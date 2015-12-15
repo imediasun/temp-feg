@@ -5,4 +5,9 @@
                     Route::controller('sbinovice', 'SbinoviceController');
                     Route::controller('sbinvoiceitem', 'SbinvoiceitemController');
                     Route::controller('sbproduct', 'SbproductController');
+                    Route::controller('employee', 'EmployeeController');
+                    Route::controller('customer', 'CustomerController');
+                    Route::controller('order', 'OrderController');
+                    Route::controller('orderdetail', 'OrderdetailController');
+                    Route::controller('product', 'ProductController');
                     ?>
