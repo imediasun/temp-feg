@@ -1,0 +1,1382 @@
+@if($setting['view-method'] =='native')
+<div class="sbox">
+	<div class="sbox-title">  
+		<h4> <i class="fa fa-table"></i> <?php echo $pageTitle ;?> <small>{{ $pageNote }}</small>
+			<a href="javascript:void(0)" class="collapse-close pull-right btn btn-xs btn-danger" onclick="ajaxViewClose('#{{ $pageModule }}')">
+			<i class="fa fa fa-times"></i></a>
+		</h4>
+	 </div>
+
+	<div class="sbox-content"> 
+@endif	
+
+		<table class="table table-striped table-bordered" >
+			<tbody>	
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Id', (isset($fields['id']['language'])? $fields['id']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->id }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Location Name', (isset($fields['location_name']['language'])? $fields['location_name']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->location_name }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Location Name Short', (isset($fields['location_name_short']['language'])? $fields['location_name_short']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->location_name_short }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Mail Attention', (isset($fields['mail_attention']['language'])? $fields['mail_attention']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->mail_attention }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Street1', (isset($fields['street1']['language'])? $fields['street1']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->street1 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('City', (isset($fields['city']['language'])? $fields['city']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->city }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('State', (isset($fields['state']['language'])? $fields['state']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->state }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Zip', (isset($fields['zip']['language'])? $fields['zip']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->zip }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Attn', (isset($fields['attn']['language'])? $fields['attn']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->attn }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Company Id', (isset($fields['company_id']['language'])? $fields['company_id']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->company_id }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Self Owned', (isset($fields['self_owned']['language'])? $fields['self_owned']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->self_owned }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Loading Info', (isset($fields['loading_info']['language'])? $fields['loading_info']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->loading_info }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Date Opened', (isset($fields['date_opened']['language'])? $fields['date_opened']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->date_opened }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Date Closed', (isset($fields['date_closed']['language'])? $fields['date_closed']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->date_closed }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Region Id', (isset($fields['region_id']['language'])? $fields['region_id']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->region_id }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Loc Group Id', (isset($fields['loc_group_id']['language'])? $fields['loc_group_id']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->loc_group_id }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Debit Type Id', (isset($fields['debit_type_id']['language'])? $fields['debit_type_id']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->debit_type_id }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Can Ship', (isset($fields['can_ship']['language'])? $fields['can_ship']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->can_ship }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Loc Ship To', (isset($fields['loc_ship_to']['language'])? $fields['loc_ship_to']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->loc_ship_to }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Phone', (isset($fields['phone']['language'])? $fields['phone']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->phone }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Bestbuy Store Number', (isset($fields['bestbuy_store_number']['language'])? $fields['bestbuy_store_number']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->bestbuy_store_number }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Bill Debit Type', (isset($fields['bill_debit_type']['language'])? $fields['bill_debit_type']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->bill_debit_type }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Bill Debit Amt', (isset($fields['bill_debit_amt']['language'])? $fields['bill_debit_amt']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->bill_debit_amt }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Bill Debit Detail', (isset($fields['bill_debit_detail']['language'])? $fields['bill_debit_detail']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->bill_debit_detail }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Bill Ticket Type', (isset($fields['bill_ticket_type']['language'])? $fields['bill_ticket_type']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->bill_ticket_type }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Bill Ticket Amt', (isset($fields['bill_ticket_amt']['language'])? $fields['bill_ticket_amt']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->bill_ticket_amt }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Bill Ticket Detail', (isset($fields['bill_ticket_detail']['language'])? $fields['bill_ticket_detail']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->bill_ticket_detail }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Bill Thermalpaper Type', (isset($fields['bill_thermalpaper_type']['language'])? $fields['bill_thermalpaper_type']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->bill_thermalpaper_type }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Bill Thermalpaper Amt', (isset($fields['bill_thermalpaper_amt']['language'])? $fields['bill_thermalpaper_amt']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->bill_thermalpaper_amt }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Bill Thermalpaper Detail', (isset($fields['bill_thermalpaper_detail']['language'])? $fields['bill_thermalpaper_detail']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->bill_thermalpaper_detail }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Bill Token Type', (isset($fields['bill_token_type']['language'])? $fields['bill_token_type']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->bill_token_type }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Bill Token Amt', (isset($fields['bill_token_amt']['language'])? $fields['bill_token_amt']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->bill_token_amt }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Bill Token Detail', (isset($fields['bill_token_detail']['language'])? $fields['bill_token_detail']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->bill_token_detail }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Bill License Type', (isset($fields['bill_license_type']['language'])? $fields['bill_license_type']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->bill_license_type }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Bill License Amt', (isset($fields['bill_license_amt']['language'])? $fields['bill_license_amt']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->bill_license_amt }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Bill License Detail', (isset($fields['bill_license_detail']['language'])? $fields['bill_license_detail']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->bill_license_detail }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Bill Attraction Type', (isset($fields['bill_attraction_type']['language'])? $fields['bill_attraction_type']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->bill_attraction_type }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Bill Attraction Amt', (isset($fields['bill_attraction_amt']['language'])? $fields['bill_attraction_amt']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->bill_attraction_amt }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Bill Attraction Detail', (isset($fields['bill_attraction_detail']['language'])? $fields['bill_attraction_detail']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->bill_attraction_detail }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Bill Redemption Type', (isset($fields['bill_redemption_type']['language'])? $fields['bill_redemption_type']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->bill_redemption_type }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Bill Redemption Amt', (isset($fields['bill_redemption_amt']['language'])? $fields['bill_redemption_amt']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->bill_redemption_amt }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Bill Redemption Detail', (isset($fields['bill_redemption_detail']['language'])? $fields['bill_redemption_detail']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->bill_redemption_detail }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Bill Instant Type', (isset($fields['bill_instant_type']['language'])? $fields['bill_instant_type']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->bill_instant_type }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Bill Instant Amt', (isset($fields['bill_instant_amt']['language'])? $fields['bill_instant_amt']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->bill_instant_amt }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Bill Instant Detail', (isset($fields['bill_instant_detail']['language'])? $fields['bill_instant_detail']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->bill_instant_detail }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Jan 2012', (isset($fields['Jan_2012']['language'])? $fields['Jan_2012']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Jan_2012 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Feb 2012', (isset($fields['Feb_2012']['language'])? $fields['Feb_2012']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Feb_2012 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Mar 2012', (isset($fields['Mar_2012']['language'])? $fields['Mar_2012']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Mar_2012 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Apr 2012', (isset($fields['Apr_2012']['language'])? $fields['Apr_2012']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Apr_2012 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('May 2012', (isset($fields['May_2012']['language'])? $fields['May_2012']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->May_2012 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Jun 2012', (isset($fields['Jun_2012']['language'])? $fields['Jun_2012']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Jun_2012 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Jul 2012', (isset($fields['Jul_2012']['language'])? $fields['Jul_2012']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Jul_2012 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Aug 2012', (isset($fields['Aug_2012']['language'])? $fields['Aug_2012']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Aug_2012 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Sep 2012', (isset($fields['Sep_2012']['language'])? $fields['Sep_2012']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Sep_2012 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Oct 2012', (isset($fields['Oct_2012']['language'])? $fields['Oct_2012']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Oct_2012 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Nov 2012', (isset($fields['Nov_2012']['language'])? $fields['Nov_2012']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Nov_2012 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Dec 2012', (isset($fields['Dec_2012']['language'])? $fields['Dec_2012']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Dec_2012 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Jan 2013', (isset($fields['Jan_2013']['language'])? $fields['Jan_2013']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Jan_2013 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Feb 2013', (isset($fields['Feb_2013']['language'])? $fields['Feb_2013']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Feb_2013 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Mar 2013', (isset($fields['Mar_2013']['language'])? $fields['Mar_2013']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Mar_2013 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Apr 2013', (isset($fields['Apr_2013']['language'])? $fields['Apr_2013']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Apr_2013 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('May 2013', (isset($fields['May_2013']['language'])? $fields['May_2013']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->May_2013 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Jun 2013', (isset($fields['Jun_2013']['language'])? $fields['Jun_2013']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Jun_2013 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Jul 2013', (isset($fields['Jul_2013']['language'])? $fields['Jul_2013']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Jul_2013 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Aug 2013', (isset($fields['Aug_2013']['language'])? $fields['Aug_2013']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Aug_2013 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Sep 2013', (isset($fields['Sep_2013']['language'])? $fields['Sep_2013']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Sep_2013 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Oct 2013', (isset($fields['Oct_2013']['language'])? $fields['Oct_2013']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Oct_2013 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Nov 2013', (isset($fields['Nov_2013']['language'])? $fields['Nov_2013']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Nov_2013 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Dec 2013', (isset($fields['Dec_2013']['language'])? $fields['Dec_2013']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Dec_2013 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Jan 2014', (isset($fields['Jan_2014']['language'])? $fields['Jan_2014']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Jan_2014 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Feb 2014', (isset($fields['Feb_2014']['language'])? $fields['Feb_2014']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Feb_2014 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Mar 2014', (isset($fields['Mar_2014']['language'])? $fields['Mar_2014']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Mar_2014 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Apr 2014', (isset($fields['Apr_2014']['language'])? $fields['Apr_2014']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Apr_2014 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('May 2014', (isset($fields['May_2014']['language'])? $fields['May_2014']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->May_2014 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Jun 2014', (isset($fields['Jun_2014']['language'])? $fields['Jun_2014']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Jun_2014 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Jul 2014', (isset($fields['Jul_2014']['language'])? $fields['Jul_2014']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Jul_2014 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Aug 2014', (isset($fields['Aug_2014']['language'])? $fields['Aug_2014']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Aug_2014 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Sep 2014', (isset($fields['Sep_2014']['language'])? $fields['Sep_2014']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Sep_2014 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Oct 2014', (isset($fields['Oct_2014']['language'])? $fields['Oct_2014']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Oct_2014 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Nov 2014', (isset($fields['Nov_2014']['language'])? $fields['Nov_2014']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Nov_2014 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Dec 2014', (isset($fields['Dec_2014']['language'])? $fields['Dec_2014']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Dec_2014 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Jan 2015', (isset($fields['Jan_2015']['language'])? $fields['Jan_2015']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Jan_2015 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Feb 2015', (isset($fields['Feb_2015']['language'])? $fields['Feb_2015']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Feb_2015 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Mar 2015', (isset($fields['Mar_2015']['language'])? $fields['Mar_2015']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Mar_2015 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Apr 2015', (isset($fields['Apr_2015']['language'])? $fields['Apr_2015']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Apr_2015 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('May 2015', (isset($fields['May_2015']['language'])? $fields['May_2015']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->May_2015 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Jun 2015', (isset($fields['Jun_2015']['language'])? $fields['Jun_2015']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Jun_2015 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Jul 2015', (isset($fields['Jul_2015']['language'])? $fields['Jul_2015']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Jul_2015 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Aug 2015', (isset($fields['Aug_2015']['language'])? $fields['Aug_2015']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Aug_2015 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Sep 2015', (isset($fields['Sep_2015']['language'])? $fields['Sep_2015']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Sep_2015 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Oct 2015', (isset($fields['Oct_2015']['language'])? $fields['Oct_2015']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Oct_2015 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Nov 2015', (isset($fields['Nov_2015']['language'])? $fields['Nov_2015']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Nov_2015 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Dec 2015', (isset($fields['Dec_2015']['language'])? $fields['Dec_2015']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Dec_2015 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Jan 2016', (isset($fields['Jan_2016']['language'])? $fields['Jan_2016']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Jan_2016 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Feb 2016', (isset($fields['Feb_2016']['language'])? $fields['Feb_2016']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Feb_2016 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Mar 2016', (isset($fields['Mar_2016']['language'])? $fields['Mar_2016']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Mar_2016 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Apr 2016', (isset($fields['Apr_2016']['language'])? $fields['Apr_2016']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Apr_2016 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('May 2016', (isset($fields['May_2016']['language'])? $fields['May_2016']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->May_2016 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Jun 2016', (isset($fields['Jun_2016']['language'])? $fields['Jun_2016']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Jun_2016 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Jul 2016', (isset($fields['Jul_2016']['language'])? $fields['Jul_2016']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Jul_2016 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Aug 2016', (isset($fields['Aug_2016']['language'])? $fields['Aug_2016']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Aug_2016 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Sep 2016', (isset($fields['Sep_2016']['language'])? $fields['Sep_2016']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Sep_2016 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Oct 2016', (isset($fields['Oct_2016']['language'])? $fields['Oct_2016']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Oct_2016 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Nov 2016', (isset($fields['Nov_2016']['language'])? $fields['Nov_2016']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Nov_2016 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Dec 2016', (isset($fields['Dec_2016']['language'])? $fields['Dec_2016']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Dec_2016 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Jan 2017', (isset($fields['Jan_2017']['language'])? $fields['Jan_2017']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Jan_2017 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Feb 2017', (isset($fields['Feb_2017']['language'])? $fields['Feb_2017']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Feb_2017 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Mar 2017', (isset($fields['Mar_2017']['language'])? $fields['Mar_2017']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Mar_2017 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Apr 2017', (isset($fields['Apr_2017']['language'])? $fields['Apr_2017']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Apr_2017 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('May 2017', (isset($fields['May_2017']['language'])? $fields['May_2017']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->May_2017 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Jun 2017', (isset($fields['Jun_2017']['language'])? $fields['Jun_2017']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Jun_2017 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Jul 2017', (isset($fields['Jul_2017']['language'])? $fields['Jul_2017']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Jul_2017 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Aug 2017', (isset($fields['Aug_2017']['language'])? $fields['Aug_2017']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Aug_2017 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Sep 2017', (isset($fields['Sep_2017']['language'])? $fields['Sep_2017']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Sep_2017 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Oct 2017', (isset($fields['Oct_2017']['language'])? $fields['Oct_2017']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Oct_2017 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Nov 2017', (isset($fields['Nov_2017']['language'])? $fields['Nov_2017']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Nov_2017 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Dec 2017', (isset($fields['Dec_2017']['language'])? $fields['Dec_2017']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Dec_2017 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Jan 2018', (isset($fields['Jan_2018']['language'])? $fields['Jan_2018']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Jan_2018 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Feb 2018', (isset($fields['Feb_2018']['language'])? $fields['Feb_2018']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Feb_2018 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Mar 2018', (isset($fields['Mar_2018']['language'])? $fields['Mar_2018']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Mar_2018 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Apr 2018', (isset($fields['Apr_2018']['language'])? $fields['Apr_2018']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Apr_2018 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('May 2018', (isset($fields['May_2018']['language'])? $fields['May_2018']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->May_2018 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Jun 2018', (isset($fields['Jun_2018']['language'])? $fields['Jun_2018']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Jun_2018 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Jul 2018', (isset($fields['Jul_2018']['language'])? $fields['Jul_2018']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Jul_2018 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Aug 2018', (isset($fields['Aug_2018']['language'])? $fields['Aug_2018']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Aug_2018 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Sep 2018', (isset($fields['Sep_2018']['language'])? $fields['Sep_2018']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Sep_2018 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Oct 2018', (isset($fields['Oct_2018']['language'])? $fields['Oct_2018']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Oct_2018 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Nov 2018', (isset($fields['Nov_2018']['language'])? $fields['Nov_2018']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Nov_2018 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Dec 2018', (isset($fields['Dec_2018']['language'])? $fields['Dec_2018']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Dec_2018 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Jan 2019', (isset($fields['Jan_2019']['language'])? $fields['Jan_2019']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Jan_2019 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Feb 2019', (isset($fields['Feb_2019']['language'])? $fields['Feb_2019']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Feb_2019 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Mar 2019', (isset($fields['Mar_2019']['language'])? $fields['Mar_2019']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Mar_2019 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Apr 2019', (isset($fields['Apr_2019']['language'])? $fields['Apr_2019']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Apr_2019 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('May 2019', (isset($fields['May_2019']['language'])? $fields['May_2019']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->May_2019 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Jun 2019', (isset($fields['Jun_2019']['language'])? $fields['Jun_2019']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Jun_2019 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Jul 2019', (isset($fields['Jul_2019']['language'])? $fields['Jul_2019']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Jul_2019 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Aug 2019', (isset($fields['Aug_2019']['language'])? $fields['Aug_2019']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Aug_2019 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Sep 2019', (isset($fields['Sep_2019']['language'])? $fields['Sep_2019']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Sep_2019 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Oct 2019', (isset($fields['Oct_2019']['language'])? $fields['Oct_2019']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Oct_2019 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Nov 2019', (isset($fields['Nov_2019']['language'])? $fields['Nov_2019']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Nov_2019 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Dec 2019', (isset($fields['Dec_2019']['language'])? $fields['Dec_2019']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Dec_2019 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Jan 2020', (isset($fields['Jan_2020']['language'])? $fields['Jan_2020']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Jan_2020 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Feb 2020', (isset($fields['Feb_2020']['language'])? $fields['Feb_2020']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Feb_2020 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Mar 2020', (isset($fields['Mar_2020']['language'])? $fields['Mar_2020']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Mar_2020 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Apr 2020', (isset($fields['Apr_2020']['language'])? $fields['Apr_2020']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Apr_2020 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('May 2020', (isset($fields['May_2020']['language'])? $fields['May_2020']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->May_2020 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Jun 2020', (isset($fields['Jun_2020']['language'])? $fields['Jun_2020']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Jun_2020 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Jul 2020', (isset($fields['Jul_2020']['language'])? $fields['Jul_2020']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Jul_2020 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Aug 2020', (isset($fields['Aug_2020']['language'])? $fields['Aug_2020']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Aug_2020 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Sep 2020', (isset($fields['Sep_2020']['language'])? $fields['Sep_2020']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Sep_2020 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Oct 2020', (isset($fields['Oct_2020']['language'])? $fields['Oct_2020']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Oct_2020 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Nov 2020', (isset($fields['Nov_2020']['language'])? $fields['Nov_2020']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Nov_2020 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Dec 2020', (isset($fields['Dec_2020']['language'])? $fields['Dec_2020']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Dec_2020 }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Contact Id', (isset($fields['contact_id']['language'])? $fields['contact_id']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->contact_id }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Merch Contact Id', (isset($fields['merch_contact_id']['language'])? $fields['merch_contact_id']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->merch_contact_id }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Field Manager Id', (isset($fields['field_manager_id']['language'])? $fields['field_manager_id']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->field_manager_id }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Tech Manager Id', (isset($fields['tech_manager_id']['language'])? $fields['tech_manager_id']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->tech_manager_id }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('No Games', (isset($fields['no_games']['language'])? $fields['no_games']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->no_games }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Liftgate', (isset($fields['liftgate']['language'])? $fields['liftgate']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->liftgate }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Ipaddress', (isset($fields['ipaddress']['language'])? $fields['ipaddress']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->ipaddress }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Reporting', (isset($fields['reporting']['language'])? $fields['reporting']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->reporting }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Not Reporting Sun', (isset($fields['not_reporting_Sun']['language'])? $fields['not_reporting_Sun']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->not_reporting_Sun }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Not Reporting Mon', (isset($fields['not_reporting_Mon']['language'])? $fields['not_reporting_Mon']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->not_reporting_Mon }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Not Reporting Tue', (isset($fields['not_reporting_Tue']['language'])? $fields['not_reporting_Tue']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->not_reporting_Tue }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Not Reporting Wed', (isset($fields['not_reporting_Wed']['language'])? $fields['not_reporting_Wed']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->not_reporting_Wed }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Not Reporting Thu', (isset($fields['not_reporting_Thu']['language'])? $fields['not_reporting_Thu']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->not_reporting_Thu }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Not Reporting Fri', (isset($fields['not_reporting_Fri']['language'])? $fields['not_reporting_Fri']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->not_reporting_Fri }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Not Reporting Sat', (isset($fields['not_reporting_Sat']['language'])? $fields['not_reporting_Sat']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->not_reporting_Sat }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Active', (isset($fields['active']['language'])? $fields['active']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->active }} </td>
+						
+					</tr>
+				
+			</tbody>	
+		</table>  
+			
+		 	
+
+@if($setting['form-method'] =='native')
+	</div>	
+</div>	
+@endif	
+
+<script>
+$(document).ready(function(){
+
+});
+</script>	

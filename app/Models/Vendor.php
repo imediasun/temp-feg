@@ -5,7 +5,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class vendor extends Sximo  {
 	
-	protected $table = 'vendor';
+	protected $table = 'tb_vendor';
 	protected $primaryKey = 'id';
 
 	public function __construct() {
@@ -15,12 +15,12 @@ class vendor extends Sximo  {
 
 	public static function querySelect(  ){
 		
-		return "  SELECT vendor.* FROM vendor  ";
+		return "  SELECT tb_vendor.* FROM tb_vendor ";
 	}	
 
 	public static function queryWhere(  ){
 		
-		return "  WHERE vendor.id IS NOT NULL ";
+		return "  WHERE tb_vendor.id IS NOT NULL ";
 	}
 	
 	public static function queryGroup(){

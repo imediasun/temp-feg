@@ -18,7 +18,8 @@
 					{!! SiteHelpers::activeLang('Id', (isset($fields['id']['language'])? $fields['id']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('id', $row['id'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
+					  <textarea name='id' rows='5' id='id' class='form-control '  
+				           >{{ $row['id'] }}</textarea> 
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -29,7 +30,8 @@
 					{!! SiteHelpers::activeLang('Title', (isset($fields['title']['language'])? $fields['title']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('title', $row['title'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
+					  <textarea name='title' rows='5' id='title' class='form-control '  
+				           >{{ $row['title'] }}</textarea> 
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -40,7 +42,8 @@
 					{!! SiteHelpers::activeLang('Description', (isset($fields['description']['language'])? $fields['description']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('description', $row['description'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
+					  <textarea name='description' rows='5' id='description' class='form-control '  
+				           >{{ $row['description'] }}</textarea> 
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -51,7 +54,8 @@
 					{!! SiteHelpers::activeLang('Start', (isset($fields['start']['language'])? $fields['start']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('start', $row['start'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
+					  <textarea name='start' rows='5' id='start' class='form-control '  
+				           >{{ $row['start'] }}</textarea> 
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -62,7 +66,8 @@
 					{!! SiteHelpers::activeLang('End', (isset($fields['end']['language'])? $fields['end']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('end', $row['end'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
+					  <textarea name='end' rows='5' id='end' class='form-control '  
+				           >{{ $row['end'] }}</textarea> 
 					 </div> 
 					 <div class="col-md-2">
 					 	

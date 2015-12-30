@@ -113,7 +113,7 @@ class OrderController extends Controller {
 		{
 			$this->data['row'] 		=  $row;
 		} else {
-			$this->data['row'] 		= $this->model->getColumnTable('orders'); 
+			$this->data['row'] 		= $this->model->getColumnTable('tb_orders'); 
 		}
 		$this->data['setting'] 		= $this->info['setting'];
 		$this->data['fields'] 		=  \AjaxHelpers::fieldLang($this->info['config']['forms']);
@@ -135,7 +135,7 @@ class OrderController extends Controller {
 		{
 			$this->data['row'] =  $row;
 		} else {
-			$this->data['row'] = $this->model->getColumnTable('orders'); 
+			$this->data['row'] = $this->model->getColumnTable('tb_orders'); 
 		}
 		$this->data['subgrid'] = $this->detailview($this->modelview ,  $this->data['subgrid'] ,$id );
 		$this->data['id'] = $id;
@@ -149,7 +149,7 @@ class OrderController extends Controller {
 	function postCopy( Request $request)
 	{
 		
-	    foreach(\DB::select("SHOW COLUMNS FROM orders ") as $column)
+	    foreach(\DB::select("SHOW COLUMNS FROM tb_orders ") as $column)
         {
 			if( $column->Field != 'orderNumber')
 				$columns[] = $column->Field;
@@ -157,8 +157,8 @@ class OrderController extends Controller {
 		$toCopy = implode(",",$request->input('ids'));
 		
 				
-		$sql = "INSERT INTO orders (".implode(",", $columns).") ";
-		$sql .= " SELECT ".implode(",", $columns)." FROM orders WHERE orderNumber IN (".$toCopy.")";
+		$sql = "INSERT INTO tb_orders (".implode(",", $columns).") ";
+		$sql .= " SELECT ".implode(",", $columns)." FROM tb_orders WHERE orderNumber IN (".$toCopy.")";
 		\DB::insert($sql);
 		return response()->json(array(
 			'status'=>'success',
@@ -172,7 +172,7 @@ class OrderController extends Controller {
 		$rules = $this->validateForm();
 		$validator = Validator::make($request->all(), $rules);	
 		if ($validator->passes()) {
-			$data = $this->validatePost('orders');
+			$data = $this->validatePost('tb_orders');
 			
 			$id = $this->model->insertRow($data , $request->input('orderNumber'));
 			$this->detailviewsave( $this->modelview , $request->all() , $this->data['subgrid'] , $id) ;

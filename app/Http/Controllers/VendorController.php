@@ -113,7 +113,7 @@ class VendorController extends Controller {
 		{
 			$this->data['row'] 		=  $row;
 		} else {
-			$this->data['row'] 		= $this->model->getColumnTable('vendor'); 
+			$this->data['row'] 		= $this->model->getColumnTable('tb_vendor'); 
 		}
 		$this->data['setting'] 		= $this->info['setting'];
 		$this->data['fields'] 		=  \AjaxHelpers::fieldLang($this->info['config']['forms']);
@@ -135,7 +135,7 @@ class VendorController extends Controller {
 		{
 			$this->data['row'] =  $row;
 		} else {
-			$this->data['row'] = $this->model->getColumnTable('vendor'); 
+			$this->data['row'] = $this->model->getColumnTable('tb_vendor'); 
 		}
 		
 		$this->data['id'] = $id;
@@ -149,7 +149,7 @@ class VendorController extends Controller {
 	function postCopy( Request $request)
 	{
 		
-	    foreach(\DB::select("SHOW COLUMNS FROM vendor ") as $column)
+	    foreach(\DB::select("SHOW COLUMNS FROM tb_vendor ") as $column)
         {
 			if( $column->Field != 'id')
 				$columns[] = $column->Field;
@@ -157,8 +157,8 @@ class VendorController extends Controller {
 		$toCopy = implode(",",$request->input('ids'));
 		
 				
-		$sql = "INSERT INTO vendor (".implode(",", $columns).") ";
-		$sql .= " SELECT ".implode(",", $columns)." FROM vendor WHERE id IN (".$toCopy.")";
+		$sql = "INSERT INTO tb_vendor (".implode(",", $columns).") ";
+		$sql .= " SELECT ".implode(",", $columns)." FROM tb_vendor WHERE id IN (".$toCopy.")";
 		\DB::insert($sql);
 		return response()->json(array(
 			'status'=>'success',
@@ -172,7 +172,7 @@ class VendorController extends Controller {
 		$rules = $this->validateForm();
 		$validator = Validator::make($request->all(), $rules);	
 		if ($validator->passes()) {
-			$data = $this->validatePost('vendor');
+			$data = $this->validatePost('tb_vendor');
 			
 			$id = $this->model->insertRow($data , $request->input('id'));
 			

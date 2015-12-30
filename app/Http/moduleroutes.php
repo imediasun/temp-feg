@@ -10,4 +10,5 @@
                     Route::controller('order', 'OrderController');
                     Route::controller('orderdetail', 'OrderdetailController');
                     Route::controller('product', 'ProductController');
+                    Route::controller('reports', 'ReportsController');
                     ?>

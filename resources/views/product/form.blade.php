@@ -13,12 +13,13 @@
 			<div class="col-md-12">
 						<fieldset><legend> Products</legend>
 									
-				  <div class="form-group hidethis " style="display:none;"> 
+				  <div class="form-group  " > 
 					<label for="ProductId" class=" control-label col-md-4 text-left"> 
 					{!! SiteHelpers::activeLang('ProductId', (isset($fields['productId']['language'])? $fields['productId']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('productId', $row['productId'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
+					  <textarea name='productId' rows='5' id='productId' class='form-control '  
+				           >{{ $row['productId'] }}</textarea> 
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -29,7 +30,8 @@
 					{!! SiteHelpers::activeLang('ProductCode', (isset($fields['productCode']['language'])? $fields['productCode']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('productCode', $row['productCode'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
+					  <textarea name='productCode' rows='5' id='productCode' class='form-control '  
+				           >{{ $row['productCode'] }}</textarea> 
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -40,7 +42,8 @@
 					{!! SiteHelpers::activeLang('ProductName', (isset($fields['productName']['language'])? $fields['productName']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('productName', $row['productName'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
+					  <textarea name='productName' rows='5' id='productName' class='form-control '  
+				           >{{ $row['productName'] }}</textarea> 
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -51,7 +54,8 @@
 					{!! SiteHelpers::activeLang('ProductScale', (isset($fields['productScale']['language'])? $fields['productScale']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('productScale', $row['productScale'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
+					  <textarea name='productScale' rows='5' id='productScale' class='form-control '  
+				           >{{ $row['productScale'] }}</textarea> 
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -62,7 +66,8 @@
 					{!! SiteHelpers::activeLang('ProductVendor', (isset($fields['productVendor']['language'])? $fields['productVendor']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('productVendor', $row['productVendor'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
+					  <textarea name='productVendor' rows='5' id='productVendor' class='form-control '  
+				           >{{ $row['productVendor'] }}</textarea> 
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -85,7 +90,8 @@
 					{!! SiteHelpers::activeLang('QuantityInStock', (isset($fields['quantityInStock']['language'])? $fields['quantityInStock']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('quantityInStock', $row['quantityInStock'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
+					  <textarea name='quantityInStock' rows='5' id='quantityInStock' class='form-control '  
+				           >{{ $row['quantityInStock'] }}</textarea> 
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -96,7 +102,8 @@
 					{!! SiteHelpers::activeLang('BuyPrice', (isset($fields['buyPrice']['language'])? $fields['buyPrice']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('buyPrice', $row['buyPrice'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
+					  <textarea name='buyPrice' rows='5' id='buyPrice' class='form-control '  
+				           >{{ $row['buyPrice'] }}</textarea> 
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -107,7 +114,8 @@
 					{!! SiteHelpers::activeLang('MSRP', (isset($fields['MSRP']['language'])? $fields['MSRP']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('MSRP', $row['MSRP'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
+					  <textarea name='MSRP' rows='5' id='MSRP' class='form-control '  
+				           >{{ $row['MSRP'] }}</textarea> 
 					 </div> 
 					 <div class="col-md-2">
 					 	

@@ -5,7 +5,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class order extends Sximo  {
 	
-	protected $table = 'orders';
+	protected $table = 'tb_orders';
 	protected $primaryKey = 'orderNumber';
 
 	public function __construct() {
@@ -15,12 +15,12 @@ class order extends Sximo  {
 
 	public static function querySelect(  ){
 		
-		return "  SELECT orders.* FROM orders  ";
+		return "  SELECT tb_orders.* FROM tb_orders ";
 	}	
 
 	public static function queryWhere(  ){
 		
-		return "  WHERE orders.orderNumber IS NOT NULL ";
+		return "  WHERE tb_orders.orderNumber IS NOT NULL ";
 	}
 	
 	public static function queryGroup(){

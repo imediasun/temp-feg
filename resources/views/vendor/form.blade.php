@@ -11,14 +11,15 @@
 @endif	
 			{!! Form::open(array('url'=>'vendor/save/'.SiteHelpers::encryptID($row['id']), 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'vendorFormAjax')) !!}
 			<div class="col-md-12">
-						<fieldset><legend> Vendor</legend>
+						<fieldset><legend> vendor</legend>
 									
 				  <div class="form-group  " > 
 					<label for="Id" class=" control-label col-md-4 text-left"> 
 					{!! SiteHelpers::activeLang('Id', (isset($fields['id']['language'])? $fields['id']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('id', $row['id'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
+					  <textarea name='id' rows='5' id='id' class='form-control '  
+				           >{{ $row['id'] }}</textarea> 
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -29,7 +30,8 @@
 					{!! SiteHelpers::activeLang('Vendor Name', (isset($fields['vendor_name']['language'])? $fields['vendor_name']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('vendor_name', $row['vendor_name'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
+					  <textarea name='vendor_name' rows='5' id='vendor_name' class='form-control '  
+				           >{{ $row['vendor_name'] }}</textarea> 
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -40,7 +42,8 @@
 					{!! SiteHelpers::activeLang('Street1', (isset($fields['street1']['language'])? $fields['street1']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('street1', $row['street1'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
+					  <textarea name='street1' rows='5' id='street1' class='form-control '  
+				           >{{ $row['street1'] }}</textarea> 
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -51,7 +54,8 @@
 					{!! SiteHelpers::activeLang('Street2', (isset($fields['street2']['language'])? $fields['street2']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('street2', $row['street2'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
+					  <textarea name='street2' rows='5' id='street2' class='form-control '  
+				           >{{ $row['street2'] }}</textarea> 
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -62,7 +66,8 @@
 					{!! SiteHelpers::activeLang('City', (isset($fields['city']['language'])? $fields['city']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('city', $row['city'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
+					  <textarea name='city' rows='5' id='city' class='form-control '  
+				           >{{ $row['city'] }}</textarea> 
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -73,7 +78,8 @@
 					{!! SiteHelpers::activeLang('State', (isset($fields['state']['language'])? $fields['state']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('state', $row['state'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
+					  <textarea name='state' rows='5' id='state' class='form-control '  
+				           >{{ $row['state'] }}</textarea> 
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -84,7 +90,8 @@
 					{!! SiteHelpers::activeLang('Zip', (isset($fields['zip']['language'])? $fields['zip']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('zip', $row['zip'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
+					  <textarea name='zip' rows='5' id='zip' class='form-control '  
+				           >{{ $row['zip'] }}</textarea> 
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -95,7 +102,8 @@
 					{!! SiteHelpers::activeLang('Phone', (isset($fields['phone']['language'])? $fields['phone']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('phone', $row['phone'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
+					  <textarea name='phone' rows='5' id='phone' class='form-control '  
+				           >{{ $row['phone'] }}</textarea> 
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -106,7 +114,8 @@
 					{!! SiteHelpers::activeLang('Fax', (isset($fields['fax']['language'])? $fields['fax']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('fax', $row['fax'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
+					  <textarea name='fax' rows='5' id='fax' class='form-control '  
+				           >{{ $row['fax'] }}</textarea> 
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -117,7 +126,8 @@
 					{!! SiteHelpers::activeLang('Contact', (isset($fields['contact']['language'])? $fields['contact']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('contact', $row['contact'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
+					  <textarea name='contact' rows='5' id='contact' class='form-control '  
+				           >{{ $row['contact'] }}</textarea> 
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -128,7 +138,8 @@
 					{!! SiteHelpers::activeLang('Email', (isset($fields['email']['language'])? $fields['email']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('email', $row['email'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
+					  <textarea name='email' rows='5' id='email' class='form-control '  
+				           >{{ $row['email'] }}</textarea> 
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -139,7 +150,8 @@
 					{!! SiteHelpers::activeLang('Email 2', (isset($fields['email_2']['language'])? $fields['email_2']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('email_2', $row['email_2'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
+					  <textarea name='email_2' rows='5' id='email_2' class='form-control '  
+				           >{{ $row['email_2'] }}</textarea> 
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -150,7 +162,8 @@
 					{!! SiteHelpers::activeLang('Website', (isset($fields['website']['language'])? $fields['website']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('website', $row['website'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
+					  <textarea name='website' rows='5' id='website' class='form-control '  
+				           >{{ $row['website'] }}</textarea> 
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -161,7 +174,8 @@
 					{!! SiteHelpers::activeLang('Games Contact Name', (isset($fields['games_contact_name']['language'])? $fields['games_contact_name']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('games_contact_name', $row['games_contact_name'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
+					  <textarea name='games_contact_name' rows='5' id='games_contact_name' class='form-control '  
+				           >{{ $row['games_contact_name'] }}</textarea> 
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -172,7 +186,8 @@
 					{!! SiteHelpers::activeLang('Games Contact Email', (isset($fields['games_contact_email']['language'])? $fields['games_contact_email']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('games_contact_email', $row['games_contact_email'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
+					  <textarea name='games_contact_email' rows='5' id='games_contact_email' class='form-control '  
+				           >{{ $row['games_contact_email'] }}</textarea> 
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -183,7 +198,8 @@
 					{!! SiteHelpers::activeLang('Games Contact Phone', (isset($fields['games_contact_phone']['language'])? $fields['games_contact_phone']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('games_contact_phone', $row['games_contact_phone'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
+					  <textarea name='games_contact_phone' rows='5' id='games_contact_phone' class='form-control '  
+				           >{{ $row['games_contact_phone'] }}</textarea> 
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -194,7 +210,8 @@
 					{!! SiteHelpers::activeLang('Partner Hide', (isset($fields['partner_hide']['language'])? $fields['partner_hide']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('partner_hide', $row['partner_hide'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
+					  <textarea name='partner_hide' rows='5' id='partner_hide' class='form-control '  
+				           >{{ $row['partner_hide'] }}</textarea> 
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -205,7 +222,8 @@
 					{!! SiteHelpers::activeLang('Isgame', (isset($fields['isgame']['language'])? $fields['isgame']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('isgame', $row['isgame'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
+					  <textarea name='isgame' rows='5' id='isgame' class='form-control '  
+				           >{{ $row['isgame'] }}</textarea> 
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -216,7 +234,8 @@
 					{!! SiteHelpers::activeLang('Ismerch', (isset($fields['ismerch']['language'])? $fields['ismerch']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('ismerch', $row['ismerch'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
+					  <textarea name='ismerch' rows='5' id='ismerch' class='form-control '  
+				           >{{ $row['ismerch'] }}</textarea> 
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -227,7 +246,8 @@
 					{!! SiteHelpers::activeLang('Min Order Amt', (isset($fields['min_order_amt']['language'])? $fields['min_order_amt']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('min_order_amt', $row['min_order_amt'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
+					  <textarea name='min_order_amt' rows='5' id='min_order_amt' class='form-control '  
+				           >{{ $row['min_order_amt'] }}</textarea> 
 					 </div> 
 					 <div class="col-md-2">
 					 	

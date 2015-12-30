@@ -1,22 +1,22 @@
 <?php namespace App\Http\Controllers;
 
 use App\Http\Controllers\controller;
-use App\Models\Employee;
+use App\Models\Reports;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Validator, Input, Redirect ; 
 
-class EmployeeController extends Controller {
+class ReportsController extends Controller {
 
 	protected $layout = "layouts.main";
 	protected $data = array();	
-	public $module = 'employee';
+	public $module = 'reports';
 	static $per_page	= '10';
 	
 	public function __construct() 
 	{
 		parent::__construct();
-		$this->model = new Employee();
+		$this->model = new Reports();
 		
 		$this->info = $this->model->makeInfo( $this->module);
 		$this->access = $this->model->validAccess($this->info['id']);
@@ -24,14 +24,25 @@ class EmployeeController extends Controller {
 		$this->data = array(
 			'pageTitle'			=> 	$this->info['title'],
 			'pageNote'			=>  $this->info['note'],
-			'pageModule'		=> 'employee',
-			'pageUrl'			=>  url('employee'),
+			'pageModule'		=> 'reports',
+			'pageUrl'			=>  url('reports'),
 			'return' 			=> 	self::returnUrl()	
 		);
 		
 			
 				
-	} 
+	}
+
+	public function getSearch( $mode = 'ajax')
+	{
+		$this->data['tableForm'] 	= $this->info['config']['forms'];
+		$this->data['tableGrid'] 	= $this->info['config']['grid'];
+		$this->data['searchMode'] 	= $mode ;
+		print_r($this->data['tableForm']);
+		exit;
+		return view('reports.search',$this->data);
+
+	}
 	
 	public function getIndex()
 	{
@@ -39,12 +50,12 @@ class EmployeeController extends Controller {
 			return Redirect::to('dashboard')->with('messagetext',\Lang::get('core.note_restric'))->with('msgstatus','error');
 				
 		$this->data['access']		= $this->access;	
-		return view('employee.index',$this->data);
+		return view('reports.index',$this->data);
 	}	
 
 	public function postData( Request $request)
-	{ 
-		$sort = (!is_null($request->input('sort')) ? $request->input('sort') : $this->info['setting']['orderby']); 
+	{
+		$sort = (!is_null($request->input('sort')) ? $request->input('sort') : $this->info['setting']['orderby']);
 		$order = (!is_null($request->input('order')) ? $request->input('order') : $this->info['setting']['ordertype']);
 		// End Filter sort and order for query 
 		// Filter Search for query		
@@ -60,13 +71,13 @@ class EmployeeController extends Controller {
 			'params'	=> $filter,
 			'global'	=> (isset($this->access['is_global']) ? $this->access['is_global'] : 0 )
 		);
-		// Get Query 
-		$results = $this->model->getRows( $params );		
-		
+		// Get Query
+		$results = $this->model->getRows( $params );
+
 		// Build pagination setting
 		$page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;	
 		$pagination = new Paginator($results['rows'], $results['total'], $params['limit']);	
-		$pagination->setPath('employee/data');
+		$pagination->setPath('reports/data');
 		
 		$this->data['param']		= $params;
 		$this->data['rowData']		= $results['rows'];
@@ -88,7 +99,7 @@ class EmployeeController extends Controller {
 		// Master detail link if any 
 		$this->data['subgrid']	= (isset($this->info['config']['subgrid']) ? $this->info['config']['subgrid'] : array()); 
 		// Render into template
-		return view('employee.table',$this->data);
+		return view('reports.table',$this->data);
 
 	}
 
@@ -113,14 +124,14 @@ class EmployeeController extends Controller {
 		{
 			$this->data['row'] 		=  $row;
 		} else {
-			$this->data['row'] 		= $this->model->getColumnTable('tb_employees'); 
+			$this->data['row'] 		= $this->model->getColumnTable('location'); 
 		}
 		$this->data['setting'] 		= $this->info['setting'];
 		$this->data['fields'] 		=  \AjaxHelpers::fieldLang($this->info['config']['forms']);
 		
 		$this->data['id'] = $id;
 
-		return view('employee.form',$this->data);
+		return view('reports.form',$this->data);
 	}	
 
 	public function getShow( $id = null)
@@ -135,30 +146,30 @@ class EmployeeController extends Controller {
 		{
 			$this->data['row'] =  $row;
 		} else {
-			$this->data['row'] = $this->model->getColumnTable('tb_employees'); 
+			$this->data['row'] = $this->model->getColumnTable('location'); 
 		}
 		
 		$this->data['id'] = $id;
 		$this->data['access']		= $this->access;
 		$this->data['setting'] 		= $this->info['setting'];
 		$this->data['fields'] 		= \AjaxHelpers::fieldLang($this->info['config']['forms']);
-		return view('employee.view',$this->data);	
+		return view('reports.view',$this->data);	
 	}	
 
 
 	function postCopy( Request $request)
 	{
 		
-	    foreach(\DB::select("SHOW COLUMNS FROM tb_employees ") as $column)
+	    foreach(\DB::select("SHOW COLUMNS FROM location ") as $column)
         {
-			if( $column->Field != 'employeeNumber')
+			if( $column->Field != 'id')
 				$columns[] = $column->Field;
         }
 		$toCopy = implode(",",$request->input('ids'));
 		
 				
-		$sql = "INSERT INTO tb_employees (".implode(",", $columns).") ";
-		$sql .= " SELECT ".implode(",", $columns)." FROM tb_employees WHERE employeeNumber IN (".$toCopy.")";
+		$sql = "INSERT INTO location (".implode(",", $columns).") ";
+		$sql .= " SELECT ".implode(",", $columns)." FROM location WHERE id IN (".$toCopy.")";
 		\DB::insert($sql);
 		return response()->json(array(
 			'status'=>'success',
@@ -172,9 +183,9 @@ class EmployeeController extends Controller {
 		$rules = $this->validateForm();
 		$validator = Validator::make($request->all(), $rules);	
 		if ($validator->passes()) {
-			$data = $this->validatePost('tb_employees');
+			$data = $this->validatePost('location');
 			
-			$id = $this->model->insertRow($data , $request->input('employeeNumber'));
+			$id = $this->model->insertRow($data , $request->input('id'));
 			
 			return response()->json(array(
 				'status'=>'success',

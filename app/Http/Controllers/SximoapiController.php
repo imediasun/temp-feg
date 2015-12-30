@@ -1,4 +1,5 @@
 <?php
+use Illuminate\Routing\Controller as BaseController;
 class SximoapiController extends BaseController {
 
 	public function __construct() 

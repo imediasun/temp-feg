@@ -13,12 +13,13 @@
 			<div class="col-md-6">
 						<fieldset><legend> Info</legend>
 									
-				  <div class="form-group hidethis " style="display:none;"> 
+				  <div class="form-group  " > 
 					<label for="OrderNumber" class=" control-label col-md-4 text-left"> 
 					{!! SiteHelpers::activeLang('OrderNumber', (isset($fields['orderNumber']['language'])? $fields['orderNumber']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('orderNumber', $row['orderNumber'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
+					  <textarea name='orderNumber' rows='5' id='orderNumber' class='form-control '  
+				           >{{ $row['orderNumber'] }}</textarea> 
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -29,11 +30,8 @@
 					{!! SiteHelpers::activeLang('OrderDate', (isset($fields['orderDate']['language'])? $fields['orderDate']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  
-				<div class="input-group m-b" style="width:150px !important;">
-					{!! Form::text('orderDate', $row['orderDate'],array('class'=>'form-control date')) !!}
-					<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-				</div> 
+					  <textarea name='orderDate' rows='5' id='orderDate' class='form-control '  
+				           >{{ $row['orderDate'] }}</textarea> 
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -44,11 +42,8 @@
 					{!! SiteHelpers::activeLang('RequiredDate', (isset($fields['requiredDate']['language'])? $fields['requiredDate']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  
-				<div class="input-group m-b" style="width:150px !important;">
-					{!! Form::text('requiredDate', $row['requiredDate'],array('class'=>'form-control date')) !!}
-					<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-				</div> 
+					  <textarea name='requiredDate' rows='5' id='requiredDate' class='form-control '  
+				           >{{ $row['requiredDate'] }}</textarea> 
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -59,27 +54,20 @@
 					{!! SiteHelpers::activeLang('ShippedDate', (isset($fields['shippedDate']['language'])? $fields['shippedDate']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  
-				<div class="input-group m-b" style="width:150px !important;">
-					{!! Form::text('shippedDate', $row['shippedDate'],array('class'=>'form-control date')) !!}
-					<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-				</div> 
+					  <textarea name='shippedDate' rows='5' id='shippedDate' class='form-control '  
+				           >{{ $row['shippedDate'] }}</textarea> 
 					 </div> 
 					 <div class="col-md-2">
 					 	
 					 </div>
-				  </div> </fieldset>
-			</div>
-			
-			<div class="col-md-6">
-						<fieldset><legend> Detail</legend>
-									
+				  </div> 					
 				  <div class="form-group  " > 
-					<label for="CustomerNumber" class=" control-label col-md-4 text-left"> 
-					{!! SiteHelpers::activeLang('CustomerNumber', (isset($fields['customerNumber']['language'])? $fields['customerNumber']['language'] : array())) !!}	
+					<label for="Status" class=" control-label col-md-4 text-left"> 
+					{!! SiteHelpers::activeLang('Status', (isset($fields['status']['language'])? $fields['status']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  <select name='customerNumber' rows='5' id='customerNumber' class='select2 ' required  ></select> 
+					  <textarea name='status' rows='5' id='status' class='form-control '  
+				           >{{ $row['status'] }}</textarea> 
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -98,25 +86,22 @@
 					 </div>
 				  </div> 					
 				  <div class="form-group  " > 
-					<label for="Status" class=" control-label col-md-4 text-left"> 
-					{!! SiteHelpers::activeLang('Status', (isset($fields['status']['language'])? $fields['status']['language'] : array())) !!}	
+					<label for="CustomerNumber" class=" control-label col-md-4 text-left"> 
+					{!! SiteHelpers::activeLang('CustomerNumber', (isset($fields['customerNumber']['language'])? $fields['customerNumber']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  
-					<?php $status = explode(',',$row['status']);
-					$status_opt = array( 'Shipped' => 'Shipped' ,  'Canceled' => 'Canceled' ,  'On Hold' => 'On Hold' ,  'In Process' => 'In Process' ,  'Disputed' => 'Disputed' ,  'Resolved' => 'Resolved' , ); ?>
-					<select name='status' rows='5' required  class='select2 '  > 
-						<?php 
-						foreach($status_opt as $key=>$val)
-						{
-							echo "<option  value ='$key' ".($row['status'] == $key ? " selected='selected' " : '' ).">$val</option>"; 						
-						}						
-						?></select> 
+					  <textarea name='customerNumber' rows='5' id='customerNumber' class='form-control '  
+				           >{{ $row['customerNumber'] }}</textarea> 
 					 </div> 
 					 <div class="col-md-2">
 					 	
 					 </div>
 				  </div> </fieldset>
+			</div>
+			
+			<div class="col-md-6">
+						<fieldset><legend> Detail</legend>
+				</fieldset>
 			</div>
 			
 												
@@ -217,10 +202,7 @@
 			 
 <script type="text/javascript">
 $(document).ready(function() { 
-	
-        $("#customerNumber").jCombo("{{ URL::to('order/comboselect?filter=customers:customerNumber:customerName') }}",
-        {  selected_value : '{{ $row["customerNumber"] }}' });
-         
+	 
 	$('.addC').relCopy({});
 	$('.editor').summernote();
 	$('.previewImage').fancybox();	

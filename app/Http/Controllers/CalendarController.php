@@ -113,7 +113,7 @@ class CalendarController extends Controller {
 		{
 			$this->data['row'] 		=  $row;
 		} else {
-			$this->data['row'] 		= $this->model->getColumnTable('calendar'); 
+			$this->data['row'] 		= $this->model->getColumnTable('tb_calendar'); 
 		}
 		$this->data['setting'] 		= $this->info['setting'];
 		$this->data['fields'] 		=  \AjaxHelpers::fieldLang($this->info['config']['forms']);
@@ -135,7 +135,7 @@ class CalendarController extends Controller {
 		{
 			$this->data['row'] =  $row;
 		} else {
-			$this->data['row'] = $this->model->getColumnTable('calendar'); 
+			$this->data['row'] = $this->model->getColumnTable('tb_calendar'); 
 		}
 		
 		$this->data['id'] = $id;
@@ -149,7 +149,7 @@ class CalendarController extends Controller {
 	function postCopy( Request $request)
 	{
 		
-	    foreach(\DB::select("SHOW COLUMNS FROM calendar ") as $column)
+	    foreach(\DB::select("SHOW COLUMNS FROM tb_calendar ") as $column)
         {
 			if( $column->Field != 'id')
 				$columns[] = $column->Field;
@@ -157,8 +157,8 @@ class CalendarController extends Controller {
 		$toCopy = implode(",",$request->input('ids'));
 		
 				
-		$sql = "INSERT INTO calendar (".implode(",", $columns).") ";
-		$sql .= " SELECT ".implode(",", $columns)." FROM calendar WHERE id IN (".$toCopy.")";
+		$sql = "INSERT INTO tb_calendar (".implode(",", $columns).") ";
+		$sql .= " SELECT ".implode(",", $columns)." FROM tb_calendar WHERE id IN (".$toCopy.")";
 		\DB::insert($sql);
 		return response()->json(array(
 			'status'=>'success',
@@ -172,7 +172,7 @@ class CalendarController extends Controller {
 		$rules = $this->validateForm();
 		$validator = Validator::make($request->all(), $rules);	
 		if ($validator->passes()) {
-			$data = $this->validatePost('calendar');
+			$data = $this->validatePost('tb_calendar');
 			
 			$id = $this->model->insertRow($data , $request->input('id'));
 			

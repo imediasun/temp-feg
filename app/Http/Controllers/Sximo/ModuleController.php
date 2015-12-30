@@ -551,7 +551,8 @@ class ModuleController extends Controller {
     public function postSaveform( Request $request)
     {
         
-        $id = $request->input('module_id');
+        $id = $request->input('module_id',54);
+
         $row = \DB::table('tb_module')->where('module_id', $id)
                                 ->get();
         if(count($row) <= 0){
@@ -814,8 +815,7 @@ class ModuleController extends Controller {
     public function postSavetable( Request $request)
     {
         //$this->beforeFilter('csrf', array('on'=>'post'));
-        
-        $id = $request->input('module_id');
+        $id = $request->input('module_id',54);
         $row = \DB::table('tb_module')->where('module_id', $id)
                                 ->get();
         if(count($row) <= 0){
@@ -844,7 +844,7 @@ class ModuleController extends Controller {
 
             $grid[] = array(
                 'field'        => $field[$i],
-                'alias'        => $alias[$i],
+                'alias'        => isset($alias[$i])?$alias[$i]:"",
                 'language'    => $language,
                 'label'        => $label[$i],
                 'view'        => (isset($view[$i]) ? 1 : 0 ),
@@ -854,28 +854,28 @@ class ModuleController extends Controller {
                 'download'    => (isset($download[$i]) ? 1 : 0 ),
                 'frozen'    => (isset($frozen[$i]) ? 1 : 0 ),
                 'limited'    => (isset($limited[$i]) ? $limited[$i] : ''),
-                'width'        => $width[$i],
-                'align'        => $align[$i],
-                'sortlist'    => $sortlist[$i],
+                'width'        => isset($width[$i])?$width[$i]:'',
+                'align'        => isset($align[$i])?$align[$i]:'',
+                'sortlist'    => isset($sortlist[$i])?$sortlist[$i]:'',
                 'conn'    =>     array(
-                            'valid'     => $conn_valid[$i],
-                            'db'        => $conn_db[$i],
-                            'key'        => $conn_key[$i],
-                            'display'    => $conn_display[$i]
+                            'valid'     => isset($conn_valid[$i])?$conn_valid[$i]:'',
+                            'db'        => isset($conn_db[$i])?$conn_db[$i]:'',
+                            'key'        => isset($conn_key[$i])?$conn_key[$i]:'',
+                            'display'    => isset($conn_display[$i])?$conn_display[$i]:''
                 ),
                 'attribute'    => array(
                     'hyperlink'    => array(
                             'active'            => (isset($attr_link_active[$i]) ? 1 : 0 ) ,
-                            'link'              => $attr_link[$i],
+                            'link'              => isset($attr_link[$i])?$attr_link[$i]:'',
                             'target'            => (isset($attr_target[$i]) ? $attr_target[$i] : 'modal' ),
-                            'html'              => $attr_link_html[$i],
+                            'html'              => isset($attr_link_html[$i])?$attr_link_html[$i]:'',
                         ),
                     'image'        => array(
                             'active'        => (isset($attr_image_active[$i]) ? 1 : 0 ),
-                            'path'            => $attr_image[$i],
-                            'size_x'        => $attr_image_width[$i],
-                            'size_y'        => $attr_image_height[$i],
-                            'html'            => $attr_image_html[$i],
+                            'path'            => isset($attr_image[$i])?$attr_image[$i]:'',
+                            'size_x'        => isset($attr_image_width[$i])?$attr_image_width[$i]:'',
+                            'size_y'        => isset($attr_image_height[$i])?$attr_image_height[$i]:'',
+                            'html'            => isset($attr_image_html[$i])?$attr_image_html[$i]:'',
                         ),
                     'formater'        => array(
                             'active'        => (isset($attr_formater_active[$i]) ? 1 : 0 ),

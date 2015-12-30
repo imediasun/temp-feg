@@ -15,7 +15,15 @@
 				
 					<tr>
 						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Code', (isset($fields['productCode']['language'])? $fields['productCode']['language'] : array())) }}	
+							{{ SiteHelpers::activeLang('ProductId', (isset($fields['productId']['language'])? $fields['productId']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->productId }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('ProductCode', (isset($fields['productCode']['language'])? $fields['productCode']['language'] : array())) }}	
 						</td>
 						<td>{{ $row->productCode }} </td>
 						
@@ -23,7 +31,7 @@
 				
 					<tr>
 						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Name', (isset($fields['productName']['language'])? $fields['productName']['language'] : array())) }}	
+							{{ SiteHelpers::activeLang('ProductName', (isset($fields['productName']['language'])? $fields['productName']['language'] : array())) }}	
 						</td>
 						<td>{{ $row->productName }} </td>
 						
@@ -31,7 +39,7 @@
 				
 					<tr>
 						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Scale', (isset($fields['productScale']['language'])? $fields['productScale']['language'] : array())) }}	
+							{{ SiteHelpers::activeLang('ProductScale', (isset($fields['productScale']['language'])? $fields['productScale']['language'] : array())) }}	
 						</td>
 						<td>{{ $row->productScale }} </td>
 						
@@ -39,7 +47,7 @@
 				
 					<tr>
 						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Vendor', (isset($fields['productVendor']['language'])? $fields['productVendor']['language'] : array())) }}	
+							{{ SiteHelpers::activeLang('ProductVendor', (isset($fields['productVendor']['language'])? $fields['productVendor']['language'] : array())) }}	
 						</td>
 						<td>{{ $row->productVendor }} </td>
 						
@@ -47,7 +55,7 @@
 				
 					<tr>
 						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Description', (isset($fields['productDescription']['language'])? $fields['productDescription']['language'] : array())) }}	
+							{{ SiteHelpers::activeLang('ProductDescription', (isset($fields['productDescription']['language'])? $fields['productDescription']['language'] : array())) }}	
 						</td>
 						<td>{{ $row->productDescription }} </td>
 						
@@ -55,7 +63,7 @@
 				
 					<tr>
 						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Stock', (isset($fields['quantityInStock']['language'])? $fields['quantityInStock']['language'] : array())) }}	
+							{{ SiteHelpers::activeLang('QuantityInStock', (isset($fields['quantityInStock']['language'])? $fields['quantityInStock']['language'] : array())) }}	
 						</td>
 						<td>{{ $row->quantityInStock }} </td>
 						

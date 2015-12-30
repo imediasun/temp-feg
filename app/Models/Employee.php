@@ -5,7 +5,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class employee extends Sximo  {
 	
-	protected $table = 'employees';
+	protected $table = 'tb_employees';
 	protected $primaryKey = 'employeeNumber';
 
 	public function __construct() {
@@ -15,12 +15,12 @@ class employee extends Sximo  {
 
 	public static function querySelect(  ){
 		
-		return "  SELECT employees.* FROM employees  ";
+		return "  SELECT tb_employees.* FROM tb_employees  ";
 	}	
 
 	public static function queryWhere(  ){
 		
-		return "  WHERE employees.employeeNumber IS NOT NULL ";
+		return "  WHERE tb_employees.employeeNumber IS NOT NULL ";
 	}
 	
 	public static function queryGroup(){

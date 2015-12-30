@@ -57,7 +57,7 @@
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('ReportsTo', (isset($fields['reportsTo']['language'])? $fields['reportsTo']['language'] : array())) }}	
 						</td>
-						<td>{!! SiteHelpers::gridDisplayView($row->reportsTo,'reportsTo','1:employees:employeeNumber:firstName|lastName') !!} </td>
+						<td>{{ $row->reportsTo }} </td>
 						
 					</tr>
 				
@@ -73,7 +73,7 @@
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Foto', (isset($fields['foto']['language'])? $fields['foto']['language'] : array())) }}	
 						</td>
-						<td>{!! SiteHelpers::showUploadedFile($row->foto,'/uploads/images/') !!} </td>
+						<td>{{ $row->foto }} </td>
 						
 					</tr>
 				

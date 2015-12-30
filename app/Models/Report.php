@@ -3,10 +3,10 @@
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 
-class product extends Sximo  {
+class report extends Sximo  {
 	
-	protected $table = 'tb_products';
-	protected $primaryKey = 'productId';
+	protected $table = 'location';
+	protected $primaryKey = '';
 
 	public function __construct() {
 		parent::__construct();
@@ -15,12 +15,12 @@ class product extends Sximo  {
 
 	public static function querySelect(  ){
 		
-		return "  SELECT tb_products.* FROM tb_products  ";
+		return "  SELECT location.* FROM location  ";
 	}	
 
 	public static function queryWhere(  ){
 		
-		return "  WHERE tb_products.productId IS NOT NULL ";
+		return "  ";
 	}
 	
 	public static function queryGroup(){

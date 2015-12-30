@@ -5,7 +5,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class calendar extends Sximo  {
 	
-	protected $table = 'calendar';
+	protected $table = 'tb_calendar';
 	protected $primaryKey = 'id';
 
 	public function __construct() {
@@ -15,12 +15,12 @@ class calendar extends Sximo  {
 
 	public static function querySelect(  ){
 		
-		return "  SELECT calendar.* FROM calendar  ";
+		return "  SELECT tb_calendar.* FROM tb_calendar  ";
 	}	
 
 	public static function queryWhere(  ){
 		
-		return "  WHERE calendar.id IS NOT NULL ";
+		return "  WHERE tb_calendar.id IS NOT NULL ";
 	}
 	
 	public static function queryGroup(){
