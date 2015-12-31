@@ -1,22 +1,22 @@
 <?php namespace App\Http\Controllers;
 
 use App\Http\Controllers\controller;
-use App\Models\Reports;
+use App\Models\Sbticket;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Validator, Input, Redirect ; 
 
-class ReportsController extends Controller {
+class SbticketController extends Controller {
 
 	protected $layout = "layouts.main";
 	protected $data = array();	
-	public $module = 'reports';
+	public $module = 'sbticket';
 	static $per_page	= '10';
 	
 	public function __construct() 
 	{
 		parent::__construct();
-		$this->model = new Reports();
+		$this->model = new Sbticket();
 		
 		$this->info = $this->model->makeInfo( $this->module);
 		$this->access = $this->model->validAccess($this->info['id']);
@@ -24,14 +24,42 @@ class ReportsController extends Controller {
 		$this->data = array(
 			'pageTitle'			=> 	$this->info['title'],
 			'pageNote'			=>  $this->info['note'],
-			'pageModule'		=> 'reports',
-			'pageUrl'			=>  url('reports'),
+			'pageModule'		=> 'sbticket',
+			'pageUrl'			=>  url('sbticket'),
 			'return' 			=> 	self::returnUrl()	
 		);
 		
 			
 				
 	} 
+
+	public static function display( )
+	{
+		
+		if(!\Auth::check())
+			return '<p class="text-center alert alert-danger">Please Login to submit Ticket </p>';
+		$data = array();
+		$task = \Input::get('view');
+		if($task !='')
+		{
+			$rest = \DB::table('sb_tickets')->where('TicketID',$task)->get();
+			if( count($rest) >=1)
+			{
+				
+				$data['row'] = $rest[0];
+
+				return view('sbticket.displayreply',$data);					
+
+			} else {
+				echo 'No Ticket Found !';
+			}
+
+		} else {
+			$data = array();
+			$data['mytickets'] = \DB::table('sb_tickets')->where('entry_by',\Session::get('uid'))->orderby('Created','desc')->get();
+			return view('sbticket.display',$data);		
+		}	
+	}
 	
 	public function getIndex()
 	{
@@ -39,18 +67,8 @@ class ReportsController extends Controller {
 			return Redirect::to('dashboard')->with('messagetext',\Lang::get('core.note_restric'))->with('msgstatus','error');
 				
 		$this->data['access']		= $this->access;	
-		return view('reports.index',$this->data);
-	}
-
-	public function getSearch( $mode = 'ajax')
-	{
-
-		$this->data['tableForm'] 	= $this->info['config']['forms'];
-		$this->data['tableGrid'] 	= $this->info['config']['grid'];
-		$this->data['searchMode'] 	= $mode ;
-		return view('reports.search',$this->data);
-
-	}
+		return view('sbticket.index',$this->data);
+	}	
 
 	public function postData( Request $request)
 	{ 
@@ -70,14 +88,13 @@ class ReportsController extends Controller {
 			'params'	=> $filter,
 			'global'	=> (isset($this->access['is_global']) ? $this->access['is_global'] : 0 )
 		);
-		// Get Query
-
+		// Get Query 
 		$results = $this->model->getRows( $params );		
 		
 		// Build pagination setting
 		$page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;	
 		$pagination = new Paginator($results['rows'], $results['total'], $params['limit']);	
-		$pagination->setPath('reports/data');
+		$pagination->setPath('sbticket/data');
 		
 		$this->data['param']		= $params;
 		$this->data['rowData']		= $results['rows'];
@@ -99,7 +116,7 @@ class ReportsController extends Controller {
 		// Master detail link if any 
 		$this->data['subgrid']	= (isset($this->info['config']['subgrid']) ? $this->info['config']['subgrid'] : array()); 
 		// Render into template
-		return view('reports.table',$this->data);
+		return view('sbticket.table',$this->data);
 
 	}
 
@@ -124,14 +141,16 @@ class ReportsController extends Controller {
 		{
 			$this->data['row'] 		=  $row;
 		} else {
-			$this->data['row'] 		= $this->model->getColumnTable('location'); 
+			$this->data['row'] 		= $this->model->getColumnTable('sb_tickets'); 
 		}
 		$this->data['setting'] 		= $this->info['setting'];
 		$this->data['fields'] 		=  \AjaxHelpers::fieldLang($this->info['config']['forms']);
 		
 		$this->data['id'] = $id;
 
-		return view('reports.form',$this->data);
+
+
+		return view('sbticket.form',$this->data);
 	}	
 
 	public function getShow( $id = null)
@@ -139,37 +158,72 @@ class ReportsController extends Controller {
 	
 		if($this->access['is_detail'] ==0) 
 			return Redirect::to('dashboard')
-				->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus','error');
+				->with('messagetext', Lang::get('core.note_restric'))->with('msgstatus','error');
 					
 		$row = $this->model->getRow($id);
 		if($row)
 		{
 			$this->data['row'] =  $row;
 		} else {
-			$this->data['row'] = $this->model->getColumnTable('location'); 
+			$this->data['row'] = $this->model->getColumnTable('sb_tickets'); 
 		}
 		
 		$this->data['id'] = $id;
 		$this->data['access']		= $this->access;
 		$this->data['setting'] 		= $this->info['setting'];
 		$this->data['fields'] 		= \AjaxHelpers::fieldLang($this->info['config']['forms']);
-		return view('reports.view',$this->data);	
+		$this->data['Comments']		= \DB::table('sb_ticketcomments')->where('TicketID',$id)->get();
+		return view('sbticket.view',$this->data);	
 	}	
 
+	public function getComment( Request $request , $id = 0)
+	{
+		$this->data['Comments']		= \DB::select("
+			SELECT sb_ticketcomments.* ,CONCAT(first_name,' ',last_name) AS author ,avatar , email   FROM sb_ticketcomments
+			LEFT JOIN tb_users ON tb_users.id = sb_ticketcomments.UserID
+			WHERE TicketID ='".$id."' ORDER BY Posted ASC
+			");
+	
+		$this->data['TicketID'] = $id;
+		return view('sbticket.reply',$this->data);		
+	}
+
+	public function postSavereply(  Request $request ){
+		$data = array(
+			'TicketID' 	=> $request->input('TicketID'),
+			'Comments'	=> $request->input('comments'),
+			'Posted'	=> date("Y-m-d H:i:s"),
+			'UserID'	=> \Session::get('uid')
+		);	
+			\DB::table('sb_ticketcomments')->insert($data);
+
+		return response()->json(array(
+			'status'=>'success',
+			'message'=> 'Reply has been sent !'
+		));			
+	}
+	public function getRemovereply( Request $request , $id = 0)
+	{
+		\DB::table('sb_ticketcomments')->where('CommentID',$id)->delete();
+		return response()->json(array(
+			'status'=>'success',
+			'message'=> 'Reply has been removed !'
+		));			
+	}
 
 	function postCopy( Request $request)
 	{
 		
-	    foreach(\DB::select("SHOW COLUMNS FROM location ") as $column)
+	    foreach(\DB::select("SHOW COLUMNS FROM sb_tickets ") as $column)
         {
-			if( $column->Field != 'id')
+			if( $column->Field != 'TicketID')
 				$columns[] = $column->Field;
         }
-		$toCopy = implode(",",$request->input('ids'));
+		$toCopy = implode(",",$request->input('id'));
 		
 				
-		$sql = "INSERT INTO location (".implode(",", $columns).") ";
-		$sql .= " SELECT ".implode(",", $columns)." FROM location WHERE id IN (".$toCopy.")";
+		$sql = "INSERT INTO sb_tickets (".implode(",", $columns).") ";
+		$sql .= " SELECT ".implode(",", $columns)." FROM sb_tickets WHERE TicketID IN (".$toCopy.")";
 		\DB::insert($sql);
 		return response()->json(array(
 			'status'=>'success',
@@ -183,9 +237,10 @@ class ReportsController extends Controller {
 		$rules = $this->validateForm();
 		$validator = Validator::make($request->all(), $rules);	
 		if ($validator->passes()) {
-			$data = $this->validatePost('location');
 			
-			$id = $this->model->insertRow($data , $request->input('id'));
+			$data = $this->validatePost('sb_tickets');
+			$data['entry_by'] = \Session::get('uid');
+			$id = $this->model->insertRow($data , $request->input('TicketID'));
 			
 			return response()->json(array(
 				'status'=>'success',
@@ -215,9 +270,10 @@ class ReportsController extends Controller {
 
 		}		
 		// delete multipe rows 
-		if(count($request->input('ids')) >=1)
+		if(count($request->input('id')) >=1)
 		{
-			$this->model->destroy($request->input('ids'));
+			$this->model->destroy($request->input('id'));
+			\DB::table('sb_ticketcomments')->whereIn('TicketID',$request->input('id'))->delete();
 			
 			return response()->json(array(
 				'status'=>'success',

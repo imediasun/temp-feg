@@ -11,4 +11,5 @@
                     Route::controller('orderdetail', 'OrderdetailController');
                     Route::controller('product', 'ProductController');
                     Route::controller('reports', 'ReportsController');
+                    Route::controller('sbticket', 'SbticketController');
                     ?>

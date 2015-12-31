@@ -6,34 +6,19 @@
 	@if($t['search'] =='1')
 		<tr id="{{ $t['field'] }}" class="fieldsearch">
 			<td>{!! SiteHelpers::activeLang($t['label'],(isset($t['language'])? $t['language'] : array())) !!} </td>
-			<td >
-			<select id="{{ $t['field']}}_operate" class="form-control oper" name="operate" onchange="changeOperate(this.value , '{{ $t['field']}}')">
-				<option value="equal"> = </option>
-				<option value="bigger_equal"> >= </option>
-				<option value="smaller_equal"> <= </option>
-				<option value="smaller"> < </option>
-				<option value="bigger"> > </option>
-				<option value="not_null"> ! Null  </option>
-				<option value="is_null"> Null </option>
-				<option value="between"> Between </option>
-				<option value="like"> Like </option>
-
-			</select>
-			</td>
 			<td id="field_{{ $t['field']}}">{!! SiteHelpers::transForm($t['field'] , $tableForm) !!}</td>
-
+			<input type="hidden" name="operate" value="equal" />
+		
 		</tr>
-
+	
 	@endif
 @endforeach
 		<tr>
-			<td></td>
-			<td><button type="button" name="search" class="doSearch btn btn-sm btn-primary"> Search </button></td>
-
+			<td colspan="2"><button type="button" name="search" class="doSearch btn btn-sm btn-primary"> Search </button></td>
 		</tr>
-	</tbody>
+	</tbody>     
 	</table>
-</form>
+</form>	
 </div>
 <script>
 function changeOperate( val , field )
@@ -43,21 +28,21 @@ function changeOperate( val , field )
 		$('input[name='+field+']').val('is_null');
 	} else if(val =='not_null') {
 		$('input[name='+field+']').attr('readonly','1');
-		$('input[name='+field+']').val('not_null');
+		$('input[name='+field+']').val('not_null');		
 
 	} else if(val =='between') {
-
+	
 		html = '<input name="'+field+'" class="date form-control" placeholder="Start Date" style="width:100px;"  /> -  <input name="'+field+'_end" class="date form-control"  placeholder="End Date" style="width:100px;"    />';
 		$('#field_'+field+'').html(html);
 	} else {
 		$('input[name='+field+']').removeAttr('readonly');
-		$('input[name='+field+']').val('');
+		$('input[name='+field+']').val('');	
 	}
 }
 jQuery(function(){
 		$('.date').datepicker({format:'yyyy-mm-dd',autoClose:true})
-		$('.datetime').datetimepicker({format: 'yyyy-mm-dd hh:ii:ss'});
-		//$(".sel-search").select2({ width:"98%"});
+		$('.datetime').datetimepicker({format: 'yyyy-mm-dd hh:ii:ss'}); 
+		//$(".sel-search").select2({ width:"98%"});	
 
 
 	$('.doSearch').click(function(){
@@ -84,13 +69,13 @@ jQuery(function(){
 					attr += field+':'+operate+':'+value+':'+value2+'|';
 				} else {
 					attr += field+':'+operate+':'+value+'|';
-				}
-
+				}	
+					
 			}
-
+			
 		});
-		<?php if($searchMode =='ajax') { ?>
-			reloadData( '#{{ $pageModule }}',"{{ $pageUrl }}/data?search="+attr);
+		<?php if($searchMode =='ajax') { ?> 
+			reloadData( '#{{ $pageModule }}',"{{ $pageUrl }}/data?search="+attr);	
 			$('#sximo-modal').modal('hide');
 		<?php } else { ?>
 			window.location.href = '{{ $pageUrl }}?search='+attr;

@@ -1,11 +1,10 @@
-<!--fully functional-->
 <?php usort($tableGrid, "SiteHelpers::_sort"); ?>
 <div class="sbox">
 	<div class="sbox-title"> 
 		<h5> <i class="fa fa-table"></i> </h5>
 		<div class="sbox-tools" >
-			<a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Clear Search" onclick="reloadData('#{{ $pageModule }}','reports/data?search=')"><i class="fa fa-trash-o"></i> Clear Search </a>
-			<a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Reload Data" onclick="reloadData('#{{ $pageModule }}','reports/data?return={{ $return }}')"><i class="fa fa-refresh"></i></a>
+			<a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Clear Search" onclick="reloadData('#{{ $pageModule }}','sbticket/data?search=')"><i class="fa fa-trash-o"></i></a>
+			<a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Reload Data" onclick="reloadData('#{{ $pageModule }}','sbticket/data?return={{ $return }}')"><i class="fa fa-refresh"></i></a>
 			@if(Session::get('gid') ==1)
 			<a href="{{ url('sximo/module/config/'.$pageModule) }}" class="btn btn-xs btn-white tips" title=" {{ Lang::get('core.btn_config') }}" ><i class="fa fa-cog"></i></a>
 			@endif 
@@ -15,37 +14,35 @@
 
 	@include( $pageModule.'/toolbar')
 
-	 <?php echo Form::open(array('url'=>'reports/delete/', 'class'=>'form-horizontal' ,'id' =>'SximoTable'  ,'data-parsley-validate'=>'' )) ;?>
+	 <?php echo Form::open(array('url'=>'sbticket/delete/', 'class'=>'form-horizontal' ,'id' =>'SximoTable'  ,'data-parsley-validate'=>'' )) ;?>
 <div class="table-responsive">	
 	@if(count($rowData)>=1)
     <table class="table table-striped  " id="{{ $pageModule }}Table">
         <thead>
 			<tr>
-				@if($setting['view-method']=='expand') <th>  </th> @endif
+				<th width="20"> No </th>
+				<th width="30"> <input type="checkbox" class="checkall" /></th>		
+				@if($setting['view-method']=='expand') <th>  </th> @endif			
 				<?php foreach ($tableGrid as $t) :
 					if($t['view'] =='1'):
-						$limited = isset($t['limited']) ? $t['limited'] :'';
-						if(SiteHelpers::filterColumn($limited ))
-						{
-							echo '<th align="'.$t['align'].'" width="'.$t['width'].'">'.\SiteHelpers::activeLang($t['label'],(isset($t['language'])? $t['language'] : array())).'</th>';
-						}
+						echo '<th align="'.$t['align'].'">'.\SiteHelpers::activeLang($t['label'],(isset($t['language'])? $t['language'] : array())).'</th>';
 					endif;
 				endforeach; ?>
+				<th width="70"><?php echo Lang::get('core.btn_action') ;?></th>
 			  </tr>
         </thead>
 
         <tbody>
         	@if($access['is_add'] =='1' && $setting['inline']=='true')
 			<tr id="form-0" >
+				<td> # </td>
+				<td> </td>
 				@if($setting['view-method']=='expand') <td> </td> @endif
 				@foreach ($tableGrid as $t)
 					@if($t['view'] =='1')
-					<?php $limited = isset($t['limited']) ? $t['limited'] :''; ?>
-						@if(SiteHelpers::filterColumn($limited ))
-						<td data-form="{{ $t['field'] }}" data-form-type="{{ AjaxHelpers::inlineFormType($t['field'],$tableForm)}}">
-							{!! SiteHelpers::transForm($t['field'] , $tableForm) !!}								
-						</td>
-						@endif
+					<td data-form="{{ $t['field'] }}" data-form-type="{{ AjaxHelpers::inlineFormType($t['field'],$tableForm)}}">
+						{!! SiteHelpers::transForm($t['field'] , $tableForm) !!}								
+					</td>
 					@endif
 				@endforeach
 				<td >
@@ -55,29 +52,48 @@
 			  @endif        
 			
            		<?php foreach ($rowData as $row) : 
-           			  $id = $row->id;
+           			  $id = $row->TicketID;
            		?>
-                <tr class="editable" id="form-{{ $row->id }}">
+                <tr class="editable" id="form-{{ $row->TicketID }}">
+					<td class="number"> <?php echo ++$i;?>  </td>
+					<td ><input type="checkbox" class="ids" name="id[]" value="<?php echo $row->TicketID ;?>" />  </td>					
 					@if($setting['view-method']=='expand')
-					<td><a href="javascript:void(0)" class="expandable" rel="#row-{{ $row->id }}" data-url="{{ url('reports/show/'.$id) }}"><i class="fa fa-plus " ></i></a></td>								
+					<td><a href="javascript:void(0)" class="expandable" rel="#row-{{ $row->TicketID }}" data-url="{{ url('sbticket/show/'.$id) }}"><i class="fa fa-plus " ></i></a></td>								
 					@endif			
 					 <?php foreach ($tableGrid as $field) :
 					 	if($field['view'] =='1') : 
-							$conn = (isset($field['conn']) ? $field['conn'] : array() );
-							$value = AjaxHelpers::gridFormater($row->$field['field'], $row , $field['attribute'],$conn);
+
+					 		if($field['field'] =='Status')
+					 		{
+								if($row->Status == 'inqueue')
+								{
+									$value =  '<span class="btn btn-warning">'.ucwords($row->Status).'</span>';
+								} elseif($row->Status == 'close') {
+									$value =  '<span class="btn btn-success">'.ucwords($row->Status).'</span>';
+								
+								} else {
+									$value =  '<span class="btn btn-danger">'.ucwords($row->Status).'</span>';
+								}	 
+
+					 		} else {
+
+								$conn = (isset($field['conn']) ? $field['conn'] : array() );
+								$value = AjaxHelpers::gridFormater($row->$field['field'], $row , $field['attribute'],$conn);
+						 	}
 						 	?>
-						 	<?php $limited = isset($field['limited']) ? $field['limited'] :''; ?>
-						 	@if(SiteHelpers::filterColumn($limited ))
-								 <td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}" data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">					 
-									{!! $value !!}							 
-								 </td>
-							@endif	
+						 <td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}" data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">					 
+							{!! $value !!}							 
+						 </td>
 						 <?php endif;					 
 						endforeach; 
 					  ?>
+				 <td data-values="action" data-key="<?php echo $row->TicketID ;?>">
+					{!! AjaxHelpers::buttonAction('sbticket',$access,$id ,$setting) !!}
+					{!! AjaxHelpers::buttonActionInline($row->TicketID,'TicketID') !!}		
+				</td>			 
                 </tr>
                 @if($setting['view-method']=='expand')
-                <tr style="display:none" class="expanded" id="row-{{ $row->id }}">
+                <tr style="display:none" class="expanded" id="row-{{ $row->TicketID }}">
                 	<td class="number"></td>
                 	<td></td>
                 	<td></td>

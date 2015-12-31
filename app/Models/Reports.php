@@ -13,27 +13,57 @@ class reports extends Sximo  {
 		
 	}
 
-	public static function querySelect(){
-		$date_start = "2015-12-26";
+	public static function querySelect()
+	{
+		$date_start = date('Y-m-d');
+		$date_end = "DATE_ADD('$date_start', INTERVAL 1 DAY)";
 		$today_text = "Tue";
-		return 'SELECT L.id,
+		$location_id = "";
+		if(isset($_GET['search'])) {
+			$filters = explode("|", trim($_GET['search'], "|"));
+			$columnFilters = array();
+			foreach ($filters as $filter) {
+				$columnFilter = explode(":", $filter);
+				//print_r($columnFilter);
+				if (!empty($columnFilter)) {
+					if ($columnFilter[0] === "date_opened") {
+						//@Todo add logic for operator
+						$date_start = $columnFilter[2];
+					}
+					if ($columnFilter[0] === "date_closed") {
+						//@Todo add logic for operator
+						$date_end = '"'.$columnFilter[2].'"';
+					}
+					if ($columnFilter[0] === "id") {
+						//@Todo add logic for operator
+						$location_id = "AND L.id = ".$columnFilter[2];
+					}
+
+				}
+			}
+			//@todo extract today_text from start date
+		}
+			//@todo check start date should be less then end date
+
+		$selectQuery = 'SELECT L.id,
 												L.location_name_short,
 												L.debit_type_id,
 											   (SELECT COUNT(E.id)
 												  FROM game_earnings E
-												 WHERE E.date_start BETWEEN "'.$date_start.'" AND DATE_ADD("'.$date_start.'", INTERVAL 1 DAY)
+												 WHERE E.date_start BETWEEN "'.$date_start.'" AND '.$date_end.'
 												   AND E.loc_id = L.id
 												   AND E.game_id !=0) AS EntryCount
 										   FROM location L
 										  WHERE L.reporting = 1
 										    AND not_reporting_'.$today_text.' = 0
+										    '.$location_id.'
 										  	AND NOT EXISTS (SELECT E.loc_id
 															  FROM game_earnings E
-															 WHERE E.date_start BETWEEN "'.$date_start.'" AND DATE_ADD("'.$date_start.'", INTERVAL 1 DAY)
+															 WHERE E.date_start BETWEEN "'.$date_start.'" AND '.$date_end.'
 															   AND E.loc_id = L.id
 															   AND E.game_id !=0)';
-		//return "  SELECT location.* FROM location  ";
-	}	
+		return $selectQuery;
+	}
 
 	public static function queryWhere(  ){
 		
@@ -69,38 +99,68 @@ class reports extends Sximo  {
 		// End Update permission global / own access new ver 1.1
 
 		$rows = array();
-		$connect = mysqli_connect("localhost","root","","fegllc_fegsys");
-		$query = self::querySelect() . self::queryWhere(). "
-				{$params} ". self::queryGroup() ." {$orderConditional}  {$limitConditional} ";
-		$result = mysqli_query($connect, $query);
-		/*
-		$result = \DB::select( self::querySelect() . self::queryWhere(). "
-				{$params} ". self::queryGroup() ." {$orderConditional}  {$limitConditional} ");
+		$host = env('DB_HOST', 'localhost');
+		$user = env('DB_USERNAME', 'root');
+		$password = env('DB_PASSWORD', '');
+		$database = env('DB_DATABASE', 'sximo');
 
-		var_dump($result);exit;
-		*/
+		$connect = mysqli_connect($host, $user, $password, $database);
+		$query = self::querySelect() ." {$orderConditional}  {$limitConditional} ";
+		//echo $query;
+
+		//$result = mysqli_query($connect, $query);
+
+		$result = \DB::select($query);
+
+		//var_dump($result);
+		//exit;
+
 
 		if($key =='' ) { $key ='*'; } else { $key = $table.".".$key ; }
 		$counter_select = preg_replace( '/[\s]*SELECT(.*)FROM/Usi', 'SELECT count('.$key.') as total FROM', self::querySelect() );
 
-		$total =  self::querySelect() . self::queryWhere(). "
-				{$params} ". self::queryGroup() ." {$orderConditional}  ";
-		$total = mysqli_query($connect, $total);
-		$total = count($total->fetch_all());
+		$totalQuery =  self::querySelect() . self::queryWhere(). " ". self::queryGroup() ." {$orderConditional}  ";
+		//$total = mysqli_query($connect, $totalQuery);
+		//var_dump($total->fetch_all());
+		//exit;
+		//$count = 0;
+		$totalResult = \DB::select($totalQuery);
+		$total = count($totalResult);
 
 		$data = array();
-		while($object = $result->fetch_object())
+		/*
+		if($result)
 		{
-			if($object->debit_type_id === '1')
+			while($object = $result->fetch_object())
 			{
-				$object->debit_type_id = "Sacoa";
+				if($object->debit_type_id === '1')
+				{
+					$object->debit_type_id = "Sacoa";
+				}
+				elseif($object->debit_type_id === '2')
+				{
+					$object->debit_type_id = "Embed";
+				}
+				$data[] = $object;
 			}
-			elseif($object->debit_type_id === '2')
-			{
-				$object->debit_type_id = "Embed";
-			}
-			$data[] = $object;
 		}
+		*/
+		if(!empty($result))
+		{
+			foreach($result as $object)
+			{
+				if($object->debit_type_id === 1)
+				{
+					$object->debit_type_id = "Sacoa";
+				}
+				elseif($object->debit_type_id === 2)
+				{
+					$object->debit_type_id = "Embed";
+				}
+				$data[] = $object;
+			}
+		}
+
 		$result = $data;
 
 
