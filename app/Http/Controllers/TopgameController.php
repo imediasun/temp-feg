@@ -1,22 +1,22 @@
 <?php namespace App\Http\Controllers;
 
 use App\Http\Controllers\controller;
-use App\Models\Reports;
+use App\Models\Topgame;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Validator, Input, Redirect ; 
 
-class ReportsController extends Controller {
+class TopgameController extends Controller {
 
 	protected $layout = "layouts.main";
 	protected $data = array();	
-	public $module = 'reports';
+	public $module = 'topgame';
 	static $per_page	= '10';
 	
 	public function __construct() 
 	{
 		parent::__construct();
-		$this->model = new Reports();
+		$this->model = new Topgame();
 		
 		$this->info = $this->model->makeInfo( $this->module);
 		$this->access = $this->model->validAccess($this->info['id']);
@@ -24,8 +24,8 @@ class ReportsController extends Controller {
 		$this->data = array(
 			'pageTitle'			=> 	$this->info['title'],
 			'pageNote'			=>  $this->info['note'],
-			'pageModule'		=> 'reports',
-			'pageUrl'			=>  url('reports'),
+			'pageModule'		=> 'topgame',
+			'pageUrl'			=>  url('topgame'),
 			'return' 			=> 	self::returnUrl()	
 		);
 		
@@ -39,7 +39,7 @@ class ReportsController extends Controller {
 			return Redirect::to('dashboard')->with('messagetext',\Lang::get('core.note_restric'))->with('msgstatus','error');
 				
 		$this->data['access']		= $this->access;	
-		return view('reports.index',$this->data);
+		return view('topgame.index',$this->data);
 	}
 
 	public function getSearch( $mode = 'ajax')
@@ -51,6 +51,7 @@ class ReportsController extends Controller {
 		return view('feg_common.search',$this->data);
 
 	}
+
 
 	public function postData( Request $request)
 	{ 
@@ -71,13 +72,13 @@ class ReportsController extends Controller {
 			'global'	=> (isset($this->access['is_global']) ? $this->access['is_global'] : 0 )
 		);
 		// Get Query
+		$results = $this->model->getRows( $params );
 
-		$results = $this->model->getRows( $params );		
-		
 		// Build pagination setting
 		$page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;	
 		$pagination = new Paginator($results['rows'], $results['total'], $params['limit']);	
-		$pagination->setPath('reports/data');
+		$pagination->setPath('topgame/data');
+
 		
 		$this->data['param']		= $params;
 		$this->data['rowData']		= $results['rows'];
@@ -99,7 +100,7 @@ class ReportsController extends Controller {
 		// Master detail link if any 
 		$this->data['subgrid']	= (isset($this->info['config']['subgrid']) ? $this->info['config']['subgrid'] : array()); 
 		// Render into template
-		return view('reports.table',$this->data);
+		return view('topgame.table',$this->data);
 
 	}
 
@@ -124,14 +125,14 @@ class ReportsController extends Controller {
 		{
 			$this->data['row'] 		=  $row;
 		} else {
-			$this->data['row'] 		= $this->model->getColumnTable('location'); 
+			$this->data['row'] 		= $this->model->getColumnTable('game_earnings'); 
 		}
 		$this->data['setting'] 		= $this->info['setting'];
 		$this->data['fields'] 		=  \AjaxHelpers::fieldLang($this->info['config']['forms']);
 		
 		$this->data['id'] = $id;
 
-		return view('reports.form',$this->data);
+		return view('topgame.form',$this->data);
 	}	
 
 	public function getShow( $id = null)
@@ -146,21 +147,21 @@ class ReportsController extends Controller {
 		{
 			$this->data['row'] =  $row;
 		} else {
-			$this->data['row'] = $this->model->getColumnTable('location'); 
+			$this->data['row'] = $this->model->getColumnTable('game_earnings'); 
 		}
 		
 		$this->data['id'] = $id;
 		$this->data['access']		= $this->access;
 		$this->data['setting'] 		= $this->info['setting'];
 		$this->data['fields'] 		= \AjaxHelpers::fieldLang($this->info['config']['forms']);
-		return view('reports.view',$this->data);	
+		return view('topgame.view',$this->data);	
 	}	
 
 
 	function postCopy( Request $request)
 	{
 		
-	    foreach(\DB::select("SHOW COLUMNS FROM location ") as $column)
+	    foreach(\DB::select("SHOW COLUMNS FROM game_earnings ") as $column)
         {
 			if( $column->Field != 'id')
 				$columns[] = $column->Field;
@@ -168,8 +169,8 @@ class ReportsController extends Controller {
 		$toCopy = implode(",",$request->input('ids'));
 		
 				
-		$sql = "INSERT INTO location (".implode(",", $columns).") ";
-		$sql .= " SELECT ".implode(",", $columns)." FROM location WHERE id IN (".$toCopy.")";
+		$sql = "INSERT INTO game_earnings (".implode(",", $columns).") ";
+		$sql .= " SELECT ".implode(",", $columns)." FROM game_earnings WHERE id IN (".$toCopy.")";
 		\DB::insert($sql);
 		return response()->json(array(
 			'status'=>'success',
@@ -183,7 +184,7 @@ class ReportsController extends Controller {
 		$rules = $this->validateForm();
 		$validator = Validator::make($request->all(), $rules);	
 		if ($validator->passes()) {
-			$data = $this->validatePost('location');
+			$data = $this->validatePost('game_earnings');
 			
 			$id = $this->model->insertRow($data , $request->input('id'));
 			

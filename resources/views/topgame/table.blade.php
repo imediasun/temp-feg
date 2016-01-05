@@ -3,8 +3,8 @@
 	<div class="sbox-title"> 
 		<h5> <i class="fa fa-table"></i> </h5>
 		<div class="sbox-tools" >
-			<a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Clear Search" onclick="reloadData('#{{ $pageModule }}','sbticket/data?search=')"><i class="fa fa-trash-o"></i> Clear Search </a>
-			<a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Reload Data" onclick="reloadData('#{{ $pageModule }}','sbticket/data?return={{ $return }}')"><i class="fa fa-refresh"></i></a>
+			<a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Clear Search" onclick="reloadData('#{{ $pageModule }}','topgame/data?search=')"><i class="fa fa-trash-o"></i> Clear Search </a>
+			<a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Reload Data" onclick="reloadData('#{{ $pageModule }}','topgame/data?return={{ $return }}')"><i class="fa fa-refresh"></i></a>
 			@if(Session::get('gid') ==1)
 			<a href="{{ url('sximo/module/config/'.$pageModule) }}" class="btn btn-xs btn-white tips" title=" {{ Lang::get('core.btn_config') }}" ><i class="fa fa-cog"></i></a>
 			@endif 
@@ -14,7 +14,7 @@
 
 	@include( $pageModule.'/toolbar')
 
-	 <?php echo Form::open(array('url'=>'sbticket/delete/', 'class'=>'form-horizontal' ,'id' =>'SximoTable'  ,'data-parsley-validate'=>'' )) ;?>
+	 <?php echo Form::open(array('url'=>'topgame/delete/', 'class'=>'form-horizontal' ,'id' =>'SximoTable'  ,'data-parsley-validate'=>'' )) ;?>
 <div class="table-responsive">	
 	@if(count($rowData)>=1)
     <table class="table table-striped  " id="{{ $pageModule }}Table">
@@ -59,13 +59,13 @@
 			  @endif        
 			
            		<?php foreach ($rowData as $row) : 
-           			  $id = $row->TicketID;
+           			  $id = $row->id;
            		?>
-                <tr class="editable" id="form-{{ $row->TicketID }}">
+                <tr class="editable" id="form-{{ $row->id }}">
 					<td class="number"> <?php echo ++$i;?>  </td>
-					<td ><input type="checkbox" class="ids" name="ids[]" value="<?php echo $row->TicketID ;?>" />  </td>					
+					<td ><input type="checkbox" class="ids" name="ids[]" value="<?php echo $row->id ;?>" />  </td>					
 					@if($setting['view-method']=='expand')
-					<td><a href="javascript:void(0)" class="expandable" rel="#row-{{ $row->TicketID }}" data-url="{{ url('sbticket/show/'.$id) }}"><i class="fa fa-plus " ></i></a></td>								
+					<td><a href="javascript:void(0)" class="expandable" rel="#row-{{ $row->id }}" data-url="{{ url('topgame/show/'.$id) }}"><i class="fa fa-plus " ></i></a></td>								
 					@endif			
 					 <?php foreach ($tableGrid as $field) :
 					 	if($field['view'] =='1') : 
@@ -81,13 +81,13 @@
 						 <?php endif;					 
 						endforeach; 
 					  ?>
-				 <td data-values="action" data-key="<?php echo $row->TicketID ;?>">
-					{!! AjaxHelpers::buttonAction('sbticket',$access,$id ,$setting) !!}
-					{!! AjaxHelpers::buttonActionInline($row->TicketID,'TicketID') !!}		
+				 <td data-values="action" data-key="<?php echo $row->id ;?>">
+					{!! AjaxHelpers::buttonAction('topgame',$access,$id ,$setting) !!}
+					{!! AjaxHelpers::buttonActionInline($row->id,'id') !!}		
 				</td>			 
                 </tr>
                 @if($setting['view-method']=='expand')
-                <tr style="display:none" class="expanded" id="row-{{ $row->TicketID }}">
+                <tr style="display:none" class="expanded" id="row-{{ $row->id }}">
                 	<td class="number"></td>
                 	<td></td>
                 	<td></td>

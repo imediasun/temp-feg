@@ -10,55 +10,54 @@
 	<div class="sbox-content"> 
 @endif	
 
-<div class="row">
+		<table class="table table-striped table-bordered" >
+			<tbody>	
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Subject', (isset($fields['Subject']['language'])? $fields['Subject']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Subject }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Description', (isset($fields['Description']['language'])? $fields['Description']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Description }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Priority', (isset($fields['Priority']['language'])? $fields['Priority']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Priority }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Date', (isset($fields['Created']['language'])? $fields['Created']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Created }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Status', (isset($fields['Status']['language'])? $fields['Status']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Status }} </td>
+						
+					</tr>
+				
+			</tbody>	
+		</table>  
+			
+		 	
 
-	<div class="col-md-4">
-		<h3> Ticket Detail </h3>
-		<hr />
-		<table class="table">
-			<tr>
-				<td> Ticket No </td>
-				<td> #{{ $row->TicketID }}</td>
-			</tr>
-			<tr>	
-				<td> Priority </td>
-				<td> {{ $row->Priority }} </td>
-			<tr>	
-				<td> Author </td>
-				<td> {!! SiteHelpers::gridDisplayView($row->entry_by,'entry_by','1:tb_users:id:first_name|last_name') !!} </td>
-			</tr>
-			<tr>	
-				<td> Status </td>
-				<td> <span class="label label-primary but"> {{ $row->Status }}</span> </td>
-			</tr>
-		</table>
-
-	
-	</div>
-
-	<div class="col-md-8">
-		<h3> {{ $row->Subject }}</h3>
-		<hr />
-		<div style="padding:20px; background:#fff; border:solid 1px #eee;"> 
-		{!! $row->Description!!}
-		</div>
-		<hr />
-		<div id="RelpyList"> 
-
-		</div>	
-		<div>
-		{!! Form::open(array('url'=>'sbticket/savereply', 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'sbticketFormAjax')) !!}
-			<textarea class="form-control replyComment" placeholder="Reply Ticket" name="comments"></textarea>
-			<input type="hidden" name="TicketID" value="{{ $row->TicketID }}">
-		<br />
-		<button class="btn btn-primary " type="submit"  id="buttonReply"> Relpy Comment </button>
-		{!! Form::close() !!}
-		</div>
-	</div>
-
-</div>
-
-	
 @if($setting['form-method'] =='native')
 	</div>	
 </div>	
@@ -67,37 +66,5 @@
 <script>
 $(document).ready(function(){
 
-	$.get('{{ url("sbticket/comment/".$row->TicketID)}}',function(callback){
-		$('#RelpyList').html(callback)
-	});
-	
-	var form = $('#sbticketFormAjax'); 
-	form.parsley();
-	form.submit(function(){
-		$('.replyComment').attr('readonly','1');
-		$('#buttonReply').html(' Posting  ....... ')
-		if(form.parsley('isValid') == true){			
-			var options = { 
-				dataType:      'json', 
-				beforeSubmit :  '',
-				success:       function(callback){
-					notyMessage(callback.message);
-					$.get('{{ url("sbticket/comment/".$row->TicketID)}}',function(output){
-						$('#RelpyList').html(output);
-						$('.replyComment').removeAttr('readonly');
-						$('.replyComment').val('');
-						$('#buttonReply').html(' Relpy Comment ')
-					});
-				}  
-			}  
-			$(this).ajaxSubmit(options); 
-			return false;
-						
-		} else {
-			$('.replyComment').attr('readonly','0');
-			return false;
-		}		
-	
-	});
 });
 </script>	

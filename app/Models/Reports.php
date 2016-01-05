@@ -18,7 +18,8 @@ class reports extends Sximo  {
 		$date_start = date('Y-m-d');
 		$date_end = "DATE_ADD('$date_start', INTERVAL 1 DAY)";
 		$today_text = "Tue";
-		$location_id = "";
+		$locationCondition = "";
+		$debitTypeCondition = "";
 		if(isset($_GET['search'])) {
 			$filters = explode("|", trim($_GET['search'], "|"));
 			$columnFilters = array();
@@ -27,18 +28,17 @@ class reports extends Sximo  {
 				//print_r($columnFilter);
 				if (!empty($columnFilter)) {
 					if ($columnFilter[0] === "date_opened") {
-						//@Todo add logic for operator
 						$date_start = $columnFilter[2];
 					}
 					if ($columnFilter[0] === "date_closed") {
-						//@Todo add logic for operator
 						$date_end = '"'.$columnFilter[2].'"';
 					}
 					if ($columnFilter[0] === "id") {
-						//@Todo add logic for operator
-						$location_id = "AND L.id = ".$columnFilter[2];
+						$locationCondition = " AND L.id = ".$columnFilter[2];
 					}
-
+					if ($columnFilter[0] === "debit_type_id") {
+						$debitTypeCondition = " AND L.debit_type_id = ".$columnFilter[2];
+					}
 				}
 			}
 			//@todo extract today_text from start date
@@ -56,7 +56,8 @@ class reports extends Sximo  {
 										   FROM location L
 										  WHERE L.reporting = 1
 										    AND not_reporting_'.$today_text.' = 0
-										    '.$location_id.'
+										    '.$locationCondition.'
+										    '.$debitTypeCondition.'
 										  	AND NOT EXISTS (SELECT E.loc_id
 															  FROM game_earnings E
 															 WHERE E.date_start BETWEEN "'.$date_start.'" AND '.$date_end.'
@@ -149,11 +150,11 @@ class reports extends Sximo  {
 		{
 			foreach($result as $object)
 			{
-				if($object->debit_type_id === 1)
+				if($object->debit_type_id == 1)
 				{
 					$object->debit_type_id = "Sacoa";
 				}
-				elseif($object->debit_type_id === 2)
+				elseif($object->debit_type_id == 2)
 				{
 					$object->debit_type_id = "Embed";
 				}

@@ -32,34 +32,6 @@ class SbticketController extends Controller {
 			
 				
 	} 
-
-	public static function display( )
-	{
-		
-		if(!\Auth::check())
-			return '<p class="text-center alert alert-danger">Please Login to submit Ticket </p>';
-		$data = array();
-		$task = \Input::get('view');
-		if($task !='')
-		{
-			$rest = \DB::table('sb_tickets')->where('TicketID',$task)->get();
-			if( count($rest) >=1)
-			{
-				
-				$data['row'] = $rest[0];
-
-				return view('sbticket.displayreply',$data);					
-
-			} else {
-				echo 'No Ticket Found !';
-			}
-
-		} else {
-			$data = array();
-			$data['mytickets'] = \DB::table('sb_tickets')->where('entry_by',\Session::get('uid'))->orderby('Created','desc')->get();
-			return view('sbticket.display',$data);		
-		}	
-	}
 	
 	public function getIndex()
 	{
@@ -148,8 +120,6 @@ class SbticketController extends Controller {
 		
 		$this->data['id'] = $id;
 
-
-
 		return view('sbticket.form',$this->data);
 	}	
 
@@ -158,7 +128,7 @@ class SbticketController extends Controller {
 	
 		if($this->access['is_detail'] ==0) 
 			return Redirect::to('dashboard')
-				->with('messagetext', Lang::get('core.note_restric'))->with('msgstatus','error');
+				->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus','error');
 					
 		$row = $this->model->getRow($id);
 		if($row)
@@ -172,44 +142,9 @@ class SbticketController extends Controller {
 		$this->data['access']		= $this->access;
 		$this->data['setting'] 		= $this->info['setting'];
 		$this->data['fields'] 		= \AjaxHelpers::fieldLang($this->info['config']['forms']);
-		$this->data['Comments']		= \DB::table('sb_ticketcomments')->where('TicketID',$id)->get();
 		return view('sbticket.view',$this->data);	
 	}	
 
-	public function getComment( Request $request , $id = 0)
-	{
-		$this->data['Comments']		= \DB::select("
-			SELECT sb_ticketcomments.* ,CONCAT(first_name,' ',last_name) AS author ,avatar , email   FROM sb_ticketcomments
-			LEFT JOIN tb_users ON tb_users.id = sb_ticketcomments.UserID
-			WHERE TicketID ='".$id."' ORDER BY Posted ASC
-			");
-	
-		$this->data['TicketID'] = $id;
-		return view('sbticket.reply',$this->data);		
-	}
-
-	public function postSavereply(  Request $request ){
-		$data = array(
-			'TicketID' 	=> $request->input('TicketID'),
-			'Comments'	=> $request->input('comments'),
-			'Posted'	=> date("Y-m-d H:i:s"),
-			'UserID'	=> \Session::get('uid')
-		);	
-			\DB::table('sb_ticketcomments')->insert($data);
-
-		return response()->json(array(
-			'status'=>'success',
-			'message'=> 'Reply has been sent !'
-		));			
-	}
-	public function getRemovereply( Request $request , $id = 0)
-	{
-		\DB::table('sb_ticketcomments')->where('CommentID',$id)->delete();
-		return response()->json(array(
-			'status'=>'success',
-			'message'=> 'Reply has been removed !'
-		));			
-	}
 
 	function postCopy( Request $request)
 	{
@@ -219,7 +154,7 @@ class SbticketController extends Controller {
 			if( $column->Field != 'TicketID')
 				$columns[] = $column->Field;
         }
-		$toCopy = implode(",",$request->input('id'));
+		$toCopy = implode(",",$request->input('ids'));
 		
 				
 		$sql = "INSERT INTO sb_tickets (".implode(",", $columns).") ";
@@ -237,9 +172,8 @@ class SbticketController extends Controller {
 		$rules = $this->validateForm();
 		$validator = Validator::make($request->all(), $rules);	
 		if ($validator->passes()) {
-			
 			$data = $this->validatePost('sb_tickets');
-			$data['entry_by'] = \Session::get('uid');
+			
 			$id = $this->model->insertRow($data , $request->input('TicketID'));
 			
 			return response()->json(array(
@@ -270,10 +204,9 @@ class SbticketController extends Controller {
 
 		}		
 		// delete multipe rows 
-		if(count($request->input('id')) >=1)
+		if(count($request->input('ids')) >=1)
 		{
-			$this->model->destroy($request->input('id'));
-			\DB::table('sb_ticketcomments')->whereIn('TicketID',$request->input('id'))->delete();
+			$this->model->destroy($request->input('ids'));
 			
 			return response()->json(array(
 				'status'=>'success',

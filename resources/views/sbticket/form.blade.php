@@ -10,85 +10,49 @@
 	<div class="sbox-content"> 
 @endif	
 			{!! Form::open(array('url'=>'sbticket/save/'.SiteHelpers::encryptID($row['TicketID']), 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'sbticketFormAjax')) !!}
-			<div class="col-md-12">
-						<fieldset><legend> Tickets</legend>
+			<div class="col-md-6">
+						<fieldset><legend> sbticket</legend>
 									
-								  <div class="form-group hidethis " style="display:none;"> 
-									<label for="TicketID" class=" control-label col-md-4 text-left"> 
-									{!! SiteHelpers::activeLang('TicketID', (isset($fields['TicketID']['language'])? $fields['TicketID']['language'] : array())) !!}	
-									</label>
-									<div class="col-md-6">
-									  {!! Form::text('TicketID', $row['TicketID'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
-									 </div> 
-									 <div class="col-md-2">
-									 	
-									 </div>
-								  </div> 					
-								  <div class="form-group  " > 
-									<label for="Subject" class=" control-label col-md-4 text-left"> 
-									{!! SiteHelpers::activeLang('Subject', (isset($fields['Subject']['language'])? $fields['Subject']['language'] : array())) !!}	
-									</label>
-									<div class="col-md-6">
-									  {!! Form::text('Subject', $row['Subject'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
-									 </div> 
-									 <div class="col-md-2">
-									 	
-									 </div>
-								  </div> 					
-								  <div class="form-group  " > 
-									<label for="Description" class=" control-label col-md-4 text-left"> 
-									{!! SiteHelpers::activeLang('Description', (isset($fields['Description']['language'])? $fields['Description']['language'] : array())) !!}	
-									</label>
-									<div class="col-md-6">
-									  <textarea name='Description' rows='5' id='Description' class='form-control '  
+				  <div class="form-group hidethis " style="display:none;"> 
+					<label for="TicketID" class=" control-label col-md-4 text-left"> 
+					{!! SiteHelpers::activeLang('TicketID', (isset($fields['TicketID']['language'])? $fields['TicketID']['language'] : array())) !!}	
+					</label>
+					<div class="col-md-6">
+					  {!! Form::text('TicketID', $row['TicketID'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
+					 </div> 
+					 <div class="col-md-2">
+					 	
+					 </div>
+				  </div> 					
+				  <div class="form-group  " > 
+					<label for="Subject" class=" control-label col-md-4 text-left"> 
+					{!! SiteHelpers::activeLang('Subject', (isset($fields['Subject']['language'])? $fields['Subject']['language'] : array())) !!}	
+					</label>
+					<div class="col-md-6">
+					  {!! Form::text('Subject', $row['Subject'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
+					 </div> 
+					 <div class="col-md-2">
+					 	
+					 </div>
+				  </div> 					
+				  <div class="form-group  " > 
+					<label for="Description" class=" control-label col-md-4 text-left"> 
+					{!! SiteHelpers::activeLang('Description', (isset($fields['Description']['language'])? $fields['Description']['language'] : array())) !!}	
+					</label>
+					<div class="col-md-6">
+					  <textarea name='Description' rows='5' id='Description' class='form-control '  
 				           >{{ $row['Description'] }}</textarea> 
-									 </div> 
-									 <div class="col-md-2">
-									 	
-									 </div>
-								  </div> 					
-								  <div class="form-group  " > 
-									<label for="Priority" class=" control-label col-md-4 text-left"> 
-									{!! SiteHelpers::activeLang('Priority', (isset($fields['Priority']['language'])? $fields['Priority']['language'] : array())) !!}	
-									</label>
-									<div class="col-md-6">
-									  
-					<?php $Priority = explode(',',$row['Priority']);
-					$Priority_opt = array( 'normal' => 'Normal' ,  'urgent' => 'Urgent' , ); ?>
-					<select name='Priority' rows='5'   class='select2 '  > 
-						<?php 
-						foreach($Priority_opt as $key=>$val)
-						{
-							echo "<option  value ='$key' ".($row['Priority'] == $key ? " selected='selected' " : '' ).">$val</option>"; 						
-						}						
-						?></select> 
-									 </div> 
-									 <div class="col-md-2">
-									 	
-									 </div>
-								  </div> 					
-								  <div class="form-group  " > 
-									<label for="Created" class=" control-label col-md-4 text-left"> 
-									{!! SiteHelpers::activeLang('Created', (isset($fields['Created']['language'])? $fields['Created']['language'] : array())) !!}	
-									</label>
-									<div class="col-md-6">
-									  
-				<div class="input-group m-b" style="width:150px !important;">
-					{!! Form::text('Created', $row['Created'],array('class'=>'form-control datetime', 'style'=>'width:150px !important;')) !!}
-					<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-				</div>
-				 
-									 </div> 
-									 <div class="col-md-2">
-									 	
-									 </div>
-								  </div> 					
-								  <div class="form-group  " > 
-									<label for="Status" class=" control-label col-md-4 text-left"> 
-									{!! SiteHelpers::activeLang('Status', (isset($fields['Status']['language'])? $fields['Status']['language'] : array())) !!}	
-									</label>
-									<div class="col-md-6">
-									  
+					 </div> 
+					 <div class="col-md-2">
+					 	
+					 </div>
+				  </div> 					
+				  <div class="form-group  " > 
+					<label for="Status" class=" control-label col-md-4 text-left"> 
+					{!! SiteHelpers::activeLang('Status', (isset($fields['Status']['language'])? $fields['Status']['language'] : array())) !!}	
+					</label>
+					<div class="col-md-6">
+					  
 					<?php $Status = explode(',',$row['Status']);
 					$Status_opt = array( 'open' => 'Open' ,  'inqueue' => 'In Queue' ,  'close' => 'Close' , ); ?>
 					<select name='Status' rows='5'   class='select2 '  > 
@@ -98,11 +62,52 @@
 							echo "<option  value ='$key' ".($row['Status'] == $key ? " selected='selected' " : '' ).">$val</option>"; 						
 						}						
 						?></select> 
-									 </div> 
-									 <div class="col-md-2">
-									 	
-									 </div>
-								  </div> </fieldset>
+					 </div> 
+					 <div class="col-md-2">
+					 	
+					 </div>
+				  </div> </fieldset>
+			</div>
+			
+			<div class="col-md-6">
+						<fieldset><legend> block2</legend>
+									
+				  <div class="form-group  " > 
+					<label for="Priority" class=" control-label col-md-4 text-left"> 
+					{!! SiteHelpers::activeLang('Priority', (isset($fields['Priority']['language'])? $fields['Priority']['language'] : array())) !!}	
+					</label>
+					<div class="col-md-6">
+					  
+					<?php $Priority = explode(',',$row['Priority']);
+					$Priority_opt = array( 'normal' => 'Normal' ,  'urgent' => 'Urgent' , ); ?>
+					<select name='Priority' rows='5'   class='select2 '  > 
+						<?php 
+						foreach($Priority_opt as $key=>$val)
+						{
+							echo "<option  value ='$key' ".($row['Priority'] == $key ? " selected='selected' " : '' ).">$val</option>"; 						
+						}						
+						?></select> 
+					 </div> 
+					 <div class="col-md-2">
+					 	
+					 </div>
+				  </div> 					
+				  <div class="form-group  " > 
+					<label for="Created" class=" control-label col-md-4 text-left"> 
+					{!! SiteHelpers::activeLang('Created', (isset($fields['Created']['language'])? $fields['Created']['language'] : array())) !!}	
+					</label>
+					<div class="col-md-6">
+					  
+				<div class="input-group m-b" style="width:150px !important;">
+					{!! Form::text('Created', $row['Created'],array('class'=>'form-control datetime', 'style'=>'width:150px !important;')) !!}
+					<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+				</div>
+				 
+					 </div> 
+					 <div class="col-md-2">
+					 	
+					 </div>
+				  </div> </fieldset>
 			</div>
 			
 												

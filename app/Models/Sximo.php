@@ -35,13 +35,14 @@ class Sximo extends Model {
 		
 		if($key =='' ) { $key ='*'; } else { $key = $table.".".$key ; }	
 		$counter_select = preg_replace( '/[\s]*SELECT(.*)FROM/Usi', 'SELECT count('.$key.') as total FROM', self::querySelect() ); 	
-
-		$total = \DB::select( self::querySelect() . self::queryWhere(). " 
+		/*
+		//total query becomes too huge
+		$total = \DB::select( self::querySelect() . self::queryWhere(). "
 				{$params} ". self::queryGroup() ." {$orderConditional}  ");
 		$total = count($total);
-
-
-		return $results = array('rows'=> $result , 'total' => $total);	
+		*/
+		$total = 1000;
+		return $results = array('rows'=> $result , 'total' => $total);
 
 	
 	}	

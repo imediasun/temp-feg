@@ -37,7 +37,7 @@
 			<textarea class="form-control replyComment" placeholder="Reply Ticket" name="comments"></textarea>
 			<input type="hidden" name="TicketID" value="{{ $row->TicketID }}">
 		<br />
-		<button class="btn btn-primary " type="submit"  id="buttonReply"> Relpy Comment </button>
+		<button class="btn btn-primary " type="submit"  id="buttonReply"> Send Message </button>
 		{!! Form::close() !!}
 		</div>
 	</div>
@@ -69,7 +69,7 @@ $(document).ready(function(){
 						$('#RelpyList').html(output);
 						$('.replyComment').removeAttr('readonly');
 						$('.replyComment').val('');
-						$('#buttonReply').html(' Relpy Comment ')
+						$('#buttonReply').html(' Send Message ')
 					});
 
 
