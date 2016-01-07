@@ -13,4 +13,5 @@
                     Route::controller('reports', 'ReportsController');
                     Route::controller('sbticket', 'SbticketController');
                     Route::controller('topgame', 'TopgameController');
+                    Route::controller('bottomgame', 'BottomgameController');
                     ?>

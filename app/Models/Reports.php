@@ -100,12 +100,7 @@ class reports extends Sximo  {
 		// End Update permission global / own access new ver 1.1
 
 		$rows = array();
-		$host = env('DB_HOST', 'localhost');
-		$user = env('DB_USERNAME', 'root');
-		$password = env('DB_PASSWORD', '');
-		$database = env('DB_DATABASE', 'sximo');
 
-		$connect = mysqli_connect($host, $user, $password, $database);
 		$query = self::querySelect() ." {$orderConditional}  {$limitConditional} ";
 		//echo $query;
 

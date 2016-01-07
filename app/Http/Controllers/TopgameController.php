@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Validator, Input, Redirect ; 
 
-class TopgameController extends Controller {
+class TopgameController extends ReportsController {
 
 	protected $layout = "layouts.main";
 	protected $data = array();	
@@ -35,21 +35,12 @@ class TopgameController extends Controller {
 	
 	public function getIndex()
 	{
+
 		if($this->access['is_view'] ==0) 
 			return Redirect::to('dashboard')->with('messagetext',\Lang::get('core.note_restric'))->with('msgstatus','error');
 				
 		$this->data['access']		= $this->access;	
 		return view('topgame.index',$this->data);
-	}
-
-	public function getSearch( $mode = 'ajax')
-	{
-
-		$this->data['tableForm'] 	= $this->info['config']['forms'];
-		$this->data['tableGrid'] 	= $this->info['config']['grid'];
-		$this->data['searchMode'] 	= $mode ;
-		return view('feg_common.search',$this->data);
-
 	}
 
 
