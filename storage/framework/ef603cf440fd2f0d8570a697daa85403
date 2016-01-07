@@ -1,0 +1,24 @@
+<div class="row m-b">
+	<div class="col-md-6">
+			<?php if($access['is_add'] ==1): ?>
+			<?php echo AjaxHelpers::buttonActionCreate($pageModule,$setting); ?>
+
+			<a href="javascript://ajax" class="btn btn-sm btn-white" onclick="ajaxCopy('#<?php echo e($pageModule); ?>','<?php echo e($pageUrl); ?>')"><i class="fa fa-file-o"></i> Copy </a>
+			<?php endif; ?> 
+			<?php if($access['is_remove'] ==1): ?>
+			<a href="javascript://ajax" class="btn btn-sm btn-white" onclick="ajaxRemove('#<?php echo e($pageModule); ?>','<?php echo e($pageUrl); ?>');"><i class="fa fa-trash-o "></i> <?php echo e(Lang::get('core.btn_remove')); ?> </a>
+			<?php endif; ?> 	
+			<a href="<?php echo e(URL::to( $pageModule .'/search')); ?>" class="btn btn-sm btn-white" onclick="SximoModal(this.href,'Advance Search'); return false;" ><i class="fa fa-search"></i> Search</a>				
+
+	</div>
+	<div class="col-md-6 "> 
+		<?php if($access['is_excel'] ==1): ?>
+		<div class="pull-right">
+			<a href="<?php echo e(URL::to( $pageModule .'/export/excel?return='.$return)); ?>" class="btn btn-sm btn-white"> Excel</a>
+			<a href="<?php echo e(URL::to( $pageModule .'/export/word?return='.$return)); ?>" class="btn btn-sm btn-white"> Word </a>
+			<a href="<?php echo e(URL::to( $pageModule .'/export/csv?return='.$return)); ?>" class="btn btn-sm btn-white"> CSV </a>
+			<a href="<?php echo e(URL::to( $pageModule .'/export/print?return='.$return)); ?>" class="btn btn-sm btn-white" onclick="ajaxPopupStatic(this.href); return false;" > Print</a>
+		</div>	
+		<?php endif; ?>
+	</div>
+</div>

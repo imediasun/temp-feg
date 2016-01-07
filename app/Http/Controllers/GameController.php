@@ -1,34 +1,34 @@
 <?php namespace App\Http\Controllers;
 
 use App\Http\Controllers\controller;
-use App\Models\Sbticket;
+use App\Models\Game;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Validator, Input, Redirect ; 
 
-class SbticketController extends Controller {
+class GameController extends Controller {
 
 	protected $layout = "layouts.main";
 	protected $data = array();	
-	public $module = 'sbticket';
+	public $module = 'game';
 	static $per_page	= '10';
 	
 	public function __construct() 
 	{
 		parent::__construct();
-		$this->model = new Sbticket();
-		$this->modelview = new  \App\Models\Sbticket();
+		$this->model = new Game();
+		
 		$this->info = $this->model->makeInfo( $this->module);
 		$this->access = $this->model->validAccess($this->info['id']);
 	
 		$this->data = array(
 			'pageTitle'			=> 	$this->info['title'],
 			'pageNote'			=>  $this->info['note'],
-			'pageModule'		=> 'sbticket',
-			'pageUrl'			=>  url('sbticket'),
+			'pageModule'		=> 'game',
+			'pageUrl'			=>  url('game'),
 			'return' 			=> 	self::returnUrl()	
 		);
-		$this->data['subgrid']	= (isset($this->info['config']['subgrid']) ? $this->info['config']['subgrid'][0] : array()); 
+		
 			
 				
 	} 
@@ -39,7 +39,7 @@ class SbticketController extends Controller {
 			return Redirect::to('dashboard')->with('messagetext',\Lang::get('core.note_restric'))->with('msgstatus','error');
 				
 		$this->data['access']		= $this->access;	
-		return view('sbticket.index',$this->data);
+		return view('game.index',$this->data);
 	}	
 
 	public function postData( Request $request)
@@ -66,7 +66,7 @@ class SbticketController extends Controller {
 		// Build pagination setting
 		$page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;	
 		$pagination = new Paginator($results['rows'], $results['total'], $params['limit']);	
-		$pagination->setPath('sbticket/data');
+		$pagination->setPath('game/data');
 		
 		$this->data['param']		= $params;
 		$this->data['rowData']		= $results['rows'];
@@ -88,7 +88,7 @@ class SbticketController extends Controller {
 		// Master detail link if any 
 		$this->data['subgrid']	= (isset($this->info['config']['subgrid']) ? $this->info['config']['subgrid'] : array()); 
 		// Render into template
-		return view('sbticket.table',$this->data);
+		return view('game.table',$this->data);
 
 	}
 
@@ -113,14 +113,14 @@ class SbticketController extends Controller {
 		{
 			$this->data['row'] 		=  $row;
 		} else {
-			$this->data['row'] 		= $this->model->getColumnTable('sb_tickets'); 
+			$this->data['row'] 		= $this->model->getColumnTable('game'); 
 		}
 		$this->data['setting'] 		= $this->info['setting'];
 		$this->data['fields'] 		=  \AjaxHelpers::fieldLang($this->info['config']['forms']);
-		$this->data['subgrid'] = $this->detailview($this->modelview ,  $this->data['subgrid'] ,$id );
+		
 		$this->data['id'] = $id;
 
-		return view('sbticket.form',$this->data);
+		return view('game.form',$this->data);
 	}	
 
 	public function getShow( $id = null)
@@ -135,30 +135,30 @@ class SbticketController extends Controller {
 		{
 			$this->data['row'] =  $row;
 		} else {
-			$this->data['row'] = $this->model->getColumnTable('sb_tickets'); 
+			$this->data['row'] = $this->model->getColumnTable('game'); 
 		}
-		$this->data['subgrid'] = $this->detailview($this->modelview ,  $this->data['subgrid'] ,$id );
+		
 		$this->data['id'] = $id;
 		$this->data['access']		= $this->access;
 		$this->data['setting'] 		= $this->info['setting'];
 		$this->data['fields'] 		= \AjaxHelpers::fieldLang($this->info['config']['forms']);
-		return view('sbticket.view',$this->data);	
+		return view('game.view',$this->data);	
 	}	
 
 
 	function postCopy( Request $request)
 	{
 		
-	    foreach(\DB::select("SHOW COLUMNS FROM sb_tickets ") as $column)
+	    foreach(\DB::select("SHOW COLUMNS FROM game ") as $column)
         {
-			if( $column->Field != 'TicketID')
+			if( $column->Field != 'id')
 				$columns[] = $column->Field;
         }
 		$toCopy = implode(",",$request->input('ids'));
 		
 				
-		$sql = "INSERT INTO sb_tickets (".implode(",", $columns).") ";
-		$sql .= " SELECT ".implode(",", $columns)." FROM sb_tickets WHERE TicketID IN (".$toCopy.")";
+		$sql = "INSERT INTO game (".implode(",", $columns).") ";
+		$sql .= " SELECT ".implode(",", $columns)." FROM game WHERE id IN (".$toCopy.")";
 		\DB::insert($sql);
 		return response()->json(array(
 			'status'=>'success',
@@ -172,10 +172,10 @@ class SbticketController extends Controller {
 		$rules = $this->validateForm();
 		$validator = Validator::make($request->all(), $rules);	
 		if ($validator->passes()) {
-			$data = $this->validatePost('sb_tickets');
+			$data = $this->validatePost('game');
 			
-			$id = $this->model->insertRow($data , $request->input('TicketID'));
-			$this->detailviewsave( $this->modelview , $request->all() , $this->data['subgrid'] , $id) ;
+			$id = $this->model->insertRow($data , $request->input('id'));
+			
 			return response()->json(array(
 				'status'=>'success',
 				'message'=> \Lang::get('core.note_success')
@@ -207,7 +207,7 @@ class SbticketController extends Controller {
 		if(count($request->input('ids')) >=1)
 		{
 			$this->model->destroy($request->input('ids'));
-			\DB::table('sb_tickets')->where('game_id',$request->input('id'))->delete();
+			
 			return response()->json(array(
 				'status'=>'success',
 				'message'=> \Lang::get('core.note_success_delete')
