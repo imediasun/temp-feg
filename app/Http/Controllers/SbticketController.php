@@ -17,7 +17,7 @@ class SbticketController extends Controller {
 	{
 		parent::__construct();
 		$this->model = new Sbticket();
-		$this->modelview = new  \App\Models\Sbticket();
+		
 		$this->info = $this->model->makeInfo( $this->module);
 		$this->access = $this->model->validAccess($this->info['id']);
 	
@@ -28,7 +28,7 @@ class SbticketController extends Controller {
 			'pageUrl'			=>  url('sbticket'),
 			'return' 			=> 	self::returnUrl()	
 		);
-		$this->data['subgrid']	= (isset($this->info['config']['subgrid']) ? $this->info['config']['subgrid'][0] : array()); 
+		
 			
 				
 	} 
@@ -117,7 +117,7 @@ class SbticketController extends Controller {
 		}
 		$this->data['setting'] 		= $this->info['setting'];
 		$this->data['fields'] 		=  \AjaxHelpers::fieldLang($this->info['config']['forms']);
-		$this->data['subgrid'] = $this->detailview($this->modelview ,  $this->data['subgrid'] ,$id );
+		
 		$this->data['id'] = $id;
 
 		return view('sbticket.form',$this->data);
@@ -137,7 +137,7 @@ class SbticketController extends Controller {
 		} else {
 			$this->data['row'] = $this->model->getColumnTable('sb_tickets'); 
 		}
-		$this->data['subgrid'] = $this->detailview($this->modelview ,  $this->data['subgrid'] ,$id );
+		
 		$this->data['id'] = $id;
 		$this->data['access']		= $this->access;
 		$this->data['setting'] 		= $this->info['setting'];
@@ -175,7 +175,7 @@ class SbticketController extends Controller {
 			$data = $this->validatePost('sb_tickets');
 			
 			$id = $this->model->insertRow($data , $request->input('TicketID'));
-			$this->detailviewsave( $this->modelview , $request->all() , $this->data['subgrid'] , $id) ;
+			
 			return response()->json(array(
 				'status'=>'success',
 				'message'=> \Lang::get('core.note_success')
@@ -207,7 +207,7 @@ class SbticketController extends Controller {
 		if(count($request->input('ids')) >=1)
 		{
 			$this->model->destroy($request->input('ids'));
-			\DB::table('sb_tickets')->where('game_id',$request->input('id'))->delete();
+			
 			return response()->json(array(
 				'status'=>'success',
 				'message'=> \Lang::get('core.note_success_delete')
