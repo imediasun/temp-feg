@@ -135,6 +135,17 @@
 					 </div>
 				  </div> 					
 				  <div class="form-group  " > 
+					<label for="Game" class=" control-label col-md-4 text-left"> 
+					{!! SiteHelpers::activeLang('Game', (isset($fields['game_id']['language'])? $fields['game_id']['language'] : array())) !!}	
+					</label>
+					<div class="col-md-6">
+					  <select name='game_id' rows='5' id='game_id' class='select2 ' required  ></select> 
+					 </div> 
+					 <div class="col-md-2">
+					 	
+					 </div>
+				  </div> 					
+				  <div class="form-group  " > 
 					<label for="Department" class=" control-label col-md-4 text-left"> 
 					{!! SiteHelpers::activeLang('Department', (isset($fields['department_id']['language'])? $fields['department_id']['language'] : array())) !!}	
 					</label>
@@ -212,17 +223,6 @@
 					 <div class="col-md-2">
 					 	
 					 </div>
-				  </div> 					
-				  <div class="form-group  " > 
-					<label for="Game" class=" control-label col-md-4 text-left"> 
-					{!! SiteHelpers::activeLang('Game', (isset($fields['game_id']['language'])? $fields['game_id']['language'] : array())) !!}	
-					</label>
-					<div class="col-md-6">
-					  <select name='game_id' rows='5' id='game_id' class='select2 ' required  ></select> 
-					 </div> 
-					 <div class="col-md-2">
-					 	
-					 </div>
 				  </div> </fieldset>
 			</div>
 			
@@ -255,11 +255,11 @@ $(document).ready(function() {
         $("#location_id").jCombo("{{ URL::to('sbticket/comboselect?filter=location:id:location_name') }}",
         {  selected_value : '{{ $row["location_id"] }}' });
         
+        $("#game_id").jCombo("{{ URL::to('sbticket/comboselect?filter=game:location_id:game_name') }}&parent=location_id:",
+        {  parent: '#location_id', selected_value : '{{ $row["game_id"] }}' });
+        
         $("#department_id").jCombo("{{ URL::to('sbticket/comboselect?filter=departments:id:name') }}",
         {  selected_value : '{{ $row["department_id"] }}' });
-        
-        $("#game_id").jCombo("{{ URL::to('sbticket/comboselect?filter=game:location_id:game_name') }}",
-        {  selected_value : '{{ $row["game_id"] }}' });
          
 	
 	$('.editor').summernote();
