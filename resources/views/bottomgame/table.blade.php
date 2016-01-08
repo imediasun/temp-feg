@@ -3,8 +3,8 @@
 	<div class="sbox-title"> 
 		<h5> <i class="fa fa-table"></i> </h5>
 		<div class="sbox-tools" >
-			<a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Clear Search" onclick="reloadData('#{{ $pageModule }}','topgame/data?search=')"><i class="fa fa-trash-o"></i> Clear Search </a>
-			<a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Reload Data" onclick="reloadData('#{{ $pageModule }}','topgame/data?return={{ $return }}')"><i class="fa fa-refresh"></i></a>
+			<a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Clear Search" onclick="reloadData('#{{ $pageModule }}','bottomgame/data?search=')"><i class="fa fa-trash-o"></i> Clear Search </a>
+			<a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Reload Data" onclick="reloadData('#{{ $pageModule }}','bottomgame/data?return={{ $return }}')"><i class="fa fa-refresh"></i></a>
 			@if(Session::get('gid') ==1)
 			<a href="{{ url('sximo/module/config/'.$pageModule) }}" class="btn btn-xs btn-white tips" title=" {{ Lang::get('core.btn_config') }}" ><i class="fa fa-cog"></i></a>
 			@endif 
@@ -14,17 +14,25 @@
 
 	@include( $pageModule.'/toolbar')
 
-	 <?php echo Form::open(array('url'=>'topgame/delete/', 'class'=>'form-horizontal' ,'id' =>'SximoTable'  ,'data-parsley-validate'=>'' )) ;?>
+	 <?php echo Form::open(array('url'=>'bottomgame/delete/', 'class'=>'form-horizontal' ,'id' =>'SximoTable'  ,'data-parsley-validate'=>'' )) ;?>
 <div class="table-responsive">	
 	@if(count($rowData)>=1)
     <table class="table table-striped  " id="{{ $pageModule }}Table">
         <thead>
 			<tr>
 				<th width="20"> No </th>
-				<th width="100">Game Title</th>
-				<th width="100">Amount Earned</th>
-				<th width="100">Location</th>
-				<th width="100">Game Average</th>
+				<th width="30"> <input type="checkbox" class="checkall" /></th>		
+				@if($setting['view-method']=='expand') <th>  </th> @endif			
+				<?php foreach ($tableGrid as $t) :
+					if($t['view'] =='1'):
+						$limited = isset($t['limited']) ? $t['limited'] :'';
+						if(SiteHelpers::filterColumn($limited ))
+						{
+							echo '<th align="'.$t['align'].'" width="'.$t['width'].'">'.\SiteHelpers::activeLang($t['label'],(isset($t['language'])? $t['language'] : array())).'</th>';				
+						} 
+					endif;
+				endforeach; ?>
+				<th width="70"><?php echo Lang::get('core.btn_action') ;?></th>
 			  </tr>
         </thead>
 
@@ -33,6 +41,7 @@
 			<tr id="form-0" >
 				<td> # </td>
 				<td> </td>
+				@if($setting['view-method']=='expand') <td> </td> @endif
 				@foreach ($tableGrid as $t)
 					@if($t['view'] =='1')
 					<?php $limited = isset($t['limited']) ? $t['limited'] :''; ?>
@@ -47,28 +56,35 @@
 					<button onclick="saved('form-0')" class="btn btn-primary btn-xs" type="button"><i class="fa  fa-save"></i></button>
 				</td>
 			  </tr>	 
-			  @endif
-				<?php
-
-						/*
-						echo "<pre>";
-						print_r($rowData);
-						echo "</pre>";
-						*/
-				?>
+			  @endif        
 			
            		<?php foreach ($rowData as $row) : 
            			  $id = $row->id;
            		?>
                 <tr class="editable" id="form-{{ $row->id }}">
-					<td class="number"> <?php echo ++$i;?> </td>
+					<td class="number"> <?php echo ++$i;?>  </td>
+					<td ><input type="checkbox" class="ids" name="ids[]" value="<?php echo $row->id ;?>" />  </td>					
 					@if($setting['view-method']=='expand')
-					<td><a href="javascript:void(0)" class="expandable" rel="#row-{{ $row->id }}" data-url="{{ url('topgame/show/'.$id) }}"><i class="fa fa-plus " ></i></a></td>								
-					@endif
-					<td align="left" data-value="" data-field="" data-format="">{{$row->Game}}</td>
-					<td align="left" data-value="" data-field="" data-format="">{{$row->Total}}</td>
-					<td align="left" data-value="" data-field="" data-format="">{{$row->location_name}}</td>
-					<td align="left" data-value="" data-field="" data-format="">{{$row->Average}}</td>
+					<td><a href="javascript:void(0)" class="expandable" rel="#row-{{ $row->id }}" data-url="{{ url('bottomgame/show/'.$id) }}"><i class="fa fa-plus " ></i></a></td>								
+					@endif			
+					 <?php foreach ($tableGrid as $field) :
+					 	if($field['view'] =='1') : 
+							$conn = (isset($field['conn']) ? $field['conn'] : array() );
+							$value = AjaxHelpers::gridFormater($row->$field['field'], $row , $field['attribute'],$conn);
+						 	?>
+						 	<?php $limited = isset($field['limited']) ? $field['limited'] :''; ?>
+						 	@if(SiteHelpers::filterColumn($limited ))
+								 <td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}" data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">					 
+									{!! $value !!}							 
+								 </td>
+							@endif	
+						 <?php endif;					 
+						endforeach; 
+					  ?>
+				 <td data-values="action" data-key="<?php echo $row->id ;?>">
+					{!! AjaxHelpers::buttonAction('bottomgame',$access,$id ,$setting) !!}
+					{!! AjaxHelpers::buttonActionInline($row->id,'id') !!}		
+				</td>			 
                 </tr>
                 @if($setting['view-method']=='expand')
                 <tr style="display:none" class="expanded" id="row-{{ $row->id }}">

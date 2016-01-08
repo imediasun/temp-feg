@@ -7,16 +7,22 @@
 		<tr id="{{ $t['field'] }}" class="fieldsearch">
 			<td>{!! SiteHelpers::activeLang($t['label'],(isset($t['language'])? $t['language'] : array())) !!} </td>
 			<td id="field_{{ $t['field']}}">{!! SiteHelpers::transForm($t['field'] , $tableForm) !!}</td>
-			<input type="hidden" name="operate" value="equal" />
-		
+			<input id="{{ $t['field']}}_operate" type="hidden" name="operate" value="equal" />
 		</tr>
-	
 	@endif
 @endforeach
+		@if($pageModule === 'topgame' || $pageModule === 'bottomgame')
+			<tr id="average" class="fieldsearch">
+				<td>Average</td>
+				<td id="field_average"><input type="text" name="average" class="form-control input-sm" value=""></td>
+				<input id="average_operate" type="hidden" name="operate" value="equal" />
+
+			</tr>
+		@endif
 		<tr>
 			<td colspan="2"><button type="button" name="search" class="doSearch btn btn-sm btn-primary"> Search </button></td>
 		</tr>
-	</tbody>     
+	</tbody>
 	</table>
 </form>	
 </div>

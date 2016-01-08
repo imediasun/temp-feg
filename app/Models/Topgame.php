@@ -14,6 +14,37 @@ class topgame extends Sximo  {
 	}
 	public static function get_top_games($locationsThatReportedIdString = null, $date_start = null, $top_or_bottom = null, $amount = null, $game_type = null, $test_piece = null, $group_by = null)
 	{
+		//end date is current date
+		//start date is 1 week before
+		$date_end = date('Y-m-d');
+		//$date_end = "2015-12-17";//@todo remove hardcoded date
+		$date_start = "DATE_SUB('$date_end', INTERVAL 1 WEEK)";
+		$locationCondition = "";
+		$havingAverage = "";
+		if(isset($_GET['search'])) {
+			$filters = explode("|", trim($_GET['search'], "|"));
+			$columnFilters = array();
+			foreach ($filters as $filter) {
+				$columnFilter = explode(":", $filter);
+				//print_r($columnFilter);
+				if (!empty($columnFilter)) {
+					if ($columnFilter[0] === "date_start") {
+						$date_start = "\"".$columnFilter[2]."\"";
+					}
+					if ($columnFilter[0] === "date_end") {
+						$date_end = $columnFilter[2];
+						$date_start = "DATE_SUB('$date_end', INTERVAL 1 WEEK)";
+					}
+					if ($columnFilter[0] === "loc_id") {
+						$locationCondition = " AND L.id = ".$columnFilter[2];
+					}
+					if ($columnFilter[0] === "average") {
+						$havingAverage = " Having Average = ".$columnFilter[2];
+					}
+
+				}
+			}
+		}
 
 		if(empty($amount))
 		{
@@ -50,6 +81,8 @@ class topgame extends Sximo  {
 		{
 			$group_by_expression = 'GROUP BY G.id';
 		}
+		//adding group by executes query very slow. No response till 5 minutes
+		$group_by_expression = '';
 
 		// id game_type game_type_short
 		// 1 Coin Action COIN
@@ -79,18 +112,18 @@ class topgame extends Sximo  {
 		{
 			$where_game_type = 'AND Y.id IN(1,2,3,4,5,7)';
 		}
-		//@todo bypass order by and limit condition
-		$top_or_bottom = '';
-		$limit = '';
+
+		//echo $date_start."=>".$date_end;
+		//exit;
 
 
 		//////////////////////
 		// TOP/BOTTOM GAMES //
 		//////////////////////
 		$topGamesQuery = 'SELECT T.game_title AS Game,
-											T.id AS GameTitleId,
+											T.id,
 											Y.game_type_short AS Type,
-											GROUP_CONCAT(DISTINCT CONCAT("<a href=\'http://fegllc.com/fegsys/locations/", E.loc_id, "\'>", E.loc_id, "</a>") ORDER BY E.loc_id) AS LocationIds,
+											L.location_name,
 											IF(G.test_piece = 1,"1",
 											   (SELECT COUNT(*)
 												  FROM game G
@@ -98,7 +131,7 @@ class topgame extends Sximo  {
 											 LEFT JOIN location L ON L.id = G.location_id
 												 WHERE T.id = (SELECT G.game_title_id FROM game G WHERE id = E.game_id AND L.reporting = 1) GROUP BY T.game_title)
 											) AS Count,
-											IF(G.test_piece = 1,
+											IF(G.test_piece = 0,
 												ROUND(SUM(CASE WHEN E.debit_type_id = 1 THEN E.total_notional_value ELSE E.std_actual_cash END)),
 												ROUND(SUM(CASE WHEN E.debit_type_id = 1 THEN E.total_notional_value ELSE E.std_actual_cash END)
 												/(SELECT COUNT(*)
@@ -121,50 +154,24 @@ class topgame extends Sximo  {
 										  LEFT JOIN game_title T ON T.id = G.game_title_id
 										  LEFT JOIN game_type Y ON Y.id = T.game_type_id
 										  LEFT JOIN location L ON L.id = E.loc_id
-											  WHERE E.date_start BETWEEN DATE_SUB("'.$date_start.'", INTERVAL 1 WEEK) AND "'.$date_start.'"
+											  WHERE E.date_start BETWEEN '.$date_start.' AND "'.$date_end.'"
 											    AND G.sold = 0
 											    AND G.status_id != 3
 												   '.$where_game_type.'
+												   '.$locationCondition.'
 												   '.$where_test_piece.'
 												   '.$group_by_expression.'
-										   		   '.$top_or_bottom.'
-										   	       '.$limit;
+												   '.$havingAverage;
+
 		//removed part AND L.id IN '.$locationsThatReportedIdString.'
+		//echo $topGamesQuery;exit;
 		return $topGamesQuery;
 	}
 
 	public static function querySelect()
 	{
-		$date_start = date('Y-m-d');
-		$date_end = "DATE_ADD('$date_start', INTERVAL 1 DAY)";
-		$today_text = "Tue";
-		$locationCondition = "";
-		$debitTypeCondition = "";
-		if(isset($_GET['search'])) {
-			$filters = explode("|", trim($_GET['search'], "|"));
-			$columnFilters = array();
-			foreach ($filters as $filter) {
-				$columnFilter = explode(":", $filter);
-				//print_r($columnFilter);
-				if (!empty($columnFilter)) {
-					if ($columnFilter[0] === "date_opened") {
-						$date_start = $columnFilter[2];
-					}
-					if ($columnFilter[0] === "date_closed") {
-						$date_end = '"'.$columnFilter[2].'"';
-					}
-					if ($columnFilter[0] === "id") {
-						$locationCondition = " AND L.id = ".$columnFilter[2];
-					}
-					if ($columnFilter[0] === "debit_type_id") {
-						$debitTypeCondition = " AND L.debit_type_id = ".$columnFilter[2];
-					}
-				}
-			}
-			//@todo extract today_text from start date
-		}
 		//@todo call function for top_games
-		$selectQuery = self::get_top_games(null, $date_start, 'top', '40', 'not_attractions','not_test','game_title');
+		$selectQuery = self::get_top_games(null, null, 'top', '40');
 		return $selectQuery;
 	}
 
@@ -196,19 +203,25 @@ class topgame extends Sximo  {
 		// End Update permission global / own access new ver 1.1
 
 		$rows = array();
-		$selectQuery = self::querySelect() . self::queryWhere(). "
-				{$params} ". self::queryGroup() ." {$orderConditional}  {$limitConditional} ";
+		$selectQuery = self::querySelect() . self::queryWhere()." {$orderConditional}  {$limitConditional} ";
+
 		$result = \DB::select($selectQuery);
+		$cleanResult = array();
+		foreach($result as $data)
+		{
+			if(!empty($data->id))
+			{
+				$cleanResult[] = $data;
+			}
+		}
+		$result = $cleanResult;
 
 		if($key =='' ) { $key ='*'; } else { $key = $table.".".$key ; }
 		$counter_select = preg_replace( '/[\s]*SELECT(.*)FROM/Usi', 'SELECT count('.$key.') as total FROM', self::querySelect() );
-		/*
+
 		//total query becomes too huge
-		$total = \DB::select( self::querySelect() . self::queryWhere(). "
-				{$params} ". self::queryGroup() ." {$orderConditional}  ");
+		$total = \DB::select( self::querySelect() . self::queryWhere() ." {$orderConditional}  ");
 		$total = count($total);
-		*/
-		$total = 1000;
 		return $results = array('rows'=> $result , 'total' => $total);
 
 
