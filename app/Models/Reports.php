@@ -50,6 +50,15 @@ class reports extends Sximo  {
 	{
 		$locationCondition = "";
 		$debitTypeCondition = "";
+
+		if(is_null($endDate))
+		{
+			$endDate = "DATE_ADD('$startDate', INTERVAL 1 DAY)";
+		}
+		else
+		{
+			$endDate = '"'.$endDate.'"';
+		}
 		if(!is_null($locationId))
 		{
 			$locationCondition = " AND L.id = ".$locationId;
@@ -66,7 +75,7 @@ class reports extends Sximo  {
 			$todayText = $start->format('D');
 		}
 
-		return  'SELECT L.id,
+		return 'SELECT L.id,
 				L.location_name_short,
 				L.debit_type_id,
 			   (SELECT COUNT(E.id)
@@ -89,7 +98,7 @@ class reports extends Sximo  {
 
     public static function getLocationNotRespondingData($startDate, $endDate, $locationId = null, $debitTypeId = null, $todayText = null)
     {
-        return \DB::select(self::getLocationNotRespondingData($startDate, $endDate, $locationId, $debitTypeId, $todayText));
+        return \DB::select(self::getLocationNotRespondingQuery($startDate, $endDate, $locationId, $debitTypeId, $todayText));
     }
 
 	public static function queryWhere(  ){
