@@ -258,8 +258,8 @@ $(document).ready(function() {
         $("#location_id").jCombo("{{ URL::to('sbticket/comboselect?filter=location:id:location_name') }}",
         {  selected_value : '{{ $row["location_id"] }}' });
         
-        $("#game_id").jCombo("{{ URL::to('sbticket/comboselect?filter=game:location_id:game_name') }}",
-        {  selected_value : '{{ $row["game_id"] }}' });
+        $("#game_id").jCombo("{{ URL::to('sbticket/comboselect?filter=game:location_id:game_name') }}&parent=location_id:",
+        {  parent: '#location_id', selected_value : '{{ $row["game_id"] }}' });
          
 	
 	$('.editor').summernote();

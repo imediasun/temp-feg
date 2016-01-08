@@ -17,4 +17,5 @@
                     Route::controller('department', 'DepartmentController');
                     Route::controller('location', 'LocationController');
                     Route::controller('game', 'GameController');
+                    Route::controller('gamesdown', 'GamesdownController');
                     ?>

@@ -15,6 +15,14 @@
 				
 					<tr>
 						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Date', (isset($fields['Created']['language'])? $fields['Created']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->Created }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Subject', (isset($fields['Subject']['language'])? $fields['Subject']['language'] : array())) }}	
 						</td>
 						<td>{{ $row->Subject }} </td>
@@ -39,9 +47,9 @@
 				
 					<tr>
 						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Date', (isset($fields['Created']['language'])? $fields['Created']['language'] : array())) }}	
+							{{ SiteHelpers::activeLang('Issue Type', (isset($fields['issue_type']['language'])? $fields['issue_type']['language'] : array())) }}	
 						</td>
-						<td>{{ $row->Created }} </td>
+						<td>{{ $row->issue_type }} </td>
 						
 					</tr>
 				
@@ -55,14 +63,6 @@
 				
 					<tr>
 						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Issue Type', (isset($fields['issue_type']['language'])? $fields['issue_type']['language'] : array())) }}	
-						</td>
-						<td>{{ $row->issue_type }} </td>
-						
-					</tr>
-				
-					<tr>
-						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Location Id', (isset($fields['location_id']['language'])? $fields['location_id']['language'] : array())) }}	
 						</td>
 						<td>{{ $row->location_id }} </td>
@@ -71,9 +71,9 @@
 				
 					<tr>
 						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Department Id', (isset($fields['department_id']['language'])? $fields['department_id']['language'] : array())) }}	
+							{{ SiteHelpers::activeLang('Department', (isset($fields['department_id']['language'])? $fields['department_id']['language'] : array())) }}	
 						</td>
-						<td>{{ $row->department_id }} </td>
+						<td>{!! SiteHelpers::gridDisplayView($row->department_id,'department_id','1:departments:id:name') !!} </td>
 						
 					</tr>
 				
