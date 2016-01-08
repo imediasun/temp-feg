@@ -15,7 +15,7 @@
 				
 					<tr>
 						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Date', (isset($fields['Created']['language'])? $fields['Created']['language'] : array())) }}	
+							{{ SiteHelpers::activeLang('Date Open', (isset($fields['Created']['language'])? $fields['Created']['language'] : array())) }}	
 						</td>
 						<td>{{ $row->Created }} </td>
 						
@@ -23,7 +23,7 @@
 				
 					<tr>
 						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Subject', (isset($fields['Subject']['language'])? $fields['Subject']['language'] : array())) }}	
+							{{ SiteHelpers::activeLang('Title', (isset($fields['Subject']['language'])? $fields['Subject']['language'] : array())) }}	
 						</td>
 						<td>{{ $row->Subject }} </td>
 						
@@ -63,9 +63,9 @@
 				
 					<tr>
 						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Location Id', (isset($fields['location_id']['language'])? $fields['location_id']['language'] : array())) }}	
+							{{ SiteHelpers::activeLang('Location', (isset($fields['location_id']['language'])? $fields['location_id']['language'] : array())) }}	
 						</td>
-						<td>{{ $row->location_id }} </td>
+						<td>{!! SiteHelpers::gridDisplayView($row->location_id,'location_id','1:location:id:location_name') !!} </td>
 						
 					</tr>
 				
@@ -79,7 +79,7 @@
 				
 					<tr>
 						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Closed', (isset($fields['closed']['language'])? $fields['closed']['language'] : array())) }}	
+							{{ SiteHelpers::activeLang('Last Event date', (isset($fields['closed']['language'])? $fields['closed']['language'] : array())) }}	
 						</td>
 						<td>{{ $row->closed }} </td>
 						
@@ -89,7 +89,7 @@
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Assign To', (isset($fields['assign_to']['language'])? $fields['assign_to']['language'] : array())) }}	
 						</td>
-						<td>{{ $row->assign_to }} </td>
+						<td>{!! SiteHelpers::gridDisplayView($row->assign_to,'assign_to','1:employees:id:first_name|last_name') !!} </td>
 						
 					</tr>
 				

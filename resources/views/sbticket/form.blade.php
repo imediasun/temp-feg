@@ -156,17 +156,12 @@
 					 	
 					 </div>
 				  </div> 					
-				  <div class="form-group  " > 
+				  <div class="form-group hidethis " style="display:none;"> 
 					<label for="Date closed" class=" control-label col-md-4 text-left"> 
 					{!! SiteHelpers::activeLang('Date closed', (isset($fields['closed']['language'])? $fields['closed']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  
-				<div class="input-group m-b" style="width:150px !important;">
-					{!! Form::text('closed', $row['closed'],array('class'=>'form-control datetime', 'style'=>'width:150px !important;')) !!}
-					<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-				</div>
-				 
+					  {!! Form::text('closed', $row['closed'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -177,16 +172,7 @@
 					{!! SiteHelpers::activeLang('Assign To', (isset($fields['assign_to']['language'])? $fields['assign_to']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  
-					<?php $assign_to = explode(',',$row['assign_to']);
-					$assign_to_opt = array( '1' => 'dev2' ,  '2' => 'dev3' , ); ?>
-					<select name='assign_to' rows='5'   class='select2 '  > 
-						<?php 
-						foreach($assign_to_opt as $key=>$val)
-						{
-							echo "<option  value ='$key' ".($row['assign_to'] == $key ? " selected='selected' " : '' ).">$val</option>"; 						
-						}						
-						?></select> 
+					  <select name='assign_to' rows='5' id='assign_to' class='select2 '   ></select> 
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -255,11 +241,14 @@ $(document).ready(function() {
         $("#location_id").jCombo("{{ URL::to('sbticket/comboselect?filter=location:id:location_name') }}",
         {  selected_value : '{{ $row["location_id"] }}' });
         
-        $("#game_id").jCombo("{{ URL::to('sbticket/comboselect?filter=game:location_id:game_name') }}&parent=location_id:",
+        $("#game_id").jCombo("{{ URL::to('sbticket/comboselect?filter=game:id:game_name') }}&parent=location_id:",
         {  parent: '#location_id', selected_value : '{{ $row["game_id"] }}' });
         
         $("#department_id").jCombo("{{ URL::to('sbticket/comboselect?filter=departments:id:name') }}",
         {  selected_value : '{{ $row["department_id"] }}' });
+        
+        $("#assign_to").jCombo("{{ URL::to('sbticket/comboselect?filter=employees:id:first_name|last_name') }}",
+        {  selected_value : '{{ $row["assign_to"] }}' });
          
 	
 	$('.editor').summernote();
