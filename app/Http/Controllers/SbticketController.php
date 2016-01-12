@@ -125,12 +125,11 @@ class SbticketController extends Controller {
 
 	public function getShow( $id = null)
 	{
-	
-		if($this->access['is_detail'] ==0) 
+		if($this->access['is_detail'] ==0)
 			return Redirect::to('dashboard')
 				->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus','error');
 					
-		$row = $this->model->getRow($id);
+		$row = $this->model->find($id);
 		if($row)
 		{
 			$this->data['row'] =  $row;
