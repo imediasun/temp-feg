@@ -146,15 +146,24 @@ class DepartmentController extends Controller {
 		$open = \DB::select("Select * FROM sb_tickets WHERE department_id = ".$id ." AND status = 'open'");
 		$close = \DB::select("Select * FROM sb_tickets WHERE department_id = ".$id ." AND status = 'close'");
 		$pending = \DB::select("Select * FROM sb_tickets WHERE department_id = ".$id ." AND status = 'inqueue'");
+
 		$row->close_tickets = count($close);
 		$row->open_tickets = count($open);
 		$row->pending_tickets = count($pending);
+		$assign_employee_ids = explode(',' ,$row->assign_employee_ids);
+		$assign_employee_names = array();
+		foreach($assign_employee_ids as $key => $value)
+		{
+			$assign_employee_names[$key] = \DB::select("Select first_name,last_name FROM employees WHERE id = ".$value ."");
+		}
+		$row->assign_employee_names = $assign_employee_names;
 		if($row)
 		{
 			$this->data['row'] =  $row;
 		} else {
 			$this->data['row'] = $this->model->getColumnTable('departments'); 
 		}
+
 		$this->data['id'] = $id;
 		$this->data['access']		= $this->access;
 		$this->data['setting'] 		= $this->info['setting'];
