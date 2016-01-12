@@ -15,14 +15,6 @@
 				
 					<tr>
 						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Date Open', (isset($fields['Created']['language'])? $fields['Created']['language'] : array())) }}	
-						</td>
-						<td>{{ $row->Created }} </td>
-						
-					</tr>
-				
-					<tr>
-						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Title', (isset($fields['Subject']['language'])? $fields['Subject']['language'] : array())) }}	
 						</td>
 						<td>{{ $row->Subject }} </td>
@@ -47,9 +39,9 @@
 				
 					<tr>
 						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Issue Type', (isset($fields['issue_type']['language'])? $fields['issue_type']['language'] : array())) }}	
+							{{ SiteHelpers::activeLang('Date Open', (isset($fields['Created']['language'])? $fields['Created']['language'] : array())) }}	
 						</td>
-						<td>{{ $row->issue_type }} </td>
+						<td>{{ $row->Created }} </td>
 						
 					</tr>
 				
@@ -58,6 +50,14 @@
 							{{ SiteHelpers::activeLang('Status', (isset($fields['Status']['language'])? $fields['Status']['language'] : array())) }}	
 						</td>
 						<td>{{ $row->Status }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Issue Type', (isset($fields['issue_type']['language'])? $fields['issue_type']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->issue_type }} </td>
 						
 					</tr>
 				
@@ -106,6 +106,14 @@
 							{{ SiteHelpers::activeLang('Game Name', (isset($fields['game_id']['language'])? $fields['game_id']['language'] : array())) }}	
 						</td>
 						<td>{!! SiteHelpers::gridDisplayView($row->game_id,'game_id','1:game:id:game_name') !!} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Updated', (isset($fields['updated']['language'])? $fields['updated']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->updated }} </td>
 						
 					</tr>
 				

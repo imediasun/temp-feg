@@ -139,7 +139,7 @@
 					{!! SiteHelpers::activeLang('Game', (isset($fields['game_id']['language'])? $fields['game_id']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  <select name='game_id' rows='5' id='game_id' class='select2 ' required  ></select> 
+					  <select name='game_id' rows='5' id='game_id' class='select2 '   ></select> 
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -205,6 +205,22 @@
 					@endforeach
 					</ul>
 					 
+					 </div> 
+					 <div class="col-md-2">
+					 	
+					 </div>
+				  </div> 					
+				  <div class="form-group  " > 
+					<label for="Last Event date" class=" control-label col-md-4 text-left"> 
+					{!! SiteHelpers::activeLang('Last Event date', (isset($fields['updated']['language'])? $fields['updated']['language'] : array())) !!}	
+					</label>
+					<div class="col-md-6">
+					  
+				<div class="input-group m-b" style="width:150px !important;">
+					{!! Form::text('updated', $row['updated'],array('class'=>'form-control datetime', 'style'=>'width:150px !important;')) !!}
+					<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+				</div>
+				 
 					 </div> 
 					 <div class="col-md-2">
 					 	

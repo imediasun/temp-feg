@@ -20,12 +20,13 @@ class reports extends Sximo  {
 		$today_text = "Tue";
 		$locationCondition = "";
 		$debitTypeCondition = "";
+		$locationId = null;
+		$debitTypeId = null;
 		if(isset($_GET['search'])) {
 			$filters = explode("|", trim($_GET['search'], "|"));
 			$columnFilters = array();
 			foreach ($filters as $filter) {
 				$columnFilter = explode(":", $filter);
-				//print_r($columnFilter);
 				if (!empty($columnFilter)) {
 					if ($columnFilter[0] === "date_opened") {
 						$date_start = $columnFilter[2];
@@ -34,37 +35,71 @@ class reports extends Sximo  {
 						$date_end = '"'.$columnFilter[2].'"';
 					}
 					if ($columnFilter[0] === "id") {
-						$locationCondition = " AND L.id = ".$columnFilter[2];
+						$locationId = $columnFilter[2];
 					}
 					if ($columnFilter[0] === "debit_type_id") {
-						$debitTypeCondition = " AND L.debit_type_id = ".$columnFilter[2];
+						$debitTypeId = $columnFilter[2];
 					}
 				}
 			}
-			//@todo extract today_text from start date
 		}
-			//@todo check start date should be less then end date
-
-		$selectQuery = 'SELECT L.id,
-												L.location_name_short,
-												L.debit_type_id,
-											   (SELECT COUNT(E.id)
-												  FROM game_earnings E
-												 WHERE E.date_start BETWEEN "'.$date_start.'" AND '.$date_end.'
-												   AND E.loc_id = L.id
-												   AND E.game_id !=0) AS EntryCount
-										   FROM location L
-										  WHERE L.reporting = 1
-										    AND not_reporting_'.$today_text.' = 0
-										    '.$locationCondition.'
-										    '.$debitTypeCondition.'
-										  	AND NOT EXISTS (SELECT E.loc_id
-															  FROM game_earnings E
-															 WHERE E.date_start BETWEEN "'.$date_start.'" AND '.$date_end.'
-															   AND E.loc_id = L.id
-															   AND E.game_id !=0)';
-		return $selectQuery;
+		return self::getLocationNotRespondingQuery($date_start, $date_end, $locationId, $debitTypeId);
 	}
+
+	public static function getLocationNotRespondingQuery($startDate, $endDate, $locationId = null, $debitTypeId = null, $todayText = null)
+	{
+		$locationCondition = "";
+		$debitTypeCondition = "";
+
+		if(is_null($endDate))
+		{
+			$endDate = "DATE_ADD('$startDate', INTERVAL 1 DAY)";
+		}
+		else
+		{
+			$endDate = '"'.$endDate.'"';
+		}
+		if(!is_null($locationId))
+		{
+			$locationCondition = " AND L.id = ".$locationId;
+		}
+
+		if(!is_null($debitTypeId))
+		{
+			$debitTypeCondition = " AND L.debit_type_id = ".$debitTypeId;
+		}
+
+		if(is_null($todayText))
+		{
+			$start = \DateTime::createFromFormat("Y-m-d", $startDate);
+			$todayText = $start->format('D');
+		}
+
+		return 'SELECT L.id,
+				L.location_name_short,
+				L.debit_type_id,
+			   (SELECT COUNT(E.id)
+				  FROM game_earnings E
+				 WHERE E.date_start BETWEEN "'.$startDate.'" AND '.$endDate.'
+				   AND E.loc_id = L.id
+				   AND E.game_id !=0) AS EntryCount
+		   FROM location L
+		  WHERE L.reporting = 1
+			AND not_reporting_'.$todayText.' = 0
+			'.$locationCondition.'
+			'.$debitTypeCondition.'
+			AND NOT EXISTS (SELECT E.loc_id
+							  FROM game_earnings E
+							 WHERE E.date_start BETWEEN "'.$startDate.'" AND '.$endDate.'
+							   AND E.loc_id = L.id
+							   AND E.game_id !=0)';
+
+	}
+
+    public static function getLocationNotRespondingData($startDate, $endDate, $locationId = null, $debitTypeId = null, $todayText = null)
+    {
+        return \DB::select(self::getLocationNotRespondingQuery($startDate, $endDate, $locationId, $debitTypeId, $todayText));
+    }
 
 	public static function queryWhere(  ){
 		
