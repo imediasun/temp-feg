@@ -32,6 +32,8 @@
 						} 
 					endif;
 				endforeach; ?>
+				<th> {!! 'No Tickets Open' !!}</th>
+				<th>{!! 'No Tickets Closed' !!}</th>
 				<th width="70"><?php echo Lang::get('core.btn_action') ;?></th>
 			  </tr>
         </thead>
@@ -57,8 +59,8 @@
 				</td>
 			  </tr>	 
 			  @endif        
-			
-           		<?php foreach ($rowData as $row) : 
+
+           		<?php foreach ($rowData as $row) :
            			  $id = $row->id;
            		?>
                 <tr class="editable" id="form-{{ $row->id }}">
@@ -75,12 +77,14 @@
 						 	<?php $limited = isset($field['limited']) ? $field['limited'] :''; ?>
 						 	@if(SiteHelpers::filterColumn($limited ))
 								 <td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}" data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">					 
-									{!! $value !!}							 
+									{!! $value !!}
 								 </td>
 							@endif	
 						 <?php endif;					 
 						endforeach; 
 					  ?>
+					<td>{!! $row->total_open_tickets  !!}</td>
+					<td>{!! $row->total_close_tickets  !!}</td>
 				 <td data-values="action" data-key="<?php echo $row->id ;?>">
 					{!! AjaxHelpers::buttonAction('department',$access,$id ,$setting) !!}
 					{!! AjaxHelpers::buttonActionInline($row->id,'id') !!}		
@@ -89,8 +93,6 @@
                 @if($setting['view-method']=='expand')
                 <tr style="display:none" class="expanded" id="row-{{ $row->id }}">
                 	<td class="number"></td>
-                	<td></td>
-                	<td></td>
                 	<td colspan="{{ $colspan}}" class="data"></td>
                 	<td></td>
                 </tr>

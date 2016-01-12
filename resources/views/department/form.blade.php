@@ -13,7 +13,7 @@
 			<div class="col-md-12">
 						<fieldset><legend> Departments</legend>
 									
-				  <div class="form-group  " > 
+				  <div class="form-group hidethis " style="display:none;"> 
 					<label for="Id" class=" control-label col-md-4 text-left"> 
 					{!! SiteHelpers::activeLang('Id', (isset($fields['id']['language'])? $fields['id']['language'] : array())) !!}	
 					</label>
@@ -29,59 +29,51 @@
 					{!! SiteHelpers::activeLang('Name', (isset($fields['name']['language'])? $fields['name']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('name', $row['name'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
+					  {!! Form::text('name', $row['name'],array('class'=>'form-control', 'placeholder'=>'', 'required'=>'true'  )) !!} 
 					 </div> 
 					 <div class="col-md-2">
 					 	
 					 </div>
 				  </div> 					
-				  <div class="form-group  " > 
+				  <div class="form-group hidethis " style="display:none;"> 
 					<label for="Status" class=" control-label col-md-4 text-left"> 
 					{!! SiteHelpers::activeLang('Status', (isset($fields['status']['language'])? $fields['status']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  
-					<?php $status = explode(',',$row['status']);
-					$status_opt = array( '1' => '1' ,  '0' => '0' , ); ?>
-					<select name='status' rows='5' required  class='select2 '  > 
-						<?php 
-						foreach($status_opt as $key=>$val)
-						{
-							echo "<option  value ='$key' ".($row['status'] == $key ? " selected='selected' " : '' ).">$val</option>"; 						
-						}						
-						?></select> 
+					  {!! Form::text('status', $row['status'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
 					 </div> 
 					 <div class="col-md-2">
 					 	
 					 </div>
 				  </div> 					
-				  <div class="form-group  " > 
+				  <div class="form-group hidethis " style="display:none;"> 
 					<label for="Created At" class=" control-label col-md-4 text-left"> 
 					{!! SiteHelpers::activeLang('Created At', (isset($fields['created_at']['language'])? $fields['created_at']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  
-				<div class="input-group m-b" style="width:150px !important;">
-					{!! Form::text('created_at', $row['created_at'],array('class'=>'form-control datetime', 'style'=>'width:150px !important;')) !!}
-					<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-				</div>
-				 
+					  {!! Form::text('created_at', $row['created_at'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
+					 </div> 
+					 <div class="col-md-2">
+					 	
+					 </div>
+				  </div> 					
+				  <div class="form-group hidethis " style="display:none;"> 
+					<label for="Updated At" class=" control-label col-md-4 text-left"> 
+					{!! SiteHelpers::activeLang('Updated At', (isset($fields['updated_at']['language'])? $fields['updated_at']['language'] : array())) !!}	
+					</label>
+					<div class="col-md-6">
+					  {!! Form::text('updated_at', $row['updated_at'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
 					 </div> 
 					 <div class="col-md-2">
 					 	
 					 </div>
 				  </div> 					
 				  <div class="form-group  " > 
-					<label for="Updated At" class=" control-label col-md-4 text-left"> 
-					{!! SiteHelpers::activeLang('Updated At', (isset($fields['updated_at']['language'])? $fields['updated_at']['language'] : array())) !!}	
+					<label for="Assign agents" class=" control-label col-md-4 text-left"> 
+					{!! SiteHelpers::activeLang('Assign agents', (isset($fields['assign_employee_ids']['language'])? $fields['assign_employee_ids']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  
-				<div class="input-group m-b" style="width:150px !important;">
-					{!! Form::text('updated_at', $row['updated_at'],array('class'=>'form-control datetime', 'style'=>'width:150px !important;')) !!}
-					<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-				</div>
-				 
+					  <select name='assign_employee_ids[]' multiple rows='5' id='assign_employee_ids' class='select2 ' required  ></select> 
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -114,7 +106,10 @@
 			 
 <script type="text/javascript">
 $(document).ready(function() { 
-	 
+	
+        $("#assign_employee_ids").jCombo("{{ URL::to('department/comboselect?filter=employees:id:first_name|last_name') }}",
+        {  selected_value : '{{ $row["assign_employee_ids"] }}' });
+         
 	
 	$('.editor').summernote();
 	$('.previewImage').fancybox();	

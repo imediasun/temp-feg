@@ -15,14 +15,6 @@
 				
 					<tr>
 						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Id', (isset($fields['id']['language'])? $fields['id']['language'] : array())) }}	
-						</td>
-						<td>{{ $row->id }} </td>
-						
-					</tr>
-				
-					<tr>
-						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Name', (isset($fields['name']['language'])? $fields['name']['language'] : array())) }}	
 						</td>
 						<td>{{ $row->name }} </td>
@@ -31,26 +23,35 @@
 				
 					<tr>
 						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Status', (isset($fields['status']['language'])? $fields['status']['language'] : array())) }}	
+							{{ SiteHelpers::activeLang('Responsible Agents Count', (isset($fields['assign_employee_ids']['language'])? $fields['assign_employee_ids']['language'] : array())) }}
 						</td>
-						<td>{{ $row->status }} </td>
+						<?php
+						$count = count(explode(',',$row->assign_employee_ids));
+						?>
+						<td>{{ $count }} </td>
 						
 					</tr>
-				
 					<tr>
 						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Created At', (isset($fields['created_at']['language'])? $fields['created_at']['language'] : array())) }}	
+							{{ 'Open Tickets Count' }}
 						</td>
-						<td>{{ $row->created_at }} </td>
-						
+						<td>{{ $row->open_tickets }} </td>
+
 					</tr>
-				
+
 					<tr>
 						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Updated At', (isset($fields['updated_at']['language'])? $fields['updated_at']['language'] : array())) }}	
+							{{ 'Pending Tickets Count' }}
 						</td>
-						<td>{{ $row->updated_at }} </td>
-						
+						<td>{{ $row->pending_tickets }} </td>
+
+					</tr>
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ 'Close Tickets Count' }}
+						</td>
+						<td>{{ $row->close_tickets }} </td>
+
 					</tr>
 				
 			</tbody>	
