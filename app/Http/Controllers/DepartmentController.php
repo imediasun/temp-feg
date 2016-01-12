@@ -67,8 +67,21 @@ class DepartmentController extends Controller {
 		$page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;	
 		$pagination = new Paginator($results['rows'], $results['total'], $params['limit']);	
 		$pagination->setPath('department/data');
-		
+
 		$this->data['param']		= $params;
+		foreach($results['rows'] as $key => $value)
+		{
+			$count = 0;
+			if(!empty($value->assign_employee_ids))
+			{
+				$count = explode(',',$value->assign_employee_ids);
+			}
+			$value->assign_employee_ids = strval(count($count));
+			$open = \DB::select("Select * FROM sb_tickets WHERE department_id = ".$value->id ." AND status = 'open'");
+			$close = \DB::select("Select * FROM sb_tickets WHERE department_id = ".$value->id ." AND status = 'close'");
+			$value->total_open_tickets = count($open);
+			$value->total_close_tickets = count($close);
+		}
 		$this->data['rowData']		= $results['rows'];
 		// Build Pagination 
 		$this->data['pagination']	= $pagination;
@@ -125,19 +138,23 @@ class DepartmentController extends Controller {
 
 	public function getShow( $id = null)
 	{
-	
-		if($this->access['is_detail'] ==0) 
+		if($this->access['is_detail'] ==0)
 			return Redirect::to('dashboard')
 				->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus','error');
 					
 		$row = $this->model->getRow($id);
+		$open = \DB::select("Select * FROM sb_tickets WHERE department_id = ".$id ." AND status = 'open'");
+		$close = \DB::select("Select * FROM sb_tickets WHERE department_id = ".$id ." AND status = 'close'");
+		$pending = \DB::select("Select * FROM sb_tickets WHERE department_id = ".$id ." AND status = 'inqueue'");
+		$row->close_tickets = count($close);
+		$row->open_tickets = count($open);
+		$row->pending_tickets = count($pending);
 		if($row)
 		{
 			$this->data['row'] =  $row;
 		} else {
 			$this->data['row'] = $this->model->getColumnTable('departments'); 
 		}
-		
 		$this->data['id'] = $id;
 		$this->data['access']		= $this->access;
 		$this->data['setting'] 		= $this->info['setting'];

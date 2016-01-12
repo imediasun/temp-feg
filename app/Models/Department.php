@@ -20,7 +20,7 @@ class department extends Sximo  {
 
 	public static function queryWhere(  ){
 		
-		return "  ";
+		return " where 1 = 1 ";
 	}
 	
 	public static function queryGroup(){
