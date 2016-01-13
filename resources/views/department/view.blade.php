@@ -1,70 +1,104 @@
 @if($setting['view-method'] =='native')
-<div class="sbox">
-	<div class="sbox-title">  
-		<h4> <i class="fa fa-table"></i> <?php echo $pageTitle ;?> <small>{{ $pageNote }}</small>
-			<a href="javascript:void(0)" class="collapse-close pull-right btn btn-xs btn-danger" onclick="ajaxViewClose('#{{ $pageModule }}')">
-			<i class="fa fa fa-times"></i></a>
-		</h4>
-	 </div>
+    <div class="sbox">
+        <div class="sbox-title">
+            <h4><i class="fa fa-table"></i> <?php echo $pageTitle;?>
+                <small>{{ $pageNote }}</small>
+                <a href="javascript:void(0)" class="collapse-close pull-right btn btn-xs btn-danger"
+                   onclick="ajaxViewClose('#{{ $pageModule }}')">
+                    <i class="fa fa fa-times"></i></a>
+            </h4>
+        </div>
 
-	<div class="sbox-content"> 
-@endif	
+        <div class="sbox-content">
+            @endif
 
-		<table class="table table-striped table-bordered" >
-			<tbody>	
-				
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Id', (isset($fields['id']['language'])? $fields['id']['language'] : array())) }}	
-						</td>
-						<td>{{ $row->id }} </td>
-						
-					</tr>
-				
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Name', (isset($fields['name']['language'])? $fields['name']['language'] : array())) }}	
-						</td>
-						<td>{{ $row->name }} </td>
-						
-					</tr>
-				
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Status', (isset($fields['status']['language'])? $fields['status']['language'] : array())) }}	
-						</td>
-						<td>{{ $row->status }} </td>
-						
-					</tr>
-				
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Created At', (isset($fields['created_at']['language'])? $fields['created_at']['language'] : array())) }}	
-						</td>
-						<td>{{ $row->created_at }} </td>
-						
-					</tr>
-				
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Updated At', (isset($fields['updated_at']['language'])? $fields['updated_at']['language'] : array())) }}	
-						</td>
-						<td>{{ $row->updated_at }} </td>
-						
-					</tr>
-				
-			</tbody>	
-		</table>  
-			
-		 	
+            <table class="table table-striped table-bordered">
+                <tbody>
 
-@if($setting['form-method'] =='native')
-	</div>	
-</div>	
-@endif	
+                <tr>
+                    <td width='30%' class='label-view text-right'>
+                        {{ SiteHelpers::activeLang('Name', (isset($fields['name']['language'])? $fields['name']['language'] : array())) }}
+                    </td>
+                    <td>{{ $row->name }} </td>
+
+                </tr>
+
+                <tr>
+                    <td width='30%' class='label-view text-right'>
+                        {{ SiteHelpers::activeLang('Responsible Agents Count', (isset($fields['assign_employee_ids']['language'])? $fields['assign_employee_ids']['language'] : array())) }}
+                    </td>
+                    <?php
+                    $count = count(explode(',', $row->assign_employee_ids));
+                    ?>
+                    <td>{{ $count }} </td>
+
+                </tr>
+                <tr>
+                    <td width='30%' class='label-view text-right'>
+                        {{ 'Submitted Tickets Count' }}
+                    </td>
+                    <td>{{ $row->open_tickets + $row->close_tickets + $row->pending_tickets}} </td>
+
+                </tr>
+                <tr>
+                    <td width='30%' class='label-view text-right'>
+                        {{ 'Tickets without agents Count' }}
+                    </td>
+                    <td>{{ 0 }} </td>
+
+                </tr>
+                <tr>
+                    <td width='30%' class='label-view text-right'>
+                        {{ 'Open Tickets Count' }}
+                    </td>
+                    <td>{{ $row->open_tickets }} </td>
+
+                </tr>
+
+                <tr>
+                    <td width='30%' class='label-view text-right'>
+                        {{ 'Pending Tickets Count' }}
+                    </td>
+                    <td>{{ $row->pending_tickets }} </td>
+
+                </tr>
+                <tr>
+                    <td width='30%' class='label-view text-right'>
+                        {{ 'Close Tickets Count' }}
+                    </td>
+                    <td>{{ $row->close_tickets }} </td>
+
+                </tr>
+                <tr>
+                    <td width='30%' class='label-view text-right'>
+                        {{ 'Assign agents' }}
+                    </td>
+                    <td>
+                        <?php
+                        if ($count == 0) {
+                            echo 'No record found';
+                        } else {
+                            foreach ($row->assign_employee_names as $index => $name) :
+                                echo (++$index) . '.  ' . $name[0]->first_name . ' ' . $name[0]->last_name . '</br>';
+                            endforeach;
+                        }
+
+                        ?>
+                    </td>
+
+                </tr>
+
+                </tbody>
+            </table>
+
+
+            @if($setting['form-method'] =='native')
+        </div>
+    </div>
+@endif
 
 <script>
-$(document).ready(function(){
+    $(document).ready(function () {
 
-});
+    });
 </script>	

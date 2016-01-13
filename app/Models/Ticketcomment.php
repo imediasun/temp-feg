@@ -3,10 +3,10 @@
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 
-class department extends Sximo  {
+class ticketcomment extends Sximo  {
 	
-	protected $table = 'departments';
-	protected $primaryKey = 'id';
+	protected $table = 'sb_ticketcomments';
+	protected $primaryKey = 'CommentID';
 
 	public function __construct() {
 		parent::__construct();
@@ -15,12 +15,12 @@ class department extends Sximo  {
 
 	public static function querySelect(  ){
 		
-		return "  SELECT departments.* FROM departments  ";
+		return "  SELECT sb_ticketcomments.* FROM sb_ticketcomments  ";
 	}	
 
 	public static function queryWhere(  ){
 		
-		return " where 1 = 1 ";
+		return "  WHERE sb_ticketcomments.CommentID IS NOT NULL ";
 	}
 	
 	public static function queryGroup(){

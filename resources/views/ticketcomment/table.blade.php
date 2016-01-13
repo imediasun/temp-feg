@@ -3,8 +3,8 @@
 	<div class="sbox-title"> 
 		<h5> <i class="fa fa-table"></i> </h5>
 		<div class="sbox-tools" >
-			<a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Clear Search" onclick="reloadData('#{{ $pageModule }}','department/data?search=')"><i class="fa fa-trash-o"></i> Clear Search </a>
-			<a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Reload Data" onclick="reloadData('#{{ $pageModule }}','department/data?return={{ $return }}')"><i class="fa fa-refresh"></i></a>
+			<a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Clear Search" onclick="reloadData('#{{ $pageModule }}','ticketcomment/data?search=')"><i class="fa fa-trash-o"></i> Clear Search </a>
+			<a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Reload Data" onclick="reloadData('#{{ $pageModule }}','ticketcomment/data?return={{ $return }}')"><i class="fa fa-refresh"></i></a>
 			@if(Session::get('gid') ==1)
 			<a href="{{ url('sximo/module/config/'.$pageModule) }}" class="btn btn-xs btn-white tips" title=" {{ Lang::get('core.btn_config') }}" ><i class="fa fa-cog"></i></a>
 			@endif 
@@ -14,7 +14,7 @@
 
 	@include( $pageModule.'/toolbar')
 
-	 <?php echo Form::open(array('url'=>'department/delete/', 'class'=>'form-horizontal' ,'id' =>'SximoTable'  ,'data-parsley-validate'=>'' )) ;?>
+	 <?php echo Form::open(array('url'=>'ticketcomment/delete/', 'class'=>'form-horizontal' ,'id' =>'SximoTable'  ,'data-parsley-validate'=>'' )) ;?>
 <div class="table-responsive">	
 	@if(count($rowData)>=1)
     <table class="table table-striped  " id="{{ $pageModule }}Table">
@@ -32,8 +32,6 @@
 						} 
 					endif;
 				endforeach; ?>
-				<th> {!! 'No Tickets Open' !!}</th>
-				<th>{!! 'No Tickets Closed' !!}</th>
 				<th width="70"><?php echo Lang::get('core.btn_action') ;?></th>
 			  </tr>
         </thead>
@@ -59,15 +57,15 @@
 				</td>
 			  </tr>	 
 			  @endif        
-
-           		<?php foreach ($rowData as $row) :
-           			  $id = $row->id;
+			
+           		<?php foreach ($rowData as $row) : 
+           			  $id = $row->CommentID;
            		?>
-                <tr class="editable" id="form-{{ $row->id }}">
+                <tr class="editable" id="form-{{ $row->CommentID }}">
 					<td class="number"> <?php echo ++$i;?>  </td>
-					<td ><input type="checkbox" class="ids" name="ids[]" value="<?php echo $row->id ;?>" />  </td>					
+					<td ><input type="checkbox" class="ids" name="ids[]" value="<?php echo $row->CommentID ;?>" />  </td>					
 					@if($setting['view-method']=='expand')
-					<td><a href="javascript:void(0)" class="expandable" rel="#row-{{ $row->id }}" data-url="{{ url('department/show/'.$id) }}"><i class="fa fa-plus " ></i></a></td>								
+					<td><a href="javascript:void(0)" class="expandable" rel="#row-{{ $row->CommentID }}" data-url="{{ url('ticketcomment/show/'.$id) }}"><i class="fa fa-plus " ></i></a></td>								
 					@endif			
 					 <?php foreach ($tableGrid as $field) :
 					 	if($field['view'] =='1') : 
@@ -77,22 +75,22 @@
 						 	<?php $limited = isset($field['limited']) ? $field['limited'] :''; ?>
 						 	@if(SiteHelpers::filterColumn($limited ))
 								 <td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}" data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">					 
-									{!! $value !!}
+									{!! $value !!}							 
 								 </td>
 							@endif	
 						 <?php endif;					 
 						endforeach; 
 					  ?>
-					<td>{!! $row->total_open_tickets  !!}</td>
-					<td>{!! $row->total_close_tickets  !!}</td>
-				 <td data-values="action" data-key="<?php echo $row->id ;?>">
-					{!! AjaxHelpers::buttonAction('department',$access,$id ,$setting) !!}
-					{!! AjaxHelpers::buttonActionInline($row->id,'id') !!}		
+				 <td data-values="action" data-key="<?php echo $row->CommentID ;?>">
+					{!! AjaxHelpers::buttonAction('ticketcomment',$access,$id ,$setting) !!}
+					{!! AjaxHelpers::buttonActionInline($row->CommentID,'CommentID') !!}		
 				</td>			 
                 </tr>
                 @if($setting['view-method']=='expand')
-                <tr style="display:none" class="expanded" id="row-{{ $row->id }}">
+                <tr style="display:none" class="expanded" id="row-{{ $row->CommentID }}">
                 	<td class="number"></td>
+                	<td></td>
+                	<td></td>
                 	<td colspan="{{ $colspan}}" class="data"></td>
                 	<td></td>
                 </tr>

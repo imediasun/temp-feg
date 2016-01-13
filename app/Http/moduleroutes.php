@@ -15,4 +15,5 @@
                     Route::controller('topgame', 'TopgameController');
                     Route::controller('bottomgame', 'BottomgameController');
                     Route::controller('gamesdown', 'GamesdownController');
+                    Route::controller('ticketcomment', 'TicketcommentController');
                     ?>
