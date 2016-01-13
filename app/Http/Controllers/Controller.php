@@ -265,7 +265,40 @@ abstract class Controller extends BaseController {
 			}										
 		}	
 		return $rules ;
-	}	
+	}
+
+	function validateTicketCommentsForm()
+	{
+		$rules = array();
+		$rules['message'] = 'required';
+		$forms = $this->info['config']['forms'];
+		$rules = array();
+		foreach($forms as $form)
+		{
+			if($form['required']== '' || $form['required'] !='0')
+			{
+				$rules[$form['field']] = 'required';
+			} elseif ($form['required'] == 'alpa'){
+				$rules[$form['field']] = 'required|alpa';
+			} elseif ($form['required'] == 'alpa_num'){
+				$rules[$form['field']] = 'required|alpa_num';
+			} elseif ($form['required'] == 'alpa_dash'){
+				$rules[$form['field']]='required|alpa_dash';
+			} elseif ($form['required'] == 'email'){
+				$rules[$form['field']] ='required|email';
+			} elseif ($form['required'] == 'numeric'){
+				$rules[$form['field']] = 'required|numeric';
+			} elseif ($form['required'] == 'date'){
+				$rules[$form['field']]='required|date';
+			} else if($form['required'] == 'url'){
+				$rules[$form['field']] = 'required|active_url';
+			} else {
+
+			}
+		}
+		return $rules ;
+	}
+
 
 	function validatePost(  $table )
 	{	
@@ -308,11 +341,10 @@ abstract class Controller extends BaseController {
 								{
 									$files .= $_POST['curr'.$field][$i].',';
 								}
-							}	
+							}
 
 							if(!is_null(Input::file($field)))
 							{
-
 								$destinationPath = '.'. $f['option']['path_to_upload']; 	
 								foreach($_FILES[$field]['tmp_name'] as $key => $tmp_name ){
 								 	$file_name = $_FILES[$field]['name'][$key];
@@ -325,8 +357,7 @@ abstract class Controller extends BaseController {
 									}
 									
 								}
-								
-								if($files !='')	$files = substr($files,0,strlen($files)-1);	
+								if($files !='')	$files = substr($files,0,strlen($files)-1);
 							}	
 							$data[$field] = $files;
 													
@@ -379,7 +410,8 @@ abstract class Controller extends BaseController {
 						$data[$field] = date("Y-m-d",strtotime($request->input($field)));
 					}
 					
-					// if post is seelct multiple						
+					// if post is seelct multiple
+					//
 					if($f['type'] =='select')
 					{
 						//echo '<pre>'; print_r( $_POST[$field] ); echo '</pre>'; 
@@ -390,7 +422,7 @@ abstract class Controller extends BaseController {
 						} else {
 							$data[$field] = $_POST[$field];
 						}	
-					}									
+					}
 					
 				}	 						
 

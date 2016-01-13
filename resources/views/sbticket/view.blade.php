@@ -1,9 +1,13 @@
+<?php
+	$commentsCount =  $comments->count();
+?>
 @if($setting['view-method'] =='native')
 <div class="sbox">
 	<div class="sbox-title">
 		<h4> <i class="fa fa-table"></i> <?php echo $pageTitle ;?> <small>{{ $pageNote }}</small>
 			<a href="javascript:void(0)" class="collapse-close pull-right btn btn-xs btn-danger" onclick="ajaxViewClose('#{{ $pageModule }}')">
 			<i class="fa fa fa-times"></i></a>
+		</h4>
 		</h4>
 	 </div>
 
@@ -149,7 +153,7 @@
 
 							<div class="blog-info-small">
 								<i class="fa fa-calendar icon-muted"></i>  <span> Feb 23, 2014  </span>
-								<i class="fa fa-comment-o icon-muted"></i>   <span>  0 comment(s)  </span>
+								<i class="fa fa-comment-o icon-muted"></i>   <span>  <?php echo $commentsCount ?> comment(s)  </span>
 
 
 							</div>
@@ -161,7 +165,7 @@
 						</div>
 					</div>
 					<hr>
-					<h5 id="comments" class="text-success"> ( 0 )  Comment(s) </h5>
+					<h5 id="comments" class="text-success"> ( <?php echo $commentsCount ?> )  Comment(s) </h5>
 					<hr>
 
 								{!! Form::open(array('url'=>'sbticket/comment/'.SiteHelpers::encryptID($row['TicketID']), 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'sbticketFormAjax')) !!}
@@ -189,7 +193,7 @@
 												{!! SiteHelpers::activeLang('Message', (isset($fields['Comments']['language'])? $fields['Comments']['language'] : array())) !!}
 											</label>
 											<div class="col-md-9">
-					 	 	<textarea name='Comments' rows='5' id='Comments' class='form-control 'required  ></textarea>
+					 	 						<textarea name='Comments' rows='5' id='Comments' class='form-control 'required  ></textarea>
 											</div>
 										</div>
 										<div class="form-group  " >
@@ -249,8 +253,8 @@
 											</label>
 											<div class="col-md-9">
 
-												<a href="javascript:void(0)" class="btn btn-xs btn-primary pull-right" onclick="addMoreFiles('file_path')"><i class="fa fa-plus"></i></a>
-												<div class="file_pathUpl">
+												<a href="javascript:void(0)" class="btn btn-xs btn-primary pull-right" onclick="addMoreFiles('Attachments')"><i class="fa fa-plus"></i></a>
+												<div class="AttachmentsUpl">
 													<input  type='file' name='Attachments[]'  />
 												</div>
 												<ul class="uploadedLists " >
@@ -287,6 +291,9 @@
 										<button type="button" onclick="ajaxViewClose('#{{ $pageModule }}')" class="btn btn-success btn-sm"><i class="fa  fa-arrow-circle-left "></i>  {{ Lang::get('core.sb_cancel') }} </button>
 									</div>
 								</div>
+								{!! Form::hidden('issue_type', $row->issue_type) !!}
+								{!! Form::hidden('location_id', $row->location_id) !!}
+								{!! Form::hidden('game_id', $row->game_id) !!}
 								{!! Form::close() !!}
 				</div>
 			</div>

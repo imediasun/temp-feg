@@ -3,7 +3,7 @@
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 
-class ticketcomment extends Sximo  {
+class Ticketcomment extends Sximo  {
 	
 	protected $table = 'sb_ticketcomments';
 	protected $primaryKey = 'CommentID';

@@ -10,7 +10,7 @@ use Validator, Input, Redirect ;
 class SbticketController extends Controller {
 
 	protected $layout = "layouts.main";
-	protected $data = array();	
+	protected $data = array();
 	public $module = 'sbticket';
 	static $per_page	= '10';
 	
@@ -19,7 +19,7 @@ class SbticketController extends Controller {
 		parent::__construct();
 		$this->model = new Sbticket();
 		
-		$this->info = $this->model->makeInfo( $this->module);
+		$this->info = $this->model->makeInfo($this->module);
 		$this->access = $this->model->validAccess($this->info['id']);
 	
 		$this->data = array(
@@ -133,6 +133,8 @@ class SbticketController extends Controller {
 		$row = $this->model->find($id);
 		if($row)
 		{
+			$comments = new Ticketcomment();
+			$this->data['comments'] = $comments->where('TicketID', '=', $id)->get();
 			$this->data['row'] =  $row;
 		} else {
 			$this->data['row'] = $this->model->getColumnTable('sb_tickets'); 
@@ -222,30 +224,42 @@ class SbticketController extends Controller {
 		} 		
 
 	}
+	function validateTicketCommentsForm()
+	{
+		$rules = array();
+		$rules['Comments'] = 'required';
+		$rules['department_id'] = 'required|numeric';
+		$rules['Priority'] = 'required';
+		$rules['Status'] = 'required';
+		return $rules;
+	}
 
 	public function postComment(Request $request)
 	{
-		//date('Y-m-d H:i:s')
-		$comment_model = new Ticketcomment();
-		$data = $request->all();
-		$id = $comment_model->insertRow($data, NULL);
-		die;
-		$rules = $this->validateForm();
+		$rules = $this->validateTicketCommentsForm();
 		$validator = Validator::make($request->all(), $rules);
 		if ($validator->passes()) {
-			die("called passes");
-			$data = $this->validatePost('sb_tickets');
+			//validate post for sb_tickets module
+			$ticketsData = $this->validatePost('sb_tickets');
 
-			$id = $this->model->insertRow($data , $request->input('TicketID'));
+			$comment_model = new Ticketcomment();
+			//re-populate info array to ticket comments module
+			$this->info = $comment_model->makeInfo('ticketcomment');
+			$commentsData = $this->validatePost('sb_ticketcomments');
+
+			//@todo need separate table for comment attachments
+			$comment_model->insertRow($commentsData, NULL);
+			$this->model->insertRow($ticketsData , $request->input('TicketID'));
 
 			return response()->json(array(
 				'status'=>'success',
 				'message'=> \Lang::get('core.note_success')
 			));
 
-		} else {
-			die("called else");
-			$message = $this->validateListError(  $validator->getMessageBag()->toArray() );
+		}
+		else
+		{
+
 			return response()->json(array(
 				'message'	=> $message,
 				'status'	=> 'error'
