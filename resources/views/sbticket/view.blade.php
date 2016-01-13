@@ -164,7 +164,7 @@
 					<h5 id="comments" class="text-success"> ( 0 )  Comment(s) </h5>
 					<hr>
 
-								{!! Form::open(array('url'=>'sbticket/save/'.SiteHelpers::encryptID($row['TicketID']), 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'sbticketFormAjax')) !!}
+								{!! Form::open(array('url'=>'sbticket/comment/'.SiteHelpers::encryptID($row['TicketID']), 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'sbticketFormAjax')) !!}
 								<div class="col-md-12">
 									<fieldset><legend> New Reply</legend>
 
@@ -176,12 +176,20 @@
 												{!! Form::text('TicketID', $row['TicketID'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
 											</div>
 										</div>
-										<div class="form-group  " >
-											<label for="Description" class=" control-label col-md-3 text-left">
-												{!! SiteHelpers::activeLang('Message', (isset($fields['Description']['language'])? $fields['Description']['language'] : array())) !!}
+										<div class="form-group hidethis " style="display:none;">
+											<label for="UserID" class=" control-label col-md-3 text-left">
+												{!! SiteHelpers::activeLang('TicketID', (isset($fields['UserID']['language'])? $fields['UserID']['language'] : array())) !!}
 											</label>
 											<div class="col-md-9">
-					 	 	<textarea name='Description' rows='5' id='Description' class='form-control 'required  ></textarea>
+												{!! Form::text('UserID', $uid,array('class'=>'form-control', 'placeholder'=>'',   )) !!}
+											</div>
+										</div>
+										<div class="form-group  " >
+											<label for="Comments" class=" control-label col-md-3 text-left">
+												{!! SiteHelpers::activeLang('Message', (isset($fields['Comments']['language'])? $fields['Comments']['language'] : array())) !!}
+											</label>
+											<div class="col-md-9">
+					 	 	<textarea name='Comments' rows='5' id='Comments' class='form-control 'required  ></textarea>
 											</div>
 										</div>
 										<div class="form-group  " >
@@ -234,6 +242,7 @@
 													?></select>
 											</div>
 										</div>
+
 										<div class="form-group  " >
 											<label for="File Path" class=" control-label col-md-3 text-left">
 												{!! SiteHelpers::activeLang('File Path', (isset($fields['file_path']['language'])? $fields['file_path']['language'] : array())) !!}
@@ -242,8 +251,24 @@
 
 												<a href="javascript:void(0)" class="btn btn-xs btn-primary pull-right" onclick="addMoreFiles('file_path')"><i class="fa fa-plus"></i></a>
 												<div class="file_pathUpl">
-													<input  type='file' name='file_path[]'  />
+													<input  type='file' name='Attachments[]'  />
 												</div>
+												<ul class="uploadedLists " >
+													<?php $cr= 0;
+													$row['file_path'] = explode(",",$row['file_path']);
+													?>
+													@foreach($row['file_path'] as $files)
+														@if(file_exists('./'.$files) && $files !='')
+															<li id="cr-<?php echo $cr;?>" class="">
+																<a href="{{ url('/'.$files) }}" target="_blank" >{{ $files }}</a>
+																<span class="pull-right" rel="cr-<?php echo $cr;?>" onclick=" $(this).parent().remove();"><i class="fa fa-trash-o  btn btn-xs btn-danger"></i></span>
+																<input type="hidden" name="currfile_path[]" value="{{ $files }}"/>
+																<?php ++$cr;?>
+															</li>
+														@endif
+
+													@endforeach
+												</ul>
 
 											</div>
 										</div>

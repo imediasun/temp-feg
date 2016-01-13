@@ -18,4 +18,5 @@
                     Route::controller('location', 'LocationController');
                     Route::controller('game', 'GameController');
                     Route::controller('gamesdown', 'GamesdownController');
+                    Route::controller('ticketcomment', 'TicketcommentController');
                     ?>
