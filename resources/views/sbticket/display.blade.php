@@ -24,7 +24,7 @@
 				
 				<button class="btn btn-primary"><i class="fa fa-envelope"></i> Submit Ticket </button>
 			</div>
-			<input type="hidden" name="Created" value="{{ date("Y-m-d H:i:s") }}">
+			<input type="hidden" name="Created" value="{{ date("mm-dd-yyyy H:i:s") }}">
 			<input type="hidden" name="Status" value="open">
 			<input type="hidden" name="entry_by" value="{{ Session::get('uid')}}" >
 									

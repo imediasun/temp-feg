@@ -1,4 +1,3 @@
-
 @if($setting['form-method'] =='native')
 	<div class="sbox">
 		<div class="sbox-title">  
@@ -11,10 +10,10 @@
 @endif	
 			{!! Form::open(array('url'=>'sbticket/save/'.SiteHelpers::encryptID($row['TicketID']), 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'sbticketFormAjax')) !!}
 			<div class="col-md-12">
-						<fieldset><legend> sbticket</legend>
+						<fieldset><legend> <?php if(empty($row['TicketID'])) echo 'Create A Ticket'; else echo 'Edit A Ticket'; ?></legend>
 									
 				  <div class="form-group hidethis " style="display:none;"> 
-					<label for="TicketID" class=" control-label col-md-4 text-left"> 
+					<label for="TicketID" class=" control-label col-md-1 text-left"> 
 					{!! SiteHelpers::activeLang('TicketID', (isset($fields['TicketID']['language'])? $fields['TicketID']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
@@ -25,7 +24,7 @@
 					 </div>
 				  </div> 					
 				  <div class="form-group  " > 
-					<label for="Subject" class=" control-label col-md-4 text-left"> 
+					<label for="Subject" class=" control-label col-md-1 text-left"> 
 					{!! SiteHelpers::activeLang('Subject', (isset($fields['Subject']['language'])? $fields['Subject']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
@@ -36,7 +35,7 @@
 					 </div>
 				  </div> 					
 				  <div class="form-group  " > 
-					<label for="Description" class=" control-label col-md-4 text-left"> 
+					<label for="Description" class=" control-label col-md-1 text-left"> 
 					{!! SiteHelpers::activeLang('Description', (isset($fields['Description']['language'])? $fields['Description']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
@@ -48,7 +47,7 @@
 					 </div>
 				  </div> 					
 				  <div class="form-group  " > 
-					<label for="Priority" class=" control-label col-md-4 text-left"> 
+					<label for="Priority" class=" control-label col-md-1 text-left"> 
 					{!! SiteHelpers::activeLang('Priority', (isset($fields['Priority']['language'])? $fields['Priority']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
@@ -68,13 +67,13 @@
 					 </div>
 				  </div> 					
 				  <div class="form-group  " > 
-					<label for="Need by Date" class=" control-label col-md-4 text-left"> 
-					{!! SiteHelpers::activeLang('Need by Date', (isset($fields['Created']['language'])? $fields['Created']['language'] : array())) !!}	
+					<label for="Need by Date" class=" control-label col-md-1 text-left"> 
+					{!! SiteHelpers::activeLang('Need by Date', (isset($fields['need_by_date']['language'])? $fields['need_by_date']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
 					  
-				<div class="input-group m-b" style="width:150px !important;">
-					{!! Form::text('Created', $row['Created'],array('class'=>'form-control date')) !!}
+				<div class="input-group m-b" style="width:200px;">
+					{!! Form::text('need_by_date', $row['need_by_date'],array('class'=>'form-control date', 'required'=>'true')) !!}
 					<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
 				</div> 
 					 </div> 
@@ -83,13 +82,13 @@
 					 </div>
 				  </div> 					
 				  <div class="form-group  " > 
-					<label for="Status" class=" control-label col-md-4 text-left"> 
+					<label for="Status" class=" control-label col-md-1 text-left"> 
 					{!! SiteHelpers::activeLang('Status', (isset($fields['Status']['language'])? $fields['Status']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
 					  
 					<?php $Status = explode(',',$row['Status']);
-					$Status_opt = array( 'open' => 'Open' ,  'inqueue' => 'In Queue' ,  'close' => 'Close' , ); ?>
+					$Status_opt = array( 'open' => 'Open' ,  'inqueue' => 'Pending' ,  'close' => 'Close' , ); ?>
 					<select name='Status' rows='5' required  class='select2 '  > 
 						<?php 
 						foreach($Status_opt as $key=>$val)
@@ -103,7 +102,7 @@
 					 </div>
 				  </div> 					
 				  <div class="form-group  " > 
-					<label for="Issue Type" class=" control-label col-md-4 text-left"> 
+					<label for="Issue Type" class=" control-label col-md-1 text-left"> 
 					{!! SiteHelpers::activeLang('Issue Type', (isset($fields['issue_type']['language'])? $fields['issue_type']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
@@ -123,7 +122,7 @@
 					 </div>
 				  </div> 					
 				  <div class="form-group  " > 
-					<label for="Location" class=" control-label col-md-4 text-left"> 
+					<label for="Location" class=" control-label col-md-1 text-left"> 
 					{!! SiteHelpers::activeLang('Location', (isset($fields['location_id']['language'])? $fields['location_id']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
@@ -134,7 +133,7 @@
 					 </div>
 				  </div> 					
 				  <div class="form-group  " > 
-					<label for="Game" class=" control-label col-md-4 text-left"> 
+					<label for="Game" class=" control-label col-md-1 text-left"> 
 					{!! SiteHelpers::activeLang('Game', (isset($fields['game_id']['language'])? $fields['game_id']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
@@ -145,7 +144,7 @@
 					 </div>
 				  </div> 					
 				  <div class="form-group  " > 
-					<label for="Department" class=" control-label col-md-4 text-left"> 
+					<label for="Department" class=" control-label col-md-1 text-left"> 
 					{!! SiteHelpers::activeLang('Department', (isset($fields['department_id']['language'])? $fields['department_id']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
@@ -155,19 +154,8 @@
 					 	
 					 </div>
 				  </div> 					
-				  <div class="form-group hidethis " style="display:none;"> 
-					<label for="Date closed" class=" control-label col-md-4 text-left"> 
-					{!! SiteHelpers::activeLang('Date closed', (isset($fields['closed']['language'])? $fields['closed']['language'] : array())) !!}	
-					</label>
-					<div class="col-md-6">
-					  {!! Form::text('closed', $row['closed'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
-					 </div> 
-					 <div class="col-md-2">
-					 	
-					 </div>
-				  </div> 					
-				  <div class="form-group  " > 
-					<label for="Assign To" class=" control-label col-md-4 text-left"> 
+				  <div class="form-group  " >
+					<label for="Assign To" class=" control-label col-md-1 text-left">
 					{!! SiteHelpers::activeLang('Assign To', (isset($fields['assign_to']['language'])? $fields['assign_to']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
@@ -178,7 +166,7 @@
 					 </div>
 				  </div> 					
 				  <div class="form-group  " > 
-					<label for="File Path" class=" control-label col-md-4 text-left"> 
+					<label for="File Path" class=" control-label col-md-1 text-left"> 
 					{!! SiteHelpers::activeLang('File Path', (isset($fields['file_path']['language'])? $fields['file_path']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
@@ -209,21 +197,8 @@
 					 	
 					 </div>
 				  </div> 					
-				  <div class="form-group  " > 
-					<label for="Last Event date" class=" control-label col-md-4 text-left"> 
-					{!! SiteHelpers::activeLang('Last Event date', (isset($fields['updated']['language'])? $fields['updated']['language'] : array())) !!}	
-					</label>
-					<div class="col-md-6">
-					  
-				<div class="input-group m-b" style="width:150px !important;">
-					{!! Form::text('updated', $row['updated'],array('class'=>'form-control date')) !!}
-					<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-				</div> 
-					 </div> 
-					 <div class="col-md-2">
-					 	
-					 </div>
-				  </div> </fieldset>
+
+					</fieldset>
 			</div>
 			
 												
@@ -269,8 +244,8 @@ $(document).ready(function() {
 	$('.previewImage').fancybox();	
 	$('.tips').tooltip();	
 	$(".select2").select2({ width:"98%"});	
-	$('.date').datepicker({format:'yyyy-mm-dd',autoClose:true})
-	$('.datetime').datetimepicker({format: 'yyyy-mm-dd hh:ii:ss'}); 
+	$('.date').datepicker({format:'mm/dd/yyyy',autoClose:true})
+	$('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});
 	$('input[type="checkbox"],input[type="radio"]').iCheck({
 		checkboxClass: 'icheckbox_square-green',
 		radioClass: 'iradio_square-green',

@@ -45,13 +45,12 @@ class SbticketController extends Controller {
 
 	public function postData( Request $request)
 	{ 
-		$sort = (!is_null($request->input('sort')) ? $request->input('sort') : $this->info['setting']['orderby']); 
+		$sort = (!is_null($request->input('sort')) ? $request->input('sort') : $this->info['setting']['orderby']);
 		$order = (!is_null($request->input('order')) ? $request->input('order') : $this->info['setting']['ordertype']);
 		// End Filter sort and order for query 
 		// Filter Search for query		
-		$filter = (!is_null($request->input('search')) ? $this->buildSearch() : '');
+		$filter = (!is_null($request->input('search')) ? $this->buildSearch() : "AND sb_tickets.Status != 'close'");
 
-		
 		$page = $request->input('page', 1);
 		$params = array(
 			'page'		=> $page ,
@@ -68,9 +67,22 @@ class SbticketController extends Controller {
 		$page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;	
 		$pagination = new Paginator($results['rows'], $results['total'], $params['limit']);	
 		$pagination->setPath('sbticket/data');
-		
+		$rows = $results['rows'];
+		$comments = new Ticketcomment();
+		foreach($rows as $row)
+		{
+			//$row->comments = $comments->where('TicketID', '=', $row->TicketID)->orderBy('TicketID', 'desc')->take(1)->get();
+			$assign_employee_ids = explode(',' ,$row->assign_to);
+			$assign_employee_names = array();
+			foreach($assign_employee_ids as $key => $value)
+			{
+				$assign_employee_names[$key] = \DB::select("Select first_name,last_name FROM employees WHERE id = ".$value ."");
+			}
+			$row->assign_employee_names = $assign_employee_names;
+		}
+
 		$this->data['param']		= $params;
-		$this->data['rowData']		= $results['rows'];
+		$this->data['rowData']		= $rows;
 		// Build Pagination 
 		$this->data['pagination']	= $pagination;
 		// Build pager number and append current param GET
@@ -131,6 +143,13 @@ class SbticketController extends Controller {
 				->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus','error');
 					
 		$row = $this->model->find($id);
+		$assign_employee_ids = explode(',' ,$row->assign_to);
+		$assign_employee_names = array();
+		foreach($assign_employee_ids as $key => $value)
+		{
+			$assign_employee_names[$key] = \DB::select("Select first_name,last_name FROM employees WHERE id = ".$value ."");
+		}
+		$row->assign_employee_names = $assign_employee_names;
 		if($row)
 		{
 			$comments = new Ticketcomment();
@@ -142,6 +161,7 @@ class SbticketController extends Controller {
 		
 		$this->data['id'] = $id;
 		$this->data['uid'] = \Session::get('uid');
+		$this->data['fid'] = \Session::get('fid');
 		$this->data['access']		= $this->access;
 		$this->data['setting'] 		= $this->info['setting'];
 		$this->data['fields'] 		= \AjaxHelpers::fieldLang($this->info['config']['forms']);
@@ -176,7 +196,10 @@ class SbticketController extends Controller {
 		$validator = Validator::make($request->all(), $rules);	
 		if ($validator->passes()) {
 			$data = $this->validatePost('sb_tickets');
-			
+			if($id==0)
+			{
+				$data['Created'] = date("Y-m-d",time());;
+			}
 			$id = $this->model->insertRow($data , $request->input('TicketID'));
 			
 			return response()->json(array(
@@ -241,13 +264,19 @@ class SbticketController extends Controller {
 		if ($validator->passes()) {
 			//validate post for sb_tickets module
 			$ticketsData = $this->validatePost('sb_tickets');
-
+			if($ticketsData['Status'] == 'close')
+			{
+				$ticketsData['closed'] = date("Y-m-d",time());
+			}
+			$ticketsData['updated'] = date("Y-m-d",time());
+			$commentsData['USERNAME'] = \Session::get('fid');
 			$comment_model = new Ticketcomment();
 			//re-populate info array to ticket comments module
 			$this->info = $comment_model->makeInfo('ticketcomment');
 			$commentsData = $this->validatePost('sb_ticketcomments');
 
 			//@todo need separate table for comment attachments
+			unset($ticketsData['file_path']);
 			$comment_model->insertRow($commentsData, NULL);
 			$this->model->insertRow($ticketsData , $request->input('TicketID'));
 

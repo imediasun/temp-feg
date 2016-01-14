@@ -14,6 +14,9 @@
                     Route::controller('sbticket', 'SbticketController');
                     Route::controller('topgame', 'TopgameController');
                     Route::controller('bottomgame', 'BottomgameController');
+                    Route::controller('department', 'DepartmentController');
+                    Route::controller('location', 'LocationController');
+                    Route::controller('game', 'GameController');
                     Route::controller('gamesdown', 'GamesdownController');
                     Route::controller('ticketcomment', 'TicketcommentController');
                     ?>

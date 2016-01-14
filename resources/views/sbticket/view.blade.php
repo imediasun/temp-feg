@@ -24,20 +24,36 @@
 							<td width='30%' class='label-view text-right'>
 								{{ SiteHelpers::activeLang('Date Open', (isset($fields['Created']['language'])? $fields['Created']['language'] : array())) }}
 							</td>
-							<td><?php echo date("m-d-Y", strtotime($row->Created));  ?></td>
+							<td><?php
+
+								$date=date("m/d/Y", strtotime($row->Created));
+								echo $date;
+								?>
+
+							</td>
 
 						</tr>
+						<tr>
+							<td width='30%' class='label-view text-right'>
+								{{ SiteHelpers::activeLang('Needed Date', (isset($fields['need_by_date']['language'])? $fields['need_by_date']['language'] : array())) }}
+							</td>
+							<td><?php echo $row->need_by_date;  ?></td>
 
+						</tr>
 						<tr>
 							<td width='30%' class='label-view text-right'>
 								{{ SiteHelpers::activeLang('Last Event date', (isset($fields['updated']['language'])? $fields['updated']['language'] : array())) }}
 							</td>
 							<td>
 								<?php
-								if($row->updated != '0000-00-00 00:00:00')
-									echo date("m-d-Y", strtotime($row->updated));
-								else
-									echo 'N/A';
+								if($commentsCount!=0){
+									foreach($comments as $comment)
+									{
+										$date=date("m/d/Y", strtotime($comment->Posted));
+										echo $date;
+										break;
+									}
+								}
 								?>
 							</td>
 
@@ -71,7 +87,14 @@
 							<td width='30%' class='label-view text-right'>
 								{{ SiteHelpers::activeLang('Assign To', (isset($fields['assign_to']['language'])? $fields['assign_to']['language'] : array())) }}
 							</td>
-							<td>{!! SiteHelpers::gridDisplayView($row->assign_to,'assign_to','1:employees:id:first_name|last_name') !!} </td>
+							<td><?php
+
+								foreach ($row->assign_employee_names as $index => $name) :
+									echo (++$index) . '.  ' . $name[0]->first_name . ' ' . $name[0]->last_name . '</br>';
+								endforeach;
+
+
+								?> </td>
 
 						</tr>
 
@@ -87,7 +110,10 @@
 							<td width='30%' class='label-view text-right'>
 								{{ SiteHelpers::activeLang('Status', (isset($fields['Status']['language'])? $fields['Status']['language'] : array())) }}
 							</td>
-							<td>{{ $row->Status }} </td>
+							<td><?php
+									if($row->Status=='inqueue') echo 'Pending';
+									else $row->Status;
+								?></td>
 
 						</tr>
 						<tr>
@@ -112,10 +138,10 @@
 							</td>
 							<td>
 								<?php
-								if($row->closed != '0000-00-00 00:00:00')
-									echo date("m-d-Y", strtotime($row->closed));
-								else
-									echo 'N/A';
+								if(!empty($row->closed)){
+									$date=date("m/d/Y", strtotime($row->closed));
+									echo $date;
+								}
 								?>
 							</td>
 
@@ -151,23 +177,52 @@
 					<div class="blog-post ">
 						<div class="post-item">
 
-							<div class="blog-info-small">
-								<i class="fa fa-calendar icon-muted"></i>  <span> Feb 23, 2014  </span>
-								<i class="fa fa-comment-o icon-muted"></i>   <span>  <?php echo $commentsCount ?> comment(s)  </span>
-
-
+							<div class="row" style="padding: 2%;">
+								<h3>Description <span style="float: right; font-size: x-small" id="comments" class="text-success"> ( <?php echo $commentsCount ?> )  Comment(s)</span> </h3>
 							</div>
 							</br>
 							<div class="summary">
 
-								<p><span style="color:rgb(113,113,113);"><?php echo $row->Description; ?></span></div>
+								<p><span style="color:rgb(113,113,113);"><?php echo $row->Description; ?></span>
+							</div>
 
 						</div>
 					</div>
 					<hr>
-					<h5 id="comments" class="text-success"> ( <?php echo $commentsCount ?> )  Comment(s) </h5>
 					<hr>
+					<?php if($commentsCount!=0){foreach($comments as $comment){?>
+					<div class="row">
+						<div class="col col-xs-12">
+							<div class="cont">
+								<div class="ticket-message message-left last first clearfix">
+									<div class="profile-image" style="padding-bottom: 5px;">
+										<strong><?php echo $fid.' '; ?>
+										<?php $date=date("m/d/Y H:i:s", strtotime($comment->Posted)); echo $date; ?></strong>
+									</div>
+								</div>
+							</div>
+							<div class="text">
+								<div class="message">
+									<?php echo $comment->Comments; ?>																									</div>
+								<div>
+									<?php
+									if(!empty($comment->Attachments))
+									{
+									$files = explode(',', $comment->Attachments);
+									foreach($files as $index => $file_name) :
+									?>
+									<a href="<?php echo url().'/'.$file_name; ?>" target="_blank"><?php echo $file_name; ?></a></br>
+									<?php
+									endforeach;
+									}
 
+									?>
+								</div>
+							</div>
+						</div>
+					</div>
+					<hr>
+					<?php } }?>
 								{!! Form::open(array('url'=>'sbticket/comment/'.SiteHelpers::encryptID($row['TicketID']), 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'sbticketFormAjax')) !!}
 								<div class="col-md-12">
 									<fieldset><legend> New Reply</legend>
@@ -236,7 +291,7 @@
 											<div class="col-md-9">
 
 												<?php $Status = explode(',',$row['Status']);
-												$Status_opt = array( 'open' => 'Open' ,  'inqueue' => 'In Queue' ,  'close' => 'Close' , ); ?>
+												$Status_opt = array( 'open' => 'Open' ,  'inqueue' => 'Pending' ,  'close' => 'Close' , ); ?>
 												<select name='Status' rows='5' required  class='select2 '  >
 													<?php
 													foreach($Status_opt as $key=>$val)
@@ -249,7 +304,7 @@
 
 										<div class="form-group  " >
 											<label for="File Path" class=" control-label col-md-3 text-left">
-												{!! SiteHelpers::activeLang('File Path', (isset($fields['file_path']['language'])? $fields['file_path']['language'] : array())) !!}
+												{!! SiteHelpers::activeLang('File Path', (isset($fields['Attachments']['language'])? $fields['Attachments']['language'] : array())) !!}
 											</label>
 											<div class="col-md-9">
 
@@ -257,22 +312,6 @@
 												<div class="AttachmentsUpl">
 													<input  type='file' name='Attachments[]'  />
 												</div>
-												<ul class="uploadedLists " >
-													<?php $cr= 0;
-													$row['file_path'] = explode(",",$row['file_path']);
-													?>
-													@foreach($row['file_path'] as $files)
-														@if(file_exists('./'.$files) && $files !='')
-															<li id="cr-<?php echo $cr;?>" class="">
-																<a href="{{ url('/'.$files) }}" target="_blank" >{{ $files }}</a>
-																<span class="pull-right" rel="cr-<?php echo $cr;?>" onclick=" $(this).parent().remove();"><i class="fa fa-trash-o  btn btn-xs btn-danger"></i></span>
-																<input type="hidden" name="currfile_path[]" value="{{ $files }}"/>
-																<?php ++$cr;?>
-															</li>
-														@endif
-
-													@endforeach
-												</ul>
 
 											</div>
 										</div>
@@ -291,6 +330,8 @@
 										<button type="button" onclick="ajaxViewClose('#{{ $pageModule }}')" class="btn btn-success btn-sm"><i class="fa  fa-arrow-circle-left "></i>  {{ Lang::get('core.sb_cancel') }} </button>
 									</div>
 								</div>
+
+								{!! Form::hidden('Description', $row->Description) !!}
 								{!! Form::hidden('issue_type', $row->issue_type) !!}
 								{!! Form::hidden('location_id', $row->location_id) !!}
 								{!! Form::hidden('game_id', $row->game_id) !!}
@@ -325,8 +366,8 @@
 		$('.previewImage').fancybox();
 		$('.tips').tooltip();
 		$(".select2").select2({ width:"98%"});
-		$('.date').datepicker({format:'yyyy-mm-dd',autoClose:true})
-		$('.datetime').datetimepicker({format: 'yyyy-mm-dd hh:ii:ss'});
+		$('.date').datepicker({format:'mm/dd/yyyy',autoClose:true})
+		$('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});
 		$('input[type="checkbox"],input[type="radio"]').iCheck({
 			checkboxClass: 'icheckbox_square-green',
 			radioClass: 'iradio_square-green',

@@ -86,16 +86,28 @@
                             <td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}"
                                 data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
                                 <?php
-                                if ($field['field'] == 'Created' || $field['field'] == 'updated') {
-                                    if ($value != '0000-00-00 00:00:00')
-                                        echo date("m-d-Y", strtotime($value));
-                                    else
-                                        echo 'N/A';
-                                } else {
-                                    echo $value;
-                                }
-
+                                    if($field['field']=='assign_to'){
+                                        foreach ($row->assign_employee_names as $index => $name) :
+                                            echo (++$index) . '.  ' . $name[0]->first_name . ' ' . $name[0]->last_name . '</br>';
+                                        endforeach;
+                                    }elseif($field['field']=='updated'){
+                                        if(!empty($row->updated)){
+                                            $date=date("m/d/Y", strtotime($row->updated));
+                                            echo $date;
+                                        }
+                                    }elseif($field['field']=='Created'){
+                                        $date=date("m/d/Y", strtotime($row->Created));
+                                        echo $date;
+                                    }
+                                    elseif($field['field']=='Status'){
+                                        if($row->Status=='inqueue') echo 'Pending';
+                                        else $row->Status;
+                                    }
+                                    else{
+                                        echo $value;
+                                    }
                                 ?>
+
                             </td>
                         @endif
                         <?php endif;
