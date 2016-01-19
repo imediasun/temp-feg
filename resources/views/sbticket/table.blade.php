@@ -85,6 +85,7 @@
                         @if(SiteHelpers::filterColumn($limited ))
                             <td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}"
                                 data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
+
                                 <?php
                                     if($field['field']=='assign_to'){
                                         foreach ($row->assign_employee_names as $index => $name) :
@@ -100,10 +101,18 @@
                                         echo $date;
                                     }
                                     elseif($field['field']=='Status'){
-                                        if($row->Status=='inqueue') echo 'Pending';
-                                        else $row->Status;
+                                        if($row->Status=='inqueue')
+                                        {
+                                            echo 'Pending';
+                                        }
+                                        else
+                                        {
+                                           echo $row->Status;
+                                        }
+
                                     }
-                                    else{
+                                    else
+                                    {
                                         echo $value;
                                     }
                                 ?>
