@@ -112,7 +112,7 @@
 							</td>
 							<td><?php
 									if($row->Status=='inqueue') echo 'Pending';
-									else $row->Status;
+									else echo $row->Status;
 								?></td>
 
 						</tr>
@@ -158,14 +158,30 @@
 								{
 								$files = explode(',', $row->file_path);
 								foreach($files as $index => $file_name) :
+								    $date=date("m/d/Y", strtotime($row->Created));
+									echo $fid.' | '.$date.' | ';
 								?>
 								<a href="<?php echo url().'/'.$file_name; ?>" target="_blank"><?php echo $file_name; ?></a></br>
 								<?php
 								endforeach;
 								}
-
 								?>
-
+									<?php if($commentsCount!=0){foreach($comments as $comment):?>
+									<?php
+									if(!empty($comment->Attachments))
+									{
+									$files = explode(',', $comment->Attachments);
+									foreach($files as $index => $file_name) :
+									$date=date("m/d/Y", strtotime($comment->Posted));
+									?>
+									<?php echo $fid.' | '.$date.' | '; ?>
+									<a href="<?php echo url().'/'.$file_name; ?>" target="_blank"><?php echo $file_name; ?></a></br>
+									<?php
+									endforeach;
+									}
+									endforeach;
+									}
+									?>
 							</td>
 
 						</tr>
@@ -205,18 +221,6 @@
 								<div class="message">
 									<?php echo $comment->Comments; ?>																									</div>
 								<div>
-									<?php
-									if(!empty($comment->Attachments))
-									{
-									$files = explode(',', $comment->Attachments);
-									foreach($files as $index => $file_name) :
-									?>
-									<a href="<?php echo url().'/'.$file_name; ?>" target="_blank"><?php echo $file_name; ?></a></br>
-									<?php
-									endforeach;
-									}
-
-									?>
 								</div>
 							</div>
 						</div>

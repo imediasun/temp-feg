@@ -137,7 +137,7 @@
 					{!! SiteHelpers::activeLang('Game', (isset($fields['game_id']['language'])? $fields['game_id']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  <select name='game_id' rows='5' id='game_id' class='select2 ' required  ></select> 
+					  <select name='game_id' rows='5' id='game_id' class='select2 ' ></select>
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -159,7 +159,7 @@
 					{!! SiteHelpers::activeLang('Assign To', (isset($fields['assign_to']['language'])? $fields['assign_to']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  <select name='assign_to[]' multiple rows='5' id='assign_to' class='select2 ' required  ></select> 
+					  <select name='assign_to[]' multiple rows='5' id='assign_to' class='select2 '></select>
 					 </div> 
 					 <div class="col-md-2">
 					 	
