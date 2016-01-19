@@ -1,5 +1,6 @@
 <?php namespace App\Models;
 
+use Faker\Provider\cs_CZ\DateTime;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 
@@ -17,8 +18,13 @@ class topgame extends Sximo  {
 		//end date is current date
 		//start date is 1 week before
 		$date_end = date('Y-m-d');
-		//$date_end = "2015-12-17";//@todo remove hardcoded date
-		$date_start = "DATE_SUB('$date_end', INTERVAL 1 WEEK)";
+		//calculate last week date
+		$dateInterval = new \DateInterval("P1W");
+		$dateInterval->invert = 1;
+		$dateObject = new \DateTime();
+		$date_start = $dateObject->add($dateInterval)->format('Y-m-d');
+
+		//$date_start = "DATE_SUB('$date_end', INTERVAL 1 WEEK)";
 		$locationCondition = "";
 		$havingAverage = "";
 		if(isset($_GET['search'])) {
@@ -29,17 +35,16 @@ class topgame extends Sximo  {
 				//print_r($columnFilter);
 				if (!empty($columnFilter)) {
 					if ($columnFilter[0] === "date_start") {
-						$date_start = "\"".$columnFilter[2]."\"";
+						$date_start = $columnFilter[2];
 					}
 					if ($columnFilter[0] === "date_end") {
 						$date_end = $columnFilter[2];
-						$date_start = "DATE_SUB('$date_end', INTERVAL 1 WEEK)";
 					}
 					if ($columnFilter[0] === "loc_id") {
-						$locationCondition = " AND L.id = ".$columnFilter[2];
+						$locationCondition = " AND location.id = ".$columnFilter[2];
 					}
 					if ($columnFilter[0] === "average") {
-						$havingAverage = " Having Average = ".$columnFilter[2];
+						$havingAverage = " Having Average ".self::searchOperation($columnFilter[1])." ".$columnFilter[2];
 					}
 
 				}
@@ -120,6 +125,7 @@ class topgame extends Sximo  {
 		//////////////////////
 		// TOP/BOTTOM GAMES //
 		//////////////////////
+		/*
 		$topGamesQuery = 'SELECT T.game_title AS Game,
 											T.id,
 											Y.game_type_short AS Type,
@@ -162,6 +168,28 @@ class topgame extends Sximo  {
 												   '.$where_test_piece.'
 												   '.$group_by_expression.'
 												   '.$havingAverage;
+		*/
+		//echo "$date_start => $date_end";
+		$topGamesQuery =
+			'SELECT
+			  game_earnings.id,
+			  IF(SUM(std_actual_cash)=0.00,SUM(total_notional_value),SUM(std_actual_cash))/COUNT(game_title_id) AS Average,
+			  date_start,
+			  game_id,
+			  game.game_name as Game,
+			  location_name,
+			  COUNT(game_title_id) AS Total
+			FROM game_earnings
+			  JOIN game
+				ON game.location_id = game_earnings.loc_id AND game.id = game_earnings.game_id
+			  JOIN location
+				 ON game_earnings.loc_id = location.id
+			WHERE DATE(date_start) BETWEEN "'.$date_start.'"
+				AND "'.$date_end.'"
+				AND game_id != 0
+				'.$locationCondition.'
+			GROUP BY game_earnings.loc_id '.
+			$havingAverage;
 
 		//removed part AND L.id IN '.$locationsThatReportedIdString.'
 		//echo $topGamesQuery;exit;
@@ -207,6 +235,7 @@ class topgame extends Sximo  {
 
 		$result = \DB::select($selectQuery);
 		$cleanResult = array();
+
 		foreach($result as $data)
 		{
 			if(!empty($data->id))
@@ -215,13 +244,7 @@ class topgame extends Sximo  {
 			}
 		}
 		$result = $cleanResult;
-
-		if($key =='' ) { $key ='*'; } else { $key = $table.".".$key ; }
-		$counter_select = preg_replace( '/[\s]*SELECT(.*)FROM/Usi', 'SELECT count('.$key.') as total FROM', self::querySelect() );
-
-		//total query becomes too huge
-		$total = \DB::select( self::querySelect() . self::queryWhere() ." {$orderConditional}  ");
-		$total = count($total);
+		$total = count($result);
 		return $results = array('rows'=> $result , 'total' => $total);
 
 

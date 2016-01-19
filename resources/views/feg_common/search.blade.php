@@ -14,8 +14,16 @@
 		@if($pageModule === 'topgame' || $pageModule === 'bottomgame')
 			<tr id="average" class="fieldsearch">
 				<td>Average</td>
-				<td id="field_average"><input type="text" name="average" class="form-control input-sm" value=""></td>
-				<input id="average_operate" type="hidden" name="operate" value="equal" />
+				<td id="field_average">
+					<select id="average_operate" class="form-control oper" name="operate" onchange="changeOperate(this.value , '{{ $t['field']}}')">
+						<option value="equal"> = </option>
+						<option value="bigger_equal"> >= </option>
+						<option value="smaller_equal"> <= </option>
+						<option value="smaller"> < </option>
+						<option value="bigger"> > </option>
+					</select>
+					<input type="text" name="average" class="form-control input-sm" value="0.00">
+				</td>
 
 			</tr>
 		@endif

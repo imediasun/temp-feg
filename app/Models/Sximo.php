@@ -227,6 +227,49 @@ class Sximo extends Model {
 	    foreach(\DB::select("SHOW COLUMNS FROM $table") as $column)
 		    $columns[$column->Field] = $column->Field;
         return $columns;
-	}	
+	}
+
+	public static function searchOperation( $operate)
+	{
+		$val = '';
+		switch ($operate) {
+			case 'equal':
+				$val = '=' ;
+				break;
+			case 'bigger_equal':
+				$val = '>=' ;
+				break;
+			case 'smaller_equal':
+				$val = '<=' ;
+				break;
+			case 'smaller':
+				$val = '<' ;
+				break;
+			case 'bigger':
+				$val = '>' ;
+				break;
+			case 'not_null':
+				$val = 'not_null' ;
+				break;
+
+			case 'is_null':
+				$val = 'is_null' ;
+				break;
+
+			case 'like':
+				$val = 'like' ;
+				break;
+
+			case 'between':
+				$val = 'between' ;
+				break;
+
+			default:
+				$val = '=' ;
+				break;
+		}
+		return $val;
+	}
+
 
 }

@@ -203,7 +203,6 @@ class TopgameController extends ReportsController {
 				'status'=>'error',
 				'message'=> \Lang::get('core.note_restric')
 			));
-			die;
 
 		}		
 		// delete multipe rows 

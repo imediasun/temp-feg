@@ -22,7 +22,7 @@
 			<tr>
 				<th width="20"> No </th>
 				<th width="100">Game Title</th>
-				<th width="100">Amount Earned</th>
+				<th width="100">Game Count</th>
 				<th width="100">Location</th>
 				<th width="100">Game Average</th>
 			  </tr>
@@ -48,15 +48,7 @@
 				</td>
 			  </tr>	 
 			  @endif
-				<?php
 
-						/*
-						echo "<pre>";
-						print_r($rowData);
-						echo "</pre>";
-						*/
-				?>
-			
            		<?php foreach ($rowData as $row) : 
            			  $id = $row->id;
            		?>
