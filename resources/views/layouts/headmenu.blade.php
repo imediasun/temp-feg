@@ -35,7 +35,7 @@
 		   
 		  	<li><a href="{{ URL::to('sximo/config')}}"><i class="fa  fa-wrench"></i> {{ Lang::get('core.m_setting') }}</a></li>
 			<li><a href="{{ URL::to('core/users')}}"><i class="fa fa-user"></i> {{ Lang::get('core.m_users') }} &  {{ Lang::get('core.m_groups') }} </a></li>
-			<li><a href="{{ URL::to('core/users/blast')}}"><i class="fa fa-envelope"></i> {{ Lang::get('core.m_blastemail') }} </a></li>	
+			<li><a href="{{ URL::to('core/users/blast')}}"><i class="fa fa-envelope"></i> {{ Lang::get('core.m_blastemail') }} </a></li>
 			<li><a href="{{ URL::to('core/logs')}}"><i class="fa fa-clock-o"></i> {{ Lang::get('core.m_logs') }}</a></li>	
 			<li class="divider"></li>
 			<li><a href="{{ URL::to('core/pages')}}"><i class="fa fa-copy"></i> {{ Lang::get('core.m_pagecms')}}</a></li>

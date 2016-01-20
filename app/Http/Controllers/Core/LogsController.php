@@ -22,10 +22,13 @@ class LogsController extends Controller {
 		$this->model = new Logs();
 		$this->info = $this->model->makeInfo( $this->module);
 		$this->access = $this->model->validAccess($this->info['id']);
-	
-		$this->data = array(
-			'pageTitle'	=> 	$this->info['title'],
+		/*
+		 * 'pageTitle'	=> 	$this->info['title'],
 			'pageNote'	=>  $this->info['note'],
+		 */
+		$this->data = array(
+			'pageTitle'	=> 	'Activity Logs',
+			'pageNote'	=>  'Activity Logs',
 			'pageModule'=> 'core/logs',
 			'return'	=> self::returnUrl()
 			

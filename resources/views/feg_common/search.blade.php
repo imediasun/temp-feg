@@ -11,22 +11,6 @@
 		</tr>
 	@endif
 @endforeach
-		@if($pageModule === 'topgame' || $pageModule === 'bottomgame')
-			<tr id="average" class="fieldsearch">
-				<td>Average</td>
-				<td id="field_average">
-					<select id="average_operate" class="form-control oper" name="operate" onchange="changeOperate(this.value , '{{ $t['field']}}')">
-						<option value="equal"> = </option>
-						<option value="bigger_equal"> >= </option>
-						<option value="smaller_equal"> <= </option>
-						<option value="smaller"> < </option>
-						<option value="bigger"> > </option>
-					</select>
-					<input type="text" name="average" class="form-control input-sm" value="0.00">
-				</td>
-
-			</tr>
-		@endif
 		<tr>
 			<td colspan="2"><button type="button" name="search" class="doSearch btn btn-sm btn-primary"> Search </button></td>
 		</tr>
@@ -54,7 +38,7 @@ function changeOperate( val , field )
 	}
 }
 jQuery(function(){
-		$('.date').datepicker({format:'yyyy-mm-dd',autoClose:true})
+		$('.date').datepicker({format:'mm/dd/yyyy',autoClose:true})
 		$('.datetime').datetimepicker({format: 'yyyy-mm-dd hh:ii:ss'}); 
 		//$(".sel-search").select2({ width:"98%"});	
 
@@ -71,6 +55,8 @@ jQuery(function(){
 				value  = value_select;
 			} else {
 				value  = $(this).find("input[name="+field+"]").val();
+				if(value != '')
+					value  = $.datepicker.formatDate('yy-mm-dd', new Date(value));
 			}
 
 			if(value !=='' && typeof value !=='undefined' && this.name !='_token')

@@ -49,7 +49,7 @@ return array(
 	"m_menu" 			=> "Menu Management",
 	"m_logs" 			=> "Activity Logs",
 	"m_codebuilder" 	=> "Code Builder",
-	"m_blastemail" 		=> "Blast Email",
+	"m_blastemail" 		=> "Send Internal Notification",
 	"m_myaccount" 		=> "My Account",
 	"m_logout" 			=> "Logout",
 	"m_profile" 		=> "Profile",
@@ -59,8 +59,8 @@ return array(
 
 	"t_generalsetting"		=> "General Settings", //updated apidevlab
 	"t_generalsettingsmall"	=> "Manage Settings Configuration", // updated apidevlab
-	"t_blastemail"			=> "Blast Email", // updated apidevlab
-	"t_blastemailsmall"		=> "Send Bulk Email",
+	"t_blastemail"			=> "Send Internal Notification", // updated apidevlab
+	"t_blastemailsmall"		=> "Send Internal Notification",
 	"t_emailtemplate"		=> "Email Templates",
 	"t_emailtemplatesmall"	=> "Manage Email Templates", // updated apidevlab
 	"t_loginsecurity"		=> "Login & Security", // updated apidevlab

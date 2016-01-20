@@ -221,15 +221,15 @@ class SbticketController extends Controller {
 	public function postDelete( Request $request)
 	{
 
-		if($this->access['is_remove'] ==0) {   
+		if($this->access['is_remove'] ==0) {
 			return response()->json(array(
 				'status'=>'error',
 				'message'=> \Lang::get('core.note_restric')
 			));
 			die;
 
-		}		
-		// delete multipe rows 
+		}
+		// delete multipe rows
 		if(count($request->input('ids')) >=1)
 		{
 			$this->model->destroy($request->input('ids'));

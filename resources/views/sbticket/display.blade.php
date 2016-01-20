@@ -110,14 +110,14 @@
 			$.post("{{ url('sbticket/delete') }}" ,datas,function( data ) {
 				if(data.status =='success')
 				{
-					notyMessage(data.message);	
-				  
-				  window.location.href = currentURL;					
+					notyMessage(data.message);
+
+				  window.location.href = currentURL;
 				} else {
-					notyMessageError(data.message);	
-				}				
-			});	
-							
+					notyMessageError(data.message);
+				}
+			});
+
 		} else {
 			return false;
 		}

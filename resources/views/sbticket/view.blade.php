@@ -13,9 +13,9 @@
 
 	<div class="sbox-content">
 @endif
-		<div class="container">
+		<div class="container-fuild">
 			<div class="row m-b-lg ">
-				<div class="col-lg-4 animated fadeInLeft delayp1">
+				<div class="col-lg-3 animated fadeInLeft delayp1" style="margin-left: auto">
 					<h3>Ticket Info</h3>
 					<table class="table table-striped table-bordered" >
 						<tbody>
@@ -189,12 +189,12 @@
 						</tbody>
 					</table>
 				</div>
-				<div class="col-lg-6 col-md-offset-1 animated fadeInRight delayp1">
+				<div class="col-lg-9 animated fadeInRight delayp1">
 					<div class="blog-post ">
 						<div class="post-item">
 
 							<div class="row" style="padding: 2%;">
-								<h3>Description <span style="float: right; font-size: x-small" id="comments" class="text-success"> ( <?php echo $commentsCount ?> )  Comment(s)</span> </h3>
+								<h3>Ticket History<span style="float: right; font-size: x-small" id="comments" class="text-success"> ( <?php echo $commentsCount ?> )  Comment(s)</span> </h3>
 							</div>
 							</br>
 							<div class="summary">
@@ -232,50 +232,50 @@
 									<fieldset><legend> New Reply</legend>
 
 										<div class="form-group hidethis " style="display:none;">
-											<label for="TicketID" class=" control-label col-md-3 text-left">
+											<label for="TicketID" class=" control-label col-md-2 text-left">
 												{!! SiteHelpers::activeLang('TicketID', (isset($fields['TicketID']['language'])? $fields['TicketID']['language'] : array())) !!}
 											</label>
-											<div class="col-md-9">
+											<div class="col-md-5">
 												{!! Form::text('TicketID', $row['TicketID'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
 											</div>
 										</div>
 										<div class="form-group hidethis " style="display:none;">
-											<label for="UserID" class=" control-label col-md-3 text-left">
+											<label for="UserID" class=" control-label col-md-2 text-left">
 												{!! SiteHelpers::activeLang('TicketID', (isset($fields['UserID']['language'])? $fields['UserID']['language'] : array())) !!}
 											</label>
-											<div class="col-md-9">
+											<div class="col-md-5">
 												{!! Form::text('UserID', $uid,array('class'=>'form-control', 'placeholder'=>'',   )) !!}
 											</div>
 										</div>
 										<div class="form-group  " >
-											<label for="Comments" class=" control-label col-md-3 text-left">
+											<label for="Comments" class=" control-label col-md-2 text-left">
 												{!! SiteHelpers::activeLang('Message', (isset($fields['Comments']['language'])? $fields['Comments']['language'] : array())) !!}
 											</label>
-											<div class="col-md-9">
+											<div class="col-md-5">
 					 	 						<textarea name='Comments' rows='5' id='Comments' class='form-control 'required  ></textarea>
 											</div>
 										</div>
 										<div class="form-group  " >
-											<label for="Assign To" class=" control-label col-md-3 text-left">
+											<label for="Assign To" class=" control-label col-md-2 text-left">
 												{!! SiteHelpers::activeLang('Re assign to user', (isset($fields['assign_to']['language'])? $fields['assign_to']['language'] : array())) !!}
 											</label>
-											<div class="col-md-9">
+											<div class="col-md-5">
 												<select name='assign_to[]' multiple rows='5' id='assign_to' class='select2 ' required  ></select>
 											</div>
 										</div>
 										<div class="form-group  " >
-											<label for="Department" class=" control-label col-md-3 text-left">
+											<label for="Department" class=" control-label col-md-2 text-left">
 												{!! SiteHelpers::activeLang('Re assign to department', (isset($fields['department_id']['language'])? $fields['department_id']['language'] : array())) !!}
 											</label>
-											<div class="col-md-9">
+											<div class="col-md-5">
 												<select name='department_id' rows='5' id='department_id' class='select2 ' required  ></select>
 											</div>
 										</div>
 										<div class="form-group  " >
-											<label for="Priority" class=" control-label col-md-3 text-left">
+											<label for="Priority" class=" control-label col-md-2 text-left">
 												{!! SiteHelpers::activeLang('Change priority', (isset($fields['Priority']['language'])? $fields['Priority']['language'] : array())) !!}
 											</label>
-											<div class="col-md-9">
+											<div class="col-md-5">
 
 												<?php $Priority = explode(',',$row['Priority']);
 												$Priority_opt = array( 'critical' => 'Critical' ,  'high' => 'High' ,  'medium' => 'Medium' ,  'low' => 'Low' , ); ?>
@@ -289,10 +289,10 @@
 											</div>
 										</div>
 										<div class="form-group  " >
-											<label for="Status" class=" control-label col-md-3 text-left">
+											<label for="Status" class=" control-label col-md-2 text-left">
 												{!! SiteHelpers::activeLang('Change status', (isset($fields['Status']['language'])? $fields['Status']['language'] : array())) !!}
 											</label>
-											<div class="col-md-9">
+											<div class="col-md-5">
 
 												<?php $Status = explode(',',$row['Status']);
 												$Status_opt = array( 'open' => 'Open' ,  'inqueue' => 'Pending' ,  'close' => 'Close' , ); ?>
@@ -307,10 +307,10 @@
 										</div>
 
 										<div class="form-group  " >
-											<label for="File Path" class=" control-label col-md-3 text-left">
+											<label for="File Path" class=" control-label col-md-2 text-left">
 												{!! SiteHelpers::activeLang('File Path', (isset($fields['Attachments']['language'])? $fields['Attachments']['language'] : array())) !!}
 											</label>
-											<div class="col-md-9">
+											<div class="col-md-5">
 
 												<a href="javascript:void(0)" class="btn btn-xs btn-primary pull-right" onclick="addMoreFiles('Attachments')"><i class="fa fa-plus"></i></a>
 												<div class="AttachmentsUpl">
@@ -328,7 +328,7 @@
 								<div style="clear:both"></div>
 
 								<div class="form-group">
-									<label class="col-sm-4 text-right">&nbsp;</label>
+									<label class="col-sm-3 text-right">&nbsp;</label>
 									<div class="col-sm-8">
 										<button type="submit" class="btn btn-primary btn-sm "><i class="fa  fa-save "></i>  {{ Lang::get('core.sb_save') }} </button>
 										<button type="button" onclick="ajaxViewClose('#{{ $pageModule }}')" class="btn btn-success btn-sm"><i class="fa  fa-arrow-circle-left "></i>  {{ Lang::get('core.sb_cancel') }} </button>

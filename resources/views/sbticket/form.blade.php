@@ -181,7 +181,7 @@
 					?>
 					@foreach($row['file_path'] as $files)
 						@if(file_exists('./'.$files) && $files !='')
-						<li id="cr-<?php echo $cr;?>" class="">							
+						<li id="cr-<?php echo $cr;?>" class="" style="margin-top: 1%; ">
 							<a href="{{ url('/'.$files) }}" target="_blank" >{{ $files }}</a> 
 							<span class="pull-right" rel="cr-<?php echo $cr;?>" onclick=" $(this).parent().remove();"><i class="fa fa-trash-o  btn btn-xs btn-danger"></i></span>
 							<input type="hidden" name="currfile_path[]" value="{{ $files }}"/>

@@ -19,7 +19,7 @@
 				<span class="clear"> <span class="block m-t-xs"> <strong class="font-bold">{{ Session::get('fid') }}</strong>
 				 <br />
 				{{ Lang::get('core.lastlogin') }} : <br />
-				<small>{{ date("H:i F j, Y", strtotime(Session::get('ll'))) }}</small>				
+				<small>{{ date("m/d/Y h:i:s", strtotime(Session::get('ll'))) }}</small>
 				 </span> 
 				 </span>
 				 </a>
