@@ -87,7 +87,7 @@
     <div class="container">
       <div class="row">
          <div class="col-md-5">
-             <p> Copyright &copy; 2015 {{ CNF_APPNAME }} . ALL Rights Reserved</p>
+             <p> Copyright &copy; 2015 {{ 'FEG' }} . ALL Rights Reserved</p>
              <a href="#"> Term of Use </a> / <a href="#"> Privacy Policy </a>
          </div>
          <div class="col-md-7 text-right">
