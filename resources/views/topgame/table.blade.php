@@ -60,7 +60,7 @@
 					<td align="left" data-value="" data-field="" data-format="">{{$row->Game}}</td>
 					<td align="left" data-value="" data-field="" data-format="">{{$row->Total}}</td>
 					<td align="left" data-value="" data-field="" data-format="">{{$row->location_name}}</td>
-					<td align="left" data-value="" data-field="" data-format="">{{$row->Average}}</td>
+					<td align="left" data-value="" data-field="" data-format="">${{number_format($row->Average,2)}}</td>
                 </tr>
                 @if($setting['view-method']=='expand')
                 <tr style="display:none" class="expanded" id="row-{{ $row->id }}">

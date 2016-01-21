@@ -172,27 +172,24 @@ class topgame extends Sximo  {
 		//echo "$date_start => $date_end";
 		$topGamesQuery =
 			'SELECT
-			  game_earnings.id,
-			  IF(SUM(std_actual_cash)=0.00,SUM(total_notional_value),SUM(std_actual_cash))/COUNT(game_title_id) AS Average,
-			  date_start,
-			  game_id,
-			  game.game_name as Game,
-			  location_name,
-			  COUNT(game_title_id) AS Total
-			FROM game_earnings
-			  JOIN game
-				ON game.location_id = game_earnings.loc_id AND game.id = game_earnings.game_id
-			  JOIN location
-				 ON game_earnings.loc_id = location.id
-			WHERE DATE(date_start) BETWEEN "'.$date_start.'"
+				game_earnings.id,
+				IF(SUM(std_actual_cash)=0.00,SUM(total_notional_value),SUM(std_actual_cash)) AS total_revenue,
+				location_name,
+				date_start,
+				game_title_id,
+				location_id,
+				game_title.game_title AS Game
+				FROM game_earnings
+				JOIN game
+				ON game.id = game_earnings.game_id
+				JOIN game_title
+				ON game.game_title_id = game_title.id
+				JOIN location
+				ON game.location_id = location.id
+				WHERE DATE(date_start) BETWEEN "'.$date_start.'"
 				AND "'.$date_end.'"
 				AND game_id != 0
-				'.$locationCondition.'
-			GROUP BY game_earnings.loc_id '.
-			$havingAverage;
-
-		//removed part AND L.id IN '.$locationsThatReportedIdString.'
-		//echo $topGamesQuery;exit;
+				GROUP BY game.game_title_id';
 		return $topGamesQuery;
 	}
 
@@ -217,7 +214,7 @@ class topgame extends Sximo  {
 			'global'	=> 1
 		), $args ));
 		//hardcoded sorting
-		$sort = "Average";
+		$sort = "total_revenue";
 		$order = "Desc";
 
 		$offset = ($page-1) * $limit ;
@@ -240,14 +237,31 @@ class topgame extends Sximo  {
 		{
 			if(!empty($data->id))
 			{
+				$countResult = \DB::select("select count(id) as game_count from game where location_id = {$data->location_id} and game_title_id = {$data->game_title_id}");
+				$data->Total = $countResult[0]->game_count;
+
+				$data->Average =  $data->total_revenue/$data->Total;
 				$cleanResult[] = $data;
 			}
 		}
+		usort($cleanResult, function($a, $b) {
+			if ($a->Average == $b->Average) {
+				return 0;
+			}
+			return ($a->Average > $b->Average) ? -1 : 1;
+		}		);
+
+		//sort result by average
 		$result = $cleanResult;
 		$total = count($result);
 		return $results = array('rows'=> $result , 'total' => $total);
 
 
+	}
+
+	public static function cmp($a, $b)
+	{
+		return strcmp($a->Average, $b->Average);
 	}
 
 
