@@ -113,7 +113,7 @@ class EmployeeController extends Controller {
 		{
 			$this->data['row'] 		=  $row;
 		} else {
-			$this->data['row'] 		= $this->model->getColumnTable('tb_employees'); 
+			$this->data['row'] 		= $this->model->getColumnTable('employees'); 
 		}
 		$this->data['setting'] 		= $this->info['setting'];
 		$this->data['fields'] 		=  \AjaxHelpers::fieldLang($this->info['config']['forms']);
@@ -135,7 +135,7 @@ class EmployeeController extends Controller {
 		{
 			$this->data['row'] =  $row;
 		} else {
-			$this->data['row'] = $this->model->getColumnTable('tb_employees'); 
+			$this->data['row'] = $this->model->getColumnTable('employees'); 
 		}
 		
 		$this->data['id'] = $id;
@@ -149,16 +149,16 @@ class EmployeeController extends Controller {
 	function postCopy( Request $request)
 	{
 		
-	    foreach(\DB::select("SHOW COLUMNS FROM tb_employees ") as $column)
+	    foreach(\DB::select("SHOW COLUMNS FROM employees ") as $column)
         {
-			if( $column->Field != 'employeeNumber')
+			if( $column->Field != 'id')
 				$columns[] = $column->Field;
         }
 		$toCopy = implode(",",$request->input('ids'));
 		
 				
-		$sql = "INSERT INTO tb_employees (".implode(",", $columns).") ";
-		$sql .= " SELECT ".implode(",", $columns)." FROM tb_employees WHERE employeeNumber IN (".$toCopy.")";
+		$sql = "INSERT INTO employees (".implode(",", $columns).") ";
+		$sql .= " SELECT ".implode(",", $columns)." FROM employees WHERE id IN (".$toCopy.")";
 		\DB::insert($sql);
 		return response()->json(array(
 			'status'=>'success',
@@ -172,9 +172,9 @@ class EmployeeController extends Controller {
 		$rules = $this->validateForm();
 		$validator = Validator::make($request->all(), $rules);	
 		if ($validator->passes()) {
-			$data = $this->validatePost('tb_employees');
+			$data = $this->validatePost('employees');
 			
-			$id = $this->model->insertRow($data , $request->input('employeeNumber'));
+			$id = $this->model->insertRow($data , $request->input('id'));
 			
 			return response()->json(array(
 				'status'=>'success',

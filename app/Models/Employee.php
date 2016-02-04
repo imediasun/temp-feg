@@ -5,8 +5,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class employee extends Sximo  {
 	
-	protected $table = 'tb_employees';
-	protected $primaryKey = 'employeeNumber';
+	protected $table = 'employees';
+	protected $primaryKey = 'id';
 
 	public function __construct() {
 		parent::__construct();
@@ -15,12 +15,15 @@ class employee extends Sximo  {
 
 	public static function querySelect(  ){
 		
-		return "  SELECT tb_employees.* FROM tb_employees  ";
+		return "  SELECT employees.*, users.user_name,users.loc_1, user_level.user_level
+FROM employees 
+JOIN users ON employees.user_id = users.id
+JOIN  user_level ON users.user_level = user_level.id ";
 	}	
 
 	public static function queryWhere(  ){
 		
-		return "  WHERE tb_employees.employeeNumber IS NOT NULL ";
+		return "  WHERE employees.id IS NOT NULL ";
 	}
 	
 	public static function queryGroup(){

@@ -19,10 +19,10 @@ class location extends Sximo  {
 	}	
 
 	public static function queryWhere(  ){
-		
-		return "  ";
+
+		return " where true ";
 	}
-	
+
 	public static function queryGroup(){
 		return "  ";
 	}

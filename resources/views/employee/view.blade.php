@@ -15,33 +15,73 @@
 				
 					<tr>
 						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('EmployeeNumber', (isset($fields['employeeNumber']['language'])? $fields['employeeNumber']['language'] : array())) }}	
+							{{ SiteHelpers::activeLang('User Name', (isset($fields['user_name']['language'])? $fields['user_name']['language'] : array())) }}	
 						</td>
-						<td>{{ $row->employeeNumber }} </td>
+						<td>{{ $row->user_name }} </td>
 						
 					</tr>
 				
 					<tr>
 						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('LastName', (isset($fields['lastName']['language'])? $fields['lastName']['language'] : array())) }}	
+							{{ SiteHelpers::activeLang('First Name', (isset($fields['first_name']['language'])? $fields['first_name']['language'] : array())) }}	
 						</td>
-						<td>{{ $row->lastName }} </td>
+						<td>{{ $row->first_name }} </td>
 						
 					</tr>
 				
 					<tr>
 						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('FirstName', (isset($fields['firstName']['language'])? $fields['firstName']['language'] : array())) }}	
+							{{ SiteHelpers::activeLang('Last Name', (isset($fields['last_name']['language'])? $fields['last_name']['language'] : array())) }}	
 						</td>
-						<td>{{ $row->firstName }} </td>
+						<td>{{ $row->last_name }} </td>
 						
 					</tr>
 				
 					<tr>
 						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Extension', (isset($fields['extension']['language'])? $fields['extension']['language'] : array())) }}	
+							{{ SiteHelpers::activeLang('User Level', (isset($fields['user_level']['language'])? $fields['user_level']['language'] : array())) }}	
 						</td>
-						<td>{{ $row->extension }} </td>
+						<td>{{ $row->user_level }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Location', (isset($fields['location_id']['language'])? $fields['location_id']['language'] : array())) }}	
+						</td>
+						<td>{!! SiteHelpers::gridDisplayView($row->location_id,'location_id','1:location:id:location_name') !!} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Street', (isset($fields['street']['language'])? $fields['street']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->street }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('City', (isset($fields['city']['language'])? $fields['city']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->city }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('State', (isset($fields['state']['language'])? $fields['state']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->state }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Zip', (isset($fields['zip']['language'])? $fields['zip']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->zip }} </td>
 						
 					</tr>
 				
@@ -55,25 +95,9 @@
 				
 					<tr>
 						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('ReportsTo', (isset($fields['reportsTo']['language'])? $fields['reportsTo']['language'] : array())) }}	
+							{{ SiteHelpers::activeLang('Company Name', (isset($fields['company_id']['language'])? $fields['company_id']['language'] : array())) }}	
 						</td>
-						<td>{{ $row->reportsTo }} </td>
-						
-					</tr>
-				
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('JobTitle', (isset($fields['jobTitle']['language'])? $fields['jobTitle']['language'] : array())) }}	
-						</td>
-						<td>{{ $row->jobTitle }} </td>
-						
-					</tr>
-				
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Foto', (isset($fields['foto']['language'])? $fields['foto']['language'] : array())) }}	
-						</td>
-						<td>{{ $row->foto }} </td>
+						<td>{!! SiteHelpers::gridDisplayView($row->company_id,'company_id','1:company:id:company_name_long') !!} </td>
 						
 					</tr>
 				

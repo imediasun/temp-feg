@@ -9,59 +9,35 @@
 
 	<div class="sbox-content"> 
 @endif	
-			{!! Form::open(array('url'=>'employee/save/'.SiteHelpers::encryptID($row['employeeNumber']), 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'employeeFormAjax')) !!}
+			{!! Form::open(array('url'=>'employee/save/'.SiteHelpers::encryptID($row['id']), 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'employeeFormAjax')) !!}
 			<div class="col-md-12">
 						<fieldset><legend> Employee</legend>
 									
 				  <div class="form-group  " > 
-					<label for="EmployeeNumber" class=" control-label col-md-4 text-left"> 
-					{!! SiteHelpers::activeLang('EmployeeNumber', (isset($fields['employeeNumber']['language'])? $fields['employeeNumber']['language'] : array())) !!}	
+					<label for="First Name" class=" control-label col-md-4 text-left"> 
+					{!! SiteHelpers::activeLang('First Name', (isset($fields['first_name']['language'])? $fields['first_name']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  <textarea name='employeeNumber' rows='5' id='employeeNumber' class='form-control '  
-				           >{{ $row['employeeNumber'] }}</textarea> 
+					  <textarea name='first_name' rows='5' id='first_name' class='form-control '  
+				           >{{ $row['first_name'] }}</textarea> 
 					 </div> 
 					 <div class="col-md-2">
 					 	
 					 </div>
 				  </div> 					
 				  <div class="form-group  " > 
-					<label for="LastName" class=" control-label col-md-4 text-left"> 
-					{!! SiteHelpers::activeLang('LastName', (isset($fields['lastName']['language'])? $fields['lastName']['language'] : array())) !!}	
+					<label for="Last Name" class=" control-label col-md-4 text-left"> 
+					{!! SiteHelpers::activeLang('Last Name', (isset($fields['last_name']['language'])? $fields['last_name']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  <textarea name='lastName' rows='5' id='lastName' class='form-control '  
-				           >{{ $row['lastName'] }}</textarea> 
+					  <textarea name='last_name' rows='5' id='last_name' class='form-control '  
+				           >{{ $row['last_name'] }}</textarea> 
 					 </div> 
 					 <div class="col-md-2">
 					 	
 					 </div>
 				  </div> 					
-				  <div class="form-group  " > 
-					<label for="FirstName" class=" control-label col-md-4 text-left"> 
-					{!! SiteHelpers::activeLang('FirstName', (isset($fields['firstName']['language'])? $fields['firstName']['language'] : array())) !!}	
-					</label>
-					<div class="col-md-6">
-					  <textarea name='firstName' rows='5' id='firstName' class='form-control '  
-				           >{{ $row['firstName'] }}</textarea> 
-					 </div> 
-					 <div class="col-md-2">
-					 	
-					 </div>
-				  </div> 					
-				  <div class="form-group  " > 
-					<label for="Extension" class=" control-label col-md-4 text-left"> 
-					{!! SiteHelpers::activeLang('Extension', (isset($fields['extension']['language'])? $fields['extension']['language'] : array())) !!}	
-					</label>
-					<div class="col-md-6">
-					  <textarea name='extension' rows='5' id='extension' class='form-control '  
-				           >{{ $row['extension'] }}</textarea> 
-					 </div> 
-					 <div class="col-md-2">
-					 	
-					 </div>
-				  </div> 					
-				  <div class="form-group  " > 
+				  <div class="form-group  " >
 					<label for="Email" class=" control-label col-md-4 text-left"> 
 					{!! SiteHelpers::activeLang('Email', (isset($fields['email']['language'])? $fields['email']['language'] : array())) !!}	
 					</label>
@@ -73,42 +49,7 @@
 					 	
 					 </div>
 				  </div> 					
-				  <div class="form-group  " > 
-					<label for="ReportsTo" class=" control-label col-md-4 text-left"> 
-					{!! SiteHelpers::activeLang('ReportsTo', (isset($fields['reportsTo']['language'])? $fields['reportsTo']['language'] : array())) !!}	
-					</label>
-					<div class="col-md-6">
-					  <textarea name='reportsTo' rows='5' id='reportsTo' class='form-control '  
-				           >{{ $row['reportsTo'] }}</textarea> 
-					 </div> 
-					 <div class="col-md-2">
-					 	
-					 </div>
-				  </div> 					
-				  <div class="form-group  " > 
-					<label for="JobTitle" class=" control-label col-md-4 text-left"> 
-					{!! SiteHelpers::activeLang('JobTitle', (isset($fields['jobTitle']['language'])? $fields['jobTitle']['language'] : array())) !!}	
-					</label>
-					<div class="col-md-6">
-					  <textarea name='jobTitle' rows='5' id='jobTitle' class='form-control '  
-				           >{{ $row['jobTitle'] }}</textarea> 
-					 </div> 
-					 <div class="col-md-2">
-					 	
-					 </div>
-				  </div> 					
-				  <div class="form-group  " > 
-					<label for="Foto" class=" control-label col-md-4 text-left"> 
-					{!! SiteHelpers::activeLang('Foto', (isset($fields['foto']['language'])? $fields['foto']['language'] : array())) !!}	
-					</label>
-					<div class="col-md-6">
-					  <textarea name='foto' rows='5' id='foto' class='form-control '  
-				           >{{ $row['foto'] }}</textarea> 
-					 </div> 
-					 <div class="col-md-2">
-					 	
-					 </div>
-				  </div> </fieldset>
+			</fieldset>
 			</div>
 			
 												
