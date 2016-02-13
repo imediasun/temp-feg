@@ -12,8 +12,8 @@
 		  
 	</div>
 	<div class="page-content-wrapper">  
-	
-	
+
+
 	@if(Auth::check() && Auth::user()->group_id == 1)
 
 <section>

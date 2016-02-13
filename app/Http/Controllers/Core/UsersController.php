@@ -44,7 +44,8 @@ class UsersController extends Controller {
 		// End Filter sort and order for query 
 		// Filter Search for query		
 		$filter = (!is_null($request->input('search')) ? $this->buildSearch() : '');
-		$filter .= " AND tb_users.group_id >= '".\Session::get('gid')."'" ;
+		//@todo check if that condition is needed in future
+		//$filter .= " AND tb_users.group_id >= '".\Session::get('gid')."'" ;
 
 		
 		$page = $request->input('page', 1);

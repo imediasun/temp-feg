@@ -131,6 +131,7 @@ function ajaxRemove( id, url )
 function ajaxViewDetail( id , url )
 {
 	$('.ajaxLoading').show();
+	console.log(url);
 	$.get( url ,function( data ) {
 		$( id +'View').html( data );
 		$( id +'Grid').hide( );
