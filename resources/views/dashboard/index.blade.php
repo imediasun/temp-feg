@@ -14,7 +14,7 @@
 	<div class="page-content-wrapper">  
 
 
-	@if(Auth::check() && Auth::user()->group_id == 1)
+	@if(Auth::check() && Auth::user()->group_id == 10)
 
 <section>
 	<div class="row m-l-none m-r-none m-t  white-bg shortcut " >

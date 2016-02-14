@@ -17,7 +17,7 @@ class SximoAuthMiddleware
     {
         $superadmin = app('session')->get('gid');
         
-        if($superadmin !='1')
+        if($superadmin !='10')
         {
             return redirect('dashboard')->with('msgstatus','error')->with('messagetext',$superadmin);
         }

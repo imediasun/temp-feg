@@ -15,10 +15,10 @@ class employee extends Sximo  {
 
 	public static function querySelect(  ){
 		
-		return "  SELECT employees.*, users.user_name,users.loc_1, user_level.user_level
+		return "  SELECT employees.*, users.username,users.loc_1, tb_groups.group_id
 FROM employees 
 JOIN users ON employees.user_id = users.id
-JOIN  user_level ON users.user_level = user_level.id ";
+JOIN  tb_groups ON users.group_id = tb_groups.group_id ";
 	}	
 
 	public static function queryWhere(  ){

@@ -39,10 +39,10 @@
 				
 					<tr>
 						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('User Level', (isset($fields['user_level']['language'])? $fields['user_level']['language'] : array())) }}	
+							{{ SiteHelpers::activeLang('User Level', (isset($fields['user_level']['language'])? $fields['user_level']['language'] : array())) }}
 						</td>
-						<td>{{ $row->user_level }} </td>
-						
+						<td>{{ $row->group_id }} </td>
+
 					</tr>
 				
 					<tr>
