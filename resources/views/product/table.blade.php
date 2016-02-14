@@ -59,13 +59,13 @@
 			  @endif        
 			
            		<?php foreach ($rowData as $row) : 
-           			  $id = $row->productId;
+           			  $id = $row->id;
            		?>
-                <tr class="editable" id="form-{{ $row->productId }}">
+                <tr class="editable" id="form-{{ $row->id }}">
 					<td class="number"> <?php echo ++$i;?>  </td>
-					<td ><input type="checkbox" class="ids" name="ids[]" value="<?php echo $row->productId ;?>" />  </td>					
+					<td ><input type="checkbox" class="ids" name="ids[]" value="<?php echo $row->id ;?>" />  </td>					
 					@if($setting['view-method']=='expand')
-					<td><a href="javascript:void(0)" class="expandable" rel="#row-{{ $row->productId }}" data-url="{{ url('product/show/'.$id) }}"><i class="fa fa-plus " ></i></a></td>								
+					<td><a href="javascript:void(0)" class="expandable" rel="#row-{{ $row->id }}" data-url="{{ url('product/show/'.$id) }}"><i class="fa fa-plus " ></i></a></td>								
 					@endif			
 					 <?php foreach ($tableGrid as $field) :
 					 	if($field['view'] =='1') : 
@@ -81,13 +81,13 @@
 						 <?php endif;					 
 						endforeach; 
 					  ?>
-				 <td data-values="action" data-key="<?php echo $row->productId ;?>">
+				 <td data-values="action" data-key="<?php echo $row->id ;?>">
 					{!! AjaxHelpers::buttonAction('product',$access,$id ,$setting) !!}
-					{!! AjaxHelpers::buttonActionInline($row->productId,'productId') !!}		
+					{!! AjaxHelpers::buttonActionInline($row->id,'id') !!}		
 				</td>			 
                 </tr>
                 @if($setting['view-method']=='expand')
-                <tr style="display:none" class="expanded" id="row-{{ $row->productId }}">
+                <tr style="display:none" class="expanded" id="row-{{ $row->id }}">
                 	<td class="number"></td>
                 	<td></td>
                 	<td></td>

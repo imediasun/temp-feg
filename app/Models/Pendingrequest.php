@@ -3,9 +3,9 @@
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 
-class order extends Sximo  {
+class pendingrequest extends Sximo  {
 	
-	protected $table = 'orders';
+	protected $table = 'requests';
 	protected $primaryKey = 'id';
 
 	public function __construct() {
@@ -15,12 +15,12 @@ class order extends Sximo  {
 
 	public static function querySelect(  ){
 		
-		return "  SELECT orders.* FROM orders  ";
+		return "  SELECT requests.* FROM requests  ";
 	}	
 
 	public static function queryWhere(  ){
 		
-		return "  WHERE orders.id IS NOT NULL ";
+		return "  WHERE requests.id IS NOT NULL ";
 	}
 	
 	public static function queryGroup(){

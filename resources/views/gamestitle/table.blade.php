@@ -3,8 +3,8 @@
 	<div class="sbox-title"> 
 		<h5> <i class="fa fa-table"></i> </h5>
 		<div class="sbox-tools" >
-			<a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Clear Search" onclick="reloadData('#{{ $pageModule }}','order/data?search=')"><i class="fa fa-trash-o"></i> Clear Search </a>
-			<a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Reload Data" onclick="reloadData('#{{ $pageModule }}','order/data?return={{ $return }}')"><i class="fa fa-refresh"></i></a>
+			<a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Clear Search" onclick="reloadData('#{{ $pageModule }}','gamestitle/data?search=')"><i class="fa fa-trash-o"></i> Clear Search </a>
+			<a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Reload Data" onclick="reloadData('#{{ $pageModule }}','gamestitle/data?return={{ $return }}')"><i class="fa fa-refresh"></i></a>
 			@if(Session::get('gid') ==1)
 			<a href="{{ url('sximo/module/config/'.$pageModule) }}" class="btn btn-xs btn-white tips" title=" {{ Lang::get('core.btn_config') }}" ><i class="fa fa-cog"></i></a>
 			@endif 
@@ -14,7 +14,7 @@
 
 	@include( $pageModule.'/toolbar')
 
-	 <?php echo Form::open(array('url'=>'order/delete/', 'class'=>'form-horizontal' ,'id' =>'SximoTable'  ,'data-parsley-validate'=>'' )) ;?>
+	 <?php echo Form::open(array('url'=>'gamestitle/delete/', 'class'=>'form-horizontal' ,'id' =>'SximoTable'  ,'data-parsley-validate'=>'' )) ;?>
 <div class="table-responsive">	
 	@if(count($rowData)>=1)
     <table class="table table-striped  " id="{{ $pageModule }}Table">
@@ -65,7 +65,7 @@
 					<td class="number"> <?php echo ++$i;?>  </td>
 					<td ><input type="checkbox" class="ids" name="ids[]" value="<?php echo $row->id ;?>" />  </td>					
 					@if($setting['view-method']=='expand')
-					<td><a href="javascript:void(0)" class="expandable" rel="#row-{{ $row->id }}" data-url="{{ url('order/show/'.$id) }}"><i class="fa fa-plus " ></i></a></td>								
+					<td><a href="javascript:void(0)" class="expandable" rel="#row-{{ $row->id }}" data-url="{{ url('gamestitle/show/'.$id) }}"><i class="fa fa-plus " ></i></a></td>								
 					@endif			
 					 <?php foreach ($tableGrid as $field) :
 					 	if($field['view'] =='1') : 
@@ -82,7 +82,7 @@
 						endforeach; 
 					  ?>
 				 <td data-values="action" data-key="<?php echo $row->id ;?>">
-					{!! AjaxHelpers::buttonAction('order',$access,$id ,$setting) !!}
+					{!! AjaxHelpers::buttonAction('gamestitle',$access,$id ,$setting) !!}
 					{!! AjaxHelpers::buttonActionInline($row->id,'id') !!}		
 				</td>			 
                 </tr>

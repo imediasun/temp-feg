@@ -15,73 +15,193 @@
 				
 					<tr>
 						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('ProductId', (isset($fields['productId']['language'])? $fields['productId']['language'] : array())) }}	
+							{{ SiteHelpers::activeLang('Id', (isset($fields['id']['language'])? $fields['id']['language'] : array())) }}	
 						</td>
-						<td>{{ $row->productId }} </td>
+						<td>{{ $row->id }} </td>
 						
 					</tr>
 				
 					<tr>
 						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('ProductCode', (isset($fields['productCode']['language'])? $fields['productCode']['language'] : array())) }}	
+							{{ SiteHelpers::activeLang('Sku', (isset($fields['sku']['language'])? $fields['sku']['language'] : array())) }}	
 						</td>
-						<td>{{ $row->productCode }} </td>
+						<td>{{ $row->sku }} </td>
 						
 					</tr>
 				
 					<tr>
 						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('ProductName', (isset($fields['productName']['language'])? $fields['productName']['language'] : array())) }}	
+							{{ SiteHelpers::activeLang('Vendor Description', (isset($fields['vendor_description']['language'])? $fields['vendor_description']['language'] : array())) }}	
 						</td>
-						<td>{{ $row->productName }} </td>
+						<td>{{ $row->vendor_description }} </td>
 						
 					</tr>
 				
 					<tr>
 						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('ProductScale', (isset($fields['productScale']['language'])? $fields['productScale']['language'] : array())) }}	
+							{{ SiteHelpers::activeLang('Item Description', (isset($fields['item_description']['language'])? $fields['item_description']['language'] : array())) }}	
 						</td>
-						<td>{{ $row->productScale }} </td>
+						<td>{{ $row->item_description }} </td>
 						
 					</tr>
 				
 					<tr>
 						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('ProductVendor', (isset($fields['productVendor']['language'])? $fields['productVendor']['language'] : array())) }}	
+							{{ SiteHelpers::activeLang('Size', (isset($fields['size']['language'])? $fields['size']['language'] : array())) }}	
 						</td>
-						<td>{{ $row->productVendor }} </td>
+						<td>{{ $row->size }} </td>
 						
 					</tr>
 				
 					<tr>
 						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('ProductDescription', (isset($fields['productDescription']['language'])? $fields['productDescription']['language'] : array())) }}	
+							{{ SiteHelpers::activeLang('Details', (isset($fields['details']['language'])? $fields['details']['language'] : array())) }}	
 						</td>
-						<td>{{ $row->productDescription }} </td>
+						<td>{{ $row->details }} </td>
 						
 					</tr>
 				
 					<tr>
 						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('QuantityInStock', (isset($fields['quantityInStock']['language'])? $fields['quantityInStock']['language'] : array())) }}	
+							{{ SiteHelpers::activeLang('Num Items', (isset($fields['num_items']['language'])? $fields['num_items']['language'] : array())) }}	
 						</td>
-						<td>{{ $row->quantityInStock }} </td>
+						<td>{{ $row->num_items }} </td>
 						
 					</tr>
 				
 					<tr>
 						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('BuyPrice', (isset($fields['buyPrice']['language'])? $fields['buyPrice']['language'] : array())) }}	
+							{{ SiteHelpers::activeLang('Vendor Id', (isset($fields['vendor_id']['language'])? $fields['vendor_id']['language'] : array())) }}	
 						</td>
-						<td>{{ $row->buyPrice }} </td>
+						<td>{{ $row->vendor_id }} </td>
 						
 					</tr>
 				
 					<tr>
 						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('MSRP', (isset($fields['MSRP']['language'])? $fields['MSRP']['language'] : array())) }}	
+							{{ SiteHelpers::activeLang('Unit Price', (isset($fields['unit_price']['language'])? $fields['unit_price']['language'] : array())) }}	
 						</td>
-						<td>{{ $row->MSRP }} </td>
+						<td>{{ $row->unit_price }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Case Price', (isset($fields['case_price']['language'])? $fields['case_price']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->case_price }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Retail Price', (isset($fields['retail_price']['language'])? $fields['retail_price']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->retail_price }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Ticket Value', (isset($fields['ticket_value']['language'])? $fields['ticket_value']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->ticket_value }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Prod Type Id', (isset($fields['prod_type_id']['language'])? $fields['prod_type_id']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->prod_type_id }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Prod Sub Type Id', (isset($fields['prod_sub_type_id']['language'])? $fields['prod_sub_type_id']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->prod_sub_type_id }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Is Reserved', (isset($fields['is_reserved']['language'])? $fields['is_reserved']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->is_reserved }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Reserved Qty', (isset($fields['reserved_qty']['language'])? $fields['reserved_qty']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->reserved_qty }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Min Order Amt', (isset($fields['min_order_amt']['language'])? $fields['min_order_amt']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->min_order_amt }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Img', (isset($fields['img']['language'])? $fields['img']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->img }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Inactive', (isset($fields['inactive']['language'])? $fields['inactive']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->inactive }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Eta', (isset($fields['eta']['language'])? $fields['eta']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->eta }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('In Development', (isset($fields['in_development']['language'])? $fields['in_development']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->in_development }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Limit To Loc Group Id', (isset($fields['limit_to_loc_group_id']['language'])? $fields['limit_to_loc_group_id']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->limit_to_loc_group_id }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Date Added', (isset($fields['date_added']['language'])? $fields['date_added']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->date_added }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Hot Item', (isset($fields['hot_item']['language'])? $fields['hot_item']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->hot_item }} </td>
 						
 					</tr>
 				

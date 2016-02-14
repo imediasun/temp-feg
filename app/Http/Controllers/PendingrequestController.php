@@ -1,22 +1,22 @@
 <?php namespace App\Http\Controllers;
 
 use App\Http\Controllers\controller;
-use App\Models\Order;
+use App\Models\Pendingrequest;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Validator, Input, Redirect ; 
 
-class OrderController extends Controller {
+class PendingrequestController extends Controller {
 
 	protected $layout = "layouts.main";
 	protected $data = array();	
-	public $module = 'order';
+	public $module = 'pendingrequest';
 	static $per_page	= '10';
 	
 	public function __construct() 
 	{
 		parent::__construct();
-		$this->model = new Order();
+		$this->model = new Pendingrequest();
 		
 		$this->info = $this->model->makeInfo( $this->module);
 		$this->access = $this->model->validAccess($this->info['id']);
@@ -24,8 +24,8 @@ class OrderController extends Controller {
 		$this->data = array(
 			'pageTitle'			=> 	$this->info['title'],
 			'pageNote'			=>  $this->info['note'],
-			'pageModule'		=> 'order',
-			'pageUrl'			=>  url('order'),
+			'pageModule'		=> 'pendingrequest',
+			'pageUrl'			=>  url('pendingrequest'),
 			'return' 			=> 	self::returnUrl()	
 		);
 		
@@ -39,7 +39,7 @@ class OrderController extends Controller {
 			return Redirect::to('dashboard')->with('messagetext',\Lang::get('core.note_restric'))->with('msgstatus','error');
 				
 		$this->data['access']		= $this->access;	
-		return view('order.index',$this->data);
+		return view('pendingrequest.index',$this->data);
 	}	
 
 	public function postData( Request $request)
@@ -66,7 +66,7 @@ class OrderController extends Controller {
 		// Build pagination setting
 		$page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;	
 		$pagination = new Paginator($results['rows'], $results['total'], $params['limit']);	
-		$pagination->setPath('order/data');
+		$pagination->setPath('pendingrequest/data');
 		
 		$this->data['param']		= $params;
 		$this->data['rowData']		= $results['rows'];
@@ -88,7 +88,7 @@ class OrderController extends Controller {
 		// Master detail link if any 
 		$this->data['subgrid']	= (isset($this->info['config']['subgrid']) ? $this->info['config']['subgrid'] : array()); 
 		// Render into template
-		return view('order.table',$this->data);
+		return view('pendingrequest.table',$this->data);
 
 	}
 
@@ -113,14 +113,14 @@ class OrderController extends Controller {
 		{
 			$this->data['row'] 		=  $row;
 		} else {
-			$this->data['row'] 		= $this->model->getColumnTable('orders'); 
+			$this->data['row'] 		= $this->model->getColumnTable('requests'); 
 		}
 		$this->data['setting'] 		= $this->info['setting'];
 		$this->data['fields'] 		=  \AjaxHelpers::fieldLang($this->info['config']['forms']);
 		
 		$this->data['id'] = $id;
 
-		return view('order.form',$this->data);
+		return view('pendingrequest.form',$this->data);
 	}	
 
 	public function getShow( $id = null)
@@ -135,21 +135,21 @@ class OrderController extends Controller {
 		{
 			$this->data['row'] =  $row;
 		} else {
-			$this->data['row'] = $this->model->getColumnTable('orders'); 
+			$this->data['row'] = $this->model->getColumnTable('requests'); 
 		}
 		
 		$this->data['id'] = $id;
 		$this->data['access']		= $this->access;
 		$this->data['setting'] 		= $this->info['setting'];
 		$this->data['fields'] 		= \AjaxHelpers::fieldLang($this->info['config']['forms']);
-		return view('order.view',$this->data);	
+		return view('pendingrequest.view',$this->data);	
 	}	
 
 
 	function postCopy( Request $request)
 	{
 		
-	    foreach(\DB::select("SHOW COLUMNS FROM orders ") as $column)
+	    foreach(\DB::select("SHOW COLUMNS FROM requests ") as $column)
         {
 			if( $column->Field != 'id')
 				$columns[] = $column->Field;
@@ -157,8 +157,8 @@ class OrderController extends Controller {
 		$toCopy = implode(",",$request->input('ids'));
 		
 				
-		$sql = "INSERT INTO orders (".implode(",", $columns).") ";
-		$sql .= " SELECT ".implode(",", $columns)." FROM orders WHERE id IN (".$toCopy.")";
+		$sql = "INSERT INTO requests (".implode(",", $columns).") ";
+		$sql .= " SELECT ".implode(",", $columns)." FROM requests WHERE id IN (".$toCopy.")";
 		\DB::insert($sql);
 		return response()->json(array(
 			'status'=>'success',
@@ -172,7 +172,7 @@ class OrderController extends Controller {
 		$rules = $this->validateForm();
 		$validator = Validator::make($request->all(), $rules);	
 		if ($validator->passes()) {
-			$data = $this->validatePost('orders');
+			$data = $this->validatePost('requests');
 			
 			$id = $this->model->insertRow($data , $request->input('id'));
 			
