@@ -191,7 +191,6 @@ class SbticketController extends Controller {
 
 	function postSave( Request $request, $id =0)
 	{
-		
 		$rules = $this->validateForm();
 		$validator = Validator::make($request->all(), $rules);	
 		if ($validator->passes()) {
@@ -271,6 +270,12 @@ class SbticketController extends Controller {
 			$ticketsData['updated'] = date("Y-m-d",time());
 			$commentsData['USERNAME'] = \Session::get('fid');
 			$comment_model = new Ticketcomment();
+			$TicketID = $request->input('TicketID');
+			$total_comments = \DB::select("Select * FROM sb_ticketcomments WHERE TicketID = ". $TicketID ."");
+			if(count($total_comments) == 0){
+				$ticketsData['Status'] = 'inqueue';
+			}
+
 			//re-populate info array to ticket comments module
 			$this->info = $comment_model->makeInfo('ticketcomment');
 			$commentsData = $this->validatePost('sb_ticketcomments');

@@ -99,6 +99,8 @@
                                     }elseif($field['field']=='Created'){
                                         $date=date("m/d/Y", strtotime($row->Created));
                                         echo $date;
+                                    }elseif($field['field']=='game_id'){
+                                        echo $row->game_id;
                                     }
                                     elseif($field['field']=='Status'){
                                         if($row->Status=='inqueue')
