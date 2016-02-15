@@ -7,7 +7,6 @@
                     Route::controller('sbproduct', 'SbproductController');
                     Route::controller('employee', 'EmployeeController');
                     Route::controller('customer', 'CustomerController');
-                    Route::controller('order', 'OrderController');
                     Route::controller('orderdetail', 'OrderdetailController');
                     Route::controller('product', 'ProductController');
                     Route::controller('reports', 'ReportsController');
@@ -19,4 +18,7 @@
                     Route::controller('game', 'GameController');
                     Route::controller('gamesdown', 'GamesdownController');
                     Route::controller('ticketcomment', 'TicketcommentController');
+                    Route::controller('gamestitle', 'GamestitleController');
+                    Route::controller('order', 'OrderController');
+                    Route::controller('pendingrequest', 'PendingrequestController');
                     ?>

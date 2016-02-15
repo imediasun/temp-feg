@@ -54,7 +54,7 @@
 								  <div class="form-group  " >
 									<label for="Username" class=" control-label col-md-4 text-left"> Username <span class="asterix"> * </span></label>
 									<div class="col-md-6">
-									  {!! Form::text('username', $row['username'],array('class'=>'form-control', 'placeholder'=>'', 'required'=>'true'  )) !!} 
+									  {!! Form::text('username', $row['username'],array('class'=>'form-control', 'placeholder'=>'', 'required'=>'true'  )) !!}
 									 </div> 
 									 <div class="col-md-2">
 									 	

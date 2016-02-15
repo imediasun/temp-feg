@@ -28,8 +28,8 @@
 				@endforeach	
 			</ul>
 		</li>	
-		@endif			
-		@if(Auth::user()->group_id == 1)
+		@endif
+		@if(Auth::user()->group_id == 10)
 		<li class="user dropdown"><a class="dropdown-toggle" href="javascript:void(0)"  data-toggle="dropdown"><i class="fa fa-desktop"></i> <span>{{ Lang::get('core.m_controlpanel') }}</span><i class="caret"></i></a>
 		  <ul class="dropdown-menu dropdown-menu-right icons-right">
 		   

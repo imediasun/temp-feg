@@ -113,7 +113,7 @@ class ProductController extends Controller {
 		{
 			$this->data['row'] 		=  $row;
 		} else {
-			$this->data['row'] 		= $this->model->getColumnTable('tb_products'); 
+			$this->data['row'] 		= $this->model->getColumnTable('products'); 
 		}
 		$this->data['setting'] 		= $this->info['setting'];
 		$this->data['fields'] 		=  \AjaxHelpers::fieldLang($this->info['config']['forms']);
@@ -135,7 +135,7 @@ class ProductController extends Controller {
 		{
 			$this->data['row'] =  $row;
 		} else {
-			$this->data['row'] = $this->model->getColumnTable('tb_products'); 
+			$this->data['row'] = $this->model->getColumnTable('products'); 
 		}
 		
 		$this->data['id'] = $id;
@@ -149,16 +149,16 @@ class ProductController extends Controller {
 	function postCopy( Request $request)
 	{
 		
-	    foreach(\DB::select("SHOW COLUMNS FROM tb_products ") as $column)
+	    foreach(\DB::select("SHOW COLUMNS FROM products ") as $column)
         {
-			if( $column->Field != 'productId')
+			if( $column->Field != 'id')
 				$columns[] = $column->Field;
         }
 		$toCopy = implode(",",$request->input('ids'));
 		
 				
-		$sql = "INSERT INTO tb_products (".implode(",", $columns).") ";
-		$sql .= " SELECT ".implode(",", $columns)." FROM tb_products WHERE productId IN (".$toCopy.")";
+		$sql = "INSERT INTO products (".implode(",", $columns).") ";
+		$sql .= " SELECT ".implode(",", $columns)." FROM products WHERE id IN (".$toCopy.")";
 		\DB::insert($sql);
 		return response()->json(array(
 			'status'=>'success',
@@ -172,9 +172,9 @@ class ProductController extends Controller {
 		$rules = $this->validateForm();
 		$validator = Validator::make($request->all(), $rules);	
 		if ($validator->passes()) {
-			$data = $this->validatePost('tb_products');
+			$data = $this->validatePost('products');
 			
-			$id = $this->model->insertRow($data , $request->input('productId'));
+			$id = $this->model->insertRow($data , $request->input('id'));
 			
 			return response()->json(array(
 				'status'=>'success',

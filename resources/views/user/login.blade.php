@@ -9,10 +9,6 @@
 				
 	</div>
 	<div class="sbox-content">
-	<!--<div class="text-center  animated fadeInDown delayp1">
-		<img src="{{ asset('sximo/images/logo-sximo.png')}}" />
-	</div>-->
- 
 	    	@if(Session::has('message'))
 				{!! Session::get('message') !!}
 			@endif
