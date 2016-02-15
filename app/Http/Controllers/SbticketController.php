@@ -44,7 +44,7 @@ class SbticketController extends Controller {
 	}	
 
 	public function postData( Request $request)
-	{ 
+	{
 		$sort = (!is_null($request->input('sort')) ? $request->input('sort') : $this->info['setting']['orderby']);
 		$order = (!is_null($request->input('order')) ? $request->input('order') : $this->info['setting']['ordertype']);
 		// End Filter sort and order for query 
@@ -61,24 +61,52 @@ class SbticketController extends Controller {
 			'global'	=> (isset($this->access['is_global']) ? $this->access['is_global'] : 0 )
 		);
 		// Get Query 
-		$results = $this->model->getRows( $params );		
-		
+		$results = $this->model->getRows( $params );
 		// Build pagination setting
 		$page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;	
 		$pagination = new Paginator($results['rows'], $results['total'], $params['limit']);	
 		$pagination->setPath('sbticket/data');
 		$rows = $results['rows'];
 		$comments = new Ticketcomment();
-		foreach($rows as $row)
+
+		$user_id = \Session::get('uid');
+		$group_id = \Session::get('gid');
+		foreach($rows as $index => $row)
 		{
+			$flag = 1;
 			//$row->comments = $comments->where('TicketID', '=', $row->TicketID)->orderBy('TicketID', 'desc')->take(1)->get();
+			$department_memebers = \DB::select("Select assign_employee_ids FROM departments WHERE id = ".$row->department_id ."");
+			$department_memebers = explode(',',$department_memebers[0]->assign_employee_ids);
+
 			$assign_employee_ids = explode(',' ,$row->assign_to);
-			$assign_employee_names = array();
-			foreach($assign_employee_ids as $key => $value)
+
+			$members_access = array_unique(array_merge($assign_employee_ids,$department_memebers));
+			foreach($members_access as $i => $id)
 			{
-				$assign_employee_names[$key] = \DB::select("Select first_name,last_name FROM employees WHERE id = ".$value ."");
+				$get_user_id_from_employess = \DB::select("Select user_id FROM employees WHERE id = ".$id ."");
+				$members_access[$i] = $get_user_id_from_employess[0]->user_id;
 			}
-			$row->assign_employee_names = $assign_employee_names;
+
+			if($group_id != 10)
+			{
+				if(!in_array($user_id,array_unique($members_access)))
+				{
+					$flag = 0;
+				}
+			}
+
+			if($flag == 1)
+			{
+				$assign_employee_names = array();
+				foreach ($assign_employee_ids as $key => $value) {
+					$assign_employee_names[$key] = \DB::select("Select first_name,last_name FROM employees WHERE id = " . $value . "");
+				}
+				$row->assign_employee_names = $assign_employee_names;
+			}
+			else
+			{
+				unset($rows[$index]);
+			}
 		}
 
 		$this->data['param']		= $params;
