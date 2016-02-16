@@ -61,15 +61,24 @@ class ProductController extends Controller {
 			'global'	=> (isset($this->access['is_global']) ? $this->access['is_global'] : 0 )
 		);
 		// Get Query 
-		$results = $this->model->getRows( $params );		
-		
+		$results = $this->model->getRows( $params );
+		$rows = $results['rows'];
+		foreach($rows as $index => $data)
+		{
+			$product_type = \DB::select("Select product_type FROM product_type WHERE id = ".$data->prod_type_id ."");
+			$rows[$index]->prod_type_id = (isset($product_type[0]->product_type) ? $product_type[0]->product_type : '');
+			$product_sub_type = \DB::select("Select product_type FROM product_type WHERE id = ".$data->prod_sub_type_id ."");
+			$rows[$index]->prod_sub_type_id = (isset($product_sub_type[0]->product_type) ? $product_sub_type[0]->product_type : '');
+			$vendor = \DB::select("Select vendor_name FROM vendor WHERE id = ".$data->vendor_id ."");
+			$rows[$index]->vendor_id = (isset($vendor[0]->vendor_name) ? $vendor[0]->vendor_name : '');
+		}
 		// Build pagination setting
 		$page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;	
 		$pagination = new Paginator($results['rows'], $results['total'], $params['limit']);	
 		$pagination->setPath('product/data');
 		
 		$this->data['param']		= $params;
-		$this->data['rowData']		= $results['rows'];
+		$this->data['rowData']		= $rows;
 		// Build Pagination 
 		$this->data['pagination']	= $pagination;
 		// Build pager number and append current param GET

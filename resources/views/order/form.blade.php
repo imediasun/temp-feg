@@ -11,7 +11,7 @@
 @endif	
 			{!! Form::open(array('url'=>'order/save/'.SiteHelpers::encryptID($row['id']), 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'orderFormAjax')) !!}
 			<div class="col-md-12">
-						<fieldset><legend> FEG Orders</legend>
+						<fieldset><legend> FEG order</legend>
 									
 				  <div class="form-group  " > 
 					<label for="Id" class=" control-label col-md-4 text-left"> 

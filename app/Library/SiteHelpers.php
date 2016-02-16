@@ -1153,8 +1153,8 @@ public static function alphaID($in, $to_num = false, $pad_up = false, $passKey =
 		
 	
 	public static function showUploadedFile($file,$path , $width = 50) {
-	
-		$files =  public_path(). $path . $file ;		
+
+		$files =  public_path(). $path . $file ;
 		if(file_exists($files ) && $file !="") {
 		//	echo $files ;
 			$info = pathinfo($files);	

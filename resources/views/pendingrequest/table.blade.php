@@ -22,15 +22,24 @@
 			<tr>
 				<th width="20"> No </th>
 				<th width="30"> <input type="checkbox" class="checkall" /></th>		
-				@if($setting['view-method']=='expand') <th>  </th> @endif			
-				<?php foreach ($tableGrid as $t) :
+				@if($setting['view-method']=='expand') <th>  </th> @endif
+				<?php $col = 0; ?>
+				<?php foreach ($tableGrid as $t) : ?>
+					@if($col == 8 )
+						<?php echo '<th align="'.$t['align'].'" width="'.$t['width'].'">'.'Total Cost'.'</th>'; ?>
+					@endif
+					@if($col == 4 )
+						<?php echo '<th align="'.$t['align'].'" width="'.$t['width'].'">'.'Vendor'.'</th>'; ?>
+					@endif
+					<?php
 					if($t['view'] =='1'):
 						$limited = isset($t['limited']) ? $t['limited'] :'';
 						if(SiteHelpers::filterColumn($limited ))
 						{
-							echo '<th align="'.$t['align'].'" width="'.$t['width'].'">'.\SiteHelpers::activeLang($t['label'],(isset($t['language'])? $t['language'] : array())).'</th>';				
+							echo '<th align="'.$t['align'].'" width="'.$t['width'].'">'.\SiteHelpers::activeLang($t['label'],(isset($t['language'])? $t['language'] : array())).'</th>';
 						} 
 					endif;
+				$col++;
 				endforeach; ?>
 				<th width="70"><?php echo Lang::get('core.btn_action') ;?></th>
 			  </tr>
@@ -67,18 +76,28 @@
 					@if($setting['view-method']=='expand')
 					<td><a href="javascript:void(0)" class="expandable" rel="#row-{{ $row->id }}" data-url="{{ url('pendingrequest/show/'.$id) }}"><i class="fa fa-plus " ></i></a></td>								
 					@endif			
-					 <?php foreach ($tableGrid as $field) :
-					 	if($field['view'] =='1') : 
-							$conn = (isset($field['conn']) ? $field['conn'] : array() );
-							$value = AjaxHelpers::gridFormater($row->$field['field'], $row , $field['attribute'],$conn);
-						 	?>
-						 	<?php $limited = isset($field['limited']) ? $field['limited'] :''; ?>
-						 	@if(SiteHelpers::filterColumn($limited ))
-								 <td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}" data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">					 
-									{!! $value !!}							 
-								 </td>
-							@endif	
-						 <?php endif;					 
+					 <?php $col = 0;
+						foreach ($tableGrid as $field) :
+					 	if($field['view'] =='1') : ?>
+							@if($col == 8 )
+								<td><?php echo $row->total_cost; ?></td>
+							@elseif($col == 5 )
+								<td><?php echo $row->vendor_description; ?></td>
+							@endif
+							<?php
+								$conn = (isset($field['conn']) ? $field['conn'] : array() );
+								$value = AjaxHelpers::gridFormater($row->$field['field'], $row , $field['attribute'],$conn);
+								?>
+								<?php $limited = isset($field['limited']) ? $field['limited'] :''; ?>
+								@if(SiteHelpers::filterColumn($limited ))
+									 <td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}" data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
+										{!! $value !!}
+									 </td>
+								@endif
+						 <?php
+
+					     endif;
+						 $col++;
 						endforeach; 
 					  ?>
 				 <td data-values="action" data-key="<?php echo $row->id ;?>">

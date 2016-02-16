@@ -43,7 +43,7 @@ class PendingrequestController extends Controller {
 	}	
 
 	public function postData( Request $request)
-	{ 
+	{
 		$sort = (!is_null($request->input('sort')) ? $request->input('sort') : $this->info['setting']['orderby']); 
 		$order = (!is_null($request->input('order')) ? $request->input('order') : $this->info['setting']['ordertype']);
 		// End Filter sort and order for query 
@@ -61,15 +61,53 @@ class PendingrequestController extends Controller {
 			'global'	=> (isset($this->access['is_global']) ? $this->access['is_global'] : 0 )
 		);
 		// Get Query 
-		$results = $this->model->getRows( $params );		
-		
+		$results = $this->model->getRows( $params );
 		// Build pagination setting
 		$page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;	
 		$pagination = new Paginator($results['rows'], $results['total'], $params['limit']);	
 		$pagination->setPath('pendingrequest/data');
-		
+		$rows = $results['rows'];
+		foreach($rows as $index => $data)
+		{
+
+			$product = \DB::select("Select unit_price,vendor_id FROM products WHERE id = ".$data->product_id ."");
+
+			if(isset($product[0]->vendor_id))
+			{
+				$vendor = \DB::select("Select vendor_name FROM vendor WHERE id = ".$product[0]->vendor_id ."");
+
+			}
+			$rows[$index]->vendor_description = (isset($vendor[0]->vendor_name) ? $vendor[0]->vendor_name : '');
+			$product = (isset($product[0]->unit_price) ? $product[0]->unit_price : 0.00000);
+			$rows[$index]->total_cost = $product * (isset($data->qty) ? $data->qty : 0);
+
+			$user = \DB::select("Select username FROM users WHERE id = ".$data->request_user_id ."");
+			$rows[$index]->request_user_id = (isset($user[0]->username) ? $user[0]->username : '');
+
+			if($data->status_id == 2)
+			{
+				$rows[$index]->status_id = 'Approved';
+			}
+			elseif($data->status_id == 3)
+			{
+				$rows[$index]->status_id = 'Denied';
+			}
+			if($data->process_date == "0000-00-00")
+			{
+				$rows[$index]->process_date = '00/00/0000';
+			}
+			else
+			{
+				$rows[$index]->process_date = date("m/d/Y", strtotime($data->process_date));
+			}
+			$rows[$index]->request_date = date("m/d/Y", strtotime($data->request_date));
+			$location = \DB::select("Select location_name FROM location WHERE id = ".$data->location_id ."");
+			$rows[$index]->location_id = (isset($location[0]->location_name) ? $location[0]->location_name : '');
+
+		}
+
 		$this->data['param']		= $params;
-		$this->data['rowData']		= $results['rows'];
+		$this->data['rowData']		= $rows;
 		// Build Pagination 
 		$this->data['pagination']	= $pagination;
 		// Build pager number and append current param GET

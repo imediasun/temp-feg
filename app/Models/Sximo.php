@@ -9,7 +9,7 @@ class Sximo extends Model {
 	{
        $table = with(new static)->table;
 	   $key = with(new static)->primaryKey;
-	   
+
         extract( array_merge( array(
 			'page' 		=> '0' ,
 			'limit'  	=> '0' ,
@@ -18,28 +18,34 @@ class Sximo extends Model {
 			'params' 	=> '' ,
 			'global'	=> 1	  
         ), $args ));
-		
-		$offset = ($page-1) * $limit ;	
+
+		$offset = ($page-1) * $limit ;
 		$limitConditional = ($page !=0 && $limit !=0) ? "LIMIT  $offset , $limit" : '';	
 		$orderConditional = ($sort !='' && $order !='') ?  " ORDER BY {$sort} {$order} " : '';
 
 		// Update permission global / own access new ver 1.1
 		$table = with(new static)->table;
 		if($global == 0 )
-				$params .= " AND {$table}.entry_by ='".\Session::get('uid')."'"; 	
+				$params .= " AND {$table}.entry_by ='".\Session::get('uid')."'";
 		// End Update permission global / own access new ver 1.1
 
 		$rows = array();
 	    $result = \DB::select( self::querySelect() . self::queryWhere(). " 
 				{$params} ". self::queryGroup() ." {$orderConditional}  {$limitConditional} ");
-		
+
 		if($key =='' ) { $key ='*'; } else { $key = $table.".".$key ; }	
-		$counter_select = preg_replace( '/[\s]*SELECT(.*)FROM/Usi', 'SELECT count('.$key.') as total FROM', self::querySelect() ); 	
+		$counter_select = preg_replace( '/[\s]*SELECT(.*)FROM/Usi', 'SELECT count('.$key.') as total FROM', self::querySelect() );
 		//total query becomes too huge
-		$total = \DB::select( self::querySelect() . self::queryWhere(). "
+		if($table == "orders")
+		{
+			$total = 2000;
+		}
+		else
+		{
+			$total = \DB::select( self::querySelect() . self::queryWhere(). "
 				{$params} ". self::queryGroup() ." {$orderConditional}  ");
-		$total = count($total);
-		
+			$total = count($total);
+		}
 		//$total = 1000;
 		return $results = array('rows'=> $result , 'total' => $total);
 

@@ -19,6 +19,6 @@
                     Route::controller('gamesdown', 'GamesdownController');
                     Route::controller('ticketcomment', 'TicketcommentController');
                     Route::controller('gamestitle', 'GamestitleController');
-                    Route::controller('order', 'OrderController');
                     Route::controller('pendingrequest', 'PendingrequestController');
+                    Route::controller('order', 'OrderController');
                     ?>
