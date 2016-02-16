@@ -43,6 +43,16 @@ class SbticketController extends Controller {
 		return view('sbticket.index',$this->data);
 	}	
 
+	public function getSetting()
+	{
+		$individuals = \DB::select("Select id,first_name,last_name FROM users");
+		$roles = \DB::select("Select group_id,name FROM tb_groups");
+
+		$this->data['roles']		= $roles;
+		$this->data['individuals']		= $individuals;
+		$this->data['access']		= $this->access;
+		return view('sbticket.setting',$this->data);
+	}
 	public function postData( Request $request)
 	{
 		$sort = (!is_null($request->input('sort')) ? $request->input('sort') : $this->info['setting']['orderby']);

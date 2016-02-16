@@ -18,16 +18,16 @@ class UserController extends Controller {
 	} 
 
 	public function getRegister() {
-        
+
 		if(CNF_REGIST =='false') :    
 			if(\Auth::check()):
 				 return Redirect::to('')->with('message',\SiteHelpers::alert('success','Youre already login'));
 			else:
 				 return Redirect::to('user/login');
 			  endif;
-			  
+
 		else :
-				
+
 				return view('user.register');  
 		 endif ; 
            
@@ -36,7 +36,6 @@ class UserController extends Controller {
 	}
 
 	public function postCreate( Request $request) {
-	
 		$rules = array(
 			'firstname'=>'required|alpha_num|min:2',
 			'lastname'=>'required|alpha_num|min:2',
@@ -50,15 +49,17 @@ class UserController extends Controller {
 
 		if ($validator->passes()) {
 			$code = rand(10000,10000000);
-			
+
 			$authen = new User;
 			$authen->first_name = $request->input('firstname');
 			$authen->last_name = $request->input('lastname');
 			$authen->email = trim($request->input('email'));
-			$authen->activation = $code;
-			$authen->group_id = 3;
+			$authen->remember_token = $code;
+			$authen->group_id = 1;
+			$authen->approved = 1;
 			$authen->password = \Hash::make($request->input('password'));
-			if(CNF_ACTIVATION == 'auto') { $authen->active = '1'; } else { $authen->active = '0'; }
+
+			if(CNF_ACTIVATION != 'auto') { $authen->active = '1'; } else { $authen->active = '0'; }
 			$authen->save();
 			
 			$data = array(
@@ -69,7 +70,7 @@ class UserController extends Controller {
 				'code'		=> $code
 				
 			);
-			if(CNF_ACTIVATION == 'confirmation')
+			if(CNF_ACTIVATION != 'confirmation')
 			{ 
 			
 				$to = $request->input('email');
