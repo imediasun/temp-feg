@@ -2,10 +2,11 @@
 
 use App\Http\Controllers\controller;
 use App\Models\Sbticket;
+use App\Models\SbticketSetting;
 use App\Models\Ticketcomment;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
-use Validator, Input, Redirect ; 
+use Validator, Input, Redirect ;
 
 class SbticketController extends Controller {
 
@@ -13,52 +14,42 @@ class SbticketController extends Controller {
 	protected $data = array();
 	public $module = 'sbticket';
 	static $per_page	= '10';
-	
-	public function __construct() 
+
+	public function __construct()
 	{
 		parent::__construct();
 		$this->model = new Sbticket();
-		
+
 		$this->info = $this->model->makeInfo($this->module);
 		$this->access = $this->model->validAccess($this->info['id']);
-	
+
 		$this->data = array(
 			'pageTitle'			=> 	$this->info['title'],
 			'pageNote'			=>  $this->info['note'],
 			'pageModule'		=> 'sbticket',
 			'pageUrl'			=>  url('sbticket'),
-			'return' 			=> 	self::returnUrl()	
+			'return' 			=> 	self::returnUrl()
 		);
-		
-			
-				
-	} 
-	
+
+
+
+	}
+
 	public function getIndex()
 	{
-		if($this->access['is_view'] ==0) 
+		if($this->access['is_view'] ==0)
 			return Redirect::to('dashboard')->with('messagetext',\Lang::get('core.note_restric'))->with('msgstatus','error');
-				
-		$this->data['access']		= $this->access;	
-		return view('sbticket.index',$this->data);
-	}	
 
-	public function getSetting()
-	{
-		$individuals = \DB::select("Select id,first_name,last_name FROM users");
-		$roles = \DB::select("Select group_id,name FROM tb_groups");
-
-		$this->data['roles']		= $roles;
-		$this->data['individuals']		= $individuals;
 		$this->data['access']		= $this->access;
-		return view('sbticket.setting',$this->data);
+		return view('sbticket.index',$this->data);
 	}
+
 	public function postData( Request $request)
 	{
 		$sort = (!is_null($request->input('sort')) ? $request->input('sort') : $this->info['setting']['orderby']);
 		$order = (!is_null($request->input('order')) ? $request->input('order') : $this->info['setting']['ordertype']);
-		// End Filter sort and order for query 
-		// Filter Search for query		
+		// End Filter sort and order for query
+		// Filter Search for query
 		$filter = (!is_null($request->input('search')) ? $this->buildSearch() : "AND sb_tickets.Status != 'close'");
 
 		$page = $request->input('page', 1);
@@ -70,11 +61,11 @@ class SbticketController extends Controller {
 			'params'	=> $filter,
 			'global'	=> (isset($this->access['is_global']) ? $this->access['is_global'] : 0 )
 		);
-		// Get Query 
+		// Get Query
 		$results = $this->model->getRows( $params );
 		// Build pagination setting
-		$page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;	
-		$pagination = new Paginator($results['rows'], $results['total'], $params['limit']);	
+		$page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;
+		$pagination = new Paginator($results['rows'], $results['total'], $params['limit']);
 		$pagination->setPath('sbticket/data');
 		$rows = $results['rows'];
 		$comments = new Ticketcomment();
@@ -121,65 +112,65 @@ class SbticketController extends Controller {
 
 		$this->data['param']		= $params;
 		$this->data['rowData']		= $rows;
-		// Build Pagination 
+		// Build Pagination
 		$this->data['pagination']	= $pagination;
 		// Build pager number and append current param GET
-		$this->data['pager'] 		= $this->injectPaginate();	
-		// Row grid Number 
-		$this->data['i']			= ($page * $params['limit'])- $params['limit']; 
-		// Grid Configuration 
+		$this->data['pager'] 		= $this->injectPaginate();
+		// Row grid Number
+		$this->data['i']			= ($page * $params['limit'])- $params['limit'];
+		// Grid Configuration
 		$this->data['tableGrid'] 	= $this->info['config']['grid'];
 		$this->data['tableForm'] 	= $this->info['config']['forms'];
-		$this->data['colspan'] 		= \SiteHelpers::viewColSpan($this->info['config']['grid']);		
+		$this->data['colspan'] 		= \SiteHelpers::viewColSpan($this->info['config']['grid']);
 		// Group users permission
 		$this->data['access']		= $this->access;
 		// Detail from master if any
 		$this->data['setting'] 		= $this->info['setting'];
-		
-		// Master detail link if any 
-		$this->data['subgrid']	= (isset($this->info['config']['subgrid']) ? $this->info['config']['subgrid'] : array()); 
+
+		// Master detail link if any
+		$this->data['subgrid']	= (isset($this->info['config']['subgrid']) ? $this->info['config']['subgrid'] : array());
 		// Render into template
 		return view('sbticket.table',$this->data);
 
 	}
 
-			
+
 	function getUpdate(Request $request, $id = null)
 	{
 
 		if($id =='')
 		{
 			if($this->access['is_add'] ==0 )
-			return Redirect::to('dashboard')->with('messagetext',\Lang::get('core.note_restric'))->with('msgstatus','error');
-		}	
-		
+				return Redirect::to('dashboard')->with('messagetext',\Lang::get('core.note_restric'))->with('msgstatus','error');
+		}
+
 		if($id !='')
 		{
 			if($this->access['is_edit'] ==0 )
-			return Redirect::to('dashboard')->with('messagetext',\Lang::get('core.note_restric'))->with('msgstatus','error');
-		}				
-				
+				return Redirect::to('dashboard')->with('messagetext',\Lang::get('core.note_restric'))->with('msgstatus','error');
+		}
+
 		$row = $this->model->find($id);
 		if($row)
 		{
 			$this->data['row'] 		=  $row;
 		} else {
-			$this->data['row'] 		= $this->model->getColumnTable('sb_tickets'); 
+			$this->data['row'] 		= $this->model->getColumnTable('sb_tickets');
 		}
 		$this->data['setting'] 		= $this->info['setting'];
 		$this->data['fields'] 		=  \AjaxHelpers::fieldLang($this->info['config']['forms']);
-		
+
 		$this->data['id'] = $id;
 
 		return view('sbticket.form',$this->data);
-	}	
+	}
 
 	public function getShow( $id = null)
 	{
 		if($this->access['is_detail'] ==0)
 			return Redirect::to('dashboard')
 				->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus','error');
-					
+
 		$row = $this->model->find($id);
 		$assign_employee_ids = explode(',' ,$row->assign_to);
 		$assign_employee_names = array();
@@ -194,44 +185,44 @@ class SbticketController extends Controller {
 			$this->data['comments'] = $comments->where('TicketID', '=', $id)->get();
 			$this->data['row'] =  $row;
 		} else {
-			$this->data['row'] = $this->model->getColumnTable('sb_tickets'); 
+			$this->data['row'] = $this->model->getColumnTable('sb_tickets');
 		}
-		
+
 		$this->data['id'] = $id;
 		$this->data['uid'] = \Session::get('uid');
 		$this->data['fid'] = \Session::get('fid');
 		$this->data['access']		= $this->access;
 		$this->data['setting'] 		= $this->info['setting'];
 		$this->data['fields'] 		= \AjaxHelpers::fieldLang($this->info['config']['forms']);
-		return view('sbticket.view',$this->data);	
-	}	
+		return view('sbticket.view',$this->data);
+	}
 
 
 	function postCopy( Request $request)
 	{
-		
-	    foreach(\DB::select("SHOW COLUMNS FROM sb_tickets ") as $column)
-        {
+
+		foreach(\DB::select("SHOW COLUMNS FROM sb_tickets ") as $column)
+		{
 			if( $column->Field != 'TicketID')
 				$columns[] = $column->Field;
-        }
+		}
 		$toCopy = implode(",",$request->input('ids'));
-		
-				
+
+
 		$sql = "INSERT INTO sb_tickets (".implode(",", $columns).") ";
 		$sql .= " SELECT ".implode(",", $columns)." FROM sb_tickets WHERE TicketID IN (".$toCopy.")";
 		\DB::insert($sql);
 		return response()->json(array(
 			'status'=>'success',
 			'message'=> \Lang::get('core.note_success')
-		));	
-	}		
+		));
+	}
 
 	function postSave( Request $request, $id =0)
 	{
 		$rules = $this->validateForm();
 		unset($rules['debit_card']);
-		$validator = Validator::make($request->all(), $rules);	
+		$validator = Validator::make($request->all(), $rules);
 		if ($validator->passes()) {
 			$data = $this->validatePost('sb_tickets');
 			if($id==0)
@@ -239,22 +230,22 @@ class SbticketController extends Controller {
 				$data['Created'] = date("Y-m-d",time());;
 			}
 			$id = $this->model->insertRow($data , $request->input('TicketID'));
-			
+
 			return response()->json(array(
 				'status'=>'success',
 				'message'=> \Lang::get('core.note_success')
-				));	
-			
+			));
+
 		} else {
 
 			$message = $this->validateListError(  $validator->getMessageBag()->toArray() );
 			return response()->json(array(
 				'message'	=> $message,
 				'status'	=> 'error'
-			));	
-		}	
-	
-	}	
+			));
+		}
+
+	}
 
 	public function postDelete( Request $request)
 	{
@@ -271,7 +262,7 @@ class SbticketController extends Controller {
 		if(count($request->input('ids')) >=1)
 		{
 			$this->model->destroy($request->input('ids'));
-			
+
 			return response()->json(array(
 				'status'=>'success',
 				'message'=> \Lang::get('core.note_success_delete')
@@ -282,7 +273,7 @@ class SbticketController extends Controller {
 				'message'=> \Lang::get('core.note_error')
 			));
 
-		} 		
+		}
 
 	}
 	function validateTicketCommentsForm()
@@ -340,4 +331,44 @@ class SbticketController extends Controller {
 		}
 	}
 
+	public function postSavepermission( Request $request)
+	{
+		$data = $request->all();
+		unset($data['_token']);
+		foreach($data as $index=>$value)
+		{
+			$data[$index] = implode(',',$data[$index]);
+		}
+		$sbticketsetting = new SbticketSetting();
+		$id = $sbticketsetting->insertRow($data, 1);
+
+		if($id==1)
+		{
+			return response()->json(array(
+				'status'=>'success',
+				'message'=> \Lang::get('core.note_success')
+			));
+		}
+		else
+		{
+			return response()->json(array(
+				'message'	=> 'Error',
+				'status'	=> 'error'
+			));
+		}
+	}
+
+	public function getSetting()
+	{
+		$ticket_setting = \DB::select("Select * FROM sbticket_setting");
+
+		$individuals = \DB::select("Select id,first_name,last_name FROM users");
+		$roles = \DB::select("Select group_id,name FROM tb_groups");
+
+		$this->data['ticket_setting']		= $ticket_setting[0];
+		$this->data['roles']		= $roles;
+		$this->data['individuals']		= $individuals;
+		$this->data['access']		= $this->access;
+		return view('sbticket.setting',$this->data);
+	}
 }
