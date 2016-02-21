@@ -14,30 +14,6 @@
 						<fieldset><legend> vendor</legend>
 									
 				  <div class="form-group  " > 
-					<label for="Id" class=" control-label col-md-4 text-left"> 
-					{!! SiteHelpers::activeLang('Id', (isset($fields['id']['language'])? $fields['id']['language'] : array())) !!}	
-					</label>
-					<div class="col-md-6">
-					  <textarea name='id' rows='5' id='id' class='form-control '  
-				           >{{ $row['id'] }}</textarea> 
-					 </div> 
-					 <div class="col-md-2">
-					 	
-					 </div>
-				  </div> 					
-				  <div class="form-group  " > 
-					<label for="Vendor Name" class=" control-label col-md-4 text-left"> 
-					{!! SiteHelpers::activeLang('Vendor Name', (isset($fields['vendor_name']['language'])? $fields['vendor_name']['language'] : array())) !!}	
-					</label>
-					<div class="col-md-6">
-					  <textarea name='vendor_name' rows='5' id='vendor_name' class='form-control '  
-				           >{{ $row['vendor_name'] }}</textarea> 
-					 </div> 
-					 <div class="col-md-2">
-					 	
-					 </div>
-				  </div> 					
-				  <div class="form-group  " > 
 					<label for="Street1" class=" control-label col-md-4 text-left"> 
 					{!! SiteHelpers::activeLang('Street1', (isset($fields['street1']['language'])? $fields['street1']['language'] : array())) !!}	
 					</label>
