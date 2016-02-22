@@ -47,14 +47,6 @@
 				
 					<tr>
 						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Img', (isset($fields['img']['language'])? $fields['img']['language'] : array())) }}	
-						</td>
-						<td>{{ $row->img }} </td>
-						
-					</tr>
-				
-					<tr>
-						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Has Manual', (isset($fields['has_manual']['language'])? $fields['has_manual']['language'] : array())) }}	
 						</td>
 						<td>{{ $row->has_manual }} </td>

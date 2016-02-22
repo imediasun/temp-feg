@@ -15,9 +15,9 @@
 				
 					<tr>
 						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('User Name', (isset($fields['user_name']['language'])? $fields['user_name']['language'] : array())) }}	
+							{{ SiteHelpers::activeLang('Id', (isset($fields['id']['language'])? $fields['id']['language'] : array())) }}	
 						</td>
-						<td>{{ $row->user_name }} </td>
+						<td>{{ $row->id }} </td>
 						
 					</tr>
 				
@@ -35,14 +35,6 @@
 						</td>
 						<td>{{ $row->last_name }} </td>
 						
-					</tr>
-				
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('User Level', (isset($fields['user_level']['language'])? $fields['user_level']['language'] : array())) }}
-						</td>
-						<td>{{ $row->group_id }} </td>
-
 					</tr>
 				
 					<tr>
@@ -90,6 +82,22 @@
 							{{ SiteHelpers::activeLang('Email', (isset($fields['email']['language'])? $fields['email']['language'] : array())) }}	
 						</td>
 						<td>{{ $row->email }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Username', (isset($fields['username']['language'])? $fields['username']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->username }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Group Name', (isset($fields['group_id']['language'])? $fields['group_id']['language'] : array())) }}	
+						</td>
+						<td>{!! SiteHelpers::gridDisplayView($row->group_id,'group_id','1:tb_groups:group_id:name') !!} </td>
 						
 					</tr>
 				

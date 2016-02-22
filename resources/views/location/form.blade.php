@@ -14,17 +14,6 @@
 						<fieldset><legend> Locations</legend>
 									
 				  <div class="form-group  " > 
-					<label for="Id" class=" control-label col-md-4 text-left"> 
-					{!! SiteHelpers::activeLang('Id', (isset($fields['id']['language'])? $fields['id']['language'] : array())) !!}	
-					</label>
-					<div class="col-md-6">
-					  {!! Form::text('id', $row['id'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
-					 </div> 
-					 <div class="col-md-2">
-					 	
-					 </div>
-				  </div> 					
-				  <div class="form-group  " > 
 					<label for="Location Name" class=" control-label col-md-4 text-left"> 
 					{!! SiteHelpers::activeLang('Location Name', (isset($fields['location_name']['language'])? $fields['location_name']['language'] : array())) !!}	
 					</label>
@@ -117,7 +106,7 @@
 					{!! SiteHelpers::activeLang('Company Id', (isset($fields['company_id']['language'])? $fields['company_id']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('company_id', $row['company_id'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
+					  <select name='company_id' rows='5' id='company_id' class='select2 '   ></select> 
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -128,7 +117,16 @@
 					{!! SiteHelpers::activeLang('Self Owned', (isset($fields['self_owned']['language'])? $fields['self_owned']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('self_owned', $row['self_owned'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
+					  
+					<?php $self_owned = explode(',',$row['self_owned']);
+					$self_owned_opt = array( '1' => 'Yes' ,  '0' => 'No' , ); ?>
+					<select name='self_owned' rows='5'   class='select2 '  > 
+						<?php 
+						foreach($self_owned_opt as $key=>$val)
+						{
+							echo "<option  value ='$key' ".($row['self_owned'] == $key ? " selected='selected' " : '' ).">$val</option>"; 						
+						}						
+						?></select> 
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -150,7 +148,11 @@
 					{!! SiteHelpers::activeLang('Date Opened', (isset($fields['date_opened']['language'])? $fields['date_opened']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('date_opened', $row['date_opened'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
+					  
+				<div class="input-group m-b" style="width:150px !important;">
+					{!! Form::text('date_opened', $row['date_opened'],array('class'=>'form-control date')) !!}
+					<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+				</div> 
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -161,7 +163,11 @@
 					{!! SiteHelpers::activeLang('Date Closed', (isset($fields['date_closed']['language'])? $fields['date_closed']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('date_closed', $row['date_closed'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
+					  
+				<div class="input-group m-b" style="width:150px !important;">
+					{!! Form::text('date_closed', $row['date_closed'],array('class'=>'form-control date')) !!}
+					<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+				</div> 
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -172,7 +178,7 @@
 					{!! SiteHelpers::activeLang('Region Id', (isset($fields['region_id']['language'])? $fields['region_id']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('region_id', $row['region_id'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
+					  <select name='region_id' rows='5' id='region_id' class='select2 '   ></select> 
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -183,7 +189,7 @@
 					{!! SiteHelpers::activeLang('Loc Group Id', (isset($fields['loc_group_id']['language'])? $fields['loc_group_id']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('loc_group_id', $row['loc_group_id'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
+					  <select name='loc_group_id' rows='5' id='loc_group_id' class='select2 '   ></select> 
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -194,7 +200,16 @@
 					{!! SiteHelpers::activeLang('Debit Type Id', (isset($fields['debit_type_id']['language'])? $fields['debit_type_id']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('debit_type_id', $row['debit_type_id'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
+					  
+					<?php $debit_type_id = explode(',',$row['debit_type_id']);
+					$debit_type_id_opt = array( '1' => 'Yes' ,  '0' => 'No' , ); ?>
+					<select name='debit_type_id' rows='5'   class='select2 '  > 
+						<?php 
+						foreach($debit_type_id_opt as $key=>$val)
+						{
+							echo "<option  value ='$key' ".($row['debit_type_id'] == $key ? " selected='selected' " : '' ).">$val</option>"; 						
+						}						
+						?></select> 
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -205,7 +220,16 @@
 					{!! SiteHelpers::activeLang('Can Ship', (isset($fields['can_ship']['language'])? $fields['can_ship']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('can_ship', $row['can_ship'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
+					  
+					<?php $can_ship = explode(',',$row['can_ship']);
+					$can_ship_opt = array( '1' => 'Yes' , ); ?>
+					<select name='can_ship' rows='5'   class='select2 '  > 
+						<?php 
+						foreach($can_ship_opt as $key=>$val)
+						{
+							echo "<option  value ='$key' ".($row['can_ship'] == $key ? " selected='selected' " : '' ).">$val</option>"; 						
+						}						
+						?></select> 
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -216,7 +240,16 @@
 					{!! SiteHelpers::activeLang('Loc Ship To', (isset($fields['loc_ship_to']['language'])? $fields['loc_ship_to']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('loc_ship_to', $row['loc_ship_to'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
+					  
+					<?php $loc_ship_to = explode(',',$row['loc_ship_to']);
+					$loc_ship_to_opt = array( '0' => 'No' , ); ?>
+					<select name='loc_ship_to' rows='5'   class='select2 '  > 
+						<?php 
+						foreach($loc_ship_to_opt as $key=>$val)
+						{
+							echo "<option  value ='$key' ".($row['loc_ship_to'] == $key ? " selected='selected' " : '' ).">$val</option>"; 						
+						}						
+						?></select> 
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -282,7 +315,16 @@
 					{!! SiteHelpers::activeLang('Bill Ticket Type', (isset($fields['bill_ticket_type']['language'])? $fields['bill_ticket_type']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('bill_ticket_type', $row['bill_ticket_type'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
+					  
+					<?php $bill_ticket_type = explode(',',$row['bill_ticket_type']);
+					$bill_ticket_type_opt = array( '0' => 'No' , ); ?>
+					<select name='bill_ticket_type' rows='5' required  class='select2 '  > 
+						<?php 
+						foreach($bill_ticket_type_opt as $key=>$val)
+						{
+							echo "<option  value ='$key' ".($row['bill_ticket_type'] == $key ? " selected='selected' " : '' ).">$val</option>"; 						
+						}						
+						?></select> 
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -315,7 +357,16 @@
 					{!! SiteHelpers::activeLang('Bill Thermalpaper Type', (isset($fields['bill_thermalpaper_type']['language'])? $fields['bill_thermalpaper_type']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('bill_thermalpaper_type', $row['bill_thermalpaper_type'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
+					  
+					<?php $bill_thermalpaper_type = explode(',',$row['bill_thermalpaper_type']);
+					$bill_thermalpaper_type_opt = array( '0' => 'No' , ); ?>
+					<select name='bill_thermalpaper_type' rows='5' required  class='select2 '  > 
+						<?php 
+						foreach($bill_thermalpaper_type_opt as $key=>$val)
+						{
+							echo "<option  value ='$key' ".($row['bill_thermalpaper_type'] == $key ? " selected='selected' " : '' ).">$val</option>"; 						
+						}						
+						?></select> 
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -348,7 +399,16 @@
 					{!! SiteHelpers::activeLang('Bill Token Type', (isset($fields['bill_token_type']['language'])? $fields['bill_token_type']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('bill_token_type', $row['bill_token_type'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
+					  
+					<?php $bill_token_type = explode(',',$row['bill_token_type']);
+					$bill_token_type_opt = array( '0' => 'No' , ); ?>
+					<select name='bill_token_type' rows='5' required  class='select2 '  > 
+						<?php 
+						foreach($bill_token_type_opt as $key=>$val)
+						{
+							echo "<option  value ='$key' ".($row['bill_token_type'] == $key ? " selected='selected' " : '' ).">$val</option>"; 						
+						}						
+						?></select> 
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -414,7 +474,16 @@
 					{!! SiteHelpers::activeLang('Bill Attraction Type', (isset($fields['bill_attraction_type']['language'])? $fields['bill_attraction_type']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('bill_attraction_type', $row['bill_attraction_type'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
+					  
+					<?php $bill_attraction_type = explode(',',$row['bill_attraction_type']);
+					$bill_attraction_type_opt = array( '0' => 'No' , ); ?>
+					<select name='bill_attraction_type' rows='5' required  class='select2 '  > 
+						<?php 
+						foreach($bill_attraction_type_opt as $key=>$val)
+						{
+							echo "<option  value ='$key' ".($row['bill_attraction_type'] == $key ? " selected='selected' " : '' ).">$val</option>"; 						
+						}						
+						?></select> 
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -447,7 +516,16 @@
 					{!! SiteHelpers::activeLang('Bill Redemption Type', (isset($fields['bill_redemption_type']['language'])? $fields['bill_redemption_type']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('bill_redemption_type', $row['bill_redemption_type'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
+					  
+					<?php $bill_redemption_type = explode(',',$row['bill_redemption_type']);
+					$bill_redemption_type_opt = array( '0' => 'No' , ); ?>
+					<select name='bill_redemption_type' rows='5' required  class='select2 '  > 
+						<?php 
+						foreach($bill_redemption_type_opt as $key=>$val)
+						{
+							echo "<option  value ='$key' ".($row['bill_redemption_type'] == $key ? " selected='selected' " : '' ).">$val</option>"; 						
+						}						
+						?></select> 
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -480,7 +558,16 @@
 					{!! SiteHelpers::activeLang('Bill Instant Type', (isset($fields['bill_instant_type']['language'])? $fields['bill_instant_type']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('bill_instant_type', $row['bill_instant_type'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
+					  
+					<?php $bill_instant_type = explode(',',$row['bill_instant_type']);
+					$bill_instant_type_opt = array( '0' => 'No' , ); ?>
+					<select name='bill_instant_type' rows='5' required  class='select2 '  > 
+						<?php 
+						foreach($bill_instant_type_opt as $key=>$val)
+						{
+							echo "<option  value ='$key' ".($row['bill_instant_type'] == $key ? " selected='selected' " : '' ).">$val</option>"; 						
+						}						
+						?></select> 
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -513,7 +600,7 @@
 					{!! SiteHelpers::activeLang('Contact Id', (isset($fields['contact_id']['language'])? $fields['contact_id']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('contact_id', $row['contact_id'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
+					  <select name='contact_id' rows='5' id='contact_id' class='select2 ' required  ></select> 
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -524,7 +611,7 @@
 					{!! SiteHelpers::activeLang('Merch Contact Id', (isset($fields['merch_contact_id']['language'])? $fields['merch_contact_id']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('merch_contact_id', $row['merch_contact_id'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
+					  <select name='merch_contact_id' rows='5' id='merch_contact_id' class='select2 ' required  ></select> 
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -535,7 +622,7 @@
 					{!! SiteHelpers::activeLang('Field Manager Id', (isset($fields['field_manager_id']['language'])? $fields['field_manager_id']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('field_manager_id', $row['field_manager_id'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
+					  <select name='field_manager_id' rows='5' id='field_manager_id' class='select2 ' required  ></select> 
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -546,7 +633,7 @@
 					{!! SiteHelpers::activeLang('Tech Manager Id', (isset($fields['tech_manager_id']['language'])? $fields['tech_manager_id']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('tech_manager_id', $row['tech_manager_id'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
+					  <select name='tech_manager_id' rows='5' id='tech_manager_id' class='select2 ' required  ></select> 
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -557,7 +644,16 @@
 					{!! SiteHelpers::activeLang('No Games', (isset($fields['no_games']['language'])? $fields['no_games']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('no_games', $row['no_games'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
+					  
+					<?php $no_games = explode(',',$row['no_games']);
+					$no_games_opt = array( '0' => 'No' , ); ?>
+					<select name='no_games' rows='5' required  class='select2 '  > 
+						<?php 
+						foreach($no_games_opt as $key=>$val)
+						{
+							echo "<option  value ='$key' ".($row['no_games'] == $key ? " selected='selected' " : '' ).">$val</option>"; 						
+						}						
+						?></select> 
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -568,7 +664,16 @@
 					{!! SiteHelpers::activeLang('Liftgate', (isset($fields['liftgate']['language'])? $fields['liftgate']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('liftgate', $row['liftgate'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
+					  
+					<?php $liftgate = explode(',',$row['liftgate']);
+					$liftgate_opt = array( '1' => 'Yes' , ); ?>
+					<select name='liftgate' rows='5' required  class='select2 '  > 
+						<?php 
+						foreach($liftgate_opt as $key=>$val)
+						{
+							echo "<option  value ='$key' ".($row['liftgate'] == $key ? " selected='selected' " : '' ).">$val</option>"; 						
+						}						
+						?></select> 
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -590,7 +695,16 @@
 					{!! SiteHelpers::activeLang('Reporting', (isset($fields['reporting']['language'])? $fields['reporting']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('reporting', $row['reporting'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
+					  
+					<?php $reporting = explode(',',$row['reporting']);
+					$reporting_opt = array( '1' => 'Yes' ,  '0' => 'No' , ); ?>
+					<select name='reporting' rows='5' required  class='select2 '  > 
+						<?php 
+						foreach($reporting_opt as $key=>$val)
+						{
+							echo "<option  value ='$key' ".($row['reporting'] == $key ? " selected='selected' " : '' ).">$val</option>"; 						
+						}						
+						?></select> 
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -601,7 +715,16 @@
 					{!! SiteHelpers::activeLang('Not Reporting Sun', (isset($fields['not_reporting_Sun']['language'])? $fields['not_reporting_Sun']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('not_reporting_Sun', $row['not_reporting_Sun'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
+					  
+					<?php $not_reporting_Sun = explode(',',$row['not_reporting_Sun']);
+					$not_reporting_Sun_opt = array( '0' => 'No' , ); ?>
+					<select name='not_reporting_Sun' rows='5' required  class='select2 '  > 
+						<?php 
+						foreach($not_reporting_Sun_opt as $key=>$val)
+						{
+							echo "<option  value ='$key' ".($row['not_reporting_Sun'] == $key ? " selected='selected' " : '' ).">$val</option>"; 						
+						}						
+						?></select> 
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -612,7 +735,16 @@
 					{!! SiteHelpers::activeLang('Not Reporting Mon', (isset($fields['not_reporting_Mon']['language'])? $fields['not_reporting_Mon']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('not_reporting_Mon', $row['not_reporting_Mon'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
+					  
+					<?php $not_reporting_Mon = explode(',',$row['not_reporting_Mon']);
+					$not_reporting_Mon_opt = array( '0' => 'No' , ); ?>
+					<select name='not_reporting_Mon' rows='5' required  class='select2 '  > 
+						<?php 
+						foreach($not_reporting_Mon_opt as $key=>$val)
+						{
+							echo "<option  value ='$key' ".($row['not_reporting_Mon'] == $key ? " selected='selected' " : '' ).">$val</option>"; 						
+						}						
+						?></select> 
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -623,7 +755,16 @@
 					{!! SiteHelpers::activeLang('Not Reporting Tue', (isset($fields['not_reporting_Tue']['language'])? $fields['not_reporting_Tue']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('not_reporting_Tue', $row['not_reporting_Tue'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
+					  
+					<?php $not_reporting_Tue = explode(',',$row['not_reporting_Tue']);
+					$not_reporting_Tue_opt = array( '0' => 'No' , ); ?>
+					<select name='not_reporting_Tue' rows='5' required  class='select2 '  > 
+						<?php 
+						foreach($not_reporting_Tue_opt as $key=>$val)
+						{
+							echo "<option  value ='$key' ".($row['not_reporting_Tue'] == $key ? " selected='selected' " : '' ).">$val</option>"; 						
+						}						
+						?></select> 
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -634,7 +775,16 @@
 					{!! SiteHelpers::activeLang('Not Reporting Wed', (isset($fields['not_reporting_Wed']['language'])? $fields['not_reporting_Wed']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('not_reporting_Wed', $row['not_reporting_Wed'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
+					  
+					<?php $not_reporting_Wed = explode(',',$row['not_reporting_Wed']);
+					$not_reporting_Wed_opt = array( '0' => 'No' , ); ?>
+					<select name='not_reporting_Wed' rows='5' required  class='select2 '  > 
+						<?php 
+						foreach($not_reporting_Wed_opt as $key=>$val)
+						{
+							echo "<option  value ='$key' ".($row['not_reporting_Wed'] == $key ? " selected='selected' " : '' ).">$val</option>"; 						
+						}						
+						?></select> 
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -645,7 +795,16 @@
 					{!! SiteHelpers::activeLang('Not Reporting Thu', (isset($fields['not_reporting_Thu']['language'])? $fields['not_reporting_Thu']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('not_reporting_Thu', $row['not_reporting_Thu'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
+					  
+					<?php $not_reporting_Thu = explode(',',$row['not_reporting_Thu']);
+					$not_reporting_Thu_opt = array( '0' => 'No' , ); ?>
+					<select name='not_reporting_Thu' rows='5' required  class='select2 '  > 
+						<?php 
+						foreach($not_reporting_Thu_opt as $key=>$val)
+						{
+							echo "<option  value ='$key' ".($row['not_reporting_Thu'] == $key ? " selected='selected' " : '' ).">$val</option>"; 						
+						}						
+						?></select> 
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -656,7 +815,16 @@
 					{!! SiteHelpers::activeLang('Not Reporting Fri', (isset($fields['not_reporting_Fri']['language'])? $fields['not_reporting_Fri']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('not_reporting_Fri', $row['not_reporting_Fri'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
+					  
+					<?php $not_reporting_Fri = explode(',',$row['not_reporting_Fri']);
+					$not_reporting_Fri_opt = array( '0' => 'No' , ); ?>
+					<select name='not_reporting_Fri' rows='5' required  class='select2 '  > 
+						<?php 
+						foreach($not_reporting_Fri_opt as $key=>$val)
+						{
+							echo "<option  value ='$key' ".($row['not_reporting_Fri'] == $key ? " selected='selected' " : '' ).">$val</option>"; 						
+						}						
+						?></select> 
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -667,7 +835,16 @@
 					{!! SiteHelpers::activeLang('Not Reporting Sat', (isset($fields['not_reporting_Sat']['language'])? $fields['not_reporting_Sat']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('not_reporting_Sat', $row['not_reporting_Sat'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
+					  
+					<?php $not_reporting_Sat = explode(',',$row['not_reporting_Sat']);
+					$not_reporting_Sat_opt = array( '0' => 'No' , ); ?>
+					<select name='not_reporting_Sat' rows='5' required  class='select2 '  > 
+						<?php 
+						foreach($not_reporting_Sat_opt as $key=>$val)
+						{
+							echo "<option  value ='$key' ".($row['not_reporting_Sat'] == $key ? " selected='selected' " : '' ).">$val</option>"; 						
+						}						
+						?></select> 
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -678,7 +855,16 @@
 					{!! SiteHelpers::activeLang('Active', (isset($fields['active']['language'])? $fields['active']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('active', $row['active'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
+					  
+					<?php $active = explode(',',$row['active']);
+					$active_opt = array( '1' => 'Yes' ,  '0' => 'No' , ); ?>
+					<select name='active' rows='5' required  class='select2 '  > 
+						<?php 
+						foreach($active_opt as $key=>$val)
+						{
+							echo "<option  value ='$key' ".($row['active'] == $key ? " selected='selected' " : '' ).">$val</option>"; 						
+						}						
+						?></select> 
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -711,7 +897,28 @@
 			 
 <script type="text/javascript">
 $(document).ready(function() { 
-	 
+	
+        $("#company_id").jCombo("{{ URL::to('location/comboselect?filter=location:id:company_id') }}",
+        {  selected_value : '{{ $row["company_id"] }}' });
+        
+        $("#region_id").jCombo("{{ URL::to('location/comboselect?filter=location:id:region_id') }}",
+        {  selected_value : '{{ $row["region_id"] }}' });
+        
+        $("#loc_group_id").jCombo("{{ URL::to('location/comboselect?filter=location:id:loc_group_id') }}",
+        {  selected_value : '{{ $row["loc_group_id"] }}' });
+        
+        $("#contact_id").jCombo("{{ URL::to('location/comboselect?filter=location:id:contact_id') }}",
+        {  selected_value : '{{ $row["contact_id"] }}' });
+        
+        $("#merch_contact_id").jCombo("{{ URL::to('location/comboselect?filter=location:id:merch_contact_id') }}",
+        {  selected_value : '{{ $row["merch_contact_id"] }}' });
+        
+        $("#field_manager_id").jCombo("{{ URL::to('location/comboselect?filter=location:id:field_manager_id') }}",
+        {  selected_value : '{{ $row["field_manager_id"] }}' });
+        
+        $("#tech_manager_id").jCombo("{{ URL::to('location/comboselect?filter=location:id:tech_manager_id') }}",
+        {  selected_value : '{{ $row["tech_manager_id"] }}' });
+         
 	
 	$('.editor').summernote();
 	$('.previewImage').fancybox();	

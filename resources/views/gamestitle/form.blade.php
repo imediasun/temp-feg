@@ -14,17 +14,6 @@
 						<fieldset><legend> Games Title</legend>
 									
 				  <div class="form-group  " > 
-					<label for="Id" class=" control-label col-md-4 text-left"> 
-					{!! SiteHelpers::activeLang('Id', (isset($fields['id']['language'])? $fields['id']['language'] : array())) !!}	
-					</label>
-					<div class="col-md-6">
-					  {!! Form::text('id', $row['id'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
-					 </div> 
-					 <div class="col-md-2">
-					 	
-					 </div>
-				  </div> 					
-				  <div class="form-group  " > 
 					<label for="Game Title" class=" control-label col-md-4 text-left"> 
 					{!! SiteHelpers::activeLang('Game Title', (isset($fields['game_title']['language'])? $fields['game_title']['language'] : array())) !!}	
 					</label>
@@ -40,7 +29,7 @@
 					{!! SiteHelpers::activeLang('Mfg Id', (isset($fields['mfg_id']['language'])? $fields['mfg_id']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('mfg_id', $row['mfg_id'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
+					  <select name='mfg_id' rows='5' id='mfg_id' class='select2 ' required  ></select> 
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -51,18 +40,7 @@
 					{!! SiteHelpers::activeLang('Game Type Id', (isset($fields['game_type_id']['language'])? $fields['game_type_id']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('game_type_id', $row['game_type_id'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
-					 </div> 
-					 <div class="col-md-2">
-					 	
-					 </div>
-				  </div> 					
-				  <div class="form-group  " > 
-					<label for="Img" class=" control-label col-md-4 text-left"> 
-					{!! SiteHelpers::activeLang('Img', (isset($fields['img']['language'])? $fields['img']['language'] : array())) !!}	
-					</label>
-					<div class="col-md-6">
-					  {!! Form::text('img', $row['img'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
+					  <select name='game_type_id' rows='5' id='game_type_id' class='select2 ' required  ></select> 
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -76,7 +54,7 @@
 					  
 					<?php $has_manual = explode(',',$row['has_manual']);
 					$has_manual_opt = array( '1' => 'Yes' ,  '0' => 'No' , ); ?>
-					<select name='has_manual' rows='5' required  class='select2 '  > 
+					<select name='has_manual' rows='5'   class='select2 '  > 
 						<?php 
 						foreach($has_manual_opt as $key=>$val)
 						{
@@ -93,7 +71,16 @@
 					{!! SiteHelpers::activeLang('Has Servicebulletin', (isset($fields['has_servicebulletin']['language'])? $fields['has_servicebulletin']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('has_servicebulletin', $row['has_servicebulletin'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
+					  
+					<?php $has_servicebulletin = explode(',',$row['has_servicebulletin']);
+					$has_servicebulletin_opt = array( '0' => 'No' , ); ?>
+					<select name='has_servicebulletin' rows='5'   class='select2 '  > 
+						<?php 
+						foreach($has_servicebulletin_opt as $key=>$val)
+						{
+							echo "<option  value ='$key' ".($row['has_servicebulletin'] == $key ? " selected='selected' " : '' ).">$val</option>"; 						
+						}						
+						?></select> 
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -104,7 +91,16 @@
 					{!! SiteHelpers::activeLang('Num Prize Meters', (isset($fields['num_prize_meters']['language'])? $fields['num_prize_meters']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('num_prize_meters', $row['num_prize_meters'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
+					  
+					<?php $num_prize_meters = explode(',',$row['num_prize_meters']);
+					$num_prize_meters_opt = array( '1' => 'Yes' , ); ?>
+					<select name='num_prize_meters' rows='5'   class='select2 '  > 
+						<?php 
+						foreach($num_prize_meters_opt as $key=>$val)
+						{
+							echo "<option  value ='$key' ".($row['num_prize_meters'] == $key ? " selected='selected' " : '' ).">$val</option>"; 						
+						}						
+						?></select> 
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -137,7 +133,13 @@
 			 
 <script type="text/javascript">
 $(document).ready(function() { 
-	 
+	
+        $("#mfg_id").jCombo("{{ URL::to('gamestitle/comboselect?filter=game_title:id:mfg_id') }}",
+        {  selected_value : '{{ $row["mfg_id"] }}' });
+        
+        $("#game_type_id").jCombo("{{ URL::to('gamestitle/comboselect?filter=game_type:id:game_type_short') }}",
+        {  selected_value : '{{ $row["game_type_id"] }}' });
+         
 	
 	$('.editor').summernote();
 	$('.previewImage').fancybox();	

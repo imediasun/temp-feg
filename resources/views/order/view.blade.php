@@ -23,17 +23,9 @@
 				
 					<tr>
 						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('User Id', (isset($fields['user_id']['language'])? $fields['user_id']['language'] : array())) }}	
+							{{ SiteHelpers::activeLang('Po Number', (isset($fields['po_number']['language'])? $fields['po_number']['language'] : array())) }}	
 						</td>
-						<td>{{ $row->user_id }} </td>
-						
-					</tr>
-				
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Company Id', (isset($fields['company_id']['language'])? $fields['company_id']['language'] : array())) }}	
-						</td>
-						<td>{{ $row->company_id }} </td>
+						<td>{{ $row->po_number }} </td>
 						
 					</tr>
 				
@@ -47,33 +39,33 @@
 				
 					<tr>
 						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Order Total', (isset($fields['order_total']['language'])? $fields['order_total']['language'] : array())) }}	
+							{{ SiteHelpers::activeLang('Ordered By', (isset($fields['user_id']['language'])? $fields['user_id']['language'] : array())) }}	
 						</td>
-						<td>{{ $row->order_total }} </td>
+						<td>{!! SiteHelpers::gridDisplayView($row->user_id,'user_id','1:users:id:username') !!} </td>
 						
 					</tr>
 				
 					<tr>
 						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Warranty', (isset($fields['warranty']['language'])? $fields['warranty']['language'] : array())) }}	
+							{{ SiteHelpers::activeLang('Location', (isset($fields['location_id']['language'])? $fields['location_id']['language'] : array())) }}	
 						</td>
-						<td>{{ $row->warranty }} </td>
+						<td>{!! SiteHelpers::gridDisplayView($row->location_id,'location_id','1:location:id:location_name') !!} </td>
 						
 					</tr>
 				
 					<tr>
 						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Location Id', (isset($fields['location_id']['language'])? $fields['location_id']['language'] : array())) }}	
+							{{ SiteHelpers::activeLang('Order Type', (isset($fields['order_type_id']['language'])? $fields['order_type_id']['language'] : array())) }}	
 						</td>
-						<td>{{ $row->location_id }} </td>
+						<td>{!! SiteHelpers::gridDisplayView($row->order_type_id,'order_type_id','1:orders:id:order_type_id') !!} </td>
 						
 					</tr>
 				
 					<tr>
 						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Vendor Id', (isset($fields['vendor_id']['language'])? $fields['vendor_id']['language'] : array())) }}	
+							{{ SiteHelpers::activeLang('Vendor', (isset($fields['vendor_id']['language'])? $fields['vendor_id']['language'] : array())) }}	
 						</td>
-						<td>{{ $row->vendor_id }} </td>
+						<td>{!! SiteHelpers::gridDisplayView($row->vendor_id,'vendor_id','1:vendor:id:vendor_name') !!} </td>
 						
 					</tr>
 				
@@ -87,17 +79,49 @@
 				
 					<tr>
 						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Status Id', (isset($fields['status_id']['language'])? $fields['status_id']['language'] : array())) }}	
+							{{ SiteHelpers::activeLang('Total Cost (NO '$')', (isset($fields['order_total']['language'])? $fields['order_total']['language'] : array())) }}	
 						</td>
-						<td>{{ $row->status_id }} </td>
+						<td>{{ $row->order_total }} </td>
 						
 					</tr>
 				
 					<tr>
 						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Order Type Id', (isset($fields['order_type_id']['language'])? $fields['order_type_id']['language'] : array())) }}	
+							{{ SiteHelpers::activeLang('Order Status', (isset($fields['status_id']['language'])? $fields['status_id']['language'] : array())) }}	
 						</td>
-						<td>{{ $row->order_type_id }} </td>
+						<td>{!! SiteHelpers::gridDisplayView($row->status_id,'status_id','1:orders:id:status_id') !!} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('PoONotes', (isset($fields['po_notes']['language'])? $fields['po_notes']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->po_notes }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Office Notes', (isset($fields['notes']['language'])? $fields['notes']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->notes }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Company Id', (isset($fields['company_id']['language'])? $fields['company_id']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->company_id }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Warranty', (isset($fields['warranty']['language'])? $fields['warranty']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->warranty }} </td>
 						
 					</tr>
 				
@@ -114,30 +138,6 @@
 							{{ SiteHelpers::activeLang('Freight Id', (isset($fields['freight_id']['language'])? $fields['freight_id']['language'] : array())) }}	
 						</td>
 						<td>{{ $row->freight_id }} </td>
-						
-					</tr>
-				
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Po Number', (isset($fields['po_number']['language'])? $fields['po_number']['language'] : array())) }}	
-						</td>
-						<td>{{ $row->po_number }} </td>
-						
-					</tr>
-				
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Po Notes', (isset($fields['po_notes']['language'])? $fields['po_notes']['language'] : array())) }}	
-						</td>
-						<td>{{ $row->po_notes }} </td>
-						
-					</tr>
-				
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Notes', (isset($fields['notes']['language'])? $fields['notes']['language'] : array())) }}	
-						</td>
-						<td>{{ $row->notes }} </td>
 						
 					</tr>
 				

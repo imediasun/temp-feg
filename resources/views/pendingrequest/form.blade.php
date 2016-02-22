@@ -85,7 +85,11 @@
 					{!! SiteHelpers::activeLang('Request Date', (isset($fields['request_date']['language'])? $fields['request_date']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('request_date', $row['request_date'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
+					  
+				<div class="input-group m-b" style="width:150px !important;">
+					{!! Form::text('request_date', $row['request_date'],array('class'=>'form-control date')) !!}
+					<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+				</div> 
 					 </div> 
 					 <div class="col-md-2">
 					 	

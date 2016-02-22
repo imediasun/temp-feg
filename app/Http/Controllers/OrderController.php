@@ -43,14 +43,14 @@ class OrderController extends Controller {
 	}	
 
 	public function postData( Request $request)
-	{
-		$sort = (!is_null($request->input('sort')) ? $request->input('sort') : $this->info['setting']['orderby']);
+	{ 
+		$sort = (!is_null($request->input('sort')) ? $request->input('sort') : $this->info['setting']['orderby']); 
 		$order = (!is_null($request->input('order')) ? $request->input('order') : $this->info['setting']['ordertype']);
-		// End Filter sort and order for query
-		// Filter Search for query
+		// End Filter sort and order for query 
+		// Filter Search for query		
 		$filter = (!is_null($request->input('search')) ? $this->buildSearch() : '');
 
-
+		
 		$page = $request->input('page', 1);
 		$params = array(
 			'page'		=> $page ,
@@ -60,57 +60,39 @@ class OrderController extends Controller {
 			'params'	=> $filter,
 			'global'	=> (isset($this->access['is_global']) ? $this->access['is_global'] : 0 )
 		);
-		// Get Query
-		$results = $this->model->getRows( $params );
-
+		// Get Query 
+		$results = $this->model->getRows( $params );		
+		
 		// Build pagination setting
-		$page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;
-		$pagination = new Paginator($results['rows'], $results['total'], $params['limit']);
+		$page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;	
+		$pagination = new Paginator($results['rows'], $results['total'], $params['limit']);	
 		$pagination->setPath('order/data');
-		$rows = $results['rows'];
-		foreach($rows as $index => $data)
-		{
-			$rows[$index]->date_ordered = date("m/d/Y", strtotime($data->date_ordered));
-			$location = \DB::select("Select location_name FROM location WHERE id = ".$data->location_id ."");
-			$rows[$index]->location_id = (isset($location[0]->location_name) ? $location[0]->location_name : '');
-
-			$user = \DB::select("Select username FROM users WHERE id = ".$data->user_id ."");
-			$rows[$index]->user_id = (isset($user[0]->username) ? $user[0]->username : '');
-
-			$order_type = \DB::select("Select order_type FROM order_type WHERE id = ".$data->order_type_id ."");
-			$rows[$index]->order_type_id = (isset($order_type[0]->order_type) ? $order_type[0]->order_type : '');
-
-			$vendor = \DB::select("Select vendor_name FROM vendor WHERE id = ".$data->vendor_id ."");
-			$rows[$index]->vendor_id = (isset($vendor[0]->vendor_name) ? $vendor[0]->vendor_name : '');
-
-			$order_status = \DB::select("Select status FROM order_status WHERE id = ".$data->status_id ."");
-			$rows[$index]->status_id = (isset($order_status[0]->status) ? $order_status[0]->status : '');
-		}
+		
 		$this->data['param']		= $params;
-		$this->data['rowData']		= $rows;
-		// Build Pagination
+		$this->data['rowData']		= $results['rows'];
+		// Build Pagination 
 		$this->data['pagination']	= $pagination;
 		// Build pager number and append current param GET
-		$this->data['pager'] 		= $this->injectPaginate();
-		// Row grid Number
-		$this->data['i']			= ($page * $params['limit'])- $params['limit'];
-		// Grid Configuration
+		$this->data['pager'] 		= $this->injectPaginate();	
+		// Row grid Number 
+		$this->data['i']			= ($page * $params['limit'])- $params['limit']; 
+		// Grid Configuration 
 		$this->data['tableGrid'] 	= $this->info['config']['grid'];
 		$this->data['tableForm'] 	= $this->info['config']['forms'];
-		$this->data['colspan'] 		= \SiteHelpers::viewColSpan($this->info['config']['grid']);
+		$this->data['colspan'] 		= \SiteHelpers::viewColSpan($this->info['config']['grid']);		
 		// Group users permission
 		$this->data['access']		= $this->access;
 		// Detail from master if any
 		$this->data['setting'] 		= $this->info['setting'];
-
-		// Master detail link if any
-		$this->data['subgrid']	= (isset($this->info['config']['subgrid']) ? $this->info['config']['subgrid'] : array());
+		
+		// Master detail link if any 
+		$this->data['subgrid']	= (isset($this->info['config']['subgrid']) ? $this->info['config']['subgrid'] : array()); 
 		// Render into template
 		return view('order.table',$this->data);
 
 	}
 
-
+			
 	function getUpdate(Request $request, $id = null)
 	{
 

@@ -71,14 +71,6 @@
 				
 					<tr>
 						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Email 2', (isset($fields['email_2']['language'])? $fields['email_2']['language'] : array())) }}	
-						</td>
-						<td>{{ $row->email_2 }} </td>
-						
-					</tr>
-				
-					<tr>
-						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Website', (isset($fields['website']['language'])? $fields['website']['language'] : array())) }}	
 						</td>
 						<td>{{ $row->website }} </td>
@@ -90,14 +82,6 @@
 							{{ SiteHelpers::activeLang('Games Contact', (isset($fields['games_contact_name']['language'])? $fields['games_contact_name']['language'] : array())) }}	
 						</td>
 						<td>{{ $row->games_contact_name }} </td>
-						
-					</tr>
-				
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Games Email', (isset($fields['games_contact_email']['language'])? $fields['games_contact_email']['language'] : array())) }}	
-						</td>
-						<td>{{ $row->games_contact_email }} </td>
 						
 					</tr>
 				
@@ -146,30 +130,6 @@
 							{{ SiteHelpers::activeLang('Id', (isset($fields['id']['language'])? $fields['id']['language'] : array())) }}	
 						</td>
 						<td>{{ $row->id }} </td>
-						
-					</tr>
-				
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Street2', (isset($fields['street2']['language'])? $fields['street2']['language'] : array())) }}	
-						</td>
-						<td>{{ $row->street2 }} </td>
-						
-					</tr>
-				
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Phone', (isset($fields['phone']['language'])? $fields['phone']['language'] : array())) }}	
-						</td>
-						<td>{{ $row->phone }} </td>
-						
-					</tr>
-				
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Fax', (isset($fields['fax']['language'])? $fields['fax']['language'] : array())) }}	
-						</td>
-						<td>{{ $row->fax }} </td>
 						
 					</tr>
 				

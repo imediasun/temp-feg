@@ -18,8 +18,7 @@
 					{!! SiteHelpers::activeLang('First Name', (isset($fields['first_name']['language'])? $fields['first_name']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  <textarea name='first_name' rows='5' id='first_name' class='form-control '  
-				           >{{ $row['first_name'] }}</textarea> 
+					  {!! Form::text('first_name', $row['first_name'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -30,26 +29,90 @@
 					{!! SiteHelpers::activeLang('Last Name', (isset($fields['last_name']['language'])? $fields['last_name']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  <textarea name='last_name' rows='5' id='last_name' class='form-control '  
-				           >{{ $row['last_name'] }}</textarea> 
+					  {!! Form::text('last_name', $row['last_name'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
 					 </div> 
 					 <div class="col-md-2">
 					 	
 					 </div>
 				  </div> 					
-				  <div class="form-group  " >
+				  <div class="form-group  " > 
+					<label for="Location" class=" control-label col-md-4 text-left"> 
+					{!! SiteHelpers::activeLang('Location', (isset($fields['location_id']['language'])? $fields['location_id']['language'] : array())) !!}	
+					</label>
+					<div class="col-md-6">
+					  <select name='location_id' rows='5' id='location_id' class='select2 '   ></select> 
+					 </div> 
+					 <div class="col-md-2">
+					 	
+					 </div>
+				  </div> 					
+				  <div class="form-group  " > 
+					<label for="Street" class=" control-label col-md-4 text-left"> 
+					{!! SiteHelpers::activeLang('Street', (isset($fields['street']['language'])? $fields['street']['language'] : array())) !!}	
+					</label>
+					<div class="col-md-6">
+					  <textarea name='street' rows='5' id='street' class='form-control '  
+				           >{{ $row['street'] }}</textarea> 
+					 </div> 
+					 <div class="col-md-2">
+					 	
+					 </div>
+				  </div> 					
+				  <div class="form-group  " > 
+					<label for="City" class=" control-label col-md-4 text-left"> 
+					{!! SiteHelpers::activeLang('City', (isset($fields['city']['language'])? $fields['city']['language'] : array())) !!}	
+					</label>
+					<div class="col-md-6">
+					  {!! Form::text('city', $row['city'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
+					 </div> 
+					 <div class="col-md-2">
+					 	
+					 </div>
+				  </div> 					
+				  <div class="form-group  " > 
+					<label for="State" class=" control-label col-md-4 text-left"> 
+					{!! SiteHelpers::activeLang('State', (isset($fields['state']['language'])? $fields['state']['language'] : array())) !!}	
+					</label>
+					<div class="col-md-6">
+					  {!! Form::text('state', $row['state'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
+					 </div> 
+					 <div class="col-md-2">
+					 	
+					 </div>
+				  </div> 					
+				  <div class="form-group  " > 
+					<label for="Zip" class=" control-label col-md-4 text-left"> 
+					{!! SiteHelpers::activeLang('Zip', (isset($fields['zip']['language'])? $fields['zip']['language'] : array())) !!}	
+					</label>
+					<div class="col-md-6">
+					  {!! Form::text('zip', $row['zip'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
+					 </div> 
+					 <div class="col-md-2">
+					 	
+					 </div>
+				  </div> 					
+				  <div class="form-group  " > 
 					<label for="Email" class=" control-label col-md-4 text-left"> 
 					{!! SiteHelpers::activeLang('Email', (isset($fields['email']['language'])? $fields['email']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  <textarea name='email' rows='5' id='email' class='form-control '  
-				           >{{ $row['email'] }}</textarea> 
+					  {!! Form::text('email', $row['email'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
 					 </div> 
 					 <div class="col-md-2">
 					 	
 					 </div>
 				  </div> 					
-			</fieldset>
+				  <div class="form-group  " > 
+					<label for="Company Id" class=" control-label col-md-4 text-left"> 
+					{!! SiteHelpers::activeLang('Company Id', (isset($fields['company_id']['language'])? $fields['company_id']['language'] : array())) !!}	
+					</label>
+					<div class="col-md-6">
+					  <select name='company_id' rows='5' id='company_id' class='select2 ' required  ></select> 
+					 </div> 
+					 <div class="col-md-2">
+					 	
+					 </div>
+				  </div> </fieldset>
 			</div>
 			
 												
@@ -77,7 +140,13 @@
 			 
 <script type="text/javascript">
 $(document).ready(function() { 
-	 
+	
+        $("#location_id").jCombo("{{ URL::to('employee/comboselect?filter=location:id:location_name') }}",
+        {  selected_value : '{{ $row["location_id"] }}' });
+        
+        $("#company_id").jCombo("{{ URL::to('employee/comboselect?filter=company:id:company_name_long') }}",
+        {  selected_value : '{{ $row["company_id"] }}' });
+         
 	
 	$('.editor').summernote();
 	$('.previewImage').fancybox();	
