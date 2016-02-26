@@ -49,9 +49,10 @@ class UsersController extends Controller {
 
 		
 		$page = $request->input('page', 1);
+
 		$params = array(
 			'page'		=> $page ,
-			'limit'		=> (!is_null($request->input('rows')) ? filter_var($request->input('rows'),FILTER_VALIDATE_INT) : static::$per_page ) ,
+			'limit'		=> (!is_null($request->input('rows')) ? filter_var($request->input('rows'),FILTER_VALIDATE_INT) : 	static::$per_page ) ,
 			'sort'		=> $sort ,
 			'order'		=> $order,
 			'params'	=> $filter,
@@ -84,10 +85,30 @@ class UsersController extends Controller {
 		$this->data['subgrid']	= (isset($this->info['config']['subgrid']) ? $this->info['config']['subgrid'] : array()); 
 		// Render into template
 		return view('core.users.index',$this->data);
-	}	
+	}
 
-
-
+	public function getPlay($id = null )
+	{
+		$return_id = \Session::get('uid');
+		$row = Users::find($id);
+		\Auth::loginUsingId($row->id);
+		\DB::table('tb_users')->where('id', '=',$row->id )->update(array('last_login' => date("Y-m-d H:i:s")));
+		\Session::put('uid', $row->id);
+		\Session::put('gid', $row->group_id);
+		\Session::put('eid', $row->email);
+		\Session::put('flgStatus', 1);
+		\Session::put('ll', $row->last_login);
+		\Session::put('fid', $row->first_name.' '. $row->last_name);
+		if(\Session::get('return_id')==$id)
+		{
+			\Session::put('return_id', '');
+		}
+		else
+		{
+			\Session::put('return_id', $return_id);
+		}
+		return Redirect::to('dashboard');
+	}
 	function getUpdate(Request $request, $id = null)
 	{
 	

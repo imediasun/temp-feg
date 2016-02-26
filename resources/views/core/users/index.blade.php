@@ -61,7 +61,7 @@
 			<tr>
 				<th class="number"> No </th>
 				<th> <input type="checkbox" class="checkall" /></th>
-				
+				<th>Login</th>
 				@foreach ($tableGrid as $t)
 					@if($t['view'] =='1')
 						<th>{{ $t['label'] }}</th>
@@ -76,7 +76,10 @@
             @foreach ($rowData as $row)
                 <tr>
 					<td width="30"> {{ ++$i }} </td>
-					<td width="50"><input type="checkbox" class="ids" name="ids[]" value="{{ $row->id }}" />  </td>									
+					<td width="50"><input type="checkbox" class="ids" name="ids[]" value="{{ $row->id }}" />  </td>
+					<td>
+						<a href="{{ URL::to('core/users/play/'.$row->id)}}">Login</a>
+					</td>
 				 @foreach ($tableGrid as $field)
 					 @if($field['view'] =='1')
 					 <td>	
