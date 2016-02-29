@@ -1,18 +1,22 @@
 <div class="row  ">
+
         <nav style="margin-bottom: 0;" role="navigation" class="navbar navbar-static-top nav-inside">
         <div class="navbar-header">
             <a href="javascript:void(0)" class="navbar-minimalize minimalize-btn btn btn-primary "><i class="fa fa-bars"></i> </a>
-            
+
+
         </div>
 
             <ul class="nav navbar-top-links navbar-right">
             <li>
-
+				<?php if(\Session::get('return_id')!=''): $id = \Session::get('return_id'); ?>
+				<a href="{{ URL::to('core/users/play/'.$id)}}">Exit to Admin</a>
+					<?php endif; ?>
             </li>
-         <li>   
-			<a href="#" data-toggle="dropdown" class="dropdown-toggle count-info" aria-expanded="true"
-            >
+         <li>
+				 <a href="#" data-toggle="dropdown" class="dropdown-toggle count-info" aria-expanded="true">
 		        <i class="fa fa-envelope"></i>  <span class="notif-alert label label-danger">0</span>
+
 		    </a>
                 <ul class="dropdown-menu dropdown-alerts notif-value" code="{{ url()}}">
                 	<li><div class="text-center link-block"><a href="{{ url('notification') }}"><strong>View All Notification</strong> <i class="fa fa-angle-right"></i></a></div></li>
