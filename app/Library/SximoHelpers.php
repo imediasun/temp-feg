@@ -1,7 +1,6 @@
 <?php 
 class SximoHelpers {
 
-
   public static function get_zip_content($name , $zip ) {  
       
     $contents = '';  
@@ -170,6 +169,10 @@ class SximoHelpers {
        
         \DB::table('tb_notification')->insert($args);   
   }
+    static function checkInstalled()
+    {
+        echo " here ";
+    }
 
 
 }

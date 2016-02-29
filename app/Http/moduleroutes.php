@@ -21,4 +21,5 @@
                     Route::controller('gamestitle', 'GamestitleController');
                     Route::controller('order', 'OrderController');
                     Route::controller('pendingrequest', 'PendingrequestController');
+                    Route::controller('tablecols', 'TablecolsController');
                     ?>

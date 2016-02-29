@@ -44,9 +44,9 @@
 			</div>
 
 			<div class="form-group has-feedback  animated fadeInRight delayp1">
-				<label> Remember Me ?	</label>
+				<label> Remember Me ?...	</label>
 				<input type="checkbox" name="remember" value="1" />
-				
+
 				<i class="icon-lock form-control-feedback"></i>
 			</div>
 

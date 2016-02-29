@@ -17,13 +17,11 @@ class HomeController extends Controller {
 	 */
 	public function index( Request $request )
 	{
-
-		
 		if(CNF_FRONT =='false' && $request->segment(1) =='' ) :
 			return Redirect::to('dashboard');
 		endif; 		
 		
-		$page = $request->segment(1); 	
+		$page = $request->segment(1);
 		if($page !='') :
 			$content = \DB::table('tb_pages')->where('alias','=',$page)->where('status','=','enable')->get();
 		//print_r($content);
@@ -70,6 +68,7 @@ class HomeController extends Controller {
 				{
 					$this->data['pages'] = 'pages.'.$row->filename;
 				//	print_r($this->data);exit;
+
 					return view($page,$this->data);
 				} else {
 					return Redirect::to('')

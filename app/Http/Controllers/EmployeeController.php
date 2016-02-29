@@ -28,9 +28,9 @@ class EmployeeController extends Controller {
 			'pageUrl'			=>  url('employee'),
 			'return' 			=> 	self::returnUrl()	
 		);
-		
-			
-				
+
+
+
 	} 
 	
 	public function getIndex()

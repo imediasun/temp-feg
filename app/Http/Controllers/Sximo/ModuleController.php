@@ -1,7 +1,7 @@
 <?php namespace App\Http\Controllers\Sximo;
 
 use App\Models\Sximo\Module;
-use App\Library\ZipHelpers;
+use App\Library\ZipHelpers as helper;
 use App\Library\SximoHelpers;
 use App\Http\Controllers\controller;
 use Illuminate\Http\Request;
@@ -29,12 +29,15 @@ class ModuleController extends Controller {
 	{
         if(!is_null($request->input('t')))
         {
+
             $rowData = \DB::table('tb_module')->where('module_type','=','core')
                     ->orderby('module_title','asc')->get();    
             $type = 'core';        
         } else {
+
             $rowData = \DB::table('tb_module')->where('module_type','!=','core')
                         ->orderby('module_title','asc')->get();
+
             $type = 'addon';
         }           
         

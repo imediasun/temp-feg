@@ -59,7 +59,7 @@
       </div>
 
  	<ul class="nav nav-tabs" style="margin-bottom:10px;">
-	  <li @if($type =='addon') class="active" @endif><a href="{{ URL::to('sximo/module')}}"> {{ Lang::get('core.tab_installed') }}  </a></li>
+	  <li  @if($type =='addon') class="active" @endif><a href="{{ URL::to('sximo/module')}}"> {{ Lang::get('core.tab_installed') }}  </a></li>
 	  <li @if($type =='core') class="active" @endif><a href="{{ URL::to('sximo/module?t=core')}}">{{ Lang::get('core.tab_core') }}</a></li>
 	</ul>     
 
