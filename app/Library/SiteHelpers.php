@@ -1532,6 +1532,20 @@ public static function alphaID($in, $to_num = false, $pad_up = false, $passKey =
 
 
         \DB::table('tb_notification')->insert($args);   
-  }		 	 		
+  }
+
+	static function isModuleEnabled($moduleName)
+	{
+		//$Q = DB::select(" SELECT ".$fields." FROM ".$arr['db']." WHERE ".$arr['key']." = '".$val."' ");
+		$result = DB::select("SELECT module_id FROM tb_module WHERE module_name = '$moduleName'");
+		if(!empty($result))
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
 			
 }

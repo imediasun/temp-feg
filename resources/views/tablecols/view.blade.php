@@ -23,9 +23,9 @@
 				
 					<tr>
 						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('User-id', (isset($fields['user-id']['language'])? $fields['user-id']['language'] : array())) }}	
+							{{ SiteHelpers::activeLang('User Id', (isset($fields['user_id']['language'])? $fields['user_id']['language'] : array())) }}	
 						</td>
-						<td>{{ $row->user-id }} </td>
+						<td>{{ $row->user_id }} </td>
 						
 					</tr>
 				
@@ -42,6 +42,14 @@
 							{{ SiteHelpers::activeLang('Config', (isset($fields['config']['language'])? $fields['config']['language'] : array())) }}	
 						</td>
 						<td>{{ $row->config }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Config Name', (isset($fields['config_name']['language'])? $fields['config_name']['language'] : array())) }}	
+						</td>
+						<td>{{ $row->config_name }} </td>
 						
 					</tr>
 				

@@ -11,7 +11,7 @@
 @endif	
 			{!! Form::open(array('url'=>'tablecols/save/'.SiteHelpers::encryptID($row['id']), 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'tablecolsFormAjax')) !!}
 			<div class="col-md-12">
-						<fieldset><legend> tablecols</legend>
+						<fieldset><legend> Table Cols</legend>
 									
 				  <div class="form-group  " > 
 					<label for="Id" class=" control-label col-md-4 text-left"> 
@@ -25,11 +25,11 @@
 					 </div>
 				  </div> 					
 				  <div class="form-group  " > 
-					<label for="User-id" class=" control-label col-md-4 text-left"> 
-					{!! SiteHelpers::activeLang('User-id', (isset($fields['user-id']['language'])? $fields['user-id']['language'] : array())) !!}	
+					<label for="User Id" class=" control-label col-md-4 text-left"> 
+					{!! SiteHelpers::activeLang('User Id', (isset($fields['user_id']['language'])? $fields['user_id']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('user-id', $row['user-id'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
+					  {!! Form::text('user_id', $row['user_id'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -53,6 +53,18 @@
 					<div class="col-md-6">
 					  <textarea name='config' rows='5' id='config' class='form-control '  
 				           >{{ $row['config'] }}</textarea> 
+					 </div> 
+					 <div class="col-md-2">
+					 	
+					 </div>
+				  </div> 					
+				  <div class="form-group  " > 
+					<label for="Config Name" class=" control-label col-md-4 text-left"> 
+					{!! SiteHelpers::activeLang('Config Name', (isset($fields['config_name']['language'])? $fields['config_name']['language'] : array())) !!}	
+					</label>
+					<div class="col-md-6">
+					  <textarea name='config_name' rows='5' id='config_name' class='form-control '  
+				           >{{ $row['config_name'] }}</textarea> 
 					 </div> 
 					 <div class="col-md-2">
 					 	
