@@ -49,7 +49,6 @@ class Sximo extends Model {
 		//$total = 1000;
 		return $results = array('rows'=> $result , 'total' => $total);
 
-	
 	}	
 
 	public static function getRow( $id )
@@ -78,18 +77,16 @@ class Sximo extends Model {
 	   $key = with(new static)->primaryKey;
 	    if($id == NULL )
         {
-			
             // Insert Here 
 			if(isset($data['createdOn'])) $data['createdOn'] = date("Y-m-d H:i:s");	
 			if(isset($data['updatedOn'])) $data['updatedOn'] = date("Y-m-d H:i:s");	
-			 $id = \DB::table( $table)->insertGetId($data);				
-            
+			 $id = \DB::table( $table)->insertGetId($data);
         } else {
             // Update here 
 			// update created field if any
 			if(isset($data['createdOn'])) unset($data['createdOn']);	
 			if(isset($data['updatedOn'])) $data['updatedOn'] = date("Y-m-d H:i:s");			
-			 \DB::table($table)->where($key,$id)->update($data);    
+			 \DB::table($table)->where($key,$id)->update($data);
         }    
         return $id;    
 	}			
@@ -276,6 +273,11 @@ class Sximo extends Model {
 		}
 		return $val;
 	}
+    public function checkModule($module_id)
+    {
+        $module_id=\DB::table('user_module_config')->where('module_id','=',$module_id)->pluck('id');
+        return $module_id;
+    }
 
 
 }

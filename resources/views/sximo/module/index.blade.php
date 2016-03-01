@@ -14,7 +14,8 @@
 
 				<div class="row m-l-none m-r-none m-t  white-bg shortcut " >
 					<div class="col-sm-3 b-r  p-sm ">
-						<span class="pull-left m-r-sm text-info"><i class="fa fa-plus-circle"></i></span> 
+						<span class="pull-left m-r-sm text-info"><i class="fa fa-plus-circle"></i></span>
+
 						<a href="{{ URL::to('sximo/module/create') }}" class="clear">
 							<span class="h3 block m-t-xs"><strong> {{ Lang::get('core.btn_create') }} Module </strong>
 							</span> <small class="text-muted text-uc"> {{ Lang::get('core.fr_createmodule') }}  </small>

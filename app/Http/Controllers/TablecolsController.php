@@ -168,14 +168,12 @@ class TablecolsController extends Controller {
 
 	function postSave( Request $request, $id =0)
 	{
-		
+
 		$rules = $this->validateForm();
 		$validator = Validator::make($request->all(), $rules);	
 		if ($validator->passes()) {
 			$data = $this->validatePost('user_module_config');
-			
 			$id = $this->model->insertRow($data , $request->input('id'));
-			
 			return response()->json(array(
 				'status'=>'success',
 				'message'=> \Lang::get('core.note_success')
@@ -221,19 +219,36 @@ class TablecolsController extends Controller {
 		} 		
 
 	}
+    public function postConfig()
+    {
+        $data=Input::all();
+        $id=$this->model->checkModule($data['module_id']);
+        $config=implode(',',$data['cols']);
+        $this->model->insertRow(array('user_id'=>$data['user_id'],'module_id'=>$data['module_id'],'config'=>$config,'config_name'=>$data['config_name'],'is_private'=>$data['user_mode']),$id);
+        return response()->json(array(
+            'status'=>'success',
+            'message'=> \Lang::get('core.note_success')
+        ));
+
+    }
 
 	public function getArrangeCols($pageModule)
 	{
 		$info = $this->model->makeInfo($pageModule);
+        $module_id=\DB::table('tb_module')->where('module_name','=',$pageModule)->pluck('module_id');
+        $user_id=\Session::get('uid');
+       /* echo $user_id;
+        exit();
+       */
 		//$this->info['config']['grid'];
-		/*
+/*
 		echo '<pre>';
 		print_r($info['config']['grid']);
 		echo '</pre>';
 		exit;
-		*/
+*/
 		//add code here to get all columns for a module
-		return view('tablecols.arrange_cols',['allColumns'=>$info['config']['grid']]);
+		return view('tablecols.arrange_cols',['allColumns'=>$info['config']['grid'],'user_id'=>$user_id,'module_id'=> $module_id,'pageModule'=>$pageModule]);
 	}
 
 }
