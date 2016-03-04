@@ -30,7 +30,7 @@ class Sximo extends Model {
 		// End Update permission global / own access new ver 1.1
 
 		$rows = array();
-	    $result = \DB::select( self::querySelect() . self::queryWhere(). " 
+	    $result = \DB::select( self::querySelect() . self::queryWhere(). "
 				{$params} ". self::queryGroup() ." {$orderConditional}  {$limitConditional} ");
 
 		if($key =='' ) { $key ='*'; } else { $key = $table.".".$key ; }	
@@ -273,10 +273,17 @@ class Sximo extends Model {
 		}
 		return $val;
 	}
-    public function checkModule($module_id)
+    public function checkModule($config_name)
     {
-        $module_id=\DB::table('user_module_config')->where('module_id','=',$module_id)->pluck('id');
-        return $module_id;
+        $id=\DB::table('user_module_config')->where('config_name','=',$config_name)->pluck('id');
+        return $id;
+    }
+
+    public function getModuleConfig($module_id,$user_id,$config_id)
+    {
+
+        $res = \DB::table('user_module_config')->where('module_id','=',$module_id)->where('user_id','=',$user_id)->where('id','=',$config_id)->get();
+        return $res;
     }
 
 

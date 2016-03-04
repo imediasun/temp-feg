@@ -101,10 +101,12 @@ class UsersController extends Controller {
 		\Session::put('fid', $row->first_name.' '. $row->last_name);
 		if(\Session::get('return_id')==$id)
 		{
+
 			\Session::put('return_id', '');
 		}
 		else
 		{
+
 			\Session::put('return_id', $return_id);
 		}
 		return Redirect::to('dashboard');

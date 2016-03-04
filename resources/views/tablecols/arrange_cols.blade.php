@@ -1,3 +1,4 @@
+
 <div style="width:70%;margin:0px auto;text-align: center">
     {!! Form::open(array('url'=>'tablecols/config/', 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'tablecolsFormAjax')) !!}
     <input type="hidden" name="module_id" value="{{ $module_id }}"/>
