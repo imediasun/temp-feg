@@ -23,6 +23,9 @@ Route::get('/restric',function(){
 	return view('errors.blocked');
 
 });
+Route::get('/gamestitle/data/{?}',function(){
+    echo "hello";
+});
 
 //Route::resource('sximoapi', 'SximoapiController');
 Route::group(['middleware' => 'auth'], function()

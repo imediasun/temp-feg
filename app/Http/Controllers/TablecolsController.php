@@ -222,7 +222,7 @@ class TablecolsController extends Controller {
     public function postConfig()
     {
         $data=Input::all();
-        $id=$this->model->checkModule($data['module_id']);
+        $id=$this->model->checkModule($data['config_name']);
         $config=implode(',',$data['cols']);
         $this->model->insertRow(array('user_id'=>$data['user_id'],'module_id'=>$data['module_id'],'config'=>$config,'config_name'=>$data['config_name'],'is_private'=>$data['user_mode']),$id);
         return response()->json(array(
