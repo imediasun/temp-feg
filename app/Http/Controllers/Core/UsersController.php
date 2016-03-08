@@ -1,11 +1,12 @@
-<?php namespace App\Http\Controllers\core;
+<?php
+namespace App\Http\Controllers\core;
 
 use App\Http\Controllers\controller;
 use App\Models\Core\Users;
 use App\Models\Core\Groups;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
-use Validator, Input, Redirect ; 
+use Validator, Input, Redirect, Session, Auth, DB ; 
 
 
 class UsersController extends Controller {
@@ -91,23 +92,28 @@ class UsersController extends Controller {
 	{
 		$return_id = \Session::get('uid');
 		$row = Users::find($id);
-		\Auth::loginUsingId($row->id);
-		\DB::table('tb_users')->where('id', '=',$row->id )->update(array('last_login' => date("Y-m-d H:i:s")));
-		\Session::put('uid', $row->id);
-		\Session::put('gid', $row->group_id);
-		\Session::put('eid', $row->email);
-		\Session::put('flgStatus', 1);
-		\Session::put('ll', $row->last_login);
-		\Session::put('fid', $row->first_name.' '. $row->last_name);
-		if(\Session::get('return_id')==$id)
+		Auth::loginUsingId($row->id);
+
+		DB::table('tb_users')->where('id', '=',$row->id )->update(array('last_login' => date("Y-m-d H:i:s")));
+		//Session::regenerate();
+		
+		Session::put('uid', $row->id);
+		Session::put('gid', $row->group_id);
+		Session::put('eid', $row->email);
+		Session::put('flgStatus', 1);
+		Session::put('ll', $row->last_login);
+		Session::put('fid', $row->first_name.' '. $row->last_name);
+		Session::save();
+
+		if(Session::get('return_id')==$id)
 		{
 
-			\Session::put('return_id', '');
+			Session::put('return_id', '');
 		}
 		else
 		{
 
-			\Session::put('return_id', $return_id);
+			Session::put('return_id', $return_id);
 		}
 		return Redirect::to('dashboard');
 	}
@@ -326,7 +332,4 @@ class UsersController extends Controller {
 		}	
 
 	}
-
-
-
 }

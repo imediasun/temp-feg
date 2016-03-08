@@ -1,4 +1,4 @@
-	<?php
+<?php
 class SiteHelpers
 {
 	public static function menus( $position ='top',$active = '1')

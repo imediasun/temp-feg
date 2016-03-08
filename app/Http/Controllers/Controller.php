@@ -34,13 +34,12 @@ abstract class Controller extends BaseController {
         	
         	if(!\Session::get('gid'))
         	{
-
 				\Session::put('uid', \Auth::user()->id);
 				\Session::put('gid', \Auth::user()->group_id);
 				\Session::put('eid', \Auth::user()->email);
 				\Session::put('ll', \Auth::user()->last_login);
 				\Session::put('fid', \Auth::user()->first_name.' '. \Auth::user()->last_name);  
-				\Session::put('themes', 'sximo-light-blue');     		
+				\Session::put('themes', 'sximo-light-blue');
         	}
         } 
 
