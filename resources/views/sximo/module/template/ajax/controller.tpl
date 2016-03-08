@@ -43,7 +43,24 @@ class {controller}Controller extends Controller {
 	}	
 
 	public function postData( Request $request)
-	{ 
+	{
+$module_id=\DB::table('tb_module')->where('module_name','=','{class}')->pluck('module_id');
+$user_id=\Session::get('uid');
+$config_id=Input::get('config_id');
+$this->data['module_id']=$module_id;
+$this->data['is_private']=0;
+$this->data['config_id']=0;
+if(!empty($config_id))
+{
+$config=$this->model->getModuleConfig($module_id,$user_id,$config_id);
+$this->data['config']=explode(',',$config[0]->config);
+$this->data['is_private']=$config[0]->is_private;
+$this->data['config_id']=$config[0]->id;
+}
+else{
+$this->data['config']='false';
+}
+
 		$sort = (!is_null($request->input('sort')) ? $request->input('sort') : $this->info['setting']['orderby']); 
 		$order = (!is_null($request->input('order')) ? $request->input('order') : $this->info['setting']['ordertype']);
 		// End Filter sort and order for query 

@@ -1666,6 +1666,7 @@ class ModuleController extends Controller {
 
                 if(!is_null($request->input('rebuild')))
                 {
+
                     // rebuild spesific files
                     if($request->input('c') =='y'){
                         file_put_contents( $dirC."{$ctr}Controller.php" , $build_controller) ;    
@@ -1703,6 +1704,7 @@ class ModuleController extends Controller {
 
             if($row->module_type =='ajax')
             {
+
                 // Do CRUD using Ajax
                 $template = base_path().'/resources/views/sximo/module/template/ajax/';
                 $controller = file_get_contents(  $template.'controller.tpl' );

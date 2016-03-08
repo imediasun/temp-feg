@@ -10,9 +10,9 @@
 			@endif 
 		</div>
 	</div>
-	<div class="sbox-content"> 	
+	<div class="sbox-content">
 
-	@include( $pageModule.'/toolbar')
+        @include( $pageModule.'/toolbar',['config_id'=>$config_id,'colconfigs' => SiteHelpers::getColsConfigs($module_id)])
 
 	 <?php echo Form::open(array('url'=>'employee/delete/', 'class'=>'form-horizontal' ,'id' =>'SximoTable'  ,'data-parsley-validate'=>'' )) ;?>
 <div class="table-responsive">	
@@ -28,8 +28,18 @@
 						$limited = isset($t['limited']) ? $t['limited'] :'';
 						if(SiteHelpers::filterColumn($limited ))
 						{
+						 if(is_array($config))
+                                {
+                            if(in_array($t['field'],$config))
+                            {
 							echo '<th align="'.$t['align'].'" width="'.$t['width'].'">'.\SiteHelpers::activeLang($t['label'],(isset($t['language'])? $t['language'] : array())).'</th>';				
-						} 
+						}
+                }
+                else
+                {
+                echo '<th align="'.$t['align'].'" width="'.$t['width'].'">'.\SiteHelpers::activeLang($t['label'],(isset($t['language'])? $t['language'] : array())).'</th>';
+                }
+                }
 					endif;
 				endforeach; ?>
 				<th width="70"><?php echo Lang::get('core.btn_action') ;?></th>
@@ -70,6 +80,10 @@
 					 <?php foreach ($tableGrid as $field) :
 					 	if($field['view'] =='1') : 
 							$conn = (isset($field['conn']) ? $field['conn'] : array() );
+							 if( is_array($config))
+                        {
+                        if(in_array($field['field'],$config))
+                            {
 							$value = AjaxHelpers::gridFormater($row->$field['field'], $row , $field['attribute'],$conn);
 						 	?>
 						 	<?php $limited = isset($field['limited']) ? $field['limited'] :''; ?>
@@ -77,8 +91,24 @@
 								 <td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}" data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">					 
 									{!! $value !!}							 
 								 </td>
-							@endif	
-						 <?php endif;					 
+							@endif
+                    <?php
+                    }
+                        }
+                        else{
+                    $value = AjaxHelpers::gridFormater($row->$field['field'], $row , $field['attribute'],$conn);
+
+
+                    ?>
+                    <?php $limited = isset($field['limited']) ? $field['limited'] :''; ?>
+                    @if(SiteHelpers::filterColumn($limited ))
+                    <td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}" data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
+                        {!! $value !!}
+                    </td>
+                    @endif
+                    <?php
+                        }
+						 endif;
 						endforeach; 
 					  ?>
 				 <td data-values="action" data-key="<?php echo $row->id ;?>">

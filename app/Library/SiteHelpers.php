@@ -1547,12 +1547,12 @@ public static function alphaID($in, $to_num = false, $pad_up = false, $passKey =
 			return false;
 		}
 	}
-    static function getColsConfigs()
+    static function getColsConfigs($module_id)
     {
-        $user_id=\Session::get('uid');
-        $result=\DB::select("SELECT * FROM user_module_config where user_id='$user_id'");
+        $result=\DB::select("SELECT * FROM user_module_config where module_id='$module_id'");
         return $result;
     }
+
 
 			
 }

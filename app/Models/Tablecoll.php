@@ -3,9 +3,9 @@
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 
-class employee extends Sximo  {
+class tablecoll extends Sximo  {
 	
-	protected $table = 'employees';
+	protected $table = 'user_module_config';
 	protected $primaryKey = 'id';
 
 	public function __construct() {
@@ -15,15 +15,12 @@ class employee extends Sximo  {
 
 	public static function querySelect(  ){
 		
-		return " SELECT employees.*, users.username,users.loc_1, tb_groups.group_id
-FROM employees 
-JOIN users ON employees.user_id = users.id
-JOIN  tb_groups ON users.group_id = tb_groups.group_id ";
+		return "  SELECT user_module_config.* FROM user_module_config  ";
 	}	
 
 	public static function queryWhere(  ){
 		
-		return "  WHERE employees.id IS NOT NULL ";
+		return "  WHERE user_module_config.id IS NOT NULL ";
 	}
 	
 	public static function queryGroup(){

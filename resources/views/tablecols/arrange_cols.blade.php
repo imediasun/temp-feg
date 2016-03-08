@@ -52,6 +52,7 @@
                 notyMessage(data.message);
                 $('#sximo-modal').modal('hide');
                 $('.ajaxLoading').hide();
+                window.location.reload();
             } else {
                 notyMessageError(data.message);
                 $('.ajaxLoading').hide();

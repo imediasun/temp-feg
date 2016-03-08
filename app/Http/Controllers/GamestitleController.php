@@ -4,7 +4,7 @@ use App\Http\Controllers\controller;
 use App\Models\Gamestitle;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
-use Validator, Input, Redirect ;
+use Validator, Input, Redirect ; 
 
 class GamestitleController extends Controller {
 
@@ -35,8 +35,6 @@ class GamestitleController extends Controller {
 	
 	public function getIndex()
 	{
-
-
 		if($this->access['is_view'] ==0) 
 			return Redirect::to('dashboard')->with('messagetext',\Lang::get('core.note_restric'))->with('msgstatus','error');
 				
@@ -46,23 +44,22 @@ class GamestitleController extends Controller {
 
 	public function postData( Request $request)
 	{
-
-        $module_id=\DB::table('tb_module')->where('module_name','=','gamestitle')->pluck('module_id');
-        $user_id=\Session::get('uid');
-        $config_id=Input::get('config_id');
-        $this->data['config_id']=0;
-        if(!empty($config_id))
-        {
-            $config=$this->model->getModuleConfig($module_id,$user_id,$config_id);
-            $this->data['config']=explode(',',$config[0]->config);
-            $this->data['is_private']=$config[0]->is_private;
-            $this->data['config_id']=$config[0]->id;
-
-        }
-        else{
-            $this->data['config']='false';
-        }
-        //$config=$this->model->getModuleConfig($module_id);
+$module_id=\DB::table('tb_module')->where('module_name','=','gamestitle')->pluck('module_id');
+$user_id=\Session::get('uid');
+$config_id=Input::get('config_id');
+$this->data['module_id']=$module_id;
+$this->data['is_private']=0;
+$this->data['config_id']=0;
+if(!empty($config_id))
+{
+$config=$this->model->getModuleConfig($module_id,$user_id,$config_id);
+$this->data['config']=explode(',',$config[0]->config);
+$this->data['is_private']=$config[0]->is_private;
+$this->data['config_id']=$config[0]->id;
+}
+else{
+$this->data['config']='false';
+}
 
 		$sort = (!is_null($request->input('sort')) ? $request->input('sort') : $this->info['setting']['orderby']); 
 		$order = (!is_null($request->input('order')) ? $request->input('order') : $this->info['setting']['ordertype']);
@@ -81,7 +78,8 @@ class GamestitleController extends Controller {
 			'global'	=> (isset($this->access['is_global']) ? $this->access['is_global'] : 0 )
 		);
 		// Get Query 
-		$results = $this->model->getRows( $params );
+		$results = $this->model->getRows( $params );		
+		
 		// Build pagination setting
 		$page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;	
 		$pagination = new Paginator($results['rows'], $results['total'], $params['limit']);	
@@ -105,9 +103,8 @@ class GamestitleController extends Controller {
 		$this->data['setting'] 		= $this->info['setting'];
 		
 		// Master detail link if any 
-		$this->data['subgrid']	= (isset($this->info['config']['subgrid']) ? $this->info['config']['subgrid'] : array());
-        // columns to show
-      //  $this->data['testconfigdata']=\SiteHelpers::getConfigs();
+		$this->data['subgrid']	= (isset($this->info['config']['subgrid']) ? $this->info['config']['subgrid'] : array()); 
+		// Render into template
 		return view('gamestitle.table',$this->data);
 
 	}

@@ -12,7 +12,7 @@
 	</div>
 	<div class="sbox-content"> 	
 
-	@include( $pageModule.'/toolbar')
+	@include( $pageModule.'/toolbar',['config_id'=>$config_id,'colconfigs' => SiteHelpers::getColsConfigs()])
 
 	 <?php echo Form::open(array('url'=>'location/delete/', 'class'=>'form-horizontal' ,'id' =>'SximoTable'  ,'data-parsley-validate'=>'' )) ;?>
 <div class="table-responsive">	
