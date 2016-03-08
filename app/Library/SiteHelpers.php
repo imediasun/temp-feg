@@ -1553,6 +1553,19 @@ public static function alphaID($in, $to_num = false, $pad_up = false, $passKey =
         return $result;
     }
 
-
+ static function showRequiredCols($tableGrid,$cols)
+ {
+     $cols=explode(',',$cols);
+     $table=array();
+     $i=0;
+     foreach($tableGrid as $t) {
+         if(in_array($t['field'],$cols))
+         {
+             $table[$i]=$t;
+             $i++;
+         }
+     }
+     return $table;
+ }
 			
 }

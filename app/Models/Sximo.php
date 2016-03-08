@@ -279,10 +279,11 @@ class Sximo extends Model {
         return $id;
     }
 
-    public function getModuleConfig($module_id,$user_id,$config_id)
+    public function getModuleConfig($module_id,$config_id)
     {
 
         $res = \DB::table('user_module_config')->where('module_id','=',$module_id)->where('id','=',$config_id)->get();
+
         return $res;
     }
 

@@ -16,7 +16,7 @@
             @foreach( $colconfigs as $configs )
             @if($configs->is_private==1)
             @if($configs->user_id==\Session::get('uid'))
-            <option @if($config_id==$configs->id) selected @endif value={{ $configs->id }}> {{ $configs->config_name }}   </option>
+            <option @if($configs->id==\Session::get('config_id')) selected @endif value={{ $configs->id }}> {{ $configs->config_name }}   </option>
             @endif
             @else
             <option @if($config_id==$configs->id) selected @endif value={{ $configs->id }}> {{ $configs->config_name }}   </option>
