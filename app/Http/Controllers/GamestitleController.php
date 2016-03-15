@@ -32,6 +32,7 @@ class GamestitleController extends Controller
 
     public function getIndex()
     {
+
         if ($this->access['is_view'] == 0)
             return Redirect::to('dashboard')->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
 
@@ -230,5 +231,158 @@ class GamestitleController extends Controller
         }
 
     }
+    function getUpload(Request $request,$id=0)
+    {
+        $uploadType=$request->get('type');
+        $this->data['game_id']=$id;
+        switch($uploadType)
+        {
+            case 1:
+                $this->data['pageTitle']="Game Image";
+                $this->data['pageNote']="Game Image";
+                $this->data['upload_inst']='**MUST BE jpg, jpeg, gif, png**';
+                break;
+            case 2:
+                $this->data['pageTitle']="Game Manual";
+                $this->data['pageNote']="Game Manual";
+                $this->data['upload_inst']='**MUST BE PDF**';
+                break;
+            case 3:
+                $this->data['pageTitle']="Game Bulletin";
+                $this->data['pageNote']="Game Bulletin";
+                $this->data['upload_inst']='**MUST BE PDF**';
+                break;
+                defaule:
+                $this->data['pageTitle']="Games Title";
+                $this->data['pageNote']="";
+
+        }
+        $this->data['upload_type']=$uploadType;
+        $res=\DB::table('game_title')->select('img','game_title')->where('id', $id)->get();
+        $this->data['game_image']=$res[0]->img;
+        $this->data['game_title']=$res[0]->game_title;
+         return view('gamestitle.upload',$this->data);
+
+    }
+    function postUpload(Request $request)
+    {
+
+        $files = array('image' => Input::file('avatar'));
+        $type=Input::get('upload_type'); $id = Input::get('id');
+        $destinationPath="./uploads/games";
+        $id=Input::get('id');
+        $upload_type=Input::get('upload_type');
+      //  $rules=array();
+        switch($type) {
+            case 1:
+                $rules = array('image' => 'required|mimes:jpeg,gif,png'); //mimes:jpeg,bmp,png
+                $destinationPath .= '/images';
+                break;
+            case 2:
+                $rules = array('image' => 'required|mimes:pdf'); //mimepdf
+                $destinationPath .= '/manuals';
+                break;
+            case 3:
+                $rules = array('image' => 'required|mimes:pdf'); //mimpdf
+                $destinationPath .= '/bulletins';
+                break;
+            default:
+                $rules = array('image' => 'required|mimes:pdf'); //mimpdf
+                $destinationPath .= '/images';
+
+        }
+                // doing the validation, passing post data, rules and the messages
+                $validator = Validator::make($files,$rules);
+
+            if ($validator->fails()) {
+
+                return Redirect::to('gamestitle/upload/' . $id ."?type=".$upload_type)->with('messagetext', \Lang::get('core.note_success'))->with('msgstatus', 'Please select an Image..')->withErrors($validator);;
+
+        } else {
+        $updates = array();
+        $file = $request->file('avatar');
+        $filename = $file->getClientOriginalName();
+        $extension = $file->getClientOriginalExtension(); //if you need extension of the file
+        $newfilename = $id . '.' . $extension;
+        $uploadSuccess = $request->file('avatar')->move($destinationPath, $newfilename);
+        if ($uploadSuccess) {
+            if($type==1)
+            {
+                $updates['img'] = $newfilename;
+            }
+            elseif($type==2)
+            {
+                $updates['manual'] = $newfilename;
+            }
+            elseif($type==3)
+            {
+                $updates['bulletin'] = $newfilename;
+            }
+
+        }
+        $this->model->insertRow($updates, $id);
+        $return = 'gamestitle/upload/' . $id;
+        return Redirect::to('gamestitle/upload/' . $id."?type=".$upload_type)->with('messagetext', \Lang::get('core.note_success'))->with('msgstatus', 'success');
+
+    }
+
+
+
+    }
+    function getImagesupdate()
+    {
+        $rows=\DB::table('game_title')->select('id')->get();
+        foreach($rows as $row)
+        {
+            $img=$row->id.".jpg";
+            \DB::table('game_title')->where('id','=',$row->id)->update(array('img'=>$img));
+        }
+    }
+    function getManualupdate()
+    {
+        $rows=\DB::table('game_title')->select('id')->get();
+        foreach($rows as $row)
+        {
+            $manual=$row->id.".pdf";
+            \DB::table('game_title')->where('id','=',$row->id)->update(array('manual'=>$manual));
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 }

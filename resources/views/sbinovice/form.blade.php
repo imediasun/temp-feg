@@ -180,7 +180,7 @@ function calculateSum()
 
 $(document).ready(function() { 
 	
-	$("#UserID").jCombo("{{ URL::to('sbinovice/comboselect?filter=tb_users:id:first_name|last_name') }}",
+	$("#UserID").jCombo("{{ URL::to('sbinovice/comboselect?filter=users:id:first_name|last_name') }}",
 	{  selected_value : '{{ $row["UserID"] }}' });
 
 	$("input[name*='bulk_Total'] ").attr('readonly','1');

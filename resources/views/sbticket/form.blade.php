@@ -1,4 +1,4 @@
-
+<?php  ?>
 @if($setting['form-method'] =='native')
 	<div class="sbox">
 		<div class="sbox-title">  
@@ -156,8 +156,8 @@
 					{!! SiteHelpers::activeLang('Assign To', (isset($fields['assign_to']['language'])? $fields['assign_to']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  <select name='assign_to[]' multiple rows='5' id='assign_to' class='select2 ' required  ></select> 
-					 </div> 
+					  <select name='assign_to[]' multiple rows='5' id='assign_to' class='select2 ' required  ></select>
+					 </div>
 					 <div class="col-md-2">
 					 	
 					 </div>

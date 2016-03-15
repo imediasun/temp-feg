@@ -39,7 +39,7 @@ class UserController extends Controller {
 		$rules = array(
 			'firstname'=>'required|alpha_num|min:2',
 			'lastname'=>'required|alpha_num|min:2',
-			'email'=>'required|email|unique:tb_users',
+			'email'=>'required|email|unique:users',
 			'password'=>'required|between:6,12|confirmed',
 			'password_confirmation'=>'required|between:6,12'
 			);	
@@ -107,7 +107,7 @@ class UserController extends Controller {
 		$user =  User::where('activation','=',$num)->get();
 		if (count($user) >=1)
 		{
-			\DB::table('tb_users')->where('activation', $num )->update(array('active' => 1,'activation'=>''));
+			\DB::table('users')->where('activation', $num )->update(array('active' => 1,'activation'=>''));
 			return Redirect::to('user/login')->with('message',\SiteHelpers::alert('success','Your account is active now!'));
 			
 		} else {
@@ -157,8 +157,15 @@ class UserController extends Controller {
 						// BLocked users
 						\Auth::logout();
 						return Redirect::to('user/login')->with('message', \SiteHelpers::alert('error','Your Account is BLocked'));
-					} else {
-						\DB::table('tb_users')->where('id', '=',$row->id )->update(array('last_login' => date("Y-m-d H:i:s")));
+					}
+                    else if($row->banned==1)
+                    {
+                        // BLocked users
+                        \Auth::logout();
+                        return Redirect::to('user/login')->with('message', \SiteHelpers::alert('error','Your Account is BLocked'));
+                    }
+                    else {
+						\DB::table('users')->where('id', '=',$row->id )->update(array('last_login' => date("Y-m-d H:i:s")));
 						\Session::put('uid', $row->id);
 						\Session::put('gid', $row->group_id);
 						\Session::put('eid', $row->email);
@@ -197,7 +204,7 @@ class UserController extends Controller {
 	{
 		$row = User::find(4);
 		\Auth::loginUsingId(4);
-		\DB::table('tb_users')->where('id', '=',$row->id )->update(array('last_login' => date("Y-m-d H:i:s")));
+		\DB::table('users')->where('id', '=',$row->id )->update(array('last_login' => date("Y-m-d H:i:s")));
 		\Session::put('uid', $row->id);
 		\Session::put('gid', $row->group_id);
 		\Session::put('eid', $row->email);
@@ -235,7 +242,7 @@ class UserController extends Controller {
 			
 		if($request->input('email') != \Session::get('eid'))
 		{
-			$rules['email'] = 'required|email|unique:tb_users';
+			$rules['email'] = 'required|email|unique:users';
 		}	
 				
 		$validator = Validator::make($request->all(), $rules);

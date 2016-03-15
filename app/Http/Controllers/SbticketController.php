@@ -46,6 +46,22 @@ class SbticketController extends Controller {
 
 	public function postData( Request $request)
 	{
+        $module_id = \DB::table('tb_module')->where('module_name', '=', 'sbticket')->pluck('module_id');
+        $this->data['module_id'] = $module_id;
+        if (Input::has('config_id')) {
+            $config_id = Input::get('config_id');
+        } elseif (\Session::has('config_id')) {
+            $config_id = \Session::get('config_id');
+        } else {
+            $config_id = 0;
+        }
+        $this->data['config_id'] = $config_id;
+        $config = $this->model->getModuleConfig($module_id, $config_id);
+        if(!empty($config))
+        {
+            $this->data['config'] = \SiteHelpers::CF_decode_json($config[0]->config);
+            \Session::put('config_id', $config_id);
+        }
 		$sort = (!is_null($request->input('sort')) ? $request->input('sort') : $this->info['setting']['orderby']);
 		$order = (!is_null($request->input('order')) ? $request->input('order') : $this->info['setting']['ordertype']);
 		// End Filter sort and order for query
@@ -129,6 +145,9 @@ class SbticketController extends Controller {
 
 		// Master detail link if any
 		$this->data['subgrid']	= (isset($this->info['config']['subgrid']) ? $this->info['config']['subgrid'] : array());
+        if ($this->data['config_id'] != 0 && !empty($config)) {
+        $this->data['tableGrid'] = \SiteHelpers::showRequiredCols($this->data['tableGrid'], $this->data['config']);
+    }
 		// Render into template
 		return view('sbticket.table',$this->data);
 
@@ -142,6 +161,7 @@ class SbticketController extends Controller {
 		{
 			if($this->access['is_add'] ==0 )
 				return Redirect::to('dashboard')->with('messagetext',\Lang::get('core.note_restric'))->with('msgstatus','error');
+
 		}
 
 		if($id !='')

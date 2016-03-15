@@ -25,7 +25,9 @@
                     <thead>
                     <tr>
                         <th width="20"> No</th>
+
                         <th width="30"><input type="checkbox" class="checkall"/></th>
+                        <th>Image</th>
                         @if($setting['view-method']=='expand')
                             <th></th> @endif
                         <?php foreach ($tableGrid as $t) :
@@ -36,6 +38,10 @@
                                 }
                             endif;
                         endforeach; ?>
+                        <th>Upload Image</th>
+                        <th>Upload Manual</th>
+                        <th>Upload Bulletin</th>
+                        <th>Manual</th>
                         <th width="70"><?php echo Lang::get('core.btn_action');?></th>
                     </tr>
                     </thead>
@@ -57,6 +63,7 @@
                                     @endif
                                 @endif
                             @endforeach
+
                             <td>
                                 <button onclick="saved('form-0')" class="btn btn-primary btn-xs" type="button"><i
                                             class="fa  fa-save"></i></button>
@@ -70,6 +77,7 @@
                     <tr class="editable" id="form-{{ $row->id }}">
                         <td class="number"> <?php echo ++$i;?>  </td>
                         <td><input type="checkbox" class="ids" name="ids[]" value="<?php echo $row->id;?>"/></td>
+                        <td>{!! SiteHelpers::showUploadedFile($row->img,'/uploads/games/images/',50,false) !!}</td>
                         @if($setting['view-method']=='expand')
                             <td><a href="javascript:void(0)" class="expandable" rel="#row-{{ $row->id }}"
                                    data-url="{{ url('location/show/'.$id) }}"><i class="fa fa-plus "></i></a></td>
@@ -92,6 +100,20 @@
                         endif;
                         endforeach;
                         ?>
+                        <td>
+                            <a href="{{ URL::to('gamestitle/upload/'.$row->id.'?type=1')}}">Upload Image</a>
+                        </td>
+                        <td>
+                            <a href="{{ URL::to('gamestitle/upload/'.$row->id.'?type=2')}}">Upload manual</a>
+                        </td>
+                        <td>
+                            <a href="{{ URL::to('gamestitle/upload/'.$row->id.'?type=3')}}">Upload Bulletin</a>
+                        </td>
+                        <td>
+                            @if($row->has_manual==1)
+                            <a href="uploads/games/manuals/{{ $row->id }}.pdf"  target="_blank">Manual</a>
+                                @endif
+                        </td>
                         <td data-values="action" data-key="<?php echo $row->id;?>">
                             {!! AjaxHelpers::buttonAction('location',$access,$id ,$setting) !!}
                             {!! AjaxHelpers::buttonActionInline($row->id,'id') !!}

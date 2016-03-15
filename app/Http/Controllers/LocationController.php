@@ -44,24 +44,23 @@ class LocationController extends Controller {
 
 	public function postData( Request $request)
 	{
-$module_id = \DB::table('tb_module')->where('module_name', '=', 'location')->pluck('module_id');
-$user_id = \Session::get('uid');
-$config_id = Input::get('config_id');
-$this->data['module_id'] = $module_id;
-$this->data['is_private'] = 0;
-if (Input::has('config_id')) {
-$config_id = Input::get('config_id');
-} elseif (\Session::has('config_id')) {
-$config_id = \Session::get('config_id');
-} else {
-$config_id = 0;
-}
-$this->data['config_id'] = $config_id;
-$config = $this->model->getModuleConfig($module_id, $config_id);
-$this->data['config'] = \SiteHelpers::CF_decode_json($config[0]->config);
-$this->data['is_private'] = $config[0]->is_private;
-$this->data['config_id'] = $config[0]->id;
-\Session::put('config_id', $config_id);
+
+        $module_id = \DB::table('tb_module')->where('module_name', '=', 'location')->pluck('module_id');
+        $this->data['module_id'] = $module_id;
+        if (Input::has('config_id')) {
+            $config_id = Input::get('config_id');
+        } elseif (\Session::has('config_id')) {
+            $config_id = \Session::get('config_id');
+        } else {
+            $config_id = 0;
+        }
+        $this->data['config_id'] = $config_id;
+        $config = $this->model->getModuleConfig($module_id, $config_id);
+        if(!empty($config))
+        {
+            $this->data['config'] = \SiteHelpers::CF_decode_json($config[0]->config);
+            \Session::put('config_id', $config_id);
+        }
 
 		$sort = (!is_null($request->input('sort')) ? $request->input('sort') : $this->info['setting']['orderby']);
 		$order = (!is_null($request->input('order')) ? $request->input('order') : $this->info['setting']['ordertype']);
@@ -81,6 +80,131 @@ $this->data['config_id'] = $config[0]->id;
 		);
 		// Get Query
 		$results = $this->model->getRows( $params );
+        foreach ($results['rows'] as $result) {
+
+            if ($result->self_owned == 1) {
+                $result->self_owned = "Yes";
+
+            } else {
+                $result->self_owned = "No";
+            }
+            if ($result->can_ship == 1) {
+                $result->can_ship = "Yes";
+
+            } else {
+                $result->can_ship = "No";
+            }
+            if ($result->bill_debit_type == 1) {
+                $result->bill_debit_type = "Yes";
+
+            } else {
+                $result->bill_debit_type = "No";
+            }
+            if ($result->bill_thermalpaper_type == 1) {
+                $result->bill_thermalpaper_type = "Yes";
+
+            } else {
+                $result->bill_thermalpaper_type = "No";
+            }
+            if ($result->bill_token_type == 1) {
+                $result->bill_token_type = "Yes";
+
+            } else {
+                $result->bill_token_type = "No";
+            }
+            if ($result->bill_attraction_type == 1) {
+                $result->bill_attraction_type = "Yes";
+
+            } else {
+                $result->bill_attraction_type = "No";
+            }
+            if ($result->bill_redemption_type == 1) {
+                $result->bill_redemption_type = "Yes";
+
+            } else {
+                $result->bill_redemption_type = "No";
+            }
+            if ($result->bill_ticket_type == 1) {
+                $result->bill_ticket_type = "Yes";
+
+            } else {
+                $result->bill_ticket_type = "No";
+            }
+            if ($result->bill_instant_type == 1) {
+                $result->bill_instant_type = "Yes";
+
+            } else {
+                $result->bill_instant_type = "No";
+            }
+            if ($result->no_games == 1) {
+                $result->no_games = "Yes";
+
+            } else {
+                $result->no_games = "No";
+            }
+            if ($result->active == 1) {
+                $result->active = "Yes";
+
+            } else {
+                $result->active = "No";
+            }
+            if ($result->reporting == 1) {
+                $result->reporting = "Yes";
+
+            } else {
+                $result->reporting = "No";
+            }
+            if ($result->not_reporting_Sat == 1) {
+                $result->not_reporting_Sat = "Yes";
+
+            } else {
+                $result->not_reporting_Sat = "No";
+            }
+            if ($result->not_reporting_Sun == 1) {
+                $result->not_reporting_Sun = "Yes";
+
+            } else {
+                $result->not_reporting_Sun = "No";
+            }if ($result->not_reporting_Mon == 1) {
+                $result->not_reporting_Mon = "Yes";
+
+            } else {
+                $result->not_reporting_Mon = "No";
+            }if ($result->not_reporting_Tue == 1) {
+                $result->not_reporting_Tue = "Yes";
+
+            } else {
+                $result->not_reporting_Tue = "No";
+            }if ($result->not_reporting_Wed == 1) {
+                $result->not_reporting_Wed = "Yes";
+
+            } else {
+                $result->not_reporting_Wed = "No";
+            }if ($result->not_reporting_Thu == 1) {
+                $result->not_reporting_Thu = "Yes";
+
+            } else {
+                $result->not_reporting_Thu = "No";
+            }if ($result->not_reporting_Fri == 1) {
+                $result->not_reporting_Fri = "Yes";
+
+            } else {
+                $result->not_reporting_Fri = "No";
+            }
+            if ($result->bill_license_type == 1) {
+                $result->bill_license_type = "Yes";
+
+            } else {
+                $result->bill_license_type = "No";
+            }
+            if ($result->liftgate == 1) {
+                $result->liftgate = "Yes";
+
+            } else {
+                $result->liftgate = "No";
+            }
+
+        }
 		// Build pagination setting
 		$page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;
 		$pagination = new Paginator($results['rows'], $results['total'], $params['limit']);
@@ -104,9 +228,9 @@ $this->data['config_id'] = $config[0]->id;
 
 		// Master detail link if any
 		$this->data['subgrid']	= (isset($this->info['config']['subgrid']) ? $this->info['config']['subgrid'] : array());
-        if ($this->data['config_id'] != 0) {
-        $this->data['tableGrid'] = \SiteHelpers::showRequiredCols($this->data['tableGrid'], $this->data['config']);
-      }
+        if ($this->data['config_id'] != 0 && !empty($config)) {
+            $this->data['tableGrid'] = \SiteHelpers::showRequiredCols($this->data['tableGrid'], $this->data['config']);
+        }
 // Render into template
 		return view('location.table',$this->data);
 
@@ -241,5 +365,18 @@ $this->data['config_id'] = $config[0]->id;
 		}
 
 	}
+    function getDetails(Request $request,$id=0)
+    {
+        if($id > 0)
+        {
+            $this->data['location_id'] = $id;
+            $this->data['row']=$this->model->getLocation($id);
+            return view('location.details',$this->data);
+        }
+        else{
+            return Redirect::to('dashboard')->with('messagetext',\Lang::get('core.note_restric'))->with('msgstatus','error');
+        }
+
+    }
 
 }

@@ -417,7 +417,7 @@ fieldset[disabled] .btn-primary:hover,
 fieldset[disabled] .btn-primary:focus,
 fieldset[disabled] .btn-primary:active,
 fieldset[disabled] .btn-primary.active {
-  background-color: ##45b6af;
+  background-color:#45b6af;
   border-color: #1dc5a3;
 }
 .btn-success {
@@ -1256,6 +1256,10 @@ border-radius:0;
 .no-top-border {
   border-top: 0 !important;
 }
+.ibox-content
+{
+    margin-bottom:30px!important;
+}
 .ibox-content.text-box {
   padding-bottom: 0px;
   padding-top: 15px;
@@ -2037,7 +2041,7 @@ box-shadow:1px 1px 0 rgba(255, 255, 255, 0.2) inset;
 .page-header { padding:20px 15px 20px; margin:0; background:#fff; border-top:solid 1px #ddd }
 fieldset { margin:10px 0;}
 fieldset legend { font-size:16px; padding:10px 0; font-weight:500;}
-.table-responsive { background:#fff;  border:solid 1px #ddd; overflow-x:auto;}
+.table-responsive { background:#fff;  border:solid 1px #ddd; overflow-x:auto;padding-bottom:15px;}
 .toolbar { margin:10px 0; clear:both; text-align:right;}
 .toolbar-line { margin:15px 0; clear:both; }
 .page-content-wrapper { padding:0 15px;}

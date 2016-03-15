@@ -1,4 +1,7 @@
-<?php usort($tableGrid, "SiteHelpers::_sort"); ?>
+<?php usort($tableGrid, "SiteHelpers::_sort");
+
+?>
+
 <div class="sbox">
     <div class="sbox-title">
         <h5><i class="fa fa-table"></i></h5>
@@ -16,22 +19,22 @@
         </div>
     </div>
     <div class="sbox-content">
-
-        @include( $pageModule.'/toolbar')
+       @include( $pageModule.'/toolbar',['colconfigs' => SiteHelpers::getColsConfigs($module_id)])
 
         <?php echo Form::open(array('url' => 'sbticket/delete/', 'class' => 'form-horizontal', 'id' => 'SximoTable', 'data-parsley-validate' => ''));?>
         <div class="table-responsive">
             @if(count($rowData)>=1)
+
                 <table class="table table-striped  " id="{{ $pageModule }}Table">
                     <thead>
                     <tr>
                         <th width="20"> No</th>
                         <th width="30"><input type="checkbox" class="checkall"/></th>
-                        @if($setting['view-method']=='expand')
-                            <th></th> @endif
+
                         <?php foreach ($tableGrid as $t) :
                             if ($t['view'] == '1'):
                                 $limited = isset($t['limited']) ? $t['limited'] : '';
+
                                 if (SiteHelpers::filterColumn($limited)) {
                                     echo '<th align="' . $t['align'] . '" width="' . $t['width'] . '">' . \SiteHelpers::activeLang($t['label'], (isset($t['language']) ? $t['language'] : array())) . '</th>';
                                 }
@@ -46,10 +49,13 @@
                         <tr id="form-0">
                             <td> #</td>
                             <td></td>
+
                             @if($setting['view-method']=='expand')
                                 <td></td> @endif
+
                             @foreach ($tableGrid as $t)
                                 @if($t['view'] =='1')
+
                                     <?php $limited = isset($t['limited']) ? $t['limited'] : ''; ?>
                                     @if(SiteHelpers::filterColumn($limited ))
                                         <td data-form="{{ $t['field'] }}"
@@ -59,6 +65,7 @@
                                     @endif
                                 @endif
                             @endforeach
+
                             <td>
                                 <button onclick="saved('form-0')" class="btn btn-primary btn-xs" type="button"><i
                                             class="fa  fa-save"></i></button>

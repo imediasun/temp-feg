@@ -71,14 +71,14 @@
 					 <?php foreach ($tableGrid as $field) :
 					 	if($field['view'] =='1') :
 							$conn = (isset($field['conn']) ? $field['conn'] : array() );
-
-
 							$value = AjaxHelpers::gridFormater($row->$field['field'], $row , $field['attribute'],$conn);
-						 	?>
+
+
+                    ?>
 						 	<?php $limited = isset($field['limited']) ? $field['limited'] :''; ?>
 						 	@if(SiteHelpers::filterColumn($limited ))
 								 <td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}" data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
-									{!! $value !!}
+									{{ $value }}
 								 </td>
 							@endif
                     <?php

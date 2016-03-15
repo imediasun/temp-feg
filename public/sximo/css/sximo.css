@@ -1252,6 +1252,15 @@ border-radius:0;
   padding-bottom: 0px;
   padding-top: 15px;
 }
+.ibox-content
+{
+    margin-bottom:30px!important;
+}
+.ibox-content table tbody tr:last-of-type
+{
+
+
+}
 .border-left-right {
   border-left: 1px solid #e7eaec;
   border-right: 1px solid #e7eaec;
@@ -2029,7 +2038,7 @@ box-shadow:1px 1px 0 rgba(255, 255, 255, 0.2) inset;
 .page-header { padding:20px 15px 20px; margin:0; background:#fff; border-top:solid 1px #ddd }
 fieldset { margin:10px 0;}
 fieldset legend { font-size:16px; padding:10px 0; font-weight:500;}
-.table-responsive { background:#fff;  border:solid 1px #ddd; overflow-x:auto;}
+.table-responsive { background:#fff;  border:solid 1px #ddd; overflow-x:auto; padding-bottom:15px;}
 .toolbar { margin:10px 0; clear:both; text-align:right;}
 .toolbar-line { margin:15px 0; clear:both; }
 .page-content-wrapper { padding:0 15px;}

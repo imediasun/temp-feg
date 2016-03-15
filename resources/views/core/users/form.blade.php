@@ -44,7 +44,7 @@
 								  <div class="form-group  " >
 									<label for="Group / Level" class=" control-label col-md-4 text-left"> Group / Level <span class="asterix"> * </span></label>
 									<div class="col-md-6">
-									  <select name='group_id' rows='5' id='group_id' code='{$group_id}' 
+									  <select name='group_id' rows='5' id='group_id' code='{$group_id}'
 							class='select2 '  required  ></select> 
 									 </div> 
 									 <div class="col-md-2">
@@ -100,13 +100,23 @@
 									 <div class="col-md-2">
 									 	
 									 </div>
-								  </div> 
+								  </div>
+            <div class="form-group  " >
+                <label for="multiple_loc" class=" control-label col-md-4 text-left">
+                    {!! SiteHelpers::activeLang('Locations', (isset($fields['locations']['language'])? $fields['assign_to']['language'] : array())) !!}
+                </label>
+                <div class="col-md-6">
+                    <select name='multiple_locations[]' multiple rows='5' id='multiple_loc' class='select2 ' required  ></select>
+                </div>
+                <div class="col-md-2">
 
+                </div>
+            </div>
 
-								  <div class="form-group  " >
+            <div class="form-group  " >
 									<label for="Avatar" class=" control-label col-md-4 text-left"> Avatar </label>
 									<div class="col-md-6">
-									  <input  type='file' name='avatar' id='avatar' @if($row['avatar'] =='') class='required' @endif style='width:150px !important;'  />
+									  <input  type='file' name='avatar' id='avatar' @if($row['avatar'] =='') class='required' @endif style='width:150px !important;'     value="{{ $row['avatar'] }}"  />
 										 	<div >
 											{!! SiteHelpers::showUploadedFile($row['avatar'],'/uploads/users/') !!}
 											
@@ -186,7 +196,9 @@
 		
 		$("#group_id").jCombo("{{ URL::to('core/users/comboselect?filter=tb_groups:group_id:name') }}",
 		{  selected_value : '{{ $row["group_id"] }}' });
-		 
-	});
+        $("#multiple_loc").jCombo("{{ URL::to('core/users/comboselect?filter=location:id:location_name') }}",
+                {  selected_value : '{{ $user_locations }}' });
+
+    });
 	</script>		 
 @stop

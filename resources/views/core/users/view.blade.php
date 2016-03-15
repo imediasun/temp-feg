@@ -92,8 +92,34 @@
 						
 					</tr>
 				
-		</tbody>	
-	</table>    
+		</tbody>
+
+	</table>
+        <h3>Locations:</h3>
+        <table class="table table-striped table-bordered" >
+            <thead>
+<tr>
+    <th>Name</th>
+    <th>Street</th>
+    <th>City</th>
+    <th>State</th>
+    <th>Zip</th>
+
+
+</tr>
+            </thead>
+            <tbody>
+            @foreach($user_locations as $locations)
+            <tr>
+                <th>{{ $locations->location_name_short }}</th>
+                <th>{{ $locations->street1 }}</th>
+                <th>{{ $locations->city }}</th>
+                <th>{{ $locations->state }}</th>
+                <th>{{ $locations->zip }}</th>
+            </tr>
+                @endforeach
+            </tbody>
+            </table>
 	
 	</div>
 </div>	

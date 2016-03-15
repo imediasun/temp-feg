@@ -1152,17 +1152,24 @@ public static function alphaID($in, $to_num = false, $pad_up = false, $passKey =
 	}	
 		
 	
-	public static function showUploadedFile($file,$path , $width = 50) {
-
-		$files =  public_path(). $path . $file ;
+	public static function showUploadedFile($file,$path , $width = 50,$circle=true) {
+       $files =  public_path(). $path . $file ;
 		if(file_exists($files ) && $file !="") {
 		//	echo $files ;
 			$info = pathinfo($files);	
 			if($info['extension'] == "jpg" || $info['extension'] == "jpeg" ||  $info['extension'] == "png" || $info['extension'] == "gif" || $info['extension'] == "JPG") 
 			{
+
 				$path_file = str_replace("./","",$path);
+                if($circle)
+                {
+                    $class="img-circle";
+                }
+                else{
+                    $class='img';
+                }
 				return '<p><a href="'.url( $path_file . $file).'" target="_blank" class="previewImage">
-				<img src="'.asset( $path_file . $file ).'" border="0" width="'. $width .'" class="img-circle" /></a></p>';
+				<img src="'.asset( $path_file . $file ).'" border="0" width="'. $width .'" class="'.$class.'"  /></a></p>';
 			} else {
 				$path_file = str_replace("./","",$path);
 				return '<p> <a href="'.url($path_file . $file).'" target="_blank"> '.$file.' </a>';
@@ -1170,7 +1177,7 @@ public static function alphaID($in, $to_num = false, $pad_up = false, $passKey =
 	
 		} else {
 			
-			return "<img src='".asset('/uploads/images/no-image.png')."' border='0' width='".$width."' class='img-circle' /></a>";
+			return "<img src='".asset('/uploads/images/no-image.png')."' border='0' width='".$width."' /></a>";
 				
 		}
 
@@ -1227,15 +1234,15 @@ public static function alphaID($in, $to_num = false, $pad_up = false, $passKey =
 				$v .= (isset($fields[0]) && $fields[0] !='' ?  $row->$fields[0].' ' : '');
 				$v .= (isset($fields[1]) && $fields[1] !=''  ? $row-> $fields[1].' ' : '');
 				$v .= (isset($fields[2]) && $fields[2] !=''  ? $row->$fields[2].' ' : '');
-				
-				
+
+
 				return $v;
 			} else {
 				return '';
 			}
 		} else {
 			return $val;
-		}	
+		}
 	}
 	public static function gridDisplayView($val , $field, $arr) {
 		$arr = explode(':',$arr);
@@ -1302,7 +1309,7 @@ public static function alphaID($in, $to_num = false, $pad_up = false, $passKey =
 	public static function avatar( $width =75)
 	{
 		$avatar = '<img alt="" src="http://www.gravatar.com/avatar/'.md5(Session::get('email')).'" class="img-circle" width="'.$width.'" />';
-		$Q = DB::table("tb_users")->where("id",'=',Session::get('uid'))->get();
+		$Q = DB::table("users")->where("id",'=',Session::get('uid'))->get();
 		if(count($Q)>=1) 
 		{
 			$row = $Q[0];

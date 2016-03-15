@@ -6,330 +6,459 @@ use App\Models\Core\Users;
 use App\Models\Core\Groups;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
-use Validator, Input, Redirect, Session, Auth, DB ; 
+use Validator, Input, Redirect, Session, Auth, DB;
 
 
-class UsersController extends Controller {
+class UsersController extends Controller
+{
 
-	protected $layout = "layouts.main";
-	protected $data = array();	
-	public $module = 'users';
-	static $per_page	= '10';
+    protected $layout = "layouts.main";
+    protected $data = array();
+    public $module = 'users';
+    static $per_page = '10';
 
-	public function __construct()
-	{
-		parent::__construct();
-		$this->beforeFilter('csrf', array('on'=>'post'));
-		$this->model = new Users();
-		$this->info = $this->model->makeInfo( $this->module);
-		$this->access = $this->model->validAccess($this->info['id']);
-	
-		$this->data = array(
-			'pageTitle'	=> 	$this->info['title'],
-			'pageNote'	=>  $this->info['note'],
-			'pageModule'=> 'core/users',
-			'return'	=> self::returnUrl()
-			
-		);
-	}
+    public function __construct()
+    {
+        parent::__construct();
+        $this->beforeFilter('csrf', array('on' => 'post'));
+        $this->model = new Users();
+        $this->info = $this->model->makeInfo($this->module);
+        $this->access = $this->model->validAccess($this->info['id']);
 
-	public function getIndex( Request $request )
-	{
+        $this->data = array(
+            'pageTitle' => $this->info['title'],
+            'pageNote' => $this->info['note'],
+            'pageModule' => 'core/users',
+            'return' => self::returnUrl()
 
-		if($this->access['is_view'] ==0) 
-			return Redirect::to('dashboard')
-				->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus','error');
-						
-		$sort = (!is_null($request->input('sort')) ? $request->input('sort') : 'id'); 
-		$order = (!is_null($request->input('order')) ? $request->input('order') : 'asc');
-		// End Filter sort and order for query 
-		// Filter Search for query		
-		$filter = (!is_null($request->input('search')) ? $this->buildSearch() : '');
-		//@todo check if that condition is needed in future
-		//$filter .= " AND tb_users.group_id >= '".\Session::get('gid')."'" ;
+        );
+    }
 
-		
-		$page = $request->input('page', 1);
+    public function getIndex(Request $request)
+    {
+        $module_id = \DB::table('tb_module')->where('module_name', '=', 'users')->pluck('module_id');
+        $this->data['module_id'] = $module_id;
+        if (Input::has('config_id')) {
+            $config_id = Input::get('config_id');
+        } elseif (\Session::has('config_id')) {
+            $config_id = \Session::get('config_id');
+        } else {
+            $config_id = 0;
+        }
+        $this->data['config_id'] = $config_id;
+        $config = $this->model->getModuleConfig($module_id, $config_id);
+        if (!empty($config)) {
+            $this->data['config'] = \SiteHelpers::CF_decode_json($config[0]->config);
+            \Session::put('config_id', $config_id);
+        }
 
-		$params = array(
-			'page'		=> $page ,
-			'limit'		=> (!is_null($request->input('rows')) ? filter_var($request->input('rows'),FILTER_VALIDATE_INT) : 	static::$per_page ) ,
-			'sort'		=> $sort ,
-			'order'		=> $order,
-			'params'	=> $filter,
-			'global'	=> (isset($this->access['is_global']) ? $this->access['is_global'] : 0 )
-		);
-		// Get Query 
-		$results = $this->model->getRows( $params );		
-		
-		// Build pagination setting
-		$page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;	
-		$pagination = new Paginator($results['rows'], $results['total'], $params['limit']);	
-		$pagination->setPath('users');
-		
-		$this->data['rowData']		= $results['rows'];
-		// Build Pagination 
-		$this->data['pagination']	= $pagination;
-		// Build pager number and append current param GET
-		$this->data['pager'] 		= $this->injectPaginate();	
-		// Row grid Number 
-		$this->data['i']			= ($page * $params['limit'])- $params['limit']; 
-		// Grid Configuration 
-		$this->data['tableGrid'] 	= $this->info['config']['grid'];
-		$this->data['tableForm'] 	= $this->info['config']['forms'];
-		$this->data['colspan'] 		= \SiteHelpers::viewColSpan($this->info['config']['grid']);		
-		// Group users permission
-		$this->data['access']		= $this->access;
-		// Detail from master if any
-		
-		// Master detail link if any 
-		$this->data['subgrid']	= (isset($this->info['config']['subgrid']) ? $this->info['config']['subgrid'] : array()); 
-		// Render into template
-		return view('core.users.index',$this->data);
-	}
+        if ($this->access['is_view'] == 0)
+            return Redirect::to('dashboard')
+                ->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
 
-	public function getPlay($id = null )
-	{
-		$return_id = \Session::get('uid');
-		$row = Users::find($id);
-		Auth::loginUsingId($row->id);
-
-		DB::table('tb_users')->where('id', '=',$row->id )->update(array('last_login' => date("Y-m-d H:i:s")));
-		//Session::regenerate();
-		
-		Session::put('uid', $row->id);
-		Session::put('gid', $row->group_id);
-		Session::put('eid', $row->email);
-		Session::put('flgStatus', 1);
-		Session::put('ll', $row->last_login);
-		Session::put('fid', $row->first_name.' '. $row->last_name);
-		Session::save();
-
-		if(Session::get('return_id')==$id)
-		{
-
-			Session::put('return_id', '');
-		}
-		else
-		{
-
-			Session::put('return_id', $return_id);
-		}
-		return Redirect::to('dashboard');
-	}
-	function getUpdate(Request $request, $id = null)
-	{
-	
-		if($id =='')
-		{
-			if($this->access['is_add'] ==0 )
-			return Redirect::to('dashboard')->with('messagetext',\Lang::get('core.note_restric'))->with('msgstatus','error');
-		}	
-		
-		if($id !='')
-		{
-			if($this->access['is_edit'] ==0 )
-			return Redirect::to('dashboard')->with('messagetext',\Lang::get('core.note_restric'))->with('msgstatus','error');
-		}				
-				
-		$row = $this->model->find($id);
-		if($row)
-		{
-			$this->data['row'] =  $row;
-		} else {
-			$this->data['row'] = $this->model->getColumnTable('tb_users'); 
-		}
-
-		$this->data['id'] = $id;
-		return view('core.users.form',$this->data);
-	}	
-
-	public function getShow( $id = null)
-	{
-	
-		if($this->access['is_detail'] ==0) 
-			return Redirect::to('dashboard')
-				->with('messagetext', Lang::get('core.note_restric'))->with('msgstatus','error');
-					
-		$row = $this->model->getRow($id);
-		if($row)
-		{
-			$this->data['row'] =  $row;
-		} else {
-			$this->data['row'] = $this->model->getColumnTable('tb_users'); 
-		}
-		$this->data['id'] = $id;
-		$this->data['access']		= $this->access;
-		return view('core.users.view',$this->data);	
-	}	
-
-	function postSave( Request $request, $id =0)
-	{
-		
-		$rules = $this->validateForm();
-		if($request->input('id') =='')
-		{
-			$rules['password'] 				= 'required|between:6,12';
-			$rules['password_confirmation'] = 'required|between:6,12';
-			$rules['email'] 				= 'required|email|unique:tb_users';
-			$rules['username'] 				= 'required|alpha_num||min:2|unique:tb_users';
-			
-		} else {
-			if($request->input('password') !='')
-			{
-				$rules['password'] 				='required|between:6,12';
-				$rules['password_confirmation'] ='required|between:6,12';			
-			}
-		}
-
-		$validator = Validator::make($request->all(), $rules);	
-		if ($validator->passes()) {
-			$data = $this->validatePost('tb_users');
-
-			$data = $this->validatePost('tb_users');
-			if($request->input('id') =='')
-			{
-				$data['password'] = \Hash::make(Input::get('password'));
-			} else {
-				if(Input::get('password') !='')
-				{
-					$data['password'] = \Hash::make(Input::get('password'));
-				} else {
-					unset($data['password']);
-				}
-			}
-					
-			
-			$id = $this->model->insertRow($data , $request->input('id'));
+        $sort = (!is_null($request->input('sort')) ? $request->input('sort') : 'id');
+        $order = (!is_null($request->input('order')) ? $request->input('order') : 'asc');
+        // End Filter sort and order for query
+        // Filter Search for query
+        $filter = (!is_null($request->input('search')) ? $this->buildSearch() : '');
+        //@todo check if that condition is needed in future
+        //$filter .= " AND tb_users.group_id >= '".\Session::get('gid')."'" ;
 
 
+        $page = $request->input('page', 1);
 
-			if(!is_null(Input::file('avatar')))
-			{
-				$updates = array();
-				$file = $request->file('avatar'); 
-				$destinationPath = './uploads/users/';
-				$filename = $file->getClientOriginalName();
-				$extension = $file->getClientOriginalExtension(); //if you need extension of the file
-				 $newfilename = $id.'.'.$extension;
-				$uploadSuccess = $request->file('avatar')->move($destinationPath, $newfilename);				 
-				if( $uploadSuccess ) {
-				    $updates['avatar'] = $newfilename; 
-				} 
-				$this->model->insertRow($updates , $id );
-			}	
+        $params = array(
+            'page' => $page,
+            'limit' => (!is_null($request->input('rows')) ? filter_var($request->input('rows'), FILTER_VALIDATE_INT) : static::$per_page),
+            'sort' => $sort,
+            'order' => $order,
+            'params' => $filter,
+            'global' => (isset($this->access['is_global']) ? $this->access['is_global'] : 0)
+        );
+        // Get Query
+        $results = $this->model->getRows($params);
 
-			if(!is_null($request->input('apply')))
-			{
-				$return = 'core/users/update/'.$id.'?return='.self::returnUrl();
-			} else {
-				$return = 'core/users?return='.self::returnUrl();
-			}
-			
-			return Redirect::to($return)->with('messagetext',\Lang::get('core.note_success'))->with('msgstatus','success');
-			
-		} else {
+        // Build pagination setting
+        $page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;
+        $pagination = new Paginator($results['rows'], $results['total'], $params['limit']);
+        $pagination->setPath('users');
+        foreach ($results['rows'] as $result) {
 
-			return Redirect::to('core/users/update/'.$id)->with('messagetext',\Lang::get('core.note_error'))->with('msgstatus','error')
-			->withErrors($validator)->withInput();
-		}	
-	
-	}	
+            if ($result->is_tech_contact == 1) {
+                $result->is_tech_contact = "Yes";
 
-	public function postDelete( Request $request)
-	{
-		
-		if($this->access['is_remove'] ==0) 
-			return Redirect::to('dashboard')
-				->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus','error');
-		// delete multipe rows 
-		if(count($request->input('ids')) >=1)
-		{
-			$this->model->destroy($request->input('ids'));
-			
-			// redirect
-			return Redirect::to('core/users')
-        		->with('messagetext', \Lang::get('core.note_success_delete'))->with('msgstatus','success'); 
-	
-		} else {
-			return Redirect::to('core/users')
-        		->with('messagetext','No Item Deleted')->with('msgstatus','error');				
-		}
+            } else {
+                $result->is_tech_contact = "No";
+            }
+            if ($result->approved == 1) {
+                $result->approved = "Yes";
+            } else {
+                $result->approved = "No";
+            }
+            if ($result->banned == 1) {
+                $result->banned = "Yes";
+            } else {
+                $result->banned = "No";
+            }
+            if ($result->using_web == 1) {
+                $result->using_web = "Yes";
+            } else {
+                $result->using_web = "No";
+            }
+            if ($result->full_time == 1) {
+                $result->full_time = "Yes";
+            } else {
+                $result->full_time = "No";
+            }
+            if ($result->restricted_mgr_email == 1) {
+                $result->restricted_mgr_email = "Yes";
+            } else {
+                $result->restricted_mgr_email = "No";
+            }
+            if ($result->restricted_user_email == 1) {
+                $result->restricted_user_email = "Yes";
+            } else {
+                $result->restricted_user_email = "No";
+            }
+            if ($result->restrict_merch == 1) {
+                $result->restrict_merch = "Yes";
+            } else {
+                $result->restrict_merch = "No";
+            }
+            if ($result->get_locations_by_region == 1) {
+                $result->get_locations_by_region = "Yes";
+            } else {
+                $result->get_locations_by_region = "No";
+            }
+            if ($result->timeclock_status == 1) {
+                $result->timeclock_status = "Yes";
+            } else {
+                $result->timeclock_status = "No";
+            }
+            if ($result->timeclock_id == 1) {
+                $result->timeclock_id = "Yes";
+            } else {
+                $result->timeclock_id = "No";
+            }
+        }
+        $this->data['rowData'] = $results['rows'];
+        // Build Pagination
+        $this->data['pagination'] = $pagination;
+        // Build pager number and append current param GET
+        $this->data['pager'] = $this->injectPaginate();
+        // Row grid Number
+        $this->data['i'] = ($page * $params['limit']) - $params['limit'];
+        // Grid Configuration
+        $this->data['tableGrid'] = $this->info['config']['grid'];
+        $this->data['tableForm'] = $this->info['config']['forms'];
+        $this->data['colspan'] = \SiteHelpers::viewColSpan($this->info['config']['grid']);
+        // Group users permission
+        $this->data['access'] = $this->access;
+        // Detail from master if any
 
-	}
+        // Master detail link if any
+        $this->data['subgrid'] = (isset($this->info['config']['subgrid']) ? $this->info['config']['subgrid'] : array());
+        if ($this->data['config_id'] != 0 && !empty($config)) {
+            $this->data['tableGrid'] = \SiteHelpers::showRequiredCols($this->data['tableGrid'], $this->data['config']);
+            $this->data['colconfigs'] = \SiteHelpers::getColsConfigs($module_id);
+        }
+        // Render into template
 
-	public function getSearch( $mode = 'native')
-	{
+        return view('core.users.index', $this->data);
+    }
 
-		$this->data['tableForm'] 	= $this->info['config']['forms'];	
-		$this->data['tableGrid'] 	= $this->info['config']['grid'];
-		$this->data['searchMode'] = 'native';
-		$this->data['pageUrl']		= url('core/users');
-		return view('sximo.module.utility.search',$this->data);
-	
-	}	
+    public function getPlay($id = null)
+    {
+        $return_id = \Session::get('uid');
+        $row = Users::find($id);
+        Auth::loginUsingId($row->id);
 
-	function getBlast()
-	{
-		$this->data = array(
-			'groups'	=> Groups::all(),
-			'pageTitle'	=> 'Blast Email',
-			'pageNote'	=> 'Send email to users'
-		);	
-		return view('core.users.blast',$this->data);		
-	}
+        DB::table('users')->where('id', '=', $row->id)->update(array('last_login' => date("Y-m-d H:i:s")));
+        //Session::regenerate();
 
-	function postDoblast( Request $request)
-	{
+        Session::put('uid', $row->id);
+        Session::put('gid', $row->group_id);
+        Session::put('eid', $row->email);
+        Session::put('flgStatus', 1);
+        Session::put('ll', $row->last_login);
+        Session::put('fid', $row->first_name . ' ' . $row->last_name);
+        Session::save();
 
-		$rules = array(
-			'subject'		=> 'required',
-			'message'		=> 'required|min:10',
-			'groups'		=> 'required',				
-		);	
-		$validator = Validator::make($request->all(), $rules);	
-		if ($validator->passes()) 
-		{	
+        if (Session::get('return_id') == $id) {
 
-			if(!is_null($request->input('groups')))
-			{
-				$groups = $request->input('groups');
-				for($i=0; $i<count($groups); $i++)
-				{
-					if($request->input('uStatus') == 'all')
-					{
-						$users = \DB::table('tb_users')->where('group_id','=',$groups[$i])->get();
-					} else {
-						$users = \DB::table('tb_users')->where('active','=',$request->input('uStatus'))->where('group_id','=',$groups[$i])->get();
-					}
-					$count = 0;
-					foreach($users as $row)
-					{
+            Session::put('return_id', '');
+        } else {
 
-						$to = $row->email;
-						$subject = $request->input('subject');
-						$message = $request->input('message');
-						$headers  = 'MIME-Version: 1.0' . "\r\n";
-						$headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
-						$headers .= 'From: '.CNF_APPNAME.' <'.CNF_EMAIL.'>' . "\r\n";
-							mail($to, $subject, $message, $headers);
-						
-						$count = ++$count;					
-					} 
-					
-				}
-				return Redirect::to('core/users/blast')->with('messagetext','Total '.$count.' Message has been sent')->with('msgstatus','success');
+            Session::put('return_id', $return_id);
+        }
+        return Redirect::to('dashboard');
+    }
 
-			}
-			return Redirect::to('core/users/blast')->with('messagetext','No Message has been sent')->with('msgstatus','info');
-			
+    function get($id = NULL)
+    {
+        $data['profile_img'] = \DB::table('users')->where('id', $id)->pluck('avatar');
+        $data['return'] = "";
+        return view('core.users.upload', $data);
+    }
 
-		} else {
+    function postUpload(Request $request)
+    {
 
-			return Redirect::to('core/users/blast')->with('messagetext', 'The following errors occurred')->with('msgstatus','error')
-			->withErrors($validator)->withInput();
+        $files = array('image' => Input::file('avatar'));
+        // setting up rules
+        $rules = array('image' => 'required|mimes:jpeg,gif,png'); //mimes:jpeg,bmp,png and for max size max:10000
+        // doing the validation, passing post data, rules and the messages
+        $validator = Validator::make($files, $rules);
+        $id = Input::get('id');
+        if ($validator->fails()) {
+            // send back to the page with the input data and errors
+            return Redirect::to('core/users/upload/' . $id)->with('messagetext', \Lang::get('core.note_success'))->with('msgstatus', 'Please select an Image..')->withErrors($validator);;
 
-		}	
+        } else {
+            $updates = array();
+            $file = $request->file('avatar');
+            $destinationPath = './uploads/users/';
+            $filename = $file->getClientOriginalName();
+            $extension = $file->getClientOriginalExtension(); //if you need extension of the file
+            $newfilename = $id . '.' . $extension;
+            $uploadSuccess = $request->file('avatar')->move($destinationPath, $newfilename);
+            if ($uploadSuccess) {
+                $updates['avatar'] = $newfilename;
+            }
+            $this->model->insertRow($updates, $id);
+            $return = 'core/users/upload/' . $id;
+            return Redirect::to('core/users/upload/' . $id)->with('messagetext', \Lang::get('core.note_success'))->with('msgstatus', 'success');
 
-	}
+        }
+
+
+    }
+
+    function getBlock($id = null)
+    {
+        DB::table('users')->where('id', '=', $id)->update(array('banned' => 1));
+        //return Redirect::to('dashboard')->with("messagetext",\Lang::get('core.note.success'))-with('msgstatus','success');
+        return Redirect::to('core/users')->with('messagetext', \Lang::get('core.note_block'))->with('msgstatus', 'success');
+    }
+
+    function getUnblock($id = null)
+    {
+
+        DB::table('users')->where('id', '=', $id)->update(array('banned' => 0));
+        //return Redirect::to('dashboard')->with("messagetext",\Lang::get('core.note.success'))-with('msgstatus','success');
+        return Redirect::to('core/users')->with('messagetext', \Lang::get('core.note_unblock'))->with('msgstatus', 'success');
+    }
+
+    function getUpdate(Request $request, $id = null)
+    {
+
+
+        if ($id == '') {
+
+            if ($this->access['is_add'] == 0)
+                return Redirect::to('dashboard')->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
+            $this->data['user_locations'] = 0;
+        }
+
+        if ($id != '') {
+            if ($this->access['is_edit'] == 0)
+                return Redirect::to('dashboard')->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
+            $this->data['user_locations'] = $this->model->getLocations($id);
+        }
+
+        $row = $this->model->find($id);
+        if ($row) {
+            $this->data['row'] = $row;
+        } else {
+            $this->data['row'] = $this->model->getColumnTable('users');
+        }
+
+        $this->data['id'] = $id;
+        return view('core.users.form', $this->data);
+    }
+
+    public function getShow($id = null)
+    {
+
+        if ($this->access['is_detail'] == 0)
+            return Redirect::to('dashboard')
+                ->with('messagetext', Lang::get('core.note_restric'))->with('msgstatus', 'error');
+
+        $row = $this->model->getRow($id);
+        if ($row) {
+            $this->data['row'] = $row;
+        } else {
+            $this->data['row'] = $this->model->getColumnTable('users');
+        }
+        $this->data['id'] = $id;
+        $this->data['access'] = $this->access;
+        $location_details = $this->model->getLocationDetails($id);
+        $this->data['user_locations'] = $location_details;
+        return view('core.users.view', $this->data);
+    }
+
+    function postSave(Request $request, $id = 0)
+    {
+
+        $rules = $this->validateForm();
+        if ($request->input('id') == '') {
+            $rules['password'] = 'required|between:6,12';
+            $rules['password_confirmation'] = 'required|between:6,12';
+            $rules['email'] = 'required|email|unique:users';
+            $rules['username'] = 'required|alpha_num||min:2|unique:users';
+
+
+        } else {
+            if ($request->input('password') != '') {
+                $rules['password'] = 'required|between:6,12';
+                $rules['password_confirmation'] = 'required|between:6,12';
+            }
+
+
+        }
+
+        $validator = Validator::make($request->all(), $rules);
+        if ($validator->passes()) {
+            $data = $this->validatePost('users');
+
+            $data = $this->validatePost('users');
+            if ($request->input('id') == '') {
+                $data['password'] = \Hash::make(Input::get('password'));
+            } else {
+                if (Input::get('password') != '') {
+                    $data['password'] = \Hash::make(Input::get('password'));
+                } else {
+                    unset($data['password']);
+                }
+
+                $file = $request->file('avatar');
+                $data = array_filter($data);
+            }
+
+            $id = $this->model->insertRow($data, $request->input('id'));
+            $this->model->inserLocations($request->input('multiple_locations'), $id, $request->input('id'));
+
+            if (!is_null(Input::get('avatar'))) {
+                $updates = array();
+                $file = $request->file('avatar');
+                $destinationPath = './uploads/users/';
+                $filename = $file->getClientOriginalName();
+                $extension = $file->getClientOriginalExtension(); //if you need extension of the file
+                $newfilename = $id . '.' . $extension;
+                $uploadSuccess = $request->file('avatar')->move($destinationPath, $newfilename);
+                if ($uploadSuccess) {
+                    $updates['avatar'] = $newfilename;
+                }
+
+                $this->model->insertRow($updates, $id);
+            } else {
+
+            }
+
+            if (!is_null($request->input('apply'))) {
+                $return = 'core/users/update/' . $id . '?return=' . self::returnUrl();
+            } else {
+                $return = 'core/users?return=' . self::returnUrl();
+            }
+
+            return Redirect::to($return)->with('messagetext', \Lang::get('core.note_success'))->with('msgstatus', 'success');
+
+        } else {
+
+            return Redirect::to('core/users/update/' . $id)->with('messagetext', \Lang::get('core.note_error'))->with('msgstatus', 'error')
+                ->withErrors($validator)->withInput();
+        }
+
+    }
+
+    public function postDelete(Request $request)
+    {
+
+        if ($this->access['is_remove'] == 0)
+            return Redirect::to('dashboard')
+                ->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
+        // delete multipe rows
+        if (count($request->input('ids')) >= 1) {
+            $this->model->destroy($request->input('ids'));
+
+            // redirect
+            return Redirect::to('core/users')
+                ->with('messagetext', \Lang::get('core.note_success_delete'))->with('msgstatus', 'success');
+
+        } else {
+            return Redirect::to('core/users')
+                ->with('messagetext', 'No Item Deleted')->with('msgstatus', 'error');
+        }
+
+    }
+
+    public function getSearch($mode = 'native')
+    {
+
+        $this->data['tableForm'] = $this->info['config']['forms'];
+        $this->data['tableGrid'] = $this->info['config']['grid'];
+        $this->data['searchMode'] = 'native';
+        $this->data['pageUrl'] = url('core/users');
+        return view('sximo.module.utility.search', $this->data);
+
+    }
+
+    function getBlast()
+    {
+        $this->data = array(
+            'groups' => Groups::all(),
+            'pageTitle' => 'Blast Email',
+            'pageNote' => 'Send email to users'
+        );
+        return view('core.users.blast', $this->data);
+    }
+
+    function postDoblast(Request $request)
+    {
+
+        $rules = array(
+            'subject' => 'required',
+            'message' => 'required|min:10',
+            'groups' => 'required',
+        );
+        $validator = Validator::make($request->all(), $rules);
+        if ($validator->passes()) {
+
+            if (!is_null($request->input('groups'))) {
+                $groups = $request->input('groups');
+                for ($i = 0; $i < count($groups); $i++) {
+                    if ($request->input('uStatus') == 'all') {
+                        $users = \DB::table('users')->where('group_id', '=', $groups[$i])->get();
+                    } else {
+                        $users = \DB::table('users')->where('active', '=', $request->input('uStatus'))->where('group_id', '=', $groups[$i])->get();
+                    }
+                    $count = 0;
+                    foreach ($users as $row) {
+
+                        $to = $row->email;
+                        $subject = $request->input('subject');
+                        $message = $request->input('message');
+                        $headers = 'MIME-Version: 1.0' . "\r\n";
+                        $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
+                        $headers .= 'From: ' . CNF_APPNAME . ' <' . CNF_EMAIL . '>' . "\r\n";
+                        mail($to, $subject, $message, $headers);
+
+                        $count = ++$count;
+                    }
+
+                }
+                return Redirect::to('core/users/blast')->with('messagetext', 'Total ' . $count . ' Message has been sent')->with('msgstatus', 'success');
+
+            }
+            return Redirect::to('core/users/blast')->with('messagetext', 'No Message has been sent')->with('msgstatus', 'info');
+
+
+        } else {
+
+            return Redirect::to('core/users/blast')->with('messagetext', 'The following errors occurred')->with('msgstatus', 'error')
+                ->withErrors($validator)->withInput();
+
+        }
+
+    }
 }

@@ -180,5 +180,7 @@ return array(
 	"note_success"				=> "Saved successfully!", // updated apidevlab
 	"note_error"				=> "The following errors occurred !",
 	"note_success_delete"		=> "Removed successfully!",	// updated apidevlab
+    "note_block"                => "Blocked",
+    "note_unblock"              => "Unblocked"
 
 );

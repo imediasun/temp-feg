@@ -12,7 +12,7 @@
 	</div>
 	<div class="sbox-content">
 
-        @include( $pageModule.'/toolbar',['config_id'=>$config_id,'colconfigs' => SiteHelpers::getColsConfigs($module_id)])
+        @include( $pageModule.'/toolbar',['colconfigs' => SiteHelpers::getColsConfigs($module_id)])
 
 	 <?php echo Form::open(array('url'=>'location/delete/', 'class'=>'form-horizontal' ,'id' =>'SximoTable'  ,'data-parsley-validate'=>'' )) ;?>
 <div class="table-responsive">	
@@ -21,31 +21,23 @@
         <thead>
 			<tr>
 				<th width="20"> No </th>
-				<th width="30"> <input type="checkbox" class="checkall" /></th>		
+				<th width="30"> <input type="checkbox" class="checkall" /></th>
+                <th>Location Details</th>
 				@if($setting['view-method']=='expand') <th>  </th> @endif			
 				<?php foreach ($tableGrid as $t) :
 					if($t['view'] =='1'):
 						$limited = isset($t['limited']) ? $t['limited'] :'';
 						if(SiteHelpers::filterColumn($limited ))
 						{
-						 if(is_array($config))
-                                {
-                            if(in_array($t['field'],$config))
-                            {
+
 							echo '<th align="'.$t['align'].'" width="'.$t['width'].'">'.\SiteHelpers::activeLang($t['label'],(isset($t['language'])? $t['language'] : array())).'</th>';				
-						}
-                }
-                else
-                {
-                echo '<th align="'.$t['align'].'" width="'.$t['width'].'">'.\SiteHelpers::activeLang($t['label'],(isset($t['language'])? $t['language'] : array())).'</th>';
-                }
+
                 }
 					endif;
 				endforeach; ?>
 				<th width="70"><?php echo Lang::get('core.btn_action') ;?></th>
 			  </tr>
         </thead>
-
         <tbody>
         	@if($access['is_add'] =='1' && $setting['inline']=='true')
 			<tr id="form-0" >
@@ -71,19 +63,18 @@
            		<?php foreach ($rowData as $row) : 
            			  $id = $row->id;
            		?>
+
                 <tr class="editable" id="form-{{ $row->id }}">
 					<td class="number"> <?php echo ++$i;?>  </td>
-					<td ><input type="checkbox" class="ids" name="ids[]" value="<?php echo $row->id ;?>" />  </td>					
+					<td ><input type="checkbox" class="ids" name="ids[]" value="<?php echo $row->id ;?>" />  </td>
+                    <td width="50"><a href="{{ URL::to('location/details/'.$row->id)}}">View Details</a></td>
 					@if($setting['view-method']=='expand')
 					<td><a href="javascript:void(0)" class="expandable" rel="#row-{{ $row->id }}" data-url="{{ url('location/show/'.$id) }}"><i class="fa fa-plus " ></i></a></td>								
 					@endif			
 					 <?php foreach ($tableGrid as $field) :
 					 	if($field['view'] =='1') : 
 							$conn = (isset($field['conn']) ? $field['conn'] : array() );
-							 if( is_array($config))
-                        {
-                        if(in_array($field['field'],$config))
-                            {
+
 							$value = AjaxHelpers::gridFormater($row->$field['field'], $row , $field['attribute'],$conn);
 						 	?>
 						 	<?php $limited = isset($field['limited']) ? $field['limited'] :''; ?>
@@ -93,21 +84,6 @@
 								 </td>
 							@endif
                     <?php
-                    }
-                        }
-                        else{
-                    $value = AjaxHelpers::gridFormater($row->$field['field'], $row , $field['attribute'],$conn);
-
-
-                    ?>
-                    <?php $limited = isset($field['limited']) ? $field['limited'] :''; ?>
-                    @if(SiteHelpers::filterColumn($limited ))
-                    <td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}" data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
-                        {!! $value !!}
-                    </td>
-                    @endif
-                    <?php
-                        }
 						 endif;
 						endforeach; 
 					  ?>

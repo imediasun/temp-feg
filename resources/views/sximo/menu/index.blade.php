@@ -24,7 +24,7 @@
 	
 		<div class="col-sm-5">
 
-		<div class="box ">
+		<div class="box " style="margin-bottom:60px;">
  <div class="infobox infobox-info fade in">
   <button type="button" class="close" data-dismiss="alert"> x </button>  
   <p> {{ Lang::get('core.t_tipsdrag') }}</p>	

@@ -45,7 +45,7 @@ class blog extends Sximo  {
 		FROM tb_blogs 
 		LEFT JOIN tb_blogcategories ON tb_blogcategories.catID = tb_blogs.catID 
 		LEFT JOIN tb_blogcomments ON tb_blogcomments.blogID = tb_blogs.blogID 
-		LEFT JOIN tb_users ON tb_blogs.entryby = tb_users.id
+		LEFT JOIN users ON tb_blogs.entryby = users.id
 		WHERE tb_blogs.blogID IS NOT NULL AND status = 'publish' 
 	    {$params} GROUP BY tb_blogs.blogID {$orderConditional}  {$limitConditional} ");
 		
@@ -62,7 +62,7 @@ class blog extends Sximo  {
 		FROM tb_blogs 
 		LEFT JOIN tb_blogcategories ON tb_blogcategories.catID = tb_blogs.catID 
 		LEFT JOIN tb_blogcomments ON tb_blogcomments.blogID = tb_blogs.blogID 
-		LEFT JOIN tb_users ON tb_blogs.entryby = tb_users.id ";
+		LEFT JOIN users ON tb_blogs.entryby = users.id ";
 	}	
 
 	public static function queryWhere(  ){
@@ -145,7 +145,7 @@ class blog extends Sximo  {
 	public static function getComments( $blogID )
 	{
 		$result = \DB::select(
-			" SELECT tb_blogcomments.* , CONCAT(first_name,' ',last_name) as name  FROM tb_blogcomments LEFT JOIN tb_users ON  tb_blogcomments.user_id = tb_users.id  WHERE blogID ='{$blogID}' ORDER BY created ASC"
+			" SELECT tb_blogcomments.* , CONCAT(first_name,' ',last_name) as name  FROM tb_blogcomments LEFT JOIN users ON  tb_blogcomments.user_id = users.id  WHERE blogID ='{$blogID}' ORDER BY created ASC"
 		);
 		$comments = array();
 		foreach($result as $row)

@@ -73,26 +73,34 @@ class Sximo extends Model {
 
 	public  function insertRow( $data , $id)
 	{
+
        $table = with(new static)->table;
 	   $key = with(new static)->primaryKey;
 	    if($id == NULL )
         {
+
             // Insert Here 
 			if(isset($data['createdOn'])) $data['createdOn'] = date("Y-m-d H:i:s");	
-			if(isset($data['updatedOn'])) $data['updatedOn'] = date("Y-m-d H:i:s");	
+			if(isset($data['updatedOn'])) $data['updatedOn'] = date("Y-m-d H:i:s");
 			 $id = \DB::table( $table)->insertGetId($data);
+
         } else {
             // Update here 
 			// update created field if any
-			if(isset($data['createdOn'])) unset($data['createdOn']);	
+            if(isset($data['createdOn'])) unset($data['createdOn']);
 			if(isset($data['updatedOn'])) $data['updatedOn'] = date("Y-m-d H:i:s");			
 			 \DB::table($table)->where($key,$id)->update($data);
         }    
         return $id;    
 	}			
+ function intersectCols($arr1,$arr2)
+{
 
+
+
+}
 	static function makeInfo( $id )
-	{	
+	{
 		$row =  \DB::table('tb_module')->where('module_name', $id)->get();
 		$data = array();
 		foreach($row as $r)
@@ -286,6 +294,54 @@ class Sximo extends Model {
 
         return $res;
     }
+    public function getLocations($id)
+    {
+        $locations=array();
+        $i=0;
+        $selected_loc=\DB::table('user_locations')->select('location_id')->where('user_id','=',$id)->get();
+       foreach($selected_loc as $loc)
+       {
+           $locations[$i]=$loc->location_id;
+           $i++;
+       }
+        return implode(',',$locations);
+    }
+    public function inserLocations($locations,$userid,$id)
+    {
+
+        $loc="";
+        $i=0;
+        foreach($locations as $location)
+        {
+            $loc[$i]=array('user_id'=>$userid,'location_id'=>$location);
+            $i++;
+        }
+        if($id!=NULL) {
+            \DB::table('user_locations')->where('user_id', '=',$userid)->delete();
+        }
+
+        \DB::table('user_locations')->insert($loc);
+    }
+    function getLocationDetails($id)
+    {
+        $locations = \DB::table('user_locations')
+            ->join('location', 'user_locations.location_id', '=', 'location.id')
+            ->select('location.*')
+            ->where('user_locations.user_id','=',$id)
+            ->get();
+       return $locations;
+    }
+    function getLocation($location_id)
+    {
+        $row= \DB::table('location')
+            ->join('users', 'location.contact_id', '=', 'users.id')
+            ->join('region', 'location.region_id', '=', 'region.id')
+            ->join('company','location.company_id','=','company.id')
+            ->select('location.*', 'users.first_name','users.last_name', 'region.region','company.company_name_short')
+            ->get();
+        return $row;
+    }
+
 
 
 }

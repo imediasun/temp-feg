@@ -57,7 +57,7 @@ abstract class Controller extends BaseController {
 		$data = array(
 				'last_activity'=> strtotime(Carbon::now())
 			);
-		\DB::table('tb_users')->where('id',\Session::get('uid'))->update($data);   
+		\DB::table('users')->where('id',\Session::get('uid'))->update($data);   
 	} 	
 
 
