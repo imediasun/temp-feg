@@ -17,7 +17,13 @@
   color: #333; overflow-x:hidden
 }
 
-
+.show{
+    display:block;
+}
+.hide
+{
+    display:none!important;
+}
 
 a { color:#1ab394;}
 h1,h2,h3,h4,h5,h6 {

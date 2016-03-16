@@ -275,6 +275,8 @@ class LocationController extends Controller {
 				->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus','error');
 
 		$row = $this->model->getRow($id);
+        print_r($row);
+        die();
 		if($row)
 		{
 			$this->data['row'] =  $row;
@@ -312,6 +314,9 @@ class LocationController extends Controller {
 
 	function postSave( Request $request, $id =0)
 	{
+        echo $id;
+        print_r($request->all());
+        die();
 
 		$rules = $this->validateForm();
 		$validator = Validator::make($request->all(), $rules);

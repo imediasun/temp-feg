@@ -63,6 +63,13 @@ h3,h4,h5 {
 .nav.navbar-top-links > li > a:focus {
   background-color: #ececec;
 }
+.show{
+    display:block;
+}
+.hide
+{
+    display:none!important;
+}
 .nav > li > a i {
   margin-right: 6px;
 }

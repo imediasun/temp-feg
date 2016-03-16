@@ -77,6 +77,28 @@ class GamestitleController extends Controller
         );
         // Get Query
         $results = $this->model->getRows($params);
+        foreach ($results['rows'] as $result) {
+
+            if ($result->has_manual == 1) {
+                $result->has_manual = "Yes";
+
+            } else {
+                $result->has_manual = "No";
+            }
+                if ($result->has_servicebulletin == 1) {
+                    $result->has_servicebulletin = "Yes";
+
+            } else {
+                    $result->has_servicebulletin = "No";
+            }
+            if ($result->num_prize_meters == 1) {
+                $result->num_prize_meters = "Yes";
+
+            } else {
+                $result->num_prize_meters = "No";
+            }
+        }
+
         // Build pagination setting
         $page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;
         $pagination = new Paginator($results['rows'], $results['total'], $params['limit']);
@@ -144,7 +166,29 @@ class GamestitleController extends Controller
                 ->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
 
         $row = $this->model->getRow($id);
+
         if ($row) {
+
+
+                if ($row->has_manual == 1) {
+                    $row->has_manual = "Yes";
+
+                } else {
+                    $row->has_manual = "No";
+                }
+                if ($row->has_servicebulletin == 1) {
+                    $row->has_servicebulletin = "Yes";
+
+                } else {
+                    $row->has_servicebulletin = "No";
+                }
+                if ($row->num_prize_meters == 1) {
+                    $row->num_prize_meters = "Yes";
+
+                } else {
+                    $row->num_prize_meters = "No";
+
+            }
             $this->data['row'] = $row;
         } else {
             $this->data['row'] = $this->model->getColumnTable('game_title');
@@ -267,7 +311,7 @@ class GamestitleController extends Controller
     function postUpload(Request $request)
     {
 
-        $files = array('image' => Input::file('avatar'));
+        $files = array('file' => Input::file('avatar'));
         $type=Input::get('upload_type'); $id = Input::get('id');
         $destinationPath="./uploads/games";
         $id=Input::get('id');
@@ -275,19 +319,19 @@ class GamestitleController extends Controller
       //  $rules=array();
         switch($type) {
             case 1:
-                $rules = array('image' => 'required|mimes:jpeg,gif,png'); //mimes:jpeg,bmp,png
+                $rules = array('file' => 'required|mimes:jpeg,gif,png'); //mimes:jpeg,bmp,png
                 $destinationPath .= '/images';
                 break;
             case 2:
-                $rules = array('image' => 'required|mimes:pdf'); //mimepdf
+                $rules = array('file' => 'required|mimes:pdf'); //mimepdf
                 $destinationPath .= '/manuals';
                 break;
             case 3:
-                $rules = array('image' => 'required|mimes:pdf'); //mimpdf
+                $rules = array('file' => 'required|mimes:pdf'); //mimpdf
                 $destinationPath .= '/bulletins';
                 break;
             default:
-                $rules = array('image' => 'required|mimes:pdf'); //mimpdf
+                $rules = array('file' => 'required|mimes:pdf'); //mimpdf
                 $destinationPath .= '/images';
 
         }
@@ -313,10 +357,12 @@ class GamestitleController extends Controller
             elseif($type==2)
             {
                 $updates['manual'] = $newfilename;
+                $updates['has_manual']='1';
             }
             elseif($type==3)
             {
                 $updates['bulletin'] = $newfilename;
+                $updates['has_servicebulletin']='1';
             }
 
         }
@@ -339,12 +385,21 @@ class GamestitleController extends Controller
         }
     }
     function getManualupdate()
+{
+    $rows=\DB::table('game_title')->select('id')->get();
+    foreach($rows as $row)
+    {
+        $manual=$row->id.".pdf";
+        \DB::table('game_title')->where('id','=',$row->id)->update(array('manual'=>$manual));
+    }
+}
+    function getBulletinupdate()
     {
         $rows=\DB::table('game_title')->select('id')->get();
         foreach($rows as $row)
         {
-            $manual=$row->id.".pdf";
-            \DB::table('game_title')->where('id','=',$row->id)->update(array('manual'=>$manual));
+            $bulletin=$row->id.".pdf";
+            \DB::table('game_title')->where('id','=',$row->id)->update(array('bulletin'=>$bulletin));
         }
     }
 

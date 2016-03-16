@@ -56,10 +56,10 @@ class Sximo extends Model {
        $table = with(new static)->table;
 	   $key = with(new static)->primaryKey;
 
-		$result = \DB::select( 
+		$result =  \DB::select(
 				self::querySelect() . 
 				self::queryWhere().
-				" AND ".$table.".".$key." = '{$id}' ". 
+				" AND ".$table.".".$key." = '{$id}' ".
 				self::queryGroup()
 			);	
 		if(count($result) <= 0){
@@ -334,10 +334,10 @@ class Sximo extends Model {
     function getLocation($location_id)
     {
         $row= \DB::table('location')
-            ->join('users', 'location.contact_id', '=', 'users.id')
             ->join('region', 'location.region_id', '=', 'region.id')
             ->join('company','location.company_id','=','company.id')
-            ->select('location.*', 'users.first_name','users.last_name', 'region.region','company.company_name_short')
+            ->select('location.*','region.region','company.company_name_short')
+            ->where('location.id','=',$location_id)
             ->get();
         return $row;
     }

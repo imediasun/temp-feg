@@ -17,6 +17,7 @@
                     <div class="row" >
                         <div class="col-md-12" style="text-align: center;margin-bottom: 10px;">
                             <h1>Location {{ $location_id }} Details</h1>
+
                             <h3 style="color:forestgreen;">
                               @if($row[0]->active==1)
                                   Active
@@ -71,7 +72,7 @@
                             </tr>
                             <tr>
                                 <td colspan="1"><h3>Internal Contact:</h3></td>
-                                <td><h4> {{ $row[0]->first_name.' '.$row[0]->last_name }} </h4></td></td>
+                                <td><h4>  </h4></td></td>
                             </tr>
                             <tr>
                                 <td colspan="1"><h3>Region:</h3></td>
@@ -89,18 +90,24 @@
 
    <div class="table-responsive">
        <h1>Bill-Backs</h1>
-                   <table class=" table">
-                       <?php $titles=array('debitcard'=>'Debit Cards','tickets'=>'Tickets','thermalpaper'=>'Thermal Paper','tokens'=>'Tokens','licenses'=>'Licenses','majorattractions'=>'Major Attractions','redemptionprizes'=>'Redemption Prizes','instantwinprizes'=>'Instant Win Prizes'); ?>
-                       {!! Form::open(array('url'=>'location/update/'.$row[0]->id, 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ')) !!}
 
-                  @foreach($titles as $key=>$title)
+                   <table class=" table">
+
+                       <?php $titles=array('bill_debit_amt'=>'Debit Cards','bill_ticket_amt'=>'Tickets','bill_thermalpaper_amt'=>'Thermal Paper','bill_token_amt'=>'Tokens','bill_license_amt'=>'Licenses','bill_attraction_amt'=>'Major Attractions','bill_redemption_amt'=>'Redemption Prizes','bill_instant_amt'=>'Instant Win Prizes'); ?>
+                       {!! Form::open(array('url'=>'location/save/'.$row[0]->id, 'class'=>'form-horizontal' , 'parsley-validate'=>'','novalidate'=>' ', 'id'=>'locationFormAjax')) !!}
+                           <input type="text" name ="test2" value="test2"/>
+                           <input type="checkbox" name=“test[]” value=1 />
+                                    @foreach($titles as $key=>$title)
                                <tr>
-                                    <td><h4> {{ $title }} </h4></td>
-                                    <td><label><input type="radio" name="{{ $key }}" value="0"> NONE</label></td>
-                                   <td><label><input type="radio" name="{{ $key }}" value="{{ $key }}_pct" onchange="showIBoxPct()">  PCT%</label></td>
-                                   <td><label><input type="radio" name="{{ $key }}" value="{{ $key }}_fixed" onchange="showIBoxFixed()">  FIXED</label></td>
-                                </tr>
-                  @endforeach
+
+                                    <td>  <h4> {{ $title }} </h4></td>
+                                    <td><label><input type="radio" name="{{ $key }}" value="0" > NONE</label></td>
+                                   <td><label><input type="radio" name="{{ $key }}" value="1"  data-pc="{{ $row[0]->$key }}">  PCT%</label></td>
+                                   <td><label><input type="radio" name="{{ $key }}" value="2"  data-fixed="{{ $row[0]->$key}}">  FIXED</label></td>
+
+                               </tr>
+
+ @endforeach
                            <br/>
                            <tr>
                                <td></td>
@@ -129,10 +136,70 @@
         </div>
 
             <script>
-                $('.pct').on('ifChecked', function(event){
-                   var html='<input type="text" name="pct"/>'+
-                                   '<input type="text" name=""';
+              /*  $('input').on('ifChecked', function(event){
+                    var val=$(this).val();
+                    $(this).parents("tr").next("tr").remove();
+                    var dataval=0.00;
+                    var label="";
+                    var data=$('this').val();
+                    if(val==1)
+                    {
+                        label="PCT % Billed: ";
+                        dataval=$(this).attr('data-pc');
+                    }
+                    else if(val==2)
+                    {
+                        label="Amount $ Billed:";
+                        dataval=$(this).attr('data-fixed');
+                    }
+                    if(val==1 || val==2)
+                    {
+                        var html='<tr class="test"><td colspan="4"><div class="form-group col-md-offset-2 col-md-8 col-sm-offset-2 col-sm-8"><label class="control-label  col-md-4 col-sm-5">'+label+'</label> <div class=" col-md-5 col-sm-5 "><input  type="text"   name="pct" value="'+dataval+'" class="form-control"/></div><label class="col-md-2 col-sm-2"> Details</label>' +
+                                '<div col-md-8 col-sm-8><input type="text" name='+data+"' class="form-control" /></div></div></td></tr>';
+                    }
+                    $(this).parents("tr").after(html);
+
                 });
+*/
+                $(document).ready(function() {
+                    var form = $('#locationFormAjax');
+                    form.parsley();
+                    form.submit(function(){
+                        if(form.parsley('isValid') == true){
+                            var options = {
+                                dataType:      'json',
+                                beforeSubmit :  showRequest,
+                                success:       showResponse
+                            }
+                            $(this).ajaxSubmit(options);
+                            return false;
+
+                        } else {
+                            return false;
+                        }
+
+                    });
+
+                });
+
+                function showRequest()
+                {
+                    $('.ajaxLoading').show();
+                }
+                function showResponse(data)  {
+
+                    if(data.status == 'success')
+                    {
+                        ajaxViewClose('#{{ $pageModule }}');
+                        ajaxFilter('#{{ $pageModule }}','{{ $pageUrl }}/data');
+                        notyMessage(data.message);
+                        $('#sximo-modal').modal('hide');
+                    } else {
+                        notyMessageError(data.message);
+                        $('.ajaxLoading').hide();
+                        return false;
+                    }
+                }
 
             </script>
 
