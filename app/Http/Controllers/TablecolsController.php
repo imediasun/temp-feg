@@ -220,7 +220,7 @@ class TablecolsController extends Controller
         $id = $this->model->checkModule($data['config_name'], $data['module_id']);
         $configstr = implode(',', $data['cols']);
         $configstr = \SiteHelpers::CF_encode_json($configstr);
-        $this->model->insertRow(array('user_id' => $data['user_id'], 'module_id' => $data['module_id'], 'config' => $configstr, 'config_name' => $data['config_name'], 'is_private' => $data['user_mode']), $id);
+        $this->model->insertRow(array('user_id' => $data['user_id'], 'module_id' => $data['module_id'], 'config' => $configstr, 'config_name' => $data['config_name'], 'is_private' => $data['user_mode'],'group_id'=>$data['group_id']), $id);
 
         return response()->json(array(
             'status' => 'success',
@@ -245,7 +245,8 @@ class TablecolsController extends Controller
                 exit;
         */
         //add code here to get all columns for a module
-        return view('tablecols.arrange_cols', ['allColumns' => $info['config']['grid'], 'user_id' => $user_id, 'module_id' => $module_id, 'pageModule' => $pageModule]);
+        $groups=\SiteHelpers::getAllGroups();
+        return view('tablecols.arrange_cols', ['allColumns' => $info['config']['grid'], 'user_id' => $user_id, 'module_id' => $module_id, 'pageModule' => $pageModule,'groups' => $groups]);
     }
 
 }

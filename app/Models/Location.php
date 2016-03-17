@@ -26,6 +26,16 @@ class location extends Sximo  {
 	public static function queryGroup(){
 		return "  ";
 	}
-	
+    public static function getRow( $id )
+    {
+        $row= \DB::table('location')
+            ->join('region', 'location.region_id', '=', 'region.id')
+            ->join('company','location.company_id','=','company.id')
+            ->select('location.*','region.region','company.company_name_short')
+            ->where('location.id','=',$location_id)
+            ->get();
+        return $row;
+    }
+
 
 }

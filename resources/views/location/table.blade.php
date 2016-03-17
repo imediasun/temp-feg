@@ -12,7 +12,7 @@
 	</div>
 	<div class="sbox-content">
 
-        @include( $pageModule.'/toolbar',['colconfigs' => SiteHelpers::getColsConfigs($module_id)])
+        @include( $pageModule.'/toolbar',['colconfigs' => SiteHelpers::getRequiredConfigs($module_id)])
 
 	 <?php echo Form::open(array('url'=>'location/delete/', 'class'=>'form-horizontal' ,'id' =>'SximoTable'  ,'data-parsley-validate'=>'' )) ;?>
 <div class="table-responsive">	
@@ -22,14 +22,12 @@
 			<tr>
 				<th width="20"> No </th>
 				<th width="30"> <input type="checkbox" class="checkall" /></th>
-                <th>Location Details</th>
 				@if($setting['view-method']=='expand') <th>  </th> @endif			
 				<?php foreach ($tableGrid as $t) :
 					if($t['view'] =='1'):
 						$limited = isset($t['limited']) ? $t['limited'] :'';
 						if(SiteHelpers::filterColumn($limited ))
 						{
-
 							echo '<th align="'.$t['align'].'" width="'.$t['width'].'">'.\SiteHelpers::activeLang($t['label'],(isset($t['language'])? $t['language'] : array())).'</th>';				
 
                 }
@@ -49,7 +47,7 @@
 					<?php $limited = isset($t['limited']) ? $t['limited'] :''; ?>
 						@if(SiteHelpers::filterColumn($limited ))
 						<td data-form="{{ $t['field'] }}" data-form-type="{{ AjaxHelpers::inlineFormType($t['field'],$tableForm)}}">
-							{!! SiteHelpers::transForm($t['field'] , $tableForm) !!}								
+							{!! SiteHelpers::transForm($t['field'] , $tableForm) !!}
 						</td>
 						@endif
 					@endif
@@ -67,7 +65,7 @@
                 <tr class="editable" id="form-{{ $row->id }}">
 					<td class="number"> <?php echo ++$i;?>  </td>
 					<td ><input type="checkbox" class="ids" name="ids[]" value="<?php echo $row->id ;?>" />  </td>
-                    <td width="50"><a href="{{ URL::to('location/details/'.$row->id)}}">View Details</a></td>
+
 					@if($setting['view-method']=='expand')
 					<td><a href="javascript:void(0)" class="expandable" rel="#row-{{ $row->id }}" data-url="{{ url('location/show/'.$id) }}"><i class="fa fa-plus " ></i></a></td>								
 					@endif			
@@ -89,7 +87,7 @@
 					  ?>
 				 <td data-values="action" data-key="<?php echo $row->id ;?>">
 					{!! AjaxHelpers::buttonAction('location',$access,$id ,$setting) !!}
-					{!! AjaxHelpers::buttonActionInline($row->id,'id') !!}		
+					{!! AjaxHelpers::buttonActionInline($row->id,'id') !!}
 				</td>			 
                 </tr>
                 @if($setting['view-method']=='expand')

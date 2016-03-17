@@ -51,14 +51,12 @@ class GamestitleController extends Controller
         } else {
             $config_id = 0;
         }
-        $this->data['config_id'] = $config_id;
-        $config = $this->model->getModuleConfig($module_id, $config_id);
-        if(!empty($config))
-        {
-            $this->data['config'] = \SiteHelpers::CF_decode_json($config[0]->config);
-            \Session::put('config_id', $config_id);
-        }
-
+            $this->data['config_id'] = $config_id;
+            $config = $this->model->getModuleConfig($module_id, $config_id);
+            if (!empty($config)) {
+                $this->data['config'] = \SiteHelpers::CF_decode_json($config[0]->config);
+                \Session::put('config_id', $config_id);
+            }
         $sort = (!is_null($request->input('sort')) ? $request->input('sort') : $this->info['setting']['orderby']);
         $order = (!is_null($request->input('order')) ? $request->input('order') : $this->info['setting']['ordertype']);
         // End Filter sort and order for query
@@ -123,7 +121,9 @@ class GamestitleController extends Controller
 
         // Master detail link if any
         $this->data['subgrid'] = (isset($this->info['config']['subgrid']) ? $this->info['config']['subgrid'] : array());
+
         if ($this->data['config_id'] != 0 && !empty($config)) {
+
             $this->data['tableGrid'] = \SiteHelpers::showRequiredCols($this->data['tableGrid'], $this->data['config']);
         }// Render into template
         return view('gamestitle.table', $this->data);
@@ -402,6 +402,7 @@ class GamestitleController extends Controller
             \DB::table('game_title')->where('id','=',$row->id)->update(array('bulletin'=>$bulletin));
         }
     }
+
 
 
 

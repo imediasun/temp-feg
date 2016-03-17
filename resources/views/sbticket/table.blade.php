@@ -19,7 +19,7 @@
         </div>
     </div>
     <div class="sbox-content">
-       @include( $pageModule.'/toolbar',['colconfigs' => SiteHelpers::getColsConfigs($module_id)])
+       @include( $pageModule.'/toolbar',['colconfigs' => SiteHelpers::getRequiredConfigs($module_id)])
 
         <?php echo Form::open(array('url' => 'sbticket/delete/', 'class' => 'form-horizontal', 'id' => 'SximoTable', 'data-parsley-validate' => ''));?>
         <div class="table-responsive">

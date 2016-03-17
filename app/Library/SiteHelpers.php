@@ -1168,11 +1168,11 @@ public static function alphaID($in, $to_num = false, $pad_up = false, $passKey =
                 else{
                     $class='img';
                 }
-				return '<p><a href="'.url( $path_file . $file).'" target="_blank" class="previewImage">
+				return '<p><a href="'.url( $path_file . $file).'" target="_blank" class="previewImage fancybox" rel="gallery1">
 				<img src="'.asset( $path_file . $file ).'" border="0" width="'. $width .'" class="'.$class.'"  /></a></p>';
 			} else {
 				$path_file = str_replace("./","",$path);
-				return '<p> <a href="'.url($path_file . $file).'" target="_blank"> '.$file.' </a>';
+				return '<p> <a  href="'.url($path_file . $file).'" target="_blank"> '.$file.' </a>';
 			}
 	
 		} else {
@@ -1574,5 +1574,48 @@ public static function alphaID($in, $to_num = false, $pad_up = false, $passKey =
      }
      return $table;
  }
+    static function getAllGroups()
+    {
+        $groups=\DB::table('tb_groups')->get();
+        return $groups;
+    }
+    static function getRequiredConfigs($module_id)
+    {
+        $group_id=Session::get('gid');
+        $user_id=Session::get('uid');
+        $configs=array();
+        $i=0;
+        //get all the configurations against a module
+        $result=\DB::table('user_module_config')->where(array('module_id'=>$module_id))->get();
+
+        foreach($result as $t) {
+            // if configuration is private only show to owner
+            if($t->is_private==1)
+            {
+                if($t->user_id==$user_id)
+                {
+                    $configs[$i]=array('config_name'=>$t->config_name,'config_id'=>$t->id);
+                    $i++;
+                }
+            }
+            // if configuration is public check for the group
+            else{
+                if($t->group_id==$group_id)
+                {
+                    $configs[$i]=array('config_name'=>$t->config_name,'config_id'=>$t->id);
+                    $i++;
+                }
+                //show configuration for owner of the configuration
+               elseif($t->user_id==$user_id)
+                {
+                    $configs[$i]=array('config_name'=>$t->config_name,'config_id'=>$t->id);
+                    $i++;
+                }
+            }
+
+        }
+return $configs;
+
+    }
 			
 }

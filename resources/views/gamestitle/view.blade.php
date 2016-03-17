@@ -36,7 +36,7 @@
 						<td>{{ $row->mfg_id }} </td>
 						
 					</tr>
-				
+
 					<tr>
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Game Type Id', (isset($fields['game_type_id']['language'])? $fields['game_type_id']['language'] : array())) }}	
@@ -47,18 +47,18 @@
 				
 					<tr>
 						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Has Manual', (isset($fields['has_manual']['language'])? $fields['has_manual']['language'] : array())) }}	
+							Manual
 						</td>
-						<td>{{ $row->has_manual }} </td>
+						<td> @if($row->has_manual=="Yes")<a href="uploads/games/manuals/{{ $row->id }}.pdf"  target="_blank">Manual</a>@else <a href="{{ URL::to('gamestitle/upload/'.$row->id.'?type=2')}}">Upload manual</a>@endif</td>
 						
 					</tr>
 				
 					<tr>
 						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Has Servicebulletin', (isset($fields['has_servicebulletin']['language'])? $fields['has_servicebulletin']['language'] : array())) }}	
+                            Servicebulletin
 						</td>
-						<td>{{ $row->has_servicebulletin }} </td>
-						
+						<td> @if($row->has_servicebulletin=="Yes")  <a href="uploads/games/bulletins/{{ $row->id }}.pdf"  target="_blank">Bulletin</a>@else  <a href="{{ URL::to('gamestitle/upload/'.$row->id.'?type=3')}}">Upload Bulletin</a>@endif</td>
+
 					</tr>
 				
 					<tr>

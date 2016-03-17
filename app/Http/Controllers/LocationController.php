@@ -275,8 +275,6 @@ class LocationController extends Controller {
 				->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus','error');
 
 		$row = $this->model->getRow($id);
-        print_r($row);
-        die();
 		if($row)
 		{
 			$this->data['row'] =  $row;

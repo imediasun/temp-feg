@@ -17,7 +17,11 @@
         </div>
     </div>
     <div class="sbox-content">
-        @include( $pageModule.'/toolbar',['colconfigs' => SiteHelpers::getColsConfigs($module_id)])
+      <?php  if(!isset($group_id)):
+            $group_id=0;
+        endif
+          ?>
+        @include( $pageModule.'/toolbar',['colconfigs' => SiteHelpers::getRequiredConfigs($module_id)])
         <?php echo Form::open(array('url' => 'gamestitle/delete/', 'class' => 'form-horizontal', 'id' => 'SximoTable', 'data-parsley-validate' => ''));?>
         <div class="table-responsive">
             @if(count($rowData)>=1)
@@ -119,7 +123,7 @@
                         </td>
                         <td>
                             @if($row->has_servicebulletin=="Yes")
-                                <a href="uploads/games/bulletins/{{ $row->id }}.pdf"  target="_blank">Manual</a>
+                                <a href="uploads/games/bulletins/{{ $row->id }}.pdf"  target="_blank">Bulletin</a>
                             @endif
                         </td>
                         <td data-values="action" data-key="<?php echo $row->id;?>">
@@ -183,6 +187,11 @@
             endif;
          ?>
     });
+
+        $(".fancybox").fancybox({
+            openEffect	: 'none',
+            closeEffect	: 'none'
+        });
 </script>
 <style>
     .table th.right {

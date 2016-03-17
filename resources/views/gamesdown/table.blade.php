@@ -10,9 +10,9 @@
 			@endif 
 		</div>
 	</div>
-	<div class="sbox-content"> 	
+	<div class="sbox-content">
 
-	@include( $pageModule.'/toolbar')
+        @include( $pageModule.'/toolbar',['colconfigs' => SiteHelpers::getRequiredConfigs($module_id)])
 
 	 <?php echo Form::open(array('url'=>'gamesdown/delete/', 'class'=>'form-horizontal' ,'id' =>'SximoTable'  ,'data-parsley-validate'=>'' )) ;?>
 <div class="table-responsive">	
