@@ -77,7 +77,28 @@ class VendorController extends Controller {
 			'global'	=> (isset($this->access['is_global']) ? $this->access['is_global'] : 0 )
 		);
 		// Get Query 
-		$results = $this->model->getRows( $params );		
+		$results = $this->model->getRows( $params );
+        foreach ($results['rows'] as $result) {
+
+            if ($result->partner_hide == 1) {
+                $result->partner_hide = "Yes";
+
+            } else {
+                $result->partner_hide = "No";
+            }
+            if ($result->isgame == 1) {
+                $result->isgame = "Yes";
+
+            } else {
+                $result->isgame = "No";
+            }
+            if ($result->ismerch == 1) {
+                $result->ismerch = "Yes";
+
+            } else {
+                $result->ismerch = "No";
+            }
+        }
 		
 		// Build pagination setting
 		$page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;	
@@ -152,6 +173,25 @@ class VendorController extends Controller {
 		$row = $this->model->getRow($id);
 		if($row)
 		{
+                if ($row->partner_hide == 1) {
+                    $row->partner_hide = "Yes";
+
+                } else {
+                    $row->partner_hide = "No";
+                }
+                if ($row->isgame == 1) {
+                    $row->isgame = "Yes";
+
+                } else {
+                    $row->isgame = "No";
+                }
+                if ($row->ismerch == 1) {
+                    $row->ismerch = "Yes";
+
+                } else {
+                    $row->ismerch = "No";
+                }
+
 			$this->data['row'] =  $row;
 		} else {
 			$this->data['row'] = $this->model->getColumnTable('tb_vendor'); 

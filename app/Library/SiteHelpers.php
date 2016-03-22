@@ -806,11 +806,9 @@ public static function alphaID($in, $to_num = false, $pad_up = false, $passKey =
 				break;				
 
 			case 'select';
-				
-			
 				if($option['opt_type'] =='external')
 				{
-					
+
 					$data = DB::table($option['lookup_table'])->get();
 					$opts = '';
 					foreach($data as $row):
@@ -1245,6 +1243,7 @@ public static function alphaID($in, $to_num = false, $pad_up = false, $passKey =
 		}
 	}
 	public static function gridDisplayView($val , $field, $arr) {
+
 		$arr = explode(':',$arr);
 		
 		if(isset($arr['0']) && $arr['0'] ==1)
@@ -1497,6 +1496,7 @@ public static function alphaID($in, $to_num = false, $pad_up = false, $passKey =
 
 	public static function activeLang( $label , $l )
 	{
+
 		$activeLang = \Session::get('lang');
 		$lang = (isset($l[$activeLang]) ? $l[$activeLang] : $label );
 		return $lang; 

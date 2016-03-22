@@ -183,27 +183,20 @@
 					 <div class="col-md-2">
 					 	
 					 </div>
-				  </div> 					
-				  <div class="form-group  " > 
-					<label for="Min Order Amt" class=" control-label col-md-4 text-left"> 
-					{!! SiteHelpers::activeLang('Min Order Amt', (isset($fields['min_order_amt']['language'])? $fields['min_order_amt']['language'] : array())) !!}	
-					</label>
-					<div class="col-md-6">
-					  
-					<?php $min_order_amt = explode(',',$row['min_order_amt']);
-					$min_order_amt_opt = array( '0' => 'No' ,  '1' => 'Yes' , ); ?>
-					<select name='min_order_amt' rows='5'   class='select2 '  > 
-						<?php 
-						foreach($min_order_amt_opt as $key=>$val)
-						{
-							echo "<option  value ='$key' ".($row['min_order_amt'] == $key ? " selected='selected' " : '' ).">$val</option>"; 						
-						}						
-						?></select> 
-					 </div> 
-					 <div class="col-md-2">
-					 	
-					 </div>
-				  </div> </fieldset>
+				  </div>
+
+                            <div class="form-group  " >
+                                <label for="Min Order Amt" class=" control-label col-md-4 text-left">
+                                    {!! SiteHelpers::activeLang('Min Order Amt', (isset($fields['min_order_amt']['language'])? $fields['min_order_amt']['language'] : array())) !!}
+                                </label>
+                                <div class="col-md-6">
+                                    {!! Form::text('min_order_amt', $row['min_order_amt'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
+                                </div>
+                                <div class="col-md-2">
+
+                                </div>
+                            </div>
+ </fieldset>
 			</div>
 			
 												
@@ -222,13 +215,9 @@
 
 
 @if($setting['form-method'] =='native')
-	</div>	
+	</div>
 </div>	
-@endif	
-
-	
-</div>	
-			 
+@endif
 <script type="text/javascript">
 $(document).ready(function() { 
 	 
@@ -241,7 +230,7 @@ $(document).ready(function() {
 	$('.datetime').datetimepicker({format: 'yyyy-mm-dd hh:ii:ss'}); 
 	$('input[type="checkbox"],input[type="radio"]').iCheck({
 		checkboxClass: 'icheckbox_square-green',
-		radioClass: 'iradio_square-green',
+		radioClass: 'iradio_square_green'
 	});			
 	$('.removeCurrentFiles').on('click',function(){
 		var removeUrl = $(this).attr('href');

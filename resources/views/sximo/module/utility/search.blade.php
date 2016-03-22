@@ -5,7 +5,7 @@
 @foreach ($tableForm as $t)
 	@if($t['search'] =='1')
 		<tr id="{{ $t['field'] }}" class="fieldsearch">
-			<td>{!! SiteHelpers::activeLang($t['label'],(isset($t['language'])? $t['language'] : array())) !!} </td>
+			<td>{!! SiteHelpers::activeLang($t['label'], (isset($t['language']) ? $t['language'] : array())) !!} </td>
 			<td > 
 			<select id="{{ $t['field']}}_operate" class="form-control oper" name="operate" onchange="changeOperate(this.value , '{{ $t['field']}}')">
 				<option value="equal"> = </option>

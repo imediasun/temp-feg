@@ -1,518 +1,171 @@
 @if($setting['view-method'] =='native')
 <div class="sbox">
-	<div class="sbox-title">  
+	<div class="sbox-title">
 		<h4> <i class="fa fa-table"></i> <?php echo $pageTitle ;?> <small>{{ $pageNote }}</small>
 			<a href="javascript:void(0)" class="collapse-close pull-right btn btn-xs btn-danger" onclick="ajaxViewClose('#{{ $pageModule }}')">
 			<i class="fa fa fa-times"></i></a>
 		</h4>
 	 </div>
+    <div class="sbox-content">
+@endif
+        <div class="row">
+            <div class="col-md-12" style="text-align: center;margin-bottom: 10px;">
+                <h1>Location {{ $id }} Details</h1>
+                <h3 style="color:forestgreen;">
+                    @if($row[0]->active==1)
+                        Active
+                    @else
+                        Inactive
+                    @endif
+                </h3>
+            </div>
+            <div class="col-md-offset-3 col-md-6">
+                <h1>BILL-BACK SUMMARY:</h1>
+                <div class="table-responsive">
+                    <div style="padding:10px;">
+                        <h4>Debit Cards: <span style="display:inline-block;margin-left:10px"> {{ $row[0]->bill_debit_amt }} % </span></h4>
+                        <h4>Licenses: <span style="display:inline-block;margin-left:20px">{{ $row[0]->bill_license_amt }} %</span></h4>
+                    </div>
+                    <table class="table">
+                        <tbody>
+                        <tr rowspan="2">
+                            <td colspan="1"><h3>Location ID:</h3></td>
+                            <td><h4> {{ $row[0]->id }} </h4></td>
+                        </tr>
+                        <tr>
+                            <td><h3>Address: </h3></td>
+                            <td>
+                                <h4>{{ $row[0]->location_name.' ' .$row[0]->street1 .' '.$row[0]->city.','.$row[0]->state.' '.$row[0]->zip }}</h4>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="1"><h3>Location Short Name:</h3></td>
+                            <td><h4> {{ $row[0]->location_name_short }} </h4></td>
+                        </tr>
+                        <tr>
+                            <td colspan="1"><h3>Shipping Restrictions:</h3></td>
+                            <td><h4> {{$row[0]->loading_info}} </h4></td>
+                        </tr>
+                        <tr>
+                            <td colspan="1"><h3>Alt. Shipping Location:</h3></td>
+                            <td><h4>{{ $row[0]->loc_ship_to }}  </h4></td>
+                        </tr>
+                        <tr>
+                            <td colspan="1"><h3>Date Opened:</h3></td>
+                            <td><h4>{{ $row[0]->date_opened }}  </h4></td>
+                        </tr>
+                        <tr>
+                            <td colspan="1"><h3>Date Closed:</h3></td>
+                            <td><h4>{{ $row[0]->date_closed }}  </h4></td>
+                        </tr>
+                        <tr>
+                            <td colspan="1"><h3>Location Phone:</h3></td>
+                            <td><h4>{{ $row[0]->phone }}  </h4></td>
+                        </tr>
+                        <tr>
+                            <td colspan="1"><h3>Internal Contact:</h3></td>
+                            <td><h4></h4></td>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="1"><h3>Region:</h3></td>
+                            <td><h4>{{ $row[0]->region }}  </h4></td>
+                        </tr>
+                        <tr>
+                            <td colspan="1"><h3>Company:</h3></td>
+                            <td><h4> {{ $row[0]->company_name_short }} </h4></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <hr/>
+                <h1>Bill-Backs</h1>
 
-	<div class="sbox-content"> 
-@endif	
+                <div class="table-responsive">
 
-		<table class="table table-striped table-bordered" >
-			<tbody>	
-				
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Id', (isset($fields['id']['language'])? $fields['id']['language'] : array())) }}	
-						</td>
-						<td>{{ $row->id }} </td>
-						
-					</tr>
-				
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Location Name', (isset($fields['location_name']['language'])? $fields['location_name']['language'] : array())) }}	
-						</td>
-						<td>{{ $row->location_name }} </td>
-						
-					</tr>
-				
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Location Name Short', (isset($fields['location_name_short']['language'])? $fields['location_name_short']['language'] : array())) }}	
-						</td>
-						<td>{{ $row->location_name_short }} </td>
-						
-					</tr>
-				
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Mail Attention', (isset($fields['mail_attention']['language'])? $fields['mail_attention']['language'] : array())) }}	
-						</td>
-						<td>{{ $row->mail_attention }} </td>
-						
-					</tr>
-				
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Street1', (isset($fields['street1']['language'])? $fields['street1']['language'] : array())) }}	
-						</td>
-						<td>{{ $row->street1 }} </td>
-						
-					</tr>
-				
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('City', (isset($fields['city']['language'])? $fields['city']['language'] : array())) }}	
-						</td>
-						<td>{{ $row->city }} </td>
-						
-					</tr>
-				
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('State', (isset($fields['state']['language'])? $fields['state']['language'] : array())) }}	
-						</td>
-						<td>{{ $row->state }} </td>
-						
-					</tr>
-				
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Zip', (isset($fields['zip']['language'])? $fields['zip']['language'] : array())) }}	
-						</td>
-						<td>{{ $row->zip }} </td>
-						
-					</tr>
-				
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Attn', (isset($fields['attn']['language'])? $fields['attn']['language'] : array())) }}	
-						</td>
-						<td>{{ $row->attn }} </td>
-						
-					</tr>
-				
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Company Id', (isset($fields['company_id']['language'])? $fields['company_id']['language'] : array())) }}	
-						</td>
-						<td>{{ $row->company_id }} </td>
-						
-					</tr>
-				
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Self Owned', (isset($fields['self_owned']['language'])? $fields['self_owned']['language'] : array())) }}	
-						</td>
-						<td>{{ $row->self_owned }} </td>
-						
-					</tr>
-				
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Loading Info', (isset($fields['loading_info']['language'])? $fields['loading_info']['language'] : array())) }}	
-						</td>
-						<td>{{ $row->loading_info }} </td>
-						
-					</tr>
-				
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Date Opened', (isset($fields['date_opened']['language'])? $fields['date_opened']['language'] : array())) }}	
-						</td>
-						<td>{{ $row->date_opened }} </td>
-						
-					</tr>
-				
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Date Closed', (isset($fields['date_closed']['language'])? $fields['date_closed']['language'] : array())) }}	
-						</td>
-						<td>{{ $row->date_closed }} </td>
-						
-					</tr>
-				
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Region Id', (isset($fields['region_id']['language'])? $fields['region_id']['language'] : array())) }}	
-						</td>
-						<td>{{ $row->region_id }} </td>
-						
-					</tr>
-				
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Loc Group Id', (isset($fields['loc_group_id']['language'])? $fields['loc_group_id']['language'] : array())) }}	
-						</td>
-						<td>{{ $row->loc_group_id }} </td>
-						
-					</tr>
-				
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Debit Type Id', (isset($fields['debit_type_id']['language'])? $fields['debit_type_id']['language'] : array())) }}	
-						</td>
-						<td>{{ $row->debit_type_id }} </td>
-						
-					</tr>
-				
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Can Ship', (isset($fields['can_ship']['language'])? $fields['can_ship']['language'] : array())) }}	
-						</td>
-						<td>{{ $row->can_ship }} </td>
-						
-					</tr>
-				
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Loc Ship To', (isset($fields['loc_ship_to']['language'])? $fields['loc_ship_to']['language'] : array())) }}	
-						</td>
-						<td>{{ $row->loc_ship_to }} </td>
-						
-					</tr>
-				
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Phone', (isset($fields['phone']['language'])? $fields['phone']['language'] : array())) }}	
-						</td>
-						<td>{{ $row->phone }} </td>
-						
-					</tr>
-				
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Bestbuy Store Number', (isset($fields['bestbuy_store_number']['language'])? $fields['bestbuy_store_number']['language'] : array())) }}	
-						</td>
-						<td>{{ $row->bestbuy_store_number }} </td>
-						
-					</tr>
-				
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Bill Debit Type', (isset($fields['bill_debit_type']['language'])? $fields['bill_debit_type']['language'] : array())) }}	
-						</td>
-						<td>{{ $row->bill_debit_type }} </td>
-						
-					</tr>
-				
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Bill Debit Amt', (isset($fields['bill_debit_amt']['language'])? $fields['bill_debit_amt']['language'] : array())) }}	
-						</td>
-						<td>{{ $row->bill_debit_amt }} </td>
-						
-					</tr>
-				
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Bill Debit Detail', (isset($fields['bill_debit_detail']['language'])? $fields['bill_debit_detail']['language'] : array())) }}	
-						</td>
-						<td>{{ $row->bill_debit_detail }} </td>
-						
-					</tr>
-				
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Bill Ticket Type', (isset($fields['bill_ticket_type']['language'])? $fields['bill_ticket_type']['language'] : array())) }}	
-						</td>
-						<td>{{ $row->bill_ticket_type }} </td>
-						
-					</tr>
-				
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Bill Ticket Amt', (isset($fields['bill_ticket_amt']['language'])? $fields['bill_ticket_amt']['language'] : array())) }}	
-						</td>
-						<td>{{ $row->bill_ticket_amt }} </td>
-						
-					</tr>
-				
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Bill Ticket Detail', (isset($fields['bill_ticket_detail']['language'])? $fields['bill_ticket_detail']['language'] : array())) }}	
-						</td>
-						<td>{{ $row->bill_ticket_detail }} </td>
-						
-					</tr>
-				
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Bill Thermalpaper Type', (isset($fields['bill_thermalpaper_type']['language'])? $fields['bill_thermalpaper_type']['language'] : array())) }}	
-						</td>
-						<td>{{ $row->bill_thermalpaper_type }} </td>
-						
-					</tr>
-				
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Bill Thermalpaper Amt', (isset($fields['bill_thermalpaper_amt']['language'])? $fields['bill_thermalpaper_amt']['language'] : array())) }}	
-						</td>
-						<td>{{ $row->bill_thermalpaper_amt }} </td>
-						
-					</tr>
-				
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Bill Thermalpaper Detail', (isset($fields['bill_thermalpaper_detail']['language'])? $fields['bill_thermalpaper_detail']['language'] : array())) }}	
-						</td>
-						<td>{{ $row->bill_thermalpaper_detail }} </td>
-						
-					</tr>
-				
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Bill Token Type', (isset($fields['bill_token_type']['language'])? $fields['bill_token_type']['language'] : array())) }}	
-						</td>
-						<td>{{ $row->bill_token_type }} </td>
-						
-					</tr>
-				
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Bill Token Amt', (isset($fields['bill_token_amt']['language'])? $fields['bill_token_amt']['language'] : array())) }}	
-						</td>
-						<td>{{ $row->bill_token_amt }} </td>
-						
-					</tr>
-				
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Bill Token Detail', (isset($fields['bill_token_detail']['language'])? $fields['bill_token_detail']['language'] : array())) }}	
-						</td>
-						<td>{{ $row->bill_token_detail }} </td>
-						
-					</tr>
-				
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Bill License Type', (isset($fields['bill_license_type']['language'])? $fields['bill_license_type']['language'] : array())) }}	
-						</td>
-						<td>{{ $row->bill_license_type }} </td>
-						
-					</tr>
-				
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Bill License Amt', (isset($fields['bill_license_amt']['language'])? $fields['bill_license_amt']['language'] : array())) }}	
-						</td>
-						<td>{{ $row->bill_license_amt }} </td>
-						
-					</tr>
-				
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Bill License Detail', (isset($fields['bill_license_detail']['language'])? $fields['bill_license_detail']['language'] : array())) }}	
-						</td>
-						<td>{{ $row->bill_license_detail }} </td>
-						
-					</tr>
-				
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Bill Attraction Type', (isset($fields['bill_attraction_type']['language'])? $fields['bill_attraction_type']['language'] : array())) }}	
-						</td>
-						<td>{{ $row->bill_attraction_type }} </td>
-						
-					</tr>
-				
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Bill Attraction Amt', (isset($fields['bill_attraction_amt']['language'])? $fields['bill_attraction_amt']['language'] : array())) }}	
-						</td>
-						<td>{{ $row->bill_attraction_amt }} </td>
-						
-					</tr>
-				
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Bill Attraction Detail', (isset($fields['bill_attraction_detail']['language'])? $fields['bill_attraction_detail']['language'] : array())) }}	
-						</td>
-						<td>{{ $row->bill_attraction_detail }} </td>
-						
-					</tr>
-				
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Bill Redemption Type', (isset($fields['bill_redemption_type']['language'])? $fields['bill_redemption_type']['language'] : array())) }}	
-						</td>
-						<td>{{ $row->bill_redemption_type }} </td>
-						
-					</tr>
-				
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Bill Redemption Amt', (isset($fields['bill_redemption_amt']['language'])? $fields['bill_redemption_amt']['language'] : array())) }}	
-						</td>
-						<td>{{ $row->bill_redemption_amt }} </td>
-						
-					</tr>
-				
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Bill Redemption Detail', (isset($fields['bill_redemption_detail']['language'])? $fields['bill_redemption_detail']['language'] : array())) }}	
-						</td>
-						<td>{{ $row->bill_redemption_detail }} </td>
-						
-					</tr>
-				
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Bill Instant Type', (isset($fields['bill_instant_type']['language'])? $fields['bill_instant_type']['language'] : array())) }}	
-						</td>
-						<td>{{ $row->bill_instant_type }} </td>
-						
-					</tr>
-				
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Bill Instant Amt', (isset($fields['bill_instant_amt']['language'])? $fields['bill_instant_amt']['language'] : array())) }}	
-						</td>
-						<td>{{ $row->bill_instant_amt }} </td>
-						
-					</tr>
-				
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Bill Instant Detail', (isset($fields['bill_instant_detail']['language'])? $fields['bill_instant_detail']['language'] : array())) }}	
-						</td>
-						<td>{{ $row->bill_instant_detail }} </td>
-						
-					</tr>
-				
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Contact Id', (isset($fields['contact_id']['language'])? $fields['contact_id']['language'] : array())) }}	
-						</td>
-						<td>{{ $row->contact_id }} </td>
-						
-					</tr>
-				
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Merch Contact Id', (isset($fields['merch_contact_id']['language'])? $fields['merch_contact_id']['language'] : array())) }}	
-						</td>
-						<td>{{ $row->merch_contact_id }} </td>
-						
-					</tr>
-				
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Field Manager Id', (isset($fields['field_manager_id']['language'])? $fields['field_manager_id']['language'] : array())) }}	
-						</td>
-						<td>{{ $row->field_manager_id }} </td>
-						
-					</tr>
-				
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Tech Manager Id', (isset($fields['tech_manager_id']['language'])? $fields['tech_manager_id']['language'] : array())) }}	
-						</td>
-						<td>{{ $row->tech_manager_id }} </td>
-						
-					</tr>
-				
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('No Games', (isset($fields['no_games']['language'])? $fields['no_games']['language'] : array())) }}	
-						</td>
-						<td>{{ $row->no_games }} </td>
-						
-					</tr>
-				
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Liftgate', (isset($fields['liftgate']['language'])? $fields['liftgate']['language'] : array())) }}	
-						</td>
-						<td>{{ $row->liftgate }} </td>
-						
-					</tr>
-				
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Ipaddress', (isset($fields['ipaddress']['language'])? $fields['ipaddress']['language'] : array())) }}	
-						</td>
-						<td>{{ $row->ipaddress }} </td>
-						
-					</tr>
-				
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Reporting', (isset($fields['reporting']['language'])? $fields['reporting']['language'] : array())) }}	
-						</td>
-						<td>{{ $row->reporting }} </td>
-						
-					</tr>
-				
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Not Reporting Sun', (isset($fields['not_reporting_Sun']['language'])? $fields['not_reporting_Sun']['language'] : array())) }}	
-						</td>
-						<td>{{ $row->not_reporting_Sun }} </td>
-						
-					</tr>
-				
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Not Reporting Mon', (isset($fields['not_reporting_Mon']['language'])? $fields['not_reporting_Mon']['language'] : array())) }}	
-						</td>
-						<td>{{ $row->not_reporting_Mon }} </td>
-						
-					</tr>
-				
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Not Reporting Tue', (isset($fields['not_reporting_Tue']['language'])? $fields['not_reporting_Tue']['language'] : array())) }}	
-						</td>
-						<td>{{ $row->not_reporting_Tue }} </td>
-						
-					</tr>
-				
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Not Reporting Wed', (isset($fields['not_reporting_Wed']['language'])? $fields['not_reporting_Wed']['language'] : array())) }}	
-						</td>
-						<td>{{ $row->not_reporting_Wed }} </td>
-						
-					</tr>
-				
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Not Reporting Thu', (isset($fields['not_reporting_Thu']['language'])? $fields['not_reporting_Thu']['language'] : array())) }}	
-						</td>
-						<td>{{ $row->not_reporting_Thu }} </td>
-						
-					</tr>
-				
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Not Reporting Fri', (isset($fields['not_reporting_Fri']['language'])? $fields['not_reporting_Fri']['language'] : array())) }}	
-						</td>
-						<td>{{ $row->not_reporting_Fri }} </td>
-						
-					</tr>
-				
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Not Reporting Sat', (isset($fields['not_reporting_Sat']['language'])? $fields['not_reporting_Sat']['language'] : array())) }}	
-						</td>
-						<td>{{ $row->not_reporting_Sat }} </td>
-						
-					</tr>
-				
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Active', (isset($fields['active']['language'])? $fields['active']['language'] : array())) }}	
-						</td>
-						<td>{{ $row->active }} </td>
-						
-					</tr>
-				
-			</tbody>	
-		</table>  
-			
-		 	
+                    <?php $titles = array('bill_debit' => 'Debit Cards', 'bill_ticket' => 'Tickets', 'bill_thermalpaper' => 'Thermal Paper', 'bill_token' => 'Tokens', 'bill_license' => 'Licenses', 'bill_attraction' => 'Major Attractions', 'bill_redemption' => 'Redemption Prizes', 'bill_instant' => 'Instant Win Prizes'); ?>
+                    {!! Form::open(array('url'=>'location/updatelocation/'.$row[0]->id, 'class'=>'form-horizontal' ,
+                    'parsley-validate'=>'','novalidate'=>' ', 'id'=>'locationFormAjax')) !!}
+                    <table class="table">
+                        @foreach($titles as $key=>$title)
+                            <tr>
+                                <td> <h3>{{ $title }}</h3>
+                                </td>
+                                <td>
+                                    <?php $keytype=$key."_type";
+                                          $keyamt=$key."_amt";
+                                          $keydetails=$key."_detail";
+                                    ?>
+                                    <label><input type="radio" @if( $row[0]->$keytype == 0 ) checked @endif name="{{ $keytype  }}" value="0"> NONE</label> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <label><input @if( $row[0]->$keytype == 1 ) checked @endif type="radio" name="{{ $keytype }}" value="1" data-detail="{{ $row[0]->$keydetails }}" data-pc="{{ $row[0]->$keyamt }}" data-name="{{ $key }}"> PCT%</label>
+                                    &nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;<label><input  type="radio" @if( $row[0]->$keytype == 2 ) checked @endif name="{{ $keytype }}" value="2"
+                                                                                   data-detail="{{ $row[0]->$keydetails }}" data-pc="{{ $row[0]->$keyamt }}" data-name="{{ $key }}"> FIXED</label>
+                                </td>
+                            </tr>
+                        @endforeach
+                        <tr> <td colspan="1"><button style="margin-top:20px;" type="submit"
+                                                     class=" col-md-12 btn btn-primary  btn-lg" name="update">SAVE
+                                </button></td><tr></tr></tr>
+                    </table>
+                    {!! Form::close() !!}
+                </div>
+                <div class="col-md-3">
+                    <ul class="parsley-error-list">
+                        @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+
+            </div>
+
+
 
 @if($setting['form-method'] =='native')
-	</div>	
-</div>	
-@endif	
+	</div>
+</div>
+@endif
 
-<script>
-$(document).ready(function(){
+    <script>
+        $('input').on('change', function (event) {
+        showRadioboxes(this);
 
-});
-</script>	
+        });
+        function showRadioboxes(event)
+        {
+            var val = $(event).val();
+            var  dataval = $(event).attr('data-pc');
+            var datadetail=$(event).attr('data-detail');
+            var label = "";
+            var name=$(event).attr('data-name');
+            var name1=name+"_amt";
+            var name2=name+"_detail";
+            var checked=false;
+            if(val==0)
+            {
+                $('.test').hide();
+            }
+            if (val == 1) {
+                label = "PCT % Billed: ";
+            }
+            else if (val == 2) {
+                label = "Amount $ Billed:";
+            }
+            if (val == 1 || val == 2) {
+                $(event).parents("tr").next("tr.test").remove();
+                var html = '<tr class="test"><td colspan="4"><div class="form-group  col-md-10  col-sm-8"><label class="control-label  col-md-4 col-sm-5">' + label + '</label> <div class=" col-md-5 col-sm-5 "><input  type="text"   name="'+name1+'" value="' + dataval + '" class="form-control"/></div><label class="col-md-2 col-sm-2"> Details</label>' +
+                        '<div col-md-8 col-sm-8><input type="text" name="' + name2+ '" value="'+datadetail+'" class="form-control" /></div></div></td></tr>';
+            }
+            $(event).parents("tr").after(html);
+        }
+
+        $(document).ready(function () {
+            $('input').each(function () {
+                if ($(this).is(":checked") && $(this).val() != 0) {
+                    showRadioboxes(this);
+                }
+            });
+        });
+
+    </script>
+    </div>

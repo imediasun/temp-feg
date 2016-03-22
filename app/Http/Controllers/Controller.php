@@ -400,7 +400,7 @@ abstract class Controller extends BaseController {
 					{
 						if(!is_null($_POST[$field]))
 						{
-							$data[$field] = implode(",",$_POST[$field]);
+							$data[$field] = $_POST[$field];
 						}	
 					}
 					// if post is date						

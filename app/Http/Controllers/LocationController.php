@@ -4,46 +4,46 @@ use App\Http\Controllers\controller;
 use App\Models\Location;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
-use Validator, Input, Redirect ; 
+use Validator, Input, Redirect ;
 
 class LocationController extends Controller {
 
-	protected $layout = "layouts.main";
-	protected $data = array();	
-	public $module = 'location';
-	static $per_page	= '10';
-	
-	public function __construct() 
-	{
-		parent::__construct();
-		$this->model = new Location();
-		
-		$this->info = $this->model->makeInfo( $this->module);
-		$this->access = $this->model->validAccess($this->info['id']);
+    protected $layout = "layouts.main";
+    protected $data = array();
+    public $module = 'location';
+    static $per_page	= '10';
 
-		$this->data = array(
-			'pageTitle'			=> 	$this->info['title'],
-			'pageNote'			=>  $this->info['note'],
-			'pageModule'		=> 'location',
-			'pageUrl'			=>  url('location'),
-			'return' 			=> 	self::returnUrl()
-		);
-		
+    public function __construct()
+    {
+        parent::__construct();
+        $this->model = new Location();
+
+        $this->info = $this->model->makeInfo( $this->module);
+        $this->access = $this->model->validAccess($this->info['id']);
+
+        $this->data = array(
+            'pageTitle'			=> 	$this->info['title'],
+            'pageNote'			=>  $this->info['note'],
+            'pageModule'		=> 'location',
+            'pageUrl'			=>  url('location'),
+            'return' 			=> 	self::returnUrl()
+        );
 
 
-	}
 
-	public function getIndex()
-	{
-		if($this->access['is_view'] ==0)
-			return Redirect::to('dashboard')->with('messagetext',\Lang::get('core.note_restric'))->with('msgstatus','error');
+    }
 
-		$this->data['access']		= $this->access;
-		return view('location.index',$this->data);
-	}
+    public function getIndex()
+    {
+        if($this->access['is_view'] ==0)
+            return Redirect::to('dashboard')->with('messagetext',\Lang::get('core.note_restric'))->with('msgstatus','error');
 
-	public function postData( Request $request)
-	{
+        $this->data['access']		= $this->access;
+        return view('location.index',$this->data);
+    }
+
+    public function postData( Request $request)
+    {
 
         $module_id = \DB::table('tb_module')->where('module_name', '=', 'location')->pluck('module_id');
         $this->data['module_id'] = $module_id;
@@ -62,24 +62,24 @@ class LocationController extends Controller {
             \Session::put('config_id', $config_id);
         }
 
-		$sort = (!is_null($request->input('sort')) ? $request->input('sort') : $this->info['setting']['orderby']);
-		$order = (!is_null($request->input('order')) ? $request->input('order') : $this->info['setting']['ordertype']);
-		// End Filter sort and order for query
-		// Filter Search for query
-		$filter = (!is_null($request->input('search')) ? $this->buildSearch() : '');
+        $sort = (!is_null($request->input('sort')) ? $request->input('sort') : $this->info['setting']['orderby']);
+        $order = (!is_null($request->input('order')) ? $request->input('order') : $this->info['setting']['ordertype']);
+        // End Filter sort and order for query
+        // Filter Search for query
+        $filter = (!is_null($request->input('search')) ? $this->buildSearch() : '');
 
 
-		$page = $request->input('page', 1);
-		$params = array(
-			'page'		=> $page ,
-			'limit'		=> (!is_null($request->input('rows')) ? filter_var($request->input('rows'),FILTER_VALIDATE_INT) : $this->info['setting']['perpage'] ) ,
-			'sort'		=> $sort ,
-			'order'		=> $order,
-			'params'	=> $filter,
-			'global'	=> (isset($this->access['is_global']) ? $this->access['is_global'] : 0 )
-		);
-		// Get Query
-		$results = $this->model->getRows( $params );
+        $page = $request->input('page', 1);
+        $params = array(
+            'page'		=> $page ,
+            'limit'		=> (!is_null($request->input('rows')) ? filter_var($request->input('rows'),FILTER_VALIDATE_INT) : $this->info['setting']['perpage'] ) ,
+            'sort'		=> $sort ,
+            'order'		=> $order,
+            'params'	=> $filter,
+            'global'	=> (isset($this->access['is_global']) ? $this->access['is_global'] : 0 )
+        );
+        // Get Query
+        $results = $this->model->getRows( $params );
         foreach ($results['rows'] as $result) {
 
             if ($result->self_owned == 1) {
@@ -93,48 +93,6 @@ class LocationController extends Controller {
 
             } else {
                 $result->can_ship = "No";
-            }
-            if ($result->bill_debit_type == 1) {
-                $result->bill_debit_type = "Yes";
-
-            } else {
-                $result->bill_debit_type = "No";
-            }
-            if ($result->bill_thermalpaper_type == 1) {
-                $result->bill_thermalpaper_type = "Yes";
-
-            } else {
-                $result->bill_thermalpaper_type = "No";
-            }
-            if ($result->bill_token_type == 1) {
-                $result->bill_token_type = "Yes";
-
-            } else {
-                $result->bill_token_type = "No";
-            }
-            if ($result->bill_attraction_type == 1) {
-                $result->bill_attraction_type = "Yes";
-
-            } else {
-                $result->bill_attraction_type = "No";
-            }
-            if ($result->bill_redemption_type == 1) {
-                $result->bill_redemption_type = "Yes";
-
-            } else {
-                $result->bill_redemption_type = "No";
-            }
-            if ($result->bill_ticket_type == 1) {
-                $result->bill_ticket_type = "Yes";
-
-            } else {
-                $result->bill_ticket_type = "No";
-            }
-            if ($result->bill_instant_type == 1) {
-                $result->bill_instant_type = "Yes";
-
-            } else {
-                $result->bill_instant_type = "No";
             }
             if ($result->no_games == 1) {
                 $result->no_games = "Yes";
@@ -205,169 +163,171 @@ class LocationController extends Controller {
             }
 
         }
-		// Build pagination setting
-		$page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;
-		$pagination = new Paginator($results['rows'], $results['total'], $params['limit']);
-		$pagination->setPath('location/data');
-		$this->data['param']		= $params;
-		$this->data['rowData']		= $results['rows'];
-		// Build Pagination
-		$this->data['pagination']	= $pagination;
-		// Build pager number and append current param GET
-		$this->data['pager'] 		= $this->injectPaginate();
-		// Row grid Number
-		$this->data['i']			= ($page * $params['limit'])- $params['limit'];
-		// Grid Configuration
-		$this->data['tableGrid'] 	= $this->info['config']['grid'];
-		$this->data['tableForm'] 	= $this->info['config']['forms'];
-		$this->data['colspan'] 		= \SiteHelpers::viewColSpan($this->info['config']['grid']);
-		// Group users permission
-		$this->data['access']		= $this->access;
-		// Detail from master if any
-		$this->data['setting'] 		= $this->info['setting'];
+        // Build pagination setting
+        $page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;
+        $pagination = new Paginator($results['rows'], $results['total'], $params['limit']);
+        $pagination->setPath('location/data');
+        $this->data['param']		= $params;
+        $this->data['rowData']		= $results['rows'];
+        // Build Pagination
+        $this->data['pagination']	= $pagination;
+        // Build pager number and append current param GET
+        $this->data['pager'] 		= $this->injectPaginate();
+        // Row grid Number
+        $this->data['i']			= ($page * $params['limit'])- $params['limit'];
+        // Grid Configuration
+        $this->data['tableGrid'] 	= $this->info['config']['grid'];
+        $this->data['tableForm'] 	= $this->info['config']['forms'];
+        $this->data['colspan'] 		= \SiteHelpers::viewColSpan($this->info['config']['grid']);
+        // Group users permission
+        $this->data['access']		= $this->access;
+        // Detail from master if any
+        $this->data['setting'] 		= $this->info['setting'];
 
-		// Master detail link if any
-		$this->data['subgrid']	= (isset($this->info['config']['subgrid']) ? $this->info['config']['subgrid'] : array());
+        // Master detail link if any
+        $this->data['subgrid']	= (isset($this->info['config']['subgrid']) ? $this->info['config']['subgrid'] : array());
         if ($this->data['config_id'] != 0 && !empty($config)) {
             $this->data['tableGrid'] = \SiteHelpers::showRequiredCols($this->data['tableGrid'], $this->data['config']);
         }
 // Render into template
-		return view('location.table',$this->data);
+        return view('location.table',$this->data);
 
-	}
-
-
-	function getUpdate(Request $request, $id = null)
-	{
-
-		if($id =='')
-		{
-			if($this->access['is_add'] ==0 )
-			return Redirect::to('dashboard')->with('messagetext',\Lang::get('core.note_restric'))->with('msgstatus','error');
-		}
-
-		if($id !='')
-		{
-			if($this->access['is_edit'] ==0 )
-			return Redirect::to('dashboard')->with('messagetext',\Lang::get('core.note_restric'))->with('msgstatus','error');
-		}
-
-		$row = $this->model->find($id);
-		if($row)
-		{
-			$this->data['row'] 		=  $row;
-		} else {
-			$this->data['row'] 		= $this->model->getColumnTable('location');
-		}
-		$this->data['setting'] 		= $this->info['setting'];
-		$this->data['fields'] 		=  \AjaxHelpers::fieldLang($this->info['config']['forms']);
-		
-		$this->data['id'] = $id;
-
-		return view('location.form',$this->data);
-	}
-
-	public function getShow( $id = null)
-	{
-
-		if($this->access['is_detail'] ==0)
-			return Redirect::to('dashboard')
-				->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus','error');
-
-		$row = $this->model->getRow($id);
-		if($row)
-		{
-			$this->data['row'] =  $row;
-		} else {
-			$this->data['row'] = $this->model->getColumnTable('location');
-		}
-		
-		$this->data['id'] = $id;
-		$this->data['access']		= $this->access;
-		$this->data['setting'] 		= $this->info['setting'];
-		$this->data['fields'] 		= \AjaxHelpers::fieldLang($this->info['config']['forms']);
-		return view('location.view',$this->data);
-	}
+    }
 
 
-	function postCopy( Request $request)
-	{
+    function getUpdate(Request $request, $id = null)
+    {
 
-	    foreach(\DB::select("SHOW COLUMNS FROM location ") as $column)
+        if($id =='')
         {
-			if( $column->Field != 'id')
-				$columns[] = $column->Field;
+            if($this->access['is_add'] ==0 )
+                return Redirect::to('dashboard')->with('messagetext',\Lang::get('core.note_restric'))->with('msgstatus','error');
         }
-		$toCopy = implode(",",$request->input('ids'));
+
+        if($id !='')
+        {
+            if($this->access['is_edit'] ==0 )
+                return Redirect::to('dashboard')->with('messagetext',\Lang::get('core.note_restric'))->with('msgstatus','error');
+        }
+
+        $row = $this->model->find($id);
+        if($row)
+        {
+            $this->data['row'] 		=  $row;
+        } else {
+            $this->data['row'] 		= $this->model->getColumnTable('location');
+        }
+        $this->data['setting'] 		= $this->info['setting'];
+        $this->data['fields'] 		=  \AjaxHelpers::fieldLang($this->info['config']['forms']);
+
+        $this->data['id'] = $id;
+
+        return view('location.form',$this->data);
+    }
+
+    public function getShow( $id = null)
+    {
+
+        if($this->access['is_detail'] ==0)
+            return Redirect::to('dashboard')
+                ->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus','error');
+
+        $row = $this->model->getRow($id);
+        if($row)
+        {
+            $this->data['row'] =  $row;
+        } else {
+            $this->data['row'] = $this->model->getColumnTable('location');
+        }
+
+        $this->data['id'] = $id;
+        $this->data['access']		= $this->access;
+        $this->data['setting'] 		= $this->info['setting'];
+        $this->data['fields'] 		= \AjaxHelpers::fieldLang($this->info['config']['forms']);
+        return view('location.view',$this->data);
+    }
 
 
-		$sql = "INSERT INTO location (".implode(",", $columns).") ";
-		$sql .= " SELECT ".implode(",", $columns)." FROM location WHERE id IN (".$toCopy.")";
-		\DB::insert($sql);
-		return response()->json(array(
-			'status'=>'success',
-			'message'=> \Lang::get('core.note_success')
-		));
-	}
+    function postCopy( Request $request)
+    {
 
-	function postSave( Request $request, $id =0)
-	{
-        echo $id;
-        print_r($request->all());
-        die();
+        foreach(\DB::select("SHOW COLUMNS FROM location ") as $column)
+        {
+            if( $column->Field != 'id')
+                $columns[] = $column->Field;
+        }
+        $toCopy = implode(",",$request->input('ids'));
 
-		$rules = $this->validateForm();
-		$validator = Validator::make($request->all(), $rules);
-		if ($validator->passes()) {
-			$data = $this->validatePost('location');
 
-			$id = $this->model->insertRow($data , $request->input('id'));
-			
-			return response()->json(array(
-				'status'=>'success',
-				'message'=> \Lang::get('core.note_success')
-				));
+        $sql = "INSERT INTO location (".implode(",", $columns).") ";
+        $sql .= " SELECT ".implode(",", $columns)." FROM location WHERE id IN (".$toCopy.")";
+        \DB::insert($sql);
+        return response()->json(array(
+            'status'=>'success',
+            'message'=> \Lang::get('core.note_success')
+        ));
+    }
 
-		} else {
+    function postSave( Request $request, $id =0)
+    {
+            $rules = $this->validateForm();
+            $validator = Validator::make($request->all(), $rules);
+            if ($validator->passes()) {
+                $data = $this->validatePost('location');
+                if($id == 0) {
+                $loc_id=$request->input('id');
+                }
+                else
+                {
+                    $loc_id=$id;
+                }
+                    $id = $this->model->insertRow($data,$loc_id );
+                    return response()->json(array(
+                    'status' => 'success',
+                    'message' => \Lang::get('core.note_success')
+                ));
 
-			$message = $this->validateListError(  $validator->getMessageBag()->toArray() );
-			return response()->json(array(
-				'message'	=> $message,
-				'status'	=> 'error'
-			));
-		}
+            } else {
 
-	}
+                $message = $this->validateListError($validator->getMessageBag()->toArray());
+                return response()->json(array(
+                    'message' => $message,
+                    'status' => 'error'
+                ));
+            }
 
-	public function postDelete( Request $request)
-	{
 
-		if($this->access['is_remove'] ==0) {
-			return response()->json(array(
-				'status'=>'error',
-				'message'=> \Lang::get('core.note_restric')
-			));
-			die;
+    }
 
-		}
-		// delete multipe rows
-		if(count($request->input('ids')) >=1)
-		{
-			$this->model->destroy($request->input('ids'));
-			
-			return response()->json(array(
-				'status'=>'success',
-				'message'=> \Lang::get('core.note_success_delete')
-			));
-		} else {
-			return response()->json(array(
-				'status'=>'error',
-				'message'=> \Lang::get('core.note_error')
-			));
+    public function postDelete( Request $request)
+    {
 
-		}
+        if($this->access['is_remove'] ==0) {
+            return response()->json(array(
+                'status'=>'error',
+                'message'=> \Lang::get('core.note_restric')
+            ));
+            die;
 
-	}
+        }
+        // delete multipe rows
+        if(count($request->input('ids')) >=1)
+        {
+            $this->model->destroy($request->input('ids'));
+
+            return response()->json(array(
+                'status'=>'success',
+                'message'=> \Lang::get('core.note_success_delete')
+            ));
+        } else {
+            return response()->json(array(
+                'status'=>'error',
+                'message'=> \Lang::get('core.note_error')
+            ));
+
+        }
+
+    }
     function getDetails(Request $request,$id=0)
     {
         if($id > 0)
@@ -380,6 +340,12 @@ class LocationController extends Controller {
             return Redirect::to('dashboard')->with('messagetext',\Lang::get('core.note_restric'))->with('msgstatus','error');
         }
 
+    }
+    function postTest(Request $request)
+    {
+        echo "<pre>";
+        print_r($request->all());
+        die();
     }
 
 }

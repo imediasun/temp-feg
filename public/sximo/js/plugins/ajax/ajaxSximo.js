@@ -110,22 +110,22 @@ function ajaxCopy(  id , url )
 
 function ajaxRemove( id, url )
 {
-	var datas = $( id +'Table :input').serialize();
-	if(confirm('Are u sure deleting selected row(s)?')) {
-		$.post( url+'/delete' ,datas,function( data ) {
-			data = JSON.parse(data);
-			if(data.status =='success')
-			{
-				console.log("called succes");
-				notyMessage(data.message);	
-				ajaxFilter( id ,url+'/data' );
-			} else {
-				console.log("called error");
-				notyMessageError(data.message);	
-			}				
-		});	
-		
-	}	
+    var datas = $( id +'Table :input').serialize();
+    if(confirm('Are u sure deleting selected row(s)?')) {
+        $.post( url+'/delete' ,datas,function( data ) {
+
+            if(data.status =='success')
+            {
+                console.log("called succes");
+                notyMessage(data.message);
+                ajaxFilter( id ,url+'/data' );
+            } else {
+                console.log("called error");
+                notyMessageError(data.message);
+            }
+        });
+
+    }
 }
 
 function ajaxViewDetail( id , url )

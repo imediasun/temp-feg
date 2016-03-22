@@ -1,6 +1,5 @@
 @extends('layouts.app')
 @section('content')
-
     <div class="page-content row">
         <!-- Page header -->
         <div class="page-header">
@@ -113,13 +112,13 @@
                                                 <label><input type="radio" name="{{ $key }}" value="0"> NONE</label>
                                                 <label><input @if($row[0]->$key > 0) checked @endif type="radio" name="{{ $key }}" value="1" data-pc="{{ $row[0]->$key }}"> PCT%</label>
                                                 <label><input  type="radio" name="{{ $key }}" value="2"
-                                                              data-fixed="{{ $row[0]->$key}}"> FIXED</label>
+                                                               data-fixed="{{ $row[0]->$key}}"> FIXED</label>
                                             </td>
                                         </tr>
                                     @endforeach
-                                   <tr> <td colspan="1"><button style="margin-top:20px;" type="submit"
-                                            class=" col-md-12 btn btn-primary  btn-lg" name="update">SAVE
-                                    </button></td><tr></tr></tr>
+                                    <tr> <td colspan="1"><button style="margin-top:20px;" type="submit"
+                                                                 class=" col-md-12 btn btn-primary  btn-lg" name="update">SAVE
+                                            </button></td><tr></tr></tr>
                                 </table>
                                 {!! Form::close() !!}
 
@@ -139,90 +138,93 @@
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
 
-                <script>
-                    $('input').on('ifChecked', function (event) {
-                        var val = $(this).val();
-                        var dataval = 0.00;
-                        var label = "";
-                        var name=$(this).attr('name');
-                        var name=name+val;
-                        var checked=false;
-                        if(val==0)
-                        {
-                            $('.test').hide();
-                        }
-                        if (val == 1) {
-                            label = "PCT % Billed: ";
-                            dataval = $(this).attr('data-pc');
-                            if(dataval > 0)
-                            {
-                                checked=true;
+    <script>
+        $('input').on('ifChecked', function (event) {
+            var val = $(this).val();
+            var dataval = 0.00;
+            var label = "";
+            var name=$(this).attr('name');
+            var name=name+val;
+            var checked=false;
+            if(val==0)
+            {
+                $('.test').hide();
+            }
+            if (val == 1) {
+                label = "PCT % Billed: ";
+                dataval = $(this).attr('data-pc');
+                if(dataval > 0)
+                {
+                    checked=true;
 
-                            }
-                        }
-                        else if (val == 2) {
-                            label = "Amount $ Billed:";
-                            dataval = $(this).attr('data-fixed');
-                            if(dataval > 0)
-                            {
-                                checked=true;
-                            }
+                }
+            }
+            else if (val == 2) {
+                label = "Amount $ Billed:";
+                dataval = $(this).attr('data-fixed');
+                if(dataval > 0)
+                {
+                    checked=true;
+                }
 
-                        }
-                        if (val == 1 || val == 2) {
-                            $(this).parents("tr").next("tr").remove();
-                            var html = '<tr class="test"><td colspan="4"><div class="form-group  col-md-8  col-sm-8"><label class="control-label  col-md-4 col-sm-5">' + label + '</label> <div class=" col-md-5 col-sm-5 "><input  type="text"   name="pct" value="' + dataval + '" class="form-control"/></div><label class="col-md-2 col-sm-2"> Details</label>' +
-                                    '<div col-md-8 col-sm-8><input type="text" name=' + name+ ' class="form-control" /></div></div></td></tr>';
-                        }
-                        $(this).parents("tr").after(html);
+            }
+            if (val == 1 || val == 2) {
+                $(this).parents("tr").next("tr").remove();
+                var html = '<tr class="test"><td colspan="4"><div class="form-group  col-md-8  col-sm-8"><label class="control-label  col-md-4 col-sm-5">' + label + '</label> <div class=" col-md-5 col-sm-5 "><input  type="text"   name="pct" value="' + dataval + '" class="form-control"/></div><label class="col-md-2 col-sm-2"> Details</label>' +
+                        '<div col-md-8 col-sm-8><input type="text" name=' + name+ ' class="form-control" /></div></div></td></tr>';
+            }
+            $(this).parents("tr").after(html);
 
-                    });
+        });
 
-                    $(document).ready(function () {
+        $(document).ready(function () {
 
-                        var form = $('#locationFormAjax');
-                        form.parsley();
-                        form.submit(function () {
-                            if (form.parsley('isValid') == true) {
-                                var options = {
-                                    dataType: 'json',
-                                    beforeSubmit: showRequest,
-                                    success: showResponse
-                                }
-                                $(this).ajaxSubmit(options);
-                                return false;
-
-                            } else {
-                                return false;
-                            }
-
-                        });
-
-                    });
-
-                    function showRequest() {
-                        $('.ajaxLoading').show();
+            var form = $('#locationFormAjax');
+            form.parsley();
+            form.submit(function () {
+                if (form.parsley('isValid') == true) {
+                    var options = {
+                        dataType: 'json',
+                        beforeSubmit: showRequest,
+                        success: showResponse
                     }
-                    function showResponse(data) {
+                    $(this).ajaxSubmit(options);
+                    return false;
 
-                        if (data.status == 'success') {
-                            ajaxViewClose('#{{ $pageModule }}');
-                            ajaxFilter('#{{ $pageModule }}', '{{ $pageUrl }}/data');
-                            notyMessage(data.message);
-                            $('#sximo-modal').modal('hide');
-                        } else {
-                            notyMessageError(data.message);
-                            $('.ajaxLoading').hide();
-                            return false;
-                        }
-                    }
-function showinput()
-{
-    $('input').iCheck('check', function(){
-        alert('Well done, Sir');
-    });
-}
-                </script>
+                } else {
+                    return false;
+                }
+
+            });
+
+        });
+
+        function showRequest() {
+            $('.ajaxLoading').show();
+        }
+        function showResponse(data) {
+
+            if (data.status == 'success') {
+                ajaxViewClose('#{{ $pageModule }}');
+                ajaxFilter('#{{ $pageModule }}', '{{ $pageUrl }}/data');
+                notyMessage(data.message);
+                $('#sximo-modal').modal('hide');
+            } else {
+                notyMessageError(data.message);
+                $('.ajaxLoading').hide();
+                return false;
+            }
+        }
+        function showinput()
+        {
+            $('input').iCheck('check', function(){
+                alert('Well done, Sir');
+            });
+        }
+    </script>
 
 @stop

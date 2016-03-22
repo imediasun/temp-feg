@@ -133,7 +133,6 @@ class GamestitleController extends Controller
 
     function getUpdate(Request $request, $id = null)
     {
-
         if ($id == '') {
             if ($this->access['is_add'] == 0)
                 return Redirect::to('dashboard')->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
@@ -170,23 +169,23 @@ class GamestitleController extends Controller
         if ($row) {
 
 
-                if ($row->has_manual == 1) {
-                    $row->has_manual = "Yes";
+                if ($row[0]->has_manual == 1) {
+                    $row[0]->has_manual = "Yes";
 
                 } else {
-                    $row->has_manual = "No";
+                    $row[0]->has_manual = "No";
                 }
-                if ($row->has_servicebulletin == 1) {
-                    $row->has_servicebulletin = "Yes";
+                if ($row[0]->has_servicebulletin == 1) {
+                    $row[0]->has_servicebulletin = "Yes";
 
                 } else {
-                    $row->has_servicebulletin = "No";
+                    $row[0]->has_servicebulletin = "No";
                 }
-                if ($row->num_prize_meters == 1) {
-                    $row->num_prize_meters = "Yes";
+                if ($row[0]->num_prize_meters == 1) {
+                    $row[0]->num_prize_meters = "Yes";
 
                 } else {
-                    $row->num_prize_meters = "No";
+                    $row[0]->num_prize_meters = "No";
 
             }
             $this->data['row'] = $row;
@@ -223,25 +222,60 @@ class GamestitleController extends Controller
 
     function postSave(Request $request, $id = 0)
     {
-
+        $files = array('manual' => Input::file('manual'),'bulletin'=> Input::file('service_bulletin'));
         $rules = $this->validateForm();
+        $rules['manual']='Required|mimes:pdf';
+        $rules['service_bulletin']='Required|mimes:pdf';
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
-            $data = $this->validatePost('game_title');
+            if($id==0) {
+                $data = $this->validatePost('game_title');
+                $id = $this->model->insertRow($data, $request->input('id'));
+            }
+            else
+            {
+                $data = $this->validatePost('game_title');
+                $id = $this->model->insertRow($data,$id);
+            }
+                $updates = array();
+                if ($request->hasFile('manual')) {
+                    $file = $request->file('manual');
+                    $filename = $file->getClientOriginalName();
+                    $extension = $file->getClientOriginalExtension(); //if you need extension of the file
+                    $newfilename = $id . '.' . $extension;
+                    $destinationPath = './uploads/games/manuals';
+                    $uploadSuccess = $request->file('manual')->move($destinationPath, $newfilename);
+                    if ($uploadSuccess) {
+                        $updates['manual'] = $newfilename;
+                        $updates['has_manual'] = '1';
+                    }
+                }
+                if ($request->hasFile('service_bulletin')) {
+                    $file1 = $request->file('service_bulletin');
+                    $filename1 = $file1->getClientOriginalName();
+                    $extension1 = $file1->getClientOriginalExtension();
+                    $newfilename1 = $id . '.' . $extension1;
+                    $destinationPath1 = './uploads/games/bulletins';
+                    $uploadSuccess1 = $request->file('service_bulletin')->move($destinationPath1, $newfilename1);
+                    if ($uploadSuccess1) {
+                        $updates['bulletin'] = $newfilename1;
+                        $updates['has_servicebulletin'] = '1';
+                    }
+                }
+                $this->model->insertRow($updates, $id);
+                return response()->json(array(
+                    'status' => 'success',
+                    'message' => \Lang::get('core.note_success')
+                ));
 
-            $id = $this->model->insertRow($data, $request->input('id'));
+        }
 
-            return response()->json(array(
-                'status' => 'success',
-                'message' => \Lang::get('core.note_success')
-            ));
-
-        } else {
-
+         else {
             $message = $this->validateListError($validator->getMessageBag()->toArray());
             return response()->json(array(
-                'message' => $message,
-                'status' => 'error'
+                'status' => 'error',
+                'message' => $message
+
             ));
         }
 
@@ -261,7 +295,6 @@ class GamestitleController extends Controller
         // delete multipe rows
         if (count($request->input('ids')) >= 1) {
             $this->model->destroy($request->input('ids'));
-
             return response()->json(array(
                 'status' => 'success',
                 'message' => \Lang::get('core.note_success_delete')
@@ -340,7 +373,7 @@ class GamestitleController extends Controller
 
             if ($validator->fails()) {
 
-                return Redirect::to('gamestitle/upload/' . $id ."?type=".$upload_type)->with('messagetext', \Lang::get('core.note_success'))->with('msgstatus', 'Please select an Image..')->withErrors($validator);;
+                return Redirect::to('gamestitle/upload/' . $id ."?type=".$upload_type)->with('messagetext', \Lang::get('core.note_success'))->with('msgstatus', 'Please select an Image..')->withErrors($validator);
 
         } else {
         $updates = array();

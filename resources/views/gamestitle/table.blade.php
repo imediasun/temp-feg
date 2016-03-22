@@ -1,4 +1,5 @@
 <?php usort($tableGrid, "SiteHelpers::_sort");
+
 ?>
 <div class="sbox">
     <div class="sbox-title">

@@ -26,6 +26,15 @@ class gamestitle extends Sximo  {
 	public static function queryGroup(){
 		return "  ";
 	}
+    public static function getRow( $id )
+    {
+        $row= \DB::table('game_title')
+            ->join('vendor', 'game_title.mfg_id', '=', 'vendor.id')
+            ->select('game_title.*','vendor.vendor_name')
+            ->where('game_title.id','=',$id)
+            ->get();
+        return $row;
+    }
 	
 
 }

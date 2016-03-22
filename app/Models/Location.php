@@ -32,7 +32,7 @@ class location extends Sximo  {
             ->join('region', 'location.region_id', '=', 'region.id')
             ->join('company','location.company_id','=','company.id')
             ->select('location.*','region.region','company.company_name_short')
-            ->where('location.id','=',$location_id)
+            ->where('location.id','=',$id)
             ->get();
         return $row;
     }
