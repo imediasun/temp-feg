@@ -9,9 +9,41 @@
 
 	<div class="sbox-content">
 @endif
-			{!! Form::open(array('url'=>'location/save/'.SiteHelpers::encryptID($row['id']), 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'locationFormAjax')) !!}
+			{!! Form::open(array('url'=>'location/save/'.$row['id'], 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'locationFormAjax')) !!}
 			<div class="col-md-12">
 						<fieldset><legend> Locations</legend>
+                            <div class="form-group  " >
+                                <label for="Active" class=" control-label col-md-4 text-left">
+                                    <input type='hidden' value='0' name='active'>
+                                    {!! SiteHelpers::activeLang('Active', (isset($fields['active']['language'])? $fields['active']['language'] : array())) !!}
+                                </label>
+                                <div class="col-md-6">
+                                    <?php $active = explode(",",$row['active']); ?>
+                                    <label class='checked checkbox-inline'>
+                                        <input type='checkbox' name='active' value ='1'   class=''
+                                               @if(in_array('1',$active))checked @endif
+                                                /> Yes </label>
+                                </div>
+                                <div class="col-md-2">
+
+                                </div>
+                            </div>
+                            <div class="form-group  " >
+                                <input type='hidden' value='0' name='self_owned'>
+                                <label for="FEG Owned" class=" control-label col-md-4 text-left">
+                                    {!! SiteHelpers::activeLang('FEG Owned', (isset($fields['self_owned']['language'])? $fields['self_owned']['language'] : array())) !!}
+                                </label>
+                                <div class="col-md-6">
+                                    <?php $self_owned = explode(",",$row['self_owned']); ?>
+                                    <label class='checked checkbox-inline'>
+                                        <input type='checkbox' name='self_owned' value ='1'   class=''
+                                               @if(in_array('1',$self_owned))checked @endif
+                                                /> Yes </label>
+                                </div>
+                                <div class="col-md-2">
+
+                                </div>
+                            </div>
 
 				  <div class="form-group  " >
 					<label for="Location Name" class=" control-label col-md-4 text-left">
@@ -25,8 +57,8 @@
 					 </div>
 				  </div>
 				  <div class="form-group  " >
-					<label for="Location Name Short" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Location Name Short', (isset($fields['location_name_short']['language'])? $fields['location_name_short']['language'] : array())) !!}
+					<label for="Short Name" class=" control-label col-md-4 text-left">
+					{!! SiteHelpers::activeLang('Short Name', (isset($fields['location_name_short']['language'])? $fields['location_name_short']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
 					  {!! Form::text('location_name_short', $row['location_name_short'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
@@ -35,9 +67,75 @@
 
 					 </div>
 				  </div>
+                            <div class="form-group  " >
+                                <label for="Region " class=" control-label col-md-4 text-left">
+                                    {!! SiteHelpers::activeLang('Region ', (isset($fields['region_id']['language'])? $fields['region_id']['language'] : array())) !!}
+                                </label>
+                                <div class="col-md-6">
+                                    <select name='region_id' rows='5' id='region_id' class='select2 '   ></select>
+                                </div>
+                                <div class="col-md-2">
+
+                                </div>
+                            </div>
+                            <div class="form-group  " >
+                                <label for="Company " class=" control-label col-md-4 text-left">
+                                    {!! SiteHelpers::activeLang('Company ', (isset($fields['company_id']['language'])? $fields['company_id']['language'] : array())) !!}
+                                </label>
+                                <div class="col-md-6">
+                                    <select name='company_id' rows='5' id='company_id' class='select2 '   ></select>
+                                </div>
+                                <div class="col-md-2">
+
+                                </div>
+                            </div>
+                            <div class="form-group  " >
+                                <label for="Contact " class=" control-label col-md-4 text-left">
+                                    {!! SiteHelpers::activeLang('Contact ', (isset($fields['contact_id']['language'])? $fields['contact_id']['language'] : array())) !!}
+                                </label>
+                                <div class="col-md-6">
+                                    <select name='contact_id' rows='5' id='contact_id' class='select2 '   ></select>
+                                </div>
+                                <div class="col-md-2">
+
+                                </div>
+                            </div>
+                            <div class="form-group  " >
+                                <label for="Merch Contact " class=" control-label col-md-4 text-left">
+                                    {!! SiteHelpers::activeLang('Merch Contact ', (isset($fields['merch_contact_id']['language'])? $fields['merch_contact_id']['language'] : array())) !!}
+                                </label>
+                                <div class="col-md-6">
+                                    <select name='merch_contact_id' rows='5' id='merch_contact_id' class='select2 '   ></select>
+                                </div>
+                                <div class="col-md-2">
+
+                                </div>
+                            </div>
+                            <div class="form-group  " >
+                                <label for="Field Manager Contact" class=" control-label col-md-4 text-left">
+                                    {!! SiteHelpers::activeLang('Field Manager Contact', (isset($fields['field_manager_id']['language'])? $fields['field_manager_id']['language'] : array())) !!}
+                                </label>
+                                <div class="col-md-6">
+                                    <select name='field_manager_id' rows='5' id='field_manager_id' class='select2 '   ></select>
+                                </div>
+                                <div class="col-md-2">
+
+                                </div>
+                            </div>
+                            <div class="form-group  " >
+                                <label for="Tech Manager " class=" control-label col-md-4 text-left">
+                                    {!! SiteHelpers::activeLang('Tech Manager ', (isset($fields['tech_manager_id']['language'])? $fields['tech_manager_id']['language'] : array())) !!}
+                                </label>
+                                <div class="col-md-6">
+                                    <select name='tech_manager_id' rows='5' id='tech_manager_id' class='select2 '></select>
+                                </div>
+                                <div class="col-md-2">
+
+                                </div>
+                            </div>
 				  <div class="form-group  " >
-					<label for="Street1" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Street1', (isset($fields['street1']['language'])? $fields['street1']['language'] : array())) !!}
+					<label for="Street" class=" control-label col-md-4 text-left">
+					{!! SiteHelpers::activeLang('Street', (isset($fields['street1']['language'])? $fields['street1']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
 					  {!! Form::text('street1', $row['street1'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
@@ -69,8 +167,8 @@
 					 </div>
 				  </div>
 				  <div class="form-group  " >
-					<label for="Zip" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Zip', (isset($fields['zip']['language'])? $fields['zip']['language'] : array())) !!}
+					<label for="Zip Code" class=" control-label col-md-4 text-left">
+					{!! SiteHelpers::activeLang('Zip Code', (isset($fields['zip']['language'])? $fields['zip']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
 					  {!! Form::text('zip', $row['zip'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
@@ -90,35 +188,11 @@
 
 					 </div>
 				  </div>
-				  <div class="form-group  " >
-					<label for="Company " class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Company ', (isset($fields['company_id']['language'])? $fields['company_id']['language'] : array())) !!}
-					</label>
-					<div class="col-md-6">
-					  <select name='company_id' rows='5' id='company_id' class='select2 '   ></select>
-					 </div>
-					 <div class="col-md-2">
 
-					 </div>
-				  </div>
-				  <div class="form-group  " >
-					<label for="FEG Owned" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('FEG Owned', (isset($fields['self_owned']['language'])? $fields['self_owned']['language'] : array())) !!}
-					</label>
-					<div class="col-md-6">
-					  <?php $self_owned = explode(",",$row['self_owned']); ?>
-					 <label class='checked checkbox-inline'>
-					<input type='checkbox' name='self_owned' value ='1'   class=''
-					@if(in_array('1',$self_owned))checked @endif
-					 /> Yes </label>
-					 </div>
-					 <div class="col-md-2">
 
-					 </div>
-				  </div>
 				  <div class="form-group  " >
-					<label for="Loading Info" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Loading Info', (isset($fields['loading_info']['language'])? $fields['loading_info']['language'] : array())) !!}
+					<label for="Shipping Restrictions" class=" control-label col-md-4 text-left">
+					{!! SiteHelpers::activeLang('Shipping Restrictions', (isset($fields['loading_info']['language'])? $fields['loading_info']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
 					  {!! Form::text('loading_info', $row['loading_info'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
@@ -127,17 +201,29 @@
 
 					 </div>
 				  </div>
-				  <div class="form-group  " >
-					<label for="Region " class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Region ', (isset($fields['region_id']['language'])? $fields['region_id']['language'] : array())) !!}
-					</label>
-					<div class="col-md-6">
-					  <select name='region_id' rows='5' id='region_id' class='select2 '   ></select>
-					 </div>
-					 <div class="col-md-2">
+                            <div class="form-group  " >
+                                <label for="Phone" class=" control-label col-md-4 text-left">
+                                    {!! SiteHelpers::activeLang('Phone', (isset($fields['phone']['language'])? $fields['phone']['language'] : array())) !!}
+                                </label>
+                                <div class="col-md-6">
+                                    {!! Form::text('phone', $row['phone'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
+                                </div>
+                                <div class="col-md-2">
 
-					 </div>
-				  </div>
+                                </div>
+                            </div>
+                            <div class="form-group  " >
+                                <label for="Bestbuy Store Number" class=" control-label col-md-4 text-left">
+                                    {!! SiteHelpers::activeLang('Bestbuy Store Number', (isset($fields['bestbuy_store_number']['language'])? $fields['bestbuy_store_number']['language'] : array())) !!}
+                                </label>
+                                <div class="col-md-6">
+                                    {!! Form::text('bestbuy_store_number', $row['bestbuy_store_number'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
+                                </div>
+                                <div class="col-md-2">
+
+                                </div>
+                            </div>
+
 				  <div class="form-group  " >
 					<label for="Ordering Group" class=" control-label col-md-4 text-left">
 					{!! SiteHelpers::activeLang('Ordering Group', (isset($fields['loc_group_id']['language'])? $fields['loc_group_id']['language'] : array())) !!}
@@ -162,6 +248,7 @@
 				  </div>
 				  <div class="form-group  " >
 					<label for="Can Ship" class=" control-label col-md-4 text-left">
+                        <input type='hidden' value='0' name='can_ship'>
 					{!! SiteHelpers::activeLang('Can Ship', (isset($fields['can_ship']['language'])? $fields['can_ship']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
@@ -175,127 +262,34 @@
 
 					 </div>
 				  </div>
+                            <div class="form-group  " >
+                                <label for="Requires Liftgate" class=" control-label col-md-4 text-left">
+                                    <input type='hidden' value='0' name='liftgate'>
+                                    {!! SiteHelpers::activeLang('Requires Liftgate', (isset($fields['liftgate']['language'])? $fields['liftgate']['language'] : array())) !!}
+                                </label>
+                                <div class="col-md-6">
+                                    <?php $liftgate = explode(",",$row['liftgate']); ?>
+                                    <label class='checked checkbox-inline'>
+                                        <input type='checkbox' name='liftgate' value ='1'   class=''
+                                               @if(in_array('1',$liftgate))checked @endif
+                                                /> Yes </label>
+                                </div>
+                                <div class="col-md-2">
+
+                                </div>
+                            </div>
 				  <div class="form-group  " >
 					<label for="Location Ship To" class=" control-label col-md-4 text-left">
 					{!! SiteHelpers::activeLang('Location Ship To', (isset($fields['loc_ship_to']['language'])? $fields['loc_ship_to']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
-
-					<?php $loc_ship_to = explode(',',$row['loc_ship_to']);
-					$loc_ship_to_opt = array( '0' => 'No' , ); ?>
-					<select name='loc_ship_to' rows='5'   class='select2 '  >
-						<?php
-						foreach($loc_ship_to_opt as $key=>$val)
-						{
-							echo "<option  value ='$key' ".($row['loc_ship_to'] == $key ? " selected='selected' " : '' ).">$val</option>";
-						}
-						?></select>
-					 </div>
+                        <select name='loc_ship_to' rows='5' id='loc_ship_to' class='select2 '   ></select>
+                    </div>
 					 <div class="col-md-2">
-
 					 </div>
 				  </div>
-				  <div class="form-group  " >
-					<label for="Phone" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Phone', (isset($fields['phone']['language'])? $fields['phone']['language'] : array())) !!}
-					</label>
-					<div class="col-md-6">
-					  {!! Form::text('phone', $row['phone'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
-					 </div>
-					 <div class="col-md-2">
-
-					 </div>
-				  </div>
-				  <div class="form-group  " >
-					<label for="Bestbuy Store Number" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Bestbuy Store Number', (isset($fields['bestbuy_store_number']['language'])? $fields['bestbuy_store_number']['language'] : array())) !!}
-					</label>
-					<div class="col-md-6">
-					  {!! Form::text('bestbuy_store_number', $row['bestbuy_store_number'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
-					 </div>
-					 <div class="col-md-2">
-
-					 </div>
-				  </div>
-				  <div class="form-group  " >
-					<label for="Contact " class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Contact ', (isset($fields['contact_id']['language'])? $fields['contact_id']['language'] : array())) !!}
-					</label>
-					<div class="col-md-6">
-					  <select name='contact_id' rows='5' id='contact_id' class='select2 '   ></select>
-					 </div>
-					 <div class="col-md-2">
-
-					 </div>
-				  </div>
-				  <div class="form-group  " >
-					<label for="Merch Contact " class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Merch Contact ', (isset($fields['merch_contact_id']['language'])? $fields['merch_contact_id']['language'] : array())) !!}
-					</label>
-					<div class="col-md-6">
-					  <select name='merch_contact_id' rows='5' id='merch_contact_id' class='select2 '   ></select>
-					 </div>
-					 <div class="col-md-2">
-
-					 </div>
-				  </div>
-				  <div class="form-group  " >
-					<label for="Field Manager Contact" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Field Manager Contact', (isset($fields['field_manager_id']['language'])? $fields['field_manager_id']['language'] : array())) !!}
-					</label>
-					<div class="col-md-6">
-					  <select name='field_manager_id' rows='5' id='field_manager_id' class='select2 '   ></select>
-					 </div>
-					 <div class="col-md-2">
-
-					 </div>
-				  </div>
-				  <div class="form-group  " >
-					<label for="Tech Manager " class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Tech Manager ', (isset($fields['tech_manager_id']['language'])? $fields['tech_manager_id']['language'] : array())) !!}
-					</label>
-					<div class="col-md-6">
-					  <select name='tech_manager_id' rows='5' id='tech_manager_id' class='select2 ' required  ></select>
-					 </div>
-					 <div class="col-md-2">
-
-					 </div>
-				  </div>
-				  <div class="form-group  " >
-					<label for="Requires Liftgate" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Requires Liftgate', (isset($fields['liftgate']['language'])? $fields['liftgate']['language'] : array())) !!}
-					</label>
-					<div class="col-md-6">
-					  <?php $liftgate = explode(",",$row['liftgate']); ?>
-					 <label class='checked checkbox-inline'>
-					<input type='checkbox' name='liftgate' value ='1'   class=''
-					@if(in_array('1',$liftgate))checked @endif
-					 /> Yes </label>
-					 </div>
-					 <div class="col-md-2">
-
-					 </div>
-				  </div>
-				  <div class="form-group  " >
-					<label for="Active" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Active', (isset($fields['active']['language'])? $fields['active']['language'] : array())) !!}
-					</label>
-					<div class="col-md-6">
-					  <?php $active = explode(",",$row['active']); ?>
-					 <label class='checked checkbox-inline'>
-					<input type='checkbox' name='active' value ='1'   class=''
-					@if(in_array('1',$active))checked @endif
-					 /> Yes </label>
-					 </div>
-					 <div class="col-md-2">
-
-					 </div>
-				  </div> </fieldset>
-			</div>
-
-
-
-
+				 </fieldset>
+</div>
 			<div style="clear:both"></div>
 
 			<div class="form-group">
@@ -341,7 +335,8 @@ $(document).ready(function() {
 
         $("#tech_manager_id").jCombo("{{ URL::to('location/comboselect?filter=users:id:first_name|last_name') }}",
         {  selected_value : '{{ $row["tech_manager_id"] }}' });
-
+    $("#loc_ship_to").jCombo("{{ URL::to('location/comboselect?filter=location:id:location_name') }}",
+            {  selected_value : '{{ $row["loc_ship_to"] }}' });
 
 	$('.editor').summernote();
 	$('.previewImage').fancybox();
@@ -351,7 +346,7 @@ $(document).ready(function() {
 	$('.datetime').datetimepicker({format: 'yyyy-mm-dd hh:ii:ss'});
 	$('input[type="checkbox"],input[type="radio"]').iCheck({
 		checkboxClass: 'icheckbox_square-green',
-		radioClass: 'iradio_square_green',
+		radioClass: 'iradio_square_green'
 	});
 	$('.removeCurrentFiles').on('click',function(){
 		var removeUrl = $(this).attr('href');

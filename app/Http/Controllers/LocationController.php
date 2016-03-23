@@ -268,20 +268,14 @@ class LocationController extends Controller {
         ));
     }
 
-    function postSave( Request $request, $id =0)
+    function postSave( Request $request, $id =null)
     {
+
             $rules = $this->validateForm();
             $validator = Validator::make($request->all(), $rules);
             if ($validator->passes()) {
                 $data = $this->validatePost('location');
-                if($id == 0) {
-                $loc_id=$request->input('id');
-                }
-                else
-                {
-                    $loc_id=$id;
-                }
-                    $id = $this->model->insertRow($data,$loc_id );
+                    $id = $this->model->insertRow($data,$id);
                     return response()->json(array(
                     'status' => 'success',
                     'message' => \Lang::get('core.note_success')
@@ -295,8 +289,6 @@ class LocationController extends Controller {
                     'status' => 'error'
                 ));
             }
-
-
     }
 
     public function postDelete( Request $request)
@@ -346,6 +338,26 @@ class LocationController extends Controller {
         echo "<pre>";
         print_r($request->all());
         die();
+    }
+    function postUpdatelocation(Request $request,$id)
+    {
+        $data=$request->all();
+        array_pop($data);
+        array_shift($data);
+        $update=\DB::table('location')->where('id','=',$id)->update($data);
+        if($update)
+        {
+            return response()->json(array(
+                'status'=>'success',
+                'message'=> \Lang::get('core.note_success')
+            ));
+        }
+        else{
+            return response()->json(array(
+                'status'=>'error',
+                'message'=> \Lang::get('core.note_error')
+            ));
+        }
     }
 
 }

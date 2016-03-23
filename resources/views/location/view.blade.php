@@ -165,6 +165,44 @@
                     showRadioboxes(this);
                 }
             });
+            var form = $('#locationFormAjax');
+            form.parsley();
+            form.submit(function(){
+
+                if(form.parsley('isValid') == true){
+                    var options = {
+                        dataType:      'json',
+                        beforeSubmit :  showRequest,
+                        success:       showResponse
+                    }
+                    $(this).ajaxSubmit(options);
+                    return false;
+
+                } else {
+                    return false;
+                }
+
+            });
+
+        function showRequest()
+        {
+            $('.ajaxLoading').show();
+        }
+        function showResponse(data)  {
+
+            if(data.status == 'success')
+            {
+                ajaxViewClose('#{{ $pageModule }}');
+                ajaxFilter('#{{ $pageModule }}','{{ $pageUrl }}/data');
+                notyMessage(data.message);
+                $('.ajaxLoading').hide();
+                $('#sximo-modal').modal('hide');
+            } else {
+                notyMessageError(data.message);
+                $('.ajaxLoading').hide();
+                return false;
+            }
+        }
         });
 
     </script>

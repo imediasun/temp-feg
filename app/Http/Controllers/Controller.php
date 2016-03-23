@@ -239,6 +239,7 @@ abstract class Controller extends BaseController {
 	function validateForm()
 	{
 		$forms = $this->info['config']['forms'];
+
 		$rules = array();
 		foreach($forms as $form)
 		{
@@ -264,6 +265,9 @@ abstract class Controller extends BaseController {
 			}										
 		}	
 		return $rules ;
+        echo "<pre>";
+        print_r($rules);
+        die();
 	}
 
 	function validateTicketCommentsForm()
@@ -299,7 +303,7 @@ abstract class Controller extends BaseController {
 	}
 
 
-	function validatePost(  $table )
+	function validatePost( $table )
 	{	
 		$request = new Request;	
 	///	return json_encode($_POST);	
