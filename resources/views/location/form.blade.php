@@ -370,11 +370,8 @@ $(document).ready(function() {
 		} else {
 			return false;
 		}
-
 	});
-
 });
-
 function showRequest()
 {
 	$('.ajaxLoading').show();
@@ -386,6 +383,7 @@ function showResponse(data)  {
 		ajaxViewClose('#{{ $pageModule }}');
 		ajaxFilter('#{{ $pageModule }}','{{ $pageUrl }}/data');
 		notyMessage(data.message);
+        $('.ajaxLoading').hide();
 		$('#sximo-modal').modal('hide');
 	} else {
 		notyMessageError(data.message);

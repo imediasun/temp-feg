@@ -96,7 +96,7 @@
                                           $keyamt=$key."_amt";
                                           $keydetails=$key."_detail";
                                     ?>
-                                    <label><input type="radio" @if( $row[0]->$keytype == 0 ) checked @endif name="{{ $keytype  }}" value="0"> NONE</label> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <label><input type="radio" @if( $row[0]->$keytype == 0 ) checked @endif name="{{ $keytype  }}" value="0" data-name="{{ $key }}" > NONE</label> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                     <label><input @if( $row[0]->$keytype == 1 ) checked @endif type="radio" name="{{ $keytype }}" value="1" data-detail="{{ $row[0]->$keydetails }}" data-pc="{{ $row[0]->$keyamt }}" data-name="{{ $key }}"> PCT%</label>
                                     &nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;<label><input  type="radio" @if( $row[0]->$keytype == 2 ) checked @endif name="{{ $keytype }}" value="2"
                                                                                    data-detail="{{ $row[0]->$keydetails }}" data-pc="{{ $row[0]->$keyamt }}" data-name="{{ $key }}"> FIXED</label>
@@ -141,9 +141,10 @@
             var name1=name+"_amt";
             var name2=name+"_detail";
             var checked=false;
+            var remove=name1+"test";
             if(val==0)
             {
-                $('.test').hide();
+                $('.'+remove).hide();
             }
             if (val == 1) {
                 label = "PCT % Billed: ";
@@ -152,8 +153,9 @@
                 label = "Amount $ Billed:";
             }
             if (val == 1 || val == 2) {
-                $(event).parents("tr").next("tr.test").remove();
-                var html = '<tr class="test"><td colspan="4"><div class="form-group  col-md-10  col-sm-8"><label class="control-label  col-md-4 col-sm-5">' + label + '</label> <div class=" col-md-5 col-sm-5 "><input  type="text"   name="'+name1+'" value="' + dataval + '" class="form-control"/></div><label class="col-md-2 col-sm-2"> Details</label>' +
+
+                $(event).parents("tr").next("tr."+remove).remove();
+                var html = '<tr class="'+name1+'test"><td colspan="4"><div class="form-group  col-md-10  col-sm-8"><label class="control-label  col-md-4 col-sm-5">' + label + '</label> <div class=" col-md-5 col-sm-5 "><input  type="text"   name="'+name1+'" value="' + dataval + '" class="form-control"/></div><label class="col-md-2 col-sm-2"> Details</label>' +
                         '<div col-md-8 col-sm-8><input type="text" name="' + name2+ '" value="'+datadetail+'" class="form-control" /></div></div></td></tr>';
             }
             $(event).parents("tr").after(html);

@@ -173,6 +173,7 @@ return array(
 	"enteremailforgot"			=> "Enter Your Email Address",
 	"detail" 					=> "View Detail",
 	"addedit" 					=> "Add - Edit",
+    "image_delete"              =>"Remove Image",
 	
 /* Notification */
 	"note_noexists"				=> "Sorry, The Page Does Not Exist!", // updated apidevlab
@@ -182,5 +183,6 @@ return array(
 	"note_success_delete"		=> "Removed successfully!",	// updated apidevlab
     "note_block"                => "Blocked",
     "note_unblock"              => "Unblocked"
+
 
 );

@@ -435,6 +435,37 @@ class GamestitleController extends Controller
             \DB::table('game_title')->where('id','=',$row->id)->update(array('bulletin'=>$bulletin));
         }
     }
+    function getImageremove(Request $request,$id)
+    {
+        if ($this->access['is_remove'] == 0) {
+            return response()->json(array(
+                'status' => 'error',
+                'message' => \Lang::get('core.note_restric')
+            ));
+            die;
+
+        }
+        // delete multipe rows
+        if (true) {
+            $filename = storage_path()."/uploads/games/images/".$id.".jpg";
+            echo $filename;
+            if (File::exists($filename)) {
+                File::delete($filename);
+            }
+            die('here..');
+            return response()->json(array(
+                'status' => 'success',
+                'message' => \Lang::get('core.note_success_delete')
+            ));
+        } else {
+            return response()->json(array(
+                'status' => 'error',
+                'message' => \Lang::get('core.note_error')
+            ));
+
+        }
+
+    }
 
 
 
