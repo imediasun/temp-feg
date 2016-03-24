@@ -1167,7 +1167,7 @@ public static function alphaID($in, $to_num = false, $pad_up = false, $passKey =
                     $class='img';
                 }
 				return '<p><a href="'.url( $path_file . $file).'" target="_blank" class="previewImage fancybox" rel="gallery1">
-				<img src="'.asset( $path_file . $file ).'" border="0" width="'. $width .'" class="'.$class.'"  /></a></p>';
+				<img style="box-shadow:1px 1px 5px gray" src="'.asset( $path_file . $file ).'" border="0" width="'. $width .'" class="'.$class.'"  /></a></p>';
 			} else {
 				$path_file = str_replace("./","",$path);
 				return '<p> <a  href="'.url($path_file . $file).'" target="_blank"> '.$file.' </a>';
@@ -1616,6 +1616,11 @@ public static function alphaID($in, $to_num = false, $pad_up = false, $passKey =
         }
 return $configs;
 
+    }
+    static function getGameImage($game_title_id)
+    {
+        $img=\DB::table('game_title')->where('id','=',$game_title_id)->pluck('img');
+        return $img;
     }
 			
 }
