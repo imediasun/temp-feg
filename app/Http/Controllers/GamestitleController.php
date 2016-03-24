@@ -447,12 +447,10 @@ class GamestitleController extends Controller
         }
         // delete multipe rows
         if (true) {
-            $filename = storage_path()."/uploads/games/images/".$id.".jpg";
-            echo $filename;
-            if (File::exists($filename)) {
-                File::delete($filename);
+            $filename = public_path()."\\uploads\\games\\images\\".$id.".jpg";
+            if (\File::exists($filename)) {
+               \ File::delete($filename);
             }
-            die('here..');
             return response()->json(array(
                 'status' => 'success',
                 'message' => \Lang::get('core.note_success_delete')
