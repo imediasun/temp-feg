@@ -68,7 +68,7 @@ h3,h4,h5 {
 }
 .hide
 {
-    display:none!important;
+    display:none;
 }
 .nav > li > a i {
   margin-right: 6px;

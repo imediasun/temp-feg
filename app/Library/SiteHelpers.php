@@ -617,7 +617,7 @@ public static function alphaID($in, $to_num = false, $pad_up = false, $passKey =
 					$form .= "
 					@if(in_array('".trim($row[0])."',\$".$field."))checked @endif 
 					";
-					$form .= " /> ".$row[1]." </label> ";					
+					$form .= " /> ".$row[0]." </label> ";
 				}
 				break;				
 			
@@ -1621,6 +1621,21 @@ return $configs;
     {
         $img=\DB::table('game_title')->where('id','=',$game_title_id)->pluck('img');
         return $img;
+    }
+    static function getDateDiff($first,$second)
+    {
+        $datetime1 = new DateTime(($first));
+        $datetime2 = new DateTime($second);
+        if($second != 00 && $first != 00) {
+            $interval = $datetime2->diff($datetime1);
+            $days = $interval->format('%y-,%m-, %d');
+           echo $days;
+        }
+        else
+        {
+            echo "N/A";
+        }
+
     }
 			
 }

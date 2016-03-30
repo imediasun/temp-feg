@@ -10,41 +10,73 @@
 	<div class="sbox-content">
 @endif
           <div class="row">
-                        <div class="col-md-6">
-                            <h1>Game Details</h1>
+              {!! Form::open(array('url'=>'mylocationgame/update/'.$row[0]->asset_number, 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'mylocationgameFormAjax')) !!}
 
+
+              <input type="hidden" name="prev_game_name" value="{{ $row[0]->game_name }}">
+              <input type="hidden" name="prev_location_id" value="{{ $row[0]->location_id }}">
+              <input type="hidden" name="game_service_id" value="{{ $row[0]->game_service_id }}">
+                        <div class="col-md-offset-1 col-md-5" style="background:#FFF;box-shadow:1px 1px 5px gray;padding:20px auto;">
+                            <h1>Game Details</h1><br/>
                             <div class="form-group" >
-                                <label for="status" class=" control-label col-md-6">
+                                <label for="sold" class=" control-label col-md-1">
                                     {!! SiteHelpers::activeLang('Sold', (isset($fields['sold']['language'])? $fields['sold']['language'] : array())) !!}
                                 </label>
-                                <div class="col-md-6">
+                                <div class="col-md-1">
                                     <input type="hidden" name="sold" value="0"/>
-                                    <input type="checkbox"  name="sold" value="1" id="sold"/>
+                                    <input type="checkbox" @if($row[0]->sold==1) checked @endif  name="sold" value="1" id="sold" style="vertical-align: middle;margin-top:9px;"/>
                                 </div>
+                                <div class="col-md-5">
+                                    <input type="date" name="date_sold" class="form-control" id="date_sold" placeholder="Date Sold" value="{{ $row[0]->date_sold }}"/>
+                                </div>
+                                <div class="col-md-5">
+                                    <input type="text" name="sold_to" class="form-control" id="sold_to" placeholder="Sold To" value="{{ $row[0]->sold_to }}"/>
+                                </div>
+
 
                             </div>
                             <div class="clearfix"></div><br/>
                             <div class="form-group">
-                                <label for="status" class=" control-label col-md-6">
+                                <label for="status" class=" control-label col-md-4">
                                     {!! SiteHelpers::activeLang('Status', (isset($fields['status']['language'])? $fields['status']['language'] : array())) !!}
                                 </label>
-                                <div class="col-md-6">
-                                    <select name='status' rows='5' id='status' class='select2 form-control'></select>
+                                <div class="col-md-8">
+                                    <select name='status_id'  class='select2 form-control' id="status"></select>
                                 </div>
 
-                            </div><br/><br/>
+                            </div><br/>
+<div class="hideshow">
+
+                                <div class="form-group">
+                                    <label for="down_date" class=" control-label col-md-4">
+                                        Date Game Down    </label>
+                                    <div class="col-md-8">
+                                        <input type="date" name="date_down" id="date_down" class="form-control" value=""/>
+                                    </div>
+                                </div><br/>
+
+                                <div class="form-group">
+                                    <label for="status" class=" control-label col-md-4">
+                                        Explain Problem
+                                        **USE AS MUCH DETAIL AS POSSIBLE**        </label>
+                                    <div class="col-md-8">
+                                        <textarea rows="5" class="form-control" name="problem"></textarea>
+                                    </div>
+                            </div>
+    </div>
                             <div class="form-group">
-                                <label for="status" class=" control-label col-md-6">
+                                <label for="status" class=" control-label col-md-4">
                                     {!! SiteHelpers::activeLang('Location', (isset($fields['location']['language'])? $fields['location']['language'] : array())) !!}
                                 </label>
-                                <div class="col-md-6">
-                                    <select disabled name='location' rows='5' id='location' class='select2 form-control'></select>
+                                <div class="col-md-8">
+                                    <select  name='location_id' rows='5' id='location_id' class='select2 form-control'></select>
                                 </div>
 
                             </div>
+
                             <div class="clearfix" style="border-bottom: 1px solid #a9a9a9;padding: 30px"></div><br/>
 
-                            <button type="submit" class="btn btn-large btn-success col-md-offset-4 col-md-4" name="submit" id="submit">Save</button>
+                            <input type="submit" class="btn btn-large btn-success col-md-offset-4 col-md-4" name="submit" id="submit" value="Save"/>
 
                             <div class="clearfix" style="border-bottom: 1px solid #a9a9a9;padding: 30px"></div><br/>
                             <div class="form-group  " >
@@ -52,25 +84,26 @@
                                     {!! SiteHelpers::activeLang('Serial Number', (isset($fields['serial']['language'])? $fields['serial']['language'] : array())) !!}
                                 </label>
                                 <div class="col-md-8">
-                                    {!! Form::text('Serial Number', $row[0]->serial,array('class'=>'form-control', 'placeholder'=>'',   )) !!}
+                                    <input type="text" name="serial" value="{{ $row[0]->serial }}" class="form-control" @if(empty($row[0]->serial))) disabled @endif placeholder="serial #"/>
                                 </div>
 
                             </div><br/><br/>
                             <div class="form-group  " >
                                 <label for="Alt. Version Signage" class=" control-label col-md-4 text-left">
-                                    {!! SiteHelpers::activeLang('Alt. Version Signage', (isset($fields['serial']['language'])? $fields['serial']['language'] : array())) !!}
+                                    {!! SiteHelpers::activeLang('Alt. Version/Signage', (isset($fields['serial']['language'])? $fields['serial']['language'] : array())) !!}
                                 </label>
                                 <div class="col-md-8">
-                                    {!! Form::text('Alt. Version Signage',"",array('class'=>'form-control', 'placeholder'=>'',   )) !!}
+                                    <input type="text" name="version_id"  class="form-control" value="{{ $row[0]->version }}" id="version_id"/>
+
                                 </div>
 
                             </div> <br/><br/>
                             <div class="form-group  " >
-                                <label for="Serial Number" class=" control-label col-md-4">
-                                    {!! SiteHelpers::activeLang('Game Converted From', (isset($fields['serial']['language'])? $fields['serial']['language'] : array())) !!}
+                                <label for="game_name" class=" control-label col-md-4">
+                                    {!! SiteHelpers::activeLang('Game Converted from:', (isset($fields['prev_game_name']['language'])? $fields['prev_game_name']['language'] : array())) !!}
                                 </label>
                                 <div class="col-md-8">
-                                    {!! Form::text('Game Converted From',"",array('class'=>'form-control', 'placeholder'=>'',   )) !!}
+                                    <input type="text" name="game_name" id="game_name"  class="form-control" value="{{ $row[0]->game_name }}" />
                                 </div>
 
                             </div>
@@ -191,11 +224,11 @@
                         <div class="col-md-6 text-center">
                             {!! SiteHelpers::showUploadedFile(SiteHelpers::getGameImage($row[0]->game_title_id),'/uploads/games/images/',400,false) !!}
                             <div class="col-md-offset-2 col-md-6" style="background: #fff;padding:10px;text-align: center">
-                                <h3>{{ $row[0]->game_name }} </h3>
+                                <h3>{{ $row[0]->game_title }} </h3>
                             </div>
                         </div>
                     </div>
-        <div class="row">
+        <div class="row" style="background: #FFF;padding:20px auto;box-shadow: 1px 1px 5px gray;margin:50px auto">
         <div class="col-md-12">
             <h2>Game Service History</h2>
             <div class="table-responsive">
@@ -212,10 +245,10 @@
                 </tr>
                 </thead>
                 <tbody>
+
                 @if($row['service_history'])
                 @foreach($row['service_history'] as $service_history)
                 <tr>
-
                     <td> {{ $service_history->game_id }}</td>
                     <td>{{ $service_history->date_down }}</td>
                     <td>{{ $service_history->down_first_name}} {{ $service_history->down_last_name }}</td>
@@ -250,19 +283,17 @@
                     </tr>
                     </thead>
                     <tbody>
-                    @if($row['move_history'])
-                        @foreach($row['move_history'] as $service_history)
-                            <tr>
 
+                    @if(($row['move_history']))
+                        @foreach($row['move_history'] as $move_history)
+                            <tr>
                                 <td> {{ $move_history->from_date }}</td>
                                 <td>{{ $move_history->from_location }}</td>
                                 <td>{{ $move_history->to_location}}</td>
                                 <td>{{ $move_history->from_name }} </td>
                                 <td>{{ $move_history->to_name }} </td>
                                 <td>{{ $move_history->to_date }} </td>
-                                <td></td>
-
-
+                                <td>{{  \SiteHelpers::getDateDiff($move_history->from_date,$move_history->to_date) }}</td>
                             </tr>
                         @endforeach
                     @else
@@ -270,7 +301,7 @@
                     @endif
 
                     </tbody>
-
+                    {!! Form::close() !!}
                 </table>
             </div>
         </div>
@@ -282,10 +313,80 @@
 
 <script>
     $(document).ready(function() {
-
         $("#status").jCombo("{{ URL::to('mylocationgame/comboselect?filter=game_status:id:game_status') }}",
                 {selected_value: '{{ $row[0]->status_id }}'});
-        $("#location").jCombo("{{ URL::to('mylocationgame/comboselect?filter=location:id:location_name') }}",
+        $("#location_id").jCombo("{{ URL::to('mylocationgame/comboselect?filter=location:id:location_name') }}",
                 {selected_value: '{{ $row[0]->location_id }}'});
+        $(".hideshow").hide();
     });
+   $("#status").on('change',function(){
+       var form = $('#mylocationgameFormAjax');
+       form.parsley();
+       form.submit(function(){
+           if(form.parsley('isValid') == true){
+               var options = {
+                   dataType:      'json',
+                   beforeSubmit :  showRequest,
+                   success:       showResponse
+               }
+               $(this).ajaxSubmit(options);
+               return false;
+
+           } else {
+               return false;
+           }
+       });
+    function showRequest()
+    {
+        $('.ajaxLoading').show();
+    }
+    function showResponse(data)  {
+
+        if(data.status == 'success')
+        {
+            ajaxViewClose('#{{ $pageModule }}');
+            ajaxFilter('#{{ $pageModule }}','{{ $pageUrl }}/data');
+            notyMessage(data.message);
+            $('#sximo-modal').modal('hide');
+        } else {
+            notyMessageError(data.message);
+            $('.ajaxLoading').hide();
+            return false;
+        }
+    }
+
+
+
+      var status=$(this).val();
+       if(status==1)
+       {
+         $("#location_id").attr('disabled','true');
+       }
+       else{
+           $("#location_id").removeAttr('disabled');
+       }
+       if(status==2)
+       {
+           $(".hideshow").show();
+       }
+       else{
+           $(".hideshow").hide();
+       }
+   });
+    $("#sold").change(function(){
+        showSoldStuff();
+    });
+    function showSoldStuff() {
+        if(document.getElementById("sold"))
+        {
+            if(document.getElementById("sold").checked == true)
+            {
+                $('#date_sold, #sold_to').show();
+            }
+            else
+            {
+                $('#date_sold, #sold_to').hide();
+            }
+        }
+    }
 </script>

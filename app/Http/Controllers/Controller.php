@@ -597,6 +597,7 @@ abstract class Controller extends BaseController {
 		$info 		= $this->model->makeInfo( $this->module);
 		//$master  	= $this->buildMasterDetail(); 
 		$filter 	= (!is_null(Input::get('search')) ? $this->buildSearch() : '');
+
 		//$filter 	.=  $master['masterFilter'];			
 		$params 	= array(
 					'params'	=>''
@@ -609,7 +610,6 @@ abstract class Controller extends BaseController {
 						'rows' => $rows,
 						'title' => $this->data['pageTitle'],
 					);
-		
 		if($t == 'word')
 		{			
 			 return view('sximo.module.utility.word',$content);
@@ -619,8 +619,8 @@ abstract class Controller extends BaseController {
 		 	$pdf = PDF::loadView('sximo.module.utility.pdf', $content);
 			return view($this->data['pageTitle'].'.pdf');
 			
-		} else if($t == 'csv') {		
-		 
+		} else if($t == 'csv') {
+
 			return view('sximo.module.utility.csv',$content);
 			
 		} else if ($t == 'print') {

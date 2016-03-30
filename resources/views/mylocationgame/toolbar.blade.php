@@ -33,8 +33,42 @@
 		@endif
 	</div>
 </div>
+<div class="row">
+    {!! Form::open(array('url'=>'mylocationgame/test', 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'mylocationgameFormAjax')) !!}
+
+    <div class="col-md-1">
+    <h4>Export</h4>
+        </div>
+        <div class="col-md-4">
+    <div class="form-group  " >
+            <select name='game_title_id' id='game_name' class='select2 '></select>
+    </div>
+        </div>
+    <div class="col-md-1">
+    <h4>From</h4>
+        </div>
+    <div class="col-md-4">
+        <div class="form-group  " >
+            <select name='location_id' id='location_id' class='select2 '></select>
+        </div>
+    </div>
+
+    <div class="col-md-2">
+        <button type="submit" class="btn btn-primary" id="submit" name="submit">Export to CSV</button>
+    </div>
+    {!! Form::close() !!}
+</div>
 <script>
-    $("#col-config").on('change',function(){
-        reloadData('#{{ $pageModule }}','{{ $pageModule }}/data?config_id='+$("#col-config").val());
+    $(document).ready(function() {
+        $("#game_name").jCombo("{{ URL::to('mylocationgame/comboselect?filter=game_title:id:game_title') }}",
+                {selected_value: ''});
+        $("#location_id").jCombo("{{ URL::to('mylocationgame/comboselect?filter=location:id:location_name') }}",
+                {selected_value: ''});
+        $(".select2").select2({ width:"98%"});
     });
+        $("#col-config").on('change', function () {
+            reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?config_id=' + $("#col-config").val());
+        });
+
+
 </script>

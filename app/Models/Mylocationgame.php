@@ -37,7 +37,7 @@ class mylocationgame extends Sximo  {
             ->leftJoin('vendor','game.mfg_id','=','vendor.id')
             ->leftJoin('users','game.last_edited_by','=','users.id')
             ->leftJoin('location as l2','game.prev_location_id','=','l2.id')
-            ->select('game.*','game_status.game_status','game_title.*','game_type.game_type','game_version.version','location.location_name','vendor.*','game.id as asset_number','users.first_name','users.last_name','l2.location_name as previous_location')
+            ->select('game.*','game_status.game_status','game_title.*','game_type.game_type','game_version.version','game_version.id as version_id','location.location_name','vendor.*','game.id as asset_number','users.first_name','users.last_name','l2.location_name as previous_location')
             ->where('game.id','=',$id)
             ->get();
         return $row;

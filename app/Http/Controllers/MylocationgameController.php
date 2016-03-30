@@ -4,7 +4,7 @@ use App\Http\Controllers\controller;
 use App\Models\Mylocationgame;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
-use Validator, Input, Redirect ; 
+use Validator, Input, Redirect,Carbon ;
 
 class MylocationgameController extends Controller {
 
@@ -155,14 +155,13 @@ class MylocationgameController extends Controller {
 
 	function getUpdate(Request $request, $id = null)
 	{
-
-		if($id =='')
+		if($id ==null)
 		{
 			if($this->access['is_add'] ==0 )
 			return Redirect::to('dashboard')->with('messagetext',\Lang::get('core.note_restric'))->with('msgstatus','error');
 		}
 
-		if($id !='')
+		if($id !=null)
 		{
 			if($this->access['is_edit'] ==0 )
 			return Redirect::to('dashboard')->with('messagetext',\Lang::get('core.note_restric'))->with('msgstatus','error');
@@ -204,6 +203,10 @@ class MylocationgameController extends Controller {
 		$this->data['access']		= $this->access;
 		$this->data['setting'] 		= $this->info['setting'];
 		$this->data['fields'] 		= \AjaxHelpers::fieldLang($this->info['config']['forms']);
+       if($this->data['row'][0]->test_piece==1)
+       {
+           $this->data['row'][0]->game_title="**Test** ".$this->data['row'][0]->game_title;
+       }
 		return view('mylocationgame.view',$this->data);
 	}
 
@@ -228,15 +231,14 @@ class MylocationgameController extends Controller {
 		));
 	}
 
-	function postSave( Request $request, $id =0)
+	function postSave( Request $request, $id =null)
 	{
-
 		$rules = $this->validateForm();
 		$validator = Validator::make($request->all(), $rules);
 		if ($validator->passes()) {
 			$data = $this->validatePost('game');
 
-			$id = $this->model->insertRow($data , $request->input('id'));
+			$id = $this->model->insertRow($data ,$id);
 			
 			return response()->json(array(
 				'status'=>'success',
@@ -284,6 +286,46 @@ class MylocationgameController extends Controller {
 
 
 	}
+    public function postUpdate(Request $request,$id=null)
+    {
+        $request=$request->all();
+        $request=array_filter($request);
+        array_shift($request);
+        array_pull($request,'submit');
+        $service_data['id']=array_pull($request,'game_service_id');
+        if($request['status_id']==2) {
+            $service_data['date_down']=array_pull($request, 'date_down');
+            $service_data['problem']=array_pull($request,'problem');
+            \DB::table('game_service_history')->where('id','=',$service_data['id'])->update($service_data);
+        }
+         $id=$this->model->insertRow($request,$id);
+        return response()->json(array(
+            'status'=>'success',
+            'message'=> \Lang::get('core.note_success')
+        ));
+    }
+    public function postTest(Request $request)
+    {
+        $this->data['pageTitle']='test';
+        $request=$request->all();
+
+        $results		= \DB::table('game')->where('game_title_id','=',$request['game_title_id'])->where('location_id','=',$request['location_id'])->get();
+           $info 		= $this->model->makeInfo( $this->module);
+        $rows		= $results;
+        $fields		= $info['config']['grid'];
+
+        $content 	= array(
+            'fields' => $fields,
+            'rows' => $rows,
+            'title' => $this->data['pageTitle'],
+        );
+
+
+            return view('sximo.module.utility.csv',$content);
+
+    }
+
+
 
 
 }
