@@ -39,7 +39,7 @@
     <div class="col-md-1">
     <h4>Export</h4>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
     <div class="form-group  " >
             <select name='game_title_id' id='game_name' class='select2 '></select>
     </div>
@@ -47,17 +47,24 @@
     <div class="col-md-1">
     <h4>From</h4>
         </div>
-    <div class="col-md-4">
+    <div class="col-md-3">
         <div class="form-group  " >
             <select name='location_id' id='location_id' class='select2 '></select>
         </div>
     </div>
 
-    <div class="col-md-2">
+    <div class="col-md-3">
         <button type="submit" class="btn btn-primary" id="submit" name="submit">Export to CSV</button>
     </div>
     {!! Form::close() !!}
 </div>
+<div class="row">
+    <div class="col-md-1"><h4>Download</h4></div>
+    <a href="#" class="btn btn-sm btn-white"> For-Sale History</a>
+    <a href="#" class="btn btn-sm btn-white"> Pending Sales List</a>
+    <a href="#" class="btn btn-sm btn-white"> Game Move History</a>
+</div><br/>
+
 <script>
     $(document).ready(function() {
         $("#game_name").jCombo("{{ URL::to('mylocationgame/comboselect?filter=game_title:id:game_title') }}",
