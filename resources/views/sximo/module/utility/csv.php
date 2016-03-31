@@ -7,16 +7,24 @@ header('Content-Disposition: attachment; filename='.$title.' '.date("d/m/Y").'.c
 // create a file pointer connected to the output stream
 $fp = fopen('php://output', 'w');
 // loop over the rows, outputting them
+$label=array();
+foreach($fields as $f )
+{
+    if($f['download'] =='1'):
+        $conn = (isset($f['conn']) ? $f['conn'] : array() );
+        $label[]=$f['label'];
+    endif;
+}
+fputcsv($fp,$label);
 foreach ($rows as $row)
 {
-	$content= array();
+    $content=array();
 	foreach($fields as $f )
 	{
-		if($f['download'] =='1'):		
-			$conn = (isset($f['conn']) ? $f['conn'] : array() );					
+		if($f['download'] =='1'):
+			$conn = (isset($f['conn']) ? $f['conn'] : array() );
 			$content[] = SiteHelpers::gridDisplay($row->$f['field'],$f['field'],$conn);
-			
-		endif;	
+		endif;
 	}
 	fputcsv($fp, $content);
 	

@@ -79,6 +79,7 @@ class LocationController extends Controller {
             'global'	=> (isset($this->access['is_global']) ? $this->access['is_global'] : 0 )
         );
         // Get Query
+
         $results = $this->model->getRows( $params );
         foreach ($results['rows'] as $result) {
 

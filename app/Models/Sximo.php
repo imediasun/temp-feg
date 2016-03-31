@@ -350,16 +350,24 @@ $row=\DB::table('game_service_history')
     ->where('game_id','=',$asset_id)->get();
         return $row;
     }
-    function getMoveHistory($asset_id)
+    function getMoveHistory($asset_id=null)
     {
         $row=\DB::table('game_move_history')
             ->leftJoin('users as u1','game_move_history.from_by','=','u1.id')
             ->leftJoin('users as u2','game_move_history.to_by','=','u2.id')
             ->leftJoin('location as l1','game_move_history.from_loc','=','l1.id')
             ->leftJoin('location as l2','game_move_history.to_loc','=','l2.id')
-            ->select('game_move_history.*','u1.username as from_name','u2.username as to_name','l1.location_name as from_location','l2.location_name as to_location')
-            ->where('game_id','=',$asset_id)->get();
+            ->select('game_move_history.*','u1.username as from_name','u2.username as to_name','l1.location_name as from_location','l2.location_name as to_location');
+            if($asset_id != null) {
+
+                $row=$row->where('game_id', '=', $asset_id);
+                }
+        $row=$row->get();
         return $row;
+    }
+    function makeLink()
+    {
+
     }
 
 }

@@ -1,6 +1,5 @@
-<?php usort($tableGrid, "SiteHelpers::_sort"); ?>
-
-
+<?php usort($tableGrid, "SiteHelpers::_sort");
+?>
 <div class="sbox">
 	<div class="sbox-title">
 		<h5> <i class="fa fa-table"></i> </h5>
@@ -51,7 +50,7 @@
 					<?php $limited = isset($t['limited']) ? $t['limited'] :''; ?>
 						@if(SiteHelpers::filterColumn($limited ))
 						<td data-form="{{ $t['field'] }}" data-form-type="{{ AjaxHelpers::inlineFormType($t['field'],$tableForm)}}">
-							{!! SiteHelpers::transForm($t['field'] , $tableForm) !!}
+
 						</td>
 						@endif
 					@endif
@@ -72,17 +71,20 @@
 					@if($setting['view-method']=='expand')
 					<td><a href="javascript:void(0)" class="expandable" rel="#row-{{ $row->id }}" data-url="{{ url('mylocationgame/show/'.$id) }}"><i class="fa fa-plus " ></i></a></td>
 					@endif
+
 					 <?php foreach ($tableGrid as $field) :
 					 	if($field['view'] =='1') :
 							$conn = (isset($field['conn']) ? $field['conn'] : array() );
-
-
 							$value = AjaxHelpers::gridFormater($row->$field['field'], $row , $field['attribute'],$conn);
 						 	?>
 						 	<?php $limited = isset($field['limited']) ? $field['limited'] :''; ?>
 						 	@if(SiteHelpers::filterColumn($limited ))
 								 <td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}" data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
-									{!! $value !!}
+
+                                     @if( $field['field']=="location_id")
+                                         <?php  $value='<a  href="#">'.$value.'</a>'; ?>
+                                     @endif
+                                     {!! $value !!}
 								 </td>
 							@endif
                     <?php
@@ -150,6 +152,9 @@ $(document).ready(function() {
 		endif;
 	 ?>
 });
+    $(".showLocation").on('click',function(){
+
+    });
 </script>
 <style>
 .table th.right { text-align:right !important;}

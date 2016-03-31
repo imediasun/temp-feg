@@ -221,7 +221,7 @@
                             </div>
                         </div>
 
-                        <div class="col-md-6 text-center">
+                        <div class="col-md-6 text-center nogallary">
                             {!! SiteHelpers::showUploadedFile(SiteHelpers::getGameImage($row[0]->game_title_id),'/uploads/games/images/',400,false) !!}
                             <div class="col-md-offset-2 col-md-6" style="background: #fff;padding:10px;text-align: center">
                                 <h3>{{ $row[0]->game_title }} </h3>
@@ -313,6 +313,7 @@
 
 <script>
     $(document).ready(function() {
+        $(".nogallary a.fancybox").removeAttr("rel");
         $("#status").jCombo("{{ URL::to('mylocationgame/comboselect?filter=game_status:id:game_status') }}",
                 {selected_value: '{{ $row[0]->status_id }}'});
         $("#location_id").jCombo("{{ URL::to('mylocationgame/comboselect?filter=location:id:location_name') }}",

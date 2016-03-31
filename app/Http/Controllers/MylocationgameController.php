@@ -147,6 +147,7 @@ class MylocationgameController extends Controller
                 $result->num_prizes= "No";
             }
 
+
         }
         // Build pagination setting
         $page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;
@@ -334,14 +335,7 @@ class MylocationgameController extends Controller
         $request = $request->all();
         $results = \DB::table('game')->where('game_title_id', '=', $request['game_title_id'])->where('location_id', '=', $request['location_id'])->get();
         $info = $this->model->makeInfo($this->module);
-        $rows = array();
-        if(!empty($results)) {
             $rows = $results;
-        }
-        else
-        {
-         echo "Nothing Found";
-        }
         $fields = $info['config']['grid'];
         $content = array(
             'fields' => $fields,
@@ -350,6 +344,61 @@ class MylocationgameController extends Controller
         );
         return view('sximo.module.utility.csv', $content);
     }
+    public function getHistory()
+    {
+            $rows = $this->model->getMoveHistory();
+            $fields = array('game', 'From Location', 'Sent by', 'From Date', 'To Location', 'Accepted by', 'To Date');
+            $this->data['pageTitle'] = 'game move history';
+            $content = array(
+                'fields' => $fields,
+                'rows' => $rows,
+                'type' => 'move',
+                'title' => $this->data['pageTitle'],
+            );
+        return view('mylocationgame.csvhistory', $content);
+    }
+    function getPending()
+    {
+            $this->data['pageTitle'] = 'game pending list';
+            $rows= \DB::Select( "SELECT V.vendor_name AS Manufacturer,T.game_title AS Game_Title, G.version, G.serial, G.id, G.location_id, L.city, L.state, G.sale_price AS Wholesale,
+									IF(G.sale_price >= 1000,
+									ROUND(((G.sale_price*1.1)-1)/10+.5)*10+5,
+									(G.sale_price+100)
+									) AS Retail, G.notes FROM game G  LEFT JOIN game_title T ON G.game_title_id = T.id LEFT JOIN vendor V ON V.id = T.mfg_id LEFT JOIN location L ON G.location_id = L.id WHERE G.sale_pending = 1 AND G.sold = 0 ORDER BY T.game_title ASC, G.location_id");
+            $fields=array("Manufacturer","Game Title","Version","Serial","Id","Location Id","City","State","WholeSale","Retail","Notes");
+            $content = array(
+                'fields' => $fields,
+                'rows' => $rows,
+                'type' => 'pending',
+                'title' => $this->data['pageTitle'],
+            );
+        return view('mylocationgame.csvhistory', $content);
+    }
+    function getForsale()
+    {
+
+        $this->data['pageTitle'] = 'game for-sale list';
+        $rows= \DB::Select( "SELECT V.vendor_name AS Manufacturer,T.game_title AS Game_Title, G.version, G.serial, IF(G.date_in_service = '0000-00-00','', G.date_in_service) AS 'date_service', G.id, G.location_id, L.city, L.state, G.sale_price AS Wholesale,
+										IF(G.sale_price >= 1000,
+										ROUND(((G.sale_price*1.1)-1)/10+.5)*10+5,
+										(G.sale_price+100)
+										) AS Retail
+									FROM game G
+							   LEFT JOIN game_title T ON G.game_title_id = T.id
+							   LEFT JOIN vendor V ON V.id = T.mfg_id
+							   LEFT JOIN location L ON G.location_id = L.id
+								   WHERE G.for_sale = 1
+    AND G.sale_pending = 0 AND G.status_id!=3 AND G.sold = 0 ORDER BY T.game_title ASC, G.location_id");
+        $fields=array("Manufacturer","Game Title","Version","Serial","Date In Service","Location Id","City","State","WholeSale","Retail");
+        $content = array(
+            'fields' => $fields,
+            'rows' => $rows,
+            'type' => 'forsale',
+            'title' => $this->data['pageTitle'],
+        );
+        return view('mylocationgame.csvhistory', $content);
 
 
+
+    }
 }

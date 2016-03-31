@@ -25,10 +25,7 @@
 	<div class="col-md-4 ">
 		@if($access['is_excel'] ==1)
 		<div class="pull-right">
-			<a href="{{ URL::to( $pageModule .'/export/excel?return='.$return) }}" class="btn btn-sm btn-white"> Excel</a>
-			<a href="{{ URL::to( $pageModule .'/export/word?return='.$return) }}" class="btn btn-sm btn-white"> Word </a>
-			<a href="{{ URL::to( $pageModule .'/export/csv?return='.$return) }}" class="btn btn-sm btn-white"> CSV </a>
-			<a href="{{ URL::to( $pageModule .'/export/print?return='.$return) }}" class="btn btn-sm btn-white" onclick="ajaxPopupStatic(this.href); return false;" > Print</a>
+
 		</div>	
 		@endif
 	</div>
@@ -41,7 +38,7 @@
         </div>
         <div class="col-md-3">
     <div class="form-group  " >
-            <select name='game_title_id' id='game_name' class='select2 '></select>
+            <select name='game_title_id' id='game_name' class='select3 '></select>
     </div>
         </div>
     <div class="col-md-1">
@@ -49,7 +46,7 @@
         </div>
     <div class="col-md-3">
         <div class="form-group  " >
-            <select name='location_id' id='location_id' class='select2 '></select>
+            <select name='location_id' id='location_id' class='select3 '></select>
         </div>
     </div>
 
@@ -60,18 +57,19 @@
 </div>
 <div class="row">
     <div class="col-md-1"><h4>Download</h4></div>
-    <a href="#" class="btn btn-sm btn-white"> For-Sale History</a>
-    <a href="#" class="btn btn-sm btn-white"> Pending Sales List</a>
-    <a href="#" class="btn btn-sm btn-white"> Game Move History</a>
+    <a href="{{ URL::to( $pageModule .'/history') }}" class="btn btn-sm btn-white"> Game Move History</a>
+    <a href="{{ URL::to( $pageModule .'/pending') }}" class="btn btn-sm btn-white"> Pending Sales List</a>
+    <a href="{{ URL::to( $pageModule .'/forsale') }}" class="btn btn-sm btn-white">For-Sale List</a>
 </div><br/>
 
 <script>
     $(document).ready(function() {
         $("#game_name").jCombo("{{ URL::to('mylocationgame/comboselect?filter=game_title:id:game_title') }}",
-                {selected_value: ''});
+                {selected_value: '',initial_text:'--- Select Game Title ---'}
+                );
         $("#location_id").jCombo("{{ URL::to('mylocationgame/comboselect?filter=location:id:location_name') }}",
-                {selected_value: ''});
-        $(".select2").select2({ width:"98%"});
+                {selected_value: '',initial_text:'--- Select Game Location ---'});
+        $(".select3").select2({ width:"98%"});
     });
         $("#col-config").on('change', function () {
             reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?config_id=' + $("#col-config").val());
