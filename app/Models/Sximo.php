@@ -365,9 +365,29 @@ $row=\DB::table('game_service_history')
         $row=$row->get();
         return $row;
     }
-    function makeLink()
+    function getPendingList()
     {
-
+        $rows= \DB::Select( "SELECT V.vendor_name AS Manufacturer,T.game_title AS Game_Title, G.version, G.serial, G.id, G.location_id, L.city, L.state, G.sale_price AS Wholesale,
+									IF(G.sale_price >= 1000,
+									ROUND(((G.sale_price*1.1)-1)/10+.5)*10+5,
+									(G.sale_price+100)
+									) AS Retail, G.notes FROM game G  LEFT JOIN game_title T ON G.game_title_id = T.id LEFT JOIN vendor V ON V.id = T.mfg_id LEFT JOIN location L ON G.location_id = L.id WHERE G.sale_pending = 1 AND G.sold = 0 ORDER BY T.game_title ASC, G.location_id");
+        return $rows;
+    }
+    function getForSaleList()
+    {
+        $rows= \DB::Select( "SELECT V.vendor_name AS Manufacturer,T.game_title AS Game_Title, G.version, G.serial, IF(G.date_in_service = '0000-00-00','', G.date_in_service) AS 'date_service', G.id, G.location_id, L.city, L.state, G.sale_price AS Wholesale,
+										IF(G.sale_price >= 1000,
+										ROUND(((G.sale_price*1.1)-1)/10+.5)*10+5,
+										(G.sale_price+100)
+										) AS Retail
+									FROM game G
+							   LEFT JOIN game_title T ON G.game_title_id = T.id
+							   LEFT JOIN vendor V ON V.id = T.mfg_id
+							   LEFT JOIN location L ON G.location_id = L.id
+								   WHERE G.for_sale = 1
+    AND G.sale_pending = 0 AND G.status_id!=3 AND G.sold = 0 ORDER BY T.game_title ASC, G.location_id");
+        return $rows;
     }
 
 }

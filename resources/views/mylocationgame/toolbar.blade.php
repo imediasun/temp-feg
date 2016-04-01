@@ -31,7 +31,7 @@
 	</div>
 </div>
 <div class="row">
-    {!! Form::open(array('url'=>'mylocationgame/test', 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'mylocationgameFormAjax')) !!}
+    {!! Form::open(array('url'=>'mylocationgame/gamelocation', 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'mylocationgameFormAjax')) !!}
 
     <div class="col-md-1">
     <h4>Export</h4>
@@ -61,6 +61,18 @@
     <a href="{{ URL::to( $pageModule .'/pending') }}" class="btn btn-sm btn-white"> Pending Sales List</a>
     <a href="{{ URL::to( $pageModule .'/forsale') }}" class="btn btn-sm btn-white">For-Sale List</a>
 </div><br/>
+<div class="row">
+
+    {!! Form::open(array('url'=>'mylocationgame/assettag', 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'mylocationgameFormAjax')) !!}
+    <div class="col-md-offset-1 col-md-3">
+        <div class="form-group  " >
+            <input type="text" class="form-control" name="asset_ids" id="asset_ids" placeholder="Enter Asset# -- separate with commas for multiple" required/>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <button type="submit" class="btn btn-primary" id="submit" name="submit">Generate Asset Tag</button>
+    </div>
+</div>
 
 <script>
     $(document).ready(function() {

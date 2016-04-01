@@ -82,8 +82,17 @@
 								 <td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}" data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
 
                                      @if( $field['field']=="location_id")
-                                         <?php  $value='<a  href="#">'.$value.'</a>'; ?>
+                                         @if($row->location_id != 0)
+                                         <?php  $value="<a  href=location/$row->location_id>".$value."</a>"; ?>
+                                             @else
+                                             <?php $value=""; ?>
+                                             @if($row->status_id==3)
+                                                 <?php $value="<a style='color:red' href=#>In Transit</a>" ?>
+                                                 @endif
                                      @endif
+                                         @endif
+
+
                                      {!! $value !!}
 								 </td>
 							@endif

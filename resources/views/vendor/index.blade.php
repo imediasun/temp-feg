@@ -25,7 +25,7 @@
 </div>	
 <script>
 $(document).ready(function(){
-	reloadData('#{{ $pageModule }}','{{ $pageModule }}/data');	
-});	
+	reloadData('#{{ $pageModule }}','{{ $pageModule }}/data');
+});
 </script>	
 @endsection

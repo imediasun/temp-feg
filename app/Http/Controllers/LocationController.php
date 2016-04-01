@@ -33,18 +33,18 @@ class LocationController extends Controller {
 
     }
 
-    public function getIndex()
+    public function getIndex(Request $request,$id=0)
     {
         if($this->access['is_view'] ==0)
             return Redirect::to('dashboard')->with('messagetext',\Lang::get('core.note_restric'))->with('msgstatus','error');
 
         $this->data['access']		= $this->access;
+        $this->data['id']=$id;
         return view('location.index',$this->data);
     }
 
-    public function postData( Request $request)
+    public function postData( Request $request,$id=null)
     {
-
         $module_id = \DB::table('tb_module')->where('module_name', '=', 'location')->pluck('module_id');
         $this->data['module_id'] = $module_id;
         if (Input::has('config_id')) {
@@ -79,8 +79,14 @@ class LocationController extends Controller {
             'global'	=> (isset($this->access['is_global']) ? $this->access['is_global'] : 0 )
         );
         // Get Query
+    if($id==null) {
+        $results = $this->model->getRows($params);
 
-        $results = $this->model->getRows( $params );
+    }
+        else{
+            $results['rows']=$this->model->getRow($id);
+            $results['total']=1;
+        }
         foreach ($results['rows'] as $result) {
 
             if ($result->self_owned == 1) {
@@ -360,5 +366,6 @@ class LocationController extends Controller {
             ));
         }
     }
+
 
 }

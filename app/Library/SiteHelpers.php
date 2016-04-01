@@ -1637,5 +1637,9 @@ return $configs;
         }
 
     }
+    static function showLink($value,$link)
+    {
+
+    }
 			
 }

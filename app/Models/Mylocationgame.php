@@ -42,5 +42,63 @@ class mylocationgame extends Sximo  {
             ->get();
         return $row;
     }
+    public function get_detail($id=null)
+    {
+        $row=\DB::select('SELECT G.id,
+									  G.game_name,
+									  G.prev_game_name,
+									  G.version,
+									  G.version_id,
+									  G.players,
+									  G.monitor_size,
+									  G.dba,
+									  G.sacoa,
+									  G.embed,
+									  G.rfid,
+									  G.notes,
+                                                                          G.freight_order_id,
+									  G.location_id,
+									  CONCAT(G.location_id," | ",L.location_name_short) AS locationFull,
+									  V.vendor_name,
+									  V.phone AS vendor_phone,
+									  V.contact AS vendor_contact,
+									  V.email AS vendor_email,
+									  V.website AS vendor_website,
+									  G.serial,
+									  G.date_in_service,
+									  G.status_id,
+									  G.game_setup_status_id,
+									  G.intended_first_location,
+									  U.username AS last_edited_by,
+									  G.last_edited_on,
+									  G.prev_location_id,
+									  CONCAT(G.prev_location_id," | ",L2.location_name_short) AS prevLocationFull,
+									  G.sold,
+									  G.date_sold,
+									  G.sold_to,
+									  G.game_move_id,
+									  G.game_service_id,
+									  G.test_piece,
+									  IF(G.test_piece =1,CONCAT("**TEST** ",T.game_title),T.game_title) AS game_title,
+									  T.id AS game_title_id,
+									  Y.game_type,
+									  P.vendor_description AS product_description,
+									  T.has_manual,
+									  T.has_servicebulletin,
+									  GS.game_status
+								 FROM game G
+						    LEFT JOIN users U ON U.id = G.last_edited_by
+						    LEFT JOIN game_title T ON T.id = G.game_title_id
+						    LEFT JOIN vendor V ON V.id = T.mfg_id
+						    LEFT JOIN game_type Y ON Y.id = T.game_type_id
+						    LEFT JOIN products P ON P.id = G.product_id_1
+						    LEFT JOIN game_status GS ON GS.id = G.status_id
+						    LEFT JOIN location L ON L.id = G.location_id
+						    LEFT JOIN location L2 ON L2.id = G.prev_location_id
+								WHERE G.id='.$id);
+        print_r($row);
+        die();
+    }
+
 
 }

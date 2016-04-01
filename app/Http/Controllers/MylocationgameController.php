@@ -146,6 +146,10 @@ class MylocationgameController extends Controller
             } else {
                 $result->num_prizes= "No";
             }
+            if ($result->mfg_id == 0) {
+                $result->mfg_id= "";
+
+            }
 
 
         }
@@ -329,13 +333,13 @@ class MylocationgameController extends Controller
         ));
     }
 
-    public function postTest(Request $request)
+    public function postGamelocation(Request $request)
     {
         $this->data['pageTitle'] = 'game in location';
         $request = $request->all();
         $results = \DB::table('game')->where('game_title_id', '=', $request['game_title_id'])->where('location_id', '=', $request['location_id'])->get();
         $info = $this->model->makeInfo($this->module);
-            $rows = $results;
+         $rows = $results;
         $fields = $info['config']['grid'];
         $content = array(
             'fields' => $fields,
@@ -359,14 +363,10 @@ class MylocationgameController extends Controller
     }
     function getPending()
     {
-            $this->data['pageTitle'] = 'game pending list';
-            $rows= \DB::Select( "SELECT V.vendor_name AS Manufacturer,T.game_title AS Game_Title, G.version, G.serial, G.id, G.location_id, L.city, L.state, G.sale_price AS Wholesale,
-									IF(G.sale_price >= 1000,
-									ROUND(((G.sale_price*1.1)-1)/10+.5)*10+5,
-									(G.sale_price+100)
-									) AS Retail, G.notes FROM game G  LEFT JOIN game_title T ON G.game_title_id = T.id LEFT JOIN vendor V ON V.id = T.mfg_id LEFT JOIN location L ON G.location_id = L.id WHERE G.sale_pending = 1 AND G.sold = 0 ORDER BY T.game_title ASC, G.location_id");
-            $fields=array("Manufacturer","Game Title","Version","Serial","Id","Location Id","City","State","WholeSale","Retail","Notes");
-            $content = array(
+             $this->data['pageTitle'] = 'game pending list';
+             $fields=array("Manufacturer","Game Title","Version","Serial","Id","Location Id","City","State","WholeSale","Retail","Notes");
+             $rows=$this->model->getPendingList();
+             $content = array(
                 'fields' => $fields,
                 'rows' => $rows,
                 'type' => 'pending',
@@ -376,20 +376,9 @@ class MylocationgameController extends Controller
     }
     function getForsale()
     {
-
         $this->data['pageTitle'] = 'game for-sale list';
-        $rows= \DB::Select( "SELECT V.vendor_name AS Manufacturer,T.game_title AS Game_Title, G.version, G.serial, IF(G.date_in_service = '0000-00-00','', G.date_in_service) AS 'date_service', G.id, G.location_id, L.city, L.state, G.sale_price AS Wholesale,
-										IF(G.sale_price >= 1000,
-										ROUND(((G.sale_price*1.1)-1)/10+.5)*10+5,
-										(G.sale_price+100)
-										) AS Retail
-									FROM game G
-							   LEFT JOIN game_title T ON G.game_title_id = T.id
-							   LEFT JOIN vendor V ON V.id = T.mfg_id
-							   LEFT JOIN location L ON G.location_id = L.id
-								   WHERE G.for_sale = 1
-    AND G.sale_pending = 0 AND G.status_id!=3 AND G.sold = 0 ORDER BY T.game_title ASC, G.location_id");
         $fields=array("Manufacturer","Game Title","Version","Serial","Date In Service","Location Id","City","State","WholeSale","Retail");
+        $rows=$this->model->getForSaleList();
         $content = array(
             'fields' => $fields,
             'rows' => $rows,
@@ -397,8 +386,181 @@ class MylocationgameController extends Controller
             'title' => $this->data['pageTitle'],
         );
         return view('mylocationgame.csvhistory', $content);
+    }
+    function generate_asset_tag($id = null)
+    {
+        //// THE SCRIPT BELOW CIRCULATES THROUGH THE ASSET IDs IN THE COMMA SEPARATED STRING BELOW AND CREATES A QR TAG - ACTIVATE BY VISITING THIS PAGE - CURRENTLY COMMENTED //////////////
+        //// START /////
+
+        // $gameString = '20002114,20002146,20002147,20002149,20002150,20002151,20002152,20002153,20002154,20002155,20002157,20002159,20002160,20002161,20002162,20002164,20002165,20002166,20002167,20002168,20002169,20002170,20002171,20002172,20002173,20002174,20002175,20002176,20002177,20002178,20002179,20002180,20002181,20002182,20002183,20002184,20002185,20002186,20002187,20002188,20002189,20002190,20002191,20002192,20002193,20002194,20002195,20002196,20002197,20002198,20002199,20002200,20002201,20002202,20002203,20002204,20002205,20002206,20002207,20002208,20002209,20002210,20002211,20002212,20002214,20002215,20002216,20002217,20002218,20002219,20002220,20002221,20002222,20002223,20002224,20002225,20002226,20002227,20002228,20002229,20002230,20002231,20002232,20002233,20002234,20002235,20002236,20002237,20002240,20002241,20002242,20002243,20002244,20002247,30007187,30007188,30007253,30007263,30007264,30007265,30007266,30007267,30007268,30007269,30007270,30007271,30007272,30007274,30007275,30007277,30007278,30007279,30007280,3000728';
+
+        // $item_count = substr_count($gameString, ',')+1;
+
+        // for($i=1;$i <= $item_count;$i++)
+        // {
+        // 	$id = substr($gameString, 0, 8);
+
+        ////// END ///// PLUS CLOSING TAG BELOW /////
+        $filename = public_path().'/qr/'.$id.'.png';
+        $data=url('/')."mylocationgame/show/".$id;
+
+        \QrCode::format('png');
+        \QrCode::size(200);
+        \QrCode::errorCorrection('H');
+        \QrCode::generate($data,$filename);
+  // $this->model->get_detail($id);
+
+        $row=\DB::select("SELECT G.id, T.game_title FROM game G LEFT JOIN game_title T ON T.id = G.game_title_id WHERE G.id=$id");
+
+        //
+
+//        $newSizeW = 135;
+//        $newSizeH = 147;
+//        $topPadding = 11;
+//        $smallerSizeFactor = .95;
+//        $smallSizeW = round($newSizeW * $smallerSizeFactor);
+//        $smallSizeH = round($newSizeH * $smallerSizeFactor);
+//
+//        // redude size of barcode
+//        $this->load->library('image_lib');
+//        $config['source_image']	= $filename;
+//        $config['quality'] = '100%';
+//        $config['width'] = $smallSizeW;
+//        $config['height'] = $smallSizeH;
+//        $config['overwrite'] = TRUE;
+//        $this->image_lib->initialize($config);
+//        $this->image_lib->resize();
+//        $this->image_lib->clear();
+
+        // add to canvas
+//        $oldimage = imagecreatefrompng($filename);
+//        $oldw = imagesx($oldimage);
+//        $oldh = imagesy($oldimage);
+//        $newimage = imagecreate($newSizeW, $newSizeH); // Creates a black image
+//        // Fill it with white (optional)
+//        $white = imagecolorallocate($newimage, 255, 255, 255);
+//        //imagefill($newimage, 0, 0, $white);
+//        //$background_color = imagecolorallocate($im, 0, 0, 0);
+//        imagecopy($newimage, $oldimage, ($newSizeH-$oldw)/2, $topPadding, 0, 0, $oldw, $oldh);
+//        imagepng($newimage, $filename);
+//        imagedestroy($newimage);
+
+        if ($row )
+        {
+
+            $id = $row[0]->id;
+            $game_name = $row[0]->game_title;
+          /*  die();
+            $this->load->library('image_lib');
+            $config['source_image']	= $filename;
+            $config['quality'] = '100%';
+            $config['wm_text'] = $id;
+            $config['wm_type'] = 'text';
+            //$config['wm_font_path'] = './system/fonts/PTC55F.ttf';
+            //$config['wm_font_path'] = './system/fonts/texb.ttf';
+            //$config['wm_font_path'] = './system/fonts/Segan-Light.ttf';
+            $config['wm_font_path'] = './system/fonts/EncodeSansWide-Regular.ttf';
+            //$config['wm_font_path'] = './system/fonts/DISCO_W.ttf';
+            //$config['wm_font_path'] = './system/fonts/arialnarrow.ttf';
+            //$config['wm_font_path'] = './system/fonts/arial.ttf';
+            $config['wm_font_size']	= '15';
+            $config['wm_font_color'] = 'black';
+            $config['wm_vrt_alignment'] = 'bottom';
+            $config['wm_hor_alignment'] = 'left';
+            $config['wm_vrt_offset'] = '-6';
+            $config['wm_hor_offset'] = '16';
+            $config['overwrite'] = TRUE;
+            $this->image_lib->initialize($config);
+            $this->image_lib->watermark();
+            $this->image_lib->clear();
+
+            $this->load->library('image_lib');
+            $config['source_image']	= $filename;
+            $config['quality'] = '100%';
+            $config['wm_text'] = $game_name;
+            $config['wm_type'] = 'text';
+            //$config['wm_font_path'] = './system/fonts/arialnarrow.ttf';
+            $config['wm_font_path'] = './system/fonts/pf_tempesta_seven_condensed.ttf';
+            //$config['wm_font_path'] = './system/fonts/pf_ronda_seven.ttf';
+            //$config['wm_font_path'] = './system/fonts/hellovetica.ttf';
+            $config['wm_font_size']	= '6';
+            $config['wm_font_color'] = 'black';
+            $config['wm_vrt_alignment'] = 'bottom';
+            $config['wm_hor_alignment'] = 'left';
+            $config['wm_vrt_offset'] = '0';
+            $config['wm_hor_offset'] = '3';
+            $config['overwrite'] = TRUE;
+            $this->image_lib->initialize($config);
+            $this->image_lib->watermark();
+            $this->image_lib->clear();*/
+        }
+        // ////
+        // $gameString = substr($gameString, 9);
+        // }
+        // ////
+    }
+    function postAssettag(Request $request,$asset_ids = null)
+    {
 
 
+        // YOU CAN PASS ASSET IDs VIA POST OR GET -- FOR MULTIPLE IDs, USE COMMA-SEPARATED FORMAT LIKE BELOW
+        //$asset_ids = '20002114,20002146,20002147,20002149,20002150,20002151,20002152,20002153,20002154,20002155,20002157,20002159,
+        // 20002160,20002161,20002162,20002164,20002165,20002166,20002167,20002168,20002169,20002170,20002171,20002172,
+        // 20002173,20002174,20002175,20002176,20002177,20002178,20002179,20002180,20002181,20002182,20002183,20002184,
+        // 30007275,30007277,30007278,30007279,30007280,3000728';
+
+
+        $asset_ids = $request->get('asset_ids');
+
+
+
+        if(!empty($asset_ids))
+        {
+            $item_count = substr_count($asset_ids, ',')+1;
+            for($i=1;$i <= $item_count;$i++)
+            {
+
+                $id = substr($asset_ids, 0, 8);
+                $asset_ids = substr($asset_ids, 9);
+               $this->generate_asset_tag($id);
+                $location = $this->get_game_info_by_id($id,'location_id');
+
+                $file  = public_path().'\\qr\\'.$id.'.png';
+// Quick check to verify that the file exists
+                if( !file_exists($file) ) die("File not found");
+// Force the download
+                return \Response::download($file);
+             /*   $from = $data['email'];
+                $to = 'dev5@shayansolutions.com';
+                $cc = '';
+                $bcc = '';
+                $subject = 'NEW Asset Tag Has Been Requested for #'.$id.' at '.$location;
+                $message = 'Click link for detail: fegllc.com/fegsys/gameDetail/'.$id;
+                $attach = FCPATH.'dl/qr/'.$id.'.png';
+
+                $this->send_email($from,$to,$cc,$bcc,$subject,$message,$attach);
+            */
+             }
+        }
+        //redirect('fegsys/home');
+      //  redirect('allGamesList');
+
+    }
+    public function get_game_info_by_id($asset_id = null, $field = null)
+    {
+        $query = \DB::select('SELECT '.$field.'
+								 FROM game_title T
+						 	LEFT JOIN game G ON G.game_title_id = T.id
+							    WHERE G.id = '.$asset_id);
+            $game_info = $query[0]->location_id;
+        if(empty($game_info))
+        {
+            $game_info = 'NONE';
+        }
+        return $game_info;
+    }
+    function getDowload()
+    {
 
     }
 }

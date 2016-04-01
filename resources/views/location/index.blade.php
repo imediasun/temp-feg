@@ -22,10 +22,21 @@
 		<div id="{{ $pageModule }}Grid"></div>
 	</div>	
 	<!-- End Content -->  
-</div>	
+</div>
+<?php
+        if(! isset($id)){
+            $id= 0;
+        }
+?>
 <script>
 $(document).ready(function(){
-	reloadData('#{{ $pageModule }}','{{ $pageModule }}/data');
+    var id = {{ $id  }};
+    if(id){
+        reloadData('#{{ $pageModule }}','/sximo/public/location/data/'+id);
+    }
+    else{
+        reloadData('#{{ $pageModule }}','{{ $pageModule }}/data');
+    }
 });	
 </script>	
 @endsection

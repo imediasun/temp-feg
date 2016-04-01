@@ -10,6 +10,7 @@
 | and give it the controller to call when that URI is requested.
 |
 */
+Route::get('location/{id?}','LocationController@getIndex');
 
 Route::get('/', 'HomeController@index');
 Route::controller('home', 'HomeController');
@@ -41,7 +42,7 @@ Route::group(['middleware' => 'auth'], function()
 		'core/template' 	=> 'Core\TemplateController',
 	]);
 
-});	
+});
 
 Route::group(['middleware' => 'auth' , 'middleware'=>'sximoauth'], function()
 {
@@ -56,6 +57,7 @@ Route::group(['middleware' => 'auth' , 'middleware'=>'sximoauth'], function()
 
 
 });
+
 
 
 

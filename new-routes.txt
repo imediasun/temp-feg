@@ -1,7 +1,6 @@
 +--------+--------------------------------+--------------------------------------------------------------------------+------+---------------------------------------------------------------------+---------------------+
 | Domain | Method                         | URI                                                                      | Name | Action                                                              | Middleware          |
 +--------+--------------------------------+--------------------------------------------------------------------------+------+---------------------------------------------------------------------+---------------------+
-|        | GET|HEAD                       | location/{id?}                                                           |      | App\Http\Controllers\LocationController@getIndex                    | ipblocked           |
 |        | GET|HEAD                       | /                                                                        |      | App\Http\Controllers\HomeController@index                           | ipblocked           |
 |        | GET|HEAD                       | home/lang/{one?}/{two?}/{three?}/{four?}/{five?}                         |      | App\Http\Controllers\HomeController@getLang                         | ipblocked           |
 |        | GET|HEAD                       | home/skin/{one?}/{two?}/{three?}/{four?}/{five?}                         |      | App\Http\Controllers\HomeController@getSkin                         | ipblocked           |
