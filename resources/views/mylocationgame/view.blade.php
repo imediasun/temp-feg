@@ -160,8 +160,7 @@
                                     {!! SiteHelpers::activeLang('Current Location', (isset($fields['serial']['language'])? $fields['serial']['language'] : array())) !!}
                                 </label>
                                 <div class="col-md-8">
-                                    @if(isset($row[0]->location_id))
-                                    {{ $row[0]->location_id }} {{ "|" }} @endif{{ $row[0]->location_name }}
+                                    {{ $row[0]->location_name }}
                                 </div>
 
                             </div>
@@ -181,7 +180,7 @@
                                     {!! SiteHelpers::activeLang('Last Edited By', (isset($fields['last_edited_by']['language'])? $fields['last_edited_by']['language'] : array())) !!}
                                 </label>
                                 <div class="col-md-8">
-                                {{ $row[0]->first_name }} {{ $row[0]->last_name }} {{ "on" }} {{$row[0]->last_edited_on}}
+                                {{ $row[0]->last_edited_by  }} {{ "on" }} {{$row[0]->last_edited_on}}
                                 </div>
 
                             </div>

@@ -4,7 +4,7 @@ use App\Http\Controllers\controller;
 use App\Models\Mylocationgame;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
-use Validator, Input, Redirect, Carbon;
+use Validator, Input, Redirect;
 
 class MylocationgameController extends Controller
 {
@@ -233,9 +233,6 @@ class MylocationgameController extends Controller
         $this->data['access'] = $this->access;
         $this->data['setting'] = $this->info['setting'];
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
-        if ($this->data['row'][0]->test_piece == 1) {
-            $this->data['row'][0]->game_title = "**Test** " . $this->data['row'][0]->game_title;
-        }
         return view('mylocationgame.view', $this->data);
     }
 
@@ -501,50 +498,38 @@ class MylocationgameController extends Controller
     }
     function postAssettag(Request $request,$asset_ids = null)
     {
-
-
-        // YOU CAN PASS ASSET IDs VIA POST OR GET -- FOR MULTIPLE IDs, USE COMMA-SEPARATED FORMAT LIKE BELOW
-        //$asset_ids = '20002114,20002146,20002147,20002149,20002150,20002151,20002152,20002153,20002154,20002155,20002157,20002159,
-        // 20002160,20002161,20002162,20002164,20002165,20002166,20002167,20002168,20002169,20002170,20002171,20002172,
-        // 20002173,20002174,20002175,20002176,20002177,20002178,20002179,20002180,20002181,20002182,20002183,20002184,
-        // 30007275,30007277,30007278,30007279,30007280,3000728';
-
-
         $asset_ids = $request->get('asset_ids');
-
-
-
-        if(!empty($asset_ids))
-        {
-            $item_count = substr_count($asset_ids, ',')+1;
-            for($i=1;$i <= $item_count;$i++)
-            {
-
-                $id = substr($asset_ids, 0, 8);
-                $asset_ids = substr($asset_ids, 9);
-               $this->generate_asset_tag($id);
-                $location = $this->get_game_info_by_id($id,'location_id');
-
-                $file  = public_path().'\\qr\\'.$id.'.png';
+        if(!empty($asset_ids)) {
+            $zip = new \ZipArchive();
+            $zip_name = "qr/QRCodes.zip"; // Zip name
+            $zip->open($zip_name, \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
+            $item_count = substr_count($asset_ids, ',') + 1;
+            if ($item_count > 1) {
+                for ($i = 1; $i <= $item_count; $i++) {
+                    $id = substr($asset_ids, 0, 8);
+                    $asset_ids = substr($asset_ids, 9);
+                    $this->generate_asset_tag($id);
+                    $location = $this->get_game_info_by_id($id, 'location_id');
+                    $file = public_path() . '\\qr\\' . $id . '.png';
 // Quick check to verify that the file exists
-                if( !file_exists($file) ) die("File not found");
-// Force the download
-                return \Response::download($file);
-             /*   $from = $data['email'];
-                $to = 'dev5@shayansolutions.com';
-                $cc = '';
-                $bcc = '';
-                $subject = 'NEW Asset Tag Has Been Requested for #'.$id.' at '.$location;
-                $message = 'Click link for detail: fegllc.com/fegsys/gameDetail/'.$id;
-                $attach = FCPATH.'dl/qr/'.$id.'.png';
-
-                $this->send_email($from,$to,$cc,$bcc,$subject,$message,$attach);
-            */
-             }
+                    if (file_exists($file)) {
+                        $zip->addFile($file);
+                    }
+                }
+                if (file_exists($zip_name)) {
+                return (\Response::download($zip_name));
+            }
+                else
+                {
+                    echo "sorry";
+                }
+            }
+            else {
+                if (file_exists("qr/" . $asset_ids . ".png")) {
+                    return (\Response::download("qr/" . $asset_ids . ".png"));
+                }
+            }
         }
-        //redirect('fegsys/home');
-      //  redirect('allGamesList');
-
     }
     public function get_game_info_by_id($asset_id = null, $field = null)
     {

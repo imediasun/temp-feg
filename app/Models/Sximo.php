@@ -365,6 +365,25 @@ $row=\DB::table('game_service_history')
         $row=$row->get();
         return $row;
     }
+function moveHistory()
+{
+    $row=\DB::select('SELECT CONCAT(A.id," | ",IF(A.test_piece = 1,CONCAT("**TEST** ",T.game_title),T.game_title)) AS Game,
+										 CONCAT(G.from_loc," | ", L1.location_name_short) AS from_location,
+										 U1.username AS from_name,
+										 G.from_date,
+										 CONCAT(G.to_loc," | ", L2.location_name_short) AS to_location,
+										 U2.username AS to_name,
+										 IF(G.to_date = "0000-00-00 00:00:00","", G.to_date) AS to_date
+									FROM game_move_history G
+							   LEFT JOIN game A ON A.id = G.game_id
+							   LEFT JOIN users U1 ON G.from_by = U1.id
+							   LEFT JOIN users U2 ON G.to_by = U2.id
+							   LEFT JOIN game M ON G.game_id = M.id
+							   LEFT JOIN game_title T ON M.game_title_id = T.id
+							   LEFT JOIN location L1 ON G.from_loc = L1.id
+							   LEFT JOIN location L2 ON G.to_loc = L2.id');
+    return $row;
+}
     function getPendingList()
     {
         $rows= \DB::Select( "SELECT V.vendor_name AS Manufacturer,T.game_title AS Game_Title, G.version, G.serial, G.id, G.location_id, L.city, L.state, G.sale_price AS Wholesale,

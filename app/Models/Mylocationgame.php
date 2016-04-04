@@ -26,7 +26,7 @@ class mylocationgame extends Sximo  {
 	public static function queryGroup(){
 		return "  ";
 	}
-    public static function getRow( $id )
+  /*  public static function getRow( $id )
     {
         $row= \DB::table('game')
             ->leftJoin('game_status', 'game.status_id', '=', 'game_status.id')
@@ -41,10 +41,10 @@ class mylocationgame extends Sximo  {
             ->where('game.id','=',$id)
             ->get();
         return $row;
-    }
-    public function get_detail($id=null)
+    }*/
+    public static function getRow($id=null)
     {
-        $row=\DB::select('SELECT G.id,
+        $row=\DB::select('SELECT G.id as asset_number,
 									  G.game_name,
 									  G.prev_game_name,
 									  G.version,
@@ -56,9 +56,9 @@ class mylocationgame extends Sximo  {
 									  G.embed,
 									  G.rfid,
 									  G.notes,
-                                                                          G.freight_order_id,
+                                      G.freight_order_id,
 									  G.location_id,
-									  CONCAT(G.location_id," | ",L.location_name_short) AS locationFull,
+									  CONCAT(G.location_id," | ",L.location_name_short) AS location_name,
 									  V.vendor_name,
 									  V.phone AS vendor_phone,
 									  V.contact AS vendor_contact,
@@ -72,7 +72,7 @@ class mylocationgame extends Sximo  {
 									  U.username AS last_edited_by,
 									  G.last_edited_on,
 									  G.prev_location_id,
-									  CONCAT(G.prev_location_id," | ",L2.location_name_short) AS prevLocationFull,
+									  CONCAT(G.prev_location_id," | ",L2.location_name_short) AS previous_location,
 									  G.sold,
 									  G.date_sold,
 									  G.sold_to,
@@ -96,8 +96,7 @@ class mylocationgame extends Sximo  {
 						    LEFT JOIN location L ON L.id = G.location_id
 						    LEFT JOIN location L2 ON L2.id = G.prev_location_id
 								WHERE G.id='.$id);
-        print_r($row);
-        die();
+      return $row;
     }
 
 

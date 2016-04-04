@@ -64,7 +64,7 @@
                         </tr>
                         <tr>
                             <td colspan="1"><h3>Internal Contact:</h3></td>
-                            <td><h4></h4></td>
+                            <td><h4>{{ $row[0]->first_name }} {{ $row[0]->last_name }}</h4></td>
                             </td>
                         </tr>
                         <tr>
