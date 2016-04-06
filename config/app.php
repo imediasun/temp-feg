@@ -148,6 +148,7 @@ return [
         GrahamCampbell\Markdown\MarkdownServiceProvider::class,  
         Collective\Html\HtmlServiceProvider::class,
         SimpleSoftwareIO\QrCode\QrCodeServiceProvider::class,
+        Intervention\Image\ImageServiceProvider::class
 
     ],
 
@@ -201,7 +202,9 @@ return [
         'Captcha'   => Mews\Captcha\Facades\Captcha::class,
         'Socialize' => Laravel\Socialite\Facades\Socialite::class,
         'Markdown'  => GrahamCampbell\Markdown\Facades\Markdown::class,
-        'QrCode' => SimpleSoftwareIO\QrCode\Facades\QrCode::class,
+        'QrCode'    => SimpleSoftwareIO\QrCode\Facades\QrCode::class,
+        'Image'     => Intervention\Image\Facades\Image::class
+
 
 
 

@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "96f1121250a3697d88c0c3b7ef2dcbf4",
-    "content-hash": "6c2d2fa21393fba451c753b47ede708f",
+    "hash": "9a8fb1d4a4a8b85545601a573f9fb745",
+    "content-hash": "f9b97142b4640e71b24e572adbf190c6",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -588,7 +588,7 @@
         },
         {
             "name": "intervention/image",
-            "version": "2.3.6",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Intervention/image.git",
@@ -3981,7 +3981,9 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": [],
+    "stability-flags": {
+        "intervention/image": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {

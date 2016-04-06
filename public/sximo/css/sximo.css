@@ -70,6 +70,11 @@ h3,h4,h5 {
 {
     display:none;
 }
+table.table-striped
+{
+    table-layout: fixed;
+    width:100%;
+}
 .nav > li > a i {
   margin-right: 6px;
 }

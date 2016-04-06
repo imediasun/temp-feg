@@ -1,5 +1,5 @@
 <div class="row m-b">
-	<div class="col-md-8">
+	<div class="col-md-7">
 			@if($access['is_add'] ==1)
 			{!! AjaxHelpers::buttonActionCreate($pageModule,$setting) !!}
 			<a href="javascript://ajax" class="btn btn-sm btn-white" onclick="ajaxCopy('#{{ $pageModule }}','{{ $pageUrl }}')"><i class="fa fa-file-o"></i> Copy </a>
@@ -22,12 +22,11 @@
         @endif
         @endif
     </div>
-	<div class="col-md-4 ">
-		@if($access['is_excel'] ==1)
-		<div class="pull-right">
-
-		</div>	
-		@endif
+	<div class="col-md-5 ">
+        <span><b>Download</b>&nbsp;</span>
+        <a href="{{ URL::to( $pageModule .'/history') }}" class="btn btn-sm btn-white"> Game Move History</a>
+        <a href="{{ URL::to( $pageModule .'/pending') }}" class="btn btn-sm btn-white"> Pending Sales List</a>
+        <a href="{{ URL::to( $pageModule .'/forsale') }}" class="btn btn-sm btn-white">For-Sale List</a>
 	</div>
 </div>
 <div class="row">
@@ -55,12 +54,6 @@
     </div>
     {!! Form::close() !!}
 </div>
-<div class="row">
-    <div class="col-md-1"><h4>Download</h4></div>
-    <a href="{{ URL::to( $pageModule .'/history') }}" class="btn btn-sm btn-white"> Game Move History</a>
-    <a href="{{ URL::to( $pageModule .'/pending') }}" class="btn btn-sm btn-white"> Pending Sales List</a>
-    <a href="{{ URL::to( $pageModule .'/forsale') }}" class="btn btn-sm btn-white">For-Sale List</a>
-</div><br/>
 <div class="row">
    <form method="post" action="mylocationgame/assettag" class="form-horizontal">
     <div class="col-md-offset-1 col-md-3">

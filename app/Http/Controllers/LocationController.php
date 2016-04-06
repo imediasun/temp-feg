@@ -204,7 +204,6 @@ class LocationController extends Controller {
 
     function getUpdate(Request $request, $id = null)
     {
-
         if($id =='')
         {
             if($this->access['is_add'] ==0 )
@@ -365,6 +364,12 @@ class LocationController extends Controller {
                 'message'=> \Lang::get('core.note_error')
             ));
         }
+    }
+    function getLocation($id=null)
+    {
+        $this->data['access']		= $this->access;
+        $this->data['id']=$id;
+        return view('location.index',$this->data);
     }
 
 

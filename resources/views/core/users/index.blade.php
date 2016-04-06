@@ -70,21 +70,21 @@
 
 	 {!! Form::open(array('url'=>'core/users/delete/', 'class'=>'form-horizontal' ,'id' =>'SximoTable' )) !!}
 	 <div class="table-responsive" style="min-height:300px;">
-    <table class="table table-striped ">
+    <table class="table" style="table-layout: fixed;width:100%">
         <thead>
 			<tr>
-				<th class="number"> No </th>
-				<th> <input type="checkbox" class="checkall" /></th>
-				<th>Login</th>
+				<th class="number" width="30"> No </th>
+				<th width="60"> <input type="checkbox" class="checkall" /></th>
+				<th width="100">Login</th>
                 <th width="150"> Block User</th>
 				@foreach ($tableGrid as $t)
 					@if($t['view'] =='1')
-						<th>{{ $t['label'] }}</th>
+						<th width="150">{{ $t['label'] }}</th>
 					@endif
 				@endforeach
 
-				<th width="70">{{ Lang::get('core.btn_action') }}</th>
-                <th > Upload Image</th>
+				<th width="100">{{ Lang::get('core.btn_action') }}</th>
+                <th width="100"> Upload Image</th>
 			  </tr>
 
         </thead>
@@ -164,8 +164,7 @@ $(document).ready(function(){
 });
 $("#col-config").change(function(){
     var config_id=$('#col-config').val();
-
-        location.href = "index?config_id=" + config_id;
+        location.href = "/sximo/public/core/users?config_id=" + config_id;
 
 
 });

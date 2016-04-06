@@ -24,7 +24,11 @@
 {
     display:none;
 }
-
+table.table-striped
+{
+    table-layout: fixed;
+    width:100%;
+}
 a { color:#337ab7;}
 h1,h2,h3,h4,h5,h6 {
   font-weight: 100;

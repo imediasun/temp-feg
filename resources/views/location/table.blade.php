@@ -17,11 +17,11 @@
 	 <?php echo Form::open(array('url'=>'location/delete/', 'class'=>'form-horizontal' ,'id' =>'SximoTable'  ,'data-parsley-validate'=>'' )) ;?>
 <div class="table-responsive">	
 	@if(count($rowData)>=1)
-    <table class="table table-striped  " id="{{ $pageModule }}Table">
+    <table class="table table-striped  " id="{{ $pageModule }}Table" style="table-layout: fixed">
         <thead>
 			<tr>
 				<th width="20"> No </th>
-				<th width="30"> <input type="checkbox" class="checkall" /></th>
+				<th width="60"> <input type="checkbox" class="checkall" /></th>
 				@if($setting['view-method']=='expand') <th>  </th> @endif			
 				<?php foreach ($tableGrid as $t) :
 					if($t['view'] =='1'):

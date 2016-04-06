@@ -170,7 +170,7 @@ class UserController extends Controller {
 						\Session::put('gid', $row->group_id);
 						\Session::put('eid', $row->email);
 						\Session::put('ll', $row->last_login);
-						\Session::put('fid', $row->first_name.' '. $row->last_name);	
+						\Session::put('fid', $row->first_name.' '. $row->last_name);
 						if(!is_null($request->input('language')))
 						{
 							\Session::put('lang', $request->input('language'));	

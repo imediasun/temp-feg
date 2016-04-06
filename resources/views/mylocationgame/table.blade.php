@@ -18,12 +18,12 @@
 	 <?php echo Form::open(array('url'=>'mylocationgame/delete/', 'class'=>'form-horizontal' ,'id' =>'SximoTable'  ,'data-parsley-validate'=>'' )) ;?>
 <div class="table-responsive">
 	@if(count($rowData)>=1)
-    <table class="table table-striped  " id="{{ $pageModule }}Table">
+    <table class="table table-striped  " id="{{ $pageModule }}Table" style="table-layout: fixed;width: 100%;">
         <thead>
 			<tr>
-				<th width="20"> No </th>
-				<th width="30"> <input type="checkbox" class="checkall" /></th>
-                <th>Img</th>
+				<th width="30"> No </th>
+				<th width="60"> <input type="checkbox" class="checkall" /></th>
+                <th width="100">Img</th>
 				@if($setting['view-method']=='expand') <th>  </th> @endif
 				<?php foreach ($tableGrid as $t) :
 					if($t['view'] =='1'):
@@ -83,7 +83,7 @@
 
                                      @if( $field['field']=="location_id")
                                          @if($row->location_id != 0)
-                                         <?php  $value="<a  href=location/$row->location_id>".$value."</a>"; ?>
+                                         <?php  $value="<a  href=./location/location/$row->location_id>".$value."</a>"; ?>
                                              @else
                                              <?php $value=""; ?>
                                              @if($row->status_id==3)
@@ -91,7 +91,6 @@
                                                  @endif
                                      @endif
                                          @endif
-
 
                                      {!! $value !!}
 								 </td>

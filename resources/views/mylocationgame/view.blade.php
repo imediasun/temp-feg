@@ -11,13 +11,11 @@
 @endif
           <div class="row">
               {!! Form::open(array('url'=>'mylocationgame/update/'.$row[0]->asset_number, 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'mylocationgameFormAjax')) !!}
-
-
               <input type="hidden" name="prev_game_name" value="{{ $row[0]->game_name }}">
               <input type="hidden" name="prev_location_id" value="{{ $row[0]->location_id }}">
               <input type="hidden" name="game_service_id" value="{{ $row[0]->game_service_id }}">
-                        <div class="col-md-offset-1 col-md-5" style="background:#FFF;box-shadow:1px 1px 5px gray;padding:20px auto;">
-                            <h1>Game Details</h1><br/>
+                        <div class="col-md-offset-1 col-md-5" style="background:#FFF;box-shadow:1px 1px 5px gray;padding:10px auto;">
+                            <h1>Game Details</h1>
                             <div class="form-group" >
                                 <label for="sold" class=" control-label col-md-1">
                                     {!! SiteHelpers::activeLang('Sold', (isset($fields['sold']['language'])? $fields['sold']['language'] : array())) !!}
@@ -35,7 +33,7 @@
 
 
                             </div>
-                            <div class="clearfix"></div><br/>
+                            <div class="clearfix"></div>
                             <div class="form-group">
                                 <label for="status" class=" control-label col-md-4">
                                     {!! SiteHelpers::activeLang('Status', (isset($fields['status']['language'])? $fields['status']['language'] : array())) !!}
@@ -44,7 +42,7 @@
                                     <select name='status_id'  class='select2 form-control' id="status"></select>
                                 </div>
 
-                            </div><br/>
+                            </div>
 <div class="hideshow">
 
                                 <div class="form-group">
@@ -53,7 +51,7 @@
                                     <div class="col-md-8">
                                         <input type="date" name="date_down" id="date_down" class="form-control" value=""/>
                                     </div>
-                                </div><br/>
+                                </div>
 
                                 <div class="form-group">
                                     <label for="status" class=" control-label col-md-4">
@@ -74,11 +72,10 @@
 
                             </div>
 
-                            <div class="clearfix" style="border-bottom: 1px solid #a9a9a9;padding: 30px"></div><br/>
-
+                            <div class="clearfix" style="border-bottom: 1px solid #a9a9a9;padding: 10px"></div><br/>
                             <input type="submit" class="btn btn-large btn-success col-md-offset-4 col-md-4" name="submit" id="submit" value="Save"/>
 
-                            <div class="clearfix" style="border-bottom: 1px solid #a9a9a9;padding: 30px"></div><br/>
+                            <div class="clearfix" style="border-bottom: 1px solid #a9a9a9;padding: 20px"></div><br/>
                             <div class="form-group  " >
                                 <label for="Serial Number" class=" control-label col-md-4 text-left">
                                     {!! SiteHelpers::activeLang('Serial Number', (isset($fields['serial']['language'])? $fields['serial']['language'] : array())) !!}
@@ -87,7 +84,7 @@
                                     <input type="text" name="serial" value="{{ $row[0]->serial }}" class="form-control" @if(empty($row[0]->serial))) disabled @endif placeholder="serial #"/>
                                 </div>
 
-                            </div><br/><br/>
+                            </div>
                             <div class="form-group  " >
                                 <label for="Alt. Version Signage" class=" control-label col-md-4 text-left">
                                     {!! SiteHelpers::activeLang('Alt. Version/Signage', (isset($fields['serial']['language'])? $fields['serial']['language'] : array())) !!}
@@ -97,7 +94,7 @@
 
                                 </div>
 
-                            </div> <br/><br/>
+                            </div>
                             <div class="form-group  " >
                                 <label for="game_name" class=" control-label col-md-4">
                                     {!! SiteHelpers::activeLang('Game Converted from:', (isset($fields['prev_game_name']['language'])? $fields['prev_game_name']['language'] : array())) !!}
@@ -105,9 +102,7 @@
                                 <div class="col-md-8">
                                     <input type="text" name="game_name" id="game_name"  class="form-control" value="{{ $row[0]->game_name }}" />
                                 </div>
-
                             </div>
-                            <br/><br/>
                             <div class="form-group  " >
                                 <label for="Game Title" class=" control-label col-md-4">
                                     {!! SiteHelpers::activeLang('Game Title', (isset($fields['game_title']['language'])? $fields['game_title']['language'] : array())) !!}
@@ -155,7 +150,7 @@
 
                             </div>
                             <div class="clearfix"></div>
-                            <div class="form-group  " >
+                            <div class="form-group " >
                                 <label for="Current Location" class=" control-label col-md-4">
                                     {!! SiteHelpers::activeLang('Current Location', (isset($fields['serial']['language'])? $fields['serial']['language'] : array())) !!}
                                 </label>
@@ -170,7 +165,7 @@
                                     {!! SiteHelpers::activeLang('Previous Location', (isset($fields['']['language'])? $fields['serial']['language'] : array())) !!}
                                 </label>
                                 <div class="col-md-8">
-                                    {{ $row[0]->prev_location_id }} {{ "|" }}  {{ $row[0]->previous_location }}
+                                    {{ $row[0]->previous_location }}
                                 </div>
 
                             </div>
@@ -227,7 +222,7 @@
                             </div>
                         </div>
                     </div>
-        <div class="row" style="background: #FFF;padding:20px auto;box-shadow: 1px 1px 5px gray;margin:50px auto">
+        <div class="row" style="background: #FFF;padding:20px auto;box-shadow: 1px 1px 5px gray;margin:30px auto">
         <div class="col-md-12">
             <h2>Game Service History</h2>
             <div class="table-responsive">

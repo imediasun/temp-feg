@@ -1637,9 +1637,167 @@ return $configs;
         }
 
     }
-    static function showLink($value,$link)
+    static function showLink()
     {
 
+
+    }
+    public  function validate()
+    {
+        $cols='U.id,
+						   U.user_name,
+						   U.first_name,
+						   U.last_name,
+						   U.email,
+						   U.user_level,
+						   U.company_id,
+						   U.loc_1,
+						   U.loc_2,
+						   U.loc_3,
+						   U.loc_4,
+						   U.loc_5,
+						   U.loc_6,
+						   U.loc_7,
+						   U.loc_8,
+						   U.loc_9,
+						   U.loc_10,
+						   U.get_locations_by_region,
+						   U.email_2,
+						   U.primary_phone,
+						   U.secondary_phone,
+						   U.street,
+						   U.city,
+						   U.state,
+						   U.zip,
+						   U.reg_id,
+						   U.restricted_mgr_email,
+						   U.restricted_user_email';
+
+
+       /* if(!empty($google_email))
+        {
+            $this->db->from('users U');
+            $this->db->where('U.email', $google_email);
+            $this->db->where('U.active', 1);
+            $query = $this->db->get();
+        }*/
+//        else
+  //      {
+            //$password = $this->input->post('password');
+            $row= \DB::Select($cols.'FROM users U WHERE U.id='.\Session::get('uid'));
+
+    //    }
+
+        if(count($row) == 1)
+        {
+            $data['is_logged_in'] = TRUE;
+            $data['last_url'] = $this->input->post('last_url');
+            $data['selected_location'] = $data['loc_1'];
+            $this->db->select('location_name_short');
+            $this->db->from('location');
+            $this->db->where('id', $data['loc_1']);
+            $locQuery = $this->db->get();
+
+            if($locQuery->num_rows == 1)
+            {
+                $locData = $locQuery->row_array();
+                $data['selected_location_name'] = $locData['location_name_short'];
+            }
+
+            if($data['user_level'] == 6 || $data['reg_id'] > 1) // IF USER IS DISTRICT MANAGER OR LOCATIONS ARE BASED ON REGION (TYPICALLY USED FOR MANY, ROUTE LOCATIONS)
+            {
+                if($data['user_level'] == 6)
+                {
+                    $distMgrQuery = $this->db->query( "SELECT DISTINCT GROUP_CONCAT(L.id) AS LocationIdList
+														 FROM location L
+														WHERE L.region_id IN(
+																SELECT R.id
+																  FROM region R
+																 WHERE R.dist_mgr_id =".$data['id']."
+																)
+														   OR L.id IN(".$data['loc_1'].",".$data['loc_2'].",".$data['loc_3'].",".$data['loc_4'].",".$data['loc_5'].",".$data['loc_6'].",".$data['loc_7'].",".$data['loc_8'].",".$data['loc_9'].",".$data['loc_10'].")
+													 	  AND L.active = 1
+													 ORDER BY L.id");
+
+                    foreach ($distMgrQuery->result() as $row)
+                    {
+                        $reg_loc_ids = $row->LocationIdList;
+                    }
+                }
+                else
+                {
+                    $locByRegQuery = $this->db->query("SELECT DISTINCT GROUP_CONCAT(L.id) AS LocationIdList
+														 FROM location L
+														WHERE L.region_id IN(".$data['reg_id'].")
+														   OR L.id IN(".$data['loc_1'].",".$data['loc_2'].",".$data['loc_3'].",".$data['loc_4'].",".$data['loc_5'].",".$data['loc_6'].",".$data['loc_7'].",".$data['loc_8'].",".$data['loc_9'].",".$data['loc_10'].")
+													      AND L.active = 1
+													    ORDER BY L.id");
+
+                    foreach ($locByRegQuery->result() as $row)
+                    {
+                        $reg_loc_ids = $row->LocationIdList;
+                    }
+                }
+            }
+            else
+            {
+                $reg_loc_ids = $data['loc_1'];
+                if(!empty($data['loc_2']))
+                {
+                    $reg_loc_ids = $reg_loc_ids.','.$data['loc_2'];
+                }
+                if(!empty($data['loc_3']))
+                {
+                    $reg_loc_ids = $reg_loc_ids.','.$data['loc_3'];
+                }
+                if(!empty($data['loc_4']))
+                {
+                    $reg_loc_ids = $reg_loc_ids.','.$data['loc_4'];
+                }
+                if(!empty($data['loc_5']))
+                {
+                    $reg_loc_ids = $reg_loc_ids.','.$data['loc_5'];
+                }
+                if(!empty($data['loc_6']))
+                {
+                    $reg_loc_ids = $reg_loc_ids.','.$data['loc_6'];
+                }
+                if(!empty($data['loc_7']))
+                {
+                    $reg_loc_ids = $reg_loc_ids.','.$data['loc_7'];
+                }
+                if(!empty($data['loc_8']))
+                {
+                    $reg_loc_ids = $reg_loc_ids.','.$data['loc_8'];
+                }
+                if(!empty($data['loc_9']))
+                {
+                    $reg_loc_ids = $reg_loc_ids.','.$data['loc_9'];
+                }
+                if(!empty($data['loc_10']))
+                {
+                    $reg_loc_ids = $reg_loc_ids.','.$data['loc_10'];
+                }
+            }
+
+            $data['reg_loc_ids'] = $reg_loc_ids;
+            if(!empty($google_email))
+            {
+                $data['login_type'] = 'google';
+            }
+            else
+            {
+                $data['login_type'] = 'standard';
+            }
+
+            $this->load->helper('date');
+            $update = array('last_login' => date('Y-m-d H:i:s', now()));
+            $this->db->where('id', $data['id']);
+            $this->db->update('users', $update);
+
+            $this->session->set_userdata($data);
+            return TRUE;
+        }
     }
 			
 }

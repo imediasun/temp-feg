@@ -10,11 +10,8 @@
 | and give it the controller to call when that URI is requested.
 |
 */
-Route::get('location/{id?}','LocationController@getIndex');
-
 Route::get('/', 'HomeController@index');
 Route::controller('home', 'HomeController');
-
 Route::controller('/user', 'UserController');
 include('pageroutes.php');
 include('moduleroutes.php');

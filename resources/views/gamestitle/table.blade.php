@@ -26,14 +26,14 @@
         <?php echo Form::open(array('url' => 'gamestitle/delete/', 'class' => 'form-horizontal', 'id' => 'SximoTable', 'data-parsley-validate' => ''));?>
         <div class="table-responsive">
             @if(count($rowData)>=1)
-                <table class="table table-striped  " id="{{ $pageModule }}Table">
+                <table class="table table-striped  " id="{{ $pageModule }}Table" style="table-layout: fixed;width:100%;">
                     <thead>
                     <tr>
                         <th width="20"> No</th>
 
-                        <th width="30"><input type="checkbox" class="checkall"/></th>
-                        <th>Image</th>
-                        <th>Upload Image</th>
+                        <th width="60"><input type="checkbox" class="checkall"/></th>
+                        <th width="100">Image</th>
+                        <th width="100">Upload Image</th>
                         @if($setting['view-method']=='expand')
                             <th></th> @endif
                         <?php foreach ($tableGrid as $t) :
@@ -45,10 +45,10 @@
                             endif;
                         endforeach; ?>
 
-                        <th>Upload Manual</th>
-                        <th>Upload Bulletin</th>
-                        <th>Manual</th>
-                        <th>Bulletin</th>
+                        <th width="100">Upload Manual</th>
+                        <th width="100">Upload Bulletin</th>
+                        <th width="100">Manual</th>
+                        <th width="100">Bulletin</th>
                         <th width="70"><?php echo Lang::get('core.btn_action');?></th>
                     </tr>
                     </thead>

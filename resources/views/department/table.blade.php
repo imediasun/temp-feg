@@ -21,7 +21,7 @@
         <thead>
 			<tr>
 				<th width="20"> No </th>
-				<th width="30"> <input type="checkbox" class="checkall" /></th>		
+				<th width="60"> <input type="checkbox" class="checkall" /></th>
 				@if($setting['view-method']=='expand') <th>  </th> @endif			
 				<?php foreach ($tableGrid as $t) :
 					if($t['view'] =='1'):
