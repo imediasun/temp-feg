@@ -23,4 +23,5 @@
                     Route::controller('pendingrequest', 'PendingrequestController');
                     Route::controller('tablecols', 'TablecolsController');
                     Route::controller('mylocationgame', 'MylocationgameController');
+                    Route::controller('merchandisebudget', 'MerchandisebudgetController');
                     ?>

@@ -13,7 +13,7 @@ class bottomgame extends topgame  {
 		parent::__construct();
 		
 	}
-	public static function getRows( $args )
+	public static function getRows( $args,$cond=null )
 	{
 		$table = with(new static)->table;
 		$key = with(new static)->primaryKey;

@@ -44,6 +44,7 @@ class ProductController extends Controller {
 
 	public function postData( Request $request)
 	{
+        $product_type=NULL;
         $module_id = \DB::table('tb_module')->where('module_name', '=', 'product')->pluck('module_id');
         $this->data['module_id'] = $module_id;
         if (Input::has('config_id')) {
@@ -74,11 +75,21 @@ class ProductController extends Controller {
 			'sort'		=> $sort ,
 			'order'		=> $order,
 			'params'	=> $filter,
-			'global'	=> (isset($this->access['is_global']) ? $this->access['is_global'] : 0 )
+			'global'	=> (isset($this->access['is_global']) ? $this->access['is_global'] : 0 ),
+
 		);
-		// Get Query 
-		$results = $this->model->getRows( $params );
-		$rows = $results['rows'];
+		// Get Query
+        if(Input::has('product_type'))
+        {
+            $product_type=Input::get('product_type');
+            $this->data['product_type_id']=$product_type;
+        }
+        else {
+           $product_type=NULL;
+            $this->data['product_type_id']=0;
+        }
+        $results = $this->model->getRows($params,$product_type);
+        $rows = $results['rows'];
 		foreach($rows as $index => $data)
 		{
 			$product_type = \DB::select("Select product_type FROM product_type WHERE id = ".$data->prod_type_id ."");
@@ -90,17 +101,20 @@ class ProductController extends Controller {
 		}
 		// Build pagination setting
 		$page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;	
-		$pagination = new Paginator($results['rows'], $results['total'], $params['limit']);	
-		$pagination->setPath('product/data');
+		$pagination = new Paginator($results['rows'], $results['total'], $params['limit']);
+
+            $pagination->setPath('product/data');
+
+
 		
 		$this->data['param']		= $params;
 		$this->data['rowData']		= $rows;
 		// Build Pagination 
 		$this->data['pagination']	= $pagination;
 		// Build pager number and append current param GET
-		$this->data['pager'] 		= $this->injectPaginate();	
+		$this->data['pager'] 		= $this->injectPaginate();
 		// Row grid Number 
-		$this->data['i']			= ($page * $params['limit'])- $params['limit']; 
+		$this->data['i']			= ($page * $params['limit'])- $params['limit'];
 		// Grid Configuration 
 		$this->data['tableGrid'] 	= $this->info['config']['grid'];
 		$this->data['tableForm'] 	= $this->info['config']['forms'];
@@ -109,7 +123,6 @@ class ProductController extends Controller {
 		$this->data['access']		= $this->access;
 		// Detail from master if any
 		$this->data['setting'] 		= $this->info['setting'];
-		
 		// Master detail link if any 
 		$this->data['subgrid']	= (isset($this->info['config']['subgrid']) ? $this->info['config']['subgrid'] : array());
         if ($this->data['config_id'] != 0 && !empty($config)) {
@@ -249,6 +262,60 @@ class ProductController extends Controller {
 		} 		
 
 	}
+    function getUpload($id = NULL)
+    {
+        $data['img'] = \DB::table('products')->where('id', $id)->pluck('img');
+        $data['return'] = "";
+        return view('product.upload', $data);
+    }
+
+    function postUpload(Request $request)
+    {
+
+        $files = array('img' => Input::file('img'));
+        // setting up rules
+        $rules = array('img' => 'required|mimes:jpeg,gif,png'); //mimes:jpeg,bmp,png and for max size max:10000
+        // doing the validation, passing post data, rules and the messages
+        $validator = Validator::make($files, $rules);
+        $id = Input::get('id');
+
+        if ($validator->fails()) {
+            // send back to the page with the input data and errors
+            return Redirect::to('product/upload/' . $id)->with('messagetext', \Lang::get('core.note_success'))->with('msgstatus', 'Please select an Image..')->withErrors($validator);;
+
+        } else {
+            $updates = array();
+            $file = $request->file('img');
+            $destinationPath = './uploads/products/';
+            $filename = $file->getClientOriginalName();
+            $extension = $file->getClientOriginalExtension(); //if you need extension of the file
+            $newfilename = $id . '.' . $extension;
+            $uploadSuccess = $request->file('img')->move($destinationPath, $newfilename);
+            if ($uploadSuccess) {
+                $updates['img'] = $newfilename;
+            }
+            $this->model->insertRow($updates, $id);
+            return Redirect::to('product/upload/' . $id)->with('messagetext', \Lang::get('core.note_success'))->with('msgstatus', 'success');
+
+        }
+
+
+    }
+    function postListcsv(Request $request)
+    {
+
+        $vendor_id=$request->vendor_id;
+        $rows= $this->model->getVendorPorductlist($vendor_id);
+        $fields = array('Vendor', 'Description', 'Sku', 'Unit Price', 'Item Per Case', 'Case Price', 'Ticket Value','Order Type','Product Type','INACTIVE');
+        $this->data['pageTitle'] = 'ProductList_';
+        $content = array(
+            'fields' => $fields,
+            'rows' => $rows,
+            'type' => 'move',
+            'title' => $this->data['pageTitle'],
+        );
+        return view('product.csvhistory', $content);
+    }
 
 
 }

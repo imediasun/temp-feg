@@ -41,9 +41,9 @@
 					{!! SiteHelpers::activeLang('Vendor Id', (isset($fields['vendor_id']['language'])? $fields['vendor_id']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  <select name='vendor_id' rows='5' id='vendor_id' class='select2 '   ></select> 
-					 </div> 
-					 <div class="col-md-2">
+                          <select name='vendor_id' rows='5' id='vendor_id' class='select2 '   ></select>
+                      </div>
+                      <div class="col-md-2">
 					 	
 					 </div>
 				  </div> 					

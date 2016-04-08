@@ -101,7 +101,7 @@ class reports extends Sximo  {
         return \DB::select(self::getLocationNotRespondingQuery($startDate, $endDate, $locationId, $debitTypeId, $todayText));
     }
 
-	public static function queryWhere(  ){
+	public static function queryWhere(){
 		
 		return "  ";
 	}
@@ -110,7 +110,7 @@ class reports extends Sximo  {
 		return "  ";
 	}
 
-	public static function getRows( $args )
+	public static function gettRows( $args, $cond=null )
 	{
 		$table = with(new static)->table;
 		$key = with(new static)->primaryKey;

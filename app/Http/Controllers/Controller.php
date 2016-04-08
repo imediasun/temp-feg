@@ -478,13 +478,18 @@ abstract class Controller extends BaseController {
 		$order 	= (isset($_GET['order']) 	? $_GET['order'] : '');
 		$rows 	= (isset($_GET['rows']) 	? $_GET['rows'] : '');
 		$search 	= (isset($_GET['search']) ? $_GET['search'] : '');
+        $product_type=(isset($_GET['product_type'])?$_GET['product_type']: '');
+        $budget_year=(isset($_GET['budget_year'])?$_GET['budget_year']: '');
 
 		$appends = array();
 		if($sort!='') 	$appends['sort'] = $sort; 
 		if($order!='') 	$appends['order'] = $order; 
 		if($rows!='') 	$appends['rows'] = $rows; 
-		if($search!='') $appends['search'] = $search; 
-		
+		if($search!='') $appends['search'] = $search;
+        if($product_type!='' || $product_type != NULL)
+        $appends['product_type']=$product_type;
+        if($budget_year!='' || $budget_year != NULL)
+            $appends['budget_year']=$budget_year;
 		return $appends;
 			
 	}	

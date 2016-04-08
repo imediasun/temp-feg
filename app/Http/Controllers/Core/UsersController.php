@@ -276,6 +276,45 @@ class UsersController extends Controller
         $this->data['id'] = $id;
         return view('core.users.form', $this->data);
     }
+    function getUpload($id = NULL)
+    {
+        $data['profile_img'] = \DB::table('users')->where('id', $id)->pluck('avatar');
+        $data['return'] = "";
+        return view('core.users.upload', $data);
+    }
+
+    function postUpload1(Request $request)
+    {
+
+        $files = array('image' => Input::file('avatar'));
+        // setting up rules
+        $rules = array('image' => 'required|mimes:jpeg,gif,png'); //mimes:jpeg,bmp,png and for max size max:10000
+        // doing the validation, passing post data, rules and the messages
+        $validator = Validator::make($files, $rules);
+        $id = Input::get('id');
+        if ($validator->fails()) {
+            // send back to the page with the input data and errors
+            return Redirect::to('core/users/upload/' . $id)->with('messagetext', \Lang::get('core.note_success'))->with('msgstatus', 'Please select an Image..')->withErrors($validator);;
+
+        } else {
+            $updates = array();
+            $file = $request->file('avatar');
+            $destinationPath = './uploads/users/';
+            $filename = $file->getClientOriginalName();
+            $extension = $file->getClientOriginalExtension(); //if you need extension of the file
+            $newfilename = $id . '.' . $extension;
+            $uploadSuccess = $request->file('avatar')->move($destinationPath, $newfilename);
+            if ($uploadSuccess) {
+                $updates['avatar'] = $newfilename;
+            }
+            $this->model->insertRow($updates, $id);
+            $return = 'core/users/upload/' . $id;
+            return Redirect::to('core/users/upload/' . $id)->with('messagetext', \Lang::get('core.note_success'))->with('msgstatus', 'success');
+
+        }
+
+
+    }
 
     public function getShow($id = null)
     {

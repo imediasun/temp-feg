@@ -25,7 +25,11 @@
                                     <input type="checkbox" @if($row[0]->sold==1) checked @endif  name="sold" value="1" id="sold" style="vertical-align: middle;margin-top:9px;"/>
                                 </div>
                                 <div class="col-md-5">
-                                    <input type="date" name="date_sold" class="form-control" id="date_sold" placeholder="Date Sold" value="{{ $row[0]->date_sold }}"/>
+                                    <div class="input-group m-b" style="width:150px !important;">
+                                        {!! Form::text('date_sold', $row[0]->date_sold,array('class'=>'form-control date')) !!}
+                                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                    </div>
+
                                 </div>
                                 <div class="col-md-5">
                                     <input type="text" name="sold_to" class="form-control" id="sold_to" placeholder="Sold To" value="{{ $row[0]->sold_to }}"/>
@@ -49,7 +53,11 @@
                                     <label for="down_date" class=" control-label col-md-4">
                                         Date Game Down    </label>
                                     <div class="col-md-8">
-                                        <input type="date" name="date_down" id="date_down" class="form-control" value=""/>
+                                        <div class="input-group m-b" style="width:150px !important;">
+                                            {!! Form::text('date_down', "",array('class'=>'form-control date')) !!}
+                                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                        </div>
+
                                     </div>
                                 </div>
 
@@ -306,6 +314,12 @@
 @endif
 
 <script>
+    $('.date').datepicker({format:'yyyy-mm-dd',autoClose:true})
+    $('.datetime').datetimepicker({format: 'yyyy-mm-dd hh:ii:ss'});
+    $('input[type="checkbox"],input[type="radio"]').iCheck({
+        checkboxClass: 'icheckbox_square-green',
+        radioClass: 'iradio_square_green'
+    });
     $(document).ready(function() {
         $(".nogallary a.fancybox").removeAttr("rel");
         $("#status").jCombo("{{ URL::to('mylocationgame/comboselect?filter=game_status:id:game_status') }}",

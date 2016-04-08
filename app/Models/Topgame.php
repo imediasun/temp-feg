@@ -200,7 +200,7 @@ class topgame extends Sximo  {
 		return $selectQuery;
 	}
 
-	public static function getRows( $args )
+	public static function getRows( $args,$cond=null )
 	{
 		$table = with(new static)->table;
 		$key = with(new static)->primaryKey;

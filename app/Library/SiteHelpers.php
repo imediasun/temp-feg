@@ -1152,8 +1152,9 @@ public static function alphaID($in, $to_num = false, $pad_up = false, $passKey =
 	
 	public static function showUploadedFile($file,$path , $width = 50,$circle=true) {
        $files =  public_path(). $path . $file ;
+
 		if(file_exists($files ) && $file !="") {
-		//	echo $files ;
+
 			$info = pathinfo($files);	
 			if($info['extension'] == "jpg" || $info['extension'] == "jpeg" ||  $info['extension'] == "png" || $info['extension'] == "gif" || $info['extension'] == "JPG") 
 			{
@@ -1798,6 +1799,11 @@ return $configs;
             $this->session->set_userdata($data);
             return TRUE;
         }
+    }
+    static function getBudgetYears()
+    {
+        $row=\DB::select('SELECT YEAR(budget_date) AS year FROM location_budget GROUP BY YEAR(budget_date)');
+        return $row;
     }
 			
 }

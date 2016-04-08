@@ -5,7 +5,7 @@ use Illuminate\Database\Eloquent\Model;
 class Sximo extends Model {
 
 
-	public static function getRows( $args )
+	public static function getRows( $args,$cond=null)
 	{
        $table = with(new static)->table;
 	   $key = with(new static)->primaryKey;
@@ -30,10 +30,20 @@ class Sximo extends Model {
 		// End Update permission global / own access new ver 1.1
 
 		$rows = array();
-	    $result = \DB::select( self::querySelect() . self::queryWhere(). "
-				{$params} ". self::queryGroup() ." {$orderConditional}  {$limitConditional} ");
+        $select=self::querySelect();
 
-		if($key =='' ) { $key ='*'; } else { $key = $table.".".$key ; }	
+        if($cond!=null )
+        {
+            $select.=self::queryWhere($cond);
+        }
+        else
+        {
+            $select.=self::queryWhere();
+        }
+        $result=\DB::select($select." {$params} ". self::queryGroup() ." {$orderConditional}  {$limitConditional} ");
+
+
+        if($key =='' ) { $key ='*'; } else { $key = $table.".".$key ; }
 		$counter_select = preg_replace( '/[\s]*SELECT(.*)FROM/Usi', 'SELECT count('.$key.') as total FROM', self::querySelect() );
 		//total query becomes too huge
 		if($table == "orders")
@@ -42,7 +52,7 @@ class Sximo extends Model {
 		}
 		else
 		{
-			$total = \DB::select( self::querySelect() . self::queryWhere(). "
+			$total = \DB::select( $select. "
 				{$params} ". self::queryGroup() ." {$orderConditional}  ");
 			$total = count($total);
 		}
@@ -408,5 +418,27 @@ function moveHistory()
     AND G.sale_pending = 0 AND G.status_id!=3 AND G.sold = 0 ORDER BY T.game_title ASC, G.location_id");
         return $rows;
     }
+    function getVendorPorductlist($vendor_id)
+    {
+        $row=\DB::Select("SELECT V.vendor_name AS Vendor,
+									 P.vendor_description AS Description,
+									 P.sku,
+									 ROUND(P.case_price/P.num_items,2) AS Unit_Price,
+									 P.num_items AS Items_Per_Case,
+									 P.case_price AS Case_Price,
+									 P.ticket_value AS Ticket_Value,
+									 O.order_type AS Order_Type,
+									 T.type_description AS Product_Type,
+									 Y.yesno AS INACTIVE
+								FROM products P
+						   LEFT JOIN vendor V ON V.id = P.vendor_id
+						   LEFT JOIN product_type T ON T.id = P.prod_sub_type_id
+						   LEFT JOIN order_type O ON O.id = P.prod_type_id
+						   LEFT JOIN yes_no Y on Y.id = P.inactive
+                           WHERE P.vendor_id=$vendor_id
+							ORDER BY P.vendor_description");
+        return $row;
+    }
+
 
 }

@@ -21,7 +21,7 @@
                         </select>
                     @endif
                 @endif
-	</div>
+                </div>
 	<div class="col-md-4 ">
 		@if($access['is_excel'] ==1)
 		<div class="pull-right">
@@ -33,8 +33,36 @@
 		@endif
 	</div>
 </div>
+<div class="row">
+    <div class="col-md-3"><select name='product_type' rows='5' id='product_type' class='select3'></select></div>
+    <div class="col-md-6">
+        {!! Form::open(array('url'=>'product/listcsv', 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ')) !!}
+        <div class="col-md-2"><h3> Export </h3></div>
+        <div class="col-md-6">
+             <select name='vendor_id' rows='5' id='vendor_id' class='select3'></select>
+         </div>
+        <div class="col-md-2">
+             <button type="submit" class="btn btn-primary">Export To CSV</button>
+        </div>
+            {!! Form::close() !!}
+    </div>
+</div><br/>
 <script>
+    $(document).ready(function(){
+        $("#product_type").jCombo("{{ URL::to('product/comboselect?filter=product_type:id:product_type') }}",
+                {  selected_value : '{{ $product_type_id }}',initial_text:'--- Select Product Type ---'});
+        $("#vendor_id").jCombo("{{ URL::to('product/comboselect?filter=vendor:id:vendor_name') }}",
+                {  selected_value : '',initial_text:'--- Select Vendor ---'});
+        $(".select3").select2({ width:"98%"});
+    });
     $("#col-config").on('change',function(){
         reloadData('#{{ $pageModule }}','{{ $pageModule }}/data?config_id='+$("#col-config").val());
     });
+  $("#product_type").click(function()
+  {
+     var val=$("#product_type").val();
+      if(val) {
+          reloadData('#{{ $pageModule }}','{{ $pageModule }}/data?product_type='+val);
+      }
+  });
 </script>

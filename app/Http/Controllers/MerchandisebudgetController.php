@@ -1,83 +1,73 @@
 <?php namespace App\Http\Controllers;
 
 use App\Http\Controllers\controller;
-use App\Models\Reports;
+use App\Models\Merchandisebudget;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Validator, Input, Redirect ; 
 
-class ReportsController extends Controller {
+class MerchandisebudgetController extends Controller {
 
 	protected $layout = "layouts.main";
 	protected $data = array();	
-	public $module = 'reports';
+	public $module = 'merchandisebudget';
 	static $per_page	= '10';
 	
 	public function __construct() 
 	{
 		parent::__construct();
-		$this->model = new Reports();
+		$this->model = new Merchandisebudget();
 		
 		$this->info = $this->model->makeInfo( $this->module);
 		$this->access = $this->model->validAccess($this->info['id']);
-	
+
 		$this->data = array(
 			'pageTitle'			=> 	$this->info['title'],
 			'pageNote'			=>  $this->info['note'],
-			'pageModule'		=> 'reports',
-			'pageUrl'			=>  url('reports'),
-			'return' 			=> 	self::returnUrl()	
+			'pageModule'		=> 'merchandisebudget',
+			'pageUrl'			=>  url('merchandisebudget'),
+			'return' 			=> 	self::returnUrl()
 		);
 		
-			
-				
-	} 
-	
-	public function getIndex()
-	{
-		if($this->access['is_view'] ==0) 
-			return Redirect::to('dashboard')->with('messagetext',\Lang::get('core.note_restric'))->with('msgstatus','error');
-				
-		$this->data['access']		= $this->access;	
-		return view('reports.index',$this->data);
+
+
 	}
 
-	public function getSearch( $mode = 'ajax')
+	public function getIndex()
 	{
+		if($this->access['is_view'] ==0)
+			return Redirect::to('dashboard')->with('messagetext',\Lang::get('core.note_restric'))->with('msgstatus','error');
 
-		$this->data['tableForm'] 	= $this->info['config']['forms'];
-		$this->data['tableGrid'] 	= $this->info['config']['grid'];
-		$this->data['searchMode'] 	= $mode ;
-		return view('feg_common.search',$this->data);
-
+		$this->data['access']		= $this->access;
+		return view('merchandisebudget.index',$this->data);
 	}
 
 	public function postData( Request $request)
 	{
 
-        $module_id = \DB::table('tb_module')->where('module_name', '=', 'reports')->pluck('module_id');
+        $module_id = \DB::table('tb_module')->where('module_name', '=', 'merchandisebudget')->pluck('module_id');
         $this->data['module_id'] = $module_id;
         if (Input::has('config_id')) {
-            $config_id = Input::get('config_id');
+        $config_id = Input::get('config_id');
         } elseif (\Session::has('config_id')) {
-            $config_id = \Session::get('config_id');
+        $config_id = \Session::get('config_id');
         } else {
-            $config_id = 0;
+        $config_id = 0;
         }
         $this->data['config_id'] = $config_id;
         $config = $this->model->getModuleConfig($module_id, $config_id);
         if(!empty($config))
         {
-            $this->data['config'] = \SiteHelpers::CF_decode_json($config[0]->config);
-            \Session::put('config_id', $config_id);
+        $this->data['config'] = \SiteHelpers::CF_decode_json($config[0]->config);
+        \Session::put('config_id', $config_id);
         }
-		$sort = (!is_null($request->input('sort')) ? $request->input('sort') : $this->info['setting']['orderby']); 
+		$sort = (!is_null($request->input('sort')) ? $request->input('sort') : $this->info['setting']['orderby']);
 		$order = (!is_null($request->input('order')) ? $request->input('order') : $this->info['setting']['ordertype']);
-		// End Filter sort and order for query 
-		// Filter Search for query		
+		// End Filter sort and order for query
+		// Filter Search for query
 		$filter = (!is_null($request->input('search')) ? $this->buildSearch() : '');
 
-		
+
 		$page = $request->input('page', 1);
 		$params = array(
 			'page'		=> $page ,
@@ -88,42 +78,41 @@ class ReportsController extends Controller {
 			'global'	=> (isset($this->access['is_global']) ? $this->access['is_global'] : 0 )
 		);
 		// Get Query
-
-		$results = $this->model->getRows( $params );
-		
+        $budget_year=isset($_GET['budget_year'])?Input::get('budget_year'):date('Y');
+		$results = $this->model->getRows( $params,$budget_year );
 		// Build pagination setting
-		$page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;	
-		$pagination = new Paginator($results['rows'], $results['total'], $params['limit']);	
-		$pagination->setPath('reports/data');
-		
+		$page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;
+		$pagination = new Paginator($results['rows'], $results['total'], $params['limit']);
+		$pagination->setPath('merchandisebudget/data');
 		$this->data['param']		= $params;
 		$this->data['rowData']		= $results['rows'];
-		// Build Pagination 
+		// Build Pagination
 		$this->data['pagination']	= $pagination;
 		// Build pager number and append current param GET
-		$this->data['pager'] 		= $this->injectPaginate();	
-		// Row grid Number 
-		$this->data['i']			= ($page * $params['limit'])- $params['limit']; 
-		// Grid Configuration 
+		$this->data['pager'] 		= $this->injectPaginate();
+		// Row grid Number
+		$this->data['i']			= ($page * $params['limit'])- $params['limit'];
+		// Grid Configuration
 		$this->data['tableGrid'] 	= $this->info['config']['grid'];
 		$this->data['tableForm'] 	= $this->info['config']['forms'];
-		$this->data['colspan'] 		= \SiteHelpers::viewColSpan($this->info['config']['grid']);		
+		$this->data['colspan'] 		= \SiteHelpers::viewColSpan($this->info['config']['grid']);
 		// Group users permission
 		$this->data['access']		= $this->access;
 		// Detail from master if any
 		$this->data['setting'] 		= $this->info['setting'];
-		
-		// Master detail link if any 
+
+		// Master detail link if any
 		$this->data['subgrid']	= (isset($this->info['config']['subgrid']) ? $this->info['config']['subgrid'] : array());
         if ($this->data['config_id'] != 0 && !empty($config)) {
-            $this->data['tableGrid'] = \SiteHelpers::showRequiredCols($this->data['tableGrid'], $this->data['config']);
+        $this->data['tableGrid'] = \SiteHelpers::showRequiredCols($this->data['tableGrid'], $this->data['config']);
         }
-		// Render into template
-		return view('reports.table',$this->data);
+        $this->data['budget_year']=$budget_year;
+// Render into template
+		return view('merchandisebudget.table',$this->data);
 
 	}
 
-			
+
 	function getUpdate(Request $request, $id = null)
 	{
 
@@ -131,110 +120,110 @@ class ReportsController extends Controller {
 		{
 			if($this->access['is_add'] ==0 )
 			return Redirect::to('dashboard')->with('messagetext',\Lang::get('core.note_restric'))->with('msgstatus','error');
-		}	
-		
+		}
+
 		if($id !='')
 		{
 			if($this->access['is_edit'] ==0 )
 			return Redirect::to('dashboard')->with('messagetext',\Lang::get('core.note_restric'))->with('msgstatus','error');
-		}				
-				
+		}
+
 		$row = $this->model->find($id);
 		if($row)
 		{
 			$this->data['row'] 		=  $row;
 		} else {
-			$this->data['row'] 		= $this->model->getColumnTable('location'); 
+			$this->data['row'] 		= $this->model->getColumnTable('location_budget');
 		}
 		$this->data['setting'] 		= $this->info['setting'];
 		$this->data['fields'] 		=  \AjaxHelpers::fieldLang($this->info['config']['forms']);
 		
 		$this->data['id'] = $id;
 
-		return view('reports.form',$this->data);
-	}	
+		return view('merchandisebudget.form',$this->data);
+	}
 
 	public function getShow( $id = null)
 	{
-	
-		if($this->access['is_detail'] ==0) 
+
+		if($this->access['is_detail'] ==0)
 			return Redirect::to('dashboard')
 				->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus','error');
-					
+
 		$row = $this->model->getRow($id);
 		if($row)
 		{
 			$this->data['row'] =  $row;
 		} else {
-			$this->data['row'] = $this->model->getColumnTable('location'); 
+			$this->data['row'] = $this->model->getColumnTable('location_budget');
 		}
 		
 		$this->data['id'] = $id;
 		$this->data['access']		= $this->access;
 		$this->data['setting'] 		= $this->info['setting'];
 		$this->data['fields'] 		= \AjaxHelpers::fieldLang($this->info['config']['forms']);
-		return view('reports.view',$this->data);	
-	}	
+		return view('merchandisebudget.view',$this->data);
+	}
 
 
 	function postCopy( Request $request)
 	{
-		
-	    foreach(\DB::select("SHOW COLUMNS FROM location ") as $column)
+
+	    foreach(\DB::select("SHOW COLUMNS FROM location_budget ") as $column)
         {
 			if( $column->Field != 'id')
 				$columns[] = $column->Field;
         }
 		$toCopy = implode(",",$request->input('ids'));
-		
-				
-		$sql = "INSERT INTO location (".implode(",", $columns).") ";
-		$sql .= " SELECT ".implode(",", $columns)." FROM location WHERE id IN (".$toCopy.")";
+
+
+		$sql = "INSERT INTO location_budget (".implode(",", $columns).") ";
+		$sql .= " SELECT ".implode(",", $columns)." FROM location_budget WHERE id IN (".$toCopy.")";
 		\DB::insert($sql);
 		return response()->json(array(
 			'status'=>'success',
 			'message'=> \Lang::get('core.note_success')
-		));	
-	}		
+		));
+	}
 
 	function postSave( Request $request, $id =0)
 	{
-		
+
 		$rules = $this->validateForm();
-		$validator = Validator::make($request->all(), $rules);	
+		$validator = Validator::make($request->all(), $rules);
 		if ($validator->passes()) {
-			$data = $this->validatePost('location');
-			
+			$data = $this->validatePost('location_budget');
+
 			$id = $this->model->insertRow($data , $request->input('id'));
 			
 			return response()->json(array(
 				'status'=>'success',
 				'message'=> \Lang::get('core.note_success')
-				));	
-			
+				));
+
 		} else {
 
 			$message = $this->validateListError(  $validator->getMessageBag()->toArray() );
 			return response()->json(array(
 				'message'	=> $message,
 				'status'	=> 'error'
-			));	
-		}	
-	
-	}	
+			));
+		}
+
+	}
 
 	public function postDelete( Request $request)
 	{
 
-		if($this->access['is_remove'] ==0) {   
+		if($this->access['is_remove'] ==0) {
 			return response()->json(array(
 				'status'=>'error',
 				'message'=> \Lang::get('core.note_restric')
 			));
 			die;
 
-		}		
-		// delete multipe rows 
+		}
+		// delete multipe rows
 		if(count($request->input('ids')) >=1)
 		{
 			$this->model->destroy($request->input('ids'));
@@ -249,8 +238,8 @@ class ReportsController extends Controller {
 				'message'=> \Lang::get('core.note_error')
 			));
 
-		} 		
+		}
 
-	}			
+	}
 
 }
