@@ -480,6 +480,7 @@ abstract class Controller extends BaseController {
 		$search 	= (isset($_GET['search']) ? $_GET['search'] : '');
         $product_type=(isset($_GET['product_type'])?$_GET['product_type']: '');
         $budget_year=(isset($_GET['budget_year'])?$_GET['budget_year']: '');
+        $order_type=(isset($_GET['order_type'])?$_GET['order_type']: '');
 
 		$appends = array();
 		if($sort!='') 	$appends['sort'] = $sort; 
@@ -490,6 +491,8 @@ abstract class Controller extends BaseController {
         $appends['product_type']=$product_type;
         if($budget_year!='' || $budget_year != NULL)
             $appends['budget_year']=$budget_year;
+        if($order_type!='ALL' || $order_type != NULL)
+            $appends['order_type']=$order_type;
 		return $appends;
 			
 	}	

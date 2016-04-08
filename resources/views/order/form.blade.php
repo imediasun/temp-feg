@@ -8,7 +8,8 @@
 	</div>
 
 	<div class="sbox-content"> 
-@endif	
+@endif
+
 			{!! Form::open(array('url'=>'order/save/'.SiteHelpers::encryptID($row['id']), 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'orderFormAjax')) !!}
 			<div class="col-md-12">
 						<fieldset><legend> FEG order</legend>
@@ -31,10 +32,10 @@
 					<div class="col-md-6">
 					  
 				<div class="input-group m-b" style="width:150px !important;">
-					{!! Form::text('date_ordered', $row['date_ordered'],array('class'=>'form-control date')) !!}
-					<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-				</div> 
-					 </div> 
+                            {!! Form::text('date_ordered', $row['date_ordered'],array('class'=>'form-control date')) !!}
+                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                        </div>
+                    </div>
 					 <div class="col-md-2">
 					 	
 					 </div>
@@ -163,8 +164,8 @@
 @endif	
 
 	
-</div>	
-			 
+
+
 <script type="text/javascript">
 $(document).ready(function() { 
 	

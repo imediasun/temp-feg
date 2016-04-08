@@ -1,4 +1,5 @@
-<?php usort($tableGrid, "SiteHelpers::_sort"); ?>
+<?php usort($tableGrid, "SiteHelpers::_sort");
+?>
 <div class="sbox">
 	<div class="sbox-title"> 
 		<h5> <i class="fa fa-table"></i> </h5>
@@ -12,7 +13,7 @@
 	</div>
 	<div class="sbox-content">
 
-        @include( $pageModule.'/toolbar',['colconfigs' => SiteHelpers::getRequiredConfigs($module_id)])
+        @include( $pageModule.'/toolbar',['colconfigs' => SiteHelpers::getRequiredConfigs($module_id),'order_type'=>$order_selected])
 
 	 <?php echo Form::open(array('url'=>'order/delete/', 'class'=>'form-horizontal' ,'id' =>'SximoTable'  ,'data-parsley-validate'=>'' )) ;?>
 <div class="table-responsive">	
@@ -21,7 +22,10 @@
         <thead>
 			<tr>
 				<th width="20"> No </th>
-				<th width="30"> <input type="checkbox" class="checkall" /></th>		
+				<th width="60"> <input type="checkbox" class="checkall" /></th>
+                @if($order_selected=='OPEN')
+                <th width="100">Remove</th>
+                @endif
 				@if($setting['view-method']=='expand') <th>  </th> @endif			
 				<?php foreach ($tableGrid as $t) :
 					if($t['view'] =='1'):
@@ -63,7 +67,10 @@
            		?>
                 <tr class="editable" id="form-{{ $row->id }}">
 					<td class="number"> <?php echo ++$i;?>  </td>
-					<td ><input type="checkbox" class="ids" name="ids[]" value="<?php echo $row->id ;?>" />  </td>					
+					<td ><input type="checkbox" class="ids" name="ids[]" value="<?php echo $row->id ;?>" />  </td>
+                    @if($order_selected=='OPEN')
+                        <td><a href="{{ URL::to('order/removalrequest/'.$row->po_number)}}">Request Removal</a></td>
+                    @endif
 					@if($setting['view-method']=='expand')
 					<td><a href="javascript:void(0)" class="expandable" rel="#row-{{ $row->id }}" data-url="{{ url('order/show/'.$id) }}"><i class="fa fa-plus " ></i></a></td>								
 					@endif			
