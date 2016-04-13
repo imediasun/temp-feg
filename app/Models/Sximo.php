@@ -50,7 +50,7 @@ class Sximo extends Model {
 		//total query becomes too huge
 		if($table == "orders")
 		{
-			$total = 2000;
+			$total = 20000;
 		}
 		else
 		{
@@ -379,6 +379,9 @@ $row=\DB::table('game_service_history')
     }
 function moveHistory()
 {
+
+// of course to revert the fetch mode you need to set it again
+
     $row=\DB::select('SELECT CONCAT(A.id," | ",IF(A.test_piece = 1,CONCAT("**TEST** ",T.game_title),T.game_title)) AS Game,
 										 CONCAT(G.from_loc," | ", L1.location_name_short) AS from_location,
 										 U1.username AS from_name,
@@ -439,6 +442,116 @@ function moveHistory()
 						   LEFT JOIN yes_no Y on Y.id = P.inactive
                            WHERE P.vendor_id=$vendor_id
 							ORDER BY P.vendor_description");
+        return $row;
+    }
+    function getOrderData($order_id)
+    {
+        \DB::setFetchMode(\PDO::FETCH_ASSOC);
+        $row=\DB::select('SELECT U1.first_name,
+										  U1.last_name,
+										  U1.email,
+										  C.company_name_short,
+										  C.company_name_long,
+										  O.date_ordered,
+										  O.order_type_id,
+										  L.location_name_short AS loc_name_short,
+										  L.id AS loc_id,
+										  L.loading_info,
+										  L.loc_ship_to AS loc_ship_to,
+										  U2.email AS loc_contact_email,
+										  U3.email AS loc_merch_contact_email,
+										  V.vendor_name,
+										  V.street1 AS vend_street1,
+										  V.city AS vend_city,
+										  V.state AS vend_state,
+										  V.zip AS vend_zip,
+										  V.contact AS vend_contact,
+										  V.email AS vend_email,
+										  O.order_description,
+										  O.order_total,
+										  O.po_number,
+										  O.alt_address,
+										  F.freight_type,
+										  O.new_format,
+										  O.po_notes
+								     FROM orders O
+								LEFT JOIN company C ON C.id = O.company_id
+								LEFT JOIN location L ON L.id = O.location_id
+								LEFT JOIN users U1 ON U1.id = O.user_id
+								LEFT JOIN users U2 ON U2.id = L.contact_id
+								LEFT JOIN users U3 ON U3.id = L.merch_contact_id
+								LEFT JOIN vendor V ON V.id = O.vendor_id
+								LEFT JOIN freight F ON F.id = O.freight_id
+								    WHERE O.id='.$order_id);
+        $alt_address=$row[0]['alt_address'];
+        if(empty($row[0]['loc_ship_to']))
+        {
+            $location_id = $row[0]['loc_id'];
+        }
+        else
+        {
+            $location_id = $row[0]['loc_ship_to'];
+            $row[0]['for_location'] = $row[0]['loc_name_short'];
+        }
+        if(empty($alt_address))
+        {
+            $query =\DB::select('SELECT location_name,
+											  street1,
+											  city,
+											  state,
+											  zip,
+											  attn
+										 FROM location
+										WHERE id='.$location_id);
+            $row[0]['po_location'] = $query[0]['location_name'];
+            $row[0]['po_street1_ship'] = $query[0]['street1'];
+            $row[0]['po_city_ship'] = $query[0]['city'];
+            $row[0]['po_state_ship'] = $query[0]['state'];
+            $row[0]['po_zip_ship'] = $query[0]['zip'];
+            $row[0]['po_attn'] = $query[0]['attn'];
+        }
+        else{
+            $pipe1 = strpos($alt_address,'|');
+            $pipe2 = strpos($alt_address,'|',$pipe1+1);
+            $pipe3 = strpos($alt_address,'|',$pipe2+1);
+
+            $location = substr($alt_address,0,$pipe1);
+            $street = substr($alt_address,$pipe1+1,$pipe2-$pipe1-1);
+            $city_state_zip = substr($alt_address,$pipe2+1,$pipe3-$pipe2-1);
+            $loading_info_new = substr($alt_address,$pipe3+1);
+
+            $row[0]['po_location'] = $location;
+            $row[0]['po_street1_ship'] = $street;
+            $row[0]['po_city_ship'] = $city_state_zip;
+            $row[0]['loading_info'] = $loading_info_new;
+            $row[0]['po_state_ship'] = '';
+            $row[0]['po_city_shippo_zip_ship'] = '';
+            $row[0]['po_attn'] = '';
+            $row[0]['company_name_long'] = '';
+        }
+        if($row[0]['new_format'] == 1)
+        {
+            $contentsQuery = \DB::select('SELECT IF(O.product_description = "" && O.product_id != 0, CONCAT(P.vendor_description, " (SKU-",P.sku,")"), O.product_description) AS description,
+													  O.price AS price,
+													  O.qty AS qty
+												 FROM order_contents O
+											LEFT JOIN products P ON P.id = O.product_id
+												WHERE O.order_id = '.$order_id);
+            $row[0]['requests_item_count'] = 0;
+            foreach ($contentsQuery as $r)
+            {
+
+                $row[0]['requests_item_count'] = $row[0]['requests_item_count'] + 1;
+                $orderDescriptionArray[] = $r['description'];
+                $orderPriceArray[] = $r['price'];
+                $orderQtyArray[] = $r['qty'];
+            }
+
+            $row[0]['orderDescriptionArray'] = $orderDescriptionArray;
+            $row[0]['orderPriceArray'] = $orderPriceArray;
+            $row[0]['orderQtyArray'] = $orderQtyArray;
+        }
+        \DB::setFetchMode(\PDO::FETCH_CLASS);
         return $row;
     }
 

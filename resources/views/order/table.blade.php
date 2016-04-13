@@ -21,11 +21,13 @@
     <table class="table table-striped  " id="{{ $pageModule }}Table">
         <thead>
 			<tr>
-				<th width="20"> No </th>
+				<th width="30"> No </th>
 				<th width="60"> <input type="checkbox" class="checkall" /></th>
                 @if($order_selected=='OPEN')
                 <th width="100">Remove</th>
                 @endif
+                <th width="100">Purchase Order</th>
+                <th width="100">Clone</th>
 				@if($setting['view-method']=='expand') <th>  </th> @endif			
 				<?php foreach ($tableGrid as $t) :
 					if($t['view'] =='1'):
@@ -71,6 +73,8 @@
                     @if($order_selected=='OPEN')
                         <td><a href="{{ URL::to('order/removalrequest/'.$row->po_number)}}">Request Removal</a></td>
                     @endif
+                    <td><a href="{{ URL::to('order/po/'.$row->id)}}">Generate PO</a></td>
+                    <td><a href="{{ URL::to('order/clone/'.$row->id)}}">Clone Order</a></td>
 					@if($setting['view-method']=='expand')
 					<td><a href="javascript:void(0)" class="expandable" rel="#row-{{ $row->id }}" data-url="{{ url('order/show/'.$id) }}"><i class="fa fa-plus " ></i></a></td>								
 					@endif			

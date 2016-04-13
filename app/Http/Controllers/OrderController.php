@@ -5,7 +5,6 @@ use App\Models\Order;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Validator, Input, Redirect;
-
 class OrderController extends Controller
 {
 
@@ -251,7 +250,6 @@ class OrderController extends Controller
         }
 
     }
-
     function getRemovalrequest($po_number = null)
     {
         $this->data['po_number'] = $po_number;
@@ -263,14 +261,131 @@ class OrderController extends Controller
         $po_number = $request->get('po_number');
         $explanation = $request->get('explaination');
         $message = 'Link to Order: 192.232.207.127/fegsys/orders/' . $po_number . ' <br>Explanation: ' . $explanation . '';
-
         $from = \Session::get('email');
         $to = 'support@fegllc.com';
-        $cc = '';
-        $bcc = '';
         $subject = 'Order Removal Request';
+        $headers  = 'MIME-Version: 1.0' . "\r\n";
+        $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
         $message = $message;
-
-
+       if( mail($to, $subject, $message, $headers)) {
+           return response()->json(array(
+               'status' => 'success',
+               'message' => \Lang::get('core.note_success')
+           ));
+       }
+        else{
+            return response()->json(array(
+                'status' => 'success',
+                'message' => \Lang::get('core.note_success')
+            ));
+        }
     }
+    function getPo($order_id=null)
+    {
+        $data=$this->model->getOrderData($order_id);
+
+        if(empty($data))
+        {
+
+        }
+        else
+        {
+            if (empty($data[0]['po_for_location']))
+            {
+                $data[0]['for_location'] = '';
+            }
+            else
+            {
+                $data[0]['for_location'] = '(for '.$data[0]['po_for_location'].')';
+            }
+
+            if($data[0]['freight_type'] == 'Employee Pickup')
+            {
+                $data[0]['po_location'] = '**WILL PICKUP FROM '.$data[0]['vendor_name'].'**'."\n".$data[0]['po_location'];
+            }
+
+            if(!empty($data[0]['loading_info']) && ($data[0]['order_type_id'] == 4 || $data[0]['order_type_id'] == 9)) //IF ORDER TYPE IS TICKTS/TOKENS OR FIXED ASSET -- AKA LARGE ITEMS
+            {
+                $data[0]['freight_type'] = $data[0]['freight_type']."\n".'DELIVERY NOTES: **'.$data[0]['loading_info'].'**';
+            }
+
+            if(!empty($data[0]['loc_merch_contact_email']) && ($data[0]['order_type_id'] == 7 || $data[0]['order_type_id'] == 8))
+            {
+                $data[0]['loc_contact_email'] = $data[0]['loc_merch_contact_email'];
+            }
+
+            if ($data[0]['email'] != $data[0]['loc_contact_email'])
+            {
+                $data[0]['loc_contact_email'] = ' AND '.$data[0]['loc_contact_email'];
+            }
+            else
+            {
+                $data[0]['loc_contact_email'] = '';
+            }
+            if ($data[0]['order_type_id'] == 3 || $data[0]['order_type_id'] == 4)
+            {
+                $data[0]['cc_email'] = ', lisa.price@fegllc.com';
+            }
+            else
+            {
+                $data[0]['cc_email'] = '';
+            }
+            if(!empty($data[0]['po_attn']))
+            {
+                $data[0]['po_location'] = $data[0]['po_location']."\n".$data[0]['po_attn'];
+            }
+            if(empty($data[0]['po_notes']))
+            {
+             $data[0]['po_notes']=" NOTE: **TO CONFIRM ORDER RECEIPT AND PRICING, SEND EMAILS TO ".$data[0]['email'].$data[0]['cc_email'].$data[0]['loc_contact_email']."**";
+            }
+            else
+            {
+                $data[0]['po_notes']= " NOTE: ".$data[0]['po_notes']." (Email Questions to ".$data[0]['email'].$data[0]['cc_email'].$data[0]['loc_contact_email'].")";
+            }
+            $order_description = $data[0]['order_description'];
+
+            if(substr($order_description, 0, 3) === ' | ')
+            {
+                $order_description = substr($order_description, 3);
+            }
+            $order_description = str_replace(' | ',"\n",$order_description);
+
+            if($data[0]['new_format'] == 1)
+            {
+                $item_description_string = '';
+                $item_price_string = '';
+                $item_qty_string = '';
+                $item_total_string = '';
+                $item_total = '';
+                $order_total_cost = 0;
+                $numLenghtyDescItems = 0;
+                for($i=0;$i < $data[0]['requests_item_count']; $i++)
+                {
+                    $j = $i+1;
+                    $item_total = $data[0]['orderPriceArray'][$i] * $data[0]['orderQtyArray'][$i];
+                    $item_total_string = "$ ".number_format($item_total,2);
+                    $item_description_string = "Item #".$j.": ".$data[0]['orderDescriptionArray'][$i];
+                    $item_qty_string = $data[0]['orderQtyArray'][$i];
+                    $item_price_string = $data[0]['orderPriceArray'][$i];
+                    $descriptionLength = strlen($item_description_string);
+                    $order_total_cost = $order_total_cost + $item_total;
+                }
+                $data[0]['item_description_string'][$i]=$item_description_string;
+                $data[0]['item_price_string'][$i]= $item_price_string;
+                $data[0]['item_qty_string'][$i]=$item_qty_string;
+                $data[0]['item_total_string'][$i]=$item_total_string;
+                $data[0]['order_total_cost']=$order_total_cost;
+                // $item_total_string = $item_total_string."-----------------\n"."$ ".number_format($order_total_cost,2)."\n";
+            }
+            $pdf = \PDF::loadView('order.po',['data'=>$data,'main_title'=>"Purchase Order"]);
+            return $pdf->download($data[0]['company_name_short']."_PO_".$data[0]['po_number'].'.pdf');
+        }
+    }
+    function getClone($order_id=null)
+    {
+        $this->data['access']=$this->access;
+        $this->data['data']=$this->model->getOrderQuery($order_id);
+        return view('order.clone', $this->data);
+    }
+
 }

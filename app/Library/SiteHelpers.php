@@ -3,14 +3,14 @@ class SiteHelpers
 {
 	public static function menus( $position ='top',$active = '1')
 	{
-		$data = array();  
-		$menu = self::nestedMenu(0,$position ,$active);		
-		foreach ($menu as $row) 
+		$data = array();
+		$menu = self::nestedMenu(0,$position ,$active);
+		foreach ($menu as $row)
 		{
 			$child_level = array();
 			$p = json_decode($row->access_data,true);
-			
-			
+
+
 			if($row->allow_guest == 1)
 			{
 				$is_allow = 1;

@@ -47,6 +47,34 @@ class order extends Sximo  {
 	public static function queryGroup(){
 		return "GROUP BY orders.id  ";
 	}
-	
+	public function getOrderQuery($order_id)
+    {
+
+        $order_query = \DB::select('SELECT location_id,vendor_id, order_type_id,company_id,freight_id FROM orders WHERE id = ' . $order_id);
+        if (count($order_query) == 1) {
+            $data['order_loc_id'] = $order_query[0]->location_id;
+            $data['order_vendor_id'] = $order_query[0]->vendor_id;
+            $data['order_type'] = $order_query[0]->order_type_id;
+            $data['order_company_id'] = $order_query[0]->company_id;
+            $data['order_freight_id'] = $order_query[0]->freight_id;
+        }
+        $content_query = \DB::select('SELECT IF(O.product_id = 0, O.product_description, P.vendor_description) AS description,O.price AS price,O.qty AS qty
+												 FROM order_contents O LEFT JOIN products P ON P.id = O.product_id WHERE O.order_id = ' . $order_id);
+        $data['requests_item_count'] = 0;
+        if ($content_query) {
+            foreach ($content_query as $row) {
+                $data['requests_item_count'] = $data['requests_item_count'] + 1;
+                $orderDescriptionArray[] = $row->description;
+                $orderPriceArray[] = $row->price;
+                $orderQtyArray[] = $row->qty;
+            }
+            $data['orderDescriptionArray'] = $orderDescriptionArray;
+            $data['orderPriceArray'] = $orderPriceArray;
+            $data['orderQtyArray'] = $orderQtyArray;
+            $data['prefill_type'] = 'clone';
+        }
+
+        return $data;
+    }
 
 }

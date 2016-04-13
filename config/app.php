@@ -148,7 +148,9 @@ return [
         GrahamCampbell\Markdown\MarkdownServiceProvider::class,  
         Collective\Html\HtmlServiceProvider::class,
         SimpleSoftwareIO\QrCode\QrCodeServiceProvider::class,
-        Intervention\Image\ImageServiceProvider::class
+        Intervention\Image\ImageServiceProvider::class,
+        Barryvdh\DomPDF\ServiceProvider::class
+
 
     ],
 
@@ -203,7 +205,8 @@ return [
         'Socialize' => Laravel\Socialite\Facades\Socialite::class,
         'Markdown'  => GrahamCampbell\Markdown\Facades\Markdown::class,
         'QrCode'    => SimpleSoftwareIO\QrCode\Facades\QrCode::class,
-        'Image'     => Intervention\Image\Facades\Image::class
+        'Image'     => Intervention\Image\Facades\Image::class,
+        'PDF'       => Barryvdh\DomPDF\Facade::class
 
 
 

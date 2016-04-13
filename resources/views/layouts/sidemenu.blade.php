@@ -1,4 +1,5 @@
 	  <?php $sidebar = SiteHelpers::menus('sidebar') ;?>
+
 <nav role="navigation" class="navbar-default navbar-static-side">
      <div class="sidebar-collapse">				  
        <ul id="sidemenu" class="nav expanded-menu">

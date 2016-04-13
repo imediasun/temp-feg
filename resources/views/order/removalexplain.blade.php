@@ -28,7 +28,7 @@
                                 <input type="hidden" value="{{$po_number }}" name="po_number"/>
                             </div>
                             <div class="form-group">
-                                <button type="submit" name="submit" class="btn btn-primary btn-sm" disabled><i class="fa  fa-save "></i>  Send Request</button>
+                                <button type="submit" name="submit" class="btn btn-primary btn-sm"><i class="fa  fa-save "></i>  Send Request </button>
                                 <button type="button" onclick="location.href='{{ URL::to('order?return='.$return) }}' " class="btn btn-success btn-sm "><i class="fa  fa-arrow-circle-left "></i>  {{ Lang::get('core.sb_cancel') }} </button>
 
                             </div>
@@ -45,6 +45,51 @@
             </div>
         </div>
         </div>
+    <script>
+        $(document).ready(function()
+        {
+        var form = $('#removalrequestform');
+        form.parsley();
+        form.submit(function(){
+
+            if(form.parsley('isValid') == true){
+                var options = {
+                    dataType:      'json',
+                    beforeSubmit :  showRequest,
+                    success:       showResponse
+                }
+                $(this).ajaxSubmit(options);
+                return false;
+
+            } else {
+                return false;
+            }
+
+        });
+
+        });
+
+        function showRequest()
+        {
+            $('.ajaxLoading').show();
+        }
+        function showResponse(data)  {
+
+            if(data.status == 'success')
+            {
+                ajaxViewClose('#{{ $pageModule }}');
+                ajaxFilter('#{{ $pageModule }}','{{ $pageUrl }}/data');
+                notyMessage(data.message);
+                $('#sximo-modal').modal('hide');
+            } else {
+                notyMessageError(data.message);
+                $('.ajaxLoading').hide();
+                return false;
+            }
+        }
+
+    </script>
+
 
 
 @stop
