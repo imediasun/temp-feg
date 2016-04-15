@@ -9,11 +9,11 @@
 
 	<div class="sbox-content"> 
 @endif	
-			{!! Form::open(array('url'=>'product/save/'.SiteHelpers::encryptID($row['id']), 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'productFormAjax')) !!}
+			{!! Form::open(array('url'=>'product/save/'.$row['id'], 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'productFormAjax')) !!}
 			<div class="col-md-12">
 						<fieldset><legend> FEG Store Products</legend>
 									
-				  <div class="form-group  " > 
+				  <div class="form-group ">
 					<label for="Vendor Description" class=" control-label col-md-4 text-left"> 
 					{!! SiteHelpers::activeLang('Vendor Description', (isset($fields['vendor_description']['language'])? $fields['vendor_description']['language'] : array())) !!}	
 					</label>
@@ -123,13 +123,14 @@
 					 </div>
 				  </div> 					
 				  <div class="form-group  " > 
-					<label for="Img" class=" control-label col-md-4 text-left"> 
+					<label for="imgee" class=" control-label col-md-4 text-left">
 					{!! SiteHelpers::activeLang('Img', (isset($fields['img']['language'])? $fields['img']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  <input  type='file' name='img' id='img' @if($row['img'] =='') class='required' @endif style='width:150px !important;'  />
+                        <input type="file" name="imgee" id="imgee"/>
 					 	<div >
-						{!! SiteHelpers::showUploadedFile($row['img'],'') !!}
+                            <br/>
+						{!! SiteHelpers::showUploadedFile($row['img'],'/uploads/products/', 50,false) !!}
 						
 						</div>					
 					 
@@ -184,7 +185,7 @@ $(document).ready(function() {
 	$('.datetime').datetimepicker({format: 'yyyy-mm-dd hh:ii:ss'}); 
 	$('input[type="checkbox"],input[type="radio"]').iCheck({
 		checkboxClass: 'icheckbox_square-green',
-		radioClass: 'iradio_square-green',
+		radioClass: 'iradio_square_green'
 	});			
 	$('.removeCurrentFiles').on('click',function(){
 		var removeUrl = $(this).attr('href');

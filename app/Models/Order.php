@@ -47,34 +47,94 @@ class order extends Sximo  {
 	public static function queryGroup(){
 		return "GROUP BY orders.id  ";
 	}
-	public function getOrderQuery($order_id)
+	public function getOrderQuery($order_id,$mode=null)
     {
-
-        $order_query = \DB::select('SELECT location_id,vendor_id, order_type_id,company_id,freight_id FROM orders WHERE id = ' . $order_id);
-        if (count($order_query) == 1) {
-            $data['order_loc_id'] = $order_query[0]->location_id;
-            $data['order_vendor_id'] = $order_query[0]->vendor_id;
-            $data['order_type'] = $order_query[0]->order_type_id;
-            $data['order_company_id'] = $order_query[0]->company_id;
-            $data['order_freight_id'] = $order_query[0]->freight_id;
-        }
-        $content_query = \DB::select('SELECT IF(O.product_id = 0, O.product_description, P.vendor_description) AS description,O.price AS price,O.qty AS qty
-												 FROM order_contents O LEFT JOIN products P ON P.id = O.product_id WHERE O.order_id = ' . $order_id);
+        $data['order_loc_id'] ='';
+        $data['order_vendor_id'] ='' ;
+        $data['order_type'] = '';
+        $data['order_company_id'] ='' ;
+        $data['order_freight_id'] = '';
+        $data['orderDescriptionArray'] = '';
+        $data['orderPriceArray'] = '';
+        $data['orderQtyArray'] = '';
+        $data['orderProductIdArray'] = '';
+        $data['orderRequestIdArray'] = '';
+        $data['requests_item_count'] = '';
+        $data['today']=$this->get_local_time();
+        $data['order_total']='0.00';
+        $data['po_1']='0';
+        $data['po_2']=date('d').date('m').date('y');
+        $data['po_3']=0;
+        $data['po_notes']='';
         $data['requests_item_count'] = 0;
-        if ($content_query) {
-            foreach ($content_query as $row) {
-                $data['requests_item_count'] = $data['requests_item_count'] + 1;
-                $orderDescriptionArray[] = $row->description;
-                $orderPriceArray[] = $row->price;
-                $orderQtyArray[] = $row->qty;
+        if($order_id!=0) {
+            $order_query = \DB::select('SELECT location_id,vendor_id, date_ordered,order_total,order_type_id,company_id,freight_id,po_notes,po_number FROM orders WHERE id = ' . $order_id);
+            if (count($order_query) == 1) {
+                $data['order_loc_id'] = $order_query[0]->location_id;
+                $data['order_vendor_id'] = $order_query[0]->vendor_id;
+                $data['order_type'] = $order_query[0]->order_type_id;
+                $data['order_company_id'] = $order_query[0]->company_id;
+                $data['order_freight_id'] = $order_query[0]->freight_id;
+                $data['today'] = $order_query[0]->date_ordered;
+                $data['order_total'] = $order_query[0]->order_total;
             }
-            $data['orderDescriptionArray'] = $orderDescriptionArray;
-            $data['orderPriceArray'] = $orderPriceArray;
-            $data['orderQtyArray'] = $orderQtyArray;
-            $data['prefill_type'] = 'clone';
-        }
+            $content_query = \DB::select('SELECT IF(O.product_id = 0, O.product_description, P.vendor_description) AS description,O.price AS price,O.qty AS qty
+												 FROM order_contents O LEFT JOIN products P ON P.id = O.product_id WHERE O.order_id = ' . $order_id);
 
+            if ($content_query) {
+
+                foreach ($content_query as $row) {
+                    $data['requests_item_count'] = $data['requests_item_count'] + 1;
+                    $orderDescriptionArray[] = $row->description;
+                    $orderPriceArray[] = $row->price;
+                    $orderQtyArray[] = $row->qty;
+                }
+                $data['orderDescriptionArray'] = $orderDescriptionArray;
+                $data['orderPriceArray'] = $orderPriceArray;
+                $data['orderQtyArray'] = $orderQtyArray;
+                $data['prefill_type'] = 'clone';
+            }
+            if ($mode == 'edit') {
+                $data['today'] = $order_query[0]->date_ordered;
+                $data['po_notes'] = $order_query[0]->po_notes;
+                $data['po_number'] = $order_query[0]->po_number;
+                $poArr = array("", "", "");
+                if (isset($data['po_number'])) {
+                    $poArr = explode("-", $data['po_number']);
+                    $data['po_1'] = $poArr[0];
+                    $data['po_2'] = $poArr[1];
+                    $data['po_3'] = $poArr[2];
+                }
+                $data['po_notes'] = $order_query[0]->po_notes;
+            }
+             $data['today'] = ($mode) ? $order_query[0]->date_ordered : $this->get_local_time('date');
+        }
         return $data;
     }
+    function getPoNumber($po_full)
+    {
+        $query = \DB::select('SELECT po_number FROM orders WHERE po_number = "'.$po_full.'"');
+        if (count($query) > 0)
+            {
+                $po_message = 'taken';
+            }
+            else
+            {
+                $po_message = 'available';
+            }
+        return $po_message;
+        }
+     public function get_local_time($type=null)
+{
+    $year = date('Y');
+    $month = date('m');
+    $day = date('d');
+    $dayText = date('D');
 
+    $yearmonthday = $year . '-' . $month . '-' . $day;
+    if($type='date')
+    {
+        return $yearmonthday;
+    }
+}
 }

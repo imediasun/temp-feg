@@ -44,7 +44,10 @@ class ProductController extends Controller {
 
 	public function postData( Request $request)
 	{
-        $product_type=NULL;
+
+        $prod_list_type=isset($_GET['prod_list_type'])?$_GET['prod_list_type']:'';
+        $active=isset($_GET['active'])?$_GET['active']:'';
+
         $module_id = \DB::table('tb_module')->where('module_name', '=', 'product')->pluck('module_id');
         $this->data['module_id'] = $module_id;
         if (Input::has('config_id')) {
@@ -79,24 +82,47 @@ class ProductController extends Controller {
 
 		);
 		// Get Query
-        if(Input::has('product_type'))
+        if($prod_list_type)
         {
-            $product_type=Input::get('product_type');
-            $this->data['product_type_id']=$product_type;
+            $this->data['product_list_type']=$prod_list_type;
+            $this->data['active_prod']=$active;
         }
         else {
-           $product_type=NULL;
-            $this->data['product_type_id']=0;
+            $this->data['product_list_type']=0;
         }
-        $results = $this->model->getRows($params,$product_type);
+        $results = $this->model->getRows($params,$prod_list_type,$active);
+
         $rows = $results['rows'];
+
 		foreach($rows as $index => $data)
 		{
+       if ($data->is_reserved == 1) {
+           $data->is_reserved = "Yes";
+
+                } else {
+                    $data->is_reserved = "No";
+                }
+                if ($data->inactive == 1) {
+                    $data->inactive = "Yes";
+
+                } else {
+                    $data->inactive = "No";
+                }
+                if ($data->hot_item == 1) {
+                    $data->hot_item = "Yes";
+
+                } else {
+                    $data->hot_item = "No";
+                }
+
+
+
+
 			$product_type = \DB::select("Select product_type FROM product_type WHERE id = ".$data->prod_type_id ."");
 			$rows[$index]->prod_type_id = (isset($product_type[0]->product_type) ? $product_type[0]->product_type : '');
 			$product_sub_type = \DB::select("Select product_type FROM product_type WHERE id = ".$data->prod_sub_type_id ."");
 			$rows[$index]->prod_sub_type_id = (isset($product_sub_type[0]->product_type) ? $product_sub_type[0]->product_type : '');
-			$vendor = \DB::select("Select vendor_name FROM vendor WHERE id = ".$data->vendor_id ."");
+           $vendor = \DB::select("Select vendor_name FROM vendor WHERE id = ".htmlentities($data->vendor_id) ."");
 			$rows[$index]->vendor_id = (isset($vendor[0]->vendor_name) ? $vendor[0]->vendor_name : '');
 		}
 		// Build pagination setting
@@ -209,14 +235,34 @@ class ProductController extends Controller {
 
 	function postSave( Request $request, $id =0)
 	{
-		
-		$rules = $this->validateForm();
+    $rules = $this->validateForm();
+        $rules['imgee']='mimes:jpeg,gif,png';
 		$validator = Validator::make($request->all(), $rules);	
 		if ($validator->passes()) {
-			$data = $this->validatePost('products');
-			
-			$id = $this->model->insertRow($data , $request->input('id'));
-			
+            if($id==0) {
+                $data = $this->validatePost('products');
+                $id = $this->model->insertRow($data, $request->input('id'));
+            }
+            else
+            {
+
+                $data = $this->validatePost('products');
+                $id = $this->model->insertRow($data,$id);
+            }
+                $updates = array();
+            if ($request->hasFile('imgee')) {
+                $file = $request->file('imgee');
+                $destinationPath = './uploads/products/';
+                $filename = $file->getClientOriginalName();
+                $extension = $file->getClientOriginalExtension(); //if you need extension of the file
+                $newfilename = $id . '.' . $extension;
+                $uploadSuccess = $file->move($destinationPath, $newfilename);
+                if ($uploadSuccess) {
+                    $updates['img'] = $newfilename;
+                }
+                $this->model->insertRow($updates, $id);
+            }
+
 			return response()->json(array(
 				'status'=>'success',
 				'message'=> \Lang::get('core.note_success')

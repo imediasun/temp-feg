@@ -17,7 +17,7 @@ class OrderController extends Controller
     {
         parent::__construct();
         $this->model = new Order();
-
+        $this->modelview = new  \App\Models\Sbinvoiceitem();
         $this->info = $this->model->makeInfo($this->module);
         $this->access = $this->model->validAccess($this->info['id']);
 
@@ -128,19 +128,16 @@ class OrderController extends Controller
     }
 
 
-    function getUpdate(Request $request, $id = null)
+    function getUpdate(Request $request, $id =0)
     {
-
         if ($id == '') {
             if ($this->access['is_add'] == 0)
                 return Redirect::to('dashboard')->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
         }
-
         if ($id != '') {
             if ($this->access['is_edit'] == 0)
                 return Redirect::to('dashboard')->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
         }
-
         $row = $this->model->find($id);
         if ($row) {
             $this->data['row'] = $row;
@@ -151,7 +148,7 @@ class OrderController extends Controller
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
 
         $this->data['id'] = $id;
-
+        $this->data['data']=$this->model->getOrderQuery($id,'edit');
         return view('order.form', $this->data);
     }
 
@@ -381,11 +378,41 @@ class OrderController extends Controller
             return $pdf->download($data[0]['company_name_short']."_PO_".$data[0]['po_number'].'.pdf');
         }
     }
-    function getClone($order_id=null)
+    function getClone($id)
     {
-        $this->data['access']=$this->access;
-        $this->data['data']=$this->model->getOrderQuery($order_id);
-        return view('order.clone', $this->data);
-    }
+        if($id =='')
+        {
+            if($this->access['is_add'] ==0 )
+                return Redirect::to('dashboard')->with('messagetext',\Lang::get('core.note_restric'))->with('msgstatus','error');
+        }
 
+        if($id !='')
+        {
+            if($this->access['is_edit'] ==0 )
+                return Redirect::to('dashboard')->with('messagetext',\Lang::get('core.note_restric'))->with('msgstatus','error');
+        }
+
+        $row = $this->model->find($id);
+        if($row)
+        {
+            $this->data['row'] 		=  $row;
+        } else {
+            $this->data['row'] 		= $this->model->getColumnTable('order');
+        }
+        $this->data['setting'] 		= $this->info['setting'];
+      //  $this->data['subgrid'] = $this->detailview($this->modelview ,  $this->data['subgrid'] ,$id );
+        $this->data['id'] = $id;
+        $this->data['access']=$this->access;
+        $this->data['data']=$this->model->getOrderQuery($id);
+        return view('order.clonenew', $this->data);
+    }
+    function postValidateponumber(Request $request)
+    {
+        $po_1 = $request->get('po_1');
+        $po_2 = $request->get('po_2');
+        $po_3 = $request->get('po_3');
+        $po_full = $po_1 . '-' . $po_2 . '-' . $po_3;
+        $msg = $this->model->getPoNumber($po_full);
+        echo $msg;
+    }
 }

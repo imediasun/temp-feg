@@ -602,6 +602,7 @@ abstract class Controller extends BaseController {
 
 	public function getExport( $t = 'excel')
 	{
+
 		$info 		= $this->model->makeInfo( $this->module);
 		//$master  	= $this->buildMasterDetail(); 
 		$filter 	= (!is_null(Input::get('search')) ? $this->buildSearch() : '');
@@ -609,8 +610,10 @@ abstract class Controller extends BaseController {
 		//$filter 	.=  $master['masterFilter'];			
 		$params 	= array(
 					'params'	=>''
-		);		
-		$results 	= $this->model->getRows( $params );
+		);
+
+		$results 	= $this->model->getRows($params );
+
 		$fields		= $info['config']['grid'];
 		$rows		= $results['rows'];
 		$content 	= array(
@@ -618,8 +621,10 @@ abstract class Controller extends BaseController {
 						'rows' => $rows,
 						'title' => $this->data['pageTitle'],
 					);
+
 		if($t == 'word')
-		{			
+		{
+
 			 return view('sximo.module.utility.word',$content);
 			 
 		} else if($t == 'pdf') {		

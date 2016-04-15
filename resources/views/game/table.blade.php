@@ -83,7 +83,7 @@
 					  ?>
 				 <td data-values="action" data-key="<?php echo $row->id ;?>">
 					{!! AjaxHelpers::buttonAction('game',$access,$id ,$setting) !!}
-					{!! AjaxHelpers::buttonActionInline($row->id,'id') !!}		
+					{!! AjaxHelpers::buttonActionInline($row->id,'id') !!}
 				</td>			 
                 </tr>
                 @if($setting['view-method']=='expand')

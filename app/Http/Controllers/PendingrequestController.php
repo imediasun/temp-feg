@@ -191,6 +191,22 @@ class PendingrequestController extends Controller {
 		if($row)
 		{
 			$this->data['row'] =  $row;
+            if($row->status_id == 2)
+            {
+                $row->status_id = 'Approved';
+            }
+            elseif($row->status_id == 3)
+            {
+                $row->status_id = 'Denied';
+            }
+            if($row->process_date == "0000-00-00")
+            {
+                $row->process_date = '00/00/0000';
+            }
+            else
+            {
+                $row->process_date = date("m/d/Y", strtotime($data->process_date));
+            }
 		} else {
 			$this->data['row'] = $this->model->getColumnTable('requests'); 
 		}

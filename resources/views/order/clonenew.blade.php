@@ -1,15 +1,15 @@
-@if($setting['form-method'] =='native')
+@extends('layouts.app')
+@section('content')
+
     <div class="sbox">
         <div class="sbox-title">
             <h4><i class="fa fa-table"></i> <?php echo $pageTitle;?>
                 <small>{{ $pageNote }}</small>
-                <a href="javascript:void(0)" class="collapse-close pull-right btn btn-xs btn-danger"
-                   onclick="ajaxViewClose('#{{ $pageModule }}')"><i class="fa fa fa-times"></i></a>
             </h4>
         </div>
 
         <div class="sbox-content">
-            @endif
+
             {!! Form::open(array('url'=>'order/save/', 'class'=>'form-vertical','files' => true ,
             'parsley-validate'=>'','novalidate'=>' ','id'=> 'ordersubmitFormAjax')) !!}
             <div class="col-md-6">
@@ -19,15 +19,15 @@
                         <label for="Company Id" class=" control-label col-md-4 text-left"> Bill To:</label> <span>Family Entertainment Group, LLC</span>
 
                         <div class="col-md-8">
-                            <input type="hidden" name="company_id" value="{{ $data['order_company_id'] }}"/>
+                            <input type="hidden" name="company_id" value="{{  $data['order_company_id'] }}"/>
                         </div>
 
                     </div>
                     <div class="form-group  ">
-                        <label for="location_id" class=" control-label col-md-4 text-left"> Location </label>
+                        <label for="location" class=" control-label col-md-4 text-left"> Location </label>
 
                         <div class="col-md-8">
-                            <select class="select3" id="location_id" name="location_id" required></select>
+                            <select class="select3" id="location_id" name="location_name"></select>
                         </div>
 
                     </div>
@@ -37,7 +37,8 @@
                             Address </label>
 
                         <div class="col-md-8">
-                            <input id="alt_ship_to" name="alt_ship_to" type="checkbox" value="1"/></div>
+                            <input id="alt_ship_to" name="alt_ship_to" type="checkbox" onchange="showAltShipTo()"/>
+                        </div>
 
                     </div>
                     {{-- Ship Address starts here  --}}
@@ -97,7 +98,7 @@
                             Order Type </label>
 
                         <div class="col-md-8">
-                            <select name='order_type_id' rows='5' id='order_type_id' class='select3 ' required></select>
+                            <select name='order_type_id' rows='5' id='order_type_id' class='select2 ' required></select>
                         </div>
 
                     </div>
@@ -107,7 +108,7 @@
                             Vendor </label>
 
                         <div class="col-md-8">
-                            <select name='vendor_id' rows='5' id='vendor_id' class='select3 ' required></select>
+                            <select name='vendor_id' rows='5' id='vendor_id' class='select2 ' required></select>
                         </div>
 
                     </div>
@@ -117,7 +118,7 @@
                             Frieght Type </label>
 
                         <div class="col-md-8">
-                            <select name='freight_type_id' rows='5' id='freight_type_id' class='select3 '
+                            <select name='freight_type_id' rows='5' id='freight_type_id' class='select2 '
                                     required></select>
                         </div>
 
@@ -125,11 +126,11 @@
                     <div class="form-group  ">
                         <br/><br/>
                         <label for="date_orederd" class=" control-label col-md-4 text-left">
-                            Date Orederd</label>
+                            Date Orderd</label>
 
                         <div class="col-md-8">
                             <div class="input-group m-b" style="width:150px !important;">
-                                <input type="text" class="form-control date" name="date_ordered" value="{{ $data['today'] }}"/>
+                                <input type="text" class="form-control date" value="{{  $data['today'] }}"/>
                                 <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
                             </div>
                         </div>
@@ -141,7 +142,7 @@
                             Total Cost</label>
 
                         <div class="col-md-8">
-                            <input style="width:150px !important;" type="text" name="order_total" id="total_cost"
+                            <input style="width:150px !important;" type="text" name="total_cost" id="total_cost"
                                    class="form-control" value="{{ $data['order_total'] }}"/>
                         </div>
                     </div>
@@ -151,26 +152,28 @@
                             PO Number</label>
 
                         <div class="col-md-8">
-                            <input type="text" name="po_1" readonly id="po_1" value="{{ $data['po_1'] }}"
+
+                            <input type="text" name="po_1" readonly id="po_1" value="{{ $data['order_loc_id'] }}"
                                    class="form-control" style="width:25%;float:left;margin-left:3px"/>
                             <input type="text" name="po_2" readonly id="po_2" class="form-control"
                                    value="{{  $data['po_2'] }}" style="width:35%;float:left;margin-left:3px"/>
                             <input type="text" name="po_3" id="po_3" required class="form-control"
                                    value="{{ $data['po_3'] }}" style="width:30%;float:left;margin-left:3px"/>
+
                             <br/>
                             <br/>
 
                             <div id="po_message"></div>
+                            <br/>
                         </div>
-
                     </div>
                     <div class="form-group">
                         <br/><br/>
                         <label class="label-control col-md-4" for="notes"> Order Notes **Will be on PO**</label>
 
                         <div class="col-md-8">
-                            <textarea id="notes" name='po_notes' cols="40" rows="5"
-                                      placeholder='Additional Notes'></textarea>
+                            <textarea id="notes" name='notes' cols="40" rows="5"
+                                      placeholder='Additional Notes'>{{ $data['po_notes'] }}</textarea>
                         </div>
                     </div>
 
@@ -196,8 +199,9 @@
                         <th>tem Descripton / Item Number</th>
                         <th>Price</th>
                         <th>Quantity</th>
+                        <th></th>
                         <th>Total</th>
-                        <th> </th>
+                        <th>Remove Item</th>
                     </tr>
 
                     </thead>
@@ -206,18 +210,18 @@
                     <tr class="clone clonedInput">
                         <td> <textarea name='item[0]' placeholder='Item #1 Description'
                                        class='form-control' cols="30" rows="4" maxlength="225" required></textarea></td>
-                        <td><br/> <input type='number' name='price[0]' placeholder='Price' id="price"
+                        <td><br/> <input type='number' name='price[]' placeholder='Price' id="price"
                                          class='form-control' min=".00000" step=".00001"
-                                         required ></td>
-                        <td><br/> <input type='number' name='qty[0]' placeholder='Quantity'
+                                         required></td>
+                        <td><br/> <input type='number' name='qty[]' placeholder='Quantity'
                                          class='form-control' min="1" step="1" id="qty"
-                                          required></td>
-                        <td><br/><input type="text" name="total" value="" readonly class="form-control"/></td>
+                                         required></td>
+                        <td><br/> <select name="game_id[]" id="game_id" class="select3 game_id"/></td>
+                        <td><br/><input type="text" name="total[]" value="" readonly class="form-control"/></td>
                         <td><br/> <a onclick=" $(this).parents('.clonedInput').remove(); calculateSum(); return false"
                                      href="#" class="remove btn btn-xs btn-danger">-</a>
                             <input type="hidden" name="counter[]">
                         </td>
-                    </tr>
                     </tr>
                     <tr>
                         <td colspan="3" class="text-right"> Subtotal</td>
@@ -232,7 +236,8 @@
             </div>
             <br/><br/>
 
-            <a href="javascript:void(0);" class="addC btn btn-xs btn-info" rel=".clone"><i class="fa fa-plus"></i> New
+            <a href="javascript:void(0);" class="addC btn btn-xs btn-info" rel=".clone" id="add_new_item"><i
+                        class="fa fa-plus"></i> New
                 Item</a>
             <hr/>
 
@@ -243,7 +248,7 @@
                 <label class="col-sm-4 text-right">&nbsp;</label>
 
                 <div class="col-sm-8">
-                    <button type="submit" class="btn btn-primary btn-sm "><i
+                    <button type="submit" class="btn btn-primary btn-sm " id="submit_btn"><i
                                 class="fa  fa-save "></i>  {{ Lang::get('core.sb_save') }} </button>
                     <button type="button" onclick="ajaxViewClose('#{{ $pageModule }}')" class="btn btn-success btn-sm">
                         <i class="fa  fa-arrow-circle-left "></i>  {{ Lang::get('core.sb_cancel') }} </button>
@@ -255,18 +260,20 @@
     </div>
 
     </div>
-    <script type="text/javascript">
-        $('#alt_ship_to').on('change', function () {
-                    if ($(this).is(':checked'))
-                        $("#ship_address").css('display', 'block');
-                    else
-                        $("#ship_address").css('display', 'none');
 
+    <script type="text/javascript">
+        $('#alt_ship_to').on('ifChecked', function () {
+                    $("#ship_address").css('display', 'block');
+
+                }
+        );
+        $('input').on('ifUnchecked', function () {
+                    $("#ship_address").css('display', 'none');
                 }
         );
         function calculateSum() {
 
-            var Subtotal = 0.00;
+            var Subtotal = 0;
             $('table tr.clone ').each(function (i) {
                 Qty = $(this).find(" input[name*='qty']").val();
                 Price = $(this).find("input[name*='price']").val();
@@ -276,7 +283,6 @@
             });
 
             $("input[name='Subtotal']").val(Subtotal);
-            $("#total_cost").val(Subtotal);
         }
 
         $(document).ready(function () {
@@ -298,10 +304,10 @@
             calculateSum();
             $(".calculate").keyup(function () {
                 calculateSum();
-            });
+            })
             $('.remove').click(function () {
                 calculateSum();
-            });
+            })
 
 
             $('.addC').relCopy({});
@@ -376,10 +382,9 @@
                 return false;
             }
         }
-        $("#location_id").click(function () {
+        $("#location_id").click(function(){
             $("#po_1").val($(this).val());
         });
-
         $('#po_3').on("keyup", function () {
             if (poajax) {
                 if (poajax.abort) {
@@ -410,13 +415,6 @@
             po_1 = $('#po_1').val().trim();
             po_2 = $('#po_2').val().trim();
             po_3 = $('#po_3').val().trim();
-            if(po_3.length >= 1)
-            {
-               // $('.ajaxLoading').show();
-            }
-            else{
-                //$('.ajaxLoading').hide();
-            }
             if (poajax) {
                 if (poajax.abort) {
                     poajax.abort();
@@ -434,7 +432,7 @@
                     po_3: $('#po_3').val().trim()
                 },
                 success: function (msg) {
-                    $('.ajaxLoading').hide();
+
                     poajax = null;
                     if (msg == 'taken') {
                         $("#po_message").html('<b style="color:red">PO# is taken, try another number..</b>');
@@ -447,7 +445,11 @@
 
                 }
             });
+
+
         }
+
+
     </script>
     <style type="text/css">
         tr.invHeading th {
@@ -456,7 +458,8 @@
             padding-bottom: 10px !important;
         }
 
-        table.itemstable tbody tr:first-of-type td:last-of-type a{
+        table.itemstable tbody tr:first-of-type td:last-of-type {
             display: none;
         }
     </style>
+@endsection

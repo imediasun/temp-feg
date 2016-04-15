@@ -7,6 +7,7 @@ class Sximo extends Model {
 
 	public static function getRows( $args,$cond=null)
 	{
+
        $table = with(new static)->table;
 	   $key = with(new static)->primaryKey;
 
@@ -40,17 +41,13 @@ class Sximo extends Model {
         {
             $select.=self::queryWhere();
         }
-      //  echo $select." {$params} ". self::queryGroup() ." {$orderConditional}  {$limitConditional}" ;
-       // die();
         $result=\DB::select($select." {$params} ". self::queryGroup() ." {$orderConditional}  {$limitConditional} ");
-
-
         if($key =='' ) { $key ='*'; } else { $key = $table.".".$key ; }
 		$counter_select = preg_replace( '/[\s]*SELECT(.*)FROM/Usi', 'SELECT count('.$key.') as total FROM', self::querySelect() );
 		//total query becomes too huge
 		if($table == "orders")
 		{
-			$total = 20000;
+			$total = 2000;
 		}
 		else
 		{
@@ -99,9 +96,11 @@ class Sximo extends Model {
         } else {
             // Update here 
 			// update created field if any
+
             if(isset($data['createdOn'])) unset($data['createdOn']);
-			if(isset($data['updatedOn'])) $data['updatedOn'] = date("Y-m-d H:i:s");			
-			 \DB::table($table)->where($key,$id)->update($data);
+            if(isset($data['updatedOn'])) $data['updatedOn'] = date("Y-m-d H:i:s");
+			\DB::table($table)->where($key,$id)->update($data);
+
         }    
         return $id;    
 	}			
@@ -552,6 +551,11 @@ function moveHistory()
             $row[0]['orderQtyArray'] = $orderQtyArray;
         }
         \DB::setFetchMode(\PDO::FETCH_CLASS);
+        return $row;
+    }
+    function getGameTitle()
+    {
+        $row=\DB::table('game_title')->get();
         return $row;
     }
 

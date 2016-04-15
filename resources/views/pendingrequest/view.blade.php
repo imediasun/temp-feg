@@ -11,21 +11,12 @@
 @endif	
 
 		<table class="table table-striped table-bordered" >
-			<tbody>	
-				
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Id', (isset($fields['id']['language'])? $fields['id']['language'] : array())) }}	
-						</td>
-						<td>{{ $row->id }} </td>
-						
-					</tr>
-				
+			<tbody>
 					<tr>
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Location', (isset($fields['location_id']['language'])? $fields['location_id']['language'] : array())) }}	
 						</td>
-						<td>{{ $row->location_id }} </td>
+						<td>{{ $row->location }} </td>
 						
 					</tr>
 				
@@ -41,18 +32,18 @@
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Requested By', (isset($fields['request_user_id']['language'])? $fields['request_user_id']['language'] : array())) }}	
 						</td>
-						<td>{{ $row->request_user_id }} </td>
+						<td>{{ $row->request_name}} </td>
 						
 					</tr>
-				
+
 					<tr>
 						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Product Id', (isset($fields['product_id']['language'])? $fields['product_id']['language'] : array())) }}	
+							{{ SiteHelpers::activeLang('Product', (isset($fields['product_id']['language'])? $fields['product_id']['language'] : array())) }}
 						</td>
-						<td>{{ $row->product_id }} </td>
-						
+						<td>{{ $row->vendor_description}} </td>
+
 					</tr>
-				
+
 					<tr>
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Supply Description', (isset($fields['description']['language'])? $fields['description']['language'] : array())) }}	
@@ -87,20 +78,11 @@
 				
 					<tr>
 						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Process User Id', (isset($fields['process_user_id']['language'])? $fields['process_user_id']['language'] : array())) }}	
+							{{ SiteHelpers::activeLang('Process User', (isset($fields['process_user_id']['language'])? $fields['process_user_id']['language'] : array())) }}
 						</td>
-						<td>{{ $row->process_user_id }} </td>
+						<td>{{ $row->process_name }} </td>
 						
 					</tr>
-				
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Request Type Id', (isset($fields['request_type_id']['language'])? $fields['request_type_id']['language'] : array())) }}	
-						</td>
-						<td>{{ $row->request_type_id }} </td>
-						
-					</tr>
-				
 					<tr>
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Notes', (isset($fields['notes']['language'])? $fields['notes']['language'] : array())) }}	

@@ -174,6 +174,7 @@ class AjaxHelpers
 
 	static public function buttonActionCreate( $module  ,$method = 'newpage')
 	{
+
 		$onclick = " onclick=\"ajaxViewDetail('#".$module."',this.href); return false; \"" ;
 		if($method['form-method'] =='modal')
 				$onclick = " onclick=\"SximoModal(this.href,'Create Detail'); return false; \"" ;
@@ -183,6 +184,7 @@ class AjaxHelpers
 			<a href="'.URL::to($module.'/update').'" class="tips btn btn-sm btn-white"  title="'.Lang::get('core.btn_create').'" '.$onclick.'>
 			<i class="fa fa-plus "></i> '.Lang::get('core.btn_create').'</a>
 		';
+
 		return $html;
 	}
 

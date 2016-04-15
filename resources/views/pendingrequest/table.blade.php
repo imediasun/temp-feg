@@ -20,8 +20,7 @@
     <table class="table table-striped  " id="{{ $pageModule }}Table">
         <thead>
 			<tr>
-				<th width="20"> No </th>
-				<th width="30"> <input type="checkbox" class="checkall" /></th>		
+				<th width="50"> No </th>
 				@if($setting['view-method']=='expand') <th>  </th> @endif
 				<?php $col = 0; ?>
 				<?php foreach ($tableGrid as $t) : ?>
@@ -41,8 +40,7 @@
 					endif;
 				$col++;
 				endforeach; ?>
-				<th width="70"><?php echo Lang::get('core.btn_action') ;?></th>
-			  </tr>
+
         </thead>
 
         <tbody>
@@ -72,7 +70,6 @@
            		?>
                 <tr class="editable" id="form-{{ $row->id }}">
 					<td class="number"> <?php echo ++$i;?>  </td>
-					<td ><input type="checkbox" class="ids" name="ids[]" value="<?php echo $row->id ;?>" />  </td>					
 					@if($setting['view-method']=='expand')
 					<td><a href="javascript:void(0)" class="expandable" rel="#row-{{ $row->id }}" data-url="{{ url('pendingrequest/show/'.$id) }}"><i class="fa fa-plus " ></i></a></td>								
 					@endif			
@@ -95,15 +92,11 @@
 									 </td>
 								@endif
 						 <?php
-
 					     endif;
 						 $col++;
 						endforeach; 
 					  ?>
-				 <td data-values="action" data-key="<?php echo $row->id ;?>">
-					{!! AjaxHelpers::buttonAction('pendingrequest',$access,$id ,$setting) !!}
-					{!! AjaxHelpers::buttonActionInline($row->id,'id') !!}		
-				</td>			 
+
                 </tr>
                 @if($setting['view-method']=='expand')
                 <tr style="display:none" class="expanded" id="row-{{ $row->id }}">
