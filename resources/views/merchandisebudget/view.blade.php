@@ -23,27 +23,77 @@
 				
 					<tr>
 						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Location Id', (isset($fields['location_id']['language'])? $fields['location_id']['language'] : array())) }}	
+							{{ SiteHelpers::activeLang('Location ', (isset($fields['location_id']['language'])? $fields['location_id']['language'] : array())) }}
 						</td>
-						<td>{{ $row->location_id }} </td>
+						<td>{{ $row->location }} </td>
 						
 					</tr>
 				
 					<tr>
 						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Budget Date', (isset($fields['budget_date']['language'])? $fields['budget_date']['language'] : array())) }}	
-						</td>
-						<td>{{ $row->budget_date }} </td>
+						January
+								</td>
+						<td>{{ $row->Jan }} </td>
 						
 					</tr>
 				
 					<tr>
 						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Budget Value', (isset($fields['budget_value']['language'])? $fields['budget_value']['language'] : array())) }}	
-						</td>
-						<td>{{ $row->budget_value }} </td>
+						February</td>
+						<td>{{ $row->Feb }} </td>
 						
 					</tr>
+                    <tr>
+                        <td width='30%' class='label-view text-right'>
+                            March</td>
+                        <td>{{ $row->March }} </td>
+
+                    </tr><tr>
+                        <td width='30%' class='label-view text-right'>
+                            April</td>
+                        <td>{{ $row->April }} </td>
+
+                    </tr><tr>
+                        <td width='30%' class='label-view text-right'>
+                            May</td>
+                        <td>{{ $row->May }} </td>
+
+                    </tr><tr>
+                        <td width='30%' class='label-view text-right'>
+                            June</td>
+                        <td>{{ $row->June }} </td>
+
+                    </tr><tr>
+                        <td width='30%' class='label-view text-right'>
+                            July</td>
+                        <td>{{ $row->July }} </td>
+
+                    </tr><tr>
+                        <td width='30%' class='label-view text-right'>
+                            August</td>
+                        <td>{{ $row->August }} </td>
+
+                    </tr><tr>
+                        <td width='30%' class='label-view text-right'>
+                        September</td>
+                        <td>{{ $row->September }} </td>
+
+                    </tr><tr>
+                        <td width='30%' class='label-view text-right'>
+                            Octuber</td>
+                        <td>{{ $row->Octuber }} </td>
+
+                    </tr><tr>
+                        <td width='30%' class='label-view text-right'>
+                            November</td>
+                        <td>{{ $row->November }} </td>
+
+                    </tr><tr>
+                        <td width='30%' class='label-view text-right'>
+                            December</td>
+                        <td>{{ $row->December }} </td>
+
+                    </tr>
 				
 			</tbody>	
 		</table>  

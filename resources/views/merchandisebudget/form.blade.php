@@ -9,54 +9,135 @@
 
 	<div class="sbox-content"> 
 @endif	
-			{!! Form::open(array('url'=>'merchandisebudget/save/'.SiteHelpers::encryptID($row['id']), 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'merchandisebudgetFormAjax')) !!}
+			{!! Form::open(array('url'=>'merchandisebudget/save/'.$row['id'], 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'merchandisebudgetFormAjax')) !!}
 			<div class="col-md-12">
 						<fieldset><legend> Merchandise Budget</legend>
-									
-				  <div class="form-group  " > 
-					<label for="Id" class=" control-label col-md-4 text-left"> 
-					{!! SiteHelpers::activeLang('Id', (isset($fields['id']['language'])? $fields['id']['language'] : array())) !!}	
-					</label>
-					<div class="col-md-6">
-					  {!! Form::text('id', $row['id'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
-					 </div> 
-					 <div class="col-md-2">
-					 	
-					 </div>
-				  </div> 					
 				  <div class="form-group  " > 
 					<label for="Location Id" class=" control-label col-md-4 text-left"> 
 					{!! SiteHelpers::activeLang('Location Id', (isset($fields['location_id']['language'])? $fields['location_id']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('location_id', $row['location_id'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
-					 </div> 
+                        <select name="location_id" id="location_id" class="select3" required/>
+					 </div>
 					 <div class="col-md-2">
 					 	
 					 </div>
 				  </div> 					
 				  <div class="form-group  " > 
 					<label for="Budget Date" class=" control-label col-md-4 text-left"> 
-					{!! SiteHelpers::activeLang('Budget Date', (isset($fields['budget_date']['language'])? $fields['budget_date']['language'] : array())) !!}	
-					</label>
-					<div class="col-md-6">
-					  {!! Form::text('budget_date', $row['budget_date'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
-					 </div> 
+					Budget Year
+							</label>
+                        <div class="col-md-6">
+                            <div class="input-group m-b" style="width:150px !important;">
+                                <input type="text" class="form-control datee" value="" name="budget_year" required/>
+                            </div>
+                        </div>
 					 <div class="col-md-2">
 					 	
 					 </div>
-				  </div> 					
+				  </div>
+                            <fieldset>
+                                <legend> Merchandise Budget Values</legend>
 				  <div class="form-group  " > 
-					<label for="Budget Value" class=" control-label col-md-4 text-left"> 
-					{!! SiteHelpers::activeLang('Budget Value', (isset($fields['budget_value']['language'])? $fields['budget_value']['language'] : array())) !!}	
-					</label>
-					<div class="col-md-6">
-					  {!! Form::text('budget_value', $row['budget_value'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
-					 </div> 
-					 <div class="col-md-2">
-					 	
+					<label for="jan" class=" control-label col-md-4 text-left">January</label>
+					<div class="col-md-4">
+					<input type="number" name="jan" id="jan" class="form-control"/>
+                    </div>
+					 <div class="col-md-4">
 					 </div>
-				  </div> </fieldset>
+				  </div>
+                  <div class="form-group  " >
+                                    <label for="feb" class=" control-label col-md-4 text-left"> February</label>
+                                    <div class="col-md-4">
+                                        <input type="number" name="feb" id="feb" class="form-control"/>  </div>
+                                    <div class="col-md-4">
+                                    </div>
+                                </div>
+                                <div class="form-group  " >
+                                    <label for="march" class=" control-label col-md-4 text-left">
+                                    March
+                                    </label>
+                                    <div class="col-md-4">
+                                        <input type="number" name="march" id="march" class="form-control"/>  </div>
+                                    <div class="col-md-4">
+                                    </div>
+                                </div>
+                                <div class="form-group  " >
+                                    <label for="april" class=" control-label col-md-4 text-left">
+                                        April   </label>
+                                    <div class="col-md-4">
+                                        <input type="number" name="april" id="april" class="form-control"/>  </div>
+                                    <div class="col-md-4">
+                                    </div>
+                                </div>
+                                <div class="form-group  " >
+                                    <label for="may" class=" control-label col-md-4 text-left">
+                                       May     </label>
+                                    <div class="col-md-4">
+                                        <input type="number" name="may" id="may" class="form-control"/>  </div>
+                                    <div class="col-md-4">
+                                    </div>
+                                </div>
+                                <div class="form-group  " >
+                                    <label for="jun" class=" control-label col-md-4 text-left">
+                                        June</label>
+                                    <div class="col-md-4">
+                                        <input type="number" name="jun" id="jun" class="form-control"/>  </div>
+                                    <div class="col-md-4">
+                                    </div>
+                                </div>
+                                <div class="form-group  " >
+                                    <label for="jul" class=" control-label col-md-4 text-left">
+                                     July  </label>
+                                    <div class="col-md-4">
+                                        <input type="number" name="jul" id="jul" class="form-control"/>  </div>
+                                    <div class="col-md-4">
+                                    </div>
+                                </div>
+                                <div class="form-group  " >
+                                    <label for="aug" class=" control-label col-md-4 text-left">
+                                       August </label>
+                                    <div class="col-md-4">
+                                        <input type="number" name="aug" id="aug" class="form-control"/>  </div>
+                                    <div class="col-md-4">
+                                    </div>
+                                </div>
+                                <div class="form-group  " >
+                                    <label for="sep" class=" control-label col-md-4 text-left">
+                                     September  </label>
+                                    <div class="col-md-4">
+                                        <input type="number" name="sep" id="sep" class="form-control"/>  </div>
+                                    <div class="col-md-4">
+                                    </div>
+                                </div>
+                                <div class="form-group  " >
+                                    <label for="oct" class=" control-label col-md-4 text-left">
+                                       Octuber    </label>
+                                    <div class="col-md-4">
+                                        <input type="number" name="oct" id="oct" class="form-control"/>
+                                        </div>
+                                    <div class="col-md-4">
+                                    </div>
+                                </div>
+                                <div class="form-group  " >
+                                    <label for="nov" class=" control-label col-md-4 text-left">
+                                   November   </label>
+                                    <div class="col-md-4">
+                                        <input type="number" name="nov" id="nov" class="form-control"/>
+                                      </div>
+                                    <div class="col-md-4">
+                                    </div>
+                                </div>
+                                <div class="form-group  " >
+                                    <label for="dec" class=" control-label col-md-4 text-left">
+                                       December </label>
+                                    <div class="col-md-4">
+                                        <input type="number" name="dec" id="dec" class="form-control"/>  </div>
+                                    <div class="col-md-4">
+                                    </div>
+                                </div>
+                            </fieldset>
+                        </fieldset>
 			</div>
 			
 												
@@ -80,21 +161,29 @@
 @endif	
 
 	
-</div>	
+
 			 
 <script type="text/javascript">
-$(document).ready(function() { 
-	 
-	
+$(document).ready(function() {
+
+    $("#location_id").jCombo("{{ URL::to('merchandisebudget/comboselect?filter=location:id:id|location_name') }}",
+            {  selected_value : '' });
+
 	$('.editor').summernote();
 	$('.previewImage').fancybox();	
 	$('.tips').tooltip();	
-	$(".select2").select2({ width:"98%"});	
-	$('.date').datepicker({format:'yyyy-mm-dd',autoClose:true})
+	$(".select3").select2({ width:"98%"});
+	$('.datee').datepicker({
+        format: " yyyy", // Notice the Extra space at the beginning
+        viewMode: "years",
+        minViewMode: "years",
+        changeMonth:false
+    });
+
 	$('.datetime').datetimepicker({format: 'yyyy-mm-dd hh:ii:ss'}); 
 	$('input[type="checkbox"],input[type="radio"]').iCheck({
 		checkboxClass: 'icheckbox_square-green',
-		radioClass: 'iradio_square-green',
+		radioClass: 'iradio_square-green'
 	});			
 	$('.removeCurrentFiles').on('click',function(){
 		var removeUrl = $(this).attr('href');

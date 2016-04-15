@@ -129,6 +129,7 @@ class MerchandisebudgetController extends Controller {
 		}
 
 		$row = $this->model->find($id);
+
 		if($row)
 		{
 			$this->data['row'] 		=  $row;
@@ -187,30 +188,37 @@ class MerchandisebudgetController extends Controller {
 	}
 
 	function postSave( Request $request, $id =0)
-	{
+    {
+        $budget_vals = array();
+        $location_id = $request->get('location_id');
+        $budget_year = $request->get('budget_year');
+        $budget_vals['jan'] = array('location_id' => $location_id, 'budget_date' => $budget_year . '-01-01', 'budget_value' => $request->get('jan'));
+        $budget_vals['feb'] = array('location_id' => $location_id, 'budget_date' => $budget_year . '-02-01', 'budget_value' => $request->get('feb'));
+        $budget_vals['march'] = array('location_id' => $location_id, 'budget_date' => $budget_year . '-03-01', 'budget_value' => $request->get('march'));
+        $budget_vals['april'] = array('location_id' => $location_id, 'budget_date' => $budget_year . '-04-01', 'budget_value' => $request->get('april'));
+        $budget_vals['may'] = array('location_id' => $location_id, 'budget_date' => $budget_year . '-05-01', 'budget_value' => $request->get('may'));
+        $budget_vals['jun'] = array('location_id' => $location_id, 'budget_date' => $budget_year . '-06-01', 'budget_value' => $request->get('jun'));
+        $budget_vals['jul'] = array('location_id' => $location_id, 'budget_date' => $budget_year . '-07-01', 'budget_value' => $request->get('jul'));
+        $budget_vals['aug'] = array('location_id' => $location_id, 'budget_date' => $budget_year . '-08-01', 'budget_value' => $request->get('aug'));
+        $budget_vals['sep'] = array('location_id' => $location_id, 'budget_date' => $budget_year . '-09-01', 'budget_value' => $request->get('sep'));
+        $budget_vals['oct'] = array('location_id' => $location_id, 'budget_date' => $budget_year . '-10-01', 'budget_value' => $request->get('oct'));
+        $budget_vals['nov'] = array('location_id' => $location_id, 'budget_date' => $budget_year . '-11-01', 'budget_value' => $request->get('nov'));
+        $budget_vals['dec'] = array('location_id' => $location_id, 'budget_date' => $budget_year . '-12-01', 'budget_value' => $request->get('dec'));
+        if($id==0) {
+            $id = $this->model->insertRow($budget_vals, $request->input('id'));
+        }
+        else
+        {
+            $id = $this->model->insertRow($budget_vals, $id);
+        }
+        return response()->json(array(
+            'status' => 'success',
+            'message' => \Lang::get('core.note_success')
+        ));
 
-		$rules = $this->validateForm();
-		$validator = Validator::make($request->all(), $rules);
-		if ($validator->passes()) {
-			$data = $this->validatePost('location_budget');
 
-			$id = $this->model->insertRow($data , $request->input('id'));
-			
-			return response()->json(array(
-				'status'=>'success',
-				'message'=> \Lang::get('core.note_success')
-				));
+    }
 
-		} else {
-
-			$message = $this->validateListError(  $validator->getMessageBag()->toArray() );
-			return response()->json(array(
-				'message'	=> $message,
-				'status'	=> 'error'
-			));
-		}
-
-	}
 
 	public function postDelete( Request $request)
 	{

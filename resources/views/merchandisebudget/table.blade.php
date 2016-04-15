@@ -22,17 +22,21 @@
 			<tr>
 				<th width="20"> No </th>
 				<th width="30"> <input type="checkbox" class="checkall" /></th>
-				@if($setting['view-method']=='expand') <th>  </th> @endif
-				<?php foreach ($tableGrid as $t) :
-					if($t['view'] =='1'):
-						$limited = isset($t['limited']) ? $t['limited'] :'';
-						if(SiteHelpers::filterColumn($limited ))
-						{
-							echo '<th align="'.$t['align'].'" width="'.$t['width'].'">'.\SiteHelpers::activeLang($t['label'],(isset($t['language'])? $t['language'] : array())).'</th>';
 
-                }
-					endif;
-				endforeach; ?>
+				<th width="200">Location</th>
+                <th width="150">January</th>
+                <th width="150">February</th>
+                <th width="150">March</th>
+                <th width="150">April</th>
+                <th width="150">May</th>
+                <th width="150">June</th>
+                <th width="150">July</th>
+                <th width="150">August</th>
+                <th width="150">September</th>
+                <th width="150">Octuber</th>
+                <th width="150">November</th>
+                <th width="150">December</th>
+
 				<th width="70"><?php echo Lang::get('core.btn_action') ;?></th>
 			  </tr>
         </thead>
@@ -44,23 +48,17 @@
 				<td> </td>
 				@if($setting['view-method']=='expand') <td> </td> @endif
 				@foreach ($tableGrid as $t)
-					@if($t['view'] =='1')
-					<?php $limited = isset($t['limited']) ? $t['limited'] :''; ?>
-						@if(SiteHelpers::filterColumn($limited ))
-						<td data-form="{{ $t['field'] }}" data-form-type="{{ AjaxHelpers::inlineFormType($t['field'],$tableForm)}}">
-							{!! SiteHelpers::transForm($t['field'] , $tableForm) !!}
-						</td>
-						@endif
-					@endif
-				@endforeach
+
 				<td >
 					<button onclick="saved('form-0')" class="btn btn-primary btn-xs" type="button"><i class="fa  fa-save"></i></button>
 				</td>
 			  </tr>
+                @endforeach
 			  @endif
 
            		<?php foreach ($rowData as $row) :
            			  $id = $row->id;
+
            		?>
                 <tr class="editable" id="form-{{ $row->id }}">
 					<td class="number"> <?php echo ++$i;?>  </td>
@@ -68,23 +66,20 @@
 					@if($setting['view-method']=='expand')
 					<td><a href="javascript:void(0)" class="expandable" rel="#row-{{ $row->id }}" data-url="{{ url('merchandisebudget/show/'.$id) }}"><i class="fa fa-plus " ></i></a></td>
 					@endif
-					 <?php foreach ($tableGrid as $field) :
-					 	if($field['view'] =='1') :
-							$conn = (isset($field['conn']) ? $field['conn'] : array() );
+                    <td>{{ $row->location }}</td>
+                    <td>{{ $row->Jan }}</td>
+                    <td>{{ $row->Feb }}</td>
+                    <td>{{ $row->March }}</td>
+                    <td>{{ $row->April }}</td>
+                    <td>{{ $row->May }}</td>
+                    <td>{{ $row->June }}</td>
+                    <td>{{ $row->July }}</td>
+                    <td>{{ $row->August }}</td>
+                    <td>{{ $row->September }}</td>
+                    <td>{{ $row->Octuber }}</td>
+                    <td>{{ $row->November }}</td>
+                    <td>{{ $row->December }}</td>
 
-
-							$value = AjaxHelpers::gridFormater($row->$field['field'], $row , $field['attribute'],$conn);
-						 	?>
-						 	<?php $limited = isset($field['limited']) ? $field['limited'] :''; ?>
-						 	@if(SiteHelpers::filterColumn($limited ))
-								 <td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}" data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
-									{!! $value !!}
-								 </td>
-							@endif
-                    <?php
-						 endif;
-						endforeach;
-					  ?>
 				 <td data-values="action" data-key="<?php echo $row->id ;?>">
 					{!! AjaxHelpers::buttonAction('merchandisebudget',$access,$id ,$setting) !!}
 					{!! AjaxHelpers::buttonActionInline($row->id,'id') !!}

@@ -41,6 +41,8 @@ class Sximo extends Model {
         {
             $select.=self::queryWhere();
         }
+        //echo $select." {$params} ". self::queryGroup() ." {$orderConditional}  {$limitConditional} ";
+        //die();
         $result=\DB::select($select." {$params} ". self::queryGroup() ." {$orderConditional}  {$limitConditional} ");
         if($key =='' ) { $key ='*'; } else { $key = $table.".".$key ; }
 		$counter_select = preg_replace( '/[\s]*SELECT(.*)FROM/Usi', 'SELECT count('.$key.') as total FROM', self::querySelect() );
