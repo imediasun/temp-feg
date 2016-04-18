@@ -46,10 +46,10 @@
 <div class="row">
     <div class="col-md-4"><select name='product_list_type' rows='5' id='product_list_type' class="form-control">
             <option disabled selected>------------ Select Type --------------</option>
-            <option value="redemption" data-active="1">Redemption Prizes</option>
-            <option value="redemption" data-active="0">Redemption Prizes - INACTIVE</option>
-            <option value="instant" data-active="1">Instant Win Prizes</option>
-            <option value="instant" data-active="0">Instant Win Prizes - INACTIVE</option>
+            <option value="redemption" data-active="0">Redemption Prizes</option>
+            <option value="redemption" data-active="1">Redemption Prizes - INACTIVE</option>
+            <option value="instant" data-active="0">Instant Win Prizes</option>
+            <option value="instant" data-active="1">Instant Win Prizes - INACTIVE</option>
             <option value="graphics" data-active="0">Graphics</option>
             <option value="ticketokens" data-active="0">Tickets,Tokens,Uniforms,Photo ,Paper-Debit, Cards</option>
             <option value="party" data-active="0">Party Supplies</option>
@@ -73,7 +73,7 @@
 <script>
     $(document).ready(function () {
         $("#product_list_type option").each(function(){
-            if($(this).val()=="{{ $prod_list_type }}")
+            if($(this).val()=="{{ $prod_list_type }}" && $(this).attr('data-active')=="{{ $active }}")
             {
                 $(this).attr('selected',true);
             }

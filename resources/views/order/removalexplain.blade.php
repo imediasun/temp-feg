@@ -1,7 +1,6 @@
 @extends('layouts.app')
 
 @section('content')
-
     <div class="page-content row">
         <!-- Page header -->
         <div class="page-header">
@@ -77,10 +76,9 @@
 
             if(data.status == 'success')
             {
-                ajaxViewClose('#{{ $pageModule }}');
-                ajaxFilter('#{{ $pageModule }}','{{ $pageUrl }}/data');
                 notyMessage(data.message);
                 $('#sximo-modal').modal('hide');
+                location.href='/sximo/public/order';
             } else {
                 notyMessageError(data.message);
                 $('.ajaxLoading').hide();

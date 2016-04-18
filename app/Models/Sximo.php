@@ -47,7 +47,7 @@ class Sximo extends Model {
         if($key =='' ) { $key ='*'; } else { $key = $table.".".$key ; }
 		$counter_select = preg_replace( '/[\s]*SELECT(.*)FROM/Usi', 'SELECT count('.$key.') as total FROM', self::querySelect() );
 		//total query becomes too huge
-		if($table == "orders")
+		if($table == "orders" && ! isset($_GET['order_type']))
 		{
 			$total = 2000;
 		}

@@ -1,4 +1,3 @@
-<?php usort($tableGrid, "SiteHelpers::_sort"); ?>
 <div class="sbox">
 	<div class="sbox-title">
 		<h5> <i class="fa fa-table"></i> </h5>
@@ -12,7 +11,7 @@
 	</div>
 	<div class="sbox-content">
 
-        @include( $pageModule.'/toolbar',['config_id'=>$config_id,'colconfigs' => SiteHelpers::getRequiredConfigs($module_id)])
+        @include( $pageModule.'/toolbar')
 
 	 <?php echo Form::open(array('url'=>'merchandisebudget/delete/', 'class'=>'form-horizontal' ,'id' =>'SximoTable'  ,'data-parsley-validate'=>'' )) ;?>
 <div class="table-responsive">
@@ -22,8 +21,7 @@
 			<tr>
 				<th width="20"> No </th>
 				<th width="30"> <input type="checkbox" class="checkall" /></th>
-
-				<th width="200">Location</th>
+                <th width="200">Location</th>
                 <th width="150">January</th>
                 <th width="150">February</th>
                 <th width="150">March</th>
@@ -58,8 +56,7 @@
 
            		<?php foreach ($rowData as $row) :
            			  $id = $row->id;
-
-           		?>
+                ?>
                 <tr class="editable" id="form-{{ $row->id }}">
 					<td class="number"> <?php echo ++$i;?>  </td>
 					<td ><input type="checkbox" class="ids" name="ids[]" value="<?php echo $row->id ;?>" />  </td>
@@ -121,7 +118,7 @@ $(document).ready(function() {
 	$('.tips').tooltip();
 	$('input[type="checkbox"],input[type="radio"]').iCheck({
 		checkboxClass: 'icheckbox_square-green',
-		radioClass: 'iradio_square-green',
+		radioClass: 'iradio_square-green'
 	});
 	$('#{{ $pageModule }}Table .checkall').on('ifChecked',function(){
 		$('#{{ $pageModule }}Table input[type="checkbox"]').iCheck('check');

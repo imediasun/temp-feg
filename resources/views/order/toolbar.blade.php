@@ -39,10 +39,10 @@
     </div>
     <div class="col-md-3">
         <?php
-        $orders=array('All'=>'ALL','Open'=>'OPEN','Fixed Asset Orders'=>'FIXED_ASSET','Products In Development Orders'=>'PRO_IN_DEV');
+        $orders=array('All'=>'0','Open'=>'OPEN','Fixed Asset Orders'=>'FIXED_ASSET','Products In Development Orders'=>'PRO_IN_DEV');
         ?>
         <select name="order_type" id="order_type" class="form-control">
-            <option>         ----- Select Orders ----- </option>
+            <option disabled>         ----- Select Orders ----- </option>
             @foreach($orders as $type=>$value)
                 <option @if($value==$order_selected) selected @endif value="{{ $value }}">{{ $type }}</option>
             @endforeach
@@ -58,7 +58,12 @@
 
         var val=$(this).val();
         if(val) {
-            reloadData('#{{ $pageModule }}','{{ $pageModule }}/data?order_type='+val);
+            if (val != 0) {
+                reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?order_type=' + val);
+            }
+            else{
+                reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data');
+            }
         }
     });
 </script>

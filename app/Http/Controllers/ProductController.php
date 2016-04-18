@@ -89,6 +89,7 @@ class ProductController extends Controller {
         }
         else {
             $this->data['product_list_type']=0;
+            $this->data['active_prod']=0;
         }
         $results = $this->model->getRows($params,$prod_list_type,$active);
 

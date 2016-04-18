@@ -478,9 +478,10 @@ abstract class Controller extends BaseController {
 		$order 	= (isset($_GET['order']) 	? $_GET['order'] : '');
 		$rows 	= (isset($_GET['rows']) 	? $_GET['rows'] : '');
 		$search 	= (isset($_GET['search']) ? $_GET['search'] : '');
-        $product_type=(isset($_GET['product_type'])?$_GET['product_type']: '');
+        $product_type=(isset($_GET['prod_list_type'])?$_GET['prod_list_type']: '');
         $budget_year=(isset($_GET['budget_year'])?$_GET['budget_year']: '');
         $order_type=(isset($_GET['order_type'])?$_GET['order_type']: '');
+        $active=(isset($_GET['active'])?$_GET['active']:'');
 
 		$appends = array();
 		if($sort!='') 	$appends['sort'] = $sort; 
@@ -488,11 +489,15 @@ abstract class Controller extends BaseController {
 		if($rows!='') 	$appends['rows'] = $rows; 
 		if($search!='') $appends['search'] = $search;
         if($product_type!='' || $product_type != NULL)
-        $appends['product_type']=$product_type;
+        $appends['prod_list_type']=$product_type;
         if($budget_year!='' || $budget_year != NULL)
             $appends['budget_year']=$budget_year;
-        if($order_type!='ALL' || $order_type != NULL)
-            $appends['order_type']=$order_type;
+        if($order_type!='')
+        $appends['order_type']=$order_type;
+        if($active!='' || $active != 0) {
+            $appends['active'] = $active;
+        }
+
 		return $appends;
 			
 	}	

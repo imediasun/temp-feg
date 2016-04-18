@@ -1,6 +1,6 @@
 
 @if($setting['form-method'] =='native')
-	<div class="sbox">
+    <div class="sbox">
 		<div class="sbox-title">  
 			<h4> <i class="fa fa-table"></i> <?php echo $pageTitle ;?> <small>{{ $pageNote }}</small>
 				<a href="javascript:void(0)" class="collapse-close pull-right btn btn-xs btn-danger" onclick="ajaxViewClose('#{{ $pageModule }}')"><i class="fa fa fa-times"></i></a>
@@ -29,7 +29,7 @@
 							</label>
                         <div class="col-md-6">
                             <div class="input-group m-b" style="width:150px !important;">
-                                <input type="text" class="form-control datee" value="" name="budget_year" required/>
+                                <input type="text" class="form-control datee" value="{{ $row['budget_year'] }}" name="budget_year" required/>
                             </div>
                         </div>
 					 <div class="col-md-2">
@@ -41,7 +41,7 @@
 				  <div class="form-group  " > 
 					<label for="jan" class=" control-label col-md-4 text-left">January</label>
 					<div class="col-md-4">
-					<input type="number" name="jan" id="jan" class="form-control"/>
+					<input type="number" name="jan" id="jan" value="{{$row['Jan']}}" class="form-control"/>
                     </div>
 					 <div class="col-md-4">
 					 </div>
@@ -49,7 +49,7 @@
                   <div class="form-group  " >
                                     <label for="feb" class=" control-label col-md-4 text-left"> February</label>
                                     <div class="col-md-4">
-                                        <input type="number" name="feb" id="feb" class="form-control"/>  </div>
+                                        <input type="number" name="feb" id="feb" value="{{ $row['Feb']}}" class="form-control"/>  </div>
                                     <div class="col-md-4">
                                     </div>
                                 </div>
@@ -58,7 +58,7 @@
                                     March
                                     </label>
                                     <div class="col-md-4">
-                                        <input type="number" name="march" id="march" class="form-control"/>  </div>
+                                        <input type="number" name="march" id="march" value="{{$row['March']}}" class="form-control"/>  </div>
                                     <div class="col-md-4">
                                     </div>
                                 </div>
@@ -66,7 +66,7 @@
                                     <label for="april" class=" control-label col-md-4 text-left">
                                         April   </label>
                                     <div class="col-md-4">
-                                        <input type="number" name="april" id="april" class="form-control"/>  </div>
+                                        <input type="number" name="april" id="april" class="form-control" value="{{$row['April']}}"/>  </div>
                                     <div class="col-md-4">
                                     </div>
                                 </div>
@@ -74,7 +74,7 @@
                                     <label for="may" class=" control-label col-md-4 text-left">
                                        May     </label>
                                     <div class="col-md-4">
-                                        <input type="number" name="may" id="may" class="form-control"/>  </div>
+                                        <input type="number" name="may" id="may" class="form-control" value="{{$row['May']}}"/>  </div>
                                     <div class="col-md-4">
                                     </div>
                                 </div>
@@ -82,7 +82,7 @@
                                     <label for="jun" class=" control-label col-md-4 text-left">
                                         June</label>
                                     <div class="col-md-4">
-                                        <input type="number" name="jun" id="jun" class="form-control"/>  </div>
+                                        <input type="number" name="jun" id="jun" class="form-control" value="{{$row['June']}}"/>  </div>
                                     <div class="col-md-4">
                                     </div>
                                 </div>
@@ -90,7 +90,7 @@
                                     <label for="jul" class=" control-label col-md-4 text-left">
                                      July  </label>
                                     <div class="col-md-4">
-                                        <input type="number" name="jul" id="jul" class="form-control"/>  </div>
+                                        <input type="number" name="jul" id="jul" class="form-control" value="{{$row['July']}}"/>  </div>
                                     <div class="col-md-4">
                                     </div>
                                 </div>
@@ -98,7 +98,7 @@
                                     <label for="aug" class=" control-label col-md-4 text-left">
                                        August </label>
                                     <div class="col-md-4">
-                                        <input type="number" name="aug" id="aug" class="form-control"/>  </div>
+                                        <input type="number" name="aug" id="aug" class="form-control" value="{{$row['August']}}"/>  </div>
                                     <div class="col-md-4">
                                     </div>
                                 </div>
@@ -106,7 +106,7 @@
                                     <label for="sep" class=" control-label col-md-4 text-left">
                                      September  </label>
                                     <div class="col-md-4">
-                                        <input type="number" name="sep" id="sep" class="form-control"/>  </div>
+                                        <input type="number" name="sep" id="sep" class="form-control" value="{{$row['September']}}"/>  </div>
                                     <div class="col-md-4">
                                     </div>
                                 </div>
@@ -114,7 +114,7 @@
                                     <label for="oct" class=" control-label col-md-4 text-left">
                                        Octuber    </label>
                                     <div class="col-md-4">
-                                        <input type="number" name="oct" id="oct" class="form-control"/>
+                                        <input type="number" name="oct" id="oct" class="form-control" value="{{$row['Octuber']}}"/>
                                         </div>
                                     <div class="col-md-4">
                                     </div>
@@ -123,7 +123,7 @@
                                     <label for="nov" class=" control-label col-md-4 text-left">
                                    November   </label>
                                     <div class="col-md-4">
-                                        <input type="number" name="nov" id="nov" class="form-control"/>
+                                        <input type="number" name="nov" id="nov" class="form-control" value="{{$row['November']}}"/>
                                       </div>
                                     <div class="col-md-4">
                                     </div>
@@ -132,7 +132,7 @@
                                     <label for="dec" class=" control-label col-md-4 text-left">
                                        December </label>
                                     <div class="col-md-4">
-                                        <input type="number" name="dec" id="dec" class="form-control"/>  </div>
+                                        <input type="number" name="dec" id="dec" class="form-control" value="{{$row['December']}}"/>  </div>
                                     <div class="col-md-4">
                                     </div>
                                 </div>
@@ -167,7 +167,7 @@
 $(document).ready(function() {
 
     $("#location_id").jCombo("{{ URL::to('merchandisebudget/comboselect?filter=location:id:id|location_name') }}",
-            {  selected_value : '' });
+            {  selected_value : '{{ $row['location_id'] }}' });
 
 	$('.editor').summernote();
 	$('.previewImage').fancybox();	
