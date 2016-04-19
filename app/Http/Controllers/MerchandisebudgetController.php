@@ -244,6 +244,55 @@ class MerchandisebudgetController extends Controller
         }
 
     }
+    function buildSearch( )
+    {
+        $keywords = ''; $fields = '';	$param ='';
+        $allowsearch = $this->info['config']['forms'];
+        foreach($allowsearch as $as) $arr[$as['field']] = $as ;
+        if($_GET['search'] !='')
+        {
+            $type = explode("|",$_GET['search'] );
+            if(count($type) >= 1)
+            {
+                foreach($type as $t)
+                {
+                    $keys = explode(":",$t);
+
+                    if(in_array($keys[0],array_keys($arr))):
+                        if($arr[$keys[0]]['type'] == 'select' || $arr[$keys[0]]['type'] == 'radio' )
+                        {
+                             if($keys[0]=="budget_date") {
+                                 \Session::put('budget_year',$keys[2]);
+                                 $param .= " AND " . "YEAR(". $arr[$keys[0]]['alias'] .".". $keys[0] . ") " . self::searchOperation($keys[1]) . " '" . $keys[2] . "' ";
+                             }
+                            else
+                            {
+                                $param .= " AND " . $arr[$keys[0]]['alias'] . "." . $keys[0] . " " . self::searchOperation($keys[1]) . " '" . $keys[2] . "' ";
+                            }
+                        } else {
+                            $operate = self::searchOperation($keys[1]);
+                            if($operate == 'like')
+                            {
+                                $param .= " AND ".$arr[$keys[0]]['alias'].".".$keys[0]." LIKE '%".$keys[2]."%%' ";
+                            } else if( $operate =='is_null') {
+                                $param .= " AND ".$arr[$keys[0]]['alias'].".".$keys[0]." IS NULL ";
+
+                            } else if( $operate =='not_null') {
+                                $param .= " AND ".$arr[$keys[0]]['alias'].".".$keys[0]." IS NOT NULL ";
+
+                            } else if( $operate =='between') {
+                                $param .= " AND (".$arr[$keys[0]]['alias'].".".$keys[0]." BETWEEN '".$keys[2]."' AND '".$keys[3]."' ) ";
+                            } else {
+                                $param .= " AND ".$arr[$keys[0]]['alias'].".".$keys[0]." ".self::searchOperation($keys[1])." '".$keys[2]."' ";
+                            }
+                        }
+                    endif;
+                }
+            }
+        }
+        return $param;
+
+    }
 //script for getting data from location_old table and inserting into location_budget
     /*public function getTest()
     {

@@ -16,10 +16,10 @@
 					<label for="Location Id" class=" control-label col-md-4 text-left"> 
 					{!! SiteHelpers::activeLang('Location Id', (isset($fields['location_id']['language'])? $fields['location_id']['language'] : array())) !!}	
 					</label>
-					<div class="col-md-6">
+					<div class="col-md-4">
                         <select name="location_id" id="location_id" class="select3" required/>
 					 </div>
-					 <div class="col-md-2">
+					 <div class="col-md-4">
 					 	
 					 </div>
 				  </div> 					
@@ -27,12 +27,18 @@
 					<label for="Budget Date" class=" control-label col-md-4 text-left"> 
 					Budget Year
 							</label>
-                        <div class="col-md-6">
-                            <div class="input-group m-b" style="width:150px !important;">
-                                <input type="text" class="form-control datee" value="{{ $row['budget_year'] }}" name="budget_year" required/>
-                            </div>
+                        <div class="col-md-4">
+                                <?php
+                                $years=array(2012,2013,2014,2015,2016,2017,2018,2019,2020);
+                                ?>
+                                <select name="budget_year" id="budget_year" class="form-control" style="width:316px">
+                                    <option selected disabled>         ----- Select Year ----- </option>
+                                    @foreach($years as $year)
+                                        <option @if($year==$row['budget_year']) selected @endif value="{{ $year}}">{{ $year }}</option>
+                                    @endforeach
+                                </select>
                         </div>
-					 <div class="col-md-2">
+					 <div class="col-md-4">
 					 	
 					 </div>
 				  </div>

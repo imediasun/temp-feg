@@ -138,7 +138,7 @@
                     <div class="form-group  ">
                         <br/><br/>
                         <label for="total_cost" class=" control-label col-md-4 text-left">
-                            Total Cost</label>
+                            Total Cost ($)</label>
 
                         <div class="col-md-8">
                             <input style="width:150px !important;" type="text" name="order_total" id="total_cost"
@@ -196,7 +196,8 @@
                         <th>tem Descripton / Item Number</th>
                         <th>Price</th>
                         <th>Quantity</th>
-                        <th>Total</th>
+                        <th>Game</th>
+                        <th>Total($)</th>
                         <th> </th>
                     </tr>
 
@@ -206,13 +207,25 @@
                     <tr class="clone clonedInput">
                         <td> <textarea name='item[0]' placeholder='Item #1 Description'
                                        class='form-control' cols="30" rows="4" maxlength="225" required></textarea></td>
-                        <td><br/> <input type='number' name='price[0]' placeholder='Price' id="price"
-                                         class='form-control' min=".00000" step=".00001"
+                        <td><br/> <input type='number' name='price[]' placeholder='Price' id="price"
+                                         class='form-control' min=".00000" step=".00001" value="0.0000"
                                          required ></td>
-                        <td><br/> <input type='number' name='qty[0]' placeholder='Quantity'
-                                         class='form-control' min="1" step="1" id="qty"
+                        <td><br/> <input type='number' name='qty[]' placeholder='Quantity'
+                                         class='form-control' min="1" step="1" id="qty" value="0.0000"
                                           required></td>
-                        <td><br/><input type="text" name="total" value="" readonly class="form-control"/></td>
+
+                         <td><br/>
+                            <select  name='game[]' id='game_0' class='game form-control'>
+                                <option selected value="">For Various Games</option>
+                                @foreach( \SiteHelpers::getGamesTitle() as $game_title)
+                                <option value="{{ $game_title->id }}"> {{ $game_title->game_title }}</option>
+                                @endforeach
+                            </select>
+                        </td>
+
+                        <input type='hidden' name='product_id[0]'>
+                        <input type='hidden' name='request_id[0]'>
+                        <td><br/><input type="text" name="total" value="0.0000" readonly class="form-control"/></td>
                         <td><br/> <a onclick=" $(this).parents('.clonedInput').remove(); calculateSum(); return false"
                                      href="#" class="remove btn btn-xs btn-danger">-</a>
                             <input type="hidden" name="counter[]">
@@ -220,7 +233,7 @@
                     </tr>
                     </tr>
                     <tr>
-                        <td colspan="3" class="text-right"> Subtotal</td>
+                        <td colspan="3" class="text-right"> Subtotal($)</td>
                         <td><input type="text" value="" class="form-control input-sm" name="Subtotal"></td>
                         <td></td>
 
@@ -232,7 +245,7 @@
             </div>
             <br/><br/>
 
-            <a href="javascript:void(0);" class="addC btn btn-xs btn-info" rel=".clone"><i class="fa fa-plus"></i> New
+            <a href="javascript:void(0);" class="addC btn btn-xs btn-info" rel=".clone" id="add_new_item"><i class="fa fa-plus"></i> New
                 Item</a>
             <hr/>
 
@@ -243,7 +256,7 @@
                 <label class="col-sm-4 text-right">&nbsp;</label>
 
                 <div class="col-sm-8">
-                    <button type="submit" class="btn btn-primary btn-sm "><i
+                    <button type="submit"  class="btn btn-primary btn-sm "><i
                                 class="fa  fa-save "></i>  {{ Lang::get('core.sb_save') }} </button>
                     <button type="button" onclick="ajaxViewClose('#{{ $pageModule }}')" class="btn btn-success btn-sm">
                         <i class="fa  fa-arrow-circle-left "></i>  {{ Lang::get('core.sb_cancel') }} </button>
@@ -258,23 +271,24 @@
     <script type="text/javascript">
         $('#alt_ship_to').on('change', function () {
                     if ($(this).is(':checked'))
-                        $("#ship_address").css('display', 'block');
+                        $("#ship_address").show();
                     else
-                        $("#ship_address").css('display', 'none');
+                        $("#ship_address").hide();
 
                 }
         );
         function calculateSum() {
-
+    
             var Subtotal = 0.00;
             $('table tr.clone ').each(function (i) {
-                Qty = $(this).find(" input[name*='qty']").val();
+                Qty = $(this).find("input[name*='qty']").val();
                 Price = $(this).find("input[name*='price']").val();
                 sum = Qty * Price;
                 Subtotal += sum;
                 $(this).find("input[name*='total']").val(sum);
             });
 
+             Subtotal=Subtotal.toFixed(4);
             $("input[name='Subtotal']").val(Subtotal);
             $("#total_cost").val(Subtotal);
         }
@@ -294,16 +308,15 @@
                     {selected_value: '{{ $data["order_type"] }}'});
             $("input[name*='total'] ").attr('readonly', '1');
             $("input[name*='qty'] , input[name*='bulk_Price'] ").addClass('calculate');
+            var ele=document.getElementsByClassName(".calculate");
 
-            calculateSum();
             $(".calculate").keyup(function () {
                 calculateSum();
             });
             $('.remove').click(function () {
                 calculateSum();
             });
-
-
+            $(".calculate").trigger("keyup");
             $('.addC').relCopy({});
             $('.editor').summernote();
             $('.previewImage').fancybox();
@@ -344,7 +357,9 @@
 
             var item_total = 0;
 
+
             for (var i = 0; i < requests_item_count; i++) {
+
 
                 $('textarea[name^=item]').eq(i).val(order_description_array[i]);
                 $('input[name^=price]').eq(i).val(order_price_array[i]);
@@ -355,8 +370,9 @@
                 if (i < requests_item_count - 1) //COMPENSATE FOR BEGINNING WITH ONE INPUT
                 {
 
-                    $("#add_new_item").trigger('click');
+                    $("#add_new_item").trigger("click");
                 }
+
             }
         });
 
@@ -406,7 +422,7 @@
         // -----------------for checking and validating PO number.... -----------------------//
         var poajax;
         function validatePONumber() {
-            var base_url = <?php echo  json_encode(url()) ?>;
+            var base_url =<?php echo  json_encode(url()) ?>;
             po_1 = $('#po_1').val().trim();
             po_2 = $('#po_2').val().trim();
             po_3 = $('#po_3').val().trim();
@@ -458,5 +474,11 @@
 
         table.itemstable tbody tr:first-of-type td:last-of-type a{
             display: none;
+        }
+        #alt_ship_to
+        {
+            transition-property: all;
+            transition-duration: .5s;
+            transition-timing-function: ease-in;
         }
     </style>

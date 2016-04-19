@@ -9,6 +9,7 @@
 			<td > 
 			<select id="{{ $t['field']}}_operate" class="form-control oper" name="operate" onchange="changeOperate(this.value , '{{ $t['field']}}')">
 				<option value="equal"> = </option>
+                @if($pageModule != "merchandisebudget" )
 				<option value="bigger_equal"> >= </option>
 				<option value="smaller_equal"> <= </option>
 				<option value="smaller"> < </option>
@@ -16,7 +17,8 @@
 				<option value="not_null"> ! Null  </option>
 				<option value="is_null"> Null </option>
 				<option value="between"> Between </option>
-				<option value="like"> Like </option>	
+				<option value="like"> Like </option>
+                    @endif
 
 			</select> 
 			</td>

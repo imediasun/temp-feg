@@ -19,8 +19,7 @@
     <table class="table table-striped  " id="{{ $pageModule }}Table">
         <thead>
 			<tr>
-				<th width="20"> No </th>
-				<th width="30"> <input type="checkbox" class="checkall" /></th>
+				<th width="50"> No </th>
                 <th width="200">Location</th>
                 <th width="150">January</th>
                 <th width="150">February</th>
@@ -59,7 +58,6 @@
                 ?>
                 <tr class="editable" id="form-{{ $row->id }}">
 					<td class="number"> <?php echo ++$i;?>  </td>
-					<td ><input type="checkbox" class="ids" name="ids[]" value="<?php echo $row->id ;?>" />  </td>
 					@if($setting['view-method']=='expand')
 					<td><a href="javascript:void(0)" class="expandable" rel="#row-{{ $row->id }}" data-url="{{ url('merchandisebudget/show/'.$id) }}"><i class="fa fa-plus " ></i></a></td>
 					@endif

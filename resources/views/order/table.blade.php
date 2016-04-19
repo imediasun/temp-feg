@@ -74,7 +74,7 @@
                         <td><a href="{{ URL::to('order/removalrequest/'.$row->po_number)}}">Request Removal</a></td>
                     @endif
                     <td><a href="{{ URL::to('order/po/'.$row->id)}}">Generate PO</a></td>
-                    <td><a href="{{ URL::to('order/clone/'.$row->id)}}">Clone Order</a></td>
+                    <td><a href="{{ $pageModule }}/update/{{$row->id}}/clone"  onclick="ajaxViewDetail('#order',this.href); return false; "  class="btn btn-xs btn-white tips" title="Clone Order">Clone Order</a></td>
 					@if($setting['view-method']=='expand')
 					<td><a href="javascript:void(0)" class="expandable" rel="#row-{{ $row->id }}" data-url="{{ url('order/show/'.$id) }}"><i class="fa fa-plus " ></i></a></td>								
 					@endif			

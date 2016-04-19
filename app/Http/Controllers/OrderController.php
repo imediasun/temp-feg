@@ -128,13 +128,17 @@ class OrderController extends Controller
     }
 
 
-    function getUpdate(Request $request, $id =0)
+    function getUpdate(Request $request, $id =0,$mode='')
     {
-        if ($id == '') {
+        if($id != 0 && $mode == '')
+        {
+            $mode='edit';
+        }
+        if ($id == 0) {
             if ($this->access['is_add'] == 0)
                 return Redirect::to('dashboard')->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
         }
-        if ($id != '') {
+        if ($id != 0) {
             if ($this->access['is_edit'] == 0)
                 return Redirect::to('dashboard')->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
         }
@@ -146,9 +150,9 @@ class OrderController extends Controller
         }
         $this->data['setting'] = $this->info['setting'];
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
-
+        $this->data['mode']=$mode;
         $this->data['id'] = $id;
-        $this->data['data']=$this->model->getOrderQuery($id,'edit');
+        $this->data['data']=$this->model->getOrderQuery($id,$mode);
         return view('order.form', $this->data);
     }
 
@@ -195,7 +199,7 @@ class OrderController extends Controller
 
     function postSave(Request $request, $id = 0)
     {
-
+       return \Redirect::to('/order');
         $rules = $this->validateForm();
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {

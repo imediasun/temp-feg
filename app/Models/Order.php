@@ -102,8 +102,8 @@ class order extends Sximo  {
                 if (isset($data['po_number'])) {
                     $poArr = explode("-", $data['po_number']);
                     $data['po_1'] = $poArr[0];
-                    $data['po_2'] = $poArr[1];
-                    $data['po_3'] = $poArr[2];
+                    $data['po_2'] = isset($poArr[1])?$poArr[1]:"";
+                    $data['po_3'] = isset($poArr[2])?$poArr[2]:"";
                 }
                 $data['po_notes'] = $order_query[0]->po_notes;
             }

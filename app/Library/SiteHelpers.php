@@ -1800,10 +1800,10 @@ return $configs;
             return TRUE;
         }
     }
-    static function getBudgetYears()
+    static function getGamesTitle()
     {
-        $row=\DB::select('SELECT YEAR(budget_date) AS year FROM location_budget GROUP BY YEAR(budget_date)');
-        return $row;
+        $row=\DB::table('game_title')->select('id','game_title')->get();
+       return $row;
     }
 			
 }

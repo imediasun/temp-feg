@@ -17,7 +17,7 @@ class merchandisebudget extends Sximo
 
     public static function querySelect()
     {
-        return "SELECT CONCAT(location.id,' | ',location.location_name) as location,location_budget.location_id,location_budget.id,YEAR(location_budget.budget_date) As budget_year,
+        return "SELECT CONCAT(location.id,' | ',location.location_name) as location,location.location_name,location_budget.location_id,location_budget.id,YEAR(location_budget.budget_date) As budget_year,
  SUM(CASE WHEN DATE_FORMAT(location_budget.budget_date,'%b')='Jan' THEN location_budget.budget_value ELSE 0 END) Jan
  , SUM(CASE WHEN DATE_FORMAT(location_budget.budget_date,'%b')='Feb' THEN location_budget.budget_value ELSE 0 END) Feb
  , SUM(CASE WHEN DATE_FORMAT(location_budget.budget_date,'%b')='Mar' THEN location_budget.budget_value ELSE 0 END) March ,
