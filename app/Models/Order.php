@@ -49,7 +49,7 @@ class order extends Sximo  {
 	}
 	public function getOrderQuery($order_id,$mode=null)
     {
-        $data['order_loc_id'] ='';
+        $data['order_loc_id'] ='0';
         $data['order_vendor_id'] ='' ;
         $data['order_type'] = '';
         $data['order_company_id'] ='' ;
@@ -93,12 +93,17 @@ class order extends Sximo  {
                 $data['orderPriceArray'] = $orderPriceArray;
                 $data['orderQtyArray'] = $orderQtyArray;
                 $data['prefill_type'] = 'clone';
+                $poArr = array("", "", "");
+                if (isset($data['po_number'])) {
+                    $poArr = explode("-", $data['po_number']);
+                    $data['po_1'] = $poArr[0];
+                }
             }
             if ($mode == 'edit') {
                 $data['today'] = $order_query[0]->date_ordered;
                 $data['po_notes'] = $order_query[0]->po_notes;
                 $data['po_number'] = $order_query[0]->po_number;
-                $poArr = array("", "", "");
+
                 if (isset($data['po_number'])) {
                     $poArr = explode("-", $data['po_number']);
                     $data['po_1'] = $poArr[0];
@@ -106,6 +111,7 @@ class order extends Sximo  {
                     $data['po_3'] = isset($poArr[2])?$poArr[2]:"";
                 }
                 $data['po_notes'] = $order_query[0]->po_notes;
+                $data['prefill_type'] = 'edit';
             }
              $data['today'] = ($mode) ? $order_query[0]->date_ordered : $this->get_local_time('date');
         }

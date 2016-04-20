@@ -1805,5 +1805,10 @@ return $configs;
         $row=\DB::table('game_title')->select('id','game_title')->get();
        return $row;
     }
+    static function getBudgetYears()
+    {
+        $row=\DB::select('select YEAR(budget_date) as year from location_budget group by YEAR(budget_date)');
+        return $row;
+    }
 			
 }

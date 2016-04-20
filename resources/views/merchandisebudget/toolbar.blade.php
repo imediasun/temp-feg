@@ -10,12 +10,12 @@
         </div>
         <div class="col-md-4">
             <?php
-            $years=array(2012,2013,2014,2015,2016,2017,2018,2019,2020);
+                $years=SiteHelpers::getBudgetYears()
             ?>
-            <select name="budget_year" id="budget_year" class="form-control">
-                <option selected disabled>         ----- Select Year ----- </option>
+            <select name="budget_year" id="budget_year" class="selectpicker1 show-menu-arrow" data-header="Select Year" data-style="btn-default">
                 @foreach($years as $year)
-                    <option @if($year==\Session::get('budget_year')) selected @endif value="{{ $year}}">{{ $year }}</option>
+                    <option @if( $year->year == \Session::get('budget_year')) selected
+                                                                              @endif value="{{ $year->year }}">{{ $year->year }}</option>
                 @endforeach
             </select>
         </div>
@@ -33,4 +33,9 @@
             reloadData('#{{ $pageModule }}','{{ $pageModule }}/data?budget_year='+val);
         }
     });
+$(document).ready(
+        function(){
+            $('.selectpicker1').selectpicker();
+        }
+);
 </script>

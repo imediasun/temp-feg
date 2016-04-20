@@ -47,12 +47,12 @@ $orders = array('asc','desc');
 
 	  </div>					
 	  </div>
-	   <div class="col-sm-3">
+	   <div class="col-sm-2">
 		<p class="text-center" style=" padding: 25px 0">
 		
 		</p>
 	   </div>
-		<div class="col-sm-4" id="<?php echo $pageModule;?>Paginate">
+		<div class="col-sm-5" id="<?php echo $pageModule;?>Paginate">
             {!! $pagination->appends($pager)->render() !!}
 	  </div>
 	  </div>

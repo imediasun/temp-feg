@@ -129,7 +129,7 @@
 
                         <div class="col-md-8">
                             <div class="input-group m-b" style="width:150px !important;">
-                                <input type="text" class="form-control date" name="date_ordered" value="{{ $data['today'] }}"/>
+                                <input type="text" class="form-control date" name="date_ordered" value="{{ $data['today'] }}" required="required"/>
                                 <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
                             </div>
                         </div>
@@ -142,7 +142,7 @@
 
                         <div class="col-md-8">
                             <input style="width:150px !important;" type="text" name="order_total" id="total_cost"
-                                   class="form-control" value="{{ $data['order_total'] }}"/>
+                                   class="form-control" value="{{ $data['order_total'] }}" maxlength="8"/>
                         </div>
                     </div>
                     <div class="form-group  ">
@@ -151,7 +151,7 @@
                             PO Number</label>
 
                         <div class="col-md-8">
-                            <input type="text" name="po_1" readonly id="po_1" value="{{ $data['po_1'] }}"
+                            <input type="text" name="po_1" readonly id="po_1" value="{{ $data['order_loc_id'] }}"
                                    class="form-control" style="width:25%;float:left;margin-left:3px"/>
                             <input type="text" name="po_2" readonly id="po_2" class="form-control"
                                    value="{{  $data['po_2'] }}" style="width:35%;float:left;margin-left:3px"/>
@@ -278,7 +278,7 @@
                 }
         );
         function calculateSum() {
-    
+
             var Subtotal = 0.00;
             $('table tr.clone ').each(function (i) {
                 Qty = $(this).find("input[name*='qty']").val();
@@ -288,14 +288,14 @@
                 $(this).find("input[name*='total']").val(sum);
             });
 
-             Subtotal=Subtotal.toFixed(4);
+             Subtotal=Subtotal.toFixed(2);
             $("input[name='Subtotal']").val(Subtotal);
             $("#total_cost").val(Subtotal);
         }
 
         $(document).ready(function () {
             $("#submit_btn").hide();
-            $("#location_id").jCombo("{{ URL::to('order/comboselect?filter=location:id:location_name') }}",
+            $("#location_id").jCombo("{{ URL::to('order/comboselect?filter=location:id:id|location_name ') }}",
                     {selected_value: '{{ $data["order_loc_id"] }}'});
 
             $("#vendor_id").jCombo("{{ URL::to('order/comboselect?filter=vendor:id:vendor_name') }}",

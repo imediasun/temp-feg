@@ -132,7 +132,11 @@ class OrderController extends Controller
     {
         if($id != 0 && $mode == '')
         {
-            $mode='edit';
+            $mode = 'edit';
+        }
+        elseif($id == 0 && $mode == '')
+        {
+            $mode = 'create';
         }
         if ($id == 0) {
             if ($this->access['is_add'] == 0)
@@ -169,7 +173,7 @@ class OrderController extends Controller
         } else {
             $this->data['row'] = $this->model->getColumnTable('orders');
         }
-
+        $this->data['order_data']=$this->model->getOrderQuery($id,'edit');
         $this->data['id'] = $id;
         $this->data['access'] = $this->access;
         $this->data['setting'] = $this->info['setting'];
@@ -200,10 +204,11 @@ class OrderController extends Controller
     function postSave(Request $request, $id = 0)
     {
        return \Redirect::to('/order');
-        $rules = $this->validateForm();
+       $rules=array('location_id'=>"required",'vendor_id'=>'required','order_type_id'=>"required",'freight_type_id'=>'required','date_ordered'=>'required','po_3'=>'required');
         $validator = Validator::make($request->all(), $rules);
+        $order_contents=array();
+
         if ($validator->passes()) {
-            $data = $this->validatePost('orders');
 
             $id = $this->model->insertRow($data, $request->input('id'));
 
@@ -289,6 +294,7 @@ class OrderController extends Controller
     function getPo($order_id=null)
     {
         $data=$this->model->getOrderData($order_id);
+
 
         if(empty($data))
         {
