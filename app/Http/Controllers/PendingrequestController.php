@@ -119,9 +119,7 @@ class PendingrequestController extends Controller {
 			$rows[$index]->request_date = date("m/d/Y", strtotime($data->request_date));
 			$location = \DB::select("Select location_name FROM location WHERE id = ".$data->location_id ."");
 			$rows[$index]->location_id = (isset($location[0]->location_name) ? $location[0]->location_name : '');
-
 		}
-
 		$this->data['param']		= $params;
 		$this->data['rowData']		= $rows;
 		// Build Pagination 

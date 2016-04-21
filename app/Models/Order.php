@@ -15,18 +15,18 @@ class order extends Sximo  {
 
 	public static function querySelect(  ){
 
-		return "  SELECT orders.*,order_type.is_merch FROM orders,order_type  ";
+		return "  SELECT orders.*,order_type.is_merch FROM orders left outer join order_type on orders.order_type_id=order_type.id  ";
 	}	
 
 	public static function queryWhere( $cond=null ){
-        $return="WHERE orders.order_type_id=order_type.id AND";
+        $return=" Where";
 		switch($cond)
         {
             case 'ALL':
                 $return.=" orders.id IS NOT NULL";
                 break;
             case 'OPEN':
-                $return.=" orders.status_id IN(".self::OPENID1.",". self::OPENID2 .",". self::OPENID3.") AND order_type.is_merch = 1";
+                $return.=" orders.status_id IN(".self::OPENID1.",". self::OPENID2 .",". self::OPENID3.") AND orders.order_type_id !=".self::FIXED_ASSET_ID." AND orders.order_type_id !=".self::PRO_IN_DEV;
                 break;
             case 'FIXED_ASSET':
                 $return.=" orders.order_type_id = ".self::FIXED_ASSET_ID;
@@ -35,7 +35,7 @@ class order extends Sximo  {
                 $return.="  orders.order_type_id = ".self::PRO_IN_DEV;
                 break;
             case 'CLOSED':
-                $return.="  orders.status_id IN(".self::CLOSEID1.",". self::CLOSEID2.") AND order_type.is_merch = 1";
+                $return.="  orders.status_id IN(".self::CLOSEID1.",". self::CLOSEID2.")";
                 break;
             default:
                 $return.=" orders.id IS NOT NULL";
@@ -66,6 +66,7 @@ class order extends Sximo  {
         $data['po_2']=date('d').date('m').date('y');
         $data['po_3']=0;
         $data['po_notes']='';
+        $data['prefill_type']="";
         $data['requests_item_count'] = 0;
         if($order_id!=0) {
             $order_query = \DB::select('SELECT location_id,vendor_id, date_ordered,order_total,order_type_id,company_id,freight_id,po_notes,po_number FROM orders WHERE id = ' . $order_id);
@@ -78,10 +79,10 @@ class order extends Sximo  {
                 $data['today'] = $order_query[0]->date_ordered;
                 $data['order_total'] = $order_query[0]->order_total;
             }
+            $data['prefill_type'] = 'clone';
             $content_query = \DB::select('SELECT IF(O.product_id = 0, O.product_description, P.vendor_description) AS description,O.price AS price,O.qty AS qty
 												 FROM order_contents O LEFT JOIN products P ON P.id = O.product_id WHERE O.order_id = ' . $order_id);
-
-            if ($content_query) {
+                if ($content_query) {
 
                 foreach ($content_query as $row) {
                     $data['requests_item_count'] = $data['requests_item_count'] + 1;
@@ -92,7 +93,6 @@ class order extends Sximo  {
                 $data['orderDescriptionArray'] = $orderDescriptionArray;
                 $data['orderPriceArray'] = $orderPriceArray;
                 $data['orderQtyArray'] = $orderQtyArray;
-                $data['prefill_type'] = 'clone';
                 $poArr = array("", "", "");
                 if (isset($data['po_number'])) {
                     $poArr = explode("-", $data['po_number']);
@@ -110,7 +110,6 @@ class order extends Sximo  {
                     $data['po_2'] = isset($poArr[1])?$poArr[1]:"";
                     $data['po_3'] = isset($poArr[2])?$poArr[2]:"";
                 }
-                $data['po_notes'] = $order_query[0]->po_notes;
                 $data['prefill_type'] = 'edit';
             }
              $data['today'] = ($mode) ? $order_query[0]->date_ordered : $this->get_local_time('date');

@@ -1800,9 +1800,9 @@ return $configs;
             return TRUE;
         }
     }
-    static function getGamesTitle()
+    static function getGamesName()
     {
-        $row=\DB::table('game_title')->select('id','game_title')->get();
+        $row=\DB::table('game')->select('id','game_name')->get();
        return $row;
     }
     static function getBudgetYears()

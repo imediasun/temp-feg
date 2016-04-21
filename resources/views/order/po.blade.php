@@ -17,7 +17,7 @@
                 </tr>
             </table>
         </div>
-        <div>
+        <div id="vendor">
             <h4>Vendor</h4>
 
             <p style="border:1px solid #000;border-right:0px;padding:2%;width:46%">
@@ -31,7 +31,7 @@
                 <br/>
             </p>
         </div>
-        <div style="position:relative;top:-187px;widtd:700px;left:50%;">
+        <div style="position:relative;top:-187px;width:700px;left:50%;" id="shipto">
             <div style="position:absolute;;top:0px;color:red">
                 <h4>Ship To</h4>
 
@@ -72,7 +72,7 @@
                         <td style="padding:8px;">  {{ $data[0]['orderDescriptionArray'][$i] }} <br/></td>
                         <td style="padding:8px;">  {{ $data[0]['orderPriceArray'][$i] }} <br/></td>
                         <td style="padding:8px;">  {{ $data[0]['orderQtyArray'][$i] }} <br/></td>
-                        <td style="padding:8px;">   {{ $data[0]['orderPriceArray'][$i] }} <br/></td>
+                        <td style="padding:8px;">   {{ $data[0]['orderPriceArray'][$i]* $data[0]['orderQtyArray'][$i] }} <br/></td>
                     </tr>
                 @endfor
                 <tr style="">
@@ -96,3 +96,11 @@
     </div>
 
 </div>
+<script>
+    $(document).ready(function(){
+        var height=$("#vendor").outerHeight();
+        $("#shipto").css("height",height);
+    });
+
+
+</script>

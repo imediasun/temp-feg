@@ -84,7 +84,7 @@ abstract class Controller extends BaseController {
 				$items[] = array($row->$param['1'] , $value); 	
 	
 			}
-			
+
 			return json_encode($items); 	
 		} else {
 			return json_encode(array('OMG'=>" Ops .. Cant access the page !"));
@@ -265,9 +265,6 @@ abstract class Controller extends BaseController {
 			}										
 		}	
 		return $rules ;
-        echo "<pre>";
-        print_r($rules);
-        die();
 	}
 
 	function validateTicketCommentsForm()

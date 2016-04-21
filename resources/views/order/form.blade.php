@@ -7,6 +7,11 @@
                    onclick="ajaxViewClose('#{{ $pageModule }}')"><i class="fa fa fa-times"></i></a>
             </h4>
         </div>
+        <script>
+            $(".sbox").onload=function(){
+                alert();
+            }
+        </script>
 
         <div class="sbox-content">
             @endif
@@ -16,13 +21,14 @@
                 <fieldset>
                     <legend>Order Info</legend>
                     <div class="form-group  ">
-                        <label for="Company Id" class=" control-label col-md-4 text-left"> Bill To:</label> <span>Family Entertainment Group, LLC</span>
-
+                        <label for="Company Id" class=" control-label col-md-4 text-left"> Bill To:</label>
                         <div class="col-md-8">
-                            <input type="hidden" name="company_id" value="{{ $data['order_company_id'] }}"/>
+                            Family Entertainment Group, LLC
+                            <input type="hidden" name="company_id" value="2" id="company_id" />
                         </div>
 
                     </div>
+                    <div class="clearfix"></div>
                     <div class="form-group  ">
                         <label for="location_id" class=" control-label col-md-4 text-left"> Location </label>
 
@@ -37,7 +43,7 @@
                             Address </label>
 
                         <div class="col-md-8">
-                            <input id="alt_ship_to" name="alt_ship_to" type="checkbox" value="1"/></div>
+                            <input id="alt_ship_to" name="alt_ship_to" type="checkbox" value="1" @if(!empty($data['alt_address'])) checked @endif/></div>
 
                     </div>
                     {{-- Ship Address starts here  --}}
@@ -48,7 +54,7 @@
                                 Name </label>
 
                             <div class="col-md-8">
-                                <input type="text" name="to_add_name" id="to_add_name" class="form-control"/>
+                                <input type="text"  name="to_add_name" id="to_add_name" class="form-control"/>
                             </div>
                         </div>
                         <div class="form-group  ">
@@ -69,7 +75,7 @@
                                        style="width:40%;float:left;margin-left:3px"/>
                                 <input type="text" name="to_add_state" id="to_add_state" class="form-control" value=""
                                        style="width:30%;float:left;margin-left:3px"/>
-                                <input type="text" name="to_add_zip" id="to_add_zip" required class="form-control"
+                                <input type="text" name="to_add_zip" id="to_add_zip"  class="form-control"
                                        value="" style="width:25%;float:left;margin-left:3px"/>
 
                             </div>
@@ -97,7 +103,7 @@
                             Order Type </label>
 
                         <div class="col-md-8">
-                            <select name='order_type_id' rows='5' id='order_type_id' class='select3 ' required></select>
+                            <select name='order_type_id' rows='5' id='order_type_id' class='select3' onchange="gameShowHide()" required></select>
                         </div>
 
                     </div>
@@ -138,7 +144,7 @@
                     <div class="form-group  ">
                         <br/><br/>
                         <label for="total_cost" class=" control-label col-md-4 text-left">
-                            Total Cost ($)</label>
+                            Total Cost ( $ )</label>
 
                         <div class="col-md-8">
                             <input style="width:150px !important;" type="text" name="order_total" id="total_cost"
@@ -170,7 +176,7 @@
 
                         <div class="col-md-8">
                             <textarea id="notes" name='po_notes' cols="40" rows="5"
-                                      placeholder='Additional Notes'></textarea>
+                                      placeholder='Additional Notes'>{{ $data['po_notes'] }}</textarea>
                         </div>
                     </div>
 
@@ -180,8 +186,8 @@
                     <input type="hidden" id="where_in_expression" name="where_in_expression"
                            value="">
                     <input type="hidden" id="SID_string" name="SID_string" value="">
-                    <input type="hidden" id="order_id" name="order_id" value="">
-                    <input type="hidden" id="editmode" name="editmode" value="">
+                    <input type="hidden" id="order_id" name="order_id" value="{{ $id }}">
+                    <input type="hidden" id="editmode" name="editmode" value="{{ $data['prefill_type'] }}">
                 </fieldset>
             </div>
             <hr/>
@@ -190,14 +196,14 @@
             <h5> Item Details </h5>
 
             <div class="table-responsive">
-                <table class="table table-striped itemstable">
+                <table class="table table-striped itemstable" onload="calculatetest()">
                     <thead>
                     <tr class="invHeading">
                         <th>tem Descripton / Item Number</th>
                         <th>Price</th>
                         <th>Quantity</th>
-                        <th>Game</th>
-                        <th>Total($)</th>
+                        <th class="game">Game</th>
+                        <th>Total ( $ )</th>
                         <th> </th>
                     </tr>
 
@@ -205,27 +211,27 @@
 
                     <tbody>
                     <tr class="clone clonedInput">
-                        <td> <textarea name='item[0]' placeholder='Item #1 Description'
-                                       class='form-control' cols="30" rows="4" maxlength="225" required></textarea></td>
+                        <td> <textarea name='item[]' placeholder='Item #1 Description'
+                                       class='form-control item' cols="30" rows="4" maxlength="225" required></textarea></td>
                         <td><br/> <input type='number' name='price[]' placeholder='Price' id="price"
-                                         class='form-control' min=".00000" step=".00001" value="0.0000"
+                                         class='form-control' min="0.00" step=".01" value="0.00"
                                          required ></td>
                         <td><br/> <input type='number' name='qty[]' placeholder='Quantity'
-                                         class='form-control' min="1" step="1" id="qty" value="0.0000"
+                                         class='form-control qty' min="1" step="1" id="qty" value="00"
                                           required></td>
 
-                         <td><br/>
-                            <select  name='game[]' id='game_0' class='game form-control'>
-                                <option selected value="">For Various Games</option>
-                                @foreach( \SiteHelpers::getGamesTitle() as $game_title)
-                                <option value="{{ $game_title->id }}"> {{ $game_title->game_title }}</option>
+                         <td class="game" style="display:none"><br/>
+                            <select  name='game[]' id='game_0' class='game  form-control'>
+                              <option value="">For Various Games</option>
+                                @foreach( \SiteHelpers::getGamesName() as $game_title)
+                                <option value="{{ $game_title->id }}"> {{ $game_title->game_name }}</option>
                                 @endforeach
                             </select>
                         </td>
 
                         <input type='hidden' name='product_id[0]'>
                         <input type='hidden' name='request_id[0]'>
-                        <td><br/><input type="text" name="total" value="0.0000" readonly class="form-control"/></td>
+                        <td><br/><input type="text" name="total" value="" readonly class="form-control"/></td>
                         <td><br/> <a onclick=" $(this).parents('.clonedInput').remove(); calculateSum(); return false"
                                      href="#" class="remove btn btn-xs btn-danger">-</a>
                             <input type="hidden" name="counter[]">
@@ -233,8 +239,9 @@
                     </tr>
                     </tr>
                     <tr>
-                        <td colspan="3" class="text-right"> Subtotal($)</td>
-                        <td><input type="text" value="" class="form-control input-sm" name="Subtotal"></td>
+                        <td class="game"></td>
+                        <td colspan="3" class="text-right"><strong> Subtotal ( $ ) </strong></td>
+                        <td><input type="text" name="Subtotal" value="{{ $data['order_total'] }}" readonly class="form-control"/></td>
                         <td></td>
 
                     </tr>
@@ -279,12 +286,14 @@
         );
         function calculateSum() {
 
+
             var Subtotal = 0.00;
             $('table tr.clone ').each(function (i) {
                 Qty = $(this).find("input[name*='qty']").val();
                 Price = $(this).find("input[name*='price']").val();
                 sum = Qty * Price;
                 Subtotal += sum;
+                sum=sum.toFixed(2);
                 $(this).find("input[name*='total']").val(sum);
             });
 
@@ -294,6 +303,7 @@
         }
 
         $(document).ready(function () {
+
             $("#submit_btn").hide();
             $("#location_id").jCombo("{{ URL::to('order/comboselect?filter=location:id:id|location_name ') }}",
                     {selected_value: '{{ $data["order_loc_id"] }}'});
@@ -316,7 +326,7 @@
             $('.remove').click(function () {
                 calculateSum();
             });
-            $(".calculate").trigger("keyup");
+            $('.selectpicker').selectpicker();
             $('.addC').relCopy({});
             $('.editor').summernote();
             $('.previewImage').fancybox();
@@ -331,7 +341,7 @@
                 $(this).parent('div').empty();
                 return false;
             });
-            var form = $('#sbinoviceFormAjax');
+            var form = $('#ordersubmitFormAjax');
             form.parsley();
             form.submit(function () {
 
@@ -356,10 +366,7 @@
             var order_request_id_array = <?php echo json_encode($data['orderRequestIdArray']) ?>;
 
             var item_total = 0;
-
-
             for (var i = 0; i < requests_item_count; i++) {
-
 
                 $('textarea[name^=item]').eq(i).val(order_description_array[i]);
                 $('input[name^=price]').eq(i).val(order_price_array[i]);
@@ -374,6 +381,7 @@
                 }
 
             }
+            calculateSum();
         });
 
         function showRequest() {
@@ -413,7 +421,7 @@
             }
             if ($elm.val().trim() === '') {
                 $("#po_message").html('');
-                $("#submit_btn").hide();
+                $("#submit_btn").fadeOut();
                 return;
             }
 
@@ -463,6 +471,26 @@
 
                 }
             });
+        }
+        function gameShowHide()
+        {
+
+           /* var user_level = <?php //echo json_encode($user_level) ?>;
+            if(user_level !== 'partner' && user_level !== 'partnerplus')
+            {*/
+
+                if($('#order_type_id').val() == 1) // Parts Order
+                {
+                    $('.game').show();
+                }
+                else
+                {
+                    $('.game').hide();
+                }
+            //}
+        }
+        function calculatetest() {
+            alert("Image is loaded");
         }
     </script>
     <style type="text/css">

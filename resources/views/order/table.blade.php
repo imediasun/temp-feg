@@ -21,7 +21,7 @@
     <table class="table table-striped  " id="{{ $pageModule }}Table">
         <thead>
 			<tr>
-				<th width="30"> No </th>
+				<th width="50"> No </th>
 				<th width="60"> <input type="checkbox" class="checkall" /></th>
                 @if($order_selected=='OPEN')
                 <th width="100">Remove</th>

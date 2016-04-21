@@ -5,6 +5,7 @@ use App\Models\Order;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Validator, Input, Redirect;
+
 class OrderController extends Controller
 {
 
@@ -128,14 +129,12 @@ class OrderController extends Controller
     }
 
 
-    function getUpdate(Request $request, $id =0,$mode='')
+    function getUpdate(Request $request, $id = 0, $mode = '')
     {
-        if($id != 0 && $mode == '')
-        {
+        $editmode = $prefill_type = 'edit';
+        if ($id != 0 && $mode == '') {
             $mode = 'edit';
-        }
-        elseif($id == 0 && $mode == '')
-        {
+        } elseif ($id == 0 && $mode == '') {
             $mode = 'create';
         }
         if ($id == 0) {
@@ -154,9 +153,10 @@ class OrderController extends Controller
         }
         $this->data['setting'] = $this->info['setting'];
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
-        $this->data['mode']=$mode;
+        $this->data['mode'] = $mode;
         $this->data['id'] = $id;
-        $this->data['data']=$this->model->getOrderQuery($id,$mode);
+        $this->data['data'] = $this->model->getOrderQuery($id, $mode);
+
         return view('order.form', $this->data);
     }
 
@@ -173,7 +173,7 @@ class OrderController extends Controller
         } else {
             $this->data['row'] = $this->model->getColumnTable('orders');
         }
-        $this->data['order_data']=$this->model->getOrderQuery($id,'edit');
+        $this->data['order_data'] = $this->model->getOrderQuery($id, 'edit');
         $this->data['id'] = $id;
         $this->data['access'] = $this->access;
         $this->data['setting'] = $this->info['setting'];
@@ -203,15 +203,157 @@ class OrderController extends Controller
 
     function postSave(Request $request, $id = 0)
     {
-       return \Redirect::to('/order');
-       $rules=array('location_id'=>"required",'vendor_id'=>'required','order_type_id'=>"required",'freight_type_id'=>'required','date_ordered'=>'required','po_3'=>'required');
+        //return \Redirect::to('/order');
+        $rules = array('location_id' => "required", 'vendor_id' => 'required', 'order_type_id' => "required", 'freight_type_id' => 'required', 'date_ordered' => 'required', 'po_3' => 'required');
         $validator = Validator::make($request->all(), $rules);
-        $order_contents=array();
-
+        $order_data = array();
+        $order_contents = array();
+        $data = array_filter($request->all());
         if ($validator->passes()) {
 
-            $id = $this->model->insertRow($data, $request->input('id'));
+            $order_id = $request->get('order_id');
+            $editmode = $request->get('editmode');
+            $where_in = $request->get('where_in_expression');
+            $SID_string = $request->get('SID_string');
+            $company_id = $request->get('company_id');
+            $location_id = $request->get('location_id');
+            $order_type = $request->get('order_type_id');
+            $vendor_id = $request->get('vendor_id');
+            $freight_type_id = $request->get('freight_type_id');
+            $date_ordered = $request->get('date_ordered');
+            $total_cost = $request->get('order_total');
+            $notes = $request->get('po_notes');
+            $po_1 = $request->get('po_1');
+            $po_2 = $request->get('po_2');
+            $po_3 = $request->get('po_3');
+            $po = $po_1 . '-' . $po_2 . '-' . $po_3;
+            $altShipTo = $request->get('alt_ship_to');
+            $alt_address = '';
+            $order_description = '';
+            if (!empty($altShipTo)) {
+                $rules = array('to_add_name' => 'required|max:60', 'to_add_street' => 'required|min:5', 'to_add_city' => 'required|min:5', 'to_add_state' => 'required|max:2', 'to_add_zip' => 'required|max:10');
+                $validator = Validator::make($request->all(), $rules);
+                $to_add_name = $request->get('to_add_name');
+                $to_add_street = $request->get('to_add_street');
+                $to_add_city = $request->get('to_add_city');
+                $to_add_state = $request->get('to_add_state');
+                $to_add_zip = $request->get('to_add_zip');
+                $to_add_notes = $request->get('to_add_notes');
+                $alt_address = $to_add_name . '|' . $to_add_street . '|' . $to_add_city . ', ' . $to_add_state . ' ' . $to_add_zip . '|' . $to_add_notes;
+            }
+            $itemsArray = $request->get('item');
+            $priceArray = $request->get('price');
+            $qtyArray = $request->get('qty');
+            $productIdArray = $request->get('product_id');
+            $requestIdArray = $request->get('request_id');
+            $games=$request->get('game');
+            $num_items_in_array = count($itemsArray);
+            for ($i = 0; $i < $num_items_in_array; $i++) {
+                $j = $i + 1;
 
+                ${'item_set_' . $i} = ' | item' . $j . ' - (' . $qtyArray[$i] . ') ' . $itemsArray[$i] . ' @ $' . $priceArray[$i] . ' ea.';
+
+                // if($order_type == 1)
+                // {
+                // 	${'game_'.$i} = $this->input->post('game_'.$i);
+                // 	if(${'game_'.$i})
+                // 	{
+                // 		$game_string = $game_string.'[item'.$i.']'.${'game_'.$i}.',';
+                // 	}
+                // }
+
+                $order_description = $order_description . ${'item_set_' . $i};
+
+
+                // echo $itemsArray[$i];
+                // echo $priceArray[$i];
+                // echo $qtyArray[$i];
+                // echo $productIdArray[$i];
+                // echo $requestIdArray[$i];
+            }
+            if ($editmode) {
+                $orderData = array(
+                    'company_id' => $company_id,
+                    'location_id' => $location_id,
+                    'order_type_id' => $order_type,
+                    'date_ordered' => $date_ordered,
+                    'vendor_id' => $vendor_id,
+                    'order_description' => $order_description,
+                    'order_total' => $total_cost,
+                    'freight_id' => $freight_type_id,
+                    'po_number' => $po,
+                    'alt_address' => $alt_address,
+                    'request_ids' => $where_in,
+                    'po_notes' => $notes
+                );
+                $this->model->insertRow($orderData, $order_id);
+                $last_insert_id = $order_id;
+                \DB::table('order_contents')->where('order_id', $last_insert_id)->delete();
+                //$this->db->delete('order_contents', array('order_id' => $last_insert_id));
+            } else {
+
+                $orderData = array(
+                    'user_id' => \Session::get('uid'),
+                    'company_id' => $company_id,
+                    'location_id' => $location_id,
+                    'order_type_id' => $order_type,
+                    'date_ordered' => $date_ordered,
+                    'vendor_id' => $vendor_id,
+                    'order_description' => $order_description,
+                    'status_id' => 1,
+                    'order_total' => $total_cost,
+                    'freight_id' => $freight_type_id,
+                    'po_number' => $po,
+                    'alt_address' => $alt_address,
+                    'request_ids' => $where_in,
+                    'new_format' => 1,
+                    'po_notes' => $notes
+                );
+                $this->model->insert($orderData, $id);
+                $order_id=\DB::getPdo()->lastInsertId();
+                //$this->db->insert('orders', $orderData);
+                //$last_insert_id = $this->db->insert_id();
+            }
+            for ($i = 0; $i < $num_items_in_array; $i++) {
+                if (empty($productIdArray[$i])) {
+                    $product_id = '0';
+                } else {
+                    $product_id = $productIdArray[$i];
+                }
+
+                if (empty($requestIdArray[$i])) {
+                    $request_id = '0';
+                } else {
+                    $request_id = $requestIdArray[$i];
+                }
+
+                if ($order_type == 1) {
+                    $game_id = $games[$i];
+                } else {
+                    $game_id = '0';
+                }
+                $contentsData = array(
+                    'order_id' => $order_id,
+                    'request_id' => $request_id,
+                    'product_id' => $product_id,
+                    'product_description' => $itemsArray[$i],
+                    'price' => $priceArray[$i],
+                    'qty' => $qtyArray[$i],
+                    'game_id' => $game_id
+                );
+                \DB::table('order_contents')->insert($contentsData);
+                if ($order_type == 18) //IF ORDER TYPE IS PRODUCT IN-DEVELOPMENT, ADD TO PRODUCTS LIST WITH STATUS IN-DEVELOPMENT
+                {
+                    $productData = array(
+                        'vendor_id' => $vendor_id,
+                        'vendor_description' => $itemsArray[$i],
+                        'case_price' => $priceArray[$i],
+                        'num_items' => $qtyArray[$i],
+                        'in_development' => 1,
+                    );
+                    \DB::table('products')->insert($productData);
+                }
+            }
             return response()->json(array(
                 'status' => 'success',
                 'message' => \Lang::get('core.note_success')
@@ -256,6 +398,7 @@ class OrderController extends Controller
         }
 
     }
+
     function getRemovalrequest($po_number = null)
     {
         $this->data['po_number'] = $po_number;
@@ -271,99 +414,80 @@ class OrderController extends Controller
         $to = 'support@fegllc.com';
         $to = 'adnanali199@gmail.com';
         $subject = 'Order Removal Request';
-        $headers  = 'MIME-Version: 1.0' . "\r\n";
+        $headers = 'MIME-Version: 1.0' . "\r\n";
         $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
         $message = $message;
-       if( mail($to, $subject, $message, $headers)) {
-           return response()->json(array(
-               'status' => 'success',
-               'message' => \Lang::get('core.note_success')
-           ));
-       }
-        else{
+        if (mail($to, $subject, $message, $headers)) {
+            return response()->json(array(
+                'status' => 'success',
+                'message' => \Lang::get('core.note_success')
+            ));
+        } else {
             return response()->json(array(
                 'status' => 'success',
                 'message' => \Lang::get('core.note_success')
             ));
         }
     }
+
     function getRemoveorder($po)
     {
         echo $po;
     }
-    function getPo($order_id=null)
+
+    function getPo($order_id = null)
     {
-        $data=$this->model->getOrderData($order_id);
+        $data = $this->model->getOrderData($order_id);
 
 
-        if(empty($data))
-        {
+        if (empty($data)) {
 
-        }
-        else
-        {
-            if (empty($data[0]['po_for_location']))
-            {
+        } else {
+            if (empty($data[0]['po_for_location'])) {
                 $data[0]['for_location'] = '';
-            }
-            else
-            {
-                $data[0]['for_location'] = '(for '.$data[0]['po_for_location'].')';
+            } else {
+                $data[0]['for_location'] = '(for ' . $data[0]['po_for_location'] . ')';
             }
 
-            if($data[0]['freight_type'] == 'Employee Pickup')
-            {
-                $data[0]['po_location'] = '**WILL PICKUP FROM '.$data[0]['vendor_name'].'**'."\n".$data[0]['po_location'];
+            if ($data[0]['freight_type'] == 'Employee Pickup') {
+                $data[0]['po_location'] = '**WILL PICKUP FROM ' . $data[0]['vendor_name'] . '**' . "\n" . $data[0]['po_location'];
             }
 
-            if(!empty($data[0]['loading_info']) && ($data[0]['order_type_id'] == 4 || $data[0]['order_type_id'] == 9)) //IF ORDER TYPE IS TICKTS/TOKENS OR FIXED ASSET -- AKA LARGE ITEMS
+            if (!empty($data[0]['loading_info']) && ($data[0]['order_type_id'] == 4 || $data[0]['order_type_id'] == 9)) //IF ORDER TYPE IS TICKTS/TOKENS OR FIXED ASSET -- AKA LARGE ITEMS
             {
-                $data[0]['freight_type'] = $data[0]['freight_type']."\n".'DELIVERY NOTES: **'.$data[0]['loading_info'].'**';
+                $data[0]['freight_type'] = $data[0]['freight_type'] . "\n" . 'DELIVERY NOTES: **' . $data[0]['loading_info'] . '**';
             }
 
-            if(!empty($data[0]['loc_merch_contact_email']) && ($data[0]['order_type_id'] == 7 || $data[0]['order_type_id'] == 8))
-            {
+            if (!empty($data[0]['loc_merch_contact_email']) && ($data[0]['order_type_id'] == 7 || $data[0]['order_type_id'] == 8)) {
                 $data[0]['loc_contact_email'] = $data[0]['loc_merch_contact_email'];
             }
 
-            if ($data[0]['email'] != $data[0]['loc_contact_email'])
-            {
-                $data[0]['loc_contact_email'] = ' AND '.$data[0]['loc_contact_email'];
-            }
-            else
-            {
+            if ($data[0]['email'] != $data[0]['loc_contact_email']) {
+                $data[0]['loc_contact_email'] = ' AND ' . $data[0]['loc_contact_email'];
+            } else {
                 $data[0]['loc_contact_email'] = '';
             }
-            if ($data[0]['order_type_id'] == 3 || $data[0]['order_type_id'] == 4)
-            {
+            if ($data[0]['order_type_id'] == 3 || $data[0]['order_type_id'] == 4) {
                 $data[0]['cc_email'] = ', lisa.price@fegllc.com';
-            }
-            else
-            {
+            } else {
                 $data[0]['cc_email'] = '';
             }
-            if(!empty($data[0]['po_attn']))
-            {
-                $data[0]['po_location'] = $data[0]['po_location']."\n".$data[0]['po_attn'];
+            if (!empty($data[0]['po_attn'])) {
+                $data[0]['po_location'] = $data[0]['po_location'] . "\n" . $data[0]['po_attn'];
             }
-            if(empty($data[0]['po_notes']))
-            {
-             $data[0]['po_notes']=" NOTE: **TO CONFIRM ORDER RECEIPT AND PRICING, SEND EMAILS TO ".$data[0]['email'].$data[0]['cc_email'].$data[0]['loc_contact_email']."**";
-            }
-            else
-            {
-                $data[0]['po_notes']= " NOTE: ".$data[0]['po_notes']." (Email Questions to ".$data[0]['email'].$data[0]['cc_email'].$data[0]['loc_contact_email'].")";
+            if (empty($data[0]['po_notes'])) {
+                $data[0]['po_notes'] = " NOTE: **TO CONFIRM ORDER RECEIPT AND PRICING, SEND EMAILS TO " . $data[0]['email'] . $data[0]['cc_email'] . $data[0]['loc_contact_email'] . "**";
+            } else {
+                $data[0]['po_notes'] = " NOTE: " . $data[0]['po_notes'] . " (Email Questions to " . $data[0]['email'] . $data[0]['cc_email'] . $data[0]['loc_contact_email'] . ")";
             }
             $order_description = $data[0]['order_description'];
 
-            if(substr($order_description, 0, 3) === ' | ')
-            {
+            if (substr($order_description, 0, 3) === ' | ') {
                 $order_description = substr($order_description, 3);
             }
-            $order_description = str_replace(' | ',"\n",$order_description);
+            $order_description = str_replace(' | ', "\n", $order_description);
 
-            if($data[0]['new_format'] == 1)
-            {
+            if ($data[0]['new_format'] == 1) {
                 $item_description_string = '';
                 $item_price_string = '';
                 $item_qty_string = '';
@@ -371,56 +495,54 @@ class OrderController extends Controller
                 $item_total = '';
                 $order_total_cost = 0;
                 $numLenghtyDescItems = 0;
-                for($i=0;$i < $data[0]['requests_item_count']; $i++)
-                {
-                    $j = $i+1;
+                for ($i = 0; $i < $data[0]['requests_item_count']; $i++) {
+                    $j = $i + 1;
                     $item_total = $data[0]['orderPriceArray'][$i] * $data[0]['orderQtyArray'][$i];
-                    $item_total_string = "$ ".number_format($item_total,2);
-                    $item_description_string = "Item #".$j.": ".$data[0]['orderDescriptionArray'][$i];
+                    $item_total_string = "$ " . number_format($item_total, 2);
+                    $item_description_string = "Item #" . $j . ": " . $data[0]['orderDescriptionArray'][$i];
                     $item_qty_string = $data[0]['orderQtyArray'][$i];
                     $item_price_string = $data[0]['orderPriceArray'][$i];
                     $descriptionLength = strlen($item_description_string);
                     $order_total_cost = $order_total_cost + $item_total;
                 }
-                $data[0]['item_description_string'][$i]=$item_description_string;
-                $data[0]['item_price_string'][$i]= $item_price_string;
-                $data[0]['item_qty_string'][$i]=$item_qty_string;
-                $data[0]['item_total_string'][$i]=$item_total_string;
-                $data[0]['order_total_cost']=$order_total_cost;
+                $data[0]['item_description_string'][$i] = $item_description_string;
+                $data[0]['item_price_string'][$i] = $item_price_string;
+                $data[0]['item_qty_string'][$i] = $item_qty_string;
+                $data[0]['item_total_string'][$i] = $item_total_string;
+                $data[0]['order_total_cost'] = $order_total_cost;
                 // $item_total_string = $item_total_string."-----------------\n"."$ ".number_format($order_total_cost,2)."\n";
             }
-            $pdf = \PDF::loadView('order.po',['data'=>$data,'main_title'=>"Purchase Order"]);
-            return $pdf->download($data[0]['company_name_short']."_PO_".$data[0]['po_number'].'.pdf');
+            $pdf = \PDF::loadView('order.po', ['data' => $data, 'main_title' => "Purchase Order"]);
+            return $pdf->download($data[0]['company_name_short'] . "_PO_" . $data[0]['po_number'] . '.pdf');
         }
     }
+
     function getClone($id)
     {
-        if($id =='')
-        {
-            if($this->access['is_add'] ==0 )
-                return Redirect::to('dashboard')->with('messagetext',\Lang::get('core.note_restric'))->with('msgstatus','error');
+        if ($id == '') {
+            if ($this->access['is_add'] == 0)
+                return Redirect::to('dashboard')->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
         }
 
-        if($id !='')
-        {
-            if($this->access['is_edit'] ==0 )
-                return Redirect::to('dashboard')->with('messagetext',\Lang::get('core.note_restric'))->with('msgstatus','error');
+        if ($id != '') {
+            if ($this->access['is_edit'] == 0)
+                return Redirect::to('dashboard')->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
         }
 
         $row = $this->model->find($id);
-        if($row)
-        {
-            $this->data['row'] 		=  $row;
+        if ($row) {
+            $this->data['row'] = $row;
         } else {
-            $this->data['row'] 		= $this->model->getColumnTable('order');
+            $this->data['row'] = $this->model->getColumnTable('order');
         }
-        $this->data['setting'] 		= $this->info['setting'];
-      //  $this->data['subgrid'] = $this->detailview($this->modelview ,  $this->data['subgrid'] ,$id );
+        $this->data['setting'] = $this->info['setting'];
+        //  $this->data['subgrid'] = $this->detailview($this->modelview ,  $this->data['subgrid'] ,$id );
         $this->data['id'] = $id;
-        $this->data['access']=$this->access;
-        $this->data['data']=$this->model->getOrderQuery($id);
+        $this->data['access'] = $this->access;
+        $this->data['data'] = $this->model->getOrderQuery($id);
         return view('order.clonenew', $this->data);
     }
+
     function postValidateponumber(Request $request)
     {
         $po_1 = $request->get('po_1');
