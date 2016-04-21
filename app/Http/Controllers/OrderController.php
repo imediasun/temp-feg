@@ -250,26 +250,7 @@ class OrderController extends Controller
             $num_items_in_array = count($itemsArray);
             for ($i = 0; $i < $num_items_in_array; $i++) {
                 $j = $i + 1;
-
                 ${'item_set_' . $i} = ' | item' . $j . ' - (' . $qtyArray[$i] . ') ' . $itemsArray[$i] . ' @ $' . $priceArray[$i] . ' ea.';
-
-                // if($order_type == 1)
-                // {
-                // 	${'game_'.$i} = $this->input->post('game_'.$i);
-                // 	if(${'game_'.$i})
-                // 	{
-                // 		$game_string = $game_string.'[item'.$i.']'.${'game_'.$i}.',';
-                // 	}
-                // }
-
-                $order_description = $order_description . ${'item_set_' . $i};
-
-
-                // echo $itemsArray[$i];
-                // echo $priceArray[$i];
-                // echo $qtyArray[$i];
-                // echo $productIdArray[$i];
-                // echo $requestIdArray[$i];
             }
             if ($editmode) {
                 $orderData = array(
@@ -552,4 +533,94 @@ class OrderController extends Controller
         $msg = $this->model->getPoNumber($po_full);
         echo $msg;
     }
+    function getOrderreceipt($order_id=null)
+    {
+        $this->data['data']=$this->model->getOrderReceipt($order_id);
+        return view('order.order-receipt',$this->data);
+    }
+    function postReceiveorder(Request $request,$id=null)
+    {
+
+        $order_id = $request->get('order_id');
+        $item_count = $request->get('item_count');
+        $notes = $request->get('notes');
+        $order_status = $request->get('order_status');
+        $added_to_inventory = $request->get('added_to_inventory');
+        $user_id=$request->get('user_id');
+        $added=0;
+        $rules=array();
+        if(empty($notes))
+        {
+            $rules['order_status']="required:min:2";
+        }
+        if($order_status == 5) // Advanced Replacement Returned.. require tracking number
+        {
+            $rules['tracking_number']="required|min:3";
+            $tracking_number = $request->get('tracking_number');
+        }
+        $validator = Validator::make($request->all(), $rules);
+       if($validator->passes())
+       {
+           if(!empty($item_count) && $added_to_inventory == 0)
+           {
+
+               ///////APPLY PRIZES TO THE PROPER GAMES / LOCATIONS
+               for ($i=1; $i<=$item_count; $i++)
+               {
+                   $product_id = $request->get('product_id_'.$i);
+                   $order_qty = $request->get('order_qty_'.$i);
+                   $game = $request->get('game_'.$i);
+
+                   // IF NO GAME SELECTED, INSERT INTO INVENTORY FOR USER'S LOCATION
+                   if(!empty($game))
+                   {
+                   // IF ALL AVAILABLE QUANTITIES ARE ALLOCATED TO THE GAME
+                       $allGame = array('product_id' => $product_id);
+                       \DB::table('game')->where('id', $game)->update($allGame);
+                   }
+
+                   $location_id = $request->get('location_id');
+
+                   $query = \DB::select('SELECT id
+											 FROM merch_inventory
+											WHERE product_id = '.$product_id.'
+								   	 		  AND location_id = '.$location_id.'');
+
+                   if (count($query) == 1)
+                   {
+                       \DB::update('UPDATE merch_inventory
+								 	 	 SET product_qty = product_qty + '.$order_qty.'
+							   	   	   WHERE product_id = '.$product_id.'
+								   	     AND location_id = '.$location_id);
+                   }
+                   else
+                   {
+                       \DB::insert('INSERT INTO merch_inventory (`location_id`,`product_id`,`product_qty`,`user_id`)
+							 	  		   VALUES ('.$location_id.','.$product_id.','.$order_qty.','.$user_id.')');
+                   }
+               }
+               $added = 1;
+           }
+           $data = array('date_received' => $request->get('date_received'),
+               'status_id' => $order_status,
+               'notes' => $notes,
+               'tracking_number' => $request->get('tracking_number'),
+               'received_by' => $request->get('user_id'),
+               'added_to_inventory' => $added);
+           \DB::table('orders')->where('id',$request->get('order_id'))->update($data);
+           return response()->json(array(
+               'status' => 'success',
+               'message' => \Lang::get('core.note_success')
+           ));
+       }
+       else {
+
+           $message = $this->validateListError($validator->getMessageBag()->toArray());
+           return response()->json(array(
+               'message' => $message,
+               'status' => 'error'
+           ));
+       }
+    }
+
 }

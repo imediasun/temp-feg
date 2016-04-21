@@ -24,7 +24,7 @@
 				<th width="50"> No </th>
 				<th width="60"> <input type="checkbox" class="checkall" /></th>
                 @if($order_selected=='OPEN')
-                <th width="100">Remove</th>
+                    <th width="100">Remove</th>
                 @endif
                 <th width="100">Purchase Order</th>
                 <th width="100">Clone</th>
@@ -39,7 +39,13 @@
 					endif;
 				endforeach; ?>
 				<th width="70"><?php echo Lang::get('core.btn_action') ;?></th>
-			  </tr>
+                @if($order_selected=='OPEN')
+              <th width="100">
+              Receive Order
+              </th>
+                    @endif
+
+
         </thead>
 
         <tbody>
@@ -92,10 +98,14 @@
 						 <?php endif;					 
 						endforeach; 
 					  ?>
+
 				 <td data-values="action" data-key="<?php echo $row->id ;?>">
 					{!! AjaxHelpers::buttonAction('order',$access,$id ,$setting) !!}
 					{!! AjaxHelpers::buttonActionInline($row->id,'id') !!}		
-				</td>			 
+				</td>
+                    @if($order_selected=='OPEN')
+                        <td><a href="{{ URL::to('order/orderreceipt/'.$row->id)}}">Receive Order</a></td>
+                    @endif
                 </tr>
                 @if($setting['view-method']=='expand')
                 <tr style="display:none" class="expanded" id="row-{{ $row->id }}">
