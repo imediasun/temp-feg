@@ -31,7 +31,7 @@
 
                     <div class="form-group" style="margin-top:120px;">
                                 <input  type='file' name='avatar' id='avatar'  required  style='width:150px !important;'     value=""  />
-                        <input type="hidden" value="{{ Request::segment(1) }}" name="id"/>
+                        <input type="hidden" value="{{ Request::segment(4) }}" name="id"/>
                     </div>
                         <div class="form-group" style="margin-top:50px;">
                                 <button type="submit" name="submit" class="btn btn-primary btn-sm" ><i class="fa  fa-save "></i> {{ Lang::get('core.sb_save') }}</button>

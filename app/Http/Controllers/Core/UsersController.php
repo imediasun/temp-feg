@@ -203,7 +203,6 @@ class UsersController extends Controller
 
     function postUpload(Request $request)
     {
-
         $files = array('image' => Input::file('avatar'));
         // setting up rules
         $rules = array('image' => 'required|mimes:jpeg,gif,png'); //mimes:jpeg,bmp,png and for max size max:10000
@@ -377,7 +376,7 @@ class UsersController extends Controller
             $id = $this->model->insertRow($data, $request->input('id'));
             $this->model->inserLocations($request->input('multiple_locations'), $id, $request->input('id'));
 
-            if (!is_null(Input::get('avatar'))) {
+            if (!is_null(Input::file('avatar'))) {
                 $updates = array();
                 $file = $request->file('avatar');
                 $destinationPath = './uploads/users/';

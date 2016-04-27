@@ -94,8 +94,8 @@ class OrderController extends Controller
             $order_type = \DB::select("Select order_type FROM order_type WHERE id = " . $data->order_type_id . "");
             $rows[$index]->order_type_id = (isset($order_type[0]->order_type) ? $order_type[0]->order_type : '');
 
-            $vendor = \DB::table('vendor')->where('id', '=', $data->vendor_id)->get(array('vendor_name'));
-            $rows[$index]->vendor_id = (isset($vendor[0]->vendor_name) ? $vendor[0]->vendor_name : '');
+          //  $vendor = \DB::table('vendor')->where('id', '=', $data->vendor_id)->get(array('vendor_name'));
+            //$rows[$index]->vendor_id = (isset($vendor[0]->vendor_name) ? $vendor[0]->vendor_name : '');
 
             $order_status = \DB::select("Select status FROM order_status WHERE id = " . $data->status_id . "");
             $rows[$index]->status_id = (isset($order_status[0]->status) ? $order_status[0]->status : '');
