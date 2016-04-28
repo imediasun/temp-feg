@@ -2353,3 +2353,67 @@ li.L9 {
     z-index: 1000;
     font-size: 11px;
 }
+.dropdown-menu {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.dropdown-menu a {
+    overflow: hidden;
+    outline: none;
+}
+
+.additem input
+{
+    border:0;
+    margin:-3px;
+    padding:3px;
+    outline: none;
+    color: #000;
+    width: 99%;
+}
+
+.additem:hover input
+{
+    background-color: #f5f5f5;
+}
+
+.additem .check-mark
+{
+    opacity: 0;
+    z-index: -1000;
+}
+
+.addnewicon {
+    position: relative;
+    padding: 4px;
+    margin: -8px;
+    padding-right: 50px;
+    margin-right: -50px;
+    color: #aaa;
+}
+
+.addnewicon:hover {
+    color: #222;
+}
+
+.topMessage, .bottomMessage {
+    text-align: center;
+    background-color: #f9f9f9;
+    padding: 10px;
+    margin: 0 !important;
+    color: #666;
+    border-bottom: 1px solid #aaa;
+}
+
+#merchthrowsdetailedFilter select[name="sort"],
+#merchthrowsdetailedFilter select[name="order"],
+#merchthrowssimpleFilter select[name="sort"],
+#merchthrowssimpleFilter select[name="order"],
+#closedlocationsFilter {
+    display:none;
+}

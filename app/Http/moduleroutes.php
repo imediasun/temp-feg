@@ -24,4 +24,15 @@
                     Route::controller('tablecols', 'TablecolsController');
                     Route::controller('mylocationgame', 'MylocationgameController');
                     Route::controller('merchandisebudget', 'MerchandisebudgetController');
+                    Route::controller('closedlocations', 'ClosedlocationsController');
+                    Route::controller('gamesnotondebitcard', 'GamesnotondebitcardController');
+                    Route::controller('closedlocationstwo', 'ClosedlocationstwoController');
+                    Route::controller('topgamesavgplays', 'TopgamesavgplaysController');
+                    Route::controller('bottomgamesavgplays', 'BottomgamesavgplaysController');
+                    Route::controller('potentialoverreportingerrors', 'PotentialoverreportingerrorsController');
+                    Route::controller('gameplayrankbylocation', 'GameplayrankbylocationController');
+                    Route::controller('gamesnotplayed', 'GamesnotplayedController');
+                    Route::controller('nonfegreaders', 'NonfegreadersController');
+                    Route::controller('merchthrowssimple', 'MerchthrowssimpleController');
+                    Route::controller('merchthrowsdetailed', 'MerchthrowsdetailedController');
                     ?>
