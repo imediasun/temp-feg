@@ -2408,6 +2408,7 @@ li.L9 {
 #merchthrowsdetailedFilter select[name="order"],
 #merchthrowssimpleFilter select[name="sort"],
 #merchthrowssimpleFilter select[name="order"],
+#gameplayrankbylocationFilter,
 #closedlocationsFilter {
     display:none;
 }
