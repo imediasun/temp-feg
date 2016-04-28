@@ -24,10 +24,13 @@ class closedlocations extends Sximo  {
             $date_end =  date("Y-m-d", $datestamp+86400);            
             $day_name = date("D", strtotime($date_start));
 
-            $sql = "SELECT '$date_start_display' as date_start, 
+            $sql = "SELECT '$date_start_display' as closed_date, 
                             location.id, 
-                            location.location_name_short, 
-                            debit_type.company as debit_type_id "
+                            location.location_name_short as location_name, 
+                            location.debit_type_id, 
+                            '$date_start_display' as date_start,
+                            '$date_start_display' as date_end,
+                            debit_type.company as debit_system "
                     . "FROM location " .
                     "JOIN debit_type on debit_type.id = location.debit_type_id ".
                     "WHERE location.reporting = 1 ".  

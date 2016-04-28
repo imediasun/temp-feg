@@ -54,7 +54,7 @@ class ClosedlocationsController extends ReportsController {
         } else {
             $config_id = 0;
         }
-        $config_id=0;
+        //$config_id=0;
         $this->data['config_id'] = $config_id;
         $config = $this->model->getModuleConfig($module_id, $config_id);
         if(!empty($config))
@@ -96,51 +96,9 @@ class ClosedlocationsController extends ReportsController {
 		$this->data['pager'] 		= $this->injectPaginate();
 		// Row grid Number
 		$this->data['i']			= ($page * $params['limit'])- $params['limit'];
-
-$dateStartField = array(               
-    "field" => "date_start",
-    "alias" => "location",
-    "language" => array("id" => ""),
-    "label" => "Date",
-    "view" =>  1,
-    "detail" =>  0,
-    "sortable" => 0,
-    "search" => 1,
-    "download" => 0,
-    "frozen" => 1,
-    "limited" => "",
-    "width" => "100",
-    "align" => "left",
-    "sortlist" => "0",
-        "conn" => array(
-          "valid" => "0",
-          "db" =>  "",
-          "key" => "",
-          "display" => ""
-        ),
-    "attribute" => 
-        array(
-          "hyperlink" => 
-                array(
-                  "active" => 0,
-                  "link" =>  "",
-                  "target" => "modal",
-                  "html" => ""
-                ),
-          "image" => 
-                array(
-                  "active" => 0,
-                  "path" => "",
-                  "size_x" => "",
-                  "size_y" => "",
-                  "html" => "",
-                ),
-          "formater" => array("active" => 0, "value" => "")
-        )
-    );                
+              
 		// Grid Configuration
-		$this->data['tableGrid'] 	= array_merge(array($dateStartField), $this->info['config']['grid']);
-//		$this->data['tableGrid'] 	= $this->info['config']['grid'];
+		$this->data['tableGrid'] 	= $this->info['config']['grid'];
                 
 		$this->data['tableForm'] 	= $this->info['config']['forms'];
 		$this->data['colspan'] 		= \SiteHelpers::viewColSpan($this->info['config']['grid']);
@@ -287,16 +245,5 @@ $dateStartField = array(
 
 		}
 
-	}
-        
-	public function getSearch( $mode = 'ajax')
-	{
-
-		$this->data['tableForm'] 	= $this->info['config']['forms'];
-		$this->data['tableGrid'] 	= $this->info['config']['grid'];
-		$this->data['searchMode'] 	= $mode ;
-		return view('closedlocations.search',$this->data);
-
-	}        
-
+	}    
 }
