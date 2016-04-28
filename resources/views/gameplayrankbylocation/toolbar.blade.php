@@ -1,6 +1,6 @@
 <div class="row m-b">
 	<div class="col-md-8">
-			@if($access['is_add'] ==1)
+			@if(false && $access['is_add'] ==1)
 			{!! AjaxHelpers::buttonActionCreate($pageModule,$setting) !!}
 			<a href="javascript://ajax" class="btn btn-sm btn-white" onclick="ajaxCopy('#{{ $pageModule }}','{{ $pageUrl }}')"><i class="fa fa-file-o"></i> Copy </a>
 			@endif 
