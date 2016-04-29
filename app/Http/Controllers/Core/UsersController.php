@@ -182,6 +182,14 @@ class UsersController extends Controller
         Session::put('flgStatus', 1);
         Session::put('ll', $row->last_login);
         Session::put('fid', $row->first_name . ' ' . $row->last_name);
+        Session::put('ufname', $row->first_name);
+        Session::put('ulname', $row->last_name);
+        Session::put('company_id', $row->company_id);
+        $user_locations = \SiteHelpers::getLocationDetails($row->id);
+        Session::put('user_locations', $user_locations);
+        Session::put('selected_location', $user_locations[0]->id);
+        Session::put('selected_location_name', $user_locations[0]->location_name_short);
+        Session::put('get_locations_by_region', $row->get_locations_by_region);
         Session::save();
 
         if (Session::get('return_id') == $id) {
@@ -275,6 +283,7 @@ class UsersController extends Controller
         $this->data['id'] = $id;
         return view('core.users.form', $this->data);
     }
+
     function getUpload($id = NULL)
     {
         $data['profile_img'] = \DB::table('users')->where('id', $id)->pluck('avatar');
@@ -330,7 +339,7 @@ class UsersController extends Controller
         }
         $this->data['id'] = $id;
         $this->data['access'] = $this->access;
-        $location_details =\SiteHelpers::getLocationDetails($id);
+        $location_details = \SiteHelpers::getLocationDetails($id);
         $this->data['user_locations'] = $location_details;
         return view('core.users.view', $this->data);
     }

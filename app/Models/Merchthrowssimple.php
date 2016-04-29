@@ -1,0 +1,150 @@
+<?php namespace App\Models;
+
+use Illuminate\Auth\Authenticatable;
+use Illuminate\Database\Eloquent\Model;
+
+class merchthrowssimple extends Sximo  {
+	
+	protected $table = 'merch_throws';
+	protected $primaryKey = 'id';
+
+	public function __construct() {
+		parent::__construct();
+		
+	}
+    public static function build_query(){
+        $filters = self::getSearchFilters();
+        $location = @$filters['location_id'];
+        $dateStart = @$filters['date_start'];
+        $dateEnd = @$filters['date_end'];
+        $loc_table_expression = " ";
+        if (!empty($location)) {
+            $loc_table_expression = " AND merch_throws.location_id=$location ";
+        }
+        $dateStart_expression= " ";
+        if (!empty($dateStart)) {
+            $dateStart_expression = " AND merch_throws.date_start >= '$dateStart' ";
+        }
+        $dateEnd_expression = " ";
+        if (!empty($dateEnd)) {
+            $dateEnd_expression = " AND merch_throws.date_end <= '$dateEnd' ";
+        }
+
+        $sql = "SELECT G.id as id,
+                                    CONCAT(G.id,' | ',I.game_title) AS 'Game',
+                                    I.game_title,
+                                    merch_throws.price_per_play,
+                                    CONCAT(IF(merch_throws.product_id_1 = 0,'',P1.vendor_description),IF(merch_throws.product_id_2 = 0,'',CONCAT(' | ',P2.vendor_description)),IF(merch_throws.product_id_3 = 0,'',CONCAT(' | ',P3.vendor_description)),IF(merch_throws.product_id_4 = 0,'',CONCAT(' | ',P4.vendor_description)),IF(merch_throws.product_id_5 = 0,'',CONCAT(' | ',P5.vendor_description))) 
+                                        AS Prizes,
+                                    merch_throws.game_earnings AS 'Earnings',
+                                    (merch_throws.product_cogs_1 + merch_throws.product_cogs_2 + merch_throws.product_cogs_3 + merch_throws.product_cogs_4 + merch_throws.product_cogs_5) 
+                                        AS 'COGS',
+                                     merch_throws.game_throw AS 'Throw',
+                                     merch_throws.location_id,
+                                     L.location_name_short as 'Location Name',
+                                     CONCAT(L.id,' - ', L.location_name_short) AS 'Location',
+                                     CONCAT(U.first_name,' ',U.last_name) AS 'Submitted By',									 
+                                     merch_throws.date_start,
+                                     merch_throws.date_end,
+                                     merch_throws.notes
+                                  FROM merch_throws
+                             LEFT JOIN location L ON L.id = merch_throws.location_id
+                             LEFT JOIN products P1 ON P1.id = merch_throws.product_id_1
+                             LEFT JOIN products P2 ON P2.id = merch_throws.product_id_2
+                             LEFT JOIN products P3 ON P3.id = merch_throws.product_id_3
+                             LEFT JOIN products P4 ON P4.id = merch_throws.product_id_4
+                             LEFT JOIN products P5 ON P5.id = merch_throws.product_id_5
+                             LEFT JOIN game G ON G.id = merch_throws.game_id
+                             LEFT JOIN game_title I ON I.id = G.game_title_id
+                             LEFT JOIN users U ON U.id = merch_throws.user_id
+                                WHERE merch_throws.location_id <> 0 
+                                    $loc_table_expression
+                                    $dateStart_expression
+                                    $dateEnd_expression
+                               GROUP BY G.id";
+        return $sql;
+    }    
+
+	public static function querySelect( $isCount = false  ){
+        $sql = "";
+        
+		return $sql;
+	}
+	public static function queryWhere(  ){
+		
+		return " WHERE location_id <> 0 ";
+	}
+	
+	public static function queryGroup(){
+		return "  ";
+	}
+	
+    private static function getSearchFilters() {
+        $finalFilter = array();
+        if (isset($_GET['search'])) {
+            $filters_raw = trim($_GET['search'], "|");
+            $filters = explode("|", $filters_raw);
+
+            foreach($filters as $filter) {
+                $columnFilter = explode(":", $filter);
+                if (isset($columnFilter) && isset($columnFilter[0]) && isset($columnFilter[2])) {
+                    $finalFilter[$columnFilter[0]] = $columnFilter[2];
+}
+            }
+        }
+        return $finalFilter;
+    }
+        
+        
+	public static function getRows( $args,$cond=null )
+	{
+		$table = with(new static)->table;
+		$key = with(new static)->primaryKey;
+        $topMessage = "";
+        $bottomMessage = "";
+        $message = "";
+                
+
+		extract( array_merge( array(
+			'page' 		=> '0' ,
+			'limit'  	=> '0' ,
+			'sort' 		=> '' ,
+			'order' 	=> '' ,
+			'params' 	=> '' ,
+			'global'	=> 1
+		), $args ));
+
+		$offset = ($page-1) * $limit ;
+		$limitConditional = ($page !=0 && $limit !=0) ? "LIMIT  $offset , $limit" : '';
+		$orderConditional = "ORDER BY G.id DESC";//($sort !='' && $order !='') ?  " ORDER BY {$sort} {$order} " : '';
+
+		// Update permission global / own access new ver 1.1
+		$table = with(new static)->table;
+		if($global == 0 )
+			$params .= " AND {$table}.entry_by ='".\Session::get('uid')."'";
+		// End Update permission global / own access new ver 1.1
+        
+        $mainQuery = self::build_query();
+        $selectQuery = $mainQuery. " {$orderConditional} {$limitConditional}";
+        $rows = \DB::select($selectQuery);
+        
+        $total = 0;
+        $totalRows = \DB::select($mainQuery);
+        if (!empty($totalRows)) {
+            $total = count($totalRows);
+        }
+		
+		return $results = array(
+                    'topMessage' => $topMessage,
+                    'bottomMessage' => $bottomMessage,
+                    'message' => $message,
+                    
+                    'rows'=> $rows, 
+                    'total' => $total
+                );
+
+
+	}
+	
+
+}

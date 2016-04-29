@@ -2400,3 +2400,24 @@ li.L9 {
 .addnewicon:hover {
     color: #222;
 }
+<<<<<<< HEAD
+=======
+
+.topMessage, .bottomMessage {
+    text-align: center;
+    background-color: #f9f9f9;
+    padding: 10px;
+    margin: 0 !important;
+    color: #666;
+    border-bottom: 1px solid #aaa;
+}
+
+#merchthrowsdetailedFilter select[name="sort"],
+#merchthrowsdetailedFilter select[name="order"],
+#merchthrowssimpleFilter select[name="sort"],
+#merchthrowssimpleFilter select[name="order"],
+#gameplayrankbylocationFilter,
+#closedlocationsFilter {
+    display:none;
+}
+>>>>>>> 4e24e08860493d4b9b54fa722d1f4079a39432fa
