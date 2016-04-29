@@ -1810,5 +1810,16 @@ return $configs;
         $row=\DB::select('select YEAR(budget_date) as year from location_budget group by YEAR(budget_date)');
         return $row;
     }
+    static function getLocationDetails($id)
+    {
+        $locations = \DB::table('user_locations')
+            ->join('location', 'user_locations.location_id', '=', 'location.id')
+            ->select('location.*')
+            ->where('location.active',1)
+            ->where('user_locations.user_id','=',$id)->orderBy('id','asc')
+            ->get();
+        return $locations;
+    }
+
 			
 }

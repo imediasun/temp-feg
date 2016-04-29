@@ -38,7 +38,12 @@ abstract class Controller extends BaseController {
 				\Session::put('gid', \Auth::user()->group_id);
 				\Session::put('eid', \Auth::user()->email);
 				\Session::put('ll', \Auth::user()->last_login);
-				\Session::put('fid', \Auth::user()->first_name.' '. \Auth::user()->last_name);  
+				\Session::put('fid', \Auth::user()->first_name.' '. \Auth::user()->last_name);
+                \Session::put('ufname',$row->first_name);
+                \Session::put('ulname',$row->last_name);
+                \Session::put('company_id',$row->company_id);
+                \Session::put('get_locations_by_region',$row->get_locations_by_region);
+                \Session::put('user_locations',\SiteHelpers::getLocationDetails($row->id));
 				\Session::put('themes', 'sximo-light-blue');
         	}
         } 
@@ -479,8 +484,9 @@ abstract class Controller extends BaseController {
         $budget_year=(isset($_GET['budget_year'])?$_GET['budget_year']: '');
         $order_type=(isset($_GET['order_type'])?$_GET['order_type']: '');
         $active=(isset($_GET['active'])?$_GET['active']:'');
-
-		$appends = array();
+        $active_inactive=(isset($_GET['active_inactive'])?$_GET['active_inactive']:'');
+        $type=(isset($_GET['type'])?$_GET['type']:'');
+        $appends = array();
 		if($sort!='') 	$appends['sort'] = $sort; 
 		if($order!='') 	$appends['order'] = $order; 
 		if($rows!='') 	$appends['rows'] = $rows; 
@@ -493,6 +499,12 @@ abstract class Controller extends BaseController {
         $appends['order_type']=$order_type;
         if($active!='' || $active != 0) {
             $appends['active'] = $active;
+        }
+        if($type!='' ) {
+            $appends['type'] = $type;
+        }
+        if($active_inactive!='' ) {
+            $appends['active_inactive'] = $active_inactive;
         }
 
 		return $appends;
@@ -700,6 +712,17 @@ abstract class Controller extends BaseController {
 
 		
 	}
+    function getChangelocation($location_id)
+    {
+      $location_name= \DB::select('select location_name_short from location where id='.$location_id);
+        if( count($location_name)== 1)
+        {
+            $data['selected_location_name'] = $location_name[0]->location_name_short;
+        }
+        $data['selected_location'] = $location_id;
+       \Session::put($data);
+        return Redirect::back();
+    }
 
 }
 

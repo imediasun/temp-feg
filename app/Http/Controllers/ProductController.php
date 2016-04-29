@@ -115,10 +115,6 @@ class ProductController extends Controller {
                 } else {
                     $data->hot_item = "No";
                 }
-
-
-
-
 			$product_type = \DB::select("Select product_type FROM product_type WHERE id = ".$data->prod_type_id ."");
 			$rows[$index]->prod_type_id = (isset($product_type[0]->product_type) ? $product_type[0]->product_type : '');
 			$product_sub_type = \DB::select("Select product_type FROM product_type WHERE id = ".$data->prod_sub_type_id ."");

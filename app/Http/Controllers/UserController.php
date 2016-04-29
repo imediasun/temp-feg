@@ -132,6 +132,7 @@ class UserController extends Controller {
 	}
 
 	public function postSignin( Request $request) {
+
 		
 		$rules = array(
 			'email'=>'required|email',
@@ -171,6 +172,14 @@ class UserController extends Controller {
 						\Session::put('eid', $row->email);
 						\Session::put('ll', $row->last_login);
 						\Session::put('fid', $row->first_name.' '. $row->last_name);
+                        \Session::put('ufname',$row->first_name);
+                        \Session::put('ulname',$row->last_name);
+                        \Session::put('company_id',$row->company_id);
+                        $user_locations=\SiteHelpers::getLocationDetails($row->id);
+                        \Session::put('user_locations',$user_locations);
+                        \Session::put('selected_location',$user_locations[0]->id);
+                        \Session::put('selected_location_name',$user_locations[0]->location_name_short);
+                        \Session::put('get_locations_by_region',$row->get_locations_by_region);
 						if(!is_null($request->input('language')))
 						{
 							\Session::put('lang', $request->input('language'));	
@@ -210,6 +219,14 @@ class UserController extends Controller {
 		\Session::put('eid', $row->email);
 		\Session::put('ll', $row->last_login);
 		\Session::put('fid', $row->first_name.' '. $row->last_name);
+        \Session::put('ufname',$row->first_name);
+        \Session::put('ulname',$row->last_name);
+        \Session::put('company_id',$row->company_id);
+        $user_locations=\SiteHelpers::getLocationDetails($row->id);
+        \Session::put('user_locations',$user_locations);
+        \Session::put('selected_location',$user_locations[0]->id);
+        \Session::put('selected_location_name',$user_locations[0]->location_name_short);
+        \Session::put('get_locations_by_region',$row->get_locations_by_region);
 		return Redirect::to('dashboard');
 	}
 	public function getData()
@@ -435,7 +452,11 @@ class UserController extends Controller {
 					Session::put('uid', $row->id);
 					Session::put('gid', $row->group_id);
 					Session::put('eid', $row->group_email);
-					Session::put('fid', $row->first_name.' '. $row->last_name);	
+					Session::put('fid', $row->first_name.' '. $row->last_name);
+                    Session::put('ufname',$row->first_name);
+                    Session::put('ulname',$row->last_name);
+                    Session::put('company_id',$row->company_id);
+                    Session::put('user_locations',\SiteHelpers::getLocationDetails($row->id));
 					if(CNF_FRONT =='false') :
 						return Redirect::to('dashboard');						
 					else :

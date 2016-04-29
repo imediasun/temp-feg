@@ -330,7 +330,7 @@ class UsersController extends Controller
         }
         $this->data['id'] = $id;
         $this->data['access'] = $this->access;
-        $location_details = $this->model->getLocationDetails($id);
+        $location_details =\SiteHelpers::getLocationDetails($id);
         $this->data['user_locations'] = $location_details;
         return view('core.users.view', $this->data);
     }

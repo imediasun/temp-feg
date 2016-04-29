@@ -24,4 +24,5 @@
                     Route::controller('tablecols', 'TablecolsController');
                     Route::controller('mylocationgame', 'MylocationgameController');
                     Route::controller('merchandisebudget', 'MerchandisebudgetController');
+                    Route::controller('shopfegrequeststore', 'ShopfegrequeststoreController');
                     ?>
