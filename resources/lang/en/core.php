@@ -182,7 +182,9 @@ return array(
 	"note_error"				=> "The following errors occurred !",
 	"note_success_delete"		=> "Removed successfully!",	// updated apidevlab
     "note_block"                => "Blocked",
-    "note_unblock"              => "Unblocked"
+    "note_unblock"              => "Unblocked",
+    "request_sent_success"      => "Request Sent Successfully",
+    "request_send_fial"         => "Error in Sending Request"
 
 
 );

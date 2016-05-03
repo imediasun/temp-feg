@@ -178,7 +178,7 @@ class shopfegrequeststore extends Sximo  {
         $location_id = \Session::get('selected_location');
         $data['selected_location'] = $location_id;
 
-        $newQuery = \DB::select('SELECT CONCAT("<a href=\"http://fegllc.com/fegsys/productDetail/",P.id,"\" style=\"color:black\" target=\"_blank\"><b>",O.order_type," - </b><i>",V.vendor_name,"</i> - <b>",P.vendor_description," </b> ($",P.case_price," / ", P.num_items," items) per case </a>") AS item,
+        $newQuery = \DB::select('SELECT CONCAT(O.order_type," - </b><i>",V.vendor_name,"</i> - <b>",P.vendor_description," </b> ($",P.case_price," / ", P.num_items," items) per case") AS item,
 								P.id as PID  FROM products P
 								LEFT JOIN vendor V ON V.id = P.vendor_id
 								LEFT JOIN order_type O ON O.id = P.prod_type_id
@@ -203,6 +203,41 @@ class shopfegrequeststore extends Sximo  {
         $data['title'] = 'Recently Added Products';
         return $data;
     }
+
+    function newGraphicRequest($data)
+    {
+        $last_inserted_id=\DB::table('new_graphics_request')->insertGetId($data);
+        $locationName = $this->get_location_info_by_id($data['location_id']);
+        $game_info=explode('-',$data['description']);
+        $message = '<b>Date Requested:</b> '.$data['request_date'].'<br>
+					<b>Requestor:</b> '.\Session::get('fid').'<br>
+					<b>Location:</b> '.$data['location_id'].' | '.$locationName.'<br>
+					<b>For Game:</b> '.$game_info[0]  .'<br>
+					<b>Description:</b> '.$data['description'].'<br>
+					<b>Quantity:</b> '.$data['qty'].'<br>
+					<b>Need By Date:</b> '.$data['need_by_date'].'<br><br>
+					<em>**Mark/Tom, please <b>Reply to All</b> with <br>
+					&nbsp;&nbsp;&nbsp; 1.) Approval/Denial  <br>
+					&nbsp;&nbsp;&nbsp; 2.) Set Priority Level at <b>http://fegllc.com/fegsys/manageGraphicsRequests</b><br><br>
+					**All cc\'d, please Reply to All <b> only if you wish to deny or modify request</b> and explain why.</em><br>';
+                    $from = \Session::get('eid');
+                    //$to = 'new-graphics@fegllc.com';
+                    $to='adnanali199@gmail.com';
+                    $cc = '';
+                    $bcc = '';
+                    $subject = 'New Graphics Request for '.$locationName;
+                    $message = $message;
+                    $headers = 'MIME-Version: 1.0' . "\r\n";
+                    $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
+                    mail($to, $subject, $message, $headers);
+        return $last_inserted_id;
+    }
+    function get_location_info_by_id($id)
+    {
+        $location_name=\DB::table('location')->where('id',$id)->pluck('location_name_short');
+        return $location_name;
+    }
+
 	
 
 }

@@ -41,7 +41,7 @@
 					</label>
 					<div class="col-md-6">
 					  <textarea name='item_description' rows='5' id='item_description' class='form-control '
-				          required="required" >{{ $row['item_description'] }}</textarea>
+				         >{{ $row['item_description'] }}</textarea>
 					 </div>
 					 <div class="col-md-2">
 
@@ -95,7 +95,7 @@
 					{!! SiteHelpers::activeLang('Unit Price', (isset($fields['unit_price']['language'])? $fields['unit_price']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('unit_price', $row['unit_price'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
+					  {!! Form::text('unit_price', $row['unit_price'],array('class'=>'form-control', 'placeholder'=>'','required'=>'required'   )) !!}
 					 </div>
 					 <div class="col-md-2">
 
@@ -106,7 +106,7 @@
 					{!! SiteHelpers::activeLang('Case Price', (isset($fields['case_price']['language'])? $fields['case_price']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('case_price', $row['case_price'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
+					  {!! Form::text('case_price', $row['case_price'],array('class'=>'form-control', 'placeholder'=>'', 'required'=>'required'  )) !!}
 					 </div>
 					 <div class="col-md-2">
 
@@ -117,7 +117,7 @@
 					{!! SiteHelpers::activeLang('Retail Price', (isset($fields['retail_price']['language'])? $fields['retail_price']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('retail_price', $row['retail_price'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
+					  {!! Form::text('retail_price', $row['retail_price'],array('class'=>'form-control', 'placeholder'=>'','required'=>'required'   )) !!}
 					 </div>
 					 <div class="col-md-2">
 
@@ -139,7 +139,7 @@
 					{!! SiteHelpers::activeLang('Prod Type Id', (isset($fields['prod_type_id']['language'])? $fields['prod_type_id']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
-					  <select name='prod_type_id' rows='5' id='prod_type_id' class='select2 '   ></select>
+					  <select name='prod_type_id' rows='5' id='prod_type_id' class='select2 ' required='required'  ></select>
 					 </div>
 					 <div class="col-md-2">
 

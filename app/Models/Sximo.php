@@ -51,7 +51,13 @@ class Sximo extends Model
         //total query becomes too huge
         if ($table == "orders" && !isset($_GET['order_type'])) {
             $total = 18000;
-        } else {
+        }
+        elseif($table=='games')
+        {
+            $total=4000;
+        }
+
+        else {
             $total = \DB::select($select . "
 				{$params} " . self::queryGroup() . " {$orderConditional}  ");
             $total = count($total);

@@ -112,6 +112,7 @@ function ajaxRemove( id, url )
 {
     var datas = $( id +'Table :input').serialize();
     if(confirm('Are u sure deleting selected row(s)?')) {
+
         $.post( url+'/delete' ,datas,function( data ) {
 
             if(data.status =='success')

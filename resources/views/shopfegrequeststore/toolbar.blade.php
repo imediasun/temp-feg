@@ -49,11 +49,11 @@
         <select name="product_type" id="product_type" class="select3" style="margin-top:5px;"></select>
     </div>
     <div class="col-md-8">
-        <h3>Recently Added Products <small><a  href="#" style="font-size:1.2em;color:red" target="_blank">*Graphic Not Below? Request New Graphic*</a></small></h3>
+        <h3>Recently Added Products <small><a  href="{{ URL::to('./shopfegrequeststore/new-graphic-request') }}" style="font-size:1.2em;color:red" target="_blank">*Graphic Not Below? Request New Graphic*</a></small></h3>
         <?php if(isset($cart['new_products'])) { ?>
         <?php foreach($cart['new_products'] as $row): ?>
         <div class="col-md-3" style=" height:100px; overflow: hidden;border: 1px solid lightgray; vertical-align:top;font-size:1em; padding:4px; background:#FFF;box-shadow: 1px 1px 2px 2px lightgrey">
-            <a href="#" style="color:black;" target="_blank">
+            <a href="{{ URL::to('./shopfegrequeststore/recentlyadded') }}" style="color:black;" target="_blank">
                 <?php echo $row['item'];?>
             </a>
         </div>
@@ -83,7 +83,7 @@
         reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?type=store&active_inactive=' + type + '&order_type=' + order_type + '&product_type=' + product_type + '&config_id=' + $("#col-config").val());
     });
     $('#locations').on('click', function () {
-        alert();
+  
         window.location = "<?php echo url();?>//shopfegrequeststore/changelocation/" + $('#locations').val();
     });
 

@@ -28,5 +28,7 @@ $(document).ready(function(){
 	reloadData('#{{ $pageModule }}','{{ $pageModule }}/data?type=store&active_inactive=active');
 });
 
-</script>	
+</script>
+
+
 @endsection

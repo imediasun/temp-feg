@@ -186,9 +186,11 @@ class UsersController extends Controller
         Session::put('ulname', $row->last_name);
         Session::put('company_id', $row->company_id);
         $user_locations = \SiteHelpers::getLocationDetails($row->id);
-        Session::put('user_locations', $user_locations);
-        Session::put('selected_location', $user_locations[0]->id);
-        Session::put('selected_location_name', $user_locations[0]->location_name_short);
+        if(!empty($user_locations)) {
+            Session::put('user_locations', $user_locations);
+            Session::put('selected_location', $user_locations[0]->id);
+            Session::put('selected_location_name', $user_locations[0]->location_name_short);
+        }
         Session::put('get_locations_by_region', $row->get_locations_by_region);
         Session::save();
 

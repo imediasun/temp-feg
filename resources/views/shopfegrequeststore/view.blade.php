@@ -1,20 +1,18 @@
-@if($setting['view-method'] =='native')
+@extends('layouts.app')
+
+@section('content')
     <div class="sbox">
         <div class="sbox-title">
-            <h4><i class="fa fa-table"></i> <?php echo $pageTitle;?>
+            <h4><i class="fa fa-table"></i> {{ $pageTitle }}
                 <small>{{ $pageNote }}</small>
-                <a href="javascript:void(0)" class="collapse-close pull-right btn btn-xs btn-danger"
-                   onclick="ajaxViewClose('#{{ $pageModule }}')">
-                    <i class="fa fa fa-times"></i></a>
             </h4>
         </div>
-
         <div class="sbox-content">
-            @endif
-            <div class="col-md-6 col-md-offset-3 text-center" style="border-bottom:1px solid lightgray">
+
+            <div class="col-md-6 col-md-offset-3 " style="border-bottom:1px solid lightgray">
                 <h1>{{ $row->vendor_description }}</h1>
 
-                <h2 > @if($row->inactive == 1) <span style="color:red"> {{ "NOT AVAILABLE" }} </span> @else <span style="color:green"> {{ "AVAILABLE" }} </span> @endif </h2>
+                <h2 class="text-center" > @if($row->inactive == 1) <span style="color:red"> {{ "NOT AVAILABLE" }} </span> @else <span style="color:green"> {{ "AVAILABLE" }} </span> @endif </h2>
             </div>
             <div class="col-md-3"></div>
             <div class="clearfix"></div>
@@ -30,7 +28,7 @@
                             <td width='30%' class='label-view text-right'>
                                 {{ SiteHelpers::activeLang('Item Description', (isset($fields['item_description']['language'])? $fields['item_description']['language'] : array())) }}
                             </td>
-                            <td>{{ $row->item_description }} </td>
+                            <td>{{ $row->vendor_description }} </td>
 
                         </tr>
                         <tr>
@@ -96,16 +94,6 @@
             </div>
             <div class="clearfix"></div>
 
-
-
-
-            @if($setting['form-method'] =='native')
         </div>
     </div>
-@endif
-
-<script>
-    $(document).ready(function () {
-
-    });
-</script>
+@endsection

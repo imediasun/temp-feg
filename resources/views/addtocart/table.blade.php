@@ -1,14 +1,15 @@
 <?php usort($tableGrid, "SiteHelpers::_sort"); ?>
+@if(isset($cartData['subtotals']) && !empty($cartData['subtotals']))
 <div class="sbox">
     <div class="sbox-title">
         <h5><i class="fa fa-table"></i></h5>
 
         <div class="sbox-tools">
             <a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Clear Search"
-               onclick="reloadData('#{{ $pageModule }}','shopfegrequeststore/data?search=')"><i
-                        class="fa fa-trash-o"></i> Clear Search </a>
+               onclick="reloadData('#{{ $pageModule }}','addtocart/data?search=')"><i class="fa fa-trash-o"></i>
+                Clear Search </a>
             <a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Reload Data"
-               onclick="reloadData('#{{ $pageModule }}','shopfegrequeststore/data?return={{ $return }}')"><i
+               onclick="reloadData('#{{ $pageModule }}','addtocart/data?return={{ $return }}')"><i
                         class="fa fa-refresh"></i></a>
             @if(Session::get('gid') ==1)
                 <a href="{{ url('sximo/module/config/'.$pageModule) }}" class="btn btn-xs btn-white tips"
@@ -18,16 +19,17 @@
     </div>
     <div class="sbox-content">
 
-        @include( $pageModule.'/toolbar',['config_id'=>$config_id,'colconfigs' => SiteHelpers::getRequiredConfigs($module_id),'order_type'=>$order_type,'product_type' => $product_type,'cart'=>$cart])
+        @include( $pageModule.'/toolbar',['cartData' => $cartData])
 
-        <?php echo Form::open(array('url' => 'shopfegrequeststore/delete/', 'class' => 'form-horizontal', 'id' => 'SximoTable', 'data-parsley-validate' => ''));?>
+        <?php echo Form::open(array('url' => 'addtocart/delete/', 'class' => 'form-horizontal', 'id' => 'SximoTable', 'data-parsley-validate' => ''));?>
         <div class="table-responsive">
             @if(count($rowData)>=1)
                 <table class="table table-striped  " id="{{ $pageModule }}Table">
                     <thead>
                     <tr>
-                        <th width="50"> No</th>
-                        <th width="100">Add'l Details</th>
+                        <th width="30"> No</th>
+                        <th width="50"><input type="checkbox" class="checkall"/></th>
+                        <th width="100">Image</th>
                         @if($setting['view-method']=='expand')
                             <th></th> @endif
                         <?php foreach ($tableGrid as $t) :
@@ -39,7 +41,14 @@
                                 }
                             endif;
                         endforeach; ?>
-                        <th width="100">Add To Cart</th>
+                        <th width="100">Vendor</th>
+                        <th width="100">Part Number</th>
+                        <th width="100">Size</th>
+                        <th width="100">Ticket Value</th>
+                        <th width="100">Case Price</th>
+                        <th width="100">Retails Price</th>
+                        <th width="100">Details</th>
+                        <th width="70"><?php echo Lang::get('core.btn_action');?></th>
 
                     </tr>
                     </thead>
@@ -74,41 +83,42 @@
                     ?>
                     <tr class="editable" id="form-{{ $row->id }}">
                         <td class="number"> <?php echo ++$i;?>  </td>
-                        <td><a href="{{ $pageModule }}/show/{{$row->id}}" target="_blank"
-                               class="btn btn-xs btn-green tips" title="Product Details">Details</a></td>
+                        <td><input type="checkbox" class="ids" name="ids[]" value="<?php echo $row->id;?>"/></td>
+                        <td> <?php
+                            echo SiteHelpers::showUploadedFile($row->img, '/uploads/products/', 50, false);
+                            ?></td>
                         @if($setting['view-method']=='expand')
                             <td><a href="javascript:void(0)" class="expandable" rel="#row-{{ $row->id }}"
-                                   data-url="{{ url('shopfegrequeststore/show/'.$id) }}"><i class="fa fa-plus "></i></a>
-                            </td>
+                                   data-url="{{ url('addtocart/show/'.$id) }}"><i class="fa fa-plus "></i></a></td>
                         @endif
                         <?php foreach ($tableGrid as $field) :
                         if($field['view'] == '1') :
                         $conn = (isset($field['conn']) ? $field['conn'] : array());
+
+
                         $value = AjaxHelpers::gridFormater($row->$field['field'], $row, $field['attribute'], $conn);
                         ?>
                         <?php $limited = isset($field['limited']) ? $field['limited'] : ''; ?>
                         @if(SiteHelpers::filterColumn($limited ))
                             <td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}"
                                 data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
-                                @if($field['field']=='img')
-                                    <?php
-                                    echo SiteHelpers::showUploadedFile($value, '/uploads/products/', 50, false);
-                                    ?>
-                                @else
-                                    {!! $value !!}
-                                @endif
+                                {!! $value !!}
                             </td>
                         @endif
                         <?php
                         endif;
                         endforeach;
                         ?>
-                        <td>
-                            @if($row->inactive == 0)
-                                <a href="{{ URL::to('shopfegrequeststore/popup-cart/'.$row->id) }}">Add To Cart</a>
-                            @else
-                                Not Avail.
-                            @endif
+                        <td>{{ $row->vendor_name }}</td>
+                        <td>{{ $row->sku }}</td>
+                        <td>{{ $row->size }}</td>
+                        <td>{{ $row->ticket_value }}</td>
+                        <td>{{ $row->case_price }}</td>
+                        <td>{{ $row->retail_price }}</td>
+                        <td>{{ $row->notes }}</td>
+                        <td data-values="action" data-key="<?php echo $row->id;?>">
+                            {!! AjaxHelpers::buttonAction('addtocart',$access,$id ,$setting) !!}
+                            {!! AjaxHelpers::buttonActionInline($row->id,'id') !!}
                         </td>
                     </tr>
                     @if($setting['view-method']=='expand')
@@ -125,6 +135,7 @@
                     </tbody>
 
                 </table>
+
             @else
 
                 <div style="margin:100px 0; text-align:center;">
@@ -136,18 +147,47 @@
 
         </div>
         <?php echo Form::close();?>
+        @if($cartData['shopping_cart_total'] >= 0)
+            <br/>
+
+            <div class="col-md-6 col-md-offset-2">
+                <div class="col-md-10" id="new_locationdiv">
+                    <select name="new_location" id="new_location" class="select3"></select>
+                </div>
+            </div>
+            <div style=";margin-left:50px;" class="col-md-2">
+                <label>Clone Order Info</label>
+                <input type="checkbox" name="clone_order" id="clone_order"
+                       style="height:25px; width:25px;vertical-align: middle">
+            </div>
+            <div class="col-md-10 col-md-offset-2">
+                <br/>
+
+                <div class="col-md-10">
+                    <input type="button" style="font-size:1.4em; width:100%; text-align:center;"
+                           value="Submit Weekly Requests totalling ${{ $cartData['shopping_cart_total']}}"
+                           onClick="confirmSubmit();"></button>
+                </div>
+            </div>
+        @endif
         @include('ajaxfooter')
 
     </div>
 </div>
-
+@else
+    <p style="color:red">Sorry! Location {{ \Session::get('selected_location') }}'s cart is empty..</p>
+@endif
 @if($setting['inline'] =='true') @include('sximo.module.utility.inlinegrid') @endif
+
 <script>
     $(document).ready(function () {
         $('.tips').tooltip();
+        $("#new_location").jCombo("{{ URL::to('order/comboselect?filter=location:id:id|location_name ') }}",
+                {selected_value: ''});
+        $(".select3").select2({width: "98%"});
         $('input[type="checkbox"],input[type="radio"]').iCheck({
             checkboxClass: 'icheckbox_square-green',
-            radioClass: 'iradio_square-green'
+            radioClass: 'iradio_square-green',
         });
         $('#{{ $pageModule }}Table .checkall').on('ifChecked', function () {
             $('#{{ $pageModule }}Table input[type="checkbox"]').iCheck('check');
@@ -161,12 +201,51 @@
             reloadData('#{{ $pageModule }}', url);
             return false;
         });
-
+        $('#new_locationdiv').hide();
         <?php if($setting['view-method'] =='expand') :
                 echo AjaxHelpers::htmlExpandGrid();
             endif;
          ?>
     });
+    $('#clone_order').on('ifChecked', function () {
+        $('#new_locationdiv').show();
+
+    });
+    $('#clone_order').on('ifUnchecked', function () {
+        $('#new_locationdiv').hide();
+    });
+    function confirmSubmit() {
+        var shortMessage = "{{ json_encode($cartData['amt_short_message']) }}";
+            shortMessage=shortMessage.replace(/&quot;/g, '');
+            shortMessage=shortMessage.trim();
+        if ( shortMessage && shortMessage.length > 0 ) {
+
+            var text="Please increase order amount in order to proceed."
+            alert(shortMessage + text);
+
+        }
+        else {
+            if (confirm("Have you confirmed all items and quantities in your shopping cart?")) {
+                var new_location = '';
+                var checked = $("#clone_order").parent('[class*="icheckbox"]').hasClass("checked");
+
+                if (checked) {
+                    if ($('#new_location').val() > 0) {
+                        new_location = '/' + $('#new_location').val();
+                        window.location.href = '{{ $pageModule }}/submit-requests' + new_location;
+                    }
+                    else {
+                        alert("You must pick a location to clone this order to!");
+                    }
+                }
+                else {
+                    window.location.href = '{{ $pageModule }}/submit-requests';
+                }
+            }
+
+        }
+    }
+
 </script>
 <style>
     .table th.right {

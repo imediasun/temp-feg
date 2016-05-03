@@ -1,35 +1,33 @@
 <?php namespace App\Http\Controllers;
 
 use App\Http\Controllers\controller;
-use App\Models\Shopfegrequeststore;
+use App\Models\Addtocart;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Validator, Input, Redirect;
 
-class ShopfegrequeststoreController extends Controller
+class AddtocartController extends Controller
 {
 
     protected $layout = "layouts.main";
     protected $data = array();
-    public $module = 'shopfegrequeststore';
+    public $module = 'addtocart';
     static $per_page = '10';
 
     public function __construct()
     {
         parent::__construct();
-        $this->model = new Shopfegrequeststore();
-
+        $this->model = new Addtocart();
         $this->info = $this->model->makeInfo($this->module);
         $this->access = $this->model->validAccess($this->info['id']);
 
         $this->data = array(
             'pageTitle' => $this->info['title'],
             'pageNote' => $this->info['note'],
-            'pageModule' => 'shopfegrequeststore',
-            'pageUrl' => url('shopfegrequeststore'),
+            'pageModule' => 'addtocart',
+            'pageUrl' => url('addtocart'),
             'return' => self::returnUrl()
         );
-
 
     }
 
@@ -37,15 +35,21 @@ class ShopfegrequeststoreController extends Controller
     {
         if ($this->access['is_view'] == 0)
             return Redirect::to('dashboard')->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
-
+        $productId = \Session::get('productId');
+        \Session::put('productId', $productId);
+        $cartData = $this->model->popupCartData($productId);
+        //$this->data['cartData'] = $cartData;
+        // \Session::put('cartData', $cartData);
         $this->data['access'] = $this->access;
-        return view('shopfegrequeststore.index', $this->data);
+        return view('addtocart.index', $this->data);
     }
 
     public function postData(Request $request)
     {
-
-        $module_id = \DB::table('tb_module')->where('module_name', '=', 'shopfegrequeststore')->pluck('module_id');
+        $productId = \Session::get('productId');
+        $cartData = $this->model->popupCartData($productId);
+        $this->data['cartData'] = $cartData;
+        $module_id = \DB::table('tb_module')->where('module_name', '=', 'addtocart')->pluck('module_id');
         $this->data['module_id'] = $module_id;
         if (Input::has('config_id')) {
             $config_id = Input::get('config_id');
@@ -77,20 +81,11 @@ class ShopfegrequeststoreController extends Controller
             'global' => (isset($this->access['is_global']) ? $this->access['is_global'] : 0)
         );
         // Get Query
-        $type = $request->get('type');
-        $this->data['type'] = $type;
-        $active_inactive = $request->get('active_inactive');
-        \Session::put('active_inactive', $active_inactive);
-        $order_type = $request->get('order_type');
-        $this->data['order_type'] = $order_type;
-        $product_type = $request->get('product_type');
-        $this->data['product_type'] = $product_type;
-        $cond = array('type' => $type, 'active_inactive' => $active_inactive, 'order_type' => $order_type, 'product_type' => $product_type,);
-        $results = $this->model->getRows($params, $cond);
+        $results = $this->model->getRows($params);
         // Build pagination setting
         $page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;
         $pagination = new Paginator($results['rows'], $results['total'], $params['limit']);
-        $pagination->setPath('shopfegrequeststore/data');
+        $pagination->setPath('addtocart/data');
         $this->data['param'] = $params;
         $this->data['rowData'] = $results['rows'];
         // Build Pagination
@@ -113,9 +108,8 @@ class ShopfegrequeststoreController extends Controller
         if ($this->data['config_id'] != 0 && !empty($config)) {
             $this->data['tableGrid'] = \SiteHelpers::showRequiredCols($this->data['tableGrid'], $this->data['config']);
         }
-        $this->data['cart'] = $this->model->shoppingCart();
 // Render into template
-        return view('shopfegrequeststore.table', $this->data);
+        return view('addtocart.table', $this->data);
 
     }
 
@@ -137,14 +131,14 @@ class ShopfegrequeststoreController extends Controller
         if ($row) {
             $this->data['row'] = $row;
         } else {
-            $this->data['row'] = $this->model->getColumnTable('products');
+            $this->data['row'] = $this->model->getColumnTable('requests');
         }
         $this->data['setting'] = $this->info['setting'];
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
 
         $this->data['id'] = $id;
 
-        return view('shopfegrequeststore.form', $this->data);
+        return view('addtocart.form', $this->data);
     }
 
     public function getShow($id = null)
@@ -158,29 +152,29 @@ class ShopfegrequeststoreController extends Controller
         if ($row) {
             $this->data['row'] = $row;
         } else {
-            $this->data['row'] = $this->model->getColumnTable('products');
+            $this->data['row'] = $this->model->getColumnTable('requests');
         }
 
         $this->data['id'] = $id;
         $this->data['access'] = $this->access;
         $this->data['setting'] = $this->info['setting'];
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
-        return view('shopfegrequeststore.view', $this->data);
+        return view('addtocart.view', $this->data);
     }
 
 
     function postCopy(Request $request)
     {
 
-        foreach (\DB::select("SHOW COLUMNS FROM products ") as $column) {
+        foreach (\DB::select("SHOW COLUMNS FROM requests ") as $column) {
             if ($column->Field != 'id')
                 $columns[] = $column->Field;
         }
         $toCopy = implode(",", $request->input('ids'));
 
 
-        $sql = "INSERT INTO products (" . implode(",", $columns) . ") ";
-        $sql .= " SELECT " . implode(",", $columns) . " FROM products WHERE id IN (" . $toCopy . ")";
+        $sql = "INSERT INTO requests (" . implode(",", $columns) . ") ";
+        $sql .= " SELECT " . implode(",", $columns) . " FROM requests WHERE id IN (" . $toCopy . ")";
         \DB::insert($sql);
         return response()->json(array(
             'status' => 'success',
@@ -188,15 +182,15 @@ class ShopfegrequeststoreController extends Controller
         ));
     }
 
-    function postSave(Request $request, $id = 0)
+    function postSave(Request $request, $id = null)
     {
 
         $rules = $this->validateForm();
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
-            $data = $this->validatePost('products');
+            $data = $this->validatePost('requests');
 
-            $id = $this->model->insertRow($data, $request->input('id'));
+            $id = $this->model->insertRow($data, $id);
 
             return response()->json(array(
                 'status' => 'success',
@@ -243,63 +237,57 @@ class ShopfegrequeststoreController extends Controller
 
     }
 
-    function getRecentlyadded()
+    public function getCart()
     {
-        if (false) {
-            redirect('fegsys/home', 'refresh');
+        $this->data['access'] = $this->access;
+        $this->data['data'] = \Session::get('data');
+        $this->data['id'] = 1;
+        return view('addtocart.index', $this->data);
+    }
+
+    function getSubmitRequests($new_location = null)
+    {
+
+        $now = date('Y-m-d');
+        $location_id = \Session::get('selected_location');
+        $data['user_level'] = \Session::get('gid');
+        if ($data['user_level'] == 3 || $data['user_level'] == 4 || $data['user_level'] == 5 || $data['user_level'] == 7 || $data['user_level'] == 9 || $data['user_level'] == 10) {
+            $statusId = 9; /// 9 IS USED AS AN ARBITRARY DELIMETER TO KEEP CART SEPERATE FROM LOCATIONS' OWN
         } else {
-            $this->data['recent_products'] = $this->model->getRecentlyAddedProducts();
-            return view('shopfegrequeststore.recentlyAddedProducts',$this->data);
+            $statusId = 0;
+        }
+
+        if (!empty($new_location)) {
+            $query = \DB::select('SELECT product_id,description,qty,status_id,request_type_id FROM requests
+                                  WHERE location_id = ' . $location_id . ' AND status_id = 9');
+
+            foreach ($query as $row) {
+                $insert = array(
+                    'product_id' => $row->product_id,
+                    'description' => $row->description,
+                    'qty' => $row->qty,
+                    'request_user_id' => \Session::get('uid'),
+                    'request_date' => $now,
+                    'location_id' => $new_location,
+                    'status_id' => $row->status_id,
+                    'request_type_id' => $row->request_type_id
+                );
+                \DB::table('requests')->insert($insert);
+            }
+        }
+        $update = array('status_id' => 1,
+            'request_user_id' => \Session::get('uid'),
+            'request_date' => $now);
+        \DB::table('requests')->where('location_id', $location_id)->where('status_id', $statusId)->update($update);
+
+        if (empty($new_location)) {
+
+            return redirect('./shopfegrequeststore/popup-cart');
+            //redirect('fegllc/popupCart', 'refresh');
+        } else {
+            $this->getChangelocation($new_location);
+            return redirect('./shopfegrequeststore/popup-cart/');
         }
     }
-    function getNewGraphicRequest()
-    {
-      return view('shopfegrequeststore.newgraphicrequest',$this->data);
-    }
-    function postNewgraphic(Request $request)
-    {
-        $rules['img']='mimes:jpeg,gif,png';
-        $validator = Validator::make($request->all(), $rules);
-        if ($validator->passes()) {
-            $now = date('Y-mm-dd');
-            $item_id = $request->get('item_id');
-            $graphics_description = $request->get('graphics_description');
-            $graphics_description = str_replace('"', '', $graphics_description);
-            $qty = $request->get('qty');
-            $date_needed = $request->get('date_needed');
-            $game_info = $request->get('game_info');
-            $locationId = $request->get('location_name');
-            $statusId = 1;
-            $now = date('Y-mm-dd');
-            $data = array('location_id' => $locationId, 'request_user_id' => \Session::get('uid'), 'request_date' => $now, 'need_by_date' => $date_needed, 'description' => $game_info . ' - ' . $graphics_description, 'qty' => $qty, 'status_id' => $statusId);
-            $last_insert_id = $this->model->newGraphicRequest($data);
-            $add_image = $request->get('add_image');
-            $updates = array();
-            if ($request->hasFile('img')) {
-                $file = $request->file('img');
-                $destinationPath = './uploads/newGraphic/';
-                $filename = $file->getClientOriginalName();
-                $extension = $file->getClientOriginalExtension(); //if you need extension of the file
-                $newfilename = $last_insert_id . '.' . $extension;
-                $uploadSuccess = $file->move($destinationPath, $newfilename);
-                if ($uploadSuccess) {
-                    $updates['img'] = $newfilename;
-                }
-                $this->model->insertRow($updates, $last_insert_id);
-            }return response()->json(array(
-                'status' => 'success',
-                'message' => \Lang::get('core.request_sent_success')
-            ));
 
-        }
-        else{
-
-        }
-
-        }
-    function getPopupCart($productId = null)
-    {
-     return redirect('addtocart')->with(array('productId'=>$productId));
-
-    }
 }

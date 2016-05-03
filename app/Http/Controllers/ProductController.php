@@ -359,6 +359,18 @@ class ProductController extends Controller {
         );
         return view('product.csvhistory', $content);
     }
+    function getTest()
+    {
+        $row=\DB::select("select id,img from products where id > 2820");
+        $img="";
+        foreach($row as $r){
+            if(!empty($r->img))
+            {
+                $img=$r->id.".jpg";
+                \DB::update("update products set img='".$img."'where id=".$r->id);
+            }
+        }
+    }
 
 
 }

@@ -6,13 +6,14 @@
                         class="fa fa-bars"></i> </a>
         </div>
         <ul class="nav navbar-top-links navbar-right">
+            <?php $user_locations=\Session::get('user_locations'); ?>
+            @if(isset($user_locations))
             <li>
                 <span><b>{{ \Session::get('ufname') }} is viewing
                         location {{ \Session::get('selected_location') }} {{ "||" }} {{ \Session::get('selected_location_name') }}</b></span>
 
             </li>
-            <?php $user_locations=\Session::get('user_locations'); ?>
-            @if(isset($user_locations))
+
             <li>
                 <select id="user_locations" class="form-control">
                     <?php $userLocations = \Session::get('user_locations') ?>
@@ -88,7 +89,6 @@
                     </ul>
                 </li>
             @endif
-
             <li class="user dropdown"><a class="dropdown-toggle" href="javascript:void(0)" data-toggle="dropdown"><i
                             class="fa fa-user"></i> <span>{{ Lang::get('core.m_myaccount') }}</span><i
                             class="caret"></i></a>
