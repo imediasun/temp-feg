@@ -212,6 +212,17 @@
                /> Yes Disable 
               </label>
            </div> 
+        </div>  
+        
+        <div class="form-group">
+          <label for="ipt" class=" control-label col-md-4">Simpler search options</label>
+          <div class="col-md-8">
+              <label class="checkbox">
+              <input type="checkbox" value="true" name="usesimplesearch" id="usesimplesearch"
+              @if(isset($setting['usesimplesearch']) && $setting['usesimplesearch'] == 'true') checked="checked" @endif 	
+               /> Yes
+              </label>
+           </div> 
         </div>                
         
 	</fieldset>	

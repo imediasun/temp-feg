@@ -144,11 +144,14 @@ class Sximo extends Model
                 'form-method' => (isset($data['config']['setting']['form-method']) ? $data['config']['setting']['form-method'] : 'native'),
                 'view-method' => (isset($data['config']['setting']['view-method']) ? $data['config']['setting']['view-method'] : 'native'),
                 'inline' => (isset($data['config']['setting']['inline']) ? $data['config']['setting']['inline'] : 'false'),
+                
+                'usesimplesearch'         => (isset($data['config']['setting']['usesimplesearch'])  ? $data['config']['setting']['usesimplesearch'] : 'false'  ),
                 'disablepagination'         => (isset($data['config']['setting']['disablepagination'])  ? $data['config']['setting']['disablepagination'] : 'false'  ),
                 'disablesort'               => (isset($data['config']['setting']['disablesort'])  ? $data['config']['setting']['disablesort'] : 'false'  ),
                 'disableactioncheckbox'     => (isset($data['config']['setting']['disableactioncheckbox'])  ? $data['config']['setting']['disableactioncheckbox'] : 'false'  ),
                 'disablerowactions'         => (isset($data['config']['setting']['disablerowactions'])  ? $data['config']['setting']['disablerowactions'] : 'false'  ),
             );
+            
             if ($data['setting']['disablepagination'] == 'true') {
                 $data['setting']['perpage'] = 0;
             }
