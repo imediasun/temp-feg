@@ -26,4 +26,7 @@
                     Route::controller('merchandisebudget', 'MerchandisebudgetController');
                     Route::controller('shopfegrequeststore', 'ShopfegrequeststoreController');
                     Route::controller('addtocart', 'AddtocartController');
+                    Route::controller('managefegrequeststore', 'ManagefegrequeststoreController');
+                    Route::controller('managenewgraphicrequests', 'ManagenewgraphicrequestsController');
+                    Route::controller('manageservicerequests', 'ManageservicerequestsController');
                     ?>

@@ -39,7 +39,7 @@ class Sximo extends Model
         } else {
             $select .= self::queryWhere();
         }
-        //echo $select." {$params} ". self::queryGroup() ." {$orderConditional}  {$limitConditional} ";
+       //echo $select." {$params} ". self::queryGroup() ." {$orderConditional}  {$limitConditional} ";
         //die();
         $result = \DB::select($select . " {$params} " . self::queryGroup() . " {$orderConditional}  {$limitConditional} ");
         if ($key == '') {
@@ -56,6 +56,8 @@ class Sximo extends Model
         {
             $total=4000;
         }
+
+
 
         else {
             $total = \DB::select($select . "
@@ -89,11 +91,9 @@ class Sximo extends Model
 
     public function insertRow($data, $id)
     {
-
         $table = with(new static)->table;
         $key = with(new static)->primaryKey;
         if ($id == NULL) {
-
             // Insert Here 
             if (isset($data['createdOn'])) $data['createdOn'] = date("Y-m-d H:i:s");
             if (isset($data['updatedOn'])) $data['updatedOn'] = date("Y-m-d H:i:s");
@@ -102,7 +102,6 @@ class Sximo extends Model
         } else {
             // Update here 
             // update created field if any
-
             if (isset($data['createdOn'])) unset($data['createdOn']);
             if (isset($data['updatedOn'])) $data['updatedOn'] = date("Y-m-d H:i:s");
             \DB::table($table)->where($key, $id)->update($data);

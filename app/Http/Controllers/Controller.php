@@ -454,6 +454,10 @@ abstract class Controller extends BaseController
         $active = (isset($_GET['active']) ? $_GET['active'] : '');
         $active_inactive = (isset($_GET['active_inactive']) ? $_GET['active_inactive'] : '');
         $type = (isset($_GET['type']) ? $_GET['type'] : '');
+        $view=(isset($_GET['view']) ? $_GET['view'] : '');
+        $v1=(isset($_GET['v1']) ? $_GET['v1'] : '');
+        $v2=(isset($_GET['v2']) ? $_GET['v2'] : '');
+        $v3=(isset($_GET['v3']) ? $_GET['v3'] : '');
         $appends = array();
         if ($sort != '') $appends['sort'] = $sort;
         if ($order != '') $appends['order'] = $order;
@@ -473,6 +477,17 @@ abstract class Controller extends BaseController
         }
         if ($active_inactive != '') {
             $appends['active_inactive'] = $active_inactive;
+        }  if ($view != '') {
+        $appends['view'] = $view;
+    }
+        if ($v1 != '') {
+            $appends['v1'] = $v1;
+        }
+        if ($v2!= '') {
+            $appends['v2'] = $v2;
+        }
+        if ($v3 != '') {
+            $appends['v3'] = $v3;
         }
 
         return $appends;

@@ -74,13 +74,18 @@ function ajaxInlineEdit(id,url,reloadurl)
 }
 
 
-function ajaxFilter( id ,url )
+function ajaxFilter( id ,url,opt  )
 {
 	var attr = '';
-	$( id +'Filter :input').each(function() {
-		if(this.value !='') { attr += this.name+'='+this.value+'&'; }
-	});	
+        $(id + 'Filter :input').each(function () {
+            if (this.value != '') {
+                attr += this.name + '=' + this.value + '&';
+            }
 
+        });
+    if(opt  !== undefined) {
+        attr += opt;
+    }
 	reloadData(id, url+"?"+attr);
 }
 
