@@ -26,7 +26,6 @@
                     Route::controller('merchandisebudget', 'MerchandisebudgetController');
                     Route::controller('closedlocations', 'ClosedlocationsController');
                     Route::controller('gamesnotondebitcard', 'GamesnotondebitcardController');
-                    Route::controller('closedlocationstwo', 'ClosedlocationstwoController');
                     Route::controller('topgamesavgplays', 'TopgamesavgplaysController');
                     Route::controller('bottomgamesavgplays', 'BottomgamesavgplaysController');
                     Route::controller('potentialoverreportingerrors', 'PotentialoverreportingerrorsController');
