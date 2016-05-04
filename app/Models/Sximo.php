@@ -127,7 +127,7 @@ class Sximo extends Model
             $data['note'] = \SiteHelpers::infoLang($r->module_note, $langs, 'note');
             $data['table'] = $r->module_db;
             $data['key'] = $r->module_db_key;
-            $data['config'] = \SiteHelpers::CF_decode_json($r->module_config);
+            $data['config'] = \SiteHelpers::CF_decode_json($r->module_config);            
             $field = array();
             foreach ($data['config']['grid'] as $fs) {
                 foreach ($fs as $f)
@@ -144,9 +144,14 @@ class Sximo extends Model
                 'form-method' => (isset($data['config']['setting']['form-method']) ? $data['config']['setting']['form-method'] : 'native'),
                 'view-method' => (isset($data['config']['setting']['view-method']) ? $data['config']['setting']['view-method'] : 'native'),
                 'inline' => (isset($data['config']['setting']['inline']) ? $data['config']['setting']['inline'] : 'false'),
-
+                'disablepagination'         => (isset($data['config']['setting']['disablepagination'])  ? $data['config']['setting']['disablepagination'] : 'false'  ),
+                'disablesort'               => (isset($data['config']['setting']['disablesort'])  ? $data['config']['setting']['disablesort'] : 'false'  ),
+                'disableactioncheckbox'     => (isset($data['config']['setting']['disableactioncheckbox'])  ? $data['config']['setting']['disableactioncheckbox'] : 'false'  ),
+                'disablerowactions'         => (isset($data['config']['setting']['disablerowactions'])  ? $data['config']['setting']['disablerowactions'] : 'false'  ),
             );
-
+            if ($data['setting']['disablepagination'] == 'true') {
+                $data['setting']['perpage'] = 0;
+            }
         }
         return $data;
 
