@@ -33,10 +33,11 @@
                     Route::controller('gamesnotplayed', 'GamesnotplayedController');
                     Route::controller('nonfegreaders', 'NonfegreadersController');
                     Route::controller('merchthrowssimple', 'MerchthrowssimpleController');
-                    Route::controller('merchthrowsdetailed', 'MerchthrowsdetailedController');                    
+                    Route::controller('merchthrowsdetailed', 'MerchthrowsdetailedController');
                     Route::controller('shopfegrequeststore', 'ShopfegrequeststoreController');
                     Route::controller('addtocart', 'AddtocartController');
                     Route::controller('managefegrequeststore', 'ManagefegrequeststoreController');
                     Route::controller('managenewgraphicrequests', 'ManagenewgraphicrequestsController');
                     Route::controller('manageservicerequests', 'ManageservicerequestsController');
+                    Route::controller('productusagereport', 'ProductusagereportController');
                     ?>
