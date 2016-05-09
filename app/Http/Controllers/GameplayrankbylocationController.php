@@ -54,7 +54,6 @@ class GameplayrankbylocationController extends ReportsController {
         } else {
         $config_id = 0;
         }
-        $config_id = 0;
         $this->data['config_id'] = $config_id;
         $config = $this->model->getModuleConfig($module_id, $config_id);
         if(!empty($config))
