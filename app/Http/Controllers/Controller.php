@@ -174,6 +174,9 @@ abstract class Controller extends BaseController
                 }
             }
         }
+        echo "<pre>";
+        print_r($param);
+        die();
         return $param;
 
     }

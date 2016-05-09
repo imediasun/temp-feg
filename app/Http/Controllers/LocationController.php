@@ -59,7 +59,11 @@ class LocationController extends Controller {
         if(!empty($config))
         {
             $this->data['config'] = \SiteHelpers::CF_decode_json($config[0]->config);
+
             \Session::put('config_id', $config_id);
+        }
+        else{
+            \Session::put('config_id', '0');
         }
 
         $sort = (!is_null($request->input('sort')) ? $request->input('sort') : $this->info['setting']['orderby']);
@@ -341,9 +345,7 @@ class LocationController extends Controller {
     }
     function postTest(Request $request)
     {
-        echo "<pre>";
-        print_r($request->all());
-        die();
+
     }
     function postUpdatelocation(Request $request,$id)
     {

@@ -1,5 +1,4 @@
-<div style="width:70%;margin:0px auto">
-
+<div class="col-md-10">
     {!! Form::open(array('url'=>'tablecols/config/', 'class'=>'form-horizontal','files' => true ,
     'parsley-validate'=>'','novalidate'=>' ','id'=> 'tablecolsFormAjax')) !!}
     <input type="hidden" name="module_id" value="{{ $module_id }}"/>
@@ -9,13 +8,14 @@
         <input type="text" name="config_name" id="configname" class="form-control" required
                placeholder="Enter Configuration Name:"/>
     </div>
-    <div class="form-group">
+    <div class="form-group col-md-12">
     <label for="pre-selected-options" class="label-control">Columns</label><br/>
-    <select name="cols[]" id='pre-selected-options' multiple='multiple'>
+    <select name="cols[]"  id='keep-order' multiple='multiple'>
         @foreach($allColumns as $columns)
             <option value="{{ $columns['field'] }}"> {{ $columns['label'] }} </option>
         @endforeach
     </select>
+        <input type="hidden" name="multiple_value" id="multiple_value"  />
         </div>
     <div id="groups" class="form-group form-group-sm  col-md-12" >
     <label for="pre-selected-options1" class="label-control">Groups</label><br/>
@@ -41,7 +41,29 @@
     </div>
     {!! Form::close() !!}
 </div>
-<script>$('#pre-selected-options').multiSelect();
+<div class="col-md-2" style="margin-top:130px">
+<button class="btn btn-small btn-primary tips" title ="Move Up" id="upbtn"><span class="fa fa-arrow-up" ></span></button>
+<button class="btn btn-small btn-primary"  title ="Move Down" id="downbtn"><span class="fa fa-arrow-down"></span></button>
+</div>
+<div class="clearfix"></div>
+
+<script>$('#keep-order').multiSelect({
+        keepOrder: true,
+        afterSelect: function(value, text){
+            var get_val = $("#multiple_value").val();
+            var hidden_val = (get_val != "") ? get_val+"," : get_val;
+            $("#multiple_value").val(hidden_val+""+value);
+        },
+        afterDeselect: function(value, text){
+            var get_val = $("#multiple_value").val();
+            var new_val = get_val.replace(value, "");
+            $("#multiple_value").val(new_val);
+        }
+    });
+    $("#upbtn").on('click',function(){
+
+
+    });
     $("#public,#private").change(function () {
         if ($("#public").is(":checked")) {
             $('#groups').show();
@@ -52,9 +74,12 @@
     });
 
 </script>
+
 <script>
     $(document).ready(function () {
-        var form = $('#tablecolsFormAjax');
+
+        $(".ms-container").css('width','100%');
+         var form = $('#tablecolsFormAjax');
         form.parsley();
         form.submit(function () {
             if (form.parsley('isValid') == true) {
@@ -91,5 +116,21 @@
         }
 
 
+    });
+</script>
+<script>
+    $(function(){
+        $('#countries').multiSelect({
+            afterSelect: function(value, text){
+                var get_val = $("#multiple_value").val();
+                var hidden_val = (get_val != "") ? get_val+"," : get_val;
+                $("#multiple_value").val(hidden_val+""+value);
+            },
+            afterDeselect: function(value, text){
+                var get_val = $("#multiple_value").val();
+                var new_val = get_val.replace(value, "");
+                $("#multiple_value").val(new_val);
+            }
+        });
     });
 </script>

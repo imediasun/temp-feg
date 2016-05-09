@@ -1,23 +1,23 @@
 <?php namespace App\Http\Controllers;
 
 use App\Http\Controllers\controller;
-use App\Models\Tablecols;
+use App\Models\Gamesintransit;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Validator, Input, Redirect;
 
-class TablecolsController extends Controller
+class GamesintransitController extends Controller
 {
 
     protected $layout = "layouts.main";
     protected $data = array();
-    public $module = 'tablecols';
+    public $module = 'gamesintransit';
     static $per_page = '10';
 
     public function __construct()
     {
         parent::__construct();
-        $this->model = new Tablecols();
+        $this->model = new Gamesintransit();
 
         $this->info = $this->model->makeInfo($this->module);
         $this->access = $this->model->validAccess($this->info['id']);
@@ -25,8 +25,8 @@ class TablecolsController extends Controller
         $this->data = array(
             'pageTitle' => $this->info['title'],
             'pageNote' => $this->info['note'],
-            'pageModule' => 'tablecols',
-            'pageUrl' => url('tablecols'),
+            'pageModule' => 'gamesintransit',
+            'pageUrl' => url('gamesintransit'),
             'return' => self::returnUrl()
         );
 
@@ -39,11 +39,30 @@ class TablecolsController extends Controller
             return Redirect::to('dashboard')->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
 
         $this->data['access'] = $this->access;
-        return view('tablecols.index', $this->data);
+        return view('gamesintransit.index', $this->data);
     }
 
     public function postData(Request $request)
     {
+
+        $module_id = \DB::table('tb_module')->where('module_name', '=', 'gamesintransit')->pluck('module_id');
+        $this->data['module_id'] = $module_id;
+        if (Input::has('config_id')) {
+            $config_id = Input::get('config_id');
+        } elseif (\Session::has('config_id')) {
+            $config_id = \Session::get('config_id');
+        } else {
+            $config_id = 0;
+        }
+        $this->data['config_id'] = $config_id;
+        $config = $this->model->getModuleConfig($module_id, $config_id);
+        if (!empty($config)) {
+            $this->data['config'] = \SiteHelpers::CF_decode_json($config[0]->config);
+            \Session::put('config_id', $config_id);
+        }
+        else{
+            \Session::put('config_id',0);
+        }
         $sort = (!is_null($request->input('sort')) ? $request->input('sort') : $this->info['setting']['orderby']);
         $order = (!is_null($request->input('order')) ? $request->input('order') : $this->info['setting']['ordertype']);
         // End Filter sort and order for query
@@ -62,12 +81,10 @@ class TablecolsController extends Controller
         );
         // Get Query
         $results = $this->model->getRows($params);
-
         // Build pagination setting
         $page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;
         $pagination = new Paginator($results['rows'], $results['total'], $params['limit']);
-        $pagination->setPath('tablecols/data');
-
+        $pagination->setPath('gamesintransit/data');
         $this->data['param'] = $params;
         $this->data['rowData'] = $results['rows'];
         // Build Pagination
@@ -87,8 +104,11 @@ class TablecolsController extends Controller
 
         // Master detail link if any
         $this->data['subgrid'] = (isset($this->info['config']['subgrid']) ? $this->info['config']['subgrid'] : array());
-        // Render into template
-        return view('tablecols.table', $this->data);
+        if ($this->data['config_id'] != 0 && !empty($config)) {
+            $this->data['tableGrid'] = \SiteHelpers::showRequiredCols($this->data['tableGrid'], $this->data['config']);
+        }
+// Render into template
+        return view('gamesintransit.table', $this->data);
 
     }
 
@@ -110,14 +130,14 @@ class TablecolsController extends Controller
         if ($row) {
             $this->data['row'] = $row;
         } else {
-            $this->data['row'] = $this->model->getColumnTable('user_module_config');
+            $this->data['row'] = $this->model->getColumnTable('game');
         }
         $this->data['setting'] = $this->info['setting'];
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
 
         $this->data['id'] = $id;
 
-        return view('tablecols.form', $this->data);
+        return view('gamesintransit.form', $this->data);
     }
 
     public function getShow($id = null)
@@ -131,29 +151,29 @@ class TablecolsController extends Controller
         if ($row) {
             $this->data['row'] = $row;
         } else {
-            $this->data['row'] = $this->model->getColumnTable('user_module_config');
+            $this->data['row'] = $this->model->getColumnTable('game');
         }
 
         $this->data['id'] = $id;
         $this->data['access'] = $this->access;
         $this->data['setting'] = $this->info['setting'];
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
-        return view('tablecols.view', $this->data);
+        return view('gamesintransit.view', $this->data);
     }
 
 
     function postCopy(Request $request)
     {
 
-        foreach (\DB::select("SHOW COLUMNS FROM user_module_config ") as $column) {
+        foreach (\DB::select("SHOW COLUMNS FROM game ") as $column) {
             if ($column->Field != 'id')
                 $columns[] = $column->Field;
         }
         $toCopy = implode(",", $request->input('ids'));
 
 
-        $sql = "INSERT INTO user_module_config (" . implode(",", $columns) . ") ";
-        $sql .= " SELECT " . implode(",", $columns) . " FROM user_module_config WHERE id IN (" . $toCopy . ")";
+        $sql = "INSERT INTO game (" . implode(",", $columns) . ") ";
+        $sql .= " SELECT " . implode(",", $columns) . " FROM game WHERE id IN (" . $toCopy . ")";
         \DB::insert($sql);
         return response()->json(array(
             'status' => 'success',
@@ -163,12 +183,14 @@ class TablecolsController extends Controller
 
     function postSave(Request $request, $id = null)
     {
-
-
-        $rules = $this->validateForm();
+        $rules = array('game_title_id' => 'required');
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
-            $data = $this->validatePost('user_module_config');
+            $data['game_title_id'] = $request->get('game_title_id');
+            $data['for_sale'] = $request->get('for_sale');
+            $data['sale_price'] = $request->get('sale_price');
+            $data['notes'] = $request->get('notes');
+            $data['game_name'] = $request->get('game_name');
             $id = $this->model->insertRow($data, $id);
             return response()->json(array(
                 'status' => 'success',
@@ -213,41 +235,6 @@ class TablecolsController extends Controller
 
         }
 
-    }
-
-    public function postConfig()
-    {
-        $data = Input::all();
-        $id = $this->model->checkModule($data['config_name'], $data['module_id']);
-        $configstr = $data['multiple_value'];
-        $configstr = \SiteHelpers::CF_encode_json($configstr);
-        $this->model->insertRow(array('user_id' => $data['user_id'], 'module_id' => $data['module_id'], 'config' => $configstr, 'config_name' => $data['config_name'], 'is_private' => $data['user_mode'],'group_id'=>$data['group_id']), $id);
-
-        return response()->json(array(
-            'status' => 'success',
-            'message' => \Lang::get('core.note_success')
-        ));
-
-    }
-
-    public function getArrangeCols($pageModule)
-    {
-        $info = $this->model->makeInfo($pageModule);
-        $module_id = \DB::table('tb_module')->where('module_name', '=', $pageModule)->pluck('module_id');
-        $user_id = \Session::get('uid');
-        /* echo $user_id;
-         exit();
-        */
-        //$this->info['config']['grid'];
-        /*
-                echo '<pre>';
-                print_r($info['config']['grid']);
-                echo '</pre>';
-                exit;
-        */
-        //add code here to get all columns for a module
-        $groups=\SiteHelpers::getAllGroups();
-        return view('tablecols.arrange_cols', ['allColumns' => $info['config']['grid'], 'user_id' => $user_id, 'module_id' => $module_id, 'pageModule' => $pageModule,'groups' => $groups]);
     }
 
 }

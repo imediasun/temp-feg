@@ -80,7 +80,7 @@ $(document).ready(function() {
 	$('.datetime').datetimepicker({format: 'yyyy-mm-dd hh:ii:ss'}); 
 	$('input[type="checkbox"],input[type="radio"]').iCheck({
 		checkboxClass: 'icheckbox_square-green',
-		radioClass: 'iradio_square-green',
+		radioClass: 'iradio_square_green'
 	});			
 	$('.removeCurrentFiles').on('click',function(){
 		var removeUrl = $(this).attr('href');
@@ -128,4 +128,7 @@ function showResponse(data)  {
 	}	
 }			 
 
-</script>		 
+</script>
+
+
+
