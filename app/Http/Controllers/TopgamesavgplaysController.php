@@ -1,22 +1,22 @@
 <?php namespace App\Http\Controllers;
 
 use App\Http\Controllers\controller;
-use App\Models\Gamesnotondebitcard;
+use App\Models\Topgamesavgplays;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Validator, Input, Redirect ; 
 
-class GamesnotondebitcardController extends Controller {
+class TopgamesavgplaysController extends Controller {
 
 	protected $layout = "layouts.main";
 	protected $data = array();	
-	public $module = 'gamesnotondebitcard';
+	public $module = 'topgamesavgplays';
 	static $per_page	= '10';
 	
 	public function __construct() 
 	{
 		parent::__construct();
-		$this->model = new Gamesnotondebitcard();
+		$this->model = new Topgamesavgplays();
 		
 		$this->info = $this->model->makeInfo( $this->module);
 		$this->access = $this->model->validAccess($this->info['id']);
@@ -24,8 +24,8 @@ class GamesnotondebitcardController extends Controller {
 		$this->data = array(
 			'pageTitle'			=> 	$this->info['title'],
 			'pageNote'			=>  $this->info['note'],
-			'pageModule'		=> 'gamesnotondebitcard',
-			'pageUrl'			=>  url('gamesnotondebitcard'),
+			'pageModule'		=> 'topgamesavgplays',
+			'pageUrl'			=>  url('topgamesavgplays'),
 			'return' 			=> 	self::returnUrl()
 		);
 		
@@ -39,13 +39,13 @@ class GamesnotondebitcardController extends Controller {
 			return Redirect::to('dashboard')->with('messagetext',\Lang::get('core.note_restric'))->with('msgstatus','error');
 
 		$this->data['access']		= $this->access;
-		return view('gamesnotondebitcard.index',$this->data);
+		return view('topgamesavgplays.index',$this->data);
 	}
 
 	public function postData( Request $request)
 	{
 
-        $module_id = \DB::table('tb_module')->where('module_name', '=', 'gamesnotondebitcard')->pluck('module_id');
+        $module_id = \DB::table('tb_module')->where('module_name', '=', 'topgamesavgplays')->pluck('module_id');
         $this->data['module_id'] = $module_id;
         if (Input::has('config_id')) {
         $config_id = Input::get('config_id');
@@ -54,7 +54,6 @@ class GamesnotondebitcardController extends Controller {
         } else {
         $config_id = 0;
         }
-        
         $this->data['config_id'] = $config_id;
         $config = $this->model->getModuleConfig($module_id, $config_id);
         if(!empty($config))
@@ -66,7 +65,7 @@ class GamesnotondebitcardController extends Controller {
 		$order = (!is_null($request->input('order')) ? $request->input('order') : $this->info['setting']['ordertype']);
 		// End Filter sort and order for query
 		// Filter Search for query
-		$filter = (!is_null($request->input('search')) ? $this->buildSearch() : ''); 
+		$filter = (!is_null($request->input('search')) ? $this->buildSearch() : '');
 
 
 		$page = $request->input('page', 1);
@@ -82,13 +81,16 @@ class GamesnotondebitcardController extends Controller {
 		$results = $this->model->getRows( $params );
 		// Build pagination setting
 		$page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;
-		$pagination = new Paginator($results['rows'], $results['total'], $params['limit'] == 0 ? $results['total'] : $params['limit']);
-		$pagination->setPath('gamesnotondebitcard/data');
+		//$pagination = new Paginator($results['rows'], $results['total'], $params['limit']);
+        $pagination = new Paginator($results['rows'], $results['total'], 
+            (isset($params['limit']) && $params['limit'] > 0  ? $params['limit'] : 
+				($results['total'] > 0 ? $results['total'] : '1')));        
+		$pagination->setPath('topgamesavgplays/data');
 		$this->data['param']		= $params;
         $this->data['topMessage']	= @$results['topMessage'];
 		$this->data['message']          = @$results['message'];
 		$this->data['bottomMessage']	= @$results['bottomMessage'];
-		
+        
 		$this->data['rowData']		= $results['rows'];
 		// Build Pagination
 		$this->data['pagination']	= $pagination;
@@ -111,7 +113,7 @@ class GamesnotondebitcardController extends Controller {
         $this->data['tableGrid'] = \SiteHelpers::showRequiredCols($this->data['tableGrid'], $this->data['config']);
         }
 // Render into template
-		return view('gamesnotondebitcard.table',$this->data);
+		return view('topgamesavgplays.table',$this->data);
 
 	}
 
@@ -136,14 +138,14 @@ class GamesnotondebitcardController extends Controller {
 		{
 			$this->data['row'] 		=  $row;
 		} else {
-			$this->data['row'] 		= $this->model->getColumnTable('game');
+			$this->data['row'] 		= $this->model->getColumnTable('game_earnings');
 		}
 		$this->data['setting'] 		= $this->info['setting'];
 		$this->data['fields'] 		=  \AjaxHelpers::fieldLang($this->info['config']['forms']);
 		
 		$this->data['id'] = $id;
 
-		return view('gamesnotondebitcard.form',$this->data);
+		return view('topgamesavgplays.form',$this->data);
 	}
 
 	public function getShow( $id = null)
@@ -158,21 +160,21 @@ class GamesnotondebitcardController extends Controller {
 		{
 			$this->data['row'] =  $row;
 		} else {
-			$this->data['row'] = $this->model->getColumnTable('game');
+			$this->data['row'] = $this->model->getColumnTable('game_earnings');
 		}
 		
 		$this->data['id'] = $id;
 		$this->data['access']		= $this->access;
 		$this->data['setting'] 		= $this->info['setting'];
 		$this->data['fields'] 		= \AjaxHelpers::fieldLang($this->info['config']['forms']);
-		return view('gamesnotondebitcard.view',$this->data);
+		return view('topgamesavgplays.view',$this->data);
 	}
 
 
 	function postCopy( Request $request)
 	{
 
-	    foreach(\DB::select("SHOW COLUMNS FROM game ") as $column)
+	    foreach(\DB::select("SHOW COLUMNS FROM game_earnings ") as $column)
         {
 			if( $column->Field != 'id')
 				$columns[] = $column->Field;
@@ -180,8 +182,8 @@ class GamesnotondebitcardController extends Controller {
 		$toCopy = implode(",",$request->input('ids'));
 
 
-		$sql = "INSERT INTO game (".implode(",", $columns).") ";
-		$sql .= " SELECT ".implode(",", $columns)." FROM game WHERE id IN (".$toCopy.")";
+		$sql = "INSERT INTO game_earnings (".implode(",", $columns).") ";
+		$sql .= " SELECT ".implode(",", $columns)." FROM game_earnings WHERE id IN (".$toCopy.")";
 		\DB::insert($sql);
 		return response()->json(array(
 			'status'=>'success',
@@ -195,7 +197,7 @@ class GamesnotondebitcardController extends Controller {
 		$rules = $this->validateForm();
 		$validator = Validator::make($request->all(), $rules);
 		if ($validator->passes()) {
-			$data = $this->validatePost('game');
+			$data = $this->validatePost('game_earnings');
 
 			$id = $this->model->insertRow($data , $request->input('id'));
 			
