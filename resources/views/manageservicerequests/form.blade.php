@@ -139,6 +139,7 @@
             ajaxFilter('#{{ $pageModule }}', '{{ $pageUrl }}/data');
             notyMessage(data.message);
             $('#sximo-modal').modal('hide');
+
         } else {
             notyMessageError(data.message);
             $('.ajaxLoading').hide();

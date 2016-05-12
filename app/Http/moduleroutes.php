@@ -29,8 +29,8 @@
                     Route::controller('managefegrequeststore', 'ManagefegrequeststoreController');
                     Route::controller('managenewgraphicrequests', 'ManagenewgraphicrequestsController');
                     Route::controller('manageservicerequests', 'ManageservicerequestsController');
-                    Route::controller('submitservicerequest', 'SubmitservicerequestController');
                     Route::controller('gamesintransit', 'GamesintransitController');
                     Route::controller('gamesdisposed', 'GamesdisposedController');
                     Route::controller('spareparts', 'SparepartsController');
+                    Route::controller('submitservicerequest', 'SubmitservicerequestController');
                     ?>

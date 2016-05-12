@@ -174,9 +174,6 @@ abstract class Controller extends BaseController
                 }
             }
         }
-        echo "<pre>";
-        print_r($param);
-        die();
         return $param;
 
     }
@@ -541,7 +538,12 @@ abstract class Controller extends BaseController
         $this->data['tableForm'] = $this->info['config']['forms'];
         $this->data['tableGrid'] = $this->info['config']['grid'];
         $this->data['searchMode'] = $mode;
-        return view('sximo.module.utility.search', $this->data);
+        if ($this->info['setting']['usesimplesearch']=='true') {
+            return view('feg_common.search',$this->data);
+        }
+        else {
+            return view('sximo.module.utility.search', $this->data);
+        }
 
     }
 

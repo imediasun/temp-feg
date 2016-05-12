@@ -192,7 +192,7 @@ $(document).ready(function() {
 	$('.previewImage').fancybox();	
 	$('.tips').tooltip();	
 	$(".select2").select2({ width:"98%"});	
-	$('.date').datepicker({format:'yyyy-mm-dd',autoClose:true})
+	$('.date').datepicker({format:'dd-mm-yyyy',autoClose:true})
 	$('.datetime').datetimepicker({format: 'yyyy-mm-dd hh:ii:ss'}); 
 	$('input[type="checkbox"],input[type="radio"]').iCheck({
 		checkboxClass: 'icheckbox_square-green',

@@ -127,7 +127,7 @@ class Sximo extends Model
             $data['note'] = \SiteHelpers::infoLang($r->module_note, $langs, 'note');
             $data['table'] = $r->module_db;
             $data['key'] = $r->module_db_key;
-            $data['config'] = \SiteHelpers::CF_decode_json($r->module_config);
+            $data['config'] = \SiteHelpers::CF_decode_json($r->module_config);            
             $field = array();
             foreach ($data['config']['grid'] as $fs) {
                 foreach ($fs as $f)
@@ -144,9 +144,17 @@ class Sximo extends Model
                 'form-method' => (isset($data['config']['setting']['form-method']) ? $data['config']['setting']['form-method'] : 'native'),
                 'view-method' => (isset($data['config']['setting']['view-method']) ? $data['config']['setting']['view-method'] : 'native'),
                 'inline' => (isset($data['config']['setting']['inline']) ? $data['config']['setting']['inline'] : 'false'),
-
+                
+                'usesimplesearch'         => (isset($data['config']['setting']['usesimplesearch'])  ? $data['config']['setting']['usesimplesearch'] : 'false'  ),
+                'disablepagination'         => (isset($data['config']['setting']['disablepagination'])  ? $data['config']['setting']['disablepagination'] : 'false'  ),
+                'disablesort'               => (isset($data['config']['setting']['disablesort'])  ? $data['config']['setting']['disablesort'] : 'false'  ),
+                'disableactioncheckbox'     => (isset($data['config']['setting']['disableactioncheckbox'])  ? $data['config']['setting']['disableactioncheckbox'] : 'false'  ),
+                'disablerowactions'         => (isset($data['config']['setting']['disablerowactions'])  ? $data['config']['setting']['disablerowactions'] : 'false'  ),
             );
-
+            
+            if ($data['setting']['disablepagination'] == 'true') {
+                $data['setting']['perpage'] = 0;
+            }
         }
         return $data;
 
@@ -516,6 +524,97 @@ class Sximo extends Model
         }
         \DB::setFetchMode(\PDO::FETCH_CLASS);
         return $row;
+    }
+    function get_user_data($data = null)
+    {
+        $data['user_id'] = \Session::get('uid');
+        $data['company_id'] = \Session::get('company_id');
+        $company_id = $data['company_id'];
+        if($company_id == 1 || $company_id == 2 || $company_id == 3){$data['company'] = 'Family Entertainment Group';}
+        if($company_id == 4){$data['company'] = 'Cleveland Coin Machine Exchange';}
+        if($company_id == 5){$data['company'] = 'Wilderness Resorts';}
+        if($company_id == 6){$data['company'] = 'Fiesta Village';}
+        $data['user_name'] = \Session::get('user_name');
+        $data['first_name'] = \Session::get('ufname');
+        $data['last_name'] = \Session::get('ulname');
+        $data['email'] = \Session::get('uemail');
+        $data['selected_location'] = \Session::get('selected_location');
+        $data['selected_location_name'] = \Session::get('selected_location_name');
+        $user_level = \Session::get('gid');
+        if($user_level == 1){$data['user_level'] = 'user';}
+        if($user_level == 2){$data['user_level'] = 'partner';}
+        if($user_level == 3){$data['user_level'] = 'merchmgr';}
+        if($user_level == 4){$data['user_level'] = 'fieldmgr';}
+        if($user_level == 5){$data['user_level'] = 'officemgr';}
+        if($user_level == 6){$data['user_level'] = 'distmgr';} // TREATED AS REGULAR USER - BELOW
+        if($user_level == 7){$data['user_level'] = 'financemgr';}
+        if($user_level == 8){$data['user_level'] = 'partnerplus';} //ADDS ACCESS TO MERCH REQUEST
+        if($user_level == 9){$data['user_level'] = 'guest';}
+        if($user_level == 10){$data['user_level'] = 'superadmin';}
+        if($user_level == 11){$data['user_level'] = 'techmgr';}
+        if($user_level == 1 || $user_level == 2 || $user_level == 6 || $user_level == 8 ||  $user_level == 11){$data['user_group'] = 'regusers';}
+        if($user_level == 3 || $user_level == 4 || $user_level == 5 || $user_level == 7 || $user_level == 9 || $user_level == 10){$data['user_group'] = 'allmgrs';}
+        $get_locations_by_region = \Session::get('get_locations_by_region');
+        //$login_type = $this->session->userdata('login_type');
+       // $data['loc_1'] = \Session::get('user_locations[0]->id');
+
+        $loc_count = 10;
+        $data['email_2'] = \Session::get('email_2');
+        $data['primary_phone'] = \Session::get('primary_phone');
+        $data['secondary_phone'] = \Session::get('secondary_phone');
+        $data['street'] = \Session::get('street');
+        $data['city'] = \Session::get('city');
+        $data['state'] = \Session::get('state');
+        $data['zip'] = \Session::get('zip');
+        $data['reg_id'] = \Session::get('reg_id');
+        //$data['reg_name'] = $this->session->userdata('region');
+        //$data['reg_loc_ids'] = $this->session->userdata('reg_loc_ids');
+        $data['restricted_mgr_email'] = \Session::get('restricted_mgr_email');
+        $data['restricted_user_email'] = \Session::get('restricted_user_email');
+
+      /*  $this->load->library('user_agent');
+        if ($this->agent->is_mobile())
+        {
+            $data['agent'] = $this->agent->mobile();
+            $data['agent_type'] = 'mobile';
+        }
+        else if ($this->agent->is_browser())
+        {
+            $data['agent'] = $this->agent->browser().' '.$this->agent->version();
+            $data['agent_type'] = 'browser';
+        }
+        else if ($this->agent->is_robot())
+        {
+            $data['agent'] = $this->agent->robot();
+            $data['agent_type'] = 'robot';
+        }
+        else
+        {
+            $data['agent'] = 'Unidentified User Agent';
+            $data['agent_type'] = 'undefined';
+        }
+*/
+
+        // HEADER DETAIL START
+        $header_detail =  $data['first_name'].' is viewing location <b>'.$data['selected_location'].' | '.$data['selected_location_name'].'</b>. Select to change your location view - ';
+        $locations_count = 0;
+        // HEADER DETAIL END
+        $browser_info = $_SERVER['HTTP_USER_AGENT'];
+        return $data;
+    }
+    public function get_location_info_by_id($loc_id = null, $field = null)
+    {
+        $query = \DB::select('SELECT '.$field.' FROM location WHERE id = '.$loc_id);
+        foreach($query as $row)
+        {
+            $location_info = $row->$field;
+        }
+
+        if(empty($location_info))
+        {
+            $location_info = 'No Location with That ID';
+        }
+        return $location_info;
     }
 
 

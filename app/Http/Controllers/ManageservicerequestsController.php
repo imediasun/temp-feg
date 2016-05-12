@@ -62,7 +62,7 @@ class ManageservicerequestsController extends Controller {
         \Session::put('config_id', $config_id);
         }
 		$sort = (!is_null($request->input('sort')) ? $request->input('sort') : $this->info['setting']['orderby']);
-		$order = (!is_null($request->input('order')) ? $request->input('order') : $this->info['setting']['ordertype']);
+		$order = (!is_null($request->input('order')) ? 'status_id' : $this->info['setting']['ordertype']);
 		// End Filter sort and order for query
 		// Filter Search for query
 		$filter = (!is_null($request->input('search')) ? $this->buildSearch() : '');

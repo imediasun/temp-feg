@@ -25,121 +25,11 @@
 					 </div>
 				  </div> 
 				  <div class="form-group  " >
-					<label for="Game Name" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Game Name', (isset($fields['game_name']['language'])? $fields['game_name']['language'] : array())) !!}
+					<label for="Priority Id" class=" control-label col-md-4 text-left">
+					{!! SiteHelpers::activeLang('Priority Id', (isset($fields['priority_id']['language'])? $fields['priority_id']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('game_name', $row['game_name'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
-					 </div> 
-					 <div class="col-md-2">
-					 	
-					 </div>
-				  </div> 
-				  <div class="form-group  " >
-					<label for="Prev Game Name" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Prev Game Name', (isset($fields['prev_game_name']['language'])? $fields['prev_game_name']['language'] : array())) !!}
-					</label>
-					<div class="col-md-6">
-					  {!! Form::text('prev_game_name', $row['prev_game_name'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
-					 </div> 
-					 <div class="col-md-2">
-					 	
-					 </div>
-				  </div> 
-				  <div class="form-group  " >
-					<label for="Game Type Id" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Game Type Id', (isset($fields['game_type_id']['language'])? $fields['game_type_id']['language'] : array())) !!}
-					</label>
-					<div class="col-md-6">
-					  {!! Form::text('game_type_id', $row['game_type_id'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
-					 </div> 
-					 <div class="col-md-2">
-					 	
-					 </div>
-				  </div> 
-				  <div class="form-group  " >
-					<label for="Version Id" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Version Id', (isset($fields['version_id']['language'])? $fields['version_id']['language'] : array())) !!}
-					</label>
-					<div class="col-md-6">
-					  {!! Form::text('version_id', $row['version_id'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
-					 </div> 
-					 <div class="col-md-2">
-					 	
-					 </div>
-				  </div> 
-				  <div class="form-group  " >
-					<label for="Players" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Players', (isset($fields['players']['language'])? $fields['players']['language'] : array())) !!}
-					</label>
-					<div class="col-md-6">
-					  {!! Form::text('players', $row['players'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
-					 </div> 
-					 <div class="col-md-2">
-					 	
-					 </div>
-				  </div> 
-				  <div class="form-group  " >
-					<label for="Monitor Size" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Monitor Size', (isset($fields['monitor_size']['language'])? $fields['monitor_size']['language'] : array())) !!}
-					</label>
-					<div class="col-md-6">
-					  {!! Form::text('monitor_size', $row['monitor_size'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
-					 </div> 
-					 <div class="col-md-2">
-					 	
-					 </div>
-				  </div> 
-				  <div class="form-group  " >
-					<label for="Dba" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Dba', (isset($fields['dba']['language'])? $fields['dba']['language'] : array())) !!}
-					</label>
-					<div class="col-md-6">
-					  {!! Form::text('dba', $row['dba'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
-					 </div> 
-					 <div class="col-md-2">
-					 	
-					 </div>
-				  </div> 
-				  <div class="form-group  " >
-					<label for="Sacoa" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Sacoa', (isset($fields['sacoa']['language'])? $fields['sacoa']['language'] : array())) !!}
-					</label>
-					<div class="col-md-6">
-					  {!! Form::text('sacoa', $row['sacoa'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
-					 </div> 
-					 <div class="col-md-2">
-					 	
-					 </div>
-				  </div> 
-				  <div class="form-group  " >
-					<label for="Embed" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Embed', (isset($fields['embed']['language'])? $fields['embed']['language'] : array())) !!}
-					</label>
-					<div class="col-md-6">
-					  {!! Form::text('embed', $row['embed'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
-					 </div> 
-					 <div class="col-md-2">
-					 	
-					 </div>
-				  </div> 
-				  <div class="form-group  " >
-					<label for="Rfid" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Rfid', (isset($fields['rfid']['language'])? $fields['rfid']['language'] : array())) !!}
-					</label>
-					<div class="col-md-6">
-					  {!! Form::text('rfid', $row['rfid'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
-					 </div> 
-					 <div class="col-md-2">
-					 	
-					 </div>
-				  </div> 
-				  <div class="form-group  " >
-					<label for="Notes" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Notes', (isset($fields['notes']['language'])? $fields['notes']['language'] : array())) !!}
-					</label>
-					<div class="col-md-6">
-					  {!! Form::text('notes', $row['notes'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
+					  {!! Form::text('priority_id', $row['priority_id'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -157,44 +47,79 @@
 					 </div>
 				  </div> 
 				  <div class="form-group  " >
-					<label for="Mfg Id" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Mfg Id', (isset($fields['mfg_id']['language'])? $fields['mfg_id']['language'] : array())) !!}
+					<label for="Requestor Id" class=" control-label col-md-4 text-left">
+					{!! SiteHelpers::activeLang('Requestor Id', (isset($fields['requestor_id']['language'])? $fields['requestor_id']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('mfg_id', $row['mfg_id'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
+					  {!! Form::text('requestor_id', $row['requestor_id'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
 					 </div> 
 					 <div class="col-md-2">
 					 	
 					 </div>
 				  </div> 
 				  <div class="form-group  " >
-					<label for="Source" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Source', (isset($fields['source']['language'])? $fields['source']['language'] : array())) !!}
+					<label for="Request Date" class=" control-label col-md-4 text-left">
+					{!! SiteHelpers::activeLang('Request Date', (isset($fields['request_date']['language'])? $fields['request_date']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('source', $row['source'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
+					  {!! Form::text('request_date', $row['request_date'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
 					 </div> 
 					 <div class="col-md-2">
 					 	
 					 </div>
 				  </div> 
 				  <div class="form-group  " >
-					<label for="Serial" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Serial', (isset($fields['serial']['language'])? $fields['serial']['language'] : array())) !!}
+					<label for="Problem" class=" control-label col-md-4 text-left">
+					{!! SiteHelpers::activeLang('Problem', (isset($fields['problem']['language'])? $fields['problem']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('serial', $row['serial'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
+					  <textarea name='problem' rows='5' id='problem' class='form-control '
+				           >{{ $row['problem'] }}</textarea>
 					 </div> 
 					 <div class="col-md-2">
 					 	
 					 </div>
 				  </div> 
 				  <div class="form-group  " >
-					<label for="Date In Service" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Date In Service', (isset($fields['date_in_service']['language'])? $fields['date_in_service']['language'] : array())) !!}
+					<label for="Need By Date" class=" control-label col-md-4 text-left">
+					{!! SiteHelpers::activeLang('Need By Date', (isset($fields['need_by_date']['language'])? $fields['need_by_date']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('date_in_service', $row['date_in_service'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
+					  {!! Form::text('need_by_date', $row['need_by_date'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
+					 </div> 
+					 <div class="col-md-2">
+					 	
+					 </div>
+				  </div> 
+				  <div class="form-group  " >
+					<label for="Solved Date" class=" control-label col-md-4 text-left">
+					{!! SiteHelpers::activeLang('Solved Date', (isset($fields['solved_date']['language'])? $fields['solved_date']['language'] : array())) !!}
+					</label>
+					<div class="col-md-6">
+					  {!! Form::text('solved_date', $row['solved_date'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
+					 </div> 
+					 <div class="col-md-2">
+					 	
+					 </div>
+				  </div> 
+				  <div class="form-group  " >
+					<label for="Solver Id" class=" control-label col-md-4 text-left">
+					{!! SiteHelpers::activeLang('Solver Id', (isset($fields['solver_id']['language'])? $fields['solver_id']['language'] : array())) !!}
+					</label>
+					<div class="col-md-6">
+					  {!! Form::text('solver_id', $row['solver_id'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
+					 </div> 
+					 <div class="col-md-2">
+					 	
+					 </div>
+				  </div> 
+				  <div class="form-group  " >
+					<label for="Solution" class=" control-label col-md-4 text-left">
+					{!! SiteHelpers::activeLang('Solution', (isset($fields['solution']['language'])? $fields['solution']['language'] : array())) !!}
+					</label>
+					<div class="col-md-6">
+					  <textarea name='solution' rows='5' id='solution' class='form-control '
+				           >{{ $row['solution'] }}</textarea>
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -212,507 +137,23 @@
 					 </div>
 				  </div> 
 				  <div class="form-group  " >
-					<label for="Game Setup Status Id" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Game Setup Status Id', (isset($fields['game_setup_status_id']['language'])? $fields['game_setup_status_id']['language'] : array())) !!}
+					<label for="Request Title" class=" control-label col-md-4 text-left">
+					{!! SiteHelpers::activeLang('Request Title', (isset($fields['request_title']['language'])? $fields['request_title']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('game_setup_status_id', $row['game_setup_status_id'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
+					  {!! Form::text('request_title', $row['request_title'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
 					 </div> 
 					 <div class="col-md-2">
 					 	
 					 </div>
 				  </div> 
 				  <div class="form-group  " >
-					<label for="Intended First Location" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Intended First Location', (isset($fields['intended_first_location']['language'])? $fields['intended_first_location']['language'] : array())) !!}
+					<label for="Attachment Path" class=" control-label col-md-4 text-left">
+					{!! SiteHelpers::activeLang('Attachment Path', (isset($fields['attachment_path']['language'])? $fields['attachment_path']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('intended_first_location', $row['intended_first_location'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
-					 </div> 
-					 <div class="col-md-2">
-					 	
-					 </div>
-				  </div> 
-				  <div class="form-group  " >
-					<label for="Ship Delay Reason" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Ship Delay Reason', (isset($fields['ship_delay_reason']['language'])? $fields['ship_delay_reason']['language'] : array())) !!}
-					</label>
-					<div class="col-md-6">
-					  <textarea name='ship_delay_reason' rows='5' id='ship_delay_reason' class='form-control '
-				           >{{ $row['ship_delay_reason'] }}</textarea>
-					 </div> 
-					 <div class="col-md-2">
-					 	
-					 </div>
-				  </div> 
-				  <div class="form-group  " >
-					<label for="Date Shipped" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Date Shipped', (isset($fields['date_shipped']['language'])? $fields['date_shipped']['language'] : array())) !!}
-					</label>
-					<div class="col-md-6">
-					  {!! Form::text('date_shipped', $row['date_shipped'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
-					 </div> 
-					 <div class="col-md-2">
-					 	
-					 </div>
-				  </div> 
-				  <div class="form-group  " >
-					<label for="Freight Order Id" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Freight Order Id', (isset($fields['freight_order_id']['language'])? $fields['freight_order_id']['language'] : array())) !!}
-					</label>
-					<div class="col-md-6">
-					  {!! Form::text('freight_order_id', $row['freight_order_id'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
-					 </div> 
-					 <div class="col-md-2">
-					 	
-					 </div>
-				  </div> 
-				  <div class="form-group  " >
-					<label for="Date Last Move" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Date Last Move', (isset($fields['date_last_move']['language'])? $fields['date_last_move']['language'] : array())) !!}
-					</label>
-					<div class="col-md-6">
-					  {!! Form::text('date_last_move', $row['date_last_move'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
-					 </div> 
-					 <div class="col-md-2">
-					 	
-					 </div>
-				  </div> 
-				  <div class="form-group  " >
-					<label for="Last Edited By" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Last Edited By', (isset($fields['last_edited_by']['language'])? $fields['last_edited_by']['language'] : array())) !!}
-					</label>
-					<div class="col-md-6">
-					  {!! Form::text('last_edited_by', $row['last_edited_by'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
-					 </div> 
-					 <div class="col-md-2">
-					 	
-					 </div>
-				  </div> 
-				  <div class="form-group  " >
-					<label for="Last Edited On" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Last Edited On', (isset($fields['last_edited_on']['language'])? $fields['last_edited_on']['language'] : array())) !!}
-					</label>
-					<div class="col-md-6">
-					  {!! Form::text('last_edited_on', $row['last_edited_on'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
-					 </div> 
-					 <div class="col-md-2">
-					 	
-					 </div>
-				  </div> 
-				  <div class="form-group  " >
-					<label for="Prev Location Id" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Prev Location Id', (isset($fields['prev_location_id']['language'])? $fields['prev_location_id']['language'] : array())) !!}
-					</label>
-					<div class="col-md-6">
-					  {!! Form::text('prev_location_id', $row['prev_location_id'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
-					 </div> 
-					 <div class="col-md-2">
-					 	
-					 </div>
-				  </div> 
-				  <div class="form-group  " >
-					<label for="For Sale" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('For Sale', (isset($fields['for_sale']['language'])? $fields['for_sale']['language'] : array())) !!}
-					</label>
-					<div class="col-md-6">
-					  {!! Form::text('for_sale', $row['for_sale'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
-					 </div> 
-					 <div class="col-md-2">
-					 	
-					 </div>
-				  </div> 
-				  <div class="form-group  " >
-					<label for="Sale Price" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Sale Price', (isset($fields['sale_price']['language'])? $fields['sale_price']['language'] : array())) !!}
-					</label>
-					<div class="col-md-6">
-					  {!! Form::text('sale_price', $row['sale_price'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
-					 </div> 
-					 <div class="col-md-2">
-					 	
-					 </div>
-				  </div> 
-				  <div class="form-group  " >
-					<label for="Sale Pending" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Sale Pending', (isset($fields['sale_pending']['language'])? $fields['sale_pending']['language'] : array())) !!}
-					</label>
-					<div class="col-md-6">
-					  {!! Form::text('sale_pending', $row['sale_pending'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
-					 </div> 
-					 <div class="col-md-2">
-					 	
-					 </div>
-				  </div> 
-				  <div class="form-group  " >
-					<label for="Sold" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Sold', (isset($fields['sold']['language'])? $fields['sold']['language'] : array())) !!}
-					</label>
-					<div class="col-md-6">
-					  {!! Form::text('sold', $row['sold'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
-					 </div> 
-					 <div class="col-md-2">
-					 	
-					 </div>
-				  </div> 
-				  <div class="form-group  " >
-					<label for="Date Sold" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Date Sold', (isset($fields['date_sold']['language'])? $fields['date_sold']['language'] : array())) !!}
-					</label>
-					<div class="col-md-6">
-					  {!! Form::text('date_sold', $row['date_sold'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
-					 </div> 
-					 <div class="col-md-2">
-					 	
-					 </div>
-				  </div> 
-				  <div class="form-group  " >
-					<label for="Sold To" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Sold To', (isset($fields['sold_to']['language'])? $fields['sold_to']['language'] : array())) !!}
-					</label>
-					<div class="col-md-6">
-					  {!! Form::text('sold_to', $row['sold_to'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
-					 </div> 
-					 <div class="col-md-2">
-					 	
-					 </div>
-				  </div> 
-				  <div class="form-group  " >
-					<label for="Game Move Id" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Game Move Id', (isset($fields['game_move_id']['language'])? $fields['game_move_id']['language'] : array())) !!}
-					</label>
-					<div class="col-md-6">
-					  {!! Form::text('game_move_id', $row['game_move_id'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
-					 </div> 
-					 <div class="col-md-2">
-					 	
-					 </div>
-				  </div> 
-				  <div class="form-group  " >
-					<label for="Game Service Id" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Game Service Id', (isset($fields['game_service_id']['language'])? $fields['game_service_id']['language'] : array())) !!}
-					</label>
-					<div class="col-md-6">
-					  {!! Form::text('game_service_id', $row['game_service_id'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
-					 </div> 
-					 <div class="col-md-2">
-					 	
-					 </div>
-				  </div> 
-				  <div class="form-group  " >
-					<label for="Game Title Id" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Game Title Id', (isset($fields['game_title_id']['language'])? $fields['game_title_id']['language'] : array())) !!}
-					</label>
-					<div class="col-md-6">
-					  {!! Form::text('game_title_id', $row['game_title_id'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
-					 </div> 
-					 <div class="col-md-2">
-					 	
-					 </div>
-				  </div> 
-				  <div class="form-group  " >
-					<label for="Version" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Version', (isset($fields['version']['language'])? $fields['version']['language'] : array())) !!}
-					</label>
-					<div class="col-md-6">
-					  {!! Form::text('version', $row['version'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
-					 </div> 
-					 <div class="col-md-2">
-					 	
-					 </div>
-				  </div> 
-				  <div class="form-group  " >
-					<label for="Num Prize Meters" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Num Prize Meters', (isset($fields['num_prize_meters']['language'])? $fields['num_prize_meters']['language'] : array())) !!}
-					</label>
-					<div class="col-md-6">
-					  {!! Form::text('num_prize_meters', $row['num_prize_meters'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
-					 </div> 
-					 <div class="col-md-2">
-					 	
-					 </div>
-				  </div> 
-				  <div class="form-group  " >
-					<label for="Num Prizes" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Num Prizes', (isset($fields['num_prizes']['language'])? $fields['num_prizes']['language'] : array())) !!}
-					</label>
-					<div class="col-md-6">
-					  {!! Form::text('num_prizes', $row['num_prizes'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
-					 </div> 
-					 <div class="col-md-2">
-					 	
-					 </div>
-				  </div> 
-				  <div class="form-group  " >
-					<label for="Product Id" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Product Id', (isset($fields['product_id']['language'])? $fields['product_id']['language'] : array())) !!}
-					</label>
-					<div class="col-md-6">
-					  {!! Form::text('product_id', $row['product_id'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
-					 </div> 
-					 <div class="col-md-2">
-					 	
-					 </div>
-				  </div> 
-				  <div class="form-group  " >
-					<label for="Product Id 1" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Product Id 1', (isset($fields['product_id_1']['language'])? $fields['product_id_1']['language'] : array())) !!}
-					</label>
-					<div class="col-md-6">
-					  {!! Form::text('product_id_1', $row['product_id_1'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
-					 </div> 
-					 <div class="col-md-2">
-					 	
-					 </div>
-				  </div> 
-				  <div class="form-group  " >
-					<label for="Product Qty 1" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Product Qty 1', (isset($fields['product_qty_1']['language'])? $fields['product_qty_1']['language'] : array())) !!}
-					</label>
-					<div class="col-md-6">
-					  {!! Form::text('product_qty_1', $row['product_qty_1'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
-					 </div> 
-					 <div class="col-md-2">
-					 	
-					 </div>
-				  </div> 
-				  <div class="form-group  " >
-					<label for="Product Id 2" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Product Id 2', (isset($fields['product_id_2']['language'])? $fields['product_id_2']['language'] : array())) !!}
-					</label>
-					<div class="col-md-6">
-					  {!! Form::text('product_id_2', $row['product_id_2'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
-					 </div> 
-					 <div class="col-md-2">
-					 	
-					 </div>
-				  </div> 
-				  <div class="form-group  " >
-					<label for="Product Qty 2" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Product Qty 2', (isset($fields['product_qty_2']['language'])? $fields['product_qty_2']['language'] : array())) !!}
-					</label>
-					<div class="col-md-6">
-					  {!! Form::text('product_qty_2', $row['product_qty_2'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
-					 </div> 
-					 <div class="col-md-2">
-					 	
-					 </div>
-				  </div> 
-				  <div class="form-group  " >
-					<label for="Product Id 3" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Product Id 3', (isset($fields['product_id_3']['language'])? $fields['product_id_3']['language'] : array())) !!}
-					</label>
-					<div class="col-md-6">
-					  {!! Form::text('product_id_3', $row['product_id_3'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
-					 </div> 
-					 <div class="col-md-2">
-					 	
-					 </div>
-				  </div> 
-				  <div class="form-group  " >
-					<label for="Product Qty 3" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Product Qty 3', (isset($fields['product_qty_3']['language'])? $fields['product_qty_3']['language'] : array())) !!}
-					</label>
-					<div class="col-md-6">
-					  {!! Form::text('product_qty_3', $row['product_qty_3'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
-					 </div> 
-					 <div class="col-md-2">
-					 	
-					 </div>
-				  </div> 
-				  <div class="form-group  " >
-					<label for="Product Id 4" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Product Id 4', (isset($fields['product_id_4']['language'])? $fields['product_id_4']['language'] : array())) !!}
-					</label>
-					<div class="col-md-6">
-					  {!! Form::text('product_id_4', $row['product_id_4'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
-					 </div> 
-					 <div class="col-md-2">
-					 	
-					 </div>
-				  </div> 
-				  <div class="form-group  " >
-					<label for="Product Qty 4" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Product Qty 4', (isset($fields['product_qty_4']['language'])? $fields['product_qty_4']['language'] : array())) !!}
-					</label>
-					<div class="col-md-6">
-					  {!! Form::text('product_qty_4', $row['product_qty_4'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
-					 </div> 
-					 <div class="col-md-2">
-					 	
-					 </div>
-				  </div> 
-				  <div class="form-group  " >
-					<label for="Product Id 5" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Product Id 5', (isset($fields['product_id_5']['language'])? $fields['product_id_5']['language'] : array())) !!}
-					</label>
-					<div class="col-md-6">
-					  {!! Form::text('product_id_5', $row['product_id_5'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
-					 </div> 
-					 <div class="col-md-2">
-					 	
-					 </div>
-				  </div> 
-				  <div class="form-group  " >
-					<label for="Product Qty 5" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Product Qty 5', (isset($fields['product_qty_5']['language'])? $fields['product_qty_5']['language'] : array())) !!}
-					</label>
-					<div class="col-md-6">
-					  {!! Form::text('product_qty_5', $row['product_qty_5'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
-					 </div> 
-					 <div class="col-md-2">
-					 	
-					 </div>
-				  </div> 
-				  <div class="form-group  " >
-					<label for="Price Per Play" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Price Per Play', (isset($fields['price_per_play']['language'])? $fields['price_per_play']['language'] : array())) !!}
-					</label>
-					<div class="col-md-6">
-					  {!! Form::text('price_per_play', $row['price_per_play'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
-					 </div> 
-					 <div class="col-md-2">
-					 	
-					 </div>
-				  </div> 
-				  <div class="form-group  " >
-					<label for="Last Product Meter 1" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Last Product Meter 1', (isset($fields['last_product_meter_1']['language'])? $fields['last_product_meter_1']['language'] : array())) !!}
-					</label>
-					<div class="col-md-6">
-					  {!! Form::text('last_product_meter_1', $row['last_product_meter_1'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
-					 </div> 
-					 <div class="col-md-2">
-					 	
-					 </div>
-				  </div> 
-				  <div class="form-group  " >
-					<label for="Last Product Meter 2" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Last Product Meter 2', (isset($fields['last_product_meter_2']['language'])? $fields['last_product_meter_2']['language'] : array())) !!}
-					</label>
-					<div class="col-md-6">
-					  {!! Form::text('last_product_meter_2', $row['last_product_meter_2'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
-					 </div> 
-					 <div class="col-md-2">
-					 	
-					 </div>
-				  </div> 
-				  <div class="form-group  " >
-					<label for="Last Product Meter 3" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Last Product Meter 3', (isset($fields['last_product_meter_3']['language'])? $fields['last_product_meter_3']['language'] : array())) !!}
-					</label>
-					<div class="col-md-6">
-					  {!! Form::text('last_product_meter_3', $row['last_product_meter_3'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
-					 </div> 
-					 <div class="col-md-2">
-					 	
-					 </div>
-				  </div> 
-				  <div class="form-group  " >
-					<label for="Last Product Meter 4" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Last Product Meter 4', (isset($fields['last_product_meter_4']['language'])? $fields['last_product_meter_4']['language'] : array())) !!}
-					</label>
-					<div class="col-md-6">
-					  {!! Form::text('last_product_meter_4', $row['last_product_meter_4'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
-					 </div> 
-					 <div class="col-md-2">
-					 	
-					 </div>
-				  </div> 
-				  <div class="form-group  " >
-					<label for="Last Product Meter 5" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Last Product Meter 5', (isset($fields['last_product_meter_5']['language'])? $fields['last_product_meter_5']['language'] : array())) !!}
-					</label>
-					<div class="col-md-6">
-					  {!! Form::text('last_product_meter_5', $row['last_product_meter_5'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
-					 </div> 
-					 <div class="col-md-2">
-					 	
-					 </div>
-				  </div> 
-				  <div class="form-group  " >
-					<label for="Last Product Meter 6" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Last Product Meter 6', (isset($fields['last_product_meter_6']['language'])? $fields['last_product_meter_6']['language'] : array())) !!}
-					</label>
-					<div class="col-md-6">
-					  {!! Form::text('last_product_meter_6', $row['last_product_meter_6'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
-					 </div> 
-					 <div class="col-md-2">
-					 	
-					 </div>
-				  </div> 
-				  <div class="form-group  " >
-					<label for="Last Product Meter 7" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Last Product Meter 7', (isset($fields['last_product_meter_7']['language'])? $fields['last_product_meter_7']['language'] : array())) !!}
-					</label>
-					<div class="col-md-6">
-					  {!! Form::text('last_product_meter_7', $row['last_product_meter_7'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
-					 </div> 
-					 <div class="col-md-2">
-					 	
-					 </div>
-				  </div> 
-				  <div class="form-group  " >
-					<label for="Last Product Meter 8" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Last Product Meter 8', (isset($fields['last_product_meter_8']['language'])? $fields['last_product_meter_8']['language'] : array())) !!}
-					</label>
-					<div class="col-md-6">
-					  {!! Form::text('last_product_meter_8', $row['last_product_meter_8'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
-					 </div> 
-					 <div class="col-md-2">
-					 	
-					 </div>
-				  </div> 
-				  <div class="form-group  " >
-					<label for="Last Meter Date" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Last Meter Date', (isset($fields['last_meter_date']['language'])? $fields['last_meter_date']['language'] : array())) !!}
-					</label>
-					<div class="col-md-6">
-					  {!! Form::text('last_meter_date', $row['last_meter_date'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
-					 </div> 
-					 <div class="col-md-2">
-					 	
-					 </div>
-				  </div> 
-				  <div class="form-group  " >
-					<label for="Not Debit" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Not Debit', (isset($fields['not_debit']['language'])? $fields['not_debit']['language'] : array())) !!}
-					</label>
-					<div class="col-md-6">
-					  {!! Form::text('not_debit', $row['not_debit'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
-					 </div> 
-					 <div class="col-md-2">
-					 	
-					 </div>
-				  </div> 
-				  <div class="form-group  " >
-					<label for="Not Debit Reason" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Not Debit Reason', (isset($fields['not_debit_reason']['language'])? $fields['not_debit_reason']['language'] : array())) !!}
-					</label>
-					<div class="col-md-6">
-					  {!! Form::text('not_debit_reason', $row['not_debit_reason'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
-					 </div> 
-					 <div class="col-md-2">
-					 	
-					 </div>
-				  </div> 
-				  <div class="form-group  " >
-					<label for="Linked To Game" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Linked To Game', (isset($fields['linked_to_game']['language'])? $fields['linked_to_game']['language'] : array())) !!}
-					</label>
-					<div class="col-md-6">
-					  {!! Form::text('linked_to_game', $row['linked_to_game'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
-					 </div> 
-					 <div class="col-md-2">
-					 	
-					 </div>
-				  </div> 
-				  <div class="form-group  " >
-					<label for="Test Piece" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Test Piece', (isset($fields['test_piece']['language'])? $fields['test_piece']['language'] : array())) !!}
-					</label>
-					<div class="col-md-6">
-					  {!! Form::text('test_piece', $row['test_piece'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
+					  <textarea name='attachment_path' rows='5' id='attachment_path' class='form-control '
+				           >{{ $row['attachment_path'] }}</textarea>
 					 </div> 
 					 <div class="col-md-2">
 					 	

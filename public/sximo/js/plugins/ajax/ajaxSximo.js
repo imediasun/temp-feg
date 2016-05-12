@@ -76,9 +76,11 @@ function ajaxInlineEdit(id,url,reloadurl)
 
 function ajaxFilter( id ,url,opt  )
 {
+
 	var attr = '';
         $(id + 'Filter :input').each(function () {
-            if (this.value != '') {
+            if (this.value != '' && this.value!=0) {
+
                 attr += this.name + '=' + this.value + '&';
             }
 

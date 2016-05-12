@@ -1,5 +1,9 @@
 <div class="row m-b">
-    	<div class="col-md-12">
+	<div class="col-md-8">
+			@if($access['is_add'] ==1)
+			{!! AjaxHelpers::buttonActionCreate($pageModule,$setting) !!}
+			<a href="javascript://ajax" class="btn btn-sm btn-white" onclick="ajaxCopy('#{{ $pageModule }}','{{ $pageUrl }}')"><i class="fa fa-file-o"></i> Copy </a>
+			@endif 
 			@if($access['is_remove'] ==1)
 			<a href="javascript://ajax" class="btn btn-sm btn-white" onclick="ajaxRemove('#{{ $pageModule }}','{{ $pageUrl }}');"><i class="fa fa-trash-o "></i> {{ Lang::get('core.btn_remove') }} </a>
 			@endif 	
@@ -18,43 +22,19 @@
         @endif
         @endif
     </div>
-    <div class="col-md-4">
-        <br/>
-        <select name="type" class="select3" id="request_type">
-            <option disabled>Select Graphic Requests Type</option>
-            <option value="open" selected> Open Graphics Requests </option>
-            <option value="archive">Graphics Request Archive</option>
-        </select>
-
-    </div>
-
-    @if($view=="open")
-    <div class="col-md-12" id="number_requests">
-        <p style="color:red;font-weight: bold">{{ $newGraphicsInfo['number_new_requests'] }} New **</p>
-    </div>
-        @endif
-
+	<div class="col-md-4 ">
+		@if($access['is_excel'] ==1)
+		<div class="pull-right">
+			<a href="{{ URL::to( $pageModule .'/export/excel?return='.$return) }}" class="btn btn-sm btn-white"> Excel</a>
+			<a href="{{ URL::to( $pageModule .'/export/word?return='.$return) }}" class="btn btn-sm btn-white"> Word </a>
+			<a href="{{ URL::to( $pageModule .'/export/csv?return='.$return) }}" class="btn btn-sm btn-white"> CSV </a>
+			<a href="{{ URL::to( $pageModule .'/export/print?return='.$return) }}" class="btn btn-sm btn-white" onclick="ajaxPopupStatic(this.href); return false;" > Print</a>
+		</div>	
+		@endif
+	</div>
 </div>
 <script>
-    $('document').ready(function () {
-        setType();
-        $(".select3").select2({width: "98%"});
-    });
-
     $("#col-config").on('change',function(){
-        var request_type=$("#request_type").val();
-        reloadData('#{{ $pageModule }}','{{ $pageModule }}/data?view='+request_type+'&config_id='+$("#col-config").val());
-    });
-    function setType() {
-        $('#request_type option').each(function () {
-            if ($(this).val() == "{{ $view }}") {
-                $(this).attr('selected', "true");
-            }
-        });
-    }
-    $("#request_type").on('change', function () {
-
-        var request_type = $(this).val();
-        reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?view='+ request_type);
+        reloadData('#{{ $pageModule }}','{{ $pageModule }}/data?config_id='+$("#col-config").val());
     });
 </script>

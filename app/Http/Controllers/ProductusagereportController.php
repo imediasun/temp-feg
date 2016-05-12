@@ -1,34 +1,34 @@
 <?php namespace App\Http\Controllers;
 
 use App\Http\Controllers\controller;
-use App\Models\{controller};
+use App\Models\Productusagereport;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Validator, Input, Redirect ; 
 
-class {controller}Controller extends Controller {
+class ProductusagereportController extends Controller {
 
 	protected $layout = "layouts.main";
 	protected $data = array();	
-	public $module = '{class}';
+	public $module = 'productusagereport';
 	static $per_page	= '10';
 	
 	public function __construct() 
 	{
 		parent::__construct();
-		$this->model = new {controller}();
-		{masterdetailmodel}
+		$this->model = new Productusagereport();
+		
 		$this->info = $this->model->makeInfo( $this->module);
 		$this->access = $this->model->validAccess($this->info['id']);
 
 		$this->data = array(
 			'pageTitle'			=> 	$this->info['title'],
 			'pageNote'			=>  $this->info['note'],
-			'pageModule'		=> '{class}',
-			'pageUrl'			=>  url('{class}'),
+			'pageModule'		=> 'productusagereport',
+			'pageUrl'			=>  url('productusagereport'),
 			'return' 			=> 	self::returnUrl()
 		);
-		{masterdetailinfo}
+		
 
 
 	}
@@ -39,13 +39,13 @@ class {controller}Controller extends Controller {
 			return Redirect::to('dashboard')->with('messagetext',\Lang::get('core.note_restric'))->with('msgstatus','error');
 
 		$this->data['access']		= $this->access;
-		return view('{class}.index',$this->data);
+		return view('productusagereport.index',$this->data);
 	}
 
 	public function postData( Request $request)
 	{
 
-        $module_id = \DB::table('tb_module')->where('module_name', '=', '{class}')->pluck('module_id');
+        $module_id = \DB::table('tb_module')->where('module_name', '=', 'productusagereport')->pluck('module_id');
         $this->data['module_id'] = $module_id;
         if (Input::has('config_id')) {
         $config_id = Input::get('config_id');
@@ -85,7 +85,7 @@ class {controller}Controller extends Controller {
         $pagination = new Paginator($results['rows'], $results['total'], 
             (isset($params['limit']) && $params['limit'] > 0  ? $params['limit'] : 
 				($results['total'] > 0 ? $results['total'] : '1')));        
-		$pagination->setPath('{class}/data');
+		$pagination->setPath('productusagereport/data');
 		$this->data['param']		= $params;
         $this->data['topMessage']	= @$results['topMessage'];
 		$this->data['message']          = @$results['message'];
@@ -113,7 +113,7 @@ class {controller}Controller extends Controller {
         $this->data['tableGrid'] = \SiteHelpers::showRequiredCols($this->data['tableGrid'], $this->data['config']);
         }
 // Render into template
-		return view('{class}.table',$this->data);
+		return view('productusagereport.table',$this->data);
 
 	}
 
@@ -138,14 +138,14 @@ class {controller}Controller extends Controller {
 		{
 			$this->data['row'] 		=  $row;
 		} else {
-			$this->data['row'] 		= $this->model->getColumnTable('{table}');
+			$this->data['row'] 		= $this->model->getColumnTable('requests');
 		}
 		$this->data['setting'] 		= $this->info['setting'];
 		$this->data['fields'] 		=  \AjaxHelpers::fieldLang($this->info['config']['forms']);
-		{masterdetailgrid}
+		
 		$this->data['id'] = $id;
 
-		return view('{class}.form',$this->data);
+		return view('productusagereport.form',$this->data);
 	}
 
 	public function getShow( $id = null)
@@ -160,30 +160,30 @@ class {controller}Controller extends Controller {
 		{
 			$this->data['row'] =  $row;
 		} else {
-			$this->data['row'] = $this->model->getColumnTable('{table}');
+			$this->data['row'] = $this->model->getColumnTable('requests');
 		}
-		{masterdetailgrid}
+		
 		$this->data['id'] = $id;
 		$this->data['access']		= $this->access;
 		$this->data['setting'] 		= $this->info['setting'];
 		$this->data['fields'] 		= \AjaxHelpers::fieldLang($this->info['config']['forms']);
-		return view('{class}.view',$this->data);
+		return view('productusagereport.view',$this->data);
 	}
 
 
 	function postCopy( Request $request)
 	{
 
-	    foreach(\DB::select("SHOW COLUMNS FROM {table} ") as $column)
+	    foreach(\DB::select("SHOW COLUMNS FROM requests ") as $column)
         {
-			if( $column->Field != '{key}')
+			if( $column->Field != 'id')
 				$columns[] = $column->Field;
         }
 		$toCopy = implode(",",$request->input('ids'));
 
 
-		$sql = "INSERT INTO {table} (".implode(",", $columns).") ";
-		$sql .= " SELECT ".implode(",", $columns)." FROM {table} WHERE {key} IN (".$toCopy.")";
+		$sql = "INSERT INTO requests (".implode(",", $columns).") ";
+		$sql .= " SELECT ".implode(",", $columns)." FROM requests WHERE id IN (".$toCopy.")";
 		\DB::insert($sql);
 		return response()->json(array(
 			'status'=>'success',
@@ -197,10 +197,10 @@ class {controller}Controller extends Controller {
 		$rules = $this->validateForm();
 		$validator = Validator::make($request->all(), $rules);
 		if ($validator->passes()) {
-			$data = $this->validatePost('{table}');
+			$data = $this->validatePost('requests');
 
-			$id = $this->model->insertRow($data , $request->input('{key}'));
-			{masterdetailsave}
+			$id = $this->model->insertRow($data , $request->input('id'));
+			
 			return response()->json(array(
 				'status'=>'success',
 				'message'=> \Lang::get('core.note_success')
@@ -232,7 +232,7 @@ class {controller}Controller extends Controller {
 		if(count($request->input('ids')) >=1)
 		{
 			$this->model->destroy($request->input('ids'));
-			{masterdetaildelete}
+			
 			return response()->json(array(
 				'status'=>'success',
 				'message'=> \Lang::get('core.note_success_delete')

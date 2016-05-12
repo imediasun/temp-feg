@@ -1,5 +1,5 @@
 <?php 
-$pages = array(10,20,30,50); 
+$pages = array(10,20,30,50,100); 
 $orders = array('asc','desc');
 
 ?>
@@ -10,7 +10,7 @@ $orders = array('asc','desc');
 	  <div class="table-actions" style=" padding: 10px 0" id="<?php echo $pageModule;?>Filter">
   			<input type="hidden" name="page" value="{{ $param['page']}}" />
 			<input type="hidden" name="search" value="<?php if(!is_null(Input::get('search'))) echo Input::get('search') ;?>" />
-			
+        @if(!isset($setting['disablepagination']) || $setting['disablepagination'] == 'false')
 		<select name="rows" class="select-alt" style="width:70px; float:left;"  >
 		  @foreach($pages as $p) 
 		  <option value="{{ $p }}" 
@@ -19,7 +19,15 @@ $orders = array('asc','desc');
 			@endif	
 		  >{{ $p }}</option>
 		  @endforeach
+          <option value="0" 
+            @if($setting['perpage'] == '0' || !isset($pager['rows'])) 
+				selected="selected"
+			@endif	
+            >All</option>
 		</select>
+        @endif 
+        
+        @if(!isset($setting['disablesort']) || $setting['disablesort'] == 'false')
 		<select name="sort" class="select-alt" style="width:100px;float:left;" >
 		  <option value=""><?php echo Lang::get('core.grid_sort');?></option>
 		  @foreach($tableGrid as $field)
@@ -43,8 +51,11 @@ $orders = array('asc','desc');
 		  >{{ ucwords($o) }}</option>
 		 @endforeach
 		</select>
+        @endif 
+        
+        @if((!isset($setting['disablepagination']) || $setting['disablepagination'] == 'false') || (!isset($setting['disablesort']) || $setting['disablesort'] == 'false'))
 		<button type="button" class="btn  btn-primary btn-sm" onclick="ajaxFilter('#<?php echo $pageModule;?>','{{ $pageUrl }}/data')" style="float:left;"><i class="fa  fa-search"></i> GO</button>	
-
+        @endif 
 	  </div>					
 	  </div>
 	   <div class="col-sm-2">
@@ -52,9 +63,11 @@ $orders = array('asc','desc');
 		
 		</p>
 	   </div>
+        @if(!isset($setting['disablepagination']) || $setting['disablepagination'] == 'false')
 		<div class="col-sm-5" id="<?php echo $pageModule;?>Paginate">
             {!! $pagination->appends($pager)->render() !!}
-	  </div>
+        </div>
+        @endif
 	  </div>
 	</div>	
 	

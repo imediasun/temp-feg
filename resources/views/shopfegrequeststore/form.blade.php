@@ -359,7 +359,8 @@ function showResponse(data)  {
 	{
 		ajaxViewClose('#{{ $pageModule }}');
 		ajaxFilter('#{{ $pageModule }}','{{ $pageUrl }}/data');
-		notyMessage(data.message);	
+		notyMessage(data.message);
+        $('.ajaxLoading').hide();
 		$('#sximo-modal').modal('hide');	
 	} else {
 		notyMessageError(data.message);	

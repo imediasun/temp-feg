@@ -2400,8 +2400,6 @@ li.L9 {
 .addnewicon:hover {
     color: #222;
 }
-<<<<<<< HEAD
-=======
 
 .topMessage, .bottomMessage {
     text-align: center;
@@ -2420,4 +2418,8 @@ li.L9 {
 #closedlocationsFilter {
     display:none;
 }
->>>>>>> 4e24e08860493d4b9b54fa722d1f4079a39432fa
+
+#advance-search.search-table  tr.fieldsearch td:first-child {
+	font-weight: bold;
+	vertical-align: middle;
+}

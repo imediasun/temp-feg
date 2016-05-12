@@ -171,6 +171,7 @@ class UserController extends Controller
                         \Session::put('eid', $row->email);
                         \Session::put('ll', $row->last_login);
                         \Session::put('fid', $row->first_name . ' ' . $row->last_name);
+                        \Session::put('user_name',$row->username);
                         \Session::put('ufname', $row->first_name);
                         \Session::put('ulname', $row->last_name);
                         \Session::put('company_id', $row->company_id);
@@ -181,6 +182,16 @@ class UserController extends Controller
                             \Session::put('selected_location_name', $user_locations[0]->location_name_short);
                         }
                         \Session::put('get_locations_by_region', $row->get_locations_by_region);
+                        \Session::put('email_2',$row->email_2);
+                        \Session::put('primary_phone',$row->primary_phone);
+                        \Session::put('secondary_phone',$row->secondary_phone);
+                        \Session::put('street',$row->street);
+                        \Session::put('city',$row->city);
+                        \Session::put('state',$row->state);
+                        \Session::put('zip',$row->zip);
+                        \Session::put('reg_id',$row->reg_id);
+                        \Session::put('restricted_mgr_email',$row->restricted_mgr_email);
+                        \Session::put('restricted_user_email',$row->restricted_user_email);
                         if (!is_null($request->input('language'))) {
                             \Session::put('lang', $request->input('language'));
                         } else {
@@ -219,6 +230,7 @@ class UserController extends Controller
         \Session::put('eid', $row->email);
         \Session::put('ll', $row->last_login);
         \Session::put('fid', $row->first_name . ' ' . $row->last_name);
+        \Session::put('user_name',$row->username);
         \Session::put('ufname', $row->first_name);
         \Session::put('ulname', $row->last_name);
         \Session::put('company_id', $row->company_id);
@@ -229,6 +241,16 @@ class UserController extends Controller
             \Session::put('selected_location_name', $user_locations[0]->location_name_short);
         }
         \Session::put('get_locations_by_region', $row->get_locations_by_region);
+        \Session::put('email_2',$row->email_2);
+        \Session::put('primary_phone',$row->primary_phone);
+        \Session::put('secondary_phone',$row->secondary_phone);
+        \Session::put('street',$row->street);
+        \Session::put('city',$row->city);
+        \Session::put('state',$row->state);
+        \Session::put('zip',$row->zip);
+        \Session::put('reg_id',$row->reg_id);
+        \Session::put('restricted_mgr_email',$row->restricted_mgr_email);
+        \Session::put('restricted_user_email',$row->restricted_user_email);
         return Redirect::to('dashboard');
     }
 
@@ -450,6 +472,7 @@ class UserController extends Controller
                     Session::put('gid', $row->group_id);
                     Session::put('eid', $row->group_email);
                     Session::put('fid', $row->first_name . ' ' . $row->last_name);
+                    Session::put('user_name',$row->username);
                     Session::put('ufname', $row->first_name);
                     Session::put('ulname', $row->last_name);
                     Session::put('company_id', $row->company_id);
@@ -460,6 +483,16 @@ class UserController extends Controller
                         Session::put('selected_location_name', $user_locations[0]->location_name_short);
                     }
                     Session::put('get_locations_by_region', $row->get_locations_by_region);
+                    Session::put('email_2',$row->email_2);
+                    Session::put('primary_phone',$row->primary_phone);
+                    Session::put('secondary_phone',$row->secondary_phone);
+                    Session::put('street',$row->street);
+                    Session::put('city',$row->city);
+                    Session::put('state',$row->state);
+                    Session::put('zip',$row->zip);
+                    Session::put('reg_id',$row->reg_id);
+                    Session::put('restricted_mgr_email',$row->restricted_mgr_email);
+                    Session::put('restricted_user_email',$row->restricted_user_email);
                     if (CNF_FRONT == 'false') :
                         return Redirect::to('dashboard');
                     else :

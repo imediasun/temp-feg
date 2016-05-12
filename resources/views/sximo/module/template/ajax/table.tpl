@@ -16,12 +16,17 @@
 
 	 <?php echo Form::open(array('url'=>'{class}/delete/', 'class'=>'form-horizontal' ,'id' =>'SximoTable'  ,'data-parsley-validate'=>'' )) ;?>
 <div class="table-responsive">
+    @if(!empty($topMessage))
+    <h5 class="topMessage">{{ $topMessage }}</h5>
+    @endif
 	@if(count($rowData)>=1)
     <table class="table table-striped  " id="{{ $pageModule }}Table">
         <thead>
 			<tr>
 				<th width="20"> No </th>
+                @if($setting['disableactioncheckbox']=='false')
 				<th width="30"> <input type="checkbox" class="checkall" /></th>
+                @endif
 				@if($setting['view-method']=='expand') <th>  </th> @endif
 				<?php foreach ($tableGrid as $t) :
 					if($t['view'] =='1'):
@@ -33,7 +38,9 @@
                 }
 					endif;
 				endforeach; ?>
+                @if($setting['disablerowactions']=='false')
 				<th width="70"><?php echo Lang::get('core.btn_action') ;?></th>
+                @endif
 			  </tr>
         </thead>
 
@@ -41,7 +48,9 @@
         	@if($access['is_add'] =='1' && $setting['inline']=='true')
 			<tr id="form-0" >
 				<td> # </td>
+                @if($setting['disableactioncheckbox']=='false')
 				<td> </td>
+                @endif
 				@if($setting['view-method']=='expand') <td> </td> @endif
 				@foreach ($tableGrid as $t)
 					@if($t['view'] =='1')
@@ -64,7 +73,9 @@
            		?>
                 <tr class="editable" id="form-{{ $row->{key} }}">
 					<td class="number"> <?php echo ++$i;?>  </td>
+                    @if($setting['disableactioncheckbox']=='false')
 					<td ><input type="checkbox" class="ids" name="ids[]" value="<?php echo $row->{key} ;?>" />  </td>
+                    @endif
 					@if($setting['view-method']=='expand')
 					<td><a href="javascript:void(0)" class="expandable" rel="#row-{{ $row->{key} }}" data-url="{{ url('{class}/show/'.$id) }}"><i class="fa fa-plus " ></i></a></td>
 					@endif
@@ -85,10 +96,12 @@
 						 endif;
 						endforeach;
 					  ?>
+                  @if($setting['disablerowactions']=='false')     
 				 <td data-values="action" data-key="<?php echo $row->{key} ;?>">
 					{!! AjaxHelpers::buttonAction('{class}',$access,$id ,$setting) !!}
 					{!! AjaxHelpers::buttonActionInline($row->{key},'{key}') !!}
 				</td>
+                @endif
                 </tr>
                 @if($setting['view-method']=='expand')
                 <tr style="display:none" class="expanded" id="row-{{ $row->{key} }}">
@@ -107,12 +120,18 @@
 	@else
 
 	<div style="margin:100px 0; text-align:center;">
-
-		<p> No Record Found </p>
+        @if(!empty($message))
+            <p class='centralMessage'>{{ $message }}</p>
+        @else
+            <p class='centralMessage'> No Record Found </p>
+        @endif
 	</div>
 
 	@endif
-
+    @if(!empty($bottomMessage))
+    <h5 class="bottomMessage">{{ $bottomMessage }}</h5>
+    @endif
+    
 	</div>
 	<?php echo Form::close() ;?>
 	@include('ajaxfooter')

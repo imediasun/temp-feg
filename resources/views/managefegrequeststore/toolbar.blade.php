@@ -1,5 +1,13 @@
 <div class="row m-b">
+      <div class="col-md-12">
+        <br/>
+        <a href="{{ URL::to( $pageModule .'/search') }}" class="btn btn-sm btn-white"
+           onclick="SximoModal(this.href,'Advance Search'); return false;"><i class="fa fa-search"></i> Search</a>
+
+    </div>
+    <div >
     <div class="col-md-3">
+        <br/>
         <select name="type" class="select3" id="request_type">
             <option disabled>Select Requests Type</option>
             <option value="manage" selected> Open Requests</option>
@@ -8,10 +16,11 @@
 
     </div>
     <div class="col-md-3">
-
+<br/>
         <input  name="order_type" @if($TID )value="{{ $TID }}" @endif id="order_type" type="hidden" onchange="pageRefresh('T');" style="width:98%">
     </div>
     <div class="col-md-3">
+        <br/>
         <select id="location_id" class="form-control" name="location_id" onchange="pageRefresh('L');">
             @foreach($manageRequestInfo['loc_options'] as $k => $locations)
                 <option @if($LID == $k) selected @endif value="{{ $k }}">{{ $locations}}</option>
@@ -19,11 +28,13 @@
         </select>
     </div>
     <div class="col-md-3">
+        <br/>
         <select id="vendor_id" class="form-control" name="vendor_id" onchange="pageRefresh('V');">
             @foreach($manageRequestInfo['vendor_options'] as $k => $vendor)
                 <option @if($VID== $k) selected @endif value="{{ $k }}">{{ $vendor }}</option>
             @endforeach
         </select>
+    </div>
     </div>
 
     <div class="clearfix"></div>
@@ -34,12 +45,7 @@
             <p style="color:red;font-weight: bold"><?php echo $manageRequestInfo['number_requests']; ?></p>
         </div>
     @endif
-    <div class="col-md-12">
-        <br/>
-        <a href="{{ URL::to( $pageModule .'/search') }}" class="btn btn-sm btn-white"
-           onclick="SximoModal(this.href,'Advance Search'); return false;"><i class="fa fa-search"></i> Search</a>
-
-    </div>
+  
 
 </div>
 <script>

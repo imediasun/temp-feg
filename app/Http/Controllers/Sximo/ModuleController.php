@@ -302,6 +302,12 @@ class ModuleController extends Controller {
             'form-method'        => (isset($config['setting']['form-method'])  ? $config['setting']['form-method'] : 'native'  ),
             'view-method'        => (isset($config['setting']['view-method'])  ? $config['setting']['view-method'] : 'native'  ),
             'inline'        => (isset($config['setting']['inline'])  ? $config['setting']['inline'] : 'false'  ),
+            
+            'usesimplesearch'         => (isset($config['setting']['usesimplesearch'])  ? $config['setting']['usesimplesearch'] : 'false'  ),
+            'disablepagination'         => (isset($config['setting']['disablepagination'])  ? $config['setting']['disablepagination'] : 'false'  ),
+            'disablesort'               => (isset($config['setting']['disablesort'])  ? $config['setting']['disablesort'] : 'false'  ),
+            'disableactioncheckbox'     => (isset($config['setting']['disableactioncheckbox'])  ? $config['setting']['disableactioncheckbox'] : 'false'  ),
+            'disablerowactions'         => (isset($config['setting']['disablerowactions'])  ? $config['setting']['disablerowactions'] : 'false'  )
         );          
 		
 		return view('sximo.module.config',$this->data);        
@@ -371,8 +377,14 @@ class ModuleController extends Controller {
             'form-method'   => (!is_null($request->input('form-method'))  ? $request->input('form-method') : 'native' ) ,
             'view-method'        => (!is_null($request->input('view-method'))  ? $request->input('view-method') : 'native' ) ,
             'inline'        => (!is_null($request->input('inline'))  ? 'true' : 'false' ) ,
+            
+            'usesimplesearch'           => (!is_null($request->input('usesimplesearch'))  ? 'true' : 'false' ) ,
+            'disablepagination'         => (!is_null($request->input('disablepagination'))  ? 'true' : 'false' ) ,
+            'disablesort'               => (!is_null($request->input('disablesort'))  ? 'true' : 'false' ) ,
+            'disableactioncheckbox'     => (!is_null($request->input('disableactioncheckbox'))  ? 'true' : 'false' ) ,
+            'disablerowactions'         => (!is_null($request->input('disablerowactions'))  ? 'true' : 'false' ) ,
 
-        
+                    
             
         );
         if(isset($config['setting'])) unset($config['setting']);

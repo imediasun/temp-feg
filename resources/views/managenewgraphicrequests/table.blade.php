@@ -33,8 +33,10 @@
                 }
 					endif;
 				endforeach; ?>
+                @if($view != "archive")
 				<th width="70"><?php echo Lang::get('core.btn_action') ;?></th>
 			  </tr>
+        @endif
         </thead>
 
         <tbody>
@@ -91,10 +93,12 @@
 						 endif;
 						endforeach;
 					  ?>
+                    @if($view != "archive")
 				 <td data-values="action" data-key="<?php echo $row->id ;?>">
 					{!! AjaxHelpers::buttonAction('managenewgraphicrequests',$access,$id ,$setting) !!}
 					{!! AjaxHelpers::buttonActionInline($row->id,'id') !!}
 				</td>
+                        @endif
                 </tr>
                 @if($setting['view-method']=='expand')
                 <tr style="display:none" class="expanded" id="row-{{ $row->id }}">

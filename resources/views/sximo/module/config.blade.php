@@ -16,7 +16,7 @@
       </ul>	  
 	  
     </div>
-
+ 
  <div class="page-content-wrapper m-t"> 
 @include('sximo.module.tab',array('active'=>'config','type'=> $type))
 	
@@ -137,11 +137,22 @@
 		  </div> 
 
 
-	
+        <div class="form-group">
+          <label for="ipt" class=" control-label col-md-4">Disable Sorting from footer</label>
+          <div class="col-md-8">
+              <label class="checkbox">
+              <input type="checkbox" value="true" name="disablesort" id="disablesort"
+              @if(isset($setting['disablesort']) && $setting['disablesort'] == 'true') checked="checked" @endif 	
+               /> Yes Disable 
+              </label>
+           </div> 
+        </div>         
+      
 	  <div class="form-group">
 		<label for="ipt" class=" control-label col-md-4"> Default Order  </label>
 		<div class="col-md-8">
 			<select class="select-alt" name="orderby">
+                <option value="">None</option>
 			@foreach($tables as $t)
 				<option value="{{ $t['field'] }}"
 				@if($setting['orderby'] ==$t['field']) selected="selected" @endif 
@@ -160,16 +171,60 @@
 		<label for="ipt" class=" control-label col-md-4"> Display Rows </label>
 		<div class="col-md-8">
 			<select class="select-alt" name="perpage">
-				<?php $pages = array('10','20','30','50');
+				<?php $pages = array('10','20','30','50', '100');
 				foreach($pages as $page) {
 				?>
 				<option value="<?php echo $page;?>"  @if($setting['perpage'] ==$page) selected="selected" @endif > <?php echo $page;?> </option>
 				<?php } ?>
+				<option value="0"  @if($setting['perpage'] ==0) selected="selected" @endif > All</option>
 			</select>	
 			/ Page	
 		 </div> 
 	  </div>   
-		
+        <div class="form-group">
+          <label for="ipt" class=" control-label col-md-4">Disable pagination</label>
+          <div class="col-md-8">
+              <label class="checkbox">
+              <input type="checkbox" value="true" name="disablepagination" id="disablepagination"
+              @if(isset($setting['disablepagination']) && $setting['disablepagination'] == 'true') checked="checked" @endif 	
+               /> Yes Disable 
+              </label>
+           </div> 
+        </div>  
+
+        <div class="form-group">
+          <label for="ipt" class=" control-label col-md-4">Disable checkbox in each row</label>
+          <div class="col-md-8">
+              <label class="checkbox">
+              <input type="checkbox" value="true" name="disableactioncheckbox" id="disableactioncheckbox"
+              @if(isset($setting['disableactioncheckbox']) && $setting['disableactioncheckbox'] == 'true') checked="checked" @endif 	
+               /> Yes Disable 
+              </label>
+           </div> 
+        </div>     
+        
+        <div class="form-group">
+          <label for="ipt" class=" control-label col-md-4">Disable row-wise actions</label>
+          <div class="col-md-8">
+              <label class="checkbox">
+              <input type="checkbox" value="true" name="disablerowactions" id="disablerowactions"
+              @if(isset($setting['disablerowactions']) && $setting['disablerowactions'] == 'true') checked="checked" @endif 	
+               /> Yes Disable 
+              </label>
+           </div> 
+        </div>  
+        
+        <div class="form-group">
+          <label for="ipt" class=" control-label col-md-4">Simpler search options</label>
+          <div class="col-md-8">
+              <label class="checkbox">
+              <input type="checkbox" value="true" name="usesimplesearch" id="usesimplesearch"
+              @if(isset($setting['usesimplesearch']) && $setting['usesimplesearch'] == 'true') checked="checked" @endif 	
+               /> Yes
+              </label>
+           </div> 
+        </div>                
+        
 	</fieldset>	
 
   	<fieldset>

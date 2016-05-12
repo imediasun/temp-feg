@@ -232,11 +232,7 @@ class shopfegrequeststore extends Sximo  {
                     mail($to, $subject, $message, $headers);
         return $last_inserted_id;
     }
-    function get_location_info_by_id($id)
-    {
-        $location_name=\DB::table('location')->where('id',$id)->pluck('location_name_short');
-        return $location_name;
-    }
+
 
 	
 

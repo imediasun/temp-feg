@@ -1819,7 +1819,7 @@ return $configs;
     {
         $locations = \DB::table('user_locations')
             ->join('location', 'user_locations.location_id', '=', 'location.id')
-            ->select('location.*')
+            ->select('location.id','location.location_name','location.location_name_short','location.street1','location.state','location.city','location.zip')
             ->where('location.active',1)
             ->where('user_locations.user_id','=',$id)->orderBy('id','asc')
             ->get();
