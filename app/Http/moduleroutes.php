@@ -33,4 +33,7 @@
                     Route::controller('gamesdisposed', 'GamesdisposedController');
                     Route::controller('spareparts', 'SparepartsController');
                     Route::controller('submitservicerequest', 'SubmitservicerequestController');
+                    Route::controller('gameservicehistory', 'GameservicehistoryController');
+                    Route::controller('merchindisetheminggallary', 'MerchindisetheminggallaryController');
+                    Route::controller('redemptioncountergallary', 'RedemptioncountergallaryController');
                     ?>

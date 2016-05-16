@@ -77,7 +77,7 @@
 								 <td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}" data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
                                      @if($field['field']=='attachment_path')
                                          <?php
-                                         echo "<a href='".url()."/uploads/serviceRequest/".$value."''> $value </a>";
+                                         echo "<a href='".url()."/uploads/serviceRequest/".$value."' target='_blank' class='previewImage fancybox' rel='gallery1' href='".url()."/uploads/serviceRequest/".$value."'> $value </a>";
                                          ?>
                                      @else
                                          {!! $value !!}

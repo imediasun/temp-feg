@@ -1,13 +1,12 @@
-<?php namespace App\Models;
+<?php
+
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Sximo extends Model
-{
+class Sximo extends Model {
 
-
-    public static function getRows($args, $cond = null)
-    {
+    public static function getRows($args, $cond = null) {
 
         $table = with(new static)->table;
         $key = with(new static)->primaryKey;
@@ -19,7 +18,7 @@ class Sximo extends Model
             'order' => '',
             'params' => '',
             'global' => 1
-        ), $args));
+                        ), $args));
 
         $offset = ($page - 1) * $limit;
         $limitConditional = ($page != 0 && $limit != 0) ? "LIMIT  $offset , $limit" : '';
@@ -39,7 +38,7 @@ class Sximo extends Model
         } else {
             $select .= self::queryWhere();
         }
-       //echo $select." {$params} ". self::queryGroup() ." {$orderConditional}  {$limitConditional} ";
+        //echo $select." {$params} ". self::queryGroup() ." {$orderConditional}  {$limitConditional} ";
         //die();
         $result = \DB::select($select . " {$params} " . self::queryGroup() . " {$orderConditional}  {$limitConditional} ");
         if ($key == '') {
@@ -47,38 +46,34 @@ class Sximo extends Model
         } else {
             $key = $table . "." . $key;
         }
-        $counter_select = preg_replace('/[\s]*SELECT(.*)FROM/Usi', 'SELECT count(' . $key . ') as total FROM', self::querySelect());
+
+        $counter_select = preg_replace('/[\s]*SELECT(.*)FROM/Usi', 'SELECT count(' . $key . ') as total FROM', $select);
         //total query becomes too huge
-        if ($table == "orders" && !isset($_GET['order_type'])) {
-            $total = 18000;
+        if ($table == "orders") {
+            $total = "2000";
         }
-        elseif($table=='games')
+        elseif($table=="img_uploads")
         {
-            $total=4000;
+        $total="";    
         }
-
-
-
         else {
-            $total = \DB::select($select . "
-				{$params} " . self::queryGroup() . " {$orderConditional}  ");
-            $total = count($total);
+            $total = \DB::select($counter_select . "
+				{$params} " . self::queryGroup());
+            $total = $total[0]->total;
+            //$total = 1000;       
         }
-        //$total = 1000;
         return $results = array('rows' => $result, 'total' => $total);
-
     }
 
-    public static function getRow($id)
-    {
+    public static function getRow($id) {
         $table = with(new static)->table;
         $key = with(new static)->primaryKey;
 
         $result = \DB::select(
-            self::querySelect() .
-            self::queryWhere() .
-            " AND " . $table . "." . $key . " = '{$id}' " .
-            self::queryGroup()
+                        self::querySelect() .
+                        self::queryWhere() .
+                        " AND " . $table . "." . $key . " = '{$id}' " .
+                        self::queryGroup()
         );
         if (count($result) <= 0) {
             $result = array();
@@ -89,35 +84,33 @@ class Sximo extends Model
         return $result;
     }
 
-    public function insertRow($data, $id)
-    {
+    public function insertRow($data, $id) {
         $table = with(new static)->table;
         $key = with(new static)->primaryKey;
         if ($id == NULL) {
             // Insert Here 
-            if (isset($data['createdOn'])) $data['createdOn'] = date("Y-m-d H:i:s");
-            if (isset($data['updatedOn'])) $data['updatedOn'] = date("Y-m-d H:i:s");
+            if (isset($data['createdOn']))
+                $data['createdOn'] = date("Y-m-d H:i:s");
+            if (isset($data['updatedOn']))
+                $data['updatedOn'] = date("Y-m-d H:i:s");
             $id = \DB::table($table)->insertGetId($data);
-
         } else {
             // Update here 
             // update created field if any
-            if (isset($data['createdOn'])) unset($data['createdOn']);
-            if (isset($data['updatedOn'])) $data['updatedOn'] = date("Y-m-d H:i:s");
+            if (isset($data['createdOn']))
+                unset($data['createdOn']);
+            if (isset($data['updatedOn']))
+                $data['updatedOn'] = date("Y-m-d H:i:s");
             \DB::table($table)->where($key, $id)->update($data);
-
         }
         return $id;
     }
 
-    function intersectCols($arr1, $arr2)
-    {
-
-
+    function intersectCols($arr1, $arr2) {
+        
     }
 
-    static function makeInfo($id)
-    {
+    static function makeInfo($id) {
         $row = \DB::table('tb_module')->where('module_name', $id)->get();
         $data = array();
         foreach ($row as $r) {
@@ -127,12 +120,11 @@ class Sximo extends Model
             $data['note'] = \SiteHelpers::infoLang($r->module_note, $langs, 'note');
             $data['table'] = $r->module_db;
             $data['key'] = $r->module_db_key;
-            $data['config'] = \SiteHelpers::CF_decode_json($r->module_config);            
+            $data['config'] = \SiteHelpers::CF_decode_json($r->module_config);
             $field = array();
             foreach ($data['config']['grid'] as $fs) {
                 foreach ($fs as $f)
                     $field[] = $fs['field'];
-
             }
             $data['field'] = $field;
             $data['setting'] = array(
@@ -144,25 +136,21 @@ class Sximo extends Model
                 'form-method' => (isset($data['config']['setting']['form-method']) ? $data['config']['setting']['form-method'] : 'native'),
                 'view-method' => (isset($data['config']['setting']['view-method']) ? $data['config']['setting']['view-method'] : 'native'),
                 'inline' => (isset($data['config']['setting']['inline']) ? $data['config']['setting']['inline'] : 'false'),
-                
-                'usesimplesearch'         => (isset($data['config']['setting']['usesimplesearch'])  ? $data['config']['setting']['usesimplesearch'] : 'false'  ),
-                'disablepagination'         => (isset($data['config']['setting']['disablepagination'])  ? $data['config']['setting']['disablepagination'] : 'false'  ),
-                'disablesort'               => (isset($data['config']['setting']['disablesort'])  ? $data['config']['setting']['disablesort'] : 'false'  ),
-                'disableactioncheckbox'     => (isset($data['config']['setting']['disableactioncheckbox'])  ? $data['config']['setting']['disableactioncheckbox'] : 'false'  ),
-                'disablerowactions'         => (isset($data['config']['setting']['disablerowactions'])  ? $data['config']['setting']['disablerowactions'] : 'false'  ),
+                'usesimplesearch' => (isset($data['config']['setting']['usesimplesearch']) ? $data['config']['setting']['usesimplesearch'] : 'false' ),
+                'disablepagination' => (isset($data['config']['setting']['disablepagination']) ? $data['config']['setting']['disablepagination'] : 'false' ),
+                'disablesort' => (isset($data['config']['setting']['disablesort']) ? $data['config']['setting']['disablesort'] : 'false' ),
+                'disableactioncheckbox' => (isset($data['config']['setting']['disableactioncheckbox']) ? $data['config']['setting']['disableactioncheckbox'] : 'false' ),
+                'disablerowactions' => (isset($data['config']['setting']['disablerowactions']) ? $data['config']['setting']['disablerowactions'] : 'false' ),
             );
-            
+
             if ($data['setting']['disablepagination'] == 'true') {
                 $data['setting']['perpage'] = 0;
             }
         }
         return $data;
-
-
     }
 
-    static function getComboselect($params, $limit = null, $parent = null)
-    {
+    static function getComboselect($params, $limit = null, $parent = null) {
         $limit = explode(':', $limit);
         $parent = explode(':', $parent);
 
@@ -201,8 +189,7 @@ class Sximo extends Model
         return $row;
     }
 
-    public static function getColoumnInfo($result)
-    {
+    public static function getColoumnInfo($result) {
         $pdo = \DB::getPdo();
         $res = $pdo->query($result);
         $i = 0;
@@ -213,16 +200,13 @@ class Sximo extends Model
             $i++;
         }
         return $coll;
-
     }
 
-
-    function validAccess($id)
-    {
+    function validAccess($id) {
 
         $row = \DB::table('tb_groups_access')->where('module_id', '=', $id)
-            ->where('group_id', '=', \Session::get('gid'))
-            ->get();
+                ->where('group_id', '=', \Session::get('gid'))
+                ->get();
 
         if (count($row) >= 1) {
             $row = $row[0];
@@ -232,15 +216,12 @@ class Sximo extends Model
                 $data = array();
             }
             return $data;
-
         } else {
             return false;
         }
-
     }
 
-    static function getColumnTable($table)
-    {
+    static function getColumnTable($table) {
         $columns = array();
         foreach (\DB::select("SHOW COLUMNS FROM $table") as $column) {
             //print_r($column);
@@ -251,8 +232,7 @@ class Sximo extends Model
         return $columns;
     }
 
-    static function getTableList($db)
-    {
+    static function getTableList($db) {
         $t = array();
         $dbname = 'Tables_in_' . $db;
         foreach (\DB::select("SHOW TABLES FROM {$db}") as $table) {
@@ -261,16 +241,14 @@ class Sximo extends Model
         return $t;
     }
 
-    static function getTableField($table)
-    {
+    static function getTableField($table) {
         $columns = array();
         foreach (\DB::select("SHOW COLUMNS FROM $table") as $column)
             $columns[$column->Field] = $column->Field;
         return $columns;
     }
 
-    public static function searchOperation($operate)
-    {
+    public static function searchOperation($operate) {
         $val = '';
         switch ($operate) {
             case 'equal':
@@ -311,22 +289,19 @@ class Sximo extends Model
         return $val;
     }
 
-    public function checkModule($config_name, $module_id)
-    {
+    public function checkModule($config_name, $module_id) {
         $id = \DB::table('user_module_config')->where('config_name', '=', $config_name)->where('module_id', '=', $module_id)->pluck('id');
         return $id;
     }
 
-    public function getModuleConfig($module_id, $config_id)
-    {
+    public function getModuleConfig($module_id, $config_id) {
 
         $res = \DB::table('user_module_config')->where('module_id', '=', $module_id)->where('id', '=', $config_id)->get();
 
         return $res;
     }
 
-    public function getLocations($id)
-    {
+    public function getLocations($id) {
         $locations = array();
         $i = 0;
         $selected_loc = \DB::table('user_locations')->select('location_id')->where('user_id', '=', $id)->get();
@@ -337,8 +312,7 @@ class Sximo extends Model
         return implode(',', $locations);
     }
 
-    public function inserLocations($locations, $userid, $id)
-    {
+    public function inserLocations($locations, $userid, $id) {
 
         $loc = "";
         $i = 0;
@@ -353,35 +327,32 @@ class Sximo extends Model
         \DB::table('user_locations')->insert($loc);
     }
 
-    function getLocation($location_id)
-    {
+    function getLocation($location_id) {
         $row = \DB::table('location')
-            ->join('region', 'location.region_id', '=', 'region.id')
-            ->join('company', 'location.company_id', '=', 'company.id')
-            ->select('location.*', 'region.region', 'company.company_name_short')
-            ->where('location.id', '=', $location_id)
-            ->get();
+                ->join('region', 'location.region_id', '=', 'region.id')
+                ->join('company', 'location.company_id', '=', 'company.id')
+                ->select('location.*', 'region.region', 'company.company_name_short')
+                ->where('location.id', '=', $location_id)
+                ->get();
         return $row;
     }
 
-    function getServiceHistory($asset_id)
-    {
+    function getServiceHistory($asset_id) {
         $row = \DB::table('game_service_history')
-            ->leftJoin('users as u1', 'game_service_history.down_user_id', '=', 'u1.id')
-            ->leftJoin('users as u2', 'game_service_history.up_user_id', '=', 'u2.id')
-            ->select('game_service_history.*', 'u1.first_name as down_first_name', 'u1.last_name as down_last_name', 'u2.first_name as up_first_name', 'u2.last_name as up_last_name')
-            ->where('game_id', '=', $asset_id)->get();
+                        ->leftJoin('users as u1', 'game_service_history.down_user_id', '=', 'u1.id')
+                        ->leftJoin('users as u2', 'game_service_history.up_user_id', '=', 'u2.id')
+                        ->select('game_service_history.*', 'u1.first_name as down_first_name', 'u1.last_name as down_last_name', 'u2.first_name as up_first_name', 'u2.last_name as up_last_name')
+                        ->where('game_id', '=', $asset_id)->get();
         return $row;
     }
 
-    function getMoveHistory($asset_id = null)
-    {
+    function getMoveHistory($asset_id = null) {
         $row = \DB::table('game_move_history')
-            ->leftJoin('users as u1', 'game_move_history.from_by', '=', 'u1.id')
-            ->leftJoin('users as u2', 'game_move_history.to_by', '=', 'u2.id')
-            ->leftJoin('location as l1', 'game_move_history.from_loc', '=', 'l1.id')
-            ->leftJoin('location as l2', 'game_move_history.to_loc', '=', 'l2.id')
-            ->select('game_move_history.*', 'u1.username as from_name', 'u2.username as to_name', 'l1.location_name as from_location', 'l2.location_name as to_location');
+                ->leftJoin('users as u1', 'game_move_history.from_by', '=', 'u1.id')
+                ->leftJoin('users as u2', 'game_move_history.to_by', '=', 'u2.id')
+                ->leftJoin('location as l1', 'game_move_history.from_loc', '=', 'l1.id')
+                ->leftJoin('location as l2', 'game_move_history.to_loc', '=', 'l2.id')
+                ->select('game_move_history.*', 'u1.username as from_name', 'u2.username as to_name', 'l1.location_name as from_location', 'l2.location_name as to_location');
         if ($asset_id != null) {
 
             $row = $row->where('game_id', '=', $asset_id);
@@ -390,8 +361,7 @@ class Sximo extends Model
         return $row;
     }
 
-    function moveHistory()
-    {
+    function moveHistory() {
 
 // of course to revert the fetch mode you need to set it again
 
@@ -413,8 +383,7 @@ class Sximo extends Model
         return $row;
     }
 
-    function getPendingList()
-    {
+    function getPendingList() {
         $rows = \DB::Select("SELECT V.vendor_name AS Manufacturer,T.game_title AS Game_Title, G.version, G.serial, G.id, G.location_id, L.city, L.state, G.sale_price AS Wholesale,
 									IF(G.sale_price >= 1000,
 									ROUND(((G.sale_price*1.1)-1)/10+.5)*10+5,
@@ -423,8 +392,7 @@ class Sximo extends Model
         return $rows;
     }
 
-    function getForSaleList()
-    {
+    function getForSaleList() {
         $rows = \DB::Select("SELECT V.vendor_name AS Manufacturer,T.game_title AS Game_Title, G.version, G.serial, IF(G.date_in_service = '0000-00-00','', G.date_in_service) AS 'date_service', G.id, G.location_id, L.city, L.state, G.sale_price AS Wholesale,
 										IF(G.sale_price >= 1000,
 										ROUND(((G.sale_price*1.1)-1)/10+.5)*10+5,
@@ -439,8 +407,7 @@ class Sximo extends Model
         return $rows;
     }
 
-    function getVendorPorductlist($vendor_id)
-    {
+    function getVendorPorductlist($vendor_id) {
         $row = \DB::Select("SELECT V.vendor_name AS Vendor, P.vendor_description AS Description, P.sku, ROUND(P.case_price/P.num_items,2) AS Unit_Price,
 									 P.num_items AS Items_Per_Case, P.case_price AS Case_Price, P.ticket_value AS Ticket_Value, O.order_type AS Order_Type,
 									 T.type_description AS Product_Type,  Y.yesno AS INACTIVE FROM products P
@@ -453,8 +420,7 @@ class Sximo extends Model
         return $row;
     }
 
-    function getOrderData($order_id)
-    {
+    function getOrderData($order_id) {
         \DB::setFetchMode(\PDO::FETCH_ASSOC);
         $row = \DB::select('SELECT U1.first_name, U1.last_name,U1.email,C.company_name_short,C.company_name_long,O.date_ordered,
 										  O.order_type_id,L.location_name_short AS loc_name_short,L.id AS loc_id,L.loading_info,
@@ -525,38 +491,72 @@ class Sximo extends Model
         \DB::setFetchMode(\PDO::FETCH_CLASS);
         return $row;
     }
-    function get_user_data($data = null)
-    {
+
+    function get_user_data($data = null) {
         $data['user_id'] = \Session::get('uid');
         $data['company_id'] = \Session::get('company_id');
         $company_id = $data['company_id'];
-        if($company_id == 1 || $company_id == 2 || $company_id == 3){$data['company'] = 'Family Entertainment Group';}
-        if($company_id == 4){$data['company'] = 'Cleveland Coin Machine Exchange';}
-        if($company_id == 5){$data['company'] = 'Wilderness Resorts';}
-        if($company_id == 6){$data['company'] = 'Fiesta Village';}
+        if ($company_id == 1 || $company_id == 2 || $company_id == 3) {
+            $data['company'] = 'Family Entertainment Group';
+        }
+        if ($company_id == 4) {
+            $data['company'] = 'Cleveland Coin Machine Exchange';
+        }
+        if ($company_id == 5) {
+            $data['company'] = 'Wilderness Resorts';
+        }
+        if ($company_id == 6) {
+            $data['company'] = 'Fiesta Village';
+        }
         $data['user_name'] = \Session::get('user_name');
         $data['first_name'] = \Session::get('ufname');
         $data['last_name'] = \Session::get('ulname');
-        $data['email'] = \Session::get('uemail');
+        $data['email'] = \Session::get('eid');
         $data['selected_location'] = \Session::get('selected_location');
         $data['selected_location_name'] = \Session::get('selected_location_name');
         $user_level = \Session::get('gid');
-        if($user_level == 1){$data['user_level'] = 'user';}
-        if($user_level == 2){$data['user_level'] = 'partner';}
-        if($user_level == 3){$data['user_level'] = 'merchmgr';}
-        if($user_level == 4){$data['user_level'] = 'fieldmgr';}
-        if($user_level == 5){$data['user_level'] = 'officemgr';}
-        if($user_level == 6){$data['user_level'] = 'distmgr';} // TREATED AS REGULAR USER - BELOW
-        if($user_level == 7){$data['user_level'] = 'financemgr';}
-        if($user_level == 8){$data['user_level'] = 'partnerplus';} //ADDS ACCESS TO MERCH REQUEST
-        if($user_level == 9){$data['user_level'] = 'guest';}
-        if($user_level == 10){$data['user_level'] = 'superadmin';}
-        if($user_level == 11){$data['user_level'] = 'techmgr';}
-        if($user_level == 1 || $user_level == 2 || $user_level == 6 || $user_level == 8 ||  $user_level == 11){$data['user_group'] = 'regusers';}
-        if($user_level == 3 || $user_level == 4 || $user_level == 5 || $user_level == 7 || $user_level == 9 || $user_level == 10){$data['user_group'] = 'allmgrs';}
+        if ($user_level == 1) {
+            $data['user_level'] = 'user';
+        }
+        if ($user_level == 2) {
+            $data['user_level'] = 'partner';
+        }
+        if ($user_level == 3) {
+            $data['user_level'] = 'merchmgr';
+        }
+        if ($user_level == 4) {
+            $data['user_level'] = 'fieldmgr';
+        }
+        if ($user_level == 5) {
+            $data['user_level'] = 'officemgr';
+        }
+        if ($user_level == 6) {
+            $data['user_level'] = 'distmgr';
+        } // TREATED AS REGULAR USER - BELOW
+        if ($user_level == 7) {
+            $data['user_level'] = 'financemgr';
+        }
+        if ($user_level == 8) {
+            $data['user_level'] = 'partnerplus';
+        } //ADDS ACCESS TO MERCH REQUEST
+        if ($user_level == 9) {
+            $data['user_level'] = 'guest';
+        }
+        if ($user_level == 10) {
+            $data['user_level'] = 'superadmin';
+        }
+        if ($user_level == 11) {
+            $data['user_level'] = 'techmgr';
+        }
+        if ($user_level == 1 || $user_level == 2 || $user_level == 6 || $user_level == 8 || $user_level == 11) {
+            $data['user_group'] = 'regusers';
+        }
+        if ($user_level == 3 || $user_level == 4 || $user_level == 5 || $user_level == 7 || $user_level == 9 || $user_level == 10) {
+            $data['user_group'] = 'allmgrs';
+        }
         $get_locations_by_region = \Session::get('get_locations_by_region');
         //$login_type = $this->session->userdata('login_type');
-       // $data['loc_1'] = \Session::get('user_locations[0]->id');
+        // $data['loc_1'] = \Session::get('user_locations[0]->id');
 
         $loc_count = 10;
         $data['email_2'] = \Session::get('email_2');
@@ -572,50 +572,47 @@ class Sximo extends Model
         $data['restricted_mgr_email'] = \Session::get('restricted_mgr_email');
         $data['restricted_user_email'] = \Session::get('restricted_user_email');
 
-      /*  $this->load->library('user_agent');
-        if ($this->agent->is_mobile())
-        {
-            $data['agent'] = $this->agent->mobile();
-            $data['agent_type'] = 'mobile';
-        }
-        else if ($this->agent->is_browser())
-        {
-            $data['agent'] = $this->agent->browser().' '.$this->agent->version();
-            $data['agent_type'] = 'browser';
-        }
-        else if ($this->agent->is_robot())
-        {
-            $data['agent'] = $this->agent->robot();
-            $data['agent_type'] = 'robot';
-        }
-        else
-        {
-            $data['agent'] = 'Unidentified User Agent';
-            $data['agent_type'] = 'undefined';
-        }
-*/
+        /*  $this->load->library('user_agent');
+          if ($this->agent->is_mobile())
+          {
+          $data['agent'] = $this->agent->mobile();
+          $data['agent_type'] = 'mobile';
+          }
+          else if ($this->agent->is_browser())
+          {
+          $data['agent'] = $this->agent->browser().' '.$this->agent->version();
+          $data['agent_type'] = 'browser';
+          }
+          else if ($this->agent->is_robot())
+          {
+          $data['agent'] = $this->agent->robot();
+          $data['agent_type'] = 'robot';
+          }
+          else
+          {
+          $data['agent'] = 'Unidentified User Agent';
+          $data['agent_type'] = 'undefined';
+          }
+         */
 
         // HEADER DETAIL START
-        $header_detail =  $data['first_name'].' is viewing location <b>'.$data['selected_location'].' | '.$data['selected_location_name'].'</b>. Select to change your location view - ';
+        $header_detail = $data['first_name'] . ' is viewing location <b>' . $data['selected_location'] . ' | ' . $data['selected_location_name'] . '</b>. Select to change your location view - ';
         $locations_count = 0;
         // HEADER DETAIL END
         $browser_info = $_SERVER['HTTP_USER_AGENT'];
         return $data;
     }
-    public function get_location_info_by_id($loc_id = null, $field = null)
-    {
-        $query = \DB::select('SELECT '.$field.' FROM location WHERE id = '.$loc_id);
-        foreach($query as $row)
-        {
+
+    public function get_location_info_by_id($loc_id = null, $field = null) {
+        $query = \DB::select('SELECT ' . $field . ' FROM location WHERE id = ' . $loc_id);
+        foreach ($query as $row) {
             $location_info = $row->$field;
         }
 
-        if(empty($location_info))
-        {
+        if (empty($location_info)) {
             $location_info = 'No Location with That ID';
         }
         return $location_info;
     }
-
 
 }

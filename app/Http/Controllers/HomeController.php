@@ -17,7 +17,6 @@ class HomeController extends Controller {
 	 */
 	public function index( Request $request )
 	{
-
 		if(CNF_FRONT =='false' && $request->segment(1) =='' ) :
 			return Redirect::to('dashboard');
 		endif; 		
@@ -25,8 +24,7 @@ class HomeController extends Controller {
 		$page = $request->segment(1);
 		if($page !='') :
 			$content = \DB::table('tb_pages')->where('alias','=',$page)->where('status','=','enable')->get();
-		print_r($content);
-		return '';
+
 			if(count($content) >=1)
 			{
 
@@ -52,8 +50,8 @@ class HomeController extends Controller {
 					$isValid =  (isset($access[$group_id]) && $access[$group_id] == 1 ? 1 : 0 );	
 					if($isValid ==0)
 					{
-						return Redirect::to('')
-							->with('message', \SiteHelpers::alert('error',Lang::get('core.note_restric')));				
+						return Redirect::to('');
+							//->with('message', \SiteHelpers::alert('error',Lang::get('core.note_restric')));
 					}
 				}				
 				if($row->template =='backend')

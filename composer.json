@@ -12,7 +12,7 @@
         "laravel/socialite": "~2.0",
         "graham-campbell/markdown": "~3.1",
       "simplesoftwareio/simple-qrcode": "~1",
-      "intervention/image": "dev-master",
+      "intervention/image": "~2.2",
       "barryvdh/laravel-dompdf": "0.6.*"
     },
     "require-dev": {

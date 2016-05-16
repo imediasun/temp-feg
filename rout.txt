@@ -1,8 +1,0 @@
-
-
-                                                               
-  [ReflectionException]                                        
-  Class App\Http\Controllers\TestingController does not exist  
-                                                               
-
-

@@ -206,9 +206,8 @@ return [
         'Markdown'  => GrahamCampbell\Markdown\Facades\Markdown::class,
         'QrCode'    => SimpleSoftwareIO\QrCode\Facades\QrCode::class,
         'Image'     => Intervention\Image\Facades\Image::class,
-        'PDF'       => Barryvdh\DomPDF\Facade::class
-
-
+        'PDF'       => Barryvdh\DomPDF\Facade::class,
+        'Image' => Intervention\Image\Facades\Image::class
 
 
     ],
