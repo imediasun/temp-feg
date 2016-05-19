@@ -1,7 +1,6 @@
 @extends('layouts.app')
 
 @section('content')
-
 <div class="page-content row">
   <!-- Begin Header & Breadcrumb -->
     <div class="page-header">
@@ -22,24 +21,11 @@
 		<div id="{{ $pageModule }}View"></div>			
 		<div id="{{ $pageModule }}Grid"></div>
 	</div>	
-	<!-- End Content -->
-    <?php
-    if(! isset($id)){
-        $id= 0;
-    }
-    ?>
-
+	<!-- End Content -->  
 </div>	
 <script>
 $(document).ready(function(){
-    var id = "{{ $sid  }}";
-    if(id){
-        ajaxViewDetail('#order',"http://localhost/sximo/public/order/update/1/"+id); return false;
-        //reloadData('#{{ $pageModule }}','/sximo/public/order/data');
-    }
-    else{
-        reloadData('#{{ $pageModule }}','{{ $pageModule }}/data');
-    }
-});
+	reloadData('#{{ $pageModule }}','{{ $pageModule }}/data');	
+});	
 </script>	
 @endsection

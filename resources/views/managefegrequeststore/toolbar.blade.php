@@ -5,8 +5,9 @@
            onclick="SximoModal(this.href,'Advance Search'); return false;"><i class="fa fa-search"></i> Search</a>
 
     </div>
+    {!! Form::open(array('url'=>'managefegrequeststore/multirequestorderfill/', 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'managefegrequeststoreFormAjax')) !!}
     <div >
-    <div class="col-md-3">
+        <div class="col-md-3">
         <br/>
         <select name="type" class="select3" id="request_type">
             <option disabled>Select Requests Type</option>
@@ -19,7 +20,7 @@
 <br/>
         <input  name="order_type" @if($TID )value="{{ $TID }}" @endif id="order_type" type="hidden" onchange="pageRefresh('T');" style="width:98%">
     </div>
-    <div class="col-md-3">
+    <div class="col-md-2">
         <br/>
         <select id="location_id" class="form-control" name="location_id" onchange="pageRefresh('L');">
             @foreach($manageRequestInfo['loc_options'] as $k => $locations)
@@ -27,7 +28,7 @@
             @endforeach
         </select>
     </div>
-    <div class="col-md-3">
+    <div class="col-md-2">
         <br/>
         <select id="vendor_id" class="form-control" name="vendor_id" onchange="pageRefresh('V');">
             @foreach($manageRequestInfo['vendor_options'] as $k => $vendor)
@@ -35,6 +36,13 @@
             @endforeach
         </select>
     </div>
+        <div class="col-md-2">
+            <br/>
+            @if(!empty($VID))
+                <button type="submit" name="submit" class="btn btn-primary btn-sm" id="multi-btn"><i class="fa  fa-save" ></i>  Add Items to Order Form </button>
+        @endif
+        </div>
+        {!! Form::close() !!}
     </div>
 
     <div class="clearfix"></div>

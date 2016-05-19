@@ -212,5 +212,142 @@ class managefegrequeststore extends Sximo
 
         return $data;
     }
+    function manageRequests($v1 = null, $v2 = null, $v3 = null)
+    {
+        $user_lever=\Session::get('gid');
+        if ($user_lever == 2)
+        {
+            redirect('dashboard');
+        }
+        else
+        {
+
+            if(substr($v1, 0, 1) == 'T')
+            {
+                $v1 = substr($v1, 1);
+                $TID = $v1;
+            }
+            else if(substr($v2, 0, 1) == 'T')
+            {
+                $v2 = substr($v2, 1);
+                $TID = $v2;
+            }
+            else if(substr($v3, 0, 1) == 'T')
+            {
+                $v3 = substr($v3, 1);
+                $TID = $v3;
+            }
+            else
+            {
+                $TID = 0;
+            }
+
+            if(substr($v1, 0, 1) == 'L')
+            {
+                $v1 = substr($v1, 1);
+                $LID = $v1;
+            }
+            else if(substr($v2, 0, 1) == 'L')
+            {
+                $v2 = substr($v2, 1);
+                $LID = $v2;
+            }
+            else if(substr($v3, 0, 1) == 'L')
+            {
+                $v3 = substr($v3, 1);
+                $LID = $v3;
+            }
+            else
+            {
+                $LID = 0;
+            }
+
+            if(substr($v1, 0, 1) == 'V')
+            {
+                $v1 = substr($v1, 1);
+                $VID = $v1;
+            }
+            else if(substr($v2, 0, 1) == 'V')
+            {
+                $v2 = substr($v2, 1);
+                $VID = $v2;
+            }
+            else if(substr($v3, 0, 1) == 'V')
+            {
+                $v3 = substr($v3, 1);
+                $VID = $v3;
+            }
+            else
+            {
+                $VID = 0;
+            }
+
+            $data['order_type_options'] = self::getOrdersDropDownData();
+
+            if(!empty($TID))
+            {
+                if(strpos($TID,'-'))
+                {
+                    $TID_comma_replaced = str_replace('-',',',$TID);
+                }
+                else
+                {
+                    $TID_comma_replaced = $TID;
+                }
+
+                $data['loc_options'] = self::getLocationDropDownData('CONCAT(requests.location_id," | ",location.location_name_short)','WHERE requests.status_id=1 AND products.prod_type_id IN ('.$TID_comma_replaced.')','ORDER BY requests.location_id');
+
+                if(!empty($LID))
+                {
+                    $data['vendor_options'] = self::getVendorDropDownData('vendor_name','WHERE requests.status_id=1 AND requests.location_id='.$LID.' AND products.prod_type_id IN ('.$TID_comma_replaced.')','ORDER BY vendor.vendor_name');
+                }
+                else
+                {
+                    $data['vendor_options'] = array('' => '<-- Select');
+                }
+
+                $order_type_where = "AND P.prod_type_id IN (".$TID_comma_replaced.")";
+            }
+            else
+            {
+                $data['loc_options'] = array('' => '<-- Select');
+                $data['vendor_options'] = array('' => '<-- Select');
+
+                $order_type_where = "";
+            }
+            $data['TID'] = $TID;
+            $data['LID'] = $LID;
+            $data['VID'] = $VID;
+          $number_requests = '';
+            $query = \DB::select('SELECT CONCAT("(",COUNT(R.id),") <em>",O.order_type,"</em>, ") AS request_count
+									 FROM requests R
+								LEFT JOIN products P ON P.id = R.product_id
+								LEFT JOIN order_type O ON O.id = P.prod_type_id
+									WHERE R.status_id = 1
+										'.$order_type_where.'
+								 GROUP BY P.prod_type_id');
+
+            foreach ($query as $row)
+            {
+                $number_requests = $number_requests.$row->request_count;
+            }
+            $data['number_requests'] = substr($number_requests, 0, -2);
+
+            $query = \DB::select('SELECT GROUP_CONCAT(order_type) AS order_types
+									 FROM order_type
+									WHERE id != 6
+									  AND id != 10');
+            if (count($query) == 1)
+            {
+                $data['order_types'] = $query[0]->order_types;
+            }
+
+            $data['title'] = 'Manage Requests';
+            $data['subtitle1'] = 'Merch Requests';
+            $data['subtitle2'] = 'Office Requests';
+            $data['subtitle3'] = 'Other Requests';
+            return $data;
+        }
+    }
 
 }

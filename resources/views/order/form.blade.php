@@ -7,12 +7,6 @@
                    onclick="ajaxViewClose('#{{ $pageModule }}')"><i class="fa fa fa-times"></i></a>
             </h4>
         </div>
-        <script>
-            $(".sbox").onload=function(){
-                alert();
-            }
-        </script>
-
         <div class="sbox-content">
             @endif
             {!! Form::open(array('url'=>'order/save/', 'class'=>'form-vertical','files' => true ,
@@ -54,7 +48,7 @@
                                 Name </label>
 
                             <div class="col-md-8">
-                                <input type="text"  name="to_add_name" id="to_add_name" class="form-control"/>
+                                <input type="text"  name="to_add_name" id="to_add_name" class="form-control" value="{{ $data['alt_name'] }}"/>
                             </div>
                         </div>
                         <div class="form-group  ">
@@ -63,7 +57,7 @@
                                 Street Address </label>
 
                             <div class="col-md-8">
-                                <input type="text" name="to_add_street" id="to_add_street" class="form-control"/></div>
+                                <input type="text" name="to_add_street" id="to_add_street" class="form-control" value="{{ $data['alt_street']}}"/></div>
                         </div>
                         <div class="form-group  ">
                             <br/><br/>
@@ -71,12 +65,12 @@
                                 City | State | Zip </label>
 
                             <div class="col-md-8">
-                                <input type="text" name="to_add_city" id="to_add_city" value="" class="form-control"
-                                       style="width:40%;float:left;margin-left:3px"/>
-                                <input type="text" name="to_add_state" id="to_add_state" class="form-control" value=""
+                                <input type="text" name="to_add_city" id="to_add_city" value="{{ $data['alt_city'] }}" class="form-control"
+                                       style="width:40%;float:left;margin-left:3px" />
+                                <input type="text" name="to_add_state" id="to_add_state" class="form-control" value="{{ $data['alt_state']  }}"
                                        style="width:30%;float:left;margin-left:3px"/>
                                 <input type="text" name="to_add_zip" id="to_add_zip"  class="form-control"
-                                       value="" style="width:25%;float:left;margin-left:3px"/>
+                                       value="{{ $data['alt_zip'] }}" style="width:25%;float:left;margin-left:3px"/>
 
                             </div>
                         </div>
@@ -86,7 +80,7 @@
                                 Shipping Notes </label>
 
                             <div class="col-md-8">
-                                <input type="text" name="to_add_notes" id="to_add_notes" class="form-control"/></div>
+                                <input type="text" name="to_add_notes" id="to_add_notes" class="form-control" value="{{ $data['shipping_notes'] }}"/></div>
 
                         </div>
                     </div>
@@ -277,13 +271,16 @@
     </div>
     <script type="text/javascript">
         $('#alt_ship_to').on('change', function () {
-                    if ($(this).is(':checked'))
-                        $("#ship_address").show();
-                    else
-                        $("#ship_address").hide();
-
+                    hideShowAltLocation();
                 }
         );
+        function hideShowAltLocation()
+        {
+            if ($("#alt_ship_to").is(':checked'))
+                $("#ship_address").show();
+            else
+                $("#ship_address").hide();
+        }
         function calculateSum() {
 
 
@@ -303,6 +300,7 @@
         }
 
         $(document).ready(function () {
+            hideShowAltLocation();
 
             $("#submit_btn").hide();
             $("#location_id").jCombo("{{ URL::to('order/comboselect?filter=location:id:id|location_name ') }}",
@@ -390,8 +388,15 @@
         function showResponse(data) {
 
             if (data.status == 'success') {
-                ajaxViewClose('#{{ $pageModule }}');
-                ajaxFilter('#{{ $pageModule }}', '{{ $pageUrl }}/data');
+                var url=location.href;
+                if( url.indexOf('submitorder') != -1)
+                {
+                    location.href="{{ url() }}/managefegrequeststore";
+                }
+                else {
+                    ajaxViewClose('#{{ $pageModule }}');
+                    ajaxFilter('#{{ $pageModule }}', '{{ $pageUrl }}/data');
+                }
                 notyMessage(data.message);
                 $('#sximo-modal').modal('hide');
             } else {

@@ -37,7 +37,7 @@ class OrderController extends Controller
     {
         if ($this->access['is_view'] == 0)
             return Redirect::to('dashboard')->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
-
+        $this->data['sid'] = "";
         $this->data['access'] = $this->access;
         return view('order.index', $this->data);
     }
@@ -94,7 +94,7 @@ class OrderController extends Controller
             $order_type = \DB::select("Select order_type FROM order_type WHERE id = " . $data->order_type_id . "");
             $rows[$index]->order_type_id = (isset($order_type[0]->order_type) ? $order_type[0]->order_type : '');
 
-          //  $vendor = \DB::table('vendor')->where('id', '=', $data->vendor_id)->get(array('vendor_name'));
+            //  $vendor = \DB::table('vendor')->where('id', '=', $data->vendor_id)->get(array('vendor_name'));
             //$rows[$index]->vendor_id = (isset($vendor[0]->vendor_name) ? $vendor[0]->vendor_name : '');
 
             $order_status = \DB::select("Select status FROM order_status WHERE id = " . $data->status_id . "");
@@ -132,10 +132,14 @@ class OrderController extends Controller
     function getUpdate(Request $request, $id = 0, $mode = '')
     {
         $editmode = $prefill_type = 'edit';
+        $where_in_expression = '';
+        $this->data['setting'] = $this->info['setting'];
         if ($id != 0 && $mode == '') {
             $mode = 'edit';
         } elseif ($id == 0 && $mode == '') {
             $mode = 'create';
+        } elseif (substr($mode, 0, 3) == 'SID') {
+            $mode = $mode;
         }
         if ($id == 0) {
             if ($this->access['is_add'] == 0)
@@ -156,7 +160,6 @@ class OrderController extends Controller
         $this->data['mode'] = $mode;
         $this->data['id'] = $id;
         $this->data['data'] = $this->model->getOrderQuery($id, $mode);
-
         return view('order.form', $this->data);
     }
 
@@ -219,6 +222,7 @@ class OrderController extends Controller
             $location_id = $request->get('location_id');
             $order_type = $request->get('order_type_id');
             $vendor_id = $request->get('vendor_id');
+            $vendor_email = $this->model->getVendorEmail($vendor_id);
             $freight_type_id = $request->get('freight_type_id');
             $date_ordered = $request->get('date_ordered');
             $total_cost = $request->get('order_total');
@@ -239,14 +243,14 @@ class OrderController extends Controller
                 $to_add_state = $request->get('to_add_state');
                 $to_add_zip = $request->get('to_add_zip');
                 $to_add_notes = $request->get('to_add_notes');
-                $alt_address = $to_add_name . '|' . $to_add_street . '|' . $to_add_city . ', ' . $to_add_state . ' ' . $to_add_zip . '|' . $to_add_notes;
+                $alt_address = $to_add_name . '|' . $to_add_street . '|' . $to_add_city . '| ' . $to_add_state . '| ' . $to_add_zip . '|' . $to_add_notes;
             }
             $itemsArray = $request->get('item');
             $priceArray = $request->get('price');
             $qtyArray = $request->get('qty');
             $productIdArray = $request->get('product_id');
             $requestIdArray = $request->get('request_id');
-            $games=$request->get('game');
+            $games = $request->get('game');
             $num_items_in_array = count($itemsArray);
             for ($i = 0; $i < $num_items_in_array; $i++) {
                 $j = $i + 1;
@@ -291,7 +295,7 @@ class OrderController extends Controller
                     'po_notes' => $notes
                 );
                 $this->model->insert($orderData, $id);
-                $order_id=\DB::getPdo()->lastInsertId();
+                $order_id = \DB::getPdo()->lastInsertId();
                 //$this->db->insert('orders', $orderData);
                 //$last_insert_id = $this->db->insert_id();
             }
@@ -335,6 +339,23 @@ class OrderController extends Controller
                     \DB::table('products')->insert($productData);
                 }
             }
+            $mailto = $vendor_email;
+            $from = \Session::get('eid');
+            //send product order as email to vendor only if sendor and reciever email is available
+            if(!empty($mailto) && !empty($from))
+            {
+            $this->getPo($order_id, true,$mailto,$from);
+            }
+            //$result = Mail::send('submitservicerequest.test', $message, function ($message) use ($to, $from, $full_upload_path, $subject) {
+//
+//        if (isset($full_upload_path) && !empty($full_upload_path)) {
+//            $message->attach($full_upload_path);
+//        }
+//        $message->subject($subject);
+//        $message->to($to);
+//        $message->from($from);
+//
+//    });
             return response()->json(array(
                 'status' => 'success',
                 'message' => \Lang::get('core.note_success')
@@ -416,7 +437,7 @@ class OrderController extends Controller
         echo $po;
     }
 
-    function getPo($order_id = null)
+    function getPo($order_id = null, $sendemail = false, $to = null, $from = null)
     {
         $data = $this->model->getOrderData($order_id);
 
@@ -494,7 +515,21 @@ class OrderController extends Controller
                 // $item_total_string = $item_total_string."-----------------\n"."$ ".number_format($order_total_cost,2)."\n";
             }
             $pdf = \PDF::loadView('order.po', ['data' => $data, 'main_title' => "Purchase Order"]);
-            return $pdf->download($data[0]['company_name_short'] . "_PO_" . $data[0]['po_number'] . '.pdf');
+            if ($sendemail) {
+                if (isset($to)) {
+                    $filename='PO_'.$order_id.'.pdf';
+                    $subject = "Purchase Order";
+                    $message = "Purchase Order";
+                    $result = \Mail::raw($message, function ($message) use ($to, $from, $subject, $pdf,$filename) {
+                        $message->subject($subject);
+                        $message->from($from);
+                        $message->to($to);
+                        $message->attachData($pdf->output(),$filename);
+                    });
+                }
+            } else {
+                return $pdf->download($data[0]['company_name_short'] . "_PO_" . $data[0]['po_number'] . '.pdf');
+            }
         }
     }
 
@@ -533,12 +568,14 @@ class OrderController extends Controller
         $msg = $this->model->getPoNumber($po_full);
         echo $msg;
     }
-    function getOrderreceipt($order_id=null)
+
+    function getOrderreceipt($order_id = null)
     {
-        $this->data['data']=$this->model->getOrderReceipt($order_id);
-        return view('order.order-receipt',$this->data);
+        $this->data['data'] = $this->model->getOrderReceipt($order_id);
+        return view('order.order-receipt', $this->data);
     }
-    function postReceiveorder(Request $request,$id=null)
+
+    function postReceiveorder(Request $request, $id = null)
     {
 
         $order_id = $request->get('order_id');
@@ -546,81 +583,79 @@ class OrderController extends Controller
         $notes = $request->get('notes');
         $order_status = $request->get('order_status');
         $added_to_inventory = $request->get('added_to_inventory');
-        $user_id=$request->get('user_id');
-        $added=0;
-        $rules=array();
-        if(empty($notes))
-        {
-            $rules['order_status']="required:min:2";
+        $user_id = $request->get('user_id');
+        $added = 0;
+        $rules = array();
+        if (empty($notes)) {
+            $rules['order_status'] = "required:min:2";
         }
-        if($order_status == 5) // Advanced Replacement Returned.. require tracking number
+        if ($order_status == 5) // Advanced Replacement Returned.. require tracking number
         {
-            $rules['tracking_number']="required|min:3";
+            $rules['tracking_number'] = "required|min:3";
             $tracking_number = $request->get('tracking_number');
         }
         $validator = Validator::make($request->all(), $rules);
-       if($validator->passes())
-       {
-           if(!empty($item_count) && $added_to_inventory == 0)
-           {
+        if ($validator->passes()) {
+            if (!empty($item_count) && $added_to_inventory == 0) {
 
-               ///////APPLY PRIZES TO THE PROPER GAMES / LOCATIONS
-               for ($i=1; $i<=$item_count; $i++)
-               {
-                   $product_id = $request->get('product_id_'.$i);
-                   $order_qty = $request->get('order_qty_'.$i);
-                   $game = $request->get('game_'.$i);
+                ///////APPLY PRIZES TO THE PROPER GAMES / LOCATIONS
+                for ($i = 1; $i <= $item_count; $i++) {
+                    $product_id = $request->get('product_id_' . $i);
+                    $order_qty = $request->get('order_qty_' . $i);
+                    $game = $request->get('game_' . $i);
 
-                   // IF NO GAME SELECTED, INSERT INTO INVENTORY FOR USER'S LOCATION
-                   if(!empty($game))
-                   {
-                   // IF ALL AVAILABLE QUANTITIES ARE ALLOCATED TO THE GAME
-                       $allGame = array('product_id' => $product_id);
-                       \DB::table('game')->where('id', $game)->update($allGame);
-                   }
+                    // IF NO GAME SELECTED, INSERT INTO INVENTORY FOR USER'S LOCATION
+                    if (!empty($game)) {
+                        // IF ALL AVAILABLE QUANTITIES ARE ALLOCATED TO THE GAME
+                        $allGame = array('product_id' => $product_id);
+                        \DB::table('game')->where('id', $game)->update($allGame);
+                    }
 
-                   $location_id = $request->get('location_id');
+                    $location_id = $request->get('location_id');
 
-                   $query = \DB::select('SELECT id
+                    $query = \DB::select('SELECT id
 											 FROM merch_inventory
-											WHERE product_id = '.$product_id.'
-								   	 		  AND location_id = '.$location_id.'');
+											WHERE product_id = ' . $product_id . '
+								   	 		  AND location_id = ' . $location_id . '');
 
-                   if (count($query) == 1)
-                   {
-                       \DB::update('UPDATE merch_inventory
-								 	 	 SET product_qty = product_qty + '.$order_qty.'
-							   	   	   WHERE product_id = '.$product_id.'
-								   	     AND location_id = '.$location_id);
-                   }
-                   else
-                   {
-                       \DB::insert('INSERT INTO merch_inventory (`location_id`,`product_id`,`product_qty`,`user_id`)
-							 	  		   VALUES ('.$location_id.','.$product_id.','.$order_qty.','.$user_id.')');
-                   }
-               }
-               $added = 1;
-           }
-           $data = array('date_received' => $request->get('date_received'),
-               'status_id' => $order_status,
-               'notes' => $notes,
-               'tracking_number' => $request->get('tracking_number'),
-               'received_by' => $request->get('user_id'),
-               'added_to_inventory' => $added);
-           \DB::table('orders')->where('id',$request->get('order_id'))->update($data);
-           return response()->json(array(
-               'status' => 'success',
-               'message' => \Lang::get('core.note_success')
-           ));
-       }
-       else {
+                    if (count($query) == 1) {
+                        \DB::update('UPDATE merch_inventory
+								 	 	 SET product_qty = product_qty + ' . $order_qty . '
+							   	   	   WHERE product_id = ' . $product_id . '
+								   	     AND location_id = ' . $location_id);
+                    } else {
+                        \DB::insert('INSERT INTO merch_inventory (`location_id`,`product_id`,`product_qty`,`user_id`)
+							 	  		   VALUES (' . $location_id . ',' . $product_id . ',' . $order_qty . ',' . $user_id . ')');
+                    }
+                }
+                $added = 1;
+            }
+            $data = array('date_received' => $request->get('date_received'),
+                'status_id' => $order_status,
+                'notes' => $notes,
+                'tracking_number' => $request->get('tracking_number'),
+                'received_by' => $request->get('user_id'),
+                'added_to_inventory' => $added);
+            \DB::table('orders')->where('id', $request->get('order_id'))->update($data);
+            return response()->json(array(
+                'status' => 'success',
+                'message' => \Lang::get('core.note_success')
+            ));
+        } else {
 
-           $message = $this->validateListError($validator->getMessageBag()->toArray());
-           return response()->json(array(
-               'message' => $message,
-               'status' => 'error'
-           ));
-       }
+            $message = $this->validateListError($validator->getMessageBag()->toArray());
+            return response()->json(array(
+                'message' => $message,
+                'status' => 'error'
+            ));
+        }
+    }
+
+    public function getSubmitorder($SID)
+    {
+        $this->data['sid'] = $SID;
+        $this->data['access'] = $this->access;
+        return view('order.index', $this->data);
     }
 
 }

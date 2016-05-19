@@ -50,7 +50,7 @@ class Sximo extends Model {
         $counter_select = preg_replace('/[\s]*SELECT(.*)FROM/Usi', 'SELECT count(' . $key . ') as total FROM', $select);
         //total query becomes too huge
         if ($table == "orders") {
-            $total = "2000";
+            $total = "27000";
         }
         elseif($table=="img_uploads")
         {

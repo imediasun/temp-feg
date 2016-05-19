@@ -1,465 +1,455 @@
 <?php
+
 class SiteHelpers
 {
-	public static function menus( $position ='top',$active = '1')
-	{
-		$data = array();
-		$menu = self::nestedMenu(0,$position ,$active);
-		foreach ($menu as $row)
-		{
-			$child_level = array();
-			$p = json_decode($row->access_data,true);
+    public static function menus($position = 'top', $active = '1')
+    {
+        $data = array();
+        $menu = self::nestedMenu(0, $position, $active);
+        foreach ($menu as $row) {
+            $child_level = array();
+            $p = json_decode($row->access_data, true);
 
 
-			if($row->allow_guest == 1)
-			{
-				$is_allow = 1;
-			} else {
-				$is_allow = (isset($p[Session::get('gid')]) && $p[Session::get('gid')] ? 1 : 0);
-			}
-			if($is_allow ==1)
-			{
+            if ($row->allow_guest == 1) {
+                $is_allow = 1;
+            } else {
+                $is_allow = (isset($p[Session::get('gid')]) && $p[Session::get('gid')] ? 1 : 0);
+            }
+            if ($is_allow == 1) {
 
-				$menus2 = self::nestedMenu($row->menu_id , $position ,$active );
-				if(count($menus2) > 0 )
-				{
-					$level2 = array();
-					foreach ($menus2 as $row2)
-					{
-						$p = json_decode($row2->access_data,true);
-						if($row2->allow_guest == 1)
-						{
-							$is_allow = 1;
-						} else {
-							$is_allow = (isset($p[Session::get('gid')]) && $p[Session::get('gid')] ? 1 : 0);
-						}
+                $menus2 = self::nestedMenu($row->menu_id, $position, $active);
+                if (count($menus2) > 0) {
+                    $level2 = array();
+                    foreach ($menus2 as $row2) {
+                        $p = json_decode($row2->access_data, true);
+                        if ($row2->allow_guest == 1) {
+                            $is_allow = 1;
+                        } else {
+                            $is_allow = (isset($p[Session::get('gid')]) && $p[Session::get('gid')] ? 1 : 0);
+                        }
 
-						if($is_allow ==1)
-						{
+                        if ($is_allow == 1) {
 
-							$menu2 = array(
-									'menu_id'		=> $row2->menu_id,
-									'module'		=> $row2->module,
-									'menu_type'		=> $row2->menu_type,
-									'url'			=> $row2->url,
-									'menu_name'		=> $row2->menu_name,
-									'menu_lang'		=> json_decode($row2->menu_lang,true),
-									'menu_icons'	=> $row2->menu_icons,
-									'childs'		=> array()
-								);
+                            $menu2 = array(
+                                'menu_id' => $row2->menu_id,
+                                'module' => $row2->module,
+                                'menu_type' => $row2->menu_type,
+                                'url' => $row2->url,
+                                'menu_name' => $row2->menu_name,
+                                'menu_lang' => json_decode($row2->menu_lang, true),
+                                'menu_icons' => $row2->menu_icons,
+                                'childs' => array()
+                            );
 
-							$menus3 = self::nestedMenu($row2->menu_id , $position , $active);
-							if(count($menus3) > 0 )
-							{
-								$child_level_3 = array();
-								foreach ($menus3 as $row3)
-								{
-									$p = json_decode($row3->access_data,true);
-									if($row3->allow_guest == 1)
-									{
-										$is_allow = 1;
-									} else {
-										$is_allow = (isset($p[Session::get('gid')]) && $p[Session::get('gid')] ? 1 : 0);
-									}
-									if($is_allow ==1)
-									{
-										$menu3 = array(
-												'menu_id'		=> $row3->menu_id,
-												'module'		=> $row3->module,
-												'menu_type'		=> $row3->menu_type,
-												'url'			=> $row3->url,
-												'menu_name'		=> $row3->menu_name,
-												'menu_lang'		=> json_decode($row3->menu_lang,true),
-												'menu_icons'	=> $row3->menu_icons,
-												'childs'		=> array()
-											);
-										$child_level_3[] = $menu3;
-									}
-								}
-								$menu2['childs'] = $child_level_3;
-							}
-							$level2[] = $menu2 ;
-						}
+                            $menus3 = self::nestedMenu($row2->menu_id, $position, $active);
+                            if (count($menus3) > 0) {
+                                $child_level_3 = array();
+                                foreach ($menus3 as $row3) {
+                                    $p = json_decode($row3->access_data, true);
+                                    if ($row3->allow_guest == 1) {
+                                        $is_allow = 1;
+                                    } else {
+                                        $is_allow = (isset($p[Session::get('gid')]) && $p[Session::get('gid')] ? 1 : 0);
+                                    }
+                                    if ($is_allow == 1) {
+                                        $menu3 = array(
+                                            'menu_id' => $row3->menu_id,
+                                            'module' => $row3->module,
+                                            'menu_type' => $row3->menu_type,
+                                            'url' => $row3->url,
+                                            'menu_name' => $row3->menu_name,
+                                            'menu_lang' => json_decode($row3->menu_lang, true),
+                                            'menu_icons' => $row3->menu_icons,
+                                            'childs' => array()
+                                        );
+                                        $child_level_3[] = $menu3;
+                                    }
+                                }
+                                $menu2['childs'] = $child_level_3;
+                            }
+                            $level2[] = $menu2;
+                        }
 
-					}
-					$child_level = $level2;
+                    }
+                    $child_level = $level2;
 
-				}
+                }
 
-				$level = array(
-						'menu_id'		=> $row->menu_id,
-						'module'		=> $row->module,
-						'menu_type'		=> $row->menu_type,
-						'url'			=> $row->url,
-						'menu_name'		=> $row->menu_name,
-						'menu_lang'		=> json_decode($row->menu_lang,true),
-						'menu_icons'	=> $row->menu_icons,
-						'childs'		=> $child_level
-					);
+                $level = array(
+                    'menu_id' => $row->menu_id,
+                    'module' => $row->module,
+                    'menu_type' => $row->menu_type,
+                    'url' => $row->url,
+                    'menu_name' => $row->menu_name,
+                    'menu_lang' => json_decode($row->menu_lang, true),
+                    'menu_icons' => $row->menu_icons,
+                    'childs' => $child_level
+                );
 
-				$data[] = $level;
-			}
+                $data[] = $level;
+            }
 
-		}
-		//echo '<pre>';print_r($data); echo '</pre>'; exit;
-		return $data;
-	}
+        }
+        //echo '<pre>';print_r($data); echo '</pre>'; exit;
+        return $data;
+    }
 
-	public static function nestedMenu($parent=0,$position ='top',$active = '1')
-	{
-		$group_sql = " AND tb_menu_access.group_id ='".Session::get('gid')."' ";
-		$active 	=  ($active =='all' ? "" : "AND active ='1' ");
-		$Q = DB::select("
+    public static function nestedMenu($parent = 0, $position = 'top', $active = '1')
+    {
+        $group_sql = " AND tb_menu_access.group_id ='" . Session::get('gid') . "' ";
+        $active = ($active == 'all' ? "" : "AND active ='1' ");
+        $Q = DB::select("
 		SELECT 
 			tb_menu.*
-		FROM tb_menu WHERE parent_id ='". $parent ."' ".$active." AND position ='{$position}'
+		FROM tb_menu WHERE parent_id ='" . $parent . "' " . $active . " AND position ='{$position}'
 		GROUP BY tb_menu.menu_id ORDER BY ordering			
 		");
-		return $Q;
-	}
+        return $Q;
+    }
 
-	public static function CF_encode_json($arr) {
-	  $str = json_encode( $arr );
-	  $enc = base64_encode($str );
-	  $enc = strtr( $enc, 'poligamI123456', '123456poligamI');
-	  return $enc;
-	}
+    public static function CF_encode_json($arr)
+    {
+        $str = json_encode($arr);
+        $enc = base64_encode($str);
+        $enc = strtr($enc, 'poligamI123456', '123456poligamI');
+        return $enc;
+    }
 
-	public static function CF_decode_json($str) {
-	  $dec = strtr( $str , '123456poligamI', 'poligamI123456');
-	  $dec = base64_decode( $dec );
-	  $obj = json_decode( $dec ,true);
-	  return $obj;
-	}
+    public static function CF_decode_json($str)
+    {
+        $dec = strtr($str, '123456poligamI', 'poligamI123456');
+        $dec = base64_decode($dec);
+        $obj = json_decode($dec, true);
+        return $obj;
+    }
 
 
-	public static function columnTable( $table )
-	{
+    public static function columnTable($table)
+    {
         $columns = array();
-	    foreach(DB::select("SHOW COLUMNS FROM $table") as $column)
-        {
-           //print_r($column);
-		    $columns[] = $column->Field;
+        foreach (DB::select("SHOW COLUMNS FROM $table") as $column) {
+            //print_r($column);
+            $columns[] = $column->Field;
         }
 
 
         return $columns;
-	}
-
-	public static function encryptID($id,$decript=false,$pass='',$separator='-', & $data=array()) {
-		$pass = $pass?$pass:Config::get('app.key');
-		$pass2 = Config::get('app.url');;
-		$bignum = 200000000;
-		$multi1 = 500;
-		$multi2 = 50;
-		$saltnum = 10000000;
-		if($decript==false){
-			$strA = self::alphaid(($bignum+($id*$multi1)),0,0,$pass);
-			$strB = self::alphaid(($saltnum+($id*$multi2)),0,0,$pass2);
-			$out = $strA.$separator.$strB;
-		} else {
-			$pid = explode($separator,$id);
-
-
-		//    trace($pid);
-			$idA = (self::alphaid($pid[0],1,0,$pass)-$bignum)/$multi1;
-			$idB = (self::alphaid($pid[1],1,0,$pass2)-$saltnum)/$multi2;
-			$data['id A'] = $idA;
-			$data['id B'] = $idB;
-			$out = ($idA==$idB)?$idA:false;
-		}
-		return $out;
-	}
-
-public static function alphaID($in, $to_num = false, $pad_up = false, $passKey = null)
-{
-    $index = "abcdefghijkmnpqrstuvwxyz23456789ABCDEFGHIJKLMNPQRSTUVWXYZ";
-    if ($passKey !== null) {
-        // Although this function's purpose is to just make the
-        // ID short - and not so much secure,
-        // with this patch by Simon Franz (http://blog.snaky.org/)
-        // you can optionally supply a password to make it harder
-        // to calculate the corresponding numeric ID
-
-        for ($n = 0; $n<strlen($index); $n++) {
-            $i[] = substr( $index,$n ,1);
-        }
-
-        $passhash = hash('sha256',$passKey);
-        $passhash = (strlen($passhash) < strlen($index))
-            ? hash('sha512',$passKey)
-            : $passhash;
-
-        for ($n=0; $n < strlen($index); $n++) {
-            $p[] =    substr($passhash, $n ,1);
-        }
-
-        array_multisort($p,    SORT_DESC, $i);
-        $index = implode($i);
     }
 
-    $base    = strlen($index);
+    public static function encryptID($id, $decript = false, $pass = '', $separator = '-', & $data = array())
+    {
+        $pass = $pass ? $pass : Config::get('app.key');
+        $pass2 = Config::get('app.url');;
+        $bignum = 200000000;
+        $multi1 = 500;
+        $multi2 = 50;
+        $saltnum = 10000000;
+        if ($decript == false) {
+            $strA = self::alphaid(($bignum + ($id * $multi1)), 0, 0, $pass);
+            $strB = self::alphaid(($saltnum + ($id * $multi2)), 0, 0, $pass2);
+            $out = $strA . $separator . $strB;
+        } else {
+            $pid = explode($separator, $id);
 
-    if ($to_num) {
-        // Digital number    <<--    alphabet letter code
-        $in    = strrev($in);
-        $out = 0;
-        $len = strlen($in) - 1;
-        for ($t = 0; $t <= $len; $t++) {
-            $bcpow = bcpow($base, $len - $t);
-            $out     = $out + strpos($index, substr($in, $t, 1)) * $bcpow;
-        }
 
-        if (is_numeric($pad_up)) {
-            $pad_up--;
-            if ($pad_up > 0) {
-                $out -= pow($base, $pad_up);
-            }
+            //    trace($pid);
+            $idA = (self::alphaid($pid[0], 1, 0, $pass) - $bignum) / $multi1;
+            $idB = (self::alphaid($pid[1], 1, 0, $pass2) - $saltnum) / $multi2;
+            $data['id A'] = $idA;
+            $data['id B'] = $idB;
+            $out = ($idA == $idB) ? $idA : false;
         }
-        $out = sprintf('%F', $out);
-        $out = substr($out, 0, strpos($out, '.'));
-    } else {
-        // Digital number    -->>    alphabet letter code
-        if (is_numeric($pad_up)) {
-            $pad_up--;
-            if ($pad_up > 0) {
-                $in += pow($base, $pad_up);
-            }
-        }
-
-        $out = "";
-        for ($t = floor(log($in, $base)); $t >= 0; $t--) {
-            $bcp = bcpow($base, $t);
-            $a     = floor($in / $bcp) % $base;
-            $out = $out . substr($index, $a, 1);
-            $in    = $in - ($a * $bcp);
-        }
-        $out = strrev($out); // reverse
+        return $out;
     }
 
-    return $out;
-}
+    public static function alphaID($in, $to_num = false, $pad_up = false, $passKey = null)
+    {
+        $index = "abcdefghijkmnpqrstuvwxyz23456789ABCDEFGHIJKLMNPQRSTUVWXYZ";
+        if ($passKey !== null) {
+            // Although this function's purpose is to just make the
+            // ID short - and not so much secure,
+            // with this patch by Simon Franz (http://blog.snaky.org/)
+            // you can optionally supply a password to make it harder
+            // to calculate the corresponding numeric ID
+
+            for ($n = 0; $n < strlen($index); $n++) {
+                $i[] = substr($index, $n, 1);
+            }
+
+            $passhash = hash('sha256', $passKey);
+            $passhash = (strlen($passhash) < strlen($index))
+                ? hash('sha512', $passKey)
+                : $passhash;
+
+            for ($n = 0; $n < strlen($index); $n++) {
+                $p[] = substr($passhash, $n, 1);
+            }
+
+            array_multisort($p, SORT_DESC, $i);
+            $index = implode($i);
+        }
+
+        $base = strlen($index);
+
+        if ($to_num) {
+            // Digital number    <<--    alphabet letter code
+            $in = strrev($in);
+            $out = 0;
+            $len = strlen($in) - 1;
+            for ($t = 0; $t <= $len; $t++) {
+                $bcpow = bcpow($base, $len - $t);
+                $out = $out + strpos($index, substr($in, $t, 1)) * $bcpow;
+            }
+
+            if (is_numeric($pad_up)) {
+                $pad_up--;
+                if ($pad_up > 0) {
+                    $out -= pow($base, $pad_up);
+                }
+            }
+            $out = sprintf('%F', $out);
+            $out = substr($out, 0, strpos($out, '.'));
+        } else {
+            // Digital number    -->>    alphabet letter code
+            if (is_numeric($pad_up)) {
+                $pad_up--;
+                if ($pad_up > 0) {
+                    $in += pow($base, $pad_up);
+                }
+            }
+
+            $out = "";
+            for ($t = floor(log($in, $base)); $t >= 0; $t--) {
+                $bcp = bcpow($base, $t);
+                $a = floor($in / $bcp) % $base;
+                $out = $out . substr($index, $a, 1);
+                $in = $in - ($a * $bcp);
+            }
+            $out = strrev($out); // reverse
+        }
+
+        return $out;
+    }
 
 
-	public static function toForm($forms,$layout)
-	{
-		$f = '';
-	//	echo '<pre>'; print_r($forms);echo '</pre>';
-		//usort($forms,"_sort");
-		$block = $layout['column'];
-		$format = $layout['format'];
-		$display = $layout['display'];
-		$title = explode(",",$layout['title']);
+    public static function toForm($forms, $layout)
+    {
+        $f = '';
+        //	echo '<pre>'; print_r($forms);echo '</pre>';
+        //usort($forms,"_sort");
+        $block = $layout['column'];
+        $format = $layout['format'];
+        $display = $layout['display'];
+        $title = explode(",", $layout['title']);
 
-		if($format =='tab')
-		{
-			$f .='<ul class="nav nav-tabs">';
+        if ($format == 'tab') {
+            $f .= '<ul class="nav nav-tabs">';
 
-			for($i=0;$i<$block;$i++)
-			{
-				$active = ($i==0 ? 'active' : '');
-				$tit = (isset($title[$i]) ? $title[$i] : 'None');
-				$f .= '<li class="'.$active.'"><a href="#'.trim(str_replace(" ","",$tit)).'" data-toggle="tab">'.$tit.'</a></li>
+            for ($i = 0; $i < $block; $i++) {
+                $active = ($i == 0 ? 'active' : '');
+                $tit = (isset($title[$i]) ? $title[$i] : 'None');
+                $f .= '<li class="' . $active . '"><a href="#' . trim(str_replace(" ", "", $tit)) . '" data-toggle="tab">' . $tit . '</a></li>
 				';
-			}
-			$f .= '</ul>';
-		}
+            }
+            $f .= '</ul>';
+        }
 
-		if($format =='tab') $f .= '<div class="tab-content">';
-		for($i=0;$i<$block;$i++)
-		{
-			if($block == 4) {
-				$class = 'col-md-3';
-			}  elseif( $block ==3 ) {
-				$class = 'col-md-4';
-			}  elseif( $block ==2 ) {
-				$class = 'col-md-6';
-			} else {
-				$class = 'col-md-12';
-			}
+        if ($format == 'tab') $f .= '<div class="tab-content">';
+        for ($i = 0; $i < $block; $i++) {
+            if ($block == 4) {
+                $class = 'col-md-3';
+            } elseif ($block == 3) {
+                $class = 'col-md-4';
+            } elseif ($block == 2) {
+                $class = 'col-md-6';
+            } else {
+                $class = 'col-md-12';
+            }
 
-			$tit = (isset($title[$i]) ? $title[$i] : 'None');
-			// Grid format
-			if($format == 'grid')
-			{
-				$f .= '<div class="'.$class.'">
-						<fieldset><legend> '.$tit.'</legend>
+            $tit = (isset($title[$i]) ? $title[$i] : 'None');
+            // Grid format
+            if ($format == 'grid') {
+                $f .= '<div class="' . $class . '">
+						<fieldset><legend> ' . $tit . '</legend>
 				';
-			} else {
-				$active = ($i==0 ? 'active' : '');
-				$f .= '<div class="tab-pane m-t '.$active.'" id="'.trim(str_replace(" ","",$tit)).'">
+            } else {
+                $active = ($i == 0 ? 'active' : '');
+                $f .= '<div class="tab-pane m-t ' . $active . '" id="' . trim(str_replace(" ", "", $tit)) . '">
 				';
-			}
+            }
 
 
+            $group = array();
 
-			$group = array();
-
-			foreach($forms as $form)
-			{
-				$tooltip =''; $required = ($form['required'] != '0' ? '<span class="asterix"> * </span>' : '');
-				if($form['view'] != 0)
-				{
-					if($form['field'] !='entry_by')
-					{
-						if(isset($form['option']['tooltip']) && $form['option']['tooltip'] !='')
-						$tooltip = '<a href="#" data-toggle="tooltip" placement="left" class="tips" title="'. $form['option']['tooltip'] .'"><i class="icon-question2"></i></a>';
-						$hidethis = ""; if($form['type'] =='hidden') $hidethis ='hidethis';
-						$inhide = ''; if(count($group) >1) $inhide ='inhide';
-						//$ebutton = ($form['type'] =='radio' || $form['option'] =='checkbox') ? "ebutton-radio" : "";
-						$show = '';
-						if($form['type'] =='hidden') $show = 'style="display:none;"';
-						if(isset($form['limited']) && $form['limited'] !='')
-						{
-							$limited_start =
-							'
+            foreach ($forms as $form) {
+                $tooltip = '';
+                $required = ($form['required'] != '0' ? '<span class="asterix"> * </span>' : '');
+                if ($form['view'] != 0) {
+                    if ($form['field'] != 'entry_by') {
+                        if (isset($form['option']['tooltip']) && $form['option']['tooltip'] != '')
+                            $tooltip = '<a href="#" data-toggle="tooltip" placement="left" class="tips" title="' . $form['option']['tooltip'] . '"><i class="icon-question2"></i></a>';
+                        $hidethis = "";
+                        if ($form['type'] == 'hidden') $hidethis = 'hidethis';
+                        $inhide = '';
+                        if (count($group) > 1) $inhide = 'inhide';
+                        //$ebutton = ($form['type'] =='radio' || $form['option'] =='checkbox') ? "ebutton-radio" : "";
+                        $show = '';
+                        if ($form['type'] == 'hidden') $show = 'style="display:none;"';
+                        if (isset($form['limited']) && $form['limited'] != '') {
+                            $limited_start =
+                                '
 				<?php 
-				$limited = isset($fields[\''.$form['field'].'\'][\'limited\']) ? $fields[\''.$form['field'].'\'][\'limited\'] :\'\';
+				$limited = isset($fields[\'' . $form['field'] . '\'][\'limited\']) ? $fields[\'' . $form['field'] . '\'][\'limited\'] :\'\';
 				if(SiteHelpers::filterColumn($limited )) { ?>
 							';
-							$limited_end = '
+                            $limited_end = '
 				<?php } ?>';
-						} else {
-							$limited_start = '';
-							$limited_end = '';
-						}
+                        } else {
+                            $limited_start = '';
+                            $limited_end = '';
+                        }
 
 
-
-						if($form['form_group'] == $i)
-						{
-							if($display == 'horizontal')
-							{
-								$f .= $limited_start;
-								$f .= '
-				  <div class="form-group '.$hidethis.' '.$inhide.'" '.$show .'>
-					<label for="'.$form['label'].'" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang(\''.$form['label'].'\', (isset($fields[\''.$form['field'].'\'][\'language\'])? $fields[\''.$form['field'].'\'][\'language\'] : array())) !!}
+                        if ($form['form_group'] == $i) {
+                            if ($display == 'horizontal') {
+                                $f .= $limited_start;
+                                $f .= '
+				  <div class="form-group ' . $hidethis . ' ' . $inhide . '" ' . $show . '>
+					<label for="' . $form['label'] . '" class=" control-label col-md-4 text-left">
+					{!! SiteHelpers::activeLang(\'' . $form['label'] . '\', (isset($fields[\'' . $form['field'] . '\'][\'language\'])? $fields[\'' . $form['field'] . '\'][\'language\'] : array())) !!}
 					</label>
 					<div class="col-md-6">
-					  '.self::formShow($form['type'],$form['field'],$form['required'],$form['option']).'
+					  ' . self::formShow($form['type'], $form['field'], $form['required'], $form['option']) . '
 					 </div> 
 					 <div class="col-md-2">
-					 	'.$tooltip.'
+					 	' . $tooltip . '
 					 </div>
 				  </div> ';
-				 				$f .= $limited_end;
-							} else {
-								$f .= $limited_start;
-								$f .= '
-				  <div class="form-group '.$hidethis.' '.$inhide.'" '.$show .'>
+                                $f .= $limited_end;
+                            } else {
+                                $f .= $limited_start;
+                                $f .= '
+				  <div class="form-group ' . $hidethis . ' ' . $inhide . '" ' . $show . '>
 					<label for="ipt" class=" control-label ">
-						{!! SiteHelpers::activeLang(\''.$form['label'].'\', (isset($fields[\''.$form['field'].'\'][\'language\'])? $fields[\''.$form['field'].'\'][\'language\'] : array())) !!}
-					 '.$required.' '.$tooltip.' </label>
-					  '.self::formShow($form['type'],$form['field'],$form['required'],$form['option']).'
+						{!! SiteHelpers::activeLang(\'' . $form['label'] . '\', (isset($fields[\'' . $form['field'] . '\'][\'language\'])? $fields[\'' . $form['field'] . '\'][\'language\'] : array())) !!}
+					 ' . $required . ' ' . $tooltip . ' </label>
+					  ' . self::formShow($form['type'], $form['field'], $form['required'], $form['option']) . '
 				  </div> ';
-				  				$f .= $limited_end;
+                                $f .= $limited_end;
 
-							}
-						}
-					}
+                            }
+                        }
+                    }
 
-				}
-			}
-			if($format == 'grid') $f .='</fieldset>';
-			$f .= '
+                }
+            }
+            if ($format == 'grid') $f .= '</fieldset>';
+            $f .= '
 			</div>
 			
 			';
-		}
+        }
 
-		//echo '<pre>'; print_r($f);echo '</pre>'; exit;
-		return $f;
+        //echo '<pre>'; print_r($f);echo '</pre>'; exit;
+        return $f;
 
-	}
-	public static function gridClass( $layout )
-	{
-		$column = $layout['column'];
-		$format = $layout['format'];
+    }
 
-		if($block == 4) {
-			$class = 'col-md-3';
-		}  elseif( $block ==3 ) {
-			$class = 'col-md-4';
-		}  elseif( $block ==2 ) {
-			$class = 'col-md-6';
-		} else {
-			$class = 'col-md-12';
-		}
+    public static function gridClass($layout)
+    {
+        $column = $layout['column'];
+        $format = $layout['format'];
 
-
-		if(format == 'tab')
-		{
-			$tag_open = '<div class="col-md-">';
-			$tag_close = '<div class="col-md-">';
-
-		}  elseif($layout['format'] == 'accordion'){
-
-		} else {
-			$tag_open = '<div class="col-md-">';
-			$tag_close = '</div>';
-		}
+        if ($block == 4) {
+            $class = 'col-md-3';
+        } elseif ($block == 3) {
+            $class = 'col-md-4';
+        } elseif ($block == 2) {
+            $class = 'col-md-6';
+        } else {
+            $class = 'col-md-12';
+        }
 
 
-		return $class;
-	}
+        if (format == 'tab') {
+            $tag_open = '<div class="col-md-">';
+            $tag_close = '<div class="col-md-">';
+
+        } elseif ($layout['format'] == 'accordion') {
+
+        } else {
+            $tag_open = '<div class="col-md-">';
+            $tag_close = '</div>';
+        }
 
 
-	public static function formShow( $type , $field , $required ,$option = array()){
-		//print_r($option);
-		$mandatory = '';$attribute = ''; $extend_class ='';
-		if(isset($option['attribute']) && $option['attribute'] !='') {
-				$attribute = $option['attribute']; }
-		if(isset($option['extend_class']) && $option['extend_class'] !='') {
-			$extend_class = $option['extend_class'];
-		}
+        return $class;
+    }
 
-		$show = '';
-		if($type =='hidden') $show = 'style="display:none;"';
 
-		if($required =='required') {
-			$mandatory = "'required'=>'true'";
-		} else if($required =='email') {
-			$mandatory = "'required'=>'true', 'parsley-type'=>'email' ";
-		} else if($required =='url') {
-			$mandatory = "'required'=>'true', 'parsley-type'=>'url' ";
-		} else if($required =='date') {
-			$mandatory = "'required'=>'true', 'parsley-type'=>'dateIso' ";
-		} else if($required =='numeric') {
-			$mandatory = "'required'=>'true', 'parsley-type'=>'number' ";
-		} else {
-			$mandatory = '';
-		}
+    public static function formShow($type, $field, $required, $option = array())
+    {
+        //print_r($option);
+        $mandatory = '';
+        $attribute = '';
+        $extend_class = '';
+        if (isset($option['attribute']) && $option['attribute'] != '') {
+            $attribute = $option['attribute'];
+        }
+        if (isset($option['extend_class']) && $option['extend_class'] != '') {
+            $extend_class = $option['extend_class'];
+        }
 
-		switch($type)
-		{
-			default;
-				$form = "{!! Form::text('{$field}', \$row['{$field}'],array('class'=>'form-control', 'placeholder'=>'', {$mandatory}  )) !!}";
-				break;
+        $show = '';
+        if ($type == 'hidden') $show = 'style="display:none;"';
 
-			case 'textarea';
-				if($required !='0') { $mandatory = 'required'; }
-				$form = "<textarea name='{$field}' rows='5' id='{$field}' class='form-control {$extend_class}'
+        if ($required == 'required') {
+            $mandatory = "'required'=>'true'";
+        } else if ($required == 'email') {
+            $mandatory = "'required'=>'true', 'parsley-type'=>'email' ";
+        } else if ($required == 'url') {
+            $mandatory = "'required'=>'true', 'parsley-type'=>'url' ";
+        } else if ($required == 'date') {
+            $mandatory = "'required'=>'true', 'parsley-type'=>'dateIso' ";
+        } else if ($required == 'numeric') {
+            $mandatory = "'required'=>'true', 'parsley-type'=>'number' ";
+        } else {
+            $mandatory = '';
+        }
+
+        switch ($type) {
+            default;
+                $form = "{!! Form::text('{$field}', \$row['{$field}'],array('class'=>'form-control', 'placeholder'=>'', {$mandatory}  )) !!}";
+                break;
+
+            case 'textarea';
+                if ($required != '0') {
+                    $mandatory = 'required';
+                }
+                $form = "<textarea name='{$field}' rows='5' id='{$field}' class='form-control {$extend_class}'
 				         {$mandatory} {$attribute} >{{ \$row['{$field}'] }}</textarea>";
-				break;
+                break;
 
-			case 'textarea_editor';
-				if($required !='0') { $mandatory = 'required'; }
-				$form = "<textarea name='{$field}' rows='5' id='editor' class='form-control editor {$extend_class}'
+            case 'textarea_editor';
+                if ($required != '0') {
+                    $mandatory = 'required';
+                }
+                $form = "<textarea name='{$field}' rows='5' id='editor' class='form-control editor {$extend_class}'
 						{$mandatory}{$attribute} >{{ \$row['{$field}'] }}</textarea>";
-				break;
+                break;
 
 
-			case 'text_date';
-				$form = "
+            case 'text_date';
+                $form = "
 				<div class=\"input-group m-b\" style=\"width:150px !important;\">
 					{!! Form::text('{$field}', \$row['{$field}'],array('class'=>'form-control date')) !!}
 					<span class=\"input-group-addon\"><i class=\"fa fa-calendar\"></i></span>
 				</div>";
-				break;
+                break;
 
-			case 'text_time';
-				$form = "
+            case 'text_time';
+                $form = "
 					<div class=\"input-group m-b\" style=\"width:150px !important;\">
 						input  type='text' name='{$field}' id='{$field}' value='{{ \$row['{$field}'] }}' 
 						{$mandatory}  {$attribute}   class='form-control {$extend_class}'
@@ -468,103 +458,103 @@ public static function alphaID($in, $to_num = false, $pad_up = false, $passKey =
 						 <span class=\"input-group-addon\"><i class=\"fa fa-calendar\"></i></span>
 						 </div>
 						 ";
-				break;
+                break;
 
-			case 'text_datetime';
-				if($required !='0') { $mandatory = 'required'; }
-				$form = "
+            case 'text_datetime';
+                if ($required != '0') {
+                    $mandatory = 'required';
+                }
+                $form = "
 				<div class=\"input-group m-b\" style=\"width:150px !important;\">
 					{!! Form::text('{$field}', \$row['{$field}'],array('class'=>'form-control datetime', 'style'=>'width:150px !important;')) !!}
 					<span class=\"input-group-addon\"><i class=\"fa fa-calendar\"></i></span>
 				</div>
 				";
-				break;
+                break;
 
-			case 'select';
-				if($required !='0') { $mandatory = 'required'; }
-				if($option['opt_type'] =='datalist')
-				{
-					$optList ='';
-					$opt = explode("|",$option['lookup_query']);
-					for($i=0; $i<count($opt);$i++)
-					{
-						$row =  explode(":",$opt[$i]);
-						for($i=0; $i<count($opt);$i++)
-						{
+            case 'select';
+                if ($required != '0') {
+                    $mandatory = 'required';
+                }
+                if ($option['opt_type'] == 'datalist') {
+                    $optList = '';
+                    $opt = explode("|", $option['lookup_query']);
+                    for ($i = 0; $i < count($opt); $i++) {
+                        $row = explode(":", $opt[$i]);
+                        for ($i = 0; $i < count($opt); $i++) {
 
-							$row =  explode(":",$opt[$i]);
-							$optList .= " '".trim($row[0])."' => '".trim($row[1])."' , ";
+                            $row = explode(":", $opt[$i]);
+                            $optList .= " '" . trim($row[0]) . "' => '" . trim($row[1]) . "' , ";
 
-						}
-					}
-					$form  = "
-					<?php \$".$field." = explode(',',\$row['".$field."']);
+                        }
+                    }
+                    $form = "
+					<?php \$" . $field . " = explode(',',\$row['" . $field . "']);
 					";
-					$form  .=
-					"\$".$field."_opt = array(".$optList."); ?>
+                    $form .=
+                        "\$" . $field . "_opt = array(" . $optList . "); ?>
 					";
 
-					if(isset($option['select_multiple']) && $option['select_multiple'] ==1)
-					{
+                    if (isset($option['select_multiple']) && $option['select_multiple'] == 1) {
 
-						$form  .= "<select name='{$field}[]' rows='5' {$mandatory} multiple  class='select2 '  > ";
-						$form  .= "
+                        $form .= "<select name='{$field}[]' rows='5' {$mandatory} multiple  class='select2 '  > ";
+                        $form .= "
 						<?php 
-						foreach(\$".$field."_opt as \$key=>\$val)
+						foreach(\$" . $field . "_opt as \$key=>\$val)
 						{
-							echo \"<option  value ='\$key' \".(in_array(\$key,\$".$field.") ? \" selected='selected' \" : '' ).\">\$val</option>\";
+							echo \"<option  value ='\$key' \".(in_array(\$key,\$" . $field . ") ? \" selected='selected' \" : '' ).\">\$val</option>\";
 						}						
 						?>";
-						$form .= "</select>";
-					} else {
+                        $form .= "</select>";
+                    } else {
 
-						$form  .= "<select name='{$field}' rows='5' {$mandatory}  class='select2 '  > ";
-						$form  .= "
+                        $form .= "<select name='{$field}' rows='5' {$mandatory}  class='select2 '  > ";
+                        $form .= "
 						<?php 
-						foreach(\$".$field."_opt as \$key=>\$val)
+						foreach(\$" . $field . "_opt as \$key=>\$val)
 						{
-							echo \"<option  value ='\$key' \".(\$row['".$field."'] == \$key ? \" selected='selected' \" : '' ).\">\$val</option>\";
+							echo \"<option  value ='\$key' \".(\$row['" . $field . "'] == \$key ? \" selected='selected' \" : '' ).\">\$val</option>\";
 						}						
 						?>";
-						$form .= "</select>";
+                        $form .= "</select>";
 
-					}
+                    }
 
-				} else {
+                } else {
 
-					if(isset($option['select_multiple']) && $option['select_multiple'] ==1)
-					{
-						$named ="name='{$field}[]' multiple";
-					} else {
-						$named ="name='{$field}'";
+                    if (isset($option['select_multiple']) && $option['select_multiple'] == 1) {
+                        $named = "name='{$field}[]' multiple";
+                    } else {
+                        $named = "name='{$field}'";
 
-					}
-					$form = "<select ".$named." rows='5' id='{$field}' class='select2 {$extend_class}' {$mandatory} {$attribute} ></select>";
+                    }
+                    $form = "<select " . $named . " rows='5' id='{$field}' class='select2 {$extend_class}' {$mandatory} {$attribute} ></select>";
 
 
-				}
-				break;
+                }
+                break;
 
-			case 'file';
-				if($required !='0') { $mandatory = 'required'; }
+            case 'file';
+                if ($required != '0') {
+                    $mandatory = 'required';
+                }
 
-				if(isset($option['image_multiple']) && $option['image_multiple'] ==1)
-				{
-					$form = '
-					<a href="javascript:void(0)" class="btn btn-xs btn-primary pull-right" onclick="addMoreFiles(\''.$field.'\')"><i class="fa fa-plus"></i></a>
-					<div class="'.$field.'Upl">
-					 	<input  type=\'file\' name=\''.$field.'[]\'  />
+                if (isset($option['image_multiple']) && $option['image_multiple'] == 1) {
+                    $form = '
+					<a href="javascript:void(0)" class="btn btn-xs btn-primary pull-right" onclick="addMoreFiles(\'' . $field . '\')"><i class="fa fa-plus"></i></a>
+					<div class="' . $field . 'Upl">
+					 	<input  type=\'file\' name=\'' . $field . '[]\'  />
 					</div>
 					<ul class="uploadedLists " >
 					<?php $cr= 0; 
-					$row[\''.$field.'\'] = explode(",",$row[\''.$field.'\']);
+					$row[\'' . $field . '\'] = explode(",",$row[\'' . $field . '\']);
 					?>
-					@foreach($row[\''.$field.'\'] as $files)
-						@if(file_exists(\'.'.$option['path_to_upload'].'\'.$files) && $files !=\'\')
+					@foreach($row[\'' . $field . '\'] as $files)
+						@if(file_exists(\'.' . $option['path_to_upload'] . '\'.$files) && $files !=\'\')
 						<li id="cr-<?php echo $cr;?>" class="">							
-							<a href="{{ url(\''.$option['path_to_upload'].'/\'.$files) }}" target="_blank" >{{ $files }}</a>
+							<a href="{{ url(\'' . $option['path_to_upload'] . '/\'.$files) }}" target="_blank" >{{ $files }}</a>
 							<span class="pull-right" rel="cr-<?php echo $cr;?>" onclick=" $(this).parent().remove();"><i class="fa fa-trash-o  btn btn-xs btn-danger"></i></span>
-							<input type="hidden" name="curr'.$field.'[]" value="{{ $files }}"/>
+							<input type="hidden" name="curr' . $field . '[]" value="{{ $files }}"/>
 							<?php ++$cr;?>
 						</li>
 						@endif
@@ -573,1084 +563,1037 @@ public static function alphaID($in, $to_num = false, $pad_up = false, $passKey =
 					</ul>
 					';
 
-				} else {
-					$form = "<input  type='file' name='{$field}' id='{$field}' ";
-					$form .= "@if(\$row['$field'] =='') class='required' @endif ";
-					$form .= "style='width:150px !important;' {$attribute} />
+                } else {
+                    $form = "<input  type='file' name='{$field}' id='{$field}' ";
+                    $form .= "@if(\$row['$field'] =='') class='required' @endif ";
+                    $form .= "style='width:150px !important;' {$attribute} />
 					 	<div >
 						{!! SiteHelpers::showUploadedFile(\$row['{$field}'],'$option[path_to_upload]') !!}
 						
 						</div>					
 					";
 
-				}
-				break;
+                }
+                break;
 
-			case 'radio';
-				if($required !='0') { $mandatory = 'required'; }
-				$opt = explode("|",$option['lookup_query']);
-				$form = '';
-				for($i=0; $i<count($opt);$i++)
-				{
-					$checked = '';
-					$row =  explode(":",$opt[$i]);
-					$form .= "
+            case 'radio';
+                if ($required != '0') {
+                    $mandatory = 'required';
+                }
+                $opt = explode("|", $option['lookup_query']);
+                $form = '';
+                for ($i = 0; $i < count($opt); $i++) {
+                    $checked = '';
+                    $row = explode(":", $opt[$i]);
+                    $form .= "
 					<label class='radio radio-inline'>
-					<input type='radio' name='{$field}' value ='".ltrim(rtrim($row[0]))."' {$mandatory} {$attribute}";
-					$form .= "@if(\$row['".$field."'] == '".ltrim(rtrim($row[0]))."') checked=\"checked\" @endif";
-					$form .= " > ".$row[1]." </label>";
-				}
-				break;
+					<input type='radio' name='{$field}' value ='" . ltrim(rtrim($row[0])) . "' {$mandatory} {$attribute}";
+                    $form .= "@if(\$row['" . $field . "'] == '" . ltrim(rtrim($row[0])) . "') checked=\"checked\" @endif";
+                    $form .= " > " . $row[1] . " </label>";
+                }
+                break;
 
-			case 'checkbox';
-				if($required !='0') { $mandatory = 'required'; }
-				$opt = explode("|",$option['lookup_query']);
-				$form = "<?php \$".$field." = explode(\",\",\$row['".$field."']); ?>";
-				for($i=0; $i<count($opt);$i++)
-				{
+            case 'checkbox';
+                if ($required != '0') {
+                    $mandatory = 'required';
+                }
+                $opt = explode("|", $option['lookup_query']);
+                $form = "<?php \$" . $field . " = explode(\",\",\$row['" . $field . "']); ?>";
+                for ($i = 0; $i < count($opt); $i++) {
 
-					$checked = '';
-					$row =  explode(":",$opt[$i]);
-					 $form .= "
+                    $checked = '';
+                    $row = explode(":", $opt[$i]);
+                    $form .= "
 					 <label class='checked checkbox-inline'>   
-					<input type='checkbox' name='{$field}[]' value ='".ltrim(rtrim($row[0]))."' {$mandatory} {$attribute} class='{$extend_class}' ";
-					$form .= "
-					@if(in_array('".trim($row[0])."',\$".$field."))checked @endif
+					<input type='checkbox' name='{$field}[]' value ='" . ltrim(rtrim($row[0])) . "' {$mandatory} {$attribute} class='{$extend_class}' ";
+                    $form .= "
+					@if(in_array('" . trim($row[0]) . "',\$" . $field . "))checked @endif
 					";
-					$form .= " /> ".$row[0]." </label> ";
-				}
-				break;
+                    $form .= " /> " . $row[0] . " </label> ";
+                }
+                break;
 
-		}
+        }
 
-		return $form;
-	}
+        return $form;
+    }
 
-	public static function toMasterDetail( $info )
-	{
+    public static function toMasterDetail($info)
+    {
 
-		 if(count($info)>=1)
-		 {
-		 	$module = ucwords($info['module']);
-		 	//$data['masterdetailmodel'] 	= '$this->modelview = new  \App\Models\''.$module.'();';
+        if (count($info) >= 1) {
+            $module = ucwords($info['module']);
+            //$data['masterdetailmodel'] 	= '$this->modelview = new  \App\Models\''.$module.'();';
 
-		 	$data['masterdetailinfo'] 	= "\$this->data['subgrid']	= (isset(\$this->info['config']['subgrid']) ? \$this->info['config']['subgrid'][0] : array()); ";
-		 	$data['masterdetailgrid'] 	= "\$this->data['subgrid'] = \$this->detailview(\$this->modelview ,  \$this->data['subgrid'] ,\$id );";
-		 	$data['masterdetailsave'] 	= "\$this->detailviewsave( \$this->modelview , \$request->all() , \$this->data['subgrid'] , \$id) ;";
+            $data['masterdetailinfo'] = "\$this->data['subgrid']	= (isset(\$this->info['config']['subgrid']) ? \$this->info['config']['subgrid'][0] : array()); ";
+            $data['masterdetailgrid'] = "\$this->data['subgrid'] = \$this->detailview(\$this->modelview ,  \$this->data['subgrid'] ,\$id );";
+            $data['masterdetailsave'] = "\$this->detailviewsave( \$this->modelview , \$request->all() , \$this->data['subgrid'] , \$id) ;";
 
-		 	$tpl = array();
-		 	require_once('../resources/views/sximo/module/template/native/masterdetailform.php');
-		 	$data['masterdetailview'] 	= $tpl['masterdetailview'];
-		 	$data['masterdetailform'] 	= $tpl['masterdetailform'];
-		 	$data['masterdetailjs'] 	= $tpl['masterdetailjs'];
-		 	$data['masterdetaildelete']	= $tpl['masterdetaildelete'];
-		 	$data['masterdetailmodel'] 	= $tpl['masterdetailmodel'];
-		 }
-		 return $data;
+            $tpl = array();
+            require_once('../resources/views/sximo/module/template/native/masterdetailform.php');
+            $data['masterdetailview'] = $tpl['masterdetailview'];
+            $data['masterdetailform'] = $tpl['masterdetailform'];
+            $data['masterdetailjs'] = $tpl['masterdetailjs'];
+            $data['masterdetaildelete'] = $tpl['masterdetaildelete'];
+            $data['masterdetailmodel'] = $tpl['masterdetailmodel'];
+        }
+        return $data;
 
-	}
+    }
 
-	public static function filterColumn( $limit )
-	{
-		if($limit !='')
-		{
-			$limited = explode(',',$limit);
-			if(in_array( \Session::get('uid'),$limited) )
-			{
-				return  true;
-			} else {
-				return false;
-			}
-		} else {
-			return true;
-		}
-	}
+    public static function filterColumn($limit)
+    {
+        if ($limit != '') {
+            $limited = explode(',', $limit);
+            if (in_array(\Session::get('uid'), $limited)) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return true;
+        }
+    }
 
-	public static function toView( $grids )
-	{
-		$f = '';
-		foreach($grids as $grid)
-		{
-			if(isset($grid['conn']) && is_array($grid['conn']))
-			{
-				$conn = $grid['conn'];
-				//print_r($conn);exit;
-			} else {
-				$conn = array('valid'=>0,'db'=>'','key'=>'','display'=>'');
-			}
+    public static function toView($grids)
+    {
+        $f = '';
+        foreach ($grids as $grid) {
+            if (isset($grid['conn']) && is_array($grid['conn'])) {
+                $conn = $grid['conn'];
+                //print_r($conn);exit;
+            } else {
+                $conn = array('valid' => 0, 'db' => '', 'key' => '', 'display' => '');
+            }
 
-			if($grid['detail'] =='1')
-			{
-				if($grid['attribute']['image']['active'] =='1')
-				{
-					$val = "{!! SiteHelpers::showUploadedFile(\$row->".$grid['field'].",'".$grid['attribute']['image']['path']."') !!}";
-				} elseif($conn['valid'] ==1)  {
-					$arr = implode(':',$conn);
-					$val = "{!! SiteHelpers::gridDisplayView(\$row->".$grid['field'].",'".$grid['field']."','".$arr."') !!}";
+            if ($grid['detail'] == '1') {
+                if ($grid['attribute']['image']['active'] == '1') {
+                    $val = "{!! SiteHelpers::showUploadedFile(\$row->" . $grid['field'] . ",'" . $grid['attribute']['image']['path'] . "') !!}";
+                } elseif ($conn['valid'] == 1) {
+                    $arr = implode(':', $conn);
+                    $val = "{!! SiteHelpers::gridDisplayView(\$row->" . $grid['field'] . ",'" . $grid['field'] . "','" . $arr . "') !!}";
 
-				} elseif(isset($grid['attribute']['formater']['active']) && $grid['attribute']['formater']['active'] ==1) {
+                } elseif (isset($grid['attribute']['formater']['active']) && $grid['attribute']['formater']['active'] == 1) {
 
-					$c 	= explode("|",$grid['attribute']['formater']['value']);
-					if(isset($c[2]))
-					{
-						$args 	= explode(":",$c[2]);
-						$a 		='';
-						foreach ($args as $a) {
-							$ar = '$row->'.$a.',';
-						}
-						$val 	= "{{ ".$c[0]."::".$c[1]."(".substr($ar,0,strlen($ar)-1).") }}";
+                    $c = explode("|", $grid['attribute']['formater']['value']);
+                    if (isset($c[2])) {
+                        $args = explode(":", $c[2]);
+                        $a = '';
+                        foreach ($args as $a) {
+                            $ar = '$row->' . $a . ',';
+                        }
+                        $val = "{{ " . $c[0] . "::" . $c[1] . "(" . substr($ar, 0, strlen($ar) - 1) . ") }}";
 
-					}
+                    }
 
-				} 	elseif(isset($attribute['hyperlink']['active']) && $attribute['hyperlink']['active'] ==1 && $attribute['hyperlink']['link'] != '') {
+                } elseif (isset($attribute['hyperlink']['active']) && $attribute['hyperlink']['active'] == 1 && $attribute['hyperlink']['link'] != '') {
 
-					$attr = '';
-					$linked = $attribute['hyperlink']['link'];
-					foreach($row as $k=>$i)
-					{
+                    $attr = '';
+                    $linked = $attribute['hyperlink']['link'];
+                    foreach ($row as $k => $i) {
 
-						if (preg_match("/$k/",$attribute['hyperlink']['link']))
-							$linked = str_replace($k,$i, $linked);
-					}
-					if($attribute['hyperlink']['target'] =='modal')
-					{
-						$attr = "onclick='SximoModal(this.href); return false'";
-					}
+                        if (preg_match("/$k/", $attribute['hyperlink']['link']))
+                            $linked = str_replace($k, $i, $linked);
+                    }
+                    if ($attribute['hyperlink']['target'] == 'modal') {
+                        $attr = "onclick='SximoModal(this.href); return false'";
+                    }
 
-					$val =  "<a href='".URL::to($linked)."'  $attr style='display:block' >".$val." <span class='fa fa-arrow-circle-right pull-right'></span></a>";
+                    $val = "<a href='" . URL::to($linked) . "'  $attr style='display:block' >" . $val . " <span class='fa fa-arrow-circle-right pull-right'></span></a>";
 
-				} else {
-					$val = "{{ \$row->".$grid['field']." }}";
-				}
+                } else {
+                    $val = "{{ \$row->" . $grid['field'] . " }}";
+                }
 
-						if(isset($grid['limited']) && $grid['limited'] !='')
-						{
-							$limited_start =
-							'
+                if (isset($grid['limited']) && $grid['limited'] != '') {
+                    $limited_start =
+                        '
 				<?php 
-				$limited = isset($fields[\''.$grid['field'].'\'][\'limited\']) ? $fields[\''.$grid['field'].'\'][\'limited\'] :\'\';
+				$limited = isset($fields[\'' . $grid['field'] . '\'][\'limited\']) ? $fields[\'' . $grid['field'] . '\'][\'limited\'] :\'\';
 				if(SiteHelpers::filterColumn($limited )) { ?>
 							';
-							$limited_end = '
+                    $limited_end = '
 				<?php } ?>';
-						} else {
-							$limited_start = '';
-							$limited_end = '';
-						}
-				$f .= $limited_start;
-				$f .= "
+                } else {
+                    $limited_start = '';
+                    $limited_end = '';
+                }
+                $f .= $limited_start;
+                $f .= "
 					<tr>
 						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('".$grid['label']."', (isset(\$fields['".$grid['field']."']['language'])? \$fields['".$grid['field']."']['language'] : array())) }}
+							{{ SiteHelpers::activeLang('" . $grid['label'] . "', (isset(\$fields['" . $grid['field'] . "']['language'])? \$fields['" . $grid['field'] . "']['language'] : array())) }}
 						</td>
-						<td>".$val." </td>
+						<td>" . $val . " </td>
 						
 					</tr>
 				";
-				$f .= $limited_end;
-			}
-		}
-		return $f;
-	}
+                $f .= $limited_end;
+            }
+        }
+        return $f;
+    }
 
-	public static  function transForm( $field, $forms = array(),$bulk=false , $value ='')
-	{
-		$type = '';
-		$bulk = ($bulk == true ? '[]' : '');
-		$mandatory = '';
-		foreach($forms as $f)
-		{
-			if($f['field'] == $field && $f['search'] ==1)
-			{
-				$type = ($f['type'] !='file' ? $f['type'] : '');
-				$option = $f['option'];
-				$required = $f['required'];
+    public static function transForm($field, $forms = array(), $bulk = false, $value = '')
+    {
+        $type = '';
+        $bulk = ($bulk == true ? '[]' : '');
+        $mandatory = '';
+        foreach ($forms as $f) {
+            if ($f['field'] == $field && $f['search'] == 1) {
+                $type = ($f['type'] != 'file' ? $f['type'] : '');
+                $option = $f['option'];
+                $required = $f['required'];
 
-				if($required =='required') {
-					$mandatory = "data-parsley-required='true'";
-				} else if($required =='email') {
-					$mandatory = "data-parsley-type'='email' ";
-				} else if($required =='date') {
-					$mandatory = "data-parsley-required='true'";
-				} else if($required =='numeric') {
-					$mandatory = "data-parsley-type='number' ";
-				} else {
-					$mandatory = '';
-				}
-			}
-		}
+                if ($required == 'required') {
+                    $mandatory = "data-parsley-required='true'";
+                } else if ($required == 'email') {
+                    $mandatory = "data-parsley-type'='email' ";
+                } else if ($required == 'date') {
+                    $mandatory = "data-parsley-required='true'";
+                } else if ($required == 'numeric') {
+                    $mandatory = "data-parsley-type='number' ";
+                } else {
+                    $mandatory = '';
+                }
+            }
+        }
 
-		switch($type)
-		{
-			default;
-				$form ='';
-				break;
-			case 'textarea';
-				$form = "<input  type='text' name='".$field."{$bulk}' class='form-control input-sm' $mandatory value='{$value}'/>";
-				break;
+        switch ($type) {
+            default;
+                $form = '';
+                break;
+            case 'textarea';
+                $form = "<input  type='text' name='" . $field . "{$bulk}' class='form-control input-sm' $mandatory value='{$value}'/>";
+                break;
 
-			case 'textarea_editor';
-				$form = "<input  type='text' name='".$field."{$bulk}' class='form-control input-sm' $mandatory value='{$value}'/>";
-				break;
+            case 'textarea_editor';
+                $form = "<input  type='text' name='" . $field . "{$bulk}' class='form-control input-sm' $mandatory value='{$value}'/>";
+                break;
 
-			case 'text';
-				$form = "<input  type='text' name='".$field."{$bulk}' class='form-control input-sm' $mandatory value='{$value}'/>";
-				break;
+            case 'text';
+                $form = "<input  type='text' name='" . $field . "{$bulk}' class='form-control input-sm' $mandatory value='{$value}'/>";
+                break;
 
-			case 'text_date';
-				$form = "<input  type='text' name='$field{$bulk}' class='date form-control input-sm' $mandatory value='{$value}'/> ";
-				break;
+            case 'text_date';
+                $form = "<input  type='text' name='$field{$bulk}' class='date form-control input-sm' $mandatory value='{$value}'/> ";
+                break;
 
-			case 'text_datetime';
-				$form = "<input  type='text' name='$field{$bulk}'  class='date form-control input-sm'  $mandatory value='{$value}'/> ";
-				break;
+            case 'text_datetime';
+                $form = "<input  type='text' name='$field{$bulk}'  class='date form-control input-sm'  $mandatory value='{$value}'/> ";
+                break;
 
-			case 'select';
-				if($option['opt_type'] =='external')
-				{
+            case 'select';
+                if ($option['opt_type'] == 'external') {
 
-					$data = DB::table($option['lookup_table'])->get();
-					$opts = '';
-					foreach($data as $row):
-						$selected = '';
-						if($value == $row->$option['lookup_key']) $selected ='selected="selected"';
-						$fields = explode("|",$option['lookup_value']);
-						//print_r($fields);exit;
-						$val = "";
-						foreach($fields as $item=>$v)
-						{
-							if($v !="") $val .= $row->$v." " ;
-						}
-						$opts .= "<option $selected value='".$row->$option['lookup_key']."' $mandatory > ".$val." </option> ";
-					endforeach;
+                    $data = DB::table($option['lookup_table'])->get();
+                    $opts = '';
+                    foreach ($data as $row):
+                        $selected = '';
+                        if ($value == $row->$option['lookup_key']) $selected = 'selected="selected"';
+                        $fields = explode("|", $option['lookup_value']);
+                        //print_r($fields);exit;
+                        $val = "";
+                        foreach ($fields as $item => $v) {
+                            if ($v != "") $val .= $row->$v . " ";
+                        }
+                        $opts .= "<option $selected value='" . $row->$option['lookup_key'] . "' $mandatory > " . $val . " </option> ";
+                    endforeach;
 
-				} else {
-					$opt = explode("|",$option['lookup_query']);
-					$opts = '';
-					for($i=0; $i<count($opt);$i++)
-					{
-						$selected = '';
-						if($value == ltrim(rtrim($opt[0]))) $selected ='selected="selected"';
-						$row =  explode(":",$opt[$i]);
-						$opts .= "<option $selected value ='".trim($row[0])."' > ".$row[1]." </option> ";
-					}
+                } else {
+                    $opt = explode("|", $option['lookup_query']);
+                    $opts = '';
+                    for ($i = 0; $i < count($opt); $i++) {
+                        $selected = '';
+                        if ($value == ltrim(rtrim($opt[0]))) $selected = 'selected="selected"';
+                        $row = explode(":", $opt[$i]);
+                        $opts .= "<option $selected value ='" . trim($row[0]) . "' > " . $row[1] . " </option> ";
+                    }
 
-				}
-				$form = "<select name='$field{$bulk}'  class='form-control sel-search' $mandatory >
+                }
+                $form = "<select name='$field{$bulk}'  class='form-control sel-search' $mandatory >
 							<option value=''> -- Select  -- </option>
 							$opts
 						</select>";
-				break;
+                break;
 
-			case 'radio';
+            case 'radio';
 
-				$opt = explode("|",$option['lookup_query']);
-				$opts = '';
-				for($i=0; $i<count($opt);$i++)
-				{
-					$checked = '';
-					$row =  explode(":",$opt[$i]);
-					$opts .= "<option value ='".$row[0]."' > ".$row[1]." </option> ";
-				}
-				$form = "<select name='$field{$bulk}' class='form-control' $mandatory ><option value=''> -- Select  -- </option>$opts</select>";
-				break;
+                $opt = explode("|", $option['lookup_query']);
+                $opts = '';
+                for ($i = 0; $i < count($opt); $i++) {
+                    $checked = '';
+                    $row = explode(":", $opt[$i]);
+                    $opts .= "<option value ='" . $row[0] . "' > " . $row[1] . " </option> ";
+                }
+                $form = "<select name='$field{$bulk}' class='form-control' $mandatory ><option value=''> -- Select  -- </option>$opts</select>";
+                break;
 
-		}
+        }
 
-		return $form;
-	}
+        return $form;
+    }
 
-	public static  function bulkForm( $field, $forms = array(), $value ='')
-	{
-		$type = '';
-		$bulk ='true';
-		$bulk = ($bulk == true ? '[]' : '');
-		$mandatory = '';
-		foreach($forms as $f)
-		{
-			if($f['field'] == $field && $f['search'] ==1)
-			{
-				$type = ($f['type'] !='file' ? $f['type'] : '');
-				$option = $f['option'];
-				$required = $f['required'];
+    public static function bulkForm($field, $forms = array(), $value = '')
+    {
+        $type = '';
+        $bulk = 'true';
+        $bulk = ($bulk == true ? '[]' : '');
+        $mandatory = '';
+        foreach ($forms as $f) {
+            if ($f['field'] == $field && $f['search'] == 1) {
+                $type = ($f['type'] != 'file' ? $f['type'] : '');
+                $option = $f['option'];
+                $required = $f['required'];
 
-				if($required =='required') {
-					$mandatory = "data-parsley-required='true'";
-				} else if($required =='email') {
-					$mandatory = "data-parsley-type'='email' ";
-				} else if($required =='date') {
-					$mandatory = "data-parsley-required='true'";
-				} else if($required =='numeric') {
-					$mandatory = "data-parsley-type='number' ";
-				} else {
-					$mandatory = '';
-				}
-			}
-		}
-		$field = 'bulk_'.$field;
+                if ($required == 'required') {
+                    $mandatory = "data-parsley-required='true'";
+                } else if ($required == 'email') {
+                    $mandatory = "data-parsley-type'='email' ";
+                } else if ($required == 'date') {
+                    $mandatory = "data-parsley-required='true'";
+                } else if ($required == 'numeric') {
+                    $mandatory = "data-parsley-type='number' ";
+                } else {
+                    $mandatory = '';
+                }
+            }
+        }
+        $field = 'bulk_' . $field;
 
-		switch($type)
-		{
-			default;
-				$form ='';
-				break;
+        switch ($type) {
+            default;
+                $form = '';
+                break;
 
-			case 'text';
-				$form = "<input  type='text' name='".$field."{$bulk}' class='form-control input-sm' $mandatory value='{$value}'/>";
-				break;
+            case 'text';
+                $form = "<input  type='text' name='" . $field . "{$bulk}' class='form-control input-sm' $mandatory value='{$value}'/>";
+                break;
 
-			case 'text_date';
-				$form = "<input  type='text' name='$field{$bulk}' class='date form-control input-sm' $mandatory value='{$value}'/> ";
-				break;
+            case 'text_date';
+                $form = "<input  type='text' name='$field{$bulk}' class='date form-control input-sm' $mandatory value='{$value}'/> ";
+                break;
 
-			case 'text_datetime';
-				$form = "<input  type='text' name='$field{$bulk}'  class='date form-control input-sm'  $mandatory value='{$value}'/> ";
-				break;
+            case 'text_datetime';
+                $form = "<input  type='text' name='$field{$bulk}'  class='date form-control input-sm'  $mandatory value='{$value}'/> ";
+                break;
 
-			case 'select';
+            case 'select';
 
 
-				if($option['opt_type'] =='external')
-				{
+                if ($option['opt_type'] == 'external') {
 
-					$data = DB::table($option['lookup_table'])->get();
-					$opts = '';
-					foreach($data as $row):
-						$selected = '';
-						if($value == $row->$option['lookup_key']) $selected ='selected="selected"';
-						$fields = explode("|",$option['lookup_value']);
-						//print_r($fields);exit;
-						$val = "";
-						foreach($fields as $item=>$v)
-						{
-							if($v !="") $val .= $row->$v." " ;
-						}
-						$opts .= "<option $selected value='".$row->$option['lookup_key']."' $mandatory > ".$val." </option> ";
-					endforeach;
+                    $data = DB::table($option['lookup_table'])->get();
+                    $opts = '';
+                    foreach ($data as $row):
+                        $selected = '';
+                        if ($value == $row->$option['lookup_key']) $selected = 'selected="selected"';
+                        $fields = explode("|", $option['lookup_value']);
+                        //print_r($fields);exit;
+                        $val = "";
+                        foreach ($fields as $item => $v) {
+                            if ($v != "") $val .= $row->$v . " ";
+                        }
+                        $opts .= "<option $selected value='" . $row->$option['lookup_key'] . "' $mandatory > " . $val . " </option> ";
+                    endforeach;
 
-				} else {
-					$opt = explode("|",$option['lookup_query']);
-					$opts = '';
-					for($i=0; $i<count($opt);$i++)
-					{
-						$selected = '';
-						if($value == ltrim(rtrim($opt[0]))) $selected ='selected="selected"';
-						$row =  explode(":",$opt[$i]);
-						$opts .= "<option $selected value ='".trim($row[0])."' > ".$row[1]." </option> ";
-					}
+                } else {
+                    $opt = explode("|", $option['lookup_query']);
+                    $opts = '';
+                    for ($i = 0; $i < count($opt); $i++) {
+                        $selected = '';
+                        if ($value == ltrim(rtrim($opt[0]))) $selected = 'selected="selected"';
+                        $row = explode(":", $opt[$i]);
+                        $opts .= "<option $selected value ='" . trim($row[0]) . "' > " . $row[1] . " </option> ";
+                    }
 
-				}
-				$form = "<select name='$field{$bulk}'  class='form-control' $mandatory >
+                }
+                $form = "<select name='$field{$bulk}'  class='form-control' $mandatory >
 							<option value=''> -- Select  -- </option>
 							$opts
 						</select>";
-				break;
+                break;
 
-			case 'radio';
+            case 'radio';
 
-				$opt = explode("|",$option['lookup_query']);
-				$opts = '';
-				for($i=0; $i<count($opt);$i++)
-				{
-					$checked = '';
-					$row =  explode(":",$opt[$i]);
-					$opts .= "<option value ='".$row[0]."' > ".$row[1]." </option> ";
-				}
-				$form = "<select name='$field{$bulk}' class='form-control' $mandatory ><option value=''> -- Select  -- </option>$opts</select>";
-				break;
+                $opt = explode("|", $option['lookup_query']);
+                $opts = '';
+                for ($i = 0; $i < count($opt); $i++) {
+                    $checked = '';
+                    $row = explode(":", $opt[$i]);
+                    $opts .= "<option value ='" . $row[0] . "' > " . $row[1] . " </option> ";
+                }
+                $form = "<select name='$field{$bulk}' class='form-control' $mandatory ><option value=''> -- Select  -- </option>$opts</select>";
+                break;
 
-		}
+        }
 
-		return $form;
-	}
+        return $form;
+    }
 
-	public static function viewColSpan( $grid )
-	{
-		$i =0;
-		foreach ($grid as $t):
-			if($t['view'] =='1') ++$i;
-		endforeach;
-		return $i;
-	}
+    public static function viewColSpan($grid)
+    {
+        $i = 0;
+        foreach ($grid as $t):
+            if ($t['view'] == '1') ++$i;
+        endforeach;
+        return $i;
+    }
 
-	public static function blend($str,$data) {
-		$src = $rep = array();
+    public static function blend($str, $data)
+    {
+        $src = $rep = array();
 
-		foreach($data as $k=>$v){
-			$src[] = "{".$k."}";
-			$rep[] = $v;
-		}
+        foreach ($data as $k => $v) {
+            $src[] = "{" . $k . "}";
+            $rep[] = $v;
+        }
 
-		if(is_array($str)){
-			foreach($str as $st ){
-				$res[] = trim(str_ireplace($src,$rep,$st));
-			}
-		} else {
-			$res = str_ireplace($src,$rep,$str);
-		}
+        if (is_array($str)) {
+            foreach ($str as $st) {
+                $res[] = trim(str_ireplace($src, $rep, $st));
+            }
+        } else {
+            $res = str_ireplace($src, $rep, $str);
+        }
 
-		return $res;
+        return $res;
 
-	}
+    }
 
-	public static function toJavascript( $forms , $app , $class )
-	{
-		$f = '';
-		foreach($forms as $form){
-			if($form['view'] != 0)
-			{
-				if(preg_match('/(select)/',$form['type']))
-				{
-					if($form['option']['opt_type'] == 'external')
-					{
-						$table 	=  $form['option']['lookup_table'] ;
-						$val 	=  $form['option']['lookup_value'];
-						$key 	=  $form['option']['lookup_key'];
-						$lookey = '';
-						if($form['option']['is_dependency']) $lookey .= $form['option']['lookup_dependency_key'] ;
-						$f .= self::createPreCombo( $form['field'] , $table , $key , $val ,$app, $class , $lookey  );
+    public static function toJavascript($forms, $app, $class)
+    {
+        $f = '';
+        foreach ($forms as $form) {
+            if ($form['view'] != 0) {
+                if (preg_match('/(select)/', $form['type'])) {
+                    if ($form['option']['opt_type'] == 'external') {
+                        $table = $form['option']['lookup_table'];
+                        $val = $form['option']['lookup_value'];
+                        $key = $form['option']['lookup_key'];
+                        $lookey = '';
+                        if ($form['option']['is_dependency']) $lookey .= $form['option']['lookup_dependency_key'];
+                        $f .= self::createPreCombo($form['field'], $table, $key, $val, $app, $class, $lookey);
 
-					}
+                    }
 
-				}
+                }
 
-			}
+            }
 
-		}
-		return $f;
+        }
+        return $f;
 
-	}
+    }
 
-	public static function createPreCombo( $field , $table , $key ,  $val ,$app ,$class ,$lookey = null)
+    public static function createPreCombo($field, $table, $key, $val, $app, $class, $lookey = null)
     {
         $parent = null;
         $parent_field = null;
-        if($lookey != null)
-        {
-            $parent = " parent: '#".$lookey."',";
-            $parent_field =  "&parent={$lookey}:";
+        if ($lookey != null) {
+            $parent = " parent: '#" . $lookey . "',";
+            $parent_field = "&parent={$lookey}:";
         }
         $pre_jCombo = "
         \$(\"#{$field}\").jCombo(\"{{ URL::to('{$class}/comboselect?filter={$table}:{$key}:{$val}') }}$parent_field\",
-        { ".$parent." selected_value : '{{ \$row[\"{$field}\"] }}' });
+        { " . $parent . " selected_value : '{{ \$row[\"{$field}\"] }}' });
         ";
         return $pre_jCombo;
     }
 
-	static public function showNotification()
-	{
-		$status = Session::get('msgstatus');
-		if(Session::has('msgstatus')): ?>
-		<script type="text/javascript">
-            $(document).ready(function(){
-			toastr.<?php echo $status;?>("success", "<?php echo Session::get('messagetext');?>");
-			toastr.options = {
-				  "closeButton": true,
-				  "debug": false,
-				  "positionClass": "toast-bottom-right",
-				  "onclick": null,
-				  "showDuration": "300",
-				  "hideDuration": "1000",
-				  "timeOut": "5000",
-				  "extendedTimeOut": "1000",
-				  "showEasing": "swing",
-				  "hideEasing": "linear",
-				  "showMethod": "fadeIn",
-				  "hideMethod": "fadeOut"
+    static public function showNotification()
+    {
+        $status = Session::get('msgstatus');
+        if (Session::has('msgstatus')): ?>
+            <script type="text/javascript">
+                $(document).ready(function () {
+                    toastr.<?php echo $status;?>("success", "<?php echo Session::get('messagetext');?>");
+                    toastr.options = {
+                        "closeButton": true,
+                        "debug": false,
+                        "positionClass": "toast-bottom-right",
+                        "onclick": null,
+                        "showDuration": "300",
+                        "hideDuration": "1000",
+                        "timeOut": "5000",
+                        "extendedTimeOut": "1000",
+                        "showEasing": "swing",
+                        "hideEasing": "linear",
+                        "showMethod": "fadeIn",
+                        "hideMethod": "fadeOut"
 
-				}
-			});
-		</script>
-		<?php endif;
-	}
+                    }
+                });
+            </script>
+        <?php endif;
+    }
 
-	public static function alert( $task , $message)
-	{
-		if($task =='error') {
-			$alert ='
+    public static function alert($task, $message)
+    {
+        if ($task == 'error') {
+            $alert = '
 			<div class="alert alert-danger  fade in block-inner">
 				<button data-dismiss="alert" class="close" type="button"> x </button>
-			<i class="icon-cancel-circle"></i> '. $message.' </div>
+			<i class="icon-cancel-circle"></i> ' . $message . ' </div>
 			';
-		} elseif ($task =='success') {
-			$alert ='
+        } elseif ($task == 'success') {
+            $alert = '
 			<div class="alert alert-success fade in block-inner">
 				<button data-dismiss="alert" class="close" type="button"> x </button>
-			<i class="icon-checkmark-circle"></i> '. $message.' </div>
+			<i class="icon-checkmark-circle"></i> ' . $message . ' </div>
 			';
-		} elseif ($task =='warning') {
-			$alert ='
+        } elseif ($task == 'warning') {
+            $alert = '
 			<div class="alert alert-warning fade in block-inner">
 				<button data-dismiss="alert" class="close" type="button"> x </button>
-			<i class="icon-warning"></i> '. $message.' </div>
+			<i class="icon-warning"></i> ' . $message . ' </div>
 			';
-		} else {
-			$alert ='
+        } else {
+            $alert = '
 			<div class="alert alert-info  fade in block-inner">
 				<button data-dismiss="alert" class="close" type="button"> x </button>
-			<i class="icon-info"></i> '. $message.' </div>
+			<i class="icon-info"></i> ' . $message . ' </div>
 			';
-		}
-		return $alert;
+        }
+        return $alert;
 
-	}
+    }
 
-	public static function _sort($a, $b) {
+    public static function _sort($a, $b)
+    {
 
-		if ($a['sortlist'] == $a['sortlist']) {
-		return strnatcmp($a['sortlist'], $b['sortlist']);
-		}
-		return strnatcmp($a['sortlist'], $b['sortlist']);
-	}
-
-
-	static public function cropImage($nw, $nh, $source, $stype, $dest)
-	{
-		$size = getimagesize($source); // ukuran gambar
-		$w = $size[0];
-		$h = $size[1];
-		switch($stype)
-		{ // format gambar
-			default :
-				$simg = imagecreatefromjpeg($source);
-				break;
-
-			case 'gif':
-				$simg = imagecreatefromgif($source);
-				break;
-
-			case 'png':
-				$simg = imagecreatefrompng($source);
-				break;
-		}
-		$dimg = imagecreatetruecolor($nw, $nh); // menciptakan image baru
-		$wm = $w/$nw;
-		$hm = $h/$nh;
-		$h_height = $nh/2;
-		$w_height = $nw/2;
-		if($w> $h)
-		{
-			$adjusted_width = $w / $hm;
-			$half_width = $adjusted_width / 2;
-			$int_width = $half_width - $w_height;
-			imagecopyresampled($dimg,$simg,-$int_width,0,0,0,$adjusted_width,$nh,$w,$h);
-		}
-		elseif(($w <$h) || ($w == $h))
-		{
-			$adjusted_height = $h / $wm;
-			$half_height = $adjusted_height / 2;
-			$int_height = $half_height - $h_height;
-			imagecopyresampled($dimg,$simg,0,-$int_height,0,0,$nw,$adjusted_height,$w,$h);
-		}
-		else
-		{
-			imagecopyresampled($dimg,$simg,0,0,0,0,$nw,$nh,$w,$h);
-		}
-		imagejpeg($dimg,$dest,100);
-	}
+        if ($a['sortlist'] == $a['sortlist']) {
+            return strnatcmp($a['sortlist'], $b['sortlist']);
+        }
+        return strnatcmp($a['sortlist'], $b['sortlist']);
+    }
 
 
-	public static function showUploadedFile($file,$path , $width = 50,$circle=true) {
-       $files =  public_path(). $path . $file ;
+    static public function cropImage($nw, $nh, $source, $stype, $dest)
+    {
+        $size = getimagesize($source); // ukuran gambar
+        $w = $size[0];
+        $h = $size[1];
+        switch ($stype) { // format gambar
+            default :
+                $simg = imagecreatefromjpeg($source);
+                break;
 
-		if(file_exists($files ) && $file !="") {
+            case 'gif':
+                $simg = imagecreatefromgif($source);
+                break;
 
-			$info = pathinfo($files);
-			if($info['extension'] == "jpg" || $info['extension'] == "jpeg" ||  $info['extension'] == "png" || $info['extension'] == "gif" || $info['extension'] == "JPG")
-			{
+            case 'png':
+                $simg = imagecreatefrompng($source);
+                break;
+        }
+        $dimg = imagecreatetruecolor($nw, $nh); // menciptakan image baru
+        $wm = $w / $nw;
+        $hm = $h / $nh;
+        $h_height = $nh / 2;
+        $w_height = $nw / 2;
+        if ($w > $h) {
+            $adjusted_width = $w / $hm;
+            $half_width = $adjusted_width / 2;
+            $int_width = $half_width - $w_height;
+            imagecopyresampled($dimg, $simg, -$int_width, 0, 0, 0, $adjusted_width, $nh, $w, $h);
+        } elseif (($w < $h) || ($w == $h)) {
+            $adjusted_height = $h / $wm;
+            $half_height = $adjusted_height / 2;
+            $int_height = $half_height - $h_height;
+            imagecopyresampled($dimg, $simg, 0, -$int_height, 0, 0, $nw, $adjusted_height, $w, $h);
+        } else {
+            imagecopyresampled($dimg, $simg, 0, 0, 0, 0, $nw, $nh, $w, $h);
+        }
+        imagejpeg($dimg, $dest, 100);
+    }
 
-				$path_file = str_replace("./","",$path);
-                if($circle)
-                {
-                    $class="img-circle";
+
+    public static function showUploadedFile($file, $path, $width = 50, $circle = true)
+    {
+        $files = public_path() . $path . $file;
+
+        if (file_exists($files) && $file != "") {
+
+            $info = pathinfo($files);
+            if ($info['extension'] == "jpg" || $info['extension'] == "jpeg" || $info['extension'] == "png" || $info['extension'] == "gif" || $info['extension'] == "JPG") {
+
+                $path_file = str_replace("./", "", $path);
+                if ($circle) {
+                    $class = "img-circle";
+                } else {
+                    $class = 'img';
                 }
-                else{
-                    $class='img';
+                return '<p><a href="' . url($path_file . $file) . '" target="_blank" class="previewImage fancybox" rel="gallery1">
+				<img style="box-shadow:1px 1px 5px gray" src="' . asset($path_file . $file) . '" border="0" width="' . $width . '" class="' . $class . '"  /></a></p>';
+            } else {
+                $path_file = str_replace("./", "", $path);
+                return '<p> <a  href="' . url($path_file . $file) . '" target="_blank"> ' . $file . ' </a>';
+            }
+
+        } else {
+
+            return "<img src='" . asset('/uploads/images/no-image.png') . "' border='0' width='" . $width . "' /></a>";
+
+        }
+
+    }
+
+    public static function globalXssClean()
+    {
+        // Recursive cleaning for array [] inputs, not just strings.
+        $sanitized = static::arrayStripTags(Input::get());
+        Input::merge($sanitized);
+    }
+
+    public static function arrayStripTags($array)
+    {
+        $result = array();
+
+        foreach ($array as $key => $value) {
+            // Don't allow tags on key either, maybe useful for dynamic forms.
+            $key = strip_tags($key);
+
+            // If the value is an array, we will just recurse back into the
+            // function to keep stripping the tags out of the array,
+            // otherwise we will set the stripped value.
+            if (is_array($value)) {
+                $result[$key] = static::arrayStripTags($value);
+            } else {
+                // I am using strip_tags(), you may use htmlentities(),
+                // also I am doing trim() here, you may remove it, if you wish.
+                $result[$key] = trim(strip_tags($value));
+            }
+        }
+
+        return $result;
+    }
+
+    public static function writeEncoder($val)
+    {
+        return base64_encode($val);
+    }
+
+    public static function readEncoder($val)
+    {
+        return base64_decode($val);
+    }
+
+    public static function gridDisplay($val, $field, $arr)
+    {
+        if (isset($arr['valid']) && $arr['valid'] == 1) {
+            $fields = str_replace("|", ",", $arr['display']);
+            $Q = DB::select(" SELECT " . $fields . " FROM " . $arr['db'] . " WHERE " . $arr['key'] . " = '" . $val . "' ");
+            if (count($Q) >= 1) {
+                $row = $Q[0];
+                $fields = explode("|", $arr['display']);
+                $v = '';
+                $v .= (isset($fields[0]) && $fields[0] != '' ? $row->$fields[0] . ' ' : '');
+                $v .= (isset($fields[1]) && $fields[1] != '' ? $row->$fields[1] . ' ' : '');
+                $v .= (isset($fields[2]) && $fields[2] != '' ? $row->$fields[2] . ' ' : '');
+
+
+                return $v;
+            } else {
+                return '';
+            }
+        } else {
+            return $val;
+        }
+    }
+
+    public static function gridDisplayView($val, $field, $arr)
+    {
+
+        $arr = explode(':', $arr);
+
+        if (isset($arr['0']) && $arr['0'] == 1) {
+            $Q = DB::select(" SELECT " . str_replace("|", ",", $arr['3']) . " FROM " . $arr['1'] . " WHERE " . $arr['2'] . " = '" . $val . "' ");
+            if (count($Q) >= 1) {
+                $row = $Q[0];
+                $fields = explode("|", $arr['3']);
+                $v = '';
+                $v .= (isset($fields[0]) && $fields[0] != '' ? $row->$fields[0] . ' ' : '');
+                $v .= (isset($fields[1]) && $fields[1] != '' ? $row->$fields[1] . ' ' : '');
+                $v .= (isset($fields[2]) && $fields[2] != '' ? $row->$fields[2] . ' ' : '');
+                return $v;
+            } else {
+                return '';
+            }
+        } else {
+            return $val;
+        }
+    }
+
+    public static function langOption()
+    {
+        $path = base_path() . '/resources/lang/';
+        $lang = scandir($path);
+
+        $t = array();
+        foreach ($lang as $value) {
+            if ($value === '.' || $value === '..') {
+                continue;
+            }
+            if (is_dir($path . $value)) {
+                $fp = file_get_contents($path . $value . '/info.json');
+                $fp = json_decode($fp, true);
+                $t[] = $fp;
+            }
+
+        }
+        return $t;
+    }
+
+
+    public static function themeOption()
+    {
+
+        $path = base_path() . '/resources/views/layouts/';
+        $lang = scandir($path);
+        $t = array();
+        foreach ($lang as $value) {
+            if ($value === '.' || $value === '..') {
+                continue;
+            }
+            if (is_dir($path . $value)) {
+                $fp = file_get_contents($path . $value . '/info.json');
+                $fp = json_decode($fp, true);
+                $t[] = $fp;
+            }
+
+        }
+        return $t;
+    }
+
+    public static function avatar($width = 75)
+    {
+        $avatar = '<img alt="" src="http://www.gravatar.com/avatar/' . md5(Session::get('email')) . '" class="img-circle" width="' . $width . '" />';
+        $Q = DB::table("users")->where("id", '=', Session::get('uid'))->get();
+        if (count($Q) >= 1) {
+            $row = $Q[0];
+            $files = './uploads/users/' . $row->avatar;
+            if ($row->avatar != '') {
+                if (file_exists($files)) {
+                    return '<img src="' . URL::to('uploads/users') . '/' . $row->avatar . '" border="0" width="' . $width . '" class="img-circle" />';
+                } else {
+                    return $avatar;
                 }
-				return '<p><a href="'.url( $path_file . $file).'" target="_blank" class="previewImage fancybox" rel="gallery1">
-				<img style="box-shadow:1px 1px 5px gray" src="'.asset( $path_file . $file ).'" border="0" width="'. $width .'" class="'.$class.'"  /></a></p>';
-			} else {
-				$path_file = str_replace("./","",$path);
-				return '<p> <a  href="'.url($path_file . $file).'" target="_blank"> '.$file.' </a>';
-			}
-
-		} else {
-
-			return "<img src='".asset('/uploads/images/no-image.png')."' border='0' width='".$width."' /></a>";
-
-		}
-
-	}
-
-	public static function globalXssClean()
-	{
-	    // Recursive cleaning for array [] inputs, not just strings.
-	    $sanitized = static::arrayStripTags(Input::get());
-	    Input::merge($sanitized);
-	}
-
-	public static function arrayStripTags($array)
-	{
-	    $result = array();
-
-	    foreach ($array as $key => $value) {
-	        // Don't allow tags on key either, maybe useful for dynamic forms.
-	        $key = strip_tags($key);
-
-	        // If the value is an array, we will just recurse back into the
-	        // function to keep stripping the tags out of the array,
-	        // otherwise we will set the stripped value.
-	        if (is_array($value)) {
-	            $result[$key] = static::arrayStripTags($value);
-	        } else {
-	            // I am using strip_tags(), you may use htmlentities(),
-	            // also I am doing trim() here, you may remove it, if you wish.
-	            $result[$key] = trim(strip_tags($value));
-	        }
-	    }
-
-	    return $result;
-	}
-
-	public static function writeEncoder($val) {
-		return base64_encode($val);
-	}
-
-	public static function readEncoder($val) {
-		return base64_decode($val);
-	}
-
-	public static function gridDisplay($val , $field, $arr) {
-		if(isset($arr['valid']) && $arr['valid'] ==1)
-		{
-			$fields = str_replace("|",",",$arr['display']);
-			$Q = DB::select(" SELECT ".$fields." FROM ".$arr['db']." WHERE ".$arr['key']." = '".$val."' ");
-			if(count($Q) >= 1 )
-			{
-				$row = $Q[0];
-				$fields = explode("|",$arr['display']);
-				$v= '';
-				$v .= (isset($fields[0]) && $fields[0] !='' ?  $row->$fields[0].' ' : '');
-				$v .= (isset($fields[1]) && $fields[1] !=''  ? $row-> $fields[1].' ' : '');
-				$v .= (isset($fields[2]) && $fields[2] !=''  ? $row->$fields[2].' ' : '');
+            } else {
+                return $avatar;
+            }
+        }
+    }
 
 
-				return $v;
-			} else {
-				return '';
-			}
-		} else {
-			return $val;
-		}
-	}
-	public static function gridDisplayView($val , $field, $arr) {
+    public static function BBCode2Html($text)
+    {
 
-		$arr = explode(':',$arr);
+        $emotion = URL::to('sximo/js/plugins/markitup/images/emoticons/');
 
-		if(isset($arr['0']) && $arr['0'] ==1)
-		{
-			$Q = DB::select(" SELECT ".str_replace("|",",",$arr['3'])." FROM ".$arr['1']." WHERE ".$arr['2']." = '".$val."' ");
-			if(count($Q) >= 1 )
-			{
-				$row = $Q[0];
-				$fields = explode("|",$arr['3']);
-				$v= '';
-				$v .= (isset($fields[0]) && $fields[0] !='' ?  $row->$fields[0].' ' : '');
-				$v .= (isset($fields[1]) && $fields[1] !=''  ? $row-> $fields[1].' ' : '');
-				$v .= (isset($fields[2]) && $fields[2] !=''  ? $row->$fields[2].' ' : '');
-				return $v;
-			} else {
-				return '';
-			}
-		} else {
-			return $val;
-		}
-	}
+        $text = trim($text);
 
-	public static function langOption()
-	{
-		$path = base_path().'/resources/lang/';
-		$lang = scandir($path);
+        // BBCode [code]
+        if (!function_exists('escape')) {
+            function escape($s)
+            {
+                global $text;
+                $text = strip_tags($text);
+                $code = $s[1];
+                $code = htmlspecialchars($code);
+                $code = str_replace("[", "&#91;", $code);
+                $code = str_replace("]", "&#93;", $code);
+                return '<pre class="prettyprint linenums"><code>' . $code . '</code></pre>';
+            }
+        }
+        $text = preg_replace_callback('/\[code\](.*?)\[\/code\]/ms', "escape", $text);
 
-		$t = array();
-		foreach($lang as $value) {
-			if($value === '.' || $value === '..') {continue;}
-				if(is_dir($path . $value))
-				{
-					$fp = file_get_contents($path . $value.'/info.json');
-					$fp = json_decode($fp,true);
-					$t[] =  $fp ;
-				}
+        // Smileys to find...
+        $in = array(':)',
+            ':D',
+            ':o',
+            ':p',
+            ':(',
+            ';)'
+        );
+        // And replace them by...
+        $out = array('<img alt=":)" src="' . $emotion . 'emoticon-happy.png" />',
+            '<img alt=":D" src="' . $emotion . 'emoticon-smile.png" />',
+            '<img alt=":o" src="' . $emotion . 'emoticon-surprised.png" />',
+            '<img alt=":p" src="' . $emotion . 'emoticon-tongue.png" />',
+            '<img alt=":(" src="' . $emotion . 'emoticon-unhappy.png" />',
+            '<img alt=";)" src="' . $emotion . 'emoticon-wink.png" />'
+        );
+        $text = str_replace($in, $out, $text);
 
-		}
-		return $t;
-	}
+        // BBCode to find...
+        $in = array('/\[b\](.*?)\[\/b\]/ms',
+            '/\[div\="?(.*?)"?](.*?)\[\/div\]/ms',
+            '/\[i\](.*?)\[\/i\]/ms',
+            '/\[u\](.*?)\[\/u\]/ms',
+            '/\[img\](.*?)\[\/img\]/ms',
+            '/\[email\](.*?)\[\/email\]/ms',
+            '/\[url\="?(.*?)"?\](.*?)\[\/url\]/ms',
+            '/\[size\="?(.*?)"?\](.*?)\[\/size\]/ms',
+            '/\[color\="?(.*?)"?\](.*?)\[\/color\]/ms',
+            '/\[quote](.*?)\[\/quote\]/ms',
+            '/\[list\=(.*?)\](.*?)\[\/list\]/ms',
+            '/\[list\](.*?)\[\/list\]/ms',
+            '/\[\*\]\s?(.*?)\n/ms'
+        );
+        // And replace them by...
+        $out = array('<strong>\1</strong>',
+            '<div class="\1">\2</div>',
+            '<em>\1</em>',
+            '<u>\1</u>',
+            '<img src="\1" alt="\1" />',
+            '<a href="mailto:\1">\1</a>',
+            '<a href="\1">\2</a>',
+            '<span style="font-size:\1%">\2</span>',
+            '<span style="color:\1">\2</span>',
+            '<blockquote>\1</blockquote>',
+            '<ol start="\1">\2</ol>',
+            '<ul>\1</ul>',
+            '<li>\1</li>'
+        );
+        $text = preg_replace($in, $out, $text);
 
+        // paragraphs
+        $text = str_replace("\r", "", $text);
+        $text = "<p>" . preg_replace("/(\n){2,}/", "</p><p>", $text) . "</p>";
+        $text = nl2br($text);
 
-	public static function themeOption()
-	{
+        // clean some tags to remain strict
+        // not very elegant, but it works. No time to do better ;)
+        if (!function_exists('removeBr')) {
+            function removeBr($s)
+            {
+                return str_replace("<br />", "", $s[0]);
+            }
+        }
+        $text = preg_replace_callback('/<pre>(.*?)<\/pre>/ms', "removeBr", $text);
+        $text = preg_replace('/<p><pre>(.*?)<\/pre><\/p>/ms', "<pre>\\1</pre>", $text);
 
-		$path = base_path().'/resources/views/layouts/';
-		$lang = scandir($path);
-		$t = array();
-		foreach($lang as $value) {
-			if($value === '.' || $value === '..') {continue;}
-				if(is_dir($path . $value))
-				{
-					$fp = file_get_contents($path .$value.'/info.json');
-					$fp = json_decode($fp,true);
-					$t[] =  $fp ;
-				}
+        $text = preg_replace_callback('/<ul>(.*?)<\/ul>/ms', "removeBr", $text);
+        $text = preg_replace('/<p><ul>(.*?)<\/ul><\/p>/ms', "<ul>\\1</ul>", $text);
 
-		}
-		return $t;
-	}
+        return $text;
+    }
 
-	public static function avatar( $width =75)
-	{
-		$avatar = '<img alt="" src="http://www.gravatar.com/avatar/'.md5(Session::get('email')).'" class="img-circle" width="'.$width.'" />';
-		$Q = DB::table("users")->where("id",'=',Session::get('uid'))->get();
-		if(count($Q)>=1)
-		{
-			$row = $Q[0];
-			$files =  './uploads/users/'.$row->avatar ;
-			if($row->avatar !='' )
-			{
-				if( file_exists($files))
-				{
-					return  '<img src="'.URL::to('uploads/users').'/'.$row->avatar.'" border="0" width="'.$width.'" class="img-circle" />';
-				} else {
-					return $avatar;
-				}
-			} else {
-				return $avatar;
-			}
-		}
-	}
+    public static function seoUrl($str, $separator = 'dash', $lowercase = FALSE)
+    {
+        if ($separator == 'dash') {
+            $search = '_';
+            $replace = '-';
+        } else {
+            $search = '-';
+            $replace = '_';
+        }
 
+        $trans = array(
+            '&\#\d+?;' => '',
+            '&\S+?;' => '',
+            '\s+' => $replace,
+            '[^a-z0-9\-\._]' => '',
+            $replace . '+' => $replace,
+            $replace . '$' => $replace,
+            '^' . $replace => $replace,
+            '\.+$' => ''
+        );
 
-	public static function BBCode2Html($text) {
+        $str = strip_tags($str);
 
-		$emotion =  URL::to('sximo/js/plugins/markitup/images/emoticons/');
+        foreach ($trans as $key => $val) {
+            $str = preg_replace("#" . $key . "#i", $val, $str);
+        }
 
-		$text = trim($text);
+        if ($lowercase === TRUE) {
+            $str = strtolower($str);
+        }
 
-		// BBCode [code]
-		if (!function_exists('escape')) {
-			function escape($s) {
-				global $text;
-				$text = strip_tags($text);
-				$code = $s[1];
-				$code = htmlspecialchars($code);
-				$code = str_replace("[", "&#91;", $code);
-				$code = str_replace("]", "&#93;", $code);
-				return '<pre class="prettyprint linenums"><code>'.$code.'</code></pre>';
-			}
-		}
-		$text = preg_replace_callback('/\[code\](.*?)\[\/code\]/ms', "escape", $text);
-
-		// Smileys to find...
-		$in = array( 	 ':)',
-						 ':D',
-						 ':o',
-						 ':p',
-						 ':(',
-						 ';)'
-		);
-		// And replace them by...
-		$out = array(	 '<img alt=":)" src="'.$emotion.'emoticon-happy.png" />',
-						 '<img alt=":D" src="'.$emotion.'emoticon-smile.png" />',
-						 '<img alt=":o" src="'.$emotion.'emoticon-surprised.png" />',
-						 '<img alt=":p" src="'.$emotion.'emoticon-tongue.png" />',
-						 '<img alt=":(" src="'.$emotion.'emoticon-unhappy.png" />',
-						 '<img alt=";)" src="'.$emotion.'emoticon-wink.png" />'
-		);
-		$text = str_replace($in, $out, $text);
-
-		// BBCode to find...
-		$in = array( 	 '/\[b\](.*?)\[\/b\]/ms',
-						 '/\[div\="?(.*?)"?](.*?)\[\/div\]/ms',
-						 '/\[i\](.*?)\[\/i\]/ms',
-						 '/\[u\](.*?)\[\/u\]/ms',
-						 '/\[img\](.*?)\[\/img\]/ms',
-						 '/\[email\](.*?)\[\/email\]/ms',
-						 '/\[url\="?(.*?)"?\](.*?)\[\/url\]/ms',
-						 '/\[size\="?(.*?)"?\](.*?)\[\/size\]/ms',
-						 '/\[color\="?(.*?)"?\](.*?)\[\/color\]/ms',
-						 '/\[quote](.*?)\[\/quote\]/ms',
-						 '/\[list\=(.*?)\](.*?)\[\/list\]/ms',
-						 '/\[list\](.*?)\[\/list\]/ms',
-						 '/\[\*\]\s?(.*?)\n/ms'
-		);
-		// And replace them by...
-		$out = array(	 '<strong>\1</strong>',
-						 '<div class="\1">\2</div>',
-						 '<em>\1</em>',
-						 '<u>\1</u>',
-						 '<img src="\1" alt="\1" />',
-						 '<a href="mailto:\1">\1</a>',
-						 '<a href="\1">\2</a>',
-						 '<span style="font-size:\1%">\2</span>',
-						 '<span style="color:\1">\2</span>',
-						 '<blockquote>\1</blockquote>',
-						 '<ol start="\1">\2</ol>',
-						 '<ul>\1</ul>',
-						 '<li>\1</li>'
-		);
-		$text = preg_replace($in, $out, $text);
-
-		// paragraphs
-		$text = str_replace("\r", "", $text);
-		$text = "<p>".preg_replace("/(\n){2,}/", "</p><p>", $text)."</p>";
-		$text = nl2br($text);
-
-		// clean some tags to remain strict
-		// not very elegant, but it works. No time to do better ;)
-		if (!function_exists('removeBr')) {
-			function removeBr($s) {
-				return str_replace("<br />", "", $s[0]);
-			}
-		}
-		$text = preg_replace_callback('/<pre>(.*?)<\/pre>/ms', "removeBr", $text);
-		$text = preg_replace('/<p><pre>(.*?)<\/pre><\/p>/ms', "<pre>\\1</pre>", $text);
-
-		$text = preg_replace_callback('/<ul>(.*?)<\/ul>/ms', "removeBr", $text);
-		$text = preg_replace('/<p><ul>(.*?)<\/ul><\/p>/ms', "<ul>\\1</ul>", $text);
-
-		return $text;
-	}
-
-	public static function seoUrl($str, $separator = 'dash', $lowercase = FALSE)
-	{
-		if ($separator == 'dash')
-		{
-			$search		= '_';
-			$replace	= '-';
-		}
-		else
-		{
-			$search		= '-';
-			$replace	= '_';
-		}
-
-		$trans = array(
-					'&\#\d+?;'				=> '',
-					'&\S+?;'				=> '',
-					'\s+'					=> $replace,
-					'[^a-z0-9\-\._]'		=> '',
-					$replace.'+'			=> $replace,
-					$replace.'$'			=> $replace,
-					'^'.$replace			=> $replace,
-					'\.+$'					=> ''
-			  );
-
-		$str = strip_tags($str);
-
-		foreach ($trans as $key => $val)
-		{
-			$str = preg_replace("#".$key."#i", $val, $str);
-		}
-
-		if ($lowercase === TRUE)
-		{
-			$str = strtolower($str);
-		}
-
-		return trim(stripslashes(strtolower($str)));
-	}
+        return trim(stripslashes(strtolower($str)));
+    }
 
 
-	static function renderHtml( $html )
-	{
+    static function renderHtml($html)
+    {
 
-		$html = preg_replace( '/(\.+\/)+uploads/Usi' , URL::to('uploads') ,  $html );
-	//	$content = str_replace($pattern , URL::to('').'/', $content );
-        preg_match_all ( "#<([a-z]+)( .*)?(?!/)>#iU", $html, $result );
+        $html = preg_replace('/(\.+\/)+uploads/Usi', URL::to('uploads'), $html);
+        //	$content = str_replace($pattern , URL::to('').'/', $content );
+        preg_match_all("#<([a-z]+)( .*)?(?!/)>#iU", $html, $result);
         $openedtags = $result[1];
         #put all closed tags into an array
-        preg_match_all ( "#</([a-z]+)>#iU", $html, $result );
+        preg_match_all("#</([a-z]+)>#iU", $html, $result);
         $closedtags = $result[1];
-        $len_opened = count ( $openedtags );
+        $len_opened = count($openedtags);
         # all tags are closed
-        if( count ( $closedtags ) == $len_opened )
-        {
-       	 return $html;
+        if (count($closedtags) == $len_opened) {
+            return $html;
         }
-        $openedtags = array_reverse ( $openedtags );
+        $openedtags = array_reverse($openedtags);
         # close tags
-        for( $i = 0; $i < $len_opened; $i++ )
-        {
-            if ( !in_array ( $openedtags[$i], $closedtags ) )
-            {
-            $html .= "</" . $openedtags[$i] . ">";
-            }
-            else
-            {
-            unset ( $closedtags[array_search ( $openedtags[$i], $closedtags)] );
+        for ($i = 0; $i < $len_opened; $i++) {
+            if (!in_array($openedtags[$i], $closedtags)) {
+                $html .= "</" . $openedtags[$i] . ">";
+            } else {
+                unset ($closedtags[array_search($openedtags[$i], $closedtags)]);
             }
         }
         return $html;
 
 
+    }
 
-	}
+    public static function activeLang($label, $l)
+    {
 
-	public static function activeLang( $label , $l )
-	{
+        $activeLang = \Session::get('lang');
+        $lang = (isset($l[$activeLang]) ? $l[$activeLang] : $label);
+        return $lang;
 
-		$activeLang = \Session::get('lang');
-		$lang = (isset($l[$activeLang]) ? $l[$activeLang] : $label );
-		return $lang;
+    }
 
-	}
+    public static function infoLang($label, $l, $t = 'title')
+    {
+        $activeLang = Session::get('lang');
+        $lang = (isset($l[$t][$activeLang]) ? $l[$t][$activeLang] : $label);
+        return $lang;
 
-	public static function infoLang( $label , $l , $t = 'title' )
-	{
-		$activeLang = Session::get('lang');
-		$lang = (isset($l[$t][$activeLang]) ? $l[$t][$activeLang] : $label );
-		return $lang;
+    }
 
-	}
+    public static function auditTrail($request, $note)
+    {
+        $data = array(
+            'module' => $request->segment(1),
+            'task' => $request->segment(2),
+            'user_id' => \Session::get('uid'),
+            'ipaddress' => $request->getClientIp(),
+            'note' => $note
+        );
 
-	public static function auditTrail( $request , $note )
-	{
-		$data = array(
-			'module'	=> $request->segment(1),
-			'task'		=> $request->segment(2),
-			'user_id'	=> \Session::get('uid'),
-			'ipaddress'	=> $request->getClientIp(),
-			'note'		=> $note
-		);
+        \DB::table('tb_logs')->insert($data);
 
-		\DB::table( 'tb_logs')->insert($data);
+    }
 
-	}
-
-  static function storeNote( $args )
-  {
-      $args =  array_merge( array(
-        'url'       => '#' ,
-        'userid'    => '0' ,
-        'title'     => '' ,
-        'note'      => '' ,
-        'created'   => date("Y-m-d H:i:s") ,
-        'icon'      => 'fa fa-envelope',
-        'is_read'   => 0
-        ), $args );
+    static function storeNote($args)
+    {
+        $args = array_merge(array(
+            'url' => '#',
+            'userid' => '0',
+            'title' => '',
+            'note' => '',
+            'created' => date("Y-m-d H:i:s"),
+            'icon' => 'fa fa-envelope',
+            'is_read' => 0
+        ), $args);
 
 
         \DB::table('tb_notification')->insert($args);
-  }
+    }
 
-	static function isModuleEnabled($moduleName)
-	{
-		//$Q = DB::select(" SELECT ".$fields." FROM ".$arr['db']." WHERE ".$arr['key']." = '".$val."' ");
-		$result = DB::select("SELECT module_id FROM tb_module WHERE module_name = '$moduleName'");
-		if(!empty($result))
-		{
-			return true;
-		}
-		else
-		{
-			return false;
-		}
-	}
+    static function isModuleEnabled($moduleName)
+    {
+        //$Q = DB::select(" SELECT ".$fields." FROM ".$arr['db']." WHERE ".$arr['key']." = '".$val."' ");
+        $result = DB::select("SELECT module_id FROM tb_module WHERE module_name = '$moduleName'");
+        if (!empty($result)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     static function getColsConfigs($module_id)
     {
-        $result=\DB::select("SELECT * FROM user_module_config where module_id='$module_id'");
+        $result = \DB::select("SELECT * FROM user_module_config where module_id='$module_id'");
         return $result;
     }
 
- static function showRequiredCols($tableGrid,$cols)
- {
-     $cols=explode(',',$cols);
-     $table=array();
-     $i=0;
-     foreach($cols as $col)
-     {
-     foreach($tableGrid as $t) {
-
-            if($col == $t['field'])
-             {
-                 $table[$i]=$t;
-                 $i++;
-             }
-         }
-     }
-     return $table;
- }
-    static function getAllGroups()
+    static function showRequiredCols($tableGrid, $cols)
     {
-        $groups=\DB::table('tb_groups')->get();
-        return $groups;
-    }
-    static function getRequiredConfigs($module_id)
-    {
-        $group_id=Session::get('gid');
-        $user_id=Session::get('uid');
-        $configs=array();
-        $i=0;
-        //get all the configurations against a module
-        $result=\DB::table('user_module_config')->where(array('module_id'=>$module_id))->get();
+        $cols = explode(',', $cols);
+        $table = array();
+        $i = 0;
+        foreach ($cols as $col) {
+            foreach ($tableGrid as $t) {
 
-        foreach($result as $t) {
-            // if configuration is private only show to owner
-            if($t->is_private==1)
-            {
-                if($t->user_id==$user_id)
-                {
-                    $configs[$i]=array('config_name'=>$t->config_name,'config_id'=>$t->id);
+                if ($col == $t['field']) {
+                    $table[$i] = $t;
                     $i++;
                 }
             }
-            // if configuration is public check for the group
-            else{
-                if($t->group_id==$group_id)
-                {
-                    $configs[$i]=array('config_name'=>$t->config_name,'config_id'=>$t->id);
+        }
+        return $table;
+    }
+
+    static function getAllGroups()
+    {
+        $groups = \DB::table('tb_groups')->get();
+        return $groups;
+    }
+
+    static function getRequiredConfigs($module_id)
+    {
+        $group_id = Session::get('gid');
+        $user_id = Session::get('uid');
+        $configs = array();
+        $i = 0;
+        //get all the configurations against a module
+        $result = \DB::table('user_module_config')->where(array('module_id' => $module_id))->get();
+
+        foreach ($result as $t) {
+            // if configuration is private only show to owner
+            if ($t->is_private == 1) {
+                if ($t->user_id == $user_id) {
+                    $configs[$i] = array('config_name' => $t->config_name, 'config_id' => $t->id);
                     $i++;
                 }
-                //show configuration for owner of the configuration
-               elseif($t->user_id==$user_id)
-                {
-                    $configs[$i]=array('config_name'=>$t->config_name,'config_id'=>$t->id);
+            } // if configuration is public check for the group
+            else {
+                if ($t->group_id == $group_id) {
+                    $configs[$i] = array('config_name' => $t->config_name, 'config_id' => $t->id);
+                    $i++;
+                } //show configuration for owner of the configuration
+                elseif ($t->user_id == $user_id) {
+                    $configs[$i] = array('config_name' => $t->config_name, 'config_id' => $t->id);
                     $i++;
                 }
             }
 
         }
 
-return $configs;
+        return $configs;
 
     }
+
     static function getGameImage($game_title_id)
     {
-        $img=\DB::table('game_title')->where('id','=',$game_title_id)->pluck('img');
+        $img = \DB::table('game_title')->where('id', '=', $game_title_id)->pluck('img');
         return $img;
     }
-    static function getDateDiff($first,$second)
+
+    static function getDateDiff($first, $second)
     {
         $datetime1 = new DateTime(($first));
         $datetime2 = new DateTime($second);
-        if($second != 00 && $first != 00) {
+        if ($second != 00 && $first != 00) {
             $interval = $datetime2->diff($datetime1);
             $days = $interval->format('%y-,%m-, %d');
-           echo $days;
-        }
-        else
-        {
+            echo $days;
+        } else {
             echo "N/A";
         }
 
     }
+
     static function showLink()
     {
 
 
     }
-    public  function validate()
+
+    public function validate()
     {
-        $cols='U.id,
+        $cols = 'U.id,
 						   U.user_name,
 						   U.first_name,
 						   U.last_name,
@@ -1680,7 +1623,7 @@ return $configs;
 						   U.restricted_user_email';
 
 
-       /* if(!empty($google_email))
+        /* if(!empty($google_email))
         {
             $this->db->from('users U');
             $this->db->where('U.email', $google_email);
@@ -1688,14 +1631,13 @@ return $configs;
             $query = $this->db->get();
         }*/
 //        else
-  //      {
-            //$password = $this->input->post('password');
-            $row= \DB::Select($cols.'FROM users U WHERE U.id='.\Session::get('uid'));
+        //      {
+        //$password = $this->input->post('password');
+        $row = \DB::Select($cols . 'FROM users U WHERE U.id=' . \Session::get('uid'));
 
-    //    }
+        //    }
 
-        if(count($row) == 1)
-        {
+        if (count($row) == 1) {
             $data['is_logged_in'] = TRUE;
             $data['last_url'] = $this->input->post('last_url');
             $data['selected_location'] = $data['loc_1'];
@@ -1704,95 +1646,75 @@ return $configs;
             $this->db->where('id', $data['loc_1']);
             $locQuery = $this->db->get();
 
-            if($locQuery->num_rows == 1)
-            {
+            if ($locQuery->num_rows == 1) {
                 $locData = $locQuery->row_array();
                 $data['selected_location_name'] = $locData['location_name_short'];
             }
 
-            if($data['user_level'] == 6 || $data['reg_id'] > 1) // IF USER IS DISTRICT MANAGER OR LOCATIONS ARE BASED ON REGION (TYPICALLY USED FOR MANY, ROUTE LOCATIONS)
+            if ($data['user_level'] == 6 || $data['reg_id'] > 1) // IF USER IS DISTRICT MANAGER OR LOCATIONS ARE BASED ON REGION (TYPICALLY USED FOR MANY, ROUTE LOCATIONS)
             {
-                if($data['user_level'] == 6)
-                {
-                    $distMgrQuery = $this->db->query( "SELECT DISTINCT GROUP_CONCAT(L.id) AS LocationIdList
+                if ($data['user_level'] == 6) {
+                    $distMgrQuery = $this->db->query("SELECT DISTINCT GROUP_CONCAT(L.id) AS LocationIdList
 														 FROM location L
 														WHERE L.region_id IN(
 																SELECT R.id
 																  FROM region R
-																 WHERE R.dist_mgr_id =".$data['id']."
+																 WHERE R.dist_mgr_id =" . $data['id'] . "
 																)
-														   OR L.id IN(".$data['loc_1'].",".$data['loc_2'].",".$data['loc_3'].",".$data['loc_4'].",".$data['loc_5'].",".$data['loc_6'].",".$data['loc_7'].",".$data['loc_8'].",".$data['loc_9'].",".$data['loc_10'].")
+														   OR L.id IN(" . $data['loc_1'] . "," . $data['loc_2'] . "," . $data['loc_3'] . "," . $data['loc_4'] . "," . $data['loc_5'] . "," . $data['loc_6'] . "," . $data['loc_7'] . "," . $data['loc_8'] . "," . $data['loc_9'] . "," . $data['loc_10'] . ")
 													 	  AND L.active = 1
 													 ORDER BY L.id");
 
-                    foreach ($distMgrQuery->result() as $row)
-                    {
+                    foreach ($distMgrQuery->result() as $row) {
                         $reg_loc_ids = $row->LocationIdList;
                     }
-                }
-                else
-                {
+                } else {
                     $locByRegQuery = $this->db->query("SELECT DISTINCT GROUP_CONCAT(L.id) AS LocationIdList
 														 FROM location L
-														WHERE L.region_id IN(".$data['reg_id'].")
-														   OR L.id IN(".$data['loc_1'].",".$data['loc_2'].",".$data['loc_3'].",".$data['loc_4'].",".$data['loc_5'].",".$data['loc_6'].",".$data['loc_7'].",".$data['loc_8'].",".$data['loc_9'].",".$data['loc_10'].")
+														WHERE L.region_id IN(" . $data['reg_id'] . ")
+														   OR L.id IN(" . $data['loc_1'] . "," . $data['loc_2'] . "," . $data['loc_3'] . "," . $data['loc_4'] . "," . $data['loc_5'] . "," . $data['loc_6'] . "," . $data['loc_7'] . "," . $data['loc_8'] . "," . $data['loc_9'] . "," . $data['loc_10'] . ")
 													      AND L.active = 1
 													    ORDER BY L.id");
 
-                    foreach ($locByRegQuery->result() as $row)
-                    {
+                    foreach ($locByRegQuery->result() as $row) {
                         $reg_loc_ids = $row->LocationIdList;
                     }
                 }
-            }
-            else
-            {
+            } else {
                 $reg_loc_ids = $data['loc_1'];
-                if(!empty($data['loc_2']))
-                {
-                    $reg_loc_ids = $reg_loc_ids.','.$data['loc_2'];
+                if (!empty($data['loc_2'])) {
+                    $reg_loc_ids = $reg_loc_ids . ',' . $data['loc_2'];
                 }
-                if(!empty($data['loc_3']))
-                {
-                    $reg_loc_ids = $reg_loc_ids.','.$data['loc_3'];
+                if (!empty($data['loc_3'])) {
+                    $reg_loc_ids = $reg_loc_ids . ',' . $data['loc_3'];
                 }
-                if(!empty($data['loc_4']))
-                {
-                    $reg_loc_ids = $reg_loc_ids.','.$data['loc_4'];
+                if (!empty($data['loc_4'])) {
+                    $reg_loc_ids = $reg_loc_ids . ',' . $data['loc_4'];
                 }
-                if(!empty($data['loc_5']))
-                {
-                    $reg_loc_ids = $reg_loc_ids.','.$data['loc_5'];
+                if (!empty($data['loc_5'])) {
+                    $reg_loc_ids = $reg_loc_ids . ',' . $data['loc_5'];
                 }
-                if(!empty($data['loc_6']))
-                {
-                    $reg_loc_ids = $reg_loc_ids.','.$data['loc_6'];
+                if (!empty($data['loc_6'])) {
+                    $reg_loc_ids = $reg_loc_ids . ',' . $data['loc_6'];
                 }
-                if(!empty($data['loc_7']))
-                {
-                    $reg_loc_ids = $reg_loc_ids.','.$data['loc_7'];
+                if (!empty($data['loc_7'])) {
+                    $reg_loc_ids = $reg_loc_ids . ',' . $data['loc_7'];
                 }
-                if(!empty($data['loc_8']))
-                {
-                    $reg_loc_ids = $reg_loc_ids.','.$data['loc_8'];
+                if (!empty($data['loc_8'])) {
+                    $reg_loc_ids = $reg_loc_ids . ',' . $data['loc_8'];
                 }
-                if(!empty($data['loc_9']))
-                {
-                    $reg_loc_ids = $reg_loc_ids.','.$data['loc_9'];
+                if (!empty($data['loc_9'])) {
+                    $reg_loc_ids = $reg_loc_ids . ',' . $data['loc_9'];
                 }
-                if(!empty($data['loc_10']))
-                {
-                    $reg_loc_ids = $reg_loc_ids.','.$data['loc_10'];
+                if (!empty($data['loc_10'])) {
+                    $reg_loc_ids = $reg_loc_ids . ',' . $data['loc_10'];
                 }
             }
 
             $data['reg_loc_ids'] = $reg_loc_ids;
-            if(!empty($google_email))
-            {
+            if (!empty($google_email)) {
                 $data['login_type'] = 'google';
-            }
-            else
-            {
+            } else {
                 $data['login_type'] = 'standard';
             }
 
@@ -1805,26 +1727,164 @@ return $configs;
             return TRUE;
         }
     }
+
     static function getGamesName()
     {
-        $row=\DB::table('game')->select('id','game_name')->get();
-       return $row;
-    }
-    static function getBudgetYears()
-    {
-        $row=\DB::select('select YEAR(budget_date) as year from location_budget group by YEAR(budget_date)');
+        $row = \DB::table('game')->select('id', 'game_name')->get();
         return $row;
     }
+
+    static function getBudgetYears()
+    {
+        $row = \DB::select('select YEAR(budget_date) as year from location_budget group by YEAR(budget_date)');
+        return $row;
+    }
+
     static function getLocationDetails($id)
     {
         $locations = \DB::table('user_locations')
             ->join('location', 'user_locations.location_id', '=', 'location.id')
-            ->select('location.id','location.location_name','location.location_name_short','location.street1','location.state','location.city','location.zip')
-            ->where('location.active',1)
-            ->where('user_locations.user_id','=',$id)->orderBy('id','asc')
+            ->select('location.id', 'location.location_name', 'location.location_name_short', 'location.street1', 'location.state', 'location.city', 'location.zip')
+            ->where('location.active', 1)
+            ->where('user_locations.user_id', '=', $id)->orderBy('id', 'asc')
             ->get();
         return $locations;
     }
 
 
+    static function getOrderHistory()
+    {
+        $loc1 = \Session::get('selected_location');
+        $reg_id = \Session::get('reg_id');
+        $curMonth = date('M');
+        $prevMonth = date("M", strtotime("-1 month"));
+
+        $curMonthFull = date("F");
+        $prevMonthFull = date("F", strtotime("-1 month"));
+        $curMonthNumber = date('m');
+        $prevMonthNumber = date("m", strtotime("-1 month"));
+        $curYear = date('Y');
+
+        if ($curMonth == 'Jan') {
+            $prevMonthYear = date("Y", strtotime("-1 year"));
+        } else {
+            $prevMonthYear = $curYear;
+        }
+        $user_level = \Session::get('gid');
+        if ($user_level == 1 || $user_level == 2 || $user_level == 6 || $user_level == 8 || $user_level == 11) {
+            $query = \DB::select('SELECT (SELECT SUM(budget_value) FROM location_budget
+											WHERE location_id=' . $loc1 . ' AND MONTH(budget_date) = ' . $curMonthNumber . ' AND YEAR(budget_date)='.$curYear.')
+											   AS monthly_merch_budget,
+										  (SELECT SUM(budget_value) FROM location_budget
+											WHERE location_id=' . $loc1 . ' AND MONTH(budget_date) = ' . $prevMonthNumber . ' AND YEAR(budget_date)='.$curYear.')
+											   AS last_month_merch_budget,
+										  (SELECT SUM(order_total)
+										  	 FROM orders
+											WHERE order_type_id IN(7,8)
+											  AND MONTH(date_ordered)=' . $curMonthNumber . '
+											  AND YEAR(date_ordered)=' . $curYear . '
+											  AND location_id=' . $loc1 . ')
+										  	   AS monthly_merch_order_total,
+									      (SELECT SUM(order_total)
+										     FROM orders
+										    WHERE order_type_id IN(7,8)
+										      AND MONTH(date_ordered)=' . $prevMonthNumber . '
+											  AND YEAR(date_ordered)=' . $prevMonthYear . '
+										      AND location_id=' . $loc1 . ')
+										 	   AS last_month_merch_order_total,
+									      (SELECT SUM(order_total)
+									 	     FROM orders
+									 	    WHERE order_type_id NOT IN(7,8,18)
+									 	      AND MONTH(date_ordered)=' . $curMonthNumber . '
+											  AND YEAR(date_ordered)=' . $curYear . '
+									 	      AND location_id=' . $loc1 . ')
+									 		   AS monthly_else_order_total,
+									      (SELECT SUM(order_total)
+										     FROM orders
+										    WHERE YEAR(date_ordered)=' . $curYear . '
+										      AND location_id=' . $loc1 . ')
+											   AS annual_order_total');
+            $data['user_group'] = "regusers";
+        } else if ($user_level == 6) {
+            $query = \DB::select('SELECT (SELECT SUM(budget_value) FROM location_budget left join location on location_budget.location_id = location.id where MONTH(budget_date) = ' . $curMonthNumber . ' AND YEAR(budget_date)='.$curYear.'
+										 AND location.region_id=' . $reg_id . ')
+										   AS monthly_merch_budget,
+									  (SELECT  SUM(budget_value) FROM location_budget left join location on location_budget.location_id = location.id where MONTH(budget_date) = ' . $prevMonthNumber . ' AND YEAR(budget_date)='.$curYear.'
+										  AND location.region_id=' . $reg_id . ')
+										   AS last_month_merch_budget,
+									  (SELECT SUM(O.order_total) FROM orders O, location L
+										WHERE O.location_id = L.id
+										  AND order_type_id IN(7,8)
+										  AND MONTH(O.date_ordered)=' . $curMonthNumber . '
+										  AND YEAR(O.date_ordered)=' . $curYear . '
+										  AND L.region_id=' . $reg_id . ')
+											AS monthly_merch_order_total,
+									   (SELECT SUM(O.order_total) FROM orders O, location L
+										WHERE O.location_id = L.id
+										  AND order_type_id IN(7,8)
+										  AND MONTH(O.date_ordered)=' . $prevMonthNumber . '
+										  AND YEAR(O.date_ordered)=' . $prevMonthYear . '
+										  AND L.region_id=' . $reg_id . ')
+											AS last_month_merch_order_total,
+									   (SELECT SUM(O.order_total) FROM orders O, location L
+									   	 WHERE O.location_id = L.id
+									 	   AND order_type_id NOT IN(7,8,18)
+										   AND MONTH(O.date_ordered)=' . $curMonthNumber . '
+										   AND YEAR(O.date_ordered)=' . $curYear . '
+										   AND L.region_id=' . $reg_id . ')
+											AS monthly_else_order_total,
+									   (SELECT SUM(O.order_total) FROM orders O, location L
+										 WHERE YEAR(O.date_ordered)=' . $curYear . '
+									   	   AND O.location_id = L.id
+										   AND L.region_id=' . $reg_id . ')
+										    AS annual_order_total');
+            $data['user_group'] = "distmgr";
+        } else {
+            $query = \DB::select('SELECT (SELECT SUM(budget_value) FROM location_budget where MONTH(budget_date) =' . $curMonthNumber . ' AND YEAR(budget_date)='.$curYear.' )
+										   AS monthly_merch_budget,
+									  (SELECT SUM(budget_value) FROM location_budget where MONTH(budget_date) =' . $curMonthNumber . ' AND YEAR(budget_date)='.$curYear.')
+										   AS last_month_merch_budget,
+									  (SELECT SUM(order_total) FROM orders
+										WHERE MONTH(date_ordered)=' . $curMonthNumber . '
+										  AND YEAR(date_ordered)=' . $curYear . '
+										  AND order_type_id IN(7,8))
+										   AS monthly_merch_order_total,
+									  (SELECT SUM(order_total) FROM orders
+										WHERE MONTH(date_ordered)=' . $prevMonthNumber . '
+										  AND YEAR(date_ordered)=' . $prevMonthYear . '
+										  AND order_type_id IN(7,8))
+										   AS last_month_merch_order_total,
+									  (SELECT SUM(order_total) FROM orders
+										WHERE MONTH(date_ordered)=' . $curMonthNumber . '
+										  AND YEAR(date_ordered)=' . $curYear . '
+										  AND order_type_id NOT IN(7,8))
+										   AS monthly_else_order_total,
+									  (SELECT SUM(order_total) FROM orders
+										WHERE YEAR(date_ordered)=' . $curYear . ')
+										   AS annual_order_total');
+            $data['user_group'] = "";
+        }
+        $data['monthly_merch_budget'] = $query[0]->monthly_merch_budget;
+        $data['monthly_merch_order_total'] = $query[0]->monthly_merch_order_total;
+        $data['monthly_else_order_total'] = $query[0]->monthly_else_order_total;
+        $data['annual_order_total'] = $query[0]->annual_order_total;
+        $data['last_month_merch_budget'] = $query[0]->last_month_merch_budget;
+        $data['last_month_merch_order_total'] = $query[0]->last_month_merch_order_total;
+        $data['monthly_merch_remaining'] = $data['monthly_merch_budget'] - $data['monthly_merch_order_total'];
+        $data['last_month_merch_remaining'] = $data['last_month_merch_budget'] - $data['last_month_merch_order_total'];
+        $data['curMonthFull'] = $curMonthFull;
+        $data['prevMonthFull'] = $prevMonthFull;
+        $data['curMonth'] = $curMonth;
+        $data['curYear'] = $curYear;
+        $data['selected_location'] = $loc1;
+        $data['reg_id']=$reg_id;
+
+        return $data;
+    }
+
+    static function getRegionName($id = null)
+    {
+        $region_name = \DB::select('select region from region where id=' . $id);
+        return $region_name;
+    }
 }

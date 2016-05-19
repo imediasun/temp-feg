@@ -11,6 +11,7 @@
 |
 */
 Route::get('submitservicerequest/{GID?}/{LID?}', 'SubmitservicerequestController@getIndex');
+Route::get('order/submitorder/{SID?}', 'OrderController@getSubmitorder');
 Route::get('/', 'HomeController@index');
 Route::controller('home', 'HomeController');
 Route::controller('/user', 'UserController');
