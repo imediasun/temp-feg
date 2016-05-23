@@ -458,6 +458,7 @@ abstract class Controller extends BaseController
         $v1=(isset($_GET['v1']) ? $_GET['v1'] : '');
         $v2=(isset($_GET['v2']) ? $_GET['v2'] : '');
         $v3=(isset($_GET['v3']) ? $_GET['v3'] : '');
+        $status=(isset($_GET['status']) ? $_GET['status'] : '');
         $appends = array();
         if ($sort != '') $appends['sort'] = $sort;
         if ($order != '') $appends['order'] = $order;
@@ -489,6 +490,10 @@ abstract class Controller extends BaseController
         if ($v3 != '') {
             $appends['v3'] = $v3;
         }
+        if ($status != '') {
+            $appends['status'] = $status;
+        }
+
 
         return $appends;
 

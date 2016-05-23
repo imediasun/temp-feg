@@ -56,6 +56,12 @@ class Sximo extends Model {
         {
         $total="";    
         }
+        elseif($table=="freight_orders")
+        {
+            $total = \DB::select($select . "
+				{$params} " . self::queryGroup());
+            $total=count($total);
+        }
         else {
             $total = \DB::select($counter_select . "
 				{$params} " . self::queryGroup());
@@ -614,5 +620,6 @@ class Sximo extends Model {
         }
         return $location_info;
     }
+
 
 }

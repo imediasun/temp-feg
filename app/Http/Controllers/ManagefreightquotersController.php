@@ -61,6 +61,9 @@ class ManagefreightquotersController extends Controller {
         $this->data['config'] = \SiteHelpers::CF_decode_json($config[0]->config);
         \Session::put('config_id', $config_id);
         }
+        else{
+            \Session::put('config_id',0);
+        }
 		$sort = (!is_null($request->input('sort')) ? $request->input('sort') : $this->info['setting']['orderby']);
 		$order = (!is_null($request->input('order')) ? $request->input('order') : $this->info['setting']['ordertype']);
 		// End Filter sort and order for query
@@ -77,9 +80,16 @@ class ManagefreightquotersController extends Controller {
 			'params'	=> $filter,
 			'global'	=> (isset($this->access['is_global']) ? $this->access['is_global'] : 0 )
 		);
+        $freight_status=$request->get('status');
+        $this->data['freight_status']=$freight_status;
 		// Get Query
-		$results = $this->model->getRows( $params );
-		// Build pagination setting
+		$results = $this->model->getRows( $params,$freight_status );
+        $description = array();
+        foreach($results['rows'] as $row) {
+            $description[$row->id]=$this->model->getDescription($row->id);
+        }
+        $this->data['description']=$description;
+        // Build pagination setting
 		$page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;
 		//$pagination = new Paginator($results['rows'], $results['total'], $params['limit']);
         $pagination = new Paginator($results['rows'], $results['total'], 
@@ -193,6 +203,7 @@ class ManagefreightquotersController extends Controller {
 
 	function postSave( Request $request, $id =0)
 	{
+        die('here....');
 
 		$rules = $this->validateForm();
 		$validator = Validator::make($request->all(), $rules);

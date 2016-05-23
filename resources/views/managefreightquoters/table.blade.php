@@ -12,7 +12,7 @@
 	</div>
 	<div class="sbox-content">
 
-        @include( $pageModule.'/toolbar',['config_id'=>$config_id,'colconfigs' => SiteHelpers::getRequiredConfigs($module_id)])
+        @include( $pageModule.'/toolbar',['selected_status'=>$freight_status,'config_id'=>$config_id,'colconfigs' => SiteHelpers::getRequiredConfigs($module_id)])
 
 	 <?php echo Form::open(array('url'=>'managefreightquoters/delete/', 'class'=>'form-horizontal' ,'id' =>'SximoTable'  ,'data-parsley-validate'=>'' )) ;?>
 <div class="table-responsive">
@@ -23,10 +23,7 @@
     <table class="table table-striped  " id="{{ $pageModule }}Table">
         <thead>
 			<tr>
-				<th width="20"> No </th>
-                @if($setting['disableactioncheckbox']=='false')
-				<th width="30"> <input type="checkbox" class="checkall" /></th>
-                @endif
+				<th width="50"> No </th>
 				@if($setting['view-method']=='expand') <th>  </th> @endif
 				<?php foreach ($tableGrid as $t) :
 					if($t['view'] =='1'):
@@ -38,6 +35,8 @@
                 }
 					endif;
 				endforeach; ?>
+                <th width="250">Freight Company</th>
+                <th width="300">Description</th>
                 @if($setting['disablerowactions']=='false')
 				<th width="70"><?php echo Lang::get('core.btn_action') ;?></th>
                 @endif
@@ -73,9 +72,6 @@
            		?>
                 <tr class="editable" id="form-{{ $row->id }}">
 					<td class="number"> <?php echo ++$i;?>  </td>
-                    @if($setting['disableactioncheckbox']=='false')
-					<td ><input type="checkbox" class="ids" name="ids[]" value="<?php echo $row->id ;?>" />  </td>
-                    @endif
 					@if($setting['view-method']=='expand')
 					<td><a href="javascript:void(0)" class="expandable" rel="#row-{{ $row->id }}" data-url="{{ url('managefreightquoters/show/'.$id) }}"><i class="fa fa-plus " ></i></a></td>
 					@endif
@@ -94,9 +90,14 @@
 							@endif
                     <?php
 						 endif;
-						endforeach;
+                        ?>
+
+
+					<?php 	endforeach;
 					  ?>
-                  @if($setting['disablerowactions']=='false')     
+                    <td>{{ $row->company_name }}</td>
+                    <td>{{ rtrim($description[$row->id][0]->description,',') }}</td>
+                  @if($setting['disablerowactions']=='false')
 				 <td data-values="action" data-key="<?php echo $row->id ;?>">
 					{!! AjaxHelpers::buttonAction('managefreightquoters',$access,$id ,$setting) !!}
 					{!! AjaxHelpers::buttonActionInline($row->id,'id') !!}
@@ -131,7 +132,7 @@
     @if(!empty($bottomMessage))
     <h5 class="bottomMessage">{{ $bottomMessage }}</h5>
     @endif
-    
+
 	</div>
 	<?php echo Form::close() ;?>
 	@include('ajaxfooter')
@@ -145,7 +146,7 @@ $(document).ready(function() {
 	$('.tips').tooltip();
 	$('input[type="checkbox"],input[type="radio"]').iCheck({
 		checkboxClass: 'icheckbox_square-green',
-		radioClass: 'iradio_square-green',
+		radioClass: 'iradio_square-green'
 	});
 	$('#{{ $pageModule }}Table .checkall').on('ifChecked',function(){
 		$('#{{ $pageModule }}Table input[type="checkbox"]').iCheck('check');
