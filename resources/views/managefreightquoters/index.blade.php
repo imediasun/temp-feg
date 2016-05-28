@@ -21,7 +21,8 @@
 		<div id="{{ $pageModule }}View"></div>			
 		<div id="{{ $pageModule }}Grid"></div>
 	</div>	
-	<!-- End Content -->  
+	<!-- End Content -->
+
 </div>	
 <script>
 $(document).ready(function(){

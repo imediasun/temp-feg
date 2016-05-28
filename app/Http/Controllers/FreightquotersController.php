@@ -191,15 +191,14 @@ class FreightquotersController extends Controller {
 		));
 	}
 
-	function postSave( Request $request, $id =0)
+	function postSave( Request $request, $id = null)
 	{
-
 		$rules = $this->validateForm();
 		$validator = Validator::make($request->all(), $rules);
 		if ($validator->passes()) {
 			$data = $this->validatePost('freight_companies');
 
-			$id = $this->model->insertRow($data , $request->input('id'));
+			$id = $this->model->insertRow($data , $id);
 			
 			return response()->json(array(
 				'status'=>'success',

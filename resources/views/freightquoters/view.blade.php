@@ -15,6 +15,14 @@
 				
 					<tr>
 						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Id', (isset($fields['id']['language'])? $fields['id']['language'] : array())) }}
+						</td>
+						<td>{{ $row->id }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Company Name', (isset($fields['company_name']['language'])? $fields['company_name']['language'] : array())) }}
 						</td>
 						<td>{{ $row->company_name }} </td>
@@ -39,11 +47,44 @@
 				
 					<tr>
 						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Active', (isset($fields['active']['language'])? $fields['active']['language'] : array())) }}
+							{{ SiteHelpers::activeLang('Phone', (isset($fields['phone']['language'])? $fields['phone']['language'] : array())) }}
 						</td>
-						<td>{{ $row->active }} </td>
+						<td>{{ $row->phone }} </td>
 						
 					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('City', (isset($fields['city']['language'])? $fields['city']['language'] : array())) }}
+						</td>
+						<td>{{ $row->city }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('State', (isset($fields['state']['language'])? $fields['state']['language'] : array())) }}
+						</td>
+						<td>{{ $row->state }} </td>
+						
+					</tr>
+				
+					<tr>
+						<td width='30%' class='label-view text-right'>
+							{{ SiteHelpers::activeLang('Zip', (isset($fields['zip']['language'])? $fields['zip']['language'] : array())) }}
+						</td>
+						<td>{{ $row->zip }} </td>
+						
+					</tr>	<tr>
+                        <td width='30%' class='label-view text-right'>
+                            {{ SiteHelpers::activeLang('Active', (isset($fields['active']['language'])? $fields['active']['language'] : array())) }}
+                        </td>
+                        <td>  {!!
+                            SiteHelpers::gridDisplayView($row->active,'active','1:yes_no:id:yesno')
+                            !!} </td>
+
+                    </tr>
+
 				
 			</tbody>	
 		</table>  

@@ -21,10 +21,22 @@
 		<div id="{{ $pageModule }}View"></div>			
 		<div id="{{ $pageModule }}Grid"></div>
 	</div>	
-	<!-- End Content -->  
-</div>	
+	<!-- End Content -->
+    <?php
+    if (session()->has('game_id')) {
+        $game_id = \Session::get('game_id');
+    } else {
+        $game_id = 0;
+    } ?>
+</div>
 <script>
-$(document).ready(function(){
+    $(document).ready(function () {
+        var game_id="{{ $game_id }}";
+
+        if(game_id!=0){
+            ajaxViewDetail('#{{ $pageModule }}',"{{url()}}/mylocationgame/show/"+game_id); return false;
+            //reloadData('#{{ $pageModule }}','/sximo/public/order/data');
+        }
 	reloadData('#{{ $pageModule }}','{{ $pageModule }}/data');	
 });	
 </script>	

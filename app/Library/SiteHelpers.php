@@ -1842,7 +1842,7 @@ class SiteHelpers
         } else {
             $query = \DB::select('SELECT (SELECT SUM(budget_value) FROM location_budget where MONTH(budget_date) =' . $curMonthNumber . ' AND YEAR(budget_date)='.$curYear.' )
 										   AS monthly_merch_budget,
-									  (SELECT SUM(budget_value) FROM location_budget where MONTH(budget_date) =' . $curMonthNumber . ' AND YEAR(budget_date)='.$curYear.')
+									  (SELECT SUM(budget_value) FROM location_budget where MONTH(budget_date) =' . $prevMonthNumber . ' AND YEAR(budget_date)='.$prevMonthYear.')
 										   AS last_month_merch_budget,
 									  (SELECT SUM(order_total) FROM orders
 										WHERE MONTH(date_ordered)=' . $curMonthNumber . '

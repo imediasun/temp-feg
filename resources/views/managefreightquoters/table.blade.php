@@ -96,10 +96,10 @@
 					<?php 	endforeach;
 					  ?>
                     <td>{{ $row->company_name }}</td>
-                    <td>{{ rtrim($description[$row->id][0]->description,',') }}</td>
+                    <td>@if(isset($description[$row->id][0]->description)){{ rtrim($description[$row->id][0]->description,',') }} @endif</td>
                   @if($setting['disablerowactions']=='false')
 				 <td data-values="action" data-key="<?php echo $row->id ;?>">
-					{!! AjaxHelpers::buttonAction('managefreightquoters',$access,$id ,$setting) !!}
+					{!! AjaxHelpers::buttonAction('managefreightquoters',$access,$id ,$setting,'edit') !!}
 					{!! AjaxHelpers::buttonActionInline($row->id,'id') !!}
 				</td>
                 @endif

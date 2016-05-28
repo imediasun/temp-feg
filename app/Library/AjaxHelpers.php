@@ -135,7 +135,7 @@ class AjaxHelpers
 		return $type;
 	}
 
-	static public function buttonAction( $module , $access , $id , $setting)
+	static public function buttonAction( $module , $access , $id , $setting,$edit=null)
 	{
 
 		$html ='<div class=" action dropup" >';
@@ -148,13 +148,15 @@ class AjaxHelpers
 				$html .= '<a href="'.URL::to($module.'/show/'.$id).'" '.$onclick.' class="btn btn-xs btn-white tips" title="'.Lang::get('core.btn_view').'"><i class="fa fa-search"></i></a>';
 			}
 		}
-		if($access['is_edit'] ==1) {
-			$onclick = " onclick=\"ajaxViewDetail('#".$module."',this.href); return false; \"" ;
-			if($setting['form-method'] =='modal')
-					$onclick = " onclick=\"SximoModal(this.href,'Edit Form'); return false; \"" ;			
-			
-			$html .= ' <a href="'.URL::to($module.'/update/'.$id).'" '.$onclick.'  class="btn btn-xs btn-white tips" title="'.Lang::get('core.btn_edit').'"><i class="fa  fa-edit"></i></a>';
-		}
+        if($edit == null) {
+            if ($access['is_edit'] == 1) {
+                $onclick = " onclick=\"ajaxViewDetail('#" . $module . "',this.href); return false; \"";
+                if ($setting['form-method'] == 'modal')
+                    $onclick = " onclick=\"SximoModal(this.href,'Edit Form'); return false; \"";
+
+                $html .= ' <a href="' . URL::to($module . '/update/' . $id) . '" ' . $onclick . '  class="btn btn-xs btn-white tips" title="' . Lang::get('core.btn_edit') . '"><i class="fa  fa-edit"></i></a>';
+            }
+        }
 		$html .= '</div>';
 		return $html;
 	}	

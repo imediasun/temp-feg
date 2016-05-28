@@ -184,7 +184,8 @@ return array(
     "note_block"                => "Blocked",
     "note_unblock"              => "Unblocked",
     "request_sent_success"      => "Request Sent Successfully",
-    "request_send_fial"         => "Error in Sending Request"
+    "request_send_fial"         => "Error in Sending Request",
+    "note_freight_paid"         => "Status Changed,Paid Successfully"
 
 
 );

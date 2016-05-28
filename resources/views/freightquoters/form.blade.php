@@ -9,16 +9,17 @@
 
 	<div class="sbox-content"> 
 @endif	
-			{!! Form::open(array('url'=>'freightquoters/save/'.SiteHelpers::encryptID($row['id']), 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'freightquotersFormAjax')) !!}
+			{!! Form::open(array('url'=>'freightquoters/save/'.$row['id'], 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'freightquotersFormAjax')) !!}
 			<div class="col-md-12">
 						<fieldset><legend> Freight Quoters</legend>
 				
+
 				  <div class="form-group  " >
 					<label for="Company Name" class=" control-label col-md-4 text-left">
 					{!! SiteHelpers::activeLang('Company Name', (isset($fields['company_name']['language'])? $fields['company_name']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('company_name', $row['company_name'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
+					  {!! Form::text('company_name', $row['company_name'],array('class'=>'form-control', 'placeholder'=>'','required'=>'required'   )) !!}
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -29,7 +30,7 @@
 					{!! SiteHelpers::activeLang('Rep Name', (isset($fields['rep_name']['language'])? $fields['rep_name']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('rep_name', $row['rep_name'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
+					  {!! Form::text('rep_name', $row['rep_name'],array('class'=>'form-control', 'placeholder'=>'', 'required'=>'required'  )) !!}
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -40,23 +41,68 @@
 					{!! SiteHelpers::activeLang('Rep Email', (isset($fields['rep_email']['language'])? $fields['rep_email']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('rep_email', $row['rep_email'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
+                        <input type="email" name="rep_email" class="form-control" id="rep_email" value="{{ $row['rep_email'] }}" required/>
+					 </div>
+					 <div class="col-md-2">
+					 	
+					 </div>
+				  </div>
+				  <div class="form-group  " >
+					<label for="Phone" class=" control-label col-md-4 text-left">
+					{!! SiteHelpers::activeLang('Phone', (isset($fields['phone']['language'])? $fields['phone']['language'] : array())) !!}
+					</label>
+					<div class="col-md-6">
+					  {!! Form::text('phone', $row['phone'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
 					 </div> 
 					 <div class="col-md-2">
 					 	
 					 </div>
 				  </div> 
 				  <div class="form-group  " >
-					<label for="Active" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Active', (isset($fields['active']['language'])? $fields['active']['language'] : array())) !!}
+					<label for="City" class=" control-label col-md-4 text-left">
+					{!! SiteHelpers::activeLang('City', (isset($fields['city']['language'])? $fields['city']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
-					  <select name='active' rows='5' id='active' class='select2 ' required  ></select>
+					  {!! Form::text('city', $row['city'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
 					 </div> 
 					 <div class="col-md-2">
 					 	
 					 </div>
-				  </div> </fieldset>
+				  </div> 
+				  <div class="form-group  " >
+					<label for="State" class=" control-label col-md-4 text-left">
+					{!! SiteHelpers::activeLang('State', (isset($fields['state']['language'])? $fields['state']['language'] : array())) !!}
+					</label>
+					<div class="col-md-6">
+					  {!! Form::text('state', $row['state'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
+					 </div> 
+					 <div class="col-md-2">
+					 	
+					 </div>
+				  </div> 
+				  <div class="form-group  " >
+					<label for="Zip" class=" control-label col-md-4 text-left">
+					{!! SiteHelpers::activeLang('Zip', (isset($fields['zip']['language'])? $fields['zip']['language'] : array())) !!}
+					</label>
+					<div class="col-md-6">
+					  {!! Form::text('zip', $row['zip'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
+					 </div> 
+					 <div class="col-md-2">
+					 	
+					 </div>
+				  </div>
+                            <div class="form-group  " >
+                                <label for="Active" class=" control-label col-md-4 text-left">
+                                    {!! SiteHelpers::activeLang('Active', (isset($fields['active']['language'])? $fields['active']['language'] : array())) !!}
+                                </label>
+                                <div class="col-md-6">
+                                    <input type="hidden" name="active" value="0"/>
+                                   <input @if($row['active'] ==1 ) checked @endif type="checkbox" name="active" value="1" id="active"/>
+                                </div>
+                                <div class="col-md-2">
+
+                                </div>
+                            </div> </fieldset>
 			</div>
 			
 												
@@ -84,10 +130,7 @@
 			 
 <script type="text/javascript">
 $(document).ready(function() { 
-	
-        $("#active").jCombo("{{ URL::to('freightquoters/comboselect?filter=yes_no:id:yesno') }}",
-        {  selected_value : '{{ $row["active"] }}',initial_text:"Please Select Status" });
-         
+	 
 	
 	$('.editor').summernote();
 	$('.previewImage').fancybox();	
