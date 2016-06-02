@@ -1,5 +1,4 @@
 @extends('layouts.app')
-
 @section('content')
 <div class="page-content row">
   <!-- Begin Header & Breadcrumb -->

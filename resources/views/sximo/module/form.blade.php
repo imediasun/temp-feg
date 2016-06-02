@@ -172,6 +172,8 @@
 </div></div>
 <script>
 $(document).ready(function() {
+    $('.date').datepicker({ format: 'yyyy-mm-dd', autoClose: true })
+    $('.datetime').datetimepicker({ format: 'yyyy-mm-dd hh:ii:ss' });
 	
 	$('.expand-row').hide();
 	$('.btn-sm').click(function(){

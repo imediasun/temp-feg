@@ -46,7 +46,7 @@
 							  <div class="form-group  " >
 
 								<div class="" style="background:#fff;">
-								  <textarea name='content' rows='35' id='content'    class='form-control markItUp'
+								  <textarea name='content' rows='35' id='content'    class='form-control markItUp editor note-editor note-editable'
 									 >{{ htmlentities($content) }}</textarea>
 								 </div>
 							  </div>
@@ -195,7 +195,7 @@
 </style>
   <script src="//cdn.tinymce.com/4/tinymce.min.js"></script>
   <script>tinymce.init({
-          selector: '#content',
+          selector: '#content4',
           plugins: ["advlist autolink lists link image charmap print preview anchor", "searchreplace" +
           " visualblocks code fullscreen", "insertdatetime media table contextmenu paste",
               "advlist","textcolor colorpicker","imagetools"],

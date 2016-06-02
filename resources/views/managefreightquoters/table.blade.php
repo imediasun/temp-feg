@@ -95,7 +95,7 @@
 
 					<?php 	endforeach;
 					  ?>
-                    <td>{{ $row->company_name }}</td>
+                    <td>{{ isset($row->company_name)?$row->company_name:$row->company_name_1 }}</td>
                     <td>@if(isset($description[$row->id][0]->description)){{ rtrim($description[$row->id][0]->description,',') }} @endif</td>
                   @if($setting['disablerowactions']=='false')
 				 <td data-values="action" data-key="<?php echo $row->id ;?>">

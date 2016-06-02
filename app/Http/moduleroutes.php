@@ -39,4 +39,5 @@
                     Route::controller('getfreightquote', 'GetfreightquoteController');
                     Route::controller('managefreightquoters', 'ManagefreightquotersController');
                     Route::controller('freightquoters', 'FreightquotersController');
+                    Route::controller('trainingmaterial', 'TrainingmaterialController');
                     ?>

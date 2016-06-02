@@ -26,6 +26,7 @@ class ManagefreightquotersController extends Controller
         $this->info = $this->model->makeInfo($this->module);
         $this->access = $this->model->validAccess($this->info['id']);
 
+
         $this->data = array(
             'pageTitle' => $this->info['title'],
             'pageNote' => $this->info['note'],
@@ -38,8 +39,7 @@ class ManagefreightquotersController extends Controller
     public function getIndex()
     {
         if ($this->access['is_view'] == 0)
-            return Redirect::to('dashboard')->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
-
+        return Redirect::to('dashboard')->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
         $this->data['access'] = $this->access;
         return view('managefreightquoters.index', $this->data);
     }
@@ -81,7 +81,14 @@ class ManagefreightquotersController extends Controller
             'global' => (isset($this->access['is_global']) ? $this->access['is_global'] : 0)
         );
         $freight_status = $request->get('status');
-        $this->data['freight_status'] = $freight_status;
+        if(!empty($freight_status))
+        {
+            $request->session()->put('freight_status', $freight_status);
+        }
+        else{
+        \Session::has('freight_status')?:\Session::put('freight_status','requested');
+        }
+        $this->data['freight_status'] = \Session::get('freight_status');
 // Get Query
         $results = $this->model->getRows($params, $freight_status);
         $description = array();

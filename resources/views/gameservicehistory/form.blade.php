@@ -25,11 +25,11 @@
 					 </div>
 				  </div> 
 				  <div class="form-group  " >
-					<label for="Game Id" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Game Id', (isset($fields['game_id']['language'])? $fields['game_id']['language'] : array())) !!}
+					<label for="Game" class=" control-label col-md-4 text-left">
+					{!! SiteHelpers::activeLang('Game ', (isset($fields['game_id']['language'])? $fields['game_id']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('game_id', $row['game_id'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
+                        <select name="game_id" id="game_id" class="select3"></select>
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -40,8 +40,8 @@
 					{!! SiteHelpers::activeLang('Date Down', (isset($fields['date_down']['language'])? $fields['date_down']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('date_down', $row['date_down'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
-					 </div> 
+					     <input type="text" name="date_down" id="date_down" class="date form-control" value="{{ $row['date_down'] }}"/> 
+					  </div> 
 					 <div class="col-md-2">
 					 	
 					 </div>
@@ -59,12 +59,13 @@
 					 </div>
 				  </div> 
 				  <div class="form-group  " >
-					<label for="Down User Id" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Down User Id', (isset($fields['down_user_id']['language'])? $fields['down_user_id']['language'] : array())) !!}
-					</label>
-					<div class="col-md-6">
-					  {!! Form::text('down_user_id', $row['down_user_id'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
-					 </div> 
+					<label for="Down User " class=" control-label col-md-4 text-left">
+                        Down User
+                    </label>
+                        <div class="col-md-6">
+					<select name="down_user_id" id="down_user_id" class="select3"></select>
+
+                  </div>
 					 <div class="col-md-2">
 					 	
 					 </div>
@@ -86,19 +87,19 @@
 					{!! SiteHelpers::activeLang('Date Up', (isset($fields['date_up']['language'])? $fields['date_up']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('date_up', $row['date_up'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
+                                            <input type="text" name="date_up" id="date_up" class="date form-control" value="{{ $row['date_up'] }}"/> 
 					 </div> 
 					 <div class="col-md-2">
 					 	
 					 </div>
 				  </div> 
 				  <div class="form-group  " >
-					<label for="Up User Id" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Up User Id', (isset($fields['up_user_id']['language'])? $fields['up_user_id']['language'] : array())) !!}
+					<label for="Up User" class=" control-label col-md-4 text-left">
+					{!! SiteHelpers::activeLang('Up User', (isset($fields['up_user_id']['language'])? $fields['up_user_id']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('up_user_id', $row['up_user_id'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
-					 </div> 
+                        <select name="up_user_id" id="up_user_id" class="select3" ></select>
+					  </div>
 					 <div class="col-md-2">
 					 	
 					 </div>
@@ -129,13 +130,18 @@
 </div>	
 			 
 <script type="text/javascript">
-$(document).ready(function() { 
-	 
-	
-	$('.editor').summernote();
+$(document).ready(function() {
+
+    $("#game_id").jCombo("{{ URL::to('gameservicehistory/comboselect?filter=game:id:game_name') }}",
+            {  selected_value : '{{ $row["game_id"] }}' });
+    $("#down_user_id").jCombo("{{ URL::to('gameservicehistory/comboselect?filter=users:id:username') }}",
+            {  selected_value : '{{ $row["down_user_id"] }}' });
+    $("#up_user_id").jCombo("{{ URL::to('gameservicehistory/comboselect?filter=users:id:username') }}",
+            {  selected_value : '{{ $row["up_user_id"] }}' });
+    $('.editor').summernote();
 	$('.previewImage').fancybox();	
 	$('.tips').tooltip();	
-	$(".select2").select2({ width:"98%"});	
+	$(".select3").select2({ width:"98%"});
 	$('.date').datepicker({format:'yyyy-mm-dd',autoClose:true})
 	$('.datetime').datetimepicker({format: 'yyyy-mm-dd hh:ii:ss'}); 
 	$('input[type="checkbox"],input[type="radio"]').iCheck({

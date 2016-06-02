@@ -38,7 +38,7 @@ class Sximo extends Model {
         } else {
             $select .= self::queryWhere();
         }
-        //echo $select." {$params} ". self::queryGroup() ." {$orderConditional}  {$limitConditional} ";
+    //   echo $select." {$params} ". self::queryGroup() ." {$orderConditional}  {$limitConditional} ";
         //die();
         $result = \DB::select($select . " {$params} " . self::queryGroup() . " {$orderConditional}  {$limitConditional} ");
         if ($key == '') {

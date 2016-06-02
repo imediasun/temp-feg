@@ -3,9 +3,9 @@
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 
-class gameservicehistory extends Sximo  {
+class trainingmaterial extends Sximo  {
 	
-	protected $table = 'game_service_history';
+	protected $table = 'img_uploads';
 	protected $primaryKey = 'id';
 
 	public function __construct() {
@@ -15,15 +15,12 @@ class gameservicehistory extends Sximo  {
 
 	public static function querySelect(  ){
 		
-		return "  SELECT id,game_id,problem,down_user_id,solution,up_user_id,date_up,
-                  CONCAT(IF(date_down IS NULL,'',date_down),'<br/>',IF(date_up IS NULL,'',date_up)) AS date_down,
-                  DATEDIFF(date_up,date_down) as days_down
-                  FROM game_service_history  ";
+		return "SELECT img_uploads.id,img_uploads.users,img_uploads.date,img_uploads.video_path,img_uploads.video_title from img_uploads";
 	}	
 
 	public static function queryWhere(  ){
 		
-		return "  WHERE game_service_history.id IS NOT NULL ";
+		return "  WHERE img_uploads.image_category='video' AND img_uploads.id IS NOT NULL  ";
 	}
 	
 	public static function queryGroup(){
@@ -42,12 +39,15 @@ class gameservicehistory extends Sximo  {
                     $finalFilter[$columnFilter[0]] = $columnFilter[2];
                 }
             }
-        }
+    }
         return $finalFilter;
     }
-}
-function getGameNames()
-{
-    $row=\DB::select('select id,game_name from game');
-    return $row;
+    function get_youtube_id_from_url($url)
+    {
+        if (stristr($url,'youtu.be/'))
+        {preg_match('/(https:|http:|)(\/\/www\.|\/\/|)(.*?)\/(.{11})/i', $url, $final_ID); return $final_ID[4]; }
+        else
+        {@preg_match('/(https:|http:|):(\/\/www\.|\/\/|)(.*?)\/(embed\/|watch.*?v=|)([a-z_A-Z0-9\-]{11})/i', $url, $IDD); return $IDD[5]; }
+    }
+
 }

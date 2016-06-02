@@ -23,17 +23,16 @@
 				
 					<tr>
 						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Game Id', (isset($fields['game_id']['language'])? $fields['game_id']['language'] : array())) }}
+							{{ SiteHelpers::activeLang('Game', (isset($fields['game_id']['language'])? $fields['game_id']['language'] : array())) }}
 						</td>
-						<td>{{ $row->game_id }} </td>
-						
-					</tr>
+                        <td> {{ SiteHelpers::gridDisplayView($row->game_id,'game_id','1:game:id:game_name') }}</td>
+                       </tr>
 				
 					<tr>
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Date Down', (isset($fields['date_down']['language'])? $fields['date_down']['language'] : array())) }}
 						</td>
-						<td>{{ $row->date_down }} </td>
+						<td><?php  echo $row->date_down ?> </td>
 						
 					</tr>
 				
@@ -49,7 +48,7 @@
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Down User Id', (isset($fields['down_user_id']['language'])? $fields['down_user_id']['language'] : array())) }}
 						</td>
-						<td>{{ $row->down_user_id }} </td>
+                      <td> {{ SiteHelpers::gridDisplayView($row->down_user_id,'down_user_id','1:users:id:username') }}</td>
 						
 					</tr>
 				
@@ -71,9 +70,12 @@
 				
 					<tr>
 						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Up User Id', (isset($fields['up_user_id']['language'])? $fields['up_user_id']['language'] : array())) }}
+							{{ SiteHelpers::activeLang('Up User', (isset($fields['up_user_id']['language'])? $fields['up_user_id']['language'] : array())) }}
 						</td>
-						<td>{{ $row->up_user_id }} </td>
+                        <td>  {!!
+                            SiteHelpers::gridDisplayView($row->up_user_id,'up_user_id','1:users:id:username')
+                            !!} </td>
+
 						
 					</tr>
 				

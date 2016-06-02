@@ -57,8 +57,8 @@ function changeOperate( val , field )
 	}
 }
 jQuery(function(){
-		$('.date').datepicker({format:'mm/dd/yyyy',autoClose:true})
-		$('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});
+		$('.date').datepicker({format:'yyyy-mm-dd',autoClose:true})
+		$('.datetime').datetimepicker({format: 'yyyy-mm-dd hh:ii:ss'});
 		//$(".sel-search").select2({ width:"98%"});	
 
 

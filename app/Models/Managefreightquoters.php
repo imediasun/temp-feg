@@ -16,16 +16,22 @@ class managefreightquoters extends Sximo
 
     public static function querySelect()
     {
-        $status = isset($_GET['status']) ? $_GET['status'] : 'manage';
-        if ($status == 'manage') {
-            $statusqry = 'IF(freight_orders.status = 0, "<b style=\"color:red\">Quote Requested</b>", "<b style=\"color:green\">Freight Booked</b>")';
-        } else {
+        $status = \Session::get('freight_status');
+        if ($status == 'requested') {
+            $statusqry = '"<b style=\"color:red\">Quote Requested</b>"';
+        }
+        elseif($status == 'booked')
+        {
+            $statusqry =  '"<b style=\"color:green\">Freight Booked</b>"';
+        }
+        else {
             $statusqry = '"<b style=\"color:darkblue\">Invoice Paid</b>"';
         }
         return 'SELECT freight_orders.*,freight_orders.date_submitted,freight_orders.date_paid,GROUP_CONCAT(company_name) AS company_name,
+                (select c.company_name from freight_companies c where c.id=freight_orders.freight_company_1) as company_name_1,
                 IF(freight_orders.vend_to = 0 AND freight_orders.loc_to_1=0, CONCAT(freight_orders.to_add_name," (",freight_orders.to_add_state,")"),
-                IF(freight_orders.vend_to = 0,CONCAT("",GROUP_CONCAT(L2.location_name_short)), V2.vendor_name)) AS vend_from,
-                IF(freight_orders.vend_from = 0 AND freight_orders.loc_from = 0, CONCAT(freight_orders.from_add_name,"(",freight_orders.from_add_state,")"),IF(freight_orders.vend_from = 0, L.location_name_short, V.vendor_name)) AS vend_to,
+                IF(freight_orders.vend_to = 0,CONCAT("",GROUP_CONCAT(L2.location_name_short)), V2.vendor_name)) AS vend_to,
+                IF(freight_orders.vend_from = 0 AND freight_orders.loc_from = 0, CONCAT(freight_orders.from_add_name,"(",freight_orders.from_add_state,")"),IF(freight_orders.vend_from = 0, L.location_name_short, V.vendor_name)) AS vend_from,
                 ' . $statusqry . ' AS status
                 FROM freight_orders  LEFT JOIN
                 freight_location_to FLT ON freight_orders.id=FLT.freight_order_id LEFT JOIN freight_companies FC ON FLT.freight_company=FC.id
@@ -35,12 +41,17 @@ class managefreightquoters extends Sximo
                 LEFT JOIN location L2 ON L2.id=FLT.location_id';
     }
 
-    public static function queryWhere($cond = 'manage')
+    public static function queryWhere()
     {
+        $status=\Session::get('freight_status');
         $where = "";
-        if ($cond == "manage") {
-            $where .= " WHERE freight_orders.status!=2 ";
-        } else {
+        if ($status == "requested") {
+            $where .= " WHERE freight_orders.status = 0 ";
+        }
+        elseif ($status == "booked") {
+            $where .= " WHERE freight_orders.status = 1 ";
+        }
+        else {
             $where .= " WHERE freight_orders.status = 2 ";
         }
         $where .= " AND  freight_orders.id IS NOT NULL ";
@@ -107,7 +118,7 @@ class managefreightquoters extends Sximo
 
     public static function getRow($id)
     {
-        $freightOrder = \DB::select('SELECT F.id AS freight_order_id, IF(F.date_submitted = "0000-00-00", "N/A",F.date_submitted) AS date_submitted,
+        $freightOrder = \DB::select('SELECT F.id AS freight_order_id,F.freight_company_1, IF(F.date_submitted = "0000-00-00", "N/A",F.date_submitted) AS date_submitted,
 						IF(F.date_booked = "0000-00-00", "N/A",F.date_booked) AS date_booked, IF(F.date_paid = "0000-00-00", "N/A",F.date_paid) AS date_paid,
                         F.vend_from, V.vendor_name AS vend_from_name, V.street1 AS vend_from_street, V.city AS vend_from_city, V.state AS vend_from_state,
 						V.zip AS vend_from_zip, V.games_contact_name AS vend_from_contact_name, V.games_contact_email AS vend_from_contact_email,
@@ -236,6 +247,7 @@ class managefreightquoters extends Sximo
         } else {
             $data['ship_to_type'] = 'internal';
         }
+        $data['freight_company_1']=isset($freightOrder[0]->freight_company_1)?$freightOrder[0]->freight_company_1:0;
         $data['loc_from_id'] = $loc_from_id;
         $data['game_drop_dwon'] = self::populateGamesDropDown();
         return $data;
@@ -275,21 +287,34 @@ class managefreightquoters extends Sximo
     public static function populateGamesDropDown()
     {
         $concat = 'CONCAT(IF(G.location_id = 0, "IN TRANSIT", G.location_id), " | ",T.game_title," | ",G.id, IF(G.notes = "","", CONCAT(" (",G.notes,")")))';
-        $where = '';
+        $where="";
         $orderBy = 'L.id,T.game_title';
-        $query = \DB::select('SELECT G.id AS id, ' . $concat . ' AS text  FROM game G
+        $query = \DB::select('SELECT G.id AS id, IFNULL(' . $concat . ',"") AS text  FROM game G
 							LEFT JOIN game_title T ON T.id = G.game_title_id
 							LEFT JOIN location L ON L.id = G.location_id
                             WHERE G.sold = 0 ' . $where . '  ORDER BY ' . $orderBy);
+        $query=json_decode(json_encode($query),true);
+
         return $query;
     }
 
     public function updateFreightOrder($data)
     {
+
         $from_loc = $data['request']['from_loc'];
         $freight_order_id = $data['request']['freight_order_id'];
         $ship_to_type = $data['request']['ship_to_type'];
-        $freight_company_1 = isset($data['request']['freight_company_1']) ? $data['request']['freight_company_1'] : isset($data['request']['company'][0])?$data['request']['company'][0]:"";
+        if(isset($data['request']['freight_company_1']))
+        {
+            $freight_company_1 = $data['request']['freight_company_1'];
+        }
+        elseif(isset($data['request']['company'][0]))
+        {
+            $freight_company_1 = $data['request']['company'][0];
+        }
+        else{
+            $freight_company_1=0;
+        }
         $email = $data['request']['email'];
         $email_notes = $data['request']['email_notes'];
         $today = date('Y-m-d');
@@ -462,7 +487,7 @@ class managefreightquoters extends Sximo
                                 $gameTitle = $this->get_game_info_by_id($game_asset_id, 'game_title');
                                 $game_links = $game_links . 'Game #' . $n . ': <b>' . $gameTitle . '</b>
 														    <br>
-														    Web Page #' . $n . ': fegllc.com/fegsys/gameDetail/' . $game_asset_id . '<br>';
+														    Web Page #' . $n . ': '.url().'/managefreightquoters/gamedetails/' . $game_asset_id . '<br>';
 
                             }
                         }
@@ -577,7 +602,7 @@ class managefreightquoters extends Sximo
                         $headers .= "MIME-Version: 1.0\r\n";
                         $headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
                         // echo $message;
-                       // mail($to, $subject, $message, $headers);
+                        mail($to, $subject, $message, $headers);
                     } else {
 
                     }
@@ -635,7 +660,7 @@ class managefreightquoters extends Sximo
                 $headers .= "MIME-Version: 1.0\r\n";
                 $headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
                 // echo $message;
-              //  mail($to, $subject, $message, $headers);
+              mail($to, $subject, $message, $headers);
             }
         }
         return true;
@@ -644,7 +669,8 @@ class managefreightquoters extends Sximo
 
     public static function companiewDropdown()
     {
-        $row = \DB::select('select id,company_name from freight_companies where active=1');
-        return $row;
+        $row = \DB::select('select id,company_name as text from freight_companies where active=1');
+        $query=json_decode(json_encode($row),true);
+       return $query;
     }
 }

@@ -1,22 +1,22 @@
 <?php namespace App\Http\Controllers;
 
 use App\Http\Controllers\controller;
-use App\Models\Gameservicehistory;
+use App\Models\Trainingmaterial;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Validator, Input, Redirect ; 
 
-class GameservicehistoryController extends Controller {
+class TrainingmaterialController extends Controller {
 
 	protected $layout = "layouts.main";
 	protected $data = array();	
-	public $module = 'gameservicehistory';
+	public $module = 'trainingmaterial';
 	static $per_page	= '10';
 	
 	public function __construct() 
 	{
 		parent::__construct();
-		$this->model = new Gameservicehistory();
+		$this->model = new Trainingmaterial();
 		
 		$this->info = $this->model->makeInfo( $this->module);
 		$this->access = $this->model->validAccess($this->info['id']);
@@ -24,8 +24,8 @@ class GameservicehistoryController extends Controller {
 		$this->data = array(
 			'pageTitle'			=> 	$this->info['title'],
 			'pageNote'			=>  $this->info['note'],
-			'pageModule'		=> 'gameservicehistory',
-			'pageUrl'			=>  url('gameservicehistory'),
+			'pageModule'		=> 'trainingmaterial',
+			'pageUrl'			=>  url('trainingmaterial'),
 			'return' 			=> 	self::returnUrl()
 		);
 		
@@ -39,13 +39,13 @@ class GameservicehistoryController extends Controller {
 			return Redirect::to('dashboard')->with('messagetext',\Lang::get('core.note_restric'))->with('msgstatus','error');
 
 		$this->data['access']		= $this->access;
-		return view('gameservicehistory.index',$this->data);
+		return view('trainingmaterial.index',$this->data);
 	}
 
 	public function postData( Request $request)
 	{
 
-        $module_id = \DB::table('tb_module')->where('module_name', '=', 'gameservicehistory')->pluck('module_id');
+        $module_id = \DB::table('tb_module')->where('module_name', '=', 'trainingmaterial')->pluck('module_id');
         $this->data['module_id'] = $module_id;
         if (Input::has('config_id')) {
         $config_id = Input::get('config_id');
@@ -85,7 +85,7 @@ class GameservicehistoryController extends Controller {
         $pagination = new Paginator($results['rows'], $results['total'], 
             (isset($params['limit']) && $params['limit'] > 0  ? $params['limit'] : 
 				($results['total'] > 0 ? $results['total'] : '1')));        
-		$pagination->setPath('gameservicehistory/data');
+		$pagination->setPath('trainingmaterial/data');
 		$this->data['param']		= $params;
         $this->data['topMessage']	= @$results['topMessage'];
 		$this->data['message']          = @$results['message'];
@@ -113,7 +113,7 @@ class GameservicehistoryController extends Controller {
         $this->data['tableGrid'] = \SiteHelpers::showRequiredCols($this->data['tableGrid'], $this->data['config']);
         }
 // Render into template
-		return view('gameservicehistory.table',$this->data);
+		return view('trainingmaterial.table',$this->data);
 
 	}
 
@@ -132,23 +132,25 @@ class GameservicehistoryController extends Controller {
 			if($this->access['is_edit'] ==0 )
 			return Redirect::to('dashboard')->with('messagetext',\Lang::get('core.note_restric'))->with('msgstatus','error');
 		}
+
 		$row = $this->model->find($id);
 		if($row)
 		{
 			$this->data['row'] 		=  $row;
 		} else {
-			$this->data['row'] 		= $this->model->getColumnTable('game_service_history');
+			$this->data['row'] 		= $this->model->getColumnTable('img_uploads');
 		}
 		$this->data['setting'] 		= $this->info['setting'];
 		$this->data['fields'] 		=  \AjaxHelpers::fieldLang($this->info['config']['forms']);
 		
 		$this->data['id'] = $id;
-        $this->data['game_name']  = $this->model->getGameNames();
-		return view('gameservicehistory.form',$this->data);
+
+		return view('trainingmaterial.form',$this->data);
 	}
 
 	public function getShow( $id = null)
 	{
+
 		if($this->access['is_detail'] ==0)
 			return Redirect::to('dashboard')
 				->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus','error');
@@ -158,21 +160,21 @@ class GameservicehistoryController extends Controller {
 		{
 			$this->data['row'] =  $row;
 		} else {
-			$this->data['row'] = $this->model->getColumnTable('game_service_history');
+			$this->data['row'] = $this->model->getColumnTable('img_uploads');
 		}
 		
 		$this->data['id'] = $id;
 		$this->data['access']		= $this->access;
 		$this->data['setting'] 		= $this->info['setting'];
 		$this->data['fields'] 		= \AjaxHelpers::fieldLang($this->info['config']['forms']);
-		return view('gameservicehistory.view',$this->data);
+		return view('trainingmaterial.view',$this->data);
 	}
 
 
 	function postCopy( Request $request)
 	{
 
-	    foreach(\DB::select("SHOW COLUMNS FROM game_service_history ") as $column)
+	    foreach(\DB::select("SHOW COLUMNS FROM img_uploads ") as $column)
         {
 			if( $column->Field != 'id')
 				$columns[] = $column->Field;
@@ -180,8 +182,8 @@ class GameservicehistoryController extends Controller {
 		$toCopy = implode(",",$request->input('ids'));
 
 
-		$sql = "INSERT INTO game_service_history (".implode(",", $columns).") ";
-		$sql .= " SELECT ".implode(",", $columns)." FROM game_service_history WHERE id IN (".$toCopy.")";
+		$sql = "INSERT INTO img_uploads (".implode(",", $columns).") ";
+		$sql .= " SELECT ".implode(",", $columns)." FROM img_uploads WHERE id IN (".$toCopy.")";
 		\DB::insert($sql);
 		return response()->json(array(
 			'status'=>'success',
@@ -189,16 +191,17 @@ class GameservicehistoryController extends Controller {
 		));
 	}
 
-	function postSave( Request $request, $id =0)
+	function postSave( Request $request, $id =null)
 	{
 
-		$rules = $this->validateForm();
+		$rules = array('video_title'=>'required','video_path'=>'required');
 		$validator = Validator::make($request->all(), $rules);
 		if ($validator->passes()) {
-			$data = $this->validatePost('game_service_history');
-
-			$id = $this->model->insertRow($data , $request->input('id'));
-			
+			$data['users'] = $request->get('users');
+            $data['video_title']=$request->get('video_title');
+            $data['video_path']=$this->model->get_youtube_id_from_url($request->get('video_path'));
+            $data['image_category']="video";
+            $id = $this->model->insertRow($data , $id);
 			return response()->json(array(
 				'status'=>'success',
 				'message'=> \Lang::get('core.note_success')

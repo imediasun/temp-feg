@@ -11,7 +11,8 @@
     <div class="col-md-3 ">
         <select class="form-control" id="status">
             <option disabled >Select Freight Type</option>
-            <option @if($selected_status == 'manage') selected @endif value="manage" selected>Manage Freight Quotes</option>
+            <option @if($selected_status == 'requested') selected @endif value="requested" selected>Requested Freight Quotes</option>
+            <option @if($selected_status == 'booked') selected @endif value="booked" >Booked Freight Quotes</option>
             <option @if($selected_status == 'archive') selected @endif value="archive">Freight Order Archive</option>
         </select>
     </div>

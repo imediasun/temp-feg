@@ -116,7 +116,7 @@
                         Booked Through:
                     </label>
                     <div class="col-md-9">
-                          <input type="hidden" name="freight_company_1" id="freight_company_1"   value="{{ isset($row['freight_loc_info']['freight_company'][0])?$row['freight_loc_info']['freight_company'][0]:"" }}" >
+                          <input type="hidden" name="freight_company_1" id="freight_company_1"   value="{{ isset($row['freight_company_1'])?$row['freight_company_1']:0 }}" >
                 </div>
                 </div>
                 <div class="clearfix"></div>
@@ -152,12 +152,14 @@
                 <br/><br/>
                 <label class="label-control col-md-3">Booked Trhough</label>
                 <div class="col-md-9">
-                    <select name="company[]" class="form-control" id="company">
+                    <input type="hidden" name="company[]" id="company{{$i}}" value="{{$row['freight_loc_info']['freight_company'][$i]}}"/>
+                    {{--<select name="company[]" class="form-control" id="company">
                         <option disabled selected>Select Freight Company</option>
                         @foreach($row['companies_dropdown'] as $d)
                             <option @if($d->id == $row['freight_loc_info']['freight_company'][$i]) selected @endif value="{{ $d->id }}">{{ $d->company_name }}</option>
                         @endforeach
-                    </select>
+                    </select>\
+                    --}}
                 </div>
             </div>
             <div>
@@ -176,15 +178,15 @@
                     <label class="label-control col-md-3">Add Game # {{ $j+1 }}</label>
                     <div class="col-md-9">
                         <input type="hidden" name="freight_loc_game_id[{{$i}}][{{$j}}]" value="{{ isset($row['freight_loc_info']['freight_loc_game_id'][$i][$j])?$row['freight_loc_info']['freight_loc_game_id'][$i][$j]:0}}"/>
-
-                        <select name="loc_game[{{$i}}][{{$j}}]" id="loc_game{{ $j }}" class="form-control">
+                        <input type="hidden" name="loc_game[{{$i}}][{{$j}}]" id="loc_game_{{$i}}_{{$j}}" value="{{ isset($row['freight_loc_info']['loc_game'][$i][$j])?  $row['freight_loc_info']['loc_game'][$i][$j]:0 }}"
+                        {{--<select name="loc_game[{{$i}}][{{$j}}]" id="loc_game{{ $j }}" class="form-control">
                             <option disabled selected>Select Game</option>
                             @foreach($row['game_drop_dwon'] as $game)
                             <option @if(isset($row['freight_loc_info']['loc_game'][$i][$j]) && $row['freight_loc_info']['loc_game'][$i][$j]== $game->id) selected @endif value="{{$game->id}}">
                                 {{$game->text}}
                             </option>
                                 @endforeach
-                        </select>
+                        </select> --}}
 
                     </div>
                 </div>
@@ -228,7 +230,7 @@
             <div>
                 <label class="label-control col-md-3">PERSONALIZED EMAIL MESSAGE:</label>
                 <div class="col-md-9">
-                    <textarea name="email_notes" rows="7" cols="20" id="email_notes" class="form-control">
+                    <textarea  name="email_notes" rows="7" cols="20" id="email_notes" class="form-control">
                     {{ $row['email_notes'] }}
                     </textarea>
                 </div>
@@ -258,7 +260,7 @@
         </div><div class="clearfix"></div>
         {!! Form::close() !!}
 @if($setting['form-method'] =='native')
-	</div>	
+	</div>	<div class="clearfix"></div>
 </div>	
 @endif
 <script>
@@ -269,8 +271,23 @@ $(document).ready(function(){
             {selected_value: '', initial_text: 'Select Location'});
     if(to_contact_name !== "" && email_notes == "")
     {
-        $("#email_notes").val("Hi "+to_contact_name+",");
+        $("#email_notes").val("Hi"+to_contact_name+",");
     }
+    $("input[id^='company']").select2({
+        width: '100%',
+        data: <?php echo json_encode($row['companies_dropdown'])?>,
+        placeholder: "Select Company"
+    });
+    $("#freight_company_1").select2({
+        width:'100%',
+        data:<?php echo json_encode($row['companies_dropdown'])?>,
+        placeholder: "Select Company"
+    });
+    console.log($("input[id^='loc_game_']"));
+    $("input[id^='loc_game_']").select2({
+        placeholder: "Select Game",
+        width: '100%',
+        data:   <?php echo json_encode($row['game_drop_dwon'])?>  });
 
 });
   $("#send_email_update").on('change',function(){
