@@ -3,7 +3,7 @@
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 
-class location extends Sximo  {
+class Location extends Sximo  {
 	
 	protected $table = 'location';
 	protected $primaryKey = 'id';

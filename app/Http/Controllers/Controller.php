@@ -295,29 +295,34 @@ abstract class Controller extends BaseController
 
     function validatePost($table)
     {
-        $request = new Request;
-        ///	return json_encode($_POST);
 
+        $request = new Request;
         $str = $this->info['config']['forms'];
+
         $data = array();
         foreach ($str as $f) {
             $field = $f['field'];
             if ($f['view'] == 1) {
-
-
                 if ($f['type'] == 'textarea_editor' || $f['type'] == 'textarea') {
+
                     $content = (isset($_POST[$field]) ? $_POST[$field] : '');
                     $data[$field] = $content;
                 } else {
-
-
-                    if (isset($_POST[$field])) {
-                        $data[$field] = $_POST[$field];
+                    $test=\Request::get($field);
+                    if (isset($_POST[$field]) or isset($test)) {
+                       if(isset($_POST[$field])) {
+                           $data[$field] = $_POST[$field];
+                       }
+                        elseif(isset($test))
+                        {
+                            $data[$field] = \Request::get($field);
+                        }
                     }
                     // if post is file or image
 
-
                     if ($f['type'] == 'file') {
+
+
 
                         $files = '';
                         if (isset($f['option']['image_multiple']) && $f['option']['image_multiple'] == 1) {
@@ -378,36 +383,53 @@ abstract class Controller extends BaseController
 
                     // if post is checkbox
                     if ($f['type'] == 'checkbox') {
-                        if (!is_null($_POST[$field])) {
+                        $test1=\Request::get($field);
+                        if (!is_null($_POST[$field]) or !is_null($test1)) {
+                            if(!is_null($_POST[$field]))
                             $data[$field] = $_POST[$field];
+                            elseif(!is_null($test1))
+                            {
+                                $data[$field] = $test1;
+                            }
                         }
                     }
                     // if post is date
                     if ($f['type'] == 'date') {
+
                         $data[$field] = date("Y-m-d", strtotime($request->input($field)));
                     }
 
                     // if post is seelct multiple
                     //
                     if ($f['type'] == 'select') {
+$test3=\Request::get($field);
                         //echo '<pre>'; print_r( $_POST[$field] ); echo '</pre>';
                         if (isset($f['option']['select_multiple']) && $f['option']['select_multiple'] == 1) {
-                            $multival = (is_array($_POST[$field]) ? implode(",", $_POST[$field]) : $_POST[$field]);
-                            $data[$field] = $multival;
+                            if(isset($_POST[$field])) {
+                                $multival = (is_array($_POST[$field]) ? implode(",", $_POST[$field]) : $_POST[$field]);
+                            }
+
+                            elseif(isset($test3))
+                            {
+
+                                $multival = (is_array($test3) ? implode(",", $test3) : $test3);
+                            }
+
+                                $data[$field] = $multival;
                         } else {
+                            if(isset($_POST[$field]))
                             $data[$field] = $_POST[$field];
+                            elseif(isset($test3))
+                                $data[$field]=$test3;
                         }
                     }
-
                 }
-
             }
         }
         $global = (isset($this->access['is_global']) ? $this->access['is_global'] : 0);
 
         if ($global == 0)
             $data['entry_by'] = \Session::get('uid');
-
         return $data;
     }
 

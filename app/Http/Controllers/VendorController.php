@@ -37,7 +37,7 @@ class VendorController extends Controller {
     {
         if($this->access['is_view'] ==0)
             return Redirect::to('dashboard')->with('messagetext',\Lang::get('core.note_restric'))->with('msgstatus','error');
-  $this->data['access']		= $this->access;
+        $this->data['access']		= $this->access;
         return view('vendor.index',$this->data);
     }
 
@@ -127,6 +127,7 @@ class VendorController extends Controller {
             $this->data['tableGrid'] = \SiteHelpers::showRequiredCols($this->data['tableGrid'], $this->data['config']);
         }
         // Render into template
+        return response()->json($this->data);
         return view('vendor.table',$this->data);
 
     }

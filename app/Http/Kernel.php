@@ -33,5 +33,6 @@ class Kernel extends HttpKernel
         'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
         'ipblocked' => \App\Http\Middleware\IpblockedMiddleware::class,
         'sximoauth' => \App\Http\Middleware\SximoAuthMiddleware::class,
+        'simpleauth' => \App\Http\Middleware\testmiddleware::class
     ];
 }
