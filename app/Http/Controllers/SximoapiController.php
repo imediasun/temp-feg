@@ -73,7 +73,14 @@ class SximoapiController extends Controller {
 	}
 	public function show( $id )
 	{	$class 	= ucwords(Input::get('module'));
-        $class1 = "App\\Models\\".$class;
+        if($class == "Users")
+        {
+            $class1="App\\Models\\core\\".$class;
+        }
+        else
+        {
+            $class1 = "App\\Models\\" . $class;
+        }
 	  	$config	 		= 	$class1::makeInfo( $class );
 	  	$tables 		=	$config['config']['grid'];			
 		$jsonData 			= 	$class1::getRow( $id );
