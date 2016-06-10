@@ -381,7 +381,7 @@ class UsersController extends Controller
         if ($validator->passes()) {
             $data = $this->validatePost('users');
 
-            $data = $this->validatePost('users');
+            $data['redirect_link']=$request->get('redirect_link');
             if ($request->input('id') == '') {
                 $data['password'] = \Hash::make(Input::get('password'));
             } else {

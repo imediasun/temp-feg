@@ -57,7 +57,7 @@
 			<div class="col-md-8">
 			<input name="cnf_comname" type="text" id="cnf_comname" class="form-control input-sm" value="{{ CNF_COMNAME }}" />  
 			 </div> 
-		  </div>      
+		  </div>
 
 		  <div class="form-group">
 		    <label for="ipt" class=" control-label col-md-4">{{ Lang::get('core.fr_emailsys') }} </label>
@@ -116,7 +116,7 @@
 				</div>
 				<small> If you need to debug mode , please unchecked this option </small>	
 			 </div> 
-		  </div> 		  
+		  </div>
 		  
 		  <div class="form-group">
 		    <label for="ipt" class=" control-label col-md-4">&nbsp;</label>
@@ -155,9 +155,18 @@
 					@endif	
 				</div>				
 			 </div> 
-		  </div>  		  
+		  </div>
 
-		</div>  
+			<div class="form-group">
+				<label for="ipt" class=" control-label col-md-4">{{ Lang::get('Enter Redirection Link') }} </label>
+				<div class="col-md-8">
+					<input name="cnf_redireclink" type="text" id="cnf_redireclink" class="form-control input-sm" value="{{ CNF_REDIRECTLINK }}" />
+				</div>
+			</div>
+
+
+		</div>
+
 		 {!! Form::close() !!}
 	</div>
 	</div>	 
