@@ -20,7 +20,7 @@ class ConfigController extends Controller {
     }
 
 	public function getIndex()
-	{	
+	{
 		$this->data['active'] = '';
 		return view('sximo.config.index',$this->data);	
 	}
