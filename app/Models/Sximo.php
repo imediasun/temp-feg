@@ -90,7 +90,7 @@ class Sximo extends Model {
         return $result;
     }
 
-    public function insertRow($data, $id) {
+    public  function insertRow($data, $id) {
         $table = with(new static)->table;
         $key = with(new static)->primaryKey;
         if ($id == NULL) {

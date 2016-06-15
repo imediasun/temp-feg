@@ -65,6 +65,8 @@ class order extends Sximo
         $data['orderPriceArray'] = '';
         $data['orderQtyArray'] = '';
         $data['orderProductIdArray'] = '';
+        $data['itemNameArray']="";
+        $data['itemCasePrice']="";
         $data['orderRequestIdArray'] = '';
         $data['requests_item_count'] = '';
         $data['today'] = $this->get_local_time();
@@ -90,7 +92,7 @@ class order extends Sximo
                 $data['alt_address'] = $order_query[0]->alt_address;
             }
             $data['prefill_type'] = 'clone';
-            $content_query = \DB::select('SELECT IF(O.product_id = 0, O.product_description, P.vendor_description) AS description,O.price AS price,O.qty AS qty
+            $content_query = \DB::select('SELECT IF(O.product_id = 0, O.product_description, P.vendor_description) AS description,O.price AS price,O.qty AS qty, O.product_id,O.item_name,O.case_price
 												 FROM order_contents O LEFT JOIN products P ON P.id = O.product_id WHERE O.order_id = ' . $order_id);
             if ($content_query) {
 
@@ -99,10 +101,23 @@ class order extends Sximo
                     $orderDescriptionArray[] = $row->description;
                     $orderPriceArray[] = $row->price;
                     $orderQtyArray[] = $row->qty;
+                    $orderProductIdArray[]=$row->product_id;
+                    $orderitemnamesArray[]=$row->item_name;
+                    $orderitemcasepriceArray[]=$row->case_price;
+                  //  $prod_data[]=$this->productUnitPriceAndName($orderProductIdArray);
                 }
                 $data['orderDescriptionArray'] = $orderDescriptionArray;
                 $data['orderPriceArray'] = $orderPriceArray;
                 $data['orderQtyArray'] = $orderQtyArray;
+                $data['orderProductIdArray']=$orderProductIdArray;
+           /*     if(count($prod_data)!=0) {
+                    foreach ($prod_data as $d) {
+                        $item_name_array[] = $d['vendor_description'];
+                        $item_case_price[] = $d['case_price'];
+                    }
+                }*/
+                $data['itemNameArray']=$orderitemnamesArray;
+                $data['itemCasePrice']=$orderitemcasepriceArray;
                 $poArr = array("", "", "");
                 if (isset($data['po_number'])) {
                     $poArr = explode("-", $data['po_number']);
@@ -164,7 +179,8 @@ $query = \DB::select('SELECT R.qty,
 									LEFT JOIN products P ON P.id = R.product_id
 									LEFT JOIN location L ON L.id = R.location_id
 										WHERE R.id = ' . ${'SID' . $i} . '');
-if (count($query) == 1) {
+
+    if (count($query) == 1) {
     $data['order_loc_id'] = $query[0]->location_id;
     $data['order_company_id'] = $query[0]->company_id;
     $data['order_vendor_id'] = $query[0]->vendor_id;
@@ -181,6 +197,9 @@ if (count($query) == 1) {
     $orderPriceArray[] = $query[0]->case_price;
     $orderQtyArray[] = $query[0]->qty;
     $orderProductIdArray[] = $query[0]->product_id;
+    $prod_data=$this->productUnitPriceAndName($query[0]->product_id);
+        $item_name_array[]=$query[0]->item_name;;
+        $item_case_price[]=$query[0]->case_price;;
     $orderRequestIdArray[] = ${'SID' . $i};
 }
 
@@ -189,6 +208,8 @@ $data['orderPriceArray'] = $orderPriceArray;
 $data['orderQtyArray'] = $orderQtyArray;
 $data['orderProductIdArray'] = $orderProductIdArray;
 $data['orderRequestIdArray'] = $orderRequestIdArray;
+$data['itemNameArray']=$item_name_array;
+$data['itemCasePrice']=$item_case_price;
 $data['requests_item_count'] = $item_count;
 $data['today'] = date('Y-m-d');
 }
@@ -318,5 +339,14 @@ function increamentPO()
         $vendor_email=\DB::select("SELECT email from vendor WHERE id=".$vendor_id);
         return $vendor_email[0]->email;
     }
+    function productUnitPriceAndName($prod_id)
+    {
+        $row=\DB::select('SELECT vendor_description,case_price from products where id='.$prod_id);
+        if($row) {
+            $data = array('vendor_description' => $row[0]->vendor_description, 'case_price' => $row[0]->case_price);
+            return $data;
+        }
+    }
 
 }
+

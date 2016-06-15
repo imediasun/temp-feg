@@ -206,7 +206,8 @@ class OrderController extends Controller
 
     function postSave(Request $request, $id = 0)
     {
-        //return \Redirect::to('/order');
+
+       //return \Redirect::to('/order');
         $rules = array('location_id' => "required", 'vendor_id' => 'required', 'order_type_id' => "required", 'freight_type_id' => 'required', 'date_ordered' => 'required', 'po_3' => 'required');
         $validator = Validator::make($request->all(), $rules);
         $order_data = array();
@@ -246,6 +247,8 @@ class OrderController extends Controller
                 $alt_address = $to_add_name . '|' . $to_add_street . '|' . $to_add_city . '| ' . $to_add_state . '| ' . $to_add_zip . '|' . $to_add_notes;
             }
             $itemsArray = $request->get('item');
+            $itemNamesArray=$request->get('item_name');
+            $casePriceArray=$request->get('case_price');
             $priceArray = $request->get('price');
             $qtyArray = $request->get('qty');
             $productIdArray = $request->get('product_id');
@@ -324,7 +327,9 @@ class OrderController extends Controller
                     'product_description' => $itemsArray[$i],
                     'price' => $priceArray[$i],
                     'qty' => $qtyArray[$i],
-                    'game_id' => $game_id
+                    'game_id' => $game_id,
+                    'item_name'=> $itemNamesArray[$i],
+                    'case_price' => $casePriceArray[$i]
                 );
                 \DB::table('order_contents')->insert($contentsData);
                 if ($order_type == 18) //IF ORDER TYPE IS PRODUCT IN-DEVELOPMENT, ADD TO PRODUCTS LIST WITH STATUS IN-DEVELOPMENT
@@ -656,6 +661,41 @@ class OrderController extends Controller
         $this->data['sid'] = $SID;
         $this->data['access'] = $this->access;
         return view('order.index', $this->data);
+    }
+    public function getProduct()
+    {
+        $rows=\DB::select('select vendor_description,sku from products where id is not null');
+        $json=array();
+        foreach($rows as $row)
+        {
+            $json[]=array('label'=>$row->vendor_description,'sku'=>$row->sku);
+        }
+        return json_encode($json);
+    }
+    public function getAutocomplete()
+    {
+        $term = Input::get('term');
+        $results = array();
+        $queries = \DB::table('products')
+            ->where('vendor_description', 'LIKE', '%' . $term . '%')
+            ->take(10)->get();
+        if (count($queries) != 0) {
+            foreach ($queries as $query) {
+                $results[] = ['id' => $query->id, 'value' => $query->vendor_description];
+            }
+            echo json_encode($results);
+        }
+        else{
+            echo json_encode(array('id' => 0 ,'value' => "No Match"));
+        }
+    }
+
+    public function getProductdata()
+    {
+        $vendor_description=Input::get('product_id');
+        $row=\DB::select('select id,item_description,unit_price,case_price from products WHERE vendor_description="'.$vendor_description.'"');
+        $json=array('item_description'=>$row[0]->item_description,'unit_price'=>$row[0]->unit_price,'case_price'=>$row[0]->case_price,'id'=>$row[0]->id);
+        echo json_encode($json);
     }
 
 }

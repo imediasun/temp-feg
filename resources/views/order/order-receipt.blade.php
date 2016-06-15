@@ -175,7 +175,7 @@
                 ajaxFilter('#{{ $pageModule }}', '{{ $pageUrl }}/data');
                 notyMessage(data.message);
                 $('#sximo-modal').modal('hide');
-                var href="http://localhost/sximo/public/order";
+                var href="{{url()}}/order";
                 window.location=href;
             } else {
                 notyMessageError(data.message);

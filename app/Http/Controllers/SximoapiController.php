@@ -96,13 +96,12 @@ class SximoapiController extends Controller {
 	{
         $class 	= ucwords(Input::get('module'));
         $class1 = "App\\Models\\".$class;
-
+        $obj=new $class1();
 		$this->info		= 	$class1::makeInfo( $class );
 
 		$data 			= $this->validatePost($this->info['table']);
 		unset($data['entry_by']);
-
-		$id = $class1::insertRow($data ,NULL);
+		$id = $obj->insertRow($data ,NULL);
         if($id)
         {
             return \Response::json(array('Status'=> \Lang::get('restapi.StatusSuccess'),'Message' => \Lang::get('restapi.StroredSuccess')),200);
@@ -120,7 +119,8 @@ class SximoapiController extends Controller {
 		$this->info		= 	$class1::makeInfo( $class );
 		$data 			= $this->validatePost($this->info['table']);
 		unset($data['entry_by']);
-		$id 			= $class1::insertRow($data , $id );
+        $obj=new $class1();
+		$id 			= $obj->insertRow($data , $id );
         return \Response::json(array('Status'=>\Lang::get('restapi.StatusSuccess'),'Message'=> \Lang::get('restapi.UpdatedSuccess')),200);
 	}
 	public function destroy( $id )
