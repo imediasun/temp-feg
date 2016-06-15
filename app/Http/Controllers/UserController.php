@@ -1,6 +1,7 @@
 <?php namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\Core\Groups;
 use App\User;
 use Socialize;
 use Illuminate\Http\Request;
@@ -151,6 +152,10 @@ class UserController extends Controller
             if (\Auth::attempt(array('email' => $request->input('email'), 'password' => $request->input('password')), $remember)) {
                 if (\Auth::check()) {
                     $row = User::find(\Auth::user()->id);
+                    $group = Groups::find($row->group_id);
+                    //CNF_REDIRECTLINK;
+
+                    //print_r($group);exit;
                     if ($row->active == '0') {
                         // inactive
                         \Auth::logout();
@@ -197,6 +202,21 @@ class UserController extends Controller
                         } else {
                             \Session::put('lang', 'en');
                         }
+
+                        if(!empty($row->redirect_link)){
+
+                           return Redirect::to($row->redirect_link);
+                        }
+
+                        elseif(!empty($group->redirect_link))
+                        {
+                           return Redirect::to($group->redirect_link);
+                        }
+                        else
+                        {
+                            return Redirect::to(CNF_REDIRECTLINK);
+                        }
+
                         if (CNF_FRONT == 'false') :
                             return Redirect::to('dashboard');
                         else :

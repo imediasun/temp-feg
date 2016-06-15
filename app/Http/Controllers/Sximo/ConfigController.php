@@ -28,14 +28,15 @@ class ConfigController extends Controller {
 
 	static function postSave( Request $request )
 	{
-		
+
 		$rules = array(
 			'cnf_appname'=>'required|min:2',
 			'cnf_appdesc'=>'required|min:2',
 			'cnf_comname'=>'required|min:2',
 			'cnf_email'=>'required|email',
+			//'cnf_redireclink'=>'required|link',
 		);
-		$validator = Validator::make($request->all(), $rules);	
+		$validator = Validator::make($request->all(), $rules);
 		if (!$validator->fails()) 
 		{
 			$logo = '';
@@ -57,7 +58,8 @@ class ConfigController extends Controller {
 			$val .= 	"define('CNF_EMAIL','".$request->input('cnf_email')."');\n";	
 			$val .= 	"define('CNF_METAKEY','".$request->input('cnf_metakey')."');\n";	
 			$val .= 	"define('CNF_METADESC','".$request->input('cnf_metadesc')."');\n";		
-			$val .= 	"define('CNF_GROUP','".CNF_GROUP."');\n";	
+			 $val .= 	"define('CNF_REDIRECTLINK','".$request->input('cnf_redireclink')."');\n";
+			$val .= 	"define('CNF_GROUP','".CNF_GROUP."');\n";
 			$val .= 	"define('CNF_ACTIVATION','".CNF_ACTIVATION."');\n";	
 			$val .= 	"define('CNF_MULTILANG','".(!is_null($request->input('cnf_multilang')) ? 1 : 0 )."');\n";
 			$val .= 	"define('CNF_LANG','".$request->input('cnf_lang')."');\n";

@@ -67,7 +67,18 @@
 									 <div class="col-md-2">
 									 	
 									 </div>
-								  </div> </fieldset>
+								  </div>
+							<div class="form-group  " >
+								<label for="Enter Redirection Link" class=" control-label col-md-4 text-left">Redirection Link </label>
+								<div class="col-md-6">
+									{!! Form::text('redirect_link', $row['redirect_link'],array('class'=>'form-control', 'placeholder'=>'', 'required'=>'true'  )) !!}
+								</div>
+								<div class="col-md-2">
+
+								</div>
+							</div>
+						</fieldset>
+
 			</div>
 			
 			

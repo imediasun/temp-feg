@@ -102,6 +102,7 @@ class GroupsController extends Controller {
 		}				
 				
 		$row = $this->model->find($id);
+
 		if($row)
 		{
 			$this->data['row'] =  $row;
@@ -134,11 +135,11 @@ class GroupsController extends Controller {
 
 	function postSave( Request $request, $id =0)
 	{
-		
 		$rules = $this->validateForm();
 		$validator = Validator::make($request->all(), $rules);	
 		if ($validator->passes()) {
 			$data = $this->validatePost('tb_groups');
+			$data['redirect_link']=$request->get('redirect_link');
 			
 			$this->model->insertRow($data , $request->input('group_id'));
 			return Redirect::to('core/groups?return='.self::returnUrl())->with('messagetext',\Lang::get('core.note_success'))->with('msgstatus','success');
