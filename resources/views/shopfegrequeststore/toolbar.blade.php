@@ -1,24 +1,5 @@
 <div class="row m-b">
-    <div class="col-md-5">
 
-        <a href="{{ URL::to( $pageModule .'/search') }}" class="btn btn-sm btn-white"
-           onclick="SximoModal(this.href,'Advance Search'); return false;"><i class="fa fa-search"></i> Search</a>
-        @if(SiteHelpers::isModuleEnabled($pageModule))
-            <a href="{{ URL::to('tablecols/arrange-cols/'.$pageModule) }}" class="btn btn-sm btn-white"
-               onclick="SximoModal(this.href,'Column Selector'); return false;"><i class="fa fa-bars"></i> Arrange
-                Columns</a>
-            @if(!empty($colconfigs))
-                <select class="form-control" style="width:40%!important;display:inline;" name="col-config"
-                        id="col-config">
-                    <option value="0">Select Configuration</option>
-                    @foreach( $colconfigs as $configs )
-                        <option @if($config_id == $configs['config_id']) selected
-                                                                         @endif value={{ $configs['config_id'] }}> {{ $configs['config_name'] }}   </option>
-                    @endforeach
-                </select>
-            @endif
-        @endif
-    </div>
     <div class="col-md-4"><h1  style="vertical-align:baseline; padding-bottom:0;">
             <img src="./sximo/images/store.png"/>
             FEG Store - <b style="font-size:.7em;">Shopping for</b></h1>
@@ -48,6 +29,8 @@
 
         <select name="product_type" id="product_type" class="select3" style="margin-top:5px;"></select>
     </div>
+
+
     <div class="col-md-8">
         <h3>Recently Added Products <small><a  href="{{ URL::to('./shopfegrequeststore/new-graphic-request') }}" style="font-size:1.2em;color:red" target="_blank">*Graphic Not Below? Request New Graphic*</a></small></h3>
         <?php if(isset($cart['new_products'])) { ?>
@@ -60,7 +43,29 @@
         <?php endforeach; ?>
         <?php } ?>
     </div>
+    <div class="col-md-5">
+
+        <a href="{{ URL::to( $pageModule .'/search') }}" class="btn btn-sm btn-white"
+           onclick="SximoModal(this.href,'Advance Search'); return false;"><i class="fa fa-search"></i> Search</a>
+        @if(SiteHelpers::isModuleEnabled($pageModule))
+            <a href="{{ URL::to('tablecols/arrange-cols/'.$pageModule) }}" class="btn btn-sm btn-white"
+               onclick="SximoModal(this.href,'Column Selector'); return false;"><i class="fa fa-bars"></i> Arrange
+                Columns</a>
+            @if(!empty($colconfigs))
+                <select class="form-control" style="width:40%!important;display:inline;" name="col-config"
+                        id="col-config">
+                    <option value="0">Select Configuration</option>
+                    @foreach( $colconfigs as $configs )
+                        <option @if($config_id == $configs['config_id']) selected
+                                                                         @endif value={{ $configs['config_id'] }}> {{ $configs['config_name'] }}   </option>
+                    @endforeach
+                </select>
+            @endif
+        @endif
+    </div>
+
 </div>
+
 <script>
     $(document).ready(function () {
         $("#order_type").jCombo("{{ URL::to('shopfegrequeststore/comboselect?filter=order_type:id:order_type:can_request:1') }}",

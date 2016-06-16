@@ -75,7 +75,7 @@
                     </div>
                 </div>
                 <div class="col-md-12 text-center">
-                    Submitted by <b>{{ \Session::get('fid') }}</b> on <b>{{ date('Y-m-d') }}</b>
+                    Submitted by <b>{{ \Session::get('fid') }}</b> on <b>{{ date('Y-mm-dd') }}</b>
                 </div>
                 <div class="form-group" style="margin-bottom:50px">
                     <label class="col-sm-8 text-right">&nbsp;</label>

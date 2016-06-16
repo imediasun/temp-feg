@@ -204,10 +204,12 @@ class shopfegrequeststore extends Sximo  {
         return $data;
     }
 
+
     function newGraphicRequest($data)
     {
+
         $last_inserted_id=\DB::table('new_graphics_request')->insertGetId($data);
-        $locationName = $this->get_location_info_by_id($data['location_id']);
+       $locationName = $this->get_location_info_by_id($data['location_id'], 'location_name_short');
         $game_info=explode('-',$data['description']);
         $message = '<b>Date Requested:</b> '.$data['request_date'].'<br>
 					<b>Requestor:</b> '.\Session::get('fid').'<br>
@@ -216,13 +218,14 @@ class shopfegrequeststore extends Sximo  {
 					<b>Description:</b> '.$data['description'].'<br>
 					<b>Quantity:</b> '.$data['qty'].'<br>
 					<b>Need By Date:</b> '.$data['need_by_date'].'<br><br>
-					<em>**Mark/Tom, please <b>Reply to All</b> with <br>
-					&nbsp;&nbsp;&nbsp; 1.) Approval/Denial  <br>
+
+					<em>**Mark/Tom, please click on <a href="">Approval</a> or <a href="">Denial</a> <br>
+					to Approve/Deny this graphic request <br><br>
 					&nbsp;&nbsp;&nbsp; 2.) Set Priority Level at <b>http://fegllc.com/fegsys/manageGraphicsRequests</b><br><br>
 					**All cc\'d, please Reply to All <b> only if you wish to deny or modify request</b> and explain why.</em><br>';
                     $from = \Session::get('eid');
                     //$to = 'new-graphics@fegllc.com';
-                    $to='adnanali199@gmail.com';
+                    $to='shayansolution@gmail.com';
                     $cc = '';
                     $bcc = '';
                     $subject = 'New Graphics Request for '.$locationName;

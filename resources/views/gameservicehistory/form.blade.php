@@ -1,4 +1,3 @@
-
 @if($setting['form-method'] =='native')
 	<div class="sbox">
 		<div class="sbox-title">  
@@ -29,7 +28,13 @@
 					{!! SiteHelpers::activeLang('Game ', (isset($fields['game_id']['language'])? $fields['game_id']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
-                        <select name="game_id" id="game_id" class="select3"></select>
+                        <select name="game_id" id="game_id" class="form-control">
+                            <option disabled>Select Game</option>
+                        @foreach($game_data as $game)
+                        <option value="{{$game->id}}" @if($game->id == $row['game_id']) selected @endif>{{ $game->game_name }}
+                        </option>
+                        @endforeach
+                        </select>
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -59,8 +64,7 @@
 					 </div>
 				  </div> 
 				  <div class="form-group  " >
-					<label for="Down User " class=" control-label col-md-4 text-left">
-                        Down User
+					<label for="Down User Id" class=" control-label col-md-4 text-left">
                     </label>
                         <div class="col-md-6">
 					<select name="down_user_id" id="down_user_id" class="select3"></select>
@@ -94,8 +98,8 @@
 					 </div>
 				  </div> 
 				  <div class="form-group  " >
-					<label for="Up User" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Up User', (isset($fields['up_user_id']['language'])? $fields['up_user_id']['language'] : array())) !!}
+					<label for="Up User Id" class=" control-label col-md-4 text-left">
+					{!! SiteHelpers::activeLang('Up User ', (isset($fields['up_user_id']['language'])? $fields['up_user_id']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
                         <select name="up_user_id" id="up_user_id" class="select3" ></select>
@@ -131,9 +135,6 @@
 			 
 <script type="text/javascript">
 $(document).ready(function() {
-
-    $("#game_id").jCombo("{{ URL::to('gameservicehistory/comboselect?filter=game:id:game_name') }}",
-            {  selected_value : '{{ $row["game_id"] }}' });
     $("#down_user_id").jCombo("{{ URL::to('gameservicehistory/comboselect?filter=users:id:username') }}",
             {  selected_value : '{{ $row["down_user_id"] }}' });
     $("#up_user_id").jCombo("{{ URL::to('gameservicehistory/comboselect?filter=users:id:username') }}",

@@ -610,7 +610,14 @@ class Sximo extends Model {
     }
 
     public function get_location_info_by_id($loc_id = null, $field = null) {
-        $query = \DB::select('SELECT ' . $field . ' FROM location WHERE id = ' . $loc_id);
+
+        if(is_null($field)){
+            $query = \DB::select('SELECT * FROM location WHERE id = ' . $loc_id);
+        }
+        else{
+            $query = \DB::select('SELECT ' . $field . ' FROM location WHERE id = ' . $loc_id);
+        }
+
         foreach ($query as $row) {
             $location_info = $row->$field;
         }

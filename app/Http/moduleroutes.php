@@ -41,4 +41,5 @@
                     Route::controller('freightquoters', 'FreightquotersController');
                     Route::controller('trainingmaterial', 'TrainingmaterialController');
                     Route::controller('course', 'CourseController');
+
                     ?>

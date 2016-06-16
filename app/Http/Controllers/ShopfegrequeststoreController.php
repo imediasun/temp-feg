@@ -4,7 +4,7 @@ use App\Http\Controllers\controller;
 use App\Models\Shopfegrequeststore;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
-use Validator, Input, Redirect;
+use Validator, Input, Redirect, URL;
 
 class ShopfegrequeststoreController extends Controller
 {
@@ -33,8 +33,21 @@ class ShopfegrequeststoreController extends Controller
 
     }
 
+    function approveGraphics($id){
+
+
+
+    }
+
+    function denyGraphics(){
+
+    }
+
+
     public function getIndex()
     {
+        echo url('shopfegrequeststore/approve/26');
+        exit;
         if ($this->access['is_view'] == 0)
             return Redirect::to('dashboard')->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
 
@@ -273,8 +286,11 @@ class ShopfegrequeststoreController extends Controller
             $now = date('Y-mm-dd');
             $data = array('location_id' => $locationId, 'request_user_id' => \Session::get('uid'), 'request_date' => $now, 'need_by_date' => $date_needed, 'description' => $game_info . ' - ' . $graphics_description, 'qty' => $qty, 'status_id' => $statusId);
             $last_insert_id = $this->model->newGraphicRequest($data);
+
+
             $add_image = $request->get('add_image');
             $updates = array();
+
             if ($request->hasFile('img')) {
                 $file = $request->file('img');
                 $destinationPath = './uploads/newGraphic/';

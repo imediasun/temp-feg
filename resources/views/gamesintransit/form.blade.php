@@ -49,35 +49,20 @@
 
                         </div>
                     </div>
-                    <div class="form-group  ">
-                        <label for="Sale Price" class=" control-label col-md-4 text-left" >
-                            {!! SiteHelpers::activeLang('Sale Price', (isset($fields['sale_price']['language'])?
-                            $fields['sale_price']['language'] : array())) !!}
-                        </label>
-
-                        <div class="col-md-6">
-                            {!! Form::text('sale_price', $row['sale_price'],array('class'=>'form-control',
-                            'placeholder'=>'','required'=>'required' )) !!}
-                        </div>
-                        <div class="col-md-2">
-
-                        </div>
+                    <div class="form-group  " >
+                    <label for="Notes" class=" control-label col-md-4 text-left">
+                        {!! SiteHelpers::activeLang('Notes', (isset($fields['notes']['language'])? $fields['notes']['language'] : array())) !!}
+                    </label>
+                    <div class="col-md-6">
+					  <textarea name='notes' rows='5' id='notes' class='form-control '
+                                required  >{{ $row['notes'] }}</textarea>
                     </div>
+                    <div class="col-md-2">
 
-                    <div class="form-group  ">
-                        <label for="Notes" class=" control-label col-md-4 text-left">
-                            {!! SiteHelpers::activeLang('Notes', (isset($fields['notes']['language'])?
-                            $fields['notes']['language'] : array())) !!}
-                        </label>
-
-                        <div class="col-md-6">
-                            {!! Form::text('notes', $row['notes'],array('class'=>'form-control', 'placeholder'=>'', ))
-                            !!}
-                        </div>
-                        <div class="col-md-2">
-
-                        </div>
                     </div>
+            </div>
+
+
                 </fieldset>
             </div>
 
