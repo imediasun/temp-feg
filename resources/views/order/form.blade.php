@@ -223,11 +223,11 @@
                     </thead>
 
                     <tbody>
-                    <tr class="clone clonedInput">
+                    <tr id="rowid" class="clone clonedInput">
                         <td><br/><input type="text"  id="item_num" name="item_num[]" disabled readonly
                                    style="width:30px;border:none;background:none"/></td>
                         <td><br/> <input type="text" name='item_name[]' placeholder='Item  Name' id="item_name"
-                                       class='form-control item_name mysearch'  maxlength="225" required>
+                                       class='form-control item_name mysearch' onfocus="init(this.id)"  maxlength="225" required>
                         </td>
                         <td>
                             <textarea name='item[]' placeholder='Item  Description' id="item"
@@ -256,7 +256,7 @@
                         </td>
                         <input type='hidden' name='request_id[]' id="request_id">
                         <td><br/><input type="text" name="total" value="" readonly class="form-control"/></td>
-                        <td><br/> <a onclick=" $(this).parents('.clonedInput').remove(); calculateSum(); return false"
+                        <td><br/> <a onclick=" $(this).parents('.clonedInput').remove(); calculateSum();decreaseCounter(); return false"
                                      href="#" class="remove btn btn-xs btn-danger">-</a>
                             <input type="hidden" name="counter[]">
                         </td>
@@ -420,9 +420,6 @@
 
         });
 
-    $("#experiment").click(function(){
-       init();
-    });
 
         function showRequest() {
             $('.ajaxLoading').show();
@@ -537,19 +534,35 @@
             alert("Image is loaded");
         }
         $("#add_new_item").click(function () {
-
-          /*  $("textarea[name^='item']").each(function(){
-                id=$(this).attr('id');
-             testauto(id);
-            });*/
-            counter = 0;
-            $('input[name^=item_num]').each(function () {
-                counter = counter + 1;
-            });
-            $('#item_num' + counter).val(counter);
-            init();
-
+            handleItemCount('add');
         });
+        function decreaseCounter()
+        {
+
+            handleItemCount('remove');
+        }
+        function handleItemCount(mode)
+        {
+
+            if(mode == "add")
+            {
+                counter = 1;
+            }
+            $('input[name^=item_num]').each(function () {
+                if(mode == "add") {
+                    counter = counter + 1;
+                    $('input[name^=item_num]').eq(counter-1).val(counter);
+                }
+                else
+                {
+                    counter = counter - 1;
+                    $('input[name^=item_num]').eq(counter-1).val(counter);
+                }
+
+            });
+
+           // init("item_name"+counter);
+        }
 
         </script>
     <style type="text/css">
@@ -570,12 +583,16 @@
         }
     </style>
     <script>
-        var init = function (){
+        function init(id){
             var cache = {},
                     lastXhr;
-            console.log($(".mysearch").length);
-            $("input.item_name,.copy1 input.item_name, .copy2 input.item_name,.copy3 input.item_name,.copy3 input.item_name,.copy4 input.item_name,.copy5 input.item_name,.copy6 input.item_name,.copy7 input.item_name,.copy8 input.item_name,.copy9 input.item_name,.copy10 input.item_name,.copy11 input.item_name,.copy12 input.item_name,.copy13 input.item_name,.copy14 input.item_name,.copy15 input.item_name,.copy16 input.item_name,.copy17 input.item_name,.copy18 input.item_name,.copy19 input.item_name,.copy20 input.item_name").on("focus", function(){
-                $(this).autocomplete({
+
+                var trid = $(this).closest('tr').attr('id');
+                var priceid = $("#"+trid+"  input[id^='price']").attr('id');
+                var casepriceid = $("#"+trid+"  input[id^='case_price']").attr('id');
+                var qtyid = $("#"+trid+"  input[id^='qty']").attr('id');
+
+                $("#"+id).autocomplete({
                     minLength: 2,
                     source: function( request, response ) {
                         var term = request.term;
@@ -589,73 +606,26 @@
                     },
                     select: function( event, ui ) {
                         $.ajax({url: "order/productdata",type:"get",dataType:'json',data:{'product_id':ui.item.value}, success: function(result){
-                           alert(result.item_description);
-                            $(this).parent('tr').text(result.item_descriptoin);
+
                             if(result.unit_price) {
-                                $("#price").val(result.unit_price);
+                                $("#"+priceid).val(result.unit_price);
                             }
                             else
                             {
-                                $("#price").val(0.00);
+                                $("#"+priceid).val(0.00);
                             }
                             if(result.case_price) {
-                                $("#case_price").val(result.case_price);
+                                $("#"+casepriceid).val(result.case_price);
                             }
                             else
                             {
-                                $("#case_price").val(0.00);
+                                $("#"+casepriceid).val(0.00);
                             }
                             $("#product_id").val(result.id);
+                            $("#"+qtyid).val(0.00);
                         }});
                     }
                 });
-            });
-
-
-            /*$( "input[id^='item_name']").each(function(index){
-                console.log($(this));
-                $(this).autocomplete({
-                    minLength: 2,
-                    source: function( request, response ) {
-                        var term = request.term;
-
-                        if ( term in cache ) {
-                            response( cache[ term ] );
-                            return;
-                        }
-                        lastXhr = $.getJSON( "order/autocomplete", request, function( data, status, xhr ) {
-                            cache[ term ] = data;
-
-                            if ( xhr === lastXhr ) {
-                                response( data );
-                            }
-                        });
-                    },
-                    select: function( event, ui ) {
-                        $.ajax({url: "order/productdata",type:"get",dataType:'json',data:{'product_id':ui.item.value}, success: function(result){
-                            $("#item").val(result.item_description);
-                            if(result.unit_price) {
-                                $("#price").val(result.unit_price);
-                            }
-                            else
-                            {
-                                $("#price").val(0.00);
-                            }
-                            if(result.case_price) {
-                                $("#case_price").val(result.case_price);
-                            }
-                            else
-                            {
-                                $("#case_price").val(0.00);
-                            }
-                            $("#product_id").val(result.id);
-                        }});
-                    }
-                });
-            })*/
-
-
-
         };
         //init();
 $(function()

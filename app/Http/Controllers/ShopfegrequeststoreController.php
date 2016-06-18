@@ -33,21 +33,8 @@ class ShopfegrequeststoreController extends Controller
 
     }
 
-    function approveGraphics($id){
-
-
-
-    }
-
-    function denyGraphics(){
-
-    }
-
-
     public function getIndex()
     {
-        echo url('shopfegrequeststore/approve/26');
-        exit;
         if ($this->access['is_view'] == 0)
             return Redirect::to('dashboard')->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
 

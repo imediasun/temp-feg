@@ -1,5 +1,6 @@
 
 @section ('content')
-@foreach($active as $data)
-    <li>{{$data->type}}</li>
+@foreach($company as $data)
+    <li>{{$data->company_name_short}}</li>b=
+    <li>{{$data->company_name_long}}</li>
 @endforeach

@@ -257,7 +257,7 @@ class OrderController extends Controller
             $num_items_in_array = count($itemsArray);
             for ($i = 0; $i < $num_items_in_array; $i++) {
                 $j = $i + 1;
-                ${'item_set_' . $i} = ' | item' . $j . ' - (' . $qtyArray[$i] . ') ' . $itemsArray[$i] . ' @ $' . $priceArray[$i] . ' ea.';
+                $order_description .= ' | item' . $j . ' - (' . $qtyArray[$i] . ') ' . $itemsArray[$i] . ' @ $' . $priceArray[$i] . ' ea.';
             }
             if ($editmode) {
                 $orderData = array(

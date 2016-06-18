@@ -22,8 +22,8 @@ class DemoController  extends Controller
 
     {
 
-        $active = DB::table('active')->get();
+        $company = DB::table('company')->get();
 
-        return view('demo.index',['active' => $active]);
+        return view('demo.index',['company' => $company]);
     }
 }
