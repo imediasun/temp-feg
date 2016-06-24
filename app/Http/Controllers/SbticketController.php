@@ -333,8 +333,12 @@ class SbticketController extends Controller {
 			//@todo need separate table for comment attachments
 			unset($ticketsData['file_path']);
 			$comment_model->insertRow($commentsData, NULL);
-			$this->model->insertRow($ticketsData , $request->input('TicketID'));
-
+			$ticketId = $request->input('TicketID');
+			$this->model->insertRow($ticketsData , $ticketId);
+			$message = $commentsData['Comments'];
+			//send email
+			$this->departmentSendMail($ticketsData['department_id'], $ticketId, $message);
+			$this->assignToSendMail($ticketsData['assign_to'], $ticketId, $message);
 			return response()->json(array(
 				'status'=>'success',
 				'message'=> \Lang::get('core.note_success')
@@ -350,7 +354,6 @@ class SbticketController extends Controller {
 			));
 		}
 	}
-
 	public function postSavepermission( Request $request)
 	{
 		$data = $request->all();
@@ -390,5 +393,35 @@ class SbticketController extends Controller {
 		$this->data['individuals']		= $individuals;
 		$this->data['access']		= $this->access;
 		return view('sbticket.setting',$this->data);
+	}
+	public function departmentSendMail($departmentId, $ticketId, $message){
+		$department_memebers = \DB::select("Select assign_employee_ids FROM departments WHERE id = ".$departmentId ."");
+		$department_memebers = explode(',',$department_memebers[0]->assign_employee_ids);
+
+		$subject = 'FEG Ticket #'.$ticketId;
+		$headers = 'MIME-Version: 1.0' . "\r\n";
+		$headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
+		$headers .= 'From: ' . CNF_REPLY_TO . ' <' . CNF_REPLY_TO . '>' . "\r\n";
+		
+		foreach($department_memebers as $i => $id)
+		{
+			$get_user_id_from_employess = \DB::select("Select users.email FROM employees JOIN users ON users.id=employees.user_id WHERE employees.id = ".$id ."");
+			if(isset($get_user_id_from_employess[0]->email)) {
+				$to = $get_user_id_from_employess[0]->email;
+				mail($to, $subject, $message, $headers);
+			}
+		}
+
+	}
+	public function assignToSendMail($assignTo, $ticketId, $message){
+		$assignTo = \DB::select("Select users.email FROM employees JOIN users ON users.id=employees.user_id WHERE employees.id = ".$assignTo ."");
+		if(isset($assignTo[0]->email)) {
+			$to = $assignTo[0]->email;
+			$subject = 'FEG Ticket #' . $ticketId;
+			$headers = 'MIME-Version: 1.0' . "\r\n";
+			$headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
+			$headers .= 'From: ' . CNF_REPLY_TO . ' <' . CNF_REPLY_TO . '>' . "\r\n";
+			mail($to, $subject, $message, $headers);
+		}
 	}
 }

@@ -187,7 +187,8 @@ class ConfigController extends Controller {
 			$val .= 	"define('CNF_MODE','".CNF_MODE."');\n";	
 			$val .= 	"define('CNF_LOGO','".CNF_LOGO."');\n";
 			$val .= 	"define('CNF_ALLOWIP','".$request->input('CNF_ALLOWIP')."');\n";
-			$val .= 	"define('CNF_RESTRICIP','".$request->input('CNF_RESTRICIP')."');\n";									
+			$val .= 	"define('CNF_RESTRICIP','".$request->input('CNF_RESTRICIP')."');\n";
+			$val .= 	"define('CNF_REPLY_TO','".CNF_REPLY_TO."');\n";
 			$val .= 	"?>";
 	
 			$filename = '../setting.php';
