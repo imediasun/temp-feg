@@ -96,6 +96,8 @@ return array(
 	"fr_emailsubject"				=> "Subject",
 	"fr_emailsendto"				=> "Send To",
 	"fr_emailmessage"				=> "Email Message",
+	"fr_email"				=> "Email ",
+	"fr_password"				=> "Password",
 	"fr_emailtag"					=> "You Can Use",
 	
 	

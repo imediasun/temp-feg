@@ -73,12 +73,14 @@ class ConfigController extends Controller {
 			$val .= 	"define('CNF_LOGO','".($logo !=''  ? $logo : CNF_LOGO )."');\n";		
 			$val .= 	"define('CNF_ALLOWIP','".CNF_ALLOWIP."');\n";
 			$val .= 	"define('CNF_RESTRICIP','".CNF_RESTRICIP."');\n";									
+			$val .= 	"define('CNF_REPLY_TO','".$request->input('cnf_reply_to')."');\n";
+			$val .= 	"define('CNF_REPLY_TO_PASSWORD','".$request->input('cnf_reply_to_password')."');\n";
 
 			$val .= 	"?>";
-	
+
 			$filename = base_path().'/setting.php';
 			$fp=fopen($filename,"w+"); 
-			fwrite($fp,$val); 
+			fwrite($fp,$val);
 			fclose($fp); 
 			return Redirect::to('sximo/config')->with('messagetext','Setting Has Been Save Successful')->with('msgstatus','success');
 		} else {
@@ -189,6 +191,7 @@ class ConfigController extends Controller {
 			$val .= 	"define('CNF_ALLOWIP','".$request->input('CNF_ALLOWIP')."');\n";
 			$val .= 	"define('CNF_RESTRICIP','".$request->input('CNF_RESTRICIP')."');\n";
 			$val .= 	"define('CNF_REPLY_TO','".CNF_REPLY_TO."');\n";
+			$val .= 	"define('CNF_REPLY_TO_PASSWORD','".CNF_REPLY_TO_PASSWORD."');\n";
 			$val .= 	"?>";
 	
 			$filename = '../setting.php';

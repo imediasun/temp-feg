@@ -1,12 +1,12 @@
-<?php
+<?php 
 define('CNF_APPNAME','Sximo 5');
 define('CNF_APPDESC','PHP Application Builder ');
 define('CNF_COMNAME','My Company name');
 define('CNF_EMAIL','info@mycompanyname.com');
 define('CNF_METAKEY','my site , my company  , Larvel Crud');
 define('CNF_METADESC','Write description for your site');
-define('CNF_GROUP','3');
 define('CNF_REDIRECTLINK','merchindisetheminggallary');
+define('CNF_GROUP','3');
 define('CNF_ACTIVATION','confirmation');
 define('CNF_MULTILANG','0');
 define('CNF_LANG','en');
@@ -21,4 +21,5 @@ define('CNF_LOGO','backend-logo.png');
 define('CNF_ALLOWIP','');
 define('CNF_RESTRICIP','192.116.134 , 194.111.606.21 ');
 define('CNF_REPLY_TO','dev5@shayansolutions.com');
+define('CNF_REPLY_TO_PASSWORD','1234532666');
 ?>
