@@ -25,7 +25,7 @@
 	 <div class="tab-pane active use-padding" id="info">	
 <div class="tab-content m-t ">
 		<div class="sbox   animated fadeInUp"> 
-			<div class="sbox-title"> Languange Manager </div>
+			<div class="sbox-title"> Language Manager </div>
 			<div class="sbox-content"> 		 
 
 	@if(Session::has('message'))

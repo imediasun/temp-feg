@@ -25,7 +25,7 @@
                    </div>
                             <div class="form-group  " >
                                 <label for="users" class=" control-label col-md-3 text-left">
-                                    {!! SiteHelpers::activeLang('users', (isset($fields['users']['language'])? $fields['users']['language'] : array())) !!}
+                                    {!! SiteHelpers::activeLang('Users', (isset($fields['users']['language'])? $fields['users']['language'] : array())) !!}
                                 </label>
                                 <div class="col-md-6">
                                     {!! Form::text('users', $row['users'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}

@@ -61,9 +61,9 @@
 
 <div class="infobox infobox-danger fade in">
   <button type="button" class="close" data-dismiss="alert"> x </button>
-  <h5>Please Read !</h5>
+  <h5>Please Note:</h5>
   <ol> 
-  	<li> If you want users <strong>only</strong> able to access they own records , then <strong>Global</strong> must be <code>uncheck</code> </li>
+  	<li> If you want users <strong>only</strong> able to access their own records , then <strong>Global</strong> must be <code>uncheck</code> </li>
 	<li> When you using this feature , Database table must have <strong><code>entry_by</code></strong> field </li>
 	</ol>	
 </div>	
