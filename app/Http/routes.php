@@ -92,6 +92,7 @@ Route::group(['middleware' => 'auth'], function()
 	Route::get('core/elfinder', 'Core\ElfinderController@getIndex');
 	Route::post('core/elfinder', 'Core\ElfinderController@getIndex');
 	Route::controller('/dashboard', 'DashboardController');
+	Route::controller('/cron', 'CronController');
 	Route::controllers([
 		'core/users'		=> 'Core\UsersController',
 		'notification'		=> 'NotificationController',
