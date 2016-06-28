@@ -411,17 +411,18 @@ class SbticketController extends Controller {
 				mail($to, $subject, $message, $headers);
 			}
 		}
-
 	}
 	public function assignToSendMail($assignTo, $ticketId, $message){
-		$assignTo = \DB::select("Select users.email FROM employees JOIN users ON users.id=employees.user_id WHERE employees.id = ".$assignTo ."");
-		if(isset($assignTo[0]->email)) {
-			$to = $assignTo[0]->email;
-			$subject = 'FEG Ticket #' . $ticketId;
-			$headers = 'MIME-Version: 1.0' . "\r\n";
-			$headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
-			$headers .= 'From: ' . CNF_REPLY_TO . ' <' . CNF_REPLY_TO . '>' . "\r\n";
-			mail($to, $subject, $message, $headers);
+		$assigneesTo = $assigneesTo = \DB::select("select users.email FROM employees JOIN users ON users.id=employees.user_id WHERE employees.id IN (".$assignTo.")");
+		foreach($assigneesTo as $assignee){
+			if (isset($assignee->email)) {
+				$to = $assignee->email;
+				$subject = 'FEG Ticket #' . $ticketId;
+				$headers = 'MIME-Version: 1.0' . "\r\n";
+				$headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
+				$headers .= 'From: ' . CNF_REPLY_TO . ' <' . CNF_REPLY_TO . '>' . "\r\n";
+				mail($to, $subject, $message, $headers);
+			}
 		}
 	}
 }
