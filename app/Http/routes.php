@@ -15,7 +15,7 @@
 
 Route::group(array('before' => 'authorization'), function()
 {
-    Route::resource('sximoapi', 'SximoapiController');
+    Route::resource('fegapi', 'FegapiController');
 });
 Route::filter('authorization', function()
 {

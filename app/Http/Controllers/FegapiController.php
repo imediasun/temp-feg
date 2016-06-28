@@ -5,7 +5,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Restapi;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Validator, Input, Redirect ;
-class SximoapiController extends Controller {
+class FegapiController extends Controller {
 
 	public function __construct() 
 	{
