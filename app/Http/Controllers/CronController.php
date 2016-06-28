@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Ticketcomment;
+use EmailReplyParser\Parser\EmailParser;
 
 class CronController extends Controller
 {
@@ -50,12 +51,13 @@ class CronController extends Controller
                 $userId = $postUser[0]->id;
 
                 $message = imap_fetchbody($inbox,$email_number,1);
+                $comment = \EmailReplyParser\EmailReplyParser::parseReply($message);
 
                 //Insert In sb_comment table
                 $comment_model = new Ticketcomment();
                 $commentsData = array(
                     'TicketID' => $ticketId,
-                    'Comments' => $message,
+                    'Comments' => $comment,
                     'Posted'   => $posted,
                     'UserID'   => $userId
                 );
