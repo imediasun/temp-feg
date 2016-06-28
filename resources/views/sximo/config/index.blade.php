@@ -163,6 +163,18 @@
 					<input name="cnf_redireclink" type="text" id="cnf_redireclink" class="form-control input-sm" value="{{ CNF_REDIRECTLINK }}" />
 				</div>
 			</div>
+			<div class="form-group">
+				<label for="ipt" class=" control-label col-md-4">{{ Lang::get('core.fr_email') }} </label>
+				<div class="col-md-8">
+					<input name="cnf_reply_to" type="text" id="cnf_reply_to" class="form-control input-sm" value="{{ CNF_REPLY_TO }}" />
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="ipt" class=" control-label col-md-4">{{ Lang::get('core.fr_password') }} </label>
+				<div class="col-md-8">
+					<input name="cnf_reply_to_password" type="text" id="cnf_reply_to_password" class="form-control input-sm" value="{{ CNF_REPLY_TO_PASSWORD }}" />
+				</div>
+			</div>
 
 
 		</div>
