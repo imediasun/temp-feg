@@ -6,9 +6,7 @@
   <div class="page-content row">
     <!-- Page header -->
     <div class="page-header">
-      <div class="page-title">
-        <h3><i class="fa fa-info"></i> SXIMO VERSION  <sup class="text-danger"> 5.1.3 </sup>  </h3>
-      </div>
+
 	  
 	 
 	  <ul class="breadcrumb">
