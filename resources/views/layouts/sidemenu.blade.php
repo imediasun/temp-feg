@@ -34,7 +34,7 @@ $selected_loc=\Session::get('selected_location');?>
             </li>
             @if(isset($selected_loc))
             <li>
-                <div class="profile-element" style="color:#FFF;padding:4px;border:1px solid #FFF;box-sizing: border-box">
+                <div class="profile-element" style="color:#FFF;padding:6px;border:1px solid #FFF;box-sizing: border-box">
                     <h4>@if($orderData['user_group'] == 'regusers')
                             Location {{ $orderData['selected_location'] }} - Expense Summary
                         @elseif ($orderData['user_group'] == 'distmgr')

@@ -109,9 +109,9 @@
 
 <div class="theme-config">
     <div class="theme-config-box">
-        <div class="spin-icon">
+     <!--   <div class="spin-icon">
             <i class="fa fa-cogs fa-spin"></i>
-        </div>
+        </div> -->
         <div class="skin-setttings">
             <div class="title">Select Color Schema</div>
             <div class="setings-item">
