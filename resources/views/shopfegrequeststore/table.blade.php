@@ -27,7 +27,7 @@
                     <thead>
                     <tr>
                         <th width="50"> No</th>
-                        <th width="100">Add'l Details</th>
+                 <th width="100">Add'l Details</th>
                         @if($setting['view-method']=='expand')
                             <th></th> @endif
                         <?php foreach ($tableGrid as $t) :

@@ -44,8 +44,10 @@
     </div>
 </div>
 <div class="row">
-    <div class="col-md-4"><select name='product_list_type' rows='5' id='product_list_type' class="form-control">
-            <option disabled selected>------------ Select Type --------------</option>
+    <div class="col-md-4">
+        <select name='product_list_type' rows='5'  id='product_list_type' class="select3" style="height: auto; font-size: 13px; font-family: 'Lato', sans-serif;
+width: 75%">
+            <option selected selected>------------ Select Type --------------</option>
             <option value="redemption" data-active="0">Redemption Prizes</option>
             <option value="redemption" data-active="1">Redemption Prizes - INACTIVE</option>
             <option value="instant" data-active="0">Instant Win Prizes</option>

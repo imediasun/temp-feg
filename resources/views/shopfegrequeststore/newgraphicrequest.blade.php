@@ -74,18 +74,19 @@
 
                     </div>
                 </div>
-                <div class="col-md-12 text-center">
+
+                    <div class="form-group" style="padding-left: 24px;margin-bottom:50px">
+                        <label class="col-sm-4 text-centre">&nbsp;</label>
+
+                        <button type="submit"  class="btn btn-primary btn-sm-5" style="padding-right: 20px;
+                                padding-left: 20px"><i
+                                class="fa  fa-save "></i>  {{ Lang::get('core.sb_save') }} </button>
+
                     Submitted by <b>{{ \Session::get('fid') }}</b> on <b>{{ date('Y-mm-dd') }}</b>
                 </div>
-                <div class="form-group" style="margin-bottom:50px">
-                    <label class="col-sm-8 text-right">&nbsp;</label>
 
-                    <div class="col-sm-4">
-                        <button type="submit"  class="btn btn-primary btn-sm "><i
-                                    class="fa  fa-save "></i>  {{ Lang::get('core.sb_save') }} </button>
 
-                    </div>
-                </div>
+
             </fieldset>
                 </div>
             <div class="clearfix"></div>

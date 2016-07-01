@@ -980,7 +980,8 @@ label { font-size:12px;}
   display: block;
   padding: 6px 12px;
   transition: border-color 0.15s ease-in-out 0s, box-shadow 0.15s ease-in-out 0s;
-  width: 100%; font-size:11px !important; height:30px;
+  width: 100%; font-size:13px !important; height:30px;
+  font-family: 'Lato', sans-serif !important;
   border-radius:0px !important; -moz-border-radius:0px !important;
 }
 .input-group-sm > .form-control, .input-group-sm > .input-group-addon, .input-group-sm > .input-group-btn > .btn { font-size: 11px !important;   border-radius:0px !important; -moz-border-radius:0px !important;}

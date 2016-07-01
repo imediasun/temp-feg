@@ -24,17 +24,17 @@
 					 	
 					 </div>
 				  </div> 					
-				  <div class="form-group  " > 
-					<label for="Sku" class=" control-label col-md-4 text-left"> 
-					{!! SiteHelpers::activeLang('Sku', (isset($fields['sku']['language'])? $fields['sku']['language'] : array())) !!}	
+				  <div class="form-group  " >
+					<label for="Sku" class=" control-label col-md-4 text-left">
+					{!! SiteHelpers::activeLang('Sku', (isset($fields['sku']['language'])? $fields['sku']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('sku', $row['sku'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
-					 </div> 
-					 <div class="col-md-2">
-					 	
+					  {!! Form::text('sku', $row['sku'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
 					 </div>
-				  </div> 					
+					 <div class="col-md-2">
+
+					 </div>
+				  </div>
 				  <div class="form-group  " > 
 					<label for="Vendor Description" class=" control-label col-md-4 text-left"> 
 					{!! SiteHelpers::activeLang('Vendor Description', (isset($fields['vendor_description']['language'])? $fields['vendor_description']['language'] : array())) !!}	
