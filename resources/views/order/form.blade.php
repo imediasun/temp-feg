@@ -98,11 +98,11 @@
                 </fieldset>
             </div>
 
-            <div class="col-md-6">
+            <div class="col-md-6" >
                 <fieldset>
                     <legend> Order Detail</legend>
 
-                    <div class="form-group  ">
+                    <div class="form-group">
                         <label for="order_type_id" class=" control-label col-md-4 text-left">
                             Order Type </label>
 
@@ -180,8 +180,8 @@
                         <br/><br/>
                         <label class="label-control col-md-3" for="notes"> Order Notes **Will be on PO**</label>
 
-                        <div class="col-md-9">
-                            <textarea id="notes" name='po_notes' cols="50" rows="9"
+                        <div class="col-md-9" style="padding-left: 58px;">
+                            <textarea id="notes" name='po_notes' cols="46" rows="9"
                                       placeholder='Additional Notes'>{{ $data['po_notes'] }}</textarea>
                         </div>
                     </div>
