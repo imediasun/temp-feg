@@ -92,8 +92,9 @@
 				 <td data-values="action" data-key="<?php echo $row->id ;?>">
 					{!! AjaxHelpers::buttonAction('product',$access,$id ,$setting) !!}
 					{!! AjaxHelpers::buttonActionInline($row->id,'id') !!}		
-				</td>
-                    <td><a href="{{ URL::to('product/upload/'.$row->id)}}">Upload Image</a></td>
+				</td><div>
+                    <td><button type="button" class="btn-imagee"><a href="{{ URL::to('product/upload/'.$row->id)}}"style ="color: white; font-family: 'Lato', sans-serif; white-space: nowrap; border-color: #2a6496;	text-decoration: none;  border-radius: 0px; border: 1px solid transparent; background-color: #428bca; font-size: 10px;">Upload Image</a></button></td>
+					</div>
                 </tr>
                 @if($setting['view-method']=='expand')
                 <tr style="display:none" class="expanded" id="row-{{ $row->id }}">
@@ -155,6 +156,11 @@ $(document).ready(function() {
 <style>
 .table th.right { text-align:right !important;}
 .table th.center { text-align:center !important;}
+	.btn-imagee{
+
+		font-size: 10px; padding: 7px 11px;border: 1px solid transparent;  border-radius: 0px;
+		background-color: #428bca;
+		border-color: #2a6496;		white-space: nowrap;
+		font-family: 'Lato', sans-serif;}
 
 </style>
-	
