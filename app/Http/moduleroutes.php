@@ -54,4 +54,5 @@
                     Route::controller('course', 'CourseController');
                     Route::controller('topgamesreport', 'TopgamesreportController');
                     Route::controller('bottomgamesreport', 'BottomgamesreportController');
+                    Route::controller('productsindevelopmentreport', 'ProductsindevelopmentreportController');
                     ?>
