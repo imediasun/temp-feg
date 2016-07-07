@@ -19,8 +19,8 @@ $orders = array('asc','desc');
 			@endif	
 		  >{{ $p }}</option>
 		  @endforeach
-          <option value="0" 
-            @if($setting['perpage'] == '0' || !isset($pager['rows'])) 
+          <option value="0"
+            @if($param['limit'] == '0') 
 				selected="selected"
 			@endif	
             >All</option>

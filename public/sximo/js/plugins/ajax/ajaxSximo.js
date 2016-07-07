@@ -79,8 +79,8 @@ function ajaxFilter( id ,url,opt  )
 
 	var attr = '';
         $(id + 'Filter :input').each(function () {
-            if (this.value != '' && this.value!=0) {
-
+//            if (this.value != '' && this.value!=0) {
+            if (this.value != '') {
                 attr += this.name + '=' + this.value + '&';
             }
 
