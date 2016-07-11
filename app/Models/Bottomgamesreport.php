@@ -160,11 +160,11 @@ class bottomgamesreport extends Sximo  {
         }
         else {
             
-            $selectQuery = self::build_query($date_start_stamp, $date_end_stamp, $location_id, $limitConditional);
+            $selectQuery = self::build_query($date_start_stamp, $date_end_stamp, $location_id, $limitConditional, $orderConditional, $filters);
             //var_dump(date("Y-m-d", $queryDateStamp));
             $rows = \DB::select($selectQuery);
             
-            $totalQuery = self::build_query($date_start_stamp, $date_end_stamp, $location_id);
+            $totalQuery = self::build_query($date_start_stamp, $date_end_stamp, $location_id, "", $orderConditional, $filters);
             $totalRows = \DB::select($totalQuery);
             if (!empty($totalRows) && isset($totalRows[0])) {
                 $total = count($totalRows);
@@ -182,7 +182,7 @@ class bottomgamesreport extends Sximo  {
 	}    
     
     
-    public static function build_query($date_start_stamp, $date_end_stamp, $location_id, $limitConditional = ""){
+    public static function build_query($date_start_stamp, $date_end_stamp, $location_id, $limitConditional = "", $orderConditional = " ORDER BY game_average ASC ", $filters = array()){
         $loc_sub_expression = empty($location_id) ? "":" AND G.location_id = $location_id";
         $date_start = date("Y-m-d", $date_start_stamp);
         $date_start_display = date("m/d/Y", $date_start_stamp);            
@@ -196,39 +196,17 @@ class bottomgamesreport extends Sximo  {
                         T.game_title AS game_name,
                         Y.game_type_short AS game_type,
                         
-                    ROUND(SUM(CASE WHEN game_earnings.debit_type_id = 1 THEN game_earnings.total_notional_value ELSE
-                        (
-                            game_earnings.std_actual_cash + 
-                            game_earnings.std_card_dollar +
-                            game_earnings.std_card_dollar_bonus +
-                           (game_earnings.time_play_dollar + game_earnings.time_play_dollar_bonus) +
-                           (game_earnings.product_plays * (game_earnings.std_card_dollar/game_earnings.std_plays)) +
-                           (game_earnings.courtesy_plays * (game_earnings.std_card_dollar/game_earnings.std_plays))
-                        ) END
-                    ),2) AS game_total,
-                    
-                    (SELECT COUNT(*) 
-                     FROM game G 
-                     LEFT JOIN game_title T ON T.id = G.game_title_id 
-                     LEFT JOIN location L ON L.id = G.location_id
-                     WHERE T.id = (SELECT G.game_title_id FROM game G WHERE id = game_earnings.game_id AND L.reporting = 1) $loc_sub_expression GROUP BY T.game_title) AS games_count,
+                    ROUND(SUM(CASE WHEN game_earnings.debit_type_id = 1 THEN game_earnings.total_notional_value ELSE game_earnings.std_actual_cash END),2) AS game_total,
+	
+                    count(distinct game_earnings.game_id) AS games_count,
+
+                    ROUND(SUM(CASE WHEN game_earnings.debit_type_id = 1 THEN game_earnings.total_notional_value ELSE game_earnings.std_actual_cash END)/
+                        count(distinct game_earnings.game_id),2) AS game_average,                      
+    
+                    GROUP_CONCAT(DISTINCT CONCAT('', game_earnings.loc_id) ORDER BY game_earnings.loc_id separator ', ') AS location_id,
+                    GROUP_CONCAT(DISTINCT L.location_name ORDER BY game_earnings.loc_id separator ', ') AS location_name,
+    
                          
-                        
-                    ROUND(SUM(CASE WHEN game_earnings.debit_type_id = 1 THEN game_earnings.total_notional_value ELSE
-                        (
-                            game_earnings.std_actual_cash + 
-                            game_earnings.std_card_dollar +
-                            game_earnings.std_card_dollar_bonus +
-                           (game_earnings.time_play_dollar + game_earnings.time_play_dollar_bonus) +
-                           (game_earnings.product_plays * (game_earnings.std_card_dollar/game_earnings.std_plays)) +
-                           (game_earnings.courtesy_plays * (game_earnings.std_card_dollar/game_earnings.std_plays))
-                        ) END
-                    )/(SELECT COUNT(*) FROM game G 
-                       LEFT JOIN game_title T ON T.id = G.game_title_id
-                       LEFT JOIN location L ON L.id = G.location_id
-                       WHERE T.id = (SELECT G.game_title_id FROM game G WHERE id = game_earnings.game_id AND L.reporting = 1)$loc_sub_expression GROUP BY T.game_title)
-                    ,2) AS game_average,
-                    
                     '$date_start_display' AS start_date,
                         
                     '$date_end_display' AS end_date,
@@ -245,12 +223,19 @@ class bottomgamesreport extends Sximo  {
                   WHERE game_earnings.date_start >= '$date_start'
                     AND game_earnings.date_end <= '$date_end 23:59:59'
                     AND L.reporting = 1
+                    AND G.sold = 0
+                    AND G.status_id != 3
+                    AND G.test_piece = 0
+                    AND Y.id IN(1,2,3,4,5,7)
                     $loc_expression
                     $game_expression
+                    
                GROUP BY G.game_title_id
-               ORDER BY game_average ASC";
+               $orderConditional
+               $limitConditional
+                ";
         
-        die($sql);
+        //die($sql);
         return $sql;
     }      
 }
