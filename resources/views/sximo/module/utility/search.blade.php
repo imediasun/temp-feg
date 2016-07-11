@@ -63,7 +63,6 @@ jQuery(function(){
 
 
 	$('.doSearch').click(function(){
-		//alert('test');
 		var attr = '';
 		$('#advance-search tr.fieldsearch').each(function(i){
 			var field = $(this).attr('id');
@@ -92,8 +91,11 @@ jQuery(function(){
 			
 		});
 		<?php if($searchMode =='ajax') { ?> 
-			reloadData( '#{{ $pageModule }}',"{{ $pageUrl }}/data?search="+attr);	
+			reloadData( '#{{ $pageModule }}',"{{ $pageUrl }}/data?search="+attr,function(){
+					$(".sbox-tools a.tips").addClass('btn-search');
+				});
 			$('#sximo-modal').modal('hide');
+
 		<?php } else { ?>
 			window.location.href = '{{ $pageUrl }}?search='+attr;
 		<?php } ?>

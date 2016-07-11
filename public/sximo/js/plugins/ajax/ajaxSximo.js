@@ -1,11 +1,13 @@
 /* CSS Document */
 
-function reloadData( id,url   )
+function reloadData( id,url,callback)
 {
 	$('.ajaxLoading').show();
 	$.post( url ,function( data ) {
 		$( id +'Grid' ).html( data );
 		$('.ajaxLoading').hide();
+		typeof callback === 'function' && callback();
+
 	});
 
 }

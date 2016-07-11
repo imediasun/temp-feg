@@ -25,10 +25,13 @@
 	  <li class=""><a href="{{ URL::to('core/users/blast')}}"><i class="fa fa-envelope"></i> Send Email </a></li>
 	</ul>
 
-<div class="sbox animated fadeInRight">
+<div class="sbox animated fadeInRight" >
 	<div class="sbox-title"> <h5> <i class="fa fa-table"></i> <?php echo $pageTitle ;?> <small>{{ $pageNote }}</small></h5>
 <div class="sbox-tools" >
-		<a href="{{ url($pageModule) }}" class="btn btn-xs btn-white tips" title="Clear Search" ><i class="fa fa-trash-o"></i> Clear Search </a>
+
+		 <a href="{{ url($pageModule) }}" class="btn btn-xs btn-white tips  {{(isset($_GET['search'])) ? 'btn-search ':'' }}" title="Clear Search" ><i class="fa fa-trash-o"></i> Clear Search </a>
+
+
 		@if(Session::get('gid') ==1)
 			<a href="{{ URL::to('sximo/module/config/'.$pageModule) }}" class="btn btn-xs btn-white tips" title=" {{ Lang::get('core.btn_config') }}" ><i class="fa fa-cog"></i></a>
 		@endif
@@ -48,6 +51,8 @@
 			<a href="{{ URL::to('core/users/download') }}" class="tips btn btn-sm btn-white" title="{{ Lang::get('core.btn_download') }}">
 			<i class="fa fa-download "></i>&nbsp;{{ Lang::get('core.btn_download') }} </a>
 			@endif
+
+
 			<a href="{{ URL::to( 'core/users/search') }}" class="btn btn-sm btn-white" onclick="SximoModal(this.href,'Advance Search'); return false;" ><i class="text-danger fa fa-search"></i> Search</a>
 
                 @if(SiteHelpers::isModuleEnabled('users'))
