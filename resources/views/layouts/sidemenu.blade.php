@@ -32,6 +32,36 @@ $selected_loc=\Session::get('selected_location');?>
                 </div>
                 <div class="photo-header "> {!! SiteHelpers::avatar( 40 ) !!}</div>
             </li>
+
+            <div>
+                <?php $user_locations=\Session::get('user_locations'); ?>
+                @if(isset($user_locations))
+                        <li>
+               <span style="padding-left:10px;"><b style="margin-left: 8px; color: #555; font-size: 13px; font-family: 'Lato', sans-serif; font-weight: bold;">location {{ \Session::get('selected_location') }} {{ "||" }} {{ \Session::get('selected_location_name') }}</b></span>
+
+                    </li>
+
+                        <li style=" padding: 6px 12px; margin-bottom: 8px;">
+
+                        <select id="user_locations" class="form-control">
+                            <?php $userLocations = \Session::get('user_locations') ?>
+                            <option disabled selected>Select Your Location</option>
+                            @foreach($userLocations as $location)
+                                <option @if($location->id==\Session::get('selected_location')) selected
+                                        @endif value="{{ $location->id }}"
+                                        data-locationname="{{ $location->location_name }}"> {{ $location->id }} {{ '||' }} {{ $location->location_name }}</option>
+                            @endforeach
+                        </select>
+                    </li>
+                @endif
+                <li>
+                    <?php if(\Session::get('return_id') != ''): $id = \Session::get('return_id'); ?>
+                    <a href="{{ URL::to('core/users/play/'.$id)}}">Exit to Admin</a>
+                    <?php endif; ?>
+                </li>
+
+            </div>
+
             @if(isset($selected_loc))
             <li>
                 <div class="profile-element" style="color:#FFF;padding:6px;border:1px solid #FFF;box-sizing: border-box">

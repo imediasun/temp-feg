@@ -6,31 +6,7 @@
                         class="fa fa-bars"></i> </a>
         </div>
         <ul class="nav navbar-top-links navbar-right">
-            <?php $user_locations=\Session::get('user_locations'); ?>
-            @if(isset($user_locations))
-            <li>
-                <span><b>{{ \Session::get('ufname') }} is viewing
-                        location {{ \Session::get('selected_location') }} {{ "||" }} {{ \Session::get('selected_location_name') }}</b></span>
 
-            </li>
-
-            <li>
-                <select id="user_locations" class="form-control">
-                    <?php $userLocations = \Session::get('user_locations') ?>
-                    <option disabled selected>Select Your Location</option>
-                    @foreach($userLocations as $location)
-                        <option @if($location->id==\Session::get('selected_location')) selected
-                                                                                       @endif value="{{ $location->id }}"
-                                                                                       data-locationname="{{ $location->location_name }}"> {{ $location->id }} {{ '||' }} {{ $location->location_name }}</option>
-                    @endforeach
-                </select>
-            </li>
-            @endif
-            <li>
-                <?php if(\Session::get('return_id') != ''): $id = \Session::get('return_id'); ?>
-                <a href="{{ URL::to('core/users/play/'.$id)}}">Exit to Admin</a>
-                <?php endif; ?>
-            </li>
             <li>
                 <a href="#" data-toggle="dropdown" class="dropdown-toggle count-info" aria-expanded="true">
                     <i class="fa fa-envelope"></i> <span class="notif-alert label label-danger">0</span>
