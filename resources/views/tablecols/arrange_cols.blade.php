@@ -101,13 +101,13 @@
         }
 
         function showResponse(data) {
-
             if (data.status == 'success') {
                 ajaxViewClose('#{{ $pageModule }}}');
                 notyMessage(data.message);
                 $('#sximo-modal').modal('hide');
                 $('.ajaxLoading').hide();
-                window.location.reload();
+                //window.location.reload();
+                reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?config_id=' + data.id);
             } else {
                 notyMessageError(data.message);
                 $('.ajaxLoading').hide();

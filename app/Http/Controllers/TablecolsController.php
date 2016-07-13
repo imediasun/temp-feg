@@ -221,11 +221,12 @@ class TablecolsController extends Controller
         $id = $this->model->checkModule($data['config_name'], $data['module_id']);
         $configstr = $data['multiple_value'];
         $configstr = \SiteHelpers::CF_encode_json($configstr);
-        $this->model->insertRow(array('user_id' => $data['user_id'], 'module_id' => $data['module_id'], 'config' => $configstr, 'config_name' => $data['config_name'], 'is_private' => $data['user_mode'],'group_id'=>$data['group_id']), $id);
+        $id = $this->model->insertRow(array('user_id' => $data['user_id'], 'module_id' => $data['module_id'], 'config' => $configstr, 'config_name' => $data['config_name'], 'is_private' => $data['user_mode'],'group_id'=>$data['group_id']), $id);
 
         return response()->json(array(
             'status' => 'success',
-            'message' => \Lang::get('core.note_success')
+            'message' => \Lang::get('core.note_success'),
+            'id' => $id
         ));
 
     }

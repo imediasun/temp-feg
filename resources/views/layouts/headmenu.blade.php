@@ -95,8 +95,11 @@
 
     });
     $("#user_locations").on('change', function () {
+
         var location_id = $(this).val();
-        location.href = "{{ $pageModule }}/changelocation/" + location_id;
+        var pageModule = "{{ $pageModule }}";
+        var pageModule = pageModule.split('?');
+        location.href = pageModule[0]+"/changelocation/" + location_id;
     });
 
 </script>
