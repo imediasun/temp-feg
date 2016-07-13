@@ -735,5 +735,9 @@ class Sximo extends Model {
         return $comma_separated_emails;
     }
 
+    public static function getUserAssignedLocation(){
+        return [];
+    }
+
 
 }

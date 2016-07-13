@@ -237,10 +237,17 @@ class shopfegrequeststore extends Sximo  {
         return $last_inserted_id;
     }
 
+    /**
+     * override location drop down menu
+     * @param $params
+     * @param null $limit
+     * @param null $parent
+     * @return mixed
+     */
     public static function getComboselect($params, $limit = null, $parent = null) {
         $tableName = $params[0];
         if($tableName == 'location'){
-            die("special handle locations");
+            return parent::getUserAssignedLocation($params,$limit,$parent);
         }
         else{
             return parent::getComboselect($params,$limit,$parent);
