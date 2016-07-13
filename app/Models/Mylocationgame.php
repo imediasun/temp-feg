@@ -98,6 +98,21 @@ class mylocationgame extends Sximo  {
 								WHERE G.id='.$id);
       return $row;
     }
+	/**
+	 * override location drop down menu
+	 * @param $params
+	 * @param null $limit
+	 * @param null $parent
+	 * @return mixed
+	 */
+	public static function getComboselect($params, $limit = null, $parent = null)
+	{
+		$tableName = $params[0];
+		if ($tableName == 'location') {
+			return parent::getUserAssignedLocation($params, $limit, $parent);
+		} else {
+			return parent::getComboselect($params, $limit, $parent);
+		}
 
-
+	}
 }
