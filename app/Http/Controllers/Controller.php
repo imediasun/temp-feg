@@ -723,7 +723,7 @@ $r2=\Request::get($field);
             $data['selected_location_name'] = $location_name[0]->location_name_short;
         }
         $data['selected_location'] = $location_id;
-        \Session::put($data);
+      // Session::put($data);
         return Redirect::back();
     }
 
