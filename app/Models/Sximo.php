@@ -164,15 +164,12 @@ class Sximo extends Model {
             $table = $params[0];
             $condition = $limit[0] . " `" . $limit[1] . "` " . $limit[2] . " " . $limit[3] . " ";
             if (count($parent) >= 2) {
-                echo "SELECT * FROM " . $table . " " . $condition . " AND " . $parent[0] . " = '" . $parent[1] . "'";
-                die();
                 $row = \DB::table($table)->where($parent[0], $parent[1])->get();
                 $row = \DB::select("SELECT * FROM " . $table . " " . $condition . " AND " . $parent[0] . " = '" . $parent[1] . "'");
             } else {
                 $row = \DB::select("SELECT * FROM " . $table . " " . $condition);
             }
         } else {
-
 
             $table = $params[0];
             if (count($parent) >= 2) {
