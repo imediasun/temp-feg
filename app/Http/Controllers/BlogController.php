@@ -259,7 +259,7 @@ class BlogController extends Controller {
 			$data = array(
 				'comment'	=> $request->input("comment"),
 				'blogID'	=> $request->input("blogID"),
-				'created'	=> date("Y-m-d H:i:s"),
+				'created'	=> date("m/d/Y H:i:s"),
 				'user_id'	=> \Session::get('uid')
 				
 			);

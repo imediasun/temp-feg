@@ -84,8 +84,18 @@
                                          <?php
                                          echo SiteHelpers::showUploadedFile($value, '/uploads/newGraphic/', 50, false);
                                          ?>
-                                     @else
-                                         {!! $value !!}
+
+									 @elseif($field['field'] == 'need_by_date')
+
+										 {!! date("m/d/Y", strtotime($value)) !!}
+
+									 @elseif($field['field'] == 'request_date')
+
+										 {!! date("m/d/Y", strtotime($value)) !!}
+
+
+									 @else
+										 {!! $value !!}
                                      @endif
 								 </td>
 							@endif

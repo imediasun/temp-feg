@@ -27,7 +27,7 @@ class NotificationController extends Controller {
 					'url'	=> $row->url,
 					'title'	=> $row->note ,
 					'icon'	=> $row->icon,
-					'date'	=> date("d/m/y",strtotime($row->created))
+					'date'	=> date("m/d/Y",strtotime($row->created))
 				);
 		}
 	

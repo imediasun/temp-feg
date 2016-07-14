@@ -139,13 +139,13 @@ class CourseController extends Controller {
 		$row = $this->model->find($id);
 		if($id !='') {
 			$start_date = date_create($row->start_date);
-			$row->start_date = date_format($start_date, "d-m-Y");
+			$row->start_date = date_format($start_date, "m/d/Y");
 			$end_date = date_create($row->end_date);
-			$row->end_date = date_format($end_date, "d-m-Y");
+			$row->end_date = date_format($end_date, "m/d/Y");
 			$advertisement_start_date = date_create($row->advertisement_start_date);
-			$row->advertisement_start_date = date_format($advertisement_start_date, "d-m-Y");
+			$row->advertisement_start_date = date_format($advertisement_start_date, "m/d/Y");
 			$advertisement_end_date = date_create($row->advertisement_end_date);
-			$row->advertisement_end_date = date_format($advertisement_end_date, "d-m-Y");
+			$row->advertisement_end_date = date_format($advertisement_end_date, "m/d/Y");
 
 		}
 		if($row)
@@ -211,9 +211,9 @@ class CourseController extends Controller {
 		$endDate = $request->get('end_date');
 		$advStartDate = $request->get('advertisement_start_date');
 		$advEndDate = $request->get('advertisement_end_date');
-		$start_date = Carbon::createFromFormat('d-m-Y', $date);
-		$end_date = Carbon::createFromFormat('d-m-Y', $endDate);
-		$advertisement_start_date = Carbon::createFromFormat('d-m-Y', $advStartDate);
+		$start_date = Carbon::createFromFormat('m/d/Y', $date);
+		$end_date = Carbon::createFromFormat('m/d/Y', $endDate);
+		$advertisement_start_date = Carbon::createFromFormat('m/d/Y', $advStartDate);
 		$advertisement_end_date = Carbon::createFromFormat('d-m-Y', $advEndDate);
 
 		$rules = $this->validateForm();

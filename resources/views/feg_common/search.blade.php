@@ -39,7 +39,7 @@ function changeOperate( val , field )
 }
 jQuery(function(){
 		$('.date').datepicker({format:'mm/dd/yyyy',autoClose:true})
-		$('.datetime').datetimepicker({format: 'yyyy-mm-dd hh:ii:ss'}); 
+		$('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});
 		//$(".sel-search").select2({ width:"98%"});	
 
 
@@ -56,7 +56,7 @@ jQuery(function(){
 			} else {
 				value  = $(this).find("input[name="+field+"]").val();
 				if(value != '')
-					value  = $.datepicker.formatDate('yy-mm-dd', new Date(value));
+					value  = $.datepicker.formatDate('mm/dd/yyyy', new Date(value));
 			}
 
 			if(value !=='' && typeof value !=='undefined' && this.name !='_token')

@@ -141,7 +141,7 @@
                         <div class="col-md-8">
                             <div class="input-group m-b" style="width:150px !important;">
                                 <input type="text" class="form-control date" name="date_ordered"
-                                       value="{{ $data['today'] }}" required="required"/>
+                                       value="{{ date("m/d/Y", strtotime($data['today'])) }}" required="required"/>
                                 <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
                             </div>
                         </div>
@@ -363,8 +363,8 @@
             $('.previewImage').fancybox();
             $('.tips').tooltip();
             $(".select3").select2({width: "98%"});
-            $('.date').datepicker({format: 'yyyy-mm-dd', autoClose: true})
-            $('.datetime').datetimepicker({format: 'yyyy-mm-dd hh:ii:ss'});
+            $('.date').datepicker({format: 'mm/dd/yyyy', autoClose: true})
+            $('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});
             $('.removeCurrentFiles').on('click', function () {
                 var removeUrl = $(this).attr('href');
                 $.get(removeUrl, function (response) {

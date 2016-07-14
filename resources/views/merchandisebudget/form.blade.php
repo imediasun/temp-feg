@@ -211,7 +211,7 @@
             changeMonth: false
         });
 
-        $('.datetime').datetimepicker({format: 'yyyy-mm-dd hh:ii:ss'});
+        $('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});
         $('input[type="checkbox"],input[type="radio"]').iCheck({
             checkboxClass: 'icheckbox_square-green',
             radioClass: 'iradio_square-green'

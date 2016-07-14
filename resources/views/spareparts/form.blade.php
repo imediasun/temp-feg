@@ -156,8 +156,8 @@
             $('.previewImage').fancybox();
             $('.tips').tooltip();
             $(".select4").select2({width: "98%"});
-            $('.date').datepicker({format: 'yyyy-mm-dd', autoClose: true})
-            $('.datetime').datetimepicker({format: 'yyyy-mm-dd hh:ii:ss'});
+            $('.date').datepicker({format: 'mm/dd/yyyy', autoClose: true})
+            $('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});
             $('input[type="checkbox"],input[type="radio"]').iCheck({
                 checkboxClass: 'icheckbox_square-green',
                 radioClass: 'iradio_square_green'

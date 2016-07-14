@@ -79,6 +79,17 @@
                                          <?php
                                          echo "<a href='".url()."/uploads/serviceRequest/".$value."' target='_blank' class='previewImage fancybox' rel='gallery1' href='".url()."/uploads/serviceRequest/".$value."'> $value </a>";
                                          ?>
+									 @elseif($field['field'] == 'request_date')
+
+										 {!! date("m/d/Y", strtotime($value)) !!}
+
+									 @elseif($field['field'] == 'need_by_date')
+
+										 {!! date("m/d/Y", strtotime($value)) !!}
+
+									 @elseif($field['field'] == 'solved_date')
+
+										 {!! date("m/d/Y", strtotime($value)) !!}
                                      @else
                                          {!! $value !!}
                                      @endif

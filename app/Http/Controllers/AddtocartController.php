@@ -248,7 +248,7 @@ class AddtocartController extends Controller
     function getSubmitRequests($new_location = null)
     {
 
-        $now = date('Y-m-d');
+        $now = date('m/d/Y');
         $location_id = \Session::get('selected_location');
         $data['user_level'] = \Session::get('gid');
         if ($data['user_level'] == 3 || $data['user_level'] == 4 || $data['user_level'] == 5 || $data['user_level'] == 7 || $data['user_level'] == 9 || $data['user_level'] == 10) {
