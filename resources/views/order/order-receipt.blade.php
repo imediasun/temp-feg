@@ -67,7 +67,7 @@
                             <label for="date_received" class=" control-label col-md-4 text-left">
                                 Date Received </label>
                             <div class="col-md-8">
-                           <input type="text" class="date form-control" name="date_received" value="{{ $data['today'] }}" required/>
+                           <input type="text" class="date form-control" name="date_received" value="{{ date("m/d/Y", strtotime($data['today']))}}" required/>
                             </div>
                         </div>
                         <div class="form-group  ">
@@ -137,8 +137,8 @@
             $('.previewImage').fancybox();
             $('.tips').tooltip();
             $(".select3").select2({width: "98%"});
-            $('.date').datepicker({format: 'yyyy-mm-dd', autoClose: true})
-            $('.datetime').datetimepicker({format: 'yyyy-mm-dd hh:ii:ss'});
+            $('.date').datepicker({format: 'mm/dd/yyyy', autoClose: true})
+            $('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});
             $('.removeCurrentFiles').on('click', function () {
                 var removeUrl = $(this).attr('href');
                 $.get(removeUrl, function (response) {

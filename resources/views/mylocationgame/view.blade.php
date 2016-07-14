@@ -314,8 +314,8 @@
 @endif
 
 <script>
-    $('.date').datepicker({format:'yyyy-mm-dd',autoClose:true})
-    $('.datetime').datetimepicker({format: 'yyyy-mm-dd hh:ii:ss'});
+    $('.date').datepicker({format:'mm/dd/yyyy',autoClose:true})
+    $('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});
     $('input[type="checkbox"],input[type="radio"]').iCheck({
         checkboxClass: 'icheckbox_square-green',
         radioClass: 'iradio_square_green'
@@ -331,6 +331,7 @@
    $("#status").on('change',function(){
        var form = $('#mylocationgameFormAjax');
        form.parsley();
+       form.submit(function(){
        form.submit(function(){
            if(form.parsley('isValid') == true){
                var options = {

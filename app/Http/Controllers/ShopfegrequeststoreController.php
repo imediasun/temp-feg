@@ -261,7 +261,7 @@ class ShopfegrequeststoreController extends Controller
         $rules['img']='mimes:jpeg,gif,png';
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
-            $now = date('Y-mm-dd');
+            $now = date('m/d/Y');
             $item_id = $request->get('item_id');
             $graphics_description = $request->get('graphics_description');
             $graphics_description = str_replace('"', '', $graphics_description);
@@ -270,7 +270,7 @@ class ShopfegrequeststoreController extends Controller
             $game_info = $request->get('game_info');
             $locationId = $request->get('location_name');
             $statusId = 1;
-            $now = date('Y-mm-dd');
+            $now = date('m/d/Y');
             $data = array('location_id' => $locationId, 'request_user_id' => \Session::get('uid'), 'request_date' => $now, 'need_by_date' => $date_needed, 'description' => $game_info . ' - ' . $graphics_description, 'qty' => $qty, 'status_id' => $statusId);
             $last_insert_id = $this->model->newGraphicRequest($data);
 

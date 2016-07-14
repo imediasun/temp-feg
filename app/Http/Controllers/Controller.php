@@ -361,7 +361,7 @@ abstract class Controller extends BaseController
                                 $filename = $file->getClientOriginalName();
                                 $extension = $file->getClientOriginalExtension(); //if you need extension of the file
                                 $rand = rand(1000, 100000000);
-                                $newfilename = strtotime(date('Y-m-d H:i:s')) . '-' . $rand . '.' . $extension;
+                                $newfilename = strtotime(date('m/d/Y H:i:s')) . '-' . $rand . '.' . $extension;
                                 $uploadSuccess = $file->move($destinationPath, $newfilename);
                                 if ($f['option']['resize_width'] != '0' && $f['option']['resize_width'] != '') {
                                     if ($f['option']['resize_height'] == 0) {
@@ -396,7 +396,7 @@ abstract class Controller extends BaseController
                     // if post is date
                     if ($f['type'] == 'date') {
 
-                        $data[$field] = date("Y-m-d", strtotime($request->input($field)));
+                        $data[$field] = date("m/d/Y", strtotime($request->input($field)));
                     }
 
                     // if post is seelct multiple
@@ -615,7 +615,7 @@ $r2=\Request::get($field);
 
         @header('Content-Type: application/ms-excel');
         @header('Content-Length: ' . strlen($content));
-        @header('Content-disposition: inline; filename="' . $title . ' ' . date("d/m/Y") . '.xls"');
+        @header('Content-disposition: inline; filename="' . $title . ' ' . date("m/d/Y") . '.xls"');
 
         echo $content;
         exit;

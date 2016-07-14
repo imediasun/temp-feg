@@ -103,8 +103,8 @@
 					 </div>
 				  </div> 					
 				  <div class="form-group  " > 
-					<label for="Unit Price" class=" control-label col-md-4 text-left"> 
-					{!! SiteHelpers::activeLang('Unit Price', (isset($fields['unit_price']['language'])? $fields['unit_price']['language'] : array())) !!}	
+					<label for="Unit Price" class=" control-label col-md-4 text-left">
+					{!! SiteHelpers::activeLang('Unit Price', (isset($fields['unit_price']['language'])? $fields['unit_price']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
 					  {!! Form::text('unit_price', $row['unit_price'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
@@ -113,17 +113,17 @@
 					 	
 					 </div>
 				  </div> 					
-				  <div class="form-group  " > 
-					<label for="Case Price" class=" control-label col-md-4 text-left"> 
-					{!! SiteHelpers::activeLang('Case Price', (isset($fields['case_price']['language'])? $fields['case_price']['language'] : array())) !!}	
+				  <div class="form-group  " >
+					<label for="Case Price" class=" control-label col-md-4 text-left">
+					{!! SiteHelpers::activeLang('Case Price', (isset($fields['case_price']['language'])? $fields['case_price']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('case_price', $row['case_price'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
-					 </div> 
-					 <div class="col-md-2">
-					 	
+					  {!! Form::text('case_price', $row['case_price'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
 					 </div>
-				  </div> 					
+					 <div class="col-md-2">
+
+					 </div>
+				  </div>
 				  <div class="form-group  " > 
 					<label for="Retail Price" class=" control-label col-md-4 text-left"> 
 					{!! SiteHelpers::activeLang('Retail Price', (isset($fields['retail_price']['language'])? $fields['retail_price']['language'] : array())) !!}	
@@ -136,7 +136,7 @@
 					 </div>
 				  </div> 					
 				  <div class="form-group  " > 
-					<label for="Ticket Value" class=" control-label col-md-4 text-left"> 
+					<label for="Ticket Value" class=" control-label col-md-4 text-left">
 					{!! SiteHelpers::activeLang('Ticket Value', (isset($fields['ticket_value']['language'])? $fields['ticket_value']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
@@ -316,8 +316,8 @@ $(document).ready(function() {
 	$('.previewImage').fancybox();	
 	$('.tips').tooltip();	
 	$(".select2").select2({ width:"98%"});	
-	$('.date').datepicker({format:'yyyy-mm-dd',autoClose:true})
-	$('.datetime').datetimepicker({format: 'yyyy-mm-dd hh:ii:ss'}); 
+	$('.date').datepicker({format:'mm/dd/yyyy',autoClose:true})
+	$('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});
 	$('input[type="checkbox"],input[type="radio"]').iCheck({
 		checkboxClass: 'icheckbox_square-green',
 		radioClass: 'iradio_square-green',

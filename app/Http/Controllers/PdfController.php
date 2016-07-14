@@ -87,7 +87,7 @@ class PdfController extends Controller
     public function getInvoice()
     {
         $data = $this->getData();
-        $date = date('Y-m-d');
+        $date = date('m/d/Y');
         $invoice = "2222";
         $view =  \View::make('pdf.invoice', compact('data', 'date', 'invoice'))->render();
         $pdf = \App::make('dompdf.wrapper');
