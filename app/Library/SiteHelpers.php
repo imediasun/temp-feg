@@ -1751,7 +1751,43 @@ class SiteHelpers
         return $locations;
     }
 
+    static function getQueryStringForLocation()
+    {
+        $queryString = ' AND (';
+        $locations = self::getLocationDetails(\Session::get('uid'));
 
+        foreach($locations as $index => $location)
+        {
+            if(count($locations) == ++$index)
+            {
+                $queryString .= " service_requests.location_id = '$location->id' ) ";
+            }
+            else
+            {
+                $queryString .= " service_requests.location_id = '$location->id' OR ";
+            }
+
+        }
+        return $queryString;
+    }
+
+    static function checkLocationIdIsExistOrNot($id)
+    {
+        $queryString = '';
+        $locations = self::getLocationDetails(\Session::get('uid'));
+        foreach($locations as $index => $location) {
+            if($location->id == $id)
+            {
+                $queryString .= " AND service_requests.location_id = '$id'";
+                break;
+            }
+        }
+        if(empty($queryString))
+        {
+            $queryString = self::getQueryStringForLocation();
+        }
+        return $queryString;
+    }
     static function getOrderHistory()
     {
         $loc1 = \Session::get('selected_location');

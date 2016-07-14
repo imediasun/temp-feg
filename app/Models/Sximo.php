@@ -736,7 +736,8 @@ class Sximo extends Model {
     }
 
     public static function getUserAssignedLocation(){
-        return [];
+        $locations = \SiteHelpers::getLocationDetails(\Session::get('uid'));
+        return $locations;
     }
 
 
