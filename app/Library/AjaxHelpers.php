@@ -148,15 +148,16 @@ class AjaxHelpers
 				$html .= '<a href="'.URL::to($module.'/show/'.$id).'" '.$onclick.' class="btn btn-xs btn-white tips" title="'.Lang::get('core.btn_view').'"><i class="fa fa-search"></i></a>';
 			}
 		}
-        if($edit == null) {
-            if ($access['is_edit'] == 1) {
-                $onclick = " onclick=\"ajaxViewDetail('#" . $module . "',this.href); return false; \"";
-                if ($setting['form-method'] == 'modal')
-                    $onclick = " onclick=\"SximoModal(this.href,'Edit Form'); return false; \"";
-
-                $html .= ' <a href="' . URL::to($module . '/update/' . $id) . '" ' . $onclick . '  class="btn btn-xs btn-white tips" title="' . Lang::get('core.btn_edit') . '"><i class="fa  fa-edit"></i></a>';
-            }
-        }
+                if($edit == null)
+                {
+		if($access['is_edit'] ==1) {
+			$onclick = " onclick=\"ajaxViewDetail('#".$module."',this.href); return false; \"" ;
+			if($setting['form-method'] =='modal')
+					$onclick = " onclick=\"SximoModal(this.href,'Edit Form'); return false; \"" ;			
+			
+			$html .= ' <a href="'.URL::to($module.'/update/'.$id).'" '.$onclick.'  class="btn btn-xs btn-white tips" title="'.Lang::get('core.btn_edit').'"><i class="fa  fa-edit"></i></a>';
+		}
+                }
 		$html .= '</div>';
 		return $html;
 	}	
@@ -186,10 +187,10 @@ class AjaxHelpers
 			<a href="'.URL::to($module.'/update').'" class="tips btn btn-sm btn-white"  title="'.Lang::get('core.btn_create').'" '.$onclick.'>
 			<i class="fa fa-plus "></i> '.Lang::get('core.btn_create').'</a>
 		';
-        if($title!=null)
-        {
-            $html=str_replace('Create',$title,$html);
-        }
+                if($title)
+                {
+                    $html=str_replace('Create',$title,$html);
+                }
 
 		return $html;
 	}
