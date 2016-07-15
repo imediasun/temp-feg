@@ -94,7 +94,8 @@
                         </label>
 
                         <div class="col-md-8">
-                            {{ $row->date_ordered }}
+                            {{  $row->date_ordered = date("m/d/Y", strtotime($row->date_ordered))  }}
+
                         </div>
 
                     </div>
@@ -105,7 +106,7 @@
                         </label>
 
                         <div class="col-md-8">
-                            {{ $row->date_received }}
+                            {{  $row->date_received = date("m/d/Y", strtotime($row->date_received))  }}
                         </div>
                     </div>
                     <div class="clearfix"></div>

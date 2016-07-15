@@ -160,7 +160,7 @@
                         <hr/>
                         <h4 class="text-center">Submitted
                             by {{ \Session::get('first_name') }} {{ \Session::get('last_name') }}
-                            on {{ date('Y-m-d') }}</h4>
+                            on {{ date('m/d/Y') }}</h4>
 
                     </div>
                     <div class="col-md-6">

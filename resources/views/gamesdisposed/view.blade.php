@@ -52,8 +52,10 @@
                 <tr>
                     <td width='30%' class='label-view text-right'>
                         {{ SiteHelpers::activeLang('Date Sold', (isset($fields['date_sold']['language'])? $fields['date_sold']['language'] : array())) }}
+
+
                     </td>
-                    <td>{{ $row->date_sold }} </td>
+                    <td>{{  $row->date_sold = date("m/d/Y", strtotime($row->date_sold))  }}</td>
                 </tr>
                 <tr>
                     <td width='30%' class='label-view text-right'>

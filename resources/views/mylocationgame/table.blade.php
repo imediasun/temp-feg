@@ -62,6 +62,7 @@
 			  @endif
 
            		<?php foreach ($rowData as $row) :
+					  //print_r($row);
            			  $id = $row->id;
            		?>
                 <tr class="editable" id="form-{{ $row->id }}">
@@ -83,16 +84,42 @@
 
                                      @if( $field['field']=="location_id")
                                          @if($row->location_id != 0)
-                                         <?php  $value="<a  href=./location/location/$row->location_id>".$value."</a>"; ?>
-                                             @else
+                                         	<?php  $value="<a  href=./location/location/$row->location_id>".$value."</a>"; ?>
+                                         @else
                                              <?php $value=""; ?>
-                                             @if($row->status_id==3)
-                                                 <?php $value="<a style='color:red' href=#>In Transit</a>" ?>
-                                                 @endif
-                                     @endif
+                                         @if($row->status_id==3)
+                                             <?php $value="<a style='color:red' href=#>In Transit</a>" ?>
                                          @endif
+                                     @endif
+									 @endif
 
-                                     {!! $value !!}
+									 @if($field['field'] == "date_in_service")
+											 {!! date("m/d/Y", strtotime($value)) !!}
+
+										 @elseif($field['field'] == 'date_shipped')
+
+											 {!! date("m/d/Y", strtotime($value)) !!}
+
+										 @elseif($field['field'] == 'date_last_move')
+
+											 {!! date("m/d/Y", strtotime($value)) !!}
+
+										 @elseif($field['field'] == 'last_edited_on')
+
+											 {!! date("m/d/Y H:i:s", strtotime($value)) !!}
+
+										 @elseif($field['field'] == 'date_sold')
+
+											 {!! date("m/d/Y", strtotime($value)) !!}
+
+										 @elseif($field['field'] == 'last_meter_date')
+
+											 {!! date("m/d/Y", strtotime($value)) !!}
+
+
+										 @else
+											 {!! $value !!}
+										 @endif
 								 </td>
 							@endif
                     <?php

@@ -45,6 +45,8 @@ class ShopfegrequeststoreController extends Controller
     public function postData(Request $request)
     {
 
+
+
         $module_id = \DB::table('tb_module')->where('module_name', '=', 'shopfegrequeststore')->pluck('module_id');
         $this->data['module_id'] = $module_id;
         if (Input::has('config_id')) {
@@ -248,7 +250,7 @@ class ShopfegrequeststoreController extends Controller
         if (false) {
             redirect('fegsys/home', 'refresh');
         } else {
-            $this->data['recent_products'] = $this->model->getRecentlyAddedProducts();
+            $this->data['recent_products'] = $this->model->getRecentlyAddedProduct();
             return view('shopfegrequeststore.recentlyAddedProducts',$this->data);
         }
     }

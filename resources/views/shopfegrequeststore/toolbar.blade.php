@@ -11,7 +11,22 @@
            title="You must disable popup-blocking in order for this popup shopping cart to work properly. Contact support@fegllc.com for help">Not
             Working?</a>
     </div>
-    <br/>
+    <div class="col-md-5">
+        <h3>Recently Added Products : <small><a  href="{{ URL::to('./shopfegrequeststore/new-graphic-request') }}" target="_blank" class="btn btn-primary">Request Custom Graphic</a></small></h3>
+
+        <?php if(isset($cart['new_products'])) { ?>
+        <?php foreach($cart['new_products'] as $row): ?>
+        <div class="col-md-10" style=" height:100px; overflow: hidden;border: 1px solid lightgray; vertical-align:top;font-size:1em; padding:4px; background:#FFF;margin-bottom: 5px;">
+            <a href="{{ URL::to('./shopfegrequeststore/recentlyadded') }}" style="color:black;" target="_blank">
+                <?php echo $row['item']; break;?>
+            </a>
+        </div>
+        <?php endforeach; ?>
+        <?php } ?>
+</div>
+</div>
+
+<div class="row m-b">
 
 
     <div class="col-md-4">
@@ -30,19 +45,9 @@
         <select name="product_type" id="product_type" class="select3" style="margin-top:5px;"></select>
     </div>
 
+</div>
+<div class="row m-b">
 
-    <div class="col-md-8">
-        <h3>Recently Added Products <small><a  href="{{ URL::to('./shopfegrequeststore/new-graphic-request') }}" style="font-size:1.2em;color:red" target="_blank">*Graphic Not Below? Request New Graphic*</a></small></h3>
-        <?php if(isset($cart['new_products'])) { ?>
-        <?php foreach($cart['new_products'] as $row): ?>
-        <div class="col-md-3" style=" height:100px; overflow: hidden;border: 1px solid lightgray; vertical-align:top;font-size:1em; padding:4px; background:#FFF;box-shadow: 1px 1px 2px 2px lightgrey">
-            <a href="{{ URL::to('./shopfegrequeststore/recentlyadded') }}" style="color:black;" target="_blank">
-                <?php echo $row['item'];?>
-            </a>
-        </div>
-        <?php endforeach; ?>
-        <?php } ?>
-    </div>
     <div class="col-md-5">
 
         <a href="{{ URL::to( $pageModule .'/search') }}" class="btn btn-sm btn-white"

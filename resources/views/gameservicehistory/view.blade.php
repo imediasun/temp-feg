@@ -32,8 +32,12 @@
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Date Down', (isset($fields['date_down']['language'])? $fields['date_down']['language'] : array())) }}
 						</td>
-						<td><?php  echo $row->date_down ?> </td>
-						
+						<td>{{  $row->date_down = date("m/d/Y", strtotime($row->date_down))  }}</td>
+
+
+
+
+
 					</tr>
 				
 					<tr>

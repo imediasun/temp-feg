@@ -82,7 +82,7 @@
                                 padding-left: 20px"><i
                                 class="fa  fa-save "></i>  {{ Lang::get('core.sb_save') }} </button>
 
-                    Submitted by <b>{{ \Session::get('fid') }}</b> on <b>{{ date('Y-mm-dd') }}</b>
+                    Submitted by <b>{{ \Session::get('fid') }}</b> on <b>{{ date('m/d/Y') }}</b>
                 </div>
 
 

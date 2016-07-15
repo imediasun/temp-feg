@@ -204,6 +204,38 @@ class shopfegrequeststore extends Sximo  {
         return $data;
     }
 
+    function getRecentlyAddedProduct()
+    {
+        $location_id = \Session::get('selected_location');
+        $data['selected_location'] = $location_id;
+
+        $newQuery = \DB::select('SELECT CONCAT(O.order_type," - </b><i>",V.vendor_name,"</i> - <b>",P.vendor_description," </b> ($",P.case_price," / ", P.num_items," items) per case") AS item,
+								P.id as PID  FROM products P
+								LEFT JOIN vendor V ON V.id = P.vendor_id
+								LEFT JOIN order_type O ON O.id = P.prod_type_id
+                                WHERE P.date_added > subdate(current_date, 10)
+                                AND P.vendor_description != ""
+                                LIMIT 1');
+
+
+        foreach ($newQuery as $row)
+        {
+            $row = array(
+                'item' => $row->item,
+                'new_product_id' => $row->PID
+            );
+
+            $newArray[] = $row;
+        }
+        if(isset($newArray))
+        {
+            $data['new_products'] = $newArray;
+        }
+        // NEW PRODUCTS (SHOWN ABOVE STORE) END
+        $data['title'] = 'Recently Added Products';
+        return $data;
+    }
+
 
     function newGraphicRequest($data)
     {

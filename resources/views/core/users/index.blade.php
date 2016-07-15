@@ -123,7 +123,26 @@
 							<?php } ?>
 					 	@elseif($field['field'] =='active')
 							{!! ($row->active ==1 ? '<lable class="label label-success">Active</label>' : '<lable class="label label-danger">Inactive</label>')  !!}
+						 @elseif($field['field'] =='last_login')
+							 <?php $row->last_login = date("m/d/Y H:i:s", strtotime($row->last_login)); ?>
 
+							 {!! $row->last_login  !!}
+
+
+						 @elseif($field['field'] =='updated_at')
+							 <?php $row->updated_at = date("m/d/Y H:i:s", strtotime($row->updated_at)); ?>
+
+							 {!! $row->updated_at  !!}
+
+						 @elseif($field['field'] =='created_at')
+							 <?php $row->created_at = date("m/d/Y H:i:s", strtotime($row->created_at)); ?>
+
+							 {!! $row->created_at  !!}
+
+						 @elseif($field['field'] =='date')
+							 <?php $row->date = date("m/d/Y H:i:s", strtotime($row->date)); ?>
+
+							 {!! $row->date  !!}
 						@else
 							{{--*/ $conn = (isset($field['conn']) ? $field['conn'] : array() ) /*--}}
 							{!! SiteHelpers::gridDisplay($row->$field['field'],$field['field'],$conn) !!}

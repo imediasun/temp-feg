@@ -66,7 +66,7 @@
                                     <tr>
                                         <td>  {!! SiteHelpers::showUploadedFile($user->avatar,'/uploads/users/') !!}</td>
                                         <td>{{ $user->first_name}} {{ $user->last_name}}</td>
-                                        <td> {{ date("Y-m-d H:i:s", strtotime($user->last_activity)) }}</td>
+                                        <td> {{ date("m/d/Y H:i:s", strtotime($user->last_activity)) }}</td>
                                     </tr>
                                 @endforeach
 

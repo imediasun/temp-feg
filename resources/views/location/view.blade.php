@@ -52,11 +52,11 @@
                         </tr>
                         <tr>
                             <td colspan="1"><h3>Date Opened:</h3></td>
-                            <td><h4>{{ $row[0]->date_opened }}  </h4></td>
+                            <td><h4>{{  $row[0]->date_opened = date("m/d/Y", strtotime($row[0]->date_opened))  }}  </h4></td>
                         </tr>
                         <tr>
                             <td colspan="1"><h3>Date Closed:</h3></td>
-                            <td><h4>{{ $row[0]->date_closed }}  </h4></td>
+                            <td><h4>{{  $row[0]->date_closed = date("m/d/Y", strtotime($row[0]->date_closed))  }}  </h4></td>
                         </tr>
                         <tr>
                             <td colspan="1"><h3>Location Phone:</h3></td>

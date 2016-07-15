@@ -76,13 +76,14 @@
 
 					<tr>
 						<td width='30%' class='label-view text-right'>Last Login</td>
-						<td>{{ $row->last_login }} </td>
-						
+						<td>	{{  $row->last_login = date("m/d/Y H:i:s", strtotime($row->last_login))  }} </td>
+
+
 					</tr>
 				
 					<tr>
 						<td width='30%' class='label-view text-right'>Updated At</td>
-						<td>{{ $row->updated_at }} </td>
+						<td>	{{  $row->updated_at = date("m/d/Y H:i:s", strtotime($row->updated_at))  }} </td>
 						
 					</tr>
 				
