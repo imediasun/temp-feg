@@ -44,7 +44,6 @@ class MylocationgameController extends Controller
 
     public function postData(Request $request)
     {
-
         $module_id = \DB::table('tb_module')->where('module_name', '=', 'mylocationgame')->pluck('module_id');
         $this->data['module_id'] = $module_id;
         if (Input::has('config_id')) {
@@ -64,8 +63,14 @@ class MylocationgameController extends Controller
         $order = (!is_null($request->input('order')) ? $request->input('order') : $this->info['setting']['ordertype']);
         // End Filter sort and order for query
         // Filter Search for query
-        $filter = (!is_null($request->input('search')) ? $this->buildSearch() : '');
-
+        if(is_null($request->input('search')))
+        {
+            $filter = \SiteHelpers::getQueryStringForLocation('game');
+        }
+        else
+        {
+            $filter = $this->buildSearch();
+        }
 
         $page = $request->input('page', 1);
         $params = array(

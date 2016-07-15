@@ -1751,7 +1751,7 @@ class SiteHelpers
         return $locations;
     }
 
-    static function getQueryStringForLocation()
+    static function getQueryStringForLocation($table)
     {
         $queryString = ' AND (';
         $locations = self::getLocationDetails(\Session::get('uid'));
@@ -1760,11 +1760,11 @@ class SiteHelpers
         {
             if(count($locations) == ++$index)
             {
-                $queryString .= " service_requests.location_id = '$location->id' ) ";
+                $queryString .= " $table.location_id = '$location->id' ) ";
             }
             else
             {
-                $queryString .= " service_requests.location_id = '$location->id' OR ";
+                $queryString .= " $table.location_id = '$location->id' OR ";
             }
 
         }

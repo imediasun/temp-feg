@@ -66,7 +66,7 @@ class ManageservicerequestsController extends Controller {
 		// Filter Search for query
 		if(is_null($request->input('search')))
 		{
-			$filter = \SiteHelpers::getQueryStringForLocation();
+			$filter = \SiteHelpers::getQueryStringForLocation('service_requests');
 		}
 		else
 		{

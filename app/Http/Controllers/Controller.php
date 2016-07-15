@@ -143,39 +143,36 @@ abstract class Controller extends BaseController
         $fields = '';
         $param = '';
         $allowsearch = $this->info['config']['forms'];
-        foreach ($allowsearch as $as) $arr[$as['field']] = $as;
+        foreach ($allowsearch as $as)
+            $arr[$as['field']] = $as;
         if ($_GET['search'] != '') {
             $type = explode("|", $_GET['search']);
             if (count($type) >= 1) {
                 foreach ($type as $t) {
                     $keys = explode(":", $t);
-                    if (in_array($keys[0], array_keys($arr))):
-                        if ($keys[0] == 'location_id') {
-                            $param .= \SiteHelpers::checkLocationIdIsExistOrNot($keys[2]);
+                    if (in_array($keys[0], array_keys($arr))) {
+                        if ($arr[$keys[0]]['type'] == 'select' || $arr[$keys[0]]['type'] == 'radio') {
+                            $param .= " AND " . $arr[$keys[0]]['alias'] . "." . $keys[0] . " " . self::searchOperation($keys[1]) . " '" . $keys[2] . "' ";
                         } else {
-                            if ($arr[$keys[0]]['type'] == 'select' || $arr[$keys[0]]['type'] == 'radio') {
-                                $param .= " AND " . $arr[$keys[0]]['alias'] . "." . $keys[0] . " " . self::searchOperation($keys[1]) . " '" . $keys[2] . "' ";
+                            $operate = self::searchOperation($keys[1]);
+                            if ($operate == 'like') {
+                                $param .= " AND " . $arr[$keys[0]]['alias'] . "." . $keys[0] . " LIKE '%" . $keys[2] . "%%' ";
+                            } else if ($operate == 'is_null') {
+                                $param .= " AND " . $arr[$keys[0]]['alias'] . "." . $keys[0] . " IS NULL ";
+
+                            } else if ($operate == 'not_null') {
+                                $param .= " AND " . $arr[$keys[0]]['alias'] . "." . $keys[0] . " IS NOT NULL ";
+
+                            } else if ($operate == 'between') {
+                                $param .= " AND (" . $arr[$keys[0]]['alias'] . "." . $keys[0] . " BETWEEN '" . $keys[2] . "' AND '" . $keys[3] . "' ) ";
                             } else {
-                                $operate = self::searchOperation($keys[1]);
-                                if ($operate == 'like') {
-                                    $param .= " AND " . $arr[$keys[0]]['alias'] . "." . $keys[0] . " LIKE '%" . $keys[2] . "%%' ";
-                                } else if ($operate == 'is_null') {
-                                    $param .= " AND " . $arr[$keys[0]]['alias'] . "." . $keys[0] . " IS NULL ";
-
-                                } else if ($operate == 'not_null') {
-                                    $param .= " AND " . $arr[$keys[0]]['alias'] . "." . $keys[0] . " IS NOT NULL ";
-
-                                } else if ($operate == 'between') {
-                                    $param .= " AND (" . $arr[$keys[0]]['alias'] . "." . $keys[0] . " BETWEEN '" . $keys[2] . "' AND '" . $keys[3] . "' ) ";
-                                } else {
-                                    $param .= " AND " . $arr[$keys[0]]['alias'] . "." . $keys[0] . " " . self::searchOperation($keys[1]) . " '" . $keys[2] . "' ";
-                                }
+                                $param .= " AND " . $arr[$keys[0]]['alias'] . "." . $keys[0] . " " . self::searchOperation($keys[1]) . " '" . $keys[2] . "' ";
                             }
                         }
-                    endif;
+                    }
                 }
+            }
         }
-    }
 return $param;
 
 }
@@ -716,6 +713,7 @@ function detailviewsave($model, $request, $detail, $id)
 
 function getChangelocation($location_id)
 {
+    \Session::put('selected_location', $location_id);
     $location_name = \DB::select('select location_name_short from location where id=' . $location_id);
     if (count($location_name) == 1) {
         $data['selected_location_name'] = $location_name[0]->location_name_short;

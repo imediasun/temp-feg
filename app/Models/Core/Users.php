@@ -28,6 +28,25 @@ FROM users LEFT JOIN tb_groups ON tb_groups.group_id = users.group_id ";
 	public static function queryGroup(){
 		return "      ";
 	}
-	
 
+	/**
+	 * override location drop down menu
+	 * @param $params
+	 * @param null $limit
+	 * @param null $parent
+	 * @return mixed
+	 */
+	public static function getComboselect($params, $limit = null, $parent = null)
+	{
+		$tableName = $params[0];
+		if ($tableName == 'location') {
+			$locations = \DB::table('location')
+				->select('location.*')
+				->where('location.active', 1)
+				->get();
+			return $locations;
+		} else {
+			return parent::getComboselect($params, $limit, $parent);
+		}
+	}
 }

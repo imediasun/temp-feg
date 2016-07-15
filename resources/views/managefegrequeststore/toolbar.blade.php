@@ -11,8 +11,8 @@
         <br/>
         <select name="type" class="select3" id="request_type">
             <option disabled>Select Requests Type</option>
-            <option value="manage" selected> Open Requests</option>
-            <option value="archive">FEG Store Requests Archives</option>
+            <option value="manage" @if($view == 'manage'): selected @endif> Open Requests</option>
+            <option value="archive" @if($view == 'archive'): selected @endif>FEG Store Requests Archives</option>
         </select>
 
     </div>
@@ -95,7 +95,7 @@
     function pageRefresh(type) {
 
         var url = document.URL;
-        var request_type = "manage"
+        var request_type = $("#request_type").val();
         var urlLength = url.length;
         var pos = url.search(type);
         var get = "?view="+request_type;

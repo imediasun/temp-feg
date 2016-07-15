@@ -55,6 +55,7 @@ class ManagefegrequeststoreController extends Controller
             $this->data['TID'] = $manageRequestInfo['TID'];
             $this->data['LID'] = $manageRequestInfo['LID'];
             $this->data['VID'] = $manageRequestInfo['VID'];
+            $this->data['view'] = $request->get('view');
             $this->data['manageRequestInfo'] = $manageRequestInfo;
             $module_id = \DB::table('tb_module')->where('module_name', '=', 'managefegrequeststore')->pluck('module_id');
             $this->data['module_id'] = $module_id;
@@ -75,7 +76,15 @@ class ManagefegrequeststoreController extends Controller
             $order = (!is_null($request->input('order')) ? $request->input('order') : $this->info['setting']['ordertype']);
             // End Filter sort and order for query
             // Filter Search for query
-            $filter = (!is_null($request->input('search')) ? $this->buildSearch() : '');
+            if(is_null($request->input('search')))
+            {
+                $filter = \SiteHelpers::getQueryStringForLocation('requests');
+            }
+            else
+            {
+                $filter = $this->buildSearch();
+            }
+
 
 
             $page = $request->input('page', 1);
