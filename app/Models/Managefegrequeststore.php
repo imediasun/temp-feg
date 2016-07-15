@@ -192,9 +192,14 @@ class managefegrequeststore extends Sximo
         $query = \DB::select('SELECT location.id AS lid, ' . $customField . 'AS location_name FROM location
 							LEFT JOIN requests ON location.id = requests.location_id
 							LEFT JOIN products ON products.id = requests.product_id ' . $customWhere . ' ' . $customOrderBy);
+        $location_ids = array();
+        $locations = self::getUserAssignedLocation();
+        foreach($locations  as $location)
+            $location_ids[] =  $location->id;
 
         foreach ($query as $row) {
-            $data[$row->lid] = $row->location_name;
+            if(in_array($row->lid, $location_ids))
+                $data[$row->lid] = $row->location_name;
         }
 
         return $data;

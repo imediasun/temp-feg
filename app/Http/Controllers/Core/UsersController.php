@@ -359,7 +359,6 @@ class UsersController extends Controller
 
     function postSave(Request $request, $id = 0)
     {
-
         $rules = $this->validateForm();
         if ($request->input('id') == '') {
             $rules['password'] = 'required|between:6,12';
@@ -414,7 +413,12 @@ class UsersController extends Controller
             } else {
 
             }
-
+            $user_locations = \SiteHelpers::getLocationDetails(\Session::get('uid'));
+            if (!empty($user_locations)) {
+                \Session::put('user_locations', $user_locations);
+                \Session::put('selected_location', $user_locations[0]->id);
+                \Session::put('selected_location_name', $user_locations[0]->location_name_short);
+            }
             if (!is_null($request->input('apply'))) {
                 $return = 'core/users/update/' . $id . '?return=' . self::returnUrl();
             } else {

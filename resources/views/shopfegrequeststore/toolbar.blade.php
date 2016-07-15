@@ -71,7 +71,7 @@
         $("#order_type").jCombo("{{ URL::to('shopfegrequeststore/comboselect?filter=order_type:id:order_type:can_request:1') }}",
                 {selected_value: '{{ $order_type }}', initial_text: 'Select Order Type'});
         $("#locations").jCombo("{{ URL::to('shopfegrequeststore/comboselect?filter=location:id:id|location_name') }}",
-                {selected_value: '{{ \Session::get('selected_location') }}', initial_text: 'Select Order Type'});
+                {selected_value: '{{ \Session::get('selected_location') }}', initial_text: 'Select Location'});
 
         $("#product_type").jCombo("{{ URL::to('shopfegrequeststore/comboselect?filter=product_type:id:product_type') }}",
                 {selected_value: '{{ $product_type }}', initial_text: 'Select Product Type'});
@@ -88,7 +88,7 @@
         reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?type=store&active_inactive=' + type + '&order_type=' + order_type + '&product_type=' + product_type + '&config_id=' + $("#col-config").val());
     });
     $('#locations').on('click', function () {
-  
+        if($('#locations').val() != '')
         window.location = "<?php echo url();?>//shopfegrequeststore/changelocation/" + $('#locations').val();
     });
 
