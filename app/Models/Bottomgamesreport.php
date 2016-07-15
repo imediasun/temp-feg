@@ -111,6 +111,10 @@ class bottomgamesreport extends Sximo  {
         $date_end = @$filters['end_date'];
         //$debit_type = @$filters['debit_type_id'];
         $location_id = @$filters['location_id'];
+        if ($location_id == 'null') {
+            $location_id = "";            
+        }
+        
         $last_sync = self::getLastSyncDate();
         $last_sync_stamp = strtotime($last_sync);
 
@@ -211,7 +215,7 @@ class bottomgamesreport extends Sximo  {
                         
                     '$date_end_display' AS end_date,
                     GROUP_CONCAT(DISTINCT game_earnings.loc_id ORDER BY game_earnings.loc_id) AS location_id,
-                    GROUP_CONCAT(DISTINCT L.location_name ORDER BY L.id) AS location_name
+                    GROUP_CONCAT(DISTINCT L.location_name_short ORDER BY L.id) AS location_name 
 
                         
                 FROM game_earnings
