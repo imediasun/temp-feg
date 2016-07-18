@@ -75,7 +75,7 @@
 					<div class="col-md-6">
 						<div class="input-group">
 							<span class="input-group-addon">$</span>
-							{!! Form::text('num_items', number_format((double)$row['num_items'],2),array('class'=>'form-control', 'placeholder'=>'','required'=>'required','input type'=>'number','min' => '0','step'=>'1' )) !!}
+							{!! Form::text('num_items', number_format((double)$row['num_items'],2),array('class'=>'form-control', 'placeholder'=>'','required'=>'required','input type'=>'number', 'value'=>'0.00', 'min' => '0','step'=>'1' )) !!}
 						</div>
 					</div>
 					 <div class="col-md-2">
