@@ -28,20 +28,7 @@
             @endif
         @endif
     </div>
-    <div class="col-md-4 ">
-        @if($access['is_excel'] ==1)
-            <div class="pull-right">
-                <a href="{{ URL::to( $pageModule .'/export/excel?return='.$return) }}" class="btn btn-sm btn-white">
-                    Excel</a>
-                <a href="{{ URL::to( $pageModule .'/export/word?return='.$return) }}" class="btn btn-sm btn-white">
-                    Word </a>
-                <a href="{{ URL::to( $pageModule .'/export/csv?return='.$return) }}" class="btn btn-sm btn-white">
-                    CSV </a>
-                <a href="{{ URL::to( $pageModule .'/export/print?return='.$return) }}" class="btn btn-sm btn-white"
-                   onclick="ajaxPopupStatic(this.href); return false;"> Print</a>
-            </div>
-        @endif
-    </div>
+
 </div>
 <div class="row">
     <div class="col-md-4">
@@ -69,9 +56,26 @@ width: 75%">
         <div class="col-md-2">
             <button type="submit" class="btn btn-primary">Export To CSV</button>
         </div>
+
+
         {!! Form::close() !!}
     </div>
-</div><br/>
+
+    <div class="col-md-5 " style="width: auto; padding-bottom: 6px;">
+        @if($access['is_excel'] ==1)
+            <div class="pull-right">
+                <a href="{{ URL::to( $pageModule .'/export/excel?return='.$return) }}" class="btn btn-sm btn-white">
+                    Excel</a>
+                <a href="{{ URL::to( $pageModule .'/export/word?return='.$return) }}" class="btn btn-sm btn-white">
+                    Word </a>
+                <a href="{{ URL::to( $pageModule .'/export/csv?return='.$return) }}" class="btn btn-sm btn-white">
+                    CSV </a>
+                <a href="{{ URL::to( $pageModule .'/export/print?return='.$return) }}" class="btn btn-sm btn-white"
+                   onclick="ajaxPopupStatic(this.href); return false;"> Print</a>
+            </div>
+        @endif
+    </div>
+</div>
 <script>
     $(document).ready(function () {
         $("#product_list_type option").each(function(){

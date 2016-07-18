@@ -652,6 +652,7 @@ fieldset[disabled] .btn-link.active {
   color: inherit;
   background: white;
   border: 1px solid #e7eaec;
+  margin-left:3px;
 }
 .btn-white:hover,
 .btn-white:focus,
