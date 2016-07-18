@@ -1,4 +1,3 @@
-/* CSS Document */
 
 function reloadData( id,url,callback)
 {
@@ -15,9 +14,11 @@ function reloadData( id,url,callback)
 
 function ajaxDoSearch( id ,url )
 {
-	var attr = '';
+	var attr = '', elm, val = "";
 	$( id +'Search :input').each(function() {
-		if(this.value !=='') { attr += this.name+':'+this.value+'|'; }
+        elm = $(this);
+        val = elm.val();
+		if(val !=='') { attr += this.name+':'+val+'|'; }
 	});
 	reloadData( id ,url+'&search='+attr);
 }
@@ -79,11 +80,13 @@ function ajaxInlineEdit(id,url,reloadurl)
 function ajaxFilter( id ,url,opt  )
 {
 
-	var attr = '';
+	var attr = '', elm, val;
         $(id + 'Filter :input').each(function () {
+			elm = $(this);
+			val = elm.val();
 //            if (this.value != '' && this.value!=0) {
-            if (this.value != '') {
-                attr += this.name + '=' + this.value + '&';
+            if (val != '' || val !== null) {
+                attr += this.name + '=' + val + '&';
             }
 
         });

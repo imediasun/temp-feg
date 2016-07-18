@@ -989,6 +989,14 @@ label { font-size:12px;}
   width: 100%; font-size:11px !important; height:30px;
   border-radius:0px !important; -moz-border-radius:0px !important;
 }
+.modal-dialog .select2-container.form-control {
+    padding: 0;
+}
+.modal-dialog .select2-container-multi .select2-choices {
+    border: none;
+    background-image: none;
+}
+
 .input-group-sm > .form-control, .input-group-sm > .input-group-addon, .input-group-sm > .input-group-btn > .btn { font-size: 11px !important;   border-radius:0px !important; -moz-border-radius:0px !important;}
 .form-control:focus {
   border-color: #357ebd;

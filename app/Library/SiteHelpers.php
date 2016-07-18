@@ -739,12 +739,13 @@ class SiteHelpers
         $type = '';
         $bulk = ($bulk == true ? '[]' : '');
         $mandatory = '';
+        $selectMultiple = "";
         foreach ($forms as $f) {
             if ($f['field'] == $field && $f['search'] == 1) {
                 $type = ($f['type'] != 'file' ? $f['type'] : '');
                 $option = $f['option'];
                 $required = $f['required'];
-
+                $selectMultiple = empty($option['select_multiple']) ? "": " multiple='multiple' ";
                 if ($required == 'required') {
                     $mandatory = "data-parsley-required='true'";
                 } else if ($required == 'email') {
@@ -811,10 +812,18 @@ class SiteHelpers
                     }
 
                 }
-                $form = "<select name='$field{$bulk}'  class='form-control sel-search' $mandatory >
-							<option value=''> -- Select  -- </option>
-							$opts
+                $form = "<select name='$field{$bulk}'  class='form-control sel-search' $mandatory $selectMultiple>" .
+						(empty($selectMultiple) ? 	"<option value=''> -- Select  -- </option>" : "") .
+						"	$opts
 						</select>";
+                
+                if (!empty($selectMultiple)) {
+                    $form .= "<script>
+                        
+                            jQuery(\"select[name=$field{$bulk}]\").select2();
+                        
+                        </script>";
+                }
                 break;
 
             case 'radio';

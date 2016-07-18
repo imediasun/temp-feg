@@ -49,7 +49,7 @@ jQuery(function(){
 		$('#advance-search tr.fieldsearch').each(function(i){
 			var field = $(this).attr('id');
 			var operate = $(this).find('#'+field+'_operate').val();
-			var value_select  = $(this).find("select[name="+field+"] option:selected").val();
+			var value_select  = $(this).find("select[name="+field+"]").val() || '';
 			if( typeof value_select !=='undefined' )
 			{
 				value  = value_select;

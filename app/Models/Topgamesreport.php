@@ -112,6 +112,10 @@ class topgamesreport extends Sximo  {
         $date_end = @$filters['end_date'];
         //$debit_type = @$filters['debit_type_id'];
         $location_id = @$filters['location_id'];
+        if ($location_id == 'null') {
+            $location_id = "";            
+        }
+        
         $last_sync = self::getLastSyncDate();
         $last_sync_stamp = strtotime($last_sync);
 
@@ -185,13 +189,13 @@ class topgamesreport extends Sximo  {
     
     
     public static function build_query($date_start_stamp, $date_end_stamp, $location_id, $limitConditional = "", $orderConditional = " ORDER BY game_average DESC ", $filters = array()){
-        $loc_sub_expression = empty($location_id) ? "":" AND G.location_id = $location_id";
+        $loc_sub_expression = empty($location_id) ? "":" AND G.location_id in ($location_id)";
         $date_start = date("Y-m-d", $date_start_stamp);
         $date_start_display = date("m/d/Y", $date_start_stamp);            
         $date_end =  date("Y-m-d", $date_end_stamp);              
         $date_end_display = date("m/d/Y", $date_end_stamp);            
         
-        $loc_expression  = empty($location_id) ? "":" AND game_earnings.loc_id = $location_id";
+        $loc_expression  = empty($location_id) ? "":" AND game_earnings.loc_id in ($location_id)";
         $game_expression = "";
         
         $sql = "SELECT  game_earnings.id, 
@@ -213,7 +217,7 @@ class topgamesreport extends Sximo  {
                         
                     '$date_end_display' AS end_date,
                     GROUP_CONCAT(DISTINCT game_earnings.loc_id ORDER BY game_earnings.loc_id separator ', ') AS location_id,
-                    GROUP_CONCAT(DISTINCT L.location_name ORDER BY L.id separator ', ') AS location_name
+                    GROUP_CONCAT(DISTINCT L.location_name_short ORDER BY L.id separator ', ') AS location_name 
 
                         
                 FROM game_earnings
