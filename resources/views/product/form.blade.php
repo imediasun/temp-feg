@@ -73,8 +73,11 @@
 					{!! SiteHelpers::activeLang('Quantity Per Case', (isset($fields['num_items']['language'])? $fields['num_items']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('num_items', $row['num_items'],array('class'=>'form-control', 'placeholder'=>'','required'=>'required'   )) !!}
-					 </div>
+						<div class="input-group">
+							<span class="input-group-addon">$</span>
+							{!! Form::text('num_items', number_format((double)$row['num_items'],2),array('class'=>'form-control', 'placeholder'=>'','required'=>'required','input type'=>'number','min' => '0','step'=>'1' )) !!}
+						</div>
+					</div>
 					 <div class="col-md-2">
 
 					 </div>
@@ -90,35 +93,51 @@
 
 					 </div>
 				  </div>
-				  <div class="form-group  " >
-					<label for="Unit Price" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Unit Price', (isset($fields['unit_price']['language'])? $fields['unit_price']['language'] : array())) !!}
-					</label>
-					<div class="col-md-6">
-					  {!! Form::text('unit_price', $row['unit_price'],array('class'=>'form-control', 'placeholder'=>'','required'=>'required'   )) !!}
-					 </div>
-					 <div class="col-md-2">
 
-					 </div>
-				  </div>
+
+							<div class="form-group  " >
+								<label for="Unit Price" class=" control-label col-md-4 text-left">
+									{!! SiteHelpers::activeLang('Unit Price', (isset($fields['unit_price']['language'])? $fields['unit_price']['language'] : array())) !!}
+								</label>
+								<div class="col-md-6">
+									<div class="input-group">
+										<span class="input-group-addon">$</span>
+										{!! Form::text('unit_price', number_format((double)$row['unit_price'],2),array('class'=>'form-control', 'placeholder'=>'','required'=>'required','type'=>'number','min' => '0','step'=>'1'  )) !!}
+									</div>
+								</div>
+
+								<div class="col-md-2">
+
+								</div>
+							</div>
+
+
+
+
 				  <div class="form-group  " >
 					<label for="Case Price" class=" control-label col-md-4 text-left">
 					{!! SiteHelpers::activeLang('Case Price', (isset($fields['case_price']['language'])? $fields['case_price']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('case_price', $row['case_price'],array('class'=>'form-control', 'placeholder'=>'', 'required'=>'required'  )) !!}
-					 </div>
-					 <div class="col-md-2">
+						<div class="input-group">
+							<span class="input-group-addon">$</span>
+							{!! Form::text('case_price', number_format((double)$row['case_price'],2),array('class'=>'form-control', 'placeholder'=>'','required'=>'required','type'=>'number','min' => '0','step'=>'1' )) !!}
+                             </div>
+						</div>
+                             <div class="col-md-2">
 
-					 </div>
-				  </div>
-				  <div class="form-group  " >
-					<label for="Retail Price" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Retail Price', (isset($fields['retail_price']['language'])? $fields['retail_price']['language'] : array())) !!}
+                             </div>
+                          </div>
+                          <div class="form-group  " >
+                            <label for="Retail Price" class=" control-label col-md-4 text-left">
+                            {!! SiteHelpers::activeLang('Retail Price', (isset($fields['retail_price']['language'])? $fields['retail_price']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('retail_price', $row['retail_price'],array('class'=>'form-control', 'placeholder'=>'','required'=>'required'   )) !!}
-					 </div>
+						<div class="input-group">
+							<span class="input-group-addon">$</span>
+							{!! Form::text('retail_price', number_format((double)$row['retail_price'],2),array('class'=>'form-control', 'placeholder'=>'','required'=>'required','type'=>'number','min' => '0','step'=>'1' )) !!}
+						</div>
+					</div>
 					 <div class="col-md-2">
 
 					 </div>
@@ -128,8 +147,11 @@
 					{!! SiteHelpers::activeLang('Ticket Value', (isset($fields['ticket_value']['language'])? $fields['ticket_value']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('ticket_value', $row['ticket_value'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
-					 </div>
+						<div class="input-group">
+							<span class="input-group-addon">$</span>
+							{!! Form::text('ticket_value', number_format((double)$row['ticket_value'],2),array('class'=>'form-control', 'placeholder'=>'','required'=>'required','type'=>'number','min' => '0','step'=>'1' )) !!}
+						</div>
+					</div>
 					 <div class="col-md-2">
 
 					 </div>
