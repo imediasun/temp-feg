@@ -38,8 +38,10 @@
                                 }
                             endif;
                         endforeach; ?>
-                        <th width="100">Add'l Details</th>
+
                         <th width="100">Add To Cart</th>
+                        <th width="100">Add'l Details</th>
+
 
                     </tr>
                     </thead>
@@ -101,8 +103,7 @@
                         endif;
                         endforeach;
                         ?>
-                        <td><a href="{{ $pageModule }}/show/{{$row->id}}" target="_blank"
-                               class="btn btn-xs btn-green tips" title="Product Details"><i class="fa fa-search" aria-hidden="true"></i></a></td>
+
                         <td>
                             @if($row->inactive == 0)
                                 <a href="{{ URL::to('shopfegrequeststore/popup-cart/'.$row->id) }}" <i class="fa fa-shopping-cart" aria-hidden="true"></a>
@@ -110,6 +111,9 @@
                                 Not Avail.
                             @endif
                         </td>
+
+                        <td><a href="{{ $pageModule }}/show/{{$row->id}}" target="_blank"
+                               class="btn btn-xs btn-green tips" title="Product Details"><i class="fa fa-search" aria-hidden="true"></i></a></td>
                     </tr>
                     @if($setting['view-method']=='expand')
                         <tr style="display:none" class="expanded" id="row-{{ $row->id }}">
