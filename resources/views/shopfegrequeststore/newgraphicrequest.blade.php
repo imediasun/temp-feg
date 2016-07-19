@@ -64,18 +64,28 @@
 
                     </div>
                 </div>
-                <div class="form-group " style="border-bottom:1px solid lightgray; padding-bottom:20px;" >
-                    <label for="add_image" class=" control-label col-md-4 text-left">
-                        Add Image     </label>
+                <div class="form-group  " >
+                    <label for="Add Image" class=" control-label col-md-4 text-left">
+                        {!! SiteHelpers::activeLang('Add Image', (isset($fields['add_image']['language'])? $fields['add_image']['language'] : array())) !!}
+                    </label>
                     <div class="col-md-6">
-                        <input  type='file' name='img' id='img'  required  style='width:150px !important;'     value=""  />
-                    </div>
-                    <div class="col-md-2">
 
-                    </div>
-                </div>
+                        <a href="javascript:void(0)" class="btn btn-xs btn-primary pull-right" onclick="addMoreFiles('add_image')"><i class="fa fa-plus"></i></a>
 
-                    <div class="form-group" style="padding-left: 24px;margin-bottom:50px">
+                        <div class="add_imageUpl">
+                            <input  type='file' name='add_image'  />
+
+
+                        </div>
+
+                        <div class="col-md-2">
+
+                        </div>
+                    </div>
+                </div> </fieldset>
+
+
+                <div class="form-group" style="padding-left: 24px;margin-bottom:50px">
                         <label class="col-sm-4 text-centre">&nbsp;</label>
 
                         <button type="submit"  class="btn btn-primary btn-sm-5" style="padding-right: 20px;
