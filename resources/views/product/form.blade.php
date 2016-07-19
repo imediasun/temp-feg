@@ -207,20 +207,32 @@
 				  </div>
 				  <div class="form-group  " >
 					<label for="Img" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Img', (isset($fields['img']['language'])? $fields['img']['language'] : array())) !!}
+						{!! SiteHelpers::activeLang('Img', (isset($fields['img']['language'])? $fields['img']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
-					  <input  type='file' name='imgee' id='img' @if($row['img'] =='') class='required' @endif style='width:150px !important;'  />
-					 	<div >
-						{!! SiteHelpers::showUploadedFile($row['img'],'/uploads/products/', 50,false) !!}
+
+						<a href="javascript:void(0)" class="btn btn-xs btn-primary pull-right" onclick="addMoreFiles('img')"><i class="fa fa-plus"></i></a>
+
+						<div class="imgUpl">
+							<input  type='file' name='img'  />
+
 
 						</div>
 
-					 </div>
-					 <div class="col-md-2">
+						<div class="col-md-2">
 
-					 </div>
-				  </div>
+						</div>
+					</div>
+					</div> </fieldset>
+
+
+
+
+
+
+
+
+
 				  <div class="form-group  " >
 					<label for="Inactive" class=" control-label col-md-4 text-left">
 					{!! SiteHelpers::activeLang('Inactive', (isset($fields['inactive']['language'])? $fields['inactive']['language'] : array())) !!}
