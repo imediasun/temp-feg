@@ -12,7 +12,7 @@
 			@endif
 		</div>
 	</div>
-	<div class="sbox-content" style="padding-top: 7px;">
+	<div class="sbox-content" style="">
 
         @include( $pageModule.'/toolbar',['colconfigs' => SiteHelpers::getRequiredConfigs($module_id),'order_type'=>$order_selected])
 
@@ -27,8 +27,7 @@
                 @if($order_selected=='OPEN')
                     <th width="100">Remove</th>
                 @endif
-                <th width="100">Purchase Order</th>
-                <th width="100">Clone</th>
+
 				@if($setting['view-method']=='expand') <th>  </th> @endif
 				<?php foreach ($tableGrid as $t) :
 					if($t['view'] =='1'):
@@ -39,7 +38,12 @@
 						}
 					endif;
 				endforeach; ?>
+
+				<th width="100">Purchase Order</th>
+				<th width="100">Clone</th>
 				<th width="70"><?php echo Lang::get('core.btn_action') ;?></th>
+
+
                 @if($order_selected=='OPEN')
               <th width="100">
               Receive Order
@@ -80,8 +84,7 @@
                     @if($order_selected=='OPEN')
                         <td><a href="{{ URL::to('order/removalrequest/'.$row->po_number)}}">Request Removal</a></td>
                     @endif
-                    <td><a href="{{ URL::to('order/po/'.$row->id)}}">Generate PO</a></td>
-                    <td><a href="{{ $pageModule }}/update/{{$row->id}}/clone"  onclick="ajaxViewDetail('#order',this.href); return false; "  class="btn btn-xs btn-white tips" title="Clone Order">Clone Order</a></td>
+
 					@if($setting['view-method']=='expand')
 					<td><a href="javascript:void(0)" class="expandable" rel="#row-{{ $row->id }}" data-url="{{ url('order/show/'.$id) }}"><i class="fa fa-plus " ></i></a></td>
 					@endif
@@ -99,6 +102,8 @@
 						 <?php endif;
 						endforeach;
 					  ?>
+					<td><a href="{{ URL::to('order/po/'.$row->id)}}">Generate PO</a></td>
+					<td><a href="{{ $pageModule }}/update/{{$row->id}}/clone"  onclick="ajaxViewDetail('#order',this.href); return false; "  class="btn btn-xs btn-white tips" title="Clone Order">Clone Order</a></td>
 
 				 <td data-values="action" data-key="<?php echo $row->id ;?>">
 					{!! AjaxHelpers::buttonAction('order',$access,$id ,$setting) !!}
