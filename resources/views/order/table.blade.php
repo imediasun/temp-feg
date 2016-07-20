@@ -12,7 +12,7 @@
 			@endif
 		</div>
 	</div>
-	<div class="sbox-content">
+	<div class="sbox-content" style="padding-top: 7px;">
 
         @include( $pageModule.'/toolbar',['colconfigs' => SiteHelpers::getRequiredConfigs($module_id),'order_type'=>$order_selected])
 

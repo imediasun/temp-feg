@@ -1,4 +1,22 @@
-<div class="row m-b">
+<div class="row">
+    <div class="col-md-2">
+        <h2>Orders</h2>
+    </div>
+    <div class="col-md-3">
+        <?php
+        $orders=array('All'=>'0','Open'=>'OPEN','Fixed Asset Orders'=>'FIXED_ASSET','Products In Development Orders'=>'PRO_IN_DEV');
+        ?>
+        <select name="order_type" id="order_type" class="form-control">
+            <option disabled>         ----- Select Orders ----- </option>
+            @foreach($orders as $type=>$value)
+                <option @if($value==$order_selected) selected @endif value="{{ $value }}">{{ $type }}</option>
+            @endforeach
+
+        </select>
+    </div>
+</div><br/>
+
+<div class="row m-b" style="margin-bottom: 7px;">
 	<div class="col-md-8">
 			@if($access['is_add'] ==1)
 			{!! AjaxHelpers::buttonActionCreate($pageModule,$setting) !!}
@@ -33,23 +51,7 @@
 		@endif
 	</div>
 </div>
-<div class="row">
-    <div class="col-md-2">
-        <h2>Orders</h2>
-    </div>
-    <div class="col-md-3">
-        <?php
-        $orders=array('All'=>'0','Open'=>'OPEN','Fixed Asset Orders'=>'FIXED_ASSET','Products In Development Orders'=>'PRO_IN_DEV');
-        ?>
-        <select name="order_type" id="order_type" class="form-control">
-            <option disabled>         ----- Select Orders ----- </option>
-            @foreach($orders as $type=>$value)
-                <option @if($value==$order_selected) selected @endif value="{{ $value }}">{{ $type }}</option>
-            @endforeach
 
-        </select>
-    </div>
-</div><br/>
 <script>
     $("#col-config").on('change',function(){
         reloadData('#{{ $pageModule }}','{{ $pageModule }}/data?config_id='+$("#col-config").val());
