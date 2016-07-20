@@ -63,7 +63,15 @@ class OrderController extends Controller
         $order = (!is_null($request->input('order')) ? $request->input('order') : $this->info['setting']['ordertype']);
         // End Filter sort and order for query
         // Filter Search for query
-        $filter = (!is_null($request->input('search')) ? $this->buildSearch() : '');
+        //$filter = (!is_null($request->input('search')) ? $this->buildSearch() : '');
+        if(is_null($request->input('search')))
+        {
+            $filter = \SiteHelpers::getQueryStringForLocation('orders');
+        }
+        else
+        {
+            $filter = $this->buildSearch();
+        }
 
 
         $page = $request->input('page', 1);

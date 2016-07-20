@@ -337,7 +337,7 @@
             $("#item_num").val('1');
             $("#submit_btn").hide();
             $("#location_id").jCombo("{{ URL::to('order/comboselect?filter=location:id:id|location_name ') }}",
-                    {selected_value: '{{ $data["order_loc_id"] }}',initial_text:'-------- Select Location --------'});
+                    {selected_value: '{{ \Session::get('selected_location') }}',initial_text:'-------- Select Location --------'});
 
             $("#vendor_id").jCombo("{{ URL::to('order/comboselect?filter=vendor:id:vendor_name') }}",
                     {selected_value: '{{ $data["order_vendor_id"] }}',initial_text:'-------- Select Vendor --------'});
