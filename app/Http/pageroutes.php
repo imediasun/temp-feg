@@ -19,4 +19,5 @@ Route::get('gamemaintenance', 'HomeController@index');
 Route::get('generaltips', 'HomeController@index');
 Route::get('trainingmatrial', 'HomeController@index');
 Route::get('def', 'HomeController@index');
+Route::get('popupblocker', 'HomeController@index');
 ?>
