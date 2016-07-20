@@ -107,7 +107,7 @@
 					{!! SiteHelpers::activeLang('Unit Price', (isset($fields['unit_price']['language'])? $fields['unit_price']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
-						{!! Form::text('num_items', number_format((double)$row['num_items'],2),array('class'=>'form-control', 'placeholder'=>'0.00','required'=>'required','input type'=>'number', 'value'=>'0.00', 'min' => '0','step'=>'1' )) !!}
+						{!! Form::text('unit_price', number_format((double)$row['unit_price'],2),array('class'=>'form-control', 'placeholder'=>'0.00','required'=>'required','input type'=>'number', 'value'=>'0.00', 'min' => '0','step'=>'1' )) !!}
 					 </div> 
 					 <div class="col-md-2">
 
