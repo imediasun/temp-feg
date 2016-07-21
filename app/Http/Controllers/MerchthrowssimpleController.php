@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Validator, Input, Redirect ; 
 
-class MerchthrowssimpleController extends ReportsController {
+class MerchthrowssimpleController extends Controller {
 
 	protected $layout = "layouts.main";
 	protected $data = array();	

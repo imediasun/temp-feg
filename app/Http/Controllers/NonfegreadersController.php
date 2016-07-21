@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Validator, Input, Redirect ; 
 
-class NonfegreadersController extends ReportsController {
+class NonfegreadersController extends Controller {
 
 	protected $layout = "layouts.main";
 	protected $data = array();	
