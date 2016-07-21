@@ -996,6 +996,7 @@ label { font-size:12px;}
 .modal-dialog .select2-container-multi .select2-choices {
     border: none;
     background-image: none;
+    overflow: visible;
 }
 
 .input-group-sm > .form-control, .input-group-sm > .input-group-addon, .input-group-sm > .input-group-btn > .btn { font-size: 11px !important;   border-radius:0px !important; -moz-border-radius:0px !important;}
