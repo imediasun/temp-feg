@@ -312,6 +312,23 @@ class ProductController extends Controller {
         return view('product.upload', $data);
     }
 
+	function postListcsv(Request $request)
+	{
+
+		$vendor_id=$request->vendor_id;
+		$rows= $this->model->getVendorPorductlist($vendor_id);
+		$fields = array('Vendor', 'Description', 'Sku', 'Unit Price', 'Item Per Case', 'Case Price', 'Ticket Value','Order Type','Product Type','INACTIVE');
+		$this->data['pageTitle'] = 'ProductList_';
+		$content = array(
+			'fields' => $fields,
+			'rows' => $rows,
+			'type' => 'move',
+			'title' => $this->data['pageTitle'],
+		);
+		return view('product.csvhistory', $content);
+	}
+
+
     function postUpload(Request $request)
     {
 
@@ -344,21 +361,7 @@ class ProductController extends Controller {
 
 
     }
-    function postListcsv(Request $request)
-    {
 
-        $vendor_id=$request->vendor_id;
-        $rows= $this->model->getVendorPorductlist($vendor_id);
-        $fields = array('Vendor', 'Description', 'Sku', 'Unit Price', 'Item Per Case', 'Case Price', 'Ticket Value','Order Type','Product Type','INACTIVE');
-        $this->data['pageTitle'] = 'ProductList_';
-        $content = array(
-            'fields' => $fields,
-            'rows' => $rows,
-            'type' => 'move',
-            'title' => $this->data['pageTitle'],
-        );
-        return view('product.csvhistory', $content);
-    }
     function getTest()
     {
         $row=\DB::select("select id,img from products where id > 2820");
