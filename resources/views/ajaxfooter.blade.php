@@ -33,7 +33,7 @@ $orders = array('asc','desc');
 		  @foreach($tableGrid as $field)
 		   @if($field['view'] =='1' && $field['sortable'] =='1')
 			  <option value="{{ $field['field'] }}"
-				@if(isset($pager['sort']) && $pager['sort'] == $field['field'])
+				@if($param['sort'] == $field['field'] || (isset($pager['sort']) && $pager['sort'] == $field['field']))
 					selected="selected"
 				@endif
 			  >{{ $field['label'] }}</option>
@@ -45,7 +45,7 @@ $orders = array('asc','desc');
 		  <option value="">{{ Lang::get('core.grid_order') }}</option>
 		   @foreach($orders as $o)
 		  <option value="{{ $o }}"
-			@if(isset($pager['order']) && $pager['order'] == $o)
+			@if($param['order'] == $o || (isset($pager['order']) && $pager['order'] == $o))
 				selected="selected"
 			@endif	
 		  >{{ ucwords($o) }}</option>

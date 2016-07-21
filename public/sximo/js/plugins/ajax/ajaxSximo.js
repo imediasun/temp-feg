@@ -85,7 +85,7 @@ function ajaxFilter( id ,url,opt  )
 			elm = $(this);
 			val = elm.val();
 //            if (this.value != '' && this.value!=0) {
-            if (val != '' || val !== null) {
+            if (val !== '' && val !== null) {
                 attr += this.name + '=' + val + '&';
             }
 
