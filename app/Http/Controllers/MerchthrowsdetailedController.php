@@ -54,7 +54,6 @@ class MerchthrowsdetailedController extends ReportsController {
         } else {
         $config_id = 0;
         }
-
         $this->data['config_id'] = $config_id;
         $config = $this->model->getModuleConfig($module_id, $config_id);
         if(!empty($config))
@@ -82,9 +81,11 @@ class MerchthrowsdetailedController extends ReportsController {
 		$results = $this->model->getRows( $params );		
 		// Build pagination setting
 		$page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;	
-		$pagination = new Paginator($results['rows'], $results['total'], $params['limit']);	
-		$pagination->setPath('merchthrowsdetailed/data');
-		
+		//$pagination = new Paginator($results['rows'], $results['total'], $params['limit']);
+        $pagination = new Paginator($results['rows'], $results['total'], 
+            (isset($params['limit']) && $params['limit'] > 0  ? $params['limit'] : 
+				($results['total'] > 0 ? $results['total'] : '1')));
+		$pagination->setPath('merchthrowsdetailed/data');		
 		$this->data['param']		= $params;
         $this->data['topMessage']	= @$results['topMessage'];
 		$this->data['message']          = @$results['message'];

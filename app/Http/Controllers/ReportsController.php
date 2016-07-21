@@ -93,8 +93,14 @@ class ReportsController extends Controller {
 		
 		// Build pagination setting
 		$page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;	
-		$pagination = new Paginator($results['rows'], $results['total'], $params['limit']);	
+		//$pagination = new Paginator($results['rows'], $results['total'], $params['limit']);
+        $pagination = new Paginator($results['rows'], $results['total'], 
+            (isset($params['limit']) && $params['limit'] > 0  ? $params['limit'] : 
+				($results['total'] > 0 ? $results['total'] : '1')));        
 		$pagination->setPath('reports/data');
+        $this->data['topMessage']	= @$results['topMessage'];
+		$this->data['message']          = @$results['message'];
+		$this->data['bottomMessage']	= @$results['bottomMessage'];        
 		
 		$this->data['param']		= $params;
 		$this->data['rowData']		= $results['rows'];
