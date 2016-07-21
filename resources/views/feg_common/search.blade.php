@@ -47,25 +47,45 @@ jQuery(function(){
 		//alert('test');
 		var attr = '';
 		$('#advance-search tr.fieldsearch').each(function(i){
-			var field = $(this).attr('id');
-			var operate = $(this).find('#'+field+'_operate').val();
-			var value_select  = $(this).find("select[name="+field+"]").val() || '';
-			if( typeof value_select !=='undefined' )
+			var UNDEFINED, 
+                container = this,
+                jQcontainer = $(container),                
+                field = jQcontainer.attr('id'),
+                name = jQcontainer.attr('name'),                
+                operatorField = jQcontainer.find('#'+field+'_operate'),
+                operate = operatorField.val(),
+                valueField = jQcontainer.find("[name="+field+"]"),
+                value = valueField.val(),
+                value2Field = jQcontainer.find("[name="+field+"_end]"),
+                value2 = value2Field.val(),
+                isValueDate = valueField.hasClass('date'),
+                isValue2Date = value2Field.hasClass('date'),
+                isValueDateTime = valueField.hasClass('datetime'),
+                isValue2DateTime = value2Field.hasClass('datetime');
+                
+                if (value === null || value === UNDEFINED ) {
+                    value = '';
+                }
+                if (value2 === null || value2 === UNDEFINED ) {
+                    value2 = '';
+                }
+				if(isValueDate) {
+                    value  = $.datepicker.formatDate('yy-mm-dd', new Date(value));
+                }                    
+				if(isValue2Date) {
+                    value  = $.datepicker.formatDate('yy-mm-dd', new Date(value));
+                }                    
+				if(isValueDateTime) {
+                    //value  = $.datepicker.formatDate('mm/dd/yy hh:ii:ss', new Date(value));
+                }                    
+				if(isValue2DateTime) {
+                    //value  = $.datepicker.formatDate('mm/dd/yy hh:ii:ss', new Date(value));
+                }                    
+					            
+			if(value !=='' && typeof value !=='undefined' && name !='_token')
 			{
-				value  = value_select;
-			} else {
-				value  = $(this).find("input[name="+field+"]").val();
-				if(value != '')
-					value  = $.datepicker.formatDate('mm/dd/yyyy', new Date(value));
-			}
-
-			if(value !=='' && typeof value !=='undefined' && this.name !='_token')
-			{
-
 				if(operate =='between')
 				{
-					var value  = $(this).find("input[name="+field+"]").val();
-					var value2  = $(this).find("input[name="+field+"_end]").val();
 					attr += field+':'+operate+':'+value+':'+value2+'|';
 				} else {
 					attr += field+':'+operate+':'+value+'|';
