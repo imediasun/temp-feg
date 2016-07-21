@@ -101,6 +101,15 @@ class VendorController extends Controller {
 
         // Build pagination setting
         $page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;
+
+
+
+
+        if(count($results['rows']) == $results['total']){
+            $params['limit'] = $results['total'];
+        }
+
+
         $pagination = new Paginator($results['rows'], $results['total'], $params['limit']);
         $pagination->setPath('vendor/data');
 
@@ -127,7 +136,7 @@ class VendorController extends Controller {
             $this->data['tableGrid'] = \SiteHelpers::showRequiredCols($this->data['tableGrid'], $this->data['config']);
         }
         // Render into template
-        return response()->json($this->data);
+      //  return response()->json($this->data);
         return view('vendor.table',$this->data);
 
     }

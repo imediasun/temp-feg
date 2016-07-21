@@ -84,6 +84,14 @@ class ManagenewgraphicrequestsController extends Controller
         $results = $this->model->getRows($params, $cond);
         // Build pagination setting
         $page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;
+
+
+
+
+        if(count($results['rows']) == $results['total']){
+            $params['limit'] = $results['total'];
+        }
+
         $pagination = new Paginator($results['rows'], $results['total'], $params['limit']);
         $pagination->setPath('managenewgraphicrequests/data');
         $this->data['param'] = $params;

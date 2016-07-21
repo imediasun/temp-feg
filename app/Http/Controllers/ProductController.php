@@ -123,7 +123,17 @@ class ProductController extends Controller {
 			$rows[$index]->vendor_id = (isset($vendor[0]->vendor_name) ? $vendor[0]->vendor_name : '');
 		}
 		// Build pagination setting
-		$page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;	
+		$page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;
+
+
+
+		if(count($results['rows']) == $results['total']){
+			$params['limit'] = $results['total'];
+		}
+
+
+
+
 		$pagination = new Paginator($results['rows'], $results['total'], $params['limit']);
 
             $pagination->setPath('product/data');
@@ -212,9 +222,11 @@ class ProductController extends Controller {
 
 	function postCopy( Request $request)
 	{
-		
+
 	    foreach(\DB::select("SHOW COLUMNS FROM products ") as $column)
         {
+
+
 			if( $column->Field != 'id')
 				$columns[] = $column->Field;
         }

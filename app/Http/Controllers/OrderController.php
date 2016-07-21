@@ -88,6 +88,14 @@ class OrderController extends Controller
         $results = $this->model->getRows($params, $order_selected);
         // Build pagination setting
         $page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;
+
+        echo count($results['rows'])."=>".$results['total']."=>".$params['limit'];
+
+
+        if(count($results['rows']) == $results['total']){
+            $params['limit'] = $results['total'];
+        }
+
         $pagination = new Paginator($results['rows'], $results['total'], $params['limit']);
         $pagination->setPath('order/data');
         $rows = $results['rows'];
