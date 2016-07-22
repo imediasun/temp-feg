@@ -81,6 +81,19 @@
 
 					 </div>
 				  </div>
+							<div class="form-group  " >
+													<label for="Prod Type Id" class=" control-label col-md-4 text-left">
+														{!! SiteHelpers::activeLang('Prod Type Id', (isset($fields['prod_type_id']['language'])? $fields['prod_type_id']['language'] : array())) !!}
+													</label>
+												<div class="col-md-6">
+
+														  <select name='prod_type_id' rows='5' id='prod_type_id' class='select2 ' required='required'  ></select>
+														 </div>
+												 <div class="col-md-2">
+
+														 </div>
+											  </div>
+
 
 				  <div class="form-group  " >
 					<label for="Prod Sub Type Id" class=" control-label col-md-4 text-left">
