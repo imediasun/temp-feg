@@ -1,10 +1,5 @@
 <div class="row m-b">
-      <div class="col-md-12">
-        <br/>
-        <a href="{{ URL::to( $pageModule .'/search') }}" class="btn btn-sm btn-white"
-           onclick="SximoModal(this.href,'Advance Search'); return false;"><i class="fa fa-search"></i> Search</a>
 
-    </div>
     {!! Form::open(array('url'=>'managefegrequeststore/multirequestorderfill/', 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'managefegrequeststoreFormAjax')) !!}
     <div >
         <div class="col-md-3">
@@ -53,6 +48,12 @@
             <p style="color:red;font-weight: bold"><?php echo $manageRequestInfo['number_requests']; ?></p>
         </div>
     @endif
+    <div class="col-md-12">
+        <br/>
+        <a href="{{ URL::to( $pageModule .'/search') }}" class="btn btn-sm btn-white"
+           onclick="SximoModal(this.href,'Advance Search'); return false;"><i class="fa fa-search"></i> Search</a>
+
+    </div>
   
 
 </div>
