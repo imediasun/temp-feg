@@ -106,9 +106,6 @@ class ManagefegrequeststoreController extends Controller
 
 
 
-            if(count($results['rows']) == $results['total']){
-                $params['limit'] = $results['total'];
-            }
 
 
             $pagination = new Paginator($results['rows'], $results['total'], $params['limit']);
