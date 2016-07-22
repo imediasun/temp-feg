@@ -77,7 +77,9 @@
 						foreach ($tableGrid as $field) :
 					 	if($field['view'] =='1') : ?>
 							@if($col == 8 )
-								<td><?php echo $row->total_cost; ?></td>
+								<td><?php echo number_format((double) $row->total_cost,2); ?></td>
+
+
 							@elseif($col == 5 )
 								<td><?php echo $row->vendor_description; ?></td>
 							@endif
