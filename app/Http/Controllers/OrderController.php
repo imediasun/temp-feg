@@ -89,8 +89,7 @@ class OrderController extends Controller
         // Build pagination setting
         $page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;
 
-        echo count($results['rows'])."=>".$results['total']."=>".$params['limit'];
-
+        
 
         if(count($results['rows']) == $results['total']){
             $params['limit'] = $results['total'];
@@ -360,13 +359,13 @@ class OrderController extends Controller
                     \DB::table('products')->insert($productData);
                 }
             }
-            $mailto = $vendor_email;
-            $from = \Session::get('eid');
+           // $mailto = $vendor_email;
+           // $from = \Session::get('eid');
             //send product order as email to vendor only if sendor and reciever email is available
-            if(!empty($mailto) && !empty($from))
-            {
-            $this->getPo($order_id, true,$mailto,$from);
-            }
+           // if(!empty($mailto) && !empty($from))
+           // {
+           // $this->getPo($order_id, true,$mailto,$from);
+            //}
             //$result = Mail::send('submitservicerequest.test', $message, function ($message) use ($to, $from, $full_upload_path, $subject) {
 //
 //        if (isset($full_upload_path) && !empty($full_upload_path)) {

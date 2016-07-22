@@ -73,7 +73,7 @@ class order extends Sximo
         $data['order_total'] = '0.00';
         $data['alt_address'] = "";
         $data['po_1'] = '0';
-        $data['po_2'] = date('dmy');
+        $data['po_2'] = date('m/d/y');
         $data['po_3'] = $this->increamentPO();
         $data['po_notes'] = '';
         $data['prefill_type'] = "";
@@ -186,7 +186,7 @@ $query = \DB::select('SELECT R.qty,
     $data['order_vendor_id'] = $query[0]->vendor_id;
     $data['order_type'] = $query[0]->prod_type_id;
     $data['order_total'] = $query[0]->total;
-    $data['po_2'] = date('dmy');
+    $data['po_2'] = date('m/d/y');
     $data['po_3'] = $this->increamentPO();
     $data['po_notes'] = $query[0]->description;
     //$this->data['id']=1806;
@@ -211,7 +211,7 @@ $data['orderRequestIdArray'] = $orderRequestIdArray;
 $data['itemNameArray']=$item_name_array;
 $data['itemCasePrice']=$item_case_price;
 $data['requests_item_count'] = $item_count;
-$data['today'] = date('Y-m-d');
+$data['today'] = date('m/d/y');
 }
 }
 return $data;
@@ -332,7 +332,7 @@ function increamentPO()
 {
     $po = \DB::select('select po_number from orders where id=(select max(id) from orders)');
     $po = explode('-', $po[0]->po_number);
-    return ++$po[2];
+    return ++$po[0];
 }
     function getVendorEmail($vendor_id)
     {
