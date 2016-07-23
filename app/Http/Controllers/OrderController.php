@@ -240,7 +240,9 @@ class OrderController extends Controller
             $vendor_id = $request->get('vendor_id');
             $vendor_email = $this->model->getVendorEmail($vendor_id);
             $freight_type_id = $request->get('freight_type_id');
-            $date_ordered = $request->get('date_ordered');
+
+            $date_ordered = date("d/m/Y", strtotime($request->get('date_ordered')));
+
             $total_cost = $request->get('order_total');
             $notes = $request->get('po_notes');
             $po_1 = $request->get('po_1');
