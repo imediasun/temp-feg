@@ -36,9 +36,7 @@
 width: 75%">
             <option selected selected>------------ Select Type --------------</option>
             <option value="redemption" data-active="0">Redemption Prizes</option>
-            <option value="redemption" data-active="1">Redemption Prizes - INACTIVE</option>
             <option value="instant" data-active="0">Instant Win Prizes</option>
-            <option value="instant" data-active="1">Instant Win Prizes - INACTIVE</option>
             <option value="graphics" data-active="0">Graphics</option>
             <option value="ticketokens" data-active="0">Tickets,Tokens,Uniforms,Photo ,Paper-Debit, Cards</option>
             <option value="party" data-active="0">Party Supplies</option>
