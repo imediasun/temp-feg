@@ -51,7 +51,7 @@
 					{!! SiteHelpers::activeLang('Created At', (isset($fields['created_at']['language'])? $fields['created_at']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('created_at', $row['created_at'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
+					  {!! Form::text('created_at',date("m/d/Y", strtotime( $row['created_at'])),array('class'=>'form-control', 'placeholder'=>'',   )) !!}
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -62,7 +62,7 @@
 					{!! SiteHelpers::activeLang('Updated At', (isset($fields['updated_at']['language'])? $fields['updated_at']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('updated_at', $row['updated_at'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
+					  {!! Form::text('updated_at',date("m/d/Y", strtotime( $row['updated_at'])),array('class'=>'form-control', 'placeholder'=>'',   )) !!}
 					 </div> 
 					 <div class="col-md-2">
 					 	
