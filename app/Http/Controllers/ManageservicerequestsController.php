@@ -211,7 +211,7 @@ class ManageservicerequestsController extends Controller {
 			$data['solved_date']= date("Y-m-d", strtotime($request->get('solved_date')));
 
 
-			exit;
+
 
 			$id = $this->model->insertRow($data , $id);
 			
