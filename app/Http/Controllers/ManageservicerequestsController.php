@@ -86,6 +86,8 @@ class ManageservicerequestsController extends Controller {
 
 		// Get Query
 		$results = $this->model->getRows( $params );
+
+
 		// Build pagination setting
 		$page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;
 
@@ -206,7 +208,11 @@ class ManageservicerequestsController extends Controller {
 		if ($validator->passes()) {
 			$data['priority_id'] = $request->get('priority_id');
             $data['status_id'] = $request->get('status_id');
-            $data['solved_date']=$request->get('solved_date');
+			$data['solved_date']= date("Y-m-d", strtotime($request->get('solved_date')));
+
+
+			exit;
+
 			$id = $this->model->insertRow($data , $id);
 			
 			return response()->json(array(

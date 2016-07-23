@@ -37,7 +37,7 @@
                         </label>
 
                         <div class="col-md-6">
-                            {!! Form::text('solved_date', $row['solved_date'],array('class'=>'form-control date',
+                            {!! Form::text('solved_date', date("m/d/Y", strtotime($row['solved_date'])),array('class'=>'form-control date',
                             'placeholder'=>'', )) !!}
                         </div>
                         <div class="col-md-2">
