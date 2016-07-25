@@ -83,10 +83,14 @@
 										 ?>
 									@elseif($field['field']=='details')
 										
-										 <?php
-										 if (strlen($value)>20) {
+										<?php
+
+									$trimValue = preg_replace('/\s+/', ' ',$value);
+
 										 
-										  echo substr($value,0,20);
+										 if (strlen($trimValue)>20) {
+										 
+										  echo substr($trimValue,0,20);
 										 echo '<br><a href="javascript:void(0)" onclick="showModal(10,this)">Read more</a>';
 										 }
 										 else{
