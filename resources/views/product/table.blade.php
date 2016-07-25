@@ -81,9 +81,27 @@
 										<?php
 										 echo SiteHelpers::showUploadedFile($value,'/uploads/products/', 50,false)
 										 ?>
+									@elseif($field['field']=='details')
+										
+										 <?php
+										 if (strlen($value)>20) {
+										 
+										  echo substr($value,0,20);
+										 echo '<br><a href="javascript:void(0)" onclick="showModal(10,this)">Read more</a>';
+										 }
+										 else{
+
+										 	echo $value;
+										 }
+										 
+
+										    ?>
+										  
+
 									@else
 									 {!! $value !!}
 									@endif
+
 								 </td>
 							@endif	
 						 <?php endif;					 
@@ -124,11 +142,46 @@
 	@include('ajaxfooter')
 	
 	</div>
+</div>
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Product Details</h4>
+      </div>
+      <div class="modal-body">
+        ...
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Dismiss</button>
+       
+      </div>
+    </div>
+  </div>
 </div>	
 	
+
 	@if($setting['inline'] =='true') @include('sximo.module.utility.inlinegrid') @endif
 <script>
+
+function showModal(id,obj){
+	$('#myModal').modal('show');
+
+		var content = $(obj).parent().attr("data-values");
+		$('#myModal .modal-body').text(content);
+
+}
+
+
 $(document).ready(function() {
+
+
+
 	$('.tips').tooltip();	
 	$('input[type="checkbox"],input[type="radio"]').iCheck({
 		checkboxClass: 'icheckbox_square-green',
