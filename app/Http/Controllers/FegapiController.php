@@ -94,21 +94,25 @@ class FegapiController extends Controller {
 	}
 	public function store(  )
 	{
+
         $class 	= ucwords(Input::get('module'));
+
         $class1 = "App\\Models\\".$class;
         $obj=new $class1();
 		$this->info		= 	$class1::makeInfo( $class );
 
-		$data 			= $this->validatePost($this->info['table']);
+        $data 			= $this->info['table'];
+
+		$data 			= $this->validatePostApi($this->info['table']);
 		unset($data['entry_by']);
 		$id = $obj->insertRow($data ,NULL);
         if($id)
         {
-            return \Response::json(array('Status'=> \Lang::get('restapi.StatusSuccess'),'Message' => \Lang::get('restapi.StroredSuccess')),200);
+            return \Response::json(array('Statusf'=> \Lang::get('restapi.StatusSuccess'),'Message' => \Lang::get('restapi.StroredSuccess')),200);
         }
         else
         {
-            return \Response::json(array('Status'=> \Lang::get('restapi.StatusError'),'Message'=> \Lang::get('restapi.StoreError')));
+            return \Response::json(array('Statusf'=> \Lang::get('restapi.StatusError'),'Message'=> \Lang::get('restapi.StoreError')));
         }
 
 	}
@@ -117,7 +121,7 @@ class FegapiController extends Controller {
         $class 			= ucwords(Input::get('module'));
         $class1 = "App\\Models\\".$class;
 		$this->info		= 	$class1::makeInfo( $class );
-		$data 			= $this->validatePost($this->info['table']);
+		$data 			= $this->validatePostApi($this->info['table']);
 		unset($data['entry_by']);
         $obj=new $class1();
 		$id 			= $obj->insertRow($data , $id );
@@ -139,5 +143,141 @@ class FegapiController extends Controller {
 		}
 		 
 		return \Response::json(array("Status"=>\Lang::get('restapi.StatusSuccess'),"Message"=>\Lang::get('restapi.DeleteSuccess')),200);
+    }
+    function validatePostApi($table)
+    {
+
+        $request = new Request;
+        $str = $this->info['config']['forms'];
+        $json = file_get_contents('php://input');
+        $obj = json_decode($json,true);
+        $_POST = $obj;
+
+        $data = array();
+        foreach ($str as $f) {
+            $field = $f['field'];
+            if (true) {
+                if ($f['type'] == 'textarea_editor' || $f['type'] == 'textarea') {
+
+                    $content = (isset($_POST[$field]) ? $_POST[$field] : '');
+                    $data[$field] = $content;
+                } else {
+                    $r = \Request::get($field);
+                    if (isset($_POST[$field]) or isset($r)) {
+                        if (isset($_POST[$field])) {
+                            $data[$field] = $_POST[$field];
+                        } elseif (isset($r)) {
+                            $data[$field] = \Request::get($field);
+                        }
+                    }
+                    // if post is file or image
+
+                    if ($f['type'] == 'file') {
+
+
+                        $files = '';
+                        if (isset($f['option']['image_multiple']) && $f['option']['image_multiple'] == 1) {
+
+                            if (isset($_POST['curr' . $field])) {
+                                $curr = '';
+                                for ($i = 0; $i < count($_POST['curr' . $field]); $i++) {
+                                    $files .= $_POST['curr' . $field][$i] . ',';
+                                }
+                            }
+
+                            if (!is_null(Input::file($field))) {
+                                $destinationPath = '.' . $f['option']['path_to_upload'];
+                                foreach ($_FILES[$field]['tmp_name'] as $key => $tmp_name) {
+                                    $file_name = $_FILES[$field]['name'][$key];
+                                    $file_tmp = $_FILES[$field]['tmp_name'][$key];
+                                    if ($file_name != '') {
+                                        move_uploaded_file($file_tmp, $destinationPath . '/' . $file_name);
+                                        $files .= $file_name . ',';
+
+                                    }
+
+                                }
+                                if ($files != '') $files = substr($files, 0, strlen($files) - 1);
+                            }
+                            $data[$field] = $files;
+
+
+                        } else {
+
+
+                            if (!is_null(Input::file($field))) {
+
+                                $file = Input::file($field);
+                                $destinationPath = public_path() . $f['option']['path_to_upload'];
+                                $filename = $file->getClientOriginalName();
+                                $extension = $file->getClientOriginalExtension(); //if you need extension of the file
+                                $rand = rand(1000, 100000000);
+                                $newfilename = strtotime(date('Y-m-d H:i:s')) . '-' . $rand . '.' . $extension;
+                                $uploadSuccess = $file->move($destinationPath, $newfilename);
+                                if ($f['option']['resize_width'] != '0' && $f['option']['resize_width'] != '') {
+                                    if ($f['option']['resize_height'] == 0) {
+                                        $f['option']['resize_height'] = $f['option']['resize_width'];
+                                    }
+                                    $orgFile = $destinationPath . '/' . $newfilename;
+                                    \SiteHelpers::cropImage($f['option']['resize_width'], $f['option']['resize_height'], $orgFile, $extension, $orgFile);
+                                }
+
+                                if ($uploadSuccess) {
+                                    $data[$field] = $newfilename;
+                                }
+                            } else {
+                                unset($data[$field]);
+                            }
+                        }
+                    }
+
+
+                    // if post is checkbox
+                    if ($f['type'] == 'checkbox') {
+                        $r1 = \Request::get($field);
+                        if (!is_null($_POST[$field]) or !is_null($r1)) {
+                            if (!is_null($_POST[$field]))
+                                $data[$field] = $_POST[$field];
+                            elseif (!is_null($r1)) {
+                                $data[$field] = $r1;
+                            }
+                        }
+                    }
+                    // if post is date
+                    if ($f['type'] == 'date') {
+
+                        $data[$field] = date("Y-m-d", strtotime($request->input($field)));
+                    }
+
+                    // if post is seelct multiple
+                    //
+                    if ($f['type'] == 'select') {
+                        $r2 = \Request::get($field);
+                        //echo '<pre>'; print_r( $_POST[$field] ); echo '</pre>';
+                        if (isset($f['option']['select_multiple']) && $f['option']['select_multiple'] == 1) {
+                            if (isset($_POST[$field])) {
+                                $multival = (is_array($_POST[$field]) ? implode(",", $_POST[$field]) : $_POST[$field]);
+                            } elseif (isset($r2)) {
+
+                                $multival = (is_array($r2) ? implode(",", $r2) : $r2);
+                            }
+
+                            $data[$field] = $multival;
+                        } else {
+                            if (isset($_POST[$field]))
+                                $data[$field] = $_POST[$field];
+                            elseif (isset($r2))
+                                $data[$field] = $r2;
+                        }
+                    }
+                }
+            }
+        }
+        $global = (isset($this->access['is_global']) ? $this->access['is_global'] : 0);
+
+        if ($global == 0)
+            $data['entry_by'] = \Session::get('uid');
+
+        return $data;
     }
 }
