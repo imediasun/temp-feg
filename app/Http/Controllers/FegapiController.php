@@ -103,7 +103,7 @@ class FegapiController extends Controller {
 
         $data 			= $this->info['table'];
 
-		$data 			= $this->validatePostApi($this->info['table']);
+		$data 			= $this->validatePost($this->info['table']);
 		unset($data['entry_by']);
 		$id = $obj->insertRow($data ,NULL);
         if($id)
@@ -121,7 +121,7 @@ class FegapiController extends Controller {
         $class 			= ucwords(Input::get('module'));
         $class1 = "App\\Models\\".$class;
 		$this->info		= 	$class1::makeInfo( $class );
-		$data 			= $this->validatePostApi($this->info['table']);
+		$data 			= $this->validatePost($this->info['table']);
 		unset($data['entry_by']);
         $obj=new $class1();
 		$id 			= $obj->insertRow($data , $id );
@@ -144,7 +144,7 @@ class FegapiController extends Controller {
 		 
 		return \Response::json(array("Status"=>\Lang::get('restapi.StatusSuccess'),"Message"=>\Lang::get('restapi.DeleteSuccess')),200);
     }
-    function validatePostApi($table)
+    function validatePost($table)
     {
 
         $request = new Request;
@@ -156,7 +156,7 @@ class FegapiController extends Controller {
         $data = array();
         foreach ($str as $f) {
             $field = $f['field'];
-            if (true) {
+
                 if ($f['type'] == 'textarea_editor' || $f['type'] == 'textarea') {
 
                     $content = (isset($_POST[$field]) ? $_POST[$field] : '');
@@ -271,7 +271,7 @@ class FegapiController extends Controller {
                         }
                     }
                 }
-            }
+
         }
         $global = (isset($this->access['is_global']) ? $this->access['is_global'] : 0);
 
