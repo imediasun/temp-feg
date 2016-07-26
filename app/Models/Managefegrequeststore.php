@@ -142,7 +142,7 @@ class managefegrequeststore extends Sximo
                                 WHERE R.status_id = 1 ' . $order_type_where . ' GROUP BY P.prod_type_id');
 
         foreach ($query as $row) {
-            $number_requests = $number_requests ."( ".$row->count." ) <em>". $row->request_count ."</em>";
+            $number_requests = $number_requests ." ".$row->count." | <em>". $row->request_count .":</em>";
         }
         $data['number_requests'] = substr($number_requests, 0, -2);
         $query = \DB::select('SELECT GROUP_CONCAT(order_type) AS order_types  FROM order_type

@@ -174,24 +174,24 @@ class ProductController extends Controller {
 		{
 			if($this->access['is_add'] ==0 )
 			return Redirect::to('dashboard')->with('messagetext',\Lang::get('core.note_restric'))->with('msgstatus','error');
-		}	
-		
+		}
+
 		if($id !='')
 		{
 			if($this->access['is_edit'] ==0 )
 			return Redirect::to('dashboard')->with('messagetext',\Lang::get('core.note_restric'))->with('msgstatus','error');
-		}				
-				
+		}
+
 		$row = $this->model->find($id);
 		if($row)
 		{
 			$this->data['row'] 		=  $row;
 		} else {
-			$this->data['row'] 		= $this->model->getColumnTable('products'); 
+			$this->data['row'] 		= $this->model->getColumnTable('products');
 		}
 		$this->data['setting'] 		= $this->info['setting'];
 		$this->data['fields'] 		=  \AjaxHelpers::fieldLang($this->info['config']['forms']);
-		
+
 		$this->data['id'] = $id;
 
 		return view('product.form',$this->data);
@@ -226,16 +226,17 @@ class ProductController extends Controller {
 	    foreach(\DB::select("SHOW COLUMNS FROM products ") as $column)
         {
 
-
 			if( $column->Field != 'id')
 				$columns[] = $column->Field;
+
         }
 		$toCopy = implode(",",$request->input('ids'));
-		
-				
+
 		$sql = "INSERT INTO products (".implode(",", $columns).") ";
+		$columns[1] = "CONCAT('copy',vendor_description)";
 		$sql .= " SELECT ".implode(",", $columns)." FROM products WHERE id IN (".$toCopy.")";
 		\DB::insert($sql);
+
 		return response()->json(array(
 			'status'=>'success',
 			'message'=> \Lang::get('core.note_success')

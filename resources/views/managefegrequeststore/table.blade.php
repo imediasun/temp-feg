@@ -86,6 +86,10 @@
 
                                             {!! date("m/d/Y", strtotime($value)) !!}
 
+                                        @elseif($field['field'] == 'price')
+
+                                            {!! number_format((float)2, '.','',($value)) !!}
+
                                         @else
                                             {!! $value !!}
 
