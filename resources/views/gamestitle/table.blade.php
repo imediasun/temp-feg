@@ -32,7 +32,7 @@
                         <th width="20"> No</th>
 
                         <th width="60"><input type="checkbox" class="checkall"/></th>
-                        <th width="100">Upload Image</th>
+
                         <th width="100">Image</th>
 
                         @if($setting['view-method']=='expand')
@@ -46,10 +46,12 @@
                             endif;
                         endforeach; ?>
 
-                        <th width="100">Upload Manual</th>
-                        <th width="100">Upload Bulletin</th>
+
                         <th width="100">Manual</th>
                         <th width="100">Bulletin</th>
+                        <th width="100">Upload Manual</th>
+                        <th width="100">Upload Bulletin</th>
+                        <th width="100">Upload Image</th>
                         <th width="70"><?php echo Lang::get('core.btn_action');?></th>
                     </tr>
                     </thead>
@@ -86,9 +88,7 @@
                         <td class="number"> <?php echo ++$i;?>  </td>
                         <td><input type="checkbox" class="ids" name="ids[]" value="<?php echo $row->id;?>"/></td>
 
-                        <div>
-                          <td>  <button type="button" class="btn-imagee"><a href="{{ URL::to('gamestitle/upload/'.$row->id.'?type=1')}}"style ="color: white; font-family: 'Lato', sans-serif; white-space: nowrap; border-color: #2a6496;	text-decoration: none;  border-radius: 0px; border: 1px solid transparent; background-color: #428bca; font-size: 10px;">Upload Image</a></button></td>
-                     </div>   <td>{!! SiteHelpers::showUploadedFile($row->img,'/uploads/games/images/',50,false) !!}</td>
+                           <td>{!! SiteHelpers::showUploadedFile($row->img,'/uploads/games/images/',50,false) !!}</td>
 
 
 
@@ -117,12 +117,7 @@
                         endforeach;
                         ?>
 
-                        <td>
-                            <a href="{{ URL::to('gamestitle/upload/'.$row->id.'?type=2')}}">Upload manual</a>
-                        </td>
-                        <td>
-                            <a href="{{ URL::to('gamestitle/upload/'.$row->id.'?type=3')}}">Upload Bulletin</a>
-                        </td>
+
                         <td>
                             @if($row->has_manual=="Yes")
                             <a href="uploads/games/manuals/{{ $row->id }}.pdf"  target="_blank">Manual</a>
@@ -133,6 +128,17 @@
                                 <a href="uploads/games/bulletins/{{ $row->id }}.pdf"  target="_blank">Bulletin</a>
                             @endif
                         </td>
+
+                       <div> <td>  <button type="button" class="btn-imagee"> <a href="{{ URL::to('gamestitle/upload/'.$row->id.'?type=2')}}"style ="color: white; font-family: 'Lato', sans-serif; white-space: nowrap; border-color: #2a6496;	text-decoration: none;  border-radius: 0px; border: 1px solid transparent; background-color: #428bca; font-size: 10px;">Upload Manual</a></button></td>
+
+                       </div>
+
+                        <div> <td>  <button type="button" class="btn-imagee"><a href="{{ URL::to('gamestitle/upload/'.$row->id.'?type=3')}}"style ="color: white; font-family: 'Lato', sans-serif; white-space: nowrap; border-color: #2a6496;	text-decoration: none;  border-radius: 0px; border: 1px solid transparent; background-color: #428bca; font-size: 10px;">Upload Bulletin</a></button></td>
+
+                        </div>
+                        <div>
+                            <td>  <button type="button" class="btn-imagee"><a href="{{ URL::to('gamestitle/upload/'.$row->id.'?type=1')}}"style ="color: white; font-family: 'Lato', sans-serif; white-space: nowrap; border-color: #2a6496;	text-decoration: none;  border-radius: 0px; border: 1px solid transparent; background-color: #428bca; font-size: 10px;">Upload Image</a></button></td>
+                        </div>
                         <td data-values="action" data-key="<?php echo $row->id;?>">
                             {!! AjaxHelpers::buttonAction('gamestitle',$access,$id ,$setting) !!}
                             {!! AjaxHelpers::buttonActionInline($row->id,'id') !!}
@@ -212,9 +218,9 @@
 
     .btn-imagee{
 
-  	font-size: 10px; padding: 7px 11px;border: 1px solid transparent;  border-radius: 0px;
+  	font-size: 10px; padding: 7px 7px;border: 1px solid transparent;  border-radius: 0px;
    		background-color: #428bca;
     		border-color: #2a6496;		white-space: nowrap;
-    		font-family: 'Lato', sans-serif;}
+    	font-family: 'Lato', sans-serif;}
 
 </style>
