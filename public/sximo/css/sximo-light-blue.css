@@ -24,6 +24,10 @@
 {
     display:none;
 }
+.table-width-auto {
+
+ table-layout: auto !important; 
+}
 table.table-striped
 {
     table-layout: fixed;

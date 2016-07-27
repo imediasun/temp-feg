@@ -276,11 +276,12 @@ class ShopfegrequeststoreController extends Controller
             $graphics_description = $request->get('graphics_description');
             $graphics_description = str_replace('"', '', $graphics_description);
             $qty = $request->get('qty');
-            $date_needed = $request->get('date_needed');
+            $date_needed = date("Y/m/d", strtotime($request->get('date_needed')));
+
             $game_info = $request->get('game_info');
             $locationId = $request->get('location_name');
             $statusId = 1;
-            $now = date('m/d/Y');
+            $now = date('Y/m/d');
             $data = array('location_id' => $locationId, 'request_user_id' => \Session::get('uid'), 'request_date' => $now, 'need_by_date' => $date_needed, 'description' => $game_info . ' - ' . $graphics_description, 'qty' => $qty, 'status_id' => $statusId);
             $last_insert_id = $this->model->newGraphicRequest($data);
 

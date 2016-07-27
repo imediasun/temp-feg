@@ -265,7 +265,7 @@
 					<div class="col-md-6">
 					  
 				<div class="input-group m-b" style="width:150px !important;">
-					{!! Form::text('date_added', $row['date_added'],array('class'=>'form-control datetime', 'style'=>'width:150px !important;')) !!}
+					{!! Form::text('date_added', date("m/d/Y", strtotime($row['date_added'])),array('class'=>'form-control datetime', 'style'=>'width:150px !important;')) !!}
 					<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
 				</div>
 				 

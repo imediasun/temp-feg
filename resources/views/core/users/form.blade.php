@@ -170,7 +170,7 @@
 
 
 				<div class="form-group  " >
-					<label for="Enter Redirection Link" class=" control-label col-md-4 text-left">Redirection Link </label>
+					<label for="Enter Redirection Link" class=" control-label col-md-4 text-left">Login Start Page </label>
 					<div class="col-md-8">
 						{!! Form::text('redirect_link', $row['redirect_link'],array('class'=>'form-control', 'placeholder'=>'', 'required'=>'true'  )) !!}
 					</div>
