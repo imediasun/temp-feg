@@ -193,7 +193,8 @@ class SubmitservicerequestController extends Controller
             $data['status_id'] = 1;
             $data['request_user_id'] = \Session::get('uid');
             $data['request_date'] = $now;
-            $data['need_by_date'] = date_format(date_create_from_format('d-m-Y', $data['need_by_date']), 'm/d/Y');
+            $data['need_by_date'] = date_format(date_create_from_format('m/d/Y', $data['need_by_date']), 'm/d/Y');
+
             if ($tech_type == 'part') {
                 $insert = array(
                     'location_id' => $data['location_id'],
