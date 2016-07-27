@@ -101,7 +101,7 @@ function ajaxFilter( id ,url,opt  )
 function ajaxCopy(  id , url )
 {
 	
-	if(confirm('Areu sure Copy selected row(s)'))
+	if(confirm('Are you sure you want to Copy selected row(s)'))
 	{
 		var datas = $( id +'Table :input').serialize();
 			$.post( url+'/copy' ,datas,function( data ) {
