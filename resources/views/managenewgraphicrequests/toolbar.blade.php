@@ -1,21 +1,26 @@
 <div class="row m-b">
 
-    <div class="col-md-4">
+    <div class="col-md-4" >
         <br/>
         <select name="type" class="select3" id="request_type">
+
             <option disabled>Select Graphic Requests Type</option>
             <option value="open" selected> Open Graphics Requests </option>
             <option value="archive">Graphics Request Archive</option>
         </select>
 
     </div>
+        @if($view=="open")
+            <div class="abc" id="number_requests">
+                <p style="color:red; padding-top: 22px; font-weight: bold">{{ $newGraphicsInfo['number_new_requests'] }} New **</p>
+            </div>
 
-    @if($view=="open")
-    <div class="col-md-12" id="number_requests">
-        <p style="color:red;font-weight: bold">{{ $newGraphicsInfo['number_new_requests'] }} New **</p>
-    </div>
         @endif
-    <div class="col-md-12">
+
+
+
+
+    <div class="col-md-12" style="padding-top: 8px;">
         @if($access['is_remove'] ==1)
             <a href="javascript://ajax" class="btn btn-sm btn-white" onclick="ajaxRemove('#{{ $pageModule }}','{{ $pageUrl }}');"><i class="fa fa-trash-o "></i> {{ Lang::get('core.btn_remove') }} </a>
         @endif
