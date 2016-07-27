@@ -3,7 +3,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Restapi;
+use App\Models\Sximo;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
+use Illuminate\Http\Request;
 use Validator, Input, Redirect ;
 class FegapiController extends Controller {
 
@@ -72,7 +74,11 @@ class FegapiController extends Controller {
         }
 	}
 	public function show( $id )
-	{	$class 	= ucwords(Input::get('module'));
+	{
+//die('Show Function');
+  echo $id."<br>";
+        $class 	= ucwords(Input::get('module'));
+        echo $class."<br>";
         if($class == "Users")
         {
             $class1="App\\Models\\core\\".$class;
@@ -92,18 +98,42 @@ class FegapiController extends Controller {
             return \Response::json(array('Status'=>\Lang::get('restapi.StatusError'),"Message"=>\Lang::get('restapi.NothingFound')));
         }
 	}
+    public function show_by_status( $status )
+    {
+die('Showw Function');
+        $class 	= ucwords(Input::get('module'));
+        if($class == "Users")
+        {
+            $class1="App\\Models\\core\\".$class;
+        }
+        else
+        {
+            $class1 = "App\\Models\\" . $class;
+        }
+        $config	 		= 	$class1::makeInfo( $class );
+        $tables 		=	$config['config']['grid'];
+        $jsonData 			= 	$class1::getRowStatus( $status );
+        if(!empty($jsonData)) {
+            return \Response::json($jsonData, 200);
+        }
+        else
+        {
+            return \Response::json(array('Status'=>\Lang::get('restapi.StatusError'),"Message"=>\Lang::get('restapi.NothingFound')));
+        }
+    }
 	public function store(  )
 	{
 
         $class 	= ucwords(Input::get('module'));
-
+        echo $class;
         $class1 = "App\\Models\\".$class;
         $obj=new $class1();
 		$this->info		= 	$class1::makeInfo( $class );
 
         $data 			= $this->info['table'];
 
-		$data 			= $this->validatePostApi($this->info['table']);
+		$data 			= $this->validatePost($this->info['table']);
+
 		unset($data['entry_by']);
 		$id = $obj->insertRow($data ,NULL);
         if($id)
@@ -120,8 +150,9 @@ class FegapiController extends Controller {
 	{
         $class 			= ucwords(Input::get('module'));
         $class1 = "App\\Models\\".$class;
+
 		$this->info		= 	$class1::makeInfo( $class );
-		$data 			= $this->validatePostApi($this->info['table']);
+		$data 			= $this->validatePost($this->info['table']);
 		unset($data['entry_by']);
         $obj=new $class1();
 		$id 			= $obj->insertRow($data , $id );
@@ -144,9 +175,10 @@ class FegapiController extends Controller {
 		 
 		return \Response::json(array("Status"=>\Lang::get('restapi.StatusSuccess'),"Message"=>\Lang::get('restapi.DeleteSuccess')),200);
     }
-    function validatePostApi($table)
+    function validatePost($table)
     {
 
+        //die;
         $request = new Request;
         $str = $this->info['config']['forms'];
         $json = file_get_contents('php://input');
@@ -156,7 +188,7 @@ class FegapiController extends Controller {
         $data = array();
         foreach ($str as $f) {
             $field = $f['field'];
-            if (true) {
+
                 if ($f['type'] == 'textarea_editor' || $f['type'] == 'textarea') {
 
                     $content = (isset($_POST[$field]) ? $_POST[$field] : '');
@@ -271,7 +303,7 @@ class FegapiController extends Controller {
                         }
                     }
                 }
-            }
+
         }
         $global = (isset($this->access['is_global']) ? $this->access['is_global'] : 0);
 
