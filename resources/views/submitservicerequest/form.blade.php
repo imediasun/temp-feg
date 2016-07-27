@@ -62,7 +62,7 @@
 					{!! SiteHelpers::activeLang('Request Date', (isset($fields['request_date']['language'])? $fields['request_date']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('request_date', $row['request_date'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
+					  {!! Form::text('request_date', date("m/d/Y", strtotime($row['request_date'])),array('class'=>'form-control', 'placeholder'=>'',   )) !!}
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -85,7 +85,7 @@
 					{!! SiteHelpers::activeLang('Need By Date', (isset($fields['need_by_date']['language'])? $fields['need_by_date']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('need_by_date', $row['need_by_date'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
+					  {!! Form::text('need_by_date', date("m/d/Y", strtotime($row['need_by_date'])),array('class'=>'form-control', 'placeholder'=>'',   )) !!}
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -96,7 +96,7 @@
 					{!! SiteHelpers::activeLang('Solved Date', (isset($fields['solved_date']['language'])? $fields['solved_date']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('solved_date', $row['solved_date'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
+					  {!! Form::text('solved_date', date("m/d/Y", strtotime($row['solved_date'])),array('class'=>'form-control', 'placeholder'=>'',   )) !!}
 					 </div> 
 					 <div class="col-md-2">
 					 	
