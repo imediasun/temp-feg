@@ -53,7 +53,7 @@
 			@endif
 
 
-			<a href="{{ URL::to( 'core/users/search') }}" class="btn btn-sm btn-white" onclick="SximoModal(this.href,'Advance Search'); return false;" ><i class="text-danger fa fa-search"></i> Search</a>
+			<a href="{{ URL::to( 'core/users/search') }}" class="btn btn-sm btn-white" onclick="SximoModal(this.href,'Advance Search'); return false;" ><i class=" fa fa-search"></i> Search</a>
 
                 @if(SiteHelpers::isModuleEnabled('users'))
                     <a href="{{ URL::to('tablecols/arrange-cols/users') }}" class="btn btn-sm btn-white" onclick="SximoModal(this.href,'Column Selector'); return false;" ><i class="fa fa-bars"></i> Arrange Columns</a>
@@ -80,14 +80,14 @@
 			<tr>
 				<th class="number" width="30"> No </th>
 				<th width="60"> <input type="checkbox" class="checkall" /></th>
-				<th width="100">Login</th>
-                <th width="150"> Block User</th>
+				
 				@foreach ($tableGrid as $t)
 					@if($t['view'] =='1')
 						<th width="150">{{ $t['label'] }}</th>
 					@endif
 				@endforeach
-
+				<th width="100">Login</th>
+                <th width="150"> Block User</th>
 				<th width="100">{{ Lang::get('core.btn_action') }}</th>
                 <th width="100"> Upload Image</th>
 			  </tr>
@@ -101,16 +101,7 @@
                 <tr>
 					<td width="30"> {{ ++$i }} </td>
 					<td width="50"><input type="checkbox" class="ids" name="ids[]" value="{{ $row->id }}" />  </td>
-					<td>
-						<a href="{{ URL::to('core/users/play/'.$row->id)}}">Login</a>
-					</td>
-                    <td>
-                        @if($row->banned=='Yes')
-                            <a href="{{ URL::to('core/users/unblock/'.$row->id)}}">Unblock</a>
-                        @else
-                            <a href="{{ URL::to('core/users/block/'.$row->id)}}">Block</a>
-                        @endif
-                    </td>
+					
 				 @foreach ($tableGrid as $field)
 
 					 @if($field['view'] =='1')
@@ -151,6 +142,18 @@
 					 @endif
 				 @endforeach
 
+
+				 	<td>
+						<a class="btn btn-primary btn-xs" href="{{ URL::to('core/users/play/'.$row->id)}}">Impersonate</a>
+					</td>
+                    <td>
+                        @if($row->banned=='Yes')
+                            <a class="btn btn-success" href="{{ URL::to('core/users/unblock/'.$row->id)}}">Unblock</a>
+                        @else
+                            <a class="btn btn-danger btn-xs" href="{{ URL::to('core/users/block/'.$row->id)}}">Block</a>
+                        @endif
+                    </td>
+
 				 <td>
 					 	@if($access['is_detail'] ==1)
 						<a href="{{ URL::to('core/users/show/'.$row->id.'?return='.$return)}}" class="tips btn btn-xs btn-white" title="{{ Lang::get('core.btn_view') }}"><i class="fa  fa-search "></i></a>
@@ -161,7 +164,7 @@
 
 
 				</td>
-                <td><a href="{{ URL::to('core/users/upload/'.$row->id)}}">Upload Image</a></td>
+                <td><a class="btn btn-warning btn-xs" href="{{ URL::to('core/users/upload/'.$row->id)}}">Upload Image</a></td>
                 </tr>
 
             @endforeach
