@@ -830,9 +830,17 @@ class ModuleController extends Controller {
     public function postSavetable( Request $request)
     {
         //$this->beforeFilter('csrf', array('on'=>'post'));
-        $id = $request->input('module_id',54);
-        $row = \DB::table('tb_module')->where('module_id', $id)
-                                ->get();
+        $id = $request->input('module_id',null);
+        //bug fix, For location module, module_id is not getting in post
+
+        if(is_null($id)){
+            $row = \DB::table('tb_module')->where('module_name', 'location')
+                ->get();
+        }
+        else{
+            $row = \DB::table('tb_module')->where('module_id', $id)
+                ->get();
+        }
         if(count($row) <= 0){
              return Redirect::to('sximo/module')->with('messagetext','Can not find module')->with('msgstatus','error');         
         }                                
