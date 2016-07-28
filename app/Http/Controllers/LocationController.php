@@ -288,6 +288,8 @@ class LocationController extends Controller {
 
     function postSave( Request $request, $id =null)
     {
+        $form_data['date_opened'] = date('Y-m-d');
+        $form_data['date_closed'] = date('Y-m-d');
 
             $rules = $this->validateForm();
             $validator = Validator::make($request->all(), $rules);
