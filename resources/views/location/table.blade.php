@@ -101,6 +101,12 @@ if (!$colconfigs) {
 
                                     {!! date("m/d/Y", strtotime($value)) !!}
 
+                                @elseif($field['field'] == 'bill_debit_amt')
+
+
+                                   {{number_format($value, 2)}}
+
+                                    
 
                                 @else
                                     {!! $value !!}
