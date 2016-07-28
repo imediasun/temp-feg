@@ -202,6 +202,9 @@ class ManagefreightquotersController extends Controller
         $form_data = array();
         $form_data['loc_to_1'] = 0;
         $form_data['date_submitted'] = date('Y-m-d');
+        $form_data['date_paid'] = date('Y-m-d');
+        $form_data['date_booked'] = date('Y-m-d');
+
         $rules['from_type'] = $rules['to_type'] = $rules['games_per_location'] = $rules['description'] = $rules['dimensions'] = 'required';
 
         if ($to_form_type == 'blank') {
@@ -478,7 +481,7 @@ class ManagefreightquotersController extends Controller
                 $headers .= "From: " . $from . "\r\n" . "X-Mailer: php";
                 $headers .= "MIME-Version: 1.0\r\n";
                 $headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
-                mail($to, $subject, $message, $headers);
+                //mail($to, $subject, $message, $headers);
             }
             return response()->json(array(
                 'status' => 'success',

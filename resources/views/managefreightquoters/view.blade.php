@@ -29,7 +29,9 @@
                         <a href="{{ url()}}/managefreightquoters/paid/{{$row['freight_order_id']}}" onclick="return confirm('Confirm?');"> MARK PAID</a>
                         @endif
                         @if(strpos($row['status'],'Paid'))
-                        <b> on &nbsp&nbsp&nbsp{{ $row['date_paid'] }}</b>
+                        <b> on &nbsp&nbsp&nbsp{{  date("m/d/Y", strtotime($row['date_paid'])) }}</b>
+
+
                         @endif
                 </div>
             </div>
@@ -81,21 +83,22 @@
             <div class="form-group">
                 <label class="label-control col-md-3">Date Submitted</label>
                 <div class="col-md-9">
-                    {{ $row['date_submitted'] }}
+                    {{ date("m/d/Y", strtotime($row['date_submitted'])) }}
+
                 </div>
             </div>
             <div class="form-group">
                 <br/><br/>
                 <label class="label-control col-md-3">Date Booked</label>
                 <div class="col-md-9">
-                    {{ $row['date_booked'] }}
+                    {{ date("m/d/Y", strtotime($row['date_booked'])) }}
                 </div>
             </div>
             <div class="form-group">
                 <br/><br/>
                 <label class="label-control col-md-3">Date Paid</label>
                 <div class="col-md-9">
-                    {{ $row['date_paid'] }}
+                    {{date("m/d/Y", strtotime($row['date_paid'])) }}
                       </div>
             </div>
             <div class="form-group">
@@ -265,6 +268,9 @@
 @endif
 <script>
 $(document).ready(function(){
+
+    $('.date').datepicker({format:'mm/dd/yyyy',autoClose:true})
+    $('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});
     var to_contact_name=<?php echo json_encode($row['to_contact_name']) ?>;
     var email_notes = <?php echo json_encode($row['email_notes']) ?>;
     $("select[id^='location']").jCombo("{{ URL::to('managefreightquoters/comboselect?filter=location:id:id|location_name') }}",
