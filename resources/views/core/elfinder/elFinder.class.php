@@ -124,7 +124,7 @@ class elFinder {
 	const ERROR_NOT_DIR           = 'errNotFolder';
 	const ERROR_NOT_FILE          = 'errNotFile';
 	const ERROR_PERM_DENIED       = 'errPerm';
-	const ERROR_LOCKED            = 'errLocked';        // '"$1" is locked and can not be renamed, moved or removed.'
+	const ERROR_LOCKED            = 'errLocked';        // '"$1" is locked and cannot be renamed, moved or removed.'
 	const ERROR_EXISTS            = 'errExists';        // 'File named "$1" already exists.'
 	const ERROR_INVALID_NAME      = 'errInvName';       // 'Invalid file name.'
 	const ERROR_MKDIR             = 'errMkdir';
@@ -146,7 +146,7 @@ class elFinder {
 	const ERROR_UPLOAD_FILE_MIME  = 'errUploadMime';       // 'File type not allowed.'
 	const ERROR_UPLOAD_TRANSFER   = 'errUploadTransfer';   // '"$1" transfer error.'
 	// const ERROR_ACCESS_DENIED     = 'errAccess';
-	const ERROR_NOT_REPLACE       = 'errNotReplace';       // Object "$1" already exists at this location and can not be replaced with object of another type.
+	const ERROR_NOT_REPLACE       = 'errNotReplace';       // Object "$1" already exists at this location and cannot be replaced with object of another type.
 	const ERROR_SAVE              = 'errSave';
 	const ERROR_EXTRACT           = 'errExtract';
 	const ERROR_ARCHIVE           = 'errArchive';
@@ -441,7 +441,7 @@ class elFinder {
 		$hash   = $init ? 'default folder' : '#'.$target;
 
 		// on init request we can get invalid dir hash -
-		// dir which can not be opened now, but remembered by client,
+		// dir which cannot be opened now, but remembered by client,
 		// so open default dir
 		if ((!$cwd || !$cwd['read']) && $init) {
 			$volume = $this->default;

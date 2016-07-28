@@ -170,7 +170,7 @@ return array(
          * image's width & height style attributes (i.e. if the image's native
          * width is 600 pixels and you specify the image's width as 72 points,
          * the image will have a DPI of 600 in the rendered PDF.  The DPI of
-         * background images can not be overridden and is controlled entirely
+         * background images cannot be overridden and is controlled entirely
          * via this parameter.
          *
          * For the purposes of DOMPDF, pixels per inch (PPI) = dots per inch (DPI).

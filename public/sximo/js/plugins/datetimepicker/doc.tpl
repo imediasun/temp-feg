@@ -575,7 +575,7 @@ $('#_datetimepicker_weekends_disable').datetimepicker({
 		<tr id="mask">
 			<td><a href="#mask">mask</a></td>
 			<td>false</td>
-			<td>Use mask for input. true - automatically generates a mask on the field &#39;format&#39;, Digit from 0 to 9, set the highest possible digit for the value. For example: the first digit of hours can not be greater than 2, and the first digit of the minutes can not be greater than 5</td>
+			<td>Use mask for input. true - automatically generates a mask on the field &#39;format&#39;, Digit from 0 to 9, set the highest possible digit for the value. For example: the first digit of hours cannot be greater than 2, and the first digit of the minutes cannot be greater than 5</td>
 			<td><pre>{mask:&#39;9999/19/39&#39;,format:&#39;Y/m/d&#39;}
 {mask:true,format:&#39;Y/m/d&#39;} // automatically generate a mask 9999/99/99
 {mask:&#39;29:59&#39;,format:&#39;H:i&#39;} //

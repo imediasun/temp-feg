@@ -193,7 +193,7 @@ class closedlocations extends Sximo  {
                 
                 
                 if ($dateDifference > 31) {
-                    $message = "Date range can not be more than 31 days.";
+                    $message = "Date range cannot be more than 31 days.";
                 }
                 else {
                     

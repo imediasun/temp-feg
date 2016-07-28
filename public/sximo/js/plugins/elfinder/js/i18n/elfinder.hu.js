@@ -36,7 +36,7 @@ if (elFinder && elFinder.prototype && typeof(elFinder.prototype.i18) == 'object'
 			'errRead'              : 'Unable to read "$1".',
 			'errWrite'             : 'Unable to write into "$1".',
 			'errPerm'              : 'Engedély megtagadva.',
-			'errLocked'            : '"$1" is locked and can not be renamed, moved or removed.',
+			'errLocked'            : '"$1" is locked and cannot be renamed, moved or removed.',
 			'errExists'            : 'File named "$1" already exists.',
 			'errInvName'           : 'Invalid file name.',
 			'errFolderNotFound'    : 'Folder not found.',

@@ -1272,7 +1272,7 @@ tinymce.create('static tinymce.util.XHR', {
 			if (!o.async)
 				return ready();
 
-			// Wait for response, onReadyStateChange can not be used since it leaks memory in IE
+			// Wait for response, onReadyStateChange cannot be used since it leaks memory in IE
 			t = w.setTimeout(ready, 10);
 		}
 	}
@@ -12993,7 +12993,7 @@ tinymce.create('tinymce.ui.Toolbar:tinymce.ui.Container', {
 		nodeChanged : function(o) {
 			var self = this, selection = self.selection, node;
 
-			// Fix for bug #1896577 it seems that this can not be fired while the editor is loading
+			// Fix for bug #1896577 it seems that this cannot be fired while the editor is loading
 			if (self.initialized) {
 				o = o || {};
 

@@ -856,7 +856,7 @@
 			if (!type) {
 				F.coming = null;
 
-				//If we can not determine content type then drop silently or display next/prev item if looping through gallery
+				//If we cannot determine content type then drop silently or display next/prev item if looping through gallery
 				if (F.current && F.router && F.router !== 'jumpto') {
 					F.current.index = index;
 
