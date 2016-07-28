@@ -101,7 +101,7 @@ function ajaxFilter( id ,url,opt  )
 function ajaxCopy(  id , url )
 {
 	
-	if(confirm('Areu sure Copy selected row(s)'))
+	if(confirm('Are you sure you want to Copy selected row(s)'))
 	{
 		var datas = $( id +'Table :input').serialize();
 			$.post( url+'/copy' ,datas,function( data ) {
@@ -123,7 +123,7 @@ function ajaxCopy(  id , url )
 function ajaxRemove( id, url )
 {
     var datas = $( id +'Table :input').serialize();
-    if(confirm('Are u sure deleting selected row(s)?')) {
+    if(confirm('Are you sure you want to delete the selected row(s)?')) {
 
         $.post( url+'/delete' ,datas,function( data ) {
 
@@ -219,13 +219,13 @@ function notyConfirm(id, url)
 {
 	
 	var n = noty({				
-		text: 'Are u sure deleting selected row(s)?',
+		text: 'Are you sure you want to delete the selected row(s)?',
 		type: 'Confirm',
 		timeout : 50,
 		layout: 'topCenter',
 		
 		buttons: [
-			{addClass: 'btn btn-primary btn-sm', text: 'Ok', onClick: function($noty) {	
+			{addClass: 'btn btn-primary btn-sm', text: 'Ok', onClick: function($noty) {
 					var datas = $( id +'Table :input').serialize();
 					$.post( url+'/destroy' ,datas,function( data ) {
 						if(data.status =='success')

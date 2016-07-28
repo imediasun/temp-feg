@@ -51,7 +51,7 @@
 	
 	 {!! Form::open(array('url'=>'core/groups/delete/', 'class'=>'form-horizontal' ,'id' =>'SximoTable' )) !!}
 	 <div class="table-responsive" style="min-height:300px;">
-    <table class="table table-striped ">
+    <table class="table table-striped table-width-auto">
         <thead>
 			<tr>
 				<th class="number"> No </th>
@@ -70,8 +70,8 @@
 						
             @foreach ($rowData as $row)
                 <tr>
-					<td width="30"> {{ ++$i }} </td>
-					<td width="50"><input type="checkbox" class="ids" name="id[]" value="{{ $row->group_id }}" />  </td>									
+					<td> {{ ++$i }}</td>
+					<td><input type="checkbox" class="ids" name="id[]" value="{{ $row->group_id }}" /></td>									
 				 @foreach ($tableGrid as $field)
 					 @if($field['view'] =='1')
 					 <td>					 
