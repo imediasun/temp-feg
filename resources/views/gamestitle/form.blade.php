@@ -11,7 +11,7 @@
 @endif	
 			{!! Form::open(array('url'=>'gamestitle/save/'.$row['id'], 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'gamestitleFormAjax')) !!}
 			<div class="col-md-12">
-						<fieldset><legend> Create Games Title</legend>
+						<fieldset><legend> Create New Game Title</legend>
 									
 				  <div class="form-group  " > 
 					<label for="Game Title" class=" control-label col-md-4 text-left"> 
