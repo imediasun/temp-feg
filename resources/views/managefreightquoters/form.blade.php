@@ -359,7 +359,7 @@
                         </div>
                         <div class="form-group">
                             <label for="" class="control-label col-md-4 text-left">
-                                Dimention <span id="#"></span></label>
+                                Dimensions <span id="#"></span></label>
 
                             <div class="col-md-6">
                                 <input type="text" name="dimensions[]" id="dimensions"
