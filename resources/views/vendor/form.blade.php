@@ -197,8 +197,8 @@
 				  </div> 					
 				  <div class="form-group  " >
                       <input type='hidden' value='0' name='isgame'>
-					<label for="Isgame" class=" control-label col-md-4 text-left"> 
-					{!! SiteHelpers::activeLang('Isgame', (isset($fields['isgame']['language'])? $fields['isgame']['language'] : array())) !!}	
+					<label for="Parts Vendor" class=" control-label col-md-4 text-left">
+					{!! SiteHelpers::activeLang('Parts Vendor', (isset($fields['isgame']['language'])? $fields['isgame']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
 					  <?php $isgame = explode(",",$row['isgame']); ?>
@@ -213,8 +213,8 @@
 				  </div> 					
 				  <div class="form-group  " >
                       <input type='hidden' value='0' name='ismerch'>
-					<label for="Ismerch" class=" control-label col-md-4 text-left"> 
-					{!! SiteHelpers::activeLang('Ismerch', (isset($fields['ismerch']['language'])? $fields['ismerch']['language'] : array())) !!}	
+					<label for="Merchandise Vendor" class=" control-label col-md-4 text-left">
+					{!! SiteHelpers::activeLang('Merchandise Vendor', (isset($fields['ismerch']['language'])? $fields['ismerch']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
 					  <?php $ismerch = explode(",",$row['ismerch']); ?>
