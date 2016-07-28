@@ -34,8 +34,20 @@
 					 <div class="col-md-2">
 					 	
 					 </div>
-				  </div> 					
-				  <div class="form-group  " > 
+				  </div>
+
+							<div class="form-group  " >
+								<label for="Street2" class=" control-label col-md-4 text-left">
+									{!! SiteHelpers::activeLang('Street2', (isset($fields['street2']['language'])? $fields['street2']['language'] : array())) !!}
+								</label>
+								<div class="col-md-6">
+									{!! Form::text('street2', $row['street2'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
+								</div>
+								<div class="col-md-2">
+
+								</div>
+							</div>
+							<div class="form-group  " >
 					<label for="City" class=" control-label col-md-4 text-left"> 
 					{!! SiteHelpers::activeLang('City', (isset($fields['city']['language'])? $fields['city']['language'] : array())) !!}	
 					</label>
