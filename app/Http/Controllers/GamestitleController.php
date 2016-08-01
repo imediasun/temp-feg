@@ -212,15 +212,21 @@ class GamestitleController extends Controller
     function postCopy(Request $request)
     {
 
+
+
         foreach (\DB::select("SHOW COLUMNS FROM game_title ") as $column) {
             if ($column->Field != 'id')
                 $columns[] = $column->Field;
+
+
         }
         $toCopy = implode(",", $request->input('ids'));
 
 
         $sql = "INSERT INTO game_title (" . implode(",", $columns) . ") ";
+        $columns[0] = "CONCAT('copy',game_title)";
         $sql .= " SELECT " . implode(",", $columns) . " FROM game_title WHERE id IN (" . $toCopy . ")";
+
         \DB::insert($sql);
         return response()->json(array(
             'status' => 'success',
