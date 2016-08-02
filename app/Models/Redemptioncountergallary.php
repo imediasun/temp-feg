@@ -26,4 +26,14 @@ class redemptioncountergallary extends Sximo  {
 	public static function queryGroup(){
 		return "  ";
 	}
+
+	public static function getComboselect($params, $limit = null, $parent = null) {
+		$tableName = $params[0];
+		if($tableName == 'location'){
+			return parent::getUserAssignedLocation($params,$limit,$parent);
+		}
+		else{
+			return parent::getComboselect($params,$limit,$parent);
+		}
+	}
 }

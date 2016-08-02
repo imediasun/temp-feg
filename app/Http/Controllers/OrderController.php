@@ -212,6 +212,7 @@ class OrderController extends Controller
 
         $sql = "INSERT INTO orders (" . implode(",", $columns) . ") ";
         $sql .= " SELECT " . implode(",", $columns) . " FROM orders WHERE id IN (" . $toCopy . ")";
+
         \DB::insert($sql);
         return response()->json(array(
             'status' => 'success',
