@@ -107,7 +107,13 @@ class SbticketController extends Controller {
 			foreach($members_access as $i => $id)
 			{
 				$get_user_id_from_employess = \DB::select("Select user_id FROM employees WHERE id = ".$id ."");
+				//print"<pre>";
+				//print_r($get_user_id_from_employess);
+				if(isset($get_user_id_from_employess[0]->user_id)) {
 				$members_access[$i] = $get_user_id_from_employess[0]->user_id;
+					//echo $members_access[$i]."<br>";
+			}
+
 			}
 
 			if($group_id != 10)
