@@ -294,7 +294,6 @@ function validateTicketCommentsForm()
 
 function validatePost($table)
 {
-
     $request = new Request;
     $str = $this->info['config']['forms'];
 

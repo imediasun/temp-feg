@@ -8,3 +8,5 @@ public/uploads/games/
 Thumbs.db
 composer.lock
 composer.phar
+config/database.php
+public/uploads

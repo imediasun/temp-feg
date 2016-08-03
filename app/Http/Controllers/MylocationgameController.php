@@ -275,13 +275,10 @@ class MylocationgameController extends Controller
     {
         $rules = $this->validateForm();
         $validator = Validator::make($request->all(), $rules);
-        echo"Okay";
         if ($validator->passes()) {
             $data = $this->validatePost('game');
 
             $id = $this->model->insertRow($data, $id);
-
-echo "<br> If Part <br>".$data;
             return response()->json(array(
                 'status' => 'success',
                 'message' => \Lang::get('core.note_success')
@@ -290,7 +287,6 @@ echo "<br> If Part <br>".$data;
         } else {
 
             $message = $this->validateListError($validator->getMessageBag()->toArray());
-            echo"<br> Else Part";
             return response()->json(array(
                 'message' => $message,
                 'status' => 'error'

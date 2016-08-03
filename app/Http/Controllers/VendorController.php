@@ -227,7 +227,7 @@ class VendorController extends Controller {
 
         $sql = "INSERT INTO vendor (".implode(",", $columns).") ";
 
-        $columns[0] = "CONCAT('copy',vendor_name)";
+        $columns[0] = "CONCAT('copy ',vendor_name)";
         $sql .= " SELECT ".implode(",", $columns)." FROM vendor WHERE id IN (".$toCopy.")";
         \DB::insert($sql);
         return response()->json(array(
@@ -238,6 +238,7 @@ class VendorController extends Controller {
 
     function postSave( Request $request, $id =null)
     {
+
         $rules = $this->validateForm();
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
