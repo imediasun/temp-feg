@@ -279,7 +279,6 @@ class MylocationgameController extends Controller
             $data = $this->validatePost('game');
 
             $id = $this->model->insertRow($data, $id);
-
             return response()->json(array(
                 'status' => 'success',
                 'message' => \Lang::get('core.note_success')

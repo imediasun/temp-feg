@@ -212,15 +212,21 @@ class GamestitleController extends Controller
     function postCopy(Request $request)
     {
 
+
+
         foreach (\DB::select("SHOW COLUMNS FROM game_title ") as $column) {
             if ($column->Field != 'id')
                 $columns[] = $column->Field;
+
+
         }
         $toCopy = implode(",", $request->input('ids'));
 
 
         $sql = "INSERT INTO game_title (" . implode(",", $columns) . ") ";
+        $columns[0] = "CONCAT('copy',game_title)";
         $sql .= " SELECT " . implode(",", $columns) . " FROM game_title WHERE id IN (" . $toCopy . ")";
+
         \DB::insert($sql);
         return response()->json(array(
             'status' => 'success',
@@ -230,9 +236,11 @@ class GamestitleController extends Controller
 
     function postSave(Request $request, $id = 0)
     {
+
         $files = array('manual' => Input::file('manual'),'bulletin'=> Input::file('service_bulletin'));
         $rules = $this->validateForm();
      //   $rules['manual']='Required|mimes:pdf';
+        $rules["game_title"]="required|unique:game_title";
         $rules['service_bulletin']='Required|mimes:pdf';
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {

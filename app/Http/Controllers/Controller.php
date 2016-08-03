@@ -294,13 +294,12 @@ function validateTicketCommentsForm()
 
 function validatePost($table)
 {
-
     $request = new Request;
     $str = $this->info['config']['forms'];
 
-    $json = file_get_contents('php://input');
+    /*$json = file_get_contents('php://input');
     $obj = json_decode($json,true);
-    $_POST = $obj;
+    $_POST = $obj;*/
 
     $data = array();
     foreach ($str as $f) {

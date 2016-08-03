@@ -38,8 +38,7 @@ class Sximo extends Model {
         } else {
             $select .= self::queryWhere();
         }
-    //   echo $select." {$params} ". self::queryGroup() ." {$orderConditional}  {$limitConditional} ";
-        //die();
+
         $result = \DB::select($select . " {$params} " . self::queryGroup() . " {$orderConditional}  {$limitConditional} ");
         if ($key == '') {
             $key = '*';
@@ -48,7 +47,7 @@ class Sximo extends Model {
         }
 
         $counter_select = preg_replace('/[\s]*SELECT(.*)FROM/Usi', 'SELECT count(' . $key . ') as total FROM', $select);
-        //total query becomes too huge
+       
         if ($table == "orders") {
             $total = "27000";
         }
@@ -91,6 +90,7 @@ class Sximo extends Model {
     }
 
     public  function insertRow($data, $id) {
+
         $table = with(new static)->table;
         $key = with(new static)->primaryKey;
         if ($id == NULL) {
