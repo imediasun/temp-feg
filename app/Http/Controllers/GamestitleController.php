@@ -236,9 +236,11 @@ class GamestitleController extends Controller
 
     function postSave(Request $request, $id = 0)
     {
+
         $files = array('manual' => Input::file('manual'),'bulletin'=> Input::file('service_bulletin'));
         $rules = $this->validateForm();
      //   $rules['manual']='Required|mimes:pdf';
+        $rules["game_title"]="required|unique:game_title";
         $rules['service_bulletin']='Required|mimes:pdf';
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {

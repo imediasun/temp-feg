@@ -227,7 +227,7 @@ class VendorController extends Controller {
 
         $sql = "INSERT INTO vendor (".implode(",", $columns).") ";
 
-        $columns[0] = "CONCAT('copy',vendor_name)";
+        $columns[0] = "CONCAT('copy ',vendor_name)";
         $sql .= " SELECT ".implode(",", $columns)." FROM vendor WHERE id IN (".$toCopy.")";
         \DB::insert($sql);
         return response()->json(array(
@@ -238,7 +238,30 @@ class VendorController extends Controller {
 
     function postSave( Request $request, $id =null)
     {
+
         $rules = $this->validateForm();
+//        $v = Validator::make($request->all(), [
+//            'Vendor' => 'required|unique:vendor|max:100|min:5'
+//        ]);
+
+//        $vendor = \App\Models\Vendor
+//            ::where("vendor_name", "=", $request->input('vendor_name'))->first();
+
+//        if($vendor != null) {
+
+
+//            $v->errors()->add('Duplicate', 'Duplicate Vendor found!');
+
+//            die("Duplicate vendor found ");
+//            return redirect('Create-Category')
+//                ->withErrors($v)
+//                ->withInput();
+
+//        }
+
+        $rules["vendor_name"]="required|unique:vendor";
+//        print_r($rules);
+//        exit;
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
             $data = $this->validatePost('vendor');
