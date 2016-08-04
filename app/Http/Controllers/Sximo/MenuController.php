@@ -96,10 +96,10 @@ class MenuController extends Controller {
 					->update(array('parent_id'=>'0','ordering'=>$a));
 				$a++;		
 			}
-			return Redirect::to('sximo/menu')
+			return Redirect::to('feg/menu')
 				->with('messagetext', 'Data Has Been Save Successfull')->with('msgstatus','success');
 		} else {
-			return Redirect::to('sximo/menu')
+			return Redirect::to('feg/menu')
 				->with('messagetext', 'The following errors occurred')->with('msgstatus','error');
 
 		}	
@@ -145,11 +145,11 @@ class MenuController extends Controller {
 			$data['allow_guest'] = $request->input('allow_guest');
 			$this->model->insertRow($data , $request->input('menu_id'));
 			
-			return Redirect::to('sximo/menu?pos='.$pos)
+			return Redirect::to('feg/menu?pos='.$pos)
 				->with('messagetext', 'Data Has Been Save Successfull')->with('msgstatus','success');
 
 		} else {
-			return Redirect::to('sximo/menu?pos='.$pos)
+			return Redirect::to('feg/menu?pos='.$pos)
 				->with('messagetext', 'The following errors occurred')->with('msgstatus','error')->withErrors($validator)->withInput();
 
 			
@@ -168,7 +168,7 @@ class MenuController extends Controller {
 		}
 		
 		$this->model->destroy($id);
-		return Redirect::to('sximo/menu')
+		return Redirect::to('feg/menu')
 				->with('messagetext', 'Successfully deleted row!')->with('msgstatus','success');
 
 	}						

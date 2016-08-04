@@ -18,7 +18,7 @@
     </div>
  
  <div class="page-content-wrapper m-t"> 
-@include('feg.module.tab',array('active'=>'config','type'=> $type))
+@include('sximo.module.tab',array('active'=>'config','type'=> $type))
 	
 	
 @if(Session::has('message'))

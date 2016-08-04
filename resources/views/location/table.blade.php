@@ -153,7 +153,7 @@ if (!$colconfigs) {
     </div>
 </div>
 
-@if($setting['inline'] =='true') @include('feg.module.utility.inlinegrid') @endif
+@if($setting['inline'] =='true') @include('sximo.module.utility.inlinegrid') @endif
 <script>
     $(document).ready(function () {
         $('.tips').tooltip();

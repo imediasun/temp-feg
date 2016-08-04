@@ -177,7 +177,7 @@
 @else
     <p style="color:red">Sorry! Location {{ \Session::get('selected_location') }}'s cart is empty..</p>
 @endif
-@if($setting['inline'] =='true') @include('feg.module.utility.inlinegrid') @endif
+@if($setting['inline'] =='true') @include('sximo.module.utility.inlinegrid') @endif
 
 <script>
     $(document).ready(function () {
