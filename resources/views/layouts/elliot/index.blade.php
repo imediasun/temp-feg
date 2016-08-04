@@ -64,7 +64,7 @@
             <ul class="dropdown-menu">
             @if(!Auth::check())
               <li><a href="{{ url('user/login')}}">Sign In</a></li>
-              <li><a href="{{ url('user/register')}}">Sign Up</a></li>
+
             @else  
              
               <li><a href="{{ url('dashboard')}}"><i class="fa fa-desktop"></i> Dashboard</a></li>
@@ -87,7 +87,8 @@
     <div class="container">
       <div class="row">
          <div class="col-md-5">
-             <p> Copyright &copy; 2015 {{ 'FEG' }} . ALL Rights Reserved</p>
+             <p> Copyright &copy;  <?php echo date("Y"); ?> {{ 'FEG' }} . ALL Rights Reserved</p>
+
              <a href="#"> Term of Use </a> / <a href="#"> Privacy Policy </a>
          </div>
          <div class="col-md-7 text-right">

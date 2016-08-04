@@ -9,8 +9,8 @@
 	</div>
 	<div class="sbox-content">
 	<div class="text-center  animated fadeInDown delayp1">
-		<img src="{{ asset('sximo/images/logo-sximo.png')}}" width="70" height="70" />
-	</div>		
+		<img src="{{ asset('sximo/images/backend-logo.png')}}" width="260" height="70" />
+	</div>
  {!! Form::open(array('url'=>'user/create', 'class'=>'form-signup')) !!}
 	    	@if(Session::has('message'))
 				{!! Session::get('message') !!}
