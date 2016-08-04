@@ -10,14 +10,14 @@
 	  
         <ul class="breadcrumb">
           <li><a href="{{ URL::to('dashboard') }}"> Dashboard </a></li>
-          <li><a href="{{ URL::to('sximo/module') }}"> Module </a></li>
+          <li><a href="{{ URL::to('feg/module') }}"> Module </a></li>
           <li class="active">  MySQL Editor  </li>
         </ul>     
 	  	  
     </div>
 
 	 <div class="page-content-wrapper m-t"> 
-	@include('sximo.module.tab',array('active'=>'sql'))
+	@include('feg.module.tab',array('active'=>'sql'))
 
 	@if(Session::has('message'))
 		   {{ Session::get('message') }}
@@ -25,7 +25,7 @@
 <div class="sbox">
  <div class="sbox-title"><h5> MySQL Statment Editor  </h5></div>
  <div class="sbox-content">
- {!! Form::open(array('url'=>'sximo/module/savesql/'.$module_name, 'class'=>'form-vertical ')) !!}
+ {!! Form::open(array('url'=>'feg/module/savesql/'.$module_name, 'class'=>'form-vertical ')) !!}
  <div class="infobox infobox-info fade in">
   <button type="button" class="close" data-dismiss="alert"> x </button>  
   <p> <strong>Tips !</strong> U can use query builder tool such <a href="http://code.google.com/p/sqlyog/downloads/list" target="_blank">SQL YOG </a> , PHP MyAdmin , Maestro etc to build your query statment and preview the result , <br /> then copy the syntac here </p>	

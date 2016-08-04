@@ -6,7 +6,7 @@
 			<a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Clear Search" onclick="reloadData('#{{ $pageModule }}','manageservicerequests/data?search=')"><i class="fa fa-trash-o"></i> Clear Search </a>
 			<a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Reload Data" onclick="reloadData('#{{ $pageModule }}','manageservicerequests/data?return={{ $return }}')"><i class="fa fa-refresh"></i></a>
 			@if(Session::get('gid') ==1)
-			<a href="{{ url('sximo/module/config/'.$pageModule) }}" class="btn btn-xs btn-white tips" title=" {{ Lang::get('core.btn_config') }}" ><i class="fa fa-cog"></i></a>
+			<a href="{{ url('feg/module/config/'.$pageModule) }}" class="btn btn-xs btn-white tips" title=" {{ Lang::get('core.btn_config') }}" ><i class="fa fa-cog"></i></a>
 			@endif
 		</div>
 	</div>
@@ -20,6 +20,8 @@
     <table class="table table-striped  " id="{{ $pageModule }}Table">
         <thead>
 			<tr>
+
+
 				<th width="50"> No </th>
 				@if($setting['view-method']=='expand') <th>  </th> @endif
 				<?php foreach ($tableGrid as $t) :
@@ -135,7 +137,7 @@
 	</div>
 </div>
 
-	@if($setting['inline'] =='true') @include('sximo.module.utility.inlinegrid') @endif
+	@if($setting['inline'] =='true') @include('feg.module.utility.inlinegrid') @endif
 <script>
 $(document).ready(function() {
 	$('.tips').tooltip();

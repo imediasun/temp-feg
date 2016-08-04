@@ -30,10 +30,10 @@
 		@endforeach
 	</ul>		
 <div class="block-content">
-	@include('sximo.config.tab')	
+	@include('sximo.config.tab')
 <div class="tab-content m-t">
 	  <div class="tab-pane active use-padding" id="info">	
-	 {!! Form::open(array('url'=>'sximo/config/email/', 'class'=>'form-vertical row')) !!}
+	 {!! Form::open(array('url'=>'feg/config/email/', 'class'=>'form-vertical row')) !!}
 	
 	<div class="col-sm-6 animated fadeInRight">
 		<div class="sbox  "> 

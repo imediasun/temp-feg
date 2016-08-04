@@ -19,26 +19,26 @@ $(document).ready(function(){
 		echo "\$('.database').hide(); \$('.datalist').hide()";
 	}?>	
 			
-	$("#lookup_table").jCombo("{{ URL::to('sximo/module/combotable') }}" , {
+	$("#lookup_table").jCombo("{{ URL::to('feg/module/combotable') }}" , {
 		selected_value : "<?php echo $f['option']['lookup_table'];?>" ,
 		initial_text : ' Select Table',
 		
 	});
 
-	$("#lookup_key").jCombo("{{ URL::to('sximo/module/combotablefield') }}?table=",
+	$("#lookup_key").jCombo("{{ URL::to('feg/module/combotablefield') }}?table=",
 	{ selected_value : "<?php echo $f['option']['lookup_key'];?>", parent: "#lookup_table", initial_text : ' Primary Key' });
 
 	<?php $lv = explode("|", $f['option']['lookup_value']); ?>
 
 	
 	
-		$("#lookup_value1").jCombo("{{ URL::to('sximo/module/combotablefield') }}?table=",
+		$("#lookup_value1").jCombo("{{ URL::to('feg/module/combotablefield') }}?table=",
 		{ selected_value : "<?php echo (isset($lv[0]) ? $lv[0] : '');?>", parent: "#lookup_table",   initial_text : ' Display Text'}); 
 		
-		$("#lookup_value2").jCombo("{{ URL::to('sximo/module/combotablefield') }}?table=",
+		$("#lookup_value2").jCombo("{{ URL::to('feg/module/combotablefield') }}?table=",
 		{ selected_value : "<?php echo (isset($lv[1]) ? $lv[1] : '');?>", parent: "#lookup_table",   initial_text : ' Display Text'}); 
 		
-		$("#lookup_value3").jCombo("{{ URL::to('sximo/module/combotablefield') }}?table=",
+		$("#lookup_value3").jCombo("{{ URL::to('feg/module/combotablefield') }}?table=",
 		{ selected_value : "<?php echo (isset($lv[2]) ? $lv[2] : '');?>", parent: "#lookup_table",   initial_text : ' Display Text'}); 		
 	
 	$('a.addC').relCopy({});		
@@ -95,7 +95,7 @@ $(document).ready(function(){
 	}	
 </script>
 
- {!! Form::open(array('url'=>'sximo/module/saveformfield/'.$module_name, 'class'=>'form-horizontal')) !!}
+ {!! Form::open(array('url'=>'feg/module/saveformfield/'.$module_name, 'class'=>'form-horizontal')) !!}
 <input type="hidden" name="alias" value="<?php echo $f['alias'];?>" />
 <input type="hidden" name="field" value="<?php echo $f['field'];?>" />	
 <input type="hidden" name="label" value="<?php echo $f['label'];?>" />	

@@ -77,8 +77,8 @@
 						</td>
 						<td>
 							<?php $info = 'field='.$column->Field.'&type='.$type.'&lenght='.$length.'&default='.$column->Default.'&notnull='.$column->Null.'&key='.$column->Key.'&ai='.$column->Extra; ?>
-							<a href="{{ URL::TO('sximo/tables/tablefieldedit/'.$table.'?'.$info) }}" class="btn btn-xs btn-primary" onclick="SximoModal(this.href,'Edit New Column : {{$column->Field}} '); return false;" ><i class="fa fa-edit "></i></a>
-							<a href="{{ URL::TO('sximo/tables/tablefieldremove/'.$table.'/'.$column->Field) }}" rel="#field-{{ $column->Field }}" class="removedField  btn btn-xs btn-danger"><i class="fa fa-minus"></i></a>
+							<a href="{{ URL::TO('feg/tables/tablefieldedit/'.$table.'?'.$info) }}" class="btn btn-xs btn-primary" onclick="SximoModal(this.href,'Edit New Column : {{$column->Field}} '); return false;" ><i class="fa fa-edit "></i></a>
+							<a href="{{ URL::TO('feg/tables/tablefieldremove/'.$table.'/'.$column->Field) }}" rel="#field-{{ $column->Field }}" class="removedField  btn btn-xs btn-danger"><i class="fa fa-minus"></i></a>
 						</td>
 										
 					</tr>
@@ -125,7 +125,7 @@
 			<hr />
 			<button type="submit" class="btn btn-xs btn-primary"> Save Table Change(s)</button>
 		@else
-		<a href="{{ URL::TO('sximo/tables/tablefieldedit/'.$table) }}" class="btn btn-xs btn-info" onclick="SximoModal(this.href,'Add New Column'); return false;" ><i class="fa fa-plus"></i> Add New Field</a>
+		<a href="{{ URL::TO('feg/tables/tablefieldedit/'.$table) }}" class="btn btn-xs btn-info" onclick="SximoModal(this.href,'Add New Column'); return false;" ><i class="fa fa-plus"></i> Add New Field</a>
 		@endif	
 
 {!! Form::close() !!}				
@@ -183,7 +183,7 @@ function showResponse(data)  {
 	
 	if(data.status == 'success')
 	{
-		window.location.href = '{{ URL::TO("sximo/tables") }}';
+		window.location.href = '{{ URL::TO("feg/tables") }}';
 		
 	} else {
 		alert(data.message);

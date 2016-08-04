@@ -9,14 +9,14 @@
       </div>
       <ul class="breadcrumb">
         <li><a href="{{ URL::to('dashboard') }}"> Dashboard </a></li>
-		<li><a href="{{ URL::to('sximo/module') }}"> Module </a></li>
+		<li><a href="{{ URL::to('feg/module') }}"> Module </a></li>
         <li class="active"> Table Editor </li>
       </ul>		  
 	  
     </div>
 
 	 <div class="page-content-wrapper m-t"> 
-	@include('sximo.module.tab',array('active'=>'table','type'=>$type))
+	@include('feg.module.tab',array('active'=>'table','type'=>$type))
 
 
 
@@ -24,7 +24,7 @@
        {{ Session::get('message') }}
 @endif
 
- {!! Form::open(array('url'=>'sximo/module/savetable/'.$module_name, 'class'=>'form-horizontal')) !!}
+ {!! Form::open(array('url'=>'feg/module/savetable/'.$module_name, 'class'=>'form-horizontal')) !!}
 <div class="sbox">
 	<div class="sbox-title"><h5> Table Grid  </h5></div>
 	<div class="sbox-content">	
@@ -72,7 +72,7 @@
 				</td>
 				<td >
 				<span  title="Lookup Display" 
-					onclick="SximoModal('{{ url('sximo/module/conn/'.$row->module_id.'?field='.$rows['field'].'&alias='.$rows['alias']) }}' ,' Connect Field : {{ $rows['field']}} ' )"
+					onclick="SximoModal('{{ url('feg/module/conn/'.$row->module_id.'?field='.$rows['field'].'&alias='.$rows['alias']) }}' ,' Connect Field : {{ $rows['field']}} ' )"
 					>
 						<i class="fa fa-external-link"></i>
 					</span>

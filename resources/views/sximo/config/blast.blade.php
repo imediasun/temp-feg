@@ -10,7 +10,7 @@
       </div>
 
       <ul class="breadcrumb">
-       <li><a href="{{ URL::to('sximo/dashboard') }}">{{ Lang::get('core.home') }}</a></li>
+       <li><a href="{{ URL::to('feg/dashboard') }}">{{ Lang::get('core.home') }}</a></li>
         <li class="active">{{ Lang::get('core.t_blastemail') }}  </li>
       </ul>
     </div>
@@ -22,7 +22,7 @@
     
     <!-- Start blast email -->
 
-{!! Form::open(array('url'=>'sximo/config/doblast/', 'class'=>'form-horizontal ','parsley-validate'=>' ' ,'novalidate'=>' ')) !!}
+{!! Form::open(array('url'=>'feg/config/doblast/', 'class'=>'form-horizontal ','parsley-validate'=>' ' ,'novalidate'=>' ')) !!}
           <div class="form-group  " >
           <label for="ipt" class=" control-label col-md-3">  </label>
           <div class="col-md-12">

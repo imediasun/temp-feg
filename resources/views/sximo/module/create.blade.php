@@ -11,7 +11,7 @@
 
       <ul class="breadcrumb">
         <li><a href="{{ URL::to('dashboard') }}"> Dashboard </a></li>
-		<li><a href="{{ URL::to('sximo/module') }}">{{ Lang::get('core.t_module') }}</a></li>
+		<li><a href="{{ URL::to('feg/module') }}">{{ Lang::get('core.t_module') }}</a></li>
         <li class="active"> {{ Lang::get('core.create') }} </li>
       </ul>
 	</div>  
@@ -24,7 +24,7 @@
 	 <div class="page-content-wrapper m-t">  
 		
 
- {!! Form::open(array('url'=>'sximo/module/create/', 'class'=>'form-horizontal', 'parsley-validate'=>'','novalidate'=>'')) !!}
+ {!! Form::open(array('url'=>'feg/module/create/', 'class'=>'form-horizontal', 'parsley-validate'=>'','novalidate'=>'')) !!}
 
 		<div class="sbox   animated fadeInUp"> 
 			<div class="sbox-title">  </div>

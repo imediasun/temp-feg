@@ -38,7 +38,7 @@
                                 class="caret"></i></a>
                     <ul class="dropdown-menu dropdown-menu-right icons-right">
 
-                        <li><a href="{{ URL::to('sximo/config')}}"><i
+                        <li><a href="{{ URL::to('feg/config')}}"><i
                                         class="fa  fa-wrench"></i> {{ Lang::get('core.m_setting') }}</a></li>
                         <li><a href="{{ URL::to('core/users')}}"><i
                                         class="fa fa-user"></i> {{ Lang::get('core.m_users') }}
@@ -52,11 +52,11 @@
                                         class="fa fa-copy"></i> {{ Lang::get('core.m_pagecms')}}</a></li>
 
                         <li class="divider"></li>
-                        <li><a href="{{ URL::to('sximo/module')}}"><i
+                        <li><a href="{{ URL::to('feg/module')}}"><i
                                         class="fa fa-cogs"></i> {{ Lang::get('core.m_codebuilder') }}</a></li>
-                        <li><a href="{{ URL::to('sximo/tables')}}"><i class="icon-database"></i> Database Tables </a>
+                        <li><a href="{{ URL::to('feg/tables')}}"><i class="icon-database"></i> Database Tables </a>
                         </li>
-                        <li><a href="{{ URL::to('sximo/menu')}}"><i
+                        <li><a href="{{ URL::to('feg/menu')}}"><i
                                         class="fa fa-sitemap"></i> {{ Lang::get('core.m_menu') }}</a></li>
                         <li class="divider"></li>
                         <li><a href="{{ URL::to('core/template')}}"><i class="fa fa-desktop"></i> Template Guide </a>

@@ -10,19 +10,19 @@
       </div>
       <ul class="breadcrumb">
         <li><a href="{{ URL::to('dashboard') }}"> Dashboard </a></li>
-		<li><a href="{{ URL::to('sximo/module') }}"> Module </a></li>
+		<li><a href="{{ URL::to('feg/module') }}"> Module </a></li>
         <li class="active"> Permission Editor </li>
       </ul>		  
 	  
     </div>
 	<div class="page-content-wrapper m-t"> 
-	@include('sximo.module.tab',array('active'=>'permission','type'=>$type))
+	@include('feg.module.tab',array('active'=>'permission','type'=>$type))
 
 @if(Session::has('message'))
        {{ Session::get('message') }}
 @endif
 
- {!! Form::open(array('url'=>'sximo/module/savepermission/'.$module_name, 'class'=>'form-horizontal')) !!}
+ {!! Form::open(array('url'=>'feg/module/savepermission/'.$module_name, 'class'=>'form-horizontal')) !!}
 
 <div class="sbox">
 	<div class="sbox-title"><h5> Module Permission </h5></div>

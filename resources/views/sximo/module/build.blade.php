@@ -1,4 +1,4 @@
- {!! Form::open(array('url'=>'sximo/module/dobuild/'.$module_name, 'class'=>'form-horizontal')) !!}
+ {!! Form::open(array('url'=>'feg/module/dobuild/'.$module_name, 'class'=>'form-horizontal')) !!}
 
   <div class="form-group">
     <label for="ipt" class=" control-label col-md-4">Controller </label>
