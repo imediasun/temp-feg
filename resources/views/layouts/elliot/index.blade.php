@@ -64,7 +64,7 @@
             <ul class="dropdown-menu">
             @if(!Auth::check())
               <li><a href="{{ url('user/login')}}">Sign In</a></li>
-              <li><a href="{{ url('user/register')}}">Sign Up</a></li>
+
             @else  
              
               <li><a href="{{ url('dashboard')}}"><i class="fa fa-desktop"></i> Dashboard</a></li>
