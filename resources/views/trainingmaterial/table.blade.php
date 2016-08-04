@@ -4,7 +4,7 @@
 		<h5> <i class="fa fa-table"></i> </h5>
 		<div class="sbox-tools" >
 				@if(Session::get('gid') ==1)
-			<a href="{{ url('sximo/module/config/'.$pageModule) }}" class="btn btn-xs btn-white tips" title=" {{ Lang::get('core.btn_config') }}" ><i class="fa fa-cog"></i></a>
+			<a href="{{ url('feg/module/config/'.$pageModule) }}" class="btn btn-xs btn-white tips" title=" {{ Lang::get('core.btn_config') }}" ><i class="fa fa-cog"></i></a>
 			@endif
 		</div>
 	</div>

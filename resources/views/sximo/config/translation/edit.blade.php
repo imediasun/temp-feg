@@ -17,7 +17,7 @@
 
 
  	<div class="page-content-wrapper m-t">  
- 	@include('feg.config.tab',array('active'=>'translation'))
+ 	@include('sximo.config.tab',array('active'=>'translation'))
 	@if(Session::has('message'))
 	  
 		   {{ Session::get('message') }}

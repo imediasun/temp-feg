@@ -16,7 +16,7 @@
 	  
     </div>
 	<div class="page-content-wrapper m-t"> 
-	@include('feg.module.tab',array('active'=>'form'))
+	@include('sximo.module.tab',array('active'=>'form'))
 
 
 @if(Session::has('message'))

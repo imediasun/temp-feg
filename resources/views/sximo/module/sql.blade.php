@@ -17,7 +17,7 @@
     </div>
 
 	 <div class="page-content-wrapper m-t"> 
-	@include('feg.module.tab',array('active'=>'sql'))
+	@include('sximo.module.tab',array('active'=>'sql'))
 
 	@if(Session::has('message'))
 		   {{ Session::get('message') }}
