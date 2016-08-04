@@ -33,7 +33,7 @@
   <div class="sbox  "> 
   <div class="sbox-title"></div>
   <div class="sbox-content"> 
-		 {!! Form::open(array('url'=>'sximo/config/save/', 'class'=>'form-horizontal row', 'files' => true)) !!}
+		 {!! Form::open(array('url'=>'feg/config/save/', 'class'=>'form-horizontal row', 'files' => true)) !!}
 
 		<div class="col-sm-6 animated fadeInRight ">
 		  <div class="form-group">

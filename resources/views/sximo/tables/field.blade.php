@@ -1,4 +1,4 @@
-{!! Form::open(array('url'=>'sximo/tables/tablefieldsave/'.$table, 'class'=>'form-horizontal','id'=>'columnTable' )) !!}
+{!! Form::open(array('url'=>'feg/tables/tablefieldsave/'.$table, 'class'=>'form-horizontal','id'=>'columnTable' )) !!}
 	<input type="hidden" value="{{ isset($field) ? $field : ''}}" name="currentfield">
 	<div class="form-group">
 		<label class="col-md-4">Column Name </label>
@@ -79,7 +79,7 @@ function showResponse(data)  {
 	
 	if(data.status == 'success')
 	{
-		url = "{{ URL::TO('sximo/tables/tableconfig/'.$table) }}";	
+		url = "{{ URL::TO('feg/tables/tableconfig/'.$table) }}";
 		$.get( url , function( data ) {
 			$('#sximo-modal').modal('hide');
 			$( ".tableconfig" ).html( data );

@@ -108,10 +108,10 @@ Route::group(['middleware' => 'auth' , 'middleware'=>'sximoauth'], function()
 {
 
 	Route::controllers([
-		'sximo/menu'		=> 'Sximo\MenuController',
-		'sximo/config' 		=> 'Sximo\ConfigController',
-		'sximo/module' 		=> 'Sximo\ModuleController',
-		'sximo/tables'		=> 'Sximo\TablesController'
+		'feg/menu'		=> 'Sximo\MenuController',
+		'feg/config' 		=> 'Sximo\ConfigController',
+		'feg/module' 		=> 'Sximo\ModuleController',
+		'feg/tables'		=> 'Sximo\TablesController'
 	]);
 
 

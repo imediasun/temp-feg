@@ -35,7 +35,7 @@
 	  <div class="tab-pane active use-padding row" id="info">	
 
 
- {!! Form::open(array('url'=>'sximo/config/login/', 'class'=>'form-horizontal')) !!}
+ {!! Form::open(array('url'=>'feg/config/login/', 'class'=>'form-horizontal')) !!}
 
 	<div class="col-sm-6">
 		<div class="sbox   animated fadeInRight"> 

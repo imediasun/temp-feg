@@ -17,7 +17,7 @@
 
 
  	<div class="page-content-wrapper m-t">  
- 	@include('sximo.config.tab',array('active'=>'translation'))
+ 	@include('feg.config.tab',array('active'=>'translation'))
 	@if(Session::has('message'))
 	  
 		   {{ Session::get('message') }}
@@ -43,12 +43,12 @@
 		@foreach($files as $f)
 			@if($f != "." and $f != ".." and $f != 'info.json')
 			<li @if($file == $f) class="active" @endif  >
-			<a href="{{ URL::to('sximo/config/translation?edit='.$lang.'&file='.$f)}}">{{ $f }} </a></li>
+			<a href="{{ URL::to('feg/config/translation?edit='.$lang.'&file='.$f)}}">{{ $f }} </a></li>
 			@endif
 		@endforeach
 		</ul>
 		<hr />
-		 {!! Form::open(array('url'=>'sximo/config/savetranslation/', 'class'=>'form-vertical ')) !!}
+		 {!! Form::open(array('url'=>'feg/config/savetranslation/', 'class'=>'form-vertical ')) !!}
 		<table class="table table-striped">
 			<thead>
 				<tr>
