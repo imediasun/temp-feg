@@ -12,7 +12,7 @@
                onclick="reloadData('#{{ $pageModule }}','gamestitle/data?return={{ $return }}')"><i
                         class="fa fa-refresh"></i></a>
             @if(Session::get('gid') ==1)
-                <a href="{{ url('sximo/module/config/'.$pageModule) }}" class="btn btn-xs btn-white tips"
+                <a href="{{ url('feg/module/config/'.$pageModule) }}" class="btn btn-xs btn-white tips"
                    title=" {{ Lang::get('core.btn_config') }}"><i class="fa fa-cog"></i></a>
             @endif
         </div>

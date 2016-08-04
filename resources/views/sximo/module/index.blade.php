@@ -16,7 +16,7 @@
 					<div class="col-sm-3 b-r  p-sm ">
 						<span class="pull-left m-r-sm text-info"><i class="fa fa-plus-circle"></i></span>
 
-						<a href="{{ URL::to('sximo/module/create') }}" class="clear">
+						<a href="{{ URL::to('feg/module/create') }}" class="clear">
 							<span class="h3 block m-t-xs"><strong> {{ Lang::get('core.btn_create') }} Module </strong>
 							</span> <small class="text-muted text-uc"> {{ Lang::get('core.fr_createmodule') }}  </small>
 						</a>
@@ -30,14 +30,14 @@
 					</div>				
 					<div class="col-sm-3 b-r  p-sm">
 						<span class="pull-left m-r-sm text-warning"><i class="fa fa-download"></i></span>
-						<a href="{{ URL::to('sximo/module/package') }}" class="clear post_url">
+						<a href="{{ URL::to('feg/module/package') }}" class="clear post_url">
 							<span class="h3 block m-t-xs"><strong>{{ Lang::get('core.btn_backup') }} Module</strong>
 							</span> <small class="text-muted text-uc"> {{ Lang::get('core.fr_backupmodule') }} </small> 
 						</a>
 					</div>					
 					<div class="col-sm-6 col-md-3 b-r  p-sm">
 						<span class="pull-left m-r-sm text-danger"><i class="icon-database"></i></span>
-						<a href="{{ URL::to('sximo/tables') }}" >
+						<a href="{{ URL::to('feg/tables') }}" >
 							<span class="h3 block m-t-xs"><strong>Database</strong>
 							</span> <small class="text-muted text-uc"> Manage Database Tables </small> 
 						</a>
@@ -52,7 +52,7 @@
 		   {{ Session::get('message') }}
 	@endif	
       <div class="white-bg p-sm m-b unziped" style=" border:solid 1px #ddd; display:none;">
-	   {!! Form::open(array('url'=>'sximo/module/install/', 'class'=>'breadcrumb-search','files' => true , 'parsley-validate'=>'','novalidate'=>' ')) !!}
+	   {!! Form::open(array('url'=>'feg/module/install/', 'class'=>'breadcrumb-search','files' => true , 'parsley-validate'=>'','novalidate'=>' ')) !!}
 		<h3>Select File ( Module zip installer ) </h3>
         <p>  <input type="file" name="installer" required style="float:left;">  <button type="submit" class="btn btn-primary btn-xs" style="float:left;"  ><i class="icon-upload"></i> Install</button></p>
         </form>
@@ -60,11 +60,11 @@
       </div>
 
  	<ul class="nav nav-tabs" style="margin-bottom:10px;">
-	  <li  @if($type =='addon') class="active" @endif><a href="{{ URL::to('sximo/module')}}"> {{ Lang::get('core.tab_installed') }}  </a></li>
-	  <li @if($type =='core') class="active" @endif><a href="{{ URL::to('sximo/module?t=core')}}">{{ Lang::get('core.tab_core') }}</a></li>
+	  <li  @if($type =='addon') class="active" @endif><a href="{{ URL::to('feg/module')}}"> {{ Lang::get('core.tab_installed') }}  </a></li>
+	  <li @if($type =='core') class="active" @endif><a href="{{ URL::to('feg/module?t=core')}}">{{ Lang::get('core.tab_core') }}</a></li>
 	</ul>     
 
-	 {!! Form::open(array('url'=>'sximo/module/package#', 'class'=>'form-horizontal' ,'ID' =>'SximoTable' )) !!}
+	 {!! Form::open(array('url'=>'feg/module/package#', 'class'=>'form-horizontal' ,'ID' =>'SximoTable' )) !!}
 	<div class="table-responsive ibox-content" style="min-height:400px;">
 	@if(count($rowData) >=1) 
 		<table class="table table-striped ">
@@ -92,11 +92,11 @@
 						@if($type != 'core')
 						<li><a href="{{ URL::to($row->module_name)}}"><i class="icon-grid"></i> {{ Lang::get('core.btn_view') }} Module </a></li>
 						@endif
-						<li><a href="{{ URL::to('sximo/module/config/'.$row->module_name)}}"><i class="icon-pencil3"></i> {{ Lang::get('core.btn_edit') }}</a></li>						
+						<li><a href="{{ URL::to('feg/module/config/'.$row->module_name)}}"><i class="icon-pencil3"></i> {{ Lang::get('core.btn_edit') }}</a></li>
 						@if($type != 'core')
-						<li><a href="javascript://ajax" onclick="SximoConfirmDelete('{{ URL::to('sximo/module/destroy/'.$row->module_id)}}')"><i class="icon-bubble-trash"></i> {{ Lang::get('core.btn_remove') }}</a></li>
+						<li><a href="javascript://ajax" onclick="SximoConfirmDelete('{{ URL::to('feg/module/destroy/'.$row->module_id)}}')"><i class="icon-bubble-trash"></i> {{ Lang::get('core.btn_remove') }}</a></li>
 						<li class="divider"></li>
-						<li><a href="{{ URL::to('sximo/module/rebuild/'.$row->module_id)}}"><i class="icon-spinner7"></i> Rebuild All Codes</a></li>
+						<li><a href="{{ URL::to('feg/module/rebuild/'.$row->module_id)}}"><i class="icon-spinner7"></i> Rebuild All Codes</a></li>
 						@endif
 					</ul>
 				</div>					
@@ -118,7 +118,7 @@
 		
 		<p class="text-center" style="padding:50px 0;">{{ Lang::get('core.norecord') }} 
 		<br /><br />
-		<a href="{{ URL::to('sximo/module/create')}}" class="btn btn-default "><i class="icon-plus-circle2"></i> New module </a>
+		<a href="{{ URL::to('feg/module/create')}}" class="btn btn-default "><i class="icon-plus-circle2"></i> New module </a>
 		 </p>	
 	@endif
 	</div>	

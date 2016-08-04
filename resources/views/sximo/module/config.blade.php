@@ -11,7 +11,7 @@
 
       <ul class="breadcrumb">
         <li><a href="{{ URL::to('dashboard') }}"> Dashboard </a></li>
-		<li><a href="{{ URL::to('sximo/module') }}"> Module </a></li>
+		<li><a href="{{ URL::to('fegd/module') }}"> Module </a></li>
         <li class="active"> Basic Info </li>
       </ul>	  
 	  
@@ -33,7 +33,7 @@
 	<div class="sbox-title"><h5> Basic Info <small> Information of module </small> </h5></div>
 	<div class="sbox-content">	
 	<div class="col-md-6">
-	{!! Form::open(array('url'=>'sximo/module/saveconfig/'.$module_name, 'class'=>'form-horizontal ')) !!}
+	{!! Form::open(array('url'=>'feg/module/saveconfig/'.$module_name, 'class'=>'form-horizontal ')) !!}
 	<input  type='text' name='module_id' id='module_id'  value='{{ $row->module_id }}'  style="display:none; " />
   	<fieldset>
 		<legend> Module Info </legend>	
@@ -115,7 +115,7 @@
  <div class="col-sm-6 col-md-6"> 
 
  @if($type !='report' && $type !='generic')
-  {!! Form::open(array('url'=>'sximo/module/savesetting/'.$module_name, 'class'=>'form-horizontal ')) !!}
+  {!! Form::open(array('url'=>'feg/module/savesetting/'.$module_name, 'class'=>'form-horizontal ')) !!}
   <input  type='text' name='module_id' id='module_id'  value='{{ $row->module_id }}'  style="display:none; " />
   	<fieldset>
 		<legend> Module Setting </legend>

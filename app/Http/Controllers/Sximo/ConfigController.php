@@ -22,7 +22,7 @@ class ConfigController extends Controller {
 	public function getIndex()
 	{
 		$this->data['active'] = '';
-		return view('sximo.config.index',$this->data);	
+		return view('sximo.config.index',$this->data);
 	}
 
 
@@ -82,9 +82,9 @@ class ConfigController extends Controller {
 			$fp=fopen($filename,"w+"); 
 			fwrite($fp,$val);
 			fclose($fp); 
-			return Redirect::to('sximo/config')->with('messagetext','Setting Has Been Save Successful')->with('msgstatus','success');
+			return Redirect::to('feg/config')->with('messagetext','Setting Has Been Save Successful')->with('msgstatus','success');
 		} else {
-			return Redirect::to('sximo/config')->with('messagetext', 'The following errors occurred')->with('msgstatus','success')
+			return Redirect::to('feg/config')->with('messagetext', 'The following errors occurred')->with('msgstatus','success')
 			->withErrors($validator)->withInput();
 		}			
 	
@@ -106,7 +106,7 @@ class ConfigController extends Controller {
 			'resetEmail'	=> 	file_get_contents($resetEmail),
 			'active'		=> 'email',
 		);	
-		return view('sximo.config.email',$this->data);		
+		return view('sximo.config.email',$this->data);
 	
 	}
 	
@@ -132,11 +132,11 @@ class ConfigController extends Controller {
 			fwrite($fp,$_POST['resetEmail']); 
 			fclose($fp);
 			
-			return Redirect::to('sximo/config/email')->with('messagetext', 'Email Has Been Updated')->with('msgstatus','success');	
+			return Redirect::to('feg/config/email')->with('messagetext', 'Email Has Been Updated')->with('msgstatus','success');
 			
 		}	else {
 
-			return Redirect::to('sximo/config/email')->with('messagetext', 'The following errors occurred')->with('msgstatus','success')
+			return Redirect::to('feg/config/email')->with('messagetext', 'The following errors occurred')->with('msgstatus','success')
 			->withErrors($validator)->withInput();
 		}
 	
@@ -154,7 +154,7 @@ class ConfigController extends Controller {
 		);
 		
 	
-		return view('sximo.config.security',$this->data);		
+		return view('sximo.config.security',$this->data);
 	
 	}	
 	
@@ -198,9 +198,9 @@ class ConfigController extends Controller {
 			$fp=fopen($filename,"w+"); 
 			fwrite($fp,$val); 
 			fclose($fp); 
-			return Redirect::to('sximo/config/security')->with('messagetext','Setting Has Been Save Successful')->with('msgstatus','success');
+			return Redirect::to('feg/config/security')->with('messagetext','Setting Has Been Save Successful')->with('msgstatus','success');
 		} else {
-			return Redirect::to('sximo/config/security')->with('messagetext', 'The following errors occurred')->with('msgstatus','error')
+			return Redirect::to('feg/config/security')->with('messagetext', 'The following errors occurred')->with('msgstatus','error')
 			->withErrors($validator)->withInput();
 		}	
 	}
@@ -214,7 +214,7 @@ class ConfigController extends Controller {
 			'pageNote'	=> 'Documentation',
 			'active'	=> 'log'
 		);	
-		return view('sximo.config.log',$this->data);	
+		return view('sximo.config.log',$this->data);
 	}
 		
 	
@@ -243,7 +243,7 @@ class ConfigController extends Controller {
 			}
 		}		
 
-		return Redirect::to('sximo/config/log')->with('messagetext','Cache has been cleared !')->with('msgstatus','success');	
+		return Redirect::to('feg/config/log')->with('messagetext','Cache has been cleared !')->with('msgstatus','success');
 	}
 	
 	function removeDir($dir) {
@@ -287,7 +287,7 @@ class ConfigController extends Controller {
 		
 		}
 
-		return view('sximo.config.translation.'.$template,$this->data);	
+		return view('sximo.config.translation.'.$template,$this->data);
 	}
 	
 	public function getAddtranslation()
@@ -323,10 +323,10 @@ class ConfigController extends Controller {
 					copy( $template .'/resources/lang/en/'.$f, $template .'/resources/lang/'.$folder.'/'.$f);
 				}
 			}
-			return Redirect::to('sximo/config/translation')->with('messagetect','New Translation has been added !')->with('msgstatus','success');	;			
+			return Redirect::to('feg/config/translation')->with('messagetect','New Translation has been added !')->with('msgstatus','success');	;
 			
 		} else {
-			return Redirect::to('sximo/config/translation')->with('messagetext','Failed to add translation !' )->with('msgstatus','error')->withErrors($validator)->withInput();
+			return Redirect::to('geg/config/translation')->with('messagetext','Failed to add translation !' )->with('msgstatus','error')->withErrors($validator)->withInput();
 		}		
 	
 	}
@@ -365,7 +365,7 @@ class ConfigController extends Controller {
 		$fp=fopen($filename,"w+"); 
 		fwrite($fp,$form); 
 		fclose($fp); 	
-		return Redirect::to('sximo/config/translation?edit='.$lang.'&file='.$file)
+		return Redirect::to('feg/config/translation?edit='.$lang.'&file='.$file)
 		->with('messagetext','Translation has been saved !')->with('msgstatus','success');	
 	
 	} 	
@@ -373,7 +373,7 @@ class ConfigController extends Controller {
 	public function getRemovetranslation( $folder )
 	{
 		self::removeDir( base_path()."/resources/lang/".$folder);
-		return Redirect::to('sximo/config/translation')->with('messagetext','Translation has been removed !')->with('msgstatus','success');	
+		return Redirect::to('feg/config/translation')->with('messagetext','Translation has been removed !')->with('msgstatus','success');
 		
 	}		
 

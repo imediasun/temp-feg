@@ -24,7 +24,7 @@
 
                     <div class="sbox-tools">
                         @if(Session::get('gid') ==1)
-                            <a href="{{ URL::to('sximo/module/config/'.$pageModule) }}"
+                            <a href="{{ URL::to('feg/module/config/'.$pageModule) }}"
                                class="btn btn-xs btn-white tips" title=" {{ Lang::get('core.btn_config') }}"><i
                                         class="fa fa-cog"></i></a>
                         @endif

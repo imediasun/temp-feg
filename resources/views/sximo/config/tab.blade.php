@@ -12,7 +12,7 @@ $tabs = array(
 
 <ul class="nav nav-tabs" >
 @foreach($tabs as $key=>$val)
-	<li  @if($key == $active) class="active" @endif><a href="{{ URL::to('sximo/config/'.$key)}}"> {{ $val }}  </a></li>
+	<li  @if($key == $active) class="active" @endif><a href="{{ URL::to('feg/config/'.$key)}}"> {{ $val }}  </a></li>
 @endforeach
 
 </ul>

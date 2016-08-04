@@ -12,7 +12,7 @@
 
       <ul class="breadcrumb">
         <li><a href="{{ URL::to('dashboard') }}"> Dashboard </a></li>
-    	<li><a href="{{ URL::to('sximo/module') }}"> Module </a></li>
+    	<li><a href="{{ URL::to('feg/module') }}"> Module </a></li>
         <li class="active"> Zip Module(s) as installer </li>
       </ul>
   </div> 
@@ -28,7 +28,7 @@
         <li>{{ $error }}</li>
       @endforeach
     </ul>
-     {!! Form::open(array('url'=>'sximo/module/dopackage', 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ')) !!}
+     {!! Form::open(array('url'=>'feg/module/dopackage', 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ')) !!}
           <div class="col-md-6">
               <div class="header" >
                 <h3> Instant Module</h3>

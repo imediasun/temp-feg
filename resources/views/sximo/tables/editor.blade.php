@@ -1,4 +1,4 @@
-{!! Form::open(array('url'=>'sximo/tables/mysqleditor', 'class'=>'form-vertical','id'=>'saveform' , 'parsley-validate'=>'','novalidate'=>' ')) !!}
+{!! Form::open(array('url'=>'feg/tables/mysqleditor', 'class'=>'form-vertical','id'=>'saveform' , 'parsley-validate'=>'','novalidate'=>' ')) !!}
 		<div class="result"></div>
 		<div class="form-group">
 			<label class=""> MySQL Query Statement <br />
@@ -50,7 +50,7 @@ function showResponse(data)  {
 	alert(data.status);
 	if(data.status == 'success')
 	{
-		window.location.href = '{!! url("sximo/tables") !!}';
+		window.location.href = '{!! url("feg/tables") !!}';
 		
 	} else {
 		var message = 'Ops Someting Goes Wrong !!<br />' + data.message.errorInfo[2];

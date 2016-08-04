@@ -1,10 +1,10 @@
 <?php 
-define('CNF_APPNAME','Sximo 5');
-define('CNF_APPDESC','PHP Application Builder ');
-define('CNF_COMNAME','My Company name');
-define('CNF_EMAIL','info@mycompanyname.com');
-define('CNF_METAKEY','my site , my company  , Larvel Crud');
-define('CNF_METADESC','Write description for your site');
+define('CNF_APPNAME','FEG LLC');
+define('CNF_APPDESC','FEGLLC Management Application');
+define('CNF_COMNAME','Family Entertainment Group');
+define('CNF_EMAIL','info@fegllc.com');
+define('CNF_METAKEY','FEG LLC');
+define('CNF_METADESC','');
 define('CNF_REDIRECTLINK','merchindisetheminggallary');
 define('CNF_GROUP','3');
 define('CNF_ACTIVATION','confirmation');
@@ -20,6 +20,6 @@ define('CNF_MODE','production');
 define('CNF_LOGO','backend-logo.png');
 define('CNF_ALLOWIP','');
 define('CNF_RESTRICIP','192.116.134 , 194.111.606.21 ');
-define('CNF_REPLY_TO','dev5@shayansolutions.com');
+define('CNF_REPLY_TO','greg@element5digital.com');
 define('CNF_REPLY_TO_PASSWORD','1234532666');
 ?>

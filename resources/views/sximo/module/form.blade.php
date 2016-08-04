@@ -10,7 +10,7 @@
       </div>
       <ul class="breadcrumb">
         <li><a href="{{ URL::to('dashboard') }}"> Dashboard </a></li>
-		<li><a href="{{ URL::to('sximo/module') }}"> Module </a></li>
+		<li><a href="{{ URL::to('feg/module') }}"> Module </a></li>
         <li class="active"> Form Editor </li>
       </ul>		  
 	  
@@ -25,14 +25,14 @@
 
 
 <ul class="nav nav-tabs" style="margin-bottom:10px;">
-  	<li class="active" ><a href="{{ URL::to('sximo/module/form/'.$module_name)}}">Form Configuration </a></li> 
-	<li ><a href="{{ URL::to('sximo/module/formdesign/'.$module_name)}}">Form Layout</a></li> 
+  	<li class="active" ><a href="{{ URL::to('feg/module/form/'.$module_name)}}">Form Configuration </a></li>
+	<li ><a href="{{ URL::to('feg/module/formdesign/'.$module_name)}}">Form Layout</a></li>
 </ul>
   
 <div class="sbox">
 	<div class="sbox-title"><h5> Form Grid  </h5></div>
 	<div class="sbox-content">	
- {!! Form::open(array('url'=>'sximo/module/saveform/'.$module_name, 'class'=>'form-horizontal')) !!}
+ {!! Form::open(array('url'=>'feg/module/saveform/'.$module_name, 'class'=>'form-horizontal')) !!}
  <div class="table-responsive">
 		<table class="table table-striped table-bordered" id="table">
 		<thead class="no-border">
@@ -124,7 +124,7 @@
 		</td>
             <td>
 			<a href="javascript:void(0)" class="btn btn-xs btn-primary editForm"  role="button"  
-			onclick="SximoModal('{{ URL::to('sximo/module/editform/'.$row->module_id.'?field='.$rows['field'].'&alias='.$rows['alias']) }}','Edit Field : <?php echo $rows['field'];?>')">
+			onclick="SximoModal('{{ URL::to('feg/module/editform/'.$row->module_id.'?field='.$rows['field'].'&alias='.$rows['alias']) }}','Edit Field : <?php echo $rows['field'];?>')">
 			<i class="fa fa-cog"></i></a>
 
 			

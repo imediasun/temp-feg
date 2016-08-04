@@ -12,7 +12,7 @@
 	 
 	  <ul class="breadcrumb">
 		<li><a href="{{ URL::to('dashboard') }}">{{ Lang::get('core.home') }}</a></li>
-		<li><a href="{{ URL::to('sximo/module') }}"> Module </a></li>
+		<li><a href="{{ URL::to('feg/module') }}"> Module </a></li>
 		<li> Database Tables </li>
 	  </ul>	  
 	 
@@ -25,8 +25,8 @@
 
 			<div class="sbox-title"><i class="icon-database"></i> All Tables  
 			<span class="pull-right">	
-				<a href="{{ URL::TO('sximo/tables/tableconfig/')}}" class="btn btn-xs btn-primary linkConfig"><i class="fa fa-plus"></i> New Table </a>
-				<a href="{{ URL::TO('sximo/tables/mysqleditor/')}}" class="btn btn-xs btn-success linkConfig"><i class="fa fa-pencil"></i> MySQL Editor </a>
+				<a href="{{ URL::TO('feg/tables/tableconfig/')}}" class="btn btn-xs btn-primary linkConfig"><i class="fa fa-plus"></i> New Table </a>
+				<a href="{{ URL::TO('feg/tables/mysqleditor/')}}" class="btn btn-xs btn-success linkConfig"><i class="fa fa-pencil"></i> MySQL Editor </a>
 			</span>	
 			</div>
 			<div class="sbox-content">
@@ -35,7 +35,7 @@
 
 			<div class="row">
 				<div class="col-md-3">
-					{!! Form::open(array('url'=>'sximo/tables/tableremove/', 'class'=>'form-horizontal','id'=>'removeTable' )) !!}
+					{!! Form::open(array('url'=>'feg/tables/tableremove/', 'class'=>'form-horizontal','id'=>'removeTable' )) !!}
 					<div class="table-responsive">
 						<table class="table table-striped">
 							<thead>
@@ -50,7 +50,7 @@
 							@foreach($tables as $table)
 								<tr>
 									<td><input type="checkbox" class="ids  i-checks" name="id[]" value="{{ $table }}" /> </td>
-									<td><a href="{{ URL::TO('sximo/tables/tableconfig/'.$table)}}" class="linkConfig" > {{ $table }}</a></td>
+									<td><a href="{{ URL::TO('feg/tables/tableconfig/'.$table)}}" class="linkConfig" > {{ $table }}</a></td>
 									<td>
 									<a href="javascript:void(0)" onclick="droptable()" class="btn btn-xs btn-danger"><i class="fa fa-minus"></i></a>
 									</td>

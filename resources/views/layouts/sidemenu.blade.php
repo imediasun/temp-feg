@@ -37,9 +37,9 @@ $selected_loc=\Session::get('selected_location');?>
                 <?php $user_locations=\Session::get('user_locations'); ?>
                 @if(isset($user_locations))
                         <li>
-               <span style="padding-left:10px;"><b style="margin-left: 8px; color: #555; font-size: 13px; font-family: 'Lato', sans-serif; font-weight: bold;">location {{ \Session::get('selected_location') }} {{ "||" }} {{ \Session::get('selected_location_name') }}</b></span>
+                            <span style="padding-left:10px;"><b style="margin-left: 8px; color: #fff; font-size: 13px; font-family: 'Lato', sans-serif; font-weight: bold;">Location {{ \Session::get('selected_location') }} {{ "||" }} {{ \Session::get('selected_location_name') }}</b></span>
 
-                    </li>
+                        </li>
 
                         <li style=" padding: 6px 12px; margin-bottom: 8px;">
 
