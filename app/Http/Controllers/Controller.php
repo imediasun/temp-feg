@@ -616,7 +616,28 @@ function getDownload(Request $request)
 
 }
 
+    public function changeDateFormat($date)
+    {
+        if($date != '0000-00-00 00:00:00')
+            return date("d/m/Y", strtotime($date));
+        return '';
+    }
 
+    public function updateDateInAllRows($rows)
+    {
+        foreach ($rows as $index => $row)
+        {
+            if(isset($row->created_at))
+            {
+                $rows[$index]->created_at = $this->changeDateFormat($row->created_at);
+            }
+            if(isset($row->updated_at))
+            {
+                $rows[$index]->updated_at = $this->changeDateFormat($row->updated_at);
+            }
+        }
+        return $rows;
+    }
 public
 function getExport($t = 'excel')
 {
@@ -634,6 +655,7 @@ function getExport($t = 'excel')
 
     $fields = $info['config']['grid'];
     $rows = $results['rows'];
+    $rows = $this->updateDateInAllRows($rows);
     $content = array(
         'fields' => $fields,
         'rows' => $rows,
