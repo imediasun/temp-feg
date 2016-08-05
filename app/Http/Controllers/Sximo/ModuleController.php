@@ -81,7 +81,7 @@ class ModuleController extends Controller {
             {
                 if($where =="")                
                 {
-                    return Redirect::to('sximo/module/create')                    
+                    return Redirect::to('feg/module/create')
                     ->withErrors($validator)->withInput()->with('messagetext', "SQL WHERE REQUIRED")->with('msgstatus','error');   
                 }
                 
@@ -94,7 +94,7 @@ class ModuleController extends Controller {
                 }catch(Exception $e){
                     // Do something when query fails. 
                     $error ='Error : '.$select .' '.$where.' '.$group ;
-                    return Redirect::to('sximo/module/create')                    
+                    return Redirect::to('feg/module/create')
                     ->withErrors($validator)->withInput()->with('messagetext', SiteHelpers::alert('error',$error))->with('msgstatus','error');   
                 }                
                 $columns = array();
@@ -209,15 +209,15 @@ class ModuleController extends Controller {
                 }
                             
                 
-                return Redirect::to('sximo/module/rebuild/'.$id->module_id);        
+                return Redirect::to('feg/module/rebuild/'.$id->module_id);
             } else {
-                return Redirect::to('sximo/module');
+                return Redirect::to('feg/module');
             }
             
                 
             
         } else {
-            return Redirect::to('sximo/module/create')
+            return Redirect::to('feg/module/create')
             ->with('messagetext','The following errors occurred')->with('msgstatus','error')
             ->withErrors($validator)->withInput();
         }                    
@@ -230,7 +230,7 @@ class ModuleController extends Controller {
         $row = \DB::table('tb_module')->where('module_id', $id)
                                 ->get();        
         if(count($row) <= 0){
-            return Redirect::to('sximo/module')->with('messagetext','Can not find module')->with('msgstatus','error');   
+            return Redirect::to('feg/module')->with('messagetext','Can not find module')->with('msgstatus','error');
       
         }
         $row = $row[0];
@@ -255,7 +255,7 @@ class ModuleController extends Controller {
                     
                 self::removeDir( base_path()."/resources/views/{$path}");
                 
-                return Redirect::to('sximo/module')
+                return Redirect::to('feg/module')
                 ->with('messagetext','Module has been removed successfull')->with('msgstatus','success');                
                 
             }    
@@ -282,7 +282,7 @@ class ModuleController extends Controller {
 		$row = \DB::table('tb_module')->where('module_name', $id)
 								->get();        
 		if(count($row) <= 0){
-			 return Redirect::to('sximo/module')->with('messagetext','Can not find module')->with('msgstatus','error');                       
+			 return Redirect::to('feg/module')->with('messagetext','Can not find module')->with('msgstatus','error');
        
 		}
 		$row = $row[0];                            
@@ -345,10 +345,10 @@ class ModuleController extends Controller {
             $id = $request->input('module_id');
            	\DB::table('tb_module')->where('module_id', '=',$id )->update($data);
 
-            return Redirect::to('sximo/module/config/'.$request->input('module_name'))
+            return Redirect::to('feg/module/config/'.$request->input('module_name'))
             ->with('messagetext','Module Info Has Been updated  Successfull')->with('msgstatus','success');
         } else {
-            return Redirect::to('sximo/module/config/'.$request->input('module_name'))
+            return Redirect::to('feg/module/config/'.$request->input('module_name'))
             ->with('messagetext','The following errors occurred')->with('msgstatus','error')
             ->withErrors($validator)->withInput();
         }        
@@ -363,7 +363,7 @@ class ModuleController extends Controller {
         $row = \DB::table('tb_module')->where('module_id', $id)
                                 ->get();
         if(count($row) <= 0){
-            return Redirect::to('sximo/module')->with('messagetext','Can not find module')->with('msgstatus','error');   
+            return Redirect::to('feg/module')->with('messagetext','Can not find module')->with('msgstatus','error');
                 
         }                                
         $row = $row[0];        
@@ -399,7 +399,7 @@ class ModuleController extends Controller {
             ->update(array('module_config' => \SiteHelpers::CF_encode_json($new_config),'module_type'=> $request->input('module_type')));   
 
 
-        return Redirect::to('sximo/module/config/'.$row->module_name)
+        return Redirect::to('feg/module/config/'.$row->module_name)
         ->with('messagetext','Module Setting Has Been Save Successfull')->with('msgstatus','success'); 
     }      
 
@@ -409,7 +409,7 @@ class ModuleController extends Controller {
 		$row = \DB::table('tb_module')->where('module_name', $id)
 								->get();
 		if(count($row) <= 0){
-			 return Redirect::to('sximo/module')->with('messagetext','Can not find module')->with('msgstatus','error');      
+			 return Redirect::to('feg/module')->with('messagetext','Can not find module')->with('msgstatus','error');
 		}
 		$row = $row[0];                                    
 		$this->data['row'] = $row;        
@@ -436,7 +436,7 @@ class ModuleController extends Controller {
         }catch(Exception $e){
             // Do something when query fails. 
             $error ='Error : '.$select .' '.$where.' '.$group ;
-            return Redirect::to('sximo/module/sql/'.$request->input('module_name'))
+            return Redirect::to('feg/module/sql/'.$request->input('module_name'))
             ->with('messagetext', $error)->with('msgstatus','error');   
         }
         
@@ -515,7 +515,7 @@ class ModuleController extends Controller {
            ->where('module_id', '=',$row->module_id )
             ->update(array('module_config' => \SiteHelpers::CF_encode_json($config)));            
                 
-        return Redirect::to('sximo/module/sql/'.$row->module_name)
+        return Redirect::to('feg/module/sql/'.$row->module_name)
             ->with('messagetext','SQL Has Changed Successful.')->with('msgstatus','success');        
                         
     
@@ -529,7 +529,7 @@ class ModuleController extends Controller {
 		$row = \DB::table('tb_module')->where('module_name', $id)
 								->get();
 		if(count($row) <= 0){
-			 return Redirect::to('sximo/module')->with('messagetext','Can not find module')->with('msgstatus','error');        
+			 return Redirect::to('feg/module')->with('messagetext','Can not find module')->with('msgstatus','error');
 		}
 		$row = $row[0];                                    
 		$this->data['row'] = $row;    
@@ -549,7 +549,7 @@ class ModuleController extends Controller {
 		$row = \DB::table('tb_module')->where('module_name', $id)
 								->get();
 		if(count($row) <= 0){
-			 return Redirect::to('sximo/module')->with('messagetext','Can not find module')->with('msgstatus','error');         
+			 return Redirect::to('feg/module')->with('messagetext','Can not find module')->with('msgstatus','error');
 		}
 		$row = $row[0];                                    
 		$this->data['row'] = $row;    
@@ -571,7 +571,7 @@ class ModuleController extends Controller {
         $row = \DB::table('tb_module')->where('module_id', $id)
                                 ->get();
         if(count($row) <= 0){
-            return Redirect::to('sximo/module')->with('messagetext','Can not find module')->with('msgstatus','error');      
+            return Redirect::to('feg/module')->with('messagetext','Can not find module')->with('msgstatus','error');
         }
         $row = $row[0];                                
                                 
@@ -635,7 +635,7 @@ class ModuleController extends Controller {
             ->where('module_id', '=',$id )
             ->update(array('module_config' => \SiteHelpers::CF_encode_json($new_config)));            
                 
-        return Redirect::to('sximo/module/form/'.$row->module_name)
+        return Redirect::to('feg/module/form/'.$row->module_name)
         ->with('messagetext','Module Forms Has Changed Successful.')->with('msgstatus','success');               
     }       
 
@@ -646,7 +646,7 @@ class ModuleController extends Controller {
         $row = \DB::table('tb_module')->where('module_id', $id)
                                 ->get();
         if(count($row) <= 0){
-             return Redirect::to('sximo/module')->with('messagetext','Can not find module')->with('msgstatus','error');     
+             return Redirect::to('feg/module')->with('messagetext','Can not find module')->with('msgstatus','error');
         }
         $row = $row[0];                                            
         $this->data['row'] = $row;    
@@ -735,7 +735,7 @@ class ModuleController extends Controller {
         $row = \DB::table('tb_module')->where('module_id', $id)
                                 ->get();
         if(count($row) <= 0){
-             return Redirect::to('sximo/module')->with('messagetext','Can not find module')->with('msgstatus','error');        
+             return Redirect::to('feg/module')->with('messagetext','Can not find module')->with('msgstatus','error');
         }
         $row = $row[0];                                    
         $this->data['row'] = $row;    
@@ -822,7 +822,7 @@ class ModuleController extends Controller {
             ->where('module_id', '=',$id )
             ->update(array('module_config' => \SiteHelpers::CF_encode_json($new_config)));            
                 
-        return Redirect::to('sximo/module/form/'.$row->module_name)
+        return Redirect::to('feg/module/form/'.$row->module_name)
         ->with('messagetext','Forms Has Changed Successful.')->with('msgstatus','success');   
     }    
 
@@ -842,7 +842,7 @@ class ModuleController extends Controller {
                 ->get();
         }
         if(count($row) <= 0){
-             return Redirect::to('sximo/module')->with('messagetext','Can not find module')->with('msgstatus','error');         
+             return Redirect::to('feg/module')->with('messagetext','Can not find module')->with('msgstatus','error');
         }                                
         $row = $row[0];        
         $config = \SiteHelpers::CF_decode_json($row->module_config); 
@@ -920,7 +920,7 @@ class ModuleController extends Controller {
             ->where('module_id', '=',$id )
             ->update(array('module_config' => \SiteHelpers::CF_encode_json($new_config)));        
 
-        return Redirect::to('sximo/module/table/'.$row->module_name)
+        return Redirect::to('feg/module/table/'.$row->module_name)
         ->with('messagetext','Module Table Has Been Save Successfull')->with('msgstatus','success');          
         
         
@@ -932,7 +932,7 @@ class ModuleController extends Controller {
             $row = \DB::table('tb_module')->where('module_name', $id)
                                     ->get();
             if(count($row) <= 0){
-                return Redirect::to('sximo/module')->with('messagetext','Can not find module')->with('msgstatus','error');     
+                return Redirect::to('feg/module')->with('messagetext','Can not find module')->with('msgstatus','error');
             }
             $row = $row[0];                                    
             $this->data['row'] = $row;            
@@ -1001,7 +1001,7 @@ class ModuleController extends Controller {
         $row = \DB::table('tb_module')->where('module_id', $id)
                                 ->get();
         if(count($row) <= 0){
-             return Redirect::to('sximo/module')->with('messagetext','Can not find module')->with('msgstatus','error');  
+             return Redirect::to('feg/module')->with('messagetext','Can not find module')->with('msgstatus','error');
         }
         $row = $row[0];                                    
         $this->data['row'] = $row;    
@@ -1055,7 +1055,7 @@ class ModuleController extends Controller {
             \DB::table('tb_groups_access')->insert($data);    
         }
                 
-        return Redirect::to('sximo/module/permission/'.$row->module_name)
+        return Redirect::to('feg/module/permission/'.$row->module_name)
         ->with('messagetext','Permission Has Changed Successful.')->with('msgstatus','success');   
     }    
 
@@ -1066,7 +1066,7 @@ class ModuleController extends Controller {
         $row = \DB::table('tb_module')->where('module_name', $id)
                                 ->get();
         if(count($row) <= 0){
-             return Redirect::to('sximo/module')->with('messagetext','Can not find module')->with('msgstatus','error');        
+             return Redirect::to('feg/module')->with('messagetext','Can not find module')->with('msgstatus','error');
         }
         $row = $row[0];        
     
@@ -1117,7 +1117,7 @@ class ModuleController extends Controller {
         $row = \DB::table('tb_module')->where('module_id', $id)
                                 ->get();
         if(count($row) <= 0){
-             return Redirect::to('sximo/module')->with('messagetext','Can not find module')->with('msgstatus','error');     
+             return Redirect::to('feg/module')->with('messagetext','Can not find module')->with('msgstatus','error');
         }
         $row = $row[0];                                
                                 
@@ -1171,7 +1171,7 @@ class ModuleController extends Controller {
             ->where('module_id', '=',$id )
             ->update(array('module_config' => \SiteHelpers::CF_encode_json($new_config)));            
                 
-        return Redirect::to('sximo/module/formdesign/'.$row->module_name)
+        return Redirect::to('feg/module/formdesign/'.$row->module_name)
         ->with('messagetext',' Forms Design Has Changed Successful.')->with('msgstatus','success');              
 
 
@@ -1184,7 +1184,7 @@ class ModuleController extends Controller {
 		$row = \DB::table('tb_module')->where('module_name', $id)
 								->get();
 		if(count($row) <= 0){
-			 return Redirect::to('sximo/module')->with('messagetext','Can not find module')->with('msgstatus','error');        
+			 return Redirect::to('feg/module')->with('messagetext','Can not find module')->with('msgstatus','error');
 		}
 		$row = $row[0];    
 		$config = \SiteHelpers::CF_decode_json($row->module_config); 
@@ -1217,7 +1217,7 @@ class ModuleController extends Controller {
             $row = \DB::table('tb_module')->where('module_id', $id)
                                     ->get();
             if(count($row) <= 0){
-                return Redirect::to('sximo/module')
+                return Redirect::to('feg/module')
                     ->with('messagetext', 'Can not find module')->with('msgstatus','error');      
             }
             $row = $row[0];                                    
@@ -1252,12 +1252,12 @@ class ModuleController extends Controller {
                 ->where('module_id', '=',$id )
                 ->update(array('module_config' => \SiteHelpers::CF_encode_json($new_config)));            
             
-            return Redirect::to('sximo/module/sub/'.$row->module_name)
+            return Redirect::to('feg/module/sub/'.$row->module_name)
             ->with('messagetext','Master Has beed added Successful.')->with('msgstatus','success');  
 
         }    else {
 
-            return Redirect::to('sximo/module/sub/'.$request->get('module_name'))
+            return Redirect::to('feg/module/sub/'.$request->get('module_name'))
             ->with('message', 'The following errors occurred')->with('msgstatus','error')
             ->withErrors($validator)->withInput();
 
@@ -1271,7 +1271,7 @@ class ModuleController extends Controller {
         $module = $request->get('mod');
         $row = \DB::table('tb_module')->where('module_id', $id)->get();
         if(count($row) <= 0){
-            return Redirect::to('sximo/module')
+            return Redirect::to('feg/module')
                  ->with('messagetext', 'Can not find module')->with('msgstatus','error');       
         }
         $row = $row[0];                                    
@@ -1295,7 +1295,7 @@ class ModuleController extends Controller {
             ->update(array('module_config' => \SiteHelpers::CF_encode_json($new_config)));    
             
         
-        return Redirect::to('sximo/module/sub/'.$row->module_name)
+        return Redirect::to('feg/module/sub/'.$row->module_name)
         ->with('messagetext','Master Has removed Successful.')->with('msgstatus','success');    
 
     }           
@@ -1305,7 +1305,7 @@ class ModuleController extends Controller {
         $row = \DB::table('tb_module')->where('module_id', $id)
                                 ->get();
         if(count($row) <= 0){
-             return Redirect::to('sximo/module')->with('messagetext','Can not find module')->with('msgstatus','error');         
+             return Redirect::to('feg/module')->with('messagetext','Can not find module')->with('msgstatus','error');
         }
         $row = $row[0];                                            
         $this->data['row'] = $row;    
@@ -1389,7 +1389,7 @@ class ModuleController extends Controller {
             ->where('module_id', '=',$id )
             ->update(array('module_config' => \SiteHelpers::CF_encode_json($new_config)));    
                     
-        return Redirect::to('sximo/module/table/'.$row->module_name)
+        return Redirect::to('feg/module/table/'.$row->module_name)
         ->with('messagetext','Module Forms Has Changed Successful.')->with('msgstatus','success');                 
        
 
@@ -1540,7 +1540,7 @@ class ModuleController extends Controller {
         $v = (isset($_POST['view']) ? 'y' : 'n');
         
         //return redirect('')
-        $url = 'sximo/module/rebuild/'.$id."?rebuild=y&c={$c}&m={$m}&g={$g}&f={$f}&v={$v}";
+        $url = 'feg/module/rebuild/'.$id."?rebuild=y&c={$c}&m={$m}&g={$g}&f={$f}&v={$v}";
         
         return Redirect::to($url);
     }    
@@ -1550,7 +1550,7 @@ class ModuleController extends Controller {
 
             $row = \DB::table('tb_module')->where('module_id', $id)->get();
             if(count($row) <= 0){
-                 return Redirect::to('sximo/module')->with('messagetext','Can not find module')->with('msgstatus','error');       
+                 return Redirect::to('feg/module')->with('messagetext','Can not find module')->with('msgstatus','error');
             }
             $row = $row[0];                                    
             $this->data['row'] = $row;    
@@ -1803,7 +1803,7 @@ class ModuleController extends Controller {
             
             self::createRouters();
     
-            return Redirect::to('sximo/module')->with('messagetext','Code Script has been replaced successfull')->with('msgstatus','success');   
+            return Redirect::to('feg/module')->with('messagetext','Code Script has been replaced successfull')->with('msgstatus','success');
        
     }  
 
@@ -1866,7 +1866,7 @@ class ModuleController extends Controller {
    function postPackage( Request $request) 
     {
         if( count( $id = $request->input('id'))<1){
-            return Redirect::to('sximo/module')->with('messagetext','Can not find module')->with('msgstatus','error');   
+            return Redirect::to('feg/module')->with('messagetext','Can not find module')->with('msgstatus','error');
 
         };
 
@@ -2046,7 +2046,7 @@ class ModuleController extends Controller {
     $this->data['module_title'] = "ZIP Packager"; 
     $this->data['app_name'] = $app_name;
 
-    return Redirect::to( 'sximo/module' )
+    return Redirect::to( 'feg/module' )
         ->with('messagetext', ' Module(s) zipped successful ! ')->with('msgstatus','success');
 
 
@@ -2072,9 +2072,9 @@ class ModuleController extends Controller {
 
       self::createRouters();
 
-          return Redirect::to('sximo/module')->with('messagetext','Module Installed' . $msg)->with('msgstatus','success');
+          return Redirect::to('feg/module')->with('messagetext','Module Installed' . $msg)->with('msgstatus','success');
     }  else  {
-         return Redirect::to('sximo/module')->with('messagetext','Please select file to upload !')->with('msgstatus','error');
+         return Redirect::to('feg/module')->with('messagetext','Please select file to upload !')->with('msgstatus','error');
     } 
 
   }
