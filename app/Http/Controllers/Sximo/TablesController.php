@@ -47,7 +47,7 @@ class TablesController extends Controller
                 
         $this->data['columns'] = $columns;
         $this->data['table'] = $table;
-        $this->data['action'] = ($table ==null ? 'sximo/tables/tables/'.$table : 'sximo/tables/tableinfo/'.$table ) ;
+        $this->data['action'] = ($table ==null ? 'feg/menu/tables/'.$table : 'feg/menu/tableinfo/'.$table ) ;
         return view('sximo.tables.config',$this->data);
     }   
 
@@ -144,9 +144,9 @@ class TablesController extends Controller
                 $sql = 'DROP TABLE IF EXISTS `' . $table . '`';
                 \DB::select($sql);   
             }
-            return Redirect::to('sximo/tables')->with('messagetext', 'Table(s) has been deleted')->with('msgstatus','success');  
+            return Redirect::to('feg/menu')->with('messagetext', 'Table(s) has been deleted')->with('msgstatus','success');
         } 
-        return Redirect::to('sximo/tables')->with('messagetext','error','No Table(s) deleted !')->with('msgstatus','error');  
+        return Redirect::to('feg/menu')->with('messagetext','error','No Table(s) deleted !')->with('msgstatus','error');
 
     }       
 
