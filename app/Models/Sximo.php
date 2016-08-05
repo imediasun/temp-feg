@@ -45,7 +45,7 @@ class Sximo extends Model {
         }
 
         if(!empty($createdFrom)){
-            $select .= "AND DATE(created_at) BETWEEN '$createdFrom' AND '$createdTo'";
+            $select .= " AND DATE(created_at) BETWEEN '$createdFrom' AND '$createdTo'";
         }
 
         if(!empty($updatedFrom)){
@@ -58,6 +58,8 @@ class Sximo extends Model {
             }
 
         }
+
+
         $result = \DB::select($select . " {$params} " . self::queryGroup() . " {$orderConditional}  {$limitConditional} ");
 
         if ($key == '') {

@@ -76,6 +76,7 @@ class product extends Sximo  {
 	}
     public static function getRows( $args,$cond=null,$active=null)
     {
+        
 
         $table = with(new static)->table;
         $key = with(new static)->primaryKey;
@@ -110,6 +111,23 @@ class product extends Sximo  {
         {
             $select.=self::queryWhere();
         }
+
+        if(!empty($createdFrom)){
+            $select .= " AND DATE(products.created_at) BETWEEN '$createdFrom' AND '$createdTo'";
+        }
+
+        if(!empty($updatedFrom)){
+
+            if(!empty($cond)){
+                $select .= " OR DATE(products.updated_at) BETWEEN '$updatedFrom' AND '$updatedTo'";
+            }
+            else{
+                $select .= " AND DATE(products.updated_at) BETWEEN '$updatedFrom' AND '$updatedTo'";
+            }
+
+        }
+
+
         $result=\DB::select($select." {$params} ". self::queryGroup() ." {$orderConditional}  {$limitConditional} ");
         if($key =='' ) { $key ='*'; } else { $key = $table.".".$key ; }
         $counter_select = preg_replace( '/[\s]*SELECT(.*)FROM/Usi', 'SELECT count('.$key.') as total FROM', self::querySelect() );
