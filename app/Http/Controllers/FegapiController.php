@@ -29,13 +29,28 @@ class FegapiController extends Controller {
             $config = $class1::makeInfo($class);
             $tables = $config['config']['grid'];
             $page = (!is_null(Input::get('page')) or Input::get('page') != 0) ? Input::get('page') : 1;
-            $param = array('page' => $page, 'sort' => '', 'order' => 'asc', 'limit' => '');
+            $param = array('page' => $page, 'sort' => '', 'order' => 'asc', 'limit' => '', 'createdFrom'=>'','createdTo'=> date('Y-m-d'),
+                'updatedFrom'=>'','updatedTo'=>date('Y-m-d'));
             $limit=Input::get('limit');
             $sort=Input::get('order');
             $order=Input::get('sort');
+
+            $createdFrom = Input::get('created_from');
+            $createdTo = Input::get('created_to');
+            $updatedFrom = Input::get('updated_from');
+            $updatedTo = Input::get('updated_to');
+
+
             if (!is_null($limit) or $limit != 0) $param['limit'] = $limit;
             if (!is_null($order)) $param['order'] =$order ;
             if (!is_null($sort)) $param['sort'] = $sort;
+
+            if (!is_null($createdFrom)) $param['createdFrom'] = $createdFrom;
+            if (!is_null($createdTo)) $param['createdTo'] = $createdTo;
+            if (!is_null($updatedFrom)) $param['updatedFrom'] = $updatedFrom;
+            if (!is_null($updatedTo)) $param['updatedTo'] = $updatedTo;
+
+
             $results = $class1::getRows($param);
             $json = array();
             foreach ($results['rows'] as $row) {
@@ -75,10 +90,7 @@ class FegapiController extends Controller {
 	}
 	public function show( $id )
 	{
-//die('Show Function');
-  //echo $id."<br>";
         $class 	= ucwords(Input::get('module'));
-       // echo $class."<br>";
         if($class == "Users")
         {
             $class1="App\\Models\\core\\".$class;
@@ -100,7 +112,6 @@ class FegapiController extends Controller {
 	}
     public function show_by_status( $status )
     {
-die('Showw Function');
         $class 	= ucwords(Input::get('module'));
         if($class == "Users")
         {
