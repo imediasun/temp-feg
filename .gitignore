@@ -10,3 +10,4 @@ composer.lock
 composer.phar
 config/database.php
 public/uploads
+public/qr
