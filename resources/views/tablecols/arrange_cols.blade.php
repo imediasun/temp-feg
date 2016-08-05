@@ -41,13 +41,14 @@
     </div>
     {!! Form::close() !!}
 </div>
-<div class="col-md-2" style="margin-top:130px">
+{{--<div class="col-md-2" style="margin-top:130px">
 <button class="btn btn-small btn-primary tips" title ="Move Up" id="upbtn"><span class="fa fa-arrow-up" ></span></button>
 <button class="btn btn-small btn-primary"  title ="Move Down" id="downbtn"><span class="fa fa-arrow-down"></span></button>
-</div>
+</div>--}}
 <div class="clearfix"></div>
 
-<script>$('#keep-order').multiSelect({
+<script>
+    $('#keep-order').multiSelect({
         keepOrder: true,
         afterSelect: function(value, text){
             var get_val = $("#multiple_value").val();
@@ -61,7 +62,12 @@
         }
     });
     $("#upbtn").on('click',function(){
+    //alert('Up Button is Pressed');
 
+    });
+
+    $("#downbtn").on('click',function(){
+       // alert('Down Button is Pressed');
 
     });
     $("#public,#private").change(function () {
