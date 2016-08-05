@@ -54,11 +54,6 @@ $selected_loc=\Session::get('selected_location');?>
                         </select>
                     </li>
                 @endif
-                <li>
-                    <?php if(\Session::get('return_id') != ''): $id = \Session::get('return_id'); ?>
-                    <a href="{{ URL::to('core/users/play/'.$id)}}">Exit to Admin</a>
-                    <?php endif; ?>
-                </li>
 
             </div>
 
