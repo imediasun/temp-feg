@@ -6,6 +6,11 @@
                         class="fa fa-bars"></i> </a>
         </div>
         <ul class="nav navbar-top-links navbar-right">
+        <li >
+                    <?php if(\Session::get('return_id') != ''): $id = \Session::get('return_id'); ?>
+                    <a class="exit-admin" style="color: #428bca;" href="{{ URL::to('core/users/play/'.$id)}}">Exit to Admin</a>
+                    <?php endif; ?>
+                </li>
 
             <li>
                 <a href="#" data-toggle="dropdown" class="dropdown-toggle count-info" aria-expanded="true">
@@ -21,6 +26,9 @@
                 </ul>
 
             </li>
+
+                 
+
             @if(CNF_MULTILANG ==1)
                 <li class="user dropdown"><a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown"><i
                                 class="icon-flag"></i><i class="caret"></i></a>
