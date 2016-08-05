@@ -18,7 +18,7 @@
 					{!! SiteHelpers::activeLang('Game Title', (isset($fields['game_title']['language'])? $fields['game_title']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('game_title', $row['game_title'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
+					  {!! Form::text('game_title', $row['game_title'],array('class'=>'form-control', 'placeholder'=>'', 'required'=>'required')) !!}
 					 </div> 
 					 <div class="col-md-2">
 					 	

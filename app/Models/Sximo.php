@@ -111,7 +111,7 @@ class Sximo extends Model {
 
     public  function insertRow($data, $id) {
 
-        $timestampTables = array('vendor','products','orders');
+        $timestampTables = array('vendor','products','orders', 'departments');
         $table = with(new static)->table;
         $key = with(new static)->primaryKey;
         if ($id == NULL) {
@@ -131,6 +131,8 @@ class Sximo extends Model {
             if(in_array($table,$timestampTables)){
                 $data['updated_at'] = date('Y-m-d H:i:s');
             }
+            if (isset($data['created_at']))
+                unset($data['created_at']);
             if (isset($data['createdOn']))
                 unset($data['createdOn']);
             if (isset($data['updatedOn']))
