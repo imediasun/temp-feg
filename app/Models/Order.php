@@ -169,6 +169,7 @@ $where_in_expression = $where_in_expression . ${'SID' . $i} . ',';
 $query = \DB::select('SELECT R.qty,
 											  P.case_price,
 											  P.vendor_id,
+											  P.item_description,
 											  R.product_id,
 											  R.location_id,
 											  L.company_id,
@@ -181,6 +182,7 @@ $query = \DB::select('SELECT R.qty,
 										WHERE R.id = ' . ${'SID' . $i} . '');
 
     if (count($query) == 1) {
+
     $data['order_loc_id'] = $query[0]->location_id;
     $data['order_company_id'] = $query[0]->company_id;
     $data['order_vendor_id'] = $query[0]->vendor_id;
@@ -198,7 +200,7 @@ $query = \DB::select('SELECT R.qty,
     $orderQtyArray[] = $query[0]->qty;
     $orderProductIdArray[] = $query[0]->product_id;
     $prod_data=$this->productUnitPriceAndName($query[0]->product_id);
-        $item_name_array[]=$query[0]->item_name;;
+        $item_name_array[]=$query[0]->item_description;
         $item_case_price[]=$query[0]->case_price;;
     $orderRequestIdArray[] = ${'SID' . $i};
 }

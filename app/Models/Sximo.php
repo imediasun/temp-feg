@@ -20,6 +20,7 @@ class Sximo extends Model {
             'global' => 1
                         ), $args));
 
+
         $offset = ($page - 1) * $limit;
         $limitConditional = ($page != 0 && $limit != 0) ? "LIMIT  $offset , $limit" : '';
         $orderConditional = ($sort != '' && $order != '') ? " ORDER BY {$sort} {$order} " : '';
@@ -33,13 +34,28 @@ class Sximo extends Model {
         $rows = array();
         $select = self::querySelect();
 
+        if(!empty($createdFrom)){
+            $cond = "AND DATE(created_at) BETWEEN '$createdFrom' AND '$createdTo'";
+        }
+
+        if(!empty($updatedFrom)){
+
+            if(!empty($cond)){
+                $cond .= " OR DATE(updated_at) BETWEEN '$updatedFrom' AND '$updatedTo'";
+            }
+            else{
+                $cond .= " AND DATE(updated_at) BETWEEN '$updatedFrom' AND '$updatedTo'";
+            }
+
+        }
+
         if ($cond != null) {
             $select .= self::queryWhere($cond);
         } else {
             $select .= self::queryWhere();
         }
+        $result = \DB::select($select . " {$params} " . $cond .self::queryGroup() . " {$orderConditional}  {$limitConditional} ");
 
-        $result = \DB::select($select . " {$params} " . self::queryGroup() . " {$orderConditional}  {$limitConditional} ");
         if ($key == '') {
             $key = '*';
         } else {

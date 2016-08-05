@@ -97,7 +97,7 @@ class DepartmentController extends Controller {
 			{
 				$count = explode(',',$value->assign_employee_ids);
 			}
-			$value->assign_employee_ids = strval(count($count));
+			//$value->assign_employee_ids = strval(count($count));
 			$open = \DB::select("Select * FROM sb_tickets WHERE department_id = ".$value->id ." AND status = 'open'");
 			$close = \DB::select("Select * FROM sb_tickets WHERE department_id = ".$value->id ." AND status = 'close'");
 			$value->total_open_tickets = count($open);

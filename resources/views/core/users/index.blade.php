@@ -39,7 +39,7 @@
 		</div>
 	</div>
 	<div class="sbox-content">
-	    <div class="toolbar-line ">
+	    <div class="toolbar-line  style="align="left";">
 			@if($access['is_add'] ==1)
 	   		<a href="{{ URL::to('core/users/update') }}" class="tips btn btn-sm btn-white"  title="{{ Lang::get('core.btn_create') }}">
 			<i class="fa fa-plus-circle "></i>&nbsp;{{ Lang::get('core.btn_create') }}</a>
@@ -55,21 +55,21 @@
 
 
 			<a href="{{ URL::to( 'core/users/search') }}" class="btn btn-sm btn-white" onclick="SximoModal(this.href,'Advance Search'); return false;" ><i class=" fa fa-search"></i> Search</a>
+		@if(SiteHelpers::isModuleEnabled('users'))
+			<a href="{{ URL::to('tablecols/arrange-cols/users') }}" class="btn btn-sm btn-white" onclick="SximoModal(this.href,'Column Selector'); return false;" ><i class="fa fa-bars"></i> Arrange Columns</a>
+			<?php   $colconfigs=SiteHelpers::getRequiredConfigs($module_id);  ?>
+			@if(!empty($colconfigs))
+				<select class="btn btn-sm btn-white" style="width:25%!important;display:inline;" name="col-config"
+						id="col-config">
+					<option value="0">Select Configuraton</option>
+					@foreach( $colconfigs as $configs )
+						<option @if($config_id == $configs['config_id']) selected
+								@endif value={{ $configs['config_id'] }}> {{ $configs['config_name'] }}   </option>
+					@endforeach
+				</select>
+			@endif
+		@endif
 
-                @if(SiteHelpers::isModuleEnabled('users'))
-                    <a href="{{ URL::to('tablecols/arrange-cols/users') }}" class="btn btn-sm btn-white" onclick="SximoModal(this.href,'Column Selector'); return false;" ><i class="fa fa-bars"></i> Arrange Columns</a>
-                 <?php   $colconfigs=SiteHelpers::getRequiredConfigs($module_id);  ?>
-                    @if(!empty($colconfigs))
-                        <select class="form-control" style="width:25%!important;display:inline;" name="col-config"
-                                id="col-config">
-                            <option value="0">Select Configuraton</option>
-                            @foreach( $colconfigs as $configs )
-                                <option @if($config_id == $configs['config_id']) selected
-                                                                                 @endif value={{ $configs['config_id'] }}> {{ $configs['config_name'] }}   </option>
-                            @endforeach
-                        </select>
-                    @endif
-                @endif
 		</div>
 
 
@@ -132,7 +132,7 @@
 							 {!! $row->created_at  !!}
 
 						 @elseif($field['field'] =='date')
-							 <?php $row->date = date("m/d/Y H:i:s", strtotime($row->date)); ?>
+							 <?php $row->date = date("m/d/Y", strtotime($row->date)); ?>
 
 							 {!! $row->date  !!}
 						@else
