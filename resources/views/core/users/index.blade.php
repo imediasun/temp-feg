@@ -87,10 +87,9 @@
 						<th width="150">{{ $t['label'] }}</th>
 					@endif
 				@endforeach
-				<th width="100">Login</th>
-                <th width="150"> Block User</th>
-				<th width="100">{{ Lang::get('core.btn_action') }}</th>
-                <th width="100"> Upload Image</th>
+
+				<th width="300">{{ Lang::get('core.btn_action') }}</th>
+
 			  </tr>
 
         </thead>
@@ -146,16 +145,13 @@
 
 				 	<td>
 						<a class="btn btn-primary btn-xs" href="{{ URL::to('core/users/play/'.$row->id)}}">Impersonate</a>
-					</td>
-                    <td>
+
                         @if($row->banned=='Yes')
                             <a class="btn btn-success" href="{{ URL::to('core/users/unblock/'.$row->id)}}">Unblock</a>
                         @else
                             <a class="btn btn-danger btn-xs" href="{{ URL::to('core/users/block/'.$row->id)}}">Block</a>
                         @endif
-                    </td>
-
-				 <td>
+						<a class="btn btn-warning btn-xs" href="{{ URL::to('core/users/upload/'.$row->id)}}">Upload Image</a>
 					 	@if($access['is_detail'] ==1)
 						<a href="{{ URL::to('core/users/show/'.$row->id.'?return='.$return)}}" class="tips btn btn-xs btn-white" title="{{ Lang::get('core.btn_view') }}"><i class="fa  fa-search "></i></a>
 						@endif
@@ -163,9 +159,7 @@
 						<a  href="{{ URL::to('core/users/update/'.$row->id.'?return='.$return) }}" class="tips btn btn-xs btn-white" title="{{ Lang::get('core.btn_edit') }}"><i class="fa fa-edit "></i></a>
 						@endif
 
-
-				</td>
-                <td><a class="btn btn-warning btn-xs" href="{{ URL::to('core/users/upload/'.$row->id)}}">Upload Image</a></td>
+					</td>
                 </tr>
 
             @endforeach
