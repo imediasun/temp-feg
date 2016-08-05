@@ -132,7 +132,7 @@
 							 {!! $row->created_at  !!}
 
 						 @elseif($field['field'] =='date')
-							 <?php $row->date = date("m/d/Y H:i:s", strtotime($row->date)); ?>
+							 <?php $row->date = date("m/d/Y", strtotime($row->date)); ?>
 
 							 {!! $row->date  !!}
 						@else

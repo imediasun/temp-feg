@@ -7,7 +7,7 @@
 <title> {{ CNF_APPNAME }} </title>
 <meta name="keywords" content="">
 <meta name="description" content=""/>
-{{--<link rel="shorStcut icon" href="{{ asset('favicon.ico')}}" type="image/x-icon">	--}}
+<link rel="shorStcut icon" href="{{ asset('fegpo.png')}}" type="image/x-icon">
 
 		<link href="http://fonts.googleapis.com/css?family=Lato:300,400,400italic,600,700|Raleway:300,400,500,600,700|Crete+Round:400italic" rel="stylesheet" type="text/css" />
         <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
@@ -23,15 +23,13 @@
         <link href="{{ asset('sximo/css/multi-select.css') }}" rel="stylesheet">
 		<link href="{{ asset('sximo/css/animate.css')}}" rel="stylesheet">
 		<link href="{{ asset('sximo/css/icons.min.css')}}" rel="stylesheet">
-    <link href="{{ asset('sximo/css/bootstrap-select.css')}}" rel="stylesheet">
+		<link href="{{ asset('sximo/css/bootstrap-select.css')}}" rel="stylesheet">
 		<link href="{{ asset('sximo/js/plugins/toastr/toastr.css')}}" rel="stylesheet">
 		@if(!Session::get('themes') or Session::get('themes') =='')
 		<link href="{{ asset('sximo/css/sximo.css')}}" rel="stylesheet">	
 		@else
 		<link href="{{ asset('sximo/css/'.Session::get('themes').'.css')}}" rel="stylesheet">	
 		@endif
-
-
 		<script type="text/javascript" src="{{ asset('sximo/js/plugins/jquery.min.js') }}"></script>
 		<script type="text/javascript" src="{{ asset('sximo/js/plugins/jquery.cookie.js') }}"></script>			
 		<script type="text/javascript" src="{{ asset('sximo/js/plugins/jquery-ui.min.js') }}"></script>				

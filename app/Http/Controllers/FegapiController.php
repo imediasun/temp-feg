@@ -76,9 +76,9 @@ class FegapiController extends Controller {
 	public function show( $id )
 	{
 //die('Show Function');
-  echo $id."<br>";
+  //echo $id."<br>";
         $class 	= ucwords(Input::get('module'));
-        echo $class."<br>";
+       // echo $class."<br>";
         if($class == "Users")
         {
             $class1="App\\Models\\core\\".$class;
