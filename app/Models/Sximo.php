@@ -34,27 +34,31 @@ class Sximo extends Model {
         $rows = array();
         $select = self::querySelect();
 
-        if(!empty($createdFrom)){
-            $cond = "AND DATE(created_at) BETWEEN '$createdFrom' AND '$createdTo'";
-        }
+        /*
 
-        if(!empty($updatedFrom)){
-
-            if(!empty($cond)){
-                $cond .= " OR DATE(updated_at) BETWEEN '$updatedFrom' AND '$updatedTo'";
-            }
-            else{
-                $cond .= " AND DATE(updated_at) BETWEEN '$updatedFrom' AND '$updatedTo'";
-            }
-
-        }
+        */
 
         if ($cond != null) {
             $select .= self::queryWhere($cond);
         } else {
             $select .= self::queryWhere();
         }
-        $result = \DB::select($select . " {$params} " . $cond .self::queryGroup() . " {$orderConditional}  {$limitConditional} ");
+
+        if(!empty($createdFrom)){
+            $select .= "AND DATE(created_at) BETWEEN '$createdFrom' AND '$createdTo'";
+        }
+
+        if(!empty($updatedFrom)){
+
+            if(!empty($cond)){
+                $select .= " OR DATE(updated_at) BETWEEN '$updatedFrom' AND '$updatedTo'";
+            }
+            else{
+                $select .= " AND DATE(updated_at) BETWEEN '$updatedFrom' AND '$updatedTo'";
+            }
+
+        }
+        $result = \DB::select($select . " {$params} " . self::queryGroup() . " {$orderConditional}  {$limitConditional} ");
 
         if ($key == '') {
             $key = '*';

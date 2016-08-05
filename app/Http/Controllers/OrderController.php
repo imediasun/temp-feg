@@ -84,7 +84,11 @@ class OrderController extends Controller
             'global' => (isset($this->access['is_global']) ? $this->access['is_global'] : 0)
         );
         // Get Query
-        $order_selected = isset($_GET['order_type']) ? $_GET['order_type'] : 'ALL';
+        // passing All gives error in query, $cond
+        //$order_selected = isset($_GET['order_type']) ? $_GET['order_type'] : 'ALL';
+        $order_selected = isset($_GET['order_type']) ? $_GET['order_type'] : '';
+
+
         $results = $this->model->getRows($params, $order_selected);
         // Build pagination setting
         $page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;
