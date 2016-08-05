@@ -433,10 +433,10 @@ class OrderController extends Controller
     {
         $po_number = $request->get('po_number');
         $explanation = $request->get('explaination');
-        $message = 'Link to Order: 192.232.207.127/fegsys/orders/removeorder' . $po_number . ' <br>Explanation: ' . $explanation . '';
+        $message = 'Link to Order: http://'.$_SERVER['HTTP_HOST'].'/fegsys/orders/removeorder' . $po_number . ' <br>Explanation: ' . $explanation . '';
         $from = \Session::get('email');
         $to = 'support@fegllc.com';
-        $to = 'adnanali199@gmail.com';
+        $to = 'greg@fegllc.com';
         $subject = 'Order Removal Request';
         $headers = 'MIME-Version: 1.0' . "\r\n";
         $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";

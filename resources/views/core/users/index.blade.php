@@ -192,7 +192,7 @@ $(document).ready(function(){
 });
 $("#col-config").change(function(){
     var config_id=$('#col-config').val();
-        location.href = "/sximo/public/core/users?config_id=" + config_id;
+        location.href = "/core/users?config_id=" + config_id;
 
 
 });
