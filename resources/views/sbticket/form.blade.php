@@ -74,7 +74,7 @@
 					<div class="col-md-6">
 					  
 					<?php $Status = explode(',',$row['Status']);
-					$Status_opt = array( 'open' => 'Open' ,  'inqueue' => 'Pending' ,  'close' => 'Close' , ); ?>
+					$Status_opt = array( 'open' => 'Open' ,  'inqueue' => 'Pending' ,  'closed' => 'Closed' , ); ?>
 					<select name='Status' rows='5'   class='select2 '  > 
 						<?php 
 						foreach($Status_opt as $key=>$val)
