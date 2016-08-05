@@ -251,7 +251,11 @@
 					<button type="submit" class="btn btn-primary btn-sm "><i class="fa  fa-save "></i>  {{ Lang::get('core.sb_save') }} </button>
 					<button type="button" onclick="ajaxViewClose('#{{ $pageModule }}')" class="btn btn-success btn-sm"><i class="fa  fa-arrow-circle-left "></i>  {{ Lang::get('core.sb_cancel') }} </button>
 				</div>			
-			</div> 		 
+			</div>
+
+			{!! Form::hidden('id',$row['id']) !!}
+			{!! Form::hidden('created_at',$row['created_at']) !!}
+			{!! Form::hidden('updated_at',$row['updated_at']) !!}
 			{!! Form::close() !!}
 
 

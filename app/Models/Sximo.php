@@ -107,18 +107,26 @@ class Sximo extends Model {
 
     public  function insertRow($data, $id) {
 
+        $timestampTables = array('vendor','products','orders');
         $table = with(new static)->table;
         $key = with(new static)->primaryKey;
         if ($id == NULL) {
-            // Insert Here 
+            // Insert Here
+
+            if(in_array($table,$timestampTables)){
+                $data['created_at'] = date('Y-m-d H:i:s');
+            }
             if (isset($data['createdOn']))
                 $data['createdOn'] = date("Y-m-d H:i:s");
             if (isset($data['updatedOn']))
                 $data['updatedOn'] = date("Y-m-d H:i:s");
             $id = \DB::table($table)->insertGetId($data);
         } else {
-            // Update here 
+            // Update here
             // update created field if any
+            if(in_array($table,$timestampTables)){
+                $data['updated_at'] = date('Y-m-d H:i:s');
+            }
             if (isset($data['createdOn']))
                 unset($data['createdOn']);
             if (isset($data['updatedOn']))

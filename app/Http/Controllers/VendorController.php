@@ -259,9 +259,7 @@ class VendorController extends Controller {
 
 //        }
 
-        $rules["vendor_name"]="required|unique:vendor";
-//        print_r($rules);
-//        exit;
+        $rules["vendor_name"]="required|unique:vendor,vendor_name,".$id;
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
             $data = $this->validatePost('vendor');

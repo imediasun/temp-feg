@@ -297,7 +297,6 @@ function validatePost($table)
     $request = new Request;
     $str = $this->info['config']['forms'];
 
-   
     $data = array();
     foreach ($str as $f) {
         $field = $f['field'];
