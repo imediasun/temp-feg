@@ -15,6 +15,8 @@ return [
 
     'debug' => env('APP_DEBUG'),
 
+    'admin-email' => env('ADMIN_EMAIL'),
+
     /*
     |--------------------------------------------------------------------------
     | Application URL

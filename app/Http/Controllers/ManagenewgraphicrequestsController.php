@@ -31,6 +31,40 @@ class ManagenewgraphicrequestsController extends Controller
         );
     }
 
+    public function getApprove($id){
+
+        echo config('app.admin-email');
+        exit;
+        $request = Managenewgraphicrequests::find($id);
+        $data = array(
+            'status_id' => 3,
+            'aprrove_user_id' => \Session::get('uid'),
+            'approve_date' => date('Y-m-d')
+        );
+
+        if($request->insertRow($data, $id)){
+            return Redirect::to('managenewgraphicrequests')->with('messagetext','Graphic request approved')->with('msgstatus','success');
+        }
+        else{
+            return Redirect::to('managenewgraphicrequests')->with('messagetext','Error on approving graphic request')->with('msgstatus','error');
+        }
+    }
+
+    public function getDeny($id){
+        $request = Managenewgraphicrequests::find($id);
+        $data = array(
+            'status_id' => 0,
+        );
+
+        if($request->insertRow($data, $id)){
+            return Redirect::to('managenewgraphicrequests')->with('messagetext','Graphic request denied')->with('msgstatus','success');
+        }
+        else{
+            return Redirect::to('managenewgraphicrequests')->with('messagetext','Error on declining graphic request')->with('msgstatus','error');
+        }
+
+    }
+
     public function getIndex()
     {
         if ($this->access['is_view'] == 0)
