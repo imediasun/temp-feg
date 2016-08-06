@@ -136,7 +136,7 @@
                     <div class="form-group  ">
                         <br/><br/>
                         <label for="date_orederd" class=" control-label col-md-4 text-left">
-                            Date Orederd</label>
+                            Date Ordered</label>
 
                         <div class="col-md-8">
                             <div class="input-group m-b" style="width:150px !important;">
