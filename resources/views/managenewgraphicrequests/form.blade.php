@@ -55,6 +55,7 @@
 
                         </div>
                     </div>
+
                     <div class="form-group  ">
                         <label for="status" class=" control-label col-md-4 text-left">
                             {!! SiteHelpers::activeLang('status ', (isset($fields['status_id']['language'])?

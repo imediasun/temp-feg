@@ -6,7 +6,7 @@
                 <div class="col-md-8 col-md-offset-2"
                      style="padding-top: 50px; padding-right: 50px; padding-bottom: 50px; background-color: #ffffff;">
 
-                    <p><strong>DOWNLOAD<br/><a href="http://192.232.207.127/fegllc/public/tech/blank_BOL_form.doc"
+                    <p><strong>DOWNLOAD<br/><a href="/tech/blank_BOL_form.doc"
                                                target="_blank"><span
                                         style="color: #808080;">Blank BOL Form</span></a></strong> <br/><br/><strong>VERY
                             IMPORTANT Checklist..</strong> <br/><span style="color: #ff0000;"><strong>Game must be in
@@ -36,11 +36,11 @@
                     </p>
 
                     <p><span style="color: #808080;"><strong><a class="download" style="color: #808080;"
-                                                                href="http://192.232.207.127/fegllc/public/tech/preventative_maintenance.doc"
+                                                                href="/tech/preventative_maintenance.doc"
                                                                 target="_blank">Preventative Game Maintenance</a>
                             </strong>by Josh Smith </span><br/><span style="color: #808080;"><strong><a class="download"
                                                                                                         style="color: #808080;"
-                                                                                                        href="http://192.232.207.127/fegllc/public/tech/antistatic_brush_manual.pdf"
+                                                                                                        href="/tech/antistatic_brush_manual.pdf"
                                                                                                         target="_blank">Anti-Status
                                     Brush Manual</a> </strong></span></p>
                 </div>

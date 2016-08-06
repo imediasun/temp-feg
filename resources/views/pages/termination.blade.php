@@ -6,7 +6,7 @@
                 <div class="col-md-8 col-md-offset-2" style="padding-top: 50px; padding-right: 50px; padding-bottom: 50px; background-color: #ffffff;">
 
                 <p style="padding-left: 30px;"><span style="color: #808080;">Click on links below to download documents..</span></p>
-<p style="padding-left: 30px;"><span style="color: #808080;"><a class="download" style="color: #808080;" href="http://192.232.207.127/fegllc/public/termination/termination_form.pdf" target="_blank">Termination Form</a></span></p>
+<p style="padding-left: 30px;"><span style="color: #808080;"><a class="download" style="color: #808080;" href="/termination/termination_form.pdf" target="_blank">Termination Form</a></span></p>
                 </div>
                 <div class="clearfix">&nbsp;</div>
             </div>

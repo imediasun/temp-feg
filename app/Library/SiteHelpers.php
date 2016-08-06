@@ -1016,7 +1016,7 @@ class SiteHelpers
         if (Session::has('msgstatus')): ?>
             <script type="text/javascript">
                 $(document).ready(function () {
-                    toastr.<?php echo $status;?>("success", "<?php echo Session::get('messagetext');?>");
+                    toastr.<?php echo $status;?>("", "<?php echo Session::get('messagetext');?>");
                     toastr.options = {
                         "closeButton": true,
                         "debug": false,

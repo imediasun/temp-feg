@@ -244,6 +244,8 @@ class shopfegrequeststore extends Sximo  {
         $locationName = $this->get_location_info_by_id($data['location_id'], 'location_name_short');
         $game_info=explode('-',$data['description']);
         $mangeGraphicRequestURL = url("managenewgraphicrequests");
+        $graphicApproveLink = "http://{$_SERVER['HTTP_HOST']}/managenewgraphicrequests/approve/$last_inserted_id";
+        $graphicDenyLink = "http://{$_SERVER['HTTP_HOST']}/managenewgraphicrequests/deny/$last_inserted_id";
         $message = '<b>Date Requested:</b> '.$data['request_date'].'<br>
 					<b>Requestor:</b> '.\Session::get('fid').'<br>
 					<b>Location:</b> '.$data['location_id'].' | '.$locationName.'<br>
@@ -252,20 +254,19 @@ class shopfegrequeststore extends Sximo  {
 					<b>Quantity:</b> '.$data['qty'].'<br>
 					<b>Need By Date:</b> '.$data['need_by_date'].'<br><br>
 
-					<em>**Mark/Tom, please click on <a href="">Approval</a> or <a href="">Denial</a> <br>
+					<em>**Mark/Tom, please click on <a href="'.$graphicApproveLink.'">Approval</a> or <a href="'.$graphicDenyLink.'">Denial</a> <br>
 					to Approve/Deny this graphic request <br><br>
 					&nbsp;&nbsp;&nbsp; 2.) Set Priority Level at <b>'.$mangeGraphicRequestURL.'</b><br><br>
 					**All cc\'d, please Reply to All <b> only if you wish to deny or modify request</b> and explain why.</em><br>';
                     $from = \Session::get('eid');
-                    //$to = 'new-graphics@fegllc.com';
-                    $to='shayansolutions@gmail.com';
+                    $to = config('app.GRAPHIC_REQUEST_ADMIN_EMAIL');
                     $cc = '';
                     $bcc = '';
                     $subject = 'New Graphics Request for '.$locationName;
                     $message = $message;
                     $headers = 'MIME-Version: 1.0' . "\r\n";
                     $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
-                    //mail($to, $subject, $message, $headers);
+                    mail($to, $subject, $message, $headers);
         return $last_inserted_id;
     }
 
