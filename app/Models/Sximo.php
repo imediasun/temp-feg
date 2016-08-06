@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Sximo extends Model {
 
     public static function getRows($args, $cond = null) {
-
+ 
         $table = with(new static)->table;
         $key = with(new static)->primaryKey;
 
@@ -59,6 +59,12 @@ class Sximo extends Model {
 
         }
 
+        if(!empty($order_type_id)){
+            $select .= " AND order_type_id='$order_type_id'";
+        }
+        if(!empty($status_id)){
+            $select .= " AND status_id='$status_id'";
+        }
 
         $result = \DB::select($select . " {$params} " . self::queryGroup() . " {$orderConditional}  {$limitConditional} ");
 

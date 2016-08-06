@@ -76,7 +76,6 @@ class product extends Sximo  {
 	}
     public static function getRows( $args,$cond=null,$active=null)
     {
-        
 
         $table = with(new static)->table;
         $key = with(new static)->primaryKey;
@@ -127,6 +126,12 @@ class product extends Sximo  {
 
         }
 
+        if(!empty($prod_type_id)){
+            $select .= " AND prod_type_id='$prod_type_id'";
+        }
+        if(!empty($vendor_id)){
+            $select .= " AND vendor_id='$vendor_id'";
+        }
 
         $result=\DB::select($select." {$params} ". self::queryGroup() ." {$orderConditional}  {$limitConditional} ");
         if($key =='' ) { $key ='*'; } else { $key = $table.".".$key ; }
