@@ -155,12 +155,35 @@
 			 </div> 
 		  </div>
 
-			<div class="form-group">
-				<label for="ipt" class=" control-label col-md-4">{{ Lang::get('Enter Redirection Link') }} </label>
+
+
+			<div class="form-group  int-link" >
+				<label for="ipt" class=" control-label col-md-4 text-right"> Start Login Page </label>
 				<div class="col-md-8">
-					<input name="cnf_redireclink" type="text" id="cnf_redireclink" class="form-control input-sm" value="{{ CNF_REDIRECTLINK }}" />
+					<select name="cnf_redireclink" type="text" id="cnf_redireclink" class="form-control input-sm" value="{{ CNF_REDIRECTLINK }}" >
+						<option value=""> -- Select Module or Page -- </option>
+						<optgroup label="Module ">
+							@foreach($modules as $mod)
+								<option value="{{ $mod->module_name}}"
+										@if(CNF_REDIRECTLINK === $mod->module_name )   selected="selected" @endif
+								>{{ $mod->module_title}}</option>
+							@endforeach
+						</optgroup>
+						<optgroup label="Page CMS ">
+							@foreach($pages as $page)
+								<option value="{{ $page->alias}}"
+										@if(CNF_REDIRECTLINK === $page->alias ) selected="selected" @endif
+								>Page : {{ $page->title}}</option>
+							@endforeach
+						</optgroup>
+					</select>
 				</div>
-			</div>
+
+
+
+
+
+
 			<div class="form-group">
 				<label for="ipt" class=" control-label col-md-4">{{ Lang::get('core.fr_email') }} </label>
 				<div class="col-md-8">

@@ -68,15 +68,31 @@
 									 	
 									 </div>
 								  </div>
-							<div class="form-group  " >
-								<label for="Enter Redirection Link" class=" control-label col-md-4 text-left">Redirection Link </label>
-								<div class="col-md-6">
-									{!! Form::text('redirect_link', $row['redirect_link'],array('class'=>'form-control', 'placeholder'=>'', 'required'=>'true'  )) !!}
-								</div>
-								<div class="col-md-2">
 
+
+
+							<div class="form-group  int-link" >
+								<label for="ipt" class=" control-label col-md-4 text-right"> Start Login Page </label>
+								<div class="col-md-6">
+									<select name="cnf_redireclink" type="text" id="cnf_redireclink" class="form-control input-sm" value="{{ CNF_REDIRECTLINK }}" >
+										<option value=""> -- Select Module or Page -- </option>
+										<optgroup label="Module ">
+											@foreach($modules as $mod)
+												<option value="{{ $mod->module_name}}"
+														@if(CNF_REDIRECTLINK === $mod->module_name )   selected="selected" @endif
+												>{{ $mod->module_title}}</option>
+											@endforeach
+										</optgroup>
+										<optgroup label="Page CMS ">
+											@foreach($pages as $page)
+												<option value="{{ $page->alias}}"
+														@if(CNF_REDIRECTLINK === $page->alias ) selected="selected" @endif
+												>Page : {{ $page->title}}</option>
+											@endforeach
+										</optgroup>
+									</select>
 								</div>
-							</div>
+								</div>
 						</fieldset>
 
 			</div>

@@ -33,7 +33,7 @@ class GroupsController extends Controller {
 
 	public function getIndex( Request $request )
 	{
-		
+
 		if($this->access['is_view'] ==0) 
 			return Redirect::to('dashboard')
 				->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus','error');
@@ -111,6 +111,8 @@ class GroupsController extends Controller {
 		}
 
 		$this->data['id'] = $id;
+		$this->data['modules'] 		= \DB::table('tb_module')->where('module_type','!=','core')->get();
+		$this->data['pages'] 		= \DB::select(" SELECT * FROM tb_pages ");
 		return view('core.groups.form',$this->data);
 	}	
 
