@@ -38,7 +38,8 @@ if (!$colconfigs) {
                             if ($t['view'] == '1'):
                                 $limited = isset($t['limited']) ? $t['limited'] : '';
                                 if (SiteHelpers::filterColumn($limited)) {
-                                    echo '<th align="' . $t['align'] . '" width="' . $t['width'] . '">' . \SiteHelpers::activeLang($t['label'], (isset($t['language']) ? $t['language'] : array())) . '</th>';
+                                    if($t['field'] != 'bill_token_detail' && $t['field'] != 'bill_license_detail' && $t['field'] != 'bill_attraction_detail')
+                                        echo '<th align="' . $t['align'] . '" width="' . $t['width'] . '">' . \SiteHelpers::activeLang($t['label'], (isset($t['language']) ? $t['language'] : array())) . '</th>';
 
                                 }
                             endif;
@@ -57,10 +58,10 @@ if (!$colconfigs) {
                                 @if($t['view'] =='1')
                                     <?php $limited = isset($t['limited']) ? $t['limited'] : ''; ?>
                                     @if(SiteHelpers::filterColumn($limited ))
-                                        <td data-form="{{ $t['field'] }}"
-                                            data-form-type="{{ AjaxHelpers::inlineFormType($t['field'],$tableForm)}}">
-                                            {!! SiteHelpers::transForm($t['field'] , $tableForm) !!}
-                                        </td>
+                                            <td data-form="{{ $t['field'] }}"
+                                                data-form-type="{{ AjaxHelpers::inlineFormType($t['field'],$tableForm)}}">
+                                                {!! SiteHelpers::transForm($t['field'] , $tableForm) !!}
+                                            </td>
                                     @endif
                                 @endif
                             @endforeach
@@ -91,28 +92,30 @@ if (!$colconfigs) {
                         ?>
                         <?php $limited = isset($field['limited']) ? $field['limited'] : ''; ?>
                         @if(SiteHelpers::filterColumn($limited ))
-                            <td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}"
-                                data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
-                                @if($field['field'] == 'date_opened')
+                            @if($field['field'] != 'bill_token_detail' && $field['field'] != 'bill_license_detail' && $field['field'] != 'bill_attraction_detail')
+                                    <td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}"
+                                    data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
+                                    @if($field['field'] == 'date_opened')
 
-                                    {!! date("m/d/Y", strtotime($value)) !!}
+                                        {!! date("m/d/Y", strtotime($value)) !!}
 
-                                @elseif($field['field'] == 'date_closed')
+                                    @elseif($field['field'] == 'date_closed')
 
-                                    {!! date("m/d/Y", strtotime($value)) !!}
+                                        {!! date("m/d/Y", strtotime($value)) !!}
 
-                                @elseif($field['field'] == 'bill_debit_amt')
+                                    @elseif($field['field'] == 'bill_debit_amt')
 
 
-                                   {{number_format($value, 2)}}
+                                       {{number_format($value, 2)}}
 
-                                    
 
-                                @else
-                                    {!! $value !!}
 
-                              @endif
-                            </td>
+                                    @else
+                                        {!! $value !!}
+
+                                  @endif
+                                </td>
+                            @endif
                         @endif
                         <?php
                         endif;

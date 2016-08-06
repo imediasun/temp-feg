@@ -88,7 +88,14 @@
 									 @elseif($field['field'] == 'need_by_date')
 
 										 {!! date("m/d/Y", strtotime($value)) !!}
-
+									 @elseif($field['field'] == 'aprrove_user_id')
+										 @if(!empty($value))
+											 {!! $value !!}
+										 @endif
+									 @elseif($field['field'] == 'approve_date')
+										 @if($value != '0000-00-00')
+											 {!! date("m/d/Y", strtotime($value)) !!}
+										 @endif
 									 @elseif($field['field'] == 'request_date')
 
 										 {!! date("m/d/Y", strtotime($value)) !!}
