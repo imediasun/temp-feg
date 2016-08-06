@@ -226,7 +226,6 @@ class ManagenewgraphicrequestsController extends Controller
 
     function postSave(Request $request, $id = null)
     {
-
         $rules = array('priority_id' => 'required', 'status_id' => 'required', 'description' => 'required|min:5');
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
@@ -234,6 +233,15 @@ class ManagenewgraphicrequestsController extends Controller
             $data['status_id'] = $request->get('status_id');
             $data['description'] = $request->get('description');
             $data['media_type'] = $request->get('media_type');
+            if (\Session::has('uid') && $data['status_id']) {
+                $data['aprrove_user_id'] = \Session::get('uid');
+                $data['approve_date'] =  date('Y-m-d');
+            }
+            else
+            {
+                $data['aprrove_user_id'] = '';
+                $data['approve_date'] =  '';
+            }
             $id = $this->model->insertRow($data, $id);
             return response()->json(array(
                 'status' => 'success',

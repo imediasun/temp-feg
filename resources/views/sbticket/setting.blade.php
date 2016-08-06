@@ -26,10 +26,10 @@
                     <table class="table table-striped table-bordered" id="table">
                         <thead class="no-border">
                         <tr>
-                            <th field="name1" width="20">No</th>
-                            <th field="name2" width="20">Section </th>
-                            <th field="name3" width="40">Roles</th>
-                            <th field="name4" width="40">individuals</th>
+                            <th field="name1" width="5%">No</th>
+                            <th field="name2" width="15%">Section </th>
+                            <th field="name3" width="40%">Roles</th>
+                            <th field="name4" width="40%">individuals</th>
 
                         </tr>
                         </thead>
