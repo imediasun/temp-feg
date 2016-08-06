@@ -6,12 +6,17 @@
                         class="fa fa-bars"></i> </a>
         </div>
         <ul class="nav navbar-top-links navbar-right">
-        <li >
+                <li >
                     <?php if(\Session::get('return_id') != ''): $id = \Session::get('return_id'); ?>
                     <a class="exit-admin" style="color: #428bca;" href="{{ URL::to('core/users/play/'.$id)}}">Exit to Admin</a>
                     <?php endif; ?>
                 </li>
+            <li>
+                <a href="addtocart"  class="dropdown-toggle count-info">
+                    <i class="fa fa-shopping-cart"></i> <span class="notif-alert label label-danger" id="update_text_to_add_cart">{{ \Session::get('total_cart') }}</span>
 
+                </a>
+            </li>
             <li>
                 <a href="#" data-toggle="dropdown" class="dropdown-toggle count-info" aria-expanded="true">
                     <i class="fa fa-envelope"></i> <span class="notif-alert label label-danger">0</span>

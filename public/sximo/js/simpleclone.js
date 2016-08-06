@@ -93,6 +93,16 @@
 					});					
 				};
 				
+				var temp = $(clone).find('.item_name').next();
+
+					if (temp.hasClass("ui-helper-hidden-accessible")) {
+
+						temp.remove();
+
+					}
+
+				$(parent).find(rel+':last').after(clone);
+				$(parent).find(rel+':last').remove();
 				$(parent).find(rel+':last').after(clone);
 				
 				return false;

@@ -588,12 +588,10 @@
                     lastXhr;
 
                 var trid = $(obj).closest('tr').attr('id');
-                    console.log(trid);
                 var priceid = $("#"+trid+"  input[id^='price']").attr('id');
                 var casepriceid = $("#"+trid+"  input[id^='case_price']").attr('id');
                 var qtyid = $("#"+trid+"  input[id^='qty']").attr('id');
 
-                    console.log(id);
                 $(obj).autocomplete({
                     minLength: 2,
                     source: function( request, response ) {
