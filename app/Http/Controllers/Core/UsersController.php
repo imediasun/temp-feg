@@ -382,8 +382,10 @@ class UsersController extends Controller
 
             $data['redirect_link']=$request->get('redirect_link');
             if ($request->input('id') == '') {
+                $logId = Users::insertLog($this->module, 'insert');
                 $data['password'] = \Hash::make(Input::get('password'));
             } else {
+                $logId = Users::insertLog($this->module, 'update');
                 if (Input::get('password') != '') {
                     $data['password'] = \Hash::make(Input::get('password'));
                 } else {
@@ -441,6 +443,7 @@ class UsersController extends Controller
         if ($this->access['is_remove'] == 0)
             return Redirect::to('dashboard')
                 ->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
+        $logId = Users::insertLog($this->module, 'delete');
         // delete multipe rows
         if (count($request->input('ids')) >= 1) {
             $this->model->destroy($request->input('ids'));
