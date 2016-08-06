@@ -227,7 +227,7 @@
                         <td><br/><input type="text"  id="item_num" name="item_num[]" disabled readonly
                                    style="width:30px;border:none;background:none"/></td>
                         <td><br/> <input type="text" name='item_name[]' placeholder='Item  Name' id="item_name"
-                                       class='form-control item_name mysearch' onfocus="init(this.id)"  maxlength="225" required>
+                                       class='form-control item_name mysearch' onfocus="init(this.id,this)"  maxlength="225" required>
                         </td>
                         <td>
                             <textarea name='item[]' placeholder='Item  Description' id="item"
@@ -583,16 +583,18 @@
         }
     </style>
     <script>
-        function init(id){
+        function init(id,obj){
             var cache = {},
                     lastXhr;
 
-                var trid = $(this).closest('tr').attr('id');
+                var trid = $(obj).closest('tr').attr('id');
+                    console.log(trid);
                 var priceid = $("#"+trid+"  input[id^='price']").attr('id');
                 var casepriceid = $("#"+trid+"  input[id^='case_price']").attr('id');
                 var qtyid = $("#"+trid+"  input[id^='qty']").attr('id');
 
-                $("#"+id).autocomplete({
+                    console.log(id);
+                $(obj).autocomplete({
                     minLength: 2,
                     source: function( request, response ) {
                         var term = request.term;
