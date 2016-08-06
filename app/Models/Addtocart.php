@@ -46,6 +46,11 @@ class addtocart extends Sximo
     {
         return "  ";
     }
+    function totallyRecordInCart()
+    {
+         return \DB::select("SELECT COUNT(*) as total FROM requests WHERE request_user_id = ".\Session::get('uid')." AND status_id = 9 AND location_id = ".\Session::get('selected_location'));
+    }
+
     function popupCartData($productId=null)
     {
         $data['user_level']=\Session::get('gid');
