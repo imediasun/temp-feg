@@ -259,7 +259,7 @@ class shopfegrequeststore extends Sximo  {
 					&nbsp;&nbsp;&nbsp; 2.) Set Priority Level at <b>'.$mangeGraphicRequestURL.'</b><br><br>
 					**All cc\'d, please Reply to All <b> only if you wish to deny or modify request</b> and explain why.</em><br>';
                     $from = \Session::get('eid');
-                    $to = config('app.admin-email');
+                    $to = config('app.GRAPHIC_REQUEST_ADMIN_EMAIL');
                     $cc = '';
                     $bcc = '';
                     $subject = 'New Graphics Request for '.$locationName;

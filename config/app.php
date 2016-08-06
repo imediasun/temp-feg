@@ -15,7 +15,8 @@ return [
 
     'debug' => env('APP_DEBUG'),
 
-    'admin-email' => env('ADMIN_EMAIL'),
+    'ADMIN_EMAIL' => env('ADMIN_EMAIL'),
+    'GRAPHIC_REQUEST_ADMIN_EMAIL' => env('GRAPHIC_REQUEST_ADMIN_EMAIL'),
 
     /*
     |--------------------------------------------------------------------------
