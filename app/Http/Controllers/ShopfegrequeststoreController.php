@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\controller;
 use App\Models\Shopfegrequeststore;
+use App\Models\Addtocart;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Validator, Input, Redirect, URL;
@@ -18,7 +19,7 @@ class ShopfegrequeststoreController extends Controller
     {
         parent::__construct();
         $this->model = new Shopfegrequeststore();
-
+        $this->addToCartModel = new Addtocart();
         $this->info = $this->model->makeInfo($this->module);
         $this->access = $this->model->validAccess($this->info['id']);
 
@@ -313,7 +314,16 @@ class ShopfegrequeststoreController extends Controller
         }
     function getPopupCart($productId = null)
     {
-     return redirect('addtocart')->with(array('productId'=>$productId));
+        \Session::put('productId', $productId);
+        $cartData = $this->addToCartModel->popupCartData($productId);
+        $total_cart = $this->addToCartModel->totallyRecordInCart();
+        \Session::put('total_cart', $total_cart[0]->total);
+        return response()->json(array(
+            'status' => 'success',
+            'message' => \Lang::get('core.add_to_cart'),
+            'total_cart' => $total_cart[0]->total
+        ));
+        //return redirect('addtocart')->with(array('productId'=>$productId));
 
     }
 }

@@ -4,7 +4,7 @@ return array(
 // General 
 	"norecord" => "No Record Found",
 	"create" => "Create New",
-
+	"add_to_cart" => "Item Added to Cart",
 	// General , Login Info & Signup
 	"home" => "Home",
 	"group" => "Group",

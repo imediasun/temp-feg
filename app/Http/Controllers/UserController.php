@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Controller;
 use App\Models\Core\Groups;
+use App\Models\Addtocart;
 use App\User;
 use Socialize;
 use Illuminate\Http\Request;
@@ -17,6 +18,7 @@ class UserController extends Controller
     public function __construct()
     {
         parent::__construct();
+        $this->addToCartModel = new Addtocart();
 
     }
 
@@ -197,6 +199,8 @@ class UserController extends Controller
                         \Session::put('reg_id',$row->reg_id);
                         \Session::put('restricted_mgr_email',$row->restricted_mgr_email);
                         \Session::put('restricted_user_email',$row->restricted_user_email);
+                        $total_cart = $this->addToCartModel->totallyRecordInCart();
+                        \Session::put('total_cart', $total_cart[0]->total);
                         if (!is_null($request->input('language'))) {
                             \Session::put('lang', $request->input('language'));
                         } else {

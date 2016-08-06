@@ -106,7 +106,7 @@
 
                         <td>
                             @if($row->inactive == 0)
-                                <a href="{{ URL::to('shopfegrequeststore/popup-cart/'.$row->id) }}" <i class="fa fa-shopping-cart" aria-hidden="true"></a>
+                                <a href="javascript:void(0)" class="addToCart" value="{{$row->id}}"><i class="fa fa-shopping-cart" aria-hidden="true"></i></a>
                             @else
                                 Not Avail.
                             @endif
@@ -166,7 +166,34 @@
             return false;
         });
 
-        <?php if($setting['view-method'] =='expand') :
+
+        $('.addToCart').on('click',function(){
+            var base_url = <?php echo  json_encode(url()) ?>;
+            var addId = $(this).attr('value');
+            console.log(addId);
+            $.ajax({
+                type: "GET",
+                url: base_url + '/shopfegrequeststore/popup-cart/'+addId,
+                data: {
+                },
+                success: function (response) {
+                    $("#update_text_to_add_cart").text(response.total_cart);
+                    showResponse(response)
+                }
+            });
+        });
+        function showResponse(data)  {
+
+            if(data.status == 'success')
+            {
+                notyMessage(data.message);
+
+            } else {
+                notyMessageError(data.message);
+                return false;
+            }
+        }
+    <?php if($setting['view-method'] =='expand') :
                 echo AjaxHelpers::htmlExpandGrid();
             endif;
          ?>
