@@ -3,33 +3,7 @@
     <div class="col-md-4"><h1  style="vertical-align:baseline; padding-bottom:0;">
             <img src="./sximo/images/store.png"/>
             FEG Store - <b style="font-size:.7em;">Shopping for</b></h1>
-    </div>
-    <div class="col-md-3" style="margin-top:10px">
-        <select class="select3" id="locations"></select>
-        <a class="pull-right" href="https://online.care1st.com/medicare_popupblocker_instructions.php"
-           target="_blank" style="font-size:12px;color:red; font-weight:normal;"
-           title="You must disable popup-blocking in order for this popup shopping cart to work properly. Contact support@fegllc.com for help">Not
-            Working?</a>
-    </div>
-    <div class="col-md-5">
-        <h3>Recently Added Products : <small><a  href="{{ URL::to('./shopfegrequeststore/new-graphic-request') }}" target="_blank" class="btn btn-primary">Request Custom Graphic</a></small></h3>
-
-        <?php if(isset($cart['new_products'])) { ?>
-        <?php foreach($cart['new_products'] as $row): ?>
-        <div class="col-md-10" style=" height:100px; overflow: hidden;border: 1px solid lightgray; vertical-align:top;font-size:1em; padding:4px; background:#FFF;margin-bottom: 5px;">
-            <a href="{{ URL::to('./shopfegrequeststore/recentlyadded') }}" style="color:black;" target="_blank">
-                <?php echo $row['item']; break;?>
-            </a>
-        </div>
-        <?php endforeach; ?>
-        <?php } ?>
-</div>
-</div>
-
-<div class="row m-b">
-
-
-    <div class="col-md-4">
+               <div class="">
      <h3>Narrow Your Search</h3>
         <?php $opts = array("active" => "Active", 'inactive' => "IN Active", 'all' => "All"); ?>
         <select name="activ_inactive_all" class=" select3" id="active_inactive">
@@ -44,6 +18,25 @@
 
         <select name="product_type" id="product_type" class="select3" style="margin-top:5px;"></select>
     </div>
+    </div>
+    <div class="col-md-3" style="margin-top:10px">
+        <select class="select3" id="locations"></select>
+       <!--  <a class="pull-right" href="https://online.care1st.com/medicare_popupblocker_instructions.php"
+           target="_blank" style="font-size:12px;color:red; font-weight:normal;"
+           title="You must disable popup-blocking in order for this popup shopping cart to work properly. Contact support@fegllc.com for help">Not
+            Working?</a> -->
+    </div>
+    <div class="col-md-5">
+        <h3 class="pull-right"> <small><a  href="{{ URL::to('./shopfegrequeststore/new-graphic-request') }}" target="_blank" class="btn btn-primary">Request Custom Graphic</a></small></h3>
+
+       
+</div>
+</div>
+
+<div class="row m-b">
+
+
+ 
 
 </div>
 <div class="row m-b">

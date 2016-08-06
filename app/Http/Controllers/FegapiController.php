@@ -30,7 +30,7 @@ class FegapiController extends Controller {
             $tables = $config['config']['grid'];
             $page = (!is_null(Input::get('page')) or Input::get('page') != 0) ? Input::get('page') : 1;
             $param = array('page' => $page, 'sort' => '', 'order' => 'asc', 'limit' => '', 'createdFrom'=>'','createdTo'=> date('Y-m-d'),
-                'updatedFrom'=>'','updatedTo'=>date('Y-m-d'));
+                'updatedFrom'=>'','updatedTo'=>date('Y-m-d'),'order_type_id' => '','status_id' => '','prod_type_id' => '','vendor_id' => '');
             $limit=Input::get('limit');
             $sort=Input::get('order');
             $order=Input::get('sort');
@@ -41,6 +41,13 @@ class FegapiController extends Controller {
             $updatedTo = Input::get('updated_to');
 
 
+            $order_type_id=Input::get('order_type_id');
+            $status_id=Input::get('status_id');
+            $prod_type_id=Input::get('prod_type_id');
+            $vendor_id=Input::get('vendor_id');
+
+
+
             if (!is_null($limit) or $limit != 0) $param['limit'] = $limit;
             if (!is_null($order)) $param['order'] =$order ;
             if (!is_null($sort)) $param['sort'] = $sort;
@@ -49,6 +56,11 @@ class FegapiController extends Controller {
             if (!is_null($createdTo)) $param['createdTo'] = $createdTo;
             if (!is_null($updatedFrom)) $param['updatedFrom'] = $updatedFrom;
             if (!is_null($updatedTo)) $param['updatedTo'] = $updatedTo;
+
+            if (!is_null($order_type_id)) $param['order_type_id'] = $order_type_id;
+            if (!is_null($status_id)) $param['status_id'] = $status_id;
+            if (!is_null($prod_type_id)) $param['prod_type_id'] = $prod_type_id;
+            if (!is_null($vendor_id)) $param['vendor_id'] = $vendor_id;
 
 
             $results = $class1::getRows($param);
@@ -136,7 +148,7 @@ class FegapiController extends Controller {
 	{
 
         $class 	= ucwords(Input::get('module'));
-        echo $class;
+       
         $class1 = "App\\Models\\".$class;
         $obj=new $class1();
 		$this->info		= 	$class1::makeInfo( $class );
