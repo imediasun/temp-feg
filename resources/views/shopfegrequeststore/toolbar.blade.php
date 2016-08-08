@@ -20,7 +20,8 @@
         <select name="product_type" id="product_type" class="select3" style="margin-top:5px;"></select>
     </div>
     </div>
-    <div class="col-md-3" style="margin-top:10px">
+
+    <div class="col-md-3" style="margin-top:10px ; padding-left: 0px;">
         <select class="select3" id="locations"></select>
        <!--  <a class="pull-right" href="https://online.care1st.com/medicare_popupblocker_instructions.php"
            target="_blank" style="font-size:12px;color:red; font-weight:normal;"
