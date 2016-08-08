@@ -787,21 +787,39 @@ class SiteHelpers
             case 'select';
                 if ($option['opt_type'] == 'external') {
 
-                    $data = DB::table($option['lookup_table'])->get();
                     $opts = '';
-                    foreach ($data as $row):
+                    if($option['lookup_table'] =='location')
+                    {
                         $selected = '';
-                        if ($value == $row->$option['lookup_key']) $selected = 'selected="selected"';
-                        $fields = explode("|", $option['lookup_value']);
-                        //print_r($fields);exit;
-                        $val = "";
-                        foreach ($fields as $item => $v) {
-                            if ($v != "") $val .= $row->$v . " ";
+                        $current_user_id=Auth::id();
+                        $user_ids = DB::table('user_locations')->where('user_id',$current_user_id)->get();
+                        foreach ($user_ids as $user_id)
+                        {
+                        $locations = DB::table($option['lookup_table'])->where('id',$user_id->location_id)->get();
+                        foreach ($locations as $location) {
+                        $opts .= "<option $selected  value='" . $location->$option['lookup_key'] . "' $mandatory > " . $location->location_name . " </option> ";
                         }
-                        $opts .= "<option $selected value='" . $row->$option['lookup_key'] . "' $mandatory > " . $val . " </option> ";
-                    endforeach;
 
+                  }
+
+                    }
+                    else {
+                        $data = DB::table($option['lookup_table'])->get();
+                        foreach ($data as $row):
+                            $selected = '';
+                            if ($value == $row->$option['lookup_key']) $selected = 'selected="selected"';
+                            $fields = explode("|", $option['lookup_value']);
+                            //print_r($fields);exit;
+                            $val = "";
+                            foreach ($fields as $item => $v) {
+                                if ($v != "") $val .= $row->$v . " ";
+                            }
+                            $opts .= "<option $selected value='" . $row->$option['lookup_key'] . "' $mandatory > " . $val . " </option> ";
+                        endforeach;
+                    }
                 } else {
+
+
                     $opt = explode("|", $option['lookup_query']);
                     $opts = '';
                     for ($i = 0; $i < count($opt); $i++) {
