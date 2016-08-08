@@ -68,15 +68,30 @@
 									 	
 									 </div>
 								  </div>
-							<div class="form-group  " >
-								<label for="Enter Redirection Link" class=" control-label col-md-4 text-left">Redirection Link </label>
-								<div class="col-md-6">
-									{!! Form::text('redirect_link', $row['redirect_link'],array('class'=>'form-control', 'placeholder'=>'', 'required'=>'true'  )) !!}
-								</div>
-								<div class="col-md-2">
 
+
+							<div class="form-group  int-link" >
+								<label for="ipt" class=" control-label col-md-4 text-right"> Start Login Page </label>
+								<div class="col-md-6">
+									<select name="redirect_link"  rows='5' type="text" id="redirect_link"  style="width:100%"  class='select-liquid ' value="{{ $row['redirect_link'] }}" >
+										<option value=""> -- Select Module or Page -- </option>
+										<optgroup label="Module ">
+											@foreach($modules as $mod)
+												<option value="{{ $mod->module_name}}"
+														@if($row['redirect_link'] === $mod->module_name )   selected="selected" @endif
+												>{{ $mod->module_title}}</option>
+											@endforeach
+										</optgroup>
+										<optgroup label="Page CMS ">
+											@foreach($pages as $page)
+												<option value="{{ $page->alias}}"
+														@if($row['redirect_link']=== $page->alias ) selected="selected" @endif
+												>Page : {{ $page->title}}</option>
+											@endforeach
+										</optgroup>
+									</select>
 								</div>
-							</div>
+								</div>
 						</fieldset>
 
 			</div>

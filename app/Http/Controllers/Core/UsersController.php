@@ -37,7 +37,12 @@ class UsersController extends Controller
     public function getIndex(Request $request)
     {
         $module_id = \DB::table('tb_module')->where('module_name', '=', 'users')->pluck('module_id');
+
+        $this->data['modules'] 		= \DB::table('tb_module')->where('module_type','!=','core')->get();
+        $this->data['pages'] 		= \DB::select(" SELECT * FROM tb_pages ");
+
         $this->data['module_id'] = $module_id;
+
         if (Input::has('config_id')) {
             $config_id = Input::get('config_id');
         } elseif (\Session::has('config_id')) {
@@ -142,6 +147,11 @@ class UsersController extends Controller
             }
         }
         $this->data['rowData'] = $results['rows'];
+
+        $this->data['modules'] 		= \DB::table('tb_module')->where('module_type','!=','core')->get();
+        $this->data['pages'] 		= \DB::select(" SELECT * FROM tb_pages ");
+
+     
         // Build Pagination
         $this->data['pagination'] = $pagination;
         // Build pager number and append current param GET
@@ -294,6 +304,9 @@ class UsersController extends Controller
         }
 
         $this->data['id'] = $id;
+
+        $this->data['modules'] 		= \DB::table('tb_module')->where('module_type','!=','core')->get();
+        $this->data['pages'] 		= \DB::select(" SELECT * FROM tb_pages ");
         return view('core.users.form', $this->data);
     }
 

@@ -239,9 +239,9 @@ class GamestitleController extends Controller
 
         $files = array('manual' => Input::file('manual'),'bulletin'=> Input::file('service_bulletin'));
         $rules = $this->validateForm();
-     //   $rules['manual']='Required|mimes:pdf';
+    //  $rules['manual']='Not Required|mimes:pdf';
         $rules["game_title"]="required|unique:game_title";
-        $rules['service_bulletin']='Required|mimes:pdf';
+     // $rules['service_bulletin']='Not Required|mimes:pdf';
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
             if($id==0) {
@@ -278,7 +278,7 @@ class GamestitleController extends Controller
                         $updates['has_servicebulletin'] = '1';
                     }
                 }
-                $this->model->insertRow($updates, $id);
+             //   $this->model->insertRow($updates, $id);
                 return response()->json(array(
                     'status' => 'success',
                     'message' => \Lang::get('core.note_success')
