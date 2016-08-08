@@ -2,7 +2,9 @@
 @if(isset($cartData['subtotals']) && !empty($cartData['subtotals']))
 <div class="sbox">
     <div class="sbox-title">
-        <h5><i class="fa fa-table"></i></h5>
+        <h5><i class="fa fa-table"></i>
+            <a href="{{ url('shopfegrequeststore') }}" class="btn btn-xs btn-white tips" title="Shop FEG Request Store"><i class="fa fa-arrow-left"></i>
+                 Back to Shop Page</a></h5>
 
         <div class="sbox-tools">
             <a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Clear Search"
