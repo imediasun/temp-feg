@@ -160,7 +160,7 @@
 			<div class="form-group  int-link" >
 				<label for="ipt" class=" control-label col-md-4 text-right"> Start Login Page </label>
 				<div class="col-md-8">
-					<select name="cnf_redireclink" type="text" id="cnf_redireclink" class="form-control input-sm" value="{{ CNF_REDIRECTLINK }}" >
+					<select name="cnf_redireclink" rows='5' type="text" id="cnf_redireclink"   style="width:100%"  class='select-liquid ' value="{{ CNF_REDIRECTLINK }}" >
 						<option value=""> -- Select Module or Page -- </option>
 						<optgroup label="Module ">
 							@foreach($modules as $mod)

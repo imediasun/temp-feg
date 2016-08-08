@@ -73,7 +73,7 @@
 							<div class="form-group  int-link" >
 								<label for="ipt" class=" control-label col-md-4 text-right"> Start Login Page </label>
 								<div class="col-md-6">
-									<select name="redirect_link" type="text" id="redirect_link" class="form-control input-sm" value="{{ $row['redirect_link'] }}" >
+									<select name="redirect_link"  rows='5' type="text" id="redirect_link"  style="width:100%"  class='select-liquid ' value="{{ $row['redirect_link'] }}" >
 										<option value=""> -- Select Module or Page -- </option>
 										<optgroup label="Module ">
 											@foreach($modules as $mod)
