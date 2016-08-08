@@ -1,8 +1,9 @@
 <div class="row m-b">
 
-    <div class="col-md-4"><h1  style="vertical-align:baseline; padding-bottom:0;">
+    <div class="col-md-4">
+        <h1  style="vertical-align:baseline; padding-bottom:0;">
             <img src="./sximo/images/store.png"/>
-            FEG Store - <b style="font-size:.7em;">Shopping for</b></h1>
+            FEG Store - <b style="font-size:.7em;">Shopping for </b></h1>
                <div class="">
      <h3>Narrow Your Search</h3>
         <?php $opts = array("active" => "Active", 'inactive' => "IN Active", 'all' => "All"); ?>
@@ -26,11 +27,7 @@
            title="You must disable popup-blocking in order for this popup shopping cart to work properly. Contact support@fegllc.com for help">Not
             Working?</a> -->
     </div>
-    <div class="col-md-5">
-        <h3 class="pull-right"> <small><a  href="{{ URL::to('./shopfegrequeststore/new-graphic-request') }}" target="_blank" class="btn btn-primary">Request Custom Graphic</a></small></h3>
 
-       
-</div>
 </div>
 
 <div class="row m-b">
@@ -61,8 +58,13 @@
             @endif
         @endif
     </div>
+    <div class="col-md-7">
+        <h3 class="pull-right"> <small><a  href="{{ URL::to('./shopfegrequeststore/new-graphic-request') }}" target="_blank" class="btn btn-primary">Request Custom Graphic</a></small></h3>
+
+    </div>
 
 </div>
+
 
 <script>
     $(document).ready(function () {
