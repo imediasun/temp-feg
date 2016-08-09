@@ -104,7 +104,24 @@
                         @if(SiteHelpers::filterColumn($limited ))
                             <td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}"
                                 data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
+
+
+
+                                @if($field['field']=='qty')
+
+
+
+
+                                            {!! Form::text('qty', $value,['style'=>'width:55px']) !!}
+
+
+
+
+
+                                    @else
+
                                 {!! $value !!}
+                                @endif
                             </td>
                         @endif
                         <?php
