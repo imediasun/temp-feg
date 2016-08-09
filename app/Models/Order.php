@@ -60,6 +60,9 @@ class order extends Sximo
         $data['order_vendor_id'] = '';
         $data['order_type'] = '';
         $data['order_company_id'] = '';
+        $data['order_location_id'] = '';
+       // $data['order_location_name'] = '';
+        
         $data['order_freight_id'] = '';
         $data['orderDescriptionArray'] = '';
         $data['orderPriceArray'] = '';
@@ -84,6 +87,9 @@ class order extends Sximo
             if (count($order_query) == 1) {
                 $data['order_loc_id'] = $order_query[0]->location_id;
                 $data['order_vendor_id'] = $order_query[0]->vendor_id;
+                $data['order_location_id'] = $order_query[0]->location_id;
+
+             //   $data['order_location_name'] = $order_query[0]->location_name;
                 $data['order_type'] = $order_query[0]->order_type_id;
                 $data['order_company_id'] = $order_query[0]->company_id;
                 $data['order_freight_id'] = $order_query[0]->freight_id;
@@ -183,6 +189,8 @@ class order extends Sximo
                     $data['order_loc_id'] = $query[0]->location_id;
                     $data['order_company_id'] = $query[0]->company_id;
                     $data['order_vendor_id'] = $query[0]->vendor_id;
+                    $data['order_location_id'] = $query[0]->location_id;
+                   // $data['order_location_name'] = $query[0]->location_name;
                     $data['order_type'] = $query[0]->prod_type_id;
                     $data['order_total'] = $query[0]->total;
                     $data['po_2'] = date('m/d/y');

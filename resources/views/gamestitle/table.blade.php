@@ -47,7 +47,7 @@
                         endforeach; ?>
 
 
-                        <th width="100">Manual</th>
+                     
                         <th width="100">Bulletin</th>
                         <th width="100">Upload Manual</th>
                         <th width="100">Upload Bulletin</th>
@@ -118,20 +118,15 @@
                         ?>
 
 
-                        <td>
-                            @if($row->has_manual=="Yes")
-                            <a href="uploads/games/manuals/{{ $row->id }}.pdf"  target="_blank">Manual</a>
-                                @endif
-                        </td>
+
                         <td>
                             @if($row->has_servicebulletin=="Yes")
                                 <a href="uploads/games/bulletins/{{ $row->id }}.pdf"  target="_blank">Bulletin</a>
                             @endif
                         </td>
 
-                       <div> <td>  <button type="button" class="btn-imagee"> <a href="{{ URL::to('gamestitle/upload/'.$row->id.'?type=2')}}"style ="color: white; font-family: 'Lato', sans-serif; white-space: nowrap; border-color: #2a6496;	text-decoration: none;  border-radius: 0px; border: 1px solid transparent; background-color: #428bca; font-size: 10px;">Upload Manual</a></button></td>
 
-                       </div>
+
 
                         <div> <td>  <button type="button" class="btn-imagee"><a href="{{ URL::to('gamestitle/upload/'.$row->id.'?type=3')}}"style ="color: white; font-family: 'Lato', sans-serif; white-space: nowrap; border-color: #2a6496;	text-decoration: none;  border-radius: 0px; border: 1px solid transparent; background-color: #428bca; font-size: 10px;">Upload Bulletin</a></button></td>
 
