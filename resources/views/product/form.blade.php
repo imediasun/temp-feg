@@ -60,7 +60,17 @@
 				  </div>
 
 
+							<div class="form-group  " >
+								<label for="Quantity Per Case" class=" control-label col-md-4 text-left">
+									{!! SiteHelpers::activeLang('Quantity Per Case', (isset($fields['num_items']['language'])? $fields['num_items']['language'] : array())) !!}
+								</label>
+								<div class="col-md-6">
+									{!! Form::text('num_items', $row['num_items'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
+								</div>
+								<div class="col-md-2">
 
+								</div>
+							</div>
 
 
 
