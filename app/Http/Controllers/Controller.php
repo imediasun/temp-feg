@@ -4,7 +4,7 @@
 namespace App\Http\Controllers;
 
 use Carbon\Carbon;
-use App\Models\AddtoCart;
+use App\Models\Addtocart;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Foundation\Validation\ValidatesRequests;
@@ -20,7 +20,7 @@ abstract class Controller extends BaseController
     public function __construct()
     {
 
-        $this->addToCartModel = new AddtoCart();
+        $this->addToCartModel = new Addtocart();
 
         $this->middleware('ipblocked');
 
