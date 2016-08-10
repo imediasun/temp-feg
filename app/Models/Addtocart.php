@@ -34,6 +34,8 @@ class addtocart extends Sximo
     {
         $where="WHERE requests.id IS NOT NULL ";
         $data['user_level'] = \Session::get('gid');
+
+
         if ($data['user_level'] == 3 || $data['user_level'] == 4 || $data['user_level'] == 5 || $data['user_level'] == 7 || $data['user_level'] == 9 || $data['user_level'] == 10) {
             $where.= " AND requests.location_id = " . \Session::get('selected_location') . " AND requests.status_id = 9"; /// 9 IS USED AS AN ARBITRARY DELIMETER TO KEEP CART SEPERATE FROM LOCATIONS' OWN
         } else {
@@ -46,13 +48,11 @@ class addtocart extends Sximo
     {
         return "  ";
     }
-    function totallyRecordInCart()
-    {
-         return \DB::select("SELECT COUNT(*) as total FROM requests WHERE request_user_id = ".\Session::get('uid')." AND status_id = 9 AND location_id = ".\Session::get('selected_location'));
-    }
+    
 
     function popupCartData($productId=null)
     {
+
         $data['user_level']=\Session::get('gid');
 
         if ($data['user_level'] == 2)
@@ -73,7 +73,7 @@ class addtocart extends Sximo
             }
             if(!empty($productId))
             {
-                $qty = 0;
+                $qty = 1;
                 $query = \DB::select('SELECT id FROM requests WHERE product_id = "'.$productId.'" AND status_id = "'.$statusId.'" AND location_id = "'.$locationId.'"');
 
                 /// TO AVOID ADDITNG THE SAME PRODUCT IN TWO PLACES

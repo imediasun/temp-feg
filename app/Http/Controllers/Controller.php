@@ -4,6 +4,7 @@
 namespace App\Http\Controllers;
 
 use Carbon\Carbon;
+use App\Models\AddtoCart;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Foundation\Validation\ValidatesRequests;
@@ -18,6 +19,8 @@ abstract class Controller extends BaseController
 
     public function __construct()
     {
+
+        $this->addToCartModel = new AddtoCart();
 
         $this->middleware('ipblocked');
 
@@ -740,6 +743,8 @@ function getChangelocation($location_id)
         $data['selected_location_name'] = $location_name[0]->location_name_short;
     }
     $data['selected_location'] = $location_id;
+    $total_cart = $this->addToCartModel->totallyRecordInCart();
+    \Session::put('total_cart', $total_cart[0]->total);
     // Session::put($data);
     return Redirect::back();
 }
