@@ -200,17 +200,18 @@
                 var id =$(this).parent().parent().attr("id");
                 id = id.split("-");
                 console.log(id[1]);
-
+//                this.form.submit();
 
                 $.ajax(
                         {url: "addtocart/save/"+id[1],
                             type: 'post',
                             data: {qty:value},
-                            status: 'success',
-                            message:Lang::get('core.note_success'),
+
 
 
                     success: function(result){
+//                    $("#div1").html(result);
+
                 }
 
                         }
