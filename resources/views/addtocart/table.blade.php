@@ -211,6 +211,7 @@
 
                     success: function(result){
 //                    $("#div1").html(result);
+                        location.reload();
 
                 }
 
