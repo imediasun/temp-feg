@@ -78,12 +78,12 @@ class addtocart extends Sximo
             }
             if(!empty($productId))
             {
-<<<<<<< HEAD
+
 
                 $qty = 1;
-=======
-                $qty = 0;
->>>>>>> 4b954913d8f9ccee87a6ef3dc1ee4f5c7b229082
+
+               // $qty = 0;
+
                 $query = \DB::select('SELECT id FROM requests WHERE product_id = "'.$productId.'" AND status_id = "'.$statusId.'" AND location_id = "'.$locationId.'"');
 
                 /// TO AVOID ADDITNG THE SAME PRODUCT IN TWO PLACES
