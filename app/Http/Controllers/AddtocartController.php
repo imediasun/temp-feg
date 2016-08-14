@@ -114,9 +114,8 @@ class AddtocartController extends Controller
     }
 
 
-    function getUpdate(Request $request, $id = null)
+    function getUpdate(Request $request, $id = null,$v=null)
     {
-
         if ($id == '') {
             if ($this->access['is_add'] == 0)
                 return Redirect::to('dashboard')->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
@@ -288,6 +287,27 @@ class AddtocartController extends Controller
             $this->getChangelocation($new_location);
             return redirect('./shopfegrequeststore/popup-cart/');
         }
+    }
+    public function getSave($id=null,$qty=null,$vendor_name=null)
+    {
+        $data=array('qty'=>$qty);
+        $update=\DB::table('requests')->where('id',$id)->update($data);
+        if($update)
+        {
+            $vendor_name= str_replace('_', ' ', $vendor_name);
+            $updated=$this->model->popupCartData(null,$vendor_name);
+            return json_encode(array('vendor_name'=>$updated['subtotals'][0]['vendor_name'],'subtotal'=>$updated['subtotals'][0]['vendor_total']));
+        }
+        else
+        {
+            echo "not hello";
+        }
+    }
+    public function getCartdata()
+    {
+        $productId = \Session::get('productId');
+        $cart_data=$this->model->popupCartData($productId);
+        return response()->json($cart_data);
     }
 
 }

@@ -42,7 +42,7 @@
 		<script type="text/javascript" src="{{ asset('sximo/js/plugins/switch.min.js') }}"></script>
 		<script type="text/javascript" src="{{ asset('sximo/js/plugins/bootstrap.datetimepicker/js/bootstrap-datetimepicker.min.js') }}"></script>
 		<script type="text/javascript" src="{{ asset('sximo/js/plugins/bootstrap/js/bootstrap.js') }}"></script>
-		<script type="text/javascript" src="{{ asset('sximo/js/plugins/jasny-bootstrap/js/jasny-bootstrap.min.js') }}"></script>
+       <script type="text/javascript" src="{{ asset('sximo/js/plugins/jasny-bootstrap/js/jasny-bootstrap.min.js') }}"></script>
 		<script type="text/javascript" src="{{ asset('sximo/js/sximo.js') }}"></script>
 		<script type="text/javascript" src="{{ asset('sximo/js/plugins/jquery.form.js') }}"></script>
 		<script type="text/javascript" src="{{ asset('sximo/js/plugins/jquery.jCombo.min.js') }}"></script>

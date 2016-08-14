@@ -50,7 +50,7 @@ class addtocart extends Sximo
     }
     
 
-    function popupCartData($productId=null)
+    function popupCartData($productId=null,$v1=null)
     {
 
         $data['user_level']=\Session::get('gid');
@@ -61,6 +61,7 @@ class addtocart extends Sximo
         }
         else
         {
+
             $locationId = \Session::get('selected_location');
 
             if ($data['user_level'] == 3 || $data['user_level'] == 4 || $data['user_level'] == 5 || $data['user_level'] == 7 || $data['user_level'] == 9 || $data['user_level'] == 10)
@@ -73,12 +74,14 @@ class addtocart extends Sximo
             }
             if(!empty($productId))
             {
+
                 $qty = 1;
                 $query = \DB::select('SELECT id FROM requests WHERE product_id = "'.$productId.'" AND status_id = "'.$statusId.'" AND location_id = "'.$locationId.'"');
 
                 /// TO AVOID ADDITNG THE SAME PRODUCT IN TWO PLACES
                 if (count($query) == 0)
                 {
+
                     $now = date('Y-m-d');
                     $insert = array(
                         'product_id' => $productId,
@@ -98,13 +101,20 @@ class addtocart extends Sximo
             $data['shopping_cart_total'] = '';
             $data['amt_short'] = '';
             $data['amt_short_message'] = '';
-            $query = \DB::select('SELECT V.vendor_name,  V.id AS vendor_id, V.min_order_amt, SUM(R.qty*P.case_price) AS total,
+
+                                       $select='SELECT V.vendor_name,  V.id AS vendor_id, V.min_order_amt, SUM(R.qty*P.case_price) AS total,
                                        V.min_order_amt - SUM(R.qty*P.case_price) AS amt_short FROM requests R
                                        LEFT JOIN products P ON P.id = R.product_id
 								       LEFT JOIN vendor V ON V.id = P.vendor_id
-									   WHERE R.status_id = "'.$statusId.'"
-									   AND R.location_id = "'.$location_id .'"
-                                       GROUP BY V.vendor_name');
+									   WHERE R.status_id = "' . $statusId . '" AND V.vendor_name !="null"
+									   AND R.location_id = "' . $location_id . '"
+                                       GROUP BY V.vendor_name';
+            if($v1)
+            {
+                $select .= ' HAVING V.vendor_name="'.$v1.'"';
+            }
+                $query = \DB::select($select);
+
 
             $amt_short_message="";
             foreach ($query as $row)

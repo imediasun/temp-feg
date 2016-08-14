@@ -109,16 +109,8 @@
 
                                 @if($field['field']=='qty')
 
-
-
-
-                                            {!! Form::text('qty', $value,['style'=>'width:55px']) !!}
-
-
-
-
-
-                                    @else
+                                    <input type="text" value="{{ $value }}" name="qty[]" id="{{ $row->id }}" data-vendor="{{ $row->vendor_name }}" style="width:55px" onblur="changeTotal(this.value,this.id)"/>
+                                @else
 
                                 {!! $value !!}
                                 @endif
@@ -233,6 +225,27 @@
     $('#clone_order').on('ifUnchecked', function () {
         $('#new_locationdiv').hide();
     });
+
+    var timer = null;
+
+
+    function doStuff(value,id,vendor_name) {
+        $.ajax({
+            url:"/addtocart/save/"+id+"/"+value+"/"+vendor_name,
+            method:'get',
+            dataType:'json',
+            success:function(data){
+                loadCart(vendor_name,data.subtotal);
+            }
+        });
+    }
+    timer=null;
+    function changeTotal(value,id)
+    {
+        var vendor_name1=$("#"+id).data('vendor');
+        vendor_name1=vendor_name1.replace(/\s+/g, '_');
+        doStuff(value,id,vendor_name1);
+    }
     function confirmSubmit() {
         var shortMessage = "{{ json_encode($cartData['amt_short_message']) }}";
             shortMessage=shortMessage.replace(/&quot;/g, '');
@@ -264,7 +277,11 @@
 
         }
     }
-
+function loadCart(vendor_name,subtotal)
+{
+    getCartData(false,vendor_name,subtotal);
+   // return false;
+}
 </script>
 <style>
     .table th.right {

@@ -8,18 +8,11 @@
     <div class="col-md-8 col-md-offset-2" style="background: #FFF;box-shadow: 1px 1px 5px lightgray;padding:20px;margin-bottom:12px">
 
         <h1 class="text-center"><img src='{{ url() }}/sximo/images/shopping_cart.png'  /> {{ $cartData['title_2'] }}</h1>
-        <div class="table-responsive" style="">
-            <table class="table table-hover">
-                @foreach($cartData['subtotals'] as $data)
-                    @if(isset($data['vendor_name']))
-                <tr>
-                 <td style="padding:7px">{{ $data['vendor_name'] }} @if($data['vendor_min_order_amt'] > 0) ( $ {{ $data['vendor_min_order_amt'] }} Minimum ) @endif</td>
-                    <td style="padding:7px"> {{ $data['vendor_total'] }} </td>
-                </tr>
-                    @endif
-                    @endforeach
-                <tr style="border-top:3px solid #000"><td style="padding:7px">Total</td><td style="padding:7px">$ {{ $cartData['shopping_cart_total'] }}</td></tr>
-            </table>
+        <div class="table-responsive" style="max-height: 800px;min-height: 100px;">
+            <div class="ajaxLoading"></div>
+            <table class="table table-hover " id="cart_data_table">
+
+                </table>
         </div>
     </div>
     <?php } ?>
@@ -39,4 +32,68 @@
     $("#col-config").on('change',function(){
         reloadData('#{{ $pageModule }}','{{ $pageModule }}/data?config_id='+$("#col-config").val());
     });
+    $(document).ready(function(){
+        var isOnLoad=true;
+        getCartData(isOnLoad);
+
+    });
+    function getCartData(isOnLoad,vendor,subtotal)
+    {
+        vendor = vendor || "no";
+        subtotal=subtotal || "no";
+
+        var t = document.getElementById('cart_data_table');
+        //$("#cart_data_table tr").remove();
+        $.ajax({
+            url:'/addtocart/cartdata',
+            method:'get',
+            success:function(data){
+
+                var row,cell1,cell2,vendor_name,vendor_total,total_row,total_cell1,total_cell2;
+                if(isOnLoad) {
+                    for (var i = 0; i < data['subtotals'].length; i++) {
+                        row = t.insertRow(i);
+                        cell1 = row.insertCell(0);
+                        cell2 = row.insertCell(1);
+                        cell2.id = data['subtotals'][i].vendor_name.replace(/[^A-Z0-9]/ig, "_").substr(0,6);
+                        cell1.style = "padding:7px";
+                        cell2.style = "padding:7px";
+                        vendor_name = data['subtotals'][i].vendor_name;
+                        vendor_total = " $ " + data['subtotals'][i].vendor_total;
+                        if (data['subtotals'][i].vendor_min_order_amt > 0) {
+                            vendor_name = vendor_name + "( $" + data['subtotals'][i].vendor_min_order_amt + " Minimum )";
+                        }
+
+// Add some text to the new cells:
+                        cell1.innerHTML = vendor_name;
+                        cell2.innerHTML = vendor_total;
+                    }
+                    total_row = t.insertRow(data['subtotals'].length);
+                    total_row.style="border-top:3px solid black";
+                    total_cell1 = total_row.insertCell(0);
+                    total_cell2 = total_row.insertCell(1);
+                    total_cell2.id="total_amount";
+
+
+
+// Add some text to the new cells:
+                    total_cell1.innerHTML = "Total";
+                    total_cell2.innerHTML =" $ "+ data['shopping_cart_total'];
+                }
+                else
+                {
+                    vendor=vendor.replace(/[^A-Z0-9]/ig, "_").substr(0,6);
+                    $("#"+vendor).text(" $ "+subtotal);
+                    $("#total_amount").text(" $ "+ data['shopping_cart_total']);
+
+                }
+
+            }
+        });
+    }
+    function testload(vendor_name,value)
+    {
+        alert(vendor_name+" "+value);
+       $("#"+vendor_name).text(value);// alert(vendor_name + value);
+    }
 </script>
