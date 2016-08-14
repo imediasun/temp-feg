@@ -80,9 +80,9 @@ class addtocart extends Sximo
             {
 
 
-                $qty = 1;
+               // $qty = 1;
 
-               // $qty = 0;
+                $qty = 0;
 
                 $query = \DB::select('SELECT id FROM requests WHERE product_id = "'.$productId.'" AND status_id = "'.$statusId.'" AND location_id = "'.$locationId.'"');
 
