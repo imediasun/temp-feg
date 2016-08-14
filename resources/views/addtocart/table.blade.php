@@ -104,6 +104,7 @@
                         @if(SiteHelpers::filterColumn($limited ))
                             <td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}"
                                 data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
+<<<<<<< HEAD
 
 
 
@@ -112,6 +113,11 @@
                                     <input type="text" value="{{ $value }}" name="qty[]" id="{{ $row->id }}" data-vendor="{{ $row->vendor_name }}" style="width:55px" onblur="changeTotal(this.value,this.id)"/>
                                 @else
 
+=======
+                                  @if($field['field']=='qty')
+                                    {!! Form::text('qty', $value,array('class'=>'my_form', 'method'=>'post','style'=>'width:55px')) !!}
+                                    @else
+>>>>>>> 4b954913d8f9ccee87a6ef3dc1ee4f5c7b229082
                                 {!! $value !!}
                                 @endif
                             </td>
@@ -196,6 +202,37 @@
         $("#new_location").jCombo("{{ URL::to('order/comboselect?filter=location:id:id|location_name ') }}",
                 {selected_value: ''});
         $(".select3").select2({width: "98%"});
+
+        $('.my_form').on("keypress",(function(e) {
+            console.log(e);
+            if (e.which == 13) {
+
+                var value = $(this).val();
+                var id =$(this).parent().parent().attr("id");
+                id = id.split("-");
+                console.log(id[1]);
+//                this.form.submit();
+
+                $.ajax(
+                        {url: "addtocart/save/"+id[1],
+                            type: 'post',
+                            data: {qty:value},
+
+
+
+                    success: function(result){
+//                    $("#div1").html(result);
+                        location.reload();
+
+                }
+
+                        }
+                );
+
+
+            }
+        }));
+
         $('input[type="checkbox"],input[type="radio"]').iCheck({
             checkboxClass: 'icheckbox_square-green',
             radioClass: 'iradio_square-green',

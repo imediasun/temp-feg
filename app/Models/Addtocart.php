@@ -55,6 +55,8 @@ class addtocart extends Sximo
 
         $data['user_level']=\Session::get('gid');
 
+
+
         if ($data['user_level'] == 2)
         {
             redirect('./dashboard', 'refresh');
@@ -63,6 +65,8 @@ class addtocart extends Sximo
         {
 
             $locationId = \Session::get('selected_location');
+
+
 
             if ($data['user_level'] == 3 || $data['user_level'] == 4 || $data['user_level'] == 5 || $data['user_level'] == 7 || $data['user_level'] == 9 || $data['user_level'] == 10)
             {
@@ -74,8 +78,12 @@ class addtocart extends Sximo
             }
             if(!empty($productId))
             {
+<<<<<<< HEAD
 
                 $qty = 1;
+=======
+                $qty = 0;
+>>>>>>> 4b954913d8f9ccee87a6ef3dc1ee4f5c7b229082
                 $query = \DB::select('SELECT id FROM requests WHERE product_id = "'.$productId.'" AND status_id = "'.$statusId.'" AND location_id = "'.$locationId.'"');
 
                 /// TO AVOID ADDITNG THE SAME PRODUCT IN TWO PLACES
@@ -95,7 +103,9 @@ class addtocart extends Sximo
                 }
             }
             $location_id = \Session::get('selected_location');
+
             $data['selected_location'] = $location_id;
+
 
             // SHOPPING CART TOTALS (SHOWN ABOVE CART) START
             $data['shopping_cart_total'] = '';
@@ -128,6 +138,7 @@ class addtocart extends Sximo
                 );
 
                 $array[] = $row;
+
 
                 if($row['amt_short'] > 0)
                 {
