@@ -37,7 +37,7 @@ class AddtocartController extends Controller
             return Redirect::to('dashboard')->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
         $productId = \Session::get('productId');
         \Session::put('productId', $productId);
-        $cartData = $this->model->popupCartData($productId);
+       // $cartData = $this->model->popupCartData(null);
         //$this->data['cartData'] = $cartData;
         // \Session::put('cartData', $cartData);
         $this->data['access'] = $this->access;
@@ -47,7 +47,7 @@ class AddtocartController extends Controller
     public function postData(Request $request)
     {
         $productId = \Session::get('productId');
-        $cartData = $this->model->popupCartData($productId);
+        $cartData = $this->model->popupCartData(null);
         $this->data['cartData'] = $cartData;
         $module_id = \DB::table('tb_module')->where('module_name', '=', 'addtocart')->pluck('module_id');
         $this->data['module_id'] = $module_id;
