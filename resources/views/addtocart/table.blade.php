@@ -262,7 +262,7 @@
 
     function doStuff(value,id,vendor_name) {
         $.ajax({
-            url:"/addtocart/save/"+id+"/"+value+"/"+vendor_name,
+            url:"/addtocart/save/"+id+"/"+value+"/"+encodeURIComponent(vendor_name) ,
             method:'get',
             dataType:'json',
             success:function(data){
@@ -274,7 +274,8 @@
     function changeTotal(value,id)
     {
         var vendor_name1=$("#"+id).data('vendor');
-        vendor_name1=vendor_name1.replace(/\s+/g, '_');
+       vendor_name1=vendor_name1.replace(/ /g, '_');
+       // alert(vendor_name1);
         doStuff(value,id,vendor_name1);
     }
     function confirmSubmit() {

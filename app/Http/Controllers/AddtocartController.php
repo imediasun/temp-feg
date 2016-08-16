@@ -295,12 +295,13 @@ class AddtocartController extends Controller
         if($update)
         {
             $vendor_name= str_replace('_', ' ', $vendor_name);
+
             $updated=$this->model->popupCartData(null,$vendor_name);
             return json_encode(array('vendor_name'=>$updated['subtotals'][0]['vendor_name'],'subtotal'=>$updated['subtotals'][0]['vendor_total']));
         }
         else
         {
-            echo "not hello";
+            echo "Update Failed...";
         }
     }
     public function getCartdata()
