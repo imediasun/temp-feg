@@ -39,9 +39,10 @@
 					endif;
 				endforeach; ?>
 
+
+				<th width="70"><?php echo Lang::get('core.btn_action') ;?></th>
 				<th width="100">Purchase Order</th>
 				<th width="100">Clone</th>
-				<th width="70"><?php echo Lang::get('core.btn_action') ;?></th>
 
 
                 @if($order_selected=='OPEN')
@@ -102,13 +103,22 @@
 						 <?php endif;
 						endforeach;
 					  ?>
-					<td><a href="{{ URL::to('order/po/'.$row->id)}}">Generate PO</a></td>
-					<td><a href="{{ $pageModule }}/update/{{$row->id}}/clone"  onclick="ajaxViewDetail('#order',this.href); return false; "  class="btn btn-xs btn-white tips" title="Clone Order">Clone Order</a></td>
+
 
 				 <td data-values="action" data-key="<?php echo $row->id ;?>">
 					{!! AjaxHelpers::buttonAction('order',$access,$id ,$setting) !!}
 					{!! AjaxHelpers::buttonActionInline($row->id,'id') !!}
 				</td>
+
+
+
+
+					<div>
+						<td><a href="{{ URL::to('order/po/'.$row->id)}}" class="btn btn-xs btn-white tips" title="Generate PO">Generate PO</a></td>
+					</div>
+					<div>
+						<td><a href="{{ $pageModule }}/update/{{$row->id}}/clone"  onclick="ajaxViewDetail('#order',this.href); return false; "  class="btn btn-xs btn-white tips" title="Clone Order">Clone Order</a></td>
+					</div>
                     @if($order_selected=='OPEN')
                         <td><a href="{{ URL::to('order/orderreceipt/'.$row->id)}}">Receive Order</a></td>
                     @endif
