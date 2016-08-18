@@ -135,14 +135,14 @@
                     </div>
                     <div class="form-group  ">
                         <br/><br/>
-                        <label for="date_orederd" class=" control-label col-md-4 text-left">
+                        <label for="date_orederd" class=" control-label col-md-4 text-left" style="margin-top: 7px;">
                             Date Ordered</label>
 
-                        <div class="col-md-8">
-                            <div class="input-group m-b" style="width:150px !important;">
-                                <input type="text" class="form-control date" name="date_ordered"
+                        <div class="col-md-8" style="padding-left: 13px;">
+                            <div class="input-group datepicker" style="width:150px !important; margin-bottom: 9px;">
+                                <input type="text" class="form-control "  id="my-datepicker"  name="date_ordered"
                                        value="{{ date("m/d/Y", strtotime($data['today'])) }}" required="required"/>
-                                <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                <span class="input-group-addon "><i class="fa fa-calendar" id="icon"></i></span>
                             </div>
                         </div>
 
@@ -152,7 +152,7 @@
                         <label for="total_cost" class=" control-label col-md-4 text-left">
                             Total Cost ( $ )</label>
 
-                        <div class="col-md-8">
+                        <div class="col-md-8" style="padding-left: 18px !important;">
                             <input style="width:150px !important;" type="text" name="order_total" id="total_cost"
                                    class="form-control" value="{{ $data['order_total'] }}" maxlength="8"/>
                         </div>
@@ -180,8 +180,8 @@
                         <br/><br/>
                         <label class="label-control col-md-3" for="notes"> Order Notes **Will be on PO**</label>
 
-                        <div class="col-md-9" style="padding-left: 58px;">
-                            <textarea id="notes" name='po_notes' cols="46" rows="9"
+                        <div class="col-md-9" >
+                            <textarea id="notes" class="form-control col-lg-offset-1" name='po_notes' cols="44" rows="9"
                                       placeholder='Additional Notes'>{{ $data['po_notes'] }}</textarea>
                         </div>
                     </div>
@@ -336,6 +336,14 @@
             hideShowAltLocation();
             $("#item_num").val('1');
             $("#submit_btn").hide();
+
+
+            $('#icon').click(function(){
+                $(document).ready(function(){
+                    $("#my-datepicker").datepicker().focus();
+                });
+            });
+
             $("#location_id").jCombo("{{ URL::to('order/comboselect?filter=location:id:id|location_name ') }}",
                     {selected_value: '{{ $data["order_location_id"] }}',initial_text:'-------- Select Location --------'});
 

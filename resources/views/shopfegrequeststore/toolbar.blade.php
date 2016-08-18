@@ -39,7 +39,7 @@
 </div>
 <div class="row m-b">
 
-    <div class="col-md-5">
+    <div class="col-md-5" style="margin-top:7px;">
 
         <a href="{{ URL::to( $pageModule .'/search') }}" class="btn btn-sm btn-white"
            onclick="SximoModal(this.href,'Advance Search'); return false;"><i class="fa fa-search"></i> Search</a>
