@@ -29,7 +29,7 @@
                 <table class="table table-striped  " id="{{ $pageModule }}Table" style="table-layout: fixed;width:100%;">
                     <thead>
                     <tr>
-                        <th width="20"> No</th>
+                        <th width="50"> No</th>
 
                         <th width="60"><input type="checkbox" class="checkall"/></th>
 

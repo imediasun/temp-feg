@@ -19,7 +19,7 @@ class order extends Sximo
     public static function querySelect()
     {
 
-        return "  SELECT orders.*,order_type.is_merch FROM orders left outer join order_type on orders.order_type_id=order_type.id  ";
+        return "  SELECT orders.* from orders ";
     }
 
     public static function queryWhere($cond = null)

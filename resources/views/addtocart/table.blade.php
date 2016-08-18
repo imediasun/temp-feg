@@ -177,7 +177,7 @@
                 <div class="col-md-10">
                     <input type="button" style="font-size:1.4em; width:100%; text-align:center;"
                            value="Submit Weekly Requests totalling ${{ $cartData['shopping_cart_total']}}"
-                           onClick="confirmSubmit();"></button>
+                           onClick="confirmSubmit();" id = "cartbtn"></button>
                 </div>
             </div>
         @endif
@@ -186,7 +186,7 @@
     </div>
 </div>
 @else
-    <p style="color:red">Sorry! Location {{ \Session::get('selected_location') }}'s cart is empty..</p>
+    <p style="color:red"> Location {{ \Session::get('selected_location') }}'s cart is empty..</p>
 @endif
 @if($setting['inline'] =='true') @include('sximo.module.utility.inlinegrid') @endif
 
@@ -279,13 +279,20 @@
         doStuff(value,id,vendor_name1);
     }
     function confirmSubmit() {
-        var shortMessage = "{{ json_encode($cartData['amt_short_message']) }}";
-            shortMessage=shortMessage.replace(/&quot;/g, '');
+        var shortMessage;
+        if(amt_short_msg == null) {
+            shortMessage = "{{ json_encode($cartData['amt_short_message']) }}";
+}
+        else
+        {
+     shortMessage=amt_short_msg;
+        }
+        shortMessage=shortMessage.replace(/&quot;/g, '');
             shortMessage=shortMessage.trim();
         if ( shortMessage && shortMessage.length > 0 ) {
 
             var text="Please increase order amount in order to proceed."
-            alert(shortMessage + text);
+            alert(shortMessage +" "+ text);
 
         }
         else {
@@ -303,7 +310,9 @@
                     }
                 }
                 else {
+                 //   alert('{{ $pageModule }}/submit-requests');
                     window.location.href = '{{ $pageModule }}/submit-requests';
+                    $("#update_text_to_add_cart").text('0');
                 }
             }
 

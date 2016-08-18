@@ -320,6 +320,7 @@ class ShopfegrequeststoreController extends Controller
         $total_cart = $this->addToCartModel->totallyRecordInCart();
         if($current_total_cart == $total_cart[0]->total)
         {
+
             $message = \Lang::get('core.already_add_to_cart');
         }
         else

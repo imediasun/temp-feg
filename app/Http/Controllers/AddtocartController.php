@@ -247,7 +247,8 @@ class AddtocartController extends Controller
     function getSubmitRequests($new_location = null)
     {
 
-        $now = date('m/d/Y');
+        $now = date('Y-m-d');
+
         $location_id = \Session::get('selected_location');
         $data['user_level'] = \Session::get('gid');
         if ($data['user_level'] == 3 || $data['user_level'] == 4 || $data['user_level'] == 5 || $data['user_level'] == 7 || $data['user_level'] == 9 || $data['user_level'] == 10) {
@@ -281,7 +282,8 @@ class AddtocartController extends Controller
 
         if (empty($new_location)) {
 
-            return redirect('./shopfegrequeststore/popup-cart');
+            return redirect('./addtocart');
+            \Session::put('total_cart',0);
             //redirect('fegllc/popupCart', 'refresh');
         } else {
             $this->getChangelocation($new_location);

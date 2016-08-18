@@ -29,6 +29,7 @@
             </div>
 </div>
 <script>
+    var amt_short_msg=null;
     $("#col-config").on('change',function(){
         reloadData('#{{ $pageModule }}','{{ $pageModule }}/data?config_id='+$("#col-config").val());
     });
@@ -37,6 +38,7 @@
         getCartData(isOnLoad);
 
     });
+
     function getCartData(isOnLoad,vendor,subtotal)
     {
         vendor = vendor || "no";
@@ -85,6 +87,8 @@
                     vendor=vendor.replace(/[^A-Z0-9]/ig, "_").substr(0,6);
                     $("#"+vendor).text(" $ "+subtotal);
                     $("#total_amount").text(" $ "+ data['shopping_cart_total']);
+                    amt_short_msg=data['amt_short_message'];
+                    $("#cartbtn").val(" Submit Weekly Requests totalling $ "+ data['shopping_cart_total']);
 
                 }
 

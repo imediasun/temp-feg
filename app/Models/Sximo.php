@@ -86,26 +86,12 @@ class Sximo extends Model {
             $key = $table . "." . $key;
         }
 
-        $counter_select = preg_replace('/[\s]*SELECT(.*)FROM/Usi', 'SELECT count(' . $key . ') as total FROM', $select);
-       
-        if ($table == "orders") {
-            $total = "27000";
-        }
-        elseif($table=="img_uploads")
+        $counter_select =\DB::select($select . " {$params} " . self::queryGroup() . " {$orderConditional}");
+        $total= count($counter_select);
+
+        if($table=="img_uploads")
         {
-        $total="";    
-        }
-        elseif($table=="freight_orders")
-        {
-            $total = \DB::select($select . "
-				{$params} " . self::queryGroup());
-            $total=count($total);
-        }
-        else {
-            $total = \DB::select($counter_select . "
-				{$params} " . self::queryGroup());
-            $total = $total[0]->total;
-            //$total = 1000;       
+        $total="";
         }
         return $results = array('rows' => $result, 'total' => $total);
     }
@@ -163,7 +149,7 @@ class Sximo extends Model {
     }
 
     function intersectCols($arr1, $arr2) {
-        
+
     }
 
     static function makeInfo($id) {

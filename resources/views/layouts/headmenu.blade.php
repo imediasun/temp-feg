@@ -13,7 +13,12 @@
                 </li>
             <li>
                 <a href="addtocart"  class="dropdown-toggle count-info">
-                    <i class="fa fa-shopping-cart"></i> <span class="notif-alert label label-danger" id="update_text_to_add_cart">{{ \Session::get('total_cart') }}</span>
+                    <?php
+                        $cart_value=\Session::get('total_cart');
+                    $cart_value=isset($cart_value)?$cart_value:0;
+
+                    ?>
+                    <i class="fa fa-shopping-cart"></i> <span class="notif-alert label label-danger" id="update_text_to_add_cart"></span>
 
                 </a>
             </li>
@@ -32,7 +37,7 @@
 
             </li>
 
-                 
+
 
             @if(CNF_MULTILANG ==1)
                 <li class="user dropdown"><a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown"><i
