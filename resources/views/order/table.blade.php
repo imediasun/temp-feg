@@ -40,7 +40,7 @@
 				endforeach; ?>
 
 
-				<th width="70"><?php echo Lang::get('core.btn_action') ;?></th>
+				<th width="50"><?php echo Lang::get('core.btn_action') ;?></th>
 				<th width="100">Purchase Order</th>
 				<th width="100">Clone</th>
 
