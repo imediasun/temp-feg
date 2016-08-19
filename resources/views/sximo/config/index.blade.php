@@ -158,7 +158,7 @@
 
 
 			<div class="form-group  int-link" >
-				<label for="ipt" class=" control-label col-md-4 text-right"> Start Login Page </label>
+				<label for="ipt" class=" control-label col-md-4 text-right"> Login Start Page </label>
 				<div class="col-md-8">
 					<select name="cnf_redireclink" rows='5' type="text" id="cnf_redireclink"   style="width:100%"  class='select-liquid ' value="{{ CNF_REDIRECTLINK }}" >
 						<option value=""> -- Select Module or Page -- </option>

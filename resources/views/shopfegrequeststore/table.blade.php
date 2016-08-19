@@ -39,10 +39,10 @@
                             endif;
                         endforeach; ?>
 
+                        <th width="100">{{ Lang::get('core.btn_action') }}</th>
 
-                        <th width="100">Add'l Details</th>
 
-                        <th width="100">Add To Cart</th>
+
 
 
                     </tr>
@@ -109,11 +109,11 @@
 
 
                         <td><a href="{{ $pageModule }}/show/{{$row->id}}" target="_blank"
-                               class="btn btn-xs btn-green tips" title="Product Details"><i class="fa fa-search" aria-hidden="true"></i></a></td>
+                               class="btn btn-xs btn-green tips" title="Product Details"><i class="fa fa-search" aria-hidden="true"></i></a>
 
-                        <td>
+
                             @if($row->inactive == 0)
-                                <a href="javascript:void(0)" class="addToCart" value="{{$row->id}}"><i class="fa fa-shopping-cart" aria-hidden="true"></i></a>
+                                <a href="javascript:void(0)" class="addToCart" title="Add to Cart" value="{{$row->id}}"><i class="fa fa-shopping-cart" aria-hidden="true"></i></a>
                             @else
                                 Not Avail.
                             @endif
