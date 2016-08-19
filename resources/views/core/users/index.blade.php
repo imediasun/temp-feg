@@ -152,14 +152,14 @@
 						<a  href="{{ URL::to('core/users/update/'.$row->id.'?return='.$return) }}" class="tips btn btn-xs btn-white" title="{{ Lang::get('core.btn_edit') }}"><i class="fa fa-edit "></i></a>
 						@endif
 
-							<a class="btn btn-primary btn-xs" href="{{ URL::to('core/users/play/'.$row->id)}}"><i class="fa fa-user" aria-hidden="true"></i></a>
+							<a  href="{{ URL::to('core/users/play/'.$row->id)}}"><i class="fa fa-user" aria-hidden="true"></i></a>
 
 							@if($row->banned=='Yes')
-								<a class="btn btn-success" href="{{ URL::to('core/users/unblock/'.$row->id)}}">Unblock</a>
+								<a  href="{{ URL::to('core/users/unblock/'.$row->id)}}">Unblock</a>
 							@else
-								<a class="btn btn-danger btn-xs" href="{{ URL::to('core/users/block/'.$row->id)}}"><i class="fa fa-ban" aria-hidden="true"></i></a>
+								<a  href="{{ URL::to('core/users/block/'.$row->id)}}"><i class="fa fa-ban" aria-hidden="true"></i></a>
 							@endif
-							<a class="btn btn-warning btn-xs" href="{{ URL::to('core/users/upload/'.$row->id)}}"><i class="fa fa-picture-o" aria-hidden="true"></i></a>
+							<a href="{{ URL::to('core/users/upload/'.$row->id)}}"><i class="fa fa-picture-o" aria-hidden="true"></i></a>
 
 					</td>
                 </tr>
