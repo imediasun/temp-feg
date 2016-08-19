@@ -88,7 +88,7 @@
 					@endif
 				@endforeach
 
-				<th width="300">{{ Lang::get('core.btn_action') }}</th>
+				<th width="200" style="text-align:center">{{ Lang::get('core.btn_action') }}</th>
 
 			  </tr>
 
@@ -152,14 +152,14 @@
 						<a  href="{{ URL::to('core/users/update/'.$row->id.'?return='.$return) }}" class="tips btn btn-xs btn-white" title="{{ Lang::get('core.btn_edit') }}"><i class="fa fa-edit "></i></a>
 						@endif
 
-							<a  href="{{ URL::to('core/users/play/'.$row->id)}}"><i class="fa fa-user" aria-hidden="true"></i></a>
+							<a  href="{{ URL::to('core/users/play/'.$row->id)}}" class="tips btn btn-xs btn-white" title="Impersonate"><i class="fa fa-user"  aria-hidden="true"></i></a>
 
 							@if($row->banned=='Yes')
-								<a  href="{{ URL::to('core/users/unblock/'.$row->id)}}">Unblock</a>
+								<a  href="{{ URL::to('core/users/unblock/'.$row->id)}}" >Unblock</a>
 							@else
-								<a  href="{{ URL::to('core/users/block/'.$row->id)}}"><i class="fa fa-ban" aria-hidden="true"></i></a>
+								<a  href="{{ URL::to('core/users/block/'.$row->id)}}" class="tips btn btn-xs btn-white"  title="Block User"><i class="fa fa-ban" aria-hidden="true"></i></a>
 							@endif
-							<a href="{{ URL::to('core/users/upload/'.$row->id)}}"><i class="fa fa-picture-o" aria-hidden="true"></i></a>
+							<a href="{{ URL::to('core/users/upload/'.$row->id)}}" class="tips btn btn-xs btn-white"  title="Upload Image"><i class="fa fa-picture-o" aria-hidden="true"></i></a>
 
 					</td>
                 </tr>
