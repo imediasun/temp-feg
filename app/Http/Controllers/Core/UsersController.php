@@ -183,7 +183,7 @@ class UsersController extends Controller
         $row = Users::find($id);
         Auth::loginUsingId($row->id);
 
-        DB::table('users')->where('id', '=', $row->id)->update(array('last_login' => date("m/d/Y H:i:s")));
+        DB::table('users')->where('id', '=', $row->id)->update(array('last_login' => date("Y-m-d H:i:s")));
         //Session::regenerate();
 
         Session::put('uid', $row->id);
