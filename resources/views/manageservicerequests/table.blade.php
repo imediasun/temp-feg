@@ -90,8 +90,7 @@
 										 {!! date("m/d/Y", strtotime($value)) !!}
 
 									 @elseif($field['field'] == 'solved_date')
-
-										 {!! date("m/d/Y", strtotime($value)) !!}
+										 {!! $value == "0000-00-00" ? "--" : date("m/d/Y", strtotime($value)) !!}
                                      @else
                                          {!! $value !!}
                                      @endif

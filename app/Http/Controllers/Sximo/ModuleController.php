@@ -163,7 +163,7 @@ class ModuleController extends Controller {
                 'module_db'        =>$request->input('module_db'),    
                 'module_db_key' => $primary,
                 'module_type'     => $module_type,
-                'module_created'     => date("m/d/Y H:i:s"),
+                'module_created'     => date("Y-m-d H:i:s"),
                 'module_config' => \SiteHelpers::CF_encode_json($json_data),            
             );
             
