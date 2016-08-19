@@ -46,7 +46,7 @@
                             endif;
                         endforeach; ?>
 
-                        <th width="370"><?php echo Lang::get('core.btn_action');?></th>
+                        <th width="180" style="text-align:center">{{ Lang::get('core.btn_action') }}</th>
 
 
                     </tr>
@@ -117,7 +117,7 @@
 
 
                         <td data-values="action" data-key="<?php echo $row->id;?>">
-                            {!! AjaxHelpers::buttonAction('gamestitle',$access,$id ,$setting) !!}
+                            {!! AjaxHelpers::GamestitleButtonAction('gamestitle',$access,$id ,$setting) !!}
                             {!! AjaxHelpers::buttonActionInline($row->id,'id') !!}
 
 
@@ -126,14 +126,14 @@
 
 
 
-                            <a class="btn btn-warning btn-xs" href="{{ URL::to('gamestitle/upload/'.$row->id.'?type=2')}}"><i class="fa fa-picture-o" aria-hidden="true"></i></a>
+                            <a href="{{ URL::to('gamestitle/upload/'.$row->id.'?type=2')}}" class="tips btn btn-xs btn-white" title="Upload Manual"><i class="fa fa-file" aria-hidden="true"></i></a>
 
 
 
-                            <a class="btn btn-warning btn-xs" href="{{ URL::to('gamestitle/upload/'.$row->id.'?type=3')}}"><i class="fa fa-picture-o" aria-hidden="true"></i></a>
+                            <a href="{{ URL::to('gamestitle/upload/'.$row->id.'?type=3')}}"  class="tips btn btn-xs btn-white" title="Upload Bulletin"><i class="fa fa-file" aria-hidden="true"></i></a>
 
 
-                            <a class="btn btn-warning btn-xs" href="{{ URL::to('gamestitle/upload/'.$row->id.'?type=1')}}"><i class="fa fa-picture-o" aria-hidden="true"></i></a>
+                            <a  href="{{ URL::to('gamestitle/upload/'.$row->id.'?type=1')}}" class="tips btn btn-xs btn-white" title="Upload Image"><i class="fa fa-picture-o" aria-hidden="true"></i></a>
 
                         </td>
                     </tr>
