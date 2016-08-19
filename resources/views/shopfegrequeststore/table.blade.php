@@ -109,11 +109,11 @@
 
 
                         <td><a href="{{ $pageModule }}/show/{{$row->id}}" target="_blank"
-                               class="btn btn-xs btn-green tips" title="Product Details"><i class="fa fa-search" aria-hidden="true"></i></a>
+                               class="btn btn-xs btn-green ti" title="Product Details"><i class="fa fa-search" aria-hidden="true"></i></a>
 
 
                             @if($row->inactive == 0)
-                                <a href="javascript:void(0)" class="addToCart" title="Add to Cart" value="{{$row->id}}"><i class="fa fa-shopping-cart" aria-hidden="true"></i></a>
+                                <a href= class="addToCart" title="Add to Cart" value="{{$row->id}}"><i class="fa fa-shopping-cart" aria-hidden="true"></i></a>
                             @else
                                 Not Avail.
                             @endif
