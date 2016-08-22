@@ -227,7 +227,7 @@ class topgamesreport extends Sximo  {
                     LEFT JOIN location L ON L.id = game_earnings.loc_id
 
                   WHERE game_earnings.date_start >= '$date_start'
-                    AND game_earnings.date_end <= '$date_end 23:59:59'
+                    AND game_earnings.date_start <= '$date_end 23:59:59'
                     AND L.reporting = 1
                     AND G.sold = 0
                     AND G.status_id != 3
