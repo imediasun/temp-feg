@@ -40,9 +40,7 @@
 				endforeach; ?>
 
 
-				<th width="50"><?php echo Lang::get('core.btn_action') ;?></th>
-				<th width="100">Purchase Order</th>
-				<th width="100">Clone</th>
+				<th width="150" style="text-align:center">{{ Lang::get('core.btn_action') }}</th>
 
 
                 @if($order_selected=='OPEN')
@@ -106,22 +104,23 @@
 
 
 				 <td data-values="action" data-key="<?php echo $row->id ;?>">
-					{!! AjaxHelpers::buttonAction('order',$access,$id ,$setting) !!}
+					{!! AjaxHelpers::GamestitleButtonAction('order',$access,$id ,$setting) !!}
 					{!! AjaxHelpers::buttonActionInline($row->id,'id') !!}
-				</td>
 
 
 
 
-					<div>
-						<td><a href="{{ URL::to('order/po/'.$row->id)}}" class="btn btn-xs btn-white tips" title="Generate PO">Generate PO</a></td>
-					</div>
-					<div>
-						<td><a href="{{ $pageModule }}/update/{{$row->id}}/clone"  onclick="ajaxViewDetail('#order',this.href); return false; "  class="btn btn-xs btn-white tips" title="Clone Order">Clone Order</a></td>
-					</div>
+
+						<a href="{{ URL::to('order/po/'.$row->id)}}"  class="tips btn btn-xs btn-white" title="Generate PO"><i class="fa fa-cogs" aria-hidden="true"></i></a>
+
+
+						<a href="{{ $pageModule }}/update/{{$row->id}}/clone"  onclick="ajaxViewDetail('#order',this.href); return false; "  class="tips btn btn-xs btn-white" title="Clone Order"><i class=" fa fa-random" aria-hidden="true"></i></a>
+
+
                     @if($order_selected=='OPEN')
                         <td><a href="{{ URL::to('order/orderreceipt/'.$row->id)}}">Receive Order</a></td>
                     @endif
+					</td>
                 </tr>
                 @if($setting['view-method']=='expand')
                 <tr style="display:none" class="expanded" id="row-{{ $row->id }}">

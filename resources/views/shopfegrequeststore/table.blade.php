@@ -113,7 +113,7 @@
 
 
                             @if($row->inactive == 0)
-                                <a href= class="addToCart" title="Add to Cart" value="{{$row->id}}" class="tips btn btn-xs btn-white" ><i class="fa fa-shopping-cart" aria-hidden="true"></i></a>
+                                <a href class="addToCart" title="Add to Cart" value="{{$row->id}}" class="tips btn btn-xs btn-white" ><i class="fa fa-shopping-cart" aria-hidden="true"></i></a>
                             @else
                                 Not Avail.
                             @endif
@@ -169,6 +169,7 @@
             reloadData('#{{ $pageModule }}', url);
             return false;
         });
+
 
 
         $('.addToCart').on('click',function(){

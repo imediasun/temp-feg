@@ -32,8 +32,8 @@
 						} 
 					endif;
 				endforeach; ?>
-				<th width="70"><?php echo Lang::get('core.btn_action') ;?></th>
-                <th width="100">Upload Image</th>
+				<th width="120" style="text-align:center">{{ Lang::get('core.btn_action') }}</th>
+
 			  </tr>
         </thead>
 
@@ -112,12 +112,16 @@
 						endforeach; 
 					  ?>
 				 <td data-values="action" data-key="<?php echo $row->id ;?>">
-					{!! AjaxHelpers::buttonAction('product',$access,$id ,$setting) !!}
+					{!! AjaxHelpers::GamestitleButtonAction('product',$access,$id ,$setting) !!}
 					{!! AjaxHelpers::buttonActionInline($row->id,'id') !!}		
-				</td><div>
-                    <td><button type="button" class="btn-imagee"><a href="{{ URL::to('product/upload/'.$row->id)}}"style ="color: white; font-family: 'Lato', sans-serif; white-space: nowrap; border-color: #2a6496;	text-decoration: none;  border-radius: 0px; border: 1px solid transparent; background-color: #428bca; font-size: 10px;">Upload Image</a></button></td>
-					</div>
-                </tr>
+
+                    <a href="{{ URL::to('product/upload/'.$row->id)}}"class="tips btn btn-xs btn-white"  title="Upload Image"><i class="fa fa-picture-o" aria-hidden="true"></i></a>
+
+
+				 </td>
+				</tr>
+
+
                 @if($setting['view-method']=='expand')
                 <tr style="display:none" class="expanded" id="row-{{ $row->id }}">
                 	<td class="number"></td>
