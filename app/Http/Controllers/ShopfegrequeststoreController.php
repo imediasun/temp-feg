@@ -98,7 +98,10 @@ class ShopfegrequeststoreController extends Controller
         if(count($results['rows']) == $results['total']){
             $params['limit'] = $results['total'];
         }
-
+        if($results['total'] === 0)
+        {
+            $params['limit'] = 1;
+        }
 
         $pagination = new Paginator($results['rows'], $results['total'], $params['limit']);
         $pagination->setPath('shopfegrequeststore/data');
