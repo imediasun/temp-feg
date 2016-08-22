@@ -573,7 +573,7 @@ function getSearch($mode = 'ajax')
 
 function getDownload(Request $request)
 {
-
+    $title = 'user';
     if ($this->access['is_excel'] == 0)
         return Redirect::to('')->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
 
@@ -602,20 +602,34 @@ function getDownload(Request $request)
         foreach ($fields as $f) {
             if ($f['download'] == '1'):
                 $conn = (isset($f['conn']) ? $f['conn'] : array());
-                $content .= '<td>' . \SiteHelpers::gridDisplay($row->$f['field'], $f['field'], $conn) . '</td>';
+                $content .= '<td>' . htmlentities(\SiteHelpers::gridDisplay($row->$f['field'], $f['field'], $conn)) . '</td>';
             endif;
         }
         $content .= '</tr>';
     }
     $content .= '</table>';
 
-    @header('Content-Type: application/ms-excel');
-    @header('Content-Length: ' . strlen($content));
-    @header('Content-disposition: inline; filename="' . $title . ' ' . date("d/m/Y") . '.xls"');
+    $path = "../storage/app/".time().".html";
+    file_put_contents($path, $content);
 
-    echo $content;
-    exit;
+    // Read the contents of the file into PHPExcel Reader class
+    $reader = new \PHPExcel_Reader_HTML;
+    $content = $reader->load($path);
 
+    // Pass to writer and output as needed
+    $objWriter = \PHPExcel_IOFactory::createWriter($content, 'Excel2007');
+    // Delete temporary file
+    unlink($path);
+
+    // We'll be outputting an excel file
+    header('Content-type: application/vnd.ms-excel');
+    // It will be called file.xls
+    header('Content-disposition: attachment; filename="'.$title.' '.date("d/m/Y").'.xlsx"');
+
+    // Write file to the browser
+    $objWriter->save('php://output');
+
+    return ;
 }
 
     public function changeDateFormat($date)
