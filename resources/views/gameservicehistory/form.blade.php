@@ -30,7 +30,7 @@
 					<div class="col-md-6">
                         <select name="game_id" id="game_id" class="form-control">
                             <option disabled>Select Game</option>
-                        @foreach($game_data as $game)
+                        @foreach($game_name as $game)
                         <option value="{{$game->id}}" @if($game->id == $row['game_id']) selected @endif>{{ $game->game_name }}
                         </option>
                         @endforeach
