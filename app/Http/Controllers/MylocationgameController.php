@@ -512,26 +512,36 @@ class MylocationgameController extends Controller
     }
     function postAssettag(Request $request,$asset_ids = null)
     {
+
         $asset_ids = $request->get('asset_ids');
         if(!empty($asset_ids)) {
             $zip = new \ZipArchive();
-            $zip_name = "qr/QRCodes.zip"; // Zip name
+            $zip_name = "./qr/QRCodes.zip"; // Zip name
             $zip->open($zip_name, \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
+            //$zip->close();
             $item_count = substr_count($asset_ids, ',') + 1;
+
             if ($item_count > 1) {
+                //die('here greater than one');
                 for ($i = 1; $i <= $item_count; $i++) {
                     $id = substr($asset_ids, 0, 8);
                     $asset_ids = substr($asset_ids, 9);
                     $this->generate_asset_tag($id);
                     $location = $this->get_game_info_by_id($id, 'location_id');
-                    $file = public_path() . '\\qr\\' . $id . '.png';
+                    $file =  'qr\\'.$id .'.png';
 // Quick check to verify that the file exists
                     if (file_exists($file)) {
-                        $zip->addFile($file);
+                        $zip->addFile($file,basename($file));
                     }
+                    else
+                        die('file not exists');
                 }
+                 $zip->close();
                 if (file_exists($zip_name)) {
-                return (\Response::download($zip_name));
+                    //header('Content-disposition: attachment; filename=files.zip');
+                    //header('Content-type: application/zip');
+                    //readfile($zip_name);
+                return response()->download(public_path('qr/QRCodes.zip'));
             }
                 else
                 {
@@ -539,8 +549,15 @@ class MylocationgameController extends Controller
                 }
             }
             else {
-                if (file_exists("qr/" . $asset_ids . ".png")) {
+              //  die('smaller than one');
+                $this->generate_asset_tag($asset_ids);
+                $file = public_path() . '\\qr\\' . $asset_ids . '.png';
+                if (file_exists($file)) {
+
                     return (\Response::download("qr/" . $asset_ids . ".png"));
+                }
+                else{
+                    die('here in file does not exists');
                 }
             }
         }

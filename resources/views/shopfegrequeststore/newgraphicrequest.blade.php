@@ -70,6 +70,11 @@
                     </label>
                     <div class="col-md-6">
 
+                        <div class="image_upload_div ">
+                            <form action="upload.php" class="dropzone">
+                            </form>
+                        </div>
+
                         <a href="javascript:void(0)" class="btn btn-xs btn-primary pull-right" onclick="addMoreFiles('add_image')"><i class="fa fa-plus"></i></a>
 
                         <div class="add_imageUpl">

@@ -25,6 +25,7 @@
 		<link href="{{ asset('sximo/css/icons.min.css')}}" rel="stylesheet">
 		<link href="{{ asset('sximo/css/bootstrap-select.css')}}" rel="stylesheet">
 		<link href="{{ asset('sximo/js/plugins/toastr/toastr.css')}}" rel="stylesheet">
+        <link href="{{ asset('sximo/css/dropzone.css')}}" rel="stylesheet">
 		@if(!Session::get('themes') or Session::get('themes') =='')
 		<link href="{{ asset('sximo/css/sximo.css')}}" rel="stylesheet">	
 		@else
@@ -45,7 +46,8 @@
        <script type="text/javascript" src="{{ asset('sximo/js/plugins/jasny-bootstrap/js/jasny-bootstrap.min.js') }}"></script>
 		<script type="text/javascript" src="{{ asset('sximo/js/sximo.js') }}"></script>
 		<script type="text/javascript" src="{{ asset('sximo/js/plugins/jquery.form.js') }}"></script>
-		<script type="text/javascript" src="{{ asset('sximo/js/plugins/jquery.jCombo.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('sximo/js/plugins/dropzone.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('sximo/js/plugins/jquery.jCombo.min.js') }}"></script>
 		<script type="text/javascript" src="{{ asset('sximo/js/plugins/toastr/toastr.js') }}"></script>
 		<script type="text/javascript" src="{{ asset('sximo/js/plugins/bootstrap.summernote/summernote.min.js') }}"></script>
 		<script type="text/javascript" src="{{ asset('sximo/js/simpleclone.js') }}"></script>
