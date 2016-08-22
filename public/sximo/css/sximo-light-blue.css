@@ -17,6 +17,8 @@
   color: #555; overflow-x:hidden
 }
 
+
+
 .show{
     display:block;
 }
@@ -2454,4 +2456,10 @@ li.L9 {
 #advance-search.search-table  tr.fieldsearch td:first-child {
 	font-weight: bold;
 	vertical-align: middle;
+}
+
+
+
+#s_icons a {
+  margin-left: 7px;
 }

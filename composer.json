@@ -14,7 +14,8 @@
       "simplesoftwareio/simple-qrcode": "~1",
       "intervention/image": "~2.2",
       "barryvdh/laravel-dompdf": "0.6.*",
-        "willdurand/email-reply-parser": "^2.5"
+        "willdurand/email-reply-parser": "^2.5",
+        "phpoffice/phpexcel": "^1.8"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",

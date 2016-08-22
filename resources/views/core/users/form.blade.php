@@ -172,7 +172,7 @@
 
 
 				<div class="form-group  int-link" >
-					<label for="ipt" class=" control-label col-md-4 text-right"> Start Login Page </label>
+					<label for="ipt" class=" control-label col-md-4 text-right">Login Start Page </label>
 					<div class="col-md-8">
 						<select name="redirect_link"  rows='5' type="text" id="redirect_link"  style="width:100%"  class='select-liquid ' value="{{ $row['redirect_link'] }}" >
 							<option value=""> -- Select Module or Page -- </option>

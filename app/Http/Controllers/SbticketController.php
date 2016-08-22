@@ -259,7 +259,7 @@ class SbticketController extends Controller {
 			$data = $this->validatePost('sb_tickets');
 			if($id==0)
 			{
-				$data['Created'] = date("m/d/Y",time());;
+				$data['Created'] = date('Y-m-d');
 			}
 			$id = $this->model->insertRow($data , $request->input('TicketID'));
 
@@ -327,9 +327,9 @@ class SbticketController extends Controller {
 			$ticketsData = $this->validatePost('sb_tickets');
 			if($ticketsData['Status'] == 'close')
 			{
-				$ticketsData['closed'] = date("m/d/Y",time());
+				$ticketsData['closed'] = date('Y-m-d');
 			}
-			$ticketsData['updated'] = date("m/d/Y",time());
+			$ticketsData['updated'] = date('Y-m-d');
 			$commentsData['USERNAME'] = \Session::get('fid');
 			$comment_model = new Ticketcomment();
 			$TicketID = $request->input('TicketID');

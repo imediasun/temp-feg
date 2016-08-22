@@ -178,10 +178,10 @@
                     </div>
                     <div class="form-group">
                         <br/><br/>
-                        <label class="label-control col-md-3" for="notes"> Order Notes **Will be on PO**</label>
+                        <label class="label-control col-md-4" for="notes"> Order Notes **Will be on PO**</label>
 
-                        <div class="col-md-9" >
-                            <textarea id="notes" class="form-control col-lg-offset-1" name='po_notes' cols="44" rows="9"
+                        <div class="col-md-8" >
+                            <textarea id="notes" class="form-control " name='po_notes' cols="44" rows="9"
                                       placeholder='Additional Notes'>{{ $data['po_notes'] }}</textarea>
                         </div>
                     </div>

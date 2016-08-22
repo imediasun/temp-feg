@@ -180,7 +180,7 @@ class SubmitservicerequestController extends Controller
 
     function postSave(Request $request, $id = null)
     {
-        $now = date('m/d/Y');
+        $now = date('Y-m-d');
         $rules = array('description' => 'required|min:10', 'location_id' => 'required', 'need_by_date' => 'required|min:10|max:10', 'userfile' => 'mimes:jpeg,gif,png,tif,bmp,jpg,doc,docx,pdf,xlx,xlsx,txt,rtf,log,zip,rar,7z,tar,bz2,bz,gz');
         $tech_type = $request->get('tech_type');
         if ($tech_type == 'part') {
@@ -193,8 +193,7 @@ class SubmitservicerequestController extends Controller
             $data['status_id'] = 1;
             $data['request_user_id'] = \Session::get('uid');
             $data['request_date'] = $now;
-            $data['need_by_date'] = date_format(date_create_from_format('m/d/Y', $data['need_by_date']), 'm/d/Y');
-
+            $data['need_by_date'] = date_format(date_create_from_format('m/d/Y', $data['need_by_date']), 'Y-m-d');
             if ($tech_type == 'part') {
                 $insert = array(
                     'location_id' => $data['location_id'],
