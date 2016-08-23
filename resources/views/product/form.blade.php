@@ -53,8 +53,7 @@
 					{!! SiteHelpers::activeLang('Add\'l Details', (isset($fields['details']['language'])? $fields['details']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
-					  <textarea name='details' rows='5' id='details' class='form-control '>
-                          {{ $row['details'] }} </textarea>
+					  <textarea name='details' rows='5' id='details' class='form-control '>{{ $row['details'] }}</textarea>
 					 </div>
 
 				  </div>
@@ -149,16 +148,16 @@
 					</label>
 					<div class="col-md-6">
 
-						<a href="javascript:void(0)" class="btn btn-xs btn-primary pull-right" onclick="addMoreFiles('img')"><i class="fa fa-plus"></i></a>
+						<!--<a href="javascript:void(0)" class="btn btn-xs btn-primary pull-right" onclick="addMoreFiles('img')"><i class="fa fa-plus"></i></a>-->
 
 						<div class="imgUpl">
 							<input  type='file' name='img'  />
-
-
 						</div>
 
-						<div class="col-md-2">
-
+						<div class="col-md-2" style="padding-top: 3px;">
+							<?php
+							echo SiteHelpers::showUploadedFile($row['img'],'/uploads/products/', 30,false)
+							?>
 						</div>
 					</div>
 					</div> </fieldset>

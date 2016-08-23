@@ -116,7 +116,7 @@
 
 
 
-                        <td data-values="action" data-key="<?php echo $row->id;?>">
+                        <td data-values="action" data-key="<?php echo $row->id;?>" class="text-center">
                             {!! AjaxHelpers::GamestitleButtonAction('gamestitle',$access,$id ,$setting) !!}
                             {!! AjaxHelpers::buttonActionInline($row->id,'id') !!}
 
