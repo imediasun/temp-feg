@@ -43,9 +43,9 @@
 	<div class="col-md-4 ">
         @if($access['is_excel'] ==1)
             <div class="pull-right">
-        <a href="{{ URL::to( $pageModule .'/export/excel?return='.$return) }}" class="btn btn-sm btn-white">
+        <a href="{{ URL::to( $pageModule .'/export/excel?return='.$return) }}" class="export_data_in_excel_or_csv btn btn-sm btn-white">
             Excel</a>
-        <a href="{{ URL::to( $pageModule .'/export/csv?return='.$return) }}" class="btn btn-sm btn-white">
+        <a href="{{ URL::to( $pageModule .'/export/csv?return='.$return) }}" class="export_data_in_excel_or_csv btn btn-sm btn-white">
             CSV </a>
     </div>
     @endif
@@ -55,6 +55,9 @@
 <script>
     $("#col-config").on('change',function(){
         reloadData('#{{ $pageModule }}','{{ $pageModule }}/data?config_id='+$("#col-config").val());
+    });
+    $(".export_data_in_excel_or_csv").on('click', function(){
+        notyMessage('Your excel file is being prepared. This may take a few minutes depending on the number of records being downloaded. Please do not leave the current page or the file will not download.');
     });
     $("#order_type").on('change',function(){
 
