@@ -1,11 +1,11 @@
 <div class="row m-b">
 
-    <div class="col-md-4">
+    <div class="col-md-4 col-lg-3">
         <h1  style="vertical-align:baseline; padding-bottom:0;">
             <img src="./sximo/images/store.png"/>
             FEG Store - <b style="font-size:.7em;">Shopping for </b></h1>
                <div class="">
-     <h3>Narrow Your Search</h3>
+            <h3>Narrow Your Search</h3>
         <?php $opts = array("active" => "Active", 'inactive' => "IN Active", 'all' => "All"); ?>
         <select name="activ_inactive_all" class=" select3" id="active_inactive">
             @foreach($opts as $opt => $title)
@@ -21,7 +21,7 @@
     </div>
     </div>
 
-    <div class="col-md-3" style="margin-top:10px ; padding-left: 0px;">
+    <div class="col-md-4 col-lg-3" style="margin-top:10px ; padding-left: 0px;">
         <select class="select3" id="locations"></select>
        <!--  <a class="pull-right" href="https://online.care1st.com/medicare_popupblocker_instructions.php"
            target="_blank" style="font-size:12px;color:red; font-weight:normal;"
