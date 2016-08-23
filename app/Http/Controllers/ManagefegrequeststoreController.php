@@ -13,8 +13,9 @@ class ManagefegrequeststoreController extends Controller
     protected $data = array();
     public $module = 'managefegrequeststore';
     static $per_page = '10';
+    protected $_request;
 
-    public function __construct()
+    public function __construct(Request $request)
     {
         parent::__construct();
         $this->model = new Managefegrequeststore();
@@ -30,6 +31,8 @@ class ManagefegrequeststoreController extends Controller
             'return' => self::returnUrl()
         );
 
+        $this->_request = $request;
+
 
     }
 
@@ -41,6 +44,88 @@ class ManagefegrequeststoreController extends Controller
         $this->data['access'] = $this->access;
         return view('managefegrequeststore.index', $this->data);
     }
+
+    public function getExport($t = 'excel')
+    {
+        set_time_limit(0);
+        $info = $this->model->makeInfo($this->module);
+        //$master  	= $this->buildMasterDetail();
+
+        // End Filter sort and order for query
+        // Filter Search for query
+        if(is_null($this->_request->input('search')))
+        {
+            $filter = \SiteHelpers::getQueryStringForLocation('requests');
+        }
+        else
+        {
+            $filter = $this->buildSearch();
+        }
+
+
+        //$filter 	.=  $master['masterFilter'];
+        $params = array(
+            'params' => $filter,
+            'sort' => 'id',
+            'order' => 'asc',
+        );
+
+        $v1 = $this->_request->get('v1');
+        $v2 = $this->_request->get('v2');
+        $v3 = $this->_request->get('v3');
+
+        $manageRequestInfo = $this->model->getManageRequestsInfo($v1, $v2, $v3);
+
+        $this->data['TID'] = $manageRequestInfo['TID'];
+        $this->data['LID'] = $manageRequestInfo['LID'];
+        $this->data['VID'] = $manageRequestInfo['VID'];
+
+        $view = $this->_request->get('view');
+        $cond = array('view' => $view, 'order_type_id' => $manageRequestInfo['TID'], 'location_id' => $manageRequestInfo['LID'], 'vendor_id' => $manageRequestInfo['VID']);
+        $this->data['view'] = $view;
+        /*
+        echo '<pre>';
+        print_r($params);
+        print_r($cond);
+        echo '</pre>';
+        exit;
+        */
+        $results = $this->model->getRows($params, $cond);
+
+
+
+        $fields = $info['config']['grid'];
+        $rows = $results['rows'];
+        $rows = $this->updateDateInAllRows($rows);
+        $content = array(
+            'fields' => $fields,
+            'rows' => $rows,
+            'title' => $this->data['pageTitle'],
+        );
+
+        if ($t == 'word') {
+
+            return view('sximo.module.utility.word', $content);
+
+        } else if ($t == 'pdf') {
+
+            $pdf = PDF::loadView('sximo.module.utility.pdf', $content);
+            return view($this->data['pageTitle'] . '.pdf');
+
+        } else if ($t == 'csv') {
+
+            return view('sximo.module.utility.csv', $content);
+
+        } else if ($t == 'print') {
+
+            return view('sximo.module.utility.print', $content);
+
+        } else {
+
+            return view('sximo.module.utility.excel', $content);
+        }
+    }
+
 
     public function postData(Request $request)
     {

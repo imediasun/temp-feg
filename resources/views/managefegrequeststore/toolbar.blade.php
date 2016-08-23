@@ -52,14 +52,19 @@
         <br/>
         <a href="{{ URL::to( $pageModule .'/search') }}" class="btn btn-sm btn-white"
            onclick="SximoModal(this.href,'Advance Search'); return false;"><i class="fa fa-search"></i> Search</a>
-
         @if(SiteHelpers::isModuleEnabled($pageModule))
             <a href="{{ URL::to('tablecols/arrange-cols/'.$pageModule) }}" class="btn btn-sm btn-white" onclick="SximoModal(this.href,'Column Selector'); return false;" ><i class="fa fa-bars"></i> Arrange Columns</a>
-
         @endif
-
+        <div class="pull-right">
+            <a href="{{ URL::to( $pageModule .'/export/excel?return='.$return) }}" class="btn btn-sm btn-white">
+                Excel</a>
+            <a href="{{ URL::to( $pageModule .'/export/csv?return='.$return) }}" class="btn btn-sm btn-white">
+                CSV </a>
+        </div>
     </div>
-  
+
+
+
 
 </div>
 <script>
