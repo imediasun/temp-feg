@@ -4,7 +4,7 @@ use App\Http\Controllers\controller;
 use App\Models\Order;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
-use Validator, Input, Redirect;
+use Validator, Input, Redirect, Cache;
 
 class OrderController extends Controller
 {
@@ -32,6 +32,63 @@ class OrderController extends Controller
 
 
     }
+
+    public
+    function getExport($t = 'excel')
+    {
+        ini_set('memory_limit','1G');
+        set_time_limit(0);
+        $info = $this->model->makeInfo($this->module);
+        //$master  	= $this->buildMasterDetail();
+        $filter = (!is_null(Input::get('search')) ? $this->buildSearch() : '');
+
+        //$filter 	.=  $master['masterFilter'];
+        //comment limit
+        $params = array(
+            'params' => '',
+            'page' => 1,
+            'sort'  => 'id',
+            'order' => 'desc'
+        );
+
+        $minutes = 60;
+        $results = Cache::remember('orderExport',$minutes , function() use ($params){
+            return $this->model->getExportRows($params);
+        });
+        //$results = $this->model->getExportRows($params);
+
+        $fields = $info['config']['grid'];
+        $rows = $results['rows'];
+        $rows = $this->updateDateInAllRows($rows);
+        $content = array(
+            'fields' => $fields,
+            'rows' => $rows,
+            'title' => $this->data['pageTitle'],
+        );
+
+        if ($t == 'word') {
+
+            return view('sximo.module.utility.word', $content);
+
+        } else if ($t == 'pdf') {
+
+            $pdf = PDF::loadView('sximo.module.utility.pdf', $content);
+            return view($this->data['pageTitle'] . '.pdf');
+
+        } else if ($t == 'csv') {
+
+            return view('sximo.module.utility.csv', $content);
+
+        } else if ($t == 'print') {
+
+            return view('sximo.module.utility.print', $content);
+
+        } else {
+
+            return view('sximo.module.utility.excel', $content);
+        }
+    }
+
 
     public function getIndex()
     {
