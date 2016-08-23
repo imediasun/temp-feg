@@ -28,10 +28,10 @@
                         </div>
                         <div class="form-group  " >
                             <label for="Game " class=" control-label col-md-4 text-left">
-                                {!! SiteHelpers::activeLang('Game ', (isset($fields['game_name']['language'])? $fields['game_name']['language'] : array())) !!}
+                                {!! SiteHelpers::activeLang('Game ', (isset($fields['game_title_id']['language'])? $fields['game_title_id']['language'] : array())) !!}
                             </label>
                             <div class="col-md-6">
-                                <select name='game_name' rows='5' id='game_name' class='select2 '   ></select>
+                                <select name='game_title_id' rows='5' id='game_title_id' class='select2 '   ></select>
                             </div>
                             <div class="col-md-2">
 
@@ -212,8 +212,8 @@
     <script type="text/javascript">
         $(document).ready(function() {
 
-            $("#game_name").jCombo("{{ URL::to('mylocationgame/comboselect?filter=game_title:id:game_title') }}",
-                    {  selected_value : '{{ $row["game_name"] }}' });
+            $("#game_title_id").jCombo("{{ URL::to('mylocationgame/comboselect?filter=game_title:id:game_title') }}",
+                    {  selected_value : '{{ $row["game_title_id"] }}' });
 
             $("#game_type_id").jCombo("{{ URL::to('mylocationgame/comboselect?filter=game_type:id:game_type') }}",
                     {  selected_value : '{{ $row["game_type_id"] }}' });
