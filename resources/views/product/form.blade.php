@@ -53,8 +53,7 @@
 					{!! SiteHelpers::activeLang('Add\'l Details', (isset($fields['details']['language'])? $fields['details']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
-					  <textarea name='details' rows='5' id='details' class='form-control '>
-                          {{ $row['details'] }} </textarea>
+					  <textarea name='details' rows='5' id='details' class='form-control '>{{ $row['details'] }}</textarea>
 					 </div>
 
 				  </div>
