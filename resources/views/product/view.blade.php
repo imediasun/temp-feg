@@ -25,7 +25,11 @@
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('IMG', (isset($fields['img']['language'])? $fields['img']['language'] : array())) }}
 						</td>
-						<td>{{ $row->img }} </td>
+						<td>
+							<?php
+							echo SiteHelpers::showUploadedFile($row->img,'/uploads/products/', 50,false)
+							?>
+						</td>
 
 					</tr>
 
