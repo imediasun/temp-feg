@@ -650,7 +650,9 @@ class OrderController extends Controller
 
     function getOrderreceipt($order_id = null)
     {
+
         $this->data['data'] = $this->model->getOrderReceipt($order_id);
+        $this->data['data']['order_items'] = \DB::select('SELECT * FROM order_contents WHERE order_id = ' . $order_id );
         return view('order.order-receipt', $this->data);
     }
 

@@ -136,26 +136,20 @@
                         <th>Total ( $ )</th>
                         <th></th>
                         <th></th>
-
-
-
-
                     </tr>
 
                     </thead>
-
                     <tbody>
+                    @foreach($data['order_items'] as $order_item)
                     <tr id="rowid" class="clone clonedInput">
-                        <td>{{ $data['po_number'] }}</td>
-                        <td>{{ $data['order_user_name'] }}</td>
-                        <td>{{ $data['vendor_name'] }}</td>
-                        <td>{{ $data['location_id'] }}</td>
-                        <td>{{ $data['order_total'] }}</td>
-
-
-                        <td>{{ $data['location_id'] }}</td>
-                        <td>{{ $data['location_id'] }}</td>
-                        <td>{{ $data['order_total'] }}</td>
+                        <td>{{ $order_item->id }}</td>
+                        <td>{{ $order_item->item_name }}</td>
+                        <td>{{ $order_item->product_description }}</td>
+                        <td>{{ $order_item->price }}</td>
+                        <td>{{ $order_item->case_price }}</td>
+                        <td>{{ $order_item->qty }}</td>
+                        <td>{{ $order_item->item_received }}</td>
+                        <td>{{ $order_item->total }}</td>
 
                    <td>
 
@@ -163,7 +157,7 @@
                      <td>  <input type="text" disabled="disabled" /></td>
                     </tr>
 
-
+                    @endforeach
 
                     </tbody>
 
