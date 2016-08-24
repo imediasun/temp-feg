@@ -18,7 +18,6 @@ class OrderController extends Controller
     {
         parent::__construct();
         $this->model = new Order();
-        $this->order_item_model = new Orderitem();
         $this->modelview = new  \App\Models\Sbinvoiceitem();
         $this->info = $this->model->makeInfo($this->module);
         $this->access = $this->model->validAccess($this->info['id']);
