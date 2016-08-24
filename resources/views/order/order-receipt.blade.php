@@ -12,7 +12,7 @@
 
             {!! Form::open(array('url'=>'order/receiveorder/', 'class'=>'form-vertical','files' => true ,
             'parsley-validate'=>'','novalidate'=>' ','id'=> 'orderreceiveFormAjax')) !!}
-            <div class="col-md-offset-1 col-md-10">
+            <div class="col-md-offset-1 col-md-10" style="padding-bottom:50px">
                 <fieldset>
                     <legend>Order Receipt</legend>
                     <div class=" table-responsive col-md-8 col-md-offset-2" style="background-color:#FFF;border:1px solid lightgray;font-size:16px">
@@ -112,30 +112,23 @@
             <div class="clr clear"></div>
 
 
-            <div class="form-group col-md-offset-3" style="margin-bottom:50px">
-                <label class="col-sm-4 text-right">&nbsp;</label>
-                <div class="col-sm-8">
-                    <button type="submit" class="btn btn-primary btn-sm " id="submit_btn"><i
-                                class="fa  fa-save "></i>  Receive Order </button>
-                    <button type="button" onclick="window.history.back();" class="btn btn-success btn-sm">
-                        <i class="fa  fa-arrow-circle-left "></i>  Go Back </button>
-                </div>
-            </div>
 
-            <div class="table-responsive">
+
+            <div class="table-responsive" style="padding-top: 5px;">
                 <table class="table table-striped itemstable" onload="calculatetest()">
                     <thead>
                     <tr class="invHeading">
-                        <th width="50"> Item #</th>
-                        <th width="200">Item Name</th>
+                        <th width="70"> Item #</th>
+                        <th width="150">Item Name</th>
                         <th width="200">Item Description</th>
-                        <th>Price Per Unit</th>
-                        <th>Case Price</th>
+                        <th width="100">Price Per Unit</th>
+                        <th width="100">Case Price</th>
                         <th>Quantity</th>
                         <th>Received Quantity</th>
                         <th>Total ( $ )</th>
                         <th></th>
                         <th></th>
+
                     </tr>
 
                     </thead>
@@ -151,10 +144,8 @@
                         <td>{{ $order_item->item_received }}</td>
                         <td>{{ $order_item->total }}</td>
 
-                   <td>
-
-                       <input type="checkbox" name="field[]" id="checkbox"></td>
-                     <td>  <input type="text" disabled="disabled" /></td>
+                        <td><input type="text"  style="width:70px" class="yourText" disabled /><td>
+                        <td><input type="checkbox" class="yourBox" /></td>
                     </tr>
 
                     @endforeach
@@ -176,14 +167,13 @@
 
             <div style="clear:both"></div>
 
-            <div class="form-group" style="margin-bottom:50px">
+            <div class="form-group col-md-offset-3" style="margin-bottom:50px">
                 <label class="col-sm-4 text-right">&nbsp;</label>
-
                 <div class="col-sm-8">
-                    <button type="submit" class="btn btn-primary btn-sm "><i
-                                class="fa  fa-save "></i>  {{ Lang::get('core.sb_save') }} </button>
-                    <button type="button" onclick="ajaxViewClose('#{{ $pageModule }}')" class="btn btn-success btn-sm">
-                        <i class="fa  fa-arrow-circle-left "></i>  {{ Lang::get('core.sb_cancel') }} </button>
+                    <button type="submit" class="btn btn-primary btn-sm " id="submit_btn"><i
+                                class="fa  fa-save "></i>  Receive Order </button>
+                    <button type="button" onclick="window.history.back();" class="btn btn-success btn-sm">
+                        <i class="fa  fa-arrow-circle-left "></i>  Go Back </button>
                 </div>
             </div>
 
@@ -200,14 +190,11 @@
     <script type="text/javascript">
         $(document).ready(function () {
 
-            $( "#checkbox" ).on( "click", function(){
-                if($(this).is(':checked')) {
-                    $(this).next().prop('disabled', false);
-                } else {
-                    $(this).next().prop('disabled', true);
-                }
+            $('.yourBox').change(function() {
 
-            });
+                $('.yourText').attr('disabled',!this.checked)
+            })
+
 
 
 
