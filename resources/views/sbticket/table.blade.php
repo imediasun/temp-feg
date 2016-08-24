@@ -45,33 +45,7 @@
                     </thead>
 
                     <tbody>
-                    @if($access['is_add'] =='1' && $setting['inline']=='true')
-                        <tr id="form-0">
-                            <td> #</td>
-                            <td></td>
 
-                            @if($setting['view-method']=='expand')
-                                <td></td> @endif
-
-                            @foreach ($tableGrid as $t)
-                                @if($t['view'] =='1')
-
-                                    <?php $limited = isset($t['limited']) ? $t['limited'] : ''; ?>
-                                    @if(SiteHelpers::filterColumn($limited ))
-                                        <td data-form="{{ $t['field'] }}"
-                                            data-form-type="{{ AjaxHelpers::inlineFormType($t['field'],$tableForm)}}">
-                                            {!! SiteHelpers::transForm($t['field'] , $tableForm) !!}
-                                        </td>
-                                    @endif
-                                @endif
-                            @endforeach
-
-                            <td>
-                                <button onclick="saved('form-0')" class="btn btn-primary btn-xs" type="button"><i
-                                            class="fa  fa-save"></i></button>
-                            </td>
-                        </tr>
-                    @endif
 
                     <?php foreach ($rowData as $row) :
 
