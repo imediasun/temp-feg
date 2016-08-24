@@ -2,7 +2,6 @@
 
 use App\Http\Controllers\controller;
 use App\Models\Order;
-use App\Models\Orderitem;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Validator, Input, Redirect, Cache;
