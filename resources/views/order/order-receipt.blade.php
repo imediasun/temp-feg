@@ -144,8 +144,8 @@
                         <td>{{ $order_item->item_received }}</td>
                         <td>{{ $order_item->total }}</td>
 
-                        <td><input type="text"  style="width:70px" class="yourText" disabled /><td>
-                        <td><input type="checkbox" class="yourBox" /></td>
+                        <td><input type="text"  name="receivedQty[]" value="{{ $order_item->qty - $order_item->item_received}}" style="width:70px" class="yourText" disabled /><td>
+                        <td><input type="checkbox" class="yourBox" name="noReceived[]" /></td>
                     </tr>
 
                     @endforeach
@@ -192,7 +192,7 @@
 
             $('.yourBox').change(function() {
 
-                $('.yourText').attr('disabled',!this.checked)
+                $('.yourText').attr('disabled',!this.checked);
             })
 
 
