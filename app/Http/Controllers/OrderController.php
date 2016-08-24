@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\controller;
 use App\Models\Order;
+use App\Models\Orderitem;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Validator, Input, Redirect, Cache;
@@ -18,6 +19,7 @@ class OrderController extends Controller
     {
         parent::__construct();
         $this->model = new Order();
+        $this->order_item_model = new Orderitem();
         $this->modelview = new  \App\Models\Sbinvoiceitem();
         $this->info = $this->model->makeInfo($this->module);
         $this->access = $this->model->validAccess($this->info['id']);
@@ -282,8 +284,6 @@ class OrderController extends Controller
 
     function postSave(Request $request, $id = 0)
     {
-
-       //return \Redirect::to('/order');
         $rules = array('location_id' => "required", 'vendor_id' => 'required', 'order_type_id' => "required", 'freight_type_id' => 'required', 'date_ordered' => 'required', 'po_3' => 'required');
         $validator = Validator::make($request->all(), $rules);
         $order_data = array();
@@ -344,7 +344,7 @@ class OrderController extends Controller
                     'order_type_id' => $order_type,
                     'date_ordered' => $date_ordered,
                     'vendor_id' => $vendor_id,
-                    'order_description' => $order_description,
+                    'order_description' => '',
                     'order_total' => $total_cost,
                     'freight_id' => $freight_type_id,
                     'po_number' => $po,
@@ -355,7 +355,6 @@ class OrderController extends Controller
                 $this->model->insertRow($orderData, $order_id);
                 $last_insert_id = $order_id;
                 \DB::table('order_contents')->where('order_id', $last_insert_id)->delete();
-                //$this->db->delete('order_contents', array('order_id' => $last_insert_id));
             } else {
 
                 $orderData = array(
@@ -375,10 +374,8 @@ class OrderController extends Controller
                     'new_format' => 1,
                     'po_notes' => $notes
                 );
-                $this->model->insert($orderData, $id);
+                $this->model->insertRow($orderData, $id);
                 $order_id = \DB::getPdo()->lastInsertId();
-                //$this->db->insert('orders', $orderData);
-                //$last_insert_id = $this->db->insert_id();
             }
             for ($i = 0; $i < $num_items_in_array; $i++) {
                 if (empty($productIdArray[$i])) {
@@ -407,7 +404,8 @@ class OrderController extends Controller
                     'qty' => $qtyArray[$i],
                     'game_id' => $game_id,
                     'item_name'=> $itemNamesArray[$i],
-                    'case_price' => $casePriceArray[$i]
+                    'case_price' => $casePriceArray[$i],
+                    'total' => $priceArray[$i] * $qtyArray[$i]
                 );
                 \DB::table('order_contents')->insert($contentsData);
                 if ($order_type == 18) //IF ORDER TYPE IS PRODUCT IN-DEVELOPMENT, ADD TO PRODUCTS LIST WITH STATUS IN-DEVELOPMENT
