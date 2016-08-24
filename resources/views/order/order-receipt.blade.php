@@ -121,15 +121,102 @@
                         <i class="fa  fa-arrow-circle-left "></i>  Go Back </button>
                 </div>
             </div>
+
+            <div class="table-responsive">
+                <table class="table table-striped itemstable" onload="calculatetest()">
+                    <thead>
+                    <tr class="invHeading">
+                        <th width="50"> Item #</th>
+                        <th width="200">Item Name</th>
+                        <th width="200">Item Description</th>
+                        <th>Price Per Unit</th>
+                        <th>Case Price</th>
+                        <th>Quantity</th>
+                        <th>Received Quantity</th>
+                        <th>Total ( $ )</th>
+                        <th></th>
+                        <th></th>
+
+
+
+
+                    </tr>
+
+                    </thead>
+
+                    <tbody>
+                    <tr id="rowid" class="clone clonedInput">
+                        <td>{{ $data['po_number'] }}</td>
+                        <td>{{ $data['order_user_name'] }}</td>
+                        <td>{{ $data['vendor_name'] }}</td>
+                        <td>{{ $data['location_id'] }}</td>
+                        <td>{{ $data['order_total'] }}</td>
+
+
+                        <td>{{ $data['location_id'] }}</td>
+                        <td>{{ $data['location_id'] }}</td>
+                        <td>{{ $data['order_total'] }}</td>
+
+                   <td>
+
+                       <input type="checkbox" name="field[]" id="checkbox"></td>
+                     <td>  <input type="text" disabled="disabled" /></td>
+                    </tr>
+
+
+
+                    </tbody>
+
+                </table>
+                <input type="hidden" name="enable-masterdetail" value="true">
+            </div>
+
+            <br/><br/>
+
+
+
+
+
+            <hr/>
+
+
+            <div style="clear:both"></div>
+
+            <div class="form-group" style="margin-bottom:50px">
+                <label class="col-sm-4 text-right">&nbsp;</label>
+
+                <div class="col-sm-8">
+                    <button type="submit" class="btn btn-primary btn-sm "><i
+                                class="fa  fa-save "></i>  {{ Lang::get('core.sb_save') }} </button>
+                    <button type="button" onclick="ajaxViewClose('#{{ $pageModule }}')" class="btn btn-success btn-sm">
+                        <i class="fa  fa-arrow-circle-left "></i>  {{ Lang::get('core.sb_cancel') }} </button>
+                </div>
+            </div>
+
             {!! Form::close() !!}
 
-        </div>
-    </div>
 
+
+
+        </div>
+
+</div>
     </div>
 
     <script type="text/javascript">
         $(document).ready(function () {
+
+            $( "#checkbox" ).on( "click", function(){
+                if($(this).is(':checked')) {
+                    $(this).next().prop('disabled', false);
+                } else {
+                    $(this).next().prop('disabled', true);
+                }
+
+            });
+
+
+
 
 
             $("#order_status_id").jCombo("{{ URL::to('order/comboselect?filter=order_status:id:status') }}",
