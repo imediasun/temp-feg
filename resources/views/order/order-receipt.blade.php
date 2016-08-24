@@ -125,9 +125,11 @@
                         <th width="100">Case Price</th>
                         <th>Quantity</th>
                         <th>Received Quantity</th>
+
+                        <th> Item received in part</th>
+                        <th width="100"></th>
+
                         <th>Total ( $ )</th>
-                        <th></th>
-                        <th></th>
 
                     </tr>
 
@@ -142,10 +144,14 @@
                         <td>{{ $order_item->case_price }}</td>
                         <td>{{ $order_item->qty }}</td>
                         <td>{{ $order_item->item_received }}</td>
-                        <td>{{ $order_item->total }}</td>
+
+
+                        <td><input type="checkbox" class="yourBox" name="noReceived[]" /></td>
 
                         <td><input type="text"  name="receivedQty[]" value="{{ $order_item->qty - $order_item->item_received}}" style="width:70px" class="yourText" disabled /><td>
-                        <td><input type="checkbox" class="yourBox" name="noReceived[]" /></td>
+
+
+                        <td>{{ $order_item->total }}</td>
                     </tr>
 
                     @endforeach
