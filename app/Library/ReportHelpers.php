@@ -15,7 +15,7 @@ class ReportHelpers
                     L.id, 
                     L.location_name_short as location_name, 
                     L.debit_type_id,
-                    D.company_name as debit_system,
+                    D.company as debit_system,
                     '$dateStart' as date_start,
                     '$dateEnd_ymd' as date_end,
                     sum(IFNULL(E.games_revenue, 0)) AS location_total,
