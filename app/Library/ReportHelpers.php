@@ -123,8 +123,9 @@ class ReportHelpers
      * Get submitted search filter values in an associative array
      * @return Array 
      */
-    public static function getSearchFilters() {
-        $finalFilter = array();
+    public static function getSearchFilters($requiredFilters = array()) {
+        $receivedFilters = array();
+        $finalFilters = array();
         if (isset($_GET['search'])) {
             $filters_raw = trim($_GET['search'], "|");
             $filters = explode("|", $filters_raw);
@@ -132,11 +133,29 @@ class ReportHelpers
             foreach($filters as $filter) {
                 $columnFilter = explode(":", $filter);
                 if (isset($columnFilter) && isset($columnFilter[0]) && isset($columnFilter[2])) {
-                    $finalFilter[$columnFilter[0]] = $columnFilter[2];
+                    $receivedFilters[$columnFilter[0]] = $columnFilter[2];
                 }
             }
         }
-        return $finalFilter;
+                
+        if (empty($requiredFilters)) {
+            $finalFilters = $receivedFilters;
+        }
+        else {
+            foreach($requiredFilters as $fieldName => $variableName) {
+                if (empty($variableName)) {
+                    $variableName = $fieldName;
+                }
+                if (isset($receivedFilters[$fieldName])) {
+                    $finalFilters[$variableName] = $receivedFilters[$fieldName];
+                }
+                else {
+                    $finalFilters[$variableName] = '';
+                }
+            }
+        }
+        
+        return $finalFilters;
     }
     
     /** 
@@ -166,26 +185,28 @@ class ReportHelpers
      * @return Array 
      */
     public static function dateRangeFix(&$startDate = "", &$endDate = "", $includeEndInRange = true) {
-        $newStartDate = $startDate;
+        $newStartDate = trim($startDate);
+        $newEndDate = trim($endDate);
+        $yesterday = self::dateify("", -1);
         if (empty($newStartDate)) {
-            if (empty($endDate)) {
-                $newStartDate = self::dateify("", -1);
+            if (empty($newEndDate)) {
+                $newStartDate = $yesterday;
             }
             else {
-                $newStartDate = $endDate;
+                $newStartDate = $newEndDate;
             }
         }
-        $newStartDate = self::dateify($newStartDate);
-        $newEndDate = $endDate;
+        $newStartDate = self::dateify(trim($newStartDate));
+        
         if (empty($newEndDate)) {
             if (empty($newStartDate)) {
-                $newEndDate = self::dateify("", -1);
+                $newEndDate = $yesterday;
             }
             else {
                 $newEndDate = $newStartDate;
             }
         }
-        $newEndDate = self::dateify($newEndDate);
+        $newEndDate = self::dateify(trim($newEndDate));
         
         $startDatestamp = strtotime($newStartDate);
         $endDatestamp = strtotime($newEndDate);
