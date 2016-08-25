@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Request;
+use Request, Log;
 class Sximo extends Model {
 
     public static function insertLog($module, $task)
@@ -78,6 +78,7 @@ class Sximo extends Model {
             $select .= " AND status_id='$status_id'";
         }
 
+        Log::info("Query : ".$select . " {$params} " . self::queryGroup() . " {$orderConditional}  {$limitConditional} ");
         $result = \DB::select($select . " {$params} " . self::queryGroup() . " {$orderConditional}  {$limitConditional} ");
 
         if ($key == '') {
@@ -86,6 +87,7 @@ class Sximo extends Model {
             $key = $table . "." . $key;
         }
 
+        Log::info("Total Query : ".$select . " {$params} " . self::queryGroup() . " {$orderConditional}");
         $counter_select =\DB::select($select . " {$params} " . self::queryGroup() . " {$orderConditional}");
         $total= count($counter_select);
 

@@ -62,7 +62,6 @@ class FegapiController extends Controller {
             if (!is_null($prod_type_id)) $param['prod_type_id'] = $prod_type_id;
             if (!is_null($vendor_id)) $param['vendor_id'] = $vendor_id;
 
-
             $results = $class1::getRows($param);
             $json = array();
             foreach ($results['rows'] as $row) {
@@ -75,6 +74,7 @@ class FegapiController extends Controller {
             }
             $jsonData = array(
                 'total' => $results['total'],
+                'records' => count($json),
                 'rows' => $json,
                 'control' => $param,
                 'key' => $config['key']
