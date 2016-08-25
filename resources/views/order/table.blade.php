@@ -40,14 +40,9 @@
 				endforeach; ?>
 
 
-				<th width="150" style="text-align:center">{{ Lang::get('core.btn_action') }}</th>
+				<th width="205" style="text-align:center">{{ Lang::get('core.btn_action') }}</th>
 
 
-                @if($order_selected=='OPEN')
-              <th width="100">
-              Receive Order
-              </th>
-                    @endif
 
 
         </thead>
@@ -118,7 +113,7 @@
 
 
                     @if($order_selected=='OPEN')
-                        <td><a href="{{ URL::to('order/orderreceipt/'.$row->id)}}">Receive Order</a></td>
+                        <a href="{{ URL::to('order/orderreceipt/'.$row->id)}}">Receive Order</a>
                     @endif
 					</td>
                 </tr>
