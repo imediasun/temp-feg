@@ -658,7 +658,7 @@ class OrderController extends Controller
 
     function postReceiveorder(Request $request, $id = null)
     {
-
+        $received_part_ids = array();
         $order_id = $request->get('order_id');
         $item_count = $request->get('item_count');
         $notes = $request->get('notes');
@@ -666,6 +666,23 @@ class OrderController extends Controller
         $added_to_inventory = $request->get('added_to_inventory');
         $user_id = $request->get('user_id');
         $added = 0;
+        if(!empty($request->get('receivedInParts')))
+        {
+            $received_part_ids = $request->get('receivedInParts');
+        }
+        $received_qtys = $request->get('receivedQty');
+        $item_ids = $request->get('itemsID');
+        $received_item_qty = $request->get('receivedItemsQty');
+        for ($i = 0; $i < count($item_ids); $i++) {
+                $status = 1;
+            if(in_array($item_ids[$i], $received_part_ids))
+                $status = 2;
+            \DB::insert('INSERT INTO order_received (`order_id`,`order_line_item_id`,`quantity`,`received_by`, `status`, `date_received`)
+							 	  		   VALUES (' . $order_id . ',' . $item_ids[$i] . ',' . $received_qtys[$i] . ',' . $user_id . ',' . $status . ',' . date('Y-m-d') .  ')');
+            \DB::update('UPDATE order_contents
+								 	 	 SET item_received = '. $received_item_qty[$i]. '+'. $received_qtys[$i] . '
+							   	   	   WHERE id = '. $item_ids[$i]);
+        }
         $rules = array();
         if (empty($notes)) {
             $rules['order_status'] = "required:min:2";
