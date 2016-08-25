@@ -25,7 +25,7 @@ class closedlocations extends Sximo  {
         $message = "";                
         
 		$offset = ($page-1) * $limit ;
-		$limitConditional = ($page !=0 && $limit !=0) ? "LIMIT  $offset , $limit" : '';
+		$limitConditional = ($page !=0 && $limit !=0) ? " LIMIT  $offset , $limit" : '';
 
         $filters = ReportHelpers::getSearchFilters(array(
             'date_start' => '', 'date_end' => '', 'id' => 'location_id', 'debit_type_id'  => ''
