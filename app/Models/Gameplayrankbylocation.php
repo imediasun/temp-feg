@@ -17,13 +17,6 @@ class gameplayrankbylocation extends Sximo  {
 	public static function processRows( $rows ){
         $newRows = array();
         foreach($rows as $row) {
-//            $newRow = new \stdClass();
-//            
-//            $newRow->id = $row->id;
-//            $newRow->location_name = $row->location_name;
-//            $newRow->date_start = date("m/d/Y", strtotime($row->date_start));
-//            $newRow->debit_system = $row->debit_system;
-//            $newRow->debit_type_id = $row->debit_type_id;
             
             $dateCount = $row->days_reported_count;
             $fullDaysCount = $row->days_count;
