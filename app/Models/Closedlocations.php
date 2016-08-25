@@ -9,7 +9,16 @@ class closedlocations extends Sximo  {
 	public function __construct() {
 		parent::__construct();
 	}
-            
+	public static function processRows( $rows ){
+        $newRows = array();
+        foreach($rows as $row) {
+            $row->date_start = date("m/d/Y", strtotime($row->date_start));
+            $row->date_end = date("m/d/Y", strtotime($row->date_end));
+            $row->closed_date = date("m/d/Y", strtotime($row->closed_date));
+            $newRows[] = $row;
+        }
+		return $newRows;
+	}             
 	public static function getRows( $args,$cond=null )
 	{
 		extract( array_merge( array(
@@ -36,7 +45,8 @@ class closedlocations extends Sximo  {
         $mainQuery = ReportHelpers::getClosedLocationsQuery($date_start, $date_end, $location_id, $debit_type_id, $sort, $order);
         $mainQuery .= $limitConditional;
         $total = ReportHelpers::getClosedLocationsCount($date_start, $date_end, $location_id, $debit_type_id);
-        $rows = \DB::select($mainQuery);
+        $rawRows = \DB::select($mainQuery);
+        $rows = self::processRows($rawRows);
                 
         if ($total == 0) {
             $message = "No data found. Try searhing with other filters.";
