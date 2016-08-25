@@ -528,8 +528,7 @@ class MylocationgameController extends Controller
                     $asset_ids = substr($asset_ids, 9);
                     $this->generate_asset_tag($id);
                     $location = $this->get_game_info_by_id($id, 'location_id');
-                    $file =  'qr\\'.$id .'.png';
-// Quick check to verify that the file exists
+                    $file = public_path().'/qr/'.$id.'.png';
                     if (file_exists($file)) {
                         $zip->addFile($file,basename($file));
                     }
@@ -551,13 +550,12 @@ class MylocationgameController extends Controller
             else {
               //  die('smaller than one');
                 $this->generate_asset_tag($asset_ids);
-                $file = public_path() . '\\qr\\' . $asset_ids . '.png';
+                $file = public_path().'/qr/'.$asset_ids.'.png';
                 if (file_exists($file)) {
-
-                    return (\Response::download("qr/" . $asset_ids . ".png"));
+                    return (\Response::download($file));
                 }
                 else{
-                    die('here in file does not exists');
+                    die('file does not exists');
                 }
             }
         }

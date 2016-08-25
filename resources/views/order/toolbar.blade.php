@@ -1,3 +1,6 @@
+<div class="col-md-12 export-messsage-contaier">
+    <div class="bg-success export-message">Your excel file is being prepared. This may take a few minutes depending on the number of records being downloaded. Please do not leave the current page or the file will not download.</div>
+</div>
 <div class="row">
     <div class="col-md-2">
         <h2>Orders</h2>
@@ -57,7 +60,8 @@
         reloadData('#{{ $pageModule }}','{{ $pageModule }}/data?config_id='+$("#col-config").val());
     });
     $(".export_data_in_excel_or_csv").on('click', function(){
-        notyMessage('Your excel file is being prepared. This may take a few minutes depending on the number of records being downloaded. Please do not leave the current page or the file will not download.');
+        $(".export-messsage-contaier").fadeIn();
+        $(".export-messsage-contaier").fadeOut(30*1000);
     });
     $("#order_type").on('change',function(){
 
