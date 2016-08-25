@@ -419,7 +419,7 @@ class MylocationgameController extends Controller
         \QrCode::size(200);
         \QrCode::errorCorrection('H');
         \QrCode::generate($data,$filename);
-  // $this->model->get_detail($id);
+        // $this->model->get_detail($id);
 
         $row=\DB::select("SELECT G.id, T.game_title FROM game G LEFT JOIN game_title T ON T.id = G.game_title_id WHERE G.id=$id");
 
@@ -461,49 +461,49 @@ class MylocationgameController extends Controller
 
             $id = $row[0]->id;
             $game_name = $row[0]->game_title;
-          /*  die();
-            $this->load->library('image_lib');
-            $config['source_image']	= $filename;
-            $config['quality'] = '100%';
-            $config['wm_text'] = $id;
-            $config['wm_type'] = 'text';
-            //$config['wm_font_path'] = './system/fonts/PTC55F.ttf';
-            //$config['wm_font_path'] = './system/fonts/texb.ttf';
-            //$config['wm_font_path'] = './system/fonts/Segan-Light.ttf';
-            $config['wm_font_path'] = './system/fonts/EncodeSansWide-Regular.ttf';
-            //$config['wm_font_path'] = './system/fonts/DISCO_W.ttf';
-            //$config['wm_font_path'] = './system/fonts/arialnarrow.ttf';
-            //$config['wm_font_path'] = './system/fonts/arial.ttf';
-            $config['wm_font_size']	= '15';
-            $config['wm_font_color'] = 'black';
-            $config['wm_vrt_alignment'] = 'bottom';
-            $config['wm_hor_alignment'] = 'left';
-            $config['wm_vrt_offset'] = '-6';
-            $config['wm_hor_offset'] = '16';
-            $config['overwrite'] = TRUE;
-            $this->image_lib->initialize($config);
-            $this->image_lib->watermark();
-            $this->image_lib->clear();
+            /*  die();
+              $this->load->library('image_lib');
+              $config['source_image']	= $filename;
+              $config['quality'] = '100%';
+              $config['wm_text'] = $id;
+              $config['wm_type'] = 'text';
+              //$config['wm_font_path'] = './system/fonts/PTC55F.ttf';
+              //$config['wm_font_path'] = './system/fonts/texb.ttf';
+              //$config['wm_font_path'] = './system/fonts/Segan-Light.ttf';
+              $config['wm_font_path'] = './system/fonts/EncodeSansWide-Regular.ttf';
+              //$config['wm_font_path'] = './system/fonts/DISCO_W.ttf';
+              //$config['wm_font_path'] = './system/fonts/arialnarrow.ttf';
+              //$config['wm_font_path'] = './system/fonts/arial.ttf';
+              $config['wm_font_size']	= '15';
+              $config['wm_font_color'] = 'black';
+              $config['wm_vrt_alignment'] = 'bottom';
+              $config['wm_hor_alignment'] = 'left';
+              $config['wm_vrt_offset'] = '-6';
+              $config['wm_hor_offset'] = '16';
+              $config['overwrite'] = TRUE;
+              $this->image_lib->initialize($config);
+              $this->image_lib->watermark();
+              $this->image_lib->clear();
 
-            $this->load->library('image_lib');
-            $config['source_image']	= $filename;
-            $config['quality'] = '100%';
-            $config['wm_text'] = $game_name;
-            $config['wm_type'] = 'text';
-            //$config['wm_font_path'] = './system/fonts/arialnarrow.ttf';
-            $config['wm_font_path'] = './system/fonts/pf_tempesta_seven_condensed.ttf';
-            //$config['wm_font_path'] = './system/fonts/pf_ronda_seven.ttf';
-            //$config['wm_font_path'] = './system/fonts/hellovetica.ttf';
-            $config['wm_font_size']	= '6';
-            $config['wm_font_color'] = 'black';
-            $config['wm_vrt_alignment'] = 'bottom';
-            $config['wm_hor_alignment'] = 'left';
-            $config['wm_vrt_offset'] = '0';
-            $config['wm_hor_offset'] = '3';
-            $config['overwrite'] = TRUE;
-            $this->image_lib->initialize($config);
-            $this->image_lib->watermark();
-            $this->image_lib->clear();*/
+              $this->load->library('image_lib');
+              $config['source_image']	= $filename;
+              $config['quality'] = '100%';
+              $config['wm_text'] = $game_name;
+              $config['wm_type'] = 'text';
+              //$config['wm_font_path'] = './system/fonts/arialnarrow.ttf';
+              $config['wm_font_path'] = './system/fonts/pf_tempesta_seven_condensed.ttf';
+              //$config['wm_font_path'] = './system/fonts/pf_ronda_seven.ttf';
+              //$config['wm_font_path'] = './system/fonts/hellovetica.ttf';
+              $config['wm_font_size']	= '6';
+              $config['wm_font_color'] = 'black';
+              $config['wm_vrt_alignment'] = 'bottom';
+              $config['wm_hor_alignment'] = 'left';
+              $config['wm_vrt_offset'] = '0';
+              $config['wm_hor_offset'] = '3';
+              $config['overwrite'] = TRUE;
+              $this->image_lib->initialize($config);
+              $this->image_lib->watermark();
+              $this->image_lib->clear();*/
         }
         // ////
         // $gameString = substr($gameString, 9);
@@ -527,37 +527,35 @@ class MylocationgameController extends Controller
                     $id = substr($asset_ids, 0, 8);
                     $asset_ids = substr($asset_ids, 9);
                     $this->generate_asset_tag($id);
-                    $location = $this->get_game_info_by_id($id, 'location_id');
-                    $file =  'qr\\'.$id .'.png';
-// Quick check to verify that the file exists
+                    //$location = $this->get_game_info_by_id($id, 'location_id');
+                    $file = public_path().'/qr/'.$id.'.png';
                     if (file_exists($file)) {
                         $zip->addFile($file,basename($file));
                     }
                     else
                         die('file not exists');
                 }
-                 $zip->close();
+                $zip->close();
                 if (file_exists($zip_name)) {
                     //header('Content-disposition: attachment; filename=files.zip');
                     //header('Content-type: application/zip');
                     //readfile($zip_name);
-                return response()->download(public_path('qr/QRCodes.zip'));
-            }
+                    return response()->download(public_path('qr/QRCodes.zip'));
+                }
                 else
                 {
                     echo "sorry";
                 }
             }
             else {
-              //  die('smaller than one');
+                //  die('smaller than one');
                 $this->generate_asset_tag($asset_ids);
-                $file = public_path() . '\\qr\\' . $asset_ids . '.png';
+                $file = public_path().'/qr/'.$asset_ids.'.png';
                 if (file_exists($file)) {
-
-                    return (\Response::download("qr/" . $asset_ids . ".png"));
+                    return (\Response::download($file));
                 }
                 else{
-                    die('here in file does not exists');
+                    die('file does not exists');
                 }
             }
         }

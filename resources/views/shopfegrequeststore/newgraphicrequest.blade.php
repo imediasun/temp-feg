@@ -69,16 +69,9 @@
                         {!! SiteHelpers::activeLang('Add Image', (isset($fields['add_image']['language'])? $fields['add_image']['language'] : array())) !!}
                     </label>
                     <div class="col-md-6">
-
-                        <div class="image_upload_div ">
-                            <form action="upload.php" class="dropzone">
-                            </form>
-                        </div>
-
-                        <a href="javascript:void(0)" class="btn btn-xs btn-primary pull-right" onclick="addMoreFiles('add_image')"><i class="fa fa-plus"></i></a>
-
                         <div class="add_imageUpl">
-                            <input  type='file' name='add_image'  />
+                                <div class="dropzone" id="dropzoneFileUpload">
+                            </div>
 
 
                         </div>
@@ -93,12 +86,13 @@
                 <div class="form-group" style="padding-left: 24px;margin-bottom:50px">
                         <label class="col-sm-4 text-centre">&nbsp;</label>
 
-                        <button type="submit"  class="btn btn-primary btn-sm-5" style="padding-right: 20px;
+                        <button type="submit" id="submitbtn"  class="btn btn-primary btn-sm-5" style="padding-right: 20px;
                                 padding-left: 20px"><i
                                 class="fa  fa-save "></i>  {{ Lang::get('core.sb_save') }} </button>
 
                     Submitted by <b>{{ \Session::get('fid') }}</b> on <b>{{ date('m/d/Y') }}</b>
                 </div>
+
 
 
 
@@ -109,8 +103,11 @@
             <div class="clearfix"></div>
 
         </div>
+
     </div>
+
     <div class="ajaxLoading"></div>
+    
     <script>
         $("document").ready(function(){
           //  $('.ajaxLoading').show();
@@ -152,6 +149,31 @@
             }
         }
     </script>
+    <script type="text/javascript">
+        var baseUrl = "{{ url('/') }}";
+        var token = "{{ Session::getToken() }}";
+        Dropzone.autoDiscover = false;
+        var myDropzone = new Dropzone("div#dropzoneFileUpload", {
+            url: baseUrl + "/shopfegrequeststore/uploadfiles",
+            params: {
+                _token: token
+            },autoProcessQueue:false
+        });
+        Dropzone.options.myAwesomeDropzone = {
+            paramName: "file", // The name that will be used to transfer the file
+            maxFilesize: 2, // MB
+            addRemoveLinks: true,
+            accept: function(file, done) {
+alert(file+done);
+            }
+        };
+        $("#submitbtn").on('click',function(e){
+            e.preventDefault();
+            myDropzone.processQueue();
+            document.getElementById("newgraphicrequest").submit();
+        });
+    </script>
+
     <style>
         .ajaxLoading { background:#fff url( {{ url() }}/loading.gif) no-repeat center center; display:none; height:200px; position:absolute; width:100%; opacity: 0.5; left:0; top:0; height: 100%; z-index:9999;}
     </style>
