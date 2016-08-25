@@ -15,7 +15,7 @@
             <div class="col-md-offset-1 col-md-10" style="padding-bottom:50px">
                 <fieldset>
                     <legend>Order Receipt</legend>
-                    <div class=" table-responsive col-md-8 col-md-offset-2" style="background-color:#FFF;border:1px solid lightgray;font-size:16px">
+                    <div class=" table-responsive col-md-12 col-md-offset-2" style="margin-left: 0px!important; margin-bottom: 20px; padding-bottom:0px !important; background-color:#FFF;border:1px solid lightgray;font-size:16px">
                         <table class="table">
                             <tr><td><b>PO #</b></td><td>{{ $data['po_number'] }}</td></tr>
                             <tr><td><b>Ordered By</b></td><td>{{ $data['order_user_name'] }}</td></tr>
@@ -57,72 +57,22 @@
 
                             @else
 
-                            <tr><td><b>Order Summary:</b></td><br> <td><?php echo  $data['description'] ?></td>
+
                                 @endif
                         </table>
                     </div>
-                    <div class="col-md-8 col-md-offset-2">
-                        <div class="form-group  ">
-                            <br/><br/>
-                            <label for="date_received" class=" control-label col-md-4 text-left">
-                                Date Received </label>
-                            <div class="col-md-8">
-                           <input type="text" class="date form-control" name="date_received" value="{{ date("m/d/Y", strtotime($data['today']))}}" required/>
-                            </div>
-                        </div>
-                        <div class="form-group  ">
-                            <br/><br/>
-                            <label for="vendor_id" class=" control-label col-md-4 text-left">
-                                Order Status
-                            </label>
-                            <div class="col-md-8">
-                                <select name='order_status' rows='5' id='order_status_id' class='select3' required onchange="removeBorder('order_status_id')");></select>
-                            </div>
 
-                        </div>
-                        <div class="form-group " id="tracking_numberdiv" style="display:none">
-                            <br/><br/>
-                            <label id ="tracking_number_lbl" for="vendor_id" class=" control-label col-md-4 text-left">
-                                Tracking Number
-                            </label>
-                            <div class="col-md-8">
-                                <input type="text"  class="form-control" name="tracking_number" id="tracking_number"/>
-                            </div>
-
-                        </div>
-                         <div class="form-group  ">
-                            <br/><br/>
-                            <label for="vendor_id" class=" control-label col-md-4 text-left">
-                               Notes </label>
-                            <div class="col-md-8">
-                            <textarea name="notes" rows="7" cols="48" id="notes" onchange="removeBorder('order_status')" required minlength=2></textarea>
-                            </div>
-                        </div>
-                    </div>
-                    <input type="hidden" name='item_count' value="{{ $data['item_count'] }}" id='item_count'/>
-                    <input type="hidden" name='order_id' value="{{ $data['order_id'] }}" id='order_id'/>
-                    <input type="hidden" name='order_type_id' value="{{ $data['order_type'] }}" id='order_type_id'/>
-                    <input type="hidden" name='location_id' value="{{ $data['location_id'] }}" id='location_id'/>
-                    <input type="hidden" name='user_id' value="{{ $data['user_id'] }}" id='user_id'/>
-                    <input type="hidden" name='added_to_inventory' value="{{ $data['added_to_inventory'] }}" id='added_to_inventory'/>
-                    </fieldset>
-            </div>
-
-            <hr/>
-            <div class="clr clear"></div>
-
-
-
+                    <div class="clearfix"></div>
 
             <div class="table-responsive" style="padding-top: 5px;">
                 <table class="table table-striped itemstable" id="itemTable">
                     <thead>
                     <tr class="invHeading">
-                        <th width="70"> Item #</th>
-                        <th width="150">Item Name</th>
-                        <th width="200">Item Description</th>
-                        <th width="100">Price Per Unit</th>
-                        <th width="100">Case Price</th>
+                        <th width="50"> Item #</th>
+                        <th width="100">Item Name</th>
+                        <th width="150">Item Description</th>
+                        <th width="70">Price Per Unit</th>
+                        <th width="70">Case Price</th>
                         <th>Quantity</th>
                         <th>Received Quantity</th>
                         <th>Item received in part</th>
@@ -167,11 +117,63 @@
                 </table>
                 <input type="hidden" name="enable-masterdetail" value="true">
             </div>
-            <br/><br/>
+
+
+
+                    <div class="col-md-8 col-md-offset-2" style="margin-left: 36.66666667% !important">
+                        <div class="form-group  ">
+                            <br/><br/>
+                            <label for="date_received" class=" control-label col-md-4 text-right">
+                                Date Received </label>
+                            <div class="col-md-8">
+                                <input type="text" class="date form-control" name="date_received" value="{{ date("m/d/Y", strtotime($data['today']))}}" required/>
+                            </div>
+                        </div>
+                        <div class="form-group  ">
+                            <br/><br/>
+                            <label for="vendor_id" class=" control-label col-md-4 text-right">
+                                Order Status
+                            </label>
+                            <div class="col-md-8">
+                                <select name='order_status' rows='5' id='order_status_id' class='select3' required onchange="removeBorder('order_status_id')");></select>
+                            </div>
+
+                        </div>
+                        <div class="form-group " id="tracking_numberdiv" style="display:none">
+                            <br/><br/>
+                            <label id ="tracking_number_lbl" for="vendor_id" class=" control-label col-md-4 text-left">
+                                Tracking Number
+                            </label>
+                            <div class="col-md-8">
+                                <input type="text"  class="form-control" name="tracking_number" id="tracking_number"/>
+                            </div>
+
+                        </div>
+                        <div class="form-group  ">
+                            <br/><br/>
+                            <label for="vendor_id" class=" control-label col-md-4 text-right">
+                                Notes </label>
+                            <div class="col-md-8">
+                                <textarea name="notes" rows="7" cols="44" id="notes" onchange="removeBorder('order_status')" required minlength=2></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <input type="hidden" name='item_count' value="{{ $data['item_count'] }}" id='item_count'/>
+                    <input type="hidden" name='order_id' value="{{ $data['order_id'] }}" id='order_id'/>
+                    <input type="hidden" name='order_type_id' value="{{ $data['order_type'] }}" id='order_type_id'/>
+                    <input type="hidden" name='location_id' value="{{ $data['location_id'] }}" id='location_id'/>
+                    <input type="hidden" name='user_id' value="{{ $data['user_id'] }}" id='user_id'/>
+                    <input type="hidden" name='added_to_inventory' value="{{ $data['added_to_inventory'] }}" id='added_to_inventory'/>
+                </fieldset>
+            </div>
+
             <hr/>
+            <div class="clr clear"></div>
+
+
             <div style="clear:both"></div>
 
-            <div class="form-group col-md-offset-3" style="margin-bottom:50px">
+            <div class="form-group col-md-offset-4" style="margin-bottom:50px; padding-left: 16px;">
                 <label class="col-sm-4 text-right">&nbsp;</label>
                 <div class="col-sm-8">
                     <button type="submit" class="btn btn-primary btn-sm " id="submit_btn"><i
@@ -180,6 +182,7 @@
                         <i class="fa  fa-arrow-circle-left "></i>  Go Back </button>
                 </div>
             </div>
+
 
             {!! Form::close() !!}
 
