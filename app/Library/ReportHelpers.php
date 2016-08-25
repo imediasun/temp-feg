@@ -6,8 +6,8 @@ class ReportHelpers
     public static function getLocationRanksQuery($dateStart, $dateEnd, $location = "", $debit = "", $sortby = "pgpd_avg", $order = "")
     {
         
-        $dateEnd_ymd = $this->dateify($dateEnd);
-        $daydiff = $this->daydiff($dateStart, $$dateEnd);
+        $dateEnd_ymd = self::dateify($dateEnd);
+        $daydiff = self::daydiff($dateStart, $$dateEnd);
         
         
         //                    sum(IFNULL(E.games_total_std_plays, 0)) AS total_plays, 
@@ -169,23 +169,23 @@ class ReportHelpers
         $newStartDate = $startDate;
         if (empty($newStartDate)) {
             if (empty($endDate)) {
-                $newStartDate = $this->dateify("", -1);
+                $newStartDate = self::dateify("", -1);
             }
             else {
                 $newStartDate = $endDate;
             }
         }
-        $newStartDate = $this->dateify($newStartDate);
+        $newStartDate = self::dateify($newStartDate);
         $newEndDate = $endDate;
         if (empty($newEndDate)) {
             if (empty($newStartDate)) {
-                $newEndDate = $this->dateify("", -1);
+                $newEndDate = self::dateify("", -1);
             }
             else {
                 $newEndDate = $newStartDate;
             }
         }
-        $newEndDate = $this->dateify($newEndDate);
+        $newEndDate = self::dateify($newEndDate);
         
         $startDatestamp = strtotime($newStartDate);
         $endDatestamp = strtotime($newEndDate);
