@@ -176,7 +176,6 @@ function notyMessage(message,showDuration)
 {
 	var showDuration = showDuration || "300";
 	toastr.success("", message);
-	alert(showDuration);
 	toastr.options = {
 		  "closeButton": true,
 		  "debug": false,
