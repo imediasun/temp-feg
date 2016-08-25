@@ -7,7 +7,7 @@ class ReportHelpers
     {
         
         $dateEnd_ymd = self::dateify($dateEnd);
-        $daydiff = $this->daydiff($dateStart, $dateEnd);
+        $daydiff = self::daydiff($dateStart, $dateEnd);
         
         
         //                    sum(IFNULL(E.games_total_std_plays, 0)) AS total_plays, 
