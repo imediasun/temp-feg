@@ -157,7 +157,7 @@ class order extends Sximo
         $data['order_total'] = '0.00';
         $data['alt_address'] = "";
         $data['po_1'] = '0';
-        $data['po_2'] = date('m/d/y');
+        $data['po_2'] = date('mdy');
         $data['po_3'] = $this->increamentPO();
         $data['po_notes'] = '';
         $data['prefill_type'] = "";
@@ -416,9 +416,13 @@ class order extends Sximo
 
     function increamentPO()
     {
-        $po = \DB::select('select po_number from orders where id=(select max(id) from orders)');
-        $po = explode('-', $po[0]->po_number);
-        return ++$po[0];
+        $today = date('mdy');
+        $po = \DB::select("select po_number from orders where po_number like '%-$today-%' order by id desc limit 0,1");
+        if(!empty($po)){
+            $po = array_reverse(explode('-', $po[0]->po_number));
+            return ++$po[0];
+        }
+        return 1;
     }
 
     function getVendorEmail($vendor_id)
