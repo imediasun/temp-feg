@@ -3,8 +3,7 @@ namespace App\Library;
 class ReportHelpers
 {
 
-    public static function getLocationRanksQuery($dateStart, $dateEnd, $location = "", $debit = "", $sortby = "pgpd_avg", $order = "")
-    {
+    public static function getLocationRanksQuery($dateStart, $dateEnd, $location = "", $debit = "", $sortby = "pgpd_avg", $order = "") {
         
         $dateEnd_ymd = self::dateify($dateEnd);
         $daydiff = self::daydiff($dateStart, $dateEnd);
@@ -12,7 +11,7 @@ class ReportHelpers
         
         //                    sum(IFNULL(E.games_total_std_plays, 0)) AS total_plays, 
         $Q = "SELECT 
-                    L.id, 
+                    E.location_id as id, 
                     L.location_name_short as location_name, 
                     L.debit_type_id,
                     D.company as debit_system,
@@ -28,7 +27,7 @@ class ReportHelpers
 
                 FROM report_locations E
                 LEFT JOIN location L ON L.id = E.location_id
-                LEFT JOIN debit_type D ON D.id = L.debit_type_id
+                LEFT JOIN debit_type D ON D.id = E.debit_type_id
                 WHERE 
                 E.record_status = 1 AND
                 E.date_played >= '$dateStart' and E.date_played <= '$dateEnd' ";
@@ -56,20 +55,127 @@ class ReportHelpers
 
         return $Q;
     }
-    public static function getLocationRanksQueryERPDB($dateStart, $dateEnd, $location, $debit, $orderField = "pgpd_avg", $order = "")
+    public static function getLocationRanksQueryERPDB($dateStart, $dateEnd, $location, $debit, $sortby = "pgpd_avg", $order = "")
     {
     }
-    public static function getLocationRanksQueryTEMPDB($dateStart, $dateEnd, $location, $debit, $orderField = "pgpd_avg", $order = "")
+    public static function getLocationRanksQueryTEMPDB($dateStart, $dateEnd, $location, $debit, $sortby = "pgpd_avg", $order = "")
     {
     }    
-
     public static function getDumpSummaryQuery()
     {
     }
-    public static function getLocationNotRespondingQuery()
-    {
+    
+    public static function getLocationNotReportingQuery($dateStart, $dateEnd, $location, $debit, $sortby = "closed_date", $order = "") {
+        $dateEnd_ymd = self::dateify($dateEnd);
+        
+        $Q = "SELECT 
+                    E.location_id as id, 
+                    L.location_name_short as location_name, 
+                    L.debit_type_id,
+                    D.company as debit_system,
+                    '$dateStart' as date_start,
+                    '$dateEnd_ymd' as date_end,
+                    A.status as adjustment_status,
+                    A.notes as nr_status,
+                    E.date_played as nr_date ";
+        
+        $Q .= self::_getLocationNotReportingQuery($dateStart, $dateEnd, $location, $debit);  
+                
+        // ORDER BY
+        $sortbys = array(            
+        );
+        if (!empty($sortbys[$sortby])) {
+            $sortby = $sortbys[$sortby];
+        }        
+        $sortbyQuery = " ORDER BY $sortby $order";
+        $Q .= $sortbyQuery;        
+
+        return $Q;        
     }
-    public static function getLocationsRespondingQuery()
+    public static function _getLocationNotReportingQuery($dateStart, $dateEnd, $location, $debit) {
+        $Q = "
+                FROM report_locations E
+                LEFT JOIN location L ON L.id = E.location_id
+                LEFT JOIN debit_type D ON D.id = E.debit_type_id
+                LEFT JOIN game_earnings_transfer_adjustments A ON A.loc_id = E.location_id AND A.date_start = E.date_played
+                WHERE 
+                E.record_status = 1 AND
+                E.report_status = 0 AND
+                E.date_played >= '$dateStart' and E.date_played <= '$dateEnd' ";
+
+        if (!empty($location)) {
+            $Q .= " AND E.location_id IN ($location)";
+        }
+        if (!empty($debit)) {
+            $Q .= " AND E.debit_type_id IN ($debit)";
+        }
+        
+        // GROUP BY
+        //$Q .= " ";
+        return $Q;
+    }
+    public static function getLocationNotReportingCount($dateStart, $dateEnd, $location, $debit) {        
+        $Q = "SELECT count(*) as `count` ";
+        $Q .= self::_getLocationNotReportingQuery($dateStart, $dateEnd, $location, $debit);        
+        $count = self::getCountFromQuery($Q);
+        return $count;     
+    }
+    
+    
+    public static function getClosedLocationsCount($dateStart, $dateEnd, $location, $debit) {
+        $Q = "SELECT count(*) as `count` ";
+        $Q .= self::_getClosedLocationsQuery($dateStart, $dateEnd, $location, $debit);        
+        $count = self::getCountFromQuery($Q);
+        return $count;
+    }
+    public static function _getClosedLocationsQuery($dateStart, $dateEnd, $location, $debit) {
+        $Q =  "        FROM game_earnings_transfer_adjustments A
+                LEFT JOIN location L ON L.id = A.loc_id
+                LEFT JOIN debit_type D ON D.id = L.debit_type_id                
+                WHERE 
+                A.status = 1 AND
+                A.notes = 'CLOSED' AND
+                A.date_start >= '$dateStart' and A.date_start <= '$dateEnd' ";
+
+        if (!empty($location)) {
+            $Q .= " AND A.loc_id IN ($location)";
+        }
+        if (!empty($debit)) {
+            $Q .= " AND L.debit_type_id IN ($debit)";
+        }        
+        // GROUP BY
+        //$Q .= " ";        
+        
+        return $Q;
+    }
+    public static function getClosedLocationsQuery($dateStart, $dateEnd, $location, $debit, $sortby = "nr_date", $order = "") {
+        $dateEnd_ymd = self::dateify($dateEnd);
+        
+        $Q = "SELECT 
+                    A.loc_id as id, 
+                    L.location_name_short as location_name, 
+                    L.debit_type_id,
+                    D.company as debit_system,
+                    '$dateStart' as date_start,
+                    '$dateEnd_ymd' as date_end,
+                    A.date_start closed_date
+                ";
+        
+        $Q .= self::_getClosedLocationsQuery($dateStart, $dateEnd, $location, $debit);        
+                
+        // ORDER BY
+        $sortbys = array(            
+        );
+        if (!empty($sortbys[$sortby])) {
+            $sortby = $sortbys[$sortby];
+        }        
+        $sortbyQuery = " ORDER BY $sortby $order";
+        $Q .= $sortbyQuery;        
+
+        return $Q;         
+    }
+    
+    public static function getLocationsReportingQuery()
     {
     }
 
@@ -117,6 +223,15 @@ class ReportHelpers
     }
     public static function getMerchExpenseReportQuery()
     {
+    }
+    
+    public static function getCountFromQuery($Q, $fieldName = 'count') {
+        $count = 0;
+        $rows = \DB::select($Q);
+        if (!empty($rows)) {
+            $count = $rows[0]->$fieldName;
+        }                
+        return $count;                
     }
     
     /**
@@ -263,7 +378,7 @@ class ReportHelpers
     }      
     
     /**
-     * 
+     * Human readable date range
      * @param type $dateStart
      * @param type $dateEnd
      * @param type $format
@@ -333,9 +448,9 @@ class ReportHelpers
         return $ret;
     }
     
+        
     // Under Development
-    public static function getMenuAccessDetails($parent = 0, $position = 'top', $active = '1')
-    {
+    public static function getMenuAccessDetails($parent = 0, $position = 'top', $active = '1') {
         $group_sql = " AND tb_menu_access.group_id ='" . Session::get('gid') . "' ";
         $active = ($active == 'all' ? "" : "AND active ='1' ");
         $Q = DB::select("
@@ -345,5 +460,45 @@ class ReportHelpers
 		GROUP BY tb_menu.menu_id ORDER BY ordering			
 		");
         return $Q;
+    } 
+    
+    /****
+     * 
+     *  OLD FUNCTIONS
+     * 
+     */
+    
+    /*//////////////////////////////////////////////////////////////////////
+    //PARA: Date Should In YYYY-MM-DD Format
+    //RESULT FORMAT:
+    // '%y Year %m Month %d Day %h Hours %i Minute %s Seconds'        =>  1 Year 3 Month 14 Day 11 Hours 49 Minute 36 Seconds
+    // '%y Year %m Month %d Day'                                    =>  1 Year 3 Month 14 Days
+    // '%m Month %d Day'                                            =>  3 Month 14 Day
+    // '%d Day %h Hours'                                            =>  14 Day 11 Hours
+    // '%d Day'                                                        =>  14 Days
+    // '%h Hours %i Minute %s Seconds'                                =>  11 Hours 49 Minute 36 Seconds
+    // '%i Minute %s Seconds'                                        =>  49 Minute 36 Seconds
+    // '%h Hours                                                    =>  11 Hours
+    // '%a Days                                                        =>  468 Days
+    */
+    private static function dateDifference($date_1 , $date_2 , $differenceFormat = '%a' ) {
+        $datetime1 = date_create($date_1);
+        $datetime2 = date_create($date_2);
+
+        $interval = date_diff($datetime1, $datetime2);
+
+        return $interval->format($differenceFormat);
+
+    }        
+    private static function getLastSyncDate() {
+        $lastDate = "";//date("Y-m-d", strtotime("-1 day"));
+        $selectQuery = "SELECT date_start from game_earnings 
+            ORDER BY date_start DESC LIMIT 1";
+        $result = \DB::select($selectQuery); 
+        if (!empty($result)) {
+            $lastDate = date("Y-m-d", strtotime($result[0]->date_start));
+        }
+        return $lastDate;
     }    
+   
 }

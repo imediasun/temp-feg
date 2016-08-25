@@ -5,13 +5,9 @@ use Illuminate\Database\Eloquent\Model;
 use App\Library\ReportHelpers;
 
 class gameplayrankbylocation extends Sximo  {
-	
-	protected $table = 'location';
-	protected $primaryKey = 'id';
-
+    
 	public function __construct() {
-		parent::__construct();
-		
+		parent::__construct();		
 	}	    
 	
 	public static function processRows( $rows ){
@@ -48,6 +44,8 @@ class gameplayrankbylocation extends Sximo  {
 			'global'	=> 1
 		), $args ));
         
+        //$offset = ($page-1) * $limit ;
+        
         $bottomMessage = "";
         $message = "";                
 
@@ -63,7 +61,7 @@ class gameplayrankbylocation extends Sximo  {
         $total = count($rows);                       
         
         if ($total == 0) {
-            $message = "No data found. Try searhing with other dates.";
+            $message = "No data found. Try searhing with other filters.";
         }		        
         $humanDateRange = ReportHelpers::humanifyDateRangeMessage($date_start, $date_end);
         $topMessage = "Game Play Ranking by Location by Per Game Per Day (PGPD) Average $humanDateRange";

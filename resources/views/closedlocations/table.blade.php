@@ -24,6 +24,10 @@
         <thead>
 			<tr>
 				<th width="20"> No </th>
+                @if($setting['disableactioncheckbox']=='false')
+				<th width="30"> <input type="checkbox" class="checkall" /></th>
+                @endif
+				@if($setting['view-method']=='expand') <th>  </th> @endif
 				<?php foreach ($tableGrid as $t) :
 					if($t['view'] =='1'):
 						$limited = isset($t['limited']) ? $t['limited'] :'';
@@ -34,15 +38,47 @@
                 }
 					endif;
 				endforeach; ?>
+                @if($setting['disablerowactions']=='false')
+				<th width="70"><?php echo Lang::get('core.btn_action') ;?></th>
+                @endif
 			  </tr>
         </thead>
 
         <tbody>
+        	@if($access['is_add'] =='1' && $setting['inline']=='true')
+			<tr id="form-0" >
+				<td> # </td>
+                @if($setting['disableactioncheckbox']=='false')
+				<td> </td>
+                @endif
+				@if($setting['view-method']=='expand') <td> </td> @endif
+				@foreach ($tableGrid as $t)
+					@if($t['view'] =='1')
+					<?php $limited = isset($t['limited']) ? $t['limited'] :''; ?>
+						@if(SiteHelpers::filterColumn($limited ))
+						<td data-form="{{ $t['field'] }}" data-form-type="{{ AjaxHelpers::inlineFormType($t['field'],$tableForm)}}">
+							{!! SiteHelpers::transForm($t['field'] , $tableForm) !!}
+						</td>
+						@endif
+					@endif
+				@endforeach
+				<td >
+					<button onclick="saved('form-0')" class="btn btn-primary btn-xs" type="button"><i class="fa  fa-save"></i></button>
+				</td>
+			  </tr>
+			  @endif
+
            		<?php foreach ($rowData as $row) :
            			  $id = $row->id;
            		?>
                 <tr class="editable" id="form-{{ $row->id }}">
 					<td class="number"> <?php echo ++$i;?>  </td>
+                    @if($setting['disableactioncheckbox']=='false')
+					<td ><input type="checkbox" class="ids" name="ids[]" value="<?php echo $row->id ;?>" />  </td>
+                    @endif
+					@if($setting['view-method']=='expand')
+					<td><a href="javascript:void(0)" class="expandable" rel="#row-{{ $row->id }}" data-url="{{ url('gameplayreport/show/'.$id) }}"><i class="fa fa-plus " ></i></a></td>
+					@endif
 					 <?php foreach ($tableGrid as $field) :
 					 	if($field['view'] =='1') :
 							$conn = (isset($field['conn']) ? $field['conn'] : array() );
@@ -60,6 +96,22 @@
 						 endif;
 						endforeach;
 					  ?>				 
+                  @if($setting['disablerowactions']=='false')     
+				 <td data-values="action" data-key="<?php echo $row->id ;?>">
+					{!! AjaxHelpers::buttonAction('gameplayreport',$access,$id ,$setting) !!}
+					{!! AjaxHelpers::buttonActionInline($row->id,'id') !!}
+				</td>
+                @endif
+                </tr>
+                @if($setting['view-method']=='expand')
+                <tr style="display:none" class="expanded" id="row-{{ $row->id }}">
+                	<td class="number"></td>
+                	<td></td>
+                	<td></td>
+                	<td colspan="{{ $colspan}}" class="data"></td>
+                	<td></td>
+                </tr>
+                @endif
             <?php endforeach;?>
 
         </tbody>
@@ -69,16 +121,13 @@
 
 	<div style="margin:100px 0; text-align:center;">
             @if(!empty($message))
-                <p>{{ $message }}</p>
+            <p class='centralMessage'>{{ $message }}</p>
             @else
-                <p> No Record Found </p>
+            <p class='centralMessage'> No Record Found </p>
             @endif
-
-		
 	</div>
 
 	@endif
-
     @if(!empty($bottomMessage))
     <h5 class="bottomMessage">{{ $bottomMessage }}</h5>
     @endif
