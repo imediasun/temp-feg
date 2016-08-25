@@ -26,8 +26,9 @@ class gameplayrankbylocation extends Sximo  {
 //            $newRow->debit_type_id = $row->debit_type_id;
             
             $dateCount = $row->days_reported_count;
+            $fullDaysCount = $row->days_count;
             $dateCountText = "FULL";
-            if($dateCount < 7) {
+            if($dateCount < $fullDaysCount) {
                 $dateCountText = "PART";
             }
             
