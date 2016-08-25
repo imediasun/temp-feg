@@ -51,18 +51,16 @@ class gameplayrankbylocation extends Sximo  {
 			'global'	=> 1
 		), $args ));
         
-        $topMessage = "Game Play Ranking by Location by Per Game Per Day (PGPD) Average";
         $bottomMessage = "";
         $message = "";                
 
-        $filters = ReportHelpers::getSearchFilters();        
-        $dateStart = isset($filters['date_start']) ? $filters['date_start']: '';
-        $dateEnd = isset($filters['date_end']) ? $filters['date_end']: '';
-        ReportHelpers::dateRangeFix($dateStart, $dateEnd);        
-        $location_id = isset($filters['id']) ? $filters['id']: '';
-        $debit_type_id = isset($filters['debit_type_id']) ? $filters['debit_type_id']: '';               
+        $filters = ReportHelpers::getSearchFilters(array(
+            'date_start' => '', 'date_end' => '', 'id' => 'location_id', 'debit_type_id'  => ''
+        ));        
+        extract($filters);
+        ReportHelpers::dateRangeFix($date_start, $date_end);        
         
-        $mainQuery = ReportHelpers::getLocationRanksQuery($dateStart, $dateEnd, $location_id, $debit_type_id, $sort, $order);
+        $mainQuery = ReportHelpers::getLocationRanksQuery($date_start, $date_end, $location_id, $debit_type_id, $sort, $order);
         $rawRows = \DB::select($mainQuery);
         $rows = self::processRows($rawRows);            
         $total = count($rows);                       
@@ -70,6 +68,10 @@ class gameplayrankbylocation extends Sximo  {
         if ($total == 0) {
             $message = "No data found. Try searhing with other dates.";
         }		
+        $topMessage = "Game Play Ranking by Location by Per Game Per Day (PGPD) Average for $dateStart";
+        if ($dateStart != $dateEnd) {
+            $topMessage .= " - $dateEnd";
+        }
         
 		$results = array(
             'topMessage' => $topMessage,
