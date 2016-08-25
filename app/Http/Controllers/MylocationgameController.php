@@ -550,13 +550,12 @@ class MylocationgameController extends Controller
             else {
               //  die('smaller than one');
                 $this->generate_asset_tag($asset_ids);
-                $file = public_path() . '\\qr\\' . $asset_ids . '.png';
+                $file = public_path().'/qr/'.$asset_ids.'.png';
                 if (file_exists($file)) {
-
-                    return (\Response::download("qr/" . $asset_ids . ".png"));
+                    return (\Response::download($file));
                 }
                 else{
-                    die('here in file does not exists');
+                    die('file does not exists');
                 }
             }
         }
