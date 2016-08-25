@@ -248,7 +248,47 @@ class ReportHelpers
         }
         return $daydiff;        
     }   
-
+    /**
+     * Get human readable dates
+     * @param type $date
+     * @param type $format
+     * @return type
+     */
+    public static function humanifydate($date, $format = "l, F d Y") {
+        $ret = "";
+        if (!empty($date)) {
+            $ret = date($format, strtotime($date));
+        }
+        return $ret;        
+    }      
+    
+    /**
+     * 
+     * @param type $dateStart
+     * @param type $dateEnd
+     * @param type $format
+     * @return type
+     */
+    public static function humanifyDateRangeMessage($dateStart, $dateEnd = "", $format = "l, F d Y") {
+        $ret = "";
+        $dateStartHuman = self::humanifydate($dateStart, $format);
+        $dateEndHuman = self::humanifydate($dateEnd, $format);
+        if (!empty($dateStartHuman)) {
+            if (!empty($dateEnd)) {
+                $dateEndYMD = self::dateify($dateEnd);
+            }            
+            if ($dateEndYMD == $dateStart) {
+                $dateEndHuman = "";
+            }            
+            if (empty($dateEndHuman)) {
+                $ret = " for $dateStartHuman";
+            }
+            else {
+                $ret = " between $dateStartHuman and $dateEndHuman";
+            }
+        }
+        return $ret;        
+    }       
     
     private function sanitizeValue($val, $default = "") {
         $ret = @$val;
