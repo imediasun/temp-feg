@@ -14,7 +14,7 @@ class gameplayrankbylocation extends Sximo  {
 		
 	}	    
 	
-	public static function processRows($rows){
+	public static function processRows( $rows ){
         $newRows = array();
         foreach($rows as $row) {
 //            $newRow = new \stdClass();
@@ -40,12 +40,21 @@ class gameplayrankbylocation extends Sximo  {
         }
 		return $newRows;
 	}        
-	public static function getRows( $args,$cond=null )
+	public static function getRows( $args, $cond = null )
 	{
+		extract( array_merge( array(
+			'page' 		=> '0' ,
+			'limit'  	=> '0' ,
+			'sort' 		=> '' ,
+			'order' 	=> '' ,
+			'params' 	=> '' ,
+			'global'	=> 1
+		), $args ));
+        
         $topMessage = "Game Play Ranking by Location by Per Game Per Day (PGPD) Average";
         $bottomMessage = "";
-        $message = "";
-                
+        $message = "";                
+
         $filters = ReportHelpers::getSearchFilters();        
         $dateStart = isset($filters['date_start']) ? $filters['date_start']: '';
         $dateEnd = isset($filters['date_end']) ? $filters['date_end']: '';
@@ -60,7 +69,7 @@ class gameplayrankbylocation extends Sximo  {
         
         if ($total == 0) {
             $message = "No data found. Try searhing with other dates.";
-        }
+        }		
         
 		$results = array(
             'topMessage' => $topMessage,
