@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Console;
-
+use DB;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -15,6 +15,7 @@ class Kernel extends ConsoleKernel
     protected $commands = [
         \App\Console\Commands\Inspire::class,
         \App\Console\Commands\ReadComment::class,
+        \App\Console\Commands\AutoCloseOrder::class,
     ];
 
     /**
@@ -26,7 +27,9 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         $schedule->command('comments:read')->everyMinute();
+        $schedule->command('autocloseorder')->daily();
         $schedule->command('inspire')
                  ->hourly();
+
     }
 }
