@@ -68,9 +68,9 @@ class gameplayrankbylocation extends Sximo  {
         if ($total == 0) {
             $message = "No data found. Try searhing with other dates.";
         }		
-        $topMessage = "Game Play Ranking by Location by Per Game Per Day (PGPD) Average for $dateStart";
-        if ($dateStart != $dateEnd) {
-            $topMessage .= " - $dateEnd";
+        $topMessage = "Game Play Ranking by Location by Per Game Per Day (PGPD) Average for $date_start";
+        if ($date_start != $date_end) {
+            $topMessage .= " - $date_end";
         }
         
 		$results = array(
