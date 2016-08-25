@@ -113,7 +113,8 @@
 
 
                             @if($row->inactive == 0)
-                                <a href class="addToCart" title="Add to Cart" value="{{$row->id}}" class="tips btn btn-xs btn-white" ><i class="fa fa-shopping-cart" aria-hidden="true"></i></a>
+
+                                <a href="javascript:void(0)" value="{{$row->id}}" class=" addToCart tips btn btn-xs btn-white"  title="Add to Cart"><i class="fa fa-shopping-cart" aria-hidden="true"></i></a>
                             @else
                                 Not Avail.
                             @endif

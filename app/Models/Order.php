@@ -2,6 +2,7 @@
 
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
+use Log;
 
 class order extends Sximo
 {
@@ -48,6 +49,86 @@ class order extends Sximo
         return $return;
     }
 
+    public static function getExportRows($args, $cond = null) {
+        $table = with(new static)->table;
+        $key = with(new static)->primaryKey;
+
+        extract(array_merge(array(
+            'page' => '0',
+            'limit' => '0',
+            'sort' => '',
+            'order' => '',
+            'params' => '',
+            'global' => 1
+        ), $args));
+
+
+        $offset = ($page - 1) * $limit;
+        $limitConditional = ($page != 0 && $limit != 0) ? "LIMIT  $offset , $limit" : '';
+        $orderConditional = ($sort != '' && $order != '') ? " ORDER BY {$sort} {$order} " : '';
+
+        // Update permission global / own access new ver 1.1
+        $table = with(new static)->table;
+        if ($global == 0)
+            $params .= " AND {$table}.entry_by ='" . \Session::get('uid') . "'";
+        // End Update permission global / own access new ver 1.1
+
+        $rows = array();
+        $select = self::querySelect();
+
+        /*
+
+        */
+
+        if ($cond != null) {
+            $select .= self::queryWhere($cond);
+        } else {
+            $select .= self::queryWhere();
+        }
+
+        if(!empty($createdFrom)){
+            $select .= " AND DATE(created_at) BETWEEN '$createdFrom' AND '$createdTo'";
+        }
+
+        if(!empty($updatedFrom)){
+
+            if(!empty($cond)){
+                $select .= " OR DATE(updated_at) BETWEEN '$updatedFrom' AND '$updatedTo'";
+            }
+            else{
+                $select .= " AND DATE(updated_at) BETWEEN '$updatedFrom' AND '$updatedTo'";
+            }
+
+        }
+
+        if(!empty($order_type_id)){
+            $select .= " AND order_type_id='$order_type_id'";
+        }
+        if(!empty($status_id)){
+            $select .= " AND status_id='$status_id'";
+        }
+
+        Log::info($select . " {$params} ". " {$orderConditional}  {$limitConditional} ");
+        $result = \DB::select($select . " {$params} ". " {$orderConditional}  {$limitConditional} ");
+
+        if ($key == '') {
+            $key = '*';
+        } else {
+            $key = $table . "." . $key;
+        }
+
+        $counter_select = \DB::select("SELECT COUNT(orders.id) as cnt FROM orders {$orderConditional}  {$limitConditional}");
+        $total = $counter_select[0]->cnt;
+
+        //$total = $limit;
+        if($table=="img_uploads")
+        {
+            $total="";
+        }
+        return $results = array('rows' => $result, 'total' => $total);
+    }
+
+
     public static function queryGroup()
     {
         return "GROUP BY orders.id  ";
@@ -76,7 +157,7 @@ class order extends Sximo
         $data['order_total'] = '0.00';
         $data['alt_address'] = "";
         $data['po_1'] = '0';
-        $data['po_2'] = date('m/d/y');
+        $data['po_2'] = date('mdy');
         $data['po_3'] = $this->increamentPO();
         $data['po_notes'] = '';
         $data['prefill_type'] = "";
@@ -335,9 +416,13 @@ class order extends Sximo
 
     function increamentPO()
     {
-        $po = \DB::select('select po_number from orders where id=(select max(id) from orders)');
-        $po = explode('-', $po[0]->po_number);
-        return ++$po[0];
+        $today = date('mdy');
+        $po = \DB::select("select po_number from orders where po_number like '%-$today-%' order by id desc limit 0,1");
+        if(!empty($po)){
+            $po = array_reverse(explode('-', $po[0]->po_number));
+            return ++$po[0];
+        }
+        return 1;
     }
 
     function getVendorEmail($vendor_id)

@@ -172,16 +172,16 @@ function ajaxPopupStatic(url ,w , h)
 	if (window.focus) {newwindow.focus()}
 }
 
-function notyMessage(message)
+function notyMessage(message,showDuration)
 {
-
+	var showDuration = showDuration || "300";
 	toastr.success("", message);
 	toastr.options = {
 		  "closeButton": true,
 		  "debug": false,
 		  "positionClass": "toast-bottom-right",
 		  "onclick": null,
-		  "showDuration": "300",
+		  "showDuration": showDuration,
 		  "hideDuration": "1000",
 		  "timeOut": "5000",
 		  "extendedTimeOut": "1000",

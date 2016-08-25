@@ -1,16 +1,18 @@
 <div class="row m-b">
 
+    <div class="col-md-7 col-lg-12">
+        <div class="row">
+            <div class="col-md-4"><h1  style="vertical-align:baseline; padding-bottom:0;"><img src="./sximo/images/store.png"/>FEG Store - <b style="font-size:.7em;">Shopping for </b></h1></div>
+            <div class="col-md-3" style="margin-top: 12px"><select class="select3" id="locations"></select></div>
+        </div>
+    </div>
     <div class="col-md-4">
-        <h1  style="vertical-align:baseline; padding-bottom:0;">
-            <img src="./sximo/images/store.png"/>
-            FEG Store - <b style="font-size:.7em;">Shopping for </b></h1>
-               <div class="">
-     <h3>Narrow Your Search</h3>
+        <h3>Narrow Your Search</h3>
         <?php $opts = array("active" => "Active", 'inactive' => "IN Active", 'all' => "All"); ?>
         <select name="activ_inactive_all" class=" select3" id="active_inactive">
             @foreach($opts as $opt => $title)
                 <option @if($opt == \Session::get('active_inactive')) selected
-                                                                      @endif value="{{ $opt }}">{{ $title }}</option>
+                        @endif value="{{ $opt }}">{{ $title }}</option>
             @endforeach
         </select>
 
@@ -19,23 +21,9 @@
 
         <select name="product_type" id="product_type" class="select3" style="margin-top:5px;"></select>
     </div>
-    </div>
-
-    <div class="col-md-3" style="margin-top:10px ; padding-left: 0px;">
-        <select class="select3" id="locations"></select>
-       <!--  <a class="pull-right" href="https://online.care1st.com/medicare_popupblocker_instructions.php"
-           target="_blank" style="font-size:12px;color:red; font-weight:normal;"
-           title="You must disable popup-blocking in order for this popup shopping cart to work properly. Contact support@fegllc.com for help">Not
-            Working?</a> -->
-    </div>
-
 </div>
 
 <div class="row m-b">
-
-
- 
-
 </div>
 <div class="row m-b">
 

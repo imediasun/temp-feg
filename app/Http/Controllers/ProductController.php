@@ -246,7 +246,7 @@ class ProductController extends Controller {
 	function postSave( Request $request, $id =0)
 	{
     $rules = $this->validateForm();
-        $rules['imgee']='mimes:jpeg,gif,png';
+        $rules['img']='mimes:jpeg,gif,png';
 		$validator = Validator::make($request->all(), $rules);	
 		if ($validator->passes()) {
             if($id==0) {
@@ -259,9 +259,10 @@ class ProductController extends Controller {
                 $data = $this->validatePost('products');
                 $id = $this->model->insertRow($data,$id);
             }
-                $updates = array();
-            if ($request->hasFile('imgee')) {
-                $file = $request->file('imgee');
+            /*
+			$updates = array();
+            if ($request->hasFile('img')) {
+                $file = $request->file('img');
                 $destinationPath = './uploads/products/';
                 $filename = $file->getClientOriginalName();
                 $extension = $file->getClientOriginalExtension(); //if you need extension of the file
@@ -272,7 +273,7 @@ class ProductController extends Controller {
                 }
                 $this->model->insertRow($updates, $id);
             }
-
+			*/
 			return response()->json(array(
 				'status'=>'success',
 				'message'=> \Lang::get('core.note_success')

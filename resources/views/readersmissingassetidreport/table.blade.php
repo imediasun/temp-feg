@@ -1,33 +1,32 @@
-
-<?php usort($tableGrid, "SiteHelpers::_sort");
-?>
+<?php usort($tableGrid, "SiteHelpers::_sort"); ?>
 <div class="sbox">
 	<div class="sbox-title">
 		<h5> <i class="fa fa-table"></i> </h5>
 		<div class="sbox-tools" >
-			<a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Clear Search" onclick="reloadData('#{{ $pageModule }}','order/data?search=')"><i class="fa fa-trash-o"></i> Clear Search </a>
-			<a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Reload Data" onclick="reloadData('#{{ $pageModule }}','order/data?return={{ $return }}')"><i class="fa fa-refresh"></i></a>
+			<a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Clear Search" onclick="reloadData('#{{ $pageModule }}','readersmissingassetidreport/data?search=')"><i class="fa fa-trash-o"></i> Clear Search </a>
+			<a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Reload Data" onclick="reloadData('#{{ $pageModule }}','readersmissingassetidreport/data?return={{ $return }}')"><i class="fa fa-refresh"></i></a>
 			@if(Session::get('gid') ==1)
-			<a href="{{ url('feg/module/config/'.$pageModule) }}" class="btn btn-xs btn-white tips" title=" {{ Lang::get('core.btn_config') }}" ><i class="fa fa-cog"></i></a>
+			<a href="{{ url('sximo/module/config/'.$pageModule) }}" class="btn btn-xs btn-white tips" title=" {{ Lang::get('core.btn_config') }}" ><i class="fa fa-cog"></i></a>
 			@endif
 		</div>
 	</div>
-	<div class="sbox-content" style="">
+	<div class="sbox-content">
 
-        @include( $pageModule.'/toolbar',['colconfigs' => SiteHelpers::getRequiredConfigs($module_id),'order_type'=>$order_selected])
+        @include( $pageModule.'/toolbar',['config_id'=>$config_id,'colconfigs' => SiteHelpers::getRequiredConfigs($module_id)])
 
-	 <?php echo Form::open(array('url'=>'order/delete/', 'class'=>'form-horizontal' ,'id' =>'SximoTable'  ,'data-parsley-validate'=>'' )) ;?>
+	 <?php echo Form::open(array('url'=>'readersmissingassetidreport/delete/', 'class'=>'form-horizontal' ,'id' =>'SximoTable'  ,'data-parsley-validate'=>'' )) ;?>
 <div class="table-responsive">
+    @if(!empty($topMessage))
+    <h5 class="topMessage">{{ $topMessage }}</h5>
+    @endif
 	@if(count($rowData)>=1)
     <table class="table table-striped  " id="{{ $pageModule }}Table">
         <thead>
 			<tr>
-				<th width="50"> No </th>
-				<th width="60"> <input type="checkbox" class="checkall" /></th>
-                @if($order_selected=='OPEN')
-                    <th width="100">Remove</th>
+				<th width="20"> No </th>
+                @if($setting['disableactioncheckbox']=='false')
+				<th width="30"> <input type="checkbox" class="checkall" /></th>
                 @endif
-
 				@if($setting['view-method']=='expand') <th>  </th> @endif
 				<?php foreach ($tableGrid as $t) :
 					if($t['view'] =='1'):
@@ -35,23 +34,23 @@
 						if(SiteHelpers::filterColumn($limited ))
 						{
 							echo '<th align="'.$t['align'].'" width="'.$t['width'].'">'.\SiteHelpers::activeLang($t['label'],(isset($t['language'])? $t['language'] : array())).'</th>';
-						}
+
+                }
 					endif;
 				endforeach; ?>
-
-
-				<th width="205" style="text-align:center">{{ Lang::get('core.btn_action') }}</th>
-
-
-
-
+                @if($setting['disablerowactions']=='false')
+				<th width="70"><?php echo Lang::get('core.btn_action') ;?></th>
+                @endif
+			  </tr>
         </thead>
 
         <tbody>
         	@if($access['is_add'] =='1' && $setting['inline']=='true')
 			<tr id="form-0" >
 				<td> # </td>
+                @if($setting['disableactioncheckbox']=='false')
 				<td> </td>
+                @endif
 				@if($setting['view-method']=='expand') <td> </td> @endif
 				@foreach ($tableGrid as $t)
 					@if($t['view'] =='1')
@@ -74,17 +73,17 @@
            		?>
                 <tr class="editable" id="form-{{ $row->id }}">
 					<td class="number"> <?php echo ++$i;?>  </td>
+                    @if($setting['disableactioncheckbox']=='false')
 					<td ><input type="checkbox" class="ids" name="ids[]" value="<?php echo $row->id ;?>" />  </td>
-                    @if($order_selected=='OPEN')
-                        <td><a href="{{ URL::to('order/removalrequest/'.$row->po_number)}}">Request Removal</a></td>
                     @endif
-
 					@if($setting['view-method']=='expand')
-					<td><a href="javascript:void(0)" class="expandable" rel="#row-{{ $row->id }}" data-url="{{ url('order/show/'.$id) }}"><i class="fa fa-plus " ></i></a></td>
+					<td><a href="javascript:void(0)" class="expandable" rel="#row-{{ $row->id }}" data-url="{{ url('readersmissingassetidreport/show/'.$id) }}"><i class="fa fa-plus " ></i></a></td>
 					@endif
 					 <?php foreach ($tableGrid as $field) :
 					 	if($field['view'] =='1') :
 							$conn = (isset($field['conn']) ? $field['conn'] : array() );
+
+
 							$value = AjaxHelpers::gridFormater($row->$field['field'], $row , $field['attribute'],$conn);
 						 	?>
 						 	<?php $limited = isset($field['limited']) ? $field['limited'] :''; ?>
@@ -93,29 +92,16 @@
 									{!! $value !!}
 								 </td>
 							@endif
-						 <?php endif;
+                    <?php
+						 endif;
 						endforeach;
 					  ?>
-
-
+                  @if($setting['disablerowactions']=='false')     
 				 <td data-values="action" data-key="<?php echo $row->id ;?>">
-					{!! AjaxHelpers::GamestitleButtonAction('order',$access,$id ,$setting) !!}
+					{!! AjaxHelpers::buttonAction('readersmissingassetidreport',$access,$id ,$setting) !!}
 					{!! AjaxHelpers::buttonActionInline($row->id,'id') !!}
-
-
-
-
-
-						<a href="{{ URL::to('order/po/'.$row->id)}}"  class="tips btn btn-xs btn-white" title="Generate PO"><i class="fa fa-cogs" aria-hidden="true"></i></a>
-
-
-						<a href="{{ $pageModule }}/update/{{$row->id}}/clone"  onclick="ajaxViewDetail('#order',this.href); return false; "  class="tips btn btn-xs btn-white" title="Clone Order"><i class=" fa fa-random" aria-hidden="true"></i></a>
-
-
-                    @if($order_selected=='OPEN')
-                        <a href="{{ URL::to('order/orderreceipt/'.$row->id)}}">Receive Order</a>
-                    @endif
-					</td>
+				</td>
+                @endif
                 </tr>
                 @if($setting['view-method']=='expand')
                 <tr style="display:none" class="expanded" id="row-{{ $row->id }}">
@@ -134,12 +120,18 @@
 	@else
 
 	<div style="margin:100px 0; text-align:center;">
-
-		<p> No Record Found </p>
+        @if(!empty($message))
+            <p class='centralMessage'>{{ $message }}</p>
+        @else
+            <p class='centralMessage'> No Record Found </p>
+        @endif
 	</div>
 
 	@endif
-
+    @if(!empty($bottomMessage))
+    <h5 class="bottomMessage">{{ $bottomMessage }}</h5>
+    @endif
+    
 	</div>
 	<?php echo Form::close() ;?>
 	@include('ajaxfooter')
@@ -148,10 +140,8 @@
 </div>
 
 	@if($setting['inline'] =='true') @include('sximo.module.utility.inlinegrid') @endif
-
 <script>
 $(document).ready(function() {
-
 	$('.tips').tooltip();
 	$('input[type="checkbox"],input[type="radio"]').iCheck({
 		checkboxClass: 'icheckbox_square-green',

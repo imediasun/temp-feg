@@ -55,4 +55,7 @@
                     Route::controller('topgamesreport', 'TopgamesreportController');
                     Route::controller('bottomgamesreport', 'BottomgamesreportController');
                     Route::controller('productsindevelopmentreport', 'ProductsindevelopmentreportController');
+                    Route::controller('gameplayreport', 'GameplayreportController');
+                    Route::controller('readersmissingassetidreport', 'ReadersmissingassetidreportController');
+                    Route::controller('merchandiseexpensesreport', 'MerchandiseexpensesreportController');                    
                     ?>

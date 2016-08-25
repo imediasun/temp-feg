@@ -4,7 +4,7 @@ use App\Http\Controllers\controller;
 use App\Models\Order;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
-use Validator, Input, Redirect;
+use Validator, Input, Redirect, Cache;
 
 class OrderController extends Controller
 {
@@ -32,6 +32,63 @@ class OrderController extends Controller
 
 
     }
+
+    public
+    function getExport($t = 'excel')
+    {
+        ini_set('memory_limit','1G');
+        set_time_limit(0);
+        $info = $this->model->makeInfo($this->module);
+        //$master  	= $this->buildMasterDetail();
+        $filter = (!is_null(Input::get('search')) ? $this->buildSearch() : '');
+
+        //$filter 	.=  $master['masterFilter'];
+        //comment limit
+        $params = array(
+            'params' => '',
+            'page' => 1,
+            'sort'  => 'id',
+            'order' => 'desc'
+        );
+
+        $minutes = 60;
+        $results = Cache::remember('orderExport',$minutes , function() use ($params){
+            return $this->model->getExportRows($params);
+        });
+        //$results = $this->model->getExportRows($params);
+
+        $fields = $info['config']['grid'];
+        $rows = $results['rows'];
+        $rows = $this->updateDateInAllRows($rows);
+        $content = array(
+            'fields' => $fields,
+            'rows' => $rows,
+            'title' => $this->data['pageTitle'],
+        );
+
+        if ($t == 'word') {
+
+            return view('sximo.module.utility.word', $content);
+
+        } else if ($t == 'pdf') {
+
+            $pdf = PDF::loadView('sximo.module.utility.pdf', $content);
+            return view($this->data['pageTitle'] . '.pdf');
+
+        } else if ($t == 'csv') {
+
+            return view('sximo.module.utility.csv', $content);
+
+        } else if ($t == 'print') {
+
+            return view('sximo.module.utility.print', $content);
+
+        } else {
+
+            return view('sximo.module.utility.excel', $content);
+        }
+    }
+
 
     public function getIndex()
     {
@@ -225,8 +282,6 @@ class OrderController extends Controller
 
     function postSave(Request $request, $id = 0)
     {
-
-       //return \Redirect::to('/order');
         $rules = array('location_id' => "required", 'vendor_id' => 'required', 'order_type_id' => "required", 'freight_type_id' => 'required', 'date_ordered' => 'required', 'po_3' => 'required');
         $validator = Validator::make($request->all(), $rules);
         $order_data = array();
@@ -287,7 +342,7 @@ class OrderController extends Controller
                     'order_type_id' => $order_type,
                     'date_ordered' => $date_ordered,
                     'vendor_id' => $vendor_id,
-                    'order_description' => $order_description,
+                    'order_description' => '',
                     'order_total' => $total_cost,
                     'freight_id' => $freight_type_id,
                     'po_number' => $po,
@@ -298,7 +353,6 @@ class OrderController extends Controller
                 $this->model->insertRow($orderData, $order_id);
                 $last_insert_id = $order_id;
                 \DB::table('order_contents')->where('order_id', $last_insert_id)->delete();
-                //$this->db->delete('order_contents', array('order_id' => $last_insert_id));
             } else {
 
                 $orderData = array(
@@ -318,10 +372,8 @@ class OrderController extends Controller
                     'new_format' => 1,
                     'po_notes' => $notes
                 );
-                $this->model->insert($orderData, $id);
+                $this->model->insertRow($orderData, $id);
                 $order_id = \DB::getPdo()->lastInsertId();
-                //$this->db->insert('orders', $orderData);
-                //$last_insert_id = $this->db->insert_id();
             }
             for ($i = 0; $i < $num_items_in_array; $i++) {
                 if (empty($productIdArray[$i])) {
@@ -350,7 +402,8 @@ class OrderController extends Controller
                     'qty' => $qtyArray[$i],
                     'game_id' => $game_id,
                     'item_name'=> $itemNamesArray[$i],
-                    'case_price' => $casePriceArray[$i]
+                    'case_price' => $casePriceArray[$i],
+                    'total' => $priceArray[$i] * $qtyArray[$i]
                 );
                 \DB::table('order_contents')->insert($contentsData);
                 if ($order_type == 18) //IF ORDER TYPE IS PRODUCT IN-DEVELOPMENT, ADD TO PRODUCTS LIST WITH STATUS IN-DEVELOPMENT
@@ -597,13 +650,15 @@ class OrderController extends Controller
 
     function getOrderreceipt($order_id = null)
     {
+
         $this->data['data'] = $this->model->getOrderReceipt($order_id);
+        $this->data['data']['order_items'] = \DB::select('SELECT * FROM order_contents WHERE order_id = ' . $order_id );
         return view('order.order-receipt', $this->data);
     }
 
     function postReceiveorder(Request $request, $id = null)
     {
-
+        $received_part_ids = array();
         $order_id = $request->get('order_id');
         $item_count = $request->get('item_count');
         $notes = $request->get('notes');
@@ -611,6 +666,28 @@ class OrderController extends Controller
         $added_to_inventory = $request->get('added_to_inventory');
         $user_id = $request->get('user_id');
         $added = 0;
+        if(!empty($request->get('receivedInParts')))
+        {
+            $received_part_ids = $request->get('receivedInParts');
+        }
+        else
+        {
+            // close order
+            $order_status = 2;
+        }
+        $received_qtys = $request->get('receivedQty');
+        $item_ids = $request->get('itemsID');
+        $received_item_qty = $request->get('receivedItemsQty');
+        for ($i = 0; $i < count($item_ids); $i++) {
+                $status = 1;
+            if(in_array($item_ids[$i], $received_part_ids))
+                $status = 2;
+            \DB::insert('INSERT INTO order_received (`order_id`,`order_line_item_id`,`quantity`,`received_by`, `status`, `date_received`, `notes`)
+							 	  		   VALUES (' . $order_id . ',' . $item_ids[$i] . ',' . $received_qtys[$i] . ',' . $user_id . ',' . $status . ', "' . date('Y-m-d') . '" , "' . $notes. '" )');
+            \DB::update('UPDATE order_contents
+								 	 	 SET item_received = '. $received_item_qty[$i]. '+'. $received_qtys[$i] . '
+							   	   	   WHERE id = '. $item_ids[$i]);
+        }
         $rules = array();
         if (empty($notes)) {
             $rules['order_status'] = "required:min:2";

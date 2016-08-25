@@ -527,7 +527,11 @@ class MylocationgameController extends Controller
                     $id = substr($asset_ids, 0, 8);
                     $asset_ids = substr($asset_ids, 9);
                     $this->generate_asset_tag($id);
+
                     //$location = $this->get_game_info_by_id($id, 'location_id');
+
+                 //   $location = $this->get_game_info_by_id($id, 'location_id');
+
                     $file = public_path().'/qr/'.$id.'.png';
                     if (file_exists($file)) {
                         $zip->addFile($file,basename($file));
