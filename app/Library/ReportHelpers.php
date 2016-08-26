@@ -229,7 +229,7 @@ class ReportHelpers
             '$game_category' AS game_category,
                 
             sum(E.game_revenue) AS game_total,
-            sum(E.game_revenue) / if(count(distinct E.game_id)=0, 1, count(distinct E.game_id)) as game_average
+            sum(E.game_revenue) / if(count(distinct E.game_id)=0, 1, count(distinct E.game_id)) as game_average,
             count(distinct E.game_id) as game_count,
             
             '$dateStart'  as date_start,
