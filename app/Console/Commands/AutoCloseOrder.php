@@ -62,6 +62,7 @@ class AutoCloseOrder extends Command
 								 	 	 , status_id = '. $status . '
 								 	 	 , received_by = '. $user_id .'
 								 	 	 , notes = "'. $notes . '"
+								 	 	 , updated_at = "'. date('Y-m-d H:i:s') . '"
 							   	   	      WHERE id = '. $order->id);
             }
         }
