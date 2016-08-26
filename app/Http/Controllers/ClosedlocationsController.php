@@ -54,7 +54,6 @@ class ClosedlocationsController extends Controller {
         } else {
             $config_id = 0;
         }
-        //$config_id=0;
         $this->data['config_id'] = $config_id;
         $config = $this->model->getModuleConfig($module_id, $config_id);
         if(!empty($config))
@@ -99,10 +98,8 @@ class ClosedlocationsController extends Controller {
 		$this->data['pager'] 		= $this->injectPaginate();
 		// Row grid Number
 		$this->data['i']			= ($page * $params['limit'])- $params['limit'];
-              
 		// Grid Configuration
 		$this->data['tableGrid'] 	= $this->info['config']['grid'];
-                
 		$this->data['tableForm'] 	= $this->info['config']['forms'];
 		$this->data['colspan'] 		= \SiteHelpers::viewColSpan($this->info['config']['grid']);
 		// Group users permission
@@ -249,4 +246,5 @@ class ClosedlocationsController extends Controller {
 		}
 
 	}    
+
 }

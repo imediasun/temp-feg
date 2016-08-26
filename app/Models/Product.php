@@ -2,6 +2,7 @@
 
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
+use Log;
 
 class product extends Sximo  {
 	
@@ -102,6 +103,8 @@ class product extends Sximo  {
         $rows = array();
         $select=self::querySelect();
 
+        $createdFlag = false;
+
         if($cond!=null )
         {
             $select.=self::queryWhere($cond,$active);
@@ -112,16 +115,17 @@ class product extends Sximo  {
         }
 
         if(!empty($createdFrom)){
-            $select .= " AND DATE(products.created_at) BETWEEN '$createdFrom' AND '$createdTo'";
+            $select .= " AND created_at BETWEEN '$createdFrom' AND '$createdTo'";
+            $createdFlag = true;
         }
 
         if(!empty($updatedFrom)){
 
-            if(!empty($cond)){
-                $select .= " OR DATE(products.updated_at) BETWEEN '$updatedFrom' AND '$updatedTo'";
+            if($createdFlag){
+                $select .= " OR updated_at BETWEEN '$updatedFrom' AND '$updatedTo'";
             }
             else{
-                $select .= " AND DATE(products.updated_at) BETWEEN '$updatedFrom' AND '$updatedTo'";
+                $select .= " AND updated_at BETWEEN '$updatedFrom' AND '$updatedTo'";
             }
 
         }
@@ -132,7 +136,7 @@ class product extends Sximo  {
         if(!empty($vendor_id)){
             $select .= " AND vendor_id='$vendor_id'";
         }
-
+        Log::info("Query : ".$select . " {$params} " . self::queryGroup() . " {$orderConditional}  {$limitConditional} ");
         $result=\DB::select($select." {$params} ". self::queryGroup() ." {$orderConditional}  {$limitConditional} ");
         if($key =='' ) { $key ='*'; } else { $key = $table.".".$key ; }
         $counter_select = preg_replace( '/[\s]*SELECT(.*)FROM/Usi', 'SELECT count('.$key.') as total FROM', self::querySelect() );

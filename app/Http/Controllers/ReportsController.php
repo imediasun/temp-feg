@@ -42,16 +42,6 @@ class ReportsController extends Controller {
 		return view('reports.index',$this->data);
 	}
 
-	public function getSearch( $mode = 'ajax')
-	{
-
-		$this->data['tableForm'] 	= $this->info['config']['forms'];
-		$this->data['tableGrid'] 	= $this->info['config']['grid'];
-		$this->data['searchMode'] 	= $mode ;
-		return view('feg_common.search',$this->data);
-
-	}
-
 	public function postData( Request $request)
 	{
 
@@ -88,9 +78,7 @@ class ReportsController extends Controller {
 			'global'	=> (isset($this->access['is_global']) ? $this->access['is_global'] : 0 )
 		);
 		// Get Query
-
 		$results = $this->model->getRows( $params );
-		
 		// Build pagination setting
 		$page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;	
 		//$pagination = new Paginator($results['rows'], $results['total'], $params['limit']);

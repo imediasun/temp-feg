@@ -2427,15 +2427,6 @@ li.L9 {
     border-bottom: 1px solid #aaa;
 }
 
-#merchthrowsdetailedFilter select[name="sort"],
-#merchthrowsdetailedFilter select[name="order"],
-#merchthrowssimpleFilter select[name="sort"],
-#merchthrowssimpleFilter select[name="order"],
-#gameplayrankbylocationFilter,
-#closedlocationsFilter {
-    display:none;
-}
-
 #advance-search.search-table  tr.fieldsearch td:first-child {
 	font-weight: bold;
 	vertical-align: middle;

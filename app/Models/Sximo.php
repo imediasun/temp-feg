@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Request;
+use Request, Log;
 class Sximo extends Model {
 
     public static function insertLog($module, $task)
@@ -49,6 +49,7 @@ class Sximo extends Model {
         /*
 
         */
+        $createdFlag = false;
 
         if ($cond != null) {
             $select .= self::queryWhere($cond);
@@ -57,16 +58,17 @@ class Sximo extends Model {
         }
 
         if(!empty($createdFrom)){
-            $select .= " AND DATE(created_at) BETWEEN '$createdFrom' AND '$createdTo'";
+            $select .= " AND created_at BETWEEN '$createdFrom' AND '$createdTo'";
+            $createdFlag = true;
         }
 
         if(!empty($updatedFrom)){
 
-            if(!empty($cond)){
-                $select .= " OR DATE(updated_at) BETWEEN '$updatedFrom' AND '$updatedTo'";
+            if($createdFlag){
+                $select .= " OR updated_at BETWEEN '$updatedFrom' AND '$updatedTo'";
             }
             else{
-                $select .= " AND DATE(updated_at) BETWEEN '$updatedFrom' AND '$updatedTo'";
+                $select .= " AND updated_at BETWEEN '$updatedFrom' AND '$updatedTo'";
             }
 
         }
@@ -78,6 +80,7 @@ class Sximo extends Model {
             $select .= " AND status_id='$status_id'";
         }
 
+        Log::info("Query : ".$select . " {$params} " . self::queryGroup() . " {$orderConditional}  {$limitConditional} ");
         $result = \DB::select($select . " {$params} " . self::queryGroup() . " {$orderConditional}  {$limitConditional} ");
 
         if ($key == '') {
@@ -86,6 +89,7 @@ class Sximo extends Model {
             $key = $table . "." . $key;
         }
 
+        Log::info("Total Query : ".$select . " {$params} " . self::queryGroup() . " {$orderConditional}");
         $counter_select =\DB::select($select . " {$params} " . self::queryGroup() . " {$orderConditional}");
         $total= count($counter_select);
 
@@ -779,6 +783,9 @@ class Sximo extends Model {
     function totallyRecordInCart()
     {
         return \DB::select("SELECT COUNT(*) as total FROM requests WHERE request_user_id = ".\Session::get('uid')." AND status_id = 9 AND location_id = ".\Session::get('selected_location'));
+    }
 
+    public static function processApiData($json){
+        return $json;
     }
 }

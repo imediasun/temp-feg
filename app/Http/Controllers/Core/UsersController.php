@@ -61,7 +61,7 @@ class UsersController extends Controller
             return Redirect::to('dashboard')
                 ->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
 
-        $sort = (!is_null($request->input('sort')) ? $request->input('sort') : 'id');
+        $sort = (!is_null($request->input('sort')) ? $request->input('sort') : 'last_name');
         $order = (!is_null($request->input('order')) ? $request->input('order') : 'asc');
         // End Filter sort and order for query
         // Filter Search for query
@@ -372,6 +372,7 @@ class UsersController extends Controller
 
     function postSave(Request $request, $id = 0)
     {
+
         $rules = $this->validateForm();
         if ($request->input('id') == '') {
             $rules['password'] = 'required|between:6,12';
@@ -410,8 +411,22 @@ class UsersController extends Controller
             }
 
             $id = $this->model->insertRow($data, $request->input('id'));
-            $this->model->inserLocations($request->input('multiple_locations'), $id, $request->input('id'));
-
+            $all_locations=Input::get('all_locations');
+            if(empty($all_locations)) {
+                $this->model->inserLocations($request->input('multiple_locations'), $id, $request->input('id'));
+            }
+            else
+            {
+               $all_locations=\DB::select('select id from location');
+                $locations=array();
+                $i=0;
+                foreach($all_locations as $l)
+                {
+                    $locations[$i]=$l->id;
+                    $i++;
+                }
+                $this->model->inserLocations($locations, $id, $request->input('id'));
+            }
             if (!is_null(Input::file('avatar'))) {
                 $updates = array();
                 $file = $request->file('avatar');

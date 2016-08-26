@@ -71,7 +71,6 @@ Route::get('arslan/{id}/{name?}/{subject?}', 'DemoController@getIndex');
 Route::post('arslan/{id}/{name?}/{subject?}', 'DemoController@postIndex');
 
 Route::get('order/submitorder/{SID?}', 'OrderController@getSubmitorder');
-Route::get('test','TestController1@getIndex');
 Route::get('/', 'HomeController@index');
 Route::controller('home', 'HomeController');
 Route::controller('/user', 'UserController');

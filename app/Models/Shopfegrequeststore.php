@@ -266,7 +266,7 @@ class shopfegrequeststore extends Sximo  {
                     $message = $message;
                     $headers = 'MIME-Version: 1.0' . "\r\n";
                     $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
-                    mail($to, $subject, $message, $headers);
+                   // mail($to, $subject, $message, $headers);
         return $last_inserted_id;
     }
 

@@ -11,7 +11,7 @@
       <ul class="breadcrumb">
         <li><a href="{{ URL::to('dashboard') }}">{{ Lang::get('core.home') }}</a></li>
         <li class="active">{{ $pageTitle }}</li>
-      </ul>	  	  
+      </ul>
     </div>
 	<!-- End Header & Breadcrumb -->
 
@@ -19,9 +19,9 @@
 	<div class="page-content-wrapper m-t">
 		<div class="resultData"></div>
 		<div class="ajaxLoading"></div>
-		<div id="{{ $pageModule }}View"></div>			
+		<div id="{{ $pageModule }}View"></div>
 		<div id="{{ $pageModule }}Grid"></div>
-	</div>	
+	</div>
 	<!-- End Content -->
     <?php
     if(! isset($id)){
@@ -29,7 +29,7 @@
     }
     ?>
 
-</div>	
+</div>
 <script>
 $(document).ready(function(){
     var id = "{{ $sid  }}";
