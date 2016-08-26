@@ -24,6 +24,11 @@ class order extends Sximo
         return "  SELECT orders.* from orders ";
     }
 
+    public static function processApiData($json)
+    {
+        return self::addOrderItems($json);
+    }
+
     public static function queryWhere($cond = null)
     {
         $return = " Where";

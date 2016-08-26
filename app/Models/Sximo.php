@@ -783,6 +783,9 @@ class Sximo extends Model {
     function totallyRecordInCart()
     {
         return \DB::select("SELECT COUNT(*) as total FROM requests WHERE request_user_id = ".\Session::get('uid')." AND status_id = 9 AND location_id = ".\Session::get('selected_location'));
+    }
 
+    public static function processApiData($json){
+        return $json;
     }
 }

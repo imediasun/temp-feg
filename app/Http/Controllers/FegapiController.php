@@ -72,9 +72,7 @@ class FegapiController extends Controller {
                 }
                 $json[] = $rows;
             }
-            if($class == "Order"){
-                $json = $class1::addOrderItems($json);
-            }
+            $json = $class1::processApiData($json);
             $jsonData = array(
                 'total' => $results['total'],
                 'records' => count($json),
