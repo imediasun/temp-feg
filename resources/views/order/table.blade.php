@@ -24,9 +24,7 @@
 			<tr>
 				<th width="50"> No </th>
 				<th width="60"> <input type="checkbox" class="checkall" /></th>
-                @if($order_selected=='OPEN')
-                    <th width="100">Remove</th>
-                @endif
+
 
 				@if($setting['view-method']=='expand') <th>  </th> @endif
 				<?php foreach ($tableGrid as $t) :
@@ -40,7 +38,7 @@
 				endforeach; ?>
 
 
-				<th width="205" style="text-align:center">{{ Lang::get('core.btn_action') }}</th>
+				<th width="200" style="text-align:center">{{ Lang::get('core.btn_action') }}</th>
 
 
 
@@ -75,9 +73,7 @@
                 <tr class="editable" id="form-{{ $row->id }}">
 					<td class="number"> <?php echo ++$i;?>  </td>
 					<td ><input type="checkbox" class="ids" name="ids[]" value="<?php echo $row->id ;?>" />  </td>
-                    @if($order_selected=='OPEN')
-                        <td><a href="{{ URL::to('order/removalrequest/'.$row->po_number)}}">Request Removal</a></td>
-                    @endif
+
 
 					@if($setting['view-method']=='expand')
 					<td><a href="javascript:void(0)" class="expandable" rel="#row-{{ $row->id }}" data-url="{{ url('order/show/'.$id) }}"><i class="fa fa-plus " ></i></a></td>
@@ -113,8 +109,11 @@
 
 
                     @if($order_selected=='OPEN')
-                        <a href="{{ URL::to('order/orderreceipt/'.$row->id)}}">Receive Order</a>
+                        <a href="{{ URL::to('order/orderreceipt/'.$row->id)}}" class="tips btn btn-xs btn-white" title="Receive Order"><i class="fa fa-cutlery" aria-hidden="true"></i></a>
                     @endif
+					@if($order_selected=='OPEN')
+						<a href="{{ URL::to('order/removalrequest/'.$row->po_number)}}" class="tips btn btn-xs btn-white" title="Request Removal"><i class="fa fa-trash-o " aria-hidden="true"></i></a>
+						@endif
 					</td>
                 </tr>
                 @if($setting['view-method']=='expand')
