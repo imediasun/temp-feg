@@ -92,8 +92,11 @@
                                 </td>
                                 <td>{{ $order_item->item_name }}</td>
                                 <td>{{ $order_item->product_description }}</td>
-                                <td>{{ $order_item->price }}</td>
-                                <td>{{ $order_item->case_price }}</td>
+                                <td>{{ number_format($order_item->price,2) }}</td>
+
+
+                                <td>{{ number_format( $order_item->case_price,2) }}</td>
+
                                 <td>{{ $order_item->qty }}</td>
                                 <td>
                                     {{ $order_item->item_received }}
@@ -106,7 +109,7 @@
                                     <input type="text"  id="receivedItemText{{ $order_item->id }}" name="receivedQty[]" value="{{ $order_item->qty - $order_item->item_received}}" style="width:70px" readonly="readonly" />
                                 <td>
                                 <td>
-                                    {{ $order_item->total }}
+                                    {{ number_format($order_item->total,2) }}
                                 </td>
                             </tr>
                         @endif
