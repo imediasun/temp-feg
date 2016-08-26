@@ -66,7 +66,7 @@
                             <tr>
                                 <th> #</th>
                                 <th>Name</th>
-                                <th>Des</th>
+                                <th>Description</th>
                                 <th>Price Unit</th>
                                 <th>Case Price</th>
                                 <th>Qty</th>
