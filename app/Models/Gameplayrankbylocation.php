@@ -5,31 +5,24 @@ use Illuminate\Database\Eloquent\Model;
 use App\Library\ReportHelpers;
 
 class gameplayrankbylocation extends Sximo  {
-	
-	protected $table = 'location';
-	protected $primaryKey = 'id';
-
+    
 	public function __construct() {
-		parent::__construct();
-		
+		parent::__construct();		
 	}	    
 	
 	public static function processRows( $rows ){
         $newRows = array();
         foreach($rows as $row) {
-//            $newRow = new \stdClass();
-//            
-//            $newRow->id = $row->id;
-//            $newRow->location_name = $row->location_name;
-//            $newRow->date_start = date("m/d/Y", strtotime($row->date_start));
-//            $newRow->debit_system = $row->debit_system;
-//            $newRow->debit_type_id = $row->debit_type_id;
             
             $dateCount = $row->days_reported_count;
+            $fullDaysCount = $row->days_count;
             $dateCountText = "FULL";
-            if($dateCount < 7) {
+            if($dateCount < $fullDaysCount) {
                 $dateCountText = "PART";
             }
+            
+            $row->date_start = date("m/d/Y", strtotime($row->date_start));
+            $row->date_end = date("m/d/Y", strtotime($row->date_end));
             
             $row->days_reported_text = $dateCountText;
             $row->days_reported = "$dateCountText ($dateCount)";            
@@ -42,7 +35,7 @@ class gameplayrankbylocation extends Sximo  {
 	}        
 	public static function getRows( $args, $cond = null )
 	{
-		extract( array_merge( array(
+		extract(array_merge( array(
 			'page' 		=> '0' ,
 			'limit'  	=> '0' ,
 			'sort' 		=> '' ,
@@ -51,25 +44,27 @@ class gameplayrankbylocation extends Sximo  {
 			'global'	=> 1
 		), $args ));
         
-        $topMessage = "Game Play Ranking by Location by Per Game Per Day (PGPD) Average";
+        //$offset = ($page-1) * $limit ;
+        
         $bottomMessage = "";
         $message = "";                
 
-        $filters = ReportHelpers::getSearchFilters();        
-        $dateStart = isset($filters['date_start']) ? $filters['date_start']: '';
-        $dateEnd = isset($filters['date_end']) ? $filters['date_end']: '';
-        ReportHelpers::dateRangeFix($dateStart, $dateEnd);        
-        $location_id = isset($filters['id']) ? $filters['id']: '';
-        $debit_type_id = isset($filters['debit_type_id']) ? $filters['debit_type_id']: '';               
+        $filters = ReportHelpers::getSearchFilters(array(
+            'date_start' => '', 'date_end' => '', 'id' => 'location_id', 'debit_type_id'  => ''
+        ));        
+        extract($filters);
+        ReportHelpers::dateRangeFix($date_start, $date_end);        
         
-        $mainQuery = ReportHelpers::getLocationRanksQuery($dateStart, $dateEnd, $location_id, $debit_type_id, $sort, $order);
+        $mainQuery = ReportHelpers::getLocationRanksQuery($date_start, $date_end, $location_id, $debit_type_id, $sort, $order);
         $rawRows = \DB::select($mainQuery);
         $rows = self::processRows($rawRows);            
         $total = count($rows);                       
         
         if ($total == 0) {
-            $message = "No data found. Try searhing with other dates.";
-        }		
+            $message = "No data found. Try searhing with other filters.";
+        }		        
+        $humanDateRange = ReportHelpers::humanifyDateRangeMessage($date_start, $date_end);
+        $topMessage = "Game Play Ranking by Location by Per Game Per Day (PGPD) Average $humanDateRange";
         
 		$results = array(
             'topMessage' => $topMessage,

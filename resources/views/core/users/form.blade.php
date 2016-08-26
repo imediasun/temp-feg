@@ -28,7 +28,7 @@
 			@endforeach
 		</ul>	
 
-		 {!! Form::open(array('url'=>'core/users/save?return='.$return, 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ')) !!}
+		 {!! Form::open(array('url'=>'core/users/save?return='.$return, 'id'=>'user_form','class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ')) !!}
 		<div class="col-md-6">
 					
 									
@@ -106,7 +106,19 @@
                     {!! SiteHelpers::activeLang('Locations', (isset($fields['locations']['language'])? $fields['assign_to']['language'] : array())) !!}
                 </label>
                 <div class="col-md-6">
-                    <select name='multiple_locations[]' multiple rows='5' id='multiple_loc' class='select2 ' required  ></select>
+                    <select name='multiple_locations[]' multiple rows='5' id='multiple_loc' class='select2' required="required"  ></select>
+                </div>
+                <div class="col-md-2">
+
+                </div>
+            </div>
+            <div class="form-group  " >
+                <label for="all_locations" class=" control-label col-md-4 text-left">
+                 All Locations
+                </label>
+                <div class="col-md-6">
+
+                    <input type="checkbox" name="all_locations" value="1" id="all_locations" class="form-control"/>
                 </div>
                 <div class="col-md-2">
 
@@ -224,7 +236,34 @@
 		{  selected_value : '{{ $row["group_id"] }}' });
         $("#multiple_loc").jCombo("{{ URL::to('core/users/comboselect?filter=location:id:location_name') }}",
                 {  selected_value : '{{ $user_locations }}' });
+    });
+
+    $('#all_locations').on('ifChecked', function () {
+// Deactivate Parsley validation
+        $('#user_form').parsley().destroy();
+
+// Make your field not required, thus disabling validation for it
+        $('#multiple_loc').removeAttr('required');
+
+// Reactivate Parsley validation
+        $('#user_form').parsley({
+            //options
+        });
 
     });
+
+// For onUncheck callback
+        $('#all_locations').on('ifUnchecked', function () { //Do your code
+            // Deactivate Parsley validation
+            $('#user_form').parsley().destroy();
+
+// Make your field required by adding the required attribute back to the element
+            $('#multiple_loc').attr('required', '');
+
+// Reactivate Parsley validation
+            $('#user_form').parsley({
+                //options
+            });
+         });
 	</script>		 
 @stop

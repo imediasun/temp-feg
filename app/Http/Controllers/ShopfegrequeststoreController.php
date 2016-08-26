@@ -339,4 +339,31 @@ class ShopfegrequeststoreController extends Controller
         //return redirect('addtocart')->with(array('productId'=>$productId));
 
     }
+    public function postUploadfiles()
+    {
+$last_id=\DB::select("select max(id) as id from new_graphics_request");
+
+        $last_id = $last_id[0]->id + 1;
+        $input = \Input::all();
+        $rules['file']='mimes:jpeg,gif,png';
+
+        $validation = Validator::make($input, $rules);
+
+        if ($validation->fails()) {
+            return \Response::json(array('error'));
+        }
+
+        $destinationPath = public_path().'/'.$last_id; // upload path
+        if (file_exists($destinationPath)) {
+           rmdir($destinationPath);
+        }
+        $extension = \Input::file('file')->getClientOriginalExtension(); // getting file extension
+        $fileName = $last_id."_" .rand(11111, 99999) . '.' . $extension; // renameing image
+        $upload_success = \Input::file('file')->move($destinationPath, $fileName); // uploading file to given path
+
+        if ($upload_success) {
+            $data=array('graphic_request_id'=>$last_id,'img'=>$fileName);
+            $query=\DB::table('new_graphic_request_images')->insert($data);
+        }
+    }
 }

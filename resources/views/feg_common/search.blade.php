@@ -69,17 +69,17 @@ jQuery(function(){
                 if (value2 === null || value2 === UNDEFINED ) {
                     value2 = '';
                 }
-				if(isValueDate) {
+				if(value && isValueDate) {
                     value  = $.datepicker.formatDate('yy-mm-dd', new Date(value));
                 }                    
-				if(isValue2Date) {
-                    value  = $.datepicker.formatDate('yy-mm-dd', new Date(value));
+				if(value2 && isValue2Date) {
+                    value2  = $.datepicker.formatDate('yy-mm-dd', new Date(value2));
                 }                    
-				if(isValueDateTime) {
+				if(value && isValueDateTime) {
                     //value  = $.datepicker.formatDate('mm/dd/yy hh:ii:ss', new Date(value));
                 }                    
-				if(isValue2DateTime) {
-                    //value  = $.datepicker.formatDate('mm/dd/yy hh:ii:ss', new Date(value));
+				if(value && isValue2DateTime) {
+                    //value2  = $.datepicker.formatDate('mm/dd/yy hh:ii:ss', new Date(value2));
                 }                    
 					            
 			if(value !=='' && typeof value !=='undefined' && name !='_token')
