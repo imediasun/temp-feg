@@ -115,17 +115,17 @@ class product extends Sximo  {
         }
 
         if(!empty($createdFrom)){
-            $select .= " AND created_at BETWEEN '$createdFrom' AND '$createdTo'";
+            $select .= " AND products.created_at BETWEEN '$createdFrom' AND '$createdTo'";
             $createdFlag = true;
         }
 
         if(!empty($updatedFrom)){
 
             if($createdFlag){
-                $select .= " OR updated_at BETWEEN '$updatedFrom' AND '$updatedTo'";
+                $select .= " OR products.updated_at BETWEEN '$updatedFrom' AND '$updatedTo'";
             }
             else{
-                $select .= " AND updated_at BETWEEN '$updatedFrom' AND '$updatedTo'";
+                $select .= " AND products.updated_at BETWEEN '$updatedFrom' AND '$updatedTo'";
             }
 
         }
