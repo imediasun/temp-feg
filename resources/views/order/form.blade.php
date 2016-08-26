@@ -543,6 +543,9 @@
         }
         $("#add_new_item").click(function () {
             handleItemCount('add');
+            $(".calculate").keyup(function () {
+                calculateSum();
+            });
         });
         function decreaseCounter()
         {
@@ -599,6 +602,7 @@
                 var priceid = $("#"+trid+"  input[id^='price']").attr('id');
                 var casepriceid = $("#"+trid+"  input[id^='case_price']").attr('id');
                 var qtyid = $("#"+trid+"  input[id^='qty']").attr('id');
+                var itemid = $("#"+trid+"  textarea[name^=item]").attr('id');
 
                 $(obj).autocomplete({
                     minLength: 2,
@@ -614,7 +618,6 @@
                     },
                     select: function( event, ui ) {
                         $.ajax({url: "order/productdata",type:"get",dataType:'json',data:{'product_id':ui.item.value}, success: function(result){
-
                             if(result.unit_price) {
                                 $("#"+priceid).val(result.unit_price);
                             }
@@ -629,6 +632,8 @@
                             {
                                 $("#"+casepriceid).val(0.00);
                             }
+                            $(obj).next("td").find("textarea").val("abcdd");
+                            $("#"+itemid).val(result.item_description);
                             $("#product_id").val(result.id);
                             $("#"+qtyid).val(0.00);
                         }});
