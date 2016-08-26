@@ -214,7 +214,8 @@ class ReportHelpers
         return $count;        
     }
     public static function getGameRankQuery($dateStart, $dateEnd, $location = "", $debit = "", $gameType = "", $gameCat = "all", $onTest = "", $sortby = "closed_date", $order = "") {
-        //sum(E.game_std_plays) AS total_plays, 
+        extract(self::getGameCategoryDetails($gameCat));
+        //sum(E.game_std_plays) AS total_plays,
         $Q = "SELECT 
             E.id, 
             GT.game_title as game_name, 
