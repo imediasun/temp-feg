@@ -425,13 +425,14 @@ class ModuleController extends Controller {
 
     function postSavesql( Request $request ,$id )
     {
+        ini_set('memory_limit','1G');
 
         $select     = $request->input('sql_select');
         $where     = $request->input('sql_where');
         $group     = $request->input('sql_group');
         
-        try {   
-            \DB::select( $select .' '.$where.' '.$group );            
+        try {
+            \DB::select( $select .' '.$where.' '.$group );
             
         }catch(Exception $e){
             // Do something when query fails. 
@@ -439,6 +440,7 @@ class ModuleController extends Controller {
             return Redirect::to('feg/module/sql/'.$request->input('module_name'))
             ->with('messagetext', $error)->with('msgstatus','error');   
         }
+
         
         $row = \DB::table('tb_module')->where('module_name', $id)
                                 ->get();
