@@ -50,6 +50,29 @@ class order extends Sximo
         return $return;
     }
 
+    public static function addOrderItems($data){
+        $orders = [];
+        //extract order id for query to order_contents order_id in (1,2,3)
+        foreach($data as &$record){
+            $orders[] = $record['id'];
+            $record['items'] = [];
+        }
+        $query = "select * from order_contents where order_id in (".implode(',',$orders).")";
+        $result = \DB::select($query);
+        //all order contents place them in relevent order
+        foreach($result as $item){
+            $orderId = $item->order_id;
+            foreach($data as &$record){
+                if($record['id'] == $orderId){
+                    break;
+                }
+            }
+            $record['items'][] = (array)$item;
+        }
+        return $data;
+    }
+
+
     public static function getExportRows($args, $cond = null) {
         $table = with(new static)->table;
         $key = with(new static)->primaryKey;
