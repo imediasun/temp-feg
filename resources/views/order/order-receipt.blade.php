@@ -12,7 +12,7 @@
 
             {!! Form::open(array('url'=>'order/receiveorder/', 'class'=>'form-vertical','files' => true ,
             'parsley-validate'=>'','novalidate'=>' ','id'=> 'orderreceiveFormAjax')) !!}
-            <div class="col-md-offset-1 col-md-10" style="padding-bottom:50px">
+            <div class="col-md-offset-1 col-md-11" style="padding-bottom:50px">
                 <fieldset>
                     <legend>Order Receipt</legend>
                     <div class=" table-responsive col-md-12 col-md-offset-2" style="margin-left: 0px!important; margin-bottom: 20px; padding-bottom:0px !important; background-color:#FFF;border:1px solid lightgray;font-size:16px">
@@ -64,14 +64,14 @@
                         <table id="itemTable" class="display" cellspacing="0" width="100%">
                             <thead>
                             <tr>
-                                <th> Item #</th>
-                                <th>Item Name</th>
-                                <th>Item Description</th>
-                                <th>Price Per Unit</th>
+                                <th> #</th>
+                                <th>Name</th>
+                                <th>Des</th>
+                                <th>Price Unit</th>
                                 <th>Case Price</th>
-                                <th>Quantity</th>
-                                <th>Received Quantity</th>
-                                <th>Item received in part</th>
+                                <th>Qty</th>
+                                <th>Received Qty</th>
+                                <th>Partialy Received</th>
                                 <th></th>
                                 <th>Total ( $ )</th>
 
@@ -197,7 +197,10 @@
     <script type="text/javascript">
         $(document).ready(function () {
 
-            $('#itemTable').DataTable();
+            var dTable =  $('#itemTable').DataTable({
+
+            });
+
 
             $('#itemTable .yourBox').on('ifChecked',function(){
                 var itemId= $(this).val();
