@@ -103,7 +103,9 @@
                                         </td>
                                         <td>
                                             <input type="text"  id="receivedItemText{{ $order_item->id }}" name="receivedQty[]" value="{{ $order_item->qty - $order_item->item_received}}" style="width:70px" readonly="readonly" />
-                                        <td>
+                                        </td>
+                                      <td> {{ number_format($order_item->total,2) }}
+                                        </td>
 
                             </tr>
                                 @endif
