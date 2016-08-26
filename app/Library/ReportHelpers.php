@@ -260,7 +260,7 @@ class ReportHelpers
         INNER JOIN location L ON L.id = E.location_id
         INNER JOIN game_title GT ON E.game_title_id = GT.id
         INNER JOIN game_type GTY ON E.game_type_id = GTY.id
-        INNER JOIN debit_type D GTY ON E.debit_type_id = D.id
+        INNER JOIN debit_type D ON E.debit_type_id = D.id
         WHERE 
         E.game_id <> 0 AND
         E.record_status = 1 AND
