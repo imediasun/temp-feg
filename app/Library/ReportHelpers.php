@@ -251,8 +251,7 @@ class ReportHelpers
 
         return $Q;                
     }
-    public static function _getGameRankQuery($dateStart, $dateEnd, $location = "", $debit = "", $gameType = "", $gameCat = "all", $onTest = "")
-    {
+    public static function _getGameRankQuery($dateStart, $dateEnd, $location = "", $debit = "", $gameType = "", $gameCat = "all", $onTest = "") {
         extract(self::getGameCategoryDetails($gameCat));
         $gameTypeIds = self::mergeGameTypeAndCategories($gameType, $game_category_type);
 
@@ -289,7 +288,13 @@ class ReportHelpers
         return $Q;
 
     }
-    public function getGameCategoryDetails($gameCat = "all") {
+    
+    /**
+     * 
+     * @param string $gameCat
+     * @return type
+     */
+    public static function getGameCategoryDetails($gameCat = "all") {
         $game_categories = array(
             "all" => array("label" => "All", "type_id" => "1,2,3,4,5,7,8"),
             "not_attractions" => array("label" => "Not Attractions", "type_id" => "1,2,3,4,5,7"),
@@ -303,6 +308,12 @@ class ReportHelpers
         
         return array("game_category" => $game_category, "game_category_type" => $game_category_type);
     }
+    /**
+     * 
+     * @param type $gameType
+     * @param type $game_category_type
+     * @return type
+     */
     public static function mergeGameTypeAndCategories($gameType = "", $game_category_type = "") {
         
         $gameTypeArray = explode(",", $gameType);
