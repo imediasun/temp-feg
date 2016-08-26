@@ -206,9 +206,122 @@ class ReportHelpers
     public static function getGamesPlayedQuery()
     {
     }    
-    public static function getGameRankQuery()
+    public static function getGameRankCount($dateStart, $dateEnd, $location = "", $debit = "", $gameType = "", $gameCat = "all", $onTest = "") {
+        $Q = "SELECT count(*) as `count` FROM (SELECT E.game_title_id ";
+        $Q .= self::_getGameRankQuery($dateStart, $dateEnd, $location, $debit, $gameType, $gameCat, $onTest); 
+        $Q .= ") GD";
+        $count = self::getCountFromQuery($Q);
+        return $count;        
+    }
+    public static function getGameRankQuery($dateStart, $dateEnd, $location = "", $debit = "", $gameType = "", $gameCat = "all", $onTest = "", $sortby = "closed_date", $order = "") {
+        //sum(E.game_std_plays) AS total_plays, 
+        $Q = "SELECT 
+            E.id, 
+            GT.game_title as game_name, 
+            E.game_title_id, 
+            E.game_type_id,
+            GTY.game_type,
+            E.game_on_test,
+            E.debit_type_id,
+            D.company as debit_system,
+            '$gameCat' AS game_cat_id,
+            '$game_category' AS game_category,
+                
+            sum(E.game_revenue) AS game_total,
+            sum(E.game_revenue) / if(count(distinct E.game_id)=0, 1, count(distinct E.game_id)) as game_average
+            count(distinct E.game_id) as game_count,
+            
+            '$dateStart'  as date_start,
+            '$dateEnd'  as date_end,
+            group_concat(distinct E.game_id SEPARATOR ', ') as game_ids, 
+            group_concat(distinct L.id SEPARATOR ', ') as location_id, 
+            group_concat(distinct L.location_name_short SEPARATOR ', ') as location_name ";
+        
+        $Q .= self::_getGameRankQuery($dateStart, $dateEnd, $location, $debit, $gameType, $gameCat, $onTest);
+        
+        // ORDER BY
+        $sortbys = array(            
+        );
+        if (!empty($sortbys[$sortby])) {
+            $sortby = $sortbys[$sortby];
+        }        
+        $sortbyQuery = " ORDER BY $sortby $order";
+        $Q .= $sortbyQuery;        
+
+        return $Q;                
+    }
+    public static function _getGameRankQuery($dateStart, $dateEnd, $location = "", $debit = "", $gameType = "", $gameCat = "all", $onTest = "")
     {
-    }    
+        extract(self::getGameCategoryDetails($gameCat));
+        $gameTypeIds = self::mergeGameTypeAndCategories($gameType, $game_category_type);
+
+        $Q ="           
+        FROM  report_game_plays E
+        INNER JOIN location L ON L.id = E.location_id
+        INNER JOIN game_title GT ON E.game_title_id = GT.id
+        INNER JOIN game_type GTY ON E.game_type_id = GTY.id
+        INNER JOIN debit_type D GTY ON E.debit_type_id = D.id
+        WHERE 
+        E.game_id <> 0 AND
+        E.record_status = 1 AND
+        E.report_status = 1 AND
+        E.date_played >= '$dateStart' and E.date_played <= '$dateEnd'";
+
+        if (!empty($location)) {
+            $Q .= " AND E.location_id IN ($location)";
+        }
+        if (!empty($debit)) {
+            $Q .= " AND E.debit_type_id IN ($debit)";
+        }
+        if (empty($onTest) || $onTest = "notest") {
+            $Q .= " AND E.game_on_test IN (0)";
+        }
+        else {
+            $Q .= " AND E.game_on_test IN (1)";
+        }
+        if (!empty($gameTypeIds)) {
+            $Q .= " AND E.game_type_id IN ($gameTypeIds)";
+        }
+
+        $Q .= " GROUP BY E.game_title_id ";  
+        
+        return $Q;
+
+    }
+    public function getGameCategoryDetails($gameCat = "all") {
+        $game_categories = array(
+            "all" => array("label" => "All", "type_id" => "1,2,3,4,5,7,8"),
+            "not_attractions" => array("label" => "Not Attractions", "type_id" => "1,2,3,4,5,7"),
+            "attractions" => array("label" => "Attractions", "type_id" => "8"),
+        );        
+        if (empty($gameCat) || empty($game_categories[$gameCat])) {
+            $gameCat = "all";
+        }
+        $game_category = $game_categories[$gameCat]['label'];
+        $game_category_type = $game_categories[$gameCat]['type_id'];
+        
+        return array("game_category" => $game_category, "game_category_type" => $game_category_type);
+    }
+    public static function mergeGameTypeAndCategories($gameType = "", $game_category_type = "") {
+        
+        $gameTypeArray = explode(",", $gameType);
+        $catTypeArray = explode(",", $game_category_type);
+        
+        $gameTypeIdsArray = array();
+        if (empty($gameType)) {
+            $gameTypeIdsArray = $catTypeArray;
+        }
+        else {
+            if (empty($game_category_type)) {
+                $gameTypeIdsArray = $gameTypeArray;
+            }
+            else {
+                $gameTypeIdsArray = array_intersect($gameTypeArray, $catTypeArray);
+            }            
+        }
+        $gameTypeIds = implode(",", $gameTypeIdsArray);
+        return $gameTypeIds;
+    }
     public static function getMerchThrowsSimpleReportQuery()
     {
     }
