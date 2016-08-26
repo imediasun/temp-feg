@@ -49,6 +49,7 @@ class Sximo extends Model {
         /*
 
         */
+        $createdFlag = false;
 
         if ($cond != null) {
             $select .= self::queryWhere($cond);
@@ -57,16 +58,17 @@ class Sximo extends Model {
         }
 
         if(!empty($createdFrom)){
-            $select .= " AND DATE(created_at) BETWEEN '$createdFrom' AND '$createdTo'";
+            $select .= " AND created_at BETWEEN '$createdFrom' AND '$createdTo'";
+            $createdFlag = true;
         }
 
         if(!empty($updatedFrom)){
 
-            if(!empty($cond)){
-                $select .= " OR DATE(updated_at) BETWEEN '$updatedFrom' AND '$updatedTo'";
+            if($createdFlag){
+                $select .= " OR updated_at BETWEEN '$updatedFrom' AND '$updatedTo'";
             }
             else{
-                $select .= " AND DATE(updated_at) BETWEEN '$updatedFrom' AND '$updatedTo'";
+                $select .= " AND updated_at BETWEEN '$updatedFrom' AND '$updatedTo'";
             }
 
         }
