@@ -14,20 +14,11 @@ class topgamesreport extends Sximo  {
         $newRows = array();
         foreach($rows as $row) {
 		
-            $dateCount = $row->days_reported_count;
-            $fullDaysCount = $row->days_count;
-            $dateCountText = "FULL";
-            if($dateCount < $fullDaysCount) {
-                $dateCountText = "PART";
-	}	
-
             $row->date_start = date("m/d/Y", strtotime($row->date_start));
             $row->date_end = date("m/d/Y", strtotime($row->date_end));
-		
-            $row->days_reported_text = $dateCountText;
-            $row->days_reported = "$dateCountText ($dateCount)";            
-            $row->pgpd_avg = '$' . number_format($row->pgpd_avg,2);
-            $row->location_total = '$' . number_format($row->location_total,2);
+		          
+            $row->game_average = '$' . number_format($row->game_average,2);
+            $row->game_total = '$' . number_format($row->game_total,2);
                        
             $newRows[] = $row;
 	}
@@ -67,7 +58,7 @@ class topgamesreport extends Sximo  {
 	}
         $humanDateRange = ReportHelpers::humanifyDateRangeMessage($date_start, $date_end);
         $topMessage = "Game Play Ranking $humanDateRange";
-        $message = "$mainQuery";
+        
 		$results = array(
             'topMessage' => $topMessage,
             'bottomMessage' => $bottomMessage,
