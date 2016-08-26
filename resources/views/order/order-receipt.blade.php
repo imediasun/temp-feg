@@ -12,10 +12,10 @@
 
             {!! Form::open(array('url'=>'order/receiveorder/', 'class'=>'form-vertical','files' => true ,
             'parsley-validate'=>'','novalidate'=>' ','id'=> 'orderreceiveFormAjax')) !!}
-            <div class="col-md-offset-1 col-md-11" style="padding-bottom:50px">
+            <div class="col-md-offset-1 col-md-11 ">
                 <fieldset>
                     <legend>Order Receipt</legend>
-                    <div class=" table-responsive col-md-12 col-md-offset-2" style="margin-left: 0px!important; margin-bottom: 20px; padding-bottom:0px !important; background-color:#FFF;border:1px solid lightgray;font-size:16px">
+                    <div class=" table-responsive col-md-12 col-md-offset-2 item-receipt-container">
                         <table class="table">
                             <tr><td><b>PO #</b></td><td>{{ $data['po_number'] }}</td></tr>
                             <tr><td><b>Ordered By</b></td><td>{{ $data['order_user_name'] }}</td></tr>
@@ -98,11 +98,11 @@
                                             <input type="hidden" name="receivedItemsQty[]" value="{{ $order_item->item_received }}">
                                         </td>
 
-                                        <td>
+                                        <td style="text-align: center">
                                             <input type="checkbox" class="yourBox" name="receivedInParts[]" value="{{ $order_item->id }}" />
                                         </td>
                                         <td>
-                                            <input type="text"  id="receivedItemText{{ $order_item->id }}" name="receivedQty[]" value="{{ $order_item->qty - $order_item->item_received}}" style="width:70px" readonly="readonly" />
+                                            <input type="text"  id="receivedItemText{{ $order_item->id }}" name="receivedQty[]" value="{{ $order_item->qty - $order_item->item_received}}" readonly="readonly" />
                                         </td>
                                       <td> {{ number_format($order_item->total,2) }}
                                         </td>
@@ -154,7 +154,7 @@
                             <label for="vendor_id" class=" control-label col-md-4 text-right">
                                 Notes </label>
                             <div class="col-md-8">
-                                <textarea name="notes" rows="7" cols="44" id="notes" onchange="removeBorder('order_status')" required minlength=2></textarea>
+                                <textarea name="notes" rows="7" cols="48" id="notes" onchange="removeBorder('order_status')" required minlength=2></textarea>
                             </div>
                         </div>
                     </div>
