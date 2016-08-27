@@ -143,24 +143,24 @@
 					
 					Internal
 					</label>
-					<label class="radio-inline">
-					<input type="radio" name="menu_type" value="external"  class="" 
-					@if($row['menu_type']=='external' ) checked="checked" @endif  /> External 
-					</label>	  
-					 </div> 
-				  </div> 	
-				  			  					
+					<label style="display:none" class="radio-inline">
+					<input  type="radio" name="menu_type" value="external"  class=""
+					@if($row['menu_type']=='external' ) checked="checked" @endif  /> External
+					</label>
+					 </div>
+				  </div>
+
 				  <div class="form-group  ext-link" >
 					<label for="ipt" class=" control-label col-md-4 text-right"> Url  </label>
 					<div class="col-md-8">
-					   {!! Form::text('url', $row['url'],array('class'=>'form-control', 'placeholder'=>' Type External Url')) !!} 
-					 </div> 
-				  </div> 	
-								  					
+					   {!! Form::text('url', $row['url'],array('class'=>'form-control', 'placeholder'=>' Type External Url')) !!}
+					 </div>
+				  </div>
+
 				  <div class="form-group  int-link" >
 					<label for="ipt" class=" control-label col-md-4 text-right"> Module </label>
 					<div class="col-md-8">
-					  <select name='module' rows='5' id='module'  style="width:100%" 
+					  <select name='module' rows='5' id='module'  style="width:100%"
 							class='select-liquid '    >
 							<option value=""> -- Select Module or Page -- </option>
 							<optgroup label="Module ">

@@ -17,12 +17,12 @@
 	 <?php echo Form::open(array('url'=>'department/delete/', 'class'=>'form-horizontal' ,'id' =>'SximoTable'  ,'data-parsley-validate'=>'' )) ;?>
 <div class="table-responsive">	
 	@if(count($rowData)>=1)
-    <table class="table table-striped  " id="{{ $pageModule }}Table">
+    <table class="table  " id="{{ $pageModule }}Table">
         <thead>
 			<tr>
 				<th width="20"> No </th>
-				<th width="60"> <input type="checkbox" class="checkall" /></th>
-				@if($setting['view-method']=='expand') <th>  </th> @endif			
+				<th width="20"> <input type="checkbox" class="checkall" /></th>
+				@if($setting['view-method']=='expand') @endif
 				<?php foreach ($tableGrid as $t) :
 					if($t['view'] =='1'):
 						$limited = isset($t['limited']) ? $t['limited'] :'';
@@ -32,9 +32,9 @@
 						} 
 					endif;
 				endforeach; ?>
-				<th> {!! 'No Tickets Open' !!}</th>
-				<th>{!! 'No Tickets Closed' !!}</th>
-				<th width="70"><?php echo Lang::get('core.btn_action') ;?></th>
+				<th width="30"> {!! 'No Tickets Open' !!}</th>
+				<th width="30">{!! 'No Tickets Closed' !!}</th>
+				<th width="30"><?php echo Lang::get('core.btn_action') ;?></th>
 			  </tr>
         </thead>
 

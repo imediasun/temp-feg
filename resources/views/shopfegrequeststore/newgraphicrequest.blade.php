@@ -64,7 +64,7 @@
 
                     </div>
                 </div>
-                <div class="form-group  " >
+                <div class="form-group  " id ="testdiv" >
                     <label for="Add Image" class=" control-label col-md-4 text-left">
                         {!! SiteHelpers::activeLang('Add Image', (isset($fields['add_image']['language'])? $fields['add_image']['language'] : array())) !!}
                     </label>
@@ -133,6 +133,7 @@
         });
         function showRequest() {
             $('.ajaxLoading').show();
+           // myDropzone.processQueue();
         }
         function showResponse(data) {
 
@@ -157,21 +158,35 @@
             url: baseUrl + "/shopfegrequeststore/uploadfiles",
             params: {
                 _token: token
-            },autoProcessQueue:false
+            },autoProcessQueue:true,
+
+            init:function(){
+                this.options.parallelUploads = 5,
+                        this.on("success", function(file,response) {
+                                                       addInput(response);
+                        });
+
+            }
         });
+        function addInput(value){
+            var newdiv = document.createElement('div');
+            newdiv.innerHTML = " <br><input style="+ "display:none"+" type='text' name='myInputs[]' value='"+value+"'>";
+            document.getElementById("testdiv").appendChild(newdiv);
+
+
+        }
+
         Dropzone.options.myAwesomeDropzone = {
             paramName: "file", // The name that will be used to transfer the file
             maxFilesize: 2, // MB
             addRemoveLinks: true,
+            acceptedFiles: "image/jpeg,image/png,image/gif",
+
             accept: function(file, done) {
-alert(file+done);
+
             }
         };
-        $("#submitbtn").on('click',function(e){
-            e.preventDefault();
-            myDropzone.processQueue();
-            document.getElementById("newgraphicrequest").submit();
-        });
+
     </script>
 
     <style>

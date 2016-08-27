@@ -76,9 +76,8 @@
                         </li>
                         <li><a href="{{ URL::to('feg/menu')}}"><i
                                         class="fa fa-sitemap"></i> {{ Lang::get('core.m_menu') }}</a></li>
-                        <li class="divider"></li>
-                        <li><a href="{{ URL::to('core/template')}}"><i class="fa fa-desktop"></i> Template Guide </a>
-                        </li>
+
+
 
                     </ul>
                 </li>
@@ -92,7 +91,7 @@
                     <li><a href="{{ URL::to('')}}" target="_blank"><i class="fa fa-desktop"></i> Main Site </a></li>
                     <li><a href="{{ URL::to('user/profile')}}"><i
                                     class="fa fa-user"></i> {{ Lang::get('core.m_profile') }}</a></li>
-                    <li><a href="{{ URL::to('core/elfinder')}}"><i class="fa fa-folder"></i> File Manager </a></li>
+
                     <li><a href="{{ URL::to('user/logout')}}"><i
                                     class="fa fa-sign-out"></i> {{ Lang::get('core.m_logout') }}</a></li>
                 </ul>

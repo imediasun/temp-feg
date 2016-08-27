@@ -81,9 +81,14 @@
 						 	@if(SiteHelpers::filterColumn($limited ))
 								 <td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}" data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
                                      @if($field['field']=='img')
-                                         <?php
-                                         echo SiteHelpers::showUploadedFile($value, '/uploads/newGraphic/', 50, false);
+                                        <?php
+                                         $images=explode(',',$value);
                                          ?>
+                                         <?php
+                                                foreach($images as $i)
+                                                    {
+                                         echo SiteHelpers::showUploadedFile($i, '/uploads/newGraphic/', 50, false);
+                                         }?>
 
 									 @elseif($field['field'] == 'need_by_date')
 

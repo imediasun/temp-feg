@@ -90,6 +90,7 @@ class ShopfegrequeststoreController extends Controller
         $this->data['product_type'] = $product_type;
         $cond = array('type' => $type, 'active_inactive' => $active_inactive, 'order_type' => $order_type, 'product_type' => $product_type,);
         $results = $this->model->getRows($params, $cond);
+
         // Build pagination setting
         $page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;
 
@@ -286,25 +287,12 @@ class ShopfegrequeststoreController extends Controller
             $locationId = $request->get('location_name');
             $statusId = 1;
             $now = date('Y-m-d');
-            $data = array('location_id' => $locationId, 'request_user_id' => \Session::get('uid'), 'request_date' => $now, 'need_by_date' => $date_needed, 'description' => $game_info . ' - ' . $graphics_description, 'qty' => $qty, 'status_id' => $statusId);
+            $filesnames = $request->get('myInputs');
+            $filesnames=implode(',',$filesnames);
+            $data = array('location_id' => $locationId, 'request_user_id' => \Session::get('uid'), 'request_date' => $now, 'need_by_date' => $date_needed, 'description' => $game_info . ' - ' . $graphics_description, 'qty' => $qty, 'status_id' => $statusId,'img'=>$filesnames);
             $last_insert_id = $this->model->newGraphicRequest($data);
 
-
-            $add_image = $request->get('add_image');
-            $updates = array();
-
-            if ($request->hasFile('img')) {
-                $file = $request->file('img');
-                $destinationPath = './uploads/newGraphic/';
-                $filename = $file->getClientOriginalName();
-                $extension = $file->getClientOriginalExtension(); //if you need extension of the file
-                $newfilename = $last_insert_id . '.' . $extension;
-                $uploadSuccess = $file->move($destinationPath, $newfilename);
-                if ($uploadSuccess) {
-                    $updates['img'] = $newfilename;
-                }
-                $this->model->insertRow($updates, $last_insert_id);
-            }return response()->json(array(
+        return response()->json(array(
                 'status' => 'success',
                 'message' => \Lang::get('core.request_sent_success')
             ));
@@ -353,17 +341,14 @@ $last_id=\DB::select("select max(id) as id from new_graphics_request");
             return \Response::json(array('error'));
         }
 
-        $destinationPath = public_path().'/'.$last_id; // upload path
-        if (file_exists($destinationPath)) {
-           rmdir($destinationPath);
-        }
+        $destinationPath = public_path().'/uploads/newGraphic'; // upload path
+
         $extension = \Input::file('file')->getClientOriginalExtension(); // getting file extension
-        $fileName = $last_id."_" .rand(11111, 99999) . '.' . $extension; // renameing image
+        $fileName = $last_id."_" .rand(111, 999) . '.' . $extension; // renameing image
         $upload_success = \Input::file('file')->move($destinationPath, $fileName); // uploading file to given path
 
         if ($upload_success) {
-            $data=array('graphic_request_id'=>$last_id,'img'=>$fileName);
-            $query=\DB::table('new_graphic_request_images')->insert($data);
+          return $fileName;
         }
     }
 }
