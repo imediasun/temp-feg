@@ -40,29 +40,31 @@ class AutoCloseOrder extends Command
     {
         $user_id = -1;
         $notes = 'close by cron job';
-        $orders  = \DB::select("Select date_ordered, id FROM orders WHERE id != 2 AND date_ordered <= DATE_ADD(CURDATE(), INTERVAL -15 DAY) limit 0,10");
+        $orders  = \DB::select("Select date_ordered, id FROM orders WHERE status_id != 2 AND date_ordered <= DATE_ADD(CURDATE(), INTERVAL -15 DAY) limit 0,10");
         foreach($orders as $order)
         {
-            $order_contents  = \DB::select("Select * FROM order_contents WHERE order_id = $order->id");
-            foreach($order_contents as $order_content)
+            echo $order->id;
+            $order_received  = \DB::select("Select * FROM order_received WHERE order_id = $order->id");
+            if(count($order_received) > 0)
             {
-                $status = 1;
-                echo 'add record in order_received';
-                \DB::insert('INSERT INTO order_received (`order_id`,`order_line_item_id`,`quantity`,`received_by`, `status`, `date_received`, `notes`)
-							 	  		   VALUES (' . $order_content->order_id . ',' . $order_content->id . ',' .$order_content->qty . ',' . $user_id . ',' . $status . ', "' . date('Y-m-d') . '" , "' . $notes. '" )');
-                echo 'update order_contents table';
-                \DB::update('UPDATE order_contents
+                $order_contents  = \DB::select("Select * FROM order_contents WHERE order_id = $order->id");
+                foreach($order_contents as $order_content)
+                {
+                    echo 'update order_contents table';
+                    \DB::update('UPDATE order_contents
 								 	 	 SET item_received = '. $order_content->qty . '
 							   	   	   WHERE id = '. $order_content->id);
-            }
-            echo 'update orders table';
-            $status = 2;
-            \DB::update('UPDATE orders
+                }
+                echo 'update orders table';
+                $status = 2;
+                \DB::update('UPDATE orders
 								 	 	 SET date_received = "'. date('Y-m-d') . '"
 								 	 	 , status_id = '. $status . '
 								 	 	 , received_by = '. $user_id .'
 								 	 	 , notes = "'. $notes . '"
+								 	 	 , updated_at = "'. date('Y-m-d H:i:s') . '"
 							   	   	      WHERE id = '. $order->id);
+            }
         }
     }
 }

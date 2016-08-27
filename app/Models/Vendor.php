@@ -26,6 +26,21 @@ class vendor extends Sximo  {
 	public static function queryGroup(){
 		return "  ";
 	}
-	
+
+	public static function processApiData($json)
+    {
+        //loop over all records and check if website is not empty then add http:// prefix for it
+        $data = array();
+        foreach($json as $record){
+            if(!empty($record['website'])){
+                if(strpos($record['website'],'http') === false){
+                    $record['website'] = 'http://'.$record['website'];
+                }
+            }
+            $data[] = $record;
+        }
+        return $data;
+    }
+
 
 }

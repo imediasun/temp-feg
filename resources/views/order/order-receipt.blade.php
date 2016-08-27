@@ -12,10 +12,10 @@
 
             {!! Form::open(array('url'=>'order/receiveorder/', 'class'=>'form-vertical','files' => true ,
             'parsley-validate'=>'','novalidate'=>' ','id'=> 'orderreceiveFormAjax')) !!}
-            <div class="col-md-offset-1 col-md-10" style="padding-bottom:50px">
+            <div class="col-md-offset-1 col-md-11 ">
                 <fieldset>
                     <legend>Order Receipt</legend>
-                    <div class=" table-responsive col-md-12 col-md-offset-2" style="margin-left: 0px!important; margin-bottom: 20px; padding-bottom:0px !important; background-color:#FFF;border:1px solid lightgray;font-size:16px">
+                    <div class=" table-responsive col-md-12 col-md-offset-2 item-receipt-container">
                         <table class="table">
                             <tr><td><b>PO #</b></td><td>{{ $data['po_number'] }}</td></tr>
                             <tr><td><b>Ordered By</b></td><td>{{ $data['order_user_name'] }}</td></tr>
@@ -26,31 +26,31 @@
                             ?>
                             @if((isset($data['item_count']) && !empty($data['item_count'])) && ($data['order_type'] == 7 || $data['order_type'] == 8) &&   $data['added_to_inventory'] == 0)  //REDEMPTION OR INSTANT WIN PRIZES -  SET TO DUMMY VALUE TO FORCE ORDER DESCRIPION UNTIL WE INTRODUCE PRIZE ALLOCATION
 
-                               <tr style="margin-top:10px;">
+                            <tr style="margin-top:10px;">
                                 <td width="4%" style="border:thin black solid; padding:2px">IMG</td>
                                 <td width="78%" style="border:thin black solid; padding:2px">Item Description</td>
                                 <td width="5%" style="border:thin black solid; text-align:center; padding:2px">Case QTY</td>
                                 <td width="13%" style="border:thin black solid; text-align:center; padding:2px">Apply Prizes</td>
-                                </tr>
+                            </tr>
 
                             @for ($i=1; $i<=$data['item_count']; $i++)
-                             <tr>
-                                <td style="border:thin white dotted;">
-                                    <?php
+                                <tr>
+                                    <td style="border:thin white dotted;">
+                                        <?php
                                         $product_id="product_id_".$i;
-                                    echo SiteHelpers::showUploadedFile($data[$product_id],'/uploads/products/', 40,false)
-                                    ?>
-                                </td>
-                                <td style="border:thin white dotted; padding:2px">{{ $data['order_description_' . $i] }}</td>
-                                <td style="border:thin white dotted; padding:2px; text-align:center;">{{  $data['order_qty_'.$i] }}</td>
-                                <td style="border:thin white dotted; padding:2px; text-align:center;">
-                                    <select name='game_'.$i id='game_'.$i>
-                                    @foreach($game_options as $key=>$value)
-                                        <option value="{{ $key }}"> {{ $value }} </option>
-                                        @endforeach
-                                    </select>
-                                </td>
-                            </tr>
+                                        echo SiteHelpers::showUploadedFile($data[$product_id],'/uploads/products/', 40,false)
+                                        ?>
+                                    </td>
+                                    <td style="border:thin white dotted; padding:2px">{{ $data['order_description_' . $i] }}</td>
+                                    <td style="border:thin white dotted; padding:2px; text-align:center;">{{  $data['order_qty_'.$i] }}</td>
+                                    <td style="border:thin white dotted; padding:2px; text-align:center;">
+                                        <select name='game_'.$i id='game_'.$i>
+                                            @foreach($game_options as $key=>$value)
+                                                <option value="{{ $key }}"> {{ $value }} </option>
+                                            @endforeach
+                                        </select>
+                                    </td>
+                                </tr>
                                 <input type="hidden" name='order_qty_'.$i value="{{ $data['order_qty_'.$i] }}" id='order_qty_'.$i/>
                                 <input type="hidden" name='product_id_'.$i value="{{ $data['product_id_'.$i] }}" id='product_id_'.$i/>
                             @endfor
@@ -58,65 +58,65 @@
                             @else
 
 
+                            @endif
+                        </table>
+
+                        <table id="itemTable" class="display" cellspacing="0" width="100%">
+                            <thead>
+                            <tr>
+                                <th> #</th>
+                                <th>Name</th>
+                                <th>Description</th>
+                                <th>Price Unit</th>
+                                <th>Case Price</th>
+                                <th>Qty</th>
+                                <th>Received Qty</th>
+                                <th>Partialy Received</th>
+                                <th></th>
+                                <th>Total ( $ )</th>
+
+                            </tr>
+                            </thead>
+
+                            <tbody>
+
+                            @foreach($data['order_items'] as $order_item)
+                                @if($order_item->qty != $order_item->item_received)
+                                    <tr>
+                                        <td>
+                                            {{ $order_item->id }}
+                                            <input type="hidden" name="itemsID[]" value="{{ $order_item->id }}">
+                                        </td>
+                                        <td>{{ $order_item->item_name }}</td>
+                                        <td>{{ $order_item->product_description }}</td>
+                                        <td>{{ number_format($order_item->price,2) }}</td>
+                                        <td>{{ number_format( $order_item->case_price,2) }}</td>
+
+                                        <td>{{ $order_item->qty }}</td>
+                                        <td>
+                                            {{ $order_item->item_received }}
+                                            <input type="hidden" name="receivedItemsQty[]" value="{{ $order_item->item_received }}">
+                                        </td>
+
+                                        <td style="text-align: center">
+                                            <input type="checkbox" class="yourBox" name="receivedInParts[]" value="{{ $order_item->id }}" />
+                                        </td>
+                                        <td>
+                                            <input type="text"  id="receivedItemText{{ $order_item->id }}" name="receivedQty[]" value="{{ $order_item->qty - $order_item->item_received}}" readonly="readonly" />
+                                        </td>
+                                      <td> {{ number_format($order_item->total,2) }}
+                                        </td>
+
+                            </tr>
                                 @endif
+                            @endforeach
+                            </tbody>
                         </table>
                     </div>
 
                     <div class="clearfix"></div>
 
-            <div class="table-responsive" style="padding-top: 5px;">
-                <table class="table table-striped itemstable" id="itemTable">
-                    <thead>
-                    <tr class="invHeading">
-                        <th width="50"> Item #</th>
-                        <th width="100">Item Name</th>
-                        <th width="150">Item Description</th>
-                        <th width="70">Price Per Unit</th>
-                        <th width="70">Case Price</th>
-                        <th>Quantity</th>
-                        <th>Received Quantity</th>
-                        <th>Item received in part</th>
-                        <th></th>
-                        <th>Total ( $ )</th>
 
-                    </tr>
-
-                    </thead>
-                    <tbody>
-                    @foreach($data['order_items'] as $order_item)
-                        @if($order_item->qty != $order_item->item_received)
-                            <tr>
-                                <td>
-                                    {{ $order_item->id }}
-                                    <input type="hidden" name="itemsID[]" value="{{ $order_item->id }}">
-                                </td>
-                                <td>{{ $order_item->item_name }}</td>
-                                <td>{{ $order_item->product_description }}</td>
-                                <td>{{ $order_item->price }}</td>
-                                <td>{{ $order_item->case_price }}</td>
-                                <td>{{ $order_item->qty }}</td>
-                                <td>
-                                    {{ $order_item->item_received }}
-                                    <input type="hidden" name="receivedItemsQty[]" value="{{ $order_item->item_received }}">
-                                </td>
-                                <td>
-                                    <input type="checkbox" class="yourBox" name="receivedInParts[]" value="{{ $order_item->id }}" />
-                                </td>
-                                <td>
-                                    <input type="text"  id="receivedItemText{{ $order_item->id }}" name="receivedQty[]" value="{{ $order_item->qty - $order_item->item_received}}" style="width:70px" readonly="readonly" />
-                                <td>
-                                <td>
-                                    {{ $order_item->total }}
-                                </td>
-                            </tr>
-                        @endif
-                    @endforeach
-
-                    </tbody>
-
-                </table>
-                <input type="hidden" name="enable-masterdetail" value="true">
-            </div>
 
 
 
@@ -154,7 +154,7 @@
                             <label for="vendor_id" class=" control-label col-md-4 text-right">
                                 Notes </label>
                             <div class="col-md-8">
-                                <textarea name="notes" rows="7" cols="44" id="notes" onchange="removeBorder('order_status')" required minlength=2></textarea>
+                                <textarea name="notes" rows="7" cols="48" id="notes" onchange="removeBorder('order_status')" required minlength=2></textarea>
                             </div>
                         </div>
                     </div>
@@ -191,11 +191,17 @@
 
         </div>
 
-</div>
+    </div>
     </div>
 
     <script type="text/javascript">
         $(document).ready(function () {
+
+            var dTable =  $('#itemTable').DataTable({
+
+            });
+
+
             $('#itemTable .yourBox').on('ifChecked',function(){
                 var itemId= $(this).val();
                 $('#receivedItemText'+itemId).removeAttr('readonly');
@@ -262,15 +268,15 @@
             var selected = $("#"+type).val();
             if(selected)
             {
-               $("#"+type).css("border","");
+                $("#"+type).css("border","");
                 if(selected == 5) /* Advanced Replacement Returned.. add tracking number */
                 {
-                   $("#tracking_numberdiv").show();
-                    }
+                    $("#tracking_numberdiv").show();
+                }
                 else
                 {
                     $("#tracking_numberdiv").hide();
-                    }
+                }
             }
             else
             {

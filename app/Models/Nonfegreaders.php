@@ -22,11 +22,11 @@ class nonfegreaders extends Sximo  {
         $debitType = @$filters['debit_type_id'];
         $locationQuery = "";
         if (!empty($location)) {
-            $locationQuery = "AND reader_exclude.loc_id = $location"; 
+            $locationQuery = "AND reader_exclude.loc_id IN ($location) "; 
         }
         $debitTypeQuery = "";
         if (!empty($debitType)) {
-            $debitTypeQuery = "AND reader_exclude.debit_type_id = $debitType"; 
+            $debitTypeQuery = "AND reader_exclude.debit_type_id IN ($debitType) "; 
         }
         
         if ($isCount) {
