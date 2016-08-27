@@ -19,7 +19,7 @@ class merchthrowsdetailed extends Sximo  {
         $dateEnd = @$filters['date_end'];
         $loc_table_expression = " ";
         if (!empty($location)) {
-            $loc_table_expression = " AND merch_throws.location_id=$location ";
+            $loc_table_expression = " AND merch_throws.location_id IN ($location) ";
         }
         $dateStart_expression= " ";
         if (!empty($dateStart)) {

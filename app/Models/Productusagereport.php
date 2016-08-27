@@ -76,16 +76,16 @@ class productusagereport extends Sximo  {
             $whereOrderType ="";
             $whereProdType = "";
             if (!empty($location_id)) {
-                $whereLocation = "AND L.id = $location_id";                
+                $whereLocation = "AND L.id IN ($location_id) ";                
             }
             if (!empty($vendor_id)) {
-                $whereVendor = "AND V.id = $vendor_id";                
+                $whereVendor = "AND V.id IN ($vendor_id) ";
             }
             if (!empty($prod_type_id)) {
-                $whereOrderType = "AND P.prod_type_id = $prod_type_id";                
+                $whereOrderType = "AND P.prod_type_id IN ($prod_type_id) ";
             }
             if (!empty($prod_sub_type_id)) {
-                $whereProdType = "AND P.prod_sub_type_id = $prod_sub_type_id";                
+                $whereProdType = "AND P.prod_sub_type_id IN ($prod_sub_type_id) ";
             }
 
             

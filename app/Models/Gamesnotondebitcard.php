@@ -18,7 +18,7 @@ class gamesnotondebitcard extends Sximo  {
         $location = @$filters['location_id'];
         $locationQuery = "";
         if (!empty($location)) {
-            $locationQuery = "AND game.location_id = $location"; 
+            $locationQuery = "AND game.location_id IN ($location) "; 
         }
         
         if ($isCount) {
