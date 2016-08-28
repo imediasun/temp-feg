@@ -175,19 +175,77 @@ class ReportHelpers
         return $Q;         
     }
     
-    public static function getLocationsReportingQuery()
-    {
+    public static function getLocationsReportingQuery() {
     }
 
-    public static function getReadersWihtMissingAssetIdsQuery()
-    {
+    public static function getReadersMissingAssetIdQuery($dateStart, $dateEnd, $location = "", $debit = "", $reader = "", $sortby = "date_start", $order = "") {
+        
+        $Q = "SELECT E.id,
+            E.date_start,
+            E.date_end,
+            E.reader_id, 
+            L.id AS location_id,
+            L.location_name_short,
+            E.debit_type_id,
+            D.company as debit_system,
+            '' as loc_game_title, 
+            SUM(CASE WHEN E.debit_type_id = 1 THEN E.total_notional_value ELSE E.std_actual_cash END) as game_total ";
+        
+        $Q .= self::_getClosedLocationsQuery($dateStart, $dateEnd, $location, $debit, $reader);    
+        // ORDER BY
+        $sortbys = array(            
+        );
+        if (!empty($sortbys[$sortby])) {
+            $sortby = $sortbys[$sortby];
+        }        
+        $sortbyQuery = " ORDER BY $sortby $order";
+        $Q .= $sortbyQuery;        
+
+        return $Q;                  
     }
-    public static function getAssetIdsWithMissingReadersQuery()
-    {
+    public static function _getReadersMissingAssetIdQuery($dateStart, $dateEnd, $location = "", $debit = "", $reader = "") {  
+        
+        if (!empty($dateStart)) {
+            $dateStart = self::dateify($dateStart);
+        }
+        if (!empty($dateEnd)) {
+            $dateEnd = self::dateify($dateEnd);
+        }
+        
+        $Q .= "
+            FROM game_earnings E
+            LEFT JOIN location L ON L.id = E.loc_id
+            LEFT JOIN debit_type D ON D.id = E.debit_type_id
+            
+            WHERE (E.game_id = 0 OR E.game_id IS NULL) ";
+                     
+        if (!empty($dateStart)) {
+            $Q .= " AND E.date_start >= '$dateStart' ";
+        }
+        
+        if (!empty($dateEnd)) {
+            $Q .= " AND E.date_start <= '$dateEnd 23:59:59' ";
+        }
+        
+        if (!empty($location)) {
+            $Q .= " AND E.loc_id IN ($location) ";
+        }
+        if (!empty($debit)) {
+            $Q .= " AND E.debit_type_id IN ($debit) ";
+        } 
+        
+        $Q .= " GROUP BY E.date_start, E.reader_id ";
+        
+        return $Q;
     }
-    public static function getMissingAssetIdMissingReadersQuery()
-    {
+    public static function getReadersMissingAssetIdCount($dateStart, $dateEnd, $location = "", $debit = "", $reader = "") {
+        $Q = "SELECT count(*) as `count` FROM (SELECT E.date_start ";
+        $Q .= self::_getGameRankQuery($dateStart, $dateEnd, $location = "", $debit = ""); 
+        $Q .= ") GD";
+        $count = self::getCountFromQuery($Q);
+        return $count;        
     }
+    
     public static function getGamesNotOnDebitCardQuery()
     {
     }
@@ -213,7 +271,7 @@ class ReportHelpers
         $count = self::getCountFromQuery($Q);
         return $count;        
     }
-    public static function getGameRankQuery($dateStart, $dateEnd, $location = "", $debit = "", $gameType = "", $gameCat = "all", $onTest = "", $sortby = "closed_date", $order = "") {
+    public static function getGameRankQuery($dateStart, $dateEnd, $location = "", $debit = "", $gameType = "", $gameCat = "all", $onTest = "", $sortby = "game_average", $order = "") {
         extract(self::getGameCategoryDetails($gameCat));
         //sum(E.game_std_plays) AS total_plays,
         $Q = "SELECT 
