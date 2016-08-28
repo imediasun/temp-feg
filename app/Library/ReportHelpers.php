@@ -447,10 +447,8 @@ class ReportHelpers
     
     public static function getMerchandizeExpensesQuery($dateStart, $dateEnd, $location = "", $debit = "", $sortby = "location_id", $order = ""){
         
-        $startDateArray = getdate(strtotime($dateStart));    
-        $start_year = $startDateArray['year'];
-        $start_month = $startDateArray['mon'];
-        $dateStart = date("Y-m-d", strtotime("{$start_year}-{$start_month}-01"));
+        $dateStart = date('Y-m-d', strtotime($dateStart. '  first day of this month'));
+        $dateEnd = date('Y-m-d', strtotime($dateEnd. ' 23:59:59  last day of this month'));
         
         $Q = "SELECT 
             L.id as location_id,
@@ -484,8 +482,8 @@ class ReportHelpers
                 LEFT JOIN location_budget LB ON LB.location_id = L.id
                 INNER JOIN debit_type D ON D.id = L.debit_type_id
 
-                WHERE L.can_ship = 1 AND O.order_type_id IN(7,8)                 
-                LB.budget_date >= '$dateStart' and LB.budget_date <= '$dateEnd' 
+                WHERE L.can_ship = 1 AND O.order_type_id IN(7,8) AND                 
+                    LB.budget_date >= '$dateStart' and LB.budget_date <= '$dateEnd' 
                 AND O.date_ordered >= '$dateStart' and O.date_ordered <= '$dateEnd' ";
 
         if (!empty($location)) {
