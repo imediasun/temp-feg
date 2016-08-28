@@ -184,7 +184,7 @@ class ReportHelpers
             E.date_start,
             E.date_end,
             E.reader_id, 
-            L.id AS location_id,
+            E.loc_id AS location_id,
             L.location_name_short,
             E.debit_type_id,
             D.company as debit_system,
@@ -234,7 +234,7 @@ class ReportHelpers
             $Q .= " AND E.debit_type_id IN ($debit) ";
         } 
         
-        $Q .= " GROUP BY E.date_start, E.reader_id ";
+        $Q .= " GROUP BY E.date_start, E.reader_id, E.loc_id ";
         
         return $Q;
     }
