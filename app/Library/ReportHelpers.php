@@ -237,6 +237,7 @@ class ReportHelpers
             $Q .= " AND E.debit_type_id IN ($debit) ";
         } 
         
+        // GROUP BY
         $Q .= " GROUP BY E.date_start, E.reader_id, E.loc_id ";
         
         return $Q;
@@ -336,11 +337,9 @@ class ReportHelpers
         if (!empty($gameTypeIds)) {
             $Q .= " AND E.game_type_id IN ($gameTypeIds)";
         }
-
-        $Q .= " GROUP BY E.game_title_id ";          
         
-
-        $Q .= " E.date_played, E.location_id, E.game_id HAVING SUM(E.game_revenue) > 4000";
+        // GROUP BY
+        $Q .= " GROUP BY E.date_played, E.location_id, E.game_id HAVING SUM(E.game_revenue) > 4000";
         
         return $Q;        
         
@@ -435,6 +434,7 @@ class ReportHelpers
             $Q .= " AND E.game_type_id IN ($gameTypeIds)";
         }
 
+        // GROUP BY
         $Q .= " GROUP BY E.game_title_id ";  
         
         return $Q;
