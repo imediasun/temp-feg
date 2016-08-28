@@ -212,7 +212,7 @@ class ReportHelpers
             $dateEnd = self::dateify($dateEnd);
         }
         
-        $Q .= "
+        $Q = "
             FROM game_earnings E
             LEFT JOIN location L ON L.id = E.loc_id
             LEFT JOIN debit_type D ON D.id = E.debit_type_id
