@@ -219,6 +219,9 @@ class ReportHelpers
             
             WHERE (E.game_id = 0 OR E.game_id IS NULL) ";
                      
+        if (!empty($reader)) {
+            $Q .= " AND E.reader_id LIKE '$reader' ";
+        }
         if (!empty($dateStart)) {
             $Q .= " AND E.date_start >= '$dateStart' ";
         }
