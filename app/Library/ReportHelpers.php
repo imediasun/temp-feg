@@ -191,7 +191,7 @@ class ReportHelpers
             '' as loc_game_title, 
             SUM(CASE WHEN E.debit_type_id = 1 THEN E.total_notional_value ELSE E.std_actual_cash END) as game_total ";
         
-        $Q .= self::_getClosedLocationsQuery($dateStart, $dateEnd, $location, $debit, $reader);    
+        $Q .= self::_getReadersMissingAssetIdQuery($dateStart, $dateEnd, $location, $debit, $reader);    
         // ORDER BY
         $sortbys = array(            
         );
@@ -240,7 +240,7 @@ class ReportHelpers
     }
     public static function getReadersMissingAssetIdCount($dateStart, $dateEnd, $location = "", $debit = "", $reader = "") {
         $Q = "SELECT count(*) as `count` FROM (SELECT E.date_start ";
-        $Q .= self::_getGameRankQuery($dateStart, $dateEnd, $location = "", $debit = ""); 
+        $Q .= self::_getReadersMissingAssetIdQuery($dateStart, $dateEnd, $location = "", $debit = ""); 
         $Q .= ") GD";
         $count = self::getCountFromQuery($Q);
         return $count;        
