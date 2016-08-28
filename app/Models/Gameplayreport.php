@@ -2,44 +2,73 @@
 
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
+use App\Library\ReportHelpers;
 
 class gameplayreport extends Sximo  {
 	
-	protected $table = 'game_earnings';
-	protected $primaryKey = 'id';
-
 	public function __construct() {
 		parent::__construct();
-		
-	}
-
-	public static function querySelect(  ){
-		
-		return "  SELECT game_earnings.* FROM game_earnings  ";
-	}	
-
-	public static function queryWhere(  ){
-		
-		return "  WHERE game_earnings.id IS NOT NULL ";
 	}
 	
-	public static function queryGroup(){
-		return "  ";
-	}
-	
-    public static function getSearchFilters() {
-        $finalFilter = array();
-        if (isset($_GET['search'])) {
-            $filters_raw = trim($_GET['search'], "|");
-            $filters = explode("|", $filters_raw);
+	public static function processRows( $rows ){
+        $newRows = array();
+        foreach($rows as $row) {
 
-            foreach($filters as $filter) {
-                $columnFilter = explode(":", $filter);
-                if (isset($columnFilter) && isset($columnFilter[0]) && isset($columnFilter[2])) {
-                    $finalFilter[$columnFilter[0]] = $columnFilter[2];
-                }
-            }
-        }
-        return $finalFilter;
+            $row->date_start = date("m/d/Y", strtotime($row->date_start));
+            $row->date_end = date("m/d/Y", strtotime($row->date_end));
+		          
+            //$row->game_average = '$' . number_format($row->game_average,2);
+            //$row->game_total = '$' . number_format($row->game_total,2);
+                       
+            $newRows[] = $row;
+}
+		return $newRows;
+	}        
+	public static function getRows( $args, $cond = null )
+	{
+		extract(array_merge( array(
+			'page' 		=> '0' ,
+			'limit'  	=> '0' ,
+			'sort' 		=> '' ,
+			'order' 	=> '' ,
+			'params' 	=> '' ,
+			'global'	=> 1
+		), $args ));
+	
+        $bottomMessage = "";
+        $message = "";                
+
+		$offset = ($page-1) * $limit ;
+		$limitConditional = ($page !=0 && $limit !=0) ? " LIMIT  $offset , $limit" : '';
+
+        $filters = ReportHelpers::getSearchFilters(array(
+            'date_start' => '', 'date_end' => '', 'game_cat_id' => '', 'game_type_id'  => '',
+            'debit_type_id' => '', 'game_on_test' => '', 'location_id' => ''
+        ));        
+        extract($filters);
+        ReportHelpers::dateRangeFix($date_start, $date_end);        
+        $mainQuery = ReportHelpers::getGamePlayQuery($date_start, $date_end, $location_id, $debit_type_id, $game_type_id, $game_cat_id, $game_on_test, $sort, $order);
+        $mainQuery .= $limitConditional;
+        $total = ReportHelpers::getGamePlayCount($date_start, $date_end, $location_id, $debit_type_id, $game_type_id, $game_cat_id, $game_on_test);
+        $rawRows = \DB::select($mainQuery);
+        $rows = self::processRows($rawRows);            
+        
+        if ($total == 0) {
+            $message = "No data found. Try searhing with other filters.";
+	}
+        $humanDateRange = ReportHelpers::humanifyDateRangeMessage($date_start, $date_end);
+        $topMessage = "Game Play Ranking $humanDateRange";
+        
+		$results = array(
+            'topMessage' => $topMessage,
+            'bottomMessage' => $bottomMessage,
+            'message' => $message,
+
+            'rows'=> $rows, 
+            'total' => $total
+        );
+        
+        return $results;
+
     }
 }

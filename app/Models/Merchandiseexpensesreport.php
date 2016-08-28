@@ -2,44 +2,73 @@
 
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
+use App\Library\ReportHelpers;
 
 class merchandiseexpensesreport extends Sximo  {
 	
-	protected $table = 'orders';
-	protected $primaryKey = 'id';
-
 	public function __construct() {
 		parent::__construct();
-		
 	}
 
-	public static function querySelect(  ){
-		
-		return "  SELECT orders.* FROM orders  ";
-	}	
+	public static function processRows( $rows ){
+        $newRows = array();
+        foreach($rows as $row) {
 
-	public static function queryWhere(  ){
-		
-		return "  WHERE orders.id IS NOT NULL ";
-	}
+            $row->date_start = date("m/d/Y", strtotime($row->date_start));
+            $row->date_end = date("m/d/Y", strtotime($row->date_end));
+		          
+            $row->merch_budget = '$' . number_format($row->merch_budget,2);
+            $row->merch_expense = '$' . number_format($row->merch_expense,2);
+            $row->utilization = '$' . number_format($row->utilization,2);
+                       
+            $newRows[] = $row;
+}
+		return $newRows;
+	}        
+	public static function getRows( $args, $cond = null )
+	{
+		extract(array_merge( array(
+			'page' 		=> '0' ,
+			'limit'  	=> '0' ,
+			'sort' 		=> '' ,
+			'order' 	=> '' ,
+			'params' 	=> '' ,
+			'global'	=> 1
+		), $args ));
 	
-	public static function queryGroup(){
-		return "  ";
-	}
-	
-    public static function getSearchFilters() {
-        $finalFilter = array();
-        if (isset($_GET['search'])) {
-            $filters_raw = trim($_GET['search'], "|");
-            $filters = explode("|", $filters_raw);
+        $bottomMessage = "";
+        $message = "";                
 
-            foreach($filters as $filter) {
-                $columnFilter = explode(":", $filter);
-                if (isset($columnFilter) && isset($columnFilter[0]) && isset($columnFilter[2])) {
-                    $finalFilter[$columnFilter[0]] = $columnFilter[2];
-                }
-            }
-        }
-        return $finalFilter;
+		$offset = ($page-1) * $limit ;
+		$limitConditional = ($page !=0 && $limit !=0) ? " LIMIT  $offset , $limit" : '';
+
+        $filters = ReportHelpers::getSearchFilters(array(
+            'date_start' => '', 'date_end' => '', 'debit_type_id' => '', 'location_id' => ''
+        ));        
+        extract($filters);
+        ReportHelpers::dateRangeFix($date_start, $date_end);        
+        $mainQuery = ReportHelpers::getMerchandizeExpensesQuery($date_start, $date_end, $location_id, $debit_type_id, $sort, $order);
+        $mainQuery .= $limitConditional;
+        $total = ReportHelpers::getMerchandizeExpensesQuery($date_start, $date_end, $location_id, $debit_type_id);
+        $rawRows = \DB::select($mainQuery);
+        $rows = self::processRows($rawRows);            
+        
+        if ($total == 0) {
+            $message = "No data found. Try searhing with other filters.";
+	}
+        $humanDateRange = ReportHelpers::humanifyDateRangeMessage($date_start, $date_end, "F Y");
+        $topMessage = "Merchandize Expesnes $humanDateRange";
+        
+		$results = array(
+            'topMessage' => $topMessage,
+            'bottomMessage' => $bottomMessage,
+            'message' => $message,
+
+            'rows'=> $rows, 
+            'total' => $total
+        );
+        
+        return $results;
+
     }
 }
