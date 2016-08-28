@@ -57,7 +57,7 @@ class gameplayreport extends Sximo  {
             $message = "No data found. Try searhing with other filters.";
 	}
         $humanDateRange = ReportHelpers::humanifyDateRangeMessage($date_start, $date_end);
-        $topMessage = "Game Play Ranking $humanDateRange";
+        $topMessage = "Game Play $humanDateRange";
         
 		$results = array(
             'topMessage' => $topMessage,

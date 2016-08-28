@@ -43,13 +43,14 @@ class gamesnotplayed extends Sximo  {
 
         $filters = ReportHelpers::getSearchFilters(array(
             'date_start' => '', 'date_end' => '', 'game_cat_id' => '', 'game_type_id'  => '',
-            'debit_type_id' => '', 'game_on_test' => '', 'location_id' => ''
+            'debit_type_id' => '', 'game_on_test' => '', 'location_id' => '', 'game_id' => '',
+            'game_title_id' => ''
         ));        
         extract($filters);
         ReportHelpers::dateRangeFix($date_start, $date_end);        
-        $mainQuery = ReportHelpers::getGamesNotPlayedQuery($date_start, $date_end, $location_id, $debit_type_id, $game_type_id, $game_cat_id, $game_on_test, $sort, $order);
+        $mainQuery = ReportHelpers::getGamesNotPlayedQuery($date_start, $date_end, $location_id, $debit_type_id, $game_type_id, $game_cat_id, $game_on_test, $game_id, $game_title_id, $sort, $order);
         $mainQuery .= $limitConditional;
-        $total = ReportHelpers::getGamesNotPlayedCount($date_start, $date_end, $location_id, $debit_type_id, $game_type_id, $game_cat_id, $game_on_test);
+        $total = ReportHelpers::getGamesNotPlayedCount($date_start, $date_end, $location_id, $debit_type_id, $game_type_id, $game_cat_id, $game_on_test, $game_id, $game_title_id);
         $rawRows = \DB::select($mainQuery);
         $rows = self::processRows($rawRows);            
         
@@ -57,7 +58,7 @@ class gamesnotplayed extends Sximo  {
             $message = "No data found. Try searhing with other filters.";
         }
         $humanDateRange = ReportHelpers::humanifyDateRangeMessage($date_start, $date_end);
-        $topMessage = "Game Play Ranking $humanDateRange";
+        $topMessage = "Games Not played $humanDateRange";
         
 		$results = array(
             'topMessage' => $topMessage,

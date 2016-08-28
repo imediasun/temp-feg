@@ -14,8 +14,8 @@ class merchandiseexpensesreport extends Sximo  {
         $newRows = array();
         foreach($rows as $row) {
 
-            $row->date_start = date("m/d/Y", strtotime($row->date_start));
-            $row->date_end = date("m/d/Y", strtotime($row->date_end));
+            $row->date_start = date("F Y", strtotime($row->date_start));
+            $row->date_end = date("F Y", strtotime($row->date_end));
 		          
             $row->merch_budget = '$' . number_format($row->merch_budget,2);
             $row->merch_expense = '$' . number_format($row->merch_expense,2);
