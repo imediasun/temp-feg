@@ -258,8 +258,99 @@ class ReportHelpers
     public static function getAdjustmentsQuery()
     {
     }
-    public static function getPotentialOverReportingQuery()
-    {
+    public static function getPotentialOverReportingErrorQuery($dateStart, $dateEnd, $location = "", $debit = "", $gameType = "", $gameCat = "all", $onTest = "", $gameId = "", $sortby = "date_start", $order = "") {
+        extract(self::getGameCategoryDetails($gameCat));        
+        $Q = "SELECT E.id,
+                E.location_id,
+                L.location_name_short as location_name,
+                E.debit_type_id,
+                D.company as debit_system,
+                E.game_id,
+                E.game_title_id,
+                T.game_title as game_name,
+                E.game_on_test,
+                E.game_not_debit,
+                E.game_type_id,
+                Y.game_type,
+                E.game_on_test,
+                '$gameCat' AS game_cat_id,
+                '$game_category' AS game_category,                
+                SUM(E.game_revenue) AS game_total,
+                E.date_played as date_start,
+                E.date_played as date_end
+                ";
+        
+        $Q .= self::_getPotentialOverReportingErrorQuery($dateStart, $dateEnd, $location, $debit, $gameType, $gameCat, $onTest, $gameId);    
+        // ORDER BY
+        $sortbys = array(            
+        );
+        if (!empty($sortbys[$sortby])) {
+            $sortby = $sortbys[$sortby];
+        }        
+        $sortbyQuery = " ORDER BY $sortby $order";
+        $Q .= $sortbyQuery;        
+
+        return $Q;         
+    }
+    public static function _getPotentialOverReportingErrorQuery($dateStart, $dateEnd, $location = "", $debit = "", $gameType = "", $gameCat = "all", $onTest = "", $gameId = "") {
+        extract(self::getGameCategoryDetails($gameCat));
+        $gameTypeIds = self::mergeGameTypeAndCategories($gameType, $game_category_type);        
+        if (!empty($dateStart)) {
+            $dateStart = self::dateify($dateStart);
+        }
+        if (!empty($dateEnd)) {
+            $dateEnd = self::dateify($dateEnd);
+        }        
+        $Q = "
+            FROM report_game_plays E
+   INNER JOIN game G ON G.id = E.game_id
+   INNER JOIN location L ON L.id = E.location_id
+   INNER JOIN debit_type D ON D.id = E.debit_type_id   
+   INNER JOIN game_title T ON T.id = G.game_title_id
+   INNER JOIN game_type Y ON Y.id = T.game_type_id
+	   WHERE E.game_id <> 0 ";
+                     
+        if (!empty($gameId)) {
+            $Q .= " AND E.game_id = $gameId ";
+        }
+        if (!empty($dateStart)) {
+            $Q .= " AND E.date_played >= '$dateStart' ";
+        }        
+        if (!empty($dateEnd)) {
+            $Q .= " AND E.date_played <= '$dateEnd 23:59:59' ";
+        }        
+        if (!empty($location)) {
+            $Q .= " AND E.location_id IN ($location) ";
+        }
+        if (!empty($debit)) {
+            $Q .= " AND E.debit_type_id IN ($debit) ";
+        }
+        if (!empty($onTest)) {
+            if ($onTest = "notest") {
+                $Q .= " AND E.game_on_test IN (0)";
+            }
+            else {
+                $Q .= " AND E.game_on_test IN (1)";
+            }            
+        }
+        if (!empty($gameTypeIds)) {
+            $Q .= " AND E.game_type_id IN ($gameTypeIds)";
+        }
+
+        $Q .= " GROUP BY E.game_title_id ";          
+        
+
+        $Q .= " E.date_played, E.location_id, E.game_id HAVING SUM(E.game_revenue) > 4000";
+        
+        return $Q;        
+        
+    }
+    public static function getPotentialOverReportingErrorCount($dateStart, $dateEnd, $location = "", $debit = "", $gameType = "", $gameCat = "all", $onTest = "", $gameId = "") {
+        $Q = "SELECT count(*) as `count` FROM (SELECT E.date_played ";
+        $Q .= self::_getPotentialOverReportingErrorQuery($dateStart, $dateEnd, $location, $debit, $gameType, $gameCat, $onTest, $gameId); 
+        $Q .= ") GD";
+        $count = self::getCountFromQuery($Q);
+        return $count;          
     }
     public static function getGamesNotPlayedQuery()
     {
