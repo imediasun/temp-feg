@@ -227,7 +227,7 @@
                         <td><br/><input type="text"  id="item_num" name="item_num[]" disabled readonly
                                    style="width:30px;border:none;background:none"/></td>
                         <td><br/> <input type="text" name='item_name[]' placeholder='Item  Name' id="item_name"
-                                       class='form-control item_name mysearch' onfocus="init(this.id,this)"  maxlength="225" required>
+                                       class='form-control item_name mysearch' onfocus="init(this.id,this)"  maxlength="225" reuuired>
                         </td>
                         <td>
                             <textarea name='item[]' placeholder='Item  Description' id="item"
@@ -423,6 +423,9 @@
                 }
 
             }
+            $(".calculate").keyup(function () {
+                calculateSum();
+            });
             calculateSum();
 
 
@@ -437,7 +440,7 @@
             if (data.status == 'success') {
                 var url = location.href;
                 if (url.indexOf('submitorder') != -1) {
-                    location.href = "{{ url() }}/managefegrequeststore";
+                    location.href = "{{ url() }}/order";
                 }
                 else {
                     ajaxViewClose('#{{ $pageModule }}');
@@ -645,10 +648,10 @@ $(function()
         {
             $("#experiment").trigger('click');
         });
-        function ajaxViewClose1(id)
-        {
-            location.href="/managefegrequeststore";
-        }
+      function ajaxViewClose1(id)
+       {
+           location.href = "{{ url() }}/order";
+       }
     </script>
     <style>
         .ui-corner-all
