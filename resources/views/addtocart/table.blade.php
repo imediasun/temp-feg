@@ -166,23 +166,27 @@
                     <select name="new_location" id="new_location" class="select3"></select>
                 </div>
             </div>
-            <div style=";margin-left:50px;" class="col-md-2">
+          <!--  <div style=";margin-left:50px;" class="col-md-2">
                 <label>Clone Order Info</label>
                 <input type="checkbox" name="clone_order" id="clone_order"
                        style="height:25px; width:25px;vertical-align: middle">
             </div>
-            <div class="col-md-10 col-md-offset-2">
-                <br/>
-
-                <div class="col-md-10">
-                    <input type="button" style="font-size:1.4em; width:100%; text-align:center;"
-                           value="Submit Weekly Requests totalling ${{ $cartData['shopping_cart_total']}}"
-                           onClick="confirmSubmit();" id = "cartbtn"></button>
-                </div>
-            </div>
+-->
         @endif
+
+
         @include('ajaxfooter')
 
+        <div class="col-md-10 col-md-offset-2">
+
+
+            <div class="col-md-10">
+                <input type="button" style="font-size:1.4em; width:100%; text-align:center;"
+                       value="Submit Weekly Requests totalling ${{ $cartData['shopping_cart_total']}}"
+                       onClick="confirmSubmit();" id = "cartbtn"></button>
+            </div>
+        </div>
+</br>
     </div>
 </div>
 @else
