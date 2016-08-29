@@ -438,8 +438,8 @@ class ReportHelpers
                 '$gameCat' AS game_cat_id,
                 '$game_category' AS game_category,                
 
-                '$dateStart' as E.date_start,
-                '$dateEnd_ymd' as E.date_end,
+                '$dateStart' as date_start,
+                '$dateEnd_ymd' as date_end,
 
                 IF(E.debit_type_id = 1,(SUM(E.std_card_credit) + SUM(E.std_card_credit_bonus) + SUM(E.courtesy_plays)),SUM(E.std_plays)) as total_plays, 
                 SUM(E.std_actual_cash) as actual_cash, 
