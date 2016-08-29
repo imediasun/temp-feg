@@ -27,11 +27,7 @@
 		<link href="{{ asset('sximo/css/bootstrap-select.css')}}" rel="stylesheet">
 		<link href="{{ asset('sximo/js/plugins/toastr/toastr.css')}}" rel="stylesheet">
         <link href="{{ asset('sximo/css/dropzone.css')}}" rel="stylesheet">
-		@if(!Session::get('themes') or Session::get('themes') =='')
-		<link href="{{ asset('sximo/css/sximo.css')}}" rel="stylesheet">	
-		@else
-		<link href="{{ asset('sximo/css/'.Session::get('themes').'.css')}}" rel="stylesheet">	
-		@endif
+		<link href="{{ asset('sximo/css/sximo.css')}}" rel="stylesheet">
 		<script type="text/javascript" src="{{ asset('sximo/js/plugins/jquery.min.js') }}"></script>
 		<script type="text/javascript" src="{{ asset('sximo/js/plugins/jquery.cookie.js') }}"></script>			
 		<script type="text/javascript" src="{{ asset('sximo/js/plugins/jquery-ui.min.js') }}"></script>				
