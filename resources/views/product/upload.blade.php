@@ -1,7 +1,6 @@
 @extends('layouts.app')
 
 @section('content')
-
     <div class="page-content row">
         <!-- Page header -->
         <div class="page-header">
@@ -9,11 +8,15 @@
                 <h3> Upload Image <small>Profile Image</small></h3>
 
             </div>
+
         </div>
 
         <div class="page-content-wrapper m-t">
             <div class="sbox animated fadeInRight">
-                <div class="sbox-title"> <h4> <i class="fa fa-table"></i> Upload Image <small>Profile Image</small></h4></div>
+                <div class="sbox-title"> <h4> <i class="fa fa-table"></i> Upload Image <small>Profile Image</small>
+                        <a href="javascript:void(0)" class="collapse-close pull-right btn btn-xs btn-danger" onclick="ajaxViewClose('#product')"><i class="fa fa fa-times"></i></a>
+                    </h4>
+                </div>
                 <div class="sbox-content">
                     <div class="row" >
                         <div class="col-md-12" style="text-align: center;margin-bottom: 10px;">
@@ -51,5 +54,11 @@
             </div>
         </div>
     </div>
-
+        </div>
+        <script>
+            function ajaxViewClose()
+            {
+                location.href='{{ URL::to('product') }}';
+            }
+        </script>
 @stop

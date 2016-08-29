@@ -39,7 +39,8 @@
                             endif;
                         endforeach; ?>
 
-                        <th width="100">{{ Lang::get('core.btn_action') }}</th>
+                        <th width="50">{{ Lang::get('core.btn_action') }}</th>
+                        <th width="150">Add To Cart</th>
 
 
 
@@ -105,20 +106,16 @@
                         endif;
                         endforeach;
                         ?>
-
-
-
                         <td><a href="{{ $pageModule }}/show/{{$row->id}}" target="_blank"
                                class="tips btn btn-xs btn-white"  title="Product Details"><i class="fa fa-search" aria-hidden="true"></i></a>
-
-
-                            @if($row->inactive == 0)
-
+</td>
+                        <td>@if($row->inactive == 0)
+                                <input type="text" name="item_quantity" class="form-control" style="display:inline;width:50px;" id="item_quantity_{{$row->id}}" />
                                 <a href="javascript:void(0)" value="{{$row->id}}" class=" addToCart tips btn btn-xs btn-white"  title="Add to Cart"><i class="fa fa-shopping-cart" aria-hidden="true"></i></a>
+
                             @else
                                 Not Avail.
-                            @endif
-                        </td>
+                            @endif</td>
                     </tr>
                     @if($setting['view-method']=='expand')
                         <tr style="display:none" class="expanded" id="row-{{ $row->id }}">
@@ -176,10 +173,16 @@
         $('.addToCart').on('click',function(){
             var base_url = <?php echo  json_encode(url()) ?>;
             var addId = $(this).attr('value');
-            console.log(addId);
+            var qty=$("#item_quantity_"+addId).val();
+alert(qty);
+            if(!qty)
+            {
+                qty=0;
+            }
+            console.log(addId+ " "+qty);
             $.ajax({
                 type: "GET",
-                url: base_url + '/shopfegrequeststore/popup-cart/'+addId,
+                url: base_url + '/shopfegrequeststore/popup-cart/'+addId+"/"+qty,
                 data: {
                 },
                 success: function (response) {

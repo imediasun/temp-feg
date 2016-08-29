@@ -1,13 +1,9 @@
 <div class="row m-b">
 
-    <div class="col-md-7 col-lg-12">
-        <div class="row">
-            <div class="col-md-4"><h1  style="vertical-align:baseline; padding-bottom:0;"><img src="./sximo/images/store.png"/>FEG Store - <b style="font-size:.7em;">Shopping for </b></h1></div>
-            <div class="col-md-3" style="margin-top: 12px"><select class="select3" id="locations"></select></div>
-        </div>
-    </div>
+
     <div class="col-md-4">
         <h3>Narrow Your Search</h3>
+
         <?php $opts = array("active" => "Active", 'inactive' => "IN Active", 'all' => "All"); ?>
         <select name="activ_inactive_all" class=" select3" id="active_inactive">
             @foreach($opts as $opt => $title)
