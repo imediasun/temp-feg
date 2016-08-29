@@ -55,15 +55,7 @@ class ReportHelpers
 
         return $Q;
     }
-    public static function getLocationRanksQueryERPDB($dateStart, $dateEnd, $location, $debit, $sortby = "pgpd_avg", $order = "")
-    {
-    }
-    public static function getLocationRanksQueryTEMPDB($dateStart, $dateEnd, $location, $debit, $sortby = "pgpd_avg", $order = "")
-    {
-    }    
-    public static function getDumpSummaryQuery()
-    {
-    }
+    
     
     public static function getLocationNotReportingQuery($dateStart, $dateEnd, $location, $debit, $sortby = "closed_date", $order = "") {
         $dateEnd_ymd = self::dateify($dateEnd);
@@ -174,38 +166,175 @@ class ReportHelpers
 
         return $Q;         
     }
-    
-    public static function getLocationsReportingQuery()
-    {
+
+
+    public static function getReadersMissingAssetIdQuery($dateStart, $dateEnd, $location = "", $debit = "", $reader = "", $sortby = "date_start", $order = "") {
+        
+        $Q = "SELECT E.id,
+            E.date_start,
+            E.date_end,
+            E.reader_id, 
+            E.loc_id AS location_id,
+            L.location_name_short,
+            E.debit_type_id,
+            D.company as debit_system,
+            '' as loc_game_title, 
+            SUM(CASE WHEN E.debit_type_id = 1 THEN E.total_notional_value ELSE E.std_actual_cash END) as game_total ";
+        
+        $Q .= self::_getReadersMissingAssetIdQuery($dateStart, $dateEnd, $location, $debit, $reader);    
+        // ORDER BY
+        $sortbys = array(            
+        );
+        if (!empty($sortbys[$sortby])) {
+            $sortby = $sortbys[$sortby];
+        }        
+        $sortbyQuery = " ORDER BY $sortby $order";
+        $Q .= $sortbyQuery;        
+
+        return $Q;                  
+    }
+    public static function _getReadersMissingAssetIdQuery($dateStart, $dateEnd, $location = "", $debit = "", $reader = "") {  
+        
+        if (!empty($dateStart)) {
+            $dateStart = self::dateify($dateStart);
+        }
+        if (!empty($dateEnd)) {
+            $dateEnd = self::dateify($dateEnd);
+        }
+        
+        $Q = "
+            FROM game_earnings E
+            LEFT JOIN location L ON L.id = E.loc_id
+            LEFT JOIN debit_type D ON D.id = E.debit_type_id
+            
+            WHERE (E.game_id = 0 OR E.game_id IS NULL) ";
+                     
+        if (!empty($reader)) {
+            $Q .= " AND E.reader_id LIKE '$reader' ";
+        }
+        if (!empty($dateStart)) {
+            $Q .= " AND E.date_start >= '$dateStart' ";
+        }
+        
+        if (!empty($dateEnd)) {
+            $Q .= " AND E.date_start <= '$dateEnd 23:59:59' ";
+        }
+        
+        if (!empty($location)) {
+            $Q .= " AND E.loc_id IN ($location) ";
+        }
+        if (!empty($debit)) {
+            $Q .= " AND E.debit_type_id IN ($debit) ";
+        } 
+        
+        // GROUP BY
+        $Q .= " GROUP BY E.date_start, E.reader_id, E.loc_id ";
+        
+        return $Q;
+    }
+    public static function getReadersMissingAssetIdCount($dateStart, $dateEnd, $location = "", $debit = "", $reader = "") {
+        $Q = "SELECT count(*) as `count` FROM (SELECT E.date_start ";
+        $Q .= self::_getReadersMissingAssetIdQuery($dateStart, $dateEnd, $location = "", $debit = ""); 
+        $Q .= ") GD";
+        $count = self::getCountFromQuery($Q);
+        return $count;        
     }
 
-    public static function getReadersWihtMissingAssetIdsQuery()
-    {
+    
+    public static function getPotentialOverReportingErrorQuery($dateStart, $dateEnd, $location = "", $debit = "", $gameType = "", $gameCat = "all", $onTest = "", $gameId = "", $sortby = "date_start", $order = "") {
+        extract(self::getGameCategoryDetails($gameCat));        
+        $Q = "SELECT E.id,
+                E.location_id,
+                L.location_name_short as location_name,
+                E.debit_type_id,
+                D.company as debit_system,
+                E.game_id,
+                E.game_title_id,
+                T.game_title as game_name,
+                E.game_on_test,
+                E.game_not_debit,
+                E.game_type_id,
+                Y.game_type,
+                E.game_on_test,
+                '$gameCat' AS game_cat_id,
+                '$game_category' AS game_category,                
+                SUM(E.game_revenue) AS game_total,
+                E.date_played as date_start,
+                E.date_played as date_end
+                ";
+        
+        $Q .= self::_getPotentialOverReportingErrorQuery($dateStart, $dateEnd, $location, $debit, $gameType, $gameCat, $onTest, $gameId);    
+        // ORDER BY
+        $sortbys = array(            
+        );
+        if (!empty($sortbys[$sortby])) {
+            $sortby = $sortbys[$sortby];
+        }        
+        $sortbyQuery = " ORDER BY $sortby $order";
+        $Q .= $sortbyQuery;        
+
+        return $Q;         
     }
-    public static function getAssetIdsWithMissingReadersQuery()
-    {
+    public static function _getPotentialOverReportingErrorQuery($dateStart, $dateEnd, $location = "", $debit = "", $gameType = "", $gameCat = "all", $onTest = "", $gameId = "") {
+        extract(self::getGameCategoryDetails($gameCat));
+        $gameTypeIds = self::mergeGameTypeAndCategories($gameType, $game_category_type);        
+        if (!empty($dateStart)) {
+            $dateStart = self::dateify($dateStart);
+        }
+        if (!empty($dateEnd)) {
+            $dateEnd = self::dateify($dateEnd);
+        }        
+        $Q = "
+            FROM report_game_plays E
+   INNER JOIN game G ON G.id = E.game_id
+   INNER JOIN location L ON L.id = E.location_id
+   INNER JOIN debit_type D ON D.id = E.debit_type_id   
+   INNER JOIN game_title T ON T.id = G.game_title_id
+   INNER JOIN game_type Y ON Y.id = T.game_type_id
+	   WHERE E.game_id <> 0 ";
+                     
+        if (!empty($gameId)) {
+            $Q .= " AND E.game_id IN ($gameId) ";
+        }
+        if (!empty($dateStart)) {
+            $Q .= " AND E.date_played >= '$dateStart' ";
+        }        
+        if (!empty($dateEnd)) {
+            $Q .= " AND E.date_played <= '$dateEnd 23:59:59' ";
+        }        
+        if (!empty($location)) {
+            $Q .= " AND E.location_id IN ($location) ";
+        }
+        if (!empty($debit)) {
+            $Q .= " AND E.debit_type_id IN ($debit) ";
+        }
+        if (!empty($onTest)) {
+            if ($onTest = "notest") {
+                $Q .= " AND E.game_on_test IN (0)";
+            }
+            else {
+                $Q .= " AND E.game_on_test IN (1)";
+            }            
+        }
+        if (!empty($gameTypeIds)) {
+            $Q .= " AND E.game_type_id IN ($gameTypeIds)";
+        }
+        
+        // GROUP BY
+        $Q .= " GROUP BY E.date_played, E.location_id, E.game_id HAVING SUM(E.game_revenue) > 4000";
+        
+        return $Q;        
+        
     }
-    public static function getMissingAssetIdMissingReadersQuery()
-    {
+    public static function getPotentialOverReportingErrorCount($dateStart, $dateEnd, $location = "", $debit = "", $gameType = "", $gameCat = "all", $onTest = "", $gameId = "") {
+        $Q = "SELECT count(*) as `count` FROM (SELECT E.date_played ";
+        $Q .= self::_getPotentialOverReportingErrorQuery($dateStart, $dateEnd, $location, $debit, $gameType, $gameCat, $onTest, $gameId); 
+        $Q .= ") GD";
+        $count = self::getCountFromQuery($Q);
+        return $count;          
     }
-    public static function getGamesNotOnDebitCardQuery()
-    {
-    }
-    public static function getExcludedReadersQuery()
-    {
-    }
-    public static function getAdjustmentsQuery()
-    {
-    }
-    public static function getPotentialOverReportingQuery()
-    {
-    }
-    public static function getGamesNotPlayedQuery()
-    {
-    }
-    public static function getGamesPlayedQuery()
-    {
-    }    
+  
+    
     public static function getGameRankCount($dateStart, $dateEnd, $location = "", $debit = "", $gameType = "", $gameCat = "all", $onTest = "") {
         $Q = "SELECT count(*) as `count` FROM (SELECT E.game_title_id ";
         $Q .= self::_getGameRankQuery($dateStart, $dateEnd, $location, $debit, $gameType, $gameCat, $onTest); 
@@ -213,7 +342,7 @@ class ReportHelpers
         $count = self::getCountFromQuery($Q);
         return $count;        
     }
-    public static function getGameRankQuery($dateStart, $dateEnd, $location = "", $debit = "", $gameType = "", $gameCat = "all", $onTest = "", $sortby = "closed_date", $order = "") {
+    public static function getGameRankQuery($dateStart, $dateEnd, $location = "", $debit = "", $gameType = "", $gameCat = "all", $onTest = "", $sortby = "game_average", $order = "") {
         extract(self::getGameCategoryDetails($gameCat));
         //sum(E.game_std_plays) AS total_plays,
         $Q = "SELECT 
@@ -283,11 +412,226 @@ class ReportHelpers
             $Q .= " AND E.game_type_id IN ($gameTypeIds)";
         }
 
+        // GROUP BY
         $Q .= " GROUP BY E.game_title_id ";  
         
         return $Q;
 
     }
+    
+    
+    public static function getGamePlayQuery($dateStart, $dateEnd, $location = "", $debit = "", $gameType = "", $gameCat = "all", $onTest = "", $sortby = "date_start", $order = ""){
+    }
+    public static function _getGamePlayQuery($dateStart, $dateEnd, $location = "", $debit = "", $gameType = "", $gameCat = "all", $onTest = ""){
+    }
+    public static function getGamePlayCount($dateStart, $dateEnd, $location = "", $debit = "", $gameType = "", $gameCat = "all", $onTest = ""){
+        $Q = "SELECT count(*) as `count` FROM (SELECT E.id ";
+        $Q .= self::_getGamePlayQuery($dateStart, $dateEnd, $location, $debit, $gameType, $gameCat, $onTest); 
+        $Q .= ") GD";
+        $count = self::getCountFromQuery($Q);
+        return $count;          
+    }
+        
+    
+    public static function getGamesNotPlayedQuery($dateStart, $dateEnd, $location = "", $debit = "", $gameType = "", $gameCat = "all", $onTest = "", $gameId = "", $gameTitleId= "", $sortby = "date_start", $order = ""){
+        extract(self::getGameCategoryDetails($gameCat));        
+        $Q = "SELECT E.id,
+                E.location_id,
+                L.location_name_short as location_name,
+                E.debit_type_id,
+                D.company as debit_system,
+                E.game_id,
+                E.game_title_id,
+                T.game_title as game_name,
+                E.game_on_test,
+                E.game_not_debit,
+                E.game_type_id,
+                Y.game_type,
+                '$gameCat' AS game_cat_id,
+                '$game_category' AS game_category,                
+                SUM(E.game_revenue) AS game_total,
+                E.date_played as date_start,
+                E.date_played as date_end,
+                E.date_last_played,
+                IFNULL(DATEDIFF(E.date_last_played, E.date_played), 'Since start') as days_not_played
+                ";
+        
+        $Q .= self::_getPotentialOverReportingErrorQuery($dateStart, $dateEnd, $location, $debit, $gameType, $gameCat, $onTest, $gameId, $gameTitleId);    
+        // ORDER BY
+        $sortbys = array(            
+        );
+        if (!empty($sortbys[$sortby])) {
+            $sortby = $sortbys[$sortby];
+        }        
+        $sortbyQuery = " ORDER BY $sortby $order";
+        $Q .= $sortbyQuery;        
+
+        return $Q;          
+        
+    }
+    public static function _getGamesNotPlayedQuery($dateStart, $dateEnd, $location = "", $debit = "", $gameType = "", $gameCat = "all", $onTest = "", $gameId = "", $gameTitleId= ""){
+        extract(self::getGameCategoryDetails($gameCat));
+        $gameTypeIds = self::mergeGameTypeAndCategories($gameType, $game_category_type);        
+        if (!empty($dateStart)) {
+            $dateStart = self::dateify($dateStart);
+        }
+        if (!empty($dateEnd)) {
+            $dateEnd = self::dateify($dateEnd);
+        }        
+        $Q = "
+            FROM report_game_plays E
+   INNER JOIN game G ON G.id = E.game_id
+   INNER JOIN location L ON L.id = E.location_id
+   INNER JOIN debit_type D ON D.id = E.debit_type_id   
+   INNER JOIN game_title T ON T.id = G.game_title_id
+   INNER JOIN game_type Y ON Y.id = T.game_type_id
+	   WHERE E.game_id <> 0 AND E.report_status = 0 AND E.record_status = 1 ";
+                     
+        if (!empty($gameTitleId)) {
+            $Q .= " AND E.game_title_id IN ($gameTitleId) ";
+        }
+        if (!empty($gameId)) {
+            $Q .= " AND E.game_id IN ($gameId) ";
+        }
+
+        if (!empty($dateStart)) {
+            $Q .= " AND E.date_played >= '$dateStart' ";
+        }        
+        if (!empty($dateEnd)) {
+            $Q .= " AND E.date_played <= '$dateEnd 23:59:59' ";
+        }        
+        if (!empty($location)) {
+            $Q .= " AND E.location_id IN ($location) ";
+        }
+        if (!empty($debit)) {
+            $Q .= " AND E.debit_type_id IN ($debit) ";
+        }
+        if (!empty($onTest)) {
+            if ($onTest = "notest") {
+                $Q .= " AND E.game_on_test IN (0)";
+            }
+            else {
+                $Q .= " AND E.game_on_test IN (1)";
+            }            
+        }
+        if (!empty($gameTypeIds)) {
+            $Q .= " AND E.game_type_id IN ($gameTypeIds)";
+        }
+        
+        // GROUP BY
+        $Q .= " GROUP BY E.date_played, E.location_id, E.game_id HAVING SUM(E.game_revenue) > 4000";
+        
+        return $Q;
+    }
+    public static function getGamesNotPlayedCount($dateStart, $dateEnd, $location = "", $debit = "", $gameType = "", $gameCat = "all", $onTest = "", $gameId = "", $gameTitleId= ""){
+        $Q = "SELECT count(*) as `count` ";
+        $Q .= self::_getGamesNotPlayedQuery($dateStart, $dateEnd, $location, $debit, $gameType, $gameCat, $onTest, $gameId, $gameTitleId);        
+        $count = self::getCountFromQuery($Q);
+        return $count;           
+    }
+        
+    
+    public static function getMerchandizeExpensesQuery($dateStart, $dateEnd, $location = "", $debit = "", $sortby = "location_id", $order = ""){
+        
+        $dateStart = date('Y-m-d', strtotime($dateStart. '  first day of this month'));
+        $dateEnd = date('Y-m-d', strtotime($dateEnd. ' 23:59:59  last day of this month'));
+        
+        $Q = "SELECT 
+            L.id as location_id,
+            L.location_name_short as location_name,
+            L.debit_type_id,
+            D.company as debit_system,
+            '$dateStart' as date_start,
+            '$dateEnd' as date_end,
+            SUM(IFNULL(LB.budget_value, 0)) as merch_budget,
+            SUM(IFNULL(O.order_total, 0)) AS merch_expense, 
+            SUM(IFNULL(LB.budget_value, 0)) - SUM(IFNULL(O.order_total, 0)) AS utilization 
+            ";
+        
+        $Q .= self::_getMerchandizeExpensesQuery($dateStart, $dateEnd, $location, $debit);
+        // ORDER BY
+        $sortbys = array(
+        );
+        if (!empty($sortbys[$sortby])) {
+            $sortby = $sortbys[$sortby];
+        }        
+        $sortbyQuery = " ORDER BY $sortby $order";
+        $Q .= $sortbyQuery;        
+
+        return $Q;        
+    }
+    public static function _getMerchandizeExpensesQuery($dateStart, $dateEnd, $location = "", $debit = ""){
+        
+        $Q = "
+                FROM location L
+				LEFT JOIN orders O ON L.id = O.location_id
+                LEFT JOIN location_budget LB ON LB.location_id = L.id
+                INNER JOIN debit_type D ON D.id = L.debit_type_id
+
+                WHERE L.can_ship = 1 AND O.order_type_id IN(7,8) AND                 
+                    LB.budget_date >= '$dateStart' and LB.budget_date <= '$dateEnd' 
+                AND O.date_ordered >= '$dateStart' and O.date_ordered <= '$dateEnd' ";
+
+        if (!empty($location)) {
+            $Q .= " AND O.location_id IN ($location)";
+        }
+        if (!empty($debit)) {
+            $Q .= " AND L.debit_type_id IN ($debit)";
+        }
+        
+        // GROUP BY
+        $Q .= " GROUP BY L.id ";     
+
+        return $Q;        
+        
+    }
+    public static function getMerchandizeExpensesCount($dateStart, $dateEnd, $location = "", $debit = ""){
+        $Q = "SELECT count(*) as `count` FROM (SELECT O.location_id ";
+        $Q .= self::_getMerchandizeExpensesQuery($dateStart, $dateEnd, $location, $debit); 
+        $Q .= ") GD";
+        $count = self::getCountFromQuery($Q);
+        return $count;         
+    }
+        
+
+        
+    public static function getLocationRanksQueryERPDB($dateStart, $dateEnd, $location, $debit, $sortby = "pgpd_avg", $order = "")
+    {
+    }
+    public static function getLocationRanksQueryTEMPDB($dateStart, $dateEnd, $location, $debit, $sortby = "pgpd_avg", $order = "")
+    {
+    }    
+    public static function getDumpSummaryQuery()
+    {
+    }    
+    public static function getLocationsReportingQuery() {
+    }    
+    public static function getGamesNotOnDebitCardQuery()
+    {
+    }
+    public static function getExcludedReadersQuery()
+    {
+    }
+    public static function getAdjustmentsQuery()
+    {
+    }    
+    public static function getGamesPlayedQuery()
+    {
+    }      
+        
+    public static function getMerchThrowsSimpleReportQuery()
+    {
+    }
+    public static function getMerchThrowsDetailedReportQuery()
+    {
+    }
+    public static function getProductUsageQuery()
+    {
+    }
+    public static function getProductInDevelopmentQuery()
+    {
+    }
+    
     
     /**
      * 
@@ -334,21 +678,8 @@ class ReportHelpers
         $gameTypeIds = implode(",", $gameTypeIdsArray);
         return $gameTypeIds;
     }
-    public static function getMerchThrowsSimpleReportQuery()
-    {
-    }
-    public static function getMerchThrowsDetailedReportQuery()
-    {
-    }
-    public static function getProductUsageQuery()
-    {
-    }
-    public static function getProductInDevelopmentQuery()
-    {
-    }
-    public static function getMerchExpenseReportQuery()
-    {
-    }
+
+
     
     public static function getCountFromQuery($Q, $fieldName = 'count') {
         $count = 0;
@@ -513,11 +844,8 @@ class ReportHelpers
         $ret = "";
         $dateStartHuman = self::humanifydate($dateStart, $format);
         $dateEndHuman = self::humanifydate($dateEnd, $format);
-        if (!empty($dateStartHuman)) {
-            if (!empty($dateEnd)) {
-                $dateEndYMD = self::dateify($dateEnd);
-            }            
-            if ($dateEndYMD == $dateStart) {
+        if (!empty($dateStartHuman)) {         
+            if ($dateStartHuman == $dateEndHuman) {
                 $dateEndHuman = "";
             }            
             if (empty($dateEndHuman)) {

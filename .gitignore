@@ -11,3 +11,4 @@ composer.phar
 config/database.php
 public/uploads
 public/qr
+public/error_log
