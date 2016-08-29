@@ -158,15 +158,16 @@
 							<label for="Assign To" class=" control-label col-md-4 text-left">
 							{{ SiteHelpers::activeLang('Needed Date', (isset($fields['need_by_date']['language'])? $fields['need_by_date']['language'] : array())) }}
 							</label>
-
 								<div class="col-md-6">
-									{!! Form::text('Needed Data', date("m/d/Y", strtotime($row['need_by_date'])),array('class'=>'form-control', 'placeholder'=>'',   )) !!}
-
+								<div class="input-group datepicker" style="width:150px ">
+									{!! Form::text('Needed Data', date("m/d/Y", strtotime($row['need_by_date'])),array('class'=>'form-control ',  'id'=>'my-datepicker', 'style'=>'width:150px !important;'))    !!}
+									<span class="input-group-addon "><i class="fa fa-calendar" id="icon"></i></span>
 								</div>
 								<div class="col-md-2">
 
 								</div>
 							</div>
+								</div>
 
 
 				  <div class="form-group  " > 
@@ -243,7 +244,13 @@ $(document).ready(function() {
         
         $("#assign_to").jCombo("{{ URL::to('sbticket/comboselect?filter=employees:id:first_name|last_name') }}",
         {  selected_value : '{{ $row["assign_to"] }}' });
-         
+
+
+	$('#icon').click(function(){
+		$(document).ready(function(){
+			$("#my-datepicker").datepicker().focus();
+		});
+	});
 	
 	$('.editor').summernote();
 	$('.previewImage').fancybox();	
