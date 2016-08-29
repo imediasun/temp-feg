@@ -13,7 +13,7 @@
 			<div class="col-md-12">
 						<fieldset><legend> sbticket</legend>
 									
-				  <div class="form-group hidethis " style="display:none;"> 
+				  <div class="form-group ">
 					<label for="TicketID" class=" control-label col-md-4 text-left"> 
 					{!! SiteHelpers::activeLang('TicketID', (isset($fields['TicketID']['language'])? $fields['TicketID']['language'] : array())) !!}	
 					</label>
@@ -140,17 +140,7 @@
 					 	
 					 </div>
 				  </div> 					
-				  <div class="form-group  " > 
-					<label for="Debit Card" class=" control-label col-md-4 text-left"> 
-					{!! SiteHelpers::activeLang('Debit Card', (isset($fields['debit_card']['language'])? $fields['debit_card']['language'] : array())) !!}	
-					</label>
-					<div class="col-md-6">
-					  <select name='debit_card' rows='5' id='debit_card' class='select2 '   ></select> 
-					 </div> 
-					 <div class="col-md-2">
-					 	
-					 </div>
-				  </div> 					
+
 				  <div class="form-group  " > 
 					<label for="Assign To" class=" control-label col-md-4 text-left"> 
 					{!! SiteHelpers::activeLang('Assign To', (isset($fields['assign_to']['language'])? $fields['assign_to']['language'] : array())) !!}	
@@ -161,7 +151,24 @@
 					 <div class="col-md-2">
 					 	
 					 </div>
-				  </div> 					
+				  </div>
+
+
+							<div class="form-group  " >
+							<label for="Assign To" class=" control-label col-md-4 text-left">
+							{{ SiteHelpers::activeLang('Needed Date', (isset($fields['need_by_date']['language'])? $fields['need_by_date']['language'] : array())) }}
+							</label>
+
+								<div class="col-md-6">
+									{!! Form::text('Needed Data', date("m/d/Y", strtotime($row['need_by_date'])),array('class'=>'form-control', 'placeholder'=>'',   )) !!}
+
+								</div>
+								<div class="col-md-2">
+
+								</div>
+							</div>
+
+
 				  <div class="form-group  " > 
 					<label for="File Path" class=" control-label col-md-4 text-left"> 
 					{!! SiteHelpers::activeLang('File Path', (isset($fields['file_path']['language'])? $fields['file_path']['language'] : array())) !!}	

@@ -212,6 +212,7 @@
                         <th width="200">Item Description</th>
                         <th>Price Per Unit</th>
                         <th>Case Price</th>
+                        <th>Retail Price</th>
                         <th>Quantity</th>
                         <th class="game" width="150">Game</th>
                         <th>Total ( $ )</th>
@@ -239,6 +240,13 @@
                                          required></td>
                         <td>
                             <br/> <input type='number' name='case_price[]' placeholder='Case Price' id="case_price"
+                                         class='form-control' min="0.00" step=".01" value="0.00"
+                                         required></td>
+                        </td>
+
+
+                        <td>
+                            <br/> <input type='number' name='retail_price[]' placeholder='Retail Price' id="retail_price"
                                          class='form-control' min="0.00" step=".01" value="0.00"
                                          required></td>
                         </td>
@@ -405,9 +413,10 @@
             var order_request_id_array = <?php echo json_encode($data['orderRequestIdArray']) ?>;
             var item_name_array=<?php echo json_encode($data['itemNameArray']) ?>;
             var item_case_price=<?php echo json_encode($data['itemCasePrice']) ?>;
+            var item_retail_price=<?php echo json_encode($data['itemCasePrice'])?>;
             var item_total = 0;
             for (var i = 0; i < requests_item_count; i++) {
-
+$('input[name^=retail_price]').eq(i).val(item_retail_price[i]);
                 $('input[name^=item_num]').eq(i).val(i + 1);
                 $('textarea[name^=item]').eq(i).val(order_description_array[i]);
                 $('input[name^=price]').eq(i).val(order_price_array[i]);
@@ -416,8 +425,8 @@
                 $('input[name^=request_id]').eq(i).val(order_request_id_array[i]);
                 $('input[name^=item_name]').eq(i).val(item_name_array[i]);
                 $('input[name^=case_price]').eq(i).val(item_case_price[i]);
-                if (i < requests_item_count - 1) //COMPENSATE FOR BEGINNING WITH ONE INPUT
-                {
+                    if (i < requests_item_count - 1) //COMPENSATE FOR BEGINNING WITH ONE INPUT
+        {
 
                     $("#add_new_item").trigger("click");
                 }
@@ -604,9 +613,9 @@
                 var trid = $(obj).closest('tr').attr('id');
                 var priceid = $("#"+trid+"  input[id^='price']").attr('id');
                 var casepriceid = $("#"+trid+"  input[id^='case_price']").attr('id');
-                var qtyid = $("#"+trid+"  input[id^='qty']").attr('id');
+                      var qtyid = $("#"+trid+"  input[id^='qty']").attr('id');
                 var itemid = $("#"+trid+"  textarea[name^=item]").attr('id');
-
+var retailpriceid = $("#"+trid+" input[id^='retail_price']").attr('id');
                 $(obj).autocomplete({
                     minLength: 2,
                     source: function( request, response ) {

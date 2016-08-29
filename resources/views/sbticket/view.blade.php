@@ -231,7 +231,7 @@ $commentsCount =  $comments->count();
 						<div class="col-md-12">
 							<fieldset><legend> New Reply</legend>
 
-								<div class="form-group hidethis " style="display:none;">
+								<div class="form-group ">
 									<label for="TicketID" class=" control-label col-md-2 text-left">
 										{!! SiteHelpers::activeLang('TicketID', (isset($fields['TicketID']['language'])? $fields['TicketID']['language'] : array())) !!}
 									</label>
