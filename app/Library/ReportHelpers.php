@@ -431,7 +431,7 @@ class ReportHelpers
                 D.company as debit_system,
                 G.game_title_id,
                 T.game_title as game_name,
-                (G.test_piece = 1, 'Yes', 'No') as game_on_test,
+                if(G.test_piece = 1, 'Yes', 'No') as game_on_test,
                 G.not_debit as game_not_debit,
                 G.game_type_id,
                 Y.game_type,
