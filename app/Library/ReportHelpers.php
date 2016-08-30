@@ -710,7 +710,7 @@ class ReportHelpers
                         FROM orders 
                         WHERE date_ordered >= '$dateStart' 
                             and date_ordered <= '$dateEnd' 
-                            AND O.order_type_id IN(7,8) 
+                            AND order_type_id IN(7,8) 
                         GROUP BY location_id) O 
                     ON L.id = O.location_id
                 LEFT JOIN (
