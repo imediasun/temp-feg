@@ -677,7 +677,7 @@ class ReportHelpers
         $dateStart = date('Y-m-d', strtotime($dateStart. '  first day of this month'));
         $dateEnd = date('Y-m-d', strtotime($dateEnd. ' 23:59:59  last day of this month'));
         
-        $Q = "SELECT 
+        $Q = "SELECT L.id, 
             L.id as location_id,
             L.location_name_short as location_name,
             L.debit_type_id,
