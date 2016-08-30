@@ -43,13 +43,14 @@ class gameplayreport extends Sximo  {
 
         $filters = ReportHelpers::getSearchFilters(array(
             'date_start' => '', 'date_end' => '', 'game_cat_id' => '', 'game_type_id'  => '',
-            'debit_type_id' => '', 'game_on_test' => '', 'location_id' => ''
+            'debit_type_id' => '', 'game_on_test' => '', 'location_id' => '','game_id' => '',
+            'game_title_id' => ''
         ));        
         extract($filters);
         ReportHelpers::dateRangeFix($date_start, $date_end);        
-        $mainQuery = ReportHelpers::getGamePlayQuery($date_start, $date_end, $location_id, $debit_type_id, $game_type_id, $game_cat_id, $game_on_test, $sort, $order);
+        $mainQuery = ReportHelpers::getGamePlayQuery($date_start, $date_end, $location_id, $debit_type_id, $game_type_id, $game_cat_id, $game_on_test, $game_id, $game_title_id, $sort, $order);
         $mainQuery .= $limitConditional;
-        $total = ReportHelpers::getGamePlayCount($date_start, $date_end, $location_id, $debit_type_id, $game_type_id, $game_cat_id, $game_on_test);
+        $total = ReportHelpers::getGamePlayCount($date_start, $date_end, $location_id, $debit_type_id, $game_type_id, $game_cat_id, $game_on_test, $game_id, $game_title_id);
         $rawRows = \DB::select($mainQuery);
         $rows = self::processRows($rawRows);            
         

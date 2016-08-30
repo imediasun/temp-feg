@@ -303,11 +303,11 @@ class ShopfegrequeststoreController extends Controller
         }
 
         }
-    function getPopupCart($productId = null)
+    function getPopupCart($productId = null,$qty=0)
     {
         $current_total_cart = \Session::get('total_cart');
         \Session::put('productId', $productId);
-        $cartData = $this->addToCartModel->popupCartData($productId);
+        $cartData = $this->addToCartModel->popupCartData($productId,null,$qty);
         $total_cart = $this->addToCartModel->totallyRecordInCart();
         if($current_total_cart == $total_cart[0]->total)
         {

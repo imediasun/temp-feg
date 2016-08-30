@@ -49,7 +49,7 @@ class addtocart extends Sximo
     }
     
 
-    function popupCartData($productId=null,$v1=null)
+    function popupCartData($productId=null,$v1=null,$qty=0)
     {
 
         $data['user_level']=\Session::get('gid');
@@ -81,7 +81,7 @@ class addtocart extends Sximo
 
                // $qty = 1;
 
-                $qty = 0;
+
 
                 $query = \DB::select('SELECT id FROM requests WHERE product_id = "'.$productId.'" AND status_id = "'.$statusId.'" AND location_id = "'.$locationId.'"');
 

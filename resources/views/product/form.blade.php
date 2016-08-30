@@ -96,7 +96,7 @@
 		</label>
 	<div class="col-md-6">
 
-			  <select name='prod_type_id' rows='5' id='prod_type_id' class='select2 ' required='required'  ></select>
+			  <select name='prod_type_id' rows='5' id='prod_type_id' class='select2 ' required='required'></select>
 			 </div>
 	 <div class="col-md-2">
 
@@ -109,7 +109,7 @@
 					{!! SiteHelpers::activeLang('Prod Sub Type Id', (isset($fields['prod_sub_type_id']['language'])? $fields['prod_sub_type_id']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
-					  <select name='prod_sub_type_id' rows='5' id='prod_sub_type_id' class='select2 '   ></select>
+					  <select name='prod_sub_type_id' rows='5' id='prod_sub_type_id' class='select2'></select>
 					 </div>
 					 <div class="col-md-2">
 
@@ -252,8 +252,8 @@ $(document).ready(function() {
         $("#prod_type_id").jCombo("{{ URL::to('product/comboselect?filter=order_type:id:order_type:can_request:1') }}",
         {  selected_value : '{{ $row["prod_type_id"] }}' });
 
-        $("#prod_sub_type_id").jCombo("{{ URL::to('product/comboselect?filter=product_type:id:product_type') }}&parent=request_type_id:",
-        {  parent: '#prod_type_id' ,selected_value : '{{ $row["prod_sub_type_id"] }}' });
+        $("#prod_sub_type_id").jCombo("{{ URL::to('product/comboselect?filter=product_type:id:product_type') }}&parent=request_type_id",
+        { selected_value : '{{ $row["prod_sub_type_id"] }}', parent: 'prod_type_id'});
 
 
 	$('.editor').summernote();
