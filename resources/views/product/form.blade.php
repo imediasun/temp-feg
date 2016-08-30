@@ -90,31 +90,31 @@
 
 					 </div>
 				  </div>
-<div class="form-group  " >
-		<label for="Prod Type Id" class=" control-label col-md-4 text-left">
-			{!! SiteHelpers::activeLang('Prod Type Id', (isset($fields['prod_type_id']['language'])? $fields['prod_type_id']['language'] : array())) !!}
-		</label>
-	<div class="col-md-6">
+							<div class="form-group  " >
+								<label for="Prod Type Id" class=" control-label col-md-4 text-left">
+									{!! SiteHelpers::activeLang('Prod Type Id', (isset($fields['prod_type_id']['language'])? $fields['prod_type_id']['language'] : array())) !!}
+								</label>
+								<div class="col-md-6">
 
-			  <select name='prod_type_id' rows='5' id='prod_type_id' class='select2 ' required='required'></select>
-			 </div>
-	 <div class="col-md-2">
+									<select name='prod_type_id' rows='5' id='prod_type_id' class='select2 ' required='required'  ></select>
+								</div>
+								<div class="col-md-2">
 
-			 </div>
-  </div>
+								</div>
+							</div>
 
 
-				  <div class="form-group  " >
-					<label for="Prod Sub Type Id" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Prod Sub Type Id', (isset($fields['prod_sub_type_id']['language'])? $fields['prod_sub_type_id']['language'] : array())) !!}
-					</label>
-					<div class="col-md-6">
-					  <select name='prod_sub_type_id' rows='5' id='prod_sub_type_id' class='select2'></select>
-					 </div>
-					 <div class="col-md-2">
+							<div class="form-group  " >
+								<label for="Prod Sub Type Id" class=" control-label col-md-4 text-left">
+									{!! SiteHelpers::activeLang('Prod Sub Type Id', (isset($fields['prod_sub_type_id']['language'])? $fields['prod_sub_type_id']['language'] : array())) !!}
+								</label>
+								<div class="col-md-6">
+									<select name='prod_sub_type_id' rows='5' id='prod_sub_type_id' class='select2 '   ></select>
+								</div>
+								<div class="col-md-2">
 
-					 </div>
-				  </div>
+								</div>
+							</div>
 				  <div class="form-group  " >
 					<label for="Is Reserved" class=" control-label col-md-4 text-left">
 					{!! SiteHelpers::activeLang('Is Reserved', (isset($fields['is_reserved']['language'])? $fields['is_reserved']['language'] : array())) !!}
@@ -249,11 +249,11 @@ $(document).ready(function() {
         $("#vendor_id").jCombo("{{ URL::to('product/comboselect?filter=vendor:id:vendor_name') }}",
         {  selected_value : '{{ $row["vendor_id"] }}' });
 
-        $("#prod_type_id").jCombo("{{ URL::to('product/comboselect?filter=order_type:id:order_type:can_request:1') }}",
-        {  selected_value : '{{ $row["prod_type_id"] }}' });
+	$("#prod_type_id").jCombo("{{ URL::to('product/comboselect?filter=order_type:id:order_type:can_request:1') }}",
+			{  selected_value : '{{ $row["prod_type_id"] }}' });
 
-        $("#prod_sub_type_id").jCombo("{{ URL::to('product/comboselect?filter=product_type:id:product_type') }}&parent=request_type_id",
-        { selected_value : '{{ $row["prod_sub_type_id"] }}', parent: 'prod_type_id'});
+	$("#prod_sub_type_id").jCombo("{{ URL::to('product/comboselect?filter=product_type:id:product_type') }}&parent=request_type_id:",
+			{  parent: '#prod_type_id' ,selected_value : '{{ $row["prod_sub_type_id"] }}' });
 
 
 	$('.editor').summernote();
