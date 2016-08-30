@@ -48,7 +48,9 @@ class gamesnotondebitcard extends Sximo  {
                 LEFT JOIN game_title ON game_title.id = game.game_title_id
                 LEFT JOIN location ON location.id = game.location_id
                 LEFT JOIN debit_type ON debit_type.id = location.debit_type_id
-                WHERE game.not_debit = 1 AND game.sold = 0 $locationQuery $debitSystemQuery ";
+                WHERE game.not_debit = 1 AND game.sold = 0 
+                AND location.reporting = 1 
+                $locationQuery $debitSystemQuery ";
         
 		return $sql;
 	}	
