@@ -49,7 +49,7 @@ class merchandiseexpensesreport extends Sximo  {
         ReportHelpers::dateRangeFix($date_start, $date_end);        
         $mainQuery = ReportHelpers::getMerchandizeExpensesQuery($date_start, $date_end, $location_id, $debit_type_id, $sort, $order);
         $mainQuery .= $limitConditional;
-        $total = ReportHelpers::getMerchandizeExpensesQuery($date_start, $date_end, $location_id, $debit_type_id);
+        $total = ReportHelpers::getMerchandizeExpensesCount($date_start, $date_end, $location_id, $debit_type_id);
         $rawRows = \DB::select($mainQuery);
         $rows = self::processRows($rawRows);            
         
