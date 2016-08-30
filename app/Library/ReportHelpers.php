@@ -684,9 +684,9 @@ class ReportHelpers
             D.company as debit_system,
             '$dateStart' as date_start,
             '$dateEnd' as date_end,
-            SUM(IFNULL(LB.budget_value, 0)) as merch_budget,
-            SUM(IFNULL(O.order_total, 0)) AS merch_expense, 
-            SUM(IFNULL(LB.budget_value, 0)) - SUM(IFNULL(O.order_total, 0)) AS utilization 
+            IFNULL(LB.budget_value, 0) as merch_budget,
+            IFNULL(O.order_total, 0) AS merch_expense, 
+            IFNULL(LB.budget_value, 0) - IFNULL(O.order_total, 0) AS utilization 
             ";
         
         $Q .= self::_getMerchandizeExpensesQuery($dateStart, $dateEnd, $location, $debit);
@@ -705,23 +705,34 @@ class ReportHelpers
         
         $Q = "
                 FROM location L
-				LEFT JOIN orders O ON L.id = O.location_id
-                LEFT JOIN location_budget LB ON LB.location_id = L.id
+				LEFT JOIN (
+                    SELECT sum(order_total) as order_total, location_id 
+                        FROM orders 
+                        WHERE date_ordered >= '$dateStart' 
+                            and date_ordered <= '$dateEnd' 
+                            AND O.order_type_id IN(7,8) 
+                        GROUP BY location_id) O 
+                    ON L.id = O.location_id
+                LEFT JOIN (
+                        SELECT sum(budget_value) as budget_value, location_id 
+                            FROM location_budget 
+                            WHERE budget_date >= '$dateStart' 
+                                and budget_date <= '$dateEnd' 
+                            GROUP BY location_id) LB 
+                    ON LB.location_id = L.id
                 LEFT JOIN debit_type D ON D.id = L.debit_type_id
 
-                WHERE L.can_ship = 1 AND O.order_type_id IN(7,8) AND                 
-                    LB.budget_date >= '$dateStart' and LB.budget_date <= '$dateEnd' 
-                AND O.date_ordered >= '$dateStart' and O.date_ordered <= '$dateEnd' ";
+                WHERE L.can_ship = 1";
 
         if (!empty($location)) {
-            $Q .= " AND O.location_id IN ($location)";
+            $Q .= " AND L.location_id IN ($location)";
         }
         if (!empty($debit)) {
-            $Q .= " AND L.debit_type_id IN ($debit)";
+            $Q .= " AND D.id IN ($debit)";
         }
         
         // GROUP BY
-        $Q .= " GROUP BY L.id ";     
+        $Q .= " ";     
 
         return $Q;        
         
