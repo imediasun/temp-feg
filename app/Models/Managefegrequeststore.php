@@ -143,10 +143,13 @@ class managefegrequeststore extends Sximo
 								LEFT JOIN products P ON P.id = requests.product_id LEFT JOIN order_type O ON O.id = P.prod_type_id
                                 WHERE requests.status_id = 1 ' . $order_type_where . ' GROUP BY P.prod_type_id');
 
-        foreach ($query as $row) {
+        foreach ($query as $index => $row) {
        //     $number_requests = $number_requests ." ".." | <em>". $row->request_count .":</em>";
+            if($index == count($query) -1 )
+                $number_requests = $number_requests ." ".$row->request_count.":  <em>". $row->count  ."  </em>";
+            else
+                $number_requests = $number_requests ." ".$row->request_count.":  <em>". $row->count  ."    |  </em>";
 
-            $number_requests = $number_requests ." ".$row->request_count.":  <em>". $row->count  ."    |  </em>";
         }
         $data['number_requests'] = substr($number_requests, 0, -2);
         $query = \DB::select('SELECT GROUP_CONCAT(order_type) AS order_types  FROM order_type
