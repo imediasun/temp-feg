@@ -175,7 +175,7 @@
 
             if(!qty)
             {
-                qty=0;
+                qty=1;
             }
             console.log(addId+ " "+qty);
             $.ajax({
