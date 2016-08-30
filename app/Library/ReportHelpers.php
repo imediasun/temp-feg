@@ -722,7 +722,7 @@ class ReportHelpers
                     ON LB.location_id = L.id
                 LEFT JOIN debit_type D ON D.id = L.debit_type_id
 
-                WHERE L.can_ship = 1";
+                WHERE L.can_ship = 1 AND L.active = 1";
 
         if (!empty($location)) {
             $Q .= " AND L.location_id IN ($location)";
