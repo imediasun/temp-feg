@@ -697,7 +697,7 @@ class ReportHelpers
         }        
         $sortbyQuery = self::orderify($sortby, $order);
         $Q .= $sortbyQuery;        
-
+        
         return $Q;        
     }
     public static function _getMerchandizeExpensesQuery($dateStart, $dateEnd, $location = "", $debit = ""){

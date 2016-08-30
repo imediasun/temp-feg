@@ -62,7 +62,7 @@ class merchandiseexpensesreport extends Sximo  {
 		$results = array(
             'topMessage' => $topMessage,
             'bottomMessage' => $bottomMessage,
-            'message' => $message,
+            'message' => $mainQuery,//$message,
 
             'rows'=> $rows, 
             'total' => $total
