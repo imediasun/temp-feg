@@ -153,21 +153,39 @@
 					 </div>
 				  </div>
 
-
 							<div class="form-group  " >
-							<label for="Assign To" class=" control-label col-md-4 text-left">
+								<label for="Needed Date" class=" control-label col-md-4 text-left">
+									{!! SiteHelpers::activeLang('Needed Date', (isset($fields['need_by_date']['language'])? $fields['need_by_date']['language'] : array())) !!}
+								</label>
+								<div class="col-md-6">
+									<div class="input-group datepicker" style="width:150px ">
+									{!! Form::text('need_by_date', $row['need_by_date'],array('class'=>'form-control', 'id'=>'my-datepicker', 'style'=>'width:150px !important;'   )) !!}
+
+									<span class="input-group-addon "><i class="fa fa-calendar" id="icon"></i></span>
+								</div>
+								<div class="col-md-2">
+
+								</div>
+									</div>
+							</div>
+
+
+
+
+						<!--	<div class="form-group  " >
+							<label for="Needed Date" class=" control-label col-md-4 text-left">
 							{{ SiteHelpers::activeLang('Needed Date', (isset($fields['need_by_date']['language'])? $fields['need_by_date']['language'] : array())) }}
 							</label>
 								<div class="col-md-6">
 								<div class="input-group datepicker" style="width:150px ">
-									{!! Form::text('Needed Data', date("m/d/Y", strtotime($row['need_by_date'])),array('class'=>'form-control ',  'id'=>'my-datepicker', 'style'=>'width:150px !important;'))    !!}
+									{!! Form::text('Needed Date', date("m/d/Y", strtotime($row['need_by_date'])),array('class'=>'form-control ',  ))    !!}
 									<span class="input-group-addon "><i class="fa fa-calendar" id="icon"></i></span>
 								</div>
 								<div class="col-md-2">
 
 								</div>
 							</div>
-								</div>
+								</div>  -->
 
 
 				  <div class="form-group  " > 

@@ -252,13 +252,14 @@ class SbticketController extends Controller {
 
 	function postSave( Request $request, $id =0)
 	{
+		$data['need_by_date'] = date('Y-m-d');
 		$rules = $this->validateForm();
 		//$rules = array( 'need_by_date' => 'required');
 		unset($rules['debit_card']);
 		$validator = Validator::make($request->all(), $rules);
 		if ($validator->passes()) {
 			$data = $this->validatePost('sb_tickets');
-			$data['need_by_date']= date("Y-m-d", strtotime($request->get('need_by_date')));
+			//$data['need_by_date']= date("Y-m-d", strtotime($request->get('need_by_date')));
 			if($id==0)
 			{
 				
