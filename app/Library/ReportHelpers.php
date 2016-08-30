@@ -65,7 +65,7 @@ class ReportHelpers
                     L.location_name_short as location_name, 
                     E.date_played as not_reporting_date,
                     E.date_last_played as date_last_reported,
-                    IFNULL(DATEDIFF(E.date_last_played, E.date_played), 'Since start') as days_not_reporting,
+                    IFNULL(DATEDIFF(E.date_played, E.date_last_played), 'Since start') as days_not_reporting,
                     A.notes as not_reporting_status,
                     L.debit_type_id,
                     D.company as debit_system,
@@ -562,7 +562,7 @@ class ReportHelpers
                 E.date_played as date_start,
                 E.date_played as date_end,
                 E.date_last_played,
-                IFNULL(DATEDIFF(E.date_last_played, E.date_played), 'Since start') as days_not_played
+                IFNULL(DATEDIFF(E.date_played, E.date_last_played), 'Since start') as days_not_played
                 ";
         
         $Q .= self::_getPotentialOverReportingErrorQuery($dateStart, $dateEnd, $location, $debit, $gameType, $gameCat, $onTest, $gameId, $gameTitleId);    
