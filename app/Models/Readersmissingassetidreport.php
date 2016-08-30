@@ -27,7 +27,7 @@ class readersmissingassetidreport extends Sximo  {
             }
             
             $newRows[] = $row;
-}
+        }
 		return $newRows;
 	}        
 	public static function getRows( $args, $cond = null )

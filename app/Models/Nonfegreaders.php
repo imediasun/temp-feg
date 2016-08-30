@@ -38,7 +38,7 @@ class nonfegreaders extends Sximo  {
                             location.location_name_short as location_name, 
                             reader_exclude.debit_type_id, 
                             debit_type.company AS debit_type,
-                            IF(reader_exclude.debit_type_id = 1, SUBSTRING(reader_exclude.reader_id, 7), reader_exclude.reader_id) AS reader_id,
+                            reader_exclude.reader_id,
                             reader_exclude.reason";
         }
         
@@ -105,7 +105,8 @@ class nonfegreaders extends Sximo  {
 		// End Update permission global / own access new ver 1.1
 
         $selectQuery = self::querySelect(). " {$orderConditional} {$limitConditional}";
-        $rows = \DB::select($selectQuery);
+        $rawRows = \DB::select($selectQuery);
+        $rows = self::processRows($rawRows);
         
         $total = 0;
         $totalQuery = self::querySelect(true);
@@ -125,6 +126,21 @@ class nonfegreaders extends Sximo  {
 
 
 	}
-	
+	public static function processRows( $rows ){
+        $newRows = array();
+        foreach($rows as $row) {
+            
+            $reader_id = $row->reader_id;
+            $store_id_position = strripos($reader_id, '_');
+            if ($store_id_position !== FALSE) {
+                $reader_id = "<span style='color:#ccc;'>" . 
+                        substr_replace($reader_id, "_</span>", $store_id_position, 1);
+                $row->reader_id = $reader_id;
+            }
+            
+            $newRows[] = $row;
+        }
+		return $newRows;
+	}   	
 
 }
