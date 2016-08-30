@@ -27,7 +27,7 @@ class ReportHelpers
 
                 FROM report_locations E
                 LEFT JOIN location L ON L.id = E.location_id
-                LEFT JOIN debit_type D ON D.id = E.debit_type_id
+                LEFT JOIN debit_type D ON D.id = L.debit_type_id
                 WHERE 
                 E.record_status = 1 AND
                 E.date_played >= '$dateStart' and E.date_played <= '$dateEnd' ";
@@ -36,7 +36,7 @@ class ReportHelpers
             $Q .= " AND E.location_id IN ($location)";
         }
         if (!empty($debit)) {
-            $Q .= " AND E.debit_type_id IN ($debit)";
+            $Q .= " AND L.debit_type_id IN ($debit)";
         }
         
         // GROUP BY
@@ -92,7 +92,7 @@ class ReportHelpers
         $Q = "
                 FROM report_locations E
                 LEFT JOIN location L ON L.id = E.location_id
-                LEFT JOIN debit_type D ON D.id = E.debit_type_id
+                LEFT JOIN debit_type D ON D.id = L.debit_type_id
                 LEFT JOIN game_earnings_transfer_adjustments A ON A.loc_id = E.location_id AND A.date_start = E.date_played
                 WHERE 
                 E.record_status = 1 AND
@@ -103,7 +103,7 @@ class ReportHelpers
             $Q .= " AND E.location_id IN ($location)";
         }
         if (!empty($debit)) {
-            $Q .= " AND E.debit_type_id IN ($debit)";
+            $Q .= " AND L.debit_type_id IN ($debit)";
         }
         
         // GROUP BY
@@ -250,7 +250,7 @@ class ReportHelpers
         $Q = "SELECT E.id,
                 E.location_id,
                 L.location_name_short as location_name,
-                E.debit_type_id,
+                L.debit_type_id,
                 D.company as debit_system,
                 E.game_id,
                 E.game_title_id,
@@ -291,7 +291,7 @@ class ReportHelpers
             FROM report_game_plays E
    LEFT JOIN game G ON G.id = E.game_id
    LEFT JOIN location L ON L.id = E.location_id
-   LEFT JOIN debit_type D ON D.id = E.debit_type_id   
+   LEFT JOIN debit_type D ON D.id = L.debit_type_id   
    LEFT JOIN game_title T ON T.id = G.game_title_id
    LEFT JOIN game_type Y ON Y.id = T.game_type_id
 	   WHERE E.game_id <> 0 ";
@@ -309,7 +309,7 @@ class ReportHelpers
             $Q .= " AND E.location_id IN ($location) ";
         }
         if (!empty($debit)) {
-            $Q .= " AND E.debit_type_id IN ($debit) ";
+            $Q .= " AND L.debit_type_id IN ($debit) ";
         }
         if (!empty($onTest)) {
             if ($onTest == "notest") {
@@ -355,7 +355,7 @@ class ReportHelpers
             E.game_type_id,
             GTY.game_type,
             if(E.game_on_test = 1, 'Yes', 'No') as game_on_test,
-            E.debit_type_id,
+            L.debit_type_id,
             D.company as debit_system,
             '$gameCat' AS game_cat_id,
             '$game_category' AS game_category,
@@ -392,7 +392,7 @@ class ReportHelpers
         LEFT JOIN location L ON L.id = E.location_id
         LEFT JOIN game_title GT ON E.game_title_id = GT.id
         LEFT JOIN game_type GTY ON E.game_type_id = GTY.id
-        LEFT JOIN debit_type D ON E.debit_type_id = D.id
+        LEFT JOIN debit_type D ON L.debit_type_id = D.id
         WHERE 
         E.game_id <> 0 AND
         E.record_status = 1 AND
@@ -403,7 +403,7 @@ class ReportHelpers
             $Q .= " AND E.location_id IN ($location)";
         }
         if (!empty($debit)) {
-            $Q .= " AND E.debit_type_id IN ($debit)";
+            $Q .= " AND L.debit_type_id IN ($debit)";
         }
         if (empty($onTest) || $onTest == "notest") {
             $Q .= " AND E.game_on_test IN (0)";
@@ -547,7 +547,7 @@ class ReportHelpers
         $Q = "SELECT E.id,
                 E.location_id,
                 L.location_name_short as location_name,
-                E.debit_type_id,
+                L.debit_type_id,
                 D.company as debit_system,
                 E.game_id,
                 E.game_title_id,
@@ -591,7 +591,7 @@ class ReportHelpers
             FROM report_game_plays E
             LEFT JOIN game G ON G.id = E.game_id
             LEFT JOIN location L ON L.id = E.location_id
-            LEFT JOIN debit_type D ON D.id = E.debit_type_id   
+            LEFT JOIN debit_type D ON D.id = L.debit_type_id   
             LEFT JOIN game_title T ON T.id = E.game_title_id
             LEFT JOIN game_type Y ON Y.id = E.game_type_id
                 WHERE E.game_id <> 0  AND E.game_not_debit = 0 AND E.report_status = 0 AND E.record_status = 1 ";
@@ -613,7 +613,7 @@ class ReportHelpers
             $Q .= " AND E.location_id IN ($location) ";
         }
         if (!empty($debit)) {
-            $Q .= " AND E.debit_type_id IN ($debit) ";
+            $Q .= " AND L.debit_type_id IN ($debit) ";
         }
         if (!empty($onTest)) {
             if ($onTest == "notest") {
