@@ -382,8 +382,8 @@ class ReportHelpers
             '$dateStart'  as date_start,
             '$dateEnd'  as date_end,
             group_concat(distinct E.game_id SEPARATOR ', ') as game_ids, 
-            group_concat(distinct L.id SEPARATOR ', ' ORDER BY L.id) as location_id, 
-            group_concat(distinct L.location_name_short SEPARATOR ', ' ORDER BY L.id) as location_name ";
+            group_concat(distinct L.id  ORDER BY L.id SEPARATOR ', ') as location_id, 
+            group_concat(distinct L.location_name_short ORDER BY L.id SEPARATOR ', ') as location_name ";
         
         $Q .= self::_getGameRankQuery($dateStart, $dateEnd, $location, $debit, $gameType, $gameCat, $onTest);
         
