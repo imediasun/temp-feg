@@ -664,9 +664,17 @@ function getExport($t = 'excel')
     $filter = (!is_null(Input::get('search')) ? $this->buildSearch() : '');
 
     //$filter 	.=  $master['masterFilter'];
-    $params = array(
-        'params' => ''
-    );
+//    $params = array(
+//        'params' => ''
+//    );    
+    $sort = isset($_GET['sort']) ? $_GET['sort'] : $this->info['setting']['orderby']; 
+    $order = isset($_GET['order']) ? $_GET['order'] : $this->info['setting']['ordertype'];	
+    $params 	= array(
+        'params' => '',
+        'sort'		=> $sort,
+        'order'		=> $order,
+    );	    
+
 
     $results = $this->model->getRows($params);
 
