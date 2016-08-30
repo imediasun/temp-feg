@@ -8,10 +8,7 @@ $orders = array('asc','desc');
 	  <div class="table-actions" style=" padding: 10px 0" id="<?php echo $pageModule;?>Filter">
   			<input type="hidden" name="page" value="{{ $param['page']}}" />
 			<input type="hidden" name="search" value="<?php if(!is_null(Input::get('search'))) echo Input::get('search') ;?>" />
-            <input type="hidden" name="order_type_id" value="<?php if(!is_null($TID)) echo $TID ?>"/>
-          <input type="hidden" name="location_id" value="<?php if(!is_null($LID)) echo $LID ?>"/>
-          <input type="hidden" name="vendor_id" value="<?php if(!is_null($VID)) echo $VID ?>"/>
-          <input type="hidden" name="view" value="<?php if(!is_null($view)) echo $view ?>"/>
+           
           @if(!isset($setting['disablepagination']) || $setting['disablepagination'] == 'false')
 		<select name="rows" class="select-alt" style="width:70px; float:left;"  >
 		  @foreach($pages as $p)

@@ -160,7 +160,7 @@
                 get+="&v1=T"+$('#order_type').val();
             }
         }
-        alert(get);
+
         reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data' + get);
 
     }
