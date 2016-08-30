@@ -558,7 +558,7 @@ class ReportHelpers
                 Y.game_type,
                 '$gameCat' AS game_cat_id,
                 '$game_category' AS game_category,                
-                SUM(E.game_revenue) AS game_total,
+                E.game_revenue AS game_total,
                 E.date_played as date_start,
                 E.date_played as date_end,
                 E.date_last_played,
@@ -628,7 +628,7 @@ class ReportHelpers
         }
         
         // GROUP BY
-        $Q .= " GROUP BY E.date_played, E.location_id, E.game_id HAVING SUM(E.game_revenue) > 4000";
+        $Q .= " ";
         
         return $Q;
     }
