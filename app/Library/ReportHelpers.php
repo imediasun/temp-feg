@@ -125,7 +125,7 @@ class ReportHelpers
                 LEFT JOIN location L ON L.id = A.loc_id
                 LEFT JOIN debit_type D ON D.id = L.debit_type_id                
                 WHERE 
-                A.status = 1 AND
+                A.status = 0 AND
                 A.notes = 'CLOSED' AND
                 A.date_start >= '$dateStart' and A.date_start <= '$dateEnd' ";
 
