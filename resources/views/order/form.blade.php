@@ -271,10 +271,11 @@
                     </tr>
                     <tr>
                         <td class="game"></td>
+                        <td></td>
                         <td colspan="6" class="text-right"><strong> Subtotal ( $ ) </strong></td>
                         <td><input type="text" name="Subtotal" value="{{ $data['order_total'] }}" readonly
                                    class="form-control"/></td>
-                        <td></td>
+
 
                     </tr>
                     </tbody>
