@@ -49,8 +49,8 @@ class ReportHelpers
         );
         if (!empty($sortbys[$sortby])) {
             $sortby = $sortbys[$sortby];
-        }        
-        $sortbyQuery = " ORDER BY $sortby $order";
+        }
+        $sortbyQuery = self::orderify($sortby, $order);        
         $Q .= $sortbyQuery;        
 
         return $Q;
@@ -82,8 +82,8 @@ class ReportHelpers
         );
         if (!empty($sortbys[$sortby])) {
             $sortby = $sortbys[$sortby];
-        }        
-        $sortbyQuery = " ORDER BY $sortby $order";
+        }      
+        $sortbyQuery = self::orderify($sortby, $order);
         $Q .= $sortbyQuery;        
 
         return $Q;        
@@ -165,7 +165,7 @@ class ReportHelpers
         if (!empty($sortbys[$sortby])) {
             $sortby = $sortbys[$sortby];
         }        
-        $sortbyQuery = " ORDER BY $sortby $order";
+        $sortbyQuery = self::orderify($sortby, $order);
         $Q .= $sortbyQuery;        
 
         return $Q;         
@@ -192,7 +192,7 @@ class ReportHelpers
         if (!empty($sortbys[$sortby])) {
             $sortby = $sortbys[$sortby];
         }        
-        $sortbyQuery = " ORDER BY $sortby $order";
+        $sortbyQuery = self::orderify($sortby, $order);
         $Q .= $sortbyQuery;        
 
         return $Q;                  
@@ -238,7 +238,7 @@ class ReportHelpers
     }
     public static function getReadersMissingAssetIdCount($dateStart, $dateEnd, $location = "", $debit = "", $reader = "") {
         $Q = "SELECT count(*) as `count` FROM (SELECT E.date_start ";
-        $Q .= self::_getReadersMissingAssetIdQuery($dateStart, $dateEnd, $location = "", $debit = ""); 
+        $Q .= self::_getReadersMissingAssetIdQuery($dateStart, $dateEnd, $location, $debit, $reader); 
         $Q .= ") GD";
         $count = self::getCountFromQuery($Q);
         return $count;        
@@ -273,7 +273,7 @@ class ReportHelpers
         if (!empty($sortbys[$sortby])) {
             $sortby = $sortbys[$sortby];
         }        
-        $sortbyQuery = " ORDER BY $sortby $order";
+        $sortbyQuery = self::orderify($sortby, $order);
         $Q .= $sortbyQuery;        
 
         return $Q;         
@@ -378,7 +378,7 @@ class ReportHelpers
         if (!empty($sortbys[$sortby])) {
             $sortby = $sortbys[$sortby];
         }        
-        $sortbyQuery = " ORDER BY $sortby $order";
+        $sortbyQuery = self::orderify($sortby, $order);
         $Q .= $sortbyQuery;        
 
         return $Q;                
@@ -474,7 +474,7 @@ class ReportHelpers
         if (!empty($sortbys[$sortby])) {
             $sortby = $sortbys[$sortby];
         }        
-        $sortbyQuery = " ORDER BY $sortby $order";
+        $sortbyQuery = self::orderify($sortby, $order);
         $Q .= $sortbyQuery;        
 
         return $Q;          
@@ -535,7 +535,7 @@ class ReportHelpers
     }
     public static function getGamePlayCount($dateStart, $dateEnd, $location = "", $debit = "", $gameType = "", $gameCat = "all", $onTest = "", $gameId = "", $gameTitleId= ""){
         $Q = "SELECT count(*) as `count` FROM (SELECT E.id ";
-        $Q .= self::_getGamePlayQuery($dateStart, $dateEnd, $location, $debit, $gameType, $gameCat, $onTest); 
+        $Q .= self::_getGamePlayQuery($dateStart, $dateEnd, $location, $debit, $gameType, $gameCat, $onTest, $gameId, $gameTitleId); 
         $Q .= ") GD";
         $count = self::getCountFromQuery($Q);
         return $count;          
@@ -572,7 +572,7 @@ class ReportHelpers
         if (!empty($sortbys[$sortby])) {
             $sortby = $sortbys[$sortby];
         }        
-        $sortbyQuery = " ORDER BY $sortby $order";
+        $sortbyQuery = self::orderify($sortby, $order);
         $Q .= $sortbyQuery;        
 
         return $Q;          
@@ -664,7 +664,7 @@ class ReportHelpers
         if (!empty($sortbys[$sortby])) {
             $sortby = $sortbys[$sortby];
         }        
-        $sortbyQuery = " ORDER BY $sortby $order";
+        $sortbyQuery = self::orderify($sortby, $order);
         $Q .= $sortbyQuery;        
 
         return $Q;        
@@ -788,7 +788,13 @@ class ReportHelpers
         return $gameTypeIds;
     }
 
-
+    public static function orderify($sortby = "", $order = "") {
+        $sortbyQuery = "";
+        if (!empty($sortbyQuery)) {
+            $sortbyQuery = " ORDER BY $sortby $order";   
+        }
+        return $sortbyQuery;
+    }
     
     public static function getCountFromQuery($Q, $fieldName = 'count') {
         $count = 0;
