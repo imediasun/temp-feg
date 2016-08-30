@@ -790,7 +790,7 @@ class ReportHelpers
 
     public static function orderify($sortby = "", $order = "") {
         $sortbyQuery = "";
-        if (!empty($sortbyQuery)) {
+        if (!empty($sortby)) {
             $sortbyQuery = " ORDER BY $sortby $order";   
         }
         return $sortbyQuery;
