@@ -16,19 +16,28 @@ class gamesnotondebitcard extends Sximo  {
 	public static function querySelect( $isCount = false  ){
 		$filters = self::getSearchFilters();
         $location = @$filters['location_id'];
+        $debit_type_id = @$filters['debit_type_id'];
         $locationQuery = "";
         if (!empty($location)) {
-            $locationQuery = "AND game.location_id IN ($location) "; 
+            $locationQuery = " AND game.location_id IN ($location) "; 
+        }
+        $debitSystemQuery = "";
+        if (!empty($debit_type_id)) {
+            $debitSystemQuery = " AND debit_type.id IN ($debit_type_id) "; 
         }
         
         if ($isCount) {
            $sqlFields = "count(game.id) as totalCount"; 
         }
         else {
-            $sqlFields = "game.id, game.game_name, game.game_title_id,
+            $sqlFields = "game.id, 
+                       game.game_name, 
+                       game.game_title_id,
                        game_title.game_title, 
                        game.location_id,
                        location.location_name_short as location_name,
+                       location.debit_type_id,
+                       debit_type.company as debit_system,
                        game.not_debit_reason,
                        game.not_debit,
                        game.sold";
@@ -38,7 +47,8 @@ class gamesnotondebitcard extends Sximo  {
                 FROM game 
                 LEFT JOIN game_title ON game_title.id = game.game_title_id
                 LEFT JOIN location ON location.id = game.location_id
-                WHERE game.not_debit = 1 AND game.sold = 0 $locationQuery ";
+                LEFT JOIN debit_type ON debit_type.id = location.debit_type_id
+                WHERE game.not_debit = 1 AND game.sold = 0 $locationQuery $debitSystemQuery ";
         
 		return $sql;
 	}	
