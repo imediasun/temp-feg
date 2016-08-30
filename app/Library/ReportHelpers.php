@@ -673,6 +673,7 @@ class ReportHelpers
     public static function getMerchandizeExpensesQuery($dateStart, $dateEnd, $location = "", 
             $debit = "", $sortby = "location_id", $order = ""){
         
+        $dateEnd = self::dateify($dateEnd);
         $dateStart = date('Y-m-d', strtotime($dateStart. '  first day of this month'));
         $dateEnd = date('Y-m-d', strtotime($dateEnd. ' 23:59:59  last day of this month'));
         
