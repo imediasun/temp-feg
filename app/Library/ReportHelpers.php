@@ -186,7 +186,7 @@ class ReportHelpers
             L.location_name_short,
             E.debit_type_id,
             D.company as debit_system,
-            '' as loc_game_title, 
+            E.loc_game_title, 
             SUM(CASE WHEN E.debit_type_id = 1 THEN E.total_notional_value ELSE E.std_actual_cash END) as game_total ";
         
         $Q .= self::_getReadersMissingAssetIdQuery($dateStart, $dateEnd, $location, $debit, $reader);    
