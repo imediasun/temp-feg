@@ -727,6 +727,9 @@ class ReportHelpers
         
     }
     public static function getMerchandizeExpensesCount($dateStart, $dateEnd, $location = "", $debit = ""){
+        $dateEnd = self::dateify($dateEnd);
+        $dateStart = date('Y-m-d', strtotime($dateStart. '  first day of this month'));
+        $dateEnd = date('Y-m-d', strtotime($dateEnd. ' 23:59:59  last day of this month'));
         $Q = "SELECT count(*) as `count` FROM (SELECT O.location_id ";
         $Q .= self::_getMerchandizeExpensesQuery($dateStart, $dateEnd, $location, $debit); 
         $Q .= ") GD";
