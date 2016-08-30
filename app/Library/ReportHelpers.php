@@ -60,16 +60,20 @@ class ReportHelpers
     public static function getLocationNotReportingQuery($dateStart, $dateEnd, $location, $debit, $sortby = "closed_date", $order = "") {
         $dateEnd_ymd = self::dateify($dateEnd);
         
-        $Q = "SELECT 
+        $Q = "SELECT
                     E.location_id as id, 
                     L.location_name_short as location_name, 
+                    E.date_played as not_reporting_date,
+                    E.date_last_played as date_last_reported,
+                    IFNULL(DATEDIFF(E.date_last_played, E.date_played), 'Since start') as days_not_reporting,
+                    A.notes as not_reporting_status,
                     L.debit_type_id,
                     D.company as debit_system,
                     '$dateStart' as date_start,
                     '$dateEnd_ymd' as date_end,
-                    A.status as adjustment_status,
-                    A.notes as nr_status,
-                    E.date_played as nr_date ";
+                    A.status as adjustment_status
+                   
+                ";
         
         $Q .= self::_getLocationNotReportingQuery($dateStart, $dateEnd, $location, $debit);  
                 

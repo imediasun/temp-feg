@@ -14,7 +14,8 @@ class reports extends Sximo  {
         foreach($rows as $row) {
             $row->date_start = date("m/d/Y", strtotime($row->date_start));
             $row->date_end = date("m/d/Y", strtotime($row->date_end));
-            $row->nr_date = date("m/d/Y", strtotime($row->nr_date));
+            $row->not_reporting_date = date("m/d/Y", strtotime($row->nr_date));
+            $row->date_last_reported = date("m/d/Y", strtotime($row->date_last_reported));
             $newRows[] = $row;
         }
 		return $newRows;
