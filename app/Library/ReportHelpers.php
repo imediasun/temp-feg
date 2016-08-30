@@ -289,11 +289,11 @@ class ReportHelpers
         }        
         $Q = "
             FROM report_game_plays E
-   INNER JOIN game G ON G.id = E.game_id
-   INNER JOIN location L ON L.id = E.location_id
-   INNER JOIN debit_type D ON D.id = E.debit_type_id   
-   INNER JOIN game_title T ON T.id = G.game_title_id
-   INNER JOIN game_type Y ON Y.id = T.game_type_id
+   LEFT JOIN game G ON G.id = E.game_id
+   LEFT JOIN location L ON L.id = E.location_id
+   LEFT JOIN debit_type D ON D.id = E.debit_type_id   
+   LEFT JOIN game_title T ON T.id = G.game_title_id
+   LEFT JOIN game_type Y ON Y.id = T.game_type_id
 	   WHERE E.game_id <> 0 ";
                      
         if (!empty($gameId)) {
@@ -389,10 +389,10 @@ class ReportHelpers
 
         $Q ="           
         FROM  report_game_plays E
-        INNER JOIN location L ON L.id = E.location_id
-        INNER JOIN game_title GT ON E.game_title_id = GT.id
-        INNER JOIN game_type GTY ON E.game_type_id = GTY.id
-        INNER JOIN debit_type D ON E.debit_type_id = D.id
+        LEFT JOIN location L ON L.id = E.location_id
+        LEFT JOIN game_title GT ON E.game_title_id = GT.id
+        LEFT JOIN game_type GTY ON E.game_type_id = GTY.id
+        LEFT JOIN debit_type D ON E.debit_type_id = D.id
         WHERE 
         E.game_id <> 0 AND
         E.record_status = 1 AND
@@ -589,11 +589,11 @@ class ReportHelpers
         }        
         $Q = "
             FROM report_game_plays E
-            INNER JOIN game G ON G.id = E.game_id
-            INNER JOIN location L ON L.id = E.location_id
-            INNER JOIN debit_type D ON D.id = E.debit_type_id   
-            INNER JOIN game_title T ON T.id = E.game_title_id
-            INNER JOIN game_type Y ON Y.id = E.game_type_id
+            LEFT JOIN game G ON G.id = E.game_id
+            LEFT JOIN location L ON L.id = E.location_id
+            LEFT JOIN debit_type D ON D.id = E.debit_type_id   
+            LEFT JOIN game_title T ON T.id = E.game_title_id
+            LEFT JOIN game_type Y ON Y.id = E.game_type_id
                 WHERE E.game_id <> 0 AND E.report_status = 0 AND E.record_status = 1 ";
                      
         if (!empty($gameTitleId)) {
@@ -675,7 +675,7 @@ class ReportHelpers
                 FROM location L
 				LEFT JOIN orders O ON L.id = O.location_id
                 LEFT JOIN location_budget LB ON LB.location_id = L.id
-                INNER JOIN debit_type D ON D.id = L.debit_type_id
+                LEFT JOIN debit_type D ON D.id = L.debit_type_id
 
                 WHERE L.can_ship = 1 AND O.order_type_id IN(7,8) AND                 
                     LB.budget_date >= '$dateStart' and LB.budget_date <= '$dateEnd' 
