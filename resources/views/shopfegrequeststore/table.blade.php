@@ -110,7 +110,7 @@
                                class="tips btn btn-xs btn-white"  title="Product Details"><i class="fa fa-search" aria-hidden="true"></i></a>
 </td>
                         <td>@if($row->inactive == 0)
-                                <input type="text" name="item_quantity" class="form-control" style="display:inline;width:50px;" id="item_quantity_{{$row->id}}" />
+                                <input type="number" title="Quantity" onkeyup="if(!this.checkValidity()){this.value='';alert('Please enter a number')};" name="item_quantity" class="form-control" style="width:70px;display:inline" id="item_quantity_{{$row->id}}"  />
                                 <a href="javascript:void(0)" value="{{$row->id}}" class=" addToCart tips btn btn-xs btn-white"  title="Add to Cart"><i class="fa fa-shopping-cart" aria-hidden="true"></i></a>
 
                             @else
@@ -168,13 +168,11 @@
             return false;
         });
 
-
-
         $('.addToCart').on('click',function(){
             var base_url = <?php echo  json_encode(url()) ?>;
             var addId = $(this).attr('value');
             var qty=$("#item_quantity_"+addId).val();
-alert(qty);
+
             if(!qty)
             {
                 qty=0;

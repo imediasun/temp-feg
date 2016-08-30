@@ -137,9 +137,11 @@ class managefegrequeststore extends Sximo
         $data['LID'] = $LID;
         $data['VID'] = $VID;
         $number_requests = '';
-        $query = \DB::select('SELECT COUNT(R.id) as count,O.order_type AS request_count FROM requests R
-								LEFT JOIN products P ON P.id = R.product_id LEFT JOIN order_type O ON O.id = P.prod_type_id
-                                WHERE R.status_id = 1 ' . $order_type_where . ' GROUP BY P.prod_type_id');
+        $order_type_where =$order_type_where." ". \SiteHelpers::getQueryStringForLocation('requests');
+
+        $query = \DB::select('SELECT COUNT(requests.id) as count,O.order_type AS request_count FROM requests
+								LEFT JOIN products P ON P.id = requests.product_id LEFT JOIN order_type O ON O.id = P.prod_type_id
+                                WHERE requests.status_id = 1 ' . $order_type_where . ' GROUP BY P.prod_type_id');
 
         foreach ($query as $row) {
        //     $number_requests = $number_requests ." ".." | <em>". $row->request_count .":</em>";
@@ -332,7 +334,7 @@ class managefegrequeststore extends Sximo
 								LEFT JOIN order_type O ON O.id = P.prod_type_id
 									WHERE R.status_id = 1
 										'.$order_type_where.'
-								 GROUP BY P.prod_type_id');
+								 GROUP BY P.prod_type_id HAVING P.prod_type_id IS NOT NULL');
 
             foreach ($query as $row)
             {
