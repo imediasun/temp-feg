@@ -416,7 +416,7 @@
             var item_retail_price=<?php echo json_encode($data['itemCasePrice'])?>;
             var item_total = 0;
             for (var i = 0; i < requests_item_count; i++) {
-$('input[name^=retail_price]').eq(i).val(item_retail_price[i]);
+
                 $('input[name^=item_num]').eq(i).val(i + 1);
                 $('textarea[name^=item]').eq(i).val(order_description_array[i]);
                 $('input[name^=price]').eq(i).val(order_price_array[i]);
@@ -615,7 +615,7 @@ $('input[name^=retail_price]').eq(i).val(item_retail_price[i]);
                 var casepriceid = $("#"+trid+"  input[id^='case_price']").attr('id');
                       var qtyid = $("#"+trid+"  input[id^='qty']").attr('id');
                 var itemid = $("#"+trid+"  textarea[name^=item]").attr('id');
-var retailpriceid = $("#"+trid+" input[id^='retail_price']").attr('id');
+
                 $(obj).autocomplete({
                     minLength: 2,
                     source: function( request, response ) {

@@ -256,6 +256,20 @@ $(document).ready(function() {
         { selected_value : '{{ $row["prod_sub_type_id"] }}', parent: 'prod_type_id'});
 
 
+
+
+	$("#order_type").jCombo("{{ URL::to('shopfegrequeststore/comboselect?filter=order_type:id:order_type:can_request:1') }}",
+			{selected_value: '{{ $order_type }}', initial_text: 'Select Order Type'});
+
+
+
+	$("#product_type").jCombo("{{ URL::to('shopfegrequeststore/comboselect?filter=product_type:id:product_type') }}&parent=request_type_id:",
+			{  parent: '#order_type' ,selected_value : '{{ $product_type }}', initial_text: 'Select Product Type'});
+
+
+
+
+
 	$('.editor').summernote();
 	$('.previewImage').fancybox();
 	$('.tips').tooltip();

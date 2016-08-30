@@ -1,6 +1,6 @@
 
 <div class="row">
-    <div class="col-md-4">
+   <!-- <div class="col-md-4">
         <select name='product_list_type' rows='5'  id='product_list_type' class="select3" style="height: auto; font-size: 13px; font-family: 'Lato', sans-serif;
 width: 75%">
             <option selected selected>------------ Select Type --------------</option>
@@ -12,8 +12,11 @@ width: 75%">
             <option value="officesupplies" data-active="0">Office Supplies - Products List</option>
             <option value="parts" data-active="0">Parts - Products List</option>
             <option value="productsindevelopment" data-active="0"></option>
-        </select></div>
-
+        </select>  -->
+    <select name="prod_type_id" id="prod_type_id" class="select3" style="height: auto;">
+    </select>
+    </div>
+    <select name="prod_sub_type_id" id="prod_sub_type_id" class="select3" style="height: auto;"></select>
 
     <div class="col-md-6">
         {!! Form::open(array('url'=>'product/listcsv', 'class'=>'form-horizontal','files' => true ,
@@ -77,6 +80,19 @@ width: 75%">
     </div>
     <script>
         $(document).ready(function () {
+
+
+
+
+            $("#prod_type_id").jCombo("{{ URL::to('product/comboselect?filter=order_type:id:order_type:can_request:1') }}",
+                    {  selected_value : '{{ $prod_type_id}}' });
+
+            $("#prod_sub_type_id").jCombo("{{ URL::to('product/comboselect?filter=product_type:id:product_type') }}&parent=request_type_id",
+                    { selected_value : '{{ $prod_sub_type_id}}', parent: '#prod_type_id'});
+
+
+
+
             $("#product_list_type option").each(function(){
                 if($(this).val()=="{{ $prod_list_type }}" && $(this).attr('data-active')=="{{ $active }}")
                 {
