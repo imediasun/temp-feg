@@ -2459,7 +2459,3 @@ table#itemTable input[type="text"]{
   width: 40px;
   text-align: center;
 }
-.datepicker-dropdown
-{
-  z-index:25 !important;
-}

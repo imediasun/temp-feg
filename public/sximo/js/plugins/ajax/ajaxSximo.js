@@ -77,10 +77,10 @@ function ajaxInlineEdit(id,url,reloadurl)
 }
 
 
-function ajaxFilter( id ,url,opt  )
+function ajaxFilter( id ,url,opt)
 {
 
-	var attr = '', elm, val;
+    var attr = '', elm, val;
         $(id + 'Filter :input').each(function () {
 			elm = $(this);
 			val = elm.val();
@@ -90,9 +90,11 @@ function ajaxFilter( id ,url,opt  )
             }
 
         });
+
     if(opt  !== undefined) {
         attr += opt;
     }
+
 	reloadData(id, url+"?"+attr);
 }
 

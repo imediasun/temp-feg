@@ -1,3 +1,4 @@
+
 <?php usort($tableGrid, "SiteHelpers::_sort"); ?>
 <div class="sbox">
     <div class="sbox-title">
@@ -134,8 +135,9 @@
             @endif
 
         </div>
+
 <?php echo Form::close(); ?>
-        @include('ajaxfooter')
+        @include('ajaxfooter',array('TID'=>$TID,'LID'=>$LID,'VID'=>$VID,'view'=>$view))
 
     </div>
 </div>
