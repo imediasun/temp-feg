@@ -1,15 +1,17 @@
 <?php
 $pages = array(10,20,30,50,100);
 $orders = array('asc','desc');
+
 ?>
+
 	<div class="table-footer">
 	<div class="row">
 	 <div class="col-sm-5">
 	  <div class="table-actions" style=" padding: 10px 0" id="<?php echo $pageModule;?>Filter">
   			<input type="hidden" name="page" value="{{ $param['page']}}" />
 			<input type="hidden" name="search" value="<?php if(!is_null(Input::get('search'))) echo Input::get('search') ;?>" />
-           
-          @if(!isset($setting['disablepagination']) || $setting['disablepagination'] == 'false')
+
+        @if(!isset($setting['disablepagination']) || $setting['disablepagination'] == 'false')
 		<select name="rows" class="select-alt" style="width:70px; float:left;"  >
 		  @foreach($pages as $p)
 		  <option value="{{ $p }}"
