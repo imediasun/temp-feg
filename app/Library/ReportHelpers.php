@@ -382,8 +382,8 @@ class ReportHelpers
             '$dateStart'  as date_start,
             '$dateEnd'  as date_end,
             group_concat(distinct E.game_id SEPARATOR ', ') as game_ids, 
-            group_concat(distinct L.id SEPARATOR ', ') as location_id, 
-            group_concat(distinct L.location_name_short SEPARATOR ', ') as location_name ";
+            group_concat(distinct L.id SEPARATOR ', ' ORDER BY L.id) as location_id, 
+            group_concat(distinct L.location_name_short SEPARATOR ', ' ORDER BY L.id) as location_name ";
         
         $Q .= self::_getGameRankQuery($dateStart, $dateEnd, $location, $debit, $gameType, $gameCat, $onTest);
         
@@ -410,7 +410,7 @@ class ReportHelpers
         LEFT JOIN game_type GTY ON E.game_type_id = GTY.id
         LEFT JOIN debit_type D ON L.debit_type_id = D.id
         WHERE 
-        E.game_id <> 0 AND
+        E.game_id <> 0 AND 
         E.record_status = 1 AND
         E.report_status = 1 AND
         E.date_played >= '$dateStart' and E.date_played <= '$dateEnd'";
@@ -427,7 +427,7 @@ class ReportHelpers
         else {
             $Q .= " AND E.game_on_test IN (1)";
         }
-        if (!empty($gameTypeIds)) {
+        if (!empty($gameCat) && !empty($gameTypeIds)) {
             $Q .= " AND E.game_type_id IN ($gameTypeIds)";
         }
 
