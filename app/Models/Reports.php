@@ -16,6 +16,7 @@ class reports extends Sximo  {
             $row->date_end = date("m/d/Y", strtotime($row->date_end));
             $row->not_reporting_date = empty($row->not_reporting_date) ? 'Never' : date("m/d/Y", strtotime($row->not_reporting_date));
             $row->date_last_reported = empty($row->date_last_reported) ? 'Never' : date("m/d/Y", strtotime($row->date_last_reported));
+            $row->days_not_reporting = is_null($row->days_not_reporting) ? 'Never' : $row->days_not_reporting;
             $newRows[] = $row;
         }
 		return $newRows;

@@ -17,6 +17,7 @@ class gamesnotplayed extends Sximo  {
             $row->date_start = date("m/d/Y", strtotime($row->date_start));
             $row->date_end = date("m/d/Y", strtotime($row->date_end));
             $row->date_last_played = empty($row->date_last_played) ? 'Never' : date("m/d/Y", strtotime($row->date_last_played));
+            $row->days_not_played = is_null($row->days_not_played) ? 'Never' : $row->days_not_played;
             
            // $row->game_average = '$' . number_format($row->game_average,2);
            // $row->game_total = '$' . number_format($row->game_total,2);
