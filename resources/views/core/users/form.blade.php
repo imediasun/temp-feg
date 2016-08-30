@@ -20,7 +20,7 @@
 
 
 <div class="sbox animated fadeInRight">
-	<div class="sbox-title"> <h4> <i class="fa fa-table"></i> <?php echo $pageTitle ;?> <small>{{ $pageNote }}</small></h4></div>
+	<div class="sbox-title"> </div>
 	<div class="sbox-content"> 	
 		<ul class="parsley-error-list">
 			@foreach($errors->all() as $error)
