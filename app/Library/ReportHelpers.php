@@ -565,7 +565,7 @@ class ReportHelpers
                 IFNULL(DATEDIFF(E.date_played, E.date_last_played), 'Never') as days_not_played
                 ";
         
-        $Q .= self::_getPotentialOverReportingErrorQuery($dateStart, $dateEnd, $location, $debit, $gameType, $gameCat, $onTest, $gameId, $gameTitleId);    
+        $Q .= self::_getGamesNotPlayedQuery($dateStart, $dateEnd, $location, $debit, $gameType, $gameCat, $onTest, $gameId, $gameTitleId);    
         // ORDER BY
         $sortbys = array(            
         );
