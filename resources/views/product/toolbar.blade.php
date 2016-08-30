@@ -15,17 +15,6 @@ width: 75%">
         </select></div>
 
 
-    <div class="form-group  " >
-        <label for="Prod Sub Type Id" class=" control-label col-md-4 text-left">
-            {!! SiteHelpers::activeLang('Prod Sub Type Id', (isset($fields['prod_sub_type_id']['language'])? $fields['prod_sub_type_id']['language'] : array())) !!}
-        </label>
-        <div class="col-md-6">
-            <select name='prod_sub_type_id' rows='5' id='prod_sub_type_id' class='select2 '   ></select>
-        </div>
-        <div class="col-md-2">
-
-        </div>
-    </div>
     <div class="col-md-6">
         {!! Form::open(array('url'=>'product/listcsv', 'class'=>'form-horizontal','files' => true ,
         'parsley-validate'=>'','novalidate'=>' ')) !!}
