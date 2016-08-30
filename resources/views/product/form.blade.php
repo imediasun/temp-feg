@@ -2,7 +2,7 @@
 @if($setting['form-method'] =='native')
 	<div class="sbox">
 		<div class="sbox-title">
-			<h4>
+			<h4> <i class="fa fa-table"></i> <?php echo $pageTitle ;?> <small>{{ $pageNote }}</small>
 				<a href="javascript:void(0)" class="collapse-close pull-right btn btn-xs btn-danger" onclick="ajaxViewClose('#{{ $pageModule }}')"><i class="fa fa fa-times"></i></a>
 			</h4>
 	</div>
@@ -254,20 +254,6 @@ $(document).ready(function() {
 
         $("#prod_sub_type_id").jCombo("{{ URL::to('product/comboselect?filter=product_type:id:product_type') }}&parent=request_type_id",
         { selected_value : '{{ $row["prod_sub_type_id"] }}', parent: 'prod_type_id'});
-
-
-
-
-	$("#order_type").jCombo("{{ URL::to('shopfegrequeststore/comboselect?filter=order_type:id:order_type:can_request:1') }}",
-			{selected_value: '{{ $order_type }}', initial_text: 'Select Order Type'});
-
-
-
-	$("#product_type").jCombo("{{ URL::to('shopfegrequeststore/comboselect?filter=product_type:id:product_type') }}&parent=request_type_id:",
-			{  parent: '#order_type' ,selected_value : '{{ $product_type }}', initial_text: 'Select Product Type'});
-
-
-
 
 
 	$('.editor').summernote();
