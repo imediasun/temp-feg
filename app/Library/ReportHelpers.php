@@ -57,7 +57,7 @@ class ReportHelpers
     }
     
     
-    public static function getLocationNotReportingQuery($dateStart, $dateEnd, $location, $debit, $sortby = "closed_date", $order = "") {
+    public static function getLocationNotReportingQuery($dateStart, $dateEnd, $location, $debit, $sortby = "not_reporting_date", $order = "") {
         $dateEnd_ymd = self::dateify($dateEnd);
         
         $Q = "SELECT
@@ -144,7 +144,7 @@ class ReportHelpers
         
         return $Q;
     }
-    public static function getClosedLocationsQuery($dateStart, $dateEnd, $location, $debit, $sortby = "nr_date", $order = "") {
+    public static function getClosedLocationsQuery($dateStart, $dateEnd, $location, $debit, $sortby = "closed_date", $order = "") {
         $dateEnd_ymd = self::dateify($dateEnd);
         
         $Q = "SELECT 
