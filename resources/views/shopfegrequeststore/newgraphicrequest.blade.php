@@ -23,7 +23,18 @@
 
                     </div>
                 </div>
-               <div class="form-group  " >
+                <div class="form-group  " >
+                    <label for="date_needed" class=" control-label col-md-4 text-left">
+                        Date Needed
+                    </label>
+                    <div class="col-md-6">
+                        <input type="text" class="date form-control" id="date_needed" name="date_needed" required="required"/>
+                    </div>
+                    <div class="col-md-2">
+
+                    </div>
+                </div>
+                <div class="form-group  " >
                     <label for="graphics_description" class=" control-label col-md-4 text-left">
                        Detailed description of color, art, location and/or game colors, size requirements, etc.
                     </label>
@@ -43,17 +54,7 @@
                     <div class="col-md-2">
 
                     </div>
-                </div>   <div class="form-group  " >
-                    <label for="date_needed" class=" control-label col-md-4 text-left">
-                        Date Needed
-                    </label>
-                    <div class="col-md-6">
-                       <input type="text" class="date form-control" id="date_needed" name="date_needed" required="required"/>
-                    </div>
-                    <div class="col-md-2">
-
-                    </div>
-                </div>   <div class="form-group  " >
+                </div>     <div class="form-group  " >
                     <label for="Id" class=" control-label col-md-4 text-left">
                        For Location:
                     </label>
