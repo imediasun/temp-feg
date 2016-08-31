@@ -715,18 +715,22 @@ function getExport($t = 'excel')
         $extra['field'] = 'total_closed';
         $extra['label'] = 'No Tickets Closed';
         $fields[] = $extra;
-
+unset($fields[2]);
+unset($fields[3]);
+unset($fields[4]);
         foreach ($rows as $index => $row)
         {
 
             $open = \DB::select("Select * FROM sb_tickets WHERE department_id = ".$row->id ." AND status = 'open'");
             $close = \DB::select("Select * FROM sb_tickets WHERE department_id = ".$row->id ." AND status = 'close'");
-
+            unset($rows[$index]->created_at);
+            unset($rows[$index]->updated_at);
             $rows[$index]->total_closed = count($close);
             $rows[$index]->total_open = count($open);
         }
 
     }
+    
     $content = array(
         'fields' => $fields,
         'rows' => $rows,
