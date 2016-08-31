@@ -399,5 +399,5 @@
                 $('#date_sold, #sold_to').hide();
             }
         }
-    }
+    }});
 </script>
