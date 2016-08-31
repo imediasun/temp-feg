@@ -139,7 +139,9 @@ class productusagereport extends Sximo  {
             $finalDataQuery = "$mainQuery $fromQuery $whereQuery $groupQuery $orderConditional $limitConditional";
             $finalTotalQuery = "$totalQuery $fromQuery $whereQuery $groupQuery $orderConditional";
             
-            $rows = \DB::select($finalDataQuery);
+            $rawRows = \DB::select($finalDataQuery);
+            $rows = self::processRows($rawRows);
+            
             $totalRows = \DB::select($finalTotalQuery);
             if (!empty($totalRows)) {
                 $total = count($totalRows);
@@ -175,5 +177,15 @@ class productusagereport extends Sximo  {
         }
         return $finalFilter;
     }	
-
+	public static function processRows( $rows ){
+        $newRows = array();
+        foreach($rows as $row) {
+		
+            $row->start_date = date("m/d/Y", strtotime($row->start_date));
+            $row->start_date = date("m/d/Y", strtotime($row->start_date));
+		          
+            $newRows[] = $row;
+        }
+		return $newRows;
+	} 
 }
