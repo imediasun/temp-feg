@@ -141,88 +141,6 @@ abstract class Controller extends BaseController
         return Redirect::to($this->module . '?search=' . substr($items, 0, strlen($items) - 1) . '&md=' . Input::get('md'));
     }
 
-    function buildSearch()
-    {
-        $keywords = '';
-        $fields = '';
-        $param = '';
-        $allowsearch = $this->info['config']['forms'];
-        foreach ($allowsearch as $as)
-            $arr[$as['field']] = $as;
-        if ($_GET['search'] != '') {
-            $type = explode("|", $_GET['search']);
-            if (count($type) >= 1) {
-                foreach ($type as $t) {
-                    $keys = explode(":", $t);
-                    if (in_array($keys[0], array_keys($arr))) {
-                        if ($arr[$keys[0]]['type'] == 'select' || $arr[$keys[0]]['type'] == 'radio') {
-                            $param .= " AND " . $arr[$keys[0]]['alias'] . "." . $keys[0] . " " . self::searchOperation($keys[1]) . " '" . $keys[2] . "' ";
-                        } else {
-                            $operate = self::searchOperation($keys[1]);
-                            if ($operate == 'like') {
-                                $param .= " AND " . $arr[$keys[0]]['alias'] . "." . $keys[0] . " LIKE '%" . $keys[2] . "%%' ";
-                            } else if ($operate == 'is_null') {
-                                $param .= " AND " . $arr[$keys[0]]['alias'] . "." . $keys[0] . " IS NULL ";
-
-                            } else if ($operate == 'not_null') {
-                                $param .= " AND " . $arr[$keys[0]]['alias'] . "." . $keys[0] . " IS NOT NULL ";
-
-                            } else if ($operate == 'between') {
-                                $param .= " AND (" . $arr[$keys[0]]['alias'] . "." . $keys[0] . " BETWEEN '" . $keys[2] . "' AND '" . $keys[3] . "' ) ";
-                            } else {
-                                $param .= " AND " . $arr[$keys[0]]['alias'] . "." . $keys[0] . " " . self::searchOperation($keys[1]) . " '" . $keys[2] . "' ";
-                            }
-                        }
-                    }
-                }
-            }
-        }
-return $param;
-
-}
-
-function searchOperation($operate)
-{
-    $val = '';
-    switch ($operate) {
-        case 'equal':
-            $val = '=';
-            break;
-        case 'bigger_equal':
-            $val = '>=';
-            break;
-        case 'smaller_equal':
-            $val = '<=';
-            break;
-        case 'smaller':
-            $val = '<';
-            break;
-        case 'bigger':
-            $val = '>';
-            break;
-        case 'not_null':
-            $val = 'not_null';
-            break;
-
-        case 'is_null':
-            $val = 'is_null';
-            break;
-
-        case 'like':
-            $val = 'like';
-            break;
-
-        case 'between':
-            $val = 'between';
-            break;
-
-        default:
-            $val = '=';
-            break;
-    }
-    return $val;
-}
-
 function inputLogs(Request $request, $note = NULL)
 {
     $data = array(
@@ -294,7 +212,6 @@ function validateTicketCommentsForm()
     }
     return $rules;
 }
-
 
 function validatePost($table)
 {
@@ -633,28 +550,88 @@ function getDownload(Request $request)
     return ;
 }
 
-    public function changeDateFormat($date)
+    function buildSearch()
     {
-        if($date != '0000-00-00 00:00:00')
-            return date("d/m/Y", strtotime($date));
-        return '';
-    }
+        $keywords = '';
+        $fields = '';
+        $param = '';
+        $allowsearch = $this->info['config']['forms'];
+        foreach ($allowsearch as $as)
+            $arr[$as['field']] = $as;
+        if ($_GET['search'] != '') {
+            $type = explode("|", $_GET['search']);
+            if (count($type) >= 1) {
+                foreach ($type as $t) {
+                    $keys = explode(":", $t);
+                    if (in_array($keys[0], array_keys($arr))) {
+                        if ($arr[$keys[0]]['type'] == 'select' || $arr[$keys[0]]['type'] == 'radio') {
+                            $param .= " AND " . $arr[$keys[0]]['alias'] . "." . $keys[0] . " " . self::searchOperation($keys[1]) . " '" . $keys[2] . "' ";
+                        } else {
+                            $operate = self::searchOperation($keys[1]);
+                            if ($operate == 'like') {
+                                $param .= " AND " . $arr[$keys[0]]['alias'] . "." . $keys[0] . " LIKE '%" . $keys[2] . "%%' ";
+                            } else if ($operate == 'is_null') {
+                                $param .= " AND " . $arr[$keys[0]]['alias'] . "." . $keys[0] . " IS NULL ";
 
-    public function updateDateInAllRows($rows)
-    {
-        foreach ($rows as $index => $row)
-        {
-            if(isset($row->created_at))
-            {
-                $rows[$index]->created_at = $this->changeDateFormat($row->created_at);
-            }
-            if(isset($row->updated_at))
-            {
-                $rows[$index]->updated_at = $this->changeDateFormat($row->updated_at);
+                            } else if ($operate == 'not_null') {
+                                $param .= " AND " . $arr[$keys[0]]['alias'] . "." . $keys[0] . " IS NOT NULL ";
+
+                            } else if ($operate == 'between') {
+                                $param .= " AND (" . $arr[$keys[0]]['alias'] . "." . $keys[0] . " BETWEEN '" . $keys[2] . "' AND '" . $keys[3] . "' ) ";
+                            } else {
+                                $param .= " AND " . $arr[$keys[0]]['alias'] . "." . $keys[0] . " " . self::searchOperation($keys[1]) . " '" . $keys[2] . "' ";
+                            }
+                        }
+                    }
+                }
             }
         }
-        return $rows;
+return $param;
+
+}
+
+function searchOperation($operate)
+{
+    $val = '';
+    switch ($operate) {
+        case 'equal':
+            $val = '=';
+            break;
+        case 'bigger_equal':
+            $val = '>=';
+            break;
+        case 'smaller_equal':
+            $val = '<=';
+            break;
+        case 'smaller':
+            $val = '<';
+            break;
+        case 'bigger':
+            $val = '>';
+            break;
+        case 'not_null':
+            $val = 'not_null';
+            break;
+
+        case 'is_null':
+            $val = 'is_null';
+            break;
+
+        case 'like':
+            $val = 'like';
+            break;
+
+        case 'between':
+            $val = 'between';
+            break;
+
+        default:
+            $val = '=';
+            break;
     }
+    return $val;
+}
+
 public
 function getExport($t = 'excel')
 {
@@ -666,21 +643,90 @@ function getExport($t = 'excel')
     //$filter 	.=  $master['masterFilter'];
 //    $params = array(
 //        'params' => ''
-//    );    
-    $sort = isset($_GET['sort']) ? $_GET['sort'] : $this->info['setting']['orderby']; 
-    $order = isset($_GET['order']) ? $_GET['order'] : $this->info['setting']['ordertype'];	
+//    );
+    $sort = isset($_GET['sort']) ? $_GET['sort'] : $this->info['setting']['orderby'];
+    $order = isset($_GET['order']) ? $_GET['order'] : $this->info['setting']['ordertype'];
     $params 	= array(
         'params' => '',
         'sort'		=> $sort,
         'order'		=> $order,
-    );	    
+    );
 
 
     $results = $this->model->getRows($params);
 
     $fields = $info['config']['grid'];
     $rows = $results['rows'];
+    //print_r($fields[0]);die;
+    $extra = array(
+        'field' => '',
+        'alias' =>'departments',
+        'language' =>
+        array('id' => ''),
+        'label' => '',
+        'view' => '1',
+        'detail' => '1',
+        'sortable' => '1',
+        'search'  => '1',
+
+        'download' => '1',
+        'frozen' => '1',
+        'limited' => '',
+        'width' =>'100',
+        'align' => 'left',
+        'sortlist' => '0',
+        'conn' =>
+        array(
+        'valid' =>'0',
+        'db' =>'',
+        'key' =>'',
+         'display' => ''),
+        'attribute' =>
+        array(
+        'hyperlink'  => '',
+            array(
+         'active' => '0',
+        'link' => '',
+        'target' => 'modal',
+        'html'  => ''),
+        'image'  =>
+            array(
+
+                'active' => '0',
+        'path' => '',
+        'size_x' => '',
+        'size_y' => '',
+        'html' => ''),
+        'formater' =>
+            array(
+                'active' => '0',
+        'value' => '',
+
+
+    )));
+
     $rows = $this->updateDateInAllRows($rows);
+    if($this->module == 'department')
+    {
+
+        $extra['field'] = 'total_open';
+        $extra['label'] = 'No Tickets Open';
+        $fields[] = $extra;
+        $extra['field'] = 'total_closed';
+        $extra['label'] = 'No Tickets Closed';
+        $fields[] = $extra;
+
+        foreach ($rows as $index => $row)
+        {
+
+            $open = \DB::select("Select * FROM sb_tickets WHERE department_id = ".$row->id ." AND status = 'open'");
+            $close = \DB::select("Select * FROM sb_tickets WHERE department_id = ".$row->id ." AND status = 'close'");
+
+            $rows[$index]->total_closed = count($close);
+            $rows[$index]->total_open = count($open);
+        }
+
+    }
     $content = array(
         'fields' => $fields,
         'rows' => $rows,
@@ -710,6 +756,28 @@ function getExport($t = 'excel')
     }
 }
 
+    public function updateDateInAllRows($rows)
+    {
+        foreach ($rows as $index => $row)
+        {
+            if(isset($row->created_at))
+            {
+                $rows[$index]->created_at = $this->changeDateFormat($row->created_at);
+            }
+            if(isset($row->updated_at))
+            {
+                $rows[$index]->updated_at = $this->changeDateFormat($row->updated_at);
+            }
+        }
+        return $rows;
+    }
+
+    public function changeDateFormat($date)
+    {
+        if($date != '0000-00-00 00:00:00')
+            return date("d/m/Y", strtotime($date));
+        return '';
+    }
 
 function detailview($model, $detail, $id)
 {
