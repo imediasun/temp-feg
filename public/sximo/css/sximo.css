@@ -2459,3 +2459,7 @@ table#itemTable input[type="text"]{
   width: 40px;
   text-align: center;
 }
+table.table-striped tr th
+{
+    cursor: pointer;
+}

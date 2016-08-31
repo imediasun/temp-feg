@@ -412,7 +412,7 @@ class MylocationgameController extends Controller
         // 	$id = substr($gameString, 0, 8);
 
         ////// END ///// PLUS CLOSING TAG BELOW /////
-        $filename = public_path().'/qr/'.$id.'.png';
+        $filename = storage_path().'/qr/'.$id.'.png';
         $data=url('/')."mylocationgame/show/".$id;
 
         \QrCode::format('png');
@@ -516,7 +516,7 @@ class MylocationgameController extends Controller
         $asset_ids = $request->get('asset_ids');
         if(!empty($asset_ids)) {
             $zip = new \ZipArchive();
-            $zip_name = "./qr/QRCodes.zip"; // Zip name
+            $zip_name =storage_path(). "/qr/QRCodes.zip"; // Zip name
             $zip->open($zip_name, \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
             //$zip->close();
             $item_count = substr_count($asset_ids, ',') + 1;
@@ -530,9 +530,9 @@ class MylocationgameController extends Controller
 
                     //$location = $this->get_game_info_by_id($id, 'location_id');
 
-                 //   $location = $this->get_game_info_by_id($id, 'location_id');
+                    //   $location = $this->get_game_info_by_id($id, 'location_id');
 
-                    $file = public_path().'/qr/'.$id.'.png';
+                    $file = storage_path().'/qr/'.$id.'.png';
                     if (file_exists($file)) {
                         $zip->addFile($file,basename($file));
                     }
@@ -554,9 +554,15 @@ class MylocationgameController extends Controller
             else {
                 //  die('smaller than one');
                 $this->generate_asset_tag($asset_ids);
-                $file = public_path().'/qr/'.$asset_ids.'.png';
+
+                //$location = $this->get_game_info_by_id($id, 'location_id');
+
+                //   $location = $this->get_game_info_by_id($id, 'location_id');
+                $file = storage_path().'/qr/'.$asset_ids.'.png';
                 if (file_exists($file)) {
-                    return (\Response::download($file));
+                    //$zip->addFile($file,basename($file));
+                    sleep(1);
+                    return response()->download($file);
                 }
                 else{
                     die('file does not exists');

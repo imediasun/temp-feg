@@ -1,3 +1,4 @@
+<?php echo $TID ?>
 <?php usort($tableGrid, "SiteHelpers::_sort"); ?>
 <div class="sbox">
     <div class="sbox-title">
@@ -134,6 +135,7 @@
             @endif
 
         </div>
+
 <?php echo Form::close(); ?>
         @include('ajaxfooter')
 
@@ -159,9 +161,11 @@ if ($setting['view-method'] == 'expand') :
 endif;
 ?>
     });
+
 </script>
 <style>
     .table th.right { text-align:right !important;}
     .table th.center { text-align:center !important;}
 
 </style>
+
