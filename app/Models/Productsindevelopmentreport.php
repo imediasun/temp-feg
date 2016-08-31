@@ -143,7 +143,7 @@ class productsindevelopmentreport extends Sximo  {
                 $row->ETA = date("m/d/Y", strtotime($row->ETA));
             }
             else {
-                $row->ETA = "unknown";
+                $row->ETA = "Unknown";
             }
 
             $newRows[] = $row;
