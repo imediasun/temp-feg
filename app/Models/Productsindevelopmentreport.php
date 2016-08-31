@@ -138,11 +138,11 @@ class productsindevelopmentreport extends Sximo  {
             $row->DateAdded = date("m/d/Y h:i:s A", strtotime($row->DateAdded));
             $row->start_date = date("m/d/Y", strtotime($row->start_date));
             $row->start_date = date("m/d/Y", strtotime($row->start_date));
-            if (!strtotime($row->eta)) {
-                $row->eta = date("m/d/Y", strtotime($row->eta));
+            if (!strtotime($row->ETA)) {
+                $row->ETA = date("m/d/Y", strtotime($row->ETA));
             }
             else {
-                $row->eta = "unknown";
+                $row->ETA = "unknown";
             }
             $newRows[] = $row;
         }
