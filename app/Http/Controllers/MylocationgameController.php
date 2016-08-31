@@ -560,8 +560,7 @@ class MylocationgameController extends Controller
                 //   $location = $this->get_game_info_by_id($id, 'location_id');
                 $file = storage_path().'/qr/'.$asset_ids.'.png';
                 if (file_exists($file)) {
-                    //$zip->addFile($file,basename($file));
-                    sleep(1);
+                    $zip->addFile($file,basename($file));
                     return response()->download($file);
                 }
                 else{
