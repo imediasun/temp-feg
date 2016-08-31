@@ -137,7 +137,7 @@ class productusagereport extends Sximo  {
         
             
             $finalDataQuery = "$mainQuery $fromQuery $whereQuery $groupQuery $orderConditional $limitConditional";
-            $finalTotalQuery = "$totalQuery $fromQuery $whereQuery $groupQuery $orderConditional";
+            $finalTotalQuery = "$totalQuery $fromQuery $whereQuery $groupQuery";
             
             $rawRows = \DB::select($finalDataQuery);
             $rows = self::processRows($rawRows);
