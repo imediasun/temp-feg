@@ -22,7 +22,7 @@ class merchandiseexpensesreport extends Sximo  {
             $row->utilization = '$' . number_format($row->utilization,2);
                        
             $newRows[] = $row;
-}
+        }
 		return $newRows;
 	}        
 	public static function getRows( $args, $cond = null )

@@ -126,7 +126,8 @@ class merchthrowssimple extends Sximo  {
         
         $mainQuery = self::build_query();
         $selectQuery = $mainQuery. " {$orderConditional} {$limitConditional}";
-        $rows = \DB::select($selectQuery);
+        $rawRows = \DB::select($selectQuery);
+        $rows = self::processRows($rawRows);
         
         $total = 0;
         $totalRows = \DB::select($mainQuery);
@@ -145,6 +146,28 @@ class merchthrowssimple extends Sximo  {
 
 
 	}
+	public static function processRows( $rows ){
+        $newRows = array();
+        foreach($rows as $row) {
+
+            $dsEpoch = strtotime($row->date_start);
+            if ($dsEpoch !== FALSE && $dsEpoch > 0) {
+                $row->date_start = date("m/d/Y", strtotime($row->date_start));
+            }
+            else {
+                $row->date_start = "";
+            }            
+            $deEpoch = strtotime($row->date_end);
+            if ($deEpoch !== FALSE && $deEpoch > 0) {
+                $row->date_end = date("m/d/Y", strtotime($row->date_end));
+            }
+            else {
+                $row->date_end = "";
+            } 
+            $newRows[] = $row;
+        }
+		return $newRows;
+	}       
 	
 
 }

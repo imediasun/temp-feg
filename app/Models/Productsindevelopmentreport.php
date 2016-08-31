@@ -137,7 +137,7 @@ class productsindevelopmentreport extends Sximo  {
             
             $row->DateAdded = date("m/d/Y h:i:s A", strtotime($row->DateAdded));
             $row->start_date = date("m/d/Y", strtotime($row->start_date));
-            $row->start_date = date("m/d/Y", strtotime($row->start_date));
+            $row->end_date = date("m/d/Y", strtotime($row->end_date));
             $etaEpoch = strtotime($row->ETA);
             if ($etaEpoch !== FALSE && $etaEpoch > 0) {
                 $row->ETA = date("m/d/Y", strtotime($row->ETA));
