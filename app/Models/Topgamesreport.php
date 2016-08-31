@@ -21,7 +21,7 @@ class topgamesreport extends Sximo  {
             $row->game_total = '$' . number_format($row->game_total,2);
                        
             $newRows[] = $row;
-	}
+        }
 		return $newRows;
 	}        
 	public static function getRows( $args, $cond = null )
