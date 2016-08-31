@@ -48,8 +48,8 @@
                         <th width="100">Size</th>
                         <th width="100">Ticket Value</th>
                         <th width="100">Case Price</th>
-                        <th width="100">Retails Price</th>
-                        <th width="100">Details</th>
+                        <th width="100">Retail Price</th>
+                        <th width="100">Detail</th>
                         <th width="70"><?php echo Lang::get('core.btn_action');?></th>
 
                     </tr>
