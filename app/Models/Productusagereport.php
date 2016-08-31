@@ -101,7 +101,7 @@ class productusagereport extends Sximo  {
             }
             
             $mainQuery = "SELECT requests.id, 
-									 V.vendor_name AS Vendor,
+									 V.vendor_name,
 									 P.vendor_description AS Product,
 									 P.ticket_value,
 									 P.num_items,
