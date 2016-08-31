@@ -110,7 +110,8 @@ class productsindevelopmentreport extends Sximo  {
 		// End Update permission global / own access new ver 1.1
 
         $selectQuery = self::querySelect(). " {$orderConditional} {$limitConditional}";
-        $rows = \DB::select($selectQuery);
+        $rawRows = \DB::select($selectQuery);
+        $rows = self::processRows($rawRows);        
         
         $total = 0;
         $totalQuery = self::querySelect(true);
@@ -129,5 +130,22 @@ class productsindevelopmentreport extends Sximo  {
                 );
 
 
-	}    
+	} 
+	public static function processRows( $rows ){
+        $newRows = array();
+        foreach($rows as $row) {
+            
+            $row->DateAdded = date("m/d/Y h:i:s A", strtotime($row->DateAdded));
+            $row->start_date = date("m/d/Y", strtotime($row->start_date));
+            $row->start_date = date("m/d/Y", strtotime($row->start_date));
+            if (!strtotime($row->eta)) {
+                $row->eta = date("m/d/Y", strtotime($row->eta));
+            }
+            else {
+                $row->eta = "unknown";
+            }
+            $newRows[] = $row;
+        }
+		return $newRows;
+	}     
 }

@@ -89,21 +89,11 @@
 						 	<?php $limited = isset($field['limited']) ? $field['limited'] :''; ?>
 						 	@if(SiteHelpers::filterColumn($limited ))
 								 <td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}" data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
-									 @if($field['field'] == 'ETA')
-
-
-										 {!! date("m/d/Y", strtotime($value)) !!}
-
-									 @else
 										 {!! $value !!}
-
-									 @endif
 								 </td>
 							@endif
                     <?php
 						 endif;
-
-
 						endforeach;
 					  ?>
                   @if($setting['disablerowactions']=='false')     
