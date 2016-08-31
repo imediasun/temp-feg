@@ -26,7 +26,7 @@
 	</ul>
 
 <div class="sbox animated fadeInRight" >
-	<div class="sbox-title"> <h5> <i class="fa fa-table"></i> <?php echo $pageTitle ;?> <small>{{ $pageNote }}</small></h5>
+	<div class="sbox-title"> 
 <div class="sbox-tools" >
 
 		 <a href="{{ url($pageModule) }}" class="btn btn-xs btn-white tips  {{(isset($_GET['search'])) ? 'btn-search ':'' }}" title="Clear Search" ><i class="fa fa-trash-o"></i> Clear Search </a>
