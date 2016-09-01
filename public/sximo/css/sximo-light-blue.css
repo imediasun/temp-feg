@@ -2476,3 +2476,15 @@ table#itemTable input[type="text"]{
   width: 40px;
   text-align: center;
 }
+
+.clearfix:before,
+.clearfix:after {
+    content: "";
+    display: table;
+} 
+.clearfix:after {
+    clear: both;
+}
+.clearfix {
+    zoom: 1; /* For IE 6/7 (trigger hasLayout) */
+}

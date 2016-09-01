@@ -269,7 +269,7 @@ class ReportHelpers
                 Y.game_type,
                 '$gameCat' AS game_cat_id,
                 '$game_category' AS game_category,                
-                SUM(E.game_revenue) AS game_total,
+                SUM(IFNULL(E.game_revenue,0)) AS game_total,
                 E.date_played as date_start,
                 E.date_played as date_end
                 ";
@@ -334,7 +334,7 @@ class ReportHelpers
         }
         
         // GROUP BY
-        $Q .= " GROUP BY E.date_played, E.location_id, E.game_id HAVING SUM(E.game_revenue) > 4000";
+        $Q .= " GROUP BY E.date_played, E.location_id, E.game_id HAVING SUM(IFNULL(E.game_revenue,0)) > 4000";
         
         return $Q;        
         
@@ -375,8 +375,8 @@ class ReportHelpers
             '$gameCat' AS game_cat_id,
             '$game_category' AS game_category,
                 
-            sum(E.game_revenue) AS game_total,
-            sum(E.game_revenue) / if(count(distinct E.game_id)=0, 1, count(distinct E.game_id)) as game_average,
+            sum(IFNULL(E.game_revenue,0)) AS game_total,
+            sum(IFNULL(E.game_revenue,0)) / if(count(distinct E.game_id)=0, 1, count(distinct E.game_id)) as game_average,
             count(distinct E.game_id) as game_count,
             
             '$dateStart'  as date_start,
@@ -410,9 +410,9 @@ class ReportHelpers
         LEFT JOIN game_type GTY ON E.game_type_id = GTY.id
         LEFT JOIN debit_type D ON L.debit_type_id = D.id
         WHERE 
+        L.reporting = 1 AND
         E.game_id <> 0 AND 
         E.record_status = 1 AND
-        E.report_status = 1 AND
         E.date_played >= '$dateStart' and E.date_played <= '$dateEnd'";
 
         if (!empty($location)) {
