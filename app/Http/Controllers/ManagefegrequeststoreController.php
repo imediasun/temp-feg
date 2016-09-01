@@ -137,6 +137,7 @@ class ManagefegrequeststoreController extends Controller
             $v1 = $request->get('v1');
             $v2 = $request->get('v2');
             $v3 = $request->get('v3');
+
             $manageRequestInfo = $this->model->getManageRequestsInfo($v1, $v2, $v3);
             $this->data['TID'] = $manageRequestInfo['TID'];
             $this->data['LID'] = $manageRequestInfo['LID'];
