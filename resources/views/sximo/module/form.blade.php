@@ -172,7 +172,7 @@
 </div></div>
 <script>
 $(document).ready(function() {
-    $('.date').datepicker({ format: 'mm/dd/yyyy', autoClose: true })
+    $('.date').datepicker({ format: 'mm/dd/yyyy', autoclose: true })
     $('.datetime').datetimepicker({ format: 'mm/dd/yyyy hh:ii:ss' });
 	
 	$('.expand-row').hide();
