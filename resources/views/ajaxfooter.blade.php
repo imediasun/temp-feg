@@ -1,3 +1,4 @@
+
 <?php
 $pages = array(10,20,30,50,100);
 $orders = array('asc','desc');
@@ -8,11 +9,19 @@ $orders = array('asc','desc');
 	  <div class="table-actions" style=" padding: 10px 0" id="<?php echo $pageModule;?>Filter">
   			<input type="hidden" name="page" value="{{ $param['page']}}" />
 			<input type="hidden" name="search" value="<?php if(!is_null(Input::get('search'))) echo Input::get('search') ;?>" />
-            <input type="hidden" name="order_type_id" value="<?php isset($TID)? $TID:0 ?>"/>
-          <input type="hidden" name="location_id" value="<?php isset($LID)?$LID:0 ?>"/>
-          <input type="hidden" name="vendor_id" value="<?php isset($VID)?$VID:0 ?>"/>
-          <input type="hidden" name="view" value="<?php isset($view)?$view:"" ?>"/>
-          @if(!isset($setting['disablepagination']) || $setting['disablepagination'] == 'false')
+           @if(isset($TID) && !is_null($TID))
+            <input type="hidden" name="v1" value="T<?php  echo $TID ?>"/>
+          @endif
+          @if(isset($LID) && !is_null($LID))
+          <input type="hidden" name="v2" value="L<?php  echo $LID ?>"/>
+          @endif
+          @if(isset($VID) && !is_null($VID))
+              <input type="hidden" name="v3" value="V<?php  echo $VID ?>"/>
+          @endif
+          @if(isset($view) && !is_null($view))
+              <input type="hidden" name="view" value="<?php  echo $view ?>"/>
+              @endif
+              @if(!isset($setting['disablepagination']) || $setting['disablepagination'] == 'false')
 		<select name="rows" class="select-alt" style="width:70px; float:left;"  >
 		  @foreach($pages as $p)
 		  <option value="{{ $p }}"

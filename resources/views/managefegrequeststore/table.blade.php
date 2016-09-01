@@ -137,7 +137,7 @@
         </div>
 
 <?php echo Form::close(); ?>
-        @include('ajaxfooter')
+        @include('ajaxfooter',array('V1'=>$TID,'V2'=>$LID,'V3'=>$VID,'view'=>$view))
 
     </div>
 </div>

@@ -350,7 +350,7 @@ class MylocationgameController extends Controller
         $request = $request->all();
         $results = \DB::table('game')->where('game_title_id', '=', $request['game_title_id'])->where('location_id', '=', $request['location_id'])->get();
         $info = $this->model->makeInfo($this->module);
-         $rows = $results;
+        $rows = $results;
         $fields = $info['config']['grid'];
         $content = array(
             'fields' => $fields,
@@ -361,28 +361,28 @@ class MylocationgameController extends Controller
     }
     public function getHistory()
     {
-            $rows = $this->model->getMoveHistory();
-            $fields = array('game', 'From Location', 'Sent by', 'From Date', 'To Location', 'Accepted by', 'To Date');
-            $this->data['pageTitle'] = 'game move history';
-            $content = array(
-                'fields' => $fields,
-                'rows' => $rows,
-                'type' => 'move',
-                'title' => $this->data['pageTitle'],
-            );
+        $rows = $this->model->getMoveHistory();
+        $fields = array('game', 'From Location', 'Sent by', 'From Date', 'To Location', 'Accepted by', 'To Date');
+        $this->data['pageTitle'] = 'game move history';
+        $content = array(
+            'fields' => $fields,
+            'rows' => $rows,
+            'type' => 'move',
+            'title' => $this->data['pageTitle'],
+        );
         return view('mylocationgame.csvhistory', $content);
     }
     function getPending()
     {
-             $this->data['pageTitle'] = 'game pending list';
-             $fields=array("Manufacturer","Game Title","Version","Serial","Id","Location Id","City","State","WholeSale","Retail","Notes");
-             $rows=$this->model->getPendingList();
-             $content = array(
-                'fields' => $fields,
-                'rows' => $rows,
-                'type' => 'pending',
-                'title' => $this->data['pageTitle'],
-            );
+        $this->data['pageTitle'] = 'game pending list';
+        $fields=array("Manufacturer","Game Title","Version","Serial","Id","Location Id","City","State","WholeSale","Retail","Notes");
+        $rows=$this->model->getPendingList();
+        $content = array(
+            'fields' => $fields,
+            'rows' => $rows,
+            'type' => 'pending',
+            'title' => $this->data['pageTitle'],
+        );
         return view('mylocationgame.csvhistory', $content);
     }
     function getForsale()
@@ -512,27 +512,24 @@ class MylocationgameController extends Controller
     }
     function postAssettag(Request $request,$asset_ids = null)
     {
-
         $asset_ids = $request->get('asset_ids');
         if(!empty($asset_ids)) {
             $zip = new \ZipArchive();
-            $zip_name =storage_path(). "/qr/QRCodes.zip"; // Zip name
-            $zip->open($zip_name, \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
+            $zip_name ="assettags.zip";
+            $zip_file_path=storage_path(). "/qr"; // Zip name
+            $zip_file=$zip_file_path."/".$zip_name;
+            $zip->open($zip_file, \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
             //$zip->close();
             $item_count = substr_count($asset_ids, ',') + 1;
-
             if ($item_count > 1) {
                 //die('here greater than one');
                 for ($i = 1; $i <= $item_count; $i++) {
                     $id = substr($asset_ids, 0, 8);
                     $asset_ids = substr($asset_ids, 9);
                     $this->generate_asset_tag($id);
-
                     //$location = $this->get_game_info_by_id($id, 'location_id');
-
                     //   $location = $this->get_game_info_by_id($id, 'location_id');
-
-                    $file = storage_path().'/qr/'.$id.'.png';
+                    $file = $zip_file_path.'/'.$id.'.png';
                     if (file_exists($file)) {
                         $zip->addFile($file,basename($file));
                     }
@@ -540,11 +537,17 @@ class MylocationgameController extends Controller
                         die('file not exists');
                 }
                 $zip->close();
-                if (file_exists($zip_name)) {
-                    //header('Content-disposition: attachment; filename=files.zip');
-                    //header('Content-type: application/zip');
-                    //readfile($zip_name);
-                    return response()->download(public_path('qr/QRCodes.zip'));
+                if (file_exists($zip_file)) {
+                    header('Content-type: application/zip');
+                    header('Content-Description: File Transfer');
+                   // header('Content-Disposition: attachment; filename="'.basename($zip_file).'"');
+                    header('Expires: 0');
+                    header('Cache-Control: must-revalidate');
+                    header('Pragma: public');
+                    header('Content-Length: ' . filesize($zip_file));
+                    readfile($zip_file);
+                    unlink($zip_file);
+                    exit;
                 }
                 else
                 {
@@ -575,7 +578,7 @@ class MylocationgameController extends Controller
 								 FROM game_title T
 						 	LEFT JOIN game G ON G.game_title_id = T.id
 							    WHERE G.id = '.$asset_id);
-            $game_info = $query[0]->location_id;
+        $game_info = $query[0]->location_id;
         if(empty($game_info))
         {
             $game_info = 'NONE';
