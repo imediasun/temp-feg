@@ -49,7 +49,7 @@
         @if(SiteHelpers::isModuleEnabled($pageModule))
             <a href="{{ URL::to('tablecols/arrange-cols/'.$pageModule) }}" class="btn btn-sm btn-white" onclick="SximoModal(this.href,'Column Selector'); return false;" ><i class="fa fa-bars"></i> Arrange Columns</a>
             @if(!empty($colconfigs))
-                <select class="form-control" style="width:25%!important;display:inline;" name="col-config"
+                <select class="form-control" style="padding-top:2px; width:25%!important;display:inline;" name="col-config"
                         id="col-config">
                     <option value="0">Select Configuraton</option>
                     @foreach( $colconfigs as $configs )
@@ -60,7 +60,7 @@
             @endif
         @endif
     </div>
-    <div class="col-md-5 ">
+    <div class="col-md-5 " style="padding-left: 38px; ">
         <span><b>Download</b>&nbsp;</span>
         <a href="{{ URL::to( $pageModule .'/history') }}" class="btn btn-sm btn-white"> Game Move History</a>
         <a href="{{ URL::to( $pageModule .'/pending') }}" class="btn btn-sm btn-white"> Pending Sales List</a>
