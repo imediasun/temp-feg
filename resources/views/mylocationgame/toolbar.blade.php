@@ -60,13 +60,15 @@
             @endif
         @endif
     </div>
-    <div class="col-md-5 " style="padding-left: 38px; ">
+    <div class="col-md-5">
+        <div class="row  pull-right" style="margin-right: 1%;">
         <span><b>Download</b>&nbsp;</span>
         <a href="{{ URL::to( $pageModule .'/history') }}" class="btn btn-sm btn-white"> Game Move History</a>
         <a href="{{ URL::to( $pageModule .'/pending') }}" class="btn btn-sm btn-white"> Pending Sales List</a>
         <a href="{{ URL::to( $pageModule .'/forsale') }}" class="btn btn-sm btn-white">For-Sale List</a>
     </div>
 </div>
+    </div>
 
 <script>
     $(document).ready(function() {
