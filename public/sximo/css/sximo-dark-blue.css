@@ -2408,14 +2408,20 @@ li.L9 {
 	vertical-align: middle;
 }
 
+.modal-dialog .select2-container-multi .select2-choices:before,
+.modal-dialog .select2-container-multi .select2-choices:after,
 .clearfix:before,
 .clearfix:after {
     content: "";
     display: table;
 } 
+
+.modal-dialog .select2-container-multi .select2-choices:after,
 .clearfix:after {
     clear: both;
 }
+
+.modal-dialog .select2-container-multi .select2-choices,
 .clearfix {
     zoom: 1; /* For IE 6/7 (trigger hasLayout) */
 }
