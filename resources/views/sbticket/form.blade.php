@@ -11,7 +11,7 @@
 @endif	
 			{!! Form::open(array('url'=>'sbticket/save/'.SiteHelpers::encryptID($row['TicketID']), 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'sbticketFormAjax')) !!}
 			<div class="col-md-12">
-						<fieldset><legend> sbticket</legend>
+						<fieldset><legend> Sbticket</legend>
 									
 				  <div class="form-group ">
 					<label for="TicketID" class=" control-label col-md-4 text-left"> 
