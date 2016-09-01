@@ -26,7 +26,10 @@ class order extends Sximo
 
     public static function processApiData($json)
     {
-        return self::addOrderItems($json);
+        if(!empty($json)){
+            return self::addOrderItems($json);
+        }
+        return $json;
     }
 
     public static function queryWhere($cond = null)
