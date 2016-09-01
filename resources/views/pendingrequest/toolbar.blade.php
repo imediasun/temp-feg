@@ -4,7 +4,8 @@
                 @if(SiteHelpers::isModuleEnabled($pageModule))
                     <a href="{{ URL::to('tablecols/arrange-cols/'.$pageModule) }}" class="btn btn-sm btn-white" onclick="SximoModal(this.href,'Column Selector'); return false;" ><i class="fa fa-bars"></i> Arrange Columns</a>
                     @if(!empty($colconfigs))
-                        <select class="form-control" style="width:25%!important;padding-top:3px !important;display:inline;" name="col-config"
+
+                        <select class="form-control" style="padding-top:3px !important; width:25%!important;display:inline;" name="col-config"
                                 id="col-config">
                             <option value="0">Select Configuraton</option>
                             @foreach( $colconfigs as $configs )
