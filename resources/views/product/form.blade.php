@@ -253,7 +253,7 @@ $(document).ready(function() {
 			{  selected_value : '{{ $row["prod_type_id"] }}' });
 
 	$("#prod_sub_type_id").jCombo("{{ URL::to('product/comboselect?filter=product_type:id:product_type') }}",
-			{  selected_value : '{{ $row["prod_sub_type_id"] }}' });
+			{selected_value : '{{ $row["prod_sub_type_id"] }}' });
 
 
 	$('.editor').summernote();
