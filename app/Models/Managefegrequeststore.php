@@ -141,9 +141,9 @@ class managefegrequeststore extends Sximo
 
         $query = \DB::select('SELECT COUNT(requests.id) as count,O.order_type AS request_count FROM requests
 								LEFT JOIN products P ON P.id = requests.product_id LEFT JOIN order_type O ON O.id = P.prod_type_id
-                                WHERE requests.status_id = 1 ' . $order_type_where . ' GROUP BY P.prod_type_id');
+                                WHERE requests.status_id = 1 and O.order_type is not null ' . $order_type_where . ' GROUP BY P.prod_type_id');
+  foreach ($query as $index => $row) {
 
-        foreach ($query as $index => $row) {
        //     $number_requests = $number_requests ." ".." | <em>". $row->request_count .":</em>";
             if($index == count($query) -1 )
                 $number_requests = $number_requests ." ".$row->request_count.":  <em>". $row->count  ."  </em>";
