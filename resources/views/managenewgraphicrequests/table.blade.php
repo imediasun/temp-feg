@@ -60,12 +60,12 @@
 				</td>
 			  </tr>
 			  @endif
-
+                <?php $j=0; ?>
            		<?php foreach ($rowData as $row) :
            			  $id = $row->id;
            		?>
                 <tr class="editable" id="form-{{ $row->id }}">
-					<td class="number"> <?php echo ++$i;?>  </td>
+					<td class="number"> <?php echo ++$j ;?>  </td>
 					<td ><input type="checkbox" class="ids" name="ids[]" value="<?php echo $row->id ;?>" />  </td>
 					@if($setting['view-method']=='expand')
 					<td><a href="javascript:void(0)" class="expandable" rel="#row-{{ $row->id }}" data-url="{{ url('managenewgraphicrequests/show/'.$id) }}"><i class="fa fa-plus " ></i></a></td>
@@ -85,9 +85,9 @@
                                          $images=explode(',',$value);
                                          ?>
                                          <?php
-                                                foreach($images as $i)
+                                                foreach($images as $img)
                                                     {
-                                         echo SiteHelpers::showUploadedFile($i, '/uploads/newGraphic/', 50, false);
+                                         echo SiteHelpers::showUploadedFile($img, '/uploads/newGraphic/', 50, false);
                                          }?>
 
 									 @elseif($field['field'] == 'need_by_date')
