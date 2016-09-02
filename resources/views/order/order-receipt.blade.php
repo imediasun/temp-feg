@@ -173,7 +173,7 @@
 
             <div style="clear:both"></div>
 
-            <div class="form-group col-md-offset-4" style="margin-bottom:50px; padding-left: 16px;">
+            <div class="form-group col-md-offset-4" style="margin-bottom:50px; padding-left: 112px;">
                 <label class="col-sm-4 text-right">&nbsp;</label>
                 <div class="col-sm-8">
                     <button type="submit" class="btn btn-primary btn-sm " id="submit_btn"><i
