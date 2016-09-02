@@ -21,7 +21,8 @@ class product extends Sximo  {
  products.vendor_description) AS `prod_description`,ROUND(products.case_price/num_items,2) AS
   `unit_pricing`,T.type_description AS `product_type`,IF(products.inactive = 1,'NOT AVAIL.',CONCAT('Add to Cart'))
   AS `add`,CONCAT('Details') AS `addldetails`,products.id AS `product_id`,
-  IF(products.retail_price = 0.00,ROUND(products.case_price/num_items,2),products.retail_price) AS `retail_price`
+  IF(products.retail_price = 0.00,ROUND(products.case_price/num_items,2),products.retail_price) AS `retail_price`,
+  CONCAT(T.id,'-',T.product_type) AS prod_type_id
   FROM `products` LEFT JOIN vendor ON (products.vendor_id = vendor.id)
   LEFT JOIN order_type O ON (O.id = products.prod_type_id)
   LEFT JOIN product_type T ON (T.id = products.prod_sub_type_id)";
