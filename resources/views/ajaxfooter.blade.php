@@ -30,11 +30,14 @@ $orders = array('asc','desc');
 			@endif
 		  >{{ $p }}</option>
 		  @endforeach
+              @if($pageModule != 'order')
           <option value="0"
             @if($param['limit'] == '0')
 				selected="selected"
 			@endif
+
             >All</option>
+                  @endif
 		</select>
         @endif
 
