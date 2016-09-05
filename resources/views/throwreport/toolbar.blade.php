@@ -21,7 +21,20 @@
         </select>
         @endif
         @endif
+
+
+
+
+				<input type="datetime" id="weeklyDatePicker"  name ="weeklydate" value ="" style="padding-bottom:5px" />
+
+
+
+
+
+
     </div>
+
+
 	<div class="col-md-4 ">
 		@if($access['is_excel'] ==1)
 		<div class="pull-right">
@@ -34,7 +47,27 @@
 	</div>
 </div>
 <script>
+
+	$(document).ready(function(){
+
+		//Initialize the datePicker(I have taken format as mm-dd-yyyy, you can     //have your owh)
+		$("#weeklyDatePicker").datetimepicker({
+			format: 'MM/DD/YYYY'
+		});
+
+		//Get the value of Start and End of Week
+		$('#weeklyDatePicker').on('dp.change', function (e) {
+			var value = $("#weeklyDatePicker").val();
+			var firstDate = moment(value, "MM/DD/YYYY").day(0).format("MM/DD/YYYY");
+			var lastDate =  moment(value, "MM/DD/YYYY").day(6).format("MM/DD/YYYY");
+			$("#weeklyDatePicker").val(firstDate + " - " + lastDate);
+		});
+
     $("#col-config").on('change',function(){
         reloadData('#{{ $pageModule }}','{{ $pageModule }}/data?config_id='+$("#col-config").val());
     });
+
+	});
+
+
 </script>

@@ -38,9 +38,10 @@
                 }
 					endif;
 				endforeach; ?>
-                @if($setting['disablerowactions']=='false')
-				<th width="70"><?php echo Lang::get('core.btn_action') ;?></th>
-                @endif
+				<th width="100">PC Payout</th>
+
+				<th width="100">Cost of Goods Sold</th>
+
 			  </tr>
         </thead>
 
@@ -89,19 +90,25 @@
 						 	<?php $limited = isset($field['limited']) ? $field['limited'] :''; ?>
 						 	@if(SiteHelpers::filterColumn($limited ))
 								 <td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}" data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
-									{!! $value !!}
+									 @if($field['field']=='price_per_play')
+
+										 <input type="text" value="{{ $value }}" name="price_per_play[]" id="{{ $row->id }}" style="width:55px" />
+
+										 @elseif($field['field']=='retail_price')
+
+											 <input type="text" value="{{ $value }}" name="retail_price[]" id="{{ $row->id }}" style="width:55px" />
+										@else {!! $value !!}
+									 @endif
 								 </td>
 							@endif
                     <?php
 						 endif;
 						endforeach;
 					  ?>
-                  @if($setting['disablerowactions']=='false')     
-				 <td data-values="action" data-key="<?php echo $row->id ;?>">
-					{!! AjaxHelpers::buttonAction('throwreport',$access,$id ,$setting) !!}
-					{!! AjaxHelpers::buttonActionInline($row->id,'id') !!}
-				</td>
-                @endif
+
+				 <td></td>
+				 <td></td>
+
                 </tr>
                 @if($setting['view-method']=='expand')
                 <tr style="display:none" class="expanded" id="row-{{ $row->id }}">
@@ -135,6 +142,17 @@
 	</div>
 	<?php echo Form::close() ;?>
 	@include('ajaxfooter')
+		<div class="col-md-10 col-md-offset-3">
+
+
+			<div class="col-md-10">
+				<input type="button" style="font-size:1.4em; width:60%; text-align:center;"
+					   value="Submit Weekly Reports"></button>
+			</div>
+		</div>
+
+		</br>
+
 
 	</div>
 </div>
@@ -143,10 +161,20 @@
 <script>
 $(document).ready(function() {
 	$('.tips').tooltip();
+
+
+
+
+
+
 	$('input[type="checkbox"],input[type="radio"]').iCheck({
 		checkboxClass: 'icheckbox_square-green',
 		radioClass: 'iradio_square-green',
 	});
+
+
+
+
 	$('#{{ $pageModule }}Table .checkall').on('ifChecked',function(){
 		$('#{{ $pageModule }}Table input[type="checkbox"]').iCheck('check');
 	});
