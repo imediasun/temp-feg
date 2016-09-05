@@ -38,7 +38,7 @@
                 }
 					endif;
 				endforeach; ?>
-				<th width="100">PC Payout</th>
+
 
 				<th width="100">Cost of Goods Sold</th>
 
@@ -97,6 +97,11 @@
 										 @elseif($field['field']=='retail_price')
 
 											 <input type="text" value="{{ $value }}" name="retail_price[]" id="{{ $row->id }}" style="width:55px" />
+
+
+									 @elseif($field['field']=='embed')
+
+										 <input type="text" value="{{ $value }}" name="embed[]" id="{{ $row->id }}" style="width:55px" />
 										@else {!! $value !!}
 									 @endif
 								 </td>
@@ -106,7 +111,7 @@
 						endforeach;
 					  ?>
 
-				 <td></td>
+				
 				 <td></td>
 
                 </tr>
