@@ -22,7 +22,14 @@ class throwreport extends Sximo  {
 	}	
 
 	public static function queryWhere(  ){
-	    //@todo get get location id from session
+
+
+
+$location= \Session::get('selected_location');
+    return "WHERE   game_earnings.loc_id =$location ";
+
+
+        //@todo get get location id from session
         //@todo get week range date from post or get parameters
 		/*
 		 * actual query is not giving any result
@@ -30,8 +37,8 @@ class throwreport extends Sximo  {
                   AND DATE(date_start) >= CURRENT_DATE AND DATE(date_end)<= CURRENT_DATE+INTERVAL 7 DAY ";
 		*/
 		//temp query to get results
-        return "  WHERE location_id = 2012 AND game_type_id = 3
-                  AND DATE(date_start) >= '2015-09-06' AND DATE(date_end)<= '2015-09-12' ";
+      /*  return "  WHERE location_id = 2012 AND game_type_id = 3
+                  AND DATE(date_start) >= '2015-09-06' AND DATE(date_end)<= '2015-09-12' ";  */
 	}
 	
 	public static function queryGroup(){

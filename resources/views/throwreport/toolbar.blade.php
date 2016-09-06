@@ -25,7 +25,7 @@
 
 
 
-				<input type="datetime" id="weeklyDatePicker"  name ="weeklydate" value ="" style="padding-bottom:5px" />
+				<input type="text" id="weeklyDatePicker"  name ="weeklydate"  style="padding-bottom:5px" />
 
 
 
@@ -46,6 +46,12 @@
 		@endif
 	</div>
 </div>
+
+
+
+{{--<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>--}}
+<script src="https://cdn.jsdelivr.net/momentjs/2.10.6/moment.min.js"></script>
+
 <script>
 
 	$(document).ready(function(){
@@ -57,7 +63,9 @@
 
 		//Get the value of Start and End of Week
 		$('#weeklyDatePicker').on('dp.change', function (e) {
+			alert('oki');
 			var value = $("#weeklyDatePicker").val();
+			alert(value);
 			var firstDate = moment(value, "MM/DD/YYYY").day(0).format("MM/DD/YYYY");
 			var lastDate =  moment(value, "MM/DD/YYYY").day(6).format("MM/DD/YYYY");
 			$("#weeklyDatePicker").val(firstDate + " - " + lastDate);
