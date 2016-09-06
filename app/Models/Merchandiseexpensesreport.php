@@ -57,7 +57,7 @@ class merchandiseexpensesreport extends Sximo  {
             $message = "No data found. Try searching with other filters.";
 	}
         $humanDateRange = ReportHelpers::humanifyDateRangeMessage($date_start, $date_end, "F Y");
-        $topMessage = "Merchandize Expesnes $humanDateRange";
+        $topMessage = "Merchandise Expenses $humanDateRange";
         
 		$results = array(
             'topMessage' => $topMessage,
