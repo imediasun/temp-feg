@@ -1,7 +1,6 @@
 <?php usort($tableGrid, "SiteHelpers::_sort"); ?>
 <div class="sbox">
 	<div class="sbox-title">
-		<h5> <i class="fa fa-table"></i> </h5>
         @include( $pageModule.'/toolbar',['config_id'=>$config_id,'colconfigs' => SiteHelpers::getRequiredConfigs($module_id)])        
 	</div>
 	<div class="sbox-content">

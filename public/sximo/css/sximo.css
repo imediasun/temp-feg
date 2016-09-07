@@ -2486,3 +2486,13 @@ table.table-striped tr th
 .datepicker tr:hover {
   background-color: #808080;
 }
+
+/* Simple search UI modifications testing on topgamesreport module  [start] */
+.topgamesreportContainer .sbox-title {
+  padding: 10px 15px; 
+}
+.topgamesreportContainer .sbox-title h5 {    
+    margin: 7px;
+}
+
+/* Simple search UI modifications testing on topgamesreport module  [end] */
