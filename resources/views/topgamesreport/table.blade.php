@@ -4,9 +4,10 @@
         @include( $pageModule.'/toolbar',['config_id'=>$config_id,'colconfigs' => SiteHelpers::getRequiredConfigs($module_id)])        
 	</div>
 	<div class="sbox-content">
-        
+        {!! $simpleSearchForm = SiteHelpers::configureSimpleSearchForm($tableForm) !!}
+        @if($setting['usesimplesearch']=='true')     
         <div class="simpleSearchContainer clearfix">
-            @foreach ($tableForm as $t)
+            @foreach ($simpleSearchForm as $t)
                 @if($t['simplesearch'] =='1') 
                 <div class="col-md-3">
                     {!! SiteHelpers::activeLang($t['label'],(isset($t['language'])? $t['language'] : array())) !!}
@@ -18,6 +19,7 @@
                 <button type="button" name="search" class="doSimpleSearch btn btn-sm btn-primary"> Search </button>		
             </div>
         </div>
+        @endif
 	 <?php echo Form::open(array('url'=>'topgamesreport/delete/', 'class'=>'form-horizontal' ,'id' =>'SximoTable'  ,'data-parsley-validate'=>'' )) ;?>
 <div class="table-responsive">
     @if(!empty($topMessage))

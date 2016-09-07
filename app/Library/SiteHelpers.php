@@ -1950,4 +1950,12 @@ class SiteHelpers
         $region_name = \DB::select('select region from region where id=' . $id);
         return $region_name;
     }
+    
+    static function configureSimpleSearchForm($data) {
+        uasort($data, function ($a, $b) { 
+            return $a['simplesearchorder'] == $b['simplesearchorder'] ? 0 :
+                    ($a['simplesearchorder'] > $b['simplesearchorder'] ? 1 : -1); 
+        });
+        return $data;
+    }
 }
