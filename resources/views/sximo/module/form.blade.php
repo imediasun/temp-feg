@@ -102,7 +102,7 @@
             <td class="formFieldSimpleSearch">
                 <label >
                     <input type="checkbox" name="simplesearch[<?php echo $id;?>]" value="1" 
-                    <?php if($rows['simplesearch'] == 1) echo 'checked="checked"';?>
+                    <?php if(isset($rows['simplesearch']) && $rows['simplesearch'] == 1) echo 'checked="checked"';?>
                     />
                 </label>
 			</td>
