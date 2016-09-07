@@ -481,7 +481,7 @@ function getSearch($mode = 'ajax')
     $this->data['tableForm'] = $this->info['config']['forms'];
     $this->data['tableGrid'] = $this->info['config']['grid'];
     $this->data['searchMode'] = $mode;
-    if ($this->info['setting']['usesimplesearch'] == 'true') {
+    if ($this->info['setting']['hideadvancedsearchoperators'] == 'true') {
         return view('feg_common.search', $this->data);
     } else {
         return view('sximo.module.utility.search', $this->data);

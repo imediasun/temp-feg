@@ -304,6 +304,7 @@ class ModuleController extends Controller {
             'inline'        => (isset($config['setting']['inline'])  ? $config['setting']['inline'] : 'false'  ),
             
             'usesimplesearch'         => (isset($config['setting']['usesimplesearch'])  ? $config['setting']['usesimplesearch'] : 'false'  ),
+            'hideadvancedsearchoperators'         => (isset($config['setting']['hideadvancedsearchoperators'])  ? $config['setting']['hideadvancedsearchoperators'] : 'false'  ),
             'disablepagination'         => (isset($config['setting']['disablepagination'])  ? $config['setting']['disablepagination'] : 'false'  ),
             'disablesort'               => (isset($config['setting']['disablesort'])  ? $config['setting']['disablesort'] : 'false'  ),
             'disableactioncheckbox'     => (isset($config['setting']['disableactioncheckbox'])  ? $config['setting']['disableactioncheckbox'] : 'false'  ),
@@ -378,7 +379,8 @@ class ModuleController extends Controller {
             'view-method'        => (!is_null($request->input('view-method'))  ? $request->input('view-method') : 'native' ) ,
             'inline'        => (!is_null($request->input('inline'))  ? 'true' : 'false' ) ,
             
-            'usesimplesearch'           => (!is_null($request->input('usesimplesearch'))  ? 'true' : 'false' ) ,
+            'usesimplesearch'               => (!is_null($request->input('usesimplesearch'))  ? 'true' : 'false' ) ,
+            'hideadvancedsearchoperators'   => (!is_null($request->input('hideadvancedsearchoperators'))  ? 'true' : 'false' ) ,
             'disablepagination'         => (!is_null($request->input('disablepagination'))  ? 'true' : 'false' ) ,
             'disablesort'               => (!is_null($request->input('disablesort'))  ? 'true' : 'false' ) ,
             'disableactioncheckbox'     => (!is_null($request->input('disableactioncheckbox'))  ? 'true' : 'false' ) ,

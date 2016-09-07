@@ -138,7 +138,7 @@
 
 
         <div class="form-group">
-          <label for="ipt" class=" control-label col-md-4">Disable Sorting from footer</label>
+          <label for="disablesort" class=" control-label col-md-4">Disable Sorting from footer</label>
           <div class="col-md-8">
               <label class="checkbox">
               <input type="checkbox" value="true" name="disablesort" id="disablesort"
@@ -182,7 +182,7 @@
 		 </div> 
 	  </div>   
         <div class="form-group">
-          <label for="ipt" class=" control-label col-md-4">Disable pagination</label>
+          <label for="disablepagination" class=" control-label col-md-4">Disable pagination</label>
           <div class="col-md-8">
               <label class="checkbox">
               <input type="checkbox" value="true" name="disablepagination" id="disablepagination"
@@ -193,7 +193,7 @@
         </div>  
 
         <div class="form-group">
-          <label for="ipt" class=" control-label col-md-4">Disable checkbox in each row</label>
+          <label for="disableactioncheckbox" class=" control-label col-md-4">Disable checkbox in each row</label>
           <div class="col-md-8">
               <label class="checkbox">
               <input type="checkbox" value="true" name="disableactioncheckbox" id="disableactioncheckbox"
@@ -204,7 +204,7 @@
         </div>     
         
         <div class="form-group">
-          <label for="ipt" class=" control-label col-md-4">Disable row-wise actions</label>
+          <label for="disablerowactions" class=" control-label col-md-4">Disable row-wise actions</label>
           <div class="col-md-8">
               <label class="checkbox">
               <input type="checkbox" value="true" name="disablerowactions" id="disablerowactions"
@@ -215,11 +215,22 @@
         </div>  
         
         <div class="form-group">
-          <label for="ipt" class=" control-label col-md-4">Simpler search options</label>
+          <label for="usesimplesearch" class=" control-label col-md-4">Simpler search options</label>
           <div class="col-md-8">
               <label class="checkbox">
               <input type="checkbox" value="true" name="usesimplesearch" id="usesimplesearch"
               @if(isset($setting['usesimplesearch']) && $setting['usesimplesearch'] == 'true') checked="checked" @endif 	
+               /> Yes
+              </label>
+           </div> 
+        </div>                
+        
+        <div class="form-group">
+          <label for="hideadvancedsearchoperators" class=" control-label col-md-4">Hide Operators in Advanced Search</label>
+          <div class="col-md-8">
+              <label class="checkbox">
+              <input type="checkbox" value="true" name="hideadvancedsearchoperators" id="hideadvancedsearchoperators"
+              @if(isset($setting['hideadvancedsearchoperators']) && $setting['hideadvancedsearchoperators'] == 'true') checked="checked" @endif 	
                /> Yes
               </label>
            </div> 
@@ -284,7 +295,7 @@
 		  <div class="form-group">
 			<label for="ipt" class=" control-label col-md-4"></label>
 			<div class="col-md-8">
-			<button type="submit" name="submit" class="btn btn-primary"> Update Seting </button>
+			<button type="submit" name="submit" class="btn btn-primary"> Update Settings </button>
 			 </div> 
 		  </div> 		  
 		   <p class="alert alert-warning"> <strong> Important ! </strong> this setting only work with module type <strong>Ajax Grid</strong></p>
