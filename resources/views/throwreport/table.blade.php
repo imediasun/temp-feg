@@ -176,12 +176,24 @@ $(document).ready(function() {
 		var payout = $(this).closest('tr').find("input[name='pc_payout']").val();
 
 		var revenue = $(this).closest('tr').find("td[data-field='revenue_total']").attr("data-values");
-		var payout_percent = (retail_price*payout)/revenue;
-				$(this).closest('tr').find("input#payout_percent").val(payout_percent);
 
-		$(this).closest('tr').find("input#tot").val(retail_price*payout);
+		if (revenue == 0.00) {
 
-	});
+			var payout_percent = (retail_price * payout);
+
+		}
+		else {
+
+			var payout_percent = (retail_price * payout) / revenue;
+		}
+
+
+
+			$(this).closest('tr').find("input#payout_percent").val(payout_percent);
+
+			$(this).closest('tr').find("input#tot").val(retail_price * payout);
+
+		});
 
 
 
