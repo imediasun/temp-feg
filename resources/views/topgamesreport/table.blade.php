@@ -13,7 +13,17 @@
 	<div class="sbox-content">
 
         @include( $pageModule.'/toolbar',['config_id'=>$config_id,'colconfigs' => SiteHelpers::getRequiredConfigs($module_id)])
-
+        <div class="row m-b simpleSearchContainer">
+            @foreach ($tableForm as $t)
+                @if($t['simplesearch'] =='1')                    
+                        {!! SiteHelpers::activeLang($t['label'],(isset($t['language'])? $t['language'] : array())) !!}
+                        {!! SiteHelpers::transForm($t['field'] , $tableForm) !!}
+                        <input id="{{ $t['field']}}_operate" type="hidden" name="operate" value="equal" />
+                    </tr>
+                @endif
+            @endforeach		
+            <button type="button" name="search" class="doSearch btn btn-sm btn-primary"> Search </button>		
+        </div>
 	 <?php echo Form::open(array('url'=>'topgamesreport/delete/', 'class'=>'form-horizontal' ,'id' =>'SximoTable'  ,'data-parsley-validate'=>'' )) ;?>
 <div class="table-responsive">
     @if(!empty($topMessage))
