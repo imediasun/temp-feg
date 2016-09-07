@@ -2494,5 +2494,10 @@ table.table-striped tr th
 .topgamesreportContainer .sbox-title h5 {    
     margin: 7px;
 }
-
+.simpleSearchContainer {
+    background: #fefefe;
+    padding: 10px 0;
+    border: 1px solid #ddd;
+    font-size: 12px;    
+}
 /* Simple search UI modifications testing on topgamesreport module  [end] */

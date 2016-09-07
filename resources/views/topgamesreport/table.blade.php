@@ -5,7 +5,7 @@
 	</div>
 	<div class="sbox-content">
         
-        <div class="row m-b simpleSearchContainer">
+        <div class="simpleSearchContainer clearfix">
             @foreach ($tableForm as $t)
                 @if($t['simplesearch'] =='1') 
                 <div class="col-md-3">
@@ -14,7 +14,7 @@
                 </div>                        
                 @endif
             @endforeach		
-            <div class="col-md-3">
+            <div class="col-md-3"><br/>
                 <button type="button" name="search" class="doSimpleSearch btn btn-sm btn-primary"> Search </button>		
             </div>
         </div>
