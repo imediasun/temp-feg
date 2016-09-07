@@ -75,6 +75,7 @@ class GamestitleController extends Controller
         );
         // Get Query
         $results = $this->model->getRows($params);
+
         foreach ($results['rows'] as $result) {
 
             if ($result->has_manual == 1) {
@@ -101,7 +102,7 @@ class GamestitleController extends Controller
         $page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;
 
 
-        if(count($results['rows']) == $results['total']){
+        if(count($results['rows']) == $results['total'] && $results['total']!=0 ){
             $params['limit'] = $results['total'];
         }
 

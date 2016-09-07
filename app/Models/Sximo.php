@@ -79,7 +79,7 @@ class Sximo extends Model {
         if(!empty($status_id)){
             $select .= " AND status_id='$status_id'";
         }
-
+//echo $select . " {$params} " . self::queryGroup() . " {$orderConditional}  {$limitConditional} ";die();
         Log::info("Query : ".$select . " {$params} " . self::queryGroup() . " {$orderConditional}  {$limitConditional} ");
         $result = \DB::select($select . " {$params} " . self::queryGroup() . " {$orderConditional}  {$limitConditional} ");
 

@@ -1,5 +1,6 @@
 <?php
-        Route::controller('pages', 'PagesController');
+
+                    Route::controller('pages', 'PagesController');
                     Route::controller('vendor', 'VendorController');
                     Route::controller('calendar', 'CalendarController');
                     Route::controller('sbinovice', 'SbinoviceController');
@@ -24,22 +25,11 @@
                     Route::controller('tablecols', 'TablecolsController');
                     Route::controller('mylocationgame', 'MylocationgameController');
                     Route::controller('merchandisebudget', 'MerchandisebudgetController');
-                    Route::controller('closedlocations', 'ClosedlocationsController');
-                    Route::controller('gamesnotondebitcard', 'GamesnotondebitcardController');
-                    Route::controller('topgamesavgplays', 'TopgamesavgplaysController');
-                    Route::controller('bottomgamesavgplays', 'BottomgamesavgplaysController');
-                    Route::controller('potentialoverreportingerrors', 'PotentialoverreportingerrorsController');
-                    Route::controller('gamesnotplayed', 'GamesnotplayedController');
-                    Route::controller('nonfegreaders', 'NonfegreadersController');
-                    Route::controller('merchthrowssimple', 'MerchthrowssimpleController');
-                    Route::controller('merchthrowsdetailed', 'MerchthrowsdetailedController');
                     Route::controller('shopfegrequeststore', 'ShopfegrequeststoreController');
-                    Route::controller('gameplayrankbylocation', 'GameplayrankbylocationController');
                     Route::controller('addtocart', 'AddtocartController');
                     Route::controller('managefegrequeststore', 'ManagefegrequeststoreController');
                     Route::controller('managenewgraphicrequests', 'ManagenewgraphicrequestsController');
                     Route::controller('manageservicerequests', 'ManageservicerequestsController');
-                    Route::controller('productusagereport', 'ProductusagereportController');
                     Route::controller('gamesintransit', 'GamesintransitController');
                     Route::controller('gamesdisposed', 'GamesdisposedController');
                     Route::controller('spareparts', 'SparepartsController');
@@ -51,11 +41,5 @@
                     Route::controller('managefreightquoters', 'ManagefreightquotersController');
                     Route::controller('freightquoters', 'FreightquotersController');
                     Route::controller('trainingmaterial', 'TrainingmaterialController');
-                    Route::controller('topgamesreport', 'TopgamesreportController');
-                    Route::controller('bottomgamesreport', 'BottomgamesreportController');
-                    Route::controller('productsindevelopmentreport', 'ProductsindevelopmentreportController');
-                    Route::controller('gameplayreport', 'GameplayreportController');
-                    Route::controller('readersmissingassetidreport', 'ReadersmissingassetidreportController');
-                    Route::controller('merchandiseexpensesreport', 'MerchandiseexpensesreportController');
-                    Route::controller('itemreceipt', 'ItemreceiptController');
+
                     ?>

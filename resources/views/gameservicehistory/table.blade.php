@@ -71,6 +71,7 @@
 
            		<?php foreach ($rowData as $row) :
            			  $id = $row->id;
+
            		?>
                 <tr class="editable" id="form-{{ $row->id }}">
 					<td class="number"> <?php echo ++$i;?>  </td>
@@ -81,23 +82,21 @@
 					<td><a href="javascript:void(0)" class="expandable" rel="#row-{{ $row->id }}" data-url="{{ url('gameservicehistory/show/'.$id) }}"><i class="fa fa-plus " ></i></a></td>
 					@endif
 					 <?php foreach ($tableGrid as $field) :
+
 					 	if($field['view'] =='1') :
 							$conn = (isset($field['conn']) ? $field['conn'] : array() );
 
 
 							$value = AjaxHelpers::gridFormater($row->$field['field'], $row , $field['attribute'],$conn);
-						 	?>
+
+                    ?>
 						 	<?php $limited = isset($field['limited']) ? $field['limited'] :''; ?>
 						 	@if(SiteHelpers::filterColumn($limited ))
 								 <td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}" data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
 									 @if($field['field'] == 'date_down')
-
 										 {!! date("m/d/Y", strtotime($value)) !!}
-
 									 @else
-
 									 {!! $value !!}
-
 										 @endif
 								 </td>
 							@endif

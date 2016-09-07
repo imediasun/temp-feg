@@ -1,3 +1,4 @@
+
 @if($setting['form-method'] =='native')
 	<div class="sbox">
 		<div class="sbox-title">  
@@ -24,17 +25,12 @@
 					 </div>
 				  </div> 
 				  <div class="form-group  " >
-					<label for="Game" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Game ', (isset($fields['game_id']['language'])? $fields['game_id']['language'] : array())) !!}
+					<label for="Game Id" class=" control-label col-md-4 text-left">
+					{!! SiteHelpers::activeLang('Game Id', (isset($fields['game_id']['language'])? $fields['game_id']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
-                        <select name="game_id" id="game_id" class="form-control">
-                            <option disabled>Select Game</option>
-                        @foreach($game_name as $game)
-                        <option value="{{$game->id}}" @if($game->id == $row['game_id']) selected @endif>{{ $game->game_name }}
-                        </option>
-                        @endforeach
-                        </select>
+					  <textarea name='game_id' rows='5' id='game_id' class='form-control '
+				           >{{ $row['game_id'] }}</textarea>
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -45,8 +41,9 @@
 					{!! SiteHelpers::activeLang('Date Down', (isset($fields['date_down']['language'])? $fields['date_down']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
-					     <input type="text" name="date_down" id="date_down" class="date form-control" value="{{ $row['date_down'] }}"/> 
-					  </div> 
+					  <textarea name='date_down' rows='5' id='date_down' class='form-control '
+				           >{{ $row['date_down'] }}</textarea>
+					 </div> 
 					 <div class="col-md-2">
 					 	
 					 </div>
@@ -65,11 +62,12 @@
 				  </div> 
 				  <div class="form-group  " >
 					<label for="Down User Id" class=" control-label col-md-4 text-left">
-                    </label>
-                        <div class="col-md-6">
-					<select name="down_user_id" id="down_user_id" class="select3"></select>
-
-                  </div>
+					{!! SiteHelpers::activeLang('Down User Id', (isset($fields['down_user_id']['language'])? $fields['down_user_id']['language'] : array())) !!}
+					</label>
+					<div class="col-md-6">
+					  <textarea name='down_user_id' rows='5' id='down_user_id' class='form-control '
+				           >{{ $row['down_user_id'] }}</textarea>
+					 </div> 
 					 <div class="col-md-2">
 					 	
 					 </div>
@@ -91,7 +89,8 @@
 					{!! SiteHelpers::activeLang('Date Up', (isset($fields['date_up']['language'])? $fields['date_up']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
-                                            <input type="text" name="date_up" id="date_up" class="date form-control" value="{{ $row['date_up'] }}"/> 
+					  <textarea name='date_up' rows='5' id='date_up' class='form-control '
+				           >{{ $row['date_up'] }}</textarea>
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -99,11 +98,36 @@
 				  </div> 
 				  <div class="form-group  " >
 					<label for="Up User Id" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Up User ', (isset($fields['up_user_id']['language'])? $fields['up_user_id']['language'] : array())) !!}
+					{!! SiteHelpers::activeLang('Up User Id', (isset($fields['up_user_id']['language'])? $fields['up_user_id']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
-                        <select name="up_user_id" id="up_user_id" class="select3" ></select>
-					  </div>
+					  <textarea name='up_user_id' rows='5' id='up_user_id' class='form-control '
+				           >{{ $row['up_user_id'] }}</textarea>
+					 </div> 
+					 <div class="col-md-2">
+					 	
+					 </div>
+				  </div> 
+				  <div class="form-group  " >
+					<label for="Game Name" class=" control-label col-md-4 text-left">
+					{!! SiteHelpers::activeLang('Game Name', (isset($fields['game_name']['language'])? $fields['game_name']['language'] : array())) !!}
+					</label>
+					<div class="col-md-6">
+					  <textarea name='game_name' rows='5' id='game_name' class='form-control '
+				           >{{ $row['game_name'] }}</textarea>
+					 </div> 
+					 <div class="col-md-2">
+					 	
+					 </div>
+				  </div> 
+				  <div class="form-group  " >
+					<label for="Daysdiff" class=" control-label col-md-4 text-left">
+					{!! SiteHelpers::activeLang('Daysdiff', (isset($fields['daysdiff']['language'])? $fields['daysdiff']['language'] : array())) !!}
+					</label>
+					<div class="col-md-6">
+					  <textarea name='daysdiff' rows='5' id='daysdiff' class='form-control '
+				           >{{ $row['daysdiff'] }}</textarea>
+					 </div> 
 					 <div class="col-md-2">
 					 	
 					 </div>
@@ -111,7 +135,80 @@
 			</div>
 			
 												
-								
+				
+
+	@if($subgrid['access']['is_add'] == '1')				
+	<hr /><div class="clr clear"></div>	
+	
+	<h5> test </h5>
+	
+	<div class="table-responsive">
+	    <table class="table table-striped ">
+	        <thead>
+				<tr>
+					@foreach ($subgrid['tableGrid'] as $t)
+						@if($t['view'] =='1' && $t['field'] !='game_id')
+							<th>
+							{{ SiteHelpers::activeLang($t['label'],(isset($t['language'])? $t['language'] : array())) }}
+							</th>
+						@endif
+					@endforeach
+					<th></th>	
+				  </tr>
+
+	        </thead>
+
+        <tbody>
+        @if(count($subgrid['rowData'])>=1)
+            @foreach ($subgrid['rowData'] as $rows)
+	            <tr class="clone clonedInput">									
+					 @foreach ($subgrid['tableGrid'] as $field)
+						 @if($field['view'] =='1' && $field['field'] !='game_id')
+						 <td>					 
+						 	{!! SiteHelpers::bulkForm($field['field'] , $subgrid['tableForm'] , $rows->$field['field']) !!}							 
+						 </td>
+						 @endif					 
+					 
+					 @endforeach
+					 <td>
+					 	<a onclick=" $(this).parents('.clonedInput').remove(); return false" href="#" class="remove btn btn-xs btn-danger">-</a>
+					 	<input type="hidden" name="counter[]">
+					 </td>
+				</tr>  
+			@endforeach
+			
+
+		@else
+
+            <tr class="clone clonedInput">								
+			 @foreach ($subgrid['tableGrid'] as $field)
+
+				 @if($field['view'] =='1' && $field['field'] !='game_id')
+				 <td>					 
+				 	{!! SiteHelpers::bulkForm($field['field'] , $subgrid['tableForm'] ) !!}							 
+				 </td>
+				 @endif					 
+			 
+			 @endforeach
+				 <td>
+				 	<a onclick=" $(this).parents('.clonedInput').remove(); return false" href="#" class="remove btn btn-xs btn-danger">-</a>
+				 	<input type="hidden" name="counter[]">
+				 </td>
+			
+			</tr> 	
+		@endif	
+
+
+        </tbody>	
+
+     	</table>  
+    	<input type="hidden" name="enable-masterdetail" value="true">
+    </div><br /><br />
+     
+     <a href="javascript:void(0);" class="addC btn btn-xs btn-info" rel=".clone"><i class="fa fa-plus"></i> New Item</a>
+     <hr />		
+	@endif
+     					
 						
 			<div style="clear:both"></div>	
 							
@@ -134,16 +231,14 @@
 </div>	
 			 
 <script type="text/javascript">
-$(document).ready(function() {
-    $("#down_user_id").jCombo("{{ URL::to('gameservicehistory/comboselect?filter=users:id:username') }}",
-            {  selected_value : '{{ $row["down_user_id"] }}' });
-    $("#up_user_id").jCombo("{{ URL::to('gameservicehistory/comboselect?filter=users:id:username') }}",
-            {  selected_value : '{{ $row["up_user_id"] }}' });
-    $('.editor').summernote();
+$(document).ready(function() { 
+	 
+	$('.addC').relCopy({});
+	$('.editor').summernote();
 	$('.previewImage').fancybox();	
 	$('.tips').tooltip();	
-	$(".select3").select2({ width:"98%"});
-	$('.date').datepicker({format:'mm/dd/yyyy',autoClose:true})
+	$(".select2").select2({ width:"98%"});	
+	$('.date').datepicker({format:'mm/dd/yyyy',autoclose:true})
 	$('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});
 	$('input[type="checkbox"],input[type="radio"]').iCheck({
 		checkboxClass: 'icheckbox_square-green',

@@ -17,7 +17,7 @@ class GameservicehistoryController extends Controller {
 	{
 		parent::__construct();
 		$this->model = new Gameservicehistory();
-		
+		$this->modelview = new  \App\Models\Game();
 		$this->info = $this->model->makeInfo( $this->module);
 		$this->access = $this->model->validAccess($this->info['id']);
 
@@ -28,7 +28,7 @@ class GameservicehistoryController extends Controller {
 			'pageUrl'			=>  url('gameservicehistory'),
 			'return' 			=> 	self::returnUrl()
 		);
-		
+		$this->data['subgrid']	= (isset($this->info['config']['subgrid']) ? $this->info['config']['subgrid'][0] : array()); 
 
 
 	}
@@ -132,6 +132,7 @@ class GameservicehistoryController extends Controller {
 			if($this->access['is_edit'] ==0 )
 			return Redirect::to('dashboard')->with('messagetext',\Lang::get('core.note_restric'))->with('msgstatus','error');
 		}
+
 		$row = $this->model->find($id);
 		if($row)
 		{
@@ -141,14 +142,15 @@ class GameservicehistoryController extends Controller {
 		}
 		$this->data['setting'] 		= $this->info['setting'];
 		$this->data['fields'] 		=  \AjaxHelpers::fieldLang($this->info['config']['forms']);
-		
+		$this->data['subgrid'] = $this->detailview($this->modelview ,  $this->data['subgrid'] ,$id );
 		$this->data['id'] = $id;
-        $this->data['game_name']  = $this->model->getGameNames();
+
 		return view('gameservicehistory.form',$this->data);
 	}
 
 	public function getShow( $id = null)
 	{
+
 		if($this->access['is_detail'] ==0)
 			return Redirect::to('dashboard')
 				->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus','error');
@@ -160,7 +162,7 @@ class GameservicehistoryController extends Controller {
 		} else {
 			$this->data['row'] = $this->model->getColumnTable('game_service_history');
 		}
-		
+		$this->data['subgrid'] = $this->detailview($this->modelview ,  $this->data['subgrid'] ,$id );
 		$this->data['id'] = $id;
 		$this->data['access']		= $this->access;
 		$this->data['setting'] 		= $this->info['setting'];
@@ -198,7 +200,7 @@ class GameservicehistoryController extends Controller {
 			$data = $this->validatePost('game_service_history');
 
 			$id = $this->model->insertRow($data , $request->input('id'));
-			
+			$this->detailviewsave( $this->modelview , $request->all() , $this->data['subgrid'] , $id) ;
 			return response()->json(array(
 				'status'=>'success',
 				'message'=> \Lang::get('core.note_success')
@@ -230,7 +232,7 @@ class GameservicehistoryController extends Controller {
 		if(count($request->input('ids')) >=1)
 		{
 			$this->model->destroy($request->input('ids'));
-			
+			\DB::table('game')->where('id',$request->input('id'))->delete();
 			return response()->json(array(
 				'status'=>'success',
 				'message'=> \Lang::get('core.note_success_delete')

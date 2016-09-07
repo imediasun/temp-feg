@@ -17,9 +17,9 @@ class gameservicehistory extends Sximo
 
     public static function querySelect()
     {
-
+        //CONCAT(IF(date_down IS NULL,'',date_down),'<br/>',IF(date_up IS NULL,'',date_up)) AS
         return "  SELECT id,game_id,problem,down_user_id,solution,up_user_id,date_up,
-                  CONCAT(IF(date_down IS NULL,'',date_down),'<br/>',IF(date_up IS NULL,'',date_up)) AS date_down,
+                   date_down,
                   DATEDIFF(date_up,date_down) as days_down
                   FROM game_service_history  ";
     }

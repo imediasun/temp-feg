@@ -68,7 +68,7 @@ jQuery(function(){
 			var field = $(this).attr('id');
 			var operate = $(this).find('#'+field+'_operate').val();
 			var value_select  = $(this).find("select[name="+field+"]").val() || '';
-			if( typeof value_select !=='undefined' )
+			if(  value_select !='' )
 			{
 				value  = value_select;
 			} else {
@@ -90,7 +90,7 @@ jQuery(function(){
 			}
 			
 		});
-		<?php if($searchMode =='ajax') { ?> 
+		<?php if($searchMode =='ajax') { ?>
 			reloadData( '#{{ $pageModule }}',"{{ $pageUrl }}/data?search="+attr,function(){
 					$(".sbox-tools a.tips").addClass('btn-search');
 				});

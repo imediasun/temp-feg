@@ -89,7 +89,7 @@ class SparepartsController extends Controller {
 
 
 
-		if(count($results['rows']) == $results['total']){
+		if(count($results['rows']) == $results['total'] && $results['total']!=0){
 			$params['limit'] = $results['total'];
 		}
 
