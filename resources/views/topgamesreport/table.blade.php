@@ -5,7 +5,7 @@
 	</div>
 	<div class="sbox-content">
         @if($setting['usesimplesearch']!='false')     
-        {!! $simpleSearchForm = SiteHelpers::configureSimpleSearchForm($tableForm) !!}
+        <?php $simpleSearchForm = SiteHelpers::configureSimpleSearchForm($tableForm); ?>
         <div class="simpleSearchContainer clearfix">
             @foreach ($simpleSearchForm as $t)
                 @if($t['simplesearch'] =='1') 
