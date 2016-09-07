@@ -15,14 +15,16 @@
         @include( $pageModule.'/toolbar',['config_id'=>$config_id,'colconfigs' => SiteHelpers::getRequiredConfigs($module_id)])
         <div class="row m-b simpleSearchContainer">
             @foreach ($tableForm as $t)
-                @if($t['simplesearch'] =='1')                    
-                        {!! SiteHelpers::activeLang($t['label'],(isset($t['language'])? $t['language'] : array())) !!}
-                        {!! SiteHelpers::transForm($t['field'] , $tableForm) !!}
-                        <input id="{{ $t['field']}}_operate" type="hidden" name="operate" value="equal" />
-                    </tr>
+                @if($t['simplesearch'] =='1') 
+                <div class="col-md-3">
+                    {!! SiteHelpers::activeLang($t['label'],(isset($t['language'])? $t['language'] : array())) !!}
+                    {!! SiteHelpers::transForm($t['field'] , $tableForm) !!}                    
+                </div>                        
                 @endif
             @endforeach		
-            <button type="button" name="search" class="doSearch btn btn-sm btn-primary"> Search </button>		
+            <div class="col-md-3">
+                <button type="button" name="search" class="doSimpleSearch btn btn-sm btn-primary"> Search </button>		
+            </div>
         </div>
 	 <?php echo Form::open(array('url'=>'topgamesreport/delete/', 'class'=>'form-horizontal' ,'id' =>'SximoTable'  ,'data-parsley-validate'=>'' )) ;?>
 <div class="table-responsive">
@@ -174,6 +176,37 @@ $(document).ready(function() {
 			echo AjaxHelpers::htmlExpandGrid();
 		endif;
 	 ?>
+             
+    $('.date').datepicker({format:'mm/dd/yyyy',autoclose:true})
+    $('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});
+
+	$('.doSimpleSearch').click(function(){
+		var attr = '';
+		$('.simpleSearchContainer .form-control').each(function(i){
+			var UNDEFINED, 
+                elm = this,
+                valueField = $(elm),                
+                name = valueField.attr('name'),                
+                operate = "equal",
+                value = valueField.val(),
+                isValueDate = valueField.hasClass('date'),
+                isValueDateTime = valueField.hasClass('datetime');
+                
+            if (value === null || value === UNDEFINED ) {
+                value = '';
+            }
+            if(value && isValueDate) {
+                value  = $.datepicker.formatDate('yy-mm-dd', new Date(value));
+            }                    
+
+			if(value !=='' && typeof value !=='undefined' && name !='_token')
+			{
+                attr += field+':'+operate+':'+value+'|';
+			}
+			
+		});
+        reloadData( '#{{ $pageModule }}',"{{ $pageUrl }}/data?search="+attr);
+	});             
 });
 </script>
 <style>
