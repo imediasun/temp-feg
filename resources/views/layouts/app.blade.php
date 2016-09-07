@@ -66,6 +66,7 @@
 
 
 	<script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/momentjs/2.10.6/moment.min.js"></script>
 
 	
   	</head>

@@ -31,6 +31,7 @@ class ReportHelpers
                 LEFT JOIN debit_type D ON D.id = L.debit_type_id
                 WHERE 
                 E.record_status = 1 AND
+                E.date_played >= L.date_opened AND 
                 E.date_played >= '$dateStart' and E.date_played <= '$dateEnd' ";
 
         if (!empty($location)) {
@@ -99,6 +100,7 @@ class ReportHelpers
                 WHERE 
                 E.record_status = 1 AND
                 E.report_status = 0 AND
+                E.date_played >= L.date_opened AND 
                 E.date_played >= '$dateStart' and E.date_played <= '$dateEnd' ";
 
         if (!empty($location)) {
@@ -133,6 +135,7 @@ class ReportHelpers
                 WHERE 
                 A.status = 0 AND
                 A.notes = 'CLOSED' AND
+                A.date_start >= L.date_opened AND 
                 A.date_start >= '$dateStart' and A.date_start <= '$dateEnd' ";
 
         if (!empty($location)) {

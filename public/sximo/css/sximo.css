@@ -2465,6 +2465,10 @@ table.table-striped tr th
     cursor: pointer;
 }
 
+.bootstrap-datetimepicker-widget tr:hover {
+  background-color: #808080;
+}
+
 .modal-dialog .select2-container-multi .select2-choices:before,
 .modal-dialog .select2-container-multi .select2-choices:after,
 .clearfix:before,
