@@ -201,7 +201,7 @@ $(document).ready(function() {
 
 			if(value !=='' && typeof value !=='undefined' && name !='_token')
 			{
-                attr += field+':'+operate+':'+value+'|';
+                attr += name+':'+operate+':'+value+'|';
 			}
 			
 		});
