@@ -4,8 +4,8 @@
         @include( $pageModule.'/toolbar',['config_id'=>$config_id,'colconfigs' => SiteHelpers::getRequiredConfigs($module_id)])        
 	</div>
 	<div class="sbox-content">
+        @if($setting['usesimplesearch']!='false')     
         {!! $simpleSearchForm = SiteHelpers::configureSimpleSearchForm($tableForm) !!}
-        @if($setting['usesimplesearch']=='true')     
         <div class="simpleSearchContainer clearfix">
             @foreach ($simpleSearchForm as $t)
                 @if($t['simplesearch'] =='1') 
