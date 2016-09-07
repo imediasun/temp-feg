@@ -984,10 +984,14 @@ label { font-size:12px;}
   font-family: 'Lato', sans-serif !important;
   border-radius:0px !important; -moz-border-radius:0px !important;
 }
+
+.simpleSearchContainer .select2-container.form-control,
 .modal-dialog .select2-container.form-control {
     padding: 0;
     height: auto;
 }
+
+.simpleSearchContainer .select2-container-multi .select2-choices,
 .modal-dialog .select2-container-multi .select2-choices {
     border: none;
     background-image: none;
@@ -2505,14 +2509,4 @@ table.table-striped tr th
     margin-bottom: 10px;
 }
 
-
-.simpleSearchContainer .select2-container.form-control {
-    padding: 0;
-    height: auto;
-}
-.simpleSearchContainer .select2-container-multi .select2-choices {
-    border: none;
-    background-image: none;
-    overflow: visible;    
-}
 /* Simple search UI modifications testing on topgamesreport module  [end] */
