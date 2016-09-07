@@ -2469,7 +2469,7 @@ table.table-striped tr th
     cursor: pointer;
 }
 
-.simpleSearchContainer .select2-container-multi .select2-choices:before,
+.simpleSearchContainer .select2-choices:before,
 .modal-dialog .select2-container-multi .select2-choices:before,
 .modal-dialog .select2-container-multi .select2-choices:after,
 .clearfix:before,
@@ -2478,7 +2478,7 @@ table.table-striped tr th
     display: table;
 } 
 
-.simpleSearchContainer .select2-container-multi .select2-choices:after,
+.simpleSearchContainer .select2-choices:after,
 .modal-dialog .select2-container-multi .select2-choices:after,
 .clearfix:after {
     clear: both;
@@ -2507,6 +2507,9 @@ table.table-striped tr th
     border: 1px solid #ddd;
     font-size: 12px;
     margin-bottom: 10px;
+}
+.simpleSearchContainer .select2-choices:after {
+    clear: both;
 }
 
 /* Simple search UI modifications testing on topgamesreport module  [end] */
