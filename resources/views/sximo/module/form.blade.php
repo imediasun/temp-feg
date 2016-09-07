@@ -35,7 +35,7 @@
 		<table class="table table-striped table-bordered" id="table">
             <thead class="no-border">
                 <tr >
-                    <th scope="col" width="70">No</th>
+                    <th scope="col" width="40">No</th>
                     <th scope="col">Field</th>
                     <th scope="col" data-hide="phone">Title / Caption</th>
                     <th scope="col" width="70"><i class="fa fa-key"></i>Limit To</th>
@@ -43,7 +43,7 @@
                     <th scope="col" data-hide="phone">Show</th>
                     <th scope="col" data-hide="phone" title='Show in Advanced Search?' >Advanced Search</th>
                     <th scope="col" title='Show in Simple Search?' >Simple Search</th>
-                    <th scope="col" title='Integer numbers 0,1,2,...n in to denote the order' >Simple Search Order</th>
+                    <th scope="col" width="70" title='Integer numbers 0,1,2,...n in to denote the order' >Simple Search Order</th>
                     <th scope="col" data-hide="phone">Required</th>
                     <th scope="col" data-hide="phone">Configure</th>            
                 </tr>
@@ -163,7 +163,7 @@
                 <?php } ?>
             </tbody>
         </table>
-        <button type="button" class="btn btn-info addCustomField">Add Custom Field</button>
+        <!--<button type="button" class="btn btn-info addCustomField">Add Custom Field</button>-->
         
 		</div>
 
