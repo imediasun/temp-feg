@@ -114,7 +114,7 @@
 
 						<td><input type="text" value=""  readonly id="tot" class="tot" style="width:55px" /></td>
 
-						<td><input type="text" value="0" style="width:55px" /></td>
+						<td><input type="text" value="" id ="payout_percent" class ="payout_percent" style="width:55px" /></td>
 						<td></td>
 
 					</tr>
@@ -171,15 +171,20 @@ $(document).ready(function() {
 	$('.tips').tooltip();
 
 	$('.num').change(function(){
-		var tot = 1;
-		$.each($('input[class=num]'),function(){
-			var curr_val = $(this).val();
-			if(curr_val != ""){
-				tot = tot * curr_val;
-				$('.tot').val(tot);
-			}
-		});
+		console.log($(this).val());
+		var retail_price = $(this).closest('tr').find("input[name='retail_price[]']").val();
+		var payout = $(this).closest('tr').find("input[name='pc_payout']").val();
+
+		var revenue = $(this).closest('tr').find("td[data-field='revenue_total']").attr("data-values");
+		var payout_percent = (retail_price*payout)/revenue;
+				$(this).closest('tr').find("input#payout_percent").val(payout_percent);
+
+		$(this).closest('tr').find("input#tot").val(retail_price*payout);
+
 	});
+
+
+
 	function totalAmount(price, quantity) {
 		return price * quantity;
 	}
