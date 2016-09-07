@@ -93,11 +93,11 @@
 							<td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}" data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
 								@if($field['field']=='price_per_play')
 
-									<input type="text" value="{{ $value }}" name="price_per_play[]" id="{{ $row->id }}" style="width:55px" />
+									<input type="text" value="{{ number_format($value,2) }}" name="price_per_play[]" id="{{ $row->id }}" style="width:55px" />
 
 								@elseif($field['field']=='retail_price')
 
-									<input type="text" value="{{ $value }}" name="retail_price[]" class="num" style="width:55px" />
+									<input type="text" value="{{ number_format($value,2) }}" name="retail_price[]" class="num" style="width:55px" />
 
 
 
