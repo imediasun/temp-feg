@@ -175,7 +175,9 @@ $(document).ready(function() {
     $('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});
 
 	$('.doSimpleSearch').click(function(){
-		var attr = '';
+		var container = $('.simpleSearchContainer'), 
+            attr = '?search=', 
+            cache = {};
 		$('.simpleSearchContainer .form-control').each(function(i){
 			var UNDEFINED, 
                 elm = this,
@@ -185,7 +187,8 @@ $(document).ready(function() {
                 value = valueField.val(),
                 isValueDate = valueField.hasClass('date'),
                 isValueDateTime = valueField.hasClass('datetime');
-                
+            
+            cache[name] = value;            
             if (value === null || value === UNDEFINED ) {
                 value = '';
             }
@@ -199,7 +202,35 @@ $(document).ready(function() {
 			}
 			
 		});
-        reloadData( '#{{ $pageModule }}',"{{ $pageUrl }}/data?search="+attr);
+        
+        $('.table-actions :input').each(function () {
+			var elm = $(this);
+			var val = elm.val();
+            if (val !== '' && val !== null) {
+                attr += '&' + this.name + '=' + val;
+            }
+        });        
+        
+        
+        reloadData( '#{{ $pageModule }}',"{{ $pageUrl }}/data"+attr, function () {
+            var elmName, elm, val;
+            for(elmName in cache) {
+                elm = container.find('.form-control[name=' + elmName + ']');
+                if (elm.length) {
+                    elm.val(cache[elmName]);
+                }
+            }
+            /*
+             * 
+             *     var attr = '', elm, val;
+        
+
+    if(opt  !== undefined) {
+        attr += opt;
+    }
+             * 
+             */
+        });
 	});             
 });
 </script>
