@@ -45,10 +45,9 @@ jQuery(function(){
 
 	$('.doSearch').click(function(){
 		//alert('test');
-		var attr = '';
+		var attr = '', cache = {};
 		$('#advance-search tr.fieldsearch').each(function(i){
-			var UNDEFINED, 
-                cache = {},
+			var UNDEFINED,                 
                 container = this,
                 jQcontainer = $(container),                
                 field = jQcontainer.attr('id'),
