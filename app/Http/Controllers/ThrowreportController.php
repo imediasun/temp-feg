@@ -44,6 +44,13 @@ class ThrowreportController extends Controller {
 
 	public function postData( Request $request)
 	{
+		if (isset($_GET['date'])) {
+			$filterDate = $_GET['date'];
+			$filterDate = explode("-", $filterDate);
+			$filterStartDate = $filterDate[0];
+			$filterEndDate = $filterDate[1];
+		}
+
 
         $module_id = \DB::table('tb_module')->where('module_name', '=', 'throwreport')->pluck('module_id');
         $this->data['module_id'] = $module_id;

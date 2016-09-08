@@ -25,7 +25,7 @@
 
 
 
-				<input type="text" id="weeklyDatePicker"  name ="weeklydate"  style="padding-bottom:5px" />
+				<input type="text" id="weeklyDatePicker"  name ="weeklyDatePicker"  style="padding-bottom:5px" } />
 
 
 
@@ -56,22 +56,33 @@
 
 	$(document).ready(function(){
 
+		var selectedDate;
 		//Initialize the datePicker(I have taken format as mm-dd-yyyy, you can     //have your owh)
-		$("#weeklyDatePicker").datepicker();
+		$("#weeklyDatePicker").datepicker('option', 'firstDay',{autoclose:true}, 1);
 
 		//Get the value of Start and End of Week
 		$('#weeklyDatePicker').datepicker().on('changeDate', function (e) {
 			var value = $("#weeklyDatePicker").val();
-			console.log(value);
+//			console.log(value);
 			var firstDate = moment(value, "MM/DD/YYYY").day(0).format("MM/DD/YYYY");
 			var lastDate =  moment(value, "MM/DD/YYYY").day(6).format("MM/DD/YYYY");
+			selectedDate=firstDate + " - " + lastDate;
 			$("#weeklyDatePicker").val(firstDate + " - " + lastDate);
+		//	$(this).datepicker('hide');
+		/*	reloadData('#{{ $pageModule }}','{{ $pageModule }}/data?date='+selectedDate.replace(/ /g,''));  */
+
 		});
 
     $("#col-config").on('change',function(){
         reloadData('#{{ $pageModule }}','{{ $pageModule }}/data?config_id='+$("#col-config").val());
     });
 
+
+
+		$('#weeklyDatePicker').datepicker().on('hide', function (e) {
+			var value = $("#weeklyDatePicker").val(selectedDate);
+
+		});
 	});
 
 
