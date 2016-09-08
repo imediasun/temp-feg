@@ -1952,9 +1952,16 @@ class SiteHelpers
     }
     
     static function configureSimpleSearchForm($data) {
-        uasort($data, function ($a, $b) { 
+        $newArray = array();
+        foreach($data as $item) {
+            if ($item['simplesearch']  == '1') {
+                $newArray[] = $item;
+            }
+        }
+        
+        uasort($newArray, function ($a, $b) { 
             return ($a['simplesearchorder'] >= $b['simplesearchorder'] ? 1 : -1); 
         });
-        return $data;
+        return $newArray;
     }
 }

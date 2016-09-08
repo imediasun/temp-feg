@@ -6,19 +6,19 @@
 	<div class="sbox-content">
         @if($setting['usesimplesearch']!='false')     
         <?php $simpleSearchForm = SiteHelpers::configureSimpleSearchForm($tableForm); ?>
+        @if(!empty($simpleSearchForm))  
         <div class="simpleSearchContainer clearfix">
             @foreach ($simpleSearchForm as $t)
-                @if($t['simplesearch'] =='1') 
                 <div class="col-md-3">
                     {!! SiteHelpers::activeLang($t['label'],(isset($t['language'])? $t['language'] : array())) !!}
                     {!! SiteHelpers::transForm($t['field'] , $tableForm) !!}                    
                 </div>                        
-                @endif
             @endforeach		
             <div class="col-md-3"><br/>
                 <button type="button" name="search" class="doSimpleSearch btn btn-sm btn-primary"> Search </button>		
             </div>
         </div>
+        @endif
         @endif
 	 <?php echo Form::open(array('url'=>'topgamesreport/delete/', 'class'=>'form-horizontal' ,'id' =>'SximoTable'  ,'data-parsley-validate'=>'' )) ;?>
 <div class="table-responsive">
