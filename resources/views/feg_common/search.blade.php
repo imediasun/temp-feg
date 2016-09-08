@@ -69,7 +69,7 @@ jQuery(function(){
                 if (value2 === null || value2 === UNDEFINED ) {
                     value2 = '';
                 }
-                cache[name] = value;
+                cache[field] = value;
 				if(value && isValueDate) {
                     value  = $.datepicker.formatDate('yy-mm-dd', new Date(value));
                 }                    
