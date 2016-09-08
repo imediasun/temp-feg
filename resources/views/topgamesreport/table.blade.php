@@ -11,8 +11,6 @@
 	</div>
 	</div>
 	<div class="sbox-content">
-
-        @include( $pageModule.'/toolbar',['config_id'=>$config_id,'colconfigs' => SiteHelpers::getRequiredConfigs($module_id)])
         @if($setting['usesimplesearch']!='false')     
         <?php $simpleSearchForm = SiteHelpers::configureSimpleSearchForm($tableForm); ?>
         @if(!empty($simpleSearchForm))  
@@ -29,6 +27,7 @@
         </div>
         @endif
         @endif
+        @include( $pageModule.'/toolbar',['config_id'=>$config_id,'colconfigs' => SiteHelpers::getRequiredConfigs($module_id)])
 	 <?php echo Form::open(array('url'=>'topgamesreport/delete/', 'class'=>'form-horizontal' ,'id' =>'SximoTable'  ,'data-parsley-validate'=>'' )) ;?>
 <div class="table-responsive">
     @if(!empty($topMessage))
@@ -179,73 +178,7 @@ $(document).ready(function() {
 			echo AjaxHelpers::htmlExpandGrid();
 		endif;
 	 ?>
-             
-    $('.date').datepicker({format:'mm/dd/yyyy',autoclose:true})
-    $('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});
-
-	$('.doSimpleSearch').click(function(){
-		var UNDEFINED,
-            container = $('.simpleSearchContainer'), 
-            attr = '?search=', 
-            cache = {};
-            
-		container.find('.form-control').each(function(i){
-            
-			var elm = this,
-                valueField = $(elm),                
-                fieldName = valueField.attr('name'),                
-                operate = "equal",
-                value = valueField.val(),
-                isValueDate = valueField.hasClass('date'),
-                isValueDateTime = valueField.hasClass('datetime');
-            
-            if (value === null || value === UNDEFINED ) {
-                value = '';
-            }
-            if (fieldName) {
-                cache[fieldName] = value;            
-            }
-                        
-            if(value && isValueDate) {
-                value  = $.datepicker.formatDate('yy-mm-dd', new Date(value));
-            }                    
-
-			if(value !=='' && typeof value !=='undefined' && name !='_token')
-			{
-                attr += fieldName+':'+operate+':'+value+'|';
-			}
-			
-		});
-        
-        $('.table-actions :input').each(function () {
-			var elm = $(this);
-			var val = elm.val();
-            if (val !== '' && val !== null) {
-                attr += '&' + this.name + '=' + val;
-            }
-        });        
-        
-        
-        reloadData( '#{{ $pageModule }}',"{{ $pageUrl }}/data"+attr, function () {
-            var elmName, elm, val;
-            window.setTimeout(function(){
-                container = $('.simpleSearchContainer');
-                for(elmName in cache) {
-                    elm = container.find('.form-control[name=' + elmName + ']');
-                    if (elm.length) {
-                        val = cache[elmName];
-                        if (elm.hasClass('sel-search')) {
-                            elm.select2('val', val);
-                        }
-                        else {
-                            elm.val(val);
-                        }
-                        
-                    }                    
-                }
-            }, 0);
-        });
-	});             
+          
 });
 </script>
 <style>
