@@ -215,7 +215,7 @@
         </div>  
         
         <div class="form-group">
-          <label for="usesimplesearch" class=" control-label col-md-4">Simpler search options</label>
+          <label for="usesimplesearch" class=" control-label col-md-4">Use Simple Search</label>
           <div class="col-md-8">
               <label class="checkbox">
               <input type="checkbox" value="true" name="usesimplesearch" id="usesimplesearch"
