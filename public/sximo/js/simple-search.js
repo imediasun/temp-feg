@@ -37,10 +37,10 @@ function performSimpleSearch(params) {
 
     $('.table-actions :input').each(function () {
         var elm = $(this), 
-            name = elm.attr('name'), 
+            fieldName = elm.attr('name'), 
             val = elm.val();
         if (name != 'search' && val !== '' && val !== null) {
-            attr += '&' +  + '=' + val;            
+            attr += '&' + fieldName + '=' + val;            
         }
     });        
     
