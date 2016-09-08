@@ -985,18 +985,6 @@ label { font-size:12px;}
   border-radius:0px !important; -moz-border-radius:0px !important;
 }
 
-.simpleSearchContainer .select2-container.form-control,
-.modal-dialog .select2-container.form-control {
-    padding: 0;
-    height: auto;
-}
-
-.simpleSearchContainer .select2-container-multi .select2-choices,
-.modal-dialog .select2-container-multi .select2-choices {
-    border: none;
-    background-image: none;
-    overflow: visible;    
-}
 .input-group-sm > .form-control, .input-group-sm > .input-group-addon, .input-group-sm > .input-group-btn > .btn { font-size: 11px !important;   border-radius:0px !important; -moz-border-radius:0px !important;}
 .form-control:focus {
   border-color: #1ab394;
@@ -2468,37 +2456,3 @@ table.table-striped tr th
 {
     cursor: pointer;
 }
-
-.simpleSearchContainer .select2-container-multi .select2-choices:before,
-.simpleSearchContainer .select2-container-multi .select2-choices:after,
-.modal-dialog .select2-container-multi .select2-choices:before,
-.modal-dialog .select2-container-multi .select2-choices:after,
-.clearfix:before,
-.clearfix:after {
-    content: "";
-    display: table;
-} 
-
-.simpleSearchContainer .select2-container-multi .select2-choices:after,
-.modal-dialog .select2-container-multi .select2-choices:after,
-.clearfix:after {
-    clear: both;
-}
-
-.simpleSearchContainer .select2-container-multi .select2-choices,
-.modal-dialog .select2-container-multi .select2-choices,
-.clearfix {
-    zoom: 1; /* For IE 6/7 (trigger hasLayout) */
-}
-
-
-/* Simple search UI modifications testing on topgamesreport module  [start] */
-.simpleSearchContainer {
-    background: #fefefe;
-    padding: 10px 0;
-    border: 1px solid #ddd;
-    font-size: 12px;
-    margin-bottom: 10px;
-}
-
-/* Simple search UI modifications testing on topgamesreport module  [end] */

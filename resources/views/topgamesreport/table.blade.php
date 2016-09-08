@@ -16,7 +16,7 @@
         @if(!empty($simpleSearchForm))  
         <div class="simpleSearchContainer clearfix">
             @foreach ($simpleSearchForm as $t)
-                <div class="col-md-3">
+                <div class="sscol col-md-3">
                     {!! SiteHelpers::activeLang($t['label'],(isset($t['language'])? $t['language'] : array())) !!}
                     {!! SiteHelpers::transForm($t['field'] , $tableForm) !!}                    
                 </div>                        
@@ -178,6 +178,12 @@ $(document).ready(function() {
 			echo AjaxHelpers::htmlExpandGrid();
 		endif;
 	 ?>
+             
+    $('.simpleSearchContainer .date').datepicker({format:'mm/dd/yyyy',autoclose:true})
+    $('.simpleSearchContainer .datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});
+    $('.simpleSearchContainer .doSimpleSearch').click(function(event){
+        performSimpleSearch.call(this, event);
+    });
           
 });
 </script>
