@@ -182,7 +182,7 @@ $(document).ready(function() {
     $('.simpleSearchContainer .date').datepicker({format:'mm/dd/yyyy',autoclose:true})
     $('.simpleSearchContainer .datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});
     $('.simpleSearchContainer .doSimpleSearch').click(function(event){
-        performSimpleSearch.call($this), {moduleID: '#{{ $pageModule }}',url: "{{ $pageUrl }}/data", event: event});
+        performSimpleSearch.call($(this), {moduleID: '#{{ $pageModule }}',url: "{{ $pageUrl }}/data", event: event});
     });
           
 });
