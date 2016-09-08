@@ -219,14 +219,15 @@ $(document).ready(function() {
         
         reloadData( '#{{ $pageModule }}',"{{ $pageUrl }}/data"+attr, function () {
             var elmName, elm, val;
-            for(elmName in cache) {
-                elm = container.find('.form-control[name=' + elmName + ']');
-                if (elm.length) {
-                    val = cache[elmName];
-                    elm.val(val);
+            window.setTimeout(function(){
+                for(elmName in cache) {
+                    elm = container.find('.form-control[name=' + elmName + ']');
+                    if (elm.length) {
+                        val = cache[elmName];
+                        elm.val(val);
+                    }
                 }
-                console.log([elmName, val, elm.length, elm]);
-            }
+            }, 1000);
         });
 	});             
 });
