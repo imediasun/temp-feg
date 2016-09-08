@@ -225,9 +225,14 @@ $(document).ready(function() {
                     elm = container.find('.form-control[name=' + elmName + ']');
                     if (elm.length) {
                         val = cache[elmName];
-                        elm.val(val);
-                    }
-                    console.log([elmName, val, elm.length, elm]);
+                        if (elm.hasClass('sel-search')) {
+                            elm.select2('val', val);
+                        }
+                        else {
+                            elm.val(val);
+                        }
+                        
+                    }                    
                 }
             }, 0);
         });
