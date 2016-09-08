@@ -184,23 +184,26 @@ $(document).ready(function() {
             
 			var elm = this,
                 valueField = $(elm),                
-                name = valueField.attr('name'),                
+                fieldName = valueField.attr('name'),                
                 operate = "equal",
                 value = valueField.val(),
                 isValueDate = valueField.hasClass('date'),
                 isValueDateTime = valueField.hasClass('datetime');
             
-            cache[name] = value;            
             if (value === null || value === UNDEFINED ) {
                 value = '';
             }
+            if (fieldName) {
+                cache[fieldName] = value;            
+            }
+                        
             if(value && isValueDate) {
                 value  = $.datepicker.formatDate('yy-mm-dd', new Date(value));
             }                    
 
 			if(value !=='' && typeof value !=='undefined' && name !='_token')
 			{
-                attr += name+':'+operate+':'+value+'|';
+                attr += fieldName+':'+operate+':'+value+'|';
 			}
 			
 		});
