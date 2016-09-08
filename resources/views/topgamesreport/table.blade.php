@@ -220,6 +220,7 @@ $(document).ready(function() {
         reloadData( '#{{ $pageModule }}',"{{ $pageUrl }}/data"+attr, function () {
             var elmName, elm, val;
             window.setTimeout(function(){
+                container = $('.simpleSearchContainer');
                 for(elmName in cache) {
                     elm = container.find('.form-control[name=' + elmName + ']');
                     if (elm.length) {
