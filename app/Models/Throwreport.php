@@ -19,14 +19,15 @@ class throwreport extends Sximo  {
                 FROM game 
                 JOIN products ON game.product_id = products.id
                 JOIN game_earnings ON game_earnings.game_id = game.id ";
-	}	
+	}
 
-	public static function queryWhere(  ){
+	public static function queryWhere($start_date = '', $end_date = ''){
 
-
-
-$location= \Session::get('selected_location');
+      $location= \Session::get('selected_location');
+        if(!empty($start_date) && !empty($end_date))
+        return "WHERE   game_earnings.loc_id =$location and game_earnings.date_start >= '$start_date' and game_earnings.date_end <= '$end_date'";
     return "WHERE   game_earnings.loc_id =$location ";
+
 
 
         //@todo get get location id from session

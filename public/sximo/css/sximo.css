@@ -2491,9 +2491,6 @@ table.table-striped tr th
     zoom: 1; /* For IE 6/7 (trigger hasLayout) */
 }
 
-.datepicker tr:hover {
-  background-color: #808080;
-}
 
 /* Simple search UI modifications testing on topgamesreport module  [start] */
 .topgamesreportContainer .sbox-title {

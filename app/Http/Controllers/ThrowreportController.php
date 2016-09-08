@@ -4,20 +4,20 @@ use App\Http\Controllers\controller;
 use App\Models\Throwreport;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
-use Validator, Input, Redirect ; 
+use Validator, Input, Redirect ;
 
 class ThrowreportController extends Controller {
 
 	protected $layout = "layouts.main";
-	protected $data = array();	
+	protected $data = array();
 	public $module = 'throwreport';
 	static $per_page	= '10';
-	
-	public function __construct() 
+
+	public function __construct()
 	{
 		parent::__construct();
 		$this->model = new Throwreport();
-		
+
 		$this->info = $this->model->makeInfo( $this->module);
 		$this->access = $this->model->validAccess($this->info['id']);
 
@@ -28,7 +28,7 @@ class ThrowreportController extends Controller {
 			'pageUrl'			=>  url('throwreport'),
 			'return' 			=> 	self::returnUrl()
 		);
-		
+
 
 
 	}
@@ -44,30 +44,22 @@ class ThrowreportController extends Controller {
 
 	public function postData( Request $request)
 	{
-		if (isset($_GET['date'])) {
-			$filterDate = $_GET['date'];
-			$filterDate = explode("-", $filterDate);
-			$filterStartDate = $filterDate[0];
-			$filterEndDate = $filterDate[1];
+		$module_id = \DB::table('tb_module')->where('module_name', '=', 'throwreport')->pluck('module_id');
+		$this->data['module_id'] = $module_id;
+		if (Input::has('config_id')) {
+			$config_id = Input::get('config_id');
+		} elseif (\Session::has('config_id')) {
+			$config_id = \Session::get('config_id');
+		} else {
+			$config_id = 0;
 		}
-
-
-        $module_id = \DB::table('tb_module')->where('module_name', '=', 'throwreport')->pluck('module_id');
-        $this->data['module_id'] = $module_id;
-        if (Input::has('config_id')) {
-        $config_id = Input::get('config_id');
-        } elseif (\Session::has('config_id')) {
-        $config_id = \Session::get('config_id');
-        } else {
-        $config_id = 0;
-        }
-        $this->data['config_id'] = $config_id;
-        $config = $this->model->getModuleConfig($module_id, $config_id);
-        if(!empty($config))
-        {
-        $this->data['config'] = \SiteHelpers::CF_decode_json($config[0]->config);
-        \Session::put('config_id', $config_id);
-        }
+		$this->data['config_id'] = $config_id;
+		$config = $this->model->getModuleConfig($module_id, $config_id);
+		if(!empty($config))
+		{
+			$this->data['config'] = \SiteHelpers::CF_decode_json($config[0]->config);
+			\Session::put('config_id', $config_id);
+		}
 		$sort = (!is_null($request->input('sort')) ? $request->input('sort') : $this->info['setting']['orderby']);
 		$order = (!is_null($request->input('order')) ? $request->input('order') : $this->info['setting']['ordertype']);
 		// End Filter sort and order for query
@@ -85,19 +77,29 @@ class ThrowreportController extends Controller {
 			'global'	=> (isset($this->access['is_global']) ? $this->access['is_global'] : 0 )
 		);
 		// Get Query
-		$results = $this->model->getRows( $params );
+		if (isset($_GET['date'])) {
+			$filterDate = $_GET['date'];
+			$filterDate = explode("-", $filterDate);
+			$filterStartDate = date("Y-m-d", strtotime($filterDate[0]));
+			$filterEndDate = date("Y-m-d", strtotime($filterDate[1]));
+			$results = $this->model->getRows( $params, null , $filterStartDate, $filterEndDate);
+		}
+		else
+		{
+			$results = $this->model->getRows( $params );
+		}
 		// Build pagination setting
 		$page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;
 		//$pagination = new Paginator($results['rows'], $results['total'], $params['limit']);
-        $pagination = new Paginator($results['rows'], $results['total'], 
-            (isset($params['limit']) && $params['limit'] > 0  ? $params['limit'] : 
-				($results['total'] > 0 ? $results['total'] : '1')));        
+		$pagination = new Paginator($results['rows'], $results['total'],
+			(isset($params['limit']) && $params['limit'] > 0  ? $params['limit'] :
+				($results['total'] > 0 ? $results['total'] : '1')));
 		$pagination->setPath('throwreport/data');
 		$this->data['param']		= $params;
-        $this->data['topMessage']	= @$results['topMessage'];
+		$this->data['topMessage']	= @$results['topMessage'];
 		$this->data['message']          = @$results['message'];
 		$this->data['bottomMessage']	= @$results['bottomMessage'];
-        
+
 		$this->data['rowData']		= $results['rows'];
 		// Build Pagination
 		$this->data['pagination']	= $pagination;
@@ -116,9 +118,9 @@ class ThrowreportController extends Controller {
 
 		// Master detail link if any
 		$this->data['subgrid']	= (isset($this->info['config']['subgrid']) ? $this->info['config']['subgrid'] : array());
-        if ($this->data['config_id'] != 0 && !empty($config)) {
-        $this->data['tableGrid'] = \SiteHelpers::showRequiredCols($this->data['tableGrid'], $this->data['config']);
-        }
+		if ($this->data['config_id'] != 0 && !empty($config)) {
+			$this->data['tableGrid'] = \SiteHelpers::showRequiredCols($this->data['tableGrid'], $this->data['config']);
+		}
 // Render into template
 		return view('throwreport.table',$this->data);
 
@@ -131,13 +133,13 @@ class ThrowreportController extends Controller {
 		if($id =='')
 		{
 			if($this->access['is_add'] ==0 )
-			return Redirect::to('dashboard')->with('messagetext',\Lang::get('core.note_restric'))->with('msgstatus','error');
+				return Redirect::to('dashboard')->with('messagetext',\Lang::get('core.note_restric'))->with('msgstatus','error');
 		}
 
 		if($id !='')
 		{
 			if($this->access['is_edit'] ==0 )
-			return Redirect::to('dashboard')->with('messagetext',\Lang::get('core.note_restric'))->with('msgstatus','error');
+				return Redirect::to('dashboard')->with('messagetext',\Lang::get('core.note_restric'))->with('msgstatus','error');
 		}
 
 		$row = $this->model->find($id);
@@ -149,7 +151,7 @@ class ThrowreportController extends Controller {
 		}
 		$this->data['setting'] 		= $this->info['setting'];
 		$this->data['fields'] 		=  \AjaxHelpers::fieldLang($this->info['config']['forms']);
-		
+
 		$this->data['id'] = $id;
 
 		return view('throwreport.form',$this->data);
@@ -169,7 +171,7 @@ class ThrowreportController extends Controller {
 		} else {
 			$this->data['row'] = $this->model->getColumnTable('game');
 		}
-		
+
 		$this->data['id'] = $id;
 		$this->data['access']		= $this->access;
 		$this->data['setting'] 		= $this->info['setting'];
@@ -181,11 +183,11 @@ class ThrowreportController extends Controller {
 	function postCopy( Request $request)
 	{
 
-	    foreach(\DB::select("SHOW COLUMNS FROM game ") as $column)
-        {
+		foreach(\DB::select("SHOW COLUMNS FROM game ") as $column)
+		{
 			if( $column->Field != 'id')
 				$columns[] = $column->Field;
-        }
+		}
 		$toCopy = implode(",",$request->input('ids'));
 
 
@@ -207,11 +209,11 @@ class ThrowreportController extends Controller {
 			$data = $this->validatePost('game');
 
 			$id = $this->model->insertRow($data , $request->input('id'));
-			
+
 			return response()->json(array(
 				'status'=>'success',
 				'message'=> \Lang::get('core.note_success')
-				));
+			));
 
 		} else {
 
@@ -239,7 +241,7 @@ class ThrowreportController extends Controller {
 		if(count($request->input('ids')) >=1)
 		{
 			$this->model->destroy($request->input('ids'));
-			
+
 			return response()->json(array(
 				'status'=>'success',
 				'message'=> \Lang::get('core.note_success_delete')

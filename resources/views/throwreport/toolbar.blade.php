@@ -69,7 +69,9 @@
 			selectedDate=firstDate + " - " + lastDate;
 			$("#weeklyDatePicker").val(firstDate + " - " + lastDate);
 		//	$(this).datepicker('hide');
-		/*	reloadData('#{{ $pageModule }}','{{ $pageModule }}/data?date='+selectedDate.replace(/ /g,''));  */
+
+			//reloadData('#{{ $pageModule }}','{{ $pageModule }}/data?search=date_start:bigger_equal:2015-01-07|date_end:smaller_equal:2015-01-14');
+			reloadData('#{{ $pageModule }}','{{ $pageModule }}/data?date='+selectedDate.replace(/ /g,''));
 
 		});
 
@@ -87,3 +89,12 @@
 
 
 </script>
+
+
+<style>
+	.datepicker tr:hover {
+		background-color: #808080;
+	}
+
+
+</style>
