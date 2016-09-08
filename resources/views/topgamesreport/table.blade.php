@@ -175,12 +175,14 @@ $(document).ready(function() {
     $('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});
 
 	$('.doSimpleSearch').click(function(){
-		var container = $('.simpleSearchContainer'), 
+		var UNDEFINED,
+            container = $('.simpleSearchContainer'), 
             attr = '?search=', 
             cache = {};
-		$('.simpleSearchContainer .form-control').each(function(i){
-			var UNDEFINED, 
-                elm = this,
+            
+		container.find('.form-control').each(function(i){
+            
+			var elm = this,
                 valueField = $(elm),                
                 name = valueField.attr('name'),                
                 operate = "equal",
@@ -217,19 +219,11 @@ $(document).ready(function() {
             for(elmName in cache) {
                 elm = container.find('.form-control[name=' + elmName + ']');
                 if (elm.length) {
-                    elm.val(cache[elmName]);
+                    val = cache[elmName];
+                    elm.val(val);
                 }
+                console.log([elmName, val]);
             }
-            /*
-             * 
-             *     var attr = '', elm, val;
-        
-
-    if(opt  !== undefined) {
-        attr += opt;
-    }
-             * 
-             */
         });
 	});             
 });
