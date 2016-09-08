@@ -39,7 +39,7 @@ function performSimpleSearch(params) {
         var elm = $(this), 
             fieldName = elm.attr('name'), 
             val = elm.val();
-        if (name != 'search' && val !== '' && val !== null) {
+        if (fieldName != 'search' && val !== '' && val !== null) {
             attr += '&' + fieldName + '=' + val;            
         }
     });        
