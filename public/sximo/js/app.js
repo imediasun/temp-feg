@@ -5,9 +5,9 @@ var UNDEFINED,
         search: {cache: {}},
         simpleSearch: {cache: {}},
         columnSort: {cache: {}},
-        populateFieldsFromCache: function (container, cacheObject) {
+        populateFieldsFromCache: function (container, cacheObject, isComplex) {
             var cache = cacheObject.cache, elmName, elm, val;
-            if (cache) {            
+            if (container.length && cache) {            
                 for(elmName in cache) {
                     elm = container.find('.form-control[name=' + elmName + ']');
                     if (elm.length) {

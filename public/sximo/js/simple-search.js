@@ -36,10 +36,11 @@ function performSimpleSearch(params) {
     });
 
     $('.table-actions :input').each(function () {
-        var elm = $(this);
-        var val = elm.val();
-        if (val !== '' && val !== null) {
-            attr += '&' + this.name + '=' + val;
+        var elm = $(this), 
+            name = elm.attr('name'), 
+            val = elm.val();
+        if (name != 'search' && val !== '' && val !== null) {
+            attr += '&' +  + '=' + val;            
         }
     });        
     
