@@ -19,7 +19,11 @@ class Sximo extends Model {
         $id = \DB::table($table)->insertGetId($data);
         return $id;
     }
-    public static function getRows($args, $cond = null) {
+
+    /**
+     * start date & end dated for throw reports
+     */
+    public static function getRows($args, $cond = null, $start_date= null, $end_date= null) {
         $table = with(new static)->table;
         $key = with(new static)->primaryKey;
 
@@ -51,10 +55,17 @@ class Sximo extends Model {
         */
         $createdFlag = false;
 
-        if ($cond != null) {
-            $select .= self::queryWhere($cond);
-        } else {
-            $select .= self::queryWhere();
+        if ($start_date != null && $end_date != null) {
+            $select .= self::queryWhere($start_date, $end_date);
+        }
+        else
+        {
+            if ($cond != null) {
+                $select .= self::queryWhere($cond);
+            }
+            else {
+                $select .= self::queryWhere();
+            }
         }
 
         if(!empty($createdFrom)){
