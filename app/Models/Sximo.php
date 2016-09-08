@@ -23,7 +23,7 @@ class Sximo extends Model {
     /**
      * start date & end dated for throw reports
      */
-    public static function getRows($args, $cond = null, $start_date= null, $end_date= null) {
+    public static function getRows($args, $cond = null) {
         $table = with(new static)->table;
         $key = with(new static)->primaryKey;
 
@@ -55,17 +55,11 @@ class Sximo extends Model {
         */
         $createdFlag = false;
 
-        if ($start_date != null && $end_date != null) {
-            $select .= self::queryWhere($start_date, $end_date);
+        if ($cond != null) {
+            $select .= self::queryWhere($cond);
         }
-        else
-        {
-            if ($cond != null) {
-                $select .= self::queryWhere($cond);
-            }
-            else {
-                $select .= self::queryWhere();
-            }
+        else {
+            $select .= self::queryWhere();
         }
 
         if(!empty($createdFrom)){

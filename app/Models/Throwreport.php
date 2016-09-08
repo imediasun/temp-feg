@@ -25,7 +25,7 @@ class throwreport extends Sximo  {
 
       $location= \Session::get('selected_location');
         if(!empty($start_date) && !empty($end_date))
-        return "WHERE   game_earnings.loc_id =$location and game_earnings.date_start >= $start_date and game_earnings.date_end <= $end_date";
+        return "WHERE   game_earnings.loc_id =$location and game_earnings.date_start >= '$start_date' and game_earnings.date_end <= '$end_date'";
     return "WHERE   game_earnings.loc_id =$location ";
 
 
