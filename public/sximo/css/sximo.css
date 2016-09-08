@@ -2493,12 +2493,6 @@ table.table-striped tr th
 
 
 /* Simple search UI modifications testing on topgamesreport module  [start] */
-.topgamesreportContainer .sbox-title {
-  padding: 10px 15px; 
-}
-.topgamesreportContainer .sbox-title h5 {    
-    margin: 7px;
-}
 .simpleSearchContainer {
     background: #fefefe;
     padding: 10px 0;

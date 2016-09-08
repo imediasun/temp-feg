@@ -1,6 +1,5 @@
 <div class="row m-b">
 	<div class="col-md-8">
-            <h5> <i class="fa fa-table"></i> </h5>
 			@if($access['is_add'] ==1)
 			{!! AjaxHelpers::buttonActionCreate($pageModule,$setting) !!}
 			<a href="javascript://ajax" class="btn btn-sm btn-white" onclick="ajaxCopy('#{{ $pageModule }}','{{ $pageUrl }}')"><i class="fa fa-file-o"></i> Copy </a>
@@ -24,13 +23,6 @@
         @endif
     </div>
 	<div class="col-md-4 ">
-        <div class="sbox-tools" >
-            <a href="javascript:void(0)" class="btn btn-sm btn-white tips" title="Clear Search" onclick="reloadData('#{{ $pageModule }}','topgamesreport/data?search=')"><i class="fa fa-trash-o"></i> Clear Search </a>
-            <a href="javascript:void(0)" class="btn btn-sm btn-white tips" title="Reload Data" onclick="reloadData('#{{ $pageModule }}','topgamesreport/data?return={{ $return }}')"><i class="fa fa-refresh"></i></a>
-            @if(Session::get('gid') ==1)
-            <a href="{{ url('feg/module/config/'.$pageModule) }}" class="btn btn-sm btn-white tips" title=" {{ Lang::get('core.btn_config') }}" ><i class="fa fa-cog"></i></a>
-            @endif
-        </div>    
 		@if($access['is_excel'] ==1)
 		<div class="pull-right">
 			<a href="{{ URL::to( $pageModule .'/export/excel?return='.$return) }}" class="btn btn-sm btn-white"> Excel</a>
