@@ -226,8 +226,9 @@ $(document).ready(function() {
                         val = cache[elmName];
                         elm.val(val);
                     }
+                    console.log([elmName, val, elm.length, elm]);
                 }
-            }, 1000);
+            }, 0);
         });
 	});             
 });
