@@ -6,7 +6,9 @@ function reloadData( id,url,callback)
 		$( id +'Grid' ).html( data );
 		$('.ajaxLoading').hide();
 		typeof callback === 'function' && callback();
-
+        if (window.App && window.App.autoCallbacks && window.App.autoCallbacks.reloaddata) {
+            window.App.autoCallbacks.reloaddata.call($( id +'Grid' ), {id:id, url:url, data:data});
+        }
 	});
 
 }
@@ -63,6 +65,9 @@ function ajaxInlineSave(id,url,reloadurl)
 		$.post( reloadurl ,function( data ) {
 			$( id+'Grid' ).html( data );
 			$('.ajaxLoading').hide();
+            if (window.App && window.App.autoCallbacks && window.App.autoCallbacks.ajaxinlinesave) {
+                window.App.autoCallbacks.ajaxinlinesave.call($( id +'Grid' ), {id:id, url:url, data:data, reloadurl: reloadurl});
+            }            
 		});							
 	});
 }	
@@ -261,6 +266,10 @@ function SximoModalLarge( url , title)
 	$('#sximo-modal-lg #sximo-modal-content').html(' ....Loading content , please wait ...');
 	$('#sximo-modal-lg  .modal-title').html(title);
 	$('#sximo-modal-lg  #sximo-modal-content').load(url,function(){
+        var titletrim = title.replace(/[\s\W]/ig, '').replace(/^\d+?/,'').toLowerCase();
+        if (window.App && window.App.autoCallbacks && window.App.autoCallbacks[titletrim]) {
+            window.App.autoCallbacks[titletrim].call($('#sximo-modal-lg'), {url:url, title:title});
+        }
 	});
 	$('#sximo-modal-lg').modal('show');	
 }

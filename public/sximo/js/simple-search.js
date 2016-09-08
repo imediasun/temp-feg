@@ -1,5 +1,7 @@
-function performSimpleSearch(clickEvent) {
-    
+function performSimpleSearch(params) {
+    if (!params) {
+        params = {};
+    }
     var elm = this, 
         container = $('.simpleSearchContainer'), 
         attr = '?search=', 
@@ -45,7 +47,7 @@ function performSimpleSearch(clickEvent) {
     App.simpleSearch.cache = cache;
     App.lastSearchMode = 'simple';
     
-    reloadData( '#{{ $pageModule }}',"{{ $pageUrl }}/data"+attr);    
+    reloadData(params.moduleID,params.url+attr);    
 }
 
 $(document).ready(function() {
