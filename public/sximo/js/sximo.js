@@ -147,9 +147,10 @@ function SximoModal( url , title)
 	$('#sximo-modal-content').html(' ....Loading content , please wait ...');
 	$('.modal-title').html(title);
 	$('#sximo-modal-content').load(url,function(){
-        var titletrim = title.replace(/[\s\W]/ig, '').replace(/^\d+?/,'').toLowerCase();
+        var modal = $('#sximo-modal-content').closest('.modal'),
+            titletrim = title.replace(/[\s\W]/ig, '').replace(/^\d+?/,'').toLowerCase();
         if (window.App && window.App.autoCallbacks && window.App.autoCallbacks[titletrim]) {
-            window.App.autoCallbacks[titletrim].call($('#sximo-modal-lg'), {url:url, title:title});
+            window.App.autoCallbacks[titletrim].call(modal, {url:url, title:title});
         }        
 	});
 	$('#sximo-modal').modal('show');	

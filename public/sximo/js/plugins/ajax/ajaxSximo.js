@@ -266,9 +266,10 @@ function SximoModalLarge( url , title)
 	$('#sximo-modal-lg #sximo-modal-content').html(' ....Loading content , please wait ...');
 	$('#sximo-modal-lg  .modal-title').html(title);
 	$('#sximo-modal-lg  #sximo-modal-content').load(url,function(){
-        var titletrim = title.replace(/[\s\W]/ig, '').replace(/^\d+?/,'').toLowerCase();
+        var modal = $('#sximo-modal-lg'),
+            titletrim = title.replace(/[\s\W]/ig, '').replace(/^\d+?/,'').toLowerCase();
         if (window.App && window.App.autoCallbacks && window.App.autoCallbacks[titletrim]) {
-            window.App.autoCallbacks[titletrim].call($('#sximo-modal-lg'), {url:url, title:title});
+            window.App.autoCallbacks[titletrim].call(modal, {url:url, title:title});
         }
 	});
 	$('#sximo-modal-lg').modal('show');	
