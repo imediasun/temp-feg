@@ -17,6 +17,12 @@ var UNDEFINED,
                         }
                         else {
                             elm.val(val);
+                            if (elm.hasClass('date')) {
+                                elm.datepicker('update');
+                            }
+                            if (elm.hasClass('datetime')) {
+                                elm.datetimepicker('update');
+                            }
                         }
                     }                    
                 }
