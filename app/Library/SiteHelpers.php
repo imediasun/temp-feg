@@ -1968,7 +1968,7 @@ class SiteHelpers
             $width = $item['simplesearchfieldwidth'];
             $widthClass = "";
             $widthStyle = "";
-            if (preg_match('/[\_a-zA-Z]/', $width) == 1) {
+            if (preg_match('/^[\_a-zA-Z]/', $width) == 1) {
                 $widthClass = $width;
             }
             else {

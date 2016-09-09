@@ -43,8 +43,11 @@
 
 .sscol-submit,
 .sscol {
-    margin: 5px 10px;
+    padding-right: 15px;
+    padding-left: 15px;
     float: left;
+    margin-top: 2px;
+    margin-bottom: 2px;
 }
 
 .sscol-submit {
