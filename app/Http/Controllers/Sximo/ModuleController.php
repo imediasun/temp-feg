@@ -962,6 +962,10 @@ class ModuleController extends Controller {
                 'is_edit'        => 'Edit ',
                 'is_remove'        => 'Remove ',
                 'is_excel'        => 'Excel ',            
+                'is_csv'        => 'CSV ',            
+                'is_print'        => 'Print ',            
+                'is_pdf'        => 'PDF ',            
+                'is_word'        => 'Word '
             );    
             /* Update permission global / own access new ver 1.1
                Adding new param is_global
@@ -994,6 +998,9 @@ class ModuleController extends Controller {
                 foreach($tasks as $item=>$val)
                 {
                     $rows[$item] = (isset($access_data[$item]) && $access_data[$item] ==1  ? 1 : 0);
+                    if (($item == 'is_csv' || $item == 'is_print') && !isset($access_data[$item])) {
+                        $rows[$item] = isset($access_data['is_excel']) ? $access_data['is_excel'] : 0;
+                    }
                 }
                 $access[$r->name] = $rows;
                 
@@ -1026,7 +1033,11 @@ class ModuleController extends Controller {
             'is_add'        => 'Add ',
             'is_edit'        => 'Edit ',
             'is_remove'        => 'Remove ',
-            'is_excel'        => 'Excel ',            
+            'is_excel'        => 'Excel ',
+            'is_csv'        => 'CSV ',            
+            'is_print'        => 'Print ',            
+            'is_pdf'        => 'PDF ',            
+            'is_word'        => 'Word '            
         );    
         /* Update permission global / own access new ver 1.1
            Adding new param is_global
