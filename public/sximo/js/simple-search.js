@@ -20,8 +20,8 @@ function performSimpleSearch(params) {
         if (value === null || value === UNDEFINED ) {
             value = '';
         }
-        if (fieldName) {
-            cache[fieldName] = value;            
+        if (fieldName) {            
+            cache[fieldName] = {value:value, value2: null, operator: operate};
         }
 
         if(value && isValueDate) {

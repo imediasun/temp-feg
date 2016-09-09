@@ -21,10 +21,8 @@
 <script>
 
 jQuery(function(){
-		$('.date').datepicker({format:'mm/dd/yyyy',autoclose:true})
-		$('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});
-		$(".sel-search-multiple").select2();	
-
+    
+    initiateSearchFormFields($('#{{$pageModule}}Search'));
 
 	$('.doSearch').click(function(){
 		
@@ -52,7 +50,9 @@ jQuery(function(){
                 if (value2 === null || value2 === UNDEFINED ) {
                     value2 = '';
                 }
-                cache[field] = value;
+                if (field && name !='_token') {
+                    cache[field] = {value:value, value2: value2, operator: operate};;            
+                }                
 				if(value && isValueDate) {
                     value  = $.datepicker.formatDate('yy-mm-dd', new Date(value));
                 }                    

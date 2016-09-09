@@ -182,12 +182,16 @@ $(document).ready(function() {
 			echo AjaxHelpers::htmlExpandGrid();
 		endif;
 	 ?>
-    
-    if ($('.simpleSearchContainer').length) {
-        $('.simpleSearchContainer .date').datepicker({format:'mm/dd/yyyy',autoclose:true})
-        $('.simpleSearchContainer .datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});
-        $('.simpleSearchContainer .doSimpleSearch').click(function(event){
-            performSimpleSearch.call($(this), {moduleID: '#{{ $pageModule }}', url: "{{ $pageUrl }}/data", event: event});
+
+    var simpleSearch = $('.simpleSearchContainer');
+    if (simpleSearch.length) {
+        initiateSearchFormFields(simpleSearch);
+        simpleSearch.find('.doSimpleSearch').click(function(event){
+            performSimpleSearch.call($(this), {
+                moduleID: '#{{ $pageModule }}', 
+                url: "{{ $pageUrl }}/data", 
+                event: event
+            });
         });        
     }
 

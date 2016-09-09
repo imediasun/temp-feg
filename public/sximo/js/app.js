@@ -6,12 +6,20 @@ var UNDEFINED,
         simpleSearch: {cache: {}},
         columnSort: {cache: {}},
         populateFieldsFromCache: function (container, cacheObject, isComplex) {
-            var cache = cacheObject.cache, elmName, elm, val;
+            var cache = cacheObject.cache, 
+                elmName, elm, elm2, operatorElm,
+                item, val, val2, operator;
+        
             if (container.length && cache) {            
                 for(elmName in cache) {
                     elm = container.find('.form-control[name=' + elmName + ']');
+                    elm2 = container.find('.form-control[name=' + elmName + '_end]');
+                    operatorElm = container.find('.form-control[name=' + elmName + '_end]');
+                    item = cache[elmName];
+                    val = item.value;
+                    val2 = item.value2;
+                    operator = item.operator;
                     if (elm.length) {
-                        val = cache[elmName];
                         if (elm.hasClass('sel-search-multiple')) {
                             elm.select2('val', val);
                         }
@@ -25,10 +33,32 @@ var UNDEFINED,
                             }
                         }
                     }                    
+                    if (elm2.length) {
+                        if (elm2.hasClass('sel-search-multiple')) {
+                            elm2.select2('val', val2);
+                        }
+                        else {
+                            elm2.val(val2);
+                            if (elm2.hasClass('date')) {
+                                elm2.datepicker('update');
+                            }
+                            if (elm2.hasClass('datetime')) {
+                                elm2.datetimepicker('update');
+                            }
+                        }
+                    }                    
+                    if (operatorElm.length) {
+                        operatorElm.val(operator);
+                    }                    
                 }
             }                    
         }
     };
 
+function initiateSearchFormFields(container) {
+    container.find('.date').datepicker({format:'mm/dd/yyyy',autoclose:true});
+    container.find('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});    
+    container.find('.sel-search-multiple').select2();
+}
 
 
