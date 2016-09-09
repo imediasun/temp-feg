@@ -100,7 +100,7 @@ jQuery(function(){
             var elm = $(this), 
                 fieldName = elm.attr('name'), 
                 val = elm.val();
-            if (fieldName != 'search' && val !== '' && val !== null) {
+            if (fieldName != 'page' && fieldName != 'search' && val !== '' && val !== null) {
                 attr += '&' + fieldName + '=' + val;            
             }
         }); 
