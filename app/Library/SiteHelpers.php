@@ -1964,11 +1964,7 @@ class SiteHelpers
             }
         }
         
-        uasort($newArray, function ($a, $b) { 
-            return ($a['simplesearchorder'] >= $b['simplesearchorder'] ? 1 : -1); 
-        });
-        
-        foreach($newArray as &$item) {
+        foreach($newArray as $key => $item) {
             $width = $item['simplesearchfieldwidth'];
             $widthClass = "";
             $widthStyle = "";
@@ -1978,9 +1974,13 @@ class SiteHelpers
             else {
                 $widthStyle = 'width:' . $width. ';';
             }
-            $item['widthClass'] = $widthClass;
-            $item['widthStyle'] = $widthStyle;
-        }        
+            $newArray[$key]['widthClass'] = $widthClass;
+            $newArray[$key]['widthStyle'] = $widthStyle;
+        }  
+        
+        uasort($newArray, function ($a, $b) { 
+            return ($a['simplesearchorder'] >= $b['simplesearchorder'] ? 1 : -1); 
+        });
         
         return $newArray;
     }
