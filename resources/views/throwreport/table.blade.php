@@ -93,11 +93,11 @@
 							<td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}" data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
 								@if($field['field']=='price_per_play')
 
-									<input type="text" value="{{ number_format($value,2) }}" name="price_per_play[]" id="{{ $row->id }}" style="width:55px" />
+									<input type="text" value="{{ number_format($value,2) }}" name="price_per_play[]" class ="my_form" id="{{ $row->id }}" style="width:55px" />
 
 								@elseif($field['field']=='retail_price')
 
-									<input type="text" value="{{ number_format($value,2) }}" name="retail_price[]" class="num" style="width:55px" />
+									<input type="text" value="{{ number_format($value,2) }}" name="retail_price[]" class="num"  id="{{ $row->id }}" style="width:55px" />
 
 
 
@@ -169,6 +169,39 @@
 <script>
 $(document).ready(function() {
 	$('.tips').tooltip();
+	$('.my_form,.num').on("keypress",(function(e) {
+		console.log(e);
+		if (e.which == 13) {
+
+			var value = $(this).val();
+			var id =$(this).parent().parent().attr("id");
+			id = id.split("-");
+			console.log(id[1]);
+        
+
+			$.ajax(
+					{url: "throwreport/save/"+id[1],
+						type: 'post',
+						data: {price_per_play:value},
+
+
+
+						success: function(result){
+
+							location.reload();
+
+						}
+
+					}
+			);
+
+
+		}
+	}));
+
+
+
+
 
 	$('.num').change(function(){
 		console.log($(this).val());
