@@ -1,7 +1,7 @@
 <div class="row m-b">
 
 <br/>
-    <div class="col-md-4">
+    <div class="col-md-4" style=" width:22% !important">
         	@if($access['is_add'] ==1)
 			{!! AjaxHelpers::buttonActionCreate($pageModule,$setting,"Get Freight Quote") !!}
 			@endif
