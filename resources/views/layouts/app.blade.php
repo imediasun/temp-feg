@@ -67,7 +67,12 @@
 
 	<script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
 	<script src="https://cdn.jsdelivr.net/momentjs/2.10.6/moment.min.js"></script>
-
+    <!-- Search and storage  -->
+    <link href="{{ asset('sximo/css/search.css')}}" rel="stylesheet">
+    <script type="text/javascript" src="{{ asset('sximo/js/app.js') }}"></script>    
+    <script type="text/javascript" src="{{ asset('sximo/js/search.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('sximo/js/simple-search.js') }}"></script>
+    <!-- End Search and storage  -->
 	
   	</head>
   	<body class="sxim-init" >

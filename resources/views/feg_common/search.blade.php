@@ -45,9 +45,9 @@ jQuery(function(){
 
 	$('.doSearch').click(function(){
 		//alert('test');
-		var attr = '';
+		var attr = '', cache = {};
 		$('#advance-search tr.fieldsearch').each(function(i){
-			var UNDEFINED, 
+			var UNDEFINED,                 
                 container = this,
                 jQcontainer = $(container),                
                 field = jQcontainer.attr('id'),
@@ -69,6 +69,7 @@ jQuery(function(){
                 if (value2 === null || value2 === UNDEFINED ) {
                     value2 = '';
                 }
+                cache[field] = value;
 				if(value && isValueDate) {
                     value  = $.datepicker.formatDate('yy-mm-dd', new Date(value));
                 }                    
@@ -94,7 +95,18 @@ jQuery(function(){
 			}
 			
 		});
-		<?php if($searchMode =='ajax') { ?> 
+        
+        $('.table-actions :input').each(function () {
+            var elm = $(this), 
+                fieldName = elm.attr('name'), 
+                val = elm.val();
+            if (fieldName != 'page' && fieldName != 'search' && val !== '' && val !== null) {
+                attr += '&' + fieldName + '=' + val;            
+            }
+        }); 
+    
+		<?php if($searchMode =='ajax') { ?>
+            App.search.cache = cache;
 			reloadData( '#{{ $pageModule }}',"{{ $pageUrl }}/data?search="+attr);	
 			$('#sximo-modal').modal('hide');
 		<?php } else { ?>

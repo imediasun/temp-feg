@@ -40,10 +40,11 @@
                     <th scope="col" data-hide="phone">Title / Caption</th>
                     <th scope="col" width="70"><i class="fa fa-key"></i>Limit To</th>
                     <th scope="col"><i class="icon-link"></i>Type</th>
-                    <th scope="col" data-hide="phone">Show</th>
-                    <th scope="col" data-hide="phone" title='Show in Advanced Search?' >Advanced Search</th>
-                    <th scope="col" title='Show in Simple Search?' >Simple Search</th>
+                    <th scope="col" width="40" data-hide="phone">Show</th>
+                    <th scope="col" width="70" data-hide="phone" title='Show in Advanced Search?' >Advanced Search</th>
+                    <th scope="col" width="70" title='Show in Simple Search?' >Simple Search</th>
                     <th scope="col" width="70" title='Integer numbers 0,1,2,...n in to denote the order' >Simple Search Order</th>
+                    <th scope="col" width="100" title='Can be class names or width value in % or px etc.' >Simple Search Field Class/Width</th>
                     <th scope="col" data-hide="phone">Required</th>
                     <th scope="col" data-hide="phone">Configure</th>            
                 </tr>
@@ -109,6 +110,10 @@
             <td class="formSimpleSearchOrder">
                 <?php $simplesearchorder = (isset($rows['simplesearchorder']) ? $rows['simplesearchorder'] : ''); ?>
                 <input type="text" class="form-control" name="simplesearchorder[<?php echo $id;?>]" class="form-control" value="<?php echo $simplesearchorder;?>" />
+            </td>            
+            <td class="formSimpleSearchFieldWidth">
+                <?php $simplesearchfieldwidth = (isset($rows['simplesearchfieldwidth']) ? $rows['simplesearchfieldwidth'] : ''); ?>
+                <input type="text" class="form-control" name="simplesearchfieldwidth[<?php echo $id;?>]" class="form-control" value="<?php echo $simplesearchfieldwidth;?>" />
             </td>            
 			<td class="formFieldRequired">
 				<?php

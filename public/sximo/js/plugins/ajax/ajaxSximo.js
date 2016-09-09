@@ -6,11 +6,30 @@ function reloadData( id,url,callback)
 		$( id +'Grid' ).html( data );
 		$('.ajaxLoading').hide();
 		typeof callback === 'function' && callback();
-
+        if (window.App && window.App.autoCallbacks && window.App.autoCallbacks.reloaddata) {
+            window.App.autoCallbacks.reloaddata.call($( id +'Grid' ), {id:id, url:url, data:data});
+        }
 	});
 
 }
 
+function getFooterFilters(excludeSearch, excludePage) {
+    var attr = "";
+    $('.table-actions :input').each(function () {
+        var elm = $(this), 
+            fieldName = elm.attr('name'), 
+            val = elm.val();
+        if (val !== '' && val !== null) {
+            if ((fieldName != 'search' && fieldName != 'page') || 
+                (fieldName == 'search' &&  !excludeSearch) || 
+                (fieldName == 'page' &&  !excludePage)) {            
+            
+                attr += '&' + fieldName + '=' + val;
+            }            
+        }
+    });
+    return attr;
+}
 
 function ajaxDoSearch( id ,url )
 {
@@ -63,6 +82,9 @@ function ajaxInlineSave(id,url,reloadurl)
 		$.post( reloadurl ,function( data ) {
 			$( id+'Grid' ).html( data );
 			$('.ajaxLoading').hide();
+            if (window.App && window.App.autoCallbacks && window.App.autoCallbacks.ajaxinlinesave) {
+                window.App.autoCallbacks.ajaxinlinesave.call($( id +'Grid' ), {id:id, url:url, data:data, reloadurl: reloadurl});
+            }            
 		});							
 	});
 }	
@@ -261,6 +283,11 @@ function SximoModalLarge( url , title)
 	$('#sximo-modal-lg #sximo-modal-content').html(' ....Loading content , please wait ...');
 	$('#sximo-modal-lg  .modal-title').html(title);
 	$('#sximo-modal-lg  #sximo-modal-content').load(url,function(){
+        var modal = $('#sximo-modal-lg'),
+            titletrim = title.replace(/[\s\W]/ig, '').replace(/^\d+?/,'').toLowerCase();
+        if (window.App && window.App.autoCallbacks && window.App.autoCallbacks[titletrim]) {
+            window.App.autoCallbacks[titletrim].call(modal, {url:url, title:title});
+        }
 	});
 	$('#sximo-modal-lg').modal('show');	
 }

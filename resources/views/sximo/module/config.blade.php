@@ -80,6 +80,12 @@
 		 </div>   	
 
 	  <div class="form-group">
+		<label for="module_type" class=" control-label col-md-4">Module Type </label>
+		<div class="col-md-8">
+		<input  type='text' name='module_type' id='module_type' readonly="1"  class="form-control " required value='{{ $row->module_type }}'  />
+		 </div> 
+	  </div>  
+	  <div class="form-group">
 		<label for="ipt" class=" control-label col-md-4">Class Controller </label>
 		<div class="col-md-8">
 		<input  type='text' name='module_name' id='module_name' readonly="1"  class="form-control " required value='{{ $row->module_name }}'  />

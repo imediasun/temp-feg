@@ -830,7 +830,12 @@ class SiteHelpers
                     }
 
                 }
-                $form = "<select name='$field{$bulk}'  class='form-control sel-search' $mandatory $selectMultiple>" .
+                
+                $multipleClass = "";
+                if (!empty($selectMultiple)) {
+                    $multipleClass = "sel-search-multiple";
+                }
+                $form = "<select name='$field{$bulk}'  class='form-control sel-search $multipleClass' $mandatory $selectMultiple>" .
 						(empty($selectMultiple) ? 	"<option value=''> -- Select  -- </option>" : "") .
 						"	$opts
 						</select>";
@@ -1959,9 +1964,24 @@ class SiteHelpers
             }
         }
         
+        foreach($newArray as $key => &$item) {
+            $width = $item['simplesearchfieldwidth'];
+            $widthClass = "";
+            $widthStyle = "";
+            if (preg_match('/^[\_a-zA-Z]/', $width) == 1) {
+                $widthClass = $width;
+            }
+            else {
+                $widthStyle = 'width:' . $width. ';';
+            }
+            $item['widthClass'] = $widthClass;
+            $item['widthStyle'] = $widthStyle;
+        }  
+        
         uasort($newArray, function ($a, $b) { 
             return ($a['simplesearchorder'] >= $b['simplesearchorder'] ? 1 : -1); 
         });
+        
         return $newArray;
     }
 }
