@@ -303,9 +303,9 @@ class ModuleController extends Controller {
             'view-method'        => (isset($config['setting']['view-method'])  ? $config['setting']['view-method'] : 'native'  ),
             'inline'        => (isset($config['setting']['inline'])  ? $config['setting']['inline'] : 'false'  ),
             
-            'hidecountrow'         => (isset($config['setting']['hidecountrow'])  ? $config['setting']['hidecountrow'] : 'false'  ),
-            'usesimplesearch'         => (isset($config['setting']['usesimplesearch'])  ? $config['setting']['usesimplesearch'] : 'true'  ),
-            'hideadvancedsearchoperators'         => (isset($config['setting']['hideadvancedsearchoperators'])  ? $config['setting']['hideadvancedsearchoperators'] : 'false'  ),
+            'hiderowcountcolumn'            => (isset($config['setting']['hiderowcountcolumn'])  ? $config['setting']['hiderowcountcolumn'] : 'false'  ),
+            'usesimplesearch'               => (isset($config['setting']['usesimplesearch'])  ? $config['setting']['usesimplesearch'] : 'true'  ),
+            'hideadvancedsearchoperators'   => (isset($config['setting']['hideadvancedsearchoperators'])  ? $config['setting']['hideadvancedsearchoperators'] : 'false'  ),
             'disablepagination'         => (isset($config['setting']['disablepagination'])  ? $config['setting']['disablepagination'] : 'false'  ),
             'disablesort'               => (isset($config['setting']['disablesort'])  ? $config['setting']['disablesort'] : 'false'  ),
             'disableactioncheckbox'     => (isset($config['setting']['disableactioncheckbox'])  ? $config['setting']['disableactioncheckbox'] : 'false'  ),
@@ -380,7 +380,7 @@ class ModuleController extends Controller {
             'view-method'        => (!is_null($request->input('view-method'))  ? $request->input('view-method') : 'native' ) ,
             'inline'        => (!is_null($request->input('inline'))  ? 'true' : 'false' ) ,
             
-            'hidecountrow'               => (!is_null($request->input('hidecountrow'))  ? 'true' : 'false' ) ,
+            'hiderowcountcolumn'            => (!is_null($request->input('hiderowcountcolumn'))  ? 'true' : 'false' ) ,
             'usesimplesearch'               => (!is_null($request->input('usesimplesearch'))  ? 'true' : 'false' ) ,
             'hideadvancedsearchoperators'   => (!is_null($request->input('hideadvancedsearchoperators'))  ? 'true' : 'false' ) ,
             'disablepagination'         => (!is_null($request->input('disablepagination'))  ? 'true' : 'false' ) ,
