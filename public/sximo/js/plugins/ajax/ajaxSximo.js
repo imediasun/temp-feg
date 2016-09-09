@@ -20,7 +20,7 @@ function getFooterFilters(excludeSearch, excludePage) {
             fieldName = elm.attr('name'), 
             val = elm.val();
         if (val !== '' && val !== null) {
-            if ((fieldName != 'search' && fieldName == 'page') || 
+            if ((fieldName != 'search' && fieldName != 'page') || 
                 (fieldName == 'search' &&  !excludeSearch) || 
                 (fieldName == 'page' &&  !excludePage)) {            
             
