@@ -22,7 +22,7 @@
         @endif
         @endif
     </div>
-	<div class="col-md-6 "> 
+	<div class="col-md-8 "> 
         <?php 
             $isExcel = isset($access['is_excel']) && $access['is_excel'] == 1;
             $isCSV = isset($access['is_csv'])  ? ($access['is_csv'] == 1) : $isExcel;
