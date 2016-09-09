@@ -3,8 +3,10 @@ function performSimpleSearch(params) {
         params = {};
     }
     var elm = this, 
-        container = $('.simpleSearchContainer'), 
-        attr = '?search=', 
+        container = params.container || $('.simpleSearchContainer'), 
+        attr = '?search=',
+        moduleID = params.moduleID,
+        url = params.url,        
         cache = {};
 
     container.find('.form-control').each(function(i){
@@ -40,7 +42,7 @@ function performSimpleSearch(params) {
     App.simpleSearch.cache = cache;
     App.lastSearchMode = 'simple';
     
-    reloadData(params.moduleID,params.url+attr);    
+    reloadData(moduleID,url+attr);    
 }
 
 $(document).ready(function() {
