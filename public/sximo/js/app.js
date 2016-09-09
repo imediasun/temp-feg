@@ -12,7 +12,7 @@ var UNDEFINED,
                     elm = container.find('.form-control[name=' + elmName + ']');
                     if (elm.length) {
                         val = cache[elmName];
-                        if (elm.hasClass('sel-search')) {
+                        if (elm.hasClass('sel-search-multiple')) {
                             elm.select2('val', val);
                         }
                         else {

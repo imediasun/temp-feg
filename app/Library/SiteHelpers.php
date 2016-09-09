@@ -830,7 +830,12 @@ class SiteHelpers
                     }
 
                 }
-                $form = "<select name='$field{$bulk}'  class='form-control sel-search' $mandatory $selectMultiple>" .
+                
+                $multipleClass = "";
+                if (!empty($selectMultiple)) {
+                    $multipleClass = "sel-search-multiple";
+                }
+                $form = "<select name='$field{$bulk}'  class='form-control sel-search $multipleClass' $mandatory $selectMultiple>" .
 						(empty($selectMultiple) ? 	"<option value=''> -- Select  -- </option>" : "") .
 						"	$opts
 						</select>";
