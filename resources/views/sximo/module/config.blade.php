@@ -242,6 +242,17 @@
            </div> 
         </div>                
         
+        <div class="form-group">
+          <label for="hiderowcountcolumn" class=" control-label col-md-4">Hide Column showing Row Count</label>
+          <div class="col-md-8">
+              <label class="checkbox">
+              <input type="checkbox" value="true" name="hiderowcountcolumn" id="hiderowcountcolumn"
+              @if(isset($setting['hiderowcountcolumn']) && $setting['hiderowcountcolumn'] == 'true') checked="checked" @endif 	
+               /> Yes
+              </label>
+           </div> 
+        </div>                
+        
 	</fieldset>	
 
   	<fieldset>
