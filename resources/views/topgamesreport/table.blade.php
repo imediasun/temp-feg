@@ -190,7 +190,8 @@ $(document).ready(function() {
             performSimpleSearch.call($(this), {
                 moduleID: '#{{ $pageModule }}', 
                 url: "{{ $pageUrl }}/data", 
-                event: event
+                event: event,
+                container: simpleSearch
             });
         });        
     }
