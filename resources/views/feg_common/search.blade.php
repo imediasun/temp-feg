@@ -19,32 +19,15 @@
 </form>	
 </div>
 <script>
-function changeOperate( val , field )
-{
-	if(val =='is_null') {
-		$('input[name='+field+']').attr('readonly','1');
-		$('input[name='+field+']').val('is_null');
-	} else if(val =='not_null') {
-		$('input[name='+field+']').attr('readonly','1');
-		$('input[name='+field+']').val('not_null');		
 
-	} else if(val =='between') {
-	
-		html = '<input name="'+field+'" class="date form-control" placeholder="Start Date" style="width:100px;"  /> -  <input name="'+field+'_end" class="date form-control"  placeholder="End Date" style="width:100px;"    />';
-		$('#field_'+field+'').html(html);
-	} else {
-		$('input[name='+field+']').removeAttr('readonly');
-		$('input[name='+field+']').val('');	
-	}
-}
 jQuery(function(){
 		$('.date').datepicker({format:'mm/dd/yyyy',autoclose:true})
 		$('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});
-		//$(".sel-search").select2({ width:"98%"});	
+		$(".sel-search-multiple").select2();	
 
 
 	$('.doSearch').click(function(){
-		//alert('test');
+		
 		var attr = '', cache = {};
 		$('#advance-search tr.fieldsearch').each(function(i){
 			var UNDEFINED,                 
