@@ -44,7 +44,7 @@
                     <th scope="col" width="70" data-hide="phone" title='Show in Advanced Search?' >Advanced Search</th>
                     <th scope="col" width="70" title='Show in Simple Search?' >Simple Search</th>
                     <th scope="col" width="70" title='Integer numbers 0,1,2,...n in to denote the order' >Simple Search Order</th>
-                    <th scope="col" width="100" title='Can be class name or value in % or pixels (px is optional)' >Simple Search Field Width</th>
+                    <th scope="col" width="100" title='Can be class names or width value in % or px etc.' >Simple Search Field Class/Width</th>
                     <th scope="col" data-hide="phone">Required</th>
                     <th scope="col" data-hide="phone">Configure</th>            
                 </tr>
