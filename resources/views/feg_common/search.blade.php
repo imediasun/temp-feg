@@ -95,6 +95,16 @@ jQuery(function(){
 			}
 			
 		});
+        
+        $('.table-actions :input').each(function () {
+            var elm = $(this), 
+                fieldName = elm.attr('name'), 
+                val = elm.val();
+            if (fieldName != 'search' && val !== '' && val !== null) {
+                attr += '&' + fieldName + '=' + val;            
+            }
+        }); 
+    
 		<?php if($searchMode =='ajax') { ?>
             App.search.cache = cache;
 			reloadData( '#{{ $pageModule }}',"{{ $pageUrl }}/data?search="+attr);	
