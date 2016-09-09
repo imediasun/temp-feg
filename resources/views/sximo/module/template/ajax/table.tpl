@@ -23,7 +23,9 @@
     <table class="table table-striped  " id="{{ $pageModule }}Table">
         <thead>
 			<tr>
+                @if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
 				<th width="20"> No </th>
+                @endif
                 @if($setting['disableactioncheckbox']=='false')
 				<th width="30"> <input type="checkbox" class="checkall" /></th>
                 @endif
@@ -72,7 +74,9 @@
            			  $id = $row->{key};
            		?>
                 <tr class="editable" id="form-{{ $row->{key} }}">
+                    @if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
 					<td class="number"> <?php echo ++$i;?>  </td>
+                    @endif
                     @if($setting['disableactioncheckbox']=='false')
 					<td ><input type="checkbox" class="ids" name="ids[]" value="<?php echo $row->{key} ;?>" />  </td>
                     @endif

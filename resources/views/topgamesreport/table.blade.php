@@ -37,7 +37,9 @@
     <table class="table table-striped  " id="{{ $pageModule }}Table">
         <thead>
 			<tr>
+                @if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
 				<th width="20"> No </th>
+                @endif
                 @if($setting['disableactioncheckbox']=='false')
 				<th width="30"> <input type="checkbox" class="checkall" /></th>
                 @endif
@@ -86,7 +88,9 @@
            			  $id = $row->id;
            		?>
                 <tr class="editable" id="form-{{ $row->id }}">
+                    @if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
 					<td class="number"> <?php echo ++$i;?>  </td>
+                    @endif
                     @if($setting['disableactioncheckbox']=='false')
 					<td ><input type="checkbox" class="ids" name="ids[]" value="<?php echo $row->id ;?>" />  </td>
                     @endif
@@ -178,13 +182,15 @@ $(document).ready(function() {
 			echo AjaxHelpers::htmlExpandGrid();
 		endif;
 	 ?>
-             
-    $('.simpleSearchContainer .date').datepicker({format:'mm/dd/yyyy',autoclose:true})
-    $('.simpleSearchContainer .datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});
-    $('.simpleSearchContainer .doSimpleSearch').click(function(event){
-        performSimpleSearch.call($(this), {moduleID: '#{{ $pageModule }}',url: "{{ $pageUrl }}/data", event: event});
-    });
-          
+    
+    if ($('.simpleSearchContainer').length) {
+        $('.simpleSearchContainer .date').datepicker({format:'mm/dd/yyyy',autoclose:true})
+        $('.simpleSearchContainer .datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});
+        $('.simpleSearchContainer .doSimpleSearch').click(function(event){
+            performSimpleSearch.call($(this), {moduleID: '#{{ $pageModule }}', url: "{{ $pageUrl }}/data", event: event});
+        });        
+    }
+
 });
 </script>
 <style>
