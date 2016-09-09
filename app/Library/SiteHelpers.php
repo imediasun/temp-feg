@@ -1967,6 +1967,21 @@ class SiteHelpers
         uasort($newArray, function ($a, $b) { 
             return ($a['simplesearchorder'] >= $b['simplesearchorder'] ? 1 : -1); 
         });
+        
+        foreach($newArray as &$item) {
+            $width = $item['simplesearchfieldwidth'];
+            $widthClass = "";
+            $widthStyle = "";
+            if (preg_match('/[\_a-zA-Z]/', $width) == 1) {
+                $widthClass = $width;
+            }
+            else {
+                $widthStyle = 'width:' . $width. ';';
+            }
+            $item['widthClass'] = $widthClass;
+            $item['widthStyle'] = $widthStyle;
+        }        
+        
         return $newArray;
     }
 }

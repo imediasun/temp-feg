@@ -16,12 +16,12 @@
         @if(!empty($simpleSearchForm))  
         <div class="simpleSearchContainer clearfix">
             @foreach ($simpleSearchForm as $t)
-                <div class="sscol col-md-3">
+                <div class="sscol {{ $t['widthClass'] }}" style="{{ $t['widthStyle'] }}">
                     {!! SiteHelpers::activeLang($t['label'],(isset($t['language'])? $t['language'] : array())) !!}
                     {!! SiteHelpers::transForm($t['field'] , $tableForm) !!}                    
                 </div>                        
             @endforeach		
-            <div class="col-md-3"><br/>
+            <div class="sscol-submit"><br/>
                 <button type="button" name="search" class="doSimpleSearch btn btn-sm btn-primary"> Search </button>		
             </div>
         </div>
