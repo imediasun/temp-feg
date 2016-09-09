@@ -685,9 +685,9 @@ class ModuleController extends Controller {
                     'size'            => $size,
                     'edit'            => $form['edit'],
                     'search'        => $form['search'],
-                    'simplesearch'        => $form['simplesearch'],
-                    'simplesearchorder'        => $form['simplesearchorder'],
-                    'simplesearchfieldwidth'        => $form['simplesearchfieldwidth'],
+                    'simplesearch'        => isset($form['simplesearch']) ? $form['simplesearch'] : '',
+                    'simplesearchorder'        => isset($form['simplesearchorder']) ? $form['simplesearchorder'] : '',
+                    'simplesearchfieldwidth'        => isset($form['simplesearchfieldwidth']) ? $form['simplesearchfieldwidth']: '',
                     "sortlist"         => $form['sortlist'] ,
                     'option'        => array(
                         "opt_type"                 => $form['option']['opt_type'],
