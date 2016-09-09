@@ -48,8 +48,7 @@ function changeOperate( val , field )
 		$('input[name='+field+']').val('not_null');		
 
 	} else if(val =='between') {
-	
-		html = '<input name="'+field+'" class="date form-control" placeholder="Start Date" style="width:100px;"  /> -  <input name="'+field+'_end" class="date form-control"  placeholder="End Date" style="width:100px;"    />';
+		html = '<input name="'+field+'" class="date form-control" placeholder="Start" style="width:100px;"  /> -  <input name="'+field+'_end" class="date form-control"  placeholder="End" style="width:100px;"    />';
 		$('#field_'+field+'').html(html);
 	} else {
 		$('input[name='+field+']').removeAttr('readonly');
@@ -57,48 +56,19 @@ function changeOperate( val , field )
 	}
 }
 jQuery(function(){
-		$('.date').datepicker({format:'mm/dd/yyyy',autoclose:true})
-		$('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});
-		//$(".sel-search").select2({ width:"98%"});	
 
+    initiateSearchFormFields($('#{{$pageModule}}Search'));
 
 	$('.doSearch').click(function(){
-		var attr = '';
-		$('#advance-search tr.fieldsearch').each(function(i){
-			var field = $(this).attr('id');
-			var operate = $(this).find('#'+field+'_operate').val();
-			var value_select  = $(this).find("select[name="+field+"]").val() || '';
-			if(  value_select !='' )
-			{
-				value  = value_select;
-			} else {
-				value  = $(this).find("input[name="+field+"]").val();
-			}
-
-			if(value !=='' && typeof value !=='undefined' && this.name !='_token')
-			{
-
-				if(operate =='between')
-				{
-					var value  = $(this).find("input[name="+field+"]").val();
-					var value2  = $(this).find("input[name="+field+"_end]").val();
-					attr += field+':'+operate+':'+value+':'+value2+'|';
-				} else {
-					attr += field+':'+operate+':'+value+'|';
-				}	
-					
-			}
-			
-		});
-		<?php if($searchMode =='ajax') { ?>
-			reloadData( '#{{ $pageModule }}',"{{ $pageUrl }}/data?search="+attr,function(){
-					$(".sbox-tools a.tips").addClass('btn-search');
-				});
-			$('#sximo-modal').modal('hide');
-
-		<?php } else { ?>
-			window.location.href = '{{ $pageUrl }}?search='+attr;
-		<?php } ?>
+        var ajaxSerachMode = <?php echo $searchMode =='ajax' ?'true':'false';?>;
+        $('#sximo-modal').modal('hide');
+        performAdvancedSearch.call($(this), {
+            moduleID: '#{{ $pageModule }}', 
+            url: "{{ $pageUrl }}/data", 
+            event: event,
+            ajaxSearch: ajaxSerachMode,
+            container: $("#advance-search")
+        });
 	});
 });
 

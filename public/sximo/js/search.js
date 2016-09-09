@@ -74,6 +74,24 @@ function performAdvancedSearch(params) {
     
 }
 
+function changeSearchOperator( val , field )
+{
+	if(val =='is_null') {
+		$('input[name='+field+']').attr('readonly','1');
+		$('input[name='+field+']').val('is_null');
+	} else if(val =='not_null') {
+		$('input[name='+field+']').attr('readonly','1');
+		$('input[name='+field+']').val('not_null');		
+
+	} else if(val =='between') {
+		html = '<input name="'+field+'" class="date form-control" placeholder="Start" style="width:100px;"  /> -  <input name="'+field+'_end" class="date form-control"  placeholder="End" style="width:100px;"    />';
+		$('#field_'+field+'').html(html);
+	} else {
+		$('input[name='+field+']').removeAttr('readonly');
+		$('input[name='+field+']').val('');	
+	}
+}
+
 App.autoCallbacks.reloaddata = function() {
     if (App.lastSearchMode == 'simple') {
         App.simpleSearch.populateFields();  
