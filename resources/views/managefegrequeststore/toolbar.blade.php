@@ -15,14 +15,7 @@
 <br/>
         <input  name="order_type" @if($TID )value="{{ $TID }}" @endif id="order_type" type="hidden" onchange="pageRefresh('T');" style="width:98%">
     </div>
-    <div class="col-md-2">
-        <br/>
-        <select id="location_id" class="form-control" name="location_id" onchange="pageRefresh('L');">
-            @foreach($manageRequestInfo['loc_options'] as $k => $locations)
-                <option @if($LID == $k) selected @endif value="{{ $k }}">{{ $locations}}</option>
-            @endforeach
-        </select>
-    </div>
+
     <div class="col-md-2">
         <br/>
         <select id="vendor_id" class="form-control" name="vendor_id" onchange="pageRefresh('V');">
