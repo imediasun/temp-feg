@@ -16,9 +16,9 @@
         @if(!empty($simpleSearchForm))  
         <div class="simpleSearchContainer clearfix">
             @foreach ($simpleSearchForm as $t)
-                <div class="sscol {{ $t['widthClass'] }}" style="{{ $t['widthStyle'] }}">
+                <div class="sscol {{ $t->widthClass }}" style="{{ $t->widthStyle }}">
                     {!! SiteHelpers::activeLang($t['label'],(isset($t['language'])? $t['language'] : array())) !!}
-                    {!! SiteHelpers::transForm($t['field'] , $tableForm) !!}                    
+                    {!! SiteHelpers::transForm($t['field'] , $simpleSearchForm) !!}                    
                 </div>                        
             @endforeach		
             <div class="sscol-submit"><br/>
