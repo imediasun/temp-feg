@@ -1964,7 +1964,7 @@ class SiteHelpers
             }
         }
         
-        foreach($newArray as $key => $item) {
+        foreach($newArray as $key => &$item) {
             $width = $item['simplesearchfieldwidth'];
             $widthClass = "";
             $widthStyle = "";
@@ -1974,8 +1974,8 @@ class SiteHelpers
             else {
                 $widthStyle = 'width:' . $width. ';';
             }
-            $newArray[$key]['widthClass'] = $widthClass;
-            $newArray[$key]['widthStyle'] = $widthStyle;
+            $item['widthClass'] = $widthClass;
+            $item['widthStyle'] = $widthStyle;
         }  
         
         uasort($newArray, function ($a, $b) { 
