@@ -77,19 +77,41 @@
 
 
 				  <div class="form-group  " >
-					<label for="Ticket Value" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Ticket Value', (isset($fields['ticket_value']['language'])? $fields['ticket_value']['language'] : array())) !!}
+					<label for="Case Price" class=" control-label col-md-4 text-left">
+					{!! SiteHelpers::activeLang('Case Price', (isset($fields['case_price']['language'])? $fields['case_price']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
 						<div class="input-group">
 							<span class="input-group-addon">$</span>
-							{!! Form::text('ticket_value', number_format((double)$row['ticket_value'],2),array('class'=>'form-control', 'placeholder'=>'','required'=>'required','type'=>'number','min' => '0','step'=>'1' )) !!}
+							{!! Form::text('case_price', number_format((double)$row['case_price'],2),array('class'=>'form-control', 'placeholder'=>'','required'=>'required','type'=>'number','min' => '0','step'=>'1' )) !!}
 						</div>
 					</div>
 					 <div class="col-md-2">
 
 					 </div>
 				  </div>
+
+
+
+							<div class="form-group  " >
+								<label for="Individual Item Price" class=" control-label col-md-4 text-left">
+									{!! SiteHelpers::activeLang('Individual Item Price', (isset($fields['unit_price']['language'])? $fields['unit_price']['language'] : array())) !!}
+								</label>
+								<div class="col-md-6">
+									<div class="input-group">
+										<span class="input-group-addon">$</span>
+										{!! Form::text('unit_price', number_format((double)$row['unit_price'],2),array('class'=>'form-control', 'placeholder'=>'','required'=>'required','type'=>'number','min' => '0','step'=>'1' )) !!}
+									</div>
+								</div>
+								<div class="col-md-2">
+
+								</div>
+							</div>
+
+
+
+
+
 							<div class="form-group  " >
 								<label for="Prod Type Id" class=" control-label col-md-4 text-left">
 									{!! SiteHelpers::activeLang('Prod Type Id', (isset($fields['prod_type_id']['language'])? $fields['prod_type_id']['language'] : array())) !!}
