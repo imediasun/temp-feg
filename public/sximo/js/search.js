@@ -9,12 +9,15 @@ App.autoCallbacks.reloaddata = function() {
 App.autoCallbacks.ajaxinlinesave = function() {
     
 };
-App.autoCallbacks.advancesearch = function() {
+App.autoCallbacks.advancedsearch = function() {
     var modal = this, searchButton = modal.find('.doSearch');
     searchButton.click(function(){
         App.lastSearchMode = 'advanced';
     });
     App.search.populateFields(modal);    
+};
+App.autoCallbacks.advancesearch = function() {
+    App.autoCallbacks.advancedsearch.call(this);
 };
 App.autoCallbacks.columnselector = function() {
     

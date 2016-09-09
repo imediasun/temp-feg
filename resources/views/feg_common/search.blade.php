@@ -96,14 +96,7 @@ jQuery(function(){
 			
 		});
         
-        $('.table-actions :input').each(function () {
-            var elm = $(this), 
-                fieldName = elm.attr('name'), 
-                val = elm.val();
-            if (fieldName != 'page' && fieldName != 'search' && val !== '' && val !== null) {
-                attr += '&' + fieldName + '=' + val;            
-            }
-        }); 
+        attr += getFooterFilters(true, true);
     
 		<?php if($searchMode =='ajax') { ?>
             App.search.cache = cache;
