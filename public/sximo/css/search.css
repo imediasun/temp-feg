@@ -59,14 +59,14 @@
 .datagrid th.dgcsortable {
     cursor: pointer;
     position: relative;
-    padding-left: 12px;
+    padding-left: 10px;
 }
 
 .datagrid th.dgcsortable:after {
     content: "\f0dc";
     position: absolute;
     left: 0;
-    padding: 3px;  
+    padding: 3px 2px 3px 0;  
     color: #aaa;
     font-family: FontAwesome;
     font-style: normal;
@@ -76,13 +76,13 @@
 }
 
 .datagrid th.dgcsortable:hover:after {
-    color: #999;
-}
-
-.datagrid th.dgcsortable.dgcsorted:after {
     color: #666;
 }
 
+.datagrid th.dgcsortable.dgcsorted:after {
+    color: #333;
+}
+.datagrid th.dgcsortable:hover:after,
 .datagrid th.dgcsortable.dgcsorted.dgcorderasc:after {
 /*    content: "\f160";  asc 
     content: "\f15d"; a-z
