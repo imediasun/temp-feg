@@ -20,22 +20,22 @@
 				<option value="like"> Like </option>
                     @endif
 
-			</select> 
+			</select>
 			</td>
 			<td id="field_{{ $t['field']}}">{!! SiteHelpers::transForm($t['field'] , $tableForm) !!}</td>
-		
+
 		</tr>
-	
+
 	@endif
 @endforeach
 		<tr>
 			<td></td>
 			<td><button type="button" name="search" class="doSearch btn btn-sm btn-primary"> Search </button></td>
-		
+
 		</tr>
-	</tbody>     
+	</tbody>
 	</table>
-</form>	
+</form>
 </div>
 <script>
 
@@ -67,8 +67,8 @@ jQuery(function(){
 					attr += field+':'+operate+':'+value+':'+value2+'|';
 				} else {
 					attr += field+':'+operate+':'+value+'|';
-				}	
-					
+				}
+
 			}
 
 		});
@@ -85,8 +85,8 @@ jQuery(function(){
         var ajaxSerachMode = <?php echo $searchMode =='ajax' ?'true':'false';?>;
         $('#sximo-modal').modal('hide');
         performAdvancedSearch.call($(this), {
-            moduleID: '#{{ $pageModule }}', 
-            url: "{{ $pageUrl }}/data", 
+            moduleID: '#{{ $pageModule }}',
+            url: "{{ $pageUrl }}/data",
             event: event,
             ajaxSearch: ajaxSerachMode,
             container: $("#advance-search")
