@@ -383,8 +383,7 @@ function injectPaginate()
 {
 
     $sort = (isset($_GET['sort']) ? $_GET['sort'] : '');
-    $order = (isset($_GET['order']) ? $_GET['order'] : '');
-    $rows = (isset($_GET['rows']) ? $_GET['rows'] : '');
+    $order = (isset($_GET['order']) ? $_GET['order'] : '');    
     $search = (isset($_GET['search']) ? $_GET['search'] : '');
     $product_type = (isset($_GET['prod_list_type']) ? $_GET['prod_list_type'] : '');
     $budget_year = (isset($_GET['budget_year']) ? $_GET['budget_year'] : '');
@@ -400,7 +399,9 @@ function injectPaginate()
     $appends = array();
     if ($sort != '') $appends['sort'] = $sort;
     if ($order != '') $appends['order'] = $order;
-    if ($rows != '') $appends['rows'] = $rows;
+    if (Input::has('rows')) {
+        $appends['rows'] = Input::get('rows');
+    }
     if ($search != '') $appends['search'] = $search;
     if ($product_type != '' || $product_type != NULL)
         $appends['prod_list_type'] = $product_type;
