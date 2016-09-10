@@ -7,7 +7,7 @@
 		<tr id="{{ $t['field'] }}" class="fieldsearch">
 			<td>{!! SiteHelpers::activeLang($t['label'], (isset($t['language']) ? $t['language'] : array())) !!} </td>
 			<td > 
-			<select id="{{ $t['field']}}_operate" class="form-control oper" name="operate" onchange="changeOperate(this.value , '{{ $t['field']}}')">
+			<select id="{{ $t['field']}}_operate" class="form-control oper" name="operate" onchange="changeSearchOperator(this.value , '{{ $t['field']}}')">
 				<option value="equal"> = </option>
                 @if($pageModule != "merchandisebudget" )
 				<option value="bigger_equal"> >= </option>
@@ -38,31 +38,13 @@
 </form>	
 </div>
 <script>
-function changeOperate( val , field )
-{
-	if(val =='is_null') {
-		$('input[name='+field+']').attr('readonly','1');
-		$('input[name='+field+']').val('is_null');
-	} else if(val =='not_null') {
-		$('input[name='+field+']').attr('readonly','1');
-		$('input[name='+field+']').val('not_null');		
 
-	} else if(val =='between') {
-	
-		html = '<input name="'+field+'" class="date form-control" placeholder="Start Date" style="width:100px;"  /> -  <input name="'+field+'_end" class="date form-control"  placeholder="End Date" style="width:100px;"    />';
-		$('#field_'+field+'').html(html);
-	} else {
-		$('input[name='+field+']').removeAttr('readonly');
-		$('input[name='+field+']').val('');	
-	}
-}
 jQuery(function(){
-		$('.date').datepicker({format:'mm/dd/yyyy',autoclose:true})
-		$('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});
-		//$(".sel-search").select2({ width:"98%"});	
 
+    initiateSearchFormFields($('#{{$pageModule}}Search'));
 
 	$('.doSearch').click(function(){
+<<<<<<< HEAD
 		var attr = '';
 		$('#advance-search tr.fieldsearch').each(function(i){
 			var field = $(this).attr('id');
@@ -99,6 +81,17 @@ jQuery(function(){
 		<?php } else { ?>
 			window.location.href = '{{ $pageUrl }}?search='+attr;
 		<?php } ?>
+=======
+        var ajaxSerachMode = <?php echo $searchMode =='ajax' ?'true':'false';?>;
+        $('#sximo-modal').modal('hide');
+        performAdvancedSearch.call($(this), {
+            moduleID: '#{{ $pageModule }}', 
+            url: "{{ $pageUrl }}/data", 
+            event: event,
+            ajaxSearch: ajaxSerachMode,
+            container: $("#advance-search")
+        });
+>>>>>>> add6916751c291caba07399e19193de2f411720f
 	});
 });
 

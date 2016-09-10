@@ -304,7 +304,9 @@ class ModuleController extends Controller {
             'view-method'        => (isset($config['setting']['view-method'])  ? $config['setting']['view-method'] : 'native'  ),
             'inline'        => (isset($config['setting']['inline'])  ? $config['setting']['inline'] : 'false'  ),
             
-            'usesimplesearch'         => (isset($config['setting']['usesimplesearch'])  ? $config['setting']['usesimplesearch'] : 'false'  ),
+            'hiderowcountcolumn'            => (isset($config['setting']['hiderowcountcolumn'])  ? $config['setting']['hiderowcountcolumn'] : 'false'  ),
+            'usesimplesearch'               => (isset($config['setting']['usesimplesearch'])  ? $config['setting']['usesimplesearch'] : 'true'  ),
+            'hideadvancedsearchoperators'   => (isset($config['setting']['hideadvancedsearchoperators'])  ? $config['setting']['hideadvancedsearchoperators'] : 'false'  ),
             'disablepagination'         => (isset($config['setting']['disablepagination'])  ? $config['setting']['disablepagination'] : 'false'  ),
             'disablesort'               => (isset($config['setting']['disablesort'])  ? $config['setting']['disablesort'] : 'false'  ),
             'disableactioncheckbox'     => (isset($config['setting']['disableactioncheckbox'])  ? $config['setting']['disableactioncheckbox'] : 'false'  ),
@@ -379,7 +381,9 @@ class ModuleController extends Controller {
             'view-method'        => (!is_null($request->input('view-method'))  ? $request->input('view-method') : 'native' ) ,
             'inline'        => (!is_null($request->input('inline'))  ? 'true' : 'false' ) ,
             
-            'usesimplesearch'           => (!is_null($request->input('usesimplesearch'))  ? 'true' : 'false' ) ,
+            'hiderowcountcolumn'            => (!is_null($request->input('hiderowcountcolumn'))  ? 'true' : 'false' ) ,
+            'usesimplesearch'               => (!is_null($request->input('usesimplesearch'))  ? 'true' : 'false' ) ,
+            'hideadvancedsearchoperators'   => (!is_null($request->input('hideadvancedsearchoperators'))  ? 'true' : 'false' ) ,
             'disablepagination'         => (!is_null($request->input('disablepagination'))  ? 'true' : 'false' ) ,
             'disablesort'               => (!is_null($request->input('disablesort'))  ? 'true' : 'false' ) ,
             'disableactioncheckbox'     => (!is_null($request->input('disableactioncheckbox'))  ? 'true' : 'false' ) ,
@@ -597,18 +601,21 @@ class ModuleController extends Controller {
             $f[] = array(
                 "field"         => $field[$i],
                 "alias"         => $alias[$i],
-                "language"         => $language,
+                "language"      => $language,
                 "label"         => $label[$i],
                 'form_group'    => $form_group[$i],
-                'required'        => (isset($required[$i]) ? $required[$i] : 0 ),
-                'view'            => (isset($view[$i]) ? 1 : 0 ),
-                'type'            => $type[$i],
-                'add'            => 1,
-                'size'            => '0',
-                'edit'            => 1,
+                'required'      => (isset($required[$i]) ? $required[$i] : 0 ),
+                'view'          => (isset($view[$i]) ? 1 : 0 ),
+                'type'          => $type[$i],
+                'add'           => 1,
+                'size'          => '0',
+                'edit'          => 1,
                 'search'        => (isset($search[$i]) ? $search[$i] : 0 ),
-                "sortlist"         => $sortlist[$i] ,
-                'limited'    => (isset($limited[$i]) ? $limited[$i] : ''),
+                'simplesearch'  => (isset($simplesearch[$i]) ? $simplesearch[$i] : 0 ),
+                'simplesearchorder' => (isset($simplesearchorder[$i]) ? $simplesearchorder[$i] : ''),
+                'simplesearchfieldwidth' => (isset($simplesearchfieldwidth[$i]) ? $simplesearchfieldwidth[$i] : ''),
+                "sortlist"      => $sortlist[$i] ,
+                'limited'       => (isset($limited[$i]) ? $limited[$i] : ''),
                 'option'        => array(
                     "opt_type"                 => $opt_type[$i],
                     "lookup_query"             => $lookup_query[$i],
@@ -681,6 +688,9 @@ class ModuleController extends Controller {
                     'size'            => $size,
                     'edit'            => $form['edit'],
                     'search'        => $form['search'],
+                    'simplesearch'        => isset($form['simplesearch']) ? $form['simplesearch'] : '',
+                    'simplesearchorder'        => isset($form['simplesearchorder']) ? $form['simplesearchorder'] : '',
+                    'simplesearchfieldwidth'        => isset($form['simplesearchfieldwidth']) ? $form['simplesearchfieldwidth']: '',
                     "sortlist"         => $form['sortlist'] ,
                     'option'        => array(
                         "opt_type"                 => $form['option']['opt_type'],
@@ -771,18 +781,21 @@ class ModuleController extends Controller {
         }
                  
         $new_field = array(
-            "field"         => $request->input('field'),
-            "alias"         => $request->input('alias'),
-            "label"         => $request->input('label'),
-            "form_group"     => $request->input('form_group'),
-            'required'        => $request->input('required'),
-            'view'            => $view,
-            'type'            => $request->input('type'),
-            'add'            => 1,
-            'edit'            => 1,
-            'search'        => $request->input('search'),
-            'size'            =>     '',
-            'sortlist'        => $request->input('sortlist'),
+            "field"            => $request->input('field'),
+            "alias"            => $request->input('alias'),
+            "label"            => $request->input('label'),
+            "form_group"       => $request->input('form_group'),
+            'required'         => $request->input('required'),
+            'view'             => $view,
+            'type'             => $request->input('type'),
+            'add'              => 1,
+            'edit'             => 1,
+            'search'           => $request->input('search'),
+            'simplesearch'     => $request->input('simplesearch'),
+            'simplesearchorder'=> $request->input('simplesearchorder'),
+            'simplesearchfieldwidth'=> $request->input('simplesearchfieldwidth'),
+            'size'             =>     '',
+            'sortlist'         => $request->input('sortlist'),
             'option'        => array(
                 "opt_type"         =>  $request->input('opt_type'),
                 "lookup_query"     =>  $datalist,
@@ -952,6 +965,10 @@ class ModuleController extends Controller {
                 'is_edit'        => 'Edit ',
                 'is_remove'        => 'Remove ',
                 'is_excel'        => 'Excel ',            
+                'is_csv'        => 'CSV ',            
+                'is_print'        => 'Print ',            
+                'is_pdf'        => 'PDF ',            
+                'is_word'        => 'Word '
             );    
             /* Update permission global / own access new ver 1.1
                Adding new param is_global
@@ -984,6 +1001,9 @@ class ModuleController extends Controller {
                 foreach($tasks as $item=>$val)
                 {
                     $rows[$item] = (isset($access_data[$item]) && $access_data[$item] ==1  ? 1 : 0);
+                    if (($item == 'is_csv' || $item == 'is_print') && !isset($access_data[$item])) {
+                        $rows[$item] = isset($access_data['is_excel']) ? $access_data['is_excel'] : 0;
+                    }
                 }
                 $access[$r->name] = $rows;
                 
@@ -1016,7 +1036,11 @@ class ModuleController extends Controller {
             'is_add'        => 'Add ',
             'is_edit'        => 'Edit ',
             'is_remove'        => 'Remove ',
-            'is_excel'        => 'Excel ',            
+            'is_excel'        => 'Excel ',
+            'is_csv'        => 'CSV ',            
+            'is_print'        => 'Print ',            
+            'is_pdf'        => 'PDF ',            
+            'is_word'        => 'Word '            
         );    
         /* Update permission global / own access new ver 1.1
            Adding new param is_global

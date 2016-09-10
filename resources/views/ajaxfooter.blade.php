@@ -23,15 +23,16 @@ $orders = array('asc','desc');
               @endif
               @if(!isset($setting['disablepagination']) || $setting['disablepagination'] == 'false')
 
-		<select name="rows" class="select-alt" style="width:70px; float:left;"  >
-
+		<select name="rows" class="select-alt" style="width:70px; float:left;">
 		  @foreach($pages as $p)
 		  <option value="{{ $p }}"
-			<?php if(isset($pager['rows']) && $pager['rows'] == $p){ ?>
+			@if(isset($param['limit']) && $param['limit'] == $p)
+1720f
 				selected="selected"
 
-			<?php }
-                    else { if($p == $setting['perpage'] ){?> selected="selected" <?php }  }?>
+
+                    @else  @if($p == $setting['perpage'] ) selected="selected" @endif
+            @endif
 		  >{{ $p }}</option>
 		  @endforeach
               @if($pageModule != 'order')

@@ -830,18 +830,15 @@ class SiteHelpers
                     }
 
                 }
-                $form = "<select name='$field{$bulk}'  class='form-control sel-search' $mandatory $selectMultiple>" .
+                
+                $multipleClass = "";
+                if (!empty($selectMultiple)) {
+                    $multipleClass = "sel-search-multiple";
+                }
+                $form = "<select name='$field{$bulk}'  class='form-control sel-search $multipleClass' $mandatory $selectMultiple>" .
 						(empty($selectMultiple) ? 	"<option value=''> -- Select  -- </option>" : "") .
 						"	$opts
 						</select>";
-                
-                if (!empty($selectMultiple)) {
-                    $form .= "<script>
-                        
-                            jQuery(\"select[name=$field{$bulk}]\").select2();
-                        
-                        </script>";
-                }
                 break;
 
             case 'radio';
@@ -1949,5 +1946,34 @@ class SiteHelpers
     {
         $region_name = \DB::select('select region from region where id=' . $id);
         return $region_name;
+    }
+    
+    static function configureSimpleSearchForm($data) {
+        $newArray = array();
+        foreach($data as $item) {
+            if ($item['simplesearch']  == '1') {
+                $newArray[] = $item;
+            }
+        }
+        
+        foreach($newArray as $key => &$item) {
+            $width = $item['simplesearchfieldwidth'];
+            $widthClass = "";
+            $widthStyle = "";
+            if (preg_match('/^[\_a-zA-Z]/', $width) == 1) {
+                $widthClass = $width;
+            }
+            else {
+                $widthStyle = 'width:' . $width. ';';
+            }
+            $item['widthClass'] = $widthClass;
+            $item['widthStyle'] = $widthStyle;
+        }  
+        
+        uasort($newArray, function ($a, $b) { 
+            return ($a['simplesearchorder'] >= $b['simplesearchorder'] ? 1 : -1); 
+        });
+        
+        return $newArray;
     }
 }

@@ -25,7 +25,7 @@
 
 
 
-				<input type="text" id="weeklyDatePicker"  name ="weeklydate"  style="padding-bottom:5px" />
+				<input type="text" id="weeklyDatePicker"  name ="weeklyDatePicker"  style="padding-bottom:5px" } />
 
 
 
@@ -42,7 +42,7 @@
 			<a href="{{ URL::to( $pageModule .'/export/word?return='.$return) }}" class="btn btn-sm btn-white"> Word </a>
 			<a href="{{ URL::to( $pageModule .'/export/csv?return='.$return) }}" class="btn btn-sm btn-white"> CSV </a>
 			<a href="{{ URL::to( $pageModule .'/export/print?return='.$return) }}" class="btn btn-sm btn-white" onclick="ajaxPopupStatic(this.href); return false;" > Print</a>
-		</div>	
+		</div>
 		@endif
 	</div>
 </div>
@@ -56,26 +56,45 @@
 
 	$(document).ready(function(){
 
+		var selectedDate;
 		//Initialize the datePicker(I have taken format as mm-dd-yyyy, you can     //have your owh)
-		$("#weeklyDatePicker").datetimepicker({
-			format: 'MM/DD/YYYY'
-		});
+		$("#weeklyDatePicker").datepicker('option', 'firstDay',{autoclose:true}, 1);
 
 		//Get the value of Start and End of Week
-		$('#weeklyDatePicker').on('dp.change', function (e) {
-			alert('oki');
+		$('#weeklyDatePicker').datepicker().on('changeDate', function (e) {
 			var value = $("#weeklyDatePicker").val();
-			alert(value);
+//			console.log(value);
 			var firstDate = moment(value, "MM/DD/YYYY").day(0).format("MM/DD/YYYY");
 			var lastDate =  moment(value, "MM/DD/YYYY").day(6).format("MM/DD/YYYY");
+			selectedDate=firstDate + " - " + lastDate;
 			$("#weeklyDatePicker").val(firstDate + " - " + lastDate);
+		//	$(this).datepicker('hide');
+
+			//reloadData('#{{ $pageModule }}','{{ $pageModule }}/data?search=date_start:bigger_equal:2015-01-07|date_end:smaller_equal:2015-01-14');
+			reloadData('#{{ $pageModule }}','{{ $pageModule }}/data?date='+selectedDate.replace(/ /g,''));
+
 		});
 
     $("#col-config").on('change',function(){
         reloadData('#{{ $pageModule }}','{{ $pageModule }}/data?config_id='+$("#col-config").val());
     });
 
+
+
+		$('#weeklyDatePicker').datepicker().on('hide', function (e) {
+			var value = $("#weeklyDatePicker").val(selectedDate);
+
+		});
 	});
 
 
 </script>
+
+
+<style>
+	.datepicker tr:hover {
+		background-color: #808080;
+	}
+
+
+</style>

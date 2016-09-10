@@ -19,6 +19,10 @@ class Sximo extends Model {
         $id = \DB::table($table)->insertGetId($data);
         return $id;
     }
+
+    /**
+     * start date & end dated for throw reports
+     */
     public static function getRows($args, $cond = null) {
         $table = with(new static)->table;
         $key = with(new static)->primaryKey;
@@ -53,7 +57,8 @@ class Sximo extends Model {
 
         if ($cond != null) {
             $select .= self::queryWhere($cond);
-        } else {
+        }
+        else {
             $select .= self::queryWhere();
         }
 
@@ -182,7 +187,9 @@ class Sximo extends Model {
                 'form-method' => (isset($data['config']['setting']['form-method']) ? $data['config']['setting']['form-method'] : 'native'),
                 'view-method' => (isset($data['config']['setting']['view-method']) ? $data['config']['setting']['view-method'] : 'native'),
                 'inline' => (isset($data['config']['setting']['inline']) ? $data['config']['setting']['inline'] : 'false'),
-                'usesimplesearch' => (isset($data['config']['setting']['usesimplesearch']) ? $data['config']['setting']['usesimplesearch'] : 'false' ),
+                'hideadvancedsearchoperators' => (isset($data['config']['setting']['hideadvancedsearchoperators']) ? $data['config']['setting']['hideadvancedsearchoperators'] : 'false' ),
+                'hiderowcountcolumn' => (isset($data['config']['setting']['hiderowcountcolumn']) ? $data['config']['setting']['hiderowcountcolumn'] : 'false' ),                
+                'usesimplesearch' => (isset($data['config']['setting']['usesimplesearch']) ? $data['config']['setting']['usesimplesearch'] : 'true' ),                
                 'disablepagination' => (isset($data['config']['setting']['disablepagination']) ? $data['config']['setting']['disablepagination'] : 'false' ),
                 'disablesort' => (isset($data['config']['setting']['disablesort']) ? $data['config']['setting']['disablesort'] : 'false' ),
                 'disableactioncheckbox' => (isset($data['config']['setting']['disableactioncheckbox']) ? $data['config']['setting']['disableactioncheckbox'] : 'false' ),
