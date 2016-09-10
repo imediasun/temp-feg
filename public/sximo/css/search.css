@@ -63,7 +63,7 @@
 }
 
 .datagrid th.dgcsortable:after {
-    content: "\e150";
+    content: "\f0dc";
     position: absolute;
     left: 0;
     padding: 3px;  
@@ -84,21 +84,21 @@
 }
 
 .datagrid th.dgcsortable.dgcsorted.dgcorderasc:after {
-    content: "\e155"; /* asc */
-/*    content: "\e151"; a-z
-    content: "\e153"; 1-9
-    content: "\e253"; up triangle*/
+/*    content: "\f160";  asc 
+    content: "\f15d"; a-z
+    content: "\f162"; 1-9 */
+    content: "\f0de"; /* up triangle */
 }
 .datagrid th.dgcsortable.dgcsorted.dgcorderasc:hover:after,
 .datagrid th.dgcsortable.dgcsorted.dgcorderdesc:after {
-    content: "\e150"; /* desc */
-/*    content: "\e152"; z-a
-    content: "\e154"; 9-1
-    content: "\e252"; down triangle */
+/*    content: "\f161";  desc 
+    content: "\f15e"; z-a
+    content: "\f163"; 9-1 */
+    content: "\f0dd"; /*down triangle */
 }
 .datagrid th.dgcsortable.dgcsorted.dgcorderdesc:hover:after {
-    content: "\e155"; /* asc */
-/*    content: "\e151"; a-z
-    content: "\e153"; 1-9
-    content: "\e253"; up triangle*/
+/*    content: "\f160";  asc 
+    content: "\f15d"; a-z
+    content: "\f162"; 1-9 */
+    content: "\f0de"; /* up triangle */
 }
