@@ -3,7 +3,7 @@ function performAdvancedSearch(params) {
         params = {};
     }
     var elm = this, 
-        container = params.container || $('.#advance-search'), 
+        container = params.container || $('#advance-search'), 
         attr = '?search=', 
         moduleID = params.moduleID,
         url = params.url,
@@ -12,8 +12,8 @@ function performAdvancedSearch(params) {
 
         container.find(' tr.fieldsearch').each(function(i){
 			var UNDEFINED,                 
-                container = this,
-                jQcontainer = $(container),                
+                trcontainer = this,
+                jQcontainer = $(trcontainer),                
                 field = jQcontainer.attr('id'),
                 name = jQcontainer.attr('name'),                
                 operatorField = jQcontainer.find('#'+field+'_operate'),
@@ -74,7 +74,7 @@ function performAdvancedSearch(params) {
     
 }
 
-function changeSearchOperator( val , field )
+function changeSearchOperator( val , field , elm )
 {
 	if(val =='is_null') {
 		$('input[name='+field+']').attr('readonly','1');
