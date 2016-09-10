@@ -1,14 +1,9 @@
 <div class="row m-b">
 
 <br/>
-<<<<<<< HEAD
-    <div class="col-md-6">
-<div style="float:left">
-        @if($access['is_add'] ==1)
-=======
+
     <div class="col-md-4" style=" width:22% !important">
         	@if($access['is_add'] ==1)
->>>>>>> add6916751c291caba07399e19193de2f411720f
 			{!! AjaxHelpers::buttonActionCreate($pageModule,$setting,"Get Freight Quote") !!}
 			@endif
 			<a href="{{ URL::to( $pageModule .'/search') }}" class="btn btn-sm btn-white" onclick="SximoModal(this.href,'Advanced Search'); return false;" ><i class="fa fa-search"></i> Search</a>

@@ -1,98 +1,59 @@
 <div >
-<form id="{{$pageModule}}Search">
-<table class="table search-table table-striped" id="advance-search">
-	<tbody>
-@foreach ($tableForm as $t)
-	@if($t['search'] =='1')
-		<tr id="{{ $t['field'] }}" class="fieldsearch">
-			<td>{!! SiteHelpers::activeLang($t['label'], (isset($t['language']) ? $t['language'] : array())) !!} </td>
-			<td > 
-			<select id="{{ $t['field']}}_operate" class="form-control oper" name="operate" onchange="changeSearchOperator(this.value , '{{ $t['field']}}')">
-				<option value="equal"> = </option>
-                @if($pageModule != "merchandisebudget" )
-				<option value="bigger_equal"> >= </option>
-				<option value="smaller_equal"> <= </option>
-				<option value="smaller"> < </option>
-				<option value="bigger"> > </option>
-				<option value="not_null"> ! Null  </option>
-				<option value="is_null"> Null </option>
-				<option value="between"> Between </option>
-				<option value="like"> Like </option>
-                    @endif
+    <form id="{{$pageModule}}Search">
+        <table class="table search-table table-striped" id="advance-search">
+            <tbody>
+            @foreach ($tableForm as $t)
+                @if($t['search'] =='1')
+                    <tr id="{{ $t['field'] }}" class="fieldsearch">
+                        <td>{!! SiteHelpers::activeLang($t['label'], (isset($t['language']) ? $t['language'] : array())) !!} </td>
+                        <td >
+                            <select id="{{ $t['field']}}_operate" class="form-control oper" name="operate" onchange="changeSearchOperator(this.value , '{{ $t['field']}}')">
+                                <option value="equal"> = </option>
+                                @if($pageModule != "merchandisebudget" )
+                                    <option value="bigger_equal"> >= </option>
+                                    <option value="smaller_equal"> <= </option>
+                                    <option value="smaller"> < </option>
+                                    <option value="bigger"> > </option>
+                                    <option value="not_null"> ! Null  </option>
+                                    <option value="is_null"> Null </option>
+                                    <option value="between"> Between </option>
+                                    <option value="like"> Like </option>
+                                @endif
 
-			</select>
-			</td>
-			<td id="field_{{ $t['field']}}">{!! SiteHelpers::transForm($t['field'] , $tableForm) !!}</td>
+                            </select>
+                        </td>
+                        <td id="field_{{ $t['field']}}">{!! SiteHelpers::transForm($t['field'] , $tableForm) !!}</td>
 
-		</tr>
+                    </tr>
 
-	@endif
-@endforeach
-		<tr>
-			<td></td>
-			<td><button type="button" name="search" class="doSearch btn btn-sm btn-primary"> Search </button></td>
+                @endif
+            @endforeach
+            <tr>
+                <td></td>
+                <td><button type="button" name="search" class="doSearch btn btn-sm btn-primary"> Search </button></td>
 
-		</tr>
-	</tbody>
-	</table>
-</form>
+            </tr>
+            </tbody>
+        </table>
+    </form>
 </div>
 <script>
 
-jQuery(function(){
+    jQuery(function(){
 
-    initiateSearchFormFields($('#{{$pageModule}}Search'));
+        initiateSearchFormFields($('#{{$pageModule}}Search'));
 
-	$('.doSearch').click(function(){
-<<<<<<< HEAD
-		var attr = '';
-		$('#advance-search tr.fieldsearch').each(function(i){
-			var field = $(this).attr('id');
-			var operate = $(this).find('#'+field+'_operate').val();
-			var value_select  = $(this).find("select[name="+field+"]").val() || '';
-			if(  value_select !='' )
-			{
-				value  = value_select;
-			} else {
-				value  = $(this).find("input[name="+field+"]").val();
-			}
-
-			if(value !=='' && typeof value !=='undefined' && this.name !='_token')
-			{
-
-				if(operate =='between')
-				{
-					var value  = $(this).find("input[name="+field+"]").val();
-					var value2  = $(this).find("input[name="+field+"_end]").val();
-					attr += field+':'+operate+':'+value+':'+value2+'|';
-				} else {
-					attr += field+':'+operate+':'+value+'|';
-				}
-
-			}
-
-		});
-		<?php if($searchMode =='ajax') { ?>
-			reloadData( '#{{ $pageModule }}',"{{ $pageUrl }}/data?search="+attr,function(){
-					$(".sbox-tools a.tips").addClass('btn-search');
-				});
-			$('#sximo-modal').modal('hide');
-
-		<?php } else { ?>
-			window.location.href = '{{ $pageUrl }}?search='+attr;
-		<?php } ?>
-=======
-        var ajaxSerachMode = <?php echo $searchMode =='ajax' ?'true':'false';?>;
-        $('#sximo-modal').modal('hide');
-        performAdvancedSearch.call($(this), {
-            moduleID: '#{{ $pageModule }}',
-            url: "{{ $pageUrl }}/data",
-            event: event,
-            ajaxSearch: ajaxSerachMode,
-            container: $("#advance-search")
+        $('.doSearch').click(function(){
+            var ajaxSerachMode = <?php echo $searchMode =='ajax' ?'true':'false';?>;
+            $('#sximo-modal').modal('hide');
+            performAdvancedSearch.call($(this), {
+                moduleID: '#{{ $pageModule }}',
+                url: "{{ $pageUrl }}/data",
+                event: event,
+                ajaxSearch: ajaxSerachMode,
+                container: $("#advance-search")
+            });
         });
->>>>>>> add6916751c291caba07399e19193de2f411720f
-	});
-});
+    });
 
 </script>

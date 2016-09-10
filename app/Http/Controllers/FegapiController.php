@@ -29,8 +29,8 @@ class FegapiController extends Controller {
             $config = $class1::makeInfo($class);
             $tables = $config['config']['grid'];
             $page = (!is_null(Input::get('page')) or Input::get('page') != 0) ? Input::get('page') : 1;
-            $param = array('page' => $page, 'sort' => '', 'order' => 'asc', 'limit' => '', 'createdFrom'=>'','createdTo'=> date('Y-m-d'),
-                'updatedFrom'=>'','updatedTo'=>date('Y-m-d'),'order_type_id' => '','status_id' => '','prod_type_id' => '','vendor_id' => '');
+            $param = array('page' => $page, 'sort' => '', 'order' => 'asc', 'limit' => '', 'createdFrom'=>'','createdTo'=> date('Y-m-d H:i:s'),
+                'updatedFrom'=>'','updatedTo'=>date('Y-m-d H:i:s'),'order_type_id' => '','status_id' => '','prod_type_id' => '','vendor_id' => '');
             $limit=Input::get('limit');
             $sort=Input::get('order');
             $order=Input::get('sort');
