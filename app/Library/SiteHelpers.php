@@ -1951,7 +1951,7 @@ class SiteHelpers
     static function configureSimpleSearchForm($data) {
         $newArray = array();
         foreach($data as $item) {
-            if ($item['simplesearch']  == '1') {
+            if (isset($item['simplesearch']) && $item['simplesearch']  == '1') {
                 $newArray[] = $item;
             }
         }
