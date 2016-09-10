@@ -54,17 +54,8 @@
     
 }
 
-/*
-//"\e150" sort
-// "\e155" asc
-//"\e156" desc
-//"\e151" az
-//"\e152" za
-//"\e153" 19
-//"\e154" 91
-//"\e252" down triangle
-//"\e253" up triangle
-*/
+
+/* Column Header based sorting */
 .datagrid th.dgcsortable {
     cursor: pointer;
     position: relative;
@@ -72,7 +63,7 @@
 }
 
 .datagrid th.dgcsortable:after {
-    content: '\e150';
+    content: "\e150";
     position: absolute;
     left: 0;
     padding: 3px;  
@@ -93,21 +84,21 @@
 }
 
 .datagrid th.dgcsortable.dgcsorted.dgcorderasc:after {
-    content: '\e155';
-/*    content: '\e151';
-    content: '\e153';
-    content: '\e253';*/
+    content: "\e155"; /* asc */
+/*    content: "\e151"; a-z
+    content: "\e153"; 1-9
+    content: "\e253"; up triangle*/
 }
 .datagrid th.dgcsortable.dgcsorted.dgcorderasc:hover:after,
 .datagrid th.dgcsortable.dgcsorted.dgcorderdesc:after {
-    content: '\e156'; 
-/*    content: '\e152'; 
-    content: '\e154'; 
-    content: '\e252'; */
+    content: "\e150"; /* desc */
+/*    content: "\e152"; z-a
+    content: "\e154"; 9-1
+    content: "\e252"; down triangle */
 }
 .datagrid th.dgcsortable.dgcsorted.dgcorderdesc:hover:after {
-    content: '\e155';
-/*    content: '\e151';
-    content: '\e153';
-    content: '\e253';*/    
+    content: "\e155"; /* asc */
+/*    content: "\e151"; a-z
+    content: "\e153"; 1-9
+    content: "\e253"; up triangle*/
 }
