@@ -22,7 +22,8 @@ $orders = array('asc','desc');
               <input type="hidden" name="view" value="<?php  echo $view ?>"/>
               @endif
               @if(!isset($setting['disablepagination']) || $setting['disablepagination'] == 'false')
-		<select name="rows" class="select-alt" style="width:70px; float:left;"  data-default="{{ $setting['perpage'] }}" date-pagerperpage="{{ $pager['rows'] }}">
+		<select name="rows" class="select-alt" style="width:70px; float:left;"  data-default="{{ $setting['perpage'] }}" 
+                date-pagerperpage="{{ isset($pager['rows'])? $pager['rows']: 0 }}">
 		  @foreach($pages as $p)
 		  <option value="{{ $p }}"
 			@if(isset($pager['rows']) && $pager['rows'] == $p)
