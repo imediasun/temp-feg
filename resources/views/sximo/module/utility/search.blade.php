@@ -44,54 +44,15 @@ jQuery(function(){
     initiateSearchFormFields($('#{{$pageModule}}Search'));
 
 	$('.doSearch').click(function(){
-<<<<<<< HEAD
-		var attr = '';
-		$('#advance-search tr.fieldsearch').each(function(i){
-			var field = $(this).attr('id');
-			var operate = $(this).find('#'+field+'_operate').val();
-			var value_select  = $(this).find("select[name="+field+"]").val() || '';
-			if(  value_select !='' )
-			{
-				value  = value_select;
-			} else {
-				value  = $(this).find("input[name="+field+"]").val();
-			}
-
-			if(value !=='' && typeof value !=='undefined' && this.name !='_token')
-			{
-
-				if(operate =='between')
-				{
-					var value  = $(this).find("input[name="+field+"]").val();
-					var value2  = $(this).find("input[name="+field+"_end]").val();
-					attr += field+':'+operate+':'+value+':'+value2+'|';
-				} else {
-					attr += field+':'+operate+':'+value+'|';
-				}	
-					
-			}
-
-		});
-		<?php if($searchMode =='ajax') { ?>
-			reloadData( '#{{ $pageModule }}',"{{ $pageUrl }}/data?search="+attr,function(){
-					$(".sbox-tools a.tips").addClass('btn-search');
-				});
-			$('#sximo-modal').modal('hide');
-
-		<?php } else { ?>
-			window.location.href = '{{ $pageUrl }}?search='+attr;
-		<?php } ?>
-=======
         var ajaxSerachMode = <?php echo $searchMode =='ajax' ?'true':'false';?>;
         $('#sximo-modal').modal('hide');
         performAdvancedSearch.call($(this), {
-            moduleID: '#{{ $pageModule }}', 
-            url: "{{ $pageUrl }}/data", 
+            moduleID: '#{{ $pageModule }}',
+            url: "{{ $pageUrl }}/data",
             event: event,
             ajaxSearch: ajaxSerachMode,
             container: $("#advance-search")
         });
->>>>>>> add6916751c291caba07399e19193de2f411720f
 	});
 });
 
