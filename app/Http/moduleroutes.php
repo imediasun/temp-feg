@@ -41,13 +41,5 @@
                     Route::controller('managefreightquoters', 'ManagefreightquotersController');
                     Route::controller('freightquoters', 'FreightquotersController');
                     Route::controller('trainingmaterial', 'TrainingmaterialController');
-                    Route::controller('topgamesreport', 'TopgamesreportController');
-                    Route::controller('bottomgamesreport', 'BottomgamesreportController');
-                    Route::controller('productsindevelopmentreport', 'ProductsindevelopmentreportController');
-                    Route::controller('gameplayreport', 'GameplayreportController');
-                    Route::controller('readersmissingassetidreport', 'ReadersmissingassetidreportController');
-                    Route::controller('merchandiseexpensesreport', 'MerchandiseexpensesreportController');
-                    Route::controller('itemreceipt', 'ItemreceiptController');
-                    Route::controller('throwreport', 'ThrowreportController');
 
                     ?>

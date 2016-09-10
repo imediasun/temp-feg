@@ -2486,3 +2486,8 @@ table.table-striped tr th
 .clearfix {
     zoom: 1; /* For IE 6/7 (trigger hasLayout) */
 }
+#col-config
+{
+    position:relative !important;
+    top:3px;
+}

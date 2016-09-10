@@ -177,7 +177,7 @@ class Sximo extends Model {
                 'gridtype' => (isset($data['config']['setting']['gridtype']) ? $data['config']['setting']['gridtype'] : 'native'),
                 'orderby' => (isset($data['config']['setting']['orderby']) ? $data['config']['setting']['orderby'] : $r->module_db_key),
                 'ordertype' => (isset($data['config']['setting']['ordertype']) ? $data['config']['setting']['ordertype'] : 'asc'),
-                'perpage' => (isset($data['config']['setting']['perpage']) ? $data['config']['setting']['perpage'] : '10'),
+                'perpage' => (isset($data['config']['setting']['perpage']) ? $data['config']['setting']['perpage'] : '20'),
                 'frozen' => (isset($data['config']['setting']['frozen']) ? $data['config']['setting']['frozen'] : 'false'),
                 'form-method' => (isset($data['config']['setting']['form-method']) ? $data['config']['setting']['form-method'] : 'native'),
                 'view-method' => (isset($data['config']['setting']['view-method']) ? $data['config']['setting']['view-method'] : 'native'),
@@ -197,6 +197,7 @@ class Sximo extends Model {
     }
 
     static function getComboselect($params, $limit = null, $parent = null) {
+
         $limit = explode(':', $limit);
         $parent = explode(':', $parent);
 

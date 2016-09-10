@@ -151,8 +151,8 @@ class ModuleController extends Controller {
             $json_data['table_db']        = $table ;
             $json_data['primary_key']    = $primary;
             $json_data['grid']    = $rowGrid ;
-            $json_data['forms']    = $rowForm ;  
-             
+            $json_data['forms']    = $rowForm ;
+
 
             $module_type = ($primary =='' ? 'report' :  $request->input('module_template'))   ;                                
                 
@@ -167,7 +167,7 @@ class ModuleController extends Controller {
                 'module_config' => \SiteHelpers::CF_encode_json($json_data),            
             );
             
-            
+
             \DB::table('tb_module')->insert($data);
             
             // Add Default permission
@@ -290,14 +290,15 @@ class ModuleController extends Controller {
 		$this->data['module'] = 'module';
 		$this->data['module_lang'] = json_decode($row->module_lang,true);    
 		$this->data['module_name'] = $row->module_name;
-		$config = \SiteHelpers::CF_decode_json($row->module_config,true);     
+		$config = \SiteHelpers::CF_decode_json($row->module_config,true);
+
 		$this->data['tables']     = $config['grid']; 
         $this->data['type']     = $row->module_type;  
         $this->data['setting'] = array(
             'gridtype'        => (isset($config['setting']) ? $config['setting']['gridtype'] : 'native'  ),
             'orderby'        => (isset($config['setting']) ? $config['setting']['orderby'] : $row->module_db_key  ),
             'ordertype'        => (isset($config['setting']) ? $config['setting']['ordertype'] : 'asc'  ),
-            'perpage'        => (isset($config['setting']) ? $config['setting']['perpage'] : '10'  ),
+            'perpage'        => (isset($config['setting']) ? $config['setting']['perpage'] : '20'  ),
             'frozen'        => (isset($config['setting']['frozen'])  ? $config['setting']['frozen'] : 'false'  ),
             'form-method'        => (isset($config['setting']['form-method'])  ? $config['setting']['form-method'] : 'native'  ),
             'view-method'        => (isset($config['setting']['view-method'])  ? $config['setting']['view-method'] : 'native'  ),

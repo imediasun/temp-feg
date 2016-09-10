@@ -38,11 +38,12 @@ FROM users LEFT JOIN tb_groups ON tb_groups.group_id = users.group_id ";
 	 */
 	public static function getComboselect($params, $limit = null, $parent = null)
 	{
+
 		$tableName = $params[0];
 		if ($tableName == 'location') {
 			$locations = \DB::table('location')
 				->select('location.*')
-				->where('location.active', 1)
+				->where('location.active', 1)->orderBy('location.location_name')
 				->get();
 			return $locations;
 		} else {

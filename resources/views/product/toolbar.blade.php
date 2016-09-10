@@ -42,13 +42,13 @@ width: 75%">
                             class="fa fa-trash-o "></i> {{ Lang::get('core.btn_remove') }} </a>
             @endif
             <a href="{{ URL::to( $pageModule .'/search') }}" class="btn btn-sm btn-white"
-               onclick="SximoModal(this.href,'Advance Search'); return false;"><i class="fa fa-search"></i> Search</a>
+               onclick="SximoModal(this.href,'Advanced Search'); return false;"><i class="fa fa-search"></i> Search</a>
             @if(SiteHelpers::isModuleEnabled($pageModule))
                 <a href="{{ URL::to('tablecols/arrange-cols/'.$pageModule) }}" class="btn btn-sm btn-white"
                    onclick="SximoModal(this.href,'Column Selector'); return false;"><i class="fa fa-bars"></i> Arrange
                     Columns</a>
                 @if(!empty($colconfigs))
-                    <select class="form-control" style="width:25%!important;display:inline;" name="col-config"
+                    <select class="form-control" style="width:25%!important;display:inline-block;box-sizing: border-box" name="col-config"
                             id="col-config">
                         <option value="0">Select Configuraton</option>
                         @foreach( $colconfigs as $configs )

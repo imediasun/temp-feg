@@ -88,7 +88,7 @@ jQuery(function(){
 				}	
 					
 			}
-			
+
 		});
 		<?php if($searchMode =='ajax') { ?>
 			reloadData( '#{{ $pageModule }}',"{{ $pageUrl }}/data?search="+attr,function(){

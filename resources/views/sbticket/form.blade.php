@@ -13,17 +13,7 @@
 			<div class="col-md-12">
 						<fieldset><legend> Sbticket</legend>
 									
-				  <div class="form-group ">
-					<label for="TicketID" class=" control-label col-md-4 text-left"> 
-					{!! SiteHelpers::activeLang('TicketID', (isset($fields['TicketID']['language'])? $fields['TicketID']['language'] : array())) !!}	
-					</label>
-					<div class="col-md-6">
-					  {!! Form::text('TicketID', $row['TicketID'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
-					 </div> 
-					 <div class="col-md-2">
-					 	
-					 </div>
-				  </div> 					
+
 				  <div class="form-group  " > 
 					<label for="Subject" class=" control-label col-md-4 text-left"> 
 					{!! SiteHelpers::activeLang('Subject', (isset($fields['Subject']['language'])? $fields['Subject']['language'] : array())) !!}	
