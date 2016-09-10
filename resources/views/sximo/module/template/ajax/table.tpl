@@ -209,7 +209,7 @@ $(document).ready(function() {
         simpleSearch.find('.doSimpleSearch').click(function(event){
             performSimpleSearch.call($(this), {
                 moduleID: '#{{ $pageModule }}', 
-                url: "{{ $pageUrl }}/data", 
+                url: "{{ $pageUrl }}", 
                 event: event,
                 container: simpleSearch
             });

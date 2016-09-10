@@ -2,12 +2,17 @@
 function reloadData( id,url,callback)
 {
 	$('.ajaxLoading').show();
+    var isClearData = /data\?search\=$/.test(url);
+    if (isClearData) {
+        url += getFooterFilters(true, true);
+    }
+    
 	$.post( url ,function( data ) {
 		$( id +'Grid' ).html( data );
 		$('.ajaxLoading').hide();
 		typeof callback === 'function' && callback();
         if (window.App && window.App.autoCallbacks && window.App.autoCallbacks.reloaddata) {
-            window.App.autoCallbacks.reloaddata.call($( id +'Grid' ), {id:id, url:url, data:data});
+            window.App.autoCallbacks.reloaddata.call($( id +'Grid' ), {id:id, url:url, data:data, isClear: isClearData});
         }
 	});
 

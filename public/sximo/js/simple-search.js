@@ -42,7 +42,7 @@ function performSimpleSearch(params) {
     App.simpleSearch.cache = cache;
     App.lastSearchMode = 'simple';
     
-    reloadData(moduleID,url+attr);    
+    reloadData(moduleID,url+ '/data' + attr);    
 }
 
 $(document).ready(function() {
