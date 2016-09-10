@@ -66,7 +66,7 @@ function performAdvancedSearch(params) {
     App.search.cache = cache;
     App.lastSearchMode = 'advanced';
     if (ajaxSearch) {
-        reloadData(moduleID,url+attr);  
+        reloadData(moduleID,url+"/data"+attr);  
     }
     else {
         window.location.href = url+attr;

@@ -48,7 +48,7 @@ jQuery(function(){
         $('#sximo-modal').modal('hide');
         performAdvancedSearch.call($(this), {
             moduleID: '#{{ $pageModule }}', 
-            url: "{{ $pageUrl }}/data", 
+            url: "{{ $pageUrl }}", 
             event: event,
             ajaxSearch: ajaxSerachMode,
             container: $("#advance-search")
