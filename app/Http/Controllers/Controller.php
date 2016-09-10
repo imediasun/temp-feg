@@ -72,12 +72,15 @@ abstract class Controller extends BaseController
 
     function getComboselect(Request $request)
     {
+
         if ($request->ajax() == true && \Auth::check() == true) {
             $param = explode(':', $request->input('filter'));
             $parent = (!is_null($request->input('parent')) ? $request->input('parent') : null);
 
             $limit = (!is_null($request->input('limit')) ? $request->input('limit') : null);
+
             $rows = $this->model->getComboselect($param, $limit, $parent);
+
             $items = array();
 
             $fields = explode("|", $param[2]);

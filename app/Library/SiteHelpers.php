@@ -839,14 +839,6 @@ class SiteHelpers
 						(empty($selectMultiple) ? 	"<option value=''> -- Select  -- </option>" : "") .
 						"	$opts
 						</select>";
-                
-                if (!empty($selectMultiple)) {
-                    $form .= "<script>
-                        
-                            jQuery(\"select[name=$field{$bulk}]\").select2();
-                        
-                        </script>";
-                }
                 break;
 
             case 'radio';
@@ -1959,7 +1951,7 @@ class SiteHelpers
     static function configureSimpleSearchForm($data) {
         $newArray = array();
         foreach($data as $item) {
-            if ($item['simplesearch']  == '1') {
+            if (isset($item['simplesearch']) && $item['simplesearch']  == '1') {
                 $newArray[] = $item;
             }
         }

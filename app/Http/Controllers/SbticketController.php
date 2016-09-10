@@ -80,6 +80,12 @@ class SbticketController extends Controller {
 		// Get Query
 		$results = $this->model->getRows( $params );
 		// Build pagination setting
+        if(count($results['rows'])==0 and $page!=1)
+        {
+            $params['limit']=$this->info['setting']['perpage'];
+            $results = $this->model->getRows($params);
+
+        }
 		$page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;
 
 		if(count($results['rows']) == $results['total']){

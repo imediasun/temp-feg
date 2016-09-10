@@ -32,7 +32,7 @@
 						$limited = isset($t['limited']) ? $t['limited'] :'';
 						if(SiteHelpers::filterColumn($limited ))
 						{
-							echo '<th align="'.$t['align'].'" width="'.$t['width'].'">'.\SiteHelpers::activeLang($t['label'],(isset($t['language'])? $t['language'] : array())).'</th>';
+							echo '<th data-column="'.$t['field'].'" align="'.$t['align'].'" width="'.$t['width'].'">'.\SiteHelpers::activeLang($t['label'],(isset($t['language'])? $t['language'] : array())).'</th>';
 						}
 					endif;
 				endforeach; ?>
@@ -174,6 +174,14 @@ $(document).ready(function() {
 		endif;
 	 ?>
 });
+$('.table-striped tr th').click(function(){
+   column=$(this).data('column');
+    ajaxFilter('#{{ $pageModule }}','{{ $pageModule }}/data','',column);
+
+
+
+});
+
 </script>
 <style>
 .table th.right { text-align:right !important;}

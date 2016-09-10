@@ -36,6 +36,7 @@
                     Route::controller('managefreightquoters', 'ManagefreightquotersController');
                     Route::controller('freightquoters', 'FreightquotersController');
                     Route::controller('trainingmaterial', 'TrainingmaterialController');
+
                     Route::controller('itemreceipt', 'ItemreceiptController');
                     
                     // Routes for Reports [start]
@@ -63,4 +64,5 @@
                     Route::controller('topgamesavgplays', 'TopgamesavgplaysController');        // top games report by average - TODO: Not required, remove soon
                     Route::controller('throwreport', 'ThrowreportController');
                     // Routes for Reports [end]
+
                     ?>

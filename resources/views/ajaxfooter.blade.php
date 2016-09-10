@@ -1,6 +1,6 @@
 
 <?php
-$pages = array(10,20,30,50,100);
+$pages = array(20,10,30,50,100);
 $orders = array('asc','desc');
 ?>
 	<div class="table-footer">
@@ -22,12 +22,17 @@ $orders = array('asc','desc');
               <input type="hidden" name="view" value="<?php  echo $view ?>"/>
               @endif
               @if(!isset($setting['disablepagination']) || $setting['disablepagination'] == 'false')
-		<select name="rows" class="select-alt" style="width:70px; float:left;"  >
+
+		<select name="rows" class="select-alt" style="width:70px; float:left;">
 		  @foreach($pages as $p)
 		  <option value="{{ $p }}"
-			@if(isset($pager['rows']) && $pager['rows'] == $p)
+			@if(isset($param['limit']) && $param['limit'] == $p)
+1720f
 				selected="selected"
-			@endif
+
+
+                    @else  @if($p == $setting['perpage'] ) selected="selected" @endif
+            @endif
 		  >{{ $p }}</option>
 		  @endforeach
               @if($pageModule != 'order')

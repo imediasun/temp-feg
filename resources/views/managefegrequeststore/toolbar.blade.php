@@ -54,9 +54,19 @@
     <div class="col-md-12">
         <br/>
         <a href="{{ URL::to( $pageModule .'/search') }}" class="btn btn-sm btn-white"
-           onclick="SximoModal(this.href,'Advance Search'); return false;"><i class="fa fa-search"></i> Search</a>
+           onclick="SximoModal(this.href,'Advanced Search'); return false;"><i class="fa fa-search"></i> Search</a>
         @if(SiteHelpers::isModuleEnabled($pageModule))
             <a href="{{ URL::to('tablecols/arrange-cols/'.$pageModule) }}" class="btn btn-sm btn-white" onclick="SximoModal(this.href,'Column Selector'); return false;" ><i class="fa fa-bars"></i> Arrange Columns</a>
+            @if(!empty($colconfigs))
+                <select class="form-control" style="width:25%!important;display:inline-block;box-sizing: border-box" name="col-config"
+                        id="col-config">
+                    <option value="0">Select Configuraton</option>
+                    @foreach( $colconfigs as $configs )
+                        <option @if($config_id == $configs['config_id']) selected
+                                                                         @endif value={{ $configs['config_id'] }}> {{ $configs['config_name'] }}   </option>
+                    @endforeach
+                </select>
+            @endif
         @endif
         <div class="pull-right">
             <a href="{{ URL::to( $pageModule .'/export/excel?return='.$return) }}" class="btn btn-sm btn-white">
@@ -96,7 +106,7 @@
         else {
             $('number_requests').hide();
         }
-        reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?view=' + request_type);
+        reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?view=' + request_type+ getFooterFilters());
     });
     function setType() {
         $('#request_type option').each(function () {
@@ -107,7 +117,7 @@
     }
     $("#col-config").on('change', function () {
         var request_type = $("#request_type").val();
-        reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?config_id=' + $("#col-config").val()+'&view=' + request_type);
+        reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?config_id=' + $("#col-config").val()+'&view=' +  getFooterFilters());
     });
 
     function pageRefresh(type) {
@@ -164,7 +174,7 @@
             }
         }
 
-        reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data' + get);
+        reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data' + get + getFooterFilters());
 
     }
 </script>

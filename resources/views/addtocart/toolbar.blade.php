@@ -21,7 +21,7 @@
                 @if($access['is_remove'] ==1)
                     <a href="javascript://ajax" class="btn btn-sm btn-white" onclick="ajaxRemove('#{{ $pageModule }}','{{ $pageUrl }}');"><i class="fa fa-trash-o "></i> {{ Lang::get('core.btn_remove') }} </a>
                 @endif
-                <a href="{{ URL::to( $pageModule .'/search') }}" class="btn btn-sm btn-white" onclick="SximoModal(this.href,'Advance Search'); return false;" ><i class="fa fa-search"></i> Search</a>
+                <a href="{{ URL::to( $pageModule .'/search') }}" class="btn btn-sm btn-white" onclick="SximoModal(this.href,'Advanced Search'); return false;" ><i class="fa fa-search"></i> Search</a>
 
             </div>
             <div class="col-md-4 ">
@@ -31,7 +31,7 @@
 <script>
     var amt_short_msg=null;
     $("#col-config").on('change',function(){
-        reloadData('#{{ $pageModule }}','{{ $pageModule }}/data?config_id='+$("#col-config").val());
+        reloadData('#{{ $pageModule }}','{{ $pageModule }}/data?config_id='+$("#col-config").val()+ getFooterFilters());
     });
     $(document).ready(function(){
         var isOnLoad=true;
@@ -95,9 +95,5 @@
             }
         });
     }
-    function testload(vendor_name,value)
-    {
-        alert(vendor_name+" "+value);
-       $("#"+vendor_name).text(value);// alert(vendor_name + value);
-    }
+
 </script>

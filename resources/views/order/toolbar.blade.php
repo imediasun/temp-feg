@@ -28,7 +28,7 @@
 			@if($access['is_remove'] ==1)
 			<a href="javascript://ajax" class="btn btn-sm btn-white" onclick="ajaxRemove('#{{ $pageModule }}','{{ $pageUrl }}');"><i class="fa fa-trash-o "></i> {{ Lang::get('core.btn_remove') }} </a>
 			@endif
-			<a href="{{ URL::to( $pageModule .'/search') }}" class="btn btn-sm btn-white" onclick="SximoModal(this.href,'Advance Search'); return false;" ><i class="fa fa-search"></i> Search</a>
+			<a href="{{ URL::to( $pageModule .'/search') }}" class="btn btn-sm btn-white" onclick="SximoModal(this.href,'Advanced Search'); return false;" ><i class="fa fa-search"></i> Search</a>
                 @if(SiteHelpers::isModuleEnabled($pageModule))
                     <a href="{{ URL::to('tablecols/arrange-cols/'.$pageModule) }}" class="btn btn-sm btn-white" onclick="SximoModal(this.href,'Column Selector'); return false;" ><i class="fa fa-bars"></i> Arrange Columns</a>
                     @if(!empty($colconfigs))
@@ -57,7 +57,7 @@
 
 <script>
     $("#col-config").on('change',function(){
-        reloadData('#{{ $pageModule }}','{{ $pageModule }}/data?config_id='+$("#col-config").val());
+        reloadData('#{{ $pageModule }}','{{ $pageModule }}/data?config_id='+$("#col-config").val()+ getFooterFilters());
     });
     $(".export_data_in_excel_or_csv").on('click', function(){
         $(".export-messsage-contaier").fadeIn();
@@ -68,7 +68,7 @@
         var val=$(this).val();
         if(val) {
             if (val != 0) {
-                reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?order_type=' + val);
+                reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?order_type=' + val + getFooterFilters());
             }
             else{
                 reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data');

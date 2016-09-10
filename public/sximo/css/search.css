@@ -53,3 +53,52 @@
 .sscol-submit {
     
 }
+
+
+/* Column Header based sorting */
+.datagrid th.dgcsortable {
+    cursor: pointer;
+    position: relative;
+    padding-left: 10px;
+}
+
+.datagrid th.dgcsortable:after {
+    content: "\f0dc";
+    position: absolute;
+    left: 0;
+    padding: 3px 2px 3px 0;  
+    color: #aaa;
+    font-family: FontAwesome;
+    font-style: normal;
+    font-weight: normal;
+    line-height: 1;
+    -webkit-font-smoothing: antialiased;    
+}
+
+.datagrid th.dgcsortable:hover:after {
+    color: #666;
+}
+
+.datagrid th.dgcsortable.dgcsorted:after {
+    color: #333;
+}
+.datagrid th.dgcsortable:hover:after,
+.datagrid th.dgcsortable.dgcsorted.dgcorderasc:after {
+/*    content: "\f160";  asc 
+    content: "\f15d"; a-z
+    content: "\f162"; 1-9 */
+    content: "\f0de"; /* up triangle */
+}
+.datagrid th.dgcsortable.dgcsorted.dgcorderasc:hover:after,
+.datagrid th.dgcsortable.dgcsorted.dgcorderdesc:after {
+/*    content: "\f161";  desc 
+    content: "\f15e"; z-a
+    content: "\f163"; 9-1 */
+    content: "\f0dd"; /*down triangle */
+}
+.datagrid th.dgcsortable.dgcsorted.dgcorderdesc:hover:after {
+/*    content: "\f160";  asc 
+    content: "\f15d"; a-z
+    content: "\f162"; 1-9 */
+    content: "\f0de"; /* up triangle */
+}
