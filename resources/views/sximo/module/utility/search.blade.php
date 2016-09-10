@@ -7,7 +7,7 @@
 		<tr id="{{ $t['field'] }}" class="fieldsearch">
 			<td>{!! SiteHelpers::activeLang($t['label'], (isset($t['language']) ? $t['language'] : array())) !!} </td>
 			<td > 
-			<select id="{{ $t['field']}}_operate" class="form-control oper" name="operate" onchange="changeOperate(this.value , '{{ $t['field']}}')">
+			<select id="{{ $t['field']}}_operate" class="form-control oper" name="operate" onchange="changeSearchOperator(this.value , '{{ $t['field']}}')">
 				<option value="equal"> = </option>
                 @if($pageModule != "merchandisebudget" )
 				<option value="bigger_equal"> >= </option>
@@ -38,23 +38,7 @@
 </form>	
 </div>
 <script>
-function changeOperate( val , field )
-{
-	if(val =='is_null') {
-		$('input[name='+field+']').attr('readonly','1');
-		$('input[name='+field+']').val('is_null');
-	} else if(val =='not_null') {
-		$('input[name='+field+']').attr('readonly','1');
-		$('input[name='+field+']').val('not_null');		
 
-	} else if(val =='between') {
-		html = '<input name="'+field+'" class="date form-control" placeholder="Start" style="width:100px;"  /> -  <input name="'+field+'_end" class="date form-control"  placeholder="End" style="width:100px;"    />';
-		$('#field_'+field+'').html(html);
-	} else {
-		$('input[name='+field+']').removeAttr('readonly');
-		$('input[name='+field+']').val('');	
-	}
-}
 jQuery(function(){
 
     initiateSearchFormFields($('#{{$pageModule}}Search'));
