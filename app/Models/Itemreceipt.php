@@ -42,6 +42,9 @@ class itemreceipt extends Sximo  {
             $orders[] = $record['id'];
             $record['receipts'] = [];
         }
+        if(empty($orders)){
+            return $data;
+        }
         $query = "select * from order_received where order_id in (".implode(',',$orders).")";
         $result = \DB::select($query);
         //all order contents place them in relevent order

@@ -65,6 +65,9 @@ class order extends Sximo
             $orders[] = $record['id'];
             $record['items'] = [];
         }
+        if(empty($orders)){
+            return $data;
+        }
         $query = "select * from order_contents where order_id in (".implode(',',$orders).")";
         $result = \DB::select($query);
         //all order contents place them in relevent order

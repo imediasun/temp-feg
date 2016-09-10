@@ -110,7 +110,7 @@
 							<?php if( file_exists( './uploads/users/'.$row->avatar) && $row->avatar !='') { ?>
 							<img src="{{ URL::to('uploads/users').'/'.$row->avatar }} " border="0" width="40" class="img-circle" />
 							<?php  } else { ?>
-							<img alt="" src="http://www.gravatar.com/avatar/{{ md5($row->email) }}" width="40" class="img-circle" />
+							<img alt="" src="{{url()}}/silouette.png" width="40" class="img-circle" border="0"/>
 							<?php } ?>
 					 	@elseif($field['field'] =='active')
 							{!! ($row->active ==1 ? '<lable class="label label-success">Active</label>' : '<lable class="label label-danger">Inactive</label>')  !!}

@@ -15,17 +15,14 @@
 <br/>
         <input  name="order_type" @if($TID )value="{{ $TID }}" @endif id="order_type" type="hidden" onchange="pageRefresh('T');" style="width:98%">
     </div>
-
-
-        <div class="col-md-2">
-
-            <br/>
-                    <select id="location_id" class="form-control" name="location_id" onchange="pageRefresh('L');">
-                            @foreach($manageRequestInfo['loc_options'] as $k => $locations)
-                                    <option @if($LID == $k) selected @endif value="{{ $k }}">{{ $locations}}</option>
-                               @endforeach
-                   </select>
-              </div>
+    <div class="col-md-2">
+        <br/>
+        <select id="location_id" class="form-control" name="location_id" onchange="pageRefresh('L');">
+            @foreach($manageRequestInfo['loc_options'] as $k => $locations)
+                <option @if($LID == $k) selected @endif value="{{ $k }}">{{ $locations}}</option>
+            @endforeach
+        </select>
+    </div>
     <div class="col-md-2">
         <br/>
         <select id="vendor_id" class="form-control" name="vendor_id" onchange="pageRefresh('V');">
@@ -106,7 +103,7 @@
         else {
             $('number_requests').hide();
         }
-        reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?view=' + request_type+ getFooterFilters());
+        reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?view=' + request_type);
     });
     function setType() {
         $('#request_type option').each(function () {
@@ -117,7 +114,7 @@
     }
     $("#col-config").on('change', function () {
         var request_type = $("#request_type").val();
-        reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?config_id=' + $("#col-config").val()+'&view=' +  getFooterFilters());
+        reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?config_id=' + $("#col-config").val()+'&view=' + request_type + getFooterFilters());
     });
 
     function pageRefresh(type) {
@@ -174,7 +171,7 @@
             }
         }
 
-        reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data' + get + getFooterFilters());
+        reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data' + get );
 
     }
 </script>
