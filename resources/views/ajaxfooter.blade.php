@@ -18,32 +18,22 @@ $orders = array('asc','desc');
           @if(isset($VID) && !is_null($VID))
               <input type="hidden" name="v3" value="V<?php  echo $VID ?>"/>
           @endif
-          @if(isset($view) && !is_null($view))
+        @if(isset($view) && !is_null($view))
               <input type="hidden" name="view" value="<?php  echo $view ?>"/>
-              @endif
-              @if(!isset($setting['disablepagination']) || $setting['disablepagination'] == 'false')
-
+        @endif
+        @if(!isset($setting['disablepagination']) || $setting['disablepagination'] == 'false')
+        <?php $setRows = isset($pager['rows']) ? $pager['rows'] : $setting['perpage']; ?>
 		<select name="rows" class="select-alt" style="width:70px; float:left;" 
-                data-setvalue="<?php echo isset($pager['rows']) ? $pager['rows'] : ''; ?>"
-                >
+                data-setvalue="{{ $setRows }}" >
 
-		  @foreach($pages as $p)
-		  <option value="{{ $p }}"
-			<?php if(isset($pager['rows']) && $pager['rows'] == $p){ ?>
-				selected="selected"
-
-			<?php }
-                    else { if($p == $setting['perpage'] ){?> selected="selected" <?php }  }?>
-		  >{{ $p }}</option>
-		  @endforeach
-              @if($pageModule != 'order')
-          <option value="0"
-            @if($param['limit'] == '0')
-				selected="selected"
-			@endif
-
-            >All</option>
-                  @endif
+            @foreach($pages as $p)
+                <option value="{{ $p }}"  @if($setRows == $p) selected="selected" @endif                    
+                >{{ $p }}</option>
+            @endforeach
+            @if($pageModule != 'order')
+                <option value="0" @if($setRows == '0') selected="selected"  @endif
+                >All</option>
+            @endif
 		</select>
         @endif
 
