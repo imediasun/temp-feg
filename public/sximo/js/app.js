@@ -14,7 +14,7 @@ var UNDEFINED,
                 for(elmName in cache) {
                     elm = container.find('.form-control[name=' + elmName + ']');
                     elm2 = container.find('.form-control[name=' + elmName + '_end]');
-                    operatorElm = container.find('.form-control[name=' + elmName + '_operate]');
+                    operatorElm = container.find('#'+elmName+'_operate');
                     item = cache[elmName];
                     val = item.value;
                     val2 = item.value2;
