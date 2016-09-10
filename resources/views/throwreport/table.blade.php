@@ -93,11 +93,11 @@
 							<td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}" data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
 								@if($field['field']=='price_per_play')
 
-									<input type="text" value="{{ number_format($value,2) }}" name="price_per_play[]" class ="my_form" id="{{ $row->id }}" style="width:55px" />
+									<input type="text" value="{{ number_format($value,2) }}" name="price_per_play[]" class ="my_form" id="price_per_play" style="width:55px" />
 
 								@elseif($field['field']=='retail_price')
 
-									<input type="text" value="{{ number_format($value,2) }}" name="retail_price[]" class="num"  id="{{ $row->id }}" style="width:55px" />
+									<input type="text" value="{{ number_format($value,2) }}" name="retail_price[]" class="num"  id="retail_price" style="width:55px" />
 
 
 
@@ -109,10 +109,10 @@
 						endif;
 						endforeach;
 						?>
-						<td><input type="text"  name ="pc_payout" value="" class="num"   style="width:55px" /></td>
+						<td><input type="text"  name ="pc_payout" value="" class="num"  id="pc_payout" style="width:55px" /></td>
 
 
-						<td><input type="text" value=""  readonly id="tot" class="tot" style="width:55px" /></td>
+						<td><input type="text" name=" tot" value=""  readonly id="tot" class="tot" style="width:55px" /></td>
 
 						<td><input type="text" value="" id ="payout_percent" class ="payout_percent" style="width:55px" /></td>
 						<td></td>
@@ -169,26 +169,33 @@
 <script>
 $(document).ready(function() {
 	$('.tips').tooltip();
-	$('.my_form,.num').on("keypress",(function(e) {
+	$('.my_form,.num,.payout_percent').on("keypress",(function(e) {
 		console.log(e);
 		if (e.which == 13) {
 
 			var value = $(this).val();
+//var revenue_total= document.getElementById("revenue_total").value
+			var price_per_play = document.getElementById("price_per_play").value;
+			var retail_price = document.getElementById("retail_price").value;
+			var pc_payout = document.getElementById("pc_payout").value;
+			var tot = document.getElementById("tot").value;
+			var payout_percent = document.getElementById("payout_percent").value;
 			var id =$(this).parent().parent().attr("id");
 			id = id.split("-");
-			console.log(id[1]);
+			//console.log(id[1]);
         
 
 			$.ajax(
-					{url: "throwreport/save/"+id[1],
+					{url: "throwreport/temp",
 						type: 'post',
-						data: {price_per_play:value},
+						data: {equipment:value,price_per_play:price_per_play,game_name:value, retail_price:retail_price,revenue_total:value,pc_payout:pc_payout,cost_goods:tot,payout_percent:payout_percent,overall_percent:payout_percent,game_id:value,},
+
 
 
 
 						success: function(result){
 
-							location.reload();
+						//	location.reload();
 
 						}
 
