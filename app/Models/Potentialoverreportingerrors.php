@@ -55,8 +55,8 @@ class potentialoverreportingerrors extends Sximo  {
         $rows = self::processRows($rawRows);            
         
         if ($total == 0) {
-            $message = "No data found. Try searching with other filters.";
-	}
+            $message = "To view the contents of this report, please select a date range and other search filter.";
+        }
         $humanDateRange = ReportHelpers::humanifyDateRangeMessage($date_start, $date_end);
         $topMessage = "Potential over-reporting error $humanDateRange";
         

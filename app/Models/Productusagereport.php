@@ -67,7 +67,7 @@ class productusagereport extends Sximo  {
         $prod_sub_type_id = @$filters['prod_sub_type_id'];
         
         if (empty($date_start) || empty($date_end)) {
-            $message = "Please select a date range from Search";
+            $message = "To view the contents of this report, please select a date range and other search filter.";
         }
         else {
             

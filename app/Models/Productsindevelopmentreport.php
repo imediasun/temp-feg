@@ -119,6 +119,10 @@ class productsindevelopmentreport extends Sximo  {
         if (!empty($totalRows) && isset($totalRows[0])) {
             $total = $totalRows[0]->totalCount;
         }
+        
+        if ($total == 0) {
+            $messaeg = "To view the contents of this report, please select a date range";
+        }
 		
 		return $results = array(
                     'topMessage' => $topMessage,

@@ -61,7 +61,7 @@ class gameplayrankbylocation extends Sximo  {
         $total = count($rows);                       
         
         if ($total == 0) {
-            $message = "No data found. Try searching with other filters.";
+            $message = "To view the contents of this report, please select a date range and other search filter.";
         }		        
         $humanDateRange = ReportHelpers::humanifyDateRangeMessage($date_start, $date_end);
         $topMessage = "Game Play Ranking by Location by Per Game Per Day (PGPD) Average $humanDateRange";
