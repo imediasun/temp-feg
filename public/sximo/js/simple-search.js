@@ -3,8 +3,10 @@ function performSimpleSearch(params) {
         params = {};
     }
     var elm = this, 
-        container = $('.simpleSearchContainer'), 
-        attr = '?search=', 
+        container = params.container || $('.simpleSearchContainer'), 
+        attr = '?search=',
+        moduleID = params.moduleID,
+        url = params.url,        
         cache = {};
 
     container.find('.form-control').each(function(i){
@@ -20,8 +22,8 @@ function performSimpleSearch(params) {
         if (value === null || value === UNDEFINED ) {
             value = '';
         }
-        if (fieldName) {
-            cache[fieldName] = value;            
+        if (fieldName) {            
+            cache[fieldName] = {value:value, value2: null, operator: operate};
         }
 
         if(value && isValueDate) {
@@ -35,20 +37,12 @@ function performSimpleSearch(params) {
 
     });
 
-    $('.table-actions :input').each(function () {
-        var elm = $(this), 
-            fieldName = elm.attr('name'), 
-            val = elm.val();
-        if (fieldName != 'page' && fieldName != 'search' && val !== '' && val !== null) {
-            attr += '&' + fieldName + '=' + val;            
-        }
-    });        
-    
+    attr += getFooterFilters(true, true);
     
     App.simpleSearch.cache = cache;
     App.lastSearchMode = 'simple';
     
-    reloadData(params.moduleID,params.url+attr);    
+    reloadData(moduleID,url+attr);    
 }
 
 $(document).ready(function() {

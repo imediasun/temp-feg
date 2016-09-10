@@ -26,7 +26,7 @@
     <div class="col-md-5" style="margin-top:7px;">
 
         <a href="{{ URL::to( $pageModule .'/search') }}" class="btn btn-sm btn-white"
-           onclick="SximoModal(this.href,'Advance Search'); return false;"><i class="fa fa-search"></i> Search</a>
+           onclick="SximoModal(this.href,'Advanced Search'); return false;"><i class="fa fa-search"></i> Search</a>
         @if(SiteHelpers::isModuleEnabled($pageModule))
             <a href="{{ URL::to('tablecols/arrange-cols/'.$pageModule) }}" class="btn btn-sm btn-white"
                onclick="SximoModal(this.href,'Column Selector'); return false;"><i class="fa fa-bars"></i> Arrange
@@ -73,14 +73,14 @@
         $(".select3").select2({width: "98%"});
     });
     $("#col-config").on('change', function () {
-        reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?type=store&active_inactive=' + $("#active_inactive").val() + '&config_id=' + $("#col-config").val());
+        reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?type=store&active_inactive=' + $("#active_inactive").val() + '&config_id=' + $("#col-config").val()+ getFooterFilters());
     });
     $("#active_inactive,#order_type,#product_type").on('click', function () {
         var type, order_type, product_type = "";
         type = $("#active_inactive").val();
         order_type = $("#order_type").val();
         product_type = $("#product_type").val();
-        reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?type=store&active_inactive=' + type + '&order_type=' + order_type + '&product_type=' + product_type + '&config_id=' + $("#col-config").val());
+        reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?type=store&active_inactive=' + type + '&order_type=' + order_type + '&product_type=' + product_type + '&config_id=' + $("#col-config").val()+ getFooterFilters());
     });
     $('#locations').on('click', function () {
         if($('#locations').val() != '')

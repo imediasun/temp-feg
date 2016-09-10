@@ -30,6 +30,21 @@ function getFooterFilters(excludeSearch, excludePage) {
     });
     return attr;
 }
+function getFooterFiltersWithoutSort() {
+    var attr = "";
+    $('.table-actions :input').each(function () {
+        var elm = $(this), 
+            fieldName = elm.attr('name'), 
+            val = elm.val();
+        if (val !== '' && val !== null) {
+            if (fieldName != 'sort' && fieldName != 'order') {                        
+                attr += '&' + fieldName + '=' + val;
+            }            
+        }
+    });
+    return attr;
+}
+
 
 function ajaxDoSearch( id ,url )
 {
@@ -99,17 +114,26 @@ function ajaxInlineEdit(id,url,reloadurl)
 }
 
 
-function ajaxFilter( id ,url,opt)
+function ajaxFilter( id ,url,opt,column)
 {
-
     var attr = '', elm, val;
         $(id + 'Filter :input').each(function () {
 			elm = $(this);
 			val = elm.val();
 //            if (this.value != '' && this.value!=0) {
-            if (val !== '' && val !== null) {
-                attr += this.name + '=' + val + '&';
-            }
+
+                if (val !== '' && val !== null) {
+                    if ( this.name == "sort" && column !== undefined) {
+
+                       attr +=  "sort="+column+"&";
+                    }
+
+                    else {
+
+                        attr += this.name + '=' + val + '&';
+
+                    }
+                }
 
         });
 
@@ -117,7 +141,8 @@ function ajaxFilter( id ,url,opt)
         attr += opt;
     }
 
-	reloadData(id, url+"?"+attr);
+
+reloadData(id, url+"?"+attr);
 }
 
 

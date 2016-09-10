@@ -151,8 +151,8 @@ class ModuleController extends Controller {
             $json_data['table_db']        = $table ;
             $json_data['primary_key']    = $primary;
             $json_data['grid']    = $rowGrid ;
-            $json_data['forms']    = $rowForm ;  
-             
+            $json_data['forms']    = $rowForm ;
+
 
             $module_type = ($primary =='' ? 'report' :  $request->input('module_template'))   ;                                
                 
@@ -167,7 +167,7 @@ class ModuleController extends Controller {
                 'module_config' => \SiteHelpers::CF_encode_json($json_data),            
             );
             
-            
+
             \DB::table('tb_module')->insert($data);
             
             // Add Default permission
@@ -290,21 +290,23 @@ class ModuleController extends Controller {
 		$this->data['module'] = 'module';
 		$this->data['module_lang'] = json_decode($row->module_lang,true);    
 		$this->data['module_name'] = $row->module_name;
-		$config = \SiteHelpers::CF_decode_json($row->module_config,true);     
+		$config = \SiteHelpers::CF_decode_json($row->module_config,true);
+
 		$this->data['tables']     = $config['grid']; 
         $this->data['type']     = $row->module_type;  
         $this->data['setting'] = array(
             'gridtype'        => (isset($config['setting']) ? $config['setting']['gridtype'] : 'native'  ),
             'orderby'        => (isset($config['setting']) ? $config['setting']['orderby'] : $row->module_db_key  ),
             'ordertype'        => (isset($config['setting']) ? $config['setting']['ordertype'] : 'asc'  ),
-            'perpage'        => (isset($config['setting']) ? $config['setting']['perpage'] : '10'  ),
+            'perpage'        => (isset($config['setting']) ? $config['setting']['perpage'] : '20'  ),
             'frozen'        => (isset($config['setting']['frozen'])  ? $config['setting']['frozen'] : 'false'  ),
             'form-method'        => (isset($config['setting']['form-method'])  ? $config['setting']['form-method'] : 'native'  ),
             'view-method'        => (isset($config['setting']['view-method'])  ? $config['setting']['view-method'] : 'native'  ),
             'inline'        => (isset($config['setting']['inline'])  ? $config['setting']['inline'] : 'false'  ),
             
-            'usesimplesearch'         => (isset($config['setting']['usesimplesearch'])  ? $config['setting']['usesimplesearch'] : 'true'  ),
-            'hideadvancedsearchoperators'         => (isset($config['setting']['hideadvancedsearchoperators'])  ? $config['setting']['hideadvancedsearchoperators'] : 'false'  ),
+            'hiderowcountcolumn'            => (isset($config['setting']['hiderowcountcolumn'])  ? $config['setting']['hiderowcountcolumn'] : 'false'  ),
+            'usesimplesearch'               => (isset($config['setting']['usesimplesearch'])  ? $config['setting']['usesimplesearch'] : 'true'  ),
+            'hideadvancedsearchoperators'   => (isset($config['setting']['hideadvancedsearchoperators'])  ? $config['setting']['hideadvancedsearchoperators'] : 'false'  ),
             'disablepagination'         => (isset($config['setting']['disablepagination'])  ? $config['setting']['disablepagination'] : 'false'  ),
             'disablesort'               => (isset($config['setting']['disablesort'])  ? $config['setting']['disablesort'] : 'false'  ),
             'disableactioncheckbox'     => (isset($config['setting']['disableactioncheckbox'])  ? $config['setting']['disableactioncheckbox'] : 'false'  ),
@@ -379,6 +381,7 @@ class ModuleController extends Controller {
             'view-method'        => (!is_null($request->input('view-method'))  ? $request->input('view-method') : 'native' ) ,
             'inline'        => (!is_null($request->input('inline'))  ? 'true' : 'false' ) ,
             
+            'hiderowcountcolumn'            => (!is_null($request->input('hiderowcountcolumn'))  ? 'true' : 'false' ) ,
             'usesimplesearch'               => (!is_null($request->input('usesimplesearch'))  ? 'true' : 'false' ) ,
             'hideadvancedsearchoperators'   => (!is_null($request->input('hideadvancedsearchoperators'))  ? 'true' : 'false' ) ,
             'disablepagination'         => (!is_null($request->input('disablepagination'))  ? 'true' : 'false' ) ,
@@ -685,9 +688,9 @@ class ModuleController extends Controller {
                     'size'            => $size,
                     'edit'            => $form['edit'],
                     'search'        => $form['search'],
-                    'simplesearch'        => $form['simplesearch'],
-                    'simplesearchorder'        => $form['simplesearchorder'],
-                    'simplesearchfieldwidth'        => $form['simplesearchfieldwidth'],
+                    'simplesearch'        => isset($form['simplesearch']) ? $form['simplesearch'] : '',
+                    'simplesearchorder'        => isset($form['simplesearchorder']) ? $form['simplesearchorder'] : '',
+                    'simplesearchfieldwidth'        => isset($form['simplesearchfieldwidth']) ? $form['simplesearchfieldwidth']: '',
                     "sortlist"         => $form['sortlist'] ,
                     'option'        => array(
                         "opt_type"                 => $form['option']['opt_type'],
@@ -962,6 +965,10 @@ class ModuleController extends Controller {
                 'is_edit'        => 'Edit ',
                 'is_remove'        => 'Remove ',
                 'is_excel'        => 'Excel ',            
+                'is_csv'        => 'CSV ',            
+                'is_print'        => 'Print ',            
+                'is_pdf'        => 'PDF ',            
+                'is_word'        => 'Word '
             );    
             /* Update permission global / own access new ver 1.1
                Adding new param is_global
@@ -994,6 +1001,9 @@ class ModuleController extends Controller {
                 foreach($tasks as $item=>$val)
                 {
                     $rows[$item] = (isset($access_data[$item]) && $access_data[$item] ==1  ? 1 : 0);
+                    if (($item == 'is_csv' || $item == 'is_print') && !isset($access_data[$item])) {
+                        $rows[$item] = isset($access_data['is_excel']) ? $access_data['is_excel'] : 0;
+                    }
                 }
                 $access[$r->name] = $rows;
                 
@@ -1026,7 +1036,11 @@ class ModuleController extends Controller {
             'is_add'        => 'Add ',
             'is_edit'        => 'Edit ',
             'is_remove'        => 'Remove ',
-            'is_excel'        => 'Excel ',            
+            'is_excel'        => 'Excel ',
+            'is_csv'        => 'CSV ',            
+            'is_print'        => 'Print ',            
+            'is_pdf'        => 'PDF ',            
+            'is_word'        => 'Word '            
         );    
         /* Update permission global / own access new ver 1.1
            Adding new param is_global

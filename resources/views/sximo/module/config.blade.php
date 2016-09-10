@@ -161,7 +161,7 @@
                 <option value="">None</option>
 			@foreach($tables as $t)
 				<option value="{{ $t['field'] }}"
-				@if($setting['orderby'] ==$t['field']) selected="selected" @endif 
+				@if($setting['orderby'] ==$t['field']) selected="selected" @endif
 				>{{ $t['label'] }}</option>
 			@endforeach
 			</select>
@@ -176,9 +176,11 @@
 	  <div class="form-group">
 		<label for="ipt" class=" control-label col-md-4"> Display Rows </label>
 		<div class="col-md-8">
+
 			<select class="select-alt" name="perpage">
 				<?php $pages = array('10','20','30','50', '100');
 				foreach($pages as $page) {
+
 				?>
 				<option value="<?php echo $page;?>"  @if($setting['perpage'] ==$page) selected="selected" @endif > <?php echo $page;?> </option>
 				<?php } ?>
@@ -237,6 +239,17 @@
               <label class="checkbox">
               <input type="checkbox" value="true" name="hideadvancedsearchoperators" id="hideadvancedsearchoperators"
               @if(isset($setting['hideadvancedsearchoperators']) && $setting['hideadvancedsearchoperators'] == 'true') checked="checked" @endif 	
+               /> Yes
+              </label>
+           </div> 
+        </div>                
+        
+        <div class="form-group">
+          <label for="hiderowcountcolumn" class=" control-label col-md-4">Hide Column showing Row Count</label>
+          <div class="col-md-8">
+              <label class="checkbox">
+              <input type="checkbox" value="true" name="hiderowcountcolumn" id="hiderowcountcolumn"
+              @if(isset($setting['hiderowcountcolumn']) && $setting['hiderowcountcolumn'] == 'true') checked="checked" @endif 	
                /> Yes
               </label>
            </div> 

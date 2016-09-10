@@ -19,99 +19,21 @@
 </form>	
 </div>
 <script>
-function changeOperate( val , field )
-{
-	if(val =='is_null') {
-		$('input[name='+field+']').attr('readonly','1');
-		$('input[name='+field+']').val('is_null');
-	} else if(val =='not_null') {
-		$('input[name='+field+']').attr('readonly','1');
-		$('input[name='+field+']').val('not_null');		
 
-	} else if(val =='between') {
-	
-		html = '<input name="'+field+'" class="date form-control" placeholder="Start Date" style="width:100px;"  /> -  <input name="'+field+'_end" class="date form-control"  placeholder="End Date" style="width:100px;"    />';
-		$('#field_'+field+'').html(html);
-	} else {
-		$('input[name='+field+']').removeAttr('readonly');
-		$('input[name='+field+']').val('');	
-	}
-}
 jQuery(function(){
-		$('.date').datepicker({format:'mm/dd/yyyy',autoclose:true})
-		$('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});
-		//$(".sel-search").select2({ width:"98%"});	
-
-
-	$('.doSearch').click(function(){
-		//alert('test');
-		var attr = '', cache = {};
-		$('#advance-search tr.fieldsearch').each(function(i){
-			var UNDEFINED,                 
-                container = this,
-                jQcontainer = $(container),                
-                field = jQcontainer.attr('id'),
-                name = jQcontainer.attr('name'),                
-                operatorField = jQcontainer.find('#'+field+'_operate'),
-                operate = operatorField.val(),
-                valueField = jQcontainer.find("[name="+field+"]"),
-                value = valueField.val(),
-                value2Field = jQcontainer.find("[name="+field+"_end]"),
-                value2 = value2Field.val(),
-                isValueDate = valueField.hasClass('date'),
-                isValue2Date = value2Field.hasClass('date'),
-                isValueDateTime = valueField.hasClass('datetime'),
-                isValue2DateTime = value2Field.hasClass('datetime');
-                
-                if (value === null || value === UNDEFINED ) {
-                    value = '';
-                }
-                if (value2 === null || value2 === UNDEFINED ) {
-                    value2 = '';
-                }
-                cache[field] = value;
-				if(value && isValueDate) {
-                    value  = $.datepicker.formatDate('yy-mm-dd', new Date(value));
-                }                    
-				if(value2 && isValue2Date) {
-                    value2  = $.datepicker.formatDate('yy-mm-dd', new Date(value2));
-                }                    
-				if(value && isValueDateTime) {
-                    //value  = $.datepicker.formatDate('mm/dd/yy hh:ii:ss', new Date(value));
-                }                    
-				if(value && isValue2DateTime) {
-                    //value2  = $.datepicker.formatDate('mm/dd/yy hh:ii:ss', new Date(value2));
-                }                    
-					            
-			if(value !=='' && typeof value !=='undefined' && name !='_token')
-			{
-				if(operate =='between')
-				{
-					attr += field+':'+operate+':'+value+':'+value2+'|';
-				} else {
-					attr += field+':'+operate+':'+value+'|';
-				}	
-					
-			}
-			
-		});
-        
-        $('.table-actions :input').each(function () {
-            var elm = $(this), 
-                fieldName = elm.attr('name'), 
-                val = elm.val();
-            if (fieldName != 'page' && fieldName != 'search' && val !== '' && val !== null) {
-                attr += '&' + fieldName + '=' + val;            
-            }
-        }); 
     
-		<?php if($searchMode =='ajax') { ?>
-            App.search.cache = cache;
-			reloadData( '#{{ $pageModule }}',"{{ $pageUrl }}/data?search="+attr);	
-			$('#sximo-modal').modal('hide');
-		<?php } else { ?>
-			window.location.href = '{{ $pageUrl }}?search='+attr;
-		<?php } ?>
+    initiateSearchFormFields($('#{{$pageModule}}Search'));
+
+	$('.doSearch').click(function(event){
+        var ajaxSerachMode = <?php echo $searchMode =='ajax' ?'true':'false';?>;
+        $('#sximo-modal').modal('hide');
+        performAdvancedSearch.call($(this), {
+            moduleID: '#{{ $pageModule }}', 
+            url: "{{ $pageUrl }}/data", 
+            event: event,
+            ajaxSearch: ajaxSerachMode,
+            container: $("#advance-search")
+        });
 	});
 });
 

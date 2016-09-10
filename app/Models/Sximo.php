@@ -182,12 +182,13 @@ class Sximo extends Model {
                 'gridtype' => (isset($data['config']['setting']['gridtype']) ? $data['config']['setting']['gridtype'] : 'native'),
                 'orderby' => (isset($data['config']['setting']['orderby']) ? $data['config']['setting']['orderby'] : $r->module_db_key),
                 'ordertype' => (isset($data['config']['setting']['ordertype']) ? $data['config']['setting']['ordertype'] : 'asc'),
-                'perpage' => (isset($data['config']['setting']['perpage']) ? $data['config']['setting']['perpage'] : '10'),
+                'perpage' => (isset($data['config']['setting']['perpage']) ? $data['config']['setting']['perpage'] : '20'),
                 'frozen' => (isset($data['config']['setting']['frozen']) ? $data['config']['setting']['frozen'] : 'false'),
                 'form-method' => (isset($data['config']['setting']['form-method']) ? $data['config']['setting']['form-method'] : 'native'),
                 'view-method' => (isset($data['config']['setting']['view-method']) ? $data['config']['setting']['view-method'] : 'native'),
                 'inline' => (isset($data['config']['setting']['inline']) ? $data['config']['setting']['inline'] : 'false'),
                 'hideadvancedsearchoperators' => (isset($data['config']['setting']['hideadvancedsearchoperators']) ? $data['config']['setting']['hideadvancedsearchoperators'] : 'false' ),
+                'hiderowcountcolumn' => (isset($data['config']['setting']['hiderowcountcolumn']) ? $data['config']['setting']['hiderowcountcolumn'] : 'false' ),                
                 'usesimplesearch' => (isset($data['config']['setting']['usesimplesearch']) ? $data['config']['setting']['usesimplesearch'] : 'true' ),                
                 'disablepagination' => (isset($data['config']['setting']['disablepagination']) ? $data['config']['setting']['disablepagination'] : 'false' ),
                 'disablesort' => (isset($data['config']['setting']['disablesort']) ? $data['config']['setting']['disablesort'] : 'false' ),
@@ -203,6 +204,7 @@ class Sximo extends Model {
     }
 
     static function getComboselect($params, $limit = null, $parent = null) {
+
         $limit = explode(':', $limit);
         $parent = explode(':', $parent);
 
