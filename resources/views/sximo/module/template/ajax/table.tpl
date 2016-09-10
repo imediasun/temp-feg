@@ -211,6 +211,7 @@ $(document).ready(function() {
                 moduleID: '#{{ $pageModule }}', 
                 url: "{{ $pageUrl }}", 
                 event: event,
+                ajaxSearch: true,
                 container: simpleSearch
             });
         });        
