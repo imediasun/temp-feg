@@ -53,10 +53,11 @@ class MerchandisebudgetController extends Controller
             $config_id = 0;
         }
         $this->data['config_id'] = $config_id;
+        \Session::put('config_id', $config_id);
         $config = $this->model->getModuleConfig($module_id, $config_id);
-        if (!empty($config)) {
-            $this->data['config'] = \SiteHelpers::CF_decode_json($config[0]->config);
-            \Session::put('config_id', $config_id);
+        if (!empty($config)) 
+        {
+            $this->data['config'] = \SiteHelpers::CF_decode_json($config[0]->config);            
         }
         $sort = (!is_null($request->input('sort')) ? $request->input('sort') : 'location_id');
         $order = (!is_null($request->input('order')) ? $request->input('order') : $this->info['setting']['ordertype']);
