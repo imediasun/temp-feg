@@ -49,8 +49,8 @@
 						$limited = isset($t['limited']) ? $t['limited'] :'';
 						if(SiteHelpers::filterColumn($limited ))
 						{
-                            $sortBy = $params['sort'];
-                            $orderBy = strtolower($params['order']);
+                            $sortBy = $param['sort'];
+                            $orderBy = strtolower($param['order']);
                             $colField = $t['field'];
                             $colIsSortable = $t['sortable'] == '1';
                             $colIsSorted = $colIsSortable && $colField == $sortBy;
