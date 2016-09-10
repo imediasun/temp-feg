@@ -92,7 +92,17 @@ function changeSearchOperator( val , field , elm )
 	}
 }
 
-App.autoCallbacks.reloaddata = function() {
+App.autoCallbacks.reloaddata = function(params) {
+    if (!params) {
+        params = {};
+    }    
+    if (/data\?search\=$/.test(params.url)) {
+        App.search.cache = {};
+        App.simpleSearch.cache = {};
+    }
+    else {
+        $(".sbox-tools a.tips").addClass('btn-search');
+    }    
     if (App.lastSearchMode == 'simple') {
         App.simpleSearch.populateFields();  
     }
@@ -100,10 +110,10 @@ App.autoCallbacks.reloaddata = function() {
 
     }
 };
-App.autoCallbacks.ajaxinlinesave = function() {
+App.autoCallbacks.ajaxinlinesave = function(params) {
     
 };
-App.autoCallbacks.advancedsearch = function() {
+App.autoCallbacks.advancedsearch = function(params) {
     var modal = this, searchButton = modal.find('.doSearch');
     searchButton.click(function(){
         App.lastSearchMode = 'advanced';
