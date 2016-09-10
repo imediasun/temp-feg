@@ -57,7 +57,7 @@
 
 <script>
     $("#col-config").on('change',function(){
-        reloadData('#{{ $pageModule }}','{{ $pageModule }}/data?config_id='+$("#col-config").val());
+        reloadData('#{{ $pageModule }}','{{ $pageModule }}/data?config_id='+$("#col-config").val()+ getFooterFilters());
     });
     $(".export_data_in_excel_or_csv").on('click', function(){
         $(".export-messsage-contaier").fadeIn();
@@ -68,7 +68,7 @@
         var val=$(this).val();
         if(val) {
             if (val != 0) {
-                reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?order_type=' + val);
+                reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?order_type=' + val + getFooterFilters());
             }
             else{
                 reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data');

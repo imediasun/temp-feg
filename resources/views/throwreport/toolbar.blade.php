@@ -71,12 +71,12 @@
 		//	$(this).datepicker('hide');
 
 			//reloadData('#{{ $pageModule }}','{{ $pageModule }}/data?search=date_start:bigger_equal:2015-01-07|date_end:smaller_equal:2015-01-14');
-			reloadData('#{{ $pageModule }}','{{ $pageModule }}/data?date='+selectedDate.replace(/ /g,''));
+			reloadData('#{{ $pageModule }}','{{ $pageModule }}/data?date='+selectedDate.replace(/ /g,'')+ getFooterFilters());
 
 		});
 
     $("#col-config").on('change',function(){
-        reloadData('#{{ $pageModule }}','{{ $pageModule }}/data?config_id='+$("#col-config").val());
+        reloadData('#{{ $pageModule }}','{{ $pageModule }}/data?config_id='+$("#col-config").val()+ getFooterFilters());
     });
 
 

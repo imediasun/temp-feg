@@ -73,14 +73,14 @@
         $(".select3").select2({width: "98%"});
     });
     $("#col-config").on('change', function () {
-        reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?type=store&active_inactive=' + $("#active_inactive").val() + '&config_id=' + $("#col-config").val());
+        reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?type=store&active_inactive=' + $("#active_inactive").val() + '&config_id=' + $("#col-config").val()+ getFooterFilters());
     });
     $("#active_inactive,#order_type,#product_type").on('click', function () {
         var type, order_type, product_type = "";
         type = $("#active_inactive").val();
         order_type = $("#order_type").val();
         product_type = $("#product_type").val();
-        reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?type=store&active_inactive=' + type + '&order_type=' + order_type + '&product_type=' + product_type + '&config_id=' + $("#col-config").val());
+        reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?type=store&active_inactive=' + type + '&order_type=' + order_type + '&product_type=' + product_type + '&config_id=' + $("#col-config").val()+ getFooterFilters());
     });
     $('#locations').on('click', function () {
         if($('#locations').val() != '')

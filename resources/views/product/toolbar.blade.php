@@ -88,14 +88,14 @@ width: 75%">
             $(".select3").select2({width: "98%"});
         });
         $("#col-config").on('change', function () {
-            reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?config_id=' + $("#col-config").val());
+            reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?config_id=' + $("#col-config").val()+ getFooterFilters());
         });
         $("#product_list_type").change(function () {
 
             var val = $("#product_list_type").val();
             var active = $(this).find('option:selected').attr('data-active');
             if (val) {
-                reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?prod_list_type=' + val + '&active=' + active);
+                reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?prod_list_type=' + val + '&active=' + active + getFooterFilters());
             }
         });
     </script>

@@ -24,13 +24,13 @@
 </div>
 <script>
     $("#col-config").on('change',function(){
-        reloadData('#{{ $pageModule }}','{{ $pageModule }}/data?config_id='+$("#col-config").val());
+        reloadData('#{{ $pageModule }}','{{ $pageModule }}/data?config_id='+$("#col-config").val()+ getFooterFilters());
     });
     $("#budget_year").on('change',function(){
 
         var val=$(this).val();
         if(val) {
-            reloadData('#{{ $pageModule }}','{{ $pageModule }}/data?budget_year='+val);
+            reloadData('#{{ $pageModule }}','{{ $pageModule }}/data?budget_year='+val+ getFooterFilters());
         }
     });
 $(document).ready(

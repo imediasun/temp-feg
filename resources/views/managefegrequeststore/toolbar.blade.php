@@ -96,7 +96,7 @@
         else {
             $('number_requests').hide();
         }
-        reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?view=' + request_type);
+        reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?view=' + request_type+ getFooterFilters());
     });
     function setType() {
         $('#request_type option').each(function () {
@@ -107,7 +107,7 @@
     }
     $("#col-config").on('change', function () {
         var request_type = $("#request_type").val();
-        reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?config_id=' + $("#col-config").val()+'&view=' + request_type);
+        reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?config_id=' + $("#col-config").val()+'&view=' +  getFooterFilters());
     });
 
     function pageRefresh(type) {
@@ -164,7 +164,7 @@
             }
         }
 
-        reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data' + get);
+        reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data' + get + getFooterFilters());
 
     }
 </script>

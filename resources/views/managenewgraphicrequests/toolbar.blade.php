@@ -49,7 +49,7 @@
 
     $("#col-config").on('change',function(){
         var request_type=$("#request_type").val();
-        reloadData('#{{ $pageModule }}','{{ $pageModule }}/data?view='+request_type+'&config_id='+$("#col-config").val());
+        reloadData('#{{ $pageModule }}','{{ $pageModule }}/data?view='+request_type+'&config_id='+$("#col-config").val()+ getFooterFilters());
     });
     function setType() {
         $('#request_type option').each(function () {
@@ -61,6 +61,6 @@
     $("#request_type").on('change', function () {
 
         var request_type = $(this).val();
-        reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?view='+ request_type);
+        reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?view='+ request_type+ getFooterFilters());
     });
 </script>

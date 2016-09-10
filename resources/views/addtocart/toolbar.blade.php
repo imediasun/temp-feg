@@ -31,7 +31,7 @@
 <script>
     var amt_short_msg=null;
     $("#col-config").on('change',function(){
-        reloadData('#{{ $pageModule }}','{{ $pageModule }}/data?config_id='+$("#col-config").val());
+        reloadData('#{{ $pageModule }}','{{ $pageModule }}/data?config_id='+$("#col-config").val()+ getFooterFilters());
     });
     $(document).ready(function(){
         var isOnLoad=true;
@@ -95,9 +95,5 @@
             }
         });
     }
-    function testload(vendor_name,value)
-    {
-        alert(vendor_name+" "+value);
-       $("#"+vendor_name).text(value);// alert(vendor_name + value);
-    }
+
 </script>
