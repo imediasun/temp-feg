@@ -30,6 +30,21 @@ function getFooterFilters(excludeSearch, excludePage) {
     });
     return attr;
 }
+function getFooterFiltersWithoutSort() {
+    var attr = "";
+    $('.table-actions :input').each(function () {
+        var elm = $(this), 
+            fieldName = elm.attr('name'), 
+            val = elm.val();
+        if (val !== '' && val !== null) {
+            if (fieldName != 'sort' && fieldName != 'order') {                        
+                attr += '&' + fieldName + '=' + val;
+            }            
+        }
+    });
+    return attr;
+}
+
 
 function ajaxDoSearch( id ,url )
 {

@@ -61,4 +61,26 @@ function initiateSearchFormFields(container) {
     container.find('.sel-search-multiple').select2();
 }
 
+function initDataGrid(module, url, options) {
+    if (!options) {
+        options = {};
+    }
+    var table = $('table#'+module+'Table'),
+        sortableCols = table.find('thead tr th.dgcsortable');        
+    
+    sortableCols.click(function(event){
+        var th = this,
+            elm = $(th),
+            field = elm.attr('data-field'),
+            sortable = elm.attr('data-sortable'),
+            sorted = elm.attr('data-sorted'),
+            sortedOrder = elm.attr('data-sortedOrder') || '',
+            nextOrder = sortedOrder == 'asc' ? 'desc' : 'asc',
+            attr = getFooterFiltersWithoutSort(),
+            allAttr = attr + ('&sort=' + field + '&order=' + nextOrder);
+            
+        reloadData('#'+module, url+'/data?colheadersort=1' + allAttr);
+        
+    });
+}
 
