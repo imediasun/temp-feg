@@ -25,7 +25,7 @@ class product extends Sximo  {
   CONCAT(T.id,'-',T.product_type) AS prod_type_id
   FROM `products` LEFT JOIN vendor ON (products.vendor_id = vendor.id)
   LEFT JOIN order_type O ON (O.id = products.prod_type_id)
-  LEFT JOIN product_type T ON (T.id = products.prod_sub_type_id)";
+  LEFT JOIN product_type T ON (T.id = products.prod_type_id)";
 	}
 
 	public static function queryWhere($product_list_type=null,$active=0){
