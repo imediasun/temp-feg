@@ -25,7 +25,7 @@ jQuery(document).ready(function($){
       
     // Adjust main panel's height based on overflowing nav-bar
     $("#page-wrapper").css({
-        'min-height': $(".navbar-default").height() + 'px',
+//        'min-height': $(".navbar-default").height() + 'px',
         'height': 'auto'
     });
     $('nav.navbar-default').on('hidden.bs.collapse', function() {
