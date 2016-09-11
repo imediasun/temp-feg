@@ -1,6 +1,6 @@
 
 <?php
-$pages = array(20,10,30,50,100);
+$pages = array(10,20,30,50,100);
 $orders = array('asc','desc');
 ?>
 	<div class="table-footer">
@@ -23,11 +23,11 @@ $orders = array('asc','desc');
         @endif
         @if(!isset($setting['disablepagination']) || $setting['disablepagination'] == 'false')
         <?php $setRows = isset($pager['rows']) ? $pager['rows'] : $setting['perpage']; ?>
-		<select name="rows" class="select-alt" style="width:70px; float:left;" 
+		<select name="rows" class="select-alt" style="width:70px; float:left;"
                 data-setvalue="{{ $setRows }}" >
 
             @foreach($pages as $p)
-                <option value="{{ $p }}"  @if($setRows == $p) selected="selected" @endif                    
+                <option value="{{ $p }}"  @if($setRows == $p) selected="selected" @endif
                 >{{ $p }}</option>
             @endforeach
             @if($pageModule != 'order')

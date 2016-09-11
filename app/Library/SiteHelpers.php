@@ -1292,7 +1292,7 @@ class SiteHelpers
 
     public static function avatar($width = 75)
     {
-        $avatar = '<img alt="" src="http://www.gravatar.com/avatar/' . md5(Session::get('email')) . '" class="img-circle" width="' . $width . '" />';
+        $avatar = '<img alt="" src="'.url().'/silouette.png" class="img-circle" width="' . $width . '" />';
         $Q = DB::table("users")->where("id", '=', Session::get('uid'))->get();
         if (count($Q) >= 1) {
             $row = $Q[0];
