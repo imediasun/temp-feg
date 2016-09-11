@@ -28,7 +28,7 @@ jQuery(document).ready(function($){
     window.setTimeout(function(){
         height = Math.max($(window).height(), $(".navbar-default").height());
         $("#page-wrapper").css({
-            'min-height': $(window).height() + 'px',
+            'min-height': height + 'px',
             'height': 'auto'
         });
         console.log($(window).height(), $(".navbar-default").height());
@@ -38,12 +38,14 @@ jQuery(document).ready(function($){
         $("#page-wrapper").css({
             'min-height': height + 'px'
         }); 
+        console.log($(window).height(), $(".navbar-default").height());
     });
     $('nav.navbar-default').on('shown.bs.collapse', function() {
         height = Math.max($(window).height(), $(".navbar-default").height());
         $("#page-wrapper").css({
             'min-height': height + 'px'
         }); 
+        console.log($(window).height(), $(".navbar-default").height());
     });
 
       /*Return to top*/
