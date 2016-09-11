@@ -99,5 +99,7 @@ function autoSetMainContainerHeight() {
     $(window).resize(setHeight);
 }
 
-// Adjust main panel's height based on overflowing nav-bar
-autoSetMainContainerHeight();
+jQuery(document).ready(function($){
+    // Adjust main panel's height based on overflowing nav-bar
+    autoSetMainContainerHeight();
+});
