@@ -86,7 +86,7 @@ function initDataGrid(module, url, options) {
 
 function autoSetMainContainerHeight() {
     var setHeight = function (){
-            var height = Math.max($(window).height() - $(".footer").height(), $(".navbar-default").height());
+            var height = Math.max($(window).height() - $(".footer").outerHeight(), $(".navbar-default").height());
             $("#page-wrapper").css({
                 'min-height': height + 'px',
                 'height': 'auto',
