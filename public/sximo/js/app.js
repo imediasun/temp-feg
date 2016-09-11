@@ -84,3 +84,20 @@ function initDataGrid(module, url, options) {
     });
 }
 
+function autoSetMainContainerHeight() {
+    var setHeight = function (){
+            var height = Math.max($(window).height() - $(".footer").height(), $(".navbar-default").height());
+            $("#page-wrapper").css({
+                'min-height': height + 'px',
+                'height': 'auto',
+                'transition' : 'height 0s'
+            });                    
+        };
+    window.setTimeout(setHeight, 1000);
+    $('nav.navbar-default').on('hidden.bs.collapse', setHeight);
+    $('nav.navbar-default').on('shown.bs.collapse', setHeight);    
+    $(window).resize(setHeight);
+}
+
+// Adjust main panel's height based on overflowing nav-bar
+autoSetMainContainerHeight();
