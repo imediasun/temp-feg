@@ -24,18 +24,25 @@ jQuery(document).ready(function($){
 		})
       
     // Adjust main panel's height based on overflowing nav-bar
-    $("#page-wrapper").css({
-//        'min-height': $(".navbar-default").height() + 'px',
-        'height': 'auto'
-    });
-    $('nav.navbar-default').on('hidden.bs.collapse', function() {
+    var height;
+    window.setTimeout(function(){
+        height = Math.max($(window).height(), $(".navbar-default").height());
         $("#page-wrapper").css({
-            'min-height': $(".navbar-default").height() + 'px'
+            'min-height': $(window).height() + 'px',
+            'height': 'auto'
+        });
+        console.log($(window).height(), $(".navbar-default").height());
+    }, 1000);
+    $('nav.navbar-default').on('hidden.bs.collapse', function() {
+        height = Math.max($(window).height(), $(".navbar-default").height());
+        $("#page-wrapper").css({
+            'min-height': height + 'px'
         }); 
     });
     $('nav.navbar-default').on('shown.bs.collapse', function() {
+        height = Math.max($(window).height(), $(".navbar-default").height());
         $("#page-wrapper").css({
-            'min-height': $(".navbar-default").height() + 'px'
+            'min-height': height + 'px'
         }); 
     });
 
