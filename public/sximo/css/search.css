@@ -59,13 +59,13 @@
 .datagrid th.dgcsortable {
     cursor: pointer;
     position: relative;
-    padding-left: 10px;
+    padding-left: 15px;
 }
 
 .datagrid th.dgcsortable:after {
     content: "\f0dc";
     position: absolute;
-    left: 0;
+    left: 5px;
     padding: 3px 2px 3px 0;  
     color: #aaa;
     font-family: FontAwesome;
