@@ -79,6 +79,13 @@ class TopgamesreportController extends Controller {
 		);
 		// Get Query
 		$results = $this->model->getRows( $params );
+        // adjust page number
+        $probedPageNumber = self::probe_current_page($page, $results['total'], $params['limit']);
+        if ($probedPageNumber != $page) {
+            $page = $probedPageNumber;
+            $params['page'] = $probedPageNumber;
+            $results = $this->model->getRows( $params );
+        }
 		// Build pagination setting
 		$page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;
 		//$pagination = new Paginator($results['rows'], $results['total'], $params['limit']);

@@ -847,5 +847,15 @@ function getChangelocation($location_id)
     return Redirect::back();
 }
 
+    function probe_current_page($currentPage, $totalRecords, $numberOfItemsPerPage) {
+        $totalPages = ceil($totalRecords/$numberOfItemsPerPage);
+        if ($currentPage > $totalPages) {
+            $currentPage = $totalPages;
+        }
+        if ($currentPage == 0) {
+            $currentPage = 1;
+        }
+        return $currentPage;
+    }
 }
 
