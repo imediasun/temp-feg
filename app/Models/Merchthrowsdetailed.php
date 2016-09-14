@@ -130,27 +130,26 @@ class merchthrowsdetailed extends Sximo  {
 			'global'	=> 1
 		), $args ));
 
-		$offset = ($page-1) * $limit ;
-		$limitConditional = ($page !=0 && $limit !=0) ? "LIMIT  $offset , $limit" : '';
-		$orderConditional = "ORDER BY date_start DESC, L.id DESC";//($sort !='' && $order !='') ?  " ORDER BY {$sort} {$order} " : '';
-
-		// Update permission global / own access new ver 1.1
-		$table = with(new static)->table;
-		if($global == 0 )
-			$params .= " AND {$table}.entry_by ='".\Session::get('uid')."'";
-		// End Update permission global / own access new ver 1.1
-        
-        $mainQuery = self::build_query();
-        $selectQuery = $mainQuery. " {$orderConditional} {$limitConditional}";
-        $rawRows = \DB::select($selectQuery);
-        $rows = self::processRows($rawRows);
-        
         $total = 0;
+        $mainQuery = self::build_query();
         $totalRows = \DB::select($mainQuery);
         if (!empty($totalRows)) {
             $total = count($totalRows);
         }
-		
+        
+		$offset = ($page-1) * $limit ;       
+        if ($offset >= $total) {
+            $page = ceil($total/$limit);
+            $offset = ($page-1) * $limit ;
+        }             
+		$limitConditional = ($page !=0 && $limit !=0) ? "LIMIT  $offset , $limit" : '';
+        
+		$orderConditional = ($sort !='' && $order !='') ?  " ORDER BY {$sort} {$order} " : 'ORDER BY date_start DESC, L.id DESC';
+        
+        $selectQuery = $mainQuery. " {$orderConditional} {$limitConditional}";
+        $rawRows = \DB::select($selectQuery);
+        $rows = self::processRows($rawRows);
+        
 		return $results = array(
                     'topMessage' => $topMessage,
                     'bottomMessage' => $bottomMessage,

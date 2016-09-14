@@ -36,9 +36,6 @@ class potentialoverreportingerrors extends Sximo  {
         $bottomMessage = "";
         $message = "";                
 
-		$offset = ($page-1) * $limit ;
-		$limitConditional = ($page !=0 && $limit !=0) ? " LIMIT  $offset , $limit" : '';
-
         $filters = ReportHelpers::getSearchFilters(array(
             'date_start' => '', 'date_end' => '', 'game_cat_id' => '', 'game_type_id'  => '',
             'debit_type_id' => '', 'game_on_test' => '', 'location_id' => '', 'game_id' => ''
@@ -48,9 +45,17 @@ class potentialoverreportingerrors extends Sximo  {
         if (empty($game_id) || (!empty($date_start) && !empty($date_end))) {
             ReportHelpers::dateRangeFix($date_start, $date_end);
         }        
+        
+		$offset = ($page-1) * $limit ;
+        $total = ReportHelpers::getPotentialOverReportingErrorCount($date_start, $date_end, $location_id, $debit_type_id, $game_type_id, $game_cat_id, $game_on_test. $game_id);
+        if ($offset >= $total) {
+            $page = ceil($total/$limit);
+            $offset = ($page-1) * $limit ;
+        }           
+		$limitConditional = ($page !=0 && $limit !=0) ? " LIMIT  $offset , $limit" : '';   
+        
         $mainQuery = ReportHelpers::getPotentialOverReportingErrorQuery($date_start, $date_end, $location_id, $debit_type_id, $game_type_id, $game_cat_id, $game_on_test, $game_id, $sort, $order);
         $mainQuery .= $limitConditional;
-        $total = ReportHelpers::getPotentialOverReportingErrorCount($date_start, $date_end, $location_id, $debit_type_id, $game_type_id, $game_cat_id, $game_on_test. $game_id);
         $rawRows = \DB::select($mainQuery);
         $rows = self::processRows($rawRows);            
         

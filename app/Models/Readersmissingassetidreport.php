@@ -44,9 +44,6 @@ class readersmissingassetidreport extends Sximo  {
         $bottomMessage = "";
         $message = "";                
 
-		$offset = ($page-1) * $limit ;
-		$limitConditional = ($page !=0 && $limit !=0) ? " LIMIT  $offset , $limit" : '';
-
         $filters = ReportHelpers::getSearchFilters(array(
             'date_start' => '', 'date_end' => '', 
             'debit_type_id' => '','location_id' => '', 'reader_id' => ''
@@ -56,9 +53,16 @@ class readersmissingassetidreport extends Sximo  {
             ReportHelpers::dateRangeFix($date_start, $date_end);
         }
         
+		$offset = ($page-1) * $limit ;
+        $total = ReportHelpers::getReadersMissingAssetIdCount($date_start, $date_end, $location_id, $debit_type_id, $reader_id);
+        if ($offset >= $total) {
+            $page = ceil($total/$limit);
+            $offset = ($page-1) * $limit ;
+        }           
+		$limitConditional = ($page !=0 && $limit !=0) ? " LIMIT  $offset , $limit" : '';    
+        
         $mainQuery = ReportHelpers::getReadersMissingAssetIdQuery($date_start, $date_end, $location_id, $debit_type_id, $reader_id, $sort, $order);
         $mainQuery .= $limitConditional;
-        $total = ReportHelpers::getReadersMissingAssetIdCount($date_start, $date_end, $location_id, $debit_type_id, $reader_id);
         $rawRows = \DB::select($mainQuery);
         $rows = self::processRows($rawRows);            
         

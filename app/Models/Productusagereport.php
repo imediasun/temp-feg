@@ -44,17 +44,6 @@ class productusagereport extends Sximo  {
 			'global'	=> 1
 		), $args ));
 
-		$offset = ($page-1) * $limit ;
-		$limitConditional = ($page !=0 && $limit !=0) ? "LIMIT  $offset , $limit" : '';
-		$orderConditional = ($sort !='' && $order !='') ?  " ORDER BY {$sort} {$order} " :
-                ' ORDER BY V.vendor_name, P.prod_type_id, P.vendor_description ';
-
-		// Update permission global / own access new ver 1.1
-		$table = with(new static)->table;
-		if($global == 0 )
-			$params .= " AND {$table}.entry_by ='".\Session::get('uid')."'";
-		// End Update permission global / own access new ver 1.1
-
 		$rows = array();
         $total = 0;
         
@@ -134,18 +123,24 @@ class productusagereport extends Sximo  {
             
             $groupQuery = " GROUP BY P.id ";
             
-        
-            
-            $finalDataQuery = "$mainQuery $fromQuery $whereQuery $groupQuery $orderConditional $limitConditional";
             $finalTotalQuery = "$totalQuery $fromQuery $whereQuery $groupQuery";
-            
-            $rawRows = \DB::select($finalDataQuery);
-            $rows = self::processRows($rawRows);
-            
             $totalRows = \DB::select($finalTotalQuery);
             if (!empty($totalRows)) {
                 $total = count($totalRows);
             }
+            $offset = ($page-1) * $limit ;
+            if ($offset >= $total) {
+                $page = ceil($total/$limit);
+                $offset = ($page-1) * $limit ;
+            }           
+            $limitConditional = ($page !=0 && $limit !=0) ? " LIMIT  $offset , $limit" : '';                
+            
+    		$orderConditional = ($sort !='' && $order !='') ?  " ORDER BY {$sort} {$order} " :
+                ' ORDER BY V.vendor_name, P.prod_type_id, P.vendor_description ';
+            
+            $finalDataQuery = "$mainQuery $fromQuery $whereQuery $groupQuery $orderConditional $limitConditional";
+            $rawRows = \DB::select($finalDataQuery);
+            $rows = self::processRows($rawRows);
             
             $topMessage = "Showing data from " . (date("m/d/Y",$date_start_stamp)) . " to " .
                     (date("m/d/Y",$date_end_stamp));
