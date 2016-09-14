@@ -11,12 +11,9 @@
                     Route::controller('product', 'ProductController');
                     Route::controller('reports', 'ReportsController');
                     Route::controller('sbticket', 'SbticketController');
-                    Route::controller('topgame', 'TopgameController');
-                    Route::controller('bottomgame', 'BottomgameController');
                     Route::controller('department', 'DepartmentController');
                     Route::controller('location', 'LocationController');
                     Route::controller('game', 'GameController');
-                    Route::controller('gamesdown', 'GamesdownController');
                     Route::controller('ticketcomment', 'TicketcommentController');
                     Route::controller('gamestitle', 'GamestitleController');
                     Route::controller('order', 'OrderController');
@@ -26,8 +23,6 @@
                     Route::controller('merchandisebudget', 'MerchandisebudgetController');
                     Route::controller('closedlocations', 'ClosedlocationsController');
                     Route::controller('gamesnotondebitcard', 'GamesnotondebitcardController');
-                    Route::controller('topgamesavgplays', 'TopgamesavgplaysController');
-                    Route::controller('bottomgamesavgplays', 'BottomgamesavgplaysController');
                     Route::controller('potentialoverreportingerrors', 'PotentialoverreportingerrorsController');
                     Route::controller('gamesnotplayed', 'GamesnotplayedController');
                     Route::controller('nonfegreaders', 'NonfegreadersController');
@@ -52,7 +47,6 @@
                     Route::controller('freightquoters', 'FreightquotersController');
                     Route::controller('trainingmaterial', 'TrainingmaterialController');
                     Route::controller('topgamesreport', 'TopgamesreportController');
-                    Route::controller('bottomgamesreport', 'BottomgamesreportController');
                     Route::controller('productsindevelopmentreport', 'ProductsindevelopmentreportController');
                     Route::controller('gameplayreport', 'GameplayreportController');
                     Route::controller('readersmissingassetidreport', 'ReadersmissingassetidreportController');
