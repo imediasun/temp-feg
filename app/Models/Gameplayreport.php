@@ -45,14 +45,14 @@ class gameplayreport extends Sximo  {
             'game_title_id' => ''
         ));        
         extract($filters);
-        ReportHelpers::dateRangeFix($date_start, $date_end);        
-        $total = ReportHelpers::getGamePlayCount($date_start, $date_end, $location_id, $debit_type_id, $game_type_id, $game_cat_id, $game_on_test, $game_id, $game_title_id);
+        ReportHelpers::dateRangeFix($date_start, $date_end);  
         
+        $total = ReportHelpers::getGamePlayCount($date_start, $date_end, $location_id, $debit_type_id, $game_type_id, $game_cat_id, $game_on_test, $game_id, $game_title_id);       
 		$offset = ($page-1) * $limit ;
-        if ($total < $offset) {
+        if ($offset >= $total) {
             $page = ceil($total/$limit);
             $offset = ($page-1) * $limit ;
-        }
+        }   
 		$limitConditional = ($page !=0 && $limit !=0) ? " LIMIT  $offset , $limit" : '';
 
         $mainQuery = ReportHelpers::getGamePlayQuery($date_start, $date_end, $location_id, $debit_type_id, $game_type_id, $game_cat_id, $game_on_test, $game_id, $game_title_id, $sort, $order);

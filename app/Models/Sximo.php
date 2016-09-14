@@ -19,10 +19,6 @@ class Sximo extends Model {
         $id = \DB::table($table)->insertGetId($data);
         return $id;
     }
-
-    /**
-     * start date & end dated for throw reports
-     */
     public static function getRows($args, $cond = null) {
         $table = with(new static)->table;
         $key = with(new static)->primaryKey;
@@ -37,8 +33,6 @@ class Sximo extends Model {
                         ), $args));
 
 
-        $offset = ($page - 1) * $limit;
-        $limitConditional = ($page != 0 && $limit != 0) ? "LIMIT  $offset , $limit" : '';
         $orderConditional = ($sort != '' && $order != '') ? " ORDER BY {$sort} {$order} " : '';
 
         // Update permission global / own access new ver 1.1
@@ -84,7 +78,22 @@ class Sximo extends Model {
         if(!empty($status_id)){
             $select .= " AND status_id='$status_id'";
         }
-//echo $select . " {$params} " . self::queryGroup() . " {$orderConditional}  {$limitConditional} ";die();
+
+        Log::info("Total Query : ".$select . " {$params} " . self::queryGroup() . " {$orderConditional}");
+        $counter_select =\DB::select($select . " {$params} " . self::queryGroup() . " {$orderConditional}");
+        $total= count($counter_select);
+        if($table=="img_uploads")
+        {
+            $total="";
+        }
+        
+        $offset = ($page - 1) * $limit;
+        if ($offset >= $total) {
+            $page = ceil($total/$limit);
+            $offset = ($page-1) * $limit ;
+        }        
+        $limitConditional = ($page != 0 && $limit != 0) ? "LIMIT  $offset , $limit" : '';
+        
         Log::info("Query : ".$select . " {$params} " . self::queryGroup() . " {$orderConditional}  {$limitConditional} ");
         $result = \DB::select($select . " {$params} " . self::queryGroup() . " {$orderConditional}  {$limitConditional} ");
 
@@ -94,14 +103,6 @@ class Sximo extends Model {
             $key = $table . "." . $key;
         }
 
-        Log::info("Total Query : ".$select . " {$params} " . self::queryGroup() . " {$orderConditional}");
-        $counter_select =\DB::select($select . " {$params} " . self::queryGroup() . " {$orderConditional}");
-        $total= count($counter_select);
-
-        if($table=="img_uploads")
-        {
-        $total="";
-        }
         return $results = array('rows' => $result, 'total' => $total);
     }
 
