@@ -728,7 +728,7 @@ class ReportHelpers
                 WHERE L.can_ship = 1 AND L.active = 1";
 
         if (!empty($location)) {
-            $Q .= " AND L.location_id IN ($location)";
+            $Q .= " AND L.id IN ($location)";
         }
         if (!empty($debit)) {
             $Q .= " AND D.id IN ($debit)";
