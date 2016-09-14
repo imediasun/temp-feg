@@ -30,7 +30,7 @@ class merchthrowssimple extends Sximo  {
             $dateEnd_expression = " AND merch_throws.date_end <= '$dateEnd' ";
         }
 
-        $sql = "SELECT G.id as id,
+        $sql = "SELECT merch_throws.game_id as id,
                                     CONCAT(G.id,' | ',I.game_title) AS 'Game',
                                     I.game_title,
                                     merch_throws.price_per_play,
