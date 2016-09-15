@@ -16,6 +16,7 @@ class Kernel extends ConsoleKernel
         \App\Console\Commands\Inspire::class,
         \App\Console\Commands\ReadComment::class,
         \App\Console\Commands\AutoCloseOrder::class,
+        \App\Console\Commands\SyncGameEarningsFromLive::class,
     ];
 
     /**
@@ -28,8 +29,8 @@ class Kernel extends ConsoleKernel
     {
         $schedule->command('comments:read')->everyMinute();
         $schedule->command('autocloseorder')->daily();
-        $schedule->command('inspire')
-                 ->hourly();
-
+        $schedule->command('inspire')->hourly();
+        //$schedule->command('syncgameearningsfromlive')->dailyAt('12:00')->withoutOverlapping();
+        $schedule->command('syncgameearningsfromlive')->everyFiveMinutes()->withoutOverlapping();
     }
 }
