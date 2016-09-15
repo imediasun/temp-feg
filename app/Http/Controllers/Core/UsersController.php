@@ -29,6 +29,7 @@ class UsersController extends Controller
             'pageTitle' => $this->info['title'],
             'pageNote' => $this->info['note'],
             'pageModule' => 'core/users',
+            'pageUrl'	=>  url('vendor'),
             'return' => self::returnUrl()
 
         );
@@ -87,6 +88,7 @@ class UsersController extends Controller
         $page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;
         $pagination = new Paginator($results['rows'], $results['total'], $params['limit']);
         $pagination->setPath('users');
+        $this->data['param']		= $params;
         foreach ($results['rows'] as $result) {
 
             if ($result->is_tech_contact == 1) {
@@ -164,6 +166,7 @@ class UsersController extends Controller
         $this->data['colspan'] = \SiteHelpers::viewColSpan($this->info['config']['grid']);
         // Group users permission
         $this->data['access'] = $this->access;
+        $this->data['setting'] 		= $this->info['setting'];
         // Detail from master if any
 
         // Master detail link if any
