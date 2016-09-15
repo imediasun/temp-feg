@@ -21,7 +21,7 @@ class MyLog
             $file = "default";
         }
         $fileprefix = "log-" . date("Ymd") . (empty($file) ? "": ("-".$file));
-        $path = storage_path() . 'logs' . (empty($depth) ? "": ("/".$depth));        
+        $path = storage_path() . '/logs' . (empty($depth) ? "": ("/".$depth));        
         $filepath = $path . '/'. $fileprefix;        
         if (!file_exists($path)) {
             mkdir($path, 0755, true);
