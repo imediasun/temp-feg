@@ -741,7 +741,7 @@ class SiteHelpers
         $mandatory = '';
         $selectMultiple = "";
         foreach ($forms as $f) {
-            if ($f['field'] == $field && $f['search'] == 1) {
+            if ($f['field'] == $field && ($f['search'] == 1 || $f['simplesearch'] == 1)) {
                 $type = ($f['type'] != 'file' ? $f['type'] : '');
                 $option = $f['option'];
                 $required = $f['required'];
