@@ -118,6 +118,10 @@ return [
             'collation' => 'utf8_unicode_ci',
             'prefix'    => '',
             'strict'    => false,
+            'options'   => array(
+                PDO::ATTR_TIMEOUT => 120,
+                PDO::ATTR_PERSISTENT => true,
+            )
         ],
         'livemysql_embed' => [
             'driver'    => 'mysql',
@@ -129,6 +133,10 @@ return [
             'collation' => 'utf8_unicode_ci',
             'prefix'    => '',
             'strict'    => false,
+            'options'   => array(
+                PDO::ATTR_TIMEOUT => 120,
+                PDO::ATTR_PERSISTENT => true,
+            )            
         ],
         'livemysql_sacoa' => [
             'driver'    => 'mysql',
@@ -140,6 +148,10 @@ return [
             'collation' => 'utf8_unicode_ci',
             'prefix'    => '',
             'strict'    => false,
+            'options'   => array(
+                PDO::ATTR_TIMEOUT => 120,
+                PDO::ATTR_PERSISTENT => true,
+            )            
         ],
 
     ],

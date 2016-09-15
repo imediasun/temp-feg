@@ -21,6 +21,7 @@ class SyncHelpers
         self::live_sync_game_summary_reports();
         $L->log("End Games Summary Sync");
         $L->log("End Live Sync");
+        DB::connection('livemysql')->disconnect();
     }
     
     public static function live_sync_adjustment_earnings() {
