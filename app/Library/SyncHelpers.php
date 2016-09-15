@@ -8,16 +8,16 @@ class SyncHelpers
         $L = new MyLog("earnings", "livesync", "Sync");
         $L->log("Start Live Sync");
         $L->log("Start Earnings Sync");
-        live_sync_earnings();
+        self::live_sync_earnings();
         $L->log("End Earnings Sync");
         $L->log("Start Adjustment Sync");
-        live_sync_adjustment_earnings();
+        self::live_sync_adjustment_earnings();
         $L->log("End Adjustment Sync");
         $L->log("Start Location Summary Sync");
-        live_sync_location_summary_reports();
+        self::live_sync_location_summary_reports();
         $L->log("End Location Summary Sync");
         $L->log("Start Games Summary Sync");
-        live_sync_game_summary_reports();
+        self::live_sync_game_summary_reports();
         $L->log("End Games Summary Sync");
         $L->log("End Live Sync");
     }
