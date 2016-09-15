@@ -6,7 +6,7 @@ use App\Library\MyLog;
 class SyncHelpers
 {    
     public static function livesync() {
-        $L = new MyLog("earnings", "livesync", "Sync");
+        $L = new MyLog("earnings.log", "livesync", "Sync");
         $L->log("Start Live Sync");
         $L->log("Start Earnings Sync");
         self::live_sync_earnings();
