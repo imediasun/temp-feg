@@ -31,6 +31,6 @@ class Kernel extends ConsoleKernel
         $schedule->command('autocloseorder')->daily();
         $schedule->command('inspire')->hourly();
         //$schedule->command('syncgameearningsfromlive')->dailyAt('12:00')->withoutOverlapping();
-        //$schedule->command('syncgameearningsfromlive')->everyFiveMinutes()->withoutOverlapping();
+        $schedule->command('syncgameearningsfromlive')->everyFiveMinutes()->withoutOverlapping();
     }
 }

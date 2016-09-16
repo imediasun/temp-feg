@@ -110,7 +110,7 @@ return [
 
         'livemysql' => [
             'driver'    => 'mysql',
-            'host'      => '70.39.151.181:3306',
+            'host'      => 'fegllcx.com',
             'database'  => 'fegllc_fegsys',
             'username'  => 'fegllc_read',
             'password'  => '9JkAnxEfhxVC',
