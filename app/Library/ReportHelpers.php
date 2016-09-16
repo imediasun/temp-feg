@@ -836,30 +836,22 @@ class ReportHelpers
      * @return type
      */
     public static function mergeGameTypeAndCategories($gameType = "", $game_category_type = "") {
-        $L = new MyLog("mergeGameTypeAndCategories.log", "uireports", "UIReports");
         $gameTypeArray = explode(",", $gameType);
-        $L->log("gameTypeArray", $gameTypeArray);
         $catTypeArray = explode(",", $game_category_type);
-        $L->log("catTypeArray", $catTypeArray);
         
         $gameTypeIdsArray = array();
         if (empty($gameType)) {
-            $L->log("Empty Game Type");
             $gameTypeIdsArray = $catTypeArray;
         }
         else {
             if (empty($game_category_type)) {
-                $L->log("Empty Game Cat");
                 $gameTypeIdsArray = $gameTypeArray;
             }
             else {
-                $L->log("Game Type + Game Cat");
                 $gameTypeIdsArray = array_intersect($gameTypeArray, $catTypeArray);
             }            
         }
         $gameTypeIds = implode(",", $gameTypeIdsArray);
-        $L->log("gameTypeIds", $gameTypeIds);
-        $L->log("-----------------------------------------------------", $gameTypeIds);
         return $gameTypeIds;
     }
 
