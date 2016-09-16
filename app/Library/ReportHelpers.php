@@ -277,7 +277,7 @@ class ReportHelpers
                 T.game_title as game_name,
                 if(E.game_on_test = 1, 'Yes', 'No') as game_on_test,
                 E.game_not_debit,
-                E.game_type_id,
+                Y.id as game_type_id,
                 Y.game_type,
                 '$gameCat' AS game_cat_id,
                 '$game_category' AS game_category,                
@@ -381,7 +381,7 @@ class ReportHelpers
             E.id, 
             GT.game_title as game_name, 
             E.game_title_id, 
-            E.game_type_id,
+            GTY.id as game_type_id,
             GTY.game_type,
             if(E.game_on_test = 1, 'Yes', 'No') as game_on_test,
             L.debit_type_id,
@@ -444,7 +444,7 @@ class ReportHelpers
             $Q .= " AND E.game_on_test IN (1)";
         }
         if (!empty($gameTypeIds)) {
-            $Q .= " AND Y.id IN ($gameTypeIds)";
+            $Q .= " AND GTY.id IN ($gameTypeIds)";
         }
 
         // GROUP BY
@@ -471,7 +471,7 @@ class ReportHelpers
                 T.game_title as game_name,
                 if(G.test_piece = 1, 'Yes', 'No') as game_on_test,
                 G.not_debit as game_not_debit,
-                G.game_type_id,
+                Y.id as game_type_id,
                 Y.game_type,
                 '$gameCat' AS game_cat_id,
                 '$game_category' AS game_category,                
@@ -597,7 +597,7 @@ class ReportHelpers
                 T.game_title as game_name,
                 if(E.game_on_test = 1, 'Yes', 'No') as game_on_test,
                 E.game_not_debit,
-                E.game_type_id,
+                Y.id as game_type_id,
                 Y.game_type,
                 '$gameCat' AS game_cat_id,
                 '$game_category' AS game_category,                
