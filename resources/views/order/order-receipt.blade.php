@@ -71,7 +71,7 @@
                                 <th>Case Price</th>
                                 <th>Qty</th>
                                 <th>Received Qty</th>
-                                <th>Partialy Received</th>
+                                <th>Partially Received</th>
                                 <th></th>
                                 <th>Total ( $ )</th>
 
@@ -173,9 +173,9 @@
 
             <div style="clear:both"></div>
 
-            <div class="form-group col-md-offset-4" style="margin-bottom:50px; padding-left: 112px;">
-                <label class="col-sm-4 text-right">&nbsp;</label>
-                <div class="col-sm-8">
+            <div class="form-group" style="margin-bottom:50px; padding-left: 112px;">
+                <label class="col-md-4 text-right" style="display: none">title</label>
+                <div class="col-md-8">
                     <button type="submit" class="btn btn-primary btn-sm " id="submit_btn"><i
                                 class="fa  fa-save "></i>  Receive Order </button>
                     <button type="button" onclick="window.history.back();" class="btn btn-success btn-sm">

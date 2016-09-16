@@ -804,11 +804,20 @@ class SiteHelpers
 
                     }
                     else {
-                        $data = DB::table($option['lookup_table'])->get();
+                        $fields = explode("|", $option['lookup_value']);
+                        if(count($fields)>1)
+                        {
+                            $data = DB::table($option['lookup_table'])->orderby($option['lookup_key'])->get();
+                        }
+                        else
+                        {
+                            $data = DB::table($option['lookup_table'])->orderby($option['lookup_value'])->get();
+                        }
+
                         foreach ($data as $row):
                             $selected = '';
                             if ($value == $row->$option['lookup_key']) $selected = 'selected="selected"';
-                            $fields = explode("|", $option['lookup_value']);
+
                             //print_r($fields);exit;
                             $val = "";
                             foreach ($fields as $item => $v) {

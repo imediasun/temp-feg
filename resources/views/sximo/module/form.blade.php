@@ -137,13 +137,13 @@
                 </select>
             </td>
             <td class="formFieldConfig">
-                <a href="javascript:void(0)" class="btn btn-xs btn-primary editForm"  role="button"  
+                <a href="javascript:void(0)" class="btn btn-xs btn-primary editForm"  role="button"
                 onclick="SximoModal('{{ URL::to('feg/module/editform/'.$row->module_id.'?field='.$rows['field'].'&alias='.$rows['alias']) }}','Edit Field : <?php echo $rows['field'];?>')">
                 <i class="fa fa-cog"></i></a>
                 <input type="hidden" name="alias[<?php echo $id;?>]" value="<?php echo $rows['alias'];?>" />
-                <input type="hidden" name="field[<?php echo $id;?>]" value="<?php echo $rows['field'];?>" />	
-                <input type="hidden" name="form_group[<?php echo $id;?>]" value="<?php echo $rows['form_group'];?>" />	
-                <input type="hidden" name="sortlist[<?php echo $id;?>]" class="reorder" value="<?php echo $rows['sortlist'];?>" />		
+                <input type="hidden" name="field[<?php echo $id;?>]" value="<?php echo $rows['field'];?>" />
+                <input type="hidden" name="form_group[<?php echo $id;?>]" value="<?php echo $rows['form_group'];?>" />
+                <input type="hidden" name="sortlist[<?php echo $id;?>]" class="reorder" value="<?php echo $rows['sortlist'];?>" />
                 <input type="hidden" name="opt_type[<?php echo $id;?>]" value="<?php echo $rows['option']['opt_type'];?>" />
                 <input type="hidden" name="lookup_query[<?php echo $id;?>]" value="<?php echo $rows['option']['lookup_query'];?>" />
                 <input type="hidden" name="lookup_table[<?php echo $id;?>]" value="<?php echo $rows['option']['lookup_table'];?>" />
@@ -163,7 +163,7 @@
                 <input type="hidden" name="image_multiple[<?php echo $id;?>]" value="<?php if(isset($rows['option']['image_multiple'])) echo $rows['option']['image_multiple'];?>" />
 
 			</td>
-			
+
           </tr>
                 <?php } ?>
             </tbody>
