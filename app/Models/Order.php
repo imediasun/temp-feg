@@ -186,6 +186,7 @@ class order extends Sximo
         $data['orderProductIdArray'] = '';
         $data['itemNameArray'] = "";
         $data['itemCasePrice'] = "";
+        $data['itemRetailPrice'] = "";
         $data['orderRequestIdArray'] = '';
         $data['requests_item_count'] = '';
         $data['today'] = $this->get_local_time();
@@ -214,7 +215,7 @@ class order extends Sximo
                 $data['alt_address'] = $order_query[0]->alt_address;
             }
             $data['prefill_type'] = 'clone';
-            $content_query = \DB::select('SELECT IF(O.product_id = 0, O.product_description, P.vendor_description) AS description,O.price AS price,O.qty AS qty, O.product_id,O.item_name,O.case_price
+            $content_query = \DB::select('SELECT IF(O.product_id = 0, O.product_description, P.vendor_description) AS description,O.price AS price,O.qty AS qty, O.product_id,O.item_name,O.case_price,P.retail_price
 												 FROM order_contents O LEFT JOIN products P ON P.id = O.product_id WHERE O.order_id = ' . $order_id);
             if ($content_query) {
 
@@ -226,6 +227,7 @@ class order extends Sximo
                     $orderProductIdArray[] = $row->product_id;
                     $orderitemnamesArray[] = $row->item_name;
                     $orderitemcasepriceArray[] = $row->case_price;
+                    $orderretailpriceArray[]=$row->retail_price;
                     //  $prod_data[]=$this->productUnitPriceAndName($orderProductIdArray);
                 }
                 $data['orderDescriptionArray'] = $orderDescriptionArray;
@@ -240,6 +242,7 @@ class order extends Sximo
                      }*/
                 $data['itemNameArray'] = $orderitemnamesArray;
                 $data['itemCasePrice'] = $orderitemcasepriceArray;
+                $data['itemRetailPrice']=$orderretailpriceArray;
                 $poArr = array("", "", "");
                 if (isset($data['po_number'])) {
                     $poArr = explode("-", $data['po_number']);
@@ -287,6 +290,7 @@ class order extends Sximo
 
                 $query = \DB::select('SELECT R.qty,
 											  P.case_price,
+											  P.retail_price,
 											  P.vendor_id,
 											  P.item_description,
 											  R.product_id,
@@ -322,13 +326,15 @@ class order extends Sximo
                     $orderProductIdArray[] = $query[0]->product_id;
                     $prod_data = $this->productUnitPriceAndName($query[0]->product_id);
                     $item_name_array[] = $query[0]->item_description;
-                    $item_case_price[] = $query[0]->case_price;;
+                    $item_case_price[] = $query[0]->case_price;
+                    $item_retail_price[]=$query[0]->retail_price;
                     $orderRequestIdArray[] = ${'SID' . $i};
                 }
 
                 $data['orderDescriptionArray'] = $orderDescriptionArray;
                 $data['orderPriceArray'] = $orderPriceArray;
                 $data['orderQtyArray'] = $orderQtyArray;
+                $data['itemRetailPriceArray']=$item_retail_price;
                 $data['orderProductIdArray'] = $orderProductIdArray;
                 $data['orderRequestIdArray'] = $orderRequestIdArray;
                 $data['itemNameArray'] = $item_name_array;
