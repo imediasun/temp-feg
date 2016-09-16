@@ -526,10 +526,23 @@ class ReportHelpers
         }
         if (!empty($dateEnd)) {
             $dateEnd = self::dateify($dateEnd);
+        } 
+        
+        $gameEarningsJOIN = "SELECT * from game_earings WHERE 
+            game_id <>0 AND date_start >= '$dateStart' AND date_start <= '$dateEnd 23:59:59' ";
+        if (!empty($gameId)) {
+            $gameEarningsJOIN .= " AND game_id IN ($gameId) ";
         }        
+        if (!empty($location)) {
+            $gameEarningsJOIN .= " AND loc_id IN ($location) ";
+        }
+        if (!empty($debit)) {
+            $gameEarningsJOIN .= " AND debit_type_id IN ($debit) ";
+        }        
+        
         $Q = "
             FROM game G
-            LEFT JOIN game_earnings E ON G.id = E.game_id
+            LEFT JOIN ($gameEarningsJOIN) E ON G.id = E.game_id
             LEFT JOIN game_title T ON T.id = G.game_title_id
             LEFT JOIN game_type Y ON Y.id = T.game_type_id
             LEFT JOIN location L ON L.id = G.location_id
@@ -543,12 +556,12 @@ class ReportHelpers
             $Q .= " AND G.id IN ($gameId) ";
         }
 
-        if (!empty($dateStart)) {
-            $Q .= " AND E.date_start >= '$dateStart' ";
-        }        
-        if (!empty($dateEnd)) {
-            $Q .= " AND E.date_start <= '$dateEnd 23:59:59' ";
-        }        
+//        if (!empty($dateStart)) {
+//            $Q .= " AND E.date_start >= '$dateStart' ";
+//        }        
+//        if (!empty($dateEnd)) {
+//            $Q .= " AND E.date_start <= '$dateEnd 23:59:59' ";
+//        }        
         if (!empty($location)) {
             $Q .= " AND L.id IN ($location) ";
         }
@@ -568,7 +581,7 @@ class ReportHelpers
         }
         
         // GROUP BY
-        $Q .= " GROUP BY E.game_id, E.loc_id ";
+        $Q .= " GROUP BY G.id, L.id ";
         
         return $Q;
     }
