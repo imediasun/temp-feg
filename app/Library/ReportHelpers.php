@@ -344,7 +344,7 @@ class ReportHelpers
             }            
         }
         if (!empty($gameTypeIds)) {
-            $Q .= " AND E.game_type_id IN ($gameTypeIds)";
+            $Q .= " AND Y.id IN ($gameTypeIds)";
         }
         
         // GROUP BY
@@ -444,7 +444,7 @@ class ReportHelpers
             $Q .= " AND E.game_on_test IN (1)";
         }
         if (!empty($gameTypeIds)) {
-            $Q .= " AND E.game_type_id IN ($gameTypeIds)";
+            $Q .= " AND Y.id IN ($gameTypeIds)";
         }
 
         // GROUP BY
@@ -564,7 +564,7 @@ class ReportHelpers
             }            
         }
         if (!empty($gameTypeIds)) {
-            $Q .= " AND G.game_type_id IN ($gameTypeIds)";
+            $Q .= " AND Y.id IN ($gameTypeIds)";
         }
         
         // GROUP BY
@@ -672,7 +672,7 @@ class ReportHelpers
             }            
         }
         if (!empty($gameTypeIds)) {
-            $Q .= " AND E.game_type_id IN ($gameTypeIds)";
+            $Q .= " AND Y.id IN ($gameTypeIds)";
         }
         
         // GROUP BY
