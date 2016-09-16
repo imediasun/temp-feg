@@ -30,7 +30,7 @@ class MyLog
             
 	}    
     
-	public function log($msg = "", $obj = null) {
+	public function log($msg = "", $obj = '') {
         if (empty($obj)) {
             $this->logger->addInfo($msg);
         }

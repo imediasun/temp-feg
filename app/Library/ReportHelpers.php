@@ -1,5 +1,6 @@
 <?php
 namespace App\Library;
+use App\Library\MyLog;
 class ReportHelpers
 {
 
@@ -55,6 +56,8 @@ class ReportHelpers
         $sortbyQuery = self::orderify($sortby, $order);        
         $Q .= $sortbyQuery;        
 
+        $L = new MyLog("location-rank.log", "uireports", "UIReports");
+        $L->log("Query", $Q);
         return $Q;
     }
     
@@ -88,7 +91,9 @@ class ReportHelpers
         }      
         $sortbyQuery = self::orderify($sortby, $order);
         $Q .= $sortbyQuery;        
-
+        
+        $L = new MyLog("location-not-reporting.log", "uireports", "UIReports");
+        $L->log("Query", $Q);
         return $Q;        
     }
     public static function _getLocationNotReportingQuery($dateStart, $dateEnd, $location, $debit) {
@@ -174,6 +179,8 @@ class ReportHelpers
         $sortbyQuery = self::orderify($sortby, $order);
         $Q .= $sortbyQuery;        
 
+        $L = new MyLog("location-closed.log", "uireports", "UIReports");
+        $L->log("Query", $Q);
         return $Q;         
     }
 
@@ -202,6 +209,8 @@ class ReportHelpers
         $sortbyQuery = self::orderify($sortby, $order);
         $Q .= $sortbyQuery;        
 
+        $L = new MyLog("readers-missing-assetid.log", "uireports", "UIReports");
+        $L->log("Query", $Q);
         return $Q;                  
     }
     public static function _getReadersMissingAssetIdQuery($dateStart, $dateEnd, 
@@ -287,6 +296,8 @@ class ReportHelpers
         $sortbyQuery = self::orderify($sortby, $order);
         $Q .= $sortbyQuery;        
 
+        $L = new MyLog("games-potential-overreporting.log", "uireports", "UIReports");
+        $L->log("Query", $Q);
         return $Q;         
     }
     public static function _getPotentialOverReportingErrorQuery($dateStart, $dateEnd, 
@@ -399,7 +410,9 @@ class ReportHelpers
         $sortbyQuery = self::orderify($sortby, $order);
         $Q .= $sortbyQuery;        
 
-        return $Q;                
+        $L = new MyLog("games-rank-bytitle.log", "uireports", "UIReports");
+        $L->log("Query", $Q);
+        return $Q;    
     }
     public static function _getGameRankQuery($dateStart, $dateEnd, $location = "", 
             $debit = "", $gameType = "", $gameCat = "all", $onTest = "") {
@@ -499,7 +512,9 @@ class ReportHelpers
         $sortbyQuery = self::orderify($sortby, $order);
         $Q .= $sortbyQuery;        
 
-        return $Q;          
+        $L = new MyLog("game-play-detailed.log", "uireports", "UIReports");
+        $L->log("Query", $Q);
+       return $Q;          
     }
     public static function _getGamePlayQuery($dateStart, $dateEnd, $location = "", 
             $debit = "", $gameType = "", $gameCat = "all", $onTest = "", 
@@ -604,6 +619,8 @@ class ReportHelpers
         $sortbyQuery = self::orderify($sortby, $order);
         $Q .= $sortbyQuery;        
 
+        $L = new MyLog("games-not-played.log", "uireports", "UIReports");
+        $L->log("Query", $Q);
         return $Q;          
         
     }
@@ -702,6 +719,8 @@ class ReportHelpers
         $sortbyQuery = self::orderify($sortby, $order);
         $Q .= $sortbyQuery;        
         
+        $L = new MyLog("merch-expesnes.log", "uireports", "UIReports");
+        $L->log("Query", $Q);
         return $Q;        
     }
     public static function _getMerchandizeExpensesQuery($dateStart, $dateEnd, $location = "", $debit = ""){
