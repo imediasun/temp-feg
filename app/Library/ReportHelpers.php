@@ -443,7 +443,7 @@ class ReportHelpers
         else {
             $Q .= " AND E.game_on_test IN (1)";
         }
-        if (!empty($gameCat) && !empty($gameTypeIds)) {
+        if (!empty($gameTypeIds)) {
             $Q .= " AND E.game_type_id IN ($gameTypeIds)";
         }
 
