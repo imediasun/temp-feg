@@ -35,6 +35,9 @@ class MyLog
             $this->logger->addInfo($msg);
         }
         else {
+            if (!is_array($obj)) {
+                $obj = array($obj);
+            }
             $this->logger->addInfo($msg, $obj);
         }        
 	}        
