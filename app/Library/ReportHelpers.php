@@ -528,7 +528,7 @@ class ReportHelpers
             $dateEnd = self::dateify($dateEnd);
         } 
         
-        $gameEarningsJOIN = "SELECT * from game_earings WHERE 
+        $gameEarningsJOIN = "SELECT * from game_earnings WHERE 
             game_id <>0 AND date_start >= '$dateStart' AND date_start <= '$dateEnd 23:59:59' ";
         if (!empty($gameId)) {
             $gameEarningsJOIN .= " AND game_id IN ($gameId) ";
