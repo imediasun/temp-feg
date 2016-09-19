@@ -741,7 +741,7 @@ class SiteHelpers
         $mandatory = '';
         $selectMultiple = "";
         foreach ($forms as $f) {
-            if ($f['field'] == $field && $f['search'] == 1) {
+            if ($f['field'] == $field && ($f['search'] == 1 || $f['simplesearch'] == 1)) {
                 $type = ($f['type'] != 'file' ? $f['type'] : '');
                 $option = $f['option'];
                 $required = $f['required'];
@@ -804,11 +804,20 @@ class SiteHelpers
 
                     }
                     else {
-                        $data = DB::table($option['lookup_table'])->get();
+                        $fields = explode("|", $option['lookup_value']);
+                        if(count($fields)>1)
+                        {
+                            $data = DB::table($option['lookup_table'])->orderby($option['lookup_key'])->get();
+                        }
+                        else
+                        {
+                            $data = DB::table($option['lookup_table'])->orderby($option['lookup_value'])->get();
+                        }
+
                         foreach ($data as $row):
                             $selected = '';
                             if ($value == $row->$option['lookup_key']) $selected = 'selected="selected"';
-                            $fields = explode("|", $option['lookup_value']);
+
                             //print_r($fields);exit;
                             $val = "";
                             foreach ($fields as $item => $v) {
@@ -1292,7 +1301,7 @@ class SiteHelpers
 
     public static function avatar($width = 75)
     {
-        $avatar = '<img alt="" src="http://www.gravatar.com/avatar/' . md5(Session::get('email')) . '" class="img-circle" width="' . $width . '" />';
+        $avatar = '<img alt="" src="'.url().'/silouette.png" class="img-circle" width="' . $width . '" />';
         $Q = DB::table("users")->where("id", '=', Session::get('uid'))->get();
         if (count($Q) >= 1) {
             $row = $Q[0];

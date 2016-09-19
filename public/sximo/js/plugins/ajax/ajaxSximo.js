@@ -2,12 +2,17 @@
 function reloadData( id,url,callback)
 {
 	$('.ajaxLoading').show();
+    var isClearData = /data\?search\=$/.test(url);
+    if (isClearData) {
+        url += getFooterFilters(true, true);
+    }
+    
 	$.post( url ,function( data ) {
 		$( id +'Grid' ).html( data );
 		$('.ajaxLoading').hide();
 		typeof callback === 'function' && callback();
         if (window.App && window.App.autoCallbacks && window.App.autoCallbacks.reloaddata) {
-            window.App.autoCallbacks.reloaddata.call($( id +'Grid' ), {id:id, url:url, data:data});
+            window.App.autoCallbacks.reloaddata.call($( id +'Grid' ), {id:id, url:url, data:data, isClear: isClearData});
         }
 	});
 
@@ -19,7 +24,7 @@ function getFooterFilters(excludeSearch, excludePage) {
         var elm = $(this), 
             fieldName = elm.attr('name'), 
             val = elm.val();
-        if (val !== '' && val !== null) {
+        if (fieldName != '_token' && val !== '' && val !== null) {
             if ((fieldName != 'search' && fieldName != 'page') || 
                 (fieldName == 'search' &&  !excludeSearch) || 
                 (fieldName == 'page' &&  !excludePage)) {            
@@ -37,7 +42,7 @@ function getFooterFiltersWithoutSort() {
             fieldName = elm.attr('name'), 
             val = elm.val();
         if (val !== '' && val !== null) {
-            if (fieldName != 'sort' && fieldName != 'order') {                        
+            if (fieldName != 'sort' && fieldName != 'order' && fieldName != '_token') {                        
                 attr += '&' + fieldName + '=' + val;
             }            
         }
@@ -121,7 +126,7 @@ function ajaxFilter( id ,url,opt,column)
 			elm = $(this);
 			val = elm.val();
 //            if (this.value != '' && this.value!=0) {
-
+              if (this.name != '_token') {
                 if (val !== '' && val !== null) {
                     if ( this.name == "sort" && column !== undefined) {
 
@@ -129,11 +134,13 @@ function ajaxFilter( id ,url,opt,column)
                     }
 
                     else {
-
+                        
                         attr += this.name + '=' + val + '&';
 
                     }
-                }
+                }                  
+              }
+
 
         });
 

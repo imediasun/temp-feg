@@ -2,21 +2,22 @@
 
 <br/>
 
-    <div class="col-md-4" style=" width:22% !important">
+    <div class="col-md-6">
         	@if($access['is_add'] ==1)
 			{!! AjaxHelpers::buttonActionCreate($pageModule,$setting,"Get Freight Quote") !!}
 			@endif
-			<a href="{{ URL::to( $pageModule .'/search') }}" class="btn btn-sm btn-white" onclick="SximoModal(this.href,'Advanced Search'); return false;" ><i class="fa fa-search"></i> Search</a>
-</div>
-            <div style="display:inline-block;margin-left:3px;float:left;width:45%">
-                <select class="form-control" id="status" style="display:inline">
+			<a href="{{ URL::to( $pageModule .'/search') }}" class="btn btn-sm btn-white" onclick="SximoModal(this.href,'Advanced Search'); return false;" ><i class="fa fa-search"></i>Advanced Search</a>
+                <select class="form-control" id="status" style="display:inline;width:40%;position:relative;top:3px;">
                     <option disabled >Select Freight Type</option>
                     <option @if($selected_status == 'requested') selected @endif value="requested" selected>Requested Freight Quotes</option>
                     <option @if($selected_status == 'booked') selected @endif value="booked" >Booked Freight Quotes</option>
                     <option @if($selected_status == 'archive') selected @endif value="archive">Freight Order Archive</option>
                 </select>
-</div>
     </div>
+
+
+</div>
+
 
 </div>
 <script>

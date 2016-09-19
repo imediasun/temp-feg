@@ -39,6 +39,22 @@
 		</div>
 	</div>
 	<div class="sbox-content">
+        @if($setting['usesimplesearch']!='false')
+            <?php $simpleSearchForm = SiteHelpers::configureSimpleSearchForm($tableForm); ?>
+            @if(!empty($simpleSearchForm))
+                <div class="simpleSearchContainer clearfix">
+                    @foreach ($simpleSearchForm as $t)
+                        <div class="sscol {{ $t['widthClass'] }}" style="{{ $t['widthStyle'] }}">
+                            {!! SiteHelpers::activeLang($t['label'],(isset($t['language'])? $t['language'] : array())) !!}
+                            {!! SiteHelpers::transForm($t['field'] , $simpleSearchForm) !!}
+                        </div>
+                    @endforeach
+                    <div class="sscol-submit"><br/>
+                        <button type="button" name="search" class="doSimpleSearch btn btn-sm btn-primary"> Search </button>
+                    </div>
+                </div>
+            @endif
+        @endif
 	    <div class="toolbar-line  style="align="left";">
 			@if($access['is_add'] ==1)
 	   		<a href="{{ URL::to('core/users/update') }}" class="tips btn btn-sm btn-white"  title="{{ Lang::get('core.btn_create') }}">
@@ -76,19 +92,45 @@
 
 	 {!! Form::open(array('url'=>'core/users/delete/', 'class'=>'form-horizontal' ,'id' =>'SximoTable' )) !!}
 	 <div class="table-responsive" style="min-height:300px;">
-    <table class="table" style="table-layout: fixed;width:100%">
+    <table class="table table-striped datagrid" style="table-layout: fixed;width:100%">
         <thead>
 			<tr>
 				<th class="number" width="30"> No </th>
 				<th width="60"> <input type="checkbox" class="checkall" /></th>
-				
-				@foreach ($tableGrid as $t)
-					@if($t['view'] =='1')
-						<th width="150">{{ $t['label'] }}</th>
-					@endif
-				@endforeach
 
-				<th width="200" style="text-align:center">{{ Lang::get('core.btn_action') }}</th>
+                <?php foreach ($tableGrid as $t) :
+                    if($t['view'] =='1'):
+                        $limited = isset($t['limited']) ? $t['limited'] :'';
+                        if(SiteHelpers::filterColumn($limited ))
+                        {
+                            $sortBy = $param['sort'];
+                            $orderBy = strtolower($param['order']);
+                            $colField = $t['field'];
+                            $colIsSortable = $t['sortable'] == '1';
+                            $colIsSorted = $colIsSortable && $colField == $sortBy;
+                            $colClass = $colIsSortable ? ' dgcsortable' : '';
+                            $colClass .= $colIsSorted ? " dgcsorted dgcorder$orderBy" : '';
+                            $th = '<th'.
+                                    ' class="'.$colClass.'"'.
+                                    ' data-field="'.$colField.'"'.
+                                    ' data-sortable="'.$colIsSortable.'"'.
+                                    ' data-sorted="'.($colIsSorted?1:0).'"'.
+                                    ' data-sortedOrder="'.($colIsSorted?$orderBy:'').'"'.
+                                    ' align="'.$t['align'].'"'.
+                                    ' width="'.$t['width'].'"';
+                            $th .= '>';
+                            $th .= \SiteHelpers::activeLang($t['label'],(isset($t['language'])? $t['language'] : array()));
+                            $th .= '</th>';
+                            echo $th;
+                        }
+                    endif;
+                endforeach; ?>
+
+
+                @if($setting['disablerowactions']=='false')
+                    <th width="200"><?php echo Lang::get('core.btn_action') ;?></th>
+                @endif
+            </tr>
 
 			  </tr>
 
@@ -185,13 +227,32 @@ $(document).ready(function(){
 		$('#SximoTable').attr('action','{{ URL::to("core/users/multisearch")}}');
 		$('#SximoTable').submit();
 	});
-});
+
 $("#col-config").change(function(){
     var config_id=$('#col-config').val();
         location.href = "/core/users?config_id=" + config_id;
 
 
-});
+    var simpleSearch = $('.simpleSearchContainer');
+    if (simpleSearch.length) {
+        initiateSearchFormFields(simpleSearch);
+        simpleSearch.find('.doSimpleSearch').click(function(event){
+            performSimpleSearch.call($(this), {
+                moduleID: '#{{ $pageModule }}',
+                url: "{{ $pageUrl }}",
+                event: event,
+                container: simpleSearch
+            });
+        });
+    }
 
+    initDataGrid('{{ $pageModule }}', '{{ $pageUrl }}');
+});
+});
 </script>
+<style>
+    .table th.right { text-align:right !important;}
+    .table th.center { text-align:center !important;}
+
+</style>
 @stop

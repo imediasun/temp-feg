@@ -6,7 +6,8 @@ function performSimpleSearch(params) {
         container = params.container || $('.simpleSearchContainer'), 
         attr = '?search=',
         moduleID = params.moduleID,
-        url = params.url,        
+        url = params.url,
+        ajaxSearch = params.ajaxSearch !== false,
         cache = {};
 
     container.find('.form-control').each(function(i){
@@ -42,7 +43,13 @@ function performSimpleSearch(params) {
     App.simpleSearch.cache = cache;
     App.lastSearchMode = 'simple';
     
-    reloadData(moduleID,url+attr);    
+    if (ajaxSearch) {
+        reloadData(moduleID, url+ '/data' + attr);    
+    }
+    else {
+        window.location.href = url+attr;
+    }
+    
 }
 
 $(document).ready(function() {

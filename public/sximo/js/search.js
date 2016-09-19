@@ -3,7 +3,7 @@ function performAdvancedSearch(params) {
         params = {};
     }
     var elm = this, 
-        container = params.container || $('.#advance-search'), 
+        container = params.container || $('#advance-search'), 
         attr = '?search=', 
         moduleID = params.moduleID,
         url = params.url,
@@ -12,8 +12,8 @@ function performAdvancedSearch(params) {
 
         container.find(' tr.fieldsearch').each(function(i){
 			var UNDEFINED,                 
-                container = this,
-                jQcontainer = $(container),                
+                trcontainer = this,
+                jQcontainer = $(trcontainer),                
                 field = jQcontainer.attr('id'),
                 name = jQcontainer.attr('name'),                
                 operatorField = jQcontainer.find('#'+field+'_operate'),
@@ -66,7 +66,7 @@ function performAdvancedSearch(params) {
     App.search.cache = cache;
     App.lastSearchMode = 'advanced';
     if (ajaxSearch) {
-        reloadData(moduleID,url+attr);  
+        reloadData(moduleID, url+"/data"+attr);  
     }
     else {
         window.location.href = url+attr;
@@ -74,7 +74,7 @@ function performAdvancedSearch(params) {
     
 }
 
-function changeSearchOperator( val , field )
+function changeSearchOperator( val , field , elm )
 {
 	if(val =='is_null') {
 		$('input[name='+field+']').attr('readonly','1');
@@ -92,18 +92,29 @@ function changeSearchOperator( val , field )
 	}
 }
 
-App.autoCallbacks.reloaddata = function() {
-    if (App.lastSearchMode == 'simple') {
-        App.simpleSearch.populateFields();  
+App.autoCallbacks.reloaddata = function(params) {
+    if (!params) {
+        params = {};
+    }    
+    if (params.isClear) {
+        App.search.cache = {};
+        App.simpleSearch.cache = {};
     }
     else {
+        $(".sbox-tools a.tips").addClass('btn-search');
+        if (App.lastSearchMode == 'simple') {
+            App.simpleSearch.populateFields();  
+        }
+        else {
 
-    }
+        }        
+    }    
+
 };
-App.autoCallbacks.ajaxinlinesave = function() {
+App.autoCallbacks.ajaxinlinesave = function(params) {
     
 };
-App.autoCallbacks.advancedsearch = function() {
+App.autoCallbacks.advancedsearch = function(params) {
     var modal = this, searchButton = modal.find('.doSearch');
     searchButton.click(function(){
         App.lastSearchMode = 'advanced';
@@ -120,4 +131,50 @@ App.autoCallbacks.columnselector = function() {
 
 App.search.populateFields = function(modal) {
     App.populateFieldsFromCache(modal, App.search, true);
+};
+
+
+
+function changeSearchOperator_new(operatorValue, field, elm)
+{
+    var $elm = $(elm),
+        container = $elm.closest('tr.fieldsearch'),
+        fieldElement = container.find("[name="+field+"]"),
+        fieldValue = fieldElement.val(),
+        field2Element = container.find("[name="+field+"_end]"),
+        field2Value = field2Element.length && field2Element.val(),
+        cacheValue1 = fieldElement.data('cachedValue'),
+        cacheValue2 = field2Element.length && field2Element.data('cachedValue'),
+        cacheOperator = $elm.data('cachedValue'),
+        html;
+    
+    fieldElement.data('cachedValue', fieldValue);
+    $elm.data('cachedValue', operatorValue);
+    if (field2Element.length) {
+        field2Element.data('cachedValue', field2Value);
+    }
+    
+    switch (operatorValue) {
+        case 'is_null':
+            fieldElement.prop('readonly',true);
+            fieldElement.val('is_null');            
+            break;
+        case 'not_null':
+            fieldElement.prop('readonly', true);
+            fieldElement.val('not_null');            
+            break;
+        case 'between':
+            html = '<input name="'+field+'" class="date form-control" placeholder="Start" style="width:100px;"  /> -  <input name="'+field+'_end" class="date form-control"  placeholder="End" style="width:100px;"    />';
+            $('#field_'+field+'').html(html);            
+            break;
+        default:
+            fieldElement.prop('readonly', false);
+            fieldElement.val('');	            
+            break;
+    }	
+    
+    
+    
 }
+
+

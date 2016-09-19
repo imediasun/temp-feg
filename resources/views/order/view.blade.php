@@ -28,7 +28,7 @@
                     <div class="clearfix"></div>
                     <div class="form-group">
                         <label class=" label-control col-md-4 text-left">
-                            {{ SiteHelpers::activeLang('Po Number', (isset($fields['po_number']['language'])? $fields['po_number']['language'] : array())) }}
+                            {{ SiteHelpers::activeLang('PO Number', (isset($fields['po_number']['language'])? $fields['po_number']['language'] : array())) }}
                         </label>
 
                         <div class="col-md-8">

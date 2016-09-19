@@ -71,7 +71,7 @@
                                 <th>Case Price</th>
                                 <th>Qty</th>
                                 <th>Received Qty</th>
-                                <th>Partialy Received</th>
+                                <th>Partially Received</th>
                                 <th></th>
                                 <th>Total ( $ )</th>
 
@@ -157,13 +157,23 @@
                                 <textarea name="notes" rows="7" cols="48" id="notes" onchange="removeBorder('order_status')" required minlength=2></textarea>
                             </div>
                         </div>
+                        <div class="form-group" >
+                            <input type="hidden" name='item_count' value="{{ $data['item_count'] }}" id='item_count'/>
+                            <input type="hidden" name='order_id' value="{{ $data['order_id'] }}" id='order_id'/>
+                            <input type="hidden" name='order_type_id' value="{{ $data['order_type'] }}" id='order_type_id'/>
+                            <input type="hidden" name='location_id' value="{{ $data['location_id'] }}" id='location_id'/>
+                            <input type="hidden" name='user_id' value="{{ $data['user_id'] }}" id='user_id'/>
+                            <input type="hidden" name='added_to_inventory' value="{{ $data['added_to_inventory'] }}" id='added_to_inventory'/>
+                            <label class="col-md-4 control-label text-right" >&nbsp</label>
+                            <div class="col-md-8">
+                                <button type="submit" class="btn btn-primary btn-sm " id="submit_btn"><i
+                                            class="fa  fa-save "></i>  Receive Order </button>
+                                <button type="button" onclick="window.history.back();" class="btn btn-success btn-sm">
+                                    <i class="fa  fa-arrow-circle-left "></i>  Go Back </button>
+                            </div>
+                        </div>
                     </div>
-                    <input type="hidden" name='item_count' value="{{ $data['item_count'] }}" id='item_count'/>
-                    <input type="hidden" name='order_id' value="{{ $data['order_id'] }}" id='order_id'/>
-                    <input type="hidden" name='order_type_id' value="{{ $data['order_type'] }}" id='order_type_id'/>
-                    <input type="hidden" name='location_id' value="{{ $data['location_id'] }}" id='location_id'/>
-                    <input type="hidden" name='user_id' value="{{ $data['user_id'] }}" id='user_id'/>
-                    <input type="hidden" name='added_to_inventory' value="{{ $data['added_to_inventory'] }}" id='added_to_inventory'/>
+
                 </fieldset>
             </div>
 
@@ -171,17 +181,9 @@
             <div class="clr clear"></div>
 
 
-            <div style="clear:both"></div>
 
-            <div class="form-group col-md-offset-4" style="margin-bottom:50px; padding-left: 112px;">
-                <label class="col-sm-4 text-right">&nbsp;</label>
-                <div class="col-sm-8">
-                    <button type="submit" class="btn btn-primary btn-sm " id="submit_btn"><i
-                                class="fa  fa-save "></i>  Receive Order </button>
-                    <button type="button" onclick="window.history.back();" class="btn btn-success btn-sm">
-                        <i class="fa  fa-arrow-circle-left "></i>  Go Back </button>
-                </div>
-            </div>
+
+
 
 
             {!! Form::close() !!}

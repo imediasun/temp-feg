@@ -3,27 +3,45 @@
 	<div class="sbox-title">
 		<h5> <i class="fa fa-table"></i> </h5>
 		<div class="sbox-tools" >
-			<a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Clear Search" onclick="reloadData('#{{ $pageModule }}','bottomgamesreport/data?search=')"><i class="fa fa-trash-o"></i> Clear Search </a>
-			<a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Reload Data" onclick="reloadData('#{{ $pageModule }}','bottomgamesreport/data?return={{ $return }}')"><i class="fa fa-refresh"></i></a>
+			<a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Clear Search" onclick="reloadData('#{{ $pageModule }}','testmodule/data?search=')"><i class="fa fa-trash-o"></i> Clear Search </a>
+			<a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Reload Data" onclick="reloadData('#{{ $pageModule }}','testmodule/data?return={{ $return }}')"><i class="fa fa-refresh"></i></a>
 			@if(Session::get('gid') ==1)
 			<a href="{{ url('feg/module/config/'.$pageModule) }}" class="btn btn-xs btn-white tips" title=" {{ Lang::get('core.btn_config') }}" ><i class="fa fa-cog"></i></a>
 			@endif
 		</div>
 	</div>
 	<div class="sbox-content">
-
+        @if($setting['usesimplesearch']!='false')     
+        <?php $simpleSearchForm = SiteHelpers::configureSimpleSearchForm($tableForm); ?>
+        @if(!empty($simpleSearchForm))  
+        <div class="simpleSearchContainer clearfix">
+            @foreach ($simpleSearchForm as $t)
+                <div class="sscol {{ $t['widthClass'] }}" style="{{ $t['widthStyle'] }}">
+                    {!! SiteHelpers::activeLang($t['label'],(isset($t['language'])? $t['language'] : array())) !!}
+                    {!! SiteHelpers::transForm($t['field'] , $simpleSearchForm) !!}                    
+                </div>                        
+            @endforeach		
+            <div class="sscol-submit"><br/>
+                <button type="button" name="search" class="doSimpleSearch btn btn-sm btn-primary"> Search </button>		
+            </div>
+        </div>
+        @endif
+        @endif
+        
         @include( $pageModule.'/toolbar',['config_id'=>$config_id,'colconfigs' => SiteHelpers::getRequiredConfigs($module_id)])
 
-	 <?php echo Form::open(array('url'=>'bottomgamesreport/delete/', 'class'=>'form-horizontal' ,'id' =>'SximoTable'  ,'data-parsley-validate'=>'' )) ;?>
+	 <?php echo Form::open(array('url'=>'testmodule/delete/', 'class'=>'form-horizontal' ,'id' =>'SximoTable'  ,'data-parsley-validate'=>'' )) ;?>
 <div class="table-responsive">
     @if(!empty($topMessage))
     <h5 class="topMessage">{{ $topMessage }}</h5>
     @endif
 	@if(count($rowData)>=1)
-    <table class="table table-striped  " id="{{ $pageModule }}Table">
+    <table class="table table-striped datagrid " id="{{ $pageModule }}Table" data-module="{{ $pageModule }}" data-url="{{ $pageUrl }}">
         <thead>
 			<tr>
+                @if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
 				<th width="20"> No </th>
+                @endif
                 @if($setting['disableactioncheckbox']=='false')
 				<th width="30"> <input type="checkbox" class="checkall" /></th>
                 @endif
@@ -33,9 +51,26 @@
 						$limited = isset($t['limited']) ? $t['limited'] :'';
 						if(SiteHelpers::filterColumn($limited ))
 						{
-							echo '<th align="'.$t['align'].'" width="'.$t['width'].'">'.\SiteHelpers::activeLang($t['label'],(isset($t['language'])? $t['language'] : array())).'</th>';
-
-                }
+                            $sortBy = $param['sort'];
+                            $orderBy = strtolower($param['order']);
+                            $colField = $t['field'];
+                            $colIsSortable = $t['sortable'] == '1';
+                            $colIsSorted = $colIsSortable && $colField == $sortBy;
+                            $colClass = $colIsSortable ? ' dgcsortable' : '';
+                            $colClass .= $colIsSorted ? " dgcsorted dgcorder$orderBy" : '';
+							$th = '<th'.
+                                    ' class="'.$colClass.'"'.
+                                    ' data-field="'.$colField.'"'.
+                                    ' data-sortable="'.$colIsSortable.'"'.
+                                    ' data-sorted="'.($colIsSorted?1:0).'"'.
+                                    ' data-sortedOrder="'.($colIsSorted?$orderBy:'').'"'.
+                                    ' align="'.$t['align'].'"'.
+                                    ' width="'.$t['width'].'"';
+							$th .= '>';
+                            $th .= \SiteHelpers::activeLang($t['label'],(isset($t['language'])? $t['language'] : array()));
+                            $th .= '</th>';
+                            echo $th;
+                        }
 					endif;
 				endforeach; ?>
                 @if($setting['disablerowactions']=='false')
@@ -72,12 +107,14 @@
            			  $id = $row->id;
            		?>
                 <tr class="editable" id="form-{{ $row->id }}">
+                    @if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
 					<td class="number"> <?php echo ++$i;?>  </td>
+                    @endif
                     @if($setting['disableactioncheckbox']=='false')
 					<td ><input type="checkbox" class="ids" name="ids[]" value="<?php echo $row->id ;?>" />  </td>
                     @endif
 					@if($setting['view-method']=='expand')
-					<td><a href="javascript:void(0)" class="expandable" rel="#row-{{ $row->id }}" data-url="{{ url('bottomgamesreport/show/'.$id) }}"><i class="fa fa-plus " ></i></a></td>
+					<td><a href="javascript:void(0)" class="expandable" rel="#row-{{ $row->id }}" data-url="{{ url('testmodule/show/'.$id) }}"><i class="fa fa-plus " ></i></a></td>
 					@endif
 					 <?php foreach ($tableGrid as $field) :
 					 	if($field['view'] =='1') :
@@ -98,7 +135,7 @@
 					  ?>
                   @if($setting['disablerowactions']=='false')     
 				 <td data-values="action" data-key="<?php echo $row->id ;?>">
-					{!! AjaxHelpers::buttonAction('bottomgamesreport',$access,$id ,$setting) !!}
+					{!! AjaxHelpers::buttonAction('testmodule',$access,$id ,$setting) !!}
 					{!! AjaxHelpers::buttonActionInline($row->id,'id') !!}
 				</td>
                 @endif
@@ -164,6 +201,24 @@ $(document).ready(function() {
 			echo AjaxHelpers::htmlExpandGrid();
 		endif;
 	 ?>
+
+    // configure simple search is available
+    var simpleSearch = $('.simpleSearchContainer');
+    if (simpleSearch.length) {
+        initiateSearchFormFields(simpleSearch);
+        simpleSearch.find('.doSimpleSearch').click(function(event){
+            performSimpleSearch.call($(this), {
+                moduleID: '#{{ $pageModule }}', 
+                url: "{{ $pageUrl }}", 
+                event: event,
+                ajaxSearch: true,
+                container: simpleSearch
+            });
+        });        
+    }
+    
+    // Configure data grid columns for sorting 
+    initDataGrid('{{ $pageModule }}', '{{ $pageUrl }}');
 });
 </script>
 <style>

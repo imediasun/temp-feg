@@ -419,7 +419,7 @@
             var order_request_id_array = <?php echo json_encode($data['orderRequestIdArray']) ?>;
             var item_name_array=<?php echo json_encode($data['itemNameArray']) ?>;
             var item_case_price=<?php echo json_encode($data['itemCasePrice']) ?>;
-            var item_retail_price=<?php echo json_encode($data['itemCasePrice'])?>;
+            var item_retail_price=<?php echo json_encode($data['itemRetailPrice'])?>;
             var item_total = 0;
             for (var i = 0; i < requests_item_count; i++) {
 
@@ -431,6 +431,7 @@
                 $('input[name^=request_id]').eq(i).val(order_request_id_array[i]);
                 $('input[name^=item_name]').eq(i).val(item_name_array[i]);
                 $('input[name^=case_price]').eq(i).val(item_case_price[i]);
+                $('input[name^=retail_price]').eq(i).val(item_retail_price[i]);
                     if (i < requests_item_count - 1) //COMPENSATE FOR BEGINNING WITH ONE INPUT
         {
 
@@ -621,6 +622,7 @@
                 var casepriceid = $("#"+trid+"  input[id^='case_price']").attr('id');
                       var qtyid = $("#"+trid+"  input[id^='qty']").attr('id');
                 var itemid = $("#"+trid+"  textarea[name^=item]").attr('id');
+            var retailpriceid=$('#'+trid+"  input[name^=retail]").attr('id');
 
                 $(obj).autocomplete({
                     minLength: 2,
@@ -636,6 +638,7 @@
                     },
                     select: function( event, ui ) {
                         $.ajax({url: "order/productdata",type:"get",dataType:'json',data:{'product_id':ui.item.value}, success: function(result){
+
                             if(result.unit_price) {
                                 $("#"+priceid).val(result.unit_price);
                             }
@@ -645,6 +648,14 @@
                             }
                             if(result.case_price) {
                                 $("#"+casepriceid).val(result.case_price);
+                            }
+                            else
+                            {
+                                $("#"+casepriceid).val(0.00);
+                            }
+                            if(result.retail_price) {
+                                alert(retailpriceid+"  "+casepriceid);
+                                $("#"+retailpriceid).val(result.retail_price);
                             }
                             else
                             {

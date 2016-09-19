@@ -38,8 +38,6 @@ class gameplayreport extends Sximo  {
         $bottomMessage = "";
         $message = "";                
 
-		$offset = ($page-1) * $limit ;
-		$limitConditional = ($page !=0 && $limit !=0) ? " LIMIT  $offset , $limit" : '';
 
         $filters = ReportHelpers::getSearchFilters(array(
             'date_start' => '', 'date_end' => '', 'game_cat_id' => '', 'game_type_id'  => '',
@@ -47,15 +45,23 @@ class gameplayreport extends Sximo  {
             'game_title_id' => ''
         ));        
         extract($filters);
-        ReportHelpers::dateRangeFix($date_start, $date_end);        
+        ReportHelpers::dateRangeFix($date_start, $date_end);  
+        
+        $total = ReportHelpers::getGamePlayCount($date_start, $date_end, $location_id, $debit_type_id, $game_type_id, $game_cat_id, $game_on_test, $game_id, $game_title_id);       
+		$offset = ($page-1) * $limit ;
+        if ($offset >= $total) {
+            $page = ceil($total/$limit);
+            $offset = ($page-1) * $limit ;
+        }   
+		$limitConditional = ($page !=0 && $limit !=0) ? " LIMIT  $offset , $limit" : '';
+
         $mainQuery = ReportHelpers::getGamePlayQuery($date_start, $date_end, $location_id, $debit_type_id, $game_type_id, $game_cat_id, $game_on_test, $game_id, $game_title_id, $sort, $order);
         $mainQuery .= $limitConditional;
-        $total = ReportHelpers::getGamePlayCount($date_start, $date_end, $location_id, $debit_type_id, $game_type_id, $game_cat_id, $game_on_test, $game_id, $game_title_id);
         $rawRows = \DB::select($mainQuery);
         $rows = self::processRows($rawRows);            
         
         if ($total == 0) {
-            $message = "No data found. Try searching with other filters.";
+            $message = "To view the contents of this report, please select a date range and other search filter.";
 	}
         $humanDateRange = ReportHelpers::humanifyDateRangeMessage($date_start, $date_end);
         $topMessage = "Game Play $humanDateRange";

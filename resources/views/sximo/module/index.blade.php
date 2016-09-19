@@ -127,6 +127,7 @@
 
 </div>	
 
+</div>
   <script language='javascript' >
   jQuery(document).ready(function($){
     $('.post_url').click(function(e){

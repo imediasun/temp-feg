@@ -22,33 +22,69 @@
             $group_id=0;
         endif
         ?>
+            @if($setting['usesimplesearch']!='false')
+                <?php $simpleSearchForm = SiteHelpers::configureSimpleSearchForm($tableForm); ?>
+                @if(!empty($simpleSearchForm))
+                    <div class="simpleSearchContainer clearfix">
+                        @foreach ($simpleSearchForm as $t)
+                            <div class="sscol {{ $t['widthClass'] }}" style="{{ $t['widthStyle'] }}">
+                                {!! SiteHelpers::activeLang($t['label'],(isset($t['language'])? $t['language'] : array())) !!}
+                                {!! SiteHelpers::transForm($t['field'] , $simpleSearchForm) !!}
+                            </div>
+                        @endforeach
+                        <div class="sscol-submit"><br/>
+                            <button type="button" name="search" class="doSimpleSearch btn btn-sm btn-primary"> Search </button>
+                        </div>
+                    </div>
+                @endif
+            @endif
         @include( $pageModule.'/toolbar',['colconfigs' => SiteHelpers::getRequiredConfigs($module_id)])
         <?php echo Form::open(array('url' => 'gamestitle/delete/', 'class' => 'form-horizontal', 'id' => 'SximoTable', 'data-parsley-validate' => ''));?>
         <div class="table-responsive">
             @if(count($rowData)>=1)
-                <table class="table table-striped  " id="{{ $pageModule }}Table" style="table-layout: fixed;width:100%;">
+                <table class="table table-striped  datagrid" id="{{ $pageModule }}Table" style="table-layout: fixed;width:100%;">
                     <thead>
                     <tr>
-                        <th width="20"> No</th>
 
-                        <th width="60"><input type="checkbox" class="checkall"/></th>
+                        @if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
+                            <th width="35"> No </th>
+                        @endif
 
-                        <th width="100">Image</th>
-
-                        @if($setting['view-method']=='expand')
-                            <th></th> @endif
+                        @if($setting['disableactioncheckbox']=='false')
+                            <th width="30"> <input type="checkbox" class="checkall" /></th>
+                        @endif
+                            <th width="70">Img</th>
+                        @if($setting['view-method']=='expand') <th>  </th> @endif
                         <?php foreach ($tableGrid as $t) :
-                            if ($t['view'] == '1'):
-                                $limited = isset($t['limited']) ? $t['limited'] : '';
-                                if (SiteHelpers::filterColumn($limited)) {
-                                    echo '<th align="' . $t['align'] . '" width="' . $t['width'] . '">' . \SiteHelpers::activeLang($t['label'], (isset($t['language']) ? $t['language'] : array())) . '</th>';
+                            if($t['view'] =='1'):
+                                $limited = isset($t['limited']) ? $t['limited'] :'';
+                                if(SiteHelpers::filterColumn($limited ))
+                                {
+                                    $sortBy = $param['sort'];
+                                    $orderBy = strtolower($param['order']);
+                                    $colField = $t['field'];
+                                    $colIsSortable = $t['sortable'] == '1';
+                                    $colIsSorted = $colIsSortable && $colField == $sortBy;
+                                    $colClass = $colIsSortable ? ' dgcsortable' : '';
+                                    $colClass .= $colIsSorted ? " dgcsorted dgcorder$orderBy" : '';
+                                    $th = '<th'.
+                                            ' class="'.$colClass.'"'.
+                                            ' data-field="'.$colField.'"'.
+                                            ' data-sortable="'.$colIsSortable.'"'.
+                                            ' data-sorted="'.($colIsSorted?1:0).'"'.
+                                            ' data-sortedOrder="'.($colIsSorted?$orderBy:'').'"'.
+                                            ' align="'.$t['align'].'"'.
+                                            ' width="'.$t['width'].'"';
+                                    $th .= '>';
+                                    $th .= \SiteHelpers::activeLang($t['label'],(isset($t['language'])? $t['language'] : array()));
+                                    $th .= '</th>';
+                                    echo $th;
                                 }
                             endif;
                         endforeach; ?>
-
-                        <th width="180" style="text-align:center">{{ Lang::get('core.btn_action') }}</th>
-
-
+                        @if($setting['disablerowactions']=='false')
+                            <th width="170"><?php echo Lang::get('core.btn_action') ;?></th>
+                        @endif
                     </tr>
                     </thead>
                     <tbody>
@@ -192,7 +228,23 @@
         echo AjaxHelpers::htmlExpandGrid();
     endif;
         ?>
+        var simpleSearch = $('.simpleSearchContainer');
+        if (simpleSearch.length) {
+            initiateSearchFormFields(simpleSearch);
+            simpleSearch.find('.doSimpleSearch').click(function(event){
+                performSimpleSearch.call($(this), {
+                    moduleID: '#{{ $pageModule }}',
+                    url: "{{ $pageUrl }}",
+                    event: event,
+                    container: simpleSearch
+                });
+            });
+        }
+
+        initDataGrid('{{ $pageModule }}', '{{ $pageUrl }}');
     });
+
+
 
     $(".fancybox").fancybox({
         openEffect	: 'none',
