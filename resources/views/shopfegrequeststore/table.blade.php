@@ -181,7 +181,7 @@
 
         </div>
         <?php echo Form::close();?>
-        @include('ajaxfooter')
+        @include('ajaxfooter',array('isactive'=>$active_inactive,'order_type'=>$order_type,'product_type'=>$product_type)))
 
     </div>
 </div>
