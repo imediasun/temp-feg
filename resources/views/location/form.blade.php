@@ -157,7 +157,7 @@
 
 							<div class="form-group  " >
 								<label for="General Contact " class=" control-label col-md-4 text-left">
-									{!! SiteHelpers::activeLang('General Contact ', (isset($fields['general_contact_id']['language'])? $fields['genral_contact_id']['language'] : array())) !!}
+									{!! SiteHelpers::activeLang('General Contact ', (isset($fields['general_contact_id']['language'])? $fields['general_contact_id']['language'] : array())) !!}
 								</label>
 								<div class="col-md-6">
 									<select name='general_contact_id' rows='5' id='general_contact_id' class='select2 '   ></select>
