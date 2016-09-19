@@ -566,7 +566,7 @@ class ReportHelpers
             $Q .= " AND L.id IN ($location) ";
         }
         if (!empty($debit)) {
-            $Q .= " AND E.debit_type_id IN ($debit) ";
+            $Q .= " AND L.debit_type_id IN ($debit) ";
         }
         if (!empty($onTest)) {
             if ($onTest == "notest") {
