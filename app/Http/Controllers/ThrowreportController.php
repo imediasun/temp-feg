@@ -88,7 +88,7 @@ class ThrowreportController extends Controller {
 		}
 		else
 		{
-			$results = $this->model->getRows( $params );
+			$results = $this->model->getRows($params);
 		}
 		// Build pagination setting
 		$page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;
@@ -117,13 +117,13 @@ class ThrowreportController extends Controller {
 		$this->data['access']		= $this->access;
 		// Detail from master if any
 		$this->data['setting'] 		= $this->info['setting'];
-
+		$this->data['setDate'] = isset($filterDate[0]) ? $filterDate[0].'-'.$filterDate[1] : '';
 		// Master detail link if any
 		$this->data['subgrid']	= (isset($this->info['config']['subgrid']) ? $this->info['config']['subgrid'] : array());
 		if ($this->data['config_id'] != 0 && !empty($config)) {
 			$this->data['tableGrid'] = \SiteHelpers::showRequiredCols($this->data['tableGrid'], $this->data['config']);
 		}
-// Render into template
+		// Render into template
 		return view('throwreport.table',$this->data);
 
 	}

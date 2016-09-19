@@ -21,18 +21,8 @@
         </select>
         @endif
         @endif
-
-
-
-
-				<input type="text" id="weeklyDatePicker"  name ="weeklyDatePicker"  style="padding-bottom:5px" } />
-
-
-
-
-
-
-    </div>
+		<input type="text" class="weeklyDatePicker"  name ="weeklyDatePicker"  style="padding-bottom:5px" } />
+	</div>
 
 
 	<div class="col-md-4 ">
@@ -65,50 +55,6 @@
 		@endif
 	</div>
 </div>
-
-
-
-{{--<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>--}}
-<script src="https://cdn.jsdelivr.net/momentjs/2.10.6/moment.min.js"></script>
-
-<script>
-
-	$(document).ready(function(){
-
-		var selectedDate;
-		//Initialize the datePicker(I have taken format as mm-dd-yyyy, you can     //have your owh)
-		$("#weeklyDatePicker").datepicker('option', 'firstDay',{autoclose:true}, 1);
-
-		//Get the value of Start and End of Week
-		$('#weeklyDatePicker').datepicker().on('changeDate', function (e) {
-			var value = $("#weeklyDatePicker").val();
-//			console.log(value);
-			var firstDate = moment(value, "MM/DD/YYYY").day(0).format("MM/DD/YYYY");
-			var lastDate =  moment(value, "MM/DD/YYYY").day(6).format("MM/DD/YYYY");
-			selectedDate=firstDate + " - " + lastDate;
-			$("#weeklyDatePicker").val(firstDate + " - " + lastDate);
-		//	$(this).datepicker('hide');
-
-			//reloadData('#{{ $pageModule }}','{{ $pageModule }}/data?search=date_start:bigger_equal:2015-01-07|date_end:smaller_equal:2015-01-14');
-			reloadData('#{{ $pageModule }}','{{ $pageModule }}/data?date='+selectedDate.replace(/ /g,'')+ getFooterFilters());
-
-		});
-
-    $("#col-config").on('change',function(){
-        reloadData('#{{ $pageModule }}','{{ $pageModule }}/data?config_id='+$("#col-config").val()+ getFooterFilters());
-    });
-
-
-
-		$('#weeklyDatePicker').datepicker().on('hide', function (e) {
-			var value = $("#weeklyDatePicker").val(selectedDate);
-
-		});
-	});
-
-
-</script>
-
 
 <style>
 	.datepicker tr:hover {

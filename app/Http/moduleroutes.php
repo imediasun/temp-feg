@@ -53,4 +53,5 @@
                     Route::controller('merchandiseexpensesreport', 'MerchandiseexpensesreportController');
                     Route::controller('itemreceipt', 'ItemreceiptController');
                     Route::controller('testmodule', 'TestmoduleController');
+                    Route::controller('throwreport', 'ThrowReportController');
                     ?>
