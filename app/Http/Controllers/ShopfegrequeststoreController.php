@@ -45,7 +45,7 @@ class ShopfegrequeststoreController extends Controller
 
     public function postData(Request $request)
     {
-
+echo $request->get('active_inactive');
 
 
         $module_id = \DB::table('tb_module')->where('module_name', '=', 'shopfegrequeststore')->pluck('module_id');
@@ -83,6 +83,7 @@ class ShopfegrequeststoreController extends Controller
         $type = $request->get('type');
         $this->data['type'] = $type;
         $active_inactive = $request->get('active_inactive');
+        $this->data['active_inactive'] = $active_inactive;
         \Session::put('active_inactive', $active_inactive);
         $order_type = $request->get('order_type');
         $this->data['order_type'] = $order_type;

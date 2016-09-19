@@ -21,6 +21,15 @@ $orders = array('asc','desc');
         @if(isset($view) && !is_null($view))
               <input type="hidden" name="view" value="<?php  echo $view ?>"/>
         @endif
+          @if(isset($isactive) && !is_null($isactive))
+              <input type="hidden" name="active_inactive" value="<?php  echo $isactive ?>"/>
+          @endif
+          @if(isset($order_type) && !is_null($order_type))
+              <input type="hidden" name="order_type" value="<?php  echo $order_type ?>"/>
+          @endif
+          @if(isset($product_type) && !is_null($product_type))
+              <input type="hidden" name="product_type" value="<?php  echo $product_type ?>"/>
+          @endif
         @if(!isset($setting['disablepagination']) || $setting['disablepagination'] == 'false')
         <?php $setRows = isset($pager['rows']) ? $pager['rows'] : $setting['perpage']; ?>
 		<select name="rows" class="select-alt" style="width:70px; float:left;"

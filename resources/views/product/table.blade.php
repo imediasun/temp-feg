@@ -1,6 +1,7 @@
 <?php usort($tableGrid, "SiteHelpers::_sort"); ?>
 <div class="sbox">
-	<div class="sbox-title"> 
+	<div class="sbox-title">
+
 		<h5> <i class="fa fa-table"></i> </h5>
 		<div class="sbox-tools" >
 			<a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Clear Search" onclick="reloadData('#{{ $pageModule }}','product/data?search=')"><i class="fa fa-trash-o"></i> Clear Search </a>
@@ -121,14 +122,14 @@
 										 echo SiteHelpers::showUploadedFile($value,'/uploads/products/', 50,false)
 										 ?>
 									@elseif($field['field']=='details')
-										
+
 										<?php
 
 									$trimValue = preg_replace('/\s+/', ' ',$value);
 
-										 
+
 										 if (strlen($trimValue)>20) {
-										 
+
 										  echo substr($trimValue,0,20);
 										 echo '<br><a href="javascript:void(0)" onclick="showModal(10,this)">Read more</a>';
 										 }
@@ -136,12 +137,13 @@
 
 										 	echo $value;
 										 }
-										 
+?>
+                                     @elseif($field['field']=='inactive')
+                                         <input type='checkbox' name="mycheckbox" @if($value == "Yes") checked  @endif 	data-size="mini" data-animate="true"
+                                                data-on-text="Yes" data-off-text="No" data-handle-width="50px" class="test" data-id="{{$row->id}}"
+                                                id="toggle_trigger_{{$row->id}}" onSwitchChange="trigger()" />
 
-										    ?>
-										  
-
-									@else
+                                     @else
 									 {!! $value !!}
 									@endif
 
@@ -210,9 +212,7 @@
       </div>
     </div>
   </div>
-</div>	
-	
-
+</div>
 	@if($setting['inline'] =='true') @include('sximo.module.utility.inlinegrid') @endif
 <script>
 
@@ -224,13 +224,26 @@ function showModal(id,obj){
 
 }
 
-
 $(document).ready(function() {
+    $("[id^='toggle_trigger_']").on('switchChange.bootstrapSwitch', function(event, state) {
 
 
+        var productId=$(this).data('id');
+        $.ajax(
+                {
+                    type:'POST',
+                    url:'product/trigger',
+                    data:{isActive:state,productId:productId},
+                    success:function(data){
 
-	$('.tips').tooltip();	
-	$('input[type="checkbox"],input[type="radio"]').iCheck({
+                    }
+                }
+        );
+    });
+
+    $("[id^='toggle_trigger_']").bootstrapSwitch();
+	$('.tips').tooltip();
+	$('input[type="checkbox"],input[type="radio"]').not('.test').iCheck({
 		checkboxClass: 'icheckbox_square-green',
 		radioClass: 'iradio_square-green',
 	});	
@@ -267,7 +280,10 @@ if (simpleSearch.length) {
 
 initDataGrid('{{ $pageModule }}', '{{ $pageUrl }}');
 });
+
+
 </script>
+
 <style>
     .table th.right {
         text-align: right !important;
