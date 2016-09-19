@@ -1,5 +1,6 @@
 <?php
 namespace App\Library;
+use App\Library\MyLog;
 class ReportHelpers
 {
 
@@ -55,6 +56,8 @@ class ReportHelpers
         $sortbyQuery = self::orderify($sortby, $order);        
         $Q .= $sortbyQuery;        
 
+        $L = new MyLog("location-rank.log", "uireports", "UIReports");
+        $L->log("Query", $Q);
         return $Q;
     }
     
@@ -88,7 +91,9 @@ class ReportHelpers
         }      
         $sortbyQuery = self::orderify($sortby, $order);
         $Q .= $sortbyQuery;        
-
+        
+        $L = new MyLog("location-not-reporting.log", "uireports", "UIReports");
+        $L->log("Query", $Q);
         return $Q;        
     }
     public static function _getLocationNotReportingQuery($dateStart, $dateEnd, $location, $debit) {
@@ -174,6 +179,8 @@ class ReportHelpers
         $sortbyQuery = self::orderify($sortby, $order);
         $Q .= $sortbyQuery;        
 
+        $L = new MyLog("location-closed.log", "uireports", "UIReports");
+        $L->log("Query", $Q);
         return $Q;         
     }
 
@@ -202,6 +209,8 @@ class ReportHelpers
         $sortbyQuery = self::orderify($sortby, $order);
         $Q .= $sortbyQuery;        
 
+        $L = new MyLog("readers-missing-assetid.log", "uireports", "UIReports");
+        $L->log("Query", $Q);
         return $Q;                  
     }
     public static function _getReadersMissingAssetIdQuery($dateStart, $dateEnd, 
@@ -268,7 +277,7 @@ class ReportHelpers
                 T.game_title as game_name,
                 if(E.game_on_test = 1, 'Yes', 'No') as game_on_test,
                 E.game_not_debit,
-                E.game_type_id,
+                Y.id as game_type_id,
                 Y.game_type,
                 '$gameCat' AS game_cat_id,
                 '$game_category' AS game_category,                
@@ -287,6 +296,8 @@ class ReportHelpers
         $sortbyQuery = self::orderify($sortby, $order);
         $Q .= $sortbyQuery;        
 
+        $L = new MyLog("games-potential-overreporting.log", "uireports", "UIReports");
+        $L->log("Query", $Q);
         return $Q;         
     }
     public static function _getPotentialOverReportingErrorQuery($dateStart, $dateEnd, 
@@ -333,7 +344,7 @@ class ReportHelpers
             }            
         }
         if (!empty($gameTypeIds)) {
-            $Q .= " AND E.game_type_id IN ($gameTypeIds)";
+            $Q .= " AND Y.id IN ($gameTypeIds)";
         }
         
         // GROUP BY
@@ -370,7 +381,7 @@ class ReportHelpers
             E.id, 
             GT.game_title as game_name, 
             E.game_title_id, 
-            E.game_type_id,
+            GTY.id as game_type_id,
             GTY.game_type,
             if(E.game_on_test = 1, 'Yes', 'No') as game_on_test,
             L.debit_type_id,
@@ -399,7 +410,9 @@ class ReportHelpers
         $sortbyQuery = self::orderify($sortby, $order);
         $Q .= $sortbyQuery;        
 
-        return $Q;                
+        $L = new MyLog("games-rank-bytitle.log", "uireports", "UIReports");
+        $L->log("Query", $Q);
+        return $Q;    
     }
     public static function _getGameRankQuery($dateStart, $dateEnd, $location = "", 
             $debit = "", $gameType = "", $gameCat = "all", $onTest = "") {
@@ -430,8 +443,8 @@ class ReportHelpers
         else {
             $Q .= " AND E.game_on_test IN (1)";
         }
-        if (!empty($gameCat) && !empty($gameTypeIds)) {
-            $Q .= " AND E.game_type_id IN ($gameTypeIds)";
+        if (!empty($gameTypeIds)) {
+            $Q .= " AND GTY.id IN ($gameTypeIds)";
         }
 
         // GROUP BY
@@ -458,7 +471,7 @@ class ReportHelpers
                 T.game_title as game_name,
                 if(G.test_piece = 1, 'Yes', 'No') as game_on_test,
                 G.not_debit as game_not_debit,
-                G.game_type_id,
+                Y.id as game_type_id,
                 Y.game_type,
                 '$gameCat' AS game_cat_id,
                 '$game_category' AS game_category,                
@@ -499,7 +512,9 @@ class ReportHelpers
         $sortbyQuery = self::orderify($sortby, $order);
         $Q .= $sortbyQuery;        
 
-        return $Q;          
+        $L = new MyLog("game-play-detailed.log", "uireports", "UIReports");
+        $L->log("Query", $Q);
+       return $Q;          
     }
     public static function _getGamePlayQuery($dateStart, $dateEnd, $location = "", 
             $debit = "", $gameType = "", $gameCat = "all", $onTest = "", 
@@ -511,10 +526,23 @@ class ReportHelpers
         }
         if (!empty($dateEnd)) {
             $dateEnd = self::dateify($dateEnd);
+        } 
+        
+        $gameEarningsJOIN = "SELECT * from game_earnings WHERE 
+            game_id <>0 AND date_start >= '$dateStart' AND date_start <= '$dateEnd 23:59:59' ";
+        if (!empty($gameId)) {
+            $gameEarningsJOIN .= " AND game_id IN ($gameId) ";
         }        
+        if (!empty($location)) {
+            $gameEarningsJOIN .= " AND loc_id IN ($location) ";
+        }
+        if (!empty($debit)) {
+            $gameEarningsJOIN .= " AND debit_type_id IN ($debit) ";
+        }        
+        
         $Q = "
             FROM game G
-            LEFT JOIN game_earnings E ON G.id = E.game_id
+            LEFT JOIN ($gameEarningsJOIN) E ON G.id = E.game_id
             LEFT JOIN game_title T ON T.id = G.game_title_id
             LEFT JOIN game_type Y ON Y.id = T.game_type_id
             LEFT JOIN location L ON L.id = G.location_id
@@ -528,17 +556,17 @@ class ReportHelpers
             $Q .= " AND G.id IN ($gameId) ";
         }
 
-        if (!empty($dateStart)) {
-            $Q .= " AND E.date_start >= '$dateStart' ";
-        }        
-        if (!empty($dateEnd)) {
-            $Q .= " AND E.date_start <= '$dateEnd 23:59:59' ";
-        }        
+//        if (!empty($dateStart)) {
+//            $Q .= " AND E.date_start >= '$dateStart' ";
+//        }        
+//        if (!empty($dateEnd)) {
+//            $Q .= " AND E.date_start <= '$dateEnd 23:59:59' ";
+//        }        
         if (!empty($location)) {
             $Q .= " AND L.id IN ($location) ";
         }
         if (!empty($debit)) {
-            $Q .= " AND E.debit_type_id IN ($debit) ";
+            $Q .= " AND L.debit_type_id IN ($debit) ";
         }
         if (!empty($onTest)) {
             if ($onTest == "notest") {
@@ -549,11 +577,11 @@ class ReportHelpers
             }            
         }
         if (!empty($gameTypeIds)) {
-            $Q .= " AND G.game_type_id IN ($gameTypeIds)";
+            $Q .= " AND Y.id IN ($gameTypeIds)";
         }
         
         // GROUP BY
-        $Q .= " GROUP BY E.game_id, E.loc_id ";
+        $Q .= " GROUP BY G.id, L.id ";
         
         return $Q;
     }
@@ -582,7 +610,7 @@ class ReportHelpers
                 T.game_title as game_name,
                 if(E.game_on_test = 1, 'Yes', 'No') as game_on_test,
                 E.game_not_debit,
-                E.game_type_id,
+                Y.id as game_type_id,
                 Y.game_type,
                 '$gameCat' AS game_cat_id,
                 '$game_category' AS game_category,                
@@ -604,6 +632,8 @@ class ReportHelpers
         $sortbyQuery = self::orderify($sortby, $order);
         $Q .= $sortbyQuery;        
 
+        $L = new MyLog("games-not-played.log", "uireports", "UIReports");
+        $L->log("Query", $Q);
         return $Q;          
         
     }
@@ -655,7 +685,7 @@ class ReportHelpers
             }            
         }
         if (!empty($gameTypeIds)) {
-            $Q .= " AND E.game_type_id IN ($gameTypeIds)";
+            $Q .= " AND Y.id IN ($gameTypeIds)";
         }
         
         // GROUP BY
@@ -702,6 +732,8 @@ class ReportHelpers
         $sortbyQuery = self::orderify($sortby, $order);
         $Q .= $sortbyQuery;        
         
+        $L = new MyLog("merch-expesnes.log", "uireports", "UIReports");
+        $L->log("Query", $Q);
         return $Q;        
     }
     public static function _getMerchandizeExpensesQuery($dateStart, $dateEnd, $location = "", $debit = ""){
@@ -817,7 +849,6 @@ class ReportHelpers
      * @return type
      */
     public static function mergeGameTypeAndCategories($gameType = "", $game_category_type = "") {
-        
         $gameTypeArray = explode(",", $gameType);
         $catTypeArray = explode(",", $game_category_type);
         

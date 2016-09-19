@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\controller;
 use App\Models\Throwreport;
+use App\Models\Throwdata;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Validator, Input, Redirect ;
@@ -17,6 +18,7 @@ class ThrowreportController extends Controller {
 	{
 		parent::__construct();
 		$this->model = new Throwreport();
+
 
 		$this->info = $this->model->makeInfo( $this->module);
 		$this->access = $this->model->validAccess($this->info['id']);
@@ -200,7 +202,80 @@ class ThrowreportController extends Controller {
 		));
 	}
 
-	function postSave( Request $request, $id =0)
+	function postTemp(Request $request){
+
+
+	//	$rows=\DB::table('throw_data')->get();
+	//	foreach($rows as $row) {
+	//		$game_id = $row->id . ".id";
+	//		\DB::table('throw_data')->where('id', '=', $row->id)->update(array('game_id' => $game_id));
+//
+//
+	//	$throwModel = new \Location();
+
+
+
+		$rows=\DB::table('throw_data')->get();
+		foreach ($rows as $row) {
+			$data = array(
+				'equipment' => $row->equipment,
+				'price_per_play' => $row->price_per_play,
+				'game_name' => $row->game_name,
+				'retail_price' => $row->retail_price,
+				'revenue_total' => $row->revenue_total,
+				'pc_payout' => $row->pc_payout,
+				'cost_goods' => $row->cost_goods,
+				'payout_percent' => $row->payout_percent,
+				'overall_percent' => $row->overall_percent,
+				'game_id' => $row->game_id,
+
+			);
+
+
+			\DB::table('throw_data')->insert($data);
+
+		}
+
+
+		$rules = $this->validateForm();
+		$validator = Validator::make($request->all(), $rules);
+		if ($validator->passes()) {
+			$data = $this->validatePost('throw_data');
+			print_r($data);
+			die();
+
+			$this->model->insert($data, null);
+			
+			return response()->json(array(
+				'status'=>'success',
+				'message'=> \Lang::get('core.note_success')
+			));
+
+		} else {
+
+			$message = $this->validateListError(  $validator->getMessageBag()->toArray() );
+			return response()->json(array(
+				'message'	=> $message,
+				'status'	=> 'error'
+			));
+		}
+
+
+
+
+
+
+
+		//step1 get complete record of row
+	//	print_r($request->all());
+		//step2 save data in db
+	//	$throwModel = new \Location();
+
+	//	$throwModel->insertData();
+
+
+
+	function postSave( Request $request, $rid =0)
 	{
 
 		$rules = $this->validateForm();
@@ -208,7 +283,7 @@ class ThrowreportController extends Controller {
 		if ($validator->passes()) {
 			$data = $this->validatePost('game');
 
-			$id = $this->model->insertRow($data , $request->input('id'));
+			$id = $this->model->insertRow($data, $request->input('id'));
 
 			return response()->json(array(
 				'status'=>'success',
@@ -224,7 +299,7 @@ class ThrowreportController extends Controller {
 			));
 		}
 
-	}
+	}}
 
 	public function postDelete( Request $request)
 	{
@@ -234,7 +309,6 @@ class ThrowreportController extends Controller {
 				'status'=>'error',
 				'message'=> \Lang::get('core.note_restric')
 			));
-			die;
 
 		}
 		// delete multipe rows

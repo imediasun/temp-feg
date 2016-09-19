@@ -1,6 +1,6 @@
 
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-4" style="padding-left: 0px!important;">
         <select name='product_list_type' rows='5'  id='product_list_type' class="select3" style="height: auto; font-size: 13px; font-family: 'Lato', sans-serif;
 width: 75%">
             <option selected selected>------------ Select Type --------------</option>

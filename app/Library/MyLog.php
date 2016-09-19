@@ -30,11 +30,14 @@ class MyLog
             
 	}    
     
-	public function log($msg = "", $obj = null) {
+	public function log($msg = "", $obj = '') {
         if (empty($obj)) {
             $this->logger->addInfo($msg);
         }
         else {
+            if (!is_array($obj)) {
+                $obj = array($obj);
+            }
             $this->logger->addInfo($msg, $obj);
         }        
 	}        
