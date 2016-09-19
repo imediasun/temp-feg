@@ -235,7 +235,7 @@ $(document).ready(function() {
                     url:'product/trigger',
                     data:{isActive:state,productId:productId},
                     success:function(data){
-alert(data);
+
                     }
                 }
         );
