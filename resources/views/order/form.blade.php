@@ -654,7 +654,7 @@
                                 $("#"+casepriceid).val(0.00);
                             }
                             if(result.retail_price) {
-                                alert(retailpriceid+"  "+casepriceid);
+
                                 $("#"+retailpriceid).val(result.retail_price);
                             }
                             else
