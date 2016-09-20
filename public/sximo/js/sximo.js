@@ -84,9 +84,9 @@ jQuery(document).ready(function($){
 	$('.nav li ul li.active').parents('li').addClass('active');
 	
 	
-		$('input[type="checkbox"],input[type="radio"]').not('.test').iCheck({
+		$('input[type="checkbox"],input[type="radio"]').iCheck({
 			checkboxClass: 'icheckbox_square-green',
-			radioClass: 'iradio_square-green'
+			radioClass: 'iradio_square-green',
 		});	
 		$('.checkall').on('ifChecked',function(){
 			$('input[type="checkbox"]').iCheck('check');

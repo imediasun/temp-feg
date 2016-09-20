@@ -320,14 +320,12 @@
                         <td>{{  $order_data['orderDescriptionArray'][$i] }}</td>
                         <td>{{  $order_data['orderPriceArray'][$i] }}</td>
                         <td>{{  $order_data['orderQtyArray'][$i] }}</td>
-                        <td>{{ number_format(  $order_data['orderPriceArray'][$i]* $order_data['orderQtyArray'][$i],2)}}</td>
-
+                        <td>{{   $order_data['orderPriceArray'][$i]* $order_data['orderQtyArray'][$i]}}</td>
                     </tr>
                     @endfor
                 <tr>
                     <td  colspan="4" class="text-center">Sub Total</td>
                     <td>{{ $order_data['order_total'] }}</td>
-
                 </tr>
                     @else
                     <tr><td colspan=5 class="text-center">Nothing  Found..</td></tr>

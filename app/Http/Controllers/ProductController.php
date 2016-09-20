@@ -388,27 +388,6 @@ class ProductController extends Controller {
             }
         }
     }
-    function postTrigger(Request $request)
-    {
-        $isActive=$request->get('isActive');
-        $productId=$request->get('productId');
-echo $isActive;
-        if($isActive=="true")
-        {
-            $update=\DB::update('update products set inactive=1 where id='.$productId);
-        }
-        else{
-            $update=\DB::update('update products set inactive=0 where id='.$productId);
-        }
-
-        if($update)
-        {
-            echo "congrates";
-        }
-        else{
-            echo "sorry";
-        }
-    }
 
 
 }

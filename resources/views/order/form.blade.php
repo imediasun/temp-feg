@@ -557,7 +557,9 @@
             }
             //}
         }
-
+        function calculatetest() {
+            alert("Image is loaded");
+        }
         $("#add_new_item").click(function () {
             handleItemCount('add');
             $(".calculate").keyup(function () {
@@ -652,6 +654,7 @@
                                 $("#"+casepriceid).val(0.00);
                             }
                             if(result.retail_price) {
+                                alert(retailpriceid+"  "+casepriceid);
                                 $("#"+retailpriceid).val(result.retail_price);
                             }
                             else
