@@ -21,6 +21,9 @@ $orders = array('asc','desc');
         @if(isset($view) && !is_null($view))
               <input type="hidden" name="view" value="<?php  echo $view ?>"/>
         @endif
+          @if(isset($type) && !is_null($type))
+              <input type="hidden" name="type" value="<?php  echo $type ?>"/>
+          @endif
           @if(isset($isactive) && !is_null($isactive))
               <input type="hidden" name="active_inactive" value="<?php  echo $isactive ?>"/>
           @endif

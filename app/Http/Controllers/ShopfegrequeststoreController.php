@@ -45,7 +45,7 @@ class ShopfegrequeststoreController extends Controller
 
     public function postData(Request $request)
     {
-echo $request->get('active_inactive');
+
 
 
         $module_id = \DB::table('tb_module')->where('module_name', '=', 'shopfegrequeststore')->pluck('module_id');
