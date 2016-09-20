@@ -6,7 +6,7 @@ function reloadData( id,url,callback)
     if (isClearData) {
         url += getFooterFilters(true, true);
     }
-    
+
 	$.post( url ,function( data ) {
 		$( id +'Grid' ).html( data );
 		$('.ajaxLoading').hide();
