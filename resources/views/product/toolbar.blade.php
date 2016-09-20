@@ -1,6 +1,6 @@
 
 <div class="row">
-    <div class="col-md-4" style="padding-left: 0px!important;">
+    <div class="col-md-3" style="padding-left: 0px!important;">
         <select name='product_list_type' rows='5'  id='product_list_type' class="select3" style="height: auto; font-size: 13px; font-family: 'Lato', sans-serif;
 width: 75%">
             <option selected selected>------------ Select Type --------------</option>
@@ -12,8 +12,26 @@ width: 75%">
             <option value="officesupplies" data-active="0">Office Supplies - Products List</option>
             <option value="parts" data-active="0">Parts - Products List</option>
             <option value="productsindevelopment" data-active="0"></option>
-        </select></div>
+        </select>
 
+
+    </div>
+    <div class="col-md-3">
+
+       <select name='prod_sub_type_id' rows='5' id='prod_sub_type_id' class='select3 '   >  </select>
+
+    <!--    <option selected selected>------------ Select Product --------------</option>
+        <option value="basic" data-active="0">basic</option>
+        <option value="marker" data-active="0">marker</option>
+        <option value="pen_pencil" data-active="0">penpencil</option>
+        <option value="tape" data-active="0">tape</option>
+        <option value="fastener" data-active="0">fastener</option>
+        <option value="officesupplies" data-active="0">Office Supplies - Products List</option>
+        <option value="parts" data-active="0">Parts - Products List</option>
+        <option value="productsindevelopment" data-active="0"></option>
+        </select>
+  -->
+</div>
 
     <div class="col-md-6">
         {!! Form::open(array('url'=>'product/listcsv', 'class'=>'form-horizontal','files' => true ,
@@ -94,12 +112,21 @@ width: 75%">
     </div>
     <script>
         $(document).ready(function () {
+
+
+
             $("#product_list_type option").each(function(){
                 if($(this).val()=="{{ $prod_list_type }}" && $(this).attr('data-active')=="{{ $active }}")
                 {
                     $(this).attr('selected',true);
                 }
             });
+
+            $("#prod_sub_type_id").jCombo("{{ URL::to('product/comboselect?filter=product_type:id:product_type') }}",
+                    {selected_value: '', initial_text: '--- Select Product ---'  });
+
+
+
             $("#vendor_id").jCombo("{{ URL::to('product/comboselect?filter=vendor:id:vendor_name') }}",
                     {selected_value: '', initial_text: '--- Select Vendor ---'});
             $(".select3").select2({width: "98%"});

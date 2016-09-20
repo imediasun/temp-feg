@@ -274,8 +274,9 @@ $(document).ready(function() {
 	$("#prod_type_id").jCombo("{{ URL::to('product/comboselect?filter=order_type:id:order_type:can_request:1') }}",
 			{  selected_value : '{{ $row["prod_type_id"] }}' });
 
-	$("#prod_sub_type_id").jCombo("{{ URL::to('product/comboselect?filter=product_type:id:product_type') }}",
-			{selected_value : '{{ $row["prod_sub_type_id"] }}' });
+
+	$("#prod_sub_type_id").jCombo("{{ URL::to('product/comboselect?filter=product_type:id:product_type') }}&parent=request_type_id:",
+			{parent : '#prod_type_id',selected_value : '{{ $row["prod_sub_type_id"] }}' });
 
 
 	$('.editor').summernote();
