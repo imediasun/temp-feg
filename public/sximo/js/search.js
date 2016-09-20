@@ -84,12 +84,19 @@ function changeSearchOperator( val , field , elm )
 		$('input[name='+field+']').val('not_null');		
 
 	} else if(val =='between') {
-		html = '<input name="'+field+'" class="date form-control" placeholder="Start" style="width:100px;"  /> -  <input name="'+field+'_end" class="date form-control"  placeholder="End" style="width:100px;"    />';
+		html = '<input name="'+field+'" class="date form-control field_size " placeholder="Start" style="width:100px;"  />';
+        html+='<div class="hide_field"> - </div> <input name="'+field+'_end" class="date form-control hide_field"  placeholder="End" style="width:100px;"    />';
 		$('#field_'+field+'').html(html);
 	} else {
 		$('input[name='+field+']').removeAttr('readonly');
 		$('input[name='+field+']').val('');	
 	}
+    if(val != 'between')
+    {
+        $('.hide_field').hide();
+        $('.field_size').width('100%');
+        $('.field_size').prop('placeholder','');
+    }
 }
 
 App.autoCallbacks.reloaddata = function(params) {
