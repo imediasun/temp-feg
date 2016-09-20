@@ -792,10 +792,10 @@ class SiteHelpers
                     {
                         $selected = '';
                         $current_user_id=Auth::id();
-                        $user_ids = DB::table('user_locations')->where('user_id',$current_user_id)->get();
+                        $user_ids = DB::table('user_locations')->where('user_id',$current_user_id)->orderby($option['lookup_value'])->get();
                         foreach ($user_ids as $user_id)
                         {
-                        $locations = DB::table($option['lookup_table'])->where('id',$user_id->location_id)->get();
+                        $locations = DB::table($option['lookup_table'])->where('id',$user_id->location_id)->orderby($option['lookup_value'])->get();
                         foreach ($locations as $location) {
                         $opts .= "<option $selected  value='" . $location->$option['lookup_key'] . "' $mandatory > " . $location->location_name . " </option> ";
                         }
