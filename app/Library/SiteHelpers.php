@@ -792,7 +792,7 @@ class SiteHelpers
                     {
                         $selected = '';
                         $current_user_id=Auth::id();
-                        $user_ids = DB::table('user_locations')->leftjoin('location as l','user_locations.location_id','=','l.id')->where('user_locations.user_id',$current_user_id)->orderby('l.'.$option['lookup_key'])->get();
+                        $user_ids = DB::table('user_locations')->leftjoin('location as l','user_locations.location_id','=','l.id')->where('user_locations.user_id',$current_user_id)->orderby('l.'.$option['lookup_value'])->get();
                         foreach ($user_ids as $user_id)
                         {
                         $locations = DB::table($option['lookup_table'])->where('id',$user_id->location_id)->orderby($option['lookup_value'])->get();
