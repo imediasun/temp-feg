@@ -271,8 +271,6 @@
                     </tr>
 
                     </tbody>
-
-
                 </table>
                 <div style="padding-left:60px !important;">
                 <a href="javascript:void(0);" class="addC btn btn-xs btn-info" rel=".clone" id="add_new_item"><i
@@ -281,20 +279,22 @@
                 <input type="hidden" name="enable-masterdetail" value="true">
             </div>
             <br/><br/>
-<div style ="
+
+
+            <div style ="
     padding-left: 865px;
     padding-right: 105px;
 ">
 
                 <td class="game"></td>
-                <td></td>
+                <td> </td>
                 <td colspan="6" class="text-left"><strong> Subtotal ( $ ) </strong></td>
-                <td><input type="text" name="Subtotal" value="{{ $data['order_total'] }}" readonly
-                           class="form-control"/></td>
+                <td> <input type="text" name="Subtotal" value="{{ $data['order_total'] }}" readonly
+                            class="form-control"/></td>
 
 
 
-</div>
+            </div>
 
 <br><hr>
             <div style="clear:both"></div>
