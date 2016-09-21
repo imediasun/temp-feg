@@ -807,11 +807,11 @@ class SiteHelpers
                         $fields = explode("|", $option['lookup_value']);
                         if(count($fields)>1)
                         {
-                            $data = DB::table($option['lookup_table'])->orderby($option['lookup_key'])->get();
+                            $data = DB::table($option['lookup_table'])->where($option['lookup_key'],'!=','')->orderby($option['lookup_key'])->groupby($option['lookup_key'])->get();
                         }
                         else
                         {
-                            $data = DB::table($option['lookup_table'])->orderby($option['lookup_value'])->get();
+                            $data = DB::table($option['lookup_table'])->where($option['lookup_value'],'!=','')->orderby($option['lookup_value'])->groupby($option['lookup_value'])->get();
                         }
 
                         foreach ($data as $row):

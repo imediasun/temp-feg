@@ -7,9 +7,10 @@
 		<tr id="{{ $t['field'] }}" class="fieldsearch">
 			<td>{!! SiteHelpers::activeLang($t['label'], (isset($t['language']) ? $t['language'] : array())) !!} </td>
 			<td > 
-			<select id="{{ $t['field']}}_operate" class="form-control oper" name="operate" onchange="changeSearchOperator(this.value , '{{ $t['field']}}', this)">
+			<select id="{{ $t['field']}}_operate" class="form-control oper" name="operate" onchange="changeSearchOperator(this.value , '{{ $t['field']}}', this,'{{ $t['type'] }}')">
 				<option value="equal"> = </option>
                 @if($pageModule != "merchandisebudget" )
+                    @if($t['type'] != 'select')
 				<option value="bigger_equal"> >= </option>
 				<option value="smaller_equal"> <= </option>
 				<option value="smaller"> < </option>
@@ -18,6 +19,7 @@
 				<option value="is_null"> Null </option>
 				<option value="between"> Between </option>
 				<option value="like"> Like </option>
+                    @endif
                     @endif
 
 			</select> 
