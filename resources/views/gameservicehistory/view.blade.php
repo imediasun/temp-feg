@@ -65,7 +65,7 @@
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Game Name', (isset($fields['game_name']['language'])? $fields['game_name']['language'] : array())) }}
 						</td>
-						<td>{{ $row->game_name }} </td>
+						<td>{{ isset($row->game_name)?$row->game_name:"" }} </td>
 						
 					</tr>
 				
@@ -73,7 +73,7 @@
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Daysdiff', (isset($fields['daysdiff']['language'])? $fields['daysdiff']['language'] : array())) }}
 						</td>
-						<td>{{ $row->daysdiff }} </td>
+						<td>{{ isset($row->daysdiff)?$row->daysdiff:"" }} </td>
 						
 					</tr>
 				
