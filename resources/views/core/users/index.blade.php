@@ -176,12 +176,26 @@
 							 <?php $row->date = date("m/d/Y", strtotime($row->date)); ?>
 
 							 {!! $row->date  !!}
+
+						 @elseif(($field['field'] =='has_all_locations'))
+
+
+							 <?php
+							 if( $row->has_all_locations =='1')
+							 {
+
+								 echo 'All'; }
+
+							 ?>
+
+
 						@else
 							{{--*/ $conn = (isset($field['conn']) ? $field['conn'] : array() ) /*--}}
 							{!! SiteHelpers::gridDisplay($row->$field['field'],$field['field'],$conn) !!}
 						@endif
 					 </td>
 					 @endif
+
 				 @endforeach
 
 

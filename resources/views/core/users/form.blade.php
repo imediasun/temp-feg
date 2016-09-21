@@ -113,12 +113,14 @@
                 </div>
             </div>
             <div class="form-group  " >
-                <label for="all_locations" class=" control-label col-md-4 text-left">
-                 All Locations
+                <label for="has_all_locations" class=" control-label col-md-4 text-left">
+					{!! SiteHelpers::activeLang('All Locations', (isset($fields['has_all_locations']['language'])? $fields['has_all_locations']['language'] : array())) !!}
                 </label>
                 <div class="col-md-6">
 
-                    <input type="checkbox" name="all_locations" value="1" id="all_locations" class="form-control"/>
+					<input type="checkbox" name="has_all_locations" value="1" id="has_all_locations"  class="form-control"/>
+
+
                 </div>
                 <div class="col-md-2">
 
@@ -230,15 +232,29 @@
 </div>	
 </div>			 
    <script type="text/javascript">
-	$(document).ready(function() { 
-		
+	$(document).ready(function() {
+
+		$('input[type=checkbox]').click(function()
+		{
+			if(this.checked)
+			{
+				$(this).prev().val('1');
+			}
+			else
+			{
+				$(this).prev().val('0');
+			}
+		});
+
 		$("#group_id").jCombo("{{ URL::to('core/users/comboselect?filter=tb_groups:group_id:name') }}",
 		{  selected_value : '{{ $row["group_id"] }}' });
         $("#multiple_loc").jCombo("{{ URL::to('core/users/comboselect?filter=location:id:location_name') }}",
                 {  selected_value : '{{ $user_locations }}' });
     });
 
-    $('#all_locations').on('ifChecked', function () {
+    $('#has_all_locations').on('ifChecked', function () {
+
+
 // Deactivate Parsley validation
         $('#user_form').parsley().destroy();
 
@@ -253,7 +269,7 @@
     });
 
 // For onUncheck callback
-        $('#all_locations').on('ifUnchecked', function () { //Do your code
+        $('#has_all_locations').on('ifUnchecked', function () { //Do your code
             // Deactivate Parsley validation
             $('#user_form').parsley().destroy();
 
