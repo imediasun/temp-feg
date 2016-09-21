@@ -74,8 +74,9 @@ function performAdvancedSearch(params) {
     
 }
 
-function changeSearchOperator( val , field , elm )
+function changeSearchOperator( val , field , elm ,type)
 {
+
 	if(val =='is_null') {
 		$('input[name='+field+']').attr('readonly','1');
 		$('input[name='+field+']').val('is_null');
@@ -84,7 +85,7 @@ function changeSearchOperator( val , field , elm )
 		$('input[name='+field+']').val('not_null');		
 
 	} else if(val =='between') {
-		html = '<input name="'+field+'" class="date form-control field_size " placeholder="Start" style="width:100px;"  />';
+		html = '<input name="'+field+'" type="text" class="form-control field_size date" placeholder="Start" style="width:100px;"  />';
         html+='<div class="hide_field"> - </div> <input name="'+field+'_end" class="date form-control hide_field"  placeholder="End" style="width:100px;"    />';
 		$('#field_'+field+'').html(html);
 	} else {
