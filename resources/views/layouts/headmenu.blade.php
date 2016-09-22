@@ -22,20 +22,6 @@
 
                 </a>
             </li>
-            <li>
-                <a href="#" data-toggle="dropdown" class="dropdown-toggle count-info" aria-expanded="true">
-                    <i class="fa fa-envelope"></i> <span class="notif-alert label label-danger">0</span>
-
-                </a>
-                <ul class="dropdown-menu dropdown-alerts notif-value" code="{{ url()}}">
-                    <li>
-                        <div class="text-center link-block"><a href="{{ url('notification') }}"><strong>View All
-                                    Notification</strong> <i class="fa fa-angle-right"></i></a></div>
-                    </li>
-
-                </ul>
-
-            </li>
 
 
 
@@ -61,8 +47,7 @@
                         <li><a href="{{ URL::to('core/users')}}"><i
                                         class="fa fa-user"></i> {{ Lang::get('core.m_users') }}
                                 &  {{ Lang::get('core.m_groups') }} </a></li>
-                        <li><a href="{{ URL::to('core/users/blast')}}"><i
-                                        class="fa fa-envelope"></i> {{ Lang::get('core.m_blastemail') }} </a></li>
+                       
                         <li><a href="{{ URL::to('core/logs')}}"><i
                                         class="fa fa-clock-o"></i> {{ Lang::get('core.m_logs') }}</a></li>
                         <li class="divider"></li>
