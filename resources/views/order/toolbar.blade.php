@@ -19,7 +19,7 @@
     </div>
 </div><br/>
 
-<div class="row m-b" style="margin-bottom: 7px;">
+<div class="row m-b" style="margin-bottom: 1px;">
 	<div class="col-md-8">
 			@if($access['is_add'] ==1)
 			{!! AjaxHelpers::buttonActionCreate($pageModule,$setting) !!}
