@@ -4,7 +4,7 @@
     <div class="col-md-4">
         <h3>Narrow Your Search</h3>
 
-        <?php $opts = array("active" => "Active", 'inactive' => "inactive", 'all' => "All"); ?>
+        <?php $opts = array("active" => "Active", 'inactive' => "Inactive", 'all' => "All"); ?>
         <select name="activ_inactive_all" class=" select3" id="active_inactive">
             @foreach($opts as $opt => $title)
                 <option @if($opt == \Session::get('active_inactive')) selected
