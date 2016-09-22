@@ -156,6 +156,10 @@
 
 											 {!! date("m/d/Y", strtotime($value)) !!}
 
+											 @elseif($field['field']=='location_num')
+												 {!! $row->location_id !!}
+
+
 
 										 @else
 											 {!! $value !!}
