@@ -18,7 +18,7 @@ class MyLog
         }
         $this->logger = new Logger($type);
         if (empty($file)) {
-            $file = "default";
+            $file = "default.log";
         }
         $fileprefix = "log-" . date("Ymd") . (empty($file) ? "": ("-".$file));
         $path = storage_path() . '/logs' . (empty($depth) ? "": ("/".$depth));        

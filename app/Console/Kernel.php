@@ -17,6 +17,7 @@ class Kernel extends ConsoleKernel
         \App\Console\Commands\ReadComment::class,
         \App\Console\Commands\AutoCloseOrder::class,
         \App\Console\Commands\SyncGameEarningsFromLive::class,
+        \App\Console\Commands\Elm5TaskManager::class,
     ];
 
     /**
@@ -31,6 +32,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('autocloseorder')->daily();
         $schedule->command('inspire')->hourly();
         //$schedule->command('syncgameearningsfromlive')->dailyAt('12:00')->withoutOverlapping();
-        //$schedule->command('syncgameearningsfromlive')->everyFiveMinutes()->withoutOverlapping();
+        $schedule->command('syncgameearningsfromlive')->everyFiveMinutes()->withoutOverlapping();
+        //$schedule->command('elm5taskmanager')->everyMinute();
     }
 }

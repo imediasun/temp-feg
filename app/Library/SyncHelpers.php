@@ -5,21 +5,42 @@ use DB;
 use App\Library\MyLog;
 class SyncHelpers
 {    
-    public static function livesync() {
-        $L = new MyLog("earnings.log", "livesync", "Sync");
-        $L->log("Start Live Sync");
+    private static $limit = 300;
+    public static function _livesync() {
+        
         $L->log("Start Earnings Sync");
         self::live_sync_earnings();
         $L->log("End Earnings Sync");
+        
+        
         $L->log("Start Adjustment Sync");
         self::live_sync_adjustment_earnings();
         $L->log("End Adjustment Sync");
+        
+        
+        
         $L->log("Start Location Summary Sync");
         self::live_sync_location_summary_reports();
         $L->log("End Location Summary Sync");
+        
+        
         $L->log("Start Games Summary Sync");
         self::live_sync_game_summary_reports();
         $L->log("End Games Summary Sync");
+        
+    }
+    public static function livesync() {
+        $L = new MyLog("earnings-and-summary.log", "livesync", "Sync");
+        $L->log("Start Live Sync");
+        $count = 0;
+        if (self::hasMoreToSync()) {
+            $L->log("has " . ($count > 0 ? "more":"") . " data to sync");
+            self::_livesync();
+            $count++;
+        }
+        else {
+            $L->log("No  " . ($count > 0 ? "more":"") . " data to sync");
+        }
         $L->log("End Live Sync");
         DB::connection('livemysql')->disconnect();
     }
@@ -33,12 +54,12 @@ class SyncHelpers
         $last_sync_id = self::get_last_id($table);
         $live_db = DB::connection('livemysql');
         
-        $q = "SELECT * from $table WHERE id > $last_sync_id";
+        $q = "SELECT * from $table WHERE id > $last_sync_id LIMIT " . self::$limit;
         $data = $live_db->select($q);
         DB::table($table)->insert($data);
         
         $last_adjusted = self::get_last_adjusted_on();
-        $q = "SELECT * from $table WHERE adjusted_date > '$last_adjusted'";
+        $q = "SELECT * from $table WHERE adjusted_date > '$last_adjusted' AND adjusted_dated < date_add('$last_adjusted', INTERVAL 10 day)";
         $data = $live_db->select($q);
         DB::beginTransaction();
         foreach($data as $item) {
@@ -51,8 +72,12 @@ class SyncHelpers
         DB::commit();
     }
     
-    public static function get_last_adjusted_on() {        
-        $date = DB::table('game_earnings_transfer_adjustments')->orderBy('adjustment_date', 'desc')->take(1)->value('adjustment_date');
+    public static function get_last_adjusted_on($dbname = null) {  
+        $db = DB::connection();        
+        if (!is_null($dbname)) {
+            $db = DB::connection($dbname);
+        }  
+        $date = $db->table('game_earnings_transfer_adjustments')->orderBy('adjustment_date', 'desc')->take(1)->value('adjustment_date');
         return $date;
     }   
     
@@ -65,7 +90,7 @@ class SyncHelpers
         $last_sync_id = self::get_last_id($table);
         $live_db = DB::connection('livemysql');
         
-        $q = "SELECT * from $table WHERE id > $last_sync_id";
+        $q = "SELECT * from $table WHERE id > $last_sync_id LIMIT " . self::$limit;
         $data = $live_db->select($q);
         DB::beginTransaction();
         foreach($data as $item) {
@@ -84,7 +109,7 @@ class SyncHelpers
         $last_sync_id = self::get_last_id($table);
         $live_db = DB::connection('livemysql');
         
-        $q = "SELECT * from $table WHERE id > $last_sync_id";
+        $q = "SELECT * from $table WHERE id > $last_sync_id LIMIT " . self::$limit;
         $data = $live_db->select($q);
         DB::beginTransaction();
         foreach($data as $item) {
@@ -110,7 +135,7 @@ class SyncHelpers
             DB::delete($q);
         }
         
-        $q = "SELECT * from game_earnings WHERE id > $last_sync_id";
+        $q = "SELECT * from game_earnings WHERE id > $last_sync_id LIMIT " . self::$limit;
         $data = $live_db->select($q);
         DB::table('game_earnings')->insert($data);
 
@@ -120,14 +145,55 @@ class SyncHelpers
         $q = "SELECT loc_id, date_start
             From game_earings 
             WHERE id > $last_sync_id
-            GROUP BY loc_id, date_start";                
+            GROUP BY loc_id, date_start  LIMIT " . self::$limit;
         $data = $live_db->select($q);
         return $data;
     }
     
-    public static function get_last_id($table) {        
-        $id = DB::table($table)->orderBy('id', 'desc')->take(1)->value('id');
+    public static function get_last_id($table, $dbname = null) {        
+        $db = DB;        
+        if (!is_null($dbname)) {
+            $db = DB::connection($dbname);
+        }       
+        $id = $db::table($table)->orderBy('id', 'desc')->take(1)->value('id');
+        if (is_null($id)) {
+            $id = 0;
+        }
         return $id;
+    }
+    
+    public static function hasMoreToSync() {
+        $liveEarningsID = self::get_last_id('game_earnings', 'livemysql');
+        $devEarningsID = self::get_last_id('game_earnings');
+        
+        $liveAdjID = self::get_last_id('game_earnings_transfer_adjustments', 'livemysql');
+        $devAdjID = self::get_last_id('game_earnings_transfer_adjustments');
+        
+        $last_adjusted = self::get_last_adjusted_on();
+        if (!is_null($last_adjusted)) {
+            $last_adjusted = strotime($last_adjusted);
+        }
+        $live_last_adjusted = self::get_last_adjusted_on('livemysql');
+        if (!is_null($live_last_adjusted)) {
+            $live_last_adjusted = strotime($live_last_adjusted);
+        }
+        
+        
+        $liveReportLocID = self::get_last_id('report_locations', 'livemysql');
+        $devReportLocID = self::get_last_id('report_locations');
+        
+        $liveReportGamesID = self::get_last_id('report_game_plays', 'livemysql');
+        $devReportGamesID = self::get_last_id('report_game_plays');
+        
+        $hasMore = $liveEarningsID > $devEarningsID || 
+                    $liveAdjID > $devAdjID || 
+                    $last_adjusted < $live_last_adjusted ||
+                    $liveReportLocID > $devReportLocID ||
+                    $liveReportGamesID > $devReportGamesID;
+
+        
+        return $hasMore;
+        
     }
 
 }
