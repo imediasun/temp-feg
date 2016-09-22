@@ -73,11 +73,13 @@ class SyncHelpers
     }
     
     public static function get_last_adjusted_on($dbname = null) {  
-        $db = DB::connection();        
-        if (!is_null($dbname)) {
-            $db = DB::connection($dbname);
+        if (is_null($dbname)) {
+            $date = DB::table('game_earnings_transfer_adjustments')->orderBy('adjustment_date', 'desc')->take(1)->value('adjustment_date');
         }  
-        $date = $db->table('game_earnings_transfer_adjustments')->orderBy('adjustment_date', 'desc')->take(1)->value('adjustment_date');
+        else {
+            $date = DB::connection($dbname)->table('game_earnings_transfer_adjustments')->orderBy('adjustment_date', 'desc')->take(1)->value('adjustment_date');
+        }
+        
         return $date;
     }   
     
@@ -150,12 +152,14 @@ class SyncHelpers
         return $data;
     }
     
-    public static function get_last_id($table, $dbname = null) {        
-        $db = DB;        
-        if (!is_null($dbname)) {
-            $db = DB::connection($dbname);
+    public static function get_last_id($table, $dbname = null) {                
+        if (is_null($dbname)) {
+            $id = DB::table($table)->orderBy('id', 'desc')->take(1)->value('id');            
         }       
-        $id = $db::table($table)->orderBy('id', 'desc')->take(1)->value('id');
+        else {
+            $id = DB::connection($dbname)->table($table)->orderBy('id', 'desc')->take(1)->value('id');
+        }
+        
         if (is_null($id)) {
             $id = 0;
         }
