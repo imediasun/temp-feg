@@ -216,19 +216,24 @@ class Sximo extends Model {
                 $row = \DB::table($table)->where($parent[0], $parent[1])->get();
                 $row = \DB::select("SELECT * FROM " . $table . " " . $condition . " AND " . $parent[0] . " = '" . $parent[1] . "'");
             } else {
+
                 $row = \DB::select("SELECT * FROM " . $table . " " . $condition);
             }
         } else {
 
             $table = $params[0];
             if (count($parent) >= 2) {
-                $row = \DB::table($table)->where($parent[0], $parent[1])->get();
+                $row = \DB::table($table)->where($parent[0], $parent[1])->orderby($params[2])->get();
             } else {
+
                 $order = substr($params['2'], 0, strpos($params['2'], '|'));
                 if (!$order) {
+
+
                     $order = $params['2'];
                 }
                 if (!isset($params['3'])) {
+
                     $row = \DB::table($table)->orderBy($order, 'asc')->get();
                 } else {
 

@@ -308,8 +308,8 @@ class UsersController extends Controller
 
         $this->data['id'] = $id;
 
-        $this->data['modules'] 		= \DB::table('tb_module')->where('module_type','!=','core')->get();
-        $this->data['pages'] 		= \DB::select(" SELECT * FROM tb_pages ");
+        $this->data['modules'] 		= \DB::table('tb_module')->where('module_type','!=','core')->orderby('module_name')->get();
+        $this->data['pages'] 		= \DB::select(" SELECT * FROM tb_pages order by alias");
         return view('core.users.form', $this->data);
     }
 

@@ -4,13 +4,13 @@
         <select name='product_list_type' rows='5'  id='product_list_type' class="select3" style="height: auto; font-size: 13px; font-family: 'Lato', sans-serif;
 width: 75%">
             <option selected selected>------------ Select Type --------------</option>
-            <option value="redemption" data-active="0">Redemption Prizes</option>
-            <option value="instant" data-active="0">Instant Win Prizes</option>
             <option value="graphics" data-active="0">Graphics</option>
-            <option value="ticketokens" data-active="0">Tickets,Tokens,Uniforms,Photo ,Paper-Debit, Cards</option>
-            <option value="party" data-active="0">Party Supplies</option>
+            <option value="instant" data-active="0">Instant Win Prizes</option>
             <option value="officesupplies" data-active="0">Office Supplies - Products List</option>
             <option value="parts" data-active="0">Parts - Products List</option>
+            <option value="party" data-active="0">Party Supplies</option>
+            <option value="redemption" data-active="0">Redemption Prizes</option>
+            <option value="ticketokens" data-active="0">Tickets,Tokens,Uniforms,Photo ,Paper-Debit, Cards</option>
             <option value="productsindevelopment" data-active="0"></option>
         </select>
 
