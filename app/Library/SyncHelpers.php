@@ -149,7 +149,7 @@ class SyncHelpers
     
     public static function get_live_earnings_meta($live_db, $last_sync_id) {        
         $q = "SELECT loc_id, date_start
-            From game_earings 
+            From game_earnings 
             WHERE id > $last_sync_id
             GROUP BY loc_id, date_start  LIMIT " . self::$limit;
         $data = $live_db->select($q);
