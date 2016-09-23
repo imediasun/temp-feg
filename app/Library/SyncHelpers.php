@@ -175,11 +175,11 @@ class SyncHelpers
         
         $last_adjusted = self::get_last_adjusted_on();
         if (!is_null($last_adjusted)) {
-            $last_adjusted = strotime($last_adjusted);
+            $last_adjusted = strtotime($last_adjusted);
         }
         $live_last_adjusted = self::get_last_adjusted_on('livemysql');
         if (!is_null($live_last_adjusted)) {
-            $live_last_adjusted = strotime($live_last_adjusted);
+            $live_last_adjusted = strtotime($live_last_adjusted);
         }
         
         
