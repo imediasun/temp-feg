@@ -71,7 +71,7 @@ class SyncHelpers
             unset($item['id']);
             unset($item['date_start']);
             unset($item['loc_id']); 
-            DB::table($table)->where('id', '=', $id)->update($item);
+            DB::table($table)->where('id', $id)->update($item);
         }
         DB::commit();
     }
@@ -100,7 +100,8 @@ class SyncHelpers
         $data = $live_db->select($q);
         DB::beginTransaction();
         foreach($data as $item) {
-            DB::table($table)->where([['location_id', '=', $item['location_id']],['date_played', '=', $item['date_played']]])->update(["record_status" => 0]);
+            DB::update("UPDATE $table SET record_status=0 WHERE location_id={$item['location_id']} AND date_played='{$item['date_played']}'");
+            //DB::table($table)->where([['location_id', '=', $item['location_id']],['date_played', '=', $item['date_played']]])->update(["record_status" => 0]);
             DB::table($table)->insert($item);
         }
         DB::commit();
@@ -119,7 +120,8 @@ class SyncHelpers
         $data = $live_db->select($q);
         DB::beginTransaction();
         foreach($data as $item) {
-            DB::table($table)->where([['game_id', '=', $item['game_id']],['date_played', '=', $item['date_played']]])->update(["record_status" => 0]);
+            DB::update("UPDATE $table SET record_status=0 WHERE game_id={$item['game_id']} AND date_played='{$item['date_played']}'");
+            //DB::table($table)->where([['game_id', '=', $item['game_id']],['date_played', '=', $item['date_played']]])->update(["record_status" => 0]);
             DB::table($table)->insert($item);
         }
         DB::commit();
