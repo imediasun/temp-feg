@@ -75,7 +75,7 @@
 			<a href="{{ URL::to('tablecols/arrange-cols/users') }}" class="btn btn-sm btn-white" onclick="SximoModal(this.href,'Column Selector'); return false;" ><i class="fa fa-bars"></i> Arrange Columns</a>
 			<?php   $colconfigs=SiteHelpers::getRequiredConfigs($module_id);  ?>
 			@if(!empty($colconfigs))
-				<select class="btn btn-sm btn-white" style="width:25%!important;display:inline;" name="col-config"
+				<select class="btn btn-sm btn-white" style="width:25%!important;display:inline;margin-bottom: 6px;" name="col-config"
 						id="col-config">
 					<option value="0">Select Configuraton</option>
 					@foreach( $colconfigs as $configs )
