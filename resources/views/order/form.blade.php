@@ -425,13 +425,43 @@ $('.test').val(0.00);
 
                 $('input[name^=item_num]').eq(i).val(i + 1);
                 $('textarea[name^=item]').eq(i).val(order_description_array[i]);
-                $('input[name^=price]').eq(i).val(order_price_array[i]);
-                $('input[name^=qty]').eq(i).val(order_qty_array[i]);
-                $('input[name^=product_id]').eq(i).val(order_product_id_array[i]);
+                if(order_price_array[i]) {
+                    $('input[name^=price]').eq(i).val(order_price_array[i]);
+                }
+                else{
+                    $('input[name^=price]').eq(i).val(0.00);
+                }
+                if(order_qty_array[i]) {
+                    $('input[name^=qty]').eq(i).val(order_qty_array[i]);
+                }
+                else{
+                    $('input[name^=qty]').eq(i).val(00);
+                }
+                if(order_product_id_array[i])
+                {
+                    $('input[name^=product_id]').eq(i).val(order_product_id_array[i]);
+                }
+                else
+                {
+                    $('input[name^=product_id]').eq(i).val(0);
+                }
                 $('input[name^=request_id]').eq(i).val(order_request_id_array[i]);
                 $('input[name^=item_name]').eq(i).val(item_name_array[i]);
-                $('input[name^=case_price]').eq(i).val(item_case_price[i]);
-                $('input[name^=retail_price]').eq(i).val(item_retail_price[i]);
+                if(item_case_price[i])
+                {
+                    $('input[name^=case_price]').eq(i).val(item_case_price[i]);
+                }
+                else
+                {
+                    $('input[name^=case_price]').eq(i).val(0.00);
+                }
+                if(item_retail_price[i]) {
+                    $('input[name^=retail_price]').eq(i).val(item_retail_price[i]);
+                }
+                else
+                {
+                    $('input[name^=retail_price]').eq(i).val(0.00);
+                }
                     if (i < requests_item_count - 1) //COMPENSATE FOR BEGINNING WITH ONE INPUT
         {
 
