@@ -432,12 +432,12 @@
                 $('input[name^=item_name]').eq(i).val(item_name_array[i]);
                 $('input[name^=case_price]').eq(i).val(item_case_price[i]);
                 $('input[name^=retail_price]').eq(i).val(item_retail_price[i]);
-
-                    if (i < requests_item_count - 2) //COMPENSATE FOR BEGINNING WITH ONE INPUT
-               {
+                    if (i < requests_item_count - 1) //COMPENSATE FOR BEGINNING WITH ONE INPUT
+        {
 
                     $("#add_new_item").trigger("click");
                 }
+
             }
             $(".calculate").keyup(function () {
                 calculateSum();
