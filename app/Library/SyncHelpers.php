@@ -194,12 +194,18 @@ class SyncHelpers
         $liveReportGamesID = self::get_last_id('report_game_plays', 'livemysql');
         $devReportGamesID = self::get_last_id('report_game_plays');
         
+        self::$L->log("PENDING: ".
+                    "Earnings => " . ($liveEarningsID > $devEarningsID ? " yes " : " no ") . 
+                    "Adj => " . ($liveAdjID > $devEarningsID ? " yes " : " no ") . 
+                    "Adj Date => " . ($live_last_adjusted > $last_adjusted ? " yes " : " no ") . 
+                    "Loc Report => " . ($liveReportLocID > $devReportLocID ? " yes " : " no ") . 
+                    "Games Report => " . ($liveReportGamesID > $devReportGamesID ? " yes " : " no "));
+                    
         $hasMore = $liveEarningsID > $devEarningsID || 
                     $liveAdjID > $devAdjID || 
-                    $last_adjusted < $live_last_adjusted ||
+                    $live_last_adjusted > $last_adjusted ||
                     $liveReportLocID > $devReportLocID ||
                     $liveReportGamesID > $devReportGamesID;
-
         
         return $hasMore;
         
