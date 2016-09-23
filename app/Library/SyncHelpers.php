@@ -6,7 +6,7 @@ use App\Library\MyLog;
 class SyncHelpers
 {    
     private static $L;
-    private static $limit = 500;
+    private static $limit = 1000;
     public static function _livesync() {
         
         self::$L->log("Start Earnings Sync");
