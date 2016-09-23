@@ -459,8 +459,7 @@
                     location.href = "{{ url() }}/order";
                 }
                 else {
-                    ajaxViewClose('#{{ $pageModule }}');
-                    ajaxFilter('#{{ $pageModule }}', '{{ $pageUrl }}/data');
+                    location.href = "{{ url() }}/order/save-or-send-email";
                 }
                 notyMessage(data.message);
                 $('#sximo-modal').modal('hide');
