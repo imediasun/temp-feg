@@ -194,18 +194,18 @@ class SyncHelpers
         $liveReportGamesID = self::get_last_id('report_game_plays', 'livemysql');
         $devReportGamesID = self::get_last_id('report_game_plays');
         
-        self::$L->log("PENDING: ".
-                    "Earnings => " . ($liveEarningsID > $devEarningsID ? " yes " : " no ") . 
-                    "Adj => " . ($liveAdjID > $devAdjID ? " yes " : " no ") . 
-                    "Adj Date => " . ($live_last_adjusted > $last_adjusted ? " yes " : " no ") . 
-                    "Loc Report => " . ($liveReportLocID > $devReportLocID ? " yes " : " no ") . 
-                    "Games Report => " . ($liveReportGamesID > $devReportGamesID ? " yes " : " no "));
-        self::$L->log("Pending Data: [live => dev] ".
-                    "Earnings: [" . ($liveEarningsID ." => ". $devEarningsID."] ") . 
-                    "Adj: [" . ($liveAdjID ." => ". $devEarningsID."] ") . 
-                    "Adj Date: [" . (date("Y-m-d", $live_last_adjusted) ." => ". date("Y-m-d", $last_adjusted)."] ") . 
-                    "Loc Report: [" . ($liveReportLocID ." => ". $devReportLocID."] ") . 
-                    "Games Report: [" . ($liveReportGamesID ." => ". $devReportGamesID."] ")); 
+        self::$L->log("PENDING:".
+                    " Earnings =>" . ($liveEarningsID > $devEarningsID ? " yes " : " no ") . 
+                    ", Adj =>" . ($liveAdjID > $devAdjID ? " yes " : " no ") . 
+                    ", Adj Date =>" . ($live_last_adjusted > $last_adjusted ? " yes " : " no ") . 
+                    ", Loc Report =>" . ($liveReportLocID > $devReportLocID ? " yes " : " no ") . 
+                    ", Games Report =>" . ($liveReportGamesID > $devReportGamesID ? " yes " : " no "));
+        self::$L->log("Pending Data: [live => dev]".
+                    " Earnings: [" . ($liveEarningsID ." => ". $devEarningsID."]") . 
+                    " Adj: [" . ($liveAdjID ." => ". $devEarningsID."]") . 
+                    " Adj Date: [" . (date("Y-m-d", $live_last_adjusted) ." => ". date("Y-m-d", $last_adjusted)."]") . 
+                    " Loc Report: [" . ($liveReportLocID ." => ". $devReportLocID."]") . 
+                    " Games Report: [" . ($liveReportGamesID ." => ". $devReportGamesID."]")); 
 
                     
         $hasMore = $liveEarningsID > $devEarningsID || 
