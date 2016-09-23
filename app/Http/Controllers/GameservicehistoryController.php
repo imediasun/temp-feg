@@ -202,7 +202,7 @@ class GameservicehistoryController extends Controller {
 
 	function postSave( Request $request, $id =0)
 	{
-
+		$form_data['date_down'] = date('Y-m-d');
 		$rules = $this->validateForm();
 		$validator = Validator::make($request->all(), $rules);
 		if ($validator->passes()) {

@@ -44,6 +44,7 @@ class MylocationgameController extends Controller
 
     public function postData(Request $request)
     {
+
         $module_id = \DB::table('tb_module')->where('module_name', '=', 'mylocationgame')->pluck('module_id');
         $this->data['module_id'] = $module_id;
         if (Input::has('config_id')) {
@@ -273,6 +274,10 @@ class MylocationgameController extends Controller
 
     function postSave(Request $request, $id = null)
     {
+
+        $form_data['date_shipped'] = date('Y-m-d');
+        $form_data['date_last_move'] = date('Y-m-d');
+        $form_data['date_in_service'] = date('Y-m-d');
         $rules = $this->validateForm();
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {

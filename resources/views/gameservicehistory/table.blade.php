@@ -129,8 +129,12 @@
 						 	<?php $limited = isset($field['limited']) ? $field['limited'] :''; ?>
 						 	@if(SiteHelpers::filterColumn($limited ))
 								 <td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}" data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
-									 @if($field['field'] == 'date_down')
+									 @if($field['field'] == 'date_up')
 										 {!! date("m/d/Y", strtotime($value)) !!}
+
+										 @elseif($field['field'] == 'date_down')
+
+											 {!! date("m/d/Y", strtotime($value)) !!}
 									 @else
 									 {!! $value !!}
 										 @endif
@@ -188,6 +192,9 @@
 <script>
 $(document).ready(function() {
 	$('.tips').tooltip();
+
+	$('.date').datepicker({format:'mm/dd/yyyy',autoclose:true})
+	$('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});
 	$('input[type="checkbox"],input[type="radio"]').iCheck({
 		checkboxClass: 'icheckbox_square-green',
 		radioClass: 'iradio_square-green',

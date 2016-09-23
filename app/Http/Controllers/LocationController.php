@@ -45,6 +45,7 @@ class LocationController extends Controller {
 
     public function postData( Request $request,$id=null)
     {
+
         $module_id = \DB::table('tb_module')->where('module_name', '=', 'location')->pluck('module_id');
         $this->data['module_id'] = $module_id;
         if (Input::has('config_id')) {
