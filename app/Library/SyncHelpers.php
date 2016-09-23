@@ -5,43 +5,47 @@ use DB;
 use App\Library\MyLog;
 class SyncHelpers
 {    
+    private static $L;
     private static $limit = 300;
     public static function _livesync() {
         
-        $L->log("Start Earnings Sync");
+        self::$L->log("Start Earnings Sync");
         self::live_sync_earnings();
-        $L->log("End Earnings Sync");
+        self::$L->log("End Earnings Sync");
         
         
-        $L->log("Start Adjustment Sync");
+        self::$L->log("Start Adjustment Sync");
         self::live_sync_adjustment_earnings();
-        $L->log("End Adjustment Sync");
+        self::$L->log("End Adjustment Sync");
         
         
         
-        $L->log("Start Location Summary Sync");
+        self::$L->log("Start Location Summary Sync");
         self::live_sync_location_summary_reports();
-        $L->log("End Location Summary Sync");
+        self::$L->log("End Location Summary Sync");
         
         
-        $L->log("Start Games Summary Sync");
+        self::$L->log("Start Games Summary Sync");
         self::live_sync_game_summary_reports();
-        $L->log("End Games Summary Sync");
+        self::$L->log("End Games Summary Sync");
         
     }
     public static function livesync() {
-        $L = new MyLog("earnings-and-summary.log", "livesync", "Sync");
-        $L->log("Start Live Sync");
+        if (!isset(self::$L)) {
+            self::$L = new MyLog("earnings-and-summary.log", "livesync", "Sync");
+        }
+        
+        self::$L->log("Start Live Sync");
         $count = 0;
         if (self::hasMoreToSync()) {
-            $L->log("has " . ($count > 0 ? "more":"") . " data to sync");
+            self::$L->log("has " . ($count > 0 ? "more":"") . " data to sync");
             self::_livesync();
             $count++;
         }
         else {
-            $L->log("No  " . ($count > 0 ? "more":"") . " data to sync");
+            self::$L->log("No  " . ($count > 0 ? "more":"") . " data to sync");
         }
-        $L->log("End Live Sync");
+        self::$L->log("End Live Sync");
         DB::connection('livemysql')->disconnect();
     }
     
