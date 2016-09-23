@@ -231,7 +231,7 @@
                         </td>
                         <td>
                             <textarea name='item[]' placeholder='Item  Description' id="item"
-                                      class='form-control item' cols="30" rows="4" maxlength="225" required></textarea>
+                                      class='form-control item' cols="30" rows="4" maxlength="225" ></textarea>
                         </td>
 
                         <td><br/> <input type='number' name='price[]' placeholder='Unit Price' id="price"
@@ -245,12 +245,12 @@
 
 
                         <td>
-                            <br/> <input type='number' name='retail_price[]' placeholder='Retail Price' id="retail_price"
-                                         class='form-control' min="0.00" step=".01" value="0.00"
-                                         required></td>
+                             <br/> <input type='number' name='retail_price[]' placeholder='Retail Price' id="retail_price"
+                                               class='form-control test' min="0.00" step=".01" value="0.00"
+                                               required></td>
                         </td>
                         <td><br/> <input type='number' name='qty[]' placeholder='Quantity'
-                                         class='form-control qty' min="1" step="1" id="qty" value="00"
+                                         class='form-control qty' min="0" step="1" id="qty" value="00"
                                          required></td>
                         <td class="game" style="display:none"><br/>
                             <select name='game[]' id='game_0' class='game  form-control'>
@@ -350,7 +350,7 @@
             hideShowAltLocation();
             $("#item_num").val('1');
             $("#submit_btn").hide();
-
+$('.test').val(0.00);
 
             $('#icon').click(function(){
                 $(document).ready(function(){
