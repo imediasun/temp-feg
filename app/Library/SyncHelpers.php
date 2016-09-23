@@ -41,7 +41,7 @@ class SyncHelpers
             self::$L->log("has " . ($count > 0 ? "more":"") . " data to sync");
             self::_livesync();
             $count++;
-            sleep(10);
+            sleep(3);
         }
         self::$L->log("No  " . ($count > 0 ? "more":"") . " data to sync");
         self::$L->log("End Live Sync");
