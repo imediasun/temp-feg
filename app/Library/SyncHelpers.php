@@ -6,7 +6,7 @@ use App\Library\MyLog;
 class SyncHelpers
 {    
     private static $L;
-    private static $limit = 300;
+    private static $limit = 1000;
     public static function _livesync() {
         
         self::$L->log("Start Earnings Sync");
@@ -37,14 +37,13 @@ class SyncHelpers
         
         self::$L->log("Start Live Sync");
         $count = 0;
-        if (self::hasMoreToSync()) {
+        while(self::hasMoreToSync()) {
             self::$L->log("has " . ($count > 0 ? "more":"") . " data to sync");
             self::_livesync();
             $count++;
+            sleep(10);
         }
-        else {
-            self::$L->log("No  " . ($count > 0 ? "more":"") . " data to sync");
-        }
+        self::$L->log("No  " . ($count > 0 ? "more":"") . " data to sync");
         self::$L->log("End Live Sync");
         DB::connection('livemysql')->disconnect();
     }
