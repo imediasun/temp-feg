@@ -425,42 +425,48 @@ $('.test').val(0.00);
 
                 $('input[name^=item_num]').eq(i).val(i + 1);
                 $('textarea[name^=item]').eq(i).val(order_description_array[i]);
-                if(order_price_array[i]) {
-                    $('input[name^=price]').eq(i).val(order_price_array[i]);
-                }
-                else{
+                if(order_price_array[i] == "" || order_price_array[i] == null ) {
                     $('input[name^=price]').eq(i).val(0.00);
                 }
-                if(order_qty_array[i]) {
-                    $('input[name^=qty]').eq(i).val(order_qty_array[i]);
-                }
                 else{
+                    $('input[name^=price]').eq(i).val(order_price_array[i]);
+
+                }
+                if(order_qty_array[i] == "" || order_qty_array[i] == null) {
                     $('input[name^=qty]').eq(i).val(00);
                 }
-                if(order_product_id_array[i])
-                {
-                    $('input[name^=product_id]').eq(i).val(order_product_id_array[i]);
+                else{
+                    $('input[name^=qty]').eq(i).val(order_qty_array[i]);
+
                 }
-                else
+                if(order_product_id_array[i] == "" || order_product_id_array[i]== null)
                 {
                     $('input[name^=product_id]').eq(i).val(0);
                 }
+                else
+                {
+                    $('input[name^=product_id]').eq(i).val(order_product_id_array[i]);
+
+                }
                 $('input[name^=request_id]').eq(i).val(order_request_id_array[i]);
                 $('input[name^=item_name]').eq(i).val(item_name_array[i]);
-                if(item_case_price[i])
-                {
-                    $('input[name^=case_price]').eq(i).val(item_case_price[i]);
-                }
-                else
+                if(item_case_price[i] == "" || item_case_price[i] == null)
                 {
                     $('input[name^=case_price]').eq(i).val(0.00);
                 }
-                if(item_retail_price[i]) {
-                    $('input[name^=retail_price]').eq(i).val(item_retail_price[i]);
+                else
+                {
+                    $('input[name^=case_price]').eq(i).val(item_case_price[i]);
+
+                }
+                if(item_retail_price[i] == "" || item_retail_price[i] == null) {
+
+                    $('input[name^=retail_price]').eq(i).val(0.00);
                 }
                 else
                 {
-                    $('input[name^=retail_price]').eq(i).val(0.00);
+                    $('input[name^=retail_price]').eq(i).val(item_retail_price[i]);
+
                 }
                     if (i < requests_item_count - 1) //COMPENSATE FOR BEGINNING WITH ONE INPUT
         {
