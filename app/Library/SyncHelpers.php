@@ -63,7 +63,7 @@ class SyncHelpers
         DB::table($table)->insert($data);
         
         $last_adjusted = self::get_last_adjusted_on();
-        $q = "SELECT * from $table WHERE adjusted_date > '$last_adjusted' AND adjusted_dated < date_add('$last_adjusted', INTERVAL 10 day)";
+        $q = "SELECT * from $table WHERE adjustment_date > '$last_adjusted' AND adjustment_date < date_add('$last_adjusted', INTERVAL 10 day)";
         $data = $live_db->select($q);
         DB::beginTransaction();
         foreach($data as $item) {
