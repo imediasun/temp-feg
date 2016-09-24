@@ -315,7 +315,7 @@ class order extends Sximo
                    // $data['order_location_name'] = $query[0]->location_name;
                     $data['order_type'] = $query[0]->prod_type_id;
                     $data['order_total'] = $query[0]->total;
-                    $data['po_2'] = date('m/d/y');
+                    $data['po_2'] = date('mdy');
                     $data['po_3'] = $this->increamentPO();
                     $data['po_notes'] = "";
                     //$this->data['id']=1806;
