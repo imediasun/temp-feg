@@ -375,7 +375,10 @@ class UsersController extends Controller
 
     function postSave(Request $request, $id = 0)
     {
-
+        $form_data['date'] = date('Y-m-d');
+        $form_data['last_login'] = date('Y-m-d');
+        $form_data['created_at'] = date('Y-m-d');
+        $form_data['updated_at'] = date('Y-m-d');
         $rules = $this->validateForm();
         if ($request->input('id') == '') {
             $rules['password'] = 'required|between:6,12';

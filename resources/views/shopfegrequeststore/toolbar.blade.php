@@ -21,9 +21,9 @@
 
 <div class="row m-b">
 </div>
-<div class="row m-b">
+<div class="row m-b" style=margin-bottom:4px;">
 
-    <div class="col-md-5" style="margin-top:7px;">
+    <div class="col-md-6" style="margin-top:7px;">
 
         <a href="{{ URL::to( $pageModule .'/search') }}" class="btn btn-sm btn-white"
            onclick="SximoModal(this.href,'Advanced Search'); return false;"><i class="fa fa-search"></i>Advanced Search</a>
@@ -43,7 +43,7 @@
             @endif
         @endif
     </div>
-    <div class="col-md-7">
+    <div class="col-md-6 style=float:right;">
         <h3 class="pull-right"> <small><a  href="{{ URL::to('./shopfegrequeststore/new-graphic-request') }}" target="_blank" class="btn btn-primary">Request Custom Graphic</a></small></h3>
 
     </div>

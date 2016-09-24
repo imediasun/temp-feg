@@ -426,7 +426,7 @@ class OrderController extends Controller
                 }
             }
            // $mailto = $vendor_email;
-           // $from = \Session::get('eid');
+            $from = \Session::get('eid');
             //send product order as email to vendor only if sendor and reciever email is available
            // if(!empty($mailto) && !empty($from))
            // {
@@ -442,9 +442,12 @@ class OrderController extends Controller
 //        $message->from($from);
 //
 //    });
+            \Session::put('send_to',$vendor_email);
+            \Session::put('order_id',$order_id);
             return response()->json(array(
                 'status' => 'success',
-                'message' => \Lang::get('core.note_success')
+                'message' => \Lang::get('core.note_success'),
+
             ));
 
         } else {
@@ -452,12 +455,40 @@ class OrderController extends Controller
             $message = $this->validateListError($validator->getMessageBag()->toArray());
             return response()->json(array(
                 'message' => $message,
-                'status' => 'error'
+                'status' => 'error',
+
             ));
         }
 
     }
+public function getSaveOrSendEmail()
+{
+    return view('order.saveorsendemail');
+}
+    function postSaveorsendemail(Request $request)
+    {
+        $to=$request->get('to');
+        $from=$request->get('from');
+        $order_id=$request->get('order_id');
+        $opt=$request->get('opt');
 
+         if($to === "NULL" || $from === "NULL")
+         {
+             return response()->json(array(
+                   'message' => "Sender or Vendor Email is missing",
+                   'status' => 'error'
+
+               ));
+            }
+         else{
+             $this->getPo($order_id, true,$to,$from);
+             return response()->json(array(
+                 'status' => 'success',
+                 'message' => \Lang::get('core.note_success'),
+
+             ));
+         }
+    }
     public function postDelete(Request $request)
     {
 
@@ -525,9 +556,8 @@ class OrderController extends Controller
 
     function getPo($order_id = null, $sendemail = false, $to = null, $from = null)
     {
+
         $data = $this->model->getOrderData($order_id);
-
-
         if (empty($data)) {
 
         } else {
@@ -798,8 +828,8 @@ class OrderController extends Controller
     public function getProductdata()
     {
         $vendor_description=Input::get('product_id');
-        $row=\DB::select("select id,item_description,unit_price,case_price from products WHERE vendor_description='".$vendor_description."'");
-        $json=array('item_description'=>$row[0]->item_description,'unit_price'=>$row[0]->unit_price,'case_price'=>$row[0]->case_price,'id'=>$row[0]->id);
+        $row=\DB::select("select id,item_description,unit_price,case_price,retail_price from products WHERE vendor_description='".$vendor_description."'");
+        $json=array('item_description'=>$row[0]->item_description,'unit_price'=>$row[0]->unit_price,'case_price'=>$row[0]->case_price,'retail_price'=>$row[0]->retail_price,'id'=>$row[0]->id);
         echo json_encode($json);
     }
 

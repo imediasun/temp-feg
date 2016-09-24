@@ -134,6 +134,10 @@
 
 										 {!! date("m/d/Y", strtotime($value)) !!}
 
+									 @elseif($field['field'] == 'date_booked')
+
+										 {!! date("m/d/Y", strtotime($value)) !!}
+
 									 @else
 										 {!! $value !!}
 									 @endif
