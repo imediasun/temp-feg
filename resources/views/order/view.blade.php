@@ -194,7 +194,7 @@
 
                         <div class="col-md-8">
                             <td> {!!
-                                SiteHelpers::gridDisplayView($row->freight_id,'freight_id','1:vendor:id:vendor_name')
+                                SiteHelpers::gridDisplayView($row->freight_id,'freight_id','1:freight:id:freight_type')
                                 !!}
                             </td>
                         </div>
@@ -215,7 +215,8 @@
                         </label>
 
                         <div class="col-md-8">
-                            {{ $row->warranty }}
+                          {{  SiteHelpers::gridDisplayView($row->warranty,'warranty','1:yes_no:id:yesno') }}
+
                         </div>
                     </div>
                     <div class="clearfix"></div>
@@ -251,7 +252,8 @@ for($i=0; $i < count($order_data['orderQtyArray']);$i++)
                         </label>
 
                         <div class="col-md-8">
-                            {{ $row->new_format }}
+                            {!! SiteHelpers::gridDisplayView($row->new_format,'new_format','1:yes_no:id:yesno') !!}
+
                         </div>
                     </div>
                     <div class="clearfix"></div>
@@ -271,7 +273,8 @@ for($i=0; $i < count($order_data['orderQtyArray']);$i++)
                         </label>
 
                         <div class="col-md-8">
-                            {{ $row->added_to_inventory }}
+                            {!! SiteHelpers::gridDisplayView( $row->added_to_inventory,'added_to_inventory','1:yes_no:id:yesno') !!}
+
                         </div>
                     </div>
                     <div class="clearfix"></div>
