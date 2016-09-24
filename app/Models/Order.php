@@ -14,6 +14,7 @@ class order extends Sximo
     public function __construct()
     {
         ini_set('memory_limit','1G');
+        set_time_limit(0);
         parent::__construct();
 
     }
