@@ -351,7 +351,7 @@ class OrderController extends Controller
                     'order_type_id' => $order_type,
                     'date_ordered' => $date_ordered,
                     'vendor_id' => $vendor_id,
-                    'order_description' => $order_description,
+                    'order_description' => '',
                     'order_total' => $total_cost,
                     'freight_id' => $freight_type_id,
                     'po_number' => $po,
@@ -472,27 +472,24 @@ public function getSaveOrSendEmail()
         $to=$request->get('to');
         $from=$request->get('from');
         $order_id=$request->get('order_id');
-        $opt=$request->get('submit');
-     if($opt=="sendemail")
-     {
-         if(!empty($to) && !empty($from))
-           {
-               return response()->json(array(
-                   'status' => 'success',
-                   'message' => \Lang::get('core.note_success'),
+        $opt=$request->get('opt');
 
-               ));
+        if($to === "NULL" || $from === "NULL")
+        {
+            return response()->json(array(
+                'message' => "Failed!Sender or Vendor Email is missing",
+                'status' => 'error'
+
+            ));
+        }
+        else{
             $this->getPo($order_id, true,$to,$from);
-            }
-         else{
-            $message="Sender or Vendor Email is missing";
-             return response()->json(array(
-                 'message' => $message,
-                 'status' => 'error',
+            return response()->json(array(
+                'status' => 'success',
+                'message' => \Lang::get('core.note_success'),
 
-             ));
-         }
-     }
+            ));
+        }
     }
     public function postDelete(Request $request)
     {
