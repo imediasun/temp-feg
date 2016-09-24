@@ -171,6 +171,7 @@ class order extends Sximo
 
     public function getOrderQuery($order_id, $mode = null)
     {
+
         $data['requests_item_count'] = 0;
         $data['order_loc_id'] = '0';
         $data['order_vendor_id'] = '';
@@ -275,7 +276,6 @@ class order extends Sximo
             $data['today'] = ($mode) ? $order_query[0]->date_ordered : $this->get_local_time('date');
         } elseif (substr($mode, 0, 3) == 'SID') {
             $item_count = substr_count($mode, '-');
-
             $SID_string = $mode;
             $data['SID_string'] = $SID_string;
             for ($i = 1; $i < $item_count; $i++) {
@@ -292,6 +292,7 @@ class order extends Sximo
 											  P.case_price,
 											  P.retail_price,
 											  P.vendor_id,
+											  P.vendor_description,
 											  P.item_description,
 											  R.product_id,
 											  R.location_id,
@@ -315,7 +316,7 @@ class order extends Sximo
                     $data['order_total'] = $query[0]->total;
                     $data['po_2'] = date('m/d/y');
                     $data['po_3'] = $this->increamentPO();
-                    $data['po_notes'] = $query[0]->description;
+                    $data['po_notes'] = "";
                     //$this->data['id']=1806;
                     $data['prefill_type'] = "";
                     $data['order_freight_id'] = "";
@@ -324,8 +325,8 @@ class order extends Sximo
                     $orderPriceArray[] = $query[0]->case_price;
                     $orderQtyArray[] = $query[0]->qty;
                     $orderProductIdArray[] = $query[0]->product_id;
-                    $prod_data = $this->productUnitPriceAndName($query[0]->product_id);
-                    $item_name_array[] = $query[0]->item_description;
+                 //   $prod_data = $this->productUnitPriceAndName($query[0]->product_id);
+                    $item_name_array[] = $query[0]->vendor_description;
                     $item_case_price[] = $query[0]->case_price;
                     $item_retail_price[]=$query[0]->retail_price;
                     $orderRequestIdArray[] = ${'SID' . $i};
@@ -339,7 +340,7 @@ class order extends Sximo
                 $data['orderRequestIdArray'] = $orderRequestIdArray;
                 $data['itemNameArray'] = $item_name_array;
                 $data['itemCasePrice'] = $item_case_price;
-                $data['requests_item_count'] = $item_count;
+                $data['requests_item_count'] = $item_count-1;
                 $data['today'] = date('m/d/y');
             }
         }
