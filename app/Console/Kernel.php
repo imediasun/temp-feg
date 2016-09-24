@@ -31,7 +31,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('comments:read')->everyMinute();
         $schedule->command('autocloseorder')->daily();
         $schedule->command('inspire')->hourly();
-        $schedule->command('syncgameearningsfromlive')->dailyAt('12:00')->withoutOverlapping();
+        $schedule->command('syncgameearningsfromlive')->dailyAt('17:00')->withoutOverlapping();
         //$schedule->command('syncgameearningsfromlive')->everyMinute()->withoutOverlapping();
         //$schedule->command('elm5taskmanager')->everyMinute();
     }
