@@ -490,7 +490,6 @@ $('.test').val(0.00);
         function showResponse(data) {
 
             if (data.status == 'success') {
-                alert();
                 var url = location.href;
                 location.href = "{{ url() }}/order/save-or-send-email";
                 notyMessage(data.message);
