@@ -491,12 +491,7 @@ $('.test').val(0.00);
 
             if (data.status == 'success') {
                 var url = location.href;
-                if (url.indexOf('submitorder') != -1) {
-                    location.href = "{{ url() }}/order";
-                }
-                else {
-                    location.href = "{{ url() }}/order/save-or-send-email";
-                }
+                location.href = "{{ url() }}/order/save-or-send-email";
                 notyMessage(data.message);
                 $('#sximo-modal').modal('hide');
             } else {

@@ -238,11 +238,13 @@ class OrderController extends Controller
         } else {
             $this->data['row'] = $this->model->getColumnTable('orders');
         }
+
         $this->data['setting'] = $this->info['setting'];
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
         $this->data['mode'] = $mode;
         $this->data['id'] = $id;
         $this->data['data'] = $this->model->getOrderQuery($id, $mode);
+
         return view('order.form', $this->data);
     }
 
@@ -472,22 +474,22 @@ public function getSaveOrSendEmail()
         $order_id=$request->get('order_id');
         $opt=$request->get('opt');
 
-         if($to === "NULL" || $from === "NULL")
-         {
-             return response()->json(array(
-                   'message' => "Sender or Vendor Email is missing",
-                   'status' => 'error'
+        if($to === "NULL" || $from === "NULL")
+        {
+            return response()->json(array(
+                'message' => "Failed!Sender or Vendor Email is missing",
+                'status' => 'error'
 
-               ));
-            }
-         else{
-             $this->getPo($order_id, true,$to,$from);
-             return response()->json(array(
-                 'status' => 'success',
-                 'message' => \Lang::get('core.note_success'),
+            ));
+        }
+        else{
+            $this->getPo($order_id, true,$to,$from);
+            return response()->json(array(
+                'status' => 'success',
+                'message' => \Lang::get('core.note_success'),
 
-             ));
-         }
+            ));
+        }
     }
     public function postDelete(Request $request)
     {
@@ -828,8 +830,8 @@ public function getSaveOrSendEmail()
     public function getProductdata()
     {
         $vendor_description=Input::get('product_id');
-        $row=\DB::select("select id,item_description,unit_price,case_price,retail_price from products WHERE vendor_description='".$vendor_description."'");
-        $json=array('item_description'=>$row[0]->item_description,'unit_price'=>$row[0]->unit_price,'case_price'=>$row[0]->case_price,'retail_price'=>$row[0]->retail_price,'id'=>$row[0]->id);
+        $row=\DB::select("select id,item_description,unit_price,case_price from products WHERE vendor_description='".$vendor_description."'");
+        $json=array('item_description'=>$row[0]->item_description,'unit_price'=>$row[0]->unit_price,'case_price'=>$row[0]->case_price,'id'=>$row[0]->id);
         echo json_encode($json);
     }
 

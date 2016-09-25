@@ -73,10 +73,6 @@
         form.submit(function () {
             var val=$(document.activeElement).val();
             $("#opt").val(val);
-            if(val=="saveandsendemail")
-            {
-                $test.trigger('click');
-            }
             if (form.parsley('isValid') == true) {
                 var options = {
                     dataType: 'json',

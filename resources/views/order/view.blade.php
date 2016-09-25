@@ -84,7 +84,7 @@
                         </label>
 
                         <div class="col-md-8">
-                            {!! SiteHelpers::gridDisplayView($row->company_id,'company_id','1:vendor:id:vendor_name') !!}
+                            {!! SiteHelpers::gridDisplayView($row->company_id,'company_id','1:company:id:company_name_long') !!}
                         </div>
                     </div>
                     <div class="clearfix"></div>
@@ -106,7 +106,11 @@
                         </label>
 
                         <div class="col-md-8">
+                          @if(isset($row->date_received))
                             {{  $row->date_received = date("m/d/Y", strtotime($row->date_received))  }}
+
+
+                              @endif
                         </div>
                     </div>
                     <div class="clearfix"></div>
@@ -116,7 +120,8 @@
                         </label>
 
                         <div class="col-md-8">
-                            {{ $row->received_by }}
+                            {!! SiteHelpers::gridDisplayView($row->received_by,'received_by','1:users:id:username') !!}
+
                         </div>
                     </div>
 
@@ -135,9 +140,9 @@
                         </label>
 
                         <div class="col-md-8">
-                            {!!
-                            SiteHelpers::gridDisplayView($row->order_type_id,'order_type_id','1:orders:id:order_type_id')
-                            !!}
+                            {{
+                            SiteHelpers::gridDisplayView($row->order_type_id,'order_type_id','1:order_type:id:order_type')
+                            }}
                         </div>
                     </div>
                     <div class="clearfix"></div>
@@ -167,7 +172,7 @@
                         </label>
 
                         <div class="col-md-8">
-                            {!! SiteHelpers::gridDisplayView($row->status_id,'status_id','1:orders:id:status_id') !!}
+                            {!! SiteHelpers::gridDisplayView($row->status_id,'status_id','1:order_status:id:status') !!}
                         </div>
                     </div>
                     <div class="clearfix"></div>
@@ -189,7 +194,7 @@
 
                         <div class="col-md-8">
                             <td> {!!
-                                SiteHelpers::gridDisplayView($row->freight_id,'freight_id','1:vendor:id:vendor_name')
+                                SiteHelpers::gridDisplayView($row->freight_id,'freight_id','1:freight:id:freight_type')
                                 !!}
                             </td>
                         </div>
@@ -210,7 +215,8 @@
                         </label>
 
                         <div class="col-md-8">
-                            {{ $row->warranty }}
+                          {{  SiteHelpers::gridDisplayView($row->warranty,'warranty','1:yes_no:id:yesno') }}
+
                         </div>
                     </div>
                     <div class="clearfix"></div>
@@ -228,9 +234,15 @@
                         <label class="label-control col-md-4">
                             {{ SiteHelpers::activeLang('Quantity', (isset($fields['quantity']['language'])? $fields['quantity']['language'] : array())) }}
                         </label>
-
-                        <div class="col-md-8">
-                            {{ $row->quantity }}
+<?php
+                            $quantity=0;
+for($i=0; $i < count($order_data['orderQtyArray']);$i++)
+                            {
+                                $quantity += $order_data['orderQtyArray'][$i];
+                            }
+?>
+                        <div class="col-md-8" id="quantity">
+                            {{ $quantity }}
                         </div>
                     </div>
                     <div class="clearfix"></div>
@@ -240,7 +252,8 @@
                         </label>
 
                         <div class="col-md-8">
-                            {{ $row->new_format }}
+                            {!! SiteHelpers::gridDisplayView($row->new_format,'new_format','1:yes_no:id:yesno') !!}
+
                         </div>
                     </div>
                     <div class="clearfix"></div>
@@ -260,7 +273,8 @@
                         </label>
 
                         <div class="col-md-8">
-                            {{ $row->added_to_inventory }}
+                            {!! SiteHelpers::gridDisplayView( $row->added_to_inventory,'added_to_inventory','1:yes_no:id:yesno') !!}
+
                         </div>
                     </div>
                     <div class="clearfix"></div>
