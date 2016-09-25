@@ -241,7 +241,7 @@ $(document).ready(function() {
         $("#location_id").jCombo("{{ URL::to('sbticket/comboselect?filter=location:id:location_name') }}",
         {  selected_value : '{{ $row["location_id"] }}' });
         
-        $("#game_id").jCombo("{{ URL::to('sbticket/comboselect?filter=game:id:game_name') }}&parent=location_id:",
+        $("#game_id").jCombo("{{ URL::to('sbticket/comboselect?filter=game:id:game_name') }}&limit=where:game_name:!=:''&parent=location_id:",
         {  parent: '#location_id', selected_value : '{{ $row["game_id"] }}' });
         
         $("#department_id").jCombo("{{ URL::to('sbticket/comboselect?filter=departments:id:name') }}",
