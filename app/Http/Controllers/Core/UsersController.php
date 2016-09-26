@@ -308,8 +308,8 @@ class UsersController extends Controller
 
         $this->data['id'] = $id;
 
-        $this->data['modules'] 		= \DB::table('tb_module')->where('module_type','!=','core')->get();
-        $this->data['pages'] 		= \DB::select(" SELECT * FROM tb_pages ");
+        $this->data['modules'] 		= \DB::table('tb_module')->where('module_type','!=','core')->orderby('module_name')->get();
+        $this->data['pages'] 		= \DB::select(" SELECT * FROM tb_pages order by alias");
         return view('core.users.form', $this->data);
     }
 
@@ -375,7 +375,10 @@ class UsersController extends Controller
 
     function postSave(Request $request, $id = 0)
     {
-
+        $form_data['date'] = date('Y-m-d');
+        $form_data['last_login'] = date('Y-m-d');
+        $form_data['created_at'] = date('Y-m-d');
+        $form_data['updated_at'] = date('Y-m-d');
         $rules = $this->validateForm();
         if ($request->input('id') == '') {
             $rules['password'] = 'required|between:6,12';

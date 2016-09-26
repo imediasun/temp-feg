@@ -4,7 +4,7 @@
     <div class="col-md-4">
         <h3>Narrow Your Search</h3>
 
-        <?php $opts = array("active" => "Active", 'inactive' => "IN Active", 'all' => "All"); ?>
+        <?php $opts = array("active" => "Active", 'inactive' => "Inactive", 'all' => "All"); ?>
         <select name="activ_inactive_all" class=" select3" id="active_inactive">
             @foreach($opts as $opt => $title)
                 <option @if($opt == \Session::get('active_inactive')) selected
@@ -21,9 +21,9 @@
 
 <div class="row m-b">
 </div>
-<div class="row m-b">
+<div class="row m-b" style=margin-bottom:4px;">
 
-    <div class="col-md-5" style="margin-top:7px;">
+    <div class="col-md-6" style="margin-top:7px;">
 
         <a href="{{ URL::to( $pageModule .'/search') }}" class="btn btn-sm btn-white"
            onclick="SximoModal(this.href,'Advanced Search'); return false;"><i class="fa fa-search"></i>Advanced Search</a>
@@ -43,7 +43,7 @@
             @endif
         @endif
     </div>
-    <div class="col-md-7">
+    <div class="col-md-6 style=float:right;">
         <h3 class="pull-right"> <small><a  href="{{ URL::to('./shopfegrequeststore/new-graphic-request') }}" target="_blank" class="btn btn-primary">Request Custom Graphic</a></small></h3>
 
     </div>

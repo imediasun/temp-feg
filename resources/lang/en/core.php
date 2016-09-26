@@ -108,7 +108,8 @@ return array(
 	"sb_save"					=> "Save",
 	"sb_apply"					=> "Apply Change(s)",
 	"sb_submit"					=> "Submit",
-	"sb_cancel"					=> "Cancel",	
+	"sb_cancel"					=> "Cancel",
+    "sb_save_send"               => "Save&Send",
 	
 /* button */
 	"btn_back"						=> "Back",	

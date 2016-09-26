@@ -231,7 +231,7 @@
                         </td>
                         <td>
                             <textarea name='item[]' placeholder='Item  Description' id="item"
-                                      class='form-control item' cols="30" rows="4" maxlength="225" required></textarea>
+                                      class='form-control item' cols="30" rows="4" maxlength="225" ></textarea>
                         </td>
 
                         <td><br/> <input type='number' name='price[]' placeholder='Unit Price' id="price"
@@ -245,12 +245,12 @@
 
 
                         <td>
-                            <br/> <input type='number' name='retail_price[]' placeholder='Retail Price' id="retail_price"
-                                         class='form-control' min="0.00" step=".01" value="0.00"
-                                         required></td>
+                             <br/> <input type='number' name='retail_price[]' placeholder='Retail Price' id="retail_price"
+                                               class='form-control test' min="0.00" step=".01" value="0.00"
+                                               required></td>
                         </td>
                         <td><br/> <input type='number' name='qty[]' placeholder='Quantity'
-                                         class='form-control qty' min="1" step="1" id="qty" value="00"
+                                         class='form-control qty' min="0" step="1" id="qty" value="00"
                                          required></td>
                         <td class="game" style="display:none"><br/>
                             <select name='game[]' id='game_0' class='game  form-control'>
@@ -350,7 +350,7 @@
             hideShowAltLocation();
             $("#item_num").val('1');
             $("#submit_btn").hide();
-
+$('.test').val(0.00);
 
             $('#icon').click(function(){
                 $(document).ready(function(){
@@ -425,19 +425,55 @@
 
                 $('input[name^=item_num]').eq(i).val(i + 1);
                 $('textarea[name^=item]').eq(i).val(order_description_array[i]);
-                $('input[name^=price]').eq(i).val(order_price_array[i]);
-                $('input[name^=qty]').eq(i).val(order_qty_array[i]);
-                $('input[name^=product_id]').eq(i).val(order_product_id_array[i]);
+                if(order_price_array[i] == "" || order_price_array[i] == null ) {
+                    $('input[name^=price]').eq(i).val(0.00);
+                }
+                else{
+                    $('input[name^=price]').eq(i).val(order_price_array[i]);
+
+                }
+                if(order_qty_array[i] == "" || order_qty_array[i] == null) {
+                    $('input[name^=qty]').eq(i).val(00);
+                }
+                else{
+                    $('input[name^=qty]').eq(i).val(order_qty_array[i]);
+
+                }
+                if(order_product_id_array[i] == "" || order_product_id_array[i]== null)
+                {
+                    $('input[name^=product_id]').eq(i).val(0);
+                }
+                else
+                {
+                    $('input[name^=product_id]').eq(i).val(order_product_id_array[i]);
+
+                }
                 $('input[name^=request_id]').eq(i).val(order_request_id_array[i]);
                 $('input[name^=item_name]').eq(i).val(item_name_array[i]);
-                $('input[name^=case_price]').eq(i).val(item_case_price[i]);
-                $('input[name^=retail_price]').eq(i).val(item_retail_price[i]);
+                if(item_case_price[i] == "" || item_case_price[i] == null)
+                {
+                    $('input[name^=case_price]').eq(i).val(0.00);
+                }
+                else
+                {
+                    $('input[name^=case_price]').eq(i).val(item_case_price[i]);
 
-                    if (i < requests_item_count - 2) //COMPENSATE FOR BEGINNING WITH ONE INPUT
-               {
+                }
+                if(item_retail_price[i] == "" || item_retail_price[i] == null) {
+
+                    $('input[name^=retail_price]').eq(i).val(0.00);
+                }
+                else
+                {
+                    $('input[name^=retail_price]').eq(i).val(item_retail_price[i]);
+
+                }
+                    if (i < requests_item_count - 1) //COMPENSATE FOR BEGINNING WITH ONE INPUT
+        {
 
                     $("#add_new_item").trigger("click");
                 }
+
             }
             $(".calculate").keyup(function () {
                 calculateSum();
@@ -455,13 +491,7 @@
 
             if (data.status == 'success') {
                 var url = location.href;
-                if (url.indexOf('submitorder') != -1) {
-                    location.href = "{{ url() }}/order";
-                }
-                else {
-                    ajaxViewClose('#{{ $pageModule }}');
-                    ajaxFilter('#{{ $pageModule }}', '{{ $pageUrl }}/data');
-                }
+                location.href = "{{ url() }}/order/save-or-send-email";
                 notyMessage(data.message);
                 $('#sximo-modal').modal('hide');
             } else {
