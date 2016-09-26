@@ -67,7 +67,7 @@
             fancyTitle =  title + '<br />' + deleteLink;
             
         $(this).fancybox({
-            "title" : fancyTitle;
+            "title" : fancyTitle
         });
     });
     function confirmDelete(id,title)
