@@ -2430,3 +2430,10 @@ li.L9 {
     position:relative !important;
     top:3px;
 }
+
+#sidemenu.nav .nav > li > a i {
+  margin-right: 0;
+}
+#sidemenu.nav .nav li > a {
+  margin-left: 6px;
+}
