@@ -64,12 +64,12 @@
                 href=$this.attr('href'),
                 title=$this.attr('title'),
                 deleteLink = '<a href="#" onclick="confirmDelete('+ id +','+title+')" >Delete</a>',
-                fancyTitle =  title + '<br />' + deleteLink;
+                fancyTitle =  '<div>' + title + '<br />' + deleteLink + '</div>';
 
             $this.fancybox({
                 "title" : fancyTitle
             });
-            console.log(fancyTitle);
+           
         });
     });
     function confirmDelete(id,title)
