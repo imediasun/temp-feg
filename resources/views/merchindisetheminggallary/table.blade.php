@@ -57,7 +57,7 @@ $(document).ready(function() {
             });
         });        
     }             
-});
+
     $(".fancybox").each(function() {
         var elm = this,
             $this = $(elm),
@@ -72,6 +72,7 @@ $(document).ready(function() {
         });
         console.log();
     });
+});
 function confirmDelete(id,title)
 {
     if(confirm('Are you sure you want to delete '+title))
