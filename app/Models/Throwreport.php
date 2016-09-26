@@ -4,49 +4,78 @@ use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use Request, Log;
 class throwreport extends Sximo  {
-	
-	protected $table = 'game';
-	protected $primaryKey = 'id';
 
-	public function __construct() {
-		parent::__construct();
-		
-	}
+    protected $table = 'merch_throws';
+    protected $primaryKey = 'id';
 
-	public static function querySelect(  ){
-		
-		return "SELECT game_earnings.date_start,game_earnings.date_end,SUM(std_actual_cash) AS revenue_total,products.item_description,products.retail_price,game.*
-                FROM game 
-                JOIN products ON game.product_id = products.id
-                JOIN game_earnings ON game_earnings.game_id = game.id ";
-	}
+    public function __construct() {
+        parent::__construct();
 
-	public static function queryWhere($start_date = '', $end_date = ''){
+    }
+
+    public static function querySelect(  ){
+
+        return "SELECT merch_throws.*, game.game_name, products.item_description FROM  merch_throws
+                       join game on merch_throws.game_id = game.id
+                       join products on merch_throws.product_id_1 = products.id ";
+    }
+
+    public static function queryWhere(){
 
         $location= \Session::get('selected_location');
-        if(!empty($start_date) && !empty($end_date))
-            return "WHERE   game_earnings.loc_id =$location and  date(game_earnings.date_start) BETWEEN  '$start_date' and '$end_date'";
+        $previous_week = strtotime("-1 week +1 day");
+        $start_week = strtotime("last sunday midnight",$previous_week);
+        $end_week = strtotime("next saturday",$start_week);
+        $filters = self::getSearchFilters();
+        $dateStart = @$filters['date_start'];
+        $dateEnd = @$filters['date_end'];
+        $dateStart_expression = "";
+        if(!empty($dateStart))
+        {
+            $dateStart = date("Y-m-d", strtotime($dateStart));
+            $dateStart_expression = "  AND merch_throws.date_start  >= '$dateStart'";
+        }
+        else
+        {
+            $dateStart = self::getStartDayOfWeek();
+            $dateStart = date("Y-m-d", strtotime($dateStart));
+            $dateStart_expression = "  AND merch_throws.date_start  >= '$dateStart'";
 
-        return "WHERE   game_earnings.loc_id =$location ";
+        }
+        $dateEnd_expression = "";
+        if(!empty($dateEnd))
+        {
+            $dateEnd = date("Y-m-d", strtotime($dateEnd));
+            $dateEnd_expression = "  AND merch_throws.date_end  <= '$dateEnd'";
+        }
+        else
+        {
+            $dateEnd = self::getEndDayOfWeek();
+            $dateEnd = date("Y-m-d", strtotime($dateEnd));
+            $dateEnd_expression = "  AND merch_throws.date_end  <= '$dateEnd'";
+        }
+
+            $where = " WHERE   merch_throws.location_id =$location and flag = 0 $dateStart_expression $dateEnd_expression ";
+        return $where;
 
 
 
         //@todo get get location id from session
         //@todo get week range date from post or get parameters
-		/*
-		 * actual query is not giving any result
-		return "  WHERE location_id = 2012 AND game_type_id = 3
+        /*
+         * actual query is not giving any result
+        return "  WHERE location_id = 2012 AND game_type_id = 3
                   AND DATE(date_start) >= CURRENT_DATE AND DATE(date_end)<= CURRENT_DATE+INTERVAL 7 DAY ";
-		*/
-		//temp query to get results
-      /*  return "  WHERE location_id = 2012 AND game_type_id = 3
-                  AND DATE(date_start) >= '2015-09-06' AND DATE(date_end)<= '2015-09-12' ";  */
-	}
-	
-	public static function queryGroup(){
-		return " GROUP BY game.id ";
-	}
-	
+        */
+        //temp query to get results
+        /*  return "  WHERE location_id = 2012 AND game_type_id = 3
+                    AND DATE(date_start) >= '2015-09-06' AND DATE(date_end)<= '2015-09-12' ";  */
+    }
+
+    public static function queryGroup(){
+
+    }
+
     public static function getSearchFilters() {
         $finalFilter = array();
         if (isset($_GET['search'])) {
@@ -74,93 +103,20 @@ class throwreport extends Sximo  {
     }
 
 
-    public static function getRows($args, $cond = null, $start_date = '', $end_date = '') {
-        $table = with(new static)->table;
-        $key = with(new static)->primaryKey;
+    public static function getStartDayOfWeek()
+    {
+        $previous_week = strtotime("-1 week +1 day");
+        $start_week = strtotime("last sunday midnight",$previous_week);
+        $dateStart = date("m/d/Y",  $start_week);
+        return $dateStart;
+    }
 
-        extract(array_merge(array(
-            'page' => '0',
-            'limit' => '0',
-            'sort' => '',
-            'order' => '',
-            'params' => '',
-            'global' => 1
-        ), $args));
-
-
-        $orderConditional = ($sort != '' && $order != '') ? " ORDER BY {$sort} {$order} " : '';
-
-        // Update permission global / own access new ver 1.1
-        $table = with(new static)->table;
-        if ($global == 0)
-            $params .= " AND {$table}.entry_by ='" . \Session::get('uid') . "'";
-        // End Update permission global / own access new ver 1.1
-
-        $rows = array();
-        $select = self::querySelect();
-
-        /*
-
-        */
-        $createdFlag = false;
-
-        if ($cond != null) {
-            $select .= self::queryWhere($cond);
-        }
-        else {
-            if($start_date != '' && $end_date != '')
-                $select .= self::queryWhere($start_date, $end_date);
-            else
-                $select .= self::queryWhere();
-        }
-
-        if(!empty($createdFrom)){
-            $select .= " AND created_at BETWEEN '$createdFrom' AND '$createdTo'";
-            $createdFlag = true;
-        }
-
-        if(!empty($updatedFrom)){
-
-            if($createdFlag){
-                $select .= " OR updated_at BETWEEN '$updatedFrom' AND '$updatedTo'";
-            }
-            else{
-                $select .= " AND updated_at BETWEEN '$updatedFrom' AND '$updatedTo'";
-            }
-
-        }
-
-        if(!empty($order_type_id)){
-            $select .= " AND order_type_id='$order_type_id'";
-        }
-        if(!empty($status_id)){
-            $select .= " AND status_id='$status_id'";
-        }
-
-        Log::info("Total Query : ".$select . " {$params} " . self::queryGroup() . " {$orderConditional}");
-        $counter_select =\DB::select($select . " {$params} " . self::queryGroup() . " {$orderConditional}");
-        $total= count($counter_select);
-        if($table=="img_uploads")
-        {
-            $total="";
-        }
-
-        $offset = ($page - 1) * $limit;
-        if ($offset >= $total) {
-            $page = ceil($total/$limit);
-            $offset = ($page-1) * $limit ;
-        }
-        $limitConditional = ($page != 0 && $limit != 0) ? "LIMIT  $offset , $limit" : '';
-
-        Log::info("Query : ".$select . " {$params} " . self::queryGroup() . " {$orderConditional}  {$limitConditional} ");
-        $result = \DB::select($select . " {$params} " . self::queryGroup() . " {$orderConditional}  {$limitConditional} ");
-
-        if ($key == '') {
-            $key = '*';
-        } else {
-            $key = $table . "." . $key;
-        }
-
-        return $results = array('rows' => $result, 'total' => $total);
+    public static function getEndDayOfWeek()
+    {
+        $previous_week = strtotime("-1 week +1 day");
+        $start_week = strtotime("last sunday midnight",$previous_week);
+        $end_week = strtotime("next saturday",$start_week);
+        $dateEnd =  date("m/d/Y",$end_week);
+        return $dateEnd;
     }
 }
