@@ -2431,7 +2431,7 @@ li.L9 {
     top:3px;
 }
 
-#sidemenu.nav > li > a i {
+#sidemenu.nav .nav > li > a i {
   margin-right: 0;
 }
 #sidemenu.nav .nav li > a {

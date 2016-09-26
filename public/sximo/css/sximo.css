@@ -2482,10 +2482,10 @@ table.table-striped tr th
 #col-config
 {
     position:relative !important;
-  top: 3px;
+    top: 3px;
 }
 
-#sidemenu.nav > li > a i {
+#sidemenu.nav .nav > li > a i {
   margin-right: 0;
 }
 #sidemenu.nav .nav li > a {
