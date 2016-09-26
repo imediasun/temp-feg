@@ -19,8 +19,14 @@ class merchindisetheminggallary extends Sximo  {
 	}	
 
 	public static function queryWhere(  ){
+        $qw = " WHERE image_category = 'mer'";
+		$filters = self::getSearchFilters(array('theme_name'));
+        extract($filters);        
 		
-		return  ' WHERE image_category = "mer"';
+        if (!empty($theme_name)) {
+            $qw .= " AND theme_name LIKE '%$theme_name%' ";
+        }
+        return  $qw;
 	}
 	
 	public static function queryGroup(){

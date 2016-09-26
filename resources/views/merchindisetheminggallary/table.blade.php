@@ -58,27 +58,24 @@ $(document).ready(function() {
         });        
     }             
 });
-$(".fancybox").each(function() {
-    var id=$(this).data('id');
-    var href=$(this).attr('href');
-    var title=this.title;
-    var title ="'"+title+"'";
-    var data=[id,title];
-    if (this.title) {
-        // New line
-        this.title += '<br />';
-        // Add tweet button
-        this.title += '<a href="#" onclick="confirmDelete('+ id +','+title+')" >Delete</a> ';
-    }
-});
+    $(".fancybox").each(function() {
+        var elm = this,
+            $this = $(elm),
+            id=$this.data('id'),
+            href=$this.attr('href'),
+            title=$this.attr('title'),
+            deleteLink = '<a href="#" onclick="confirmDelete('+ id +','+title+')" >Delete</a>',
+            fancyTitle =  title + '<br />' + deleteLink;
+            
+        $(this).fancybox({
+            "title" : fancyTitle;
+        });
+    });
 function confirmDelete(id,title)
 {
     if(confirm('Are you sure you want to delete '+title))
     {
         location.href="{{ url() }}/merchindisetheminggallary/delete/"+id;
-    }
-    else
-    {
     }
 }
 </script>

@@ -19,8 +19,14 @@ class redemptioncountergallary extends Sximo  {
     }
 
     public static function queryWhere(  ){
-
-        return  ' WHERE image_category = "red"';
+        $qw = " WHERE image_category = 'red'";
+		$filters = self::getSearchFilters(array('theme_name'));
+        extract($filters);        
+		
+        if (!empty($theme_name)) {
+            $qw .= " AND theme_name LIKE '%$theme_name%' ";
+        }
+        return  $qw;
 	}
 	
 	public static function queryGroup(){
