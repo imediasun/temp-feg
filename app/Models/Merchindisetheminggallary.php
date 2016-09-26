@@ -18,7 +18,7 @@ class merchindisetheminggallary extends Sximo  {
 									 FROM img_uploads I LEFT JOIN location L on L.id = I.loc_id ';
 	}	
 
-	public static function queryWhere(  ){
+	public static function queryWhere($cond = null){
         $qw = " WHERE I.image_category = 'mer'";
 		$filters = self::getSearchFilters(array('theme_name'));
         extract($filters);        
