@@ -20,7 +20,7 @@ class redemptioncountergallary extends Sximo  {
 
     public static function queryWhere($cond = null){
         $qw = " WHERE I.image_category = 'red'";
-		$filters = self::getSearchFilters(array('theme_name'));
+		$filters = self::getSearchFilters(array('theme_name' => ''));
         extract($filters);        
 		
         if (!empty($theme_name)) {
