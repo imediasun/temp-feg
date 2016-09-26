@@ -4,6 +4,22 @@
         <h5> <i class="fa fa-table"></i>  {{ $pageTitle }}</h5>
     </div>
     <div class="sbox-content">
+        @if($setting['usesimplesearch']!='false')     
+        <?php $simpleSearchForm = SiteHelpers::configureSimpleSearchForm($tableForm); ?>
+        @if(!empty($simpleSearchForm))  
+        <div class="simpleSearchContainer clearfix">
+            @foreach ($simpleSearchForm as $t)
+                <div class="sscol {{ $t['widthClass'] }}" style="{{ $t['widthStyle'] }}">
+                    {!! SiteHelpers::activeLang($t['label'],(isset($t['language'])? $t['language'] : array())) !!}
+                    {!! SiteHelpers::transForm($t['field'] , $simpleSearchForm) !!}                    
+                </div>                        
+            @endforeach		
+            <div class="sscol-submit"><br/>
+                <button type="button" name="search" class="doSimpleSearch btn btn-sm btn-primary"> Search </button>		
+            </div>
+        </div>
+        @endif
+        @endif        
         @include( $pageModule.'/toolbar',['config_id'=>$config_id,'colconfigs' => SiteHelpers::getRequiredConfigs($module_id)])
 
         <div>
@@ -28,6 +44,18 @@
                 echo AjaxHelpers::htmlExpandGrid();
             endif;
          ?>
+        var simpleSearch = $('.simpleSearchContainer');
+        if (simpleSearch.length) {
+            initiateSearchFormFields(simpleSearch);
+            simpleSearch.find('.doSimpleSearch').click(function(event){
+                performSimpleSearch.call($(this), {
+                    moduleID: '#{{ $pageModule }}', 
+                    url: "{{ $pageUrl }}", 
+                    event: event,
+                    container: simpleSearch
+                });
+            });        
+        }                 
     });
     $(".fancybox").each(function() {
         var id=$(this).data('id');
