@@ -67,7 +67,7 @@
             fancyTitle =  title + '<br />' + deleteLink;
             
         $this.fancybox({
-            "title" : 
+            "title" : fancyTitle
         });
         console.log(fancyTitle);
     });
