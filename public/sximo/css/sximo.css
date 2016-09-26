@@ -2484,3 +2484,10 @@ table.table-striped tr th
     position:relative !important;
   top: 3px;
 }
+
+#sidemenu.nav > li > a i {
+  margin-right: 0;
+}
+#sidemenu.nav .nav li > a {
+  margin-right: 6px;
+}
