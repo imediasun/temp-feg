@@ -263,8 +263,8 @@
                         </td>
                         <input type='hidden' name='request_id[]' id="request_id">
                         <td><br/><input type="text" name="total" value="" readonly class="form-control"/></td>
-                        <td><br/> <a onclick=" $(this).parents('.clonedInput').remove(); calculateSum();decreaseCounter(); return false"
-                                     href="#" class="remove btn btn-xs btn-danger">-</a>
+                        <td><br/> <button onclick=" $(this).parents('.clonedInput').remove(); calculateSum();decreaseCounter(); return false"
+                                      class="remove btn btn-xs btn-danger">-</button>
                             <input type="hidden" name="counter[]">
                         </td>
                     </tr>
