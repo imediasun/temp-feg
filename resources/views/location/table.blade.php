@@ -88,7 +88,9 @@ if (!$colconfigs) {
                     @if($access['is_add'] =='1' && $setting['inline']=='true')
                         <tr id="form-0">
                             <td> #</td>
+                            @if($setting['disableactioncheckbox']=='false')
                             <td></td>
+                            @endif
                             @if($setting['view-method']=='expand')
                                 <td></td> @endif
                             @foreach ($tableGrid as $t)
@@ -114,9 +116,12 @@ if (!$colconfigs) {
                     ?>
 
                     <tr class="editable" id="form-{{ $row->id }}">
+                        @if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
                         <td class="number"> <?php echo ++$i;?>  </td>
+                        @endif
+                        @if($setting['disableactioncheckbox']=='false')
                         <td><input type="checkbox" class="ids" name="ids[]" value="<?php echo $row->id;?>"/></td>
-
+                        @endif
                         @if($setting['view-method']=='expand')
                             <td><a href="javascript:void(0)" class="expandable" rel="#row-{{ $row->id }}"
                                    data-url="{{ url('location/show/'.$id) }}"><i class="fa fa-plus "></i></a></td>
