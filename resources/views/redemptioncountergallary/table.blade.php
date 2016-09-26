@@ -66,9 +66,10 @@
             deleteLink = '<a href="#" onclick="confirmDelete('+ id +','+title+')" >Delete</a>',
             fancyTitle =  title + '<br />' + deleteLink;
             
-        $(this).fancybox({
-            "title" : fancyTitle
+        $this.fancybox({
+            "title" : 
         });
+        console.log(fancyTitle);
     });
     function confirmDelete(id,title)
     {
