@@ -70,7 +70,7 @@ $(document).ready(function() {
         $this.fancybox({
             "title" : fancyTitle
         });
-        console.log();
+        console.log(fancyTitle);
     });
 });
 function confirmDelete(id,title)
