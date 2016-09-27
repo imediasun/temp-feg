@@ -739,9 +739,9 @@ class SiteHelpers
         $type = '';
         $bulk = ($bulk == true ? '[]' : '');
         $mandatory = '';
-        $selectMultiple = "";
-        $simpleSearchOptions = '';
+        $selectMultiple = "";        
         foreach ($forms as $f) {
+            $simpleSearchOptions = '';
             $hasSimpleSearch = $f['simplesearch'] == 1;
             if ($f['field'] == $field && ($f['search'] == 1 || $hasSimpleSearch)) {
                 $type = ($f['type'] != 'file' ? $f['type'] : '');
@@ -759,14 +759,14 @@ class SiteHelpers
                 } else {
                     $mandatory = '';
                 }
-            }
-            if ($hasSimpleSearch) {
-                $simpleSearchOptions .= " data-simpleSearch='1' ";
-                $simpleSearchOperator = 'equal';
-                if (isset($f['simplesearchoperator'])) {
-                    $simpleSearchOperator = $f['simplesearchoperator'];
-                }
-                $simpleSearchOptions .= " data-simpleSearchOperator='{$simpleSearchOperator}' ";
+                if ($hasSimpleSearch) {
+                    $simpleSearchOptions .= " data-simpleSearch='1' ";
+                    $simpleSearchOperator = 'equal';
+                    if (isset($f['simplesearchoperator'])) {
+                        $simpleSearchOperator = $f['simplesearchoperator'];
+                    }
+                    $simpleSearchOptions .= " data-simpleSearchOperator='{$simpleSearchOperator}' ";
+                }                
             }
         }
 
