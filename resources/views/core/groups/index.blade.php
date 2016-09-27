@@ -118,7 +118,7 @@ $(document).ready(function(){
 	});
 	
     var simpleSearch = $('.simpleSearchContainer'),
-        ajaxSerachMode = <?php echo $searchMode =='ajax' ?'true':'false';?>;
+        ajaxMode = false;
         
     if (simpleSearch.length) {
         initiateSearchFormFields(simpleSearch);
@@ -127,13 +127,13 @@ $(document).ready(function(){
                 moduleID: '#{{ $pageModule }}',
                 url: "{{ $pageUrl }}",
                 event: event,
-                ajaxSearch: ajaxSerachMode,
+                ajaxSearch: ajaxMode,
                 container: simpleSearch
             });
         });
     }
     
-    initDataGrid('{{ $pageModule }}', '{{ $pageUrl }}', {useAjax: ajaxSerachMode});    
+    initDataGrid('{{ $pageModule }}', '{{ $pageUrl }}', {useAjax: ajaxMode});    
 });	
 </script>		
 @stop
