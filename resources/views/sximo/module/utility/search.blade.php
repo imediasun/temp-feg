@@ -6,7 +6,7 @@
 	@if($t['search'] =='1')
 		<tr id="{{ $t['field'] }}" class="fieldsearch">
 			<td>{!! SiteHelpers::activeLang($t['label'], (isset($t['language']) ? $t['language'] : array())) !!} </td>
-			<td width="30">
+			<td width="120">
 			<select id="{{ $t['field']}}_operate" @if($t['type'] == 'select') disabled @endif class="form-control oper" name="operate" onchange="changeSearchOperator(this.value , '{{ $t['field']}}', this,'{{ $t['type'] }}')">
 				<option value="equal"> = </option>
                 @if($pageModule != "merchandisebudget" )
@@ -24,14 +24,14 @@
 
 			</select>
 			</td>
-			<td id="field_{{ $t['field']}}">{!! SiteHelpers::transForm($t['field'] , $tableForm) !!}</td>
+			<td id="field_{{ $t['field']}}" width="50%">{!! SiteHelpers::transForm($t['field'] , $tableForm) !!}</td>
 		
 		</tr>
 	
 	@endif
 @endforeach
 		<tr>
-			<td colspan="3" class="right-align"><button type="button" name="search" class="doSearch btn btn-sm btn-primary"> Search </button></td>		
+			<td colspan="3"><button type="button" name="search" class="doSearch btn btn-sm btn-primary pull-right"> Search </button></td>		
 		</tr>
 	</tbody>     
 	</table>
