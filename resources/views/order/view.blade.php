@@ -1,3 +1,4 @@
+
 @if($setting['view-method'] =='native')
     <div class="sbox">
 
@@ -106,8 +107,8 @@
                         </label>
 
                         <div class="col-md-8">
-                          @if(isset($date_received))
-                            {{  $received_date = date("m/d/Y", strtotime($received_date))  }}
+                          @if(isset($order_data['received_date']))
+                            {{  $order_data['received_date'] = date("m/d/Y", strtotime($order_data['received_date']))  }}
 
 
                               @endif
@@ -120,7 +121,7 @@
                         </label>
 
                         <div class="col-md-8">
-                            {!! SiteHelpers::gridDisplayView($row->received_by,'received_by','1:users:id:username') !!}
+                            {!! SiteHelpers::gridDisplayView($order_data['received_by'],'received_by','1:users:id:username') !!}
 
                         </div>
                     </div>
