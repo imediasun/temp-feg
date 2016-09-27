@@ -69,10 +69,8 @@
                 title=$this.attr('title'),
                 deleteLink = '<a href="#" onclick="confirmDelete('+ id +','+title+')" >Delete</a>',
                 fancyTitle =  '<div>' + title + '<br />' + deleteLink + '</div>';
-
-            $this.fancybox({
-                "title" : fancyTitle
-            });
+                
+            elm.data('fancybox-title', fancyTitle);
            
         });
     });
