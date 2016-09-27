@@ -79,6 +79,7 @@ if (!$colconfigs) {
                                 }
                             endif;
                         endforeach; ?>
+
                         @if($setting['disablerowactions']=='false')
                             <th width="70"><?php echo Lang::get('core.btn_action') ;?></th>
                         @endif
@@ -164,6 +165,9 @@ if (!$colconfigs) {
                         endif;
                         endforeach;
                         ?>
+                            <td></td>
+                            <td></td>
+                            <td></td>
                         <td data-values="action" data-key="<?php echo $row->id;?>">
                             {!! AjaxHelpers::buttonAction('location',$access,$id ,$setting) !!}
                             {!! AjaxHelpers::buttonActionInline($row->id,'id') !!}
