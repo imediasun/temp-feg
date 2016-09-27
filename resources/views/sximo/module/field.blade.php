@@ -291,14 +291,24 @@ $(document).ready(function(){
 		<input name="extend_class" type="text" id="extend_class" class="form-control input-sm" value="<?php echo $f['option']['extend_class'];?>"/>
 	 </div> 
   </div>   
-  
+   
   <div class="form-group " style="display:none;">
     <label for="ipt" class=" control-label col-md-4">Html Attribute</label>
 	<div class="col-md-8">
 		<textarea name="attribute" id="attribute" class="form-control input-sm"><?php echo $f['option']['attribute'];?></textarea>
 	 </div> 
   </div>  
-  
+    
+   <div class="form-group" @if(empty($f['simplesearch']) || $f['simplesearch'] != 1) style="display:none;" @endif;>
+    <label for="simplesearchoperator" class=" control-label col-md-4">Simple Search Operator</label>
+	<div class="col-md-8">
+        <?php 
+            $simplesearchoperator = isset($f['simplesearchoperator']) ? $f['simplesearchoperator'] : 'equal';
+        ?>
+		<input name="simplesearchoperator" type="text" id="simplesearchoperator" class="form-control input-sm" value="<?php echo $simplesearchoperator;?>"/>
+	 </div> 
+  </div>   
+    
   <div class="form-group">
     <label for="ipt" class=" control-label col-md-4"></label>
 	<div class="col-md-8">

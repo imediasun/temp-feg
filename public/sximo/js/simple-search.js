@@ -15,7 +15,7 @@ function performSimpleSearch(params) {
         var elm = this,
             valueField = $(elm),                
             fieldName = valueField.attr('name'),                
-            operate = "equal",
+            operate = valueField.attr('data-simpleSearchOperator') || "equal",
             value = valueField.val(),
             isValueDate = valueField.hasClass('date'),
             isValueDateTime = valueField.hasClass('datetime');
