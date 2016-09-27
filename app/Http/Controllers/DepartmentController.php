@@ -82,7 +82,7 @@ class DepartmentController extends Controller {
 		// Build pagination setting
 		$page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;
 
-		if(count($results['rows']) == $results['total']){
+		if(count($results['rows']) == $results['total'] && $results['total']!=0){
 			$params['limit'] = $results['total'];
 		}
 
