@@ -65,6 +65,9 @@ function initDataGrid(module, url, options) {
     if (!options) {
         options = {};
     }
+    
+    module = module.replace(/[^\w-]/g, '');
+    
     var table = $('table#'+module+'Table'),
         sortableCols = table.find('thead tr th.dgcsortable');        
     
