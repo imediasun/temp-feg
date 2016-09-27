@@ -95,8 +95,13 @@
     <table id="coreusersTable" class="table table-striped datagrid" style="table-layout: fixed;width:100%">
         <thead>
 			<tr>
+
+				@if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
 				<th class="number" width="30"> No </th>
-				<th width="60"> <input type="checkbox" class="checkall" /></th>
+				@endif
+					@if($setting['disableactioncheckbox']=='false')
+						<th width="50"> <input type="checkbox" class="checkall" /></th>
+					@endif
 
                 <?php foreach ($tableGrid as $t) :
                     if($t['view'] =='1'):
@@ -141,9 +146,13 @@
             @foreach ($rowData as $row)
 
                 <tr>
+					@if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
 					<td width="30"> {{ ++$i }} </td>
-					<td width="50"><input type="checkbox" class="ids" name="ids[]" value="{{ $row->id }}" />  </td>
+					@endif
 
+						@if($setting['disableactioncheckbox']=='false')
+					<td width="50"><input type="checkbox" class="ids" name="ids[]" value="{{ $row->id }}" />  </td>
+						@endif
 				 @foreach ($tableGrid as $field)
 
 					 @if($field['view'] =='1')
@@ -244,7 +253,7 @@ $(document).ready(function(){
 
     var simpleSearch = $('.simpleSearchContainer'),
         ajaxMode = false;
-        
+
     if (simpleSearch.length) {
         initiateSearchFormFields(simpleSearch);
         simpleSearch.find('.doSimpleSearch').click(function(event){
@@ -257,7 +266,7 @@ $(document).ready(function(){
             });
         });
     }
-    
+
     initDataGrid('{{ $pageModule }}', '{{ $pageUrl }}', {useAjax: ajaxMode});
 });
 </script>

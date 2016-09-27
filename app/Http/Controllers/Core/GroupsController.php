@@ -63,7 +63,7 @@ class GroupsController extends Controller {
 		//$pagination = Paginator::make($results['rows'], $results['total'],$params['limit']);	
 		$pagination = new Paginator($results['rows'], $results['total'], $params['limit']);	
 		$pagination->setPath('groups');
-		
+        $this->data['param']		= $params;
 		$this->data['rowData']		= $results['rows'];
 		// Build Pagination 
 		$this->data['pagination']	= $pagination;
@@ -77,6 +77,7 @@ class GroupsController extends Controller {
 		$this->data['colspan'] 		= \SiteHelpers::viewColSpan($this->info['config']['grid']);		
 		// Group users permission
 		$this->data['access']		= $this->access;
+		$this->data['setting'] 		= $this->info['setting'];
 		// Detail from master if any
 		
 		// Master detail link if any 

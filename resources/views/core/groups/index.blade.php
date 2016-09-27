@@ -51,17 +51,43 @@
 	
 	 {!! Form::open(array('url'=>'core/groups/delete/', 'class'=>'form-horizontal' ,'id' =>'SximoTable' )) !!}
 	 <div class="table-responsive" style="min-height:300px;">
-    <table id="coregroupsTable" class="table table-striped table-width-auto">
+    <table id="coregroupsTable" class="table table-striped table-width-auto datagrid">
         <thead>
 			<tr>
+				@if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
 				<th class="number"> No </th>
+
+				@endif
+					@if($setting['disableactioncheckbox']=='false')
 				<th> <input type="checkbox" class="checkall" /></th>
-				
-				@foreach ($tableGrid as $t)
-					@if($t['view'] =='1')
-						<th>{{ $t['label'] }}</th>
 					@endif
-				@endforeach
+				<?php foreach ($tableGrid as $t) :
+					if($t['view'] =='1'):
+						$limited = isset($t['limited']) ? $t['limited'] :'';
+						if(SiteHelpers::filterColumn($limited ))
+						{
+							$sortBy = $param['sort'];
+							$orderBy = strtolower($param['order']);
+							$colField = $t['field'];
+							$colIsSortable = $t['sortable'] == '1';
+							$colIsSorted = $colIsSortable && $colField == $sortBy;
+							$colClass = $colIsSortable ? ' dgcsortable' : '';
+							$colClass .= $colIsSorted ? " dgcsorted dgcorder$orderBy" : '';
+							$th = '<th'.
+									' class="'.$colClass.'"'.
+									' data-field="'.$colField.'"'.
+									' data-sortable="'.$colIsSortable.'"'.
+									' data-sorted="'.($colIsSorted?1:0).'"'.
+									' data-sortedOrder="'.($colIsSorted?$orderBy:'').'"'.
+									' align="'.$t['align'].'"'.
+									' width="'.$t['width'].'"';
+							$th .= '>';
+							$th .= \SiteHelpers::activeLang($t['label'],(isset($t['language'])? $t['language'] : array()));
+							$th .= '</th>';
+							echo $th;
+						}
+					endif;
+				endforeach; ?>
 				<th width="70" >{{ Lang::get('core.btn_action') }}</th>
 			  </tr>
         </thead>
@@ -70,8 +96,13 @@
 						
             @foreach ($rowData as $row)
                 <tr>
+					@if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
 					<td> {{ ++$i }}</td>
-					<td><input type="checkbox" class="ids" name="id[]" value="{{ $row->group_id }}" /></td>									
+					@endif
+						@if($setting['disableactioncheckbox']=='false')
+
+					<td><input type="checkbox" class="ids" name="id[]" value="{{ $row->group_id }}" /></td>
+						@endif
 				 @foreach ($tableGrid as $field)
 					 @if($field['view'] =='1')
 					 <td>					 
