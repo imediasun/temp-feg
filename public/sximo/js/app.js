@@ -88,7 +88,7 @@ function initDataGrid(module, url, options) {
             reloadData('#'+module, url+'/data?colheadersort=1' + allAttr);
         }
         else {
-            window.location.href = url+'/data?colheadersort=1' + allAttr;
+            window.location.href = url+'?colheadersort=1' + allAttr;
         }            
         
         
