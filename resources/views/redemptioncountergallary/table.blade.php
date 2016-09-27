@@ -70,7 +70,7 @@
                 deleteLink = '<a href="#" onclick="confirmDelete('+ id +','+title+')" >Delete</a>',
                 fancyTitle =  '<div>' + title + '<br />' + deleteLink + '</div>';
                 
-            elm.data('fancybox-title', fancyTitle);
+            $this.data('fancybox-title', fancyTitle);
            
         });
     });
