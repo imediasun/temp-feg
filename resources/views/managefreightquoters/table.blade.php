@@ -111,7 +111,12 @@
            			  $id = $row->id;
            		?>
                 <tr class="editable" id="form-{{ $row->id }}">
-					<td class="number"> <?php echo ++$i;?>  </td>
+					@if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
+						<td class="number"> <?php echo ++$i;?>  </td>
+					@endif
+					@if($setting['disableactioncheckbox']=='false')
+						<td ><input type="checkbox" class="ids" name="ids[]" value="<?php echo $row->id ;?>" />  </td>
+					@endif
 					@if($setting['view-method']=='expand')
 					<td><a href="javascript:void(0)" class="expandable" rel="#row-{{ $row->id }}" data-url="{{ url('managefreightquoters/show/'.$id) }}"><i class="fa fa-plus " ></i></a></td>
 					@endif
