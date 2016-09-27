@@ -15,6 +15,7 @@ class PendingrequestController extends Controller {
 	
 	public function __construct() 
 	{
+	    ini_set('memory_limit','1G');
 		parent::__construct();
 		$this->model = new Pendingrequest();
 		
