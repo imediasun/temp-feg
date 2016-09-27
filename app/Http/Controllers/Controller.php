@@ -568,7 +568,13 @@ function getDownload(Request $request)
                     $keys = explode(":", $t);
                     if (in_array($keys[0], array_keys($arr))) {
                         if ($arr[$keys[0]]['type'] == 'select' || $arr[$keys[0]]['type'] == 'radio') {
-                            $param .= " AND " . $arr[$keys[0]]['alias'] . "." . $keys[0] . " " . self::searchOperation($keys[1]) . " '" . $keys[2] . "' ";
+                            if ($arr[$keys[0]]['select_multiple'] == 1) {
+                                $param .= " AND " . $arr[$keys[0]]['alias'] . "." . $keys[0] . " IN(". $keys[2] . ") ";
+                            }
+                            else {
+                                $param .= " AND " . $arr[$keys[0]]['alias'] . "." . $keys[0] . " " . self::searchOperation($keys[1]) . " '" . $keys[2] . "' ";
+                            }
+                            
                         } else {
                             $operate = self::searchOperation($keys[1]);
                             if ($operate == 'like') {
