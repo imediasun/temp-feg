@@ -63,7 +63,7 @@ class GroupsController extends Controller {
 		//$pagination = Paginator::make($results['rows'], $results['total'],$params['limit']);	
 		$pagination = new Paginator($results['rows'], $results['total'], $params['limit']);	
 		$pagination->setPath('groups');
-		
+        $this->data['param']		= $params;
 		$this->data['rowData']		= $results['rows'];
 		// Build Pagination 
 		$this->data['pagination']	= $pagination;

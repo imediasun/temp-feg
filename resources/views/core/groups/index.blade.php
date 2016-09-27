@@ -61,11 +61,33 @@
 					@if($setting['disableactioncheckbox']=='false')
 				<th> <input type="checkbox" class="checkall" /></th>
 					@endif
-				@foreach ($tableGrid as $t)
-					@if($t['view'] =='1')
-						<th>{{ $t['label'] }}</th>
-					@endif
-				@endforeach
+				<?php foreach ($tableGrid as $t) :
+					if($t['view'] =='1'):
+						$limited = isset($t['limited']) ? $t['limited'] :'';
+						if(SiteHelpers::filterColumn($limited ))
+						{
+							$sortBy = $param['sort'];
+							$orderBy = strtolower($param['order']);
+							$colField = $t['field'];
+							$colIsSortable = $t['sortable'] == '1';
+							$colIsSorted = $colIsSortable && $colField == $sortBy;
+							$colClass = $colIsSortable ? ' dgcsortable' : '';
+							$colClass .= $colIsSorted ? " dgcsorted dgcorder$orderBy" : '';
+							$th = '<th'.
+									' class="'.$colClass.'"'.
+									' data-field="'.$colField.'"'.
+									' data-sortable="'.$colIsSortable.'"'.
+									' data-sorted="'.($colIsSorted?1:0).'"'.
+									' data-sortedOrder="'.($colIsSorted?$orderBy:'').'"'.
+									' align="'.$t['align'].'"'.
+									' width="'.$t['width'].'"';
+							$th .= '>';
+							$th .= \SiteHelpers::activeLang($t['label'],(isset($t['language'])? $t['language'] : array()));
+							$th .= '</th>';
+							echo $th;
+						}
+					endif;
+				endforeach; ?>
 				<th width="70" >{{ Lang::get('core.btn_action') }}</th>
 			  </tr>
         </thead>
