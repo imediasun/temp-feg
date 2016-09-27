@@ -29,7 +29,7 @@ class UsersController extends Controller
             'pageTitle' => $this->info['title'],
             'pageNote' => $this->info['note'],
             'pageModule' => 'core/users',
-            'pageUrl'	=>  url('vendor'),
+            'pageUrl'	=>  url('core/users'),
             'return' => self::returnUrl()
 
         );
