@@ -614,6 +614,7 @@ class ModuleController extends Controller {
                 'simplesearch'  => (isset($simplesearch[$i]) ? $simplesearch[$i] : 0 ),
                 'simplesearchorder' => (isset($simplesearchorder[$i]) ? $simplesearchorder[$i] : ''),
                 'simplesearchfieldwidth' => (isset($simplesearchfieldwidth[$i]) ? $simplesearchfieldwidth[$i] : ''),
+                'simplesearchoperator' => (isset($simplesearchoperator[$i]) ? $simplesearchoperator[$i] : ''),
                 "sortlist"      => $sortlist[$i] ,
                 'limited'       => (isset($limited[$i]) ? $limited[$i] : ''),
                 'option'        => array(
@@ -691,6 +692,7 @@ class ModuleController extends Controller {
                     'simplesearch'        => isset($form['simplesearch']) ? $form['simplesearch'] : '',
                     'simplesearchorder'        => isset($form['simplesearchorder']) ? $form['simplesearchorder'] : '',
                     'simplesearchfieldwidth'        => isset($form['simplesearchfieldwidth']) ? $form['simplesearchfieldwidth']: '',
+                    'simplesearchoperator'        => isset($form['simplesearchoperator']) ? $form['simplesearchoperator']: '',
                     "sortlist"         => $form['sortlist'] ,
                     'option'        => array(
                         "opt_type"                 => $form['option']['opt_type'],
@@ -794,6 +796,7 @@ class ModuleController extends Controller {
             'simplesearch'     => $request->input('simplesearch'),
             'simplesearchorder'=> $request->input('simplesearchorder'),
             'simplesearchfieldwidth'=> $request->input('simplesearchfieldwidth'),
+            'simplesearchoperator'=> $request->input('simplesearchoperator'),
             'size'             =>     '',
             'sortlist'         => $request->input('sortlist'),
             'option'        => array(

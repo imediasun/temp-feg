@@ -112,8 +112,10 @@
                 <input type="text" class="form-control" name="simplesearchorder[<?php echo $id;?>]" class="form-control" value="<?php echo $simplesearchorder;?>" />
             </td>            
             <td class="formSimpleSearchFieldWidth">
-                <?php $simplesearchfieldwidth = (isset($rows['simplesearchfieldwidth']) ? $rows['simplesearchfieldwidth'] : ''); ?>
+                <?php $simplesearchfieldwidth = (isset($rows['simplesearchfieldwidth']) ? $rows['simplesearchfieldwidth'] : ''); ?>                
                 <input type="text" class="form-control" name="simplesearchfieldwidth[<?php echo $id;?>]" class="form-control" value="<?php echo $simplesearchfieldwidth;?>" />
+                <?php $simplesearchoperator = (isset($rows['simplesearchoperator']) ? $rows['simplesearchoperator'] : 'equal'); ?>
+                <input type="hidden" name="simplesearchoperator[<?php echo $id;?>]" value="<?php echo $simplesearchoperator;?>" />
             </td>            
 			<td class="formFieldRequired">
 				<?php
