@@ -39,7 +39,7 @@ class gameplayreport extends Sximo  {
         $message = "";                
 
 
-        $filters = ReportHelpers::getSearchFilters(array(
+        $filters = self::getSearchFilters(array(
             'date_start' => '', 'date_end' => '', 'game_cat_id' => '', 'game_type_id'  => '',
             'debit_type_id' => '', 'game_on_test' => '', 'location_id' => '','game_id' => '',
             'game_title_id' => ''
