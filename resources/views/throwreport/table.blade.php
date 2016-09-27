@@ -43,11 +43,6 @@
                                 }
                             endif;
                         endforeach; ?>
-                        <th width="100">PC Payout</th>
-
-                        <th width="100">Cost of Goods Sold</th>
-                        <th width="100">Payout %</th>
-                        <th width="100">Overall %</th>
                     </tr>
                     </thead>
 
@@ -81,7 +76,7 @@
                     <?php foreach ($rowData as $row) :
                     $id = $row->id;
                     ?>
-                    <tr class="editable" id="form-{{ $row->id }}">
+                    <tr class="editable" id="{{ $row->id }}">
                         <td class="number"> <?php echo ++$i;?>  </td>
                         @if($setting['disableactioncheckbox']=='false')
                             <td><input type="checkbox" class="ids" name="ids[]" value="<?php echo $row->id;?>"/></td>
@@ -90,7 +85,7 @@
                             <td><a href="javascript:void(0)" class="expandable" rel="#row-{{ $row->id }}"
                                    data-url="{{ url('throwreport/show/'.$id) }}"><i class="fa fa-plus "></i></a></td>
                         @endif
-                        <?php foreach ($tableGrid as $field) :
+                        <?php foreach ($tableGrid as $index => $field) :
                         if($field['view'] == '1') :
                         $conn = (isset($field['conn']) ? $field['conn'] : array());
 
@@ -103,15 +98,29 @@
                                 data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
                                 @if($field['field']=='price_per_play')
 
-                                    <input type="text" value="{{ number_format($value,2) }}" name="price_per_play[]"
-                                           class="my_form" id="price_per_play" style="width:55px"/>
-
+                                    <input type="text" value="{{ number_format($value,2) }}" name="price_per_play"
+                                           class="changed" id="price_per_play-{{ $row->id }}" style="width:55px"/>
+                                @elseif($field['field']=='game_earnings')
+                                    <span id="game_earnings-{{ $row->id }}">{{ $value }}</span>
                                 @elseif($field['field']=='retail_price')
+                                    <input type="text" value="{{ number_format($row->retail_price,2) }}"
+                                           name="retail_price"
+                                           class="changed" id="retail_price-{{ $row->id }}" style="width:55px"/>
 
-                                    <input type="text" value="{{ number_format($value,2) }}" name="retail_price[]"
-                                           class="num" id="retail_price" style="width:55px"/>
+                                @elseif($field['field']=='product_cogs_1')
+                                    <span id="product_cogs_1-{{ $row->id }}">{{ number_format($row->retail_price * $row->product_throw_1,2) }}</span>
 
+                                @elseif($field['field']=='game_throw')
+                                    <span id="game_throw-{{ $row->id }}"><?php
+                                        $cogs = $row->retail_price * $row->product_throw_1;
+                                        if ($row->game_earnings != 0.00)
+                                            echo number_format(($cogs / $row->game_earnings), 2);
+                                        ?></span>
 
+                                @elseif($field['field']=='product_throw_1')
+
+                                    <input type="text" value="{{ $value }}" name="product_throw_1"
+                                           class="changed" id="product_throw_1-{{ $row->id }}" style="width:55px"/>
 
                                 @else {!! $value !!}
                                 @endif
@@ -121,17 +130,6 @@
                         endif;
                         endforeach;
                         ?>
-                        <td><input type="text" name="pc_payout" value="" class="num" id="pc_payout" style="width:55px"/>
-                        </td>
-
-
-                        <td><input type="text" name=" tot" value="" readonly id="tot" class="tot" style="width:55px"/>
-                        </td>
-
-                        <td><input type="text" value="" id="payout_percent" class="payout_percent" style="width:55px"/>
-                        </td>
-                        <td></td>
-
                     </tr>
                     @if($setting['view-method']=='expand')
                         <tr style="display:none" class="expanded" id="row-{{ $row->id }}">
@@ -166,14 +164,15 @@
         <?php echo Form::close();?>
         @include('ajaxfooter')
         <div class="col-md-10 col-md-offset-3">
-
-
             <div class="col-md-10">
-                <input type="button" style="font-size:1.4em; width:60%; text-align:center;"
-                       value="Submit Weekly Reports"></button>
+                @if(count($rowData) > 0)
+                    <a id="report-submit-button" href="javascript:void(0);" class="btn btn-white"
+                       style="font-size:1.4em; width:60%; text-align:center;">Submit Weekly Reports</a>
+                @endif
             </div>
         </div>
 
+        </br>
         </br>
 
 
@@ -184,79 +183,92 @@
 <script src="https://cdn.jsdelivr.net/momentjs/2.10.6/moment.min.js"></script>
 <script>
     $(document).ready(function () {
+
         //Initialize the datePicker(I have taken format as mm-dd-yyyy, you can     //have your owh)
-        $(".weeklyDatePicker").datepicker('option', 'firstDay', {autoclose: true}, 1);
+        //var lastWeekDate = new Date(new Date().setDate(new Date().getDate() - (new Date().getDay() == 0 ? 6 : 6)));
+        var lastWeekDate = moment(new Date()).weekday(-1).format('MM/DD/YYYY');
+        $(".weeklyDatePicker").datepicker({endDate: lastWeekDate});
         $(".weeklyDatePicker").val('{{ $setDate }}');
         $('.weeklyDatePicker').datepicker().on('change', function (e) {
             $('.weeklyDatePicker').datepicker("hide");
-            //reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data');
-             var value = $(".weeklyDatePicker").val();
-             var firstDate = moment(value, "MM/DD/YYYY").day(0).format("MM/DD/YYYY");
-             var lastDate =  moment(value, "MM/DD/YYYY").day(6).format("MM/DD/YYYY");
-             selectedDate=firstDate + " - " + lastDate;
-             $(".weeklyDatePicker").val(firstDate + " - " + lastDate);
-             reloadData('#{{ $pageModule }}','{{ $pageModule }}/data?date='+selectedDate.replace(/ /g,'')+ getFooterFilters());
-
-
+            var value = $(".weeklyDatePicker").val();
+            var firstDate = moment(value, "MM/DD/YYYY").day(0).format("MM/DD/YYYY");
+            var lastDate = moment(value, "MM/DD/YYYY").day(6).format("MM/DD/YYYY");
+            selectedDate = firstDate + " - " + lastDate;
+            $(".weeklyDatePicker").val(firstDate + " - " + lastDate);
+            reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?search=date_start:equal:' + firstDate + '|date_end:equal:' + lastDate);
+        });
+        var defaultWeekValue = '{{$setDate}}';
+        $('.weeklyDatePicker').datepicker().on('click blur', function (e) {
+            $(".weeklyDatePicker").val(defaultWeekValue);
         });
         $('.tips').tooltip();
-        $('.my_form,.num,.payout_percent').on("keypress", (function (e) {
-            console.log(e);
-            if (e.which == 13) {
-                var value = $(this).val();
-                var price_per_play = document.getElementById("price_per_play").value;
-                var retail_price = document.getElementById("retail_price").value;
-                var pc_payout = document.getElementById("pc_payout").value;
-                var tot = document.getElementById("tot").value;
-                var payout_percent = document.getElementById("payout_percent").value;
-                var id = $(this).parent().parent().attr("id");
-                id = id.split("-");
-                $.ajax(
-                        {
-                            url: "throwreport/temp",
-                            type: 'post',
-                            data: {
-                                equipment: value,
-                                price_per_play: price_per_play,
-                                game_name: value,
-                                retail_price: retail_price,
-                                revenue_total: value,
-                                pc_payout: pc_payout,
-                                cost_goods: tot,
-                                payout_percent: payout_percent,
-                                overall_percent: payout_percent,
-                                game_id: value,
-                            },
-                            success: function (result) {
-
+        $('#report-submit-button').on('click', (function () {
+            $('.ajaxLoading').show();
+            $.ajax(
+                    {
+                        url: "throwreport/update-status",
+                        type: 'post',
+                        data: {},
+                        success: function (data) {
+                            if (data.status == 'success') {
+                                notyMessage(data.message);
+                                $('.ajaxLoading').hide();
+                            } else {
+                                notyMessageError(data.message);
+                                $('.ajaxLoading').hide();
+                                return false;
                             }
+                        }
+
+                    }
+            );
+        }));
+        $('.changed').on("change", (function (e) {
+            /*
+             game_throw => payout %
+             product_cogs_1 => cost of good sold
+             product_throw_1 => pc payout
+             */
+            var rowID = $(this).parents('tr').attr('id');
+            var price_per_play = $(this).parents('tr').find("input[name='price_per_play']").val();
+            var retail_price = $(this).parents('tr').find("input[name='retail_price']").val();
+            var product_throw_1 = $(this).parents('tr').find("input[name='product_throw_1']").val();
+            var product_cogs_1 = $(this).parents('tr').find("#product_cogs_1-" + rowID).text();
+            var game_throw = $(this).parents('tr').find("#game_throw-" + rowID).text();
+            var game_earnings = $(this).parents('tr').find("#game_earnings-" + rowID).text();
+
+            product_cogs_1 = retail_price * product_throw_1;
+            product_cogs_1 = product_cogs_1.toFixed(2);
+            if (product_cogs_1 != '0.00') {
+                game_throw = game_earnings / product_cogs_1;
+                game_throw = game_throw.toFixed(2);
+                $(this).parents('tr').find("#game_throw-" + rowID).text(game_throw);
+            }
+            $(this).parents('tr').find("#product_cogs_1-" + rowID).text(product_cogs_1);
+
+
+            $.ajax(
+                    {
+                        url: "throwreport/temp",
+                        type: 'post',
+                        data: {
+                            price_per_play: price_per_play,
+                            retail_price: retail_price,
+                            product_throw_1: product_throw_1,
+                            product_cogs_1: product_cogs_1,
+                            game_throw: game_throw,
+                            id: rowID,
+                        },
+                        success: function (result) {
 
                         }
-                );
 
+                    }
+            );
 
-            }
         }));
-        $('.num').change(function () {
-            console.log($(this).val());
-            var retail_price = $(this).closest('tr').find("input[name='retail_price[]']").val();
-            var payout = $(this).closest('tr').find("input[name='pc_payout']").val();
-            var revenue = $(this).closest('tr').find("td[data-field='revenue_total']").attr("data-values");
-            if (revenue == 0.00) {
-                var payout_percent = (retail_price * payout);
-            }
-            else {
 
-                var payout_percent = (retail_price * payout) / revenue;
-            }
-            $(this).closest('tr').find("input#payout_percent").val(payout_percent);
-            $(this).closest('tr').find("input#tot").val(retail_price * payout);
-
-        });
-
-        function totalAmount(price, quantity) {
-            return price * quantity;
-        }
 
         $('input[type="checkbox"],input[type="radio"]').iCheck({
             checkboxClass: 'icheckbox_square-green',

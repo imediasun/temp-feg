@@ -739,9 +739,11 @@ class SiteHelpers
         $type = '';
         $bulk = ($bulk == true ? '[]' : '');
         $mandatory = '';
-        $selectMultiple = "";
+        $selectMultiple = "";   
+        $simpleSearchOptions = '';
         foreach ($forms as $f) {
-            if ($f['field'] == $field && ($f['search'] == 1 || $f['simplesearch'] == 1)) {
+            $hasSimpleSearch = $f['simplesearch'] == 1;
+            if ($f['field'] == $field && ($f['search'] == 1 || $hasSimpleSearch)) {
                 $type = ($f['type'] != 'file' ? $f['type'] : '');
                 $option = $f['option'];
                 $required = $f['required'];
@@ -757,6 +759,15 @@ class SiteHelpers
                 } else {
                     $mandatory = '';
                 }
+                if ($hasSimpleSearch) {
+                    $simpleSearchOptions = " data-simpleSearch='1' ";
+                    $simpleSearchOperator = 'equal';
+                    if (isset($f['simplesearchoperator'])) {
+                        $simpleSearchOperator = $f['simplesearchoperator'];
+                    }
+                    $simpleSearchOptions .= " data-simpleSearchOperator='{$simpleSearchOperator}' ";
+                }                
+                break;
             }
         }
 
@@ -765,23 +776,23 @@ class SiteHelpers
                 $form = '';
                 break;
             case 'textarea';
-                $form = "<input  type='text' name='" . $field . "{$bulk}' class='form-control input-sm' $mandatory value='{$value}'/>";
+                $form = "<input  type='text' name='" . $field . "{$bulk}' class='form-control input-sm' $mandatory $simpleSearchOptions value='{$value}'/>";
                 break;
 
             case 'textarea_editor';
-                $form = "<input  type='text' name='" . $field . "{$bulk}' class='form-control input-sm' $mandatory value='{$value}'/>";
+                $form = "<input  type='text' name='" . $field . "{$bulk}' class='form-control input-sm' $mandatory $simpleSearchOptions value='{$value}'/>";
                 break;
 
             case 'text';
-                $form = "<input  type='text' name='" . $field . "{$bulk}' class='form-control input-sm' $mandatory value='{$value}'/>";
+                $form = "<input  type='text' name='" . $field . "{$bulk}' class='form-control input-sm' $mandatory $simpleSearchOptions value='{$value}'/>";
                 break;
 
             case 'text_date';
-                $form = "<input  type='text' name='$field{$bulk}' class='date form-control input-sm' $mandatory value='{$value}'/> ";
+                $form = "<input  type='text' name='$field{$bulk}' class='date form-control input-sm' $mandatory $simpleSearchOptions value='{$value}'/> ";
                 break;
 
             case 'text_datetime';
-                $form = "<input  type='text' name='$field{$bulk}'  class='date form-control input-sm'  $mandatory value='{$value}'/> ";
+                $form = "<input  type='text' name='$field{$bulk}'  class='date form-control input-sm'  $mandatory $simpleSearchOptions value='{$value}'/> ";
                 break;
 
             case 'select';
@@ -800,7 +811,7 @@ class SiteHelpers
                         $opts .= "<option $selected  value='" . $location->$option['lookup_key'] . "' $mandatory > " . $location->location_name . " </option> ";
                         }
 
-                  }
+                        }
 
                     }
                     else {
@@ -844,7 +855,7 @@ class SiteHelpers
                 if (!empty($selectMultiple)) {
                     $multipleClass = "sel-search-multiple";
                 }
-                $form = "<select name='$field{$bulk}'  class='form-control sel-search $multipleClass' $mandatory $selectMultiple>" .
+                $form = "<select name='$field{$bulk}'  class='form-control sel-search $multipleClass' $mandatory $selectMultiple $simpleSearchOptions>" .
 						(empty($selectMultiple) ? 	"<option value=''> -- Select  -- </option>" : "") .
 						"	$opts
 						</select>";
@@ -859,7 +870,7 @@ class SiteHelpers
                     $row = explode(":", $opt[$i]);
                     $opts .= "<option value ='" . $row[0] . "' > " . $row[1] . " </option> ";
                 }
-                $form = "<select name='$field{$bulk}' class='form-control' $mandatory ><option value=''> -- Select  -- </option>$opts</select>";
+                $form = "<select name='$field{$bulk}' class='form-control' $mandatory $simpleSearchOptions><option value=''> -- Select  -- </option>$opts</select>";
                 break;
 
         }

@@ -35,7 +35,7 @@ class reports extends Sximo  {
         $bottomMessage = "";
         $message = "";                
         
-        $filters = ReportHelpers::getSearchFilters(array(
+        $filters = self::getSearchFilters(array(
             'date_start' => '', 'date_end' => '', 'id' => 'location_id', 'debit_type_id'  => ''
         ));        
         extract($filters);

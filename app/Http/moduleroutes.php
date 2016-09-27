@@ -52,5 +52,6 @@
                     Route::controller('readersmissingassetidreport', 'ReadersmissingassetidreportController');
                     Route::controller('merchandiseexpensesreport', 'MerchandiseexpensesreportController');
                     Route::controller('itemreceipt', 'ItemreceiptController');
+                    Route::controller('throwreport', 'ThrowreportController');
 
 ?>

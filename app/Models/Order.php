@@ -174,11 +174,14 @@ class order extends Sximo
     {
 
         $data['requests_item_count'] = 0;
+        $data['receivedItemsArray']=0;
         $data['order_loc_id'] = '0';
         $data['order_vendor_id'] = '';
         $data['order_type'] = '';
         $data['order_company_id'] = '';
         $data['order_location_id'] = '';
+        $data['received_date']="";
+        $data['received_by']="";
        // $data['order_location_name'] = '';
         
         $data['order_freight_id'] = '';
@@ -217,12 +220,12 @@ class order extends Sximo
                 $data['alt_address'] = $order_query[0]->alt_address;
             }
             $data['prefill_type'] = 'clone';
-            $content_query = \DB::select('SELECT IF(O.product_id = 0, O.product_description, P.vendor_description) AS description,O.price AS price,O.qty AS qty, O.product_id,O.item_name,O.case_price,P.retail_price
-												 FROM order_contents O LEFT JOIN products P ON P.id = O.product_id WHERE O.order_id = ' . $order_id);
+            $content_query = \DB::select('SELECT  O.product_description AS description,O.price AS price,O.qty AS qty, O.product_id,O.item_name,O.case_price,P.retail_price
+												,O.item_received as item_received FROM order_contents O LEFT JOIN products P ON P.id = O.product_id  WHERE O.order_id = ' . $order_id);
             if ($content_query) {
-
                 foreach ($content_query as $row) {
                     $data['requests_item_count'] = $data['requests_item_count'] + 1;
+                    $receivedItemsArray[]=$row->item_received;
                     $orderDescriptionArray[] = $row->description;
                     $orderPriceArray[] = $row->price;
                     $orderQtyArray[] = $row->qty;
@@ -230,8 +233,17 @@ class order extends Sximo
                     $orderitemnamesArray[] = $row->item_name;
                     $orderitemcasepriceArray[] = $row->case_price;
                     $orderretailpriceArray[]=$row->retail_price;
+
                     //  $prod_data[]=$this->productUnitPriceAndName($orderProductIdArray);
                 }
+                $order_received_query=\DB::select('select date_received,received_by from order_received where order_id='.$order_id);
+               if($order_received_query)
+               {
+                   foreach($order_received_query as $r) {
+                       $data['received_date'] =$r->date_received;
+                       $data['received_by'] = $r->received_by;
+                   }
+               }
                 $data['orderDescriptionArray'] = $orderDescriptionArray;
                 $data['orderPriceArray'] = $orderPriceArray;
                 $data['orderQtyArray'] = $orderQtyArray;
@@ -242,9 +254,11 @@ class order extends Sximo
                              $item_case_price[] = $d['case_price'];
                          }
                      }*/
+
                 $data['itemNameArray'] = $orderitemnamesArray;
                 $data['itemCasePrice'] = $orderitemcasepriceArray;
                 $data['itemRetailPrice']=$orderretailpriceArray;
+                $data['receivedItemsArray']=$receivedItemsArray;
                 $poArr = array("", "", "");
                 if (isset($data['po_number'])) {
                     $poArr = explode("-", $data['po_number']);
@@ -345,6 +359,7 @@ class order extends Sximo
                 $data['today'] = date('m/d/y');
             }
         }
+
         return $data;
     }
 

@@ -806,4 +806,44 @@ class Sximo extends Model {
     public static function processApiData($json){
         return $json;
     }
+
+    /**
+     * Get submitted search filter values in an associative array
+     * @return Array 
+     */
+    public static function getSearchFilters($requiredFilters = array()) {
+        $receivedFilters = array();
+        $finalFilters = array();
+        if (isset($_GET['search'])) {
+            $filters_raw = trim($_GET['search'], "|");
+            $filters = explode("|", $filters_raw);
+
+            foreach($filters as $filter) {
+                $columnFilter = explode(":", $filter);
+                if (isset($columnFilter) && isset($columnFilter[0]) && isset($columnFilter[2])) {
+                    $receivedFilters[$columnFilter[0]] = $columnFilter[2];
+                }
+            }
+        }
+                
+        if (empty($requiredFilters)) {
+            $finalFilters = $receivedFilters;
+        }
+        else {
+            foreach($requiredFilters as $fieldName => $variableName) {
+                if (empty($variableName)) {
+                    $variableName = $fieldName;
+                }
+                if (isset($receivedFilters[$fieldName])) {
+                    $finalFilters[$variableName] = $receivedFilters[$fieldName];
+                }
+                else {
+                    $finalFilters[$variableName] = '';
+                }
+            }
+        }
+        
+        return $finalFilters;
+    }    
+    
 }

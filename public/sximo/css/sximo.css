@@ -2482,5 +2482,22 @@ table.table-striped tr th
 #col-config
 {
     position:relative !important;
-  top: 3px;
+    top: 3px;
+}
+
+#sidemenu.nav .nav > li > a i {
+  margin-right: 0;
+}
+#sidemenu.nav .nav li > a {
+  margin-left: 6px;
+}
+
+.left-align {
+    text-align: left !important;
+}
+.right-align {
+    text-align: right !important;    
+}
+.center-align {
+    text-align: center !important;    
 }
