@@ -351,7 +351,7 @@ class OrderController extends Controller
                     'order_type_id' => $order_type,
                     'date_ordered' => $date_ordered,
                     'vendor_id' => $vendor_id,
-                    'order_description' =>$order_description,
+                    'order_description' => '',
                     'order_total' => $total_cost,
                     'freight_id' => $freight_type_id,
                     'po_number' => $po,
@@ -830,8 +830,8 @@ public function getSaveOrSendEmail()
     public function getProductdata()
     {
         $vendor_description=Input::get('product_id');
-        $row=\DB::select("select id,item_description,unit_price,case_price,retail_price from products WHERE vendor_description='".$vendor_description."'");
-        $json=array('item_description'=>$row[0]->item_description,'unit_price'=>$row[0]->unit_price,'case_price'=>$row[0]->case_price,'retail_price'=>$row[0]->retail_price,'id'=>$row[0]->id);
+        $row=\DB::select("select id,item_description,unit_price,case_price from products WHERE vendor_description='".$vendor_description."'");
+        $json=array('item_description'=>$row[0]->item_description,'unit_price'=>$row[0]->unit_price,'case_price'=>$row[0]->case_price,'id'=>$row[0]->id);
         echo json_encode($json);
     }
 
