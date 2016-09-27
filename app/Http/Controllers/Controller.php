@@ -561,14 +561,14 @@ function getDownload(Request $request)
         $allowsearch = $this->info['config']['forms'];
         foreach ($allowsearch as $as)
             $arr[$as['field']] = $as;
-        if ($_GET['search'] != '') {
+            if ($_GET['search'] != '') {
             $type = explode("|", $_GET['search']);
             if (count($type) >= 1) {
                 foreach ($type as $t) {
                     $keys = explode(":", $t);
                     if (in_array($keys[0], array_keys($arr))) {
                         if ($arr[$keys[0]]['type'] == 'select' || $arr[$keys[0]]['type'] == 'radio') {
-                            if ($arr[$keys[0]]['select_multiple'] == 1) {
+                            if (isset($arr[$keys[0]]['option']['select_multiple']) && $arr[$keys[0]]['option']['select_multiple'] == 1) {
                                 $param .= " AND " . $arr[$keys[0]]['alias'] . "." . $keys[0] . " IN(". $keys[2] . ") ";
                             }
                             else {

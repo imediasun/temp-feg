@@ -82,7 +82,10 @@
         	@if($access['is_add'] =='1' && $setting['inline']=='true')
 			<tr id="form-0" >
 				<td> # </td>
-				<td> </td>
+				@if($setting['disableactioncheckbox']=='false')
+					<td> </td>
+				@endif
+
 				@if($setting['view-method']=='expand') <td> </td> @endif
 				@foreach ($tableGrid as $t)
 					@if($t['view'] =='1')
@@ -104,7 +107,12 @@
            			  $id = $row->id;
            		?>
                 <tr class="editable" id="form-{{ $row->id }}">
-					<td class="number"> <?php echo ++$i;?>  </td>
+					@if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
+						<td class="number"> <?php echo ++$i;?>  </td>
+					@endif
+					@if($setting['disableactioncheckbox']=='false')
+						<td ><input type="checkbox" class="ids" name="ids[]" value="<?php echo $row->id ;?>" />  </td>
+					@endif
                     <td>
                         <?php
                         echo SiteHelpers::showUploadedFile($row->img, '/uploads/games/',50, false);

@@ -103,9 +103,9 @@ $(document).ready(function(){
 <input type="hidden" name="sortlist" value="<?php echo $f['sortlist'];?>" />
 <input type="hidden" name="view" value="<?php echo $f['view'];?>" />
 <input type="hidden" name="search" value="<?php echo $f['search'];?>" />
-<input type="hidden" name="simplesearch" value="<?php echo $f['simplesearch'];?>" />
-<input type="hidden" name="simplesearchorder" value="<?php echo $f['simplesearchorder'];?>" />
-<input type="hidden" name="simplesearchfieldwidth" value="<?php echo $f['simplesearchfieldwidth'];?>" />
+<input type="hidden" name="simplesearch" value="<?php echo isset($f['simplesearch']) ? $f['simplesearch'] : ''; ?>" />
+<input type="hidden" name="simplesearchorder" value="<?php echo isset($f['simplesearchorder']) ? $f['simplesearchorder'] : '';?>" />
+<input type="hidden" name="simplesearchfieldwidth" value="<?php echo isset($f['simplesearchfieldwidth']) ?$f['simplesearchfieldwidth'] : '';?>" />
 <input type="hidden" name="limited" value="<?php echo (isset($f['limited']) ? $f['limited'] : '');?>" />
 <div class="" style="padding:30px;">			
 			
@@ -299,7 +299,7 @@ $(document).ready(function(){
 	 </div> 
   </div>  
     
-   <div class="form-group" @if(empty($f['simplesearch']) || $f['simplesearch'] != 1) style="display:none;" @endif;>
+   <div class="form-group" @if(empty($f['simplesearch']) || $f['simplesearch'] != 1) style="display:none;" @endif>
     <label for="simplesearchoperator" class=" control-label col-md-4">Simple Search Operator</label>
 	<div class="col-md-8">
         <?php 

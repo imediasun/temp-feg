@@ -33,7 +33,7 @@
                 <a title="{{ $row->theme_name }} by {{$row->users }} at {{ $row->Location }} " class="previewImage fancybox" rel='gallery1' data-id="{{ $row->id }}" href="{{ url() }}/uploads/gallary/{{ $row->id }}.jpg">
                     <img src="{{ url() }}/uploads/gallary/{{ $row->id }}_thumb.jpg" alt="{{ $row->theme_name }}" class="merch-gallery"/>
                 </a>
-                @endforeach;
+                @endforeach
                 @endif
             </p>
         </div>

@@ -39,7 +39,7 @@ class merchandiseexpensesreport extends Sximo  {
         $bottomMessage = "";
         $message = "";                
 
-        $filters = ReportHelpers::getSearchFilters(array(
+        $filters = self::getSearchFilters(array(
             'date_start' => '', 'date_end' => '', 'debit_type_id' => '', 'location_id' => ''
         ));        
         extract($filters);

@@ -76,28 +76,109 @@ function performAdvancedSearch(params) {
 
 function changeSearchOperator( val , field , elm ,type)
 {
+    var $elm = jQuery(elm),
+        grandParent = $elm.closest('tr'),
+        fieldElm = grandParent.find('input[name='+field+']'),
+        parent = fieldElm.closest('td'),
+        fieldElmVal = fieldElm.val(),
+        fieldElm2 = parent.find('input[name=' + field + '_end]'),
+        fieldElm2Val = fieldElm2.val(),
+        dashElement = parent.find('.betweenseparator'),
+        previousValue = fieldElm.data('previousValue'),
+        previousValue2 = fieldElm.data('previousValue2'),
+        previousOperator = fieldElm.data('previousOperator'),
+        previousOperatorWasNull = previousOperator && 
+            (previousOperator == 'is_null' || previousOperator == 'not_null'),
+        operatorIsNull = (val == 'is_null' || val == 'not_null');
 
-	if(val =='is_null') {
-		$('input[name='+field+']').attr('readonly','1');
-		$('input[name='+field+']').val('is_null');
-	} else if(val =='not_null') {
-		$('input[name='+field+']').attr('readonly','1');
-		$('input[name='+field+']').val('not_null');		
-
-	} else if(val =='between') {
-		html = '<input name="'+field+'" type="text" class="form-control field_size date" placeholder="Start" style="width:100px;"  />';
-        html+='<div class="hide_field"> - </div> <input name="'+field+'_end" class="date form-control hide_field"  placeholder="End" style="width:100px;"    />';
-		$('#field_'+field+'').html(html);
-	} else {
-		$('input[name='+field+']').removeAttr('readonly');
-		$('input[name='+field+']').val('');	
-	}
-    if(val != 'between')
-    {
-        $('.hide_field').hide();
-        $('.field_size').width('100%');
-        $('.field_size').prop('placeholder','');
+    if (!previousOperatorWasNull) {
+        fieldElm.data('previousValue', fieldElmVal);
     }
+    if (fieldElm2Val !== UNDEFINED && fieldElm2Val !== null) {
+        fieldElm.data('previousValue2', fieldElm2Val);
+    }
+    fieldElm.data('previousOperator', val);
+
+    fieldElm
+            .prop('readonly', false)
+            .attr('placeholder', '')
+            .width('100%')
+            .removeClass('pull-left'); 
+    
+    if (previousOperatorWasNull && !operatorIsNull) {
+        if (fieldElm.hasClass('sel-search-multiple')) {
+            fieldElm.select2('val', previousValue);            
+        }
+        else {
+            fieldElm.val(previousValue);
+        }
+        if (fieldElm.hasClass('date')) {           
+            fieldElm.datepicker('update');
+        }
+        if (fieldElm.hasClass('datetime')) {
+            fieldElm.datetimepicker('update');                
+        }        
+    }
+    
+    if (fieldElm2) {
+        fieldElm2.remove();
+    }
+    if (dashElement) {
+        dashElement.remove();
+    }    
+    
+    switch (val) {
+        case "is_null":
+        case "not_null":
+            fieldElm.prop('readonly', true)
+                    .val(val);
+            break;
+        
+        case 'between':
+            fieldElm.width('48%')
+                    .attr('placeholder', 'Start')
+                    .addClass('pull-left');
+            
+            fieldElm2 = jQuery('<input name="'+field+'_end" class="form-control" />')
+                        .insertAfter(fieldElm);
+            fieldElm2.attr('placeholder', "End")
+                    .addClass('pull-left')
+                    .width('48%');
+            
+//            if (fieldElm.hasClass('sel-search-multiple')) {
+//                fieldElm2.addClass('.sel-search-multiple').select2();    
+//                fieldElm2.select2('val', previousValue2);            
+//            }            
+            if (previousValue2 !== UNDEFINED && previousValue2 !== null) {
+                fieldElm2.val(previousValue2);
+            }            
+            if (fieldElm.hasClass('date')) {
+                fieldElm2.addClass('date')
+                        .datepicker({format:'mm/dd/yyyy',autoclose:true});                 
+                fieldElm2.datepicker('update');
+            }
+            if (fieldElm.hasClass('datetime')) {
+                fieldElm2.addClass('datetime')
+                        .datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});    
+                fieldElm2.datetimepicker('update');
+                
+            }
+            
+            dashElement = jQuery('<div class="betweenseparator"> - </div>')
+                            .insertAfter(fieldElm);
+            dashElement
+                .addClass('pull-left')
+                .css({
+                    "margin": "1%",
+                    "height": "100%",
+                    "line-height": "2em"
+                });
+            break;
+            
+        default:
+            break;
+    }
+
 }
 
 App.autoCallbacks.reloaddata = function(params) {

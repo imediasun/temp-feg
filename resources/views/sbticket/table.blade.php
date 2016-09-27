@@ -91,8 +91,13 @@
                     $id = $row->TicketID;
                     ?>
                     <tr class="editable" id="form-{{ $row->TicketID }}">
-                        <td class="number"> <?php echo ++$i;?>  </td>
-                        <td><input type="checkbox" class="ids" name="ids[]" value="<?php echo $row->TicketID;?>"/></td>
+                        @if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
+                            <td class="number"> <?php echo ++$i;?>  </td>
+                        @endif
+                        @if($setting['disableactioncheckbox']=='false')
+                                <td><input type="checkbox" class="ids" name="ids[]" value="<?php echo $row->TicketID;?>"/></td>
+                        @endif
+
                         @if($setting['view-method']=='expand')
                             <td><a href="javascript:void(0)" class="expandable" rel="#row-{{ $row->TicketID }}"
                                    data-url="{{ url('sbticket/show/'.$id) }}"><i class="fa fa-plus "></i></a></td>
