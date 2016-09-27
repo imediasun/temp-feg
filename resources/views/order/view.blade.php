@@ -107,7 +107,7 @@
                         </label>
 
                         <div class="col-md-8">
-                          @if(isset($order_data['received_date']))
+                          @if(isset($order_data['received_date']) && !empty($order_data['received_date']))
                             {{  $order_data['received_date'] = date("m/d/Y", strtotime($order_data['received_date']))  }}
 
 
