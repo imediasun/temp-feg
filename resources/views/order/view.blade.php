@@ -1,4 +1,3 @@
-
 @if($setting['view-method'] =='native')
     <div class="sbox">
 
@@ -321,7 +320,8 @@ for($i=0; $i < count($order_data['orderQtyArray']);$i++)
                 <thead>
                 <tr>
                 <th>N0 #</th>
-                <th>Item Deacription</th>
+                <th>Sku #</th>
+                <th>Item Description</th>
                 <th>Item Price</th>
                 <th>Item Quantity </th>
                 <th>Items Received</th>
@@ -333,6 +333,7 @@ for($i=0; $i < count($order_data['orderQtyArray']);$i++)
                 @for($i = 0 ; $i < $order_data['requests_item_count']; $i++)
                     <tr>
                         <td>{{ $i+1 }} </td>
+                        <td>{{  $order_data['skuNumArray'][$i]}}</td>
                         <td>{{  $order_data['orderDescriptionArray'][$i] }}</td>
                         <td>{{  $order_data['orderPriceArray'][$i] }}</td>
                         <td>{{  $order_data['orderQtyArray'][$i] }}</td>
@@ -342,8 +343,9 @@ for($i=0; $i < count($order_data['orderQtyArray']);$i++)
                     </tr>
                     @endfor
                 <tr>
-                    <td>&nbsp</td><td>&nbsp</td><td>&nbsp</td><td>&nbsp</td>
-                    <td   class="text-center">Sub Total</td>
+
+                    <td>&nbsp</td><td>&nbsp</td><td>&nbsp</td><td>&nbsp</td><td>&nbsp</td>
+                    <td  colspan="1">Sub Total</td>
                     <td>{{ $order_data['order_total'] }}</td>
 
                 </tr>

@@ -333,6 +333,8 @@ class OrderController extends Controller
             }
             $itemsArray = $request->get('item');
             $itemNamesArray=$request->get('item_name');
+            //$skuNumArray=$request->get('sku');
+
             $casePriceArray=$request->get('case_price');
             $priceArray = $request->get('price');
             $qtyArray = $request->get('qty');
@@ -609,6 +611,7 @@ public function getSaveOrSendEmail()
 
             if ($data[0]['new_format'] == 1) {
                 $item_description_string = '';
+                $sku_num_string = '';
                 $item_price_string = '';
                 $item_qty_string = '';
                 $item_total_string = '';
@@ -620,6 +623,7 @@ public function getSaveOrSendEmail()
                     $item_total = $data[0]['orderPriceArray'][$i] * $data[0]['orderQtyArray'][$i];
                     $item_total_string = "$ " . number_format($item_total, 2);
                     $item_description_string = "Item #" . $j . ": " . $data[0]['orderDescriptionArray'][$i];
+                    $sku_num_string = $data[0]['skuNumArray'][$i];
                     $item_qty_string = $data[0]['orderQtyArray'][$i];
                     $item_price_string = $data[0]['orderPriceArray'][$i];
                     $descriptionLength = strlen($item_description_string);
@@ -627,6 +631,8 @@ public function getSaveOrSendEmail()
                 }
                 $data[0]['item_description_string'][$i] = $item_description_string;
                 $data[0]['item_price_string'][$i] = $item_price_string;
+                $data[0]['sku_num_string'][$i] = $sku_num_string;
+           
                 $data[0]['item_qty_string'][$i] = $item_qty_string;
                 $data[0]['item_total_string'][$i] = $item_total_string;
                 $data[0]['order_total_cost'] = $order_total_cost;
@@ -830,8 +836,8 @@ public function getSaveOrSendEmail()
     public function getProductdata()
     {
         $vendor_description=Input::get('product_id');
-        $row=\DB::select("select id,item_description,unit_price,case_price,retail_price from products WHERE vendor_description='".$vendor_description."'");
-        $json=array('item_description'=>$row[0]->item_description,'unit_price'=>$row[0]->unit_price,'case_price'=>$row[0]->case_price,'retail_price'=>$row[0]->retail_price,'id'=>$row[0]->id);
+        $row=\DB::select("select id,sku,item_description,unit_price,case_price,retail_price from products WHERE vendor_description='".$vendor_description."'");
+        $json=array('sku'=>$row[0]->sku,'item_description'=>$row[0]->item_description,'unit_price'=>$row[0]->unit_price,'case_price'=>$row[0]->case_price,'retail_price'=>$row[0]->retail_price,'id'=>$row[0]->id);
         echo json_encode($json);
     }
 
