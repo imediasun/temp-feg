@@ -304,8 +304,22 @@ $(document).ready(function(){
 	<div class="col-md-8">
         <?php 
             $simplesearchoperator = isset($f['simplesearchoperator']) ? $f['simplesearchoperator'] : 'equal';
+            $simplesearchoperators = array(
+                    "equal" => " >= ",
+                    "bigger_equal" => "=",
+                    "smaller_equal" => " <= ",
+                    "smaller" => " < ",
+                    "bigger" => " > ",
+                    "like" => "Like",
+                );
         ?>
-		<input name="simplesearchoperator" type="text" id="simplesearchoperator" class="form-control input-sm" value="<?php echo $simplesearchoperator;?>"/>
+        <select id="simplesearchoperator" class="form-control" name="simplesearchoperator">
+            <?php foreach($simplesearchoperators as $val=>$label): ?>
+                <option  value="<?php echo $val;?>"
+                    <?php if($val == $simplesearchoperator) echo 'selected="selected"';?>
+                > <?php echo $label;?></option>
+            <?php endforeach; ?>
+        </select>		
 	 </div> 
   </div>   
     

@@ -4,7 +4,7 @@ function performSimpleSearch(params) {
     }
     var elm = this, 
         container = params.container || $('.simpleSearchContainer'), 
-        attr = '?search=',
+        attr = '?simplesearch=1&search=',
         moduleID = params.moduleID,
         url = params.url,
         ajaxSearch = params.ajaxSearch !== false,
