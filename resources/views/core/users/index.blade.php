@@ -55,7 +55,7 @@
                 </div>
             @endif
         @endif
-	    <div class="toolbar-line  style="align="left";">
+	    <div class="toolbar-line">
 			@if($access['is_add'] ==1)
 	   		<a href="{{ URL::to('core/users/update') }}" class="tips btn btn-sm btn-white"  title="{{ Lang::get('core.btn_create') }}">
 			<i class="fa fa-plus-circle "></i>&nbsp;{{ Lang::get('core.btn_create') }}</a>
@@ -242,12 +242,9 @@ $(document).ready(function(){
 		$('#SximoTable').submit();
 	});
 
-$("#col-config").change(function(){
-    var config_id=$('#col-config').val();
-        location.href = "/core/users?config_id=" + config_id;
-
-
-    var simpleSearch = $('.simpleSearchContainer');
+    var simpleSearch = $('.simpleSearchContainer'),
+        ajaxMode = false;
+        
     if (simpleSearch.length) {
         initiateSearchFormFields(simpleSearch);
         simpleSearch.find('.doSimpleSearch').click(function(event){
@@ -255,13 +252,13 @@ $("#col-config").change(function(){
                 moduleID: '#{{ $pageModule }}',
                 url: "{{ $pageUrl }}",
                 event: event,
+                ajaxSearch: ajaxMode,
                 container: simpleSearch
             });
         });
     }
-
-    initDataGrid('{{ $pageModule }}', '{{ $pageUrl }}');
-});
+    
+    initDataGrid('{{ $pageModule }}', '{{ $pageUrl }}', {useAjax: ajaxMode});
 });
 </script>
 <style>
