@@ -67,8 +67,7 @@ Route::filter('authorization', function()
 Route::get('submitservicerequest/{GID?}/{LID?}', 'SubmitservicerequestController@getIndex');
 
 
-Route::get('arslan/{id}/{name?}/{subject?}', 'DemoController@getIndex');
-Route::post('arslan/{id}/{name?}/{subject?}', 'DemoController@postIndex');
+
 
 Route::get('order/submitorder/{SID?}', 'OrderController@getSubmitorder');
 Route::get('/', 'UserController@getLogin');
