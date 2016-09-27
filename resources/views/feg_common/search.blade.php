@@ -6,13 +6,13 @@
 	@if($t['search'] =='1')
 		<tr id="{{ $t['field'] }}" class="fieldsearch">
 			<td>{!! SiteHelpers::activeLang($t['label'],(isset($t['language'])? $t['language'] : array())) !!} </td>
-			<td id="field_{{ $t['field']}}">{!! SiteHelpers::transForm($t['field'] , $tableForm) !!}</td>
-			<input id="{{ $t['field']}}_operate" type="hidden" name="operate" value="equal" />
+			<td id="field_{{ $t['field']}}">{!! SiteHelpers::transForm($t['field'] , $tableForm) !!}
+			<input id="{{ $t['field']}}_operate" type="hidden" name="operate" value="equal" /></td>
 		</tr>
 	@endif
 @endforeach
 		<tr>
-			<td colspan="2"><button type="button" name="search" class="doSearch btn btn-sm btn-primary"> Search </button></td>
+			<td colspan="2"class="right-align"><button type="button" name="search" class="doSearch btn btn-sm btn-primary"> Search </button></td>
 		</tr>
 	</tbody>
 	</table>

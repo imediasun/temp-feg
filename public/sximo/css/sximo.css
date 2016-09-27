@@ -2491,3 +2491,13 @@ table.table-striped tr th
 #sidemenu.nav .nav li > a {
   margin-left: 6px;
 }
+
+.left-align {
+    text-align: left !important;
+}
+.right-align {
+    text-align: right !important;    
+}
+.center-align {
+    text-align: center !important;    
+}
