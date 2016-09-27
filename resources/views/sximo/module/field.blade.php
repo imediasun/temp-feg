@@ -299,7 +299,7 @@ $(document).ready(function(){
 	 </div> 
   </div>  
     
-   <div class="form-group" @if(empty($f['simplesearch']) || $f['simplesearch'] != 1) style="display:none;" @endif;>
+   <div class="form-group" @if(empty($f['simplesearch']) || $f['simplesearch'] != 1) style="display:none;" @endif>
     <label for="simplesearchoperator" class=" control-label col-md-4">Simple Search Operator</label>
 	<div class="col-md-8">
         <?php 
