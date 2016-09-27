@@ -117,6 +117,23 @@ $(document).ready(function(){
 		$('#SximoTable').submit();
 	});
 	
+    var simpleSearch = $('.simpleSearchContainer'),
+        ajaxSerachMode = <?php echo $searchMode =='ajax' ?'true':'false';?>;
+        
+    if (simpleSearch.length) {
+        initiateSearchFormFields(simpleSearch);
+        simpleSearch.find('.doSimpleSearch').click(function(event){
+            performSimpleSearch.call($(this), {
+                moduleID: '#{{ $pageModule }}',
+                url: "{{ $pageUrl }}",
+                event: event,
+                ajaxSearch: ajaxSerachMode,
+                container: simpleSearch
+            });
+        });
+    }
+    
+    initDataGrid('{{ $pageModule }}', '{{ $pageUrl }}', {useAjax: ajaxSerachMode});    
 });	
 </script>		
 @stop
