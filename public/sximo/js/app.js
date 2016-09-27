@@ -66,6 +66,7 @@ function initDataGrid(module, url, options) {
         options = {};
     }
     
+    var useAjax = options.useAjax !== false;
     module = module.replace(/[^\w-]/g, '');
     
     var table = $('table#'+module+'Table'),
@@ -81,8 +82,15 @@ function initDataGrid(module, url, options) {
             nextOrder = sortedOrder == 'asc' ? 'desc' : 'asc',
             attr = getFooterFiltersWithoutSort(),
             allAttr = attr + ('&sort=' + field + '&order=' + nextOrder);
-            
-        reloadData('#'+module, url+'/data?colheadersort=1' + allAttr);
+        
+        
+        if (useAjax) {
+            reloadData('#'+module, url+'/data?colheadersort=1' + allAttr);
+        }
+        else {
+            window.location.href = url+'/data?colheadersort=1' + allAttr;
+        }            
+        
         
     });
 }
