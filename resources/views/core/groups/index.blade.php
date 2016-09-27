@@ -51,7 +51,7 @@
 	
 	 {!! Form::open(array('url'=>'core/groups/delete/', 'class'=>'form-horizontal' ,'id' =>'SximoTable' )) !!}
 	 <div class="table-responsive" style="min-height:300px;">
-    <table id="coregroupsTable" class="table table-striped table-width-auto">
+    <table id="coregroupsTable" class="table table-striped table-width-auto datagrid">
         <thead>
 			<tr>
 				@if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')

@@ -183,7 +183,7 @@ class order extends Sximo
         $data['received_date']="";
         $data['received_by']="";
        // $data['order_location_name'] = '';
-        
+
         $data['order_freight_id'] = '';
         $data['orderDescriptionArray'] = '';
         $data['orderPriceArray'] = '';
@@ -365,7 +365,9 @@ class order extends Sximo
                 $data['today'] = date('m/d/y');
             }
         }
-
+echo "<pre>";
+        print_r($orderDescriptionArray);
+        die();
         return $data;
     }
 
