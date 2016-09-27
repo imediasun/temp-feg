@@ -26,6 +26,7 @@ class GroupsController extends Controller {
 			'pageTitle'	=> 	$this->info['title'],
 			'pageNote'	=>  $this->info['note'],
 			'pageModule'=> 'core/groups',
+            'pageUrl'	=> url('core/groups'),
 			'return'	=> self::returnUrl()
 			
 		);
