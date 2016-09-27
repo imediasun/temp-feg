@@ -208,27 +208,20 @@ $(document).ready(function() {
 			echo AjaxHelpers::htmlExpandGrid();
 		endif;
 	 ?>
-});
-$('.table-striped tr th').click(function(){
-   column=$(this).data('column');
-    ajaxFilter('#{{ $pageModule }}','{{ $pageModule }}/data','',column);
+	var simpleSearch = $('.simpleSearchContainer');
+	if (simpleSearch.length) {
+		initiateSearchFormFields(simpleSearch);
+		simpleSearch.find('.doSimpleSearch').click(function(event){
+			performSimpleSearch.call($(this), {
+				moduleID: '#{{ $pageModule }}',
+				url: "{{ $pageUrl }}",
+				event: event,
+				container: simpleSearch
+			});
+		});
+	}
+	initDataGrid('{{ $pageModule }}', '{{ $pageUrl }}');
 
-
-
-    var simpleSearch = $('.simpleSearchContainer');
-    if (simpleSearch.length) {
-        initiateSearchFormFields(simpleSearch);
-        simpleSearch.find('.doSimpleSearch').click(function(event){
-            performSimpleSearch.call($(this), {
-                moduleID: '#{{ $pageModule }}',
-                url: "{{ $pageUrl }}",
-                event: event,
-                container: simpleSearch
-            });
-        });
-    }
-
-    initDataGrid('{{ $pageModule }}', '{{ $pageUrl }}');
 });
 </script>
 <style>
