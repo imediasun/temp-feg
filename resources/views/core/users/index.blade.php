@@ -92,7 +92,7 @@
 
 	 {!! Form::open(array('url'=>'core/users/delete/', 'class'=>'form-horizontal' ,'id' =>'SximoTable' )) !!}
 	 <div class="table-responsive" style="min-height:300px;">
-    <table class="table table-striped datagrid" style="table-layout: fixed;width:100%">
+    <table id="coreusersTable" class="table table-striped datagrid" style="table-layout: fixed;width:100%">
         <thead>
 			<tr>
 				<th class="number" width="30"> No </th>
@@ -143,7 +143,7 @@
                 <tr>
 					<td width="30"> {{ ++$i }} </td>
 					<td width="50"><input type="checkbox" class="ids" name="ids[]" value="{{ $row->id }}" />  </td>
-					
+
 				 @foreach ($tableGrid as $field)
 
 					 @if($field['view'] =='1')
