@@ -66,7 +66,6 @@ Route::filter('authorization', function()
 });
 Route::get('submitservicerequest/{GID?}/{LID?}', 'SubmitservicerequestController@getIndex');
 
-
 Route::get('arslan/{id}/{name?}/{subject?}', 'DemoController@getIndex');
 Route::post('arslan/{id}/{name?}/{subject?}', 'DemoController@postIndex');
 
@@ -76,7 +75,7 @@ Route::controller('home', 'HomeController');
 Route::controller('/user', 'UserController');
 include('pageroutes.php');
 include('moduleroutes.php');
-
+Route::get('sbticket/setting', 'SbticketController@getSetting');
 Route::get('/restric',function(){
 
 	return view('errors.blocked');
