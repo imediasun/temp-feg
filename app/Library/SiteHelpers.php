@@ -742,7 +742,7 @@ class SiteHelpers
         $selectMultiple = "";   
         $simpleSearchOptions = '';
         foreach ($forms as $f) {
-            $hasSimpleSearch = $f['simplesearch'] == 1;
+            $hasSimpleSearch = isset($f['simplesearch']) ? $f['simplesearch'] == 1 : false;
             if ($f['field'] == $field && ($f['search'] == 1 || $hasSimpleSearch)) {
                 $type = ($f['type'] != 'file' ? $f['type'] : '');
                 $option = $f['option'];

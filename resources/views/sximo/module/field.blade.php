@@ -103,9 +103,9 @@ $(document).ready(function(){
 <input type="hidden" name="sortlist" value="<?php echo $f['sortlist'];?>" />
 <input type="hidden" name="view" value="<?php echo $f['view'];?>" />
 <input type="hidden" name="search" value="<?php echo $f['search'];?>" />
-<input type="hidden" name="simplesearch" value="<?php echo $f['simplesearch'];?>" />
-<input type="hidden" name="simplesearchorder" value="<?php echo $f['simplesearchorder'];?>" />
-<input type="hidden" name="simplesearchfieldwidth" value="<?php echo $f['simplesearchfieldwidth'];?>" />
+<input type="hidden" name="simplesearch" value="<?php echo isset($f['simplesearch']) ? $f['simplesearch'] : ''; ?>" />
+<input type="hidden" name="simplesearchorder" value="<?php echo isset($f['simplesearchorder']) ? $f['simplesearchorder'] : '';?>" />
+<input type="hidden" name="simplesearchfieldwidth" value="<?php echo isset($f['simplesearchfieldwidth']) ?$f['simplesearchfieldwidth'] : '';?>" />
 <input type="hidden" name="limited" value="<?php echo (isset($f['limited']) ? $f['limited'] : '');?>" />
 <div class="" style="padding:30px;">			
 			
