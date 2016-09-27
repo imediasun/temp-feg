@@ -76,6 +76,7 @@ class GroupsController extends Controller {
 		$this->data['colspan'] 		= \SiteHelpers::viewColSpan($this->info['config']['grid']);		
 		// Group users permission
 		$this->data['access']		= $this->access;
+		$this->data['setting'] 		= $this->info['setting'];
 		// Detail from master if any
 		
 		// Master detail link if any 

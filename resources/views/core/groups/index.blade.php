@@ -54,9 +54,13 @@
     <table class="table table-striped table-width-auto">
         <thead>
 			<tr>
+				@if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
 				<th class="number"> No </th>
+
+				@endif
+					@if($setting['disableactioncheckbox']=='false')
 				<th> <input type="checkbox" class="checkall" /></th>
-				
+					@endif
 				@foreach ($tableGrid as $t)
 					@if($t['view'] =='1')
 						<th>{{ $t['label'] }}</th>
@@ -70,8 +74,13 @@
 						
             @foreach ($rowData as $row)
                 <tr>
+					@if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
 					<td> {{ ++$i }}</td>
-					<td><input type="checkbox" class="ids" name="id[]" value="{{ $row->group_id }}" /></td>									
+					@endif
+						@if($setting['disableactioncheckbox']=='false')
+
+					<td><input type="checkbox" class="ids" name="id[]" value="{{ $row->group_id }}" /></td>
+						@endif
 				 @foreach ($tableGrid as $field)
 					 @if($field['view'] =='1')
 					 <td>					 
