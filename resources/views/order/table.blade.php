@@ -208,12 +208,6 @@ $(document).ready(function() {
 			echo AjaxHelpers::htmlExpandGrid();
 		endif;
 	 ?>
-});
-$('.table-striped tr th').click(function(){
-   column=$(this).data('column');
-    ajaxFilter('#{{ $pageModule }}','{{ $pageModule }}/data','',column);
-
-
 
     var simpleSearch = $('.simpleSearchContainer');
     if (simpleSearch.length) {

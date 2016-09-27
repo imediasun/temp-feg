@@ -51,7 +51,7 @@
 	
 	 {!! Form::open(array('url'=>'core/groups/delete/', 'class'=>'form-horizontal' ,'id' =>'SximoTable' )) !!}
 	 <div class="table-responsive" style="min-height:300px;">
-    <table class="table table-striped table-width-auto">
+    <table id="coregroupsTable" class="table table-striped table-width-auto">
         <thead>
 			<tr>
 				@if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
@@ -126,6 +126,23 @@ $(document).ready(function(){
 		$('#SximoTable').submit();
 	});
 	
+    var simpleSearch = $('.simpleSearchContainer'),
+        ajaxMode = false;
+        
+    if (simpleSearch.length) {
+        initiateSearchFormFields(simpleSearch);
+        simpleSearch.find('.doSimpleSearch').click(function(event){
+            performSimpleSearch.call($(this), {
+                moduleID: '#{{ $pageModule }}',
+                url: "{{ $pageUrl }}",
+                event: event,
+                ajaxSearch: ajaxMode,
+                container: simpleSearch
+            });
+        });
+    }
+    
+    initDataGrid('{{ $pageModule }}', '{{ $pageUrl }}', {useAjax: ajaxMode});    
 });	
 </script>		
 @stop
