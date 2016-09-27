@@ -305,8 +305,8 @@ $(document).ready(function(){
         <?php 
             $simplesearchoperator = isset($f['simplesearchoperator']) ? $f['simplesearchoperator'] : 'equal';
             $simplesearchoperators = array(
-                    "equal" => " >= ",
-                    "bigger_equal" => "=",
+                    "equal" => " = ",
+                    "bigger_equal" => " >= ",
                     "smaller_equal" => " <= ",
                     "smaller" => " < ",
                     "bigger" => " > ",
