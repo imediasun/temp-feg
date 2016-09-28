@@ -156,7 +156,15 @@
 
         </div>
         <?php echo Form::close();?>
-        @include('ajaxfooter')
+        <div class="table-footer">
+            <div class="row">
+                @if(!isset($setting['disablepagination']) || $setting['disablepagination'] == 'false')
+                    <div class="col-md-5 col-md-offset-7" id="<?php echo $pageModule;?>Paginate">
+                        {!! $pagination->appends($pager)->render() !!}
+                    </div>
+                @endif
+            </div>
+        </div>
         <div class="col-md-10 col-md-offset-3">
             <div class="col-md-10">
                 @if(count($rowData) > 0)
@@ -168,7 +176,6 @@
 
         </br>
         </br>
-
 
     </div>
 </div>
@@ -193,30 +200,46 @@
             reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?search=date_start:equal:' + firstDate + '|date_end:equal:' + lastDate);
         });
         var defaultWeekValue = '{{$setDate}}';
-        $('.weeklyDatePicker').datepicker().on('click blur', function (e) {
+        $('.weeklyDatePicker').datepicker().on('click blur hide', function (e) {
             $(".weeklyDatePicker").val(defaultWeekValue);
         });
         $('.tips').tooltip();
         $('#report-submit-button').on('click', (function () {
-            $('.ajaxLoading').show();
-            $.ajax(
-                    {
-                        url: "throwreport/update-status",
-                        type: 'post',
-                        data: {},
-                        success: function (data) {
-                            if (data.status == 'success') {
-                                notyMessage(data.message);
-                                $('.ajaxLoading').hide();
-                            } else {
-                                notyMessageError(data.message);
-                                $('.ajaxLoading').hide();
-                                return false;
-                            }
-                        }
+            $('.modal-title').html("Add Comment");
+            var weekDate = $(".weeklyDatePicker").val();
+            $('#sximo-modal-content').html('{!! Form::open(array("url"=>"throwreport/update-status/", "class"=>"form-horizontal","files" => true , "parsley-validate"=>"","novalidate"=>"","id"=> "throwreportFormAjax")) !!}'+
+                            '<input type="hidden" name="weekdate" value="'+weekDate+'">'+
+                            '<div class="form-group">'+
+                            '<div class="col-md-12">'+
+                            '<textarea name="comment" rows="5" class="form-control" placeholder="Comment" required></textarea>'+
+                            '</div>'+
+                            '</div>'+
+                            '<div class="form-group" style="margin-bottom: 0px !important;">'+
+                            '<div class="col-sm-12">'+
+                            '<button style="float: right;" type="submit" class="btn btn-primary btn-sm "><i class="fa  fa-save "></i>  {{ Lang::get('core.sb_save') }} </button>'+
+                            '</div>'+
+                            '</div>'+
+                            '{!! Form::close() !!}');
+            $('#sximo-modal').modal('show');
+            var form = $('#throwreportFormAjax');
+            form.parsley();
+            form.submit(function(){
 
+                if(form.parsley('isValid') == true){
+                    var options = {
+                        dataType:      'json',
+                        beforeSubmit :  showRequest,
+                        success:       showResponse
                     }
-            );
+                    $(this).ajaxSubmit(options);
+                    return false;
+
+                } else {
+                    return false;
+                }
+
+            });
+
         }));
         $('.changed').on("change", (function (e) {
             /*
@@ -286,6 +309,25 @@
     endif;
         ?>
     });
+    function showRequest()
+    {
+        $('.ajaxLoading').show();
+    }
+    function showResponse(data)  {
+
+        if(data.status == 'success')
+        {
+            $('.ajaxLoading').hide();
+            notyMessage(data.message);
+            $('#sximo-modal').modal('hide');
+        } else {
+            notyMessageError(data.message);
+            $('.ajaxLoading').hide();
+            $('#sximo-modal').modal('show');
+            return false;
+        }
+    }
+
 </script>
 <style>
     .table th.right {
