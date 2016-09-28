@@ -55,13 +55,13 @@
 	  {!! Form::close() !!}
 	  </div>					
 	  </div>
-	   <div class="col-sm-3">
+<!--	   <div class="col-sm-3">
 		<p class="text-center" style=" padding: 25px 0">
 		Total : <b>{{ $pagination->total() }}</b>
 		</p>		
-	   </div>
+	   </div>-->
         @if(!isset($setting['disablepagination']) || $setting['disablepagination'] == 'false')
-		<div class="col-sm-4">			 
+		<div class="col-sm-7">			 
             {!! $pagination->appends($pager)->render() !!}
         </div>
         @endif
