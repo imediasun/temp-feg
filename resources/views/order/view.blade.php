@@ -106,8 +106,8 @@
                         </label>
 
                         <div class="col-md-8">
-                          @if(isset($order_data['received_date']) && !empty($order_data['received_date']))
-                            {{  $order_data['received_date'] = date("m/d/Y", strtotime($order_data['received_date']))  }}
+                          @if(isset($row->date_received) && !empty($row->date_received))
+                            {{  $row->date_received = date("m/d/Y", strtotime($row->date_received))  }}
 
 
                               @endif
@@ -120,7 +120,7 @@
                         </label>
 
                         <div class="col-md-8">
-                            {!! SiteHelpers::gridDisplayView($order_data['received_by'],'received_by','1:users:id:username') !!}
+                            {!! SiteHelpers::gridDisplayView($row->received_by,'received_by','1:users:id:username') !!}
 
                         </div>
                     </div>
