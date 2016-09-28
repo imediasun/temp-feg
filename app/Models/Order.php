@@ -402,7 +402,7 @@ class order extends Sximo
         $data['location_id'] = '';
         $data['user_id'] = \Session::get('uid');
         if (!empty($order_id)) {
-            $query = \DB::select('SELECT O.order_type_id,O.order_description,O.request_ids,O.po_number,O.location_id,O.order_total,O.status_id,
+            $query = \DB::select('SELECT O.order_type_id,O.order_description,O.request_ids,O.po_number,O.location_id,O.order_total,O.status_id,O.date_received,
                      O.notes,O.added_to_inventory,V.vendor_name,U.username FROM orders O LEFT JOIN vendor V ON V.id = O.vendor_id
                      LEFT JOIN users U ON U.id = O.user_id WHERE O.id = ' . $order_id . '');
             if (count($query) == 1) {
@@ -419,6 +419,7 @@ class order extends Sximo
                 $data['description'] = str_replace(' | ', "<br>", $order_description);
                 $data['vendor_name'] = $query[0]->vendor_name;
                 $data['item_count'] = '';
+                $data['date_received']=$query[0]->date_received;
             }
             if (!empty($data['requestIds']) && ($data['order_type'] == 7 || $data['order_type'] == 8)) //INSTANT WIN AND REDEMPTION PRIZES
             {
