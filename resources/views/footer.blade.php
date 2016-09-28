@@ -3,11 +3,11 @@
 	<div class="row">
 	 <div class="col-sm-5">
 	  <div class="table-actions" style=" padding: 10px 0" id="<?php echo $pageModule;?>Filter">        
-		<input type="hidden" name="search" value="<?php if(!is_null(Input::get('search'))) echo Input::get('search') ;?>" />
-		<input type="hidden" name="simplesearch" value="<?php if(!is_null(Input::get('simplesearch'))) echo Input::get('simplesearch') ;?>" />
 	   {!! Form::open(array('url'=>$pageModule.'/filter/')) !!}
 		   {{--*/ $pages = array(10,20,30,50,100) /*--}}
 		   {{--*/ $orders = array('asc','desc') /*--}}
+		<input type="hidden" name="search" value="<?php if(!is_null(Input::get('search'))) echo Input::get('search') ;?>" />
+		<input type="hidden" name="simplesearch" value="<?php if(!is_null(Input::get('simplesearch'))) echo Input::get('simplesearch') ;?>" />
         @if(!isset($setting['disablepagination']) || $setting['disablepagination'] == 'false')
         <?php $setRows = isset($pager['rows']) ? $pager['rows'] : $setting['perpage']; ?>
 		<select name="rows" data-placeholder="{{ Lang::get('core.grid_show') }}" 
