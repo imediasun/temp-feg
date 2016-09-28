@@ -888,7 +888,7 @@ class ModuleController extends Controller {
                 'field'        => $field[$i],
                 'alias'        => isset($alias[$i])?$alias[$i]:"",
                 'language'    => $language,
-                'label'        => $label[$i],
+                'label'        => isset($label[$i])?$label[$i]:"",
                 'view'        => (isset($view[$i]) ? 1 : 0 ),
                 'detail'    => (isset($detail[$i]) ? 1 : 0 ),
                 'sortable'    => (isset($sortable[$i]) ? 1 : 0 ),
