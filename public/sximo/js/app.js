@@ -53,6 +53,7 @@ var UNDEFINED,
                     switch (operator) {
                         case 'between':
                                 showBetweenFields({
+                                    field: elmName,
                                     fieldElm : elm,
                                     fieldElm2 : elm2,
                                     previousValue2 : val2,

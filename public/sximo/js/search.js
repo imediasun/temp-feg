@@ -136,6 +136,7 @@ function changeSearchOperator( val , field , elm ,type)
         
         case 'between':
             showBetweenFields({
+                field: field,
                 fieldElm : fieldElm,
                 fieldElm2 : fieldElm2,
                 previousValue2 : previousValue2,
@@ -153,6 +154,7 @@ function showBetweenFields(options) {
         options = {};
     }
     var fieldElm = options.fieldElm, 
+        field = options.field || fieldElm.attr('name'),
         fieldElm2 = options.fieldElm2, 
         previousValue2 = options.previousValue2, 
         dashElement = options.dashElement;
