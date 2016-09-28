@@ -167,6 +167,7 @@
                 @endif
             </div>
         </div>
+        </br>
         <div class="col-md-10 col-md-offset-3">
             <div class="col-md-10">
                 @if(count($rowData) > 0)
@@ -186,22 +187,18 @@
 <script src="https://cdn.jsdelivr.net/momentjs/2.10.6/moment.min.js"></script>
 <script>
     $(document).ready(function () {
-        var flag = 0;
-        var weekDate = '';
         //Initialize the datePicker(I have taken format as mm-dd-yyyy, you can     //have your owh)
         //var lastWeekDate = new Date(new Date().setDate(new Date().getDate() - (new Date().getDay() == 0 ? 6 : 6)));
         var lastWeekDate = moment(new Date()).weekday(-1).format('MM/DD/YYYY');
         $(".weeklyDatePicker").datepicker({endDate: lastWeekDate, autoclose: true});
         $(".weeklyDatePicker").val('{{ $setDate }}');
         $('.weeklyDatePicker').datepicker().on('change', function (e) {
-            flag = 1;
             var value = $(".weeklyDatePicker").val();
             var firstDate = moment(value, "MM/DD/YYYY").day(0).format("MM/DD/YYYY");
             var lastDate = moment(value, "MM/DD/YYYY").day(6).format("MM/DD/YYYY");
             selectedDate = firstDate + " - " + lastDate;
-            weekDate = selectedDate;
             $(".weeklyDatePicker").val(firstDate + " - " + lastDate);
-            reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?search=date_start:equal:' + firstDate + '|date_end:equal:' + lastDate);
+            reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?search=date_start:equal:' + firstDate + '|date_end:equal:' + lastDate+'&config_id=' + $("#col-config").val());
             $('.weeklyDatePicker').datepicker("hide");
         });
         var defaultWeekValue = '{{$setDate}}';
@@ -333,6 +330,12 @@
         }
     }
 
+    $("#col-config").on('change', function () {
+        var value = $(".weeklyDatePicker").val();
+        var firstDate = moment(value, "MM/DD/YYYY").day(0).format("MM/DD/YYYY");
+        var lastDate = moment(value, "MM/DD/YYYY").day(6).format("MM/DD/YYYY");
+        reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?config_id=' + $("#col-config").val()+ '&search=date_start:equal:' + firstDate + '|date_end:equal:' + lastDate);
+    });
 </script>
 <style>
     .table th.right {
