@@ -25,7 +25,7 @@ class order extends Sximo
         return "  SELECT orders.* from orders ";
     }
 
-    public static function processApiData($json)
+    public static function processApiData($json,$param=null)
     {
         if(!empty($json)){
             return self::addOrderItems($json);
@@ -365,9 +365,6 @@ class order extends Sximo
                 $data['today'] = date('m/d/y');
             }
         }
-echo "<pre>";
-        print_r($orderDescriptionArray);
-        die();
         return $data;
     }
 
