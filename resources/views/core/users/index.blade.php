@@ -70,7 +70,7 @@
 			@endif
 
 
-			<a href="{{ URL::to( 'core/users/search') }}" class="btn btn-sm btn-white" onclick="SximoModal(this.href,'Advanced Search'); return false;" ><i class=" fa fa-search"></i> Search</a>
+			<a href="{{ URL::to( 'core/users/search') }}" class="btn btn-sm btn-white" onclick="SximoModal(this.href,'Advanced Search'); return false;" ><i class=" fa fa-search"></i>Advanced Search</a>
 		@if(SiteHelpers::isModuleEnabled('users'))
 			<a href="{{ URL::to('tablecols/arrange-cols/users') }}" class="btn btn-sm btn-white" onclick="SximoModal(this.href,'Column Selector'); return false;" ><i class="fa fa-bars"></i> Arrange Columns</a>
 			<?php   $colconfigs=SiteHelpers::getRequiredConfigs($module_id);  ?>

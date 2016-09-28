@@ -3,7 +3,7 @@
 	<div class="row">
 	 <div class="col-sm-5">
 	  <div class="table-actions" style=" padding: 10px 0" id="<?php echo $pageModule;?>Filter">        
-	   {!! Form::open(array('url'=>$pageModule.'/filter/')) !!}
+	   {!! Form::open(array('url'=>$pageModule)) !!}
 		   {{--*/ $pages = array(10,20,30,50,100) /*--}}
 		   {{--*/ $orders = array('asc','desc') /*--}}
 		<input type="hidden" name="search" value="<?php if(!is_null(Input::get('search'))) echo Input::get('search') ;?>" />
