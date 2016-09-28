@@ -27,11 +27,13 @@
 <div class="sbox animated fadeInRight">
 	<div class="sbox-title"> <h5> <i class="fa fa-table"></i> <?php echo $pageTitle ;?> <small>{{ $pageNote }}</small></h5>
 		<div class="sbox-tools" >
-
-		 <a href="{{ url($pageModule) }}" class="btn btn-xs btn-white tips  {{(isset($_GET['search'])) ? 'btn-search ':'' }}" title="Clear Search" ><i class="fa fa-trash-o"></i> Clear Search </a>
-
-
-
+        {{--*/ $sortParam = is_null(Input::get('sort')))?'':'&sort='.Input::get('sort') /*--}}
+        {{--*/ $orderParam = is_null(Input::get('order')))?'':'&order='.Input::get('order') /*--}}
+        {{--*/ $rowsParam = is_null(Input::get('rows')))?'':'&rows='.Input::get('rows') /*--}}
+        @if(isset($_GET['search']))
+		 <a href="{{ url($pageModule) }}?{{ $sortParam }}{{ $orderParam }}{{ $rowsParam }}"
+            class="btn btn-xs btn-white tips btn-search" title="Clear Search" ><i class="fa fa-trash-o"></i> Clear Search </a>
+        @endif
 		@if(Session::get('gid') ==1)
 			<a href="{{ URL::to('feg/module/config/'.$pageModule) }}" class="btn btn-xs btn-white tips" title=" {{ Lang::get('core.btn_config') }}" ><i class="fa fa-cog"></i></a>
 		@endif
