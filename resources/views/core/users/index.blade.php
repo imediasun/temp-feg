@@ -245,8 +245,8 @@
 </div>
 <script>
 // The following 2 lines are only for native modules
-var modParams = <?php json_encode($param); ?>;
-var searchParams = <?php json_encode($searchFilters); ?>;
+var modParams = <?php echo json_encode($param); ?>;
+var searchParams = <?php echo json_encode($searchFilters); ?>;
 $(document).ready(function(){
 
 	$('.do-quick-search').click(function(){
