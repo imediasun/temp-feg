@@ -4,7 +4,7 @@ use App\Http\Controllers\controller;
 use App\Models\Core\Groups;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
-use Validator, Input, Redirect ; 
+use Validator, Input, Redirect, Session, Auth, DB; 
 
 
 class GroupsController extends Controller {
@@ -39,17 +39,17 @@ class GroupsController extends Controller {
 			return Redirect::to('dashboard')
 				->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus','error');
 
-		$sort = (!is_null($request->input('sort')) ? $request->input('sort') : 'group_id'); 
-		$order = (!is_null($request->input('order')) ? $request->input('order') : 'asc');
+		$sort = (!is_null($request->input('sort')) ? $request->input('sort') : $this->info['setting']['orderby']);
+		$order = (!is_null($request->input('order')) ? $request->input('order') : $this->info['setting']['ordertype']);
 		// End Filter sort and order for query 
 		// Filter Search for query		
-		$filter = (!is_null($request->input('search')) ? '': '');
+		$filter = (!is_null($request->input('search')) ? $this->buildSearch() : '');
 
 		
 		$page = $request->input('page', 1);
 		$params = array(
 			'page'		=> $page ,
-			'limit'		=> (!is_null($request->input('rows')) ? filter_var($request->input('rows'),FILTER_VALIDATE_INT) : static::$per_page ) ,
+			'limit'		=> (!is_null($request->input('rows')) ? filter_var($request->input('rows'),FILTER_VALIDATE_INT) : $this->info['setting']['perpage'] ),
 			'sort'		=> $sort ,
 			'order'		=> $order,
 			'params'	=> $filter,
@@ -176,7 +176,18 @@ class GroupsController extends Controller {
         		->with('messagetext','No Item Deleted')->with('msgstatus','error');				
 		}
 
-	}			
+	}
+    
+    public function getSearch($mode = 'native')
+    {
+
+        $this->data['tableForm'] = $this->info['config']['forms'];
+        $this->data['tableGrid'] = $this->info['config']['grid'];
+        $this->data['searchMode'] = 'native';
+        $this->data['pageUrl'] = url('core/groups');
+        return view('sximo.module.utility.search', $this->data);
+
+    }    
 
 
 }
