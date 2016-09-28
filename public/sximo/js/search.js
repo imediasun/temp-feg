@@ -61,7 +61,7 @@ function performAdvancedSearch(params) {
 			
 		});
 
-    attr += getFooterFilters(true, true);
+    attr += getFooterFilters({'simplesearch': true, 'search': true, 'page': true});
     
     App.search.cache = cache;
     App.lastSearchMode = 'advanced';

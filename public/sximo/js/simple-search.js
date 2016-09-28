@@ -38,7 +38,7 @@ function performSimpleSearch(params) {
 
     });
 
-    attr += getFooterFilters(true, true);
+    attr += getFooterFilters({'simplesearch': true, 'search': true, 'page': true});
     
     App.simpleSearch.cache = cache;
     App.lastSearchMode = 'simple';

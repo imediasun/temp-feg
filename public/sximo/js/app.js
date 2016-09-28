@@ -94,7 +94,7 @@ function initDataGrid(module, url, options) {
             sorted = elm.attr('data-sorted'),
             sortedOrder = elm.attr('data-sortedOrder') || '',
             nextOrder = sortedOrder == 'asc' ? 'desc' : 'asc',
-            attr = getFooterFiltersWithoutSort(),
+            attr = getFooterFilters({'sort': true, 'order': true}),
             allAttr = attr + ('&sort=' + field + '&order=' + nextOrder);
         
         
