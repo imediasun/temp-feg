@@ -4,7 +4,7 @@ function performSimpleSearch(params) {
     }
     var elm = this, 
         container = params.container || $('.simpleSearchContainer'), 
-        attr = '?search=',
+        attr = '?simplesearch=1&search=',
         moduleID = params.moduleID,
         url = params.url,
         ajaxSearch = params.ajaxSearch !== false,
@@ -15,7 +15,7 @@ function performSimpleSearch(params) {
         var elm = this,
             valueField = $(elm),                
             fieldName = valueField.attr('name'),                
-            operate = "equal",
+            operate = valueField.attr('data-simpleSearchOperator') || "equal",
             value = valueField.val(),
             isValueDate = valueField.hasClass('date'),
             isValueDateTime = valueField.hasClass('datetime');

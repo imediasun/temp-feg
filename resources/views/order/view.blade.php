@@ -106,8 +106,8 @@
                         </label>
 
                         <div class="col-md-8">
-                          @if(isset($row->date_received))
-                            {{  $row->date_received = date("m/d/Y", strtotime($row->date_received))  }}
+                          @if(isset($order_data['received_date']) && !empty($order_data['received_date']))
+                            {{  $order_data['received_date'] = date("m/d/Y", strtotime($order_data['received_date']))  }}
 
 
                               @endif
@@ -120,7 +120,7 @@
                         </label>
 
                         <div class="col-md-8">
-                            {!! SiteHelpers::gridDisplayView($row->received_by,'received_by','1:users:id:username') !!}
+                            {!! SiteHelpers::gridDisplayView($order_data['received_by'],'received_by','1:users:id:username') !!}
 
                         </div>
                     </div>
@@ -320,9 +320,11 @@ for($i=0; $i < count($order_data['orderQtyArray']);$i++)
                 <thead>
                 <tr>
                 <th>N0 #</th>
-                <th>Item Deacription</th>
+                <th>Sku #</th>
+                <th>Item Description</th>
                 <th>Item Price</th>
                 <th>Item Quantity </th>
+                <th>Items Received</th>
                 <th>Total ($)</th>
                 </tr>
                 </thead>
@@ -331,15 +333,19 @@ for($i=0; $i < count($order_data['orderQtyArray']);$i++)
                 @for($i = 0 ; $i < $order_data['requests_item_count']; $i++)
                     <tr>
                         <td>{{ $i+1 }} </td>
+                        <td>{{  $order_data['skuNumArray'][$i]}}</td>
                         <td>{{  $order_data['orderDescriptionArray'][$i] }}</td>
                         <td>{{  $order_data['orderPriceArray'][$i] }}</td>
                         <td>{{  $order_data['orderQtyArray'][$i] }}</td>
+                        <td>{{ $order_data['receivedItemsArray'][$i] }}</td>
                         <td>{{ number_format(  $order_data['orderPriceArray'][$i]* $order_data['orderQtyArray'][$i],2)}}</td>
 
                     </tr>
                     @endfor
                 <tr>
-                    <td  colspan="4" class="text-center">Sub Total</td>
+
+                    <td>&nbsp</td><td>&nbsp</td><td>&nbsp</td><td>&nbsp</td><td>&nbsp</td>
+                    <td  colspan="1">Sub Total</td>
                     <td>{{ $order_data['order_total'] }}</td>
 
                 </tr>

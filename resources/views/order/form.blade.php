@@ -207,6 +207,7 @@
                     <thead>
                     <tr class="invHeading">
                         <th width="50"> Item #</th>
+                        <th width="100"> Sku #</th>
                         <th width="200">Item Name</th>
                         <th width="200">Item Description</th>
                         <th>Price Per Unit</th>
@@ -226,6 +227,9 @@
                     <tr id="rowid" class="clone clonedInput">
                         <td><br/><input type="text"  id="item_num" name="item_num[]" disabled readonly
                                    style="width:30px;border:none;background:none"/></td>
+                        <td><br/><input type="text"  id="sku_num" name="sku_num[]" disabled readonly
+                                        style="width:70px;border:none;background:none"/></td>
+
                         <td><br/> <input type="text" name='item_name[]' placeholder='Item  Name' id="item_name"
                                        class='form-control item_name mysearch' onfocus="init(this.id,this)"  maxlength="225" reuuired>
                         </td>
@@ -252,19 +256,16 @@
                         <td><br/> <input type='number' name='qty[]' placeholder='Quantity'
                                          class='form-control qty' min="0" step="1" id="qty" value="00"
                                          required></td>
-                        <td class="game" style="display:none"><br/>
+                        <!--<td class="game" style="display:none"><br/>
                             <select name='game[]' id='game_0' class='game  form-control'>
                                 <option value="">For Various Games</option>
-                                @foreach( \SiteHelpers::getGamesName() as $game_title)
-                                    <option value="{{ $game_title->id }}"> {{ $game_title->game_name }}</option>
-                                @endforeach
                             </select>
-                            <input type='hidden' name='product_id[]' id="product_id">
-                        </td>
+                        </td>-->
+                        <input type='hidden' name='product_id[]' id="product_id">
                         <input type='hidden' name='request_id[]' id="request_id">
                         <td><br/><input type="text" name="total" value="" readonly class="form-control"/></td>
-                        <td><br/> <a onclick=" $(this).parents('.clonedInput').remove(); calculateSum();decreaseCounter(); return false"
-                                     href="#" class="remove btn btn-xs btn-danger">-</a>
+                        <td><br/> <button onclick=" $(this).parents('.clonedInput').remove(); calculateSum();decreaseCounter(); return false"
+                                      class="remove btn btn-xs btn-danger">-</button>
                             <input type="hidden" name="counter[]">
                         </td>
                     </tr>
@@ -350,7 +351,7 @@
             hideShowAltLocation();
             $("#item_num").val('1');
             $("#submit_btn").hide();
-$('.test').val(0.00);
+           $('.test').val(0.00);
 
             $('#icon').click(function(){
                 $(document).ready(function(){
@@ -418,13 +419,18 @@ $('.test').val(0.00);
             var order_product_id_array = <?php echo json_encode($data['orderProductIdArray']) ?>;
             var order_request_id_array = <?php echo json_encode($data['orderRequestIdArray']) ?>;
             var item_name_array=<?php echo json_encode($data['itemNameArray']) ?>;
+            var sku_num_array=<?php echo json_encode($data['skuNumArray']) ?>;
+
             var item_case_price=<?php echo json_encode($data['itemCasePrice']) ?>;
             var item_retail_price=<?php echo json_encode($data['itemRetailPrice'])?>;
             var item_total = 0;
+            console.log(sku_num_array);
             for (var i = 0; i < requests_item_count; i++) {
 
                 $('input[name^=item_num]').eq(i).val(i + 1);
                 $('textarea[name^=item]').eq(i).val(order_description_array[i]);
+                console.log("===>"+sku_num_array[i]);
+                $('input[name^=sku_num]').eq(i).val(sku_num_array[i]);
                 if(order_price_array[i] == "" || order_price_array[i] == null ) {
                     $('input[name^=price]').eq(i).val(0.00);
                 }
@@ -439,6 +445,8 @@ $('.test').val(0.00);
                     $('input[name^=qty]').eq(i).val(order_qty_array[i]);
 
                 }
+
+
                 if(order_product_id_array[i] == "" || order_product_id_array[i]== null)
                 {
                     $('input[name^=product_id]').eq(i).val(0);
@@ -450,6 +458,7 @@ $('.test').val(0.00);
                 }
                 $('input[name^=request_id]').eq(i).val(order_request_id_array[i]);
                 $('input[name^=item_name]').eq(i).val(item_name_array[i]);
+
                 if(item_case_price[i] == "" || item_case_price[i] == null)
                 {
                     $('input[name^=case_price]').eq(i).val(0.00);
@@ -490,6 +499,7 @@ $('.test').val(0.00);
         function showResponse(data) {
 
             if (data.status == 'success') {
+                alert();
                 var url = location.href;
                 location.href = "{{ url() }}/order/save-or-send-email";
                 notyMessage(data.message);
@@ -646,11 +656,16 @@ $('.test').val(0.00);
                     lastXhr;
 
                 var trid = $(obj).closest('tr').attr('id');
+            var skuid = $("#"+trid+"  input[id^='sku_num']").attr('id');
                 var priceid = $("#"+trid+"  input[id^='price']").attr('id');
                 var casepriceid = $("#"+trid+"  input[id^='case_price']").attr('id');
-                      var qtyid = $("#"+trid+"  input[id^='qty']").attr('id');
+                var qtyid = $("#"+trid+"  input[id^='qty']").attr('id');
                 var itemid = $("#"+trid+"  textarea[name^=item]").attr('id');
-            var retailpriceid=$('#'+trid+"  input[name^=retail]").attr('id');
+                var retailpriceid=$('#'+trid+"  input[name^=retail]").attr('id');
+                var selectorProductId=$('#'+trid+"  input[name^=product_id]").attr('id');
+                console.log(qtyid);
+                console.log(retailpriceid);
+                console.log(selectorProductId);
 
                 $(obj).autocomplete({
                     minLength: 2,
@@ -666,6 +681,14 @@ $('.test').val(0.00);
                     },
                     select: function( event, ui ) {
                         $.ajax({url: "order/productdata",type:"get",dataType:'json',data:{'product_id':ui.item.value}, success: function(result){
+
+                            if(result.sku) {
+                                $("#"+skuid).val(result.sku);
+                            }
+                            else
+                            {
+                                $("#"+skuid).val();
+                            }
 
                             if(result.unit_price) {
                                 $("#"+priceid).val(result.unit_price);
@@ -690,8 +713,9 @@ $('.test').val(0.00);
                             }
                             $(obj).next("td").find("textarea").val("abcdd");
                             $("#"+itemid).val(result.item_description);
-                            $("#product_id").val(result.id);
+                            $("#"+selectorProductId).val(result.id);
                             $("#"+qtyid).val(0.00);
+                            calculateSum();
                         }});
                     }
                 });

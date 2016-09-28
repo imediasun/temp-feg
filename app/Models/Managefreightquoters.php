@@ -63,23 +63,6 @@ class managefreightquoters extends Sximo
         return " GROUP BY freight_orders.id";
     }
 
-    public static function getSearchFilters()
-    {
-        $finalFilter = array();
-        if (isset($_GET['search'])) {
-            $filters_raw = trim($_GET['search'], "|");
-            $filters = explode("|", $filters_raw);
-
-            foreach ($filters as $filter) {
-                $columnFilter = explode(":", $filter);
-                if (isset($columnFilter) && isset($columnFilter[0]) && isset($columnFilter[2])) {
-                    $finalFilter[$columnFilter[0]] = $columnFilter[2];
-                }
-            }
-        }
-        return $finalFilter;
-    }
-
     function getDescription($freight_order_id)
     {
         $description = \DB::select("SELECT freight_orders.id,GROUP_CONCAT(description) as description FROM freight_pallet_details LEFT JOIN freight_orders ON freight_orders.id=freight_pallet_details.freight_order_id where freight_orders.id=" . $freight_order_id . " GROUP BY freight_orders.id");

@@ -6,6 +6,7 @@
             <div class="sbox-title">
                 <h3 >  Save/Download PO
                    </h3>
+                <button style="visibility: hidden" type="button " class="btn-xs collapse-close btn btn-danger pull-right"><i class="fa fa fa-times"></i></button>
                 <a href="javascript:void(0)" class="collapse-close pull-right btn btn-xs btn-danger"  id="close" onclick="reloadOrder();"
                         ><i class="fa fa fa-times"></i></a>
 

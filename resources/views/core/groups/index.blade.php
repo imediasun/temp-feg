@@ -28,9 +28,32 @@
 	<div class="sbox-title"> <h5> <i class="fa fa-table"></i> <?php echo $pageTitle ;?> <small>{{ $pageNote }}</small></h5>
 		<div class="sbox-tools" >
 
+		 <a href="{{ url($pageModule) }}" class="btn btn-xs btn-white tips  {{(isset($_GET['search'])) ? 'btn-search ':'' }}" title="Clear Search" ><i class="fa fa-trash-o"></i> Clear Search </a>
+
+
+
+		@if(Session::get('gid') ==1)
+			<a href="{{ URL::to('feg/module/config/'.$pageModule) }}" class="btn btn-xs btn-white tips" title=" {{ Lang::get('core.btn_config') }}" ><i class="fa fa-cog"></i></a>
+		@endif
 		</div>
 	</div>
 	<div class="sbox-content"> 	
+        @if($setting['usesimplesearch']!='false')
+            <?php $simpleSearchForm = SiteHelpers::configureSimpleSearchForm($tableForm); ?>
+            @if(!empty($simpleSearchForm))
+                <div class="simpleSearchContainer clearfix">
+                    @foreach ($simpleSearchForm as $t)
+                        <div class="sscol {{ $t['widthClass'] }}" style="{{ $t['widthStyle'] }}">
+                            {!! SiteHelpers::activeLang($t['label'],(isset($t['language'])? $t['language'] : array())) !!}
+                            {!! SiteHelpers::transForm($t['field'] , $simpleSearchForm) !!}
+                        </div>
+                    @endforeach
+                    <div class="sscol-submit"><br/>
+                        <button type="button" name="search" class="doSimpleSearch btn btn-sm btn-primary"> Search </button>
+                    </div>
+                </div>
+            @endif
+        @endif
 	    <div class="toolbar-line ">
 			@if($access['is_add'] ==1)
 	   		<a href="{{ URL::to('core/groups/update') }}" class="tips btn btn-sm btn-white"  title="{{ Lang::get('core.btn_create') }}">
@@ -51,17 +74,43 @@
 	
 	 {!! Form::open(array('url'=>'core/groups/delete/', 'class'=>'form-horizontal' ,'id' =>'SximoTable' )) !!}
 	 <div class="table-responsive" style="min-height:300px;">
-    <table class="table table-striped table-width-auto">
+    <table id="coregroupsTable" class="table table-striped table-width-auto datagrid">
         <thead>
 			<tr>
+				@if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
 				<th class="number"> No </th>
+
+				@endif
+					@if($setting['disableactioncheckbox']=='false')
 				<th> <input type="checkbox" class="checkall" /></th>
-				
-				@foreach ($tableGrid as $t)
-					@if($t['view'] =='1')
-						<th>{{ $t['label'] }}</th>
 					@endif
-				@endforeach
+				<?php foreach ($tableGrid as $t) :
+					if($t['view'] =='1'):
+						$limited = isset($t['limited']) ? $t['limited'] :'';
+						if(SiteHelpers::filterColumn($limited ))
+						{
+							$sortBy = $param['sort'];
+							$orderBy = strtolower($param['order']);
+							$colField = $t['field'];
+							$colIsSortable = $t['sortable'] == '1';
+							$colIsSorted = $colIsSortable && $colField == $sortBy;
+							$colClass = $colIsSortable ? ' dgcsortable' : '';
+							$colClass .= $colIsSorted ? " dgcsorted dgcorder$orderBy" : '';
+							$th = '<th'.
+									' class="'.$colClass.'"'.
+									' data-field="'.$colField.'"'.
+									' data-sortable="'.$colIsSortable.'"'.
+									' data-sorted="'.($colIsSorted?1:0).'"'.
+									' data-sortedOrder="'.($colIsSorted?$orderBy:'').'"'.
+									' align="'.$t['align'].'"'.
+									' width="'.$t['width'].'"';
+							$th .= '>';
+							$th .= \SiteHelpers::activeLang($t['label'],(isset($t['language'])? $t['language'] : array()));
+							$th .= '</th>';
+							echo $th;
+						}
+					endif;
+				endforeach; ?>
 				<th width="70" >{{ Lang::get('core.btn_action') }}</th>
 			  </tr>
         </thead>
@@ -70,8 +119,13 @@
 						
             @foreach ($rowData as $row)
                 <tr>
+					@if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
 					<td> {{ ++$i }}</td>
-					<td><input type="checkbox" class="ids" name="id[]" value="{{ $row->group_id }}" /></td>									
+					@endif
+						@if($setting['disableactioncheckbox']=='false')
+
+					<td><input type="checkbox" class="ids" name="id[]" value="{{ $row->group_id }}" /></td>
+						@endif
 				 @foreach ($tableGrid as $field)
 					 @if($field['view'] =='1')
 					 <td>					 
@@ -117,6 +171,23 @@ $(document).ready(function(){
 		$('#SximoTable').submit();
 	});
 	
+    var simpleSearch = $('.simpleSearchContainer'),
+        ajaxMode = false;
+        
+    if (simpleSearch.length) {
+        initiateSearchFormFields(simpleSearch);
+        simpleSearch.find('.doSimpleSearch').click(function(event){
+            performSimpleSearch.call($(this), {
+                moduleID: '#{{ $pageModule }}',
+                url: "{{ $pageUrl }}",
+                event: event,
+                ajaxSearch: ajaxMode,
+                container: simpleSearch
+            });
+        });
+    }
+    
+    initDataGrid('{{ $pageModule }}', '{{ $pageUrl }}', {useAjax: ajaxMode});    
 });	
 </script>		
 @stop

@@ -1,4 +1,3 @@
-
 <?php usort($tableGrid, "SiteHelpers::_sort");
 ?>
 <div class="sbox">
@@ -80,7 +79,9 @@
         	@if($access['is_add'] =='1' && $setting['inline']=='true')
 			<tr id="form-0" >
 				<td> # </td>
-				<td> </td>
+				@if($setting['disableactioncheckbox']=='false')
+					<td> </td>
+				@endif
 				@if($setting['view-method']=='expand') <td> </td> @endif
 				@foreach ($tableGrid as $t)
 					@if($t['view'] =='1')
@@ -102,8 +103,13 @@
            			  $id = $row->id;
            		?>
                 <tr class="editable" id="form-{{ $row->id }}">
-					<td class="number"> <?php echo ++$i;?>  </td>
-					<td ><input type="checkbox" class="ids" name="ids[]" value="<?php echo $row->id ;?>" />  </td>
+
+					@if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
+						<td class="number"> <?php echo ++$i;?>  </td>
+					@endif
+					@if($setting['disableactioncheckbox']=='false')
+						<td ><input type="checkbox" class="ids" name="ids[]" value="<?php echo $row->id ;?>" />  </td>
+					@endif
 
 
 					@if($setting['view-method']=='expand')
@@ -128,8 +134,6 @@
 				 <td data-values="action" data-key="<?php echo $row->id ;?>">
 					{!! AjaxHelpers::GamestitleButtonAction('order',$access,$id ,$setting) !!}
 					{!! AjaxHelpers::buttonActionInline($row->id,'id') !!}
-
-
 
 
 
@@ -204,12 +208,6 @@ $(document).ready(function() {
 			echo AjaxHelpers::htmlExpandGrid();
 		endif;
 	 ?>
-});
-$('.table-striped tr th').click(function(){
-   column=$(this).data('column');
-    ajaxFilter('#{{ $pageModule }}','{{ $pageModule }}/data','',column);
-
-
 
     var simpleSearch = $('.simpleSearchContainer');
     if (simpleSearch.length) {

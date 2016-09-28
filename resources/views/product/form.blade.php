@@ -275,7 +275,7 @@ $(document).ready(function() {
 			{  selected_value : '{{ $row["prod_type_id"] }}' });
 
 
-	$("#prod_sub_type_id").jCombo("{{ URL::to('product/comboselect?filter=product_type:id:product_type') }}&parent=request_type_id:",
+	$("#prod_sub_type_id").jCombo("{{ URL::to('product/comboselect?filter=product_type:id:type_description') }}&parent=request_type_id:",
 			{parent : '#prod_type_id',selected_value : '{{ $row["prod_sub_type_id"] }}' });
 
 

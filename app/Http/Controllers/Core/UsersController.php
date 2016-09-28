@@ -29,7 +29,7 @@ class UsersController extends Controller
             'pageTitle' => $this->info['title'],
             'pageNote' => $this->info['note'],
             'pageModule' => 'core/users',
-            'pageUrl'	=>  url('vendor'),
+            'pageUrl'	=>  url('core/users'),
             'return' => self::returnUrl()
 
         );
@@ -62,8 +62,8 @@ class UsersController extends Controller
             return Redirect::to('dashboard')
                 ->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
 
-        $sort = (!is_null($request->input('sort')) ? $request->input('sort') : 'last_name');
-        $order = (!is_null($request->input('order')) ? $request->input('order') : 'asc');
+		$sort = (!is_null($request->input('sort')) ? $request->input('sort') : $this->info['setting']['orderby']);
+		$order = (!is_null($request->input('order')) ? $request->input('order') : $this->info['setting']['ordertype']);
         // End Filter sort and order for query
         // Filter Search for query
         $filter = (!is_null($request->input('search')) ? $this->buildSearch() : '');
@@ -74,12 +74,12 @@ class UsersController extends Controller
         $page = $request->input('page', 1);
 
         $params = array(
-            'page' => $page,
-            'limit' => (!is_null($request->input('rows')) ? filter_var($request->input('rows'), FILTER_VALIDATE_INT) : static::$per_page),
-            'sort' => $sort,
-            'order' => $order,
-            'params' => $filter,
-            'global' => (isset($this->access['is_global']) ? $this->access['is_global'] : 0)
+            'page'      => $page,
+            'limit'     => (!is_null($request->input('rows')) ? filter_var($request->input('rows'),FILTER_VALIDATE_INT) : $this->info['setting']['perpage'] ),
+            'sort'      => $sort,
+            'order'     => $order,
+            'params'    => $filter,
+            'global'    => (isset($this->access['is_global']) ? $this->access['is_global'] : 0)
         );
         // Get Query
         $results = $this->model->getRows($params);

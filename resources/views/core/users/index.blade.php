@@ -55,7 +55,7 @@
                 </div>
             @endif
         @endif
-	    <div class="toolbar-line  style="align="left";">
+	    <div class="toolbar-line">
 			@if($access['is_add'] ==1)
 	   		<a href="{{ URL::to('core/users/update') }}" class="tips btn btn-sm btn-white"  title="{{ Lang::get('core.btn_create') }}">
 			<i class="fa fa-plus-circle "></i>&nbsp;{{ Lang::get('core.btn_create') }}</a>
@@ -92,11 +92,16 @@
 
 	 {!! Form::open(array('url'=>'core/users/delete/', 'class'=>'form-horizontal' ,'id' =>'SximoTable' )) !!}
 	 <div class="table-responsive" style="min-height:300px;">
-    <table class="table table-striped datagrid" style="table-layout: fixed;width:100%">
+    <table id="coreusersTable" class="table table-striped datagrid" style="table-layout: fixed;width:100%">
         <thead>
 			<tr>
+
+				@if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
 				<th class="number" width="30"> No </th>
-				<th width="60"> <input type="checkbox" class="checkall" /></th>
+				@endif
+					@if($setting['disableactioncheckbox']=='false')
+						<th width="50"> <input type="checkbox" class="checkall" /></th>
+					@endif
 
                 <?php foreach ($tableGrid as $t) :
                     if($t['view'] =='1'):
@@ -141,9 +146,13 @@
             @foreach ($rowData as $row)
 
                 <tr>
+					@if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
 					<td width="30"> {{ ++$i }} </td>
+					@endif
+
+						@if($setting['disableactioncheckbox']=='false')
 					<td width="50"><input type="checkbox" class="ids" name="ids[]" value="{{ $row->id }}" />  </td>
-					
+						@endif
 				 @foreach ($tableGrid as $field)
 
 					 @if($field['view'] =='1')
@@ -242,12 +251,9 @@ $(document).ready(function(){
 		$('#SximoTable').submit();
 	});
 
-$("#col-config").change(function(){
-    var config_id=$('#col-config').val();
-        location.href = "/core/users?config_id=" + config_id;
+    var simpleSearch = $('.simpleSearchContainer'),
+        ajaxMode = false;
 
-
-    var simpleSearch = $('.simpleSearchContainer');
     if (simpleSearch.length) {
         initiateSearchFormFields(simpleSearch);
         simpleSearch.find('.doSimpleSearch').click(function(event){
@@ -255,13 +261,13 @@ $("#col-config").change(function(){
                 moduleID: '#{{ $pageModule }}',
                 url: "{{ $pageUrl }}",
                 event: event,
+                ajaxSearch: ajaxMode,
                 container: simpleSearch
             });
         });
     }
 
-    initDataGrid('{{ $pageModule }}', '{{ $pageUrl }}');
-});
+    initDataGrid('{{ $pageModule }}', '{{ $pageUrl }}', {useAjax: ajaxMode});
 });
 </script>
 <style>

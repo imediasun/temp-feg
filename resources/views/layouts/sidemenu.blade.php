@@ -126,7 +126,7 @@ $selected_loc=\Session::get('selected_location');?>
                     @if(count($menu['childs']) > 0)
                         <ul class="nav nav-second-level">
                             @foreach ($menu['childs'] as $menu2)
-                                <li @if(Request::segment(1) == $menu2['module']) class="active" @endif>
+                                <li @if(Request::segment(1) == $menu2['module'] && Request::segment(2)!="setting") class="active" @endif >
                                     <a
                                     @if($menu2['menu_type'] =='external')
                                         href="{{ $menu2['url']}}"
