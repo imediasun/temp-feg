@@ -21,6 +21,7 @@
         </select>
         @endif
         @endif
+		<label>Week Date Range</label>
 		<input type="text" class="weeklyDatePicker"  name ="weeklyDatePicker"  style="padding-bottom:5px" } />
 	</div>
 

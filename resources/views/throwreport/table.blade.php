@@ -3,12 +3,14 @@
     <div class="sbox-title">
         <h5><i class="fa fa-table"></i></h5>
         <div class="sbox-tools">
+            <!--
             <a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Clear Search"
                onclick="reloadData('#{{ $pageModule }}','throwreport/data?search=')"><i class="fa fa-trash-o"></i> Clear
                 Search </a>
             <a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Reload Data"
                onclick="reloadData('#{{ $pageModule }}','throwreport/data?return={{ $return }}')"><i
                         class="fa fa-refresh"></i></a>
+            -->
             @if(Session::get('gid') ==1)
                 <a href="{{ url('feg/module/config/'.$pageModule) }}" class="btn btn-xs btn-white tips"
                    title=" {{ Lang::get('core.btn_config') }}"><i class="fa fa-cog"></i></a>
@@ -184,20 +186,23 @@
 <script src="https://cdn.jsdelivr.net/momentjs/2.10.6/moment.min.js"></script>
 <script>
     $(document).ready(function () {
-
+        var flag = 0;
+        var weekDate = '';
         //Initialize the datePicker(I have taken format as mm-dd-yyyy, you can     //have your owh)
         //var lastWeekDate = new Date(new Date().setDate(new Date().getDate() - (new Date().getDay() == 0 ? 6 : 6)));
         var lastWeekDate = moment(new Date()).weekday(-1).format('MM/DD/YYYY');
-        $(".weeklyDatePicker").datepicker({endDate: lastWeekDate});
+        $(".weeklyDatePicker").datepicker({endDate: lastWeekDate, autoclose: true});
         $(".weeklyDatePicker").val('{{ $setDate }}');
         $('.weeklyDatePicker').datepicker().on('change', function (e) {
-            $('.weeklyDatePicker').datepicker("hide");
+            flag = 1;
             var value = $(".weeklyDatePicker").val();
             var firstDate = moment(value, "MM/DD/YYYY").day(0).format("MM/DD/YYYY");
             var lastDate = moment(value, "MM/DD/YYYY").day(6).format("MM/DD/YYYY");
             selectedDate = firstDate + " - " + lastDate;
+            weekDate = selectedDate;
             $(".weeklyDatePicker").val(firstDate + " - " + lastDate);
             reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?search=date_start:equal:' + firstDate + '|date_end:equal:' + lastDate);
+            $('.weeklyDatePicker').datepicker("hide");
         });
         var defaultWeekValue = '{{$setDate}}';
         $('.weeklyDatePicker').datepicker().on('click blur hide', function (e) {
