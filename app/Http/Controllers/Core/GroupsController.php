@@ -44,7 +44,6 @@ class GroupsController extends Controller {
 		// End Filter sort and order for query 
 		// Filter Search for query		
 		$filter = (!is_null($request->input('search')) ? $this->buildSearch() : '');
-        $searchFilters = $this->model->getSearchFilters();
 		
 		$page = $request->input('page', 1);
 		$params = array(
@@ -68,7 +67,6 @@ class GroupsController extends Controller {
         
 		$pagination->setPath('groups');
         $this->data['param']		= $params;
-        $this->data['searchFilters']		= $searchFilters;
 		$this->data['rowData']		= $results['rows'];
 		// Build Pagination 
 		$this->data['pagination']	= $pagination;

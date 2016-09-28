@@ -165,10 +165,7 @@
 </div>	
 	</div>	  
 </div>	
-<script>
-// The following 2 lines are only for native modules
-var modParams = <?php echo json_encode($param); ?>;
-var searchParams = <?php echo json_encode($searchFilters); ?>;    
+<script> 
 $(document).ready(function(){
 
 	$('.do-quick-search').click(function(){
@@ -194,7 +191,7 @@ $(document).ready(function(){
     
     initDataGrid('{{ $pageModule }}', '{{ $pageUrl }}', {useAjax: ajaxMode});    
     
-    updateNativeUIFieldsBasedOn({params: modParams, search: searchParams, ajax: ajaxMode});  
+    updateNativeUIFieldsBasedOn();  
 });	
 </script>		
 @stop

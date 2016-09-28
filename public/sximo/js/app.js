@@ -130,11 +130,52 @@ jQuery(document).ready(function($){
     autoSetMainContainerHeight();
 });
 
-function updateNativeUIFieldsBasedOn(options) {
+function updateNativeUIFieldsBasedOn() {
+    var searchCache,
+        search = $('.table-actions input[name=search]').val() || '',
+        isSimpleSearch = $('.table-actions input[name=simplesearch]').val() || 0, 
+        splitFields = search.split('|'),//id:between:1:100|
+        field, 
+        item, i,
+        fieldName, val, operator, val2;
+        
+    if (search) {
+        searchCache = {};
+        for(i in splitFields) {
+            field = splitFields[i];
+            if (field) {
+                item = field.split(":");
+                fieldName = item[0] || '';
+                operator = item[1] || '';
+                val = item[2] || '';
+                val2 = item[3];
+                if (fieldName) {
+                    searchCache[fieldName] = {'operator': operator, 'value': val, 'value2': val2};
+                }
+            }
+        }
+        if (isSimpleSearch) {
+            App.simpleSearch.cache = searchCache;
+            App.simpleSearch.populateFields();
+        }
+        else {
+            App.search.cache = searchCache;
+        }
+    }
     
 }
 
 function makeSimpleSearchFieldsToInitiateSearchOnEnter() {
-    //$('.simpleSearchContainer')
-    console.log('simple search field interactivity config');
+    var simpleSearchContainer = $('.simpleSearchContainer'),
+        hasSimpleSearch = simpleSearchContainer.length,
+        simpleSearchButton =  hasSimpleSearch && 
+                            simpleSearchContainer.find('doSimpleSearch');
+    if (hasSimpleSearch) {
+        simpleSearchContainer.find('input[type=text]').keypress(function(event){
+            var keycode = event.keyCode || event.which;
+            if(keycode == '13') {
+                simpleSearchButton.click();
+            }
+        });
+    }
 }

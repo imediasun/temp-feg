@@ -67,7 +67,6 @@ class UsersController extends Controller
         // End Filter sort and order for query
         // Filter Search for query
         $filter = (!is_null($request->input('search')) ? $this->buildSearch() : '');
-        $searchFilters = $this->model->getSearchFilters();
         //@todo check if that condition is needed in future
         //$filter .= " AND tb_users.group_id >= '".\Session::get('gid')."'" ;
 
@@ -93,7 +92,6 @@ class UsersController extends Controller
 				($results['total'] > 0 ? $results['total'] : '1')));          
         $pagination->setPath('users');
         $this->data['param']		= $params;
-        $this->data['searchFilters']		= $searchFilters;
         foreach ($results['rows'] as $result) {
 
             if ($result->is_tech_contact == 1) {
