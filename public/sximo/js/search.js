@@ -135,44 +135,12 @@ function changeSearchOperator( val , field , elm ,type)
             break;
         
         case 'between':
-            fieldElm.width('48%')
-                    .attr('placeholder', 'Start')
-                    .addClass('pull-left');
-            
-            fieldElm2 = jQuery('<input name="'+field+'_end" class="form-control" />')
-                        .insertAfter(fieldElm);
-            fieldElm2.attr('placeholder', "End")
-                    .addClass('pull-left')
-                    .width('48%');
-            
-//            if (fieldElm.hasClass('sel-search-multiple')) {
-//                fieldElm2.addClass('.sel-search-multiple').select2();    
-//                fieldElm2.select2('val', previousValue2);            
-//            }            
-            if (previousValue2 !== UNDEFINED && previousValue2 !== null) {
-                fieldElm2.val(previousValue2);
-            }            
-            if (fieldElm.hasClass('date')) {
-                fieldElm2.addClass('date')
-                        .datepicker({format:'mm/dd/yyyy',autoclose:true});                 
-                fieldElm2.datepicker('update');
-            }
-            if (fieldElm.hasClass('datetime')) {
-                fieldElm2.addClass('datetime')
-                        .datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});    
-                fieldElm2.datetimepicker('update');
-                
-            }
-            
-            dashElement = jQuery('<div class="betweenseparator"> - </div>')
-                            .insertAfter(fieldElm);
-            dashElement
-                .addClass('pull-left')
-                .css({
-                    "margin": "1%",
-                    "height": "100%",
-                    "line-height": "2em"
-                });
+            showBetweenFields({
+                fieldElm : fieldElm,
+                fieldElm2 : fieldElm2,
+                previousValue2 : previousValue2,
+                dashElement : dashElement
+            });
             break;
             
         default:
@@ -180,7 +148,55 @@ function changeSearchOperator( val , field , elm ,type)
     }
 
 }
+function showBetweenFields(options) {
+    if (!options) {
+        options = {};
+    }
+    var fieldElm = options.fieldElm, 
+        fieldElm2 = options.fieldElm2, 
+        previousValue2 = options.previousValue2, 
+        dashElement = options.dashElement;
+    
+    fieldElm.width('48%')
+                .attr('placeholder', 'Start')
+                .addClass('pull-left');
 
+    fieldElm2 = jQuery('<input name="'+field+'_end" class="form-control" />')
+                .insertAfter(fieldElm);
+    fieldElm2.attr('placeholder', "End")
+            .addClass('pull-left')
+            .width('48%');
+
+//            if (fieldElm.hasClass('sel-search-multiple')) {
+//                fieldElm2.addClass('.sel-search-multiple').select2();    
+//                fieldElm2.select2('val', previousValue2);            
+//            }            
+    if (previousValue2 !== UNDEFINED && previousValue2 !== null) {
+        fieldElm2.val(previousValue2);
+    }            
+    if (fieldElm.hasClass('date')) {
+        fieldElm2.addClass('date')
+                .datepicker({format:'mm/dd/yyyy',autoclose:true});                 
+        fieldElm2.datepicker('update');
+    }
+    if (fieldElm.hasClass('datetime')) {
+        fieldElm2.addClass('datetime')
+                .datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});    
+        fieldElm2.datetimepicker('update');
+
+    }
+
+    dashElement = jQuery('<div class="betweenseparator"> - </div>')
+                    .insertAfter(fieldElm);
+    dashElement
+        .addClass('pull-left')
+        .css({
+            "margin": "1%",
+            "height": "100%",
+            "line-height": "2em"
+        });    
+    
+}
 App.autoCallbacks.reloaddata = function(params) {
     if (!params) {
         params = {};
@@ -197,7 +213,9 @@ App.autoCallbacks.reloaddata = function(params) {
         else {
 
         }        
-    }    
+    }
+    
+    makeSimpleSearchFieldsToInitiateSearchOnEnter();
 
 };
 App.autoCallbacks.ajaxinlinesave = function(params) {
@@ -221,49 +239,3 @@ App.autoCallbacks.columnselector = function() {
 App.search.populateFields = function(modal) {
     App.populateFieldsFromCache(modal, App.search, true);
 };
-
-
-
-function changeSearchOperator_new(operatorValue, field, elm)
-{
-    var $elm = $(elm),
-        container = $elm.closest('tr.fieldsearch'),
-        fieldElement = container.find("[name="+field+"]"),
-        fieldValue = fieldElement.val(),
-        field2Element = container.find("[name="+field+"_end]"),
-        field2Value = field2Element.length && field2Element.val(),
-        cacheValue1 = fieldElement.data('cachedValue'),
-        cacheValue2 = field2Element.length && field2Element.data('cachedValue'),
-        cacheOperator = $elm.data('cachedValue'),
-        html;
-    
-    fieldElement.data('cachedValue', fieldValue);
-    $elm.data('cachedValue', operatorValue);
-    if (field2Element.length) {
-        field2Element.data('cachedValue', field2Value);
-    }
-    
-    switch (operatorValue) {
-        case 'is_null':
-            fieldElement.prop('readonly',true);
-            fieldElement.val('is_null');            
-            break;
-        case 'not_null':
-            fieldElement.prop('readonly', true);
-            fieldElement.val('not_null');            
-            break;
-        case 'between':
-            html = '<input name="'+field+'" class="date form-control" placeholder="Start" style="width:100px;"  /> -  <input name="'+field+'_end" class="date form-control"  placeholder="End" style="width:100px;"    />';
-            $('#field_'+field+'').html(html);            
-            break;
-        default:
-            fieldElement.prop('readonly', false);
-            fieldElement.val('');	            
-            break;
-    }	
-    
-    
-    
-}
-
-

@@ -67,13 +67,14 @@ class UsersController extends Controller
         // End Filter sort and order for query
         // Filter Search for query
         $filter = (!is_null($request->input('search')) ? $this->buildSearch() : '');
+        $searchFilters = $this->model->getSearchFilters();
         //@todo check if that condition is needed in future
         //$filter .= " AND tb_users.group_id >= '".\Session::get('gid')."'" ;
 
 
         $page = $request->input('page', 1);
 
-        $params = array(
+            $params = array(
             'page'      => $page,
             'limit'     => (!is_null($request->input('rows')) ? filter_var($request->input('rows'),FILTER_VALIDATE_INT) : $this->info['setting']['perpage'] ),
             'sort'      => $sort,
@@ -86,9 +87,13 @@ class UsersController extends Controller
 
         // Build pagination setting
         $page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;
-        $pagination = new Paginator($results['rows'], $results['total'], $params['limit']);
+		//$pagination = new Paginator($results['rows'], $results['total'], $params['limit']);
+        $pagination = new Paginator($results['rows'], $results['total'], 
+            (isset($params['limit']) && $params['limit'] > 0  ? $params['limit'] : 
+				($results['total'] > 0 ? $results['total'] : '1')));          
         $pagination->setPath('users');
         $this->data['param']		= $params;
+        $this->data['searchFilters']		= $searchFilters;
         foreach ($results['rows'] as $result) {
 
             if ($result->is_tech_contact == 1) {

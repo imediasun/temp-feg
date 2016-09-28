@@ -49,7 +49,21 @@ var UNDEFINED,
                     }                    
                     if (operatorElm.length) {
                         operatorElm.val(operator);
-                    }                    
+                    }
+                    switch (operator) {
+                        case 'between':
+                                showBetweenFields({
+                                    fieldElm : elm,
+                                    fieldElm2 : elm2,
+                                    previousValue2 : val2,
+                                    dashElement : null
+                                });                            
+                            break;
+                        case "is_null":
+                        case "not_null":
+                            elm.prop('readonly', true);
+                            break;                            
+                    }
                 }
             }                    
         }
@@ -114,3 +128,12 @@ jQuery(document).ready(function($){
     // Adjust main panel's height based on overflowing nav-bar
     autoSetMainContainerHeight();
 });
+
+function updateNativeUIFieldsBasedOn(options) {
+    
+}
+
+function makeSimpleSearchFieldsToInitiateSearchOnEnter() {
+    //$('.simpleSearchContainer')
+    console.log('simple search field interactivity config');
+}
