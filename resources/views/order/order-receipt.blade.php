@@ -9,7 +9,7 @@
         </div>
 
         <div class="sbox-content">
-
+<div class="ajaxLoading"></div>
             {!! Form::open(array('url'=>'order/receiveorder/', 'class'=>'form-vertical','files' => true ,
             'parsley-validate'=>'','novalidate'=>' ','id'=> 'orderreceiveFormAjax')) !!}
             <div class="col-md-offset-1 col-md-11 ">
