@@ -65,10 +65,7 @@ Route::filter('authorization', function()
 
 });
 Route::get('submitservicerequest/{GID?}/{LID?}', 'SubmitservicerequestController@getIndex');
-
-
-
-
+Route::get('ticketsetting','SbticketController@getSetting');
 Route::get('order/submitorder/{SID?}', 'OrderController@getSubmitorder');
 Route::get('/', 'UserController@getLogin');
 Route::controller('home', 'HomeController');
