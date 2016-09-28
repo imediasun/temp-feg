@@ -169,7 +169,7 @@ function makeSimpleSearchFieldsToInitiateSearchOnEnter() {
     var simpleSearchContainer = $('.simpleSearchContainer'),
         hasSimpleSearch = simpleSearchContainer.length,
         simpleSearchButton =  hasSimpleSearch && 
-                            simpleSearchContainer.find('doSimpleSearch');
+                            simpleSearchContainer.find('.doSimpleSearch');
     if (hasSimpleSearch) {
         simpleSearchContainer.find('input[type=text]').keypress(function(event){
             var keycode = event.keyCode || event.which;
