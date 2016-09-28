@@ -50,6 +50,7 @@ class FegapiController extends Controller {
 
 
             if (!is_null($limit) or $limit != 0) $param['limit'] = $limit;
+            else $param['limit']=500;
             if (!is_null($order)) $param['order'] =$order ;
             if (!is_null($sort)) $param['sort'] = $sort;
 
