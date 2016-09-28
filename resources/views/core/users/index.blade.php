@@ -272,6 +272,7 @@ $(document).ready(function(){
     initDataGrid('{{ $pageModule }}', '{{ $pageUrl }}', {useAjax: ajaxMode});
     
     updateNativeUIFieldsBasedOn();  
+    makeSimpleSearchFieldsToInitiateSearchOnEnter();
     
 });
 </script>
