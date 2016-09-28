@@ -28,9 +28,9 @@
 <div class="sbox animated fadeInRight" >
 	<div class="sbox-title">
 <div class="sbox-tools" >
-        {{!! $sortParam = is_null(Input::get('sort')))?'':'&sort='.Input::get('sort') !!}}
-        {{!! $orderParam = is_null(Input::get('order')))?'':'&order='.Input::get('order') !!}}
-        {{!! $rowsParam = is_null(Input::get('rows')))?'':'&rows='.Input::get('rows') !!}}
+        {{--*/ $sortParam = is_null(Input::get('sort'))?'':'&sort='.Input::get('sort') /*--}}
+        {{--*/ $orderParam = is_null(Input::get('order'))?'':'&order='.Input::get('order') /*--}}
+        {{--*/ $rowsParam = is_null(Input::get('rows'))?'':'&rows='.Input::get('rows') /*--}}
         @if(isset($_GET['search']))
 		 <a href="{{ url($pageModule) }}?{{ $sortParam }}{{ $orderParam }}{{ $rowsParam }}"
             class="btn btn-xs btn-white tips btn-search" title="Clear Search" ><i class="fa fa-trash-o"></i> Clear Search </a>
