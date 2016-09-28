@@ -4,7 +4,7 @@ use App\Http\Controllers\controller;
 use App\Models\Core\Groups;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
-use Validator, Input, Redirect ; 
+use Validator, Input, Redirect, Session, Auth, DB; 
 
 
 class GroupsController extends Controller {
@@ -43,7 +43,7 @@ class GroupsController extends Controller {
 		$order = (!is_null($request->input('order')) ? $request->input('order') : 'asc');
 		// End Filter sort and order for query 
 		// Filter Search for query		
-		$filter = (!is_null($request->input('search')) ? '': '');
+		$filter = (!is_null($request->input('search')) ? $this->buildSearch() : '');
 
 		
 		$page = $request->input('page', 1);
@@ -176,7 +176,18 @@ class GroupsController extends Controller {
         		->with('messagetext','No Item Deleted')->with('msgstatus','error');				
 		}
 
-	}			
+	}
+    
+    public function getSearch($mode = 'native')
+    {
+
+        $this->data['tableForm'] = $this->info['config']['forms'];
+        $this->data['tableGrid'] = $this->info['config']['grid'];
+        $this->data['searchMode'] = 'native';
+        $this->data['pageUrl'] = url('core/groups');
+        return view('sximo.module.utility.search', $this->data);
+
+    }    
 
 
 }
