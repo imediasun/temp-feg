@@ -365,9 +365,6 @@ class order extends Sximo
                 $data['today'] = date('m/d/y');
             }
         }
-echo "<pre>";
-        print_r($orderDescriptionArray);
-        die();
         return $data;
     }
 
