@@ -81,7 +81,7 @@
            			  $id = $row->id;
                 ?>
                 <tr class="editable" id="form-{{ $row->id }}">
-					<@if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
+					@if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
 					<td class="number"> <?php echo ++$i;?>  </td>
                     @endif
 					@if($setting['view-method']=='expand')
