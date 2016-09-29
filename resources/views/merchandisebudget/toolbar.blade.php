@@ -5,8 +5,7 @@
 			@endif
             <a href="{{ URL::to( $pageModule .'/search') }}" class="btn btn-sm btn-white" onclick="SximoModal(this.href,'Advanced Search'); return false;" ><i class="fa fa-search"></i>Advanced Search</a>
         </div>
-        <div class="col-md-4">
-            <h2>Merchant Budget</h2>
+        <div class="col-md-4">            
         </div>
         <div class="col-md-4">
             <?php
