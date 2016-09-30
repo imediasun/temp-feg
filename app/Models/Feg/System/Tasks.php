@@ -1,9 +1,8 @@
 <?php namespace App\Models\Feg\System;
 
-use App\Models;
+use App\Models\Sximo;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
-use App\Library\ReportHelpers;
 
 class tasks extends Sximo  {
 	
