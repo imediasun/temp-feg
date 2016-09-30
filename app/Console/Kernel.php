@@ -18,6 +18,8 @@ class Kernel extends ConsoleKernel
         \App\Console\Commands\AutoCloseOrder::class,
         \App\Console\Commands\SyncGameEarningsFromLive::class,
         \App\Console\Commands\Elm5TaskManager::class,
+        \App\Console\Commands\CreateDummyOrders::class,
+
     ];
 
     /**
@@ -32,6 +34,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('autocloseorder')->daily();
         $schedule->command('inspire')->hourly();
         $schedule->command('syncgameearningsfromlive')->dailyAt('17:00')->withoutOverlapping();
+        $schedule->command('create:dummy_order')->everyMinute()->sendOutputTo("C:\\Users\\adnan\\Desktop\\test.txt");
         //$schedule->command('syncgameearningsfromlive')->everyMinute()->withoutOverlapping();
         //$schedule->command('elm5taskmanager')->everyMinute();
     }

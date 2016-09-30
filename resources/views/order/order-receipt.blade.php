@@ -126,7 +126,7 @@
                             <label for="date_received" class=" control-label col-md-4 text-right">
                                 Date Received </label>
                             <div class="col-md-8">
-                                <input type="text" class="date form-control" name="date_received" value="{{ isset($data['date_received'])?date("m/d/Y", strtotime($data['date_received'])):date("m/d/Y", strtotime($data['today']))}}" required/>
+                                <input type="text" class="date form-control" name="date_received" value="{{ isset($data['date_received'])?date("m/d/Y", strtotime($data['date_received'])):date("m/d/Y")}}" required/>
                             </div>
                         </div>
                         <div class="form-group  ">
