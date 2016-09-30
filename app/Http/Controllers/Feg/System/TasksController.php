@@ -4,7 +4,7 @@ use App\Http\Controllers\controller;
 use App\Models\Feg\System\Tasks;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
-use Validator, Input, Redirect ; 
+use Validator, Input, Redirect, Session, Auth, DB; 
 
 class TasksController extends Controller {
 
@@ -25,7 +25,7 @@ class TasksController extends Controller {
 			'pageTitle'			=> 	$this->info['title'],
 			'pageNote'			=>  $this->info['note'],
 			'pageModule'		=> 'feg/system/tasks',
-			'pageUrl'			=>  url('feg/system/tasks'),
+			'pageUrl'			=>  url('tasks'),
 			'return' 			=> 	self::returnUrl()
 		);
 		
