@@ -89,8 +89,6 @@ class TasksController extends Controller {
 		// Row grid Number
 		$this->data['i']			= ($page * $params['limit'])- $params['limit'];
 		// Grid Configuration
-        var_dump($this->data['rowData']);
-        die();
 		$this->data['tableGrid'] 	= $this->info['config']['grid'];
 		$this->data['tableForm'] 	= $this->info['config']['forms'];
 		$this->data['colspan'] 		= \SiteHelpers::viewColSpan($this->info['config']['grid']);
@@ -101,6 +99,8 @@ class TasksController extends Controller {
 
 		// Master detail link if any
 		$this->data['subgrid']	= (isset($this->info['config']['subgrid']) ? $this->info['config']['subgrid'] : array());
+        var_dump($this->data['tableGrid'] );
+        die();
 
 // Render into template
 		return view('feg.system.tasks.table',$this->data);
