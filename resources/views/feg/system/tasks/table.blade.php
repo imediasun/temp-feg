@@ -3,31 +3,9 @@
 	<div class="sbox-title">
 		<h5> <i class="fa fa-table"></i> </h5>
 		<div class="sbox-tools" >
-			<a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Clear Search" onclick="reloadData('#{{ $pageModule }}','{{$pageModule}}/data?search=')"><i class="fa fa-trash-o"></i> Clear Search </a>
-			<a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Reload Data" onclick="reloadData('#{{ $pageModule }}','{{$pageModule}}/data?return={{ $return }}')"><i class="fa fa-refresh"></i></a>
-			@if(Session::get('gid') ==1)
-			<a href="{{ url('feg/module/config/'.$pageModule) }}" class="btn btn-xs btn-white tips" title=" {{ Lang::get('core.btn_config') }}" ><i class="fa fa-cog"></i></a>
-			@endif
-	</div>
+        </div>
 	</div>
 	<div class="sbox-content">
-        @if($setting['usesimplesearch']!='false')     
-        <?php $simpleSearchForm = SiteHelpers::configureSimpleSearchForm($tableForm); ?>
-        @if(!empty($simpleSearchForm))  
-        <div class="simpleSearchContainer clearfix">
-            @foreach ($simpleSearchForm as $t)
-                <div class="sscol {{ $t['widthClass'] }}" style="{{ $t['widthStyle'] }}">
-                    {!! SiteHelpers::activeLang($t['label'],(isset($t['language'])? $t['language'] : array())) !!}
-                    {!! SiteHelpers::transForm($t['field'] , $simpleSearchForm) !!}                    
-                </div>                        
-            @endforeach		
-            <div class="sscol-submit"><br/>
-                <button type="button" name="search" class="doSimpleSearch btn btn-sm btn-primary"> Search </button>		
-            </div>
-        </div>
-        @endif
-        @endif
-        @include( $pageModule.'/toolbar',['config_id'=>$config_id,'colconfigs' => SiteHelpers::getRequiredConfigs($module_id)])
 	 <?php echo Form::open(array('url'=>'{{$pageModule}}/delete/', 'class'=>'form-horizontal' ,'id' =>'SximoTable'  ,'data-parsley-validate'=>'' )) ;?>
 <div class="table-responsive">
     @if(!empty($topMessage))
@@ -200,20 +178,6 @@ $(document).ready(function() {
 		endif;
 	 ?>
 
-    var simpleSearch = $('.simpleSearchContainer');
-    if (simpleSearch.length) {
-        initiateSearchFormFields(simpleSearch);
-        simpleSearch.find('.doSimpleSearch').click(function(event){
-            performSimpleSearch.call($(this), {
-                moduleID: '#{{ $pageModule }}', 
-                url: "{{ $pageUrl }}", 
-                event: event,
-                container: simpleSearch
-            });
-        });        
-    }
-    
-    initDataGrid('{{ $pageModule }}', '{{ $pageUrl }}');
 });
 </script>
 <style>
