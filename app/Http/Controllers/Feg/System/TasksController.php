@@ -24,8 +24,8 @@ class TasksController extends Controller {
 		$this->data = array(
 			'pageTitle'			=> 	$this->info['title'],
 			'pageNote'			=>  $this->info['note'],
-			'pageModule'		=> 'feg/system/tasks',
-			'pageUrl'			=>  url('tasks'),
+			'pageModule'		=> 'tasks',
+			'pageUrl'			=>  url('feg/system/tasks'),
 			'return' 			=> 	self::returnUrl()
 		);
 		
