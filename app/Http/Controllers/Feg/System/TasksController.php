@@ -99,9 +99,6 @@ class TasksController extends Controller {
 
 		// Master detail link if any
 		$this->data['subgrid']	= (isset($this->info['config']['subgrid']) ? $this->info['config']['subgrid'] : array());
-        var_dump($this->data['tableForm'] );
-        var_dump($this->data['colspan'] );
-        die();
 
 // Render into template
 		return view('feg.system.tasks.table',$this->data);
