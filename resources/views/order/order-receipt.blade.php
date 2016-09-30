@@ -126,7 +126,7 @@
                             <label for="date_received" class=" control-label col-md-4 text-right">
                                 Date Received </label>
                             <div class="col-md-8">
-                                <?php if(isset($data['date_received']) && !empty($data['date_received']))
+                                <?php if(isset($data['date_received']) && ($data['date_received']!='0000-00-00'))
                                 $date_received = $data['date_received'];
                                 else
                                     $date_received=date('m/d/Y');
