@@ -107,7 +107,7 @@ Route::group(['middleware' => 'auth' , 'middleware'=>'sximoauth'], function()
 		'feg/config' 		=> 'Sximo\ConfigController',
 		'feg/module' 		=> 'Sximo\ModuleController',
 		'feg/tables'		=> 'Sximo\TablesController',
-		'feg/system/tasks'	=> 'feg\system\TasksController',
+		'feg/system/tasks'	=> 'Feg\System\TasksController',
 	]);
 
 
