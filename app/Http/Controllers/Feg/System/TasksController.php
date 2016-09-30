@@ -56,7 +56,7 @@ class TasksController extends Controller {
 		// End Filter sort and order for query
 		// Filter Search for query
 		$filter = (!is_null($request->input('search')) ? $this->buildSearch() : '');
-
+        
 
 		$page = $request->input('page', 1);
 		$params = array(
@@ -69,6 +69,8 @@ class TasksController extends Controller {
 		);
 		// Get Query
 		$results = $this->model->getRows( $params );
+        var_dump($results);
+        die();
 		// Build pagination setting
 		$page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;
 		//$pagination = new Paginator($results['rows'], $results['total'], $params['limit']);
