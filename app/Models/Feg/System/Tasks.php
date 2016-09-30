@@ -6,6 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class tasks extends Sximo  {
 	
+    protected $table = 'elm5_tasks';
+	protected $primaryKey = 'id';
+    
 	public function __construct() {
 		parent::__construct();
 	}
