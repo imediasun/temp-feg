@@ -1,4 +1,4 @@
-<?php namespace App\Http\Controllers;
+<?php namespace App\Http\Controllers\feg\system;
 
 use App\Http\Controllers\controller;
 use App\Models\feg\system\Tasks;
