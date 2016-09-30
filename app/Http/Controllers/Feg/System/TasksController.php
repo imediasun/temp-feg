@@ -69,8 +69,6 @@ class TasksController extends Controller {
 		);
 		// Get Query
 		$results = $this->model->getRows( $params );
-        var_dump($results);
-        die();
 		// Build pagination setting
 		$page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;
 		//$pagination = new Paginator($results['rows'], $results['total'], $params['limit']);
@@ -91,6 +89,8 @@ class TasksController extends Controller {
 		// Row grid Number
 		$this->data['i']			= ($page * $params['limit'])- $params['limit'];
 		// Grid Configuration
+        var_dump($this->data['rowData']);
+        die();
 		$this->data['tableGrid'] 	= $this->info['config']['grid'];
 		$this->data['tableForm'] 	= $this->info['config']['forms'];
 		$this->data['colspan'] 		= \SiteHelpers::viewColSpan($this->info['config']['grid']);
