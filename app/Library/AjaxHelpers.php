@@ -137,10 +137,11 @@ class AjaxHelpers
 
 	static public function buttonAction( $module , $access , $id , $setting,$edit=null)
 	{
+        
         $url = $module;
         if (is_array($module)) {
-            $module = $module['module'];
             $url = $module['url'];
+            $module = $module['module'];
         }
 
 		$html ='<div class=" action dropup" >';
