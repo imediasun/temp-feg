@@ -90,7 +90,7 @@
 					<td ><input type="checkbox" class="ids" name="ids[]" value="<?php echo $row->id ;?>" />  </td>
                     @endif
 					@if($setting['view-method']=='expand')
-					<td><a href="javascript:void(0)" class="expandable" rel="#row-{{ $row->id }}" data-url="{{ url('{{ $pageModule }}/show/'.$id) }}"><i class="fa fa-plus " ></i></a></td>
+					<td><a href="javascript:void(0)" class="expandable" rel="#row-{{ $row->id }}" data-url="{{ url($pageModule.'/show/'.$id) }}"><i class="fa fa-plus " ></i></a></td>
 					@endif
 					 <?php foreach ($tableGrid as $field) :
 					 	if($field['view'] =='1') :
@@ -111,7 +111,7 @@
 					  ?>
                   @if($setting['disablerowactions']=='false')     
 				 <td data-values="action" data-key="<?php echo $row->id ;?>">
-					{!! AjaxHelpers::buttonAction('tasks',$access,$id ,$setting) !!}
+					{!! AjaxHelpers::buttonAction('{{ $pageModule }}',$access,$id ,$setting) !!}
 					{!! AjaxHelpers::buttonActionInline($row->id,'id') !!}
 				</td>
                 @endif
