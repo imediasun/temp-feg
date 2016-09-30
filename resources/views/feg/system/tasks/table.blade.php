@@ -111,7 +111,7 @@
 					  ?>
                   @if($setting['disablerowactions']=='false')     
 				 <td data-values="action" data-key="<?php echo $row->id ;?>">
-					{!! AjaxHelpers::buttonAction('$pageUrl',$access,$id ,$setting) !!}
+					{!! AjaxHelpers::buttonAction($pageModule, $access, $id, $setting) !!}
 					{!! AjaxHelpers::buttonActionInline($row->id,'id') !!}
 				</td>
                 @endif
