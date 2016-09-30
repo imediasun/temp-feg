@@ -1,5 +1,6 @@
 <?php namespace App\Models\Feg\System;
 
+use App\Models;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use App\Library\ReportHelpers;
