@@ -1,7 +1,7 @@
 <?php namespace App\Http\Controllers\Feg\System;
 
 use App\Http\Controllers\controller;
-use App\Models\feg\system\Tasks;
+use App\Models\Feg\System\Tasks;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Validator, Input, Redirect ; 
