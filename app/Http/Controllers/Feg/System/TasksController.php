@@ -51,17 +51,17 @@ class TasksController extends Controller {
         $this->data['config_id'] = $config_id;
         \Session::put('config_id', $config_id);
         $config = null;
-		$sort = (!is_null($request->input('sort')) ? $request->input('sort') : $this->info['setting']['orderby']);
-		$order = (!is_null($request->input('order')) ? $request->input('order') : $this->info['setting']['ordertype']);
+		$sort = (!is_null($request) && !is_null($request->input('sort')) ? $request->input('sort') : $this->info['setting']['orderby']);
+		$order = (!is_null($request) && !is_null($request->input('order')) ? $request->input('order') : $this->info['setting']['ordertype']);
 		// End Filter sort and order for query
 		// Filter Search for query
-		$filter = (!is_null($request->input('search')) ? $this->buildSearch() : '');
+		$filter = (!is_null($request) && !is_null($request->input('search')) ? $this->buildSearch() : '');
         
 
-		$page = $request->input('page', 1);
+		$page = !is_null($request) ? $request->input('page', 1) : 1;
 		$params = array(
 			'page'		=> $page ,
-			'limit'		=> (!is_null($request->input('rows')) ? filter_var($request->input('rows'),FILTER_VALIDATE_INT) : $this->info['setting']['perpage'] ) ,
+			'limit'		=> (!is_null($request) && !is_null($request->input('rows')) ? filter_var($request->input('rows'),FILTER_VALIDATE_INT) : $this->info['setting']['perpage'] ) ,
 			'sort'		=> $sort ,
 			'order'		=> $order,
 			'params'	=> $filter,
