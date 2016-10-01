@@ -5,20 +5,7 @@
         </div>
 	</div>
 	<div class="sbox-content">
-        <div class="row-fluid headerCols">
-            <div class="col-sm-4 center-align">
-                Task
-            </div>
-            <div class="col-sm-3 center-align">
-                Status
-            </div>
-            <div class="col-sm-3 center-align">
-                Schedule
-            </div>
-            <div class="col-sm-2 center-align">
-                Actions
-            </div>
-        </div>
+
         @foreach ($rowData as $row)
             {{--*/ $rowId = $row->id /*--}}
             {{--*/ $taskName = $row->task_name /*--}}
@@ -42,14 +29,32 @@
             {{--*/ $schedules = $row->schedules = null /*--}}
             {{--*/ $lastSchedule = $row->lastSchedule = null /*--}}
             {{--*/ $nextSchedule = $row->nextSchedule = null /*--}}
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <div class="form-group formContent hidden">
+                    <input type="text" class="form-control taskName" 
+                           value="{{ $taskName }}"
+                           name="taskName" placeholder="Name">
+                    <input type="text" class="form-control taskAction" 
+                           value="{{ $actionName }}"
+                           name="taskAction" placeholder="Action">
+                </div>
+                <div class="textContent clearfix">
+                    <h4 class="taskNameText pull-left">{{ $taskName }} 
+                        <small class="taskActionText pull-left">{{ $actionName }}</small> 
+                        <button class="form-control btn btn-danger runTaskNow textContent pull-right" >Run Now</button>
+                    </h4>
+                </div>
+            </div>
+            <div class="panel-body">
+            </div>
+            <div class="panel-footer">Panel footer</div>
+        </div>
         <div class="row-fluid taskData">
             <div class="col-sm-4 taskDetails">
                 <input type="hidden" value="{{ $rowId }}" name="rowId"/>
                 <div class="form-group">
-                    <input type="text" class="form-control taskName hidden" 
-                           value="{{ $taskName }}"
-                           name="taskName" placeholder="Name">
-                    <h4 class="taskNameText">{{ $taskName }}</h4>
+                    
                 </div>
                 <div class="form-group">
                     <input type="text" class="form-control taskAction hidden" 
@@ -58,7 +63,7 @@
                     <h4 class="taskActionText">{{ $actionName }}</h4>
                 </div>
                 <div class="form-group">
-                    <button class="form-control btn btn-danger runTaskNow" >Run Now</button>
+                    
                 </div>
 
             </div>
