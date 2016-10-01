@@ -22,7 +22,7 @@
         @foreach ($rowData as $row)
             {{--*/ $rowId = $row->id /*--}}
             {{--*/ $taskName = $row->task_name /*--}}
-            {{--*/ $actionName = $row->actionName /*--}}
+            {{--*/ $actionName = $row->action_name /*--}}
             {{--*/ $isActive = $row->is_active /*--}}
             {{--*/ $params = $row->params /*--}}
             {{--*/ $schedule = $row->schedule /*--}}
@@ -39,9 +39,9 @@
             {{--*/ $notes = $row->notes /*--}}
             {{--*/ $log_folder = $row->log_folder /*--}}
             {{--*/ $log_filename = $row->log_filename /*--}}
-            {{--*/ $schedules = $row->schedules /*--}}
-            {{--*/ $lastSchedule = $row->lastSchedule /*--}}
-            {{--*/ $nextSchedule = $row->nextSchedule /*--}}
+            {{--*/ $schedules = $row->schedules = null /*--}}
+            {{--*/ $lastSchedule = $row->lastSchedule = null /*--}}
+            {{--*/ $nextSchedule = $row->nextSchedule = null /*--}}
         <div class="row-fluid taskData">
             <div class="col-sm-4 taskDetails">
                 <input type="hidden" value="{{ $rowId }}" name="rowId"/>
