@@ -53,15 +53,9 @@
                 </div>
                 <div class="form-group">
                     <input type="text" class="form-control taskAction hidden" 
-                           value="{{ $taskAction }}"
+                           value="{{ $actionName }}"
                            name="taskAction" placeholder="Action">
-                    <h4 class="taskActionText">{{ $taskAction }}</h4>
-                </div>
-                <div class="form-group">
-                    <input type="text" class="form-control taskAction hidden" 
-                           value="{{ $taskName }}"
-                           name="taskName" placeholder="Name">
-                    <h4 class="taskActionText">{{ $taskName }}</h4>
+                    <h4 class="taskActionText">{{ $actionName }}</h4>
                 </div>
                 <div class="form-group">
                     <button class="form-control btn btn-danger runTaskNow" >Run Now</button>
