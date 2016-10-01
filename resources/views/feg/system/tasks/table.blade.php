@@ -22,7 +22,7 @@
             {{--*/ $schedules = $row->schedules = null /*--}}
             {{--*/ $lastSchedule = $row->lastSchedule = null /*--}}
             {{--*/ $nextSchedule = $row->nextSchedule = null /*--}}
-        <div class="panel panel-default">
+        <div class="panel panel-default @if($isActive) panel-active @else panel-notactive @endif">
             <div class="panel-heading">
                 <div class="formContent hidden">
                     <input type="text" class="taskName" 
@@ -46,9 +46,15 @@
                     
                 </div>
                 <div class="pull-right">
-                    <button class="btn btn-danger deleteTask" >Delete</button>
-                    <button class="btn btn-info showSchedules" >Schedules</button>                
-                    <button class="btn btn-success editTask" >Edit</button>
+                    <div class="saveButtonsGroup hidden" >
+                        <button class="btn btn-default cancelEditTask" >Cancel</button>
+                        <button class="btn btn-success addUpdateTask" >Save</button>
+                    </div>
+                    <div class="editButtonGroup" >
+                        <button class="btn btn-primary editTask" >Edit</button>                    
+                        <button class="btn btn-danger deleteTask" >Delete</button>
+                        <button class="btn btn-info showSchedules" >Schedules</button>                
+                    </div>
                 </div>
             </div>
         </div>
