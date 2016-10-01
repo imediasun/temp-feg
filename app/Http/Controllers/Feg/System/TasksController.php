@@ -38,16 +38,15 @@ class TasksController extends Controller {
 	{
 		if($this->access['is_view'] ==0)
 			return Redirect::to('dashboard')->with('messagetext',\Lang::get('core.note_restric'))->with('msgstatus','error');
-
+        
 		$this->data['access']		= $this->access;
+        $this->pageData();
 		return view('feg.system.tasks.index',$this->data);
 	}
-
-	public function postData( Request $request)
-	{
+    public static function pageData( Request $request = null) {
 
         $module_id = \DB::table('tb_module')->where('module_name', '=', 'tasks')->pluck('module_id');
-        $this->data['module_id'] = $module_id;
+        $data['module_id'] = $module_id;
         $config_id = 0;
         $this->data['config_id'] = $config_id;
         \Session::put('config_id', $config_id);
@@ -100,8 +99,14 @@ class TasksController extends Controller {
 
 		// Master detail link if any
 		$this->data['subgrid']	= (isset($this->info['config']['subgrid']) ? $this->info['config']['subgrid'] : array());
+        
+        return $this->data;
+    }
+	public function postData( Request $request)
+	{
 
-// Render into template
+        $this->pageData($request);
+        // Render into template
 		return view('feg.system.tasks.table',$this->data);
 
 	}

@@ -20,7 +20,7 @@
 		<div class="ajaxLoading"></div>
 		<div id="{{ $pageModule }}View"></div>			
         <div id="{{ $pageModule }}Grid">
-            @include('feg.system.tasks.table')
+            @include('feg.system.tasks.table') 
         </div>
 	</div>	
 	<!-- End Content -->  
