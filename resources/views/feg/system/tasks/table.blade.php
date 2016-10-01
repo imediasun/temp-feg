@@ -1,11 +1,4 @@
-<div class="sbox">
-	<div class="sbox-title">
-		<h5> <i class="fa fa-table"></i> </h5>
-		<div class="sbox-tools" >
-        </div>
-	</div>
-	<div class="sbox-content">
-
+<div class="content">
         @foreach ($rowData as $row)
             {{--*/ $rowId = $row->id /*--}}
             {{--*/ $taskName = $row->task_name /*--}}
@@ -227,7 +220,7 @@
 	<?php echo Form::close() ;?>
 	@include('ajaxfooter')
 
-	</div>
+	
 </div>
 
 	@if($setting['inline'] =='true') @include('sximo.module.utility.inlinegrid') @endif
