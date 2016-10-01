@@ -2520,13 +2520,13 @@ table.table-striped tr th
 }
 .tasksContainer #tasksGrid .panel.panel-active {
     background-color: #fff !important;
-    border-color: #96a987  !important;
+    border-color: #b3ce9e  !important;
 }
 
 .tasksContainer #tasksGrid .panel-active>.panel-heading {
     color: #3c763d !important;
     background-color: #dff0d8 !important;
-    border-color: #96a987  !important;
+    border-color: #b3ce9e  !important;
 }
 .tasksContainer #tasksGrid .panel.panel-inactive {
     background-color: #f1f1f1 !important;
@@ -2539,6 +2539,10 @@ table.table-striped tr th
 }
 
 
+.tasksContainer #tasksGrid .formContent input[type=text] {
+    padding: 2px 3px 3px 3px;
+    width: 49%
+}
 .tasksContainer #tasksGrid .panel-heading .taskNameText {
     margin: 4px 0;
 }

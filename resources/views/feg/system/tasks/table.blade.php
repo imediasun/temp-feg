@@ -22,9 +22,11 @@
             {{--*/ $schedules = $row->schedules = null /*--}}
             {{--*/ $lastSchedule = $row->lastSchedule = null /*--}}
             {{--*/ $nextSchedule = $row->nextSchedule = null /*--}}
-        <div class="panel @if($isActive) panel-active @else panel-inactive @endif">
+        <form action="{{ $pageUrl }}/save/?taskid={{ $taskId }}" method="post">
+        <div class="taskPanel panel @if($isActive) panel-active @else panel-inactive @endif" data-taskid="{{ $taskId }}">
             <div class="panel-heading">
                 <div class="formContent hidden">
+                    <input type="hidden" class="taskId"  value="{{ $taskId }}" name="taskId" >
                     <input type="text" class="taskName" 
                            value="{{ $taskName }}"
                            name="taskName" placeholder="Name">
@@ -36,7 +38,7 @@
                     <p class="taskNameText pull-left">{{ $taskName }} 
                         <span class="label label-info taskActionText">{{ $actionName }}</span>                         
                     </p>
-                    <button class="btn btn-warning runTaskNow textContent pull-right" >Run Now</button>
+                    <button class="btn btn-warning runTaskNow textContent pull-right"  data-taskid="{{ $taskId }}">Run Now</button>
                 </div>
             </div>
             <div class="panel-body clearfix">
@@ -47,50 +49,18 @@
                 </div>
                 <div class="pull-right">
                     <div class="saveButtonsGroup hidden" >
-                        <button class="btn btn-default cancelEditTask" >Cancel</button>
-                        <button class="btn btn-success addUpdateTask" >Save</button>
+                        <button class="btn btn-default cancelEditTask" type="reset"  data-taskid="{{ $taskId }}">Cancel</button>
+                        <button class="btn btn-success addUpdateTask"  data-taskid="{{ $taskId }}">Save</button>
                     </div>
                     <div class="editButtonGroup" >
-                        <button class="btn btn-primary editTask" >Edit</button>                    
-                        <button class="btn btn-danger deleteTask" >Delete</button>
-                        <button class="btn btn-info showSchedules" >Schedules</button>                
+                        <button class="btn btn-primary editTask"  data-taskid="{{ $taskId }}">Edit</button>                    
+                        <button class="btn btn-danger deleteTask"  data-taskid="{{ $taskId }}">Delete</button>
+                        <button class="btn btn-info showSchedules"  data-taskid="{{ $taskId }}">Schedules</button>                
                     </div>
                 </div>
             </div>
         </div>
-        <div class="row-fluid taskData">
-            <div class="col-sm-4 taskDetails">
-                <input type="hidden" value="{{ $rowId }}" name="rowId"/>
-                <div class="form-group">
-                    
-                </div>
-                <div class="form-group">
-                    <input type="text" class="form-control taskAction hidden" 
-                           value="{{ $actionName }}"
-                           name="taskAction" placeholder="Action">
-                    <h4 class="taskActionText">{{ $actionName }}</h4>
-                </div>
-                <div class="form-group">
-                    
-                </div>
-
-            </div>
-            <div class="col-sm-3 taskStatus">
-                Status
-            </div>
-            <div class="col-sm-2 taskSchedules">
-                Schedule
-            </div>
-            <div class="col-sm-2 taskManageActions">
-                Actions
-            </div>
-            <div class="col-sm-12 taskExtraDetails">
-                <div class="col-sm-1">
-                    
-                </div>
-            </div>
-            
-        </div>
+        </form>
         @endforeach
 	 <?php echo Form::open(array('url'=>$pageUrl.'/delete/', 'class'=>'form-horizontal' ,'id' =>'SximoTable'  ,'data-parsley-validate'=>'' )) ;?>
 <div class="table-responsive">
