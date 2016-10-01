@@ -43,7 +43,7 @@ class TasksController extends Controller {
         $this->pageData();
 		return view('feg.system.tasks.index',$this->data);
 	}
-    public static function pageData( Request $request = null) {
+    public function pageData( Request $request = null) {
 
         $module_id = \DB::table('tb_module')->where('module_name', '=', 'tasks')->pluck('module_id');
         $data['module_id'] = $module_id;
