@@ -1,6 +1,6 @@
 <div class="content">
         @foreach ($rowData as $row)
-            {{--*/ $rowId = $row->id /*--}}
+            {{--*/ $taskId = $row->id /*--}}
             {{--*/ $taskName = $row->task_name /*--}}
             {{--*/ $actionName = $row->action_name /*--}}
             {{--*/ $isActive = $row->is_active /*--}}
