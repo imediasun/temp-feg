@@ -22,7 +22,7 @@
             {{--*/ $schedules = $row->schedules = null /*--}}
             {{--*/ $lastSchedule = $row->lastSchedule = null /*--}}
             {{--*/ $nextSchedule = $row->nextSchedule = null /*--}}
-        <div class="panel panel-default @if($isActive) panel-active @else panel-intactive @endif">
+        <div class="panel @if($isActive) panel-active @else panel-inactive @endif">
             <div class="panel-heading">
                 <div class="formContent hidden">
                     <input type="text" class="taskName" 

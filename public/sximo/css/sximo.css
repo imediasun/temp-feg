@@ -2528,7 +2528,7 @@ table.table-striped tr th
     background-color: #dff0d8 !important;
     border-color: #96a987  !important;
 }
-.tasksContainer #tasksGrid .panel.panel-intactive {
+.tasksContainer #tasksGrid .panel.panel-inactive {
     background-color: #f1f1f1 !important;
     border-color: #d4c4c4  !important;
 }
