@@ -2501,3 +2501,22 @@ table.table-striped tr th
 .center-align {
     text-align: center !important;    
 }
+
+/* Tasks module css */
+
+.tasksContainer #tasksGrid .panel {
+    background: #fff !important;
+    border-color: #ddd !important;
+}
+.tasksContainer #tasksGrid .panel-heading {
+    background-color: #fcfcfc !important;
+}
+.tasksContainer #tasksGrid .panel-body {
+    background-color: #fff !important;
+}
+.tasksContainer #tasksGrid .panel-footer {
+    background-color: #fafafa !important;
+}
+
+
+/* Tasks module css end */

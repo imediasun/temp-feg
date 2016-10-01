@@ -24,19 +24,19 @@
             {{--*/ $nextSchedule = $row->nextSchedule = null /*--}}
         <div class="panel panel-default">
             <div class="panel-heading">
-                <div class="form-group formContent hidden">
-                    <input type="text" class="form-control taskName" 
+                <div class="formContent hidden">
+                    <input type="text" class="taskName" 
                            value="{{ $taskName }}"
                            name="taskName" placeholder="Name">
-                    <input type="text" class="form-control taskAction" 
+                    <input type="text" class="taskAction" 
                            value="{{ $actionName }}"
                            name="taskAction" placeholder="Action">
                 </div>
                 <div class="textContent clearfix">
-                    <h4 class="taskNameText pull-left">{{ $taskName }} 
-                        <small class="taskActionText pull-left">{{ $actionName }}</small> 
-                        <button class="form-control btn btn-danger runTaskNow textContent pull-right" >Run Now</button>
-                    </h4>
+                    <p class="taskNameText pull-left">{{ $taskName }} 
+                        <span class="label label-info taskActionText">{{ $actionName }}</span>                         
+                    </p>
+                    <button class="btn btn-danger runTaskNow textContent pull-right" >Run Now</button>
                 </div>
             </div>
             <div class="panel-body">
