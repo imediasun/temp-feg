@@ -36,12 +36,21 @@
                     <p class="taskNameText pull-left">{{ $taskName }} 
                         <span class="label label-info taskActionText">{{ $actionName }}</span>                         
                     </p>
-                    <button class="btn btn-danger runTaskNow textContent pull-right" >Run Now</button>
+                    <button class="btn btn-warning runTaskNow textContent pull-right" >Run Now</button>
                 </div>
             </div>
             <div class="panel-body">
             </div>
-            <div class="panel-footer">Panel footer</div>
+            <div class="panel-footer">
+                <div class="col-sm-8">
+                    
+                </div>
+                <div class="col-sm-4">
+                    <button class="btn btn-danger deleteTask" >Delete</button>
+                    <button class="btn btn-info showSchedules" >Schedules</button>                
+                    <button class="btn btn-success editTask" >Edit</button>
+                </div>
+            </div>
         </div>
         <div class="row-fluid taskData">
             <div class="col-sm-4 taskDetails">
