@@ -39,13 +39,13 @@
                     <button class="btn btn-warning runTaskNow textContent pull-right" >Run Now</button>
                 </div>
             </div>
-            <div class="panel-body">
+            <div class="panel-body clearfix">
             </div>
-            <div class="panel-footer">
+            <div class="panel-footer clearfix">
                 <div class="col-sm-8">
                     
                 </div>
-                <div class="col-sm-4">
+                <div class="pull-right">
                     <button class="btn btn-danger deleteTask" >Delete</button>
                     <button class="btn btn-info showSchedules" >Schedules</button>                
                     <button class="btn btn-success editTask" >Edit</button>
