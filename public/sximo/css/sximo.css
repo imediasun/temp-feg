@@ -2508,37 +2508,9 @@ table.table-striped tr th
     background: #fff !important;
     border-color: #ddd !important;
 }
-
-.tasksContainer #tasksGrid .panel.panel-active {
-    background-color: #fff !important;
-    border-color: #d6e9c6  !important;
-}
-
-.panel-active>.panel-heading {
-    color: #3c763d !important;
-    background-color: #dff0d8 !important;
-    border-color: #d6e9c6  !important;
-}
-.tasksContainer #tasksGrid .panel.panel-notactive {
-    background-color: #f1f1f1 !important;
-    border-color: #d4c4c4  !important;
-}
-.panel-notactive>.panel-heading {
-    color: #8e7878 !important;
-    background-color: #f0d8d8 !important;
-    border-color: #d4c4c4  !important;    
-}
-
 .tasksContainer #tasksGrid .panel-heading {
     background-color: #fcfcfc !important;
     font-size: 16px;
-}
-
-.tasksContainer #tasksGrid .panel-heading .taskNameText {
-    margin: 4px 0;
-}
-.tasksContainer #tasksGrid .panel-heading .label {
-    font-size: 13px;
 }
 .tasksContainer #tasksGrid .panel-body {
     background-color: #fff !important;
@@ -2546,6 +2518,34 @@ table.table-striped tr th
 .tasksContainer #tasksGrid .panel-footer {
     background-color: #fafafa !important;
 }
+.tasksContainer #tasksGrid .panel.panel-active {
+    background-color: #fff !important;
+    border-color: #96a987  !important;
+}
+
+.panel-active>.panel-heading {
+    color: #3c763d !important;
+    background-color: #dff0d8 !important;
+    border-color: #96a987  !important;
+}
+.tasksContainer #tasksGrid .panel.panel-intactive {
+    background-color: #f1f1f1 !important;
+    border-color: #d4c4c4  !important;
+}
+.panel-inactive>.panel-heading {
+    color: #8e7878 !important;
+    background-color: #e8e1e1 !important;
+    border-color: #d4c4c4  !important;    
+}
+
+
+.tasksContainer #tasksGrid .panel-heading .taskNameText {
+    margin: 4px 0;
+}
+.tasksContainer #tasksGrid .panel-heading .label {
+    font-size: 13px;
+}
+
 
 
 /* Tasks module css end */
