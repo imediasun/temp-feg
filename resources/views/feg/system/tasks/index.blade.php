@@ -19,13 +19,15 @@
 		<div class="resultData"></div>
 		<div class="ajaxLoading"></div>
 		<div id="{{ $pageModule }}View"></div>			
-		<div id="{{ $pageModule }}Grid"></div>
+        <div id="{{ $pageModule }}Grid">
+            @include('feg.system.tasks.table')
+        </div>
 	</div>	
 	<!-- End Content -->  
 </div>	
 <script>
 $(document).ready(function(){
-	reloadData('#{{ $pageModule }}','{{ $pageModule }}/data');	
+	//reloadData('#{{ $pageModule }}','{{ $pageModule }}/data');	
 });	
 </script>	
 @endsection

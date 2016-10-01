@@ -1,4 +1,3 @@
-<?php usort($tableGrid, "SiteHelpers::_sort"); ?>
 <div class="sbox">
 	<div class="sbox-title">
 		<h5> <i class="fa fa-table"></i> </h5>
@@ -6,6 +5,86 @@
         </div>
 	</div>
 	<div class="sbox-content">
+        <div class="row-fluid headerCols">
+            <div class="col-sm-4 center-align">
+                Task
+            </div>
+            <div class="col-sm-3 center-align">
+                Status
+            </div>
+            <div class="col-sm-3 center-align">
+                Schedule
+            </div>
+            <div class="col-sm-2 center-align">
+                Actions
+            </div>
+        </div>
+        @foreach ($rowData as $row)
+            {{--*/ $rowId = $row->id /*--}}
+            {{--*/ $taskName = $row->task_name /*--}}
+            {{--*/ $actionName = $row->actionName /*--}}
+            {{--*/ $isActive = $row->is_active /*--}}
+            {{--*/ $params = $row->params /*--}}
+            {{--*/ $schedule = $row->schedule /*--}}
+            {{--*/ $is_repeat= $row->is_repeat /*--}}
+            {{--*/ $repeat_count= $row->repeat_count /*--}}
+            {{--*/ $no_overlap = $row->no_overlap /*--}}
+            {{--*/ $run_after = $row->run_after /*--}}
+            {{--*/ $run_before = $row->run_before /*--}}
+            {{--*/ $fail_action = $row->fail_action /*--}}
+            {{--*/ $success_action = $row->success_action /*--}}
+            {{--*/ $fail_email = $row->fail_email /*--}}
+            {{--*/ $success_email = $row->success_email /*--}}
+            {{--*/ $run_count = $row->run_count /*--}}
+            {{--*/ $notes = $row->notes /*--}}
+            {{--*/ $log_folder = $row->log_folder /*--}}
+            {{--*/ $log_filename = $row->log_filename /*--}}
+            {{--*/ $schedules = $row->schedules /*--}}
+            {{--*/ $lastSchedule = $row->lastSchedule /*--}}
+            {{--*/ $nextSchedule = $row->nextSchedule /*--}}
+        <div class="row-fluid taskData">
+            <div class="col-sm-4 taskDetails">
+                <input type="hidden" value="{{ $rowId }}" name="rowId"/>
+                <div class="form-group">
+                    <input type="text" class="form-control taskName hidden" 
+                           value="{{ $taskName }}"
+                           name="taskName" placeholder="Name">
+                    <h4 class="taskNameText">{{ $taskName }}</h4>
+                </div>
+                <div class="form-group">
+                    <input type="text" class="form-control taskAction hidden" 
+                           value="{{ $taskAction }}"
+                           name="taskAction" placeholder="Action">
+                    <h4 class="taskActionText">{{ $taskAction }}</h4>
+                </div>
+                <div class="form-group">
+                    <input type="text" class="form-control taskAction hidden" 
+                           value="{{ $taskName }}"
+                           name="taskName" placeholder="Name">
+                    <h4 class="taskActionText">{{ $taskName }}</h4>
+                </div>
+                <div class="form-group">
+                    <button class="form-control btn btn-danger runTaskNow" >Run Now</button>
+                </div>
+
+            </div>
+            <div class="col-sm-3 taskStatus">
+                Status
+            </div>
+            <div class="col-sm-2 taskSchedules">
+                Schedule
+            </div>
+            <div class="col-sm-2 taskManageActions">
+                Actions
+            </div>
+            <div class="col-sm-12 taskExtraDetails">
+                <div class="col-sm-1">
+                    
+                </div>
+            </div>
+            
+        </div>
+        @endforeach
 	 <?php echo Form::open(array('url'=>$pageUrl.'/delete/', 'class'=>'form-horizontal' ,'id' =>'SximoTable'  ,'data-parsley-validate'=>'' )) ;?>
 <div class="table-responsive">
     @if(!empty($topMessage))
