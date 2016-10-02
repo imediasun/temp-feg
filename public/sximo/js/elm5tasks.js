@@ -86,5 +86,5 @@ function toggleFormTextContent(id, container) {
         forms = main.find(".formContent"),
         texts = main.find(".textContent");      
         forms.toggleClass('hidden');
-        texts.toggleClass('texts');
+        texts.toggleClass('hidden');
 }
