@@ -1,5 +1,3 @@
-<?php
-
         {{--*/ $taskId = $row->id /*--}}
         {{--*/ $taskName = $row->task_name /*--}}
         {{--*/ $actionName = $row->action_name /*--}}
