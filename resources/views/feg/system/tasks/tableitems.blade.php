@@ -36,7 +36,7 @@
                            name="taskAction" placeholder="Action">
                 </div>
                 <div class="textContent clearfix">                    
-                    <input type="checkbox" data-class="pull-left"  data-size="small" data-toggle="toggle" data-on="Active" data-off="In Active" class="isActive test" data-onstyle="success" disabled @if($isActive) checked @endif>
+                    <input type="checkbox" data-style="float:left"  data-size="small" data-toggle="toggle" data-on="Active" data-off="In Active" class="isActive test" data-onstyle="success" disabled @if($isActive) checked @endif>
                     <p class="taskNameText pull-left">{{ $taskName }}                         
                         <span class="label label-info taskActionText">{{ $actionName }}</span>                         
                     </p>
