@@ -148,11 +148,3 @@
         @include('feg.system.tasks.tableitems', array('row' => new StdClass))
     </div>
 </div>
-
-@section ('beforebodyend')
-    <script type="text/javascript">
-        var pageModule = '{{$pageModule}}',
-            pageUrl = '{{$pageUrl}}';
-    </script>  
-    <script type="text/javascript" src="{{ asset('sximo/js/elm5tasks.js') }}"></script>  
-@end

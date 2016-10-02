@@ -31,3 +31,13 @@ $(document).ready(function(){
 });	
 </script>	
 @endsection
+@section ('beforebodyend')
+
+
+    <script type="text/javascript">
+        var pageModule = '{{$pageModule}}',
+            pageUrl = '{{$pageUrl}}';
+    </script>  
+    <script type="text/javascript" src="{{ asset('sximo/js/elm5tasks.js') }}"></script>  
+@append
+@end
