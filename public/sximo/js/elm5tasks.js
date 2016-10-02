@@ -12,6 +12,7 @@ function initEditTask(event) {
     var btn = $(this),
         parent = btn.closest('.taskPanel');
     toggleFormTextContent(null, parent);
+    parent.find('.saveButtonsGroup, .editButtonGroup').toggleClass('hidden');
 }
 function initAddTask(event) {
     event.preventDefault();
@@ -42,6 +43,7 @@ function initCancelEditTask(event) {
     var btn = $(this),
         parent = btn.closest('.taskPanel');
     toggleFormTextContent(null, parent);    
+    parent.find('.saveButtonsGroup, .editButtonGroup').toggleClass('hidden');
 }
 
 function showUIBlocker(id, container) {
