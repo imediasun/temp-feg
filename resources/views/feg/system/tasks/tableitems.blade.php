@@ -26,7 +26,7 @@
         <form action="{{ $pageUrl }}/save/?taskid={{ $taskId }}" method="post" class="taskForm taskForm-{{ $taskId }}">
             <div class="panel-heading">                
                 <div class="formContent hidden">
-                    <input type="checkbox"  data-class="" data-size="small" data-toggle="toggle" data-on="Active" data-off="In Active" name="isActive" class="isActive test" data-onstyle="success" @if($isActive) checked @endif>                    
+                    <input type="checkbox"  data-width="15%" data-size="small" data-toggle="toggle" data-on="Active" data-off="In Active" name="isActive" class="isActive test" data-onstyle="success" @if($isActive) checked @endif>                    
                     <input type="hidden" class="taskId"  value="{{ $taskId }}" name="taskId" >
                     <input type="text" class="taskName" 
                            value="{{ $taskName }}"
