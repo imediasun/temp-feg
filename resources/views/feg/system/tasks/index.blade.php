@@ -31,6 +31,7 @@ $(document).ready(function(){
 });	
 </script>	
 @endsection
+
 @section ('beforebodyend')
 
 
@@ -39,5 +40,5 @@ $(document).ready(function(){
             pageUrl = '{{$pageUrl}}';
     </script>  
     <script type="text/javascript" src="{{ asset('sximo/js/elm5tasks.js') }}"></script>  
-@append
+
 @endsection
