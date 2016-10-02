@@ -2542,9 +2542,11 @@ table.table-striped tr th
 .tasksContainer #tasksGrid .formContent input[type=text] {
     padding: 2px 3px 3px 3px;    
 }
-.taskName,
-.taskAction {
-    width: 49%
+.tasksContainer #tasksGrid .taskName,
+.tasksContainer #tasksGrid .taskAction {
+    width: 40%
+}
+.tasksContainer #tasksGrid .isActive {    
 }
 .tasksContainer #tasksGrid .panel-heading .taskNameText {
     margin: 4px 0;

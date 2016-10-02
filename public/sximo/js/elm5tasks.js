@@ -1,50 +1,88 @@
 jQuery(document).ready(function ($) {
-    $(document).on('click', '.cancelEditTask', function(event){});
-    $(document).on('click', '.addUpdateTask', function(event){});
-    $(document).on('click', '.editTask', function(event){});
-    $(document).on('click', '.deleteTask', function(event){});
-    $(document).on('click', '.showSchedules', function(event){});
-    $(document).on('click', '.addNewTask', function(event){});
+    $(document).on('click', '.cancelEditTask', initCancelEditTask);
+    $(document).on('click', '.addUpdateTask', updateTask);
+    $(document).on('click', '.editTask', initEditTask);
+    $(document).on('click', '.deleteTask', initDelTask);
+    $(document).on('click', '.showSchedules', initShowScheduledTasks);
+    $(document).on('click', '.addNewTask', initAddTask);
 
 });
-function initEditTask() {
+function initEditTask(event) {
+    event.preventDefault();
+    var btn = $(this),
+        parent = btn.closest('.taskPanel');
+    toggleFormTextContent(null, parent);
+}
+function initAddTask(event) {
+    event.preventDefault();
+    var btn = $(this),
+        parent = btn.closest('.taskPanel');
+    //toggleFormTextContent(null, parent);    
+}
+function initDelTask(event) {
+    event.preventDefault();
+    var btn = $(this),
+        parent = btn.closest('.taskPanel');
     
 }
-function initAddTask() {
+function initShowScheduledTasks(event) {
+    event.preventDefault();
+    var btn = $(this),
+        parent = btn.closest('.taskPanel');
     
 }
-function initDelTask() {
-    
+function updateTask(event) {   
+    event.preventDefault();
+    var btn = $(this),
+        parent = btn.closest('.taskPanel');
+    //toggleFormTextContent(null, parent);    
 }
-function initShowScheduledTasks() {
-    
-}
-function updateTask() {
-    
+function initCancelEditTask(event) {    
+    event.preventDefault();
+    var btn = $(this),
+        parent = btn.closest('.taskPanel');
+    toggleFormTextContent(null, parent);    
 }
 
-function showFormContent() {
-    var main = $(".tasksContent"),
+function showUIBlocker(id, container) {
+    var idClass = id ? ('.taskPanel-'+id) : '.taskAdd',
+        main =  container || $(".tasksContent "+ idClass),
+        blocker = main.find('.ajaxLoading');
+    blocker.css({'display': 'block'});
+}
+function hideUIBlocker(id, container) {
+    var idClass = id ? ('.taskPanel-'+id) : '.taskAdd',
+        main =  container || $(".tasksContent "+ idClass),
+        blocker = main.find('.ajaxLoading');
+    blocker.css({'display': 'none'});
+}
+function showFormContent(id, container) {
+    var idClass = id ? ('.taskPanel-'+id) : '.taskAdd',
+        main =  container || $(".tasksContent "+ idClass),
         toShow = main.find(".formContent");        
     toShow.removeClass('hidden');    
 }
-function hideFormContent() {
-    var main = $(".tasksContent"),
+function hideFormContent(id, container) {
+    var idClass = id ? ('.taskPanel-'+id) : '.taskAdd',
+        main =  container || $(".tasksContent "+ idClass),
         toShow = main.find(".formContent");        
     toShow.addClass('hidden');     
 }
-function showTextContent() {
-    var main = $(".tasksContent"),
+function showTextContent(id, container) {
+    var idClass = id ? ('.taskPanel-'+id) : '.taskAdd',
+        main =  container || $(".tasksContent "+ idClass),
         toShow = main.find(".textContent");        
     toShow.removeClass('hidden');
 }
-function hideTextContent() {
-    var main = $(".tasksContent"),
+function hideTextContent(id, container) {
+    var idClass = id ? ('.taskPanel-'+id) : '.taskAdd',
+        main =  container || $(".tasksContent "+ idClass),
         toShow = main.find(".textContent");        
     toShow.addClass('hidden');    
 }
-function toggleFormTextContent() {
-    var main = $(".tasksContent"),
+function toggleFormTextContent(id, container) {
+    var idClass = id ? ('.taskPanel-'+id) : '.taskAdd',
+        main = container || $(".tasksContent "+ idClass),
         forms = main.find(".formContent"),
         texts = main.find(".textContent");      
         forms.toggleClass('hidden');
