@@ -1,4 +1,4 @@
-<div class="content">
+<div class="content tasksContent">
         @foreach ($rowData as $row)
             @include('feg.system.tasks.tableitems', array('row' => $row))
         @endforeach
@@ -140,8 +140,10 @@
     <h5 class="bottomMessage">{{ $bottomMessage }}</h5>
     @endif
     
-	</div>
-	
+	</div>	
+</div>
+<div class='hidden taskTemplateContent'>
+    @include('feg.system.tasks.tableitems', array('row' => new StdClass))
 </div>
 
 
