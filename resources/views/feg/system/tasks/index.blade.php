@@ -40,4 +40,4 @@ $(document).ready(function(){
     </script>  
     <script type="text/javascript" src="{{ asset('sximo/js/elm5tasks.js') }}"></script>  
 @append
-@end
+@endsection
