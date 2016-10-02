@@ -26,7 +26,7 @@
         <form action="{{ $pageUrl }}/save/?taskid={{ $taskId }}" method="post" class="taskForm taskForm-{{ $taskId }}">
             <div class="panel-heading">                
                 <div class="formContent hidden">
-                    <input type="checkbox"  data-width="15%" data-size="small" data-toggle="toggle" data-on="Active" data-off="In Active" name="isActive" class="isActive test" data-onstyle="success" @if($isActive) checked @endif>                    
+                    <input type="checkbox"  data-style="isActiveToggleForm" data-size="small" data-toggle="toggle" data-on="Active" data-off="In Active" name="isActive" class="isActive test" data-onstyle="success" @if($isActive) checked @endif>                    
                     <input type="hidden" class="taskId"  value="{{ $taskId }}" name="taskId" >
                     <input type="text" class="taskName" 
                            value="{{ $taskName }}"
@@ -36,7 +36,7 @@
                            name="taskAction" placeholder="Action">
                 </div>
                 <div class="textContent clearfix">                    
-                    <input type="checkbox" data-style="float:left"  data-size="small" data-toggle="toggle" data-on="Active" data-off="In Active" class="isActive test" data-onstyle="success" disabled @if($isActive) checked @endif>
+                    <input type="checkbox" data-style="pull-left"  data-size="small" data-toggle="toggle" data-on="Active" data-off="In Active" class="isActive test" data-onstyle="success" disabled @if($isActive) checked @endif>
                     <p class="taskNameText pull-left">{{ $taskName }}                         
                         <span class="label label-info taskActionText">{{ $actionName }}</span>                         
                     </p>

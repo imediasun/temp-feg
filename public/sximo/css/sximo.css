@@ -2544,9 +2544,13 @@ table.table-striped tr th
 }
 .tasksContainer #tasksGrid .taskName,
 .tasksContainer #tasksGrid .taskAction {
-    width: 40%
+    width: 46%
 }
 .tasksContainer #tasksGrid .isActive {    
+}
+.tasksContainer #tasksGrid .isActiveToggleForm {    
+    width: 5%;
+    margin-top: -3px;
 }
 .tasksContainer #tasksGrid .panel-heading .taskNameText {
     margin: 4px 0;
