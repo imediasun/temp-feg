@@ -2550,6 +2550,9 @@ table.table-striped tr th
     font-size: 13px;
 }
 
+.taskPanel {
+    position: relative;
+}
 
 
 /* Tasks module css end */

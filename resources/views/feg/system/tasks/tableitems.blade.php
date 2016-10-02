@@ -20,8 +20,10 @@
         {{--*/ $schedules = $row->schedules = null /*--}}
         {{--*/ $lastSchedule = $row->lastSchedule = null /*--}}
         {{--*/ $nextSchedule = $row->nextSchedule = null /*--}}
-        <form action="{{ $pageUrl }}/save/?taskid={{ $taskId }}" method="post" class="taskForm taskform-{{ $taskId }}">
+        
         <div class="taskPanel taskpanel-{{ $taskId }} panel @if($isActive) panel-active @else panel-inactive @endif" data-taskid="{{ $taskId }}">
+        <div class="ajaxLoading"></div>
+        <form action="{{ $pageUrl }}/save/?taskid={{ $taskId }}" method="post" class="taskForm taskform-{{ $taskId }}">
             <div class="panel-heading">
                 <div class="formContent hidden">
                     <input type="hidden" class="taskId"  value="{{ $taskId }}" name="taskId" >
@@ -57,6 +59,7 @@
                     </div>
                 </div>
             </div>
-        </div>
         </form>
+        </div>
+        
 
