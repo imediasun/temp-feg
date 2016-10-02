@@ -1,68 +1,7 @@
 <div class="content">
         @foreach ($rowData as $row)
-            {{--*/ $taskId = $row->id /*--}}
-            {{--*/ $taskName = $row->task_name /*--}}
-            {{--*/ $actionName = $row->action_name /*--}}
-            {{--*/ $isActive = $row->is_active /*--}}
-            {{--*/ $params = $row->params /*--}}
-            {{--*/ $schedule = $row->schedule /*--}}
-            {{--*/ $is_repeat= $row->is_repeat /*--}}
-            {{--*/ $repeat_count= $row->repeat_count /*--}}
-            {{--*/ $no_overlap = $row->no_overlap /*--}}
-            {{--*/ $run_after = $row->run_after /*--}}
-            {{--*/ $run_before = $row->run_before /*--}}
-            {{--*/ $fail_action = $row->fail_action /*--}}
-            {{--*/ $success_action = $row->success_action /*--}}
-            {{--*/ $fail_email = $row->fail_email /*--}}
-            {{--*/ $success_email = $row->success_email /*--}}
-            {{--*/ $run_count = $row->run_count /*--}}
-            {{--*/ $notes = $row->notes /*--}}
-            {{--*/ $log_folder = $row->log_folder /*--}}
-            {{--*/ $log_filename = $row->log_filename /*--}}
-            {{--*/ $schedules = $row->schedules = null /*--}}
-            {{--*/ $lastSchedule = $row->lastSchedule = null /*--}}
-            {{--*/ $nextSchedule = $row->nextSchedule = null /*--}}
-        <form action="{{ $pageUrl }}/save/?taskid={{ $taskId }}" method="post">
-        <div class="taskPanel panel @if($isActive) panel-active @else panel-inactive @endif" data-taskid="{{ $taskId }}">
-            <div class="panel-heading">
-                <div class="formContent hidden">
-                    <input type="hidden" class="taskId"  value="{{ $taskId }}" name="taskId" >
-                    <input type="text" class="taskName" 
-                           value="{{ $taskName }}"
-                           name="taskName" placeholder="Name">
-                    <input type="text" class="taskAction" 
-                           value="{{ $actionName }}"
-                           name="taskAction" placeholder="Action">
-                </div>
-                <div class="textContent clearfix">
-                    <p class="taskNameText pull-left">{{ $taskName }} 
-                        <span class="label label-info taskActionText">{{ $actionName }}</span>                         
-                    </p>
-                    <button class="btn btn-warning runTaskNow textContent pull-right"  data-taskid="{{ $taskId }}">Run Now</button>
-                </div>
-            </div>
-            <div class="panel-body clearfix">
-            </div>
-            <div class="panel-footer clearfix">
-                <div class="col-sm-8">
-                    
-                </div>
-                <div class="pull-right">
-                    <div class="saveButtonsGroup hidden" >
-                        <button class="btn btn-default cancelEditTask" type="reset"  data-taskid="{{ $taskId }}">Cancel</button>
-                        <button class="btn btn-success addUpdateTask"  data-taskid="{{ $taskId }}">Save</button>
-                    </div>
-                    <div class="editButtonGroup" >
-                        <button class="btn btn-primary editTask"  data-taskid="{{ $taskId }}">Edit</button>                    
-                        <button class="btn btn-danger deleteTask"  data-taskid="{{ $taskId }}">Delete</button>
-                        <button class="btn btn-info showSchedules"  data-taskid="{{ $taskId }}">Schedules</button>                
-                    </div>
-                </div>
-            </div>
-        </div>
-        </form>
+            @include('feg.system.tasks.tableitems', array('row' => $row))
         @endforeach
-	 <?php echo Form::open(array('url'=>$pageUrl.'/delete/', 'class'=>'form-horizontal' ,'id' =>'SximoTable'  ,'data-parsley-validate'=>'' )) ;?>
 <div class="table-responsive">
     @if(!empty($topMessage))
     <h5 class="topMessage">{{ $topMessage }}</h5>
@@ -202,42 +141,7 @@
     @endif
     
 	</div>
-	<?php echo Form::close() ;?>
-	@include('ajaxfooter')
-
 	
 </div>
 
-	@if($setting['inline'] =='true') @include('sximo.module.utility.inlinegrid') @endif
-<script>
-$(document).ready(function() {
-	$('.tips').tooltip();
-	$('input[type="checkbox"],input[type="radio"]').iCheck({
-		checkboxClass: 'icheckbox_square-green',
-		radioClass: 'iradio_square-green'
-	});
-	$('#{{ $pageModule }}Table .checkall').on('ifChecked',function(){
-		$('#{{ $pageModule }}Table input[type="checkbox"]').iCheck('check');
-	});
-	$('#{{ $pageModule }}Table .checkall').on('ifUnchecked',function(){
-		$('#{{ $pageModule }}Table input[type="checkbox"]').iCheck('uncheck');
-	});
 
-	$('#{{ $pageModule }}Paginate .pagination li a').click(function() {
-		var url = $(this).attr('href');
-		reloadData('#{{ $pageModule }}',url);
-		return false ;
-	});
-
-	<?php if($setting['view-method'] =='expand') :
-			echo AjaxHelpers::htmlExpandGrid();
-		endif;
-	 ?>
-
-});
-</script>
-<style>
-.table th.right { text-align:right !important;}
-.table th.center { text-align:center !important;}
-
-</style>
