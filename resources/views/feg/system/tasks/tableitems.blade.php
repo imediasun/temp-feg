@@ -27,7 +27,7 @@
             <div class="panel-heading">
                 <div class="formContent hidden">
                     <input type="hidden" class="taskId"  value="{{ $taskId }}" name="taskId" >
-                    <input type="checkbox" data-toggle="toggle" data-on="Active" data-off="In Active" name="isActive" class="isActive" data-onstyle="success" @if($isActive) checked @endif>
+                    <input type="checkbox" data-toggle="toggle" data-on="Active" data-off="In Active" name="isActive" class="isActive test" data-onstyle="success" @if($isActive) checked @endif>
                     <input type="text" class="taskName" 
                            value="{{ $taskName }}"
                            name="taskName" placeholder="Name">
@@ -37,7 +37,7 @@
                 </div>
                 <div class="textContent clearfix">                    
                     <p class="taskNameText pull-left">{{ $taskName }} 
-                        <input type="checkbox" data-toggle="toggle" data-on="Active" data-off="In Active" class="isActive" data-onstyle="success" disabled @if($isActive) checked @endif>
+                        <input type="checkbox" data-toggle="toggle" data-on="Active" data-off="In Active" class="isActive test" data-onstyle="success" disabled @if($isActive) checked @endif>
                         <span class="label label-info taskActionText">{{ $actionName }}</span>                         
                     </p>
                     <button class="btn btn-warning runTaskNow textContent pull-right"  data-taskid="{{ $taskId }}">Run Now</button>
