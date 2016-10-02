@@ -1,7 +1,9 @@
 <?php
 namespace App\Library;
+
 use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
+
 class MyLog
 {
 	private $logger;

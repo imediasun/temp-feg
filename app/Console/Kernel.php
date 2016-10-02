@@ -36,6 +36,6 @@ class Kernel extends ConsoleKernel
         $schedule->command('syncgameearningsfromlive')->dailyAt('17:00')->withoutOverlapping();
         $schedule->command('create:dummy_order')->everyMinute()->sendOutputTo("C:\\Users\\adnan\\Desktop\\test.txt");
         //$schedule->command('syncgameearningsfromlive')->everyMinute()->withoutOverlapping();
-        //$schedule->command('elm5taskmanager')->everyMinute();
+        $schedule->command('elm5taskmanager')->everyMinute();
     }
 }

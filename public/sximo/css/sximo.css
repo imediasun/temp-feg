@@ -2540,7 +2540,10 @@ table.table-striped tr th
 
 
 .tasksContainer #tasksGrid .formContent input[type=text] {
-    padding: 2px 3px 3px 3px;
+    padding: 2px 3px 3px 3px;    
+}
+.taskName,
+.taskAction {
     width: 49%
 }
 .tasksContainer #tasksGrid .panel-heading .taskNameText {

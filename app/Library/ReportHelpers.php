@@ -1,9 +1,10 @@
 <?php
 namespace App\Library;
+
 use App\Library\MyLog;
+
 class ReportHelpers
 {
-
     public static function getLocationRanksQuery($dateStart, $dateEnd, $location = "", 
             $debit = "", $sortby = "pgpd_avg", $order = "") {
         
