@@ -25,14 +25,16 @@
         <div class="ajaxLoading"></div>
         <form action="{{ $pageUrl }}/save/?taskid={{ $taskId }}" method="post" class="taskForm taskForm-{{ $taskId }}">
             <div class="panel-heading">                
-                <div class="formContent hidden">
-                    <input type="checkbox" data-width="5%" 
+                <div class="isActiveContainer col-sm-1">
+                    <input type="checkbox" data-handle-width="5%" 
                            data-wrapper-class="isActiveToggleForm" 
                            data-size="small" 
                            data-on="Active" data-off="Inactive" 
                            data-onstyle="primary" data-offstyle="danger"
                            name="isActive" class="isActive test toggleSwitch"                            
                            @if($isActive) checked @endif>                    
+                </div>
+                <div class="formContent hidden col-sm-11">
                     <input type="hidden" class="taskId"  value="{{ $taskId }}" name="taskId" >
                     <input type="text" class="taskName" 
                            value="{{ $taskName }}"
@@ -41,14 +43,7 @@
                            value="{{ $actionName }}"
                            name="taskAction" placeholder="Task Action">
                 </div>
-                <div class="textContent clearfix">                    
-                    <input type="checkbox" data-width="5%" 
-                           data-wrapper-class="pull-left isActiveToggleText"  
-                           data-size="mini" 
-                           data-on-text="Active" data-off-text="Inactive"                            
-                           data-on-color="primary" data-off-color="danger"
-                           class="isActive test toggleSwitch" 
-                           readonly @if($isActive) checked @endif>
+                <div class="textContent clearfix  col-sm-11">                    
                     <p title="Task Name" class="taskNameText pull-left">{{ $taskName }}                         
                         <span title="Task Action" class="label taskActionText">{{ $actionName }}</span>                         
                     </p>
