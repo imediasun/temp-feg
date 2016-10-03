@@ -6,15 +6,27 @@ jQuery(document).ready(function ($) {
     $(document).on('click', '.showSchedules', initShowScheduledTasks);
     $(document).on('click', '.addNewTask', initAddTask);
     
-    $('.toggleSwitch').bootstrapSwitch();
+    $('.toggleSwitch').bootstrapSwitch({
+        onInit: switchOnInit,
+        onSwitchChange: switchOnChange,
+    });
 
 });
+
+function switchOnInit(event, state) {
+    console.log(event,state, this);
+}
+function switchOnChange(event, state) {
+    console.log(event,state, this);
+}
+
 function initEditTask(event) {
     event.preventDefault();
     var btn = $(this),
         parent = btn.closest('.taskPanel');
     toggleFormTextContent(null, parent);
     parent.find('.saveButtonsGroup, .editButtonGroup').toggleClass('hidden');
+    parent.find('.toggleSwitch.isActive').bootstrapSwitch('readonly', false);
 }
 function initAddTask(event) {
     event.preventDefault();
@@ -46,6 +58,7 @@ function initCancelEditTask(event) {
         parent = btn.closest('.taskPanel');
     toggleFormTextContent(null, parent);    
     parent.find('.saveButtonsGroup, .editButtonGroup').toggleClass('hidden');
+    parent.find('.toggleSwitch.isActive').bootstrapSwitch('readonly', true);
 }
 
 function showUIBlocker(id, container) {
