@@ -1,5 +1,8 @@
 <div class="mainContent">
     <div class="alertContent"></div>
+    <div class="addButtonContent">
+        <button class="btn btn-info btn-lg addNewTask">Add New Task</button>
+    </div>
     <div class="content tasksContent">
         @foreach ($rowData as $row)
             @include('feg.system.tasks.tableitems', array('row' => $row))
