@@ -2548,7 +2548,7 @@ table.table-striped tr th
 }
 
 .tasksContainer #tasksGrid .bootstrap-switch-isActiveToggleForm {    
-    width: 100%;
+    margin-right: 10px;
 }
 .tasksContainer #tasksGrid .panel-heading .taskNameText {
     margin: 4px 0;
