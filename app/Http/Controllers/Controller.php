@@ -367,12 +367,16 @@ function postFilter(Request $request)
     $order = (!is_null($request->input('order')) ? $request->input('order') : '');
     $rows = (!is_null($request->input('rows')) ? $request->input('rows') : '');
     $md = (!is_null($request->input('md')) ? $request->input('md') : '');
+    $s = (!is_null($request->input('search')) ? $request->input('search') : '');
+    $ss = (!is_null($request->input('simplesearch')) ? $request->input('simplesearch') : '');
 
     $filter = '?';
     if ($sort != '') $filter .= '&sort=' . $sort;
     if ($order != '') $filter .= '&order=' . $order;
     if ($rows != '') $filter .= '&rows=' . $rows;
     if ($md != '') $filter .= '&md=' . $md;
+    if ($s != '') $filter .= '&search=' . $s;
+    if ($ss != '') $filter .= '&simplesearch=' . $ss;
 
 
     return Redirect::to($this->data['pageModule'] . $filter);

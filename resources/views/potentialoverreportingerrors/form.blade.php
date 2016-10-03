@@ -303,7 +303,7 @@ $(document).ready(function() {
 	$('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});
 	$('input[type="checkbox"],input[type="radio"]').iCheck({
 		checkboxClass: 'icheckbox_square-green',
-		radioClass: 'iradio_square-green',
+		radioClass: 'iradio_square-green'
 	});			
 	$('.removeCurrentFiles').on('click',function(){
 		var removeUrl = $(this).attr('href');

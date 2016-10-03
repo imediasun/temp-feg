@@ -3,12 +3,14 @@
     <div class="sbox-title">
         <h5><i class="fa fa-table"></i></h5>
         <div class="sbox-tools">
+            <!--
             <a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Clear Search"
                onclick="reloadData('#{{ $pageModule }}','throwreport/data?search=')"><i class="fa fa-trash-o"></i> Clear
                 Search </a>
             <a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Reload Data"
                onclick="reloadData('#{{ $pageModule }}','throwreport/data?return={{ $return }}')"><i
                         class="fa fa-refresh"></i></a>
+            -->
             @if(Session::get('gid') ==1)
                 <a href="{{ url('feg/module/config/'.$pageModule) }}" class="btn btn-xs btn-white tips"
                    title=" {{ Lang::get('core.btn_config') }}"><i class="fa fa-cog"></i></a>
@@ -156,7 +158,16 @@
 
         </div>
         <?php echo Form::close();?>
-        @include('ajaxfooter')
+        <div class="table-footer">
+            <div class="row">
+                @if(!isset($setting['disablepagination']) || $setting['disablepagination'] == 'false')
+                    <div class="col-md-5 col-md-offset-7" id="<?php echo $pageModule;?>Paginate">
+                        {!! $pagination->appends($pager)->render() !!}
+                    </div>
+                @endif
+            </div>
+        </div>
+        </br>
         <div class="col-md-10 col-md-offset-3">
             <div class="col-md-10">
                 @if(count($rowData) > 0)
@@ -169,7 +180,6 @@
         </br>
         </br>
 
-
     </div>
 </div>
 
@@ -177,46 +187,61 @@
 <script src="https://cdn.jsdelivr.net/momentjs/2.10.6/moment.min.js"></script>
 <script>
     $(document).ready(function () {
-
         //Initialize the datePicker(I have taken format as mm-dd-yyyy, you can     //have your owh)
         //var lastWeekDate = new Date(new Date().setDate(new Date().getDate() - (new Date().getDay() == 0 ? 6 : 6)));
         var lastWeekDate = moment(new Date()).weekday(-1).format('MM/DD/YYYY');
-        $(".weeklyDatePicker").datepicker({endDate: lastWeekDate});
+        $(".weeklyDatePicker").datepicker({endDate: lastWeekDate, autoclose: true});
         $(".weeklyDatePicker").val('{{ $setDate }}');
         $('.weeklyDatePicker').datepicker().on('change', function (e) {
-            $('.weeklyDatePicker').datepicker("hide");
             var value = $(".weeklyDatePicker").val();
             var firstDate = moment(value, "MM/DD/YYYY").day(0).format("MM/DD/YYYY");
             var lastDate = moment(value, "MM/DD/YYYY").day(6).format("MM/DD/YYYY");
             selectedDate = firstDate + " - " + lastDate;
             $(".weeklyDatePicker").val(firstDate + " - " + lastDate);
-            reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?search=date_start:equal:' + firstDate + '|date_end:equal:' + lastDate);
+            reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?search=date_start:equal:' + firstDate + '|date_end:equal:' + lastDate+'&config_id=' + $("#col-config").val());
+            $('.weeklyDatePicker').datepicker("hide");
         });
         var defaultWeekValue = '{{$setDate}}';
-        $('.weeklyDatePicker').datepicker().on('click blur', function (e) {
+        $('.weeklyDatePicker').datepicker().on('click blur hide', function (e) {
             $(".weeklyDatePicker").val(defaultWeekValue);
         });
         $('.tips').tooltip();
         $('#report-submit-button').on('click', (function () {
-            $('.ajaxLoading').show();
-            $.ajax(
-                    {
-                        url: "throwreport/update-status",
-                        type: 'post',
-                        data: {},
-                        success: function (data) {
-                            if (data.status == 'success') {
-                                notyMessage(data.message);
-                                $('.ajaxLoading').hide();
-                            } else {
-                                notyMessageError(data.message);
-                                $('.ajaxLoading').hide();
-                                return false;
-                            }
-                        }
+            $('.modal-title').html("Add Comment");
+            var weekDate = $(".weeklyDatePicker").val();
+            $('#sximo-modal-content').html('{!! Form::open(array("url"=>"throwreport/update-status/", "class"=>"form-horizontal","files" => true , "parsley-validate"=>"","novalidate"=>"","id"=> "throwreportFormAjax")) !!}'+
+                            '<input type="hidden" name="weekdate" value="'+weekDate+'">'+
+                            '<div class="form-group">'+
+                            '<div class="col-md-12">'+
+                            '<textarea name="comment" rows="5" class="form-control" placeholder="Comment" required></textarea>'+
+                            '</div>'+
+                            '</div>'+
+                            '<div class="form-group" style="margin-bottom: 0px !important;">'+
+                            '<div class="col-sm-12">'+
+                            '<button style="float: right;" type="submit" class="btn btn-primary btn-sm "><i class="fa  fa-save "></i>  {{ Lang::get('core.sb_save') }} </button>'+
+                            '</div>'+
+                            '</div>'+
+                            '{!! Form::close() !!}');
+            $('#sximo-modal').modal('show');
+            var form = $('#throwreportFormAjax');
+            form.parsley();
+            form.submit(function(){
 
+                if(form.parsley('isValid') == true){
+                    var options = {
+                        dataType:      'json',
+                        beforeSubmit :  showRequest,
+                        success:       showResponse
                     }
-            );
+                    $(this).ajaxSubmit(options);
+                    return false;
+
+                } else {
+                    return false;
+                }
+
+            });
+
         }));
         $('.changed').on("change", (function (e) {
             /*
@@ -285,6 +310,31 @@
         echo AjaxHelpers::htmlExpandGrid();
     endif;
         ?>
+    });
+    function showRequest()
+    {
+        $('.ajaxLoading').show();
+    }
+    function showResponse(data)  {
+
+        if(data.status == 'success')
+        {
+            $('.ajaxLoading').hide();
+            notyMessage(data.message);
+            $('#sximo-modal').modal('hide');
+        } else {
+            notyMessageError(data.message);
+            $('.ajaxLoading').hide();
+            $('#sximo-modal').modal('show');
+            return false;
+        }
+    }
+
+    $("#col-config").on('change', function () {
+        var value = $(".weeklyDatePicker").val();
+        var firstDate = moment(value, "MM/DD/YYYY").day(0).format("MM/DD/YYYY");
+        var lastDate = moment(value, "MM/DD/YYYY").day(6).format("MM/DD/YYYY");
+        reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?config_id=' + $("#col-config").val()+ '&search=date_start:equal:' + firstDate + '|date_end:equal:' + lastDate);
     });
 </script>
 <style>

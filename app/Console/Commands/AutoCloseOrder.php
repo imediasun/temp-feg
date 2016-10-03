@@ -19,7 +19,7 @@ class AutoCloseOrder extends Command
      *
      * @var string
      */
-    protected $description = '15 days ago orders is uuto closed';
+    protected $description = '15 days ago orders is auto closed';
 
     /**
      * Create a new command instance.

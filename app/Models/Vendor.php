@@ -27,7 +27,7 @@ class vendor extends Sximo  {
 		return "  ";
 	}
 
-	public static function processApiData($json)
+	public static function processApiData($json,$param=null)
     {
         //loop over all records and check if website is not empty then add http:// prefix for it
         $data = array();

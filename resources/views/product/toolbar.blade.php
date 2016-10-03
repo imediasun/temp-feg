@@ -1,6 +1,6 @@
 
 <div class="row">
-    <div class="col-md-3" style="padding-left: 0px!important;">
+    <div class="col-md-3">
         <select name='product_list_type' rows='5'  id='product_list_type' class="select3" style="height: auto; font-size: 13px; font-family: 'Lato', sans-serif;
 width: 75%">
             <option selected selected>------------ Select Type --------------</option>
@@ -47,7 +47,7 @@ width: 75%">
 
         {!! Form::close() !!}
     </div>
-    <div class="row m-b" style=" margin-bottom: 10px !important;  margin-top: 35px !important;">
+    <div class="row m-b" style=" margin-bottom: 10px !important; margin-left:0px; margin-right:0px;  margin-top: 35px !important;">
         <div class="col-md-8">
             @if($access['is_add'] ==1)
                 {!! AjaxHelpers::buttonActionCreate($pageModule,$setting) !!}

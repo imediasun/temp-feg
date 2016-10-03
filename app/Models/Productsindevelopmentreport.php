@@ -40,6 +40,7 @@ class productsindevelopmentreport extends Sximo  {
         $filters = self::getSearchFilters();
         $date_start = @$filters['start_date'];
         $date_end = @$filters['end_date'];
+        $description = @$filters['Description'];
         
 		$where = "   WHERE products.in_development = 1  ";        
         if (!empty($date_start)) {
@@ -47,6 +48,9 @@ class productsindevelopmentreport extends Sximo  {
         }
         if (!empty($date_end)) {
             $where .= " AND products.date_added <= '$date_end 23:59:59' ";
+        }
+        if (!empty($description)) {
+            $where .= " AND products.vendor_description LIKE '%$description%' ";
         }
 		
         $sql .= $where;

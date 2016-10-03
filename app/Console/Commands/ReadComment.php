@@ -1,7 +1,7 @@
 <?php
-
 namespace App\Console\Commands;
 
+require_once('setting.php');
 use Illuminate\Console\Command;
 use App\Models\Ticketcomment;
 
@@ -59,7 +59,6 @@ class ReadComment extends Command
 
             /* for every email... */
             foreach($emails as $email_number) {
-                echo 'here found email';
 
                 /* get information specific to this email */
                 $overview = imap_fetch_overview($inbox,$email_number,0);

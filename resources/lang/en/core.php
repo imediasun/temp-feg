@@ -47,6 +47,8 @@ return array(
 	"m_users" 			=> "Users",
 	"m_groups" 			=> "Groups",
 	"m_pagecms" 		=> "Page CMS",
+	"m_taskspage" 		=> "System Tasks",
+	"m_scheduledemails" => "Scheduled Email",
 	"m_menu" 			=> "Menu Management",
 	"m_logs" 			=> "Activity Logs",
 	"m_codebuilder" 	=> "Code Builder",

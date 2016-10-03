@@ -1,5 +1,6 @@
 <?php
 namespace App\Library;
+
 use PDO;
 use DB;
 use App\Library\MyLog;
@@ -12,6 +13,7 @@ class Elm5Tasks
 {   
     public static $L = null;
     public static $CL = null;
+    
     private static function log($message = '', $data = '') {
         if (is_null(self::$L)) {
             self::$L = new MyLog("task-manager.log", "elm5Tasks", "Elm5Tasks");
@@ -46,7 +48,7 @@ class Elm5Tasks
         
     }
     public static function runTasks() {
-        $tasks = self::getTasks(true);
+        //$tasks = self::getTasks(true);
         
     }
     public static function runTask() {

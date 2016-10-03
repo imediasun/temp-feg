@@ -251,11 +251,16 @@ GROUP BY game.id");
 
     function postUpdateStatus(Request $request)
     {
-        $rows = \DB::table('merch_throws')->where('date_start', '>=', '2014-01-15')->where('date_start', '<=', '2014-01-16')->select('id')->get();
+        $comments = $request->input('comment');
+        $date = $request->input('weekdate');
+        $date = explode('-', $date);
+        $dateStart_expression = date("Y-m-d", strtotime($date[0]));
+        $dateEnd_expression = date("Y-m-d", strtotime($date[1]));
+        $rows = \DB::table('merch_throws')->where('date_start', '>=', $dateStart_expression)->where('date_start', '<=', $dateEnd_expression)->select('id')->get();
         if (count($rows) > 0) {
             foreach($rows as $row)
             {
-                \DB::table('merch_throws')->where('id', $row->id)->update(array('flag'=>1));
+                \DB::table('merch_throws')->where('id', $row->id)->update(array('flag'=>1, 'notes'=> $comments));
             }
             return response()->json(array(
                 'status' => 'success',

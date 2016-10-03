@@ -15,7 +15,8 @@ class FegapiController extends Controller {
 					
 	}
 	public function index()
-	{		
+	{
+
 		$class 	= ucwords(Input::get('module'));
         if(!empty($class)) {
             if($class == "Users")
@@ -49,6 +50,7 @@ class FegapiController extends Controller {
 
 
             if (!is_null($limit) or $limit != 0) $param['limit'] = $limit;
+            if(is_null($limit))  $param['limit']=500;
             if (!is_null($order)) $param['order'] =$order ;
             if (!is_null($sort)) $param['sort'] = $sort;
 
@@ -63,6 +65,7 @@ class FegapiController extends Controller {
             if (!is_null($vendor_id)) $param['vendor_id'] = $vendor_id;
 
             $results = $class1::getRows($param);
+
             $json = array();
             foreach ($results['rows'] as $row) {
                 $rows = array();
@@ -70,9 +73,13 @@ class FegapiController extends Controller {
                     $conn = (isset($table['conn']) ? $table['conn'] : array());
                     $rows[$table['field']] = $row->$table['field'];
                 }
+
                 $json[] = $rows;
+
             }
-            $json = $class1::processApiData($json);
+
+            $json = $class1::processApiData($json,$param);
+
             $jsonData = array(
                 'total' => $results['total'],
                 'records' => count($json),
@@ -90,11 +97,13 @@ class FegapiController extends Controller {
                 foreach ($tables as $table) {
                     $field[] = $table['field'];
                 }
+
                 $jsonData['option'] = array(
                     'label' => $label,
                     'field' => $field
                 );
             }
+
             return \Response::json($jsonData, 200);
         }
         else{

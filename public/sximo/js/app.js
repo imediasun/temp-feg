@@ -49,7 +49,22 @@ var UNDEFINED,
                     }                    
                     if (operatorElm.length) {
                         operatorElm.val(operator);
-                    }                    
+                    }
+                    switch (operator) {
+                        case 'between':
+                                showBetweenFields({
+                                    field: elmName,
+                                    fieldElm : elm,
+                                    fieldElm2 : elm2,
+                                    previousValue2 : val2,
+                                    dashElement : null
+                                });                            
+                            break;
+                        case "is_null":
+                        case "not_null":
+                            elm.prop('readonly', true);
+                            break;                            
+                    }
                 }
             }                    
         }
@@ -80,7 +95,7 @@ function initDataGrid(module, url, options) {
             sorted = elm.attr('data-sorted'),
             sortedOrder = elm.attr('data-sortedOrder') || '',
             nextOrder = sortedOrder == 'asc' ? 'desc' : 'asc',
-            attr = getFooterFiltersWithoutSort(),
+            attr = getFooterFilters({'sort': true, 'order': true}),
             allAttr = attr + ('&sort=' + field + '&order=' + nextOrder);
         
         
@@ -114,3 +129,53 @@ jQuery(document).ready(function($){
     // Adjust main panel's height based on overflowing nav-bar
     autoSetMainContainerHeight();
 });
+
+function updateNativeUIFieldsBasedOn() {
+    var searchCache,
+        search = $('.table-actions input[name=search]').val() || '',
+        isSimpleSearch = $('.table-actions input[name=simplesearch]').val() || 0, 
+        splitFields = search.split('|'),//id:between:1:100|
+        field, 
+        item, i,
+        fieldName, val, operator, val2;
+        
+    if (search) {
+        searchCache = {};
+        for(i in splitFields) {
+            field = splitFields[i];
+            if (field) {
+                item = field.split(":");
+                fieldName = item[0] || '';
+                operator = item[1] || '';
+                val = item[2] || '';
+                val2 = item[3];
+                if (fieldName) {
+                    searchCache[fieldName] = {'operator': operator, 'value': val, 'value2': val2};
+                }
+            }
+        }
+        if (isSimpleSearch) {
+            App.simpleSearch.cache = searchCache;
+            App.simpleSearch.populateFields();
+        }
+        else {
+            App.search.cache = searchCache;
+        }
+    }
+    
+}
+
+function makeSimpleSearchFieldsToInitiateSearchOnEnter() {
+    var simpleSearchContainer = $('.simpleSearchContainer'),
+        hasSimpleSearch = simpleSearchContainer.length,
+        simpleSearchButton =  hasSimpleSearch && 
+                            simpleSearchContainer.find('.doSimpleSearch');
+    if (hasSimpleSearch) {
+        simpleSearchContainer.find('input[type=text]').keypress(function(event){
+            var keycode = event.keyCode || event.which;
+            if(keycode == '13') {
+                simpleSearchButton.click();
+            }
+        });
+    }
+}
