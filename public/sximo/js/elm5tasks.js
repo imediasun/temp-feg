@@ -23,10 +23,12 @@ function switchOnChange(event, state) {
 function initEditTask(event) {
     event.preventDefault();
     var btn = $(this),
-        parent = btn.closest('.taskPanel');
+        parent = btn.closest('.taskPanel'),
+        buttons = parent.find('.saveButtonsGroup, .editButtonGroup'),
+        switches = parent.find('.toggleSwitch.isActive');
     toggleFormTextContent(null, parent);
-    parent.find('.saveButtonsGroup, .editButtonGroup').toggleClass('hidden');
-    parent.find('.toggleSwitch.isActive').bootstrapSwitch('readonly', false);
+    buttons.toggleClass('hidden');
+    switches.bootstrapSwitch('readonly', false);
 }
 function initAddTask(event) {
     event.preventDefault();
@@ -55,10 +57,12 @@ function updateTask(event) {
 function initCancelEditTask(event) {    
     event.preventDefault();
     var btn = $(this),
-        parent = btn.closest('.taskPanel');
+        parent = btn.closest('.taskPanel'),
+        buttons = parent.find('.saveButtonsGroup, .editButtonGroup'),
+        switches = parent.find('.toggleSwitch.isActive');;
     toggleFormTextContent(null, parent);    
-    parent.find('.saveButtonsGroup, .editButtonGroup').toggleClass('hidden');
-    parent.find('.toggleSwitch.isActive').bootstrapSwitch('readonly', true);
+    buttons.toggleClass('hidden');
+    switches.bootstrapSwitch('readonly', true);
 }
 
 function showUIBlocker(id, container) {
