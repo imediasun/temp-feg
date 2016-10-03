@@ -10,14 +10,17 @@ jQuery(document).ready(function ($) {
         onInit: switchOnInit,
         onSwitchChange: switchOnChange,
     });
+    
 
 });
 
 function switchOnInit(event, state) {
-    console.log(event,state, this);
+    var elm = $(this);
+    elm.data('resetValue', elm.prop('checked'));
 }
-function switchOnChange(event, state) {
-    console.log(event,state, this);
+function switchOnChange(event, state) {    
+    var elm = $(this);
+    elm.prop('checked', state);    
 }
 
 function initEditTask(event) {
@@ -59,9 +62,12 @@ function initCancelEditTask(event) {
     var btn = $(this),
         parent = btn.closest('.taskPanel'),
         buttons = parent.find('.saveButtonsGroup, .editButtonGroup'),
-        switches = parent.find('.toggleSwitch.isActive');;
+        switches = parent.find('.toggleSwitch.isActive'),
+        switchValue = switches.data('resetValue');
     toggleFormTextContent(null, parent);    
     buttons.toggleClass('hidden');
+    switches.prop('checked', switchValue);
+    switches.bootstrapSwitch('state', switchValue);
     switches.bootstrapSwitch('readonly', true);
 }
 
