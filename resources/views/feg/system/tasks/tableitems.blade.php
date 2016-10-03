@@ -32,7 +32,7 @@
                            data-wrapper-class="isActiveToggleForm" 
                            name="isActive" class="isActive test toggleSwitch"                            
                            @if($isActive) checked @endif 
-                           disabled >                    
+                           readonly >                    
                 </div>
                 <div class="formContent hidden">
                     <input type="hidden" class="taskId"  value="{{ $taskId }}" name="taskId" >
