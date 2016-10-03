@@ -24,13 +24,13 @@
         <div class="taskPanel taskPanel-{{ $taskId }} panel @if($isActive) panel-active @else panel-inactive @endif" data-taskid="{{ $taskId }}">
         <div class="ajaxLoading"></div>
         <form action="{{ $pageUrl }}/save/?taskid={{ $taskId }}" method="post" class="taskForm taskForm-{{ $taskId }}">
-            <div class="panel-heading">                
+            <div class="panel-heading clearfix">                
                 <div class="isActiveContainer col-sm-1">
                     <input type="checkbox"
+                           data-size="mini" 
+                           data-on-text="Active" data-off-text="Inactive"                            
+                           data-on-color="primary" data-off-color="danger"
                            data-wrapper-class="isActiveToggleForm" 
-                           data-size="small" 
-                           data-on="Active" data-off="Inactive" 
-                           data-onstyle="primary" data-offstyle="danger"
                            name="isActive" class="isActive test toggleSwitch"                            
                            @if($isActive) checked @endif>                    
                 </div>
