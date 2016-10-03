@@ -6,11 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 use Request, Log;
 class Sximo extends Model {
 
-    public function abc(){
-        die("this is for testing a patch");
-    }
-
-
     public static function insertLog($module, $task)
     {
         $table = 'tb_logs';
