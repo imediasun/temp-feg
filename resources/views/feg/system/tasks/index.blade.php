@@ -34,7 +34,6 @@ $(document).ready(function(){
 
 @section ('beforeheadend')
 
-<link href="{{ asset('sximo/js/plugins/bootstrap-toggle/bootstrap-toggle.min.css') }}" rel="stylesheet" type="text/css"/>
 
 @endsection
 @section ('beforebodyend')
@@ -44,7 +43,6 @@ $(document).ready(function(){
         var pageModule = '{{$pageModule}}',
             pageUrl = '{{$pageUrl}}';
     </script>  
-    <script type="text/javascript" src="{{ asset('sximo/js/plugins/bootstrap-toggle/bootstrap-toggle.min.js') }}"></script>  
     <script type="text/javascript" src="{{ asset('sximo/js/elm5tasks.js') }}"></script>  
 
 @endsection

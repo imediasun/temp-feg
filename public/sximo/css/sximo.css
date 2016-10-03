@@ -2550,6 +2550,9 @@ table.table-striped tr th
 .tasksContainer #tasksGrid .isActiveToggleForm {    
     margin-right: 5px;
 }
+.tasksContainer #tasksGrid .isActiveToggleText{    
+    margin-top: 5px;
+}
 .tasksContainer #tasksGrid .isActiveToggleForm {    
     width: 5%;
     min-height: 31px;

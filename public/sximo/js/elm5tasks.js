@@ -5,6 +5,8 @@ jQuery(document).ready(function ($) {
     $(document).on('click', '.deleteTask', initDelTask);
     $(document).on('click', '.showSchedules', initShowScheduledTasks);
     $(document).on('click', '.addNewTask', initAddTask);
+    
+    $('.toggleSwitch').bootstrapSwitch();
 
 });
 function initEditTask(event) {
