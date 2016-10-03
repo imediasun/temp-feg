@@ -71,12 +71,11 @@
                 <div class="pull-right m-b">
                     
                     <div class="saveButtonsGroup hidden" >
-                        <button class="btn testTask" title="Check whether the Task Action exists"  data-taskid="{{ $taskId }}">Test</button>
                         <button class="btn btn-default cancelEditTask" type="reset"  data-taskid="{{ $taskId }}">Cancel</button>
+                        <button class="btn testTask" title="Check whether the Task Action exists"  data-taskid="{{ $taskId }}">Test</button>
                         <button class="btn btn-success addUpdateTask"  data-taskid="{{ $taskId }}">Save</button>
                     </div>
                     <div class="editButtonGroup" >
-                        <button class="btn testTask" title="Check whether the Task Action exists"  data-taskid="{{ $taskId }}">Test</button>
                         <button class="btn btn-primary editTask"  data-taskid="{{ $taskId }}">Edit</button>                    
                         <button class="btn btn-danger deleteTask"  data-taskid="{{ $taskId }}">Delete</button>
                         <button class="btn btn-info showSchedules" title="Show all the previously executed and upcoming tasks" data-taskid="{{ $taskId }}">Schedules</button>                
