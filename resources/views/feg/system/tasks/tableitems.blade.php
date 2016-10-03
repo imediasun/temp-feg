@@ -25,16 +25,15 @@
         <div class="ajaxLoading"></div>
         <form action="{{ $pageUrl }}/save/?taskid={{ $taskId }}" method="post" class="taskForm taskForm-{{ $taskId }}">
             <div class="panel-heading clearfix">                
-                <div class="isActiveContainer col-sm-1">
+                <div class="isActiveContainer pull-left">
                     <input type="checkbox"
-                           data-size="mini" 
-                           data-on-text="Active" data-off-text="Inactive"                            
+                           data-size="small"                            
                            data-on-color="primary" data-off-color="danger"
                            data-wrapper-class="isActiveToggleForm" 
                            name="isActive" class="isActive test toggleSwitch"                            
                            @if($isActive) checked @endif>                    
                 </div>
-                <div class="formContent hidden col-sm-11">
+                <div class="formContent hidden">
                     <input type="hidden" class="taskId"  value="{{ $taskId }}" name="taskId" >
                     <input type="text" class="taskName" 
                            value="{{ $taskName }}"
@@ -43,7 +42,7 @@
                            value="{{ $actionName }}"
                            name="taskAction" placeholder="Task Action">
                 </div>
-                <div class="textContent clearfix  col-sm-11">                    
+                <div class="textContent clearfix">                    
                     <p title="Task Name" class="taskNameText pull-left">{{ $taskName }}                         
                         <span title="Task Action" class="label taskActionText">{{ $actionName }}</span>                         
                     </p>
