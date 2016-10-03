@@ -26,7 +26,7 @@
         <form action="{{ $pageUrl }}/save/?taskid={{ $taskId }}" method="post" class="taskForm taskForm-{{ $taskId }}">
             <div class="panel-heading clearfix">                
                 <div class="isActiveContainer pull-left">
-                    <input type="checkbox"
+                    <input type="checkbox" data-handle-width="25"
                            data-size="small"                            
                            data-on-color="primary" data-off-color="danger"
                            data-wrapper-class="isActiveToggleForm" 

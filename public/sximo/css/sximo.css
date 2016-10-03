@@ -2544,7 +2544,7 @@ table.table-striped tr th
 }
 .tasksContainer #tasksGrid .taskName,
 .tasksContainer #tasksGrid .taskAction {
-    width: 46%
+    width: 45%
 }
 
 .tasksContainer #tasksGrid .bootstrap-switch-isActiveToggleForm {    
