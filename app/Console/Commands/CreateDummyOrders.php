@@ -37,7 +37,7 @@ class CreateDummyOrders extends Command
      */
     public function handle()
     {
-        $created_date=$this->rand_date('2016-09-01','2016-10-30');
+        $created_date=$this->rand_date('2016-09-02','2016-10-29');
         $counter=rand(1,5);
       // echo 'total number of orders:'.$counter.'----';
         for($i=0;$i < $counter;$i++) {
@@ -151,7 +151,7 @@ class CreateDummyOrders extends Command
             $qtyarr=array();
             if(count($received_part_ids)==0)
             {
-                //echo 'in received parts';
+              //  echo 'in received parts';
                 $order_receipt_data['order_status']=2;
 
             }
