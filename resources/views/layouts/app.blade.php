@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+@yield('afterheadstart', '')
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -77,9 +78,10 @@
     <script type="text/javascript" src="{{ asset('sximo/js/search.js') }}"></script>
     <script type="text/javascript" src="{{ asset('sximo/js/simple-search.js') }}"></script>
     <!-- End Search and storage  -->
-	
+    @yield('beforeheadend', '')	
   	</head>
   	<body class="sxim-init" >
+    @yield('afterbodystart', '')        
 	<div id="wrapper">
 		@include('layouts/sidemenu')
 		<div class="gray-bg " id="page-wrapper">
@@ -137,6 +139,7 @@
 </div>
 
 {{ Sitehelpers::showNotification() }} 
+@yield('beforebodyend', '')
 <script type="text/javascript">
 jQuery(document).ready(function ($) {
 
@@ -164,4 +167,5 @@ jQuery(document).ready(function ($) {
 	
 </script>
 </body>
+@yield('afterbodyend', '')
 </html>
