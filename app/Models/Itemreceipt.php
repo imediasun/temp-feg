@@ -59,7 +59,8 @@ class itemreceipt extends Sximo  {
         else{
             $query = "select * from order_received where order_id in (" . implode(',', $orders) . ") ";
         }
-            $result = \DB::select($query);
+        \Log::info("Api Query => ".$query);
+        $result = \DB::select($query);
         //all order contents place them in relevent order
         foreach($result as $item){
             $orderId = $item->order_id;
