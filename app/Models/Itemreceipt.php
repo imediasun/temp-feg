@@ -41,7 +41,8 @@ class itemreceipt extends Sximo  {
        {
           if(!empty($param['createdFrom']) && !empty($param['createdTo']))
           {
-              $cond=' AND date_received BETWEEN "'.$param['createdFrom'].'" AND "'.$param['createdTo'].'"';
+              //either order id or date_received between given date range
+              $cond=' OR date_received BETWEEN "'.$param['createdFrom'].'" AND "'.$param['createdTo'].'"';
           }
        }
         $orders = [];
