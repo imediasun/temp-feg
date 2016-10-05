@@ -778,7 +778,9 @@ public function getSaveOrSendEmail()
                 }
                 $added = 1;
             }
-            $data = array('date_received' => $request->get('date_received'),
+            $date_received = $request->get('date_received');
+            $date_received = date("Y-m-d", strtotime($date_received));
+            $data = array('date_received'=>$date_received,
                 'status_id' => $order_status,
                 'notes' => $notes,
                 'tracking_number' => $request->get('tracking_number'),

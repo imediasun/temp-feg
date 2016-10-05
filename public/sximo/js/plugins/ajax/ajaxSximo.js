@@ -4,7 +4,7 @@ function reloadData( id,url,callback)
 	$('.ajaxLoading').show();
     var isClearData = /data\?search\=$/.test(url);
     if (isClearData) {
-        url += getFooterFilters(true, true);
+        url += getFooterFilters({'search': true, 'page': true});
     }
 
 	$.post( url ,function( data ) {
@@ -18,35 +18,34 @@ function reloadData( id,url,callback)
 
 }
 
-function getFooterFilters(excludeSearch, excludePage) {
-    var attr = "";
+function getFooterFilters(excludeList, forceSetFields) {
+    var attr = "", fieldKey;
+    if (!forceSetFields) {
+        forceSetFields = {};
+    }
+    if (!excludeList) {
+        excludeList = {};
+    }
+    if (excludeList['_token'] === UNDEFINED) {
+        excludeList['_token'] = true;
+    }
+    
+    for(fieldKey in forceSetFields) {
+        $('.table-actions [name='+fieldKey+']').val(forceSetFields[fieldKey]);
+    }        
     $('.table-actions :input').each(function () {
         var elm = $(this), 
             fieldName = elm.attr('name'), 
-            val = elm.val();
-        if (fieldName != '_token' && val !== '' && val !== null) {
-            if ((fieldName != 'search' && fieldName != 'page') || 
-                (fieldName == 'search' &&  !excludeSearch) || 
-                (fieldName == 'page' &&  !excludePage)) {            
-            
-                attr += '&' + fieldName + '=' + val;
-            }            
+            val = elm.val(),
+            isExlude = excludeList[fieldName] === true;
+        if (!isExlude && val !== '' && val !== null) {
+            attr += '&' + fieldName + '=' + val;
         }
     });
     return attr;
 }
 function getFooterFiltersWithoutSort() {
-    var attr = "";
-    $('.table-actions :input').each(function () {
-        var elm = $(this), 
-            fieldName = elm.attr('name'), 
-            val = elm.val();
-        if (val !== '' && val !== null) {
-            if (fieldName != 'sort' && fieldName != 'order' && fieldName != '_token') {                        
-                attr += '&' + fieldName + '=' + val;
-            }            
-        }
-    });
+    var attr = getFooterFilters({'sort': true, 'order': true});
     return attr;
 }
 

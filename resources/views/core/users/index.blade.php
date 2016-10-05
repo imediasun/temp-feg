@@ -28,11 +28,13 @@
 <div class="sbox animated fadeInRight" >
 	<div class="sbox-title">
 <div class="sbox-tools" >
-
-		 <a href="{{ url($pageModule) }}" class="btn btn-xs btn-white tips  {{(isset($_GET['search'])) ? 'btn-search ':'' }}" title="Clear Search" ><i class="fa fa-trash-o"></i> Clear Search </a>
-
-
-
+        {{--*/ $sortParam = is_null(Input::get('sort'))?'':'&sort='.Input::get('sort') /*--}}
+        {{--*/ $orderParam = is_null(Input::get('order'))?'':'&order='.Input::get('order') /*--}}
+        {{--*/ $rowsParam = is_null(Input::get('rows'))?'':'&rows='.Input::get('rows') /*--}}
+        @if(isset($_GET['search']))
+		 <a href="{{ url($pageModule) }}?{{ $sortParam }}{{ $orderParam }}{{ $rowsParam }}"
+            class="btn btn-xs btn-white tips btn-search" title="Clear Search" ><i class="fa fa-trash-o"></i> Clear Search </a>
+        @endif
 		@if(Session::get('gid') ==1)
 			<a href="{{ URL::to('feg/module/config/'.$pageModule) }}" class="btn btn-xs btn-white tips" title=" {{ Lang::get('core.btn_config') }}" ><i class="fa fa-cog"></i></a>
 		@endif
@@ -70,7 +72,7 @@
 			@endif
 
 
-			<a href="{{ URL::to( 'core/users/search') }}" class="btn btn-sm btn-white" onclick="SximoModal(this.href,'Advanced Search'); return false;" ><i class=" fa fa-search"></i> Search</a>
+			<a href="{{ URL::to( 'core/users/search') }}" class="btn btn-sm btn-white" onclick="SximoModal(this.href,'Advanced Search'); return false;" ><i class=" fa fa-search"></i>Advanced Search</a>
 		@if(SiteHelpers::isModuleEnabled('users'))
 			<a href="{{ URL::to('tablecols/arrange-cols/users') }}" class="btn btn-sm btn-white" onclick="SximoModal(this.href,'Column Selector'); return false;" ><i class="fa fa-bars"></i> Arrange Columns</a>
 			<?php   $colconfigs=SiteHelpers::getRequiredConfigs($module_id);  ?>
@@ -268,6 +270,10 @@ $(document).ready(function(){
     }
 
     initDataGrid('{{ $pageModule }}', '{{ $pageUrl }}', {useAjax: ajaxMode});
+    
+    updateNativeUIFieldsBasedOn();  
+    makeSimpleSearchFieldsToInitiateSearchOnEnter();
+    
 });
 </script>
 <style>
