@@ -801,6 +801,10 @@ class SiteHelpers
                     $opts = '';
                     if($option['lookup_table'] =='location')
                     {
+                        $lookupParts = explode('|',$option['lookup_value']);
+                        if(is_array($lookupParts) && !empty($lookupParts)){
+                            $option['lookup_value'] = $lookupParts[0];
+                        }
                         $selected = '';
                         $current_user_id=Auth::id();
                         $user_ids = DB::table('user_locations')->leftjoin('location as l','user_locations.location_id','=','l.id')->where('user_locations.user_id',$current_user_id)->orderby('l.'.$option['lookup_value'])->get();
