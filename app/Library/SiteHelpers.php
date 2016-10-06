@@ -838,7 +838,7 @@ class SiteHelpers
                             $selected = '';
                             if ($value == $row->$option['lookup_key']) $selected = 'selected="selected"';
 
-                            print_r($fields);exit;
+                            //print_r($fields);exit;
                             $val = "";
                             foreach ($fields as $item => $v) {
                                 if ($v != "") $val .= $row->$v . " ";
