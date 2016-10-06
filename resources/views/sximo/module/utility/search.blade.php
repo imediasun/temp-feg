@@ -25,17 +25,17 @@
 			</select>
 			</td>
 			<td id="field_{{ $t['field']}}" width="50%">{!! SiteHelpers::transForm($t['field'] , $tableForm) !!}</td>
-		
+
 		</tr>
-	
+
 	@endif
 @endforeach
 		<tr>
-			<td colspan="3"><button type="button" name="search" class="doSearch btn btn-sm btn-primary pull-right"> Search </button></td>		
+			<td colspan="3"><button type="button" name="search" class="doSearch btn btn-sm btn-primary pull-right"> Search </button></td>
 		</tr>
-	</tbody>     
+	</tbody>
 	</table>
-</form>	
+</form>
 </div>
 <script>
 
@@ -47,8 +47,8 @@ jQuery(function(){
         var ajaxSerachMode = <?php echo $searchMode =='ajax' ?'true':'false';?>;
         $('#sximo-modal').modal('hide');
         performAdvancedSearch.call($(this), {
-            moduleID: '#{{ $pageModule }}', 
-            url: "{{ $pageUrl }}", 
+            moduleID: '#{{ $pageModule }}',
+            url: "{{ $pageUrl }}",
             event: event,
             ajaxSearch: ajaxSerachMode,
             container: $("#advance-search")
