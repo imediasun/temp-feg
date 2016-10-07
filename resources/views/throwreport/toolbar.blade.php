@@ -8,7 +8,9 @@
 			{{--<a href="javascript://ajax" class="btn btn-sm btn-white" onclick="ajaxRemove('#{{ $pageModule }}','{{ $pageUrl }}');"><i class="fa fa-trash-o "></i> {{ Lang::get('core.btn_remove') }} </a>--}}
 			@endif
 			{{--<a href="{{ URL::to( $pageModule .'/search') }}" class="btn btn-sm btn-white" onclick="SximoModal(this.href,'Advanced Search'); return false;" ><i class="fa fa-search"></i>Advanced Search</a>--}}
-        @if(SiteHelpers::isModuleEnabled($pageModule))
+				<label>Week Date Range</label>
+				<input type="text" class="weeklyDatePicker"  name ="weeklyDatePicker"  style="padding-bottom:5px" } />
+		@if(SiteHelpers::isModuleEnabled($pageModule))
         <a href="{{ URL::to('tablecols/arrange-cols/'.$pageModule) }}" class="btn btn-sm btn-white" onclick="SximoModal(this.href,'Column Selector'); return false;" ><i class="fa fa-bars"></i> Arrange Columns</a>
         @if(!empty($colconfigs))
         <select class="form-control" style="width:25%!important;display:inline; top: 1px !important;" name="col-config"
@@ -21,8 +23,7 @@
         </select>
         @endif
         @endif
-		<label>Week Date Range</label>
-		<input type="text" class="weeklyDatePicker"  name ="weeklyDatePicker"  style="padding-bottom:5px" } />
+				<label>Week Number: {{ $setWeek }}</label>
 	</div>
 
 
