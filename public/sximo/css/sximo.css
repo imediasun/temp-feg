@@ -2544,16 +2544,15 @@ table.table-striped tr th
 }
 .tasksContainer #tasksGrid .taskName,
 .tasksContainer #tasksGrid .taskAction {
-    width: 46%
+    width: 40%
 }
-.tasksContainer #tasksGrid .isActiveToggleText,
-.tasksContainer #tasksGrid .isActiveToggleForm {    
-    margin-right: 5px;
+
+.tasksContainer #tasksGrid .bootstrap-switch-isActiveToggleForm {    
+    margin-right: 10px;
 }
-.tasksContainer #tasksGrid .isActiveToggleForm {    
-    width: 5%;
-    min-height: 31px;
-    margin-top: -3px;
+.tasksContainer #tasksGrid .bootstrap-switch-isActiveToggleForm .bootstrap-switch-handle-off {    
+    padding-left: 5px; 
+    padding-right: 5px;
 }
 .tasksContainer #tasksGrid .panel-heading .taskNameText {
     margin: 4px 0;

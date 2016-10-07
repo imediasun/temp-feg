@@ -1,6 +1,6 @@
 <div class="mainContent">
     <div class="alertContent"></div>
-    <div class="addButtonContent">
+    <div class="addButtonContent m-b">
         <button class="btn btn-info btn-lg addNewTask">Add New Task</button>
     </div>
     <div class="content tasksContent">

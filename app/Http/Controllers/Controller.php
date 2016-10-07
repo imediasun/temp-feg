@@ -571,28 +571,67 @@ function getDownload(Request $request)
                 foreach ($type as $t) {
                     $keys = explode(":", $t);
                     if (in_array($keys[0], array_keys($arr))) {
+
                         if ($arr[$keys[0]]['type'] == 'select' || $arr[$keys[0]]['type'] == 'radio') {
                             if (isset($arr[$keys[0]]['option']['select_multiple']) && $arr[$keys[0]]['option']['select_multiple'] == 1) {
-                                $param .= " AND " . $arr[$keys[0]]['alias'] . "." . $keys[0] . " IN(". $keys[2] . ") ";
+
+                                if(is_string($keys[2]))
+                                {
+                                if($keys[0]=="freight_company_1" && $arr[$keys[0]]['alias']=="freight_orders")
+                            {
+                               $table="FC";
+                                $keys[0]='id';
+
+                            }
+                                    else{
+                                        $table = $arr[$keys[0]]['alias'];
+                                    }
+
+                                    $vals=explode(',',$keys[2]);
+
+                                    $multi_in=array();
+                                    foreach($vals as $v)
+                                    {
+                                        $multi_in[] .='"'.$v.'"';
+                                    }
+                                    $multi_in=implode(',',$multi_in);
+                                    $param .= " AND " . $table . "." . $keys[0] . " IN(" . $multi_in . ") ";
+                                }
+                                else {
+                                    $param .= " AND " . $arr[$keys[0]]['alias'] . "." . $keys[0] . " IN(" . $keys[2] . ") ";
+                                }
                             }
                             else {
+
                                 $param .= " AND " . $arr[$keys[0]]['alias'] . "." . $keys[0] . " " . self::searchOperation($keys[1]) . " '" . $keys[2] . "' ";
                             }
                             
                         } else {
+                            $col=$arr[$keys[0]]['alias'] . "." .$keys[0];
+                            if($keys[0] == 'up_user_id' && $arr[$keys[0]]['alias'] =="game_service_history")
+                            {
+                                $col="DATEDIFF(date_up,date_down)";
+                            }
+                            elseif($keys[0] == 'description' && $arr[$keys[0]]['alias'] == "requests")
+                            {
+                                $col="products.vendor_description";
+                            }
+
                             $operate = self::searchOperation($keys[1]);
                             if ($operate == 'like') {
-                                $param .= " AND " . $arr[$keys[0]]['alias'] . "." . $keys[0] . " LIKE '%" . $keys[2] . "%%' ";
+                                $param .= " AND " . $col . " LIKE '%" . $keys[2] . "%%' ";
                             } else if ($operate == 'is_null') {
-                                $param .= " AND " . $arr[$keys[0]]['alias'] . "." . $keys[0] . " IS NULL ";
+                                $param .= " AND " .  $col . " IS NULL ";
 
                             } else if ($operate == 'not_null') {
-                                $param .= " AND " . $arr[$keys[0]]['alias'] . "." . $keys[0] . " IS NOT NULL ";
+                                $param .= " AND " .  $col . " IS NOT NULL ";
 
                             } else if ($operate == 'between') {
-                                $param .= " AND (" . $arr[$keys[0]]['alias'] . "." . $keys[0] . " BETWEEN '" . $keys[2] . "' AND '" . $keys[3] . "' ) ";
+                                $param .= " AND (" . $col . " BETWEEN '" . $keys[2] . "' AND '" . $keys[3] . "' ) ";
                             } else {
-                                $param .= " AND " . $arr[$keys[0]]['alias'] . "." . $keys[0] . " " . self::searchOperation($keys[1]) . " '" . $keys[2] . "' ";
+
+                                $param .= " AND " .  $col . " " . self::searchOperation($keys[1]) . " '" . $keys[2] . "' ";
+
                             }
                         }
                     }

@@ -5,14 +5,33 @@ jQuery(document).ready(function ($) {
     $(document).on('click', '.deleteTask', initDelTask);
     $(document).on('click', '.showSchedules', initShowScheduledTasks);
     $(document).on('click', '.addNewTask', initAddTask);
+    
+    $('.toggleSwitch').bootstrapSwitch({
+        onInit: switchOnInit,
+        onSwitchChange: switchOnChange,
+    });
+    
 
 });
+
+function switchOnInit(event, state) {
+    var elm = $(this);
+    elm.data('resetValue', elm.prop('checked'));
+}
+function switchOnChange(event, state) {    
+    var elm = $(this);
+    elm.prop('checked', state);    
+}
+
 function initEditTask(event) {
     event.preventDefault();
     var btn = $(this),
-        parent = btn.closest('.taskPanel');
+        parent = btn.closest('.taskPanel'),
+        buttons = parent.find('.saveButtonsGroup, .editButtonGroup'),
+        switches = parent.find('.toggleSwitch.isActive');
     toggleFormTextContent(null, parent);
-    parent.find('.saveButtonsGroup, .editButtonGroup').toggleClass('hidden');
+    buttons.toggleClass('hidden');
+    switches.bootstrapSwitch('readonly', false);
 }
 function initAddTask(event) {
     event.preventDefault();
@@ -41,9 +60,15 @@ function updateTask(event) {
 function initCancelEditTask(event) {    
     event.preventDefault();
     var btn = $(this),
-        parent = btn.closest('.taskPanel');
+        parent = btn.closest('.taskPanel'),
+        buttons = parent.find('.saveButtonsGroup, .editButtonGroup'),
+        switches = parent.find('.toggleSwitch.isActive'),
+        switchValue = switches.data('resetValue');
     toggleFormTextContent(null, parent);    
-    parent.find('.saveButtonsGroup, .editButtonGroup').toggleClass('hidden');
+    buttons.toggleClass('hidden');
+    switches.prop('checked', switchValue);
+    switches.bootstrapSwitch('state', switchValue);
+    switches.bootstrapSwitch('readonly', true);
 }
 
 function showUIBlocker(id, container) {

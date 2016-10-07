@@ -93,7 +93,6 @@ class Sximo extends Model {
             $offset = ($page-1) * $limit ;
         }        
         $limitConditional = ($page != 0 && $limit != 0) ? "LIMIT  $offset , $limit" : '';
-        
         Log::info("Query : ".$select . " {$params} " . self::queryGroup() . " {$orderConditional}  {$limitConditional} ");
         $result = \DB::select($select . " {$params} " . self::queryGroup() . " {$orderConditional}  {$limitConditional} ");
 

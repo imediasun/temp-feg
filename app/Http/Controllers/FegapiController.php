@@ -67,16 +67,21 @@ class FegapiController extends Controller {
             $results = $class1::getRows($param);
 
             $json = array();
-            foreach ($results['rows'] as $row) {
-                $rows = array();
-                foreach ($tables as $table) {
-                    $conn = (isset($table['conn']) ? $table['conn'] : array());
-                    $rows[$table['field']] = $row->$table['field'];
-                }
-
-                $json[] = $rows;
-
+            //condition necessary to show additional fields in api response
+            if($class == "Itemreceipt"){
+                $json = $results['rows'];
             }
+            else{
+                foreach ($results['rows'] as $row) {
+                    $rows = array();
+                    foreach ($tables as $table) {
+                        $conn = (isset($table['conn']) ? $table['conn'] : array());
+                        $rows[$table['field']] = $row->$table['field'];
+                    }
+                    $json[] = $rows;
+                }
+            }
+
 
             $json = $class1::processApiData($json,$param);
 
