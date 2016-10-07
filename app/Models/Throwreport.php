@@ -15,9 +15,8 @@ class throwreport extends Sximo  {
 
     public static function querySelect(  ){
 
-        return "SELECT merch_throws.*, game.game_name, products.item_description FROM  merch_throws
-                       join game on merch_throws.game_id = game.id
-                       join products on merch_throws.product_id_1 = products.id ";
+        return "SELECT merch_throws.*, game.game_name FROM  merch_throws
+                       join game on merch_throws.game_id = game.id";
     }
 
     public static function queryWhere(){
@@ -55,7 +54,7 @@ class throwreport extends Sximo  {
             $dateEnd_expression = "  AND merch_throws.date_end  <= '$dateEnd'";
         }
 
-            $where = " WHERE   merch_throws.location_id =$location and flag = 0 $dateStart_expression $dateEnd_expression ";
+            $where = " WHERE merch_throws.location_id =$location and flag = 0 $dateStart_expression $dateEnd_expression ";
         return $where;
 
 

@@ -93,11 +93,11 @@ class ThrowreportController extends Controller
             $dateStart_expression = date("Y-m-d", strtotime($dateStart));
             $dateEnd_expression = date("Y-m-d", strtotime($dateEnd));
             $location= \Session::get('selected_location');
-            $rows = \DB::select("SELECT game_earnings.date_start, game_earnings.date_end, SUM(std_actual_cash) AS revenue_total,products.item_description,products.retail_price,game.*
+            $rows = \DB::select("SELECT game_earnings.date_start, game_earnings.date_end, SUM(std_actual_cash) AS revenue_total,game.*
 FROM game
-JOIN products ON game.product_id = products.id
 JOIN game_earnings ON game_earnings.game_id = game.id WHERE game_earnings.loc_id =$location and
 game_earnings.date_start >= '$dateStart_expression' and game_earnings.date_end <= '$dateEnd_expression'
+and game.game_type_id = 3
 GROUP BY game.id");
             if(count($rows) > 0)
             {
@@ -134,6 +134,7 @@ GROUP BY game.id");
         // Detail from master if any
         $this->data['setting'] = $this->info['setting'];
         $this->data['setDate'] = isset($dateStart) ? $dateStart.'-'.$dateEnd : '';
+        $this->data['setWeek'] = date("W", strtotime($dateEnd));;
         // Master detail link if any
         $this->data['subgrid'] = (isset($this->info['config']['subgrid']) ? $this->info['config']['subgrid'] : array());
         if ($this->data['config_id'] != 0 && !empty($config)) {
@@ -153,10 +154,10 @@ GROUP BY game.id");
                 'date_end' => date("Y-m-d", strtotime($row->date_end)),
                 'game_id' => $row->id,
                 'location_id' => $row->location_id,
-                'product_id_1' => $row->product_id,
+                'product_id' => $row->product_id,
                 'product_qty_1' => $row->product_qty_1,
                 'flag' => 0,
-                'retail_price' => $row->retail_price,
+                'retail_price' => '',
                 'game_earnings' => $row->revenue_total,
             );
             $id = $this->model->insertRow($data, '');
@@ -235,6 +236,16 @@ GROUP BY game.id");
     {
         if ($request->input('id') != '') {
             $data = $request->all();
+            $meter = array();
+            for($index = 0; $index < count($data['meter_start']); $index++)
+            {
+                $meter[$index][] =  $data['meter_start'][$index];
+                $meter[$index][] =  $data['meter_end'][$index];
+            }
+            unset($data['meter_start']);
+            unset($data['meter_end']);
+            $meter = json_encode($meter);
+            $data['meter'] = $meter;
             $this->model->insertRow($data, $request->input('id'));
             return response()->json(array(
                 'status' => 'success',
@@ -249,18 +260,17 @@ GROUP BY game.id");
         }
     }
 
-    function postUpdateStatus(Request $request)
+    function getUpdateStatus(Request $request)
     {
-        $comments = $request->input('comment');
         $date = $request->input('weekdate');
         $date = explode('-', $date);
         $dateStart_expression = date("Y-m-d", strtotime($date[0]));
         $dateEnd_expression = date("Y-m-d", strtotime($date[1]));
-        $rows = \DB::table('merch_throws')->where('date_start', '>=', $dateStart_expression)->where('date_start', '<=', $dateEnd_expression)->select('id')->get();
+        $rows = \DB::table('merch_throws')->where('date_start', '>=', $dateStart_expression)->where('date_end', '<=', $dateEnd_expression)->select('id')->get();
         if (count($rows) > 0) {
             foreach($rows as $row)
             {
-                \DB::table('merch_throws')->where('id', $row->id)->update(array('flag'=>1, 'notes'=> $comments));
+                \DB::table('merch_throws')->where('id', $row->id)->update(array('flag'=>1));
             }
             return response()->json(array(
                 'status' => 'success',

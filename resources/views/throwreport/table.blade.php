@@ -38,7 +38,12 @@
                             if ($t['view'] == '1'):
                                 $limited = isset($t['limited']) ? $t['limited'] : '';
                                 if (SiteHelpers::filterColumn($limited)) {
-                                    echo '<th align="' . $t['align'] . '" width="' . $t['width'] . '">' . \SiteHelpers::activeLang($t['label'], (isset($t['language']) ? $t['language'] : array())) . '</th>';
+                                    if ($t['label'] == 'meter') {
+                                        echo '<th align="' . $t['align'] . '" width="' . $t['width'] . '">Add/Remove</th>';
+                                        echo '<th align="' . $t['align'] . '" width="' . $t['width'] . '">Meter Start</th>';
+                                        echo '<th align="' . $t['align'] . '" width="' . $t['width'] . '">Meter End</th>';
+                                    } else
+                                        echo '<th align="' . $t['align'] . '" width="' . $t['width'] . '">' . \SiteHelpers::activeLang($t['label'], (isset($t['language']) ? $t['language'] : array())) . '</th>';
 
                                 }
                             endif;
@@ -76,7 +81,7 @@
                     ?>
                     <tr class="editable" id="{{ $row->id }}">
                         <td class="number"> <?php echo ++$i;?>  </td>
-                        
+
                         @if($setting['view-method']=='expand')
                             <td><a href="javascript:void(0)" class="expandable" rel="#row-{{ $row->id }}"
                                    data-url="{{ url('throwreport/show/'.$id) }}"><i class="fa fa-plus "></i></a></td>
@@ -90,37 +95,99 @@
                         ?>
                         <?php $limited = isset($field['limited']) ? $field['limited'] : ''; ?>
                         @if(SiteHelpers::filterColumn($limited ))
-                            <td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}"
-                                data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
-                                @if($field['field']=='price_per_play')
+                            @if($field['field'] != 'meter')
+                                <td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}"
+                                    data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
+                                    @if($field['field']=='price_per_play')
 
-                                    <input type="text" value="{{ number_format($value,2) }}" name="price_per_play"
-                                           class="changed" id="price_per_play-{{ $row->id }}" style="width:55px"/>
-                                @elseif($field['field']=='game_earnings')
-                                    <span id="game_earnings-{{ $row->id }}">{{ $value }}</span>
-                                @elseif($field['field']=='retail_price')
-                                    <input type="text" value="{{ number_format($row->retail_price,2) }}"
-                                           name="retail_price"
-                                           class="changed" id="retail_price-{{ $row->id }}" style="width:55px"/>
+                                        <input type="text" value="{{ number_format($value,2) }}" name="price_per_play"
+                                               class="changed" id="price_per_play-{{ $row->id }}" style="width:55px"/>
+                                    @elseif($field['field']=='product_id')
+                                        <?php
+                                        $product_ids = json_decode($value);
+                                        foreach ($product_ids as $index => $product_id) {
+                                            if(!empty($product_id))
+                                                echo ++$index . '. ' . \SiteHelpers::getProductName($product_id) . '<br/>';
+                                        }
+                                        ?>
+                                    @elseif($field['field']=='game_earnings')
+                                        <span id="game_earnings-{{ $row->id }}">{{ $value }}</span>
+                                    @elseif($field['field']=='retail_price')
+                                        <input type="text" value="{{ number_format($row->retail_price,2) }}"
+                                               name="retail_price"
+                                               class="changed" id="retail_price-{{ $row->id }}" style="width:55px"/>
 
-                                @elseif($field['field']=='product_cogs_1')
-                                    <span id="product_cogs_1-{{ $row->id }}">{{ number_format($row->retail_price * $row->product_throw_1,2) }}</span>
+                                    @elseif($field['field']=='product_cogs_1')
+                                        <span id="product_cogs_1-{{ $row->id }}">{{ number_format($row->retail_price * $row->product_throw_1,2) }}</span>
 
-                                @elseif($field['field']=='game_throw')
-                                    <span id="game_throw-{{ $row->id }}"><?php
-                                        $cogs = $row->retail_price * $row->product_throw_1;
-                                        if ($row->game_earnings != 0.00)
-                                            echo number_format(($cogs / $row->game_earnings), 2);
-                                        ?></span>
+                                    @elseif($field['field']=='product_throw_1')
+                                        <input type="text" value="{{ $value }}" name="product_throw_1"
+                                               class="changed" id="product_throw_1-{{ $row->id }}" style="width:55px"/>
+                                    @elseif($field['field']=='notes')
 
-                                @elseif($field['field']=='product_throw_1')
+                                        <textarea value="{{ $value }}" name="notes" rows="4"
+                                                  class="changed" id="notes-{{ $row->id }}"
+                                                  style="width:100%">{{$value}}</textarea>
+                                    @elseif($field['field']=='reasons')
+                                        <textarea value="{{ $value }}" name="reasons" rows="4"
+                                                  class="changed" id="reasons-{{ $row->id }}"
+                                                  style="width:100%">{{$value}}</textarea>
+                                    @else {!! $value !!}
+                                    @endif
+                                </td>
+                            @else
+                                <?php $meters = json_decode($value); ?>
+                                @if(count($meters) > 0)
+                                    <td style="text-align: center">
+                                        @foreach($meters as $index => $meter)
+                                            @if($index == 0)
+                                                <a href="javascript:void(0)" id="{{ $row->id }}"
+                                                   class="add_meter btn btn-xs btn-primary">+</a>
+                                            @else
+                                                <br/><a style="margin-top: 2px;"
+                                                   href="javascript:void(0)" class="btn btn-xs btn-danger"
+                                                   onclick="removeMe($(this), '{{ $row->id }}');  return false">-</a>
+                                            @endif
+                                        @endforeach
+                                    </td>
+                                    <td>
+                                        @foreach($meters as $index => $meter)
 
-                                    <input type="text" value="{{ $value }}" name="product_throw_1"
-                                           class="changed" id="product_throw_1-{{ $row->id }}" style="width:55px"/>
+                                            @if($index == 0)
+                                                <input type="text" name="meter_start[]"
+                                                       class="changed" id="meter_start-{{ $row->id }}"
+                                                       value="{{$meter[0]}}" style="width:55px"/>
+                                            @else
+                                                <input style="width:55px; margin-top: 4px; display: block;" type="text"
+                                                       name="meter_start[]" value="{{$meter[0]}}" class="changed"/>
+                                            @endif
+                                        @endforeach
+                                    </td>
+                                    <td>
+                                        @foreach($meters as $index => $meter)
 
-                                @else {!! $value !!}
+                                            @if($index == 0)
+                                                <input type="text" name="meter_end[]"
+                                                       class="changed" id="meter_end-{{ $row->id }}"
+                                                       value="{{$meter[1]}}" style="width:55px"/>
+                                            @else
+                                                <input style="display: block; width:55px; margin-top: 3px;" type="text"
+                                                       name="meter_end[]" value="{{$meter[1]}}" class="changed"/>
+                                            @endif
+                                        @endforeach
+                                    </td>
+                                @else
+                                    <td style="text-align: center"><a href="javascript:void(0)" id="{{ $row->id }}"
+                                                                      class="add_meter btn btn-xs btn-primary">+</a>
+                                    </td>
+                                    <td><input type="text" name="meter_start[]" value=""
+                                                         class="changed" id="meter_start-{{ $row->id }}"
+                                                         style="width:55px"/></td>
+                                    <td><input type="text" name="meter_end[]" value=""
+                                               class="changed" id="meter_end-{{ $row->id }}" style="width:55px"/>
+                                    </td>
                                 @endif
-                            </td>
+                            @endif
                         @endif
                         <?php
                         endif;
@@ -186,6 +253,20 @@
 @if($setting['inline'] =='true') @include('sximo.module.utility.inlinegrid') @endif
 <script src="https://cdn.jsdelivr.net/momentjs/2.10.6/moment.min.js"></script>
 <script>
+    function removeMe(element, id) {
+        var index = 0;
+        element.parent("td").find("a").each(function (index, elem) {
+
+            if (element[0] === $(elem)[0]) {
+                $("#meter_start-" + id).parent("td").find('input').eq(index).remove();
+                $("#meter_end-" + id).parent("td").find('input').eq(index).remove();
+                element.parent("td").find('br').eq(index).remove();
+            }
+            index++;
+        });
+        updateThrowReportData(element);
+        element.remove();
+    }
     $(document).ready(function () {
         //Initialize the datePicker(I have taken format as mm-dd-yyyy, you can     //have your owh)
         //var lastWeekDate = new Date(new Date().setDate(new Date().getDate() - (new Date().getDay() == 0 ? 6 : 6)));
@@ -198,7 +279,7 @@
             var lastDate = moment(value, "MM/DD/YYYY").day(6).format("MM/DD/YYYY");
             selectedDate = firstDate + " - " + lastDate;
             $(".weeklyDatePicker").val(firstDate + " - " + lastDate);
-            reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?search=date_start:equal:' + firstDate + '|date_end:equal:' + lastDate+'&config_id=' + $("#col-config").val());
+            reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?search=date_start:equal:' + firstDate + '|date_end:equal:' + lastDate + '&config_id=' + $("#col-config").val());
             $('.weeklyDatePicker').datepicker("hide");
         });
         var defaultWeekValue = '{{$setDate}}';
@@ -207,87 +288,49 @@
         });
         $('.tips').tooltip();
         $('#report-submit-button').on('click', (function () {
-            $('.modal-title').html("Add Comment");
-            var weekDate = $(".weeklyDatePicker").val();
-            $('#sximo-modal-content').html('{!! Form::open(array("url"=>"throwreport/update-status/", "class"=>"form-horizontal","files" => true , "parsley-validate"=>"","novalidate"=>"","id"=> "throwreportFormAjax")) !!}'+
-                            '<input type="hidden" name="weekdate" value="'+weekDate+'">'+
-                            '<div class="form-group">'+
-                            '<div class="col-md-12">'+
-                            '<textarea name="comment" rows="5" class="form-control" placeholder="Comment" required></textarea>'+
-                            '</div>'+
-                            '</div>'+
-                            '<div class="form-group" style="margin-bottom: 0px !important;">'+
-                            '<div class="col-sm-12">'+
-                            '<button style="float: right;" type="submit" class="btn btn-primary btn-sm "><i class="fa  fa-save "></i>  {{ Lang::get('core.sb_save') }} </button>'+
-                            '</div>'+
-                            '</div>'+
-                            '{!! Form::close() !!}');
-            $('#sximo-modal').modal('show');
-            var form = $('#throwreportFormAjax');
-            form.parsley();
-            form.submit(function(){
-
-                if(form.parsley('isValid') == true){
-                    var options = {
-                        dataType:      'json',
-                        beforeSubmit :  showRequest,
-                        success:       showResponse
-                    }
-                    $(this).ajaxSubmit(options);
-                    return false;
-
-                } else {
-                    return false;
-                }
-
-            });
-
-        }));
-        $('.changed').on("change", (function (e) {
-            /*
-             game_throw => payout %
-             product_cogs_1 => cost of good sold
-             product_throw_1 => pc payout
-             */
-            var rowID = $(this).parents('tr').attr('id');
-            var price_per_play = $(this).parents('tr').find("input[name='price_per_play']").val();
-            var retail_price = $(this).parents('tr').find("input[name='retail_price']").val();
-            var product_throw_1 = $(this).parents('tr').find("input[name='product_throw_1']").val();
-            var product_cogs_1 = $(this).parents('tr').find("#product_cogs_1-" + rowID).text();
-            var game_throw = $(this).parents('tr').find("#game_throw-" + rowID).text();
-            var game_earnings = $(this).parents('tr').find("#game_earnings-" + rowID).text();
-
-            product_cogs_1 = retail_price * product_throw_1;
-            product_cogs_1 = product_cogs_1.toFixed(2);
-            if (product_cogs_1 != '0.00') {
-                game_throw = game_earnings / product_cogs_1;
-                game_throw = game_throw.toFixed(2);
-                $(this).parents('tr').find("#game_throw-" + rowID).text(game_throw);
-            }
-            $(this).parents('tr').find("#product_cogs_1-" + rowID).text(product_cogs_1);
-
-
+            showRequest();
+            var weekdate = $(".weeklyDatePicker").val();
             $.ajax(
                     {
-                        url: "throwreport/temp",
-                        type: 'post',
+                        url: "throwreport/update-status/",
+                        type: 'get',
                         data: {
-                            price_per_play: price_per_play,
-                            retail_price: retail_price,
-                            product_throw_1: product_throw_1,
-                            product_cogs_1: product_cogs_1,
-                            game_throw: game_throw,
-                            id: rowID,
+                            weekdate:  weekdate
                         },
-                        success: function (result) {
+                        success: function (data) {
+                            if(data.status == 'success')
+                            {
+                                $('.ajaxLoading').hide();
+                                notyMessage(data.message);
 
+                            } else {
+                                notyMessageError(data.message);
+                                $('.ajaxLoading').hide();
+                                return false;
+                            }
                         }
 
                     }
             );
-
         }));
 
+
+        $('.add_meter').on('click', function (e) {
+            var id = $(this).attr('id');
+            $(this).after('<br/><a style="margin-top: 2px;" href="javascript:void(0)" class="btn btn-xs btn-danger"' +
+                    'onclick="removeMe($(this), ' + id + ');  return false">-</a>');
+            $('#meter_start-' + id).parent('td').append('<input style="display: block; width:55px; margin-top: 4px;" type="text" name="meter_start[]" value="" class="changed"/>');
+            $('#meter_end-' + id).parent('td').append('<input style="display: block; width:55px; margin-top: 3px;" type="text" name="meter_end[]" value="" class="changed"/>');
+            inlineChanges();
+        });
+
+        function inlineChanges() {
+            $('.changed').on("change", (function (e) {
+                updateThrowReportData($(this));
+            }));
+        }
+
+        inlineChanges();
 
         $('input[type="checkbox"],input[type="radio"]').iCheck({
             checkboxClass: 'icheckbox_square-green',
@@ -311,14 +354,66 @@
     endif;
         ?>
     });
-    function showRequest()
-    {
+    function updateThrowReportData(element){
+        /*
+         game_throw => payout %
+         product_cogs_1 => cost of good sold
+         product_throw_1 => pc payout
+         */
+        var rowID = element.parents('tr').attr('id');
+        var price_per_play = element.parents('tr').find("input[name='price_per_play']").val();
+        var retail_price = element.parents('tr').find("input[name='retail_price']").val();
+        var product_throw_1 =element.parents('tr').find("input[name='product_throw_1']").val();
+        var product_cogs_1 = element.parents('tr').find("#product_cogs_1-" + rowID).text();
+        var game_throw = element.parents('tr').find("#game_throw-" + rowID).text();
+        var game_earnings = element.parents('tr').find("#game_earnings-" + rowID).text();
+        var notes = element.parents('tr').find("#notes-" + rowID).val();
+        var reasons = element.parents('tr').find("#reasons-" + rowID).val();
+        var meterStartArray = new Array();
+        element.parents('tr').find("input[name*='meter_start']").each(function () {
+            meterStartArray.push($(this).val());
+        });
+        var meterEndArray = new Array();
+        element.parents('tr').find("input[name*='meter_end']").each(function () {
+            meterEndArray.push($(this).val());
+        });
+        console.log(meterStartArray);
+        console.log(meterEndArray);
+        product_cogs_1 = retail_price * product_throw_1;
+        product_cogs_1 = product_cogs_1.toFixed(2);
+
+        element.parents('tr').find("#product_cogs_1-" + rowID).text(product_cogs_1);
+
+
+        $.ajax(
+                {
+                    url: "throwreport/temp",
+                    type: 'post',
+                    data: {
+                        price_per_play: price_per_play,
+                        retail_price: retail_price,
+                        product_throw_1: product_throw_1,
+                        product_cogs_1: product_cogs_1,
+                        game_throw: game_throw,
+                        notes: notes,
+                        reasons: reasons,
+                        meter_start: meterStartArray,
+                        meter_end: meterEndArray,
+                        id: rowID,
+                    },
+                    success: function (result) {
+                        console.log(result);
+                    }
+
+                }
+        );
+    }
+    function showRequest() {
         $('.ajaxLoading').show();
     }
-    function showResponse(data)  {
+    function showResponse(data) {
 
-        if(data.status == 'success')
-        {
+        if (data.status == 'success') {
             $('.ajaxLoading').hide();
             notyMessage(data.message);
             $('#sximo-modal').modal('hide');
@@ -334,7 +429,7 @@
         var value = $(".weeklyDatePicker").val();
         var firstDate = moment(value, "MM/DD/YYYY").day(0).format("MM/DD/YYYY");
         var lastDate = moment(value, "MM/DD/YYYY").day(6).format("MM/DD/YYYY");
-        reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?config_id=' + $("#col-config").val()+ '&search=date_start:equal:' + firstDate + '|date_end:equal:' + lastDate);
+        reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?config_id=' + $("#col-config").val() + '&search=date_start:equal:' + firstDate + '|date_end:equal:' + lastDate);
     });
 </script>
 <style>

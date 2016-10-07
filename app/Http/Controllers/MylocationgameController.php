@@ -217,6 +217,22 @@ class MylocationgameController extends Controller
 
         $row = $this->model->find($id);
         if ($row) {
+            if(!empty($row->product_id))
+            {
+                $row->product_id = json_decode($row->product_id);
+                $row->product_id = implode(',', $row->product_id);
+            }
+            /*
+            $products = \DB::table('game_product')
+                ->where('game_id', '=', $row->id)
+                ->select('product_id')
+                ->get();
+            if(count($products) > 0)
+            {
+                $products = json_decode(json_encode($products), true);
+                $products = array_column($products, 'product_id');
+                $row->product_id = implode(',', $products);
+            }*/
             $this->data['row'] = $row;
         } else {
             $this->data['row'] = $this->model->getColumnTable('game');
@@ -274,16 +290,35 @@ class MylocationgameController extends Controller
 
     function postSave(Request $request, $id = null)
     {
-
+        $products = array();
         $form_data['date_shipped'] = date('Y-m-d');
         $form_data['date_last_move'] = date('Y-m-d');
         $form_data['date_in_service'] = date('Y-m-d');
         $rules = $this->validateForm();
         $validator = Validator::make($request->all(), $rules);
+        if(!empty($request->input('product_id')))
+        {
+            $products = $request->input('product_id');
+            $products = json_encode($products);
+        }
+
         if ($validator->passes()) {
             $data = $this->validatePost('game');
-
+            $data['product_id'] = $products;
             $id = $this->model->insertRow($data, $id);
+            /*
+            \DB::table('game_product')
+                ->where('game_id', '=', $id)
+                ->delete();
+            if(count($products) > 0)
+            {
+                foreach($products as $product){
+                    \DB::table('game_product')
+                        ->insert(array('game_id' => $id, 'product_id' => $product));
+                }
+            }
+            */
+
             return response()->json(array(
                 'status' => 'success',
                 'message' => \Lang::get('core.note_success')

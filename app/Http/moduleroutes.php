@@ -1,5 +1,5 @@
 <?php
-        Route::controller('pages', 'PagesController');
+                    Route::controller('pages', 'PagesController');
                     Route::controller('vendor', 'VendorController');
                     Route::controller('calendar', 'CalendarController');
                     Route::controller('sbinovice', 'SbinoviceController');
@@ -52,6 +52,8 @@
                     Route::controller('readersmissingassetidreport', 'ReadersmissingassetidreportController');
                     Route::controller('merchandiseexpensesreport', 'MerchandiseexpensesreportController');
                     Route::controller('itemreceipt', 'ItemreceiptController');
+                    Route::controller('ticketsetting', 'TicketsettingController');
                     Route::controller('throwreport', 'ThrowreportController');
-
-?>
+                    Route::controller('throwreportinstantwin', 'ThrowreportinstantwinController');
+                    Route::controller('throwreportpayout', 'ThrowreportpayoutController');
+                    ?>

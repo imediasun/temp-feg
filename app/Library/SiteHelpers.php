@@ -2005,4 +2005,10 @@ class SiteHelpers
         
         return $newArray;
     }
+
+
+    static function getProductName($id)
+    {
+        return \DB::table('products')->where('id', $id)->pluck('vendor_description');
+    }
 }
