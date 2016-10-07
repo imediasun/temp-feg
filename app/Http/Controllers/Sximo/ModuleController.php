@@ -79,6 +79,7 @@ class ModuleController extends Controller {
 
             if($request->input('creation') == 'manual')
             {
+
                 if($where =="")                
                 {
                     return Redirect::to('feg/module/create')
@@ -86,9 +87,8 @@ class ModuleController extends Controller {
                 }
                 
                 try {
-                
-                    \DB::select( $select .' '.$where.' '.$group );            
-                    
+                    \DB::select( $select .' '.$where.' '.$group );
+
 
 
                 }catch(Exception $e){
@@ -96,7 +96,8 @@ class ModuleController extends Controller {
                     $error ='Error : '.$select .' '.$where.' '.$group ;
                     return Redirect::to('feg/module/create')
                     ->withErrors($validator)->withInput()->with('messagetext', SiteHelpers::alert('error',$error))->with('msgstatus','error');   
-                }                
+                }
+
                 $columns = array();
                 $results = $this->model->getColoumnInfo($select .' '.$where.' '.$group);
                 $primary_exits = '';
@@ -317,7 +318,7 @@ class ModuleController extends Controller {
                                                 
     }	
 
-    function postSaveconfig( Request $request) 
+    function postSaveconfig( Request $request)
     {
         
         $rules = array(
@@ -479,18 +480,18 @@ class ModuleController extends Controller {
             }
             $grid[] = $grids ;
             
-            if($row->module_db == $alias ) 
-            {
+          //  if($row->module_db == $alias )
+           // {
                 $forms = self::configForm($name,$alias,'text',$i);
                 foreach($config['forms'] as $f)
                 {
-                    if($f['field'] == $name && $f['alias'] == $alias) 
-                    {                            
+                    if($f['field'] == $name && $f['alias'] == $alias)
+                    {
                         $forms = $f;                            
                     }
                 }                
                 $form[] = $forms ;
-            }    
+          //  }
                             
             
              $i++;    
