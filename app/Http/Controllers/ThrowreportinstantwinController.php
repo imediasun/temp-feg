@@ -116,7 +116,7 @@ class ThrowreportinstantwinController extends Controller {
 		// Detail from master if any
 		$this->data['setting'] 		= $this->info['setting'];
 		$this->data['setDate'] = isset($dateStart) ? $dateStart.'-'.$dateEnd : '';
-		$this->data['setWeek'] = date("W", strtotime($dateStart));
+		$this->data['setWeek'] = date("W", strtotime($dateEnd));
 		// Master detail link if any
 		$this->data['subgrid']	= (isset($this->info['config']['subgrid']) ? $this->info['config']['subgrid'] : array());
         if ($this->data['config_id'] != 0 && !empty($config)) {

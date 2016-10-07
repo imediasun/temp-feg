@@ -120,7 +120,7 @@ class ThrowreportpayoutController extends Controller {
 		$this->data['setting'] 		= $this->info['setting'];
 		$this->data['setDate'] = isset($dateStart) ? $dateStart.'-'.$dateEnd : '';
 		$this->data['total_revenue'] = isset($total_revenue[0]->total_revenue) ? $total_revenue[0]->total_revenue : 0;
-		$this->data['setWeek'] = date("W", strtotime($dateStart));
+		$this->data['setWeek'] = date("W", strtotime($dateEnd));
 
 		// Master detail link if any
 		$this->data['subgrid']	= (isset($this->info['config']['subgrid']) ? $this->info['config']['subgrid'] : array());
