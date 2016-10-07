@@ -76,11 +76,12 @@
                                 }
                             endif;
                         endforeach; ?>
-                        <td width="100" align="left">
+                        <th width="100" align="left">
                             Payout %
-                        </td>
-                        <td width="100" align="left">
-                        </td>
+                        </th>
+                        <th width="100" align="left">
+                            Overall payout
+                        </th>
                     </tr>
                     </thead>
 
@@ -135,7 +136,8 @@
                                     <?php
                                     $product_ids = json_decode($value);
                                     foreach ($product_ids as $index => $product_id) {
-                                        echo ++$index . '. ' . \SiteHelpers::getProductName($product_id) . '<br/>';
+                                        if(!empty($product_id))
+                                            echo ++$index . '. ' . \SiteHelpers::getProductName($product_id) . '<br/>';
                                     }
                                     ?>
                                 @elseif($field['field']=='retail_price')
@@ -159,14 +161,14 @@
                         ?>
                         <td width="100" align="left">
                             @if($row->game_earnings != 0.00)
-                                {{ number_format(($row->product_cogs_1 / $row->game_earnings),2).'%' }}
+                                {{ number_format(($row->product_cogs_1 / $row->game_earnings),4).'%' }}
                             @else
                                 0.00
                             @endif
                         </td>
                         <td width="100" align="left">
                             @if($total_revenue != 0)
-                                {{ number_format($row->game_earnings/$total_revenue,2).'%' }}
+                                {{ number_format($row->game_earnings/$total_revenue,4).'%' }}
                             @else
                                 0.00
                             @endif

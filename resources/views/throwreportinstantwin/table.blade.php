@@ -72,12 +72,12 @@
                         }
 					endif;
 				endforeach; ?>
-               		<td width="100" align="left">
+               		<th width="100" align="left">
 						Average Throw  %
-					</td>
-					<td width="100" align="left">
+					</th>
+					<th width="100" align="left">
 						% Of Instant Win Rev
-					</td>
+					</th>
 			  </tr>
         </thead>
 
@@ -126,7 +126,8 @@
 										 <?php
 										 $product_ids = json_decode($value);
 										 foreach ($product_ids as $index => $product_id) {
-											 echo ++$index . '. ' . \SiteHelpers::getProductName($product_id) . '<br/>';
+											 if(!empty($product_id))
+											 	echo ++$index . '. ' . \SiteHelpers::getProductName($product_id) . '<br/>';
 										 }
 										 ?>
 											 @elseif($field['field']=='product_cogs_1')
@@ -144,13 +145,11 @@
 					  ?>
 						<td width="100" align="left">
 							@if($row->game_earnings != 0.00)
-								{{ number_format($row->product_cogs_1 / $row->game_earnings,2).'%' }}
-							@else
-								0.00
+								{{ number_format($row->product_cogs_1 / $row->game_earnings,4).'%' }}
 							@endif
 						</td>
 						<td width="100" align="left">
-
+						</td>
                 </tr>
                 @if($setting['view-method']=='expand')
                 <tr style="display:none" class="expanded" id="row-{{ $row->id }}">

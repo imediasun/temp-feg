@@ -106,7 +106,8 @@
                                         <?php
                                         $product_ids = json_decode($value);
                                         foreach ($product_ids as $index => $product_id) {
-                                            echo ++$index . '. ' . \SiteHelpers::getProductName($product_id) . '<br/>';
+                                            if(!empty($product_id))
+                                                echo ++$index . '. ' . \SiteHelpers::getProductName($product_id) . '<br/>';
                                         }
                                         ?>
                                     @elseif($field['field']=='game_earnings')
@@ -143,7 +144,7 @@
                                                 <a href="javascript:void(0)" id="{{ $row->id }}"
                                                    class="add_meter btn btn-xs btn-primary">+</a>
                                             @else
-                                                <a style="margin-left:40%; margin-right:50%; margin-top: 2px;"
+                                                <br/><a style="margin-top: 2px;"
                                                    href="javascript:void(0)" class="btn btn-xs btn-danger"
                                                    onclick="removeMe($(this), '{{ $row->id }}');  return false">-</a>
                                             @endif
@@ -157,7 +158,7 @@
                                                        class="changed" id="meter_start-{{ $row->id }}"
                                                        value="{{$meter[0]}}" style="width:55px"/>
                                             @else
-                                                <input style="width:55px; margin-top: 4px;" type="text"
+                                                <input style="width:55px; margin-top: 4px; display: block;" type="text"
                                                        name="meter_start[]" value="{{$meter[0]}}" class="changed"/>
                                             @endif
                                         @endforeach
@@ -170,7 +171,7 @@
                                                        class="changed" id="meter_end-{{ $row->id }}"
                                                        value="{{$meter[1]}}" style="width:55px"/>
                                             @else
-                                                <input style="width:55px; margin-top: 3px;" type="text"
+                                                <input style="display: block; width:55px; margin-top: 3px;" type="text"
                                                        name="meter_end[]" value="{{$meter[1]}}" class="changed"/>
                                             @endif
                                         @endforeach
@@ -179,7 +180,7 @@
                                     <td style="text-align: center"><a href="javascript:void(0)" id="{{ $row->id }}"
                                                                       class="add_meter btn btn-xs btn-primary">+</a>
                                     </td>
-                                    <td>{{$value}}<input type="text" name="meter_start[]" value=""
+                                    <td><input type="text" name="meter_start[]" value=""
                                                          class="changed" id="meter_start-{{ $row->id }}"
                                                          style="width:55px"/></td>
                                     <td><input type="text" name="meter_end[]" value=""
@@ -259,6 +260,7 @@
             if (element[0] === $(elem)[0]) {
                 $("#meter_start-" + id).parent("td").find('input').eq(index).remove();
                 $("#meter_end-" + id).parent("td").find('input').eq(index).remove();
+                element.parent("td").find('br').eq(index).remove();
             }
             index++;
         });
@@ -315,10 +317,10 @@
 
         $('.add_meter').on('click', function (e) {
             var id = $(this).attr('id');
-            $(this).after('<a style="margin-left:40%; margin-right:50%; margin-top: 2px;" href="javascript:void(0)" class="btn btn-xs btn-danger"' +
+            $(this).after('<br/><a style="margin-top: 2px;" href="javascript:void(0)" class="btn btn-xs btn-danger"' +
                     'onclick="removeMe($(this), ' + id + ');  return false">-</a>');
-            $('#meter_start-' + id).parent('td').append('<input style="width:55px; margin-top: 4px;" type="text" name="meter_start[]" value="" class="changed"/>');
-            $('#meter_end-' + id).parent('td').append('<input style="width:55px; margin-top: 3px;" type="text" name="meter_end[]" value="" class="changed"/>');
+            $('#meter_start-' + id).parent('td').append('<input style="display: block; width:55px; margin-top: 4px;" type="text" name="meter_start[]" value="" class="changed"/>');
+            $('#meter_end-' + id).parent('td').append('<input style="display: block; width:55px; margin-top: 3px;" type="text" name="meter_end[]" value="" class="changed"/>');
             inlineChanges();
         });
 
