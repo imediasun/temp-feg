@@ -1,5 +1,5 @@
 <?php namespace App\Models\Feg\System;
-
+use Cron;
 use App\Models\Sximo;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
