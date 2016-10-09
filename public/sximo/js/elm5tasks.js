@@ -5,15 +5,38 @@ jQuery(document).ready(function ($) {
     $(document).on('click', '.deleteTask', initDelTask);
     $(document).on('click', '.showSchedules', initShowScheduledTasks);
     $(document).on('click', '.addNewTask', initAddTask);
+    $(document).on('change', '.croninp', buildCrontab);
     
     $('.toggleSwitch').bootstrapSwitch({
         onInit: switchOnInit,
-        onSwitchChange: switchOnChange,
+        onSwitchChange: switchOnChange
     });
     
     parseCronStamps();    
 
 });
+
+function buildCrontab(e) {
+    var elm = $(this),
+        parent = elm.closest('.taskScheduleContainer') || '*',
+        targetText = parent.find('.cronStampText') || '*',
+        targetInp = parent.find('input[name=cronstamp]') || '*',
+        iMin = parent.find('.cronmin.croninp').val() || '*',
+        iHr = parent.find('.cronhr.croninp').val() || '*',
+        iDay = parent.find('.cronday.croninp').val() || '*',
+        iMon = parent.find('.cronmonth.croninp').val() || '*',
+        iWeek = parent.find('.cronweekday.croninp').val() || '*',
+        iYear = parent.find('.cronyear.croninp').val() || '*',
+        val = [iMin, iHr, iDay, iMon, iWeek, iYear ].join(' '),
+        pretty = prettyCron.toString(val),
+        resetPretty = targetText.data('resetValue');
+    
+    if (!resetPretty) {
+        targetText.data('resetValue', pretty);
+    }    
+    targetText.text(pretty);
+    targetInp.val(val);        
+}
 
 function parseCronStamps(elm, value) {
     
@@ -88,12 +111,19 @@ function initCancelEditTask(event) {
         parent = btn.closest('.taskPanel'),
         buttons = parent.find('.saveButtonsGroup, .editButtonGroup'),
         switches = parent.find('.toggleSwitch.isActive'),
+        cronText = parent.find('.cronStampText'),
+        cronTextResetValue = cronText.data('resetValue'),
         switchValue = switches.data('resetValue');
     toggleFormTextContent(null, parent);    
     buttons.toggleClass('hidden');
     switches.prop('checked', switchValue);
     switches.bootstrapSwitch('state', switchValue);
     switches.bootstrapSwitch('readonly', true);
+    
+    if (cronTextResetValue) {
+        cronText.text(cronTextResetValue);
+    }
+    
 }
 
 function showUIBlocker(id, container) {

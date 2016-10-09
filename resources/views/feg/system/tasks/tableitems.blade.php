@@ -52,12 +52,12 @@
             </div>
             <div class="panel-body clearfix">
                 <div class="taskScheduleContainer m-b">
-                    <div class="clearfix cronscheduletext">
-                        Run <span class="cronStampText" data-cronstamp="{{ $schedule }}"></span> 
+                    <div class="clearfix cronscheduletext m-b">
+                        <strong>Run: </strong><span class="cronStampText" data-cronstamp="{{ $schedule }}"></span> 
                     </div>
                     <div class="formContent hidden clearfix">
                         <div class="form-inline clearfix cronscheduleinputs">
-                            <label>Edit: </label>
+                            <label><strong>Edit: </strong></label>
                             <?php 
                                 $cronItems = array();
                                 if ($schedule) {
@@ -76,7 +76,7 @@
                             <input type="text" name="cronday" value="{{ $cronDay }}" placeholder="Day" class="cronday croninp">
                             <input type="text" name="cronmonth" value="{{ $cronMonth }}" placeholder="Month" class="cronmonth croninp">
                             <input type="text" name="cronweekday" value="{{ $cronWeekday }}" placeholder="Weekday" class="cronweekday croninp">
-                            <input type="text" name="cronyear" value="{{ $cronYear }}" placeholder="Year" class="cronyear croninp">
+                            <!--<input type="text" name="cronyear" value="{{ $cronYear }}" placeholder="Year" class="cronyear croninp">-->
                             <input type="hidden" name="cronstamp" value="{{ $schedule }}" >
                         </div>
                     </div>
