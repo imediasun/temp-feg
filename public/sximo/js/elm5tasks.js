@@ -11,9 +11,13 @@ jQuery(document).ready(function ($) {
         onSwitchChange: switchOnChange,
     });
     
+    parseCronStamps();    
 
 });
 
+function parseCronStamps(elm, value) {
+    
+}
 function switchOnInit(event, state) {
     var elm = $(this);
     elm.data('resetValue', elm.prop('checked'));

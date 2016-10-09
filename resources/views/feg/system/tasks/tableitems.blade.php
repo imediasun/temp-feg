@@ -52,11 +52,33 @@
             </div>
             <div class="panel-body clearfix">
                 <div class="taskScheduleContainer m-b">
-                    <div class="formContent hidden">
-                        Every xx minute xx hours xx day xx month xx weekday xx years
+                    <div class="clearfix cronscheduletext">
+                        Run <span class="cronStamp" data-cronstamp="{{ $schedule }}"></span> 
                     </div>
-                    <div class="textContent clearfix">
-                        
+                    <div class="formContent hidden clearfix">
+                        <div class="form-inline clearfix cronscheduleinputs">
+                            <label>Edit: </label>
+                            <?php 
+                                $cronItems = array();
+                                if ($schedule) {
+                                    $cronItems = explode(' ', $schedule);
+                                }
+                                $cronMin = isset($cronItems[0]) ? $cronItems[0] : '';
+                                $cronHr = isset($cronItems[1]) ? $cronItems[1] : '';
+                                $cronDay = isset($cronItems[2]) ? $cronItems[2] : '';
+                                $cronMonth = isset($cronItems[3]) ? $cronItems[3] : '';
+                                $cronWeekday = isset($cronItems[4]) ? $cronItems[4] : '';
+                                $cronYear = isset($cronItems[5]) ? $cronItems[5] : '';
+
+                            ?>
+                            <input type="text" name="cronmin" value="{{ $cronMin }}" placeholder="Minute" class="cronmin croninp">
+                            <input type="text" name="cronhr" value="{{ $cronHr }}" placeholder="Hour" class="cronhr croninp">
+                            <input type="text" name="cronday" value="{{ $cronDay }}" placeholder="Day" class="cronday croninp">
+                            <input type="text" name="cronmonth" value="{{ $cronMonth }}" placeholder="Month" class="cronmonth croninp">
+                            <input type="text" name="cronweekday" value="{{ $cronWeekday }}" placeholder="Weekday" class="cronweekday croninp">
+                            <input type="text" name="cronyear" value="{{ $cronYear }}" placeholder="Year" class="cronyear croninp">
+                            <input type="hidden" name="cronstamp" value="{{ $schedule }}" >
+                        </div>
                     </div>
                 </div>
                 <div class="taskConfig">
@@ -77,6 +99,7 @@
                     </div>
                     <div class="editButtonGroup" >
                         <button class="btn btn-primary editTask"  data-taskid="{{ $taskId }}">Edit</button>                    
+                        <button class="btn testTask" title="Check whether the Task Action exists"  data-taskid="{{ $taskId }}">Test</button>
                         <button class="btn btn-danger deleteTask"  data-taskid="{{ $taskId }}">Delete</button>
                         <button class="btn btn-info showSchedules" title="Show all the previously executed and upcoming tasks" data-taskid="{{ $taskId }}">Schedules</button>                
                     </div>                                    
