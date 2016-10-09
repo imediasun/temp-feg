@@ -53,7 +53,7 @@
             <div class="panel-body clearfix">
                 <div class="taskScheduleContainer m-b">
                     <div class="clearfix cronscheduletext">
-                        Run <span class="cronStamp" data-cronstamp="{{ $schedule }}"></span> 
+                        Run <span class="cronStampText" data-cronstamp="{{ $schedule }}"></span> 
                     </div>
                     <div class="formContent hidden clearfix">
                         <div class="form-inline clearfix cronscheduleinputs">

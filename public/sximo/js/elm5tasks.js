@@ -17,7 +17,28 @@ jQuery(document).ready(function ($) {
 
 function parseCronStamps(elm, value) {
     
+    var getValueFromElement = !value;
+    if (!elm) {
+        elm = $('.cronStampText');
+    }
+    if (getValueFromElement) {
+        elm.each(function(){
+            var eachElm = $(this), pretty;
+            if (getValueFromElement) {
+                value = eachElm.attr('data-cronstamp');
+                pretty = parseCronStamp(value);
+                eachElm.text(pretty);
+            }
+        });
+        
+    }
+    
 }
+function parseCronStamp(value) {    
+    return prettyCron.toString(value);
+}
+    
+
 function switchOnInit(event, state) {
     var elm = $(this);
     elm.data('resetValue', elm.prop('checked'));

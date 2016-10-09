@@ -43,6 +43,9 @@ $(document).ready(function(){
         var pageModule = '{{$pageModule}}',
             pageUrl = '{{$pageUrl}}';
     </script>  
+    <script type="text/javascript" src="{{ asset('sximo/js/plugins/moment/moment.min.js') }}"></script>  
+    <script type="text/javascript" src="{{ asset('sximo/js/plugins/later/later.min.js') }}"></script>  
+    <script type="text/javascript" src="{{ asset('sximo/js/plugins/prettycron/prettycron.js') }}"></script>  
     <script type="text/javascript" src="{{ asset('sximo/js/elm5tasks.js') }}"></script>  
 
 @endsection
