@@ -31,7 +31,7 @@ $(document).ready(function(){
 });	
 </script>	
 @endsection
-
+<link href="{{ asset('sximo/css/elm5-tasks.css') }}" rel="stylesheet" type="text/css"/>
 @section ('beforeheadend')
 
 
