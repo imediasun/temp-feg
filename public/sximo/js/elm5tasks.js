@@ -18,9 +18,9 @@ jQuery(document).ready(function ($) {
 
 function buildCrontab(e) {
     var elm = $(this),
-        parent = elm.closest('.taskScheduleContainer') || '*',
-        targetText = parent.find('.cronStampText') || '*',
-        targetInp = parent.find('input[name=cronstamp]') || '*',
+        parent = elm.closest('.taskScheduleContainer'),
+        targetText = parent.find('.cronStampText'),
+        targetInp = parent.find('input[name=cronstamp]'),
         iMin = parent.find('.cronmin.croninp').val() || '*',
         iHr = parent.find('.cronhr.croninp').val() || '*',
         iDay = parent.find('.cronday.croninp').val() || '*',
@@ -32,7 +32,7 @@ function buildCrontab(e) {
         resetPretty = targetText.data('resetValue');
     
     if (!resetPretty) {
-        targetText.data('resetValue', pretty);
+        targetText.data('resetValue', targetText.text());
     }    
     targetText.text(pretty);
     targetInp.val(val);        
