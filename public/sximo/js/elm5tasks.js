@@ -106,7 +106,7 @@ function updateTask(event) {
     //toggleFormTextContent(null, parent);    
 }
 function initCancelEditTask(event) {    
-    event.preventDefault();
+    //event.preventDefault();
     var btn = $(this),
         parent = btn.closest('.taskPanel'),
         buttons = parent.find('.saveButtonsGroup, .editButtonGroup'),
