@@ -78,11 +78,11 @@
 }
 
 .tasksContainer #tasksGrid .taskConfig {
-    margin-top: 0;
+    margin-top: 30px;
 }
 @media (min-width: 1200px) {
     .tasksContainer #tasksGrid .taskConfig {
-        margin-top: 30px;
+        margin-top: 0;
     }
 }
 
