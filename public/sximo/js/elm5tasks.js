@@ -7,14 +7,20 @@ jQuery(document).ready(function ($) {
     $(document).on('click', '.addNewTask', initAddTask);
     $(document).on('change', '.croninp', buildCrontab);
     
-    $('.toggleSwitch').bootstrapSwitch({
+    initTasks();
+});
+
+function initTasks(parent) {
+    if (!parent) {
+        parent = $;
+    }
+    parent.find('.toggleSwitch').bootstrapSwitch({
         onInit: switchOnInit,
         onSwitchChange: switchOnChange
     });
-    
-    parseCronStamps();    
-
-});
+    parent.find('[data-toggle="tooltip"]').tooltip();
+    parseCronStamps(parent.find('.cronStampText'));
+}
 
 function buildCrontab(e) {
     var elm = $(this),
@@ -102,7 +108,17 @@ function initShowScheduledTasks(event) {
 function updateTask(event) {   
     event.preventDefault();
     var btn = $(this),
-        parent = btn.closest('.taskPanel');
+        parent = btn.closest('.taskPanel'),
+        form = parent.find('form'),
+        data = form.serialize(),
+        uiblocker = parent.find('.ajaxloading'),
+        url = pageUrl + '/save',
+        ajax = $.post(url, data,  function(result){
+            parent.html(result);            
+            uiblocker.fadeOut();
+            initTasks(parent);
+        });
+    uiblocker.fadeIn();
     //toggleFormTextContent(null, parent);    
 }
 function initCancelEditTask(event) {    

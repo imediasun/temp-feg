@@ -71,12 +71,30 @@
                                 $cronYear = isset($cronItems[5]) ? $cronItems[5] : '';
 
                             ?>
-                            <input type="text" name="cronmin" value="{{ $cronMin }}" placeholder="Minute" class="cronmin croninp">
-                            <input type="text" name="cronhr" value="{{ $cronHr }}" placeholder="Hour" class="cronhr croninp">
-                            <input type="text" name="cronday" value="{{ $cronDay }}" placeholder="Day" class="cronday croninp">
-                            <input type="text" name="cronmonth" value="{{ $cronMonth }}" placeholder="Month" class="cronmonth croninp">
-                            <input type="text" name="cronweekday" value="{{ $cronWeekday }}" placeholder="Weekday" class="cronweekday croninp">
-                            <!--<input type="text" name="cronyear" value="{{ $cronYear }}" placeholder="Year" class="cronyear croninp">-->
+                            <input type="text" name="cronmin" value="{{ $cronMin }}" 
+                                data-toggle="tooltip" data-placement="top" 
+                                title="Minute (range 0-59 or *) Examples: 10 for every 10th minute. 10,15,45 for every 10th, 15th and 45th minute. 10-15 for every 10th to 15th minute. * for every minute. */5 for every 5 minutes. */2 for every even minutes. 1-*/2 for every odd minutes. 11-31/7 for every 7 minutes starting 11th minute and ending 31st minute (11,18,25)." 
+                                placeholder="Minute" class="cronmin croninp">
+                            <input type="text" name="cronhr" value="{{ $cronHr }}" 
+                                data-toggle="tooltip" data-placement="top" 
+                                title="Hour (range 0-23 or *) Examples: 10 for every 10th hour. 8,10,20 for every 8th, 10th and 20th hour. 10-15 for every 10th to 15th hour. * for every hour. */5 for every 5 hours. */2 for every even hours. 1-*/2 for every odd hours. 11-19/2 for every alternate hours starting 11th hour and ending 19th hour (11,13,15,17,19)." 
+                                placeholder="Hour" class="cronhr croninp">
+                            <input type="text" name="cronday" value="{{ $cronDay }}" 
+                                data-toggle="tooltip" data-placement="top" 
+                                title="Day (range 1-31 or *) Examples: 10 for every 10th day of the month. 10,15,25 for every 10th, 15th and 25th day of month. 10-15 for every 10th to 15th day of month. * for every month. */5 for every 5 days. */2 for every even days. 1-*/2 for every odd days. 11-22/6 for every 6 days starting 11th day and ending 22th day (11,17,23)." 
+                                placeholder="Day" class="cronday croninp">
+                            <input type="text" name="cronmonth" value="{{ $cronMonth }}" 
+                                data-toggle="tooltip" data-placement="top" 
+                                title="Month (range 1-12 or *) Examples: 8 for every Aug. 3,10,11 for every Mar, Oct and Nov. 5-8 for every May,Jun,July,Aug. * for every month. */5 for every 5th month (May and Oct). */2 for every even months (Feb,Apr,Jun,Aug,Oct,Dec). 1-*/2 for every odd months (Jan, Mar, May, Jul, Sep, Nov). 5-12/3 for every 3 months starting 5th month (May) and ending 12th month (Dec) - May,Aug and Nov ." 
+                                placeholder="Month" class="cronmonth croninp">
+                            <input type="text" name="cronweekday" value="{{ $cronWeekday }}" 
+                                data-toggle="tooltip" data-placement="top" 
+                                title="Weekday (range 0-6 where 0 is sunday or  *) Examples: 3 for every Wed. 2,3,6 for every Tue, Wed and Sat. 3-6 for every Wed,Thu,Fri,Sat. * for every day in week. */5 for every 5 minutes. */2 for every even weekdday (Sun,Tue,Thu,Sat). 1-5/2 for every odd day in week (Mon,Wed,Fri). " 
+                                placeholder="Weekday" class="cronweekday croninp">
+                            <!--<input type="text" name="cronyear" value="{{ $cronYear }}" 
+                            data-toggle="tooltip" data-placement="top" 
+                                title="Year (range four digit year or *) Examples:  * for all years, 2017 for year 2017. 2008-2022 for years 2008 to 2022. */2 every even year. 1-*/2 every odd year." 
+                                placeholder="Year" class="cronyear croninp">-->
                             <input type="hidden" name="cronstamp" value="{{ $schedule }}" >
                         </div>
                     </div>
