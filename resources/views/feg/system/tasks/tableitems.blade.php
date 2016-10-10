@@ -61,15 +61,22 @@
                 <div class="row">
                 <div class="taskScheduleContainer col-lg-6">
                     <div class="clearfix cronscheduletext">
-                        <strong>Schedule: </strong><span class="cronStampText" data-cronstamp="{{ $schedule }}"></span> 
+                        <strong>Schedule: </strong>
+                            <span class="cronStampText" 
+                                data-cronstamp="{{ $schedule }}">                                      
+                            </span> 
                     </div>
                     <div class="textContent clearfix m-t taskAttachBeforeAfter @if (empty($run_before) && empty($run_after)) hidden @endif">                        
                         <p class="@if (empty($run_before)) hidden @endif"
-                            ><strong>Run Before: </strong><span class="label cronscheduleBeforeText" data-runBeforeTask="{{ $run_before }}"></span> </p>
-                        @endif
+                            ><strong>Run Before: </strong>
+                            <span class="label cronscheduleBeforeText" 
+                                  data-runBeforeTask="{{ $run_before }}"></span> 
+                        </p>
                         <p class="@if (empty($run_after)) hidden @endif"
-                           ><strong>Run After: </strong><span class="label cronscheduleAfterText" data-runAfterTask="{{ $run_after }}"></span> </p>
-                        @endif
+                           ><strong>Run After: </strong>
+                            <span class="label cronscheduleAfterText" 
+                                  data-runAfterTask="{{ $run_after }}"></span>
+                        </p>
                     </div>
                     <div class="formContent hidden clearfix m-t">
                         <div class="form-inline clearfix cronscheduleinputs">
