@@ -71,4 +71,9 @@
     width: 35px;
     margin-left: 2px;
 }
+
+.tasksContainer #tasksGrid .taskScheduleContainer.shade {
+    padding: 15px;
+    background: #fafafa;
+}
 /* Tasks module css end */

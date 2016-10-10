@@ -91,6 +91,8 @@ function initEditTask(event) {
         parent = btn.closest('.taskPanel'),
         buttons = parent.find('.saveButtonsGroup, .editButtonGroup'),
         switches = parent.find('.toggleSwitch.isActive');
+    
+    parent.find('.taskScheduleContainer').toggleClass('shade');
     toggleFormTextContent(null, parent);
     buttons.toggleClass('hidden');
     switches.bootstrapSwitch('readonly', false);
@@ -153,6 +155,7 @@ function initCancelEditTask(event) {
         cronTextResetValue = cronText.data('resetValue'),
         switchValue = switches.data('resetValue');
     toggleFormTextContent(null, parent);    
+    parent.find('.taskScheduleContainer').toggleClass('shade');
     buttons.toggleClass('hidden');
     switches.prop('checked', switchValue);
     switches.bootstrapSwitch('state', switchValue);
