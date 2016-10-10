@@ -154,6 +154,6 @@
 <script type="text/javascript">
     var tasksList = [];
     @if (!empty($rowData)) 
-        tasksList = {{ json_encode($rowData) }};
+        tasksList = <?php echo json_encode($rowData); ?>;
     @endif    
 </script>
