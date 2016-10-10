@@ -7,16 +7,23 @@
         {{--*/ $is_repeat= @$row->is_repeat /*--}}
         {{--*/ $repeat_count= @$row->repeat_count /*--}}
         {{--*/ $no_overlap = @$row->no_overlap /*--}}
+        
         {{--*/ $run_after = @$row->run_after /*--}}
         {{--*/ $run_before = @$row->run_before /*--}}
-        {{--*/ $fail_action = @$row->fail_action /*--}}
-        {{--*/ $success_action = @$row->success_action /*--}}
-        {{--*/ $fail_email = @$row->fail_email /*--}}
-        {{--*/ $success_email = @$row->success_email /*--}}
-        {{--*/ $run_count = @$row->run_count /*--}}
-        {{--*/ $notes = @$row->notes /*--}}
+        
         {{--*/ $log_folder = @$row->log_folder /*--}}
         {{--*/ $log_filename = @$row->log_filename /*--}}
+        
+        {{--*/ $fail_action = @$row->fail_action /*--}}
+        {{--*/ $success_action = @$row->success_action /*--}}
+        
+        {{--*/ $fail_email = @$row->fail_email /*--}}
+        {{--*/ $success_email = @$row->success_email /*--}}
+        
+        {{--*/ $run_count = @$row->run_count /*--}}
+        {{--*/ $notes = @$row->notes /*--}}
+        
+        
         {{--*/ $schedules = $row->schedules = null /*--}}
         {{--*/ $lastSchedule = $row->lastSchedule = null /*--}}
         {{--*/ $nextSchedule = $row->nextSchedule = null /*--}}
@@ -101,7 +108,25 @@
                     </div>
                 </div>
                 <div class="taskConfig col-lg-6">
-                    
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" name="is_repeat"                                        
+                                   @if($is_repeat) checked="checked" @endif /> 
+                            Repeat?
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label class="checkbox">Repeat Count </label>
+                        <input type="text" name="repeat_count"                                        
+                                   value="{{ $repeat_count }}" />                             
+                    </div>
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" name="no_overlap"                                        
+                                   @if($no_overlap) checked="checked" @endif /> 
+                            No overlap?
+                        </label>
+                    </div>                    
                 </div>                
                 </div>
             </div>
