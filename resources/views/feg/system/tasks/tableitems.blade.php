@@ -63,14 +63,16 @@
                     <div class="clearfix cronscheduletext">
                         <strong>Schedule: </strong><span class="cronStampText" data-cronstamp="{{ $schedule }}"></span> 
                     </div>
+                    @if (!empty($run_before) || !empty($run_after))
                     <div class="textContent clearfix m-t">
                         @if (!empty($run_before))
-                        <p><strong>Run Before: </strong><span class="label cronscheduleBeforeText"></span> </p>
+                        <p><strong>Run Before: </strong><span class="label cronscheduleBeforeText" data-runBeforeTask="{{ $run_before }}"></span> </p>
                         @endif
                         @if (!empty($run_after))
-                        <p><strong>Run After: </strong><span class="label cronscheduleAfterText"></span> </p>
+                        <p><strong>Run After: </strong><span class="label cronscheduleAfterText" data-runAfterTask="{{ $run_after }}"></span> </p>
                         @endif
                     </div>
+                    @endif
                     <div class="formContent hidden clearfix m-t">
                         <div class="form-inline clearfix cronscheduleinputs">
                             <label><strong>Edit: </strong></label>
@@ -115,11 +117,11 @@
                         </div>
                         <div class="clearfix m-t">
                             <label>Run before:</label>
-                            <select name="run_before">
+                            <select name="run_before" data-select-runBeforeTask="{{ $run_before }}">
                                 <option value="">Select a Task </option>
                             </select>
                             <label>Run after:</label>
-                            <select name="run_after">
+                            <select name="run_after" data-select-runAfterTask="{{ $run_after }}">
                                 <option value="">Select a Task </option>
                             </select>
                         </div>
@@ -144,22 +146,26 @@
                             No overlap?
                         </label>
                     </div>                    
-                    <div class="col-sm-8">
-                        Log Folder: 
-                        <input type="text" name="log_folder" value="{{ $log_folder }}" /> 
-                    </div>                    
-                    <div class="col-sm-4">
-                        Log file: 
-                        <input type="text" name="log_filename" value="{{ $log_filename }}" /> 
-                    </div>                    
-                    <div class="col-sm-6">
-                        Success Action: 
-                        <input type="text" name="success_action" value="{{ $success_action }}" /> 
-                    </div>                    
-                    <div class="col-sm-6">
-                        Fail Action: 
-                        <input type="text" name="fail_action" value="{{ $fail_action }}" /> 
-                    </div>                    
+                    <div class="clearfix m-t">
+                        <div class="col-sm-8">
+                            Log Folder: 
+                            <input type="text" name="log_folder" class="form-control" value="{{ $log_folder }}" /> 
+                        </div>                    
+                        <div class="col-sm-4">
+                            Log file: 
+                            <input type="text" name="log_filename" class="form-control" value="{{ $log_filename }}" /> 
+                        </div>
+                    </div>
+                    <div class="clearfix m-t">
+                        <div class="col-sm-6">
+                            Success Action: 
+                            <input type="text" name="success_action" class="form-control" value="{{ $success_action }}" /> 
+                        </div>                    
+                        <div class="col-sm-6">
+                            Fail Action: 
+                            <input type="text" name="fail_action" class="form-control" value="{{ $fail_action }}" /> 
+                        </div>
+                    </div>
                 </div>                
                 </div>
             </div>
