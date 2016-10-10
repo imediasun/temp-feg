@@ -61,7 +61,7 @@
                 <div class="row">
                 <div class="taskScheduleContainer col-lg-6">
                     <div class="clearfix cronscheduletext">
-                        <strong>Schedule: </strong><span ></span> 
+                        <strong>Schedule: </strong><span class="cronStampText" data-cronstamp="{{ $schedule }}"></span> 
                     </div>
                     <div class="textContent clearfix ">
                         @if (!empty($run_before))
