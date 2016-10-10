@@ -48,6 +48,8 @@
                            name="taskName" placeholder="Task Name">
                     <input type="text" class="taskAction" 
                            value="{{ $actionName }}"
+                           data-toggle="tooltip" data-placement="top" 
+                           title="A static function name with namesapce (example: \App\Library\SyncHelpers::transfer_earnings)" 
                            name="taskAction" placeholder="Task Action">
                 </div>
                 <div class="textContent clearfix">                    
@@ -123,11 +125,15 @@
                         <p class="@if (empty($run_before)) hidden @endif"
                             ><strong>Run Before: </strong>
                             <span class="label cronscheduleBeforeText" 
+                                  data-toggle="tooltip" data-placement="top" 
+                                  title="This task will run before the running the task selected from the dropdown" 
                                   data-runBeforeTask="{{ $run_before }}"></span> 
                         </p>
                         <p class="@if (empty($run_after)) hidden @endif"
                            ><strong>Run After: </strong>
                             <span class="label cronscheduleAfterText" 
+                                  data-toggle="tooltip" data-placement="top" 
+                                  title="This task will run after the running the task selected from the dropdown" 
                                   data-runAfterTask="{{ $run_after }}"></span>
                         </p>
                     </div>                    
@@ -135,18 +141,23 @@
                 <div class="formContent hidden taskConfig col-lg-6 row">
                     <div class="col-sm-3">
                         <label>
-                            <input type="checkbox" name="is_repeat"  class="test"                                      
+                            <input type="checkbox" name="is_repeat"  class="test"      
+                                   data-toggle="tooltip" data-placement="top" 
+                                   title="Whether the task will run repeatedly" 
                                    @if($is_repeat) checked="checked" @endif /> 
                             Repeat?
                         </label>
                     </div>
                     <div class="col-sm-5">
                         <strong>Repeat Count</strong>
-                        <input type="text" name="repeat_count" value="{{ $repeat_count }}" />                             
+                        <input type="text" name="repeat_count" 
+                               data-toggle="tooltip" data-placement="top" 
+                               title="How many times the task will be repeated. For no limit set 0." 
+                               value="{{ $repeat_count }}" />                             
                     </div>
                     <div class="col-sm-4">
                         <label>
-                            <input type="checkbox" name="no_overlap"  class="test"
+                            <input type="checkbox" name="no_overlap"  class="test"                                   
                                    @if($no_overlap) checked="checked" @endif /> 
                             No overlap?
                         </label>
@@ -154,21 +165,31 @@
                     <div class="clearfix m-t">
                         <div class="col-sm-8">
                             Log Folder: 
-                            <input type="text" name="log_folder" class="form-control" value="{{ $log_folder }}" /> 
+                            <input type="text" name="log_folder" class="form-control"
+                                   data-toggle="tooltip" data-placement="top" 
+                                   title="A directory relative to SITEROOT/storage/logs " 
+                                   value="{{ $log_folder }}" /> 
                         </div>                    
                         <div class="col-sm-4">
                             Log file: 
-                            <input type="text" name="log_filename" class="form-control" value="{{ $log_filename }}" /> 
+                            <input type="text" name="log_filename" class="form-control" 
+                                   value="{{ $log_filename }}" /> 
                         </div>
                     </div>
                     <div class="clearfix m-t">
                         <div class="col-sm-6">
                             Success Action: 
-                            <input type="text" name="success_action" class="form-control" value="{{ $success_action }}" /> 
+                            <input type="text" name="success_action" class="form-control" 
+                                   data-toggle="tooltip" data-placement="top" 
+                                   title="Action to run when task runs successfully" 
+                                   value="{{ $success_action }}" /> 
                         </div>                    
                         <div class="col-sm-6">
                             Fail Action: 
-                            <input type="text" name="fail_action" class="form-control" value="{{ $fail_action }}" /> 
+                            <input type="text" name="fail_action" class="form-control" 
+                                   data-toggle="tooltip" data-placement="top" 
+                                   title="Action to run when task fails" 
+                                   value="{{ $fail_action }}" /> 
                         </div>
                     </div>
                 </div>                
