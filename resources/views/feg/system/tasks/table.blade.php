@@ -12,3 +12,9 @@
         @include('feg.system.tasks.tableitems', array('row' => new StdClass))
     </div>
 </div>
+<script type="text/javascript">
+    var tasksList = [];
+    @if (!empty($rowData)) 
+        tasksList = <?php echo json_encode($rowData); ?>;
+    @endif    
+</script>

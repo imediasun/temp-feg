@@ -69,7 +69,7 @@
                         @endif
                         @if (!empty($run_after))
                         <p><strong>Run After: </strong><span class="label cronscheduleAfterText"></span> </p>
-                        @if (!empty($run_after))
+                        @endif
                     </div>
                     <div class="formContent hidden clearfix m-t">
                         <div class="form-inline clearfix cronscheduleinputs">
