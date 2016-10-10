@@ -63,7 +63,7 @@
                     <div class="clearfix cronscheduletext">
                         <strong>Schedule: </strong><span class="cronStampText" data-cronstamp="{{ $schedule }}"></span> 
                     </div>
-                    <div class="textContent clearfix ">
+                    <div class="textContent clearfix m-t">
                         @if (!empty($run_before))
                         <p><strong>Run Before: </strong><span class="label cronscheduleBeforeText"></span> </p>
                         @endif
@@ -113,14 +113,16 @@
                                 placeholder="Year" class="cronyear croninp">-->
                             <input type="hidden" name="cronstamp" value="{{ $schedule }}" >
                         </div>
-                        <label>Run before:</label>
-                        <select name="run_before">
-                            <option value="">Select a Task </option>
-                        </select>
-                        <label>Run after:</label>
-                        <select name="run_after">
-                            <option value="">Select a Task </option>
-                        </select>
+                        <div class="clearfix m-t">
+                            <label>Run before:</label>
+                            <select name="run_before">
+                                <option value="">Select a Task </option>
+                            </select>
+                            <label>Run after:</label>
+                            <select name="run_after">
+                                <option value="">Select a Task </option>
+                            </select>
+                        </div>
                     </div>
                 </div>
                 <div class="formContent hidden taskConfig col-lg-6 row m-t">
@@ -141,6 +143,22 @@
                                    @if($no_overlap) checked="checked" @endif /> 
                             No overlap?
                         </label>
+                    </div>                    
+                    <div class="col-sm-8">
+                        Log Folder: 
+                        <input type="text" name="log_folder" value="{{ $log_folder }}" /> 
+                    </div>                    
+                    <div class="col-sm-4">
+                        Log file: 
+                        <input type="text" name="log_file" value="{{ $log_file }}" /> 
+                    </div>                    
+                    <div class="col-sm-6">
+                        Success Action: 
+                        <input type="text" name="success_action" value="{{ $success_action }}" /> 
+                    </div>                    
+                    <div class="col-sm-6">
+                        Fail Action: 
+                        <input type="text" name="fail_action" value="{{ $fail_action }}" /> 
                     </div>                    
                 </div>                
                 </div>
