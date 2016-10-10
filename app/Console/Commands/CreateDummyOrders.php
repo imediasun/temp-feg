@@ -100,7 +100,7 @@ class CreateDummyOrders extends Command
 
         $orders_data=array('user_id'=>$user_id,'date_ordered'=>$created_date,'location_id'=>$location_id,'vendor_id'=>$vendor_id,'order_total'=>$order_total,
             'status_id'=>$status_id,'freight_id'=>$freight_id,'order_description'=>$order_description,'company_id'=>$company_id
-        ,'order_type_id'=>$order_type,'po_number'=>$po_number,'date_received'=>$date_received,'created_at'=>date('Y-m-d'),'updated_at'=>date('Y-m-d'));
+        ,'order_type_id'=>$order_type,'po_number'=>$po_number,'date_received'=>$date_received,'created_at'=>date('Y-m-d h:i:sa'),'updated_at'=>date('Y-m-d h:i:sa'));
 
         $inserted=\DB::table('orders')->insert($orders_data);
         if($inserted)

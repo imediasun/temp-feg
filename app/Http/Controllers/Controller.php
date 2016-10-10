@@ -321,6 +321,7 @@ function validatePost($table)
                 //
                 if ($f['type'] == 'select') {
                     $r2 = \Request::get($field);
+                    $multival="";
                     //echo '<pre>'; print_r( $_POST[$field] ); echo '</pre>';
                     if (isset($f['option']['select_multiple']) && $f['option']['select_multiple'] == 1) {
                         if (isset($_POST[$field])) {
