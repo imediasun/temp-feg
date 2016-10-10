@@ -7,19 +7,22 @@ jQuery(document).ready(function ($) {
     $(document).on('click', '.addNewTask', initAddTask);
     $(document).on('change', '.croninp', buildCrontab);
     
-    window.setTimeout(initTasks, 0);    
+    initTasks($(document));    
 });
 
 function initTasks(parent) {
     if (!parent) {
-        parent = jQuery;
+        parent = jQuery(document);
     }
+    parseCronStamps(parent.find('.cronStampText'));
+    
+    parent.find('[data-toggle="tooltip"]').tooltip();
+    
     parent.find('.toggleSwitch').bootstrapSwitch({
         onInit: switchOnInit,
         onSwitchChange: switchOnChange
     });
-    parent.find('[data-toggle="tooltip"]').tooltip();
-    parseCronStamps(parent.find('.cronStampText'));
+    
 }
 
 function buildCrontab(e) {
