@@ -62,5 +62,9 @@
     position: relative;
 }
 
+.tasksContainer #tasksGrid .cronscheduleinputs input[type=text] {
+    margin: 2px 3px;
+    width: 15%;
+}
 
 /* Tasks module css end */

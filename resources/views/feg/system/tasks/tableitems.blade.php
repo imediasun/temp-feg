@@ -51,11 +51,12 @@
                 </div>
             </div>
             <div class="panel-body clearfix">
-                <div class="taskScheduleContainer m-b">
-                    <div class="clearfix cronscheduletext m-b">
+                <div class="row">
+                <div class="taskScheduleContainer col-lg-6">
+                    <div class="clearfix cronscheduletext">
                         <strong>Run: </strong><span class="cronStampText" data-cronstamp="{{ $schedule }}"></span> 
                     </div>
-                    <div class="formContent hidden clearfix">
+                    <div class="formContent hidden clearfix m-t">
                         <div class="form-inline clearfix cronscheduleinputs">
                             <label><strong>Edit: </strong></label>
                             <?php 
@@ -99,9 +100,10 @@
                         </div>
                     </div>
                 </div>
-                <div class="taskConfig">
+                <div class="taskConfig col-lg-6">
                     
                 </div>                
+                </div>
             </div>
             <div class="panel-footer clearfix">
                 <div class="col-sm-8">
