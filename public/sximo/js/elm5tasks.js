@@ -77,7 +77,11 @@ function switchOnInit(event, state) {
     elm.data('resetValue', elm.prop('checked'));
 }
 function switchOnChange(event, state) {    
-    var elm = jQuery(this);
+    var elm = jQuery(this),
+        parent = elm.closest('.taskPanel'),
+        className = state ? 'panel-acive' : 'panel-inacive';
+        
+    parent.removeClass('panel-acive panel-inactive').addClass(className);
     elm.prop('checked', state);    
 }
 
