@@ -132,7 +132,7 @@
                         </p>
                     </div>                    
                 </div>
-                <div class="formContent hidden taskConfig col-lg-6 row m-t-md">
+                <div class="formContent hidden taskConfig col-lg-6 row">
                     <div class="col-sm-3">
                         <label>
                             <input type="checkbox" name="is_repeat"  class="test"                                      

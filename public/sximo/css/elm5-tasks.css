@@ -76,4 +76,14 @@
     padding: 15px;
     background: #fafafa;
 }
+
+.tasksContainer #tasksGrid .taskConfig {
+    margin-top: 0;
+}
+@media (min-width: 1200px) {
+    .tasksContainer #tasksGrid .taskConfig {
+        margin-top: 30px;
+    }
+}
+
 /* Tasks module css end */
