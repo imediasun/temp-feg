@@ -119,7 +119,7 @@
                             </select>
                         </div>
                     </div>
-                    <div class="textContent clearfix m-b taskAttachBeforeAfter @if (!empty($run_before) || !empty($run_after)) m-t @endif">                        
+                    <div class="textContent clearfix taskAttachBeforeAfter">                        
                         <p class="@if (empty($run_before)) hidden @endif"
                             ><strong>Run Before: </strong>
                             <span class="label cronscheduleBeforeText" 
@@ -132,7 +132,7 @@
                         </p>
                     </div>                    
                 </div>
-                <div class="formContent hidden taskConfig col-lg-6 row">
+                <div class="formContent hidden taskConfig col-lg-6 row m-t">
                     <div class="col-sm-3">
                         <label>
                             <input type="checkbox" name="is_repeat"  class="test"                                      
