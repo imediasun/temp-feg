@@ -61,7 +61,15 @@
                 <div class="row">
                 <div class="taskScheduleContainer col-lg-6">
                     <div class="clearfix cronscheduletext">
-                        <strong>Run: </strong><span class="cronStampText" data-cronstamp="{{ $schedule }}"></span> 
+                        <strong>Schedule: </strong><span ></span> 
+                    </div>
+                    <div class="textContent clearfix ">
+                        @if (!empty($run_before))
+                        <p><strong>Run Before: </strong><span class="label cronscheduleBeforeText"></span> </p>
+                        @endif
+                        @if (!empty($run_after))
+                        <p><strong>Run After: </strong><span class="label cronscheduleAfterText"></span> </p>
+                        @if (!empty($run_after))
                     </div>
                     <div class="formContent hidden clearfix m-t">
                         <div class="form-inline clearfix cronscheduleinputs">
@@ -105,24 +113,31 @@
                                 placeholder="Year" class="cronyear croninp">-->
                             <input type="hidden" name="cronstamp" value="{{ $schedule }}" >
                         </div>
+                        <label>Run before:</label>
+                        <select name="run_before">
+                            <option value="">Select a Task </option>
+                        </select>
+                        <label>Run after:</label>
+                        <select name="run_after">
+                            <option value="">Select a Task </option>
+                        </select>
                     </div>
                 </div>
-                <div class="taskConfig col-lg-6">
-                    <div class="form-group">
+                <div class="formContent hidden taskConfig col-lg-6 row m-t">
+                    <div class="col-sm-3">
                         <label>
-                            <input type="checkbox" name="is_repeat"                                        
+                            <input type="checkbox" name="is_repeat"  class="test"                                      
                                    @if($is_repeat) checked="checked" @endif /> 
                             Repeat?
                         </label>
                     </div>
-                    <div class="form-group">
-                        <label class="checkbox">Repeat Count </label>
-                        <input type="text" name="repeat_count"                                        
-                                   value="{{ $repeat_count }}" />                             
+                    <div class="col-sm-5">
+                        <strong>Repeat Count</strong>
+                        <input type="text" name="repeat_count" value="{{ $repeat_count }}" />                             
                     </div>
-                    <div class="form-group">
+                    <div class="col-sm-4">
                         <label>
-                            <input type="checkbox" name="no_overlap"                                        
+                            <input type="checkbox" name="no_overlap"  class="test"
                                    @if($no_overlap) checked="checked" @endif /> 
                             No overlap?
                         </label>

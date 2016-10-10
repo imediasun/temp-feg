@@ -30,14 +30,14 @@ function buildCrontab(e) {
         parent = elm.closest('.taskScheduleContainer'),
         targetText = parent.find('.cronStampText'),
         targetInp = parent.find('input[name=cronstamp]'),
-        iMin = parent.find('.cronmin.croninp').val() || '*',
-        iHr = parent.find('.cronhr.croninp').val() || '*',
-        iDay = parent.find('.cronday.croninp').val() || '*',
-        iMon = parent.find('.cronmonth.croninp').val() || '*',
-        iWeek = parent.find('.cronweekday.croninp').val() || '*',
-        iYear = parent.find('.cronyear.croninp').val() || '*',
+        iMin = parent.find('.cronmin.croninp').val() || '',
+        iHr = parent.find('.cronhr.croninp').val() || '',
+        iDay = parent.find('.cronday.croninp').val() || '',
+        iMon = parent.find('.cronmonth.croninp').val() || '',
+        iWeek = parent.find('.cronweekday.croninp').val() || '',
+        iYear = parent.find('.cronyear.croninp').val() || '',
         val = [iMin, iHr, iDay, iMon, iWeek, iYear ].join(' '),
-        pretty = prettyCron.toString(val),
+        pretty = parseCronStamp(val),
         resetPretty = targetText.data('resetValue');
     
     if (!resetPretty) {
@@ -67,7 +67,8 @@ function parseCronStamps(elm, value) {
     
 }
 function parseCronStamp(value) {    
-    return prettyCron.toString(value);
+    var cron = value.replace(' ', '') ? prettyCron.toString(value) : 'None';    
+    return cron;
 }
     
 
@@ -113,15 +114,29 @@ function updateTask(event) {
     var btn = jQuery(this),
         parent = btn.closest('.taskPanel'),
         form = parent.find('form'),
-        data = form.serialize(),
+        cron = form.find('[name=cronstamp]'),        
+        beforeAction = form.find('[name=run_before]'),
+        afterAction = form.find('[name=run_after]'),        
         uiblocker = parent.find('.ajaxloading'),
         url = pageUrl + '/save',
-        ajax = jQuery.post(url, data,  function(result){
-            parent.html(result);            
-            uiblocker.fadeOut();
-            initTasks(parent);
-        });
-    uiblocker.fadeIn();
+        data,
+        ajax;
+        
+    
+    if (cron.val() == "None") {
+        cron.val('');
+    }
+    
+    uiblocker.fadeIn();    
+    data = form.serialize();
+    ajax = jQuery.post(url, data,  function(result){
+        parent.html(result);            
+        uiblocker.fadeOut();
+        initTasks(parent);
+    });
+    
+    
+    
     //toggleFormTextContent(null, parent);    
 }
 function initCancelEditTask(event) {    

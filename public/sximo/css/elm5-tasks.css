@@ -67,4 +67,8 @@
     width: 15%;
 }
 
+.tasksContainer #tasksGrid  .taskConfig [name=repeat_count] {
+    width: 35px;
+    margin-left: 2px;
+}
 /* Tasks module css end */
