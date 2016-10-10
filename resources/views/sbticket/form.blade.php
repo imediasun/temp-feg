@@ -108,7 +108,7 @@
 					 	
 					 </div>
 				  </div> 					
-				  <div class="form-group  " > 
+				  <div class="form-group  " style="display:none" >
 					<label for="Game" class=" control-label col-md-4 text-left"> 
 					{!! SiteHelpers::activeLang('Game', (isset($fields['game_id']['language'])? $fields['game_id']['language'] : array())) !!}	
 					</label>
@@ -119,24 +119,24 @@
 					 	
 					 </div>
 				  </div> 					
-				  <div class="form-group  " > 
+				  <div class="form-group  " style="display:none" >
 					<label for="Department" class=" control-label col-md-4 text-left"> 
 					{!! SiteHelpers::activeLang('Department', (isset($fields['department_id']['language'])? $fields['department_id']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  <select name='department_id' rows='5' id='department_id' class='select2 ' required  ></select> 
+					  <select name='department_id' rows='5' id='department_id' class='select2 '   ></select>
 					 </div> 
 					 <div class="col-md-2">
 					 	
 					 </div>
 				  </div> 					
 
-				  <div class="form-group  " > 
+				  <div class="form-group  " style="display:none" >
 					<label for="Assign To" class=" control-label col-md-4 text-left"> 
 					{!! SiteHelpers::activeLang('Assign To', (isset($fields['assign_to']['language'])? $fields['assign_to']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  <select name='assign_to[]' multiple rows='5' id='assign_to' class='select2 ' required  ></select>
+					  <select name='assign_to[]' multiple rows='5' id='assign_to' class='select2 '  ></select>
 					 </div>
 					 <div class="col-md-2">
 					 	
@@ -241,17 +241,17 @@ $(document).ready(function() {
         $("#location_id").jCombo("{{ URL::to('sbticket/comboselect?filter=location:id:location_name') }}",
         {  selected_value : '{{ $row["location_id"] }}' });
         
-        $("#game_id").jCombo("{{ URL::to('sbticket/comboselect?filter=game:id:game_name') }}&limit=where:game_name:!=:''&parent=location_id:",
-        {  parent: '#location_id', selected_value : '{{ $row["game_id"] }}' });
+      //  $("#game_id").jCombo("{{-- URL::to('sbticket/comboselect?filter=game:id:game_name') }}&limit=where:game_name:!=:''&parent=location_id:",
+        //{  parent: '#location_id', selected_value : '{{ $row["game_id"] --}}' });
         
-        $("#department_id").jCombo("{{ URL::to('sbticket/comboselect?filter=departments:id:name') }}",
-        {  selected_value : '{{ $row["department_id"] }}' });
+        //$("#department_id").jCombo("{{--URL::to('sbticket/comboselect?filter=departments:id:name') }}",
+        //{  selected_value : '{{ $row["department_id"] --}}' });
         
         $("#debit_card").jCombo("{{ URL::to('sbticket/comboselect?filter=debit_type:company:company') }}",
         {  selected_value : '{{ $row["debit_card"] }}' });
         
-        $("#assign_to").jCombo("{{ URL::to('sbticket/comboselect?filter=employees:id:first_name|last_name') }}",
-        {  selected_value : '{{ $row["assign_to"] }}' });
+      //  $("#assign_to").jCombo("{{-- URL::to('sbticket/comboselect?filter=employees:id:first_name|last_name') }}",
+        //{  selected_value : '{{ $row["assign_to"] --}}' });
 
 
 	$('#icon').click(function(){
