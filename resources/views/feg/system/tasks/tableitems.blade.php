@@ -150,7 +150,7 @@
                     </div>                    
                     <div class="col-sm-4">
                         Log file: 
-                        <input type="text" name="log_file" value="{{ $log_file }}" /> 
+                        <input type="text" name="log_filename" value="{{ $log_filename }}" /> 
                     </div>                    
                     <div class="col-sm-6">
                         Success Action: 
