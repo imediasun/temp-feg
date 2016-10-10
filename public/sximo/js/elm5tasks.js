@@ -7,12 +7,12 @@ jQuery(document).ready(function ($) {
     $(document).on('click', '.addNewTask', initAddTask);
     $(document).on('change', '.croninp', buildCrontab);
     
-    initTasks();
+    window.setTimeout(initTasks, 0);    
 });
 
 function initTasks(parent) {
     if (!parent) {
-        parent = $;
+        parent = jQuery;
     }
     parent.find('.toggleSwitch').bootstrapSwitch({
         onInit: switchOnInit,
@@ -23,7 +23,7 @@ function initTasks(parent) {
 }
 
 function buildCrontab(e) {
-    var elm = $(this),
+    var elm = jQuery(this),
         parent = elm.closest('.taskScheduleContainer'),
         targetText = parent.find('.cronStampText'),
         targetInp = parent.find('input[name=cronstamp]'),
@@ -48,11 +48,11 @@ function parseCronStamps(elm, value) {
     
     var getValueFromElement = !value;
     if (!elm) {
-        elm = $('.cronStampText');
+        elm = jQuery('.cronStampText');
     }
     if (getValueFromElement) {
         elm.each(function(){
-            var eachElm = $(this), pretty;
+            var eachElm = jQuery(this), pretty;
             if (getValueFromElement) {
                 value = eachElm.attr('data-cronstamp');
                 pretty = parseCronStamp(value);
@@ -69,17 +69,17 @@ function parseCronStamp(value) {
     
 
 function switchOnInit(event, state) {
-    var elm = $(this);
+    var elm = jQuery(this);
     elm.data('resetValue', elm.prop('checked'));
 }
 function switchOnChange(event, state) {    
-    var elm = $(this);
+    var elm = jQuery(this);
     elm.prop('checked', state);    
 }
 
 function initEditTask(event) {
     event.preventDefault();
-    var btn = $(this),
+    var btn = jQuery(this),
         parent = btn.closest('.taskPanel'),
         buttons = parent.find('.saveButtonsGroup, .editButtonGroup'),
         switches = parent.find('.toggleSwitch.isActive');
@@ -89,31 +89,31 @@ function initEditTask(event) {
 }
 function initAddTask(event) {
     event.preventDefault();
-    var btn = $(this),
+    var btn = jQuery(this),
         parent = btn.closest('.taskPanel');
     //toggleFormTextContent(null, parent);    
 }
 function initDelTask(event) {
     event.preventDefault();
-    var btn = $(this),
+    var btn = jQuery(this),
         parent = btn.closest('.taskPanel');
     
 }
 function initShowScheduledTasks(event) {
     event.preventDefault();
-    var btn = $(this),
+    var btn = jQuery(this),
         parent = btn.closest('.taskPanel');
     
 }
 function updateTask(event) {   
     event.preventDefault();
-    var btn = $(this),
+    var btn = jQuery(this),
         parent = btn.closest('.taskPanel'),
         form = parent.find('form'),
         data = form.serialize(),
         uiblocker = parent.find('.ajaxloading'),
         url = pageUrl + '/save',
-        ajax = $.post(url, data,  function(result){
+        ajax = jQuery.post(url, data,  function(result){
             parent.html(result);            
             uiblocker.fadeOut();
             initTasks(parent);
@@ -123,7 +123,7 @@ function updateTask(event) {
 }
 function initCancelEditTask(event) {    
     //event.preventDefault();
-    var btn = $(this),
+    var btn = jQuery(this),
         parent = btn.closest('.taskPanel'),
         buttons = parent.find('.saveButtonsGroup, .editButtonGroup'),
         switches = parent.find('.toggleSwitch.isActive'),
@@ -144,43 +144,43 @@ function initCancelEditTask(event) {
 
 function showUIBlocker(id, container) {
     var idClass = id ? ('.taskPanel-'+id) : '.taskAdd',
-        main =  container || $(".tasksContent "+ idClass),
+        main =  container || jQuery(".tasksContent "+ idClass),
         blocker = main.find('.ajaxLoading');
     blocker.css({'display': 'block'});
 }
 function hideUIBlocker(id, container) {
     var idClass = id ? ('.taskPanel-'+id) : '.taskAdd',
-        main =  container || $(".tasksContent "+ idClass),
+        main =  container || jQuery(".tasksContent "+ idClass),
         blocker = main.find('.ajaxLoading');
     blocker.css({'display': 'none'});
 }
 function showFormContent(id, container) {
     var idClass = id ? ('.taskPanel-'+id) : '.taskAdd',
-        main =  container || $(".tasksContent "+ idClass),
+        main =  container || jQuery(".tasksContent "+ idClass),
         toShow = main.find(".formContent");        
     toShow.removeClass('hidden');    
 }
 function hideFormContent(id, container) {
     var idClass = id ? ('.taskPanel-'+id) : '.taskAdd',
-        main =  container || $(".tasksContent "+ idClass),
+        main =  container || jQuery(".tasksContent "+ idClass),
         toShow = main.find(".formContent");        
     toShow.addClass('hidden');     
 }
 function showTextContent(id, container) {
     var idClass = id ? ('.taskPanel-'+id) : '.taskAdd',
-        main =  container || $(".tasksContent "+ idClass),
+        main =  container || jQuery(".tasksContent "+ idClass),
         toShow = main.find(".textContent");        
     toShow.removeClass('hidden');
 }
 function hideTextContent(id, container) {
     var idClass = id ? ('.taskPanel-'+id) : '.taskAdd',
-        main =  container || $(".tasksContent "+ idClass),
+        main =  container || jQuery(".tasksContent "+ idClass),
         toShow = main.find(".textContent");        
     toShow.addClass('hidden');    
 }
 function toggleFormTextContent(id, container) {
     var idClass = id ? ('.taskPanel-'+id) : '.taskAdd',
-        main = container || $(".tasksContent "+ idClass),
+        main = container || jQuery(".tasksContent "+ idClass),
         forms = main.find(".formContent"),
         texts = main.find(".textContent");      
         forms.toggleClass('hidden');
