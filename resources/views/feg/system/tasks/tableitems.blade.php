@@ -112,7 +112,7 @@
                                 placeholder="Month" class="cronmonth croninp">
                             <input type="text" name="cronweekday" value="{{ $cronWeekday }}" 
                                 data-toggle="tooltip" data-placement="top" 
-                                title="Weekday (range 0-6 where 0 is sunday or  *) Examples: 3 for every Wed. 2,3,6 for every Tue, Wed and Sat. 3-6 for every Wed,Thu,Fri,Sat. * for every day in week. */5 for every 5 minutes. */2 for every even weekdday (Sun,Tue,Thu,Sat). 1-5/2 for every odd day in week (Mon,Wed,Fri). " 
+                                title="Weekday (range 0-6 where 0 is sunday or  *) Examples: 3 for every Wed. 2,3,6 for every Tue, Wed and Sat. 3-6 for every Wed,Thu,Fri,Sat. * for every day in week. */2 for every even weekday (Sun,Tue,Thu,Sat). 1-5/2 for every odd day in week (Mon,Wed,Fri). " 
                                 placeholder="Weekday" class="cronweekday croninp">
                             <!--<input type="text" name="cronyear" value="{{ $cronYear }}" 
                             data-toggle="tooltip" data-placement="top" 
