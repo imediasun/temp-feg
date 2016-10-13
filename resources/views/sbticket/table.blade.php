@@ -114,12 +114,12 @@
 
                                 <?php
                                     if($field['field']=='assign_to'){
-                                        foreach ($row->assign_employee_names as $index => $name) :
+                                       /* foreach ($row->assign_employee_names as $index => $name) :
                                             if(isset($name[0]->first_name))
                                                 {
                                             echo (++$index) . '.  ' . $name[0]->first_name . ' ' . $name[0]->last_name . '</br>';
                                        }
-                                        endforeach;
+                                        endforeach;*/
                                     }elseif($field['field']=='updated'){
                                         if(!empty($row->updated)){
                                             $date=date("m/d/Y", strtotime($row->updated));
