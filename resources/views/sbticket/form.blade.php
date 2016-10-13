@@ -44,8 +44,9 @@
 					<div class="col-md-6">
 					  
 					<?php $Priority = explode(',',$row['Priority']);
-					$Priority_opt = array('high' => 'High' ,  'medium' => 'Medium' ,  'low' => 'Low' , ); ?>
+					$Priority_opt = array('normal' => 'Normal' ,  'emergency' => 'Emergency'); ?>
 					<select name='Priority' rows='5' required  class='select2 '  >
+                        <option selected disabled>Select Priority</option>
 						<?php 
 						foreach($Priority_opt as $key=>$val)
 						{
@@ -93,6 +94,7 @@
 					<?php $issue_type = explode(',',$row['issue_type']);
 					$issue_type_opt = array('Order Request' => 'Order Request' ,'Support Issue' => 'Support Issue' ); ?>
 					<select name='issue_type' rows='5'   class='select2 ' required >
+                        <option selected disabled>Select Issue Type</option>
 						<?php 
 						foreach($issue_type_opt as $key=>$val)
 						{
