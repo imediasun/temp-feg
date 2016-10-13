@@ -1,25 +1,25 @@
 <?php namespace App\Http\Controllers;
 
 use App\Http\Controllers\controller;
-use App\Models\Sbticket;
-use App\Models\SbticketSetting;
+use App\Models\servicerequests;
+use App\Models\servicerequestsSetting;
 use App\Models\Ticketcomment;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Validator, Input, Redirect;
 
-class SbticketController extends Controller
+class servicerequestsController extends Controller
 {
 
     static $per_page = '10';
-    public $module = 'sbticket';
+    public $module = 'Servicerequests';
     protected $layout = "layouts.main";
     protected $data = array();
 
     public function __construct()
     {
         parent::__construct();
-        $this->model = new Sbticket();
+        $this->model = new Servicerequests();
 
         $this->info = $this->model->makeInfo($this->module);
         $this->access = $this->model->validAccess($this->info['id']);
@@ -27,8 +27,8 @@ class SbticketController extends Controller
         $this->data = array(
             'pageTitle' => $this->info['title'],
             'pageNote' => $this->info['note'],
-            'pageModule' => 'sbticket',
-            'pageUrl' => url('sbticket'),
+            'pageModule' => 'servicerequests',
+            'pageUrl' => url('servicerequests'),
             'return' => self::returnUrl()
         );
 
@@ -41,13 +41,13 @@ class SbticketController extends Controller
             return Redirect::to('dashboard')->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
 
         $this->data['access'] = $this->access;
-        return view('sbticket.index', $this->data);
+        return view('servicerequests.index', $this->data);
     }
 
     public function postData(Request $request)
     {
 
-        $module_id = \DB::table('tb_module')->where('module_name', '=', 'sbticket')->pluck('module_id');
+        $module_id = \DB::table('tb_module')->where('module_name', '=', 'servicerequests')->pluck('module_id');
         $this->data['module_id'] = $module_id;
         if (Input::has('config_id')) {
             $config_id = Input::get('config_id');
@@ -93,7 +93,7 @@ class SbticketController extends Controller
 
 
         $pagination = new Paginator($results['rows'], $results['total'], $params['limit']);
-        $pagination->setPath('sbticket/data');
+        $pagination->setPath('servicerequests/data');
         $rows = $results['rows'];
         $comments = new Ticketcomment();
 
@@ -105,38 +105,38 @@ class SbticketController extends Controller
             {
                 //$row->comments = $comments->where('TicketID', '=', $row->TicketID)->orderBy('TicketID', 'desc')->take(1)->get();
                 $department_memebers = \DB::select("Select assign_employee_ids FROM departments WHERE id = " . $row->department_id . "");
-            $department_memebers = explode(',', $department_memebers[0]->assign_employee_ids);
+                $department_memebers = explode(',', $department_memebers[0]->assign_employee_ids);
 
-            $assign_employee_ids = explode(',', $row->assign_to);
+                $assign_employee_ids = explode(',', $row->assign_to);
 
-            $members_access = array_unique(array_merge($assign_employee_ids, $department_memebers));
-            foreach ($members_access as $i => $id) {
-                $get_user_id_from_employess = \DB::select("Select user_id FROM employees WHERE id = " . $id . "");
-                //print"<pre>";
-                //print_r($get_user_id_from_employess);
-                if (isset($get_user_id_from_employess[0]->user_id)) {
-                    $members_access[$i] = $get_user_id_from_employess[0]->user_id;
-                    //echo $members_access[$i]."<br>";
+                $members_access = array_unique(array_merge($assign_employee_ids, $department_memebers));
+                foreach ($members_access as $i => $id) {
+                    $get_user_id_from_employess = \DB::select("Select user_id FROM employees WHERE id = " . $id . "");
+                    //print"<pre>";
+                    //print_r($get_user_id_from_employess);
+                    if (isset($get_user_id_from_employess[0]->user_id)) {
+                        $members_access[$i] = $get_user_id_from_employess[0]->user_id;
+                        //echo $members_access[$i]."<br>";
+                    }
+
                 }
 
-            }
+                if ($group_id != 10) {
+                    if (!in_array($user_id, array_unique($members_access))) {
+                        $flag = 0;
+                    }
+                }
 
-            if ($group_id != 10) {
-                if (!in_array($user_id, array_unique($members_access))) {
-                    $flag = 0;
+                if ($flag == 1) {
+                    $assign_employee_names = array();
+                    foreach ($assign_employee_ids as $key => $value) {
+                        $assign_employee_names[$key] = \DB::select("Select first_name,last_name FROM employees WHERE id = " . $value . "");
+                    }
+                    $row->assign_employee_names = $assign_employee_names;
+                } else {
+                    unset($rows[$index]);
                 }
             }
-
-            if ($flag == 1) {
-                $assign_employee_names = array();
-                foreach ($assign_employee_ids as $key => $value) {
-                    $assign_employee_names[$key] = \DB::select("Select first_name,last_name FROM employees WHERE id = " . $value . "");
-                }
-                $row->assign_employee_names = $assign_employee_names;
-            } else {
-                unset($rows[$index]);
-            }
-        }
         }
 
         $this->data['param'] = $params;
@@ -162,7 +162,7 @@ class SbticketController extends Controller
             $this->data['tableGrid'] = \SiteHelpers::showRequiredCols($this->data['tableGrid'], $this->data['config']);
         }
         // Render into template
-        return view('sbticket.table', $this->data);
+        return view('servicerequests.table', $this->data);
 
     }
 
@@ -197,7 +197,7 @@ class SbticketController extends Controller
         $this->data['id'] = $id;
 
 
-        return view('sbticket.form', $this->data);
+        return view('servicerequests.form', $this->data);
     }
 
     public function getShow($id = null)
@@ -227,7 +227,7 @@ class SbticketController extends Controller
         $this->data['access'] = $this->access;
         $this->data['setting'] = $this->info['setting'];
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
-        return view('sbticket.view', $this->data);
+        return view('servicerequests.view', $this->data);
     }
 
 
@@ -252,9 +252,7 @@ class SbticketController extends Controller
 
     function postSave(Request $request, $id = 0)
     {
-        echo "<pre>";
-        echo  ($request->get('status'));
-        die();
+
         $data['need_by_date'] = date('Y-m-d');
         //$rules = $this->validateForm();
         $rules = array('Subject' => 'required', 'Description' => 'required', 'Priority' => 'required', 'issue_type' => 'required', 'location_id' => 'required');
@@ -262,15 +260,14 @@ class SbticketController extends Controller
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
             $data = $this->validatePost('sb_tickets');
-            //$data['need_by_date']= date("Y-m-d", strtotime($request->get('need_by_date')));
+            $data['need_by_date']= date("Y-m-d", strtotime($request->get('need_by_date')));
+            $data['status']=$request->get('status');
             if ($id == 0) {
 
                 $data['Created'] = date('Y-m-d');
 
             }
-            if ($id != 0) {
-                die('in edit mode...');
-            }
+
             $id = $this->model->insertRow($data, $request->input('TicketID'));
 
             return response()->json(array(
@@ -415,8 +412,8 @@ class SbticketController extends Controller
         foreach ($data as $index => $value) {
             $data[$index] = implode(',', $data[$index]);
         }
-        $sbticketsetting = new SbticketSetting();
-        $id = $sbticketsetting->insertRow($data, 1);
+        $servicerequestssetting = new servicerequestsSetting();
+        $id = $servicerequestssetting->insertRow($data, 1);
 
         if ($id == 1) {
             return response()->json(array(
@@ -433,7 +430,7 @@ class SbticketController extends Controller
 
     public function getSetting()
     {
-        $ticket_setting = \DB::select("Select * FROM sbticket_setting");
+        $ticket_setting = \DB::select("Select * FROM servicerequests_setting");
 
         $individuals = \DB::select("Select id,first_name,last_name FROM users");
         $roles = \DB::select("Select group_id,name FROM tb_groups");
@@ -442,6 +439,6 @@ class SbticketController extends Controller
         $this->data['roles'] = $roles;
         $this->data['individuals'] = $individuals;
         $this->data['access'] = $this->access;
-        return view('sbticket.setting', $this->data);
+        return view('servicerequests.setting', $this->data);
     }
 }
