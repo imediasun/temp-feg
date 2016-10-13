@@ -1,7 +1,7 @@
 <?php namespace App\Http\Controllers;
 
 use App\Http\Controllers\controller;
-use App\Models\servicerequests;
+use App\Models\Servicerequests;
 use App\Models\servicerequestsSetting;
 use App\Models\Ticketcomment;
 use Illuminate\Http\Request;
