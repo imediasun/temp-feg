@@ -4,46 +4,46 @@ use App\Http\Controllers\controller;
 use App\Models\Department;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
-use Validator, Input, Redirect ; 
+use Validator, Input, Redirect;
 
-class DepartmentController extends Controller {
+class DepartmentController extends Controller
+{
 
-	protected $layout = "layouts.main";
-	protected $data = array();	
-	public $module = 'department';
-	static $per_page	= '10';
-	
-	public function __construct() 
-	{
-		parent::__construct();
-		$this->model = new Department();
-		
-		$this->info = $this->model->makeInfo( $this->module);
-		$this->access = $this->model->validAccess($this->info['id']);
-	
-		$this->data = array(
-			'pageTitle'			=> 	$this->info['title'],
-			'pageNote'			=>  $this->info['note'],
-			'pageModule'		=> 'department',
-			'pageUrl'			=>  url('department'),
-			'return' 			=> 	self::returnUrl()	
-		);
-		
-			
-				
-	} 
-	
-	public function getIndex()
-	{
-		if($this->access['is_view'] ==0) 
-			return Redirect::to('dashboard')->with('messagetext',\Lang::get('core.note_restric'))->with('msgstatus','error');
-				
-		$this->data['access']		= $this->access;	
-		return view('department.index',$this->data);
-	}	
+    protected $layout = "layouts.main";
+    protected $data = array();
+    public $module = 'department';
+    static $per_page = '10';
 
-	public function postData( Request $request)
-	{
+    public function __construct()
+    {
+        parent::__construct();
+        $this->model = new Department();
+
+        $this->info = $this->model->makeInfo($this->module);
+        $this->access = $this->model->validAccess($this->info['id']);
+
+        $this->data = array(
+            'pageTitle' => $this->info['title'],
+            'pageNote' => $this->info['note'],
+            'pageModule' => 'department',
+            'pageUrl' => url('department'),
+            'return' => self::returnUrl()
+        );
+
+
+    }
+
+    public function getIndex()
+    {
+        if ($this->access['is_view'] == 0)
+            return Redirect::to('dashboard')->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
+
+        $this->data['access'] = $this->access;
+        return view('department.index', $this->data);
+    }
+
+    public function postData(Request $request)
+    {
         $module_id = \DB::table('tb_module')->where('module_name', '=', 'department')->pluck('module_id');
         $this->data['module_id'] = $module_id;
         if (Input::has('config_id')) {
@@ -55,221 +55,211 @@ class DepartmentController extends Controller {
         }
         $this->data['config_id'] = $config_id;
         $config = $this->model->getModuleConfig($module_id, $config_id);
-        if(!empty($config))
-        {
+        if (!empty($config)) {
             $this->data['config'] = \SiteHelpers::CF_decode_json($config[0]->config);
             \Session::put('config_id', $config_id);
         }
-		$sort = (!is_null($request->input('sort')) ? $request->input('sort') : $this->info['setting']['orderby']); 
-		$order = (!is_null($request->input('order')) ? $request->input('order') : $this->info['setting']['ordertype']);
-		// End Filter sort and order for query 
-		// Filter Search for query		
-		$filter = (!is_null($request->input('search')) ? $this->buildSearch() : '');
+        $sort = (!is_null($request->input('sort')) ? $request->input('sort') : $this->info['setting']['orderby']);
+        $order = (!is_null($request->input('order')) ? $request->input('order') : $this->info['setting']['ordertype']);
+        // End Filter sort and order for query
+        // Filter Search for query
+        $filter = (!is_null($request->input('search')) ? $this->buildSearch() : '');
 
-		
-		$page = $request->input('page', 1);
-		$params = array(
-			'page'		=> $page ,
-			'limit'		=> (!is_null($request->input('rows')) ? filter_var($request->input('rows'),FILTER_VALIDATE_INT) : $this->info['setting']['perpage'] ) ,
-			'sort'		=> $sort ,
-			'order'		=> $order,
-			'params'	=> $filter,
-			'global'	=> (isset($this->access['is_global']) ? $this->access['is_global'] : 0 )
-		);
-		// Get Query 
-		$results = $this->model->getRows( $params );		
-		
-		// Build pagination setting
-		$page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;
 
-		if(count($results['rows']) == $results['total'] && $results['total']!=0){
-			$params['limit'] = $results['total'];
-		}
+        $page = $request->input('page', 1);
+        $params = array(
+            'page' => $page,
+            'limit' => (!is_null($request->input('rows')) ? filter_var($request->input('rows'), FILTER_VALIDATE_INT) : $this->info['setting']['perpage']),
+            'sort' => $sort,
+            'order' => $order,
+            'params' => $filter,
+            'global' => (isset($this->access['is_global']) ? $this->access['is_global'] : 0)
+        );
+        // Get Query
+        $results = $this->model->getRows($params);
 
-		$pagination = new Paginator($results['rows'], $results['total'], $params['limit']);	
-		$pagination->setPath('department/data');
+        // Build pagination setting
+        $page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;
 
-		$this->data['param']		= $params;
-		foreach($results['rows'] as $key => $value)
-		{
-			$count = 0;
-			if(!empty($value->assign_employee_ids))
-			{
-				$count = explode(',',$value->assign_employee_ids);
-			}
-			//$value->assign_employee_ids = strval(count($count));
-			$open = \DB::select("Select * FROM sb_tickets WHERE department_id = ".$value->id ." AND status = 'open'");
-			$close = \DB::select("Select * FROM sb_tickets WHERE department_id = ".$value->id ." AND status = 'close'");
-			$value->total_open_tickets = count($open);
-			$value->total_close_tickets = count($close);
-		}
-		$this->data['rowData']		= $results['rows'];
-		// Build Pagination 
-		$this->data['pagination']	= $pagination;
-		// Build pager number and append current param GET
-		$this->data['pager'] 		= $this->injectPaginate();	
-		// Row grid Number 
-		$this->data['i']			= ($page * $params['limit'])- $params['limit']; 
-		// Grid Configuration 
-		$this->data['tableGrid'] 	= $this->info['config']['grid'];
-		$this->data['tableForm'] 	= $this->info['config']['forms'];
-		$this->data['colspan'] 		= \SiteHelpers::viewColSpan($this->info['config']['grid']);		
-		// Group users permission
-		$this->data['access']		= $this->access;
-		// Detail from master if any
-		$this->data['setting'] 		= $this->info['setting'];
-		
-		// Master detail link if any 
-		$this->data['subgrid']	= (isset($this->info['config']['subgrid']) ? $this->info['config']['subgrid'] : array());
+        if (count($results['rows']) == $results['total'] && $results['total'] != 0) {
+            $params['limit'] = $results['total'];
+        }
+
+        $pagination = new Paginator($results['rows'], $results['total'], $params['limit']);
+        $pagination->setPath('department/data');
+
+        $this->data['param'] = $params;
+        foreach ($results['rows'] as $key => $value) {
+            $count = 0;
+            if (!empty($value->assign_employee_ids)) {
+                $count = explode(',', $value->assign_employee_ids);
+            }
+            //$value->assign_employee_ids = strval(count($count));
+            $open = \DB::select("Select * FROM sb_tickets WHERE department_id = " . $value->id . " AND status = 'open'");
+            $close = \DB::select("Select * FROM sb_tickets WHERE department_id = " . $value->id . " AND status = 'close'");
+            $value->total_open_tickets = count($open);
+            $value->total_close_tickets = count($close);
+        }
+        $this->data['rowData'] = $results['rows'];
+        // Build Pagination
+        $this->data['pagination'] = $pagination;
+        // Build pager number and append current param GET
+        $this->data['pager'] = $this->injectPaginate();
+        // Row grid Number
+        $this->data['i'] = ($page * $params['limit']) - $params['limit'];
+        // Grid Configuration
+        $this->data['tableGrid'] = $this->info['config']['grid'];
+        $this->data['tableForm'] = $this->info['config']['forms'];
+        $this->data['colspan'] = \SiteHelpers::viewColSpan($this->info['config']['grid']);
+        // Group users permission
+        $this->data['access'] = $this->access;
+        // Detail from master if any
+        $this->data['setting'] = $this->info['setting'];
+
+        // Master detail link if any
+        $this->data['subgrid'] = (isset($this->info['config']['subgrid']) ? $this->info['config']['subgrid'] : array());
         if ($this->data['config_id'] != 0 && !empty($config)) {
             $this->data['tableGrid'] = \SiteHelpers::showRequiredCols($this->data['tableGrid'], $this->data['config']);
         }
-		// Render into template
-		return view('department.table',$this->data);
+        // Render into template
+        return view('department.table', $this->data);
 
-	}
-
-			
-	function getUpdate(Request $request, $id = null)
-	{
-
-		if($id =='')
-		{
-			if($this->access['is_add'] ==0 )
-			return Redirect::to('dashboard')->with('messagetext',\Lang::get('core.note_restric'))->with('msgstatus','error');
-		}	
-		
-		if($id !='')
-		{
-			if($this->access['is_edit'] ==0 )
-			return Redirect::to('dashboard')->with('messagetext',\Lang::get('core.note_restric'))->with('msgstatus','error');
-		}				
-				
-		$row = $this->model->find($id);
-		if($row)
-		{
-			$this->data['row'] 		=  $row;
-		} else {
-			$this->data['row'] 		= $this->model->getColumnTable('departments'); 
-		}
-		$this->data['setting'] 		= $this->info['setting'];
-		$this->data['fields'] 		=  \AjaxHelpers::fieldLang($this->info['config']['forms']);
-		
-		$this->data['id'] = $id;
-
-		return view('department.form',$this->data);
-	}	
-
-	public function getShow( $id = null)
-	{
-		if($this->access['is_detail'] ==0)
-			return Redirect::to('dashboard')
-				->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus','error');
-					
-		$row = $this->model->getRow($id);
-		$open = \DB::select("Select * FROM sb_tickets WHERE department_id = ".$id ." AND status = 'open'");
-		$close = \DB::select("Select * FROM sb_tickets WHERE department_id = ".$id ." AND status = 'close'");
-		$pending = \DB::select("Select * FROM sb_tickets WHERE department_id = ".$id ." AND status = 'inqueue'");
-
-		$row->close_tickets = count($close);
-		$row->open_tickets = count($open);
-		$row->pending_tickets = count($pending);
-		$assign_employee_ids = explode(',' ,$row->assign_employee_ids);
-		$assign_employee_names = array();
-		foreach($assign_employee_ids as $key => $value)
-		{
-			$assign_employee_names[$key] = \DB::select("Select first_name,last_name FROM employees WHERE id = ".$value ."");
-		}
-		$row->assign_employee_names = $assign_employee_names;
-		if($row)
-		{
-			$this->data['row'] =  $row;
-		} else {
-			$this->data['row'] = $this->model->getColumnTable('departments'); 
-		}
-
-		$this->data['id'] = $id;
-		$this->data['access']		= $this->access;
-		$this->data['setting'] 		= $this->info['setting'];
-		$this->data['fields'] 		= \AjaxHelpers::fieldLang($this->info['config']['forms']);
-		return view('department.view',$this->data);	
-	}	
+    }
 
 
-	function postCopy( Request $request)
-	{
-		
-	    foreach(\DB::select("SHOW COLUMNS FROM departments ") as $column)
-        {
-			if( $column->Field != 'id')
-				$columns[] = $column->Field;
+    function getUpdate(Request $request, $id = null)
+    {
+
+        if ($id == '') {
+            if ($this->access['is_add'] == 0)
+                return Redirect::to('dashboard')->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
         }
-		$toCopy = implode(",",$request->input('ids'));
-		
-				
-		$sql = "INSERT INTO departments (".implode(",", $columns).") ";
-		$sql .= " SELECT ".implode(",", $columns)." FROM departments WHERE id IN (".$toCopy.")";
-		\DB::insert($sql);
-		return response()->json(array(
-			'status'=>'success',
-			'message'=> \Lang::get('core.note_success')
-		));	
-	}		
 
-	function postSave( Request $request, $id =0)
-	{
-		
-		$rules = $this->validateForm();
-		$validator = Validator::make($request->all(), $rules);	
-		if ($validator->passes()) {
-			$data = $this->validatePost('departments');
-			
-			$id = $this->model->insertRow($data , $request->input('id'));
-			
-			return response()->json(array(
-				'status'=>'success',
-				'message'=> \Lang::get('core.note_success')
-				));	
-			
-		} else {
+        if ($id != '') {
+            if ($this->access['is_edit'] == 0)
+                return Redirect::to('dashboard')->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
+        }
 
-			$message = $this->validateListError(  $validator->getMessageBag()->toArray() );
-			return response()->json(array(
-				'message'	=> $message,
-				'status'	=> 'error'
-			));	
-		}	
-	
-	}	
+        $row = $this->model->find($id);
+        if ($row) {
+            $this->data['row'] = $row;
+        } else {
+            $this->data['row'] = $this->model->getColumnTable('departments');
+        }
+        $this->data['setting'] = $this->info['setting'];
+        $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
 
-	public function postDelete( Request $request)
-	{
+        $this->data['id'] = $id;
 
-		if($this->access['is_remove'] ==0) {   
-			return response()->json(array(
-				'status'=>'error',
-				'message'=> \Lang::get('core.note_restric')
-			));
-			die;
+        return view('department.form', $this->data);
+    }
 
-		}		
-		// delete multipe rows 
-		if(count($request->input('ids')) >=1)
-		{
-			$this->model->destroy($request->input('ids'));
-			
-			return response()->json(array(
-				'status'=>'success',
-				'message'=> \Lang::get('core.note_success_delete')
-			));
-		} else {
-			return response()->json(array(
-				'status'=>'error',
-				'message'=> \Lang::get('core.note_error')
-			));
+    public function getShow($id = null)
+    {
+        if ($this->access['is_detail'] == 0)
+            return Redirect::to('dashboard')
+                ->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
 
-		} 		
+        $row = $this->model->getRow($id);
+        $open = \DB::select("Select * FROM sb_tickets WHERE department_id = " . $id . " AND status = 'open'");
+        $close = \DB::select("Select * FROM sb_tickets WHERE department_id = " . $id . " AND status = 'close'");
+        $pending = \DB::select("Select * FROM sb_tickets WHERE department_id = " . $id . " AND status = 'inqueue'");
 
-	}			
+        $row->close_tickets = count($close);
+        $row->open_tickets = count($open);
+        $row->pending_tickets = count($pending);
+        $assign_employee_ids = explode(',', $row->assign_employee_ids);
+        $assign_employee_names = array();
+        foreach ($assign_employee_ids as $key => $value) {
+            $assign_employee_names[$key] = \DB::select("Select first_name,last_name FROM employees WHERE id = " . $value . "");
+        }
+        $row->assign_employee_names = $assign_employee_names;
+        if ($row) {
+            $this->data['row'] = $row;
+        } else {
+            $this->data['row'] = $this->model->getColumnTable('departments');
+        }
+
+        $this->data['id'] = $id;
+        $this->data['access'] = $this->access;
+        $this->data['setting'] = $this->info['setting'];
+        $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
+        return view('department.view', $this->data);
+    }
+
+
+    function postCopy(Request $request)
+    {
+
+        foreach (\DB::select("SHOW COLUMNS FROM departments ") as $column) {
+            if ($column->Field != 'id')
+                $columns[] = $column->Field;
+        }
+        $toCopy = implode(",", $request->input('ids'));
+
+
+        $sql = "INSERT INTO departments (" . implode(",", $columns) . ") ";
+        $sql .= " SELECT " . implode(",", $columns) . " FROM departments WHERE id IN (" . $toCopy . ")";
+        \DB::insert($sql);
+        return response()->json(array(
+            'status' => 'success',
+            'message' => \Lang::get('core.note_success')
+        ));
+    }
+
+    function postSave(Request $request, $id = 0)
+    {
+
+        $rules = $this->validateForm();
+        $validator = Validator::make($request->all(), $rules);
+        if ($validator->passes()) {
+            $data = $this->validatePost('departments');
+
+            $id = $this->model->insertRow($data, $request->input('id'));
+
+            return response()->json(array(
+                'status' => 'success',
+                'message' => \Lang::get('core.note_success')
+            ));
+
+        } else {
+
+            $message = $this->validateListError($validator->getMessageBag()->toArray());
+            return response()->json(array(
+                'message' => $message,
+                'status' => 'error'
+            ));
+        }
+
+    }
+
+    public function postDelete(Request $request)
+    {
+
+        if ($this->access['is_remove'] == 0) {
+            return response()->json(array(
+                'status' => 'error',
+                'message' => \Lang::get('core.note_restric')
+            ));
+            die;
+
+        }
+        // delete multipe rows
+        if (count($request->input('ids')) >= 1) {
+            $this->model->destroy($request->input('ids'));
+
+            return response()->json(array(
+                'status' => 'success',
+                'message' => \Lang::get('core.note_success_delete')
+            ));
+        } else {
+            return response()->json(array(
+                'status' => 'error',
+                'message' => \Lang::get('core.note_error')
+            ));
+
+        }
+
+    }
 
 }

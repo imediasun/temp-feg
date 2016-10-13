@@ -59,9 +59,8 @@ class GamesintransitController extends Controller
         if (!empty($config)) {
             $this->data['config'] = \SiteHelpers::CF_decode_json($config[0]->config);
             \Session::put('config_id', $config_id);
-        }
-        else{
-            \Session::put('config_id',0);
+        } else {
+            \Session::put('config_id', 0);
         }
         $sort = (!is_null($request->input('sort')) ? $request->input('sort') : $this->info['setting']['orderby']);
         $order = (!is_null($request->input('order')) ? $request->input('order') : $this->info['setting']['ordertype']);
@@ -85,11 +84,7 @@ class GamesintransitController extends Controller
         $page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;
 
 
-
-
-
-
-        if(count($results['rows']) == $results['total'] && $results['total']!=0){
+        if (count($results['rows']) == $results['total'] && $results['total'] != 0) {
             $params['limit'] = $results['total'];
         }
 

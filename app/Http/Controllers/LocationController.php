@@ -4,46 +4,46 @@ use App\Http\Controllers\controller;
 use App\Models\Location;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
-use Validator, Input, Redirect ;
+use Validator, Input, Redirect;
 
-class LocationController extends Controller {
+class LocationController extends Controller
+{
 
     protected $layout = "layouts.main";
     protected $data = array();
     public $module = 'location';
-    static $per_page	= '10';
+    static $per_page = '10';
 
     public function __construct()
     {
         parent::__construct();
         $this->model = new Location();
 
-        $this->info = $this->model->makeInfo( $this->module);
+        $this->info = $this->model->makeInfo($this->module);
         $this->access = $this->model->validAccess($this->info['id']);
 
         $this->data = array(
-            'pageTitle'			=> 	$this->info['title'],
-            'pageNote'			=>  $this->info['note'],
-            'pageModule'		=> 'location',
-            'pageUrl'			=>  url('location'),
-            'return' 			=> 	self::returnUrl()
+            'pageTitle' => $this->info['title'],
+            'pageNote' => $this->info['note'],
+            'pageModule' => 'location',
+            'pageUrl' => url('location'),
+            'return' => self::returnUrl()
         );
 
 
-
     }
 
-    public function getIndex(Request $request,$id=0)
+    public function getIndex(Request $request, $id = 0)
     {
-        if($this->access['is_view'] ==0)
-            return Redirect::to('dashboard')->with('messagetext',\Lang::get('core.note_restric'))->with('msgstatus','error');
+        if ($this->access['is_view'] == 0)
+            return Redirect::to('dashboard')->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
 
-        $this->data['access']		= $this->access;
-        $this->data['id']=$id;
-        return view('location.index',$this->data);
+        $this->data['access'] = $this->access;
+        $this->data['id'] = $id;
+        return view('location.index', $this->data);
     }
 
-    public function postData( Request $request,$id=null)
+    public function postData(Request $request, $id = null)
     {
 
         $module_id = \DB::table('tb_module')->where('module_name', '=', 'location')->pluck('module_id');
@@ -57,13 +57,11 @@ class LocationController extends Controller {
         }
         $this->data['config_id'] = $config_id;
         $config = $this->model->getModuleConfig($module_id, $config_id);
-        if(!empty($config))
-        {
+        if (!empty($config)) {
             $this->data['config'] = \SiteHelpers::CF_decode_json($config[0]->config);
 
             \Session::put('config_id', $config_id);
-        }
-        else{
+        } else {
             \Session::put('config_id', '0');
         }
 
@@ -76,21 +74,20 @@ class LocationController extends Controller {
 
         $page = $request->input('page', 1);
         $params = array(
-            'page'		=> $page ,
-            'limit'		=> (!is_null($request->input('rows')) ? filter_var($request->input('rows'),FILTER_VALIDATE_INT) : $this->info['setting']['perpage'] ) ,
-            'sort'		=> $sort ,
-            'order'		=> $order,
-            'params'	=> $filter,
-            'global'	=> (isset($this->access['is_global']) ? $this->access['is_global'] : 0 )
+            'page' => $page,
+            'limit' => (!is_null($request->input('rows')) ? filter_var($request->input('rows'), FILTER_VALIDATE_INT) : $this->info['setting']['perpage']),
+            'sort' => $sort,
+            'order' => $order,
+            'params' => $filter,
+            'global' => (isset($this->access['is_global']) ? $this->access['is_global'] : 0)
         );
         // Get Query
-    if($id==null) {
-        $results = $this->model->getRows($params);
+        if ($id == null) {
+            $results = $this->model->getRows($params);
 
-    }
-        else{
-            $results['rows']=$this->model->getRow($id);
-            $results['total']=1;
+        } else {
+            $results['rows'] = $this->model->getRow($id);
+            $results['total'] = 1;
         }
         foreach ($results['rows'] as $result) {
 
@@ -135,27 +132,32 @@ class LocationController extends Controller {
 
             } else {
                 $result->not_reporting_Sun = "No";
-            }if ($result->not_reporting_Mon == 1) {
+            }
+            if ($result->not_reporting_Mon == 1) {
                 $result->not_reporting_Mon = "Yes";
 
             } else {
                 $result->not_reporting_Mon = "No";
-            }if ($result->not_reporting_Tue == 1) {
+            }
+            if ($result->not_reporting_Tue == 1) {
                 $result->not_reporting_Tue = "Yes";
 
             } else {
                 $result->not_reporting_Tue = "No";
-            }if ($result->not_reporting_Wed == 1) {
+            }
+            if ($result->not_reporting_Wed == 1) {
                 $result->not_reporting_Wed = "Yes";
 
             } else {
                 $result->not_reporting_Wed = "No";
-            }if ($result->not_reporting_Thu == 1) {
+            }
+            if ($result->not_reporting_Thu == 1) {
                 $result->not_reporting_Thu = "Yes";
 
             } else {
                 $result->not_reporting_Thu = "No";
-            }if ($result->not_reporting_Fri == 1) {
+            }
+            if ($result->not_reporting_Fri == 1) {
                 $result->not_reporting_Fri = "Yes";
 
             } else {
@@ -179,210 +181,203 @@ class LocationController extends Controller {
         $page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;
 
 
-
-        if(count($results['rows']) == $results['total'] && $results['total']!=0){
+        if (count($results['rows']) == $results['total'] && $results['total'] != 0) {
             $params['limit'] = $results['total'];
         }
 
 
         $pagination = new Paginator($results['rows'], $results['total'], $params['limit']);
         $pagination->setPath('location/data');
-        $this->data['param']		= $params;
-        $this->data['rowData']		= $results['rows'];
+        $this->data['param'] = $params;
+        $this->data['rowData'] = $results['rows'];
         // Build Pagination
-        $this->data['pagination']	= $pagination;
+        $this->data['pagination'] = $pagination;
         // Build pager number and append current param GET
-        $this->data['pager'] 		= $this->injectPaginate();
+        $this->data['pager'] = $this->injectPaginate();
         // Row grid Number
-        $this->data['i']			= ($page * $params['limit'])- $params['limit'];
+        $this->data['i'] = ($page * $params['limit']) - $params['limit'];
         // Grid Configuration
-        $this->data['tableGrid'] 	= $this->info['config']['grid'];
-        $this->data['tableForm'] 	= $this->info['config']['forms'];
-        $this->data['colspan'] 		= \SiteHelpers::viewColSpan($this->info['config']['grid']);
+        $this->data['tableGrid'] = $this->info['config']['grid'];
+        $this->data['tableForm'] = $this->info['config']['forms'];
+        $this->data['colspan'] = \SiteHelpers::viewColSpan($this->info['config']['grid']);
         // Group users permission
-        $this->data['access']		= $this->access;
+        $this->data['access'] = $this->access;
         // Detail from master if any
-        $this->data['setting'] 		= $this->info['setting'];
+        $this->data['setting'] = $this->info['setting'];
 
         // Master detail link if any
-        $this->data['subgrid']	= (isset($this->info['config']['subgrid']) ? $this->info['config']['subgrid'] : array());
+        $this->data['subgrid'] = (isset($this->info['config']['subgrid']) ? $this->info['config']['subgrid'] : array());
         if ($this->data['config_id'] != 0 && !empty($config)) {
             $this->data['tableGrid'] = \SiteHelpers::showRequiredCols($this->data['tableGrid'], $this->data['config']);
         }
 // Render into template
-        return view('location.table',$this->data);
+        return view('location.table', $this->data);
 
     }
 
 
     function getUpdate(Request $request, $id = null)
     {
-        if($id =='')
-        {
-            if($this->access['is_add'] ==0 )
-                return Redirect::to('dashboard')->with('messagetext',\Lang::get('core.note_restric'))->with('msgstatus','error');
+        if ($id == '') {
+            if ($this->access['is_add'] == 0)
+                return Redirect::to('dashboard')->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
         }
 
-        if($id !='')
-        {
-            if($this->access['is_edit'] ==0 )
-                return Redirect::to('dashboard')->with('messagetext',\Lang::get('core.note_restric'))->with('msgstatus','error');
+        if ($id != '') {
+            if ($this->access['is_edit'] == 0)
+                return Redirect::to('dashboard')->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
         }
 
         $row = $this->model->find($id);
-        if($row)
-        {
-            $this->data['row'] 		=  $row;
+        if ($row) {
+            $this->data['row'] = $row;
         } else {
-            $this->data['row'] 		= $this->model->getColumnTable('location');
+            $this->data['row'] = $this->model->getColumnTable('location');
         }
-        $this->data['setting'] 		= $this->info['setting'];
-        $this->data['fields'] 		=  \AjaxHelpers::fieldLang($this->info['config']['forms']);
+        $this->data['setting'] = $this->info['setting'];
+        $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
 
         $this->data['id'] = $id;
 
-        return view('location.form',$this->data);
+        return view('location.form', $this->data);
     }
 
-    public function getShow( $id = null)
+    public function getShow($id = null)
     {
 
-        if($this->access['is_detail'] ==0)
+        if ($this->access['is_detail'] == 0)
             return Redirect::to('dashboard')
-                ->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus','error');
+                ->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
 
         $row = $this->model->getRow($id);
-        if($row)
-        {
-            $this->data['row'] =  $row;
+        if ($row) {
+            $this->data['row'] = $row;
         } else {
             $this->data['row'] = $this->model->getColumnTable('location');
         }
 
         $this->data['id'] = $id;
-        $this->data['access']		= $this->access;
-        $this->data['setting'] 		= $this->info['setting'];
-        $this->data['fields'] 		= \AjaxHelpers::fieldLang($this->info['config']['forms']);
-        return view('location.view',$this->data);
+        $this->data['access'] = $this->access;
+        $this->data['setting'] = $this->info['setting'];
+        $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
+        return view('location.view', $this->data);
     }
 
 
-    function postCopy( Request $request)
+    function postCopy(Request $request)
     {
 
-        foreach(\DB::select("SHOW COLUMNS FROM location ") as $column)
-        {
-            if( $column->Field != 'id')
+        foreach (\DB::select("SHOW COLUMNS FROM location ") as $column) {
+            if ($column->Field != 'id')
                 $columns[] = $column->Field;
         }
-        $toCopy = implode(",",$request->input('ids'));
+        $toCopy = implode(",", $request->input('ids'));
 
 
-        $sql = "INSERT INTO location (".implode(",", $columns).") ";
-        $sql .= " SELECT ".implode(",", $columns)." FROM location WHERE id IN (".$toCopy.")";
+        $sql = "INSERT INTO location (" . implode(",", $columns) . ") ";
+        $sql .= " SELECT " . implode(",", $columns) . " FROM location WHERE id IN (" . $toCopy . ")";
         \DB::insert($sql);
         return response()->json(array(
-            'status'=>'success',
-            'message'=> \Lang::get('core.note_success')
+            'status' => 'success',
+            'message' => \Lang::get('core.note_success')
         ));
     }
 
-    function postSave( Request $request, $id =null)
+    function postSave(Request $request, $id = null)
     {
         $form_data['date_opened'] = date('Y-m-d');
         $form_data['date_closed'] = date('Y-m-d');
 
-            $rules = $this->validateForm();
-            $validator = Validator::make($request->all(), $rules);
-            if ($validator->passes()) {
-                $data = $this->validatePost('location');
-                    $id = $this->model->insertRow($data,$id);
-                    return response()->json(array(
-                    'status' => 'success',
-                    'message' => \Lang::get('core.note_success')
-                ));
+        $rules = $this->validateForm();
+        $validator = Validator::make($request->all(), $rules);
+        if ($validator->passes()) {
+            $data = $this->validatePost('location');
+            $id = $this->model->insertRow($data, $id);
+            return response()->json(array(
+                'status' => 'success',
+                'message' => \Lang::get('core.note_success')
+            ));
 
-            } else {
+        } else {
 
-                $message = $this->validateListError($validator->getMessageBag()->toArray());
-                return response()->json(array(
-                    'message' => $message,
-                    'status' => 'error'
-                ));
-            }
+            $message = $this->validateListError($validator->getMessageBag()->toArray());
+            return response()->json(array(
+                'message' => $message,
+                'status' => 'error'
+            ));
+        }
     }
 
-    public function postDelete( Request $request)
+    public function postDelete(Request $request)
     {
 
-        if($this->access['is_remove'] ==0) {
+        if ($this->access['is_remove'] == 0) {
             return response()->json(array(
-                'status'=>'error',
-                'message'=> \Lang::get('core.note_restric')
+                'status' => 'error',
+                'message' => \Lang::get('core.note_restric')
             ));
             die;
 
         }
         // delete multipe rows
-        if(count($request->input('ids')) >=1)
-        {
+        if (count($request->input('ids')) >= 1) {
             $this->model->destroy($request->input('ids'));
 
             return response()->json(array(
-                'status'=>'success',
-                'message'=> \Lang::get('core.note_success_delete')
+                'status' => 'success',
+                'message' => \Lang::get('core.note_success_delete')
             ));
         } else {
             return response()->json(array(
-                'status'=>'error',
-                'message'=> \Lang::get('core.note_error')
+                'status' => 'error',
+                'message' => \Lang::get('core.note_error')
             ));
 
         }
 
     }
-    function getDetails(Request $request,$id=0)
+
+    function getDetails(Request $request, $id = 0)
     {
-        if($id > 0)
-        {
+        if ($id > 0) {
             $this->data['location_id'] = $id;
-            $this->data['row']=$this->model->getLocation($id);
-            return view('location.details',$this->data);
-        }
-        else{
-            return Redirect::to('dashboard')->with('messagetext',\Lang::get('core.note_restric'))->with('msgstatus','error');
+            $this->data['row'] = $this->model->getLocation($id);
+            return view('location.details', $this->data);
+        } else {
+            return Redirect::to('dashboard')->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
         }
 
     }
+
     function postTest(Request $request)
     {
 
     }
-    function postUpdatelocation(Request $request,$id)
+
+    function postUpdatelocation(Request $request, $id)
     {
-        $data=$request->all();
+        $data = $request->all();
         array_pop($data);
         array_shift($data);
-        $update=\DB::table('location')->where('id','=',$id)->update($data);
-        if($update)
-        {
+        $update = \DB::table('location')->where('id', '=', $id)->update($data);
+        if ($update) {
             return response()->json(array(
-                'status'=>'success',
-                'message'=> \Lang::get('core.note_success')
+                'status' => 'success',
+                'message' => \Lang::get('core.note_success')
             ));
-        }
-        else{
+        } else {
             return response()->json(array(
-                'status'=>'error',
-                'message'=> \Lang::get('core.note_error')
+                'status' => 'error',
+                'message' => \Lang::get('core.note_error')
             ));
         }
     }
-    function getLocation($id=null)
+
+    function getLocation($id = null)
     {
-        $this->data['access']		= $this->access;
-        $this->data['id']=$id;
-        return view('location.index',$this->data);
+        $this->data['access'] = $this->access;
+        $this->data['id'] = $id;
+        return view('location.index', $this->data);
     }
 
 

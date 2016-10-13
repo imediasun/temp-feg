@@ -51,12 +51,12 @@ class GamestitleController extends Controller
         } else {
             $config_id = 0;
         }
-            $this->data['config_id'] = $config_id;
-            $config = $this->model->getModuleConfig($module_id, $config_id);
-            if (!empty($config)) {
-                $this->data['config'] = \SiteHelpers::CF_decode_json($config[0]->config);
-                \Session::put('config_id', $config_id);
-            }
+        $this->data['config_id'] = $config_id;
+        $config = $this->model->getModuleConfig($module_id, $config_id);
+        if (!empty($config)) {
+            $this->data['config'] = \SiteHelpers::CF_decode_json($config[0]->config);
+            \Session::put('config_id', $config_id);
+        }
         $sort = (!is_null($request->input('sort')) ? $request->input('sort') : $this->info['setting']['orderby']);
         $order = (!is_null($request->input('order')) ? $request->input('order') : $this->info['setting']['ordertype']);
         // End Filter sort and order for query
@@ -84,11 +84,11 @@ class GamestitleController extends Controller
             } else {
                 $result->has_manual = "No";
             }
-                if ($result->has_servicebulletin == 1) {
-                    $result->has_servicebulletin = "Yes";
+            if ($result->has_servicebulletin == 1) {
+                $result->has_servicebulletin = "Yes";
 
             } else {
-                    $result->has_servicebulletin = "No";
+                $result->has_servicebulletin = "No";
             }
             if ($result->num_prize_meters == 1) {
                 $result->num_prize_meters = "Yes";
@@ -102,10 +102,9 @@ class GamestitleController extends Controller
         $page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;
 
 
-        if(count($results['rows']) == $results['total'] && $results['total']!=0 ){
+        if (count($results['rows']) == $results['total'] && $results['total'] != 0) {
             $params['limit'] = $results['total'];
         }
-
 
 
         $pagination = new Paginator($results['rows'], $results['total'], $params['limit']);
@@ -178,23 +177,23 @@ class GamestitleController extends Controller
         if ($row) {
 
 
-                if ($row[0]->has_manual == 1) {
-                    $row[0]->has_manual = "Yes";
+            if ($row[0]->has_manual == 1) {
+                $row[0]->has_manual = "Yes";
 
-                } else {
-                    $row[0]->has_manual = "No";
-                }
-                if ($row[0]->has_servicebulletin == 1) {
-                    $row[0]->has_servicebulletin = "Yes";
+            } else {
+                $row[0]->has_manual = "No";
+            }
+            if ($row[0]->has_servicebulletin == 1) {
+                $row[0]->has_servicebulletin = "Yes";
 
-                } else {
-                    $row[0]->has_servicebulletin = "No";
-                }
-                if ($row[0]->num_prize_meters == 1) {
-                    $row[0]->num_prize_meters = "Yes";
+            } else {
+                $row[0]->has_servicebulletin = "No";
+            }
+            if ($row[0]->num_prize_meters == 1) {
+                $row[0]->num_prize_meters = "Yes";
 
-                } else {
-                    $row[0]->num_prize_meters = "No";
+            } else {
+                $row[0]->num_prize_meters = "No";
 
             }
             $this->data['row'] = $row;
@@ -212,7 +211,6 @@ class GamestitleController extends Controller
 
     function postCopy(Request $request)
     {
-
 
 
         foreach (\DB::select("SHOW COLUMNS FROM game_title ") as $column) {
@@ -238,56 +236,52 @@ class GamestitleController extends Controller
     function postSave(Request $request, $id = 0)
     {
 
-        $files = array('manual' => Input::file('manual'),'bulletin'=> Input::file('service_bulletin'));
+        $files = array('manual' => Input::file('manual'), 'bulletin' => Input::file('service_bulletin'));
         $rules = $this->validateForm();
-    //  $rules['manual']='Not Required|mimes:pdf';
-        $rules["game_title"]="required|unique:game_title";
-     // $rules['service_bulletin']='Not Required|mimes:pdf';
+        //  $rules['manual']='Not Required|mimes:pdf';
+        $rules["game_title"] = "required|unique:game_title";
+        // $rules['service_bulletin']='Not Required|mimes:pdf';
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
-            if($id==0) {
+            if ($id == 0) {
                 $data = $this->validatePost('game_title');
                 $id = $this->model->insertRow($data, $request->input('id'));
-            }
-            else
-            {
+            } else {
                 $data = $this->validatePost('game_title');
-                $id = $this->model->insertRow($data,$id);
+                $id = $this->model->insertRow($data, $id);
             }
-                $updates = array();
-                if ($request->hasFile('manual')) {
-                    $file = $request->file('manual');
-                    $filename = $file->getClientOriginalName();
-                    $extension = $file->getClientOriginalExtension(); //if you need extension of the file
-                    $newfilename = $id . '.' . $extension;
-                    $destinationPath = './uploads/games/manuals';
-                    $uploadSuccess = $request->file('manual')->move($destinationPath, $newfilename);
-                    if ($uploadSuccess) {
-                        $updates['manual'] = $newfilename;
-                        $updates['has_manual'] = '1';
-                    }
+            $updates = array();
+            if ($request->hasFile('manual')) {
+                $file = $request->file('manual');
+                $filename = $file->getClientOriginalName();
+                $extension = $file->getClientOriginalExtension(); //if you need extension of the file
+                $newfilename = $id . '.' . $extension;
+                $destinationPath = './uploads/games/manuals';
+                $uploadSuccess = $request->file('manual')->move($destinationPath, $newfilename);
+                if ($uploadSuccess) {
+                    $updates['manual'] = $newfilename;
+                    $updates['has_manual'] = '1';
                 }
-                if ($request->hasFile('service_bulletin')) {
-                    $file1 = $request->file('service_bulletin');
-                    $filename1 = $file1->getClientOriginalName();
-                    $extension1 = $file1->getClientOriginalExtension();
-                    $newfilename1 = $id . '.' . $extension1;
-                    $destinationPath1 = './uploads/games/bulletins';
-                    $uploadSuccess1 = $request->file('service_bulletin')->move($destinationPath1, $newfilename1);
-                    if ($uploadSuccess1) {
-                        $updates['bulletin'] = $newfilename1;
-                        $updates['has_servicebulletin'] = '1';
-                    }
+            }
+            if ($request->hasFile('service_bulletin')) {
+                $file1 = $request->file('service_bulletin');
+                $filename1 = $file1->getClientOriginalName();
+                $extension1 = $file1->getClientOriginalExtension();
+                $newfilename1 = $id . '.' . $extension1;
+                $destinationPath1 = './uploads/games/bulletins';
+                $uploadSuccess1 = $request->file('service_bulletin')->move($destinationPath1, $newfilename1);
+                if ($uploadSuccess1) {
+                    $updates['bulletin'] = $newfilename1;
+                    $updates['has_servicebulletin'] = '1';
                 }
-             //   $this->model->insertRow($updates, $id);
-                return response()->json(array(
-                    'status' => 'success',
-                    'message' => \Lang::get('core.note_success')
-                ));
+            }
+            //   $this->model->insertRow($updates, $id);
+            return response()->json(array(
+                'status' => 'success',
+                'message' => \Lang::get('core.note_success')
+            ));
 
-        }
-
-         else {
+        } else {
             $message = $this->validateListError($validator->getMessageBag()->toArray());
             return response()->json(array(
                 'status' => 'error',
@@ -325,49 +319,51 @@ class GamestitleController extends Controller
         }
 
     }
-    function getUpload(Request $request,$id=0)
+
+    function getUpload(Request $request, $id = 0)
     {
-        $uploadType=$request->get('type');
-        $this->data['game_id']=$id;
-        switch($uploadType)
-        {
+        $uploadType = $request->get('type');
+        $this->data['game_id'] = $id;
+        switch ($uploadType) {
             case 1:
-                $this->data['pageTitle']="Game Image";
-                $this->data['pageNote']="Game Image";
-                $this->data['upload_inst']='**MUST BE jpg, jpeg, gif, png**';
+                $this->data['pageTitle'] = "Game Image";
+                $this->data['pageNote'] = "Game Image";
+                $this->data['upload_inst'] = '**MUST BE jpg, jpeg, gif, png**';
                 break;
             case 2:
-                $this->data['pageTitle']="Game Manual";
-                $this->data['pageNote']="Game Manual";
-                $this->data['upload_inst']='**MUST BE PDF**';
+                $this->data['pageTitle'] = "Game Manual";
+                $this->data['pageNote'] = "Game Manual";
+                $this->data['upload_inst'] = '**MUST BE PDF**';
                 break;
             case 3:
-                $this->data['pageTitle']="Game Bulletin";
-                $this->data['pageNote']="Game Bulletin";
-                $this->data['upload_inst']='**MUST BE PDF**';
+                $this->data['pageTitle'] = "Game Bulletin";
+                $this->data['pageNote'] = "Game Bulletin";
+                $this->data['upload_inst'] = '**MUST BE PDF**';
                 break;
                 defaule:
-                $this->data['pageTitle']="Games Title";
-                $this->data['pageNote']="";
+                $this->data['pageTitle'] = "Games Title";
+                $this->data['pageNote'] = "";
 
         }
-        $this->data['upload_type']=$uploadType;
-        $res=\DB::table('game_title')->select('img','game_title')->where('id', $id)->get();
-        $this->data['game_image']=$res[0]->img;
-        $this->data['game_title']=$res[0]->game_title;
-         return view('gamestitle.upload',$this->data);
+        $this->data['upload_type'] = $uploadType;
+        $res = \DB::table('game_title')->select('img', 'game_title')->where('id', $id)->get();
+        $this->data['game_image'] = $res[0]->img;
+        $this->data['game_title'] = $res[0]->game_title;
+        return view('gamestitle.upload', $this->data);
 
     }
+
     function postUpload(Request $request)
     {
 
         $files = array('file' => Input::file('avatar'));
-        $type=Input::get('upload_type'); $id = Input::get('id');
-        $destinationPath="./uploads/games";
-        $id=Input::get('id');
-        $upload_type=Input::get('upload_type');
-      //  $rules=array();
-        switch($type) {
+        $type = Input::get('upload_type');
+        $id = Input::get('id');
+        $destinationPath = "./uploads/games";
+        $id = Input::get('id');
+        $upload_type = Input::get('upload_type');
+        //  $rules=array();
+        switch ($type) {
             case 1:
                 $rules = array('file' => 'required|mimes:jpeg,gif,png'); //mimes:jpeg,bmp,png
                 $destinationPath .= '/images';
@@ -385,74 +381,69 @@ class GamestitleController extends Controller
                 $destinationPath .= '/images';
 
         }
-                // doing the validation, passing post data, rules and the messages
-                $validator = Validator::make($files,$rules);
+        // doing the validation, passing post data, rules and the messages
+        $validator = Validator::make($files, $rules);
 
-            if ($validator->fails()) {
+        if ($validator->fails()) {
 
-                return Redirect::to('gamestitle/upload/' . $id ."?type=".$upload_type)->with('messagetext', \Lang::get('core.note_success'))->with('msgstatus', 'Please select an Image..')->withErrors($validator);
+            return Redirect::to('gamestitle/upload/' . $id . "?type=" . $upload_type)->with('messagetext', \Lang::get('core.note_success'))->with('msgstatus', 'Please select an Image..')->withErrors($validator);
 
         } else {
-        $updates = array();
-        $file = $request->file('avatar');
-        $filename = $file->getClientOriginalName();
-        $extension = $file->getClientOriginalExtension(); //if you need extension of the file
-        $newfilename = $id . '.' . $extension;
-        $uploadSuccess = $request->file('avatar')->move($destinationPath, $newfilename);
-        if ($uploadSuccess) {
-            if($type==1)
-            {
-                $updates['img'] = $newfilename;
+            $updates = array();
+            $file = $request->file('avatar');
+            $filename = $file->getClientOriginalName();
+            $extension = $file->getClientOriginalExtension(); //if you need extension of the file
+            $newfilename = $id . '.' . $extension;
+            $uploadSuccess = $request->file('avatar')->move($destinationPath, $newfilename);
+            if ($uploadSuccess) {
+                if ($type == 1) {
+                    $updates['img'] = $newfilename;
+                } elseif ($type == 2) {
+                    $updates['manual'] = $newfilename;
+                    $updates['has_manual'] = '1';
+                } elseif ($type == 3) {
+                    $updates['bulletin'] = $newfilename;
+                    $updates['has_servicebulletin'] = '1';
+                }
+
             }
-            elseif($type==2)
-            {
-                $updates['manual'] = $newfilename;
-                $updates['has_manual']='1';
-            }
-            elseif($type==3)
-            {
-                $updates['bulletin'] = $newfilename;
-                $updates['has_servicebulletin']='1';
-            }
+            $this->model->insertRow($updates, $id);
+            $return = 'gamestitle/upload/' . $id;
+            return Redirect::to('gamestitle/upload/' . $id . "?type=" . $upload_type)->with('messagetext', \Lang::get('core.note_success'))->with('msgstatus', 'success');
 
         }
-        $this->model->insertRow($updates, $id);
-        $return = 'gamestitle/upload/' . $id;
-        return Redirect::to('gamestitle/upload/' . $id."?type=".$upload_type)->with('messagetext', \Lang::get('core.note_success'))->with('msgstatus', 'success');
-
-    }
-
 
 
     }
+
     function getImagesupdate()
     {
-        $rows=\DB::table('game_title')->select('id')->get();
-        foreach($rows as $row)
-        {
-            $img=$row->id.".jpg";
-            \DB::table('game_title')->where('id','=',$row->id)->update(array('img'=>$img));
+        $rows = \DB::table('game_title')->select('id')->get();
+        foreach ($rows as $row) {
+            $img = $row->id . ".jpg";
+            \DB::table('game_title')->where('id', '=', $row->id)->update(array('img' => $img));
         }
     }
+
     function getManualupdate()
-{
-    $rows=\DB::table('game_title')->select('id')->get();
-    foreach($rows as $row)
     {
-        $manual=$row->id.".pdf";
-        \DB::table('game_title')->where('id','=',$row->id)->update(array('manual'=>$manual));
+        $rows = \DB::table('game_title')->select('id')->get();
+        foreach ($rows as $row) {
+            $manual = $row->id . ".pdf";
+            \DB::table('game_title')->where('id', '=', $row->id)->update(array('manual' => $manual));
+        }
     }
-}
+
     function getBulletinupdate()
     {
-        $rows=\DB::table('game_title')->select('id')->get();
-        foreach($rows as $row)
-        {
-            $bulletin=$row->id.".pdf";
-            \DB::table('game_title')->where('id','=',$row->id)->update(array('bulletin'=>$bulletin));
+        $rows = \DB::table('game_title')->select('id')->get();
+        foreach ($rows as $row) {
+            $bulletin = $row->id . ".pdf";
+            \DB::table('game_title')->where('id', '=', $row->id)->update(array('bulletin' => $bulletin));
         }
     }
-    function getImageremove(Request $request,$id)
+
+    function getImageremove(Request $request, $id)
     {
         if ($this->access['is_remove'] == 0) {
             return response()->json(array(
@@ -464,9 +455,9 @@ class GamestitleController extends Controller
         }
         // delete multipe rows
         if (true) {
-            $filename = public_path()."\\uploads\\games\\images\\".$id.".jpg";
+            $filename = public_path() . "\\uploads\\games\\images\\" . $id . ".jpg";
             if (\File::exists($filename)) {
-               \ File::delete($filename);
+                \ File::delete($filename);
             }
             return response()->json(array(
                 'status' => 'success',
@@ -481,43 +472,6 @@ class GamestitleController extends Controller
         }
 
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 }

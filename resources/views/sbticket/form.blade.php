@@ -45,7 +45,7 @@
 					  
 					<?php $Priority = explode(',',$row['Priority']);
 					$Priority_opt = array('high' => 'High' ,  'medium' => 'Medium' ,  'low' => 'Low' , ); ?>
-					<select name='Priority' rows='5' required  class='select2 '  > 
+					<select name='Priority' rows='5' required  class='select2 '  >
 						<?php 
 						foreach($Priority_opt as $key=>$val)
 						{
@@ -65,12 +65,19 @@
 					  
 					<?php $Status = explode(',',$row['Status']);
 					$Status_opt = array( 'open' => 'Open' ,  'inqueue' => 'Pending' ,  'closed' => 'Closed' , ); ?>
-					<select name='Status' rows='5'   class='select2 '  > 
-						<?php 
+					<select name='Status' rows='5'   class='select2 ' @if($in_edit_mode) disabled @endif  >
+						<?php
+                            if(!$in_edit_mode)
+                                {
 						foreach($Status_opt as $key=>$val)
 						{
 							echo "<option  value ='$key' ".($row['Status'] == $key ? " selected='selected' " : '' ).">$val</option>"; 						
-						}						
+						}
+                            }
+                            else{
+                                echo "<option  value ='open'>Open</option>";
+                            }
+
 						?></select> 
 					 </div> 
 					 <div class="col-md-2">
@@ -84,8 +91,8 @@
 					<div class="col-md-6">
 					  
 					<?php $issue_type = explode(',',$row['issue_type']);
-					$issue_type_opt = array( 'Support Issue' => 'Support Issue' ,  'Order Request' => 'Order Request' , ); ?>
-					<select name='issue_type' rows='5'   class='select2 '  > 
+					$issue_type_opt = array('Order Request' => 'Order Request' ,'Support Issue' => 'Support Issue' ); ?>
+					<select name='issue_type' rows='5'   class='select2 ' required >
 						<?php 
 						foreach($issue_type_opt as $key=>$val)
 						{
@@ -229,11 +236,17 @@
 
 @if($setting['form-method'] =='native')
 	</div>	
-</div>	
-@endif	
 
-	
-</div>	
+@endif	
+<?php
+            if($in_edite_mode)
+                {
+                    $row['location_id']=\Session::get('selected_location');
+                }
+
+        ?>
+
+</div>
 			 
 <script type="text/javascript">
 $(document).ready(function() { 

@@ -7,14 +7,14 @@
  */
 
 namespace App\Http\Controllers;
-use App\Http\Controllers\Controller;
 
+use App\Http\Controllers\Controller;
 
 
 use Illuminate\Support\Facades\Input;
 use DB;
 
-class DemoController  extends Controller
+class DemoController extends Controller
 {
 
 
@@ -24,6 +24,6 @@ class DemoController  extends Controller
 
         $company = DB::table('company')->get();
 
-        return view('demo.index',['company' => $company]);
+        return view('demo.index', ['company' => $company]);
     }
 }

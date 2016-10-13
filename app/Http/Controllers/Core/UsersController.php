@@ -29,7 +29,7 @@ class UsersController extends Controller
             'pageTitle' => $this->info['title'],
             'pageNote' => $this->info['note'],
             'pageModule' => 'core/users',
-            'pageUrl'	=>  url('core/users'),
+            'pageUrl' => url('core/users'),
             'return' => self::returnUrl()
 
         );
@@ -39,8 +39,8 @@ class UsersController extends Controller
     {
         $module_id = \DB::table('tb_module')->where('module_name', '=', 'users')->pluck('module_id');
 
-        $this->data['modules'] 		= \DB::table('tb_module')->where('module_type','!=','core')->get();
-        $this->data['pages'] 		= \DB::select(" SELECT * FROM tb_pages ");
+        $this->data['modules'] = \DB::table('tb_module')->where('module_type', '!=', 'core')->get();
+        $this->data['pages'] = \DB::select(" SELECT * FROM tb_pages ");
 
         $this->data['module_id'] = $module_id;
 
@@ -62,8 +62,8 @@ class UsersController extends Controller
             return Redirect::to('dashboard')
                 ->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
 
-		$sort = (!is_null($request->input('sort')) ? $request->input('sort') : $this->info['setting']['orderby']);
-		$order = (!is_null($request->input('order')) ? $request->input('order') : $this->info['setting']['ordertype']);
+        $sort = (!is_null($request->input('sort')) ? $request->input('sort') : $this->info['setting']['orderby']);
+        $order = (!is_null($request->input('order')) ? $request->input('order') : $this->info['setting']['ordertype']);
         // End Filter sort and order for query
         // Filter Search for query
         $filter = (!is_null($request->input('search')) ? $this->buildSearch() : '');
@@ -73,25 +73,25 @@ class UsersController extends Controller
 
         $page = $request->input('page', 1);
 
-            $params = array(
-            'page'      => $page,
-            'limit'     => (!is_null($request->input('rows')) ? filter_var($request->input('rows'),FILTER_VALIDATE_INT) : $this->info['setting']['perpage'] ),
-            'sort'      => $sort,
-            'order'     => $order,
-            'params'    => $filter,
-            'global'    => (isset($this->access['is_global']) ? $this->access['is_global'] : 0)
+        $params = array(
+            'page' => $page,
+            'limit' => (!is_null($request->input('rows')) ? filter_var($request->input('rows'), FILTER_VALIDATE_INT) : $this->info['setting']['perpage']),
+            'sort' => $sort,
+            'order' => $order,
+            'params' => $filter,
+            'global' => (isset($this->access['is_global']) ? $this->access['is_global'] : 0)
         );
         // Get Query
         $results = $this->model->getRows($params);
 
         // Build pagination setting
         $page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;
-		//$pagination = new Paginator($results['rows'], $results['total'], $params['limit']);
-        $pagination = new Paginator($results['rows'], $results['total'], 
-            (isset($params['limit']) && $params['limit'] > 0  ? $params['limit'] : 
-				($results['total'] > 0 ? $results['total'] : '1')));          
+        //$pagination = new Paginator($results['rows'], $results['total'], $params['limit']);
+        $pagination = new Paginator($results['rows'], $results['total'],
+            (isset($params['limit']) && $params['limit'] > 0 ? $params['limit'] :
+                ($results['total'] > 0 ? $results['total'] : '1')));
         $pagination->setPath('users');
-        $this->data['param']		= $params;
+        $this->data['param'] = $params;
         foreach ($results['rows'] as $result) {
 
             if ($result->is_tech_contact == 1) {
@@ -153,10 +153,10 @@ class UsersController extends Controller
         }
         $this->data['rowData'] = $results['rows'];
 
-        $this->data['modules'] 		= \DB::table('tb_module')->where('module_type','!=','core')->get();
-        $this->data['pages'] 		= \DB::select(" SELECT * FROM tb_pages ");
+        $this->data['modules'] = \DB::table('tb_module')->where('module_type', '!=', 'core')->get();
+        $this->data['pages'] = \DB::select(" SELECT * FROM tb_pages ");
 
-     
+
         // Build Pagination
         $this->data['pagination'] = $pagination;
         // Build pager number and append current param GET
@@ -169,7 +169,7 @@ class UsersController extends Controller
         $this->data['colspan'] = \SiteHelpers::viewColSpan($this->info['config']['grid']);
         // Group users permission
         $this->data['access'] = $this->access;
-        $this->data['setting'] 		= $this->info['setting'];
+        $this->data['setting'] = $this->info['setting'];
         // Detail from master if any
 
         // Master detail link if any
@@ -198,27 +198,27 @@ class UsersController extends Controller
         Session::put('flgStatus', 1);
         Session::put('ll', $row->last_login);
         Session::put('fid', $row->first_name . ' ' . $row->last_name);
-        Session::put('user_name',$row->username);
+        Session::put('user_name', $row->username);
         Session::put('ufname', $row->first_name);
         Session::put('ulname', $row->last_name);
         Session::put('company_id', $row->company_id);
         $user_locations = \SiteHelpers::getLocationDetails($row->id);
-        if(!empty($user_locations)) {
+        if (!empty($user_locations)) {
             Session::put('user_locations', $user_locations);
             Session::put('selected_location', $user_locations[0]->id);
             Session::put('selected_location_name', $user_locations[0]->location_name_short);
         }
         Session::put('get_locations_by_region', $row->get_locations_by_region);
-        Session::put('email_2',$row->email_2);
-        Session::put('primary_phone',$row->primary_phone);
-        Session::put('secondary_phone',$row->secondary_phone);
-        Session::put('street',$row->street);
-        Session::put('city',$row->city);
-        Session::put('state',$row->state);
-        Session::put('zip',$row->zip);
-        Session::put('reg_id',$row->reg_id);
-        Session::put('restricted_mgr_email',$row->restricted_mgr_email);
-        Session::put('restricted_user_email',$row->restricted_user_email);
+        Session::put('email_2', $row->email_2);
+        Session::put('primary_phone', $row->primary_phone);
+        Session::put('secondary_phone', $row->secondary_phone);
+        Session::put('street', $row->street);
+        Session::put('city', $row->city);
+        Session::put('state', $row->state);
+        Session::put('zip', $row->zip);
+        Session::put('reg_id', $row->reg_id);
+        Session::put('restricted_mgr_email', $row->restricted_mgr_email);
+        Session::put('restricted_user_email', $row->restricted_user_email);
         Session::save();
 
         if (Session::get('return_id') == $id) {
@@ -311,8 +311,8 @@ class UsersController extends Controller
 
         $this->data['id'] = $id;
 
-        $this->data['modules'] 		= \DB::table('tb_module')->where('module_type','!=','core')->orderby('module_name')->get();
-        $this->data['pages'] 		= \DB::select(" SELECT * FROM tb_pages order by alias");
+        $this->data['modules'] = \DB::table('tb_module')->where('module_type', '!=', 'core')->orderby('module_name')->get();
+        $this->data['pages'] = \DB::select(" SELECT * FROM tb_pages order by alias");
         return view('core.users.form', $this->data);
     }
 
@@ -403,7 +403,7 @@ class UsersController extends Controller
         if ($validator->passes()) {
             $data = $this->validatePost('users');
 
-            $data['redirect_link']=$request->get('redirect_link');
+            $data['redirect_link'] = $request->get('redirect_link');
             if ($request->input('id') == '') {
                 $logId = Users::insertLog($this->module, 'insert');
                 $data['password'] = \Hash::make(Input::get('password'));
@@ -420,18 +420,15 @@ class UsersController extends Controller
             }
 
             $id = $this->model->insertRow($data, $request->input('id'));
-            $all_locations=Input::get('all_locations');
-            if(empty($all_locations)) {
+            $all_locations = Input::get('all_locations');
+            if (empty($all_locations)) {
                 $this->model->inserLocations($request->input('multiple_locations'), $id, $request->input('id'));
-            }
-            else
-            {
-               $all_locations=\DB::select('select id from location');
-                $locations=array();
-                $i=0;
-                foreach($all_locations as $l)
-                {
-                    $locations[$i]=$l->id;
+            } else {
+                $all_locations = \DB::select('select id from location');
+                $locations = array();
+                $i = 0;
+                foreach ($all_locations as $l) {
+                    $locations[$i] = $l->id;
                     $i++;
                 }
                 $this->model->inserLocations($locations, $id, $request->input('id'));

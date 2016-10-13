@@ -82,25 +82,22 @@ class ThrowreportController extends Controller
         $filters = $this->model->getSearchFilters();
         $dateStart = @$filters['date_start'];
         $dateEnd = @$filters['date_end'];
-        if(empty($dateStart) && empty($dateEnd))
-        {
+        if (empty($dateStart) && empty($dateEnd)) {
             $dateStart = $this->model->getStartDayOfWeek();
             $dateEnd = $this->model->getEndDayOfWeek();
         }
 
-        if(count($results['rows']) == 0 && !empty($dateStart) && !empty($dateEnd))
-        {
+        if (count($results['rows']) == 0 && !empty($dateStart) && !empty($dateEnd)) {
             $dateStart_expression = date("Y-m-d", strtotime($dateStart));
             $dateEnd_expression = date("Y-m-d", strtotime($dateEnd));
-            $location= \Session::get('selected_location');
+            $location = \Session::get('selected_location');
             $rows = \DB::select("SELECT game_earnings.date_start, game_earnings.date_end, SUM(std_actual_cash) AS revenue_total,game.*
 FROM game
 JOIN game_earnings ON game_earnings.game_id = game.id WHERE game_earnings.loc_id =$location and
 game_earnings.date_start >= '$dateStart_expression' and game_earnings.date_end <= '$dateEnd_expression'
 and game.game_type_id = 3
 GROUP BY game.id");
-            if(count($rows) > 0)
-            {
+            if (count($rows) > 0) {
                 $this->importDateIntoMerchThrow($rows);
                 $results = $this->model->getRows($params);
             }
@@ -133,7 +130,7 @@ GROUP BY game.id");
         $this->data['access'] = $this->access;
         // Detail from master if any
         $this->data['setting'] = $this->info['setting'];
-        $this->data['setDate'] = isset($dateStart) ? $dateStart.'-'.$dateEnd : '';
+        $this->data['setDate'] = isset($dateStart) ? $dateStart . '-' . $dateEnd : '';
         $this->data['setWeek'] = date("W", strtotime($dateEnd));;
         // Master detail link if any
         $this->data['subgrid'] = (isset($this->info['config']['subgrid']) ? $this->info['config']['subgrid'] : array());
@@ -147,8 +144,7 @@ GROUP BY game.id");
 
     private function importDateIntoMerchThrow($rows)
     {
-        foreach($rows as $row)
-        {
+        foreach ($rows as $row) {
             $data = array(
                 'date_start' => date("Y-m-d", strtotime($row->date_start)),
                 'date_end' => date("Y-m-d", strtotime($row->date_end)),
@@ -237,10 +233,9 @@ GROUP BY game.id");
         if ($request->input('id') != '') {
             $data = $request->all();
             $meter = array();
-            for($index = 0; $index < count($data['meter_start']); $index++)
-            {
-                $meter[$index][] =  $data['meter_start'][$index];
-                $meter[$index][] =  $data['meter_end'][$index];
+            for ($index = 0; $index < count($data['meter_start']); $index++) {
+                $meter[$index][] = $data['meter_start'][$index];
+                $meter[$index][] = $data['meter_end'][$index];
             }
             unset($data['meter_start']);
             unset($data['meter_end']);
@@ -268,9 +263,8 @@ GROUP BY game.id");
         $dateEnd_expression = date("Y-m-d", strtotime($date[1]));
         $rows = \DB::table('merch_throws')->where('date_start', '>=', $dateStart_expression)->where('date_end', '<=', $dateEnd_expression)->select('id')->get();
         if (count($rows) > 0) {
-            foreach($rows as $row)
-            {
-                \DB::table('merch_throws')->where('id', $row->id)->update(array('flag'=>1));
+            foreach ($rows as $row) {
+                \DB::table('merch_throws')->where('id', $row->id)->update(array('flag' => 1));
             }
             return response()->json(array(
                 'status' => 'success',

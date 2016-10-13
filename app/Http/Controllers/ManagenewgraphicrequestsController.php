@@ -31,7 +31,8 @@ class ManagenewgraphicrequestsController extends Controller
         );
     }
 
-    public function getApprove($id){
+    public function getApprove($id)
+    {
 
         echo config('app.admin-email');
         exit;
@@ -42,25 +43,24 @@ class ManagenewgraphicrequestsController extends Controller
             'approve_date' => date('Y-m-d')
         );
 
-        if($request->insertRow($data, $id)){
-            return Redirect::to('managenewgraphicrequests')->with('messagetext','Graphic request approved')->with('msgstatus','success');
-        }
-        else{
-            return Redirect::to('managenewgraphicrequests')->with('messagetext','Error on approving graphic request')->with('msgstatus','error');
+        if ($request->insertRow($data, $id)) {
+            return Redirect::to('managenewgraphicrequests')->with('messagetext', 'Graphic request approved')->with('msgstatus', 'success');
+        } else {
+            return Redirect::to('managenewgraphicrequests')->with('messagetext', 'Error on approving graphic request')->with('msgstatus', 'error');
         }
     }
 
-    public function getDeny($id){
+    public function getDeny($id)
+    {
         $request = Managenewgraphicrequests::find($id);
         $data = array(
             'status_id' => 0,
         );
 
-        if($request->insertRow($data, $id)){
-            return Redirect::to('managenewgraphicrequests')->with('messagetext','Graphic request denied')->with('msgstatus','success');
-        }
-        else{
-            return Redirect::to('managenewgraphicrequests')->with('messagetext','Error on declining graphic request')->with('msgstatus','error');
+        if ($request->insertRow($data, $id)) {
+            return Redirect::to('managenewgraphicrequests')->with('messagetext', 'Graphic request denied')->with('msgstatus', 'success');
+        } else {
+            return Redirect::to('managenewgraphicrequests')->with('messagetext', 'Error on declining graphic request')->with('msgstatus', 'error');
         }
 
     }
@@ -90,8 +90,7 @@ class ManagenewgraphicrequestsController extends Controller
         if (!empty($config)) {
             $this->data['config'] = \SiteHelpers::CF_decode_json($config[0]->config);
             \Session::put('config_id', $config_id);
-        }
-        else{
+        } else {
             \Session::put('config_id', '0');
         }
         $sort = (!is_null($request->input('sort')) ? $request->input('sort') : $this->info['setting']['orderby']);
@@ -113,16 +112,14 @@ class ManagenewgraphicrequestsController extends Controller
         $view = $request->get('view');
         $cond = array('view' => $view);
         $this->data['view'] = $view;
-        $this->data['manageNewGraphicsInfo']=$this->model->getManageGraphicsRequestsInfo();
+        $this->data['manageNewGraphicsInfo'] = $this->model->getManageGraphicsRequestsInfo();
         // Get Query
         $results = $this->model->getRows($params, $cond);
         // Build pagination setting
         $page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;
 
 
-
-
-        if(count($results['rows']) == $results['total'] && $results['total']!=0){
+        if (count($results['rows']) == $results['total'] && $results['total'] != 0) {
             $params['limit'] = $results['total'];
         }
 
@@ -235,12 +232,10 @@ class ManagenewgraphicrequestsController extends Controller
             $data['media_type'] = $request->get('media_type');
             if (\Session::has('uid') && $data['status_id']) {
                 $data['aprrove_user_id'] = \Session::get('uid');
-                $data['approve_date'] =  date('Y-m-d');
-            }
-            else
-            {
+                $data['approve_date'] = date('Y-m-d');
+            } else {
                 $data['aprrove_user_id'] = '';
-                $data['approve_date'] =  '';
+                $data['approve_date'] = '';
             }
             $id = $this->model->insertRow($data, $id);
             return response()->json(array(

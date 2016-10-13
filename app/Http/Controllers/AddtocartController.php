@@ -37,7 +37,7 @@ class AddtocartController extends Controller
             return Redirect::to('dashboard')->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
         $productId = \Session::get('productId');
         \Session::put('productId', $productId);
-       // $cartData = $this->model->popupCartData(null);
+        // $cartData = $this->model->popupCartData(null);
         //$this->data['cartData'] = $cartData;
         // \Session::put('cartData', $cartData);
         $this->data['access'] = $this->access;
@@ -114,7 +114,7 @@ class AddtocartController extends Controller
     }
 
 
-    function getUpdate(Request $request, $id = null,$v=null)
+    function getUpdate(Request $request, $id = null, $v = null)
     {
         if ($id == '') {
             if ($this->access['is_add'] == 0)
@@ -281,8 +281,8 @@ class AddtocartController extends Controller
         \DB::table('requests')->where('location_id', $location_id)->where('status_id', $statusId)->update($update);
 
         if (empty($new_location)) {
-            return Redirect::to('./shopfegrequeststore')->with('messagetext','Submitted Successfully')->with('msgstatus', 'success');
-           \Session::put('total_cart',0);
+            return Redirect::to('./shopfegrequeststore')->with('messagetext', 'Submitted Successfully')->with('msgstatus', 'success');
+            \Session::put('total_cart', 0);
             //redirect('fegllc/popupCart', 'refresh');
         } else {
 
@@ -290,26 +290,25 @@ class AddtocartController extends Controller
             return redirect('./shopfegrequeststore/popup-cart/');
         }
     }
-    public function getSave($id=null,$qty=null,$vendor_name=null)
-    {
-        $data=array('qty'=>$qty);
-        $update=\DB::table('requests')->where('id',$id)->update($data);
-        if($update)
-        {
-            $vendor_name= str_replace('_', ' ', $vendor_name);
 
-            $updated=$this->model->popupCartData(null,$vendor_name);
-            return json_encode(array('vendor_name'=>$updated['subtotals'][0]['vendor_name'],'subtotal'=>$updated['subtotals'][0]['vendor_total']));
-        }
-        else
-        {
+    public function getSave($id = null, $qty = null, $vendor_name = null)
+    {
+        $data = array('qty' => $qty);
+        $update = \DB::table('requests')->where('id', $id)->update($data);
+        if ($update) {
+            $vendor_name = str_replace('_', ' ', $vendor_name);
+
+            $updated = $this->model->popupCartData(null, $vendor_name);
+            return json_encode(array('vendor_name' => $updated['subtotals'][0]['vendor_name'], 'subtotal' => $updated['subtotals'][0]['vendor_total']));
+        } else {
             echo "Update Failed...";
         }
     }
+
     public function getCartdata()
     {
         $productId = \Session::get('productId');
-        $cart_data=$this->model->popupCartData($productId);
+        $cart_data = $this->model->popupCartData($productId);
         return response()->json($cart_data);
     }
 

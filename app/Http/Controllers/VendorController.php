@@ -4,44 +4,44 @@ use App\Http\Controllers\controller;
 use App\Models\Vendor;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
-use Validator, Input, Redirect ;
+use Validator, Input, Redirect;
 
-class VendorController extends Controller {
+class VendorController extends Controller
+{
 
     protected $layout = "layouts.main";
     protected $data = array();
     public $module = 'vendor';
-    static $per_page	= '10';
+    static $per_page = '10';
 
     public function __construct()
     {
         parent::__construct();
         $this->model = new Vendor();
 
-        $this->info = $this->model->makeInfo( $this->module);
+        $this->info = $this->model->makeInfo($this->module);
         $this->access = $this->model->validAccess($this->info['id']);
 
         $this->data = array(
-            'pageTitle'			=> 	$this->info['title'],
-            'pageNote'			=>  $this->info['note'],
-            'pageModule'		=> 'vendor',
-            'pageUrl'			=>  url('vendor'),
-            'return' 			=> 	self::returnUrl()
+            'pageTitle' => $this->info['title'],
+            'pageNote' => $this->info['note'],
+            'pageModule' => 'vendor',
+            'pageUrl' => url('vendor'),
+            'return' => self::returnUrl()
         );
-
 
 
     }
 
     public function getIndex()
     {
-        if($this->access['is_view'] ==0)
-            return Redirect::to('dashboard')->with('messagetext',\Lang::get('core.note_restric'))->with('msgstatus','error');
-        $this->data['access']		= $this->access;
-        return view('vendor.index',$this->data);
+        if ($this->access['is_view'] == 0)
+            return Redirect::to('dashboard')->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
+        $this->data['access'] = $this->access;
+        return view('vendor.index', $this->data);
     }
 
-    public function postData( Request $request)
+    public function postData(Request $request)
     {
         $module_id = \DB::table('tb_module')->where('module_name', '=', 'vendor')->pluck('module_id');
         $this->data['module_id'] = $module_id;
@@ -54,8 +54,7 @@ class VendorController extends Controller {
         }
         $this->data['config_id'] = $config_id;
         $config = $this->model->getModuleConfig($module_id, $config_id);
-        if(!empty($config))
-        {
+        if (!empty($config)) {
             $this->data['config'] = \SiteHelpers::CF_decode_json($config[0]->config);
             \Session::put('config_id', $config_id);
         }
@@ -67,15 +66,15 @@ class VendorController extends Controller {
 
         $page = $request->input('page', 1);
         $params = array(
-            'page'		=> $page ,
-            'limit'		=> (!is_null($request->input('rows')) ? filter_var($request->input('rows'),FILTER_VALIDATE_INT) : $this->info['setting']['perpage'] ) ,
-            'sort'		=> $sort ,
-            'order'		=> $order,
-            'params'	=> $filter,
-            'global'	=> (isset($this->access['is_global']) ? $this->access['is_global'] : 0 )
+            'page' => $page,
+            'limit' => (!is_null($request->input('rows')) ? filter_var($request->input('rows'), FILTER_VALIDATE_INT) : $this->info['setting']['perpage']),
+            'sort' => $sort,
+            'order' => $order,
+            'params' => $filter,
+            'global' => (isset($this->access['is_global']) ? $this->access['is_global'] : 0)
         );
         // Get Query
-        $results = $this->model->getRows( $params );
+        $results = $this->model->getRows($params);
         foreach ($results['rows'] as $result) {
 
             if ($result->partner_hide == 1) {
@@ -102,9 +101,7 @@ class VendorController extends Controller {
         $page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;
 
 
-
-
-        if(count($results['rows']) == $results['total'] && $results['total']!=0){
+        if (count($results['rows']) == $results['total'] && $results['total'] != 0) {
             $params['limit'] = $results['total'];
         }
 
@@ -112,31 +109,31 @@ class VendorController extends Controller {
         $pagination = new Paginator($results['rows'], $results['total'], $params['limit']);
         $pagination->setPath('vendor/data');
 
-        $this->data['param']		= $params;
-        $this->data['rowData']		= $results['rows'];
+        $this->data['param'] = $params;
+        $this->data['rowData'] = $results['rows'];
         // Build Pagination
-        $this->data['pagination']	= $pagination;
+        $this->data['pagination'] = $pagination;
         // Build pager number and append current param GET
-        $this->data['pager'] 		= $this->injectPaginate();
+        $this->data['pager'] = $this->injectPaginate();
         // Row grid Number
-        $this->data['i']			= ($page * $params['limit'])- $params['limit'];
+        $this->data['i'] = ($page * $params['limit']) - $params['limit'];
         // Grid Configuration
-        $this->data['tableGrid'] 	= $this->info['config']['grid'];
-        $this->data['tableForm'] 	= $this->info['config']['forms'];
-        $this->data['colspan'] 		= \SiteHelpers::viewColSpan($this->info['config']['grid']);
+        $this->data['tableGrid'] = $this->info['config']['grid'];
+        $this->data['tableForm'] = $this->info['config']['forms'];
+        $this->data['colspan'] = \SiteHelpers::viewColSpan($this->info['config']['grid']);
         // Group users permission
-        $this->data['access']		= $this->access;
+        $this->data['access'] = $this->access;
         // Detail from master if any
-        $this->data['setting'] 		= $this->info['setting'];
+        $this->data['setting'] = $this->info['setting'];
 
         // Master detail link if any
-        $this->data['subgrid']	= (isset($this->info['config']['subgrid']) ? $this->info['config']['subgrid'] : array());
+        $this->data['subgrid'] = (isset($this->info['config']['subgrid']) ? $this->info['config']['subgrid'] : array());
         if ($this->data['config_id'] != 0 && !empty($config)) {
             $this->data['tableGrid'] = \SiteHelpers::showRequiredCols($this->data['tableGrid'], $this->data['config']);
         }
         // Render into template
-      //  return response()->json($this->data);
-        return view('vendor.table',$this->data);
+        //  return response()->json($this->data);
+        return view('vendor.table', $this->data);
 
     }
 
@@ -144,43 +141,39 @@ class VendorController extends Controller {
     function getUpdate(Request $request, $id = null)
     {
 
-        if($id =='')
-        {
-            if($this->access['is_add'] ==0 )
-                return Redirect::to('dashboard')->with('messagetext',\Lang::get('core.note_restric'))->with('msgstatus','error');
+        if ($id == '') {
+            if ($this->access['is_add'] == 0)
+                return Redirect::to('dashboard')->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
         }
 
-        if($id !='')
-        {
-            if($this->access['is_edit'] ==0 )
-                return Redirect::to('dashboard')->with('messagetext',\Lang::get('core.note_restric'))->with('msgstatus','error');
+        if ($id != '') {
+            if ($this->access['is_edit'] == 0)
+                return Redirect::to('dashboard')->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
         }
 
         $row = $this->model->find($id);
-        if($row)
-        {
-            $this->data['row'] 		=  $row;
+        if ($row) {
+            $this->data['row'] = $row;
         } else {
-            $this->data['row'] 		= $this->model->getColumnTable('vendor');
+            $this->data['row'] = $this->model->getColumnTable('vendor');
         }
-        $this->data['setting'] 		= $this->info['setting'];
-        $this->data['fields'] 		=  \AjaxHelpers::fieldLang($this->info['config']['forms']);
+        $this->data['setting'] = $this->info['setting'];
+        $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
 
         $this->data['id'] = $id;
 
-        return view('vendor.form',$this->data);
+        return view('vendor.form', $this->data);
     }
 
-    public function getShow( $id = null)
+    public function getShow($id = null)
     {
 
-        if($this->access['is_detail'] ==0)
+        if ($this->access['is_detail'] == 0)
             return Redirect::to('dashboard')
-                ->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus','error');
+                ->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
 
         $row = $this->model->getRow($id);
-        if($row)
-        {
+        if ($row) {
             if ($row->partner_hide == 1) {
                 $row->partner_hide = "Yes";
 
@@ -200,42 +193,41 @@ class VendorController extends Controller {
                 $row->ismerch = "No";
             }
 
-            $this->data['row'] =  $row;
+            $this->data['row'] = $row;
         } else {
             $this->data['row'] = $this->model->getColumnTable('vendor');
         }
 
         $this->data['id'] = $id;
-        $this->data['access']		= $this->access;
-        $this->data['setting'] 		= $this->info['setting'];
-        $this->data['fields'] 		= \AjaxHelpers::fieldLang($this->info['config']['forms']);
-        return view('vendor.view',$this->data);
+        $this->data['access'] = $this->access;
+        $this->data['setting'] = $this->info['setting'];
+        $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
+        return view('vendor.view', $this->data);
     }
 
 
-    function postCopy( Request $request)
+    function postCopy(Request $request)
     {
 
-        foreach(\DB::select("SHOW COLUMNS FROM vendor ") as $column)
-        {
-            if( $column->Field != 'id')
+        foreach (\DB::select("SHOW COLUMNS FROM vendor ") as $column) {
+            if ($column->Field != 'id')
                 $columns[] = $column->Field;
         }
-        $toCopy = implode(",",$request->input('ids'));
+        $toCopy = implode(",", $request->input('ids'));
 
 
-        $sql = "INSERT INTO vendor (".implode(",", $columns).") ";
+        $sql = "INSERT INTO vendor (" . implode(",", $columns) . ") ";
 
         $columns[0] = "CONCAT('copy ',vendor_name)";
-        $sql .= " SELECT ".implode(",", $columns)." FROM vendor WHERE id IN (".$toCopy.")";
+        $sql .= " SELECT " . implode(",", $columns) . " FROM vendor WHERE id IN (" . $toCopy . ")";
         \DB::insert($sql);
         return response()->json(array(
-            'status'=>'success',
-            'message'=> \Lang::get('core.note_success')
+            'status' => 'success',
+            'message' => \Lang::get('core.note_success')
         ));
     }
 
-    function postSave( Request $request, $id =null)
+    function postSave(Request $request, $id = null)
     {
 
         $rules = $this->validateForm();
@@ -258,53 +250,52 @@ class VendorController extends Controller {
 
 //        }
 
-        $rules["vendor_name"]="required|unique:vendor,vendor_name,".$id;
+        $rules["vendor_name"] = "required|unique:vendor,vendor_name," . $id;
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
             $data = $this->validatePost('vendor');
 
-            $id = $this->model->insertRow($data ,$id);
+            $id = $this->model->insertRow($data, $id);
 
             return response()->json(array(
-                'status'=>'success',
-                'message'=> \Lang::get('core.note_success')
+                'status' => 'success',
+                'message' => \Lang::get('core.note_success')
             ));
 
         } else {
 
-            $message = $this->validateListError(  $validator->getMessageBag()->toArray() );
+            $message = $this->validateListError($validator->getMessageBag()->toArray());
             return response()->json(array(
-                'message'	=> $message,
-                'status'	=> 'error'
+                'message' => $message,
+                'status' => 'error'
             ));
         }
 
     }
 
-    public function postDelete( Request $request)
+    public function postDelete(Request $request)
     {
 
-        if($this->access['is_remove'] ==0) {
+        if ($this->access['is_remove'] == 0) {
             return response()->json(array(
-                'status'=>'error',
-                'message'=> \Lang::get('core.note_restric')
+                'status' => 'error',
+                'message' => \Lang::get('core.note_restric')
             ));
             die;
 
         }
         // delete multipe rows
-        if(count($request->input('ids')) >=1)
-        {
+        if (count($request->input('ids')) >= 1) {
             $this->model->destroy($request->input('ids'));
 
             return response()->json(array(
-                'status'=>'success',
-                'message'=> \Lang::get('core.note_success_delete')
+                'status' => 'success',
+                'message' => \Lang::get('core.note_success_delete')
             ));
         } else {
             return response()->json(array(
-                'status'=>'error',
-                'message'=> \Lang::get('core.note_error')
+                'status' => 'error',
+                'message' => \Lang::get('core.note_error')
             ));
 
         }
