@@ -67,7 +67,7 @@
 					<?php $Status = explode(',',$row['Status']);
 					$Status_opt = array( 'open' => 'Open' ,  'inqueue' => 'Pending' ,  'closed' => 'Closed' , ); ?>
 					<select name='Status' rows='5'   class='select2 ' @if(!$in_edit_mode) disabled @endif  >
-                      
+
 						<?php
                             if($in_edit_mode)
                                 {
@@ -263,8 +263,8 @@ $(document).ready(function() {
         //$("#department_id").jCombo("{{--URL::to('sbticket/comboselect?filter=departments:id:name') }}",
         //{  selected_value : '{{ $row["department_id"] --}}' });
         
-        $("#debit_card").jCombo("{{ URL::to('sbticket/comboselect?filter=debit_type:company:company') }}",
-        {  selected_value : '{{ $row["debit_card"] }}','initial-text': "Select Debit Type" });
+     //   $("#debit_card").jCombo("{{-- URL::to('sbticket/comboselect?filter=debit_type:company:company') }}",
+        {  selected_value : '{{ $row["debit_card"] }}','initial-text': "Select Debit Type" --});
         
       //  $("#assign_to").jCombo("{{-- URL::to('sbticket/comboselect?filter=employees:id:first_name|last_name') }}",
         //{  selected_value : '{{ $row["assign_to"] --}}' });
