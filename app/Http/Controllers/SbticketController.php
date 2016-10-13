@@ -100,8 +100,10 @@ class SbticketController extends Controller
         $group_id = \Session::get('gid');
         foreach ($rows as $index => $row) {
             $flag = 1;
-            //$row->comments = $comments->where('TicketID', '=', $row->TicketID)->orderBy('TicketID', 'desc')->take(1)->get();
-            $department_memebers = \DB::select("Select assign_employee_ids FROM departments WHERE id = " . $row->department_id . "");
+            if (isset($row->department_id) && !empty($row->department_id))
+            {
+                //$row->comments = $comments->where('TicketID', '=', $row->TicketID)->orderBy('TicketID', 'desc')->take(1)->get();
+                $department_memebers = \DB::select("Select assign_employee_ids FROM departments WHERE id = " . $row->department_id . "");
             $department_memebers = explode(',', $department_memebers[0]->assign_employee_ids);
 
             $assign_employee_ids = explode(',', $row->assign_to);
@@ -133,6 +135,7 @@ class SbticketController extends Controller
             } else {
                 unset($rows[$index]);
             }
+        }
         }
 
         $this->data['param'] = $params;
