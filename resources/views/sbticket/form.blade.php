@@ -46,7 +46,7 @@
 					<?php $Priority = explode(',',$row['Priority']);
 					$Priority_opt = array('normal' => 'Normal' ,  'emergency' => 'Emergency'); ?>
 					<select name='Priority' rows='5' required  class='select2 '  >
-                        <option selected disabled>Select Priority</option>
+                        <option value="">Select Priority</option>
 						<?php 
 						foreach($Priority_opt as $key=>$val)
 						{
@@ -67,6 +67,7 @@
 					<?php $Status = explode(',',$row['Status']);
 					$Status_opt = array( 'open' => 'Open' ,  'inqueue' => 'Pending' ,  'closed' => 'Closed' , ); ?>
 					<select name='Status' rows='5'   class='select2 ' @if(!$in_edit_mode) disabled @endif  >
+                        <option value="">Select Status</option>
 						<?php
                             if($in_edit_mode)
                                 {
@@ -94,7 +95,7 @@
 					<?php $issue_type = explode(',',$row['issue_type']);
 					$issue_type_opt = array('Order Request' => 'Order Request' ,'Support Issue' => 'Support Issue' ); ?>
 					<select name='issue_type' rows='5'   class='select2 ' required >
-                        <option selected disabled>Select Issue Type</option>
+                        <option value="">Select Issue Type</option>
 						<?php 
 						foreach($issue_type_opt as $key=>$val)
 						{
@@ -254,7 +255,7 @@
 $(document).ready(function() { 
 	
         $("#location_id").jCombo("{{ URL::to('sbticket/comboselect?filter=location:id:location_name') }}",
-        {  selected_value : '{{ $row["location_id"] }}' });
+        {  selected_value : '{{ $row["location_id"] }}','initial-text': "Select Location" });
         
       //  $("#game_id").jCombo("{{-- URL::to('sbticket/comboselect?filter=game:id:game_name') }}&limit=where:game_name:!=:''&parent=location_id:",
         //{  parent: '#location_id', selected_value : '{{ $row["game_id"] --}}' });
@@ -263,7 +264,7 @@ $(document).ready(function() {
         //{  selected_value : '{{ $row["department_id"] --}}' });
         
         $("#debit_card").jCombo("{{ URL::to('sbticket/comboselect?filter=debit_type:company:company') }}",
-        {  selected_value : '{{ $row["debit_card"] }}' });
+        {  selected_value : '{{ $row["debit_card"] }}','initial-text': "Select Debit Type" });
         
       //  $("#assign_to").jCombo("{{-- URL::to('sbticket/comboselect?filter=employees:id:first_name|last_name') }}",
         //{  selected_value : '{{ $row["assign_to"] --}}' });
