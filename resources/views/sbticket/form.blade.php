@@ -239,7 +239,7 @@
 
 @endif	
 <?php
-            if($in_edite_mode)
+            if($in_edit_mode)
                 {
                     $row['location_id']=\Session::get('selected_location');
                 }
