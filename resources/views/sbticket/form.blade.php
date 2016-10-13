@@ -65,7 +65,7 @@
 					  
 					<?php $Status = explode(',',$row['Status']);
 					$Status_opt = array( 'open' => 'Open' ,  'inqueue' => 'Pending' ,  'closed' => 'Closed' , ); ?>
-					<select name='Status' rows='5'   class='select2 ' @if($in_edit_mode) disabled @endif  >
+					<select name='Status' rows='5'   class='select2 ' @if(!$in_edit_mode) disabled @endif  >
 						<?php
                             if($in_edit_mode)
                                 {
