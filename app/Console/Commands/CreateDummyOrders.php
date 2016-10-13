@@ -42,10 +42,10 @@ class CreateDummyOrders extends Command
       // echo 'total number of orders:'.$counter.'----';
         for($i=0;$i < $counter;$i++) {
           // echo $counter;
-            $this->createOrder($created_date,$i,$created_date);
+            $this->createOrder($created_date,$i);
         }
     }
-    function createOrder($created_date,$order_no=null,$created_date=null)
+    function createOrder($created_date=null,$order_no=null)
     {
 
         $user_id=$this->getId('users');
@@ -100,7 +100,7 @@ class CreateDummyOrders extends Command
 
         $orders_data=array('user_id'=>$user_id,'date_ordered'=>$created_date,'location_id'=>$location_id,'vendor_id'=>$vendor_id,'order_total'=>$order_total,
             'status_id'=>$status_id,'freight_id'=>$freight_id,'order_description'=>$order_description,'company_id'=>$company_id
-        ,'order_type_id'=>$order_type,'po_number'=>$po_number,'date_received'=>$date_received,'created_at'=>date('Y-m-d h:i:sa'),'updated_at'=>date('Y-m-d h:i:sa'));
+        ,'order_type_id'=>$order_type,'po_number'=>$po_number,'date_received'=>$date_received,'created_at'=>date('Y-m-d h:i:sa',strtotime($created_date)),'updated_at'=>date('Y-m-d h:i:sa',strtotime($created_date)));
 
         $inserted=\DB::table('orders')->insert($orders_data);
         if($inserted)
