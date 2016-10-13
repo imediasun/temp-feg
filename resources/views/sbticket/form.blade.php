@@ -67,7 +67,7 @@
 					$Status_opt = array( 'open' => 'Open' ,  'inqueue' => 'Pending' ,  'closed' => 'Closed' , ); ?>
 					<select name='Status' rows='5'   class='select2 ' @if($in_edit_mode) disabled @endif  >
 						<?php
-                            if(!$in_edit_mode)
+                            if($in_edit_mode)
                                 {
 						foreach($Status_opt as $key=>$val)
 						{
@@ -239,7 +239,7 @@
 
 @endif	
 <?php
-            if($in_edit_mode)
+            if(!$in_edit_mode)
                 {
                     $row['location_id']=\Session::get('selected_location');
                 }
