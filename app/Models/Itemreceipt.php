@@ -89,8 +89,9 @@ class itemreceipt extends Sximo  {
 
         }
 
-        \Log::info("Total Query : ".$select . " {$params} " . self::queryGroup() . " {$orderConditional}");
-        $counter_select =\DB::select($select . " {$params} " . "GROUP BY orders.id" . " {$orderConditional}");
+        \Log::info("Total Query : ".$select . " {$params} " . " {$orderConditional}");
+        //why added group by in order
+        $counter_select =\DB::select($select . " {$params} " . " {$orderConditional}");
         $total= count($counter_select);
         if($table=="img_uploads")
         {
