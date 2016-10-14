@@ -9,7 +9,7 @@
 
 	<div class="sbox-content"> 
 @endif	
-			{!! Form::open(array('url'=>'servicerequests/save/'.SiteHelpers::encryptID($row['TicketID']), 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'sbticketFormAjax')) !!}
+			{!! Form::open(array('url'=>'servicerequests/save/'.$row['TicketID'], 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'sbticketFormAjax')) !!}
 			<div class="col-md-12">
 						<fieldset><legend> Service Requests</legend>
 									
@@ -326,7 +326,8 @@ function showResponse(data)  {
 		ajaxViewClose('#{{ $pageModule }}');
 		ajaxFilter('#{{ $pageModule }}','{{ $pageUrl }}/data');
 		notyMessage(data.message);	
-		$('#sximo-modal').modal('hide');	
+		$('#sximo-modal').modal('hide');
+        window.location.href=window.location;
 	} else {
 		notyMessageError(data.message);	
 		$('.ajaxLoading').hide();

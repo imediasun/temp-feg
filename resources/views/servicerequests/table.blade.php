@@ -7,10 +7,10 @@
         <h5><i class="fa fa-table"></i></h5>
         <div class="sbox-tools">
             <a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Clear Search"
-               onclick="reloadData('#{{ $pageModule }}','sbticket/data?search=')"><i class="fa fa-trash-o"></i> Clear
+               onclick="reloadData('#{{ $pageModule }}','servicerequests/data?search=')"><i class="fa fa-trash-o"></i> Clear
                 Search </a>
             <a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Reload Data"
-               onclick="reloadData('#{{ $pageModule }}','sbticket/data?return={{ $return }}')"><i
+               onclick="reloadData('#{{ $pageModule }}','servicerequests/data?return={{ $return }}')"><i
                         class="fa fa-refresh"></i></a>
             @if(Session::get('gid') ==1)
                 <a href="{{ url('feg/module/config/'.$pageModule) }}" class="btn btn-xs btn-white tips"
@@ -37,7 +37,7 @@
         @endif
        @include( $pageModule.'/toolbar',['colconfigs' => SiteHelpers::getRequiredConfigs($module_id)])
 
-        <?php echo Form::open(array('url' => 'sbticket/delete/', 'class' => 'form-horizontal', 'id' => 'SximoTable', 'data-parsley-validate' => ''));?>
+        <?php echo Form::open(array('url' => 'servicerequests/delete/', 'class' => 'form-horizontal', 'id' => 'SximoTable', 'data-parsley-validate' => ''));?>
         <div class="table-responsive">
             @if(count($rowData)>=1)
 
@@ -100,7 +100,7 @@
 
                         @if($setting['view-method']=='expand')
                             <td><a href="javascript:void(0)" class="expandable" rel="#row-{{ $row->TicketID }}"
-                                   data-url="{{ url('sbticket/show/'.$id) }}"><i class="fa fa-plus "></i></a></td>
+                                   data-url="{{ url('servicerequests/show/'.$id) }}"><i class="fa fa-plus "></i></a></td>
                         @endif
                         <?php foreach ($tableGrid as $field) :
                         if($field['view'] == '1') :
@@ -154,7 +154,7 @@
                         endforeach;
                         ?>
                         <td data-values="action" data-key="<?php echo $row->TicketID;?>">
-                            {!! AjaxHelpers::buttonAction('sbticket',$access,$id ,$setting) !!}
+                            {!! AjaxHelpers::buttonAction('servicerequests',$access,$id ,$setting) !!}
                             {!! AjaxHelpers::buttonActionInline($row->TicketID,'TicketID') !!}
                         </td>
                     </tr>

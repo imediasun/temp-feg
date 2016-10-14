@@ -33,7 +33,7 @@
 
 		</div>	
 		<div>
-		{!! Form::open(array('url'=>'sbticket/savereply', 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'sbticketFormAjax')) !!}
+		{!! Form::open(array('url'=>'servicerequests/savereply', 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'servicerequestsFormAjax')) !!}
 			<textarea class="form-control replyComment" placeholder="Reply Ticket" name="comments"></textarea>
 			<input type="hidden" name="TicketID" value="{{ $row->TicketID }}">
 		<br />
@@ -50,11 +50,11 @@
 <script>
 $(document).ready(function(){
 
-	$.get('{{ url("sbticket/comment/".$row->TicketID)}}',function(callback){
+	$.get('{{ url("servicerequests/comment/".$row->TicketID)}}',function(callback){
 		$('#RelpyList').html(callback)
 	});
 
-	var form = $('#sbticketFormAjax'); 
+	var form = $('#servicerequestsFormAjax'); 
 	form.parsley();
 	form.submit(function(){
 		$('.replyComment').attr('readonly','1');
@@ -65,7 +65,7 @@ $(document).ready(function(){
 				beforeSubmit :  '',
 				success:       function(callback){
 					notyMessage(callback.message);	
-					$.get('{{ url("sbticket/comment/".$row->TicketID)}}',function(output){
+					$.get('{{ url("servicerequests/comment/".$row->TicketID)}}',function(output){
 						$('#RelpyList').html(output);
 						$('.replyComment').removeAttr('readonly');
 						$('.replyComment').val('');

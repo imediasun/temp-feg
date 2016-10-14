@@ -2,7 +2,7 @@
 	<div class="col-md-4 well">
 		<h5><i class="fa fa-envelope"></i> Submit New Ticket </h5>
 		<hr />
-		{!! Form::open(array('url'=>'sbticket/save/', 'class'=>'form-vertical','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'sbticketFormAjax')) !!}
+		{!! Form::open(array('url'=>'servicerequests/save/', 'class'=>'form-vertical','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'servicerequestsFormAjax')) !!}
 			<div class="form-group">
 				<label> Subject</label>
 				<input class="form-control" name="Subject" value="" placeholder="Subject" />
@@ -36,11 +36,11 @@
 		<hr />
 		
 <div class="table-responsive">	
-	<form id="" action="{{ url('sbticket/destroy') }}" method="post" >
+	<form id="" action="{{ url('servicerequests/destroy') }}" method="post" >
 		<div class="text-right">
 			<a href="#" onclick="RemoveTickets()" class="btn btn-danger"><i class="fa fa-trash-o"></i> Remove Selected </a>
 	    </div>
-	    <table id="sbticketTable" class="table table-striped  ">
+	    <table id="servicerequestsTable" class="table table-striped  ">
         <thead>
 			<tr>
 				<th width="30"> <input type="checkbox" class="checkall" /></th>	
@@ -107,7 +107,7 @@
 	{
 		var datas = $( '.table :input').serialize();
 		if(confirm('Are u sure deleting selected row(s)?')) {
-			$.post("{{ url('sbticket/delete') }}" ,datas,function( data ) {
+			$.post("{{ url('servicerequests/delete') }}" ,datas,function( data ) {
 				if(data.status =='success')
 				{
 					notyMessage(data.message);
@@ -134,7 +134,7 @@
 			cblist.removeAttr("checked");
 		}	
 	});		
-		var form = $('#sbticketFormAjax'); 
+		var form = $('#servicerequestsFormAjax'); 
 		form.parsley();
 		form.submit(function(){
 			

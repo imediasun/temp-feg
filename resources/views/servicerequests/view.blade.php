@@ -15,13 +15,13 @@ $commentsCount =  $comments->count();
 			@endif
 			<div class="container-fuild">
 				<div class="row m-b-lg ">
-					<div class="col-lg-3 animated fadeInLeft delayp1" style="margin-left: auto">
+					<div class="col-lg-4 animated fadeInLeft delayp1" style="margin-left: auto">
 						<h3>Ticket Info</h3>
 						<table class="table table-striped table-bordered" >
 							<tbody>
 
 							<tr>
-								<td width='30%' class='label-view text-right'>
+								<td width='40%' class='label-view text-right'>
 									{{ SiteHelpers::activeLang('Date Open', (isset($fields['Created']['language'])? $fields['Created']['language'] : array())) }}
 								</td>
 								<td><?php
@@ -34,14 +34,14 @@ $commentsCount =  $comments->count();
 
 							</tr>
 							<tr>
-								<td width='30%' class='label-view text-right'>
+								<td width='40%' class='label-view text-right'>
 									{{ SiteHelpers::activeLang('Needed Date', (isset($fields['need_by_date']['language'])? $fields['need_by_date']['language'] : array())) }}
 								</td>
 								<td><?php echo $row->need_by_date;  ?></td>
 
 							</tr>
 							<tr>
-								<td width='30%' class='label-view text-right'>
+								<td width='40%' class='label-view text-right'>
 									{{ SiteHelpers::activeLang('Last Event date', (isset($fields['updated']['language'])? $fields['updated']['language'] : array())) }}
 								</td>
 								<td>
@@ -60,7 +60,7 @@ $commentsCount =  $comments->count();
 							</tr>
 
 							<tr>
-								<td width='30%' class='label-view text-right'>
+								<td width='40%' class='label-view text-right'>
 									{{ SiteHelpers::activeLang('Title', (isset($fields['Subject']['language'])? $fields['Subject']['language'] : array())) }}
 								</td>
 								<td>{{ $row->Subject }} </td>
@@ -68,7 +68,7 @@ $commentsCount =  $comments->count();
 							</tr>
 
 							<tr>
-								<td width='30%' class='label-view text-right'>
+								<td width='40%' class='label-view text-right'>
 									{{ SiteHelpers::activeLang('Location', (isset($fields['location_id']['language'])? $fields['location_id']['language'] : array())) }}
 								</td>
 								<td>{!! SiteHelpers::gridDisplayView($row->location_id,'location_id','1:location:id:location_name') !!} </td>
@@ -76,7 +76,7 @@ $commentsCount =  $comments->count();
 							</tr>
 
 							<tr>
-								<td width='30%' class='label-view text-right'>
+								<td width='40%' class='label-view text-right'>
 									{{ SiteHelpers::activeLang('Game Name', (isset($fields['game_id']['language'])? $fields['game_id']['language'] : array())) }}
 								</td>
 								<td>{!! SiteHelpers::gridDisplayView($row->game_id,'game_id','1:game:id:game_name') !!} </td>
@@ -84,7 +84,7 @@ $commentsCount =  $comments->count();
 							</tr>
 
 							<tr>
-								<td width='30%' class='label-view text-right'>
+								<td width='40%' class='label-view text-right'>
 									{{ SiteHelpers::activeLang('Assign To', (isset($fields['assign_to']['language'])? $fields['assign_to']['language'] : array())) }}
 								</td>
 								<td><?php
@@ -99,7 +99,7 @@ $commentsCount =  $comments->count();
 							</tr>
 
 							<tr>
-								<td width='30%' class='label-view text-right'>
+								<td width='40%' class='label-view text-right'>
 									{{ SiteHelpers::activeLang('Priority', (isset($fields['Priority']['language'])? $fields['Priority']['language'] : array())) }}
 								</td>
 								<td>{{ $row->Priority }} </td>
@@ -107,7 +107,7 @@ $commentsCount =  $comments->count();
 							</tr>
 
 							<tr>
-								<td width='30%' class='label-view text-right'>
+								<td width='40%' class='label-view text-right'>
 									{{ SiteHelpers::activeLang('Status', (isset($fields['Status']['language'])? $fields['Status']['language'] : array())) }}
 								</td>
 								<td><?php
@@ -117,7 +117,7 @@ $commentsCount =  $comments->count();
 
 							</tr>
 							<tr>
-								<td width='30%' class='label-view text-right'>
+								<td width='40%' class='label-view text-right'>
 									{{ SiteHelpers::activeLang('Issue Type', (isset($fields['issue_type']['language'])? $fields['issue_type']['language'] : array())) }}
 								</td>
 								<td>{{ $row->issue_type }} </td>
@@ -125,7 +125,7 @@ $commentsCount =  $comments->count();
 							</tr>
 
 							<tr>
-								<td width='30%' class='label-view text-right'>
+								<td width='40%' class='label-view text-right'>
 									{{ SiteHelpers::activeLang('Department', (isset($fields['department_id']['language'])? $fields['department_id']['language'] : array())) }}
 								</td>
 								<td>{!! SiteHelpers::gridDisplayView($row->department_id,'department_id','1:departments:id:name') !!} </td>
@@ -133,7 +133,7 @@ $commentsCount =  $comments->count();
 							</tr>
 
 							<tr>
-								<td width='30%' class='label-view text-right'>
+								<td width='40%' class='label-view text-right'>
 									{{ SiteHelpers::activeLang('Close', (isset($fields['closed']['language'])? $fields['closed']['language'] : array())) }}
 								</td>
 								<td>
@@ -148,7 +148,7 @@ $commentsCount =  $comments->count();
 							</tr>
 
 							<tr>
-								<td width='30%' class='label-view text-right'>
+								<td width='40%' class='label-view text-right'>
 									{{ SiteHelpers::activeLang('Attached file list', (isset($fields['file_path']['language'])? $fields['file_path']['language'] : array())) }}
 								</td>
 								<td>
@@ -189,7 +189,7 @@ $commentsCount =  $comments->count();
 							</tbody>
 						</table>
 					</div>
-					<div class="col-lg-9 animated fadeInRight delayp1">
+					<div class="col-lg-8 animated fadeInRight delayp1">
 						<div class="blog-post ">
 							<div class="post-item">
 
@@ -376,7 +376,7 @@ $commentsCount =  $comments->count();
 		$('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});
 		$('input[type="checkbox"],input[type="radio"]').iCheck({
 			checkboxClass: 'icheckbox_square-green',
-			radioClass: 'iradio_square-green',
+			radioClass: 'iradio_square-green'
 		});
 		$('.removeCurrentFiles').on('click',function(){
 			var removeUrl = $(this).attr('href');

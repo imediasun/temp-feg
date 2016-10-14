@@ -49,9 +49,9 @@
 		if(confirm('Delete comment ?'))
 		{
 			$('.ajaxLoading').show();
-			$.get("{{ url('sbticket/removereply/')}}/"+id,function(callback){
+			$.get("{{ url('servicerequests/removereply/')}}/"+id,function(callback){
 				notyMessage(callback.message);	
-				$.get('{{ url("sbticket/comment/".$TicketID)}}',function(output){
+				$.get('{{ url("servicerequests/comment/".$TicketID)}}',function(output){
 					$('#RelpyList').html(output);
 					$('.ajaxLoading').hide();
 				});

@@ -127,7 +127,8 @@ class servicerequestsController extends Controller
                     }
                 }
 
-                if ($flag == 1) {
+                if ($flag == 1 && count($assign_employee_ids) > 0) {
+                    echo count($assign_employee_ids);
                     $assign_employee_names = array();
                     foreach ($assign_employee_ids as $key => $value) {
                         $assign_employee_names[$key] = \DB::select("Select first_name,last_name FROM employees WHERE id = " . $value . "");
@@ -209,8 +210,11 @@ class servicerequestsController extends Controller
         $row = $this->model->find($id);
         $assign_employee_ids = explode(',', $row->assign_to);
         $assign_employee_names = array();
-        foreach ($assign_employee_ids as $key => $value) {
-            $assign_employee_names[$key] = \DB::select("Select first_name,last_name FROM employees WHERE id = " . $value . "");
+
+        if(!empty($assign_employee_ids[0]) ) {
+            foreach ($assign_employee_ids as $key => $value) {
+                $assign_employee_names[$key] = \DB::select("Select first_name,last_name FROM employees WHERE id = " . $value . "");
+            }
         }
         $row->assign_employee_names = $assign_employee_names;
         if ($row) {
@@ -250,13 +254,13 @@ class servicerequestsController extends Controller
         ));
     }
 
-    function postSave(Request $request, $id = 0)
+    function postSave(Request $request, $id = NULL)
     {
 
-        $data['need_by_date'] = date('Y-m-d');
+        //$data['need_by_date'] = date('Y-m-d');
         //$rules = $this->validateForm();
         $rules = array('Subject' => 'required', 'Description' => 'required', 'Priority' => 'required', 'issue_type' => 'required', 'location_id' => 'required');
-        unset($rules['debit_card']);
+        //unset($rules['debit_card']);
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
             $data = $this->validatePost('sb_tickets');
@@ -268,7 +272,7 @@ class servicerequestsController extends Controller
 
             }
 
-            $id = $this->model->insertRow($data, $request->input('TicketID'));
+            $id = $this->model->insertRow($data, $id);
 
             return response()->json(array(
                 'status' => 'success',

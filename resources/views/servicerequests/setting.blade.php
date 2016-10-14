@@ -18,7 +18,7 @@
                 {{ Session::get('message') }}
             @endif
 
-            {!! Form::open(array('url'=>'sbticket/savepermission', 'class'=>'form-horizontal', 'parsley-validate'=>'','novalidate'=>' ', 'id'=> 'sbticketSetting')) !!}
+            {!! Form::open(array('url'=>'servicerequests/savepermission', 'class'=>'form-horizontal', 'parsley-validate'=>'','novalidate'=>' ', 'id'=> 'servicerequestsSetting')) !!}
 
             <div class="sbox">
                 <div class="sbox-title"><h5> Ticket Permission </h5></div>
@@ -107,29 +107,29 @@
 
     <script>
         $(document).ready(function(){
-            $("#role1").jCombo("{{ URL::to('sbticket/comboselect?filter=tb_groups:group_id:name') }}",
+            $("#role1").jCombo("{{ URL::to('servicerequests/comboselect?filter=tb_groups:group_id:name') }}",
                     {selected_value: '{{ $ticket_setting->role1 }}'});
-            $("#role2").jCombo("{{ URL::to('sbticket/comboselect?filter=tb_groups:group_id:name') }}",
+            $("#role2").jCombo("{{ URL::to('servicerequests/comboselect?filter=tb_groups:group_id:name') }}",
                     {selected_value: '{{ $ticket_setting->role2 }}'});
-            $("#role3").jCombo("{{ URL::to('sbticket/comboselect?filter=tb_groups:group_id:name') }}",
+            $("#role3").jCombo("{{ URL::to('servicerequests/comboselect?filter=tb_groups:group_id:name') }}",
                     {selected_value: '{{ $ticket_setting->role3 }}'});
-            $("#role4").jCombo("{{ URL::to('sbticket/comboselect?filter=tb_groups:group_id:name') }}",
+            $("#role4").jCombo("{{ URL::to('servicerequests/comboselect?filter=tb_groups:group_id:name') }}",
                     {selected_value: '{{ $ticket_setting->role4 }}'});
-            $("#role5").jCombo("{{ URL::to('sbticket/comboselect?filter=tb_groups:group_id:name') }}",
+            $("#role5").jCombo("{{ URL::to('servicerequests/comboselect?filter=tb_groups:group_id:name') }}",
                     {selected_value: '{{ $ticket_setting->role5 }}'});
-            $("#individual1").jCombo("{{ URL::to('sbticket/comboselect?filter=employees:id:first_name|last_name') }}",
+            $("#individual1").jCombo("{{ URL::to('servicerequests/comboselect?filter=employees:id:first_name|last_name') }}",
                     {selected_value: '{{ $ticket_setting->individual1 }}'});
-            $("#individual2").jCombo("{{ URL::to('sbticket/comboselect?filter=employees:id:first_name|last_name') }}",
+            $("#individual2").jCombo("{{ URL::to('servicerequests/comboselect?filter=employees:id:first_name|last_name') }}",
                     {selected_value: '{{ $ticket_setting->individual2 }}'});
-            $("#individual3").jCombo("{{ URL::to('sbticket/comboselect?filter=employees:id:first_name|last_name') }}",
+            $("#individual3").jCombo("{{ URL::to('servicerequests/comboselect?filter=employees:id:first_name|last_name') }}",
                     {selected_value: '{{ $ticket_setting->individual3 }}'});
-            $("#individual4").jCombo("{{ URL::to('sbticket/comboselect?filter=employees:id:first_name|last_name') }}",
+            $("#individual4").jCombo("{{ URL::to('servicerequests/comboselect?filter=employees:id:first_name|last_name') }}",
                     {selected_value: '{{ $ticket_setting->individual4 }}'});
-            $("#individual5").jCombo("{{ URL::to('sbticket/comboselect?filter=employees:id:first_name|last_name') }}",
+            $("#individual5").jCombo("{{ URL::to('servicerequests/comboselect?filter=employees:id:first_name|last_name') }}",
                     {selected_value: '{{ $ticket_setting->individual5 }}'});
         });
 
-        var form = $('#sbticketSetting');
+        var form = $('#servicerequestsSetting');
         form.parsley();
         form.submit(function () {
             if (form.parsley('isValid') == true) {
