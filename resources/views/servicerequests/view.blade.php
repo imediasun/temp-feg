@@ -278,7 +278,7 @@ $commentsCount =  $comments->count();
 									<div class="col-md-5">
 
 										<?php $Priority = explode(',',$row['Priority']);
-										$Priority_opt = array( 'critical' => 'Critical' ,  'high' => 'High' ,  'medium' => 'Medium' ,  'low' => 'Low' , ); ?>
+                                        $Priority_opt = array('normal' => 'Normal' ,  'emergency' => 'Emergency'); ?>
 										<select name='Priority' rows='5' required  class='select2 '  >
 											<?php
 											foreach($Priority_opt as $key=>$val)
