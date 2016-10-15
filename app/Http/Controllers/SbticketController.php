@@ -46,7 +46,6 @@ class SbticketController extends Controller
 
     public function postData(Request $request)
     {
-
         $module_id = \DB::table('tb_module')->where('module_name', '=', 'sbticket')->pluck('module_id');
         $this->data['module_id'] = $module_id;
         if (Input::has('config_id')) {
@@ -252,9 +251,6 @@ class SbticketController extends Controller
 
     function postSave(Request $request, $id = 0)
     {
-        echo "<pre>";
-        echo  ($request->get('status'));
-        die();
         $data['need_by_date'] = date('Y-m-d');
         //$rules = $this->validateForm();
         $rules = array('Subject' => 'required', 'Description' => 'required', 'Priority' => 'required', 'issue_type' => 'required', 'location_id' => 'required');

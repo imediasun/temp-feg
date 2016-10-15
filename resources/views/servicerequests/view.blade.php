@@ -227,7 +227,7 @@ $commentsCount =  $comments->count();
 						</div>
 						<hr>
 						<?php } }?>
-						{!! Form::open(array('url'=>'sbticket/comment/'.SiteHelpers::encryptID($row['TicketID']), 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'sbticketFormAjax')) !!}
+						{!! Form::open(array('url'=>'servicerequests/comment/'.SiteHelpers::encryptID($row['TicketID']), 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'servicerequestsFormAjax')) !!}
 						<div class="col-md-12">
 							<fieldset><legend> New Reply</legend>
 
@@ -355,16 +355,16 @@ $commentsCount =  $comments->count();
 <script type="text/javascript">
 	$(document).ready(function() {
 
-		$("#location_id").jCombo("{{ URL::to('sbticket/comboselect?filter=location:id:location_name') }}",
+		$("#location_id").jCombo("{{ URL::to('servicerequests/comboselect?filter=location:id:location_name') }}",
 				{  selected_value : '{{ $row["location_id"] }}' });
 
-		$("#game_id").jCombo("{{ URL::to('sbticket/comboselect?filter=game:id:game_name') }}&parent=location_id:",
+		$("#game_id").jCombo("{{ URL::to('servicerequests/comboselect?filter=game:id:game_name') }}&parent=location_id:",
 				{  parent: '#location_id', selected_value : '{{ $row["game_id"] }}' });
 
-		$("#department_id").jCombo("{{ URL::to('sbticket/comboselect?filter=departments:id:name') }}",
+		$("#department_id").jCombo("{{ URL::to('servicerequests/comboselect?filter=departments:id:name') }}",
 				{  selected_value : '{{ $row["department_id"] }}' });
 
-		$("#assign_to").jCombo("{{ URL::to('sbticket/comboselect?filter=employees:id:first_name|last_name') }}",
+		$("#assign_to").jCombo("{{ URL::to('servicerequests/comboselect?filter=employees:id:first_name|last_name') }}",
 				{  selected_value : '{{ $row["assign_to"] }}' });
 
 
@@ -384,7 +384,7 @@ $commentsCount =  $comments->count();
 			$(this).parent('div').empty();
 			return false;
 		});
-		var form = $('#sbticketFormAjax');
+		var form = $('#servicerequestsFormAjax');
 		form.parsley();
 		form.submit(function(){
 
