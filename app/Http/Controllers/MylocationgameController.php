@@ -287,16 +287,21 @@ class MylocationgameController extends Controller
         $form_data['date_shipped'] = date('Y-m-d');
         $form_data['date_last_move'] = date('Y-m-d');
         $form_data['date_in_service'] = date('Y-m-d');
+
         $rules = $this->validateForm();
         $validator = Validator::make($request->all(), $rules);
-        if (!empty($request->input('product_id'))) {
-            $products = $request->input('product_id');
-            $products = json_encode($products);
-        }
 
         if ($validator->passes()) {
             $data = $this->validatePost('game');
-            $data['product_id'] = $products;
+            //after validating data array become very small, so merge with post data
+            $data = array_merge($data, $_POST);
+            if (!empty($request->input('product_id'))) {
+                $products = $request->input('product_id');
+                $products = json_encode($products);
+                $data['product_id'] = $products;
+            }
+            $data['game_name'] = \DB::table('game_title')->where('id', '=', $data['game_title_id'])->pluck('game_title');
+            unset($data['_token']);
             $id = $this->model->insertRow($data, $id);
             /*
             \DB::table('game_product')
