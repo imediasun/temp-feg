@@ -236,8 +236,7 @@ class Sximo extends Model {
                     $order = $params['2'];
                 }
                 if (!isset($params['3'])) {
-
-                    $row = \DB::table($table)->orderBy($order, 'asc')->get();
+                    $row = \DB::table($table)->where($order,'!='," ")->orderBy($order,'asc')->get();
                 } else {
 
                     $row = \DB::table($table)->where($params['3'], $params['4'])->orderBy($order, 'asc')->get();

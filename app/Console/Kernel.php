@@ -31,7 +31,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         //giving error
-        //$schedule->command('comments:read')->everyMinute();
+        $schedule->command('comments:read')->everyMinute();
         $schedule->command('autocloseorder')->daily();
         $schedule->command('inspire')->hourly();
         $schedule->command('syncgameearningsfromlive')->dailyAt('17:00')->withoutOverlapping();
