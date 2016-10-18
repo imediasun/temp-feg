@@ -1,5 +1,4 @@
 function performSimpleSearch(params) {
-//alert();
     if (!params) {
         params = {};
     }
@@ -35,10 +34,7 @@ function performSimpleSearch(params) {
                     value=value.replace(/&/g, '_amp');
                 }
             }
-           // alert(value);
         }
-        //alert(value);
-
         if (fieldName) {            
             cache[fieldName] = {value:value, value2: null, operator: operate};
         }
@@ -55,10 +51,8 @@ function performSimpleSearch(params) {
     });
 
     attr += getFooterFilters({'simplesearch': true, 'search': true, 'page': true});
-        //alert(attr);
     App.simpleSearch.cache = cache;
     App.lastSearchMode = 'simple';
-    alert(attr);
     if (ajaxSearch) {
         reloadData(moduleID, url+ '/data' + attr);    
     }
