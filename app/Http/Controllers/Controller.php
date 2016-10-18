@@ -567,9 +567,12 @@ abstract class Controller extends BaseController
         foreach ($allowsearch as $as)
             $arr[$as['field']] = $as;
         if ($_GET['search'] != '') {
-            $type = explode("|", $_GET['search']);
+            $search_params=$_GET['search'];
+            $search_params=str_replace('_amp','&',$search_params);
+            $type = explode("|", $search_params);
             if (count($type) >= 1) {
                 foreach ($type as $t) {
+
                     $keys = explode(":", $t);
                     if (in_array($keys[0], array_keys($arr))) {
 
