@@ -37,6 +37,7 @@ function performSimpleSearch(params) {
             }
             alert(value);
         }
+        alert(value);
 
         if (fieldName) {            
             cache[fieldName] = {value:value, value2: null, operator: operate};
