@@ -524,7 +524,8 @@ class UsersController extends Controller
         );
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
-
+            //gabe requested to set from email address as
+            $replyEmailAddress = "donotreply@fegllc.com";
             if (!is_null($request->input('groups'))) {
                 $groups = $request->input('groups');
                 for ($i = 0; $i < count($groups); $i++) {
@@ -542,7 +543,8 @@ class UsersController extends Controller
                         $message = $this->replaceVariables($message, $row);
                         $headers = 'MIME-Version: 1.0' . "\r\n";
                         $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
-                        $headers .= 'From: ' . CNF_APPNAME . ' <' . CNF_EMAIL . '>' . "\r\n";
+
+                        $headers .= 'From: ' . CNF_APPNAME . ' <' . $replyEmailAddress . '>' . "\r\n";
                         mail($to, $subject, $message, $headers);
 
                         $count = ++$count;
