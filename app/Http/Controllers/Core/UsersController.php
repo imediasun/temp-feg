@@ -548,7 +548,9 @@ class UsersController extends Controller
                     }
 
                 }
-                return Redirect::to('core/users/blast')->with('messagetext', 'Total ' . $count . ' Message has been sent')->with('msgstatus', 'success');
+                //Total 8 Messages has been sent
+                //Total 1 Message has been sent
+                return Redirect::to('core/users/blast')->with('messagetext', 'Total '.$count<=1?"$count Message has been sent":"$count Messages has been sent")->with('msgstatus', 'success');
 
             }
             return Redirect::to('core/users/blast')->with('messagetext', 'No Message has been sent')->with('msgstatus', 'info');
