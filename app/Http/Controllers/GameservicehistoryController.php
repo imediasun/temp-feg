@@ -77,6 +77,9 @@ class GameservicehistoryController extends Controller
             'params' => $filter,
             'global' => (isset($this->access['is_global']) ? $this->access['is_global'] : 0)
         );
+        echo "<pre>";
+        print_r($params);
+        echo "</pre>";
         // Get Query
         $results = $this->model->getRows($params);
 
