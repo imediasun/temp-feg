@@ -1,5 +1,5 @@
 function performSimpleSearch(params) {
-alert();
+//alert();
     if (!params) {
         params = {};
     }
@@ -35,9 +35,9 @@ alert();
                     value=value.replace(/&/g, '_amp');
                 }
             }
-            alert(value);
+           // alert(value);
         }
-        alert(value);
+        //alert(value);
 
         if (fieldName) {            
             cache[fieldName] = {value:value, value2: null, operator: operate};
