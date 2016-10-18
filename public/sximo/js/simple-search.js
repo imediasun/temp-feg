@@ -35,7 +35,7 @@ function performSimpleSearch(params) {
                     value=value.replace(/&/g, '_amp');
                 }
             }
-          //  alert(value);
+            alert(value);
         }
 
         if (fieldName) {            
