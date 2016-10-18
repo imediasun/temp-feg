@@ -539,6 +539,7 @@ class UsersController extends Controller
                         $to = $row->email;
                         $subject = $request->input('subject');
                         $message = $request->input('message');
+                        $message = $this->replaceVariables($message, $row);
                         $headers = 'MIME-Version: 1.0' . "\r\n";
                         $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
                         $headers .= 'From: ' . CNF_APPNAME . ' <' . CNF_EMAIL . '>' . "\r\n";
@@ -563,5 +564,13 @@ class UsersController extends Controller
 
         }
 
+    }
+
+    protected function replaceVariables($content,$object){
+        $content = str_replace("[fullname]",$object->first_name." ".$object->last_name,$content);
+        $content = str_replace("[first_name]",$object->first_name,$content);
+        $content = str_replace("[last_name]",$object->last_name,$content);
+        $content = str_replace("[email]",$object->email,$content);
+        return $content;
     }
 }
