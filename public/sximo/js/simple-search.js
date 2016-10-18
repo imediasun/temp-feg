@@ -1,5 +1,5 @@
 function performSimpleSearch(params) {
-
+alert();
     if (!params) {
         params = {};
     }
