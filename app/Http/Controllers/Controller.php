@@ -392,6 +392,7 @@ abstract class Controller extends BaseController
         $rows = (isset($_GET['rows']) ? $_GET['rows'] : '');
         $search = (isset($_GET['search']) ? $_GET['search'] : '');
         $product_type = (isset($_GET['prod_list_type']) ? $_GET['prod_list_type'] : '');
+        $sub_type = (isset($_GET['sub_type']) ? $_GET['sub_type'] : '');
         $budget_year = (isset($_GET['budget_year']) ? $_GET['budget_year'] : '');
         $order_type = (isset($_GET['order_type']) ? $_GET['order_type'] : '');
         $active = (isset($_GET['active']) ? $_GET['active'] : '');
@@ -404,6 +405,7 @@ abstract class Controller extends BaseController
         $status = (isset($_GET['status']) ? $_GET['status'] : '');
         $appends = array();
         if ($sort != '') $appends['sort'] = $sort;
+        if ($sub_type != '') $appends['sub_type'] = $sub_type;
         if ($order != '') $appends['order'] = $order;
         if ($rows != '') $appends['rows'] = $rows;
         if ($search != '') $appends['search'] = $search;

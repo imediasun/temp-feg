@@ -47,6 +47,7 @@ class ProductController extends Controller
 
         $prod_list_type = isset($_GET['prod_list_type']) ? $_GET['prod_list_type'] : '';
         $active = isset($_GET['active']) ? $_GET['active'] : '';
+        $sub_type = isset($_GET['sub_type']) ? $_GET['sub_type'] : '';
 
         $module_id = \DB::table('tb_module')->where('module_name', '=', 'product')->pluck('module_id');
         $this->data['module_id'] = $module_id;
@@ -88,7 +89,8 @@ class ProductController extends Controller
             $this->data['product_list_type'] = 0;
             $this->data['active_prod'] = 0;
         }
-        $results = $this->model->getRows($params, $prod_list_type, $active);
+        $this->data['sub_type']=$sub_type;
+        $results = $this->model->getRows($params, $prod_list_type, $active,$sub_type);
 
         $rows = $results['rows'];
 

@@ -11,7 +11,7 @@ width: 75%">
             <option value="party" data-active="0">Party Supplies</option>
             <option value="redemption" data-active="0">Redemption Prizes</option>
             <option value="ticketokens" data-active="0">Tickets,Tokens,Uniforms,Photo ,Paper-Debit, Cards</option>
-            <option value="productsindevelopment" data-active="0"></option>
+            <option value="productsindevelopment" data-active="0">Products In Development</option>
         </select>
 
 
@@ -122,8 +122,16 @@ width: 75%">
                 }
             });
 
-            $("#prod_sub_type_id").jCombo("{{ URL::to('product/comboselect?filter=product_type:id:product_type') }}",
-                    {selected_value: '', initial_text: '--- Select  Subtype ---'  });
+var url_for_prod_sub_type="{{ URL::to('product/comboselect?filter=product_type:id:type_description') }}";
+            var type="{{ $prod_list_type }}";
+            if(type != 0)
+            {
+                url_for_prod_sub_type = url_for_prod_sub_type+":request_type_id:"+"{{\Session::get('product_type_id')}}";
+            }
+           // alert(url_for_prod_sub_type);
+
+            $("#prod_sub_type_id").jCombo(url_for_prod_sub_type,
+                    {selected_value: '{{ $sub_type }}', initial_text: '--- Select  Subtype ---'  });
 
 
 
@@ -141,6 +149,16 @@ width: 75%">
             if (val) {
                 reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?prod_list_type=' + val + '&active=' + active + getFooterFilters());
             }
+        });
+        $("#prod_sub_type_id").click(function () {
+
+            var sub_type = $("#prod_sub_type_id").val();
+            var type="{{\Session::get('product_type')}}";
+            var active="0";
+            if (sub_type && type) {
+                reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?prod_list_type=' + type + '&sub_type='+sub_type+'&active=' + active + getFooterFilters());
+            }
+
         });
     </script>
 </div>

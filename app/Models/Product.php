@@ -29,9 +29,11 @@ class product extends Sximo  {
   LEFT JOIN product_type T ON (T.id = products.prod_sub_type_id)";
 	}
 
-	public static function queryWhere($product_list_type=null,$active=0){
+	public static function queryWhere($product_list_type=null,$active=0,$sub_type=null){
+        echo $sub_type;
+        //die();
 		$return="WHERE products.id IS NOT NULL";
-        if($product_list_type!= null)
+        if($product_list_type!= null || $sub_type != null)
         {
             $product_type_id='';
             switch($product_list_type)
@@ -49,7 +51,7 @@ class product extends Sximo  {
                     $product_type_id=10;
                     break;
                 case 'ticketokens':
-                    $product_type_id=7;
+                    $product_type_id=4;
                     break;
                 case 'party':
                     $product_type_id=17;
@@ -61,15 +63,31 @@ class product extends Sximo  {
                     $product_type_id=1;
                     break;
             }
-            if($product_list_type=="productsindevelopment")
+           // unset();
+            \Session::put('product_type_id',"");
+            \Session::put('product_type',"");
+            \Session::put('product_type_id',$product_type_id);
+            \Session::put('product_type',$product_list_type);
+            if($product_list_type == "productsindevelopment")
             {
-                $return.=" AND products.prod_type_id=".$product_type_id." AND  products.inactive = ".$active." AND products.in_development = 1";
-
+                if($sub_type != null)
+                {
+                    $return.=" AND products.prod_type_id=".$product_type_id." AND products.prod_sub_type_id=".$sub_type." AND products.inactive = ".$active." AND products.in_development = 1";
+                }
+              else {
+                  $return .= "  AND  products.inactive = " . $active . " AND products.in_development = 1";
+              }
             }
             else{
-                $return.=" AND products.prod_type_id=".$product_type_id." AND  products.inactive = ".$active." AND products.in_development = 0";
-
+                if($sub_type != null)
+                {
+                    $return.=" AND products.prod_type_id=".$product_type_id." AND products.prod_sub_type_id=".$sub_type." AND  products.inactive = ".$active." AND products.in_development = 0";
+                }
+                else {
+                    $return .= " AND products.prod_type_id=" . $product_type_id . " AND  products.inactive = " . $active . " AND products.in_development = 0";
+                }
             }
+
         }
         return $return;
 	}
@@ -77,7 +95,7 @@ class product extends Sximo  {
 	public static function queryGroup(){
 		return "  ";
 	}
-    public static function getRows( $args,$cond=null,$active=null)
+    public static function getRows( $args,$cond=null,$active=null,$sub_type=null)
     {
 
         $table = with(new static)->table;
@@ -109,7 +127,7 @@ class product extends Sximo  {
 
         if($cond!=null )
         {
-            $select.=self::queryWhere($cond,$active);
+            $select.=self::queryWhere($cond,$active,$sub_type);
         }
         else
         {
