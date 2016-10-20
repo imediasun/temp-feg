@@ -418,7 +418,7 @@ class UsersController extends Controller
                 $file = $request->file('avatar');
                 $data = array_filter($data);
             }
-
+            $data['active']=$request->get('active');
             $id = $this->model->insertRow($data, $request->input('id'));
             $all_locations = Input::get('all_locations');
             if (empty($all_locations)) {
