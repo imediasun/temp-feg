@@ -619,7 +619,9 @@ class OrderController extends Controller
                     $item_total = $data[0]['orderPriceArray'][$i] * $data[0]['orderQtyArray'][$i];
                     $item_total_string = "$ " . number_format($item_total, 2);
                     $item_description_string = "Item #" . $j . ": " . $data[0]['orderDescriptionArray'][$i];
-                    $sku_num_string = $data[0]['skuNumArray'][$i];
+                 if(isset($data[0]['skuNumArray'])) {
+                     $sku_num_string = $data[0]['skuNumArray'][$i];
+                 }
                     $item_qty_string = $data[0]['orderQtyArray'][$i];
                     $item_price_string = $data[0]['orderPriceArray'][$i];
                     $descriptionLength = strlen($item_description_string);
