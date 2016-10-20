@@ -3,7 +3,7 @@
     <div class="col-md-3">
         <select name='product_list_type' rows='5'  id='product_list_type' class="select3" style="height: auto; font-size: 13px; font-family: 'Lato', sans-serif;
 width: 75%">
-            <option selected selected>------------ Select Type --------------</option>
+            <option value="select" data-active="0" selected>------------ Select Type --------------</option>
             <option value="graphics" data-active="0">Graphics</option>
             <option value="instant" data-active="0">Instant Win Prizes</option>
             <option value="officesupplies" data-active="0">Office Supplies - Products List</option>
@@ -11,7 +11,7 @@ width: 75%">
             <option value="party" data-active="0">Party Supplies</option>
             <option value="redemption" data-active="0">Redemption Prizes</option>
             <option value="ticketokens" data-active="0">Tickets,Tokens,Uniforms,Photo ,Paper-Debit, Cards</option>
-            <option value="productsindevelopment" data-active="0"></option>
+            <option value="productsindevelopment" data-active="0">Products In Development</option>
         </select>
 
 
@@ -112,21 +112,22 @@ width: 75%">
     </div>
     <script>
         $(document).ready(function () {
-
-
-
             $("#product_list_type option").each(function(){
                 if($(this).val()=="{{ $prod_list_type }}" && $(this).attr('data-active')=="{{ $active }}")
                 {
                     $(this).attr('selected',true);
                 }
             });
+           var url_for_prod_sub_type="{{ URL::to('product/comboselect?filter=product_type:id:type_description') }}";
+            var type="{{ $product_list_type  }}";
 
-            $("#prod_sub_type_id").jCombo("{{ URL::to('product/comboselect?filter=product_type:id:product_type') }}",
-                    {selected_value: '', initial_text: '--- Select Product ---'  });
+            if(type != 0 && type != "select")
+            {
+                url_for_prod_sub_type = url_for_prod_sub_type+":request_type_id:"+"{{\Session::get('product_type_id')}}";
 
-
-
+            }
+            $("#prod_sub_type_id").jCombo(url_for_prod_sub_type,
+                    {selected_value: '{{ \Session::get('sub_type') }}', initial_text: '--- Select  Subtype ---'  });
             $("#vendor_id").jCombo("{{ URL::to('product/comboselect?filter=vendor:id:vendor_name') }}",
                     {selected_value: '', initial_text: '--- Select Vendor ---'});
             $(".select3").select2({width: "98%"});
@@ -141,6 +142,28 @@ width: 75%">
             if (val) {
                 reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?prod_list_type=' + val + '&active=' + active + getFooterFilters());
             }
+        });
+        $("#prod_sub_type_id").click(function () {
+
+            var sub_type = $("#prod_sub_type_id").val();
+            var type="{{\Session::get('product_type')}}";
+            var url="{{ $pageModule }}/data?";
+            var active="0";
+            if(type != "")
+            {
+                url += "prod_list_type="+type;
+            }
+            else
+            {
+                url += "prod_list_type=select";
+            }
+            if(sub_type)
+            {
+                url +="&sub_type="+sub_type;
+            }
+            url +='&active=' + active + getFooterFilters();
+            //alert(url);
+            reloadData('#{{ $pageModule }}', url);
         });
     </script>
 </div>

@@ -387,7 +387,7 @@ class UsersController extends Controller
             $rules['password'] = 'required|between:6,12';
             $rules['password_confirmation'] = 'required|between:6,12';
             $rules['email'] = 'required|email|unique:users';
-            $rules['username'] = 'required|alpha_num||min:2|unique:users';
+            $rules['username'] = 'required|min:2|unique:users';
 
 
         } else {
@@ -418,7 +418,7 @@ class UsersController extends Controller
                 $file = $request->file('avatar');
                 $data = array_filter($data);
             }
-
+            $data['active']=$request->get('active');
             $id = $this->model->insertRow($data, $request->input('id'));
             $all_locations = Input::get('all_locations');
             if (empty($all_locations)) {

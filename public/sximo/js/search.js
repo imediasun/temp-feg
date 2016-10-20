@@ -30,9 +30,33 @@ function performAdvancedSearch(params) {
                 if (value === null || value === UNDEFINED ) {
                     value = '';
                 }
+                else
+                {
+                    if(value != "")
+                    {
+                        value=String(value);
+                        if(value.includes('&'))
+                        {
+                            value=value.replace(/&/g, '_amp');
+                        }
+                    }
+                    //  alert(value);
+                }
                 if (value2 === null || value2 === UNDEFINED ) {
                     value2 = '';
                 }
+                else
+                    {
+                        if(value2 != "")
+                        {
+                            value2=String(value2);
+                            if(value2.includes('&'))
+                            {
+                                value2=value2.replace(/&/g, '_amp');
+                            }
+                        }
+                        //  alert(value);
+                    }
                 if (field && name !='_token') {
                     cache[field] = {value:value, value2: value2, operator: operate};;            
                 }                

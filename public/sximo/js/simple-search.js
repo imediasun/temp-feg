@@ -21,7 +21,19 @@ function performSimpleSearch(params) {
             isValueDateTime = valueField.hasClass('datetime');
 
         if (value === null || value === UNDEFINED ) {
+
             value = '';
+        }
+        else
+        {
+            if(value != "")
+            {
+               value=String(value);
+                if(value.includes('&'))
+                {
+                    value=value.replace(/&/g, '_amp');
+                }
+            }
         }
         if (fieldName) {            
             cache[fieldName] = {value:value, value2: null, operator: operate};
@@ -39,10 +51,8 @@ function performSimpleSearch(params) {
     });
 
     attr += getFooterFilters({'simplesearch': true, 'search': true, 'page': true});
-    
     App.simpleSearch.cache = cache;
     App.lastSearchMode = 'simple';
-    
     if (ajaxSearch) {
         reloadData(moduleID, url+ '/data' + attr);    
     }
