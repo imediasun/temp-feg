@@ -30,10 +30,9 @@ class product extends Sximo  {
 	}
 
 	public static function queryWhere($product_list_type=null,$active=0,$sub_type=null){
-        echo $sub_type;
-        //die();
-		$return="WHERE products.id IS NOT NULL";
-        if($product_list_type!= null || $sub_type != null)
+        $return="WHERE products.id IS NOT NULL";
+echo  \Session::get('sub_type');
+        if($product_list_type!= null && $product_list_type != "select" )
         {
             $product_type_id='';
             switch($product_list_type)
@@ -64,30 +63,48 @@ class product extends Sximo  {
                     break;
             }
            // unset();
-            \Session::put('product_type_id',"");
-            \Session::put('product_type',"");
             \Session::put('product_type_id',$product_type_id);
             \Session::put('product_type',$product_list_type);
+
             if($product_list_type == "productsindevelopment")
             {
                 if($sub_type != null)
                 {
+
+                    \Session::put('sub_type',$sub_type);
                     $return.=" AND products.prod_type_id=".$product_type_id." AND products.prod_sub_type_id=".$sub_type." AND products.inactive = ".$active." AND products.in_development = 1";
                 }
               else {
+                  \Session::put('sub_type',"");
                   $return .= "  AND  products.inactive = " . $active . " AND products.in_development = 1";
               }
             }
             else{
                 if($sub_type != null)
                 {
+                    \Session::put('sub_type',$sub_type);
                     $return.=" AND products.prod_type_id=".$product_type_id." AND products.prod_sub_type_id=".$sub_type." AND  products.inactive = ".$active." AND products.in_development = 0";
                 }
                 else {
+                    \Session::put('sub_type',"");
                     $return .= " AND products.prod_type_id=" . $product_type_id . " AND  products.inactive = " . $active . " AND products.in_development = 0";
                 }
             }
 
+        }
+        else
+        {
+            \Session::put('product_type_id',"");
+            \Session::put('product_type',"");
+            if($sub_type !=null)
+            {
+                \Session::put('sub_type',$sub_type);
+                $return .=" AND products.prod_sub_type_id=".$sub_type." AND products.inactive = ".$active." AND products.in_development = 0";
+            }
+            else{
+                \Session::put('sub_type',"");
+            }
+            return $return;
         }
         return $return;
 	}
