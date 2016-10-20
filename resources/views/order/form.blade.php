@@ -695,7 +695,7 @@ if(result.unit_price == 0 && result.case_price == 0)
                             }
                             else
                             {
-                                $("#"+skuid).val();
+                                $("#"+skuid).val('N/A');
                             }
 
                             if(result.unit_price) {
