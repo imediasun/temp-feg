@@ -832,6 +832,8 @@ class ModuleController extends Controller
 
     public function postSavetable(Request $request)
     {
+        print_r($_POST);
+        exit;
         //$this->beforeFilter('csrf', array('on'=>'post'));
         $id = $request->input('module_id', null);
         //bug fix, For location module, module_id is not getting in post
