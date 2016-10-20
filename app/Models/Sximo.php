@@ -375,10 +375,12 @@ class Sximo extends Model {
 
         $loc = "";
         $i = 0;
-        foreach ($locations as $location) {
-            $loc[$i] = array('user_id' => $userid, 'location_id' => $location);
-            $i++;
-        }
+            foreach ($locations as $location) {
+                $loc[$i] = array('user_id' => $userid, 'location_id' => $location);
+                $i++;
+
+            }
+
         if ($id != NULL) {
             \DB::table('user_locations')->where('user_id', '=', $userid)->delete();
         }

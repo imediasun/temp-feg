@@ -118,7 +118,7 @@
                 </label>
                 <div class="col-md-6">
 
-					<input type="checkbox" name="has_all_locations" value="1" id="has_all_locations"  class="form-control"/>
+					<input type="checkbox" name="all_locations" value="1" id="has_all_locations"  class="form-control"/>
 
 
                 </div>
