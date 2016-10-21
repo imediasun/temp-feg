@@ -349,7 +349,7 @@ class OrderController extends Controller
                     'order_type_id' => $order_type,
                     'date_ordered' => $date_ordered,
                     'vendor_id' => $vendor_id,
-                    'order_description' => '',
+                    'order_description' => $order_description,
                     'order_total' => $total_cost,
                     'freight_id' => $freight_type_id,
                     'po_number' => $po,
@@ -474,7 +474,7 @@ class OrderController extends Controller
         $order_id = $request->get('order_id');
         $opt = $request->get('opt');
 
-        if ($to === "NULL" || $from === "NULL") {
+        if ($to === "NULL" || $from === "NULL" || empty($to) || empty($from) || $to == "" || $from=="") {
             return response()->json(array(
                 'message' => "Failed!Sender or Vendor Email is missing",
                 'status' => 'error'
@@ -484,7 +484,7 @@ class OrderController extends Controller
             $this->getPo($order_id, true, $to, $from);
             return response()->json(array(
                 'status' => 'success',
-                'message' => \Lang::get('core.note_success'),
+                'message' => \Lang::get('core.mail_sent_success'),
 
             ));
         }
