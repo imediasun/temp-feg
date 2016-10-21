@@ -566,6 +566,8 @@ abstract class Controller extends BaseController
         $fields = '';
         $param = '';
         $allowsearch = $this->info['config']['forms'];
+
+
         foreach ($allowsearch as $as)
             $arr[$as['field']] = $as;
         if ($_GET['search'] != '') {
@@ -610,7 +612,7 @@ abstract class Controller extends BaseController
                             $col = $arr[$keys[0]]['alias'] . "." . $keys[0];
                             if ($keys[0] == 'up_user_id' && $arr[$keys[0]]['alias'] == "game_service_history") {
                                 $col = "DATEDIFF(date_up,date_down)";
-                            } elseif ($keys[0] == 'description' && $arr[$keys[0]]['alias'] == "requests") {
+                            } elseif ($keys[0] == 'description' && $arr[$keys[0]]['alias'] == "requests" && \Request::segment(1)=="managefegrequeststore") {
                                 $col = "products.vendor_description";
                             }
 
