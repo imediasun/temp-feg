@@ -483,7 +483,7 @@ class OrderController extends Controller
             $this->getPo($order_id, true, $to, $from);
             return response()->json(array(
                 'status' => 'success',
-                'message' => \Lang::get('core.note_success'),
+                'message' => \Lang::get('core.mail_sent_success'),
 
             ));
         }

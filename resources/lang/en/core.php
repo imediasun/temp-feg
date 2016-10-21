@@ -191,7 +191,8 @@ return array(
     "note_unblock"              => "Unblocked",
     "request_sent_success"      => "Request Sent Successfully",
     "request_send_fial"         => "Error in Sending Request",
-    "note_freight_paid"         => "Status Changed,Paid Successfully"
+    "note_freight_paid"         => "Status Changed,Paid Successfully",
+     "mail_sent_success"        => "Email Sent Successfully"
 
 
 );
