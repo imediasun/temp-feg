@@ -33,6 +33,15 @@ $orders = array('asc','desc');
           @if(isset($product_type) && !is_null($product_type))
               <input type="hidden" name="product_type" value="<?php  echo $product_type ?>"/>
           @endif
+          @if(isset($product_list_type) && !is_null($product_list_type))
+              <input type="hidden" name="prod_list_type" value="<?php  echo \Session::get('product_type') ?>"/>
+          @endif
+          @if(isset($sub_type) && !is_null($sub_type))
+              <input type="hidden" name="sub_type" value="<?php  echo $sub_type ?>"/>
+          @endif
+          @if(isset($active) && !is_null($active))
+              <input type="hidden" name="active" value="<?php  echo $active ?>"/>
+          @endif
         @if(!isset($setting['disablepagination']) || $setting['disablepagination'] == 'false')
         <?php $setRows = isset($pager['rows']) ? $pager['rows'] : $setting['perpage']; ?>
 		<select name="rows" class="select-alt" style="width:70px; float:left;"

@@ -49,6 +49,7 @@ class ProductController extends Controller
         $active = isset($_GET['active']) ? $_GET['active'] : '';
         $sub_type = isset($_GET['sub_type']) ? $_GET['sub_type'] : '';
 
+
         $module_id = \DB::table('tb_module')->where('module_name', '=', 'product')->pluck('module_id');
         $this->data['module_id'] = $module_id;
         if (Input::has('config_id')) {
@@ -86,7 +87,7 @@ class ProductController extends Controller
             $this->data['product_list_type'] = $prod_list_type;
             $this->data['active_prod'] = $active;
         } else {
-            $this->data['product_list_type'] = 0;
+            $this->data['product_list_type'] = 'select';
             $this->data['active_prod'] = 0;
         }
         $this->data['sub_type']=$sub_type;
