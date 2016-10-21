@@ -9,11 +9,7 @@
                 <button style="visibility: hidden" type="button " class="btn-xs collapse-close btn btn-danger pull-right"><i class="fa fa fa-times"></i></button>
                 <a href="javascript:void(0)" class="collapse-close pull-right btn btn-xs btn-danger"  id="close" onclick="reloadOrder();"
                         ><i class="fa fa fa-times"></i></a>
-
-
             </div>
-
-
         <div class="page-content-wrapper m-t">
             <div class="ajaxLoading"></div>
             <div class="sbox animated fadeInRight">
@@ -93,6 +89,7 @@
         function showResponse(data) {
             if (data.status == 'success') {
                 notyMessage(data.message);
+                $('.ajaxLoading').hide();
                 $('#sximo-modal').modal('hide');
             } else {
                 notyMessageError(data.message);
