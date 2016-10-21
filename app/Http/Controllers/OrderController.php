@@ -473,7 +473,7 @@ class OrderController extends Controller
         $order_id = $request->get('order_id');
         $opt = $request->get('opt');
 
-        if ($to === "NULL" || $from === "NULL") {
+        if ($to === "NULL" || $from === "NULL" || empty($to) || empty($from) || $to == "" || $from=="") {
             return response()->json(array(
                 'message' => "Failed!Sender or Vendor Email is missing",
                 'status' => 'error'
