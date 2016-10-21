@@ -44,17 +44,6 @@ class productusagereport extends Sximo  {
 			'global'	=> 1
 		), $args ));
 
-		$offset = ($page-1) * $limit ;
-		$limitConditional = ($page !=0 && $limit !=0) ? "LIMIT  $offset , $limit" : '';
-		$orderConditional = ($sort !='' && $order !='') ?  " ORDER BY {$sort} {$order} " :
-                ' ORDER BY V.vendor_name, P.prod_type_id, P.vendor_description ';
-
-		// Update permission global / own access new ver 1.1
-		$table = with(new static)->table;
-		if($global == 0 )
-			$params .= " AND {$table}.entry_by ='".\Session::get('uid')."'";
-		// End Update permission global / own access new ver 1.1
-
 		$rows = array();
         $total = 0;
         
@@ -67,7 +56,7 @@ class productusagereport extends Sximo  {
         $prod_sub_type_id = @$filters['prod_sub_type_id'];
         
         if (empty($date_start) || empty($date_end)) {
-            $message = "Please select a date range from Search";
+            $message = "To view the contents of this report, please select a date range and other search filter.";
         }
         else {
             
@@ -76,16 +65,16 @@ class productusagereport extends Sximo  {
             $whereOrderType ="";
             $whereProdType = "";
             if (!empty($location_id)) {
-                $whereLocation = "AND L.id = $location_id";                
+                $whereLocation = "AND L.id IN ($location_id) ";                
             }
             if (!empty($vendor_id)) {
-                $whereVendor = "AND V.id = $vendor_id";                
+                $whereVendor = "AND V.id IN ($vendor_id) ";
             }
             if (!empty($prod_type_id)) {
-                $whereOrderType = "AND P.prod_type_id = $prod_type_id";                
+                $whereOrderType = "AND P.prod_type_id IN ($prod_type_id) ";
             }
             if (!empty($prod_sub_type_id)) {
-                $whereProdType = "AND P.prod_sub_type_id = $prod_sub_type_id";                
+                $whereProdType = "AND P.prod_sub_type_id IN ($prod_sub_type_id) ";
             }
 
             
@@ -101,7 +90,7 @@ class productusagereport extends Sximo  {
             }
             
             $mainQuery = "SELECT requests.id, 
-									 V.vendor_name AS Vendor,
+									 V.vendor_name,
 									 P.vendor_description AS Product,
 									 P.ticket_value,
 									 P.num_items,
@@ -134,16 +123,24 @@ class productusagereport extends Sximo  {
             
             $groupQuery = " GROUP BY P.id ";
             
-        
-            
-            $finalDataQuery = "$mainQuery $fromQuery $whereQuery $groupQuery $orderConditional $limitConditional";
-            $finalTotalQuery = "$totalQuery $fromQuery $whereQuery $groupQuery $orderConditional";
-            
-            $rows = \DB::select($finalDataQuery);
+            $finalTotalQuery = "$totalQuery $fromQuery $whereQuery $groupQuery";
             $totalRows = \DB::select($finalTotalQuery);
             if (!empty($totalRows)) {
                 $total = count($totalRows);
             }
+            $offset = ($page-1) * $limit ;
+            if ($offset >= $total) {
+                $page = ceil($total/$limit);
+                $offset = ($page-1) * $limit ;
+            }           
+            $limitConditional = ($page !=0 && $limit !=0) ? " LIMIT  $offset , $limit" : '';                
+            
+    		$orderConditional = ($sort !='' && $order !='') ?  " ORDER BY {$sort} {$order} " :
+                ' ORDER BY V.vendor_name, P.prod_type_id, P.vendor_description ';
+            
+            $finalDataQuery = "$mainQuery $fromQuery $whereQuery $groupQuery $orderConditional $limitConditional";
+            $rawRows = \DB::select($finalDataQuery);
+            $rows = self::processRows($rawRows);
             
             $topMessage = "Showing data from " . (date("m/d/Y",$date_start_stamp)) . " to " .
                     (date("m/d/Y",$date_end_stamp));
@@ -160,20 +157,15 @@ class productusagereport extends Sximo  {
 
 	}
 	    
-    public static function getSearchFilters() {
-        $finalFilter = array();
-        if (isset($_GET['search'])) {
-            $filters_raw = trim($_GET['search'], "|");
-            $filters = explode("|", $filters_raw);
-
-            foreach($filters as $filter) {
-                $columnFilter = explode(":", $filter);
-                if (isset($columnFilter) && isset($columnFilter[0]) && isset($columnFilter[2])) {
-                    $finalFilter[$columnFilter[0]] = $columnFilter[2];
-                }
-            }
+	public static function processRows( $rows ){
+        $newRows = array();
+        foreach($rows as $row) {
+		
+            $row->start_date = date("m/d/Y", strtotime($row->start_date));
+            $row->start_date = date("m/d/Y", strtotime($row->start_date));
+		          
+            $newRows[] = $row;
         }
-        return $finalFilter;
-    }	
-
+		return $newRows;
+	} 
 }

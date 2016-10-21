@@ -19,7 +19,7 @@ class merchthrowsdetailed extends Sximo  {
         $dateEnd = @$filters['date_end'];
         $loc_table_expression = " ";
         if (!empty($location)) {
-            $loc_table_expression = " AND merch_throws.location_id=$location ";
+            $loc_table_expression = " AND merch_throws.location_id IN ($location) ";
         }
         $dateStart_expression= " ";
         if (!empty($dateStart)) {
@@ -30,7 +30,7 @@ class merchthrowsdetailed extends Sximo  {
             $dateEnd_expression = " AND merch_throws.date_end <= '$dateEnd' ";
         }
 
-        $sql = "SELECT  G.id as id,
+        $sql = "SELECT  merch_throws.game_id as id,
                         I.game_title,
                         CONCAT(G.id,' | ',I.game_title) AS 'Game',
 									 merch_throws.price_per_play,
@@ -95,23 +95,6 @@ class merchthrowsdetailed extends Sximo  {
 		return "  ";
 	}
 	
-    private static function getSearchFilters() {
-        $finalFilter = array();
-        if (isset($_GET['search'])) {
-            $filters_raw = trim($_GET['search'], "|");
-            $filters = explode("|", $filters_raw);
-
-            foreach($filters as $filter) {
-                $columnFilter = explode(":", $filter);
-                if (isset($columnFilter) && isset($columnFilter[0]) && isset($columnFilter[2])) {
-                    $finalFilter[$columnFilter[0]] = $columnFilter[2];
-}
-            }
-        }
-        return $finalFilter;
-    }
-        
-        
 	public static function getRows( $args,$cond=null )
 	{
 		$table = with(new static)->table;
@@ -130,26 +113,26 @@ class merchthrowsdetailed extends Sximo  {
 			'global'	=> 1
 		), $args ));
 
-		$offset = ($page-1) * $limit ;
-		$limitConditional = ($page !=0 && $limit !=0) ? "LIMIT  $offset , $limit" : '';
-		$orderConditional = "ORDER BY date_start DESC, L.id DESC";//($sort !='' && $order !='') ?  " ORDER BY {$sort} {$order} " : '';
-
-		// Update permission global / own access new ver 1.1
-		$table = with(new static)->table;
-		if($global == 0 )
-			$params .= " AND {$table}.entry_by ='".\Session::get('uid')."'";
-		// End Update permission global / own access new ver 1.1
-        
-        $mainQuery = self::build_query();
-        $selectQuery = $mainQuery. " {$orderConditional} {$limitConditional}";
-        $rows = \DB::select($selectQuery);
-        
         $total = 0;
+        $mainQuery = self::build_query();
         $totalRows = \DB::select($mainQuery);
         if (!empty($totalRows)) {
             $total = count($totalRows);
         }
-		
+        
+		$offset = ($page-1) * $limit ;       
+        if ($offset >= $total) {
+            $page = ceil($total/$limit);
+            $offset = ($page-1) * $limit ;
+        }             
+		$limitConditional = ($page !=0 && $limit !=0) ? "LIMIT  $offset , $limit" : '';
+        
+		$orderConditional = ($sort !='' && $order !='') ?  " ORDER BY {$sort} {$order} " : 'ORDER BY date_start DESC, L.id DESC';
+        
+        $selectQuery = $mainQuery. " {$orderConditional} {$limitConditional}";
+        $rawRows = \DB::select($selectQuery);
+        $rows = self::processRows($rawRows);
+        
 		return $results = array(
                     'topMessage' => $topMessage,
                     'bottomMessage' => $bottomMessage,
@@ -162,5 +145,27 @@ class merchthrowsdetailed extends Sximo  {
 
 	}
 	
+	public static function processRows( $rows ){
+        $newRows = array();
+        foreach($rows as $row) {
+
+            $dsEpoch = strtotime($row->date_start);
+            if ($dsEpoch !== FALSE && $dsEpoch > 0) {
+                $row->date_start = date("m/d/Y", strtotime($row->date_start));
+            }
+            else {
+                $row->date_start = "";
+            }            
+            $deEpoch = strtotime($row->date_end);
+            if ($deEpoch !== FALSE && $deEpoch > 0) {
+                $row->date_end = date("m/d/Y", strtotime($row->date_end));
+            }
+            else {
+                $row->date_end = "";
+            } 
+            $newRows[] = $row;
+        }
+		return $newRows;
+	}     
 
 }

@@ -10,7 +10,7 @@
       </div>
       <ul class="breadcrumb">
         <li><a href="{{ URL::to('dashboard') }}"> Dashboard </a></li>
-		<li><a href="{{ URL::to('sximo/module') }}"> Module </a></li>
+		<li><a href="{{ URL::to('feg/module') }}"> Module </a></li>
         <li class="active"> Form Design Editor </li>
       </ul>	  
     </div>
@@ -26,15 +26,15 @@
 @endif
 
 <ul class="nav nav-tabs" style="margin-bottom:10px;">
-  	<li ><a href="{{ URL::to('sximo/module/form/'.$module_name)}}">Form Configuration </a></li> 
-	<li class="active" ><a href="{{ URL::to('sximo/module/formdesign/'.$module_name)}}">Form Layout</a></li> 
+  	<li ><a href="{{ URL::to('feg/module/form/'.$module_name)}}">Form Configuration </a></li>
+	<li class="active" ><a href="{{ URL::to('feg/module/formdesign/'.$module_name)}}">Form Layout</a></li>
 </ul>
 
 <div class="sbox">
 	<div class="sbox-title"><h5> Form Layout Confiuration </h5></div>
 	<div class="sbox-content">	
 	<p class="alert alert-info"> <strong>Tips !</strong> Drag and drop rows to re ordering lists </p>	
- {!! Form::open(array('url'=>'sximo/module/formdesign/'.$module_name,'id'=>'doReorder', 'class'=>'form-vertical','parsley-validate'=>'','novalidate'=>' ')) !!}
+ {!! Form::open(array('url'=>'feg/module/formdesign/'.$module_name,'id'=>'doReorder', 'class'=>'form-vertical','parsley-validate'=>'','novalidate'=>' ')) !!}
  
  <div class="col-md-4">
 	  <div class="form-group ">
@@ -144,6 +144,7 @@
  {!! Form::close() !!}
 </div> </div></div>
 
+</div>
 <script>
 $(document).ready(function() {
 	$('#saveLayout').click(function(){

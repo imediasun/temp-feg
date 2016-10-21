@@ -6,8 +6,8 @@
         <br/>
         <select name="type" class="select3" id="request_type">
             <option disabled>Select Requests Type</option>
-            <option value="manage" @if($view == 'manage'): selected @endif> Open Requests</option>
             <option value="archive" @if($view == 'archive'): selected @endif>FEG Store Requests Archives</option>
+            <option value="manage" @if($view == 'manage'): selected @endif> Open Requests</option>
         </select>
 
     </div>
@@ -51,15 +51,30 @@
     <div class="col-md-12">
         <br/>
         <a href="{{ URL::to( $pageModule .'/search') }}" class="btn btn-sm btn-white"
-           onclick="SximoModal(this.href,'Advance Search'); return false;"><i class="fa fa-search"></i> Search</a>
-
+           onclick="SximoModal(this.href,'Advanced Search'); return false;"><i class="fa fa-search"></i>Advanced Search</a>
         @if(SiteHelpers::isModuleEnabled($pageModule))
             <a href="{{ URL::to('tablecols/arrange-cols/'.$pageModule) }}" class="btn btn-sm btn-white" onclick="SximoModal(this.href,'Column Selector'); return false;" ><i class="fa fa-bars"></i> Arrange Columns</a>
-
+            @if(!empty($colconfigs))
+                <select class="form-control" style="width:25%!important;display:inline-block;box-sizing: border-box" name="col-config"
+                        id="col-config">
+                    <option value="0">Select Configuraton</option>
+                    @foreach( $colconfigs as $configs )
+                        <option @if($config_id == $configs['config_id']) selected
+                                                                         @endif value={{ $configs['config_id'] }}> {{ $configs['config_name'] }}   </option>
+                    @endforeach
+                </select>
+            @endif
         @endif
-
+        <div class="pull-right">
+            <a href="{{ URL::to( $pageModule .'/export/excel?return='.$return) }}" class="btn btn-sm btn-white">
+                Excel</a>
+            <a href="{{ URL::to( $pageModule .'/export/csv?return='.$return) }}" class="btn btn-sm btn-white">
+                CSV </a>
+        </div>
     </div>
-  
+
+
+
 
 </div>
 <script>
@@ -99,7 +114,7 @@
     }
     $("#col-config").on('change', function () {
         var request_type = $("#request_type").val();
-        reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?config_id=' + $("#col-config").val()+'&view=' + request_type);
+        reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?config_id=' + $("#col-config").val()+'&view=' + request_type + getFooterFilters());
     });
 
     function pageRefresh(type) {
@@ -155,8 +170,8 @@
                 get+="&v1=T"+$('#order_type').val();
             }
         }
-        //alert(get);
-        reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data' + get);
+
+        reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data' + get );
 
     }
 </script>

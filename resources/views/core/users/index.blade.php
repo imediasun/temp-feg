@@ -26,19 +26,38 @@
 	</ul>
 
 <div class="sbox animated fadeInRight" >
-	<div class="sbox-title"> <h5> <i class="fa fa-table"></i> <?php echo $pageTitle ;?> <small>{{ $pageNote }}</small></h5>
+	<div class="sbox-title">
 <div class="sbox-tools" >
-
-		 <a href="{{ url($pageModule) }}" class="btn btn-xs btn-white tips  {{(isset($_GET['search'])) ? 'btn-search ':'' }}" title="Clear Search" ><i class="fa fa-trash-o"></i> Clear Search </a>
-
-
+        {{--*/ $sortParam = is_null(Input::get('sort'))?'':'&sort='.Input::get('sort') /*--}}
+        {{--*/ $orderParam = is_null(Input::get('order'))?'':'&order='.Input::get('order') /*--}}
+        {{--*/ $rowsParam = is_null(Input::get('rows'))?'':'&rows='.Input::get('rows') /*--}}
+        @if(isset($_GET['search']))
+		 <a href="{{ url($pageModule) }}?{{ $sortParam }}{{ $orderParam }}{{ $rowsParam }}"
+            class="btn btn-xs btn-white tips btn-search" title="Clear Search" ><i class="fa fa-trash-o"></i> Clear Search </a>
+        @endif
 		@if(Session::get('gid') ==1)
-			<a href="{{ URL::to('sximo/module/config/'.$pageModule) }}" class="btn btn-xs btn-white tips" title=" {{ Lang::get('core.btn_config') }}" ><i class="fa fa-cog"></i></a>
+			<a href="{{ URL::to('feg/module/config/'.$pageModule) }}" class="btn btn-xs btn-white tips" title=" {{ Lang::get('core.btn_config') }}" ><i class="fa fa-cog"></i></a>
 		@endif
 		</div>
 	</div>
 	<div class="sbox-content">
-	    <div class="toolbar-line ">
+        @if($setting['usesimplesearch']!='false')
+            <?php $simpleSearchForm = SiteHelpers::configureSimpleSearchForm($tableForm); ?>
+            @if(!empty($simpleSearchForm))
+                <div class="simpleSearchContainer clearfix">
+                    @foreach ($simpleSearchForm as $t)
+                        <div class="sscol {{ $t['widthClass'] }}" style="{{ $t['widthStyle'] }}">
+                            {!! SiteHelpers::activeLang($t['label'],(isset($t['language'])? $t['language'] : array())) !!}
+                            {!! SiteHelpers::transForm($t['field'] , $simpleSearchForm) !!}
+                        </div>
+                    @endforeach
+                    <div class="sscol-submit"><br/>
+                        <button type="button" name="search" class="doSimpleSearch btn btn-sm btn-primary"> Search </button>
+                    </div>
+                </div>
+            @endif
+        @endif
+	    <div class="toolbar-line">
 			@if($access['is_add'] ==1)
 	   		<a href="{{ URL::to('core/users/update') }}" class="tips btn btn-sm btn-white"  title="{{ Lang::get('core.btn_create') }}">
 			<i class="fa fa-plus-circle "></i>&nbsp;{{ Lang::get('core.btn_create') }}</a>
@@ -53,43 +72,73 @@
 			@endif
 
 
-			<a href="{{ URL::to( 'core/users/search') }}" class="btn btn-sm btn-white" onclick="SximoModal(this.href,'Advance Search'); return false;" ><i class=" fa fa-search"></i> Search</a>
+			<a href="{{ URL::to( 'core/users/search') }}" class="btn btn-sm btn-white" onclick="SximoModal(this.href,'Advanced Search'); return false;" ><i class=" fa fa-search"></i>Advanced Search</a>
+		@if(SiteHelpers::isModuleEnabled('users'))
+			<a href="{{ URL::to('tablecols/arrange-cols/users') }}" class="btn btn-sm btn-white" onclick="SximoModal(this.href,'Column Selector'); return false;" ><i class="fa fa-bars"></i> Arrange Columns</a>
+			<?php   $colconfigs=SiteHelpers::getRequiredConfigs($module_id);  ?>
+			@if(!empty($colconfigs))
+				<select class="btn btn-sm btn-white" style="width:25%!important;display:inline;margin-bottom: 6px;" name="col-config"
+						id="col-config">
+					<option value="0">Select Configuraton</option>
+					@foreach( $colconfigs as $configs )
+						<option @if($config_id == $configs['config_id']) selected
+								@endif value={{ $configs['config_id'] }}> {{ $configs['config_name'] }}   </option>
+					@endforeach
+				</select>
+			@endif
+		@endif
 
-                @if(SiteHelpers::isModuleEnabled('users'))
-                    <a href="{{ URL::to('tablecols/arrange-cols/users') }}" class="btn btn-sm btn-white" onclick="SximoModal(this.href,'Column Selector'); return false;" ><i class="fa fa-bars"></i> Arrange Columns</a>
-                 <?php   $colconfigs=SiteHelpers::getRequiredConfigs($module_id);  ?>
-                    @if(!empty($colconfigs))
-                        <select class="form-control" style="width:25%!important;display:inline;" name="col-config"
-                                id="col-config">
-                            <option value="0">Select Configuraton</option>
-                            @foreach( $colconfigs as $configs )
-                                <option @if($config_id == $configs['config_id']) selected
-                                                                                 @endif value={{ $configs['config_id'] }}> {{ $configs['config_name'] }}   </option>
-                            @endforeach
-                        </select>
-                    @endif
-                @endif
 		</div>
 
 
 
 	 {!! Form::open(array('url'=>'core/users/delete/', 'class'=>'form-horizontal' ,'id' =>'SximoTable' )) !!}
 	 <div class="table-responsive" style="min-height:300px;">
-    <table class="table" style="table-layout: fixed;width:100%">
+    <table id="coreusersTable" class="table table-striped datagrid" style="table-layout: fixed;width:100%">
         <thead>
 			<tr>
+
+				@if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
 				<th class="number" width="30"> No </th>
-				<th width="60"> <input type="checkbox" class="checkall" /></th>
-				
-				@foreach ($tableGrid as $t)
-					@if($t['view'] =='1')
-						<th width="150">{{ $t['label'] }}</th>
+				@endif
+					@if($setting['disableactioncheckbox']=='false')
+						<th width="50"> <input type="checkbox" class="checkall" /></th>
 					@endif
-				@endforeach
-				<th width="100">Login</th>
-                <th width="150"> Block User</th>
-				<th width="100">{{ Lang::get('core.btn_action') }}</th>
-                <th width="100"> Upload Image</th>
+
+                <?php foreach ($tableGrid as $t) :
+                    if($t['view'] =='1'):
+                        $limited = isset($t['limited']) ? $t['limited'] :'';
+                        if(SiteHelpers::filterColumn($limited ))
+                        {
+                            $sortBy = $param['sort'];
+                            $orderBy = strtolower($param['order']);
+                            $colField = $t['field'];
+                            $colIsSortable = $t['sortable'] == '1';
+                            $colIsSorted = $colIsSortable && $colField == $sortBy;
+                            $colClass = $colIsSortable ? ' dgcsortable' : '';
+                            $colClass .= $colIsSorted ? " dgcsorted dgcorder$orderBy" : '';
+                            $th = '<th'.
+                                    ' class="'.$colClass.'"'.
+                                    ' data-field="'.$colField.'"'.
+                                    ' data-sortable="'.$colIsSortable.'"'.
+                                    ' data-sorted="'.($colIsSorted?1:0).'"'.
+                                    ' data-sortedOrder="'.($colIsSorted?$orderBy:'').'"'.
+                                    ' align="'.$t['align'].'"'.
+                                    ' width="'.$t['width'].'"';
+                            $th .= '>';
+                            $th .= \SiteHelpers::activeLang($t['label'],(isset($t['language'])? $t['language'] : array()));
+                            $th .= '</th>';
+                            echo $th;
+                        }
+                    endif;
+                endforeach; ?>
+
+
+                @if($setting['disablerowactions']=='false')
+                    <th width="200"><?php echo Lang::get('core.btn_action') ;?></th>
+                @endif
+            </tr>
+
 			  </tr>
 
         </thead>
@@ -99,9 +148,13 @@
             @foreach ($rowData as $row)
 
                 <tr>
+					@if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
 					<td width="30"> {{ ++$i }} </td>
+					@endif
+
+						@if($setting['disableactioncheckbox']=='false')
 					<td width="50"><input type="checkbox" class="ids" name="ids[]" value="{{ $row->id }}" />  </td>
-					
+						@endif
 				 @foreach ($tableGrid as $field)
 
 					 @if($field['view'] =='1')
@@ -110,7 +163,7 @@
 							<?php if( file_exists( './uploads/users/'.$row->avatar) && $row->avatar !='') { ?>
 							<img src="{{ URL::to('uploads/users').'/'.$row->avatar }} " border="0" width="40" class="img-circle" />
 							<?php  } else { ?>
-							<img alt="" src="http://www.gravatar.com/avatar/{{ md5($row->email) }}" width="40" class="img-circle" />
+							<img alt="" src="{{url()}}/silouette.png" width="40" class="img-circle" border="0"/>
 							<?php } ?>
 					 	@elseif($field['field'] =='active')
 							{!! ($row->active ==1 ? '<lable class="label label-success">Active</label>' : '<lable class="label label-danger">Inactive</label>')  !!}
@@ -131,7 +184,7 @@
 							 {!! $row->created_at  !!}
 
 						 @elseif($field['field'] =='date')
-							 <?php $row->date = date("m/d/Y H:i:s", strtotime($row->date)); ?>
+							 <?php $row->date = date("m/d/Y", strtotime($row->date)); ?>
 
 							 {!! $row->date  !!}
 						@else
@@ -140,21 +193,12 @@
 						@endif
 					 </td>
 					 @endif
+
 				 @endforeach
 
 
-				 	<td>
-						<a class="btn btn-primary btn-xs" href="{{ URL::to('core/users/play/'.$row->id)}}">Impersonate</a>
-					</td>
-                    <td>
-                        @if($row->banned=='Yes')
-                            <a class="btn btn-success" href="{{ URL::to('core/users/unblock/'.$row->id)}}">Unblock</a>
-                        @else
-                            <a class="btn btn-danger btn-xs" href="{{ URL::to('core/users/block/'.$row->id)}}">Block</a>
-                        @endif
-                    </td>
+				 	<td id="s_icons">
 
-				 <td>
 					 	@if($access['is_detail'] ==1)
 						<a href="{{ URL::to('core/users/show/'.$row->id.'?return='.$return)}}" class="tips btn btn-xs btn-white" title="{{ Lang::get('core.btn_view') }}"><i class="fa  fa-search "></i></a>
 						@endif
@@ -162,9 +206,16 @@
 						<a  href="{{ URL::to('core/users/update/'.$row->id.'?return='.$return) }}" class="tips btn btn-xs btn-white" title="{{ Lang::get('core.btn_edit') }}"><i class="fa fa-edit "></i></a>
 						@endif
 
+							<a  href="{{ URL::to('core/users/play/'.$row->id)}}" class="tips btn btn-xs btn-white" title="Impersonate"><i class="fa fa-user"  aria-hidden="true"></i></a>
 
-				</td>
-                <td><a class="btn btn-warning btn-xs" href="{{ URL::to('core/users/upload/'.$row->id)}}">Upload Image</a></td>
+							@if($row->banned=='Yes')
+								<a  href="{{ URL::to('core/users/unblock/'.$row->id)}}" >Unblock</a>
+							@else
+								<a  href="{{ URL::to('core/users/block/'.$row->id)}}" class="tips btn btn-xs btn-white"  title="Block User"><i class="fa fa-ban" aria-hidden="true"></i></a>
+							@endif
+							<a href="{{ URL::to('core/users/upload/'.$row->id)}}" class="tips btn btn-xs btn-white"  title="Upload Image"><i class="fa fa-picture-o" aria-hidden="true"></i></a>
+
+					</td>
                 </tr>
 
             @endforeach
@@ -188,13 +239,33 @@ $(document).ready(function(){
 		$('#SximoTable').attr('action','{{ URL::to("core/users/multisearch")}}');
 		$('#SximoTable').submit();
 	});
+
+    var simpleSearch = $('.simpleSearchContainer'),
+        ajaxMode = false;
+
+    if (simpleSearch.length) {
+        initiateSearchFormFields(simpleSearch);
+        simpleSearch.find('.doSimpleSearch').click(function(event){
+            performSimpleSearch.call($(this), {
+                moduleID: '#{{ $pageModule }}',
+                url: "{{ $pageUrl }}",
+                event: event,
+                ajaxSearch: ajaxMode,
+                container: simpleSearch
+            });
+        });
+    }
+
+    initDataGrid('{{ $pageModule }}', '{{ $pageUrl }}', {useAjax: ajaxMode});
+    
+    updateNativeUIFieldsBasedOn();  
+    makeSimpleSearchFieldsToInitiateSearchOnEnter();
+    
 });
-$("#col-config").change(function(){
-    var config_id=$('#col-config').val();
-        location.href = "/sximo/public/core/users?config_id=" + config_id;
-
-
-});
-
 </script>
+<style>
+    .table th.right { text-align:right !important;}
+    .table th.center { text-align:center !important;}
+
+</style>
 @stop

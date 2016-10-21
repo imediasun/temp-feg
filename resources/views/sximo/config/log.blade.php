@@ -47,7 +47,7 @@
 		  </div>  
 		  
 		<div class="form-group">   
-			<a href="{{ URL::to('sximo/config/clearlog') }}" class="btn btn-primary" > Clear cache and logs </a>	 
+			<a href="{{ URL::to('feg/config/clearlog') }}" class="btn btn-primary" > Clear cache and logs </a>
 		</div>
 	
   	</fieldset>

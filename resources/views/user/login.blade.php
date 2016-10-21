@@ -21,11 +21,7 @@
 	<ul class="nav nav-tabs" >
 	  <li class="active"><a href="#tab-sign-in" data-toggle="tab">  {{ Lang::get('core.signin') }} </a></li>
 	   <li ><a href="#tab-forgot" data-toggle="tab"> {{ Lang::get('core.forgotpassword') }} </a></li>
-	   @if(CNF_REGIST =='true') 			
-	   <li><a href="{{ URL::TO('user/register')}}" >  {{ Lang::get('core.signup') }} </a></li>
-	   @endif	
-	 
-	</ul>	
+	</ul>
 	<div class="tab-content" >
 		<div class="tab-pane active m-t" id="tab-sign-in">
 		<form method="post" action="{{ url('user/signin')}}" class="form-vertical">
@@ -41,13 +37,14 @@
 			<div class="form-group has-feedback  animated fadeInRight delayp1">
 				<label>{{ Lang::get('core.password') }}	</label>
 				<input type="password" name="password" placeholder="Password" class="form-control" required="true" />
+				<i class="icon-lock form-control-feedback"></i>
 			</div>
 
 			<div class="form-group has-feedback  animated fadeInRight delayp1">
 				<label> Remember Me ?...	</label>
 				<input type="checkbox" name="remember" value="1" />
 
-				<i class="icon-lock form-control-feedback"></i>
+
 			</div>
 
 

@@ -78,7 +78,7 @@
             {
                 notyMessage(data.message);
                 $('#sximo-modal').modal('hide');
-                location.href='/sximo/public/order';
+                location.href='/order';
             } else {
                 notyMessageError(data.message);
                 $('.ajaxLoading').hide();

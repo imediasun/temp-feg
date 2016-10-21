@@ -18,48 +18,82 @@
         </div>
     </div>
     <div class="sbox-content">
-      <?php  if(!isset($group_id)):
+        <?php  if(!isset($group_id)):
             $group_id=0;
         endif
-          ?>
+        ?>
+            @if($setting['usesimplesearch']!='false')
+                <?php $simpleSearchForm = SiteHelpers::configureSimpleSearchForm($tableForm); ?>
+                @if(!empty($simpleSearchForm))
+                    <div class="simpleSearchContainer clearfix">
+                        @foreach ($simpleSearchForm as $t)
+                            <div class="sscol {{ $t['widthClass'] }}" style="{{ $t['widthStyle'] }}">
+                                {!! SiteHelpers::activeLang($t['label'],(isset($t['language'])? $t['language'] : array())) !!}
+                                {!! SiteHelpers::transForm($t['field'] , $simpleSearchForm) !!}
+                            </div>
+                        @endforeach
+                        <div class="sscol-submit"><br/>
+                            <button type="button" name="search" class="doSimpleSearch btn btn-sm btn-primary"> Search </button>
+                        </div>
+                    </div>
+                @endif
+            @endif
         @include( $pageModule.'/toolbar',['colconfigs' => SiteHelpers::getRequiredConfigs($module_id)])
         <?php echo Form::open(array('url' => 'gamestitle/delete/', 'class' => 'form-horizontal', 'id' => 'SximoTable', 'data-parsley-validate' => ''));?>
         <div class="table-responsive">
             @if(count($rowData)>=1)
-                <table class="table table-striped  " id="{{ $pageModule }}Table" style="table-layout: fixed;width:100%;">
+                <table class="table table-striped  datagrid" id="{{ $pageModule }}Table" style="table-layout: fixed;width:100%;">
                     <thead>
                     <tr>
-                        <th width="20"> No</th>
 
-                        <th width="60"><input type="checkbox" class="checkall"/></th>
+                        @if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
+                            <th width="35"> No </th>
+                        @endif
 
-                        <th width="100">Image</th>
-
-                        @if($setting['view-method']=='expand')
-                            <th></th> @endif
+                        @if($setting['disableactioncheckbox']=='false')
+                            <th width="30"> <input type="checkbox" class="checkall" /></th>
+                        @endif
+                            <th width="70">Img</th>
+                        @if($setting['view-method']=='expand') <th>  </th> @endif
                         <?php foreach ($tableGrid as $t) :
-                            if ($t['view'] == '1'):
-                                $limited = isset($t['limited']) ? $t['limited'] : '';
-                                if (SiteHelpers::filterColumn($limited)) {
-                                    echo '<th align="' . $t['align'] . '" width="' . $t['width'] . '">' . \SiteHelpers::activeLang($t['label'], (isset($t['language']) ? $t['language'] : array())) . '</th>';
+                            if($t['view'] =='1'):
+                                $limited = isset($t['limited']) ? $t['limited'] :'';
+                                if(SiteHelpers::filterColumn($limited ))
+                                {
+                                    $sortBy = $param['sort'];
+                                    $orderBy = strtolower($param['order']);
+                                    $colField = $t['field'];
+                                    $colIsSortable = $t['sortable'] == '1';
+                                    $colIsSorted = $colIsSortable && $colField == $sortBy;
+                                    $colClass = $colIsSortable ? ' dgcsortable' : '';
+                                    $colClass .= $colIsSorted ? " dgcsorted dgcorder$orderBy" : '';
+                                    $th = '<th'.
+                                            ' class="'.$colClass.'"'.
+                                            ' data-field="'.$colField.'"'.
+                                            ' data-sortable="'.$colIsSortable.'"'.
+                                            ' data-sorted="'.($colIsSorted?1:0).'"'.
+                                            ' data-sortedOrder="'.($colIsSorted?$orderBy:'').'"'.
+                                            ' align="'.$t['align'].'"'.
+                                            ' width="'.$t['width'].'"';
+                                    $th .= '>';
+                                    $th .= \SiteHelpers::activeLang($t['label'],(isset($t['language'])? $t['language'] : array()));
+                                    $th .= '</th>';
+                                    echo $th;
                                 }
                             endif;
                         endforeach; ?>
-
-
-                        <th width="100">Manual</th>
-                        <th width="100">Bulletin</th>
-                        <th width="100">Upload Manual</th>
-                        <th width="100">Upload Bulletin</th>
-                        <th width="100">Upload Image</th>
-                        <th width="70"><?php echo Lang::get('core.btn_action');?></th>
+                        @if($setting['disablerowactions']=='false')
+                            <th width="170"><?php echo Lang::get('core.btn_action') ;?></th>
+                        @endif
                     </tr>
                     </thead>
                     <tbody>
                     @if($access['is_add'] =='1' && $setting['inline']=='true')
                         <tr id="form-0">
-                            <td> #</td>
-                            <td></td>
+                            <td> # </td>
+                            @if($setting['disableactioncheckbox']=='false')
+                                <td> </td>
+                            @endif
                             @if($setting['view-method']=='expand')
                                 <td></td> @endif
                             @foreach ($tableGrid as $t)
@@ -85,10 +119,14 @@
                     $id = $row->id;
                     ?>
                     <tr class="editable" id="form-{{ $row->id }}">
-                        <td class="number"> <?php echo ++$i;?>  </td>
-                        <td><input type="checkbox" class="ids" name="ids[]" value="<?php echo $row->id;?>"/></td>
+                        @if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
+                            <td class="number"> <?php echo ++$i;?>  </td>
+                        @endif
+                        @if($setting['disableactioncheckbox']=='false')
+                            <td ><input type="checkbox" class="ids" name="ids[]" value="<?php echo $row->id ;?>" />  </td>
+                        @endif
 
-                           <td>{!! SiteHelpers::showUploadedFile($row->img,'/uploads/games/images/',50,false) !!}</td>
+                        <td>{!! SiteHelpers::showUploadedFile($row->img,'/uploads/games/images/',50,false) !!}</td>
 
 
 
@@ -118,30 +156,27 @@
                         ?>
 
 
-                        <td>
-                            @if($row->has_manual=="Yes")
-                            <a href="uploads/games/manuals/{{ $row->id }}.pdf"  target="_blank">Manual</a>
-                                @endif
-                        </td>
-                        <td>
-                            @if($row->has_servicebulletin=="Yes")
-                                <a href="uploads/games/bulletins/{{ $row->id }}.pdf"  target="_blank">Bulletin</a>
-                            @endif
-                        </td>
 
-                       <div> <td>  <button type="button" class="btn-imagee"> <a href="{{ URL::to('gamestitle/upload/'.$row->id.'?type=2')}}"style ="color: white; font-family: 'Lato', sans-serif; white-space: nowrap; border-color: #2a6496;	text-decoration: none;  border-radius: 0px; border: 1px solid transparent; background-color: #428bca; font-size: 10px;">Upload Manual</a></button></td>
 
-                       </div>
-
-                        <div> <td>  <button type="button" class="btn-imagee"><a href="{{ URL::to('gamestitle/upload/'.$row->id.'?type=3')}}"style ="color: white; font-family: 'Lato', sans-serif; white-space: nowrap; border-color: #2a6496;	text-decoration: none;  border-radius: 0px; border: 1px solid transparent; background-color: #428bca; font-size: 10px;">Upload Bulletin</a></button></td>
-
-                        </div>
-                        <div>
-                            <td>  <button type="button" class="btn-imagee"><a href="{{ URL::to('gamestitle/upload/'.$row->id.'?type=1')}}"style ="color: white; font-family: 'Lato', sans-serif; white-space: nowrap; border-color: #2a6496;	text-decoration: none;  border-radius: 0px; border: 1px solid transparent; background-color: #428bca; font-size: 10px;">Upload Image</a></button></td>
-                        </div>
-                        <td data-values="action" data-key="<?php echo $row->id;?>">
-                            {!! AjaxHelpers::buttonAction('gamestitle',$access,$id ,$setting) !!}
+                        <td data-values="action" data-key="<?php echo $row->id;?>" class="text-center">
+                            {!! AjaxHelpers::GamestitleButtonAction('gamestitle',$access,$id ,$setting) !!}
                             {!! AjaxHelpers::buttonActionInline($row->id,'id') !!}
+
+
+
+
+
+
+
+                            <a href="{{ URL::to('gamestitle/upload/'.$row->id.'?type=2')}}" class="tips btn btn-xs btn-white" title="Upload Manual"><i class="fa fa-file" aria-hidden="true"></i></a>
+
+
+
+                            <a href="{{ URL::to('gamestitle/upload/'.$row->id.'?type=3')}}"  class="tips btn btn-xs btn-white" title="Upload Bulletin"><i class="fa fa-file" aria-hidden="true"></i></a>
+
+
+                            <a  href="{{ URL::to('gamestitle/upload/'.$row->id.'?type=1')}}" class="tips btn btn-xs btn-white" title="Upload Image"><i class="fa fa-picture-o" aria-hidden="true"></i></a>
+
                         </td>
                     </tr>
                     @if($setting['view-method']=='expand')
@@ -196,15 +231,31 @@
         });
 
         <?php if($setting['view-method'] =='expand') :
-                echo AjaxHelpers::htmlExpandGrid();
-            endif;
-         ?>
+        echo AjaxHelpers::htmlExpandGrid();
+    endif;
+        ?>
+        var simpleSearch = $('.simpleSearchContainer');
+        if (simpleSearch.length) {
+            initiateSearchFormFields(simpleSearch);
+            simpleSearch.find('.doSimpleSearch').click(function(event){
+                performSimpleSearch.call($(this), {
+                    moduleID: '#{{ $pageModule }}',
+                    url: "{{ $pageUrl }}",
+                    event: event,
+                    container: simpleSearch
+                });
+            });
+        }
+
+        initDataGrid('{{ $pageModule }}', '{{ $pageUrl }}');
     });
 
-        $(".fancybox").fancybox({
-            openEffect	: 'none',
-            closeEffect	: 'none'
-        });
+
+
+    $(".fancybox").fancybox({
+        openEffect	: 'none',
+        closeEffect	: 'none'
+    });
 </script>
 <style>
     .table th.right {
@@ -218,9 +269,9 @@
 
     .btn-imagee{
 
-  	font-size: 10px; padding: 7px 7px;border: 1px solid transparent;  border-radius: 0px;
-   		background-color: #428bca;
-    		border-color: #2a6496;		white-space: nowrap;
-    	font-family: 'Lato', sans-serif;}
+        font-size: 10px; padding: 7px 7px;border: 1px solid transparent;  border-radius: 0px;
+        background-color: #428bca;
+        border-color: #2a6496;		white-space: nowrap;
+        font-family: 'Lato', sans-serif;}
 
 </style>

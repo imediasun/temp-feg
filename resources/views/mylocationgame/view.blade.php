@@ -229,7 +229,8 @@
                                 <h3>{{ $row[0]->game_title }} </h3>
                             </div>
                         </div>
-                    </div>
+              </div>
+
         <div class="row" style="background: #FFF;padding:20px auto;box-shadow: 1px 1px 5px gray;margin:30px auto">
         <div class="col-md-12">
             <h2>Game Service History</h2>
@@ -398,5 +399,5 @@
                 $('#date_sold, #sold_to').hide();
             }
         }
-    }
+    }});
 </script>

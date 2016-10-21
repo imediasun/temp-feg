@@ -89,7 +89,7 @@ $(document).ready(function(){
 function notyMessage(message)
 {
 
-	toastr.success("success", message);
+	toastr.success("", message);
 	toastr.options = {
 		  "closeButton": true,
 		  "debug": false,

@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{{ CNF_APPNAME }}</title>
-<link rel="shortcut icon" href="{{ asset('favicon.ico')}}" type="image/x-icon">
+<link rel="shortcut icon" href="{{ asset('fegpo.png')}}" type="image/x-icon">
 
 		<link href="{{ asset('sximo/js/plugins/bootstrap/css/bootstrap.css')}}" rel="stylesheet"> 
 		<link href="{{ asset('sximo/css/sximo.css')}}" rel="stylesheet">

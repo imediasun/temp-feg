@@ -19,26 +19,26 @@ $(document).ready(function(){
 		echo "\$('.database').hide(); \$('.datalist').hide()";
 	}?>	
 			
-	$("#lookup_table").jCombo("{{ URL::to('sximo/module/combotable') }}" , {
+	$("#lookup_table").jCombo("{{ URL::to('feg/module/combotable') }}" , {
 		selected_value : "<?php echo $f['option']['lookup_table'];?>" ,
 		initial_text : ' Select Table',
 		
 	});
 
-	$("#lookup_key").jCombo("{{ URL::to('sximo/module/combotablefield') }}?table=",
+	$("#lookup_key").jCombo("{{ URL::to('feg/module/combotablefield') }}?table=",
 	{ selected_value : "<?php echo $f['option']['lookup_key'];?>", parent: "#lookup_table", initial_text : ' Primary Key' });
 
 	<?php $lv = explode("|", $f['option']['lookup_value']); ?>
 
 	
 	
-		$("#lookup_value1").jCombo("{{ URL::to('sximo/module/combotablefield') }}?table=",
+		$("#lookup_value1").jCombo("{{ URL::to('feg/module/combotablefield') }}?table=",
 		{ selected_value : "<?php echo (isset($lv[0]) ? $lv[0] : '');?>", parent: "#lookup_table",   initial_text : ' Display Text'}); 
 		
-		$("#lookup_value2").jCombo("{{ URL::to('sximo/module/combotablefield') }}?table=",
+		$("#lookup_value2").jCombo("{{ URL::to('feg/module/combotablefield') }}?table=",
 		{ selected_value : "<?php echo (isset($lv[1]) ? $lv[1] : '');?>", parent: "#lookup_table",   initial_text : ' Display Text'}); 
 		
-		$("#lookup_value3").jCombo("{{ URL::to('sximo/module/combotablefield') }}?table=",
+		$("#lookup_value3").jCombo("{{ URL::to('feg/module/combotablefield') }}?table=",
 		{ selected_value : "<?php echo (isset($lv[2]) ? $lv[2] : '');?>", parent: "#lookup_table",   initial_text : ' Display Text'}); 		
 	
 	$('a.addC').relCopy({});		
@@ -95,7 +95,7 @@ $(document).ready(function(){
 	}	
 </script>
 
- {!! Form::open(array('url'=>'sximo/module/saveformfield/'.$module_name, 'class'=>'form-horizontal')) !!}
+ {!! Form::open(array('url'=>'feg/module/saveformfield/'.$module_name, 'class'=>'form-horizontal')) !!}
 <input type="hidden" name="alias" value="<?php echo $f['alias'];?>" />
 <input type="hidden" name="field" value="<?php echo $f['field'];?>" />	
 <input type="hidden" name="label" value="<?php echo $f['label'];?>" />	
@@ -103,6 +103,9 @@ $(document).ready(function(){
 <input type="hidden" name="sortlist" value="<?php echo $f['sortlist'];?>" />
 <input type="hidden" name="view" value="<?php echo $f['view'];?>" />
 <input type="hidden" name="search" value="<?php echo $f['search'];?>" />
+<input type="hidden" name="simplesearch" value="<?php echo isset($f['simplesearch']) ? $f['simplesearch'] : ''; ?>" />
+<input type="hidden" name="simplesearchorder" value="<?php echo isset($f['simplesearchorder']) ? $f['simplesearchorder'] : '';?>" />
+<input type="hidden" name="simplesearchfieldwidth" value="<?php echo isset($f['simplesearchfieldwidth']) ?$f['simplesearchfieldwidth'] : '';?>" />
 <input type="hidden" name="limited" value="<?php echo (isset($f['limited']) ? $f['limited'] : '');?>" />
 <div class="" style="padding:30px;">			
 			
@@ -288,14 +291,38 @@ $(document).ready(function(){
 		<input name="extend_class" type="text" id="extend_class" class="form-control input-sm" value="<?php echo $f['option']['extend_class'];?>"/>
 	 </div> 
   </div>   
-  
+   
   <div class="form-group " style="display:none;">
     <label for="ipt" class=" control-label col-md-4">Html Attribute</label>
 	<div class="col-md-8">
 		<textarea name="attribute" id="attribute" class="form-control input-sm"><?php echo $f['option']['attribute'];?></textarea>
 	 </div> 
   </div>  
-  
+    
+   <div class="form-group" @if(empty($f['simplesearch']) || $f['simplesearch'] != 1) style="display:none;" @endif>
+    <label for="simplesearchoperator" class=" control-label col-md-4">Simple Search Operator</label>
+	<div class="col-md-8">
+        <?php 
+            $simplesearchoperator = isset($f['simplesearchoperator']) ? $f['simplesearchoperator'] : 'equal';
+            $simplesearchoperators = array(
+                    "equal" => " = ",
+                    "bigger_equal" => " >= ",
+                    "smaller_equal" => " <= ",
+                    "smaller" => " < ",
+                    "bigger" => " > ",
+                    "like" => "Like",
+                );
+        ?>
+        <select id="simplesearchoperator" class="form-control" name="simplesearchoperator">
+            <?php foreach($simplesearchoperators as $val=>$label): ?>
+                <option  value="<?php echo $val;?>"
+                    <?php if($val == $simplesearchoperator) echo 'selected="selected"';?>
+                > <?php echo $label;?></option>
+            <?php endforeach; ?>
+        </select>		
+	 </div> 
+  </div>   
+    
   <div class="form-group">
     <label for="ipt" class=" control-label col-md-4"></label>
 	<div class="col-md-8">

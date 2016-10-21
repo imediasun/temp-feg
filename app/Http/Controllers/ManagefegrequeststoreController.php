@@ -13,8 +13,9 @@ class ManagefegrequeststoreController extends Controller
     protected $data = array();
     public $module = 'managefegrequeststore';
     static $per_page = '10';
+    protected $_request;
 
-    public function __construct()
+    public function __construct(Request $request)
     {
         parent::__construct();
         $this->model = new Managefegrequeststore();
@@ -30,6 +31,8 @@ class ManagefegrequeststoreController extends Controller
             'return' => self::returnUrl()
         );
 
+        $this->_request = $request;
+
 
     }
 
@@ -42,8 +45,87 @@ class ManagefegrequeststoreController extends Controller
         return view('managefegrequeststore.index', $this->data);
     }
 
+    public function getExport($t = 'excel')
+    {
+        set_time_limit(0);
+        $info = $this->model->makeInfo($this->module);
+        //$master  	= $this->buildMasterDetail();
+
+        // End Filter sort and order for query
+        // Filter Search for query
+        if (is_null($this->_request->input('search'))) {
+            $filter = \SiteHelpers::getQueryStringForLocation('requests');
+        } else {
+            $filter = $this->buildSearch();
+        }
+
+
+        //$filter 	.=  $master['masterFilter'];
+        $params = array(
+            'params' => $filter,
+            'sort' => 'id',
+            'order' => 'asc',
+        );
+
+        $v1 = $this->_request->get('v1');
+        $v2 = $this->_request->get('v2');
+        $v3 = $this->_request->get('v3');
+
+        $manageRequestInfo = $this->model->getManageRequestsInfo($v1, $v2, $v3);
+
+        $this->data['TID'] = $manageRequestInfo['TID'];
+        $this->data['LID'] = $manageRequestInfo['LID'];
+        $this->data['VID'] = $manageRequestInfo['VID'];
+
+        $view = $this->_request->get('view');
+        $cond = array('view' => $view, 'order_type_id' => $manageRequestInfo['TID'], 'location_id' => $manageRequestInfo['LID'], 'vendor_id' => $manageRequestInfo['VID']);
+        $this->data['view'] = $view;
+        /*
+        echo '<pre>';
+        print_r($params);
+        print_r($cond);
+        echo '</pre>';
+        exit;
+        */
+        $results = $this->model->getRows($params, $cond);
+
+
+        $fields = $info['config']['grid'];
+        $rows = $results['rows'];
+        $rows = $this->updateDateInAllRows($rows);
+        $content = array(
+            'fields' => $fields,
+            'rows' => $rows,
+            'title' => $this->data['pageTitle'],
+        );
+
+        if ($t == 'word') {
+
+            return view('sximo.module.utility.word', $content);
+
+        } else if ($t == 'pdf') {
+
+            $pdf = PDF::loadView('sximo.module.utility.pdf', $content);
+            return view($this->data['pageTitle'] . '.pdf');
+
+        } else if ($t == 'csv') {
+
+            return view('sximo.module.utility.csv', $content);
+
+        } else if ($t == 'print') {
+
+            return view('sximo.module.utility.print', $content);
+
+        } else {
+
+            return view('sximo.module.utility.excel', $content);
+        }
+    }
+
+
     public function postData(Request $request)
     {
+        // die('here in reload data');
         $user_level = \Session::get('gid');
         if ($user_level == 2) {
             return redirect('dashboard');
@@ -51,6 +133,7 @@ class ManagefegrequeststoreController extends Controller
             $v1 = $request->get('v1');
             $v2 = $request->get('v2');
             $v3 = $request->get('v3');
+
             $manageRequestInfo = $this->model->getManageRequestsInfo($v1, $v2, $v3);
             $this->data['TID'] = $manageRequestInfo['TID'];
             $this->data['LID'] = $manageRequestInfo['LID'];
@@ -76,15 +159,11 @@ class ManagefegrequeststoreController extends Controller
             $order = (!is_null($request->input('order')) ? $request->input('order') : $this->info['setting']['ordertype']);
             // End Filter sort and order for query
             // Filter Search for query
-            if(is_null($request->input('search')))
-            {
+            if (is_null($request->input('search'))) {
                 $filter = \SiteHelpers::getQueryStringForLocation('requests');
-            }
-            else
-            {
+            } else {
                 $filter = $this->buildSearch();
             }
-
 
 
             $page = $request->input('page', 1);
@@ -103,9 +182,6 @@ class ManagefegrequeststoreController extends Controller
             $results = $this->model->getRows($params, $cond);
             // Build pagination setting
             $page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;
-
-
-
 
 
             $pagination = new Paginator($results['rows'], $results['total'], $params['limit']);
@@ -274,12 +350,11 @@ class ManagefegrequeststoreController extends Controller
                 foreach ($query as $row) {
                     $SID = $SID . '-' . $row->id;
                 }
-               return Redirect::to('order/submitorder/'.$SID.'-');
-            }
-            else {
+                return Redirect::to('order/submitorder/' . $SID . '-');
+            } else {
                 $manageRequestInfo = $this->model->getManageRequestsInfo();
                 $this->data['manageRequestInfo'] = $manageRequestInfo;
-                return view('managefegrequests.table',$this->data);
+                return view('managefegrequests.table', $this->data);
             }
         }
     }

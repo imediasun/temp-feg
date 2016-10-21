@@ -2,7 +2,7 @@
 @if($setting['form-method'] =='native')
 	<div class="sbox">
 		<div class="sbox-title">  
-			<h4> <i class="fa fa-table"></i> <?php echo $pageTitle ;?> <small>{{ $pageNote }}</small>
+			<h4>
 				<a href="javascript:void(0)" class="collapse-close pull-right btn btn-xs btn-danger" onclick="ajaxViewClose('#{{ $pageModule }}')"><i class="fa fa fa-times"></i></a>
 			</h4>
 	</div>
@@ -11,19 +11,9 @@
 @endif	
 			{!! Form::open(array('url'=>'sbticket/save/'.SiteHelpers::encryptID($row['TicketID']), 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'sbticketFormAjax')) !!}
 			<div class="col-md-12">
-						<fieldset><legend> sbticket</legend>
+						<fieldset><legend> Sbticket</legend>
 									
-				  <div class="form-group hidethis " style="display:none;"> 
-					<label for="TicketID" class=" control-label col-md-4 text-left"> 
-					{!! SiteHelpers::activeLang('TicketID', (isset($fields['TicketID']['language'])? $fields['TicketID']['language'] : array())) !!}	
-					</label>
-					<div class="col-md-6">
-					  {!! Form::text('TicketID', $row['TicketID'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
-					 </div> 
-					 <div class="col-md-2">
-					 	
-					 </div>
-				  </div> 					
+
 				  <div class="form-group  " > 
 					<label for="Subject" class=" control-label col-md-4 text-left"> 
 					{!! SiteHelpers::activeLang('Subject', (isset($fields['Subject']['language'])? $fields['Subject']['language'] : array())) !!}	
@@ -54,8 +44,9 @@
 					<div class="col-md-6">
 					  
 					<?php $Priority = explode(',',$row['Priority']);
-					$Priority_opt = array( 'critical' => 'Critical' ,  'high' => 'High' ,  'medium' => 'Medium' ,  'low' => 'Low' , ); ?>
-					<select name='Priority' rows='5' required  class='select2 '  > 
+					$Priority_opt = array('normal' => 'Normal' ,  'emergency' => 'Emergency'); ?>
+					<select name='Priority' rows='5' required  class='select2 '  >
+                        <option value="">Select Priority</option>
 						<?php 
 						foreach($Priority_opt as $key=>$val)
 						{
@@ -74,13 +65,21 @@
 					<div class="col-md-6">
 					  
 					<?php $Status = explode(',',$row['Status']);
-					$Status_opt = array( 'open' => 'Open' ,  'inqueue' => 'Pending' ,  'close' => 'Close' , ); ?>
-					<select name='Status' rows='5'   class='select2 '  > 
-						<?php 
+					$Status_opt = array( 'open' => 'Open' ,  'inqueue' => 'Pending' ,  'closed' => 'Closed' , ); ?>
+					<select name='Status' rows='5'   class='select2 ' @if(!$in_edit_mode) disabled @endif  >
+
+						<?php
+                            if($in_edit_mode)
+                                {
 						foreach($Status_opt as $key=>$val)
 						{
 							echo "<option  value ='$key' ".($row['Status'] == $key ? " selected='selected' " : '' ).">$val</option>"; 						
-						}						
+						}
+                            }
+                            else{
+                                echo "<option  value ='open'>Open</option>";
+                            }
+
 						?></select> 
 					 </div> 
 					 <div class="col-md-2">
@@ -94,8 +93,9 @@
 					<div class="col-md-6">
 					  
 					<?php $issue_type = explode(',',$row['issue_type']);
-					$issue_type_opt = array( 'Support Issue' => 'Support Issue' ,  'Order Request' => 'Order Request' , ); ?>
-					<select name='issue_type' rows='5'   class='select2 '  > 
+					$issue_type_opt = array('Order Request' => 'Order Request' ,'Support Issue' => 'Support Issue' ); ?>
+					<select name='issue_type' rows='5'   class='select2 ' required >
+                        <option value="">Select Issue Type</option>
 						<?php 
 						foreach($issue_type_opt as $key=>$val)
 						{
@@ -118,7 +118,7 @@
 					 	
 					 </div>
 				  </div> 					
-				  <div class="form-group  " > 
+				  <div class="form-group  " style="display:none" >
 					<label for="Game" class=" control-label col-md-4 text-left"> 
 					{!! SiteHelpers::activeLang('Game', (isset($fields['game_id']['language'])? $fields['game_id']['language'] : array())) !!}	
 					</label>
@@ -129,39 +129,65 @@
 					 	
 					 </div>
 				  </div> 					
-				  <div class="form-group  " > 
+				  <div class="form-group  " style="display:none" >
 					<label for="Department" class=" control-label col-md-4 text-left"> 
 					{!! SiteHelpers::activeLang('Department', (isset($fields['department_id']['language'])? $fields['department_id']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  <select name='department_id' rows='5' id='department_id' class='select2 ' required  ></select> 
+					  <select name='department_id' rows='5' id='department_id' class='select2 '   ></select>
 					 </div> 
 					 <div class="col-md-2">
 					 	
 					 </div>
 				  </div> 					
-				  <div class="form-group  " > 
-					<label for="Debit Card" class=" control-label col-md-4 text-left"> 
-					{!! SiteHelpers::activeLang('Debit Card', (isset($fields['debit_card']['language'])? $fields['debit_card']['language'] : array())) !!}	
-					</label>
-					<div class="col-md-6">
-					  <select name='debit_card' rows='5' id='debit_card' class='select2 '   ></select> 
-					 </div> 
-					 <div class="col-md-2">
-					 	
-					 </div>
-				  </div> 					
-				  <div class="form-group  " > 
+
+				  <div class="form-group  " style="display:none" >
 					<label for="Assign To" class=" control-label col-md-4 text-left"> 
 					{!! SiteHelpers::activeLang('Assign To', (isset($fields['assign_to']['language'])? $fields['assign_to']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  <select name='assign_to[]' multiple rows='5' id='assign_to' class='select2 ' required  ></select>
+					  <select name='assign_to[]' multiple rows='5' id='assign_to' class='select2 '  ></select>
 					 </div>
 					 <div class="col-md-2">
 					 	
 					 </div>
-				  </div> 					
+				  </div>
+
+							<div class="form-group  " >
+								<label for="Needed Date" class=" control-label col-md-4 text-left">
+									{!! SiteHelpers::activeLang('Needed Date', (isset($fields['need_by_date']['language'])? $fields['need_by_date']['language'] : array())) !!}
+								</label>
+								<div class="col-md-6">
+									<div class="input-group datepicker" style="width:150px ">
+									{!! Form::text('need_by_date', $row['need_by_date'],array('class'=>'form-control', 'id'=>'my-datepicker', 'style'=>'width:150px !important;'   )) !!}
+
+									<span class="input-group-addon "><i class="fa fa-calendar" id="icon"></i></span>
+								</div>
+								<div class="col-md-2">
+
+								</div>
+									</div>
+							</div>
+
+
+
+
+						<!--	<div class="form-group  " >
+							<label for="Needed Date" class=" control-label col-md-4 text-left">
+							{{ SiteHelpers::activeLang('Needed Date', (isset($fields['need_by_date']['language'])? $fields['need_by_date']['language'] : array())) }}
+							</label>
+								<div class="col-md-6">
+								<div class="input-group datepicker" style="width:150px ">
+									{!! Form::text('Needed Date', date("m/d/Y", strtotime($row['need_by_date'])),array('class'=>'form-control ',  ))    !!}
+									<span class="input-group-addon "><i class="fa fa-calendar" id="icon"></i></span>
+								</div>
+								<div class="col-md-2">
+
+								</div>
+							</div>
+								</div>  -->
+
+
 				  <div class="form-group  " > 
 					<label for="File Path" class=" control-label col-md-4 text-left"> 
 					{!! SiteHelpers::activeLang('File Path', (isset($fields['file_path']['language'])? $fields['file_path']['language'] : array())) !!}	
@@ -213,30 +239,42 @@
 
 @if($setting['form-method'] =='native')
 	</div>	
-</div>	
-@endif	
 
-	
-</div>	
+@endif	
+<?php
+            if(!$in_edit_mode)
+                {
+                    $row['location_id']=\Session::get('selected_location');
+                }
+
+        ?>
+
+</div>
 			 
 <script type="text/javascript">
 $(document).ready(function() { 
 	
         $("#location_id").jCombo("{{ URL::to('sbticket/comboselect?filter=location:id:location_name') }}",
-        {  selected_value : '{{ $row["location_id"] }}' });
+        {  selected_value : '{{ $row["location_id"] }}','initial-text': "Select Location" });
         
-        $("#game_id").jCombo("{{ URL::to('sbticket/comboselect?filter=game:id:game_name') }}&parent=location_id:",
-        {  parent: '#location_id', selected_value : '{{ $row["game_id"] }}' });
+      //  $("#game_id").jCombo("{{-- URL::to('sbticket/comboselect?filter=game:id:game_name') }}&limit=where:game_name:!=:''&parent=location_id:",
+        //{  parent: '#location_id', selected_value : '{{ $row["game_id"] --}}' });
         
-        $("#department_id").jCombo("{{ URL::to('sbticket/comboselect?filter=departments:id:name') }}",
-        {  selected_value : '{{ $row["department_id"] }}' });
+        //$("#department_id").jCombo("{{--URL::to('sbticket/comboselect?filter=departments:id:name') }}",
+        //{  selected_value : '{{ $row["department_id"] --}}' });
         
-        $("#debit_card").jCombo("{{ URL::to('sbticket/comboselect?filter=debit_type:company:company') }}",
-        {  selected_value : '{{ $row["debit_card"] }}' });
+     //   $("#debit_card").jCombo("{{-- URL::to('sbticket/comboselect?filter=debit_type:company:company') }}",
+        {  selected_value : '{{ $row["debit_card"] }}','initial-text': "Select Debit Type" --});
         
-        $("#assign_to").jCombo("{{ URL::to('sbticket/comboselect?filter=employees:id:first_name|last_name') }}",
-        {  selected_value : '{{ $row["assign_to"] }}' });
-         
+      //  $("#assign_to").jCombo("{{-- URL::to('sbticket/comboselect?filter=employees:id:first_name|last_name') }}",
+        //{  selected_value : '{{ $row["assign_to"] --}}' });
+
+
+	$('#icon').click(function(){
+		$(document).ready(function(){
+			$("#my-datepicker").datepicker().focus();
+		});
+	});
 	
 	$('.editor').summernote();
 	$('.previewImage').fancybox();	

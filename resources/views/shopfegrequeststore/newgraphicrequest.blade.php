@@ -23,7 +23,18 @@
 
                     </div>
                 </div>
-               <div class="form-group  " >
+                <div class="form-group  " >
+                    <label for="date_needed" class=" control-label col-md-4 text-left">
+                        Date Needed
+                    </label>
+                    <div class="col-md-6">
+                        <input type="text" class="date form-control" id="date_needed" name="date_needed" required="required"/>
+                    </div>
+                    <div class="col-md-2">
+
+                    </div>
+                </div>
+                <div class="form-group  " >
                     <label for="graphics_description" class=" control-label col-md-4 text-left">
                        Detailed description of color, art, location and/or game colors, size requirements, etc.
                     </label>
@@ -43,17 +54,7 @@
                     <div class="col-md-2">
 
                     </div>
-                </div>   <div class="form-group  " >
-                    <label for="date_needed" class=" control-label col-md-4 text-left">
-                        Date Needed
-                    </label>
-                    <div class="col-md-6">
-                       <input type="text" class="date form-control" id="date_needed" name="date_needed" required="required"/>
-                    </div>
-                    <div class="col-md-2">
-
-                    </div>
-                </div>   <div class="form-group  " >
+                </div>     <div class="form-group  " >
                     <label for="Id" class=" control-label col-md-4 text-left">
                        For Location:
                     </label>
@@ -64,16 +65,14 @@
 
                     </div>
                 </div>
-                <div class="form-group  " >
+                <div class="form-group  " id ="testdiv" >
                     <label for="Add Image" class=" control-label col-md-4 text-left">
                         {!! SiteHelpers::activeLang('Add Image', (isset($fields['add_image']['language'])? $fields['add_image']['language'] : array())) !!}
                     </label>
                     <div class="col-md-6">
-
-                        <a href="javascript:void(0)" class="btn btn-xs btn-primary pull-right" onclick="addMoreFiles('add_image')"><i class="fa fa-plus"></i></a>
-
                         <div class="add_imageUpl">
-                            <input  type='file' name='add_image'  />
+                                <div class="dropzone" id="dropzoneFileUpload">
+                            </div>
 
 
                         </div>
@@ -88,12 +87,13 @@
                 <div class="form-group" style="padding-left: 24px;margin-bottom:50px">
                         <label class="col-sm-4 text-centre">&nbsp;</label>
 
-                        <button type="submit"  class="btn btn-primary btn-sm-5" style="padding-right: 20px;
+                        <button type="submit" id="submitbtn"  class="btn btn-primary btn-sm-5" style="padding-right: 20px;
                                 padding-left: 20px"><i
                                 class="fa  fa-save "></i>  {{ Lang::get('core.sb_save') }} </button>
 
                     Submitted by <b>{{ \Session::get('fid') }}</b> on <b>{{ date('m/d/Y') }}</b>
                 </div>
+
 
 
 
@@ -104,8 +104,11 @@
             <div class="clearfix"></div>
 
         </div>
+
     </div>
+
     <div class="ajaxLoading"></div>
+    
     <script>
         $("document").ready(function(){
           //  $('.ajaxLoading').show();
@@ -131,6 +134,7 @@
         });
         function showRequest() {
             $('.ajaxLoading').show();
+           // myDropzone.processQueue();
         }
         function showResponse(data) {
 
@@ -147,6 +151,45 @@
             }
         }
     </script>
+    <script type="text/javascript">
+        var baseUrl = "{{ url('/') }}";
+        var token = "{{ Session::getToken() }}";
+        Dropzone.autoDiscover = false;
+        var myDropzone = new Dropzone("div#dropzoneFileUpload", {
+            url: baseUrl + "/shopfegrequeststore/uploadfiles",
+            params: {
+                _token: token
+            },autoProcessQueue:true,
+
+            init:function(){
+                this.options.parallelUploads = 5,
+                        this.on("success", function(file,response) {
+                                                       addInput(response);
+                        });
+
+            }
+        });
+        function addInput(value){
+            var newdiv = document.createElement('div');
+            newdiv.innerHTML = " <br><input style="+ "display:none"+" type='text' name='myInputs[]' value='"+value+"'>";
+            document.getElementById("testdiv").appendChild(newdiv);
+
+
+        }
+
+        Dropzone.options.myAwesomeDropzone = {
+            paramName: "file", // The name that will be used to transfer the file
+            maxFilesize: 2, // MB
+            addRemoveLinks: true,
+            acceptedFiles: "image/jpeg,image/png,image/gif",
+
+            accept: function(file, done) {
+
+            }
+        };
+
+    </script>
+
     <style>
         .ajaxLoading { background:#fff url( {{ url() }}/loading.gif) no-repeat center center; display:none; height:200px; position:absolute; width:100%; opacity: 0.5; left:0; top:0; height: 100%; z-index:9999;}
     </style>

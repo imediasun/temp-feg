@@ -11,7 +11,7 @@
 @endif	
 			{!! Form::open(array('url'=>'gameplayrankbylocation/save/'.SiteHelpers::encryptID($row['id']), 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'gameplayrankbylocationFormAjax')) !!}
 			<div class="col-md-12">
-						<fieldset><legend> gameplayrankbylocation</legend>
+						<fieldset><legend> Report: Game Play Rank by Location</legend>
 									
 				  <div class="form-group  " > 
 					<label for="Id" class=" control-label col-md-4 text-left"> 
@@ -303,7 +303,7 @@ $(document).ready(function() {
 	$('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});
 	$('input[type="checkbox"],input[type="radio"]').iCheck({
 		checkboxClass: 'icheckbox_square-green',
-		radioClass: 'iradio_square-green',
+		radioClass: 'iradio_square-green'
 	});			
 	$('.removeCurrentFiles').on('click',function(){
 		var removeUrl = $(this).attr('href');

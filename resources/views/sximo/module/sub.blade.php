@@ -10,7 +10,7 @@
       </div>
       <ul class="breadcrumb">
         <li><a href="{{ URL::to('dashboard') }}"> Dashboard </a></li>
-        <li ><a href="{{ URL::to( 'sximo/module' ) }}">Module </a></li>
+        <li ><a href="{{ URL::to( 'feg/module' ) }}">Module </a></li>
 		<li class="active"> Master Detail Editor </li>
       </ul>		  
 	  
@@ -31,7 +31,7 @@
 	<div class="sbox-title"><h5> Master Detail  <small> Create master detail module </small> </h5></div>
 	<div class="sbox-content">	
   @if(count($subs) < 1)
-    {!! Form::open(array('url'=>'sximo/module/savesub/'.$module_name, 'class'=>'form-horizontal  ')) !!}
+    {!! Form::open(array('url'=>'feg/module/savesub/'.$module_name, 'class'=>'form-horizontal  ')) !!}
 
         <input  type='text' name='master' id='master'  value='{{ $row->module_name }}'  style="display:none;" /> 
         <input  type='text' name='module_id' id='module_id'  value='{{ $row->module_id }}'  style="display:none;" />
@@ -115,7 +115,7 @@
         <td><?php echo $rows['table'];?></td>
         <td><?php echo $rows['key'];?></td>
         <td><a  href="javascript:void(0)" 
-        onclick="SximoConfirmDelete('{{ URL::to('sximo/module/removesub?id='.$row->module_id.'&mod='.$rows['module']) }}');" 
+        onclick="SximoConfirmDelete('{{ URL::to('feg/module/removesub?id='.$row->module_id.'&mod='.$rows['module']) }}');"
         class="btn btn-danger btn-xs"><i class="fa fa-trash-o"></i> </a></td>
       
       </tr>
@@ -132,9 +132,9 @@
 
  <script>
 $(document).ready(function(){   
-    $("#table").jCombo("{{ url('sximo/module/combotable') }}",
+    $("#table").jCombo("{{ url('feg/module/combotable') }}",
     { }); 
-    $("#key").jCombo("{{ url('sximo/module/combotablefield') }}?table=",
+    $("#key").jCombo("{{ url('feg/module/combotablefield') }}?table=",
     { parent  :  "#table"}); 
 });
 </script> 

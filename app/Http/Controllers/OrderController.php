@@ -4,7 +4,7 @@ use App\Http\Controllers\controller;
 use App\Models\Order;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
-use Validator, Input, Redirect;
+use Validator, Input, Redirect, Cache;
 
 class OrderController extends Controller
 {
@@ -32,6 +32,63 @@ class OrderController extends Controller
 
 
     }
+
+    public
+    function getExport($t = 'excel')
+    {
+        ini_set('memory_limit', '1G');
+        set_time_limit(0);
+        $info = $this->model->makeInfo($this->module);
+        //$master  	= $this->buildMasterDetail();
+        $filter = (!is_null(Input::get('search')) ? $this->buildSearch() : '');
+
+        //$filter 	.=  $master['masterFilter'];
+        //comment limit
+        $params = array(
+            'params' => '',
+            'page' => 1,
+            'sort' => 'id',
+            'order' => 'desc'
+        );
+
+        $minutes = 60;
+        $results = Cache::remember('orderExport', $minutes, function () use ($params) {
+            return $this->model->getExportRows($params);
+        });
+        //$results = $this->model->getExportRows($params);
+
+        $fields = $info['config']['grid'];
+        $rows = $results['rows'];
+        $rows = $this->updateDateInAllRows($rows);
+        $content = array(
+            'fields' => $fields,
+            'rows' => $rows,
+            'title' => $this->data['pageTitle'],
+        );
+
+        if ($t == 'word') {
+
+            return view('sximo.module.utility.word', $content);
+
+        } else if ($t == 'pdf') {
+
+            $pdf = PDF::loadView('sximo.module.utility.pdf', $content);
+            return view($this->data['pageTitle'] . '.pdf');
+
+        } else if ($t == 'csv') {
+
+            return view('sximo.module.utility.csv', $content);
+
+        } else if ($t == 'print') {
+
+            return view('sximo.module.utility.print', $content);
+
+        } else {
+
+            return view('sximo.module.utility.excel', $content);
+        }
+    }
+
 
     public function getIndex()
     {
@@ -64,12 +121,9 @@ class OrderController extends Controller
         // End Filter sort and order for query
         // Filter Search for query
         //$filter = (!is_null($request->input('search')) ? $this->buildSearch() : '');
-        if(is_null($request->input('search')))
-        {
+        if (is_null($request->input('search'))) {
             $filter = \SiteHelpers::getQueryStringForLocation('orders');
-        }
-        else
-        {
+        } else {
             $filter = $this->buildSearch();
         }
 
@@ -84,14 +138,23 @@ class OrderController extends Controller
             'global' => (isset($this->access['is_global']) ? $this->access['is_global'] : 0)
         );
         // Get Query
-        $order_selected = isset($_GET['order_type']) ? $_GET['order_type'] : 'ALL';
+        // passing All gives error in query, $cond
+        //$order_selected = isset($_GET['order_type']) ? $_GET['order_type'] : 'ALL';
+        $order_selected = isset($_GET['order_type']) ? $_GET['order_type'] : '';
+
+
         $results = $this->model->getRows($params, $order_selected);
+
+        if (count($results['rows']) == 0 and $page != 1) {
+            $params['limit'] = $this->info['setting']['perpage'];
+            $results = $this->model->getRows($params, $order_selected);
+
+        }
         // Build pagination setting
         $page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;
 
-        
 
-        if(count($results['rows']) == $results['total']){
+        if (count($results['rows']) == $results['total'] && $results['total'] != 0) {
             $params['limit'] = $results['total'];
         }
 
@@ -170,11 +233,13 @@ class OrderController extends Controller
         } else {
             $this->data['row'] = $this->model->getColumnTable('orders');
         }
+
         $this->data['setting'] = $this->info['setting'];
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
         $this->data['mode'] = $mode;
         $this->data['id'] = $id;
         $this->data['data'] = $this->model->getOrderQuery($id, $mode);
+
         return view('order.form', $this->data);
     }
 
@@ -222,8 +287,6 @@ class OrderController extends Controller
 
     function postSave(Request $request, $id = 0)
     {
-
-       //return \Redirect::to('/order');
         $rules = array('location_id' => "required", 'vendor_id' => 'required', 'order_type_id' => "required", 'freight_type_id' => 'required', 'date_ordered' => 'required', 'po_3' => 'required');
         $validator = Validator::make($request->all(), $rules);
         $order_data = array();
@@ -265,8 +328,10 @@ class OrderController extends Controller
                 $alt_address = $to_add_name . '|' . $to_add_street . '|' . $to_add_city . '| ' . $to_add_state . '| ' . $to_add_zip . '|' . $to_add_notes;
             }
             $itemsArray = $request->get('item');
-            $itemNamesArray=$request->get('item_name');
-            $casePriceArray=$request->get('case_price');
+            $itemNamesArray = $request->get('item_name');
+            //$skuNumArray=$request->get('sku');
+
+            $casePriceArray = $request->get('case_price');
             $priceArray = $request->get('price');
             $qtyArray = $request->get('qty');
             $productIdArray = $request->get('product_id');
@@ -284,7 +349,7 @@ class OrderController extends Controller
                     'order_type_id' => $order_type,
                     'date_ordered' => $date_ordered,
                     'vendor_id' => $vendor_id,
-                    'order_description' => $order_description,
+                    'order_description' => '',
                     'order_total' => $total_cost,
                     'freight_id' => $freight_type_id,
                     'po_number' => $po,
@@ -295,7 +360,6 @@ class OrderController extends Controller
                 $this->model->insertRow($orderData, $order_id);
                 $last_insert_id = $order_id;
                 \DB::table('order_contents')->where('order_id', $last_insert_id)->delete();
-                //$this->db->delete('order_contents', array('order_id' => $last_insert_id));
             } else {
 
                 $orderData = array(
@@ -315,10 +379,8 @@ class OrderController extends Controller
                     'new_format' => 1,
                     'po_notes' => $notes
                 );
-                $this->model->insert($orderData, $id);
+                $this->model->insertRow($orderData, $id);
                 $order_id = \DB::getPdo()->lastInsertId();
-                //$this->db->insert('orders', $orderData);
-                //$last_insert_id = $this->db->insert_id();
             }
             for ($i = 0; $i < $num_items_in_array; $i++) {
                 if (empty($productIdArray[$i])) {
@@ -346,8 +408,9 @@ class OrderController extends Controller
                     'price' => $priceArray[$i],
                     'qty' => $qtyArray[$i],
                     'game_id' => $game_id,
-                    'item_name'=> $itemNamesArray[$i],
-                    'case_price' => $casePriceArray[$i]
+                    'item_name' => $itemNamesArray[$i],
+                    'case_price' => $casePriceArray[$i],
+                    'total' => $priceArray[$i] * $qtyArray[$i]
                 );
                 \DB::table('order_contents')->insert($contentsData);
                 if ($order_type == 18) //IF ORDER TYPE IS PRODUCT IN-DEVELOPMENT, ADD TO PRODUCTS LIST WITH STATUS IN-DEVELOPMENT
@@ -362,12 +425,12 @@ class OrderController extends Controller
                     \DB::table('products')->insert($productData);
                 }
             }
-           // $mailto = $vendor_email;
-           // $from = \Session::get('eid');
+            // $mailto = $vendor_email;
+            $from = \Session::get('eid');
             //send product order as email to vendor only if sendor and reciever email is available
-           // if(!empty($mailto) && !empty($from))
-           // {
-           // $this->getPo($order_id, true,$mailto,$from);
+            // if(!empty($mailto) && !empty($from))
+            // {
+            // $this->getPo($order_id, true,$mailto,$from);
             //}
             //$result = Mail::send('submitservicerequest.test', $message, function ($message) use ($to, $from, $full_upload_path, $subject) {
 //
@@ -379,9 +442,12 @@ class OrderController extends Controller
 //        $message->from($from);
 //
 //    });
+            \Session::put('send_to', $vendor_email);
+            \Session::put('order_id', $order_id);
             return response()->json(array(
                 'status' => 'success',
-                'message' => \Lang::get('core.note_success')
+                'message' => \Lang::get('core.note_success'),
+
             ));
 
         } else {
@@ -389,10 +455,39 @@ class OrderController extends Controller
             $message = $this->validateListError($validator->getMessageBag()->toArray());
             return response()->json(array(
                 'message' => $message,
-                'status' => 'error'
+                'status' => 'error',
+
             ));
         }
 
+    }
+
+    public function getSaveOrSendEmail()
+    {
+        return view('order.saveorsendemail');
+    }
+
+    function postSaveorsendemail(Request $request)
+    {
+        $to = $request->get('to');
+        $from = $request->get('from');
+        $order_id = $request->get('order_id');
+        $opt = $request->get('opt');
+
+        if ($to === "NULL" || $from === "NULL") {
+            return response()->json(array(
+                'message' => "Failed!Sender or Vendor Email is missing",
+                'status' => 'error'
+
+            ));
+        } else {
+            $this->getPo($order_id, true, $to, $from);
+            return response()->json(array(
+                'status' => 'success',
+                'message' => \Lang::get('core.note_success'),
+
+            ));
+        }
     }
 
     public function postDelete(Request $request)
@@ -434,10 +529,10 @@ class OrderController extends Controller
     {
         $po_number = $request->get('po_number');
         $explanation = $request->get('explaination');
-        $message = 'Link to Order: 192.232.207.127/fegsys/orders/removeorder' . $po_number . ' <br>Explanation: ' . $explanation . '';
+        $message = 'Link to Order: http://' . $_SERVER['HTTP_HOST'] . '/fegsys/orders/removeorder' . $po_number . ' <br>Explanation: ' . $explanation . '';
         $from = \Session::get('email');
         $to = 'support@fegllc.com';
-        $to = 'adnanali199@gmail.com';
+        $to = 'greg@fegllc.com';
         $subject = 'Order Removal Request';
         $headers = 'MIME-Version: 1.0' . "\r\n";
         $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
@@ -462,9 +557,8 @@ class OrderController extends Controller
 
     function getPo($order_id = null, $sendemail = false, $to = null, $from = null)
     {
+
         $data = $this->model->getOrderData($order_id);
-
-
         if (empty($data)) {
 
         } else {
@@ -514,6 +608,7 @@ class OrderController extends Controller
 
             if ($data[0]['new_format'] == 1) {
                 $item_description_string = '';
+                $sku_num_string = '';
                 $item_price_string = '';
                 $item_qty_string = '';
                 $item_total_string = '';
@@ -525,6 +620,9 @@ class OrderController extends Controller
                     $item_total = $data[0]['orderPriceArray'][$i] * $data[0]['orderQtyArray'][$i];
                     $item_total_string = "$ " . number_format($item_total, 2);
                     $item_description_string = "Item #" . $j . ": " . $data[0]['orderDescriptionArray'][$i];
+                 if(isset($data[0]['skuNumArray'])) {
+                     $sku_num_string = $data[0]['skuNumArray'][$i];
+                 }
                     $item_qty_string = $data[0]['orderQtyArray'][$i];
                     $item_price_string = $data[0]['orderPriceArray'][$i];
                     $descriptionLength = strlen($item_description_string);
@@ -532,6 +630,8 @@ class OrderController extends Controller
                 }
                 $data[0]['item_description_string'][$i] = $item_description_string;
                 $data[0]['item_price_string'][$i] = $item_price_string;
+                $data[0]['sku_num_string'][$i] = $sku_num_string;
+
                 $data[0]['item_qty_string'][$i] = $item_qty_string;
                 $data[0]['item_total_string'][$i] = $item_total_string;
                 $data[0]['order_total_cost'] = $order_total_cost;
@@ -540,14 +640,14 @@ class OrderController extends Controller
             $pdf = \PDF::loadView('order.po', ['data' => $data, 'main_title' => "Purchase Order"]);
             if ($sendemail) {
                 if (isset($to)) {
-                    $filename='PO_'.$order_id.'.pdf';
+                    $filename = 'PO_' . $order_id . '.pdf';
                     $subject = "Purchase Order";
                     $message = "Purchase Order";
-                    $result = \Mail::raw($message, function ($message) use ($to, $from, $subject, $pdf,$filename) {
+                    $result = \Mail::raw($message, function ($message) use ($to, $from, $subject, $pdf, $filename) {
                         $message->subject($subject);
                         $message->from($from);
                         $message->to($to);
-                        $message->attachData($pdf->output(),$filename);
+                        $message->attachData($pdf->output(), $filename);
                     });
                 }
             } else {
@@ -594,13 +694,15 @@ class OrderController extends Controller
 
     function getOrderreceipt($order_id = null)
     {
+
         $this->data['data'] = $this->model->getOrderReceipt($order_id);
+        $this->data['data']['order_items'] = \DB::select('SELECT * FROM order_contents WHERE order_id = ' . $order_id);
         return view('order.order-receipt', $this->data);
     }
 
     function postReceiveorder(Request $request, $id = null)
     {
-
+        $received_part_ids = array();
         $order_id = $request->get('order_id');
         $item_count = $request->get('item_count');
         $notes = $request->get('notes');
@@ -608,6 +710,25 @@ class OrderController extends Controller
         $added_to_inventory = $request->get('added_to_inventory');
         $user_id = $request->get('user_id');
         $added = 0;
+        if (!empty($request->get('receivedInParts'))) {
+            $received_part_ids = $request->get('receivedInParts');
+        } else {
+            // close order
+            $order_status = 2;
+        }
+        $received_qtys = $request->get('receivedQty');
+        $item_ids = $request->get('itemsID');
+        $received_item_qty = $request->get('receivedItemsQty');
+        for ($i = 0; $i < count($item_ids); $i++) {
+            $status = 1;
+            if (in_array($item_ids[$i], $received_part_ids))
+                $status = 2;
+            \DB::insert('INSERT INTO order_received (`order_id`,`order_line_item_id`,`quantity`,`received_by`, `status`, `date_received`, `notes`)
+							 	  		   VALUES (' . $order_id . ',' . $item_ids[$i] . ',' . $received_qtys[$i] . ',' . $user_id . ',' . $status . ', "' . date('Y-m-d') . '" , "' . $notes . '" )');
+            \DB::update('UPDATE order_contents
+								 	 	 SET item_received = ' . $received_item_qty[$i] . '+' . $received_qtys[$i] . '
+							   	   	   WHERE id = ' . $item_ids[$i]);
+        }
         $rules = array();
         if (empty($notes)) {
             $rules['order_status'] = "required:min:2";
@@ -653,7 +774,9 @@ class OrderController extends Controller
                 }
                 $added = 1;
             }
-            $data = array('date_received' => $request->get('date_received'),
+            $date_received = $request->get('date_received');
+            $date_received = date("Y-m-d", strtotime($date_received));
+            $data = array('date_received' => $date_received,
                 'status_id' => $order_status,
                 'notes' => $notes,
                 'tracking_number' => $request->get('tracking_number'),
@@ -680,39 +803,39 @@ class OrderController extends Controller
         $this->data['access'] = $this->access;
         return view('order.index', $this->data);
     }
+
     public function getProduct()
     {
-        $rows=\DB::select('select vendor_description,sku from products where id is not null');
-        $json=array();
-        foreach($rows as $row)
-        {
-            $json[]=array('label'=>$row->vendor_description,'sku'=>$row->sku);
+        $rows = \DB::select('select vendor_description,sku from products where id is not null');
+        $json = array();
+        foreach ($rows as $row) {
+            $json[] = array('label' => $row->vendor_description, 'sku' => $row->sku);
         }
         return json_encode($json);
     }
+
     public function getAutocomplete()
     {
         $term = Input::get('term');
         $results = array();
         $queries = \DB::table('products')
-            ->where('vendor_description', 'LIKE', '%' . $term . '%')
+            ->where('vendor_description', 'LIKE', '%' . $term . '%')->where('inactive', '=', 0)
             ->take(10)->get();
         if (count($queries) != 0) {
             foreach ($queries as $query) {
                 $results[] = ['id' => $query->id, 'value' => $query->vendor_description];
             }
             echo json_encode($results);
-        }
-        else{
-            echo json_encode(array('id' => 0 ,'value' => "No Match"));
+        } else {
+            echo json_encode(array('id' => 0, 'value' => "No Match"));
         }
     }
 
     public function getProductdata()
     {
-        $vendor_description=Input::get('product_id');
-        $row=\DB::select('select id,item_description,unit_price,case_price from products WHERE vendor_description="'.$vendor_description.'"');
-        $json=array('item_description'=>$row[0]->item_description,'unit_price'=>$row[0]->unit_price,'case_price'=>$row[0]->case_price,'id'=>$row[0]->id);
+        $vendor_description = Input::get('product_id');
+        $row = \DB::select("select id,sku,item_description,unit_price,case_price,retail_price from products WHERE vendor_description='" . $vendor_description . "'");
+        $json = array('sku' => $row[0]->sku, 'item_description' => $row[0]->item_description, 'unit_price' => $row[0]->unit_price, 'case_price' => $row[0]->case_price, 'retail_price' => $row[0]->retail_price, 'id' => $row[0]->id);
         echo json_encode($json);
     }
 

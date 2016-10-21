@@ -11,36 +11,78 @@
                onclick="reloadData('#{{ $pageModule }}','shopfegrequeststore/data?return={{ $return }}')"><i
                         class="fa fa-refresh"></i></a>
             @if(Session::get('gid') ==1)
-                <a href="{{ url('sximo/module/config/'.$pageModule) }}" class="btn btn-xs btn-white tips"
+                <a href="{{ url('feg/module/config/'.$pageModule) }}" class="btn btn-xs btn-white tips"
                    title=" {{ Lang::get('core.btn_config') }}"><i class="fa fa-cog"></i></a>
             @endif
         </div>
     </div>
     <div class="sbox-content">
-
+        @if($setting['usesimplesearch']!='false')
+            <?php $simpleSearchForm = SiteHelpers::configureSimpleSearchForm($tableForm); ?>
+            @if(!empty($simpleSearchForm))
+                <div class="simpleSearchContainer clearfix">
+                    @foreach ($simpleSearchForm as $t)
+                        <div class="sscol {{ $t['widthClass'] }}" style="{{ $t['widthStyle'] }}">
+                            {!! SiteHelpers::activeLang($t['label'],(isset($t['language'])? $t['language'] : array())) !!}
+                            {!! SiteHelpers::transForm($t['field'] , $simpleSearchForm) !!}
+                        </div>
+                    @endforeach
+                    <div class="sscol-submit"><br/>
+                        <button type="button" name="search" class="doSimpleSearch btn btn-sm btn-primary"> Search </button>
+                    </div>
+                </div>
+            @endif
+        @endif
         @include( $pageModule.'/toolbar',['config_id'=>$config_id,'colconfigs' => SiteHelpers::getRequiredConfigs($module_id),'order_type'=>$order_type,'product_type' => $product_type,'cart'=>$cart])
 
         <?php echo Form::open(array('url' => 'shopfegrequeststore/delete/', 'class' => 'form-horizontal', 'id' => 'SximoTable', 'data-parsley-validate' => ''));?>
         <div class="table-responsive">
             @if(count($rowData)>=1)
-                <table class="table table-striped  " id="{{ $pageModule }}Table">
+                <table class="table table-striped  datagrid" id="{{ $pageModule }}Table">
                     <thead>
                     <tr>
-                        <th width="50"> No</th>
-                        @if($setting['view-method']=='expand')
-                            <th></th> @endif
+                        @if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
+                            <th width="35"> No </th>
+                        @endif
+                        @if($setting['disableactioncheckbox']=='false')
+                            <th width="30"> <input type="checkbox" class="checkall" /></th>
+                        @endif
+                        @if($setting['view-method']=='expand') <th>  </th> @endif
                         <?php foreach ($tableGrid as $t) :
-                            if ($t['view'] == '1'):
-                                $limited = isset($t['limited']) ? $t['limited'] : '';
-                                if (SiteHelpers::filterColumn($limited)) {
-                                    echo '<th align="' . $t['align'] . '" width="' . $t['width'] . '">' . \SiteHelpers::activeLang($t['label'], (isset($t['language']) ? $t['language'] : array())) . '</th>';
-
+                            if($t['view'] =='1'):
+                                $limited = isset($t['limited']) ? $t['limited'] :'';
+                                if(SiteHelpers::filterColumn($limited ))
+                                {
+                                    $sortBy = $param['sort'];
+                                    $orderBy = strtolower($param['order']);
+                                    $colField = $t['field'];
+                                    $colIsSortable = $t['sortable'] == '1';
+                                    $colIsSorted = $colIsSortable && $colField == $sortBy;
+                                    $colClass = $colIsSortable ? ' dgcsortable' : '';
+                                    $colClass .= $colIsSorted ? " dgcsorted dgcorder$orderBy" : '';
+                                    $th = '<th'.
+                                            ' class="'.$colClass.'"'.
+                                            ' data-field="'.$colField.'"'.
+                                            ' data-sortable="'.$colIsSortable.'"'.
+                                            ' data-sorted="'.($colIsSorted?1:0).'"'.
+                                            ' data-sortedOrder="'.($colIsSorted?$orderBy:'').'"'.
+                                            ' align="'.$t['align'].'"'.
+                                            ' width="'.$t['width'].'"';
+                                    $th .= '>';
+                                    $th .= \SiteHelpers::activeLang($t['label'],(isset($t['language'])? $t['language'] : array()));
+                                    $th .= '</th>';
+                                    echo $th;
                                 }
                             endif;
                         endforeach; ?>
+                        @if($setting['disablerowactions']=='false')
+                            <th width="70"><?php echo Lang::get('core.btn_action') ;?></th>
+                        @endif
 
-                        <th width="100">Add To Cart</th>
-                        <th width="100">Add'l Details</th>
+                        <th width="150">Add To Cart</th>
+
+
+
 
 
                     </tr>
@@ -50,7 +92,9 @@
                     @if($access['is_add'] =='1' && $setting['inline']=='true')
                         <tr id="form-0">
                             <td> #</td>
-                            <td></td>
+                            @if($setting['disableactioncheckbox']=='false')
+                                <td> </td>
+                            @endif
                             @if($setting['view-method']=='expand')
                                 <td></td> @endif
                             @foreach ($tableGrid as $t)
@@ -75,7 +119,12 @@
                     $id = $row->id;
                     ?>
                     <tr class="editable" id="form-{{ $row->id }}">
-                        <td class="number"> <?php echo ++$i;?>  </td>
+                        @if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
+                            <td class="number"> <?php echo ++$i;?>  </td>
+                        @endif
+                        @if($setting['disableactioncheckbox']=='false')
+                            <td ><input type="checkbox" class="ids" name="ids[]" value="<?php echo $row->id ;?>" />  </td>
+                        @endif
                         @if($setting['view-method']=='expand')
                             <td><a href="javascript:void(0)" class="expandable" rel="#row-{{ $row->id }}"
                                    data-url="{{ url('shopfegrequeststore/show/'.$id) }}"><i class="fa fa-plus "></i></a>
@@ -103,17 +152,16 @@
                         endif;
                         endforeach;
                         ?>
+                        <td><a href="{{ $pageModule }}/show/{{$row->id}}" target="_blank"
+                               class="tips btn btn-xs btn-white"  title="Product Details"><i class="fa fa-search" aria-hidden="true"></i></a>
+</td>
+                        <td>@if($row->inactive == 0)
+                                <input type="number" title="Quantity" onkeyup="if(!this.checkValidity()){this.value='';alert('Please enter a number')};" name="item_quantity" class="form-control" style="width:70px;display:inline" id="item_quantity_{{$row->id}}"  />
+                                <a href="javascript:void(0)" value="{{$row->id}}" class=" addToCart tips btn btn-xs btn-white"  title="Add to Cart"><i class="fa fa-shopping-cart" aria-hidden="true"></i></a>
 
-                        <td>
-                            @if($row->inactive == 0)
-                                <a href="{{ URL::to('shopfegrequeststore/popup-cart/'.$row->id) }}" <i class="fa fa-shopping-cart" aria-hidden="true"></a>
                             @else
                                 Not Avail.
-                            @endif
-                        </td>
-
-                        <td><a href="{{ $pageModule }}/show/{{$row->id}}" target="_blank"
-                               class="btn btn-xs btn-green tips" title="Product Details"><i class="fa fa-search" aria-hidden="true"></i></a></td>
+                            @endif</td>
                     </tr>
                     @if($setting['view-method']=='expand')
                         <tr style="display:none" class="expanded" id="row-{{ $row->id }}">
@@ -140,7 +188,7 @@
 
         </div>
         <?php echo Form::close();?>
-        @include('ajaxfooter')
+        @include('ajaxfooter',array('isactive'=>$active_inactive,'order_type'=>$order_type,'product_type'=>$product_type,'type'=>$type))
 
     </div>
 </div>
@@ -166,10 +214,56 @@
             return false;
         });
 
-        <?php if($setting['view-method'] =='expand') :
+        $('.addToCart').on('click',function(){
+            var base_url = <?php echo  json_encode(url()) ?>;
+            var addId = $(this).attr('value');
+            var qty=$("#item_quantity_"+addId).val();
+
+            if(!qty)
+            {
+                qty=1;
+            }
+            console.log(addId+ " "+qty);
+            $.ajax({
+                type: "GET",
+                url: base_url + '/shopfegrequeststore/popup-cart/'+addId+"/"+qty,
+                data: {
+                },
+                success: function (response) {
+                    $("#update_text_to_add_cart").text(response.total_cart);
+                    showResponse(response)
+                }
+            });
+        });
+        function showResponse(data)  {
+
+            if(data.status == 'success')
+            {
+                notyMessage(data.message);
+
+            } else {
+                notyMessageError(data.message);
+                return false;
+            }
+        }
+    <?php if($setting['view-method'] =='expand') :
                 echo AjaxHelpers::htmlExpandGrid();
             endif;
          ?>
+        var simpleSearch = $('.simpleSearchContainer');
+        if (simpleSearch.length) {
+            initiateSearchFormFields(simpleSearch);
+            simpleSearch.find('.doSimpleSearch').click(function(event){
+                performSimpleSearch.call($(this), {
+                    moduleID: '#{{ $pageModule }}',
+                    url: "{{ $pageUrl }}",
+                    event: event,
+                    container: simpleSearch
+                });
+            });
+        }
+
+        initDataGrid('{{ $pageModule }}', '{{ $pageUrl }}');
     });
 </script>
 <style>

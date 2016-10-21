@@ -2,13 +2,51 @@
 function reloadData( id,url,callback)
 {
 	$('.ajaxLoading').show();
+    var isClearData = /data\?search\=$/.test(url);
+    if (isClearData) {
+        url += getFooterFilters({'search': true, 'page': true});
+    }
+
 	$.post( url ,function( data ) {
 		$( id +'Grid' ).html( data );
 		$('.ajaxLoading').hide();
 		typeof callback === 'function' && callback();
-
+        if (window.App && window.App.autoCallbacks && window.App.autoCallbacks.reloaddata) {
+            window.App.autoCallbacks.reloaddata.call($( id +'Grid' ), {id:id, url:url, data:data, isClear: isClearData});
+        }
 	});
 
+}
+
+function getFooterFilters(excludeList, forceSetFields) {
+    var attr = "", fieldKey;
+    if (!forceSetFields) {
+        forceSetFields = {};
+    }
+    if (!excludeList) {
+        excludeList = {};
+    }
+    if (excludeList['_token'] === UNDEFINED) {
+        excludeList['_token'] = true;
+    }
+    
+    for(fieldKey in forceSetFields) {
+        $('.table-actions [name='+fieldKey+']').val(forceSetFields[fieldKey]);
+    }        
+    $('.table-actions :input').each(function () {
+        var elm = $(this), 
+            fieldName = elm.attr('name'), 
+            val = elm.val(),
+            isExlude = excludeList[fieldName] === true;
+        if (!isExlude && val !== '' && val !== null) {
+            attr += '&' + fieldName + '=' + val;
+        }
+    });
+    return attr;
+}
+function getFooterFiltersWithoutSort() {
+    var attr = getFooterFilters({'sort': true, 'order': true});
+    return attr;
 }
 
 
@@ -63,6 +101,9 @@ function ajaxInlineSave(id,url,reloadurl)
 		$.post( reloadurl ,function( data ) {
 			$( id+'Grid' ).html( data );
 			$('.ajaxLoading').hide();
+            if (window.App && window.App.autoCallbacks && window.App.autoCallbacks.ajaxinlinesave) {
+                window.App.autoCallbacks.ajaxinlinesave.call($( id +'Grid' ), {id:id, url:url, data:data, reloadurl: reloadurl});
+            }            
 		});							
 	});
 }	
@@ -77,23 +118,37 @@ function ajaxInlineEdit(id,url,reloadurl)
 }
 
 
-function ajaxFilter( id ,url,opt  )
+function ajaxFilter( id ,url,opt,column)
 {
-
-	var attr = '', elm, val;
+    var attr = '', elm, val;
         $(id + 'Filter :input').each(function () {
 			elm = $(this);
 			val = elm.val();
 //            if (this.value != '' && this.value!=0) {
-            if (val !== '' && val !== null) {
-                attr += this.name + '=' + val + '&';
-            }
+              if (this.name != '_token') {
+                if (val !== '' && val !== null) {
+                    if ( this.name == "sort" && column !== undefined) {
+
+                       attr +=  "sort="+column+"&";
+                    }
+
+                    else {
+                        
+                        attr += this.name + '=' + val + '&';
+
+                    }
+                }                  
+              }
+
 
         });
+
     if(opt  !== undefined) {
         attr += opt;
     }
-	reloadData(id, url+"?"+attr);
+
+
+reloadData(id, url+"?"+attr);
 }
 
 
@@ -172,16 +227,16 @@ function ajaxPopupStatic(url ,w , h)
 	if (window.focus) {newwindow.focus()}
 }
 
-function notyMessage(message)
+function notyMessage(message,showDuration)
 {
-
-	toastr.success("success", message);
+	var showDuration = showDuration || "300";
+	toastr.success("", message);
 	toastr.options = {
 		  "closeButton": true,
 		  "debug": false,
 		  "positionClass": "toast-bottom-right",
 		  "onclick": null,
-		  "showDuration": "300",
+		  "showDuration": showDuration,
 		  "hideDuration": "1000",
 		  "timeOut": "5000",
 		  "extendedTimeOut": "1000",
@@ -196,7 +251,7 @@ function notyMessage(message)
 function notyMessageError(message)
 {
 	
-	toastr.error("error", message);
+	toastr.error("", message);
 	toastr.options = {
 		  "closeButton": true,
 		  "debug": false,
@@ -259,6 +314,11 @@ function SximoModalLarge( url , title)
 	$('#sximo-modal-lg #sximo-modal-content').html(' ....Loading content , please wait ...');
 	$('#sximo-modal-lg  .modal-title').html(title);
 	$('#sximo-modal-lg  #sximo-modal-content').load(url,function(){
+        var modal = $('#sximo-modal-lg'),
+            titletrim = title.replace(/[\s\W]/ig, '').replace(/^\d+?/,'').toLowerCase();
+        if (window.App && window.App.autoCallbacks && window.App.autoCallbacks[titletrim]) {
+            window.App.autoCallbacks[titletrim].call(modal, {url:url, title:title});
+        }
 	});
 	$('#sximo-modal-lg').modal('show');	
 }

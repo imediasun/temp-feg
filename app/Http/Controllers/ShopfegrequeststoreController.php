@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\controller;
 use App\Models\Shopfegrequeststore;
+use App\Models\Addtocart;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Validator, Input, Redirect, URL;
@@ -18,7 +19,7 @@ class ShopfegrequeststoreController extends Controller
     {
         parent::__construct();
         $this->model = new Shopfegrequeststore();
-
+        $this->addToCartModel = new Addtocart();
         $this->info = $this->model->makeInfo($this->module);
         $this->access = $this->model->validAccess($this->info['id']);
 
@@ -44,7 +45,6 @@ class ShopfegrequeststoreController extends Controller
 
     public function postData(Request $request)
     {
-
 
 
         $module_id = \DB::table('tb_module')->where('module_name', '=', 'shopfegrequeststore')->pluck('module_id');
@@ -82,6 +82,7 @@ class ShopfegrequeststoreController extends Controller
         $type = $request->get('type');
         $this->data['type'] = $type;
         $active_inactive = $request->get('active_inactive');
+        $this->data['active_inactive'] = $active_inactive;
         \Session::put('active_inactive', $active_inactive);
         $order_type = $request->get('order_type');
         $this->data['order_type'] = $order_type;
@@ -89,15 +90,17 @@ class ShopfegrequeststoreController extends Controller
         $this->data['product_type'] = $product_type;
         $cond = array('type' => $type, 'active_inactive' => $active_inactive, 'order_type' => $order_type, 'product_type' => $product_type,);
         $results = $this->model->getRows($params, $cond);
+
         // Build pagination setting
         $page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;
 
 
-
-        if(count($results['rows']) == $results['total']){
+        if (count($results['rows']) == $results['total']) {
             $params['limit'] = $results['total'];
         }
-
+        if ($results['total'] === 0) {
+            $params['limit'] = 1;
+        }
 
         $pagination = new Paginator($results['rows'], $results['total'], $params['limit']);
         $pagination->setPath('shopfegrequeststore/data');
@@ -259,19 +262,21 @@ class ShopfegrequeststoreController extends Controller
             redirect('fegsys/home', 'refresh');
         } else {
             $this->data['recent_products'] = $this->model->getRecentlyAddedProduct();
-            return view('shopfegrequeststore.recentlyAddedProducts',$this->data);
+            return view('shopfegrequeststore.recentlyAddedProducts', $this->data);
         }
     }
+
     function getNewGraphicRequest()
     {
-      return view('shopfegrequeststore.newgraphicrequest',$this->data);
+        return view('shopfegrequeststore.newgraphicrequest', $this->data);
     }
+
     function postNewgraphic(Request $request)
     {
-        $rules['img']='mimes:jpeg,gif,png';
+        $rules['img'] = 'mimes:jpeg,gif,png';
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
-            $now = date('m/d/Y');
+            $now = date('Y-m-d');
             $item_id = $request->get('item_id');
             $graphics_description = $request->get('graphics_description');
             $graphics_description = str_replace('"', '', $graphics_description);
@@ -281,39 +286,67 @@ class ShopfegrequeststoreController extends Controller
             $game_info = $request->get('game_info');
             $locationId = $request->get('location_name');
             $statusId = 1;
-            $now = date('Y/m/d');
-            $data = array('location_id' => $locationId, 'request_user_id' => \Session::get('uid'), 'request_date' => $now, 'need_by_date' => $date_needed, 'description' => $game_info . ' - ' . $graphics_description, 'qty' => $qty, 'status_id' => $statusId);
+            $now = date('Y-m-d');
+            $filesnames = $request->get('myInputs');
+            $filesnames = implode(',', $filesnames);
+            $data = array('location_id' => $locationId, 'request_user_id' => \Session::get('uid'), 'request_date' => $now, 'need_by_date' => $date_needed, 'description' => $game_info . ' - ' . $graphics_description, 'qty' => $qty, 'status_id' => $statusId, 'img' => $filesnames);
             $last_insert_id = $this->model->newGraphicRequest($data);
 
-
-            $add_image = $request->get('add_image');
-            $updates = array();
-
-            if ($request->hasFile('img')) {
-                $file = $request->file('img');
-                $destinationPath = './uploads/newGraphic/';
-                $filename = $file->getClientOriginalName();
-                $extension = $file->getClientOriginalExtension(); //if you need extension of the file
-                $newfilename = $last_insert_id . '.' . $extension;
-                $uploadSuccess = $file->move($destinationPath, $newfilename);
-                if ($uploadSuccess) {
-                    $updates['img'] = $newfilename;
-                }
-                $this->model->insertRow($updates, $last_insert_id);
-            }return response()->json(array(
+            return response()->json(array(
                 'status' => 'success',
                 'message' => \Lang::get('core.request_sent_success')
             ));
 
-        }
-        else{
+        } else {
 
         }
 
-        }
-    function getPopupCart($productId = null)
+    }
+
+    function getPopupCart($productId = null, $qty = 0)
     {
-     return redirect('addtocart')->with(array('productId'=>$productId));
+        $current_total_cart = \Session::get('total_cart');
+        \Session::put('productId', $productId);
+        $cartData = $this->addToCartModel->popupCartData($productId, null, $qty);
+        $total_cart = $this->addToCartModel->totallyRecordInCart();
+        if ($current_total_cart == $total_cart[0]->total) {
 
+            $message = \Lang::get('core.already_add_to_cart');
+        } else {
+            $message = \Lang::get('core.add_to_cart');
+        }
+        \Session::put('total_cart', $total_cart[0]->total);
+        return response()->json(array(
+            'status' => 'success',
+            'message' => $message,
+            'total_cart' => $total_cart[0]->total
+        ));
+        //return redirect('addtocart')->with(array('productId'=>$productId));
+
+    }
+
+    public function postUploadfiles()
+    {
+        $last_id = \DB::select("select max(id) as id from new_graphics_request");
+
+        $last_id = $last_id[0]->id + 1;
+        $input = \Input::all();
+        $rules['file'] = 'mimes:jpeg,gif,png';
+
+        $validation = Validator::make($input, $rules);
+
+        if ($validation->fails()) {
+            return \Response::json(array('error'));
+        }
+
+        $destinationPath = public_path() . '/uploads/newGraphic'; // upload path
+
+        $extension = \Input::file('file')->getClientOriginalExtension(); // getting file extension
+        $fileName = $last_id . "_" . rand(111, 999) . '.' . $extension; // renameing image
+        $upload_success = \Input::file('file')->move($destinationPath, $fileName); // uploading file to given path
+
+        if ($upload_success) {
+            return $fileName;
+        }
     }
 }

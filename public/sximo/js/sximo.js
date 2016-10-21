@@ -22,6 +22,7 @@ jQuery(document).ready(function($){
 				$('body').removeClass('body-small')
 			}
 		})
+      
       /*Return to top*/
       var offset = 220;
       var duration = 500;
@@ -43,7 +44,7 @@ jQuery(document).ready(function($){
       });
 
   	$('.switch').bootstrapSwitch();
-	$('.date').datepicker({format:'mm/dd/yyyy',autoClose:true})
+	$('.date').datepicker({format:'mm/dd/yyyy',autoclose:true})
 	$('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});
 	
 	/* Tooltip */
@@ -83,9 +84,9 @@ jQuery(document).ready(function($){
 	$('.nav li ul li.active').parents('li').addClass('active');
 	
 	
-		$('input[type="checkbox"],input[type="radio"]').iCheck({
+		$('input[type="checkbox"],input[type="radio"]').not('.test').iCheck({
 			checkboxClass: 'icheckbox_square-green',
-			radioClass: 'iradio_square-green',
+			radioClass: 'iradio_square-green'
 		});	
 		$('.checkall').on('ifChecked',function(){
 			$('input[type="checkbox"]').iCheck('check');
@@ -147,6 +148,11 @@ function SximoModal( url , title)
 	$('#sximo-modal-content').html(' ....Loading content , please wait ...');
 	$('.modal-title').html(title);
 	$('#sximo-modal-content').load(url,function(){
+        var modal = $('#sximo-modal-content').closest('.modal'),
+            titletrim = title.replace(/[\s\W]/ig, '').replace(/^\d+?/,'').toLowerCase();
+        if (window.App && window.App.autoCallbacks && window.App.autoCallbacks[titletrim]) {
+            window.App.autoCallbacks[titletrim].call(modal, {url:url, title:title});
+        }        
 	});
 	$('#sximo-modal').modal('show');	
 }

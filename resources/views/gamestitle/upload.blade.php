@@ -61,7 +61,7 @@
 <script>
     function deleteImage() {
         if (confirm("Do you Really Want to Delete Existing Image...")) {
-            location.href="/sximo/public/gamestitle/imageremove/{{ $game_id }}";
+            location.href="/gamestitle/imageremove/{{ $game_id }}";
         }
     }
 </script>

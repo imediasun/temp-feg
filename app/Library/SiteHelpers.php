@@ -739,9 +739,11 @@ class SiteHelpers
         $type = '';
         $bulk = ($bulk == true ? '[]' : '');
         $mandatory = '';
-        $selectMultiple = "";
+        $selectMultiple = "";   
+        $simpleSearchOptions = '';
         foreach ($forms as $f) {
-            if ($f['field'] == $field && $f['search'] == 1) {
+            $hasSimpleSearch = isset($f['simplesearch']) ? $f['simplesearch'] == 1 : false;
+            if ($f['field'] == $field && ($f['search'] == 1 || $hasSimpleSearch)) {
                 $type = ($f['type'] != 'file' ? $f['type'] : '');
                 $option = $f['option'];
                 $required = $f['required'];
@@ -757,6 +759,15 @@ class SiteHelpers
                 } else {
                     $mandatory = '';
                 }
+                if ($hasSimpleSearch) {
+                    $simpleSearchOptions = " data-simpleSearch='1' ";
+                    $simpleSearchOperator = 'equal';
+                    if (isset($f['simplesearchoperator'])) {
+                        $simpleSearchOperator = $f['simplesearchoperator'];
+                    }
+                    $simpleSearchOptions .= " data-simpleSearchOperator='{$simpleSearchOperator}' ";
+                }                
+                break;
             }
         }
 
@@ -765,43 +776,79 @@ class SiteHelpers
                 $form = '';
                 break;
             case 'textarea';
-                $form = "<input  type='text' name='" . $field . "{$bulk}' class='form-control input-sm' $mandatory value='{$value}'/>";
+                $form = "<input  type='text' name='" . $field . "{$bulk}' class='form-control input-sm' $mandatory $simpleSearchOptions value='{$value}'/>";
                 break;
 
             case 'textarea_editor';
-                $form = "<input  type='text' name='" . $field . "{$bulk}' class='form-control input-sm' $mandatory value='{$value}'/>";
+                $form = "<input  type='text' name='" . $field . "{$bulk}' class='form-control input-sm' $mandatory $simpleSearchOptions value='{$value}'/>";
                 break;
 
             case 'text';
-                $form = "<input  type='text' name='" . $field . "{$bulk}' class='form-control input-sm' $mandatory value='{$value}'/>";
+                $form = "<input  type='text' name='" . $field . "{$bulk}' class='form-control input-sm' $mandatory $simpleSearchOptions value='{$value}'/>";
                 break;
 
             case 'text_date';
-                $form = "<input  type='text' name='$field{$bulk}' class='date form-control input-sm' $mandatory value='{$value}'/> ";
+                $form = "<input  type='text' name='$field{$bulk}' class='date form-control input-sm' $mandatory $simpleSearchOptions value='{$value}'/> ";
                 break;
 
             case 'text_datetime';
-                $form = "<input  type='text' name='$field{$bulk}'  class='date form-control input-sm'  $mandatory value='{$value}'/> ";
+                $form = "<input  type='text' name='$field{$bulk}'  class='date form-control input-sm'  $mandatory $simpleSearchOptions value='{$value}'/> ";
                 break;
 
             case 'select';
                 if ($option['opt_type'] == 'external') {
 
-                    $data = DB::table($option['lookup_table'])->get();
                     $opts = '';
-                    foreach ($data as $row):
-                        $selected = '';
-                        if ($value == $row->$option['lookup_key']) $selected = 'selected="selected"';
-                        $fields = explode("|", $option['lookup_value']);
-                        //print_r($fields);exit;
-                        $val = "";
-                        foreach ($fields as $item => $v) {
-                            if ($v != "") $val .= $row->$v . " ";
+                    if($option['lookup_table'] =='location')
+                    {
+                        $lookupParts = explode('|',$option['lookup_value']);
+                        if(is_array($lookupParts) && !empty($lookupParts)){
+                            $option['lookup_value'] = $lookupParts[0];
                         }
-                        $opts .= "<option $selected value='" . $row->$option['lookup_key'] . "' $mandatory > " . $val . " </option> ";
-                    endforeach;
+                        $selected = '';
+                        $current_user_id=Auth::id();
+                        $user_ids = DB::table('user_locations')->leftjoin('location as l','user_locations.location_id','=','l.id')->where('user_locations.user_id',$current_user_id)->orderby('l.'.$option['lookup_value'])->get();
+                        foreach ($user_ids as $user_id)
+                        {
+                        $locations = DB::table($option['lookup_table'])->where('id',$user_id->location_id)->orderby($option['lookup_value'])->get();
+                        foreach ($locations as $location) {
+                            $value = "";
+                            foreach($lookupParts as $field){
+                                $value .= $location->$field." - ";
+                            }
+                            $value = trim($value,' - ');
+                            $opts .= "<option $selected  value='" . $location->$option['lookup_key'] . "' $mandatory > " . $value . " </option> ";
+                        }
 
+                        }
+
+                    }
+                    else {
+                        $fields = explode("|", $option['lookup_value']);
+                        if(count($fields)>1)
+                        {
+                            $data = DB::table($option['lookup_table'])->where($option['lookup_key'],'!=','')->orderby($option['lookup_key'])->groupby($option['lookup_key'])->get();
+                        }
+                        else
+                        {
+                            $data = DB::table($option['lookup_table'])->where($option['lookup_value'],'!=','')->orderby($option['lookup_value'])->groupby($option['lookup_value'])->get();
+                        }
+
+                        foreach ($data as $row):
+                            $selected = '';
+                            if ($value == $row->$option['lookup_key']) $selected = 'selected="selected"';
+
+                            //print_r($fields);exit;
+                            $val = "";
+                            foreach ($fields as $item => $v) {
+                                if ($v != "") $val .= $row->$v . " ";
+                            }
+                            $opts .= "<option $selected value='" . $row->$option['lookup_key'] . "' $mandatory > " . $val . " </option> ";
+                        endforeach;
+                    }
                 } else {
+
+
                     $opt = explode("|", $option['lookup_query']);
                     $opts = '';
                     for ($i = 0; $i < count($opt); $i++) {
@@ -812,18 +859,15 @@ class SiteHelpers
                     }
 
                 }
-                $form = "<select name='$field{$bulk}'  class='form-control sel-search' $mandatory $selectMultiple>" .
+                
+                $multipleClass = "";
+                if (!empty($selectMultiple)) {
+                    $multipleClass = "sel-search-multiple";
+                }
+                $form = "<select name='$field{$bulk}'  class='form-control sel-search $multipleClass' $mandatory $selectMultiple $simpleSearchOptions>" .
 						(empty($selectMultiple) ? 	"<option value=''> -- Select  -- </option>" : "") .
 						"	$opts
 						</select>";
-                
-                if (!empty($selectMultiple)) {
-                    $form .= "<script>
-                        
-                            jQuery(\"select[name=$field{$bulk}]\").select2();
-                        
-                        </script>";
-                }
                 break;
 
             case 'radio';
@@ -835,7 +879,7 @@ class SiteHelpers
                     $row = explode(":", $opt[$i]);
                     $opts .= "<option value ='" . $row[0] . "' > " . $row[1] . " </option> ";
                 }
-                $form = "<select name='$field{$bulk}' class='form-control' $mandatory ><option value=''> -- Select  -- </option>$opts</select>";
+                $form = "<select name='$field{$bulk}' class='form-control' $mandatory $simpleSearchOptions><option value=''> -- Select  -- </option>$opts</select>";
                 break;
 
         }
@@ -1016,7 +1060,7 @@ class SiteHelpers
         if (Session::has('msgstatus')): ?>
             <script type="text/javascript">
                 $(document).ready(function () {
-                    toastr.<?php echo $status;?>("success", "<?php echo Session::get('messagetext');?>");
+                    toastr.<?php echo $status;?>("", "<?php echo Session::get('messagetext');?>");
                     toastr.options = {
                         "closeButton": true,
                         "debug": false,
@@ -1277,7 +1321,7 @@ class SiteHelpers
 
     public static function avatar($width = 75)
     {
-        $avatar = '<img alt="" src="http://www.gravatar.com/avatar/' . md5(Session::get('email')) . '" class="img-circle" width="' . $width . '" />';
+        $avatar = '<img alt="" src="'.url().'/silouette.png" class="img-circle" width="' . $width . '" />';
         $Q = DB::table("users")->where("id", '=', Session::get('uid'))->get();
         if (count($Q) >= 1) {
             $row = $Q[0];
@@ -1931,5 +1975,40 @@ class SiteHelpers
     {
         $region_name = \DB::select('select region from region where id=' . $id);
         return $region_name;
+    }
+    
+    static function configureSimpleSearchForm($data) {
+        $newArray = array();
+        foreach($data as $item) {
+            if (isset($item['simplesearch']) && $item['simplesearch']  == '1') {
+                $newArray[] = $item;
+            }
+        }
+        
+        foreach($newArray as $key => &$item) {
+            $width = $item['simplesearchfieldwidth'];
+            $widthClass = "";
+            $widthStyle = "";
+            if (preg_match('/^[\_a-zA-Z]/', $width) == 1) {
+                $widthClass = $width;
+            }
+            else {
+                $widthStyle = 'width:' . $width. ';';
+            }
+            $item['widthClass'] = $widthClass;
+            $item['widthStyle'] = $widthStyle;
+        }  
+        
+        uasort($newArray, function ($a, $b) { 
+            return ($a['simplesearchorder'] >= $b['simplesearchorder'] ? 1 : -1); 
+        });
+        
+        return $newArray;
+    }
+
+
+    static function getProductName($id)
+    {
+        return \DB::table('products')->where('id', $id)->pluck('vendor_description');
     }
 }

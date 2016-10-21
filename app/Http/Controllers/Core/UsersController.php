@@ -29,6 +29,7 @@ class UsersController extends Controller
             'pageTitle' => $this->info['title'],
             'pageNote' => $this->info['note'],
             'pageModule' => 'core/users',
+            'pageUrl' => url('core/users'),
             'return' => self::returnUrl()
 
         );
@@ -37,7 +38,12 @@ class UsersController extends Controller
     public function getIndex(Request $request)
     {
         $module_id = \DB::table('tb_module')->where('module_name', '=', 'users')->pluck('module_id');
+
+        $this->data['modules'] = \DB::table('tb_module')->where('module_type', '!=', 'core')->get();
+        $this->data['pages'] = \DB::select(" SELECT * FROM tb_pages ");
+
         $this->data['module_id'] = $module_id;
+
         if (Input::has('config_id')) {
             $config_id = Input::get('config_id');
         } elseif (\Session::has('config_id')) {
@@ -56,8 +62,8 @@ class UsersController extends Controller
             return Redirect::to('dashboard')
                 ->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
 
-        $sort = (!is_null($request->input('sort')) ? $request->input('sort') : 'id');
-        $order = (!is_null($request->input('order')) ? $request->input('order') : 'asc');
+        $sort = (!is_null($request->input('sort')) ? $request->input('sort') : $this->info['setting']['orderby']);
+        $order = (!is_null($request->input('order')) ? $request->input('order') : $this->info['setting']['ordertype']);
         // End Filter sort and order for query
         // Filter Search for query
         $filter = (!is_null($request->input('search')) ? $this->buildSearch() : '');
@@ -69,7 +75,7 @@ class UsersController extends Controller
 
         $params = array(
             'page' => $page,
-            'limit' => (!is_null($request->input('rows')) ? filter_var($request->input('rows'), FILTER_VALIDATE_INT) : static::$per_page),
+            'limit' => (!is_null($request->input('rows')) ? filter_var($request->input('rows'), FILTER_VALIDATE_INT) : $this->info['setting']['perpage']),
             'sort' => $sort,
             'order' => $order,
             'params' => $filter,
@@ -80,8 +86,12 @@ class UsersController extends Controller
 
         // Build pagination setting
         $page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;
-        $pagination = new Paginator($results['rows'], $results['total'], $params['limit']);
+        //$pagination = new Paginator($results['rows'], $results['total'], $params['limit']);
+        $pagination = new Paginator($results['rows'], $results['total'],
+            (isset($params['limit']) && $params['limit'] > 0 ? $params['limit'] :
+                ($results['total'] > 0 ? $results['total'] : '1')));
         $pagination->setPath('users');
+        $this->data['param'] = $params;
         foreach ($results['rows'] as $result) {
 
             if ($result->is_tech_contact == 1) {
@@ -142,6 +152,11 @@ class UsersController extends Controller
             }
         }
         $this->data['rowData'] = $results['rows'];
+
+        $this->data['modules'] = \DB::table('tb_module')->where('module_type', '!=', 'core')->get();
+        $this->data['pages'] = \DB::select(" SELECT * FROM tb_pages ");
+
+
         // Build Pagination
         $this->data['pagination'] = $pagination;
         // Build pager number and append current param GET
@@ -154,6 +169,7 @@ class UsersController extends Controller
         $this->data['colspan'] = \SiteHelpers::viewColSpan($this->info['config']['grid']);
         // Group users permission
         $this->data['access'] = $this->access;
+        $this->data['setting'] = $this->info['setting'];
         // Detail from master if any
 
         // Master detail link if any
@@ -173,7 +189,7 @@ class UsersController extends Controller
         $row = Users::find($id);
         Auth::loginUsingId($row->id);
 
-        DB::table('users')->where('id', '=', $row->id)->update(array('last_login' => date("m/d/Y H:i:s")));
+        DB::table('users')->where('id', '=', $row->id)->update(array('last_login' => date("Y-m-d H:i:s")));
         //Session::regenerate();
 
         Session::put('uid', $row->id);
@@ -182,27 +198,27 @@ class UsersController extends Controller
         Session::put('flgStatus', 1);
         Session::put('ll', $row->last_login);
         Session::put('fid', $row->first_name . ' ' . $row->last_name);
-        Session::put('user_name',$row->username);
+        Session::put('user_name', $row->username);
         Session::put('ufname', $row->first_name);
         Session::put('ulname', $row->last_name);
         Session::put('company_id', $row->company_id);
         $user_locations = \SiteHelpers::getLocationDetails($row->id);
-        if(!empty($user_locations)) {
+        if (!empty($user_locations)) {
             Session::put('user_locations', $user_locations);
             Session::put('selected_location', $user_locations[0]->id);
             Session::put('selected_location_name', $user_locations[0]->location_name_short);
         }
         Session::put('get_locations_by_region', $row->get_locations_by_region);
-        Session::put('email_2',$row->email_2);
-        Session::put('primary_phone',$row->primary_phone);
-        Session::put('secondary_phone',$row->secondary_phone);
-        Session::put('street',$row->street);
-        Session::put('city',$row->city);
-        Session::put('state',$row->state);
-        Session::put('zip',$row->zip);
-        Session::put('reg_id',$row->reg_id);
-        Session::put('restricted_mgr_email',$row->restricted_mgr_email);
-        Session::put('restricted_user_email',$row->restricted_user_email);
+        Session::put('email_2', $row->email_2);
+        Session::put('primary_phone', $row->primary_phone);
+        Session::put('secondary_phone', $row->secondary_phone);
+        Session::put('street', $row->street);
+        Session::put('city', $row->city);
+        Session::put('state', $row->state);
+        Session::put('zip', $row->zip);
+        Session::put('reg_id', $row->reg_id);
+        Session::put('restricted_mgr_email', $row->restricted_mgr_email);
+        Session::put('restricted_user_email', $row->restricted_user_email);
         Session::save();
 
         if (Session::get('return_id') == $id) {
@@ -294,6 +310,9 @@ class UsersController extends Controller
         }
 
         $this->data['id'] = $id;
+
+        $this->data['modules'] = \DB::table('tb_module')->where('module_type', '!=', 'core')->orderby('module_name')->get();
+        $this->data['pages'] = \DB::select(" SELECT * FROM tb_pages order by alias");
         return view('core.users.form', $this->data);
     }
 
@@ -359,12 +378,16 @@ class UsersController extends Controller
 
     function postSave(Request $request, $id = 0)
     {
+        $form_data['date'] = date('Y-m-d');
+        $form_data['last_login'] = date('Y-m-d');
+        $form_data['created_at'] = date('Y-m-d');
+        $form_data['updated_at'] = date('Y-m-d');
         $rules = $this->validateForm();
         if ($request->input('id') == '') {
             $rules['password'] = 'required|between:6,12';
             $rules['password_confirmation'] = 'required|between:6,12';
             $rules['email'] = 'required|email|unique:users';
-            $rules['username'] = 'required|alpha_num||min:2|unique:users';
+            $rules['username'] = 'required|min:2|unique:users';
 
 
         } else {
@@ -380,10 +403,12 @@ class UsersController extends Controller
         if ($validator->passes()) {
             $data = $this->validatePost('users');
 
-            $data['redirect_link']=$request->get('redirect_link');
+            $data['redirect_link'] = $request->get('redirect_link');
             if ($request->input('id') == '') {
+                $logId = Users::insertLog($this->module, 'insert');
                 $data['password'] = \Hash::make(Input::get('password'));
             } else {
+                $logId = Users::insertLog($this->module, 'update');
                 if (Input::get('password') != '') {
                     $data['password'] = \Hash::make(Input::get('password'));
                 } else {
@@ -393,10 +418,21 @@ class UsersController extends Controller
                 $file = $request->file('avatar');
                 $data = array_filter($data);
             }
-
+            $data['active']=$request->get('active');
             $id = $this->model->insertRow($data, $request->input('id'));
-            $this->model->inserLocations($request->input('multiple_locations'), $id, $request->input('id'));
-
+            $all_locations = Input::get('all_locations');
+            if (empty($all_locations)) {
+                $this->model->inserLocations($request->input('multiple_locations'), $id, $request->input('id'));
+            } else {
+                $all_locations = \DB::select('select id from location');
+                $locations = array();
+                $i = 0;
+                foreach ($all_locations as $l) {
+                    $locations[$i] = $l->id;
+                    $i++;
+                }
+                $this->model->inserLocations($locations, $id, $request->input('id'));
+            }
             if (!is_null(Input::file('avatar'))) {
                 $updates = array();
                 $file = $request->file('avatar');
@@ -441,6 +477,7 @@ class UsersController extends Controller
         if ($this->access['is_remove'] == 0)
             return Redirect::to('dashboard')
                 ->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
+        $logId = Users::insertLog($this->module, 'delete');
         // delete multipe rows
         if (count($request->input('ids')) >= 1) {
             $this->model->destroy($request->input('ids'));
@@ -487,7 +524,8 @@ class UsersController extends Controller
         );
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
-
+            //gabe requested to set from email address as
+            $replyEmailAddress = "donotreply@fegllc.com";
             if (!is_null($request->input('groups'))) {
                 $groups = $request->input('groups');
                 for ($i = 0; $i < count($groups); $i++) {
@@ -502,16 +540,20 @@ class UsersController extends Controller
                         $to = $row->email;
                         $subject = $request->input('subject');
                         $message = $request->input('message');
+                        $message = $this->replaceVariables($message, $row);
                         $headers = 'MIME-Version: 1.0' . "\r\n";
                         $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
-                        $headers .= 'From: ' . CNF_APPNAME . ' <' . CNF_EMAIL . '>' . "\r\n";
+
+                        $headers .= 'From: ' . CNF_APPNAME . ' <' . $replyEmailAddress . '>' . "\r\n";
                         mail($to, $subject, $message, $headers);
 
                         $count = ++$count;
                     }
 
                 }
-                return Redirect::to('core/users/blast')->with('messagetext', 'Total ' . $count . ' Message has been sent')->with('msgstatus', 'success');
+                //Total 8 Messages has been sent
+                //Total 1 Message has been sent
+                return Redirect::to('core/users/blast')->with('messagetext', 'Total '.$count<=1?"$count Message has been sent":"$count Messages has been sent")->with('msgstatus', 'success');
 
             }
             return Redirect::to('core/users/blast')->with('messagetext', 'No Message has been sent')->with('msgstatus', 'info');
@@ -524,5 +566,13 @@ class UsersController extends Controller
 
         }
 
+    }
+
+    protected function replaceVariables($content,$object){
+        $content = str_replace("[fullname]",$object->first_name." ".$object->last_name,$content);
+        $content = str_replace("[first_name]",$object->first_name,$content);
+        $content = str_replace("[last_name]",$object->last_name,$content);
+        $content = str_replace("[email]",$object->email,$content);
+        return $content;
     }
 }

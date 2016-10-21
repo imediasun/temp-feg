@@ -47,7 +47,7 @@
 	
 	 {!! Form::open(array('url'=>'core/logs/delete/', 'class'=>'form-horizontal' ,'id' =>'SximoTable' )) !!}
 	 <div class="table-responsive" style="min-height:300px;">
-    <table class="table table-striped ">
+    <table id="corelogsTable" class="table table-striped ">
         <thead>
 			<tr>
 				<th class="number"> No </th>

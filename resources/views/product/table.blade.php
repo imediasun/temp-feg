@@ -1,47 +1,89 @@
 <?php usort($tableGrid, "SiteHelpers::_sort"); ?>
 <div class="sbox">
-	<div class="sbox-title"> 
+	<div class="sbox-title">
+
 		<h5> <i class="fa fa-table"></i> </h5>
 		<div class="sbox-tools" >
 			<a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Clear Search" onclick="reloadData('#{{ $pageModule }}','product/data?search=')"><i class="fa fa-trash-o"></i> Clear Search </a>
 			<a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Reload Data" onclick="reloadData('#{{ $pageModule }}','product/data?return={{ $return }}')"><i class="fa fa-refresh"></i></a>
 			@if(Session::get('gid') ==1)
-			<a href="{{ url('sximo/module/config/'.$pageModule) }}" class="btn btn-xs btn-white tips" title=" {{ Lang::get('core.btn_config') }}" ><i class="fa fa-cog"></i></a>
+			<a href="{{ url('feg/module/config/'.$pageModule) }}" class="btn btn-xs btn-white tips" title=" {{ Lang::get('core.btn_config') }}" ><i class="fa fa-cog"></i></a>
 			@endif 
 		</div>
 	</div>
 	<div class="sbox-content">
-
+        @if($setting['usesimplesearch']!='false')
+            <?php $simpleSearchForm = SiteHelpers::configureSimpleSearchForm($tableForm); ?>
+            @if(!empty($simpleSearchForm))
+                <div class="simpleSearchContainer clearfix">
+                    @foreach ($simpleSearchForm as $t)
+                        <div class="sscol {{ $t['widthClass'] }}" style="{{ $t['widthStyle'] }}">
+                            {!! SiteHelpers::activeLang($t['label'],(isset($t['language'])? $t['language'] : array())) !!}
+                            {!! SiteHelpers::transForm($t['field'] , $simpleSearchForm) !!}
+                        </div>
+                    @endforeach
+                    <div class="sscol-submit"><br/>
+                        <button type="button" name="search" class="doSimpleSearch btn btn-sm btn-primary"> Search </button>
+                    </div>
+                </div>
+            @endif
+        @endif
         @include( $pageModule.'/toolbar',['colconfigs' => SiteHelpers::getRequiredConfigs($module_id),'prod_list_type'=>$product_list_type,'active'=>$active_prod])
 
 	 <?php echo Form::open(array('url'=>'product/delete/', 'class'=>'form-horizontal' ,'id' =>'SximoTable'  ,'data-parsley-validate'=>'' )) ;?>
 <div class="table-responsive">	
 	@if(count($rowData)>=1)
-    <table class="table table-striped  " id="{{ $pageModule }}Table">
+    <table class="table table-striped datagrid " id="{{ $pageModule }}Table">
         <thead>
-			<tr>
-				<th width="30"> No </th>
-				<th width="60"> <input type="checkbox" class="checkall" /></th>
-				@if($setting['view-method']=='expand') <th>  </th> @endif			
-				<?php foreach ($tableGrid as $t) :
-					if($t['view'] =='1'):
-						$limited = isset($t['limited']) ? $t['limited'] :'';
-						if(SiteHelpers::filterColumn($limited ))
-						{
-							echo '<th align="'.$t['align'].'" width="'.$t['width'].'">'.\SiteHelpers::activeLang($t['label'],(isset($t['language'])? $t['language'] : array())).'</th>';				
-						} 
-					endif;
-				endforeach; ?>
-				<th width="70"><?php echo Lang::get('core.btn_action') ;?></th>
-                <th width="100">Upload Image</th>
-			  </tr>
+        <tr>
+            @if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
+                <th width="35"> No </th>
+            @endif
+            @if($setting['disableactioncheckbox']=='false')
+                <th width="30"> <input type="checkbox" class="checkall" /></th>
+            @endif
+            @if($setting['view-method']=='expand') <th>  </th> @endif
+            <?php foreach ($tableGrid as $t) :
+                if($t['view'] =='1'):
+                    $limited = isset($t['limited']) ? $t['limited'] :'';
+                    if(SiteHelpers::filterColumn($limited ))
+                    {
+                        $sortBy = $param['sort'];
+                        $orderBy = strtolower($param['order']);
+                        $colField = $t['field'];
+                        $colIsSortable = $t['sortable'] == '1';
+                        $colIsSorted = $colIsSortable && $colField == $sortBy;
+                        $colClass = $colIsSortable ? ' dgcsortable' : '';
+                        $colClass .= $colIsSorted ? " dgcsorted dgcorder$orderBy" : '';
+                        $th = '<th'.
+                                ' class="'.$colClass.'"'.
+                                ' data-field="'.$colField.'"'.
+                                ' data-sortable="'.$colIsSortable.'"'.
+                                ' data-sorted="'.($colIsSorted?1:0).'"'.
+                                ' data-sortedOrder="'.($colIsSorted?$orderBy:'').'"'.
+                                ' align="'.$t['align'].'"'.
+                                ' width="'.$t['width'].'"';
+                        $th .= '>';
+                        $th .= \SiteHelpers::activeLang($t['label'],(isset($t['language'])? $t['language'] : array()));
+                        $th .= '</th>';
+                        echo $th;
+                    }
+                endif;
+            endforeach; ?>
+            @if($setting['disablerowactions']=='false')
+                <th width="70"><?php echo Lang::get('core.btn_action') ;?></th>
+            @endif
+        </tr>
         </thead>
+
 
         <tbody>
         	@if($access['is_add'] =='1' && $setting['inline']=='true')
 			<tr id="form-0" >
 				<td> # </td>
-				<td> </td>
+				@if($setting['disableactioncheckbox']=='false')
+					<td> </td>
+				@endif
 				@if($setting['view-method']=='expand') <td> </td> @endif
 				@foreach ($tableGrid as $t)
 					@if($t['view'] =='1')
@@ -63,8 +105,12 @@
            			  $id = $row->id;
            		?>
                 <tr class="editable" id="form-{{ $row->id }}">
-					<td class="number"> <?php echo ++$i;?>  </td>
-					<td ><input type="checkbox" class="ids" name="ids[]" value="<?php echo $row->id ;?>" />  </td>					
+					@if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
+						<td class="number"> <?php echo ++$i;?>  </td>
+					@endif
+					@if($setting['disableactioncheckbox']=='false')
+						<td ><input type="checkbox" class="ids" name="ids[]" value="<?php echo $row->id ;?>" />  </td>
+					@endif
 					@if($setting['view-method']=='expand')
 					<td><a href="javascript:void(0)" class="expandable" rel="#row-{{ $row->id }}" data-url="{{ url('product/show/'.$id) }}"><i class="fa fa-plus " ></i></a></td>								
 					@endif			
@@ -82,14 +128,14 @@
 										 echo SiteHelpers::showUploadedFile($value,'/uploads/products/', 50,false)
 										 ?>
 									@elseif($field['field']=='details')
-										
+
 										<?php
 
 									$trimValue = preg_replace('/\s+/', ' ',$value);
 
-										 
+
 										 if (strlen($trimValue)>20) {
-										 
+
 										  echo substr($trimValue,0,20);
 										 echo '<br><a href="javascript:void(0)" onclick="showModal(10,this)">Read more</a>';
 										 }
@@ -97,12 +143,13 @@
 
 										 	echo $value;
 										 }
-										 
+?>
+                                     @elseif($field['field']=='inactive')
+                                         <input type='checkbox' name="mycheckbox" @if($value == "Yes") checked  @endif 	data-size="mini" data-animate="true"
+                                                data-on-text="Yes" data-off-text="No" data-handle-width="50px" class="test" data-id="{{$row->id}}"
+                                                id="toggle_trigger_{{$row->id}}" onSwitchChange="trigger()" />
 
-										    ?>
-										  
-
-									@else
+                                     @else
 									 {!! $value !!}
 									@endif
 
@@ -112,12 +159,16 @@
 						endforeach; 
 					  ?>
 				 <td data-values="action" data-key="<?php echo $row->id ;?>">
-					{!! AjaxHelpers::buttonAction('product',$access,$id ,$setting) !!}
+					{!! AjaxHelpers::GamestitleButtonAction('product',$access,$id ,$setting) !!}
 					{!! AjaxHelpers::buttonActionInline($row->id,'id') !!}		
-				</td><div>
-                    <td><button type="button" class="btn-imagee"><a href="{{ URL::to('product/upload/'.$row->id)}}"style ="color: white; font-family: 'Lato', sans-serif; white-space: nowrap; border-color: #2a6496;	text-decoration: none;  border-radius: 0px; border: 1px solid transparent; background-color: #428bca; font-size: 10px;">Upload Image</a></button></td>
-					</div>
-                </tr>
+
+                    <a href="{{ URL::to('product/upload/'.$row->id)}}"class="tips btn btn-xs btn-white"  title="Upload Image"><i class="fa fa-picture-o" aria-hidden="true"></i></a>
+
+
+				 </td>
+				</tr>
+
+
                 @if($setting['view-method']=='expand')
                 <tr style="display:none" class="expanded" id="row-{{ $row->id }}">
                 	<td class="number"></td>
@@ -143,7 +194,7 @@
 	
 	</div>
 	<?php echo Form::close() ;?>
-	@include('ajaxfooter')
+	@include('ajaxfooter',array('product_list_type'=>$product_list_type,'sub_type'=>$sub_type,'active'=>$active_prod))
 	
 	</div>
 </div>
@@ -167,9 +218,7 @@
       </div>
     </div>
   </div>
-</div>	
-	
-
+</div>
 	@if($setting['inline'] =='true') @include('sximo.module.utility.inlinegrid') @endif
 <script>
 
@@ -181,13 +230,26 @@ function showModal(id,obj){
 
 }
 
-
 $(document).ready(function() {
+    $("[id^='toggle_trigger_']").on('switchChange.bootstrapSwitch', function(event, state) {
 
 
+        var productId=$(this).data('id');
+        $.ajax(
+                {
+                    type:'POST',
+                    url:'product/trigger',
+                    data:{isActive:state,productId:productId},
+                    success:function(data){
 
-	$('.tips').tooltip();	
-	$('input[type="checkbox"],input[type="radio"]').iCheck({
+                    }
+                }
+        );
+    });
+
+    $("[id^='toggle_trigger_']").bootstrapSwitch();
+	$('.tips').tooltip();
+	$('input[type="checkbox"],input[type="radio"]').not('.test').iCheck({
 		checkboxClass: 'icheckbox_square-green',
 		radioClass: 'iradio_square-green',
 	});	
@@ -208,11 +270,36 @@ $(document).ready(function() {
 			echo AjaxHelpers::htmlExpandGrid();
 		endif;
 	 ?>	
-});		
-</script>	
+
+var simpleSearch = $('.simpleSearchContainer');
+if (simpleSearch.length) {
+    initiateSearchFormFields(simpleSearch);
+    simpleSearch.find('.doSimpleSearch').click(function(event){
+        performSimpleSearch.call($(this), {
+            moduleID: '#{{ $pageModule }}',
+            url: "{{ $pageUrl }}",
+            event: event,
+            container: simpleSearch
+        });
+    });
+}
+
+initDataGrid('{{ $pageModule }}', '{{ $pageUrl }}');
+});
+
+
+</script>
+
 <style>
-.table th.right { text-align:right !important;}
-.table th.center { text-align:center !important;}
+    .table th.right {
+        text-align: right !important;
+    }
+
+    .table th.center {
+        text-align: center !important;
+    }
+
+
 	.btn-imagee{
 
 		font-size: 10px; padding: 7px 11px;border: 1px solid transparent;  border-radius: 0px;

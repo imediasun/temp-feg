@@ -1,10 +1,9 @@
 @if($setting['form-method'] =='native')
     <div class="sbox">
         <div class="sbox-title">
-            <h4><i class="fa fa-table"></i> <?php echo $pageTitle;?>
-                <small>{{ $pageNote }}</small>
+            <h4>
                 <a href="javascript:void(0)" class="collapse-close pull-right btn btn-xs btn-danger"
-                   onclick="ajaxViewClose('#{{ $pageModule }}')"><i class="fa fa fa-times"></i></a>
+                   onclick="ajaxViewClose1('#{{ $pageModule }}')"><i class="fa fa fa-times"></i></a>
             </h4>
         </div>
         <div class="sbox-content">
@@ -125,7 +124,7 @@
                     <div class="form-group  ">
                         <br/><br/>
                         <label for="freight_type_id" class=" control-label col-md-4 text-left">
-                            Frieght Type </label>
+                            Freight Type </label>
 
                         <div class="col-md-8">
                             <select name='freight_type_id' rows='5' id='freight_type_id' class='select3 '
@@ -135,14 +134,14 @@
                     </div>
                     <div class="form-group  ">
                         <br/><br/>
-                        <label for="date_orederd" class=" control-label col-md-4 text-left">
-                            Date Orederd</label>
+                        <label for="date_orederd" class=" control-label col-md-4 text-left" style="margin-top: 7px;">
+                            Date Ordered</label>
 
-                        <div class="col-md-8">
-                            <div class="input-group m-b" style="width:150px !important;">
-                                <input type="text" class="form-control date" name="date_ordered"
+                        <div class="col-md-8" style="padding-left: 13px;">
+                            <div class="input-group datepicker" style="width:150px !important; margin-bottom: 9px;">
+                                <input type="text" class="form-control "  id="my-datepicker"  name="date_ordered"
                                        value="{{ date("m/d/Y", strtotime($data['today'])) }}" required="required"/>
-                                <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                <span class="input-group-addon "><i class="fa fa-calendar" id="icon"></i></span>
                             </div>
                         </div>
 
@@ -152,7 +151,7 @@
                         <label for="total_cost" class=" control-label col-md-4 text-left">
                             Total Cost ( $ )</label>
 
-                        <div class="col-md-8">
+                        <div class="col-md-8" style="padding-left: 18px !important;">
                             <input style="width:150px !important;" type="text" name="order_total" id="total_cost"
                                    class="form-control" value="{{ $data['order_total'] }}" maxlength="8"/>
                         </div>
@@ -178,10 +177,10 @@
                     </div>
                     <div class="form-group">
                         <br/><br/>
-                        <label class="label-control col-md-3" for="notes"> Order Notes **Will be on PO**</label>
+                        <label class="label-control col-md-4" for="notes"> Order Notes **Will be on PO**</label>
 
-                        <div class="col-md-9" style="padding-left: 58px;">
-                            <textarea id="notes" name='po_notes' cols="46" rows="9"
+                        <div class="col-md-8" >
+                            <textarea id="notes" class="form-control " name='po_notes' cols="44" rows="9"
                                       placeholder='Additional Notes'>{{ $data['po_notes'] }}</textarea>
                         </div>
                     </div>
@@ -208,10 +207,12 @@
                     <thead>
                     <tr class="invHeading">
                         <th width="50"> Item #</th>
+                        <th width="100"> Sku #</th>
                         <th width="200">Item Name</th>
                         <th width="200">Item Description</th>
                         <th>Price Per Unit</th>
                         <th>Case Price</th>
+                        <th>Retail Price</th>
                         <th>Quantity</th>
                         <th class="game" width="150">Game</th>
                         <th>Total ( $ )</th>
@@ -226,12 +227,15 @@
                     <tr id="rowid" class="clone clonedInput">
                         <td><br/><input type="text"  id="item_num" name="item_num[]" disabled readonly
                                    style="width:30px;border:none;background:none"/></td>
+                        <td><br/><input type="text"  id="sku_num" name="sku_num[]" disabled readonly
+                                        style="width:70px;border:none;background:none"/></td>
+
                         <td><br/> <input type="text" name='item_name[]' placeholder='Item  Name' id="item_name"
-                                       class='form-control item_name mysearch' onfocus="init(this.id)"  maxlength="225" required>
+                                       class='form-control item_name mysearch' onfocus="init(this.id,this)"  maxlength="225" reuuired>
                         </td>
                         <td>
                             <textarea name='item[]' placeholder='Item  Description' id="item"
-                                      class='form-control item' cols="30" rows="4" maxlength="225" required></textarea>
+                                      class='form-control item' cols="30" rows="4" maxlength="225" ></textarea>
                         </td>
 
                         <td><br/> <input type='number' name='price[]' placeholder='Unit Price' id="price"
@@ -242,47 +246,58 @@
                                          class='form-control' min="0.00" step=".01" value="0.00"
                                          required></td>
                         </td>
+
+
+                        <td>
+                             <br/> <input type='number' name='retail_price[]' placeholder='Retail Price' id="retail_price"
+                                               class='form-control test' min="0.00" step=".01" value="0.00"
+                                               required></td>
+                        </td>
                         <td><br/> <input type='number' name='qty[]' placeholder='Quantity'
-                                         class='form-control qty' min="1" step="1" id="qty" value="00"
+                                         class='form-control qty' min="0" step="1" id="qty" value="00"
                                          required></td>
-                        <td class="game" style="display:none"><br/>
+                        <!--<td class="game" style="display:none"><br/>
                             <select name='game[]' id='game_0' class='game  form-control'>
                                 <option value="">For Various Games</option>
-                                @foreach( \SiteHelpers::getGamesName() as $game_title)
-                                    <option value="{{ $game_title->id }}"> {{ $game_title->game_name }}</option>
-                                @endforeach
                             </select>
-                            <input type='hidden' name='product_id[]' id="product_id">
-                        </td>
+                        </td>-->
+                        <input type='hidden' name='product_id[]' id="product_id">
                         <input type='hidden' name='request_id[]' id="request_id">
                         <td><br/><input type="text" name="total" value="" readonly class="form-control"/></td>
-                        <td><br/> <a onclick=" $(this).parents('.clonedInput').remove(); calculateSum();decreaseCounter(); return false"
-                                     href="#" class="remove btn btn-xs btn-danger">-</a>
+                        <td><br/> <button onclick=" $(this).parents('.clonedInput').remove(); calculateSum();decreaseCounter(); return false"
+                                      class="remove btn btn-xs btn-danger">-</button>
                             <input type="hidden" name="counter[]">
                         </td>
                     </tr>
                     </tr>
-                    <tr>
-                        <td class="game"></td>
-                        <td colspan="6" class="text-right"><strong> Subtotal ( $ ) </strong></td>
-                        <td><input type="text" name="Subtotal" value="{{ $data['order_total'] }}" readonly
-                                   class="form-control"/></td>
-                        <td></td>
 
-                    </tr>
                     </tbody>
-
                 </table>
+                <div style="padding-left:60px !important;">
+                <a href="javascript:void(0);" class="addC btn btn-xs btn-info" rel=".clone" id="add_new_item"><i
+                            class="fa fa-plus"></i>
+                    New Item</a></div>
                 <input type="hidden" name="enable-masterdetail" value="true">
             </div>
             <br/><br/>
 
-            <a href="javascript:void(0);" class="addC btn btn-xs btn-info" rel=".clone" id="add_new_item"><i
-                        class="fa fa-plus"></i>
-                New Item</a>
-            <hr/>
+
+            <div style ="
+    padding-left: 865px;
+    padding-right: 105px;
+">
+
+                <td class="game"></td>
+                <td> </td>
+                <td colspan="6" class="text-left"><strong> Subtotal ( $ ) </strong></td>
+                <td> <input type="text" name="Subtotal" value="{{ $data['order_total'] }}" readonly
+                            class="form-control"/></td>
 
 
+
+            </div>
+
+<br><hr>
             <div style="clear:both"></div>
 
             <div class="form-group" style="margin-bottom:50px">
@@ -320,6 +335,11 @@
             $('table tr.clone ').each(function (i) {
                 Qty = $(this).find("input[name*='qty']").val();
                 Price = $(this).find("input[name*='price']").val();
+                if(Price == 0)
+                {
+                    Price = $(this).find("input[name*='case_price']").val();
+
+                }
                 sum = Qty * Price;
                 Subtotal += sum;
                 sum = sum.toFixed(2);
@@ -336,8 +356,16 @@
             hideShowAltLocation();
             $("#item_num").val('1');
             $("#submit_btn").hide();
+           $('.test').val(0.00);
+
+            $('#icon').click(function(){
+                $(document).ready(function(){
+                    $("#my-datepicker").datepicker().focus();
+                });
+            });
+
             $("#location_id").jCombo("{{ URL::to('order/comboselect?filter=location:id:id|location_name ') }}",
-                    {selected_value: '{{ \Session::get('selected_location') }}',initial_text:'-------- Select Location --------'});
+                    {selected_value: '{{ $data["order_location_id"] }}',initial_text:'-------- Select Location --------'});
 
             $("#vendor_id").jCombo("{{ URL::to('order/comboselect?filter=vendor:id:vendor_name') }}",
                     {selected_value: '{{ $data["order_vendor_id"] }}',initial_text:'-------- Select Vendor --------'});
@@ -396,25 +424,74 @@
             var order_product_id_array = <?php echo json_encode($data['orderProductIdArray']) ?>;
             var order_request_id_array = <?php echo json_encode($data['orderRequestIdArray']) ?>;
             var item_name_array=<?php echo json_encode($data['itemNameArray']) ?>;
+            var sku_num_array=<?php echo json_encode($data['skuNumArray']) ?>;
+
             var item_case_price=<?php echo json_encode($data['itemCasePrice']) ?>;
+            var item_retail_price=<?php echo json_encode($data['itemRetailPrice'])?>;
             var item_total = 0;
+            console.log(sku_num_array);
             for (var i = 0; i < requests_item_count; i++) {
 
                 $('input[name^=item_num]').eq(i).val(i + 1);
                 $('textarea[name^=item]').eq(i).val(order_description_array[i]);
-                $('input[name^=price]').eq(i).val(order_price_array[i]);
-                $('input[name^=qty]').eq(i).val(order_qty_array[i]);
-                $('input[name^=product_id]').eq(i).val(order_product_id_array[i]);
+                console.log("===>"+sku_num_array[i]);
+                $('input[name^=sku_num]').eq(i).val(sku_num_array[i]);
+                if(order_price_array[i] == "" || order_price_array[i] == null ) {
+                    $('input[name^=price]').eq(i).val(0.00);
+                }
+                else{
+                    $('input[name^=price]').eq(i).val(order_price_array[i]);
+
+                }
+                if(order_qty_array[i] == "" || order_qty_array[i] == null) {
+                    $('input[name^=qty]').eq(i).val(00);
+                }
+                else{
+                    $('input[name^=qty]').eq(i).val(order_qty_array[i]);
+
+                }
+
+
+                if(order_product_id_array[i] == "" || order_product_id_array[i]== null)
+                {
+                    $('input[name^=product_id]').eq(i).val(0);
+                }
+                else
+                {
+                    $('input[name^=product_id]').eq(i).val(order_product_id_array[i]);
+
+                }
                 $('input[name^=request_id]').eq(i).val(order_request_id_array[i]);
                 $('input[name^=item_name]').eq(i).val(item_name_array[i]);
-                $('input[name^=case_price]').eq(i).val(item_case_price[i]);
-                if (i < requests_item_count - 1) //COMPENSATE FOR BEGINNING WITH ONE INPUT
+
+                if(item_case_price[i] == "" || item_case_price[i] == null)
                 {
+                    $('input[name^=case_price]').eq(i).val(0.00);
+                }
+                else
+                {
+                    $('input[name^=case_price]').eq(i).val(item_case_price[i]);
+
+                }
+                if(item_retail_price[i] == "" || item_retail_price[i] == null) {
+
+                    $('input[name^=retail_price]').eq(i).val(0.00);
+                }
+                else
+                {
+                    $('input[name^=retail_price]').eq(i).val(item_retail_price[i]);
+
+                }
+                    if (i < requests_item_count - 1) //COMPENSATE FOR BEGINNING WITH ONE INPUT
+        {
 
                     $("#add_new_item").trigger("click");
                 }
 
             }
+            $(".calculate").keyup(function () {
+                calculateSum();
+            });
             calculateSum();
 
 
@@ -428,13 +505,7 @@
 
             if (data.status == 'success') {
                 var url = location.href;
-                if (url.indexOf('submitorder') != -1) {
-                    location.href = "{{ url() }}/managefegrequeststore";
-                }
-                else {
-                    ajaxViewClose('#{{ $pageModule }}');
-                    ajaxFilter('#{{ $pageModule }}', '{{ $pageUrl }}/data');
-                }
+                location.href = "{{ url() }}/order/save-or-send-email";
                 notyMessage(data.message);
                 $('#sximo-modal').modal('hide');
             } else {
@@ -530,11 +601,12 @@
             }
             //}
         }
-        function calculatetest() {
-            alert("Image is loaded");
-        }
+
         $("#add_new_item").click(function () {
             handleItemCount('add');
+            $(".calculate").keyup(function () {
+                calculateSum();
+            });
         });
         function decreaseCounter()
         {
@@ -583,16 +655,23 @@
         }
     </style>
     <script>
-        function init(id){
+        function init(id,obj){
             var cache = {},
                     lastXhr;
 
-                var trid = $(this).closest('tr').attr('id');
+                var trid = $(obj).closest('tr').attr('id');
+            var skuid = $("#"+trid+"  input[id^='sku_num']").attr('id');
                 var priceid = $("#"+trid+"  input[id^='price']").attr('id');
                 var casepriceid = $("#"+trid+"  input[id^='case_price']").attr('id');
                 var qtyid = $("#"+trid+"  input[id^='qty']").attr('id');
+                var itemid = $("#"+trid+"  textarea[name^=item]").attr('id');
+                var retailpriceid=$('#'+trid+"  input[name^=retail]").attr('id');
+                var selectorProductId=$('#'+trid+"  input[name^=product_id]").attr('id');
+                console.log(qtyid);
+                console.log(retailpriceid);
+                console.log(selectorProductId);
 
-                $("#"+id).autocomplete({
+                $(obj).autocomplete({
                     minLength: 2,
                     source: function( request, response ) {
                         var term = request.term;
@@ -606,6 +685,18 @@
                     },
                     select: function( event, ui ) {
                         $.ajax({url: "order/productdata",type:"get",dataType:'json',data:{'product_id':ui.item.value}, success: function(result){
+if(result.unit_price == 0 && result.case_price == 0)
+{
+    notyMessageError("Retail Price and Case Price Unavailable...");
+    exit;
+}
+                            if(result.sku) {
+                                $("#"+skuid).val(result.sku);
+                            }
+                            else
+                            {
+                                $("#"+skuid).val('N/A');
+                            }
 
                             if(result.unit_price) {
                                 $("#"+priceid).val(result.unit_price);
@@ -621,8 +712,17 @@
                             {
                                 $("#"+casepriceid).val(0.00);
                             }
-                            $("#product_id").val(result.id);
+                            if(result.retail_price) {
+                                $("#"+retailpriceid).val(result.retail_price);
+                            }
+                            else
+                            {
+                                $("#"+casepriceid).val(0.00);
+                            }
+                            $("#"+itemid).val(result.item_description);
+                            $("#"+selectorProductId).val(result.id);
                             $("#"+qtyid).val(0.00);
+                            calculateSum();
                         }});
                     }
                 });
@@ -632,6 +732,10 @@ $(function()
         {
             $("#experiment").trigger('click');
         });
+      function ajaxViewClose1(id)
+       {
+           location.href = "{{ url() }}/order";
+       }
     </script>
     <style>
         .ui-corner-all

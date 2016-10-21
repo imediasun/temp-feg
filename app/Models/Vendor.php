@@ -20,12 +20,27 @@ class vendor extends Sximo  {
 
 	public static function queryWhere(  ){
 		
-		return "  WHERE id IS NOT NULL ";
+		return "  WHERE id IS NOT NULL AND vendor.hide = 0 ";
 	}
 	
 	public static function queryGroup(){
 		return "  ";
 	}
-	
+
+	public static function processApiData($json,$param=null)
+    {
+        //loop over all records and check if website is not empty then add http:// prefix for it
+        $data = array();
+        foreach($json as $record){
+            if(!empty($record['website'])){
+                if(strpos($record['website'],'http') === false){
+                    $record['website'] = 'http://'.$record['website'];
+                }
+            }
+            $data[] = $record;
+        }
+        return $data;
+    }
+
 
 }

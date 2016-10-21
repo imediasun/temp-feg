@@ -20,7 +20,7 @@
 
 
 <div class="sbox animated fadeInRight">
-	<div class="sbox-title"> <h4> <i class="fa fa-table"></i> <?php echo $pageTitle ;?> <small>{{ $pageNote }}</small></h4></div>
+	<div class="sbox-title"> </div>
 	<div class="sbox-content"> 	
 		<ul class="parsley-error-list">
 			@foreach($errors->all() as $error)
@@ -28,7 +28,7 @@
 			@endforeach
 		</ul>	
 
-		 {!! Form::open(array('url'=>'core/users/save?return='.$return, 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ')) !!}
+		 {!! Form::open(array('url'=>'core/users/save?return='.$return, 'id'=>'user_form','class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ')) !!}
 		<div class="col-md-6">
 					
 									
@@ -106,7 +106,21 @@
                     {!! SiteHelpers::activeLang('Locations', (isset($fields['locations']['language'])? $fields['assign_to']['language'] : array())) !!}
                 </label>
                 <div class="col-md-6">
-                    <select name='multiple_locations[]' multiple rows='5' id='multiple_loc' class='select2 ' required  ></select>
+                    <select name='multiple_locations[]' multiple rows='5' id='multiple_loc' class='select2' required="required"  ></select>
+                </div>
+                <div class="col-md-2">
+
+                </div>
+            </div>
+            <div class="form-group  " >
+                <label for="has_all_locations" class=" control-label col-md-4 text-left">
+					{!! SiteHelpers::activeLang('All Locations', (isset($fields['has_all_locations']['language'])? $fields['has_all_locations']['language'] : array())) !!}
+                </label>
+                <div class="col-md-6">
+
+					<input type="checkbox" name="all_locations" value="1" id="has_all_locations"  class="form-control"/>
+
+
                 </div>
                 <div class="col-md-2">
 
@@ -116,7 +130,7 @@
             <div class="form-group  " >
 									<label for="Avatar" class=" control-label col-md-4 text-left"> Avatar </label>
 									<div class="col-md-6">
-									  <input  type='file' name='avatar' id='avatar' @if($row['avatar'] =='') class='required' @endif style='width:150px !important;'     value="{{ $row['avatar'] }}"  />
+									  <input  type='file' name='avatar' id='avatar' @if($row['avatar'] =='') class='required' @endif style='width:350px !important;'     value="{{ $row['avatar'] }}"  />
 										 	<div >
 											{!! SiteHelpers::showUploadedFile($row['avatar'],'/uploads/users/') !!}
 											
@@ -169,19 +183,35 @@
 		  </div>
 
 
-				<div class="form-group  " >
-					<label for="Enter Redirection Link" class=" control-label col-md-4 text-left">Login Start Page </label>
-					<div class="col-md-8">
-						{!! Form::text('redirect_link', $row['redirect_link'],array('class'=>'form-control', 'placeholder'=>'', 'required'=>'true'  )) !!}
-					</div>
-					<div class="col-md-2">
 
+
+				<div class="form-group  int-link" >
+					<label for="ipt" class=" control-label col-md-4 text-right">Login Start Page </label>
+					<div class="col-md-8">
+						<select name="redirect_link"  rows='5' type="text" id="redirect_link"  style="width:100%"  class='select-liquid ' value="{{ $row['redirect_link'] }}" >
+							<option value=""> -- Select Module or Page -- </option>
+							<optgroup label="Module ">
+								@foreach($modules as $mod)
+									<option value="{{ $mod->module_name}}"
+											@if($row['redirect_link'] === $mod->module_name )   selected="selected" @endif
+									>{{ $mod->module_title}}</option>
+								@endforeach
+							</optgroup>
+							<optgroup label="Page CMS ">
+								@foreach($pages as $page)
+									<option value="{{ $page->alias}}"
+											@if($row['redirect_link']=== $page->alias ) selected="selected" @endif
+									>Page : {{ $page->title}}</option>
+								@endforeach
+							</optgroup>
+						</select>
 					</div>
 				</div>
 
-		 
-		 </div>			
-			
+
+
+		 </div>
+
 			
 			<div style="clear:both"></div>	
 				
@@ -202,13 +232,54 @@
 </div>	
 </div>			 
    <script type="text/javascript">
-	$(document).ready(function() { 
-		
+	$(document).ready(function() {
+
+		$('input[type=checkbox]').click(function()
+		{
+			if(this.checked)
+			{
+				$(this).prev().val('1');
+			}
+			else
+			{
+				$(this).prev().val('0');
+			}
+		});
+
 		$("#group_id").jCombo("{{ URL::to('core/users/comboselect?filter=tb_groups:group_id:name') }}",
 		{  selected_value : '{{ $row["group_id"] }}' });
         $("#multiple_loc").jCombo("{{ URL::to('core/users/comboselect?filter=location:id:location_name') }}",
                 {  selected_value : '{{ $user_locations }}' });
+    });
+
+    $('#has_all_locations').on('ifChecked', function () {
+
+
+// Deactivate Parsley validation
+        $('#user_form').parsley().destroy();
+
+// Make your field not required, thus disabling validation for it
+        $('#multiple_loc').removeAttr('required');
+
+// Reactivate Parsley validation
+        $('#user_form').parsley({
+            //options
+        });
 
     });
+
+// For onUncheck callback
+        $('#has_all_locations').on('ifUnchecked', function () { //Do your code
+            // Deactivate Parsley validation
+            $('#user_form').parsley().destroy();
+
+// Make your field required by adding the required attribute back to the element
+            $('#multiple_loc').attr('required', '');
+
+// Reactivate Parsley validation
+            $('#user_form').parsley({
+                //options
+            });
+         });
 	</script>		 
 @stop

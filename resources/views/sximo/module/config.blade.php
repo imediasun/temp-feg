@@ -11,7 +11,7 @@
 
       <ul class="breadcrumb">
         <li><a href="{{ URL::to('dashboard') }}"> Dashboard </a></li>
-		<li><a href="{{ URL::to('sximo/module') }}"> Module </a></li>
+		<li><a href="{{ URL::to('feg/module') }}"> Module </a></li>
         <li class="active"> Basic Info </li>
       </ul>	  
 	  
@@ -33,7 +33,7 @@
 	<div class="sbox-title"><h5> Basic Info <small> Information of module </small> </h5></div>
 	<div class="sbox-content">	
 	<div class="col-md-6">
-	{!! Form::open(array('url'=>'sximo/module/saveconfig/'.$module_name, 'class'=>'form-horizontal ')) !!}
+	{!! Form::open(array('url'=>'feg/module/saveconfig/'.$module_name, 'class'=>'form-horizontal ')) !!}
 	<input  type='text' name='module_id' id='module_id'  value='{{ $row->module_id }}'  style="display:none; " />
   	<fieldset>
 		<legend> Module Info </legend>	
@@ -80,6 +80,12 @@
 		 </div>   	
 
 	  <div class="form-group">
+		<label for="module_type" class=" control-label col-md-4">Module Type </label>
+		<div class="col-md-8">
+		<input  type='text' name='module_type' id='module_type' readonly="1"  class="form-control " required value='{{ $row->module_type }}'  />
+		 </div> 
+	  </div>  
+	  <div class="form-group">
 		<label for="ipt" class=" control-label col-md-4">Class Controller </label>
 		<div class="col-md-8">
 		<input  type='text' name='module_name' id='module_name' readonly="1"  class="form-control " required value='{{ $row->module_name }}'  />
@@ -115,7 +121,7 @@
  <div class="col-sm-6 col-md-6"> 
 
  @if($type !='report' && $type !='generic')
-  {!! Form::open(array('url'=>'sximo/module/savesetting/'.$module_name, 'class'=>'form-horizontal ')) !!}
+  {!! Form::open(array('url'=>'feg/module/savesetting/'.$module_name, 'class'=>'form-horizontal ')) !!}
   <input  type='text' name='module_id' id='module_id'  value='{{ $row->module_id }}'  style="display:none; " />
   	<fieldset>
 		<legend> Module Setting </legend>
@@ -138,7 +144,7 @@
 
 
         <div class="form-group">
-          <label for="ipt" class=" control-label col-md-4">Disable Sorting from footer</label>
+          <label for="disablesort" class=" control-label col-md-4">Disable Sorting from footer</label>
           <div class="col-md-8">
               <label class="checkbox">
               <input type="checkbox" value="true" name="disablesort" id="disablesort"
@@ -155,7 +161,7 @@
                 <option value="">None</option>
 			@foreach($tables as $t)
 				<option value="{{ $t['field'] }}"
-				@if($setting['orderby'] ==$t['field']) selected="selected" @endif 
+				@if($setting['orderby'] ==$t['field']) selected="selected" @endif
 				>{{ $t['label'] }}</option>
 			@endforeach
 			</select>
@@ -170,9 +176,11 @@
 	  <div class="form-group">
 		<label for="ipt" class=" control-label col-md-4"> Display Rows </label>
 		<div class="col-md-8">
+
 			<select class="select-alt" name="perpage">
 				<?php $pages = array('10','20','30','50', '100');
 				foreach($pages as $page) {
+
 				?>
 				<option value="<?php echo $page;?>"  @if($setting['perpage'] ==$page) selected="selected" @endif > <?php echo $page;?> </option>
 				<?php } ?>
@@ -182,7 +190,7 @@
 		 </div> 
 	  </div>   
         <div class="form-group">
-          <label for="ipt" class=" control-label col-md-4">Disable pagination</label>
+          <label for="disablepagination" class=" control-label col-md-4">Disable pagination</label>
           <div class="col-md-8">
               <label class="checkbox">
               <input type="checkbox" value="true" name="disablepagination" id="disablepagination"
@@ -193,7 +201,7 @@
         </div>  
 
         <div class="form-group">
-          <label for="ipt" class=" control-label col-md-4">Disable checkbox in each row</label>
+          <label for="disableactioncheckbox" class=" control-label col-md-4">Disable checkbox in each row</label>
           <div class="col-md-8">
               <label class="checkbox">
               <input type="checkbox" value="true" name="disableactioncheckbox" id="disableactioncheckbox"
@@ -204,7 +212,7 @@
         </div>     
         
         <div class="form-group">
-          <label for="ipt" class=" control-label col-md-4">Disable row-wise actions</label>
+          <label for="disablerowactions" class=" control-label col-md-4">Disable row-wise actions</label>
           <div class="col-md-8">
               <label class="checkbox">
               <input type="checkbox" value="true" name="disablerowactions" id="disablerowactions"
@@ -215,11 +223,33 @@
         </div>  
         
         <div class="form-group">
-          <label for="ipt" class=" control-label col-md-4">Simpler search options</label>
+          <label for="usesimplesearch" class=" control-label col-md-4">Use Simple Search</label>
           <div class="col-md-8">
               <label class="checkbox">
               <input type="checkbox" value="true" name="usesimplesearch" id="usesimplesearch"
               @if(isset($setting['usesimplesearch']) && $setting['usesimplesearch'] == 'true') checked="checked" @endif 	
+               /> Yes
+              </label>
+           </div> 
+        </div>                
+        
+        <div class="form-group">
+          <label for="hideadvancedsearchoperators" class=" control-label col-md-4">Hide Operators in Advanced Search</label>
+          <div class="col-md-8">
+              <label class="checkbox">
+              <input type="checkbox" value="true" name="hideadvancedsearchoperators" id="hideadvancedsearchoperators"
+              @if(isset($setting['hideadvancedsearchoperators']) && $setting['hideadvancedsearchoperators'] == 'true') checked="checked" @endif 	
+               /> Yes
+              </label>
+           </div> 
+        </div>                
+        
+        <div class="form-group">
+          <label for="hiderowcountcolumn" class=" control-label col-md-4">Hide Column showing Row Count</label>
+          <div class="col-md-8">
+              <label class="checkbox">
+              <input type="checkbox" value="true" name="hiderowcountcolumn" id="hiderowcountcolumn"
+              @if(isset($setting['hiderowcountcolumn']) && $setting['hiderowcountcolumn'] == 'true') checked="checked" @endif 	
                /> Yes
               </label>
            </div> 
@@ -284,7 +314,7 @@
 		  <div class="form-group">
 			<label for="ipt" class=" control-label col-md-4"></label>
 			<div class="col-md-8">
-			<button type="submit" name="submit" class="btn btn-primary"> Update Seting </button>
+			<button type="submit" name="submit" class="btn btn-primary"> Update Settings </button>
 			 </div> 
 		  </div> 		  
 		   <p class="alert alert-warning"> <strong> Important ! </strong> this setting only work with module type <strong>Ajax Grid</strong></p>
@@ -301,4 +331,5 @@
 	</div>
 </div>			
 
+</div>
 @stop

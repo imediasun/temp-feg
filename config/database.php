@@ -55,7 +55,7 @@ return [
         'mysql' => [
             'driver'    => 'mysql',
             'host'      => env('DB_HOST', 'localhost'),
-            'database'  => env('DB_DATABASE', 'fegllc_sximo'),
+            'database'  => env('DB_DATABASE', 'sximo'),
             'username'  => env('DB_USERNAME', 'root'),
             'password'  => env('DB_PASSWORD', ''),
             'charset'   => 'utf8',
@@ -82,6 +82,76 @@ return [
             'username' => env('DB_USERNAME', 'forge'),
             'password' => env('DB_PASSWORD', ''),
             'prefix'   => '',
+        ],
+
+        'embed_temp' => [
+            'driver'    => 'mysql',
+            'host'      => env('DB_HOST', 'localhost'),
+            'database'  => 'devfegll_embed_temp',
+            'username'  => env('DB_USERNAME', 'root'),
+            'password'  => env('DB_PASSWORD', ''),
+            'charset'   => 'utf8',
+            'collation' => 'utf8_unicode_ci',
+            'prefix'    => '',
+            'strict'    => false,
+        ],
+
+        'sacoa_temp' => [
+            'driver'    => 'mysql',
+            'host'      => env('DB_HOST', 'localhost'),
+            'database'  => 'devfegll_sacoa_temp',
+            'username'  => env('DB_USERNAME', 'root'),
+            'password'  => env('DB_PASSWORD', ''),
+            'charset'   => 'utf8',
+            'collation' => 'utf8_unicode_ci',
+            'prefix'    => '',
+            'strict'    => false,
+        ],
+
+        'livemysql' => [
+            'driver'    => 'mysql',
+            'host'      => 'fegllc.com',
+            'database'  => 'fegllc_fegsys',
+            'username'  => 'fegllc_read',
+            'password'  => '9JkAnxEfhxVC',
+            'charset'   => 'utf8',
+            'collation' => 'utf8_unicode_ci',
+            'prefix'    => '',
+            'strict'    => false,
+            'options'   => array(
+                PDO::ATTR_TIMEOUT => 120,
+                PDO::ATTR_PERSISTENT => true,
+            )
+        ],
+        'livemysql_embed' => [
+            'driver'    => 'mysql',
+            'host'      => 'fegllc.com',
+            'database'  => 'fegllc_embed_temp',
+            'username'  => 'fegllc_read',
+            'password'  => '9JkAnxEfhxVC',
+            'charset'   => 'utf8',
+            'collation' => 'utf8_unicode_ci',
+            'prefix'    => '',
+            'strict'    => false,
+            'options'   => array(
+                PDO::ATTR_TIMEOUT => 120,
+                PDO::ATTR_PERSISTENT => true,
+            )            
+        ],
+        'livemysql_sacoa' => [
+            'driver'    => 'mysql',
+            'host'      => 'fegllc.com',
+            'database'  => 'fegllc_test',
+            'username'  => 'fegllc_read',
+            'password'  => '9JkAnxEfhxVC',
+            'charset'   => 'utf8',
+            'collation' => 'utf8_unicode_ci',
+            'prefix'    => '',
+            'strict'    => false,
+            'options'   => array(
+                PDO::ATTR_TIMEOUT => 120,
+                PDO::ATTR_PERSISTENT => true,
+            )            
         ],
 
     ],

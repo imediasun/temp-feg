@@ -44,6 +44,7 @@ class MylocationgameController extends Controller
 
     public function postData(Request $request)
     {
+
         $module_id = \DB::table('tb_module')->where('module_name', '=', 'mylocationgame')->pluck('module_id');
         $this->data['module_id'] = $module_id;
         if (Input::has('config_id')) {
@@ -63,12 +64,9 @@ class MylocationgameController extends Controller
         $order = (!is_null($request->input('order')) ? $request->input('order') : $this->info['setting']['ordertype']);
         // End Filter sort and order for query
         // Filter Search for query
-        if(is_null($request->input('search')))
-        {
+        if (is_null($request->input('search'))) {
             $filter = \SiteHelpers::getQueryStringForLocation('game');
-        }
-        else
-        {
+        } else {
             $filter = $this->buildSearch();
         }
 
@@ -125,34 +123,34 @@ class MylocationgameController extends Controller
                 $result->test_piece = "Yes";
 
             } else {
-                $result->test_piece= "No";
+                $result->test_piece = "No";
             }
             if ($result->linked_to_game == 1) {
                 $result->linked_to_game = "Yes";
 
             } else {
-                $result->linked_to_game= "No";
+                $result->linked_to_game = "No";
             }
             if ($result->not_debit == 1) {
                 $result->not_debit = "Yes";
 
             } else {
-                $result->num_prize_meters= "No";
+                $result->num_prize_meters = "No";
             }
             if ($result->num_prize_meters == 1) {
                 $result->num_prize_meters = "Yes";
 
             } else {
-                $result->not_debit= "No";
+                $result->not_debit = "No";
             }
             if ($result->num_prizes == 1) {
                 $result->num_prizes = "Yes";
 
             } else {
-                $result->num_prizes= "No";
+                $result->num_prizes = "No";
             }
             if ($result->mfg_id == 0) {
-                $result->mfg_id= "";
+                $result->mfg_id = "";
 
             }
 
@@ -162,10 +160,7 @@ class MylocationgameController extends Controller
         $page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;
 
 
-
-
-
-        if(count($results['rows']) == $results['total']){
+        if (count($results['rows']) == $results['total'] && $results['total'] != 0) {
             $params['limit'] = $results['total'];
         }
 
@@ -216,6 +211,21 @@ class MylocationgameController extends Controller
 
         $row = $this->model->find($id);
         if ($row) {
+            if (!empty($row->product_id)) {
+                $row->product_id = json_decode($row->product_id);
+                $row->product_id = implode(',', $row->product_id);
+            }
+            /*
+            $products = \DB::table('game_product')
+                ->where('game_id', '=', $row->id)
+                ->select('product_id')
+                ->get();
+            if(count($products) > 0)
+            {
+                $products = json_decode(json_encode($products), true);
+                $products = array_column($products, 'product_id');
+                $row->product_id = implode(',', $products);
+            }*/
             $this->data['row'] = $row;
         } else {
             $this->data['row'] = $this->model->getColumnTable('game');
@@ -273,12 +283,38 @@ class MylocationgameController extends Controller
 
     function postSave(Request $request, $id = null)
     {
+        $products = array();
+        $form_data['date_shipped'] = date('Y-m-d');
+        $form_data['date_last_move'] = date('Y-m-d');
+        $form_data['date_in_service'] = date('Y-m-d');
+
         $rules = $this->validateForm();
         $validator = Validator::make($request->all(), $rules);
+
         if ($validator->passes()) {
             $data = $this->validatePost('game');
-
+            //after validating data array become very small, so merge with post data
+            $data = array_merge($data, $_POST);
+            if (!empty($request->input('product_id'))) {
+                $products = $request->input('product_id');
+                $products = json_encode($products);
+                $data['product_id'] = $products;
+            }
+            $data['game_name'] = \DB::table('game_title')->where('id', '=', $data['game_title_id'])->pluck('game_title');
+            unset($data['_token']);
             $id = $this->model->insertRow($data, $id);
+            /*
+            \DB::table('game_product')
+                ->where('game_id', '=', $id)
+                ->delete();
+            if(count($products) > 0)
+            {
+                foreach($products as $product){
+                    \DB::table('game_product')
+                        ->insert(array('game_id' => $id, 'product_id' => $product));
+                }
+            }
+            */
 
             return response()->json(array(
                 'status' => 'success',
@@ -351,7 +387,7 @@ class MylocationgameController extends Controller
         $request = $request->all();
         $results = \DB::table('game')->where('game_title_id', '=', $request['game_title_id'])->where('location_id', '=', $request['location_id'])->get();
         $info = $this->model->makeInfo($this->module);
-         $rows = $results;
+        $rows = $results;
         $fields = $info['config']['grid'];
         $content = array(
             'fields' => $fields,
@@ -360,37 +396,40 @@ class MylocationgameController extends Controller
         );
         return view('sximo.module.utility.csv', $content);
     }
+
     public function getHistory()
     {
-            $rows = $this->model->getMoveHistory();
-            $fields = array('game', 'From Location', 'Sent by', 'From Date', 'To Location', 'Accepted by', 'To Date');
-            $this->data['pageTitle'] = 'game move history';
-            $content = array(
-                'fields' => $fields,
-                'rows' => $rows,
-                'type' => 'move',
-                'title' => $this->data['pageTitle'],
-            );
+        $rows = $this->model->getMoveHistory();
+        $fields = array('game', 'From Location', 'Sent by', 'From Date', 'To Location', 'Accepted by', 'To Date');
+        $this->data['pageTitle'] = 'game move history';
+        $content = array(
+            'fields' => $fields,
+            'rows' => $rows,
+            'type' => 'move',
+            'title' => $this->data['pageTitle'],
+        );
         return view('mylocationgame.csvhistory', $content);
     }
+
     function getPending()
     {
-             $this->data['pageTitle'] = 'game pending list';
-             $fields=array("Manufacturer","Game Title","Version","Serial","Id","Location Id","City","State","WholeSale","Retail","Notes");
-             $rows=$this->model->getPendingList();
-             $content = array(
-                'fields' => $fields,
-                'rows' => $rows,
-                'type' => 'pending',
-                'title' => $this->data['pageTitle'],
-            );
+        $this->data['pageTitle'] = 'game pending list';
+        $fields = array("Manufacturer", "Game Title", "Version", "Serial", "Id", "Location Id", "City", "State", "WholeSale", "Retail", "Notes");
+        $rows = $this->model->getPendingList();
+        $content = array(
+            'fields' => $fields,
+            'rows' => $rows,
+            'type' => 'pending',
+            'title' => $this->data['pageTitle'],
+        );
         return view('mylocationgame.csvhistory', $content);
     }
+
     function getForsale()
     {
         $this->data['pageTitle'] = 'game for-sale list';
-        $fields=array("Manufacturer","Game Title","Version","Serial","Date In Service","Location Id","City","State","WholeSale","Retail");
-        $rows=$this->model->getForSaleList();
+        $fields = array("Manufacturer", "Game Title", "Version", "Serial", "Date In Service", "Location Id", "City", "State", "WholeSale", "Retail");
+        $rows = $this->model->getForSaleList();
         $content = array(
             'fields' => $fields,
             'rows' => $rows,
@@ -399,6 +438,7 @@ class MylocationgameController extends Controller
         );
         return view('mylocationgame.csvhistory', $content);
     }
+
     function generate_asset_tag($id = null)
     {
         //// THE SCRIPT BELOW CIRCULATES THROUGH THE ASSET IDs IN THE COMMA SEPARATED STRING BELOW AND CREATES A QR TAG - ACTIVATE BY VISITING THIS PAGE - CURRENTLY COMMENTED //////////////
@@ -413,16 +453,16 @@ class MylocationgameController extends Controller
         // 	$id = substr($gameString, 0, 8);
 
         ////// END ///// PLUS CLOSING TAG BELOW /////
-        $filename = public_path().'/qr/'.$id.'.png';
-        $data=url('/')."mylocationgame/show/".$id;
+        $filename = storage_path() . '/qr/' . $id . '.png';
+        $data = url('/') . "mylocationgame/show/" . $id;
 
         \QrCode::format('png');
         \QrCode::size(200);
         \QrCode::errorCorrection('H');
-        \QrCode::generate($data,$filename);
-  // $this->model->get_detail($id);
+        \QrCode::generate($data, $filename);
+        // $this->model->get_detail($id);
 
-        $row=\DB::select("SELECT G.id, T.game_title FROM game G LEFT JOIN game_title T ON T.id = G.game_title_id WHERE G.id=$id");
+        $row = \DB::select("SELECT G.id, T.game_title FROM game G LEFT JOIN game_title T ON T.id = G.game_title_id WHERE G.id=$id");
 
         //
 
@@ -457,108 +497,131 @@ class MylocationgameController extends Controller
 //        imagepng($newimage, $filename);
 //        imagedestroy($newimage);
 
-        if ($row )
-        {
+        if ($row) {
 
             $id = $row[0]->id;
             $game_name = $row[0]->game_title;
-          /*  die();
-            $this->load->library('image_lib');
-            $config['source_image']	= $filename;
-            $config['quality'] = '100%';
-            $config['wm_text'] = $id;
-            $config['wm_type'] = 'text';
-            //$config['wm_font_path'] = './system/fonts/PTC55F.ttf';
-            //$config['wm_font_path'] = './system/fonts/texb.ttf';
-            //$config['wm_font_path'] = './system/fonts/Segan-Light.ttf';
-            $config['wm_font_path'] = './system/fonts/EncodeSansWide-Regular.ttf';
-            //$config['wm_font_path'] = './system/fonts/DISCO_W.ttf';
-            //$config['wm_font_path'] = './system/fonts/arialnarrow.ttf';
-            //$config['wm_font_path'] = './system/fonts/arial.ttf';
-            $config['wm_font_size']	= '15';
-            $config['wm_font_color'] = 'black';
-            $config['wm_vrt_alignment'] = 'bottom';
-            $config['wm_hor_alignment'] = 'left';
-            $config['wm_vrt_offset'] = '-6';
-            $config['wm_hor_offset'] = '16';
-            $config['overwrite'] = TRUE;
-            $this->image_lib->initialize($config);
-            $this->image_lib->watermark();
-            $this->image_lib->clear();
+            /*  die();
+              $this->load->library('image_lib');
+              $config['source_image']	= $filename;
+              $config['quality'] = '100%';
+              $config['wm_text'] = $id;
+              $config['wm_type'] = 'text';
+              //$config['wm_font_path'] = './system/fonts/PTC55F.ttf';
+              //$config['wm_font_path'] = './system/fonts/texb.ttf';
+              //$config['wm_font_path'] = './system/fonts/Segan-Light.ttf';
+              $config['wm_font_path'] = './system/fonts/EncodeSansWide-Regular.ttf';
+              //$config['wm_font_path'] = './system/fonts/DISCO_W.ttf';
+              //$config['wm_font_path'] = './system/fonts/arialnarrow.ttf';
+              //$config['wm_font_path'] = './system/fonts/arial.ttf';
+              $config['wm_font_size']	= '15';
+              $config['wm_font_color'] = 'black';
+              $config['wm_vrt_alignment'] = 'bottom';
+              $config['wm_hor_alignment'] = 'left';
+              $config['wm_vrt_offset'] = '-6';
+              $config['wm_hor_offset'] = '16';
+              $config['overwrite'] = TRUE;
+              $this->image_lib->initialize($config);
+              $this->image_lib->watermark();
+              $this->image_lib->clear();
 
-            $this->load->library('image_lib');
-            $config['source_image']	= $filename;
-            $config['quality'] = '100%';
-            $config['wm_text'] = $game_name;
-            $config['wm_type'] = 'text';
-            //$config['wm_font_path'] = './system/fonts/arialnarrow.ttf';
-            $config['wm_font_path'] = './system/fonts/pf_tempesta_seven_condensed.ttf';
-            //$config['wm_font_path'] = './system/fonts/pf_ronda_seven.ttf';
-            //$config['wm_font_path'] = './system/fonts/hellovetica.ttf';
-            $config['wm_font_size']	= '6';
-            $config['wm_font_color'] = 'black';
-            $config['wm_vrt_alignment'] = 'bottom';
-            $config['wm_hor_alignment'] = 'left';
-            $config['wm_vrt_offset'] = '0';
-            $config['wm_hor_offset'] = '3';
-            $config['overwrite'] = TRUE;
-            $this->image_lib->initialize($config);
-            $this->image_lib->watermark();
-            $this->image_lib->clear();*/
+              $this->load->library('image_lib');
+              $config['source_image']	= $filename;
+              $config['quality'] = '100%';
+              $config['wm_text'] = $game_name;
+              $config['wm_type'] = 'text';
+              //$config['wm_font_path'] = './system/fonts/arialnarrow.ttf';
+              $config['wm_font_path'] = './system/fonts/pf_tempesta_seven_condensed.ttf';
+              //$config['wm_font_path'] = './system/fonts/pf_ronda_seven.ttf';
+              //$config['wm_font_path'] = './system/fonts/hellovetica.ttf';
+              $config['wm_font_size']	= '6';
+              $config['wm_font_color'] = 'black';
+              $config['wm_vrt_alignment'] = 'bottom';
+              $config['wm_hor_alignment'] = 'left';
+              $config['wm_vrt_offset'] = '0';
+              $config['wm_hor_offset'] = '3';
+              $config['overwrite'] = TRUE;
+              $this->image_lib->initialize($config);
+              $this->image_lib->watermark();
+              $this->image_lib->clear();*/
         }
         // ////
         // $gameString = substr($gameString, 9);
         // }
         // ////
     }
-    function postAssettag(Request $request,$asset_ids = null)
+
+    function postAssettag(Request $request, $asset_ids = null)
     {
         $asset_ids = $request->get('asset_ids');
-        if(!empty($asset_ids)) {
+        if (!empty($asset_ids)) {
             $zip = new \ZipArchive();
-            $zip_name = "qr/QRCodes.zip"; // Zip name
-            $zip->open($zip_name, \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
+            $zip_name = "assettags.zip";
+            $zip_file_path = storage_path() . "/qr"; // Zip name
+            $zip_file = $zip_file_path . "/" . $zip_name;
+            $zip->open($zip_file, \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
+            //$zip->close();
             $item_count = substr_count($asset_ids, ',') + 1;
             if ($item_count > 1) {
+                //die('here greater than one');
                 for ($i = 1; $i <= $item_count; $i++) {
                     $id = substr($asset_ids, 0, 8);
                     $asset_ids = substr($asset_ids, 9);
                     $this->generate_asset_tag($id);
-                    $location = $this->get_game_info_by_id($id, 'location_id');
-                    $file = public_path() . '\\qr\\' . $id . '.png';
-// Quick check to verify that the file exists
+                    //$location = $this->get_game_info_by_id($id, 'location_id');
+                    //   $location = $this->get_game_info_by_id($id, 'location_id');
+                    $file = $zip_file_path . '/' . $id . '.png';
                     if (file_exists($file)) {
-                        $zip->addFile($file);
-                    }
+                        $zip->addFile($file, basename($file));
+                    } else
+                        die('file not exists');
                 }
-                if (file_exists($zip_name)) {
-                return (\Response::download($zip_name));
-            }
-                else
-                {
+                $zip->close();
+                if (file_exists($zip_file)) {
+                    header('Content-type: application/zip');
+                    header('Content-Description: File Transfer');
+                    // header('Content-Disposition: attachment; filename="'.basename($zip_file).'"');
+                    header('Expires: 0');
+                    header('Cache-Control: must-revalidate');
+                    header('Pragma: public');
+                    header('Content-Length: ' . filesize($zip_file));
+                    readfile($zip_file);
+                    unlink($zip_file);
+                    exit;
+                } else {
                     echo "sorry";
                 }
-            }
-            else {
-                if (file_exists("qr/" . $asset_ids . ".png")) {
-                    return (\Response::download("qr/" . $asset_ids . ".png"));
+            } else {
+                //  die('smaller than one');
+                $this->generate_asset_tag($asset_ids);
+
+                //$location = $this->get_game_info_by_id($id, 'location_id');
+
+                //   $location = $this->get_game_info_by_id($id, 'location_id');
+                $file = storage_path() . '/qr/' . $asset_ids . '.png';
+                if (file_exists($file)) {
+                    $zip->addFile($file, basename($file));
+                    return response()->download($file);
+                } else {
+                    die('file does not exists');
                 }
             }
         }
     }
+
     public function get_game_info_by_id($asset_id = null, $field = null)
     {
-        $query = \DB::select('SELECT '.$field.'
+        $query = \DB::select('SELECT ' . $field . '
 								 FROM game_title T
 						 	LEFT JOIN game G ON G.game_title_id = T.id
-							    WHERE G.id = '.$asset_id);
-            $game_info = $query[0]->location_id;
-        if(empty($game_info))
-        {
+							    WHERE G.id = ' . $asset_id);
+        $game_info = $query[0]->location_id;
+        if (empty($game_info)) {
             $game_info = 'NONE';
         }
         return $game_info;
     }
+
     function getDowload()
     {
 

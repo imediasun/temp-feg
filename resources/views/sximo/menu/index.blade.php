@@ -17,8 +17,8 @@
 	
 	<div class="page-content-wrapper">  
 	<ul class="nav nav-tabs" style="margin:10px 0;">
-		<li @if($active == 'top') class="active" @endif ><a href="{{ URL::to('sximo/menu?pos=top')}}"><i class="icon-paragraph-justify2"></i> {{ Lang::get('core.tab_topmenu') }} </a></li>
-		<li @if($active == 'sidebar') class="active" @endif><a href="{{ URL::to('sximo/menu?pos=sidebar')}}"><i class="icon-paragraph-justify2"></i> {{ Lang::get('core.tab_sidemenu') }}</a></li>	
+		<li @if($active == 'top') class="active" @endif ><a href="{{ URL::to('feg/menu?pos=top')}}"><i class="icon-paragraph-justify2"></i> {{ Lang::get('core.tab_topmenu') }} </a></li>
+		<li @if($active == 'sidebar') class="active" @endif><a href="{{ URL::to('feg/menu?pos=sidebar')}}"><i class="icon-paragraph-justify2"></i> {{ Lang::get('core.tab_sidemenu') }}</a></li>
 	</ul>  	
 	
 	
@@ -36,7 +36,7 @@
 				  <li data-id="{{$menu['menu_id']}}" class="dd-item dd3-item">
 					<div class="dd-handle dd3-handle"></div><div class="dd3-content">{{$menu['menu_name']}}
 						<span class="pull-right">
-						<a href="{{ URL::to('sximo/menu/index/'.$menu['menu_id'].'?pos='.$active)}}"><i class="icon-cogs"></i></a></span>
+						<a href="{{ URL::to('feg/menu/index/'.$menu['menu_id'].'?pos='.$active)}}"><i class="icon-cogs"></i></a></span>
 					</div>
 					@if(count($menu['childs']) > 0)
 						<ol class="dd-list" style="">
@@ -44,7 +44,7 @@
 							 <li data-id="{{$menu2['menu_id']}}" class="dd-item dd3-item">
 								<div class="dd-handle dd3-handle"></div><div class="dd3-content">{{$menu2['menu_name']}}
 									<span class="pull-right">
-									<a href="{{ URL::to('sximo/menu/index/'.$menu2['menu_id'].'?pos='.$active)}}"><i class="icon-cogs"></i></a></span>
+									<a href="{{ URL::to('feg/menu/index/'.$menu2['menu_id'].'?pos='.$active)}}"><i class="icon-cogs"></i></a></span>
 								</div>
 								@if(count($menu2['childs']) > 0)
 								<ol class="dd-list" style="">
@@ -52,7 +52,7 @@
 									 	<li data-id="{{$menu3['menu_id']}}" class="dd-item dd3-item">
 											<div class="dd-handle dd3-handle"></div><div class="dd3-content">{{ $menu3['menu_name'] }}
 												<span class="pull-right">
-												<a href="{{ URL::to('sximo/menu/index/'.$menu3['menu_id'].'?pos='.$active)}}"><i class="icon-cogs"></i></a>
+												<a href="{{ URL::to('feg/menu/index/'.$menu3['menu_id'].'?pos='.$active)}}"><i class="icon-cogs"></i></a>
 												</span>
 											</div>
 										</li>	
@@ -67,7 +67,7 @@
 			@endforeach			  
               </ol>
             </div>
-		 {!! Form::open(array('url'=>'sximo/menu/saveorder/', 'class'=>'form-horizontal','files' => true)) !!}	
+		 {!! Form::open(array('url'=>'feg/menu/saveorder/', 'class'=>'form-horizontal','files' => true)) !!}
 			<input type="hidden" name="reorder" id="reorder" value="" />
  <div class="infobox infobox-danger fade in">
  <p> {{ Lang::get('core.t_tipsnote') }}	</p>
@@ -87,7 +87,7 @@
 		</h5>
 			
 			
-		 {!! Form::open(array('url'=>'sximo/menu/save/', 'class'=>'form-horizontal','files' => true)) !!}
+		 {!! Form::open(array('url'=>'feg/menu/save/', 'class'=>'form-horizontal','files' => true)) !!}
 				<div class=" box">	
 
 				
@@ -143,24 +143,24 @@
 					
 					Internal
 					</label>
-					<label class="radio-inline">
-					<input type="radio" name="menu_type" value="external"  class="" 
-					@if($row['menu_type']=='external' ) checked="checked" @endif  /> External 
-					</label>	  
-					 </div> 
-				  </div> 	
-				  			  					
+					<label style="display:none" class="radio-inline">
+					<input  type="radio" name="menu_type" value="external"  class=""
+					@if($row['menu_type']=='external' ) checked="checked" @endif  /> External
+					</label>
+					 </div>
+				  </div>
+
 				  <div class="form-group  ext-link" >
 					<label for="ipt" class=" control-label col-md-4 text-right"> Url  </label>
 					<div class="col-md-8">
-					   {!! Form::text('url', $row['url'],array('class'=>'form-control', 'placeholder'=>' Type External Url')) !!} 
-					 </div> 
-				  </div> 	
-								  					
+					   {!! Form::text('url', $row['url'],array('class'=>'form-control', 'placeholder'=>' Type External Url')) !!}
+					 </div>
+				  </div>
+
 				  <div class="form-group  int-link" >
 					<label for="ipt" class=" control-label col-md-4 text-right"> Module </label>
 					<div class="col-md-8">
-					  <select name='module' rows='5' id='module'  style="width:100%" 
+					  <select name='module' rows='5' id='module'  style="width:100%"
 							class='select-liquid '    >
 							<option value=""> -- Select Module or Page -- </option>
 							<optgroup label="Module ">
@@ -248,7 +248,7 @@
 				<div class="col-sm-8">	
 				<button type="submit" class="btn btn-primary ">  {{ Lang::get('core.sb_submit') }}  </button>
 				@if($row['menu_id'] !='')
-					<button type="button"onclick="SximoConfirmDelete('{{ URL::to('sximo/menu/destroy/'.$row['menu_id'])}}')" class="btn btn-danger ">  Delete </button>
+					<button type="button"onclick="SximoConfirmDelete('{{ URL::to('feg/menu/destroy/'.$row['menu_id'])}}')" class="btn btn-danger ">  Delete </button>
 				@endif	
 				</div>	  
 		

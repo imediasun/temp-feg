@@ -2,7 +2,7 @@
 @if($setting['form-method'] =='native')
 	<div class="sbox">
 		<div class="sbox-title">  
-			<h4> <i class="fa fa-table"></i> <?php echo $pageTitle ;?> <small>{{ $pageNote }}</small>
+			<h4>
 				<a href="javascript:void(0)" class="collapse-close pull-right btn btn-xs btn-danger" onclick="ajaxViewClose('#{{ $pageModule }}')"><i class="fa fa fa-times"></i></a>
 			</h4>
 	</div>
@@ -18,7 +18,7 @@
 					{!! SiteHelpers::activeLang('Game Title', (isset($fields['game_title']['language'])? $fields['game_title']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('game_title', $row['game_title'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
+					  {!! Form::text('game_title', $row['game_title'],array('class'=>'form-control', 'placeholder'=>'', 'required'=>'required')) !!}
 					 </div> 
 					 <div class="col-md-2">
 					 	

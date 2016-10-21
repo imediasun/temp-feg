@@ -1,4 +1,3 @@
-
 <?php usort($tableGrid, "SiteHelpers::_sort");
 ?>
 <div class="sbox">
@@ -8,56 +7,81 @@
 			<a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Clear Search" onclick="reloadData('#{{ $pageModule }}','order/data?search=')"><i class="fa fa-trash-o"></i> Clear Search </a>
 			<a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Reload Data" onclick="reloadData('#{{ $pageModule }}','order/data?return={{ $return }}')"><i class="fa fa-refresh"></i></a>
 			@if(Session::get('gid') ==1)
-			<a href="{{ url('sximo/module/config/'.$pageModule) }}" class="btn btn-xs btn-white tips" title=" {{ Lang::get('core.btn_config') }}" ><i class="fa fa-cog"></i></a>
+			<a href="{{ url('feg/module/config/'.$pageModule) }}" class="btn btn-xs btn-white tips" title=" {{ Lang::get('core.btn_config') }}" ><i class="fa fa-cog"></i></a>
 			@endif
 		</div>
 	</div>
 	<div class="sbox-content" style="">
-
+        @if($setting['usesimplesearch']!='false')
+            <?php $simpleSearchForm = SiteHelpers::configureSimpleSearchForm($tableForm); ?>
+            @if(!empty($simpleSearchForm))
+                <div class="simpleSearchContainer clearfix">
+                    @foreach ($simpleSearchForm as $t)
+                        <div class="sscol {{ $t['widthClass'] }}" style="{{ $t['widthStyle'] }}">
+                            {!! SiteHelpers::activeLang($t['label'],(isset($t['language'])? $t['language'] : array())) !!}
+                            {!! SiteHelpers::transForm($t['field'] , $simpleSearchForm) !!}
+                        </div>
+                    @endforeach
+                    <div class="sscol-submit"><br/>
+                        <button type="button" name="search" class="doSimpleSearch btn btn-sm btn-primary"> Search </button>
+                    </div>
+                </div>
+            @endif
+        @endif
         @include( $pageModule.'/toolbar',['colconfigs' => SiteHelpers::getRequiredConfigs($module_id),'order_type'=>$order_selected])
 
 	 <?php echo Form::open(array('url'=>'order/delete/', 'class'=>'form-horizontal' ,'id' =>'SximoTable'  ,'data-parsley-validate'=>'' )) ;?>
 <div class="table-responsive">
 	@if(count($rowData)>=1)
-    <table class="table table-striped  " id="{{ $pageModule }}Table">
+    <table class="table table-striped datagrid " id="{{ $pageModule }}Table">
         <thead>
-			<tr>
-				<th width="50"> No </th>
-				<th width="60"> <input type="checkbox" class="checkall" /></th>
-                @if($order_selected=='OPEN')
-                    <th width="100">Remove</th>
-                @endif
-
-				@if($setting['view-method']=='expand') <th>  </th> @endif
-				<?php foreach ($tableGrid as $t) :
-					if($t['view'] =='1'):
-						$limited = isset($t['limited']) ? $t['limited'] :'';
-						if(SiteHelpers::filterColumn($limited ))
-						{
-							echo '<th align="'.$t['align'].'" width="'.$t['width'].'">'.\SiteHelpers::activeLang($t['label'],(isset($t['language'])? $t['language'] : array())).'</th>';
-						}
-					endif;
-				endforeach; ?>
-
-				<th width="100">Purchase Order</th>
-				<th width="100">Clone</th>
-				<th width="70"><?php echo Lang::get('core.btn_action') ;?></th>
-
-
-                @if($order_selected=='OPEN')
-              <th width="100">
-              Receive Order
-              </th>
-                    @endif
-
-
+        <tr>
+            @if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
+                <th width="35"> No </th>
+            @endif
+            @if($setting['disableactioncheckbox']=='false')
+                <th width="30"> <input type="checkbox" class="checkall" /></th>
+            @endif
+            @if($setting['view-method']=='expand') <th>  </th> @endif
+            <?php foreach ($tableGrid as $t) :
+                if($t['view'] =='1'):
+                    $limited = isset($t['limited']) ? $t['limited'] :'';
+                    if(SiteHelpers::filterColumn($limited ))
+                    {
+                        $sortBy = $param['sort'];
+                        $orderBy = strtolower($param['order']);
+                        $colField = $t['field'];
+                        $colIsSortable = $t['sortable'] == '1';
+                        $colIsSorted = $colIsSortable && $colField == $sortBy;
+                        $colClass = $colIsSortable ? ' dgcsortable' : '';
+                        $colClass .= $colIsSorted ? " dgcsorted dgcorder$orderBy" : '';
+                        $th = '<th'.
+                                ' class="'.$colClass.'"'.
+                                ' data-field="'.$colField.'"'.
+                                ' data-sortable="'.$colIsSortable.'"'.
+                                ' data-sorted="'.($colIsSorted?1:0).'"'.
+                                ' data-sortedOrder="'.($colIsSorted?$orderBy:'').'"'.
+                                ' align="'.$t['align'].'"'.
+                                ' width="'.$t['width'].'"';
+                        $th .= '>';
+                        $th .= \SiteHelpers::activeLang($t['label'],(isset($t['language'])? $t['language'] : array()));
+                        $th .= '</th>';
+                        echo $th;
+                    }
+                endif;
+            endforeach; ?>
+            @if($setting['disablerowactions']=='false')
+                <th width="70"><?php echo Lang::get('core.btn_action') ;?></th>
+            @endif
+        </tr>
         </thead>
-
         <tbody>
         	@if($access['is_add'] =='1' && $setting['inline']=='true')
 			<tr id="form-0" >
 				<td> # </td>
-				<td> </td>
+				@if($setting['disableactioncheckbox']=='false')
+					<td> </td>
+				@endif
 				@if($setting['view-method']=='expand') <td> </td> @endif
 				@foreach ($tableGrid as $t)
 					@if($t['view'] =='1')
@@ -79,11 +103,14 @@
            			  $id = $row->id;
            		?>
                 <tr class="editable" id="form-{{ $row->id }}">
-					<td class="number"> <?php echo ++$i;?>  </td>
-					<td ><input type="checkbox" class="ids" name="ids[]" value="<?php echo $row->id ;?>" />  </td>
-                    @if($order_selected=='OPEN')
-                        <td><a href="{{ URL::to('order/removalrequest/'.$row->po_number)}}">Request Removal</a></td>
-                    @endif
+
+					@if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
+						<td class="number"> <?php echo ++$i;?>  </td>
+					@endif
+					@if($setting['disableactioncheckbox']=='false')
+						<td ><input type="checkbox" class="ids" name="ids[]" value="<?php echo $row->id ;?>" />  </td>
+					@endif
+
 
 					@if($setting['view-method']=='expand')
 					<td><a href="javascript:void(0)" class="expandable" rel="#row-{{ $row->id }}" data-url="{{ url('order/show/'.$id) }}"><i class="fa fa-plus " ></i></a></td>
@@ -102,16 +129,27 @@
 						 <?php endif;
 						endforeach;
 					  ?>
-					<td><a href="{{ URL::to('order/po/'.$row->id)}}">Generate PO</a></td>
-					<td><a href="{{ $pageModule }}/update/{{$row->id}}/clone"  onclick="ajaxViewDetail('#order',this.href); return false; "  class="btn btn-xs btn-white tips" title="Clone Order">Clone Order</a></td>
+
 
 				 <td data-values="action" data-key="<?php echo $row->id ;?>">
-					{!! AjaxHelpers::buttonAction('order',$access,$id ,$setting) !!}
+					{!! AjaxHelpers::GamestitleButtonAction('order',$access,$id ,$setting) !!}
 					{!! AjaxHelpers::buttonActionInline($row->id,'id') !!}
-				</td>
+
+
+
+						<a href="{{ URL::to('order/po/'.$row->id)}}"  class="tips btn btn-xs btn-white" title="Generate PO"><i class="fa fa-cogs" aria-hidden="true"></i></a>
+
+
+						<a href="{{ $pageModule }}/update/{{$row->id}}/clone"  onclick="ajaxViewDetail('#order',this.href); return false; "  class="tips btn btn-xs btn-white" title="Clone Order"><i class=" fa fa-random" aria-hidden="true"></i></a>
+
+
                     @if($order_selected=='OPEN')
-                        <td><a href="{{ URL::to('order/orderreceipt/'.$row->id)}}">Receive Order</a></td>
+                        <a href="{{ URL::to('order/orderreceipt/'.$row->id)}}" class="tips btn btn-xs btn-white" title="Receive Order"><i class="fa fa-cutlery" aria-hidden="true"></i></a>
                     @endif
+					@if($order_selected=='OPEN')
+						<a href="{{ URL::to('order/removalrequest/'.$row->po_number)}}" class="tips btn btn-xs btn-white" title="Request Removal"><i class="fa fa-trash-o " aria-hidden="true"></i></a>
+						@endif
+					</td>
                 </tr>
                 @if($setting['view-method']=='expand')
                 <tr style="display:none" class="expanded" id="row-{{ $row->id }}">
@@ -170,10 +208,30 @@ $(document).ready(function() {
 			echo AjaxHelpers::htmlExpandGrid();
 		endif;
 	 ?>
+
+    var simpleSearch = $('.simpleSearchContainer');
+    if (simpleSearch.length) {
+        initiateSearchFormFields(simpleSearch);
+        simpleSearch.find('.doSimpleSearch').click(function(event){
+            performSimpleSearch.call($(this), {
+                moduleID: '#{{ $pageModule }}',
+                url: "{{ $pageUrl }}",
+                event: event,
+                container: simpleSearch
+            });
+        });
+    }
+
+    initDataGrid('{{ $pageModule }}', '{{ $pageUrl }}');
 });
 </script>
 <style>
-.table th.right { text-align:right !important;}
-.table th.center { text-align:center !important;}
+    .table th.right {
+        text-align: right !important;
+    }
+
+    .table th.center {
+        text-align: center !important;
+    }
 
 </style>

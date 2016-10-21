@@ -37,9 +37,9 @@ $selected_loc=\Session::get('selected_location');?>
                 <?php $user_locations=\Session::get('user_locations'); ?>
                 @if(isset($user_locations))
                         <li>
-               <span style="padding-left:10px;"><b style="margin-left: 8px; color: #555; font-size: 13px; font-family: 'Lato', sans-serif; font-weight: bold;">location {{ \Session::get('selected_location') }} {{ "||" }} {{ \Session::get('selected_location_name') }}</b></span>
+                            <span style="padding-left:10px;"><b style="margin-left: 8px; color: #fff; font-size: 13px; font-family: 'Lato', sans-serif; font-weight: bold;">Location {{ \Session::get('selected_location') }} {{ "||" }} {{ \Session::get('selected_location_name') }}</b></span>
 
-                    </li>
+                        </li>
 
                         <li style=" padding: 6px 12px; margin-bottom: 8px;">
 
@@ -54,11 +54,6 @@ $selected_loc=\Session::get('selected_location');?>
                         </select>
                     </li>
                 @endif
-                <li>
-                    <?php if(\Session::get('return_id') != ''): $id = \Session::get('return_id'); ?>
-                    <a href="{{ URL::to('core/users/play/'.$id)}}">Exit to Admin</a>
-                    <?php endif; ?>
-                </li>
 
             </div>
 
@@ -131,7 +126,7 @@ $selected_loc=\Session::get('selected_location');?>
                     @if(count($menu['childs']) > 0)
                         <ul class="nav nav-second-level">
                             @foreach ($menu['childs'] as $menu2)
-                                <li @if(Request::segment(1) == $menu2['module']) class="active" @endif>
+                                <li @if(Request::segment(1) == $menu2['module'] && Request::segment(2)!="setting") class="active" @endif >
                                     <a
                                     @if($menu2['menu_type'] =='external')
                                         href="{{ $menu2['url']}}"

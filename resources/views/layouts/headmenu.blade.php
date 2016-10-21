@@ -6,7 +6,22 @@
                         class="fa fa-bars"></i> </a>
         </div>
         <ul class="nav navbar-top-links navbar-right">
+                <li >
+                    <?php if(\Session::get('return_id') != ''): $id = \Session::get('return_id'); ?>
+                    <a class="exit-admin" style="color: #428bca;" href="{{ URL::to('core/users/play/'.$id)}}">Exit to Admin</a>
+                    <?php endif; ?>
+                </li>
+            <li>
+                <a href="addtocart"  class="dropdown-toggle count-info">
+                    <?php
+                        $cart_value=\Session::get('total_cart');
+                    $cart_value=isset($cart_value)?$cart_value:0;
 
+                    ?>
+                    <i class="fa fa-shopping-cart"></i> <span class="notif-alert label label-danger" id="update_text_to_add_cart"></span>
+
+                </a>
+            </li>
             <li>
                 <a href="#" data-toggle="dropdown" class="dropdown-toggle count-info" aria-expanded="true">
                     <i class="fa fa-envelope"></i> <span class="notif-alert label label-danger">0</span>
@@ -21,6 +36,9 @@
                 </ul>
 
             </li>
+
+
+
             @if(CNF_MULTILANG ==1)
                 <li class="user dropdown"><a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown"><i
                                 class="icon-flag"></i><i class="caret"></i></a>
@@ -38,7 +56,7 @@
                                 class="caret"></i></a>
                     <ul class="dropdown-menu dropdown-menu-right icons-right">
 
-                        <li><a href="{{ URL::to('sximo/config')}}"><i
+                        <li><a href="{{ URL::to('feg/config')}}"><i
                                         class="fa  fa-wrench"></i> {{ Lang::get('core.m_setting') }}</a></li>
                         <li><a href="{{ URL::to('core/users')}}"><i
                                         class="fa fa-user"></i> {{ Lang::get('core.m_users') }}
@@ -50,17 +68,19 @@
                         <li class="divider"></li>
                         <li><a href="{{ URL::to('core/pages')}}"><i
                                         class="fa fa-copy"></i> {{ Lang::get('core.m_pagecms')}}</a></li>
-
                         <li class="divider"></li>
-                        <li><a href="{{ URL::to('sximo/module')}}"><i
+                        <li><a href="{{ URL::to('feg/system/tasks')}}"><i
+                                        class="fa fa-tasks"></i> {{ Lang::get('core.m_taskspage')}}</a></li>
+                        <!--<li><a href="{{ URL::to('feg/system/emails')}}"><i class="fa fa-envelope-o"></i> {{ Lang::get('core.m_scheduledemails')}}</a></li>-->
+                        <li class="divider"></li>
+                        <li><a href="{{ URL::to('feg/module')}}"><i
                                         class="fa fa-cogs"></i> {{ Lang::get('core.m_codebuilder') }}</a></li>
-                        <li><a href="{{ URL::to('sximo/tables')}}"><i class="icon-database"></i> Database Tables </a>
+                        <li><a href="{{ URL::to('feg/tables')}}"><i class="icon-database"></i> Database Tables </a>
                         </li>
-                        <li><a href="{{ URL::to('sximo/menu')}}"><i
+                        <li><a href="{{ URL::to('feg/menu')}}"><i
                                         class="fa fa-sitemap"></i> {{ Lang::get('core.m_menu') }}</a></li>
-                        <li class="divider"></li>
-                        <li><a href="{{ URL::to('core/template')}}"><i class="fa fa-desktop"></i> Template Guide </a>
-                        </li>
+
+
 
                     </ul>
                 </li>
@@ -74,7 +94,7 @@
                     <li><a href="{{ URL::to('')}}" target="_blank"><i class="fa fa-desktop"></i> Main Site </a></li>
                     <li><a href="{{ URL::to('user/profile')}}"><i
                                     class="fa fa-user"></i> {{ Lang::get('core.m_profile') }}</a></li>
-                    <li><a href="{{ URL::to('core/elfinder')}}"><i class="fa fa-folder"></i> File Manager </a></li>
+
                     <li><a href="{{ URL::to('user/logout')}}"><i
                                     class="fa fa-sign-out"></i> {{ Lang::get('core.m_logout') }}</a></li>
                 </ul>

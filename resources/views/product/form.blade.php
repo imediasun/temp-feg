@@ -2,7 +2,7 @@
 @if($setting['form-method'] =='native')
 	<div class="sbox">
 		<div class="sbox-title">
-			<h4> <i class="fa fa-table"></i> <?php echo $pageTitle ;?> <small>{{ $pageNote }}</small>
+			<h4>
 				<a href="javascript:void(0)" class="collapse-close pull-right btn btn-xs btn-danger" onclick="ajaxViewClose('#{{ $pageModule }}')"><i class="fa fa fa-times"></i></a>
 			</h4>
 	</div>
@@ -53,14 +53,23 @@
 					{!! SiteHelpers::activeLang('Add\'l Details', (isset($fields['details']['language'])? $fields['details']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
-					  <textarea name='details' rows='5' id='details' class='form-control '>
-                          {{ $row['details'] }} </textarea>
+					  <textarea name='details' rows='5' id='details' class='form-control '>{{ $row['details'] }}</textarea>
 					 </div>
 
 				  </div>
 
 
+							<div class="form-group  " >
+								<label for="Quantity Per Case" class=" control-label col-md-4 text-left">
+									{!! SiteHelpers::activeLang('Quantity Per Case', (isset($fields['num_items']['language'])? $fields['num_items']['language'] : array())) !!}
+								</label>
+								<div class="col-md-6">
+									{!! Form::text('num_items', $row['num_items'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
+								</div>
+								<div class="col-md-2">
 
+								</div>
+							</div>
 
 
 
@@ -68,44 +77,66 @@
 
 
 				  <div class="form-group  " >
-					<label for="Ticket Value" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Ticket Value', (isset($fields['ticket_value']['language'])? $fields['ticket_value']['language'] : array())) !!}
+					<label for="Case Price" class=" control-label col-md-4 text-left">
+					{!! SiteHelpers::activeLang('Case Price', (isset($fields['case_price']['language'])? $fields['case_price']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
 						<div class="input-group">
 							<span class="input-group-addon">$</span>
-							{!! Form::text('ticket_value', number_format((double)$row['ticket_value'],2),array('class'=>'form-control', 'placeholder'=>'','required'=>'required','type'=>'number','min' => '0','step'=>'1' )) !!}
+							{!! Form::text('case_price', number_format((double)$row['case_price'],2),array('class'=>'form-control', 'placeholder'=>'','required'=>'required','type'=>'number','min' => '0','step'=>'1' )) !!}
 						</div>
 					</div>
 					 <div class="col-md-2">
 
 					 </div>
 				  </div>
-<div class="form-group  " >
-		<label for="Prod Type Id" class=" control-label col-md-4 text-left">
-			{!! SiteHelpers::activeLang('Prod Type Id', (isset($fields['prod_type_id']['language'])? $fields['prod_type_id']['language'] : array())) !!}
-		</label>
-	<div class="col-md-6">
-
-			  <select name='prod_type_id' rows='5' id='prod_type_id' class='select2 ' required='required'  ></select>
-			 </div>
-	 <div class="col-md-2">
-
-			 </div>
-  </div>
 
 
-				  <div class="form-group  " >
-					<label for="Prod Sub Type Id" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Prod Sub Type Id', (isset($fields['prod_sub_type_id']['language'])? $fields['prod_sub_type_id']['language'] : array())) !!}
-					</label>
-					<div class="col-md-6">
-					  <select name='prod_sub_type_id' rows='5' id='prod_sub_type_id' class='select2 '   ></select>
-					 </div>
-					 <div class="col-md-2">
 
-					 </div>
-				  </div>
+							<div class="form-group  " >
+								<label for="Individual Item Price" class=" control-label col-md-4 text-left">
+									{!! SiteHelpers::activeLang('Individual Item Price', (isset($fields['unit_price']['language'])? $fields['unit_price']['language'] : array())) !!}
+								</label>
+								<div class="col-md-6">
+									<div class="input-group">
+										<span class="input-group-addon">$</span>
+										{!! Form::text('unit_price', number_format((double)$row['unit_price'],2),array('class'=>'form-control', 'placeholder'=>'','required'=>'required','type'=>'number','min' => '0','step'=>'1' )) !!}
+									</div>
+								</div>
+								<div class="col-md-2">
+
+								</div>
+							</div>
+
+
+
+
+
+							<div class="form-group  " >
+								<label for="Prod Type Id" class=" control-label col-md-4 text-left">
+									{!! SiteHelpers::activeLang('Prod Type Id', (isset($fields['prod_type_id']['language'])? $fields['prod_type_id']['language'] : array())) !!}
+								</label>
+								<div class="col-md-6">
+
+									<select name='prod_type_id' rows='5' id='prod_type_id' class='select2 ' required='required'  ></select>
+								</div>
+								<div class="col-md-2">
+
+								</div>
+							</div>
+
+
+							<div class="form-group  " >
+								<label for="Prod Sub Type Id" class=" control-label col-md-4 text-left">
+									{!! SiteHelpers::activeLang('Prod Sub Type Id', (isset($fields['prod_sub_type_id']['language'])? $fields['prod_sub_type_id']['language'] : array())) !!}
+								</label>
+								<div class="col-md-6">
+									<select name='prod_sub_type_id' rows='5' id='prod_sub_type_id' class='select2 '   ></select>
+								</div>
+								<div class="col-md-2">
+
+								</div>
+							</div>
 				  <div class="form-group  " >
 					<label for="Is Reserved" class=" control-label col-md-4 text-left">
 					{!! SiteHelpers::activeLang('Is Reserved', (isset($fields['is_reserved']['language'])? $fields['is_reserved']['language'] : array())) !!}
@@ -139,16 +170,16 @@
 					</label>
 					<div class="col-md-6">
 
-						<a href="javascript:void(0)" class="btn btn-xs btn-primary pull-right" onclick="addMoreFiles('img')"><i class="fa fa-plus"></i></a>
+						<!--<a href="javascript:void(0)" class="btn btn-xs btn-primary pull-right" onclick="addMoreFiles('img')"><i class="fa fa-plus"></i></a>-->
 
 						<div class="imgUpl">
 							<input  type='file' name='img'  />
-
-
 						</div>
 
-						<div class="col-md-2">
-
+						<div class="col-md-2" style="padding-top: 3px;">
+							<?php
+							echo SiteHelpers::showUploadedFile($row['img'],'/uploads/products/', 30,false)
+							?>
 						</div>
 					</div>
 					</div> </fieldset>
@@ -240,11 +271,12 @@ $(document).ready(function() {
         $("#vendor_id").jCombo("{{ URL::to('product/comboselect?filter=vendor:id:vendor_name') }}",
         {  selected_value : '{{ $row["vendor_id"] }}' });
 
-        $("#prod_type_id").jCombo("{{ URL::to('product/comboselect?filter=order_type:id:order_type:can_request:1') }}",
-        {  selected_value : '{{ $row["prod_type_id"] }}' });
+	$("#prod_type_id").jCombo("{{ URL::to('product/comboselect?filter=order_type:id:order_type:can_request:1') }}",
+			{  selected_value : '{{ $row["prod_type_id"] }}' });
 
-        $("#prod_sub_type_id").jCombo("{{ URL::to('product/comboselect?filter=product_type:id:product_type') }}&parent=request_type_id:",
-        {  parent: '#prod_type_id' ,selected_value : '{{ $row["prod_sub_type_id"] }}' });
+
+	$("#prod_sub_type_id").jCombo("{{ URL::to('product/comboselect?filter=product_type:id:type_description') }}&parent=request_type_id:",
+			{parent : '#prod_type_id',selected_value : '{{ $row["prod_sub_type_id"] }}' });
 
 
 	$('.editor').summernote();
@@ -253,7 +285,7 @@ $(document).ready(function() {
 	$(".select2").select2({ width:"98%"});
 	$('.date').datepicker({format:'mm/dd/yyyy',autoClose:true})
 	$('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});
-	$('input[type="checkbox"],input[type="radio"]').iCheck({
+	$('input[type="checkbox"],input[type="radio"]').not('.test').iCheck({
 		checkboxClass: 'icheckbox_square-green',
 		radioClass: 'iradio_square-green',
 	});

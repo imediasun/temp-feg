@@ -137,6 +137,12 @@ class AjaxHelpers
 
 	static public function buttonAction( $module , $access , $id , $setting,$edit=null)
 	{
+        
+        $url = $module;
+        if (is_array($module)) {
+            $url = $module['url'];
+            $module = $module['module'];
+        }
 
 		$html ='<div class=" action dropup" >';
 		if($access['is_detail'] ==1) {
@@ -145,7 +151,7 @@ class AjaxHelpers
 				$onclick = " onclick=\"ajaxViewDetail('#".$module."',this.href); return false; \"" ;
 				if($setting['view-method'] =='modal')
 						$onclick = " onclick=\"SximoModal(this.href,'View Detail'); return false; \"" ;
-				$html .= '<a href="'.URL::to($module.'/show/'.$id).'" '.$onclick.' class="btn btn-xs btn-white tips" title="'.Lang::get('core.btn_view').'"><i class="fa fa-search"></i></a>';
+				$html .= '<a href="'.URL::to($url.'/show/'.$id).'" '.$onclick.' class="btn btn-xs btn-white tips" title="'.Lang::get('core.btn_view').'"><i class="fa fa-search"></i></a>';
 			}
 		}
                 if($edit == null)
@@ -155,13 +161,38 @@ class AjaxHelpers
 			if($setting['form-method'] =='modal')
 					$onclick = " onclick=\"SximoModal(this.href,'Edit Form'); return false; \"" ;			
 			
-			$html .= ' <a href="'.URL::to($module.'/update/'.$id).'" '.$onclick.'  class="btn btn-xs btn-white tips" title="'.Lang::get('core.btn_edit').'"><i class="fa  fa-edit"></i></a>';
+			$html .= ' <a href="'.URL::to($url.'/update/'.$id).'" '.$onclick.'  class="btn btn-xs btn-white tips" title="'.Lang::get('core.btn_edit').'"><i class="fa  fa-edit"></i></a>';
 		}
                 }
 		$html .= '</div>';
 		return $html;
-	}	
+	}
+	static public function GamestitleButtonAction( $module , $access , $id , $setting,$edit=null)
+	{
 
+		$html ='';
+		if($access['is_detail'] ==1) {
+			if($setting['view-method'] != 'expand')
+			{
+				$onclick = " onclick=\"ajaxViewDetail('#".$module."',this.href); return false; \"" ;
+				if($setting['view-method'] =='modal')
+					$onclick = " onclick=\"SximoModal(this.href,'View Detail'); return false; \"" ;
+				$html .= '<a href="'.URL::to($module.'/show/'.$id).'" '.$onclick.' class="btn btn-xs btn-white tips" title="'.Lang::get('core.btn_view').'"><i class="fa fa-search"></i></a>';
+			}
+		}
+		if($edit == null)
+		{
+			if($access['is_edit'] ==1) {
+				$onclick = " onclick=\"ajaxViewDetail('#".$module."',this.href); return false; \"" ;
+				if($setting['form-method'] =='modal')
+					$onclick = " onclick=\"SximoModal(this.href,'Edit Form'); return false; \"" ;
+
+				$html .= ' <a href="'.URL::to($module.'/update/'.$id).'" '.$onclick.'  class="btn btn-xs btn-white tips" title="'.Lang::get('core.btn_edit').'"><i class="fa  fa-edit"></i></a>';
+			}
+		}
+		$html .= '';
+		return $html;
+	}
 	static public function buttonActionInline( $id ,$key )
 	{
 		$divid = 'form-'.$id;	

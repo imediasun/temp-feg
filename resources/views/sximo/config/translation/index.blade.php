@@ -12,7 +12,7 @@
 
 		  <ul class="breadcrumb">
 			<li><a href="{{ URL::to('dashboard') }}"> Dashboard</a></li>
-			<li><a href="{{ URL::to('sximo/config') }}"> Setting </a></li>
+			<li><a href="{{ URL::to('feg/config') }}"> Setting </a></li>
 			<li class="active"> Translation </li>
 		  </ul>
 			  
@@ -39,11 +39,11 @@
 		@endforeach
 	</ul>	  
 	  
-	 {!! Form::open(array('url'=>'sximo/config/translation/', 'class'=>'form-vertical row')) !!}
+	 {!! Form::open(array('url'=>'feg/config/translation/', 'class'=>'form-vertical row')) !!}
 	
 	<div class="col-sm-9">
 		
-		<a href="{{ URL::to('sximo/config/addtranslation')}} " onclick="SximoModal(this.href,'Add New Language');return false;" class="btn btn-primary"><i class="fa fa-plus-circle"></i> Add New Translation </a>  
+		<a href="{{ URL::to('feg/config/addtranslation')}} " onclick="SximoModal(this.href,'Add New Language');return false;" class="btn btn-primary"><i class="fa fa-plus-circle"></i> Add New Translation </a>
 		<hr />
 		<table class="table table-striped">
 			<thead>
@@ -63,8 +63,8 @@
 					<td> {{  $lang['author'] }} </td>
 				  	<td>
 					@if($lang['folder'] !='en')
-					<a href="{{ URL::to('sximo/config/translation?edit='.$lang['folder'])}} " class="btn btn-sm btn-primary"> Manage </a>
-					<a href="{{ URL::to('sximo/config/removetranslation/'.$lang['folder'])}} " class="btn btn-sm btn-danger"> Delete </a> 
+					<a href="{{ URL::to('feg/config/translation?edit='.$lang['folder'])}} " class="btn btn-sm btn-primary"> Manage </a>
+					<a href="{{ URL::to('feg/config/removetranslation/'.$lang['folder'])}} " class="btn btn-sm btn-danger"> Delete </a>
 					 
 					@endif 
 				

@@ -1,4 +1,4 @@
- {!! Form::open(array('url'=>'sximo/config/addtranslation/', 'class'=>'form-horizontal ','parsley-validate'=>'','novalidate'=>' ')) !!}
+ {!! Form::open(array('url'=>'feg/config/addtranslation/', 'class'=>'form-horizontal ','parsley-validate'=>'','novalidate'=>' ')) !!}
  <div class="row">
   <div class="form-group">
     <label for="ipt" class=" control-label col-md-4"> Languange Name </label>

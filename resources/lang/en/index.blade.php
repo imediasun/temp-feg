@@ -20,21 +20,21 @@
 	<div class="row m-l-none m-r-none m-t  white-bg shortcut " >
 		<div class="col-sm-6 col-md-3 b-r  p-sm ">
 			<span class="pull-left m-r-sm text-navy"><i class="fa fa-plus-circle"></i></span> 
-			<a href="{{ URL::to('sximo/module') }}" class="clear">
+			<a href="{{ URL::to('feg/module') }}" class="clear">
 				<span class="h3 block m-t-xs"><strong>  {{ Lang::get('core.dash_i_module') }}  </strong>
 				</span> <small class="text-muted text-uc">  {{ Lang::get('core.dash_module') }}</small>
 			</a>
 		</div>
 		<div class="col-sm-6 col-md-3 b-r  p-sm">
 			<span class="pull-left m-r-sm text-info">	<i class="fa fa-cogs"></i></span>
-			<a href="{{ URL::to('sximo/config') }}" class="clear">
+			<a href="{{ URL::to('feg/config') }}" class="clear">
 				<span class="h3 block m-t-xs"><strong> {{ Lang::get('core.dash_i_setting') }}</strong>
 				</span> <small class="text-muted text-uc">   {{ Lang::get('core.dash_setting') }} </small> 
 			</a>
 		</div>
 		<div class="col-sm-6 col-md-3 b-r  p-sm">
 			<span class="pull-left m-r-sm text-warning">	<i class="fa fa-sitemap"></i></span>
-			<a href="{{ URL::to('sximo/menu') }}" class="clear">
+			<a href="{{ URL::to('feg/menu') }}" class="clear">
 			<span class="h3 block m-t-xs"><strong>  {{ Lang::get('core.dash_i_sitemenu') }} </strong></span>
 			<small class="text-muted text-uc">  {{ Lang::get('core.dash_sitemenu') }}  </small> </a>
 		</div>

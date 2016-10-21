@@ -37,7 +37,7 @@ class AddtocartController extends Controller
             return Redirect::to('dashboard')->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
         $productId = \Session::get('productId');
         \Session::put('productId', $productId);
-        $cartData = $this->model->popupCartData($productId);
+        // $cartData = $this->model->popupCartData(null);
         //$this->data['cartData'] = $cartData;
         // \Session::put('cartData', $cartData);
         $this->data['access'] = $this->access;
@@ -47,7 +47,7 @@ class AddtocartController extends Controller
     public function postData(Request $request)
     {
         $productId = \Session::get('productId');
-        $cartData = $this->model->popupCartData($productId);
+        $cartData = $this->model->popupCartData(null);
         $this->data['cartData'] = $cartData;
         $module_id = \DB::table('tb_module')->where('module_name', '=', 'addtocart')->pluck('module_id');
         $this->data['module_id'] = $module_id;
@@ -114,9 +114,8 @@ class AddtocartController extends Controller
     }
 
 
-    function getUpdate(Request $request, $id = null)
+    function getUpdate(Request $request, $id = null, $v = null)
     {
-
         if ($id == '') {
             if ($this->access['is_add'] == 0)
                 return Redirect::to('dashboard')->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
@@ -248,7 +247,8 @@ class AddtocartController extends Controller
     function getSubmitRequests($new_location = null)
     {
 
-        $now = date('m/d/Y');
+        $now = date('Y-m-d');
+
         $location_id = \Session::get('selected_location');
         $data['user_level'] = \Session::get('gid');
         if ($data['user_level'] == 3 || $data['user_level'] == 4 || $data['user_level'] == 5 || $data['user_level'] == 7 || $data['user_level'] == 9 || $data['user_level'] == 10) {
@@ -281,13 +281,35 @@ class AddtocartController extends Controller
         \DB::table('requests')->where('location_id', $location_id)->where('status_id', $statusId)->update($update);
 
         if (empty($new_location)) {
-
-            return redirect('./shopfegrequeststore/popup-cart');
+            return Redirect::to('./shopfegrequeststore')->with('messagetext', 'Submitted Successfully')->with('msgstatus', 'success');
+            \Session::put('total_cart', 0);
             //redirect('fegllc/popupCart', 'refresh');
         } else {
+
             $this->getChangelocation($new_location);
             return redirect('./shopfegrequeststore/popup-cart/');
         }
+    }
+
+    public function getSave($id = null, $qty = null, $vendor_name = null)
+    {
+        $data = array('qty' => $qty);
+        $update = \DB::table('requests')->where('id', $id)->update($data);
+        if ($update) {
+            $vendor_name = str_replace('_', ' ', $vendor_name);
+
+            $updated = $this->model->popupCartData(null, $vendor_name);
+            return json_encode(array('vendor_name' => $updated['subtotals'][0]['vendor_name'], 'subtotal' => $updated['subtotals'][0]['vendor_total']));
+        } else {
+            echo "Update Failed...";
+        }
+    }
+
+    public function getCartdata()
+    {
+        $productId = \Session::get('productId');
+        $cart_data = $this->model->popupCartData($productId);
+        return response()->json($cart_data);
     }
 
 }

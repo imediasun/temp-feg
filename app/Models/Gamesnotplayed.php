@@ -2,44 +2,82 @@
 
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
+use App\Library\ReportHelpers;
 
 class gamesnotplayed extends Sximo  {
 	
-	protected $table = 'game_earnings';
-	protected $primaryKey = 'id';
-
 	public function __construct() {
 		parent::__construct();
-		
 	}
 
-	public static function querySelect(  ){
-		
-		return " SELECT * from game_earnings ";
-	}	
-
-	public static function queryWhere(  ){
-		
-		return " WHERE id IS NULL ";
-	}
+	public static function processRows( $rows ){
+        $newRows = array();
+        foreach($rows as $row) {
 	
-	public static function queryGroup(){
-		return "  ";
-	}
-	
-    public static function getSearchFilters() {
-        $finalFilter = array();
-        if (isset($_GET['search'])) {
-            $filters_raw = trim($_GET['search'], "|");
-            $filters = explode("|", $filters_raw);
-
-            foreach($filters as $filter) {
-                $columnFilter = explode(":", $filter);
-                if (isset($columnFilter) && isset($columnFilter[0]) && isset($columnFilter[2])) {
-                    $finalFilter[$columnFilter[0]] = $columnFilter[2];
-                }
+            $row->date_start = date("m/d/Y", strtotime($row->date_start));
+            $row->date_end = date("m/d/Y", strtotime($row->date_end));
+            $row->date_last_played = empty($row->date_last_played) ? 'Never' : date("m/d/Y", strtotime($row->date_last_played));
+            $row->days_not_played = is_null($row->days_not_played) ? 'Never' : $row->days_not_played;
+            if ($row->game_total == "0") {
+                $row->date_last_played .= ' (zero earnings)';
             }
+           // $row->game_average = '$' . number_format($row->game_average,2);
+           // $row->game_total = '$' . number_format($row->game_total,2);
+                       
+            $newRows[] = $row;
+                }
+		return $newRows;
+            }
+	public static function getRows( $args, $cond = null )
+	{
+		extract(array_merge( array(
+			'page' 		=> '0' ,
+			'limit'  	=> '0' ,
+			'sort' 		=> '' ,
+			'order' 	=> '' ,
+			'params' 	=> '' ,
+			'global'	=> 1
+		), $args ));
+	
+        $bottomMessage = "";
+        $message = "";                
+
+        $filters = self::getSearchFilters(array(
+            'date_start' => '', 'date_end' => '', 'game_cat_id' => '', 'game_type_id'  => '',
+            'debit_type_id' => '', 'game_on_test' => '', 'location_id' => '', 'game_id' => '',
+            'game_title_id' => ''
+        ));        
+        extract($filters);
+        ReportHelpers::dateRangeFix($date_start, $date_end);        
+        $total = ReportHelpers::getGamesNotPlayedCount($date_start, $date_end, $location_id, $debit_type_id, $game_type_id, $game_cat_id, $game_on_test, $game_id, $game_title_id);
+		$offset = ($page-1) * $limit ;
+        if ($offset >= $total) {
+            $page = ceil($total/$limit);
+            $offset = ($page-1) * $limit ;
+        }         
+		$limitConditional = ($page !=0 && $limit !=0) ? " LIMIT  $offset , $limit" : '';
+        
+        $mainQuery = ReportHelpers::getGamesNotPlayedQuery($date_start, $date_end, $location_id, $debit_type_id, $game_type_id, $game_cat_id, $game_on_test, $game_id, $game_title_id, $sort, $order);
+        $mainQuery .= $limitConditional;
+        $rawRows = \DB::select($mainQuery);
+        $rows = self::processRows($rawRows);            
+        
+        if ($total == 0) {
+            $message = "To view the contents of this report, please select a date range and other search filter.";
         }
-        return $finalFilter;
+        $humanDateRange = ReportHelpers::humanifyDateRangeMessage($date_start, $date_end);
+        $topMessage = "Games Not played $humanDateRange";
+        
+		$results = array(
+            'topMessage' => $topMessage,
+            'bottomMessage' => $bottomMessage,
+            'message' => $message,
+
+            'rows'=> $rows, 
+            'total' => $total
+        );
+        
+        return $results;
+
     }
 }

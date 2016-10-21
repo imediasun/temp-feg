@@ -984,14 +984,7 @@ label { font-size:12px;}
   font-family: 'Lato', sans-serif !important;
   border-radius:0px !important; -moz-border-radius:0px !important;
 }
-.modal-dialog .select2-container.form-control {
-    padding: 0;
-}
-.modal-dialog .select2-container-multi .select2-choices {
-    border: none;
-    background-image: none;
-    overflow: visible;
-}
+
 .input-group-sm > .form-control, .input-group-sm > .input-group-addon, .input-group-sm > .input-group-btn > .btn { font-size: 11px !important;   border-radius:0px !important; -moz-border-radius:0px !important;}
 .form-control:focus {
   border-color: #1ab394;
@@ -1685,7 +1678,7 @@ code {
   margin-bottom: 10px;
 }
 .m-b {
-  margin-bottom: 15px;
+  margin-bottom: 9px;
 }
 .m-b-md {
   margin-bottom: 20px;
@@ -2049,7 +2042,7 @@ box-shadow:1px 1px 0 rgba(255, 255, 255, 0.2) inset;
 .sbox-content {
   background-color: #f9f9f9;
   color: inherit;
-  padding: 15px 20px 20px 20px;
+  padding: 15px 20px 7px 20px;
   border-color: #ddd;
   border-image: none;
   border-style: solid solid none;
@@ -2076,7 +2069,7 @@ fieldset { margin:10px 0;}
 fieldset legend { font-size:16px; padding:10px 0; font-weight:500;}
 .table-responsive { background:#fff;  border:solid 1px #ddd; overflow-x:auto; padding-bottom:15px;}
 .toolbar { margin:10px 0; clear:both; text-align:right;}
-.toolbar-line { margin:15px 0; clear:both; }
+.toolbar-line { margin:6px 0; clear:both; }
 .page-content-wrapper { padding:0 15px;}
 .ribon-sximo { margin:20px 0;}
 
@@ -2365,7 +2358,7 @@ li.L9 {
     left: 0;
     margin-left: 220px;
     padding: 10px 20px;
-    position: fixed;
+
     right: 0;
     z-index: 1000;
     font-size: 11px;
@@ -2427,16 +2420,84 @@ li.L9 {
     border-bottom: 1px solid #aaa;
 }
 
-#merchthrowsdetailedFilter select[name="sort"],
-#merchthrowsdetailedFilter select[name="order"],
-#merchthrowssimpleFilter select[name="sort"],
-#merchthrowssimpleFilter select[name="order"],
-#gameplayrankbylocationFilter,
-#closedlocationsFilter {
-    display:none;
-}
-
 #advance-search.search-table  tr.fieldsearch td:first-child {
 	font-weight: bold;
 	vertical-align: middle;
+}
+
+
+
+#s_icons a {
+  margin-left: 7px;
+}
+.export-messsage-contaier{
+  margin-bottom: 10px;margin-left: 0px;
+  padding-left: 0px;
+  display:none;
+}
+.export-message{
+  padding: 5px 5px 5px 30px;
+  font-size:12px;
+  font-weight: bold;
+}
+.item-receipt-container{
+  margin-left: 0px!important;
+  margin-bottom: 20px;
+  padding:15px;
+  background-color:#FFF;
+  border:1px solid lightgray;
+  font-size:11px
+}
+table#itemTable input[type="text"]{
+  width: 40px;
+  text-align: center;
+}
+table.table-striped tr th
+{
+    cursor: pointer;
+
+}
+
+.bootstrap-datetimepicker-widget tr:hover {
+  background-color: #808080;
+}
+
+.modal-dialog .select2-container-multi .select2-choices:before,
+.modal-dialog .select2-container-multi .select2-choices:after,
+.clearfix:before,
+.clearfix:after {
+    content: "";
+    display: table;
+} 
+
+.modal-dialog .select2-container-multi .select2-choices:after,
+.clearfix:after {
+    clear: both;
+}
+
+.modal-dialog .select2-container-multi .select2-choices,
+.clearfix {
+    zoom: 1; /* For IE 6/7 (trigger hasLayout) */
+}
+#col-config
+{
+    position:relative !important;
+    top: 3px;
+}
+
+#sidemenu.nav .nav > li > a i {
+  margin-right: 0;
+}
+#sidemenu.nav .nav li > a {
+  margin-left: 6px;
+}
+
+.left-align {
+    text-align: left !important;
+}
+.right-align {
+    text-align: right !important;    
+}
+.center-align {
+    text-align: center !important;    
 }

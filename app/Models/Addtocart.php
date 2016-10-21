@@ -17,7 +17,6 @@ class addtocart extends Sximo
 
     public static function querySelect()
     {
-
         return "SELECT requests.*,u1.username,products.img,IF(product_id = 0, requests.description, products.vendor_description) as description,
                 products.sku,products.case_price,products.retail_price,products.case_price*requests.qty,products.ticket_value,location.location_name_short,
                 merch_request_status.status,products.size,V1.vendor_name,order_type.order_type,If(products.reserved_qty = 0, '' , products.reserved_qty) as reserved_qty,
@@ -34,6 +33,8 @@ class addtocart extends Sximo
     {
         $where="WHERE requests.id IS NOT NULL ";
         $data['user_level'] = \Session::get('gid');
+
+
         if ($data['user_level'] == 3 || $data['user_level'] == 4 || $data['user_level'] == 5 || $data['user_level'] == 7 || $data['user_level'] == 9 || $data['user_level'] == 10) {
             $where.= " AND requests.location_id = " . \Session::get('selected_location') . " AND requests.status_id = 9"; /// 9 IS USED AS AN ARBITRARY DELIMETER TO KEEP CART SEPERATE FROM LOCATIONS' OWN
         } else {
@@ -46,9 +47,14 @@ class addtocart extends Sximo
     {
         return "  ";
     }
-    function popupCartData($productId=null)
+    
+
+    function popupCartData($productId=null,$v1=null,$qty=0)
     {
+
         $data['user_level']=\Session::get('gid');
+
+
 
         if ($data['user_level'] == 2)
         {
@@ -56,7 +62,10 @@ class addtocart extends Sximo
         }
         else
         {
+
             $locationId = \Session::get('selected_location');
+
+
 
             if ($data['user_level'] == 3 || $data['user_level'] == 4 || $data['user_level'] == 5 || $data['user_level'] == 7 || $data['user_level'] == 9 || $data['user_level'] == 10)
             {
@@ -68,12 +77,18 @@ class addtocart extends Sximo
             }
             if(!empty($productId))
             {
-                $qty = 0;
+
+
+               // $qty = 1;
+
+
+
                 $query = \DB::select('SELECT id FROM requests WHERE product_id = "'.$productId.'" AND status_id = "'.$statusId.'" AND location_id = "'.$locationId.'"');
 
                 /// TO AVOID ADDITNG THE SAME PRODUCT IN TWO PLACES
                 if (count($query) == 0)
                 {
+
                     $now = date('Y-m-d');
                     $insert = array(
                         'product_id' => $productId,
@@ -87,19 +102,29 @@ class addtocart extends Sximo
                 }
             }
             $location_id = \Session::get('selected_location');
+
             $data['selected_location'] = $location_id;
+
 
             // SHOPPING CART TOTALS (SHOWN ABOVE CART) START
             $data['shopping_cart_total'] = '';
             $data['amt_short'] = '';
             $data['amt_short_message'] = '';
-            $query = \DB::select('SELECT V.vendor_name,  V.id AS vendor_id, V.min_order_amt, SUM(R.qty*P.case_price) AS total,
+
+                                       $select='SELECT V.vendor_name,  V.id AS vendor_id, V.min_order_amt, SUM(R.qty*P.case_price) AS total,
                                        V.min_order_amt - SUM(R.qty*P.case_price) AS amt_short FROM requests R
                                        LEFT JOIN products P ON P.id = R.product_id
 								       LEFT JOIN vendor V ON V.id = P.vendor_id
-									   WHERE R.status_id = "'.$statusId.'"
-									   AND R.location_id = "'.$location_id .'"
-                                       GROUP BY V.vendor_name');
+									   WHERE R.status_id = "' . $statusId . '" AND V.vendor_name !="null"
+									   AND R.location_id = "' . $location_id . '"
+                                       GROUP BY V.vendor_name';
+            if($v1)
+            {
+                $select .= ' HAVING V.vendor_name="'.$v1.'"';
+            }
+
+                $query = \DB::select($select);
+
 
             $amt_short_message="";
             foreach ($query as $row)
@@ -113,6 +138,7 @@ class addtocart extends Sximo
                 );
 
                 $array[] = $row;
+
 
                 if($row['amt_short'] > 0)
                 {

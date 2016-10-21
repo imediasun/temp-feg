@@ -6,3 +6,12 @@ storage/framework/views/
 public/uploads/tickets/comments-attachments/*
 public/uploads/games/
 Thumbs.db
+composer.lock
+composer.phar
+config/database.php
+public/uploads
+public/qr
+public/error_log
+/storage/qr/
+error_log
+laravel-2016-09-30.log

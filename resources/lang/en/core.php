@@ -4,7 +4,8 @@ return array(
 // General 
 	"norecord" => "No Record Found",
 	"create" => "Create New",
-
+	"add_to_cart" => "Item Added to Cart",
+	"already_add_to_cart" => "Item already added to Cart",
 	// General , Login Info & Signup
 	"home" => "Home",
 	"group" => "Group",
@@ -46,6 +47,8 @@ return array(
 	"m_users" 			=> "Users",
 	"m_groups" 			=> "Groups",
 	"m_pagecms" 		=> "Page CMS",
+	"m_taskspage" 		=> "System Tasks",
+	"m_scheduledemails" => "Scheduled Email",
 	"m_menu" 			=> "Menu Management",
 	"m_logs" 			=> "Activity Logs",
 	"m_codebuilder" 	=> "Code Builder",
@@ -107,7 +110,8 @@ return array(
 	"sb_save"					=> "Save",
 	"sb_apply"					=> "Apply Change(s)",
 	"sb_submit"					=> "Submit",
-	"sb_cancel"					=> "Cancel",	
+	"sb_cancel"					=> "Cancel",
+    "sb_save_send"               => "Save&Send",
 	
 /* button */
 	"btn_back"						=> "Back",	

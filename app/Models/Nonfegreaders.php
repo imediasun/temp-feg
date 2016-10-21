@@ -22,11 +22,11 @@ class nonfegreaders extends Sximo  {
         $debitType = @$filters['debit_type_id'];
         $locationQuery = "";
         if (!empty($location)) {
-            $locationQuery = "AND reader_exclude.loc_id = $location"; 
+            $locationQuery = "AND reader_exclude.loc_id IN ($location) "; 
         }
         $debitTypeQuery = "";
         if (!empty($debitType)) {
-            $debitTypeQuery = "AND reader_exclude.debit_type_id = $debitType"; 
+            $debitTypeQuery = "AND reader_exclude.debit_type_id IN ($debitType) "; 
         }
         
         if ($isCount) {
@@ -38,7 +38,7 @@ class nonfegreaders extends Sximo  {
                             location.location_name_short as location_name, 
                             reader_exclude.debit_type_id, 
                             debit_type.company AS debit_type,
-                            IF(reader_exclude.debit_type_id = 1, SUBSTRING(reader_exclude.reader_id, 7), reader_exclude.reader_id) AS reader_id,
+                            reader_exclude.reader_id,
                             reader_exclude.reason";
         }
         
@@ -59,23 +59,6 @@ class nonfegreaders extends Sximo  {
 		return "  ";
 	}
 	
-    private static function getSearchFilters() {
-        $finalFilter = array();
-        if (isset($_GET['search'])) {
-            $filters_raw = trim($_GET['search'], "|");
-            $filters = explode("|", $filters_raw);
-
-            foreach($filters as $filter) {
-                $columnFilter = explode(":", $filter);
-                if (isset($columnFilter) && isset($columnFilter[0]) && isset($columnFilter[2])) {
-                    $finalFilter[$columnFilter[0]] = $columnFilter[2];
-}
-            }
-        }
-        return $finalFilter;
-    }
-        
-        
 	public static function getRows( $args,$cond=null )
 	{
 		$table = with(new static)->table;
@@ -94,26 +77,25 @@ class nonfegreaders extends Sximo  {
 			'global'	=> 1
 		), $args ));
 
-		$offset = ($page-1) * $limit ;
-		$limitConditional = ($page !=0 && $limit !=0) ? "LIMIT  $offset , $limit" : '';
-		$orderConditional = ($sort !='' && $order !='') ?  " ORDER BY {$sort} {$order} " : '';
-
-		// Update permission global / own access new ver 1.1
-		$table = with(new static)->table;
-		if($global == 0 )
-			$params .= " AND {$table}.entry_by ='".\Session::get('uid')."'";
-		// End Update permission global / own access new ver 1.1
-
-        $selectQuery = self::querySelect(). " {$orderConditional} {$limitConditional}";
-        $rows = \DB::select($selectQuery);
-        
         $total = 0;
         $totalQuery = self::querySelect(true);
         $totalRows = \DB::select($totalQuery);
         if (!empty($totalRows) && isset($totalRows[0])) {
             $total = $totalRows[0]->totalCount;
         }
-		
+        $offset = ($page-1) * $limit ;
+        if ($offset >= $total) {
+            $page = ceil($total/$limit);
+            $offset = ($page-1) * $limit ;
+        }           
+        $limitConditional = ($page !=0 && $limit !=0) ? " LIMIT  $offset , $limit" : '';    
+       
+		$orderConditional = ($sort !='' && $order !='') ?  " ORDER BY {$sort} {$order} " : '';
+        
+        $selectQuery = self::querySelect(). " {$orderConditional} {$limitConditional}";
+        $rawRows = \DB::select($selectQuery);
+        $rows = self::processRows($rawRows);
+        
 		return $results = array(
                     'topMessage' => $topMessage,
                     'bottomMessage' => $bottomMessage,
@@ -125,6 +107,21 @@ class nonfegreaders extends Sximo  {
 
 
 	}
-	
+	public static function processRows( $rows ){
+        $newRows = array();
+        foreach($rows as $row) {
+            
+            $reader_id = $row->reader_id;
+            $store_id_position = strripos($reader_id, '_');
+            if ($store_id_position !== FALSE) {
+                $reader_id = "<span style='color:#ccc;'>" . 
+                        substr_replace($reader_id, "_</span>", $store_id_position, 1);
+                $row->reader_id = $reader_id;
+            }
+            
+            $newRows[] = $row;
+        }
+		return $newRows;
+	}   	
 
 }

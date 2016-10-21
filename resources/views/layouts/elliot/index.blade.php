@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
     <title> {{ $pageTitle}} | {{ CNF_APPNAME }}</title>
-    <link rel="shortcut icon" href="{{ asset('favicon.ico')}}" type="image/x-icon"> 
+    <link rel="shortcut icon" href="{{ asset('fegpo.png')}}" type="image/x-icon">
 
     <!-- Bootstrap -->
     <link href="http://fonts.googleapis.com/css?family=Lato:300,400,400italic,600,700|Raleway:300,400,500,600,700|Crete+Round:400italic" rel="stylesheet" type="text/css" />
@@ -64,7 +64,7 @@
             <ul class="dropdown-menu">
             @if(!Auth::check())
               <li><a href="{{ url('user/login')}}">Sign In</a></li>
-              <li><a href="{{ url('user/register')}}">Sign Up</a></li>
+
             @else  
              
               <li><a href="{{ url('dashboard')}}"><i class="fa fa-desktop"></i> Dashboard</a></li>
@@ -87,7 +87,8 @@
     <div class="container">
       <div class="row">
          <div class="col-md-5">
-             <p> Copyright &copy; 2015 {{ 'FEG' }} . ALL Rights Reserved</p>
+             <p> Copyright &copy;  <?php echo date("Y"); ?> {{ 'FEG' }} . ALL Rights Reserved</p>
+
              <a href="#"> Term of Use </a> / <a href="#"> Privacy Policy </a>
          </div>
          <div class="col-md-7 text-right">

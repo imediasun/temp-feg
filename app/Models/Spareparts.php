@@ -35,6 +35,6 @@ class spareparts extends Sximo  {
 			return parent::getComboselect($params,$limit,$parent);
 		}
 	}
-	
+
 
 }

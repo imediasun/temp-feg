@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Console;
-
+use DB;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -15,6 +15,11 @@ class Kernel extends ConsoleKernel
     protected $commands = [
         \App\Console\Commands\Inspire::class,
         \App\Console\Commands\ReadComment::class,
+        \App\Console\Commands\AutoCloseOrder::class,
+        \App\Console\Commands\SyncGameEarningsFromLive::class,
+        \App\Console\Commands\Elm5TaskManager::class,
+        \App\Console\Commands\CreateDummyOrders::class,
+
     ];
 
     /**
@@ -25,8 +30,14 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
+        //giving error
         $schedule->command('comments:read')->everyMinute();
-        $schedule->command('inspire')
-                 ->hourly();
+        $schedule->command('autocloseorder')->daily();
+        $schedule->command('inspire')->hourly();
+        $schedule->command('syncgameearningsfromlive')->dailyAt('17:00')->withoutOverlapping();
+        //turning off to allow client to test and avoid from varying counts
+        //$schedule->command('create:dummy_order')->cron('*/15 * * * * *')->withoutOverlapping();;
+        //$schedule->command('syncgameearningsfromlive')->everyMinute()->withoutOverlapping();
+        $schedule->command('elm5taskmanager')->everyMinute();
     }
 }

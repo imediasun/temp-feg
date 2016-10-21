@@ -3,22 +3,22 @@
 use App\Http\Controllers\controller;
 use App\Groups;
 use Illuminate\Http\Request;
-use Validator, Input, Redirect; 
+use Validator, Input, Redirect;
 
 
+class DashboardController extends Controller
+{
 
-class DashboardController extends Controller {
+    public function __construct()
+    {
+        //$this->middleware('auth');
+    }
 
-	public function __construct()
-	{
-		//$this->middleware('auth');
-	}
+    public function getIndex(Request $request)
+    {
 
-	public function getIndex( Request $request )
-	{
-
-		return view('dashboard.index');
-	}	
+        return view('dashboard.index');
+    }
 
 
 }

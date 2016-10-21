@@ -1,6 +1,6 @@
 <div style="width:padding:10px;;">
 
-{!! Form::open(array('url'=>'sximo/module/conn/'.$module_name, 'id'=>'conn_form','class'=>'form-vertical' ,'parsley-validate'=>'','novalidate'=>' ')) !!}
+{!! Form::open(array('url'=>'feg/module/conn/'.$module_name, 'id'=>'conn_form','class'=>'form-vertical' ,'parsley-validate'=>'','novalidate'=>' ')) !!}
 	<div id="result"></div>
 <div class="padding-lg">
 
@@ -42,19 +42,19 @@
 <script>
 $(document).ready(function(){
 			
-	$("#db").jCombo("{{ URL::to('sximo/module/combotable') }}",
+	$("#db").jCombo("{{ URL::to('feg/module/combotable') }}",
 	{ selected_value : "{{ $f['db'] }}" });
 
 	
 	<?php $display = explode("|", $f['display']); ?>
 
-	$("#key").jCombo("{{ URL::to('sximo/module/combotablefield') }}?table=",
+	$("#key").jCombo("{{ URL::to('feg/module/combotablefield') }}?table=",
 	{ selected_value : "{{ $f['key'] }}", parent: "#db", initial_text : ' Primary Key' });		
-	$("#lookup_value1").jCombo("{{ URL::to('sximo/module/combotablefield') }}?table=",
+	$("#lookup_value1").jCombo("{{ URL::to('feg/module/combotablefield') }}?table=",
 	{ selected_value : "<?php echo (isset($display[0]) ? $display[0] : '');?>", parent: "#db",   initial_text : ' Display Text 1'});
-	$("#lookup_value2").jCombo("{{ URL::to('sximo/module/combotablefield') }}?table=",
+	$("#lookup_value2").jCombo("{{ URL::to('feg/module/combotablefield') }}?table=",
 	{ selected_value : "<?php echo (isset($display[1]) ? $display[1] : '');?>", parent: "#db",   initial_text : ' Display Text 2'});
-	$("#lookup_value3").jCombo("{{ URL::to('sximo/module/combotablefield') }}?table=",
+	$("#lookup_value3").jCombo("{{ URL::to('feg/module/combotablefield') }}?table=",
 	{ selected_value : "<?php echo (isset($display[2]) ? $display[2] : '');?>", parent: "#db",   initial_text : ' Display Text 3'});	
 });	
 </script>	

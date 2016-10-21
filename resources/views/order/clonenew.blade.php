@@ -223,24 +223,36 @@
                             <input type="hidden" name="counter[]">
                         </td>
                     </tr>
-                    <tr>
-                        <td colspan="3" class="text-right"> Subtotal</td>
-                        <td><input type="text" value="" class="form-control input-sm" name="Subtotal"></td>
-                        <td></td>
-
                     </tr>
+
                     </tbody>
 
                 </table>
+                <div style="padding-left:60px !important;">
+                    <a href="javascript:void(0);" class="addC btn btn-xs btn-info" rel=".clone" id="add_new_item"><i
+                                class="fa fa-plus"></i>
+                        New Item</a></div>
                 <input type="hidden" name="enable-masterdetail" value="true">
             </div>
             <br/><br/>
 
-            <a href="javascript:void(0);" class="addC btn btn-xs btn-info" rel=".clone" id="add_new_item"><i
-                        class="fa fa-plus"></i> New
-                Item</a>
-            <hr/>
 
+            <div style ="
+    padding-left: 865px;
+    padding-right: 105px;
+">
+
+                <td class="game"></td>
+                <td> </td>
+                <td colspan="6" class="text-left"><strong> Subtotal ( $ ) </strong></td>
+                <td> <input type="text" name="Subtotal" value="{{ $data['order_total'] }}" readonly
+                            class="form-control"/></td>
+
+
+
+            </div>
+
+            <br><hr>
 
             <div style="clear:both"></div>
 
