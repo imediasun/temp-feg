@@ -1,8 +1,8 @@
 <div class="row m-b">
 
     <div class="col-md-4" >
-        <br/>
-        <select name="type" class="select3" id="request_type">
+
+        <select name="type" class="select3" id="request_type" style="display:inline-block">
 
             <option disabled>Select Graphic Requests Type</option>
             <option value="open" selected> Open Graphics Requests </option>
@@ -11,8 +11,8 @@
 
     </div>
         @if($view=="open")
-            <div class="abc" id="number_requests">
-                <p style="color:red; padding-top: 22px; font-weight: bold">{{ $newGraphicsInfo['number_new_requests'] }} New **</p>
+            <div class="abc" id="number_requests" >
+                <p style="color:red;  font-weight: bold">{{ $newGraphicsInfo['number_new_requests'] }} New **</p>
             </div>
 
         @endif

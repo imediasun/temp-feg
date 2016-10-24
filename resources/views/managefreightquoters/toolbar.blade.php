@@ -1,7 +1,4 @@
 <div class="row m-b">
-
-<br/>
-
     <div class="col-md-6">
         	@if($access['is_add'] ==1)
 			{!! AjaxHelpers::buttonActionCreate($pageModule,$setting,"Get Freight Quote") !!}
@@ -14,11 +11,7 @@
                     <option @if($selected_status == 'archive') selected @endif value="archive">Freight Order Archive</option>
                 </select>
     </div>
-
-
 </div>
-
-
 
 <script>
     $("#col-config").on('change',function(){
