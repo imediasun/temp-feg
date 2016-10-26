@@ -633,7 +633,7 @@ class Elm5Tasks
                 ($scheduledOnly ? " AND (S.status_code=0 OR S.status_code IS NULL)": "") .
                 ($includeManual ? "": " AND is_manual != 1") .
                 ($includeInactive ? "" : " AND T.is_active=1 AND S.is_active = 1") .
-                ($onlyEligibleForRun ? " AND S.scheduled_at IS NOT NULL AND S.scheduled_at <= now())": "") .
+                ($onlyEligibleForRun ? " AND (S.scheduled_at IS NOT NULL AND S.scheduled_at <= now())": "") .
                     
             " ORDER BY S.scheduled_at ASC, S.is_manual DESC
             ";        
@@ -674,12 +674,12 @@ class Elm5Tasks
                 ($scheduledOnly ? " AND (S.status_code=0 OR S.status_code IS NULL)": "") .
                 ($includeManual ? "": " AND is_manual != 1") .
                 ($includeInactive ? "" : " AND T.is_active=1 AND S.is_active = 1") .
-                ($onlyEligibleForRun ? " AND S.scheduled_at IS NOT NULL AND S.scheduled_at <= now())": "") .
+                ($onlyEligibleForRun ? " AND (S.scheduled_at IS NOT NULL AND S.scheduled_at <= now())": "") .
                     
             " ORDER BY S.scheduled_at DESC
                 LIMIT 100
             ";        
-        
+        self::log($q);
         return DB::select($q);
     }
 
