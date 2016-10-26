@@ -41,8 +41,14 @@ $(document).ready(function(){
 
     <script type="text/javascript">
         var pageModule = '{{$pageModule}}',
-            pageUrl = '{{$pageUrl}}';
-    </script>  
+            pageUrl = '{{$pageUrl}}',
+            tasksList = [];
+        @if (!empty($rowData)) 
+            tasksList = <?php echo json_encode($rowData); ?>;
+        @endif
+    </script>
+    <!--<script type="text/javascript" src="{{ asset('sximo/js/plugins/ajax/noty/jquery.noty.js') }}"></script>-->  
+    <script type="text/javascript" src="{{ asset('sximo/js/plugins/ajax/noty/packaged/jquery.noty.packaged.min.js') }}"></script>  
     <script type="text/javascript" src="{{ asset('sximo/js/plugins/moment/moment.min.js') }}"></script>  
     <script type="text/javascript" src="{{ asset('sximo/js/plugins/later/later.min.js') }}"></script>  
     <script type="text/javascript" src="{{ asset('sximo/js/plugins/prettycron/prettycron.js') }}"></script>  

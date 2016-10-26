@@ -39,8 +39,9 @@ class Elm5TaskManager extends Command
      */
     public function handle()
     {
-        $L = new MyLog("task-manager-cron.log", "elm5Tasks", "Elm5Tasks");
+        $L = new MyLog("task-manager-cron.log", "FEGCronTasks", "FEGCronTasks");
         $L->log('Start Cron Tasks');
+        Elm5Tasks::addSchedules();
         Elm5Tasks::runTasks();
         $L->log('End Cron Tasks');
     }

@@ -229,7 +229,7 @@ function ajaxPopupStatic(url ,w , h)
 
 function notyMessage(message,showDuration)
 {
-	var showDuration = showDuration || "300";
+	showDuration = showDuration || "300";
 	toastr.success("", message);
 	toastr.options = {
 		  "closeButton": true,
@@ -245,19 +245,19 @@ function notyMessage(message,showDuration)
 		  "showMethod": "fadeIn",
 		  "hideMethod": "fadeOut"
 
-	}	
+	};	
 	
 }
-function notyMessageError(message)
+function notyMessageError(message, showDuration)
 {
-	
+	showDuration = showDuration || "300";
 	toastr.error("", message);
 	toastr.options = {
 		  "closeButton": true,
 		  "debug": false,
 		  "positionClass": "toast-bottom-right",
 		  "onclick": null,
-		  "showDuration": "300",
+		  "showDuration": showDuration,
 		  "hideDuration": "1000",
 		  "timeOut": "5000",
 		  "extendedTimeOut": "1000",
@@ -266,7 +266,7 @@ function notyMessageError(message)
 		  "showMethod": "fadeIn",
 		  "hideMethod": "fadeOut"
 
-	}	
+	};	
 	
 }
 
