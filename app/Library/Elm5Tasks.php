@@ -572,17 +572,17 @@ class Elm5Tasks
     
     public static function startSchedule($id) {
         $now = date("Y-m-d H:i:s");
-        self::updateSchedule($id, array("status_code" => 1, "run_at" => $now, "status" => 'Running')); 
+        self::updateSchedule($id, array("status_code" => 1, "run_at" => $now, "status_name" => 'Running')); 
     }
     
     public static function endSchedule($id) {
         $now = date("Y-m-d H:i:s");
-        self::updateSchedule($id, array("status_code" => 9, "end_at" => $now, "status" => 'Completed', "is_active" => 0)); 
+        self::updateSchedule($id, array("status_code" => 9, "end_at" => $now, "status_name" => 'Completed', "is_active" => 0)); 
     }
     
     public static function errorShedule($id) {
         $now = date("Y-m-d H:i:s");
-        self::updateSchedule($id, array("status_code" => 5, "end_at" => $now, "status" => 'Error', "is_active" => 0)); 
+        self::updateSchedule($id, array("status_code" => 5, "end_at" => $now, "status_name" => 'Error', "is_active" => 0)); 
     }
     
     public static function deleteSchedule($id) {
