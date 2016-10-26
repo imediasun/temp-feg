@@ -3,6 +3,7 @@ namespace App\Library;
 
 use PDO;
 use DB;
+use Carbon\Carbon;
 use App\Library\CronHelpers;
 use App\Library\MyLog;
 
@@ -296,9 +297,10 @@ class Elm5Tasks
     
     public static function getTaskNextScheduledAt($id) {
         
+        $now = date("Y-m-d H:i:s");
         $sql = "SELECT DATE_FORMAT(scheduled_at, '%a %b %d, %Y %r') as next_run
             FROM elm5_task_schedules 
-            WHERE task_id = $id AND scheduled_at >= now()
+            WHERE task_id = $id AND scheduled_at >= '$now'
                 AND is_manual=0 AND status_code = 0 and is_active =1
                 ORDER BY run_at asc LIMIT 1";
         
@@ -621,6 +623,7 @@ class Elm5Tasks
     public static function getSchedules($task_id = null, $scheduledOnly = false, 
             $includeManual = true, $includeInactive = false, $onlyEligibleForRun = false) {
         
+        $now = date('Y-m-d H:i:s');
         $q = "SELECT  S.id, S.task_id, T.task_name, T.action_name,
                       S.is_active, S.is_test_mode,
                       S.scheduled_at, S.is_manual, S.no_overlap, S.params,
@@ -636,7 +639,7 @@ class Elm5Tasks
                 ($scheduledOnly ? " AND (S.status_code=0 OR S.status_code IS NULL)": "") .
                 ($includeManual ? "": " AND is_manual != 1") .
                 ($includeInactive ? "" : " AND T.is_active=1 AND S.is_active = 1") .
-                ($onlyEligibleForRun ? " AND (S.scheduled_at IS NOT NULL AND S.scheduled_at <= now())": "") .
+                ($onlyEligibleForRun ? " AND (S.scheduled_at IS NOT NULL AND S.scheduled_at <= '$now')": "") .
                     
             " ORDER BY S.scheduled_at ASC, S.is_manual DESC
             ";        
@@ -659,6 +662,7 @@ class Elm5Tasks
     public static function getSchedulesForReview($task_id = null, $scheduledOnly = false, 
             $includeManual = true, $includeInactive = true, $onlyEligibleForRun = false) {
         
+        $now = date('Y-m-d H:i:s');
         $q = "SELECT  S.id, S.task_id, 
                       T.task_name, T.action_name, 
                       S.is_manual, S.no_overlap, S.params,
@@ -677,7 +681,7 @@ class Elm5Tasks
                 ($scheduledOnly ? " AND (S.status_code=0 OR S.status_code IS NULL)": "") .
                 ($includeManual ? "": " AND is_manual != 1") .
                 ($includeInactive ? "" : " AND T.is_active=1 AND S.is_active = 1") .
-                ($onlyEligibleForRun ? " AND (S.scheduled_at IS NOT NULL AND S.scheduled_at <= now())": "") .
+                ($onlyEligibleForRun ? " AND (S.scheduled_at IS NOT NULL AND S.scheduled_at <= '$now')": "") .
                     
             " ORDER BY S.scheduled_at DESC
                 LIMIT 100
