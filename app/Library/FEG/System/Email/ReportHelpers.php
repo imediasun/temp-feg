@@ -1,6 +1,6 @@
 <?php
 
-namespace App\FEG\System\Email;
+namespace App\Library\FEG\System\Email;
 
 use PDO;
 use DB;

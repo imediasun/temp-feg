@@ -1,11 +1,11 @@
 <?php
 
-namespace App\FEG\System\Email;
+namespace App\Library\FEG\System\Email;
 
 use PDO;
 use DB;
 use App\Library\MyLog;
-use App\FEG\System\Email\ReportHelpers;
+use App\Library\FEG\System\Email\ReportHelpers;
 
 class Report
 {  

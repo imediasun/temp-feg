@@ -1,12 +1,12 @@
 <?php
 
-namespace App\FEG\System;
+namespace App\Library\FEG\System;
 
 use PDO;
 use DB;
 use Carbon\Carbon;
 use App\Library\MyLog;
-use App\FEG\System\SyncHelpers;
+use App\Library\FEG\System\SyncHelpers;
 
 class Sync
 {    

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\FEG\System;
+namespace App\Library\FEG\System;
 
 use PDO;
 use DB;
