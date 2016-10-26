@@ -39,6 +39,7 @@
                 <label class="red-bg">
                 <input type="checkbox"  name="isTestMode" class="test isTestMode"
                        data-toggle="tooltip" data-placement="top" 
+                       value="1"
                        title="A special flag send to the task - developer can make use of it for testing like sending email to testers only"  /> 
                 TEST MODE?
                 </label>
