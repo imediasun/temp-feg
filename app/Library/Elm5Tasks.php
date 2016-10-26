@@ -302,19 +302,22 @@ class Elm5Tasks
                 AND is_manual=0 AND status_code = 0 and is_active =1
                 ORDER BY run_at asc LIMIT 1";
         
-        $value = "Not scheduled";
+        $value = "";
         $data = DB::select($sql);
         if (!empty($data) && isset($data[0])) {
             $value = $data[0]->next_run;
         }
         
-        if (!empty(trim(self::getTaskCrontab($id))) && self::isTaskActive($id)) {
+        if (empty($value) && !empty(trim(self::getTaskCrontab($id))) && self::isTaskActive($id)) {
             $schedule = self::addSchedule($id);
             if ($schedule) {
                 $value = date("l M d, Y h:i A", strtotime($schedule));
             }
         }
         
+        if (empty($value)) {
+            $value = "Not scheduled";
+        }
         return $value;        
     }
         
