@@ -4,10 +4,10 @@
         {{--*/ $isActive = @$row->is_active /*--}}
         {{--*/ $params = @$row->params /*--}}
         {{--*/ $schedule = @$row->schedule /*--}}
-        {{--*/ $is_repeat= @$row->is_repeat /*--}}
-        {{--*/ $repeat_count= @$row->repeat_count /*--}}
-        {{--*/ $no_overlap = @$row->no_overlap /*--}}
-        {{--*/ $is_test_mode = @$row->is_test_mode /*--}}
+        {{--*/ $is_repeat= !empty($row->is_repeat) /*--}}
+        {{--*/ $repeat_count = empty($row->repeat_count)? 0: $row->repeat_count /*--}}
+        {{--*/ $no_overlap = !empty($row->no_overlap) /*--}}
+        {{--*/ $is_test_mode = !empty($row->is_test_mode) /*--}}
         
         {{--*/ $run_after = @$row->run_after /*--}}
         {{--*/ $run_before = @$row->run_before /*--}}
