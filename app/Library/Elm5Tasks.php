@@ -685,8 +685,7 @@ class Elm5Tasks
                     
             " ORDER BY S.scheduled_at DESC
                 LIMIT 100
-            ";        
-        self::log($q);
+            ";                
         return DB::select($q);
     }
 
