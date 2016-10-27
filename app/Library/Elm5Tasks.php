@@ -191,7 +191,7 @@ class Elm5Tasks
         $uTask = isset($oldParams['_task']) ? $oldParams['_task'] : (
                 isset($oldParams[0]['_task']) ? $oldParams[0]['_task'] : 
                     null);
-        $uId = !empty($uTask['id']) ? $uTask['id'] : '';
+        $uId = !empty($uTask->id) ? $uTask->id : '';
 
         if (empty($log_folder)) {
             $log_folder = "FEGCronTasks/$taskFolderName";
