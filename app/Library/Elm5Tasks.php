@@ -153,7 +153,7 @@ class Elm5Tasks
     }
         
     public static function runPrePostTasks($taskId, $parameters, $isPostTask = false) {
-        $taskLogId = ($isPostTask ? 'Post' : 'Pre') . " Dependent Task - [$taskId => {$task['id']}] {$task['task_name']} ({{$task['action_name']}})";
+                
         $uL = isset($parameters['_logger']) ? $parameters['_logger'] : (
                 isset($parameters[0]['_logger']) ? $parameters[0]['_logger'] : 
                     null);
@@ -166,6 +166,7 @@ class Elm5Tasks
         if (count($tasksData) > 0) {
             
             foreach($taskData as $task) { 
+                $taskLogId = ($isPostTask ? 'Post' : 'Pre') . " Dependent Task - [$taskId => {$task['id']}] {$task['task_name']} ({{$task['action_name']}})";
                 self::cronlog("Starting $taskLogId", null, $uL);
                 self::runDependentTask($task, $parameters);
                 self::cronlog("End $taskLogId", null, $uL);
