@@ -204,7 +204,7 @@ class Elm5Tasks
         
         $logTaskId = "[$uId] (=> $taskId) $taskName ($actionName)";
         
-        $L =  MyLog($log_filename, $log_folder, $taskName);
+        $L = new MyLog($log_filename, $log_folder, $taskName);
         
         $parameters = $oldParams;
         
