@@ -165,7 +165,7 @@ class Elm5Tasks
         
         if (count($tasksData) > 0) {
             
-            foreach($taskData as $task) { 
+            foreach($tasksData as $task) { 
                 $taskLogId = ($isPostTask ? 'Post' : 'Pre') . " Dependent Task - [$taskId => {$task['id']}] {$task['task_name']} ({{$task['action_name']}})";
                 self::cronlog("Starting $taskLogId", null, $uL);
                 self::runDependentTask($task, $parameters);
