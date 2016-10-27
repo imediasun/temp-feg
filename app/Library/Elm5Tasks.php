@@ -152,7 +152,7 @@ class Elm5Tasks
         self::updateSchedule($id, array("results" => $result));
     }
         
-    public function runPrePostTasks($taskId, $parameters, $isPostTask = false) {
+    public static function runPrePostTasks($taskId, $parameters, $isPostTask = false) {
         $taskLogId = ($isPostTask ? 'Post' : 'Pre') . " Dependent Task - [$taskId => {$task['id']}] {$task['task_name']} ({{$task['action_name']}})";
         $uL = isset($parameters['_logger']) ? $parameters['_logger'] : (
                 isset($parameters[0]['_logger']) ? $parameters[0]['_logger'] : 
