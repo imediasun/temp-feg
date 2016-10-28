@@ -4,7 +4,7 @@
 <div class="sbox animated fadeInRight">
 <div class="sbox-title">&nbsp;{{ $pageTitle }}</div>
 <div class="sbox-content">
-<div class="col-md-8 col-md-offset-2" style="background-color: #fff; padding: 50px;">
+<div class="col-md-12" style="background-color: #fff; padding: 50px;">
 <p><a class="smallhdr" href="http://www.mytotalsource.com/" target="_blank" name="adp">ADP Total Source</a></p>
 <p><span style="color: #808080; background-color: #ffffff;">Questions regarding the ADP My Total Source website, </span><strong>resetting My Total Source password</strong>,<span style="color: #808080;"> or general questions regarding the information on the website,</span> <strong>please call the Employee Service Center at (800) 554-1802</strong>, <span style="color: #808080;">available Monday through Friday, 7:00 am to 9:00 pm Central Time.</span> <br /><br /><span style="color: #808080;">If you need to have your ADP EZLabor time clock password reset, please contact <a style="color: #808080;" href="mailto:hr@fegllc.com" target="_blank">hr@fegllc.com</a>. </span></p>
 <p>-<span style="color: #808080;"> View your paycheck</span></p>

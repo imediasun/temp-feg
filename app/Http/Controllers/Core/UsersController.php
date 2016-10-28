@@ -432,6 +432,7 @@ class UsersController extends Controller
                     $i++;
                 }
                 $this->model->inserLocations($locations, $id, $request->input('id'));
+                \DB::update("update users set has_all_locations=1 where id=$id");
             }
             if (!is_null(Input::file('avatar'))) {
                 $updates = array();
