@@ -3,7 +3,7 @@
 <div class="sbox animated fadeInRight">
 <div class="sbox-title">&nbsp;{{ $pageTitle }}</div>
 <div class="sbox-content">
-<div class="col-md-8 col-md-offset-2" style="padding-top: 50px; padding-right: 50px; padding-bottom: 50px; background-color: #ffffff;">
+<div class="col-md-12 " style="padding-top: 50px;  padding-bottom: 50px; background-color: #ffffff;">
 <h3>Click on links below to download documents..</h3>
 <p style="padding-left: 60px;"><span style="color: #808080;"><a class="download" style="color: #808080;" title="Candidate Interview Form" href="/preemp/Candidate_Interview_Form.pdf" target="_blank">Candidate Interview Form</a></span></p>
 <p style="padding-left: 60px;"><span style="color: #808080;"><a class="download" style="color: #808080;" title="Consent to Background Check Form" href="/dl/preemp/Background_Check_Form.pdf" target="_blank">Consent to Background Check Form</a></span></p>

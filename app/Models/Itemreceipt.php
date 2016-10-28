@@ -16,12 +16,12 @@ class itemreceipt extends Sximo  {
 
 	public static function querySelect(  ){
 		
-		return "  SELECT orders.*,order_received.* FROM orders JOIN order_received ON order_received.order_id = orders.id ";
-	}	
+		return "  SELECT orders.* from orders";
+	}
 
 	public static function queryWhere(  ){
 		
-		return "  WHERE order_received.id IS NOT NULL ";
+		return "  WHERE orders.id IS NOT NULL ";
 	}
 
 	public static function queryGroup(){
@@ -48,7 +48,7 @@ class itemreceipt extends Sximo  {
         ), $args));
 
         if($sort == "id"){
-            $sort = "order_received.id";
+            $sort = "orders.id";
         }
         $orderConditional = ($sort != '' && $order != '') ? " ORDER BY {$sort} {$order} " : '';
 
@@ -74,7 +74,7 @@ class itemreceipt extends Sximo  {
         }
 
         if(!empty($createdFrom)){
-            $select .= " AND order_received.date_received BETWEEN '$createdFrom' AND '$createdTo'";
+            $select .= " AND orders.created_at BETWEEN '$createdFrom' AND '$createdTo'";
             $createdFlag = true;
         }
 
@@ -88,7 +88,7 @@ class itemreceipt extends Sximo  {
             }
 
         }
-
+echo $select . " {$params} " . " {$orderConditional}";
         \Log::info("Total Query : ".$select . " {$params} " . " {$orderConditional}");
         //why added group by in order
         $counter_select =\DB::select($select . " {$params} " . " {$orderConditional}");
@@ -120,28 +120,47 @@ class itemreceipt extends Sximo  {
 
     public static function addOrderReceiptItems($data,$param=null){
         $result = [];
-        //all order contents place them in relevent order
-        foreach($data as $record){
-            if(!isset($result[$record->order_id])){
-                $result[$record->order_id] = (array)$record;
-                $result[$record->order_id]['id'] = $record->order_id;
-            }
-            unset($result[$record->order_id]['order_id']);
-            unset($result[$record->order_id]['order_line_item_id']);
-            unset($result[$record->order_id]['status']);
-            $result[$record->order_id]['receipts'][] = [
-                'id' => $record->id,
-                'order_id' => $record->order_id,
-                'order_line_item_id' => $record->order_line_item_id,
-                'quantity' => $record->quantity,
-                'received_by' => $record->received_by,
-                'date_received' => $record->date_received,
-                'notes' => $record->notes,
-                'status' => $record->status
-            ];
+        $order_ids=array();
+        $where="";
+
+
+        foreach($data as $record)
+{
+    $order_ids[]=$record->id;
+}
+        if(!empty($param['createdFrom'])){
+            $where .= " AND order_received.date_received BETWEEN '".$param['createdFrom']."' AND '".$param['createdTo']."'";
+            $createdFlag = true;
         }
-        //print_r($result);
-        //exit;
+        $qry_in_string=implode(',',$order_ids);
+
+        $order_received_data=\DB::select("select *from order_received where order_id in($qry_in_string) $where");
+
+        //all order contents place them in relevent order
+        foreach($data as $test) {
+            if (!isset($result[$test->id])) {
+
+                $result[$test->id] = (array)$test;
+                $result[$test->id]['id'] = $test->id;
+            }
+            /* unset($result[$record->order_id]['order_id']);
+             unset($result[$record->order_id]['order_line_item_id']);
+             unset($result[$record->order_id]['status']);*/
+            foreach ($order_received_data as $record) {
+                if ($test->id == $record->order_id) {
+                    $result[$record->order_id]['receipts'][] = [
+                        'id' => $record->id,
+                        'order_id' => $record->order_id,
+                        'order_line_item_id' => $record->order_line_item_id,
+                        'quantity' => $record->quantity,
+                        'received_by' => $record->received_by,
+                        'date_received' => $record->date_received,
+                        'notes' => $record->notes,
+                        'status' => $record->status
+                    ];
+                }
+            }
+        }
         return array_values($result);
     }
 
