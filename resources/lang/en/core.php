@@ -47,6 +47,8 @@ return array(
 	"m_users" 			=> "Users",
 	"m_groups" 			=> "Groups",
 	"m_pagecms" 		=> "Page CMS",
+	"m_taskspage" 		=> "System Tasks",
+	"m_scheduledemails" => "Scheduled Email",
 	"m_menu" 			=> "Menu Management",
 	"m_logs" 			=> "Activity Logs",
 	"m_codebuilder" 	=> "Code Builder",
@@ -108,7 +110,8 @@ return array(
 	"sb_save"					=> "Save",
 	"sb_apply"					=> "Apply Change(s)",
 	"sb_submit"					=> "Submit",
-	"sb_cancel"					=> "Cancel",	
+	"sb_cancel"					=> "Cancel",
+    "sb_save_send"               => "Save&Send",
 	
 /* button */
 	"btn_back"						=> "Back",	
@@ -188,7 +191,8 @@ return array(
     "note_unblock"              => "Unblocked",
     "request_sent_success"      => "Request Sent Successfully",
     "request_send_fial"         => "Error in Sending Request",
-    "note_freight_paid"         => "Status Changed,Paid Successfully"
+    "note_freight_paid"         => "Status Changed,Paid Successfully",
+     "mail_sent_success"        => "Email Sent Successfully"
 
 
 );

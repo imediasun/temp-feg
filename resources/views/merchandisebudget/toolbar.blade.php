@@ -3,10 +3,9 @@
 		<div class="col-md-4">	@if($access['is_add'] ==1)
 			{!! AjaxHelpers::buttonActionCreate($pageModule,$setting) !!}
 			@endif
-            <a href="{{ URL::to( $pageModule .'/search') }}" class="btn btn-sm btn-white" onclick="SximoModal(this.href,'Advance Search'); return false;" ><i class="fa fa-search"></i> Search</a>
+            <a href="{{ URL::to( $pageModule .'/search') }}" class="btn btn-sm btn-white" onclick="SximoModal(this.href,'Advanced Search'); return false;" ><i class="fa fa-search"></i>Advanced Search</a>
         </div>
-        <div class="col-md-4">
-            <h2>Merchant Budget</h2>
+        <div class="col-md-4">            
         </div>
         <div class="col-md-4">
             <?php
@@ -24,13 +23,13 @@
 </div>
 <script>
     $("#col-config").on('change',function(){
-        reloadData('#{{ $pageModule }}','{{ $pageModule }}/data?config_id='+$("#col-config").val());
+        reloadData('#{{ $pageModule }}','{{ $pageModule }}/data?config_id='+$("#col-config").val()+ getFooterFilters());
     });
     $("#budget_year").on('change',function(){
 
         var val=$(this).val();
         if(val) {
-            reloadData('#{{ $pageModule }}','{{ $pageModule }}/data?budget_year='+val);
+            reloadData('#{{ $pageModule }}','{{ $pageModule }}/data?budget_year='+val+ getFooterFilters());
         }
     });
 $(document).ready(

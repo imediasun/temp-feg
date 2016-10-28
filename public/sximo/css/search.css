@@ -1,0 +1,104 @@
+.simpleSearchContainer .select2-container.form-control,
+.modal-dialog .select2-container.form-control {
+    padding: 0;
+    height: auto;
+}
+
+.simpleSearchContainer .select2-container-multi .select2-choices,
+.modal-dialog .select2-container-multi .select2-choices {
+    border: none;
+    background-image: none;
+    overflow: visible;    
+}
+
+.simpleSearchContainer .select2-container-multi .select2-choices:before,
+.simpleSearchContainer .select2-container-multi .select2-choices:after,
+.modal-dialog .select2-container-multi .select2-choices:before,
+.modal-dialog .select2-container-multi .select2-choices:after,
+.clearfix:before,
+.clearfix:after {
+    content: "";
+    display: table;
+} 
+
+.simpleSearchContainer .select2-container-multi .select2-choices:after,
+.modal-dialog .select2-container-multi .select2-choices:after,
+.clearfix:after {
+    clear: both;
+}
+
+.simpleSearchContainer .select2-container-multi .select2-choices,
+.modal-dialog .select2-container-multi .select2-choices,
+.clearfix {
+    zoom: 1; /* For IE 6/7 (trigger hasLayout) */
+}
+
+.simpleSearchContainer {
+    background: #fefefe;
+    padding: 10px 0;
+    border: 1px solid #ddd;
+    font-size: 12px;
+    margin-bottom: 10px;
+}
+
+.sscol-submit,
+.sscol {
+    padding-right: 10px;
+    padding-left: 10px;
+    float: left;
+    margin-top: 2px;
+    margin-bottom: 2px;
+}
+
+.sscol-submit {
+    
+}
+
+
+/* Column Header based sorting */
+.datagrid th.dgcsortable {
+    cursor: pointer;
+    position: relative;
+    padding-left: 15px;
+}
+
+.datagrid th.dgcsortable:after {
+    content: "\f0dc";
+    position: absolute;
+    left: 5px;
+    padding: 3px 2px 3px 0;  
+    color: #aaa;
+    font-family: FontAwesome;
+    font-style: normal;
+    font-weight: normal;
+    line-height: 1;
+    -webkit-font-smoothing: antialiased;    
+}
+
+.datagrid th.dgcsortable:hover:after {
+    color: #666;
+}
+
+.datagrid th.dgcsortable.dgcsorted:after {
+    color: #333;
+}
+.datagrid th.dgcsortable:hover:after,
+.datagrid th.dgcsortable.dgcsorted.dgcorderasc:after {
+/*    content: "\f160";  asc 
+    content: "\f15d"; a-z
+    content: "\f162"; 1-9 */
+    content: "\f0de"; /* up triangle */
+}
+.datagrid th.dgcsortable.dgcsorted.dgcorderasc:hover:after,
+.datagrid th.dgcsortable.dgcsorted.dgcorderdesc:after {
+/*    content: "\f161";  desc 
+    content: "\f15e"; z-a
+    content: "\f163"; 9-1 */
+    content: "\f0dd"; /*down triangle */
+}
+.datagrid th.dgcsortable.dgcsorted.dgcorderdesc:hover:after {
+/*    content: "\f160";  asc 
+    content: "\f15d"; a-z
+    content: "\f162"; 1-9 */
+    content: "\f0de"; /* up triangle */
+}

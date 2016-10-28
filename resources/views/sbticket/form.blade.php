@@ -13,17 +13,7 @@
 			<div class="col-md-12">
 						<fieldset><legend> Sbticket</legend>
 									
-				  <div class="form-group ">
-					<label for="TicketID" class=" control-label col-md-4 text-left"> 
-					{!! SiteHelpers::activeLang('TicketID', (isset($fields['TicketID']['language'])? $fields['TicketID']['language'] : array())) !!}	
-					</label>
-					<div class="col-md-6">
-					  {!! Form::text('TicketID', $row['TicketID'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
-					 </div> 
-					 <div class="col-md-2">
-					 	
-					 </div>
-				  </div> 					
+
 				  <div class="form-group  " > 
 					<label for="Subject" class=" control-label col-md-4 text-left"> 
 					{!! SiteHelpers::activeLang('Subject', (isset($fields['Subject']['language'])? $fields['Subject']['language'] : array())) !!}	
@@ -54,8 +44,9 @@
 					<div class="col-md-6">
 					  
 					<?php $Priority = explode(',',$row['Priority']);
-					$Priority_opt = array('high' => 'High' ,  'medium' => 'Medium' ,  'low' => 'Low' , ); ?>
-					<select name='Priority' rows='5' required  class='select2 '  > 
+					$Priority_opt = array('normal' => 'Normal' ,  'emergency' => 'Emergency'); ?>
+					<select name='Priority' rows='5' required  class='select2 '  >
+                        <option value="">Select Priority</option>
 						<?php 
 						foreach($Priority_opt as $key=>$val)
 						{
@@ -75,12 +66,20 @@
 					  
 					<?php $Status = explode(',',$row['Status']);
 					$Status_opt = array( 'open' => 'Open' ,  'inqueue' => 'Pending' ,  'closed' => 'Closed' , ); ?>
-					<select name='Status' rows='5'   class='select2 '  > 
-						<?php 
+					<select name='Status' rows='5'   class='select2 ' @if(!$in_edit_mode) disabled @endif  >
+
+						<?php
+                            if($in_edit_mode)
+                                {
 						foreach($Status_opt as $key=>$val)
 						{
 							echo "<option  value ='$key' ".($row['Status'] == $key ? " selected='selected' " : '' ).">$val</option>"; 						
-						}						
+						}
+                            }
+                            else{
+                                echo "<option  value ='open'>Open</option>";
+                            }
+
 						?></select> 
 					 </div> 
 					 <div class="col-md-2">
@@ -94,8 +93,9 @@
 					<div class="col-md-6">
 					  
 					<?php $issue_type = explode(',',$row['issue_type']);
-					$issue_type_opt = array( 'Support Issue' => 'Support Issue' ,  'Order Request' => 'Order Request' , ); ?>
-					<select name='issue_type' rows='5'   class='select2 '  > 
+					$issue_type_opt = array('Order Request' => 'Order Request' ,'Support Issue' => 'Support Issue' ); ?>
+					<select name='issue_type' rows='5'   class='select2 ' required >
+                        <option value="">Select Issue Type</option>
 						<?php 
 						foreach($issue_type_opt as $key=>$val)
 						{
@@ -118,7 +118,7 @@
 					 	
 					 </div>
 				  </div> 					
-				  <div class="form-group  " > 
+				  <div class="form-group  " style="display:none" >
 					<label for="Game" class=" control-label col-md-4 text-left"> 
 					{!! SiteHelpers::activeLang('Game', (isset($fields['game_id']['language'])? $fields['game_id']['language'] : array())) !!}	
 					</label>
@@ -129,24 +129,24 @@
 					 	
 					 </div>
 				  </div> 					
-				  <div class="form-group  " > 
+				  <div class="form-group  " style="display:none" >
 					<label for="Department" class=" control-label col-md-4 text-left"> 
 					{!! SiteHelpers::activeLang('Department', (isset($fields['department_id']['language'])? $fields['department_id']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  <select name='department_id' rows='5' id='department_id' class='select2 ' required  ></select> 
+					  <select name='department_id' rows='5' id='department_id' class='select2 '   ></select>
 					 </div> 
 					 <div class="col-md-2">
 					 	
 					 </div>
 				  </div> 					
 
-				  <div class="form-group  " > 
+				  <div class="form-group  " style="display:none" >
 					<label for="Assign To" class=" control-label col-md-4 text-left"> 
 					{!! SiteHelpers::activeLang('Assign To', (isset($fields['assign_to']['language'])? $fields['assign_to']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  <select name='assign_to[]' multiple rows='5' id='assign_to' class='select2 ' required  ></select>
+					  <select name='assign_to[]' multiple rows='5' id='assign_to' class='select2 '  ></select>
 					 </div>
 					 <div class="col-md-2">
 					 	
@@ -239,29 +239,35 @@
 
 @if($setting['form-method'] =='native')
 	</div>	
-</div>	
-@endif	
 
-	
-</div>	
+@endif	
+<?php
+            if(!$in_edit_mode)
+                {
+                    $row['location_id']=\Session::get('selected_location');
+                }
+
+        ?>
+
+</div>
 			 
 <script type="text/javascript">
 $(document).ready(function() { 
 	
         $("#location_id").jCombo("{{ URL::to('sbticket/comboselect?filter=location:id:location_name') }}",
-        {  selected_value : '{{ $row["location_id"] }}' });
+        {  selected_value : '{{ $row["location_id"] }}','initial-text': "Select Location" });
         
-        $("#game_id").jCombo("{{ URL::to('sbticket/comboselect?filter=game:id:game_name') }}&parent=location_id:",
-        {  parent: '#location_id', selected_value : '{{ $row["game_id"] }}' });
+      //  $("#game_id").jCombo("{{-- URL::to('sbticket/comboselect?filter=game:id:game_name') }}&limit=where:game_name:!=:''&parent=location_id:",
+        //{  parent: '#location_id', selected_value : '{{ $row["game_id"] --}}' });
         
-        $("#department_id").jCombo("{{ URL::to('sbticket/comboselect?filter=departments:id:name') }}",
-        {  selected_value : '{{ $row["department_id"] }}' });
+        //$("#department_id").jCombo("{{--URL::to('sbticket/comboselect?filter=departments:id:name') }}",
+        //{  selected_value : '{{ $row["department_id"] --}}' });
         
-        $("#debit_card").jCombo("{{ URL::to('sbticket/comboselect?filter=debit_type:company:company') }}",
-        {  selected_value : '{{ $row["debit_card"] }}' });
+     //   $("#debit_card").jCombo("{{-- URL::to('sbticket/comboselect?filter=debit_type:company:company') }}",
+        {  selected_value : '{{ $row["debit_card"] }}','initial-text': "Select Debit Type" --});
         
-        $("#assign_to").jCombo("{{ URL::to('sbticket/comboselect?filter=employees:id:first_name|last_name') }}",
-        {  selected_value : '{{ $row["assign_to"] }}' });
+      //  $("#assign_to").jCombo("{{-- URL::to('sbticket/comboselect?filter=employees:id:first_name|last_name') }}",
+        //{  selected_value : '{{ $row["assign_to"] --}}' });
 
 
 	$('#icon').click(function(){

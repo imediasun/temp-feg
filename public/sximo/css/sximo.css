@@ -984,15 +984,7 @@ label { font-size:12px;}
   font-family: 'Lato', sans-serif !important;
   border-radius:0px !important; -moz-border-radius:0px !important;
 }
-.modal-dialog .select2-container.form-control {
-    padding: 0;
-    height: auto;
-}
-.modal-dialog .select2-container-multi .select2-choices {
-    border: none;
-    background-image: none;
-    overflow: visible;    
-}
+
 .input-group-sm > .form-control, .input-group-sm > .input-group-addon, .input-group-sm > .input-group-btn > .btn { font-size: 11px !important;   border-radius:0px !important; -moz-border-radius:0px !important;}
 .form-control:focus {
   border-color: #1ab394;
@@ -1686,7 +1678,7 @@ code {
   margin-bottom: 10px;
 }
 .m-b {
-  margin-bottom: 15px;
+  margin-bottom: 10px;
 }
 .m-b-md {
   margin-bottom: 20px;
@@ -2050,7 +2042,7 @@ box-shadow:1px 1px 0 rgba(255, 255, 255, 0.2) inset;
 .sbox-content {
   background-color: #f9f9f9;
   color: inherit;
-  padding: 15px 20px 20px 20px;
+  padding: 10px 20px 7px 20px;
   border-color: #ddd;
   border-image: none;
   border-style: solid solid none;
@@ -2077,7 +2069,7 @@ fieldset { margin:10px 0;}
 fieldset legend { font-size:16px; padding:10px 0; font-weight:500;}
 .table-responsive { background:#fff;  border:solid 1px #ddd; overflow-x:auto; padding-bottom:15px;}
 .toolbar { margin:10px 0; clear:both; text-align:right;}
-.toolbar-line { margin:15px 0; clear:both; }
+.toolbar-line { margin:6px 0; clear:both; }
 .page-content-wrapper { padding:0 15px;}
 .ribon-sximo { margin:20px 0;}
 
@@ -2463,6 +2455,7 @@ table#itemTable input[type="text"]{
 table.table-striped tr th
 {
     cursor: pointer;
+
 }
 
 .bootstrap-datetimepicker-widget tr:hover {
@@ -2485,4 +2478,26 @@ table.table-striped tr th
 .modal-dialog .select2-container-multi .select2-choices,
 .clearfix {
     zoom: 1; /* For IE 6/7 (trigger hasLayout) */
+}
+#col-config
+{
+    position:relative !important;
+    top: 3px;
+}
+
+#sidemenu.nav .nav > li > a i {
+  margin-right: 0;
+}
+#sidemenu.nav .nav li > a {
+  margin-left: 6px;
+}
+
+.left-align {
+    text-align: left !important;
+}
+.right-align {
+    text-align: right !important;    
+}
+.center-align {
+    text-align: center !important;    
 }

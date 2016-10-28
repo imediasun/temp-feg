@@ -4,7 +4,7 @@ use App\Http\Controllers\controller;
 use App\Models\Merchandisebudget;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
-use Validator, Input, Redirect ; 
+use Validator, Input, Redirect;
 
 class MerchandisebudgetController extends Controller
 {
@@ -53,10 +53,10 @@ class MerchandisebudgetController extends Controller
             $config_id = 0;
         }
         $this->data['config_id'] = $config_id;
+        \Session::put('config_id', $config_id);
         $config = $this->model->getModuleConfig($module_id, $config_id);
         if (!empty($config)) {
             $this->data['config'] = \SiteHelpers::CF_decode_json($config[0]->config);
-            \Session::put('config_id', $config_id);
         }
         $sort = (!is_null($request->input('sort')) ? $request->input('sort') : 'location_id');
         $order = (!is_null($request->input('order')) ? $request->input('order') : $this->info['setting']['ordertype']);
@@ -82,16 +82,16 @@ class MerchandisebudgetController extends Controller
         $results = $this->model->getRows($params, $budget_year);
         // Build pagination setting
         $page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;
-		//$pagination = new Paginator($results['rows'], $results['total'], $params['limit']);
-        $pagination = new Paginator($results['rows'], $results['total'], 
-            (isset($params['limit']) && $params['limit'] > 0  ? $params['limit'] : 
-				($results['total'] > 0 ? $results['total'] : '1')));        
+        //$pagination = new Paginator($results['rows'], $results['total'], $params['limit']);
+        $pagination = new Paginator($results['rows'], $results['total'],
+            (isset($params['limit']) && $params['limit'] > 0 ? $params['limit'] :
+                ($results['total'] > 0 ? $results['total'] : '1')));
         $pagination->setPath('merchandisebudget/data');
         $this->data['param'] = $params;
-        $this->data['topMessage']	= @$results['topMessage'];
-		$this->data['message']          = @$results['message'];
-		$this->data['bottomMessage']	= @$results['bottomMessage'];
-        
+        $this->data['topMessage'] = @$results['topMessage'];
+        $this->data['message'] = @$results['message'];
+        $this->data['bottomMessage'] = @$results['bottomMessage'];
+
         $this->data['rowData'] = $results['rows'];
         // Build Pagination
         $this->data['pagination'] = $pagination;
@@ -251,46 +251,42 @@ class MerchandisebudgetController extends Controller
         }
 
     }
-    function buildSearch( )
-    {
-        $keywords = ''; $fields = '';	$param ='';
-        $allowsearch = $this->info['config']['forms'];
-        foreach($allowsearch as $as) $arr[$as['field']] = $as ;
-        if($_GET['search'] !='')
-        {
-            $type = explode("|",$_GET['search'] );
-            if(count($type) >= 1)
-            {
-                foreach($type as $t)
-                {
-                    $keys = explode(":",$t);
 
-                    if(in_array($keys[0],array_keys($arr))):
-                        if($arr[$keys[0]]['type'] == 'select' || $arr[$keys[0]]['type'] == 'radio' )
-                        {
-                             if($keys[0]=="budget_date") {
-                                 \Session::put('budget_year',$keys[2]);
-                                 $param .= " AND " . "YEAR(". $arr[$keys[0]]['alias'] .".". $keys[0] . ") " . self::searchOperation($keys[1]) . " '" . $keys[2] . "' ";
-                             }
-                            else
-                            {
+    function buildSearch()
+    {
+        $keywords = '';
+        $fields = '';
+        $param = '';
+        $allowsearch = $this->info['config']['forms'];
+        foreach ($allowsearch as $as) $arr[$as['field']] = $as;
+        if ($_GET['search'] != '') {
+            $type = explode("|", $_GET['search']);
+            if (count($type) >= 1) {
+                foreach ($type as $t) {
+                    $keys = explode(":", $t);
+
+                    if (in_array($keys[0], array_keys($arr))):
+                        if ($arr[$keys[0]]['type'] == 'select' || $arr[$keys[0]]['type'] == 'radio') {
+                            if ($keys[0] == "budget_date") {
+                                \Session::put('budget_year', $keys[2]);
+                                $param .= " AND " . "YEAR(" . $arr[$keys[0]]['alias'] . "." . $keys[0] . ") " . self::searchOperation($keys[1]) . " '" . $keys[2] . "' ";
+                            } else {
                                 $param .= " AND " . $arr[$keys[0]]['alias'] . "." . $keys[0] . " " . self::searchOperation($keys[1]) . " '" . $keys[2] . "' ";
                             }
                         } else {
                             $operate = self::searchOperation($keys[1]);
-                            if($operate == 'like')
-                            {
-                                $param .= " AND ".$arr[$keys[0]]['alias'].".".$keys[0]." LIKE '%".$keys[2]."%%' ";
-                            } else if( $operate =='is_null') {
-                                $param .= " AND ".$arr[$keys[0]]['alias'].".".$keys[0]." IS NULL ";
+                            if ($operate == 'like') {
+                                $param .= " AND " . $arr[$keys[0]]['alias'] . "." . $keys[0] . " LIKE '%" . $keys[2] . "%%' ";
+                            } else if ($operate == 'is_null') {
+                                $param .= " AND " . $arr[$keys[0]]['alias'] . "." . $keys[0] . " IS NULL ";
 
-                            } else if( $operate =='not_null') {
-                                $param .= " AND ".$arr[$keys[0]]['alias'].".".$keys[0]." IS NOT NULL ";
+                            } else if ($operate == 'not_null') {
+                                $param .= " AND " . $arr[$keys[0]]['alias'] . "." . $keys[0] . " IS NOT NULL ";
 
-                            } else if( $operate =='between') {
-                                $param .= " AND (".$arr[$keys[0]]['alias'].".".$keys[0]." BETWEEN '".$keys[2]."' AND '".$keys[3]."' ) ";
+                            } else if ($operate == 'between') {
+                                $param .= " AND (" . $arr[$keys[0]]['alias'] . "." . $keys[0] . " BETWEEN '" . $keys[2] . "' AND '" . $keys[3] . "' ) ";
                             } else {
-                                $param .= " AND ".$arr[$keys[0]]['alias'].".".$keys[0]." ".self::searchOperation($keys[1])." '".$keys[2]."' ";
+                                $param .= " AND " . $arr[$keys[0]]['alias'] . "." . $keys[0] . " " . self::searchOperation($keys[1]) . " '" . $keys[2] . "' ";
                             }
                         }
                     endif;

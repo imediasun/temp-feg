@@ -17,11 +17,11 @@ class gameservicehistory extends Sximo
 
     public static function querySelect()
     {
-
-        return "  SELECT id,game_id,problem,down_user_id,solution,up_user_id,date_up,
-                  CONCAT(IF(date_down IS NULL,'',date_down),'<br/>',IF(date_up IS NULL,'',date_up)) AS date_down,
-                  DATEDIFF(date_up,date_down) as days_down
-                  FROM game_service_history  ";
+        //CONCAT(IF(date_down IS NULL,'',date_down),'<br/>',IF(date_up IS NULL,'',date_up)) AS
+        return "  SELECT game_service_history.id,game_service_history.game_id,game.game_name,game_service_history.problem,game_service_history.down_user_id,game_service_history.solution,game_service_history.up_user_id,game_service_history.date_up,
+                   game_service_history.date_down,
+                  DATEDIFF(game_service_history.date_up,game_service_history.date_down) as days_down
+                  FROM game_service_history left outer join game on game_service_history.game_id=game.id ";
     }
 
     public static function queryWhere()
@@ -33,23 +33,6 @@ class gameservicehistory extends Sximo
     public static function queryGroup()
     {
         return "  ";
-    }
-
-    public static function getSearchFilters()
-    {
-        $finalFilter = array();
-        if (isset($_GET['search'])) {
-            $filters_raw = trim($_GET['search'], "|");
-            $filters = explode("|", $filters_raw);
-
-            foreach ($filters as $filter) {
-                $columnFilter = explode(":", $filter);
-                if (isset($columnFilter) && isset($columnFilter[0]) && isset($columnFilter[2])) {
-                    $finalFilter[$columnFilter[0]] = $columnFilter[2];
-                }
-            }
-        }
-        return $finalFilter;
     }
 
     function getGameNames()

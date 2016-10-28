@@ -11,7 +11,22 @@
 		</div>
 	</div>
 	<div class="sbox-content">
-
+        @if($setting['usesimplesearch']!='false')
+            <?php $simpleSearchForm = SiteHelpers::configureSimpleSearchForm($tableForm); ?>
+            @if(!empty($simpleSearchForm))
+                <div class="simpleSearchContainer clearfix">
+                    @foreach ($simpleSearchForm as $t)
+                        <div class="sscol {{ $t['widthClass'] }}" style="{{ $t['widthStyle'] }}">
+                            {!! SiteHelpers::activeLang($t['label'],(isset($t['language'])? $t['language'] : array())) !!}
+                            {!! SiteHelpers::transForm($t['field'] , $simpleSearchForm) !!}
+                        </div>
+                    @endforeach
+                    <div class="sscol-submit"><br/>
+                        <button type="button" name="search" class="doSimpleSearch btn btn-sm btn-primary"> Search </button>
+                    </div>
+                </div>
+            @endif
+        @endif
         @include( $pageModule.'/toolbar',['config_id'=>$config_id,'colconfigs' => SiteHelpers::getRequiredConfigs($module_id)])
 
 	 <?php echo Form::open(array('url'=>'gameservicehistory/delete/', 'class'=>'form-horizontal' ,'id' =>'SximoTable'  ,'data-parsley-validate'=>'' )) ;?>
@@ -20,24 +35,45 @@
     <h5 class="topMessage">{{ $topMessage }}</h5>
     @endif
 	@if(count($rowData)>=1)
-    <table class="table table-striped  " id="{{ $pageModule }}Table">
+    <table class="table table-striped  datagrid" id="{{ $pageModule }}Table">
         <thead>
-			<tr>
-				<th width="50"> No </th>
-                @if($setting['disableactioncheckbox']=='false')
-				<th width="50"> <input type="checkbox" class="checkall" /></th>
-                @endif
-				@if($setting['view-method']=='expand') <th>  </th> @endif
-				<?php foreach ($tableGrid as $t) :
-					if($t['view'] =='1'):
-						$limited = isset($t['limited']) ? $t['limited'] :'';
-						if(SiteHelpers::filterColumn($limited ))
-						{
-							echo '<th align="'.$t['align'].'" width="'.$t['width'].'">'.\SiteHelpers::activeLang($t['label'],(isset($t['language'])? $t['language'] : array())).'</th>';
+        <tr>
 
-                }
-					endif;
-				endforeach; ?>
+            @if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
+                <th width="35"> No </th>
+            @endif
+
+            @if($setting['disableactioncheckbox']=='false')
+                <th width="30"> <input type="checkbox" class="checkall" /></th>
+            @endif
+            @if($setting['view-method']=='expand') <th>  </th> @endif
+            <?php foreach ($tableGrid as $t) :
+                if($t['view'] =='1'):
+                    $limited = isset($t['limited']) ? $t['limited'] :'';
+                    if(SiteHelpers::filterColumn($limited ))
+                    {
+                        $sortBy = $param['sort'];
+                        $orderBy = strtolower($param['order']);
+                        $colField = $t['field'];
+                        $colIsSortable = $t['sortable'] == '1';
+                        $colIsSorted = $colIsSortable && $colField == $sortBy;
+                        $colClass = $colIsSortable ? ' dgcsortable' : '';
+                        $colClass .= $colIsSorted ? " dgcsorted dgcorder$orderBy" : '';
+                        $th = '<th'.
+                                ' class="'.$colClass.'"'.
+                                ' data-field="'.$colField.'"'.
+                                ' data-sortable="'.$colIsSortable.'"'.
+                                ' data-sorted="'.($colIsSorted?1:0).'"'.
+                                ' data-sortedOrder="'.($colIsSorted?$orderBy:'').'"'.
+                                ' align="'.$t['align'].'"'.
+                                ' width="'.$t['width'].'"';
+                        $th .= '>';
+                        $th .= \SiteHelpers::activeLang($t['label'],(isset($t['language'])? $t['language'] : array()));
+                        $th .= '</th>';
+                        echo $th;
+                    }
+                endif;
+            endforeach; ?>
                 <th width="100"># Days Down</th>
                 @if($setting['disablerowactions']=='false')
 				<th width="70"><?php echo Lang::get('core.btn_action') ;?></th>
@@ -71,6 +107,7 @@
 
            		<?php foreach ($rowData as $row) :
            			  $id = $row->id;
+
            		?>
                 <tr class="editable" id="form-{{ $row->id }}">
 					<td class="number"> <?php echo ++$i;?>  </td>
@@ -81,23 +118,25 @@
 					<td><a href="javascript:void(0)" class="expandable" rel="#row-{{ $row->id }}" data-url="{{ url('gameservicehistory/show/'.$id) }}"><i class="fa fa-plus " ></i></a></td>
 					@endif
 					 <?php foreach ($tableGrid as $field) :
+
 					 	if($field['view'] =='1') :
 							$conn = (isset($field['conn']) ? $field['conn'] : array() );
 
 
 							$value = AjaxHelpers::gridFormater($row->$field['field'], $row , $field['attribute'],$conn);
-						 	?>
+
+                    ?>
 						 	<?php $limited = isset($field['limited']) ? $field['limited'] :''; ?>
 						 	@if(SiteHelpers::filterColumn($limited ))
 								 <td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}" data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
-									 @if($field['field'] == 'date_down')
-
+									 @if($field['field'] == 'date_up')
 										 {!! date("m/d/Y", strtotime($value)) !!}
 
+										 @elseif($field['field'] == 'date_down')
+
+											 {!! date("m/d/Y", strtotime($value)) !!}
 									 @else
-
 									 {!! $value !!}
-
 										 @endif
 								 </td>
 							@endif
@@ -153,6 +192,9 @@
 <script>
 $(document).ready(function() {
 	$('.tips').tooltip();
+
+	$('.date').datepicker({format:'mm/dd/yyyy',autoclose:true})
+	$('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});
 	$('input[type="checkbox"],input[type="radio"]').iCheck({
 		checkboxClass: 'icheckbox_square-green',
 		radioClass: 'iradio_square-green',
@@ -174,10 +216,29 @@ $(document).ready(function() {
 			echo AjaxHelpers::htmlExpandGrid();
 		endif;
 	 ?>
+    var simpleSearch = $('.simpleSearchContainer');
+    if (simpleSearch.length) {
+        initiateSearchFormFields(simpleSearch);
+        simpleSearch.find('.doSimpleSearch').click(function(event){
+            performSimpleSearch.call($(this), {
+                moduleID: '#{{ $pageModule }}',
+                url: "{{ $pageUrl }}",
+                event: event,
+                container: simpleSearch
+            });
+        });
+    }
+
+    initDataGrid('{{ $pageModule }}', '{{ $pageUrl }}');
 });
 </script>
 <style>
-.table th.right { text-align:right !important;}
-.table th.center { text-align:center !important;}
+    .table th.right {
+        text-align: right !important;
+    }
+
+    .table th.center {
+        text-align: center !important;
+    }
 
 </style>

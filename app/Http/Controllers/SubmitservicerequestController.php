@@ -274,19 +274,17 @@ class SubmitservicerequestController extends Controller
 //        
 //    });
 
-           
 
-           if(empty($result)) {
-               return response()->json(array(
-                   'status' => 'success',
-                   'message' => \Lang::get('core.note_success')
-               ));
-           }
-            else{
-                  return response()->json(array(
-                'message' => $message,
-                'status' => 'error'
-            ));
+            if (empty($result)) {
+                return response()->json(array(
+                    'status' => 'success',
+                    'message' => \Lang::get('core.note_success')
+                ));
+            } else {
+                return response()->json(array(
+                    'message' => $message,
+                    'status' => 'error'
+                ));
             }
 
         } else {

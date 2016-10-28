@@ -1,0 +1,190 @@
+/* Tasks module css */
+
+.no-lr-padding {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+.no-l-padding {
+    padding-left: 0 !important;
+}
+.no-r-padding {
+    padding-right: 0 !important;
+}
+
+
+.tasksContainer #tasksGrid .panel {
+    background: #fff !important;
+    border-color: #ddd !important;
+}
+.tasksContainer #tasksGrid .panel-heading {
+    background-color: #fcfcfc !important;
+    font-size: 16px;
+}
+.tasksContainer #tasksGrid .panel-body {
+    background-color: #fff !important;
+}
+.tasksContainer #tasksGrid .panel-footer {
+    background-color: #fafafa !important;
+}
+.tasksContainer #tasksGrid .panel.panel-active {
+    background-color: #fff !important;
+    border-color: #b3ce9e  !important;
+}
+
+.tasksContainer #tasksGrid .panel-active .panel-heading {
+    color: #3c763d !important;
+    background-color: #dff0d8 !important;
+    border-color: #b3ce9e  !important;
+}
+.tasksContainer #tasksGrid .panel.panel-inactive {
+    background-color: #f1f1f1 !important;
+    border-color: #d4c4c4  !important;
+}
+.tasksContainer #tasksGrid .panel-inactive .panel-heading {
+    color: #8e7878 !important;
+    background-color: #e8e1e1 !important;
+    border-color: #d4c4c4  !important;    
+}
+
+
+.tasksContainer #tasksGrid .formContent input[type=text] {
+    padding: 2px 3px 3px 3px;    
+}
+.tasksContainer #tasksGrid .taskName,
+.tasksContainer #tasksGrid .taskAction {
+    width: 40%
+}
+
+.tasksContainer #tasksGrid .bootstrap-switch-isActiveToggleForm {    
+    margin-right: 10px;
+}
+.tasksContainer #tasksGrid .bootstrap-switch-isActiveToggleForm .bootstrap-switch-handle-off {    
+    padding-left: 5px; 
+    padding-right: 5px;
+}
+.tasksContainer #tasksGrid .panel-heading .taskNameText {
+    margin: 4px 0;
+}
+.tasksContainer #tasksGrid .panel-heading .label {
+    font-size: 13px;
+    opacity: .6;
+}
+.tasksContainer #tasksGrid .panel-body {
+    padding: 0;
+}
+.tasksContainer #tasksGrid .panel-body > div > div {
+    margin: 15px 0;
+}
+
+.tasksContainer #tasksGrid .tasksContent .taskPanel {
+    position: relative;
+}
+
+.tasksContainer #tasksGrid .cronscheduleinputs input[type=text] {
+    margin: 2px 3px;
+    width: 15%;
+}
+.tasksContainer #tasksGrid .specialRunBeforeAfter select {
+    padding: 5px;
+    margin: 2px 5px;
+}
+
+.tasksContainer #tasksGrid  .taskConfig [name=repeat_count] {
+    width: 35px;
+    margin-left: 2px;
+}
+
+.tasksContainer #tasksGrid .shade {
+    padding: 15px;
+    background: #fafafa;
+}
+.tasksContainer #tasksGrid .shade2 {
+    padding: 15px;
+    background: #f7f7f9;
+}
+
+.tasksContainer #tasksGrid .taskConfig {
+    margin-top: 30px;
+}
+
+.tasksContainer #tasksGrid .schedulesContainer {
+    background: #fff;
+    border-radius: 3px;
+    padding: 10px;
+    position: relative;
+}
+
+.tasksContainer #tasksGrid .schedulesContainer table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.tasksContainer #tasksGrid .schedulesContainer thead th {
+    font-weight: bold;
+    padding: 4px;
+    background: #f8f8f8;
+    border: 1px solid #ddd;
+}
+
+.tasksContainer #tasksGrid .schedulesContainer td {
+    padding: 4px;    
+    border: 1px solid #ddd;
+}
+
+
+.tasksContainer #tasksGrid .schedulesContainer tr.inactive {
+    color: #ccc;    
+}
+.tasksContainer #tasksGrid .schedulesContainer tr.active {
+    color: #333;
+    background-color: #FFF;
+}
+.tasksContainer #tasksGrid .schedulesContainer tr.deactivated {
+    color: #eee;
+    text-decoration: line-through;
+    background-color: #fcfcfc;
+}
+.tasksContainer #tasksGrid .schedulesContainer tr.scheduled {
+    background-color: #fbf7ff;
+}
+.tasksContainer #tasksGrid .schedulesContainer tr.running {
+    color: #0e800e;
+    background-color: #fefff4;
+}
+.tasksContainer #tasksGrid .schedulesContainer tr.completed {
+    background-color: #f2fff5;
+}
+.tasksContainer #tasksGrid .schedulesContainer tr.error {
+    color: #880000;
+    background-color: #fff8f8;
+}
+
+.tasksContainer #tasksGrid .schedulesContainer tr.manual {
+    /*font-weight: bold;*/
+    font-style: italic;
+}
+
+.tasksContainer #tasksGrid .tasksContent .taskPanel .popupRunTaskFormCotainer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    min-height: 100%;
+    background-color: rgba(0,0,0,.6);
+    z-index: 9;
+    display: none;
+    color: #ccc;
+    padding-bottom:10px;
+}
+.tasksContainer #tasksGrid .tasksContent .taskPanel .popupRunTaskFormCotainer input {
+    color: #333;
+}
+
+
+@media (min-width: 1200px) {
+    .tasksContainer #tasksGrid .taskConfig {
+        margin-top: 0;
+    }
+}
+
+/* Tasks module css end */

@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="page-content row">
+<div class="page-content row {{ $pageModule }}Container">
   <!-- Begin Header & Breadcrumb -->
     <div class="page-header">
       <div class="page-title">

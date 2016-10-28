@@ -39,25 +39,30 @@ class merchandiseexpensesreport extends Sximo  {
         $bottomMessage = "";
         $message = "";                
 
-		$offset = ($page-1) * $limit ;
-		$limitConditional = ($page !=0 && $limit !=0) ? " LIMIT  $offset , $limit" : '';
-
-        $filters = ReportHelpers::getSearchFilters(array(
+        $filters = self::getSearchFilters(array(
             'date_start' => '', 'date_end' => '', 'debit_type_id' => '', 'location_id' => ''
         ));        
         extract($filters);
-        ReportHelpers::dateRangeFix($date_start, $date_end);        
+        ReportHelpers::dateRangeFix($date_start, $date_end); 
+        
+        $total = ReportHelpers::getMerchandizeExpensesCount($date_start, $date_end, $location_id, $debit_type_id);
+		$offset = ($page-1) * $limit ;
+        if ($offset >= $total) {
+            $page = ceil($total/$limit);
+            $offset = ($page-1) * $limit ;
+        }         
+		$limitConditional = ($page !=0 && $limit !=0) ? " LIMIT  $offset , $limit" : '';
+        
         $mainQuery = ReportHelpers::getMerchandizeExpensesQuery($date_start, $date_end, $location_id, $debit_type_id, $sort, $order);
         $mainQuery .= $limitConditional;
-        $total = ReportHelpers::getMerchandizeExpensesCount($date_start, $date_end, $location_id, $debit_type_id);
         $rawRows = \DB::select($mainQuery);
         $rows = self::processRows($rawRows);            
         
         if ($total == 0) {
-            $message = "No data found. Try searhing with other filters.";
+            $message = "To view the contents of this report, please select a date range and other search filter.";
 	}
         $humanDateRange = ReportHelpers::humanifyDateRangeMessage($date_start, $date_end, "F Y");
-        $topMessage = "Merchandize Expesnes $humanDateRange";
+        $topMessage = "Merchandise Expenses $humanDateRange";
         
 		$results = array(
             'topMessage' => $topMessage,

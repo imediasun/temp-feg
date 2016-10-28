@@ -47,7 +47,6 @@ class ShopfegrequeststoreController extends Controller
     {
 
 
-
         $module_id = \DB::table('tb_module')->where('module_name', '=', 'shopfegrequeststore')->pluck('module_id');
         $this->data['module_id'] = $module_id;
         if (Input::has('config_id')) {
@@ -83,6 +82,7 @@ class ShopfegrequeststoreController extends Controller
         $type = $request->get('type');
         $this->data['type'] = $type;
         $active_inactive = $request->get('active_inactive');
+        $this->data['active_inactive'] = $active_inactive;
         \Session::put('active_inactive', $active_inactive);
         $order_type = $request->get('order_type');
         $this->data['order_type'] = $order_type;
@@ -95,12 +95,10 @@ class ShopfegrequeststoreController extends Controller
         $page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;
 
 
-
-        if(count($results['rows']) == $results['total']){
+        if (count($results['rows']) == $results['total']) {
             $params['limit'] = $results['total'];
         }
-        if($results['total'] === 0)
-        {
+        if ($results['total'] === 0) {
             $params['limit'] = 1;
         }
 
@@ -264,16 +262,18 @@ class ShopfegrequeststoreController extends Controller
             redirect('fegsys/home', 'refresh');
         } else {
             $this->data['recent_products'] = $this->model->getRecentlyAddedProduct();
-            return view('shopfegrequeststore.recentlyAddedProducts',$this->data);
+            return view('shopfegrequeststore.recentlyAddedProducts', $this->data);
         }
     }
+
     function getNewGraphicRequest()
     {
-      return view('shopfegrequeststore.newgraphicrequest',$this->data);
+        return view('shopfegrequeststore.newgraphicrequest', $this->data);
     }
+
     function postNewgraphic(Request $request)
     {
-        $rules['img']='mimes:jpeg,gif,png';
+        $rules['img'] = 'mimes:jpeg,gif,png';
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
             $now = date('Y-m-d');
@@ -288,34 +288,31 @@ class ShopfegrequeststoreController extends Controller
             $statusId = 1;
             $now = date('Y-m-d');
             $filesnames = $request->get('myInputs');
-            $filesnames=implode(',',$filesnames);
-            $data = array('location_id' => $locationId, 'request_user_id' => \Session::get('uid'), 'request_date' => $now, 'need_by_date' => $date_needed, 'description' => $game_info . ' - ' . $graphics_description, 'qty' => $qty, 'status_id' => $statusId,'img'=>$filesnames);
+            $filesnames = implode(',', $filesnames);
+            $data = array('location_id' => $locationId, 'request_user_id' => \Session::get('uid'), 'request_date' => $now, 'need_by_date' => $date_needed, 'description' => $game_info . ' - ' . $graphics_description, 'qty' => $qty, 'status_id' => $statusId, 'img' => $filesnames);
             $last_insert_id = $this->model->newGraphicRequest($data);
 
-        return response()->json(array(
+            return response()->json(array(
                 'status' => 'success',
                 'message' => \Lang::get('core.request_sent_success')
             ));
 
-        }
-        else{
+        } else {
 
         }
 
-        }
-    function getPopupCart($productId = null,$qty=0)
+    }
+
+    function getPopupCart($productId = null, $qty = 0)
     {
         $current_total_cart = \Session::get('total_cart');
         \Session::put('productId', $productId);
-        $cartData = $this->addToCartModel->popupCartData($productId,null,$qty);
+        $cartData = $this->addToCartModel->popupCartData($productId, null, $qty);
         $total_cart = $this->addToCartModel->totallyRecordInCart();
-        if($current_total_cart == $total_cart[0]->total)
-        {
+        if ($current_total_cart == $total_cart[0]->total) {
 
             $message = \Lang::get('core.already_add_to_cart');
-        }
-        else
-        {
+        } else {
             $message = \Lang::get('core.add_to_cart');
         }
         \Session::put('total_cart', $total_cart[0]->total);
@@ -327,13 +324,14 @@ class ShopfegrequeststoreController extends Controller
         //return redirect('addtocart')->with(array('productId'=>$productId));
 
     }
+
     public function postUploadfiles()
     {
-$last_id=\DB::select("select max(id) as id from new_graphics_request");
+        $last_id = \DB::select("select max(id) as id from new_graphics_request");
 
         $last_id = $last_id[0]->id + 1;
         $input = \Input::all();
-        $rules['file']='mimes:jpeg,gif,png';
+        $rules['file'] = 'mimes:jpeg,gif,png';
 
         $validation = Validator::make($input, $rules);
 
@@ -341,14 +339,14 @@ $last_id=\DB::select("select max(id) as id from new_graphics_request");
             return \Response::json(array('error'));
         }
 
-        $destinationPath = public_path().'/uploads/newGraphic'; // upload path
+        $destinationPath = public_path() . '/uploads/newGraphic'; // upload path
 
         $extension = \Input::file('file')->getClientOriginalExtension(); // getting file extension
-        $fileName = $last_id."_" .rand(111, 999) . '.' . $extension; // renameing image
+        $fileName = $last_id . "_" . rand(111, 999) . '.' . $extension; // renameing image
         $upload_success = \Input::file('file')->move($destinationPath, $fileName); // uploading file to given path
 
         if ($upload_success) {
-          return $fileName;
+            return $fileName;
         }
     }
 }

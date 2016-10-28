@@ -144,6 +144,7 @@
  {!! Form::close() !!}
 </div> </div></div>
 
+</div>
 <script>
 $(document).ready(function() {
 	$('#saveLayout').click(function(){

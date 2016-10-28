@@ -12,7 +12,13 @@
     <label for="pre-selected-options" class="label-control">Columns</label><br/>
     <select name="cols[]"  id='keep-order' multiple='multiple'>
         @foreach($allColumns as $columns)
-            <option value="{{ $columns['field'] }}"> {{ $columns['label'] }} </option>
+            @if($pageModule == 'throwreport' || $pageModule == 'throwreportinstantwin' || $pageModule == 'throwreportpayout')
+                @if($columns['view'] == 1 )
+                    <option value="{{ $columns['field'] }}"> {{ $columns['label'] }} </option>
+                @endif
+            @else
+                <option value="{{ $columns['field'] }}"> {{ $columns['label'] }} </option>
+            @endif
         @endforeach
     </select>
         <input type="hidden" name="multiple_value" id="multiple_value"  />

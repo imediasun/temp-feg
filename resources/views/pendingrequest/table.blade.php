@@ -11,13 +11,28 @@
 		</div>
 	</div>
 	<div class="sbox-content">
-
+        @if($setting['usesimplesearch']!='false')
+            <?php $simpleSearchForm = SiteHelpers::configureSimpleSearchForm($tableForm); ?>
+            @if(!empty($simpleSearchForm))
+                <div class="simpleSearchContainer clearfix">
+                    @foreach ($simpleSearchForm as $t)
+                        <div class="sscol {{ $t['widthClass'] }}" style="{{ $t['widthStyle'] }}">
+                            {!! SiteHelpers::activeLang($t['label'],(isset($t['language'])? $t['language'] : array())) !!}
+                            {!! SiteHelpers::transForm($t['field'] , $simpleSearchForm) !!}
+                        </div>
+                    @endforeach
+                    <div class="sscol-submit"><br/>
+                        <button type="button" name="search" class="doSimpleSearch btn btn-sm btn-primary"> Search </button>
+                    </div>
+                </div>
+            @endif
+        @endif
         @include( $pageModule.'/toolbar',['colconfigs' => SiteHelpers::getRequiredConfigs($module_id)])
 
 	 <?php echo Form::open(array('url'=>'pendingrequest/delete/', 'class'=>'form-horizontal' ,'id' =>'SximoTable'  ,'data-parsley-validate'=>'' )) ;?>
 <div class="table-responsive">	
 	@if(count($rowData)>=1)
-    <table class="table table-striped  " id="{{ $pageModule }}Table">
+    <table class="table table-striped datagrid " id="{{ $pageModule }}Table">
         <thead>
 			<tr>
 				<th width="50"> No </th>
@@ -35,8 +50,25 @@
 						$limited = isset($t['limited']) ? $t['limited'] :'';
 						if(SiteHelpers::filterColumn($limited ))
 						{
-							echo '<th align="'.$t['align'].'" width="'.$t['width'].'">'.\SiteHelpers::activeLang($t['label'],(isset($t['language'])? $t['language'] : array())).'</th>';
-						} 
+                            $sortBy = $param['sort'];
+                            $orderBy = strtolower($param['order']);
+                            $colField = $t['field'];
+                            $colIsSortable = $t['sortable'] == '1';
+                            $colIsSorted = $colIsSortable && $colField == $sortBy;
+                            $colClass = $colIsSortable ? ' dgcsortable' : '';
+                            $colClass .= $colIsSorted ? " dgcsorted dgcorder$orderBy" : '';
+                            $th = '<th'.
+                                    ' class="'.$colClass.'"'.
+                                    ' data-field="'.$colField.'"'.
+                                    ' data-sortable="'.$colIsSortable.'"'.
+                                    ' data-sorted="'.($colIsSorted?1:0).'"'.
+                                    ' data-sortedOrder="'.($colIsSorted?$orderBy:'').'"'.
+                                    ' align="'.$t['align'].'"'.
+                                    ' width="'.$t['width'].'"';
+                            $th .= '>';
+                            $th .= \SiteHelpers::activeLang($t['label'],(isset($t['language'])? $t['language'] : array()));
+                            $th .= '</th>';
+                            echo $th;	}
 					endif;
 				$col++;
 				endforeach; ?>
@@ -90,7 +122,13 @@
 								<?php $limited = isset($field['limited']) ? $field['limited'] :''; ?>
 								@if(SiteHelpers::filterColumn($limited ))
 									 <td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}" data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
-										{!! $value !!}
+										 @if($field['field'] == 'date_processed')
+
+											 {!! date("m/d/Y", strtotime($value)) !!}
+
+										 @else
+											 {!! $value !!}
+										 @endif
 									 </td>
 								@endif
 						 <?php
@@ -155,11 +193,31 @@ $(document).ready(function() {
 			echo AjaxHelpers::htmlExpandGrid();
 		endif;
 	 ?>	
-});		
-</script>	
+
+var simpleSearch = $('.simpleSearchContainer');
+if (simpleSearch.length) {
+    initiateSearchFormFields(simpleSearch);
+    simpleSearch.find('.doSimpleSearch').click(function(event){
+        performSimpleSearch.call($(this), {
+            moduleID: '#{{ $pageModule }}',
+            url: "{{ $pageUrl }}",
+            event: event,
+            container: simpleSearch
+        });
+    });
+}
+
+initDataGrid('{{ $pageModule }}', '{{ $pageUrl }}');
+});
+</script>
 <style>
-.table th.right { text-align:right !important;}
-.table th.center { text-align:center !important;}
+    .table th.right {
+        text-align: right !important;
+    }
+
+    .table th.center {
+        text-align: center !important;
+    }
 
 </style>
 	

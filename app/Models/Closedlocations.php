@@ -33,23 +33,27 @@ class closedlocations extends Sximo  {
         $bottomMessage = "";
         $message = "";                
         
-		$offset = ($page-1) * $limit ;
-		$limitConditional = ($page !=0 && $limit !=0) ? " LIMIT  $offset , $limit" : '';
-
-        $filters = ReportHelpers::getSearchFilters(array(
+        $filters = self::getSearchFilters(array(
             'date_start' => '', 'date_end' => '', 'id' => 'location_id', 'debit_type_id'  => ''
         ));        
         extract($filters);
         ReportHelpers::dateRangeFix($date_start, $date_end);        
-
+        
+        $total = ReportHelpers::getClosedLocationsCount($date_start, $date_end, $location_id, $debit_type_id);
+        $offset = ($page-1) * $limit ;
+        if ($offset >= $total) {
+            $page = ceil($total/$limit);
+            $offset = ($page-1) * $limit ;
+        }   
+		$limitConditional = ($page !=0 && $limit !=0) ? " LIMIT  $offset , $limit" : '';
+        
         $mainQuery = ReportHelpers::getClosedLocationsQuery($date_start, $date_end, $location_id, $debit_type_id, $sort, $order);
         $mainQuery .= $limitConditional;
-        $total = ReportHelpers::getClosedLocationsCount($date_start, $date_end, $location_id, $debit_type_id);
         $rawRows = \DB::select($mainQuery);
         $rows = self::processRows($rawRows);
                 
         if ($total == 0) {
-            $message = "No data found. Try searhing with other filters.";
+            $message = "To view the contents of this report, please select a date range and other search filter.";
                     }
         $humanDateRange = ReportHelpers::humanifyDateRangeMessage($date_start, $date_end);
         $topMessage = "Locations marked as closed $humanDateRange";

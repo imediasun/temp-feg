@@ -16,49 +16,49 @@
 	  
     </div>
 	<div class="page-content-wrapper m-t"> 
-	@include('sximo.module.tab',array('active'=>'form'))
+        @include('sximo.module.tab',array('active'=>'form'))
+        @if(Session::has('message'))
+               {{ Session::get('message') }}
+        @endif
 
 
-@if(Session::has('message'))
-       {{ Session::get('message') }}
-@endif
-
-
-<ul class="nav nav-tabs" style="margin-bottom:10px;">
-  	<li class="active" ><a href="{{ URL::to('feg/module/form/'.$module_name)}}">Form Configuration </a></li>
-	<li ><a href="{{ URL::to('feg/module/formdesign/'.$module_name)}}">Form Layout</a></li>
-</ul>
+        <ul class="nav nav-tabs" style="margin-bottom:10px;">
+            <li class="active" ><a href="{{ URL::to('feg/module/form/'.$module_name)}}">Form Configuration </a></li>
+            <li ><a href="{{ URL::to('feg/module/formdesign/'.$module_name)}}">Form Layout</a></li>
+        </ul>
   
 <div class="sbox">
-	<div class="sbox-title"><h5> Form Grid  </h5></div>
-	<div class="sbox-content">	
- {!! Form::open(array('url'=>'feg/module/saveform/'.$module_name, 'class'=>'form-horizontal')) !!}
- <div class="table-responsive">
+<div class="sbox-title"><h5> Form Grid  </h5></div>
+<div class="sbox-content">	
+    {!! Form::open(array('url'=>'feg/module/saveform/'.$module_name, 'class'=>'form-horizontal')) !!}
+    <div class="table-responsive">
 		<table class="table table-striped table-bordered" id="table">
-		<thead class="no-border">
-          <tr >
-            <th scope="col">No</th>
-            <th scope="col">Field</th>
-            <th scope="col" data-hide="phone">Title / Caption </th>
-            <th scope="col" width="70"><i class="fa fa-key"></i> Limit To</th>
-				<th scope="col"><i class="icon-link"></i></th>
-			<th scope="col" data-hide="phone">Type </th>
-            <th scope="col" data-hide="phone">Show</th>
-            
-            <th scope="col" data-hide="phone">Searchable</th>
-			<th scope="col" data-hide="phone">Required</th>
-            <th scope="col">&nbsp;</th>
-          </tr>
-		  </thead>
-		  <tbody class="no-border-x no-border-y">	
-		  <?php usort($forms, "SiteHelpers::_sort"); ?>
-		  <?php $i=0; foreach($forms as $rows){
-		  $id = ++$i;
-		  ?>
+            <thead class="no-border">
+                <tr >
+                    <th scope="col" width="40">No</th>
+                    <th scope="col">Field</th>
+                    <th scope="col" data-hide="phone">Title / Caption</th>
+                    <th scope="col" width="70"><i class="fa fa-key"></i>Limit To</th>
+                    <th scope="col"><i class="icon-link"></i>Type</th>
+                    <th scope="col" width="40" data-hide="phone">Show</th>
+                    <th scope="col" width="70" data-hide="phone" title='Show in Advanced Search?' >Advanced Search</th>
+                    <th scope="col" width="70" title='Show in Simple Search?' >Simple Search</th>
+                    <th scope="col" width="70" title='Integer numbers 0,1,2,...n in to denote the order' >Simple Search Order</th>
+                    <th scope="col" width="100" title='Can be class names or width value in % or px etc.' >Simple Search Field Class/Width</th>
+                    <th scope="col" data-hide="phone">Required</th>
+                    <th scope="col" data-hide="phone">Configure</th>            
+                </tr>
+            </thead>
+          
+            <tbody class="no-border-x no-border-y">	
+            <?php usort($forms, "SiteHelpers::_sort"); ?>
+            <?php $i=0; foreach($forms as $rows){
+              $id = ++$i;
+            ?>
           <tr>
-            <td  class="index"><?php echo $id;?></td>
-            <td><?php echo $rows['field'];?></td>
-            <td>
+            <td class="index"><?php echo $id;?></td>
+            <td class="formField"><?php echo $rows['field'];?></td>
+            <td class="formTitle">
 				<div class="input-group input-group-sm">
 				<span class="input-group-addon xlick bg-default btn-xs " >EN</span>		
 				<input type="text" name="label[<?php echo $id;?>]" class="form-control input-sm" value="<?php echo $rows['label'];?>" />
@@ -76,87 +76,102 @@
               </div>
 			  <?php } } } ?>			
 			</td>
-				<td>
-					<?php
-						 $limited_to = (isset($rows['limited']) ? $rows['limited'] : '');
-					?>
-					<input type="text" class="form-control" name="limited[<?php echo $id;?>]" class="limited" value="<?php echo $limited_to;?>" />
-
-				</td>			
-			<td>
-            <?php echo $rows['type'];?>
-			<input type="hidden" name="type[<?php echo $id;?>]" value="<?php echo $rows['type'];?>" />
+            <td class="formLimitTo">
+                <?php
+                     $limited_to = (isset($rows['limited']) ? $rows['limited'] : '');
+                ?>
+                <input type="text" class="form-control" name="limited[<?php echo $id;?>]" class="limited" value="<?php echo $limited_to;?>" />
+            </td>			
+			<td class="formType">
+                <?php echo $rows['type'];?>
+                <input type="hidden" name="type[<?php echo $id;?>]" value="<?php echo $rows['type'];?>" />
 			</td>
-            <td>
-			<label >
-            <input type="checkbox" name="view[<?php echo $id;?>]" value="1" 
-			<?php if($rows['view'] == 1) echo 'checked="checked"';?> />
-			</label>
+            <td class="formFieldVisible">
+                <label >
+                    <input type="checkbox" name="view[<?php echo $id;?>]" value="1" 
+                    <?php if($rows['view'] == 1) echo 'checked="checked"';?> />
+                </label>
 			</td>
             
-            <td>
-			<label >
-            <input type="checkbox" name="search[<?php echo $id;?>]" value="1" 
-			<?php if($rows['search'] == 1) echo 'checked="checked"';?>
-			/>
-			</label>
+            <td class="formFieldAdvSearch">
+                <label >
+                    <input type="checkbox" name="search[<?php echo $id;?>]" value="1" 
+                    <?php if($rows['search'] == 1) echo 'checked="checked"';?>
+                    />
+                </label>
 			</td>
-			<td>
+            <td class="formFieldSimpleSearch">
+                <label >
+                    <input type="checkbox" name="simplesearch[<?php echo $id;?>]" value="1" 
+                    <?php if(isset($rows['simplesearch']) && $rows['simplesearch'] == 1) echo 'checked="checked"';?>
+                    />
+                </label>
+			</td>
+            <td class="formSimpleSearchOrder">
+                <?php $simplesearchorder = (isset($rows['simplesearchorder']) ? $rows['simplesearchorder'] : ''); ?>
+                <input type="text" class="form-control" name="simplesearchorder[<?php echo $id;?>]" class="form-control" value="<?php echo $simplesearchorder;?>" />
+            </td>            
+            <td class="formSimpleSearchFieldWidth">
+                <?php $simplesearchfieldwidth = (isset($rows['simplesearchfieldwidth']) ? $rows['simplesearchfieldwidth'] : ''); ?>                
+                <input type="text" class="form-control" name="simplesearchfieldwidth[<?php echo $id;?>]" class="form-control" value="<?php echo $simplesearchfieldwidth;?>" />
+                <?php $simplesearchoperator = (isset($rows['simplesearchoperator']) ? $rows['simplesearchoperator'] : 'equal'); ?>
+                <input type="hidden" name="simplesearchoperator[<?php echo $id;?>]" value="<?php echo $simplesearchoperator;?>" />
+            </td>            
+			<td class="formFieldRequired">
 				<?php
-		$reqType = array(
-			'required'			=> 'Required',
-			'alpa'				=> 'Required Only Alpha ',
-			'numeric'			=> 'Required Only Number',	
-			'alpa_num'			=> 'Required Alpha & Numeric ',			
-			'email'				=> 'Required Email',
-			'url'				=> 'Required Url',
-			'date'				=> 'Required Date',
-					
-		);
-		
-	?>
-		<select name="required[<?php echo $id;?>]" id="required" class="form-control" style="width:150px;" >
-			<option value="0" <?php if($rows['required'] == 1) echo 'selected="selected"';?>>No Required</option>
-			<?php foreach($reqType as $item=>$val) { ?>
-				<option value="<?php echo $item;?>" <?php if($rows['required'] == $item) echo 'selected="selected"';?>><?php echo $val;?></option>
-			<?php } ?>
-		</select>
-		</td>
-            <td>
-			<a href="javascript:void(0)" class="btn btn-xs btn-primary editForm"  role="button"  
-			onclick="SximoModal('{{ URL::to('feg/module/editform/'.$row->module_id.'?field='.$rows['field'].'&alias='.$rows['alias']) }}','Edit Field : <?php echo $rows['field'];?>')">
-			<i class="fa fa-cog"></i></a>
+                    $reqType = array(
+                        'required'			=> 'Required',
+                        'alpa'				=> 'Required Only Alpha ',
+                        'numeric'			=> 'Required Only Number',	
+                        'alpa_num'			=> 'Required Alpha & Numeric ',			
+                        'email'				=> 'Required Email',
+                        'url'				=> 'Required Url',
+                        'date'				=> 'Required Date',
 
-			
-			
-			<input type="hidden" name="alias[<?php echo $id;?>]" value="<?php echo $rows['alias'];?>" />
-			<input type="hidden" name="field[<?php echo $id;?>]" value="<?php echo $rows['field'];?>" />	
-			<input type="hidden" name="form_group[<?php echo $id;?>]" value="<?php echo $rows['form_group'];?>" />	
-			<input type="hidden" name="sortlist[<?php echo $id;?>]" class="reorder" value="<?php echo $rows['sortlist'];?>" />		
-			<input type="hidden" name="opt_type[<?php echo $id;?>]" value="<?php echo $rows['option']['opt_type'];?>" />
-			<input type="hidden" name="lookup_query[<?php echo $id;?>]" value="<?php echo $rows['option']['lookup_query'];?>" />
-			<input type="hidden" name="lookup_table[<?php echo $id;?>]" value="<?php echo $rows['option']['lookup_table'];?>" />
-			<input type="hidden" name="lookup_key[<?php echo $id;?>]" value="<?php echo $rows['option']['lookup_key'];?>" />
-			<input type="hidden" name="lookup_value[<?php echo $id;?>]" value="<?php echo $rows['option']['lookup_value'];?>" />
-			<input type="hidden" name="is_dependency[<?php echo $id;?>]" value="<?php echo $rows['option']['is_dependency'];?>" />
-			<input type="hidden" name="lookup_dependency_key[<?php echo $id;?>]" value="<?php echo $rows['option']['lookup_dependency_key'];?>" />
-			<input type="hidden" name="path_to_upload[<?php echo $id;?>]" value="<?php echo $rows['option']['path_to_upload'];?>" />
-			<input type="hidden" name="upload_type[<?php echo $id;?>]" value="<?php echo $rows['option']['upload_type'];?>" />
-			<input type="hidden" name="resize_width[<?php echo $id;?>]" value="<?php if(isset($rows['option']['resize_width'])) echo $rows['option']['resize_width'];?>" />
-			<input type="hidden" name="resize_height[<?php echo $id;?>]" value="<?php if(isset($rows['option']['resize_height'])) echo $rows['option']['resize_height'];?>" />
-			<input type="hidden" name="extend_class[<?php echo $id;?>]" value="<?php if(isset($rows['option']['resize_height'])) echo $rows['option']['resize_height'];?>" />
-			<input type="hidden" name="tooltip[<?php echo $id;?>]" value="<?php if(isset($rows['option']['tooltip'])) echo $rows['option']['tooltip'];?>" />
-			<input type="hidden" name="attribute[<?php echo $id;?>]" value="<?php if(isset($rows['option']['attribute'])) echo $rows['option']['attribute'];?>" />
-			<input type="hidden" name="extend_class[<?php echo $id;?>]" value="<?php if(isset($rows['option']['extend_class'])) echo $rows['option']['extend_class'];?>" />
-			<input type="hidden" name="select_multiple[<?php echo $id;?>]" value="<?php if(isset($rows['option']['select_multiple'])) echo $rows['option']['select_multiple'];?>" />
-			<input type="hidden" name="image_multiple[<?php echo $id;?>]" value="<?php if(isset($rows['option']['image_multiple'])) echo $rows['option']['image_multiple'];?>" />
-			
+                    );
+                    
+                ?>
+                <select name="required[<?php echo $id;?>]" id="required" class="form-control" style="width:150px;" >
+                    <option value="0" <?php if($rows['required'] == 1) echo 'selected="selected"';?>>No Required</option>
+                    <?php foreach($reqType as $item=>$val) { ?>
+                        <option value="<?php echo $item;?>" <?php if($rows['required'] == $item) echo 'selected="selected"';?>><?php echo $val;?></option>
+                    <?php } ?>
+                </select>
+            </td>
+            <td class="formFieldConfig">
+                <a href="javascript:void(0)" class="btn btn-xs btn-primary editForm"  role="button"
+                onclick="SximoModal('{{ URL::to('feg/module/editform/'.$row->module_id.'?field='.$rows['field'].'&alias='.$rows['alias']) }}','Edit Field : <?php echo $rows['field'];?>')">
+                <i class="fa fa-cog"></i></a>
+                <input type="hidden" name="alias[<?php echo $id;?>]" value="<?php echo $rows['alias'];?>" />
+                <input type="hidden" name="field[<?php echo $id;?>]" value="<?php echo $rows['field'];?>" />
+                <input type="hidden" name="form_group[<?php echo $id;?>]" value="<?php echo $rows['form_group'];?>" />
+                <input type="hidden" name="sortlist[<?php echo $id;?>]" class="reorder" value="<?php echo $rows['sortlist'];?>" />
+                <input type="hidden" name="opt_type[<?php echo $id;?>]" value="<?php echo $rows['option']['opt_type'];?>" />
+                <input type="hidden" name="lookup_query[<?php echo $id;?>]" value="<?php echo $rows['option']['lookup_query'];?>" />
+                <input type="hidden" name="lookup_table[<?php echo $id;?>]" value="<?php echo $rows['option']['lookup_table'];?>" />
+                <input type="hidden" name="lookup_key[<?php echo $id;?>]" value="<?php echo $rows['option']['lookup_key'];?>" />
+                <input type="hidden" name="lookup_value[<?php echo $id;?>]" value="<?php echo $rows['option']['lookup_value'];?>" />
+                <input type="hidden" name="is_dependency[<?php echo $id;?>]" value="<?php echo $rows['option']['is_dependency'];?>" />
+                <input type="hidden" name="lookup_dependency_key[<?php echo $id;?>]" value="<?php echo $rows['option']['lookup_dependency_key'];?>" />
+                <input type="hidden" name="path_to_upload[<?php echo $id;?>]" value="<?php echo $rows['option']['path_to_upload'];?>" />
+                <input type="hidden" name="upload_type[<?php echo $id;?>]" value="<?php echo $rows['option']['upload_type'];?>" />
+                <input type="hidden" name="resize_width[<?php echo $id;?>]" value="<?php if(isset($rows['option']['resize_width'])) echo $rows['option']['resize_width'];?>" />
+                <input type="hidden" name="resize_height[<?php echo $id;?>]" value="<?php if(isset($rows['option']['resize_height'])) echo $rows['option']['resize_height'];?>" />
+                <input type="hidden" name="extend_class[<?php echo $id;?>]" value="<?php if(isset($rows['option']['resize_height'])) echo $rows['option']['resize_height'];?>" />
+                <input type="hidden" name="tooltip[<?php echo $id;?>]" value="<?php if(isset($rows['option']['tooltip'])) echo $rows['option']['tooltip'];?>" />
+                <input type="hidden" name="attribute[<?php echo $id;?>]" value="<?php if(isset($rows['option']['attribute'])) echo $rows['option']['attribute'];?>" />
+                <input type="hidden" name="extend_class[<?php echo $id;?>]" value="<?php if(isset($rows['option']['extend_class'])) echo $rows['option']['extend_class'];?>" />
+                <input type="hidden" name="select_multiple[<?php echo $id;?>]" value="<?php if(isset($rows['option']['select_multiple'])) echo $rows['option']['select_multiple'];?>" />
+                <input type="hidden" name="image_multiple[<?php echo $id;?>]" value="<?php if(isset($rows['option']['image_multiple'])) echo $rows['option']['image_multiple'];?>" />
+
 			</td>
-			
+
           </tr>
-		  <?php } ?>
-		  </tbody>
+                <?php } ?>
+            </tbody>
         </table>
+        <!--<button type="button" class="btn btn-info addCustomField">Add Custom Field</button>-->
+        
 		</div>
 
  <div class="infobox infobox-danger fade in">
@@ -164,12 +179,14 @@
   <p> <strong>Note !</strong> Your primary key must be <strong>show</strong> and in <strong>hidden</strong> type   </p>	
 </div>		
 		
-		<button type="submit" class="btn btn-primary"> Save Changes </button>
+		<button type="submit" class="btn btn-primary submitSearchConfigurations"> Save Changes </button>
 		<input type="hidden" name="module_id" value="{{ $row->module_id }}" />
  {!! Form::close() !!}		
 	
 </div>	
-</div></div>
+</div>
+</div>
+</div>
 <script>
 $(document).ready(function() {
     $('.date').datepicker({ format: 'mm/dd/yyyy', autoclose: true })
@@ -198,7 +215,7 @@ $(document).ready(function() {
 				$(this).val(i + 1);
 			});			
 		};
-		
+        		
 /*	$("#table tbody").sortable({
 		helper: fixHelperModified,
 		stop: updateIndex

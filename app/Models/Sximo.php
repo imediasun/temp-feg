@@ -33,8 +33,6 @@ class Sximo extends Model {
                         ), $args));
 
 
-        $offset = ($page - 1) * $limit;
-        $limitConditional = ($page != 0 && $limit != 0) ? "LIMIT  $offset , $limit" : '';
         $orderConditional = ($sort != '' && $order != '') ? " ORDER BY {$sort} {$order} " : '';
 
         // Update permission global / own access new ver 1.1
@@ -53,7 +51,8 @@ class Sximo extends Model {
 
         if ($cond != null) {
             $select .= self::queryWhere($cond);
-        } else {
+        }
+        else {
             $select .= self::queryWhere();
         }
 
@@ -80,6 +79,22 @@ class Sximo extends Model {
             $select .= " AND status_id='$status_id'";
         }
 
+        Log::info("Total Query : ".$select . " {$params} " . self::queryGroup() . " {$orderConditional}");
+        $counter_select =\DB::select($select . " {$params} " . self::queryGroup() . " {$orderConditional}");
+        $total= count($counter_select);
+        if($table=="img_uploads")
+        {
+            $total="";
+        }
+        
+        $offset = ($page - 1) * $limit;
+        if ($offset >= $total && $total != 0) {
+            $page = ceil($total/$limit);
+            $offset = ($page-1) * $limit ;
+        }
+
+        $limitConditional = ($page != 0 && $limit != 0) ? "LIMIT  $offset , $limit" : '';
+       // echo $select . " {$params} " . self::queryGroup() . " {$orderConditional}  {$limitConditional} ";
         Log::info("Query : ".$select . " {$params} " . self::queryGroup() . " {$orderConditional}  {$limitConditional} ");
         $result = \DB::select($select . " {$params} " . self::queryGroup() . " {$orderConditional}  {$limitConditional} ");
 
@@ -89,14 +104,6 @@ class Sximo extends Model {
             $key = $table . "." . $key;
         }
 
-        Log::info("Total Query : ".$select . " {$params} " . self::queryGroup() . " {$orderConditional}");
-        $counter_select =\DB::select($select . " {$params} " . self::queryGroup() . " {$orderConditional}");
-        $total= count($counter_select);
-
-        if($table=="img_uploads")
-        {
-        $total="";
-        }
         return $results = array('rows' => $result, 'total' => $total);
     }
 
@@ -177,12 +184,14 @@ class Sximo extends Model {
                 'gridtype' => (isset($data['config']['setting']['gridtype']) ? $data['config']['setting']['gridtype'] : 'native'),
                 'orderby' => (isset($data['config']['setting']['orderby']) ? $data['config']['setting']['orderby'] : $r->module_db_key),
                 'ordertype' => (isset($data['config']['setting']['ordertype']) ? $data['config']['setting']['ordertype'] : 'asc'),
-                'perpage' => (isset($data['config']['setting']['perpage']) ? $data['config']['setting']['perpage'] : '10'),
+                'perpage' => (isset($data['config']['setting']['perpage']) ? $data['config']['setting']['perpage'] : '20'),
                 'frozen' => (isset($data['config']['setting']['frozen']) ? $data['config']['setting']['frozen'] : 'false'),
                 'form-method' => (isset($data['config']['setting']['form-method']) ? $data['config']['setting']['form-method'] : 'native'),
                 'view-method' => (isset($data['config']['setting']['view-method']) ? $data['config']['setting']['view-method'] : 'native'),
                 'inline' => (isset($data['config']['setting']['inline']) ? $data['config']['setting']['inline'] : 'false'),
-                'usesimplesearch' => (isset($data['config']['setting']['usesimplesearch']) ? $data['config']['setting']['usesimplesearch'] : 'false' ),
+                'hideadvancedsearchoperators' => (isset($data['config']['setting']['hideadvancedsearchoperators']) ? $data['config']['setting']['hideadvancedsearchoperators'] : 'false' ),
+                'hiderowcountcolumn' => (isset($data['config']['setting']['hiderowcountcolumn']) ? $data['config']['setting']['hiderowcountcolumn'] : 'false' ),                
+                'usesimplesearch' => (isset($data['config']['setting']['usesimplesearch']) ? $data['config']['setting']['usesimplesearch'] : 'true' ),                
                 'disablepagination' => (isset($data['config']['setting']['disablepagination']) ? $data['config']['setting']['disablepagination'] : 'false' ),
                 'disablesort' => (isset($data['config']['setting']['disablesort']) ? $data['config']['setting']['disablesort'] : 'false' ),
                 'disableactioncheckbox' => (isset($data['config']['setting']['disableactioncheckbox']) ? $data['config']['setting']['disableactioncheckbox'] : 'false' ),
@@ -197,6 +206,7 @@ class Sximo extends Model {
     }
 
     static function getComboselect($params, $limit = null, $parent = null) {
+
         $limit = explode(':', $limit);
         $parent = explode(':', $parent);
 
@@ -205,22 +215,30 @@ class Sximo extends Model {
             $condition = $limit[0] . " `" . $limit[1] . "` " . $limit[2] . " " . $limit[3] . " ";
             if (count($parent) >= 2) {
                 $row = \DB::table($table)->where($parent[0], $parent[1])->get();
-                $row = \DB::select("SELECT * FROM " . $table . " " . $condition . " AND " . $parent[0] . " = '" . $parent[1] . "'");
+                $query = "SELECT * FROM " . $table . " " . $condition . " AND " . $parent[0] . " = '" . $parent[1] . "'";
+                if(!empty($params) && isset($params[2])){
+                    $query .= " order by ".$params[2];
+                }
+                $row = \DB::select($query);
             } else {
+
                 $row = \DB::select("SELECT * FROM " . $table . " " . $condition);
             }
         } else {
 
             $table = $params[0];
             if (count($parent) >= 2) {
-                $row = \DB::table($table)->where($parent[0], $parent[1])->get();
+                $row = \DB::table($table)->where($parent[0], $parent[1])->orderby($params[2])->get();
             } else {
+
                 $order = substr($params['2'], 0, strpos($params['2'], '|'));
                 if (!$order) {
+
+
                     $order = $params['2'];
                 }
                 if (!isset($params['3'])) {
-                    $row = \DB::table($table)->orderBy($order, 'asc')->get();
+                    $row = \DB::table($table)->where($order,'!='," ")->orderBy($order,'asc')->get();
                 } else {
 
                     $row = \DB::table($table)->where($params['3'], $params['4'])->orderBy($order, 'asc')->get();
@@ -359,10 +377,12 @@ class Sximo extends Model {
 
         $loc = "";
         $i = 0;
-        foreach ($locations as $location) {
-            $loc[$i] = array('user_id' => $userid, 'location_id' => $location);
-            $i++;
-        }
+            foreach ($locations as $location) {
+                $loc[$i] = array('user_id' => $userid, 'location_id' => $location);
+                $i++;
+
+            }
+
         if ($id != NULL) {
             \DB::table('user_locations')->where('user_id', '=', $userid)->delete();
         }
@@ -785,7 +805,47 @@ class Sximo extends Model {
         return \DB::select("SELECT COUNT(*) as total FROM requests WHERE request_user_id = ".\Session::get('uid')." AND status_id = 9 AND location_id = ".\Session::get('selected_location'));
     }
 
-    public static function processApiData($json){
+    public static function processApiData($json,$param=null){
         return $json;
     }
+
+    /**
+     * Get submitted search filter values in an associative array
+     * @return Array 
+     */
+    public static function getSearchFilters($requiredFilters = array()) {
+        $receivedFilters = array();
+        $finalFilters = array();
+        if (isset($_GET['search'])) {
+            $filters_raw = trim($_GET['search'], "|");
+            $filters = explode("|", $filters_raw);
+
+            foreach($filters as $filter) {
+                $columnFilter = explode(":", $filter);
+                if (isset($columnFilter) && isset($columnFilter[0]) && isset($columnFilter[2])) {
+                    $receivedFilters[$columnFilter[0]] = $columnFilter[2];
+                }
+            }
+        }
+                
+        if (empty($requiredFilters)) {
+            $finalFilters = $receivedFilters;
+        }
+        else {
+            foreach($requiredFilters as $fieldName => $variableName) {
+                if (empty($variableName)) {
+                    $variableName = $fieldName;
+                }
+                if (isset($receivedFilters[$fieldName])) {
+                    $finalFilters[$variableName] = $receivedFilters[$fieldName];
+                }
+                else {
+                    $finalFilters[$variableName] = '';
+                }
+            }
+        }
+        
+        return $finalFilters;
+    }    
+    
 }

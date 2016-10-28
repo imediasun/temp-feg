@@ -40,6 +40,7 @@ class productsindevelopmentreport extends Sximo  {
         $filters = self::getSearchFilters();
         $date_start = @$filters['start_date'];
         $date_end = @$filters['end_date'];
+        $description = @$filters['Description'];
         
 		$where = "   WHERE products.in_development = 1  ";        
         if (!empty($date_start)) {
@@ -47,6 +48,9 @@ class productsindevelopmentreport extends Sximo  {
         }
         if (!empty($date_end)) {
             $where .= " AND products.date_added <= '$date_end 23:59:59' ";
+        }
+        if (!empty($description)) {
+            $where .= " AND products.vendor_description LIKE '%$description%' ";
         }
 		
         $sql .= $where;
@@ -63,23 +67,6 @@ class productsindevelopmentreport extends Sximo  {
 	public static function queryGroup(){
 		return "  ";
 	}
-	
-    public static function getSearchFilters() {
-        $finalFilter = array();
-        if (isset($_GET['search'])) {
-            $filters_raw = trim($_GET['search'], "|");
-            $filters = explode("|", $filters_raw);
-
-            foreach($filters as $filter) {
-                $columnFilter = explode(":", $filter);
-                if (isset($columnFilter) && isset($columnFilter[0]) && isset($columnFilter[2])) {
-                    $finalFilter[$columnFilter[0]] = $columnFilter[2];
-                }
-            }
-        }
-        return $finalFilter;
-    }
-    
     
 	public static function getRows( $args,$cond=null )
 	{
@@ -99,25 +86,27 @@ class productsindevelopmentreport extends Sximo  {
 			'global'	=> 1
 		), $args ));
 
-		$offset = ($page-1) * $limit ;
-		$limitConditional = ($page !=0 && $limit !=0) ? "LIMIT  $offset , $limit" : '';
-		$orderConditional = ($sort !='' && $order !='') ?  " ORDER BY {$sort} {$order} " : '';
-
-		// Update permission global / own access new ver 1.1
-		$table = with(new static)->table;
-		if($global == 0 )
-			$params .= " AND {$table}.entry_by ='".\Session::get('uid')."'";
-		// End Update permission global / own access new ver 1.1
-
-        $selectQuery = self::querySelect(). " {$orderConditional} {$limitConditional}";
-        $rawRows = \DB::select($selectQuery);
-        $rows = self::processRows($rawRows);        
-        
         $total = 0;
         $totalQuery = self::querySelect(true);
         $totalRows = \DB::select($totalQuery);
         if (!empty($totalRows) && isset($totalRows[0])) {
             $total = $totalRows[0]->totalCount;
+        }            
+        $offset = ($page-1) * $limit ;
+        if ($offset >= $total) {
+            $page = ceil($total/$limit);
+            $offset = ($page-1) * $limit ;
+        }           
+        $limitConditional = ($page !=0 && $limit !=0) ? " LIMIT  $offset , $limit" : '';    
+            
+		$orderConditional = ($sort !='' && $order !='') ?  " ORDER BY {$sort} {$order} " : '';
+
+        $selectQuery = self::querySelect(). " {$orderConditional} {$limitConditional}";
+        $rawRows = \DB::select($selectQuery);
+        $rows = self::processRows($rawRows);        
+                
+        if ($total == 0) {
+            $messaeg = "To view the contents of this report, please select a date range";
         }
 		
 		return $results = array(

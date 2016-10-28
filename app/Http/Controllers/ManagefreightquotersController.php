@@ -39,7 +39,7 @@ class ManagefreightquotersController extends Controller
     public function getIndex()
     {
         if ($this->access['is_view'] == 0)
-        return Redirect::to('dashboard')->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
+            return Redirect::to('dashboard')->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
         $this->data['access'] = $this->access;
         return view('managefreightquoters.index', $this->data);
     }
@@ -81,12 +81,10 @@ class ManagefreightquotersController extends Controller
             'global' => (isset($this->access['is_global']) ? $this->access['is_global'] : 0)
         );
         $freight_status = $request->get('status');
-        if(!empty($freight_status))
-        {
+        if (!empty($freight_status)) {
             $request->session()->put('freight_status', $freight_status);
-        }
-        else{
-        \Session::has('freight_status')?:\Session::put('freight_status','requested');
+        } else {
+            \Session::has('freight_status') ?: \Session::put('freight_status', 'requested');
         }
         $this->data['freight_status'] = \Session::get('freight_status');
 // Get Query
@@ -496,10 +494,11 @@ class ManagefreightquotersController extends Controller
             ));
         }
     }
-    public function postUpdate(Request $request,$id=null)
+
+    public function postUpdate(Request $request, $id = null)
     {
-        $data['request']=$request->all();
-        $data['freight_order_id']=$id;
+        $data['request'] = $request->all();
+        $data['freight_order_id'] = $id;
         $this->model->updateFreightOrder($data);
         return Redirect::to('managefreightquoters')->with('messagetext', \Lang::get('core.note_success'))->with('msgstatus', 'success');
 
@@ -530,14 +529,16 @@ class ManagefreightquotersController extends Controller
             ));
         }
     }
+
     public function getPaid($freight_order_id)
-{
-    $update=array('status'=>2,'date_paid'=>date('Y-m-d'));
-    \DB::table('freight_orders')->where('id',$freight_order_id)->update($update);
-    return Redirect::to('managefreightquoters')->with('messagetext', \Lang::get('core.note_freight_paid'))->with('msgstatus', 'success');
-}
+    {
+        $update = array('status' => 2, 'date_paid' => date('Y-m-d'));
+        \DB::table('freight_orders')->where('id', $freight_order_id)->update($update);
+        return Redirect::to('managefreightquoters')->with('messagetext', \Lang::get('core.note_freight_paid'))->with('msgstatus', 'success');
+    }
+
     public function getGamedetails($SID)
     {
-        return Redirect::to('mylocationgame')->with('game_id',$SID);
+        return Redirect::to('mylocationgame')->with('game_id', $SID);
     }
 }

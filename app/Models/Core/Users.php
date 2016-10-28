@@ -16,8 +16,9 @@ class Users extends Sximo  {
 
 	public static function querySelect(  ){
 		
-		return " SELECT  users.*,  tb_groups.name, users.group_id, users.username
-FROM users LEFT JOIN tb_groups ON tb_groups.group_id = users.group_id ";
+		return " SELECT  users.*,  tb_groups.name, users.group_id, users.username,
+                IF(has_all_locations = 0,(SELECT GROUP_CONCAT(location_name SEPARATOR ', ') FROM user_locations JOIN location ON location.id = user_locations.location_id WHERE user_id = users.id GROUP BY user_id) ,\"All Locations\") AS has_all_locations
+                FROM users LEFT JOIN tb_groups ON tb_groups.group_id = users.group_id ";
 	}	
 
 	public static function queryWhere(  ){
@@ -38,11 +39,12 @@ FROM users LEFT JOIN tb_groups ON tb_groups.group_id = users.group_id ";
 	 */
 	public static function getComboselect($params, $limit = null, $parent = null)
 	{
+
 		$tableName = $params[0];
 		if ($tableName == 'location') {
 			$locations = \DB::table('location')
 				->select('location.*')
-				->where('location.active', 1)
+				->where('location.active', 1)->orderBy('location.location_name')
 				->get();
 			return $locations;
 		} else {

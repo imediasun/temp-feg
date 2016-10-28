@@ -14,13 +14,13 @@ class merchindisetheminggallary extends Sximo  {
 	}
 
 	public static function querySelect(  ){
-		return 'SELECT I.id,I.theme_name,CONCAT(L.id, " | ",L.location_name_short) AS Location, I.users
-									 FROM img_uploads I LEFT JOIN location L on L.id = I.loc_id ';
+		return 'SELECT img_uploads.id,img_uploads.theme_name,CONCAT(L.id, " | ",L.location_name_short) AS Location, img_uploads.users
+									 FROM img_uploads LEFT JOIN location L on L.id = img_uploads.loc_id ';
 	}	
 
-	public static function queryWhere(  ){
-		
-		return  ' WHERE image_category = "mer"';
+	public static function queryWhere($cond = null){
+        $qw = " WHERE img_uploads.image_category = 'mer'";
+        return  $qw;
 	}
 	
 	public static function queryGroup(){

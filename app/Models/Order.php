@@ -14,6 +14,7 @@ class order extends Sximo
     public function __construct()
     {
         ini_set('memory_limit','1G');
+        set_time_limit(0);
         parent::__construct();
 
     }
@@ -24,7 +25,7 @@ class order extends Sximo
         return "  SELECT orders.* from orders ";
     }
 
-    public static function processApiData($json)
+    public static function processApiData($json,$param=null)
     {
         if(!empty($json)){
             return self::addOrderItems($json);
@@ -64,6 +65,9 @@ class order extends Sximo
         foreach($data as &$record){
             $orders[] = $record['id'];
             $record['items'] = [];
+        }
+        if(empty($orders)){
+            return $data;
         }
         $query = "select * from order_contents where order_id in (".implode(',',$orders).")";
         $result = \DB::select($query);
@@ -168,21 +172,27 @@ class order extends Sximo
 
     public function getOrderQuery($order_id, $mode = null)
     {
+
         $data['requests_item_count'] = 0;
+        $data['receivedItemsArray']=0;
         $data['order_loc_id'] = '0';
         $data['order_vendor_id'] = '';
         $data['order_type'] = '';
         $data['order_company_id'] = '';
         $data['order_location_id'] = '';
+        $data['received_date']="";
+        $data['received_by']="";
        // $data['order_location_name'] = '';
-        
+
         $data['order_freight_id'] = '';
         $data['orderDescriptionArray'] = '';
         $data['orderPriceArray'] = '';
         $data['orderQtyArray'] = '';
         $data['orderProductIdArray'] = '';
         $data['itemNameArray'] = "";
+        $data['skuNumArray'] = "";
         $data['itemCasePrice'] = "";
+        $data['itemRetailPrice'] = "";
         $data['orderRequestIdArray'] = '';
         $data['requests_item_count'] = '';
         $data['today'] = $this->get_local_time();
@@ -211,23 +221,35 @@ class order extends Sximo
                 $data['alt_address'] = $order_query[0]->alt_address;
             }
             $data['prefill_type'] = 'clone';
-            $content_query = \DB::select('SELECT IF(O.product_id = 0, O.product_description, P.vendor_description) AS description,O.price AS price,O.qty AS qty, O.product_id,O.item_name,O.case_price
-												 FROM order_contents O LEFT JOIN products P ON P.id = O.product_id WHERE O.order_id = ' . $order_id);
+            $content_query = \DB::select('SELECT  O.product_description AS description,O.price AS price,O.qty AS qty, O.product_id,O.item_name,O.case_price,P.retail_price, P.sku
+												,O.item_received as item_received FROM order_contents O LEFT JOIN products P ON P.id = O.product_id  WHERE O.order_id = ' . $order_id);
             if ($content_query) {
-
                 foreach ($content_query as $row) {
                     $data['requests_item_count'] = $data['requests_item_count'] + 1;
+                    $receivedItemsArray[]=$row->item_received;
                     $orderDescriptionArray[] = $row->description;
                     $orderPriceArray[] = $row->price;
                     $orderQtyArray[] = $row->qty;
                     $orderProductIdArray[] = $row->product_id;
                     $orderitemnamesArray[] = $row->item_name;
+                    $skuNumArray[] = $row->sku;
                     $orderitemcasepriceArray[] = $row->case_price;
+                    $orderretailpriceArray[]=$row->retail_price;
+
                     //  $prod_data[]=$this->productUnitPriceAndName($orderProductIdArray);
                 }
+                $order_received_query=\DB::select('select date_received,received_by from order_received where order_id='.$order_id);
+               if($order_received_query)
+               {
+                   foreach($order_received_query as $r) {
+                       $data['received_date'] =$r->date_received;
+                       $data['received_by'] = $r->received_by;
+                   }
+               }
                 $data['orderDescriptionArray'] = $orderDescriptionArray;
                 $data['orderPriceArray'] = $orderPriceArray;
                 $data['orderQtyArray'] = $orderQtyArray;
+                $data['skuNumArray'] = $skuNumArray;
                 $data['orderProductIdArray'] = $orderProductIdArray;
                 /*     if(count($prod_data)!=0) {
                          foreach ($prod_data as $d) {
@@ -235,8 +257,11 @@ class order extends Sximo
                              $item_case_price[] = $d['case_price'];
                          }
                      }*/
+
                 $data['itemNameArray'] = $orderitemnamesArray;
                 $data['itemCasePrice'] = $orderitemcasepriceArray;
+                $data['itemRetailPrice']=$orderretailpriceArray;
+                $data['receivedItemsArray']=$receivedItemsArray;
                 $poArr = array("", "", "");
                 if (isset($data['po_number'])) {
                     $poArr = explode("-", $data['po_number']);
@@ -269,7 +294,6 @@ class order extends Sximo
             $data['today'] = ($mode) ? $order_query[0]->date_ordered : $this->get_local_time('date');
         } elseif (substr($mode, 0, 3) == 'SID') {
             $item_count = substr_count($mode, '-');
-
             $SID_string = $mode;
             $data['SID_string'] = $SID_string;
             for ($i = 1; $i < $item_count; $i++) {
@@ -284,7 +308,10 @@ class order extends Sximo
 
                 $query = \DB::select('SELECT R.qty,
 											  P.case_price,
+											  P.sku
+											  P.retail_price,
 											  P.vendor_id,
+											  P.vendor_description,
 											  P.item_description,
 											  R.product_id,
 											  R.location_id,
@@ -306,9 +333,9 @@ class order extends Sximo
                    // $data['order_location_name'] = $query[0]->location_name;
                     $data['order_type'] = $query[0]->prod_type_id;
                     $data['order_total'] = $query[0]->total;
-                    $data['po_2'] = date('m/d/y');
+                    $data['po_2'] = date('mdy');
                     $data['po_3'] = $this->increamentPO();
-                    $data['po_notes'] = $query[0]->description;
+                    $data['po_notes'] = "";
                     //$this->data['id']=1806;
                     $data['prefill_type'] = "";
                     $data['order_freight_id'] = "";
@@ -316,21 +343,25 @@ class order extends Sximo
                     $orderDescriptionArray[] = $query[0]->description;
                     $orderPriceArray[] = $query[0]->case_price;
                     $orderQtyArray[] = $query[0]->qty;
+                    $skuNumArray[] = $query[0]->sku;
                     $orderProductIdArray[] = $query[0]->product_id;
-                    $prod_data = $this->productUnitPriceAndName($query[0]->product_id);
-                    $item_name_array[] = $query[0]->item_description;
-                    $item_case_price[] = $query[0]->case_price;;
+                 //   $prod_data = $this->productUnitPriceAndName($query[0]->product_id);
+                    $item_name_array[] = $query[0]->vendor_description;
+                    $item_case_price[] = $query[0]->case_price;
+                    $item_retail_price[]=$query[0]->retail_price;
                     $orderRequestIdArray[] = ${'SID' . $i};
                 }
 
                 $data['orderDescriptionArray'] = $orderDescriptionArray;
                 $data['orderPriceArray'] = $orderPriceArray;
                 $data['orderQtyArray'] = $orderQtyArray;
+                $data['itemRetailPriceArray']=$item_retail_price;
                 $data['orderProductIdArray'] = $orderProductIdArray;
                 $data['orderRequestIdArray'] = $orderRequestIdArray;
                 $data['itemNameArray'] = $item_name_array;
+                $data['skuNumArray'] = $skuNumArray;
                 $data['itemCasePrice'] = $item_case_price;
-                $data['requests_item_count'] = $item_count;
+                $data['requests_item_count'] = $item_count-1;
                 $data['today'] = date('m/d/y');
             }
         }
@@ -371,7 +402,7 @@ class order extends Sximo
         $data['location_id'] = '';
         $data['user_id'] = \Session::get('uid');
         if (!empty($order_id)) {
-            $query = \DB::select('SELECT O.order_type_id,O.order_description,O.request_ids,O.po_number,O.location_id,O.order_total,O.status_id,
+            $query = \DB::select('SELECT O.order_type_id,O.order_description,O.request_ids,O.po_number,O.location_id,O.order_total,O.status_id,O.date_received,
                      O.notes,O.added_to_inventory,V.vendor_name,U.username FROM orders O LEFT JOIN vendor V ON V.id = O.vendor_id
                      LEFT JOIN users U ON U.id = O.user_id WHERE O.id = ' . $order_id . '');
             if (count($query) == 1) {
@@ -388,6 +419,7 @@ class order extends Sximo
                 $data['description'] = str_replace(' | ', "<br>", $order_description);
                 $data['vendor_name'] = $query[0]->vendor_name;
                 $data['item_count'] = '';
+                $data['date_received']=$query[0]->date_received;
             }
             if (!empty($data['requestIds']) && ($data['order_type'] == 7 || $data['order_type'] == 8)) //INSTANT WIN AND REDEMPTION PRIZES
             {

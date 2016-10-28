@@ -2,21 +2,21 @@
 
     {!! Form::open(array('url'=>'managefegrequeststore/multirequestorderfill/', 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'managefegrequeststoreFormAjax')) !!}
     <div >
-        <div class="col-md-3">
-        <br/>
+        <div class="col-md-3 m-b">
+
         <select name="type" class="select3" id="request_type">
             <option disabled>Select Requests Type</option>
-            <option value="manage" @if($view == 'manage'): selected @endif> Open Requests</option>
             <option value="archive" @if($view == 'archive'): selected @endif>FEG Store Requests Archives</option>
+            <option value="manage" @if($view == 'manage'): selected @endif> Open Requests</option>
         </select>
 
     </div>
     <div class="col-md-3">
-<br/>
+
         <input  name="order_type" @if($TID )value="{{ $TID }}" @endif id="order_type" type="hidden" onchange="pageRefresh('T');" style="width:98%">
     </div>
     <div class="col-md-2">
-        <br/>
+
         <select id="location_id" class="form-control" name="location_id" onchange="pageRefresh('L');">
             @foreach($manageRequestInfo['loc_options'] as $k => $locations)
                 <option @if($LID == $k) selected @endif value="{{ $k }}">{{ $locations}}</option>
@@ -24,7 +24,7 @@
         </select>
     </div>
     <div class="col-md-2">
-        <br/>
+
         <select id="vendor_id" class="form-control" name="vendor_id" onchange="pageRefresh('V');">
             @foreach($manageRequestInfo['vendor_options'] as $k => $vendor)
                 <option @if($VID== $k) selected @endif value="{{ $k }}">{{ $vendor }}</option>
@@ -32,7 +32,7 @@
         </select>
     </div>
         <div class="col-md-2">
-            <br/>
+
             @if(!empty($VID))
                 <button type="submit" name="submit" class="btn btn-primary btn-sm" id="multi-btn"><i class="fa  fa-save" ></i>  Add Items to Order Form </button>
         @endif
@@ -43,17 +43,25 @@
     <div class="clearfix"></div>
     @if($view == "manage")
         <div class="col-md-12" id="number_requests">
-            <br/>
-
             <p style="color:red;font-weight: bold"><?php echo $manageRequestInfo['number_requests']; ?></p>
         </div>
     @endif
     <div class="col-md-12">
-        <br/>
+
         <a href="{{ URL::to( $pageModule .'/search') }}" class="btn btn-sm btn-white"
-           onclick="SximoModal(this.href,'Advance Search'); return false;"><i class="fa fa-search"></i> Search</a>
+           onclick="SximoModal(this.href,'Advanced Search'); return false;"><i class="fa fa-search"></i>Advanced Search</a>
         @if(SiteHelpers::isModuleEnabled($pageModule))
             <a href="{{ URL::to('tablecols/arrange-cols/'.$pageModule) }}" class="btn btn-sm btn-white" onclick="SximoModal(this.href,'Column Selector'); return false;" ><i class="fa fa-bars"></i> Arrange Columns</a>
+            @if(!empty($colconfigs))
+                <select class="form-control" style="width:25%!important;display:inline-block;box-sizing: border-box" name="col-config"
+                        id="col-config">
+                    <option value="0">Select Configuraton</option>
+                    @foreach( $colconfigs as $configs )
+                        <option @if($config_id == $configs['config_id']) selected
+                                                                         @endif value={{ $configs['config_id'] }}> {{ $configs['config_name'] }}   </option>
+                    @endforeach
+                </select>
+            @endif
         @endif
         <div class="pull-right">
             <a href="{{ URL::to( $pageModule .'/export/excel?return='.$return) }}" class="btn btn-sm btn-white">
@@ -104,7 +112,7 @@
     }
     $("#col-config").on('change', function () {
         var request_type = $("#request_type").val();
-        reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?config_id=' + $("#col-config").val()+'&view=' + request_type);
+        reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?config_id=' + $("#col-config").val()+'&view=' + request_type + getFooterFilters());
     });
 
     function pageRefresh(type) {
@@ -161,7 +169,7 @@
             }
         }
 
-        reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data' + get);
+        reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data' + get );
 
     }
 </script>

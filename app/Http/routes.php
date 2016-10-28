@@ -65,13 +65,9 @@ Route::filter('authorization', function()
 
 });
 Route::get('submitservicerequest/{GID?}/{LID?}', 'SubmitservicerequestController@getIndex');
-
-
-Route::get('arslan/{id}/{name?}/{subject?}', 'DemoController@getIndex');
-Route::post('arslan/{id}/{name?}/{subject?}', 'DemoController@postIndex');
-
+Route::get('ticketsetting','TicketsettingController@getSetting');
 Route::get('order/submitorder/{SID?}', 'OrderController@getSubmitorder');
-Route::get('/', 'HomeController@index');
+Route::get('/', 'UserController@getLogin');
 Route::controller('home', 'HomeController');
 Route::controller('/user', 'UserController');
 include('pageroutes.php');
@@ -110,7 +106,8 @@ Route::group(['middleware' => 'auth' , 'middleware'=>'sximoauth'], function()
 		'feg/menu'		=> 'Sximo\MenuController',
 		'feg/config' 		=> 'Sximo\ConfigController',
 		'feg/module' 		=> 'Sximo\ModuleController',
-		'feg/tables'		=> 'Sximo\TablesController'
+		'feg/tables'		=> 'Sximo\TablesController',
+		'feg/system/tasks'	=> 'Feg\System\TasksController',
 	]);
 
 

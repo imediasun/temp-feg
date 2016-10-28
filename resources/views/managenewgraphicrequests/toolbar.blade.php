@@ -1,8 +1,8 @@
 <div class="row m-b">
 
     <div class="col-md-4" >
-        <br/>
-        <select name="type" class="select3" id="request_type">
+
+        <select name="type" class="select3" id="request_type" style="display:inline-block">
 
             <option disabled>Select Graphic Requests Type</option>
             <option value="open" selected> Open Graphics Requests </option>
@@ -11,8 +11,8 @@
 
     </div>
         @if($view=="open")
-            <div class="abc" id="number_requests">
-                <p style="color:red; padding-top: 22px; font-weight: bold">{{ $newGraphicsInfo['number_new_requests'] }} New **</p>
+            <div class="abc" id="number_requests" >
+                <p style="color:red;  font-weight: bold">{{ $newGraphicsInfo['number_new_requests'] }} New **</p>
             </div>
 
         @endif
@@ -24,7 +24,7 @@
         @if($access['is_remove'] ==1)
             <a href="javascript://ajax" class="btn btn-sm btn-white" onclick="ajaxRemove('#{{ $pageModule }}','{{ $pageUrl }}');"><i class="fa fa-trash-o "></i> {{ Lang::get('core.btn_remove') }} </a>
         @endif
-        <a href="{{ URL::to( $pageModule .'/search') }}" class="btn btn-sm btn-white" onclick="SximoModal(this.href,'Advance Search'); return false;" ><i class="fa fa-search"></i> Search</a>
+        <a href="{{ URL::to( $pageModule .'/search') }}" class="btn btn-sm btn-white" onclick="SximoModal(this.href,'Advanced Search'); return false;" ><i class="fa fa-search"></i>Advanced Search</a>
         @if(SiteHelpers::isModuleEnabled($pageModule))
             <a href="{{ URL::to('tablecols/arrange-cols/'.$pageModule) }}" class="btn btn-sm btn-white" onclick="SximoModal(this.href,'Column Selector'); return false;" ><i class="fa fa-bars"></i> Arrange Columns</a>
             @if(!empty($colconfigs))
@@ -49,7 +49,7 @@
 
     $("#col-config").on('change',function(){
         var request_type=$("#request_type").val();
-        reloadData('#{{ $pageModule }}','{{ $pageModule }}/data?view='+request_type+'&config_id='+$("#col-config").val());
+        reloadData('#{{ $pageModule }}','{{ $pageModule }}/data?view='+request_type+'&config_id='+$("#col-config").val()+ getFooterFilters());
     });
     function setType() {
         $('#request_type option').each(function () {
@@ -61,6 +61,6 @@
     $("#request_type").on('change', function () {
 
         var request_type = $(this).val();
-        reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?view='+ request_type);
+        reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?view='+ request_type+ getFooterFilters());
     });
 </script>

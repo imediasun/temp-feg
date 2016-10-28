@@ -77,19 +77,41 @@
 
 
 				  <div class="form-group  " >
-					<label for="Ticket Value" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Ticket Value', (isset($fields['ticket_value']['language'])? $fields['ticket_value']['language'] : array())) !!}
+					<label for="Case Price" class=" control-label col-md-4 text-left">
+					{!! SiteHelpers::activeLang('Case Price', (isset($fields['case_price']['language'])? $fields['case_price']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
 						<div class="input-group">
 							<span class="input-group-addon">$</span>
-							{!! Form::text('ticket_value', number_format((double)$row['ticket_value'],2),array('class'=>'form-control', 'placeholder'=>'','required'=>'required','type'=>'number','min' => '0','step'=>'1' )) !!}
+							{!! Form::text('case_price', number_format((double)$row['case_price'],2),array('class'=>'form-control', 'placeholder'=>'','required'=>'required','type'=>'number','min' => '0','step'=>'1' )) !!}
 						</div>
 					</div>
 					 <div class="col-md-2">
 
 					 </div>
 				  </div>
+
+
+
+							<div class="form-group  " >
+								<label for="Individual Item Price" class=" control-label col-md-4 text-left">
+									{!! SiteHelpers::activeLang('Individual Item Price', (isset($fields['unit_price']['language'])? $fields['unit_price']['language'] : array())) !!}
+								</label>
+								<div class="col-md-6">
+									<div class="input-group">
+										<span class="input-group-addon">$</span>
+										{!! Form::text('unit_price', number_format((double)$row['unit_price'],2),array('class'=>'form-control', 'placeholder'=>'','required'=>'required','type'=>'number','min' => '0','step'=>'1' )) !!}
+									</div>
+								</div>
+								<div class="col-md-2">
+
+								</div>
+							</div>
+
+
+
+
+
 							<div class="form-group  " >
 								<label for="Prod Type Id" class=" control-label col-md-4 text-left">
 									{!! SiteHelpers::activeLang('Prod Type Id', (isset($fields['prod_type_id']['language'])? $fields['prod_type_id']['language'] : array())) !!}
@@ -252,8 +274,9 @@ $(document).ready(function() {
 	$("#prod_type_id").jCombo("{{ URL::to('product/comboselect?filter=order_type:id:order_type:can_request:1') }}",
 			{  selected_value : '{{ $row["prod_type_id"] }}' });
 
-	$("#prod_sub_type_id").jCombo("{{ URL::to('product/comboselect?filter=product_type:id:product_type') }}",
-			{selected_value : '{{ $row["prod_sub_type_id"] }}' });
+
+	$("#prod_sub_type_id").jCombo("{{ URL::to('product/comboselect?filter=product_type:id:type_description') }}&parent=request_type_id:",
+			{parent : '#prod_type_id',selected_value : '{{ $row["prod_sub_type_id"] }}' });
 
 
 	$('.editor').summernote();
@@ -262,7 +285,7 @@ $(document).ready(function() {
 	$(".select2").select2({ width:"98%"});
 	$('.date').datepicker({format:'mm/dd/yyyy',autoClose:true})
 	$('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});
-	$('input[type="checkbox"],input[type="radio"]').iCheck({
+	$('input[type="checkbox"],input[type="radio"]').not('.test').iCheck({
 		checkboxClass: 'icheckbox_square-green',
 		radioClass: 'iradio_square-green',
 	});
