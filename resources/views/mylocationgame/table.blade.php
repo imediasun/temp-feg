@@ -158,10 +158,6 @@
 
 											 {!! date("m/d/Y", strtotime($value)) !!}
 
-										 @elseif($field['field'] == 'last_meter_date')
-
-											 {!! date("m/d/Y", strtotime($value)) !!}
-
 											 @elseif($field['field']=='location_num')
 												 {!! $row->location_id !!}
 
