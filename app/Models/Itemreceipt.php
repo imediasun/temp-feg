@@ -88,7 +88,7 @@ class itemreceipt extends Sximo  {
             }
 
         }
-echo $select . " {$params} " . " {$orderConditional}";
+//echo $select . " {$params} " . " {$orderConditional}";
         \Log::info("Total Query : ".$select . " {$params} " . " {$orderConditional}");
         //why added group by in order
         $counter_select =\DB::select($select . " {$params} " . " {$orderConditional}");
