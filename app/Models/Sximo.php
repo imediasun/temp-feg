@@ -867,16 +867,10 @@ class Sximo extends Model {
             $headers .= 'From: ' . CNF_APPNAME . ' <' . CNF_EMAIL . '>' . "\r\n";
           if(mail($to, $subject, $message, $headers))
         {
-            return response()->json(array(
-                'status' => 'success',
-                'message' => \Lang::get('Emails Successfully Sent to All Users..')
-            ));
+          echo "mail sent successfully";
         }
             else{
-                return response()->json(array(
-                    'status' => 'error',
-                    'message' => \Lang::get('Error in Sending Emails..')
-                ));
+                echo "error in sending email";
             }
           //  return Redirect::to('user/login')->with('message', \SiteHelpers::alert('success', 'Please check your email'));
 
