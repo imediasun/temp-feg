@@ -308,7 +308,7 @@ class order extends Sximo
 
                 $query = \DB::select('SELECT R.qty,
 											  P.case_price,
-											  P.sku
+											  P.sku,
 											  P.retail_price,
 											  P.vendor_id,
 											  P.vendor_description,
