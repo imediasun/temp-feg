@@ -427,7 +427,7 @@ if($token!="")
                 $data = array('verCode' => $email);
                 return view('user.remind', $data);
             } else {
-                return Redirect::to('user/login')->with('message', \SiteHelpers::alert('error', 'Cant find your reset code'));
+                return Redirect::to('user/login')->with('message', \SiteHelpers::alert('error', 'Cant find your email'));
             }
         }
     }
