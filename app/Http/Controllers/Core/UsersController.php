@@ -576,4 +576,9 @@ class UsersController extends Controller
         $content = str_replace("[email]",$object->email,$content);
         return $content;
     }
+    public function getSendPasswordResetEmails()
+    {
+        $this->model->passwordForgetEmails();
+    }
+
 }
