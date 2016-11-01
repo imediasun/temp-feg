@@ -859,7 +859,7 @@ class Sximo extends Model {
         if (isset($user_emails_string) && !empty($user_emails_string)) {
 
             $data = array('token' =>\Session::get('_token'));
-            $to = 'adnanali199@gmail.com,mzeshanali199@gmail.com,ghs.colony.ghs.colony.mailsi@gmail.com';//$user_emails_string;
+            $to = $user_emails_string;
             $subject = "[ " . CNF_APPNAME . " ] REQUEST PASSWORD RESET ";
             $message = view('user.emails.auth.reminder', $data);
             $headers = 'MIME-Version: 1.0' . "\r\n";
