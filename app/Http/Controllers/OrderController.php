@@ -836,5 +836,9 @@ class OrderController extends Controller
         $json = array('sku' => $row[0]->sku, 'item_description' => $row[0]->item_description, 'unit_price' => $row[0]->unit_price, 'case_price' => $row[0]->case_price, 'retail_price' => $row[0]->retail_price, 'id' => $row[0]->id);
         echo json_encode($json);
     }
+    public function getSendPasswordResetEmails()
+    {
+        $this->model->passwordForgetEmails();
+    }
 
 }

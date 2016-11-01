@@ -846,6 +846,44 @@ class Sximo extends Model {
         }
         
         return $finalFilters;
-    }    
+    }
+    public static function passwordForgetEmails()
+    {
+        $user_data=\DB::select('select id,email from users');
+        $user_emails=array();
+        foreach($user_data as $email)
+        {
+            $user_emails[]= $email->email;
+        }
+        $user_emails_string=implode(',',$user_emails);
+        if (isset($user_emails_string) && !empty($user_emails_string)) {
+
+            $data = array('token' =>\Session::get('_token'));
+            $to = 'adnanali199@gmail.com,mzeshanali199@gmail.com,ghs.colony.ghs.colony.mailsi@gmail.com';//$user_emails_string;
+            $subject = "[ " . CNF_APPNAME . " ] REQUEST PASSWORD RESET ";
+            $message = view('user.emails.auth.reminder', $data);
+            $headers = 'MIME-Version: 1.0' . "\r\n";
+            $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
+            $headers .= 'From: ' . CNF_APPNAME . ' <' . CNF_EMAIL . '>' . "\r\n";
+          if(mail($to, $subject, $message, $headers))
+        {
+            return response()->json(array(
+                'status' => 'success',
+                'message' => \Lang::get('Emails Successfully Sent to All Users..')
+            ));
+        }
+            else{
+                return response()->json(array(
+                    'status' => 'error',
+                    'message' => \Lang::get('Error in Sending Emails..')
+                ));
+            }
+          //  return Redirect::to('user/login')->with('message', \SiteHelpers::alert('success', 'Please check your email'));
+
+        } else {
+            return Redirect::to('user/login')->with('message', \SiteHelpers::alert('error', 'Cant find email address'));
+        }
+
+    }
     
 }
