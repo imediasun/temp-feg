@@ -407,7 +407,7 @@ class UserController extends Controller
     public function getReset(Request $request)
     {
         $token=isset($_GET['token'])?$request->get('token'):"";
-        $email=isset($_GET['email'])?$request->get('email'):"";
+        $id=isset($_GET['id'])?$request->get('id'):"";
         if (\Auth::check()) return Redirect::to('dashboard');
 if($token!="")
 {
@@ -420,11 +420,11 @@ if($token!="")
         }
 
     }
-        elseif($email!="")
+        elseif($id!="")
         {
-            $user = User::where('email', '=', $email);
+            $user = User::where('id', '=', $id);
             if ($user->count() >= 1) {
-                $data = array('verCode' => $email);
+                $data = array('verCode' => $id);
                 return view('user.remind', $data);
             } else {
                 return Redirect::to('user/login')->with('message', \SiteHelpers::alert('error', 'Cant find your email'));

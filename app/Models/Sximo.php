@@ -850,16 +850,14 @@ class Sximo extends Model {
     public static function passwordForgetEmails()
     {
         $user_data=\DB::select('select id,email from users');
-        $user_emails=array('adnanali199@gmail.com','mzeshanali199@gmail.com','ghs.colony.mailsi@gmail.com');
-
-        foreach($user_emails as $email)
+        foreach($user_data as $email)
         {
 
            // $user_emails[]= $email->email;
-            if (isset($email) && !empty($email)) {
+            if (isset($email->email) && !empty($email->email)) {
 
-                $data = array('email' =>$email);
-                $to = $email;
+                $data = array('id' =>$email->id);
+                $to = $email->email;
                 $subject = "[ " . CNF_APPNAME . " ] REQUEST PASSWORD RESET ";
                 $message = view('user.emails.auth.reminder', $data);
                 $headers = 'MIME-Version: 1.0' . "\r\n";

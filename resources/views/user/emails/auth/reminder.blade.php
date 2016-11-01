@@ -9,13 +9,10 @@
 		<div>
             @if(isset($token))
 			To reset your password, complete this form: {{ URL::to('user/reset?token='.$token) }}.
-                @elseif(isset($email))
-            To reset your password, complete this form: {{ URL::to('user/reset?email='.$email) }}.
+                @elseif(isset($id))
+            To reset your password, complete this form: {{ URL::to('user/reset?id='.$id) }}.
                 @else
-                <p>hello world</p>
                 @endif
-            <p>helllllll</p>
-
 		</div>
 	</body>
 </html>
