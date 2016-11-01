@@ -868,9 +868,13 @@ class Sximo extends Model {
                  if(mail($to, $subject, $message, $headers))
                 {
 
-
                 //  return Redirect::to('user/login')->with('message', \SiteHelpers::alert('success', 'Emails send successfully'));
                 }
+                //else{
+                //  return Redirect::to('user/login')->with('message', \SiteHelpers::alert('error', 'Error in sending Emails'));
+                //}
+                //  return Redirect::to('user/login')->with('message', \SiteHelpers::alert('success', 'Please check your email'));
+
             }
 
         }

@@ -8,11 +8,14 @@
 
 		<div>
             @if(isset($token))
-			To reset your password, complete this form: {{ URL::to('user/reset?token='.array($token)) }}.
+			To reset your password, complete this form: {{ URL::to('user/reset?token='.$token) }}.
                 @elseif(isset($email))
-            To reset your password, complete this form: {{ URL::to('user/reset?email'. array($email)) }}.
+            To reset your password, complete this form: {{ URL::to('user/reset?email'.$email) }}.
                 @else
+                <p>hello world</p>
                 @endif
-        </div>
+            <p>helllllll</p>
+
+		</div>
 	</body>
 </html>
