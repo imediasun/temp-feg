@@ -404,10 +404,13 @@ class UserController extends Controller
         }
     }
 
-    public function getReset($token = '')
+    public function getReset(Request $request)
     {
+        $token=isset($_GET['token'])?$request->get('token'):"";
+        $email=isset($_GET['email'])?$request->get('email'):"";
         if (\Auth::check()) return Redirect::to('dashboard');
-
+if($token!="")
+{
         $user = User::where('reminder', '=', $token);
         if ($user->count() >= 1) {
             $data = array('verCode' => $token);
@@ -416,6 +419,17 @@ class UserController extends Controller
             return Redirect::to('user/login')->with('message', \SiteHelpers::alert('error', 'Cant find your reset code'));
         }
 
+    }
+        elseif($email!="")
+        {
+            $user = User::where('email', '=', $email);
+            if ($user->count() >= 1) {
+                $data = array('verCode' => $email);
+                return view('user.remind', $data);
+            } else {
+                return Redirect::to('user/login')->with('message', \SiteHelpers::alert('error', 'Cant find your reset code'));
+            }
+        }
     }
 
     public function postDoreset(Request $request, $token = '')
@@ -426,8 +440,14 @@ class UserController extends Controller
         );
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
+            if (strpos($token,'@')) {
+                $user = User::where('email', '=', $token);
+            }
+            else
+            {
+                $user = User::where('reminder', '=', $token);
+            }
 
-            $user = User::where('reminder', '=', $token);
             if ($user->count() >= 1) {
                 $data = $user->get();
                 $user = User::find($data[0]->id);
