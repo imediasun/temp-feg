@@ -72,12 +72,6 @@ class itemreceipt extends Sximo  {
         else {
             $select .= self::queryWhere();
         }
-
-        if(!empty($createdFrom)){
-            $select .= " AND orders.created_at BETWEEN '$createdFrom' AND '$createdTo'";
-            $createdFlag = true;
-        }
-
         if(!empty($updatedFrom)){
 
             if($createdFlag){
@@ -88,7 +82,6 @@ class itemreceipt extends Sximo  {
             }
 
         }
-//echo $select . " {$params} " . " {$orderConditional}";
         \Log::info("Total Query : ".$select . " {$params} " . " {$orderConditional}");
         //why added group by in order
         $counter_select =\DB::select($select . " {$params} " . " {$orderConditional}");
@@ -119,14 +112,13 @@ class itemreceipt extends Sximo  {
 
 
     public static function addOrderReceiptItems($data,$param=null){
+
         $result = [];
         $order_ids=array();
         $where="";
-
-
         foreach($data as $record)
 {
-    $order_ids[]=$record->id;
+        $order_ids[]=$record->id;
 }
         if(!empty($param['createdFrom'])){
             $where .= " AND order_received.date_received BETWEEN '".$param['createdFrom']."' AND '".$param['createdTo']."'";
@@ -135,19 +127,22 @@ class itemreceipt extends Sximo  {
         $qry_in_string=implode(',',$order_ids);
 
         $order_received_data=\DB::select("select *from order_received where order_id in($qry_in_string) $where");
-
+        $order_received_ids=\DB::select("select order_id from order_received where order_id in($qry_in_string) $where group by order_id");
         //all order contents place them in relevent order
-        foreach($data as $test) {
-            if (!isset($result[$test->id])) {
-
-                $result[$test->id] = (array)$test;
-                $result[$test->id]['id'] = $test->id;
+        foreach($data as $order_data) {
+            if (!isset($result[$order_data->id])) {
+                foreach ($order_received_ids as $order_ids) {
+                    if($order_ids->order_id == $order_data->id) {
+                        $result[$order_data->id] = (array)$order_data;
+                        $result[$order_data->id]['id'] = $order_data->id;
+                    }
+                }
             }
             /* unset($result[$record->order_id]['order_id']);
              unset($result[$record->order_id]['order_line_item_id']);
              unset($result[$record->order_id]['status']);*/
             foreach ($order_received_data as $record) {
-                if ($test->id == $record->order_id) {
+                if ($order_data->id == $record->order_id) {
                     $result[$record->order_id]['receipts'][] = [
                         'id' => $record->id,
                         'order_id' => $record->order_id,
@@ -161,6 +156,7 @@ class itemreceipt extends Sximo  {
                 }
             }
         }
+
         return array_values($result);
     }
 
