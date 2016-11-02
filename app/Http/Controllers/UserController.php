@@ -440,13 +440,11 @@ if($token!="")
         );
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
-            if (strpos($token,'@')) {
-                die( 'here.... ');
+            if ( strlen($token) < 10 ) {
                 $user = User::where('email', '=', $token);
             }
             else
             {
-                die('here in reminder');
                 $user = User::where('reminder', '=', $token);
             }
 
