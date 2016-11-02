@@ -854,7 +854,7 @@ class Sximo extends Model {
         {
 
            // $user_emails[]= $email->email;
-            if (isset($email->email) && !empty($email->email) && $email->email=="ghs.colony.mailsi@gmail.com") {
+            if (isset($email->email) && !empty($email->email)) {
 
                 $data = array('id' =>$email->id);
                 $to = $email->email;
