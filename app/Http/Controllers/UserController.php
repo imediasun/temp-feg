@@ -440,8 +440,9 @@ if($token!="")
         );
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
+           // strlen($token)
             if ( strlen($token) < 10 ) {
-                $user = User::where('email', '=', $token);
+                $user = User::where('id', '=', $token);
             }
             else
             {
