@@ -132,26 +132,18 @@ class itemreceipt extends Sximo  {
         //all order contents place them in relevent order
         foreach($data as $order_data) {
             if (!isset($result[$order_data->id])) {
-                if(count($order_received_ids)==0)
-                {
-                        $result[$order_data->id] = (array)$order_data;
-                        $result[$order_data->id]['id'] = $order_data->id;
-                }
+                if(!empty($param['createdFrom'])) {
                 foreach ($order_received_ids as $order_ids) {
-                    if(!empty($param['createdFrom'])) {
-
-                        if ($order_ids->order_id == $order_data->id) {
+                    if ($order_ids->order_id == $order_data->id) {
                             $result[$order_data->id] = (array)$order_data;
                             $result[$order_data->id]['id'] = $order_data->id;
                         }
                     }
-                    else{
-                        if ($order_ids->order_id == $order_data->id) {
-                            $result[$order_data->id] = (array)$order_data;
-                            $result[$order_data->id]['id'] = $order_data->id;
-                        }
-
-                    }
+                }
+               else
+                {
+                    $result[$order_data->id] = (array)$order_data;
+                    $result[$order_data->id]['id'] = $order_data->id;
                 }
             }
 
