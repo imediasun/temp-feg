@@ -128,16 +128,33 @@ class itemreceipt extends Sximo  {
 
         $order_received_data=\DB::select("select *from order_received where order_id in($qry_in_string) $where");
         $order_received_ids=\DB::select("select order_id from order_received where order_id in($qry_in_string) $where group by order_id");
+       // echo "select order_id from order_received where order_id in($qry_in_string) $where group by order_id";
         //all order contents place them in relevent order
         foreach($data as $order_data) {
             if (!isset($result[$order_data->id])) {
-                foreach ($order_received_ids as $order_ids) {
-                    if($order_ids->order_id == $order_data->id) {
+                if(count($order_received_ids)==0)
+                {
                         $result[$order_data->id] = (array)$order_data;
                         $result[$order_data->id]['id'] = $order_data->id;
+                }
+                foreach ($order_received_ids as $order_ids) {
+                    if(!empty($param['createdFrom'])) {
+
+                        if ($order_ids->order_id == $order_data->id) {
+                            $result[$order_data->id] = (array)$order_data;
+                            $result[$order_data->id]['id'] = $order_data->id;
+                        }
+                    }
+                    else{
+                        if ($order_ids->order_id == $order_data->id) {
+                            $result[$order_data->id] = (array)$order_data;
+                            $result[$order_data->id]['id'] = $order_data->id;
+                        }
+
                     }
                 }
             }
+
             /* unset($result[$record->order_id]['order_id']);
              unset($result[$record->order_id]['order_line_item_id']);
              unset($result[$record->order_id]['status']);*/
