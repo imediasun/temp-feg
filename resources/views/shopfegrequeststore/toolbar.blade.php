@@ -53,6 +53,8 @@
 <script>
     $(document).ready(function () {
 
+        setTimeout(function(){
+
         $("#locations").jCombo("{{ URL::to('shopfegrequeststore/comboselect?filter=location:id:id|location_name') }}",
                 {selected_value: '{{ \Session::get('selected_location') }}', initial_text: 'Select Location'});
 
@@ -65,7 +67,7 @@
                 {  parent: '#order_type' ,selected_value : '{{ $product_type }}', initial_text: 'Select Product Type'});
 
 
-
+        }, 2000);
 
 
 
