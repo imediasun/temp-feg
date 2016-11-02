@@ -67,7 +67,7 @@
                 {  parent: '#order_type' ,selected_value : '{{ $product_type }}', initial_text: 'Select Product Type'});
 
 
-        }, 3000);
+        }, 5000);
 
 
 
