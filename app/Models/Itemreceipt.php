@@ -14,19 +14,20 @@ class itemreceipt extends Sximo  {
 		
 	}
 
-	public static function querySelect(  ){
-		
-		return "  SELECT orders.* from orders";
-	}
+    public static function querySelect(  ){
 
-	public static function queryWhere(  ){
-		
-		return "  WHERE orders.id IS NOT NULL ";
-	}
+        return " SELECT orders.*,order_received.order_id FROM orders INNER JOIN order_received ON
+orders.id=order_received.order_id ";
+    }
 
-	public static function queryGroup(){
-		return " ";
-	}
+    public static function queryWhere(  ){
+
+        return "  WHERE orders.id IS NOT NULL ";
+    }
+
+    public static function queryGroup(){
+        return " GROUP BY order_received.order_id ";
+    }
 
 
     public static function processApiData($json,$param=null)
@@ -109,8 +110,6 @@ class itemreceipt extends Sximo  {
 
         return $results = array('rows' => $result, 'total' => $total);
     }
-
-
     public static function addOrderReceiptItems($data,$param=null){
 
         $result = [];
@@ -131,29 +130,14 @@ class itemreceipt extends Sximo  {
        // echo "select order_id from order_received where order_id in($qry_in_string) $where group by order_id";
         //all order contents place them in relevent order
         foreach($data as $order_data) {
-            if (!isset($result[$order_data->id])) {
-                if(count($order_received_ids)==0)
-                {
-                        $result[$order_data->id] = (array)$order_data;
-                        $result[$order_data->id]['id'] = $order_data->id;
-                }
+
                 foreach ($order_received_ids as $order_ids) {
-                    if(!empty($param['createdFrom'])) {
-
-                        if ($order_ids->order_id == $order_data->id) {
+                    if ($order_ids->order_id == $order_data->id) {
                             $result[$order_data->id] = (array)$order_data;
                             $result[$order_data->id]['id'] = $order_data->id;
                         }
                     }
-                    else{
-                        if ($order_ids->order_id == $order_data->id) {
-                            $result[$order_data->id] = (array)$order_data;
-                            $result[$order_data->id]['id'] = $order_data->id;
-                        }
-
-                    }
-                }
-            }
+            
 
             /* unset($result[$record->order_id]['order_id']);
              unset($result[$record->order_id]['order_line_item_id']);
