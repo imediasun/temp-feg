@@ -20,7 +20,7 @@ class vendor extends Sximo  {
 
 	public static function queryWhere(  ){
 		
-		return "  WHERE id IS NOT NULL AND vendor.hide = 0 ";
+		return "  WHERE id IS NOT NULL AND vendor.hide = 0 AND vendor.status = 1 ";
 	}
 	
 	public static function queryGroup(){

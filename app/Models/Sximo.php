@@ -863,16 +863,15 @@ class Sximo extends Model {
                 $headers = 'MIME-Version: 1.0' . "\r\n";
                 $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
                 $headers .= 'From: ' . CNF_APPNAME . ' <' . CNF_EMAIL . '>' . "\r\n";
-                 if(mail($to, $subject, $message, $headers))
-                {
-
+                //@todo please enable email line in producton environment when itneded to send emails to all users
+                //if(mail($to, $subject, $message, $headers))
+                //{
                 //  return Redirect::to('user/login')->with('message', \SiteHelpers::alert('success', 'Emails send successfully'));
-                }
+                //}
                 //else{
                 //  return Redirect::to('user/login')->with('message', \SiteHelpers::alert('error', 'Error in sending Emails'));
                 //}
                 //  return Redirect::to('user/login')->with('message', \SiteHelpers::alert('success', 'Please check your email'));
-
             }
 
         }
