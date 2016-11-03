@@ -14,15 +14,17 @@ class itemreceipt extends Sximo  {
 		
 	}
 
-    public static function querySelect(  ){
+    public static function querySelect(){
 
-        return " SELECT orders.*,order_received.order_id FROM orders INNER JOIN order_received ON
+    return " SELECT orders.*,order_received.order_id FROM orders INNER JOIN order_received ON
 orders.id=order_received.order_id ";
+
+
     }
 
-    public static function queryWhere(  ){
+    public static function queryWhere($range=null){
 
-        return "  WHERE orders.id IS NOT NULL ";
+        return "  WHERE orders.id IS NOT NULL  $range ";
     }
 
     public static function queryGroup(){
@@ -60,17 +62,24 @@ orders.id=order_received.order_id ";
         // End Update permission global / own access new ver 1.1
 
         $rows = array();
+
         $select = self::querySelect();
 
         /*
 
         */
         $createdFlag = false;
+        $cond="";
 
+        if(!empty($args['createdFrom']) && isset($args['createdFrom'])){
+            $cond .= " AND order_received.date_received BETWEEN '".$args['createdFrom']."' AND '".$args['createdTo']."'";
+            $createdFlag = true;
+        }
         if ($cond != null) {
             $select .= self::queryWhere($cond);
         }
         else {
+
             $select .= self::queryWhere();
         }
         if(!empty($updatedFrom)){
@@ -83,9 +92,9 @@ orders.id=order_received.order_id ";
             }
 
         }
-        \Log::info("Total Query : ".$select . " {$params} " . " {$orderConditional}");
+        \Log::info("Total Query : ".$select . " {$params} " . "  self::queryGroup() "." {$orderConditional}");
         //why added group by in order
-        $counter_select =\DB::select($select . " {$params} " . " {$orderConditional}");
+        $counter_select =\DB::select($select . " {$params} "  . self::queryGroup() .  " {$orderConditional}");
         $total= count($counter_select);
         if($table=="img_uploads")
         {
@@ -98,7 +107,8 @@ orders.id=order_received.order_id ";
             $offset = ($page-1) * $limit ;
         }
         $limitConditional = ($page != 0 && $limit != 0) ? "LIMIT  $offset , $limit" : '';
-
+//echo $select . " {$params} " . self::queryGroup() . " {$orderConditional}  {$limitConditional} ";
+       // die();
         \Log::info("Query : ".$select . " {$params} " . self::queryGroup() . " {$orderConditional}  {$limitConditional} ");
         $result = \DB::select($select . " {$params} " . self::queryGroup() . " {$orderConditional}  {$limitConditional} ");
 
