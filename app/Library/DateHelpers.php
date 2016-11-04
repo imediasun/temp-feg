@@ -1,5 +1,5 @@
 <?php
-namespace App\Library;
+
 class DateHelpers{
 
         public static  function formatDate($date){
