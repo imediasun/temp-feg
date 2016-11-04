@@ -136,11 +136,21 @@ width: 75%">
             reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?config_id=' + $("#col-config").val()+ getFooterFilters());
         });
         $("#product_list_type").change(function () {
-
+            var sub_type = $("#prod_sub_type_id").val();
             var val = $("#product_list_type").val();
             var active = $(this).find('option:selected').attr('data-active');
             if (val) {
-                reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?prod_list_type=' + val + '&active=' + active + getFooterFilters());
+                 var footer_filters=getFooterFilters();
+                if(footer_filters.indexOf('sub_type') != -1)
+                {
+                    footer_filters = footer_filters.replace( /sub_type.*?&/, '' );
+                }
+                if(footer_filters.indexOf('prod_list_type') != -1)
+                {
+                    footer_filters = footer_filters.replace( /prod_list_type.*?&/, '' );
+                }
+
+                reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?active=' + active + footer_filters+'&prod_list_type=' + val );
             }
         });
         $("#prod_sub_type_id").click(function () {
@@ -149,19 +159,20 @@ width: 75%">
             var type="{{\Session::get('product_type')}}";
             var url="{{ $pageModule }}/data?";
             var active="0";
+            url +='&active=' + active + getFooterFilters();
             if(type != "")
             {
-                url += "prod_list_type="+type;
+                url += "&prod_list_type="+type;
             }
             else
             {
-                url += "prod_list_type=select";
+                url += "&prod_list_type=select";
             }
             if(sub_type)
             {
                 url +="&sub_type="+sub_type;
             }
-            url +='&active=' + active + getFooterFilters();
+
             //alert(url);
             reloadData('#{{ $pageModule }}', url);
         });

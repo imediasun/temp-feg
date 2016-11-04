@@ -19,6 +19,7 @@ function reloadData( id,url,callback)
 }
 
 function getFooterFilters(excludeList, forceSetFields) {
+
     var attr = "", fieldKey;
     if (!forceSetFields) {
         forceSetFields = {};
