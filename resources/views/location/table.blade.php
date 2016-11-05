@@ -139,15 +139,9 @@ if (!$colconfigs) {
                             @if($field['field'] != 'bill_token_detail' && $field['field'] != 'bill_license_detail' && $field['field'] != 'bill_attraction_detail')
                                     <td align="<?php echo $field['align'];?>" data-values="{{ isset($row->$field['field'])?$row->$field['field']:"" }}"
                                     data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
-                                    @if($field['field'] == 'date_opened')
 
-                                        {!! date("m/d/Y", strtotime($value)) !!}
 
-                                    @elseif($field['field'] == 'date_closed')
-
-                                        {!! date("m/d/Y", strtotime($value)) !!}
-
-                                    @elseif($field['field'] == 'bill_debit_amt')
+                                    @if($field['field'] == 'bill_debit_amt')
 
 
                                        {{number_format($value, 2)}}
@@ -209,7 +203,7 @@ if (!$colconfigs) {
         $('.tips').tooltip();
         $('input[type="checkbox"],input[type="radio"]').iCheck({
             checkboxClass: 'icheckbox_square-green',
-            radioClass: 'iradio_square-green',
+            radioClass: 'iradio_square-green'
         });
         $('#{{ $pageModule }}Table .checkall').on('ifChecked', function () {
             $('#{{ $pageModule }}Table input[type="checkbox"]').iCheck('check');
