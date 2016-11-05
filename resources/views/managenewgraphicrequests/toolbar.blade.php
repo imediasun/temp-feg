@@ -61,6 +61,12 @@
     $("#request_type").on('change', function () {
 
         var request_type = $(this).val();
-        reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?view='+ request_type+ getFooterFilters());
+        var footer_filters=getFooterFilters();
+        if(footer_filters.indexOf('view') != -1)
+        {
+            footer_filters = footer_filters.replace( /view.*?&/, '' );
+        }
+
+        reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?view='+ request_type+ footer_filters);
     });
 </script>
