@@ -894,7 +894,7 @@ class Sximo extends Model {
         $query = \DB::select('SELECT V.id AS id,
 							          V.vendor_name AS text
 								 FROM vendor V
-								 	  '.$where.'');
+								 	  '.$where.' order by V.vendor_name');
 
         foreach ($query as $row)
         {
