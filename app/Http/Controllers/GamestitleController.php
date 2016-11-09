@@ -134,6 +134,7 @@ class GamestitleController extends Controller
 
             $this->data['tableGrid'] = \SiteHelpers::showRequiredCols($this->data['tableGrid'], $this->data['config']);
         }// Render into template
+
         return view('gamestitle.table', $this->data);
 
     }
@@ -161,7 +162,7 @@ class GamestitleController extends Controller
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
 
         $this->data['id'] = $id;
-
+        $this->data['vendor_options']=$this->model->populateVendorsDropdown();
         return view('gamestitle.form', $this->data);
     }
 
@@ -233,23 +234,22 @@ class GamestitleController extends Controller
         ));
     }
 
-    function postSave(Request $request, $id = 0)
+    function postSave(Request $request, $id = null)
     {
 
         $files = array('manual' => Input::file('manual'), 'bulletin' => Input::file('service_bulletin'));
         $rules = $this->validateForm();
         //  $rules['manual']='Not Required|mimes:pdf';
-        $rules["game_title"] = "required|unique:game_title";
-        // $rules['service_bulletin']='Not Required|mimes:pdf';
+          $rules['img']='mimes:jpeg,gif,png';
+        if($id == null) {
+            $rules["game_title"] = "required|unique:game_title";
+        }// $rules['service_bulletin']='Not Required|mimes:pdf';
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
-            if ($id == 0) {
-                $data = $this->validatePost('game_title');
-                $id = $this->model->insertRow($data, $request->input('id'));
-            } else {
+
                 $data = $this->validatePost('game_title');
                 $id = $this->model->insertRow($data, $id);
-            }
+
             $updates = array();
             if ($request->hasFile('manual')) {
                 $file = $request->file('manual');
@@ -273,6 +273,18 @@ class GamestitleController extends Controller
                 if ($uploadSuccess1) {
                     $updates['bulletin'] = $newfilename1;
                     $updates['has_servicebulletin'] = '1';
+                }
+            }
+            if ($request->hasFile('img')) {
+                $img = $request->file('img');
+                $img_name = $img->getClientOriginalName();
+                $img_extension = $img->getClientOriginalExtension(); //if you need extension of the file
+                $img_new_name = $id . '.' . $img_extension;
+                $img_destinationPath = './uploads/games/images';
+                $img_uploadSuccess = $request->file('img')->move($img_destinationPath, $img_new_name);
+                if ($img_uploadSuccess) {
+                    $updates['img'] = $img_new_name;
+
                 }
             }
             //   $this->model->insertRow($updates, $id);
