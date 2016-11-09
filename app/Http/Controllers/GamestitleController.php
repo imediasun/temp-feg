@@ -287,7 +287,7 @@ class GamestitleController extends Controller
 
                 }
             }
-            //   $this->model->insertRow($updates, $id);
+               $this->model->insertRow($updates, $id);
             return response()->json(array(
                 'status' => 'success',
                 'message' => \Lang::get('core.note_success')
