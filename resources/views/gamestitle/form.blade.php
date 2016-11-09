@@ -29,7 +29,8 @@
 					{!! SiteHelpers::activeLang('Manufacturer', (isset($fields['mfg_id']['language'])? $fields['mfg_id']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
-					  <select name='mfg_id' rows='5' id='mfg_id' class='select2 ' required  ></select> 
+                        <input type="hidden" name="mfg_id" id="mfg_id" class="" style="width:98%" value="{{ $row['mfg_id'] }}"/>
+
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -94,8 +95,19 @@
 					 <div class="col-md-2">
 					 	
 					 </div>
-				  </div> 					
-				  <div class="form-group  " > 
+				  </div>
+                            <div class="form-group  " >
+                                <label for="img" class=" control-label col-md-4 text-left">
+                                    {!! SiteHelpers::activeLang('Image', (isset($fields['img']['language'])? $fields['img']['language'] : array())) !!}
+                                </label>
+                                <div class="col-md-6">
+                                    <input type="file" name="img" id="img"/>
+                                </div>
+                                <div class="col-md-2">
+
+                                </div>
+                            </div>
+                            <div class="form-group  " >
 					<label for="Num Prize Meters" class=" control-label col-md-4 text-left"> 
 					{!! SiteHelpers::activeLang('Num Prize Meters', (isset($fields['num_prize_meters']['language'])? $fields['num_prize_meters']['language'] : array())) !!}	
 					</label>
@@ -139,11 +151,14 @@
 <script type="text/javascript">
 $(document).ready(function() { 
 	
-        $("#mfg_id").jCombo("{{ URL::to('gamestitle/comboselect?filter=vendor:id:vendor_name') }}",
-        {  selected_value : '{{ $row["mfg_id"] }}' });
+
+    $("#mfg_id").select2({
+        data: <?php echo json_encode($vendor_options)?>,
+        placeholder: "Select Manufacturer"
+    });
         
         $("#game_type_id").jCombo("{{ URL::to('gamestitle/comboselect?filter=game_type:id:game_type') }}",
-        {  selected_value : '{{ $row["game_type_id"] }}' });
+        {  selected_value : '{{ $row["game_type_id"] }}',initial_text:'Select Game Type' });
          
 	
 	$('.editor').summernote();

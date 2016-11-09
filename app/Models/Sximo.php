@@ -879,5 +879,32 @@ class Sximo extends Model {
 
 
     }
+    public function populateVendorsDropdown()
+    {
+        $gid=\Session::get('gid');
+        if($gid == 2 || $gid == 8 || $gid == 9)
+        {
+            $where = 'WHERE partner_hide = 0';
+        }
+        else
+        {
+            $where = '';
+        }
+
+        $query = \DB::select('SELECT V.id AS id,
+							          V.vendor_name AS text
+								 FROM vendor V
+								 	  '.$where.'');
+
+        foreach ($query as $row)
+        {
+            $row = array(
+                'id' => $row->id,
+                'text' => $row->text
+            );
+            $array[] = $row;
+        }
+        return $array;
+    }
     
 }
