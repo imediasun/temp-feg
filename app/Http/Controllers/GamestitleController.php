@@ -465,16 +465,15 @@ class GamestitleController extends Controller
             die;
 
         }
-        // delete multipe rows
+        // delete an image.
         if (true) {
             $filename = public_path() . "\\uploads\\games\\images\\" . $id . ".jpg";
             if (\File::exists($filename)) {
                 \ File::delete($filename);
             }
-            return response()->json(array(
-                'status' => 'success',
-                'message' => \Lang::get('core.note_success_delete')
-            ));
+            \DB::update('update game_title set img="" where id='.$id);
+            return Redirect::to('gamestitle')->with('messagetext', \Lang::get('core.note_success_delete'))->with('msgstatus', 'success');
+
         } else {
             return response()->json(array(
                 'status' => 'error',

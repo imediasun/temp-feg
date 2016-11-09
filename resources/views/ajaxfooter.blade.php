@@ -7,7 +7,7 @@ $orders = array('asc','desc');
 	<div class="row">
 	 <div class="col-sm-5">
 	  <div class="table-actions" style=" padding: 10px 0" id="<?php echo $pageModule;?>Filter">
-  			<input type="hidden" name="page" value="{{ $param['page']}}" />
+  			<input type="hidden" name="page" value="{{ isset($param['page'])?$param['page']:""}}" />
 			<input type="hidden" name="search" value="<?php if(!is_null(Input::get('search'))) echo Input::get('search') ;?>" />
            @if(isset($TID) && !is_null($TID))
             <input type="hidden" name="v1" value="T<?php  echo $TID ?>"/>
