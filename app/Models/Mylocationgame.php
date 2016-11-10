@@ -20,7 +20,7 @@ class mylocationgame extends Sximo  {
 
 	public static function queryWhere(  ){
 		
-		return "  WHERE game.id IS NOT NULL ";
+		return "  WHERE game.id IS NOT NULL AND sold=0";
 	}
 	
 	public static function queryGroup(){
