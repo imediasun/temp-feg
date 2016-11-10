@@ -113,6 +113,7 @@ if (!$colconfigs) {
                     @endif
 
                     <?php foreach ($rowData as $row) :
+
                     $id = $row->id;
                     ?>
 
@@ -136,22 +137,12 @@ if (!$colconfigs) {
                         ?>
                         <?php $limited = isset($field['limited']) ? $field['limited'] : ''; ?>
                         @if(SiteHelpers::filterColumn($limited ))
-                            @if($field['field'] != 'bill_token_detail' && $field['field'] != 'bill_license_detail' && $field['field'] != 'bill_attraction_detail')
-                                    <td align="<?php echo $field['align'];?>" data-values="{{ isset($row->$field['field'])?$row->$field['field']:"" }}"
+                           {{-- @if($field['field'] != 'bill_token_detail' && $field['field'] != 'bill_license_detail' && $field['field'] != 'bill_attraction_detail')
+                                --}}    <td align="<?php echo $field['align'];?>" data-values="{{ isset($row->$field['field'])?$row->$field['field']:"" }}"
                                     data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
-
-
-                                    @if($field['field'] == 'bill_debit_amt')
-
-
-                                       {{number_format($value, 2)}}
-
-
-
-                                    @else
+@if($field)
                                         {!! $value !!}
 
-                                  @endif
                                 </td>
                             @endif
                         @endif
@@ -159,9 +150,7 @@ if (!$colconfigs) {
                         endif;
                         endforeach;
                         ?>
-                            <td></td>
-                            <td></td>
-                            <td></td>
+
                         <td data-values="action" data-key="<?php echo $row->id;?>">
                             {!! AjaxHelpers::buttonAction('location',$access,$id ,$setting) !!}
                             {!! AjaxHelpers::buttonActionInline($row->id,'id') !!}
@@ -170,10 +159,9 @@ if (!$colconfigs) {
                     @if($setting['view-method']=='expand')
                         <tr style="display:none" class="expanded" id="row-{{ $row->id }}">
                             <td class="number"></td>
-                            <td></td>
-                            <td></td>
+
                             <td colspan="{{ $colspan}}" class="data"></td>
-                            <td></td>
+
                         </tr>
                     @endif
                     <?php endforeach;?>
