@@ -91,6 +91,36 @@ class LocationController extends Controller
         }
         foreach ($results['rows'] as $result) {
 
+            if ($result->contact_id == 0) {
+                $result->contact_id="";
+
+            }
+            if ($result->merch_contact_id == 0) {
+                $result->merch_contact_id="";
+
+            }
+            if ($result->field_manager_id == 0) {
+                $result->field_manager_id="";
+            }
+            if ($result->tech_manager_id == 0) {
+                $result->tech_manager_id="";
+            }
+            if ($result->merchandise_contact_id == 0) {
+                $result->merchandise_contact_id="";
+            }
+            if ($result->general_contact_id == 0) {
+                $result->general_contact_id="";
+            }
+            if ($result->technical_contact_id == 0) {
+                $result->technical_contact_id="";
+            }
+            if ($result->regional_contact_id == 0) {
+                $result->regional_contact_id="";
+            }
+            if ($result->senior_vp_id == 0) {
+                $result->senior_vp_id="";
+            }
+
 
 
         }

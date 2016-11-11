@@ -21,16 +21,6 @@ class DateHelpers{
             }
 
     }
-    public static function formatZeroValue($value)
-    {
-        if($value == 0 || $value == null)
-        {
-            return "";
-        }
-        else
-        {
-            return $value;
-        }
-    }
+    
 
 }
