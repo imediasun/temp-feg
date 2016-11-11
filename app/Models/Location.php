@@ -20,7 +20,7 @@ class location extends Sximo  {
 
 	public static function queryWhere(  ){
 		
-		return " Where location.id is not null  ";
+		return " Where location.id is not null and location.active=1  ";
 	}
 	
 	public static function queryGroup(){
