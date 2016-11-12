@@ -101,7 +101,13 @@
                                     {!! SiteHelpers::activeLang('Image', (isset($fields['img']['language'])? $fields['img']['language'] : array())) !!}
                                 </label>
                                 <div class="col-md-6">
-                                    <input type="file" name="img" id="img"/>
+                                    <input type="file"   name="img" id="img" @if(empty($row->img)) class="required" @else style="color:white;width:23%;display:inline" @endif /><span>{{ isset($row->img)?$row->img:"" }}</span>
+                                    @if(isset($row->img))  <div style="margin-top:15px;">
+
+                                        {!! SiteHelpers::showUploadedFile($row->img,'/uploads/games/images/') !!}
+
+                                    </div>
+                                        @endif
                                 </div>
                                 <div class="col-md-2">
 
