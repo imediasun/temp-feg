@@ -188,7 +188,7 @@
 
 							<a  href="{{ URL::to('core/users/play/'.$row->id)}}" class="tips btn btn-xs btn-white" title="Impersonate"><i class="fa fa-user"  aria-hidden="true"></i></a>
 
-							@if($row->banned=='Yes')
+							@if($row->banned=='1')
 								<a  href="{{ URL::to('core/users/unblock/'.$row->id)}}" class="tips btn btn-xs btn-white" title="Unblock User" ><i class="fa fa-unlock" aria-hidden="true"></i></a>
 							@else
 								<a  href="{{ URL::to('core/users/block/'.$row->id)}}" class="tips btn btn-xs btn-white"  title="Block User"><i class="fa fa-ban" aria-hidden="true"></i></a>
