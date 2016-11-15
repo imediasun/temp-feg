@@ -142,7 +142,7 @@ if (!$colconfigs) {
                                     data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
 @if($field)
     @if($field['field'] == "district_manager")
-      <a href="core/users/user-details/{{ $row->dist_mgr_id }}" class="btn-small btn-default" style="display:block;padding:2px;text-align: center;color:blue;font-weight: bold"> {!! $value !!} </a>
+      <a href="core/users/user-details/{{ $row->dist_mgr_id }}" @if($value ==  "None Specified") style="pointer-events: none;cursor: default;display:block;padding:2px;text-align: center;color:blue;font-weight: bold" @else style="display:block;padding:2px;text-align: center;color:blue;font-weight: bold" @endif class="btn-small btn-default" > {!! $value !!} </a>
         @else
                                         {!! $value !!}
 @endif
