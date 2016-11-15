@@ -1,5 +1,4 @@
 @extends('layouts.app')
-
 @section('content')
 {{--*/ usort($tableGrid, "SiteHelpers::_sort") /*--}}
   <div class="page-content row">
@@ -166,27 +165,8 @@
 							<img alt="" src="{{url()}}/silouette.png" width="40" class="img-circle" border="0"/>
 							<?php } ?>
 					 	@elseif($field['field'] =='active')
-							{!! ($row->active ==1 ? '<lable class="label label-success">Active</label>' : '<lable class="label label-danger">Inactive</label>')  !!}
-						 @elseif($field['field'] =='last_login')
-							 <?php $row->last_login = date("m/d/Y H:i:s", strtotime($row->last_login)); ?>
+							{!! ($row->active ==1 ? '<lable class="label label-success">Active</lable>' : '<lable class="label label-danger">Inactive</lable>')  !!}
 
-							 {!! $row->last_login  !!}
-
-
-						 @elseif($field['field'] =='updated_at')
-							 <?php $row->updated_at = date("m/d/Y H:i:s", strtotime($row->updated_at)); ?>
-
-							 {!! $row->updated_at  !!}
-
-						 @elseif($field['field'] =='created_at')
-							 <?php $row->created_at = date("m/d/Y H:i:s", strtotime($row->created_at)); ?>
-
-							 {!! $row->created_at  !!}
-
-						 @elseif($field['field'] =='date')
-							 <?php $row->date = date("m/d/Y", strtotime($row->date)); ?>
-
-							 {!! $row->date  !!}
 						@else
 							{{--*/ $conn = (isset($field['conn']) ? $field['conn'] : array() ) /*--}}
 							{!! SiteHelpers::gridDisplay($row->$field['field'],$field['field'],$conn) !!}
@@ -208,8 +188,8 @@
 
 							<a  href="{{ URL::to('core/users/play/'.$row->id)}}" class="tips btn btn-xs btn-white" title="Impersonate"><i class="fa fa-user"  aria-hidden="true"></i></a>
 
-							@if($row->banned=='Yes')
-								<a  href="{{ URL::to('core/users/unblock/'.$row->id)}}" >Unblock</a>
+							@if($row->banned=='1')
+								<a  href="{{ URL::to('core/users/unblock/'.$row->id)}}" class="tips btn btn-xs btn-white" title="Unblock User" ><i class="fa fa-unlock" aria-hidden="true"></i></a>
 							@else
 								<a  href="{{ URL::to('core/users/block/'.$row->id)}}" class="tips btn btn-xs btn-white"  title="Block User"><i class="fa fa-ban" aria-hidden="true"></i></a>
 							@endif

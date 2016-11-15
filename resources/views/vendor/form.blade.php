@@ -18,7 +18,7 @@
 					{!! SiteHelpers::activeLang('Vendor Name', (isset($fields['vendor_name']['language'])? $fields['vendor_name']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('vendor_name', $row['vendor_name'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
+					  {!! Form::text('vendor_name', $row['vendor_name'],array('class'=>'form-control', 'placeholder'=>'', 'required'=>'required'  )) !!}
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -118,7 +118,7 @@
 					{!! SiteHelpers::activeLang('Email', (isset($fields['email']['language'])? $fields['email']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('email', $row['email'],array('class'=>'form-control', 'placeholder'=>'', 'required'=>'true', 'parsley-type'=>'email'   )) !!} 
+					  {!! Form::text('email', $row['email'],array('class'=>'form-control', 'placeholder'=>'',  'parsley-type'=>'email'   )) !!}
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -140,7 +140,7 @@
 					{!! SiteHelpers::activeLang('Website', (isset($fields['website']['language'])? $fields['website']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('website', $row['website'],array('class'=>'form-control', 'placeholder'=>'', 'required'=>'true', 'parsley-type'=>'url'   )) !!} 
+					  {!! Form::text('website', $row['website'],array('class'=>'form-control', 'placeholder'=>'',  'parsley-type'=>'url'   )) !!}
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -162,7 +162,7 @@
 					{!! SiteHelpers::activeLang('Games  Email', (isset($fields['games_contact_email']['language'])? $fields['games_contact_email']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('games_contact_email', $row['games_contact_email'],array('class'=>'form-control', 'placeholder'=>'', 'required'=>'true', 'parsley-type'=>'email'   )) !!} 
+					  {!! Form::text('games_contact_email', $row['games_contact_email'],array('class'=>'form-control', 'placeholder'=>'',  'parsley-type'=>'email'   )) !!}
 					 </div> 
 					 <div class="col-md-2">
 					 	

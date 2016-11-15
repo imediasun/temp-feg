@@ -91,90 +91,37 @@ class LocationController extends Controller
         }
         foreach ($results['rows'] as $result) {
 
-            if ($result->self_owned == 1) {
-                $result->self_owned = "Yes";
+            if ($result->contact_id == 0) {
+                $result->contact_id="";
 
-            } else {
-                $result->self_owned = "No";
             }
-            if ($result->can_ship == 1) {
-                $result->can_ship = "Yes";
+            if ($result->merch_contact_id == 0) {
+                $result->merch_contact_id="";
 
-            } else {
-                $result->can_ship = "No";
             }
-            if ($result->no_games == 1) {
-                $result->no_games = "Yes";
+            if ($result->field_manager_id == 0) {
+                $result->field_manager_id="";
+            }
+            if ($result->tech_manager_id == 0) {
+                $result->tech_manager_id="";
+            }
+            if ($result->merchandise_contact_id == 0) {
+                $result->merchandise_contact_id="";
+            }
+            if ($result->general_contact_id == 0) {
+                $result->general_contact_id="";
+            }
+            if ($result->technical_contact_id == 0) {
+                $result->technical_contact_id="";
+            }
+            if ($result->regional_contact_id == 0) {
+                $result->regional_contact_id="";
+            }
+            if ($result->senior_vp_id == 0) {
+                $result->senior_vp_id="";
+            }
 
-            } else {
-                $result->no_games = "No";
-            }
-            if ($result->active == 1) {
-                $result->active = "Yes";
 
-            } else {
-                $result->active = "No";
-            }
-            if ($result->reporting == 1) {
-                $result->reporting = "Yes";
-
-            } else {
-                $result->reporting = "No";
-            }
-            if ($result->not_reporting_Sat == 1) {
-                $result->not_reporting_Sat = "Yes";
-
-            } else {
-                $result->not_reporting_Sat = "No";
-            }
-            if ($result->not_reporting_Sun == 1) {
-                $result->not_reporting_Sun = "Yes";
-
-            } else {
-                $result->not_reporting_Sun = "No";
-            }
-            if ($result->not_reporting_Mon == 1) {
-                $result->not_reporting_Mon = "Yes";
-
-            } else {
-                $result->not_reporting_Mon = "No";
-            }
-            if ($result->not_reporting_Tue == 1) {
-                $result->not_reporting_Tue = "Yes";
-
-            } else {
-                $result->not_reporting_Tue = "No";
-            }
-            if ($result->not_reporting_Wed == 1) {
-                $result->not_reporting_Wed = "Yes";
-
-            } else {
-                $result->not_reporting_Wed = "No";
-            }
-            if ($result->not_reporting_Thu == 1) {
-                $result->not_reporting_Thu = "Yes";
-
-            } else {
-                $result->not_reporting_Thu = "No";
-            }
-            if ($result->not_reporting_Fri == 1) {
-                $result->not_reporting_Fri = "Yes";
-
-            } else {
-                $result->not_reporting_Fri = "No";
-            }
-            if ($result->bill_license_type == 1) {
-                $result->bill_license_type = "Yes";
-
-            } else {
-                $result->bill_license_type = "No";
-            }
-            if ($result->liftgate == 1) {
-                $result->liftgate = "Yes";
-
-            } else {
-                $result->liftgate = "No";
-            }
 
         }
         // Build pagination setting
