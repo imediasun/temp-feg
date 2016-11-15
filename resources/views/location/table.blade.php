@@ -141,8 +141,11 @@ if (!$colconfigs) {
                                 --}}    <td align="<?php echo $field['align'];?>" data-values="{{ isset($row->$field['field'])?$row->$field['field']:"" }}"
                                     data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
 @if($field)
+    @if($field['field'] == "district_manager")
+      <a href="core/users/user-details/{{ $row->dist_mgr_id }}" class="btn-small btn-default" style="display:block;padding:2px;text-align: center;color:blue;font-weight: bold"> {!! $value !!} </a>
+        @else
                                         {!! $value !!}
-
+@endif
                                 </td>
                             @endif
                         @endif

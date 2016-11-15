@@ -1,5 +1,4 @@
 @extends('layouts.app')
-
 @section('content')
 {{--*/ usort($tableGrid, "SiteHelpers::_sort") /*--}}
   <div class="page-content row">
@@ -166,8 +165,9 @@
 							<img alt="" src="{{url()}}/silouette.png" width="40" class="img-circle" border="0"/>
 							<?php } ?>
 					 	@elseif($field['field'] =='active')
-							{!! ($row->active ==1 ? '<label class="label label-success">Active</label>' : '<label class="label label-danger">Inactive</label>')  !!}
-                    	@else
+							{!! ($row->active ==1 ? '<lable class="label label-success">Active</lable>' : '<lable class="label label-danger">Inactive</lable>')  !!}
+
+						@else
 							{{--*/ $conn = (isset($field['conn']) ? $field['conn'] : array() ) /*--}}
 							{!! SiteHelpers::gridDisplay($row->$field['field'],$field['field'],$conn) !!}
 						@endif

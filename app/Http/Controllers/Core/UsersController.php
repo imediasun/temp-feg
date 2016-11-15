@@ -35,8 +35,9 @@ class UsersController extends Controller
         );
     }
 
-    public function getIndex(Request $request)
+    public function getIndex(Request $request,$id=null)
     {
+
         $module_id = \DB::table('tb_module')->where('module_name', '=', 'users')->pluck('module_id');
 
         $this->data['modules'] = \DB::table('tb_module')->where('module_type', '!=', 'core')->get();
@@ -82,7 +83,8 @@ class UsersController extends Controller
             'global' => (isset($this->access['is_global']) ? $this->access['is_global'] : 0)
         );
         // Get Query
-        $results = $this->model->getRows($params);
+
+            $results = $this->model->getRows($params,$id);
 
         // Build pagination setting
         $page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;
@@ -92,65 +94,7 @@ class UsersController extends Controller
                 ($results['total'] > 0 ? $results['total'] : '1')));
         $pagination->setPath('users');
         $this->data['param'] = $params;
-        foreach ($results['rows'] as $result) {
 
-            if ($result->is_tech_contact == 1) {
-                $result->is_tech_contact = "Yes";
-
-            } else {
-                $result->is_tech_contact = "No";
-            }
-            if ($result->approved == 1) {
-                $result->approved = "Yes";
-            } else {
-                $result->approved = "No";
-            }
-            if ($result->banned == 1) {
-                $result->banned = "Yes";
-            } else {
-                $result->banned = "No";
-            }
-            if ($result->using_web == 1) {
-                $result->using_web = "Yes";
-            } else {
-                $result->using_web = "No";
-            }
-            if ($result->full_time == 1) {
-                $result->full_time = "Yes";
-            } else {
-                $result->full_time = "No";
-            }
-            if ($result->restricted_mgr_email == 1) {
-                $result->restricted_mgr_email = "Yes";
-            } else {
-                $result->restricted_mgr_email = "No";
-            }
-            if ($result->restricted_user_email == 1) {
-                $result->restricted_user_email = "Yes";
-            } else {
-                $result->restricted_user_email = "No";
-            }
-            if ($result->restrict_merch == 1) {
-                $result->restrict_merch = "Yes";
-            } else {
-                $result->restrict_merch = "No";
-            }
-            if ($result->get_locations_by_region == 1) {
-                $result->get_locations_by_region = "Yes";
-            } else {
-                $result->get_locations_by_region = "No";
-            }
-            if ($result->timeclock_status == 1) {
-                $result->timeclock_status = "Yes";
-            } else {
-                $result->timeclock_status = "No";
-            }
-            if ($result->timeclock_id == 1) {
-                $result->timeclock_id = "Yes";
-            } else {
-                $result->timeclock_id = "No";
-            }
-        }
         $this->data['rowData'] = $results['rows'];
 
         $this->data['modules'] = \DB::table('tb_module')->where('module_type', '!=', 'core')->get();
@@ -179,7 +123,6 @@ class UsersController extends Controller
             $this->data['colconfigs'] = \SiteHelpers::getColsConfigs($module_id);
         }
         // Render into template
-
         return view('core.users.index', $this->data);
     }
 
@@ -580,5 +523,10 @@ class UsersController extends Controller
     {
         $this->model->passwordForgetEmails();
     }
-
+public function getUserDetails($id)
+{
+    $request=new Request();
+return $this->getIndex($request,$id);
+//    return view('core.users.index', $data);
+}
 }
