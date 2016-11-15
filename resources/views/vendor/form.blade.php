@@ -18,7 +18,7 @@
 					{!! SiteHelpers::activeLang('Vendor Name', (isset($fields['vendor_name']['language'])? $fields['vendor_name']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('vendor_name', $row['vendor_name'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
+					  {!! Form::text('vendor_name', $row['vendor_name'],array('class'=>'form-control', 'placeholder'=>'', 'required'=>'required'  )) !!}
 					 </div> 
 					 <div class="col-md-2">
 					 	
