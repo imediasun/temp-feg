@@ -78,30 +78,30 @@ return [
         'sqlsrv' => [
             'driver'   => 'sqlsrv',
             'host'     => env('DB_HOST', 'localhost'),
-            'database' => env('DB_DATABASE', 'forge'),
-            'username' => env('DB_USERNAME', 'forge'),
+            'database' => env('DB_DATABASE', 'fegllc_fegsys'),
+            'username' => env('DB_USERNAME', ''),
             'password' => env('DB_PASSWORD', ''),
             'prefix'   => '',
         ],
 
-        'embed_temp' => [
+        'embed_sync' => [
             'driver'    => 'mysql',
-            'host'      => env('DB_HOST', 'localhost'),
-            'database'  => 'devfegll_embed_temp',
-            'username'  => env('DB_USERNAME', 'root'),
-            'password'  => env('DB_PASSWORD', ''),
+            'host'      => env('DB_EMBEDSYNC_HOST', 'localhost'),
+            'database'  => env('DB_EMBEDSYNC_DATABASE', 'fegllc_embed_temp'),
+            'username'  => env('DB_EMBEDSYNC_USERNAME', ''),
+            'password'  => env('DB_EMBEDSYNC_PASSWORD', ''),
             'charset'   => 'utf8',
             'collation' => 'utf8_unicode_ci',
             'prefix'    => '',
             'strict'    => false,
         ],
 
-        'sacoa_temp' => [
+        'sacoa_sync' => [
             'driver'    => 'mysql',
-            'host'      => env('DB_HOST', 'localhost'),
-            'database'  => 'devfegll_sacoa_temp',
-            'username'  => env('DB_USERNAME', 'root'),
-            'password'  => env('DB_PASSWORD', ''),
+            'host'      => env('DB_SACOASYNC_HOST', 'localhost'),
+            'database'  => env('DB_SACOASYNC_DATABASE', 'fegllc_test'),
+            'username'  => env('DB_SACOASYNC_USERNAME', ''),
+            'password'  => env('DB_SACOASYNC_PASSWORD', ''),
             'charset'   => 'utf8',
             'collation' => 'utf8_unicode_ci',
             'prefix'    => '',
@@ -110,7 +110,7 @@ return [
 
         'livemysql' => [
             'driver'    => 'mysql',
-            'host'      => 'fegllc.com',
+            'host'      => 'admin1.fegllc.com',
             'database'  => 'fegllc_fegsys',
             'username'  => 'fegllc_read',
             'password'  => '9JkAnxEfhxVC',
@@ -125,7 +125,7 @@ return [
         ],
         'livemysql_embed' => [
             'driver'    => 'mysql',
-            'host'      => 'fegllc.com',
+            'host'      => 'admin1.fegllc.com',
             'database'  => 'fegllc_embed_temp',
             'username'  => 'fegllc_read',
             'password'  => '9JkAnxEfhxVC',
@@ -140,7 +140,7 @@ return [
         ],
         'livemysql_sacoa' => [
             'driver'    => 'mysql',
-            'host'      => 'fegllc.com',
+            'host'      => 'admin1.fegllc.com',
             'database'  => 'fegllc_test',
             'username'  => 'fegllc_read',
             'password'  => '9JkAnxEfhxVC',
