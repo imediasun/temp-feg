@@ -84,7 +84,7 @@ return [
             'prefix'   => '',
         ],
 
-        'embed_temp' => [
+        'embed_sync' => [
             'driver'    => 'mysql',
             'host'      => env('DB_EMBEDSYNC_HOST', 'localhost'),
             'database'  => env('DB_EMBEDSYNC_DATABASE', 'fegllc_embed_temp'),
@@ -96,7 +96,7 @@ return [
             'strict'    => false,
         ],
 
-        'sacoa_temp' => [
+        'sacoa_sync' => [
             'driver'    => 'mysql',
             'host'      => env('DB_SACOASYNC_HOST', 'localhost'),
             'database'  => env('DB_SACOASYNC_DATABASE', 'fegllc_test'),
@@ -110,7 +110,7 @@ return [
 
         'livemysql' => [
             'driver'    => 'mysql',
-            'host'      => 'fegllc.com',
+            'host'      => 'admin1.fegllc.com',
             'database'  => 'fegllc_fegsys',
             'username'  => 'fegllc_read',
             'password'  => '9JkAnxEfhxVC',
@@ -125,7 +125,7 @@ return [
         ],
         'livemysql_embed' => [
             'driver'    => 'mysql',
-            'host'      => 'fegllc.com',
+            'host'      => 'admin1.fegllc.com',
             'database'  => 'fegllc_embed_temp',
             'username'  => 'fegllc_read',
             'password'  => '9JkAnxEfhxVC',
@@ -140,7 +140,7 @@ return [
         ],
         'livemysql_sacoa' => [
             'driver'    => 'mysql',
-            'host'      => 'fegllc.com',
+            'host'      => 'admin1.fegllc.com',
             'database'  => 'fegllc_test',
             'username'  => 'fegllc_read',
             'password'  => '9JkAnxEfhxVC',
