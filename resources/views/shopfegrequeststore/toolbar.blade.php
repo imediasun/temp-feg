@@ -65,14 +65,14 @@
 
             $("#order_type").change(function(){
                 var order_type = $("#order_type").val();
-                if(order_type != "") {
+//                if(order_type != "") {
                     $("#product_type").jCombo("{{ URL::to('shopfegrequeststore/comboselect?filter=product_type:id:product_type') }}&parent=request_type_id:" +order_type,
                             {
 //
                                 selected_value: '{{ $product_type }}',
                                 initial_text: 'Select Product Type'
                             });
-                }
+//                }
             });
 
 
