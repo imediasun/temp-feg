@@ -388,6 +388,9 @@ class MylocationgameController extends Controller
         $results = \DB::table('game')->where('game_title_id', '=', $request['game_title_id'])->where('location_id', '=', $request['location_id'])->get();
         $info = $this->model->makeInfo($this->module);
         $rows = $results;
+        foreach ($rows as &$row){
+            $row->game_name=$row->game_title_id;
+        }
         $fields = $info['config']['grid'];
         $content = array(
             'fields' => $fields,
