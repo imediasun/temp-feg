@@ -107,7 +107,7 @@
 <script type="text/javascript">
 $(document).ready(function() { 
 	
-        $("#assign_employee_ids").jCombo("{{ URL::to('department/comboselect?filter=employees:id:first_name|last_name') }}",
+        $("#assign_employee_ids").jCombo("{{ URL::to('department/comboselect?filter=users:id:first_name|last_name') }}",
         {  selected_value : '{{ $row["assign_employee_ids"] }}' });
          
 	

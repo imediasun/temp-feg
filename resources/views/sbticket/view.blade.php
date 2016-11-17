@@ -364,7 +364,7 @@ $commentsCount =  $comments->count();
 		$("#department_id").jCombo("{{ URL::to('sbticket/comboselect?filter=departments:id:name') }}",
 				{  selected_value : '{{ $row["department_id"] }}' });
 
-		$("#assign_to").jCombo("{{ URL::to('sbticket/comboselect?filter=employees:id:first_name|last_name') }}",
+		$("#assign_to").jCombo("{{ URL::to('sbticket/comboselect?filter=users:id:first_name|last_name') }}",
 				{  selected_value : '{{ $row["assign_to"] }}' });
 
 
