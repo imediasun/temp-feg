@@ -184,7 +184,7 @@
 <script type="text/javascript">
 $(document).ready(function() {
 
-        $("#salesRepEmployeeNumber").jCombo("{{ URL::to('customer/comboselect?filter=employees:employeeNumber:firstName|lastName') }}",
+        $("#salesRepEmployeeNumber").jCombo("{{ URL::to('customer/comboselect?filter=users:employeeNumber:firstName|lastName') }}",
         {  selected_value : '{{ $row["salesRepEmployeeNumber"] }}' });
 
 
