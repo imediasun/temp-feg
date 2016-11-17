@@ -111,7 +111,7 @@ class servicerequestsController extends Controller
 
                 $members_access = array_unique(array_merge($assign_employee_ids, $department_memebers));
                 foreach ($members_access as $i => $id) {
-                    $get_user_id_from_employess = \DB::select("Select user_id FROM employees WHERE id = " . $id . "");
+                    $get_user_id_from_employess = \DB::select("Select user_id FROM users WHERE id = " . $id . "");
                     //print"<pre>";
                     //print_r($get_user_id_from_employess);
                     if (isset($get_user_id_from_employess[0]->user_id)) {
@@ -131,7 +131,7 @@ class servicerequestsController extends Controller
                     echo count($assign_employee_ids);
                     $assign_employee_names = array();
                     foreach ($assign_employee_ids as $key => $value) {
-                        $assign_employee_names[$key] = \DB::select("Select first_name,last_name FROM employees WHERE id = " . $value . "");
+                        $assign_employee_names[$key] = \DB::select("Select first_name,last_name FROM users WHERE id = " . $value . "");
                     }
                     $row->assign_employee_names = $assign_employee_names;
                 } else {
@@ -213,7 +213,7 @@ class servicerequestsController extends Controller
 
         if(!empty($assign_employee_ids[0]) ) {
             foreach ($assign_employee_ids as $key => $value) {
-                $assign_employee_names[$key] = \DB::select("Select first_name,last_name FROM employees WHERE id = " . $value . "");
+                $assign_employee_names[$key] = \DB::select("Select first_name,last_name FROM users WHERE id = " . $value . "");
             }
         }
         $row->assign_employee_names = $assign_employee_names;
@@ -386,7 +386,7 @@ class servicerequestsController extends Controller
         $headers .= 'From: ' . CNF_REPLY_TO . ' <' . CNF_REPLY_TO . '>' . "\r\n";
 
         foreach ($department_memebers as $i => $id) {
-            $get_user_id_from_employess = \DB::select("Select users.email FROM employees JOIN users ON users.id=employees.user_id WHERE employees.id = " . $id . "");
+            $get_user_id_from_employess = \DB::select("Select users.email FROM users  WHERE users.id = " . $id . "");
             if (isset($get_user_id_from_employess[0]->email)) {
                 $to = $get_user_id_from_employess[0]->email;
                 mail($to, $subject, $message, $headers);
@@ -396,7 +396,7 @@ class servicerequestsController extends Controller
 
     public function assignToSendMail($assignTo, $ticketId, $message)
     {
-        $assigneesTo = $assigneesTo = \DB::select("select users.email FROM employees JOIN users ON users.id=employees.user_id WHERE employees.id IN (" . $assignTo . ")");
+        $assigneesTo = $assigneesTo = \DB::select("select users.email FROM users WHERE users.id IN (" . $assignTo . ")");
         foreach ($assigneesTo as $assignee) {
             if (isset($assignee->email)) {
                 $to = $assignee->email;
