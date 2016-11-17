@@ -11,6 +11,7 @@
 			@endif
 		</div>
 	</div>
+    @include( $pageModule.'/toolbar',['colconfigs' => SiteHelpers::getRequiredConfigs($module_id),'order_type'=>$order_selected])
 	<div class="sbox-content" style="">
         @if($setting['usesimplesearch']!='false')
             <?php $simpleSearchForm = SiteHelpers::configureSimpleSearchForm($tableForm); ?>
@@ -28,8 +29,6 @@
                 </div>
             @endif
         @endif
-        @include( $pageModule.'/toolbar',['colconfigs' => SiteHelpers::getRequiredConfigs($module_id),'order_type'=>$order_selected])
-
 	 <?php echo Form::open(array('url'=>'order/delete/', 'class'=>'form-horizontal' ,'id' =>'SximoTable'  ,'data-parsley-validate'=>'' )) ;?>
 <div class="table-responsive">
 	@if(count($rowData)>=1)
