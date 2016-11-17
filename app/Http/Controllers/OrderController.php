@@ -816,7 +816,7 @@ class OrderController extends Controller
     {
         $term = Input::get('term');
         $results = array();
-        $queries = \DB::select("SELECT MAX(id) id, vendor_description
+        $queries = \DB::select("SELECT *
   FROM products
  WHERE vendor_description LIKE '%$term%'
  GROUP BY vendor_description
