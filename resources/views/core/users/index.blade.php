@@ -1,5 +1,4 @@
 @extends('layouts.app')
-
 @section('content')
 {{--*/ usort($tableGrid, "SiteHelpers::_sort") /*--}}
   <div class="page-content row">
@@ -166,8 +165,9 @@
 							<img alt="" src="{{url()}}/silouette.png" width="40" class="img-circle" border="0"/>
 							<?php } ?>
 					 	@elseif($field['field'] =='active')
-							{!! ($row->active ==1 ? '<label class="label label-success">Active</label>' : '<label class="label label-danger">Inactive</label>')  !!}
-                    	@else
+							{!! ($row->active ==1 ? '<lable class="label label-success">Active</lable>' : '<lable class="label label-danger">Inactive</lable>')  !!}
+
+						@else
 							{{--*/ $conn = (isset($field['conn']) ? $field['conn'] : array() ) /*--}}
 							{!! SiteHelpers::gridDisplay($row->$field['field'],$field['field'],$conn) !!}
 						@endif
@@ -188,8 +188,8 @@
 
 							<a  href="{{ URL::to('core/users/play/'.$row->id)}}" class="tips btn btn-xs btn-white" title="Impersonate"><i class="fa fa-user"  aria-hidden="true"></i></a>
 
-							@if($row->banned=='Yes')
-								<a  href="{{ URL::to('core/users/unblock/'.$row->id)}}" >Unblock</a>
+							@if($row->banned=='1')
+								<a  href="{{ URL::to('core/users/unblock/'.$row->id)}}" class="tips btn btn-xs btn-white" title="Unblock User" ><i class="fa fa-unlock" aria-hidden="true"></i></a>
 							@else
 								<a  href="{{ URL::to('core/users/block/'.$row->id)}}" class="tips btn btn-xs btn-white"  title="Block User"><i class="fa fa-ban" aria-hidden="true"></i></a>
 							@endif
