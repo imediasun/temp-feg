@@ -117,15 +117,15 @@
                     {selected_value: '{{ $ticket_setting->role4 }}'});
             $("#role5").jCombo("{{ URL::to('sbticket/comboselect?filter=tb_groups:group_id:name') }}",
                     {selected_value: '{{ $ticket_setting->role5 }}'});
-            $("#individual1").jCombo("{{ URL::to('sbticket/comboselect?filter=employees:id:first_name|last_name') }}",
+            $("#individual1").jCombo("{{ URL::to('sbticket/comboselect?filter=users:id:first_name|last_name') }}",
                     {selected_value: '{{ $ticket_setting->individual1 }}'});
-            $("#individual2").jCombo("{{ URL::to('sbticket/comboselect?filter=employees:id:first_name|last_name') }}",
+            $("#individual2").jCombo("{{ URL::to('sbticket/comboselect?filter=users:id:first_name|last_name') }}",
                     {selected_value: '{{ $ticket_setting->individual2 }}'});
-            $("#individual3").jCombo("{{ URL::to('sbticket/comboselect?filter=employees:id:first_name|last_name') }}",
+            $("#individual3").jCombo("{{ URL::to('sbticket/comboselect?filter=users:id:first_name|last_name') }}",
                     {selected_value: '{{ $ticket_setting->individual3 }}'});
-            $("#individual4").jCombo("{{ URL::to('sbticket/comboselect?filter=employees:id:first_name|last_name') }}",
+            $("#individual4").jCombo("{{ URL::to('sbticket/comboselect?filter=users:id:first_name|last_name') }}",
                     {selected_value: '{{ $ticket_setting->individual4 }}'});
-            $("#individual5").jCombo("{{ URL::to('sbticket/comboselect?filter=employees:id:first_name|last_name') }}",
+            $("#individual5").jCombo("{{ URL::to('sbticket/comboselect?filter=users:id:first_name|last_name') }}",
                     {selected_value: '{{ $ticket_setting->individual5 }}'});
         });
 
