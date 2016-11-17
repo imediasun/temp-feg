@@ -242,4 +242,40 @@ class GamesintransitController extends Controller
 
     }
 
+    function postAddNewGame(Request $request)
+    {
+        $rules = array('asset_number' => 'required|min:8|max:8');
+        $validator = Validator::make($request->all(), $rules);
+        if ($validator->passes()) {
+            $serial = $request->get('serial');
+            $game_title_id = $request->get('game_title');
+            $asset_number = $request->get('asset_number');
+            $notes = $request->get('notes');
+            $test_piece = $request->get('test_piece');
+            $insert = array(
+                'id' => $asset_number,
+                'game_title_id' => $game_title_id,
+                'serial' => $serial,
+                'status_id' => 3,
+                'test_piece' => $test_piece,
+                'notes' => $notes
+            );
+            \DB::table('game')->insert($insert);
+
+            return response()->json(array(
+                'status' => 'success',
+                'message' => 'New Game Added Successfully'
+            ));
+        }
+        else
+        {
+            $message = $this->validateListError($validator->getMessageBag()->toArray());
+            return response()->json(array(
+                'message' => $message,
+                'status' => 'error'
+            ));
+        }
+
+
+    }
 }
