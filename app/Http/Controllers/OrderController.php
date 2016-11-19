@@ -468,11 +468,8 @@ class OrderController extends Controller
 
     function postSaveorsendemail(Request $request)
     {
-        //echo "<pre>";
-       // print_r($request->all());
-      //  die();
         $type=$request->get('submit');
-        if($type == "sendemail") {
+        if($type == "send") {
             $to = $request->get('to');
             $cc = $request->get('cc');
             $bcc = $request->get('bcc');
@@ -492,7 +489,6 @@ class OrderController extends Controller
             return response()->json(array(
                 'message' => "Failed!Sender or Vendor Email is missing",
                 'status' => 'error'
-
             ));
         } else {
             $this->getPo($order_id, true, $to, $from,$cc,$bcc,$message);

@@ -77,6 +77,7 @@
                                     <input type="hidden" value="{{ $send_from }}" name="from"/>
                                     <input type="hidden" value="{{ $order_id }}" name="order_id"/>
                                     <input type="hidden" value="" id="opt" name="opt"/>
+                                    <input type="hidden" value="send"  name="submit"/>
                                     <div class="form-group">
                                         <label class="control-label col-md-4" for="to">To</label>
                                         <div class="col-md-8">
@@ -145,6 +146,7 @@
                                     <input type="hidden" value="{{ $send_from }}" name="from"/>
                                     <input type="hidden" value="{{ $order_id }}" name="order_id"/>
                                     <input type="hidden" value="" id="opt" name="opt"/>
+                                    <input type="hidden" value="sendorsave"  name="submit"/>
                                     <div class="form-group">
                                         <label class="control-label col-md-4" for="to">To</label>
                                         <div class="col-md-8">
