@@ -150,21 +150,21 @@
                                     <div class="form-group">
                                         <label class="control-label col-md-4" for="to">To</label>
                                         <div class="col-md-8">
-                                            <select name="to[]" multiple id="to1" class="form-control select2"
+                                            <select name="to1[]" multiple id="to1" class="form-control select2"
                                                     required></select>
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label class="control-label col-md-4" for="cc">CC</label>
                                         <div class="col-md-8">
-                                            <select name="cc[]" id="cc1" multiple class="form-control select2"
+                                            <select name="cc1[]" id="cc1" multiple class="form-control select2"
                                                     ></select>
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label class="control-label col-md-4" for="bcc">BCC</label>
                                         <div class="col-md-8">
-                                            <select name="bcc[]" id="bcc1" multiple class="form-control select2"
+                                            <select name="bcc1[]" id="bcc1" multiple class="form-control select2"
                                                     ></select>
                                         </div>
                                     </div>
