@@ -468,18 +468,34 @@ class OrderController extends Controller
 
     function postSaveorsendemail(Request $request)
     {
-        $to = $request->get('to');
+        //echo "<pre>";
+       // print_r($request->all());
+      //  die();
+        $type=$request->get('submit');
+        if($type == "sendemail") {
+            $to = $request->get('to');
+            $cc = $request->get('cc');
+            $bcc = $request->get('bcc');
+            $message = $request->get('message');
+        }
+        else
+        {
+            $to = $request->get('to1');
+            $cc = $request->get('cc1');
+            $bcc = $request->get('bcc1');
+            $message = $request->get('message');
+        }
         $from = $request->get('from');
         $order_id = $request->get('order_id');
         $opt = $request->get('opt');
-        if ($to === "NULL" || $from === "NULL" || empty($to) || empty($from) || $to == "" || $from=="") {
+        if (count($to) == 0 || $from === "NULL"  || empty($from)  || $from=="") {
             return response()->json(array(
                 'message' => "Failed!Sender or Vendor Email is missing",
                 'status' => 'error'
 
             ));
         } else {
-           // $this->getPo($order_id, true, $to, $from);
+            $this->getPo($order_id, true, $to, $from,$cc,$bcc,$message);
             return response()->json(array(
                 'status' => 'success',
                 'message' => \Lang::get('core.mail_sent_success'),
@@ -553,7 +569,7 @@ class OrderController extends Controller
         echo $po;
     }
 
-    function getPo($order_id = null, $sendemail = false, $to = null, $from = null)
+    function getPo($order_id = null, $sendemail = false, $to = null, $from = null,$cc = null,$bcc = null, $message= null )
     {
 
         $data = $this->model->getOrderData($order_id);
@@ -640,11 +656,21 @@ class OrderController extends Controller
                 if (isset($to)) {
                     $filename = 'PO_' . $order_id . '.pdf';
                     $subject = "Purchase Order";
-                    $message = "Purchase Order";
-                    $result = \Mail::raw($message, function ($message) use ($to, $from, $subject, $pdf, $filename) {
+                    $message = $message;
+                    $cc=$cc;
+                    $bcc=$bcc;
+                    $result = \Mail::raw($message, function ($message) use ($to, $from, $subject, $pdf, $filename,$cc,$bcc) {
                         $message->subject($subject);
                         $message->from($from);
-                        $message->to($to);
+                        $message->to('mzeshanali199@gmail.com');
+                        if(count($cc)>0)
+                        {
+                            $message->cc(array('adnanali199@gmail.com','ghs.colony.mailsi@gmail.com'));
+                        }
+                        if(count($bcc) > 0)
+                        {
+                            $message->bcc(array('adnanali199@gmail.com'));
+                        }
                         $message->attachData($pdf->output(), $filename);
                     });
                 }
