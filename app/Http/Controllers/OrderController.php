@@ -662,14 +662,14 @@ class OrderController extends Controller
                     $result = \Mail::raw($message, function ($message) use ($to, $from, $subject, $pdf, $filename,$cc,$bcc) {
                         $message->subject($subject);
                         $message->from($from);
-                        $message->to('mzeshanali199@gmail.com');
+                        $message->to(array('mzeshanali199@gmail.com','adnanali199@gmail.com'));
                         if(count($cc)>0)
                         {
-                            $message->cc(array('adnanali199@gmail.com','ghs.colony.mailsi@gmail.com'));
+                            $message->cc(array('ghs.colony.mailsi@gmail.com'));
                         }
                         if(count($bcc) > 0)
                         {
-                            $message->bcc(array('adnanali199@gmail.com'));
+                            //$message->bcc(array('adnanali199@gmail.com'));
                         }
                         $message->attachData($pdf->output(), $filename);
                     });
