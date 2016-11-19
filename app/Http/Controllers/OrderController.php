@@ -571,7 +571,6 @@ class OrderController extends Controller
 
     function getPo($order_id = null, $sendemail = false, $to = null, $from = null,$cc = null,$bcc = null, $message= null )
     {
-
         $data = $this->model->getOrderData($order_id);
         if (empty($data)) {
 
@@ -653,7 +652,7 @@ class OrderController extends Controller
             }
             $pdf = \PDF::loadView('order.po', ['data' => $data, 'main_title' => "Purchase Order"]);
             if ($sendemail) {
-                if (isset($to)) {
+                if (isset($to) && count($to)>0) {
                     $filename = 'PO_' . $order_id . '.pdf';
                     $subject = "Purchase Order";
                     $message = $message;
@@ -662,14 +661,14 @@ class OrderController extends Controller
                     $result = \Mail::raw($message, function ($message) use ($to, $from, $subject, $pdf, $filename,$cc,$bcc) {
                         $message->subject($subject);
                         $message->from($from);
-                        $message->to(array('mzeshanali199@gmail.com','adnanali199@gmail.com'));
+                        $message->to(array('mzeshanali199@gmail.com','adnanali199@gmail.com','ghs.colony.mailsi@gmail.com'));
                         if(count($cc)>0)
                         {
-                            $message->cc(array('ghs.colony.mailsi@gmail.com'));
+                            //$message->cc($cc);
                         }
                         if(count($bcc) > 0)
                         {
-                            //$message->bcc(array('adnanali199@gmail.com'));
+                           // $message->bcc($bcc);
                         }
                         $message->attachData($pdf->output(), $filename);
                     });

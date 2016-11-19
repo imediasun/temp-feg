@@ -88,14 +88,14 @@
                                         <label class="control-label col-md-4" for="cc">CC</label>
                                         <div class="col-md-8">
                                             <select name="cc[]" id="cc" multiple class="form-control select2"
-                                                    required></select>
+                                                    ></select>
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label class="control-label col-md-4" for="bcc">BCC</label>
                                         <div class="col-md-8">
                                             <select name="bcc[]" id="bcc" multiple class="form-control select2"
-                                                    required></select>
+                                                    ></select>
                                         </div>
                                     </div>
                                     <div class="form-group">
@@ -156,14 +156,14 @@
                                         <label class="control-label col-md-4" for="cc">CC</label>
                                         <div class="col-md-8">
                                             <select name="cc[]" id="cc1" multiple class="form-control select2"
-                                                    required></select>
+                                                    ></select>
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label class="control-label col-md-4" for="bcc">BCC</label>
                                         <div class="col-md-8">
                                             <select name="bcc[]" id="bcc1" multiple class="form-control select2"
-                                                    required></select>
+                                                    ></select>
                                         </div>
                                     </div>
                                     <div class="form-group">
@@ -232,6 +232,42 @@
             var val = $(document.activeElement).val();
             $("#opt").val(val);
             if (form.parsley('isValid') == true) {
+                var options = {
+                    dataType: 'json',
+                    beforeSubmit: showRequest,
+                    success: showResponse
+                }
+                $(this).ajaxSubmit(options);
+                return false;
+
+            } else {
+                return false;
+            }
+        });
+        var saveForm = $('#saveFormAjax');
+        saveForm.parsley();
+        saveForm.submit(function () {
+            var val = $(document.activeElement).val();
+            $("#opt").val(val);
+            if (saveForm.parsley('isValid') == true) {
+                var options = {
+                    dataType: 'json',
+                    beforeSubmit: showRequest,
+                    success: showResponse
+                }
+                $(this).ajaxSubmit(options);
+                return false;
+
+            } else {
+                return false;
+            }
+        });
+        var sendForm = $('#sendFormAjax');
+        sendForm.parsley();
+        sendForm.submit(function () {
+            var val = $(document.activeElement).val();
+            $("#opt").val(val);
+            if (sendForm.parsley('isValid') == true) {
                 var options = {
                     dataType: 'json',
                     beforeSubmit: showRequest,
