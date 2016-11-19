@@ -842,9 +842,15 @@ class OrderController extends Controller
     {
         $term = Input::get('term');
         $results = array();
-        $queries = \DB::table('products')
-            ->where('vendor_description', 'LIKE', '%' . $term . '%')->where('inactive', '=', 0)
-            ->take(10)->get();
+        $queries = \DB::select("SELECT *
+  FROM products
+ WHERE vendor_description LIKE '%$term%'
+ GROUP BY vendor_description
+ ORDER BY CASE WHEN vendor_description LIKE '$term%' THEN 0
+               WHEN vendor_description LIKE '% %$term% %' THEN 1
+               WHEN vendor_description LIKE '%$term' THEN 2
+               ELSE 3
+          END, vendor_description");
         if (count($queries) != 0) {
             foreach ($queries as $query) {
                 $results[] = ['id' => $query->id, 'value' => $query->vendor_description];
