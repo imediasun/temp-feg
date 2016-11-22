@@ -244,8 +244,8 @@ class GamesintransitController extends Controller
 
     function postAddNewGame(Request $request)
     {
-        $rules = array('asset_number' => 'required|min:8|max:8');
-        $validator = Validator::make($request->all(), $rules);
+        $rules = array('asset_number' => 'required|min:8|max:8|unique:game,id');
+        $validator = Validator::make(array_map('trim',$request->all()), $rules);
         if ($validator->passes()) {
             $serial = $request->get('serial');
             $game_title_id = $request->get('game_title');
@@ -277,5 +277,22 @@ class GamesintransitController extends Controller
         }
 
 
+    }
+    function getAssetNumberAvailability($asset_num)
+    {
+        if(strlen(trim($asset_num)) < 8 || strlen(trim($asset_num)) > 8)
+        {
+            return json_encode(array('status'=>'error','message'=>'Asset Number must have 8 characters'));
+
+        }
+        $row=\DB::select('select id from game where id ='.trim($asset_num));
+        if(count($row) > 0)
+        {
+            echo json_encode(array('status'=>'error','message'=>'This Asset Number not available'));
+        }
+        else
+        {
+            echo json_encode(array('status'=>'success','message'=>'This Asset Number is available'));
+        }
     }
 }

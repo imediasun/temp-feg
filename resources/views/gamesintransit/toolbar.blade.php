@@ -42,7 +42,8 @@
                         <label class="control-label col-md-4" for="asset_number">Asset Number*</label>
                         <div class="col-md-8">
                             <input type="text" name="asset_number" id="asset_number" class="form-control" required data-parsley-minlength="8" data-parsley-maxlength ="8" value=" "/>
-                             </div>
+                        <p id="asset_available" style="display:none"><i class="fa" id="status-icon"></i> </p>
+                        </div>
                         </div>
                          
                         <div class="form-group">
@@ -151,4 +152,26 @@
             return false;
         }
     }
+    $("#asset_number").focus(function(){
+        $('#asset_available').hide('300');
+    });
+    $("#asset_number").blur(function(){
+        var asset_number=$(this).val();
+        $.ajax({
+            url:'{{url()}}/gamesintransit/asset-number-availability/'+asset_number,
+            method:'get',
+            dataType:'json',
+            success:function(result){
+                if(result.status=="error")
+                {
+                    $('#asset_available').css('color','red');
+                }
+                else{
+                    $('#asset_available').css('color','green');
+                }
+                $('#asset_available').show('500');
+                $("#asset_available").text(result.message);
+            }
+        });
+    });
 </script>
