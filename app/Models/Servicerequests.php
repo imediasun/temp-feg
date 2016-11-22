@@ -2,8 +2,8 @@
 
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
-
-class Servicerequests extends Sximo  {
+use App\Models\Observers\Observerable;
+class Servicerequests extends Observerable  {
 
     protected $table = 'sb_tickets';
     protected $primaryKey = 'TicketID';
