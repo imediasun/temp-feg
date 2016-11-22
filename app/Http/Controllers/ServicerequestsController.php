@@ -353,10 +353,13 @@ class servicerequestsController extends Controller
             $this->model->insertRow($ticketsData, $ticketId);
             $message = $commentsData['Comments'];
             //send email
-            $this->model->notifyObserver('AddComment',[$message]);
+            $this->model->notifyObserver('AddComment',[
+                "message"       =>$message,
+                "ticketId"      => $ticketId,
+                "department_id" =>$ticketsData['department_id'],
+                "assign_to"     => $ticketsData['assign_to']
+                ]);
 
-            //$this->departmentSendMail($ticketsData['department_id'], $ticketId, $message);
-            //$this->assignToSendMail($ticketsData['assign_to'], $ticketId, $message);
             return response()->json(array(
                 'status' => 'success',
                 'message' => \Lang::get('core.note_success')

@@ -18,18 +18,16 @@ class TicketMailer
             case 'AddComment':
                 //fetch ticket settings
                 // send email to all group users
-                // send email to all individual users
+                // $this->departmentSendMail($data['department_id'],$data['ticketId'],$data['message']);
+
+                $settings = (array)\DB::table('sbticket_setting')->first();
+                $groupIds = $settings['role2'].','.$settings['role4'].','.$settings['role5'];
+                $users = (array) \DB::table('users')->whereIn('group_id', [$groupIds])->get();;
+                $this->assignToSendMail($data['ticketId'],$data['message'],$users);
                 break;
 
         };
-        /*
-        echo '<pre>';
-        print_r($type);
-        print_r($data);
-        print_r($object);
-        echo '</pre>';
-        exit;
-        */
+        
     }
     protected function departmentSendMail($departmentId, $ticketId, $message)
     {
@@ -45,15 +43,15 @@ class TicketMailer
             $get_user_id_from_employess = \DB::select("Select users.email FROM users  WHERE users.id = " . $id . "");
             if (isset($get_user_id_from_employess[0]->email)) {
                 $to = $get_user_id_from_employess[0]->email;
-                mail($to, $subject, $message, $headers);
+                 mail($to, $subject, $message, $headers);
             }
         }
     }
 
-    protected function assignToSendMail($assignTo, $ticketId, $message)
+    protected function assignToSendMail( $ticketId, $message,$users)
     {
-        $assigneesTo = $assigneesTo = \DB::select("select users.email FROM users WHERE users.id IN (" . $assignTo . ")");
-        foreach ($assigneesTo as $assignee) {
+        // $assigneesTo = $assigneesTo = \DB::select("select users.email FROM users WHERE users.id IN (" . $assignTo . ")");
+        foreach ($users as $assignee) {
             if (isset($assignee->email)) {
                 $to = $assignee->email;
                 $subject = 'FEG Ticket #' . $ticketId;
