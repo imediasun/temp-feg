@@ -7,6 +7,7 @@ use App\Models\Ticketcomment;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Validator, Input, Redirect;
+use App\Models\Core\TicketMailer;
 
 class servicerequestsController extends Controller
 {
@@ -20,6 +21,8 @@ class servicerequestsController extends Controller
     {
         parent::__construct();
         $this->model = new Servicerequests();
+
+        $this->model->attachObserver('AddComment',new TicketMailer);
 
         $this->info = $this->model->makeInfo($this->module);
         $this->access = $this->model->validAccess($this->info['id']);
@@ -321,6 +324,7 @@ class servicerequestsController extends Controller
 
     public function postComment(Request $request)
     {
+
         $rules = $this->validateTicketCommentsForm();
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
@@ -349,8 +353,10 @@ class servicerequestsController extends Controller
             $this->model->insertRow($ticketsData, $ticketId);
             $message = $commentsData['Comments'];
             //send email
-            $this->departmentSendMail($ticketsData['department_id'], $ticketId, $message);
-            $this->assignToSendMail($ticketsData['assign_to'], $ticketId, $message);
+            $this->model->notifyObserver('AddComment',[$message]);
+
+            //$this->departmentSendMail($ticketsData['department_id'], $ticketId, $message);
+            //$this->assignToSendMail($ticketsData['assign_to'], $ticketId, $message);
             return response()->json(array(
                 'status' => 'success',
                 'message' => \Lang::get('core.note_success')
