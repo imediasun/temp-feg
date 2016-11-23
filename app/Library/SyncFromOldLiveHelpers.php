@@ -49,7 +49,43 @@ class SyncFromOldLiveHelpers
         }
         self::$L->log("No  " . ($count > 0 ? "more":"") . " data to sync");
         self::$L->log("End Live Sync");
+        
+        self::$L->log("Clean Games Summary Sync");
+        self::live_sync_clean_summary_reports();
+        self::$L->log("Clean Games Summary Sync");
+        
+        
         DB::connection('livemysql')->disconnect();
+    }
+ 
+    public static function live_sync_clean_summary_reports($location = null) {
+        
+        DB::connection()->setFetchMode(PDO::FETCH_ASSOC); 
+        
+        $q = "SELECT id, date_opened from location WHERE reporting=1 " .
+            (empty($location) ? "": " AND id in ($location)");
+        $data = DB::select($q);
+        foreach($data as $item) {
+            $id = $item['id'];
+            $date = $item['date_opened'];
+            $sql = "DELETE FROM report_locations WHERE location_id = $loc and date_played < '$date'";
+            DB::delete($sql);        
+            $sql = "DELETE FROM report_game_plays WHERE location_id = $loc and date_played < '$date'";
+            DB::delete($sql);
+
+            $sql = "DELETE FROM report_locations WHERE record_status = 0";
+            if (!empty($location)) {
+                $sql .= " AND location_id in ($location)";
+            }
+            DB::delete($sql);
+            
+            $sql = "DELETE FROM report_game_plays WHERE record_status = 0";
+
+            if (!empty($location)) {
+                $sql .= " AND location_id in ($location)";
+            }
+            DB::delete($sql);        
+        }
     }
     
     public static function live_sync_adjustment_earnings() {
