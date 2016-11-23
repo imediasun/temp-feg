@@ -103,8 +103,59 @@ class servicerequestsController extends Controller
         $user_id = \Session::get('uid');
         $group_id = \Session::get('gid');
         foreach ($rows as $index => $row) {
+
             $flag = 1;
-            if (isset($row->department_id) && !empty($row->department_id)&& false)
+            $settings = (array)\DB::table('sbticket_setting')->first();
+            $groupIds =explode(",", $settings['role1']);
+            $users = (array) \DB::table('users')->select("id")->whereIn('group_id', $groupIds)->get();
+            $AllTickets = array();
+            foreach($users as $user){
+                $AllTickets[] = $user->id;
+            }
+            //Add indivisuals to our array
+            $AllTickets = array_merge($AllTickets,explode(",", $settings['individual1']));
+
+            //get only assignee
+            $groupIds=array();
+            $groupIds =explode(",", $settings['role3']);
+            $users=null;
+            $users = (array) \DB::table('users')->select("id")->whereIn('group_id', $groupIds)->get();
+            $OnlyAssigneees = array();
+            foreach($users as $user){
+                $OnlyAssigneees[] = $user->id;
+            }
+            //Add indivisuals to our array
+            $OnlyAssigneees = array_merge($OnlyAssigneees,explode(",", $settings['individual3']));
+
+            foreach ($rows as $index => $row) {
+                $flag = 0;
+                $status=0;
+                if (isset($user_id))
+                {
+                    if ($group_id != 10) {
+
+                        if(in_array($user_id,$OnlyAssigneees) && in_array($user_id,$AllTickets)){
+                                    $status = 2; //if user group exists in both we keep track of it 
+                         }
+                        
+                         if(($flag == 0 ||$status == 2) && in_array($user_id,explode(",", $row->assign_to)))
+                            { 
+                                $flag = 1; 
+                             } 
+                         if(($status != 2 && $flag != 1) && in_array($user_id,$AllTickets)) 
+                          {
+                                $flag = 1; 
+                          }
+                    if($flag == 0)
+                      unset($rows[$index]);
+                    }
+                }
+            }
+
+
+
+            //this code is not woring for some reason
+            /*if (isset($row->department_id) && !empty($row->department_id)&& false)
             {
                 //$row->comments = $comments->where('TicketID', '=', $row->TicketID)->orderBy('TicketID', 'desc')->take(1)->get();
                 $department_memebers = \DB::select("Select assign_employee_ids FROM departments WHERE id = " . $row->department_id . "");
@@ -140,7 +191,7 @@ class servicerequestsController extends Controller
                 } else {
                     unset($rows[$index]);
                 }
-            }
+            }*/
         }
 
         $this->data['param'] = $params;
