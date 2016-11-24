@@ -21,8 +21,11 @@ class TicketMailer
                 // $this->departmentSendMail($data['department_id'],$data['ticketId'],$data['message']);
 
                 $settings = (array)\DB::table('sbticket_setting')->first();
-                $groupIds = $settings['role2'].','.$settings['role4'].','.$settings['role5'];
-                $users = (array) \DB::table('users')->whereIn('group_id', [$groupIds])->get();;
+                $groupIds = array_unique(explode(",",$settings['role2'].','.$settings['role5']));
+                $users = (array) \DB::table('users')->whereIn('group_id', $groupIds)->get();;
+                $indvisuals = array_unique(explode(",",$settings['individual2'].','.$settings['individual5']));
+                $indvisualUser = (array) \DB::table('users')->whereIn('id', $indvisuals)->get();
+                $users = array_merge($users,$indvisualUser);
                 $this->assignToSendMail($data['ticketId'],$data['message'],$users);
                 break;
 

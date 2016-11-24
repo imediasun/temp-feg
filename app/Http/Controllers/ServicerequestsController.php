@@ -407,7 +407,7 @@ class servicerequestsController extends Controller
             $this->model->notifyObserver('AddComment',[
                 "message"       =>$message,
                 "ticketId"      => $ticketId,
-                "department_id" =>$ticketsData['department_id'],
+                "department_id" =>"",
                 "assign_to"     => $ticketsData['assign_to']
                 ]);
 
@@ -429,7 +429,7 @@ class servicerequestsController extends Controller
     {
         $rules = array();
         $rules['Comments'] = 'required';
-        $rules['department_id'] = 'required|numeric';
+        //$rules['department_id'] = 'required|numeric';
         $rules['Priority'] = 'required';
         $rules['Status'] = 'required';
         return $rules;
