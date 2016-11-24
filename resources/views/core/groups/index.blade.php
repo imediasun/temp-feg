@@ -6,7 +6,7 @@
     <!-- Page header -->
     <div class="page-header">
       <div class="page-title">
-        <h3> {{ $pageTitle }} <small>{{ $pageNote }}</small></h3>
+        <h3> {{ $pageTitle }} </h3>
       </div>
 
       <ul class="breadcrumb">

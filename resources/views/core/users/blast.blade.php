@@ -6,7 +6,7 @@
     <!-- Page header -->
     <div class="page-header">
       <div class="page-title">
-        <h3>  {{ Lang::get('core.t_blastemail') }}  <small>{{ Lang::get('core.t_blastemailsmall') }}</small></h3>
+        <h3>  {{ Lang::get('core.t_blastemail') }}  </h3>
       </div>
 
       <ul class="breadcrumb">
