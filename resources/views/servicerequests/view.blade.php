@@ -237,6 +237,8 @@ $commentsCount =  $comments->count();
 									</label>
 									<div class="col-md-5">
 										{!! Form::label('TicketID', $row['TicketID'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
+										{!! Form::hidden('TicketID', $row['TicketID'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
+
 									</div>
 								</div>
 								<div class="form-group hidethis " style="display:none;">
