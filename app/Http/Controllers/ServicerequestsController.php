@@ -417,7 +417,7 @@ class servicerequestsController extends Controller
             ));
 
         } else {
-
+            $message = $this->validateListError($validator->getMessageBag()->toArray());
             return response()->json(array(
                 'message' => $message,
                 'status' => 'error'
