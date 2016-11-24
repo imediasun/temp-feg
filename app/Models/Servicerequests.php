@@ -19,8 +19,11 @@ class Servicerequests extends Observerable  {
     }
 
     public static function queryWhere(  ){
-
-        return "  WHERE sb_tickets.TicketID IS NOT NULL ";
+        $selected_loc=\Session::get('selected_location');
+        if (isset($selected_loc))
+            return "  WHERE sb_tickets.TicketID IS NOT NULL AND location_id=$selected_loc";
+        else
+            return "  WHERE sb_tickets.TicketID IS NOT NULL ";
     }
 
     public static function queryGroup(){
