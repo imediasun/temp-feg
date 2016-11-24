@@ -161,7 +161,10 @@
 								</label>
 								<div class="col-md-6">
 									<div class="input-group datepicker" style="width:150px ">
-									{!! Form::text('need_by_date', $row['need_by_date'],array('class'=>'form-control', 'id'=>'my-datepicker', 'style'=>'width:150px !important;'   )) !!}
+										<?php
+										$date = \DateHelpers::formatDate($row['need_by_date']);
+										?>
+									{!! Form::text('need_by_date', $date,array('class'=>'form-control', 'id'=>'my-datepicker', 'style'=>'width:150px !important;'   )) !!}
 
 									<span class="input-group-addon "><i class="fa fa-calendar" id="icon"></i></span>
 								</div>
