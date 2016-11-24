@@ -124,13 +124,13 @@ $commentsCount =  $comments->count();
 
 							</tr>
 
-							<tr>
-								<td width='40%' class='label-view text-right'>
-									{{ SiteHelpers::activeLang('Department', (isset($fields['department_id']['language'])? $fields['department_id']['language'] : array())) }}
-								</td>
-								<td>{!! SiteHelpers::gridDisplayView($row->department_id,'department_id','1:departments:id:name') !!} </td>
+							{{--<tr>--}}
+								{{--<td width='40%' class='label-view text-right'>--}}
+									{{--{{ SiteHelpers::activeLang('Department', (isset($fields['department_id']['language'])? $fields['department_id']['language'] : array())) }}--}}
+								{{--</td>--}}
+								{{--<td>{!! SiteHelpers::gridDisplayView($row->department_id,'department_id','1:departments:id:name') !!} </td>--}}
 
-							</tr>
+							{{--</tr>--}}
 
 							<tr>
 								<td width='40%' class='label-view text-right'>
