@@ -7,6 +7,7 @@
  */
 
 namespace App\Models\Core;
+use Log;
 
 
 class TicketMailer
@@ -49,7 +50,8 @@ class TicketMailer
             $get_user_id_from_employess = \DB::select("Select users.email FROM users  WHERE users.id = " . $id . "");
             if (isset($get_user_id_from_employess[0]->email)) {
                 $to = $get_user_id_from_employess[0]->email;
-                 mail($to, $subject, $message, $headers);
+                Log::info("**Send Emmail => ",[$to, $subject, $message, $headers]);
+                 //mail($to, $subject, $message, $headers);
             }
         }
     }
@@ -64,7 +66,8 @@ class TicketMailer
                 $headers = 'MIME-Version: 1.0' . "\r\n";
                 $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
                 $headers .= 'From: ' . CNF_REPLY_TO . ' <' . CNF_REPLY_TO . '>' . "\r\n";
-                mail($to, $subject, $message, $headers);
+                Log::info("**Send Emmail => ",[$to, $subject, $message, $headers]);
+                //mail($to, $subject, $message, $headers);
             }
         }
     }
