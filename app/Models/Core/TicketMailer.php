@@ -13,22 +13,25 @@ class TicketMailer
 {
     function callBack($object,$type,$data){
         //@todo
+        $settings = (array)\DB::table('sbticket_setting')->first();
 
         switch($type){
             case 'AddComment':
                 //fetch ticket settings
                 // send email to all group users
                 // $this->departmentSendMail($data['department_id'],$data['ticketId'],$data['message']);
-
-                $settings = (array)\DB::table('sbticket_setting')->first();
-                $groupIds = array_unique(explode(",",$settings['role2'].','.$settings['role5']));
-                $users = (array) \DB::table('users')->whereIn('group_id', $groupIds)->get();;
-                $indvisuals = array_unique(explode(",",$settings['individual2'].','.$settings['individual5']));
-                $indvisualUser = (array) \DB::table('users')->whereIn('id', $indvisuals)->get();
-                $users = array_merge($users,$indvisualUser);
+                $role=$settings['role2'].','.$settings['role5'];
+                $indivisual=$settings['individual2'].','.$settings['individual5'];
+                $users = $this->getUsers($role,$indivisual);
                 $this->assignToSendMail($data['ticketId'],$data['message'],$users);
                 break;
-
+            case 'FirstEmail':
+                //Call this when user create first ticket
+                $role=$settings['role4'];
+                $indivisual=$settings['individual4'];
+                $users = $this->getUsers($role,$indivisual);
+                $this->assignToSendMail($data['ticketId'],$data['message'],$users);
+                break;
         };
         
     }
@@ -64,6 +67,16 @@ class TicketMailer
                 mail($to, $subject, $message, $headers);
             }
         }
+    }
+
+    protected function getUsers($role,$indivisual){
+
+        $groupIds = array_unique(explode(",",$role));
+        $users = (array) \DB::table('users')->whereIn('group_id', $groupIds)->get();;
+        $indvisuals = array_unique(explode(",",$indivisual));
+        $indvisualUser = (array) \DB::table('users')->whereIn('id', $indvisuals)->get();
+        $users = array_merge($users,$indvisualUser);
+        return $users;
     }
 
 }

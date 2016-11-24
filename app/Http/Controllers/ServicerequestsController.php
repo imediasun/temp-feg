@@ -22,6 +22,7 @@ class servicerequestsController extends Controller
         parent::__construct();
         $this->model = new Servicerequests();
 
+        $this->model->attachObserver('FirstEmail',new TicketMailer);
         $this->model->attachObserver('AddComment',new TicketMailer);
 
         $this->info = $this->model->makeInfo($this->module);
@@ -313,6 +314,9 @@ class servicerequestsController extends Controller
 
         //$data['need_by_date'] = date('Y-m-d');
         //$rules = $this->validateForm();
+        $sendMail=false;
+        if($id==null)
+            $sendMail=true;
         $rules = array('Subject' => 'required', 'Description' => 'required', 'Priority' => 'required', 'issue_type' => 'required', 'location_id' => 'required');
         //unset($rules['debit_card']);
         $validator = Validator::make($request->all(), $rules);
@@ -327,7 +331,14 @@ class servicerequestsController extends Controller
             }
 
             $id = $this->model->insertRow($data, $id);
+            if($sendMail){
+                $message = $data['Description'];
+                $this->model->notifyObserver('FirstEmail',[
+                    "message"       =>$message,
+                    "ticketId"      => $id
+                ]);
 
+            }
             return response()->json(array(
                 'status' => 'success',
                 'message' => \Lang::get('core.note_success')
