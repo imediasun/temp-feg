@@ -6,10 +6,10 @@ $selected_loc=\Session::get('selected_location');?>
 
 @endif
 <nav role="navigation" class="navbar-default navbar-static-side">
-    <div class="sidebar-collapse">
+    <div class="sidebar-collapse side_menu_bg">
         <ul id="sidemenu" class="nav expanded-menu">
             <li class="logo-header">
-                <a class="navbar-brand" href="{{ URL::to('dashboard')}}">
+                <a id="logo" class="navbar-brand" href="{{ URL::to('dashboard')}}">
                     @if(file_exists(public_path().'/sximo/images/'.CNF_LOGO) && CNF_LOGO !='')
                         <img src="{{ asset('sximo/images/'.CNF_LOGO)}}" alt="{{ CNF_APPNAME }}"/>
                     @else
@@ -17,7 +17,7 @@ $selected_loc=\Session::get('selected_location');?>
                     @endif
                 </a>
             </li>
-            <li class="nav-header">
+            <li class="nav-header side_menu_bg">
                 <div class="dropdown profile-element" style="text-align:center;"> <span>
 				{!! SiteHelpers::avatar() !!}
 				 </span>

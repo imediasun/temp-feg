@@ -74,8 +74,12 @@
 						 	?>
 						 	<?php $limited = isset($field['limited']) ? $field['limited'] :''; ?>
 						 	@if(SiteHelpers::filterColumn($limited ))
-								 <td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}" data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">					 
-									{!! $value !!}							 
+								 <td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}" data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
+                                     @if($field['field']=='img')
+                                         {{ SiteHelpers::showUploadedFile($row->img, '/uploads/games/images', 50, false) }}
+                                     @else
+                                         {!! $value !!}
+                                     @endif
 								 </td>
 							@endif	
 						 <?php endif;					 

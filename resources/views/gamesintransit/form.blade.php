@@ -49,6 +49,18 @@
 
                         </div>
                     </div>
+                    <div class="form-group  ">
+                        <label for="sale_price" class=" control-label col-md-4 text-left">
+                            {!! SiteHelpers::activeLang('Sale Price', (isset($fields['sale_price']['language'])?
+                            $fields['sale_price']['language'] : array())) !!}
+                        </label>
+
+                        <div class="col-md-6">
+                            <input type="number" value="0.00" step=".1" class="form-control" name="sale_price" id="sale_price"  required="required">
+                        </div>
+                        <div class="col-md-2">
+                        </div>
+                    </div>
                     <div class="form-group  " >
                     <label for="Notes" class=" control-label col-md-4 text-left">
                         {!! SiteHelpers::activeLang('Notes', (isset($fields['notes']['language'])? $fields['notes']['language'] : array())) !!}

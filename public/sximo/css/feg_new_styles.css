@@ -1,0 +1,106 @@
+.dark_blue
+{
+    background:#195a97;
+    color:#FFF;
+}
+.nav > li.active {
+    background: #0a2347;
+}
+
+.navbar-default .nav > li > a:hover,
+.navbar-default .nav > li > a:focus {
+    background-color: #0a2347;
+    color: white;
+}
+.page-content
+{
+    background:#195a97;
+}
+.side_menu_bg
+{
+    background:#103669;
+}
+#logo
+{
+    margin:0px;
+    padding:0px;
+    display:inline-block;
+}
+.sxim-init
+{
+
+}
+.navbar-static-side
+{
+    width:220px;
+}
+.silver-btn
+{
+    background: #e0a94e;
+    color:#FFF;
+    border-radius: 3px;
+    font-size: 17px;
+}
+#page-wrapper {
+    background:#195a97!important;
+}
+.expanded-menu > li.active > a i  {
+    color:#e0a94e;
+}
+.nav.navbar-top-links a i
+{
+    color:#ababab;
+}
+.collapse.in li
+{
+    border-left:2px solid #e0a94e;
+}
+.text-gray
+{
+    color:#999999;
+}
+
+.logo-header
+{
+    height:70px;
+}
+.sbox
+{
+    margin-top:25px;
+    background: #f9f9f9;
+}
+.page-title
+{
+    margin-left:0px;
+    font-size: 22px;
+}
+.btn-primary, .btn-success,.btn-info,.btn-danger {
+    background-color: #1c84c6;
+    border-color: #1c84c6;
+    color: #FFFFFF;
+}
+.btn-primary:hover,.btn-success:hover,.btn-info:hover,.btn-danger:hover
+{
+    background-color: #14457a!important;
+    border-color:#14457a!important;
+    color:#FFF!important;
+}
+.form-control:focus {
+    border-color: #195a97;
+}
+.form-horizontal .control-label
+{
+    text-align: left;
+}
+.nav-tabs > li.active > a
+{
+    background-color: #14457a;
+    border-color:#14457a;
+    color: #FFFFFF;
+}
+ .nav-tabs > li.active > a:hover
+  {
+     background-color: #14457a!important;
+     border-color:#14457a!important;
+     color:#FFF!important;
+  }
