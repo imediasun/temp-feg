@@ -17,33 +17,14 @@ $selected_loc=\Session::get('selected_location');?>
                     @endif
                 </a>
             </li>
-            <li class="nav-header side_menu_bg">
-                <div class="dropdown profile-element" style="text-align:center;"> <span>
-				{!! SiteHelpers::avatar() !!}
-				 </span>
-                    <a href="{{ URL::to('user/profile') }}">
-				<span class="clear"> <span class="block m-t-xs"> <strong
-                                class="font-bold">{{ Session::get('fid') }}</strong>
-				 <br/>
 
-				 </span> 
-				 </span>
-                    </a>
-                </div>
-                <div class="photo-header "> {!! SiteHelpers::avatar( 40 ) !!}</div>
-            </li>
 
             <div>
                 <?php $user_locations=\Session::get('user_locations'); ?>
                 @if(isset($user_locations))
-                        <li>
-                            <span style="padding-left:10px;"><b style="margin-left: 8px; color: #fff; font-size: 13px; font-family: 'Lato', sans-serif; font-weight: bold;">Location {{ \Session::get('selected_location') }} {{ "||" }} {{ \Session::get('selected_location_name') }}</b></span>
+                        <li style=" padding: 5px; margin-bottom: 8px;">
 
-                        </li>
-
-                        <li style=" padding: 6px 12px; margin-bottom: 8px;">
-
-                        <select id="user_locations" class="form-control">
+                        <select id="user_locations" style="width:210px;font-size:20px;padding:5px" class="form-control">
                             <?php $userLocations = \Session::get('user_locations') ?>
                             <option disabled selected>Select Your Location</option>
                             @foreach($userLocations as $location)
@@ -59,24 +40,34 @@ $selected_loc=\Session::get('selected_location');?>
 
             @if(isset($selected_loc))
             <li>
-                <div class="profile-element" style="color:#FFF;padding:6px;border:1px solid #FFF;box-sizing: border-box">
-                    <h4>@if($orderData['user_group'] == 'regusers')
+                <div class="profile-element" >
+                    <h5 id="profile-element-heading"style="">@if($orderData['user_group'] == 'regusers')
                             Location {{ $orderData['selected_location'] }} - Expense Summary
                         @elseif ($orderData['user_group'] == 'distmgr')
                             All {{ SiteHelpers::getRegionName($orderData['reg_id']) }} Locations - Expense Summary
                         @else
-                            All Locations - Expense Summary
+                            Expense Summary (All Locations)
                         @endif
-                    </h4>
-                    <table style="font-size: 10px">
+                        Month : {{ $orderData['curMonthFull'] }}
+                    </h5>
+                    <table class="budget-summery">
                         <tr>
-                            <td>Merch Expences For {{ $orderData['curMonthFull'] }}</td>
+                            <td>Merchandise</td>
                             <td>$ {{ number_format($orderData['monthly_merch_order_total'], 2, '.', ',') }}</td>
                         </tr>
-                        <tr style="border-bottom:1px solid lightgray">
+                        <tr class="border-bottom">
 
-                            <td>Parts & other Expense for {{ $orderData['curMonthFull'] }}</td>
+                            <td>Parts & other </td>
                             <td>$ {{ number_format($orderData['monthly_else_order_total'], 2, '.', ',') }}</td>
+                        </tr>
+                        <tr class="border-bottom">
+                            <td>{{ $orderData['curMonthFull'] }} Remaining Merch Budget:</td>
+                            <td>$
+                                @if($orderData['monthly_merch_remaining'] < 0){
+                                {{ number_format($orderData['monthly_merch_remaining'], 2, '.', ',') }}
+                                @else
+                                    {{ number_format($orderData['monthly_merch_remaining'], 2, '.', ',') }}
+                            @endif
                         </tr>
                         <tr>
                             <td> {{$orderData['prevMonthFull'] }} Over/Under Merch Budget:</td>
@@ -89,15 +80,7 @@ $selected_loc=\Session::get('selected_location');?>
                                     @endif
                             </td>
                         </tr>
-                        <tr>
-                            <td>{{ $orderData['curMonthFull'] }} Remaining Merch Budget:</td>
-                            <td>$
-                                @if($orderData['monthly_merch_remaining'] < 0){
-                                {{ number_format($orderData['monthly_merch_remaining'], 2, '.', ',') }}
-                                 @else
-                                {{ number_format($orderData['monthly_merch_remaining'], 2, '.', ',') }}
-                            @endif
-                        </tr>
+
                     </table>
 
                 </div>

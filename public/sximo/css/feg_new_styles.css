@@ -62,7 +62,7 @@
 
 .logo-header
 {
-    height:70px;
+    height:85px;
 }
 .sbox
 {
@@ -91,7 +91,7 @@
 {
     text-align: left;
 }
-.nav-tabs > li.active > a
+.nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus,.logo-header
 {
     background-color: #14457a;
     border-color:#14457a;
@@ -103,3 +103,45 @@
      border-color:#14457a!important;
      color:#FFF!important;
   }
+ .darkblue-btn
+ {
+     background: #012c5f;
+     color:#FFF;
+     border-color:#012c5f;
+ }
+ .darkblue-btn:hover
+ {
+     color:#f0ad4e;
+ }
+.has-feedback .form-control-feedback
+{
+    top:21px!important;
+}
+.budget-summery
+{
+    font-size: 10px;
+}
+.budget-summery tr > td
+{
+    padding-top:0px;
+}
+.budget-summery tr td
+{
+    padding:3px;
+}
+.border-bottom
+{
+    border-bottom:1px solid lightgray;
+}
+.profile-element
+{
+    color:#FFF;padding:2px;border:1px solid #FFF;box-sizing: border-box;width:96%;margin:0px auto;
+}
+#profile-element-heading
+{
+    background:#0a2347;padding: 5px;font-weight: bolder
+}
+#login-bg
+{
+    background:#003673;
+}
