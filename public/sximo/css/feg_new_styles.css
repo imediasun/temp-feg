@@ -139,9 +139,10 @@
 }
 #profile-element-heading
 {
-    background:#0a2347;padding: 5px;font-weight: bolder
+    background:#0a2347;padding: 5px;font-weight: bolder;margin-top:0px;
 }
 #login-bg
 {
     background:#003673;
 }
+
