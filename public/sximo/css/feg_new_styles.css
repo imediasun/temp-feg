@@ -23,8 +23,18 @@
 #logo
 {
     margin:0px;
-    padding:0px;
+
     display:inline-block;
+    text-align: center;
+
+}
+#logo-img
+{
+    width:75%;
+}
+#logo-bar
+{
+    margin-top:15px;
 }
 .sxim-init
 {
@@ -109,7 +119,7 @@
      color:#FFF;
      border-color:#012c5f;
  }
- .darkblue-btn:hover
+ .darkblue-btn:hover,.darkblue-btn:hover:active
  {
      color:#f0ad4e;
  }
@@ -156,4 +166,8 @@
 .sidebar_loc_dropdown
 {
     max-width:210px;width:100%;font-size:20px;padding:3px;
+}
+#logo:hover
+{
+    background:none;
 }

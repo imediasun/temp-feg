@@ -11,11 +11,12 @@ $selected_loc=\Session::get('selected_location');?>
             <li class="logo-header">
                 <a id="logo" class="navbar-brand" href="{{ URL::to('dashboard')}}">
                     @if(file_exists(public_path().'/sximo/images/'.CNF_LOGO) && CNF_LOGO !='')
-                        <img src="{{ asset('sximo/images/'.CNF_LOGO)}}" alt="{{ CNF_APPNAME }}"/>
+                        <img id="logo-img" src="{{ asset('sximo/images/'.CNF_LOGO)}}" alt="{{ CNF_APPNAME }}"/>
                     @else
                         <img src="{{ asset('sximo/images/logo.png')}}" alt="{{ CNF_APPNAME }}"/>
                     @endif
                 </a>
+                <img id="logo-bar" src="{{ asset('sximo/images/logo_bar.png') }}" />
             </li>
 
 
