@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="text-center">
-    <img src="{{ asset('sximo/images/feg_new_logo.png') }}"/>
+    <img src="{{ asset('sximo/images/feg_new_logo.png') }}" class="full-width"/>
     </div>
 <div class="sbox ">
 

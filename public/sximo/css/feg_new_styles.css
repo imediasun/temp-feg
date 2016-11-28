@@ -131,15 +131,15 @@
 }
 .border-bottom
 {
-    border-bottom:1px solid lightgray;
+    border-bottom:1px solid #c7d2de;
 }
 .profile-element
 {
-    color:#FFF;padding:2px;border:1px solid #FFF;box-sizing: border-box;width:96%;margin:0px auto;
+    color:#FFF;padding:2px;border:2px solid #7592b2 ;box-sizing: border-box;width:96%;margin:0px auto;
 }
 #profile-element-heading
 {
-    background:#0a2347;padding: 5px;font-weight: bolder;margin-top:0px;
+    background:#0a2347;padding: 5px;font-weight: bolder;margin-top:0px;border-bottom:1px solid #0a2347;
 }
 #login-bg
 {
@@ -149,4 +149,11 @@
 {
     font-weight: normal;
 }
-
+.full-width
+{
+    width:100%;
+}
+.sidebar_loc_dropdown
+{
+    max-width:210px;width:100%;font-size:20px;padding:3px;
+}

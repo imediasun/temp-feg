@@ -20,7 +20,7 @@
 		<link href="{{ asset('sximo/js/plugins/datepicker/css/bootstrap-datetimepicker.min.css')}}" rel="stylesheet">
 		<link href="{{ asset('sximo/js/plugins/bootstrap.datetimepicker/css/bootstrap-datetimepicker.min.css')}}" rel="stylesheet">
 		<link href="{{ asset('sximo/js/plugins/select2/select2.css')}}" rel="stylesheet">
-		<link href="{{ asset('sximo/js/plugins/iCheck/skins/square/green.css')}}" rel="stylesheet">
+		<link href="{{ asset('sximo/js/plugins/iCheck/skins/square/blue.css')}}" rel="stylesheet">
 		<link href="{{ asset('sximo/js/plugins/fancybox/jquery.fancybox.css') }}" rel="stylesheet">
         <link href="{{ asset('sximo/css/multi-select.css') }}" rel="stylesheet">
 		<link href="{{ asset('sximo/css/animate.css')}}" rel="stylesheet">

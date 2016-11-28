@@ -196,8 +196,8 @@ $(document).ready(function() {
 	$('.date').datepicker({format:'mm/dd/yyyy',autoclose:true})
 	$('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});
 	$('input[type="checkbox"],input[type="radio"]').iCheck({
-		checkboxClass: 'icheckbox_square-green',
-		radioClass: 'iradio_square-green',
+		checkboxClass: 'icheckbox_square-blue',
+		radioClass: 'iradio_square-blue',
 	});
 	$('#{{ $pageModule }}Table .checkall').on('ifChecked',function(){
 		$('#{{ $pageModule }}Table input[type="checkbox"]').iCheck('check');

@@ -24,7 +24,7 @@ $selected_loc=\Session::get('selected_location');?>
                 @if(isset($user_locations))
                         <li style=" padding: 5px; margin-bottom: 8px;">
 
-                        <select id="user_locations" style="width:210px;font-size:20px;padding:5px" class="form-control">
+                        <select id="user_locations"  class="form-control sidebar_loc_dropdown">
                             <?php $userLocations = \Session::get('user_locations') ?>
                             <option disabled selected>Select Your Location</option>
                             @foreach($userLocations as $location)
@@ -41,7 +41,7 @@ $selected_loc=\Session::get('selected_location');?>
             @if(isset($selected_loc))
             <li>
                 <div class="profile-element" >
-                    <h5 id="profile-element-heading"style="">@if($orderData['user_group'] == 'regusers')
+                    <h5 id="profile-element-heading">@if($orderData['user_group'] == 'regusers')
                             Location {{ $orderData['selected_location'] }} - Expense Summary
                         @elseif ($orderData['user_group'] == 'distmgr')
                             All {{ SiteHelpers::getRegionName($orderData['reg_id']) }} Locations - Expense Summary
@@ -72,11 +72,11 @@ $selected_loc=\Session::get('selected_location');?>
                         <tr>
                             <td> {{$orderData['prevMonthFull'] }} Over/Under Merch Budget:</td>
                             <td>
-                                $
+
                                 @if($orderData['last_month_merch_remaining'] < 0)
-                                {{ number_format($orderData['last_month_merch_remaining'], 2, '.', ',')}}
+                                ${{ number_format($orderData['last_month_merch_remaining'], 2, '.', ',')}}
                                 @else
-                                    {{ number_format($orderData['last_month_merch_remaining'], 2, '.', ',')}}
+                                 ${{ number_format($orderData['last_month_merch_remaining'], 2, '.', ',')}}
                                     @endif
                             </td>
                         </tr>
