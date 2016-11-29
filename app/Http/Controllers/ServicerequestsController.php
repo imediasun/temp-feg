@@ -329,13 +329,13 @@ class servicerequestsController extends Controller
                 $data['Created'] = date('Y-m-d');
 
             }
-
             $id = $this->model->insertRow($data, $id);
             if($sendMail){
                 $message = $data['Description'];
                 $this->model->notifyObserver('FirstEmail',[
                     "message"       =>$message,
-                    "ticketId"      => $id
+                    "ticketId"      => $id,
+                    "location_id"   => $data['location_id']
                 ]);
 
             }
@@ -420,6 +420,7 @@ class servicerequestsController extends Controller
                 "message"       =>$message,
                 "ticketId"      => $ticketId,
                 "department_id" =>"",
+                "location_id"   => $ticketsData["location_id"],
                 "assign_to"     => $ticketsData['assign_to']
                 ]);
 

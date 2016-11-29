@@ -23,14 +23,14 @@ class TicketMailer
                 // $this->departmentSendMail($data['department_id'],$data['ticketId'],$data['message']);
                 $role=$settings['role2'].','.$settings['role5'];
                 $indivisual=$settings['individual2'].','.$settings['individual5'];
-                $users = $this->getUsers($role,$indivisual);
+                $users = $this->getUsers($role,$indivisual,$data['location_id']);
                 $this->assignToSendMail($data['ticketId'],$data['message'],$users);
                 break;
             case 'FirstEmail':
                 //Call this when user create first ticket
                 $role=$settings['role4'];
                 $indivisual=$settings['individual4'];
-                $users = $this->getUsers($role,$indivisual);
+                $users = $this->getUsers($role,$indivisual,$data['location_id']);
                 $this->assignToSendMail($data['ticketId'],$data['message'],$users);
                 break;
         };
@@ -72,12 +72,16 @@ class TicketMailer
         }
     }
 
-    protected function getUsers($role,$indivisual){
 
+    protected function getUsers($role,$indivisual,$loc){
         $groupIds = array_unique(explode(",",$role));
-        $users = (array) \DB::table('users')->whereIn('group_id', $groupIds)->get();;
+        $users = (array) \DB::table('users')
+            ->join('user_locations', 'user_locations.user_id', '=', 'users.id')
+            ->where("location_id",$loc)->whereIn('group_id', $groupIds)->get();;
         $indvisuals = array_unique(explode(",",$indivisual));
-        $indvisualUser = (array) \DB::table('users')->whereIn('id', $indvisuals)->get();
+        $indvisualUser = (array) \DB::table('users')
+            ->join('user_locations', 'user_locations.user_id', '=', 'users.id')
+            ->where("location_id",$loc)->whereIn('users.id', $indvisuals)->get();
         $users = array_merge($users,$indvisualUser);
         return $users;
     }
