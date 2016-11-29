@@ -1,14 +1,14 @@
 @extends('layouts.login')
 
 @section('content')
-
+    <div class="text-center">
+    <img src="{{ asset('sximo/images/feg_new_logo.png') }}" />
+        <img id="logo-bar"  src="{{ asset('sximo/images/logo_bar.png') }}" class="full-width"/>
+    </div>
 <div class="sbox ">
-	<div class="sbox-title">
-			
-				<h3 >{{ CNF_APPNAME }} <small> {{ CNF_APPDESC }} </small></h3>
-				
-	</div>
+
 	<div class="sbox-content">
+
 	    	@if(Session::has('message'))
 				{!! Session::get('message') !!}
 			@endif
@@ -71,27 +71,27 @@
 				
 				<div class="clr"></div>
 			</div>	
-		 	@endif	
+		 	@endif
 
 
 
 
-			<div class="form-group  has-feedback text-center  animated fadeInLeft delayp1" style=" margin-bottom:20px;" >
-				 	 
-					<button type="submit" class="btn btn-info btn-sm btn-block" ><i class="fa fa-sign-in"></i> {{ Lang::get('core.signin') }}</button>
-				       
+            <div class="form-group  has-feedback text-center  animated fadeInLeft delayp1" style=" margin-bottom:20px;" >
 
-				
-			 	<div class="clr"></div>
-				
-			</div>	
-			<div class="animated fadeInUp delayp1">
+                <button type="submit"  class="btn darkblue-btn btn-sm btn-block" ><i class="fa fa-sign-in"></i> {{ Lang::get('core.signin') }}</button>
+
+
+
+                <div class="clr"></div>
+
+            </div>
+            <div class="animated fadeInUp delayp1">
 		<div class="form-group has-feedback text-center">
 			@if($socialize['google']['client_id'] !='' || $socialize['twitter']['client_id'] !='' || $socialize['facebook'] ['client_id'] !='') 
 			<br />
 			<p class="text-muted text-center"><b> {{ Lang::get('core.loginsocial') }} </b>	  </p>
 			@endif
-			<div style="padding:15px 0;">
+			<div style="padding: 0;">
 				@if($socialize['facebook']['client_id'] !='') 
 				<a href="{{ URL::to('user/socialize/facebook')}}" class="btn btn-primary"><i class="icon-facebook"></i> Facebook </a>
 				@endif
@@ -104,10 +104,6 @@
 			</div>
 		</div>			
 
-
-			  <p style="padding:10px 0" class="text-center">
-			  <a href="{{ URL::to('')}}"> {{ Lang::get('core.backtosite') }} </a>  
-		   		</p>
 		   	</div>	
 		   </form>			
 		</div>
@@ -126,10 +122,10 @@
 				<i class="icon-envelope form-control-feedback"></i>
 			</div> 	
 			</div>
-			<div class="form-group has-feedback">        
-		      <button type="submit" class="btn btn-default pull-right"> {{ Lang::get('core.sb_submit') }} </button>        
+			<div class="form-group has-feedback">
+		      <button type="submit" class="btn darkblue-btn pull-right"> {{ Lang::get('core.sb_submit') }} </button>
 		  </div>
-		  
+
 		  <div class="clr"></div>
 
 		  

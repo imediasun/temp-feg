@@ -20,7 +20,7 @@
 		<link href="{{ asset('sximo/js/plugins/datepicker/css/bootstrap-datetimepicker.min.css')}}" rel="stylesheet">
 		<link href="{{ asset('sximo/js/plugins/bootstrap.datetimepicker/css/bootstrap-datetimepicker.min.css')}}" rel="stylesheet">
 		<link href="{{ asset('sximo/js/plugins/select2/select2.css')}}" rel="stylesheet">
-		<link href="{{ asset('sximo/js/plugins/iCheck/skins/square/green.css')}}" rel="stylesheet">
+		<link href="{{ asset('sximo/js/plugins/iCheck/skins/square/blue.css')}}" rel="stylesheet">
 		<link href="{{ asset('sximo/js/plugins/fancybox/jquery.fancybox.css') }}" rel="stylesheet">
         <link href="{{ asset('sximo/css/multi-select.css') }}" rel="stylesheet">
 		<link href="{{ asset('sximo/css/animate.css')}}" rel="stylesheet">
@@ -74,13 +74,14 @@
 	<script src="https://cdn.jsdelivr.net/momentjs/2.10.6/moment.min.js"></script>
     <!-- Search and storage  -->
     <link href="{{ asset('sximo/css/search.css')}}" rel="stylesheet">
+    <link href="{{ asset('sximo/css/feg_new_styles.css') }}" rel="stylesheet">
     <script type="text/javascript" src="{{ asset('sximo/js/app.js') }}"></script>    
     <script type="text/javascript" src="{{ asset('sximo/js/search.js') }}"></script>
     <script type="text/javascript" src="{{ asset('sximo/js/simple-search.js') }}"></script>
     <!-- End Search and storage  -->
     @yield('beforeheadend', '')	
   	</head>
-  	<body class="sxim-init" >
+  	<body class="sxim-init" style="background:url('{{asset("sximo/images/sidebar-bg.jpg") }}');background-repeat:repeat-y;background-size: 220px;background-position:left bottom ">
     @yield('afterbodystart', '')        
 	<div id="wrapper">
 		@include('layouts/sidemenu')

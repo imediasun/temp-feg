@@ -133,15 +133,15 @@
 
 									 @if($field['field'] == 'date_submitted')
 
-										 {!! date("m/d/Y", strtotime($value)) !!}
+										 {{  \DateHelpers::formatDate($value) }}
 
 									 @elseif($field['field'] == 'date_paid')
 
-										 {!! date("m/d/Y", strtotime($value)) !!}
+										 {{  \DateHelpers::formatDate($value) }}
 
 									 @elseif($field['field'] == 'date_booked')
 
-										 {!! date("m/d/Y", strtotime($value)) !!}
+										 {{   \DateHelpers::formatDate($value) }}
 
 									 @else
 										 {!! $value !!}
@@ -206,8 +206,8 @@
 $(document).ready(function() {
 	$('.tips').tooltip();
 	$('input[type="checkbox"],input[type="radio"]').iCheck({
-		checkboxClass: 'icheckbox_square-green',
-		radioClass: 'iradio_square-green'
+		checkboxClass: 'icheckbox_square-blue',
+		radioClass: 'iradio_square-blue'
 	});
 	$('#{{ $pageModule }}Table .checkall').on('ifChecked',function(){
 		$('#{{ $pageModule }}Table input[type="checkbox"]').iCheck('check');

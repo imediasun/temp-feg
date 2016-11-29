@@ -329,13 +329,13 @@ class servicerequestsController extends Controller
                 $data['Created'] = date('Y-m-d');
 
             }
-
             $id = $this->model->insertRow($data, $id);
             if($sendMail){
                 $message = $data['Description'];
                 $this->model->notifyObserver('FirstEmail',[
                     "message"       =>$message,
-                    "ticketId"      => $id
+                    "ticketId"      => $id,
+                    "location_id"   => $data['location_id']
                 ]);
 
             }
@@ -392,9 +392,10 @@ class servicerequestsController extends Controller
         if ($validator->passes()) {
             //validate post for sb_tickets module
             $ticketsData = $this->validatePost('sb_tickets');
-            if ($ticketsData['Status'] == 'close') {
-                $ticketsData['closed'] = date('Y-m-d');
+            if ($ticketsData['Status'] == 'closed') {
+                $ticketsData['closed'] = date('Y-m-d H:i:s');
             }
+            else{ $ticketsData['closed']=""; }
             $ticketsData['updated'] = date('Y-m-d');
             $commentsData['USERNAME'] = \Session::get('fid');
             $comment_model = new Ticketcomment();
@@ -419,6 +420,7 @@ class servicerequestsController extends Controller
                 "message"       =>$message,
                 "ticketId"      => $ticketId,
                 "department_id" =>"",
+                "location_id"   => $ticketsData["location_id"],
                 "assign_to"     => $ticketsData['assign_to']
                 ]);
 

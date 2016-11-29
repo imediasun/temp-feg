@@ -5,7 +5,7 @@
         <!-- Page header -->
         <div class="page-header">
             <div class="page-title">
-                <h3> Permission Editor: <small> Edit ticket permission </small></h3>
+                <h3> Permission Editor: </h3>
             </div>
             <ul class="breadcrumb">
                 <li><a href="{{ URL::to('dashboard') }}"> Dashboard </a></li>
@@ -82,20 +82,20 @@
                                 </select>
                             </td>
                         </tr>
-                        <tr>
-                            <td>5</td>
-                            <td>Able to subscribe to email alerts by ticket</td>
-                            <td>
-                                <select name='role5[]' multiple id="role5" rows='5' class='select2 '>
+                        {{--<tr>--}}
+                            {{--<td>5</td>--}}
+                            {{--<td>Able to subscribe to email alerts by ticket</td>--}}
+                            {{--<td>--}}
+                                {{--<select name='role5[]' multiple id="role5" rows='5' class='select2 '>--}}
 
-                                </select>
-                            </td>
-                            <td>
-                                <select name='individual5[]' multiple rows='5' id="individual5" class='select2 '>
+                                {{--</select>--}}
+                            {{--</td>--}}
+                            {{--<td>--}}
+                                {{--<select name='individual5[]' multiple rows='5' id="individual5" class='select2 '>--}}
 
-                                </select>g
-                            </td>
-                        </tr>
+                                {{--</select>--}}
+                            {{--</td>--}}
+                        {{--</tr>--}}
                         </tbody>
                     </table>
                     <button type="submit" class="btn btn-success"> Save Changes </button>

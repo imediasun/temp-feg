@@ -15,7 +15,10 @@
 		   {{ Session::get('message') }}
 	@endif	
 	
-	<div class="page-content-wrapper">  
+	<div class="page-content-wrapper">
+        <div class="sbox">
+            <div class="sbox-content">
+
 	<ul class="nav nav-tabs" style="margin:10px 0;">
 		<li @if($active == 'top') class="active" @endif ><a href="{{ URL::to('feg/menu?pos=top')}}"><i class="icon-paragraph-justify2"></i> {{ Lang::get('core.tab_topmenu') }} </a></li>
 		<li @if($active == 'sidebar') class="active" @endif><a href="{{ URL::to('feg/menu?pos=sidebar')}}"><i class="icon-paragraph-justify2"></i> {{ Lang::get('core.tab_sidemenu') }}</a></li>
@@ -267,7 +270,8 @@
 		
 	</div>
 
-
+    </div>
+  </div>
 	
 	
 <script>
