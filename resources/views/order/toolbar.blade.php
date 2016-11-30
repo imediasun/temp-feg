@@ -20,7 +20,7 @@
 </div>
 
 <div class="row m-b" style="margin-bottom: 1px;">
-	<div class="col-md-8" style="padding-left: 0px !important">
+	<div class="col-md-9" style="padding-left: 0px !important">
 			@if($access['is_add'] ==1)
 			{!! AjaxHelpers::buttonActionCreate($pageModule,$setting) !!}
 			<a href="javascript://ajax" class="btn btn-sm btn-white" onclick="ajaxCopy('#{{ $pageModule }}','{{ $pageUrl }}')"><i class="fa fa-file-o"></i> Copy </a>
@@ -40,10 +40,14 @@
                                                                                  @endif value={{ $configs['config_id'] }}> {{ $configs['config_name'] }}   </option>
                             @endforeach
                         </select>
+                        @if(!empty($config_id))
+                            <a href="{{ URL::to('tablecols/arrange-cols/'.$pageModule.'/edit') }}" class="btn btn-sm btn-white"
+                               onclick="SximoModal(this.href,'Column Selector'); return false;"><i class="fa fa-bars"></i> Edit Columns Arrangement</a>
+                        @endif
                     @endif
                 @endif
 	</div>
-	<div class="col-md-4 " style="padding-right:0px !important">
+	<div class="col-md-3 " style="padding-right:0px !important">
         <?php
         $isExcel = isset($access['is_excel']) && $access['is_excel'] == 1;
         $isCSV = isset($access['is_csv'])  ? ($access['is_csv'] == 1) : $isExcel;

@@ -105,9 +105,7 @@ class LocationController extends Controller
             if ($result->tech_manager_id == 0) {
                 $result->tech_manager_id="";
             }
-            if ($result->merchandise_contact_id == 0) {
-                $result->merchandise_contact_id="";
-            }
+
             if ($result->general_contact_id == 0) {
                 $result->general_contact_id="";
             }
