@@ -1,5 +1,5 @@
 <div class="row m-b">
-	<div class="col-md-8">
+	<div class="col-md-9">
 			<a href="{{ URL::to( $pageModule .'/search') }}" class="btn btn-sm btn-white" onclick="SximoModal(this.href,'Advanced Search'); return false;" ><i class="fa fa-search"></i>Advanced Search</a>
         @if(SiteHelpers::isModuleEnabled($pageModule))
         <a href="{{ URL::to('tablecols/arrange-cols/'.$pageModule) }}" class="btn btn-sm btn-white" onclick="SximoModal(this.href,'Column Selector'); return false;" ><i class="fa fa-bars"></i> Arrange Columns</a>
@@ -12,6 +12,10 @@
             @endif value={{ $configs['config_id'] }}> {{ $configs['config_name'] }}   </option>
             @endforeach
         </select>
+                @if(!empty($config_id))
+                    <a href="{{ URL::to('tablecols/arrange-cols/'.$pageModule.'/edit') }}" class="btn btn-sm btn-white"
+                       onclick="SximoModal(this.href,'Column Selector'); return false;"><i class="fa fa-bars"></i> Edit Columns Arrangement</a>
+                @endif
         @endif
         @endif
         <button class="btn btn-sm btn-white"  data-toggle="modal" data-target="#myModal"><i class="fa fa-plus"></i>Add Game</button>
@@ -79,7 +83,7 @@
         </div>
     </div>
 
-    <div class="col-md-4 ">
+    <div class="col-md-3">
         <?php
         $isExcel = isset($access['is_excel']) && $access['is_excel'] == 1;
         $isCSV = isset($access['is_csv'])  ? ($access['is_csv'] == 1) : $isExcel;

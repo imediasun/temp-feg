@@ -13,7 +13,7 @@
 	</div>
 	<div class="sbox-content" style="">
         @if($setting['usesimplesearch']!='false')
-            <?php $simpleSearchForm = SiteHelpers::configureSimpleSearchForm($tableForm); ?>
+            <?php $simpleSearchForm = SiteHelpers::configureSimpleSearchForm($tableForm);?>
             @if(!empty($simpleSearchForm))
                 <div class="simpleSearchContainer clearfix">
                     @foreach ($simpleSearchForm as $t)

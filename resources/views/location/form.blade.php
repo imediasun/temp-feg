@@ -56,7 +56,7 @@
 					 	
 					 </div>
 				  </div> 
-				  <div class="form-group  " >
+				{{--  <div class="form-group  " >
 					<label for="ID" class=" control-label col-md-4 text-left">
 					{!! SiteHelpers::activeLang('ID', (isset($fields['id']['language'])? $fields['id']['language'] : array())) !!}
 					</label>
@@ -66,7 +66,7 @@
 					 <div class="col-md-2">
 					 	
 					 </div>
-				  </div> 
+				  </div> --}}
 				  <div class="form-group  " >
 					<label for="Location Name" class=" control-label col-md-4 text-left">
 					{!! SiteHelpers::activeLang('Location Name', (isset($fields['location_name']['language'])? $fields['location_name']['language'] : array())) !!}
@@ -145,8 +145,8 @@
 					 </div>
 				  </div> 
 				  <div class="form-group  " >
-					<label for="District Manager " class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('District Manager ', (isset($fields['tech_manager_id']['language'])? $fields['tech_manager_id']['language'] : array())) !!}
+					<label for="tech_manager_id " class=" control-label col-md-4 text-left">
+					{!! SiteHelpers::activeLang('Tech Manager ', (isset($fields['tech_manager_id']['language'])? $fields['tech_manager_id']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
 					  <select name='tech_manager_id' rows='5' id='tech_manager_id' class='select2 '   ></select>
@@ -155,9 +155,7 @@
 					 	
 					 </div>
 				  </div>
-
-
-							<div class="form-group  " >
+                            <div class="form-group  " >
 								<label for="General Contact " class=" control-label col-md-4 text-left">
 									{!! SiteHelpers::activeLang('General Contact ', (isset($fields['general_contact_id']['language'])? $fields['general_contact_id']['language'] : array())) !!}
 								</label>
@@ -168,39 +166,7 @@
 
 								</div>
 							</div>
-
-
-
-							<div class="form-group  " >
-								<label for="Merchandise Contact " class=" control-label col-md-4 text-left">
-									{!! SiteHelpers::activeLang('Merchandise Contact ', (isset($fields['merchandise_contact_id']['language'])? $fields['merchandise_contact_id']['language'] : array())) !!}
-								</label>
-								<div class="col-md-6">
-									<select name='merchandise_contact_id' rows='5' id='merchandise_contact_id' class='select2 '   ></select>
-								</div>
-								<div class="col-md-2">
-
-								</div>
-							</div>
-
-
-
-
-							<div class="form-group  " >
-								<label for="Technical Contact " class=" control-label col-md-4 text-left">
-									{!! SiteHelpers::activeLang('Technical Contact ', (isset($fields['technical_contact_id']['language'])? $fields['technical_contact_id']['language'] : array())) !!}
-								</label>
-								<div class="col-md-6">
-									<select name='technical_contact_id' rows='5' id='technical_contact_id' class='select2 '   ></select>
-								</div>
-								<div class="col-md-2">
-
-								</div>
-							</div>
-
-
-
-							<div class="form-group  " >
+                            <div class="form-group  " >
 								<label for="Regional Contact " class=" control-label col-md-4 text-left">
 									{!! SiteHelpers::activeLang('Regional Contact ', (isset($fields['regional_contact_id']['language'])? $fields['regional_contact_id']['language'] : array())) !!}
 								</label>
@@ -440,13 +406,7 @@ $(document).ready(function() {
         
         $("#general_contact_id").jCombo("{{ URL::to('location/comboselect?filter=users:id:first_name|last_name') }}",
         {  selected_value : '{{ $row["general_contact_id"] }}' });
-
-	$("#merchandise_contact_id").jCombo("{{ URL::to('location/comboselect?filter=users:id:first_name|last_name') }}",
-			{  selected_value : '{{ $row["merchandise_contact_id"] }}' });
-		$("#technical_contact_id").jCombo("{{ URL::to('location/comboselect?filter=users:id:first_name|last_name') }}",
-			{  selected_value : '{{ $row["technical_contact_id"] }}' });
-
-		$("#regional_contact_id").jCombo("{{ URL::to('location/comboselect?filter=users:id:first_name|last_name') }}",
+    $("#regional_contact_id").jCombo("{{ URL::to('location/comboselect?filter=users:id:first_name|last_name') }}",
 			{  selected_value : '{{ $row["regional_contact_id"] }}' });
 
 		$("#senior_vp_id").jCombo("{{ URL::to('location/comboselect?filter=users:id:first_name|last_name') }}",
