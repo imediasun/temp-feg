@@ -10,7 +10,9 @@
 	<div class="sbox-content"> 
 @endif	
 			{!! Form::open(array('url'=>'servicerequests/save/'.$row['TicketID'], 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'sbticketFormAjax')) !!}
-			<div class="col-md-12">
+
+		<input type="hidden" name='assign_to' value="{{$row['assign_to']}}">
+		<div class="col-md-12">
 						<fieldset><legend> Service Requests</legend>
 									
 
