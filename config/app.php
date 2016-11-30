@@ -42,7 +42,7 @@ return [
     |
     */
 
-    'timezone' => 'America/Chicago',
+    'timezone' => 'America/Detroit',
 
     /*
     |--------------------------------------------------------------------------
