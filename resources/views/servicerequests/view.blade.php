@@ -90,7 +90,7 @@ $commentsCount =  $comments->count();
 								<td><?php
 
 									foreach ($row->assign_employee_names as $index => $name) :
-										echo (++$index) . '.  ' . $name[0]->first_name . ' ' . $name[0]->last_name . '</br>';
+										echo (++$index) . '.  ' . isset($name[0]->first_name) ? $name[0]->first_name : "" . ' ' . isset($name[0]->last_name)?$name[0]->last_name:"" . '</br>';
 									endforeach;
 
 
@@ -161,7 +161,10 @@ $commentsCount =  $comments->count();
 									$date=date("m/d/Y", strtotime($row->Created));
 									echo $fid.' | '.$date.' | ';
 									?>
-									<a href="<?php echo url().'/'.$file_name; ?>" target="_blank"><?php echo $file_name; ?></a></br>
+									<a href="<?php echo url().'/'.$file_name; ?>" target="_blank">
+										<?php echo strlen($file_name) > 30 ? substr($file_name,0,30)."..." : $file_name; ?>
+
+									</a></br>
 									<?php
 									endforeach;
 									}
@@ -175,7 +178,9 @@ $commentsCount =  $comments->count();
 									$date=date("m/d/Y", strtotime($comment->Posted));
 									?>
 									<?php echo $fid.' | '.$date.' | '; ?>
-									<a href="<?php echo url().'/'.$file_name; ?>" target="_blank"><?php echo $file_name; ?></a></br>
+									<a href="<?php echo url().'/'.$file_name; ?>" target="_blank">
+										<?php echo strlen($file_name) > 30 ? substr($file_name,0,30)."..." : $file_name; ?>
+									</a></br>
 									<?php
 									endforeach;
 									}
