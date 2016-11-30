@@ -162,7 +162,7 @@ $commentsCount =  $comments->count();
 									echo $fid.' | '.$date.' | ';
 									?>
 									<a href="<?php echo url().'/'.$file_name; ?>" target="_blank">
-										<?php echo strlen($file_name) > 30 ? substr($file_name,0,30)."..." : $file_name; ?>
+										<?php echo strlen($file_name) > 20 ? substr($file_name,0,20).'.'.substr(strrchr($file_name,'.'),1) : $file_name; ?>
 
 									</a></br>
 									<?php
@@ -179,7 +179,7 @@ $commentsCount =  $comments->count();
 									?>
 									<?php echo $fid.' | '.$date.' | '; ?>
 									<a href="<?php echo url().'/'.$file_name; ?>" target="_blank">
-										<?php echo strlen($file_name) > 30 ? substr($file_name,0,30)."..." : $file_name; ?>
+										<?php echo strlen($file_name) > 20 ? substr($file_name,0,20).'.'.substr(strrchr($file_name,'.'),1) : $file_name; ?>
 									</a></br>
 									<?php
 									endforeach;
