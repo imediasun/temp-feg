@@ -11,7 +11,7 @@
 @endif	
 			{!! Form::open(array('url'=>'servicerequests/save/'.$row['TicketID'], 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'sbticketFormAjax')) !!}
 
-		<input type="hidden" name='assign_to' value="{{ isset($row['assign_to']) ? $row['assign_to'] : "" }}">
+		<input type="hidden" name='assign_to' value="{{$row['assign_to']}}">
 		<div class="col-md-12">
 						<fieldset><legend> Service Requests</legend>
 									
