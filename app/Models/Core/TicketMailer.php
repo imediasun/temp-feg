@@ -51,7 +51,8 @@ class TicketMailer
             if (isset($get_user_id_from_employess[0]->email)) {
                 $to = $get_user_id_from_employess[0]->email;
                 Log::info("**Send Emmail => ",[$to, $subject, $message, $headers]);
-                 //mail($to, $subject, $message, $headers);
+                //enabled on gabe request
+                mail($to, $subject, $message, $headers);
             }
         }
     }
@@ -67,7 +68,8 @@ class TicketMailer
                 $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
                 $headers .= 'From: ' . CNF_REPLY_TO . ' <' . CNF_REPLY_TO . '>' . "\r\n";
                 Log::info("**Send Emmail => ",[$to, $subject, $message, $headers]);
-                //mail($to, $subject, $message, $headers);
+                //enabled on gabe request
+                mail($to, $subject, $message, $headers);
             }
         }
     }
