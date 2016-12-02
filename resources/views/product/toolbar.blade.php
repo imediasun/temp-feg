@@ -33,7 +33,7 @@ width: 75%">
   -->
 </div>
 
-    <div class="col-md-8">
+    <div class="col-md-6">
         {!! Form::open(array('url'=>'product/listcsv', 'class'=>'form-horizontal','files' => true ,
         'parsley-validate'=>'','novalidate'=>' ')) !!}
         <div class="col-md-2"><h3> Export </h3></div>
