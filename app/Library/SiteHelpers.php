@@ -2002,7 +2002,7 @@ class SiteHelpers
         uasort($newArray, function ($a, $b) { 
             return ($a['simplesearchorder'] >= $b['simplesearchorder'] ? 1 : -1); 
         });
-        
+
         return $newArray;
     }
 

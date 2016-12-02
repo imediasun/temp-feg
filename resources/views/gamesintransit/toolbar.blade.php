@@ -12,11 +12,10 @@
             @endif value={{ $configs['config_id'] }}> {{ $configs['config_name'] }}   </option>
             @endforeach
         </select>
-                @if(!empty($config_id))
-                    <a href="{{ URL::to('tablecols/arrange-cols/'.$pageModule.'/edit') }}" class="btn btn-sm btn-white"
-                       onclick="SximoModal(this.href,'Column Selector'); return false;"><i class="fa fa-bars"></i> Edit Columns Arrangement</a>
-                @endif
-        @endif
+                <a id="edit-cols" href="{{ URL::to('tablecols/arrange-cols/'.$pageModule.'/edit') }}" class="btn btn-sm btn-white"
+                   onclick="SximoModal(this.href,'Column Selector'); return false;"><i class="fa fa-bars"></i> Edit Columns Arrangement</a>
+
+            @endif
         @endif
         <button class="btn btn-sm btn-white"  data-toggle="modal" data-target="#myModal"><i class="fa fa-plus"></i>Add Game</button>
 
@@ -139,6 +138,16 @@
             }
 
         });
+        var config_id=$("#col-config").val();
+            if(config_id ==0 )
+            {
+                $('#edit-cols').hide();
+            }
+            else
+            {
+                $('#edit-cols').show();
+            }
+
     });
     function showRequest() {
         $('.ajaxLoading').show();

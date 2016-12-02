@@ -19,10 +19,9 @@
             @endif value={{ $configs['config_id'] }}> {{ $configs['config_name'] }}   </option>
             @endforeach
         </select>
-                        @if(!empty($config_id))
-                            <a href="{{ URL::to('tablecols/arrange-cols/'.$pageModule.'/edit') }}" class="btn btn-sm btn-white"
+                        <a id="edit-cols" href="{{ URL::to('tablecols/arrange-cols/'.$pageModule.'/edit') }}" class="btn btn-sm btn-white"
                                onclick="SximoModal(this.href,'Column Selector'); return false;"><i class="fa fa-bars"></i> Edit Columns Arrangement</a>
-                        @endif
+
         @endif
         @endif
     </div>
@@ -57,6 +56,18 @@
 	</div>
 </div>
 <script>
+    $(document).ready(function() {
+        var config_id=$("#col-config").val();
+        if(config_id ==0 )
+        {
+            $('#edit-cols').hide();
+        }
+        else
+        {
+            $('#edit-cols').show();
+        }
+    });
+
     $("#col-config").on('change',function(){
         reloadData('#{{ $pageModule }}','{{ $pageModule }}/data?config_id='+$("#col-config").val()+ getFooterFilters());
     });

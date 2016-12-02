@@ -54,6 +54,14 @@
 <div class="clearfix"></div>
 
 <script>
+    $(document).ready(function(){
+        if ($("#private").is(":checked")) {
+            $('#groups').hide();
+        }
+        else{
+            $('#groups').show();
+        }
+    });
     $('#keep-order').multiSelect({
         keepOrder: true,
         afterSelect: function(value, text){

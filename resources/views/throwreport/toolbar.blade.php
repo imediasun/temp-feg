@@ -1,5 +1,5 @@
 <div class="row m-b">
-	<div class="col-md-8">
+	<div class="col-md-9">
 			@if($access['is_add'] ==1)
 {{--			{!! AjaxHelpers::buttonActionCreate($pageModule,$setting) !!}--}}
 			{{--<a href="javascript://ajax" class="btn btn-sm btn-white" onclick="ajaxCopy('#{{ $pageModule }}','{{ $pageUrl }}')"><i class="fa fa-file-o"></i> Copy </a>--}}
@@ -11,7 +11,7 @@
 				<label>Week Date Range</label>
 				<input type="text" class="weeklyDatePicker"  name ="weeklyDatePicker"  style="padding-bottom:5px" } />
 		@if(SiteHelpers::isModuleEnabled($pageModule))
-        <a href="{{ URL::to('tablecols/arrange-cols/'.$pageModule) }}" class="btn btn-sm btn-white" onclick="SximoModal(this.href,'Column Selector'); return false;" ><i class="fa fa-bars"></i> Arrange Columns</a>
+        <a id="edit-cols" href="{{ URL::to('tablecols/arrange-cols/'.$pageModule) }}" class="btn btn-sm btn-white" onclick="SximoModal(this.href,'Column Selector'); return false;" ><i class="fa fa-bars"></i> Arrange Columns</a>
         @if(!empty($colconfigs))
         <select class="form-control" style="width:25%!important;display:inline; top: 1px !important;" name="col-config"
                 id="col-config">
@@ -21,13 +21,17 @@
             @endif value={{ $configs['config_id'] }}> {{ $configs['config_name'] }}   </option>
             @endforeach
         </select>
+
+                            <a href="{{ URL::to('tablecols/arrange-cols/'.$pageModule.'/edit') }}" class="btn btn-sm btn-white"
+                               onclick="SximoModal(this.href,'Column Selector'); return false;"><i class="fa fa-bars"></i> Edit Columns Arrangement</a>
+
         @endif
         @endif
 				<label>Week Number: {{ $setWeek }}</label>
 	</div>
 
 
-	<div class="col-md-4 ">
+	<div class="col-md-3 ">
 		<?php
 		$isExcel = isset($access['is_excel']) && $access['is_excel'] == 1;
 		$isCSV = isset($access['is_csv'])  ? ($access['is_csv'] == 1) : $isExcel;
@@ -65,3 +69,16 @@
 
 
 </style>
+<script>
+    $(document).ready(function(){
+        var config_id=$("#col-config").val();
+        if(config_id ==0 )
+        {
+            $('#edit-cols').hide();
+        }
+        else
+        {
+            $('#edit-cols').show();
+        }
+    });
+</script>

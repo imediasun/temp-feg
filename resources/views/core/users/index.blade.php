@@ -72,22 +72,7 @@
 
 
 			<a href="{{ URL::to( 'core/users/search') }}" class="btn btn-sm btn-white" onclick="SximoModal(this.href,'Advanced Search'); return false;" ><i class=" fa fa-search"></i>Advanced Search</a>
-		@if(SiteHelpers::isModuleEnabled('users'))
-			<a href="{{ URL::to('tablecols/arrange-cols/users') }}" class="btn btn-sm btn-white" onclick="SximoModal(this.href,'Column Selector'); return false;" ><i class="fa fa-bars"></i> Arrange Columns</a>
-			<?php   $colconfigs=SiteHelpers::getRequiredConfigs($module_id);  ?>
-			@if(!empty($colconfigs))
-				<select class="btn btn-sm btn-white" style="width:25%!important;display:inline;margin-bottom: 6px;" name="col-config"
-						id="col-config">
-					<option value="0">Select Configuraton</option>
-					@foreach( $colconfigs as $configs )
-						<option @if($config_id == $configs['config_id']) selected
-								@endif value={{ $configs['config_id'] }}> {{ $configs['config_name'] }}   </option>
-					@endforeach
-				</select>
-			@endif
-		@endif
-
-		</div>
+        </div>
 
 
 
@@ -249,7 +234,7 @@ $(document).ready(function(){
     
     updateNativeUIFieldsBasedOn();  
     makeSimpleSearchFieldsToInitiateSearchOnEnter();
-    
+
 });
 </script>
 <style>

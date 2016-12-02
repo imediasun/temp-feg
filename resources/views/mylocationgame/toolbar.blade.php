@@ -52,12 +52,14 @@
                 <select class="form-control" style=" width:25%!important;display:inline;" name="col-config"
                         id="col-config">
                     <option value="0">Select Configuraton</option>
-                    @foreach( $colconfigs as $configs )
+                    @foreach($colconfigs as $configs )
                         <option @if($config_id == $configs['config_id']) selected
                                                                          @endif value={{ $configs['config_id'] }}> {{ $configs['config_name'] }}   </option>
                     @endforeach
                 </select>
-            @endif
+                        <a id="edit-cols" href="{{ URL::to('tablecols/arrange-cols/'.$pageModule.'/edit') }}" class="btn btn-sm btn-white"
+                           onclick="SximoModal(this.href,'Column Selector'); return false;"><i class="fa fa-bars"></i> Edit Columns Arrangement</a>
+                @endif
         @endif
     </div>
     <div class="col-md-5">
@@ -78,6 +80,15 @@
         $("#location_id").jCombo("{{ URL::to('mylocationgame/comboselect?filter=location:id:location_name') }}",
                 {selected_value: '',initial_text:'--- Select Game Location ---'});
         $(".select3").select2({ width:"98%"});
+        var config_id=$("#col-config").val();
+        if(config_id ==0 )
+        {
+            $('#edit-cols').hide();
+        }
+        else
+        {
+            $('#edit-cols').show();
+        }
     });
         $("#col-config").on('change', function () {
             reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?config_id=' + $("#col-config").val()+ getFooterFilters());

@@ -230,7 +230,7 @@ class TablecolsController extends Controller
 
     }
 
-    public function getArrangeCols($pageModule,$mode=null)
+    public function getArrangeCols($pageModule,$mode = null)
     {
         $info = $this->model->makeInfo($pageModule);
         $module_id = \DB::table('tb_module')->where('module_name', '=', $pageModule)->pluck('module_id');
@@ -241,7 +241,8 @@ class TablecolsController extends Controller
         $config_name="";
         if($mode != null)
         {
-            $module_id = \DB::table('tb_module')->where('module_name', '=', 'location')->pluck('module_id');
+
+            $module_id = \DB::table('tb_module')->where('module_name', '=',$pageModule)->pluck('module_id');
             $config_id = \Session::get('config_id');
             $config = $this->model->getModuleConfig($module_id, $config_id);
             if (!empty($config)) {

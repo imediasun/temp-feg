@@ -33,7 +33,7 @@ width: 75%">
   -->
 </div>
 
-    <div class="col-md-6">
+    <div class="col-md-8">
         {!! Form::open(array('url'=>'product/listcsv', 'class'=>'form-horizontal','files' => true ,
         'parsley-validate'=>'','novalidate'=>' ')) !!}
         <div class="col-md-2"><h3> Export </h3></div>
@@ -48,7 +48,7 @@ width: 75%">
         {!! Form::close() !!}
     </div>
     <div class="row m-b" style=" margin-bottom: 10px !important; margin-left:0px; margin-right:0px;  margin-top: 35px !important;">
-        <div class="col-md-8">
+        <div class="col-md-9">
             @if($access['is_add'] ==1)
                 {!! AjaxHelpers::buttonActionCreate($pageModule,$setting) !!}
                 <a href="javascript://ajax" class="btn btn-sm btn-white"
@@ -74,13 +74,16 @@ width: 75%">
                                     @endif value={{ $configs['config_id'] }}> {{ $configs['config_name'] }}   </option>
                         @endforeach
                     </select>
-                @endif
+                        <a id="edit-cols" href="{{ URL::to('tablecols/arrange-cols/'.$pageModule.'/edit') }}" class="btn btn-sm btn-white"
+                           onclick="SximoModal(this.href,'Column Selector'); return false;"><i class="fa fa-bars"></i> Edit Columns Arrangement</a>
+
+                    @endif
             @endif
         </div>
 
 
 
-        <div class="col-md-4 ">
+        <div class="col-md-3 ">
             <?php
             $isExcel = isset($access['is_excel']) && $access['is_excel'] == 1;
             $isCSV = isset($access['is_csv'])  ? ($access['is_csv'] == 1) : $isExcel;
@@ -131,6 +134,15 @@ width: 75%">
             $("#vendor_id").jCombo("{{ URL::to('product/comboselect?filter=vendor:id:vendor_name') }}",
                     {selected_value: '', initial_text: '--- Select Vendor ---'});
             $(".select3").select2({width: "98%"});
+            var config_id=$("#col-config").val();
+            if(config_id ==0 )
+            {
+                $('#edit-cols').hide();
+            }
+            else
+            {
+                $('#edit-cols').show();
+            }
         });
         $("#col-config").on('change', function () {
             reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?config_id=' + $("#col-config").val()+ getFooterFilters());
