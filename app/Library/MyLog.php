@@ -42,7 +42,18 @@ class MyLog
             }
             $this->logger->addInfo($msg, $obj);
         }        
-	}        
+	}
+	public function error($msg = "", $obj = '') {
+        if (empty($obj)) {
+            $this->logger->addError($msg);
+        }
+        else {
+            if (!is_array($obj)) {
+                $obj = array($obj);
+            }
+            $this->logger->addError($msg, $obj);
+        }        
+	}      
 }
 
 
