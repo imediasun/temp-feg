@@ -44,7 +44,7 @@ class TicketMailer
         $subject = 'FEG Ticket #' . $ticketId;
         $headers = 'MIME-Version: 1.0' . "\r\n";
         $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
-        $headers .= 'From: ' . CNF_REPLY_TO . ' <' . CNF_REPLY_TO . '>' . "\r\n";
+        $headers .= 'From: ' . CNF_APPNAME . ' <' . CNF_REPLY_TO . '>' . "\r\n";
 
         foreach ($department_memebers as $i => $id) {
             $get_user_id_from_employess = \DB::select("Select users.email FROM users  WHERE users.id = " . $id . "");
@@ -66,7 +66,7 @@ class TicketMailer
                 $subject = 'FEG Ticket #' . $ticketId;
                 $headers = 'MIME-Version: 1.0' . "\r\n";
                 $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
-                $headers .= 'From: ' . CNF_REPLY_TO . ' <' . CNF_REPLY_TO . '>' . "\r\n";
+                $headers .= 'From: ' . CNF_APPNAME . ' <' . CNF_REPLY_TO . '>' . "\r\n";
                 Log::info("**Send Emmail => ",[$to, $subject, $message, $headers]);
                 //enabled on gabe request
                 mail($to, $subject, $message, $headers);
