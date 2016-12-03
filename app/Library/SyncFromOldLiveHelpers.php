@@ -153,15 +153,15 @@ class SyncFromOldLiveHelpers
         self::$L->log("End Games Title Sync");
         
         self::$L->log("Start Games Sync");
-        self::live_sync_games($params = array());
+        self::live_sync_games($params);
         self::$L->log("End Games Sync");   
 
         self::$L->log("Start Reader Exclude Sync");
-        self::live_sync_reader_exclude($params = array());
+        self::live_sync_reader_exclude($params);
         self::$L->log("End Reader Exclude Sync");        
         
         self::$L->log("Start Requests Sync");
-        self::live_sync_requests($params = array());
+        self::live_sync_requests($params);
         self::$L->log("End Requests Sync");          
     }
     
