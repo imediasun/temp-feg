@@ -116,8 +116,8 @@ class SyncFromOldLiveHelpers
         DB::connection($liveSystemDBName)->setFetchMode(PDO::FETCH_ASSOC); 
         $live_db = DB::connection($liveSystemDBName);
         $local_db = DB::connection();
-        $last_synced_id = self::get_last_id($table, $local_db);
-        $last_live_id = self::get_last_id($table, $live_db);
+        $last_synced_id = self::get_last_id($table);
+        $last_live_id = self::get_last_id($table, $liveSystemDBName);
         
         if ($last_live_id > $last_synced_id) {
             self::$L->log("Start copying requests");   
