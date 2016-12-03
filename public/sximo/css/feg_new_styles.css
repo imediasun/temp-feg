@@ -84,11 +84,11 @@
     font-size: 22px;
 }
 .btn-primary, .btn-success,.btn-info,.btn-danger {
-    background-color: #1c84c6;
+    background-color: #1c84c6!important;
     border-color: #1c84c6;
     color: #FFFFFF;
 }
-.btn-primary:hover,.btn-success:hover,.btn-info:hover,.btn-danger:hover
+.btn-primary:hover,.btn-success:hover,.btn-info:hover,.btn-danger:hover,.btn-primary:active,.btn-success:active,.btn-info:active,.btn-danger:active,.btn-primary:active,.btn-success:active,.btn-info:active,.btn-danger:active,.btn-primary:focus,.btn-success:focus,.btn-info:focus,.btn-danger:focus
 {
     background-color: #14457a!important;
     border-color:#14457a!important;

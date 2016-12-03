@@ -34,14 +34,13 @@ width: 75%">
 </div>
 
     <div class="col-md-6">
-        {!! Form::open(array('url'=>'product/listcsv', 'class'=>'form-horizontal','files' => true ,
-        'parsley-validate'=>'','novalidate'=>' ')) !!}
+        {!! Form::open(array('url'=>'product/listcsv', 'class'=>'form-horizontal','files' => true)) !!}
         <div class="col-md-2"><h3> Export </h3></div>
         <div class="col-md-6">
             <select name='vendor_id' rows='5' id='vendor_id' class='select3'></select>
         </div>
         <div class="col-md-2">
-            <button type="submit" class="btn btn-primary">Export To CSV</button>
+            <button disabled id="submit-btn" type="submit" class="btn btn-primary">Export To CSV</button>
         </div>
 
 
@@ -187,6 +186,12 @@ width: 75%">
 
             //alert(url);
             reloadData('#{{ $pageModule }}', url);
+        });
+        $('#vendor_id').change(function(){
+            if($(this).val())
+            {
+                $('#submit-btn').enable();
+            }
         });
     </script>
 </div>
