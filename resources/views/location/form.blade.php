@@ -331,7 +331,22 @@
 					 <div class="col-md-2">
 					 	
 					 </div>
-				  </div> 
+				  </div>
+                            <div class="form-group  " >
+                                <label for="reporting" class=" control-label col-md-4 text-left">
+                                    {!! SiteHelpers::activeLang('Reporting', (isset($fields['reporting']['language'])? $fields['reporting']['language'] : array())) !!}
+                                </label>
+                                <div class="col-md-6">
+                                    <input type ="text"  value="0" name="reporting" style="display:none"/>
+                                    <?php $reporting = $row['reporting']; ?>
+                                    <label class='checked checkbox-inline'>
+                                        <input type='checkbox' name='reporting' value ='1'
+                                               @if($reporting == 1)checked @endif />  </label>
+                                </div>
+                                <div class="col-md-2">
+
+                                </div>
+                            </div>
 				  <div class="form-group  " >
 					<label for="On Debit" class=" control-label col-md-4 text-left">
 					{!! SiteHelpers::activeLang('On Debit', (isset($fields['debit_type_id']['language'])? $fields['debit_type_id']['language'] : array())) !!}
