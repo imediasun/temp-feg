@@ -813,8 +813,8 @@ class SiteHelpers
                         $locations = DB::table($option['lookup_table'])->where('id',$user_id->location_id)->orderby($option['lookup_value'])->get();
                         foreach ($locations as $location) {
                             $value = "";
-                            foreach($lookupParts as $field){
-                                $value .= $location->$field." - ";
+                            foreach($lookupParts as $lookup){
+                                $value .= $location->$lookup." - ";
                             }
                             $value = trim($value,' - ');
                             $opts .= "<option $selected  value='" . $location->$option['lookup_key'] . "' $mandatory > " . $value . " </option> ";
