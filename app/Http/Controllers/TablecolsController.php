@@ -221,7 +221,7 @@ class TablecolsController extends Controller
         $id = $this->model->checkModule($data['config_name'], $data['module_id']);
         $configstr = implode(',',$data['cols']);
         $configstr = \SiteHelpers::CF_encode_json($configstr);
-        $id = $this->model->insertRow(array('user_id' => $data['user_id'], 'module_id' => $data['module_id'], 'config' => $configstr, 'config_name' => $data['config_name'], 'is_private' => $data['user_mode'], 'group_id' => $data['group_id']), $id);
+        $id = $this->model->insertRow(array('user_id' => $data['user_id'], 'module_id' => $data['module_id'], 'config' => $configstr, 'config_name' => $data['config_name'], 'is_private' => $data['user_mode'], 'group_id' => $data['group_id']), $data['config_id']);
         return response()->json(array(
             'status' => 'success',
             'message' => \Lang::get('core.note_success'),
@@ -239,11 +239,11 @@ class TablecolsController extends Controller
         $group_id="";
         $is_private="";
         $config_name="";
+        $config_id = \Session::get('config_id');
         if($mode != null)
         {
 
             $module_id = \DB::table('tb_module')->where('module_name', '=',$pageModule)->pluck('module_id');
-            $config_id = \Session::get('config_id');
             $config = $this->model->getModuleConfig($module_id, $config_id);
             if (!empty($config)) {
                $configs = \SiteHelpers::CF_decode_json($config[0]->config);
@@ -266,7 +266,7 @@ class TablecolsController extends Controller
         */
         //add code here to get all columns for a module
         $groups = \SiteHelpers::getAllGroups();
-        return view('tablecols.arrange_cols', ['allColumns' => $info['config']['grid'], 'user_id' => $user_id, 'module_id' => $module_id, 'pageModule' => $pageModule, 'groups' => $groups,'cols'=>$configs,'group_id'=>$group_id,'config_name'=>$config_name,'is_private'=>$is_private]);
+        return view('tablecols.arrange_cols', ['allColumns' => $info['config']['grid'], 'user_id' => $user_id, 'module_id' => $module_id, 'pageModule' => $pageModule, 'groups' => $groups,'cols'=>$configs,'group_id'=>$group_id,'config_name'=>$config_name,'is_private'=>$is_private,'config_id'=>$config_id]);
     }
 
 }

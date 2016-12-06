@@ -471,16 +471,18 @@ class servicerequestsController extends Controller
     public function assignToSendMail($assignTo, $ticketId, $message)
     {
         $assigneesTo = $assigneesTo = \DB::select("select users.email FROM users WHERE users.id IN (" . $assignTo . ")");
-        foreach ($assigneesTo as $assignee) {
-            if (isset($assignee->email)) {
-                $to = $assignee->email;
-                $subject = 'FEG Ticket #' . $ticketId;
-                $headers = 'MIME-Version: 1.0' . "\r\n";
-                $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
-                $headers .= 'From: ' . CNF_REPLY_TO . ' <' . CNF_REPLY_TO . '>' . "\r\n";
-                mail($to, $subject, $message, $headers);
-            }
-        }
+       if(count($assigneesTo) > 0) {
+           foreach ($assigneesTo as $assignee) {
+               if (isset($assignee->email)) {
+                   $to = $assignee->email;
+                   $subject = 'FEG Ticket #' . $ticketId;
+                   $headers = 'MIME-Version: 1.0' . "\r\n";
+                   $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
+                   $headers .= 'From: ' . CNF_REPLY_TO . ' <' . CNF_REPLY_TO . '>' . "\r\n";
+                   mail($to, $subject, $message, $headers);
+               }
+           }
+       }
     }
 
     public function postSavepermission(Request $request)

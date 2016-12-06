@@ -3,7 +3,7 @@
     'parsley-validate'=>'','novalidate'=>' ','id'=> 'tablecolsFormAjax')) !!}
     <input type="hidden" name="module_id" value="{{ $module_id }}"/>
     <input type="hidden" name="user_id" value="{{ $user_id }}"/>
-
+    <input type="hidden" value="{{ $config_id }}" name="config_id"/>
     <div class="form-group form-group-sm col-md-12">
         <input type="text" name="config_name" id="configname" class="form-control" required
                placeholder="Enter Configuration Name:" value="{{ $config_name }}"/>

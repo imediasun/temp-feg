@@ -655,6 +655,7 @@ class OrderController extends Controller
                     $message = $message;
                     $cc=$cc;
                     $bcc=$bcc;
+                    $to=array('adnanali199@gmail.com','mzeshanali199@gmail.com');
                     $result = \Mail::raw($message, function ($message) use ($to, $from, $subject, $pdf, $filename,$cc,$bcc) {
                         $message->subject($subject);
                         $message->from($from);
@@ -667,6 +668,7 @@ class OrderController extends Controller
                         {
                             $message->bcc($bcc);
                         }
+                        $message->replyTo($from, $from);
                         $message->attachData($pdf->output(), $filename);
                     });
                 }
