@@ -667,6 +667,7 @@ class OrderController extends Controller
                         {
                             $message->bcc($bcc);
                         }
+                        $message->replyTo($from, $from);
                         $message->attachData($pdf->output(), $filename);
                     });
                 }

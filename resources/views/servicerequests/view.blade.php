@@ -267,7 +267,7 @@ $commentsCount =  $comments->count();
 										{!! SiteHelpers::activeLang('Re assign to user', (isset($fields['assign_to']['language'])? $fields['assign_to']['language'] : array())) !!}
 									</label>
 									<div class="col-md-5">
-										<select name='assign_to[]' multiple rows='5' id='assign_to' class='select2 ' required  ></select>
+										<select name='assign_to[]' multiple rows='5' id='assign_to' class='select2 ' ></select>
 									</div>
 								</div>
 								{{--<div class="form-group  " >--}}
