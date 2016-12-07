@@ -99,8 +99,18 @@
 					 <div class="col-md-2">
 					 	
 					 </div>
-				  </div> 
+				  </div>
 				  <div class="form-group  " >
+					    <label for="Region " class=" control-label col-md-4 text-left">
+						     {!! SiteHelpers::activeLang('District Manager', (isset($fields['district_manager_id']['language'])? $fields['district_manager_id']['language'] : array())) !!}
+						</label>
+						<div class="col-md-6">
+						    <select name='district_manager_id' rows='5' id='district_manager_id' class='select2 '   ></select>
+						</div>
+						<div class="col-md-2">
+						</div>
+				  </div>
+					<div class="form-group  " >
 					<label for="Company " class=" control-label col-md-4 text-left">
 					{!! SiteHelpers::activeLang('Company ', (isset($fields['company_id']['language'])? $fields['company_id']['language'] : array())) !!}
 					</label>
@@ -403,7 +413,8 @@ $(document).ready(function() {
 	
         $("#region_id").jCombo("{{ URL::to('location/comboselect?filter=region:id:region') }}",
         {  selected_value : '{{ $row["region_id"] }}' });
-        
+		$("#district_manager_id").jCombo("{{ URL::to('location/comboselect?filter=users:id:first_name|last_name') }}",
+			{  selected_value : '{{ $row["district_manager_id"] }}' });
         $("#company_id").jCombo("{{ URL::to('location/comboselect?filter=company:id:company_name_long') }}",
         {  selected_value : '{{ $row["company_id"] }}' });
         
