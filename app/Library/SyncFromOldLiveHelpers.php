@@ -155,6 +155,12 @@ class SyncFromOldLiveHelpers
         self::$L->log("Start Games Sync");
         self::live_sync_games($params);
         self::$L->log("End Games Sync");   
+        
+    }
+    public static function commonSyncEnd($params = array()) {
+        
+        extract($params);
+        self::$L = $_logger;
 
         self::$L->log("Start Reader Exclude Sync");
         self::live_sync_reader_exclude($params);
@@ -162,7 +168,8 @@ class SyncFromOldLiveHelpers
         
         self::$L->log("Start Requests Sync");
         self::live_sync_requests($params);
-        self::$L->log("End Requests Sync");          
+        self::$L->log("End Requests Sync");  
+        
     }
     
     public static function get_last_id($table, $dbname = null) {                
@@ -211,7 +218,8 @@ class SyncFromOldLiveHelpers
         self::$L->log("End Embed Sync");        
         self::$L->log("Adjustments start");        
         self::live_sync_temp_earnings_adj('livemysql_embed', 'livemysql_sacoa');
-        self::$L->log("Adjustments End");        
+        self::$L->log("Adjustments End"); 
+        self::commonSyncEnd($params);
     }
 
     public static function live_sync_temp_earnings_adj($embedDBName, $sacoatDBName) {
@@ -381,6 +389,8 @@ class SyncFromOldLiveHelpers
         self::$L->log("Start Games Summary Sync");
         self::live_sync_game_summary_reports();
         self::$L->log("End Games Summary Sync");
+        
+        self::commonSyncEnd($params);        
         
     }
     public static function livesync($params = array()) {        
