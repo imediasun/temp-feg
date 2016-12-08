@@ -29,7 +29,7 @@
 					 	
 					 </div>
 				  </div> 
-				  <div class="form-group  " >
+				{{--  <div class="form-group  " >
 					<label for="Location Detail" class=" control-label col-md-4 text-left">
 					{!! SiteHelpers::activeLang('Location Detail', (isset($fields['ipaddress']['language'])? $fields['ipaddress']['language'] : array())) !!}
 					</label>
@@ -39,7 +39,7 @@
 					 <div class="col-md-2">
 					 	
 					 </div>
-				  </div> 
+				  </div> --}}
 				  <div class="form-group  " >
 					<label for="FEG Owned" class=" control-label col-md-4 text-left">
 					{!! SiteHelpers::activeLang('FEG Owned', (isset($fields['self_owned']['language'])? $fields['self_owned']['language'] : array())) !!}

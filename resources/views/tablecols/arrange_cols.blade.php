@@ -26,9 +26,9 @@
     <div id="groups" class="form-group form-group-sm  col-md-12" >
     <label for="pre-selected-options1" class="label-control">Groups</label><br/>
     <select name="group_id" class="form-control">
-        <option value="0">Select Group</option>
+        <option disabled>Select Group</option>
         @foreach($groups as $group)
-            <option @if($group->group_id == $group_id) selected @endif value="{{ $group->group_id }}"> {{ $group->name }} </option>
+            <option @if($group->group_id == $group_id || $group->group_id == \Session::get('gid')) selected @endif value="{{ $group->group_id }}"> {{ $group->name }} </option>
         @endforeach
     </select>
     </div><div class="clearfix"></div>

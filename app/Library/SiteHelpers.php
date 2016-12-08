@@ -2011,4 +2011,9 @@ class SiteHelpers
     {
         return \DB::table('products')->where('id', $id)->pluck('vendor_description');
     }
+    static function getConfigOwner($config_id)
+    {
+        $user_id=\DB::table('user_module_config')->where('id','=',$config_id)->pluck('user_id');
+        return $user_id;
+    }
 }

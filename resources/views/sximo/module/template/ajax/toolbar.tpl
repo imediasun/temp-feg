@@ -59,11 +59,11 @@
         var config_id=$("#col-config").val();
         if(config_id ==0 )
         {
-            $('#edit-cols').hide();
+            $('#edit-cols,#delete-cols').hide();
         }
         else
         {
-            $('#edit-cols').show();
+            $('#edit-cols,#delete-cols').show();
         }
     });
     $("#col-config").on('change',function(){
