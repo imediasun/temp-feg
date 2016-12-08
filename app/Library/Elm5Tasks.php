@@ -842,7 +842,7 @@ class Elm5Tasks
         $eL = new MyLog("task-error-FATAL.log", "FEGCronTasks", "FEG Cron Tasks");
         $eL->error($generalErrorMessage);
         $eL->error('Message: '. $errorMessage);
-        self::emailScheduleError($item, $e);
+//        self::emailScheduleError($item, $e);
         self::emailScheduleFatalError($errorMessage, $scheduleId);
         
     }
@@ -866,6 +866,7 @@ class Elm5Tasks
     }    
     private static function emailScheduleFatalError($errorMessage, $scheduleId) {
         
-        $generalErrorMessage = "FATAL ERROR while running task with schedule ID $scheduleId";                
+        $generalErrorMessage = "FATAL ERROR while running task with schedule ID $scheduleId 
+                 - $errorMessage";                
     }    
 }
