@@ -261,5 +261,26 @@ class TablecolsController extends Controller
        // $groups = \DB::table('tb_groups')->where('level', '>=', \Session::get('level'))->get();
         return view('tablecols.arrange_cols', ['allColumns' => $info['config']['grid'], 'user_id' => $user_id, 'module_id' => $module_id, 'pageModule' => $pageModule, 'groups' => $groups,'cols'=>$configs,'group_id'=>$group_id,'config_name'=>$config_name,'is_private'=>$is_private,'config_id'=>$config_id ]);
     }
+    function getDeleteConfig(Request $request)
+    {
+        $module=$request->get('module');
+        $config_id=$request->get('config_id');
+        $user_id=\Session::get('uid');
+        $is_deleted=\DB::table('user_module_config')->where('id','=',$config_id)->delete();
+        if($is_deleted)
+        {
+            return response()->json(array(
+                'status' => 'success',
+                'message' => \Lang::get('core.delete_success')
+            ));
+        }
+        else
+        {
+            return response()->json(array(
+                'status' => 'error',
+                'message' => \Lang::get('core.delete_error')
+            ));
+        }
+    }
 
 }

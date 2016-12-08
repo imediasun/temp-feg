@@ -192,7 +192,9 @@ return array(
     "request_sent_success"      => "Request Sent Successfully",
     "request_send_fial"         => "Error in Sending Request",
     "note_freight_paid"         => "Status Changed,Paid Successfully",
-     "mail_sent_success"        => "Email Sent Successfully"
+     "mail_sent_success"        => "Email Sent Successfully",
+    "delete_success"            => "Deleted Successfully",
+    "delete_error"              => "Some Error Occurred while Deleting"
 
 
 );

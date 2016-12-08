@@ -100,7 +100,23 @@
             );
         }
     });
+    function showRequest() {
+        $('.ajaxLoading').show();
+    }
+    function showResponse(data) {
+
+        if (data.status == 'success') {
+            ajaxViewClose('#{{ $pageModule }}');
+            ajaxFilter('#{{ $pageModule }}', '{{ $pageUrl }}/data');
+            notyMessage(data.message);
+            $('#sximo-modal').modal('hide');
+        } else {
+            notyMessageError(data.message);
+            $('.ajaxLoading').hide();
+            return false;
+        }
+    }
     $("#col-config").on('change',function(){
-        reloadData('#{{ $pageModule }}','{{ $pageModule }}/data?config_id='+$("#col-config").val());
+        reloadData('#{{ $pageModule }}','{{ $pageModule }}/data?config_id='+$("#col-config").val()+getFooterFilters());
     });
 </script>
