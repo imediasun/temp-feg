@@ -567,7 +567,6 @@ abstract class Controller extends BaseController
         $param = '';
         $allowsearch = $this->info['config']['forms'];
 
-
         foreach ($allowsearch as $as)
             $arr[$as['field']] = $as;
         if ($_GET['search'] != '') {
@@ -593,7 +592,6 @@ abstract class Controller extends BaseController
                                     }
 
                                     $vals = explode(',', $keys[2]);
-
                                     $multi_in = array();
                                     foreach ($vals as $v) {
                                         $multi_in[] .= '"' . $v . '"';

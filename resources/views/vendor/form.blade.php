@@ -189,7 +189,7 @@
 					 <label class='checked checkbox-inline'>   
 					<input type='checkbox' name='partner_hide' value ='1'   class=''
 					@if(in_array('1',$partner_hide))checked @endif 
-					 /> Yes </label>  
+					 />  </label>
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -198,19 +198,20 @@
 				  <div class="form-group  " >
                       <input type='hidden' value='0' name='isgame'>
 					<label for="Parts Vendor" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Parts Vendor', (isset($fields['isgame']['language'])? $fields['isgame']['language'] : array())) !!}
+					{!! SiteHelpers::activeLang('Game Vendor', (isset($fields['isgame']['language'])? $fields['isgame']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
 					  <?php $isgame = explode(",",$row['isgame']); ?>
 					 <label class='checked checkbox-inline'>   
 					<input type='checkbox' name='isgame' value ='1'   class=''
 					@if(in_array('1',$isgame))checked @endif 
-					 /> Yes </label>  
+					 />  </label>
 					 </div> 
 					 <div class="col-md-2">
 					 	
 					 </div>
-				  </div> 					
+				  </div>
+
 				  <div class="form-group  " >
                       <input type='hidden' value='0' name='ismerch'>
 					<label for="Merchandise Vendor" class=" control-label col-md-4 text-left">
@@ -221,7 +222,7 @@
 					 <label class='checked checkbox-inline'>   
 					<input type='checkbox' name='ismerch' value ='1'   class=''
 					@if(in_array('1',$ismerch))checked @endif 
-					 /> Yes </label>  
+					 />  </label>
 					 </div> 
 					 <div class="col-md-2">
 					 	
