@@ -149,19 +149,19 @@ jQuery(document).ready(function ($) {
         $(".theme-config-box").toggleClass("show");
     });
 
-	setInterval(function(){
-		var noteurl = $('.notif-value').attr('code');
-		$.get( noteurl +'/notification/load',function(data){
-			$('.notif-alert').html(data.total);
-			var html = '';
-			$.each( data.note, function( key, val ) {
-				html += '<li><a href="'+val.url+'"> <div> <i class="'+val.icon+' fa-fw"></i> '+ val.title+'  <span class="pull-right text-muted small">'+val.date+'</span></div></li>';
-				html += '<li class="divider"></li>';
-			});
-			html += '<li><div class="text-center link-block"><a href="'+noteurl+'/notification"><strong>View All Notification</strong> <i class="fa fa-angle-right"></i></a></div></li>';
-			$('.notif-value').html(html);
-		});
-	}, 60000);
+//	setInterval(function(){
+//		var noteurl = $('.notif-value').attr('code');
+//		$.get( noteurl +'/notification/load',function(data){
+//			$('.notif-alert').html(data.total);
+//			var html = '';
+//			$.each( data.note, function( key, val ) {
+//				html += '<li><a href="'+val.url+'"> <div> <i class="'+val.icon+' fa-fw"></i> '+ val.title+'  <span class="pull-right text-muted small">'+val.date+'</span></div></li>';
+//				html += '<li class="divider"></li>';
+//			});
+//			html += '<li><div class="text-center link-block"><a href="'+noteurl+'/notification"><strong>View All Notification</strong> <i class="fa fa-angle-right"></i></a></div></li>';
+//			$('.notif-value').html(html);
+//		});
+//	}, 60000);
 		
 });	
 	

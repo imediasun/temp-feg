@@ -57,7 +57,10 @@
                         <li class="divider"></li>
                         <li><a href="{{ URL::to('feg/system/tasks')}}"><i
                                         class="fa fa-tasks"></i> {{ Lang::get('core.m_taskspage')}}</a></li>
-                        <!--<li><a href="{{ URL::to('feg/system/emails')}}"><i class="fa fa-envelope-o"></i> {{ Lang::get('core.m_scheduledemails')}}</a></li>-->
+                        <li><a href="{{ URL::to('feg/system/systememailreportmanager')}}">
+                                <i class="fa fa-envelope-o"></i>
+                                {{ Lang::get('core.m_systememailreportmanager')}}
+                        </a></li>
                         <li class="divider"></li>
                         <li><a href="{{ URL::to('feg/module')}}"><i
                                         class="fa fa-cogs"></i> {{ Lang::get('core.m_codebuilder') }}</a></li>
