@@ -19,6 +19,14 @@ class ReportGenerator
             'date' => date('Y-m-d', strtotime('-1 day')),
             'today' => date('Y-m-d'),
             'location' => null,
+             
+            'noTransferStatus' => 0,
+            'noClosed' => 0,
+            'noDownGames' => 0,
+            'noMissingAssetIds' => 0,
+            'noLocationwise' => 0,
+            '' => 0,
+             
             '_task' => array(),
             '_logger' => null,
         ), $params));
@@ -38,7 +46,10 @@ class ReportGenerator
             $dailyTransferStatusReport = self::getDailyTransferStatusReport($params);
             $dailyTransferStatus = self::$reportCache['syncStatus'];
             if (!$dailyTransferStatus['1'] || !$dailyTransferStatus['2']) {
-                self::dailyTransferFailReportEmail($params);
+                if (!$noTransferStatus != 1) {
+                    self::dailyTransferFailReportEmail($params);
+                }
+                
             }            
             if (!$dailyTransferStatus['1'] && !$dailyTransferStatus['2']) {
                return "Sync Failed for both sacoa and embed";
@@ -69,14 +80,13 @@ class ReportGenerator
                 "<br><b><u>Games Not Played:</u></b><br>" .
                 $gamesNotPlayed;
        
-        self::sendEmailReport(array(
-            'to' => 'nate.smith@fegllc.com, silvia.linter@fegllc.com', 
+        $emailRecipients = self::getSystemReportEmailRecipients('Daily Game Earnings DB Transfer Report');
+        self::sendEmailReport(array_merge($emailRecipients, array(
             'subject' => "Game Earnings DB Transfer Report for $humanDate", 
             'message' => $message, 
-            'cc' => '', 
-            'bcc' => 'greg@element5digital.com, element5@fegllc.com',             
             'isTest' => $isTest,
-        ));
+        )));
+
         $__logger->log("        End Email Game Earnings DB Transfer Report for $date");
         $__logger->log("End Game Earnings DB Transfer Report for $date");
         
@@ -236,15 +246,12 @@ class ReportGenerator
         $task =$_task;
         $isTest = $task->is_test_mode;
         
-        self::sendEmailReport(array(
-            'to' => 'nate.smith@fegllc.com', 
+        $emailRecipients = self::getSystemReportEmailRecipients('Daily Transfer Bulk Fail'); 
+        self::sendEmailReport(array_merge($emailRecipients, array(
             'subject' => "Transfer Failure $humanDate", 
             'message' => $statusReport, 
-            'cc' => '', 
-            'bcc' => 'greg@element5digital.com, element5@fegllc.com',             
             'isTest' => $isTest,
-        ));
-        
+        )));       
         
     }
 
@@ -397,25 +404,20 @@ class ReportGenerator
         $isTest = $task->is_test_mode;
         
         if ($hasDailyReport) {
-            $emailRecipients = self::getLocationSystemEmailRecipients($location);
-            self::sendEmailReport(array(
-                'to' => $emailRecipients, 
+            $emailRecipients = self::getSystemReportEmailRecipients('Daily games summary for each location', $location);
+            self::sendEmailReport(array_merge($emailRecipients, array(
                 'subject' => "Games Summary for location  $location - $humanDate", 
                 'message' => $dailyReport, 
-                'cc' => '', 
-                'bcc' => 'greg@element5digital.com,element5@fegllc.com',             
                 'isTest' => $isTest,
-            ));              
+            )));              
         }
         else {
-            self::sendEmailReport(array(
-                'to' => 'greg@element5digital.com,element5@fegllc.com', 
+            $emailRecipients = self::getSystemReportEmailRecipients('Daily games summary for each location - No Issue', $location);
+            self::sendEmailReport(array_merge($emailRecipients, array(
                 'subject' => "Games Summary for location  $location - $humanDate  [NO ISSUES]", 
                 'message' => $dailyReport, 
-                'cc' => '', 
-                'bcc' => '',             
                 'isTest' => $isTest,
-            ));             
+            )));             
         }
  
     }
@@ -517,7 +519,7 @@ class ReportGenerator
             $readerIdOriginal = $row->reader_id;
             $readerId = preg_replace('/^.*\_/', "", $readerIdOriginal);
             $gameTotalOriginal = $row->game_total;
-            $gameTotal = number_format(floatval($gameTotalOriginal));
+            $gameTotal = number_format(floatval($gameTotalOriginal), 2);
             $rowNumber = $index + 1;
             
             $missingAssetId = array(
@@ -629,6 +631,7 @@ class ReportGenerator
             'endDate' => null,
             'today' => date('Y-m-d'),
             'location' => null,
+            'debit' => null,
             '_task' => array(),
             '_logger' => null,
         ), $params));
@@ -645,7 +648,7 @@ class ReportGenerator
             $endDate = $startDate;//date("Y-m-d", strtotime($startDate." +1 day"));
         }
         
-        $data = DB::select(ReportHelpers::getPotentialOverReportingErrorQuery($startDate, $endDate, $location));
+        $data = DB::select(ReportHelpers::getPotentialOverReportingErrorQuery($startDate, $endDate, $location, $debit));
         
         $report = array();
         foreach($data as $row) {
@@ -655,8 +658,8 @@ class ReportGenerator
             $gameId = $row->game_id;
             $gameOnTest = $row->game_on_test == "Yes";
             $gameTitleOriginal = $row->game_name;
-            $gameTitle = ($isOnTest ? "**TEST** " : "") . $gameTitleOriginal;                        
-            $earnings = $row->game_total;
+            $gameTitle = ($gameOnTest ? "**TEST** " : "") . $gameTitleOriginal;                        
+            $earnings =  number_format(floatval($row->game_total), 2);
             
             $report[] = ($startDate == $endDate ? "" : "[$dateStart]") .
                 "<b>$gameId | $gameTitle</b> on 
@@ -665,6 +668,9 @@ class ReportGenerator
         }
         
         $reportString = implode("", $report);
+        if (empty($reportString)) {
+            $reportString = "None";
+        }
         
         return $reportString;
          
@@ -683,16 +689,15 @@ class ReportGenerator
         $task =$_task;
         $isTest = $task->is_test_mode;        
         
-        if (!empty($overReporting)) {
+        //"Daily Potential Over-reporting Errors Report"
+        if (!empty($overReporting) && $overReporting != "None") {
             $message = "<b><u>Potential Over-reporting Errors:</u></b><br><br>$overReporting";
-            self::sendEmailReport(array(
-                'to' => 'support@fegllc.com', 
+            $emailRecipients = self::getSystemReportEmailRecipients('Daily Potential Over-reporting Errors Report'); 
+            self::sendEmailReport(array_merge($emailRecipients, array(
                 'subject' => "Potential Over-reporting Errors Check for $humanDate", 
                 'message' => $message, 
-                'cc' => '', 
-                'bcc' => 'greg@element5digital.com,element5@fegllc.com',             
                 'isTest' => $isTest,
-            ));             
+            )));          
         }
     }
     
@@ -798,14 +803,13 @@ class ReportGenerator
 					    <br><br>
 					    Thanks,<br>
 					    Nate";
-            self::sendEmailReport(array(
-                'to' => 'support@fegllc.com', 
+            
+            $emailRecipients = self::getSystemReportEmailRecipients('Daily Sacoa Data Transfer Failure and Status'); 
+            self::sendEmailReport(array_merge($emailRecipients, array(
                 'subject' => "Sacoa->FEG: Data Transfer Failure status as of $humanDateToday", 
                 'message' => $sacoaReport, 
-                'cc' => '', 
-                'bcc' => 'greg@element5digital.com,element5@fegllc.com',             
                 'isTest' => $isTest,
-            ));              
+            )));            
         }
         if (!empty($retryReportEmbed)) {
             $embedReport = "<b><u>Missing Data for the Following Locations:</u></b><br>
@@ -813,24 +817,22 @@ class ReportGenerator
                     <br><br>
                     Thanks,<br>
                     Nate";
-            self::sendEmailReport(array(
-                'to' => 'support@fegllc.com', 
+
+            $emailRecipients = self::getSystemReportEmailRecipients('Daily Embed Data Transfer Failure and Status'); 
+            self::sendEmailReport(array_merge($emailRecipients, array(
                 'subject' => "Embed->FEG: Data Transfer Failure status as of $humanDateToday", 
                 'message' => $embedReport, 
-                'cc' => '', 
-                'bcc' => 'greg@element5digital.com,element5@fegllc.com',             
                 'isTest' => $isTest,
-            ));              
+            )));              
+             
         }
         
-        self::sendEmailReport(array(
-            'to' => 'support@fegllc.com', 
-            'subject' => "DB Transfer Failure and Adjustment Summary as of $humanDateToday", 
+        $emailRecipients = self::getSystemReportEmailRecipients('Daily Data Transfer Failure Summary'); 
+        self::sendEmailReport(array_merge($emailRecipients, array(
+            'subject' => "Data Transfer Failure Summary as of $humanDateToday", 
             'message' => $retryReportAll, 
-            'cc' => '', 
-            'bcc' => 'greg@element5digital.com,element5@fegllc.com',             
             'isTest' => $isTest,
-        ));              
+        )));             
  
     }        
     
@@ -917,7 +919,7 @@ class ReportGenerator
         $topGamesTable = array(); 
         $blackBrdStyle = "style='border:1px solid black;'";
         $greyBrdStyle = "style='border:1px solid grey;'";        
-        if (!empty($top25GamesThisWeekData) && count($top25GamesThisWeekData) > 0) {
+        if (!empty($top25GamesThisWeekData)) {
             $topGamesTable[] = "<table style='margin:0px auto; 
                 width:100%; border:1px solid black; color:black;'>";
             $topGamesTable[] = "<tr $blackBrdStyle>
@@ -934,8 +936,8 @@ class ReportGenerator
                 $rowIndex = $index+1;
                 $gameTitle = $row->game_name;
                 $gameCount = $row->game_count;
-                $gameAverageRevenue = $row->game_average;
-                $gameTotalRevenue = $row->game_total;
+                $gameAverageRevenue =  number_format(floatval($row->game_average),2);
+                $gameTotalRevenue = number_format(floatval($row->game_total),2);
                 $locationIds = $row->location_id;
                 $locationNames = $row->location_name;
                 $gameIds = $row->game_ids;
@@ -975,19 +977,13 @@ class ReportGenerator
         $isTest = $task->is_test_mode;        
         
         if (!empty($finalGameSummaryReport)) {
-            self::sendEmailReport(array(
-                'to' => 'nate.smith@fegllc.com,
-                        rich.pankey@fegllc.com,
-                        john.vaughn@fegllc.com, 
-                        mark.nesfeder@fegllc.com,
-                        tom.revolinsky@fegllc.com,
-                        steve.paris@fegllc.com', 
+            
+            $emailRecipients = self::getSystemReportEmailRecipients('Daily Games Summary'); 
+            self::sendEmailReport(array_merge($emailRecipients, array(
                 'subject' => "Games Summary - $humanDate", 
                 'message' => $finalGameSummaryReport, 
-                'cc' => '', 
-                'bcc' => 'greg@element5digital.com,element5@fegllc.com',             
                 'isTest' => $isTest,
-            ));             
+            )));        
         }
     }
         
@@ -1000,40 +996,348 @@ class ReportGenerator
             'date_end' => date('Y-m-d', strtotime('-1 day')),
             'date_start' => date('Y-m-d', strtotime('-7 day')),
             'location' => null,
+            'debit' => null,
+             
+            'noAttraction' => 1,
+            'noTop' => 0,
+            'noBottom' => 0,
+            'noTest' => 0,
+            'noOverreporting' => 0,
+            'noRanking' => 0,
+            'noClosed' => 0,
+             
+            'topGames' => 40,
+            'topAttractions' => 20,
+            'topTest' => 30,
+            'bottomGames' => 25,
+             
             '_task' => array(),
             '_logger' => null,
         ), $params));
+         
+        $report = array();
+        $report[] = '<b style="color:red;">**Temporarily removed Attractions part while feed totals are being addressed**</b><br>';
         
-        $task =$_task;
+        $dStart = new \DateTime($date_start);
+        $dEnd  = new \DateTime($date_end);
+        $dDiff = $dStart->diff($dEnd);   
+        $days = $dDiff->days + 1;
+   
+        $task = $_task;
+        $logInfo = " $date_start - $date_end ($days days)";
         $isTest = $task->is_test_mode;
         $params['isTestMode'] = $isTest;
         $params['humanDate'] = $humanDate = self::getHumanDate($date);
         $params['humanDateToday'] = $humanDateToday = self::getHumanDate($today);
-        $params['humanDateStart'] = $humanDate = self::getHumanDate($date_start);
-        $params['humanDateEnd'] = $humanDateToday = self::getHumanDate($date_end);
+        $params['humanDateStart'] = $humanDateStart = self::getHumanDate($date_start);
+        $params['humanDateEnd'] = $humanDateEnd = self::getHumanDate($date_end);
+        $humanDateRange = "$humanDateStart - $humanDateEnd ($days days)";
         
         $__logger = $_logger;        
-        $__logger->log("Start Weekly Email Report $date_start - $date_end");
-        //Potential Over-reporting Errors
-        //Top 40 Games - 7 Day Period
-        // Top 20 attractions - 7 day period (disabled)
-        //Top Games on Test - 7 Day Period
-        //Bottom 25 Games - 7 Day Period
-        //Game Play Ranking by Location
-        // Locations Not Reporting: Either Closed or Error in Data Transfer
-        $__logger->log("End Weekly Email Report $date_start - $date_end");
+        $__logger->log("Start Weekly Email Report $logInfo");
+        
+        //1. Potential Over-reporting Errors
+        if ($noOverreporting != 1) {
+        $report[] = '<br><b style="text-decoration:underline">Potential Over-reporting Errors ('. 
+                $humanDateRange . ')</b><br>';
+        $__logger->log("Start over reporting error Report $logInfo");
+        $report[] = self::getOverreportingReport($params);         
+        $__logger->log("  End processing of over reporting error Report $logInfo");
+        }
+        
+        if ($noAttraction != 1) {
+        //2. Top attractions - (disabled)
+        $__logger->log("Start Top Attractions Report $logInfo");
+        $report[] = '<br><br><b style="text-decoration:underline">Top '.$topAttractions.
+                ' Attractions - '. $humanDateRange . '</b><br>';
+        $q = ReportHelpers::getGameRankQuery($date_start, $date_end, $location,
+                        $debit, "", "attractions", "notest", "game_average", "desc");
+        $q .= " LIMIT $topAttractions";
+        $gamesData = DB::select($q);
+        $gamesTable = array("None"); 
+        if (!empty($gamesData)) {
+            $gamesTable = array();
+            foreach($gamesData as $index => $row) {
+                $rowIndex = $index+1;
+                $gameTitle = $row->game_name;
+                $gameCount = $row->game_count;
+                $gameAverageRevenue = number_format(floatval($row->game_average), 2);
+                $gameTotalRevenue = number_format(floatval($row->game_total), 2);
+                $locationIds = $row->location_id;
+                $locationNames = $row->location_name;
+                
+                $gamesTable[] = "$rowIndex.) $gameTitle [
+                    <b style='color:blue'>$gameCount</b> <em>games averaged</em> 
+                    <b style='color:green'>\${$gameAverageRevenue}</b> 
+                    and totaled 
+                    <b style='color:green'>\${$gameTotalRevenue}</b> ]
+                    <span style='font-size:.9em; color:gray;'>
+                    ($locationIds) ($locationNames)</span>";
+            }
+        }
+        $report[] = implode("<br/>", $gamesTable);        
+        $__logger->log("End processing Top Attractions Report $logInfo");
+        }
+        
+        //3. Top Games 
+        if ($noTop != 1) {
+        $__logger->log("Start Top Games Report $logInfo");
+        $report[] = '<br><br><b style="text-decoration:underline">Top '.$topGames.
+                ' Non Attraction Games - '. $humanDateRange . '</b><br>';
+
+        $q = ReportHelpers::getGameRankQuery($date_start, $date_end, $location,
+                        $debit, "", "not_attractions", "notest", "game_average", "desc");
+        $q .= " LIMIT $topGames";
+        $gamesData = DB::select($q);
+        $gamesTable = array("None"); 
+        if (!empty($gamesData)) {
+            $gamesTable = array();
+            foreach($gamesData as $index => $row) {
+                $rowIndex = $index+1;
+                $gameTitle = $row->game_name;
+                $gameCount = $row->game_count;
+                $gameAverageRevenue = number_format(floatval($row->game_average), 2);
+                $gameTotalRevenue = number_format(floatval($row->game_total), 2);
+                $locationIds = $row->location_id;
+                $locationNames = $row->location_name;
+                
+                $gamesTable[] = "$rowIndex.) $gameTitle [
+                    <b style='color:blue'>$gameCount</b> <em>games averaged</em> 
+                    <b style='color:green'>\${$gameAverageRevenue}</b> 
+                    and totaled 
+                    <b style='color:green'>\${$gameTotalRevenue}</b> ]
+                    <span style='font-size:.9em; color:gray;'>
+                    ($locationIds) ($locationNames)</span>";
+            }
+        }
+        $report[] = implode("<br/>", $gamesTable);
+        $__logger->log("End processing Top Games Report $logInfo");
+        }
+        
+        //4. Top Games on Test 
+        if ($noTest != 1) {
+        $__logger->log("Start Test Games Report $logInfo");
+        $report[] = '<br><br><b style="text-decoration:underline">Top '.$topTest.
+                ' Games on Test - '. $humanDateRange . '</b><br>';
+        $q = ReportHelpers::getGamesOnTestRankQuery($date_start, $date_end, $location, $debit);
+        $q .= " LIMIT $topTest";
+        $testGamesData = DB::select($q);
+        $gamesTable = array("None"); 
+        if (!empty($testGamesData)) {
+            $gamesTable = array();
+            foreach($testGamesData as $index => $row) {
+                $rowIndex = $index+1;
+                $gameId = $row->game_id;
+                $gameTitle = $row->game_name;
+                $locationId = $row->location_id;
+                $locationName = $row->location_name;
+                $gameTotalRevenue = number_format(floatval($row->game_total), 2);
+                
+                $gamesTable[] = "$rowIndex.) $gameId - $gameTitle - totaled 
+                    <b style='color:green'>\${$gameTotalRevenue}</b> 
+                    <span style='font-size:.9em; color:gray;'>
+                    [$locationId - $locationName]</span>";
+            }
+        }
+        $report[] = implode("<br/>", $gamesTable);
+        $__logger->log("End processing Test Games Report $logInfo");          
+        }
+        
+        //5. Bottom Games 
+        if ($noBottom != 1) {
+        $__logger->log("Start Bottom Games Report $logInfo");
+        $report[] = '<br><br><b style="text-decoration:underline">Bottom '.$bottomGames.
+                ' Games - '. $humanDateRange . '</b><br>';
+        $q = ReportHelpers::getGameRankQuery($date_start, $date_end, $location,
+                        $debit, "", "all", "notest", "game_average", "asc");
+        $q .= " LIMIT $bottomGames";
+        $gamesData = DB::select($q);
+        $gamesTable = array("None"); 
+        if (!empty($gamesData)) {
+            $gamesTable = array();
+            foreach($gamesData as $index => $row) {
+                $rowIndex = $index+1;
+                $gameTitle = $row->game_name;
+                $gameCount = $row->game_count;
+                $gameAverageRevenue = number_format(floatval($row->game_average), 2);
+                $gameTotalRevenue = number_format(floatval($row->game_total), 2);
+                $locationIds = $row->location_id;
+                $locationNames = $row->location_name;
+                
+                $gamesTable[] = "$rowIndex.) $gameTitle [
+                    <b style='color:blue'>$gameCount</b> <em>games averaged</em> 
+                    <b style='color:red'>\${$gameAverageRevenue}</b> 
+                    and totaled 
+                    <b style='color:red'>\${$gameTotalRevenue}</b> ]
+                    <span style='font-size:.9em; color:gray;'>
+                    ($locationIds) ($locationNames)</span>";
+            }
+        }
+        $report[] = implode("<br/>", $gamesTable);
+        $__logger->log("End processing Bottom Games Report $logInfo");        
+        }
+        
+        //6. Game Play Ranking by Location
+        if ($noRanking != 1) {
+            $__logger->log("Start Location Ranking Report $logInfo");
+            $report[] = "<br><br><b style='text-decoration:underline'>
+                Game Play Ranking by Location - Per Game Per Day (PGPD) Average 
+                - $humanDateRange</b><br>";
+            $q = ReportHelpers::getLocationRanksQuery($date_start, $date_end, 
+                    $location, $debit, "pgpd_avg", "desc");
+            $locationRanksData = DB::select($q);
+            $rankTable = array("None"); 
+            
+            $trHeadStyle = "color:black; border:thin black solid";        
+            $thStyle = "padding-left:3px; border:thin black solid;";        
+            $bodyTrStyle = "color:black; vertical-align:top";        
+            $tdStyle = "border: thin silver solid; ";        
+            if (!empty($locationRanksData)) {
+                $rankTable = array();
+                $rankTable[] = "<table style='margin:0px auto; 
+                    width:100%; border:1px solid black; color:black;'>";
+                $rankTable[] = "<tr style='$trHeadStyle'>
+                        <th style='$thStyle'>#</th>
+                        <th style='$thStyle'>Locations</th>
+                        <th style='$thStyle'>Debit System</th>
+                        <th style='$thStyle'>PGPD AVG</th>                        
+                        <th style='$thStyle'>Location Total</th>
+                        <th style='$thStyle'>Game Count</th>
+                        <th style='$thStyle'>Days Reported</th>
+                    </tr>";    
+                foreach($locationRanksData as $index => $row) {
+                    $rowIndex = $index+1;
+                    
+                    $locationId = $row->id;
+                    $locationName = $row->location_name;
+                    $debitSystem = $row->debit_system;
+                    
+                    $total = number_format(floatval($row->location_total), 2);
+                    $daysPlayed = $row->days_reported_count;
+                    $totalDays = $days;//$row->days_count;
+                    $games = $row->game_count;
+                    $avg = number_format(floatval($row->pgpd_avg), 2);
+
+                    $dateCountText = "<b style='color:green;'>FULL ($daysPlayed)</b>";
+                    if($daysPlayed < $totalDays) {
+                        $dateCountText = "<b style='color:red;'>PART ($daysPlayed)</b>";
+                    }
+
+
+                $rankTable[] = "<tr style='color:black; border:thin black solid;'>
+                        <td style='$thStyle;padding-left:3px; padding-right:2px;'>
+                        $rowIndex</td>
+                        <td style='$thStyle;padding-left:3px;'>$locationId | 
+                        $locationName</td>
+                        <td style='$thStyle;text-align:center;'>$debitSystem</td>
+                        <td style='$thStyle;padding-right:3px; text-align:right;'>\${$avg}</td>
+                        <td style='$thStyle;padding-right:3px; text-align:right;'>\${$total}</td>
+                        <td style='$thStyle;text-align:center;'>$games</td>
+                        <td style='$thStyle;text-align:center;'>$dateCountText</td>
+                    </tr>";                
+
+                }
+                $rankTable[] = "</table>";                
+            }            
+            $report[] = implode("\r\n", $rankTable);
+            
+            $__logger->log("End processing Location Ranking Report $logInfo");
+        }
+        //7. Locations Not Reporting: Either Closed or Error in Data Transfer
+        if ($noClosed != 1) {
+            $__logger->log("Start Locations Not Reporting Report $logInfo");
+            $report[] = "<br><br><b style='text-decoration:underline'>
+                Locations Not Reporting - $humanDateRange</b>: 
+                    <em>Either Closed or Error in Data Transfer</em><br>";
+            $q = ReportHelpers::getLocationNotReportingQuery($date_start, $date_end, 
+                    $location, $debit);
+            $closedData = DB::select($q);             
+            $closedTable = self::getClosedLocationWeeklyReport($closedData, $date_start, $date_end);  
+            $report[] = $closedTable;
+            $__logger->log("End processing Locations Not Reporting Report $logInfo");
+        }
+        
+        $__logger->log("End Processing weekly Email Report $logInfo");
+        $__logger->log("sending weekly email report $logInfo");
+        
+        $message = implode("", $report);
+        $emailRecipients = self::getSystemReportEmailRecipients('Weekly games summary');
+            self::sendEmailReport(array_merge($emailRecipients, array(
+                'subject' => "FEG Weekly Games Summary | $humanDateRange", 
+                'message' => $message, 
+                'isTest' => $isTest,
+            )));
+        
+        $__logger->log("End sending weekly email report $logInfo");
+        $__logger->log("End Weekly Email Report $logInfo");
 
     }
     
-    
-    
-    
-    
-    
-    public static function phpMail($to, $subject, $message, $from = "support@fegllc.com", $options = array()) {
-        if (empty($from)) {
-            $from = "support@fegllc.com";
+    public static function getClosedLocationWeeklyReport($data, $date_start, $date_end) {       
+        $trHeadStyle = "color:black; border:thin black solid; vertical-align:top";        
+        $thStyle = "padding-left:5px; border:thin black solid; text-align:center;";        
+        $bodyTrStyle = "color:black; border:thin black solid; vertical-align:top";        
+        $tdStyle = "padding-left:5px; border:thin black solid; text-align:center;"; 
+
+        $table = array("None");
+        $header = array();
+        $body = array();
+        
+        if (!empty($data)) {
+            $table = array();
+            foreach($data as $row) {
+                $playDate = $row->not_reporting_date;
+                $playDateHuman = self::getHumanDate($playDate);
+                $debitType = $row->debit_system;
+                $locId = $row->id;
+                $locName = $row->location_name;
+                
+                if (empty($body[$playDate])) {
+                    $body[$playDate] = "";
+                }
+                $body[$playDate] .= "$locId $locName <span style='color:red;'>
+                    ($debitType)</span><br/>";
+            }
+        }  
+        
+        $dateStartTimestamp = strtotime($date_start);
+        $dateEndTimestamp = strtotime($date_end);
+        $currentDate = $dateStartTimestamp;
+        $date = $date_start; 
+        
+        $table[] = "<table style='margin:0px auto; width:100%;'>";
+        $table[] = "<tr style='$trHeadStyle'>";                
+        while($currentDate <= $dateEndTimestamp) {
+            $th = self::getHumanDate($date);
+            $header[] = $date;
+            $table[] = "<th style='$thStyle'>$th</th>";
+            $currentDate = strtotime($date . " +1 day");
+            $date = date("Y-m-d", $currentDate);
         }
+        $table[] = "</tr>";
+        
+        if (count($header) > 0) {
+            $table[] = "<tr style='$bodyTrStyle'>";
+            foreach($header as $date) {
+                $table[] = "<td style='$tdStyle'>";   
+                if (isset($body[$date])) {
+                    $td = $body[$date];
+                    $table[] = $td; 
+                }
+                $table[] = "</td>";
+            }
+            $table[] = "</tr>";                
+        }
+        
+        $table[] = "</table>";                
+       
+        $tableString = implode("\r\n", $table);
+        
+        return $tableString;
+    }
+    
+    
+    public static function phpMail($to, $subject, $message, $from = "support@element5digital.com", $options = array()) {
         $headers = 'MIME-Version: 1.0' . "\r\n";
         $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
         $headers .= 'From: ' . $from . "\r\n";        
@@ -1048,14 +1352,23 @@ class ReportGenerator
         
         mail($to, $subject, $message, $headers);
     }
+    public static function sendEmail($to, $subject, $message, $from = "support@element5digital.com", $options = array()) { 
+        //support@fegllc.com
+        if (empty($from)) {
+            //$from = "support@fegllc.com";
+            $from = "support@element5digital.com";
+        }        
+        self::phpMail($to, $subject, $message, $from, $options);
+    }
     
     public static function sendEmailReport($options) {        
         extract(array_merge(array(
-            'from' => null,
+            'from' => "support@element5digital.com",
+            'reportName' => "Test",
         ), $options));
         
         if ($isTest) {
-            //$testRecipients = self::getTestRecipients();
+            
             $message =  "
 *************** EMAIL START --- DEBUG INFO *******************<br>
 [SUBJECT: $subject]<br>
@@ -1067,14 +1380,23 @@ $message
 ******************************************* EMAIL END ********************************<br>";
             
             $subject .= "[TEST] ". $subject;
-            $to = "e5devmail@gmail.com";
-            $cc = "";
-            $bcc = "";
+            $emailRecipients = self::getSystemReportEmailRecipients($reportName, null, true);
+            $to = $emailRecipients['to'];
+            $cc = $emailRecipients['to'];
+            $bcc = $emailRecipients['bcc'];
+            if (empty($to)) {
+                $to = "e5devmail@gmail.com";
+            }
             
             $message = str_ireplace(array("<br />","<br>","<br/>"), "\r\n", $message);
             
-            self::logit($message, "email.log", "SystemEmailsDump");
-            return;
+            $reportNameSanitized = preg_replace('/[\W]/', '-', strtolower($reportName));
+            self::logit($message, "email-{$reportNameSanitized}.log", "SystemEmailsDump");
+            
+            if (strpos(url(), "//localhost")) {
+                return;
+            }
+            
         }
         
         $opt = array();
@@ -1085,10 +1407,147 @@ $message
             $opt['bcc'] = $bcc;
         }        
         
-        self::phpMail($to, $subject, $message, $from, $opt);
+        self::sendEmail($to, $subject, $message, $from, $opt);
     }
-    public static function getLocationSystemEmailRecipients($location) {
-        return "";
+    public static function getSystemReportEmailRecipients($reportName, $location = null, $isTest = false) {
+        $emails = array('reportName' => $reportName, 'to' => '', 'cc' => '', 'bcc' => '');
+        $q = "SELECT * from system_email_report_manager WHERE report_name='$reportName' AND is_active=1 order by id desc";
+        $data = DB::select($q);
+        $groups = array('to' => '', 'cc' => '', 'bcc' => '');
+        $locationUsers = array('to' => '', 'cc' => '', 'bcc' => '');
+        $users = array('to' => '', 'cc' => '', 'bcc' => '');
+        $inclues = array('to' => '', 'cc' => '', 'bcc' => '');
+        $excludes = array('to' => '', 'cc' => '', 'bcc' => '');
+        if (!empty($data)) {
+            $data = $data[0];
+            if ($isTest) {
+                $emails['to'] = $data->test_to_emails;
+                $emails['cc'] = $data->test_cc_emails;
+                $emails['bcc'] = $data->test_bcc_emails;
+            }
+            else {
+                
+                $location = empty($location) ? null : $location;
+                
+                $lut = $data->to_email_location_contacts;
+                $lucc = $data->cc_email_location_contacts;
+                $lubcc = $data->bcc_email_location_contacts;
+                $locationUsers['to']  = empty($lut) ? array() : self::getLocationManagersEmails($lut,  $location);
+                $locationUsers['cc']  = empty($lucc) ? array() : self::getLocationManagersEmails($lucc,  $location);
+                $locationUsers['bcc'] = empty($lubcc) ? array() : self::getLocationManagersEmails($lubcc, $location);
+                
+                
+                $gt = $data->to_email_groups;
+                $gcc = $data->cc_email_groups;
+                $gbcc = $data->bcc_email_groups;
+                $groups['to'] = empty($gt) ? array() : self::getGroupsUserEmails($gt,   $location);
+                $groups['cc'] = empty($gcc) ? array() : self::getGroupsUserEmails($gcc,   $location);
+                $groups['bcc'] = empty($gbcc) ? array() : self::getGroupsUserEmails($gbcc, $location);
+                
+                $ut = $data->to_email_individuals;
+                $ucc = $data->cc_email_individuals;
+                $ubcc = $data->bcc_email_individuals;                
+                $users['to'] = empty($ut) ? array() : self::getUserEmails($ut);
+                $users['cc'] = empty($ucc) ? array() : self::getUserEmails($ucc);
+                $users['bcc'] = empty($ubcc) ? array() : self::getUserEmails($ubcc);
+                
+                $inclues['to'] = self::split_trim($data->to_include_emails);
+                $inclues['cc'] = self::split_trim($data->cc_include_emails);
+                $inclues['bcc'] = self::split_trim($data->bcc_include_emails);
+                
+                $excludes['to'] = array_merge(self::split_trim(
+                        $data->to_exclude_emails), array(null, ''));
+                $excludes['cc'] = array_merge(self::split_trim(
+                        $data->cc_exclude_emails), array(null, ''));
+                $excludes['bcc'] = array_merge(self::split_trim(
+                        $data->bcc_exclude_emails), array(null, ''));
+                
+                $to = array_diff(array_unique(
+                        array_merge($groups['to'], 
+                            $locationUsers['to'], $users['to'], $inclues['to'])),
+                        $excludes['to']);
+                $cc = array_diff(
+                        array_unique(array_merge($groups['cc'], 
+                            $locationUsers['cc'], $users['cc'], $inclues['cc'])),
+                        $excludes['cc']);
+                $bcc = array_diff(
+                        array_unique(array_merge($groups['bcc'], 
+                            $locationUsers['bcc'], $users['bcc'], $inclues['bcc'])),
+                        $excludes['bcc']);
+                
+                $emails['to'] = implode(',', $to);
+                $emails['cc'] = implode(',', $cc);
+                $emails['bcc'] = implode(',', $bcc);
+            }
+        }
+        return $emails;
+    }
+
+    public static function getLocationManagersEmails($fields, $location = null) {
+//        $q = "SELECT id,contact_id, general_contact_id, field_manager_id,
+//            tech_manager_id, merch_contact_id, merchandise_contact_id,
+//            technical_contact_id, regional_contact_id, senior_vp_id, district_manager_id
+//        FROM location WHERE active=1";
+        $emails = array();
+            if (!empty(trim($fields))) {
+            $q = "SELECT $fields
+            FROM location WHERE active=1";
+            if ($location) {
+                $q .= " AND id IN ($location)";
+            }
+            $fieldsArr = explode(',', $fields);
+            $data = DB::select($q);
+            $ids = array();
+            foreach($data as $row) {            
+                foreach($fieldsArr as $fname) {
+                    $val = $row->$fname;
+                    if (!empty($val)) {
+                        $ids[] = $val;
+                    }                
+                }        
+            }
+            if (!empty($ids)) {
+                $emails = self::getUserEmails(implode(',', $ids));
+            }
+            
+        }
+        
+        return $emails;
+    }
+        
+    
+    public static function getGroupsUserEmails($groups = null, $location = null) {
+        $q = "SELECT U.id, U.group_id, UL.location_id, U.email FROM users U 
+                    LEFT JOIN user_locations UL ON UL.user_id = U.id
+                LEFT JOIN tb_groups G ON G.group_id = U.group_id
+                LEFT JOIN location L ON L.id = UL.location_id
+                WHERE U.active=1 AND L.active=1 ";
+        if (!empty($groups)) {
+            $q .= " AND G.group_id IN ($groups)";
+        }
+        if (!empty($location)) {
+            $q .= " AND UL.location_id IN ($location)";
+        }
+        $data = DB::select($q);
+        $emails = array();
+        foreach($data as $row) {
+            $email = $row->email;
+            $emails[] =  trim($email);
+        }
+        return $emails;
+    }
+    public static function getUserEmails($users = null) {
+        $q = "SELECT DISTINCT email FROM users WHERE active=1 ";
+        if (!empty($users)) {
+            $q .= " AND id IN ($users)";
+        }
+        $data = DB::select($q);
+        $emails = array();
+        foreach($data as $row) {
+            $email = $row->email;
+            $emails[] = trim($email);
+        }
+        return $emails;
     }
     
     private static function getHumanDate($date = "") {
@@ -1098,7 +1557,20 @@ $message
         }
         return $hDate;
     }
-    
+    private static function split_trim($txt, $delim = ',', $trimChar = null) {
+        $arr = array();
+        if (empty($txt)) {
+            $txt = "";
+        }
+        $data = explode($delim, $txt);
+        foreach($data as $val) {
+            $val = empty($trimChar) ? trim($val): trim($val, $trimChar);
+            if (!empty($val)) {
+                $arr[] = $val;
+            }
+        }
+        return $arr;        
+    }
 
     private static function logit($obj = "", $file = "system-email-report.log", $pathsuffix ="") {
         $path = self::set_log_path($file, $pathsuffix);

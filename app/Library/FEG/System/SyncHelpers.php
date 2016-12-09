@@ -67,7 +67,7 @@ class SyncHelpers
         $__logger->log("Start finding pending transfers");
         $q = "SELECT * from $table WHERE status=1";
         $data = DB::select($q);
-        if (!empty($data) && count($data) > 0) {
+        if (!empty($data)) {
             $__logger->log("Found pending transfers - start retry");
             foreach($data as $item) {
                 $location = $item->loc_id;
@@ -236,7 +236,7 @@ class SyncHelpers
 
         DB::connection()->setFetchMode(PDO::FETCH_ASSOC); 
         $data = DB::select($sql);
-        if (!empty($data) && count($data) > 0) {
+        if (!empty($data)) {
             DB::beginTransaction();
             foreach ($data as $row) {
                 $revenue = $row['games_revenue'];
@@ -349,7 +349,7 @@ class SyncHelpers
         $query->chunk($chunkSize, 
                 function($data)  use ($table, $date, &$rowcount, &$chunkCount, &$insertCount, &$insertArray, &$gameIdArray){
                     global $__logger;
-                    if (!empty($data) && count($data) > 0) {
+                    if (!empty($data)) {
                         $dataSize = count($data);
                         $chunkCount++;
                         $rowcount += $dataSize;
@@ -404,7 +404,7 @@ class SyncHelpers
                                             GROUP BY E.game_id, E.loc_id";
 
                             $last_played_data = DB::select($last_played_sql);
-                            if  (!empty($last_played_data) && count($last_played_data) > 0) { 
+                            if  (!empty($last_played_data)) { 
                                 foreach($last_played_data as $row) {
                                    $game_id = $row['game_id'];
                                    $loc_id = $row['loc_id'];
@@ -465,7 +465,7 @@ class SyncHelpers
                 (empty($debit_type) ? '' : " AND debit_type_id IN ($debit_type)");
         
         $items = DB::select($q);
-        if (!empty($items) && count($items) > 0) {
+        if (!empty($items)) {
             foreach($items as $item) {
                 $id = $item->id;
                 DB::beginTransaction();
@@ -563,7 +563,7 @@ class SyncHelpers
         $q = "SELECT debit_type_id from location WHERE id = $location";
         $item = DB::select($q);
         $debitType = '';
-        if ($item && count($item) > 0) {
+        if (!empty($item)) {
             $debitType = $item[0]->debit_type_id;
         }        
         return $debitType;                
@@ -592,7 +592,7 @@ class SyncHelpers
         $count = 0;
         $item = DB::connection($sourceDBName)->select($q);
         //$__logger->log("has sync data: ", $item);
-        if (!empty($item) && count($item) > 0) {
+        if (!empty($item)) {
             $count = $item[0]->count;
         }
         
@@ -698,7 +698,7 @@ class SyncHelpers
         $query->chunk($chunkSize, 
                 function($data)  use ($table, &$rowcount, &$chunkCount){
                     global $__logger;
-                    if (!empty($data) && count($data) > 0) {
+                    if (!empty($data)) {
                         $dataSize = count($data);
                         $chunkCount++;
                         $rowcount += $dataSize;

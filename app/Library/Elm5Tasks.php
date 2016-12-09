@@ -68,7 +68,9 @@ class Elm5Tasks
                 
             } catch(\Exception $e) {                
                 
-                $errorMessage = $e->getMessage();
+                $errorFile = $e->getFile();
+                $errorLine = $e->getLine();                
+                $errorMessage = $e->getMessage() . " - $errorFile at line $errorLine";
                 self::errorSchedule($scheduleId);
                 self::updateSchedule($scheduleId, array("results" => $errorMessage, "notes" => $errorMessage));
                 self::logScheduleError($item, $e);
@@ -126,16 +128,19 @@ class Elm5Tasks
         
         $params = $item->params;
         $isEmptyParam = empty($params);
-        $isParamIndexedArray = strpos(trim($params), "[") === 0;
         if ($isEmptyParam) {
-            $params = "[]";
+            $params = "{}";
         }
         
         $paramsWithNoArrayLiteralBoundary = strpos(trim($params), "[") === FALSE &&
                                             strpos(trim($params), "{") === FALSE;
         if ($paramsWithNoArrayLiteralBoundary) {
-            $params = "{".$params."}";
+            //$params = "{".$params."}";
+            $params = "[".$params."]";
         }
+        $isParamIndexedArray = strpos(trim($params), "[") === 0;
+//        $isParamIndexedArray = false;
+//        $L->log("Param:", $params);
         $customParameters = json_decode($params, true);
         if ($isParamIndexedArray) {
             $parameters = array_merge($customParameters, $initialParameters);
@@ -143,7 +148,7 @@ class Elm5Tasks
         else {
             $parameters = array(array_merge($customParameters, $initialParameters));
         }
-        
+//        $L->log("parameters:", $parameters);
         
         self::cronlog("Starting Task - $logTaskId", null, $L);
         self::startSchedule($id);       
@@ -200,6 +205,9 @@ class Elm5Tasks
             self::endSchedule($id);
         }
         
+        if (is_array($result) || is_object($result)) {
+            $result = json_encode($result);
+        }
         self::updateSchedule($id, array("results" => $result));
         
         self::cronlog("Task Ended ".($isError?"with error":"")." - $logTaskId", null, $L);
@@ -284,7 +292,9 @@ class Elm5Tasks
                 }
             } catch (\Exception $ex) {
                 $isError = true;
-                $result = $ex->getMessage();
+                $errorFile = $ex->getFile();
+                $errorLine = $ex->getLine();                
+                $result = $ex->getMessage() . " - $errorFile at line $errorLine";                
                 self::logScheduleError($uTask, $ex);
                 self::errorSchedule($uSId);       
                 self::updateSchedule($uSId, array("notes" => $result, "results" => $result));        

@@ -7,7 +7,7 @@
         <th>Schedule</th>
         <th>Run at</th>
         <th>End at</th>
-        <th>Notes</th>
+        <th>Result</th>
         <!--<th>Result</th>-->
     </tr>
     </thead>
@@ -49,7 +49,7 @@
         <td>{{ $scheduled_at }}</td>
         <td>{{ $run_at }}</td>
         <td>{{ $end_at }}</td>
-        <td>{{ $notes }}</td>
+        <td>{{ $results }}</td>
         <!--<td>{{ $results }}</td>-->
     </tr>
 

@@ -776,7 +776,55 @@ class ReportHelpers
     {
     }    
     public static function getLocationsReportingQuery() {
-    }    
+    }   
+    
+    public static function getGamesOnTestRankQuery($dateStart, $dateEnd, 
+            $location = "", $debit = "", $sortby = "game_total", $order = "desc")
+    {
+        
+        $Q = "SELECT 
+            E.id, 
+            E.game_id, 
+            L.id as location_id, 
+            L.location_name_short as location_name,
+            L.debit_type_id,
+            D.company as debit_system,
+            E.game_title_id, 
+            T.game_title as game_name,                 
+            sum(IFNULL(E.game_revenue,0)) AS game_total ";            
+        
+        $Q .= "FROM report_game_plays E
+                LEFT JOIN location L ON L.id = E.location_id
+                LEFT JOIN debit_type D ON D.id = E.debit_type_id   
+                LEFT JOIN game_title T ON T.id = E.game_title_id
+                
+                WHERE E.game_id <> 0 
+                AND E.game_on_test = 1
+                AND E.report_status = 1 
+                AND E.record_status = 1
+                AND E.date_played >= '$dateStart' 
+                AND E.date_played <= '$dateEnd'";
+        
+        if (!empty($location)) {
+            $Q .= " AND L.id IN ($location)";
+        }
+        if (!empty($debit)) {
+            $Q .= " AND D.id IN ($debit)";
+        }
+        $Q .= " Group By E.game_id";
+        
+        // ORDER BY
+        $sortbys = array(
+        );
+        if (!empty($sortbys[$sortby])) {
+            $sortby = $sortbys[$sortby];
+        }        
+        $sortbyQuery = self::orderify($sortby, $order);
+        $Q .= $sortbyQuery; 
+        
+        return $Q;
+    }
+    
     public static function getGamesNotOnDebitCardQuery($location = "")
     {
         $locationQuery = "";            
