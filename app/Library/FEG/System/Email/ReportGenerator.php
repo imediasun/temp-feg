@@ -1380,10 +1380,10 @@ class ReportGenerator
 $message
 ******************************************* EMAIL END ********************************<br>";
             
-            $subject .= "[TEST] ". $subject;
+            $subject = "[TEST] ". $subject;
             $emailRecipients = self::getSystemReportEmailRecipients($reportName, null, true);
             $to = $emailRecipients['to'];
-            $cc = $emailRecipients['to'];
+            $cc = $emailRecipients['cc'];
             $bcc = $emailRecipients['bcc'];
             if (empty($to)) {
                 $to = "e5devmail@gmail.com";
@@ -1393,7 +1393,9 @@ $message
             
             $reportNameSanitized = preg_replace('/[\W]/', '-', strtolower($reportName));
             self::logit("to: " .$to, "email-{$reportNameSanitized}.log", "SystemEmailsDump");
-            self::logit("subject: " .$subject, "email-{$reportNameSanitized}.log", "SystemEmailsDump");
+            self::logit("cc: " .$cc, "email-{$reportNameSanitized}.log", "SystemEmailsDump");
+            self::logit("bcc: " .$bcc, "email-{$reportNameSanitized}.log", "SystemEmailsDump");
+//            self::logit("subject: " .$subject, "email-{$reportNameSanitized}.log", "SystemEmailsDump");
             self::logit(url(), "email-{$reportNameSanitized}.log", "SystemEmailsDump");
             self::logit(strpos(url(), "localhost") >= 0, "email-{$reportNameSanitized}.log", "SystemEmailsDump");
             

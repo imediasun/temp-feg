@@ -25,6 +25,16 @@ class Sync
         SyncHelpers::generateDailySummary($params);
         $L->log("End Generate Daily Summary");
     }
+    
+    public static function generateDailySummaryRange($params = array()) {
+        $L = isset($params['_logger']) ? $params['_logger'] : 
+            new MyLog('daily-earnings-summary-database.log', 'bulk-daily-summary', 'GenerateDailySummary');
+        $params['_logger'] = $L;
+        $L->log("Start Generate Daily Summary by date range");
+        SyncHelpers::generateDailySummaryDateRange($params);
+        $L->log("End Generate Daily Summary by date range");
+    }
+    
  
     public static function retryTransferMissingEarnings($params = array()) {
         $L = isset($params['_logger']) ? $params['_logger'] : 

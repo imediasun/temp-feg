@@ -450,6 +450,43 @@ class SyncHelpers
         self::report_daily_game_summary($params);
         $__logger->log("END Generate Daily GAME Summary");
     }       
+     public static function generateDailySummaryDateRange($params = array()) {
+        global $__logger;
+        extract(array_merge(array(
+            'date_start' => null,
+            'date_end' => null,
+            'location' => null,
+            '_task' => array(),
+            '_logger' => null,
+        ), $params)); 
+        $__logger = $_logger;
+        
+        if (empty($date_start) || empty($date_end)) {
+            $__logger->log("No date range specified.");
+            return "No date range specified.";
+        }
+        
+        $dateStartTimestamp = strtotime($date_start);
+        $dateEndTimestamp = strtotime($date_end);
+        $currentDate = $dateStartTimestamp;
+        $date = $date_start; 
+        
+        while($currentDate <= $dateEndTimestamp) {
+            
+            $cParams = array_merge($params, array("date" => $date));
+            $__logger->log("Start Generate Daily LOCATION Summary");
+            self::report_daily_location_summary($cParams);
+            $__logger->log("END Generate Daily LOCATION Summary");
+            $__logger->log("Start Generate Daily GAME Summary");
+            self::report_daily_game_summary($cParams);
+            $__logger->log("END Generate Daily GAME Summary");            
+            
+            $currentDate = strtotime($date . " +1 day");
+            $date = date("Y-m-d", $currentDate);
+        }
+        
+
+    }       
  
     public static function reportMissingEarningsData($date_start = "", $location = "", $debit_type = "") {
         global $__logger;
