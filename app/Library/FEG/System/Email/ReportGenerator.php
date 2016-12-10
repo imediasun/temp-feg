@@ -1373,6 +1373,7 @@ class ReportGenerator
 *************** EMAIL START --- DEBUG INFO *******************<br>
 [SUBJECT: $subject]<br>
 [TO: $to]<br>
+[FROM: $from]<br/>
 [CC: $cc]<br>
 [BCC: $bcc]<br>                   
 ***************** DEBUG INFO END *****************************<br><br>
@@ -1388,14 +1389,18 @@ $message
                 $to = "e5devmail@gmail.com";
             }
             
-            $message = str_ireplace(array("<br />","<br>","<br/>"), "\r\n", $message);
+            $messageLog = str_ireplace(array("<br />","<br>","<br/>"), "\r\n", $message);
             
             $reportNameSanitized = preg_replace('/[\W]/', '-', strtolower($reportName));
-            self::logit($message, "email-{$reportNameSanitized}.log", "SystemEmailsDump");
+            self::logit("to: " .$to, "email-{$reportNameSanitized}.log", "SystemEmailsDump");
+            self::logit("subject: " .$subject, "email-{$reportNameSanitized}.log", "SystemEmailsDump");
+            self::logit(url(), "email-{$reportNameSanitized}.log", "SystemEmailsDump");
+            self::logit(strpos(url(), "localhost") >= 0, "email-{$reportNameSanitized}.log", "SystemEmailsDump");
             
-            if (strpos(url(), "localhost") >= 0) {
-                return;
-            }
+            self::logit($messageLog, "email-{$reportNameSanitized}.log", "SystemEmailsDump");
+//            if (strpos(url(), "localhost") >= 0) {
+//                return;
+//            }
             
         }
         
