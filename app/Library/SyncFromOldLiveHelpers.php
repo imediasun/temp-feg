@@ -143,6 +143,11 @@ class SyncFromOldLiveHelpers
         }
   
     }     
+    
+    public static function commonSyncAll ($params = array()) {
+        self::commonSync($params);
+        self::commonSyncEnd($params);
+    }
     public static function commonSync($params = array()) {
         
         extract($params);
@@ -209,7 +214,7 @@ class SyncFromOldLiveHelpers
     }    
     
     public static function _syncFromLiveTempDB($params = array()) {
-        self::commonSync($params);
+//        self::commonSync($params);
         self::$L->log("Start Sacoa Sync");
         self::live_sync_temp_earnings('livemysql_sacoa', 'sacoa_sync');
         self::$L->log("End Sacoa Sync");        
@@ -219,7 +224,7 @@ class SyncFromOldLiveHelpers
         self::$L->log("Adjustments start");        
         self::live_sync_temp_earnings_adj('livemysql_embed', 'livemysql_sacoa');
         self::$L->log("Adjustments End"); 
-        self::commonSyncEnd($params);
+//        self::commonSyncEnd($params);
     }
 
     public static function live_sync_temp_earnings_adj($embedDBName, $sacoatDBName) {
@@ -372,7 +377,7 @@ class SyncFromOldLiveHelpers
     /* Sync From LIVE ERP DB (Processed data) [START] */
     public static function _livesync($params = array()) {
         
-        self::commonSync($params);
+//        self::commonSync($params);
         
         self::$L->log("Start Earnings Sync");
         self::live_sync_earnings();
@@ -390,7 +395,7 @@ class SyncFromOldLiveHelpers
         self::live_sync_game_summary_reports();
         self::$L->log("End Games Summary Sync");
         
-        self::commonSyncEnd($params);        
+//        self::commonSyncEnd($params);        
         
     }
     public static function livesync($params = array()) {        
