@@ -27,12 +27,15 @@ class SyncFromOldLiveHelpers
 
         self::$L->log("Start copying Game Title");   
         $chunkCount = 0;
+        $totalCount = 0;
         $local_db->table($table)->truncate();
         $live_db->table($table)
                 ->chunk($chunkSize, 
                         function($data)  use ($local_db, $table, $chunkSize, &$chunkCount){
                             $chunkCount++;
-                            self::$L->log("Game Title: received chunk of $chunkSize #$chunkCount");        
+                            $dataCount = count($data);
+                            $totalCount += $dataCount;
+                            self::$L->log("Game Title: received chunk of $dataCount #$chunkCount");        
                             if (!empty($data) && count($data) > 0) {
                                 self::$L->log("Adding data to local");
                                 $local_db->table($table)->insert($data);
@@ -44,7 +47,7 @@ class SyncFromOldLiveHelpers
         
         $local_db->update("UPDATE `game_title` SET img = CONCAT(id,'.jpg') where img !=''");
         
-        self::$L->log("End copying Game Title");  
+        self::$L->log("End copying $totalCount Game Title");  
 
     } 
     public static function live_sync_games($params = array()) {
@@ -59,12 +62,15 @@ class SyncFromOldLiveHelpers
 
         self::$L->log("Start copying Game");   
         $chunkCount = 0;
+        $totalCount = 0;
         $local_db->table($table)->truncate();
         $live_db->table($table)
                 ->chunk($chunkSize, 
                         function($data)  use ($local_db, $table, $chunkSize, &$chunkCount){
                             $chunkCount++;
-                            self::$L->log("Game: received chunk of $chunkSize #$chunkCount");        
+                            $dataCount = count($data);
+                            $totalCount += $dataCount;
+                            self::$L->log("Game: received chunk of $dataCount #$chunkCount");        
                             if (!empty($data) && count($data) > 0) {
                                 self::$L->log("Adding data to local");
                                 $local_db->table($table)->insert($data);
@@ -73,8 +79,9 @@ class SyncFromOldLiveHelpers
                                 self::$L->log("Game: NO data to add");
                             }            
                         });   
-        $local_db->update("update `game` set product_id = concat('[\"',product_id ,'\"]') where game.game_type_id = 3");
-        self::$L->log("End copying Game");  
+        $local_db->update("update `game` set product_id = concat('[\"',product_id ,'\"]') 
+            WHERE product_id NOT LIKE '[\"%' AND game_type_id = 3");
+        self::$L->log("End copying $totalCount Game");  
         
     } 
     public static function live_sync_reader_exclude($params = array()) {
@@ -89,12 +96,15 @@ class SyncFromOldLiveHelpers
 
         self::$L->log("Start copying Reader Excludes");   
         $chunkCount = 0;
+        $totalCount = 0;
         $local_db->table($table)->truncate();
         $live_db->table($table)
                 ->chunk($chunkSize, 
                         function($data)  use ($local_db, $table, $chunkSize, &$chunkCount){
                             $chunkCount++;
-                            self::$L->log("Reader Excludes: received chunk of $chunkSize #$chunkCount");        
+                            $dataCount = count($data);
+                            $totalCount += $dataCount;
+                            self::$L->log("Reader Excludes: received chunk of $dataCount #$chunkCount");        
                             if (!empty($data) && count($data) > 0) {
                                 self::$L->log("Adding data to local");
                                 $local_db->table($table)->insert($data);
@@ -104,7 +114,7 @@ class SyncFromOldLiveHelpers
                             }            
                         });   
                        
-        self::$L->log("End copying Reader Excludes");  
+        self::$L->log("End copying $totalCount Reader Excludes");  
     }     
     public static function live_sync_requests($params = array()) {
         extract($params);
@@ -122,21 +132,24 @@ class SyncFromOldLiveHelpers
         if ($last_live_id > $last_synced_id) {
             self::$L->log("Start copying requests");   
             $chunkCount = 0;
+            $totalCount = 0;
             $live_db->table($table)->where('id', '>', $last_synced_id)
                     ->chunk($chunkSize, 
                             function($data)  use ($local_db, $table, $chunkSize, &$chunkCount){
                                 $chunkCount++;
-                                self::$L->log("Reader Excludes: received chunk of $chunkSize #$chunkCount");        
+                                $dataCount = count($data);
+                                $totalCount += $dataCount;
+                                self::$L->log("Requests: received chunk of $dataCount #$chunkCount");        
                                 if (!empty($data) && count($data) > 0) {
-                                    self::$L->log("Adding data to local");
+                                    self::$L->log("Adding requests data to local");
                                     $local_db->table($table)->insert($data);
                                 }
                                 else {
-                                    self::$L->log("Game: NO data to add");
+                                    self::$L->log("requests: NO data to add");
                                 }            
                             });   
 
-            self::$L->log("End copying requests");            
+            self::$L->log("End copying $totalCount requests");            
         }
         else {
             self::$L->log("Requests sync not required. Ending.");   
@@ -246,12 +259,15 @@ class SyncFromOldLiveHelpers
 
         self::$L->log("Start copying Adjustment metadata");   
         $chunkCount = 0;
+        $totalCount = 0;
         $local_db->table($adMetaTable)->truncate();
         $live_db->table($adMetaTable)->orderBy('id')
                 ->chunk($chunkSize, 
                         function($data)  use ($local_db, $adMetaTable, $chunkSize, &$chunkCount){
                             $chunkCount++;
-                            self::$L->log("Adj meta data: received chunk of $chunkSize #$chunkCount");        
+                            $dataCount = count($data);
+                            $totalCount += $dataCount;
+                            self::$L->log("Adj meta data: received chunk of $dataCount #$chunkCount (Total so far:$totalCount)");        
                             if (!empty($data) && count($data) > 0) {
                                 self::$L->log("Adding data to local");
                                 $local_db->table($adMetaTable)->insert($data);
@@ -354,12 +370,14 @@ class SyncFromOldLiveHelpers
         self::$L->log("FETCH unsynced DATA");               
         $chunkCount = 0;
         $dataCount = 0;
+        $totalCount = 0;
         $live_db->table($table)->where('id', '>', $last_synced_id)
                 ->chunk($chunkSize, 
                         function($data)  use ($local_db, $table, $chunkSize, &$chunkCount, &$dataCount){
                             $chunkCount++;
-                            $dataCount+=count($data);
-                            self::$L->log("Data received chunk of size $chunkSize: #$chunkCount");        
+                            $dataCount=count($data);
+                            $totalCount += $dataCount;
+                            self::$L->log("Data received chunk of size $dataCount: #$chunkCount");        
                             if (!empty($data) && count($data) > 0) {
                                 self::$L->log("Adding data to local");
                                 $local_db->table($table)->insert($data);
@@ -368,7 +386,7 @@ class SyncFromOldLiveHelpers
                                 self::$L->log("NO data to add");
                             }            
                         }); 
-        self::$L->log("Added $dataCount data items to local");
+        self::$L->log("Added $totalCount data items to local");
         self::$L->log("END FETCH unsynced DATA");
     }    
      /* Sync From Temp DB [END] */

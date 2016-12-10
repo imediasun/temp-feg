@@ -1393,7 +1393,7 @@ $message
             $reportNameSanitized = preg_replace('/[\W]/', '-', strtolower($reportName));
             self::logit($message, "email-{$reportNameSanitized}.log", "SystemEmailsDump");
             
-            if (strpos(url(), "//localhost")) {
+            if (strpos(url(), "localhost") >= 0) {
                 return;
             }
             
@@ -1406,8 +1406,9 @@ $message
         if (!empty($bcc)) {
             $opt['bcc'] = $bcc;
         }        
-        
+        self::logit("Sending Email", "email-{$reportNameSanitized}.log", "SystemEmailsDump");
         self::sendEmail($to, $subject, $message, $from, $opt);
+        self::logit("Email sent", "email-{$reportNameSanitized}.log", "SystemEmailsDump");
     }
     public static function getSystemReportEmailRecipients($reportName, $location = null, $isTest = false) {
         $emails = array('reportName' => $reportName, 'to' => '', 'cc' => '', 'bcc' => '');
