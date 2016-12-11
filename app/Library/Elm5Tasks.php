@@ -66,14 +66,14 @@ class Elm5Tasks
                 
                 $return = self::runTask($item);
                 
-            } catch(\Exception $e) {                
+            } catch(\Exception $ex) {                
                 
-                $errorFile = $e->getFile();
-                $errorLine = $e->getLine();                
-                $errorMessage = $e->getMessage() . " - $errorFile at line $errorLine";
+                $errorFile = $ex->getFile();
+                $errorLine = $ex->getLine();                
+                $errorMessage = $ex->getMessage() . " - $errorFile at line $errorLine";
                 self::errorSchedule($scheduleId);
                 self::updateSchedule($scheduleId, array("results" => $errorMessage, "notes" => $errorMessage));
-                self::logScheduleError($item, $e);
+                self::logScheduleError($item, $ex);
                 self::log("Error running ".($is_manual ? "manual ": ""). $taskLog);
                 self::log("Error: ".$errorMessage);
             }            
@@ -179,7 +179,9 @@ class Elm5Tasks
                 }
             } catch (\Exception $ex) {
                 $isError = true;
-                $result = $ex->getMessage();                
+                $errorFile = $ex->getFile();
+                $errorLine = $ex->getLine();                
+                $result = $ex->getMessage() . " - $errorFile at line $errorLine";                  
                 self::logScheduleError($item, $ex);
             }
         }
@@ -187,7 +189,7 @@ class Elm5Tasks
         
         if ($isError) {
             self::errorSchedule($id);    
-            self::updateSchedule($id, array("notes" => $result));
+            self::updateSchedule($id, array("notes" => $result, "results" => $result));
             $log = "Task ERROR - $logTaskId";            
         }        
         else {
