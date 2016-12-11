@@ -39,7 +39,7 @@ class Elm5TaskManager extends Command
      */
     public function handle()
     {
-        
+        set_time_limit(0);
         $L = new MyLog("task-manager-command.log", "FEGCronTasks", "FEGCronTasks");
         $L->log('Start Cron Tasks');
         
