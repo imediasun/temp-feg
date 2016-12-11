@@ -31,7 +31,7 @@ class SyncFromOldLiveHelpers
         $local_db->table($table)->truncate();
         $live_db->table($table)
                 ->chunk($chunkSize, 
-                        function($data)  use ($local_db, $table, $chunkSize, &$chunkCount){
+                        function($data)  use ($local_db, $table, $chunkSize, &$chunkCount, &$totalCount){
                             $chunkCount++;
                             $dataCount = count($data);
                             $totalCount += $dataCount;
@@ -66,7 +66,7 @@ class SyncFromOldLiveHelpers
         $local_db->table($table)->truncate();
         $live_db->table($table)
                 ->chunk($chunkSize, 
-                        function($data)  use ($local_db, $table, $chunkSize, &$chunkCount){
+                        function($data)  use ($local_db, $table, $chunkSize, &$chunkCount, &$totalCount){
                             $chunkCount++;
                             $dataCount = count($data);
                             $totalCount += $dataCount;
@@ -100,7 +100,7 @@ class SyncFromOldLiveHelpers
         $local_db->table($table)->truncate();
         $live_db->table($table)
                 ->chunk($chunkSize, 
-                        function($data)  use ($local_db, $table, $chunkSize, &$chunkCount){
+                        function($data)  use ($local_db, $table, $chunkSize, &$chunkCount, &$totalCount){
                             $chunkCount++;
                             $dataCount = count($data);
                             $totalCount += $dataCount;
@@ -135,7 +135,7 @@ class SyncFromOldLiveHelpers
             $totalCount = 0;
             $live_db->table($table)->where('id', '>', $last_synced_id)
                     ->chunk($chunkSize, 
-                            function($data)  use ($local_db, $table, $chunkSize, &$chunkCount){
+                            function($data)  use ($local_db, $table, $chunkSize, &$chunkCount, &$totalCount){
                                 $chunkCount++;
                                 $dataCount = count($data);
                                 $totalCount += $dataCount;
@@ -263,7 +263,7 @@ class SyncFromOldLiveHelpers
         $local_db->table($adMetaTable)->truncate();
         $live_db->table($adMetaTable)->orderBy('id')
                 ->chunk($chunkSize, 
-                        function($data)  use ($local_db, $adMetaTable, $chunkSize, &$chunkCount){
+                        function($data)  use ($local_db, $adMetaTable, $chunkSize, &$chunkCount, &$totalCount){
                             $chunkCount++;
                             $dataCount = count($data);
                             $totalCount += $dataCount;
@@ -373,7 +373,7 @@ class SyncFromOldLiveHelpers
         $totalCount = 0;
         $live_db->table($table)->where('id', '>', $last_synced_id)
                 ->chunk($chunkSize, 
-                        function($data)  use ($local_db, $table, $chunkSize, &$chunkCount, &$dataCount){
+                        function($data)  use ($local_db, $table, $chunkSize, &$chunkCount, &$dataCount, &$totalCount){
                             $chunkCount++;
                             $dataCount=count($data);
                             $totalCount += $dataCount;
