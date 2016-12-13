@@ -46,7 +46,7 @@ class ReportGenerator
             $dailyTransferStatusReport = self::getDailyTransferStatusReport($params);
             $dailyTransferStatus = self::$reportCache['syncStatus'];
             if (!$dailyTransferStatus['1'] || !$dailyTransferStatus['2']) {
-                if (!$noTransferStatus != 1) {
+                if ($noTransferStatus == 0) {
                     self::dailyTransferFailReportEmail($params);
                 }
                 
