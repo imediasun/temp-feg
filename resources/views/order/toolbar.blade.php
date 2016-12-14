@@ -17,7 +17,7 @@
 
         </select>
     </div>
-</div><br/>
+</div>
 
 <div class="row m-b" style="margin-bottom: 1px;">
 	<div class="col-md-8" style="padding-left: 0px !important">

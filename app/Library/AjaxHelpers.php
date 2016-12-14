@@ -63,10 +63,16 @@ class AjaxHelpers
 			$c = explode("|",$val);
 			if(isset($c[0]) && class_exists($c[0]))
 			{
-				$val = call_user_func( array($c[0],$c[1]), str_replace(":",",",$c[2])); 
-				//$val = $c[2];
-			}	
-			
+
+                if($c[1]=="formatDate" || $c[1]=="formatDateTime"){
+
+                    $val = call_user_func( array($c[0],$c[1]), $c[2]);
+                }
+                else{
+                    $val = call_user_func( array($c[0],$c[1]), str_replace(":",",",$c[2]));
+                }
+			}
+
 		}
 		// Handling Link  function 	
 		if(isset($attribute['hyperlink']['active']) && $attribute['hyperlink']['active'] ==1 && $attribute['hyperlink']['link'] != '')

@@ -9,7 +9,7 @@
 
 	<div class="sbox-content"> 
 @endif	
-			{!! Form::open(array('url'=>'location/save/'.SiteHelpers::encryptID($row['id']), 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'locationFormAjax')) !!}
+			{!! Form::open(array('url'=>'location/save/'.$row['id'], 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'locationFormAjax')) !!}
 			<div class="col-md-12">
 						<fieldset><legend> location</legend>
 				
@@ -18,10 +18,11 @@
 					{!! SiteHelpers::activeLang('Active Location', (isset($fields['active']['language'])? $fields['active']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
-					  <?php $active = explode(",",$row['active']); ?>
+                        <input type ="text"  value="0" name="active" style="display:none"/>
+					  <?php $active = $row['active']; ?>
 					 <label class='checked checkbox-inline'>   
 					<input type='checkbox' name='active' value ='1'
-					@if(in_array('',$active))checked @endif
+					@if($active == 1)checked @endif
 					 />  </label> 
 					 </div> 
 					 <div class="col-md-2">
@@ -44,10 +45,11 @@
 					{!! SiteHelpers::activeLang('FEG Owned', (isset($fields['self_owned']['language'])? $fields['self_owned']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
-					  <?php $self_owned = explode(",",$row['self_owned']); ?>
+                        <input type ="text"  value="0" name="self_owned" style="display:none"/>
+					  <?php $self_owned = $row['self_owned']; ?>
 					 <label class='checked checkbox-inline'>   
 					<input type='checkbox' name='self_owned' value ='1'
-					@if(in_array('',$self_owned))checked @endif
+					@if($self_owned == 1)checked @endif
 					 />  </label> 
 					 </div> 
 					 <div class="col-md-2">
@@ -315,10 +317,11 @@
 					{!! SiteHelpers::activeLang('Can Ship', (isset($fields['can_ship']['language'])? $fields['can_ship']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
-					  <?php $can_ship = explode(",",$row['can_ship']); ?>
+                        <input type ="text"  value="0" name="can_ship" style="display:none"/>
+					  <?php $can_ship = $row['can_ship']; ?>
 					 <label class='checked checkbox-inline'>   
 					<input type='checkbox' name='can_ship' value ='1'
-					@if(in_array('',$can_ship))checked @endif
+					@if($can_ship == 1)checked @endif
 					 />  </label> 
 					 </div> 
 					 <div class="col-md-2">
@@ -330,10 +333,11 @@
 					{!! SiteHelpers::activeLang('Requires Liftgate', (isset($fields['liftgate']['language'])? $fields['liftgate']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
-					  <?php $liftgate = explode(",",$row['liftgate']); ?>
+                        <input type ="text"  value="0" name="liftgate" style="display:none!important"/>
+					  <?php $liftgate = $row['liftgate']; ?>
 					 <label class='checked checkbox-inline'>   
 					<input type='checkbox' name='liftgate' value ='1'
-					@if(in_array('',$liftgate))checked @endif
+					@if($liftgate == 1)checked @endif
 					 />  </label> 
 					 </div> 
 					 <div class="col-md-2">
@@ -378,10 +382,11 @@
 					{!! SiteHelpers::activeLang(' Debit Type', (isset($fields['bill_debit_type']['language'])? $fields['bill_debit_type']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
-					  <?php $bill_debit_type = explode(",",$row['bill_debit_type']); ?>
+                        <input type ="text"  value="0" name="bill_debit_type" style="display:none"/>
+					  <?php $bill_debit_type = $row['bill_debit_type']; ?>
 					 <label class='checked checkbox-inline'>   
 					<input type='checkbox' name='bill_debit_type' value ='1'
-					@if(in_array('',$bill_debit_type))checked @endif
+					@if($bill_debit_type == 1)checked @endif
 					 />  </label> 
 					 </div> 
 					 <div class="col-md-2">

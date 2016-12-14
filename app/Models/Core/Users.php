@@ -21,9 +21,13 @@ class Users extends Sximo  {
                 FROM users LEFT JOIN tb_groups ON tb_groups.group_id = users.group_id ";
 	}	
 
-	public static function queryWhere(  ){
-		
-		return "    WHERE users.id !=''   ";
+	public static function queryWhere( $id = null ){
+        $return ="Where users.id is not null ";
+        if($id != null)
+        {
+            $return .= " AND users.id = $id";
+        }
+        return $return;
 	}
 	
 	public static function queryGroup(){

@@ -3,7 +3,7 @@
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 
-class vendor extends Sximo  {
+class VendorAPI extends Sximo  {
 	
 	protected $table = 'vendor';
 	protected $primaryKey = 'id';
@@ -18,9 +18,9 @@ class vendor extends Sximo  {
 		return "SELECT vendor.* FROM vendor ";
 	}	
 
-	public static function queryWhere(  ){
+	public static function queryWhere( ){
 		
-		return "  WHERE id IS NOT NULL AND vendor.hide = 0 AND vendor.status = 1 ";
+		return "  WHERE id IS NOT NULL AND vendor.status = 1 ";
 	}
 	
 	public static function queryGroup(){

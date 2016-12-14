@@ -183,7 +183,7 @@
                                     {!! SiteHelpers::activeLang('Last Edited By', (isset($fields['last_edited_by']['language'])? $fields['last_edited_by']['language'] : array())) !!}
                                 </label>
                                 <div class="col-md-8">
-                                {{ $row[0]->last_edited_by = date("m/d/Y", strtotime($row[0]->last_edited_by))  }} }} {{ "on" }} {{$row[0]->last_edited_on}}
+                                {{ $row[0]->last_edited_by }}  {{ "on" }} {{$row[0]->last_edited_on}}
                                 </div>
 
                             </div>

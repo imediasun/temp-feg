@@ -3,7 +3,7 @@
 namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
-use App\Library\SyncHelpers;
+use App\Library\SyncFromOldLiveHelpers;
 
 class SyncGameEarningsFromLive extends Command
 {
@@ -39,7 +39,7 @@ class SyncGameEarningsFromLive extends Command
     public function handle()
     {
         Log::info('Start Sync From Live');
-        SyncHelpers::livesync();
+        SyncFromOldLiveHelpers::livesync();
         Log::info('End Sync From Live');
     }
 }

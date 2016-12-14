@@ -24,7 +24,11 @@ class FegapiController extends Controller
         if (!empty($class)) {
             if ($class == "Users") {
                 $class1 = "App\\Models\\core\\" . $class;
-            } else {
+            }
+            else if($class == "Vendor"){
+                $class1 = "App\\Models\\VendorAPI";
+            }
+            else {
                 $class1 = "App\\Models\\" . $class;
             }
             $config = $class1::makeInfo($class);

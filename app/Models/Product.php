@@ -31,7 +31,7 @@ class product extends Sximo  {
 
 	public static function queryWhere($product_list_type=null,$active=0,$sub_type=null){
         $return="WHERE products.id IS NOT NULL";
-echo  \Session::get('sub_type');
+
         if($product_list_type!= null && $product_list_type != "select" )
         {
             $product_type_id='';

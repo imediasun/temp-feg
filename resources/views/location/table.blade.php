@@ -113,6 +113,7 @@ if (!$colconfigs) {
                     @endif
 
                     <?php foreach ($rowData as $row) :
+
                     $id = $row->id;
                     ?>
 
@@ -136,28 +137,15 @@ if (!$colconfigs) {
                         ?>
                         <?php $limited = isset($field['limited']) ? $field['limited'] : ''; ?>
                         @if(SiteHelpers::filterColumn($limited ))
-                            @if($field['field'] != 'bill_token_detail' && $field['field'] != 'bill_license_detail' && $field['field'] != 'bill_attraction_detail')
-                                    <td align="<?php echo $field['align'];?>" data-values="{{ isset($row->$field['field'])?$row->$field['field']:"" }}"
+                           {{-- @if($field['field'] != 'bill_token_detail' && $field['field'] != 'bill_license_detail' && $field['field'] != 'bill_attraction_detail')
+                                --}}    <td align="<?php echo $field['align'];?>" data-values="{{ isset($row->$field['field'])?$row->$field['field']:"" }}"
                                     data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
-                                    @if($field['field'] == 'date_opened')
-
-                                        {!! date("m/d/Y", strtotime($value)) !!}
-
-                                    @elseif($field['field'] == 'date_closed')
-
-                                        {!! date("m/d/Y", strtotime($value)) !!}
-
-                                    @elseif($field['field'] == 'bill_debit_amt')
-
-
-                                       {{number_format($value, 2)}}
-
-
-
-                                    @else
+@if($field)
+    @if($field['field'] == "district_manager")
+      <a href="core/users/user-details/{{ $row->dist_mgr_id }}" @if($value ==  "None Specified") style="pointer-events: none;cursor: default;display:block;padding:2px;text-align: center;color:blue;font-weight: bold" @else style="display:block;padding:2px;text-align: center;color:blue;font-weight: bold" @endif class="btn-small btn-default" > {!! $value !!} </a>
+        @else
                                         {!! $value !!}
-
-                                  @endif
+@endif
                                 </td>
                             @endif
                         @endif
@@ -165,9 +153,7 @@ if (!$colconfigs) {
                         endif;
                         endforeach;
                         ?>
-                            <td></td>
-                            <td></td>
-                            <td></td>
+
                         <td data-values="action" data-key="<?php echo $row->id;?>">
                             {!! AjaxHelpers::buttonAction('location',$access,$id ,$setting) !!}
                             {!! AjaxHelpers::buttonActionInline($row->id,'id') !!}
@@ -176,10 +162,9 @@ if (!$colconfigs) {
                     @if($setting['view-method']=='expand')
                         <tr style="display:none" class="expanded" id="row-{{ $row->id }}">
                             <td class="number"></td>
-                            <td></td>
-                            <td></td>
+
                             <td colspan="{{ $colspan}}" class="data"></td>
-                            <td></td>
+
                         </tr>
                     @endif
                     <?php endforeach;?>
@@ -209,7 +194,7 @@ if (!$colconfigs) {
         $('.tips').tooltip();
         $('input[type="checkbox"],input[type="radio"]').iCheck({
             checkboxClass: 'icheckbox_square-green',
-            radioClass: 'iradio_square-green',
+            radioClass: 'iradio_square-green'
         });
         $('#{{ $pageModule }}Table .checkall').on('ifChecked', function () {
             $('#{{ $pageModule }}Table input[type="checkbox"]').iCheck('check');

@@ -19,11 +19,10 @@
     </div>
 </div>
 
-<div class="row m-b">
-</div>
-<div class="row m-b" style=margin-bottom:4px;">
 
-    <div class="col-md-6" style="margin-top:7px;">
+<div class="row " >
+
+    <div class="col-md-6">
 
         <a href="{{ URL::to( $pageModule .'/search') }}" class="btn btn-sm btn-white"
            onclick="SximoModal(this.href,'Advanced Search'); return false;"><i class="fa fa-search"></i>Advanced Search</a>
@@ -54,6 +53,8 @@
 <script>
     $(document).ready(function () {
 
+        setTimeout(function(){
+
         $("#locations").jCombo("{{ URL::to('shopfegrequeststore/comboselect?filter=location:id:id|location_name') }}",
                 {selected_value: '{{ \Session::get('selected_location') }}', initial_text: 'Select Location'});
 
@@ -66,7 +67,7 @@
                 {  parent: '#order_type' ,selected_value : '{{ $product_type }}', initial_text: 'Select Product Type'});
 
 
-
+        }, 5000);
 
 
 

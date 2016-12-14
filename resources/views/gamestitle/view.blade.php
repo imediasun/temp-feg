@@ -31,7 +31,7 @@
 
 					<tr>
 						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Menufacturer', (isset($fields['mfg_id']['language'])? $fields['mfg_id']['language'] : array())) }}
+							{{ SiteHelpers::activeLang('Manufacturer', (isset($fields['mfg_id']['language'])? $fields['mfg_id']['language'] : array())) }}
 						</td>
 						<td>{{ $row[0]->vendor_name }} </td>
 

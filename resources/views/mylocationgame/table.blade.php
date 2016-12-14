@@ -138,31 +138,7 @@
                                          @endif
                                      @endif
 									 @endif
-
-									 @if($field['field'] == "date_in_service")
-											 {!! date("m/d/Y", strtotime($value)) !!}
-
-										 @elseif($field['field'] == 'date_shipped')
-
-											 {!! date("m/d/Y", strtotime($value)) !!}
-
-										 @elseif($field['field'] == 'date_last_move')
-
-											 {!! date("m/d/Y", strtotime($value)) !!}
-
-										 @elseif($field['field'] == 'last_edited_on')
-
-											 {!! date("m/d/Y H:i:s", strtotime($value)) !!}
-
-										 @elseif($field['field'] == 'date_sold')
-
-											 {!! date("m/d/Y", strtotime($value)) !!}
-
-										 @elseif($field['field'] == 'last_meter_date')
-
-											 {!! date("m/d/Y", strtotime($value)) !!}
-
-											 @elseif($field['field']=='location_num')
+											 @if($field['field']=='location_num')
 												 {!! $row->location_id !!}
 
 

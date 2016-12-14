@@ -134,6 +134,7 @@ class GamestitleController extends Controller
 
             $this->data['tableGrid'] = \SiteHelpers::showRequiredCols($this->data['tableGrid'], $this->data['config']);
         }// Render into template
+
         return view('gamestitle.table', $this->data);
 
     }
@@ -161,7 +162,7 @@ class GamestitleController extends Controller
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
 
         $this->data['id'] = $id;
-
+        $this->data['vendor_options']=$this->model->populateVendorsDropdown();
         return view('gamestitle.form', $this->data);
     }
 
@@ -233,24 +234,31 @@ class GamestitleController extends Controller
         ));
     }
 
-    function postSave(Request $request, $id = 0)
+    function postSave(Request $request, $id = null)
     {
-
-        $files = array('manual' => Input::file('manual'), 'bulletin' => Input::file('service_bulletin'));
         $rules = $this->validateForm();
         //  $rules['manual']='Not Required|mimes:pdf';
-        $rules["game_title"] = "required|unique:game_title";
-        // $rules['service_bulletin']='Not Required|mimes:pdf';
+          $rules['img']='mimes:jpeg,gif,png';
+        if($id == null) {
+            $rules["game_title"] = "unique:game_title";
+        }// $rules['service_bulletin']='Not Required|mimes:pdf';
+        else{
+            $rules["game_title"] = "";
+        }
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
-            if ($id == 0) {
+
                 $data = $this->validatePost('game_title');
-                $id = $this->model->insertRow($data, $request->input('id'));
-            } else {
-                $data = $this->validatePost('game_title');
-                $id = $this->model->insertRow($data, $id);
+            if($id != null )
+            {
+                unset($data['manual']);
+                unset($data['bulletin']);
+                unset($data['img']);
             }
+                $id = $this->model->insertRow($data, $id);
+
             $updates = array();
+            $manualFlag=false;$serviceFlag=false;$imgFlag=false;
             if ($request->hasFile('manual')) {
                 $file = $request->file('manual');
                 $filename = $file->getClientOriginalName();
@@ -259,6 +267,7 @@ class GamestitleController extends Controller
                 $destinationPath = './uploads/games/manuals';
                 $uploadSuccess = $request->file('manual')->move($destinationPath, $newfilename);
                 if ($uploadSuccess) {
+                    $manualFlag=true;
                     $updates['manual'] = $newfilename;
                     $updates['has_manual'] = '1';
                 }
@@ -271,11 +280,27 @@ class GamestitleController extends Controller
                 $destinationPath1 = './uploads/games/bulletins';
                 $uploadSuccess1 = $request->file('service_bulletin')->move($destinationPath1, $newfilename1);
                 if ($uploadSuccess1) {
+                    $serviceFlag=true;
                     $updates['bulletin'] = $newfilename1;
                     $updates['has_servicebulletin'] = '1';
                 }
             }
-            //   $this->model->insertRow($updates, $id);
+            if ($request->hasFile('img')) {
+                $img = $request->file('img');
+                $img_name = $img->getClientOriginalName();
+                $img_extension = $img->getClientOriginalExtension(); //if you need extension of the file
+                $img_new_name = $id . '.' . $img_extension;
+                $img_destinationPath = './uploads/games/images';
+                $img_uploadSuccess = $request->file('img')->move($img_destinationPath, $img_new_name);
+                if ($img_uploadSuccess) {
+                    $imgFlag=true;
+                    $updates['img'] = $img_new_name;
+
+                }
+            }
+            if($manualFlag || $serviceFlag || $imgFlag) {
+                $this->model->insertRow($updates, $id);
+            }
             return response()->json(array(
                 'status' => 'success',
                 'message' => \Lang::get('core.note_success')
@@ -453,16 +478,15 @@ class GamestitleController extends Controller
             die;
 
         }
-        // delete multipe rows
+        // delete an image.
         if (true) {
             $filename = public_path() . "\\uploads\\games\\images\\" . $id . ".jpg";
             if (\File::exists($filename)) {
-                \ File::delete($filename);
+                unlink($filename);
             }
-            return response()->json(array(
-                'status' => 'success',
-                'message' => \Lang::get('core.note_success_delete')
-            ));
+            \DB::update('update game_title set img="" where id='.$id);
+            return Redirect::to('gamestitle')->with('messagetext', \Lang::get('core.note_success_delete'))->with('msgstatus', 'success');
+
         } else {
             return response()->json(array(
                 'status' => 'error',

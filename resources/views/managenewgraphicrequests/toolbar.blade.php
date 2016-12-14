@@ -1,8 +1,8 @@
 <div class="row m-b">
 
     <div class="col-md-4" >
-        <br/>
-        <select name="type" class="select3" id="request_type">
+
+        <select name="type" class="select3" id="request_type" style="display:inline-block">
 
             <option disabled>Select Graphic Requests Type</option>
             <option value="open" selected> Open Graphics Requests </option>
@@ -11,8 +11,8 @@
 
     </div>
         @if($view=="open")
-            <div class="abc" id="number_requests">
-                <p style="color:red; padding-top: 22px; font-weight: bold">{{ $newGraphicsInfo['number_new_requests'] }} New **</p>
+            <div class="abc" id="number_requests" >
+                <p style="color:red;  font-weight: bold">{{ $newGraphicsInfo['number_new_requests'] }} New **</p>
             </div>
 
         @endif
@@ -61,6 +61,12 @@
     $("#request_type").on('change', function () {
 
         var request_type = $(this).val();
-        reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?view='+ request_type+ getFooterFilters());
+        var footer_filters=getFooterFilters();
+        if(footer_filters.indexOf('view') != -1)
+        {
+            footer_filters = footer_filters.replace( /view.*?&/, '' );
+        }
+
+        reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?view='+ request_type+ footer_filters);
     });
 </script>

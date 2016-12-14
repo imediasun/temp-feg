@@ -15,3 +15,4 @@ public/error_log
 /storage/qr/
 error_log
 laravel-2016-09-30.log
+web.config

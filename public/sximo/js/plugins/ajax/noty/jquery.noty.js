@@ -1,6 +1,6 @@
 /*!
  @package noty - jQuery Notification Plugin
- @version version: 2.3.1
+ @version version: 2.3.8
  @contributors https://github.com/needim/noty/graphs/contributors
 
  @documentation Examples and Documentation - http://needim.github.com/noty/
@@ -30,15 +30,10 @@
             if($.noty.themes[this.options.theme])
                 this.options.theme = $.noty.themes[this.options.theme];
             else
-                options.themeClassName = this.options.theme;
-
-            delete options.layout;
-            delete options.theme;
+                this.options.themeClassName = this.options.theme;
 
             this.options = $.extend({}, this.options, this.options.layout.options);
             this.options.id = 'noty_' + (new Date().getTime() * Math.floor(Math.random() * 1000000));
-
-            this.options = $.extend({}, this.options, options);
 
             // Build the noty dom initial structure
             this._build();
@@ -73,10 +68,11 @@
 
                 $.each(this.options.buttons, function(i, button) {
                     var $button = $('<button/>').addClass((button.addClass) ? button.addClass : 'gray').html(button.text).attr('id', button.id ? button.id : 'button-' + i)
+                        .attr('title', button.title)
                         .appendTo(self.$bar.find('.noty_buttons'))
-                        .on('click', function() {
+                        .on('click', function(event) {
                             if($.isFunction(button.onClick)) {
-                                button.onClick.call($button, self);
+                                button.onClick.call($button, self, event);
                             }
                         });
                 });
@@ -104,7 +100,7 @@
 
             self.$bar.addClass(self.options.layout.addClass);
 
-            self.options.layout.container.style.apply($(self.options.layout.container.selector));
+            self.options.layout.container.style.apply($(self.options.layout.container.selector), [self.options.within]);
 
             self.showing = true;
 
@@ -139,10 +135,19 @@
 
             if (typeof self.options.animation.open == 'string') {
                 self.$bar.css('height', self.$bar.innerHeight());
+                self.$bar.on('click',function(e){
+                    self.wasClicked = true;
+                });
                 self.$bar.show().addClass(self.options.animation.open).one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function() {
                     if(self.options.callback.afterShow) self.options.callback.afterShow.apply(self);
                     self.showing = false;
                     self.shown = true;
+                    if(self.hasOwnProperty('wasClicked')){
+                        self.$bar.off('click',function(e){
+                            self.wasClicked = true;
+                        });
+                        self.close();
+                    }
                 });
 
             } else {
@@ -182,8 +187,6 @@
                 );
                 return;
             }
-
-            this.$bar.dequeue();
 
             if(!this.shown && !this.showing) { // If we are still waiting in the queue just delete from queue
                 var queue = [];
@@ -229,7 +232,7 @@
             // Modal Cleaning
             if(self.options.modal) {
                 $.notyRenderer.setModalCount(-1);
-                if($.notyRenderer.getModalCount() == 0) $('.noty_modal').fadeOut('fast', function() {
+                if($.notyRenderer.getModalCount() == 0) $('.noty_modal').fadeOut(self.options.animation.fadeSpeed, function() {
                     $(this).remove();
                 });
             }
@@ -346,7 +349,7 @@
         if($.type(instance) === 'object') {
             if(instance.options.dismissQueue) {
                 if(instance.options.maxVisible > 0) {
-                    if($(instance.options.layout.container.selector + ' li').length < instance.options.maxVisible) {
+                    if($(instance.options.layout.container.selector + ' > li').length < instance.options.maxVisible) {
                         $.notyRenderer.show($.noty.queue.shift());
                     }
                     else {
@@ -407,7 +410,7 @@
             if(notification.options.theme.modal && notification.options.theme.modal.css)
                 modal.css(notification.options.theme.modal.css);
 
-            modal.prependTo($('body')).fadeIn('fast');
+            modal.prependTo($('body')).fadeIn(notification.options.animation.fadeSpeed);
 
             if($.inArray('backdrop', notification.options.closeWith) > -1)
                 modal.on('click', function(e) {
@@ -501,7 +504,8 @@
             open  : {height: 'toggle'},
             close : {height: 'toggle'},
             easing: 'swing',
-            speed : 500
+            speed : 500,
+            fadeSpeed: 'fast',
         },
         timeout     : false,
         force       : false,
@@ -532,5 +536,5 @@
 
     // Helpers
     window.noty = function noty(options) {
-        return jQuery.notyRenderer.init(options);
+        return $.notyRenderer.init(options);
     };

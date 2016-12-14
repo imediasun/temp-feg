@@ -1626,11 +1626,11 @@ class SiteHelpers
 
     static function getDateDiff($first, $second)
     {
-        $datetime1 = new DateTime(($first));
+        $datetime1 = new DateTime($first);
         $datetime2 = new DateTime($second);
         if ($second != 00 && $first != 00) {
-            $interval = $datetime2->diff($datetime1);
-            $days = $interval->format('%y-,%m-, %d');
+            $interval = $datetime1->diff($datetime2);
+            $days = $interval->format("%a");
             echo $days;
         } else {
             echo "N/A";

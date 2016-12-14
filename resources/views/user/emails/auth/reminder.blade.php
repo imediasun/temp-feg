@@ -7,7 +7,12 @@
 		<h2>Password Reset</h2>
 
 		<div>
-			To reset your password, complete this form: {{ URL::to('user/reset', array($token)) }}.
+            @if(isset($token))
+			To reset your password, complete this form: {{ URL::to('user/reset?token='.$token) }}.
+                @elseif(isset($id))
+            To reset your password, complete this form: {{ URL::to('user/reset?id='.$id) }}.
+                @else
+                @endif
 		</div>
 	</body>
 </html>

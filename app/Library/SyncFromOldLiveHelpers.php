@@ -1,14 +1,16 @@
 <?php
+
 namespace App\Library;
 
 use PDO;
 use DB;
 use App\Library\MyLog;
 
-class SyncHelpers
-{    
+class SyncFromOldLiveHelpers
+{  
     private static $L;
     private static $limit = 1000;
+    
     public static function _livesync() {
         
         self::$L->log("Start Earnings Sync");
@@ -219,5 +221,4 @@ class SyncHelpers
         return $hasMore;
         
     }
-
 }

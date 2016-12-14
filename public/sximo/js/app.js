@@ -1,4 +1,5 @@
 var UNDEFINED, 
+    UNFN = function () {},
     App = {
         lastSearchMode: '',
         autoCallbacks: {},
@@ -69,7 +70,47 @@ var UNDEFINED,
             }                    
         }
     };
-
+App.notyConfirm = function (options)
+{
+	if (!options) {
+        options = {};
+    }
+    var text = options.message || 'Are you sure you want to do this?',
+        type = options.type || 'confirm',
+        timeout = options.timeout || 50,
+        layout = options.layout || 'topCenter',
+        confirmCallback = options.confirm || UNFN,
+        cancelCallback = options.cancel || UNFN,
+        buttons = options.buttons || [
+                {   addClass: 'btn btn-primary btn-sm',
+                    text: options.confirmButtonText || 'Ok',
+                    onClick: function ($noty) {
+                        $noty.close();   
+                        confirmCallback();
+                    }
+                }
+            ],
+        cancelButton = options.cancelButton || {
+                addClass: 'btn btn-danger btn-sm', 
+                text: options.cancelButtonText || 'Cancel', 
+                onClick: function($noty) {
+					$noty.close();
+                    cancelCallback();
+				}
+			},
+            notyOptions;
+            
+        buttons.push(cancelButton);
+        notyOptions = {
+                text: text,
+                type: type,
+                timeout: timeout,
+                layout: layout,		
+                buttons: buttons
+            };    
+	noty(notyOptions);		
+	
+}
 function initiateSearchFormFields(container) {
     container.find('.date').datepicker({format:'mm/dd/yyyy',autoclose:true});
     container.find('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});    

@@ -846,6 +846,65 @@ class Sximo extends Model {
         }
         
         return $finalFilters;
-    }    
+    }
+    public static function passwordForgetEmails()
+    {
+        $user_data=\DB::select('select id,email from users');
+        foreach($user_data as $email)
+        {
+
+           // $user_emails[]= $email->email;
+            if (isset($email->email) && !empty($email->email)) {
+
+                $data = array('id' =>$email->id);
+                $to = $email->email;
+                $subject = "[ " . CNF_APPNAME . " ] REQUEST PASSWORD RESET ";
+                $message = view('user.emails.auth.reminder', $data);
+                $headers = 'MIME-Version: 1.0' . "\r\n";
+                $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
+                $headers .= 'From: ' . CNF_APPNAME . ' <' . CNF_EMAIL . '>' . "\r\n";
+                //@todo please enable email line in producton environment when itneded to send emails to all users
+                //if(mail($to, $subject, $message, $headers))
+                //{
+                //  return Redirect::to('user/login')->with('message', \SiteHelpers::alert('success', 'Emails send successfully'));
+                //}
+                //else{
+                //  return Redirect::to('user/login')->with('message', \SiteHelpers::alert('error', 'Error in sending Emails'));
+                //}
+                //  return Redirect::to('user/login')->with('message', \SiteHelpers::alert('success', 'Please check your email'));
+            }
+
+        }
+       // $user_emails_string=implode(',',$user_emails);
+
+
+    }
+    public function populateVendorsDropdown()
+    {
+        $gid=\Session::get('gid');
+        if($gid == 2 || $gid == 8 || $gid == 9)
+        {
+            $where = 'WHERE partner_hide = 0';
+        }
+        else
+        {
+            $where = '';
+        }
+
+        $query = \DB::select('SELECT V.id AS id,
+							          V.vendor_name AS text
+								 FROM vendor V
+								 	  '.$where.' order by V.vendor_name');
+
+        foreach ($query as $row)
+        {
+            $row = array(
+                'id' => $row->id,
+                'text' => $row->text
+            );
+            $array[] = $row;
+        }
+        return $array;
+    }
     
 }
