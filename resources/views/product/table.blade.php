@@ -250,8 +250,8 @@ $(document).ready(function() {
     $("[id^='toggle_trigger_']").bootstrapSwitch();
 	$('.tips').tooltip();
 	$('input[type="checkbox"],input[type="radio"]').not('.test').iCheck({
-		checkboxClass: 'icheckbox_square-green',
-		radioClass: 'iradio_square-green',
+		checkboxClass: 'icheckbox_square-blue',
+		radioClass: 'iradio_square-blue',
 	});	
 	$('#{{ $pageModule }}Table .checkall').on('ifChecked',function(){
 		$('#{{ $pageModule }}Table input[type="checkbox"]').iCheck('check');

@@ -34,21 +34,20 @@ width: 75%">
 </div>
 
     <div class="col-md-6">
-        {!! Form::open(array('url'=>'product/listcsv', 'class'=>'form-horizontal','files' => true ,
-        'parsley-validate'=>'','novalidate'=>' ')) !!}
+        {!! Form::open(array('url'=>'product/listcsv', 'class'=>'form-horizontal','files' => true)) !!}
         <div class="col-md-2"><h3> Export </h3></div>
         <div class="col-md-6">
             <select name='vendor_id' rows='5' id='vendor_id' class='select3'></select>
         </div>
         <div class="col-md-2">
-            <button type="submit" class="btn btn-primary">Export To CSV</button>
+            <button disabled id="submit-btn" type="submit" class="btn btn-primary">Export To CSV</button>
         </div>
 
 
         {!! Form::close() !!}
     </div>
     <div class="row m-b" style=" margin-bottom: 10px !important; margin-left:0px; margin-right:0px;  margin-top: 35px !important;">
-        <div class="col-md-8">
+        <div class="col-md-9">
             @if($access['is_add'] ==1)
                 {!! AjaxHelpers::buttonActionCreate($pageModule,$setting) !!}
                 <a href="javascript://ajax" class="btn btn-sm btn-white"
@@ -74,13 +73,18 @@ width: 75%">
                                     @endif value={{ $configs['config_id'] }}> {{ $configs['config_name'] }}   </option>
                         @endforeach
                     </select>
-                @endif
+                        @if(\Session::get('uid') ==  \SiteHelpers::getConfigOwner($config_id))
+                            <a id="edit-cols" href="{{ URL::to('tablecols/arrange-cols/'.$pageModule.'/edit') }}" class="btn btn-sm btn-white tips"
+                               onclick="SximoModal(this.href,'Column Selector'); return false;" title="Edit Arrange">  <i class="fa fa-pencil-square-o"></i></a>
+                            <button id="delete-cols" href="{{ URL::to('tablecols/arrange-cols/'.$pageModule.'/delete') }}" class="btn btn-sm btn-white tips" title="Clear Arrange">  <i class="fa fa-trash-o"></i></button>
+                        @endif
+                    @endif
             @endif
         </div>
 
 
 
-        <div class="col-md-4 ">
+        <div class="col-md-3 ">
             <?php
             $isExcel = isset($access['is_excel']) && $access['is_excel'] == 1;
             $isCSV = isset($access['is_csv'])  ? ($access['is_csv'] == 1) : $isExcel;
@@ -131,6 +135,29 @@ width: 75%">
             $("#vendor_id").jCombo("{{ URL::to('product/comboselect?filter=vendor:id:vendor_name') }}",
                     {selected_value: '', initial_text: '--- Select Vendor ---'});
             $(".select3").select2({width: "98%"});
+            var config_id=$("#col-config").val();
+            if(config_id ==0 )
+            {
+                $('#edit-cols,#delete-cols').hide();
+            }
+            else
+            {
+                $('#edit-cols,#delete-cols').show();
+            }
+            if ($("#private").is(":checked")) {
+                $('#groups').hide();
+            }
+            else{
+                $('#groups').show();
+            }
+        });
+        $("#public,#private").change(function () {
+            if ($("#public").is(":checked")) {
+                $('#groups').show();
+            }
+            else {
+                $('#groups').hide();
+            }
         });
         $("#col-config").on('change', function () {
             reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?config_id=' + $("#col-config").val()+ getFooterFilters());
@@ -176,5 +203,44 @@ width: 75%">
             //alert(url);
             reloadData('#{{ $pageModule }}', url);
         });
+        $('#vendor_id').change(function(){
+            if($(this).val())
+            {
+                $('#submit-btn').enable();
+            }
+        });
+        $('#delete-cols').click(function(){
+            if(confirm('Are You Sure, You want to delete this Columns Arrangement?')) {
+                showRequest();
+                var module = "{{ $pageModule }}";
+                var config_id = $("#col-config").val();
+                $.ajax(
+                        {
+                            method: 'get',
+                            data: {module: module, config_id: config_id},
+                            url: '{{ url() }}/tablecols/delete-config',
+                            success: function (data) {
+                                showResponse(data);
+                            }
+                        }
+                );
+            }
+        });
+        function showRequest() {
+            $('.ajaxLoading').show();
+        }
+        function showResponse(data) {
+
+            if (data.status == 'success') {
+                ajaxViewClose('#{{ $pageModule }}');
+                ajaxFilter('#{{ $pageModule }}', '{{ $pageUrl }}/data');
+                notyMessage(data.message);
+                $('#sximo-modal').modal('hide');
+            } else {
+                notyMessageError(data.message);
+                $('.ajaxLoading').hide();
+                return false;
+            }
+        }
     </script>
 </div>

@@ -50,6 +50,7 @@ class SbticketController extends Controller
         $this->data['module_id'] = $module_id;
         if (Input::has('config_id')) {
             $config_id = Input::get('config_id');
+            \Session::put('config_id',$config_id);
         } elseif (\Session::has('config_id')) {
             $config_id = \Session::get('config_id');
         } else {
@@ -411,6 +412,8 @@ class SbticketController extends Controller
         foreach ($data as $index => $value) {
             $data[$index] = implode(',', $data[$index]);
         }
+        $data = $this->filterPermissions($data);
+
         $sbticketsetting = new SbticketSetting();
         $id = $sbticketsetting->insertRow($data, 1);
 
@@ -440,4 +443,14 @@ class SbticketController extends Controller
         $this->data['access'] = $this->access;
         return view('sbticket.setting', $this->data);
     }
+    protected function filterPermissions($data){
+        $cols = \App\Models\Sximo::getColumnTable('sbticket_setting');
+        unset($cols["id"]);unset($cols["updated_at"]);
+        foreach ($cols as $col => $value){
+            if(!array_key_exists($col,$data))
+                    $data[$col]="";
+        }
+        return $data;
+    }
+
 }

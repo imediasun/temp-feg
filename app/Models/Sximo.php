@@ -128,7 +128,7 @@ class Sximo extends Model {
 
     public  function insertRow($data, $id) {
 
-        $timestampTables = array('vendor','products','orders', 'departments');
+        $timestampTables = array('vendor','products','orders', 'departments', 'system_email_report_manager');
         $table = with(new static)->table;
         $key = with(new static)->primaryKey;
         if ($id == NULL) {
@@ -884,11 +884,11 @@ class Sximo extends Model {
         $gid=\Session::get('gid');
         if($gid == 2 || $gid == 8 || $gid == 9)
         {
-            $where = 'WHERE partner_hide = 0';
+            $where = 'WHERE V.partner_hide = 0 and V.isgame = 1';
         }
         else
         {
-            $where = '';
+            $where = 'Where V.isgame = 1';
         }
 
         $query = \DB::select('SELECT V.id AS id,

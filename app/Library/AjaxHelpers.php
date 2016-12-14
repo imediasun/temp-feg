@@ -154,7 +154,7 @@ class AjaxHelpers
 		if($access['is_detail'] ==1) {
 			if($setting['view-method'] != 'expand')
 			{
-				$onclick = " onclick=\"ajaxViewDetail('#".$module."',this.href); return false; \"" ;
+				$onclick = " onclick=\"ajaxViewDetail('#".preg_replace('/\/?[^\/]+?\//', '', $module)."',this.href); return false; \"" ;
 				if($setting['view-method'] =='modal')
 						$onclick = " onclick=\"SximoModal(this.href,'View Detail'); return false; \"" ;
 				$html .= '<a href="'.URL::to($url.'/show/'.$id).'" '.$onclick.' class="btn btn-xs btn-white tips" title="'.Lang::get('core.btn_view').'"><i class="fa fa-search"></i></a>';
@@ -163,7 +163,7 @@ class AjaxHelpers
                 if($edit == null)
                 {
 		if($access['is_edit'] ==1) {
-			$onclick = " onclick=\"ajaxViewDetail('#".$module."',this.href); return false; \"" ;
+			$onclick = " onclick=\"ajaxViewDetail('#".preg_replace('/\/?[^\/]+?\//', '', $module)."',this.href); return false; \"" ;
 			if($setting['form-method'] =='modal')
 					$onclick = " onclick=\"SximoModal(this.href,'Edit Form'); return false; \"" ;			
 			
@@ -180,7 +180,7 @@ class AjaxHelpers
 		if($access['is_detail'] ==1) {
 			if($setting['view-method'] != 'expand')
 			{
-				$onclick = " onclick=\"ajaxViewDetail('#".$module."',this.href); return false; \"" ;
+				$onclick = " onclick=\"ajaxViewDetail('#".preg_replace('/\/?[^\/]+?\//', '', $module)."',this.href); return false; \"" ;
 				if($setting['view-method'] =='modal')
 					$onclick = " onclick=\"SximoModal(this.href,'View Detail'); return false; \"" ;
 				$html .= '<a href="'.URL::to($module.'/show/'.$id).'" '.$onclick.' class="btn btn-xs btn-white tips" title="'.Lang::get('core.btn_view').'"><i class="fa fa-search"></i></a>';
@@ -189,7 +189,7 @@ class AjaxHelpers
 		if($edit == null)
 		{
 			if($access['is_edit'] ==1) {
-				$onclick = " onclick=\"ajaxViewDetail('#".$module."',this.href); return false; \"" ;
+				$onclick = " onclick=\"ajaxViewDetail('#".preg_replace('/\/?[^\/]+?\//', '', $module)."',this.href); return false; \"" ;
 				if($setting['form-method'] =='modal')
 					$onclick = " onclick=\"SximoModal(this.href,'Edit Form'); return false; \"" ;
 
@@ -215,7 +215,7 @@ class AjaxHelpers
 	static public function buttonActionCreate( $module  ,$method = 'newpage',$title=null)
 	{
 
-		$onclick = " onclick=\"ajaxViewDetail('#".$module."',this.href); return false; \"" ;
+		$onclick = " onclick=\"ajaxViewDetail('#".preg_replace('/\/?[^\/]+?\//', '', $module)."',this.href); return false; \"" ;
 		if($method['form-method'] =='modal')
 				$onclick = " onclick=\"SximoModal(this.href,'Create Detail'); return false; \"" ;
 

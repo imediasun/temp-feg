@@ -22,7 +22,7 @@ class gamesintransit extends Sximo
                IF(game.location_id = 0, '<em style=\"color:red\">IN TRANSIT</em>', L1.location_name_short), CONCAT(L1.id,' | ',L1.location_name_short) as location,
                IF(game.intended_first_location IS NULL, '<em style=\"color:red\">Check Notes to Confirm</em>', CONCAT(L3.id, ' | ',L3.location_name_short)) as intended_first_location,T.img,
                IF(T.game_title LIKE '%*TEST*%','', CONCAT('../qr/',game.id,'.png')),If(L2.id IS NULL, 'NEW GAME' , CONCAT(L2.id,' | ',L2.location_name_short)) ,
-               game_status.game_status,If(Y.game_type IS NULL, '' , Y.game_type) ,If(V.vendor_name IS NULL, '' , V.vendor_name)
+               game_status.game_status,If(Y.game_type IS NULL, '' , Y.game_type) ,If(V.vendor_name IS NULL, '' , V.vendor_name),T.game_type_id,T.img
                From game
                LEFT JOIN location L1 ON (game.location_id = L1.id)
 			   LEFT JOIN location L2 ON (game.prev_location_id = L2.id)

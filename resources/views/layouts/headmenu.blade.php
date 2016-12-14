@@ -2,8 +2,9 @@
 
     <nav style="margin-bottom: 0;" role="navigation" class="navbar navbar-static-top nav-inside">
         <div class="navbar-header">
-            <a href="javascript:void(0)" class="navbar-minimalize minimalize-btn btn btn-primary "><i
+            <a href="javascript:void(0)" class="navbar-minimalize minimalize-btn btn  silver-btn "><i
                         class="fa fa-bars"></i> </a>
+            <span class="navbar-minimalize minimalize-btn text-gray page-title">@if(isset($pageTitle)){{ $pageTitle }}@endif</span>
         </div>
         <ul class="nav navbar-top-links navbar-right">
                 <li >
@@ -56,7 +57,10 @@
                         <li class="divider"></li>
                         <li><a href="{{ URL::to('feg/system/tasks')}}"><i
                                         class="fa fa-tasks"></i> {{ Lang::get('core.m_taskspage')}}</a></li>
-                        <!--<li><a href="{{ URL::to('feg/system/emails')}}"><i class="fa fa-envelope-o"></i> {{ Lang::get('core.m_scheduledemails')}}</a></li>-->
+                        <li><a href="{{ URL::to('feg/system/systememailreportmanager')}}">
+                                <i class="fa fa-envelope-o"></i>
+                                {{ Lang::get('core.m_systememailreportmanager')}}
+                        </a></li>
                         <li class="divider"></li>
                         <li><a href="{{ URL::to('feg/module')}}"><i
                                         class="fa fa-cogs"></i> {{ Lang::get('core.m_codebuilder') }}</a></li>

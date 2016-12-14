@@ -364,7 +364,7 @@ $commentsCount =  $comments->count();
 		$("#department_id").jCombo("{{ URL::to('sbticket/comboselect?filter=departments:id:name') }}",
 				{  selected_value : '{{ $row["department_id"] }}' });
 
-		$("#assign_to").jCombo("{{ URL::to('sbticket/comboselect?filter=employees:id:first_name|last_name') }}",
+		$("#assign_to").jCombo("{{ URL::to('sbticket/comboselect?filter=users:id:first_name|last_name') }}",
 				{  selected_value : '{{ $row["assign_to"] }}' });
 
 
@@ -375,8 +375,8 @@ $commentsCount =  $comments->count();
 		$('.date').datepicker({format:'mm/dd/yyyy',autoClose:true})
 		$('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});
 		$('input[type="checkbox"],input[type="radio"]').iCheck({
-			checkboxClass: 'icheckbox_square-green',
-			radioClass: 'iradio_square-green',
+			checkboxClass: 'icheckbox_square-blue',
+			radioClass: 'iradio_square-blue',
 		});
 		$('.removeCurrentFiles').on('click',function(){
 			var removeUrl = $(this).attr('href');

@@ -463,12 +463,11 @@ class ReportHelpers
         $dateEnd_ymd = self::dateify($dateEnd);
         $Q = "SELECT 
                 E.id,
-                G.id as game_id,
-                G.location_id,
+                E.game_id,
                 L.location_name_short as location_name,
                 E.debit_type_id,
                 D.company as debit_system,
-                G.game_title_id,
+                E.game_title_id,
                 T.game_title as game_name,
                 if(G.test_piece = 1, 'Yes', 'No') as game_on_test,
                 G.not_debit as game_not_debit,
@@ -480,25 +479,18 @@ class ReportHelpers
                 '$dateStart' as date_start,
                 '$dateEnd_ymd' as date_end,
 
-                IF(E.debit_type_id = 1,(SUM(E.std_card_credit) + SUM(E.std_card_credit_bonus) + SUM(E.courtesy_plays)),SUM(E.std_plays)) as total_plays, 
-                SUM(E.std_actual_cash) as actual_cash, 
-                IF(E.debit_type_id = 1,SUM(E.std_card_credit * 1),SUM(E.std_card_dollar)) as card_cash,
-                IF(E.debit_type_id = 1,SUM(E.std_card_credit_bonus * 1),SUM(E.std_card_dollar_bonus)) as card_bonus,
-                IF(E.debit_type_id = 1,(SUM(E.std_actual_cash)+
-								SUM(E.std_card_credit * 1)+
-								SUM(E.std_card_credit_bonus * 1)
-							),
-							   (SUM(E.std_actual_cash)+
-								SUM(E.std_card_dollar)+
-								SUM(E.std_card_dollar_bonus))
-							) as card_total,
+                E.location_id,
+                SUM(E.total_plays) as total_plays, 
+                SUM(E.actual_cash) as actual_cash, 
+                SUM(E.card_cash) as card_cash,
+                SUM(E.card_bonus) as card_bonus,
+                SUM(E.actual_cash)+SUM(E.card_cash)+SUM(E.card_bonus) as card_total,
                 SUM(E.time_plays) as time_plays,
                 SUM(E.product_plays) as product_plays,
-                ROUND(SUM(E.product_plays * (E.std_card_dollar / E.std_plays)),2)  as product_notional_value,
+                SUM(E.product_notional_value) as product_notional_value,
                 SUM(E.courtesy_plays) as courtesy_plays,
-                SUM(E.product_plays + E.courtesy_plays) as product_and_courtesy_plays,
-                SUM(CASE WHEN E.debit_type_id = 1 THEN E.total_notional_value ELSE E.std_actual_cash END
-                    ) as grand_total
+                SUM(E.product_and_courtesy_plays) as product_and_courtesy_plays,
+                SUM(E.grand_total) as grand_total
                 
                 ";
         
@@ -529,24 +521,12 @@ class ReportHelpers
             $dateEnd = self::dateify($dateEnd);
         } 
         
-        $gameEarningsJOIN = "SELECT * from game_earnings WHERE 
-            game_id <>0 AND date_start >= '$dateStart' AND date_start <= '$dateEnd 23:59:59' ";
-        if (!empty($gameId)) {
-            $gameEarningsJOIN .= " AND game_id IN ($gameId) ";
-        }        
-        if (!empty($location)) {
-            $gameEarningsJOIN .= " AND loc_id IN ($location) ";
-        }
-        if (!empty($debit)) {
-            $gameEarningsJOIN .= " AND debit_type_id IN ($debit) ";
-        }        
-        
         $Q = "
-            FROM game G
-            LEFT JOIN ($gameEarningsJOIN) E ON G.id = E.game_id
-            LEFT JOIN game_title T ON T.id = G.game_title_id
+            FROM report_game_plays E
+            LEFT JOIN game G ON G.id = E.game_id
+            LEFT JOIN game_title T ON T.id = E.game_title_id
             LEFT JOIN game_type Y ON Y.id = T.game_type_id
-            LEFT JOIN location L ON L.id = G.location_id
+            LEFT JOIN location L ON L.id = E.location_id
             LEFT JOIN debit_type D ON D.id = E.debit_type_id   
                 WHERE E.game_id <> 0 AND G.not_debit = 0 ";
                      
@@ -557,12 +537,12 @@ class ReportHelpers
             $Q .= " AND G.id IN ($gameId) ";
         }
 
-//        if (!empty($dateStart)) {
-//            $Q .= " AND E.date_start >= '$dateStart' ";
-//        }        
-//        if (!empty($dateEnd)) {
-//            $Q .= " AND E.date_start <= '$dateEnd 23:59:59' ";
-//        }        
+        if (!empty($dateStart)) {
+            $Q .= " AND E.date_played >= '$dateStart' ";
+        }        
+        if (!empty($dateEnd)) {
+            $Q .= " AND E.date_played <= '$dateEnd 23:59:59' ";
+        }        
         if (!empty($location)) {
             $Q .= " AND L.id IN ($location) ";
         }
@@ -582,7 +562,7 @@ class ReportHelpers
         }
         
         // GROUP BY
-        $Q .= " GROUP BY G.id, L.id ";
+        $Q .= " GROUP BY E.game_id, E.location_id ";
         
         return $Q;
     }
@@ -595,8 +575,7 @@ class ReportHelpers
         $count = self::getCountFromQuery($Q);
         return $count;          
     }
-        
-    
+           
     public static function getGamesNotPlayedQuery($dateStart, $dateEnd, $location = "", 
             $debit = "", $gameType = "", $gameCat = "all", $onTest = "", 
             $gameId = "", $gameTitleId= "", $sortby = "date_start", $order = ""){
@@ -656,7 +635,8 @@ class ReportHelpers
             LEFT JOIN debit_type D ON D.id = L.debit_type_id   
             LEFT JOIN game_title T ON T.id = E.game_title_id
             LEFT JOIN game_type Y ON Y.id = E.game_type_id
-                WHERE E.game_id <> 0  AND E.game_not_debit = 0 AND E.report_status = 0 AND E.record_status = 1 ";
+                WHERE E.game_id <> 0  AND E.game_not_debit = 0 
+                AND E.report_status = 0 AND E.record_status = 1 ";
                      
         if (!empty($gameTitleId)) {
             $Q .= " AND E.game_title_id IN ($gameTitleId) ";
@@ -796,13 +776,137 @@ class ReportHelpers
     {
     }    
     public static function getLocationsReportingQuery() {
-    }    
-    public static function getGamesNotOnDebitCardQuery()
+    }   
+    
+    public static function getGamesOnTestRankQuery($dateStart, $dateEnd, 
+            $location = "", $debit = "", $sortby = "game_total", $order = "desc")
     {
+        
+        $Q = "SELECT 
+            E.id, 
+            E.game_id, 
+            L.id as location_id, 
+            L.location_name_short as location_name,
+            L.debit_type_id,
+            D.company as debit_system,
+            E.game_title_id, 
+            T.game_title as game_name,                 
+            sum(IFNULL(E.game_revenue,0)) AS game_total ";            
+        
+        $Q .= "FROM report_game_plays E
+                LEFT JOIN location L ON L.id = E.location_id
+                LEFT JOIN debit_type D ON D.id = E.debit_type_id   
+                LEFT JOIN game_title T ON T.id = E.game_title_id
+                
+                WHERE E.game_id <> 0 
+                AND E.game_on_test = 1
+                AND E.report_status = 1 
+                AND E.record_status = 1
+                AND E.date_played >= '$dateStart' 
+                AND E.date_played <= '$dateEnd'";
+        
+        if (!empty($location)) {
+            $Q .= " AND L.id IN ($location)";
+        }
+        if (!empty($debit)) {
+            $Q .= " AND D.id IN ($debit)";
+        }
+        $Q .= " Group By E.game_id";
+        
+        // ORDER BY
+        $sortbys = array(
+        );
+        if (!empty($sortbys[$sortby])) {
+            $sortby = $sortbys[$sortby];
+        }        
+        $sortbyQuery = self::orderify($sortby, $order);
+        $Q .= $sortbyQuery; 
+        
+        return $Q;
     }
-    public static function getExcludedReadersQuery()
+    
+    public static function getGamesNotOnDebitCardQuery($location = "")
     {
+        $locationQuery = "";            
+        if (!empty($location)) {
+            $locationQuery = " AND game.location_id IN ($location) "; 
+        }
+        
+        $sqlFields = "game.id, 
+                   game.game_name, 
+                   game.game_title_id,
+                   game_title.game_title, 
+                   game.location_id,
+                   location.location_name_short as location_name,
+                   location.debit_type_id,
+                   debit_type.company as debit_system,
+                   game.not_debit_reason,
+                   game.not_debit,
+                   game.sold";
+        
+        $sql = "SELECT $sqlFields 
+                FROM game 
+                LEFT JOIN game_title ON game_title.id = game.game_title_id
+                LEFT JOIN location ON location.id = game.location_id
+                LEFT JOIN debit_type ON debit_type.id = location.debit_type_id
+                WHERE game.not_debit = 1 AND game.sold = 0 
+                AND location.reporting = 1 
+                $locationQuery";
+        
+        return $sql;
     }
+    public static function getExcludedReadersQuery($location = "")
+    {
+        $locationQuery = "";            
+        if (!empty($location)) {
+            $locationQuery = " AND reader_exclude.loc_id IN ($location) "; 
+        }
+        
+        $sqlFields = "reader_exclude.id, 
+                    reader_exclude.loc_id AS location_id,
+                    location.location_name_short as location_name, 
+                    reader_exclude.debit_type_id, 
+                    debit_type.company AS debit_type,
+                    reader_exclude.reader_id,
+                    reader_exclude.reason";
+        
+        $sql = "SELECT $sqlFields 
+                FROM reader_exclude 
+                LEFT JOIN debit_type ON debit_type.id = reader_exclude.debit_type_id
+                LEFT JOIN location ON location.id = reader_exclude.loc_id
+                WHERE reader_exclude.loc_id <> 0 $locationQuery";
+        
+        return $sql;        
+    }
+    
+    public static function getRetrySyncStatusQuery($adjustment_date = null, $location = "") {
+        $q = "SELECT GA.date_start, GA.loc_id, L.debit_type_id, GA.status, GA.notes, GA.adjustment_date
+            FROM game_earnings_transfer_adjustments GA 
+            LEFT JOIN location L ON L.id=GA.loc_id
+            WHERE 
+            GA.status = 1 ";
+        if (!empty($location)) {
+            $q .= " AND GA.loc_id IN ($location) ";
+        }
+        if (!empty($adjustment_date)) {
+            $q .= " OR GA.adjustment_date = '$adjustment_date' ";
+        }
+        $q .= " ORDER BY GA.date_start DESC";
+        return $q;
+    }
+    public static function getRetrySyncSuccessQuery($adjustment_date = null) {
+        $q = "SELECT date_start, loc_id, status, notes, adjustment_date
+            FROM game_earnings_transfer_adjustments 
+            WHERE status = 0 AND notes='ADJUSTED' ";
+        if (!empty($adjustment_date)) {
+            $q .= " AND adjustment_date = '$adjustment_date' ";
+        }
+        $q .= " ORDER BY date_start ASC";
+        return $q;
+    }
+    
+    
+    
     public static function getAdjustmentsQuery()
     {
     }    
@@ -1150,4 +1254,148 @@ class ReportHelpers
         return $lastDate;
     }    
    
+    /* depriacated functions */
+    
+        
+    
+    public static function getGamePlayQuery_v1($dateStart, $dateEnd, $location = "", 
+            $debit = "", $gameType = "", $gameCat = "all", $onTest = "", 
+            $gameId = "", $gameTitleId= "", $sortby = "date_start", $order = ""){
+        extract(self::getGameCategoryDetails($gameCat));  
+        $dateEnd_ymd = self::dateify($dateEnd);
+        $Q = "SELECT 
+                E.id,
+                G.id as game_id,
+                G.location_id,
+                L.location_name_short as location_name,
+                E.debit_type_id,
+                D.company as debit_system,
+                G.game_title_id,
+                T.game_title as game_name,
+                if(G.test_piece = 1, 'Yes', 'No') as game_on_test,
+                G.not_debit as game_not_debit,
+                Y.id as game_type_id,
+                Y.game_type,
+                '$gameCat' AS game_cat_id,
+                '$game_category' AS game_category,                
+
+                '$dateStart' as date_start,
+                '$dateEnd_ymd' as date_end,
+
+                IF(E.debit_type_id = 1,(SUM(E.std_card_credit) + SUM(E.std_card_credit_bonus) + SUM(E.courtesy_plays)),SUM(E.std_plays)) as total_plays, 
+                SUM(E.std_actual_cash) as actual_cash, 
+                IF(E.debit_type_id = 1,SUM(E.std_card_credit * 1),SUM(E.std_card_dollar)) as card_cash,
+                IF(E.debit_type_id = 1,SUM(E.std_card_credit_bonus * 1),SUM(E.std_card_dollar_bonus)) as card_bonus,
+                IF(E.debit_type_id = 1,(SUM(E.std_actual_cash)+
+								SUM(E.std_card_credit * 1)+
+								SUM(E.std_card_credit_bonus * 1)
+							),
+							   (SUM(E.std_actual_cash)+
+								SUM(E.std_card_dollar)+
+								SUM(E.std_card_dollar_bonus))
+							) as card_total,
+                SUM(E.time_plays) as time_plays,
+                SUM(E.product_plays) as product_plays,
+                ROUND(SUM(E.product_plays * (E.std_card_dollar / E.std_plays)),2)  as product_notional_value,
+                SUM(E.courtesy_plays) as courtesy_plays,
+                SUM(E.product_plays + E.courtesy_plays) as product_and_courtesy_plays,
+                SUM(CASE WHEN E.debit_type_id = 1 THEN E.total_notional_value ELSE E.std_actual_cash END
+                    ) as grand_total
+                
+                ";
+        
+        $Q .= self::_getGamePlayQuery($dateStart, $dateEnd, $location, $debit, 
+                $gameType, $gameCat, $onTest, $gameId, $gameTitleId);    
+        // ORDER BY
+        $sortbys = array(            
+        );
+        if (!empty($sortbys[$sortby])) {
+            $sortby = $sortbys[$sortby];
+        }        
+        $sortbyQuery = self::orderify($sortby, $order);
+        $Q .= $sortbyQuery;        
+
+        $L = new MyLog("game-play-detailed.log", "uireports", "UIReports");
+        $L->log("Query", $Q);
+       return $Q;          
+    }
+    public static function _getGamePlayQuery_v1($dateStart, $dateEnd, $location = "", 
+            $debit = "", $gameType = "", $gameCat = "all", $onTest = "", 
+            $gameId = "", $gameTitleId= ""){
+        extract(self::getGameCategoryDetails($gameCat));
+        $gameTypeIds = self::mergeGameTypeAndCategories($gameType, $game_category_type);        
+        if (!empty($dateStart)) {
+            $dateStart = self::dateify($dateStart);
+        }
+        if (!empty($dateEnd)) {
+            $dateEnd = self::dateify($dateEnd);
+        } 
+        
+        $gameEarningsJOIN = "SELECT * from game_earnings WHERE 
+            game_id <>0 AND date_start >= '$dateStart' AND date_start <= '$dateEnd 23:59:59' ";
+        if (!empty($gameId)) {
+            $gameEarningsJOIN .= " AND game_id IN ($gameId) ";
+        }        
+        if (!empty($location)) {
+            $gameEarningsJOIN .= " AND loc_id IN ($location) ";
+        }
+        if (!empty($debit)) {
+            $gameEarningsJOIN .= " AND debit_type_id IN ($debit) ";
+        }        
+        
+        $Q = "
+            FROM game G
+            LEFT JOIN ($gameEarningsJOIN) E ON G.id = E.game_id
+            LEFT JOIN game_title T ON T.id = G.game_title_id
+            LEFT JOIN game_type Y ON Y.id = T.game_type_id
+            LEFT JOIN location L ON L.id = G.location_id
+            LEFT JOIN debit_type D ON D.id = E.debit_type_id   
+                WHERE E.game_id <> 0 AND G.not_debit = 0 ";
+                     
+        if (!empty($gameTitleId)) {
+            $Q .= " AND G.game_title_id IN ($gameTitleId) ";
+        }
+        if (!empty($gameId)) {
+            $Q .= " AND G.id IN ($gameId) ";
+        }
+
+//        if (!empty($dateStart)) {
+//            $Q .= " AND E.date_start >= '$dateStart' ";
+//        }        
+//        if (!empty($dateEnd)) {
+//            $Q .= " AND E.date_start <= '$dateEnd 23:59:59' ";
+//        }        
+        if (!empty($location)) {
+            $Q .= " AND L.id IN ($location) ";
+        }
+        if (!empty($debit)) {
+            $Q .= " AND L.debit_type_id IN ($debit) ";
+        }
+        if (!empty($onTest)) {
+            if ($onTest == "notest") {
+                $Q .= " AND G.test_piece IN (0)";
+            }
+            else {
+                $Q .= " AND G.test_piece IN (1)";
+            }            
+        }
+        if (!empty($gameTypeIds)) {
+            $Q .= " AND Y.id IN ($gameTypeIds)";
+        }
+        
+        // GROUP BY
+        $Q .= " GROUP BY G.id, L.id ";
+        
+        return $Q;
+    }
+    public static function getGamePlayCount_v1($dateStart, $dateEnd, $location = "", 
+            $debit = "", $gameType = "", $gameCat = "all", $onTest = "", 
+            $gameId = "", $gameTitleId= ""){
+        $Q = "SELECT count(*) as `count` FROM (SELECT E.id ";
+        $Q .= self::_getGamePlayQuery($dateStart, $dateEnd, $location, $debit, $gameType, $gameCat, $onTest, $gameId, $gameTitleId); 
+        $Q .= ") GD";
+        $count = self::getCountFromQuery($Q);
+        return $count;          
+    }    
+    
 }

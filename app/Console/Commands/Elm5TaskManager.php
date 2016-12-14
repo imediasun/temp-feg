@@ -39,10 +39,45 @@ class Elm5TaskManager extends Command
      */
     public function handle()
     {
+        set_time_limit(0);
         $L = new MyLog("task-manager-command.log", "FEGCronTasks", "FEGCronTasks");
         $L->log('Start Cron Tasks');
-        Elm5Tasks::addSchedules();
-        Elm5Tasks::runTasks();
+        
+        try {
+            
+            Elm5Tasks::addSchedules();
+            Elm5Tasks::runTasks();
+            
+        } catch(\Exception $e) {
+            
+            $this->logTaskManagerError($e);
+        }
+        
         $L->log('End Cron Tasks');
     }
+    private function logTaskManagerError($e) {
+        global $_scheduleId;
+        $errorMessage = $e->getMessage();
+        $errorFile = $e->getFile();
+        $errorLine = $e->getLine();
+        $errorTrace = str_replace('\\\\', "\\", 
+                str_replace('\\r', "\r", 
+                str_replace('\\n', "\n", 
+                str_replace('\\t', "\t", 
+                str_replace('\\r\\n', "\r\n", 
+                json_encode($e->getTrace(), JSON_UNESCAPED_SLASHES))))));
+        
+        $generalErrorMessage = "Task Manager Error ";
+
+        if (!empty($_scheduleId)) {
+            $generalErrorMessage .= " while running schedule ID: $_scheduleId";
+        }
+        
+        $eL = new MyLog("task-manager-error.log", "FEGCronTasks", "FEG Cron Tasks");
+        $eL->error($generalErrorMessage);
+        $eL->error('Message: '. $errorMessage);
+        $eL->error('File: '. $errorFile . " (line: $errorLine)");
+        $eL->error('Trace: '. $errorTrace);
+        //JSON_PRETTY_PRINT
+    }     
 }

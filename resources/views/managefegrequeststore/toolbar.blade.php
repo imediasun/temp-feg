@@ -53,7 +53,7 @@
         @if(SiteHelpers::isModuleEnabled($pageModule))
             <a href="{{ URL::to('tablecols/arrange-cols/'.$pageModule) }}" class="btn btn-sm btn-white" onclick="SximoModal(this.href,'Column Selector'); return false;" ><i class="fa fa-bars"></i> Arrange Columns</a>
             @if(!empty($colconfigs))
-                <select class="form-control" style="width:25%!important;display:inline-block;box-sizing: border-box" name="col-config"
+                <select class="form-control" style="width:15%!important;display:inline-block;box-sizing: border-box" name="col-config"
                         id="col-config">
                     <option value="0">Select Configuraton</option>
                     @foreach( $colconfigs as $configs )
@@ -61,6 +61,11 @@
                                                                          @endif value={{ $configs['config_id'] }}> {{ $configs['config_name'] }}   </option>
                     @endforeach
                 </select>
+                @if(\Session::get('uid') ==  \SiteHelpers::getConfigOwner($config_id))
+                    <a id="edit-cols" href="{{ URL::to('tablecols/arrange-cols/'.$pageModule.'/edit') }}" class="btn btn-sm btn-white tips"
+                       onclick="SximoModal(this.href,'Column Selector'); return false;" title="Edit Arrange">  <i class="fa fa-pencil-square-o"></i></a>
+                    <button id="delete-cols" href="{{ URL::to('tablecols/arrange-cols/'.$pageModule.'/delete') }}" class="btn btn-sm btn-white tips" title="Clear Arrange">  <i class="fa fa-trash-o"></i></button>
+                @endif
             @endif
         @endif
         <div class="pull-right">
@@ -82,7 +87,15 @@
 
     $('document').ready(function () {
         setType();
-
+            var config_id=$("#col-config").val();
+            if(config_id ==0 )
+            {
+                $('#edit-cols,#delete-cols').hide();
+            }
+            else
+            {
+                $('#edit-cols,#delete-cols').show();
+            }
         $(".select3").select2({width: "98%"});
         $("#order_type").select2({
             dataType: 'json',
@@ -91,6 +104,20 @@
 
         });
 
+        if ($("#private").is(":checked")) {
+            $('#groups').hide();
+        }
+        else{
+            $('#groups').show();
+        }
+    });
+    $("#public,#private").change(function () {
+        if ($("#public").is(":checked")) {
+            $('#groups').show();
+        }
+        else {
+            $('#groups').hide();
+        }
     });
     $("#request_type").on('change', function () {
 
@@ -171,5 +198,38 @@
 
         reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data' + get );
 
+    }
+    $('#delete-cols').click(function(){
+        if(confirm('Are You Sure, You want to delete this Columns Arrangement?')) {
+            showRequest();
+            var module = "{{ $pageModule }}";
+            var config_id = $("#col-config").val();
+            $.ajax(
+                    {
+                        method: 'get',
+                        data: {module: module, config_id: config_id},
+                        url: '{{ url() }}/tablecols/delete-config',
+                        success: function (data) {
+                            showResponse(data);
+                        }
+                    }
+            );
+        }
+    });
+    function showRequest() {
+        $('.ajaxLoading').show();
+    }
+    function showResponse(data) {
+
+        if (data.status == 'success') {
+            ajaxViewClose('#{{ $pageModule }}');
+            ajaxFilter('#{{ $pageModule }}', '{{ $pageUrl }}/data');
+            notyMessage(data.message);
+            $('#sximo-modal').modal('hide');
+        } else {
+            notyMessageError(data.message);
+            $('.ajaxLoading').hide();
+            return false;
+        }
     }
 </script>

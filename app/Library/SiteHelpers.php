@@ -813,8 +813,8 @@ class SiteHelpers
                         $locations = DB::table($option['lookup_table'])->where('id',$user_id->location_id)->orderby($option['lookup_value'])->get();
                         foreach ($locations as $location) {
                             $value = "";
-                            foreach($lookupParts as $field){
-                                $value .= $location->$field." - ";
+                            foreach($lookupParts as $lookup){
+                                $value .= $location->$lookup." - ";
                             }
                             $value = trim($value,' - ');
                             $opts .= "<option $selected  value='" . $location->$option['lookup_key'] . "' $mandatory > " . $value . " </option> ";
@@ -2002,7 +2002,7 @@ class SiteHelpers
         uasort($newArray, function ($a, $b) { 
             return ($a['simplesearchorder'] >= $b['simplesearchorder'] ? 1 : -1); 
         });
-        
+
         return $newArray;
     }
 
@@ -2010,5 +2010,10 @@ class SiteHelpers
     static function getProductName($id)
     {
         return \DB::table('products')->where('id', $id)->pluck('vendor_description');
+    }
+    static function getConfigOwner($config_id)
+    {
+        $user_id=\DB::table('user_module_config')->where('id','=',$config_id)->pluck('user_id');
+        return $user_id;
     }
 }

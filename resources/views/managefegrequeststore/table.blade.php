@@ -193,7 +193,7 @@
             $(document).ready(function() {
     $('.tips').tooltip();
             $('input[type="checkbox"],input[type="radio"]').iCheck({
-    checkboxClass: 'icheckbox_square-green',
+    checkboxClass: 'icheckbox_square-blue',
             radioClass: 'iradio_square_green'
     });
             $('#{{ $pageModule }}Paginate .pagination li a').click(function() {

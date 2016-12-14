@@ -105,6 +105,7 @@ class OrderController extends Controller
         $this->data['module_id'] = $module_id;
         if (Input::has('config_id')) {
             $config_id = Input::get('config_id');
+            \Session::put('config_id',$config_id);
         } elseif (\Session::has('config_id')) {
             $config_id = \Session::get('config_id');
         } else {
@@ -469,18 +470,30 @@ class OrderController extends Controller
 
     function postSaveorsendemail(Request $request)
     {
-        $to = $request->get('to');
+        $type=$request->get('submit');
+        if($type == "send") {
+            $to = $request->get('to');
+            $cc = $request->get('cc');
+            $bcc = $request->get('bcc');
+            $message = $request->get('message');
+        }
+        else
+        {
+            $to = $request->get('to1');
+            $cc = $request->get('cc1');
+            $bcc = $request->get('bcc1');
+            $message = $request->get('message');
+        }
         $from = $request->get('from');
         $order_id = $request->get('order_id');
         $opt = $request->get('opt');
-        if ($to === "NULL" || $from === "NULL" || empty($to) || empty($from) || $to == "" || $from=="") {
+        if (count($to) == 0 || $from === "NULL"  || empty($from)  || $from=="") {
             return response()->json(array(
                 'message' => "Failed!Sender or Vendor Email is missing",
                 'status' => 'error'
-
             ));
         } else {
-           // $this->getPo($order_id, true, $to, $from);
+            $this->getPo($order_id, true, $to, $from,$cc,$bcc,$message);
             return response()->json(array(
                 'status' => 'success',
                 'message' => \Lang::get('core.mail_sent_success'),
@@ -554,9 +567,8 @@ class OrderController extends Controller
         echo $po;
     }
 
-    function getPo($order_id = null, $sendemail = false, $to = null, $from = null)
+    function getPo($order_id = null, $sendemail = false, $to = null, $from = null,$cc = null,$bcc = null, $message= null )
     {
-
         $data = $this->model->getOrderData($order_id);
         if (empty($data)) {
 
@@ -638,14 +650,25 @@ class OrderController extends Controller
             }
             $pdf = \PDF::loadView('order.po', ['data' => $data, 'main_title' => "Purchase Order"]);
             if ($sendemail) {
-                if (isset($to)) {
+                if (isset($to) && count($to)>0) {
                     $filename = 'PO_' . $order_id . '.pdf';
                     $subject = "Purchase Order";
-                    $message = "Purchase Order";
-                    $result = \Mail::raw($message, function ($message) use ($to, $from, $subject, $pdf, $filename) {
+                    $message = $message;
+                    $cc=$cc;
+                    $bcc=$bcc;
+                    $result = \Mail::raw($message, function ($message) use ($to, $from, $subject, $pdf, $filename,$cc,$bcc) {
                         $message->subject($subject);
                         $message->from($from);
                         $message->to($to);
+                        if(count($cc)>0)
+                        {
+                            $message->cc($cc);
+                        }
+                        if(count($bcc) > 0)
+                        {
+                            $message->bcc($bcc);
+                        }
+                        $message->replyTo($from, $from);
                         $message->attachData($pdf->output(), $filename);
                     });
                 }
@@ -817,9 +840,15 @@ class OrderController extends Controller
     {
         $term = Input::get('term');
         $results = array();
-        $queries = \DB::table('products')
-            ->where('vendor_description', 'LIKE', '%' . $term . '%')->where('inactive', '=', 0)
-            ->take(10)->get();
+        $queries = \DB::select("SELECT *
+  FROM products
+ WHERE vendor_description LIKE '%$term%'
+ GROUP BY vendor_description
+ ORDER BY CASE WHEN vendor_description LIKE '$term%' THEN 0
+               WHEN vendor_description LIKE '% %$term% %' THEN 1
+               WHEN vendor_description LIKE '%$term' THEN 2
+               ELSE 3
+          END, vendor_description");
         if (count($queries) != 0) {
             foreach ($queries as $query) {
                 $results[] = ['id' => $query->id, 'value' => $query->vendor_description];

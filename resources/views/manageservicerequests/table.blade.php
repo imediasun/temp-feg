@@ -186,8 +186,8 @@
 $(document).ready(function() {
 	$('.tips').tooltip();
 	$('input[type="checkbox"],input[type="radio"]').iCheck({
-		checkboxClass: 'icheckbox_square-green',
-		radioClass: 'iradio_square-green',
+		checkboxClass: 'icheckbox_square-blue',
+		radioClass: 'iradio_square-blue',
 	});
 	$('#{{ $pageModule }}Paginate .pagination li a').click(function() {
 		var url = $(this).attr('href');

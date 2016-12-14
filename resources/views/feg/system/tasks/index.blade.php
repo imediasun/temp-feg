@@ -11,10 +11,11 @@
         <li><a href="{{ URL::to('dashboard') }}">{{ Lang::get('core.home') }}</a></li>
         <li class="active">{{ $pageTitle }}</li>
       </ul>	  	  
-    </div>
+    </div>  
 	<!-- End Header & Breadcrumb -->
 
 	<!-- Begin Content -->
+    <span class='label label-success'>Now: {!! date('Y-m-d H:i:s') !!}</span>
 	<div class="page-content-wrapper m-t">
 		<div class="resultData"></div>
 		<div class="ajaxLoading"></div>

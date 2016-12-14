@@ -61,7 +61,7 @@
                         <span title="Task Action" class="label taskActionText">{{ $actionName }}</span>                         
                     </p>
                     <button class="btn btn-warning runTaskNow textContent pull-right"  
-                            @if($isManualRunning) disabled="disabled" title="Already running" @endif
+                            @if(false && $isManualRunning) disabled="disabled" title="Already running" @endif
                             data-taskid="{{ $taskId }}">Run Now</button>
                 </div>
             </div>

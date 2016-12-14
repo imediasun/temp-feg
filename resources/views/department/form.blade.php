@@ -107,7 +107,7 @@
 <script type="text/javascript">
 $(document).ready(function() { 
 	
-        $("#assign_employee_ids").jCombo("{{ URL::to('department/comboselect?filter=employees:id:first_name|last_name') }}",
+        $("#assign_employee_ids").jCombo("{{ URL::to('department/comboselect?filter=users:id:first_name|last_name') }}",
         {  selected_value : '{{ $row["assign_employee_ids"] }}' });
          
 	
@@ -118,8 +118,8 @@ $(document).ready(function() {
 	$('.date').datepicker({format:'mm/dd/yyyy',autoClose:true})
 	$('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});
 	$('input[type="checkbox"],input[type="radio"]').iCheck({
-		checkboxClass: 'icheckbox_square-green',
-		radioClass: 'iradio_square-green',
+		checkboxClass: 'icheckbox_square-blue',
+		radioClass: 'iradio_square-blue',
 	});			
 	$('.removeCurrentFiles').on('click',function(){
 		var removeUrl = $(this).attr('href');

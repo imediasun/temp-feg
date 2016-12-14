@@ -219,10 +219,10 @@ class TablecolsController extends Controller
     {
         $data = Input::all();
         $id = $this->model->checkModule($data['config_name'], $data['module_id']);
-        $configstr = $data['multiple_value'];
+        $configstr="";
+        $configstr = implode(',',$data['cols']);
         $configstr = \SiteHelpers::CF_encode_json($configstr);
-        $id = $this->model->insertRow(array('user_id' => $data['user_id'], 'module_id' => $data['module_id'], 'config' => $configstr, 'config_name' => $data['config_name'], 'is_private' => $data['user_mode'], 'group_id' => $data['group_id']), $id);
-
+        $id = $this->model->insertRow(array('user_id' => $data['user_id'], 'module_id' => $data['module_id'], 'config' => $configstr, 'config_name' => $data['config_name'], 'is_private' => $data['user_mode'], 'group_id' => $data['group_id']), $data['config_id']);
         return response()->json(array(
             'status' => 'success',
             'message' => \Lang::get('core.note_success'),
@@ -231,24 +231,56 @@ class TablecolsController extends Controller
 
     }
 
-    public function getArrangeCols($pageModule)
+    public function getArrangeCols($pageModule,$mode = null)
     {
         $info = $this->model->makeInfo($pageModule);
         $module_id = \DB::table('tb_module')->where('module_name', '=', $pageModule)->pluck('module_id');
         $user_id = \Session::get('uid');
-        /* echo $user_id;
-         exit();
-        */
-        //$this->info['config']['grid'];
-        /*
-                echo '<pre>';
-                print_r($info['config']['grid']);
-                echo '</pre>';
-                exit;
-        */
+        $configs="";
+        $group_id="";
+        $is_private="";
+        $config_name="";
+        if($mode != null)
+        {
+            $module_id = \DB::table('tb_module')->where('module_name', '=',$pageModule)->pluck('module_id');
+            $config_id = \Session::get('config_id');
+            $config = $this->model->getModuleConfig($module_id, $config_id);
+            if (!empty($config)) {
+                $configs = \SiteHelpers::CF_decode_json($config[0]->config);
+                $group_id=$config[0]->group_id;
+                $is_private=$config[0]->is_private;
+                $config_name=$config[0]->config_name;
+                \Session::put('config_id', $config_id);
+            }
+        }
+        else{
+            $config_id=null;
+        }
         //add code here to get all columns for a module
         $groups = \SiteHelpers::getAllGroups();
-        return view('tablecols.arrange_cols', ['allColumns' => $info['config']['grid'], 'user_id' => $user_id, 'module_id' => $module_id, 'pageModule' => $pageModule, 'groups' => $groups]);
+       // $groups = \DB::table('tb_groups')->where('level', '>=', \Session::get('level'))->get();
+        return view('tablecols.arrange_cols', ['allColumns' => $info['config']['grid'], 'user_id' => $user_id, 'module_id' => $module_id, 'pageModule' => $pageModule, 'groups' => $groups,'cols'=>$configs,'group_id'=>$group_id,'config_name'=>$config_name,'is_private'=>$is_private,'config_id'=>$config_id ]);
+    }
+    function getDeleteConfig(Request $request)
+    {
+        $module=$request->get('module');
+        $config_id=$request->get('config_id');
+        $user_id=\Session::get('uid');
+        $is_deleted=\DB::table('user_module_config')->where('id','=',$config_id)->delete();
+        if($is_deleted)
+        {
+            return response()->json(array(
+                'status' => 'success',
+                'message' => \Lang::get('core.delete_success')
+            ));
+        }
+        else
+        {
+            return response()->json(array(
+                'status' => 'error',
+                'message' => \Lang::get('core.delete_error')
+            ));
+        }
     }
 
 }

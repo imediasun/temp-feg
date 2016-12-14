@@ -16,5 +16,5 @@ define('CNF_THEME','sximone');
 define('CNF_RECAPTCHAPUBLICKEY','');
 define('CNF_RECAPTCHAPRIVATEKEY','');
 define('CNF_MODE','production');
-define('CNF_LOGO','backend-logo.png');
+define('CNF_LOGO','feg_new_logo.png');
 ?>

@@ -46,8 +46,8 @@ abstract class Controller extends BaseController
                 \Session::put('company_id', \Auth::user()->company_id);
                 $user_locations = \SiteHelpers::getLocationDetails(\Auth::user()->id);
                 \Session::put('user_locations', $user_locations);
-                \Session::put('selected_location', $user_locations[0]->id);
-                \Session::put('selected_location_name', $user_locations[0]->location_name_short);
+                \Session::put('selected_location', isset($user_locations[0]->id) ? $user_locations[0]->id: null);
+                \Session::put('selected_location_name', isset($user_locations[0]->location_name_short) ? $user_locations[0]->location_name_short : null);
                 \Session::put('get_locations_by_region', \Auth::user()->get_locations_by_region);
                 \Session::put('themes', 'sximo-light-blue');
             }
@@ -567,7 +567,6 @@ abstract class Controller extends BaseController
         $param = '';
         $allowsearch = $this->info['config']['forms'];
 
-
         foreach ($allowsearch as $as)
             $arr[$as['field']] = $as;
         if ($_GET['search'] != '') {
@@ -593,7 +592,6 @@ abstract class Controller extends BaseController
                                     }
 
                                     $vals = explode(',', $keys[2]);
-
                                     $multi_in = array();
                                     foreach ($vals as $v) {
                                         $multi_in[] .= '"' . $v . '"';

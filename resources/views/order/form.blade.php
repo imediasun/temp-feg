@@ -212,7 +212,7 @@
                         <th width="200">Item Description</th>
                         <th>Price Per Unit</th>
                         <th>Case Price</th>
-                        <th>Retail Price</th>
+                        {{--<th>Retail Price</th>--}}
                         <th>Quantity</th>
                         <th class="game" width="150">Game</th>
                         <th>Total ( $ )</th>
@@ -248,11 +248,12 @@
                         </td>
 
 
-                        <td>
-                             <br/> <input type='number' name='retail_price[]' placeholder='Retail Price' id="retail_price"
-                                               class='form-control test' min="0.00" step=".01" value="0.00"
-                                               required></td>
-                        </td>
+                        {{--<td>--}}
+                             {{--<br/> <input type='number' name='retail_price[]' placeholder='Retail Price' id="retail_price"--}}
+                                               {{--class='form-control test' min="0.00" step=".01" value="0.00"--}}
+                                               {{--required></td>--}}
+                        {{--</td>--}}
+
                         <td><br/> <input type='number' name='qty[]' placeholder='Quantity'
                                          class='form-control qty' min="0" step="1" id="qty" value="00"
                                          required></td>

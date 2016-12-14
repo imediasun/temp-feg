@@ -26,10 +26,10 @@
             <div class="col-sm-10">
                 Parameters: 
                 <input type="text"  name="params" class="params form-control"
-                       placeholder='[{ "date": "2016-11-35", "location": 7001 }]'
+                       placeholder='{ "date": "2016-11-35", "location": 7001 }'
                        data-toggle="tooltip" data-placement="top" 
                        title="Parameters in JSON format" 
-                       values='[{ "date": "2016-11-25", "location": 2000 }]'
+                       values='{ "date": "2016-11-25", "location": 2000 }'
                        value=''
                        /> 
             </div>

@@ -15,41 +15,85 @@ class Elm5Tasks
     const SCHEDULESDB = 'elm5_task_schedules';
 
     public static function runTasks() {
-        //$tasks = self::getTasks(true);
+        global $_scheduleId;
         self::log("Run tasks start");  
-        
-        $insertData = array();
-        
         $now = date('Y-m-d H:i:s');
-       
+        
+        register_shutdown_function(function(){
+            global $_scheduleId;
+            if (!empty($_scheduleId)) {
+                $errors = [E_ERROR, E_CORE_ERROR, E_COMPILE_ERROR, E_PARSE];
+                $error = error_get_last();
+                $eType = $error['type'];
+                if (!empty($_scheduleId) && in_array($eType, $errors)) {
+                    
+                    $eFile = $error['file'];
+                    $eLine = $error['line'];
+                    $errorMessage = $error['message']. "in file $eFile line $eLine";
+
+                    self::errorSchedule($_scheduleId);
+                    self::updateSchedule($_scheduleId, array("results" => $errorMessage, "notes" => $errorMessage));
+                    self::logScheduleFatalError($errorMessage, $_scheduleId);
+                    self::log("FATAL Error running task with schedule ID: $_scheduleId");
+                    self::log("Error: ".$errorMessage);    
+                }
+            }
+            
+        });
+        
         $schedules = self::getRunEligibleSchedules();
         foreach ($schedules as $item) {
             
             $no_overlap = $item->no_overlap;
             $taskId = $item->task_id;
+            $scheduleId = $item->id;
+            $_scheduleId = $scheduleId;
             $taskName = $item->task_name;
+            $is_manual = $item->is_manual == 1;
+            
+            $taskLog = "task '$taskName' ($taskId) [$scheduleId]";
             
             if ($no_overlap) {
                 if (self::isTaskRunning($taskId)) {
-                    self::log("Task $taskName ($taskId) is alrady running - not allowed to run overlapped. Hence, not running.");
+                    self::log("Task '$taskName' ($taskId) is alrady running - not allowed to run overlapped. Hence, not running.");
                     continue;
                 }
             }
             
-            self::log("Start runnung Task $taskName ($taskId)");
-            $return = self::runTask($item);      
-            self::log("End runnung Task $taskName ($taskId)");
+            self::log("Start running ".($is_manual ? "manual ": "").$taskLog);
+           
+            try {
+                
+                $return = self::runTask($item);
+                
+            } catch(\Exception $ex) {                
+                
+                $errorFile = $ex->getFile();
+                $errorLine = $ex->getLine();                
+                $errorMessage = $ex->getMessage() . " - $errorFile at line $errorLine";
+                self::errorSchedule($scheduleId);
+                self::updateSchedule($scheduleId, array("results" => $errorMessage, "notes" => $errorMessage));
+                self::logScheduleError($item, $ex);
+                self::log("Error running ".($is_manual ? "manual ": ""). $taskLog);
+                self::log("Error: ".$errorMessage);
+            }            
+               
+            self::log("End running ".($is_manual ? "manual ": ""). $taskLog);
             if (date('s')>= 58) {
                 break;
             }
+            
+            $_scheduleId = null;
         }
         
         self::log("Run Tasks end");         
     }
-    
+        
     public static function runTask($item) {
+        
         $now = date("Y-m-d H:i:s");
         $id = $item->id;
+        
         $taskId = $item->task_id;
         $taskName = trim($item->task_name);
         $taskFolderName = preg_replace('/\-{1,}/', '-', preg_replace('/[^\w\-]/', '', str_replace(' ', '-', $taskName)));
@@ -57,7 +101,7 @@ class Elm5Tasks
 
         $schedule = $item->scheduled_at;
         $no_overlap = $item->no_overlap;
-        $is_manual = $item->is_manual;
+        $is_manual = $item->is_manual == 1;
 
         $success_action = $item->success_action;
         $fail_action = $item->fail_action;
@@ -65,38 +109,51 @@ class Elm5Tasks
         $log_filename = $item->log_filename;
         $is_test_mode = $item->is_test_mode;
         
-        $logTaskId = "[$id] ($taskId) $taskName ($actionName)";
+        $logTaskId = "[$id] ($taskId) '$taskName'".($is_manual?"(manual)": "")." ($actionName)";
 
         if (empty($log_folder)) {
             $log_folder = "FEGCronTasks/$taskFolderName";
             $item->log_folder = $log_folder;
         }
         if (empty($log_filename)) {
-            $log_filename = "task-" .((empty($is_manual)) ? "" : "manual-"). strtolower($taskFolderName).".log";
+            $log_filename = "task-" .(empty($is_manual) ? "" : "manual-"). strtolower($taskFolderName).".log";
             $item->log_filename = $log_filename;
         }
         
         $L = new MyLog($log_filename, $log_folder, $taskName);
+        
+        $initialParameters = array();
+        $initialParameters['_task'] = $item;
+        $initialParameters['_logger'] = $L;
+        
         $params = $item->params;
-            
         $isEmptyParam = empty($params);
         if ($isEmptyParam) {
-            $params = "[]";
+            $params = "{}";
         }
-        $parameters = json_decode($params, true);
-        if (empty($parameters)) {
-            $parameters = array();
+        
+        $paramsWithNoArrayLiteralBoundary = strpos(trim($params), "[") === FALSE &&
+                                            strpos(trim($params), "{") === FALSE;
+        if ($paramsWithNoArrayLiteralBoundary) {
+            //$params = "{".$params."}";
+            $params = "[".$params."]";
         }
-        $parameters['_logger'] = $L;
-        $parameters['_task'] = $item;
-        if ($isEmptyParam) {
-            $parameters = array($parameters);
+        $isParamIndexedArray = strpos(trim($params), "[") === 0;
+//        $isParamIndexedArray = false;
+//        $L->log("Param:", $params);
+        $customParameters = json_decode($params, true);
+        if ($isParamIndexedArray) {
+            $parameters = array_merge($customParameters, $initialParameters);
         }
+        else {
+            $parameters = array(array_merge($customParameters, $initialParameters));
+        }
+//        $L->log("parameters:", $parameters);
         
         self::cronlog("Starting Task - $logTaskId", null, $L);
         self::startSchedule($id);       
         
-        if ($is_manual != 1) {
+        if (true || !$is_manual) {
             self::runPrePostTasks($taskId, $parameters);
         }
         
@@ -109,47 +166,55 @@ class Elm5Tasks
             try {
                 $result = call_user_func_array($actionName, $parameters);
                 if ($result === false) {
+                    $isError = true;
                     $result = "Error: calling $actionName";
                 }
                 else {
-                    if ($is_manual != 1) {
+                    if (!$is_manual) {
                         self::addRunCount($taskId, $taskName);
                     }                    
                     if ($result !== 0 && $result !== "0" && empty($result)) {
                         $result = "";
                     }
                 }
-            } catch (Exception $ex) {
+            } catch (\Exception $ex) {
                 $isError = true;
-                $result = $ex->getMessage();
+                $errorFile = $ex->getFile();
+                $errorLine = $ex->getLine();                
+                $result = $ex->getMessage() . " - $errorFile at line $errorLine";                  
+                self::logScheduleError($item, $ex);
             }
         }
                 
         
         if ($isError) {
-            $log = "Task ERROR - $logTaskId";
+            self::errorSchedule($id);    
+            self::updateSchedule($id, array("notes" => $result, "results" => $result));
+            $log = "Task ERROR - $logTaskId";            
         }        
         else {
-            $log = "Task result - $logTaskId";
+            $log = "Task result - $logTaskId";            
         }        
-        self::cronlog($log, null, $L);
+        self::cronlog($log, $result, $L);
         
         if (!$isError) {
-            if ($is_manual != 1) {
+            if (true || !$is_manual) {
                 self::runPrePostTasks($taskId, $parameters, true);
             }
         }
         
-        self::cronlog("Task Ended -  $logTaskId", null, $L);
+        if (!$isError) {               
+            self::endSchedule($id);
+        }
         
-        if ($isError) {
-            self::errorSchedule($id);       
+        if (is_array($result) || is_object($result)) {
+            $result = json_encode($result);
         }
-        else {
-            self::endSchedule($id);       
-        }
-
         self::updateSchedule($id, array("results" => $result));
+        
+        self::cronlog("Task Ended ".($isError?"with error":"")." - $logTaskId", null, $L);
+        
+        return $result;
     }
         
     public static function runPrePostTasks($taskId, $parameters, $isPostTask = false) {
@@ -158,15 +223,15 @@ class Elm5Tasks
                 isset($parameters[0]['_logger']) ? $parameters[0]['_logger'] : 
                     null);
         
-        $q = "SELECT id, task_name, action_name, success_action, fail_action, log_folder, log_filename from " . self::TASKSDB . 
+        $q = "SELECT id, task_name, action_name, success_action, fail_action, log_folder, log_filename from " . 
+                self::TASKSDB . 
                 " WHERE is_active=1 AND ". ($isPostTask ? 'run_after' : 'run_before') . "=$taskId";
-        
-        $tasksData = DB::select($q);
-        
+                
+        $tasksData = DB::select($q);        
         if (count($tasksData) > 0) {
             
             foreach($tasksData as $task) { 
-                $taskLogId = ($isPostTask ? 'Post' : 'Pre') . " Dependent Task - [$taskId => {$task->id}] {$task->task_name} ({$task->action_name})";
+                $taskLogId = ($isPostTask ? 'Post' : 'Pre') . " Dependent Task - [$taskId => {$task->id}] '{$task->task_name}' ({$task->action_name})";
                 self::cronlog("Starting $taskLogId", null, $uL);
                 self::runDependentTask($task, $parameters);
                 self::cronlog("End $taskLogId", null, $uL);
@@ -191,18 +256,20 @@ class Elm5Tasks
         $uTask = isset($oldParams['_task']) ? $oldParams['_task'] : (
                 isset($oldParams[0]['_task']) ? $oldParams[0]['_task'] : 
                     null);
-        $uId = !empty($uTask->id) ? $uTask->id : '';
+        $uSId = !empty($uTask->id) ? $uTask->id : '';
+        $uTId = !empty($uTask->task_id) ? $uTask->task_id : '';        
+        $uIsManual = !empty($uTask->is_manual);        
 
         if (empty($log_folder)) {
             $log_folder = "FEGCronTasks/$taskFolderName";
             $item->log_folder = $log_folder;
         }
         if (empty($log_filename)) {
-            $log_filename = "task-". strtolower($taskFolderName).".log";
+            $log_filename = "task-". (empty($is_manual) ? "" : "manual-"). strtolower($taskFolderName).".log";
             $item->log_filename = $log_filename;
         }
         
-        $logTaskId = "[$uId] (=> $taskId) $taskName ($actionName)";
+        $logTaskId = "[$uSId] ($uTId => $taskId) '$taskName' ".($uIsManual?"(manual)": "")." ($actionName)";
         
         $L = new MyLog($log_filename, $log_folder, $taskName);
         
@@ -213,33 +280,39 @@ class Elm5Tasks
         $isError = false;
         if (!is_callable($actionName, false)) {
             $isError = true;
-            $result = "ERROR: Task Action ($actionName) Does not exist";
+            $result = "ERROR: Dependent Task Action ($actionName) Does not exist";
         }
         else {
             try {
                 $result = call_user_func_array($actionName, $parameters);
                 if ($result === false) {
+                    $isError = true;
                     $result = "Error calling $actionName";
                 }
                 elseif ($result !== 0 && $result !== "0" && empty($result)) {
                     $result = "";
                 }
-            } catch (Exception $ex) {
+            } catch (\Exception $ex) {
                 $isError = true;
-                $result = $ex->getMessage();
+                $errorFile = $ex->getFile();
+                $errorLine = $ex->getLine();                
+                $result = $ex->getMessage() . " - $errorFile at line $errorLine";                
+                self::logScheduleError($uTask, $ex);
+                self::errorSchedule($uSId);       
+                self::updateSchedule($uSId, array("notes" => $result, "results" => $result));        
             }
         }
-                
         
         if ($isError) {
-            self::cronlog("Task ERROR - $logTaskId", array($result), $L, $uL);                
+            self::cronlog("Dependent Task ERROR - $logTaskId", $result, $L, $uL);                
         }        
         else {
-            self::cronlog("Task result - $logTaskId", array($result), $L, $uL);            
+            self::cronlog("Dependent Task result - $logTaskId", $result, $L, $uL);            
         }        
         
-        self::runPrePostTasks($taskId, $parameters, true);
-        
+        if (!$isError) {
+            self::runPrePostTasks($taskId, $parameters, true);
+        }
     }
 
     public static function getTasks($activeOnly = false, $scheduledOnly = false, $cronable = false) {
@@ -362,7 +435,7 @@ class Elm5Tasks
     
     public static function disableTask($id) {
         self::deactivateTaskSchedule($id);
-        $q = "UPDATE ".self::SCHEDULESDB .
+        $q = "UPDATE ".self::TASKSDB .
                 " set is_active=0
                     where id IN ($id)";
         return DB::update($q);
@@ -373,7 +446,7 @@ class Elm5Tasks
                 " SET run_count=run_count+1
                     where id IN ($taskId)";
         DB::update($q);
-        self::log("Increment Run count for Task $taskName ID: $taskId");
+        self::log("Increment Run count for task '$taskName' ID: $taskId");
         self::runCountManager($taskId, $taskName);
     }
     
@@ -390,7 +463,7 @@ class Elm5Tasks
             $repeatLimit = $row->repeat_count;
             $runCount = $row->run_count;
             if ($isRepeat == 0 || ($repeatLimit > 0 && $runCount >= $repeatLimit) ) {
-                self::log("Disable Task as Run Limit reached for Task $taskName ID: $taskId");
+                self::log("Disable Task as Run Limit reached for task '$taskName' ID: $taskId");
                 self::disableTask($taskId);
             }
         }        
@@ -469,7 +542,7 @@ class Elm5Tasks
             
                 if ($notScheduled) {
                     self::log(($isRunNow ? "[RUN NOW] ":"") . 
-                            "New schedule for Task $taskName($taskId) - at $scheduled_at");  
+                            "New schedule for Task '$taskName'($taskId) - at $scheduled_at");  
                     $insertData = array(
                         "task_id" => $taskId,
                         "is_manual" => $is_manual,
@@ -502,9 +575,26 @@ class Elm5Tasks
         return $scheduled_at;
     }
     
+    public static function stopBrokenTasks() {        
+        $now = date("Y-m-d H:i:s");
+        $q = "UPDATE " .self::SCHEDULESDB . " 
+            SET is_active = 0, end_at='$now', 
+                status_name = 'Error', status_code = 5, 
+                notes = 'Running too long'
+            WHERE 
+                is_active = 1 AND status_code = 1 AND 
+                run_at < DATE_SUB('$now', INTERVAL 23 HOUR)
+            ";
+        $updateCount = DB::update($q);   
+        if ($updateCount > 0) {
+            self::log("Terminated $updateCount tasks which were running too long");
+        }
+    }
     public static function addSchedules() {
         
         self::log("Add automatic schedules start");  
+        
+        self::stopBrokenTasks();
         
         $insertData = array();
         
@@ -544,7 +634,7 @@ class Elm5Tasks
             }
             
             if ($notScheduled) {
-                self::log("New automatic schedule for Task $taskName - at $scheduled_at");  
+                self::log("New automatic schedule for Task '$taskName' - at $scheduled_at");  
                 $insertData[] = array(
                     "task_id" => $taskId,
                     "status_name" => 'Scheduled',
@@ -556,8 +646,7 @@ class Elm5Tasks
                     "log_folder" => $log_folder,
                     "is_test_mode" => $is_test_mode,
                 );
-            }
-            
+            }            
         }
         
         if (count($insertData) > 0) {
@@ -574,18 +663,31 @@ class Elm5Tasks
     }
     
     public static function startSchedule($id) {
+        global $_scheduleId;
+        if (empty($id)) {
+            $id = $_scheduleId;
+        }
         $now = date("Y-m-d H:i:s");
         self::updateSchedule($id, array("status_code" => 1, "run_at" => $now, "status_name" => 'Running')); 
     }
     
     public static function endSchedule($id) {
+        global $_scheduleId;
+        if (empty($id)) {
+            $id = $_scheduleId;
+        }
         $now = date("Y-m-d H:i:s");
         self::updateSchedule($id, array("status_code" => 9, "end_at" => $now, "status_name" => 'Completed', "is_active" => 0)); 
     }
     
-    public static function errorShedule($id) {
+    public static function errorSchedule($id) {
+        global $_scheduleId;
+        if (empty($id)) {
+            $id = $_scheduleId;
+        }
         $now = date("Y-m-d H:i:s");
-        self::updateSchedule($id, array("status_code" => 5, "end_at" => $now, "status_name" => 'Error', "is_active" => 0)); 
+        //DB::connection()->reconnect();
+        self::updateSchedule($id, array("status_code" => 5, "end_at" => $now, "status_name" => 'Error', "is_active" => 0));      
     }
     
     public static function deleteSchedule($id) {
@@ -625,7 +727,7 @@ class Elm5Tasks
             $includeManual = true, $includeInactive = false, $onlyEligibleForRun = false) {
         
         $now = date('Y-m-d H:i:s');
-        $q = "SELECT  S.id, S.task_id, T.task_name, T.action_name,
+        $q = "SELECT  S.id, S.task_id, T.task_name, T.action_name, T.repeat_count, T.run_count,
                       S.is_active, S.is_test_mode,
                       S.scheduled_at, S.is_manual, S.no_overlap, S.params,
                       S.success_action, S.fail_action,
@@ -639,7 +741,7 @@ class Elm5Tasks
                 (!empty($task_id) ? " AND S.task_id IN ($task_id)" : " ") .
                 ($scheduledOnly ? " AND (S.status_code=0 OR S.status_code IS NULL)": "") .
                 ($includeManual ? "": " AND is_manual != 1") .
-                ($includeInactive ? "" : " AND T.is_active=1 AND S.is_active = 1") .
+                ($includeInactive ? "" : ($includeManual ? " AND S.is_active = 1":" AND T.is_active=1 AND S.is_active = 1")) .
                 ($onlyEligibleForRun ? " AND (S.scheduled_at IS NOT NULL AND S.scheduled_at <= '$now')": "") .
                     
             " ORDER BY S.scheduled_at ASC, S.is_manual DESC
@@ -665,7 +767,7 @@ class Elm5Tasks
         
         $now = date('Y-m-d H:i:s');
         $q = "SELECT  S.id, S.task_id, 
-                      T.task_name, T.action_name, 
+                      T.task_name, T.action_name, T.repeat_count, T.run_count,
                       S.is_manual, S.no_overlap, S.params,
                       S.is_active, S.is_test_mode,
                       S.status_code, S.status_name,
@@ -681,7 +783,7 @@ class Elm5Tasks
                 (!empty($task_id) ? " AND S.task_id IN ($task_id)" : " ") .
                 ($scheduledOnly ? " AND (S.status_code=0 OR S.status_code IS NULL)": "") .
                 ($includeManual ? "": " AND is_manual != 1") .
-                ($includeInactive ? "" : " AND T.is_active=1 AND S.is_active = 1") .
+                ($includeInactive ? "" : ($includeManual ? " AND S.is_active = 1":" AND T.is_active=1 AND S.is_active = 1")) .
                 ($onlyEligibleForRun ? " AND (S.scheduled_at IS NOT NULL AND S.scheduled_at <= '$now')": "") .
                     
             " ORDER BY S.scheduled_at DESC
@@ -694,27 +796,89 @@ class Elm5Tasks
     
     private static function log($message = '', $data = '', $L = null, $uL = null) {
         if (is_null(self::$L)) {
-            self::$L = new MyLog("task-manager.log", "FEGCronTasks", "FEGCronTasks");
+            self::$L = new MyLog("task-manager.log", "FEGCronTasks", "FEG Cron Tasks");
         }
         self::$L->log($message, $data);
         if (!empty($L)) {
             $L->log($message, $data);
         }
         if (!empty($uL)) {
-            $L->log($message, $data);
+            $uL->log($message, $data);
         }
     }
     
-    private static function cronlog($message = '', $data = '', $L = null, $uL = null) {
+    private static function cronlog($message = '', $data = '', $L = null, $uL = null) {        
         if (is_null(self::$CL)) {
-            self::$CL = new MyLog("task-manager-cron.log", "FEGCronTasks", "FEGCronTasks");
+            self::$CL = new MyLog("task-manager-cron.log", "FEGCronTasks", "FEG Cron Tasks");
         }
         self::$CL->log($message, $data);
         if (!empty($L)) {
             $L->log($message, $data);
         }
         if (!empty($uL)) {
-            $L->log($message, $data);
+            $uL->log($message, $data);
         }        
     }
+    
+    private static function logScheduleError($item, $e) {
+        
+        $taskId = $item->task_id;
+        $scheduleId = $item->id;
+        $taskName = $item->task_name;
+        $errorMessage = $e->getMessage();
+        $errorFile = $e->getFile();
+        $errorLine = $e->getLine();
+        $errorTrace = str_replace('\\\\', "\\", 
+                str_replace('\\r', "\r", 
+                str_replace('\\n', "\n", 
+                str_replace('\\t', "\t", 
+                str_replace('\\r\\n', "\r\n", 
+                json_encode($e->getTrace(), JSON_UNESCAPED_SLASHES))))));
+        
+        $generalErrorMessage = "Task error while running task '$taskName' ($taskId), Schedule ID - $scheduleId";
+
+        $eL = new MyLog("task-error.log", "FEGCronTasks", "FEG Cron Tasks");
+        $eL->error($generalErrorMessage);
+        $eL->error('Message: '. $errorMessage);
+        $eL->error('File: '. $errorFile . " (line: $errorLine)");        
+        $eL->error('Trace: '.$errorTrace);    
+        
+        self::emailScheduleError($item, $e);
+        
+    }
+    private static function logScheduleFatalError($errorMessage, $scheduleId) {
+        
+        
+        $generalErrorMessage = "FATAL ERROR while running task with schedule ID $scheduleId";
+
+        $eL = new MyLog("task-error-FATAL.log", "FEGCronTasks", "FEG Cron Tasks");
+        $eL->error($generalErrorMessage);
+        $eL->error('Message: '. $errorMessage);
+//        self::emailScheduleError($item, $e);
+        self::emailScheduleFatalError($errorMessage, $scheduleId);
+        
+    }
+    
+    private static function emailScheduleError($item, $e) {
+        
+        $taskId = $item->task_id;
+        $scheduleId = $item->id;
+        $taskName = $item->task_name;
+        $errorMessage = $e->getMessage();
+        $errorFile = $e->getFile();
+        $errorLine = $e->getLine();
+        $errorTrace = str_replace('\\\\', "\\", 
+                str_replace('\\r', "\r", 
+                str_replace('\\n', "\n", 
+                str_replace('\\t', "\t", 
+                str_replace('\\r\\n', "\r\n", 
+                json_encode($e->getTrace(), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES))))));
+        
+        $generalErrorMessage = "Task error while running task '$taskName' ($taskId), Schedule ID - $scheduleId";                
+    }    
+    private static function emailScheduleFatalError($errorMessage, $scheduleId) {
+        
+        $generalErrorMessage = "FATAL ERROR while running task with schedule ID $scheduleId 
+                 - $errorMessage";                
+    }    
 }

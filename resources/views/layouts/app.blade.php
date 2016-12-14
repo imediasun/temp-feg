@@ -20,7 +20,7 @@
 		<link href="{{ asset('sximo/js/plugins/datepicker/css/bootstrap-datetimepicker.min.css')}}" rel="stylesheet">
 		<link href="{{ asset('sximo/js/plugins/bootstrap.datetimepicker/css/bootstrap-datetimepicker.min.css')}}" rel="stylesheet">
 		<link href="{{ asset('sximo/js/plugins/select2/select2.css')}}" rel="stylesheet">
-		<link href="{{ asset('sximo/js/plugins/iCheck/skins/square/green.css')}}" rel="stylesheet">
+		<link href="{{ asset('sximo/js/plugins/iCheck/skins/square/blue.css')}}" rel="stylesheet">
 		<link href="{{ asset('sximo/js/plugins/fancybox/jquery.fancybox.css') }}" rel="stylesheet">
         <link href="{{ asset('sximo/css/multi-select.css') }}" rel="stylesheet">
 		<link href="{{ asset('sximo/css/animate.css')}}" rel="stylesheet">
@@ -74,30 +74,31 @@
 	<script src="https://cdn.jsdelivr.net/momentjs/2.10.6/moment.min.js"></script>
     <!-- Search and storage  -->
     <link href="{{ asset('sximo/css/search.css')}}" rel="stylesheet">
+    <link href="{{ asset('sximo/css/feg_new_styles.css') }}" rel="stylesheet">
     <script type="text/javascript" src="{{ asset('sximo/js/app.js') }}"></script>    
     <script type="text/javascript" src="{{ asset('sximo/js/search.js') }}"></script>
     <script type="text/javascript" src="{{ asset('sximo/js/simple-search.js') }}"></script>
     <!-- End Search and storage  -->
     @yield('beforeheadend', '')	
   	</head>
-  	<body class="sxim-init" >
-    @yield('afterbodystart', '')        
+  	<body class="sxim-init" style="background:url('{{asset("sximo/images/sidebar-bg.jpg") }}');background-repeat:no-repeat;background-size: 220px;background-position:left bottom;background-color:#103669 ">
+    @yield('afterbodystart', '')
 	<div id="wrapper">
 		@include('layouts/sidemenu')
 		<div class="gray-bg " id="page-wrapper">
 			@include('layouts/headmenu')
 
-			@yield('content')		
+			@yield('content')
 		</div>
 
 		<div class="footer fixed">
 		    <div class="pull-right">
-		       
+
 		    </div>
 		    <div>
-		        <strong>Copyright</strong> &copy; 2014-{{ date('Y')}} . {{ CNF_COMNAME }}  
+		        <strong>Copyright</strong> &copy; 2014-{{ date('Y')}} . {{ CNF_COMNAME }}
 		    </div>
-		</div>		
+		</div>
 
 	</div>
 
@@ -125,20 +126,20 @@
             <div class="title">Select Color Schema</div>
             <div class="setings-item">
                     <ul>
-	                    <li><a href="{{ url('home/skin/sximo') }}"> Default Skin  <span class="pull-right default-skin"> </span></a></li> 
-	                    <li><a href="{{ url('home/skin/sximo-dark-blue') }}"> Dark Blue Skin <span class="pull-right dark-blue-skin"> </span> </a></li> 
-	                    <li><a href="{{ url('home/skin/sximo-light-blue') }}"> Light Blue Skin <span class="pull-right light-blue-skin"> </span> </a></li> 
-	                   
+	                    <li><a href="{{ url('home/skin/sximo') }}"> Default Skin  <span class="pull-right default-skin"> </span></a></li>
+	                    <li><a href="{{ url('home/skin/sximo-dark-blue') }}"> Dark Blue Skin <span class="pull-right dark-blue-skin"> </span> </a></li>
+	                    <li><a href="{{ url('home/skin/sximo-light-blue') }}"> Light Blue Skin <span class="pull-right light-blue-skin"> </span> </a></li>
+
                     </ul>
 
-                
+
             </div>
-            
+
         </div>
     </div>
 </div>
 
-{{ Sitehelpers::showNotification() }} 
+{{ Sitehelpers::showNotification() }}
 @yield('beforebodyend', '')
 <script type="text/javascript">
 jQuery(document).ready(function ($) {
@@ -148,19 +149,19 @@ jQuery(document).ready(function ($) {
         $(".theme-config-box").toggleClass("show");
     });
 
-	setInterval(function(){ 
-		var noteurl = $('.notif-value').attr('code'); 
-		$.get( noteurl +'/notification/load',function(data){
-			$('.notif-alert').html(data.total);
-			var html = '';
-			$.each( data.note, function( key, val ) {
-				html += '<li><a href="'+val.url+'"> <div> <i class="'+val.icon+' fa-fw"></i> '+ val.title+'  <span class="pull-right text-muted small">'+val.date+'</span></div></li>';
-				html += '<li class="divider"></li>';			 
-			});
-			html += '<li><div class="text-center link-block"><a href="'+noteurl+'/notification"><strong>View All Notification</strong> <i class="fa fa-angle-right"></i></a></div></li>';
-			$('.notif-value').html(html);
-		});
-	}, 60000);
+//	setInterval(function(){
+//		var noteurl = $('.notif-value').attr('code');
+//		$.get( noteurl +'/notification/load',function(data){
+//			$('.notif-alert').html(data.total);
+//			var html = '';
+//			$.each( data.note, function( key, val ) {
+//				html += '<li><a href="'+val.url+'"> <div> <i class="'+val.icon+' fa-fw"></i> '+ val.title+'  <span class="pull-right text-muted small">'+val.date+'</span></div></li>';
+//				html += '<li class="divider"></li>';
+//			});
+//			html += '<li><div class="text-center link-block"><a href="'+noteurl+'/notification"><strong>View All Notification</strong> <i class="fa fa-angle-right"></i></a></div></li>';
+//			$('.notif-value').html(html);
+//		});
+//	}, 60000);
 		
 });	
 	

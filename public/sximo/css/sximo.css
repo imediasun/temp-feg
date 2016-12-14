@@ -2479,6 +2479,13 @@ table.table-striped tr th
 .clearfix {
     zoom: 1; /* For IE 6/7 (trigger hasLayout) */
 }
+
+.autoheight {
+    height: auto !important;
+}
+.nopadding {
+    padding: 0 !important;
+}
 #col-config
 {
     position:relative !important;

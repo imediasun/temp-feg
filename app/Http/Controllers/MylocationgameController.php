@@ -49,6 +49,7 @@ class MylocationgameController extends Controller
         $this->data['module_id'] = $module_id;
         if (Input::has('config_id')) {
             $config_id = Input::get('config_id');
+            \Session::put('config_id',$config_id);
         } elseif (\Session::has('config_id')) {
             $config_id = \Session::get('config_id');
         } else {
@@ -388,6 +389,9 @@ class MylocationgameController extends Controller
         $results = \DB::table('game')->where('game_title_id', '=', $request['game_title_id'])->where('location_id', '=', $request['location_id'])->get();
         $info = $this->model->makeInfo($this->module);
         $rows = $results;
+        foreach ($rows as &$row){
+            $row->game_name=$row->game_title_id;
+        }
         $fields = $info['config']['grid'];
         $content = array(
             'fields' => $fields,

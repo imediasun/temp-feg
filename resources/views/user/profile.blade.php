@@ -17,6 +17,9 @@
 	</div>  
 		
 	<div class="page-content-wrapper m-t">
+        <div class="sbox">
+            <div class="sbox-content">
+
 	@if(Session::has('message'))	  
 		   {!! Session::get('message') !!}
 	@endif	
@@ -34,37 +37,37 @@
 	  <div class="tab-pane active m-t" id="info">
 		{!! Form::open(array('url'=>'user/saveprofile/', 'class'=>'form-horizontal ' ,'files' => true)) !!}  
 		  <div class="form-group">
-			<label for="ipt" class=" control-label col-md-4"> Username </label>
+			<label for="ipt" class=" control-label col-md-2"> Username </label>
 			<div class="col-md-8">
 			<input name="username" type="text" id="username" disabled="disabled" class="form-control input-sm" required  value="{{ $info->username }}" />  
 			 </div> 
 		  </div>  
 		  <div class="form-group">
-			<label for="ipt" class=" control-label col-md-4">{{ Lang::get('core.email') }} </label>
+			<label for="ipt" class=" control-label col-md-2">{{ Lang::get('core.email') }} </label>
 			<div class="col-md-8">
 			<input name="email" type="text" id="email"  class="form-control input-sm" value="{{ $info->email }}" /> 
 			 </div> 
 		  </div> 	  
 	  
 		  <div class="form-group">
-			<label for="ipt" class=" control-label col-md-4">{{ Lang::get('core.firstname') }} </label>
+			<label for="ipt" class=" control-label col-md-2">{{ Lang::get('core.firstname') }} </label>
 			<div class="col-md-8">
 			<input name="first_name" type="text" id="first_name" class="form-control input-sm" required value="{{ $info->first_name }}" /> 
 			 </div> 
 		  </div>  
 		  
 		  <div class="form-group">
-			<label for="ipt" class=" control-label col-md-4">{{ Lang::get('core.lastname') }} </label>
+			<label for="ipt" class=" control-label col-md-2">{{ Lang::get('core.lastname') }} </label>
 			<div class="col-md-8">
 			<input name="last_name" type="text" id="last_name" class="form-control input-sm" required value="{{ $info->last_name }}" />  
 			 </div> 
 		  </div>    
 	
 		  <div class="form-group  " >
-			<label for="ipt" class=" control-label col-md-4 text-right"> Avatar </label>
+			<label for="ipt" class=" control-label col-md-2 text-right"> Avatar </label>
 			<div class="col-md-8">
 			<div class="fileinput fileinput-new" data-provides="fileinput">
-			  <span class="btn btn-primary btn-file">
+			  <span class="btn  btn-file">
 			  	<span class="fileinput-new">Upload Avatar Image</span><span class="fileinput-exists">Change</span>
 					<input type="file" name="avatar">
 				</span>
@@ -79,7 +82,7 @@
 		  </div>  
 	
 		  <div class="form-group">
-			<label for="ipt" class=" control-label col-md-4">&nbsp;</label>
+			<label for="ipt" class=" control-label col-md-2">&nbsp;</label>
 			<div class="col-md-8">
 				<button class="btn btn-success" type="submit"> {{ Lang::get('core.sb_savechanges') }}</button>
 			 </div> 
@@ -92,14 +95,14 @@
 		{!! Form::open(array('url'=>'user/savepassword/', 'class'=>'form-horizontal ')) !!}    
 		  
 		  <div class="form-group">
-			<label for="ipt" class=" control-label col-md-4"> {{ Lang::get('core.newpassword') }} </label>
+			<label for="ipt" class=" control-label col-md-2"> {{ Lang::get('core.newpassword') }} </label>
 			<div class="col-md-8">
 			<input name="password" type="password" id="password" class="form-control input-sm" value="" /> 
 			 </div> 
 		  </div>  
 		  
 		  <div class="form-group">
-			<label for="ipt" class=" control-label col-md-4"> {{ Lang::get('core.conewpassword') }}  </label>
+			<label for="ipt" class=" control-label col-md-2"> {{ Lang::get('core.conewpassword') }}  </label>
 			<div class="col-md-8">
 			<input name="password_confirmation" type="password" id="password_confirmation" class="form-control input-sm" value="" />  
 			 </div> 
@@ -107,15 +110,17 @@
 		 
 		
 		  <div class="form-group">
-			<label for="ipt" class=" control-label col-md-4">&nbsp;</label>
+			<label for="ipt" class=" control-label col-md-2">&nbsp;</label>
 			<div class="col-md-8">
 				<button class="btn btn-danger" type="submit"> {{ Lang::get('core.sb_savechanges') }} </button>
 			 </div> 
 		  </div>   
 		{!! Form::close() !!}	
 	  </div>
-  
 
+
+    </div>
+            </div>
 
 </div>
 </div>
