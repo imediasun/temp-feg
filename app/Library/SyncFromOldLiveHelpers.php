@@ -500,7 +500,7 @@ class SyncFromOldLiveHelpers
             'targetTable' => '', 
             'chunk' => 1000, 
             'cleanFirst' => 0,
-        )), $params); // $sourceDB, $targetDB, $table, $chunk, $cleanFirst,
+        ), $params)); // $sourceDB, $targetDB, $table, $chunk, $cleanFirst,
         
         if (empty($chunk)) {
             $chunk = 1000;
@@ -548,7 +548,7 @@ class SyncFromOldLiveHelpers
         extract(array_merge(array(
             'db' => '', 
             'table' => ''
-        )),$params); 
+        ), $params)); 
         if (is_null(db)) {
             $id = DB::table(table)->truncate();            
         }       
@@ -565,7 +565,7 @@ class SyncFromOldLiveHelpers
             'targetTable' => '', 
             'chunk' => 1000, 
             'cleanFirst' => 0,
-        )), $params); // $sourceDB, $targetDB, $table, $targetTable, $chunk, $cleanFirst,
+        ), $params)); // $sourceDB, $targetDB, $table, $targetTable, $chunk, $cleanFirst,
 
         $sourceLastID = self::get_last_id($table, $sourceDB);
         $targetLastID = self::get_last_id($targetTable, $targetDB);
