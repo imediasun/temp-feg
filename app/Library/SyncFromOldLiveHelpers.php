@@ -523,7 +523,7 @@ class SyncFromOldLiveHelpers
             DB::connection($targetDB)->setFetchMode(PDO::FETCH_ASSOC); 
         }
         
-        $lastID = self::get_last_id($table, $sourceDB);
+        $lastID = self::get_last_id($table, $targetDB);
 
         $q = "SELECT * from $table WHERE id > $lastID LIMIT " . $chunk;
         $data = $source->select($q);
@@ -848,7 +848,7 @@ class SyncFromOldLiveHelpers
             }            
         }
         
-        $timeString = implode("", $time);
+        $timeString = implode(" ", $time);
         return $timeString;
     }
     /* Sync From LIVE ERP DB (Processed data) [START] */
