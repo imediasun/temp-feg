@@ -13,7 +13,29 @@ class SyncFromOldLiveHelpers
     private static $possibleAdjustments;
     private static $limit = 1000;
 
+    public static function syncGameEarningsFromLive($params = array()) {
+        $params['sourceDB'] = 'livemysql';
+        $params['targetDB'] = 'mysql';
+        $params['table'] = 'game_earnings';
+        $params['cleanFirst'] = 1;
         
+        return self::syncTable($params);
+    }
+    public static function syncGameEarningsFromLiveSacoa($params = array()) {
+        $params['sourceDB'] = 'livemysql_sacoa'; ///livemysql_embed
+        $params['targetDB'] = 'sacoa_sync';//embed_sync
+        $params['table'] = 'game_earnings';
+        $params['cleanFirst'] = 1;        
+        return self::syncTable($params);
+    }
+    public static function syncGameEarningsFromLiveEmbed($params = array()) {
+        $params['sourceDB'] = 'livemysql_embed'; ///
+        $params['targetDB'] = 'embed_sync';//
+        $params['table'] = 'game_earnings';
+        $params['cleanFirst'] = 1;        
+        return self::syncTable($params);
+    }
+    
     /* Common functions */
     public static function live_sync_game_titles($params = array()) {
         extract($params);
@@ -46,7 +68,7 @@ class SyncFromOldLiveHelpers
                         });   
         
         $local_db->update("UPDATE `game_title` SET img = CONCAT(id,'.jpg') where img !=''");
-        
+        DB::connection($liveSystemDBName)->setFetchMode(PDO::FETCH_CLASS); 
         self::$L->log("End copying $totalCount Game Title");  
 
     } 
@@ -81,6 +103,7 @@ class SyncFromOldLiveHelpers
                         });   
         $local_db->update("update `game` set product_id = concat('[\"',product_id ,'\"]') 
             WHERE product_id NOT LIKE '[\"%' AND game_type_id = 3");
+        DB::connection($liveSystemDBName)->setFetchMode(PDO::FETCH_CLASS); 
         self::$L->log("End copying $totalCount Game");  
         
     } 
@@ -113,7 +136,7 @@ class SyncFromOldLiveHelpers
                                 self::$L->log("NO data to add");
                             }            
                         });   
-                       
+        DB::connection($liveSystemDBName)->setFetchMode(PDO::FETCH_CLASS);                        
         self::$L->log("End copying $totalCount Reader Excludes");  
     }     
     public static function live_sync_requests($params = array()) {
@@ -154,7 +177,7 @@ class SyncFromOldLiveHelpers
         else {
             self::$L->log("Requests sync not required. Ending.");   
         }
-  
+        DB::connection($liveSystemDBName)->setFetchMode(PDO::FETCH_CLASS); 
     }     
     
     public static function commonSyncAll ($params = array()) {
@@ -295,6 +318,9 @@ class SyncFromOldLiveHelpers
         }
                 
         self::$L->log("End copying Adjustment metadata");  
+        DB::connection($embedDBName)->setFetchMode(PDO::FETCH_CLASS);         
+        DB::connection($sacoatDBName)->setFetchMode(PDO::FETCH_CLASS);         
+        DB::connection($liveSystemDBName)->setFetchMode(PDO::FETCH_CLASS);         
         
 //        $q = "SELECT ga.id, ga.loc_id, L.debit_type_id 
 //            FROM $adMetaTable ga
@@ -386,12 +412,174 @@ class SyncFromOldLiveHelpers
                                 self::$L->log("NO data to add");
                             }            
                         }); 
+        DB::connection($sourceDB)->setFetchMode(PDO::FETCH_CLASS);                                 
+        DB::connection($destDB)->setFetchMode(PDO::FETCH_CLASS);                                 
         self::$L->log("Added $totalCount data items to local");
         self::$L->log("END FETCH unsynced DATA");
     }    
      /* Sync From Temp DB [END] */
 
     
+    public static function syncTable($params = array()) {
+        extract($params, array(
+            'sourceDB' => '',  //mysql, livemysql, livemysql_sacoa, livemysql_embed
+            'targetDB' => '', //embed_sync, sacoa_sync
+            'table' => '', 
+            'targetTable' => '', 
+            'chunk' => 1000, 
+            'cleanFirst' => 0,
+        )); // $sourceDB, $targetDB, $table, $chunk, $cleanFirst,
+        self::$L = $_logger;
+        
+        if (empty($targetTable)) {
+            $targetTable = $table;
+            $params['targetTable'] = $targetTable;
+        }
+        
+        $syncLogTemplate = "$sourceDB.$table => $targetDB.$targetTable";
+        self::$L->log("Start DATABASE SYNC: $syncLogTemplate");
+        
+        if (empty($table)) {
+            $log = "No table to sync. Ending...";
+            self::$L->log($log);
+            self::$L->log("End DATABASE SYNC: $syncLogTemplate ");
+            return $log;
+        }
+        if ($targetTable == $table) {
+            if (empty($sourceDB) && empty($targetDB) || ($sourceDB == $targetDB)) {
+                $log = "No target table for sync. Ending...";
+                self::$L->log($log);
+                self::$L->log("End DATABASE SYNC: $syncLogTemplate ");
+                return $log;
+            }
+            
+        }
+
+        
+        if ($clearFirst == 1) {
+            self::truncateTable(array('db' => $targetDB, 'table' => $targetTable));
+        }
+        
+        $count = 0;
+        
+        $timeStart = microtime(true);
+        $timeEnd = microtime(true);        
+        while(self::checkIfSyncRequired($params)) {
+            $timeEnd = microtime(true);
+            $timeDiff = round($timeEnd - $timeStart);
+            $timeDiffHuman = self::secondsToHumanTime($timeDiff);
+            self::$L->log("has " . ($count > 0 ? "more":"") . " data to sync [ $timeDiffHuman ]");
+            self::_syncTable($params);
+            $count++;
+            sleep(3);
+        }
+        self::$L->log("No  " . ($count > 0 ? "more":"") . " data to sync");
+        
+        $timeEnd = microtime(true);
+        $timeDiff = round($timeEnd - $timeStart);
+        $timeDiffHuman = self::secondsToHumanTime($timeDiff);
+        
+        self::$L->log("End DATABASE SYNC: $syncLogTemplate ");
+        $timeTaken = "Time taken: $timeDiffHuman ";
+        self::$L->log($timeTaken);
+        
+        if (!empty($sourceDB)) {
+            DB::connection($sourceDB)->disconnect();
+        }
+        if (!empty($targetDB)) {
+            DB::connection($targetDB)->disconnect();
+        }        
+        
+        return $timeTaken;
+    }
+    public static function _syncTable($params = array()) {
+        extract($params, array(
+            'sourceDB' => '', 
+            'targetDB' => '', 
+            'table' => '', 
+            'targetTable' => '', 
+            'chunk' => 1000, 
+            'cleanFirst' => 0,
+        )); // $sourceDB, $targetDB, $table, $chunk, $cleanFirst,
+        
+        if (empty($chunk)) {
+            $chunk = 1000;
+        }
+        
+        if (empty($sourceDB)) {
+            $source = DB::connection();
+            DB::connection()->setFetchMode(PDO::FETCH_ASSOC); 
+        }
+        else {
+            $source = DB::connection($sourceDB);
+            DB::connection($sourceDB)->setFetchMode(PDO::FETCH_ASSOC); 
+        }
+        if (empty($targetDB)) {
+            $target = DB::connection();
+            DB::connection()->setFetchMode(PDO::FETCH_ASSOC); 
+        }
+        else {
+            $target = DB::connection($targetDB);
+            DB::connection($targetDB)->setFetchMode(PDO::FETCH_ASSOC); 
+        }
+        
+        $lastID = self::get_last_id($table, $sourceDB);
+
+        $q = "SELECT * from $table WHERE id > $lastID LIMIT " . $chunk;
+        $data = $source->select($q);
+        $target->table($targetTable)->insert($data);
+        
+        if (empty($sourceDB)) {
+            DB::connection()->setFetchMode(PDO::FETCH_CLASS); 
+        }
+        else {
+            DB::connection($sourceDB)->setFetchMode(PDO::FETCH_CLASS); 
+        }
+        if (empty($targetDB)) {
+            DB::connection()->setFetchMode(PDO::FETCH_CLASS); 
+        }
+        else {
+            DB::connection($targetDB)->setFetchMode(PDO::FETCH_CLASS); 
+        }
+        
+    }
+    
+    public static function truncateTable ($params = array()) {
+        extract($params, array(
+            'db' => '', 
+            'table' => ''
+        )); 
+        if (is_null(db)) {
+            $id = DB::table(table)->truncate();            
+        }       
+        else {
+            $id = DB::connection(db)->table(table)->truncate();
+        }
+    }
+    
+    public static function checkIfSyncRequired($params = array()) {
+        extract($params, array(
+            'sourceDB' => '', 
+            'targetDB' => '', 
+            'table' => '', 
+            'targetTable' => '', 
+            'chunk' => 1000, 
+            'cleanFirst' => 0,
+        )); // $sourceDB, $targetDB, $table, $targetTable, $chunk, $cleanFirst,
+
+        $sourceLastID = self::get_last_id($table, $sourceDB);
+        $targetLastID = self::get_last_id($targetTable, $targetDB);
+        
+        self::$L->log("Sync Status :".
+            " $sourceDB.$table ($sourceLastID)  => $targetDB.$targetTable ($targetLastID) : " 
+            . ($sourceLastID > $targetLastID ? " yes" : " no"));
+
+                    
+        $hasMore = $sourceLastID > $targetLastID;
+        
+        return $hasMore;        
+    }
+            
     /* Sync From LIVE ERP DB (Processed data) [START] */
     public static function _livesync($params = array()) {
         
@@ -467,6 +655,7 @@ class SyncFromOldLiveHelpers
             }
             DB::delete($sql);        
         }
+        DB::connection()->setFetchMode(PDO::FETCH_CLASS); 
     }
     
     public static function live_sync_adjustment_earnings() {
@@ -494,6 +683,9 @@ class SyncFromOldLiveHelpers
             DB::table($table)->where('id', $id)->update($item);
         }
         DB::commit();
+        
+        DB::connection()->setFetchMode(PDO::FETCH_CLASS); 
+        DB::connection('livemysql')->setFetchMode(PDO::FETCH_CLASS); 
     }
     
     public static function get_last_adjusted_on($dbname = null) {  
@@ -525,6 +717,8 @@ class SyncFromOldLiveHelpers
             DB::table($table)->insert($item);
         }
         DB::commit();
+        DB::connection()->setFetchMode(PDO::FETCH_CLASS);               
+        DB::connection('livemysql')->setFetchMode(PDO::FETCH_CLASS);               
     }
     
     public static function live_sync_game_summary_reports() {
@@ -545,6 +739,8 @@ class SyncFromOldLiveHelpers
             DB::table($table)->insert($item);
         }
         DB::commit();
+        DB::connection()->setFetchMode(PDO::FETCH_CLASS);               
+        DB::connection('livemysql')->setFetchMode(PDO::FETCH_CLASS);               
     }
     
     public static function live_sync_earnings() {
@@ -566,7 +762,8 @@ class SyncFromOldLiveHelpers
         $q = "SELECT * from game_earnings WHERE id > $last_sync_id LIMIT " . self::$limit;
         $data = $live_db->select($q);
         DB::table('game_earnings')->insert($data);
-
+        DB::connection()->setFetchMode(PDO::FETCH_CLASS);               
+        DB::connection('livemysql')->setFetchMode(PDO::FETCH_CLASS);   
     }
     
     public static function get_live_earnings_meta($live_db, $last_sync_id) {        
@@ -623,6 +820,36 @@ class SyncFromOldLiveHelpers
         
         return $hasMore;
         
+    }
+    
+    public static function secondsToHumanTime($seconds) {
+        $time = array();
+        if (!empty($seconds)) {
+            //$seconds = intval($seconds);
+            $dtF = new \DateTime('@0');
+            $dtT = new \DateTime("@$seconds");
+            $diff = $dtF->diff($dtT);
+            $days = $diff->format('%a');
+            $hours = $diff->format('%h');
+            $mins = $diff->format('%i');
+            $snds = $diff->format('%s');
+            
+            if (!empty($days)) {
+                $time[] = "$days days";
+            }
+            if (!empty($hours)) {
+                $time[] = "$hours hours";
+            }
+            if (!empty($mins)) {
+                $time[] = "$mins minutes";
+            }
+            if (!empty($snds)) {
+                $time[] = "$snds seconds";
+            }            
+        }
+        
+        $timeString = implode("", $time);
+        return $timeString;
     }
     /* Sync From LIVE ERP DB (Processed data) [START] */
 }
