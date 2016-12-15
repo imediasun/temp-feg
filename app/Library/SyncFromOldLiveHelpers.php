@@ -848,7 +848,7 @@ class SyncFromOldLiveHelpers
             }            
         }
         
-        $timeString = implode("", $time);
+        $timeString = implode(" ", $time);
         return $timeString;
     }
     /* Sync From LIVE ERP DB (Processed data) [START] */
