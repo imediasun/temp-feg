@@ -421,14 +421,14 @@ class SyncFromOldLiveHelpers
 
     
     public static function syncTable($params = array()) {
-        extract($params, array(
+        extract(array_merge(array(
             'sourceDB' => '',  //mysql, livemysql, livemysql_sacoa, livemysql_embed
             'targetDB' => '', //embed_sync, sacoa_sync
             'table' => '', 
             'targetTable' => '', 
             'chunk' => 1000, 
             'cleanFirst' => 0,
-        )); // $sourceDB, $targetDB, $table, $chunk, $cleanFirst,
+        ), $params)); // $sourceDB, $targetDB, $table, $chunk, $cleanFirst,
         self::$L = $_logger;
         
         if (empty($targetTable)) {
@@ -493,14 +493,14 @@ class SyncFromOldLiveHelpers
         return $timeTaken;
     }
     public static function _syncTable($params = array()) {
-        extract($params, array(
+        extract(array_merge(array(
             'sourceDB' => '', 
             'targetDB' => '', 
             'table' => '', 
             'targetTable' => '', 
             'chunk' => 1000, 
             'cleanFirst' => 0,
-        )); // $sourceDB, $targetDB, $table, $chunk, $cleanFirst,
+        )), $params); // $sourceDB, $targetDB, $table, $chunk, $cleanFirst,
         
         if (empty($chunk)) {
             $chunk = 1000;
@@ -545,10 +545,10 @@ class SyncFromOldLiveHelpers
     }
     
     public static function truncateTable ($params = array()) {
-        extract($params, array(
+        extract(array_merge(array(
             'db' => '', 
             'table' => ''
-        )); 
+        )),$params); 
         if (is_null(db)) {
             $id = DB::table(table)->truncate();            
         }       
@@ -558,14 +558,14 @@ class SyncFromOldLiveHelpers
     }
     
     public static function checkIfSyncRequired($params = array()) {
-        extract($params, array(
+        extract(array_merge(array(
             'sourceDB' => '', 
             'targetDB' => '', 
             'table' => '', 
             'targetTable' => '', 
             'chunk' => 1000, 
             'cleanFirst' => 0,
-        )); // $sourceDB, $targetDB, $table, $targetTable, $chunk, $cleanFirst,
+        )), $params); // $sourceDB, $targetDB, $table, $targetTable, $chunk, $cleanFirst,
 
         $sourceLastID = self::get_last_id($table, $sourceDB);
         $targetLastID = self::get_last_id($targetTable, $targetDB);
