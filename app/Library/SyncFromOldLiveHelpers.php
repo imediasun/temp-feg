@@ -549,11 +549,11 @@ class SyncFromOldLiveHelpers
             'db' => '', 
             'table' => ''
         ), $params)); 
-        if (is_null(db)) {
-            $id = DB::table(table)->truncate();            
+        if (is_null($db)) {
+            $id = DB::table($table)->truncate();            
         }       
         else {
-            $id = DB::connection(db)->table(table)->truncate();
+            $id = DB::connection($db)->table($table)->truncate();
         }
     }
     
