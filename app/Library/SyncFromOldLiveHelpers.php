@@ -456,7 +456,7 @@ class SyncFromOldLiveHelpers
         }
 
         
-        if ($clearFirst == 1) {
+        if ($cleanFirst == 1) {
             self::truncateTable(array('db' => $targetDB, 'table' => $targetTable));
         }
         
