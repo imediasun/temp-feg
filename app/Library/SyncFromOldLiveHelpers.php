@@ -456,7 +456,7 @@ class SyncFromOldLiveHelpers
         }
 
         
-        if ($clearFirst == 1) {
+        if ($cleanFirst == 1) {
             self::truncateTable(array('db' => $targetDB, 'table' => $targetTable));
         }
         
@@ -637,9 +637,9 @@ class SyncFromOldLiveHelpers
         foreach($data as $item) {
             $id = $item['id'];
             $date = $item['date_opened'];
-            $sql = "DELETE FROM report_locations WHERE location_id = $loc and date_played < '$date'";
+            $sql = "DELETE FROM report_locations WHERE location_id = $id and date_played < '$date'";
             DB::delete($sql);        
-            $sql = "DELETE FROM report_game_plays WHERE location_id = $loc and date_played < '$date'";
+            $sql = "DELETE FROM report_game_plays WHERE location_id = $id and date_played < '$date'";
             DB::delete($sql);
 
             $sql = "DELETE FROM report_locations WHERE record_status = 0";
