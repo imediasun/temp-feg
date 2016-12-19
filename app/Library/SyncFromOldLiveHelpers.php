@@ -12,7 +12,36 @@ class SyncFromOldLiveHelpers
     private static $L;
     private static $possibleAdjustments;
     private static $limit = 1000;
+    
+    
+    
 
+    public static function createGameSummary($params = array()) {
+        extract(array_merge(array(
+            'cleanFirst' => 1,
+        ), $params));
+        
+        self::commonSyncAll($params);
+        $q = "select date_format(max(date_start), '%Y-%m-%d') as maxd, 
+            date_format(min(date_start), '%Y-%m-%d') as mind from game_earnings";
+        $data = DB::select($q);
+        if (!empty($data)) {
+            $max = $data[0]->maxd;
+            $min = $data[0]->mind;
+        }
+        
+       if ($cleanFirst == 1) {
+            self::$L->log("Clear all data from target table first...");
+            self::truncateTable(array('db' => 'mysql', 'table' => 'report_locations'));
+            self::truncateTable(array('db' => 'mysql', 'table' => 'report_game_plays'));
+        }        
+        
+        $params['date_start'] = $min;
+        $params['date_end'] = $max;
+        
+        SyncHelpers::generateDailySummaryDateRange($params);
+        
+    }
     public static function syncGameEarningsFromLive($params = array()) {
         $params['sourceDB'] = 'livemysql';
         $params['targetDB'] = 'mysql';
@@ -188,6 +217,17 @@ class SyncFromOldLiveHelpers
         
         extract($params);
         self::$L = $_logger;
+        
+        self::$L->log("Start Games Move history Sync");
+        $gMHParams = array_merge($params, array(
+            "sourceDB" => "livemysql", 
+            "targetDB" => "mysql", 
+            "table" => "game_move_history", 
+            "cleanFirst" => 1
+        ));        
+        return self::syncTable($gMHParams);        
+        unset($gMHParams);
+        self::$L->log("End Games Move history Sync");
         
         self::$L->log("Start Games Title Sync");
         self::live_sync_game_titles($params);
@@ -457,6 +497,7 @@ class SyncFromOldLiveHelpers
 
         
         if ($cleanFirst == 1) {
+            self::$L->log("Clear all data from target table first...");
             self::truncateTable(array('db' => $targetDB, 'table' => $targetTable));
         }
         
@@ -628,34 +669,43 @@ class SyncFromOldLiveHelpers
     }
     
     public static function live_sync_clean_summary_reports($location = null) {
-        
-        DB::connection()->setFetchMode(PDO::FETCH_ASSOC); 
-        
-        $q = "SELECT id, date_opened from location WHERE reporting=1 " .
-            (empty($location) ? "": " AND id in ($location)");
-        $data = DB::select($q);
-        foreach($data as $item) {
-            $id = $item['id'];
-            $date = $item['date_opened'];
-            $sql = "DELETE FROM report_locations WHERE location_id = $id and date_played < '$date'";
-            DB::delete($sql);        
-            $sql = "DELETE FROM report_game_plays WHERE location_id = $id and date_played < '$date'";
-            DB::delete($sql);
 
-            $sql = "DELETE FROM report_locations WHERE record_status = 0";
-            if (!empty($location)) {
-                $sql .= " AND location_id in ($location)";
-            }
-            DB::delete($sql);
-            
-            $sql = "DELETE FROM report_game_plays WHERE record_status = 0";
+        $q = "DELETE FROM report_locations WHERE record_status = 0 " .
+            empty($location) ? "" : " AND location_id in ($location)";
+        DB::delete($q);
 
-            if (!empty($location)) {
-                $sql .= " AND location_id in ($location)";
-            }
-            DB::delete($sql);        
-        }
-        DB::connection()->setFetchMode(PDO::FETCH_CLASS); 
+        $q = "DELETE FROM report_game_plays WHERE record_status = 0".
+            empty($location) ? "" : " AND location_id in ($location)";
+        DB::delete($q);        
+        
+        $q = "DELETE FROM report_locations
+                USING report_locations
+                JOIN location ON location.id=report_locations.location_id
+                WHERE report_locations.date_played < location.date_opened
+                AND location.date_opened IS NOT NULL 
+                AND location.date_opened <> '0000-00-00'" .
+            (empty($location) ? "": " AND report_locations.location_id in ($location)");
+        DB::delete($q);
+        
+        $q = "DELETE FROM report_game_plays
+                USING report_game_plays
+                JOIN location ON location.id=report_game_plays.location_id
+                WHERE report_game_plays.date_played < location.date_opened
+                AND location.date_opened IS NOT NULL 
+                AND location.date_opened <> '0000-00-00'" .
+            (empty($location) ? "": " AND report_game_plays.location_id in ($location)");
+        DB::delete($q);
+        
+        
+        $q = "DELETE FROM report_game_plays USING report_game_plays 
+                    JOIN game ON game.id=report_game_plays.game_id 
+                        WHERE report_game_plays.date_played < game.date_in_service 
+                            AND game.date_in_service <> '0000-00-00' 
+                            AND report_game_plays.game_revenue IS NULL".
+            (empty($location) ? "": " AND report_game_plays.location_id in ($location)");
+        
+        DB::delete($q);        
+        
     }
     
     public static function live_sync_adjustment_earnings() {
