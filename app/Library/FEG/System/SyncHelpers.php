@@ -299,7 +299,7 @@ class SyncHelpers
                                 game.game_title_id,
                                 game_title.game_type_id,
                                 game.status_id as game_status,
-                                game.sold as game_is_sold,
+                                IF(game.date_sold >= '$date', 1, 0) as game_is_sold,
                                 game.test_piece as game_on_test,
                                 game.not_debit as game_not_debit,
                                 '$today' as report_date,

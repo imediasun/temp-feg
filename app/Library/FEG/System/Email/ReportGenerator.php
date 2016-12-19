@@ -1337,7 +1337,7 @@ class ReportGenerator
     }
     
     
-    public static function phpMail($to, $subject, $message, $from = "support@element5digital.com", $options = array()) {
+    public static function phpMail($to, $subject, $message, $from = "support@fegllc.com", $options = array()) {
         $headers = 'MIME-Version: 1.0' . "\r\n";
         $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
         $headers .= 'From: ' . $from . "\r\n";        
@@ -1352,18 +1352,19 @@ class ReportGenerator
         
         mail($to, $subject, $message, $headers);
     }
-    public static function sendEmail($to, $subject, $message, $from = "support@element5digital.com", $options = array()) { 
+    public static function sendEmail($to, $subject, $message, $from = "support@fegllc.com", $options = array()) { 
         //support@fegllc.com
         if (empty($from)) {
             //$from = "support@fegllc.com";
-            $from = "support@element5digital.com";
+            //$from = "support@element5digital.com";
+            $from = "support@fegllc.com";
         }        
         self::phpMail($to, $subject, $message, $from, $options);
     }
     
     public static function sendEmailReport($options) {        
         extract(array_merge(array(
-            'from' => "support@element5digital.com",
+            'from' => "support@fegllc.com",
             'reportName' => "Test",
         ), $options));
         
