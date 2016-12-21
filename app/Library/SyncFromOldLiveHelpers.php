@@ -53,23 +53,42 @@ class SyncFromOldLiveHelpers
         $params['sourceDB'] = 'livemysql';
         $params['targetDB'] = 'mysql';
         $params['table'] = 'game_earnings';
-        $params['cleanFirst'] = 1;
+        $params['cleanFirst'] = isset($params['cleanFirst']) ? $params['cleanFirst'] : 0;
         
+        if ($params['cleanFirst'] == 1) {
         return self::syncTable($params);
+    }
+        else {
+            return self::live_sync_temp_earnings('livemysql', 'mysql');
+        }
+        
     }
     public static function syncGameEarningsFromLiveSacoa($params = array()) {
         $params['sourceDB'] = 'livemysql_sacoa'; ///livemysql_embed
         $params['targetDB'] = 'sacoa_sync';//embed_sync
         $params['table'] = 'game_earnings';
-        $params['cleanFirst'] = 1;        
+        $params['cleanFirst'] = isset($params['cleanFirst']) ? $params['cleanFirst'] : 0;
+        
+        if ($params['cleanFirst'] ==1) {
+        return self::syncTable($params);
+    }
+        else {
+            return self::live_sync_temp_earnings('livemysql_sacoa', 'sacoa_sync');
+        }        
         return self::syncTable($params);
     }
     public static function syncGameEarningsFromLiveEmbed($params = array()) {
         $params['sourceDB'] = 'livemysql_embed'; ///
         $params['targetDB'] = 'embed_sync';//
         $params['table'] = 'game_earnings';
-        $params['cleanFirst'] = 1;        
+        $params['cleanFirst'] = isset($params['cleanFirst']) ? $params['cleanFirst'] : 0;
+        
+        if ($params['cleanFirst'] ==1) {
         return self::syncTable($params);
+    }
+        else {
+            return self::live_sync_temp_earnings('livemysql_embed', 'embed_sync');
+        }        
     }
     
     /* Common functions */
@@ -230,7 +249,7 @@ class SyncFromOldLiveHelpers
             "sourceDB" => "livemysql", 
             "targetDB" => "mysql", 
             "table" => "game_move_history", 
-            "cleanFirst" => 1
+            "cleanFirst" => 0
         ));        
         self::syncTable($gMHParams);        
         unset($gMHParams);
