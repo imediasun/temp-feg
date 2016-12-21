@@ -481,6 +481,7 @@ class SyncHelpers
         extract(array_merge(array(
             'date_start' => null,
             'date_end' => null,
+            'count' => 0,
             'location' => null,
             '_task' => array(),
             '_logger' => null,
@@ -496,9 +497,9 @@ class SyncHelpers
         $dateEndTimestamp = strtotime($date_end);
         $currentDate = $dateStartTimestamp;
         $date = $date_start; 
-        
+        $dateCount = 1;
         while($currentDate <= $dateEndTimestamp) {
-            
+            $__logger->log("DATE: $date ($dateCount/$count days)");
             $cParams = array_merge($params, array("date" => $date));
             $__logger->log("Start Generate Daily LOCATION Summary");
             self::report_daily_location_summary($cParams);
@@ -509,6 +510,7 @@ class SyncHelpers
             
             $currentDate = strtotime($date . " +1 day");
             $date = date("Y-m-d", $currentDate);
+            $dateCount++;
         }
         
 
