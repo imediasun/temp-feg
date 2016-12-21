@@ -498,7 +498,7 @@ class SyncHelpers
         $date = $date_start; 
         
         while($currentDate <= $dateEndTimestamp) {
-            
+            $__logger->log("DATE: $date");
             $cParams = array_merge($params, array("date" => $date));
             $__logger->log("Start Generate Daily LOCATION Summary");
             self::report_daily_location_summary($cParams);

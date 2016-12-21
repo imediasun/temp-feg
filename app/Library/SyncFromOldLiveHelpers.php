@@ -21,13 +21,18 @@ class SyncFromOldLiveHelpers
             'cleanFirst' => 1,
         ), $params));
         
+        $L = $_logger;
+        
         self::commonSyncAll($params);
         $q = "select date_format(max(date_start), '%Y-%m-%d') as maxd, 
-            date_format(min(date_start), '%Y-%m-%d') as mind from game_earnings";
+            date_format(min(date_start), '%Y-%m-%d') as mind, 
+            datediff(max(date_start), min(date_start)) as ndays
+            from game_earnings";
         $data = DB::select($q);
         if (!empty($data)) {
             $max = $data[0]->maxd;
             $min = $data[0]->mind;
+            $count = $data[0]->ndays;
         }
         
        if ($cleanFirst == 1) {
@@ -35,11 +40,13 @@ class SyncFromOldLiveHelpers
             self::truncateTable(array('db' => 'mysql', 'table' => 'report_locations'));
             self::truncateTable(array('db' => 'mysql', 'table' => 'report_game_plays'));
         }        
-        
+        $L->log("From $min to $max");   
         $params['date_start'] = $min;
         $params['date_end'] = $max;
+        $params['count'] = $count;
         
         SyncHelpers::generateDailySummaryDateRange($params);
+        $L->log("END createGameSummary");
         
     }
     public static function syncGameEarningsFromLive($params = array()) {
@@ -225,7 +232,7 @@ class SyncFromOldLiveHelpers
             "table" => "game_move_history", 
             "cleanFirst" => 1
         ));        
-        return self::syncTable($gMHParams);        
+        self::syncTable($gMHParams);        
         unset($gMHParams);
         self::$L->log("End Games Move history Sync");
         
