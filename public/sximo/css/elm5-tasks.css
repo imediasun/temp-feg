@@ -180,7 +180,9 @@
     color: #333;
 }
 
-
+.btn-transparent {
+    background: transparent !important;
+}
 @media (min-width: 1200px) {
     .tasksContainer #tasksGrid .taskConfig {
         margin-top: 0;

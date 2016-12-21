@@ -60,12 +60,18 @@
                     <p title="Task Name" class="taskNameText pull-left"><span class='taskTitle'>{{ $taskName }}</span>
                         <span title="Task Action" class="label taskActionText">{{ $actionName }}</span>                         
                     </p>
+                    <button class="btn btn-transparent textContent pull-right expandTask" >
+                      <i class="glyphicon glyphicon-chevron-down"></i>
+                    </button>  
+                    <button class="btn btn-transparent textContent pull-right collapseTask" style='display:none;'>
+                      <i class="glyphicon glyphicon-chevron-up"></i>
+                    </button>                      
                     <button class="btn btn-warning runTaskNow textContent pull-right"  
                             @if(false && $isManualRunning) disabled="disabled" title="Already running" @endif
-                            data-taskid="{{ $taskId }}">Run Now</button>
+                            data-taskid="{{ $taskId }}">Run Now</button>              
                 </div>
             </div>
-            <div class="panel-body clearfix">
+            <div class="panel-body clearfix" style='display:none;'>
                 <div class="">
                 <div class="taskScheduleContainer col-lg-6">
                     <div class="clearfix cronscheduletext">
@@ -218,7 +224,7 @@
                 </div>                
                 </div>
             </div>
-            <div class="panel-footer clearfix">
+            <div class="panel-footer clearfix" style='display:none;'>
                 <div class="col-sm-8 footerStatus m-t-xs">
                     <p class="pull-left m-r">Last scheduled run: <span class="label">{{ $lastSchedule or 'Never' }}</span></p>
                     <p class="pull-left m-r">Next scheduled run: <span class="label">{{ $nextSchedule or 'Not Scheduled' }}</span></p>
