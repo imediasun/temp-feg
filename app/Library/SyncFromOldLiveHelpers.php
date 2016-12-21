@@ -50,10 +50,22 @@ class SyncFromOldLiveHelpers
         
     }
     public static function syncGameEarningsFromLive($params = array()) {
+        extract(array_merge(array(
+            '_task' => array(),
+            '_logger' => null,
+            'cleanFirst' => 0,
+        ), $params));
+                
+        if (!isset(self::$L)) {
+            if (empty($_logger)) {
+                $_logger = new MyLog("syncGameEarningsFromLive.log", "live-temp-sync", "Sync");                
+            }
+            self::$L = $_logger;
+        }
+        
         $params['sourceDB'] = 'livemysql';
         $params['targetDB'] = 'mysql';
         $params['table'] = 'game_earnings';
-        $params['cleanFirst'] = isset($params['cleanFirst']) ? $params['cleanFirst'] : 0;
         
         if ($params['cleanFirst'] == 1) {
         return self::syncTable($params);
@@ -64,10 +76,21 @@ class SyncFromOldLiveHelpers
         
     }
     public static function syncGameEarningsFromLiveSacoa($params = array()) {
+        extract(array_merge(array(
+            '_task' => array(),
+            '_logger' => null,
+            'cleanFirst' => 0,
+        ), $params));
+                
+        if (!isset(self::$L)) {
+            if (empty($_logger)) {
+                $_logger = new MyLog("syncGameEarningsFromLiveSacoa.log", "live-temp-sync", "Sync");                
+            }
+            self::$L = $_logger;
+        }        
         $params['sourceDB'] = 'livemysql_sacoa'; ///livemysql_embed
         $params['targetDB'] = 'sacoa_sync';//embed_sync
         $params['table'] = 'game_earnings';
-        $params['cleanFirst'] = isset($params['cleanFirst']) ? $params['cleanFirst'] : 0;
         
         if ($params['cleanFirst'] ==1) {
         return self::syncTable($params);
@@ -78,10 +101,22 @@ class SyncFromOldLiveHelpers
         return self::syncTable($params);
     }
     public static function syncGameEarningsFromLiveEmbed($params = array()) {
+        extract(array_merge(array(
+            '_task' => array(),
+            '_logger' => null,
+            'cleanFirst' => 0,
+        ), $params));
+                
+        if (!isset(self::$L)) {
+            if (empty($_logger)) {
+                $_logger = new MyLog("syncGameEarningsFromLiveEmbed.log", "live-temp-sync", "Sync");                
+            }
+            self::$L = $_logger;
+        }
+        
         $params['sourceDB'] = 'livemysql_embed'; ///
         $params['targetDB'] = 'embed_sync';//
         $params['table'] = 'game_earnings';
-        $params['cleanFirst'] = isset($params['cleanFirst']) ? $params['cleanFirst'] : 0;
         
         if ($params['cleanFirst'] ==1) {
         return self::syncTable($params);
