@@ -66,6 +66,7 @@ class SyncFromOldLiveHelpers
         $params['sourceDB'] = 'livemysql';
         $params['targetDB'] = 'mysql';
         $params['table'] = 'game_earnings';
+        $params['cleanFirst'] = $cleanFirst;
         
         if ($params['cleanFirst'] == 1) {
         return self::syncTable($params);
@@ -91,6 +92,7 @@ class SyncFromOldLiveHelpers
         $params['sourceDB'] = 'livemysql_sacoa'; ///livemysql_embed
         $params['targetDB'] = 'sacoa_sync';//embed_sync
         $params['table'] = 'game_earnings';
+        $params['cleanFirst'] = $cleanFirst;
         
         if ($params['cleanFirst'] ==1) {
         return self::syncTable($params);
@@ -117,6 +119,7 @@ class SyncFromOldLiveHelpers
         $params['sourceDB'] = 'livemysql_embed'; ///
         $params['targetDB'] = 'embed_sync';//
         $params['table'] = 'game_earnings';
+        $params['cleanFirst'] = $cleanFirst;
         
         if ($params['cleanFirst'] ==1) {
         return self::syncTable($params);
