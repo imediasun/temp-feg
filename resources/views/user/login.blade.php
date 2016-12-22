@@ -96,7 +96,7 @@
 				<a href="{{ URL::to('user/socialize/facebook')}}" class="btn btn-primary"><i class="icon-facebook"></i> Facebook </a>
 				@endif
 				@if($socialize['google']['client_id'] !='') 
-				<a href="{{ URL::to('user/socialize/google')}}" class="btn btn-danger"><i class="icon-google"></i> Google </a>
+				<a href="{{ URL::to('user/socialize/google')}}" style="background-color:#DD4B39; border-color: #DD4B39; color: #ffffff;" class="btn btn-block"><i class="icon-google-plus"></i> Google </a>
 				@endif
 				@if($socialize['twitter']['client_id'] !='') 
 				<a href="{{ URL::to('user/socialize/twitter')}}" class="btn btn-info"><i class="icon-twitter"></i> Twitter </a>
