@@ -35,10 +35,10 @@ return [
 	],
 
 	'google' => [
-	   	'client_id' => '',
-	   // 'client_id' => '1038196167526-euluve7af4mhfgde9vr79a8s1or4t8it',
-	    'client_secret' => 'Z_Wq238T-bSWC5Azmyk2jSs6',
-	    'redirect' => 'http://sximobuilder.com/sximodemo/sximo5/user/google',
+		//'client_id' => '',
+	   	'client_id' => env('G_ID'),
+	    'client_secret' => env('G_SECRET'),
+	    'redirect' => env('G_REDIRECT'),
 	],
 
 	'twitter' => [

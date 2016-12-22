@@ -233,8 +233,8 @@ class LocationController extends Controller
     {
         $form_data['date_opened'] = date('Y-m-d');
         $form_data['date_closed'] = date('Y-m-d');
-
         $rules = $this->validateForm();
+        $rules['id']='required|unique:location';
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
             $data = $this->validatePost('location');
@@ -325,6 +325,23 @@ class LocationController extends Controller
         $this->data['id'] = $id;
         return view('location.index', $this->data);
     }
+function getIsLocationAvailable($id)
+{
+    $isAvailable=\DB::select("select count('id') as count from location where id=$id");
 
+    if($isAvailable[0]->count > 0)
+    {
+        return response()->json(array(
+            'status' => 'error',
+            'message' => \Lang::get('*Location Id Exists Already')
+        ));
+    }
+    else {
+        return response()->json(array(
+            'status' => 'success',
+            'message' => \Lang::get('*Location Available')
+        ));
+    }
+}
 
 }
