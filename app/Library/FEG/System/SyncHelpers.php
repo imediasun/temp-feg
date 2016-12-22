@@ -257,6 +257,8 @@ class SyncHelpers
             '_task' => array(),
             '_logger' => null,
         ), $params));         
+        
+        $qL = new MyLog('report_daily_game_summary.log', 'generated-sql', 'SQL');
 
         
         $table = "report_game_plays";
@@ -342,9 +344,12 @@ class SyncHelpers
                                 ) E"), 'E.game_id', '=', 'game.id')
                     ->leftJoin('location', 'location.id', '=', 'game.location_id')
                     ->leftJoin('game_title', 'game_title.id', '=', 'game.game_title_id')
-                    ->where(DB::raw((empty($location) ? "location.reporting = 1 OR E.date_played IS NOT NULL" : "location.id IN ($location)")));
+                    ->whereRaw(empty($location) ? "location.reporting = 1 OR E.date_played IS NOT NULL" : "location.id IN ($location)");
                 
-
+//        $sql = $query->toSql();
+//        $qL->log("Date for query: $date");
+//        $qL->log($sql);
+        
         $rowcount = 0;
         $chunkCount = 0;
         $insertArray = array();
@@ -491,6 +496,10 @@ class SyncHelpers
         if (empty($date_start) || empty($date_end)) {
             $__logger->log("No date range specified.");
             return "No date range specified.";
+        }
+        
+        if ($count == 0) {
+            
         }
         
         $dateStartTimestamp = strtotime($date_start);
