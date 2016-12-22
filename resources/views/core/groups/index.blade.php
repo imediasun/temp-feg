@@ -83,8 +83,9 @@
 				<th class="number"> No </th>
 
 				@endif
+
 					@if($setting['disableactioncheckbox']=='false')
-				<th> <input type="checkbox" class="checkall" /></th>
+				<th width="30px"> <input type="checkbox" class="checkall" /></th>
 					@endif
 				<?php foreach ($tableGrid as $t) :
 					if($t['view'] =='1'):
