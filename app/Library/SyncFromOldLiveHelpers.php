@@ -22,6 +22,9 @@ class SyncFromOldLiveHelpers
         ), $params));
         
         $L = $_logger;
+        self::$L = $_logger;
+        
+        $timeStart = microtime(true);
         
         self::commonSyncAll($params);
         $q = "select date_format(max(date_start), '%Y-%m-%d') as maxd, 
@@ -36,7 +39,7 @@ class SyncFromOldLiveHelpers
         }
         
        if ($cleanFirst == 1) {
-            self::$L->log("Clear all data from target table first...");
+            $L->log("Clear all data from target table first...");
             self::truncateTable(array('db' => 'mysql', 'table' => 'report_locations'));
             self::truncateTable(array('db' => 'mysql', 'table' => 'report_game_plays'));
         }        
@@ -46,8 +49,14 @@ class SyncFromOldLiveHelpers
         $params['count'] = $count;
         
         SyncHelpers::generateDailySummaryDateRange($params);
-        $L->log("END createGameSummary");
         
+        $timeEnd = microtime(true);
+        $timeDiff = round($timeEnd - $timeStart);
+        $timeDiffHuman = self::secondsToHumanTime($timeDiff);
+        $timeTaken = "Time taken: $timeDiffHuman ";
+        $L->log($timeTaken);        
+        $L->log("END createGameSummary");
+        return $timeTaken;
     }
     public static function syncGameEarningsFromLive($params = array()) {
         extract(array_merge(array(
