@@ -12,6 +12,18 @@
 			{!! Form::open(array('url'=>'location/save/'.$row['id'], 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'locationFormAjax')) !!}
 			<div class="col-md-12">
 						<fieldset><legend> location</legend>
+                            <div class="form-group  " >
+                                <label for="Short Name" class=" control-label col-md-4 text-left">
+                                    {!! SiteHelpers::activeLang('Location Id', (isset($fields['id']['language'])? $fields['id']['language'] : array())) !!}
+                                </label>
+                                <div class="col-md-6">
+                                    {!! Form::text('id', $row['id'],array('class'=>'form-control', 'placeholder'=>'','id'=>'location_id','required'=>'required'   )) !!}
+                                </div>
+                                <div class="col-md-2" id="location_available">
+
+                                </div>
+                            </div>
+                            <
 				
 				  <div class="form-group  " >
 					<label for="Active Location" class=" control-label col-md-4 text-left">
@@ -409,8 +421,8 @@
 
 			 
 <script type="text/javascript">
-$(document).ready(function() { 
-	
+$(document).ready(function() {
+        $('#location_available').hide();
         $("#region_id").jCombo("{{ URL::to('location/comboselect?filter=region:id:region') }}",
         {  selected_value : '{{ $row["region_id"] }}' });
 		$("#district_manager_id").jCombo("{{ URL::to('location/comboselect?filter=users:id:first_name|last_name') }}",
@@ -505,5 +517,26 @@ function showResponse(data)  {
 		return false;
 	}	
 }			 
-
+$('#location_id').on('blur',function(){
+    var location_id=$(this).val();
+    $.ajax({
+        url:'{{url()}}/location/is-location-available/'+location_id,
+        method:'get',
+        dataType:'json',
+        success:function(result){
+            if(result.status=="error")
+            {
+                $('#location_available').css('color','red');
+            }
+            else{
+                $('#location_available').css('color','green');
+            }
+            $('#location_available').show('500');
+            $("#location_available").text(result.message);
+        }
+    });
+});
+$('#location_id').on('focus',function(){
+    $('#location_available').hide();
+});
 </script>		 

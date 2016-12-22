@@ -10,6 +10,8 @@ jQuery(document).ready(function ($) {
     $(document).on('click', '.showSchedules', initShowScheduledTasks);
     $(document).on('click', '.addNewTask', initAddTask);
     $(document).on('click', '.testTask', testTask);
+    $(document).on('click', '.expandTask', expandTaskContainer);
+    $(document).on('click', '.collapseTask', collapseTaskContainer);
     $(document).on('change', '.croninp', buildCrontab);
     
     populateTaskDropdowns();
@@ -17,6 +19,30 @@ jQuery(document).ready(function ($) {
     initTasks($('.tasksContent'));    
 });
 
+function expandTaskContainer(e) {
+    e.preventDefault();
+    var elm = jQuery(this),
+        task = elm.closest('.taskPanel'),
+        oppositeButton = task.find('.collapseTask'),
+        container = task.find('.panel-body, .panel-footer');
+    container.slideDown(function(){
+        
+    });
+    elm.hide();
+    oppositeButton.show();
+    
+}
+function collapseTaskContainer(e) {
+    e.preventDefault();
+    var elm = jQuery(this),
+        task = elm.closest('.taskPanel'),
+        oppositeButton = task.find('.expandTask'),
+        container = task.find('.panel-body, .panel-footer, .schedulesContainer');
+    container.slideUp(function(){
+        oppositeButton.show();
+    });    
+    elm.hide();
+}
 function populateTaskDropdowns(elm) {
     if (!elm) {
         elm = jQuery("select[name=run_after], select[name=run_before]");
