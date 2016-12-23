@@ -375,17 +375,16 @@ class SbticketController extends Controller
     {
         $department_memebers = \DB::select("Select assign_employee_ids FROM departments WHERE id = " . $departmentId . "");
         $department_memebers = explode(',', $department_memebers[0]->assign_employee_ids);
-
+        $reply_to='ticket-reply-'.$ticketId.'@tickets.fegllc.com';
         $subject = 'FEG Ticket #' . $ticketId;
         $headers = 'MIME-Version: 1.0' . "\r\n";
         $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
-        $headers .= 'From: ' . CNF_REPLY_TO . ' <' . CNF_REPLY_TO . '>' . "\r\n";
+        $headers .= 'From: ' . $reply_to . ' <' . $reply_to . '>' . "\r\n";
 
         foreach ($department_memebers as $i => $id) {
             $get_user_id_from_employess = \DB::select("Select users.email FROM employees JOIN users ON users.id=employees.user_id WHERE employees.id = " . $id . "");
             if (isset($get_user_id_from_employess[0]->email)) {
                 $to = $get_user_id_from_employess[0]->email;
-                $to="adnanali199@gmail.com";
                 mail($to, $subject, $message, $headers);
             }
         }
@@ -397,11 +396,11 @@ class SbticketController extends Controller
         foreach ($assigneesTo as $assignee) {
             if (isset($assignee->email)) {
                 $to = $assignee->email;
+                $reply_to='ticket-reply-'.$ticketId.'@tickets.fegllc.com';
                 $subject = 'FEG Ticket #' . $ticketId;
                 $headers = 'MIME-Version: 1.0' . "\r\n";
                 $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
-                $headers .= 'From: ' . CNF_REPLY_TO . ' <' . CNF_REPLY_TO . '>' . "\r\n";
-                $to="adnanali199@gmail.com";
+                $headers .= 'From: ' . $reply_to . ' <' . $reply_to . '>' . "\r\n";
                 mail($to, $subject, $message, $headers);
             }
         }

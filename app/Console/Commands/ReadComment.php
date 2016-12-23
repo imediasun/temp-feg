@@ -47,7 +47,7 @@ class ReadComment extends Command
         $inbox = imap_open($hostname,$username,$password) or die('Cannot connect to Gmail: ' . imap_last_error());
         echo "connection established";
         /* grab emails */
-        $emails = imap_search($inbox,'SUBJECT "FEG Ticket #"');
+        $emails = imap_search($inbox,'FROM "ticket-reply-"');
 
         /* if emails are returned, cycle through each... */
         if($emails) {
@@ -62,7 +62,7 @@ class ReadComment extends Command
 
                 /* get information specific to this email */
                 $overview = imap_fetch_overview($inbox,$email_number,0);
-                //var_dump($overview[0]);
+                var_dump($overview[0]);
                 $from = $overview[0]->from;
                 $from = substr($from, strpos($from, "<") + 1,-1);
 
@@ -72,8 +72,8 @@ class ReadComment extends Command
 
                 //Parse subject to find comment id
                 $subject = $overview[0]->subject;
-                $ticketId = substr($subject, strpos($subject, "#") + 1);
-
+                $ticketId = explode('-', $from);
+                $ticketId = substr($ticketId[2], strpos($ticketId[2], "@") + 1);
                 //insert comment
                 $postUser = \DB::select("Select * FROM users WHERE email = '". $from ."'");
                 $userId = $postUser[0]->id;
