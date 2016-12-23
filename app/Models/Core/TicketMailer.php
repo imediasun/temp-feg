@@ -40,11 +40,11 @@ class TicketMailer
     {
         $department_memebers = \DB::select("Select assign_employee_ids FROM departments WHERE id = " . $departmentId . "");
         $department_memebers = explode(',', $department_memebers[0]->assign_employee_ids);
-
         $subject = 'FEG Ticket #' . $ticketId;
+        $reply_to='ticket-reply-'.$ticketId.'@tickets.fegllc.com';
         $headers = 'MIME-Version: 1.0' . "\r\n";
         $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
-        $headers .= 'From: ' . CNF_APPNAME . ' <' . CNF_REPLY_TO . '>' . "\r\n";
+        $headers .= 'From: ' . CNF_APPNAME . ' <' . $reply_to . '>' . "\r\n";
 
         foreach ($department_memebers as $i => $id) {
             $get_user_id_from_employess = \DB::select("Select users.email FROM users  WHERE users.id = " . $id . "");
@@ -63,13 +63,14 @@ class TicketMailer
         foreach ($users as $assignee) {
             if (isset($assignee->email)) {
                 $to = $assignee->email;
+                $reply_to='ticket-reply-'.$ticketId.'@tickets.fegllc.com';
                 $subject = 'FEG Ticket #' . $ticketId;
                 $headers = 'MIME-Version: 1.0' . "\r\n";
                 $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
-                $headers .= 'From: ' . CNF_APPNAME . ' <' . CNF_REPLY_TO . '>' . "\r\n";
+                $headers .= 'From: ' . CNF_APPNAME . ' <' . $reply_to . '>' . "\r\n";
                 Log::info("**Send Emmail => ",[$to, $subject, $message, $headers]);
                 //enabled on gabe request
-                mail($to, $subject, $message, $headers);
+               // mail($to, $subject, $message, $headers);
             }
         }
     }

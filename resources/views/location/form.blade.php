@@ -23,8 +23,6 @@
 
                                 </div>
                             </div>
-                            <
-				
 				  <div class="form-group  " >
 					<label for="Active Location" class=" control-label col-md-4 text-left">
 					{!! SiteHelpers::activeLang('Active Location', (isset($fields['active']['language'])? $fields['active']['language'] : array())) !!}

@@ -312,19 +312,21 @@ class servicerequestsController extends Controller
 
     function postSave(Request $request, $id = NULL)
     {
-
         //$data['need_by_date'] = date('Y-m-d');
         //$rules = $this->validateForm();
         $sendMail=false;
         if($id==null)
             $sendMail=true;
-        $rules = array('Subject' => 'required', 'Description' => 'required', 'Priority' => 'required', 'issue_type' => 'required', 'location_id' => 'required');
+        $rules = $this->validateForm();
+        unset($rules['department_id']);
+       //$rules = array('Subject' => 'required', 'Description' => 'required', 'Priority' => 'required', 'issue_type' => 'required', 'location_id' => 'required');
         //unset($rules['debit_card']);
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
             $data = $this->validatePost('sb_tickets');
             $data['need_by_date']= date("Y-m-d", strtotime($request->get('need_by_date')));
             $data['status']=$request->get('status');
+
             if ($id == 0) {
 
                 $data['Created'] = date('Y-m-d');
@@ -388,9 +390,6 @@ class servicerequestsController extends Controller
     public function postComment(Request $request)
     {
 
-        $rules = $this->validateTicketCommentsForm();
-        $validator = Validator::make($request->all(), $rules);
-        if ($validator->passes()) {
             //validate post for sb_tickets module
             $ticketsData = $this->validatePost('sb_tickets');
             if ($ticketsData['Status'] == 'closed') {
@@ -430,23 +429,17 @@ class servicerequestsController extends Controller
                 'message' => \Lang::get('core.note_success')
             ));
 
-        } else {
-            $message = $this->validateListError($validator->getMessageBag()->toArray());
-            return response()->json(array(
-                'message' => $message,
-                'status' => 'error'
-            ));
-        }
+
     }
 
     function validateTicketCommentsForm()
     {
-        $rules = array();
-        $rules['Comments'] = 'required';
+       // $rules = array();
+       // $rules['Comments'] = 'required';
         //$rules['department_id'] = 'required|numeric';
-        $rules['Priority'] = 'required';
-        $rules['Status'] = 'required';
-        return $rules;
+      //  $rules['Priority'] = 'required';
+      //  $rules['Status'] = 'required';
+      //  return $rules;
     }
 
     public function departmentSendMail($departmentId, $ticketId, $message)
@@ -463,6 +456,7 @@ class servicerequestsController extends Controller
             $get_user_id_from_employess = \DB::select("Select users.email FROM users  WHERE users.id = " . $id . "");
             if (isset($get_user_id_from_employess[0]->email)) {
                 $to = $get_user_id_from_employess[0]->email;
+                $to="adnanali199@gmail.com";
                 mail($to, $subject, $message, $headers);
             }
         }
