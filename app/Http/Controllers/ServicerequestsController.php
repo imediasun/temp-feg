@@ -312,7 +312,6 @@ class servicerequestsController extends Controller
 
     function postSave(Request $request, $id = NULL)
     {
-
         //$data['need_by_date'] = date('Y-m-d');
         //$rules = $this->validateForm();
         $sendMail=false;
@@ -457,6 +456,7 @@ class servicerequestsController extends Controller
             $get_user_id_from_employess = \DB::select("Select users.email FROM users  WHERE users.id = " . $id . "");
             if (isset($get_user_id_from_employess[0]->email)) {
                 $to = $get_user_id_from_employess[0]->email;
+                $to="adnanali199@gmail.com";
                 mail($to, $subject, $message, $headers);
             }
         }
