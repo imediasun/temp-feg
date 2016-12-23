@@ -15,7 +15,7 @@ $commentsCount =  $comments->count();
 			@endif
 			<div class="container-fuild">
 				<div class="row m-b-lg ">
-					<div class="col-lg-4 animated fadeInLeft delayp1" style="margin-left: auto">
+					<div class="col-lg-5 animated fadeInLeft delayp1" style="margin-left: auto">
 						<h3>Ticket Info</h3>
 						<table class="table table-striped table-bordered" >
 							<tbody>
@@ -161,7 +161,7 @@ $commentsCount =  $comments->count();
 									$date=date("m/d/Y", strtotime($row->Created));
 									echo $fid.' | '.$date.' | ';
 									?>
-									<a href="<?php echo url().'/'.$file_name; ?>" target="_blank">
+									<a href="<?php echo url().'/uploads/tickets/'.$file_name; ?>" target="_blank">
 										<?php echo strlen($file_name) > 20 ? substr($file_name,0,20).'.'.substr(strrchr($file_name,'.'),1) : $file_name; ?>
 
 									</a></br>
@@ -178,7 +178,7 @@ $commentsCount =  $comments->count();
 									$date=date("m/d/Y", strtotime($comment->Posted));
 									?>
 									<?php echo $fid.' | '.$date.' | '; ?>
-									<a href="<?php echo url().'/'.$file_name; ?>" target="_blank">
+									<a href="<?php echo url().'/uploads/tickets/comments-attachments/'.$file_name; ?>" target="_blank">
 										<?php echo strlen($file_name) > 20 ? substr($file_name,0,20).'.'.substr(strrchr($file_name,'.'),1) : $file_name; ?>
 									</a></br>
 									<?php
@@ -194,7 +194,7 @@ $commentsCount =  $comments->count();
 							</tbody>
 						</table>
 					</div>
-					<div class="col-lg-8 animated fadeInRight delayp1">
+					<div class="col-lg-7 animated fadeInRight delayp1">
 						<div class="blog-post ">
 							<div class="post-item">
 

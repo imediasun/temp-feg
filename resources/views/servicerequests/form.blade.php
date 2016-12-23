@@ -21,7 +21,7 @@
 					{!! SiteHelpers::activeLang('Subject', (isset($fields['Subject']['language'])? $fields['Subject']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('Subject', $row['Subject'],array('class'=>'form-control', 'placeholder'=>'', 'required'=>'true'  )) !!} 
+					  {!! Form::text('Subject', $row['Subject'],array('class'=>'form-control', 'placeholder'=>'', 'required'=>'required'  )) !!}
 					 </div> 
 					 <div class="col-md-2">
 					 	

@@ -189,19 +189,19 @@
 -->
         @endif
 
+            <div class="col-md-8 col-md-offset-4">
 
+
+                <div class="col-md-10">
+                    <input type="button" style="font-size:1.4em; width:100%; text-align:center;"
+                           value="Submit Weekly Requests totalling ${{ $cartData['shopping_cart_total']}}"
+                           onClick="confirmSubmit();" id = "cartbtn"></button>
+                </div>
+            </div>
         @include('ajaxfooter')
 
-        <div class="col-md-10 col-md-offset-2">
 
 
-            <div class="col-md-10">
-                <input type="button" style="font-size:1.4em; width:100%; text-align:center;"
-                       value="Submit Weekly Requests totalling ${{ $cartData['shopping_cart_total']}}"
-                       onClick="confirmSubmit();" id = "cartbtn"></button>
-            </div>
-        </div>
-</br>
     </div>
 </div>
 @else
