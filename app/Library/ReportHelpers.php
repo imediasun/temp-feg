@@ -1109,11 +1109,11 @@ class ReportHelpers
      * @param Boolean $inclusive  Whether end data is included in the count
      * @return number
      */
-    public static function daydiff($date1, $date2, $inclusive = true) {
-        $datetime1 = strtotime($date1);
-        $datetime2 = strtotime($date2);
-        $timediff = abs($datetime2 - $datetime1);
-        $daydiff = floor($timediff/(60*60*24));
+    public static function daydiff($date1, $date2, $inclusive = true) {        
+        $datetime1 = new DateTime($date1);
+        $datetime2 = new DateTime($date2);
+        $interval = $datetime1->diff($datetime2);
+        $daydiff = $interval->days;
         if ($inclusive) {
             $daydiff++;
         }

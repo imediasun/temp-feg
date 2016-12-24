@@ -18,7 +18,7 @@ class SyncFromOldLiveHelpers
 
     public static function createGameSummary($params = array()) {
         extract(array_merge(array(
-            'cleanFirst' => 1,
+            'cleanFirst' => 0,
         ), $params));
         
         $L = $_logger;
