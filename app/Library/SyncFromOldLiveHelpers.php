@@ -67,7 +67,7 @@ class SyncFromOldLiveHelpers
             'cleanFirst' => 1,
         ), $params));
 
-        $L = $self::setLogger($_logger);
+        $L = self::setLogger($_logger);
         
         $params['sourceDB'] = 'livemysql';
         $params['targetDB'] = 'mysql';
