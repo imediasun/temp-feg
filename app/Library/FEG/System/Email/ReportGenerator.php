@@ -1279,7 +1279,7 @@ class ReportGenerator
         $trHeadStyle = "color:black; border:thin black solid; vertical-align:top";        
         $thStyle = "padding-left:5px; border:thin black solid; text-align:center;";        
         $bodyTrStyle = "color:black; vertical-align:top";        
-        $tdStyle = "padding-left:5px; border:thin black silver; text-align:center;"; 
+        $tdStyle = "padding-left:5px; border:1px solid silver; text-align:center;"; 
 
         $table = array("None");
         $header = array();
