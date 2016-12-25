@@ -96,6 +96,7 @@ class ReportGenerator
         $reportingLocations = isset(self::$reportCache['locationsReportingIds']) ? 
                 self::$reportCache['locationsReportingIds'] : self::getLocationsReportingIds($params);
         
+        $__logger->log("Reporting Locations:", $reportingLocations);
         self::logit("Reporting Locations:", "daily-transfer.log", "CleanLog");
         self::logit($reportingLocations, "daily-transfer.log", "CleanLog");
         
@@ -568,7 +569,7 @@ class ReportGenerator
         }
         
         $q = ReportHelpers::getGamesNotPlayedQuery($date, $date, 
-                null, null, null, "all", "", "", "", "");
+                null, null, null, "all", "", "", "", "days_not_played", "DESC");
         
         //$q .= " AND E.location_id NOT IN (" . implode(',', $locationsNotReportingIds). ")";
         
@@ -753,7 +754,7 @@ class ReportGenerator
                 $locId = $row->loc_id;
                 $debitType = $row->debit_type_id;
                 
-                if ($status == 1) {
+                if ($status == 1 && $notes != "CLOSED") {
                     $notes .= " OR Location is closed";
                 }
                 
