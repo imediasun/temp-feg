@@ -919,13 +919,13 @@ class ReportGenerator
         $top25GamesThisWeekData = DB::select($q);
         $topGamesTable = array(); 
         $blackBrdStyle = "style='border:1px solid black;'";
-        $greyBrdStyle = "style='border:1px solid grey;'";        
+        $greyBrdStyle = "style='border:1px solid silver;'";        
         if (!empty($top25GamesThisWeekData)) {
             $topGamesTable[] = "<table style='margin:0px auto; 
-                width:100%; border:1px solid black; color:black;'>";
+                width:100%; border:1px solid white; color:black;'>";
             $topGamesTable[] = "<tr $blackBrdStyle>
                     <th $blackBrdStyle>No.</th>
-                    <th $blackBrdStyle>Game</th>
+                    <th $blackBrdStyle width='200'>Game</th>
                     <th $blackBrdStyle>Average</th>
                     <th $blackBrdStyle>Total</th>
                     <th $blackBrdStyle>Game Count</th>
@@ -943,7 +943,7 @@ class ReportGenerator
                 $locationNames = $row->location_name;
                 $gameIds = $row->game_ids;
                 
-            $topGamesTable[] = "<tr style='color:black; border:thin black solid;'>
+            $topGamesTable[] = "<tr style='color:black;'>
                     <td $greyBrdStyle>$rowIndex</td>
                     <td $greyBrdStyle>$gameTitle</td>
                     <td $greyBrdStyle>\${$gameAverageRevenue}</td>
@@ -1196,7 +1196,7 @@ class ReportGenerator
             if (!empty($locationRanksData)) {
                 $rankTable = array();
                 $rankTable[] = "<table style='margin:0px auto; 
-                    width:100%; border:1px solid black; color:black;'>";
+                    width:100%; border:1px solid white; color:black;'>";
                 $rankTable[] = "<tr style='$trHeadStyle'>
                         <th style='$thStyle'>#</th>
                         <th style='$thStyle'>Locations</th>
@@ -1225,16 +1225,16 @@ class ReportGenerator
                     }
 
 
-                $rankTable[] = "<tr style='color:black; border:thin black solid;'>
-                        <td style='$thStyle;padding-left:3px; padding-right:2px;'>
+                $rankTable[] = "<tr style='color:black;'>
+                        <td style='$tdStyle;padding-left:3px; padding-right:2px;'>
                         $rowIndex</td>
-                        <td style='$thStyle;padding-left:3px;'>$locationId | 
+                        <td style='$tdStyle;padding-left:3px;'>$locationId | 
                         $locationName</td>
-                        <td style='$thStyle;text-align:center;'>$debitSystem</td>
-                        <td style='$thStyle;padding-right:3px; text-align:right;'>\${$avg}</td>
-                        <td style='$thStyle;padding-right:3px; text-align:right;'>\${$total}</td>
-                        <td style='$thStyle;text-align:center;'>$games</td>
-                        <td style='$thStyle;text-align:center;'>$dateCountText</td>
+                        <td style='$tdStyle;text-align:center;'>$debitSystem</td>
+                        <td style='$tdStyle;padding-right:3px; text-align:right;'>\${$avg}</td>
+                        <td style='$tdStyle;padding-right:3px; text-align:right;'>\${$total}</td>
+                        <td style='$tdStyle;text-align:center;'>$games</td>
+                        <td style='$tdStyle;text-align:center;'>$dateCountText</td>
                     </tr>";                
 
                 }
@@ -1277,8 +1277,8 @@ class ReportGenerator
     public static function getClosedLocationWeeklyReport($data, $date_start, $date_end) {       
         $trHeadStyle = "color:black; border:thin black solid; vertical-align:top";        
         $thStyle = "padding-left:5px; border:thin black solid; text-align:center;";        
-        $bodyTrStyle = "color:black; border:thin black solid; vertical-align:top";        
-        $tdStyle = "padding-left:5px; border:thin black solid; text-align:center;"; 
+        $bodyTrStyle = "color:black; vertical-align:top";        
+        $tdStyle = "padding-left:5px; border:thin black silver; text-align:center;"; 
 
         $table = array("None");
         $header = array();

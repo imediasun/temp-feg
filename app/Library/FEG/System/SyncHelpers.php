@@ -819,7 +819,7 @@ class SyncHelpers
          if ($affected_rows > 0) {
             $debitTypeName = self::getDebitTypeName($debit_type);
             $dL = new MyLog('transfer-delete-existingdata.log', 
-                    'daily-transfer', 'DeleteData');
+                    'FEGCronTasks/daily-transfer', 'DeleteData');
             $log = "Deleted existing records for Date: $date_start " . 
                     (empty($location) ? "" : ", Location: $location") .
                     (empty($debit_type) ? "" : ", Debit Type: $debitTypeName");
