@@ -918,12 +918,13 @@ class ReportGenerator
         $q .= " LIMIT 25";
         $top25GamesThisWeekData = DB::select($q);
         $topGamesTable = array(); 
-        $blackBrdStyle = "style='border:1px solid black;'";
-        $greyBrdStyle = "style='border:1px solid silver;'";        
+        $blackBrdStyle = "style='border:1px solid black; padding: 5px; margin: 0;'";
+        $greyBrdStyle = "style='border:1px solid silver; padding: 5px; margin: 0;'";        
+        $greyBrdTrStyle = "style='border:1px solid silver;'";        
         if (!empty($top25GamesThisWeekData)) {
             $topGamesTable[] = "<table style='margin:0px auto; 
                 width:100%; border:1px solid white; color:black;'>";
-            $topGamesTable[] = "<tr $blackBrdStyle>
+            $topGamesTable[] = "<tr $greyBrdTrStyle>
                     <th $blackBrdStyle>No.</th>
                     <th $blackBrdStyle width='200'>Game</th>
                     <th $blackBrdStyle>Average</th>
