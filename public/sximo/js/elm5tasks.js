@@ -453,7 +453,7 @@ function initAddTask(event) {
         parent = jQuery('.tasksContent'),
         source = jQuery(".taskTemplateContent .taskPanel").clone();    
     
-    source.find('.panel-heading, .panel-footer').sliderDown();
+    source.find('.panel-body, .panel-footer').slideDown();
     btn.hide();
     source.find('.textContent, .footerStatus').remove();
     source.find('.addUpdateTask').text('Add');
