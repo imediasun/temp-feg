@@ -58,6 +58,33 @@ class SyncFromOldLiveHelpers
         $L->log("END createGameSummary");
         return $timeTaken;
     }
+    public static function syncGameEarningsAdjMetaFromLive($params = array()) {
+        $table = "game_earnings_transfer_adjustments";
+        extract(array_merge(array(
+            'date' => null,
+            '_task' => array(),
+            '_logger' => null,
+            'cleanFirst' => 1,
+        ), $params));
+
+        $L = $self::setLogger($_logger);
+        
+        $params['sourceDB'] = 'livemysql';
+        $params['targetDB'] = 'mysql';
+        $params['table'] = $table;
+        $params['cleanFirst'] = $cleanFirst;
+                       
+        $ret = self::syncTable($params);
+        
+        if (!empty($date)) {
+            $q = "UPDATE $table SET adjustment_date=NULL, status = 1, notes='STILL MISSING' 
+                    WHERE status=0 AND notes='ADJUSTED' AND adjustment_date >= '$date'";
+            DB::update($q);
+        }
+        
+        return $ret;
+        
+    }
     public static function syncGameEarningsFromLive($params = array()) {
         extract(array_merge(array(
             '_task' => array(),
@@ -78,13 +105,13 @@ class SyncFromOldLiveHelpers
         $params['cleanFirst'] = $cleanFirst;
         
         if ($params['cleanFirst'] == 1) {
-        return self::syncTable($params);
-    }
+            return self::syncTable($params);
+        }   
         else {
             return self::live_sync_temp_earnings('livemysql', 'mysql');
-        }
-        
+        }        
     }
+    
     public static function syncGameEarningsFromLiveSacoa($params = array()) {
         extract(array_merge(array(
             '_task' => array(),
@@ -104,8 +131,8 @@ class SyncFromOldLiveHelpers
         $params['cleanFirst'] = $cleanFirst;
         
         if ($params['cleanFirst'] ==1) {
-        return self::syncTable($params);
-    }
+            return self::syncTable($params);
+        }
         else {
             return self::live_sync_temp_earnings('livemysql_sacoa', 'sacoa_sync');
         }        
@@ -131,8 +158,8 @@ class SyncFromOldLiveHelpers
         $params['cleanFirst'] = $cleanFirst;
         
         if ($params['cleanFirst'] ==1) {
-        return self::syncTable($params);
-    }
+            return self::syncTable($params);
+        }
         else {
             return self::live_sync_temp_earnings('livemysql_embed', 'embed_sync');
         }        
@@ -974,5 +1001,17 @@ class SyncFromOldLiveHelpers
         $timeString = implode(" ", $time);
         return $timeString;
     }
+    
+    public static function setLogger($_logger, $name = "sync-from-old-general.log", $path = "general", $id = "LOG") {
+        global $__logger;
+        if (!isset(self::$L)) {
+            if (empty($_logger)) {
+                $_logger = new MyLog($name, $name, $path, $id);                
+            }
+            self::$L = $_logger;
+        } 
+        return $_logger;
+    }
+    
     /* Sync From LIVE ERP DB (Processed data) [START] */
 }
