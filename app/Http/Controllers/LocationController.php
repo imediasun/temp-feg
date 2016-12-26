@@ -364,26 +364,20 @@ function getIsLocationAvailable($id)
 
                 /* get information specific to this email */
                 $overview = imap_fetch_overview($inbox,$email_number,0);
-                echo "<pre>";
-                print_r($overview);
-                echo "</pre>";
                 //var_dump($overview[0]);
                 $from = $overview[0]->from;
                 $from = substr($from, strpos($from, "<") + 1,-1);
-echo            "From:".$from;
                 $to = $overview[0]->to;
-                echo "To:".substr($to, strpos($to, "<") + 1,-1);
+                $to=substr($to, strpos($to, "<") + 1,-1);
                 // date format according to sql
                 $date = str_replace('at','',$overview[0]->date);
                 $posted =date_create($date);
 
                 //Parse subject to find comment id
                 $subject = $overview[0]->subject;
-                $ticketId = explode('-', $from);
-                echo "<pre>";
-                print_r($ticketId);
-                echo "</pre>";
-              //  $ticketId = substr($ticketId[2], strpos($ticketId[2], "@") + 1);
+                $ticketId = explode('-', $to);
+                $ticketId = substr($ticketId[2], strpos($ticketId[2], "@") + 1);
+                echo $ticketId;
                 //insert comment
                 $postUser = \DB::select("Select * FROM users WHERE email = '". $from ."'");
                 $userId = $postUser[0]->id;
