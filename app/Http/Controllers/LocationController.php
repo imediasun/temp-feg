@@ -343,8 +343,8 @@ function getIsLocationAvailable($id)
     {
         /* connect to gmail */
         $hostname = '{imap.gmail.com:993/imap/ssl}INBOX';
-        $username = "tickets@tickets.fegllc.com";
-        $password = "8d<Sy%68";
+        $username = CNF_REPLY_TO;
+        $password = CNF_REPLY_TO_PASSWORD;
 
         /* try to connect */
         $inbox = imap_open($hostname,$username,$password) or die('Cannot connect to Gmail: ' . imap_last_error());
