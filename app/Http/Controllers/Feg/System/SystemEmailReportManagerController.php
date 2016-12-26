@@ -33,15 +33,13 @@ class SystemEmailReportManagerController extends Controller
         
         $this->data['locationContactNames'] = array(
             "contact_id" => "Contact",
-            "general_contact_id" => "General Contact",
-            "field_manager_id" => "Field Manager",
-            "tech_manager_id" => "Technical Manager",
             "merch_contact_id" => "Merch Contact",
-            "merchandise_contact_id" => "Merchandise Contact",
+            "field_manager_id" => "Field Manager",
             "technical_contact_id" => "Technical Contact",
+            "tech_manager_id" => "Technical Manager",
+            "general_contact_id" => "General Contact",
             "regional_contact_id" => "Regional Contact",
             "senior_vp_id" => "Senior VP",
-            "district_manager_id" => "District Manager",
         );
         $this->data['users'] = $this->model->getUserEmailsIDAssociated();
         $this->data['userGroups'] = $this->model->getGroupNamesIDAssociated();
