@@ -40,8 +40,8 @@ class ReadComment extends Command
     {
         /* connect to gmail */
         $hostname = '{imap.gmail.com:993/imap/ssl}INBOX';
-        $username = CNF_REPLY_TO;
-        $password = CNF_REPLY_TO_PASSWORD;
+        $username = "tickets@tickets.fegllc.com";
+        $password = "8d<Sy%68";
 
         /* try to connect */
         $inbox = imap_open($hostname,$username,$password) or die('Cannot connect to Gmail: ' . imap_last_error());
