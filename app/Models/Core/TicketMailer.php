@@ -52,7 +52,6 @@ class TicketMailer
                 $to = $get_user_id_from_employess[0]->email;
                 Log::info("**Send Emmail => ",[$to, $subject, $message, $headers]);
                 //enabled on gabe request
-                $to="adnanali199@gmail.com";
                 mail($to, $subject, $message, $headers);
             }
         }
@@ -71,8 +70,7 @@ class TicketMailer
                 $headers .= 'From: ' . CNF_APPNAME . ' <' . $reply_to . '>' . "\r\n";
                 Log::info("**Send Emmail => ",[$to, $subject, $message, $headers]);
                 //enabled on gabe request
-                $to="adnanali199@gmail.com";
-               mail($to, $subject, $message, $headers);
+              mail($to, $subject, $message, $headers);
             }
         }
     }
