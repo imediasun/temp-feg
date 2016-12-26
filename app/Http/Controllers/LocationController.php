@@ -372,7 +372,7 @@ function getIsLocationAvailable($id)
                 $from = substr($from, strpos($from, "<") + 1,-1);
 echo            "From:".$from;
                 $to = $overview[0]->to;
-                echo "To:".$to;
+                echo "To:".substr($to, strpos($to, "<") + 1,-1);
                 // date format according to sql
                 $date = str_replace('at','',$overview[0]->date);
                 $posted =date_create($date);
