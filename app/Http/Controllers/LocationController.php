@@ -351,6 +351,9 @@ function getIsLocationAvailable($id)
         echo "connection established";
         /* grab emails */
         $emails = imap_search($inbox,'TEXT "ticket-reply-"');
+        echo "<pre>";
+        print_r($emails);
+        echo "</pre>";
         /* if emails are returned, cycle through each... */
         if($emails) {
             /* begin output var */
@@ -379,6 +382,7 @@ function getIsLocationAvailable($id)
                 echo "T0:".$to;
                 echo "<pre>";
                 print_r($ticketId);
+                echo "</pre>";
                 $ticketId = substr($ticketId[2], strpos($ticketId[2], "@") + 1);
                 echo $ticketId;
                 //insert comment
@@ -399,6 +403,9 @@ function getIsLocationAvailable($id)
             }
 
             imap_delete($inbox,$email_number);
+        }
+        else{
+            echo "no emails found....";
         }
         /* close the connection */
         imap_close($inbox);
