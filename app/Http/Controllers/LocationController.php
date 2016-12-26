@@ -364,6 +364,9 @@ function getIsLocationAvailable($id)
 
                 /* get information specific to this email */
                 $overview = imap_fetch_overview($inbox,$email_number,0);
+                echo "<pre>";
+                print_r($overview);
+                echo "</pre>";
                 //var_dump($overview[0]);
                 $from = $overview[0]->from;
                 $from = substr($from, strpos($from, "<") + 1,-1);
