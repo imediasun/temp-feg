@@ -40,15 +40,15 @@ class ReadComment extends Command
     {
         /* connect to gmail */
         $hostname = '{imap.gmail.com:993/imap/ssl}INBOX';
-        $username = CNF_REPLY_TO;
-        $password = CNF_REPLY_TO_PASSWORD;
+        $username = "tickets@tickets.fegllc.com";
+        $password = "8d<Sy%68";
 
         /* try to connect */
         $inbox = imap_open($hostname,$username,$password) or die('Cannot connect to Gmail: ' . imap_last_error());
         echo "connection established";
         /* grab emails */
-        $emails = imap_search($inbox,'FROM "ticket-reply-"');
-
+        $emails = imap_search($inbox,'TEXT "ticket-reply-"');
+        Log::info("**Send Emmail => ",$emails);
         /* if emails are returned, cycle through each... */
         if($emails) {
             /* begin output var */
@@ -62,7 +62,7 @@ class ReadComment extends Command
 
                 /* get information specific to this email */
                 $overview = imap_fetch_overview($inbox,$email_number,0);
-                var_dump($overview[0]);
+               //var_dump($overview[0]);
                 $from = $overview[0]->from;
                 $from = substr($from, strpos($from, "<") + 1,-1);
 
