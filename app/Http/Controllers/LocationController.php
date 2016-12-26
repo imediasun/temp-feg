@@ -376,6 +376,9 @@ function getIsLocationAvailable($id)
                 //Parse subject to find comment id
                 $subject = $overview[0]->subject;
                 $ticketId = explode('-', $to);
+                echo "T0:".$to;
+                echo "<pre>";
+                print_r($ticketId);
                 $ticketId = substr($ticketId[2], strpos($ticketId[2], "@") + 1);
                 echo $ticketId;
                 //insert comment
