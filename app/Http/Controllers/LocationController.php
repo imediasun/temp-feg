@@ -368,7 +368,7 @@ function getIsLocationAvailable($id)
                 $from = $overview[0]->from;
                 $from = substr($from, strpos($from, "<") + 1,-1);
 echo            "From:".$from;
-                $to = $overview[0]->from;
+                $to = $overview[0]->to;
                 echo "To:".$to;
                 // date format according to sql
                 $date = str_replace('at','',$overview[0]->date);
