@@ -342,7 +342,7 @@ function getIsLocationAvailable($id)
     function getGmailData()
     {
         /* connect to gmail */
-        $hostname = '{imap.gmail.com:993/imap/ssl/novalidate-cert/norsh}INBOX';
+        $hostname = '{imap.gmail.com:993/imap/ssl/novalidate-cert}INBOX';
         $username = "tickets@tickets.fegllc.com";
         $password = "8d<Sy%68";
 
@@ -367,7 +367,9 @@ function getIsLocationAvailable($id)
                 //var_dump($overview[0]);
                 $from = $overview[0]->from;
                 $from = substr($from, strpos($from, "<") + 1,-1);
-echo "From:".$from;
+echo            "From:".$from;
+                $to = $overview[0]->from;
+                echo "To:".$to;
                 // date format according to sql
                 $date = str_replace('at','',$overview[0]->date);
                 $posted =date_create($date);
