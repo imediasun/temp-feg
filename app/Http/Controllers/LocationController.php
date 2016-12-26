@@ -350,7 +350,7 @@ function getIsLocationAvailable($id)
         $inbox = imap_open($hostname,$username,$password) or die('Cannot connect to Gmail: ' . imap_last_error());
         echo "connection established";
         /* grab emails */
-        $emails = imap_search($inbox,'TEXT "test"');
+        $emails = imap_search($inbox,'SUBJECT "FEG Ticket #"');
 echo "<pre>";
         print_r($emails);
         echo "</pre>";
