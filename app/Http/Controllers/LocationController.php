@@ -4,6 +4,7 @@ use App\Http\Controllers\controller;
 use App\Models\Location;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
+use App\Models\Ticketcomment;
 use Validator, Input, Redirect;
 
 class LocationController extends Controller
