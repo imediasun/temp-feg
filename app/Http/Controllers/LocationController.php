@@ -377,22 +377,20 @@ function getIsLocationAvailable($id)
                 $subject = $overview[0]->subject;
                 $ticketId = explode('-', $to);
                 $ticketId = substr($ticketId[2],0,strpos($ticketId[2], "@"));
-                echo $ticketId;
-                //insert comment
+               //insert comment
                 $postUser = \DB::select("Select * FROM users WHERE email = '". $from ."'");
                 $userId = $postUser[0]->id;
-
                 $message = imap_fetchbody($inbox,$email_number,1);
 
                 //Insert In sb_comment table
-               // $comment_model = new Ticketcomment();
-               // $commentsData = array(
-               //    'TicketID' => $ticketId,
-                //    'Comments' => $message,
-                //    'Posted'   => $posted,
-                //    'UserID'   => $userId
-               // );
-               // $comment_model->insertRow($commentsData, NULL);
+               $comment_model = new Ticketcomment();
+                $commentsData = array(
+                  'TicketID' => $ticketId,
+                    'Comments' => $message,
+                   'Posted'   => $posted,
+                    'UserID'   => $userId
+                );
+                $comment_model->insertRow($commentsData, NULL);
             }
 
             imap_delete($inbox,$email_number);
