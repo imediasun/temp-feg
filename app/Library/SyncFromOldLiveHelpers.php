@@ -391,6 +391,7 @@ class SyncFromOldLiveHelpers
     
     public static function _syncFromLiveTempDB($params = array()) {
 //        self::commonSync($params);
+        self::commonSyncAll($params);        
         self::$L->log("Start Sacoa Sync");
         self::live_sync_temp_earnings('livemysql_sacoa', 'sacoa_sync');
         self::$L->log("End Sacoa Sync");        
