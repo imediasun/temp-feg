@@ -40,15 +40,14 @@ class ReadComment extends Command
     {
         /* connect to gmail */
         $hostname = '{imap.gmail.com:993/imap/ssl}INBOX';
-        //$username = CNF_REPLY_TO;
-        $username = "tickets@tickets.fegllc.com";
-        //$password = CNF_REPLY_TO_PASSWORD;
-$password="8d<Sy%68";
+        $username = CNF_REPLY_TO;
+        $password = CNF_REPLY_TO_PASSWORD;
+
         /* try to connect */
         $inbox = imap_open($hostname,$username,$password) or die('Cannot connect to Gmail: ' . imap_last_error());
         echo "connection established";
         /* grab emails */
-        $emails = imap_search($inbox,'SUBJECT "FEG Ticket #"');
+        $emails = imap_search($inbox,'TEXT "ticket-reply-"');
 
         /* if emails are returned, cycle through each... */
         if($emails) {
@@ -63,7 +62,7 @@ $password="8d<Sy%68";
 
                 /* get information specific to this email */
                 $overview = imap_fetch_overview($inbox,$email_number,0);
-                //var_dump($overview[0]);
+               //var_dump($overview[0]);
                 $from = $overview[0]->from;
                 $from = substr($from, strpos($from, "<") + 1,-1);
 
@@ -73,8 +72,8 @@ $password="8d<Sy%68";
 
                 //Parse subject to find comment id
                 $subject = $overview[0]->subject;
-                $ticketId = substr($subject, strpos($subject, "#") + 1);
-
+                $ticketId = explode('-', $from);
+                $ticketId = substr($ticketId[2], strpos($ticketId[2], "@") + 1);
                 //insert comment
                 $postUser = \DB::select("Select * FROM users WHERE email = '". $from ."'");
                 $userId = $postUser[0]->id;

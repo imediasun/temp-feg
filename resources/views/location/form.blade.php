@@ -8,7 +8,8 @@
 	</div>
 
 	<div class="sbox-content"> 
-@endif	
+@endif
+        <a href="{{ url() }}/location/gmail-data" class="btn btn-success" >Det Gmail Data</a>
 			{!! Form::open(array('url'=>'location/save/'.$row['id'], 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'locationFormAjax')) !!}
 			<div class="col-md-12">
 						<fieldset><legend> location</legend>
@@ -369,7 +370,7 @@
                             </div>
 				  <div class="form-group  " >
 					<label for="On Debit" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('On Debit', (isset($fields['debit_type_id']['language'])? $fields['debit_type_id']['language'] : array())) !!}
+					{!! SiteHelpers::activeLang('Debit Type', (isset($fields['debit_type_id']['language'])? $fields['debit_type_id']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
 					  <select name='debit_type_id' rows='5' id='debit_type_id' class='select2 '   ></select>
@@ -380,7 +381,7 @@
 				  </div> 
 				  <div class="form-group  " >
 					<label for=" Debit Type" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang(' Debit Type', (isset($fields['bill_debit_type']['language'])? $fields['bill_debit_type']['language'] : array())) !!}
+					{!! SiteHelpers::activeLang('On Debit', (isset($fields['bill_debit_type']['language'])? $fields['bill_debit_type']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
                         <input type ="text"  value="0" name="bill_debit_type" style="display:none"/>
