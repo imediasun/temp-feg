@@ -351,9 +351,6 @@ function getIsLocationAvailable($id)
         echo "connection established";
         /* grab emails */
         $emails = imap_search($inbox,'TEXT "ticket-reply-"');
-        echo "<pre>";
-        print_r($emails);
-        echo "</pre>";
         /* if emails are returned, cycle through each... */
         if($emails) {
             /* begin output var */
@@ -379,11 +376,7 @@ function getIsLocationAvailable($id)
                 //Parse subject to find comment id
                 $subject = $overview[0]->subject;
                 $ticketId = explode('-', $to);
-                echo "T0:".$to;
-                echo "<pre>";
-                print_r($ticketId);
-                echo "</pre>";
-                $ticketId = substr($ticketId[2], strpos($ticketId[2], "@") + 1);
+                $ticketId = substr($ticketId[2],0,strpos($ticketId[2], "@"));
                 echo $ticketId;
                 //insert comment
                 $postUser = \DB::select("Select * FROM users WHERE email = '". $from ."'");
