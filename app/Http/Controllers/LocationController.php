@@ -367,7 +367,7 @@ function getIsLocationAvailable($id)
                 //var_dump($overview[0]);
                 $from = $overview[0]->from;
                 $from = substr($from, strpos($from, "<") + 1,-1);
-
+echo "From:".$from;
                 // date format according to sql
                 $date = str_replace('at','',$overview[0]->date);
                 $posted =date_create($date);
@@ -375,7 +375,10 @@ function getIsLocationAvailable($id)
                 //Parse subject to find comment id
                 $subject = $overview[0]->subject;
                 $ticketId = explode('-', $from);
-                $ticketId = substr($ticketId[2], strpos($ticketId[2], "@") + 1);
+                echo "<pre>";
+                print_r($ticketId);
+                echo "</pre>";
+              //  $ticketId = substr($ticketId[2], strpos($ticketId[2], "@") + 1);
                 //insert comment
                 $postUser = \DB::select("Select * FROM users WHERE email = '". $from ."'");
                 $userId = $postUser[0]->id;
