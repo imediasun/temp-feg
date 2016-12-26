@@ -70,7 +70,7 @@ class TicketMailer
                 $headers .= 'From: ' . CNF_APPNAME . ' <' . $reply_to . '>' . "\r\n";
                 Log::info("**Send Emmail => ",[$to, $subject, $message, $headers]);
                 //enabled on gabe request
-               // mail($to, $subject, $message, $headers);
+              mail($to, $subject, $message, $headers);
             }
         }
     }

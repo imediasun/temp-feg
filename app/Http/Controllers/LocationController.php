@@ -168,12 +168,10 @@ class LocationController extends Controller
             if ($this->access['is_add'] == 0)
                 return Redirect::to('dashboard')->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
         }
-
         if ($id != '') {
             if ($this->access['is_edit'] == 0)
                 return Redirect::to('dashboard')->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
         }
-
         $row = $this->model->find($id);
         if ($row) {
             $this->data['row'] = $row;
@@ -182,9 +180,8 @@ class LocationController extends Controller
         }
         $this->data['setting'] = $this->info['setting'];
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
-
         $this->data['id'] = $id;
-
+        \Session::put('location_updated',$id);
         return view('location.form', $this->data);
     }
 
@@ -234,11 +231,17 @@ class LocationController extends Controller
         $form_data['date_opened'] = date('Y-m-d');
         $form_data['date_closed'] = date('Y-m-d');
         $rules = $this->validateForm();
-        $rules['id']='required|unique:location';
+        $input_id=$request->get('id');
+        if(\Session::get('location_updated') != $input_id) {
+            $rules['id'] = 'required|unique:location';
+        }
+        else{
+            $rules['id'] = 'required';
+        }
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
             $data = $this->validatePost('location');
-            $id = $this->model->insertRow($data, $id);
+                $id = $this->model->insertRow($data, $id);
             return response()->json(array(
                 'status' => 'success',
                 'message' => \Lang::get('core.note_success')
@@ -294,12 +297,6 @@ class LocationController extends Controller
         }
 
     }
-
-    function postTest(Request $request)
-    {
-
-    }
-
     function postUpdatelocation(Request $request, $id)
     {
         $data = $request->all();
@@ -328,7 +325,6 @@ class LocationController extends Controller
 function getIsLocationAvailable($id)
 {
     $isAvailable=\DB::select("select count('id') as count from location where id=$id");
-
     if($isAvailable[0]->count > 0)
     {
         return response()->json(array(
