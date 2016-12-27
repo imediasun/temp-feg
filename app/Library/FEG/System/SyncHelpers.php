@@ -194,9 +194,14 @@ class SyncHelpers
             '_logger' => null,
         ), $params));         
 
+        $yesterdayStamp = strtotime('now -1 day');
+        $yesterday = date("Y-m-d", $yesterdayStamp);
         $date = date("Y-m-d", strtotime($date));
+        $datePlayedStamp = strtotime($date);
         $today = date("Y-m-d");
         $nextDate = date("Y-m-d", strtotime($date." +1 day"));
+        $isPastData = $datePlayedStamp < $yesterdayStamp;        
+        
         self::report_archive_duplicate_location_summary_data($date, $location);
 
         $sql = "SELECT 
@@ -240,8 +245,19 @@ class SyncHelpers
             DB::beginTransaction();
             foreach ($data as $row) {
                 $revenue = $row['games_revenue'];
-                $row['report_status'] = (is_null($revenue) || empty($revenue) || $revenue === "0") ? 0 : 1;                
-                DB::table('report_locations')->insert($row);
+                $row['report_status'] = (is_null($revenue) || empty($revenue) || $revenue === "0") ? 0 : 1;     
+                $validData = true;
+                if ($isPastData) {
+                    $locationId = $row['location_id'];
+                    $locationStartDate = strtotime(DB::table('location')->where('id', $locationId)->value('date_opened'));
+                    if ($locationStartDate && $locationStartDate > 0) {
+                        $validData = $datePlayedStamp >= $locationStartDate;
+                    }
+                }                
+                if ($validData) {
+                    DB::table('report_locations')->insert($row);
+                }
+                
             }
             DB::commit();            
         }
@@ -357,7 +373,7 @@ class SyncHelpers
         $gameIdArray = array();
         DB::connection()->setFetchMode(PDO::FETCH_ASSOC); 
         $query->chunk($chunkSize, 
-                function($data)  use ($table, $date, $yesterdayStamp, &$rowcount, &$chunkCount, &$insertCount, &$insertArray, &$gameIdArray){
+                function($data)  use ($date, $yesterdayStamp, &$rowcount, &$chunkCount, &$insertCount, &$insertArray, &$gameIdArray){
                     global $__logger;
                     if (!empty($data)) {
                         $dataSize = count($data);
@@ -369,6 +385,7 @@ class SyncHelpers
                             $revenue = $row['game_revenue'];                           
                             $lastPlayed = $row['date_last_played'];                           
                             $datePlayedStamp = strtotime($date);
+                            $isPastData = $datePlayedStamp < $yesterdayStamp;
                             
                             $row['report_status'] = 1;
                             if (is_null($revenue) || empty($revenue) || $revenue == "0") {
@@ -389,7 +406,7 @@ class SyncHelpers
                                 $gameLocationID = $elocation_id;
                             }
                             else {
-                                if ($datePlayedStamp < $yesterdayStamp) {
+                                if ($isPastData) {
                                     $possibleLocation = self::getPossibleHistoricalLocationOfGame($game_id, $date, $location_id);
                                 }
                                 else {
@@ -421,11 +438,25 @@ class SyncHelpers
                             unset($row['glocation_id']);
                             unset($row['prev_location_id']);
                             unset($row['elocation_id']);
-                            unset($row['edebit_type_id']);                            
-                            $insertArray[$insertCount] = $row;
-                            ////$gameLocationKey = $game_id."_$gameLocationID";
-                            ////$gameIdArray[$gameLocationKey] = $insertCount;
-                            $insertCount++;
+                            unset($row['edebit_type_id']); 
+                            
+                            $validData = true;
+                            if ($isPastData) {
+                                $gameStartDate = strtotime(DB::table('game')->where('id', $game_id)->value('date_in_service'));
+                                $locationStartDate = strtotime(DB::table('location')->where('id', $gameLocationID)->value('date_opened'));
+                                if ($gameStartDate && $gameStartDate > 0) {
+                                    $validData = $datePlayedStamp >= $gameStartDate;
+                                }
+                                if ($locationStartDate && $locationStartDate > 0) {
+                                    $validData = $datePlayedStamp >= $locationStartDate;
+                                }
+                            }
+                            if ($validData) {
+                                $insertArray[$insertCount] = $row;
+                                ////$gameLocationKey = $game_id."_$gameLocationID";
+                                ////$gameIdArray[$gameLocationKey] = $insertCount;
+                                $insertCount++;
+                            }
                         }
                         
 //                        if (!empty($gamesNotReporting)) {
