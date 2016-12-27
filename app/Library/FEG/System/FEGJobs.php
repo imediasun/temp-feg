@@ -6,6 +6,7 @@ use PDO;
 use DB;
 use Carbon\Carbon;
 use App\Library\MyLog;
+use App\Library\FEG\System\FEGSystemHelper;
 
 
 class FEGJobs
@@ -65,6 +66,78 @@ class FEGJobs
             (empty($location) ? "": " AND report_game_plays.location_id in ($location)");
         
         DB::delete($q); 
+    }
+    
+    public static function findDuplicateTransferredEarnings($params=array()) {
+        $lf = 'findDuplicateTransferredEarnings.log';
+        $lp = 'FEGCronTasks/DuplicateTransferredEarnings';
+        extract(array_merge(array(
+            '_logger' => null
+        ), $params));        
+        $L = FEGSystemHelper::setLogger($_logger, $lf, $lp, 'EARNINGS');
+        $params['_logger'] = $L;
+        
+        $L->log("***************************** START FIND DUPLICATE ********************************");
+        FEGSystemHelper::logit("***************************** START FIND DUPLICATE ********************************", $lf, $lp);
+        
+        $endDate = "2014-01-01";
+        $endDateValue = strtotime($endDate);
+        $startDate = DB::table('game_earnings')->orderBy('date_start', 'desc')->take(1)->value('date_start');
+        $startDateValue = strtotime($startDate);
+        $date = $startDate;
+        $dateValue = $startDateValue;
+        $L->log("Start: $startDate, End: $endDate => going backwards");
+        FEGSystemHelper::logit("Start: $startDate, End: $endDate => going backwards", $lf, $lp);
+        while ($dateValue >= $endDateValue) {
+            
+            $L->log("DATE: $date");
+            
+            $q = "SELECT game_id, count(game_id) recordCount from game_earnings 
+                WHERE date_start >= '$date' 
+                    AND date_start < DATE_ADD('$date', , INTERVAL 1 DAY) 
+                GROUP BY game_id";
+            $dataERP = DB::select($q);
+            $data = array();            
+            foreach($dataERP as $row) {
+                $data[$row->game_id] = $row->recordCount;
+            }
+            $dataERP = null;
+            $dataSacoaTemp = DB::connection('sacoa_sync')->select($q);
+            $dataTemp = array();
+            foreach($dataSacoaTemp as $row) {
+                $dataTemp[$row->game_id] = $row->recordCount;
+            }
+            $dataSacoaTemp = null;
+            $dataEmbedTemp = DB::connection('embed_sync')->select($q);
+            foreach($dataEmbedTemp as $row) {
+                $dataTemp[$row->game_id] = $row->recordCount;
+            }
+            $dataEmbedTemp = null;            
+            
+            foreach($data as $gameId => $count) {
+                if (isset($dataTemp[$gameId])) {
+                    if ($dataTemp[$gameId] != $count) {
+                        $log = "$date, $gameId, ERP: $count, TEMP: $dataTemp[$gameId]";
+                        FEGSystemHelper::logit($log, $lf, $lp);
+                        $L->log($log);
+                    }
+                    unset($data[$gameId]);
+                    unset($dataTemp[$gameId]);                        
+                }
+                else {
+                        $log = "$date, $gameId, ERP: $count, TEMP: NOT FOUND IN TEMP";
+                        FEGSystemHelper::logit($log, $lf, $lp);
+                        $L->log($log);                    
+                }
+            }
+            
+            $dateValue = strtotime($date.' -1 day');
+            $date = date("Y-m-d", $dateValue);
+        }
+        
+        
+        FEGSystemHelper::logit("***************************** END FIND DUPLICATE ********************************", $lf, $lp);
+        $L->log("***************************** END FIND DUPLICATE ********************************");
     }
     
 }
