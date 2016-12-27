@@ -84,8 +84,8 @@ class FEGJobs
         $endDateValue = strtotime($endDate);
         $startDate = DB::table('game_earnings')->orderBy('date_start', 'desc')->take(1)->value('date_start');
         $startDateValue = strtotime($startDate);
-        $date = $startDate;
-        $dateValue = $startDateValue;
+        $date = date("Y-m-d", $startDateValue);
+        $dateValue = strtotime($date);
         $L->log("Start: $startDate, End: $endDate => going backwards");
         FEGSystemHelper::logit("Start: $startDate, End: $endDate => going backwards", $lf, $lp);
         while ($dateValue >= $endDateValue) {
