@@ -58,4 +58,6 @@
                     Route::controller('throwreportpayout', 'ThrowreportpayoutController');
                     Route::controller('throwreportinstantwin', 'ThrowreportinstantwinController');
                     Route::controller('servicerequests', 'ServicerequestsController');
+                    Route::controller('feg/system/tasks', 'Feg\System\TasksController');
+                    Route::controller('feg/system/systememailreportmanager', 'Feg\System\SystemEmailReportManagerController');
                     ?>
