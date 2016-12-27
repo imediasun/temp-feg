@@ -1007,7 +1007,7 @@ class SyncFromOldLiveHelpers
         global $__logger;
         if (!isset(self::$L)) {
             if (empty($_logger)) {
-                $_logger = new MyLog($name, $name, $path, $id);                
+                $_logger = new MyLog($name, $path, $id);                
             }
             self::$L = $_logger;
         } 
