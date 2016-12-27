@@ -247,7 +247,7 @@ class SyncHelpers
         }
         DB::connection()->setFetchMode(PDO::FETCH_CLASS);
     }
-    
+
     public static function report_daily_game_summary($params = array()) {
         global $__logger;
         $chunkSize = 500;
@@ -367,6 +367,7 @@ class SyncHelpers
                         foreach ($data as $row) {
                             $game_id = $row['game_id'];
                             $revenue = $row['game_revenue'];                           
+                            $lastPlayed = $row['date_last_played'];                           
                             $datePlayedStamp = strtotime($date);
                             
                             $row['report_status'] = 1;
@@ -375,42 +376,46 @@ class SyncHelpers
                                 if ($revenue == "0") {
                                     $row['notes'] = "NO REVENUE";
                                 }
-                                $gamesNotReporting[] = $game_id;
+                                ////$gamesNotReporting[] = $game_id;                                
                             }
                             if (!empty($row['edebit_type_id'])) {
                                 $row['debit_type_id'] = $row['edebit_type_id'];
                             }
                             
                             $gameLocationID = 0;
-                            if (!empty($row['elocation_id'])) {
-                                $gameLocationID = $row['elocation_id'];
+                            $elocation_id = $row['elocation_id'];
+                            $location_id = $row['location_id'];
+                            if (!empty($elocation_id)) {
+                                $gameLocationID = $elocation_id;
                             }
                             else {
                                 if ($datePlayedStamp < $yesterdayStamp) {
-                                    $possibleLocation = null;
-                                    $q = "select to_loc from game_move_history
-                                        WHERE game_id = $game_id
-                                        and '$date' >= from_date
-                                        order by from_date DESC LIMIT 1";
-                                    $possibleLocationData = DB::select($q);
-                                    if (!empty($possibleLocationData[0])) {
-                                        $possibleLocation = $possibleLocationData[0]['to_loc'];
-                                    }
-                                    if (!empty($possibleLocation)) {
-                                        $gameLocationID = $possibleLocation;
-                                    }
-                                }                                
+                                    $possibleLocation = \App\Library\FEG\System\SyncHelpers::getPossibleHistoricalLocationOfGame($game_id, $date, $location_id);
+                                }
+                                else {
+                                    $possibleLocation = $location_id;
+                                }
+                                if (!empty($possibleLocation)) {
+                                    $gameLocationID = $possibleLocation;
+                                }
+                            }
+                            if (empty($lastPlayed)) {
+                                $lastPlayed = \App\Library\FEG\System\SyncHelpers::getPossibleLastPlayedDateOfGame($game_id, $date, $gameLocationID);
+                                if (!empty($lastPlayed) && strtotime($lastPlayed) > 0) {
+                                    $row['date_last_played'] = $lastPlayed; 
+                                }
                             }
                             
-                            if (empty($gameLocationID)) {
-                                $gameLocationID = $row['glocation_id'];
-                            }
-                            if (empty($gameLocationID)) {
-                                $gameLocationID = $row['location_id'];
-                            }
-                            if (empty($gameLocationID)) {
-                                $gameLocationID = $row['prev_location_id'];
-                            }
+//                            
+//                            if (empty($gameLocationID)) {
+//                                $gameLocationID = $row['glocation_id'];
+//                            }
+//                            if (empty($gameLocationID)) {
+//                                $gameLocationID = $row['location_id'];
+//                            }
+//                            if (empty($gameLocationID)) {
+//                                $gameLocationID = $row['prev_location_id'];
+//                            }
                             $row['location_id'] = $gameLocationID;
                             
                             unset($row['glocation_id']);
@@ -418,36 +423,36 @@ class SyncHelpers
                             unset($row['elocation_id']);
                             unset($row['edebit_type_id']);                            
                             $insertArray[$insertCount] = $row;
-                            $gameLocationKey = $game_id."_$gameLocationID";
-                            $gameIdArray[$gameLocationKey] = $insertCount;
+                            ////$gameLocationKey = $game_id."_$gameLocationID";
+                            ////$gameIdArray[$gameLocationKey] = $insertCount;
                             $insertCount++;
                         }
                         
-                        if (!empty($gamesNotReporting)) {
-                            $lastPlayed = array();
-                            $last_played_sql = "SELECT E.game_id, E.loc_id, max(E.date_start) as date_last_played 
-                                            FROM game_earnings E
-                                            INNER JOIN location L ON L.id = E.loc_id
-                                            WHERE L.reporting = 1 AND
-                                            E.date_start <= '$date 23:59:59'
-                                            AND E.game_id IN (" . implode(',', $gamesNotReporting) . ")
-                                            GROUP BY E.game_id, E.loc_id";
-
-                            $last_played_data = DB::select($last_played_sql);
-                            if  (!empty($last_played_data)) { 
-                                foreach($last_played_data as $row) {
-                                   $game_id = $row['game_id'];
-                                   $loc_id = $row['loc_id'];
-                                   $gameLocationKey = $game_id."_$loc_id";
-                                   $date_last_played = $row['date_last_played'];
-                                   $insertKey = isset($gameIdArray[$gameLocationKey]) ? 
-                                           $gameIdArray[$gameLocationKey] : null;
-                                   if (isset($insertKey)  && isset($insertArray[$insertKey])) {
-                                       $insertArray[$insertKey]['date_last_played'] = $date_last_played;
-                                   }                        
-                                }
-                            }
-                        }                      
+//                        if (!empty($gamesNotReporting)) {
+//                            $lastPlayed = array();
+//                            $last_played_sql = "SELECT E.game_id, E.loc_id, max(E.date_start) as date_last_played 
+//                                            FROM game_earnings E
+//                                            INNER JOIN location L ON L.id = E.loc_id
+//                                            WHERE L.reporting = 1 AND
+//                                            E.date_start <= '$date 23:59:59'
+//                                            AND E.game_id IN (" . implode(',', $gamesNotReporting) . ")
+//                                            GROUP BY E.game_id, E.loc_id";
+//
+//                            $last_played_data = DB::select($last_played_sql);
+//                            if  (!empty($last_played_data)) { 
+//                                foreach($last_played_data as $row) {
+//                                   $game_id = $row['game_id'];
+//                                   $loc_id = $row['loc_id'];
+//                                   $gameLocationKey = $game_id."_$loc_id";
+//                                   $date_last_played = $row['date_last_played'];
+//                                   $insertKey = isset($gameIdArray[$gameLocationKey]) ? 
+//                                           $gameIdArray[$gameLocationKey] : null;
+//                                   if (isset($insertKey)  && isset($insertArray[$insertKey])) {
+//                                       $insertArray[$insertKey]['date_last_played'] = $date_last_played;
+//                                   }                        
+//                                }
+//                            }
+//                        }                      
                     }
                     else {
                         //self::$L->log("NO data to add");
