@@ -390,7 +390,7 @@ class SyncHelpers
                             }
                             else {
                                 if ($datePlayedStamp < $yesterdayStamp) {
-                                    $possibleLocation = \App\Library\FEG\System\SyncHelpers::getPossibleHistoricalLocationOfGame($game_id, $date, $location_id);
+                                    $possibleLocation = self::getPossibleHistoricalLocationOfGame($game_id, $date, $location_id);
                                 }
                                 else {
                                     $possibleLocation = $location_id;
@@ -400,7 +400,7 @@ class SyncHelpers
                                 }
                             }
                             if (empty($lastPlayed)) {
-                                $lastPlayed = \App\Library\FEG\System\SyncHelpers::getPossibleLastPlayedDateOfGame($game_id, $date, $gameLocationID);
+                                $lastPlayed = self::getPossibleLastPlayedDateOfGame($game_id, $date, $gameLocationID);
                                 if (!empty($lastPlayed) && strtotime($lastPlayed) > 0) {
                                     $row['date_last_played'] = $lastPlayed; 
                                 }
@@ -835,6 +835,135 @@ class SyncHelpers
         return $affected_rows;
     }        
     
+
+    public static function getPossibleLastPlayedDateOfGame($game_id, $date, $location = 0) {
+        $possibleDate = null;
+        //$l = new MyLog('getPossibleLastPlayedDateOfGame.log', 'Test', 'DATE');  
+        //$l->log("Game: $game_id, date: $date, location: $location");
+        $gameStartDate = DB::table('game')->where('id', $game_id)->value('date_in_service');
+        //$l->log("date_in_service: ", $gameStartDate);
+        $locationStartDate = DB::table('location')->where('id', $location)->value('date_opened');
+        //$l->log("locationStartDate: ", $locationStartDate);
+        
+        $q = "SELECT date_format(max(E.date_start), '%Y-%m-%d') as date_last_played 
+                    FROM game_earnings E
+                    WHERE
+                    E.date_start <= '$date 23:59:59'
+                    AND E.game_id IN ($game_id)
+                    AND E.loc_id=$location";
+        
+        $data = DB::select($q);
+        
+        if (!empty($data)) {
+            $row = $data[0];
+            if (is_array($row)) {
+                $possibleDate = $row['date_last_played'];
+            }
+            else {
+                $possibleDate = $row->date_last_played;
+            }
+            //$l->log("Step 1 [from game earnings] Possible Date: ", $possibleDate);
+        }
+        
+        $isPossibleDateEmpty = empty($possibleDate) || strtotime($possibleDate) <= 0; 
+                
+        if ($isPossibleDateEmpty) {            
+            $q = "select from_loc, to_loc, date_format(from_date, '%Y-%m-%d') as from_date
+                from game_move_history WHERE game_id = $game_id";
+            $data = DB::select($q);
+            if (!empty($data)) {
+                $dateValue = strtotime($date);
+                foreach ($data as $row) {
+                    if (is_array($row)) {
+                        $from = $row['from_date'];
+                        $tloc = $row['to_loc'];
+                        $floc = $row['from_loc'];
+                    }
+                    else {
+                        $from = $row->from_date;
+                        $tloc = $row->to_loc;
+                        $floc = $row->from_loc;
+                    }
+                    $fromValue = strtotime($from);
+                    // if the move history's from date is greater than the given date
+                    if ($dateValue < $fromValue) {
+                        $possibleDate = $gameStartDate;
+                        //$l->log("Step 2.1 [move history TOP] Possible Date:", $possibleDate);
+                        break;
+                    }
+                    if ($dateValue >= $fromValue) {
+                        $possibleDate = $from;
+                       // $l->log("Step 2.2x [move history rest] Possible Date: ", $possibleDate);
+                    }
+                }            
+            }
+        }
+        
+        $isPossibleDateEmpty = empty($possibleDate) || strtotime($possibleDate) <= 0;        
+        if ($isPossibleDateEmpty) {
+            $possibleDate = $gameStartDate;
+            //$l->log("Step 3 [game start] Possible Date: ", $possibleDate);
+        }
+        
+        $isPossibleDateEmpty = empty($possibleDate) || strtotime($possibleDate) <= 0;    
+        
+        if ($isPossibleDateEmpty) {
+            $possibleDate = $locationStartDate;
+            //$l->log("Step 4 [location start] Possible Date: ", $possibleDate);
+        }
+        
+        $isPossibleDateEmpty = empty($possibleDate) || strtotime($possibleDate) <= 0;    
+        
+        if ($isPossibleDateEmpty) {
+            $possibleDate = null;
+        }
+        //$l->log("FINAL possible date: ", $possibleDate);
+        return $possibleDate;
+    }
+    
+    public static function getPossibleHistoricalLocationOfGame($game_id, $date, $location = 0) {
+        //$l = new MyLog('getPossibleHistoricalLocationOfGame.log', 'Test', 'LOCATION');  
+        //$l->log("Game: $game_id, date: $date, location: $location");
+        $possibleLocation = false;
+        $q = "select from_loc, to_loc, date_format(from_date, '%Y-%m-%d') as from_date
+            from game_move_history WHERE game_id = $game_id";
+        $data = DB::select($q);
+        if (!empty($data)) {
+            $dateValue = strtotime($date);
+            foreach ($data as $row) {
+                if (is_array($row)) {
+                    $from = $row['from_date'];
+                    $tloc = $row['to_loc'];
+                    $floc = $row['from_loc'];
+                }
+                else {
+                    $from = $row->from_date;
+                    $tloc = $row->to_loc;
+                    $floc = $row->from_loc;
+                }
+                $fromValue = strtotime($from);
+                if ($dateValue < $fromValue) {
+                    $possibleLocation = $floc;
+                    //$l->log("STEP 1.1 [move history top] possible location: ", $possibleLocation);
+                    break;
+                }
+                if ($dateValue >= $fromValue) {
+                    $possibleLocation = $tloc;
+                    //$l->log("STEP 1.2 [move history rest] possible location: ", $possibleLocation);
+                }
+            }            
+        }
+        
+        if ($possibleLocation === false) {
+            $possibleLocation = $location;
+            //$l->log("STEP 2 [default] possible location: ", $possibleLocation);
+        }
+        
+        //$l->log("FINAL possible location: ", $possibleLocation);
+        return $possibleLocation;
+    }
+    
+    
     
     public static function migrate($params = array()) {
         $L = new MyLog('database-migration.log', 'GoLiveMigration', 'Data');
@@ -1006,4 +1135,6 @@ class SyncHelpers
         $L->log("End Database Migration");
         
     }
+    
+    
 }
