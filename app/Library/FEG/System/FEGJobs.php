@@ -94,7 +94,7 @@ class FEGJobs
             
             $q = "SELECT game_id, count(game_id) recordCount from game_earnings 
                 WHERE date_start >= '$date' 
-                    AND date_start < DATE_ADD('$date', , INTERVAL 1 DAY) 
+                    AND date_start < DATE_ADD('$date', INTERVAL 1 DAY) 
                 GROUP BY game_id";
             $dataERP = DB::select($q);
             $data = array();            
