@@ -92,40 +92,40 @@ class FEGJobs
             
             $L->log("DATE: $date");
             
-            $q = "SELECT game_id, count(game_id) recordCount from game_earnings 
+            $q = "SELECT game_id, reader_id, count(game_id) recordCount from game_earnings 
                 WHERE date_start >= '$date' 
                     AND date_start < DATE_ADD('$date', INTERVAL 1 DAY) 
-                GROUP BY game_id";
+                GROUP BY game_id, reader_id";
             $dataERP = DB::select($q);
             $data = array();            
             foreach($dataERP as $row) {
-                $data[$row->game_id] = $row->recordCount;
+                $data[$row->game_id.'_'.$row->reader_id] = $row->recordCount;
             }
             $dataERP = null;
             $dataSacoaTemp = DB::connection('sacoa_sync')->select($q);
             $dataTemp = array();
             foreach($dataSacoaTemp as $row) {
-                $dataTemp[$row->game_id] = $row->recordCount;
+                $dataTemp[$row->game_id.'_'.$row->reader_id] = $row->recordCount;
             }
             $dataSacoaTemp = null;
             $dataEmbedTemp = DB::connection('embed_sync')->select($q);
             foreach($dataEmbedTemp as $row) {
-                $dataTemp[$row->game_id] = $row->recordCount;
+                $dataTemp[$row->game_id.'_'.$row->reader_id] = $row->recordCount;
             }
             $dataEmbedTemp = null;            
             
-            foreach($data as $gameId => $count) {
-                if (isset($dataTemp[$gameId])) {
-                    if ($dataTemp[$gameId] != $count) {
-                        $log = "$date, $gameId, ERP: $count, TEMP: $dataTemp[$gameId]";
+            foreach($data as $gameId_readerId => $count) {
+                if (isset($dataTemp[$gameId_readerId])) {
+                    if ($count > $dataTemp[$gameId_readerId]) {
+                        $log = "$date, $gameId_readerId, ERP: $count, TEMP: $dataTemp[$gameId_readerId]";
                         FEGSystemHelper::logit($log, $lf, $lp);
                         $L->log($log);
                     }
-                    unset($data[$gameId]);
-                    unset($dataTemp[$gameId]);                        
+                    unset($data[$gameId_readerId]);
+                    unset($dataTemp[$gameId_readerId]);                        
                 }
                 else {
-                        $log = "$date, $gameId, ERP: $count, TEMP: NOT FOUND IN TEMP";
+                        $log = "$date, $gameId_readerId, ERP: $count, TEMP: NOT FOUND IN TEMP";
                         FEGSystemHelper::logit($log, $lf, $lp);
                         $L->log($log);                    
                 }
