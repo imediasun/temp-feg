@@ -9,8 +9,7 @@
 
 	<div class="sbox-content"> 
 @endif
-        <a href="{{ url() }}/location/gmail-data" class="btn btn-success" >Det Gmail Data</a>
-			{!! Form::open(array('url'=>'location/save/'.$row['id'], 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'locationFormAjax')) !!}
+        {!! Form::open(array('url'=>'location/save/'.$row['id'], 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'locationFormAjax')) !!}
 			<div class="col-md-12">
 						<fieldset><legend> location</legend>
                             <div class="form-group  " >
