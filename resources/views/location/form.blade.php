@@ -18,9 +18,9 @@
                                 </label>
                                 <div class="col-md-6">
                                     {!! Form::text('id', $row['id'],array('class'=>'form-control', 'placeholder'=>'','id'=>'location_id','required'=>'required'   )) !!}
-                                </div>
-                                <div class="col-md-2" id="location_available">
+									<div id="location_available">
 
+									</div>
                                 </div>
                             </div>
 				  <div class="form-group  " >
