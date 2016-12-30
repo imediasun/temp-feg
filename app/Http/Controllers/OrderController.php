@@ -866,4 +866,23 @@ class OrderController extends Controller
         echo json_encode($json);
     }
 
+
+    function getMinOrderAmount($id)
+    {
+        $row = \DB::table('vendor')->where('id', $id)->select('min_order_amt')->first();
+        if($row)
+        {
+            return response()->json(array(
+                'status' => 'success',
+                'min_order_amount' => $row->min_order_amt,
+                'message' => 'Your request order amonut should be $'.number_format($row->min_order_amt, 2)
+            ));
+        }
+        else {
+            return response()->json(array(
+                'status' => 'error',
+                'message' => 'Current vendor id not exist'
+            ));
+        }
+    }
 }
