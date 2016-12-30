@@ -22,7 +22,6 @@ var UNDEFINED,
                     operator = item.operator;
                     if (elm.length) {
                         if (elm.hasClass('sel-search-multiple')) {
-                            val = val.split(',');
                             elm.select2('val', val);
                         }
                         else {
