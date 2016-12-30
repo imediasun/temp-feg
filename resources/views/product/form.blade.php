@@ -73,6 +73,17 @@
 
 
 
+							<div class="form-group  " >
+								<label for="SKU" class=" control-label col-md-4 text-left">
+									{!! SiteHelpers::activeLang('SKU', (isset($fields['sku']['language'])? $fields['sku']['language'] : array())) !!}
+								</label>
+								<div class="col-md-6">
+									{!! Form::text('sku', $row['sku'],array('class'=>'form-control', 'placeholder'=>'', 'required'=>'required')) !!}
+								</div>
+								<div class="col-md-2">
+
+								</div>
+							</div>
 
 
 
