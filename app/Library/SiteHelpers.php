@@ -870,7 +870,8 @@ class SiteHelpers
 						</select>";
                 break;
 
-            case 'radio';
+            case 'radio':
+            case 'checkbox':
 
                 $opt = explode("|", $option['lookup_query']);
                 $opts = '';
@@ -881,6 +882,7 @@ class SiteHelpers
                 }
                 $form = "<select name='$field{$bulk}' class='form-control' $mandatory $simpleSearchOptions><option value=''> -- Select  -- </option>$opts</select>";
                 break;
+
 
         }
 
