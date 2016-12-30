@@ -19,6 +19,14 @@ var UNDEFINED,
                     item = cache[elmName];
                     val = item.value;
                     val2 = item.value2;
+                    if(typeof val === 'string' || val instanceof String){
+                        val = decodeURIComponent(val);
+                    }
+                    //Decode received string
+                    //if game tile search for Cats & Mice then it will show encoded value of & sign
+                    if(typeof val2 === 'string' || val2 instanceof String){
+                        val2 = decodeURIComponent(val2);
+                    }
                     operator = item.operator;
                     if (elm.length) {
                         if (elm.hasClass('sel-search-multiple')) {
