@@ -202,6 +202,7 @@
 
             <h5> Item Details </h5>
             </div>
+            <div id="order-info-message"></div>
             <div class="table-responsive">
                 <table class="table table-striped itemstable" onload="calculatetest()">
                     <thead>
@@ -292,7 +293,11 @@
                 <td> </td>
                 <td colspan="6" class="text-left"><strong> Subtotal ( $ ) </strong></td>
                 <td> <input type="text" name="Subtotal" value="{{ $data['order_total'] }}" readonly
-                            class="form-control"/></td>
+                            class="form-control"/>
+                    <div id="error-meesage-amount">
+
+                    </div>
+                </td>
 
 
 
@@ -318,7 +323,7 @@
     </div>
     <script type="text/javascript">
 
-
+        var minOrderAmount = 0.00;
         $('#alt_ship_to').on('change', function () {
                     hideShowAltLocation();
                 }
@@ -376,6 +381,34 @@
 
             $("#order_type_id").jCombo("{{ URL::to('order/comboselect?filter=order_type:id:order_type') }}",
                     {selected_value: '{{ $data["order_type"] }}',initial_text:'-------- Select Order Type --------'});
+
+            $('#vendor_id').on('change',function(){
+                var vendor_id=$(this).val();
+                if(vendor_id != '')
+                {
+                    $.ajax({
+                        url:'{{url()}}/order/min-order-amount/'+vendor_id,
+                        method:'get',
+                        dataType:'json',
+                        success:function(result){
+                            minOrderAmount = result.min_order_amount;
+                            if(result.status=="success" && result.min_order_amount > 0)
+                            {
+                                $('#order-info-message').css('color','green');
+                                $("#order-info-message").text(result.message);
+                            }
+                            else
+                            {
+                                $('#order-info-message').css('color','#ffffff');
+                                $("#order-info-message").text('');
+                            }
+
+                        }
+                    });
+                }
+            });
+
+
             $("input[name*='total'] ").attr('readonly', '1');
             $("input[name*='qty'] , input[name*='bulk_Price'] ").addClass('calculate');
             var ele = document.getElementsByClassName(".calculate");
@@ -406,12 +439,22 @@
             form.submit(function () {
 
                 if (form.parsley('isValid') == true) {
-                    var options = {
-                        dataType: 'json',
-                        beforeSubmit: showRequest,
-                        success: showResponse
+                    var total_cost = $("#total_cost").val();
+                    if(total_cost >= minOrderAmount)
+                    {
+                        var options = {
+                            dataType: 'json',
+                            beforeSubmit: showRequest,
+                            success: showResponse
+                        }
+                        $(this).ajaxSubmit(options);
                     }
-                    $(this).ajaxSubmit(options);
+                    else
+                    {
+                        $('#error-meesage-amount').css('color','red');
+                        $('#error-meesage-amount').show().delay(5000).fadeOut();
+                        $("#error-meesage-amount").text('Sorry! you can not create a order request. Please recheck your order price.');
+                    }
                     return false;
 
                 } else {

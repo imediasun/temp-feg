@@ -26,13 +26,11 @@ function performSimpleSearch(params) {
         }
         else
         {
-            if(value != "")
-            {
-               value=String(value);
-                if(value.includes('&'))
-                {
-                    value=value.replace(/&/g, '_amp');
-                }
+            //when search is a string the encode it
+            //encoding is needed for & sign, especially in games title search for Cats & Mice
+            //if arrays are encoded, it does not populate in advanced search field
+            if(typeof value === 'string' || value instanceof String){
+                value = encodeURIComponent(value);
             }
         }
         if (fieldName) {            

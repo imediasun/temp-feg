@@ -241,6 +241,7 @@ class ProductController extends Controller
     {
         $rules = $this->validateForm();
         $rules['img'] = 'mimes:jpeg,gif,png';
+        $rules['sku'] = 'required|unique:products,sku,'.$id;
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
             if ($id == 0) {

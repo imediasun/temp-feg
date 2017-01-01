@@ -32,31 +32,26 @@ function performAdvancedSearch(params) {
                 }
                 else
                 {
-                    if(value != "")
-                    {
-                        value=String(value);
-                        if(value.includes('&'))
-                        {
-                            value=value.replace(/&/g, '_amp');
-                        }
+                    //when search is a string the encode it
+                    //encoding is needed for & sign, especially in games title search for Cats & Mice
+                    //if arrays are encoded, it does not populate in advanced search field
+                    if(typeof value === 'string' || value instanceof String){
+                        value = encodeURIComponent(value);
                     }
-                    //  alert(value);
                 }
                 if (value2 === null || value2 === UNDEFINED ) {
                     value2 = '';
                 }
                 else
-                    {
-                        if(value2 != "")
-                        {
-                            value2=String(value2);
-                            if(value2.includes('&'))
-                            {
-                                value2=value2.replace(/&/g, '_amp');
-                            }
-                        }
-                        //  alert(value);
+                {
+                    //when search is a string the encode it
+                    //encoding is needed for & sign, especially in games title search for Cats & Mice
+                    //if arrays are encoded, it does not populate in advanced search field
+                    if(typeof value2 === 'string' || value2 instanceof String){
+                        value2 = encodeURIComponent(value2);
                     }
+
+                }
                 if (field && name !='_token') {
                     cache[field] = {value:value, value2: value2, operator: operate};;            
                 }                

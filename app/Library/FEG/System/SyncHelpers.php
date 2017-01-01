@@ -215,6 +215,7 @@ class SyncHelpers
                     E.games_played_count,
                     E.games_revenue,
                     E.games_total_std_plays,
+                    L.date_opened,
                     1 as record_status
 
                 FROM location L
@@ -248,13 +249,13 @@ class SyncHelpers
                 $row['report_status'] = (is_null($revenue) || empty($revenue) || $revenue === "0") ? 0 : 1;     
                 $validData = true;
                 if ($isPastData) {
-                    $locationId = $row['location_id'];
-                    $locationStartDate = strtotime(DB::table('location')->where('id', $locationId)->value('date_opened'));
-                    if ($locationStartDate && $locationStartDate > 0) {
+                    $locationStartDate = strtotime($row['date_opened']);
+                    if (!empty($locationStartDate) && $locationStartDate > 0) {
                         $validData = $datePlayedStamp >= $locationStartDate;
                     }
-                }                
+                }
                 if ($validData) {
+                    unset($row['date_opened']);
                     DB::table('report_locations')->insert($row);
                 }
                 
@@ -407,7 +408,7 @@ class SyncHelpers
                             }
                             else {
                                 if ($isPastData) {
-                                    $possibleLocation = self::getPossibleHistoricalLocationOfGame($game_id, $date, $location_id);
+                                    //$possibleLocation = self::getPossibleHistoricalLocationOfGame($game_id, $date, $location_id);
                                 }
                                 else {
                                     $possibleLocation = $location_id;
@@ -417,10 +418,10 @@ class SyncHelpers
                                 }
                             }
                             if (empty($lastPlayed)) {
-                                $lastPlayed = self::getPossibleLastPlayedDateOfGame($game_id, $date, $gameLocationID);
-                                if (!empty($lastPlayed) && strtotime($lastPlayed) > 0) {
-                                    $row['date_last_played'] = $lastPlayed; 
-                                }
+//                                $lastPlayed = self::getPossibleLastPlayedDateOfGame($game_id, $date, $gameLocationID);
+//                                if (!empty($lastPlayed) && strtotime($lastPlayed) > 0) {
+//                                    $row['date_last_played'] = $lastPlayed; 
+//                                }
                             }
                             
 //                            
@@ -442,14 +443,14 @@ class SyncHelpers
                             
                             $validData = true;
                             if ($isPastData) {
-                                $gameStartDate = strtotime(DB::table('game')->where('id', $game_id)->value('date_in_service'));
-                                $locationStartDate = strtotime(DB::table('location')->where('id', $gameLocationID)->value('date_opened'));
-                                if ($gameStartDate && $gameStartDate > 0) {
-                                    $validData = $datePlayedStamp >= $gameStartDate;
-                                }
-                                if ($locationStartDate && $locationStartDate > 0) {
-                                    $validData = $datePlayedStamp >= $locationStartDate;
-                                }
+//                                $gameStartDate = strtotime(DB::table('game')->where('id', $game_id)->value('date_in_service'));
+//                                $locationStartDate = strtotime(DB::table('location')->where('id', $gameLocationID)->value('date_opened'));
+//                                if (!empty($gameStartDate) && $gameStartDate > 0) {
+//                                    $validData = $datePlayedStamp >= $gameStartDate;
+//                                }
+//                                if (!empty($locationStartDate) && $locationStartDate > 0) {
+//                                    $validData = $datePlayedStamp >= $locationStartDate;
+//                                }
                             }
                             if ($validData) {
                                 $insertArray[$insertCount] = $row;
@@ -523,6 +524,7 @@ class SyncHelpers
             'date_start' => null,
             'date_end' => null,
             'count' => 0,
+            'reverse' => 0,
             'location' => null,
             '_task' => array(),
             '_logger' => null,
@@ -538,26 +540,50 @@ class SyncHelpers
             
         }
         
-        $dateStartTimestamp = strtotime($date_start);
-        $dateEndTimestamp = strtotime($date_end);
-        $currentDate = $dateStartTimestamp;
-        $date = $date_start; 
-        $dateCount = 1;
-        while($currentDate <= $dateEndTimestamp) {
-            $__logger->log("DATE: $date ($dateCount/$count days)");
-            $cParams = array_merge($params, array("date" => $date));
-            $__logger->log("Start Generate Daily LOCATION Summary");
-            self::report_daily_location_summary($cParams);
-            $__logger->log("END Generate Daily LOCATION Summary");
-            $__logger->log("Start Generate Daily GAME Summary");
-            self::report_daily_game_summary($cParams);
-            $__logger->log("END Generate Daily GAME Summary");            
+        if ($reverse == 1) {
+            $dateStartTimestamp = strtotime($date_start);
+            $dateEndTimestamp = strtotime($date_end);
+            $currentDate = $dateEndTimestamp;
+            $date = $date_end; 
+            $dateCount = 1;
+            while($currentDate >= $dateStartTimestamp) {
+                $__logger->log("DATE: $date ($dateCount/$count days)");
+                $cParams = array_merge($params, array("date" => $date));
+                $__logger->log("Start Generate Daily LOCATION Summary");
+                self::report_daily_location_summary($cParams);
+                $__logger->log("END Generate Daily LOCATION Summary");
+                $__logger->log("Start Generate Daily GAME Summary");
+                self::report_daily_game_summary($cParams);
+                $__logger->log("END Generate Daily GAME Summary");            
+
+                $currentDate = strtotime($date . " -1 day");
+                $date = date("Y-m-d", $currentDate);
+                $dateCount++;
+            }
             
-            $currentDate = strtotime($date . " +1 day");
-            $date = date("Y-m-d", $currentDate);
-            $dateCount++;
+        }        
+        else  {
+            $dateStartTimestamp = strtotime($date_start);
+            $dateEndTimestamp = strtotime($date_end);
+            $currentDate = $dateStartTimestamp;
+            $date = $date_start; 
+            $dateCount = 1;
+            while($currentDate <= $dateEndTimestamp) {
+                $__logger->log("DATE: $date ($dateCount/$count days)");
+                $cParams = array_merge($params, array("date" => $date));
+                $__logger->log("Start Generate Daily LOCATION Summary");
+                self::report_daily_location_summary($cParams);
+                $__logger->log("END Generate Daily LOCATION Summary");
+                $__logger->log("Start Generate Daily GAME Summary");
+                self::report_daily_game_summary($cParams);
+                $__logger->log("END Generate Daily GAME Summary");            
+
+                $currentDate = strtotime($date . " +1 day");
+                $date = date("Y-m-d", $currentDate);
+                $dateCount++;
+            }
+            
         }
-        
 
     }       
  
@@ -896,7 +922,8 @@ class SyncHelpers
             //$l->log("Step 1 [from game earnings] Possible Date: ", $possibleDate);
         }
         
-        $isPossibleDateEmpty = empty($possibleDate) || strtotime($possibleDate) <= 0; 
+        $possibleDateValue = strtotime($possibleDate);
+        $isPossibleDateEmpty = empty($possibleDateValue) || $possibleDateValue <= 0; 
                 
         if ($isPossibleDateEmpty) {            
             $q = "select from_loc, to_loc, date_format(from_date, '%Y-%m-%d') as from_date
@@ -930,20 +957,23 @@ class SyncHelpers
             }
         }
         
-        $isPossibleDateEmpty = empty($possibleDate) || strtotime($possibleDate) <= 0;        
+        $possibleDateValue = strtotime($possibleDate);
+        $isPossibleDateEmpty = empty($possibleDateValue) || $possibleDateValue <= 0;      
         if ($isPossibleDateEmpty) {
             $possibleDate = $gameStartDate;
             //$l->log("Step 3 [game start] Possible Date: ", $possibleDate);
         }
         
-        $isPossibleDateEmpty = empty($possibleDate) || strtotime($possibleDate) <= 0;    
+        $possibleDateValue = strtotime($possibleDate);
+        $isPossibleDateEmpty = empty($possibleDateValue) || $possibleDateValue <= 0;    
         
         if ($isPossibleDateEmpty) {
             $possibleDate = $locationStartDate;
             //$l->log("Step 4 [location start] Possible Date: ", $possibleDate);
         }
         
-        $isPossibleDateEmpty = empty($possibleDate) || strtotime($possibleDate) <= 0;    
+        $possibleDateValue = strtotime($possibleDate);
+        $isPossibleDateEmpty = empty($possibleDateValue) || $possibleDateValue <= 0;   
         
         if ($isPossibleDateEmpty) {
             $possibleDate = null;

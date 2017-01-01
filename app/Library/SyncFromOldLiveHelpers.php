@@ -19,6 +19,7 @@ class SyncFromOldLiveHelpers
     public static function createGameSummary($params = array()) {
         extract(array_merge(array(
             'cleanFirst' => 0,
+            'reverse' => 1,
         ), $params));
         
         $L = $_logger;
@@ -43,10 +44,11 @@ class SyncFromOldLiveHelpers
             self::truncateTable(array('db' => 'mysql', 'table' => 'report_locations'));
             self::truncateTable(array('db' => 'mysql', 'table' => 'report_game_plays'));
         }        
-        $L->log("From $min to $max");   
+        $L->log("From $maxto $min");   
         $params['date_start'] = $min;
         $params['date_end'] = $max;
         $params['count'] = $count;
+        $params['reverse'] = $reverse;
         
         SyncHelpers::generateDailySummaryDateRange($params);
         
@@ -610,7 +612,7 @@ class SyncFromOldLiveHelpers
             $timeEnd = microtime(true);
             $timeDiff = round($timeEnd - $timeStart);
             $timeDiffHuman = self::secondsToHumanTime($timeDiff);
-            self::$L->log("has " . ($count > 0 ? "more":"") . " data to sync [ $timeDiffHuman ]");
+            self::$L->log("Has " . ($count > 0 ? "more":"") . " data to sync [ $timeDiffHuman ]");
             self::_syncTable($params);
             $count++;
             sleep(3);
