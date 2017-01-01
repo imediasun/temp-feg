@@ -44,7 +44,7 @@ class SyncFromOldLiveHelpers
             self::truncateTable(array('db' => 'mysql', 'table' => 'report_locations'));
             self::truncateTable(array('db' => 'mysql', 'table' => 'report_game_plays'));
         }        
-        $L->log("From $maxto $min");   
+        $L->log("From {$max} to {$min}");   
         $params['date_start'] = $min;
         $params['date_end'] = $max;
         $params['count'] = $count;
