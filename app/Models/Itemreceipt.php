@@ -134,7 +134,8 @@ orders.id=order_received.order_id ";
             $createdFlag = true;
         }
         $qry_in_string=implode(',',$order_ids);
-
+        if(empty($qry_in_string))
+            $qry_in_string = "''";
         $order_received_data=\DB::select("select *from order_received where order_id in($qry_in_string) $where");
         $order_received_ids=\DB::select("select order_id from order_received where order_id in($qry_in_string) $where group by order_id");
        // echo "select order_id from order_received where order_id in($qry_in_string) $where group by order_id";
