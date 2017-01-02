@@ -36,7 +36,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('inspire')->hourly();
         $schedule->command('syncgameearningsfromlive')->dailyAt('17:00')->withoutOverlapping();
         //turning off to allow client to test and avoid from varying counts
-        //$schedule->command('create:dummy_order')->cron('*/15 * * * * *')->withoutOverlapping();;
+        $schedule->command('create:dummy_order')->everyMinute()->withoutOverlapping();;
         //$schedule->command('syncgameearningsfromlive')->everyMinute()->withoutOverlapping();
         $schedule->command('elm5taskmanager')->everyMinute();
     }

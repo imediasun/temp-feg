@@ -37,7 +37,7 @@ class CreateDummyOrders extends Command
      */
     public function handle()
     {
-        $created_date=$this->rand_date('2016-09-02','2016-10-29');
+        $created_date=$this->rand_date('2016-12-01','2017-01-30');
         $counter=rand(1,5);
       // echo 'total number of orders:'.$counter.'----';
         for($i=0;$i < $counter;$i++) {
