@@ -99,18 +99,18 @@ class FEGJobs
             $dataERP = DB::select($q);
             $data = array();            
             foreach($dataERP as $row) {
-                $data[$row->game_id.'_'.$row->reader_id] = $row->recordCount;
+                $data[$row->game_id.'_'.trim($row->reader_id)] = $row->recordCount;
             }
             $dataERP = null;
             $dataSacoaTemp = DB::connection('sacoa_sync')->select($q);
             $dataTemp = array();
             foreach($dataSacoaTemp as $row) {
-                $dataTemp[$row->game_id.'_'.$row->reader_id] = $row->recordCount;
+                $dataTemp[$row->game_id.'_'.trim($row->reader_id)] = $row->recordCount;
             }
             $dataSacoaTemp = null;
             $dataEmbedTemp = DB::connection('embed_sync')->select($q);
             foreach($dataEmbedTemp as $row) {
-                $dataTemp[$row->game_id.'_'.$row->reader_id] = $row->recordCount;
+                $dataTemp[$row->game_id.'_'.trim($row->reader_id)] = $row->recordCount;
             }
             $dataEmbedTemp = null;            
             
@@ -133,7 +133,7 @@ class FEGJobs
             
             $dateValue = strtotime($date.' -1 day');
             $date = date("Y-m-d", $dateValue);
-            break;
+            //break;
         }
         
         
