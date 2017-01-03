@@ -187,12 +187,12 @@ class CreateDummyOrders extends Command
                     $notes="All Items Received";
                 }
                 \DB::insert('INSERT INTO order_received (`order_id`,`order_line_item_id`,`quantity`,`received_by`, `status`, `date_received`, `notes`)
-							 	  		   VALUES (' . $order_id . ',' . $order_contents_ids[$i] . ',' . $iquantity[$i] . ',' . $user_id . ',' . $status . ', "' . date('Y-m-d') . '" , "' . $notes. '" )');
+							 	  		   VALUES (' . $order_id . ',' . $order_contents_ids[$i] . ',' . $iquantity[$i] . ',' . $user_id . ',' . $status . ', "' .date('Y-m-d',rand( strtotime("2017-01-03"), strtotime("2017-01-30"))). '" , "' . $notes. '" )');
                 \DB::update('UPDATE order_contents
 								 	 	 SET item_received ='.$cond . '
 							   	   	   WHERE id = '. $order_contents_ids[$i]);
             }
-            $date_received = date("Y-m-d", strtotime($date_received));
+           $date_received = date("Y-m-d", strtotime($date_received));
             $data = array('date_received'=>$date_received,
                 'status_id' => $status,
                 'notes' => $notes,
@@ -258,7 +258,6 @@ class CreateDummyOrders extends Command
 
         $min_epoch = strtotime($min_date);
         $max_epoch = strtotime($max_date);
-
         $rand_epoch = rand($min_epoch, $max_epoch);
 
         return date('Y-m-d H:i:s', $rand_epoch);
