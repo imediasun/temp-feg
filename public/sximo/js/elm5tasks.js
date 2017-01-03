@@ -12,12 +12,22 @@ jQuery(document).ready(function ($) {
     $(document).on('click', '.testTask', testTask);
     $(document).on('click', '.expandTask', expandTaskContainer);
     $(document).on('click', '.collapseTask', collapseTaskContainer);
+    $(document).on('click', '.logActionsExpand', logActionsExpand);
     $(document).on('change', '.croninp', buildCrontab);
-    
+    logActionsExpand
     populateTaskDropdowns();
     
     initTasks($('.tasksContent'));    
 });
+
+function logActionsExpand(e) {
+    e.preventDefault();
+    var elm = jQuery(this),
+        task = elm.closest('.taskPanel'),
+        container = task.find('.logActionsEdit');
+    container.slideDown();    
+    elm.hide();
+}
 
 function expandTaskContainer(e) {
     e.preventDefault();
@@ -32,6 +42,7 @@ function expandTaskContainer(e) {
     oppositeButton.show();
     
 }
+
 function collapseTaskContainer(e) {
     e.preventDefault();
     var elm = jQuery(this),
@@ -118,6 +129,7 @@ function initTasks(parent) {
     parseCronStamps(parent.find('.cronStampText'));
     
     parent.find('[data-toggle="tooltip"]').tooltip();
+    parent.find('[name="run_dependent"]').prop('checked', true);
     
     parent.find('.toggleSwitch').bootstrapSwitch({
         onInit: switchOnInit,
@@ -273,11 +285,13 @@ function runTaskPopupInit(popup, parent, taskId, success, cancel) {
         url = pageUrl + '/runnow',
         form = popup.find('form'),
         isTest = parent.find('.taskForm input[name=is_test_mode]').prop('checked'),
+        runDependent = parent.find('.taskForm input[name=run_dependent]').prop('checked'),
         data,
         ajax;
     
     form.find('input.taskId').val(taskId);
     form.find('input.isTestMode').prop('checked', isTest);
+    form.find('input.runDependent').prop('checked', runDependent);
     
     form.find('.cancel').unbind('click').click(function(e){
         //e.preventDefault();
@@ -305,17 +319,17 @@ function initRunTaskNow(event) {
         success = function (data) {
             cancel();
             if (data && data.statusCode) {
-                btn.remove();
+                //btn.remove();
             }            
         },
         cancel = function () {
             popup.fadeOut(function(){
                 popup.html('');
             });
-            btn.prop('disabled', false);
+            //btn.prop('disabled', false);
         };
         
-    btn.prop('disabled', true);    
+    //btn.prop('disabled', true);    
     popup.html(popupTemplate);
     runTaskPopupInit(popup, parent, taskId, success, cancel);
 }

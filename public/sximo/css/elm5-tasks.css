@@ -183,6 +183,11 @@
 .btn-transparent {
     background: transparent !important;
 }
+
+.jsaction {
+    cursor: pointer;
+}
+
 @media (min-width: 1200px) {
     .tasksContainer #tasksGrid .taskConfig {
         margin-top: 0;

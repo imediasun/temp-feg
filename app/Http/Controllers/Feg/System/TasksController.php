@@ -170,6 +170,7 @@ class TasksController extends Controller
                 "onsuccess" => $request->input('onsuccess'),
                 "onfailure" => $request->input('onfailure'),        
                 "istestmode" => $request->input('isTestMode'),        
+                "rundependent" => $request->input('runDependent'),        
             ));
 
             if ($schedule) {

@@ -107,7 +107,8 @@ class Elm5Tasks
         $fail_action = $item->fail_action;
         $log_folder = $item->log_folder;
         $log_filename = $item->log_filename;
-        $is_test_mode = $item->is_test_mode;
+        $is_test_mode = $item->is_test_mode == 1;
+        $run_dependent = $item->run_dependent == 1;
         
         $logTaskId = "[$id] ($taskId) '$taskName'".($is_manual?"(manual)": "")." ($actionName)";
 
@@ -153,7 +154,8 @@ class Elm5Tasks
         self::cronlog("Starting Task - $logTaskId", null, $L);
         self::startSchedule($id);       
         
-        if (true || !$is_manual) {
+        if ($run_dependent) {
+        //if (true || !$is_manual) {
             self::runPrePostTasks($taskId, $parameters);
         }
         
@@ -198,7 +200,8 @@ class Elm5Tasks
         self::cronlog($log, $result, $L);
         
         if (!$isError) {
-            if (true || !$is_manual) {
+            //if (true || !$is_manual) {
+            if ($run_dependent) {
                 self::runPrePostTasks($taskId, $parameters, true);
             }
         }
@@ -210,7 +213,7 @@ class Elm5Tasks
         if (is_array($result) || is_object($result)) {
             $result = json_encode($result);
         }
-        self::updateSchedule($id, array("results" => $result));
+        self::updateSchedule($id, array("results" => $result, "notes" => $result));
         
         self::cronlog("Task Ended ".($isError?"with error":"")." - $logTaskId", null, $L);
         
@@ -495,6 +498,7 @@ class Elm5Tasks
             $log_folder = $item->log_folder;
             $log_filename = $item->log_filename;
             $is_test_mode = $item->is_test_mode;
+            $run_dependent = $item->run_dependent;
             $is_manual = $isRunNow ? 1 : 0;
             $params = '';
             
@@ -529,6 +533,9 @@ class Elm5Tasks
             if (isset($override['istestmode'])) {
                 $is_test_mode = $override['istestmode'];
             }
+            if (isset($override['rundependent'])) {
+                $run_dependent = $override['rundependent'];
+            }
             
             $notScheduled = true;
             if (!empty($scheduled_at)) {                
@@ -555,6 +562,7 @@ class Elm5Tasks
                         "status_name" => 'Scheduled',
                         "is_active" => 1,
                         "is_test_mode" => $is_test_mode,                        
+                        "run_dependent" => $run_dependent,                        
                         "params" => $params,
                     );
 
@@ -728,7 +736,7 @@ class Elm5Tasks
         
         $now = date('Y-m-d H:i:s');
         $q = "SELECT  S.id, S.task_id, T.task_name, T.action_name, T.repeat_count, T.run_count,
-                      S.is_active, S.is_test_mode,
+                      S.is_active, S.is_test_mode, S.run_dependent,
                       S.scheduled_at, S.is_manual, S.no_overlap, S.params,
                       S.success_action, S.fail_action,
                       S.log_folder, S.log_filename, S.results
@@ -769,7 +777,7 @@ class Elm5Tasks
         $q = "SELECT  S.id, S.task_id, 
                       T.task_name, T.action_name, T.repeat_count, T.run_count,
                       S.is_manual, S.no_overlap, S.params,
-                      S.is_active, S.is_test_mode,
+                      S.is_active, S.is_test_mode, S.run_dependent,
                       S.status_code, S.status_name,
                       S.scheduled_at, S.run_at, S.end_at, S.created_at, S.results, S.notes,                      
                       S.success_action, S.fail_action,
