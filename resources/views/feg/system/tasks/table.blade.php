@@ -43,6 +43,13 @@
                        title="A special flag send to the task - developer can make use of it for testing like sending email to testers only"  /> 
                 TEST MODE?
                 </label>
+                <label class="">
+                <input type="checkbox"  name="runDependent" class="test runDependent"
+                       data-toggle="tooltip" data-placement="top" 
+                       value="1"
+                       title="Uncheck not to run the dependent tasks"  /> 
+                Dependents?
+                </label>                
             </div>                    
             <div class="col-sm-2">
                 Log Folder: 

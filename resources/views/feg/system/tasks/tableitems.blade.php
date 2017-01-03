@@ -25,7 +25,7 @@
         {{--*/ $notes = @$row->notes /*--}}
         
         
-        {{--*/ $schedules = $row->schedules = null /*--}}
+        {{--*/ $runDependent = @$row->run_dependent == 1 /*--}}
         {{--*/ $lastSchedule = @$row->lastSchedule /*--}}
         {{--*/ $nextSchedule = @$row->nextSchedule /*--}}
         {{--*/ $isManualRunning = @$row->isManualRunning /*--}}
@@ -157,6 +157,7 @@
                     </div>                    
                 </div>
                 <div class="formContent hidden taskConfig col-lg-6 shade2">
+                    <div class="clearfix">
                     <div class="col-sm-3 no-r-padding m-b">
                         <label class="red-bg">
                             <input type="checkbox" name="is_test_mode"  class="test"     
@@ -190,7 +191,20 @@
                                    @if($no_overlap) checked="checked" @endif /> 
                             No overlap?
                         </label>
-                    </div>                    
+                    </div>
+                    </div>
+                    <div class="clearfix">
+                        <div class="col-sm-6">
+                            <label>
+                                <input type="checkbox" name="run_dependent"  class="test"
+                                       value="1"
+                                       @if($runDependent) checked="checked" @endif /> 
+                                Run Dependent Tasks?
+                            </label>
+                        </div>
+                    </div>
+                    <div class="clearfix m-t"><strong>Log and Actions: </strong><span class="logActionsExpand jsaction">▼</span></div>
+                    <div class="clearfix logActionsEdit" style='display:none;'>
                     <div class="clearfix m-t">
                         <div class="col-sm-8">
                             Log Folder: 
@@ -220,6 +234,7 @@
                                    title="Action to run when task fails" 
                                    value="{{ $fail_action }}" /> 
                         </div>
+                    </div>
                     </div>
                 </div>                
                 </div>
