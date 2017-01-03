@@ -2,7 +2,6 @@
 @section('content')
     <div class="page-content row">
         <!-- Page header -->
-
         <div class="sbox-title">
             <h3> Save/Download PO
             </h3>
@@ -16,6 +15,11 @@
             <div class="ajaxLoading"></div>
             <div class="sbox">
                 <div class="sbox-content">
+                    <div style="color:green" class="row">
+                        @if(empty($google_account->g_mail) || empty($google_account->g_password))
+                            *Google Account Info is missing
+                        @endif
+                    </div>
                     <div class="row">
                         <div class="col-md-6 col-md-offset-5">
                             {!! Form::open(array('url'=>'order/saveorsendemail', 'class'=>'form-horizontal','files' =>
@@ -37,11 +41,12 @@
 
                             <div class="form-group" style="margin-top:10px;">
                                 <button data-toggle="modal" data-button="savesend" type="button" data-target="#savesendModal" style="width:33%"
-                                   class=" btn  btn-lg btn-success" title="SAVE & SEND" id="save_send_modal"><i
+                                   class=" btn  btn-lg btn-success @if(empty($google_account->g_mail) || empty($google_account->g_password)) {{ 'disabled' }} @endif" title="SAVE & SEND" id="save_send_modal"><i
                                             class="fa  fa-download" aria-hidden="true"></i>
                                     &nbsp {{ Lang::get('core.sb_save_send') }}</button></div>
                         <div class="form-group" style="margin-top:10px;">
-                            <button data-button="save" data-toggle="modal" type="button" data-target="#myModal" class="btn btn-info btn-lg"
+                            <button data-button="save" data-toggle="modal" type="button" data-target="#myModal"
+                                    class="btn btn-info btn-lg @if(empty($google_account->g_mail) || empty($google_account->g_password)) {{ 'disabled' }} @endif"
                                     style="width:33%" title="SEND"><i
                                         class="fa fa-sign-in  "></i>&nbsp {{ Lang::get('core.sb_send') }}</button>
                         </div>

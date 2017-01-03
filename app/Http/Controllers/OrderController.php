@@ -5,7 +5,7 @@ use App\Models\Order;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Validator, Input, Redirect, Cache;
-
+use PHPMailer;
 class OrderController extends Controller
 {
 
@@ -465,7 +465,8 @@ class OrderController extends Controller
 
     public function getSaveOrSendEmail()
     {
-        return view('order.saveorsendemail');
+        $google_account = \DB::table('users')->where('id', \Session::get('uid'))->select('g_mail','g_password')->first();
+        return view('order.saveorsendemail', compact('google_account'));
     }
 
     function postSaveorsendemail(Request $request)
@@ -484,6 +485,7 @@ class OrderController extends Controller
             $bcc = $request->get('bcc1');
             $message = $request->get('message');
         }
+
         $from = $request->get('from');
         $order_id = $request->get('order_id');
         $opt = $request->get('opt');
@@ -493,12 +495,34 @@ class OrderController extends Controller
                 'status' => 'error'
             ));
         } else {
-            $this->getPo($order_id, true, $to, $from,$cc,$bcc,$message);
-            return response()->json(array(
-                'status' => 'success',
-                'message' => \Lang::get('core.mail_sent_success'),
+            $status = $this->getPo($order_id, true, $to, $from,$cc,$bcc,$message);
 
-            ));
+            if($status == 1)
+            {
+                return array(
+                    'status' => 'success',
+                    'message' => \Lang::get('core.mail_sent_success'),
+
+                );
+            }
+            elseif($status == 2)
+            {
+                return array(
+                    'status' => 'error',
+                    'message' => "Google account detail not exist",
+
+                );
+            }
+            elseif($status == 3)
+            {
+                return array(
+                    'status' => 'error',
+                    'message' => "Mail Error: SMTP connect() failed",
+
+                );
+            }
+
+
         }
     }
 
@@ -656,6 +680,7 @@ class OrderController extends Controller
                     $message = $message;
                     $cc=$cc;
                     $bcc=$bcc;
+                    /*
                     $result = \Mail::raw($message, function ($message) use ($to, $from, $subject, $pdf, $filename,$cc,$bcc) {
                         $message->subject($subject);
                         $message->from($from);
@@ -670,7 +695,62 @@ class OrderController extends Controller
                         }
                         $message->replyTo($from, $from);
                         $message->attachData($pdf->output(), $filename);
-                    });
+                    });*/
+                    /*
+                    * https://www.google.com/settings/security/lesssecureapps
+                    * enable stmp detail
+                    */
+                    $mail = new PHPMailer(); // create a new object
+                    $mail->IsSMTP(); // enable SMTP
+                    //$mail->SMTPDebug = 1; // debugging: 1 = errors and messages, 2 = messages only
+                    $mail->SMTPAuth = true; // authentication enabled
+                    $mail->SMTPSecure = 'ssl'; // secure transfer enabled REQUIRED for Gmail
+                    $mail->Host = "smtp.gmail.com";
+                    $mail->Port = 465; // or 587
+                    $mail->IsHTML(true);
+                    /* current user */
+                    $google_acc = \DB::table('users')->where('id', \Session::get('uid'))->select('g_mail', 'g_password')->first();
+                    if(!empty($google_acc->g_mail) && !empty($google_acc->g_password))
+                    {
+
+                        $mail->Username = $google_acc->g_mail;                 // SMTP username
+                        $mail->Password = trim(base64_decode($google_acc->g_password), env('SALT_KEY'));
+                        $mail->SetFrom($google_acc->g_mail);
+                        $mail->Subject = $subject;
+                        $mail->Body = $message;
+                        foreach($to as $t)
+                        {
+                            $mail->addAddress($t);
+                        }
+                        $mail->addReplyTo($google_acc->g_mail);
+                        if(count($cc)>0)
+                        {
+                            foreach($cc as $c)
+                            {
+                                $mail->addCC($c);
+                            }
+                        }
+                        if(count($bcc) > 0)
+                        {
+                            foreach($bcc as $bc)
+                            {
+                                $mail->addBCC($bc);
+                            }
+                        }
+                        $output = $pdf->output();
+                        $file_to_save = public_path().'/orders/'.$filename;
+                        file_put_contents($file_to_save, $output);
+                        $mail->addAttachment($file_to_save, $filename, 'base64', 'application/pdf');
+                        if(!$mail->Send()) {
+                            return 3;
+                        } else {
+                            return 1;
+                        }
+                    }
+                    else
+                    {
+                        return 2;
+                    }
                 }
             } else {
                 return $pdf->download($data[0]['company_name_short'] . "_PO_" . $data[0]['po_number'] . '.pdf');
@@ -886,4 +966,6 @@ class OrderController extends Controller
             ));
         }
     }
+
+
 }

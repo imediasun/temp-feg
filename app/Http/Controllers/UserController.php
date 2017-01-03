@@ -379,6 +379,8 @@ class UserController extends Controller
         $rules = array(
             'first_name' => 'required|alpha_num|min:2',
             'last_name' => 'required|alpha_num|min:2',
+            'g_mail' => 'email',
+            'g_password' => 'min:8',
         );
 
         if ($request->input('email') != \Session::get('eid')) {
@@ -404,9 +406,15 @@ class UserController extends Controller
             }
 
             $user = User::find(\Session::get('uid'));
+            if(!is_null($request->input('g_password')))
+            {
+                $password = base64_encode(env('SALT_KEY').$request->input('g_password').env('SALT_KEY'));
+                $user->g_password = $password;
+            }
             $user->first_name = $request->input('first_name');
             $user->last_name = $request->input('last_name');
             $user->email = $request->input('email');
+            $user->g_mail = $request->input('g_mail');
             if (isset($data['avatar'])) $user->avatar = $newfilename;
             $user->save();
 
