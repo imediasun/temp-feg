@@ -121,7 +121,6 @@ class FEGJobs
                         FEGSystemHelper::logit($log, $lf, $lp);
                         $L->log($log);
                     }
-                    unset($data[$gameId_readerId]);
                     unset($dataTemp[$gameId_readerId]);                        
                 }
                 else {
@@ -129,10 +128,12 @@ class FEGJobs
                         FEGSystemHelper::logit($log, $lf, $lp);
                         $L->log($log);                    
                 }
+                unset($data[$gameId_readerId]);                
             }
             
             $dateValue = strtotime($date.' -1 day');
             $date = date("Y-m-d", $dateValue);
+            break;
         }
         
         
