@@ -79,7 +79,7 @@
 
         <tbody>
         	@if($access['is_add'] =='1' && $setting['inline']=='true')
-			<tr id="form-0" >
+			<tr id="form-0" style="display: none;">
 				<td> # </td>
 				@if($setting['disableactioncheckbox']=='false')
 					<td> </td>
@@ -90,7 +90,7 @@
 					<?php $limited = isset($t['limited']) ? $t['limited'] :''; ?>
 						@if(SiteHelpers::filterColumn($limited ))
 						<td data-form="{{ $t['field'] }}" data-form-type="{{ AjaxHelpers::inlineFormType($t['field'],$tableForm)}}">
-							{!! SiteHelpers::transForm($t['field'] , $tableForm) !!}								
+							{!! SiteHelpers::transInlineForm($t['field'] , $tableForm) !!}
 						</td>
 						@endif
 					@endif

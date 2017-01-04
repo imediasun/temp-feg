@@ -4,8 +4,10 @@ $(document).ready(function() {
 			var id = $(this).attr("id");
 			$('#form-0 td').each(function(){
 				var val = $(this).attr("data-form");
-				var format = $(this).attr("data-form-type");	
-				
+				var format = $(this).attr("data-form-type");
+				console.log('<---start--->');
+				console.log(format);
+				console.log('<---end--->');
 				if( val !== undefined && val !== 'action' )
 				{
 
@@ -18,7 +20,10 @@ $(document).ready(function() {
 						{
 							$(this).html(h);
 							if(format =='select'){
-								$('#'+id+' td option[value="'+values+'"]').attr('selected','selected');
+								if($.isNumeric(values))
+									$('#'+id+' td option[value="'+values+'"]').attr('selected','selected');
+								else
+									$('#'+id+' td select[name="'+target+'"]').remove();
 
 							} else (format =='text')
 							{

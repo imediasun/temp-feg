@@ -130,7 +130,7 @@ class AjaxHelpers
 				$type = ($f['type'] !='file' ? $f['type'] : ''); 			
 			}	
 		}
-		if($type =='select' || $type="radio" || $type =='checkbox')
+		if($type =='select' || $type=="radio" || $type =='checkbox')
 		{
 			$type = 'select';
 		} else if($type=='file') {

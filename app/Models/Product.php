@@ -173,6 +173,7 @@ class product extends Sximo  {
         if(!empty($vendor_id)){
             $select .= " AND vendor_id='$vendor_id'";
         }
+        $limitConditional = 'LIMIT 0 , 1';
         Log::info("Query : ".$select . " {$params} " . self::queryGroup() . " {$orderConditional}  {$limitConditional} ");
         $result=\DB::select($select." {$params} ". self::queryGroup() ." {$orderConditional}  {$limitConditional} ");
         if($key =='' ) { $key ='*'; } else { $key = $table.".".$key ; }
