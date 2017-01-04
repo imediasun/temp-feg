@@ -69,9 +69,9 @@ class FEGJobs
     }
     
     public static function findDuplicateTransferredEarnings($params=array()) {
-        $lfu = 'findDuplicateTransferredEarnings-updates-'.date("Ymd").'.log';
-        $lfd = 'findDuplicateTransferredEarnings-deletes-'.date("Ymd").'.log';
-        $lf = 'findDuplicateTransferredEarnings-'.date("Ymd").'.log';
+        $lfu = 'findDuplicateTransferredEarnings-updates.log';
+        $lfd = 'findDuplicateTransferredEarnings-deletes.log';
+        $lf = 'findDuplicateTransferredEarnings.log';
         $lp = 'FEGCronTasks/DuplicateTransferredEarnings';
         extract(array_merge(array(
             '_logger' => null
@@ -94,7 +94,8 @@ class FEGJobs
             
             $L->log("DATE: $date");
             
-            $q = "SELECT loc_id, game_id, reader_id, group_concat(id) as ids, 
+            $q = "SET SESSION group_concat_max_len = 1000000;
+                SELECT loc_id, game_id, reader_id, group_concat(id) as ids, 
                     count(game_id) recordCount 
                 FROM game_earnings 
                 WHERE date_start >= '$date' 
