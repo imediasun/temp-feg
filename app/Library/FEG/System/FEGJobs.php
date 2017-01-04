@@ -94,13 +94,14 @@ class FEGJobs
             
             $L->log("DATE: $date");
             
-            $q = "SET SESSION group_concat_max_len = 1000000;
-                SELECT loc_id, game_id, reader_id, group_concat(id) as ids, 
+            $q = "SELECT loc_id, game_id, reader_id, group_concat(id) as ids, 
                     count(game_id) recordCount 
                 FROM game_earnings 
                 WHERE date_start >= '$date' 
                     AND date_start < DATE_ADD('$date', INTERVAL 1 DAY) 
-                GROUP BY loc_id, game_id, reader_id";
+                GROUP BY loc_id, game_id, reader_id;
+                    ";
+            DB::statement("SET SESSION group_concat_max_len = 1000000;");
             $dataERP = DB::select($q);
             $data = array();            
             foreach($dataERP as $row) {
@@ -108,6 +109,7 @@ class FEGJobs
                 $data[$key] = array('count' => $row->recordCount, 'ids' => $row->ids);
             }
             $dataERP = null;
+            DB::connection('sacoa_sync')->statement("SET SESSION group_concat_max_len = 1000000;");
             $dataSacoaTemp = DB::connection('sacoa_sync')->select($q);
             $dataTemp = array();
             foreach($dataSacoaTemp as $row) {
@@ -115,6 +117,7 @@ class FEGJobs
                 $dataTemp[$key] = array('db' => 'sacoa_sync', 'count' => $row->recordCount, 'ids' => $row->ids);
             }
             $dataSacoaTemp = null;
+            DB::connection('embed_sync')->statement("SET SESSION group_concat_max_len = 1000000;");
             $dataEmbedTemp = DB::connection('embed_sync')->select($q);
             foreach($dataEmbedTemp as $row) {
                 $key = $row->loc_id."::".$row->game_id."::".trim($row->reader_id);
