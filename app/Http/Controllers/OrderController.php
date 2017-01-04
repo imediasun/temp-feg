@@ -705,7 +705,7 @@ class OrderController extends Controller
                     $mail->SMTPAuth = true; // authentication enabled
                     $mail->SMTPSecure = 'tls'; // secure transfer enabled REQUIRED for Gmail
                     $mail->Host = "smtp.gmail.com";
-                    $mail->Port = 578; // or 587
+                    $mail->Port = 587; // or 587
                     $mail->IsHTML(true);
                     /* current user */
                     $google_acc = \DB::table('users')->where('id', \Session::get('uid'))->select('g_mail', 'g_password')->first();
