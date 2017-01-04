@@ -69,7 +69,9 @@ class FEGJobs
     }
     
     public static function findDuplicateTransferredEarnings($params=array()) {
-        $lf = 'findDuplicateTransferredEarnings.log';
+        $lfu = 'findDuplicateTransferredEarnings-updates-'.date("Ymd").'.log';
+        $lfd = 'findDuplicateTransferredEarnings-deletes-'.date("Ymd").'.log';
+        $lf = 'findDuplicateTransferredEarnings-'.date("Ymd").'.log';
         $lp = 'FEGCronTasks/DuplicateTransferredEarnings';
         extract(array_merge(array(
             '_logger' => null
@@ -80,7 +82,7 @@ class FEGJobs
         $L->log("***************************** START FIND DUPLICATE ********************************");
         FEGSystemHelper::logit("***************************** START FIND DUPLICATE ********************************", $lf, $lp);
         
-        $endDate = "2014-01-01";
+        $endDate = "2014-12-15"; //[2017-01-03 10:32:46] 2014-12-15, 30007444_103000146A00, ERP: 2, TEMP: 1
         $endDateValue = strtotime($endDate);
         $startDate = DB::table('game_earnings')->orderBy('date_start', 'desc')->take(1)->value('date_start');
         $startDateValue = strtotime($startDate);
@@ -92,43 +94,105 @@ class FEGJobs
             
             $L->log("DATE: $date");
             
-            $q = "SELECT game_id, reader_id, count(game_id) recordCount from game_earnings 
+            $q = "SELECT loc_id, game_id, reader_id, group_concat(id) as ids, 
+                    count(game_id) recordCount 
+                FROM game_earnings 
                 WHERE date_start >= '$date' 
                     AND date_start < DATE_ADD('$date', INTERVAL 1 DAY) 
-                GROUP BY game_id, reader_id";
+                GROUP BY loc_id, game_id, reader_id";
             $dataERP = DB::select($q);
             $data = array();            
             foreach($dataERP as $row) {
-                $data[$row->game_id.'_'.trim($row->reader_id)] = $row->recordCount;
+                $key = $row->loc_id."::".$row->game_id."::".trim($row->reader_id);
+                $data[$key] = array('count' => $row->recordCount, 'ids' => $row->ids);
             }
             $dataERP = null;
             $dataSacoaTemp = DB::connection('sacoa_sync')->select($q);
             $dataTemp = array();
             foreach($dataSacoaTemp as $row) {
-                $dataTemp[$row->game_id.'_'.trim($row->reader_id)] = $row->recordCount;
+                $key = $row->loc_id."::".$row->game_id."::".trim($row->reader_id);
+                $dataTemp[$key] = array('db' => 'sacoa_sync', 'count' => $row->recordCount, 'ids' => $row->ids);
             }
             $dataSacoaTemp = null;
             $dataEmbedTemp = DB::connection('embed_sync')->select($q);
             foreach($dataEmbedTemp as $row) {
-                $dataTemp[$row->game_id.'_'.trim($row->reader_id)] = $row->recordCount;
+                $key = $row->loc_id."::".$row->game_id."::".trim($row->reader_id);
+                $dataTemp[$key] = array('db' => 'embed_sync', 'count' => $row->recordCount, 'ids' => $row->ids);
             }
             $dataEmbedTemp = null;            
             
-            foreach($data as $gameId_readerId => $count) {
-                if (isset($dataTemp[$gameId_readerId])) {
-                    if ($count > $dataTemp[$gameId_readerId]) {
-                        $log = "$date, $gameId_readerId, ERP: $count, TEMP: $dataTemp[$gameId_readerId]";
+            foreach($data as $key => $erpItem) {
+                $erpCount = $erpItem['count'];
+                $erpIds = $erpItem['ids'];
+                $keyReadable = str_replace("::", ',', $key);
+                
+                if (isset($dataTemp[$key])) {
+                    $tempItem = $dataTemp[$key];
+                    $tempDB = $tempItem['db'];
+                    $tempIds = $tempItem['ids'];
+                    $tempCount = $tempItem['count'];
+                    
+                    if ($erpCount > $tempCount) {
+                        $log = "$date, $keyReadable, ERP: $erpCount, TEMP: $tempCount, ERPIDS: $erpIds, TEMPIDS: $tempIds";
                         FEGSystemHelper::logit($log, $lf, $lp);
                         $L->log($log);
+                        
+                        
+                        $log = "DELETING FROM ERP, $date, $keyReadable, count: $erpCount, IDS: $erpIds";
+                        FEGSystemHelper::logit($log, $lfu, $lp);
+                        
+                        $q = "DELETE FROM game_earnings WHERE id in ($erpIds)";
+                        DB::delete($q);
+                        
+                        $tq = "SELECT 
+                                debit_type_id,
+                                loc_id,
+                                game_id,
+                                trim(both '\t' from trim(both ' ' from reader_id)) as reader_id,
+                                play_value,
+                                total_notional_value,
+                                std_plays,
+                                std_card_credit,
+                                std_card_credit_bonus,
+                                std_actual_cash,
+                                std_card_dollar,
+                                std_card_dollar_bonus,
+                                time_plays,
+                                time_play_dollar,
+                                time_play_dollar_bonus,
+                                product_plays,
+                                service_plays,
+                                courtesy_plays,
+                                date_start,
+                                date_end,
+                                ticket_payout,
+                                ticket_value,
+                                loc_game_title
+                        FROM game_earnings WHERE id IN($tempIds)";
+                        DB::connection($tempDB)->setFetchMode(PDO::FETCH_ASSOC); 
+                        $tempData = DB::connection($tempDB)->select($tq);
+                        if (!empty($tempData)) {
+                            DB::table('game_earnings')->insert($tempData);
+                            $log = "RESYNC FROM TEMP, $date, $keyReadable, count: $tempCount, IDS: $tempIds";
+                            FEGSystemHelper::logit($log, $lfu, $lp);
                     }
-                    unset($dataTemp[$gameId_readerId]);                        
+                        DB::connection($tempDB)->setFetchMode(PDO::FETCH_CLASS); 
+                        
+                    }
+                    unset($dataTemp[$key]);                        
                 }
                 else {
-                        $log = "$date, $gameId_readerId, ERP: $count, TEMP: NOT FOUND IN TEMP";
+                    $log = "$date, $keyReadable, ERP: $erpCount, TEMP: NONE, ERPIDS: $erpIds, TEMPIDS: NONE";
                         FEGSystemHelper::logit($log, $lf, $lp);
                         $L->log($log);                    
+                    
+                    $log = "DELETING FROM ERP ONLY, $date, $keyReadable, count: $erpCount, IDS: $erpIds";
+                    FEGSystemHelper::logit($log, $lfd, $lp);                    
+                    $q = "DELETE FROM game_earnings WHERE id in ($erpIds)";
+                    DB::delete($q);
+                    
                 }
-                unset($data[$gameId_readerId]);                
+                unset($data[$key]);                
             }
             
             $dateValue = strtotime($date.' -1 day');

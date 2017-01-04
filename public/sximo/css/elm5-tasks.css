@@ -148,11 +148,12 @@
     background-color: #fbf7ff;
 }
 .tasksContainer #tasksGrid .schedulesContainer tr.running {
-    color: #0e800e;
-    background-color: #fefff4;
+    color: #160e80;
+    background-color: #b3d6ff;    
 }
 .tasksContainer #tasksGrid .schedulesContainer tr.completed {
     background-color: #f2fff5;
+    color: #0e800e;
 }
 .tasksContainer #tasksGrid .schedulesContainer tr.error {
     color: #880000;
