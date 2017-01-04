@@ -274,7 +274,7 @@ class Elm5Tasks
         
         $logTaskId = "[$uSId] ($uTId => $taskId) '$taskName' ".($uIsManual?"(manual)": "")." ($actionName)";
         
-        $L = new MyLog($log_filename, $log_folder, $taskName);
+        $L = null;//new MyLog($log_filename, $log_folder, $taskName);
         
         $parameters = $oldParams;
         
