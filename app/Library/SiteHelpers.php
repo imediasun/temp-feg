@@ -896,7 +896,8 @@ class SiteHelpers
         $mandatory = '';
         foreach($forms as $f)
         {
-            if($f['field'] == $field)
+            $hasShow = isset($f['view']) ? $f['view'] == 1 : false;
+            if($f['field'] == $field && $hasShow)
             {
                 $type = ($f['type'] !='file' ? $f['type'] : '');
                 $option = $f['option'];

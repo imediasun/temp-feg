@@ -1,6 +1,9 @@
 <script type="text/javascript">
 $(document).ready(function() {
-	$('.editable').dblclick(function(){ 
+	//$('.date').datepicker({format:'mm/dd/yyyy',autoClose:true});
+	initiateSearchFormFields($('#form-0 td'));
+	$('.editable').dblclick(function(){
+		//alert('called');
 			var id = $(this).attr("id");
 			$('#form-0 td').each(function(){
 				var val = $(this).attr("data-form");
@@ -21,11 +24,31 @@ $(document).ready(function() {
 							$(this).html(h);
 							if(format =='select'){
 								if($.isNumeric(values))
+								{
 									$('#'+id+' td option[value="'+values+'"]').attr('selected','selected');
+								}
+								else if((/^[0-9]+-.*?$/).test(values))
+								{
+									var myval = values.split('-');
+									$('#'+id+' td option[value="'+myval[0]+'"]').attr('selected','selected');
+								}
 								else
-									$('#'+id+' td select[name="'+target+'"]').remove();
+								{
+									//$('#'+id+' td select[name="'+target+'"]').remove();
+									$('#'+id+' td select[name="'+target+'"] option').each(function() {
+										if($.trim(values) == $.trim($(this).text()))
+											$(this).attr('selected','selected');
+											console.log($(this).text()+'--'+$(this).val());
+									});
+								}
 
-							} else (format =='text')
+							}
+							else if(format == 'text_date')
+							{
+								$('#'+id+' td input[name="'+target+'"]').val('02/03/1990');
+								$('#'+id+' td input[name="'+target+'"]').datepicker('update');
+							}
+							else (format =='text')
 							{
 								$('#'+id+' td input[name="'+target+'"]').val(values);
 							} 

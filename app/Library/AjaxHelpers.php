@@ -135,7 +135,12 @@ class AjaxHelpers
 			$type = 'select';
 		} else if($type=='file') {
 			$type = '';
-		} else {
+		} else if($type=='text_date') {
+			$type = 'text_date';
+		} else if($type=='text_datetime') {
+			$type = 'text_datetime';
+		}
+		else {
 			$type = 'text';
 		}
 		return $type;

@@ -79,7 +79,7 @@
 
         <tbody>
         	@if($access['is_add'] =='1' && $setting['inline']=='true')
-			<tr id="form-0" style="display: none;">
+			<tr id="form-0" >
 				<td> # </td>
 				@if($setting['disableactioncheckbox']=='false')
 					<td> </td>
