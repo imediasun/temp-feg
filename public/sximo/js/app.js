@@ -6,8 +6,9 @@ var UNDEFINED,
         search: {cache: {}},
         simpleSearch: {cache: {}},
         columnSort: {cache: {}},
-        populateFieldsFromCache: function (container, cacheObject, isComplex) {
+        populateFieldsFromCache: function (container, cacheObject, rebuildRequiredElements) {
             var cache = cacheObject.cache, 
+                
                 elmName, elm, elm2, operatorElm,
                 item, val, val2, operator;
         
@@ -54,13 +55,15 @@ var UNDEFINED,
                     }
                     switch (operator) {
                         case 'between':
+                            if (rebuildRequiredElements) {
                                 showBetweenFields({
                                     field: elmName,
                                     fieldElm : elm,
                                     fieldElm2 : elm2,
                                     previousValue2 : val2,
                                     dashElement : null
-                                });                            
+                                });                                
+                            }
                             break;
                         case "is_null":
                         case "not_null":
@@ -70,7 +73,7 @@ var UNDEFINED,
                 }
             }                    
         }
-    };
+    };    
 App.notyConfirm = function (options)
 {
 	if (!options) {
@@ -111,7 +114,7 @@ App.notyConfirm = function (options)
             };    
 	noty(notyOptions);		
 	
-}
+};
 
 
 /**
@@ -132,6 +135,42 @@ App.needsURIEncoding = function (value, field) {
         needs = false;
     }
     return needs;
+};
+
+
+App.buildSearchQueryFromArray = function (fields) {
+    var fieldName, 
+        field,
+        value,
+        operator,
+        value2,
+        attr = '';
+
+    for(fieldName in fields) {
+        field = fields[fieldName];
+        operator = field['operator'];
+        value = field['value'];
+        value2 = field['endValue'];
+        if (operator == 'between') {
+            if (value === UNDEFINED || value2 === UNDEFINED) {
+                operator = "equal";
+            }
+            if (value === UNDEFINED && value2 !== UNDEFINED) {
+                value = value2;
+                value2 = UNDEFINED;
+            }
+            if (value === UNDEFINED && value2 === UNDEFINED) {
+                continue;
+            }
+        }
+        attr += fieldName+':'+operator+':'+value;
+        if (value2 !== UNDEFINED) {
+            attr += ':'+value2;
+        }
+        attr += "|";
+    }
+    
+    return attr;
 };
 
 function initiateSearchFormFields(container) {

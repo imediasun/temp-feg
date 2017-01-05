@@ -311,6 +311,7 @@ $(document).ready(function(){
                     "smaller" => " < ",
                     "bigger" => " > ",
                     "like" => "Like",
+                    "between" => "BETWEEN",
                 );
         ?>
         <select id="simplesearchoperator" class="form-control" name="simplesearchoperator">
