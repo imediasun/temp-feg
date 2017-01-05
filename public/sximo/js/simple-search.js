@@ -38,7 +38,7 @@ function performSimpleSearch(params) {
         }
 
         if(value && isValueDate) {
-            value  = $.datepicker.formatDate('yy-mm-dd', new Date(value));
+            value  = $.datepicker.formatDate('yy-mm-dd', new Date(decodeURIComponent(value)));
         }                    
 
         if(value !=='' && typeof value !=='undefined' && fieldName !='_token')

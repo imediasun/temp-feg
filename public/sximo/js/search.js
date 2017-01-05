@@ -56,16 +56,16 @@ function performAdvancedSearch(params) {
                     cache[field] = {value:value, value2: value2, operator: operate};;            
                 }                
 				if(value && isValueDate) {
-                    value  = $.datepicker.formatDate('yy-mm-dd', new Date(value));
+                    value  = $.datepicker.formatDate('yy-mm-dd', new Date(decodeURIComponent(value)));
                 }                    
 				if(value2 && isValue2Date) {
-                    value2  = $.datepicker.formatDate('yy-mm-dd', new Date(value2));
+                    value2  = $.datepicker.formatDate('yy-mm-dd', new Date(decodeURIComponent(value2)));
                 }                    
 				if(value && isValueDateTime) {
-                    //value  = $.datepicker.formatDate('mm/dd/yy hh:ii:ss', new Date(value));
+                    //value  = $.datepicker.formatDate('mm/dd/yy hh:ii:ss', new Date(decodeURIComponent(value)));
                 }                    
 				if(value && isValue2DateTime) {
-                    //value2  = $.datepicker.formatDate('mm/dd/yy hh:ii:ss', new Date(value2));
+                    //value2  = $.datepicker.formatDate('mm/dd/yy hh:ii:ss', new Date(decodeURIComponent(value2)));
                 }                    
 					            
 			if(value !=='' && typeof value !=='undefined' && name !='_token')
