@@ -128,7 +128,7 @@ App.needsURIEncoding = function (value, field) {
     //if arrays are encoded, it does not populate in advanced search field
     // except: date fields
     var needs = typeof value === 'string';
-    if (field.hasClass('date') || field.hasClass('datetime')) {
+    if (value === '' || field.hasClass('date') || field.hasClass('datetime')) {
         needs = false;
     }
     return needs;
