@@ -29,7 +29,8 @@ function performSimpleSearch(params) {
             //when search is a string the encode it
             //encoding is needed for & sign, especially in games title search for Cats & Mice
             //if arrays are encoded, it does not populate in advanced search field
-            if(typeof value === 'string' || value instanceof String){
+            // except: date fields
+            if(App.needsURIEncoding(value, valueField)){
                 value = encodeURIComponent(value);
             }
         }
@@ -38,7 +39,7 @@ function performSimpleSearch(params) {
         }
 
         if(value && isValueDate) {
-            value  = $.datepicker.formatDate('yy-mm-dd', new Date(decodeURIComponent(value)));
+            value  = $.datepicker.formatDate('yy-mm-dd', new Date(value));
         }                    
 
         if(value !=='' && typeof value !=='undefined' && fieldName !='_token')

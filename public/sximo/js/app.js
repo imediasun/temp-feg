@@ -119,6 +119,28 @@ App.notyConfirm = function (options)
 	noty(notyOptions);		
 	
 }
+
+
+/**
+ *  This function can check if a value needs URI encoding. 
+ *  It can be used before building a custom querystring
+ *  
+ * @param mixed             value 
+ * @param jQuery Element    field
+ * @returns {Boolean}
+ */
+App.needsURIEncoding = function (value, field) {
+    //when search is a string the encode it
+    //encoding is needed for & sign, especially in games title search for Cats & Mice
+    //if arrays are encoded, it does not populate in advanced search field
+    // except: date fields
+    var needs = typeof value === 'string';
+    if (field.hasClass('date') || field.hasClass('datetime')) {
+        needs = false;
+    }
+    return needs;
+};
+
 function initiateSearchFormFields(container) {
     container.find('.date').datepicker({format:'mm/dd/yyyy',autoclose:true});
     container.find('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});    

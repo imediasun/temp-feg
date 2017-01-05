@@ -35,7 +35,8 @@ function performAdvancedSearch(params) {
                     //when search is a string the encode it
                     //encoding is needed for & sign, especially in games title search for Cats & Mice
                     //if arrays are encoded, it does not populate in advanced search field
-                    if(typeof value === 'string' || value instanceof String){
+                    // except: date fields
+                    if(App.needsURIEncoding(value, valueField)){
                         value = encodeURIComponent(value);
                     }
                 }
@@ -47,7 +48,8 @@ function performAdvancedSearch(params) {
                     //when search is a string the encode it
                     //encoding is needed for & sign, especially in games title search for Cats & Mice
                     //if arrays are encoded, it does not populate in advanced search field
-                    if(typeof value2 === 'string' || value2 instanceof String){
+                    // except: date fields
+                    if(App.needsURIEncoding(value2, value2Field)){
                         value2 = encodeURIComponent(value2);
                     }
 
@@ -56,16 +58,16 @@ function performAdvancedSearch(params) {
                     cache[field] = {value:value, value2: value2, operator: operate};;            
                 }                
 				if(value && isValueDate) {
-                    value  = $.datepicker.formatDate('yy-mm-dd', new Date(decodeURIComponent(value)));
+                    value  = $.datepicker.formatDate('yy-mm-dd', new Date(value));
                 }                    
 				if(value2 && isValue2Date) {
-                    value2  = $.datepicker.formatDate('yy-mm-dd', new Date(decodeURIComponent(value2)));
+                    value2  = $.datepicker.formatDate('yy-mm-dd', new Date(value2));
                 }                    
 				if(value && isValueDateTime) {
-                    //value  = $.datepicker.formatDate('mm/dd/yy hh:ii:ss', new Date(decodeURIComponent(value)));
+                    //value  = $.datepicker.formatDate('mm/dd/yy hh:ii:ss', new Date(value));
                 }                    
 				if(value && isValue2DateTime) {
-                    //value2  = $.datepicker.formatDate('mm/dd/yy hh:ii:ss', new Date(decodeURIComponent(value2)));
+                    //value2  = $.datepicker.formatDate('mm/dd/yy hh:ii:ss', new Date(value2));
                 }                    
 					            
 			if(value !=='' && typeof value !=='undefined' && name !='_token')
