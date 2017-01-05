@@ -228,7 +228,7 @@ class ReportGenerator
          extract(array_merge(array(
             'date' => date('Y-m-d', strtotime('-1 day')),
             'location' => null,
-            'status' => array(),
+            'status' => @self::$reportCache['syncStatus'],
             '_task' => array(),
             '_logger' => null,
         ), $params));
