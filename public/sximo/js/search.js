@@ -26,54 +26,64 @@ function performAdvancedSearch(params) {
                 isValue2Date = value2Field.hasClass('date'),
                 isValueDateTime = valueField.hasClass('datetime'),
                 isValue2DateTime = value2Field.hasClass('datetime');
+            
+            // not required 
+            if (!field || name === '_token') {
+                return;
+            }
                 
-                if (value === null || value === UNDEFINED ) {
-                    value = '';
-                }
-                else
-                {
-                    //when search is a string the encode it
-                    //encoding is needed for & sign, especially in games title search for Cats & Mice
-                    //if arrays are encoded, it does not populate in advanced search field
-                    if(typeof value === 'string' || value instanceof String){
-                        value = encodeURIComponent(value);
-                    }
-                }
-                if (value2 === null || value2 === UNDEFINED ) {
-                    value2 = '';
-                }
-                else
-                {
-                    //when search is a string the encode it
-                    //encoding is needed for & sign, especially in games title search for Cats & Mice
-                    //if arrays are encoded, it does not populate in advanced search field
-                    if(typeof value2 === 'string' || value2 instanceof String){
-                        value2 = encodeURIComponent(value2);
-                    }
+            // normalize values to '' if null/undefined to avoid unwanted results
+            if (value === null || value === UNDEFINED ) {
+                value = '';
+            }
+            if (value2 === null || value2 === UNDEFINED ) {
+                value2 = '';
+            }
 
-                }
-                if (field && name !='_token') {
-                    cache[field] = {value:value, value2: value2, operator: operate};;            
-                }                
-				if(value && isValueDate) {
-                    value  = $.datepicker.formatDate('yy-mm-dd', new Date(value));
-                }                    
-				if(value2 && isValue2Date) {
-                    value2  = $.datepicker.formatDate('yy-mm-dd', new Date(value2));
-                }                    
-				if(value && isValueDateTime) {
-                    //value  = $.datepicker.formatDate('mm/dd/yy hh:ii:ss', new Date(value));
-                }                    
-				if(value && isValue2DateTime) {
-                    //value2  = $.datepicker.formatDate('mm/dd/yy hh:ii:ss', new Date(value2));
-                }                    
+            // cache original value
+            cache[field] = {value:value, value2: value2, operator: operate};           
+
+            // convert date format to ISO for serverside consumption
+            if(value && isValueDate) {
+                value  = $.datepicker.formatDate('yy-mm-dd', new Date(value));
+            }                    
+            if(value2 && isValue2Date) {
+                value2  = $.datepicker.formatDate('yy-mm-dd', new Date(value2));
+            }                    
+            if(value && isValueDateTime) {
+                //value  = $.datepicker.formatDate('mm/dd/yy hh:ii:ss', new Date(value));
+            }                    
+            if(value && isValue2DateTime) {
+                //value2  = $.datepicker.formatDate('mm/dd/yy hh:ii:ss', new Date(value2));
+            }                    
 					            
-			if(value !=='' && typeof value !=='undefined' && name !='_token')
+            // encode URI if needed
+            if(App.needsURIEncoding(value, valueField)){
+                value = encodeURIComponent(value);
+            }
+            // encode URI if needed
+            if(App.needsURIEncoding(value2, value2Field)){
+                value2 = encodeURIComponent(value2);
+            }
+            
+            // normalize range search to simple search if 
+            // one of the range values are not present
+            if (operate === 'between') {
+                if (value === '' || value2 === '') {
+                    operate = "equal";
+                }                
+                if (value === '' && value2 !== '') {
+                    value = value2;
+                }
+                
+            }
+			if(value !=='' && value !== UNDEFINED && name !='_token')
 			{
 				if(operate =='between')
 				{
 					attr += field+':'+operate+':'+value+':'+value2+'|';
-				} else {
+				} 
+                else {
 					attr += field+':'+operate+':'+value+'|';
 				}						
 			}

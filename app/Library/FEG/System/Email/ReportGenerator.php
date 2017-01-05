@@ -21,11 +21,25 @@ class ReportGenerator
             'location' => null,
              
             'noTransferStatus' => 0,
+             
+            'noTransferSummary' => 0,
+            'noDumpStatus' => 0,
             'noClosed' => 0,
             'noDownGames' => 0,
             'noMissingAssetIds' => 0,
+             
             'noLocationwise' => 0,
-            '' => 0,
+             
+            'noOverReporting' => 0,
+             
+            'noRetrySync' => 0,
+            'noRetrySyncSacoa' => 0,
+            'noRetrySyncEmbed' => 0,
+             
+            'noDailyGameSummary' => 0,
+            'noDailyGameSummaryClosed' => 0,
+            'noDailyGameSummaryDownGames' => 0,
+            'noDailyGameSummaryTop25' => 0,
              
             '_task' => array(),
             '_logger' => null,
@@ -45,8 +59,10 @@ class ReportGenerator
         if (empty($location)) {
             $dailyTransferStatusReport = self::getDailyTransferStatusReport($params);
             $dailyTransferStatus = self::$reportCache['syncStatus'];
+            $__logger->log("        daily Transfer Status Report: ", $dailyTransferStatusReport);
+            $__logger->log("        dailyTransferStatus array: ", $dailyTransferStatus);
             if (!$dailyTransferStatus['1'] || !$dailyTransferStatus['2']) {
-                if ($noTransferStatus == 0) {
+                if ($noTransferStatus != 1) {
                     self::dailyTransferFailReportEmail($params);
                 }
                 
@@ -64,35 +80,40 @@ class ReportGenerator
         // Transfer report
             // $dailyTransferStatusReport
             // Locations Not Reporting:
-        $locationsNotReportingReport = self::getLocationsNotReportingReport($params);
+        if ($noClosed != 1) {
+            $locationsNotReportingReport = self::getLocationsNotReportingReport($params);            
+        }
          // Readers Missing Asset Ids
-        $readersMissingAssetIds = self::getReadersMissingAssetIdsReport($params);
-            // Games Not Played:
-        $gamesNotPlayed = self::getGamesNotPlayedReport($params);
+        if ($noMissingAssetIds != 1) {        
+            $readersMissingAssetIds = self::getReadersMissingAssetIdsReport($params);
+        }
+        // Games Not Played:
+        if ($noDownGames != 1) {   
+            $gamesNotPlayed = self::getGamesNotPlayedReport($params);
+        }
         
         $__logger->log("        End processing Game Earnings DB Transfer Report for $date");
         
-        $message = $dailyTransferStatusReport .
-                "<br><br><b><u>Locations Not Reporting:</u></b><em>(Either Closed or Error in Data Transfer)</em><br>" .
-                $locationsNotReportingReport .
-                "<br><b><u>Readers Missing Asset Ids:</u></b><br>" .
-                $readersMissingAssetIds .
-                "<br><b><u>Games Not Played:</u></b><br>" .
-                $gamesNotPlayed;
-       
-        $emailRecipients = self::getSystemReportEmailRecipients('Daily Game Earnings DB Transfer Report');
-        self::sendEmailReport(array_merge($emailRecipients, array(
-            'subject' => "Game Earnings DB Transfer Report for $humanDate", 
-            'message' => $message, 
-            'isTest' => $isTest,
-        )));
+        if ($noTransferSummary != 1) {
+            $message = $dailyTransferStatusReport .
+                    "<br><br><b><u>Locations Not Reporting:</u></b><em>(Either Closed or Error in Data Transfer)</em><br>" .
+                    @$locationsNotReportingReport .
+                    "<br><b><u>Readers Missing Asset Ids:</u></b><br>" .
+                    @$readersMissingAssetIds .
+                    "<br><b><u>Games Not Played:</u></b><br>" .
+                    @$gamesNotPlayed;
 
-        $__logger->log("        End Email Game Earnings DB Transfer Report for $date");
-        $__logger->log("End Game Earnings DB Transfer Report for $date");
-        
+            $emailRecipients = self::getSystemReportEmailRecipients('Daily Game Earnings DB Transfer Report');
+            self::sendEmailReport(array_merge($emailRecipients, array(
+                'subject' => "Game Earnings DB Transfer Report for $humanDate", 
+                'message' => $message, 
+                'isTest' => $isTest,
+            )));
 
-        // each location report
-        $__logger->log("Start Locationwise Report for $date");
+            $__logger->log("        End Email Game Earnings DB Transfer Report for $date");
+            $__logger->log("End Game Earnings DB Transfer Report for $date");
+        }
+
         $reportingLocations = isset(self::$reportCache['locationsReportingIds']) ? 
                 self::$reportCache['locationsReportingIds'] : self::getLocationsReportingIds($params);
         
@@ -106,58 +127,67 @@ class ReportGenerator
         self::logit("Games Not Played:", "daily-transfer.log", "CleanLog");
         self::logit(self::$reportCache['gamesNotPlayedPerLocation'], "daily-transfer.log", "CleanLog");        
         
-        foreach($reportingLocations as $locationId) {
-            $__logger->log("    Start Report for Location $locationId for $date");
-            $locationParams = array_merge($params, array('location' => $locationId));
-            $locationwiseReport = self::getLocationWiseDailyReport($locationParams);
-            $hasLocationwiseReport = $locationwiseReport['hasReport'];
-            $locationwiseReportMessage = $locationwiseReport['report'];
-            $locationParams['dailyReport'] = $locationwiseReportMessage;
-            $locationParams['hasDailyReport'] = $hasLocationwiseReport;
-            $__logger->log("    End processing Report for Location $locationId for $date");
-            self::sendLocationWiseDailyReportEmail($locationParams);
-            $__logger->log("    End sending email Report for Location $locationId for $date");
-            $__logger->log("    End Report for Location $locationId for $date");
-        }
-        //$__logger->log("    ** Start Locationwise Report for data adjusted on $today");
-        // TODO: send location email for all sync adjustments
-        //$__logger->log("    ** End Locationwise Report for data adjusted on $today");
-        
-        $__logger->log("End Locationwise Report for $date");
+        if ($noLocationwise != 1) {
+            // each location report
+            $__logger->log("Start Locationwise Report for $date");
+            foreach($reportingLocations as $locationId) {
+                $__logger->log("    Start Report for Location $locationId for $date");
+                $locationParams = array_merge($params, array('location' => $locationId));
+                $locationwiseReport = self::getLocationWiseDailyReport($locationParams);
+                $hasLocationwiseReport = $locationwiseReport['hasReport'];
+                $locationwiseReportMessage = $locationwiseReport['report'];
+                $locationParams['dailyReport'] = $locationwiseReportMessage;
+                $locationParams['hasDailyReport'] = $hasLocationwiseReport;
+                $__logger->log("    End processing Report for Location $locationId for $date");
+                self::sendLocationWiseDailyReportEmail($locationParams);
+                $__logger->log("    End sending email Report for Location $locationId for $date");
+                $__logger->log("    End Report for Location $locationId for $date");
+            }
+            //$__logger->log("    ** Start Locationwise Report for data adjusted on $today");
+            // TODO: send location email for all sync adjustments
+            //$__logger->log("    ** End Locationwise Report for data adjusted on $today");
 
-        $__logger->log("Start over reporting error Report $date");
-        $potentialOverreportingErrorReport = self::getOverreportingReport($params);
-        $params['overReporting'] = $potentialOverreportingErrorReport;        
-        $__logger->log("  End processing of over reporting error Report $date");
-        self::sendOverreportingReportEmail($params);
-        unset($params['overReporting']);
-        $__logger->log("  End Email of over reporting error Report $date");
+            $__logger->log("End Locationwise Report for $date");
+        }
         
-        //$__logger->log("  ** Start overreporting error Report of adjusted data on $today");
-        // TODO: Get all adjusted data's potential over reporting
-        //$__logger->log("  ** End overreporting error Report of adjusted data on $today");
+        if ($noOverReporting != 1) {
+            $__logger->log("Start over reporting error Report $date");
+            $potentialOverreportingErrorReport = self::getOverreportingReport($params);
+            $params['overReporting'] = $potentialOverreportingErrorReport;        
+            $__logger->log("  End processing of over reporting error Report $date");
+            self::sendOverreportingReportEmail($params);
+            unset($params['overReporting']);
+            $__logger->log("  End Email of over reporting error Report $date");
+
+            //$__logger->log("  ** Start overreporting error Report of adjusted data on $today");
+            // TODO: Get all adjusted data's potential over reporting
+            //$__logger->log("  ** End overreporting error Report of adjusted data on $today");
+
+            $__logger->log("End over reporting error Report $date");
+        }
         
-        $__logger->log("End over reporting error Report $date");
-        
-        // Adjustment sync (all, sacoa, embed)
-        $__logger->log("Start retry sync report  as of $today");
-        $retrySyncReportData = self::getRetrySyncReport($params);
-        $params['retryReports'] = $retrySyncReportData;
-        $__logger->log("    End processing retry sync report as of $today");
-        self::sendRetrySyncReportEmail($params);
-        $__logger->log("    End sending retry sync report  as of $today");
-        unset($params['retryReports']);
-        $__logger->log("End retry sync report  as of $today");
-        
+        if ($noRetrySync != 1) {
+            // Adjustment sync (all, sacoa, embed)
+            $__logger->log("Start retry sync report  as of $today");
+            $retrySyncReportData = self::getRetrySyncReport($params);
+            $params['retryReports'] = $retrySyncReportData;
+            $__logger->log("    End processing retry sync report as of $today");
+            self::sendRetrySyncReportEmail($params);
+            $__logger->log("    End sending retry sync report  as of $today");
+            unset($params['retryReports']);
+            $__logger->log("End retry sync report  as of $today");
+        }
         // final
-        $__logger->log("Start Final Games Summary Report for $date");
-        $finalGameSummaryReport = self::getDailyGameSummaryReport($params);
-        $__logger->log("    END processing Final Games Summary Report for $date");        
-        $params['finalGameSummaryReport'] = $finalGameSummaryReport;
-        self::sendDailyGameSummaryReportEmail($params);
-        unset($params['finalGameSummaryReport']);
-        $__logger->log("    END sending EMAIL of Final Games Summary Report for $date");        
-        $__logger->log("END Final Games Summary Report for $date");
+        if ($noDailyGameSummary != 1) {
+            $__logger->log("Start Final Games Summary Report for $date");
+            $finalGameSummaryReport = self::getDailyGameSummaryReport($params);
+            $__logger->log("    END processing Final Games Summary Report for $date");        
+            $params['finalGameSummaryReport'] = $finalGameSummaryReport;
+            self::sendDailyGameSummaryReportEmail($params);
+            unset($params['finalGameSummaryReport']);
+            $__logger->log("    END sending EMAIL of Final Games Summary Report for $date");        
+            $__logger->log("END Final Games Summary Report for $date");
+        }
         
         $__logger->log("END Generate Daily Email Reports $date");
 
@@ -785,6 +815,9 @@ class ReportGenerator
             'today' => date('Y-m-d'),            
             'location' => null,
             'retryReports' => array(),
+            'noRetrySync' => 0,
+            'noRetrySyncSacoa' => 0,
+            'noRetrySyncEmbed' => 0,             
             '_task' => array(),
             '_logger' => null,
         ), $params));
@@ -796,9 +829,7 @@ class ReportGenerator
         $retryReportSacoa = $retryReports[1];
         $retryReportEmbed = $retryReports[2];
         
-        
-        
-        if (!empty($retryReportSacoa)) {
+        if ($noRetrySyncSacoa != 1 && !empty($retryReportSacoa)) {
             $sacoaReport = "<b><u>Missing Data for the Following Locations:</u></b><br>
 					    <b>$retryReportSacoa</b>
 					    <br><br>
@@ -812,7 +843,8 @@ class ReportGenerator
                 'isTest' => $isTest,
             )));            
         }
-        if (!empty($retryReportEmbed)) {
+        
+        if ($noRetrySyncEmbed != 1 && !empty($retryReportEmbed)) {
             $embedReport = "<b><u>Missing Data for the Following Locations:</u></b><br>
                     <b>$retryReportEmbed</b>
                     <br><br>
@@ -825,15 +857,16 @@ class ReportGenerator
                 'message' => $embedReport, 
                 'isTest' => $isTest,
             )));              
-             
         }
         
-        $emailRecipients = self::getSystemReportEmailRecipients('Daily Data Transfer Failure Summary'); 
-        self::sendEmailReport(array_merge($emailRecipients, array(
-            'subject' => "Data Transfer Failure Summary as of $humanDateToday", 
-            'message' => $retryReportAll, 
-            'isTest' => $isTest,
-        )));             
+        if ($noRetrySync != 1) {            
+            $emailRecipients = self::getSystemReportEmailRecipients('Daily Data Transfer Failure Summary'); 
+            self::sendEmailReport(array_merge($emailRecipients, array(
+                'subject' => "Data Transfer Failure Summary as of $humanDateToday", 
+                'message' => $retryReportAll, 
+                'isTest' => $isTest,
+            )));            
+        }
  
     }        
     
@@ -843,41 +876,49 @@ class ReportGenerator
             'date' => date('Y-m-d', strtotime('-1 day')),
             'today' => date('Y-m-d'),
             'location' => null,
+            'noDailyGameSummaryClosed' => 0,
+            'noDailyGameSummaryDownGames' => 0,
+            'noDailyGameSummaryTop25' => 0,               
             '_task' => array(),
             '_logger' => null,
         ), $params)); 
          
         
         $report = array();
+        $report[] = '<h5>Daily Games Earnings Summary</h5><br><br>';
+        
         //Locations Not Reporting: Either Closed or Error in Data Transfer (cashed)
-        $report[] = '<h5>Daily Games Earnings Summary</h5><br><br>
-            <b style="text-decoration:underline">Locations Not Reporting</b>: 
-            <em>Either Closed or Error in Data Transfer</em><br>';
-        $locationsNotReportingReport = isset(self::$reportCache['locationsNotReportingReport']) ?
-                self::$reportCache['locationsNotReportingReport'] : self::getLocationsNotReportingReport($params);
-        $report[] = $locationsNotReportingReport;
+        if ($noDailyGameSummaryClosed != 1) {
+            $report[] = '<b style="text-decoration:underline">Locations Not Reporting</b>: 
+                <em>Either Closed or Error in Data Transfer</em><br>';
+            $locationsNotReportingReport = isset(self::$reportCache['locationsNotReportingReport']) ?
+                    self::$reportCache['locationsNotReportingReport'] : self::getLocationsNotReportingReport($params);
+            $report[] = $locationsNotReportingReport;
+        }
         
         // Games Down for 7+ Days (cache)
-        $report[] = '<br><b style="text-decoration:underline">Games Down for 7+ Days:</b><br>';
-        
-        $gamesDownMoreThanAWeek = self::$reportCache['gamesNotPlayedMoreThanAWeek'];
-        if (!empty($gamesDownMoreThanAWeek)) {
-            $countIndex = 0;
-            foreach($gamesDownMoreThanAWeek as $row) {
-                $countIndex++;
-                $gameId = $row['game_id'];
-                $gameTitle = $row['game_name'];
-                $locationId = $row['location_id'];
-                $locationName = $row['location_name'];
-                $downForText = $row['days_not_played_text'];
+        if ($noDailyGameSummaryDownGames != 1) {        
+            $report[] = '<br><b style="text-decoration:underline">Games Down for 7+ Days:</b><br>';
 
-                $report[] = "$countIndex.) <b>$gameId | $gameTitle</b> 
-                        at <b>$locationId ($locationName)</b> $downForText<br>";
-            }            
+            $gamesDownMoreThanAWeek = self::$reportCache['gamesNotPlayedMoreThanAWeek'];
+            if (!empty($gamesDownMoreThanAWeek)) {
+                $countIndex = 0;
+                foreach($gamesDownMoreThanAWeek as $row) {
+                    $countIndex++;
+                    $gameId = $row['game_id'];
+                    $gameTitle = $row['game_name'];
+                    $locationId = $row['location_id'];
+                    $locationName = $row['location_name'];
+                    $downForText = $row['days_not_played_text'];
+
+                    $report[] = "$countIndex.) <b>$gameId | $gameTitle</b> 
+                            at <b>$locationId ($locationName)</b> $downForText<br>";
+                }            
+            }
+            else {
+                $report[] = "<br>None<br>"; 
+            }        
         }
-        else {
-            $report[] = "<br>None<br>"; 
-        }        
         
 //        //Games Down for 7+ Days (from database)        
 //        $report[] = '<br><b style="text-decoration:underline">Games Down for 7+ Days:</b><br>';// 
@@ -911,55 +952,57 @@ class ReportGenerator
 //        }
         
         // Top 25 - 7 Day Period (new)
-        $report[] = '<br><b style="text-decoration:underline">Top 25 - 7 Day Period</b><br>';        
-        $dateStart = date("Y-m-d", strtotime("$date -6 days"));
-        $q = ReportHelpers::getGameRankQuery($dateStart, $date, $location,
-                                "", "", "all", "", "game_average", "desc");
-        $q .= " LIMIT 25";
-        $top25GamesThisWeekData = DB::select($q);
-        $topGamesTable = array(); 
-        $blackBrdStyle = "style='border:1px solid black; padding: 5px; margin: 0;'";
-        $greyBrdStyle = "style='border:1px solid silver; padding: 5px; margin: 0;'";        
-        $greyBrdTrStyle = "style='border:1px solid silver;'";        
-        if (!empty($top25GamesThisWeekData)) {
-            $topGamesTable[] = "<table style='margin:0px auto; 
-                width:100%; border:1px solid white; color:black;'>";
-            $topGamesTable[] = "<tr $greyBrdTrStyle>
-                    <th $blackBrdStyle>No.</th>
-                    <th $blackBrdStyle width='200'>Game</th>
-                    <th $blackBrdStyle>Average</th>
-                    <th $blackBrdStyle>Total</th>
-                    <th $blackBrdStyle>Game Count</th>
-                    <th $blackBrdStyle>Location Ids</th>
-                    <th $blackBrdStyle>Location Names</th>
-                    <th $blackBrdStyle>Game IDs</th>
-                </tr>";
-            foreach($top25GamesThisWeekData as $index => $row) {
-                $rowIndex = $index+1;
-                $gameTitle = $row->game_name;
-                $gameCount = $row->game_count;
-                $gameAverageRevenue =  number_format(floatval($row->game_average),2);
-                $gameTotalRevenue = number_format(floatval($row->game_total),2);
-                $locationIds = $row->location_id;
-                $locationNames = $row->location_name;
-                $gameIds = $row->game_ids;
-                
-            $topGamesTable[] = "<tr style='color:black;'>
-                    <td $greyBrdStyle>$rowIndex</td>
-                    <td $greyBrdStyle>$gameTitle</td>
-                    <td $greyBrdStyle>\${$gameAverageRevenue}</td>
-                    <td $greyBrdStyle>\${$gameTotalRevenue}</td>
-                    <td $greyBrdStyle>$gameCount</td>
-                    <td $greyBrdStyle>$locationIds</td>
-                    <td $greyBrdStyle>$locationNames</td>
-                    <td $greyBrdStyle>$gameIds</td>
-                </tr>";                
-                
+        if ($noDailyGameSummaryTop25 != 1) {              
+            $report[] = '<br><b style="text-decoration:underline">Top 25 - 7 Day Period</b><br>';        
+            $dateStart = date("Y-m-d", strtotime("$date -6 days"));
+            $q = ReportHelpers::getGameRankQuery($dateStart, $date, $location,
+                                    "", "", "all", "", "game_average", "desc");
+            $q .= " LIMIT 25";
+            $top25GamesThisWeekData = DB::select($q);
+            $topGamesTable = array(); 
+            $blackBrdStyle = "style='border:1px solid black; padding: 5px; margin: 0;'";
+            $greyBrdStyle = "style='border:1px solid silver; padding: 5px; margin: 0;'";        
+            $greyBrdTrStyle = "style='border:1px solid silver;'";        
+            if (!empty($top25GamesThisWeekData)) {
+                $topGamesTable[] = "<table style='margin:0px auto; 
+                    width:100%; border:1px solid white; color:black;'>";
+                $topGamesTable[] = "<tr $greyBrdTrStyle>
+                        <th $blackBrdStyle>No.</th>
+                        <th $blackBrdStyle width='200'>Game</th>
+                        <th $blackBrdStyle>Average</th>
+                        <th $blackBrdStyle>Total</th>
+                        <th $blackBrdStyle>Game Count</th>
+                        <th $blackBrdStyle>Location Ids</th>
+                        <th $blackBrdStyle>Location Names</th>
+                        <th $blackBrdStyle>Game IDs</th>
+                    </tr>";
+                foreach($top25GamesThisWeekData as $index => $row) {
+                    $rowIndex = $index+1;
+                    $gameTitle = $row->game_name;
+                    $gameCount = $row->game_count;
+                    $gameAverageRevenue =  number_format(floatval($row->game_average),2);
+                    $gameTotalRevenue = number_format(floatval($row->game_total),2);
+                    $locationIds = $row->location_id;
+                    $locationNames = $row->location_name;
+                    $gameIds = $row->game_ids;
+
+                $topGamesTable[] = "<tr style='color:black;'>
+                        <td $greyBrdStyle>$rowIndex</td>
+                        <td $greyBrdStyle>$gameTitle</td>
+                        <td $greyBrdStyle>\${$gameAverageRevenue}</td>
+                        <td $greyBrdStyle>\${$gameTotalRevenue}</td>
+                        <td $greyBrdStyle>$gameCount</td>
+                        <td $greyBrdStyle>$locationIds</td>
+                        <td $greyBrdStyle>$locationNames</td>
+                        <td $greyBrdStyle>$gameIds</td>
+                    </tr>";                
+
+                }
+                $topGamesTable[] = "</table>";
             }
-            $topGamesTable[] = "</table>";
+            $topGamesTableString = implode("", $topGamesTable);
+            $report[] = $topGamesTableString;
         }
-        $topGamesTableString = implode("", $topGamesTable);
-        $report[] = $topGamesTableString;
         $reportString = implode("", $report);
         
         return $reportString;
@@ -970,7 +1013,7 @@ class ReportGenerator
             'date' => date('Y-m-d', strtotime('-1 day')),
             'today' => date('Y-m-d'),            
             'location' => null,
-            'finalGameSummaryReport' => "",
+            'finalGameSummaryReport' => "",           
             '_task' => array(),
             '_logger' => null,
         ), $params));
