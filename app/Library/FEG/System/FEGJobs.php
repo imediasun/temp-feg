@@ -235,6 +235,7 @@ class FEGJobs
         extract(array_merge(array(
             '_logger' => null,
             'reverse' => 1,
+            'chunkSize' => 50,
         ), $params));
         $lf = 'generateMissingDatesForSummary.log';
         $lp = 'FEGCronTasks/Generate Missing Dates in Summary';
@@ -275,12 +276,12 @@ class FEGJobs
             $dateCount = 1;
             while($currentDate >= $dateStartTimestamp) {
                 $L->log("DATE: $date ($dateCount/$count days)");
-                $L->log("Start Generate Daily LOCATION Summary");
+                $L->log("Start Generate Daily LOCATION Summary - $date");
                 SyncHelpers::generateMissingDatesForLocationSummary($date);
-                $L->log("END Generate Daily LOCATION Summary");
-                $L->log("Start Generate Daily GAME Summary");
-                SyncHelpers::generateMissingLocationAndDatesForGamePlaySummary($date);
-                $L->log("END Generate Daily GAME Summary");            
+                $L->log("END Generate Daily LOCATION Summary - $date");
+                $L->log("Start Generate Daily GAME Summary - $date");
+                SyncHelpers::generateMissingLocationAndDatesForGamePlaySummary($date, $chunkSize);
+                $L->log("END Generate Daily GAME Summary - $date");            
 
                 $currentDate = strtotime($date . " -1 day");
                 $date = date("Y-m-d", $currentDate);
@@ -296,12 +297,12 @@ class FEGJobs
             $dateCount = 1;
             while($currentDate <= $dateEndTimestamp) {
                 $L->log("DATE: $date ($dateCount/$count days)");
-                $L->log("Start Generate Daily LOCATION Summary");
+                $L->log("Start Generate Daily LOCATION Summary - $date");
                 SyncHelpers::generateMissingDatesForLocationSummary($date);
-                $L->log("END Generate Daily LOCATION Summary");
-                $L->log("Start Generate Daily GAME Summary");
-                SyncHelpers::generateMissingLocationAndDatesForGamePlaySummary($date);
-                $L->log("END Generate Daily GAME Summary");            
+                $L->log("END Generate Daily LOCATION Summary - $date");
+                $L->log("Start Generate Daily GAME Summary - $date");
+                SyncHelpers::generateMissingLocationAndDatesForGamePlaySummary($date, $chunkSize);
+                $L->log("END Generate Daily GAME Summary - $date");            
 
                 $currentDate = strtotime($date . " +1 day");
                 $date = date("Y-m-d", $currentDate);
