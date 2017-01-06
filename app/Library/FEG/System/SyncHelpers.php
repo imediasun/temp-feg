@@ -289,11 +289,12 @@ class SyncHelpers
             $foundLastPlayed = null;
             $id = $item->id;
             $location = $item->location_id;            
-            $Q = "SELECT date_format(date_start, '%Y-%m-%d') as dateLastPlayed 
-                FROM game_earnings 
-                WHERE loc_id =$location 
-                    AND date_start <= '$date 23:59:59' 
-                ORDER BY date_start DESC LIMIT 1";
+            $Q = "SELECT mac(date_played) as dateLastPlayed 
+                FROM report_locations 
+                WHERE location_id =$location 
+                    AND date_played <= '$date' 
+                    AND report_status=1;
+                    AND record_status=1";
             $data = DB::select($Q);
             $L->log("Location: $location, search data from game_earnings");
             if (empty($data)) {
@@ -305,13 +306,13 @@ class SyncHelpers
             else {
                 $row = $data[0];
                 $foundLastPlayed = $row->dateLastPlayed;
-                $L->log("Location: $foundLastPlayed from game_earnings");
+                $L->log("$foundLastPlayed from game_earnings");
             }
             
             $locationStartDatestamp = strtotime($foundLastPlayed);
             if (!empty($locationStartDatestamp) || $locationStartDatestamp > 0 || $locationStartDatestamp > $dateValue) {
                 $foundLastPlayed = null;
-                $L->log("Location: last played date had to be set to null");
+                $L->log("last played date had to be set to null");
             }
             $L->log("Begin Update query");
             DB::update($updateSQL, [$foundLastPlayed,$id]);
@@ -343,7 +344,6 @@ class SyncHelpers
                 function($data)  use ($date, $dateValue, &$rowcount, &$chunkCount){
                     global $__logger;
                     $L = $__logger;
-                    $L->log("FOUND $chunkCount locations");
                     $updateSQL = "UPDATE report_game_plays SET 
                                 date_last_played=?,
                                 location_id = ?,
@@ -379,14 +379,17 @@ class SyncHelpers
                             $location = null;
                             $debitTypeId = $item->debit_type_id;            
                             
-                            $L->log("Start searching in  move history");
+                            $gameLog = "Game: $game_id,  Loc: $location ($debitTypeId), Data: $date";
+                            
+                            $L->log("*********** $gameLog *******************");
+                            $L->log("Start searching in  move history  - $gameLog");
                             if (empty($location)) {
                                 $possibleLocation = null;
                                 $q = "select from_loc, to_loc, 
                                     date_format(from_date, '%Y-%m-%d') as from_date
                                     from game_move_history WHERE game_id = $game_id order by from_date ASC";
                                 $data = DB::select($q);
-                                $L->log("Executed query for searching in game move history");
+                                $L->log("Executed query for searching in game move history - $gameLog");
                                 if (!empty($data)) {                    
                                     foreach ($data as $moveCount => $row) {
                                         $from = $row->from_date;
@@ -408,10 +411,10 @@ class SyncHelpers
                 
                                 // fallback to present day game location 
                                 // when no data found from game move history
-                                $L->log("Fallback to present day game location ");
+                                $L->log("Fallback to present day game location - $gameLog");
                                 if (empty($possibleLocation)) {
                                     $possibleLocation = DB::table('game')->where('id', $game_id)->value('location_id');
-                                    $L->log("Got possible location from game when none worked");
+                                    $L->log("Got possible location from game when none worked  - $gameLog");
                                     if (!empty($possibleLocation)) {
                                         $locationFromGameTable = true;
                                     }                    
@@ -428,22 +431,29 @@ class SyncHelpers
                             if (!empty($location)) {
 
                                 //1: try to find last played date from game earnings
-                                $q = "SELECT date_format(date_start, '%Y-%m-%d') as dateLastPlayed 
-                                        FROM game_earnings
-                                        WHERE
-                                            date_start <= '$date 23:59:59'
-                                            AND game_id IN ($game_id)
-                                            AND loc_id=$location 
-                                        ORDER BY date_start DESC LIMIT 1";
+//                                $q = "SELECT date_format(date_start, '%Y-%m-%d') as dateLastPlayed 
+//                                        FROM game_earnings
+//                                        WHERE
+//                                            date_start <= '$date 23:59:59'
+//                                            AND game_id IN ($game_id)
+//                                            AND loc_id=$location 
+//                                        ORDER BY date_start DESC LIMIT 1";
+                                $q = "select max(date_played) as dateLastPlayed
+                                        from report_game_plays 
+                                        WHERE game_id=$game_id 
+                                            AND location_id=$location
+                                            AND date_played <= '$date'
+                                            AND report_status=1 
+                                            AND record_status=1";
                                 $data = DB::select($q);        
-                                $L->log("Try to find last played date from game earnings");
+                                $L->log("Try to find last played date from game earnings  - $gameLog");
                                 if (!empty($data)) {
                                     $row = $data[0];
                                     $foundLastPlayed = $row->dateLastPlayed;
                                     $foundDatestamp = strtotime($foundDate);
                                 }
                                 
-                                $L->log("NOT FOUND: in game earnings -> set game's first date, location's first date");
+                                $L->log("NOT FOUND: in game earnings -> set game's first date, location's first date  - $gameLog");
                                 // 1 NOT FOUND: in game earnings -> set game's first date, location's first date
                                 if (empty($foundDatestamp) || $foundDatestamp < 0) {
 
@@ -453,22 +463,22 @@ class SyncHelpers
                                             $foundLastPlayed = $gameMoveStartDate;
                                             $foundDatestamp = $gameMoveStartDatestamp; 
                                         }
-                                        $L->log("If present in subsequent move history set it as possible date");
+                                        $L->log("If present in subsequent move history set it as possible date  - $gameLog");
                                     }
 
                                     // 3. If not found in subsequent move history
                                     // check head move entry - i.e. either game_in_service or location's start date
                                     if (empty($foundDatestamp) || $foundDatestamp < 0) {
-                                        $L->log("If not found in subsequent move history fallback to location's and game's intial date");
+                                        $L->log("If not found in subsequent move history fallback to location's and game's intial date  - $gameLog");
                                         $minGameDate = DB::table('game')->where('id', $game_id)->value('date_in_service');
-                                        $L->log("Game first date");
+                                        $L->log("Game first date ($minGameDate) - $gameLog");
                                         $minGameDatestamp = strtotime($minGameDate);
                                         $isMinGameDate = !empty($minGameDatestamp) && $minGameDatestamp > 0 && $minGameDatestamp <= $dateValue;
 
                                         $minLocationDate = DB::table('location')->where('id', $location)->value('date_opened');
                                         $minLocationDatestamp = strtotime($minLocationDate);
                                         $isMinLocationDate = !empty($minLocationDatestamp) && $minLocationDatestamp > 0 && $minLocationDatestamp <= $dateValue;
-                                        $L->log("Location first date");
+                                        $L->log("Location first date ($isMinLocationDate) - $gameLog");
 
                                         if ($isMinGameDate && $isMinLocationDate) {
                                             $foundDatestamp = max($minGameDatestamp, $minLocationDatestamp);
@@ -487,15 +497,15 @@ class SyncHelpers
                                 }
                             }   
                             
-                            $L->log("Beging update");
+                            $L->log("Beging update ($foundLastPlayed)  - $gameLog");
                             DB::update($updateSQL, [$foundLastPlayed, $foundLocation, $foundDebitType, $id]);
-                            $L->log("END update");
+                            $L->log("END update ($foundLastPlayed) - $gameLog");
                             
                         }
                     }
                 });           
         DB::commit();
-        $L->log("END update query");
+        $L->log("END update queries");
     }
 
     public static function report_daily_game_summary($params = array()) {
