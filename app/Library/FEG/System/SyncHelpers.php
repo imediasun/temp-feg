@@ -329,12 +329,15 @@ class SyncHelpers
         $rowcount = 0;
         $chunkCount = 0;
         
-        $q = "SELECT id, game_id, location_id, debit_type_id 
-            FROM report_game_plays 
-            WHERE date_played='$date' 
-                AND record_status=1 AND report_status = 0"; 
+//        $q = "SELECT id, game_id, location_id, debit_type_id 
+//            FROM report_game_plays 
+//            WHERE date_played='$date' 
+//                AND record_status=1 AND report_status = 0"; 
             //AND date_last_played IS NULL
             // AND report_status = 0
+        $query = DB::table('report_game_plays')
+            ->select('id', 'game_id', 'location_id', 'debit_type_id')
+            ->whereRaw("date_played='$date' AND record_status=1 AND report_status=0");
         DB::beginTransaction();
         $query->chunk($chunkSize, 
                 function($data)  use ($date, $dateValue, &$rowcount, &$chunkCount){
@@ -484,14 +487,15 @@ class SyncHelpers
                                 }
                             }   
                             
-                            $L->log("Beging update query");
+                            $L->log("Beging update");
                             DB::update($updateSQL, [$foundLastPlayed, $foundLocation, $foundDebitType, $id]);
-                            $L->log("END update query");
+                            $L->log("END update");
                             
                         }
                     }
                 });           
         DB::commit();
+        $L->log("END update query");
     }
 
     public static function report_daily_game_summary($params = array()) {
