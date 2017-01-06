@@ -179,7 +179,7 @@ class FEGJobs
                             DB::table('game_earnings')->insert($tempData);
                             $log = "RESYNC FROM TEMP, $date, $keyReadable, count: $tempCount, IDS: $tempIds";
                             FEGSystemHelper::logit($log, $lfu, $lp);
-                    }
+                        }
                         DB::connection($tempDB)->setFetchMode(PDO::FETCH_CLASS); 
                         
                     }
@@ -187,8 +187,8 @@ class FEGJobs
                 }
                 else {
                     $log = "$date, $keyReadable, ERP: $erpCount, TEMP: NONE, ERPIDS: $erpIds, TEMPIDS: NONE";
-                        FEGSystemHelper::logit($log, $lf, $lp);
-                        $L->log($log);                    
+                    FEGSystemHelper::logit($log, $lf, $lp);
+                    $L->log($log);                    
                     
                     $log = "DELETING FROM ERP ONLY, $date, $keyReadable, count: $erpCount, IDS: $erpIds";
                     FEGSystemHelper::logit($log, $lfd, $lp);                    
@@ -208,5 +208,93 @@ class FEGJobs
         FEGSystemHelper::logit("***************************** END FIND DUPLICATE ********************************", $lf, $lp);
         $L->log("***************************** END FIND DUPLICATE ********************************");
     }
+    
+    public static function generateMissingDatesForSummary($params = array()) {
+        extract(array_merge(array(
+            'reverse' => 1,
+        ), $params));
+        
+        $L = $_logger;
+        self::$L = $_logger;
+        
+        $timeStart = microtime(true);
+        
+        $q = "select date_format(max(date_played), '%Y-%m-%d') as maxd, 
+            date_format(min(date_played), '%Y-%m-%d') as mind, 
+            datediff(max(date_played), min(date_played)) as ndays
+            from report_game_played WHERE record_status=1 AND report_status=0";
+        
+        $data = DB::select($q);
+        if (!empty($data)) {
+            $max = $data[0]->maxd;
+            $min = $data[0]->mind;
+            $count = $data[0]->ndays;
+        }
+        
+        if (empty($min) || empty($max)) {
+            $__logger->log("No date range specified.");
+            return "No date range specified.";
+        }
+        
+        $L->log("---------------------------------------------------------------------------------------");   
+        $L->log("From {$max} to {$min}");   
+        $params['date_start'] = $min;
+        $params['date_end'] = $max;
+        $params['count'] = $count;
+        $params['reverse'] = $reverse;
+
+        if ($reverse == 1) {
+            $dateStartTimestamp = strtotime($min);
+            $dateEndTimestamp = strtotime($max);
+            $currentDate = $dateEndTimestamp;
+            $date = $max; 
+            $dateCount = 1;
+            while($currentDate >= $dateStartTimestamp) {
+                $__logger->log("DATE: $date ($dateCount/$count days)");
+                $__logger->log("Start Generate Daily LOCATION Summary");
+                SyncHelpers::generateMissingDatesForLocationSummary($date);
+                $__logger->log("END Generate Daily LOCATION Summary");
+                $__logger->log("Start Generate Daily GAME Summary");
+                SyncHelpers::generateMissingLocationAndDatesForGamePlaySummary($date);
+                $__logger->log("END Generate Daily GAME Summary");            
+
+                $currentDate = strtotime($date . " -1 day");
+                $date = date("Y-m-d", $currentDate);
+                $dateCount++;
+            }
+            
+        }        
+        else  {
+            $dateStartTimestamp = strtotime($min);
+            $dateEndTimestamp = strtotime($max);
+            $currentDate = $dateStartTimestamp;
+            $date = $min; 
+            $dateCount = 1;
+            while($currentDate <= $dateEndTimestamp) {
+                $__logger->log("DATE: $date ($dateCount/$count days)");
+                $__logger->log("Start Generate Daily LOCATION Summary");
+                SyncHelpers::generateMissingDatesForLocationSummary($date);
+                $__logger->log("END Generate Daily LOCATION Summary");
+                $__logger->log("Start Generate Daily GAME Summary");
+                SyncHelpers::generateMissingLocationAndDatesForGamePlaySummary($date);
+                $__logger->log("END Generate Daily GAME Summary");            
+
+                $currentDate = strtotime($date . " +1 day");
+                $date = date("Y-m-d", $currentDate);
+                $dateCount++;
+            }
+            
+        }        
+                
+        $timeEnd = microtime(true);
+        $timeDiff = round($timeEnd - $timeStart);
+        $timeDiffHuman = self::secondsToHumanTime($timeDiff);
+        $timeTaken = "Time taken: $timeDiffHuman ";
+        $L->log($timeTaken);        
+        $L->log("END generateMissingDatesForSummary");
+        return $timeTaken;
+    }
+    
+    
     
 }

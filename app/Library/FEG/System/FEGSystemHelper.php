@@ -12,7 +12,7 @@ class FEGSystemHelper
 {    
     private static $L;
     
-    public static function setLogger($_logger, $name = "general-log.log", $path = "FEG-General", $id = "LOG") {
+    public static function setLogger($_logger, $name = "elm5-general-log.log", $path = "FEG-General", $id = "LOG") {
         global $__logger;
         if (empty($_logger)) {
             $_logger = new MyLog($name, $path, $id);                
@@ -49,7 +49,7 @@ class FEGSystemHelper
         return $timeString;
     }
         
-    public static function logit($obj = "", $file = "system-email-report.log", $pathsuffix ="") {
+    public static function logit($obj = "", $file = "elm5-system-log.log", $pathsuffix ="") {
         $path = self::set_log_path($file, $pathsuffix);
         $date = "[" . date("Y-m-d H:i:s"). "] ";
         if (is_array($obj) || is_object($obj)) {
@@ -60,7 +60,7 @@ class FEGSystemHelper
         }
         file_put_contents($path, $date.$log."\r\n", FILE_APPEND);    
     }	
-    public static function set_log_path($file = "system-email-report.log", $pathsuffix = "") {
+    public static function set_log_path($file = "elm5-system-log.log", $pathsuffix = "") {
         $fileprefix = "log-" . date("Ymd") . "-";
         $path = realpath(storage_path() . '/logs/').(empty($pathsuffix) ? "" : '/'.$pathsuffix);        
         if (!file_exists($path)) {

@@ -203,11 +203,12 @@ class SyncHelpers
         $isPastData = $datePlayedStamp < $yesterdayStamp;        
         
         self::report_archive_duplicate_location_summary_data($date, $location);
-
+        
+        //(SELECT E.date_start FROM game_earnings E WHERE E.loc_id = L.id and E.date_start < '$nextDate' ORDER BY E.date_start DESC LIMIT 1) as date_last_played,                    
         $sql = "SELECT 
                     L.id AS location_id, 
                     '$date' as date_played,
-                    (SELECT E.date_start FROM game_earnings E WHERE E.loc_id = L.id and E.date_start < '$nextDate' ORDER BY E.date_start DESC LIMIT 1) as date_last_played,                    
+                    E.date_last_played,
                     L.debit_type_id,
                     '$today' as report_date,
                     E.sync_record_count, 
@@ -223,6 +224,7 @@ class SyncHelpers
                 LEFT JOIN  (
                 SELECT 	loc_id, 
                         debit_type_id, 
+                        '$date' as date_last_played,
                         COUNT(*) AS sync_record_count, 
                         SUM(CASE WHEN debit_type_id = 1 THEN total_notional_value ELSE std_actual_cash END) AS games_revenue, 
                         SUM(std_plays) AS games_total_std_plays,
@@ -235,7 +237,7 @@ class SyncHelpers
                 ) E ON L.id = E.loc_id 
 
                 LEFT JOIN  (
-                SELECT location_id, COUNT(*) AS games_count FROM game GROUP BY location_id
+                    SELECT location_id, COUNT(*) AS games_count FROM game WHERE GROUP BY location_id
                 ) G ON G.location_id = L.id 
 
                 WHERE " . (empty($location) ? "L.reporting = 1" : "L.id IN ($location)");
@@ -248,12 +250,12 @@ class SyncHelpers
                 $revenue = $row['games_revenue'];
                 $row['report_status'] = (is_null($revenue) || empty($revenue) || $revenue === "0") ? 0 : 1;     
                 $validData = true;
-                if ($isPastData) {
-                    $locationStartDate = strtotime($row['date_opened']);
-                    if (!empty($locationStartDate) && $locationStartDate > 0) {
-                        $validData = $datePlayedStamp >= $locationStartDate;
-                    }
-                }
+//                if ($isPastData) {
+//                    $locationStartDate = strtotime($row['date_opened']);
+//                    if (!empty($locationStartDate) && $locationStartDate > 0) {
+//                        $validData = $datePlayedStamp >= $locationStartDate;
+//                    }
+//                }
                 if ($validData) {
                     unset($row['date_opened']);
                     DB::table('report_locations')->insert($row);
@@ -263,6 +265,191 @@ class SyncHelpers
             DB::commit();            
         }
         DB::connection()->setFetchMode(PDO::FETCH_CLASS);
+    }
+    
+    public static function generateMissingDatesForLocationSummary($date) {
+        if (empty($date)) {
+            return;
+        }
+        $dateValue = strtotime($date);
+        
+        $q = "SELECT id, location_id 
+            FROM report_locations 
+            WHERE date_played='$date' 
+                AND record_status=1 AND report_status = 0"; 
+            //AND date_last_played IS NULL
+            // AND report_status = 0
+        $items = DB::select($q);
+        foreach($items as $item) {
+            $foundLastPlayed = null;
+            $id = $item->id;
+            $location = $item->location;            
+            $Q = "SELECT date_format(date_start, '%Y-%m-%d') as dateLastPlayed 
+                FROM game_earnings 
+                WHERE loc_id =$location 
+                    AND E.date_start <= '$date 23:59:59' 
+                ORDER BY date_start DESC LIMIT 1";
+            $data = DB::select($Q);
+            if (empty($data)) {                
+                $locationStartDatestamp = strtotime(DB::table('location')
+                        ->where('id', $location)->value('date_opened'));
+                if (!empty($locationStartDatestamp) || $locationStartDatestamp > 0) {
+                    $foundLastPlayed = date("Y-m-d", $locationStartDatestamp);
+                }                
+            }
+            else {
+                $row = $data[0];
+                $foundLastPlayed = $row->dateLastPlayed;
+            }
+            if (!empty($foundLastPlayed)) {
+                DB::update("UPDATE report_locations SET date_last_played='$foundLastPlayed' WHERE id=$id");
+            }
+        }
+
+    }
+    public static function generateMissingLocationAndDatesForGamePlaySummary($date) {
+        if (empty($date)) {
+            return;
+        }        
+        $dateValue = strtotime($date);
+        
+        $q = "SELECT id, game_id, location_id, debit_type_id 
+            FROM report_game_plays 
+            WHERE date_played='$date' 
+                AND record_status=1 AND report_status = 0"; 
+            //AND date_last_played IS NULL
+            // AND report_status = 0
+        $items = DB::select($q);
+        foreach($items as $item) {
+            
+            $foundLocation = null;
+            $foundDebitType = null;
+            
+            $minLocationDate = null;
+            $minLocationDatestamp = null;
+            $minGameDate = null;
+            $minGameDatestamp = null;
+            $gameMoveStartDate = null;
+            $gameMoveStartDatestamp = null;
+            
+            $foundDate = null;
+            $foundDatestamp = null;
+            $foundLastPlayed = null;
+            
+            $moveHistorySubsequent = false;
+            $locationFromGameTable = false;
+            
+            $id = $item->id;
+            $game_id = $item->game_id;
+            $location = $item->location_id;
+            $location = null;
+            $debitTypeId = $item->debit_type_id;            
+
+            if (empty($location)) {
+                $possibleLocation = null;
+                $q = "select from_loc, to_loc, 
+                    date_format(from_date, '%Y-%m-%d') as from_date
+                    from game_move_history WHERE game_id = $game_id order by from_date ASC";
+                $data = DB::select($q);
+                if (!empty($data)) {                    
+                    foreach ($data as $moveCount => $row) {
+                        $from = $row->from_date;
+                        $tloc = $row->to_loc;
+                        $floc = $row->from_loc;
+                        $fromValue = strtotime($from);
+                        if ($moveCount == 0 && $dateValue < $fromValue) {
+                            $possibleLocation = $floc;  
+                            break;
+                        }
+                        if ($dateValue >= $fromValue) {
+                            $possibleLocation = $tloc; 
+                            $moveHistorySubsequent = true;
+                            $gameMoveStartDate = $from;
+                            $gameMoveStartDatestamp = $fromValue;
+                        }
+                    }            
+                }
+                
+                // fallback to present day game location 
+                // when no data found from game move history
+                if (empty($possibleLocation)) {
+                    $possibleLocation = DB::table('game')->where('id', $game_id)->value('location');
+                    if (!empty($possibleLocation)) {
+                        $locationFromGameTable = true;
+                    }                    
+                }
+                if (!empty($possibleLocation)) {
+                    $location = $foundLocation = $possibleLocation;
+                }
+            }
+            
+            if (!empty($location)) {                
+                $debitTypeId = $foundDebitType = self::getLocationDebitType($location);
+            }
+            
+            if (!empty($location)) {
+                
+                //1: try to find last played date from game earnings
+                $q = "SELECT date_format(date_start, '%Y-%m-%d') as dateLastPlayed 
+                        FROM game_earnings
+                        WHERE
+                            date_start <= '$date 23:59:59'
+                            AND game_id IN ($game_id)
+                            AND loc_id=$location 
+                        ORDER BY date_start DESC LIMIT 1";
+                $data = DB::select($q);        
+
+                if (!empty($data)) {
+                    $row = $data[0];
+                    $foundLastPlayed = $row->dateLastPlayed;
+                    $foundDatestamp = strtotime($foundDate);
+                }
+
+                // 1 NOT FOUND: in game earnings -> set game's first date, location's first date
+                if (empty($foundDatestamp) || $foundDatestamp < 0) {
+                    
+                    // 2: if present in subsequent move history 
+                    if ($moveHistorySubsequent) {
+                        if (!empty($gameMoveStartDatestamp) && $gameMoveStartDatestamp > 0 && $gameMoveStartDatestamp <= $dateValue) {
+                            $foundLastPlayed = $gameMoveStartDate;
+                            $foundDatestamp = $gameMoveStartDatestamp; 
+                        }
+                    }
+                    
+                    // 3. If not found in subsequent move history
+                    // check head move entry - i.e. either game_in_service or location's start date
+                    if (empty($foundDatestamp) || $foundDatestamp < 0) {
+                        $minGameDate = DB::table('game')->where('id', $game_id)->value('date_in_service');
+                        $minGameDatestamp = strtotime($minGameDate);
+                        $isMinGameDate = !empty($minGameDatestamp) && $minGameDatestamp > 0 && $minGameDatestamp <= $dateValue;
+
+                        $minLocationDate = DB::table('location')->where('id', $location)->value('date_opened');
+                        $minLocationDatestamp = strtotime($minLocationDate);
+                        $isMinLocationDate = !empty($minLocationDatestamp) && $minLocationDatestamp > 0 && $minLocationDatestamp <= $dateValue;
+                        
+                        if ($isMinGameDate && $isMinLocationDate) {
+                            $foundDatestamp = max($minGameDatestamp, $minLocationDatestamp);
+                            $foundLastPlayed = date("Y-m-d", $foundDatestamp);
+                            
+                        }
+                        elseif ($isMinGameDate) {
+                            $foundLastPlayed = $minGameDate;
+                            $foundDatestamp = $minGameDatestamp;
+                        }
+                        elseif($isMinLocationDate) {
+                            $foundLastPlayed = $minLocationDate;
+                            $foundDatestamp = $minLocationDatestamp;                                      
+                        }
+                    }    
+                }
+            }   
+            
+            DB::update("UPDATE report_game_plays SET 
+                date_last_played='$foundLastPlayed',
+                location_id = '$foundLocation',
+                debit_type_id = '$foundDebitType'
+                WHERE id=$id");
+        }
     }
 
     public static function report_daily_game_summary($params = array()) {
@@ -306,15 +493,15 @@ class SyncHelpers
                                 E.courtesy_plays,
                                 E.product_and_courtesy_plays,
                                 E.grand_total,
-                                E.location_id as elocation_id,
-                                E.debit_type_id as edebit_type_id,
+                                E.location_id as location_id,
+                                E.debit_type_id as debit_type_id,
                     
                                 E.game_revenue,
                                 E.game_std_plays,
-                                location.id as location_id,
+                                location.id as llocation_id,
                                 game.prev_location_id,
                                 game.location_id as glocation_id,                    
-                                location.debit_type_id,
+                                location.debit_type_id as ldebit_type_id,
                                 game.game_title_id,
                                 game_title.game_type_id,
                                 game.status_id as game_status,
@@ -396,25 +583,29 @@ class SyncHelpers
                                 }
                                 ////$gamesNotReporting[] = $game_id;                                
                             }
-                            if (!empty($row['edebit_type_id'])) {
-                                $row['debit_type_id'] = $row['edebit_type_id'];
+                            if (empty($row['debit_type_id']) && !empty($row['ldebit_type_id'])) {
+                                $row['debit_type_id'] = $row['ldebit_type_id'];
                             }
                             
                             $gameLocationID = 0;
-                            $elocation_id = $row['elocation_id'];
+                            $llocation_id = $row['llocation_id'];
+                            $glocation_id = $row['glocation_id'];
                             $location_id = $row['location_id'];
-                            if (!empty($elocation_id)) {
-                                $gameLocationID = $elocation_id;
+                            if (!empty($location_id)) {
+                                $gameLocationID = $location_id;
                             }
                             else {
-                                if ($isPastData) {
-                                    //$possibleLocation = self::getPossibleHistoricalLocationOfGame($game_id, $date, $location_id);
+                                if ($isPastData) {                                    
+                                    //$possibleLocation = self::getPossibleHistoricalLocationOfGame($game_id, $date, $glocation_id);
                                 }
                                 else {
-                                    $possibleLocation = $location_id;
+                                    $possibleLocation = $glocation_id;
                                 }
                                 if (!empty($possibleLocation)) {
                                     $gameLocationID = $possibleLocation;
+                                }
+                                if (!empty($gameLocationID)) {
+                                     //$row['debit_type_id'] = self::getLocationDebitType($gameLocationID);
                                 }
                             }
                             if (empty($lastPlayed)) {
@@ -438,8 +629,8 @@ class SyncHelpers
                             
                             unset($row['glocation_id']);
                             unset($row['prev_location_id']);
-                            unset($row['elocation_id']);
-                            unset($row['edebit_type_id']); 
+                            unset($row['llocation_id']);
+                            unset($row['ldebit_type_id']); 
                             
                             $validData = true;
                             if ($isPastData) {
@@ -920,19 +1111,19 @@ class SyncHelpers
 
     public static function getPossibleLastPlayedDateOfGame($game_id, $date, $location = 0) {
         $possibleDate = null;
+        $moveHistoryTop = false;
+        $moveHistorySubsequent = false;
+        $dateValue = strtotime($date);
         //$l = new MyLog('getPossibleLastPlayedDateOfGame.log', 'Test', 'DATE');  
         //$l->log("Game: $game_id, date: $date, location: $location");
-        $gameStartDate = DB::table('game')->where('id', $game_id)->value('date_in_service');
-        //$l->log("date_in_service: ", $gameStartDate);
-        $locationStartDate = DB::table('location')->where('id', $location)->value('date_opened');
-        //$l->log("locationStartDate: ", $locationStartDate);
-        
-        $q = "SELECT date_format(max(E.date_start), '%Y-%m-%d') as date_last_played 
-                    FROM game_earnings E
-                    WHERE
-                    E.date_start <= '$date 23:59:59'
-                    AND E.game_id IN ($game_id)
-                    AND E.loc_id=$location";
+
+        $q = "SELECT date_format(date_start, '%Y-%m-%d') as dateLastPlayed 
+                        FROM game_earnings
+                        WHERE
+                            date_start <= '$date 23:59:59'
+                            AND game_id IN ($game_id)
+                            AND loc_id=$location 
+                        ORDER BY date_start DESC LIMIT 1";
         
         $data = DB::select($q);
         
@@ -948,14 +1139,16 @@ class SyncHelpers
         }
         
         $possibleDateValue = strtotime($possibleDate);
-        $isPossibleDateEmpty = empty($possibleDateValue) || $possibleDateValue <= 0; 
-                
+        $isPossibleDateEmpty = empty($possibleDateValue) || $possibleDateValue <= 0 || $possibleDateValue > $dateValue; 
+        
+        // 2. try move history
         if ($isPossibleDateEmpty) {            
-            $q = "select from_loc, to_loc, date_format(from_date, '%Y-%m-%d') as from_date
-                from game_move_history WHERE game_id = $game_id";
+            $q = "select from_loc, to_loc, 
+                    date_format(from_date, '%Y-%m-%d') as from_date
+                    from game_move_history WHERE game_id = $game_id order by from_date ASC";
             $data = DB::select($q);
             if (!empty($data)) {
-                $dateValue = strtotime($date);
+                
                 foreach ($data as $row) {
                     if (is_array($row)) {
                         $from = $row['from_date'];
@@ -969,36 +1162,54 @@ class SyncHelpers
                     }
                     $fromValue = strtotime($from);
                     // if the move history's from date is greater than the given date
-                    if ($dateValue < $fromValue) {
-                        $possibleDate = $gameStartDate;
+                    if ($moveCount == 0 && $dateValue < $fromValue) {
+                        $moveHistoryTop = true;
+                        //$possibleDate = $gameStartDate;
                         //$l->log("Step 2.1 [move history TOP] Possible Date:", $possibleDate);
                         break;
                     }
                     if ($dateValue >= $fromValue) {
-                        $possibleDate = $from;
+                        $gameMoveStartDate = $from;
+                        $gameMoveStartDatestamp = $fromValue;
+                        $moveHistorySubsequent = true;
                        // $l->log("Step 2.2x [move history rest] Possible Date: ", $possibleDate);
                     }
                 }            
             }
         }
         
-        $possibleDateValue = strtotime($possibleDate);
-        $isPossibleDateEmpty = empty($possibleDateValue) || $possibleDateValue <= 0;      
-        if ($isPossibleDateEmpty) {
-            $possibleDate = $gameStartDate;
-            //$l->log("Step 3 [game start] Possible Date: ", $possibleDate);
+        // 3 NOT FOUND in move history -> set game's first date, location's first date
+        if (empty($gameMoveStartDatestamp) || $gameMoveStartDatestamp < 0) {
+
+            $minGameDate = DB::table('game')->where('id', $game_id)->value('date_in_service');
+            $minGameDatestamp = strtotime($minGameDate);
+            $isMinGameDate = !empty($minGameDatestamp) && $minGameDatestamp > 0 && $minGameDatestamp <= $dateValue;
+
+            $minLocationDate = DB::table('location')->where('id', $location)->value('date_opened');
+            $minLocationDatestamp = strtotime($minLocationDate);
+            $isMinLocationDate = !empty($minLocationDatestamp) && $minLocationDatestamp > 0 && $minLocationDatestamp <= $dateValue;
+
+            if ($isMinGameDate && $isMinLocationDate) {
+                $possibleDateValue = max($minGameDatestamp, $minLocationDatestamp);
+                $possibleDate = date("Y-m-d", $possibleDateValue);
+
+            }
+            elseif ($isMinGameDate) {
+                $possibleDate = $minGameDate;
+                $possibleDateValue = $minGameDatestamp;
+            }
+            elseif($isMinLocationDate) {
+                $possibleDate = $minLocationDate;
+                $possibleDateValue = $minLocationDatestamp;                                      
+            }
         }
-        
-        $possibleDateValue = strtotime($possibleDate);
-        $isPossibleDateEmpty = empty($possibleDateValue) || $possibleDateValue <= 0;    
-        
-        if ($isPossibleDateEmpty) {
-            $possibleDate = $locationStartDate;
-            //$l->log("Step 4 [location start] Possible Date: ", $possibleDate);
+        else {
+            $possibleDate = $gameMoveStartDate;
         }
-        
+
+            
         $possibleDateValue = strtotime($possibleDate);
-        $isPossibleDateEmpty = empty($possibleDateValue) || $possibleDateValue <= 0;   
+        $isPossibleDateEmpty = empty($possibleDateValue) || $possibleDateValue <= 0 || $possibleDateValue > $dateValue; 
         
         if ($isPossibleDateEmpty) {
             $possibleDate = null;
@@ -1011,11 +1222,12 @@ class SyncHelpers
         //$l = new MyLog('getPossibleHistoricalLocationOfGame.log', 'Test', 'LOCATION');  
         //$l->log("Game: $game_id, date: $date, location: $location");
         $possibleLocation = false;
-        $q = "select from_loc, to_loc, date_format(from_date, '%Y-%m-%d') as from_date
-            from game_move_history WHERE game_id = $game_id";
+        $dateValue = strtotime($date);
+        $q = "select from_loc, to_loc, 
+                    date_format(from_date, '%Y-%m-%d') as from_date
+                    from game_move_history WHERE game_id = $game_id order by from_date ASC";
         $data = DB::select($q);
-        if (!empty($data)) {
-            $dateValue = strtotime($date);
+        if (!empty($data)) {            
             foreach ($data as $row) {
                 if (is_array($row)) {
                     $from = $row['from_date'];
