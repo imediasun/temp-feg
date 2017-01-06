@@ -268,6 +268,7 @@ class SyncHelpers
     }
     
     public static function generateMissingDatesForLocationSummary($date) {
+        global $__logger;
         if (empty($date)) {
             return;
         }
@@ -308,6 +309,8 @@ class SyncHelpers
 
     }
     public static function generateMissingLocationAndDatesForGamePlaySummary($date) {
+        global $__logger;
+        $L = $__logger;
         if (empty($date)) {
             return;
         }        
