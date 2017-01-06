@@ -17,27 +17,35 @@ class FEGJobs
     
     public static function cleanSummaryReports($params = array()) {
         global $__logger;
-        $L = isset($params['_logger']) ? $params['_logger'] : 
-                isset($__logger) ? $__logger :
-                    new MyLog('cleanup-summary.log', 'earnings-summary', 
-                                'EarningsSummary');
-
-        $params['_logger'] = $L;
-        if (empty($__logger)) {            
-            $__logger = $L;
-        }
+        $lf = 'CleanUpSummaryReports.log';
+        $lp = 'FEGCronTasks/Cleanup Summary';
         
         extract(array_merge(array(
+            '_logger' => null,
             'location' => null,
-        ), $params));
-                
+        ), $params));        
+        $L = FEGSystemHelper::setLogger($_logger, $lf, $lp, 'CleanSummaryReports');
+        $params['_logger'] = $L;  
+        $__logger = $L;
+        
+        
+        
+        $L->log("****************START CLEAN SUMMARY ");
         $q = "DELETE FROM report_locations WHERE record_status = 0 " .
-            empty($location) ? "" : " AND location_id in ($location)";
-        DB::delete($q);
+            (empty($location) ? "" : " AND location_id in ($location)");
+        
+        $L->log("Delete inactive locations report");
+        $L->log($q);
+        $count = DB::delete($q);
+        $L->log("Deleted $count");
 
-        $q = "DELETE FROM report_game_plays WHERE record_status = 0".
-            empty($location) ? "" : " AND location_id in ($location)";
-        DB::delete($q);        
+        $q = "DELETE FROM report_game_plays WHERE record_status = 0" .
+            (empty($location) ? "" : " AND location_id in ($location)");
+        
+        $L->log("Delete inactive game play reports");
+        $L->log($q);
+        $count = DB::delete($q);
+        $L->log("Deleted $count");        
         
         $q = "DELETE FROM report_locations
                 USING report_locations
@@ -45,8 +53,13 @@ class FEGJobs
                 WHERE report_locations.date_played < location.date_opened
                 AND location.date_opened IS NOT NULL 
                 AND location.date_opened <> '0000-00-00'" .
-            (empty($location) ? "": " AND report_locations.location_id in ($location)");
-        DB::delete($q);
+            (empty($location) ? "" : " AND report_locations.location_id in ($location)");
+        
+        $L->log("Delete unwanted (beyond open date) Location reports");
+        $L->log($q);
+        $count = DB::delete($q);
+        $L->log("Deleted $count");
+        
         
         $q = "DELETE FROM report_game_plays
                 USING report_game_plays
@@ -55,17 +68,25 @@ class FEGJobs
                 AND location.date_opened IS NOT NULL 
                 AND location.date_opened <> '0000-00-00'" .
             (empty($location) ? "": " AND report_game_plays.location_id in ($location)");
-        DB::delete($q);
+        
+        $L->log("Delete unwanted (beyond Location open date) Game Play reports");
+        $L->log($q);
+        $count = DB::delete($q);
+        $L->log("Deleted $count");
         
         
         $q = "DELETE FROM report_game_plays USING report_game_plays 
                     JOIN game ON game.id=report_game_plays.game_id 
                         WHERE report_game_plays.date_played < game.date_in_service 
                             AND game.date_in_service <> '0000-00-00' 
-                            AND report_game_plays.game_revenue IS NULL".
+                            AND report_game_plays.game_revenue IS NULL" .
             (empty($location) ? "": " AND report_game_plays.location_id in ($location)");
         
-        DB::delete($q); 
+        $L->log("Delete unwanted (beyond Game open date) Game Play reports");
+        $L->log($q);
+        $count = DB::delete($q);
+        $L->log("Deleted $count");
+        $L->log("**************** END CLEAN SUMMARY ");
     }
     
     public static function findDuplicateTransferredEarnings($params=array()) {
