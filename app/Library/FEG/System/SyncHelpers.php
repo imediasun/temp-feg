@@ -237,7 +237,7 @@ class SyncHelpers
                 ) E ON L.id = E.loc_id 
 
                 LEFT JOIN  (
-                    SELECT location_id, COUNT(*) AS games_count FROM game WHERE GROUP BY location_id
+                    SELECT location_id, COUNT(*) AS games_count FROM game GROUP BY location_id
                 ) G ON G.location_id = L.id 
 
                 WHERE " . (empty($location) ? "L.reporting = 1" : "L.id IN ($location)");
