@@ -288,7 +288,7 @@ class SyncHelpers
             $Q = "SELECT date_format(date_start, '%Y-%m-%d') as dateLastPlayed 
                 FROM game_earnings 
                 WHERE loc_id =$location 
-                    AND E.date_start <= '$date 23:59:59' 
+                    AND date_start <= '$date 23:59:59' 
                 ORDER BY date_start DESC LIMIT 1";
             $data = DB::select($Q);
             if (empty($data)) {                
