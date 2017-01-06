@@ -231,12 +231,15 @@ class FEGJobs
     }
     
     public static function generateMissingDatesForSummary($params = array()) {
+        global $__logger;
         extract(array_merge(array(
+            '_logger' => null,
             'reverse' => 1,
         ), $params));
-        
-        $L = $_logger;
-        self::$L = $_logger;
+        $lf = 'generateMissingDatesForSummary.log';
+        $lp = 'FEGCronTasks/Generate Missing Dates in Summary';
+        $L = FEGSystemHelper::setLogger($_logger, $lf, $lp, 'SummaryReportDates');
+        $params['_logger'] = $__logger = $L;  
         
         $timeStart = microtime(true);
         
@@ -253,7 +256,7 @@ class FEGJobs
         }
         
         if (empty($min) || empty($max)) {
-            $__logger->log("No date range specified.");
+            $L->log("No date range specified.");
             return "No date range specified.";
         }
         
@@ -271,13 +274,13 @@ class FEGJobs
             $date = $max; 
             $dateCount = 1;
             while($currentDate >= $dateStartTimestamp) {
-                $__logger->log("DATE: $date ($dateCount/$count days)");
-                $__logger->log("Start Generate Daily LOCATION Summary");
+                $L->log("DATE: $date ($dateCount/$count days)");
+                $L->log("Start Generate Daily LOCATION Summary");
                 SyncHelpers::generateMissingDatesForLocationSummary($date);
-                $__logger->log("END Generate Daily LOCATION Summary");
-                $__logger->log("Start Generate Daily GAME Summary");
+                $L->log("END Generate Daily LOCATION Summary");
+                $L->log("Start Generate Daily GAME Summary");
                 SyncHelpers::generateMissingLocationAndDatesForGamePlaySummary($date);
-                $__logger->log("END Generate Daily GAME Summary");            
+                $L->log("END Generate Daily GAME Summary");            
 
                 $currentDate = strtotime($date . " -1 day");
                 $date = date("Y-m-d", $currentDate);
@@ -292,13 +295,13 @@ class FEGJobs
             $date = $min; 
             $dateCount = 1;
             while($currentDate <= $dateEndTimestamp) {
-                $__logger->log("DATE: $date ($dateCount/$count days)");
-                $__logger->log("Start Generate Daily LOCATION Summary");
+                $L->log("DATE: $date ($dateCount/$count days)");
+                $L->log("Start Generate Daily LOCATION Summary");
                 SyncHelpers::generateMissingDatesForLocationSummary($date);
-                $__logger->log("END Generate Daily LOCATION Summary");
-                $__logger->log("Start Generate Daily GAME Summary");
+                $L->log("END Generate Daily LOCATION Summary");
+                $L->log("Start Generate Daily GAME Summary");
                 SyncHelpers::generateMissingLocationAndDatesForGamePlaySummary($date);
-                $__logger->log("END Generate Daily GAME Summary");            
+                $L->log("END Generate Daily GAME Summary");            
 
                 $currentDate = strtotime($date . " +1 day");
                 $date = date("Y-m-d", $currentDate);
