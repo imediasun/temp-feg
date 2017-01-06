@@ -376,7 +376,7 @@ class SyncHelpers
                 // fallback to present day game location 
                 // when no data found from game move history
                 if (empty($possibleLocation)) {
-                    $possibleLocation = DB::table('game')->where('id', $game_id)->value('location');
+                    $possibleLocation = DB::table('game')->where('id', $game_id)->value('location_id');
                     if (!empty($possibleLocation)) {
                         $locationFromGameTable = true;
                     }                    
