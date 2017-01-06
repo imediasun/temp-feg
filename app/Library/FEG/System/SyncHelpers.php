@@ -284,7 +284,7 @@ class SyncHelpers
         foreach($items as $item) {
             $foundLastPlayed = null;
             $id = $item->id;
-            $location = $item->location;            
+            $location = $item->location_id;            
             $Q = "SELECT date_format(date_start, '%Y-%m-%d') as dateLastPlayed 
                 FROM game_earnings 
                 WHERE loc_id =$location 
