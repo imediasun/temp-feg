@@ -923,11 +923,8 @@ class SiteHelpers
                 $form ='';
                 break;
             case 'textarea':
-                $form = "<input  type='text' name='".$field."{$bulk}' class='form-control input-sm' $mandatory value='{$value}'/>";
-                break;
-
             case 'textarea_editor':
-                $form = "<input  type='text' name='".$field."{$bulk}' class='form-control input-sm' $mandatory value='{$value}'/>";
+                $form = "<textarea name='".$field."{$bulk}' class='form-control input-sm' $mandatory value='{$value}'></textarea>";
                 break;
 
             case 'text':
@@ -939,7 +936,7 @@ class SiteHelpers
                 break;
 
             case 'text_datetime':
-                $form = "<input  type='text' name='$field{$bulk}'  class='date form-control input-sm'  $mandatory value='{$value}'/> ";
+                $form = "<input  type='text' name='$field{$bulk}'  class='datetime form-control input-sm'  $mandatory value='{$value}'/> ";
                 break;
 
             case 'select':

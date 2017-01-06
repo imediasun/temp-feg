@@ -139,6 +139,8 @@ class AjaxHelpers
 			$type = 'text_date';
 		} else if($type=='text_datetime') {
 			$type = 'text_datetime';
+		} else if($type=='textarea' || $type=='textarea_editor') {
+			$type = 'textarea';
 		}
 		else {
 			$type = 'text';

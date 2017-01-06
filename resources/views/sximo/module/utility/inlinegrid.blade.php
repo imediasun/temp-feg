@@ -19,6 +19,7 @@ $(document).ready(function() {
 					$('#'+id+' td').each(function() {
 						var target = $(this).attr('data-field');
 						var values = $(this).attr('data-values');
+						var data_format = $(this).attr('data-format');
 						if( target !== undefined && target !== 'action' && target == val)
 						{
 							$(this).html(h);
@@ -34,19 +35,27 @@ $(document).ready(function() {
 								}
 								else
 								{
-									//$('#'+id+' td select[name="'+target+'"]').remove();
-									$('#'+id+' td select[name="'+target+'"] option').each(function() {
-										if($.trim(values) == $.trim($(this).text()))
-											$(this).attr('selected','selected');
-											console.log($(this).text()+'--'+$(this).val());
-									});
+									$('#'+id+' td select[name="'+target+'"] option').filter(function(){
+										return this.text == values;
+									}).prop('selected', true);
 								}
 
 							}
 							else if(format == 'text_date')
 							{
-								$('#'+id+' td input[name="'+target+'"]').val('02/03/1990');
+								$('#'+id+' td input[name="'+target+'"]').val(data_format);
 								$('#'+id+' td input[name="'+target+'"]').datepicker('update');
+							}
+							else if(format == 'text_datetime')
+							{
+								//$('#'+id+' td input[name="'+target+'"]').remove();
+								$('#'+id+' td input[name="'+target+'"]').val('01/13/2017 14:20:50');
+								$('#'+id+' td input[name="'+target+'"]').datetimepicker('update').trigger('click');
+
+							}
+							else if(format =='textarea' || format =='textarea')
+							{
+								$('#'+id+' td textarea[name="'+target+'"]').val(values);
 							}
 							else (format =='text')
 							{
