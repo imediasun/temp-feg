@@ -243,7 +243,7 @@ class FEGJobs
         $q = "select date_format(max(date_played), '%Y-%m-%d') as maxd, 
             date_format(min(date_played), '%Y-%m-%d') as mind, 
             datediff(max(date_played), min(date_played)) as ndays
-            from report_game_played WHERE record_status=1 AND report_status=0";
+            from report_game_plays WHERE record_status=1 AND report_status=0";
         
         $data = DB::select($q);
         if (!empty($data)) {
