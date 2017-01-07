@@ -183,7 +183,7 @@ function initTasks(parent) {
     parseCronStamps(parent.find('.cronStampText'));
     
     parent.find('[data-toggle="tooltip"]').tooltip();
-    parent.find('[name="run_dependent"]').prop('checked', true);
+    //parent.find('[name="run_dependent"]').prop('checked', true);
     
     parent.find('.toggleSwitch').bootstrapSwitch({
         onInit: switchOnInit,
