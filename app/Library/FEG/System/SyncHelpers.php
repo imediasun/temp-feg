@@ -204,11 +204,11 @@ class SyncHelpers
         
         self::report_archive_duplicate_location_summary_data($date, $location);
         
-        //(SELECT E.date_start FROM game_earnings E WHERE E.loc_id = L.id and E.date_start < '$nextDate' ORDER BY E.date_start DESC LIMIT 1) as date_last_played,                    
+        //
         $sql = "SELECT 
                     L.id AS location_id, 
                     '$date' as date_played,
-                    E.date_last_played,
+                    (SELECT E.date_start FROM game_earnings E WHERE E.loc_id = L.id and E.date_start < '$nextDate' ORDER BY E.date_start DESC LIMIT 1) as date_last_played,
                     L.debit_type_id,
                     '$today' as report_date,
                     E.sync_record_count, 
@@ -279,7 +279,7 @@ class SyncHelpers
         $q = "SELECT id, location_id 
             FROM report_locations 
             WHERE date_played='$date' 
-                AND record_status=1 AND report_status = 0"; 
+                AND record_status=1 AND report_status = 0 AND date_last_played IS NULL"; 
             //AND date_last_played IS NULL
             // AND report_status = 0
         $items = DB::select($q);
@@ -338,7 +338,7 @@ class SyncHelpers
             // AND report_status = 0
         $query = DB::table('report_game_plays')
             ->select('id', 'game_id', 'location_id', 'debit_type_id')
-            ->whereRaw("date_played='$date' AND record_status=1 AND report_status=0");
+            ->whereRaw("date_played='$date' AND record_status=1 AND report_status=0 AND date_last_played IS NULL");
         DB::beginTransaction();
         $query->chunk($chunkSize, 
                 function($data)  use ($date, $dateValue, &$rowcount, &$chunkCount){
@@ -652,7 +652,7 @@ class SyncHelpers
                             }
                             else {
                                 if ($isPastData) {                                    
-                                    //$possibleLocation = self::getPossibleHistoricalLocationOfGame($game_id, $date, $glocation_id);
+                                    $possibleLocation = self::getPossibleHistoricalLocationOfGame($game_id, $date, $glocation_id);
                                 }
                                 else {
                                     $possibleLocation = $glocation_id;
@@ -661,14 +661,14 @@ class SyncHelpers
                                     $gameLocationID = $possibleLocation;
                                 }
                                 if (!empty($gameLocationID)) {
-                                     //$row['debit_type_id'] = self::getLocationDebitType($gameLocationID);
+                                     $row['debit_type_id'] = self::getLocationDebitType($gameLocationID);
                                 }
                             }
                             if (empty($lastPlayed)) {
-//                                $lastPlayed = self::getPossibleLastPlayedDateOfGame($game_id, $date, $gameLocationID);
-//                                if (!empty($lastPlayed) && strtotime($lastPlayed) > 0) {
-//                                    $row['date_last_played'] = $lastPlayed; 
-//                                }
+                                $lastPlayed = self::getPossibleLastPlayedDateOfGame($game_id, $date, $gameLocationID);
+                                if (!empty($lastPlayed) && strtotime($lastPlayed) > 0) {
+                                    $row['date_last_played'] = $lastPlayed; 
+                                }
                             }
                             
 //                            
