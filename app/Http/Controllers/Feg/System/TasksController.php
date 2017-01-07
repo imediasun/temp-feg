@@ -214,7 +214,7 @@ class TasksController extends Controller
     public function getSchedulestatus(Request $request) {
         $id = $request->input('id');        
         $data = FEGSystemHelper::session_get('status_elm5_schedule_'. $id, '');        
-        return \Response::json($data);
+        return \Response::json(json_decode($data, true));
     }
     
 	function postSave( Request $request, $id = 0)
