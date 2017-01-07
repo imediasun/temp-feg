@@ -282,7 +282,8 @@ class FEGJobs
                 $L->log("DATE: $date ($dateCount/$count days)");
                 $L->log("Start Generate Daily LOCATION Summary - $date");
                 $result = SyncHelpers::generateMissingDatesForLocationSummary($date);
-                if (!$result || \Session::pull("terminate_elm5_schedule_$_scheduleId") == 1) {
+                $terminateSignal = FEGSystemHelper::session_pull("terminate_elm5_schedule_$_scheduleId") == 1;
+                if (!$result || $terminateSignal) {
                     $errorMessage = "User Terminated";
                     \App\Library\Elm5Tasks::errorSchedule($_scheduleId);
                     \App\Library\Elm5Tasks::updateSchedule($_scheduleId, array("results" => $errorMessage, "notes" => $errorMessage));
@@ -294,7 +295,8 @@ class FEGJobs
                 $L->log("END Generate Daily LOCATION Summary - $date");
                 $L->log("Start Generate Daily GAME Summary - $date");
                 $result = SyncHelpers::generateMissingLocationAndDatesForGamePlaySummary($date, $chunkSize);
-                if (!$result || \Session::pull("terminate_elm5_schedule_$_scheduleId") == 1) {
+                $terminateSignal = FEGSystemHelper::session_pull("terminate_elm5_schedule_$_scheduleId") == 1;
+                if (!$result || $terminateSignal) {
                     $errorMessage = "User Terminated at games report";
                     \App\Library\Elm5Tasks::errorSchedule($_scheduleId);
                     \App\Library\Elm5Tasks::updateSchedule($_scheduleId, array("results" => $errorMessage, "notes" => $errorMessage));
@@ -309,7 +311,7 @@ class FEGJobs
                 $timeDiffHuman = FEGSystemHelper::secondsToHumanTime($timeDiff);                                
                 $sessionLog[] = "Completed processing $date";
                 $sessionLog[] = "Time passed: $timeDiffHuman ";
-                \Session::put('status_elm5_schedule_'.$_scheduleId, $sessionLog);
+                FEGSystemHelper::session_put('status_elm5_schedule_'.$_scheduleId, $sessionLog);
         
                 $L->log("END Generate Daily GAME Summary - $date");            
 
@@ -359,7 +361,7 @@ class FEGJobs
                 $timeDiffHuman = FEGSystemHelper::secondsToHumanTime($timeDiff);                                
                 $sessionLog[] = "Completed processing for $date";
                 $sessionLog[] = "Time passed: $timeDiffHuman ";
-                \Session::put('status_elm5_schedule_'.$_scheduleId, $sessionLog);
+                FEGSystemHelper::session_put('status_elm5_schedule_'.$_scheduleId, $sessionLog);
                 
                 $L->log("END Generate Daily GAME Summary - $date");            
 
@@ -376,31 +378,7 @@ class FEGJobs
         $timeTaken = "Time taken: $timeDiffHuman ";
         $L->log($timeTaken);        
         $L->log("END generateMissingDatesForSummary");
-        \Session::put('status_elm5_schedule_'.$_scheduleId, "Completed all. $timeTaken");
+        FEGSystemHelper::session_put('status_elm5_schedule_'.$_scheduleId, "Completed all. $timeTaken");
         return $timeTaken;
     }
-    
-    public static function testScheduleAndSession($params = array()) {
-        global $_scheduleId;
-        global $__logger;
-        extract(array_merge(array(
-            '_logger' => null,
-            'reverse' => 1,
-            'chunkSize' => 50,
-        ), $params));
-        $lf = 'generateMissingDatesForSummary.log';
-        $lp = 'FEGCronTasks/Generate Missing Dates in Summary';
-        $L = FEGSystemHelper::setLogger($_logger, $lf, $lp, 'SummaryReportDates');
-        $params['_logger'] = $__logger = $L;          
-        
-        \Session::put('elm5_test'.$_scheduleId, "TESTTT");        
-        $s = \Session::pull('elm5_test'.$_scheduleId, '');
-        
-        $log = "Schedule id is $_scheduleId [session: $s]";
-        $L->log($log);
-        
-        
-        return $log;
-    }
-    
 }

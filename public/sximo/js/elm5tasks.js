@@ -47,9 +47,13 @@ function autoLoadScheduleStatus(e) {
         url = pageUrl + '/schedulestatus';
     
     if (isChecked) {
-        setInterval(function(){
+        if (intervalId) {
+            clearInterval();
+        }
+        intervalId = setInterval(function(){
             callServer(url, data, UNFN, options);
         }, 5000);
+        elm.data('autoloadIntervalId', intervalId);
     }
     else {
         clearInterval(intervalId);
@@ -179,7 +183,7 @@ function initTasks(parent) {
     parseCronStamps(parent.find('.cronStampText'));
     
     parent.find('[data-toggle="tooltip"]').tooltip();
-    parent.find('[name="run_dependent"]').prop('checked', true);
+    //parent.find('[name="run_dependent"]').prop('checked', true);
     
     parent.find('.toggleSwitch').bootstrapSwitch({
         onInit: switchOnInit,

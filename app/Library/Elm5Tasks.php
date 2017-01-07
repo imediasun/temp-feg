@@ -802,7 +802,7 @@ class Elm5Tasks
 
     
     
-    private static function log($message = '', $data = '', $L = null, $uL = null) {
+    public static function log($message = '', $data = '', $L = null, $uL = null) {
         if (is_null(self::$L)) {
             self::$L = new MyLog("task-manager.log", "FEGCronTasks", "FEG Cron Tasks");
         }
@@ -815,7 +815,7 @@ class Elm5Tasks
         }
     }
     
-    private static function cronlog($message = '', $data = '', $L = null, $uL = null) {        
+    public static function cronlog($message = '', $data = '', $L = null, $uL = null) {        
         if (is_null(self::$CL)) {
             self::$CL = new MyLog("task-manager-cron.log", "FEGCronTasks", "FEG Cron Tasks");
         }
@@ -828,7 +828,7 @@ class Elm5Tasks
         }        
     }
     
-    private static function logScheduleError($item, $e) {
+    public static function logScheduleError($item, $e) {
         
         $taskId = $item->task_id;
         $scheduleId = $item->id;
@@ -854,7 +854,7 @@ class Elm5Tasks
         self::emailScheduleError($item, $e);
         
     }
-    private static function logScheduleFatalError($errorMessage, $scheduleId) {
+    public static function logScheduleFatalError($errorMessage, $scheduleId) {
         
         
         $generalErrorMessage = "FATAL ERROR while running task with schedule ID $scheduleId";
@@ -867,7 +867,7 @@ class Elm5Tasks
         
     }
     
-    private static function emailScheduleError($item, $e) {
+    public static function emailScheduleError($item, $e) {
         
         $taskId = $item->task_id;
         $scheduleId = $item->id;
@@ -884,7 +884,7 @@ class Elm5Tasks
         
         $generalErrorMessage = "Task error while running task '$taskName' ($taskId), Schedule ID - $scheduleId";                
     }    
-    private static function emailScheduleFatalError($errorMessage, $scheduleId) {
+    public static function emailScheduleFatalError($errorMessage, $scheduleId) {
         
         $generalErrorMessage = "FATAL ERROR while running task with schedule ID $scheduleId 
                  - $errorMessage";                

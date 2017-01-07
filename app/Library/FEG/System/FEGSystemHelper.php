@@ -68,5 +68,45 @@ class FEGSystemHelper
         }
         $filepath = $path . '/'. $fileprefix . $file;        
         return $filepath;
-    }       
+    }
+    public static function set_session_log_path($file = "session.log" , $isReadonly = false) {
+        $path = realpath(storage_path())."/logs/ELM5_Sessions";        
+        if (!$isReadonly && !file_exists($path)) {
+            mkdir($path, 0755, true);
+        }
+        $filepath = $path.'/'.$file;        
+        return $filepath;
+    }
+    
+    public static function session_get($var, $default = '', $deleteFile = false) {
+        $path = self::set_session_log_path($var.'.log', true);
+        $value = $default;
+        if (file_exists($path)) {
+            $value = file_get_contents($path);
+            if ($deleteFile) {
+                unlink($path);
+            }
+        }
+        return $value;
+    }
+    public static function session_put($var, $value = '') {
+        $path = self::set_session_log_path($var.'.log');
+        if (is_array($value) || is_object($value)) {
+            $log = json_encode($value);
+        }
+        else {
+            $log = $value;
+        }
+        file_put_contents($path, $log);    
+        return $log;
+    }
+    public static function session_pull($var, $default = '') {
+        return self::session_get($var, $default, true);        
+    }
+    public static function session_forget($var) {
+        $path = self::set_session_log_path($var, true);
+        if (file_exists($path)) {
+            return unlink($path);
+        }    
+    }
 }
