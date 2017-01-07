@@ -55,7 +55,16 @@
                     data-taskid='{{ $taskId }}' 
                     title="Send Terminate signal">x</button>
             @endif </td>
-        <td>{{ $results }}</td>
+        <td>
+            @if(true || $status_code==1)
+            <label><input type='checkbox' 
+                    data-id='{{ $id }}' 
+                    data-taskid='{{ $taskId }}'
+                    class='scheduleStatusAutoLoad'/> 
+                Autoload status if available
+            </label>
+            @endif 
+            <div class='resultContent'>{{ $results }}</div></td>
         <!--<td>{{ $results }}</td>-->
     </tr>
 

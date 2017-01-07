@@ -15,23 +15,61 @@ jQuery(document).ready(function ($) {
     $(document).on('click', '.logActionsExpand', logActionsExpand);
     $(document).on('change', '.croninp', buildCrontab);
     $(document).on('click', '.terminateRunningTask', sendTerminateTaskSignal);
-    logActionsExpand
+    $(document).on('click', '.scheduleStatusAutoLoad', autoLoadScheduleStatus);
+    
     populateTaskDropdowns();
     
     initTasks($('.tasksContent'));    
 });
 
+
+function autoLoadScheduleStatus(e) {
+    e.preventDefault();
+    var elm = jQuery(this),
+        id = elm.attr('data-id'),
+        parent = elm.closest('td'),
+        target = parent.find('.resultContent'),
+        isChecked = elm.prop('checked'),
+        intervalId = elm.data('autoloadIntervalId'),
+        data = {'id': id},
+        successFn = function (result) {
+            var i, h = result;
+            if (typeof result != 'string') {
+                h = '';
+                for(var i in result) {
+                   h += result[i] + "<br>";
+                }
+            }
+            
+            target.html(h);            
+        },
+        options = {'method': 'GET', success: successFn, error: UNFN },        
+        url = pageUrl + '/schedulestatus';
+    
+    if (isChecked) {
+        setInterval(2000, function(){
+            callServer(url, data, UNFN, options);
+        });
+    }
+    else {
+        clearInterval(intervalId);
+    }
+    
+}
+
+
 function sendTerminateTaskSignal(e) {
     e.preventDefault();
     var elm = jQuery(this),
-        id = elm.attr('date-id'),
+        id = elm.attr('data-id'),
         data = {'id': id},
         options = {'method': 'POST', success: UNFN, error: UNFN },        
-        url = pageUrl + '/terminateSchedule';
+        url = pageUrl + '/terminateschedule';
 
     callServer(url, data, UNFN, options);
     elm.hide();
 }
+
 function logActionsExpand(e) {
     e.preventDefault();
     var elm = jQuery(this),

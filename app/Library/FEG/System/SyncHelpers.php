@@ -209,7 +209,7 @@ class SyncHelpers
         $sql = "SELECT 
                     L.id AS location_id, 
                     '$date' as date_played,
-                    (SELECT E.date_start FROM game_earnings E WHERE E.loc_id = L.id and E.date_start < '$nextDate' ORDER BY E.date_start DESC LIMIT 1) as date_last_played,
+                    (SELECT max(E.date_played) FROM report_locations E WHERE E.location_id = L.id and E.date_played <= '$date') as date_last_played,
                     L.debit_type_id,
                     '$today' as report_date,
                     E.sync_record_count, 
@@ -250,18 +250,11 @@ class SyncHelpers
             foreach ($data as $row) {
                 $revenue = $row['games_revenue'];
                 $row['report_status'] = (is_null($revenue) || empty($revenue) || $revenue === "0") ? 0 : 1;     
-                $validData = true;
-//                if ($isPastData) {
-//                    $locationStartDate = strtotime($row['date_opened']);
-//                    if (!empty($locationStartDate) && $locationStartDate > 0) {
-//                        $validData = $datePlayedStamp >= $locationStartDate;
-//                    }
-//                }
-                if ($validData) {
-                    unset($row['date_opened']);
-                    DB::table('report_locations')->insert($row);
+                if (empty($row['date_last_played'])) {
+                    $row['date_last_played'] = $row['date_opened'];
                 }
-                
+                unset($row['date_opened']);
+                DB::table('report_locations')->insert($row);                
             }
             DB::commit();            
         }
@@ -276,9 +269,9 @@ class SyncHelpers
         global $__logger;
         $L = $__logger;
         $lf = 'GenerateMissingDates.log';
-        $lp = 'GenerateMissingDates';        
+        $lp = 'FEGCronTasks/GenerateMissingDates';        
         if (\Session::pull("terminate_elm5_schedule_$_scheduleId") == 1) {
-            FEGSystemHelper::logit("Location Last Played date USER TERMINATED !!!!");
+            FEGSystemHelper::logit("Location Last Played date USER TERMINATED !!!!", $lf, $lp);
             return false;
         }
         $dateValue = strtotime($date);
@@ -297,7 +290,7 @@ class SyncHelpers
         foreach($items as $item) {
             
             if (\Session::pull("terminate_elm5_schedule_$_scheduleId") == 1) {
-                FEGSystemHelper::logit("LLP USER TERMINATED !!!! - rolling back");
+                FEGSystemHelper::logit("LLP USER TERMINATED !!!! - rolling back", $lf, $lp);
                 DB::rollBack();
                 return false;
             }            
@@ -318,7 +311,6 @@ class SyncHelpers
             
             if (empty($data)) {
                 FEGSystemHelper::logit("        --!!  NOT FOUND date in Report Locations", $lf, $lp);                
-                $L->log("Location: $location, ");
                 $foundLastPlayed = DB::table('location')
                         ->where('id', $location)->value('date_opened');
                 FEGSystemHelper::logit("            -- HENCE -- FOUND LOCATION date WHEN OPENED: '$foundLastPlayed'", $lf, $lp);
@@ -326,7 +318,7 @@ class SyncHelpers
             else {
                 $row = $data[0];
                 $foundLastPlayed = $row->dateLastPlayed;
-                FEGSystemHelper::logit("        :: FOUND '$foundLastPlayed' date from Report Locations: $foundLastPlayed", $lf, $lp);
+                FEGSystemHelper::logit("        : : FOUND '$foundLastPlayed' date from Report Locations: $foundLastPlayed", $lf, $lp);
             }
             
             $locationStartDatestamp = strtotime($foundLastPlayed);
@@ -336,16 +328,16 @@ class SyncHelpers
             }
             
             DB::update($updateSQL, [$foundLastPlayed,$id]);
-            FEGSystemHelper::logit("    LLP Update Location Summary's last played for $location with Last Played as $foundLastPlayed");
+            FEGSystemHelper::logit("    LLP Update Location Summary's last played for $location with Last Played as $foundLastPlayed", $lf, $lp);
             
             if (\Session::pull("terminate_elm5_schedule_$_scheduleId") == 1) {
-                FEGSystemHelper::logit("Location Last Played USER TERMINATED !!!! - rolling back");
+                FEGSystemHelper::logit("Location Last Played USER TERMINATED !!!! - rolling back", $lf, $lp);
                 DB::rollBack();
                 return false;
             }             
         }
         DB::commit();
-        $L->log("------------------------------ [ END Finding Last Played date of closed locations for $date ]");        
+        FEGSystemHelper::logit("------------------------------ [ END Finding Last Played date of closed locations for $date ]", $lf, $lp);        
         return true;
         
     }
@@ -354,15 +346,15 @@ class SyncHelpers
         global $_scheduleId;
         $L = $__logger;        
         $lf = 'GenerateMissingDates.log';
-        $lp = 'GenerateMissingDates'; 
+        $lp = 'FEGCronTasks/GenerateMissingDates'; 
         if (\Session::pull("terminate_elm5_schedule_$_scheduleId") == 1) {
-            FEGSystemHelper::logit("Game Play Date Last played USER TERMINATED !!!!");
+            FEGSystemHelper::logit("Game Play Date Last played USER TERMINATED !!!!", $lf, $lp);
             return false;
         }          
         if (empty($date)) {
             return true;
         }
-        FEGSystemHelper::logit("*********************************  SEARCH FOR LAST PLAYED DATES FOR UNPLAYED GAMES on $date ************************************");
+        FEGSystemHelper::logit("*********************************  SEARCH FOR LAST PLAYED DATES FOR UNPLAYED GAMES on $date ************************************", $lf, $lp);
         $dateValue = strtotime($date);
         $rowcount = 0;
         $chunkCount = 0;
@@ -404,7 +396,7 @@ class SyncHelpers
                         foreach ($data as $item) {
                             
                             if (\Session::pull("terminate_elm5_schedule_$_scheduleId") == 1) {
-                                FEGSystemHelper::logit("GLP{CLoZr} USER TERMINATED !!!!");
+                                FEGSystemHelper::logit("GLP{CLoZr} USER TERMINATED !!!!", $lf, $lp);
                                 return false;
                             }                             
                             $possibleLocation = $foundLocation = null;
@@ -422,9 +414,9 @@ class SyncHelpers
                             $gameLog = "[Game: $game_id,  Loc: $location (DebitType: $debitTypeId), Date: $date]";
                             $location = null;
                             
-                            FEGSystemHelper::logit("    |||||||||||||||||||||||||   $gameLog  |||||||||||||||||||||||||||||||");
+                            FEGSystemHelper::logit("    |||||||||||||||||||||||||   $gameLog  |||||||||||||||||||||||||||||||", $lf, $lp);
                                                         
-                            FEGSystemHelper::logit("         --- Search LOCATION in Game Move History");
+                            FEGSystemHelper::logit("         --- Search LOCATION in Game Move History", $lf, $lp);
                             if (empty($location)) {
                                                                 
                                 $q = "select from_loc, to_loc, 
@@ -441,7 +433,7 @@ class SyncHelpers
                                         if ($moveCount == 0 && $dateValue < $fromValue) {
                                             $possibleLocation = $floc;  
                                             $moveHistoryTop = true;
-                                            FEGSystemHelper::logit("            --- Top History item found location '$floc' where game ran before '$from'");
+                                            FEGSystemHelper::logit("            --- Top History item found location '$floc' where game ran before '$from'", $lf, $lp);
                                             break;
                                         }
                                         if ($dateValue >= $fromValue) {
@@ -452,17 +444,17 @@ class SyncHelpers
                                         }
                                     }
                                     if (!empty($possibleLocation) && !$moveHistoryTop) {
-                                        FEGSystemHelper::logit("            ---  History item found location '$possibleLocation' where game ran on and after '$gameMoveStartDate'");
+                                        FEGSystemHelper::logit("            ---  History item found location '$possibleLocation' where game ran on and after '$gameMoveStartDate'", $lf, $lp);
                                     }
                                 }
                 
                                 // fallback to present day game location 
                                 // when no data found from game move history
                                 if (empty($possibleLocation)) {                                    
-                                    FEGSystemHelper::logit("            !!! >> History item NOT FOUND - LOCATION NOT FOUND");
-                                    FEGSystemHelper::logit("                << << Get default location from game table");
+                                    FEGSystemHelper::logit("            !!! >> History item NOT FOUND - LOCATION NOT FOUND", $lf, $lp);
+                                    FEGSystemHelper::logit("                << << Get default location from game table", $lf, $lp);
                                     $possibleLocation = DB::table('game')->where('id', $game_id)->value('location_id');
-                                    FEGSystemHelper::logit("                    >> >> Default location from game table is '$possibleLocation'");
+                                    FEGSystemHelper::logit("                    >> >> Default location from game table is '$possibleLocation'", $lf, $lp);
                                     
                                     if (!empty($possibleLocation)) {
                                         $locationFromGameTable = true;
@@ -475,7 +467,7 @@ class SyncHelpers
             
                             if (!empty($location)) {                
                                 $debitTypeId = $foundDebitType = self::getLocationDebitType($location);
-                                FEGSystemHelper::logit("    ### Location found: '$location' (debit type: $debitTypeId)");
+                                FEGSystemHelper::logit("    ### Location found: '$location' (debit type: $debitTypeId)", $lf, $lp);
                             }
             
                             if (!empty($location)) {
@@ -500,63 +492,63 @@ class SyncHelpers
                                 if (!empty($data)) {
                                     $row = $data[0];
                                     $foundLastPlayed = $row->dateLastPlayed;
-                                    $foundDatestamp = strtotime($foundDate);
-                                    FEGSystemHelper::logit("        :: Date '$foundLastPlayed' found in Report Game Plays", $lf, $lp);     
+                                    $foundDatestamp = strtotime($foundLastPlayed);
+                                    FEGSystemHelper::logit("        : : Date '$foundLastPlayed' found in Report Game Plays", $lf, $lp);     
                                 }
                                 
                                 // 1 NOT FOUND: in game earnings -> set game's first date, location's first date
                                 if (empty($foundDatestamp) || $foundDatestamp < 0) {
-                                    FEGSystemHelper::logit("   << << NOT FOUND date in Report Game Plays. ");
+                                    FEGSystemHelper::logit("   << << NOT FOUND date in Report Game Plays. ", $lf, $lp);
 
                                     // 2: if present in subsequent move history 
                                     if ($moveHistorySubsequent) {
-                                        FEGSystemHelper::logit("   >> >> Trying to set game movement (first date in location) date - '$gameMoveStartDate'");
+                                        FEGSystemHelper::logit("   >> >> Trying to set game movement (first date in location) date - '$gameMoveStartDate'", $lf, $lp);
                                         if (!empty($gameMoveStartDatestamp) && $gameMoveStartDatestamp > 0 && $gameMoveStartDatestamp <= $dateValue) {
                                             $foundLastPlayed = $gameMoveStartDate;
                                             $foundDatestamp = $gameMoveStartDatestamp; 
-                                            FEGSystemHelper::logit("    << << Yes! '$gameMoveStartDate' - first date in location IS the last played date");
+                                            FEGSystemHelper::logit("    << << Yes! '$gameMoveStartDate' - first date in location IS the last played date", $lf, $lp);
                                         }
                                     }
 
                                     // 3. If not found in subsequent move history
                                     // check head move entry - i.e. either game_in_service or location's start date
                                     if (empty($foundDatestamp) || $foundDatestamp < 0) {
-                                        FEGSystemHelper::logit("   %% %% Not found in move history - fallback to either location's first date or game's intial date");
+                                        FEGSystemHelper::logit("   %% %% Not found in move history - fallback to either location's first date or game's intial date", $lf, $lp);
                                         $minGameDate = DB::table('game')->where('id', $game_id)->value('date_in_service');
-                                        FEGSystemHelper::logit("           -- Game's first date ($minGameDate)");
+                                        FEGSystemHelper::logit("           -- Game's first date ($minGameDate)", $lf, $lp);
                                         $minGameDatestamp = strtotime($minGameDate);
                                         $isMinGameDate = !empty($minGameDatestamp) && $minGameDatestamp > 0 && $minGameDatestamp <= $dateValue;
 
                                         $minLocationDate = DB::table('location')->where('id', $location)->value('date_opened');
                                         $minLocationDatestamp = strtotime($minLocationDate);
                                         $isMinLocationDate = !empty($minLocationDatestamp) && $minLocationDatestamp > 0 && $minLocationDatestamp <= $dateValue;
-                                        FEGSystemHelper::logit("           -- Location's first date ($minLocationDate)");
+                                        FEGSystemHelper::logit("           -- Location's first date ($minLocationDate)", $lf, $lp);
 
                                         if ($isMinGameDate && $isMinLocationDate) {
                                             $foundDatestamp = max($minGameDatestamp, $minLocationDatestamp);
                                             $foundLastPlayed = date("Y-m-d", $foundDatestamp);
-                                            FEGSystemHelper::logit("            -- >> Consider the higher of location and game dates - '$foundLastPlayed'");
+                                            FEGSystemHelper::logit("            -- >> Consider the higher of location and game dates - '$foundLastPlayed'", $lf, $lp);
                                         }
                                         elseif ($isMinGameDate) {
                                             $foundLastPlayed = $minGameDate;
                                             $foundDatestamp = $minGameDatestamp;
-                                            FEGSystemHelper::logit("            -- >> Consider the Game start date - '$foundLastPlayed'");
+                                            FEGSystemHelper::logit("            -- >> Consider the Game start date - '$foundLastPlayed'", $lf, $lp);
                                         }
                                         elseif($isMinLocationDate) {
                                             $foundLastPlayed = $minLocationDate;
                                             $foundDatestamp = $minLocationDatestamp;                                      
-                                            FEGSystemHelper::logit("            -- >> Consider the location's start date - '$foundLastPlayed'");
+                                            FEGSystemHelper::logit("            -- >> Consider the location's start date - '$foundLastPlayed'", $lf, $lp);
                                         }
                                     }    
                                 }
                             }   
                             
                             if (!empty($location)) {   
-                                FEGSystemHelper::logit("    FINAL: [game: $game_id], '$foundLocation'(debit type: $foundDebitType) date: '$foundLastPlayed'");
+                                FEGSystemHelper::logit("    FINAL: [game: $game_id], '$foundLocation'(debit type: $foundDebitType) date: '$foundLastPlayed'", $lf, $lp);
                                 DB::update($updateSQL, [$foundLastPlayed, $foundLocation, $foundDebitType, $id]);                            
                             }
                             else {
-                                FEGSystemHelper::logit("    FINAL: [game: $game_id] Location not found hence skipping [DATE: '$foundLastPlayed', LOC: '$foundLocation' ($foundDebitType), DBID: $id]");
+                                FEGSystemHelper::logit("    FINAL: [game: $game_id] Location not found hence skipping [DATE: '$foundLastPlayed', LOC: '$foundLocation' ($foundDebitType), DBID: $id]", $lf, $lp);
                             }
                             
                         }
@@ -577,13 +569,13 @@ class SyncHelpers
             );  
                 
         if (!$result || \Session::pull("terminate_elm5_schedule_$_scheduleId") == 1) {
-            FEGSystemHelper::logit("GLP USER TERMINATED !!!! - rolling back");
+            FEGSystemHelper::logit("GLP USER TERMINATED !!!! - rolling back", $lf, $lp);
             DB::rollBack();
             return false;
         }          
         DB::commit();
         
-        FEGSystemHelper::logit("*********************************  [ END ] SEARCH FOR LAST PLAYED DATES FOR UNPLAYED GAMES on $date ");
+        FEGSystemHelper::logit("*********************************  [ END ] SEARCH FOR LAST PLAYED DATES FOR UNPLAYED GAMES on $date ", $lf, $lp);
         
         return true;
     }
@@ -1278,30 +1270,30 @@ class SyncHelpers
         $dateValue = strtotime($date);
         //$l = new MyLog('getPossibleLastPlayedDateOfGame.log', 'Test', 'DATE');  
         //$l->log("Game: $game_id, date: $date, location: $location");
-
-        $q = "SELECT date_format(date_start, '%Y-%m-%d') as dateLastPlayed 
-                        FROM game_earnings
-                        WHERE
-                            date_start <= '$date 23:59:59'
-                            AND game_id IN ($game_id)
-                            AND loc_id=$location 
-                        ORDER BY date_start DESC LIMIT 1";
+                                
+        $q = "select max(date_played) as dateLastPlayed
+                FROM report_game_plays 
+                WHERE game_id=$game_id 
+                    AND location_id=$location
+                    AND date_played <= '$date'
+                    AND report_status=1 
+                    AND record_status=1";
         
         $data = DB::select($q);
         
         if (!empty($data)) {
             $row = $data[0];
             if (is_array($row)) {
-                $possibleDate = $row['date_last_played'];
+                $possibleDate = $row['dateLastPlayed'];
             }
             else {
-                $possibleDate = $row->date_last_played;
+                $possibleDate = $row->dateLastPlayed;
             }
             //$l->log("Step 1 [from game earnings] Possible Date: ", $possibleDate);
         }
         
         $possibleDateValue = strtotime($possibleDate);
-        $isPossibleDateEmpty = empty($possibleDateValue) || $possibleDateValue <= 0 || $possibleDateValue > $dateValue; 
+        $isPossibleDateEmpty = empty($possibleDateValue) || $possibleDateValue < 0 || $possibleDateValue > $dateValue; 
         
         // 2. try move history
         if ($isPossibleDateEmpty) {            
@@ -1309,9 +1301,8 @@ class SyncHelpers
                     date_format(from_date, '%Y-%m-%d') as from_date
                     from game_move_history WHERE game_id = $game_id order by from_date ASC";
             $data = DB::select($q);
-            if (!empty($data)) {
-                
-                foreach ($data as $row) {
+            if (!empty($data)) {                
+                foreach ($data as $moveCount => $row) {
                     if (is_array($row)) {
                         $from = $row['from_date'];
                         $tloc = $row['to_loc'];
@@ -1335,7 +1326,7 @@ class SyncHelpers
                         $gameMoveStartDatestamp = $fromValue;
                         $moveHistorySubsequent = true;
                        // $l->log("Step 2.2x [move history rest] Possible Date: ", $possibleDate);
-                    }
+                    }                    
                 }            
             }
         }
@@ -1389,8 +1380,8 @@ class SyncHelpers
                     date_format(from_date, '%Y-%m-%d') as from_date
                     from game_move_history WHERE game_id = $game_id order by from_date ASC";
         $data = DB::select($q);
-        if (!empty($data)) {            
-            foreach ($data as $row) {
+        if (!empty($data)) {
+            foreach ($data as $moveCount => $row) {
                 if (is_array($row)) {
                     $from = $row['from_date'];
                     $tloc = $row['to_loc'];
@@ -1402,7 +1393,7 @@ class SyncHelpers
                     $floc = $row->from_loc;
                 }
                 $fromValue = strtotime($from);
-                if ($dateValue < $fromValue) {
+                if ($moveCount == 0 && $dateValue < $fromValue) {
                     $possibleLocation = $floc;
                     //$l->log("STEP 1.1 [move history top] possible location: ", $possibleLocation);
                     break;
@@ -1410,7 +1401,7 @@ class SyncHelpers
                 if ($dateValue >= $fromValue) {
                     $possibleLocation = $tloc;
                     //$l->log("STEP 1.2 [move history rest] possible location: ", $possibleLocation);
-                }
+                }                
             }            
         }
         
