@@ -276,6 +276,9 @@ class FEGJobs
             $date = $max; 
             $dateCount = 1;
             while($currentDate >= $dateStartTimestamp) {
+                $sessionLog = array();
+                $sessionLog[] = "Start processing: $date ($dateCount/$count days)";
+                
                 $L->log("DATE: $date ($dateCount/$count days)");
                 $L->log("Start Generate Daily LOCATION Summary - $date");
                 $result = SyncHelpers::generateMissingDatesForLocationSummary($date);
@@ -299,7 +302,15 @@ class FEGJobs
                     \App\Library\Elm5Tasks::log("User force-termimated task with schedule ID: $_scheduleId");
                     exit();
                     break;
-                }                
+                }
+                
+                $timeEnd = microtime(true);
+                $timeDiff = round($timeEnd - $timeStart);
+                $timeDiffHuman = FEGSystemHelper::secondsToHumanTime($timeDiff);                                
+                $sessionLog[] = "Completed processing $date";
+                $sessionLog[] = "Time passed: $timeDiffHuman ";
+                \Session::put('status_elm5_schedule_'.$_scheduleId, $sessionLog);
+        
                 $L->log("END Generate Daily GAME Summary - $date");            
 
                 $currentDate = strtotime($date . " -1 day");
@@ -315,6 +326,9 @@ class FEGJobs
             $date = $min; 
             $dateCount = 1;
             while($currentDate <= $dateEndTimestamp) {
+                $sessionLog = array();
+                $sessionLog[] = "Start processing: $date ($dateCount/$count days)";
+                
                 $L->log("DATE: $date ($dateCount/$count days)");
                 $L->log("Start Generate Daily LOCATION Summary - $date");
                 $result = SyncHelpers::generateMissingDatesForLocationSummary($date);
@@ -339,6 +353,14 @@ class FEGJobs
                     exit();
                     break;
                 }                
+                
+                $timeEnd = microtime(true);
+                $timeDiff = round($timeEnd - $timeStart);
+                $timeDiffHuman = FEGSystemHelper::secondsToHumanTime($timeDiff);                                
+                $sessionLog[] = "Completed processing for $date";
+                $sessionLog[] = "Time passed: $timeDiffHuman ";
+                \Session::put('status_elm5_schedule_'.$_scheduleId, $sessionLog);
+                
                 $L->log("END Generate Daily GAME Summary - $date");            
 
                 $currentDate = strtotime($date . " +1 day");
@@ -354,6 +376,7 @@ class FEGJobs
         $timeTaken = "Time taken: $timeDiffHuman ";
         $L->log($timeTaken);        
         $L->log("END generateMissingDatesForSummary");
+        \Session::put('status_elm5_schedule_'.$_scheduleId, "Completed all. $timeTaken");
         return $timeTaken;
     }
     
