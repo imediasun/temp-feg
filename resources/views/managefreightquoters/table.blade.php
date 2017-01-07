@@ -133,15 +133,15 @@
 
 									 @if($field['field'] == 'date_submitted')
 
-										 {{  \DateHelpers::formatDate($value) }}
+										 {{  \App\Library\DateHelpers::formatDate($value) }}
 
 									 @elseif($field['field'] == 'date_paid')
 
-										 {{  \DateHelpers::formatDate($value) }}
+										 {{  \App\Library\DateHelpers::formatDate($value) }}
 
 									 @elseif($field['field'] == 'date_booked')
 
-										 {{   \DateHelpers::formatDate($value) }}
+										 {{   \App\Library\DateHelpers::formatDate($value) }}
 
 									 @else
 										 {!! $value !!}
