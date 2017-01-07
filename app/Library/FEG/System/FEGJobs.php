@@ -231,6 +231,7 @@ class FEGJobs
     }
     
     public static function generateMissingDatesForSummary($params = array()) {
+        global $_scheduleId;
         global $__logger;
         extract(array_merge(array(
             '_logger' => null,
@@ -277,10 +278,28 @@ class FEGJobs
             while($currentDate >= $dateStartTimestamp) {
                 $L->log("DATE: $date ($dateCount/$count days)");
                 $L->log("Start Generate Daily LOCATION Summary - $date");
-                SyncHelpers::generateMissingDatesForLocationSummary($date);
+                $result = SyncHelpers::generateMissingDatesForLocationSummary($date);
+                if (!$result || \Session::pull("terminate_elm5_schedule_$_scheduleId") == 1) {
+                    $errorMessage = "User Terminated";
+                    \App\Library\Elm5Tasks::errorSchedule($_scheduleId);
+                    \App\Library\Elm5Tasks::updateSchedule($_scheduleId, array("results" => $errorMessage, "notes" => $errorMessage));
+                    \App\Library\Elm5Tasks::logScheduleFatalError($errorMessage, $_scheduleId);
+                    \App\Library\Elm5Tasks::log("User force-termimated task with schedule ID: $_scheduleId");
+                    exit();
+                    break;
+                }
                 $L->log("END Generate Daily LOCATION Summary - $date");
                 $L->log("Start Generate Daily GAME Summary - $date");
-                SyncHelpers::generateMissingLocationAndDatesForGamePlaySummary($date, $chunkSize);
+                $result = SyncHelpers::generateMissingLocationAndDatesForGamePlaySummary($date, $chunkSize);
+                if (!$result || \Session::pull("terminate_elm5_schedule_$_scheduleId") == 1) {
+                    $errorMessage = "User Terminated at games report";
+                    \App\Library\Elm5Tasks::errorSchedule($_scheduleId);
+                    \App\Library\Elm5Tasks::updateSchedule($_scheduleId, array("results" => $errorMessage, "notes" => $errorMessage));
+                    \App\Library\Elm5Tasks::logScheduleFatalError($errorMessage, $_scheduleId);
+                    \App\Library\Elm5Tasks::log("User force-termimated task with schedule ID: $_scheduleId");
+                    exit();
+                    break;
+                }                
                 $L->log("END Generate Daily GAME Summary - $date");            
 
                 $currentDate = strtotime($date . " -1 day");
@@ -298,10 +317,28 @@ class FEGJobs
             while($currentDate <= $dateEndTimestamp) {
                 $L->log("DATE: $date ($dateCount/$count days)");
                 $L->log("Start Generate Daily LOCATION Summary - $date");
-                SyncHelpers::generateMissingDatesForLocationSummary($date);
+                $result = SyncHelpers::generateMissingDatesForLocationSummary($date);
+                if (!$result) {
+                    $errorMessage = "User Terminated";
+                    \App\Library\Elm5Tasks::errorSchedule($_scheduleId);
+                    \App\Library\Elm5Tasks::updateSchedule($_scheduleId, array("results" => $errorMessage, "notes" => $errorMessage));
+                    \App\Library\Elm5Tasks::logScheduleFatalError($errorMessage, $_scheduleId);
+                    \App\Library\Elm5Tasks::log("User force-termimated task with schedule ID: $_scheduleId");
+                    exit();
+                    break;
+                }                
                 $L->log("END Generate Daily LOCATION Summary - $date");
                 $L->log("Start Generate Daily GAME Summary - $date");
-                SyncHelpers::generateMissingLocationAndDatesForGamePlaySummary($date, $chunkSize);
+                $result = SyncHelpers::generateMissingLocationAndDatesForGamePlaySummary($date, $chunkSize);
+                if (!$result) {
+                    $errorMessage = "User Terminated at games report";
+                    \App\Library\Elm5Tasks::errorSchedule($_scheduleId);
+                    \App\Library\Elm5Tasks::updateSchedule($_scheduleId, array("results" => $errorMessage, "notes" => $errorMessage));
+                    \App\Library\Elm5Tasks::logScheduleFatalError($errorMessage, $_scheduleId);
+                    \App\Library\Elm5Tasks::log("User force-termimated task with schedule ID: $_scheduleId");
+                    exit();
+                    break;
+                }                
                 $L->log("END Generate Daily GAME Summary - $date");            
 
                 $currentDate = strtotime($date . " +1 day");
@@ -313,7 +350,7 @@ class FEGJobs
                 
         $timeEnd = microtime(true);
         $timeDiff = round($timeEnd - $timeStart);
-        $timeDiffHuman = self::secondsToHumanTime($timeDiff);
+        $timeDiffHuman = FEGSystemHelper::secondsToHumanTime($timeDiff);
         $timeTaken = "Time taken: $timeDiffHuman ";
         $L->log($timeTaken);        
         $L->log("END generateMissingDatesForSummary");

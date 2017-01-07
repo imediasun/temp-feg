@@ -203,7 +203,13 @@ class TasksController extends Controller
         return \Response::json($json);
     }    
     
-
+    public function postTerminateSchedule(Request $request) {
+        $id = $request->input('id');
+        if (!empty($id)) {
+            \Session::put('terminate_elm5_schedule_'. $id, 1);
+        }
+        return "";
+    }
 	function postSave( Request $request, $id = 0)
 	{
 		$rules = $this->validateForm();

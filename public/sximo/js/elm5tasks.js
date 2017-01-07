@@ -14,12 +14,24 @@ jQuery(document).ready(function ($) {
     $(document).on('click', '.collapseTask', collapseTaskContainer);
     $(document).on('click', '.logActionsExpand', logActionsExpand);
     $(document).on('change', '.croninp', buildCrontab);
+    $(document).on('click', '.terminateRunningTask', sendTerminateTaskSignal);
     logActionsExpand
     populateTaskDropdowns();
     
     initTasks($('.tasksContent'));    
 });
 
+function sendTerminateTaskSignal(e) {
+    e.preventDefault();
+    var elm = jQuery(this),
+        id = elm.attr('date-id'),
+        data = {'id': id},
+        options = {'method': 'POST', success: UNFN, error: UNFN },        
+        url = pageUrl + '/terminateSchedule';
+
+    callServer(url, data, UNFN, options);
+    elm.hide();
+}
 function logActionsExpand(e) {
     e.preventDefault();
     var elm = jQuery(this),
