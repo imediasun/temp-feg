@@ -164,7 +164,7 @@
 								<div class="col-md-6">
 									<div class="input-group datepicker" style="width:150px ">
 										<?php
-										$date = \DateHelpers::formatDate($row['need_by_date']);
+										$date = \App\Library\DateHelpers::formatDate($row['need_by_date']);
 										?>
 									{!! Form::text('need_by_date', $date,array('class'=>'form-control', 'id'=>'my-datepicker', 'style'=>'width:150px !important;'   )) !!}
 
