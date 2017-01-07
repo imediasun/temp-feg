@@ -285,7 +285,7 @@ class SyncHelpers
         $L = $__logger;
         $lf = 'GenerateMissingDates.log';
         $lp = 'FEGCronTasks/GenerateMissingDates';        
-        if (\Session::pull("terminate_elm5_schedule_$_scheduleId") == 1) {
+        if (FEGSystemHelper::session_pull("terminate_elm5_schedule_$_scheduleId") == 1) {
             FEGSystemHelper::logit("Location Last Played date USER TERMINATED !!!!", $lf, $lp);
             return false;
         }
@@ -304,7 +304,7 @@ class SyncHelpers
         FEGSystemHelper::logit("--------------------------------------------- Finding Last Played date of closed locations for $date ------------------------------", $lf, $lp);        
         foreach($items as $item) {
             
-            if (\Session::pull("terminate_elm5_schedule_$_scheduleId") == 1) {
+            if (FEGSystemHelper::session_pull("terminate_elm5_schedule_$_scheduleId") == 1) {
                 FEGSystemHelper::logit("LLP USER TERMINATED !!!! - rolling back", $lf, $lp);
                 DB::rollBack();
                 return false;
@@ -345,7 +345,7 @@ class SyncHelpers
             DB::update($updateSQL, [$foundLastPlayed,$id]);
             FEGSystemHelper::logit("    LLP Update Location Summary's last played for $location with Last Played as $foundLastPlayed\r\n", $lf, $lp);
             
-            if (\Session::pull("terminate_elm5_schedule_$_scheduleId") == 1) {
+            if (FEGSystemHelper::session_pull("terminate_elm5_schedule_$_scheduleId") == 1) {
                 FEGSystemHelper::logit("Location Last Played USER TERMINATED !!!! - rolling back", $lf, $lp);
                 DB::rollBack();
                 return false;
@@ -362,7 +362,7 @@ class SyncHelpers
         $L = $__logger;        
         $lf = 'GenerateMissingDates.log';
         $lp = 'FEGCronTasks/GenerateMissingDates'; 
-        if (\Session::pull("terminate_elm5_schedule_$_scheduleId") == 1) {
+        if (FEGSystemHelper::session_pull("terminate_elm5_schedule_$_scheduleId") == 1) {
             FEGSystemHelper::logit("Game Play Date Last played USER TERMINATED !!!!", $lf, $lp);
             return false;
         }          
@@ -410,7 +410,7 @@ class SyncHelpers
                         
                         foreach ($data as $item) {
                             
-                            if (\Session::pull("terminate_elm5_schedule_$_scheduleId") == 1) {
+                            if (FEGSystemHelper::session_pull("terminate_elm5_schedule_$_scheduleId") == 1) {
                                 FEGSystemHelper::logit("GLP{CLoZr} USER TERMINATED !!!!", $lf, $lp);
                                 return false;
                             }                             
@@ -583,7 +583,7 @@ class SyncHelpers
                 }
             );  
                 
-        if (!$result || \Session::pull("terminate_elm5_schedule_$_scheduleId") == 1) {
+        if (!$result || FEGSystemHelper::session_pull("terminate_elm5_schedule_$_scheduleId") == 1) {
             FEGSystemHelper::logit("GLP USER TERMINATED !!!! - rolling back", $lf, $lp);
             DB::rollBack();
             return false;

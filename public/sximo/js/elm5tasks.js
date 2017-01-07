@@ -47,9 +47,13 @@ function autoLoadScheduleStatus(e) {
         url = pageUrl + '/schedulestatus';
     
     if (isChecked) {
-        setInterval(function(){
+        if (intervalId) {
+            clearInterval();
+        }
+        intervalId = setInterval(function(){
             callServer(url, data, UNFN, options);
         }, 5000);
+        elm.data('autoloadIntervalId', intervalId);
     }
     else {
         clearInterval(intervalId);
