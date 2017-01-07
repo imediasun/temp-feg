@@ -1010,7 +1010,14 @@ class SyncHelpers
         $item = DB::select($q);
         $debitType = '';
         if (!empty($item)) {
-            $debitType = $item[0]->debit_type_id;
+            $data = $item[0];
+            if (is_array($data)) {
+                $debitType = $data['debit_type_id'];
+            }
+            else {
+                $debitType = $data->debit_type_id;
+            }
+            
         }        
         return $debitType;                
     }
