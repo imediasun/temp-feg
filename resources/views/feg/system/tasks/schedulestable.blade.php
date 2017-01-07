@@ -56,7 +56,7 @@
                     title="Send Terminate signal">x</button>
             @endif </td>
         <td>
-            @if(true || $status_code==1)
+            @if($status_code==1)
             <label><input type='checkbox' 
                     data-id='{{ $id }}' 
                     data-taskid='{{ $taskId }}'
