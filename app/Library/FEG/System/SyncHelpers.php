@@ -703,7 +703,7 @@ class SyncHelpers
         $insertCount = 0;
         DB::connection()->setFetchMode(PDO::FETCH_ASSOC); 
         $query->chunk($chunkSize, 
-                function($data)  use ($date, $yesterdayStamp, &$rowcount, &$chunkCount, &$insertCount, &$insertArray){
+                function($data)  use ($date, $yesterdayStamp, &$rowcount, &$chunkCount, &$insertCount, &$insertArray, $skipLastPlayedDetection, $skipLastValidityCheckOfPlayDate){
                     global $__logger;
                     global $_scheduleId;
                     
