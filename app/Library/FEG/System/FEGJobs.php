@@ -277,7 +277,7 @@ class FEGJobs
             $dateCount = 1;
             while($currentDate >= $dateStartTimestamp) {
                 $sessionLog = array();
-                $sessionLog[] = "Start processing: $date ($dateCount/$count days)";
+                $sessionLog[] = "Start processing: $date ($dateCount/$count days) [Schedule id: $_scheduleId]";
                 
                 $L->log("DATE: $date ($dateCount/$count days)");
                 $L->log("Start Generate Daily LOCATION Summary - $date");
@@ -327,7 +327,7 @@ class FEGJobs
             $dateCount = 1;
             while($currentDate <= $dateEndTimestamp) {
                 $sessionLog = array();
-                $sessionLog[] = "Start processing: $date ($dateCount/$count days)";
+                $sessionLog[] = "Start processing: $date ($dateCount/$count days) [Schedule id: $_scheduleId]";
                 
                 $L->log("DATE: $date ($dateCount/$count days)");
                 $L->log("Start Generate Daily LOCATION Summary - $date");
@@ -380,6 +380,27 @@ class FEGJobs
         return $timeTaken;
     }
     
-    
+    public static function testScheduleAndSession($params = array()) {
+        global $_scheduleId;
+        global $__logger;
+        extract(array_merge(array(
+            '_logger' => null,
+            'reverse' => 1,
+            'chunkSize' => 50,
+        ), $params));
+        $lf = 'generateMissingDatesForSummary.log';
+        $lp = 'FEGCronTasks/Generate Missing Dates in Summary';
+        $L = FEGSystemHelper::setLogger($_logger, $lf, $lp, 'SummaryReportDates');
+        $params['_logger'] = $__logger = $L;          
+        
+        \Session::put('elm5_test'.$_scheduleId, "TESTTT");        
+        $s = \Session::pull('elm5_test'.$_scheduleId, '');
+        
+        $log = "Schedule id is $_scheduleId [session: $s]";
+        $L->log($log);
+        
+        
+        return $log;
+    }
     
 }
