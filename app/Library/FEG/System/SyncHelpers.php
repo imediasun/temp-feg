@@ -647,8 +647,8 @@ class SyncHelpers
                                 location.debit_type_id as ldebit_type_id,
                                 game.game_title_id,
                                 game_title.game_type_id,
-                                IF(game.date_sold <= '$date', 3, game.status_id) as game_status,
-                                IF(game.date_sold <= '$date', 1, 0) as game_is_sold,
+                                IF(game.date_sold <> '0000-00-00' AND game.date_sold IS NOT NULL AND game.date_sold <= '$date', 3, game.status_id) as game_status,                                     
+                                IF(game.date_sold <> '0000-00-00' AND game.date_sold IS NOT NULL AND game.date_sold <= '$date', 1, 0) as game_is_sold,
                                 game.test_piece as game_on_test,
                                 game.not_debit as game_not_debit,
                                 '$today' as report_date,
@@ -714,9 +714,16 @@ class SyncHelpers
                         $rowcount += $dataSize;
                         //$__logger->log("Data received chunk #$chunkCount of size $dataSize. Total items received so far: $rowcount");        
                         foreach ($data as $row) {
+                            $gameStatus = $row['game_status'];
+                            $gameSold = $row['game_is_sold'];
                             $game_id = $row['game_id'];
-                            $revenue = $row['game_revenue'];                           
-                            $lastPlayed = $row['date_last_played'];                           
+                            $revenue = $row['game_revenue'];       
+                            
+                            if (empty($revenue) && $gameSold == 1) {
+                                continue;
+                            }
+                            
+                            $lastPlayed = $row['date_last_played'];
                             $datePlayedStamp = strtotime($date);
                             $isPastData = $datePlayedStamp < $yesterdayStamp;
                             
