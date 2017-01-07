@@ -24,7 +24,7 @@ jQuery(document).ready(function ($) {
 
 
 function autoLoadScheduleStatus(e) {
-    e.preventDefault();
+    
     var elm = jQuery(this),
         id = elm.attr('data-id'),
         parent = elm.closest('td'),
@@ -47,9 +47,9 @@ function autoLoadScheduleStatus(e) {
         url = pageUrl + '/schedulestatus';
     
     if (isChecked) {
-        setInterval(2000, function(){
+        setInterval(function(){
             callServer(url, data, UNFN, options);
-        });
+        }, 5000);
     }
     else {
         clearInterval(intervalId);

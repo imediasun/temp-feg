@@ -324,11 +324,11 @@ class SyncHelpers
             $locationStartDatestamp = strtotime($foundLastPlayed);
             if (empty($locationStartDatestamp) || $locationStartDatestamp < 0 || $locationStartDatestamp > $dateValue) {
                 $foundLastPlayed = null;
-                FEGSystemHelper::logit("    >> '$foundLastPlayed' date is not valid!! Hence setting to null", $lf, $lp);
+                FEGSystemHelper::logit("            >> '$foundLastPlayed' date is not valid!! Hence setting to null", $lf, $lp);
             }
             
             DB::update($updateSQL, [$foundLastPlayed,$id]);
-            FEGSystemHelper::logit("    LLP Update Location Summary's last played for $location with Last Played as $foundLastPlayed", $lf, $lp);
+            FEGSystemHelper::logit("    LLP Update Location Summary's last played for $location with Last Played as $foundLastPlayed\r\n", $lf, $lp);
             
             if (\Session::pull("terminate_elm5_schedule_$_scheduleId") == 1) {
                 FEGSystemHelper::logit("Location Last Played USER TERMINATED !!!! - rolling back", $lf, $lp);
@@ -376,7 +376,7 @@ class SyncHelpers
                     global $__logger;
                     $L = $__logger;
                     $lf = 'GenerateMissingDates.log';
-                    $lp = 'GenerateMissingDates'; 
+                    $lp = 'FEGCronTasks/GenerateMissingDates'; 
                     
                     try {
 
@@ -544,11 +544,11 @@ class SyncHelpers
                             }   
                             
                             if (!empty($location)) {   
-                                FEGSystemHelper::logit("    FINAL: [game: $game_id], '$foundLocation'(debit type: $foundDebitType) date: '$foundLastPlayed'", $lf, $lp);
+                                FEGSystemHelper::logit("    FINAL: DB UPDATED [game: $game_id], '$foundLocation'(debit type: $foundDebitType) date: '$foundLastPlayed' \r\n", $lf, $lp);
                                 DB::update($updateSQL, [$foundLastPlayed, $foundLocation, $foundDebitType, $id]);                            
                             }
                             else {
-                                FEGSystemHelper::logit("    FINAL: [game: $game_id] Location not found hence skipping [DATE: '$foundLastPlayed', LOC: '$foundLocation' ($foundDebitType), DBID: $id]", $lf, $lp);
+                                FEGSystemHelper::logit("    FINAL: [game: $game_id] Location not found hence skipping [DATE: '$foundLastPlayed', LOC: '$foundLocation' ($foundDebitType), DBID: $id]\r\n", $lf, $lp);
                             }
                             
                         }
