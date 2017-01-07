@@ -342,6 +342,30 @@ class SyncHelpers
         DB::beginTransaction();
         $query->chunk($chunkSize, 
                 function($data)  use ($date, $dateValue, &$rowcount, &$chunkCount){
+            
+        register_shutdown_function(function(){
+            global $_scheduleId;
+            if (!empty($_scheduleId)) {
+                $errors = [E_ERROR, E_CORE_ERROR, E_COMPILE_ERROR, E_PARSE];
+                $error = error_get_last();
+                $eType = $error['type'];
+                if (!empty($_scheduleId) && in_array($eType, $errors)) {
+                    
+                    $eFile = $error['file'];
+                    $eLine = $error['line'];
+                    $errorMessage = "[generateMissingLocationAndDatesForGamePlaySummary] " . $error['message']. "in file $eFile line $eLine";
+
+                    \App\Library\Elm5Tasks::errorSchedule($_scheduleId);
+                    \App\Library\Elm5Tasks::updateSchedule($_scheduleId, array("results" => $errorMessage, "notes" => $errorMessage));
+                    \App\Library\Elm5Tasks::logScheduleFatalError($errorMessage, $_scheduleId);
+                    \App\Library\Elm5Tasks::log("FATAL Error running task with schedule ID: $_scheduleId");
+                    \App\Library\Elm5Tasks::log("Error: ".$errorMessage);    
+                }
+            }
+            
+        });            
+            
+            
                     global $__logger;
                     $L = $__logger;
                     $updateSQL = "UPDATE report_game_plays SET 
@@ -619,6 +643,29 @@ class SyncHelpers
         $query->chunk($chunkSize, 
                 function($data)  use ($date, $yesterdayStamp, &$rowcount, &$chunkCount, &$insertCount, &$insertArray, &$gameIdArray){
                     global $__logger;
+                    
+        register_shutdown_function(function(){
+            global $_scheduleId;
+            if (!empty($_scheduleId)) {
+                $errors = [E_ERROR, E_CORE_ERROR, E_COMPILE_ERROR, E_PARSE];
+                $error = error_get_last();
+                $eType = $error['type'];
+                if (!empty($_scheduleId) && in_array($eType, $errors)) {
+                    
+                    $eFile = $error['file'];
+                    $eLine = $error['line'];
+                    $errorMessage = "[report_daily_game_summary] " . $error['message']. "in file $eFile line $eLine";
+
+                    \App\Library\Elm5Tasks::errorSchedule($_scheduleId);
+                    \App\Library\Elm5Tasks::updateSchedule($_scheduleId, array("results" => $errorMessage, "notes" => $errorMessage));
+                    \App\Library\Elm5Tasks::logScheduleFatalError($errorMessage, $_scheduleId);
+                    \App\Library\Elm5Tasks::log("FATAL Error running task with schedule ID: $_scheduleId");
+                    \App\Library\Elm5Tasks::log("Error: ".$errorMessage);    
+                }
+            }
+            
+        });                    
+                    
                     if (!empty($data)) {
                         $dataSize = count($data);
                         $chunkCount++;
@@ -1106,6 +1153,29 @@ class SyncHelpers
         $query->chunk($chunkSize, 
                 function($data)  use ($table, &$rowcount, &$chunkCount){
                     global $__logger;
+                    
+        register_shutdown_function(function(){
+            global $_scheduleId;
+            if (!empty($_scheduleId)) {
+                $errors = [E_ERROR, E_CORE_ERROR, E_COMPILE_ERROR, E_PARSE];
+                $error = error_get_last();
+                $eType = $error['type'];
+                if (!empty($_scheduleId) && in_array($eType, $errors)) {
+                    
+                    $eFile = $error['file'];
+                    $eLine = $error['line'];
+                    $errorMessage = "[TransferEarningsGeneric] " . $error['message']. "in file $eFile line $eLine";
+
+                    \App\Library\Elm5Tasks::errorSchedule($_scheduleId);
+                    \App\Library\Elm5Tasks::updateSchedule($_scheduleId, array("results" => $errorMessage, "notes" => $errorMessage));
+                    \App\Library\Elm5Tasks::logScheduleFatalError($errorMessage, $_scheduleId);
+                    \App\Library\Elm5Tasks::log("FATAL Error running task with schedule ID: $_scheduleId");
+                    \App\Library\Elm5Tasks::log("Error: ".$errorMessage);    
+                }
+            }
+            
+        });                    
+                    
                     if (!empty($data)) {
                         $dataSize = count($data);
                         $chunkCount++;
