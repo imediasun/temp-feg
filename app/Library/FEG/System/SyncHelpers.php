@@ -289,11 +289,11 @@ class SyncHelpers
             $foundLastPlayed = null;
             $id = $item->id;
             $location = $item->location_id;            
-            $Q = "SELECT mac(date_played) as dateLastPlayed 
+            $Q = "SELECT max(date_played) as dateLastPlayed 
                 FROM report_locations 
                 WHERE location_id =$location 
                     AND date_played <= '$date' 
-                    AND report_status=1;
+                    AND report_status=1
                     AND record_status=1";
             $data = DB::select($Q);
             $L->log("Location: $location, search data from game_earnings");
