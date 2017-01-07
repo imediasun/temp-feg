@@ -1339,25 +1339,25 @@ class SyncHelpers
         // copy data from users to user location
         DB::table("user_locations")->truncate();
         $q="INSERT into user_locations(user_id, location_id)
-            SELECT id as user_id, loc_1 as loc FROM `users1` where loc_1<>0
+            SELECT id as user_id, loc_1 as loc FROM `users` where loc_1<>0
             UNION
-            SELECT id as user_id, loc_2 as loc FROM `users1` where loc_2<>0
+            SELECT id as user_id, loc_2 as loc FROM `users` where loc_2<>0
             UNION
-            SELECT id as user_id, loc_3 as loc FROM `users1` where loc_3<>0
+            SELECT id as user_id, loc_3 as loc FROM `users` where loc_3<>0
             UNION
-            SELECT id as user_id, loc_4 as loc FROM `users1` where loc_4<>0
+            SELECT id as user_id, loc_4 as loc FROM `users` where loc_4<>0
             UNION
-            SELECT id as user_id, loc_5 as loc FROM `users1` where loc_5<>0
+            SELECT id as user_id, loc_5 as loc FROM `users` where loc_5<>0
             UNION
-            SELECT id as user_id, loc_6 as loc FROM `users1` where loc_6<>0
+            SELECT id as user_id, loc_6 as loc FROM `users` where loc_6<>0
             UNION
-            SELECT id as user_id, loc_7 as loc FROM `users1` where loc_7<>0
+            SELECT id as user_id, loc_7 as loc FROM `users` where loc_7<>0
             UNION
-            SELECT id as user_id, loc_8 as loc FROM `users1` where loc_8<>0
+            SELECT id as user_id, loc_8 as loc FROM `users` where loc_8<>0
             UNION
-            SELECT id as user_id, loc_9 as loc FROM `users1` where loc_9<>0
+            SELECT id as user_id, loc_9 as loc FROM `users` where loc_9<>0
             UNION
-            SELECT id as user_id, loc_10 as loc FROM `users1` where loc_10<>0
+            SELECT id as user_id, loc_10 as loc FROM `users` where loc_10<>0
             order by user_id";
         DB::insert($q);
         
