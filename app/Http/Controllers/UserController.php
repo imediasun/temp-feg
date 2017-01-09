@@ -543,7 +543,7 @@ class UserController extends Controller
 
             return Redirect::to('user/login')->with('message', \SiteHelpers::alert('success', 'Password has been saved!'));
         } else {
-            return Redirect::to('user/reset/' . $token)->with('message', \SiteHelpers::alert('error', 'The following errors occurred')
+            return Redirect::to('user/reset/?token=' . $token)->with('message', \SiteHelpers::alert('error', 'The following errors occurred')
             )->withErrors($validator)->withInput();
         }
 
