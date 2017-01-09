@@ -26,7 +26,7 @@
     <link href="{{ asset('sximo/css/feg_new_styles.css')}}" rel="stylesheet">
 	
   	</head>
-<body id="login-bg" style="background:url('{{asset("sximo/images/feg-login-bg.jpg") }}');background-repeat:no-repeat;background-size: 100%">
+<body id="login-bg" style="background:url('{{asset("sximo/images/feg-login-bg.jpg") }}');background-size: 100% auto;background-attachment: fixed;background-position: center top;">
     <div class="middle-box  ">
         <div>
 
