@@ -61,10 +61,14 @@ class SyncHelpers
         $table = "game_earnings_transfer_adjustments";
         extract(array_merge(array(
             'chunkSize' => 500,
+            'date' => null,
+            'location' => null,
             '_task' => array(),
             '_logger' => null,
         ), $params));
         $__logger = $_logger;
+        $originalDate = $date;
+        $originalDatestamp = strtotime($originalDate);
         $__logger->log("Start finding pending transfers");
         $q = "SELECT * from $table WHERE status=1";
         $data = DB::select($q);
@@ -73,6 +77,11 @@ class SyncHelpers
             foreach($data as $item) {
                 $location = $item->loc_id;
                 $date = $item->date_start;
+                $datestamp = strtotime($date);
+                if (!empty($originalDate) && $datestamp > $originalDatestamp) {
+                    $__logger->log("Skipping retry for $date ($location) as the retry date is in future to the given date $originalDate");
+                    continue;
+                }
 
                 $logData = " for $date ". 
                     (empty($location)? "" : ", Location: $location");
@@ -95,10 +104,10 @@ class SyncHelpers
                     $__logger->log("Transfer data on retry: $logData");
                     $count = self::TransferEarningsGeneric($debitTypeId, $date, $location, $chunkSize);
 
-                    self::generateDailySummary(array_merge(array(
+                    self::generateDailySummary(array_merge($params, array(
                                 'date' => $date,
                                 'location' => $location,
-                            ), $params));
+                            )));
 
                     $__logger->log("Update sync status of pending Earnings: $logData");
                     self::syncedMissingEarningsData($date, $location);
@@ -828,12 +837,12 @@ class SyncHelpers
         ), $params)); 
         $__logger = $_logger;
                 
-        $__logger->log("Start Generate Daily LOCATION Summary");
+        $__logger->log("Start Generate Daily LOCATION Summary $date - $location");
         self::report_daily_location_summary($params);
-        $__logger->log("END Generate Daily LOCATION Summary");
-        $__logger->log("Start Generate Daily GAME Summary");
+        $__logger->log("END Generate Daily LOCATION Summary $date - $location");
+        $__logger->log("Start Generate Daily GAME Summary $date - $location");
         self::report_daily_game_summary($params);
-        $__logger->log("END Generate Daily GAME Summary");
+        $__logger->log("END Generate Daily GAME Summary $date - $location");
     }       
      public static function generateDailySummaryDateRange($params = array()) {
         global $__logger;
