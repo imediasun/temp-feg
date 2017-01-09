@@ -611,6 +611,7 @@ class ReportGenerator
         $notPlayedGames = array();
         $notPlayedGamesFlat = array();
         $notPlayedMoreThanAWeek = array();
+        $rowIndex = 0;
         foreach($data as $index => $row) {
             $locationId = $row->location_id;
             $locationName = $row->location_name;
@@ -622,7 +623,6 @@ class ReportGenerator
             $daysNotPlayed = $row->days_not_played;
             $downForText = $daysNotPlayed > 1 ? 
                     "<em style=\"color:red\"> - down for <b>$daysNotPlayed days<b></em>" : "";
-            $rowIndex = $index+1;
             
             $game = array(
                 "location_id" => $locationId,
@@ -641,6 +641,7 @@ class ReportGenerator
             }
             
             if (!in_array($locationId, $locationsNotReportingIds)) {
+                $rowIndex++;                
                 $report[] = "$rowIndex.) <b>$gameId | $gameTitle</b>" . 
                     " at <b>$locationId | $locationName</b> $downForText<br>";                
             }
