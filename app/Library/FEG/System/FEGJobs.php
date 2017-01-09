@@ -419,7 +419,8 @@ class FEGJobs
         
         if ($skipAdjustmentMeta != 1) {
         $L->log("Sync and Clean earnings adjustment meta");
-        $result = \App\Library\SyncFromOldLiveHelpers::syncGameEarningsAdjMetaFromLive($cParams);
+        $aParams = array_merge($params, array("date" => $min));
+        $result = \App\Library\SyncFromOldLiveHelpers::syncGameEarningsAdjMetaFromLive($aParams);
         if (FEGSystemHelper::session_pull("terminate_elm5_schedule_$_scheduleId") == 1) {
             $errorMessage = "User Terminated befor transfer of $date";
             \App\Library\Elm5Tasks::errorSchedule($_scheduleId);
