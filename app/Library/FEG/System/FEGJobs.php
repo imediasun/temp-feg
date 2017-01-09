@@ -386,7 +386,7 @@ class FEGJobs
     
     public static function bulkDailyTransfer($params=array()) {
         global $__logger;
-        $_scheduleId;
+        global $_scheduleId;
         $lf = 'BulkDailyTransfer.log';
         $lp = 'FEGCronTasks/BulkDailyTransfer';        
         extract(array_merge(array(
