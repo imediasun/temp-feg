@@ -266,6 +266,8 @@ class UserController extends Controller
                             \Session::put('user_locations', $user_locations);
                             \Session::put('selected_location', $user_locations[0]->id);
                             \Session::put('selected_location_name', $user_locations[0]->location_name_short);
+                        } else {
+                            \Session::put('selected_location', 0);
                         }
                         \Session::put('get_locations_by_region', $row->get_locations_by_region);
                         \Session::put('email_2', $row->email_2);
