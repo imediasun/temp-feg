@@ -20,6 +20,9 @@ class SyncFromOldLiveHelpers
         extract(array_merge(array(
             'cleanFirst' => 0,
             'reverse' => 1,
+            'skipSyncCommon' => 0,
+            'dateStart' => null,
+            'dateEnd' => null,
         ), $params));
         
         $L = $_logger;
@@ -27,15 +30,17 @@ class SyncFromOldLiveHelpers
         
         $timeStart = microtime(true);
         
-        self::commonSyncAll($params);
+        if ($skipSyncCommon != 1) {
+            self::commonSyncAll($params);
+        }        
         $q = "select date_format(max(date_start), '%Y-%m-%d') as maxd, 
             date_format(min(date_start), '%Y-%m-%d') as mind, 
             datediff(max(date_start), min(date_start)) as ndays
             from game_earnings";
         $data = DB::select($q);
         if (!empty($data)) {
-            $max = $data[0]->maxd;
-            $min = $data[0]->mind;
+            $max = !empty($dateEnd) ? $dateEnd : $data[0]->maxd;
+            $min = !empty($dateStart) ? $dateStart : $data[0]->mind;
             $count = $data[0]->ndays;
         }
         

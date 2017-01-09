@@ -280,7 +280,7 @@ class FEGJobs
                 $sessionLog[] = "Start processing: $date ($dateCount/$count days) [Schedule id: $_scheduleId]";
                 
                 $L->log("DATE: $date ($dateCount/$count days)");
-                $L->log("Start Generate Daily LOCATION Summary - $date");
+                $L->log("Start finding missing date for locations - $date");
                 $result = SyncHelpers::generateMissingDatesForLocationSummary($date);
                 $terminateSignal = FEGSystemHelper::session_pull("terminate_elm5_schedule_$_scheduleId") == 1;
                 if (!$result || $terminateSignal) {
@@ -292,8 +292,9 @@ class FEGJobs
                     exit();
                     break;
                 }
-                $L->log("END Generate Daily LOCATION Summary - $date");
-                $L->log("Start Generate Daily GAME Summary - $date");
+                $L->log("END finding missing date for locations - $date");
+                
+                $L->log("START finding missing date for game plays - $date");
                 $result = SyncHelpers::generateMissingLocationAndDatesForGamePlaySummary($date, $chunkSize);
                 $terminateSignal = FEGSystemHelper::session_pull("terminate_elm5_schedule_$_scheduleId") == 1;
                 if (!$result || $terminateSignal) {
@@ -313,7 +314,7 @@ class FEGJobs
                 $sessionLog[] = "Time passed: $timeDiffHuman ";
                 FEGSystemHelper::session_put('status_elm5_schedule_'.$_scheduleId, $sessionLog);
         
-                $L->log("END Generate Daily GAME Summary - $date");            
+                $L->log("END finding missing date for game plays - $date");
 
                 $currentDate = strtotime($date . " -1 day");
                 $date = date("Y-m-d", $currentDate);
@@ -332,7 +333,7 @@ class FEGJobs
                 $sessionLog[] = "Start processing: $date ($dateCount/$count days) [Schedule id: $_scheduleId]";
                 
                 $L->log("DATE: $date ($dateCount/$count days)");
-                $L->log("Start Generate Daily LOCATION Summary - $date");
+                $L->log("Start finding missing date for locations - $date");
                 $result = SyncHelpers::generateMissingDatesForLocationSummary($date);
                 if (!$result) {
                     $errorMessage = "User Terminated";
@@ -343,8 +344,8 @@ class FEGJobs
                     exit();
                     break;
                 }                
-                $L->log("END Generate Daily LOCATION Summary - $date");
-                $L->log("Start Generate Daily GAME Summary - $date");
+                $L->log("END finding missing date for locations - $date");
+                $L->log("Start finding missing date for game plays - $date");
                 $result = SyncHelpers::generateMissingLocationAndDatesForGamePlaySummary($date, $chunkSize);
                 if (!$result) {
                     $errorMessage = "User Terminated at games report";
@@ -363,7 +364,7 @@ class FEGJobs
                 $sessionLog[] = "Time passed: $timeDiffHuman ";
                 FEGSystemHelper::session_put('status_elm5_schedule_'.$_scheduleId, $sessionLog);
                 
-                $L->log("END Generate Daily GAME Summary - $date");            
+                $L->log("END finding missing date for game plays - $date");    
 
                 $currentDate = strtotime($date . " +1 day");
                 $date = date("Y-m-d", $currentDate);
