@@ -45,8 +45,11 @@ class ReportGenerator
             '_logger' => null,
         ), $params));
         
+         
+        
         $__logger = $_logger;
         $__logger->log("Start Generate Daily Email Reports $date");
+        $__logger->log("PARAMS:", $params);
         
         $task = $_task;
         $isTest = $task->is_test_mode;
