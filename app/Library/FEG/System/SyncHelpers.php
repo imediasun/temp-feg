@@ -1425,11 +1425,11 @@ class SyncHelpers
         $lf = 'CleanUpSummaryReports.log';
         $lp = 'FEGCronTasks/Cleanup Summary';
         
-        extract(array(
+        extract(array_merge(array(
             'date' => null,
             'location' => null,            
             '_logger' => null,
-        ), $params);
+        ), $params));
         $L = FEGSystemHelper::setLogger($_logger, $lf, $lp, 'CleanSummaryReports');
         $params['_logger'] = $L;  
         $__logger = $L;
