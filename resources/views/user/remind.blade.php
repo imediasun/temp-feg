@@ -1,4 +1,4 @@
-@extends('layouts.reset')
+@extends('layouts.login')
 
 @section('content')
 
