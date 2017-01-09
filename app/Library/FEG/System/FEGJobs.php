@@ -436,9 +436,9 @@ class FEGJobs
             
             $cParams = array_merge($params, array('date' => $date));
             $sessionLog = array();
-            $sessionLog[] = "Start transfer: $date ($dateCountth day) [Schedule id: $_scheduleId]";
+            $sessionLog[] = "Start transfer: $date ({$dateCount}th day) [Schedule id: $_scheduleId]";
 
-            $L->log("DATE: $date ($dateCountth day)");
+            $L->log("DATE: $date ({$dateCount}th day)");
             $L->log("END Clean adjustment meta");
             $L->log("Start Transfer");
             $result = SyncHelpers::transferEarnings($cParams);
