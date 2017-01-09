@@ -7,6 +7,7 @@ use DB;
 use Carbon\Carbon;
 use App\Library\MyLog;
 use App\Library\FEG\System\FEGSystemHelper;
+use App\Library\FEG\System\SyncHelpers;
 
 
 class FEGJobs

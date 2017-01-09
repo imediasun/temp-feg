@@ -1331,37 +1331,36 @@ class SyncHelpers
                     }                    
                 }            
             }
-        }
-        
-        // 3 NOT FOUND in move history -> set game's first date, location's first date
-        if (empty($gameMoveStartDatestamp) || $gameMoveStartDatestamp < 0) {
+                
+            // 3 NOT FOUND in move history -> set game's first date, location's first date
+            if (empty($gameMoveStartDatestamp) || $gameMoveStartDatestamp < 0) {
 
-            $minGameDate = DB::table('game')->where('id', $game_id)->value('date_in_service');
-            $minGameDatestamp = strtotime($minGameDate);
-            $isMinGameDate = !empty($minGameDatestamp) && $minGameDatestamp > 0 && $minGameDatestamp <= $dateValue;
+                $minGameDate = DB::table('game')->where('id', $game_id)->value('date_in_service');
+                $minGameDatestamp = strtotime($minGameDate);
+                $isMinGameDate = !empty($minGameDatestamp) && $minGameDatestamp > 0 && $minGameDatestamp <= $dateValue;
 
-            $minLocationDate = DB::table('location')->where('id', $location)->value('date_opened');
-            $minLocationDatestamp = strtotime($minLocationDate);
-            $isMinLocationDate = !empty($minLocationDatestamp) && $minLocationDatestamp > 0 && $minLocationDatestamp <= $dateValue;
+                $minLocationDate = DB::table('location')->where('id', $location)->value('date_opened');
+                $minLocationDatestamp = strtotime($minLocationDate);
+                $isMinLocationDate = !empty($minLocationDatestamp) && $minLocationDatestamp > 0 && $minLocationDatestamp <= $dateValue;
 
-            if ($isMinGameDate && $isMinLocationDate) {
-                $possibleDateValue = max($minGameDatestamp, $minLocationDatestamp);
-                $possibleDate = date("Y-m-d", $possibleDateValue);
+                if ($isMinGameDate && $isMinLocationDate) {
+                    $possibleDateValue = max($minGameDatestamp, $minLocationDatestamp);
+                    $possibleDate = date("Y-m-d", $possibleDateValue);
 
+                }
+                elseif ($isMinGameDate) {
+                    $possibleDate = $minGameDate;
+                    $possibleDateValue = $minGameDatestamp;
+                }
+                elseif($isMinLocationDate) {
+                    $possibleDate = $minLocationDate;
+                    $possibleDateValue = $minLocationDatestamp;                                      
+                }
             }
-            elseif ($isMinGameDate) {
-                $possibleDate = $minGameDate;
-                $possibleDateValue = $minGameDatestamp;
-            }
-            elseif($isMinLocationDate) {
-                $possibleDate = $minLocationDate;
-                $possibleDateValue = $minLocationDatestamp;                                      
+            else {
+                $possibleDate = $gameMoveStartDate;
             }
         }
-        else {
-            $possibleDate = $gameMoveStartDate;
-        }
-
             
         $possibleDateValue = strtotime($possibleDate);
         $isPossibleDateEmpty = empty($possibleDateValue) || $possibleDateValue <= 0 || $possibleDateValue > $dateValue; 
