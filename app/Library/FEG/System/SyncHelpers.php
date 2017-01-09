@@ -834,6 +834,7 @@ class SyncHelpers
             'location' => null,
             '_task' => array(),
             '_logger' => null,
+            'cleanup' => 1,
         ), $params); 
         extract($params);
         $__logger = $_logger;
@@ -844,7 +845,9 @@ class SyncHelpers
         $__logger->log("Start Generate Daily GAME Summary $date - $location");
         self::report_daily_game_summary($params);
         $__logger->log("END Generate Daily GAME Summary $date - $location");
-        self::cleanDailyReport($params);
+        if ($cleanup == 1) {
+            self::cleanDailyReport($params);
+        }        
     }       
      public static function generateDailySummaryDateRange($params = array()) {
         global $__logger;
