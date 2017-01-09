@@ -540,8 +540,8 @@ class Elm5Tasks
             $notScheduled = true;
             if (!empty($scheduled_at)) {                
                 $q = "SELECT * from " .self::SCHEDULESDB. "
-                    WHERE task_id = $taskId AND is_active = 1 and is_manual=$is_manual " .
-                        (empty($is_manual) ? " AND scheduled_at = '$scheduled_at' " : "");
+                    WHERE task_id = $taskId AND is_active = 1 
+                        AND scheduled_at = '$scheduled_at' ";
                 $scheduledTask = DB::select($q);
                 if ($scheduledTask && count($scheduledTask) > 0) {
                     $notScheduled = false;
