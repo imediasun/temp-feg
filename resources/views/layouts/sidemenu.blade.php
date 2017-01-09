@@ -53,7 +53,7 @@ $selected_loc=\Session::get('selected_location');?>
                     </h5>
                     <table class="budget-summery">
                         <tr>
-                            <td width="150">Merchandise</td>
+                            <td width="120">Merchandise</td>
                             <td>$ {{ number_format($orderData['monthly_merch_order_total'], 2, '.', ',') }}</td>
                         </tr>
                         <tr class="border-bottom">
