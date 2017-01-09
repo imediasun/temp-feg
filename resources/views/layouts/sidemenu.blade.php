@@ -43,7 +43,7 @@ $selected_loc=\Session::get('selected_location');?>
             <li>
                 <div class="profile-element" >
                     <h5 id="profile-element-heading">@if($orderData['user_group'] == 'regusers')
-                            Location {{ $orderData['selected_location'] }} - Expense Summary
+                            Location @if($orderData['selected_location'] != 0) {{ $orderData['selected_location'] }} @else {{ 'not set' }}@endif  - Expense Summary
                         @elseif ($orderData['user_group'] == 'distmgr')
                             All {{ SiteHelpers::getRegionName($orderData['reg_id']) }} Locations - Expense Summary
                         @else
