@@ -23,6 +23,22 @@
                 <p><strong>{{ $row->video_title }} </strong><span style="color: #808080;">by {{ $row->users }}</span></p>
                 <p><iframe src="https://youtube.com/embed/{{$row->video_path}}" width="675" height="380" allowfullscreen="allowfullscreen"></iframe></p>
                 @endforeach
+				<p>Click on links below to download training materials..</p>
+				<ul>
+			         <li><a href="{{asset('trainingmaterial/sacoa_redemption_program_manual_195_eng.doc')}}">Sacoa redemption program manual</a></li>
+			         <li><a href="{{asset('trainingmaterial/merch_training_binder.doc')}}">Merch Training Binder</a></li>
+					 <li><a href="{{asset('trainingmaterial/arcade_decor.pptx')}}">Arcade Decor PowerPoint</a></li>
+					 <li><a href="{{asset('trainingmaterial/throw_percentages.xlsm')}}">Throw Percentages with Reset Macro</a></li>
+					 <li><a href="{{asset('trainingmaterial/merchandising_standards.doc')}}">merchandising standards</a></li>
+					 <li><a href="{{asset('trainingmaterial/eclaw_standards_guide .doc')}}">E-Claw Standards</a></li>
+					 <li><a href="{{asset('trainingmaterial/mega_stacker_standards_guide.doc')}}">Mega Stacker Standards</a></li>
+			         <li><a href="{{asset('trainingmaterial/high_end_merchandiser_standards.doc')}}">High-End Merchandisers Standards</a></li>
+			         <li><a href="{{asset('trainingmaterial/miscellaneous_merchandisers.doc')}}"> Merchandisers Standards</a></li>
+			         <li><a href="{{asset('trainingmaterial/redemption_decor_standards.doc')}}">Redemption Decor Standards</a></li>
+				     <li><a href="{{asset('trainingmaterial/traditional_crane_standards.doc')}}">Traditional Crane Standards</a></li>
+				     <li><a href="{{asset('trainingmaterial/ticket_bow_101.doc')}}">Ticket Bow 101</a></li>
+				     <li><a href="{{asset('trainingmaterial/prize_ordering_101.docx')}}">Prize Ordering 101</a></li>
+				</ul>
             </div>
             <div class="clearfix">&nbsp;</div>
 	@else
