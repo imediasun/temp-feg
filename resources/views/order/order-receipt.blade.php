@@ -1,6 +1,17 @@
 @extends('layouts.app')
 @section('content')
+    <div class="page-content row">
+    <div class="page-header">
+        <div class="page-title">
+            <h3> <?php echo $pageTitle ;?> <small>{{ $pageNote }}</small></h3>
+        </div>
+        <ul class="breadcrumb">
+            <li><a href="{{ URL::to('dashboard') }}">{{ Lang::get('core.home') }}</a></li>
+            <li class="active">{{ $pageTitle }}</li>
+        </ul>
+    </div>
 
+    <div class="page-content-wrapper m-t">
     <div class="sbox">
         <div class="sbox-title">
             <h4><i class="fa fa-table"></i> <?php echo $pageTitle;?>
@@ -12,7 +23,7 @@
 <div class="ajaxLoading"></div>
             {!! Form::open(array('url'=>'order/receiveorder/', 'class'=>'form-vertical','files' => true ,
             'parsley-validate'=>'','novalidate'=>' ','id'=> 'orderreceiveFormAjax')) !!}
-            <div class="col-md-offset-1 col-md-11 ">
+            <div class="col-sm-12 ">
                 <fieldset>
                     <legend>Order Receipt</legend>
                     <div class=" table-responsive col-md-12 col-md-offset-2 item-receipt-container">
@@ -201,7 +212,8 @@
 
     </div>
     </div>
-
+    </div>
+</div>
     <script type="text/javascript">
         $(document).ready(function () {
 
