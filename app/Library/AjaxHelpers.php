@@ -57,8 +57,8 @@ class AjaxHelpers
 			$val = $attribute['formater']['value'];
 			foreach($row as $k=>$i)
 			{
-				if (preg_match("/$k/",$val))
-					$val = str_replace($k,$i,$val);				
+				if (preg_match('/\b('.$k.')\b/',$val))
+                $val = str_replace($k,$i,$val);
 			}
 			$c = explode("|",$val);
 			if(isset($c[0]) && class_exists($c[0]))

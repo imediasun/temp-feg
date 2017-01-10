@@ -13,11 +13,6 @@
 
     <div class="page-content-wrapper m-t">
     <div class="sbox">
-        <div class="sbox-title">
-            <h4><i class="fa fa-table"></i> <?php echo $pageTitle;?>
-                <small>{{ $pageNote }}</small>
-            </h4>
-        </div>
 
         <div class="sbox-content">
 <div class="ajaxLoading"></div>
