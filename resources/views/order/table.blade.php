@@ -144,7 +144,7 @@
 
 
                     @if($order_selected=='OPEN')
-                        <a href="{{ URL::to('order/orderreceipt/'.$row->id)}}" class="tips btn btn-xs btn-white" title="Receive Order"><i class="fa fa-archive" aria-hidden="true"></i></a>
+                        <a href="{{ URL::to('order/orderreceipt/'.$row->id)}}" class="tips btn btn-xs btn-white" title="Receive Order"><i class="fa fa fa-download" aria-hidden="true"></i></a>
                     @endif
 					@if($order_selected=='OPEN')
 						<a href="{{ URL::to('order/removalrequest/'.$row->po_number)}}" class="tips btn btn-xs btn-white" title="Request Removal"><i class="fa fa-trash-o " aria-hidden="true"></i></a>
