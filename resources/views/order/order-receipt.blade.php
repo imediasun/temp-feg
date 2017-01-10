@@ -17,7 +17,7 @@
                     <legend>Order Receipt</legend>
                     <div class=" table-responsive col-md-12 col-md-offset-2 item-receipt-container">
                         <table class="table">
-                            <tr><td><b>PO #</b></td><td>{{ $data['po_number'] }}</td></tr>
+                            <tr><td  style="border: none;" ><b>PO #</b></td><td  style="border: none;" >{{ $data['po_number'] }}</td></tr>
                             <tr><td><b>Ordered By</b></td><td>{{ $data['order_user_name'] }}</td></tr>
                             <tr><td><b>Location </b></td><td>{{ $data['location_id'] }}</td></tr>
                             <tr><td><b>Vendor</b></td><td>{{ $data['vendor_name'] }}</td></tr>
@@ -72,7 +72,7 @@
                                 <th>Qty</th>
                                 <th>Received Qty</th>
                                 <th>Partially Received</th>
-                                <th></th>
+                                <th>Qty</th>
                                 <th>Total ( $ )</th>
 
                             </tr>
