@@ -7,6 +7,7 @@ use DB;
 use Carbon\Carbon;
 use App\Library\MyLog;
 use App\Library\FEG\System\FEGSystemHelper;
+use App\Library\FEG\System\SyncHelpers;
 
 
 class FEGJobs
@@ -382,4 +383,100 @@ class FEGJobs
         FEGSystemHelper::session_put('status_elm5_schedule_'.$_scheduleId, "Completed all. $timeTaken");
         return $timeTaken;
     }
+    
+    public static function bulkDailyTransfer($params=array()) {
+        global $__logger;
+        global $_scheduleId;
+        $lf = 'BulkDailyTransfer.log';
+        $lp = 'FEGCronTasks/BulkDailyTransfer';        
+        extract(array_merge(array(
+            'startDate' => null,
+            'endDate' => null,           
+            'skipAdjustmentMeta' => 0,
+            'chunkSize' => 500,
+            '_task' => array(),
+            '_logger' => null,
+        ), $params));
+        $L = FEGSystemHelper::setLogger($_logger, $lf, $lp, 'BulkDaily');
+        $params['_logger'] = $L;  
+        $__logger = $L;
+        
+        $max = !empty($dateEnd);
+        $min = !empty($dateStart);
+        if (empty($max) || empty($min)) {
+            $L->log("NO date range given. ENDING.");
+            return;            
+        }
+        
+        $L->log("Start Loop");
+        $timeStart = microtime(true);
+        
+        $dateStartTimestamp = strtotime($min);
+        $dateEndTimestamp = strtotime($max);
+        $currentDate = $dateStartTimestamp;
+        $date = $min; 
+        $dateCount = 1;
+        
+        if ($skipAdjustmentMeta != 1) {
+        $L->log("Sync and Clean earnings adjustment meta");
+        $aParams = array_merge($params, array("date" => $min));
+        $result = \App\Library\SyncFromOldLiveHelpers::syncGameEarningsAdjMetaFromLive($aParams);
+        if (FEGSystemHelper::session_pull("terminate_elm5_schedule_$_scheduleId") == 1) {
+            $errorMessage = "User Terminated befor transfer of $date";
+            \App\Library\Elm5Tasks::errorSchedule($_scheduleId);
+            \App\Library\Elm5Tasks::updateSchedule($_scheduleId, array("results" => $errorMessage, "notes" => $errorMessage));
+            \App\Library\Elm5Tasks::logScheduleFatalError($errorMessage, $_scheduleId);
+            \App\Library\Elm5Tasks::log("User force-termimated task with schedule ID: $_scheduleId");
+            FEGSystemHelper::session_put('status_elm5_schedule_'.$_scheduleId, $errorMessage);
+            exit();
+        }                
+        }
+
+        while($currentDate <= $dateEndTimestamp) {
+            
+            $cParams = array_merge($params, array('date' => $date));
+            $sessionLog = array();
+            $sessionLog[] = "Start transfer: $date ({$dateCount}th day) [Schedule id: $_scheduleId]";
+
+            $L->log("DATE: $date ({$dateCount}th day)");
+            $L->log("END Clean adjustment meta");
+            $L->log("Start Transfer");
+            $result = SyncHelpers::transferEarnings($cParams);
+            $L->log("End transfer");    
+            if (FEGSystemHelper::session_pull("terminate_elm5_schedule_$_scheduleId") == 1) {
+                $errorMessage = "User Terminated after transfer of $date";
+                \App\Library\Elm5Tasks::errorSchedule($_scheduleId);
+                \App\Library\Elm5Tasks::updateSchedule($_scheduleId, array("results" => $errorMessage, "notes" => $errorMessage));
+                \App\Library\Elm5Tasks::logScheduleFatalError($errorMessage, $_scheduleId);
+                \App\Library\Elm5Tasks::log("User force-termimated task with schedule ID: $_scheduleId");
+                FEGSystemHelper::session_put('status_elm5_schedule_'.$_scheduleId, $errorMessage);
+                exit();
+                break;
+            }                
+
+            $timeEnd = microtime(true);
+            $timeDiff = round($timeEnd - $timeStart);
+            $timeDiffHuman = FEGSystemHelper::secondsToHumanTime($timeDiff);                                
+            $sessionLog[] = "Completed transfer for $date";
+            $sessionLog[] = "Time passed: $timeDiffHuman ";
+            FEGSystemHelper::session_put('status_elm5_schedule_'.$_scheduleId, $sessionLog);
+
+
+            $currentDate = strtotime($date . " +1 day");
+            $date = date("Y-m-d", $currentDate);
+            $dateCount++;
+        }
+        $L->log("End Loop");
+                
+        $timeEnd = microtime(true);
+        $timeDiff = round($timeEnd - $timeStart);
+        $timeDiffHuman = FEGSystemHelper::secondsToHumanTime($timeDiff);
+        $timeTaken = "Time taken: $timeDiffHuman ";
+        $L->log($timeTaken);        
+        $L->log("END generateMissingDatesForSummary");
+        FEGSystemHelper::session_put('status_elm5_schedule_'.$_scheduleId, "Completed all. $timeTaken");
+        return $timeTaken;        
+        
+    }
+    
 }

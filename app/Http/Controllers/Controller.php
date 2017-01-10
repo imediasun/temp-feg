@@ -409,10 +409,11 @@ abstract class Controller extends BaseController
         $order = (isset($_GET['order']) ? $_GET['order'] : '');
         $rows = (isset($_GET['rows']) ? $_GET['rows'] : '');
         $search = (isset($_GET['search']) ? $_GET['search'] : '');
-        $product_type = (isset($_GET['prod_list_type']) ? $_GET['prod_list_type'] : '');
+        $product_list_type = (isset($_GET['prod_list_type']) ? $_GET['prod_list_type'] : '');
         $sub_type = (isset($_GET['sub_type']) ? $_GET['sub_type'] : '');
         $budget_year = (isset($_GET['budget_year']) ? $_GET['budget_year'] : '');
         $order_type = (isset($_GET['order_type']) ? $_GET['order_type'] : '');
+        $product_type = (isset($_GET['product_type']) ? $_GET['product_type'] : '');
         $active = (isset($_GET['active']) ? $_GET['active'] : '');
         $active_inactive = (isset($_GET['active_inactive']) ? $_GET['active_inactive'] : '');
         $type = (isset($_GET['type']) ? $_GET['type'] : '');
@@ -428,7 +429,9 @@ abstract class Controller extends BaseController
         if ($rows != '') $appends['rows'] = $rows;
         if ($search != '') $appends['search'] = $search;
         if ($product_type != '' || $product_type != NULL)
-            $appends['prod_list_type'] = $product_type;
+            $appends['product_type'] = $product_type;
+        if ($product_list_type != '' || $product_list_type != NULL)
+            $appends['prod_list_type'] = $product_list_type;
         if ($budget_year != '' || $budget_year != NULL)
             $appends['budget_year'] = $budget_year;
         if ($order_type != '')

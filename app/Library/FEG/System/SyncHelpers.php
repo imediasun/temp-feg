@@ -127,7 +127,7 @@ class SyncHelpers
                     $__logger->log("No Data found yet for transfer:  $logData");
                 }
                 $__logger->log("End Retry Earnings Transfer $logData");
-            }
+            }            
         }
         else {
             $__logger->log("No pending transfers found");
@@ -829,12 +829,14 @@ class SyncHelpers
     
      public static function generateDailySummary($params = array()) {
         global $__logger;
-        extract(array_merge(array(
+        $params = array_merge(array(
             'date' => date('Y-m-d', strtotime('now -1 day')),
             'location' => null,
             '_task' => array(),
             '_logger' => null,
-        ), $params)); 
+            'cleanup' => 1,
+        ), $params); 
+        extract($params);
         $__logger = $_logger;
                 
         $__logger->log("Start Generate Daily LOCATION Summary $date - $location");
@@ -843,6 +845,9 @@ class SyncHelpers
         $__logger->log("Start Generate Daily GAME Summary $date - $location");
         self::report_daily_game_summary($params);
         $__logger->log("END Generate Daily GAME Summary $date - $location");
+        if ($cleanup == 1) {
+            self::cleanDailyReport($params);
+        }        
     }       
      public static function generateDailySummaryDateRange($params = array()) {
         global $__logger;
@@ -1331,37 +1336,36 @@ class SyncHelpers
                     }                    
                 }            
             }
-        }
-        
-        // 3 NOT FOUND in move history -> set game's first date, location's first date
-        if (empty($gameMoveStartDatestamp) || $gameMoveStartDatestamp < 0) {
+                
+            // 3 NOT FOUND in move history -> set game's first date, location's first date
+            if (empty($gameMoveStartDatestamp) || $gameMoveStartDatestamp < 0) {
 
-            $minGameDate = DB::table('game')->where('id', $game_id)->value('date_in_service');
-            $minGameDatestamp = strtotime($minGameDate);
-            $isMinGameDate = !empty($minGameDatestamp) && $minGameDatestamp > 0 && $minGameDatestamp <= $dateValue;
+                $minGameDate = DB::table('game')->where('id', $game_id)->value('date_in_service');
+                $minGameDatestamp = strtotime($minGameDate);
+                $isMinGameDate = !empty($minGameDatestamp) && $minGameDatestamp > 0 && $minGameDatestamp <= $dateValue;
 
-            $minLocationDate = DB::table('location')->where('id', $location)->value('date_opened');
-            $minLocationDatestamp = strtotime($minLocationDate);
-            $isMinLocationDate = !empty($minLocationDatestamp) && $minLocationDatestamp > 0 && $minLocationDatestamp <= $dateValue;
+                $minLocationDate = DB::table('location')->where('id', $location)->value('date_opened');
+                $minLocationDatestamp = strtotime($minLocationDate);
+                $isMinLocationDate = !empty($minLocationDatestamp) && $minLocationDatestamp > 0 && $minLocationDatestamp <= $dateValue;
 
-            if ($isMinGameDate && $isMinLocationDate) {
-                $possibleDateValue = max($minGameDatestamp, $minLocationDatestamp);
-                $possibleDate = date("Y-m-d", $possibleDateValue);
+                if ($isMinGameDate && $isMinLocationDate) {
+                    $possibleDateValue = max($minGameDatestamp, $minLocationDatestamp);
+                    $possibleDate = date("Y-m-d", $possibleDateValue);
 
+                }
+                elseif ($isMinGameDate) {
+                    $possibleDate = $minGameDate;
+                    $possibleDateValue = $minGameDatestamp;
+                }
+                elseif($isMinLocationDate) {
+                    $possibleDate = $minLocationDate;
+                    $possibleDateValue = $minLocationDatestamp;                                      
+                }
             }
-            elseif ($isMinGameDate) {
-                $possibleDate = $minGameDate;
-                $possibleDateValue = $minGameDatestamp;
-            }
-            elseif($isMinLocationDate) {
-                $possibleDate = $minLocationDate;
-                $possibleDateValue = $minLocationDatestamp;                                      
+            else {
+                $possibleDate = $gameMoveStartDate;
             }
         }
-        else {
-            $possibleDate = $gameMoveStartDate;
-        }
-
             
         $possibleDateValue = strtotime($possibleDate);
         $isPossibleDateEmpty = empty($possibleDateValue) || $possibleDateValue <= 0 || $possibleDateValue > $dateValue; 
@@ -1416,7 +1420,39 @@ class SyncHelpers
         return $possibleLocation;
     }
     
-    
+    public static function cleanDailyReport($params = array()) {
+        global $__logger;
+        $lf = 'CleanUpSummaryReports.log';
+        $lp = 'FEGCronTasks/Cleanup Summary';
+        
+        extract(array_merge(array(
+            'date' => null,
+            'location' => null,            
+            '_logger' => null,
+        ), $params));
+        $L = FEGSystemHelper::setLogger($_logger, $lf, $lp, 'CleanSummaryReports');
+        $params['_logger'] = $L;  
+        $__logger = $L;
+        
+        $q = "DELETE FROM report_locations WHERE record_status = 0";
+        if (!empty($date)) {
+            $q .= " AND date_played='$date'";
+        }
+        if (!empty($location)) {
+            $q .= " AND location_id=$location";
+        }
+        $return = DB::delete($q);
+        
+        $q = "DELETE FROM report_game_plays WHERE record_status = 0";
+        if (!empty($date)) {
+            $q .= " AND date_played='$date'";
+        }
+        if (!empty($location)) {
+            $q .= " AND location_id=$location";
+        }
+        $return2 = DB::delete($q);  
+        return "Deleted records: ". ($return + $return2);
+    }
     
     public static function migrate($params = array()) {
         $L = new MyLog('database-migration.log', 'GoLiveMigration', 'Data');

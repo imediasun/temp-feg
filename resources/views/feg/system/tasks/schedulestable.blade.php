@@ -7,6 +7,7 @@
         <th>Schedule</th>
         <th>Run at</th>
         <th>End at</th>
+        <th width="20%">Params</th>
         <th width="30%">Result</th>
         <!--<th>Result</th>-->
     </tr>
@@ -56,6 +57,9 @@
                     title="Send Terminate signal">x</button>
             @endif </td>
         <td>
+            {{ $params }} 
+        </td>
+        <td>
             @if($status_code==1)
             <label><input type='checkbox' 
                     data-id='{{ $id }}' 
@@ -64,7 +68,8 @@
                 Autoload status if available
             </label>
             @endif 
-            <div class='resultContent'>{{ $results }}</div></td>
+            <div class='resultContent'>{{ $results }}</div>
+        </td>
         <!--<td>{{ $results }}</td>-->
     </tr>
 
