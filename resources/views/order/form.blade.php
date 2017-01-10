@@ -775,6 +775,17 @@ if(result.unit_price == 0 && result.case_price == 0)
 $(function()
         {
             $("#experiment").trigger('click');
+
+            $("#price").on("change",function(){
+                calculateSum();
+            });
+            $("#qty").on("change",function(){
+                calculateSum();
+            });
+
+            $("#case_price").on("change",function(){
+                calculateSum();
+            });
         });
       function ajaxViewClose1(id)
        {

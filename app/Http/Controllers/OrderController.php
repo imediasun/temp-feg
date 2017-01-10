@@ -141,7 +141,8 @@ class OrderController extends Controller
         // Get Query
         // passing All gives error in query, $cond
         //$order_selected = isset($_GET['order_type']) ? $_GET['order_type'] : 'ALL';
-        $order_selected = isset($_GET['order_type']) ? $_GET['order_type'] : '';
+
+        $order_selected = isset($_GET['order_type']) ? $_GET['order_type'] : 'OPEN';
 
 
         $results = $this->model->getRows($params, $order_selected);
