@@ -600,6 +600,7 @@ class ModuleController extends Controller
                 'simplesearchorder' => (isset($simplesearchorder[$i]) ? $simplesearchorder[$i] : ''),
                 'simplesearchfieldwidth' => (isset($simplesearchfieldwidth[$i]) ? $simplesearchfieldwidth[$i] : ''),
                 'simplesearchoperator' => (isset($simplesearchoperator[$i]) ? $simplesearchoperator[$i] : ''),
+                'simplesearchselectfieldwithoutblankdefault' => (isset($simplesearchselectfieldwithoutblankdefault[$i]) ? $simplesearchselectfieldwithoutblankdefault[$i] : '0'),
                 "sortlist" => $sortlist[$i],
                 'limited' => (isset($limited[$i]) ? $limited[$i] : ''),
                 'option' => array(
@@ -677,6 +678,7 @@ class ModuleController extends Controller
                     'simplesearchorder' => isset($form['simplesearchorder']) ? $form['simplesearchorder'] : '',
                     'simplesearchfieldwidth' => isset($form['simplesearchfieldwidth']) ? $form['simplesearchfieldwidth'] : '',
                     'simplesearchoperator' => isset($form['simplesearchoperator']) ? $form['simplesearchoperator'] : '',
+                    'simplesearchselectfieldwithoutblankdefault' => isset($form['simplesearchselectfieldwithoutblankdefault']) ? $form['simplesearchselectfieldwithoutblankdefault'] : '0',
                     "sortlist" => $form['sortlist'],
                     'option' => array(
                         "opt_type" => $form['option']['opt_type'],
@@ -783,6 +785,7 @@ class ModuleController extends Controller
             'simplesearchorder' => $request->input('simplesearchorder'),
             'simplesearchfieldwidth' => $request->input('simplesearchfieldwidth'),
             'simplesearchoperator' => $request->input('simplesearchoperator'),
+            'simplesearchselectfieldwithoutblankdefault' => $request->input('simplesearchselectfieldwithoutblankdefault'),
             'size' => '',
             'sortlist' => $request->input('sortlist'),
             'option' => array(

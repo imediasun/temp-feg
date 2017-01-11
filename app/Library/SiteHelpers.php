@@ -748,6 +748,8 @@ class SiteHelpers
         $simpleSearchEndStyle = '';
         $simpleSearchPlaceholder = '';
         $simpleSearchEndPlaceholder = '';
+        $isSSSFWOBD = false; 
+
         foreach ($forms as $f) {
             $hasSimpleSearch = isset($f['generatingSimpleSearch']) ? $f['generatingSimpleSearch'] : false;
             if ($f['field'] == $field && ($f['search'] == 1 || $hasSimpleSearch)) {
@@ -784,6 +786,11 @@ class SiteHelpers
                     $simpleSearchOptions = "$simpleSearchOptionsBasic 
                         $simpleSearchPlaceholder 
                         $simpleSearchStyle ";
+                    
+                    if (isset($f['simplesearchselectfieldwithoutblankdefault'])) {
+                        $isSSSFWOBD = $f['simplesearchselectfieldwithoutblankdefault'] == 1;
+                    } 
+                    
                 }                
                 break;
             }
@@ -958,7 +965,7 @@ class SiteHelpers
                     $multipleClass = "sel-search-multiple";
                 }
                 $form = "<select name='$field{$bulk}'  class='form-control sel-search $multipleClass' $mandatory $selectMultiple $simpleSearchOptions>" .
-						(empty($selectMultiple) ? 	"<option value=''> -- Select  -- </option>" : "") .
+						(empty($selectMultiple) || !$isSSSFWOBD ? 	"<option value=''> -- Select  -- </option>" : "") .
 						"	$opts
 						</select>";
                 break;
@@ -973,7 +980,9 @@ class SiteHelpers
                     $row = explode(":", $opt[$i]);
                     $opts .= "<option value ='" . $row[0] . "' > " . $row[1] . " </option> ";
                 }
-                $form = "<select name='$field{$bulk}' class='form-control' $mandatory $simpleSearchOptions><option value=''> -- Select  -- </option>$opts</select>";
+                $form = "<select name='$field{$bulk}' class='form-control' $mandatory $simpleSearchOptions>" .
+                        ($isSSSFWOBD ? "" : "<option value=''> -- Select  -- </option")
+                        . ">$opts</select>";
                 break;
 
 
