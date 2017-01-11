@@ -276,14 +276,14 @@ class FEGJobs
             $dataSacoaTemp = DB::connection('sacoa_sync')->select($q);
             $dataTemp = array();
             foreach($dataSacoaTemp as $row) {
-                $key = $row->loc_id."::".$row->game_id."::".trim($row->reader_id);
+                $key = $row->loc_id;
                 $dataTemp[$key] = array('db' => 'sacoa_sync', 'count' => $row->recordCount);
             }
             $dataSacoaTemp = null;
             
             $dataEmbedTemp = DB::connection('embed_sync')->select($q);
             foreach($dataEmbedTemp as $row) {
-                $key = $row->loc_id."::".$row->game_id."::".trim($row->reader_id);
+                $key = $row->loc_id;
                 $dataTemp[$key] = array('db' => 'embed_sync', 'count' => $row->recordCount);
             }
             $dataEmbedTemp = null;            
