@@ -231,6 +231,119 @@ class FEGJobs
         $L->log("***************************** END FIND DUPLICATE ********************************");
     }
     
+    public static function findMissingTransferredEarnings($params=array()) {
+        global $_scheduleId;
+        global $__logger;
+        $lfu = 'findMissingTransferredEarnings-updates.log';
+        $lfd = 'findMissingTransferredEarnings-deletes.log';
+        $lf = 'findMissingTransferredEarnings.log';
+        $lp = 'FEGCronTasks/MissingTransferredEarnings';
+        extract(array_merge(array(
+            '_logger' => null
+        ), $params));        
+        $L = FEGSystemHelper::setLogger($_logger, $lf, $lp, 'EARNINGS');
+        $params['_logger'] = $L;
+        
+        $L->log("***************************** START FIND MISSING ********************************");
+        FEGSystemHelper::logit("***************************** START FIND MISSING ********************************", $lf, $lp);
+        
+        $endDate = "2014-12-15"; //[2017-01-03 10:32:46] 2014-12-15, 30007444_103000146A00, ERP: 2, TEMP: 1
+        $endDateValue = strtotime($endDate);
+        $startDate = DB::table('game_earnings')->orderBy('date_start', 'desc')->take(1)->value('date_start');
+        $startDateValue = strtotime($startDate);
+        $date = date("Y-m-d", $startDateValue);
+        $dateValue = strtotime($date);
+        $L->log("Start: $startDate, End: $endDate => going backwards");
+        FEGSystemHelper::logit("Start: $startDate, End: $endDate => going backwards", $lf, $lp);
+        $sessionLog[] = "Job initiated - Start: $startDate, End: $endDate => going backwards";
+        FEGSystemHelper::session_put('status_elm5_schedule_'.$_scheduleId, $sessionLog);
+        
+        $totalCount = 0;
+        while ($dateValue >= $endDateValue) {
+            
+            $L->log("DATE: $date");
+            $sessionLog = array();
+            $sessionLog[] = "Working on date - $date";
+            FEGSystemHelper::session_put('status_elm5_schedule_'.$_scheduleId, $sessionLog);
+            
+            $q = "SELECT loc_id, count(game_id) recordCount 
+                FROM game_earnings 
+                WHERE date_start >= '$date' 
+                    AND date_start < DATE_ADD('$date', INTERVAL 1 DAY) 
+                GROUP BY loc_id;
+                    ";
+            
+            $dataSacoaTemp = DB::connection('sacoa_sync')->select($q);
+            $dataTemp = array();
+            foreach($dataSacoaTemp as $row) {
+                $key = $row->loc_id."::".$row->game_id."::".trim($row->reader_id);
+                $dataTemp[$key] = array('db' => 'sacoa_sync', 'count' => $row->recordCount);
+            }
+            $dataSacoaTemp = null;
+            
+            $dataEmbedTemp = DB::connection('embed_sync')->select($q);
+            foreach($dataEmbedTemp as $row) {
+                $key = $row->loc_id."::".$row->game_id."::".trim($row->reader_id);
+                $dataTemp[$key] = array('db' => 'embed_sync', 'count' => $row->recordCount);
+            }
+            $dataEmbedTemp = null;            
+            $dataERP = DB::select($q);
+            $data = array();            
+            foreach($dataERP as $row) {
+                $key = $row->loc_id;
+                $data[$key] = array('count' => $row->recordCount);
+            }
+            $dataERP = null;
+            
+            foreach($dataTemp as $key => $tempItem) {
+                $tempCount = $tempItem['count'];
+                $keyReadable = str_replace("::", ',', $key);
+                $tempDB = $tempItem['db'];
+                
+                if (!isset($data[$key])) {
+                    $totalCount++;
+                    $erpItem = $data[$key];
+                    $erpCount = $data['count'];
+                    $log = "$totalCount.), Need to retransfer, Date, $date, Location, $key, from, $tempDB, ($tempCount records)";
+                    FEGSystemHelper::logit($log, $lf, $lp);
+                    $L->log($log);
+                    FEGSystemHelper::session_put('status_elm5_schedule_'.$_scheduleId, $log);                    
+                    SyncHelpers::recordMissingEarningsData($date, $key);
+                    unset($dataTemp[$key]);                        
+                }
+                else {
+                    
+                }
+                unset($data[$key]);                
+            }
+            
+            $dateValue = strtotime($date.' -1 day');
+            $date = date("Y-m-d", $dateValue);
+            //break;
+
+            $terminateSignal = FEGSystemHelper::session_pull("terminate_elm5_schedule_$_scheduleId") == 1;
+            if ($terminateSignal) {
+                $errorMessage = "User Terminated";
+                \App\Library\Elm5Tasks::errorSchedule($_scheduleId);
+                \App\Library\Elm5Tasks::updateSchedule($_scheduleId, array("results" => $errorMessage, "notes" => $errorMessage));
+                \App\Library\Elm5Tasks::logScheduleFatalError($errorMessage, $_scheduleId);
+                \App\Library\Elm5Tasks::log("User force-termimated task with schedule ID: $_scheduleId");
+                FEGSystemHelper::session_put('status_elm5_schedule_'.$_scheduleId, $errorMessage);
+                exit();
+                break;
+            }            
+        }
+        
+        $sessionLog = "Job ended - $totalCount items added to retry sync request.";
+        FEGSystemHelper::session_put('status_elm5_schedule_'.$_scheduleId, $sessionLog);
+        
+        FEGSystemHelper::logit($sessionLog);
+        $L->log($sessionLog);
+        FEGSystemHelper::logit("***************************** END FIND MISSING ********************************", $lf, $lp);
+        $L->log("***************************** END FIND MISSING ********************************");
+    }
+    
+    
     public static function generateMissingDatesForSummary($params = array()) {
         global $_scheduleId;
         global $__logger;
@@ -290,6 +403,7 @@ class FEGJobs
                     \App\Library\Elm5Tasks::updateSchedule($_scheduleId, array("results" => $errorMessage, "notes" => $errorMessage));
                     \App\Library\Elm5Tasks::logScheduleFatalError($errorMessage, $_scheduleId);
                     \App\Library\Elm5Tasks::log("User force-termimated task with schedule ID: $_scheduleId");
+                    FEGSystemHelper::session_put('status_elm5_schedule_'.$_scheduleId, $errorMessage);
                     exit();
                     break;
                 }
@@ -304,6 +418,7 @@ class FEGJobs
                     \App\Library\Elm5Tasks::updateSchedule($_scheduleId, array("results" => $errorMessage, "notes" => $errorMessage));
                     \App\Library\Elm5Tasks::logScheduleFatalError($errorMessage, $_scheduleId);
                     \App\Library\Elm5Tasks::log("User force-termimated task with schedule ID: $_scheduleId");
+                    FEGSystemHelper::session_put('status_elm5_schedule_'.$_scheduleId, $errorMessage);
                     exit();
                     break;
                 }
@@ -342,6 +457,7 @@ class FEGJobs
                     \App\Library\Elm5Tasks::updateSchedule($_scheduleId, array("results" => $errorMessage, "notes" => $errorMessage));
                     \App\Library\Elm5Tasks::logScheduleFatalError($errorMessage, $_scheduleId);
                     \App\Library\Elm5Tasks::log("User force-termimated task with schedule ID: $_scheduleId");
+                    FEGSystemHelper::session_put('status_elm5_schedule_'.$_scheduleId, $errorMessage);
                     exit();
                     break;
                 }                
@@ -354,6 +470,7 @@ class FEGJobs
                     \App\Library\Elm5Tasks::updateSchedule($_scheduleId, array("results" => $errorMessage, "notes" => $errorMessage));
                     \App\Library\Elm5Tasks::logScheduleFatalError($errorMessage, $_scheduleId);
                     \App\Library\Elm5Tasks::log("User force-termimated task with schedule ID: $_scheduleId");
+                    FEGSystemHelper::session_put('status_elm5_schedule_'.$_scheduleId, $errorMessage);
                     exit();
                     break;
                 }                
@@ -453,6 +570,22 @@ class FEGJobs
                 exit();
                 break;
             }                
+            $sessionLog[] = "Completed transfer for $date";
+            $L->log("Start Summary");    
+            $sessionLog[] = "Start Summary: $date ({$dateCount}th day) [Schedule id: $_scheduleId]";
+            $result = SyncHelpers::generateDailySummary($cParams);
+            $L->log("End Summary");    
+            $sessionLog[] = "Completed Summary for $date";
+            if (FEGSystemHelper::session_pull("terminate_elm5_schedule_$_scheduleId") == 1) {
+                $errorMessage = "User Terminated after summary of $date";
+                \App\Library\Elm5Tasks::errorSchedule($_scheduleId);
+                \App\Library\Elm5Tasks::updateSchedule($_scheduleId, array("results" => $errorMessage, "notes" => $errorMessage));
+                \App\Library\Elm5Tasks::logScheduleFatalError($errorMessage, $_scheduleId);
+                \App\Library\Elm5Tasks::log("User force-termimated task with schedule ID: $_scheduleId");
+                FEGSystemHelper::session_put('status_elm5_schedule_'.$_scheduleId, $errorMessage);
+                exit();
+                break;
+            }            
 
             $timeEnd = microtime(true);
             $timeDiff = round($timeEnd - $timeStart);
