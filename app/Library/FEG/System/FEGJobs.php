@@ -276,45 +276,45 @@ class FEGJobs
             $dataSacoaTemp = DB::connection('sacoa_sync')->select($q);
             $dataTemp = array();
             foreach($dataSacoaTemp as $row) {
-                $key = $row->loc_id;
+                $key = $row->loc_id."::";
                 $dataTemp[$key] = array('db' => 'sacoa_sync', 'count' => $row->recordCount);
             }
             $dataSacoaTemp = null;
             
             $dataEmbedTemp = DB::connection('embed_sync')->select($q);
             foreach($dataEmbedTemp as $row) {
-                $key = $row->loc_id;
+                $key = $row->loc_id."::";
                 $dataTemp[$key] = array('db' => 'embed_sync', 'count' => $row->recordCount);
             }
             $dataEmbedTemp = null;            
             $dataERP = DB::select($q);
             $data = array();            
             foreach($dataERP as $row) {
-                $key = $row->loc_id;
+                $key = $row->loc_id."::";
                 $data[$key] = array('count' => $row->recordCount);
             }
             $dataERP = null;
             
             foreach($dataTemp as $key => $tempItem) {
                 $tempCount = $tempItem['count'];
-                $keyReadable = str_replace("::", ',', $key);
+                $keyReadable = str_replace("::", '', $key);
                 $tempDB = $tempItem['db'];
                 
                 if (!isset($data[$key])) {
                     $totalCount++;
                     $erpItem = $data[$key];
                     $erpCount = $data['count'];
-                    $log = "$totalCount.), Need to retransfer, Date, $date, Location, $key, from, $tempDB, ($tempCount records)";
+                    $log = "$totalCount.), Need to retransfer, Date, $date, Location, $keyReadable, from, $tempDB, ($tempCount records)";
                     FEGSystemHelper::logit($log, $lf, $lp);
                     $L->log($log);
                     FEGSystemHelper::session_put('status_elm5_schedule_'.$_scheduleId, $log);                    
-                    SyncHelpers::recordMissingEarningsData($date, $key);
-                    unset($dataTemp[$key]);                        
+                    SyncHelpers::recordMissingEarningsData($date, $keyReadable);
+                    unset($data[$key]);                        
                 }
                 else {
                     
                 }
-                unset($data[$key]);                
+                unset($dataTemp[$key]);                
             }
             
             $dateValue = strtotime($date.' -1 day');
