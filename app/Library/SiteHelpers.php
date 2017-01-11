@@ -894,6 +894,7 @@ class SiteHelpers
         $type = '';
         $bulk = ($bulk == true ? '[]' : '');
         $mandatory = '';
+        $selectMultiple = "";
         foreach($forms as $f)
         {
             $hasShow = isset($f['view']) ? $f['view'] == 1 : false;

@@ -231,6 +231,7 @@ function showModal(id,obj){
 }
 
 $(document).ready(function() {
+	//$(".sel-search").select2({ width:"98%"});
     $("[id^='toggle_trigger_']").on('switchChange.bootstrapSwitch', function(event, state) {
 
 

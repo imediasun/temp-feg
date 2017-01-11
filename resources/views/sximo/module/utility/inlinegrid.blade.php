@@ -48,9 +48,8 @@ $(document).ready(function() {
 							}
 							else if(format == 'text_datetime')
 							{
-								//$('#'+id+' td input[name="'+target+'"]').remove();
-								$('#'+id+' td input[name="'+target+'"]').val('01/13/2017 14:20:50');
-								$('#'+id+' td input[name="'+target+'"]').datetimepicker('update').trigger('click');
+								$('#'+id+' td input[name="'+target+'"]').val(data_format);
+								$('#'+id+' td input[name="'+target+'"]').datetimepicker('update');
 
 							}
 							else if(format =='textarea' || format =='textarea')
@@ -90,24 +89,24 @@ function canceled( id )
 }	
 function saved( id )
 {
-
+	var myId = id.split('-');
 	var datas = $('#'+id+' td :input').serialize();
+	console.log(JSON.stringify(datas));
 	$('#'+id+' .action').show();
 	$('.ajaxLoading').show();	
-	$.post( '{{$pageModule}}/save' ,datas, function( data ) {
+	$.post( '{{$pageModule}}/save/'+myId[1] ,datas, function( data ) {
 		if(data.status == 'success')
 		{
 			ajaxFilter('#{{ $pageModule }}','{{ $pageUrl }}/data');
-			notyMessage(data.message);	
+			notyMessage(data.message);
+			$('#'+id+' .actionopen').empty();
 			
 		} else {
 			$('.ajaxLoading').hide();
 			notyMessageError(data.message);	
 			return false;
 		}
-	});	
-
-	$('#'+id+' .actionopen').empty();
+	});
 }	
 
 </script>

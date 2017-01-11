@@ -121,7 +121,7 @@ App.notyConfirm = function (options)
 }
 function initiateSearchFormFields(container) {
     container.find('.date').datepicker({format:'mm/dd/yyyy',autoclose:true});
-    container.find('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});
+    container.find('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss', autoclose:true});
     container.find('.sel-search-multiple').select2();
 }
 
