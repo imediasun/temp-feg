@@ -302,17 +302,14 @@ class FEGJobs
                 
                 if (!isset($data[$key])) {
                     $totalCount++;
-                    $erpItem = $data[$key];
-                    $erpCount = $data['count'];
                     $log = "$totalCount.), Need to retransfer, Date, $date, Location, $keyReadable, from, $tempDB, ($tempCount records)";
                     FEGSystemHelper::logit($log, $lf, $lp);
                     $L->log($log);
                     FEGSystemHelper::session_put('status_elm5_schedule_'.$_scheduleId, $log);                    
-                    SyncHelpers::recordMissingEarningsData($date, $keyReadable);
-                    unset($data[$key]);                        
+                    SyncHelpers::recordMissingEarningsData($date, $keyReadable);                                          
                 }
                 else {
-                    
+                    //unset($data[$key]);
                 }
                 unset($dataTemp[$key]);                
             }
