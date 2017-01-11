@@ -384,6 +384,7 @@ class MylocationgameController extends Controller
 
     public function postGamelocation(Request $request)
     {
+       // die('here....');
         $this->data['pageTitle'] = 'game in location';
         $request = $request->all();
         $results = \DB::table('game')->where('game_title_id', '=', $request['game_title_id'])->where('location_id', '=', $request['location_id'])->get();
@@ -398,6 +399,10 @@ class MylocationgameController extends Controller
             'rows' => $rows,
             'title' => $this->data['pageTitle'],
         );
+        echo  "<pre>";
+        print_r($content['rows']);
+        echo "</pre>";
+        die();
         return view('sximo.module.utility.csv', $content);
     }
 
