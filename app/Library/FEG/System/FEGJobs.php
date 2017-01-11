@@ -26,7 +26,7 @@ class FEGJobs
             'location' => null,
         ), $params));        
         $L = FEGSystemHelper::setLogger($_logger, $lf, $lp, 'CleanSummaryReports');
-        $params['_logger'] = $L;  
+        $params['_logger'] = $__logger = $L;  
         $__logger = $L;
         
         
@@ -91,6 +91,7 @@ class FEGJobs
     }
     
     public static function findDuplicateTransferredEarnings($params=array()) {
+        global $__logger;
         $lfu = 'findDuplicateTransferredEarnings-updates.log';
         $lfd = 'findDuplicateTransferredEarnings-deletes.log';
         $lf = 'findDuplicateTransferredEarnings.log';
@@ -99,7 +100,7 @@ class FEGJobs
             '_logger' => null
         ), $params));        
         $L = FEGSystemHelper::setLogger($_logger, $lf, $lp, 'EARNINGS');
-        $params['_logger'] = $L;
+        $params['_logger'] = $__logger = $L;
         
         $L->log("***************************** START FIND DUPLICATE ********************************");
         FEGSystemHelper::logit("***************************** START FIND DUPLICATE ********************************", $lf, $lp);
@@ -242,7 +243,7 @@ class FEGJobs
             '_logger' => null
         ), $params));        
         $L = FEGSystemHelper::setLogger($_logger, $lf, $lp, 'EARNINGS');
-        $params['_logger'] = $L;
+        $params['_logger'] = $__logger = $L;
         
         $L->log("***************************** START FIND MISSING ********************************");
         FEGSystemHelper::logit("***************************** START FIND MISSING ********************************", $lf, $lp);
@@ -512,7 +513,7 @@ class FEGJobs
             '_logger' => null,
         ), $params));
         $L = FEGSystemHelper::setLogger($_logger, $lf, $lp, 'BulkDaily');
-        $params['_logger'] = $L;  
+        $params['_logger'] = $__logger = $L;  
         $__logger = $L;
         
         $max = !empty($dateEnd);
