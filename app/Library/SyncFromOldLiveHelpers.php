@@ -405,9 +405,9 @@ class SyncFromOldLiveHelpers
         self::$L->log("Start Embed Sync");
         self::live_sync_temp_earnings('livemysql_embed', 'embed_sync');
         self::$L->log("End Embed Sync");        
-        self::$L->log("Adjustments start");        
-        self::live_sync_temp_earnings_adj('livemysql_embed', 'livemysql_sacoa');
-        self::$L->log("Adjustments End"); 
+        //self::$L->log("Adjustments start");        
+        //self::live_sync_temp_earnings_adj('livemysql_embed', 'livemysql_sacoa');
+        //self::$L->log("Adjustments End"); 
 //        self::commonSyncEnd($params);
     }
 
