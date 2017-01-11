@@ -21,11 +21,7 @@ $selected_loc=\Session::get('selected_location');?>
 
 
             <div>
-                <?php
-
-                $user_locations=\Session::get('user_locations');
-
-                ?>
+                <?php $user_locations=\Session::get('user_locations'); ?>
                 @if(isset($user_locations))
                         <li style=" padding: 5px; margin-bottom: 8px;">
 
