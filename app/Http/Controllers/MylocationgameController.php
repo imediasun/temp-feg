@@ -413,10 +413,6 @@ class MylocationgameController extends Controller
             'rows' => $rows,
             'title' => $this->data['pageTitle'],
         );
-        echo  "<pre>";
-        print_r($content['rows']);
-        echo "</pre>";
-        die();
         return view('sximo.module.utility.csv', $content);
     }
 
