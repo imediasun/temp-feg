@@ -387,8 +387,22 @@ class MylocationgameController extends Controller
        // die('here....');
         $this->data['pageTitle'] = 'game in location';
         $request = $request->all();
-        $results = \DB::table('game')->where('game_title_id', '=', $request['game_title_id'])->where('location_id', '=', $request['location_id'])->get();
-        $info = $this->model->makeInfo($this->module);
+        if(!empty($request['game_title_id']) && !empty($request['location_id']))
+        {
+            $results = \DB::table('game')->where('game_title_id', '=', $request['game_title_id'])->where('location_id', '=', $request['location_id'])->get();
+        }
+        elseif(!empty($request['game_title_id']))
+        {
+            $results = \DB::table('game')->where('game_title_id', '=', $request['game_title_id'])->get();
+        }
+        elseif(!empty($request['location_id'])){
+            $results = \DB::table('game')->where('location_id', '=', $request['location_id'])->get();
+        }
+        else
+        {
+            $results = \DB::table('game')->get();
+        }
+            $info = $this->model->makeInfo($this->module);
         $rows = $results;
         foreach ($rows as &$row){
             $row->game_name=$row->game_title_id;
