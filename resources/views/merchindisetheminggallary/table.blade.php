@@ -68,13 +68,12 @@ $(document).ready(function() {
             id=$this.data('id'),
             href=$this.attr('href'),
             title=$this.attr('title'),
-            deleteLink = '<a href="#" onclick="confirmDelete('+ id +','+title+')" >Delete</a>',
-            fancyTitle =  '<div>' + title + '<br />' + deleteLink + '</div>';
-        
-        $this.data('fancybox-title', fancyTitle);
+            deleteLink = '<a href="javascript:void(0);" onclick="confirmDelete('+ id +',\''+title+'\');" >Delete</a>',
+             fancyTitle =  '<div>' + title + '<br>' + deleteLink + '</div>';
+             $this.data('fancybox-title', fancyTitle);
     });
 });
-function confirmDelete(id,title)
+function confirmDelete(id, title)
 {
     if(confirm('Are you sure you want to delete '+title))
     {
