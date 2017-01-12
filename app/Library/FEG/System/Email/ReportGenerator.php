@@ -800,8 +800,9 @@ class ReportGenerator
                 $reportString = "$prefix $dateOfPlay - $locId: $notes </span> <br>";                
                 
                 $reportAllString .= $reportString;
-                $report[$debitType] .= $reportString;
-                
+                if (!empty($debitType)) {
+                    $report[$debitType] .= $reportString;
+                }
             }
         }
         else {
