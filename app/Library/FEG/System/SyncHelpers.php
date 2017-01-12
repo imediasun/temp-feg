@@ -89,8 +89,12 @@ class SyncHelpers
                 $__logger->log("Start Retry Earnings Transfer $logData");
 
                 $debitTypeId = self::getLocationDebitType($location);
-
-                $isValidZeroSync = self::check_valid_zero_sync($date, $location, $debitTypeId);
+                if ($debitTypeId == '') {
+                    $isValidZeroSync = true;
+                }
+                else {
+                    $isValidZeroSync = self::check_valid_zero_sync($date, $location, $debitTypeId);
+                }
                 $hasSyncData = self::hasSyncData($date, $location);
 
                 if ($isValidZeroSync) {
