@@ -792,7 +792,7 @@ class ReportGenerator
                     $notes .= " OR Location is closed";
                 }
                 
-                $prefix = $debitTypeTemplate[$status][$debitType];
+                $prefix = "" . @$debitTypeTemplate[$status][$debitType];
                 if ($notes == "CLOSED") {
                     $prefix = preg_replace('/"color:.+?"/', '"color:orange"', $prefix);
                 }
