@@ -190,7 +190,7 @@
                     <input type="hidden" id="form_type" name="form_type" value="">
                     <input type="hidden" id="where_in_expression" name="where_in_expression"
                            value="{{$data['where_in_expression']}}">
-                    <input type="hidden" id="SID_string" name="SID_string" value="{{$data['SID_string']}}">
+                    <input type="hidden" id="SID_string" name="SID_string" @if(isset($data['SID_string']))) value="{{$data['SID_string']}}" @else value="" @endif>
                     <input type="hidden" id="order_id" name="order_id" value="{{ $id }}">
                     <input type="hidden" id="editmode" name="editmode" value="{{ $data['prefill_type'] }}">
                 </fieldset>
