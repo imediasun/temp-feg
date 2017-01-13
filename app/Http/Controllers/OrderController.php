@@ -426,6 +426,32 @@ class OrderController extends Controller
                     );
                     \DB::table('products')->insert($productData);
                 }
+                if(!empty($where_in))
+                {
+
+                    //// UPDATE STATUS TO APPROVED AND PROCESSED
+                    $now = $this->model->get_local_time('date');
+
+                    \DB::update('UPDATE requests
+							 SET status_id = 2,
+							 	 process_user_id = '.\Session::get('uid').',
+								 process_date = "'.$now.'"
+						   WHERE id IN('.$where_in.')');
+                    //// SUBTRACT QTY OF RESERVED AMT ITEMS
+                    $item_count = substr_count($SID_string, '-') - 1;
+                    $SID_new = $SID_string;
+                    for($i=1;$i <= $item_count;$i++)
+                    {
+                        $pos1 = strpos($SID_new,'-');
+                        $SID_new = substr($SID_new, $pos1+1);
+                        $pos2 = strpos($SID_new,'-');
+                        ${'SID' . $i}= substr($SID_new, 0, $pos2);
+                        \DB::update('UPDATE products
+						   LEFT JOIN requests ON requests.product_id = products.id
+							 	 SET products.reserved_qty = (products.reserved_qty - requests.qty)
+						   	   WHERE requests.id = '.${'SID' . $i}.' AND products.is_reserved = 1');
+                    }
+                }
             }
             // $mailto = $vendor_email;
             $from = \Session::get('eid');
