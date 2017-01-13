@@ -71,7 +71,16 @@ class LocationController extends Controller
         // End Filter sort and order for query
         // Filter Search for query
         $filter = (!is_null($request->input('search')) ? $this->buildSearch() : '');
-
+        
+        // Special filter for default active location
+        if (stripos($filter, "location.active") === false ) {
+            $filter .= " AND location.active = '1'";
+        }
+        // and showing both active and inactive location
+        if (stripos($filter, "AND location.active = '-1'") >= 0 ) {
+            $filter = str_replace("AND location.active = '-1'", "", $filter);
+        }
+        
 
         $page = $request->input('page', 1);
         $params = array(

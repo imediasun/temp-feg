@@ -20,6 +20,7 @@
     </div>
 </div>
 
+<div class="sbox-content" style="padding: 10px 20px 7px 15px; border: none;">
 <div class="row m-b" style="margin-bottom: 1px;">
 	<div class="col-md-9" style="padding-left: 0px !important">
 			@if($access['is_add'] ==1)
@@ -79,6 +80,7 @@
         @endif
     </div>
 	</div>
+</div>
 </div>
 
 <script>

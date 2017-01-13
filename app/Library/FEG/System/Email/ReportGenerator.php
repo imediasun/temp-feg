@@ -792,7 +792,7 @@ class ReportGenerator
                     $notes .= " OR Location is closed";
                 }
                 
-                $prefix = $debitTypeTemplate[$status][$debitType];
+                $prefix = "" . @$debitTypeTemplate[$status][$debitType];
                 if ($notes == "CLOSED") {
                     $prefix = preg_replace('/"color:.+?"/', '"color:orange"', $prefix);
                 }
@@ -800,8 +800,9 @@ class ReportGenerator
                 $reportString = "$prefix $dateOfPlay - $locId: $notes </span> <br>";                
                 
                 $reportAllString .= $reportString;
-                $report[$debitType] .= $reportString;
-                
+                if (!empty($debitType)) {
+                    $report[$debitType] .= $reportString;
+                }
             }
         }
         else {
