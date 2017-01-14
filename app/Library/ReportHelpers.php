@@ -1403,7 +1403,12 @@ class ReportHelpers
         return $count;          
     }    
    
-    public static function buildBlankResultDataDueToNoLocation($message = "No associated location found", $topMessage = "No report", $bottomMessage = "") {
+    public static function buildBlankResultDataDueToNoLocation($message = "", $topMessage = "Report not available", $bottomMessage = "") {
+        if (empty($message)) {
+            $message = "In order to run reports you must be assigned to atleast one location. 
+                You have not been assigned to any locations. 
+                Please contact an administrator if you believe this to be an error.";
+        }
         $result = self::buildBlankResultData($message, $topMessage, $bottomMessage);
         return $result; 
     }
