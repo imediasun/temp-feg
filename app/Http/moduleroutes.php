@@ -58,4 +58,5 @@
                     Route::controller('throwreportpayout', 'ThrowreportpayoutController');
                     Route::controller('servicerequests', 'ServicerequestsController');
                     Route::controller('training', 'TrainingController');
-                    ?>
+
+?>
