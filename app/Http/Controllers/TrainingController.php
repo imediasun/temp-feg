@@ -1,51 +1,50 @@
 <?php namespace App\Http\Controllers;
 
 use App\Http\Controllers\controller;
-use App\Models\Trainingmaterial;
+use App\Models\Training;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
-use Validator, Input, Redirect;
+use Validator, Input, Redirect ; 
 
-class TrainingmaterialController extends Controller
-{
+class TrainingController extends Controller {
 
-    protected $layout = "layouts.main";
-    protected $data = array();
-    public $module = 'trainingmaterial';
-    static $per_page = '10';
+	protected $layout = "layouts.main";
+	protected $data = array();	
+	public $module = 'training';
+	static $per_page	= '10';
+	
+	public function __construct() 
+	{
+		parent::__construct();
+		$this->model = new Training();
+		
+		$this->info = $this->model->makeInfo( $this->module);
+		$this->access = $this->model->validAccess($this->info['id']);
 
-    public function __construct()
-    {
-        parent::__construct();
-        $this->model = new Trainingmaterial();
-
-        $this->info = $this->model->makeInfo($this->module);
-        $this->access = $this->model->validAccess($this->info['id']);
-
-        $this->data = array(
-            'pageTitle' => $this->info['title'],
-            'pageNote' => $this->info['note'],
-            'pageModule' => 'trainingmaterial',
-            'pageUrl' => url('trainingmaterial'),
-            'return' => self::returnUrl()
-        );
+		$this->data = array(
+			'pageTitle'			=> 	$this->info['title'],
+			'pageNote'			=>  $this->info['note'],
+			'pageModule'		=> 'training',
+			'pageUrl'			=>  url('training'),
+			'return' 			=> 	self::returnUrl()
+		);
+		
 
 
-    }
+	}
 
-    public function getIndex()
-    {
-        if ($this->access['is_view'] == 0)
-            return Redirect::to('dashboard')->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
+	public function getIndex()
+	{
+		if($this->access['is_view'] ==0)
+			return Redirect::to('dashboard')->with('messagetext',\Lang::get('core.note_restric'))->with('msgstatus','error');
 
-        $this->data['access'] = $this->access;
-        return view('trainingmaterial.index', $this->data);
-    }
+		$this->data['access']		= $this->access;
+		return view('training.index',$this->data);
+	}
 
-    public function postData(Request $request)
-    {
-
-        $module_id = \DB::table('tb_module')->where('module_name', '=', 'trainingmaterial')->pluck('module_id');
+	public function postData( Request $request)
+	{
+        $module_id = \DB::table('tb_module')->where('module_name', '=', 'training')->pluck('module_id');
         $this->data['module_id'] = $module_id;
         if (Input::has('config_id')) {
             $config_id = Input::get('config_id');
@@ -113,81 +112,86 @@ class TrainingmaterialController extends Controller
             $this->data['tableGrid'] = \SiteHelpers::showRequiredCols($this->data['tableGrid'], $this->data['config']);
         }
 // Render into template
-        return view('trainingmaterial.table', $this->data);
+        return view('training.table', $this->data);
 
-    }
+	}
 
 
-    function getUpdate(Request $request, $id = null)
-    {
+	function getUpdate(Request $request, $id = null)
+	{
 
-        if ($id == '') {
-            if ($this->access['is_add'] == 0)
-                return Redirect::to('dashboard')->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
+		if($id =='')
+		{
+			if($this->access['is_add'] ==0 )
+			return Redirect::to('dashboard')->with('messagetext',\Lang::get('core.note_restric'))->with('msgstatus','error');
+		}
+
+		if($id !='')
+		{
+			if($this->access['is_edit'] ==0 )
+			return Redirect::to('dashboard')->with('messagetext',\Lang::get('core.note_restric'))->with('msgstatus','error');
+		}
+
+		$row = $this->model->find($id);
+		if($row)
+		{
+			$this->data['row'] 		=  $row;
+		} else {
+			$this->data['row'] 		= $this->model->getColumnTable('img_uploads');
+		}
+		$this->data['setting'] 		= $this->info['setting'];
+		$this->data['fields'] 		=  \AjaxHelpers::fieldLang($this->info['config']['forms']);
+		
+		$this->data['id'] = $id;
+
+		return view('training.form',$this->data);
+	}
+
+	public function getShow( $id = null)
+	{
+
+		if($this->access['is_detail'] ==0)
+			return Redirect::to('dashboard')
+				->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus','error');
+
+		$row = $this->model->getRow($id);
+		if($row)
+		{
+			$this->data['row'] =  $row;
+		} else {
+			$this->data['row'] = $this->model->getColumnTable('img_uploads');
+		}
+		
+		$this->data['id'] = $id;
+		$this->data['access']		= $this->access;
+		$this->data['setting'] 		= $this->info['setting'];
+		$this->data['fields'] 		= \AjaxHelpers::fieldLang($this->info['config']['forms']);
+		return view('training.view',$this->data);
+	}
+
+
+	function postCopy( Request $request)
+	{
+
+	    foreach(\DB::select("SHOW COLUMNS FROM img_uploads ") as $column)
+        {
+			if( $column->Field != 'id')
+				$columns[] = $column->Field;
         }
-
-        if ($id != '') {
-            if ($this->access['is_edit'] == 0)
-                return Redirect::to('dashboard')->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
-        }
-
-        $row = $this->model->find($id);
-        if ($row) {
-            $this->data['row'] = $row;
-        } else {
-            $this->data['row'] = $this->model->getColumnTable('img_uploads');
-        }
-        $this->data['setting'] = $this->info['setting'];
-        $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
-
-        $this->data['id'] = $id;
-
-        return view('trainingmaterial.form', $this->data);
-    }
-
-    public function getShow($id = null)
-    {
-
-        if ($this->access['is_detail'] == 0)
-            return Redirect::to('dashboard')
-                ->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
-
-        $row = $this->model->getRow($id);
-        if ($row) {
-            $this->data['row'] = $row;
-        } else {
-            $this->data['row'] = $this->model->getColumnTable('img_uploads');
-        }
-
-        $this->data['id'] = $id;
-        $this->data['access'] = $this->access;
-        $this->data['setting'] = $this->info['setting'];
-        $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
-        return view('trainingmaterial.view', $this->data);
-    }
+		$toCopy = implode(",",$request->input('ids'));
 
 
-    function postCopy(Request $request)
-    {
+		$sql = "INSERT INTO img_uploads (".implode(",", $columns).") ";
+		$sql .= " SELECT ".implode(",", $columns)." FROM img_uploads WHERE id IN (".$toCopy.")";
+		\DB::insert($sql);
+		return response()->json(array(
+			'status'=>'success',
+			'message'=> \Lang::get('core.note_success')
+		));
+	}
 
-        foreach (\DB::select("SHOW COLUMNS FROM img_uploads ") as $column) {
-            if ($column->Field != 'id')
-                $columns[] = $column->Field;
-        }
-        $toCopy = implode(",", $request->input('ids'));
-
-
-        $sql = "INSERT INTO img_uploads (" . implode(",", $columns) . ") ";
-        $sql .= " SELECT " . implode(",", $columns) . " FROM img_uploads WHERE id IN (" . $toCopy . ")";
-        \DB::insert($sql);
-        return response()->json(array(
-            'status' => 'success',
-            'message' => \Lang::get('core.note_success')
-        ));
-    }
-
-    function postSave(Request $request, $id = null)
-    {
+	function postSave( Request $request, $id =null)
+	{
 
         $rules = array('video_title' => 'required', 'video_path' => 'required');
         $validator = Validator::make($request->all(), $rules);
@@ -208,7 +212,7 @@ class TrainingmaterialController extends Controller
                     'status' => 'error'
                 ));
             }
-            $data['image_category'] = "video";
+            $data['image_category'] = "video-training";
             $id = $this->model->insertRow($data, $id);
             return response()->json(array(
                 'status' => 'success',
@@ -224,35 +228,36 @@ class TrainingmaterialController extends Controller
             ));
         }
 
-    }
+	}
 
-    public function postDelete(Request $request)
-    {
+	public function postDelete( Request $request)
+	{
 
-        if ($this->access['is_remove'] == 0) {
-            return response()->json(array(
-                'status' => 'error',
-                'message' => \Lang::get('core.note_restric')
-            ));
-            die;
+		if($this->access['is_remove'] ==0) {
+			return response()->json(array(
+				'status'=>'error',
+				'message'=> \Lang::get('core.note_restric')
+			));
+			die;
 
-        }
-        // delete multipe rows
-        if (count($request->input('ids')) >= 1) {
-            $this->model->destroy($request->input('ids'));
+		}
+		// delete multipe rows
+		if(count($request->input('ids')) >=1)
+		{
+			$this->model->destroy($request->input('ids'));
+			
+			return response()->json(array(
+				'status'=>'success',
+				'message'=> \Lang::get('core.note_success_delete')
+			));
+		} else {
+			return response()->json(array(
+				'status'=>'error',
+				'message'=> \Lang::get('core.note_error')
+			));
 
-            return response()->json(array(
-                'status' => 'success',
-                'message' => \Lang::get('core.note_success_delete')
-            ));
-        } else {
-            return response()->json(array(
-                'status' => 'error',
-                'message' => \Lang::get('core.note_error')
-            ));
+		}
 
-        }
-
-    }
+	}
 
 }

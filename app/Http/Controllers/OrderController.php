@@ -335,11 +335,20 @@ class OrderController extends Controller
 
             $casePriceArray = $request->get('case_price');
             $priceArray = $request->get('price');
+            // add case price in priceArray if item_price is 0.00
+            foreach($priceArray as $item_price_key=>$item_price_value)
+            {
+                if($item_price_value == 0.00)
+                {
+                    $priceArray[$item_price_key]=$casePriceArray[$item_price_key];
+                }
+            }
             $qtyArray = $request->get('qty');
             $productIdArray = $request->get('product_id');
             $requestIdArray = $request->get('request_id');
             $games = $request->get('game');
             $num_items_in_array = count($itemsArray);
+
             for ($i = 0; $i < $num_items_in_array; $i++) {
                 $j = $i + 1;
                 $order_description .= ' | item' . $j . ' - (' . $qtyArray[$i] . ') ' . $itemsArray[$i] . ' @ $' . $priceArray[$i] . ' ea.';
@@ -385,6 +394,7 @@ class OrderController extends Controller
                 $order_id = \DB::getPdo()->lastInsertId();
             }
             for ($i = 0; $i < $num_items_in_array; $i++) {
+
                 if (empty($productIdArray[$i])) {
                     $product_id = '0';
                 } else {
@@ -439,18 +449,8 @@ class OrderController extends Controller
 						   WHERE id IN('.$where_in.')');
                     //// SUBTRACT QTY OF RESERVED AMT ITEMS
                     $item_count = substr_count($SID_string, '-') - 1;
-                    $SID_new = $SID_string;
-                    for($i=1;$i <= $item_count;$i++)
-                    {
-                        $pos1 = strpos($SID_new,'-');
-                        $SID_new = substr($SID_new, $pos1+1);
-                        $pos2 = strpos($SID_new,'-');
-                        ${'SID' . $i}= substr($SID_new, 0, $pos2);
-                        \DB::update('UPDATE products
-						   LEFT JOIN requests ON requests.product_id = products.id
-							 	 SET products.reserved_qty = (products.reserved_qty - requests.qty)
-						   	   WHERE requests.id = '.${'SID' . $i}.' AND products.is_reserved = 1');
-                    }
+                   $SID_new = $SID_string;
+                    $this->updateRequestAndProducts($item_count,$SID_new);
                 }
             }
             // $mailto = $vendor_email;
@@ -662,12 +662,11 @@ class OrderController extends Controller
                 $data[0]['po_notes'] = " NOTE: " . $data[0]['po_notes'] . " (Email Questions to " . $data[0]['email'] . $data[0]['cc_email'] . $data[0]['loc_contact_email'] . ")";
             }
             $order_description = $data[0]['order_description'];
-
             if (substr($order_description, 0, 3) === ' | ') {
                 $order_description = substr($order_description, 3);
+
             }
             $order_description = str_replace(' | ', "\n", $order_description);
-
             if ($data[0]['new_format'] == 1) {
                 $item_description_string = '';
                 $sku_num_string = '';
@@ -1020,5 +1019,19 @@ class OrderController extends Controller
             echo "Message has been sent";
         }
         die;
+    }
+    function updateRequestAndProducts($item_count,$SID_new)
+    {
+        for($i=1;$i <= $item_count;$i++)
+        {
+            $pos1 = strpos($SID_new,'-');
+            $SID_new = substr($SID_new, $pos1+1);
+            $pos2 = strpos($SID_new,'-');
+            ${'SID' . $i}= substr($SID_new, 0, $pos2);
+             \DB::update('UPDATE products
+                 LEFT JOIN requests ON requests.product_id = products.id
+                        SET products.reserved_qty = (products.reserved_qty - requests.qty)
+                        WHERE requests.id = '.${'SID' . $i}.' AND products.is_reserved = 1');
+        }
     }
 }

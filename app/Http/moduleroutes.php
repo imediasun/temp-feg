@@ -1,5 +1,4 @@
 <?php
-
                     Route::controller('pages', 'PagesController');
                     Route::controller('vendor', 'VendorController');
                     Route::controller('calendar', 'CalendarController');
@@ -55,9 +54,8 @@
                     Route::controller('itemreceipt', 'ItemreceiptController');
                     Route::controller('ticketsetting', 'TicketsettingController');
                     Route::controller('throwreport', 'ThrowreportController');
-                    Route::controller('throwreportpayout', 'ThrowreportpayoutController');
                     Route::controller('throwreportinstantwin', 'ThrowreportinstantwinController');
+                    Route::controller('throwreportpayout', 'ThrowreportpayoutController');
                     Route::controller('servicerequests', 'ServicerequestsController');
-                    Route::controller('feg/system/tasks', 'Feg\System\TasksController');
-                    Route::controller('feg/system/systememailreportmanager', 'Feg\System\SystemEmailReportManagerController');
+                    Route::controller('training', 'TrainingController');
                     ?>
