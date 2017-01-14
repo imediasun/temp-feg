@@ -1925,8 +1925,12 @@ class SiteHelpers
 //        $hasAllLocations = \Session::get('user_has_all_locations') == 1;
 //        if ($hasAllLocations) {
 //            $locations = \Session::get('user_location_ids');            
-//        }        
-        $locations = \Session::get('user_location_ids');            
+//        }       
+        
+        $locations = \Session::get('user_location_ids');   
+        if ($locations === null) {
+            $locations = array();
+        }        
         if (!$asArray) {
             $locations = implode(',', $locations);
         }        

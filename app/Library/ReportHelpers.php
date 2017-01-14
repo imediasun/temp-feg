@@ -1408,7 +1408,7 @@ class ReportHelpers
         return $result; 
     }
     public static function buildBlankResultData($message = "", $topMessage = "", $bottomMessage = "") {
-        $result = self::buildResultData($message, $topMessage, $bottomMessage);
+        $result = self::buildResultData(array(), 0, $message, $topMessage, $bottomMessage);
         return $result; 
     }
     public static function buildResultData($rows = array(), $total = 0, $message = "", $topMessage = "", $bottomMessage = "") {
