@@ -1402,5 +1402,23 @@ class ReportHelpers
         $count = self::getCountFromQuery($Q);
         return $count;          
     }    
-    
+   
+    public static function buildBlankResultDataDueToNoLocation($message = "No associated location found", $topMessage = "No report", $bottomMessage = "") {
+        $result = self::buildBlankResultData($message, $topMessage, $bottomMessage);
+        return $result; 
+    }
+    public static function buildBlankResultData($message = "", $topMessage = "", $bottomMessage = "") {
+        $result = self::buildResultData($message, $topMessage, $bottomMessage);
+        return $result; 
+    }
+    public static function buildResultData($rows = array(), $total = 0, $message = "", $topMessage = "", $bottomMessage = "") {
+        $result = array(
+                'topMessage' => $topMessage,
+                'bottomMessage' => $bottomMessage,
+                'message' => $message,
+                'rows'=> $rows, 
+                'total' => $total
+            );
+        return $result; 
+    }
 }

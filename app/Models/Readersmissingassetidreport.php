@@ -52,7 +52,11 @@ class readersmissingassetidreport extends Sximo  {
         extract($filters);
         if (empty($location_id)) {
             $location_id = SiteHelpers::getCurrentUserLocationsFromSession();
-        }        
+        }    
+        if (empty($location_id)) {
+            return ReportHelpers::buildBlankResultDataDueToNoLocation();
+        } 
+        
         if (empty($reader_id) || (!empty($date_start) && !empty($date_end))) {
             ReportHelpers::dateRangeFix($date_start, $date_end);
         }

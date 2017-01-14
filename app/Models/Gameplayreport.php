@@ -48,7 +48,11 @@ class gameplayreport extends Sximo  {
         extract($filters);
         if (empty($location_id)) {
             $location_id = SiteHelpers::getCurrentUserLocationsFromSession();
-        }        
+        }     
+        if (empty($location_id)) {
+            return ReportHelpers::buildBlankResultDataDueToNoLocation();
+        }
+        
         ReportHelpers::dateRangeFix($date_start, $date_end);  
         
         $total = ReportHelpers::getGamePlayCount($date_start, $date_end, $location_id, $debit_type_id, $game_type_id, $game_cat_id, $game_on_test, $game_id, $game_title_id);       

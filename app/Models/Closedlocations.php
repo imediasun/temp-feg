@@ -43,6 +43,10 @@ class closedlocations extends Sximo  {
         if (empty($location_id)) {
             $location_id = SiteHelpers::getCurrentUserLocationsFromSession();
         }
+        if (empty($location_id)) {
+            return ReportHelpers::buildBlankResultDataDueToNoLocation();
+        }
+        
         $total = ReportHelpers::getClosedLocationsCount($date_start, $date_end, $location_id, $debit_type_id);
         $offset = ($page-1) * $limit ;
         if ($offset >= $total) {

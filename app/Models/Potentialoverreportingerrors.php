@@ -45,6 +45,10 @@ class potentialoverreportingerrors extends Sximo  {
         if (empty($location_id)) {
             $location_id = SiteHelpers::getCurrentUserLocationsFromSession();
         }        
+        if (empty($location_id)) {
+            return ReportHelpers::buildBlankResultDataDueToNoLocation();
+        } 
+        
         ReportHelpers::dateRangeFix($date_start, $date_end);
         if (empty($game_id) || (!empty($date_start) && !empty($date_end))) {
             ReportHelpers::dateRangeFix($date_start, $date_end);

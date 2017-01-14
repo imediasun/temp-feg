@@ -56,7 +56,11 @@ class gameplayrankbylocation extends Sximo  {
         extract($filters);
         if (empty($location_id)) {
             $location_id = SiteHelpers::getCurrentUserLocationsFromSession();
-        }        
+        }
+        if (empty($location_id)) {
+            return ReportHelpers::buildBlankResultDataDueToNoLocation();
+        }
+        
         ReportHelpers::dateRangeFix($date_start, $date_end);        
         
         $mainQuery = ReportHelpers::getLocationRanksQuery($date_start, $date_end, $location_id, $debit_type_id, $sort, $order);

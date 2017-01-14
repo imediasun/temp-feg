@@ -3,6 +3,7 @@
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use SiteHelpers;
+use App\Library\ReportHelpers;
 
 class productusagereport extends Sximo  {
 	
@@ -57,7 +58,10 @@ class productusagereport extends Sximo  {
         $prod_sub_type_id = @$filters['prod_sub_type_id'];
         if (empty($location_id)) {
             $location_id = SiteHelpers::getCurrentUserLocationsFromSession();
-        }        
+        }
+        if (empty($location_id)) {
+            return ReportHelpers::buildBlankResultDataDueToNoLocation();
+        }         
         
         if (empty($date_start) || empty($date_end)) {
             $message = "To view the contents of this report, please select a date range and other search filter.";

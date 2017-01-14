@@ -46,7 +46,11 @@ class merchandiseexpensesreport extends Sximo  {
         extract($filters);
         if (empty($location_id)) {
             $location_id = SiteHelpers::getCurrentUserLocationsFromSession();
-        }        
+        }
+        if (empty($location_id)) {
+            return ReportHelpers::buildBlankResultDataDueToNoLocation();
+        } 
+        
         ReportHelpers::dateRangeFix($date_start, $date_end); 
         
         $total = ReportHelpers::getMerchandizeExpensesCount($date_start, $date_end, $location_id, $debit_type_id);

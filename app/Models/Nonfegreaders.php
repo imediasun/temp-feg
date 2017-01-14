@@ -3,6 +3,7 @@
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use SiteHelpers;
+use App\Library\ReportHelpers;
 
 class nonfegreaders extends Sximo  {
 	
@@ -19,14 +20,18 @@ class nonfegreaders extends Sximo  {
 	}	
 	public static function querySelect( $isCount = false  ){
 		$filters = self::getSearchFilters();
-        $location = @$filters['location_id'];
-        if (empty($location)) {
-            $location = SiteHelpers::getCurrentUserLocationsFromSession();
-        }        
+        $location_id = @$filters['location_id'];
+        if (empty($location_id)) {
+            $location_id = SiteHelpers::getCurrentUserLocationsFromSession();
+        }
+        if (empty($location_id)) {
+            return ReportHelpers::buildBlankResultDataDueToNoLocation();
+        } 
+        
         $debitType = @$filters['debit_type_id'];
         $locationQuery = "";
-        if (!empty($location)) {
-            $locationQuery = "AND reader_exclude.loc_id IN ($location) "; 
+        if (!empty($location_id)) {
+            $locationQuery = "AND reader_exclude.loc_id IN ($location_id) "; 
         }
         $debitTypeQuery = "";
         if (!empty($debitType)) {
