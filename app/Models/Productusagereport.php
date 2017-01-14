@@ -2,6 +2,7 @@
 
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
+use SiteHelpers;
 
 class productusagereport extends Sximo  {
 	
@@ -54,6 +55,9 @@ class productusagereport extends Sximo  {
         $vendor_id = @$filters['vendor_id'];
         $prod_type_id = @$filters['prod_type_id'];
         $prod_sub_type_id = @$filters['prod_sub_type_id'];
+        if (empty($location_id)) {
+            $location_id = SiteHelpers::getCurrentUserLocationsFromSession();
+        }        
         
         if (empty($date_start) || empty($date_end)) {
             $message = "To view the contents of this report, please select a date range and other search filter.";

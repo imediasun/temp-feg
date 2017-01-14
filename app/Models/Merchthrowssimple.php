@@ -2,6 +2,7 @@
 
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
+use SiteHelpers;
 
 class merchthrowssimple extends Sximo  {
 	
@@ -15,6 +16,9 @@ class merchthrowssimple extends Sximo  {
     public static function build_query(){
         $filters = self::getSearchFilters();
         $location = @$filters['location_id'];
+        if (empty($location)) {
+            $location = SiteHelpers::getCurrentUserLocationsFromSession();
+        }        
         $dateStart = @$filters['date_start'];
         $dateEnd = @$filters['date_end'];
         $loc_table_expression = " ";

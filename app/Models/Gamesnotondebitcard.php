@@ -2,6 +2,7 @@
 
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
+use SiteHelpers;
 
 class gamesnotondebitcard extends Sximo  {
 	
@@ -16,6 +17,9 @@ class gamesnotondebitcard extends Sximo  {
 	public static function querySelect( $isCount = false  ){
 		$filters = self::getSearchFilters();
         $location = @$filters['location_id'];
+        if (empty($location)) {
+            $location = SiteHelpers::getCurrentUserLocationsFromSession();
+        }        
         $debit_type_id = @$filters['debit_type_id'];
         $locationQuery = "";
         if (!empty($location)) {

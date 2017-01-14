@@ -3,6 +3,7 @@
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use App\Library\ReportHelpers;
+use SiteHelpers;
 
 class readersmissingassetidreport extends Sximo  {
 	
@@ -49,6 +50,9 @@ class readersmissingassetidreport extends Sximo  {
             'debit_type_id' => '','location_id' => '', 'reader_id' => ''
         ));        
         extract($filters);
+        if (empty($location_id)) {
+            $location_id = SiteHelpers::getCurrentUserLocationsFromSession();
+        }        
         if (empty($reader_id) || (!empty($date_start) && !empty($date_end))) {
             ReportHelpers::dateRangeFix($date_start, $date_end);
         }

@@ -1918,6 +1918,20 @@ class SiteHelpers
         }
         return $locations;
     }    
+    
+    public static function getCurrentUserLocationsFromSession($asArray = false)
+    {
+//        $locations = array();        
+//        $hasAllLocations = \Session::get('user_has_all_locations') == 1;
+//        if ($hasAllLocations) {
+//            $locations = \Session::get('user_location_ids');            
+//        }        
+        $locations = \Session::get('user_location_ids');            
+        if (!$asArray) {
+            $locations = implode(',', $locations);
+        }        
+        return $locations;
+    }       
 
     static function getQueryStringForLocation($table)
     {

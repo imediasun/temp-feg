@@ -3,6 +3,7 @@
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use App\Library\ReportHelpers;
+use SiteHelpers;
 
 class topgamesreport extends Sximo  {
 	
@@ -44,7 +45,9 @@ class topgamesreport extends Sximo  {
         ));        
         extract($filters);
         ReportHelpers::dateRangeFix($date_start, $date_end);        
-        
+        if (empty($location_id)) {
+            $location_id = SiteHelpers::getCurrentUserLocationsFromSession();
+        }
 		$offset = ($page-1) * $limit ;
         $total = ReportHelpers::getGameRankCount($date_start, $date_end, $location_id, $debit_type_id, $game_type_id, $game_cat_id, $game_on_test);
         if ($offset >= $total) {

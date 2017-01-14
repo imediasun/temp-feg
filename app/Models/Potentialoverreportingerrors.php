@@ -3,6 +3,7 @@
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use App\Library\ReportHelpers;
+use SiteHelpers;
 
 class potentialoverreportingerrors extends Sximo  {
 	
@@ -41,6 +42,9 @@ class potentialoverreportingerrors extends Sximo  {
             'debit_type_id' => '', 'game_on_test' => '', 'location_id' => '', 'game_id' => ''
         ));        
         extract($filters);
+        if (empty($location_id)) {
+            $location_id = SiteHelpers::getCurrentUserLocationsFromSession();
+        }        
         ReportHelpers::dateRangeFix($date_start, $date_end);
         if (empty($game_id) || (!empty($date_start) && !empty($date_end))) {
             ReportHelpers::dateRangeFix($date_start, $date_end);

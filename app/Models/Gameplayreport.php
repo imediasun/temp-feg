@@ -3,6 +3,7 @@
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use App\Library\ReportHelpers;
+use SiteHelpers;
 
 class gameplayreport extends Sximo  {
 	
@@ -45,6 +46,9 @@ class gameplayreport extends Sximo  {
             'game_title_id' => ''
         ));        
         extract($filters);
+        if (empty($location_id)) {
+            $location_id = SiteHelpers::getCurrentUserLocationsFromSession();
+        }        
         ReportHelpers::dateRangeFix($date_start, $date_end);  
         
         $total = ReportHelpers::getGamePlayCount($date_start, $date_end, $location_id, $debit_type_id, $game_type_id, $game_cat_id, $game_on_test, $game_id, $game_title_id);       

@@ -3,6 +3,7 @@
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use App\Library\ReportHelpers;
+use SiteHelpers;
 
 class reports extends Sximo  {
 
@@ -40,7 +41,9 @@ class reports extends Sximo  {
         ));        
         extract($filters);
         ReportHelpers::dateRangeFix($date_start, $date_end);  
-        
+        if (empty($location_id)) {
+            $location_id = SiteHelpers::getCurrentUserLocationsFromSession();
+        }        
 		$offset = ($page-1) * $limit ;
         $total = ReportHelpers::getLocationNotReportingCount($date_start, $date_end, $location_id, $debit_type_id);
         if ($offset >= $total) {
