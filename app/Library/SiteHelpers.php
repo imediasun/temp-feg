@@ -1907,6 +1907,17 @@ class SiteHelpers
             ->get();
         return $locations;
     }
+    
+    static function getIdsFromLocationDetails($userLocations)
+    {
+        $locations = array();
+        if (!empty($userLocations)) {
+            foreach($userLocations as $location) {
+                $locations[] = $location->id;
+            }
+        }
+        return $locations;
+    }    
 
     static function getQueryStringForLocation($table)
     {
