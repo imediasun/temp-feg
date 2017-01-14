@@ -1,5 +1,9 @@
 <?php
+        Route::controller('users', 'UsersController');
+                    Route::controller('groups', 'GroupsController');
                     Route::controller('pages', 'PagesController');
+                    Route::controller('tasks', 'TasksController');
+                    Route::controller('systememailreportmanager', 'SystememailreportmanagerController');
                     Route::controller('vendor', 'VendorController');
                     Route::controller('calendar', 'CalendarController');
                     Route::controller('sbinovice', 'SbinoviceController');
@@ -58,5 +62,4 @@
                     Route::controller('throwreportpayout', 'ThrowreportpayoutController');
                     Route::controller('servicerequests', 'ServicerequestsController');
                     Route::controller('training', 'TrainingController');
-
-?>
+                    ?>
