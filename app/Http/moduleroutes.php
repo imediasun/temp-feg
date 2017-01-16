@@ -59,5 +59,5 @@ Route::controller('throwreportinstantwin', 'ThrowreportinstantwinController');
 Route::controller('servicerequests', 'ServicerequestsController');
 Route::controller('feg/system/tasks', 'Feg\System\TasksController');
 Route::controller('feg/system/systememailreportmanager', 'Feg\System\SystemEmailReportManagerController');
-//Route::controller('training', 'TrainingController');
+Route::controller('training', 'TrainingController');
 ?>
