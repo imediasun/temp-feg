@@ -41,8 +41,7 @@ class TrainingController extends Controller {
 		$this->data['access']		= $this->access;
 		return view('training.index',$this->data);
 	}
-
-	public function postData( Request $request)
+    public function postData( Request $request)
 	{
         $module_id = \DB::table('tb_module')->where('module_name', '=', 'training')->pluck('module_id');
         $this->data['module_id'] = $module_id;
@@ -65,8 +64,6 @@ class TrainingController extends Controller {
         // End Filter sort and order for query
         // Filter Search for query
         $filter = (!is_null($request->input('search')) ? $this->buildSearch() : '');
-
-
         $page = $request->input('page', 1);
         $params = array(
             'page' => $page,
@@ -113,14 +110,10 @@ class TrainingController extends Controller {
         }
 // Render into template
         return view('training.table', $this->data);
-
-	}
-
-
-	function getUpdate(Request $request, $id = null)
+    }
+    function getUpdate(Request $request, $id = null)
 	{
-
-		if($id =='')
+        if($id =='')
 		{
 			if($this->access['is_add'] ==0 )
 			return Redirect::to('dashboard')->with('messagetext',\Lang::get('core.note_restric'))->with('msgstatus','error');
@@ -146,8 +139,7 @@ class TrainingController extends Controller {
 
 		return view('training.form',$this->data);
 	}
-
-	public function getShow( $id = null)
+    public function getShow( $id = null)
 	{
 
 		if($this->access['is_detail'] ==0)
@@ -168,12 +160,9 @@ class TrainingController extends Controller {
 		$this->data['fields'] 		= \AjaxHelpers::fieldLang($this->info['config']['forms']);
 		return view('training.view',$this->data);
 	}
-
-
-	function postCopy( Request $request)
+    function postCopy( Request $request)
 	{
-
-	    foreach(\DB::select("SHOW COLUMNS FROM img_uploads ") as $column)
+        foreach(\DB::select("SHOW COLUMNS FROM img_uploads ") as $column)
         {
 			if( $column->Field != 'id')
 				$columns[] = $column->Field;
@@ -189,10 +178,8 @@ class TrainingController extends Controller {
 			'message'=> \Lang::get('core.note_success')
 		));
 	}
-
-	function postSave( Request $request, $id =null)
+    function postSave( Request $request, $id =null)
 	{
-
         $rules = array('video_title' => 'required', 'video_path' => 'required');
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
@@ -218,7 +205,6 @@ class TrainingController extends Controller {
                 'status' => 'success',
                 'message' => \Lang::get('core.note_success')
             ));
-
         } else {
 
             $message = $this->validateListError($validator->getMessageBag()->toArray());
@@ -227,10 +213,8 @@ class TrainingController extends Controller {
                 'status' => 'error'
             ));
         }
-
-	}
-
-	public function postDelete( Request $request)
+    }
+    public function postDelete( Request $request)
 	{
 
 		if($this->access['is_remove'] ==0) {
@@ -239,8 +223,7 @@ class TrainingController extends Controller {
 				'message'=> \Lang::get('core.note_restric')
 			));
 			die;
-
-		}
+        }
 		// delete multipe rows
 		if(count($request->input('ids')) >=1)
 		{
@@ -255,9 +238,6 @@ class TrainingController extends Controller {
 				'status'=>'error',
 				'message'=> \Lang::get('core.note_error')
 			));
-
-		}
-
-	}
-
+        }
+    }
 }

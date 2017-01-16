@@ -12,14 +12,13 @@ class training extends Sximo  {
 		parent::__construct();
 		
 	}
-
-    public static function querySelect(  ){
-
+    public static function querySelect(  )
+    {
         return "SELECT img_uploads.id,img_uploads.users,img_uploads.date,img_uploads.video_path,img_uploads.video_title from img_uploads";
     }
 
-    public static function queryWhere(  ){
-
+    public static function queryWhere(  )
+    {
         return "  WHERE img_uploads.image_category='video-training' AND img_uploads.id IS NOT NULL  ";
     }
 
