@@ -181,6 +181,7 @@ class managefegrequeststore extends Sximo
                 'id' => $row->id,
                 'text' => $row->order_type
             );
+                die();
                 // Removing 'Instant Wind Prizes' and 'Redemption Prizes' from order type array
                 if($row['id'] != 7 && $row['id'] != 8) {
                     $orderTypesArray[] = $row;
