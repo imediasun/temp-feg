@@ -365,6 +365,7 @@ class order extends Sximo
                 $data['today'] = date('m/d/y');
             }
         }
+        $data['where_in_expression'] = substr($where_in_expression, 0, -1);
         return $data;
     }
 

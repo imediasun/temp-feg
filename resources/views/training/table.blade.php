@@ -21,7 +21,7 @@
 					<hr/>
 					@foreach ($rowData as $row)
 						<p><strong>{{ $row->video_title }} </strong><span style="color: #808080;">by {{ $row->users }}</span></p>
-						<p><iframe src="https://youtube.com/embed/{{$row->video_path}}" width="675" height="380" allowfullscreen="allowfullscreen"></iframe></p>
+						<p><iframe src="https://youtube.com/embed/{{$row->video_path}}" width="600" height="380" allowfullscreen="allowfullscreen"></iframe></p>
 					@endforeach
 
 				</div>

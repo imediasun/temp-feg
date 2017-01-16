@@ -41,7 +41,6 @@ class TrainingController extends Controller {
 		$this->data['access']		= $this->access;
 		return view('training.index',$this->data);
 	}
-
 	public function postData( Request $request)
 	{
 
@@ -145,7 +144,6 @@ class TrainingController extends Controller {
 		$this->data['fields'] 		=  \AjaxHelpers::fieldLang($this->info['config']['forms']);
 		
 		$this->data['id'] = $id;
-
 		return view('training.form', $this->data);
 	}
 
@@ -170,8 +168,6 @@ class TrainingController extends Controller {
 		$this->data['fields'] 		= \AjaxHelpers::fieldLang($this->info['config']['forms']);
 		return view('training.view',$this->data);
 	}
-
-
 	function postCopy( Request $request)
 	{
 
@@ -230,7 +226,6 @@ class TrainingController extends Controller {
 				'message'=> \Lang::get('core.note_restric')
 			));
 			die;
-
 		}
 		// delete multipe rows
 		if(count($request->input('ids')) >=1)
@@ -246,7 +241,6 @@ class TrainingController extends Controller {
 				'status'=>'error',
 				'message'=> \Lang::get('core.note_error')
 			));
-
 		}
 
 	}

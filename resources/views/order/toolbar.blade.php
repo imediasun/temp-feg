@@ -7,7 +7,7 @@
     </div>
     <div class="col-md-3">
         <?php
-        $orders=array('All'=>'0','Open'=>'OPEN','Fixed Asset Orders'=>'FIXED_ASSET','Products In Development Orders'=>'PRO_IN_DEV');
+        $orders=array('All'=>'ALL','Open'=>'OPEN','Fixed Asset Orders'=>'FIXED_ASSET','Products In Development Orders'=>'PRO_IN_DEV');
         ?>
         <select name="order_type" id="order_type" class="form-control">
             <option disabled>         ----- Select Orders ----- </option>
@@ -20,6 +20,7 @@
     </div>
 </div>
 
+<div class="sbox-content" style="padding: 10px 20px 7px 15px; border: none;">
 <div class="row m-b" style="margin-bottom: 1px;">
 	<div class="col-md-9" style="padding-left: 0px !important">
 			@if($access['is_add'] ==1)
@@ -79,6 +80,7 @@
         @endif
     </div>
 	</div>
+</div>
 </div>
 
 <script>

@@ -1,3 +1,4 @@
+<button class="refreshButton"><i class="glyphicon glyphicon-refresh"></i></button>
 <table class="schedulesTable">
     <thead>
     <tr>

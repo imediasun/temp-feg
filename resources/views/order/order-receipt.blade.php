@@ -1,26 +1,33 @@
 @extends('layouts.app')
 @section('content')
-
-    <div class="sbox">
-        <div class="sbox-title">
-            <h4><i class="fa fa-table"></i> <?php echo $pageTitle;?>
-                <small>{{ $pageNote }}</small>
-            </h4>
+    <div class="page-content row">
+    <div class="page-header">
+        <div class="page-title">
+            <h3> <?php echo $pageTitle ;?> <small>{{ $pageNote }}</small></h3>
         </div>
+        <ul class="breadcrumb">
+            <li><a href="{{ URL::to('dashboard') }}">{{ Lang::get('core.home') }}</a></li>
+            <li class="active">{{ $pageTitle }}</li>
+        </ul>
+    </div>
+
+    <div class="page-content-wrapper m-t">
+    <div class="sbox">
 
         <div class="sbox-content">
 <div class="ajaxLoading"></div>
             {!! Form::open(array('url'=>'order/receiveorder/', 'class'=>'form-vertical','files' => true ,
             'parsley-validate'=>'','novalidate'=>' ','id'=> 'orderreceiveFormAjax')) !!}
-            <div class="col-md-offset-1 col-md-11 ">
+            <div class="col-sm-12 ">
                 <fieldset>
                     <legend>Order Receipt</legend>
                     <div class=" table-responsive col-md-12 col-md-offset-2 item-receipt-container">
                         <table class="table">
-                            <tr><td><b>PO #</b></td><td>{{ $data['po_number'] }}</td></tr>
+                            <tr><td  style="border: none;" ><b>PO #</b></td><td  style="border: none;" >{{ $data['po_number'] }}</td></tr>
                             <tr><td><b>Ordered By</b></td><td>{{ $data['order_user_name'] }}</td></tr>
                             <tr><td><b>Location </b></td><td>{{ $data['location_id'] }}</td></tr>
                             <tr><td><b>Vendor</b></td><td>{{ $data['vendor_name'] }}</td></tr>
+                            <tr><td><b>Description</b></td><td>{{ str_replace("<br>","" ,$data['description']) }}</td></tr>
                             <tr><td><b>Total Cost</b></td><td>{{ $data['order_total'] }}</td></tr>
                             <?php //if(!empty($item_count) && ($order_type == 7 || $order_type == 8) && () && $added_to_inventory == 0)  //REDEMPTION OR INSTANT WIN PRIZES -  SET TO DUMMY VALUE TO FORCE ORDER DESCRIPION UNTIL WE INTRODUCE PRIZE ALLOCATION
                             ?>
@@ -72,7 +79,7 @@
                                 <th>Qty</th>
                                 <th>Received Qty</th>
                                 <th>Partially Received</th>
-                                <th></th>
+                                <th>Qty</th>
                                 <th>Total ( $ )</th>
 
                             </tr>
@@ -196,7 +203,8 @@
 
     </div>
     </div>
-
+    </div>
+</div>
     <script type="text/javascript">
         $(document).ready(function () {
 

@@ -11,7 +11,7 @@
 			@endif
 		</div>
 	</div>
-	<div class="sbox-content" style="">
+	<div class="sbox-content" style="border: none;">
         @if($setting['usesimplesearch']!='false')
             <?php $simpleSearchForm = SiteHelpers::configureSimpleSearchForm($tableForm); ?>
             @if(!empty($simpleSearchForm))
@@ -29,7 +29,7 @@
             @endif
         @endif
         @include( $pageModule.'/toolbar',['colconfigs' => SiteHelpers::getRequiredConfigs($module_id),'order_type'=>$order_selected])
-
+			<div class="sbox-content" style="border: none;">
 	 <?php echo Form::open(array('url'=>'order/delete/', 'class'=>'form-horizontal' ,'id' =>'SximoTable'  ,'data-parsley-validate'=>'' )) ;?>
 <div class="table-responsive">
 	@if(count($rowData)>=1)
@@ -180,7 +180,7 @@
 
 	</div>
 </div>
-
+</div>
 	@if($setting['inline'] =='true') @include('sximo.module.utility.inlinegrid') @endif
 
 <script>
