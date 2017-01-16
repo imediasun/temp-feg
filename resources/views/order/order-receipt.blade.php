@@ -116,11 +116,7 @@
 
                     <div class="clearfix"></div>
 
-
-
-
-
-                    <div class="col-md-8 col-md-offset-2" style="margin-left: 36.66666667% !important">
+                 <div class="col-md-8 col-md-offset-2" style="margin-left: 36.66666667% !important">
                         <div class="form-group  ">
                             <br/><br/>
                             <label for="date_received" class=" control-label col-md-4 text-right">
@@ -159,7 +155,7 @@
                             <label for="vendor_id" class=" control-label col-md-4 text-right">
                                 Notes </label>
                             <div class="col-md-8">
-                                <textarea name="notes" rows="7" cols="48" id="notes" onchange="removeBorder('order_status')" required minlength=2></textarea>
+                                <textarea name="notes" rows="7" cols="48" id="notes" onchange="removeBorder('order_status')" ></textarea>
                             </div>
                         </div>
                         <div class="form-group" >

@@ -7,6 +7,7 @@ class trainingmaterial extends Sximo  {
 	
 	protected $table = 'img_uploads';
 	protected $primaryKey = 'id';
+	const TYPE = 0;
 
 	public function __construct() {
 		parent::__construct();
@@ -20,7 +21,7 @@ class trainingmaterial extends Sximo  {
 
 	public static function queryWhere(  ){
 		
-		return "  WHERE img_uploads.image_category='video' AND img_uploads.id IS NOT NULL  ";
+		return "  WHERE img_uploads.image_category='video' AND img_uploads.id IS NOT NULL  AND type = 0 ";
 	}
 	
 	public static function queryGroup(){

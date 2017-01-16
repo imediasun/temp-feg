@@ -196,6 +196,7 @@ class TrainingmaterialController extends Controller
             $data['video_title'] = $request->get('video_title');
             $data['video_path'] = $this->model->get_youtube_id_from_url($request->get('video_path'));
             $data['image_category'] = "video";
+            $data['type'] = Trainingmaterial::TYPE;
             $id = $this->model->insertRow($data, $id);
             return response()->json(array(
                 'status' => 'success',
