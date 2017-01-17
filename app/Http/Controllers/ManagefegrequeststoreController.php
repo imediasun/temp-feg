@@ -125,7 +125,6 @@ class ManagefegrequeststoreController extends Controller
 
     public function postData(Request $request)
     {
-        die('here in reload data');
         $user_level = \Session::get('gid');
         if ($user_level == 2) {
             return redirect('dashboard');

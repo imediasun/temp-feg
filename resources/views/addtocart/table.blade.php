@@ -125,7 +125,7 @@
 
                                 @if($field['field']=='qty')
 
-                                    <input type="text" value="{{ $value }}" name="qty[]" id="{{ $row->id }}" data-vendor="{{ $row->vendor_name }}" style="width:55px" onblur="changeTotal(this.value,this.id)"/>
+                                    <input type="number" value="{{ $value }}" name="qty[]" id="{{ $row->id }}" data-vendor="{{ $row->vendor_name }}" style="width:55px" onchange="changeTotal(this.value,this.id)"/>
                                 @else
 {!! $value !!}
                                 @endif
@@ -295,7 +295,7 @@
 
     function doStuff(value,id,vendor_name) {
         $.ajax({
-            url:"/addtocart/save/"+id+"/"+value+"/"+encodeURIComponent(vendor_name) ,
+            url:"addtocart/save/"+id+"/"+value+"/"+encodeURIComponent(vendor_name) ,
             method:'get',
             dataType:'json',
             success:function(data){
@@ -353,6 +353,7 @@
     }
 function loadCart(vendor_name,subtotal)
 {
+
     getCartData(false,vendor_name,subtotal);
    // return false;
 }
