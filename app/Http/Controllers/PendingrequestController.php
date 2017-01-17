@@ -101,7 +101,7 @@ class PendingrequestController extends Controller
             }
             $rows[$index]->vendor_description = (isset($vendor[0]->vendor_name) ? $vendor[0]->vendor_name : '');
             $product = (isset($product[0]->unit_price) ? $product[0]->unit_price : 0.00000);
-            $rows[$index]->total_cost = $product * (isset($data->qty) ? $data->qty : 0);
+            $rows[$index]->total_cost = \CurrencyHelpers::formatCurrency($product * (isset($data->qty) ? $data->qty : 0));
 
             $user = \DB::select("Select username FROM users WHERE id = " . $data->request_user_id . "");
             $rows[$index]->request_user_id = (isset($user[0]->username) ? $user[0]->username : '');
@@ -120,6 +120,11 @@ class PendingrequestController extends Controller
             $location = \DB::select("Select location_name FROM location WHERE id = " . $data->location_id . "");
             $rows[$index]->location_id = (isset($location[0]->location_name) ? $location[0]->location_name : '');
         }
+        //echo '<pre>';
+        //print_r($rows);
+        //echo '</pre>';
+        //exit;
+
         $this->data['param'] = $params;
         $this->data['rowData'] = $rows;
         // Build Pagination
