@@ -289,6 +289,7 @@ class OrderController extends Controller
 
     function postSave(Request $request, $id = 0)
     {
+
         $rules = array('location_id' => "required", 'vendor_id' => 'required', 'order_type_id' => "required", 'freight_type_id' => 'required', 'date_ordered' => 'required', 'po_3' => 'required');
         $validator = Validator::make($request->all(), $rules);
         $order_data = array();
@@ -307,8 +308,7 @@ class OrderController extends Controller
             $vendor_email = $this->model->getVendorEmail($vendor_id);
             $freight_type_id = $request->get('freight_type_id');
 
-            $date_ordered = date("m-d-Y", strtotime($request->get('date_ordered')));
-
+           $date_ordered = date("Y-m-d", strtotime($request->get('date_ordered')));
             $total_cost = $request->get('order_total');
             $notes = $request->get('po_notes');
             $po_1 = $request->get('po_1');
@@ -1022,7 +1022,8 @@ class OrderController extends Controller
     }
     function updateRequestAndProducts($item_count,$SID_new)
     {
-        for($i=1;$i <= $item_count;$i++)
+         
+         for($i=1;$i <= $item_count;$i++)
         {
             $pos1 = strpos($SID_new,'-');
             $SID_new = substr($SID_new, $pos1+1);
