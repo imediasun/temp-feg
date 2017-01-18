@@ -77,7 +77,7 @@ class ReportGenerator
             }            
         }
         
-        FEGSystemHelper::getRetrySyncSuccessData($params);        
+        self::getRetrySyncSuccessData($params);        
         FEGSystemHelper::logit("Retry Sync Success Data: ", $lf, $lp);
         FEGSystemHelper::logit(self::$reportCache['retrySyncSuccessData'], $lf, $lp);        
         
