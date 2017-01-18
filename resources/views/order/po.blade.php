@@ -68,7 +68,8 @@
                     <tr>
                         <td style="padding:8px;border:1px dotted #000;border-top:none">  {{ $data[0]['orderDescriptionArray'][$i] }} <br/></td>
                         <td style="padding:9px;border:1px dotted #000;border-top:none"> {{ $i+1 }}</td>
-                        <td style="padding:8px;border:1px dotted #000;border-top:none">  {{ $data[0]['orderPriceArray'][$i] }} <br/></td>
+                        <td style="padding:8px;border:1px dotted #000;border-top:none">  {{CurrencyHelpers::formatCurrency($data[0]['orderPriceArray'][$i]) }} <br/></td>
+
                         <td style="padding:8px;border:1px dotted #000;border-top:none">  {{ $data[0]['orderQtyArray'][$i] }} <br/></td>
                         <td style="padding:9px;border:1px dotted #000;border-top:none">   {{ $data[0]['orderPriceArray'][$i]* $data[0]['orderQtyArray'][$i] }} <br/></td>
 <td></td>
