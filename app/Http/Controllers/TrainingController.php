@@ -41,79 +41,87 @@ class TrainingController extends Controller {
 		$this->data['access']		= $this->access;
 		return view('training.index',$this->data);
 	}
-    public function postData( Request $request)
+	public function postData( Request $request)
 	{
+
         $module_id = \DB::table('tb_module')->where('module_name', '=', 'training')->pluck('module_id');
         $this->data['module_id'] = $module_id;
         if (Input::has('config_id')) {
-            $config_id = Input::get('config_id');
-            \Session::put('config_id',$config_id);
+        $config_id = Input::get('config_id');
+			
         } elseif (\Session::has('config_id')) {
-            $config_id = \Session::get('config_id');
+        $config_id = \Session::get('config_id');
         } else {
-            $config_id = 0;
+        $config_id = 0;
         }
         $this->data['config_id'] = $config_id;
+        \Session::put('config_id', $config_id);
         $config = $this->model->getModuleConfig($module_id, $config_id);
-        if (!empty($config)) {
-            $this->data['config'] = \SiteHelpers::CF_decode_json($config[0]->config);
-            \Session::put('config_id', $config_id);
+        if(!empty($config))
+        {
+            $this->data['config'] = \SiteHelpers::CF_decode_json($config[0]->config);        
         }
-        $sort = (!is_null($request->input('sort')) ? $request->input('sort') : $this->info['setting']['orderby']);
-        $order = (!is_null($request->input('order')) ? $request->input('order') : $this->info['setting']['ordertype']);
-        // End Filter sort and order for query
-        // Filter Search for query
-        $filter = (!is_null($request->input('search')) ? $this->buildSearch() : '');
-        $page = $request->input('page', 1);
-        $params = array(
-            'page' => $page,
-            'limit' => (!is_null($request->input('rows')) ? filter_var($request->input('rows'), FILTER_VALIDATE_INT) : $this->info['setting']['perpage']),
-            'sort' => $sort,
-            'order' => $order,
-            'params' => $filter,
-            'global' => (isset($this->access['is_global']) ? $this->access['is_global'] : 0)
-        );
-        // Get Query
-        $results = $this->model->getRows($params);
-        // Build pagination setting
-        $page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;
-        //$pagination = new Paginator($results['rows'], $results['total'], $params['limit']);
-        $pagination = new Paginator($results['rows'], $results['total'],
-            (isset($params['limit']) && $params['limit'] > 0 ? $params['limit'] :
-                ($results['total'] > 0 ? $results['total'] : '1')));
-        $pagination->setPath('trainingmaterial/data');
-        $this->data['param'] = $params;
-        $this->data['topMessage'] = @$results['topMessage'];
-        $this->data['message'] = @$results['message'];
-        $this->data['bottomMessage'] = @$results['bottomMessage'];
+		$sort = (!is_null($request->input('sort')) ? $request->input('sort') : $this->info['setting']['orderby']);
+		$order = (!is_null($request->input('order')) ? $request->input('order') : $this->info['setting']['ordertype']);
+		// End Filter sort and order for query
+		// Filter Search for query
+		$filter = (!is_null($request->input('search')) ? $this->buildSearch() : '');
 
-        $this->data['rowData'] = $results['rows'];
-        // Build Pagination
-        $this->data['pagination'] = $pagination;
-        // Build pager number and append current param GET
-        $this->data['pager'] = $this->injectPaginate();
-        // Row grid Number
-        $this->data['i'] = ($page * $params['limit']) - $params['limit'];
-        // Grid Configuration
-        $this->data['tableGrid'] = $this->info['config']['grid'];
-        $this->data['tableForm'] = $this->info['config']['forms'];
-        $this->data['colspan'] = \SiteHelpers::viewColSpan($this->info['config']['grid']);
-        // Group users permission
-        $this->data['access'] = $this->access;
-        // Detail from master if any
-        $this->data['setting'] = $this->info['setting'];
 
-        // Master detail link if any
-        $this->data['subgrid'] = (isset($this->info['config']['subgrid']) ? $this->info['config']['subgrid'] : array());
+		$page = $request->input('page', 1);
+		$params = array(
+			'page'		=> $page ,
+			'limit'		=> (!is_null($request->input('rows')) ? filter_var($request->input('rows'),FILTER_VALIDATE_INT) : $this->info['setting']['perpage'] ) ,
+			'sort'		=> $sort ,
+			'order'		=> $order,
+			'params'	=> $filter,
+			'global'	=> (isset($this->access['is_global']) ? $this->access['is_global'] : 0 )
+		);
+		// Get Query
+		$results = $this->model->getRows( $params );
+		// Build pagination setting
+		$page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;
+		//$pagination = new Paginator($results['rows'], $results['total'], $params['limit']);
+        $pagination = new Paginator($results['rows'], $results['total'], 
+            (isset($params['limit']) && $params['limit'] > 0  ? $params['limit'] : 
+				($results['total'] > 0 ? $results['total'] : '1')));        
+		$pagination->setPath('training/data');
+		$this->data['param']		= $params;
+        $this->data['topMessage']	= @$results['topMessage'];
+		$this->data['message']          = @$results['message'];
+		$this->data['bottomMessage']	= @$results['bottomMessage'];
+        
+		$this->data['rowData']		= $results['rows'];
+		// Build Pagination
+		$this->data['pagination']	= $pagination;
+		// Build pager number and append current param GET
+		$this->data['pager'] 		= $this->injectPaginate();
+		// Row grid Number
+		$this->data['i']			= ($page * $params['limit'])- $params['limit'];
+		// Grid Configuration
+		$this->data['tableGrid'] 	= $this->info['config']['grid'];
+		$this->data['tableForm'] 	= $this->info['config']['forms'];
+		$this->data['colspan'] 		= \SiteHelpers::viewColSpan($this->info['config']['grid']);
+		// Group users permission
+		$this->data['access']		= $this->access;
+		// Detail from master if any
+		$this->data['setting'] 		= $this->info['setting'];
+
+		// Master detail link if any
+		$this->data['subgrid']	= (isset($this->info['config']['subgrid']) ? $this->info['config']['subgrid'] : array());
         if ($this->data['config_id'] != 0 && !empty($config)) {
-            $this->data['tableGrid'] = \SiteHelpers::showRequiredCols($this->data['tableGrid'], $this->data['config']);
+        $this->data['tableGrid'] = \SiteHelpers::showRequiredCols($this->data['tableGrid'], $this->data['config']);
         }
 // Render into template
-        return view('training.table', $this->data);
-    }
-    function getUpdate(Request $request, $id = null)
+		return view('training.table',$this->data);
+
+	}
+
+
+	function getUpdate(Request $request, $id = null)
 	{
-        if($id =='')
+
+		if($id =='')
 		{
 			if($this->access['is_add'] ==0 )
 			return Redirect::to('dashboard')->with('messagetext',\Lang::get('core.note_restric'))->with('msgstatus','error');
@@ -136,10 +144,10 @@ class TrainingController extends Controller {
 		$this->data['fields'] 		=  \AjaxHelpers::fieldLang($this->info['config']['forms']);
 		
 		$this->data['id'] = $id;
-
-		return view('training.form',$this->data);
+		return view('training.form', $this->data);
 	}
-    public function getShow( $id = null)
+
+	public function getShow( $id = null)
 	{
 
 		if($this->access['is_detail'] ==0)
@@ -160,9 +168,10 @@ class TrainingController extends Controller {
 		$this->data['fields'] 		= \AjaxHelpers::fieldLang($this->info['config']['forms']);
 		return view('training.view',$this->data);
 	}
-    function postCopy( Request $request)
+	function postCopy( Request $request)
 	{
-        foreach(\DB::select("SHOW COLUMNS FROM img_uploads ") as $column)
+
+	    foreach(\DB::select("SHOW COLUMNS FROM img_uploads ") as $column)
         {
 			if( $column->Field != 'id')
 				$columns[] = $column->Field;
@@ -178,43 +187,37 @@ class TrainingController extends Controller {
 			'message'=> \Lang::get('core.note_success')
 		));
 	}
-    function postSave( Request $request, $id =null)
-	{
-        $rules = array('video_title' => 'required', 'video_path' => 'required');
-        $validator = Validator::make($request->all(), $rules);
-        if ($validator->passes()) {
-            $data['users'] = $request->get('users');
-            $data['video_title'] = $request->get('video_title');
-            if (strpos($request->get('video_path'), 'youtu') < 0) {
-                return response()->json(array(
-                    'message' =>"Please add a valid Youtube link",
-                    'status' => 'error'
-                ));
-            }
-            $data['video_path'] = $this->model->get_youtube_id_from_url($request->get('video_path'));
-            if(!$data['video_path'])
-            {
-                return response()->json(array(
-                    'message' =>"Please add a valid Youtube link",
-                    'status' => 'error'
-                ));
-            }
-            $data['image_category'] = "video-training";
-            $id = $this->model->insertRow($data, $id);
-            return response()->json(array(
-                'status' => 'success',
-                'message' => \Lang::get('core.note_success')
-            ));
-        } else {
 
-            $message = $this->validateListError($validator->getMessageBag()->toArray());
-            return response()->json(array(
-                'message' => $message,
-                'status' => 'error'
-            ));
-        }
-    }
-    public function postDelete( Request $request)
+	function postSave( Request $request, $id =0)
+	{
+
+		$rules = array('video_title' => 'required', 'video_path' => 'required');
+		$validator = Validator::make($request->all(), $rules);
+		if ($validator->passes()) {
+			$data['users'] = $request->get('users');
+			$data['video_title'] = $request->get('video_title');
+			$data['video_path'] = $this->model->get_youtube_id_from_url($request->get('video_path'));
+			$data['image_category'] = "video";
+			$data['type'] = Training::TYPE;
+			$id = $this->model->insertRow($data, $id);
+			
+			return response()->json(array(
+				'status'=>'success',
+				'message'=> \Lang::get('core.note_success')
+				));
+
+		} else {
+
+			$message = $this->validateListError(  $validator->getMessageBag()->toArray() );
+			return response()->json(array(
+				'message'	=> $message,
+				'status'	=> 'error'
+			));
+		}
+
+	}
+
+	public function postDelete( Request $request)
 	{
 
 		if($this->access['is_remove'] ==0) {
@@ -223,7 +226,7 @@ class TrainingController extends Controller {
 				'message'=> \Lang::get('core.note_restric')
 			));
 			die;
-        }
+		}
 		// delete multipe rows
 		if(count($request->input('ids')) >=1)
 		{
@@ -238,6 +241,8 @@ class TrainingController extends Controller {
 				'status'=>'error',
 				'message'=> \Lang::get('core.note_error')
 			));
-        }
-    }
+		}
+
+	}
+
 }

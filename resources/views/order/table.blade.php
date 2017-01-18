@@ -123,8 +123,9 @@
 						 	<?php $limited = isset($field['limited']) ? $field['limited'] :''; ?>
 						 	@if(SiteHelpers::filterColumn($limited ))
 								 <td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}" data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
-									{!! $value !!}
-								 </td>
+
+							{!! $value !!}
+							</td>
 							@endif
 						 <?php endif;
 						endforeach;
@@ -144,8 +145,8 @@
 
 
                     @if($order_selected=='OPEN')
-                        <a href="{{ URL::to('order/orderreceipt/'.$row->id)}}" class="tips btn btn-xs btn-white" title="Receive Order"><i class="fa fa fa-download" aria-hidden="true"></i></a>
-                    @endif
+                        <a href="{{ URL::to('order/orderreceipt/'.$row->id)}}" class="tips btn btn-xs btn-white" title="Receive Order"><i class="fa fa fa-truck" aria-hidden="true"></i></a>
+                   @endif
 					@if($order_selected=='OPEN')
 						<a href="{{ URL::to('order/removalrequest/'.$row->po_number)}}" class="tips btn btn-xs btn-white" title="Request Removal"><i class="fa fa-trash-o " aria-hidden="true"></i></a>
 						@endif

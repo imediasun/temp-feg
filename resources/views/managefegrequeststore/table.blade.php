@@ -135,7 +135,7 @@
 
                                         @elseif($field['field'] == 'price')
 
-                                            {!! number_format((float)2, '.','',($value)) !!}
+                                            {!!number_format((float)2, '.','',$value) !!}
 
                                         @else
                                             {!! $value !!}
@@ -149,7 +149,7 @@
                             endforeach;
                             ?>
                             <td>{{ $row->vendor_name }}</td>
-                            <td>{{ $row->case_price }}</td>
+                            <td>{{CurrencyHelpers::formatCurrency($row->case_price)}} </td>
                             <td>{{ $row->reserved_difference }}</td>
                             <td> {{ $row->order_type }}</td>
                             <td data-values="action" data-key="<?php echo $row->id; ?>">

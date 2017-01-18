@@ -209,6 +209,7 @@ class TrainingmaterialController extends Controller
                 ));
             }
             $data['image_category'] = "video";
+            $data['type'] = Trainingmaterial::TYPE;
             $id = $this->model->insertRow($data, $id);
             return response()->json(array(
                 'status' => 'success',
