@@ -18,7 +18,7 @@ class managenewgraphicrequests extends Sximo
     public static function querySelect()
     {
 
-        return "SELECT new_graphics_request.*,u1.username,location.location_name_short,new_graphics_request_status.status FROM new_graphics_request LEFT JOIN users u1 ON (new_graphics_request.request_user_id = u1.id)
+        return "SELECT new_graphics_request.*,if(new_graphics_request.aprrove_user_id = 0,'',new_graphics_request.aprrove_user_id)as aprrove_user_id,u1.username,location.location_name_short,new_graphics_request_status.status FROM new_graphics_request LEFT JOIN users u1 ON (new_graphics_request.request_user_id = u1.id)
                 LEFT JOIN location ON (new_graphics_request.location_id = location.id)
                 LEFT JOIN new_graphics_request_status ON (new_graphics_request.status_id = new_graphics_request_status.id)";
 
