@@ -11,7 +11,7 @@
             <table width="100%" style="border-collapse: collapse">
                 <tr>
                     <td style="width:50%;border:1px solid #000;border-right:none;text-align: center;;padding:6px 0px;">Date:
-                        <br/> {{ $data[0]['date_ordered'] }} </td>
+                        <br/> {{ DateHelpers::formatDate($data[0]['date_ordered']) }} </td>
                     <td style="width:50%;border:1px solid #000;text-align: center;padding:6px 0px;">PO #
                         <br/>   {{ $data[0]['po_number'] }} </td>
                 </tr>
