@@ -11,7 +11,7 @@
             <table width="100%" style="border-collapse: collapse">
                 <tr>
                     <td style="width:50%;border:1px solid #000;border-right:none;text-align: center;;padding:6px 0px;">Date:
-                        <br/> {{ $data[0]['date_ordered'] }} </td>
+                        <br/> {{ DateHelpers::formatDate($data[0]['date_ordered']) }} </td>
                     <td style="width:50%;border:1px solid #000;text-align: center;padding:6px 0px;">PO #
                         <br/>   {{ $data[0]['po_number'] }} </td>
                 </tr>
@@ -68,7 +68,8 @@
                     <tr>
                         <td style="padding:8px;border:1px dotted #000;border-top:none">  {{ $data[0]['orderDescriptionArray'][$i] }} <br/></td>
                         <td style="padding:9px;border:1px dotted #000;border-top:none"> {{ $i+1 }}</td>
-                        <td style="padding:8px;border:1px dotted #000;border-top:none">  {{ $data[0]['orderPriceArray'][$i] }} <br/></td>
+                        <td style="padding:8px;border:1px dotted #000;border-top:none">  {{CurrencyHelpers::formatCurrency($data[0]['orderPriceArray'][$i]) }} <br/></td>
+
                         <td style="padding:8px;border:1px dotted #000;border-top:none">  {{ $data[0]['orderQtyArray'][$i] }} <br/></td>
                         <td style="padding:9px;border:1px dotted #000;border-top:none">   {{ $data[0]['orderPriceArray'][$i]* $data[0]['orderQtyArray'][$i] }} <br/></td>
 <td></td>

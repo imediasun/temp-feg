@@ -240,11 +240,11 @@
                         </td>
 
                         <td><br/> <input type='number' name='price[]' placeholder='Unit Price' id="price"
-                                         class='form-control' min="0.00" step=".01" value="0.00"
+                                         class='calculate form-control' min="0.00" step=".01" value="0.00"
                                          required></td>
                         <td>
                             <br/> <input type='number' name='case_price[]' placeholder='Case Price' id="case_price"
-                                         class='form-control' min="0.00" step=".01" value="0.00"
+                                         class='calculate form-control' min="0.00" step=".01" value="0.00"
                                          required></td>
                         </td>
 
@@ -256,7 +256,7 @@
                         {{--</td>--}}
 
                         <td><br/> <input type='number' name='qty[]' placeholder='Quantity'
-                                         class='form-control qty' min="0" step="1" id="qty" value="00"
+                                         class='calculate form-control qty' min="0" step="1" id="qty" value="00"
                                          required></td>
                         <!--<td class="game" style="display:none"><br/>
                             <select name='game[]' id='game_0' class='game  form-control'>
@@ -410,7 +410,7 @@
 
 
             $("input[name*='total'] ").attr('readonly', '1');
-            $("input[name*='qty'] , input[name*='bulk_Price'] ").addClass('calculate');
+            $(" input[name*='bulk_Price'] ").addClass('calculate');
             var ele = document.getElementsByClassName(".calculate");
 
             $(".calculate").keyup(function () {
@@ -775,15 +775,7 @@ if(result.unit_price == 0 && result.case_price == 0)
 $(function()
         {
             $("#experiment").trigger('click');
-
-            $("#price").on("change",function(){
-                calculateSum();
-            });
-            $("#qty").on("change",function(){
-                calculateSum();
-            });
-
-            $("#case_price").on("change",function(){
+            $(".calculate").live("change",function () {
                 calculateSum();
             });
         });

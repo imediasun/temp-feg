@@ -7,6 +7,7 @@ use DB;
 use App\Library\MyLog;
 use App\Library\ReportHelpers;
 use App\Library\FEG\System\SyncHelpers;
+use App\Library\FEG\System\FEGSystemHelper;
 
 class ReportGenerator
 {  
@@ -46,7 +47,8 @@ class ReportGenerator
         ), $params));
         
          
-        
+        $lf = "daily-transfer.log";
+        $lp = "FEGCronTasks/Skim-Daily-Transfer";
         $__logger = $_logger;
         $__logger->log("Start Generate Daily Email Reports $date");
         $__logger->log("PARAMS:", $params);
@@ -54,8 +56,8 @@ class ReportGenerator
         $task = $_task;
         $isTest = $task->is_test_mode;
         $params['isTestMode'] = $isTest;
-        $params['humanDate'] = $humanDate = self::getHumanDate($date);
-        $params['humanDateToday'] = $humanDateToday = self::getHumanDate($today);
+        $params['humanDate'] = $humanDate = FEGSystemHelper::getHumanDate($date);
+        $params['humanDateToday'] = $humanDateToday = FEGSystemHelper::getHumanDate($today);
         
         // Transfer Basic Status
         $dailyTransferStatusReport = '';
@@ -75,9 +77,9 @@ class ReportGenerator
             }            
         }
         
-        self::getRetrySyncSuccessData($params);        
-        self::logit("Retry Sync Success Data: ", "daily-transfer.log", "CleanLog");
-        self::logit(self::$reportCache['retrySyncSuccessData'], "daily-transfer.log", "CleanLog");        
+        FEGSystemHelper::getRetrySyncSuccessData($params);        
+        FEGSystemHelper::logit("Retry Sync Success Data: ", $lf, $lp);
+        FEGSystemHelper::logit(self::$reportCache['retrySyncSuccessData'], $lf, $lp);        
         
         $__logger->log("Start Game Earnings DB Transfer Report for $date");
         // Transfer report
@@ -106,11 +108,14 @@ class ReportGenerator
                     "<br><b><u>Games Not Played:</u></b><br>" .
                     @$gamesNotPlayed;
 
-            $emailRecipients = self::getSystemReportEmailRecipients('Daily Game Earnings DB Transfer Report');
+            $reportName = 'Daily Game Earnings DB Transfer Report';
+            $emailRecipients = self::getSystemReportEmailRecipients($reportName);
             self::sendEmailReport(array_merge($emailRecipients, array(
                 'subject' => "Game Earnings DB Transfer Report for $humanDate", 
                 'message' => $message, 
                 'isTest' => $isTest,
+                'reportName' => $reportName,
+                'reportNameSuffix' => $date,
             )));
 
             $__logger->log("        End Email Game Earnings DB Transfer Report for $date");
@@ -121,14 +126,14 @@ class ReportGenerator
                 self::$reportCache['locationsReportingIds'] : self::getLocationsReportingIds($params);
         
         $__logger->log("Reporting Locations:", $reportingLocations);
-        self::logit("Reporting Locations:", "daily-transfer.log", "CleanLog");
-        self::logit($reportingLocations, "daily-transfer.log", "CleanLog");
+        FEGSystemHelper::logit("Reporting Locations:", $lf, $lp);
+        FEGSystemHelper::logit($reportingLocations, $lf, $lp);
         
-        self::logit("Missing Asset IDs:", "daily-transfer.log", "CleanLog");
-        self::logit(self::$reportCache['missingAssetIdsPerLocation'], "daily-transfer.log", "CleanLog");        
+        FEGSystemHelper::logit("Missing Asset IDs:", $lf, $lp);
+        FEGSystemHelper::logit(self::$reportCache['missingAssetIdsPerLocation'], $lf, $lp);        
         
-        self::logit("Games Not Played:", "daily-transfer.log", "CleanLog");
-        self::logit(self::$reportCache['gamesNotPlayedPerLocation'], "daily-transfer.log", "CleanLog");        
+        FEGSystemHelper::logit("Games Not Played:", $lf, $lp);
+        FEGSystemHelper::logit(self::$reportCache['gamesNotPlayedPerLocation'], $lf, $lp);        
         
         if ($noLocationwise != 1) {
             // each location report
@@ -280,15 +285,17 @@ class ReportGenerator
         $task =$_task;
         $isTest = $task->is_test_mode;
         
-        $emailRecipients = self::getSystemReportEmailRecipients('Daily Transfer Bulk Fail'); 
+        $reportName = 'Daily Transfer Bulk Fail';
+        $emailRecipients = self::getSystemReportEmailRecipients($reportName); 
         self::sendEmailReport(array_merge($emailRecipients, array(
             'subject' => "Transfer Failure $humanDate", 
             'message' => $statusReport, 
             'isTest' => $isTest,
+            'reportName' => $reportName,
+            'reportNameSuffix' => $date,           
         )));       
         
     }
-
 
     public static function getLocationWiseDailyReport($params) {
         //Missing Asset IDs
@@ -301,11 +308,13 @@ class ReportGenerator
             '_task' => array(),
             '_logger' => null,
         ), $params));  
-        
+               
+        $lf = "daily-transfer.log";
+        $lp = "FEGCronTasks/Skim-Daily-Transfer";
         $report = array();
         $hasReport = false;
         $reportString = "";
-        self::logit("Location Wise Report: $location, $date ", "daily-transfer.log", "CleanLog");        
+        FEGSystemHelper::logit("Location Wise Report: $location, $date ", $lf, $lp);        
         if (!empty($location) && !empty($date))  {
             $missingAssetIdsAll = isset(self::$reportCache['missingAssetIdsPerLocation']) ? 
                     self::$reportCache['missingAssetIdsPerLocation'] : array();
@@ -317,10 +326,10 @@ class ReportGenerator
             $gamesNotPlayed = isset($gamesNotPlayedAll[$location]) ? $gamesNotPlayedAll[$location] : 
                 array();//self::getGamesNotPlayed($params);
             
-            self::logit("Missing Asset ID for Location $location", "daily-transfer.log", "CleanLog");
-            self::logit($missingAssetIds, "daily-transfer.log", "CleanLog");
-            self::logit("Games Not Played for Location $location", "daily-transfer.log", "CleanLog");
-            self::logit($gamesNotPlayed, "daily-transfer.log", "CleanLog");
+            FEGSystemHelper::logit("Missing Asset ID for Location $location", $lf, $lp);
+            FEGSystemHelper::logit($missingAssetIds, $lf, $lp);
+            FEGSystemHelper::logit("Games Not Played for Location $location", $lf, $lp);
+            FEGSystemHelper::logit($gamesNotPlayed, $lf, $lp);
             
             $gamesOffDebitCardData = DB::select(ReportHelpers::getGamesNotOnDebitCardQuery($location));
             
@@ -438,25 +447,31 @@ class ReportGenerator
         $isTest = $task->is_test_mode;
         
         if ($hasDailyReport) {
-            $emailRecipients = self::getSystemReportEmailRecipients('Daily games summary for each location', $location);
+            $reportName = 'Daily games summary for each location';
+            $emailRecipients = self::getSystemReportEmailRecipients($reportName, $location);
             self::sendEmailReport(array_merge($emailRecipients, array(
                 'subject' => "Games Summary for location  $location - $humanDate", 
                 'message' => $dailyReport, 
                 'isTest' => $isTest,
+                'reportName' => $reportName,
+                'reportNameSuffix' => "$location - $humanDate",                
             )));              
         }
         else {
-            $emailRecipients = self::getSystemReportEmailRecipients('Daily games summary for each location - No Issue', $location);
+            $reportName = 'Daily games summary for each location - No Issue';
+            $emailRecipients = self::getSystemReportEmailRecipients($reportName, $location);
             self::sendEmailReport(array_merge($emailRecipients, array(
                 'subject' => "Games Summary for location  $location - $humanDate  [NO ISSUES]", 
                 'message' => $dailyReport, 
                 'isTest' => $isTest,
+                'reportName' => $reportName,
+                'reportNameSuffix' => "$location - $humanDate",                
             )));             
         }
  
     }
     
-     public static function getLocationsReportingIds($params = array()) {
+    public static function getLocationsReportingIds($params = array()) {
          extract(array_merge(array(
             'date' => date('Y-m-d', strtotime('-1 day')),
             'location' => null,
@@ -532,7 +547,399 @@ class ReportGenerator
         
         return $reportString;
     }
-    
+    public static function getMissingDataReport ($params = array()) {
+        $lp = 'FEGCronTasks/Missing-Data-Report';
+        extract(array_merge(array(
+            'date' => null,
+            'date_start' => null,
+            'date_end' => null,
+            'location' => null,
+            'debit' => null,
+            'reader' => null,
+            'game' => null,
+            'sortBy' => 'loc_id',
+            'order' => 'asc',
+            'flatData' => 0,
+            '_task' => array(),
+            '_logger' => null,
+        ), $params));  
+
+        if (empty($date_start) && empty($date_end)) {         
+            if (empty($date)) {
+                $date = date('Y-m-d', strtotime('-1 day'));
+            }
+            $date_start = $date_end = $date; 
+        }
+        else {
+            if (empty($date_end)) {
+                $date_end = $date_start;
+            }
+            elseif(empty($date_start)) {
+                $date_start = $date_end;
+            }
+        }
+        
+        $isFlatData = $flatData == 1;
+        $report = array();        
+                        
+        $missingAssetIdData = array();
+        $q = ReportHelpers::getReadersMissingAssetIdQuery($date_start, $date_end, 
+            $location, $debit, $reader, $sortBy, $order);        
+        $data = DB::select($q);
+        foreach($data as $index => $row) {
+            $dateStart = FEGSystemHelper::getHumanDate($row->date_start);
+            $locationId = $row->location_id;
+            $locationName = $row->location_name_short;
+            $locationIDName = $locationName.' ('.$locationId.')';
+            $locationGameName = $row->loc_game_title;
+            $readerIdOriginal = $row->reader_id;
+            $readerId = preg_replace('/^.*\_/', "", $readerIdOriginal);
+            $gameTotalOriginal = $row->game_total;
+            $gameTotal = number_format(floatval($gameTotalOriginal), 2);
+            if (empty($readerId)) {
+                $readerId = "MISSING";
+            }
+            if (empty($locationGameName)) {
+                $locationGameName = "NOT RETRIEVED";
+            }
+            
+            $missingAsset = array(               
+                "Location ID" => $locationId,
+                "Location Name" => htmlentities($locationName),
+                "Location Game Name" => htmlentities($locationGameName),
+                "Reader ID" => htmlentities($readerId),
+                "Date" => FEGSystemHelper::getHumanDate($dateStart),
+                "Game Revenue" => $gameTotal,
+                "_Game Revenue Original" => $gameTotalOriginal,
+                "_Asset ID" => 0,
+                "_Reader ID" => $readerIdOriginal,
+                
+                
+            );
+            if ($isFlatData) {
+                $missingAssetIdData[] = $missingAsset;
+            }
+            else {
+                if (empty($missingAssetIdData[$locationIDName])) {
+                    $missingAssetIdData[$locationIDName] = array();
+                }            
+                $missingAssetIdData[$locationIDName][$locationGameName] = $missingAsset;        
+                
+            }
+            
+        }
+        if (!empty($missingAssetIdData)) {
+            $report['missingAssetIDs'] = $missingAssetIdData;
+        }        
+        
+        $badReadersData = array();
+        $q = ReportHelpers::getMissingReadersQuery($date_start, $date_end, 
+            $location, $debit, $game, $sortBy, $order);    
+        FEGSystemHelper::logit($q, 'getMissingReadersQuery.sql.log', $lp);
+        $data = DB::select($q);
+        foreach($data as $index => $row) {
+            $dateStart = $row->date_start;
+            $locationId = $row->location_id;
+            $locationName = $row->location_name_short;
+            $locationIDName = $locationName.' ('.$locationId.')';
+            $locationGameName = $row->loc_game_title;
+            $readerId = $row->reader_id;
+            $gameId = $row->game_id;
+            $gameTotalOriginal = $row->game_total;
+            $gameTotal = number_format(floatval($gameTotalOriginal), 2);
+            if (empty($gameId)) {
+                $gameId = "MISSING";
+            }
+            if (empty($readerId)) {
+                $readerId = "MISSING";
+            }
+            if (empty($locationGameName)) {
+                $locationGameName = "NOT RETRIEVED";
+            }
+            
+            $badReader = array(
+                "Location ID" => $locationId,
+                "Location Name" => htmlentities($locationName),
+                "Location Game Name" => htmlentities($locationGameName),
+                "Reader ID" => htmlentities($readerId),
+                "Asset ID" => $gameId,
+                "Date" => FEGSystemHelper::getHumanDate($dateStart),
+                "Game Revenue" => $gameTotal,
+                "_Game Revenue Original" => $gameTotalOriginal,
+            );
+            
+            if ($isFlatData) {
+                $badReadersData[] = $badReader;
+            }
+            else {
+                if (empty($badReadersData[$locationIDName])) {
+                    $badReadersData[$locationIDName] = array();   
+                }
+                $badReadersData[$locationIDName][$locationGameName] = $badReader;
+            }            
+
+        }
+        if (!empty($badReadersData)) {
+            $report['badReaderIDs'] = $badReadersData;
+        }
+        
+        $badAssetIDData = array();
+        $q = ReportHelpers::getUnknownAssetIdQuery($date_start, $date_end, 
+            $location, $debit, $reader, $sortBy, $order);
+        DB::statement("SET SESSION group_concat_max_len = 1000000;");
+        $data = DB::select($q);
+        foreach($data as $index => $row) {
+            $dateStart = $row->date_start;
+            $locationId = $row->location_id;
+            $locationName = $row->location_name_short;
+            $locationIDName = $locationName.' ('.$locationId.')';
+            $locationGameName = $row->loc_game_title;
+            $readerId = $row->reader_id;
+            $gameId = $row->game_id;
+            $gameTotalOriginal = $row->game_total;
+            $gameTotal = number_format(floatval($gameTotalOriginal), 2);
+            if (empty($gameId)) {
+                $gameId = "MISSING";
+            }
+            if (empty($readerId)) {
+                $readerId = "MISSING";
+            }
+            if (empty($locationGameName)) {
+                $locationGameName = "NOT RETRIEVED";
+            }
+
+            $badAsset = array(
+                "Location ID" => $locationId,
+                "Location Name" => htmlentities($locationName),
+                "Location Game Name" => htmlentities($locationGameName),
+                "Reader ID" => htmlentities($readerId),
+                "Asset ID" => $gameId,
+                "Date" => FEGSystemHelper::getHumanDate($dateStart),
+                "Game Revenue" => $gameTotal,
+                "_Game Revenue Original" => $gameTotalOriginal,
+            );
+            
+            if ($isFlatData) {
+                $badAssetIDData[] = $badAsset;
+            }
+            else {
+                if (empty($badReadersData[$locationIDName])) {
+                    $badAssetIDData[$locationIDName] = array();
+                }            
+                $badAssetIDData[$locationIDName][$locationGameName] = $badAsset;
+            }            
+        }
+        
+        if (!empty($badAssetIDData)) {
+            $report['badAssetIDs'] = $badAssetIDData;
+        }
+        
+        return $report;
+    }
+    public static function missingDataReport ($params = array()) {
+        $timeStart = microtime(true);        
+        global $__logger;
+        $lf = 'MissingDataReports.log';
+        $lp = 'FEGCronTasks/Missing-Data-Report';        
+        extract(array_merge(array(
+            '_task' => array(),
+            '_logger' => null,
+            'today' => date('Y-m-d'),            
+            'date' => null,
+            'date_start' => null,
+            'date_end' => null,             
+            'flatData' => 0,
+        ), $params));    
+        
+        $L = FEGSystemHelper::setLogger($_logger, $lf, $lp, 'MissingData');
+        $params['_logger'] = $__logger = $L;  
+        $__logger = $L;
+        
+        if (empty($date_start) && empty($date_end)) {         
+            if (empty($date)) {
+                $date = date('Y-m-d', strtotime('-1 day'));
+            }
+            $date_start = $date_end = $date; 
+        }
+        else {
+            if (empty($date_end)) {
+                $date_end = $date_start;
+            }
+            elseif(empty($date_start)) {
+                $date_start = $date_end;
+            }
+        }
+        $isFlatData = $flatData == 1;
+        
+        $tableStyle = 'border: 1px solid #888; padding: 0; margin: 0; width: 100%; border-collapse: collapse; font-family: tahoma, arial, sans-serif; font-size: 95%; color: #555;';
+        $cellStyle = 'border: 1px solid #888; padding: 5px; margin: 0; border-collapse: collapse;';       
+        $thStyle = 'background-color: #ddd; font-weight: bold; border-collapse: collapse;';
+        $tdStyle = '';
+        
+        
+        $dStart = new \DateTime($date_start);
+        $dEnd  = new \DateTime($date_end);
+        $dDiff = $dStart->diff($dEnd);   
+        $days = $dDiff->days + 1;
+   
+        $isTest = $_task->is_test_mode;
+        $humanDate = FEGSystemHelper::getHumanDate($date);
+        $humanDateToday = FEGSystemHelper::getHumanDate($today);
+        $humanDateStart = FEGSystemHelper::getHumanDate($date_start);
+        $humanDateEnd = FEGSystemHelper::getHumanDate($date_end);
+        if ($date_start == $date_end) {
+            $reportPrefix = "";
+            $reportSuffix = "$date_start";
+            $logInfo = " $date_start";
+            $humanDateRange = "$humanDateStart";
+        }
+        else {
+            $reportPrefix = "";
+            $reportSuffix = "$date_start - $date_end";
+            $logInfo = " $date_start - $date_end ($days days)";
+            $humanDateRange = "$humanDateStart - $humanDateEnd ($days days)";
+        }
+        
+        FEGSystemHelper::logit("Start Processing Missing data for - $logInfo", $lf, $lp);
+        
+        $reportData = self::getMissingDataReport($params);
+        FEGSystemHelper::logit("        Data processed");
+        
+        $messages = array("<div style='font-family: tahoma, arial, sans-serif; color: #333; font-size: 90%;'>");
+        $messages[] = "<h2>Missing  Data Report</h2><br/>";
+        if (empty($reportData)) {
+            FEGSystemHelper::logit("    No missing data found", $lf, $lp);
+            $messages[] = "<b style='color:green;'>Congrats! No issues found.</b>";
+        }
+        else {
+            if (!empty($reportData['missingAssetIDs'])) {
+                FEGSystemHelper::logit("    Missing Asset ID found", $lf, $lp);
+                $messages[] = "<h3 style='color:red;'>Missing Asset IDs</h3>";
+                $messages[] = "<p style='color:grey;'>The following Locations have reported 
+                    data with missing Asset IDs. Please update the repective 
+                    games based on the reader ids or the game names at location with 
+                    correct Asset ID</p>";
+                
+                if ($isFlatData) {
+                    $messages[] = FEGSystemHelper::tableFromArray($reportData['missingAssetIDs'], array(
+                                'tableStyles' => $tableStyle,
+                                'cellStyles' => $cellStyle,
+                                'THStyles' => $thStyle,
+                                'TDStyles' => $tdStyle,
+                        ));
+                }
+                else {
+                    foreach($reportData['missingAssetIDs'] as $locationIDName => $items) {
+                        $data = FEGSystemHelper::joinArray($items, 'Location Game Name', 
+                                array('Date'), 
+                                array('Game Revenue'), 
+                                array('Location ID', 'Location Name'));
+                        $messages[] = "<h4>Report for Location: $locationIDName</h4>";
+                        $messages[] = FEGSystemHelper::tableFromArray($data, array(
+                                'cellWidths' => array('Location Game Name' => '40%', 'Reader ID' => '20%', 'Date' => '20%', 'Game Revenue' => '20%'),
+                                'tableStyles' => $tableStyle,
+                                'cellStyles' => $cellStyle,
+                                'THStyles' => $thStyle,
+                                'TDStyles' => $tdStyle,
+                            ));
+                    }
+                }
+                $messages[] = "<p>&nbsp;</p><hr/><p>&nbsp;</p>";
+                
+            }
+            if (!empty($reportData['badReaderIDs'])) {
+                FEGSystemHelper::logit("    Missing or Incorrect Reader ID found", $lf, $lp);
+                $messages[] = "<h3 style='color:red;'>Missing or Incorrect Reader IDs</h3>";
+                $messages[] = "<p style='color:grey;'>The following Locations have reported 
+                    data with incorrect or invalid Reader IDs.</p>";
+                
+                if ($isFlatData) {
+                    $messages[] = FEGSystemHelper::tableFromArray($reportData['badReaderIDs'], array(
+                                'tableStyles' => $tableStyle,
+                                'cellStyles' => $cellStyle,
+                                'THStyles' => $thStyle,
+                                'TDStyles' => $tdStyle,
+                        ));
+                }
+                else {
+                    $data = array();     
+                    foreach($reportData['badReaderIDs'] as $locationIDName => $items) {
+                        $data = FEGSystemHelper::joinArray($items, 'Location Game Name', 
+                                array('Date'), 
+                                array('Game Revenue'), 
+                                array('Location ID', 'Location Name'));
+                        $messages[] = "<h4>Report for Location: $locationIDName</h4>";
+                        $messages[] = FEGSystemHelper::tableFromArray($data, array(
+                                'cellWidths' => array('Location Game Name' => '40%', 'Reader ID' => '15%', 'Asset ID' => '15%',  'Date' => '15%', 'Game Revenue' => '15%'),
+                                'tableStyles' => $tableStyle,
+                                'cellStyles' => $cellStyle,
+                                'THStyles' => $thStyle,
+                                'TDStyles' => $tdStyle,
+                            ));
+                    }                    
+                } 
+                $messages[] = "<p>&nbsp;</p><hr/><p>&nbsp;</p>";
+            }
+            if (!empty($reportData['badAssetIDs'])) {
+                FEGSystemHelper::logit("    Unknown Asset ID found", $lf, $lp);
+                $messages[] = "<h3 style='color:red;'>Unknown Asset ID</h3>";
+                $messages[] = "<p style='color:grey;'>The following Locations have reported 
+                    data with Asset IDs not matching in FEG Admin. 
+                    Please update the repective 
+                    games based on the reader ids or the game names at location with 
+                    correct Asset ID</p>";
+                
+                if ($isFlatData) {
+                    $messages[] = FEGSystemHelper::tableFromArray($reportData['badAssetIDs'], array(
+                                'tableStyles' => $tableStyle,
+                                'cellStyles' => $cellStyle,
+                                'THStyles' => $thStyle,
+                                'TDStyles' => $tdStyle,
+                        ));
+                }
+                else {
+                    $data = array();
+                    foreach($reportData['badAssetIDs'] as $locationIDName => $items) {
+                        $data = FEGSystemHelper::joinArray($items, 'Location Game Name', 
+                                array('Date'), 
+                                array('Game Revenue'), 
+                                array('Location ID', 'Location Name'));
+                        $messages[] = "<h4>Report for Location: $locationIDName</h4>";
+                        $messages[] = FEGSystemHelper::tableFromArray($data, array(
+                                'cellWidths' => array('Location Game Name' => '40%', 'Reader ID' => '15%', 'Asset ID' => '15%',  'Date' => '15%', 'Game Revenue' => '15%'),
+                                'tableStyles' => $tableStyle,
+                                'cellStyles' => $cellStyle,
+                                'THStyles' => $thStyle,
+                                'TDStyles' => $tdStyle,
+                        ));
+                    }                    
+                } 
+                $messages[] = "<p>&nbsp;</p><hr/><p>&nbsp;</p>";
+            }
+        }
+        $messages[] = "</div>";
+        $message = implode('<br>', $messages);
+        
+        FEGSystemHelper::logit("    Start sending email", $lf, $lp);
+        $reportName = 'Daily Missing Asset ID Reader ID Unknown Asset ID Report';
+        $emailRecipients = self::getSystemReportEmailRecipients($reportName); 
+        self::sendEmailReport(array_merge($emailRecipients, array(
+            'subject' => "FEG Missing Data (Asset ID, Reader ID, Unknown Asset ID) Report for $humanDateRange", 
+            'message' => $message, 
+            'isTest' => $isTest,
+            'reportName' => $reportName,
+            'reportNamePrefix' => $reportPrefix,
+            'reportNameSuffix' => $reportSuffix,
+        ))); 
+        FEGSystemHelper::logit("    End sending email", $lf, $lp);
+        FEGSystemHelper::logit("End Processing Missing data for - $logInfo", $lf, $lp);
+        $timeEnd = microtime(true);
+        $timeDiff = round($timeEnd - $timeStart);
+        $timeDiffHuman = FEGSystemHelper::secondsToHumanTime($timeDiff);
+        $timeTaken = "Time taken: $timeDiffHuman ";
+        return $timeTaken;
+    }
+
     public static function getReadersMissingAssetIdsReport($params = array()) {
          extract(array_merge(array(
             'date' => date('Y-m-d', strtotime('-1 day')),
@@ -727,11 +1134,14 @@ class ReportGenerator
         //"Daily Potential Over-reporting Errors Report"
         if (!empty($overReporting) && $overReporting != "None") {
             $message = "<b><u>Potential Over-reporting Errors:</u></b><br><br>$overReporting";
-            $emailRecipients = self::getSystemReportEmailRecipients('Daily Potential Over-reporting Errors Report'); 
+            $reportName = 'Daily Potential Over-reporting Errors Report';
+            $emailRecipients = self::getSystemReportEmailRecipients($reportName); 
             self::sendEmailReport(array_merge($emailRecipients, array(
                 'subject' => "Potential Over-reporting Errors Check for $humanDate", 
                 'message' => $message, 
                 'isTest' => $isTest,
+                'reportName' => $reportName,
+                'reportNameSuffix' => "$humanDate",
             )));          
         }
     }
@@ -841,11 +1251,15 @@ class ReportGenerator
 					    Thanks,<br>
 					    Nate";
             
-            $emailRecipients = self::getSystemReportEmailRecipients('Daily Sacoa Data Transfer Failure and Status'); 
+            $reportName = 'Daily Sacoa Data Transfer Failure and Status';
+            $emailRecipients = self::getSystemReportEmailRecipients($reportName); 
             self::sendEmailReport(array_merge($emailRecipients, array(
                 'subject' => "Sacoa->FEG: Data Transfer Failure status as of $humanDateToday", 
                 'message' => $sacoaReport, 
                 'isTest' => $isTest,
+                'reportName' => $reportName,
+                'reportNameSuffix' => $humanDateToday,
+                
             )));            
         }
         
@@ -856,20 +1270,26 @@ class ReportGenerator
                     Thanks,<br>
                     Nate";
 
-            $emailRecipients = self::getSystemReportEmailRecipients('Daily Embed Data Transfer Failure and Status'); 
+            $reportName = 'Daily Embed Data Transfer Failure and Status';
+            $emailRecipients = self::getSystemReportEmailRecipients($reportName); 
             self::sendEmailReport(array_merge($emailRecipients, array(
                 'subject' => "Embed->FEG: Data Transfer Failure status as of $humanDateToday", 
                 'message' => $embedReport, 
                 'isTest' => $isTest,
+                'reportName' => $reportName,
+                'reportNameSuffix' => $humanDateToday,
             )));              
         }
         
-        if ($noRetrySync != 1) {            
-            $emailRecipients = self::getSystemReportEmailRecipients('Daily Data Transfer Failure Summary'); 
+        if ($noRetrySync != 1) { 
+            $reportName = 'Daily Data Transfer Failure Summary';
+            $emailRecipients = self::getSystemReportEmailRecipients($reportName); 
             self::sendEmailReport(array_merge($emailRecipients, array(
                 'subject' => "Data Transfer Failure Summary as of $humanDateToday", 
                 'message' => $retryReportAll, 
                 'isTest' => $isTest,
+                'reportName' => $reportName, 
+                'reportNameSuffix' => $humanDateToday,
             )));            
         }
  
@@ -1027,16 +1447,17 @@ class ReportGenerator
         $isTest = $task->is_test_mode;        
         
         if (!empty($finalGameSummaryReport)) {
-            
-            $emailRecipients = self::getSystemReportEmailRecipients('Daily Games Summary'); 
+            $reportName = 'Daily Games Summary';
+            $emailRecipients = self::getSystemReportEmailRecipients($reportName); 
             self::sendEmailReport(array_merge($emailRecipients, array(
                 'subject' => "Games Summary - $humanDate", 
                 'message' => $finalGameSummaryReport, 
                 'isTest' => $isTest,
+                'reportName' => $reportName,
+                'reportNameSuffix' => $humanDate,
             )));        
         }
     }
-        
     
     public static function weekly($params = array()) {
         global $__logger;
@@ -1077,10 +1498,10 @@ class ReportGenerator
         $logInfo = " $date_start - $date_end ($days days)";
         $isTest = $task->is_test_mode;
         $params['isTestMode'] = $isTest;
-        $params['humanDate'] = $humanDate = self::getHumanDate($date);
-        $params['humanDateToday'] = $humanDateToday = self::getHumanDate($today);
-        $params['humanDateStart'] = $humanDateStart = self::getHumanDate($date_start);
-        $params['humanDateEnd'] = $humanDateEnd = self::getHumanDate($date_end);
+        $params['humanDate'] = $humanDate = FEGSystemHelper::getHumanDate($date);
+        $params['humanDateToday'] = $humanDateToday = FEGSystemHelper::getHumanDate($today);
+        $params['humanDateStart'] = $humanDateStart = FEGSystemHelper::getHumanDate($date_start);
+        $params['humanDateEnd'] = $humanDateEnd = FEGSystemHelper::getHumanDate($date_end);
         $humanDateRange = "$humanDateStart - $humanDateEnd ($days days)";
         
         $__logger = $_logger;        
@@ -1311,11 +1732,14 @@ class ReportGenerator
         $__logger->log("sending weekly email report $logInfo");
         
         $message = implode("", $report);
-        $emailRecipients = self::getSystemReportEmailRecipients('Weekly games summary');
+        $reportName = 'Weekly games summary';
+        $emailRecipients = self::getSystemReportEmailRecipients($reportName);
             self::sendEmailReport(array_merge($emailRecipients, array(
                 'subject' => "FEG Weekly Games Summary | $humanDateRange", 
                 'message' => $message, 
                 'isTest' => $isTest,
+                'reportName' => $reportName,
+                'reportNameSuffix' => $humanDateRange,
             )));
         
         $__logger->log("End sending weekly email report $logInfo");
@@ -1337,7 +1761,7 @@ class ReportGenerator
             $table = array();
             foreach($data as $row) {
                 $playDate = $row->not_reporting_date;
-                $playDateHuman = self::getHumanDate($playDate);
+                $playDateHuman = FEGSystemHelper::getHumanDate($playDate);
                 $debitType = $row->debit_system;
                 $locId = $row->id;
                 $locName = $row->location_name;
@@ -1358,7 +1782,7 @@ class ReportGenerator
         $table[] = "<table style='margin:0px auto; width:100%;'>";
         $table[] = "<tr style='$trHeadStyle'>";                
         while($currentDate <= $dateEndTimestamp) {
-            $th = self::getHumanDate($date);
+            $th = FEGSystemHelper::getHumanDate($date);
             $header[] = $date;
             $table[] = "<th style='$thStyle'>$th</th>";
             $currentDate = strtotime($date . " +1 day");
@@ -1386,47 +1810,33 @@ class ReportGenerator
         return $tableString;
     }
     
-    
-    public static function phpMail($to, $subject, $message, $from = "support@fegllc.com", $options = array()) {
-        $headers = 'MIME-Version: 1.0' . "\r\n";
-        $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
-        $headers .= 'From: ' . $from . "\r\n";        
-        if (!empty($options)) {
-            if (!empty($options['cc'])) {
-                $headers .= 'Cc: ' . $options['cc'] . "\r\n";  
-            }
-            if (!empty($options['bcc'])) {
-                $headers .= 'Bcc: ' . $options['bcc'] . "\r\n";  
-            }
-        }
+    public static function sendEmailReport($options) {  
         
-        mail($to, $subject, $message, $headers);
-    }
-    public static function sendEmail($to, $subject, $message, $from = "support@fegllc.com", $options = array()) { 
-        //support@fegllc.com
-        if (empty($from)) {
-            //$from = "support@fegllc.com";
-            //$from = "support@element5digital.com";
-            $from = "support@fegllc.com";
-        }        
-        self::phpMail($to, $subject, $message, $from, $options);
-    }
-    
-    public static function sendEmailReport($options) {        
+        $lp = 'FEGCronTasks/SystemEmails';
+        $lpd = 'FEGCronTasks/SystemEmailsDump';
         extract(array_merge(array(
             'from' => "support@fegllc.com",
             'reportName' => "Test",
+            'reportNamePrefix' => "",
+            'reportNameSuffix' => "",
         ), $options));
+        
+        $reportNameSanitized = preg_replace('/[\W]/', '-', strtolower($reportName));
+        $lf = "email-"
+                . (empty($reportNamePrefix)? "" : "{$reportNamePrefix}-")
+                . $reportNameSanitized
+                . (empty($reportNameSuffix)? "" : "-{$reportNameSuffix}")
+                . ".log";
         
         if ($isTest) {
             
             $message =  "
 *************** EMAIL START --- DEBUG INFO *******************<br>
-[SUBJECT: $subject]<br>
-[TO: $to]<br>
+[SUBJECT: $subject]<br/>
+[TO: $to]<br/>
 [FROM: $from]<br/>
-[CC: $cc]<br>
-[BCC: $bcc]<br>                   
+[CC: $cc]<br/>
+[BCC: $bcc]<br/>                   
 ***************** DEBUG INFO END *****************************<br><br>
 $message
 ******************************************* EMAIL END ********************************<br>";
@@ -1442,19 +1852,15 @@ $message
             
             $messageLog = str_ireplace(array("<br />","<br>","<br/>"), "\r\n", $message);
             
-            $reportNameSanitized = preg_replace('/[\W]/', '-', strtolower($reportName));
-            self::logit("to: " .$to, "email-{$reportNameSanitized}.log", "SystemEmailsDump");
-            self::logit("cc: " .$cc, "email-{$reportNameSanitized}.log", "SystemEmailsDump");
-            self::logit("bcc: " .$bcc, "email-{$reportNameSanitized}.log", "SystemEmailsDump");
-//            self::logit("subject: " .$subject, "email-{$reportNameSanitized}.log", "SystemEmailsDump");
-            self::logit(url(), "email-{$reportNameSanitized}.log", "SystemEmailsDump");
-            self::logit(strpos(url(), "localhost") >= 0, "email-{$reportNameSanitized}.log", "SystemEmailsDump");
+//            FEGSystemHelper::logit("to: " .$to, "email-{$reportNameSanitized}.log", "FEGCronTasks/SystemEmailsDump");
+//            FEGSystemHelper::logit("cc: " .$cc, "email-{$reportNameSanitized}.log", "FEGCronTasks/SystemEmailsDump");
+//            FEGSystemHelper::logit("bcc: " .$bcc, "email-{$reportNameSanitized}.log", "FEGCronTasks/SystemEmailsDump");
+//            FEGSystemHelper::logit("subject: " .$subject, "email-{$reportNameSanitized}.log", "FEGCronTasks/SystemEmailsDump");
             
-            self::logit($messageLog, "email-{$reportNameSanitized}.log", "SystemEmailsDump");
-//            if (strpos(url(), "localhost") >= 0) {
+            FEGSystemHelper::logit($messageLog, "{$lf}.html", $lpd, true);
+//            if (strpos(\Symfony\Component\HttpFoundation\Request::server('HTTP_REFERER'), "localhost") >= 0) {
 //                return;
 //            }
-            
         }
         
         $opt = array();
@@ -1464,9 +1870,9 @@ $message
         if (!empty($bcc)) {
             $opt['bcc'] = $bcc;
         }        
-        self::logit("Sending Email", "email-{$reportNameSanitized}.log", "SystemEmailsDump");
-        self::sendEmail($to, $subject, $message, $from, $opt);
-        self::logit("Email sent", "email-{$reportNameSanitized}.log", "SystemEmailsDump");
+        FEGSystemHelper::logit("Sending Email", $lf, $lp);
+        FEGSystemHelper::sendEmail($to, $subject, $message, $from, $opt);
+        FEGSystemHelper::logit("Email sent", $lf, $lp);
     }
     public static function getSystemReportEmailRecipients($reportName, $location = null, $isTest = false) {
         $emails = array('reportName' => $reportName, 'to' => '', 'cc' => '', 'bcc' => '');
@@ -1510,15 +1916,15 @@ $message
                 $users['cc'] = empty($ucc) ? array() : self::getUserEmails($ucc);
                 $users['bcc'] = empty($ubcc) ? array() : self::getUserEmails($ubcc);
                 
-                $inclues['to'] = self::split_trim($data->to_include_emails);
-                $inclues['cc'] = self::split_trim($data->cc_include_emails);
-                $inclues['bcc'] = self::split_trim($data->bcc_include_emails);
+                $inclues['to'] = FEGSystemHelper::split_trim($data->to_include_emails);
+                $inclues['cc'] = FEGSystemHelper::split_trim($data->cc_include_emails);
+                $inclues['bcc'] = FEGSystemHelper::split_trim($data->bcc_include_emails);
                 
-                $excludes['to'] = array_merge(self::split_trim(
+                $excludes['to'] = array_merge(FEGSystemHelper::split_trim(
                         $data->to_exclude_emails), array(null, ''));
-                $excludes['cc'] = array_merge(self::split_trim(
+                $excludes['cc'] = array_merge(FEGSystemHelper::split_trim(
                         $data->cc_exclude_emails), array(null, ''));
-                $excludes['bcc'] = array_merge(self::split_trim(
+                $excludes['bcc'] = array_merge(FEGSystemHelper::split_trim(
                         $data->bcc_exclude_emails), array(null, ''));
                 
                 $to = array_diff(array_unique(
@@ -1573,8 +1979,7 @@ $message
         
         return $emails;
     }
-        
-    
+
     public static function getGroupsUserEmails($groups = null, $location = null) {
         $q = "SELECT U.id, U.group_id, UL.location_id, U.email FROM users U 
                     LEFT JOIN user_locations UL ON UL.user_id = U.id
@@ -1608,48 +2013,5 @@ $message
         }
         return $emails;
     }
-    
-    private static function getHumanDate($date = "") {
-        $hDate = "";
-        if (!empty($date)) {
-            $hDate = date("l, F d Y", strtotime($date));
-        }
-        return $hDate;
-    }
-    private static function split_trim($txt, $delim = ',', $trimChar = null) {
-        $arr = array();
-        if (empty($txt)) {
-            $txt = "";
-        }
-        $data = explode($delim, $txt);
-        foreach($data as $val) {
-            $val = empty($trimChar) ? trim($val): trim($val, $trimChar);
-            if (!empty($val)) {
-                $arr[] = $val;
-            }
-        }
-        return $arr;        
-    }
 
-    private static function logit($obj = "", $file = "system-email-report.log", $pathsuffix ="") {
-        $path = self::set_log_path($file, $pathsuffix);
-        $date = "[" . date("Y-m-d H:i:s"). "] ";
-        if (is_array($obj) || is_object($obj)) {
-            $log = json_encode($obj);
-        }
-        else {
-            $log = $obj;
-        }
-        file_put_contents($path, $date.$log."\r\n", FILE_APPEND);    
-    }	
-    private static function set_log_path($file = "system-email-report.log", $pathsuffix = "") {
-        $fileprefix = "log-" . date("Ymd") . "-";
-        $path = realpath(storage_path() . '/logs/').(empty($pathsuffix) ? "" : '/'.$pathsuffix);        
-        if (!file_exists($path)) {
-            mkdir($path, 0755, true);
-        }
-        $filepath = $path . '/'. $fileprefix . $file;        
-        return $filepath;
-    }     
-    
 }
