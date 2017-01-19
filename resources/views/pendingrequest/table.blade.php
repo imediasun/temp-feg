@@ -120,13 +120,13 @@
 								<?php $limited = isset($field['limited']) ? $field['limited'] :''; ?>
 								@if(SiteHelpers::filterColumn($limited ))
 									 <td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}" data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
-										 @if($field['field'] == 'process_date')
+										 {{--@if($field['field'] == 'process_date')--}}
 
-											 {!! DateHelpers::formatDate($value) !!}
+											 {{--{!! DateHelpers::formatDate($value) !!}--}}
 
-										 @else
+										 {{--@else--}}
 											 {!! $value !!}
-										 @endif
+										 {{--@endif--}}
 									 </td>
 								@endif
 						 <?php
