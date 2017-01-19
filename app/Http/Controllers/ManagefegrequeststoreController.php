@@ -125,6 +125,8 @@ class ManagefegrequeststoreController extends Controller
 
     public function postData(Request $request)
     {
+
+   // die('here in reload data');
         $user_level = \Session::get('gid');
         if ($user_level == 2) {
             return redirect('dashboard');
@@ -177,13 +179,12 @@ class ManagefegrequeststoreController extends Controller
             );
             // Get Query
             $view = $request->get('view');
+            \Session::put('manage-request-view',$view);
             $cond = array('view' => $view, 'order_type_id' => $manageRequestInfo['TID'], 'location_id' => $manageRequestInfo['LID'], 'vendor_id' => $manageRequestInfo['VID']);
             $this->data['view'] = $view;
             $results = $this->model->getRows($params, $cond);
             // Build pagination setting
             $page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;
-
-
             $pagination = new Paginator($results['rows'], $results['total'], $params['limit']);
             $pagination->setPath('managefegrequeststore/data');
             $this->data['param'] = $params;
@@ -294,6 +295,7 @@ class ManagefegrequeststoreController extends Controller
             $id = $this->model->insertRow($data, $id);
             return response()->json(array(
                 'status' => 'success',
+                'view'=>\Session::get('manage-request-view'),
                 'message' => \Lang::get('core.note_success')
             ));
 

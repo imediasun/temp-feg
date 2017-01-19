@@ -118,7 +118,7 @@ function showResponse(data)  {
 	if(data.status == 'success')
 	{
 		ajaxViewClose('#{{ $pageModule }}');
-		ajaxFilter('#{{ $pageModule }}','{{ $pageModule }}/data','view=manage');
+		ajaxFilter('#{{ $pageModule }}','{{ $pageModule }}/data',data.view);
 		notyMessage(data.message);	
 		$('#sximo-modal').modal('hide');	
 	} else {
