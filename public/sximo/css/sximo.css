@@ -1815,7 +1815,10 @@ code {
 .dd-handle { cursor:default;display: block; margin: 5px 0; padding: 7px 10px; color: #333; text-decoration: none; border: 1px solid #ddd;
 background: #fff;
 }
-
+.action
+{
+    padding-left:3%;
+}
 .dd-handle:hover { color: #FFF; background: #4D90FD; border-color:#428BCA; }
 
 .dd-item > button { color:#555;font-family: FontAwesome;display: block; position: relative; cursor: pointer; float: left; width: 25px; height: 20px; margin: 8px 2px; padding: 0; text-indent: 100%; white-space: nowrap; overflow: hidden; border: 0; background: transparent; font-size: 10px; line-height: 1; text-align: center; }
