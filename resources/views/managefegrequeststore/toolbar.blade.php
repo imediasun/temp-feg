@@ -5,7 +5,6 @@
         <div class="col-md-3 m-b">
 
         <select name="type" class="select3" id="request_type">
-            <option disabled>Select Requests Type</option>
             <option value="archive" @if($view == 'archive'): selected @endif>FEG Store Requests Archives</option>
             <option value="manage" @if($view == 'manage'): selected @endif> Open Requests</option>
         </select>
