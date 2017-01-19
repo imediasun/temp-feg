@@ -83,7 +83,7 @@
                             endif;
                         endforeach; ?>
                         @if($setting['disablerowactions']=='false')
-                            <th width="170" align="center" style="text-align: center"><?php echo Lang::get('core.btn_action') ;?></th>
+                            <th width="140" align="center" style="text-align: center"><?php echo Lang::get('core.btn_action') ;?></th>
                         @endif
                     </tr>
                     </thead>
