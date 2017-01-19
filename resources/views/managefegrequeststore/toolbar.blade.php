@@ -10,7 +10,8 @@
         </select>
 
     </div>
-    <div class="col-md-3">
+    @if($view == "manage")
+        <div class="col-md-3">
 
         <input  name="order_type" @if($TID )value="{{ $TID }}" @endif id="order_type" type="hidden" onchange="pageRefresh('T');" style="width:98%">
     </div>
@@ -36,6 +37,7 @@
                 <button type="submit" name="submit" class="btn btn-primary btn-sm" id="multi-btn"><i class="fa  fa-save" ></i>  Add Items to Order Form </button>
         @endif
         </div>
+        @endif
         {!! Form::close() !!}
     </div>
 
