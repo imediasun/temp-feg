@@ -83,7 +83,7 @@
                             endif;
                         endforeach; ?>
                         @if($setting['disablerowactions']=='false')
-                            <th width="140" align="center" ><?php echo Lang::get('core.btn_action') ;?></th>
+                            <th width="110"  ><?php echo Lang::get('core.btn_action') ;?></th>
                         @endif
                     </tr>
                     </thead>
@@ -158,7 +158,7 @@
 
 
 
-                        <td class="action" align="center" data-values="action" data-key="<?php echo $row->id;?>" class="text-center">
+                        <td class="action"  data-values="action" data-key="<?php echo $row->id;?>" class="text-center">
                             {!! AjaxHelpers::GamestitleButtonAction('gamestitle',$access,$id ,$setting) !!}
                             {!! AjaxHelpers::buttonActionInline($row->id,'id') !!}
                             <a href="{{ URL::to('gamestitle/upload/'.$row->id.'?type=2')}}" class="tips btn btn-xs btn-white" title="Upload Manual"><i class="fa fa-file" aria-hidden="true"></i></a>
