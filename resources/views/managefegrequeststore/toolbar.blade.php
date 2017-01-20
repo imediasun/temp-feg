@@ -5,13 +5,13 @@
         <div class="col-md-3 m-b">
 
         <select name="type" class="select3" id="request_type">
-            <option disabled>Select Requests Type</option>
             <option value="archive" @if($view == 'archive'): selected @endif>FEG Store Requests Archives</option>
             <option value="manage" @if($view == 'manage'): selected @endif> Open Requests</option>
         </select>
 
     </div>
-    <div class="col-md-3">
+    @if($view == "manage")
+        <div class="col-md-3">
 
         <input  name="order_type" @if($TID )value="{{ $TID }}" @endif id="order_type" type="hidden" onchange="pageRefresh('T');" style="width:98%">
     </div>
@@ -37,6 +37,7 @@
                 <button type="submit" name="submit" class="btn btn-primary btn-sm" id="multi-btn"><i class="fa  fa-save" ></i>  Add Items to Order Form </button>
         @endif
         </div>
+        @endif
         {!! Form::close() !!}
     </div>
 

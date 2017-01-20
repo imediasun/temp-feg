@@ -72,7 +72,7 @@
 
                         <th width="200">Vendor</th>
                         <th width="100">Price</th>
-                        <th width="100" style="background-color:red;color:#FFF">Remaining Reserved Qty</th>
+                        <th width="100" style="background-color:red;color:#FFF" align="center">Remaining Reserved Qty</th>
                         <th width="100">Order Type</th>
                         @if($setting['disablerowactions']=='false')
                             <th width="70"><?php echo Lang::get('core.btn_action') ;?></th>
@@ -150,7 +150,7 @@
                             ?>
                             <td>{{ $row->vendor_name }}</td>
                             <td>{{CurrencyHelpers::formatCurrency($row->case_price)}} </td>
-                            <td>{{ $row->reserved_difference }}</td>
+                            <td align="center">{{ $row->reserved_difference }}</td>
                             <td> {{ $row->order_type }}</td>
                             <td data-values="action" data-key="<?php echo $row->id; ?>">
                                 {!! AjaxHelpers::buttonAction('managefegrequeststore',$access,$id ,$setting) !!}
