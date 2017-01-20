@@ -79,7 +79,7 @@
                             <th width="70"><?php echo Lang::get('core.btn_action') ;?></th>
                         @endif
 
-                        <th width="150">Add To Cart</th>
+                        <th width="115">Add To Cart</th>
 
 
 
