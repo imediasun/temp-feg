@@ -107,8 +107,9 @@
 
                         <div class="col-md-8">
                             <select name='order_type_id' rows='5' id='order_type_id' class='select3'
-                                    onchange="gameShowHide()" required></select>
+                                     required></select>
                         </div>
+
 
                     </div>
                     <div class="form-group  ">
@@ -215,7 +216,7 @@
                         <th>Case Price</th>
                         {{--<th>Retail Price</th>--}}
                         <th>Quantity</th>
-                        <th class="game" width="150">Game</th>
+                        {{--<th class="game" width="150">Game Located</th>--}}
                         <th>Total ( $ )</th>
                         <th>Remove</th>
 
@@ -249,20 +250,12 @@
                         </td>
 
 
-                        {{--<td>--}}
-                             {{--<br/> <input type='number' name='retail_price[]' placeholder='Retail Price' id="retail_price"--}}
-                                               {{--class='form-control test' min="0.00" step=".01" value="0.00"--}}
-                                               {{--required></td>--}}
-                        {{--</td>--}}
+
 
                         <td><br/> <input type='number' name='qty[]' placeholder='Quantity'
                                          class='calculate form-control qty' min="0" step="1" id="qty" value="00"
                                          required></td>
-                        <!--<td class="game" style="display:none"><br/>
-                            <select name='game[]' id='game_0' class='game  form-control'>
-                                <option value="">For Various Games</option>
-                            </select>
-                        </td>-->
+
                         <input type='hidden' name='product_id[]' id="product_id">
                         <input type='hidden' name='request_id[]' id="request_id">
                         <td><br/><input type="text" name="total" value="" readonly class="form-control"/></td>
@@ -289,7 +282,7 @@
     padding-right: 105px;
 ">
 
-                <td class="game"></td>
+                {{--<td class="game"></td>--}}
                 <td> </td>
                 <td colspan="6" class="text-left"><strong> Subtotal ( $ ) </strong></td>
                 <td> <input type="text" name="Subtotal" value="{{ $data['order_total'] }}" readonly
