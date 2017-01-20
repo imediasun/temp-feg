@@ -72,6 +72,8 @@
                                             ' data-field="'.$colField.'"'.
                                             ' data-sortable="'.$colIsSortable.'"'.
                                             ' data-sorted="'.($colIsSorted?1:0).'"'.
+                                            ' align="'.$t['align'].'"'.
+                                            ' width="'.$t['width'].'"'.
                                             ' data-sortedOrder="'.($colIsSorted?$orderBy:'').'"';
                                     $th .= '>';
                                     $th .= \SiteHelpers::activeLang($t['label'],(isset($t['language'])? $t['language'] : array()));
