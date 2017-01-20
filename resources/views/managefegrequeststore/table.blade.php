@@ -72,7 +72,7 @@
 
                         <th width="200">Vendor</th>
                         <th width="100">Price</th>
-                        <th width="140" style="background-color:red;color:#FFF">Remaining Reserved Qty</th>
+                        <th width="130" style="background-color:red;color:#FFF">Remaining Reserved Qty</th>
                         <th width="100">Order Type</th>
                         @if($setting['disablerowactions']=='false')
                             <th width="70"><?php echo Lang::get('core.btn_action') ;?></th>
