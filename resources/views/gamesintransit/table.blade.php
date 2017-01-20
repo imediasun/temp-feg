@@ -73,7 +73,7 @@
                 endif;
             endforeach; ?>
             @if($setting['disablerowactions']=='false')
-                <th width="170"><?php echo Lang::get('core.btn_action') ;?></th>
+                <th width="70"><?php echo Lang::get('core.btn_action') ;?></th>
             @endif
         </tr>
         </thead>
@@ -138,7 +138,7 @@
 						 endif;
 						endforeach;
 					  ?>
-				 <td data-values="action" data-key="<?php echo $row->id ;?>">
+				 <td class="action"  data-values="action" data-key="<?php echo $row->id ;?>">
 					{!! AjaxHelpers::buttonAction('gamesintransit',$access,$id ,$setting) !!}
 					{!! AjaxHelpers::buttonActionInline($row->id,'id') !!}
 				</td>
