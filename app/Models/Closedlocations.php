@@ -3,7 +3,6 @@
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use App\Library\ReportHelpers;
-use SiteHelpers;
 
 class closedlocations extends Sximo  {
 	
@@ -39,13 +38,6 @@ class closedlocations extends Sximo  {
         ));        
         extract($filters);
         ReportHelpers::dateRangeFix($date_start, $date_end);        
-        
-        if (empty($location_id)) {
-            $location_id = SiteHelpers::getCurrentUserLocationsFromSession();
-        }
-        if (empty($location_id)) {
-            return ReportHelpers::buildBlankResultDataDueToNoLocation();
-        }
         
         $total = ReportHelpers::getClosedLocationsCount($date_start, $date_end, $location_id, $debit_type_id);
         $offset = ($page-1) * $limit ;

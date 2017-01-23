@@ -109,9 +109,7 @@
 						foreach ($tableGrid as $field) :
 					 	if($field['view'] =='1') : ?>
 							@if($col == 8 )
-								<td><?php echo number_format((double) $row->total_cost,2); ?></td>
-
-
+								<td><?php echo $row->total_cost; ?></td>
 							@elseif($col == 5 )
 								<td><?php echo $row->vendor_description; ?></td>
 							@endif
@@ -122,13 +120,13 @@
 								<?php $limited = isset($field['limited']) ? $field['limited'] :''; ?>
 								@if(SiteHelpers::filterColumn($limited ))
 									 <td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}" data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
-										 @if($field['field'] == 'date_processed')
+										 {{--@if($field['field'] == 'process_date')--}}
 
-											 {!! date("m/d/Y", strtotime($value)) !!}
+											 {{--{!! DateHelpers::formatDate($value) !!}--}}
 
-										 @else
+										 {{--@else--}}
 											 {!! $value !!}
-										 @endif
+										 {{--@endif--}}
 									 </td>
 								@endif
 						 <?php

@@ -2,8 +2,6 @@
 
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
-use SiteHelpers;
-use App\Library\ReportHelpers;
 
 class merchthrowssimple extends Sximo  {
 	
@@ -16,18 +14,12 @@ class merchthrowssimple extends Sximo  {
 	}
     public static function build_query(){
         $filters = self::getSearchFilters();
-        $location_id = @$filters['location_id'];
-        if (empty($location_id)) {
-            $location_id = SiteHelpers::getCurrentUserLocationsFromSession();
-        }
-        if (empty($location_id)) {
-            return ReportHelpers::buildBlankResultDataDueToNoLocation();
-        }         
+        $location = @$filters['location_id'];
         $dateStart = @$filters['date_start'];
         $dateEnd = @$filters['date_end'];
         $loc_table_expression = " ";
-        if (!empty($location_id)) {
-            $loc_table_expression = " AND merch_throws.location_id IN ($location_id) ";
+        if (!empty($location)) {
+            $loc_table_expression = " AND merch_throws.location_id IN ($location) ";
         }
         $dateStart_expression= " ";
         if (!empty($dateStart)) {

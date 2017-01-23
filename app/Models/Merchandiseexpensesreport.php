@@ -3,7 +3,6 @@
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use App\Library\ReportHelpers;
-use SiteHelpers;
 
 class merchandiseexpensesreport extends Sximo  {
 	
@@ -44,13 +43,6 @@ class merchandiseexpensesreport extends Sximo  {
             'date_start' => '', 'date_end' => '', 'debit_type_id' => '', 'location_id' => ''
         ));        
         extract($filters);
-        if (empty($location_id)) {
-            $location_id = SiteHelpers::getCurrentUserLocationsFromSession();
-        }
-        if (empty($location_id)) {
-            return ReportHelpers::buildBlankResultDataDueToNoLocation();
-        } 
-        
         ReportHelpers::dateRangeFix($date_start, $date_end); 
         
         $total = ReportHelpers::getMerchandizeExpensesCount($date_start, $date_end, $location_id, $debit_type_id);

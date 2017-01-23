@@ -3,7 +3,6 @@
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use App\Library\ReportHelpers;
-use SiteHelpers;
 
 class reports extends Sximo  {
 
@@ -40,14 +39,8 @@ class reports extends Sximo  {
             'date_start' => '', 'date_end' => '', 'id' => 'location_id', 'debit_type_id'  => ''
         ));        
         extract($filters);
-        if (empty($location_id)) {
-            $location_id = SiteHelpers::getCurrentUserLocationsFromSession();
-        }
-        if (empty($location_id)) {
-            return ReportHelpers::buildBlankResultDataDueToNoLocation();
-        }        
-        
         ReportHelpers::dateRangeFix($date_start, $date_end);  
+        
 		$offset = ($page-1) * $limit ;
         $total = ReportHelpers::getLocationNotReportingCount($date_start, $date_end, $location_id, $debit_type_id);
         if ($offset >= $total) {

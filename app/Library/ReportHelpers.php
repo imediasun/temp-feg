@@ -1567,28 +1567,5 @@ class ReportHelpers
         $count = self::getCountFromQuery($Q);
         return $count;          
     }    
-   
-    public static function buildBlankResultDataDueToNoLocation($message = "", $topMessage = "Report not available", $bottomMessage = "") {
-        if (empty($message)) {
-            $message = "In order to run reports you must be assigned to atleast one location. 
-                You have not been assigned to any locations. 
-                Please contact an administrator if you believe this to be an error.";
-        }
-        $result = self::buildBlankResultData($message, $topMessage, $bottomMessage);
-        return $result; 
-    }
-    public static function buildBlankResultData($message = "", $topMessage = "", $bottomMessage = "") {
-        $result = self::buildResultData(array(), 0, $message, $topMessage, $bottomMessage);
-        return $result; 
-    }
-    public static function buildResultData($rows = array(), $total = 0, $message = "", $topMessage = "", $bottomMessage = "") {
-        $result = array(
-                'topMessage' => $topMessage,
-                'bottomMessage' => $bottomMessage,
-                'message' => $message,
-                'rows'=> $rows, 
-                'total' => $total
-            );
-        return $result; 
-    }
+    
 }

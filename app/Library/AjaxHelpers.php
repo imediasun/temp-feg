@@ -14,7 +14,7 @@ class AjaxHelpers
 		if(isset($arr['valid']) && $arr['valid'] ==1)
 		{
 			$fields = str_replace("|",",",$arr['display']);			
-
+            $val=addslashes($val);
 			if(isset( $arr['multiple']) && $arr['multiple'] =='1')
 			{
 				$Q = DB::select(" SELECT ".$fields." FROM ".$arr['db']." WHERE ".$arr['key']." IN (".$val.") ");

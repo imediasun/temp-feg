@@ -74,7 +74,7 @@
                 endif;
             endforeach; ?>
             @if($setting['disablerowactions']=='false')
-                <th width="170"><?php echo Lang::get('core.btn_action') ;?></th>
+                <th width="70"><?php echo Lang::get('core.btn_action') ;?></th>
             @endif
         </tr>
         </thead>
@@ -142,8 +142,9 @@
 												 {!! $row->location_id !!}
 
 
-
-										 @else
+										 @elseif ($field['field']=='game_type_id')
+											 {!! $value=="0"?null:$value !!}
+										@else
 											 {!! $value !!}
 										 @endif
 								 </td>
@@ -152,7 +153,7 @@
 						 endif;
 						endforeach;
 					  ?>
-				 <td data-values="action" data-key="<?php echo $row->id ;?>">
+				 <td class="action" data-values="action" data-key="<?php echo $row->id ;?>">
 					{!! AjaxHelpers::buttonAction('mylocationgame',$access,$id ,$setting) !!}
 					{!! AjaxHelpers::buttonActionInline($row->id,'id') !!}
 				</td>

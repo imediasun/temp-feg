@@ -77,7 +77,7 @@ class ReportGenerator
             }            
         }
         
-        self::getRetrySyncSuccessData($params);        
+        FEGSystemHelper::getRetrySyncSuccessData($params);        
         FEGSystemHelper::logit("Retry Sync Success Data: ", $lf, $lp);
         FEGSystemHelper::logit(self::$reportCache['retrySyncSuccessData'], $lf, $lp);        
         
@@ -816,7 +816,7 @@ class ReportGenerator
                 FEGSystemHelper::logit("    Missing Asset ID found", $lf, $lp);
                 $messages[] = "<h3 style='color:red;'>Missing Asset IDs</h3>";
                 $messages[] = "<p style='color:grey;'>The following Locations have reported 
-                    data with missing Asset IDs. Please update the respective 
+                    data with missing Asset IDs. Please update the repective 
                     games based on the reader ids or the game names at location with 
                     correct Asset ID</p>";
                 
@@ -885,7 +885,7 @@ class ReportGenerator
                 $messages[] = "<h3 style='color:red;'>Unknown Asset ID</h3>";
                 $messages[] = "<p style='color:grey;'>The following Locations have reported 
                     data with Asset IDs not matching in FEG Admin. 
-                    Please update the respective 
+                    Please update the repective 
                     games based on the reader ids or the game names at location with 
                     correct Asset ID</p>";
                 
