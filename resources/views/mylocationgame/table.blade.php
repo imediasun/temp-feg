@@ -142,8 +142,9 @@
 												 {!! $row->location_id !!}
 
 
-
-										 @else
+										 @elseif ($field['field']=='game_type_id')
+											 {!! $value=="0"?null:$value !!}
+										@else
 											 {!! $value !!}
 										 @endif
 								 </td>
