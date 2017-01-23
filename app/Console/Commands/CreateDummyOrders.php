@@ -40,7 +40,7 @@ class CreateDummyOrders extends Command
         if (env('SCENE', 'development') == 'production') {
             return;
         }        
-        $created_date=$this->rand_date('2016-12-01','2016-12-31');
+        $created_date=$this->rand_date('2017-01-01','2017-02-28');
         $counter=rand(1,5);
       // echo 'total number of orders:'.$counter.'----';
         for($i=0;$i < $counter;$i++) {
