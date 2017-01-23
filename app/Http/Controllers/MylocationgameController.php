@@ -291,7 +291,7 @@ class MylocationgameController extends Controller
 
         $rules = $this->validateForm();
         $validator = Validator::make($request->all(), $rules);
-
+            
         if ($validator->passes()) {
             $data = $this->validatePost('game');
             //after validating data array become very small, so merge with post data
