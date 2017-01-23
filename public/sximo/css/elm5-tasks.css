@@ -112,6 +112,29 @@
     border-radius: 3px;
     padding: 10px;
     position: relative;
+    min-height: 40px;
+    max-height: 300px;
+    overflow: auto;
+    overflow-x: hidden;
+}
+
+.tasksContainer #tasksGrid .schedulesContainer .refreshButton {
+    outline: none;
+    top: 2px;
+    right: 2px;
+    width: 30px;
+    height: 30px;
+    background: transparent;
+    border: none;
+    background: #1c84c6;
+    border-radius: 50%;
+    padding: 7px 0;
+    color: white;
+    position: absolute;
+    position: -webkit-sticky;
+    position: -moz-sticky;
+    position: -ms-sticky;
+    position: -o-sticky;    
 }
 
 .tasksContainer #tasksGrid .schedulesContainer table {
@@ -148,11 +171,12 @@
     background-color: #fbf7ff;
 }
 .tasksContainer #tasksGrid .schedulesContainer tr.running {
-    color: #0e800e;
-    background-color: #fefff4;
+    color: #160e80;
+    background-color: #b3d6ff;    
 }
 .tasksContainer #tasksGrid .schedulesContainer tr.completed {
     background-color: #f2fff5;
+    color: #0e800e;
 }
 .tasksContainer #tasksGrid .schedulesContainer tr.error {
     color: #880000;
@@ -180,6 +204,13 @@
     color: #333;
 }
 
+.btn-transparent {
+    background: transparent !important;
+}
+
+.jsaction {
+    cursor: pointer;
+}
 
 @media (min-width: 1200px) {
     .tasksContainer #tasksGrid .taskConfig {

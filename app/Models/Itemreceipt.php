@@ -14,7 +14,6 @@ class itemreceipt extends Sximo  {
 		
 	}
 
-
     public static function querySelect(){
 
     return " SELECT orders.*,order_received.order_id FROM orders INNER JOIN order_received ON
@@ -31,6 +30,7 @@ orders.id=order_received.order_id ";
     public static function queryGroup(){
         return " GROUP BY order_received.order_id ";
     }
+
 
     public static function processApiData($json,$param=null)
     {
@@ -105,7 +105,6 @@ orders.id=order_received.order_id ";
         if ($offset >= $total && $total != 0) {
             $page = ceil($total/$limit);
             $offset = ($page-1) * $limit ;
-
         }
         $limitConditional = ($page != 0 && $limit != 0) ? "LIMIT  $offset , $limit" : '';
 //echo $select . " {$params} " . self::queryGroup() . " {$orderConditional}  {$limitConditional} ";

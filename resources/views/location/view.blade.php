@@ -48,7 +48,11 @@
                         </tr>
                         <tr>
                             <td colspan="1"><h3>Alt. Shipping Location:</h3></td>
-                            <td><h4>{{ $row[0]->loc_ship_to }}  </h4></td>
+                            <td><h4> @if($row[0]->loc_ship_to != 0) {{ $row[0]->loc_ship_to }} @endif  </h4></td>
+                        </tr>
+                        <tr>
+                            <td colspan="1"><h3>Reporting</h3></td>
+                            <td><h4> @if($row[0]->reporting == 1) Yes @else No @endif   </h4></td>
                         </tr>
                         <tr>
                             <td colspan="1"><h3>Date Opened:</h3></td>

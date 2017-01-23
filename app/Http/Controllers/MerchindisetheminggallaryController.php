@@ -51,6 +51,7 @@ class MerchindisetheminggallaryController extends Controller
         $this->data['module_id'] = $module_id;
         if (Input::has('config_id')) {
             $config_id = Input::get('config_id');
+            \Session::put('config_id',$config_id);
         } elseif (\Session::has('config_id')) {
             $config_id = \Session::get('config_id');
         } else {
@@ -207,9 +208,10 @@ class MerchindisetheminggallaryController extends Controller
             } else {
                 $extension = '';
             }
-            $img->save(public_path('/uploads/gallary/' . $id . $extension));
+
+            $img->save(public_path() . '/uploads/gallary/' . $id . $extension);
             $img->resize(101, 150);
-            $img->save(public_path('/uploads/gallary/' . $id . '_thumb' . $extension));
+            $img->save(public_path() . '/uploads/gallary/' . $id . '_thumb' . $extension);
 
             return response()->json(array(
                 'status' => 'success',
@@ -234,11 +236,11 @@ class MerchindisetheminggallaryController extends Controller
             ));
             die;
         }
-        // delete multipe rows
+
         if ($id) {
             $this->model->destroy($id);
-            $image_path = array(public_path() . '/uploads/gallary/' . $id . ".jpg", public_path() . '/uploads/gallary' . $id . "_thumb.jpg");
-            foreach ($image_path as $img) {
+           $image_path = array(public_path() . '/uploads/gallary/' . $id . ".jpg", public_path() . '/uploads/gallary' . $id . "_thumb.jpg");
+             foreach ($image_path as $img) {
                 if (file_exists($img)) {
                     unlink($img);
                 }

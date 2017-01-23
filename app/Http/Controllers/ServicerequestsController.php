@@ -7,6 +7,7 @@ use App\Models\Ticketcomment;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Validator, Input, Redirect;
+use App\Models\Core\TicketMailer;
 
 class servicerequestsController extends Controller
 {
@@ -20,6 +21,9 @@ class servicerequestsController extends Controller
     {
         parent::__construct();
         $this->model = new Servicerequests();
+
+        $this->model->attachObserver('FirstEmail',new TicketMailer);
+        $this->model->attachObserver('AddComment',new TicketMailer);
 
         $this->info = $this->model->makeInfo($this->module);
         $this->access = $this->model->validAccess($this->info['id']);
@@ -51,6 +55,7 @@ class servicerequestsController extends Controller
         $this->data['module_id'] = $module_id;
         if (Input::has('config_id')) {
             $config_id = Input::get('config_id');
+            \Session::put('config_id',$config_id);
         } elseif (\Session::has('config_id')) {
             $config_id = \Session::get('config_id');
         } else {
@@ -100,8 +105,59 @@ class servicerequestsController extends Controller
         $user_id = \Session::get('uid');
         $group_id = \Session::get('gid');
         foreach ($rows as $index => $row) {
+
             $flag = 1;
-            if (isset($row->department_id) && !empty($row->department_id)&& false)
+            $settings = (array)\DB::table('sbticket_setting')->first();
+            $groupIds =explode(",", $settings['role1']);
+            $users = (array) \DB::table('users')->select("id")->whereIn('group_id', $groupIds)->get();
+            $AllTickets = array();
+            foreach($users as $user){
+                $AllTickets[] = $user->id;
+            }
+            //Add indivisuals to our array
+            $AllTickets = array_merge($AllTickets,explode(",", $settings['individual1']));
+
+            //get only assignee
+            $groupIds=array();
+            $groupIds =explode(",", $settings['role3']);
+            $users=null;
+            $users = (array) \DB::table('users')->select("id")->whereIn('group_id', $groupIds)->get();
+            $OnlyAssigneees = array();
+            foreach($users as $user){
+                $OnlyAssigneees[] = $user->id;
+            }
+            //Add indivisuals to our array
+            $OnlyAssigneees = array_merge($OnlyAssigneees,explode(",", $settings['individual3']));
+
+            foreach ($rows as $index => $row) {
+                $flag = 0;
+                $status=0;
+                if (isset($user_id))
+                {
+                    if ($group_id != 10) {
+
+                        if(in_array($user_id,$OnlyAssigneees) && in_array($user_id,$AllTickets)){
+                                    $status = 2; //if user group exists in both we keep track of it 
+                         }
+                        
+                         if(($flag == 0 ||$status == 2) && in_array($user_id,explode(",", $row->assign_to)))
+                            { 
+                                $flag = 1; 
+                             } 
+                         if(($status != 2 && $flag != 1) && in_array($user_id,$AllTickets)) 
+                          {
+                                $flag = 1; 
+                          }
+                    if($flag == 0)
+                      unset($rows[$index]);
+                    }
+                }
+            }
+
+
+
+            //this code is not woring for some reason
+            /*if (isset($row->department_id) && !empty($row->department_id)&& false)
             {
                 //$row->comments = $comments->where('TicketID', '=', $row->TicketID)->orderBy('TicketID', 'desc')->take(1)->get();
                 $department_memebers = \DB::select("Select assign_employee_ids FROM departments WHERE id = " . $row->department_id . "");
@@ -111,7 +167,7 @@ class servicerequestsController extends Controller
 
                 $members_access = array_unique(array_merge($assign_employee_ids, $department_memebers));
                 foreach ($members_access as $i => $id) {
-                    $get_user_id_from_employess = \DB::select("Select user_id FROM employees WHERE id = " . $id . "");
+                    $get_user_id_from_employess = \DB::select("Select user_id FROM users WHERE id = " . $id . "");
                     //print"<pre>";
                     //print_r($get_user_id_from_employess);
                     if (isset($get_user_id_from_employess[0]->user_id)) {
@@ -131,13 +187,13 @@ class servicerequestsController extends Controller
                     echo count($assign_employee_ids);
                     $assign_employee_names = array();
                     foreach ($assign_employee_ids as $key => $value) {
-                        $assign_employee_names[$key] = \DB::select("Select first_name,last_name FROM employees WHERE id = " . $value . "");
+                        $assign_employee_names[$key] = \DB::select("Select first_name,last_name FROM users WHERE id = " . $value . "");
                     }
                     $row->assign_employee_names = $assign_employee_names;
                 } else {
                     unset($rows[$index]);
                 }
-            }
+            }*/
         }
 
         $this->data['param'] = $params;
@@ -213,7 +269,7 @@ class servicerequestsController extends Controller
 
         if(!empty($assign_employee_ids[0]) ) {
             foreach ($assign_employee_ids as $key => $value) {
-                $assign_employee_names[$key] = \DB::select("Select first_name,last_name FROM employees WHERE id = " . $value . "");
+                $assign_employee_names[$key] = \DB::select("Select first_name,last_name FROM users WHERE id = " . $value . "");
             }
         }
         $row->assign_employee_names = $assign_employee_names;
@@ -256,24 +312,36 @@ class servicerequestsController extends Controller
 
     function postSave(Request $request, $id = NULL)
     {
-
         //$data['need_by_date'] = date('Y-m-d');
         //$rules = $this->validateForm();
-        $rules = array('Subject' => 'required', 'Description' => 'required', 'Priority' => 'required', 'issue_type' => 'required', 'location_id' => 'required');
+        $sendMail=false;
+        if($id==null)
+            $sendMail=true;
+        $rules = $this->validateForm();
+        unset($rules['department_id']);
+       //$rules = array('Subject' => 'required', 'Description' => 'required', 'Priority' => 'required', 'issue_type' => 'required', 'location_id' => 'required');
         //unset($rules['debit_card']);
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
             $data = $this->validatePost('sb_tickets');
             $data['need_by_date']= date("Y-m-d", strtotime($request->get('need_by_date')));
             $data['status']=$request->get('status');
+
             if ($id == 0) {
 
                 $data['Created'] = date('Y-m-d');
 
             }
-
             $id = $this->model->insertRow($data, $id);
+            if($sendMail){
+                $message = $data['Description'];
+                $this->model->notifyObserver('FirstEmail',[
+                    "message"       =>$message,
+                    "ticketId"      => $id,
+                    "location_id"   => $data['location_id']
+                ]);
 
+            }
             return response()->json(array(
                 'status' => 'success',
                 'message' => \Lang::get('core.note_success')
@@ -321,14 +389,13 @@ class servicerequestsController extends Controller
 
     public function postComment(Request $request)
     {
-        $rules = $this->validateTicketCommentsForm();
-        $validator = Validator::make($request->all(), $rules);
-        if ($validator->passes()) {
+
             //validate post for sb_tickets module
             $ticketsData = $this->validatePost('sb_tickets');
-            if ($ticketsData['Status'] == 'close') {
-                $ticketsData['closed'] = date('Y-m-d');
+            if ($ticketsData['Status'] == 'closed') {
+                $ticketsData['closed'] = date('Y-m-d H:i:s');
             }
+            else{ $ticketsData['closed']=""; }
             $ticketsData['updated'] = date('Y-m-d');
             $commentsData['USERNAME'] = \Session::get('fid');
             $comment_model = new Ticketcomment();
@@ -349,30 +416,30 @@ class servicerequestsController extends Controller
             $this->model->insertRow($ticketsData, $ticketId);
             $message = $commentsData['Comments'];
             //send email
-            $this->departmentSendMail($ticketsData['department_id'], $ticketId, $message);
-            $this->assignToSendMail($ticketsData['assign_to'], $ticketId, $message);
+            $this->model->notifyObserver('AddComment',[
+                "message"       =>$message,
+                "ticketId"      => $ticketId,
+                "department_id" =>"",
+                "location_id"   => $ticketsData["location_id"],
+                "assign_to"     => $ticketsData['assign_to']
+                ]);
+
             return response()->json(array(
                 'status' => 'success',
                 'message' => \Lang::get('core.note_success')
             ));
 
-        } else {
 
-            return response()->json(array(
-                'message' => $message,
-                'status' => 'error'
-            ));
-        }
     }
 
     function validateTicketCommentsForm()
     {
-        $rules = array();
-        $rules['Comments'] = 'required';
-        $rules['department_id'] = 'required|numeric';
-        $rules['Priority'] = 'required';
-        $rules['Status'] = 'required';
-        return $rules;
+       // $rules = array();
+       // $rules['Comments'] = 'required';
+        //$rules['department_id'] = 'required|numeric';
+      //  $rules['Priority'] = 'required';
+      //  $rules['Status'] = 'required';
+      //  return $rules;
     }
 
     public function departmentSendMail($departmentId, $ticketId, $message)
@@ -386,7 +453,7 @@ class servicerequestsController extends Controller
         $headers .= 'From: ' . CNF_REPLY_TO . ' <' . CNF_REPLY_TO . '>' . "\r\n";
 
         foreach ($department_memebers as $i => $id) {
-            $get_user_id_from_employess = \DB::select("Select users.email FROM employees JOIN users ON users.id=employees.user_id WHERE employees.id = " . $id . "");
+            $get_user_id_from_employess = \DB::select("Select users.email FROM users  WHERE users.id = " . $id . "");
             if (isset($get_user_id_from_employess[0]->email)) {
                 $to = $get_user_id_from_employess[0]->email;
                 mail($to, $subject, $message, $headers);
@@ -396,17 +463,19 @@ class servicerequestsController extends Controller
 
     public function assignToSendMail($assignTo, $ticketId, $message)
     {
-        $assigneesTo = $assigneesTo = \DB::select("select users.email FROM employees JOIN users ON users.id=employees.user_id WHERE employees.id IN (" . $assignTo . ")");
-        foreach ($assigneesTo as $assignee) {
-            if (isset($assignee->email)) {
-                $to = $assignee->email;
-                $subject = 'FEG Ticket #' . $ticketId;
-                $headers = 'MIME-Version: 1.0' . "\r\n";
-                $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
-                $headers .= 'From: ' . CNF_REPLY_TO . ' <' . CNF_REPLY_TO . '>' . "\r\n";
-                mail($to, $subject, $message, $headers);
-            }
-        }
+        $assigneesTo = $assigneesTo = \DB::select("select users.email FROM users WHERE users.id IN (" . $assignTo . ")");
+       if(count($assigneesTo) > 0) {
+           foreach ($assigneesTo as $assignee) {
+               if (isset($assignee->email)) {
+                   $to = $assignee->email;
+                   $subject = 'FEG Ticket #' . $ticketId;
+                   $headers = 'MIME-Version: 1.0' . "\r\n";
+                   $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
+                   $headers .= 'From: ' . CNF_REPLY_TO . ' <' . CNF_REPLY_TO . '>' . "\r\n";
+                   mail($to, $subject, $message, $headers);
+               }
+           }
+       }
     }
 
     public function postSavepermission(Request $request)

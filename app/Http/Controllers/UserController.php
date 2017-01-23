@@ -1,5 +1,6 @@
 <?php namespace App\Http\Controllers;
 
+use Laravel\Socialite\Facades\Socialite;
 use App\Http\Controllers\Controller;
 use App\Models\Core\Groups;
 use App\Models\Addtocart;
@@ -19,6 +20,84 @@ class UserController extends Controller
     {
         parent::__construct();
         $this->addToCartModel = new Addtocart();
+
+    }
+
+    public function getGoogle()
+    {
+
+        $user = Socialite::driver('google')->stateless()->user();
+        $email = $user->email;
+        $userCheck = User::where('email', '=', $user->email)->first();
+        if ($userCheck) {
+            \Auth::loginUsingId($userCheck->id);
+            $row = $userCheck;
+            $group = Groups::find($row->group_id);
+            //CNF_REDIRECTLINK;
+            if ($row->active == '0') {
+                \Auth::logout();
+                return Redirect::to('user/login')->with('message', \SiteHelpers::alert('error', 'Your Account is not active'));
+
+            } else if ($row->active == '2') {
+                // BLocked users
+                \Auth::logout();
+                return Redirect::to('user/login')->with('message', \SiteHelpers::alert('error', 'Your Account is BLocked'));
+            } else if ($row->banned == 1) {
+                // BLocked users
+                \Auth::logout();
+                return Redirect::to('user/login')->with('message', \SiteHelpers::alert('error', 'Your Account is BLocked'));
+            } else {
+                \DB::table('users')->where('id', '=', $row->id)->update(array('last_login' => date("Y-m/d H:i:s")));
+                \Session::put('uid', $row->id);
+                \Session::put('gid', $row->group_id);
+                \Session::put('eid', $row->email);
+                \Session::put('ll', $row->last_login);
+                \Session::put('fid', $row->first_name . ' ' . $row->last_name);
+                \Session::put('user_name', $row->username);
+                \Session::put('ufname', $row->first_name);
+                \Session::put('ulname', $row->last_name);
+                \Session::put('company_id', $row->company_id);
+                $user_locations = \SiteHelpers::getLocationDetails($row->id);
+                if (!empty($user_locations)) {
+                    \Session::put('user_locations', $user_locations);
+                    \Session::put('selected_location', $user_locations[0]->id);
+                    \Session::put('selected_location_name', $user_locations[0]->location_name_short);
+                }
+                \Session::put('get_locations_by_region', $row->get_locations_by_region);
+                \Session::put('email_2', $row->email_2);
+                \Session::put('primary_phone', $row->primary_phone);
+                \Session::put('secondary_phone', $row->secondary_phone);
+                \Session::put('street', $row->street);
+                \Session::put('city', $row->city);
+                \Session::put('state', $row->state);
+                \Session::put('zip', $row->zip);
+                \Session::put('reg_id', $row->reg_id);
+                \Session::put('restricted_mgr_email', $row->restricted_mgr_email);
+                \Session::put('restricted_user_email', $row->restricted_user_email);
+                $total_cart = $this->addToCartModel->totallyRecordInCart();
+                \Session::put('total_cart', $total_cart[0]->total);
+                \Session::put('lang', 'en');
+
+                if (!empty($row->redirect_link)) {
+                    return Redirect::to($row->redirect_link);
+                } elseif (!empty($group->redirect_link)) {
+                    return Redirect::to($group->redirect_link);
+                } else {
+                    return Redirect::to(CNF_REDIRECTLINK);
+                }
+                if (CNF_FRONT == 'false') {
+                    return Redirect::to('dashboard');
+                } else {
+                    return Redirect::to('');
+                }
+
+
+            }
+
+        } else {
+            return Redirect::to('user/login')
+                ->with('message', \SiteHelpers::alert('error', 'Sorry, Your email ' . $email . ' not found'));
+        }
 
     }
 
@@ -187,6 +266,8 @@ class UserController extends Controller
                             \Session::put('user_locations', $user_locations);
                             \Session::put('selected_location', $user_locations[0]->id);
                             \Session::put('selected_location_name', $user_locations[0]->location_name_short);
+                        } else {
+                            \Session::put('selected_location', 0);
                         }
                         \Session::put('get_locations_by_region', $row->get_locations_by_region);
                         \Session::put('email_2', $row->email_2);
@@ -300,6 +381,8 @@ class UserController extends Controller
         $rules = array(
             'first_name' => 'required|alpha_num|min:2',
             'last_name' => 'required|alpha_num|min:2',
+            'g_mail' => 'email',
+            'g_password' => 'min:8',
         );
 
         if ($request->input('email') != \Session::get('eid')) {
@@ -325,9 +408,15 @@ class UserController extends Controller
             }
 
             $user = User::find(\Session::get('uid'));
+            if(!is_null($request->input('g_password')))
+            {
+                $password = base64_encode(env('SALT_KEY').$request->input('g_password').env('SALT_KEY'));
+                $user->g_password = $password;
+            }
             $user->first_name = $request->input('first_name');
             $user->last_name = $request->input('last_name');
             $user->email = $request->input('email');
+            $user->g_mail = $request->input('g_mail');
             if (isset($data['avatar'])) $user->avatar = $newfilename;
             $user->save();
 
@@ -406,22 +495,19 @@ class UserController extends Controller
 
     public function getReset(Request $request)
     {
-        $token=isset($_GET['token'])?$request->get('token'):"";
-        $id=isset($_GET['id'])?$request->get('id'):"";
+        $token = isset($_GET['token']) ? $request->get('token') : "";
+        $id = isset($_GET['id']) ? $request->get('id') : "";
         if (\Auth::check()) return Redirect::to('dashboard');
-if($token!="")
-{
-        $user = User::where('reminder', '=', $token);
-        if ($user->count() >= 1) {
-            $data = array('verCode' => $token);
-            return view('user.remind', $data);
-        } else {
-            return Redirect::to('user/login')->with('message', \SiteHelpers::alert('error', 'Cant find your reset code'));
-        }
+        if ($token != "") {
+            $user = User::where('reminder', '=', $token);
+            if ($user->count() >= 1) {
+                $data = array('verCode' => $token);
+                return view('user.remind', $data);
+            } else {
+                return Redirect::to('user/login')->with('message', \SiteHelpers::alert('error', 'Cant find your reset code'));
+            }
 
-    }
-        elseif($id!="")
-        {
+        } elseif ($id != "") {
             $user = User::where('id', '=', $id);
             if ($user->count() >= 1) {
                 $data = array('verCode' => $id);
@@ -440,12 +526,10 @@ if($token!="")
         );
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
-           // strlen($token)
-            if ( strlen($token) < 10 ) {
+            // strlen($token)
+            if (strlen($token) < 10) {
                 $user = User::where('id', '=', $token);
-            }
-            else
-            {
+            } else {
                 $user = User::where('reminder', '=', $token);
             }
 
@@ -459,7 +543,7 @@ if($token!="")
 
             return Redirect::to('user/login')->with('message', \SiteHelpers::alert('success', 'Password has been saved!'));
         } else {
-            return Redirect::to('user/reset/' . $token)->with('message', \SiteHelpers::alert('error', 'The following errors occurred')
+            return Redirect::to('user/reset/?token=' . $token)->with('message', \SiteHelpers::alert('error', 'The following errors occurred')
             )->withErrors($validator)->withInput();
         }
 

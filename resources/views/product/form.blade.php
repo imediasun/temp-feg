@@ -73,6 +73,17 @@
 
 
 
+							<div class="form-group  " >
+								<label for="SKU" class=" control-label col-md-4 text-left">
+									{!! SiteHelpers::activeLang('SKU', (isset($fields['sku']['language'])? $fields['sku']['language'] : array())) !!}
+								</label>
+								<div class="col-md-6">
+									{!! Form::text('sku', $row['sku'],array('class'=>'form-control', 'placeholder'=>'', 'required'=>'required')) !!}
+								</div>
+								<div class="col-md-2">
+
+								</div>
+							</div>
 
 
 
@@ -286,8 +297,8 @@ $(document).ready(function() {
 	$('.date').datepicker({format:'mm/dd/yyyy',autoClose:true})
 	$('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});
 	$('input[type="checkbox"],input[type="radio"]').not('.test').iCheck({
-		checkboxClass: 'icheckbox_square-green',
-		radioClass: 'iradio_square-green',
+		checkboxClass: 'icheckbox_square-blue',
+		radioClass: 'iradio_square-blue'
 	});
 	$('.removeCurrentFiles').on('click',function(){
 		var removeUrl = $(this).attr('href');

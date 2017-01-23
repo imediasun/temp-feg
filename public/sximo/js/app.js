@@ -6,8 +6,9 @@ var UNDEFINED,
         search: {cache: {}},
         simpleSearch: {cache: {}},
         columnSort: {cache: {}},
-        populateFieldsFromCache: function (container, cacheObject, isComplex) {
+        populateFieldsFromCache: function (container, cacheObject, rebuildRequiredElements) {
             var cache = cacheObject.cache, 
+                
                 elmName, elm, elm2, operatorElm,
                 item, val, val2, operator;
         
@@ -19,6 +20,7 @@ var UNDEFINED,
                     item = cache[elmName];
                     val = item.value;
                     val2 = item.value2;
+
                     operator = item.operator;
                     if (elm.length) {
                         if (elm.hasClass('sel-search-multiple')) {
@@ -53,13 +55,15 @@ var UNDEFINED,
                     }
                     switch (operator) {
                         case 'between':
+                            if (rebuildRequiredElements) {
                                 showBetweenFields({
                                     field: elmName,
                                     fieldElm : elm,
                                     fieldElm2 : elm2,
                                     previousValue2 : val2,
                                     dashElement : null
-                                });                            
+                                });                                
+                            }
                             break;
                         case "is_null":
                         case "not_null":
@@ -69,7 +73,7 @@ var UNDEFINED,
                 }
             }                    
         }
-    };
+    };    
 App.notyConfirm = function (options)
 {
 	if (!options) {
@@ -110,7 +114,65 @@ App.notyConfirm = function (options)
             };    
 	noty(notyOptions);		
 	
-}
+};
+
+
+/**
+ *  This function can check if a value needs URI encoding. 
+ *  It can be used before building a custom querystring
+ *  
+ * @param mixed             value 
+ * @param jQuery Element    field
+ * @returns {Boolean}
+ */
+App.needsURIEncoding = function (value, field) {
+    //when search is a string the encode it
+    //encoding is needed for & sign, especially in games title search for Cats & Mice
+    //if arrays are encoded, it does not populate in advanced search field
+    // except: date fields
+    var needs = typeof value === 'string';
+    if (value === '' || field.hasClass('date') || field.hasClass('datetime')) {
+        needs = false;
+    }
+    return needs;
+};
+
+
+App.buildSearchQueryFromArray = function (fields) {
+    var fieldName, 
+        field,
+        value,
+        operator,
+        value2,
+        attr = '';
+
+    for(fieldName in fields) {
+        field = fields[fieldName];
+        operator = field['operator'];
+        value = field['value'];
+        value2 = field['endValue'];
+        if (operator == 'between') {
+            if (value === UNDEFINED || value2 === UNDEFINED) {
+                operator = "equal";
+            }
+            if (value === UNDEFINED && value2 !== UNDEFINED) {
+                value = value2;
+                value2 = UNDEFINED;
+            }
+            if (value === UNDEFINED && value2 === UNDEFINED) {
+                continue;
+            }
+        }
+        attr += fieldName+':'+operator+':'+value;
+        if (value2 !== UNDEFINED) {
+            attr += ':'+value2;
+        }
+        attr += "|";
+    }
+    
+    return attr;
+};
+
 function initiateSearchFormFields(container) {
     container.find('.date').datepicker({format:'mm/dd/yyyy',autoclose:true});
     container.find('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});    

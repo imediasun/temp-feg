@@ -50,6 +50,7 @@ class SbticketController extends Controller
         $this->data['module_id'] = $module_id;
         if (Input::has('config_id')) {
             $config_id = Input::get('config_id');
+            \Session::put('config_id',$config_id);
         } elseif (\Session::has('config_id')) {
             $config_id = \Session::get('config_id');
         } else {
@@ -374,11 +375,11 @@ class SbticketController extends Controller
     {
         $department_memebers = \DB::select("Select assign_employee_ids FROM departments WHERE id = " . $departmentId . "");
         $department_memebers = explode(',', $department_memebers[0]->assign_employee_ids);
-
+        $reply_to='ticket-reply-'.$ticketId.'@tickets.fegllc.com';
         $subject = 'FEG Ticket #' . $ticketId;
         $headers = 'MIME-Version: 1.0' . "\r\n";
         $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
-        $headers .= 'From: ' . CNF_REPLY_TO . ' <' . CNF_REPLY_TO . '>' . "\r\n";
+        $headers .= 'From: ' . $reply_to . ' <' . $reply_to . '>' . "\r\n";
 
         foreach ($department_memebers as $i => $id) {
             $get_user_id_from_employess = \DB::select("Select users.email FROM employees JOIN users ON users.id=employees.user_id WHERE employees.id = " . $id . "");
@@ -395,10 +396,11 @@ class SbticketController extends Controller
         foreach ($assigneesTo as $assignee) {
             if (isset($assignee->email)) {
                 $to = $assignee->email;
+                $reply_to='ticket-reply-'.$ticketId.'@tickets.fegllc.com';
                 $subject = 'FEG Ticket #' . $ticketId;
                 $headers = 'MIME-Version: 1.0' . "\r\n";
                 $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
-                $headers .= 'From: ' . CNF_REPLY_TO . ' <' . CNF_REPLY_TO . '>' . "\r\n";
+                $headers .= 'From: ' . $reply_to . ' <' . $reply_to . '>' . "\r\n";
                 mail($to, $subject, $message, $headers);
             }
         }
@@ -411,6 +413,8 @@ class SbticketController extends Controller
         foreach ($data as $index => $value) {
             $data[$index] = implode(',', $data[$index]);
         }
+        $data = $this->filterPermissions($data);
+
         $sbticketsetting = new SbticketSetting();
         $id = $sbticketsetting->insertRow($data, 1);
 
@@ -440,4 +444,14 @@ class SbticketController extends Controller
         $this->data['access'] = $this->access;
         return view('sbticket.setting', $this->data);
     }
+    protected function filterPermissions($data){
+        $cols = \App\Models\Sximo::getColumnTable('sbticket_setting');
+        unset($cols["id"]);unset($cols["updated_at"]);
+        foreach ($cols as $col => $value){
+            if(!array_key_exists($col,$data))
+                    $data[$col]="";
+        }
+        return $data;
+    }
+
 }

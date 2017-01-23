@@ -4,7 +4,13 @@
 	responOptData('<?php echo $f['option']['opt_type'];?>');
 	responeFormType('<?php echo $f['type'];?>')	;	
 $(document).ready(function(){
+    
 	$(".select2").select2({ width:"98%"});	
+     $(document).on('click', '.searchFieldConfigForm input[type=checkbox]', function(){
+         var elm = $(this),
+            checked = 1 * elm.prop('checked');            
+        elm.val(checked);        
+     });
 
 	 <?php 
 	 if(preg_match('/(select|radio|checkbox)/',$f['type'])) 
@@ -95,7 +101,7 @@ $(document).ready(function(){
 	}	
 </script>
 
- {!! Form::open(array('url'=>'feg/module/saveformfield/'.$module_name, 'class'=>'form-horizontal')) !!}
+ {!! Form::open(array('url'=>'feg/module/saveformfield/'.$module_name, 'class'=>'form-horizontal searchFieldConfigForm')) !!}
 <input type="hidden" name="alias" value="<?php echo $f['alias'];?>" />
 <input type="hidden" name="field" value="<?php echo $f['field'];?>" />	
 <input type="hidden" name="label" value="<?php echo $f['label'];?>" />	
@@ -300,6 +306,17 @@ $(document).ready(function(){
   </div>  
     
    <div class="form-group" @if(empty($f['simplesearch']) || $f['simplesearch'] != 1) style="display:none;" @endif>
+        <?php 
+            $simplesearchselectfieldwithoutblankdefault = (isset($f['simplesearchselectfieldwithoutblankdefault']) ? $f['simplesearchselectfieldwithoutblankdefault'] : '0');     
+            $SSSFWOBDChecked = $simplesearchselectfieldwithoutblankdefault==1;
+        ?>
+    <label for="simplesearchselectfieldwithoutblankdefault" class=" control-label col-md-12">
+        <input type="checkbox" name="simplesearchselectfieldwithoutblankdefault" 
+               @if($SSSFWOBDChecked) checked="checked" @endif
+               value="<?php echo $simplesearchselectfieldwithoutblankdefault;?>" />        
+        Remove '-- SELECT --' option from dropdown
+    </label>
+        <p>&nbsp;</p>
     <label for="simplesearchoperator" class=" control-label col-md-4">Simple Search Operator</label>
 	<div class="col-md-8">
         <?php 
@@ -311,6 +328,7 @@ $(document).ready(function(){
                     "smaller" => " < ",
                     "bigger" => " > ",
                     "like" => "Like",
+                    "between" => "BETWEEN",
                 );
         ?>
         <select id="simplesearchoperator" class="form-control" name="simplesearchoperator">

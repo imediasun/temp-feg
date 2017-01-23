@@ -56,6 +56,7 @@
               $id = ++$i;
             ?>
           <tr>
+              <input type="hidden" name="module_id" value="{{ $row->module_id }}" />
             <td class="index"><?php echo $id;?></td>
             <td class="formField"><?php echo $rows['field'];?></td>
             <td class="formTitle">
@@ -116,6 +117,8 @@
                 <input type="text" class="form-control" name="simplesearchfieldwidth[<?php echo $id;?>]" class="form-control" value="<?php echo $simplesearchfieldwidth;?>" />
                 <?php $simplesearchoperator = (isset($rows['simplesearchoperator']) ? $rows['simplesearchoperator'] : 'equal'); ?>
                 <input type="hidden" name="simplesearchoperator[<?php echo $id;?>]" value="<?php echo $simplesearchoperator;?>" />
+                <?php $simplesearchselectfieldwithoutblankdefault = (isset($rows['simplesearchselectfieldwithoutblankdefault']) ? $rows['simplesearchselectfieldwithoutblankdefault'] : '0'); ?>
+                <input type="hidden" name="simplesearchselectfieldwithoutblankdefault" value="<?php echo $simplesearchselectfieldwithoutblankdefault;?>" />
             </td>            
 			<td class="formFieldRequired">
 				<?php
@@ -177,10 +180,10 @@
  <div class="infobox infobox-danger fade in">
   <button type="button" class="close" data-dismiss="alert"> x </button>  
   <p> <strong>Note !</strong> Your primary key must be <strong>show</strong> and in <strong>hidden</strong> type   </p>	
-</div>		
-		
+</div>
+
 		<button type="submit" class="btn btn-primary submitSearchConfigurations"> Save Changes </button>
-		<input type="hidden" name="module_id" value="{{ $row->module_id }}" />
+
  {!! Form::close() !!}		
 	
 </div>	

@@ -5,6 +5,7 @@ use App\Models\Feg\System\Tasks;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Validator, Input, Redirect, Session, Auth, DB; 
+use App\Library\FEG\System\FEGSystemHelper;
 
 class TasksController extends Controller
 {
@@ -170,6 +171,7 @@ class TasksController extends Controller
                 "onsuccess" => $request->input('onsuccess'),
                 "onfailure" => $request->input('onfailure'),        
                 "istestmode" => $request->input('isTestMode'),        
+                "rundependent" => $request->input('runDependent'),        
             ));
 
             if ($schedule) {
@@ -202,7 +204,19 @@ class TasksController extends Controller
         return \Response::json($json);
     }    
     
-
+    public function postTerminateschedule(Request $request) {
+        $id = $request->input('id');
+        if (!empty($id)) {
+            FEGSystemHelper::session_put('terminate_elm5_schedule_'. $id, 1);
+        }
+        return \Response::json($id);
+    }
+    public function getSchedulestatus(Request $request) {
+        $id = $request->input('id');        
+        $data = FEGSystemHelper::session_get('status_elm5_schedule_'. $id, '');        
+        return \Response::json(json_decode($data, true));
+    }
+    
 	function postSave( Request $request, $id = 0)
 	{
 		$rules = $this->validateForm();

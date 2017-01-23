@@ -5,7 +5,7 @@
     <!-- Page header -->
     <div class="page-header">
       <div class="page-title">
-        <h3> {{ $pageTitle }} <small>{{ $pageNote }}</small></h3>
+        <h3> {{ $pageTitle }} </h3>
       </div>
 
       <ul class="breadcrumb">
@@ -72,22 +72,7 @@
 
 
 			<a href="{{ URL::to( 'core/users/search') }}" class="btn btn-sm btn-white" onclick="SximoModal(this.href,'Advanced Search'); return false;" ><i class=" fa fa-search"></i>Advanced Search</a>
-		@if(SiteHelpers::isModuleEnabled('users'))
-			<a href="{{ URL::to('tablecols/arrange-cols/users') }}" class="btn btn-sm btn-white" onclick="SximoModal(this.href,'Column Selector'); return false;" ><i class="fa fa-bars"></i> Arrange Columns</a>
-			<?php   $colconfigs=SiteHelpers::getRequiredConfigs($module_id);  ?>
-			@if(!empty($colconfigs))
-				<select class="btn btn-sm btn-white" style="width:25%!important;display:inline;margin-bottom: 6px;" name="col-config"
-						id="col-config">
-					<option value="0">Select Configuraton</option>
-					@foreach( $colconfigs as $configs )
-						<option @if($config_id == $configs['config_id']) selected
-								@endif value={{ $configs['config_id'] }}> {{ $configs['config_name'] }}   </option>
-					@endforeach
-				</select>
-			@endif
-		@endif
-
-		</div>
+        </div>
 
 
 
@@ -166,7 +151,16 @@
 							<?php } ?>
 					 	@elseif($field['field'] =='active')
 							{!! ($row->active ==1 ? '<lable class="label label-success">Active</lable>' : '<lable class="label label-danger">Inactive</lable>')  !!}
-
+						 @elseif($field['field'] =='date')
+							 {{  DateHelpers::formatDate($row->date) }}
+						 @elseif($field['field'] =='last_login')
+							 {{  DateHelpers::formatDateTime($row->last_login) }}
+						 @elseif($field['field'] =='last_activity')
+							 {{  DateHelpers::formatDateTime($row->last_activity) }}
+						 @elseif($field['field'] =='updated_at')
+							 {{  DateHelpers::formatDate($row->updated_at) }}
+						 @elseif($field['field'] =='created_at')
+							 {{  DateHelpers::formatDate($row->created_at) }}
 						@else
 							{{--*/ $conn = (isset($field['conn']) ? $field['conn'] : array() ) /*--}}
 							{!! SiteHelpers::gridDisplay($row->$field['field'],$field['field'],$conn) !!}
@@ -240,7 +234,7 @@ $(document).ready(function(){
     
     updateNativeUIFieldsBasedOn();  
     makeSimpleSearchFieldsToInitiateSearchOnEnter();
-    
+
 });
 </script>
 <style>

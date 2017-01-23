@@ -96,6 +96,8 @@ Route::group(['middleware' => 'auth'], function()
 		'core/pages' 		=> 'Core\PagesController',
 		'core/groups' 		=> 'Core\GroupsController',
 		'core/template' 	=> 'Core\TemplateController',
+		'feg/system/tasks'	=> 'Feg\System\TasksController',
+		'feg/system/systememailreportmanager'	=> 'Feg\System\SystemEmailReportManagerController',        
 	]);
 
 });
@@ -108,7 +110,6 @@ Route::group(['middleware' => 'auth' , 'middleware'=>'sximoauth'], function()
 		'feg/config' 		=> 'Sximo\ConfigController',
 		'feg/module' 		=> 'Sximo\ModuleController',
 		'feg/tables'		=> 'Sximo\TablesController',
-		'feg/system/tasks'	=> 'Feg\System\TasksController',
 	]);
 
 

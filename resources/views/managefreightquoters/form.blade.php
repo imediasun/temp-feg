@@ -441,8 +441,8 @@
         $('.date').datepicker({format: 'mm/dd/yyyy', autoClose: true})
         $('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});
         $('input[type="checkbox"],input[type="radio"]').iCheck({
-            checkboxClass: 'icheckbox_square-green',
-            radioClass: 'iradio_square-green'
+            checkboxClass: 'icheckbox_square-blue',
+            radioClass: 'iradio_square-blue'
         });
         $('.removeCurrentFiles').on('click', function () {
             var removeUrl = $(this).attr('href');

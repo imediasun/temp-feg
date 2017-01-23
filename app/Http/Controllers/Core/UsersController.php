@@ -47,6 +47,7 @@ class UsersController extends Controller
 
         if (Input::has('config_id')) {
             $config_id = Input::get('config_id');
+            \Session::put('config_id',$config_id);
         } elseif (\Session::has('config_id')) {
             $config_id = \Session::get('config_id');
         } else {
@@ -326,6 +327,8 @@ class UsersController extends Controller
         $form_data['created_at'] = date('Y-m-d');
         $form_data['updated_at'] = date('Y-m-d');
         $rules = $this->validateForm();
+        $rules['g_mail'] = 'email';
+        $rules['g_password'] = 'min:8';
         if ($request->input('id') == '') {
             $rules['password'] = 'required|between:6,12';
             $rules['password_confirmation'] = 'required|between:6,12';
@@ -362,6 +365,13 @@ class UsersController extends Controller
                 $data = array_filter($data);
             }
             $data['active']=$request->get('active');
+            /* add google account password and email*/
+            $data['g_mail'] = $request->input('g_mail');
+            if(!is_null($request->input('g_password')))
+            {
+                $password = base64_encode(env('SALT_KEY').$request->input('g_password').env('SALT_KEY'));
+                $data['g_password'] = $password;
+            }
             $id = $this->model->insertRow($data, $request->input('id'));
             $all_locations = Input::get('all_locations');
             if (empty($all_locations)) {

@@ -79,7 +79,7 @@ $(document).ready(function() {
 	$('.date').datepicker({format:'mm/dd/yyyy',autoClose:true})
 	$('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});
 	$('input[type="checkbox"],input[type="radio"]').iCheck({
-		checkboxClass: 'icheckbox_square-green',
+		checkboxClass: 'icheckbox_square-blue',
 		radioClass: 'iradio_square_green'
 	});			
 	$('.removeCurrentFiles').on('click',function(){
@@ -118,7 +118,7 @@ function showResponse(data)  {
 	if(data.status == 'success')
 	{
 		ajaxViewClose('#{{ $pageModule }}');
-		ajaxFilter('#{{ $pageModule }}','{{ $pageModule }}/data','view=manage');
+		ajaxFilter('#{{ $pageModule }}','{{ $pageModule }}/data',data.view);
 		notyMessage(data.message);	
 		$('#sximo-modal').modal('hide');	
 	} else {

@@ -26,10 +26,10 @@
             <div class="col-sm-10">
                 Parameters: 
                 <input type="text"  name="params" class="params form-control"
-                       placeholder='[{ "date": "2016-11-35", "location": 7001 }]'
+                       placeholder='{ "date": "2016-11-35", "location": 7001 }'
                        data-toggle="tooltip" data-placement="top" 
                        title="Parameters in JSON format" 
-                       values='[{ "date": "2016-11-25", "location": 2000 }]'
+                       values='{ "date": "2016-11-25", "location": 2000 }'
                        value=''
                        /> 
             </div>
@@ -43,6 +43,13 @@
                        title="A special flag send to the task - developer can make use of it for testing like sending email to testers only"  /> 
                 TEST MODE?
                 </label>
+                <label class="">
+                <input type="checkbox"  name="runDependent" class="test runDependent"
+                       data-toggle="tooltip" data-placement="top" 
+                       value="1"
+                       title="Uncheck not to run the dependent tasks"  /> 
+                Dependents?
+                </label>                
             </div>                    
             <div class="col-sm-2">
                 Log Folder: 

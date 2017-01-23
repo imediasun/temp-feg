@@ -2,8 +2,8 @@
 
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
-
-class Servicerequests extends Sximo  {
+use App\Models\Observers\Observerable;
+class Servicerequests extends Observerable  {
 
     protected $table = 'sb_tickets';
     protected $primaryKey = 'TicketID';
@@ -19,8 +19,11 @@ class Servicerequests extends Sximo  {
     }
 
     public static function queryWhere(  ){
-
-        return "  WHERE sb_tickets.TicketID IS NOT NULL ";
+        $selected_loc=\Session::get('selected_location');
+        if (isset($selected_loc))
+            return "  WHERE sb_tickets.TicketID IS NOT NULL AND location_id=$selected_loc";
+        else
+            return "  WHERE sb_tickets.TicketID IS NOT NULL ";
     }
 
     public static function queryGroup(){

@@ -49,6 +49,7 @@ class GamesintransitController extends Controller
         $this->data['module_id'] = $module_id;
         if (Input::has('config_id')) {
             $config_id = Input::get('config_id');
+            \Session::put('config_id',$config_id);
         } elseif (\Session::has('config_id')) {
             $config_id = \Session::get('config_id');
         } else {
@@ -242,4 +243,57 @@ class GamesintransitController extends Controller
 
     }
 
+    function postAddNewGame(Request $request)
+    {
+        $rules = array('asset_number' => 'required|min:8|max:8|unique:game,id');
+        $validator = Validator::make(array_map('trim',$request->all()), $rules);
+        if ($validator->passes()) {
+            $serial = $request->get('serial');
+            $game_title_id = $request->get('game_title');
+            $asset_number = $request->get('asset_number');
+            $notes = $request->get('notes');
+            $test_piece = $request->get('test_piece');
+            $insert = array(
+                'id' => $asset_number,
+                'game_title_id' => $game_title_id,
+                'serial' => $serial,
+                'status_id' => 3,
+                'test_piece' => $test_piece,
+                'notes' => $notes
+            );
+            \DB::table('game')->insert($insert);
+
+            return response()->json(array(
+                'status' => 'success',
+                'message' => 'New Game Added Successfully'
+            ));
+        }
+        else
+        {
+            $message = $this->validateListError($validator->getMessageBag()->toArray());
+            return response()->json(array(
+                'message' => $message,
+                'status' => 'error'
+            ));
+        }
+
+
+    }
+    function getAssetNumberAvailability($asset_num)
+    {
+        if(strlen(trim($asset_num)) < 8 || strlen(trim($asset_num)) > 8)
+        {
+            return json_encode(array('status'=>'error','message'=>'Asset Number must have 8 characters'));
+
+        }
+        $row=\DB::select('select id from game where id ='.trim($asset_num));
+        if(count($row) > 0)
+        {
+            echo json_encode(array('status'=>'error','message'=>'This Asset Number not available'));
+        }
+        else
+        {
+            echo json_encode(array('status'=>'success','message'=>'This Asset Number is available'));
+        }
+    }
 }

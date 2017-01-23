@@ -8,11 +8,21 @@
 	</div>
 
 	<div class="sbox-content"> 
-@endif	
-			{!! Form::open(array('url'=>'location/save/'.$row['id'], 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'locationFormAjax')) !!}
+@endif
+        {!! Form::open(array('url'=>'location/save/'.$row['id'], 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'locationFormAjax')) !!}
 			<div class="col-md-12">
 						<fieldset><legend> location</legend>
-				
+                            <div class="form-group  " >
+                                <label for="Short Name" class=" control-label col-md-4 text-left">
+                                    {!! SiteHelpers::activeLang('Location Id', (isset($fields['id']['language'])? $fields['id']['language'] : array())) !!}
+                                </label>
+                                <div class="col-md-6">
+                                    {!! Form::text('id', $row['id'],array('class'=>'form-control', 'placeholder'=>'','id'=>'location_id','required'=>'required'   )) !!}
+									<div id="location_available">
+
+									</div>
+                                </div>
+                            </div>
 				  <div class="form-group  " >
 					<label for="Active Location" class=" control-label col-md-4 text-left">
 					{!! SiteHelpers::activeLang('Active Location', (isset($fields['active']['language'])? $fields['active']['language'] : array())) !!}
@@ -29,7 +39,7 @@
 					 	
 					 </div>
 				  </div> 
-				  <div class="form-group  " >
+				{{--  <div class="form-group  " >
 					<label for="Location Detail" class=" control-label col-md-4 text-left">
 					{!! SiteHelpers::activeLang('Location Detail', (isset($fields['ipaddress']['language'])? $fields['ipaddress']['language'] : array())) !!}
 					</label>
@@ -39,7 +49,7 @@
 					 <div class="col-md-2">
 					 	
 					 </div>
-				  </div> 
+				  </div> --}}
 				  <div class="form-group  " >
 					<label for="FEG Owned" class=" control-label col-md-4 text-left">
 					{!! SiteHelpers::activeLang('FEG Owned', (isset($fields['self_owned']['language'])? $fields['self_owned']['language'] : array())) !!}
@@ -56,7 +66,7 @@
 					 	
 					 </div>
 				  </div> 
-				  <div class="form-group  " >
+				{{--  <div class="form-group  " >
 					<label for="ID" class=" control-label col-md-4 text-left">
 					{!! SiteHelpers::activeLang('ID', (isset($fields['id']['language'])? $fields['id']['language'] : array())) !!}
 					</label>
@@ -66,7 +76,7 @@
 					 <div class="col-md-2">
 					 	
 					 </div>
-				  </div> 
+				  </div> --}}
 				  <div class="form-group  " >
 					<label for="Location Name" class=" control-label col-md-4 text-left">
 					{!! SiteHelpers::activeLang('Location Name', (isset($fields['location_name']['language'])? $fields['location_name']['language'] : array())) !!}
@@ -99,8 +109,18 @@
 					 <div class="col-md-2">
 					 	
 					 </div>
-				  </div> 
+				  </div>
 				  <div class="form-group  " >
+					    <label for="Region " class=" control-label col-md-4 text-left">
+						     {!! SiteHelpers::activeLang('District Manager', (isset($fields['district_manager_id']['language'])? $fields['district_manager_id']['language'] : array())) !!}
+						</label>
+						<div class="col-md-6">
+						    <select name='district_manager_id' rows='5' id='district_manager_id' class='select2 '   ></select>
+						</div>
+						<div class="col-md-2">
+						</div>
+				  </div>
+					<div class="form-group  " >
 					<label for="Company " class=" control-label col-md-4 text-left">
 					{!! SiteHelpers::activeLang('Company ', (isset($fields['company_id']['language'])? $fields['company_id']['language'] : array())) !!}
 					</label>
@@ -145,8 +165,8 @@
 					 </div>
 				  </div> 
 				  <div class="form-group  " >
-					<label for="District Manager " class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('District Manager ', (isset($fields['tech_manager_id']['language'])? $fields['tech_manager_id']['language'] : array())) !!}
+					<label for="tech_manager_id " class=" control-label col-md-4 text-left">
+					{!! SiteHelpers::activeLang('Tech Manager ', (isset($fields['tech_manager_id']['language'])? $fields['tech_manager_id']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
 					  <select name='tech_manager_id' rows='5' id='tech_manager_id' class='select2 '   ></select>
@@ -155,9 +175,7 @@
 					 	
 					 </div>
 				  </div>
-
-
-							<div class="form-group  " >
+                            <div class="form-group  " >
 								<label for="General Contact " class=" control-label col-md-4 text-left">
 									{!! SiteHelpers::activeLang('General Contact ', (isset($fields['general_contact_id']['language'])? $fields['general_contact_id']['language'] : array())) !!}
 								</label>
@@ -168,39 +186,7 @@
 
 								</div>
 							</div>
-
-
-
-							<div class="form-group  " >
-								<label for="Merchandise Contact " class=" control-label col-md-4 text-left">
-									{!! SiteHelpers::activeLang('Merchandise Contact ', (isset($fields['merchandise_contact_id']['language'])? $fields['merchandise_contact_id']['language'] : array())) !!}
-								</label>
-								<div class="col-md-6">
-									<select name='merchandise_contact_id' rows='5' id='merchandise_contact_id' class='select2 '   ></select>
-								</div>
-								<div class="col-md-2">
-
-								</div>
-							</div>
-
-
-
-
-							<div class="form-group  " >
-								<label for="Technical Contact " class=" control-label col-md-4 text-left">
-									{!! SiteHelpers::activeLang('Technical Contact ', (isset($fields['technical_contact_id']['language'])? $fields['technical_contact_id']['language'] : array())) !!}
-								</label>
-								<div class="col-md-6">
-									<select name='technical_contact_id' rows='5' id='technical_contact_id' class='select2 '   ></select>
-								</div>
-								<div class="col-md-2">
-
-								</div>
-							</div>
-
-
-
-							<div class="form-group  " >
+                            <div class="form-group  " >
 								<label for="Regional Contact " class=" control-label col-md-4 text-left">
 									{!! SiteHelpers::activeLang('Regional Contact ', (isset($fields['regional_contact_id']['language'])? $fields['regional_contact_id']['language'] : array())) !!}
 								</label>
@@ -365,10 +351,25 @@
 					 <div class="col-md-2">
 					 	
 					 </div>
-				  </div> 
+				  </div>
+                            <div class="form-group  " >
+                                <label for="reporting" class=" control-label col-md-4 text-left">
+                                    {!! SiteHelpers::activeLang('Reporting', (isset($fields['reporting']['language'])? $fields['reporting']['language'] : array())) !!}
+                                </label>
+                                <div class="col-md-6">
+                                    <input type ="text"  value="0" name="reporting" style="display:none"/>
+                                    <?php $reporting = $row['reporting']; ?>
+                                    <label class='checked checkbox-inline'>
+                                        <input type='checkbox' name='reporting' value ='1'
+                                               @if($reporting == 1)checked @endif />  </label>
+                                </div>
+                                <div class="col-md-2">
+
+                                </div>
+                            </div>
 				  <div class="form-group  " >
 					<label for="On Debit" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('On Debit', (isset($fields['debit_type_id']['language'])? $fields['debit_type_id']['language'] : array())) !!}
+					{!! SiteHelpers::activeLang('Debit Type', (isset($fields['debit_type_id']['language'])? $fields['debit_type_id']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
 					  <select name='debit_type_id' rows='5' id='debit_type_id' class='select2 '   ></select>
@@ -379,7 +380,7 @@
 				  </div> 
 				  <div class="form-group  " >
 					<label for=" Debit Type" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang(' Debit Type', (isset($fields['bill_debit_type']['language'])? $fields['bill_debit_type']['language'] : array())) !!}
+					{!! SiteHelpers::activeLang('On Debit', (isset($fields['bill_debit_type']['language'])? $fields['bill_debit_type']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
                         <input type ="text"  value="0" name="bill_debit_type" style="display:none"/>
@@ -415,15 +416,15 @@
 </div>	
 @endif	
 
-	
-</div>	
+
 			 
 <script type="text/javascript">
-$(document).ready(function() { 
-	
+$(document).ready(function() {
+        $('#location_available').hide();
         $("#region_id").jCombo("{{ URL::to('location/comboselect?filter=region:id:region') }}",
         {  selected_value : '{{ $row["region_id"] }}' });
-        
+		$("#district_manager_id").jCombo("{{ URL::to('location/comboselect?filter=users:id:first_name|last_name') }}",
+			{  selected_value : '{{ $row["district_manager_id"] }}' });
         $("#company_id").jCombo("{{ URL::to('location/comboselect?filter=company:id:company_name_long') }}",
         {  selected_value : '{{ $row["company_id"] }}' });
         
@@ -441,13 +442,7 @@ $(document).ready(function() {
         
         $("#general_contact_id").jCombo("{{ URL::to('location/comboselect?filter=users:id:first_name|last_name') }}",
         {  selected_value : '{{ $row["general_contact_id"] }}' });
-
-	$("#merchandise_contact_id").jCombo("{{ URL::to('location/comboselect?filter=users:id:first_name|last_name') }}",
-			{  selected_value : '{{ $row["merchandise_contact_id"] }}' });
-		$("#technical_contact_id").jCombo("{{ URL::to('location/comboselect?filter=users:id:first_name|last_name') }}",
-			{  selected_value : '{{ $row["technical_contact_id"] }}' });
-
-		$("#regional_contact_id").jCombo("{{ URL::to('location/comboselect?filter=users:id:first_name|last_name') }}",
+    $("#regional_contact_id").jCombo("{{ URL::to('location/comboselect?filter=users:id:first_name|last_name') }}",
 			{  selected_value : '{{ $row["regional_contact_id"] }}' });
 
 		$("#senior_vp_id").jCombo("{{ URL::to('location/comboselect?filter=users:id:first_name|last_name') }}",
@@ -472,8 +467,8 @@ $(document).ready(function() {
 	$('.date').datepicker({format:'mm/dd/yyyy',autoClose:true})
 	$('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});
 	$('input[type="checkbox"],input[type="radio"]').iCheck({
-		checkboxClass: 'icheckbox_square-green',
-		radioClass: 'iradio_square-green',
+		checkboxClass: 'icheckbox_square-blue',
+		radioClass: 'iradio_square-blue'
 	});			
 	$('.removeCurrentFiles').on('click',function(){
 		var removeUrl = $(this).attr('href');
@@ -520,5 +515,26 @@ function showResponse(data)  {
 		return false;
 	}	
 }			 
-
+$('#location_id').on('blur',function(){
+    var location_id=$(this).val();
+    $.ajax({
+        url:'{{url()}}/location/is-location-available/'+location_id,
+        method:'get',
+        dataType:'json',
+        success:function(result){
+            if(result.status=="error")
+            {
+                $('#location_available').css('color','red');
+            }
+            else{
+                $('#location_available').css('color','green');
+            }
+            $('#location_available').show('500');
+            $("#location_available").text(result.message);
+        }
+    });
+});
+$('#location_id').on('focus',function(){
+    $('#location_available').hide();
+});
 </script>		 

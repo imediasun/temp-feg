@@ -8,9 +8,7 @@
 		<span class="text-semibold"><i class="icon-user-plus"></i> {{ CNF_APPNAME}}</span>
 	</div>	
 	<div class="sbox-content">
-	<div class="text-center">
-		<img src="{{ asset('sximo/images/feg-logo.png')}}"  />
-	</div>
+
 		{!! Form::open(array('url' => 'user/doreset/'.$verCode, 'class'=>'form-vertical')) !!}
 	
 	    	@if(Session::has('message'))

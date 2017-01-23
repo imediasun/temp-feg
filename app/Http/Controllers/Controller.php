@@ -46,8 +46,8 @@ abstract class Controller extends BaseController
                 \Session::put('company_id', \Auth::user()->company_id);
                 $user_locations = \SiteHelpers::getLocationDetails(\Auth::user()->id);
                 \Session::put('user_locations', $user_locations);
-                \Session::put('selected_location', $user_locations[0]->id);
-                \Session::put('selected_location_name', $user_locations[0]->location_name_short);
+                \Session::put('selected_location', isset($user_locations[0]->id) ? $user_locations[0]->id: null);
+                \Session::put('selected_location_name', isset($user_locations[0]->location_name_short) ? $user_locations[0]->location_name_short : null);
                 \Session::put('get_locations_by_region', \Auth::user()->get_locations_by_region);
                 \Session::put('themes', 'sximo-light-blue');
             }
@@ -220,7 +220,6 @@ abstract class Controller extends BaseController
     {
         $request = new Request;
         $str = $this->info['config']['forms'];
-
         $data = array();
         foreach ($str as $f) {
             $field = $f['field'];
@@ -254,15 +253,33 @@ abstract class Controller extends BaseController
                             }
 
                             if (!is_null(Input::file($field))) {
-                                $destinationPath = '.' . $f['option']['path_to_upload'];
+                                if( $this->info['config']['table_db'] == "sb_tickets" || $this->info['config']['table_db'] == "sb_ticketcomments")
+                                {
+                                    $destinationPath = '.' . $f['option']['path_to_upload'].'/'.date('Y-m-d');
+                                    if (!file_exists($destinationPath)) {
+                                        mkdir($destinationPath, 0777, true);
+                                    }
+                                }
+                                else
+                                {
+                                    $destinationPath = '.' . $f['option']['path_to_upload'];
+                                }
+
                                 foreach ($_FILES[$field]['tmp_name'] as $key => $tmp_name) {
                                     $file_name = $_FILES[$field]['name'][$key];
-                                    $file_tmp = $_FILES[$field]['tmp_name'][$key];
+                                    $file_tmp =$_FILES[$field]['tmp_name'][$key];
+                                    $temp = explode(".", $_FILES[$field]['name'][$key]);
+                                    $newfilename = round(microtime(true)) . '.' . end($temp);
                                     if ($file_name != '') {
-                                        move_uploaded_file($file_tmp, $destinationPath . '/' . $file_name);
-                                        $files .= $file_name . ',';
-
-                                    }
+                                        move_uploaded_file($file_tmp, $destinationPath . '/' . $newfilename);
+                                        if( $this->info['config']['table_db'] == "sb_tickets" || $this->info['config']['table_db'] == "sb_ticketcomments") {
+                                            $files .= date('Y-m-d').'/'.$newfilename . ',';
+                                        }
+                                        else
+                                        {
+                                            $files .= $newfilename . ',';
+                                        }
+                                   }
 
                                 }
                                 if ($files != '') $files = substr($files, 0, strlen($files) - 1);
@@ -270,7 +287,8 @@ abstract class Controller extends BaseController
                             $data[$field] = $files;
 
 
-                        } else {
+                        }
+                        else {
 
 
                             if (!is_null(Input::file($field))) {
@@ -391,10 +409,11 @@ abstract class Controller extends BaseController
         $order = (isset($_GET['order']) ? $_GET['order'] : '');
         $rows = (isset($_GET['rows']) ? $_GET['rows'] : '');
         $search = (isset($_GET['search']) ? $_GET['search'] : '');
-        $product_type = (isset($_GET['prod_list_type']) ? $_GET['prod_list_type'] : '');
+        $product_list_type = (isset($_GET['prod_list_type']) ? $_GET['prod_list_type'] : '');
         $sub_type = (isset($_GET['sub_type']) ? $_GET['sub_type'] : '');
         $budget_year = (isset($_GET['budget_year']) ? $_GET['budget_year'] : '');
         $order_type = (isset($_GET['order_type']) ? $_GET['order_type'] : '');
+        $product_type=(isset($_GET['product_type']) ? $_GET['product_type'] : '');
         $active = (isset($_GET['active']) ? $_GET['active'] : '');
         $active_inactive = (isset($_GET['active_inactive']) ? $_GET['active_inactive'] : '');
         $type = (isset($_GET['type']) ? $_GET['type'] : '');
@@ -409,8 +428,10 @@ abstract class Controller extends BaseController
         if ($order != '') $appends['order'] = $order;
         if ($rows != '') $appends['rows'] = $rows;
         if ($search != '') $appends['search'] = $search;
+        if ($product_list_type != '' || $product_list_type != NULL)
+            $appends['prod_list_type'] = $product_list_type;
         if ($product_type != '' || $product_type != NULL)
-            $appends['prod_list_type'] = $product_type;
+            $appends['product_type'] = $product_type;
         if ($budget_year != '' || $budget_year != NULL)
             $appends['budget_year'] = $budget_year;
         if ($order_type != '')
@@ -567,7 +588,6 @@ abstract class Controller extends BaseController
         $param = '';
         $allowsearch = $this->info['config']['forms'];
 
-
         foreach ($allowsearch as $as)
             $arr[$as['field']] = $as;
         if ($_GET['search'] != '') {
@@ -593,7 +613,6 @@ abstract class Controller extends BaseController
                                     }
 
                                     $vals = explode(',', $keys[2]);
-
                                     $multi_in = array();
                                     foreach ($vals as $v) {
                                         $multi_in[] .= '"' . $v . '"';
@@ -888,6 +907,10 @@ abstract class Controller extends BaseController
         \Session::put('total_cart', $total_cart[0]->total);
         // Session::put($data);
         return Redirect::back();
+    }
+
+    function generateRandomString($length = 10) {
+        return substr(str_shuffle(str_repeat($x='0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', ceil($length/strlen($x)) )),1,$length);
     }
 
 }

@@ -1,12 +1,12 @@
 <div class="col-md-10">
-    {!! Form::open(array('url'=>'tablecols/config/', 'class'=>'form-horizontal','files' => true ,
+    {!! Form::open(array('url'=>'tablecols/config/'.$module_id, 'class'=>'form-horizontal','files' => true ,
     'parsley-validate'=>'','novalidate'=>' ','id'=> 'tablecolsFormAjax')) !!}
     <input type="hidden" name="module_id" value="{{ $module_id }}"/>
     <input type="hidden" name="user_id" value="{{ $user_id }}"/>
-
+    <input type="hidden" value="{{ $config_id }}" name="config_id"/>
     <div class="form-group form-group-sm col-md-12">
         <input type="text" name="config_name" id="configname" class="form-control" required
-               placeholder="Enter Configuration Name:"/>
+               placeholder="Enter Configuration Name:" value="{{ $config_name }}"/>
     </div>
     <div class="form-group col-md-12">
     <label for="pre-selected-options" class="label-control">Columns</label><br/>
@@ -26,9 +26,9 @@
     <div id="groups" class="form-group form-group-sm  col-md-12" >
     <label for="pre-selected-options1" class="label-control">Groups</label><br/>
     <select name="group_id" class="form-control">
-        <option value="0">Select Group</option>
+        <option disabled>Select Group</option>
         @foreach($groups as $group)
-            <option value="{{ $group->group_id }}"> {{ $group->name }} </option>
+            <option @if($group->group_id == $group_id || $group->group_id == \Session::get('gid')) selected @endif value="{{ $group->group_id }}"> {{ $group->name }} </option>
         @endforeach
     </select>
     </div><div class="clearfix"></div>
@@ -37,7 +37,7 @@
         <label for="public"><input type="radio" name="user_mode" value="0" checked id="public"/> Public </label>
     </div>
     <div class="radio-inline">
-        <label for="private"><input type="radio" name="user_mode" _mode value="1" id="private"/> Private </label>
+        <label for="private"><input type="radio" @if($is_private == 1) checked @endif name="user_mode" _mode value="1" id="private"/> Private </label>
     </div>
     <div class="clearfix"></div>
     <br/>
@@ -54,6 +54,14 @@
 <div class="clearfix"></div>
 
 <script>
+    $(document).ready(function(){
+        if ($("#private").is(":checked")) {
+            $('#groups').hide();
+        }
+        else{
+            $('#groups').show();
+        }
+    });
     $('#keep-order').multiSelect({
         keepOrder: true,
         afterSelect: function(value, text){
@@ -67,6 +75,14 @@
             $("#multiple_value").val(new_val);
         }
     });
+   cols="{{ $cols }}";
+    if(cols) {
+        cols = cols.split(',');
+        $('#keep-order').val(cols);
+        $('#keep-order').multiSelect('refresh');
+
+    }
+   // $('#keep-order').multiSelect('select', (['store_id','city']));
     $("#upbtn").on('click',function(){
     //alert('Up Button is Pressed');
 

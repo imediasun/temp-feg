@@ -49,6 +49,7 @@ class MylocationgameController extends Controller
         $this->data['module_id'] = $module_id;
         if (Input::has('config_id')) {
             $config_id = Input::get('config_id');
+            \Session::put('config_id',$config_id);
         } elseif (\Session::has('config_id')) {
             $config_id = \Session::get('config_id');
         } else {
@@ -383,11 +384,29 @@ class MylocationgameController extends Controller
 
     public function postGamelocation(Request $request)
     {
+       // die('here....');
         $this->data['pageTitle'] = 'game in location';
         $request = $request->all();
-        $results = \DB::table('game')->where('game_title_id', '=', $request['game_title_id'])->where('location_id', '=', $request['location_id'])->get();
-        $info = $this->model->makeInfo($this->module);
+        if(!empty($request['game_title_id']) && !empty($request['location_id']))
+        {
+            $results = \DB::table('game')->where('game_title_id', '=', $request['game_title_id'])->where('location_id', '=', $request['location_id'])->get();
+        }
+        elseif(!empty($request['game_title_id']))
+        {
+            $results = \DB::table('game')->where('game_title_id', '=', $request['game_title_id'])->get();
+        }
+        elseif(!empty($request['location_id'])){
+            $results = \DB::table('game')->where('location_id', '=', $request['location_id'])->get();
+        }
+        else
+        {
+            $results = \DB::table('game')->get();
+        }
+            $info = $this->model->makeInfo($this->module);
         $rows = $results;
+        foreach ($rows as &$row){
+            $row->game_name=$row->game_title_id;
+        }
         $fields = $info['config']['grid'];
         $content = array(
             'fields' => $fields,

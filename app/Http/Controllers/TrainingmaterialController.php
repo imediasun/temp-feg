@@ -49,6 +49,7 @@ class TrainingmaterialController extends Controller
         $this->data['module_id'] = $module_id;
         if (Input::has('config_id')) {
             $config_id = Input::get('config_id');
+            \Session::put('config_id',$config_id);
         } elseif (\Session::has('config_id')) {
             $config_id = \Session::get('config_id');
         } else {
@@ -193,8 +194,22 @@ class TrainingmaterialController extends Controller
         if ($validator->passes()) {
             $data['users'] = $request->get('users');
             $data['video_title'] = $request->get('video_title');
+            if (strpos($request->get('video_path'), 'youtu') < 0) {
+                return response()->json(array(
+                    'message' =>"Please add a valid Youtube link",
+                    'status' => 'error'
+                ));
+            }
             $data['video_path'] = $this->model->get_youtube_id_from_url($request->get('video_path'));
+            if(!$data['video_path'])
+            {
+                return response()->json(array(
+                    'message' =>"Please add a valid Youtube link",
+                    'status' => 'error'
+                ));
+            }
             $data['image_category'] = "video";
+            $data['type'] = Trainingmaterial::TYPE;
             $id = $this->model->insertRow($data, $id);
             return response()->json(array(
                 'status' => 'success',

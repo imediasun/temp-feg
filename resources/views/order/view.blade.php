@@ -146,7 +146,7 @@
                         </div>
                     </div>
                     <div class="clearfix"></div>
-                    <div class="form-group  ">
+                    <div class="form-group">
                         <label class=" label-control col-md-4 text-left">
                             {{ SiteHelpers::activeLang('Order Description', (isset($fields['order_description']['language'])? $fields['order_description']['language'] : array())) }}
                         </label>

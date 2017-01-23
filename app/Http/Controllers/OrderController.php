@@ -5,7 +5,7 @@ use App\Models\Order;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Validator, Input, Redirect, Cache;
-
+use PHPMailer;
 class OrderController extends Controller
 {
 
@@ -105,6 +105,7 @@ class OrderController extends Controller
         $this->data['module_id'] = $module_id;
         if (Input::has('config_id')) {
             $config_id = Input::get('config_id');
+            \Session::put('config_id',$config_id);
         } elseif (\Session::has('config_id')) {
             $config_id = \Session::get('config_id');
         } else {
@@ -140,7 +141,8 @@ class OrderController extends Controller
         // Get Query
         // passing All gives error in query, $cond
         //$order_selected = isset($_GET['order_type']) ? $_GET['order_type'] : 'ALL';
-        $order_selected = isset($_GET['order_type']) ? $_GET['order_type'] : '';
+
+        $order_selected = isset($_GET['order_type']) ? $_GET['order_type'] : 'OPEN';
 
 
         $results = $this->model->getRows($params, $order_selected);
@@ -277,6 +279,7 @@ class OrderController extends Controller
 
         $sql = "INSERT INTO orders (" . implode(",", $columns) . ") ";
         $sql .= " SELECT " . implode(",", $columns) . " FROM orders WHERE id IN (" . $toCopy . ")";
+
         \DB::insert($sql);
         return response()->json(array(
             'status' => 'success',
@@ -286,6 +289,7 @@ class OrderController extends Controller
 
     function postSave(Request $request, $id = 0)
     {
+
         $rules = array('location_id' => "required", 'vendor_id' => 'required', 'order_type_id' => "required", 'freight_type_id' => 'required', 'date_ordered' => 'required', 'po_3' => 'required');
         $validator = Validator::make($request->all(), $rules);
         $order_data = array();
@@ -304,8 +308,7 @@ class OrderController extends Controller
             $vendor_email = $this->model->getVendorEmail($vendor_id);
             $freight_type_id = $request->get('freight_type_id');
 
-            $date_ordered = date("Y-m-d", strtotime($request->get('date_ordered')));
-
+           $date_ordered = date("Y-m-d", strtotime($request->get('date_ordered')));
             $total_cost = $request->get('order_total');
             $notes = $request->get('po_notes');
             $po_1 = $request->get('po_1');
@@ -332,11 +335,20 @@ class OrderController extends Controller
 
             $casePriceArray = $request->get('case_price');
             $priceArray = $request->get('price');
+            // add case price in priceArray if item_price is 0.00
+            foreach($priceArray as $item_price_key=>$item_price_value)
+            {
+                if($item_price_value == 0.00)
+                {
+                    $priceArray[$item_price_key]=$casePriceArray[$item_price_key];
+                }
+            }
             $qtyArray = $request->get('qty');
             $productIdArray = $request->get('product_id');
             $requestIdArray = $request->get('request_id');
             $games = $request->get('game');
             $num_items_in_array = count($itemsArray);
+
             for ($i = 0; $i < $num_items_in_array; $i++) {
                 $j = $i + 1;
                 $order_description .= ' | item' . $j . ' - (' . $qtyArray[$i] . ') ' . $itemsArray[$i] . ' @ $' . $priceArray[$i] . ' ea.';
@@ -382,6 +394,7 @@ class OrderController extends Controller
                 $order_id = \DB::getPdo()->lastInsertId();
             }
             for ($i = 0; $i < $num_items_in_array; $i++) {
+
                 if (empty($productIdArray[$i])) {
                     $product_id = '0';
                 } else {
@@ -423,6 +436,22 @@ class OrderController extends Controller
                     );
                     \DB::table('products')->insert($productData);
                 }
+                if(!empty($where_in))
+                {
+
+                    //// UPDATE STATUS TO APPROVED AND PROCESSED
+                    $now = $this->model->get_local_time('date');
+
+                    \DB::update('UPDATE requests
+							 SET status_id = 2,
+							 	 process_user_id = '.\Session::get('uid').',
+								 process_date = "'.$now.'"
+						   WHERE id IN('.$where_in.')');
+                    //// SUBTRACT QTY OF RESERVED AMT ITEMS
+                    $item_count = substr_count($SID_string, '-') - 1;
+                   $SID_new = $SID_string;
+                    $this->updateRequestAndProducts($item_count,$SID_new);
+                }
             }
             // $mailto = $vendor_email;
             $from = \Session::get('eid');
@@ -463,28 +492,64 @@ class OrderController extends Controller
 
     public function getSaveOrSendEmail()
     {
-        return view('order.saveorsendemail');
+        $google_account = \DB::table('users')->where('id', \Session::get('uid'))->select('g_mail','g_password')->first();
+        return view('order.saveorsendemail', compact('google_account'));
     }
 
     function postSaveorsendemail(Request $request)
     {
-        $to = $request->get('to');
+        $type=$request->get('submit');
+        if($type == "send") {
+            $to = $request->get('to');
+            $cc = $request->get('cc');
+            $bcc = $request->get('bcc');
+            $message = $request->get('message');
+        }
+        else
+        {
+            $to = $request->get('to1');
+            $cc = $request->get('cc1');
+            $bcc = $request->get('bcc1');
+            $message = $request->get('message');
+        }
+
         $from = $request->get('from');
         $order_id = $request->get('order_id');
         $opt = $request->get('opt');
-        if ($to === "NULL" || $from === "NULL" || empty($to) || empty($from) || $to == "" || $from=="") {
+        if (count($to) == 0 || $from === "NULL"  || empty($from)  || $from=="") {
             return response()->json(array(
                 'message' => "Failed!Sender or Vendor Email is missing",
                 'status' => 'error'
-
             ));
         } else {
-           // $this->getPo($order_id, true, $to, $from);
-            return response()->json(array(
-                'status' => 'success',
-                'message' => \Lang::get('core.mail_sent_success'),
+            $status = $this->getPo($order_id, true, $to, $from,$cc,$bcc,$message);
 
-            ));
+            if($status == 1)
+            {
+                return array(
+                    'status' => 'success',
+                    'message' => \Lang::get('core.mail_sent_success'),
+
+                );
+            }
+            elseif($status == 2)
+            {
+                return array(
+                    'status' => 'error',
+                    'message' => "Google account detail not exist",
+
+                );
+            }
+            elseif($status == 3)
+            {
+                return array(
+                    'status' => 'error',
+                    'message' => "Mail Error: SMTP connect() failed",
+
+                );
+            }
+
+
         }
     }
 
@@ -553,9 +618,8 @@ class OrderController extends Controller
         echo $po;
     }
 
-    function getPo($order_id = null, $sendemail = false, $to = null, $from = null)
+    function getPo($order_id = null, $sendemail = false, $to = null, $from = null,$cc = null,$bcc = null, $message= null )
     {
-
         $data = $this->model->getOrderData($order_id);
         if (empty($data)) {
 
@@ -598,12 +662,11 @@ class OrderController extends Controller
                 $data[0]['po_notes'] = " NOTE: " . $data[0]['po_notes'] . " (Email Questions to " . $data[0]['email'] . $data[0]['cc_email'] . $data[0]['loc_contact_email'] . ")";
             }
             $order_description = $data[0]['order_description'];
-
             if (substr($order_description, 0, 3) === ' | ') {
                 $order_description = substr($order_description, 3);
+
             }
             $order_description = str_replace(' | ', "\n", $order_description);
-
             if ($data[0]['new_format'] == 1) {
                 $item_description_string = '';
                 $sku_num_string = '';
@@ -637,16 +700,83 @@ class OrderController extends Controller
             }
             $pdf = \PDF::loadView('order.po', ['data' => $data, 'main_title' => "Purchase Order"]);
             if ($sendemail) {
-                if (isset($to)) {
+                if (isset($to) && count($to)>0) {
                     $filename = 'PO_' . $order_id . '.pdf';
                     $subject = "Purchase Order";
-                    $message = "Purchase Order";
-                    $result = \Mail::raw($message, function ($message) use ($to, $from, $subject, $pdf, $filename) {
+                    $message = $message;
+                    $cc=$cc;
+                    $bcc=$bcc;
+                    /*
+                    $result = \Mail::raw($message, function ($message) use ($to, $from, $subject, $pdf, $filename,$cc,$bcc) {
                         $message->subject($subject);
                         $message->from($from);
                         $message->to($to);
+                        if(count($cc)>0)
+                        {
+                            $message->cc($cc);
+                        }
+                        if(count($bcc) > 0)
+                        {
+                            $message->bcc($bcc);
+                        }
+                        $message->replyTo($from, $from);
                         $message->attachData($pdf->output(), $filename);
-                    });
+                    });*/
+                    /*
+                    * https://www.google.com/settings/security/lesssecureapps
+                    * enable stmp detail
+                    */
+                    $mail = new PHPMailer(); // create a new object
+                    $mail->IsSMTP(); // enable SMTP
+                    //$mail->SMTPDebug = 1; // debugging: 1 = errors and messages, 2 = messages only
+                    $mail->SMTPAuth = true; // authentication enabled
+                    $mail->SMTPSecure = 'tls'; // secure transfer enabled REQUIRED for Gmail
+                    $mail->Host = "smtp.gmail.com";
+                    $mail->Port = 587; // or 587
+                    $mail->IsHTML(true);
+                    /* current user */
+                    $google_acc = \DB::table('users')->where('id', \Session::get('uid'))->select('g_mail', 'g_password')->first();
+                    if(!empty($google_acc->g_mail) && !empty($google_acc->g_password))
+                    {
+
+                        $mail->Username = $google_acc->g_mail;                 // SMTP username
+                        $mail->Password = trim(base64_decode($google_acc->g_password), env('SALT_KEY'));
+                        $mail->SetFrom($google_acc->g_mail);
+                        $mail->Subject = $subject;
+                        $mail->Body = $message;
+                        foreach($to as $t)
+                        {
+                            $mail->addAddress($t);
+                        }
+                        $mail->addReplyTo($google_acc->g_mail);
+                        if(count($cc)>0)
+                        {
+                            foreach($cc as $c)
+                            {
+                                $mail->addCC($c);
+                            }
+                        }
+                        if(count($bcc) > 0)
+                        {
+                            foreach($bcc as $bc)
+                            {
+                                $mail->addBCC($bc);
+                            }
+                        }
+                        $output = $pdf->output();
+                        $file_to_save = public_path().'/orders/'.$filename;
+                        file_put_contents($file_to_save, $output);
+                        $mail->addAttachment($file_to_save, $filename, 'base64', 'application/pdf');
+                        if(!$mail->Send()) {
+                            return 3;
+                        } else {
+                            return 1;
+                        }
+                    }
+                    else
+                    {
+                        return 2;
+                    }
                 }
             } else {
                 return $pdf->download($data[0]['company_name_short'] . "_PO_" . $data[0]['po_number'] . '.pdf');
@@ -722,7 +852,7 @@ class OrderController extends Controller
             if (in_array($item_ids[$i], $received_part_ids))
                 $status = 2;
             \DB::insert('INSERT INTO order_received (`order_id`,`order_line_item_id`,`quantity`,`received_by`, `status`, `date_received`, `notes`)
-							 	  		   VALUES (' . $order_id . ',' . $item_ids[$i] . ',' . $received_qtys[$i] . ',' . $user_id . ',' . $status . ', "' . date('Y-m-d') . '" , "' . $notes . '" )');
+							 	  		   VALUES (' . $order_id . ',' . $item_ids[$i] . ',' . $received_qtys[$i] . ',' . $user_id . ',' . $status . ', "' . date('m-d-Y') . '" , "' . $notes . '" )');
             \DB::update('UPDATE order_contents
 								 	 	 SET item_received = ' . $received_item_qty[$i] . '+' . $received_qtys[$i] . '
 							   	   	   WHERE id = ' . $item_ids[$i]);
@@ -773,7 +903,7 @@ class OrderController extends Controller
                 $added = 1;
             }
             $date_received = $request->get('date_received');
-            $date_received = date("Y-m-d", strtotime($date_received));
+            $date_received = date("m-d-Y", strtotime($date_received));
             $data = array('date_received' => $date_received,
                 'status_id' => $order_status,
                 'notes' => $notes,
@@ -816,9 +946,15 @@ class OrderController extends Controller
     {
         $term = Input::get('term');
         $results = array();
-        $queries = \DB::table('products')
-            ->where('vendor_description', 'LIKE', '%' . $term . '%')->where('inactive', '=', 0)
-            ->take(10)->get();
+        $queries = \DB::select("SELECT *
+  FROM products
+ WHERE vendor_description LIKE '%$term%'
+ GROUP BY vendor_description
+ ORDER BY CASE WHEN vendor_description LIKE '$term%' THEN 0
+               WHEN vendor_description LIKE '% %$term% %' THEN 1
+               WHEN vendor_description LIKE '%$term' THEN 2
+               ELSE 3
+          END, vendor_description");
         if (count($queries) != 0) {
             foreach ($queries as $query) {
                 $results[] = ['id' => $query->id, 'value' => $query->vendor_description];
@@ -837,4 +973,66 @@ class OrderController extends Controller
         echo json_encode($json);
     }
 
+
+    function getMinOrderAmount($id)
+    {
+        $row = \DB::table('vendor')->where('id', $id)->select('min_order_amt')->first();
+        if($row)
+        {
+            return response()->json(array(
+                'status' => 'success',
+                'min_order_amount' => $row->min_order_amt,
+                'message' => 'Your request order amonut should be $'.number_format($row->min_order_amt, 2)
+            ));
+        }
+        else {
+            return response()->json(array(
+                'status' => 'error',
+                'message' => 'Current vendor id not exist'
+            ));
+        }
+    }
+
+    function getTestEmail()
+    {
+        $mail = new PHPMailer(); // create a new object
+        $mail->IsSMTP(); // enable SMTP
+        $mail->Host = 'smtp.gmail.com';
+        $mail->Port = 587; // or 587
+        $mail->SMTPSecure = 'tls'; // secure transfer enabled REQUIRED for Gmail
+        $mail->SMTPAuth = true; // authentication enabled
+
+        $mail->SMTPDebug = 1; // debugging: 1 = errors and messages, 2 = messages only
+
+        //$mail->IsHTML(true);
+        $mail->Username = 'dev2@shayansolutions.com';          // SMTP username
+        $mail->Password = '&b%Dd9Kr';
+        $mail->SetFrom('dev2@shayansolutions.com');
+        $mail->Subject = "Test";
+        $mail->Body = "hello";
+        $mail->AddAddress("dev3@shayansolutions.com");
+        $mail->addCC('shayansolutions@gmail.com');
+        $mail->addBCC('dev1@shayansolutions.com');
+        if(!$mail->Send()) {
+            echo "Mailer Error: " . $mail->ErrorInfo;
+        } else {
+            echo "Message has been sent";
+        }
+        die;
+    }
+    function updateRequestAndProducts($item_count,$SID_new)
+    {
+         
+         for($i=1;$i <= $item_count;$i++)
+        {
+            $pos1 = strpos($SID_new,'-');
+            $SID_new = substr($SID_new, $pos1+1);
+            $pos2 = strpos($SID_new,'-');
+            ${'SID' . $i}= substr($SID_new, 0, $pos2);
+             \DB::update('UPDATE products
+                 LEFT JOIN requests ON requests.product_id = products.id
+                        SET products.reserved_qty = (products.reserved_qty - requests.qty)
+                        WHERE requests.id = '.${'SID' . $i}.' AND products.is_reserved = 1');
+        }
+    }
 }

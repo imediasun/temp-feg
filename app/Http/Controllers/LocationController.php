@@ -50,6 +50,7 @@ class LocationController extends Controller
         $this->data['module_id'] = $module_id;
         if (Input::has('config_id')) {
             $config_id = Input::get('config_id');
+          //  \Session::put('config_id',$config_id);
         } elseif (\Session::has('config_id')) {
             $config_id = \Session::get('config_id');
         } else {
@@ -70,7 +71,16 @@ class LocationController extends Controller
         // End Filter sort and order for query
         // Filter Search for query
         $filter = (!is_null($request->input('search')) ? $this->buildSearch() : '');
-
+        
+        // Special filter for default active location
+        if (stripos($filter, "location.active") === false ) {
+            $filter .= " AND location.active = '1'";
+        }
+        // and showing both active and inactive location
+        if (stripos($filter, "AND location.active = '-1'") >= 0 ) {
+            $filter = str_replace("AND location.active = '-1'", "", $filter);
+        }
+        
 
         $page = $request->input('page', 1);
         $params = array(
@@ -105,9 +115,7 @@ class LocationController extends Controller
             if ($result->tech_manager_id == 0) {
                 $result->tech_manager_id="";
             }
-            if ($result->merchandise_contact_id == 0) {
-                $result->merchandise_contact_id="";
-            }
+
             if ($result->general_contact_id == 0) {
                 $result->general_contact_id="";
             }
@@ -169,12 +177,10 @@ class LocationController extends Controller
             if ($this->access['is_add'] == 0)
                 return Redirect::to('dashboard')->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
         }
-
         if ($id != '') {
             if ($this->access['is_edit'] == 0)
                 return Redirect::to('dashboard')->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
         }
-
         $row = $this->model->find($id);
         if ($row) {
             $this->data['row'] = $row;
@@ -183,9 +189,8 @@ class LocationController extends Controller
         }
         $this->data['setting'] = $this->info['setting'];
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
-
         $this->data['id'] = $id;
-
+        \Session::put('location_updated',$id);
         return view('location.form', $this->data);
     }
 
@@ -234,12 +239,18 @@ class LocationController extends Controller
     {
         $form_data['date_opened'] = date('Y-m-d');
         $form_data['date_closed'] = date('Y-m-d');
-
         $rules = $this->validateForm();
+        $input_id=$request->get('id');
+        if(\Session::get('location_updated') != $input_id) {
+            $rules['id'] = 'required|unique:location';
+        }
+        else{
+            $rules['id'] = 'required';
+        }
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
             $data = $this->validatePost('location');
-            $id = $this->model->insertRow($data, $id);
+                $id = $this->model->insertRow($data, $id);
             return response()->json(array(
                 'status' => 'success',
                 'message' => \Lang::get('core.note_success')
@@ -295,12 +306,6 @@ class LocationController extends Controller
         }
 
     }
-
-    function postTest(Request $request)
-    {
-
-    }
-
     function postUpdatelocation(Request $request, $id)
     {
         $data = $request->all();
@@ -326,6 +331,22 @@ class LocationController extends Controller
         $this->data['id'] = $id;
         return view('location.index', $this->data);
     }
-
+function getIsLocationAvailable($id)
+{
+    $isAvailable=\DB::select("select count('id') as count from location where id=$id");
+    if($isAvailable[0]->count > 0)
+    {
+        return response()->json(array(
+            'status' => 'error',
+            'message' => \Lang::get('*Location Id Exists Already')
+        ));
+    }
+    else {
+        return response()->json(array(
+            'status' => 'success',
+            'message' => \Lang::get('*Location Available')
+        ));
+    }
+}
 
 }

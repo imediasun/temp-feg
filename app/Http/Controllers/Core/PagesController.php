@@ -61,9 +61,12 @@ class PagesController extends Controller
 
         // Build pagination setting
         $page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;
+        if($params['limit'] == 0)
+            $params['limit'] = $results['total'];
         $pagination = new Paginator($results['rows'], $results['total'], $params['limit']);
         $pagination->setPath('pages');
 
+        $this->data['param'] = $params;
         $this->data['rowData'] = $results['rows'];
         // Build Pagination
         $this->data['pagination'] = $pagination;
@@ -78,7 +81,7 @@ class PagesController extends Controller
         // Group users permission
         $this->data['access'] = $this->access;
         // Detail from master if any
-
+        $this->data['setting'] = $this->info['setting'];
         // Master detail link if any
         $this->data['subgrid'] = (isset($this->info['config']['subgrid']) ? $this->info['config']['subgrid'] : array());
         // Render into template

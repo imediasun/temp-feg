@@ -141,8 +141,8 @@ if (!$colconfigs) {
                                 --}}    <td align="<?php echo $field['align'];?>" data-values="{{ isset($row->$field['field'])?$row->$field['field']:"" }}"
                                     data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
 @if($field)
-    @if($field['field'] == "district_manager")
-      <a href="core/users/user-details/{{ $row->dist_mgr_id }}" @if($value ==  "None Specified") style="pointer-events: none;cursor: default;display:block;padding:2px;text-align: center;color:blue;font-weight: bold" @else style="display:block;padding:2px;text-align: center;color:blue;font-weight: bold" @endif class="btn-small btn-default" > {!! $value !!} </a>
+    @if($field['field'] == "district_manager_id")
+      <a href="core/users/user-details/{{ $row->district_manager_id }}" @if($value ==  '0') style="pointer-events: none;cursor: default;display:block;padding:2px;text-align: center;color:blue;font-weight: bold" @else style="display:block;padding:2px;text-align: center;color:blue;font-weight: bold" @endif class="btn-small btn-default" > @if($value ==  '0') {{ 'None Specified' }} @else{!! $value !!} @endif</a>
         @else
                                         {!! $value !!}
 @endif
@@ -193,8 +193,8 @@ if (!$colconfigs) {
     $(document).ready(function () {
         $('.tips').tooltip();
         $('input[type="checkbox"],input[type="radio"]').iCheck({
-            checkboxClass: 'icheckbox_square-green',
-            radioClass: 'iradio_square-green'
+            checkboxClass: 'icheckbox_square-blue',
+            radioClass: 'iradio_square-blue'
         });
         $('#{{ $pageModule }}Table .checkall').on('ifChecked', function () {
             $('#{{ $pageModule }}Table input[type="checkbox"]').iCheck('check');

@@ -10,7 +10,9 @@
 	<div class="sbox-content"> 
 @endif	
 			{!! Form::open(array('url'=>'servicerequests/save/'.$row['TicketID'], 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'sbticketFormAjax')) !!}
-			<div class="col-md-12">
+
+		<input type="hidden" name='assign_to' value="{{$row['assign_to']}}">
+		<div class="col-md-12">
 						<fieldset><legend> Service Requests</legend>
 									
 
@@ -19,7 +21,7 @@
 					{!! SiteHelpers::activeLang('Subject', (isset($fields['Subject']['language'])? $fields['Subject']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('Subject', $row['Subject'],array('class'=>'form-control', 'placeholder'=>'', 'required'=>'true'  )) !!} 
+					  {!! Form::text('Subject', $row['Subject'],array('class'=>'form-control', 'placeholder'=>'', 'required'=>'required'  )) !!}
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -161,7 +163,10 @@
 								</label>
 								<div class="col-md-6">
 									<div class="input-group datepicker" style="width:150px ">
-									{!! Form::text('need_by_date', $row['need_by_date'],array('class'=>'form-control', 'id'=>'my-datepicker', 'style'=>'width:150px !important;'   )) !!}
+										<?php
+										$date = DateHelpers::formatDate($row['need_by_date']);
+										?>
+									{!! Form::text('need_by_date', $date,array('class'=>'form-control', 'id'=>'my-datepicker', 'style'=>'width:150px !important;'   )) !!}
 
 									<span class="input-group-addon "><i class="fa fa-calendar" id="icon"></i></span>
 								</div>
@@ -285,8 +290,8 @@ $(document).ready(function() {
 	$('.date').datepicker({format:'mm/dd/yyyy',autoClose:true})
 	$('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});
 	$('input[type="checkbox"],input[type="radio"]').iCheck({
-		checkboxClass: 'icheckbox_square-green',
-		radioClass: 'iradio_square-green',
+		checkboxClass: 'icheckbox_square-blue',
+		radioClass: 'iradio_square-blue',
 	});			
 	$('.removeCurrentFiles').on('click',function(){
 		var removeUrl = $(this).attr('href');

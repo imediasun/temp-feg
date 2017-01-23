@@ -5,45 +5,27 @@ $selected_loc=\Session::get('selected_location');?>
 ?>
 
 @endif
-<nav role="navigation" class="navbar-default navbar-static-side">
-    <div class="sidebar-collapse">
+<nav role="navigation" class="  side_menu_bg navbar-default navbar-static-side">
+    <div class="sidebar-collapse ">
         <ul id="sidemenu" class="nav expanded-menu">
             <li class="logo-header">
-                <a class="navbar-brand" href="{{ URL::to('dashboard')}}">
+                <a id="logo" class="navbar-brand" href="{{ URL::to('dashboard')}}">
                     @if(file_exists(public_path().'/sximo/images/'.CNF_LOGO) && CNF_LOGO !='')
-                        <img src="{{ asset('sximo/images/'.CNF_LOGO)}}" alt="{{ CNF_APPNAME }}"/>
+                        <img id="logo-img" src="{{ asset('sximo/images/'.CNF_LOGO)}}" alt="{{ CNF_APPNAME }}"/>
                     @else
                         <img src="{{ asset('sximo/images/logo.png')}}" alt="{{ CNF_APPNAME }}"/>
                     @endif
                 </a>
+                <img id="logo-bar" src="{{ asset('sximo/images/logo_bar.png') }}" />
             </li>
-            <li class="nav-header">
-                <div class="dropdown profile-element" style="text-align:center;"> <span>
-				{!! SiteHelpers::avatar() !!}
-				 </span>
-                    <a href="{{ URL::to('user/profile') }}">
-				<span class="clear"> <span class="block m-t-xs"> <strong
-                                class="font-bold">{{ Session::get('fid') }}</strong>
-				 <br/>
 
-				 </span> 
-				 </span>
-                    </a>
-                </div>
-                <div class="photo-header "> {!! SiteHelpers::avatar( 40 ) !!}</div>
-            </li>
 
             <div>
                 <?php $user_locations=\Session::get('user_locations'); ?>
                 @if(isset($user_locations))
-                        <li>
-                            <span style="padding-left:10px;"><b style="margin-left: 8px; color: #fff; font-size: 13px; font-family: 'Lato', sans-serif; font-weight: bold;">Location {{ \Session::get('selected_location') }} {{ "||" }} {{ \Session::get('selected_location_name') }}</b></span>
+                        <li style=" padding: 5px; margin-bottom: 8px;">
 
-                        </li>
-
-                        <li style=" padding: 6px 12px; margin-bottom: 8px;">
-
-                        <select id="user_locations" class="form-control">
+                        <select id="user_locations"  class="form-control sidebar_loc_dropdown">
                             <?php $userLocations = \Session::get('user_locations') ?>
                             <option disabled selected>Select Your Location</option>
                             @foreach($userLocations as $location)
@@ -59,45 +41,47 @@ $selected_loc=\Session::get('selected_location');?>
 
             @if(isset($selected_loc))
             <li>
-                <div class="profile-element" style="color:#FFF;padding:6px;border:1px solid #FFF;box-sizing: border-box">
-                    <h4>@if($orderData['user_group'] == 'regusers')
-                            Location {{ $orderData['selected_location'] }} - Expense Summary
+                <div class="profile-element" >
+                    <h5 id="profile-element-heading">@if($orderData['user_group'] == 'regusers')
+                            Location @if($orderData['selected_location'] != 0) {{ $orderData['selected_location'] }} @else {{ 'not set' }}@endif  - Expense Summary
                         @elseif ($orderData['user_group'] == 'distmgr')
                             All {{ SiteHelpers::getRegionName($orderData['reg_id']) }} Locations - Expense Summary
                         @else
-                            All Locations - Expense Summary
+                            Expense Summary <span class="sub-heading">(All Locations)</span>
                         @endif
-                    </h4>
-                    <table style="font-size: 10px">
+                        <span class="sub-heading">Month : {{ $orderData['curMonthFull'] }}</span>
+                    </h5>
+                    <table class="budget-summery">
                         <tr>
-                            <td>Merch Expences For {{ $orderData['curMonthFull'] }}</td>
+                            <td width="120">Merchandise</td>
                             <td>$ {{ number_format($orderData['monthly_merch_order_total'], 2, '.', ',') }}</td>
                         </tr>
-                        <tr style="border-bottom:1px solid lightgray">
+                        <tr class="border-bottom">
 
-                            <td>Parts & other Expense for {{ $orderData['curMonthFull'] }}</td>
+                            <td>Parts & other </td>
                             <td>$ {{ number_format($orderData['monthly_else_order_total'], 2, '.', ',') }}</td>
+                        </tr>
+                        <tr class="border-bottom">
+                            <td>{{ $orderData['curMonthFull'] }} Remaining Merch Budget:</td>
+                            <td>$
+                            @if($orderData['monthly_merch_remaining'] < 0)
+                                {{ number_format($orderData['monthly_merch_remaining'], 2, '.', ',') }}
+                            @else
+                                {{ number_format($orderData['monthly_merch_remaining'], 2, '.', ',') }}
+                            @endif
                         </tr>
                         <tr>
                             <td> {{$orderData['prevMonthFull'] }} Over/Under Merch Budget:</td>
                             <td>
-                                $
+
                                 @if($orderData['last_month_merch_remaining'] < 0)
-                                {{ number_format($orderData['last_month_merch_remaining'], 2, '.', ',')}}
+                                ${{ number_format($orderData['last_month_merch_remaining'], 2, '.', ',')}}
                                 @else
-                                    {{ number_format($orderData['last_month_merch_remaining'], 2, '.', ',')}}
+                                 ${{ number_format($orderData['last_month_merch_remaining'], 2, '.', ',')}}
                                     @endif
                             </td>
                         </tr>
-                        <tr>
-                            <td>{{ $orderData['curMonthFull'] }} Remaining Merch Budget:</td>
-                            <td>$
-                                @if($orderData['monthly_merch_remaining'] < 0){
-                                {{ number_format($orderData['monthly_merch_remaining'], 2, '.', ',') }}
-                                 @else
-                                {{ number_format($orderData['monthly_merch_remaining'], 2, '.', ',') }}
-                            @endif
-                        </tr>
+
                     </table>
 
                 </div>

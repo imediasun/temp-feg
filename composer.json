@@ -15,7 +15,8 @@
       "intervention/image": "~2.2",
       "barryvdh/laravel-dompdf": "0.6.*",
         "willdurand/email-reply-parser": "^2.5",
-        "phpoffice/phpexcel": "^1.8"
+        "phpoffice/phpexcel": "^1.8",
+        "phpmailer/phpmailer": "^5.2"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",

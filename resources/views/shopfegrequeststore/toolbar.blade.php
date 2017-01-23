@@ -22,7 +22,7 @@
 
 <div class="row " >
 
-    <div class="col-md-6">
+    <div class="col-md-8">
 
         <a href="{{ URL::to( $pageModule .'/search') }}" class="btn btn-sm btn-white"
            onclick="SximoModal(this.href,'Advanced Search'); return false;"><i class="fa fa-search"></i>Advanced Search</a>
@@ -31,7 +31,7 @@
                onclick="SximoModal(this.href,'Column Selector'); return false;"><i class="fa fa-bars"></i> Arrange
                 Columns</a>
             @if(!empty($colconfigs))
-                <select class="form-control" style="width:40%!important;display:inline;" name="col-config"
+                <select class="form-control" style="width:25%!important;display:inline;" name="col-config"
                         id="col-config">
                     <option value="0">Select Configuration</option>
                     @foreach( $colconfigs as $configs )
@@ -39,10 +39,15 @@
                                                                          @endif value={{ $configs['config_id'] }}> {{ $configs['config_name'] }}   </option>
                     @endforeach
                 </select>
+                @if(\Session::get('uid') ==  \SiteHelpers::getConfigOwner($config_id))
+                    <a id="edit-cols" href="{{ URL::to('tablecols/arrange-cols/'.$pageModule.'/edit') }}" class="btn btn-sm btn-white tips"
+                       onclick="SximoModal(this.href,'Column Selector'); return false;" title="Edit Arrange">  <i class="fa fa-pencil-square-o"></i></a>
+                    <button id="delete-cols" href="{{ URL::to('tablecols/arrange-cols/'.$pageModule.'/delete') }}" class="btn btn-sm btn-white tips" title="Clear Arrange">  <i class="fa fa-trash-o"></i></button>
+                @endif
             @endif
         @endif
     </div>
-    <div class="col-md-6 style=float:right;">
+    <div class="col-md-4 style=float:right;">
         <h3 class="pull-right"> <small><a  href="{{ URL::to('./shopfegrequeststore/new-graphic-request') }}" target="_blank" class="btn btn-primary">Request Custom Graphic</a></small></h3>
 
     </div>
@@ -53,7 +58,7 @@
 <script>
     $(document).ready(function () {
 
-        setTimeout(function(){
+
 
         $("#locations").jCombo("{{ URL::to('shopfegrequeststore/comboselect?filter=location:id:id|location_name') }}",
                 {selected_value: '{{ \Session::get('selected_location') }}', initial_text: 'Select Location'});
@@ -63,15 +68,41 @@
 
 
 
-        $("#product_type").jCombo("{{ URL::to('shopfegrequeststore/comboselect?filter=product_type:id:product_type') }}&parent=request_type_id:",
-                {  parent: '#order_type' ,selected_value : '{{ $product_type }}', initial_text: 'Select Product Type'});
-
-
-        }, 5000);
-
-
-
-        $(".select3").select2({width: "98%"});
+            $("#order_type").change(function(){
+                var order_type = $("#order_type").val();
+//                if(order_type != "") {
+                    $("#product_type").jCombo("{{ URL::to('shopfegrequeststore/comboselect?filter=product_type:id:product_type') }}&parent=request_type_id:" +order_type,
+                            {
+//
+                                selected_value: '{{ $product_type }}',
+                                initial_text: 'Select Product Type'
+                            });
+//                }
+            });
+   $(".select3").select2({width: "98%"});
+            var config_id=$("#col-config").val();
+            if(config_id ==0 )
+            {
+                $('#edit-cols,#delete-cols').hide();
+            }
+            else
+            {
+                $('#edit-cols,#delete-cols').show();
+            }
+            if ($("#public").is(":checked")) {
+                $('#groups').show();
+            }
+            else {
+                $('#groups').hide();
+            }
+    });
+    $("#public,#private").change(function () {
+        if ($("#public").is(":checked")) {
+            $('#groups').show();
+        }
+        else {
+            $('#groups').hide();
+        }
     });
     $("#col-config").on('change', function () {
         reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?type=store&'+ getFooterFilters()+'&active_inactive=' + $("#active_inactive").val() + '&config_id=' + $("#col-config").val());
@@ -87,5 +118,38 @@
         if($('#locations').val() != '')
         window.location = "<?php echo url();?>//shopfegrequeststore/changelocation/" + $('#locations').val();
     });
+    $('#delete-cols').click(function(){
+        if(confirm('Are You Sure, You want to delete this Columns Arrangement?')) {
+            showRequest();
+            var module = "{{ $pageModule }}";
+            var config_id = $("#col-config").val();
+            $.ajax(
+                    {
+                        method: 'get',
+                        data: {module: module, config_id: config_id},
+                        url: '{{ url() }}/tablecols/delete-config',
+                        success: function (data) {
+                            showResponse(data);
+                        }
+                    }
+            );
+        }
+    });
+    function showRequest() {
+        $('.ajaxLoading').show();
+    }
+    function showResponse(data) {
+
+        if (data.status == 'success') {
+            ajaxViewClose('#{{ $pageModule }}');
+            ajaxFilter('#{{ $pageModule }}', '{{ $pageUrl }}/data');
+            notyMessage(data.message);
+            $('#sximo-modal').modal('hide');
+        } else {
+            notyMessageError(data.message);
+            $('.ajaxLoading').hide();
+            return false;
+        }
+    }
 
 </script>

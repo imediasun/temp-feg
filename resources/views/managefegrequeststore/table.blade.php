@@ -72,7 +72,7 @@
 
                         <th width="200">Vendor</th>
                         <th width="100">Price</th>
-                        <th width="100" style="background-color:red;color:#FFF">Remaining Reserved Qty</th>
+                        <th width="140" style="background-color:red;color:#FFF">Remaining Reserved Qty</th>
                         <th width="100">Order Type</th>
                         @if($setting['disablerowactions']=='false')
                             <th width="70"><?php echo Lang::get('core.btn_action') ;?></th>
@@ -135,7 +135,7 @@
 
                                         @elseif($field['field'] == 'price')
 
-                                            {!! number_format((float)2, '.','',($value)) !!}
+                                            {!!number_format((float)2, '.','',$value) !!}
 
                                         @else
                                             {!! $value !!}
@@ -149,8 +149,8 @@
                             endforeach;
                             ?>
                             <td>{{ $row->vendor_name }}</td>
-                            <td>{{ $row->case_price }}</td>
-                            <td>{{ $row->reserved_difference }}</td>
+                            <td>{{CurrencyHelpers::formatCurrency($row->case_price)}} </td>
+                            <td align="center">{{ $row->reserved_difference }}</td>
                             <td> {{ $row->order_type }}</td>
                             <td data-values="action" data-key="<?php echo $row->id; ?>">
                                 {!! AjaxHelpers::buttonAction('managefegrequeststore',$access,$id ,$setting) !!}
@@ -193,7 +193,7 @@
             $(document).ready(function() {
     $('.tips').tooltip();
             $('input[type="checkbox"],input[type="radio"]').iCheck({
-    checkboxClass: 'icheckbox_square-green',
+    checkboxClass: 'icheckbox_square-blue',
             radioClass: 'iradio_square_green'
     });
             $('#{{ $pageModule }}Paginate .pagination li a').click(function() {

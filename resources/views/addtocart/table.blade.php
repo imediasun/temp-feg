@@ -125,7 +125,7 @@
 
                                 @if($field['field']=='qty')
 
-                                    <input type="text" value="{{ $value }}" name="qty[]" id="{{ $row->id }}" data-vendor="{{ $row->vendor_name }}" style="width:55px" onblur="changeTotal(this.value,this.id)"/>
+                                    <input type="number" value="{{ $value }}" name="qty[]" id="{{ $row->id }}" data-vendor="{{ $row->vendor_name }}" style="width:55px" onchange="changeTotal(this.value,this.id)"/>
                                 @else
 {!! $value !!}
                                 @endif
@@ -189,19 +189,19 @@
 -->
         @endif
 
+            <div class="col-md-8 col-md-offset-4">
 
+
+                <div class="col-md-10">
+                    <input type="button" style="font-size:1.4em; width:100%; text-align:center;"
+                           value="Submit Weekly Requests totalling ${{ $cartData['shopping_cart_total']}}"
+                           onClick="confirmSubmit();" id = "cartbtn"></button>
+                </div>
+            </div>
         @include('ajaxfooter')
 
-        <div class="col-md-10 col-md-offset-2">
 
 
-            <div class="col-md-10">
-                <input type="button" style="font-size:1.4em; width:100%; text-align:center;"
-                       value="Submit Weekly Requests totalling ${{ $cartData['shopping_cart_total']}}"
-                       onClick="confirmSubmit();" id = "cartbtn"></button>
-            </div>
-        </div>
-</br>
     </div>
 </div>
 @else
@@ -247,8 +247,8 @@
         }));
 
         $('input[type="checkbox"],input[type="radio"]').iCheck({
-            checkboxClass: 'icheckbox_square-green',
-            radioClass: 'iradio_square-green',
+            checkboxClass: 'icheckbox_square-blue',
+            radioClass: 'iradio_square-blue',
         });
         $('#{{ $pageModule }}Table .checkall').on('ifChecked', function () {
             $('#{{ $pageModule }}Table input[type="checkbox"]').iCheck('check');
@@ -295,7 +295,7 @@
 
     function doStuff(value,id,vendor_name) {
         $.ajax({
-            url:"/addtocart/save/"+id+"/"+value+"/"+encodeURIComponent(vendor_name) ,
+            url:"addtocart/save/"+id+"/"+value+"/"+encodeURIComponent(vendor_name) ,
             method:'get',
             dataType:'json',
             success:function(data){
@@ -353,6 +353,7 @@
     }
 function loadCart(vendor_name,subtotal)
 {
+
     getCartData(false,vendor_name,subtotal);
    // return false;
 }

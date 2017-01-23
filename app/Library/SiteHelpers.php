@@ -740,9 +740,18 @@ class SiteHelpers
         $bulk = ($bulk == true ? '[]' : '');
         $mandatory = '';
         $selectMultiple = "";   
+        $simpleSearchOptionsBasic = '';
         $simpleSearchOptions = '';
+        $simpleSearchOperator = '';
+        $isSimpleSearchBetween = false;
+        $simpleSearchStyle = '';
+        $simpleSearchEndStyle = '';
+        $simpleSearchPlaceholder = '';
+        $simpleSearchEndPlaceholder = '';
+        $isSSSFWOBD = false; 
+
         foreach ($forms as $f) {
-            $hasSimpleSearch = isset($f['simplesearch']) ? $f['simplesearch'] == 1 : false;
+            $hasSimpleSearch = isset($f['generatingSimpleSearch']) ? $f['generatingSimpleSearch'] : false;
             if ($f['field'] == $field && ($f['search'] == 1 || $hasSimpleSearch)) {
                 $type = ($f['type'] != 'file' ? $f['type'] : '');
                 $option = $f['option'];
@@ -760,12 +769,28 @@ class SiteHelpers
                     $mandatory = '';
                 }
                 if ($hasSimpleSearch) {
-                    $simpleSearchOptions = " data-simpleSearch='1' ";
                     $simpleSearchOperator = 'equal';
                     if (isset($f['simplesearchoperator'])) {
                         $simpleSearchOperator = $f['simplesearchoperator'];
+                    }                    
+                    $isSimpleSearchBetween = $simpleSearchOperator == 'between';
+                    if ($isSimpleSearchBetween) {
+                        $simpleSearchPlaceholder = "placeholder='Start'";
+                        $simpleSearchEndPlaceholder = "placeholder='End'";
+                        $simpleSearchStyle = "style='width:47%; float: left;'";
+                        $simpleSearchEndStyle = "style='width:47%'";                        
                     }
-                    $simpleSearchOptions .= " data-simpleSearchOperator='{$simpleSearchOperator}' ";
+                    
+                    $simpleSearchOptionsBasic = " data-simpleSearch='1' 
+                        data-simpleSearchOperator='{$simpleSearchOperator}' ";
+                    $simpleSearchOptions = "$simpleSearchOptionsBasic 
+                        $simpleSearchPlaceholder 
+                        $simpleSearchStyle ";
+                    
+                    if (isset($f['simplesearchselectfieldwithoutblankdefault'])) {
+                        $isSSSFWOBD = $f['simplesearchselectfieldwithoutblankdefault'] == 1;
+                    } 
+                    
                 }                
                 break;
             }
@@ -777,22 +802,97 @@ class SiteHelpers
                 break;
             case 'textarea';
                 $form = "<input  type='text' name='" . $field . "{$bulk}' class='form-control input-sm' $mandatory $simpleSearchOptions value='{$value}'/>";
+                if ($isSimpleSearchBetween) {
+                    $form = "<div class='clearfix' >$form"
+                            ."<div class='betweenseparator pull-left' style='margin: 1%; height: 100%; line-height: 2em;'> - </div>" 
+                            ."<input type='text' 
+                                value='{$value}'
+                                name='$field{$bulk}_end' 
+                                class='form-control input-sm pull-left' 
+                                data-range-end-field='1' 
+                                $mandatory 
+                                $simpleSearchOptionsBasic 
+                                $simpleSearchEndStyle 
+                                $simpleSearchEndPlaceholder 
+                                />
+                            </div>";
+                }                 
                 break;
 
             case 'textarea_editor';
                 $form = "<input  type='text' name='" . $field . "{$bulk}' class='form-control input-sm' $mandatory $simpleSearchOptions value='{$value}'/>";
+                if ($isSimpleSearchBetween) {
+                    $form = "<div class='clearfix' >$form"
+                            ."<div class='betweenseparator pull-left' style='margin: 1%; height: 100%; line-height: 2em;'> - </div>" 
+                            ."<input type='text' 
+                                value='{$value}'
+                                name='$field{$bulk}_end' 
+                                class='form-control input-sm pull-left' 
+                                data-range-end-field='1' 
+                                $mandatory 
+                                $simpleSearchOptionsBasic 
+                                $simpleSearchEndStyle 
+                                $simpleSearchEndPlaceholder 
+                                />
+                            </div>";
+                }                 
                 break;
 
             case 'text';
                 $form = "<input  type='text' name='" . $field . "{$bulk}' class='form-control input-sm' $mandatory $simpleSearchOptions value='{$value}'/>";
+                if ($isSimpleSearchBetween) {
+                    $form = "<div class='clearfix' >$form"
+                            ."<div class='betweenseparator pull-left' style='margin: 1%; height: 100%; line-height: 2em;'> - </div>" 
+                            ."<input type='text' 
+                                value='{$value}'
+                                name='$field{$bulk}_end' 
+                                class='form-control input-sm pull-left' 
+                                data-range-end-field='1' 
+                                $mandatory 
+                                $simpleSearchOptionsBasic 
+                                $simpleSearchEndStyle 
+                                $simpleSearchEndPlaceholder 
+                                />
+                            </div>";
+                }                
                 break;
 
             case 'text_date';
                 $form = "<input  type='text' name='$field{$bulk}' class='date form-control input-sm' $mandatory $simpleSearchOptions value='{$value}'/> ";
+                if ($isSimpleSearchBetween) {
+                    $form = "<div class='clearfix' >$form"
+                            ."<div class='betweenseparator pull-left' style='margin: 1%; height: 100%; line-height: 2em;'> - </div>" 
+                            ."<input type='text' 
+                                value='{$value}'
+                                name='$field{$bulk}_end' 
+                                class='date form-control input-sm pull-left' 
+                                data-range-end-field='1' 
+                                $mandatory 
+                                $simpleSearchOptionsBasic 
+                                $simpleSearchEndStyle 
+                                $simpleSearchEndPlaceholder 
+                                />
+                            </div>";
+                }
                 break;
 
             case 'text_datetime';
                 $form = "<input  type='text' name='$field{$bulk}'  class='date form-control input-sm'  $mandatory $simpleSearchOptions value='{$value}'/> ";
+                if ($isSimpleSearchBetween) {
+                    $form = "<div class='clearfix' >$form"
+                            ."<div class='betweenseparator pull-left' style='margin: 1%; height: 100%; line-height: 2em;'> - </div>" 
+                            ."<input type='text' 
+                                value='{$value}'
+                                name='$field{$bulk}_end' 
+                                class='date form-control input-sm pull-left' 
+                                data-range-end-field='1' 
+                                $mandatory 
+                                $simpleSearchOptionsBasic 
+                                $simpleSearchEndStyle 
+                                $simpleSearchEndPlaceholder 
+                                />
+                            </div>";
+                }                 
                 break;
 
             case 'select';
@@ -813,8 +913,8 @@ class SiteHelpers
                         $locations = DB::table($option['lookup_table'])->where('id',$user_id->location_id)->orderby($option['lookup_value'])->get();
                         foreach ($locations as $location) {
                             $value = "";
-                            foreach($lookupParts as $field){
-                                $value .= $location->$field." - ";
+                            foreach($lookupParts as $lookup){
+                                $value .= $location->$lookup." - ";
                             }
                             $value = trim($value,' - ');
                             $opts .= "<option $selected  value='" . $location->$option['lookup_key'] . "' $mandatory > " . $value . " </option> ";
@@ -865,12 +965,13 @@ class SiteHelpers
                     $multipleClass = "sel-search-multiple";
                 }
                 $form = "<select name='$field{$bulk}'  class='form-control sel-search $multipleClass' $mandatory $selectMultiple $simpleSearchOptions>" .
-						(empty($selectMultiple) ? 	"<option value=''> -- Select  -- </option>" : "") .
+						(empty($selectMultiple) && !$isSSSFWOBD ? 	"<option value=''> -- Select  -- </option>" : "") .
 						"	$opts
 						</select>";
                 break;
 
-            case 'radio';
+            case 'radio':
+            case 'checkbox':
 
                 $opt = explode("|", $option['lookup_query']);
                 $opts = '';
@@ -879,8 +980,11 @@ class SiteHelpers
                     $row = explode(":", $opt[$i]);
                     $opts .= "<option value ='" . $row[0] . "' > " . $row[1] . " </option> ";
                 }
-                $form = "<select name='$field{$bulk}' class='form-control' $mandatory $simpleSearchOptions><option value=''> -- Select  -- </option>$opts</select>";
+                $form = "<select name='$field{$bulk}' class='form-control' $mandatory $simpleSearchOptions>" .
+                        ($isSSSFWOBD ? "" : "<option value=''> -- Select  -- </option")
+                        . ">$opts</select>";
                 break;
+
 
         }
 
@@ -1981,6 +2085,7 @@ class SiteHelpers
         $newArray = array();
         foreach($data as $item) {
             if (isset($item['simplesearch']) && $item['simplesearch']  == '1') {
+                $item['generatingSimpleSearch'] = true;
                 $newArray[] = $item;
             }
         }
@@ -2002,7 +2107,7 @@ class SiteHelpers
         uasort($newArray, function ($a, $b) { 
             return ($a['simplesearchorder'] >= $b['simplesearchorder'] ? 1 : -1); 
         });
-        
+
         return $newArray;
     }
 
@@ -2010,5 +2115,10 @@ class SiteHelpers
     static function getProductName($id)
     {
         return \DB::table('products')->where('id', $id)->pluck('vendor_description');
+    }
+    static function getConfigOwner($config_id)
+    {
+        $user_id=\DB::table('user_module_config')->where('id','=',$config_id)->pluck('user_id');
+        return $user_id;
     }
 }

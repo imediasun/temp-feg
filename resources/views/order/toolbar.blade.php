@@ -7,20 +7,21 @@
     </div>
     <div class="col-md-3">
         <?php
-        $orders=array('All'=>'0','Open'=>'OPEN','Fixed Asset Orders'=>'FIXED_ASSET','Products In Development Orders'=>'PRO_IN_DEV');
+        $orders=array('All'=>'ALL','Fixed Asset Orders'=>'FIXED_ASSET','Open'=>'OPEN');
         ?>
         <select name="order_type" id="order_type" class="form-control">
-            <option disabled>         ----- Select Orders ----- </option>
             @foreach($orders as $type=>$value)
                 <option @if($value==$order_selected) selected @endif value="{{ $value }}">{{ $type }}</option>
             @endforeach
 
         </select>
+
     </div>
 </div>
 
+<div class="sbox-content" style="padding: 10px 20px 7px 15px; border: none;">
 <div class="row m-b" style="margin-bottom: 1px;">
-	<div class="col-md-8" style="padding-left: 0px !important">
+	<div class="col-md-9" style="padding-left: 0px !important">
 			@if($access['is_add'] ==1)
 			{!! AjaxHelpers::buttonActionCreate($pageModule,$setting) !!}
 			<a href="javascript://ajax" class="btn btn-sm btn-white" onclick="ajaxCopy('#{{ $pageModule }}','{{ $pageUrl }}')"><i class="fa fa-file-o"></i> Copy </a>
@@ -40,10 +41,15 @@
                                                                                  @endif value={{ $configs['config_id'] }}> {{ $configs['config_name'] }}   </option>
                             @endforeach
                         </select>
+                        @if(\Session::get('uid') ==  \SiteHelpers::getConfigOwner($config_id))
+                            <a id="edit-cols" href="{{ URL::to('tablecols/arrange-cols/'.$pageModule.'/edit') }}" class="btn btn-sm btn-white tips"
+                               onclick="SximoModal(this.href,'Column Selector'); return false;" title="Edit Arrange">  <i class="fa fa-pencil-square-o"></i></a>
+                            <button id="delete-cols" href="{{ URL::to('tablecols/arrange-cols/'.$pageModule.'/delete') }}" class="btn btn-sm btn-white tips" title="Clear Arrange">  <i class="fa fa-trash-o"></i></button>
+                        @endif
                     @endif
                 @endif
 	</div>
-	<div class="col-md-4 " style="padding-right:0px !important">
+	<div class="col-md-3 " style="padding-right:0px !important">
         <?php
         $isExcel = isset($access['is_excel']) && $access['is_excel'] == 1;
         $isCSV = isset($access['is_csv'])  ? ($access['is_csv'] == 1) : $isExcel;
@@ -74,6 +80,7 @@
     </div>
 	</div>
 </div>
+</div>
 
 <script>
     $("#col-config").on('change',function(){
@@ -95,4 +102,62 @@
             }
         }
     });
+    $(document).ready(function(){
+        var config_id=$("#col-config").val();
+        if(config_id ==0 )
+        {
+            $('#edit-cols,#delete-cols').hide();
+        }
+        else
+        {
+            $('#edit-cols,#delete-cols').show();
+        }
+        if ($("#private").is(":checked")) {
+            $('#groups').hide();
+        }
+        else{
+            $('#groups').show();
+        }
+    });
+    $("#public,#private").change(function () {
+        if ($("#public").is(":checked")) {
+            $('#groups').show();
+        }
+        else {
+            $('#groups').hide();
+        }
+    });
+    $('#delete-cols').click(function(){
+        if(confirm('Are You Sure, You want to delete this Columns Arrangement?')) {
+            showRequest();
+            var module = "{{ $pageModule }}";
+            var config_id = $("#col-config").val();
+            $.ajax(
+                    {
+                        method: 'get',
+                        data: {module: module, config_id: config_id},
+                        url: '{{ url() }}/tablecols/delete-config',
+                        success: function (data) {
+                            showResponse(data);
+                        }
+                    }
+            );
+        }
+    });
+    function showRequest() {
+        $('.ajaxLoading').show();
+    }
+    function showResponse(data) {
+
+        if (data.status == 'success') {
+            ajaxViewClose('#{{ $pageModule }}');
+            ajaxFilter('#{{ $pageModule }}', '{{ $pageUrl }}/data');
+            notyMessage(data.message);
+            $('#sximo-modal').modal('hide');
+        } else {
+            notyMessageError(data.message);
+            $('.ajaxLoading').hide();
+            return false;
+        }
+    }
 </script>

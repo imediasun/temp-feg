@@ -25,7 +25,7 @@
         {{--*/ $notes = @$row->notes /*--}}
         
         
-        {{--*/ $schedules = $row->schedules = null /*--}}
+        {{--*/ $runDependent = @$row->run_dependent == 1 /*--}}
         {{--*/ $lastSchedule = @$row->lastSchedule /*--}}
         {{--*/ $nextSchedule = @$row->nextSchedule /*--}}
         {{--*/ $isManualRunning = @$row->isManualRunning /*--}}
@@ -60,12 +60,18 @@
                     <p title="Task Name" class="taskNameText pull-left"><span class='taskTitle'>{{ $taskName }}</span>
                         <span title="Task Action" class="label taskActionText">{{ $actionName }}</span>                         
                     </p>
+                    <button class="btn btn-transparent textContent pull-right expandTask" >
+                      <i class="glyphicon glyphicon-chevron-down"></i>
+                    </button>  
+                    <button class="btn btn-transparent textContent pull-right collapseTask" style='display:none;'>
+                      <i class="glyphicon glyphicon-chevron-up"></i>
+                    </button>                      
                     <button class="btn btn-warning runTaskNow textContent pull-right"  
-                            @if($isManualRunning) disabled="disabled" title="Already running" @endif
-                            data-taskid="{{ $taskId }}">Run Now</button>
+                            @if(false && $isManualRunning) disabled="disabled" title="Already running" @endif
+                            data-taskid="{{ $taskId }}">Run Now</button>              
                 </div>
             </div>
-            <div class="panel-body clearfix">
+            <div class="panel-body clearfix" style='display:none;'>
                 <div class="">
                 <div class="taskScheduleContainer col-lg-6">
                     <div class="clearfix cronscheduletext">
@@ -151,6 +157,7 @@
                     </div>                    
                 </div>
                 <div class="formContent hidden taskConfig col-lg-6 shade2">
+                    <div class="clearfix">
                     <div class="col-sm-3 no-r-padding m-b">
                         <label class="red-bg">
                             <input type="checkbox" name="is_test_mode"  class="test"     
@@ -184,7 +191,20 @@
                                    @if($no_overlap) checked="checked" @endif /> 
                             No overlap?
                         </label>
-                    </div>                    
+                    </div>
+                    </div>
+                    <div class="clearfix">
+                        <div class="col-sm-6">
+                            <label>
+                                <input type="checkbox" name="run_dependent"  class="test"
+                                       value="1"
+                                       @if($runDependent) checked="checked" @endif /> 
+                                Run Dependent Tasks?
+                            </label>
+                        </div>
+                    </div>
+                    <div class="clearfix m-t"><strong>Log and Actions: </strong><span class="logActionsExpand jsaction">▼</span></div>
+                    <div class="clearfix logActionsEdit" style='display:none;'>
                     <div class="clearfix m-t">
                         <div class="col-sm-8">
                             Log Folder: 
@@ -215,10 +235,11 @@
                                    value="{{ $fail_action }}" /> 
                         </div>
                     </div>
+                    </div>
                 </div>                
                 </div>
             </div>
-            <div class="panel-footer clearfix">
+            <div class="panel-footer clearfix" style='display:none;'>
                 <div class="col-sm-8 footerStatus m-t-xs">
                     <p class="pull-left m-r">Last scheduled run: <span class="label">{{ $lastSchedule or 'Never' }}</span></p>
                     <p class="pull-left m-r">Next scheduled run: <span class="label">{{ $nextSchedule or 'Not Scheduled' }}</span></p>
@@ -239,7 +260,7 @@
                 </div>                
             </div>
             <div class="schedulesContainer" style="display:none;">
-
+                <button class="refreshButton"><i class="glyphicon glyphicon-refresh"></i></button>
             </div>            
         </form>
         </div>
