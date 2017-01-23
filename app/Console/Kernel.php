@@ -33,7 +33,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('autocloseorder')->daily();
         $schedule->command('inspire')->hourly();
         //turning off to allow client to test and avoid from varying counts
-       // $schedule->command('create:dummy_order')->cron('*/30 * * * * *')->withoutOverlapping();;
+        $schedule->command('create:dummy_order')->cron('*/30 * * * * *')->withoutOverlapping();;
         $schedule->command('elm5taskmanager')->everyMinute();
     }
 }
