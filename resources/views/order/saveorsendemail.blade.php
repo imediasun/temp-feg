@@ -27,6 +27,7 @@
                             <?php
                             $send_from = \Session::get('eid');
                             $order_id = \Session::get('order_id');
+                            $send_to=\Session::get('send_to');
                             ?>
                             <input type="hidden" value="{{ $send_from }}" name="from"/>
                             <input type="hidden" value="{{ $order_id }}" name="order_id"/>
@@ -78,6 +79,7 @@
                                     <?php
                                     $send_from = \Session::get('eid');
                                     $order_id = \Session::get('order_id');
+                                    $send_to=\Session::get('send_to');
                                     ?>
                                     <input type="hidden" value="{{ $send_from }}" name="from"/>
                                     <input type="hidden" value="{{ $order_id }}" name="order_id"/>
@@ -114,7 +116,7 @@
                                     </div>
                                     <div class="col-md-offset-6 col-md-6">
                                         <div class="form-group" style="margin-top:10px;">
-                                            <button type="submit" name="submit" value="sendemail" data-button="create"
+                                            <button id="send-only" type="button" name="submit" value="sendemail" data-button="create"
                                                     class="btn btn-info btn-lg" style="width:33%" title="SEND"><i
                                                         class="fa fa-sign-in  "></i>&nbsp {{ Lang::get('core.sb_send') }}
                                             </button>
@@ -215,13 +217,13 @@
     <script>
         $(document).ready(function () {
             $("#to").jCombo("{{ URL::to('order/comboselect?filter=vendor:email:email') }}",
-                    {initial_text: 'Select Receipts'});
+                    {initial_text: 'Select Receipts',selected_value: '{{ $send_to }}'});
             $("#cc").jCombo("{{ URL::to('order/comboselect?filter=vendor:email:email') }}",
                     {initial_text: 'Select CC'});
             $("#bcc").jCombo("{{ URL::to('order/comboselect?filter=vendor:email:email') }}",
                     {initial_text: 'Select BCC'});
             $("#to1").jCombo("{{ URL::to('order/comboselect?filter=vendor:email:email') }}",
-                    {initial_text: 'Select Receipts'});
+                    {initial_text: 'Select Receipts',selected_value: '{{ $send_to }}'});
             $("#cc1").jCombo("{{ URL::to('order/comboselect?filter=vendor:email:email') }}",
                     {initial_text: 'Select CC'});
             $("#bcc1").jCombo("{{ URL::to('order/comboselect?filter=vendor:email:email') }}",
@@ -230,7 +232,22 @@
         function reloadOrder() {
             location.href = "{{ url() }}/order";
         }
+        $("#send-only").click(function(e){
+          var to=$("#to").val();
+            var cc=$("#cc").val();
+            var bcc=$("#bcc").val();
+            var  email_link="";
+            e.preventDefault();
+            $.get("{{ url() }}/order/po/{{ $order_id }}?mode=save", function(data, status){
+                email_link="https://mail.google.com/mail/u/0/?view=cm&fs=1&to="+to+"&su=Purchase%20Order&body=click%20here%20to%20download%20Purchase Order %20"+data['url']+"/order/download-po/"+data['file_name']+"&bcc="+bcc+"&tf=1";
+                window.open(email_link);
+            });
+
+
+
+        });
         $("#save_send").click(function () {
+
             $('#sendsaveFormAjax').submit();
         });
         var form = $('#sendsaveFormAjax');
