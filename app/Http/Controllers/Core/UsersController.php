@@ -435,6 +435,9 @@ class UsersController extends Controller
         // delete multipe rows
         if (count($request->input('ids')) >= 1) {
             $this->model->destroy($request->input('ids'));
+            
+            // clean orphan user location assignmens
+            \SiteHelpers::cleanUpUserLocations();
 
             // redirect
             return Redirect::to('core/users')
