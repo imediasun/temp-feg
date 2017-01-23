@@ -64,7 +64,7 @@ class AjaxHelpers
 
 			if(isset($c[0]) && class_exists($c[0]))
 			{
-if(isset($c[2]) && ($c[2] != null || !empty($c[2]))) {
+if(isset($c[2]) && ($c[2] != null || empty($c[2]))) {
     if ($c[1] == "formatDate" || $c[1] == "formatDateTime") {
         $val = call_user_func(array($c[0], $c[1]), $c[2]);
     } else {
