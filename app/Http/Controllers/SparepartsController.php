@@ -189,7 +189,8 @@ class SparepartsController extends Controller
 
     function postSave(Request $request, $id = null)
     {
-        $rules = $this->validateForm();
+        $rules = array('description' => "required",  'qty' => "required", 'value' => 'required', 'loc_id' => 'required', 'user' => 'required','status_id' => 'required');
+//        $rules = $this->validateForm();
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
             $data = $this->validatePost('spare_parts');

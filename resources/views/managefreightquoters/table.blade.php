@@ -75,10 +75,10 @@
                 endif;
             endforeach; ?>
 
-                <th width="250">Freight Company</th>
-                <th width="300">Description</th>
+                <th width="130">Freight Company</th>
+                <th width="150">Description</th>
                 @if($setting['disablerowactions']=='false')
-                    <th width="170"><?php echo Lang::get('core.btn_action') ;?></th>
+                    <th width="50"><?php echo Lang::get('core.btn_action') ;?></th>
                 @endif
 			  </tr>
         </thead>

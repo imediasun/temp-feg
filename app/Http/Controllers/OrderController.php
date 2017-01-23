@@ -289,6 +289,7 @@ class OrderController extends Controller
 
     function postSave(Request $request, $id = 0)
     {
+
         $rules = array('location_id' => "required", 'vendor_id' => 'required', 'order_type_id' => "required", 'freight_type_id' => 'required', 'date_ordered' => 'required', 'po_3' => 'required');
         $validator = Validator::make($request->all(), $rules);
         $order_data = array();
@@ -307,8 +308,7 @@ class OrderController extends Controller
             $vendor_email = $this->model->getVendorEmail($vendor_id);
             $freight_type_id = $request->get('freight_type_id');
 
-            $date_ordered = date("Y-m-d", strtotime($request->get('date_ordered')));
-
+           $date_ordered = date("Y-m-d", strtotime($request->get('date_ordered')));
             $total_cost = $request->get('order_total');
             $notes = $request->get('po_notes');
             $po_1 = $request->get('po_1');
@@ -335,11 +335,20 @@ class OrderController extends Controller
 
             $casePriceArray = $request->get('case_price');
             $priceArray = $request->get('price');
+            // add case price in priceArray if item_price is 0.00
+            foreach($priceArray as $item_price_key=>$item_price_value)
+            {
+                if($item_price_value == 0.00)
+                {
+                    $priceArray[$item_price_key]=$casePriceArray[$item_price_key];
+                }
+            }
             $qtyArray = $request->get('qty');
             $productIdArray = $request->get('product_id');
             $requestIdArray = $request->get('request_id');
             $games = $request->get('game');
             $num_items_in_array = count($itemsArray);
+
             for ($i = 0; $i < $num_items_in_array; $i++) {
                 $j = $i + 1;
                 $order_description .= ' | item' . $j . ' - (' . $qtyArray[$i] . ') ' . $itemsArray[$i] . ' @ $' . $priceArray[$i] . ' ea.';
@@ -385,6 +394,7 @@ class OrderController extends Controller
                 $order_id = \DB::getPdo()->lastInsertId();
             }
             for ($i = 0; $i < $num_items_in_array; $i++) {
+
                 if (empty($productIdArray[$i])) {
                     $product_id = '0';
                 } else {
@@ -425,6 +435,22 @@ class OrderController extends Controller
                         'in_development' => 1,
                     );
                     \DB::table('products')->insert($productData);
+                }
+                if(!empty($where_in))
+                {
+
+                    //// UPDATE STATUS TO APPROVED AND PROCESSED
+                    $now = $this->model->get_local_time('date');
+
+                    \DB::update('UPDATE requests
+							 SET status_id = 2,
+							 	 process_user_id = '.\Session::get('uid').',
+								 process_date = "'.$now.'"
+						   WHERE id IN('.$where_in.')');
+                    //// SUBTRACT QTY OF RESERVED AMT ITEMS
+                    $item_count = substr_count($SID_string, '-') - 1;
+                   $SID_new = $SID_string;
+                    $this->updateRequestAndProducts($item_count,$SID_new);
                 }
             }
             // $mailto = $vendor_email;
@@ -636,12 +662,11 @@ class OrderController extends Controller
                 $data[0]['po_notes'] = " NOTE: " . $data[0]['po_notes'] . " (Email Questions to " . $data[0]['email'] . $data[0]['cc_email'] . $data[0]['loc_contact_email'] . ")";
             }
             $order_description = $data[0]['order_description'];
-
             if (substr($order_description, 0, 3) === ' | ') {
                 $order_description = substr($order_description, 3);
+
             }
             $order_description = str_replace(' | ', "\n", $order_description);
-
             if ($data[0]['new_format'] == 1) {
                 $item_description_string = '';
                 $sku_num_string = '';
@@ -827,7 +852,7 @@ class OrderController extends Controller
             if (in_array($item_ids[$i], $received_part_ids))
                 $status = 2;
             \DB::insert('INSERT INTO order_received (`order_id`,`order_line_item_id`,`quantity`,`received_by`, `status`, `date_received`, `notes`)
-							 	  		   VALUES (' . $order_id . ',' . $item_ids[$i] . ',' . $received_qtys[$i] . ',' . $user_id . ',' . $status . ', "' . date('Y-m-d') . '" , "' . $notes . '" )');
+							 	  		   VALUES (' . $order_id . ',' . $item_ids[$i] . ',' . $received_qtys[$i] . ',' . $user_id . ',' . $status . ', "' . date('m-d-Y') . '" , "' . $notes . '" )');
             \DB::update('UPDATE order_contents
 								 	 	 SET item_received = ' . $received_item_qty[$i] . '+' . $received_qtys[$i] . '
 							   	   	   WHERE id = ' . $item_ids[$i]);
@@ -878,7 +903,7 @@ class OrderController extends Controller
                 $added = 1;
             }
             $date_received = $request->get('date_received');
-            $date_received = date("Y-m-d", strtotime($date_received));
+            $date_received = date("m-d-Y", strtotime($date_received));
             $data = array('date_received' => $date_received,
                 'status_id' => $order_status,
                 'notes' => $notes,
@@ -994,5 +1019,20 @@ class OrderController extends Controller
             echo "Message has been sent";
         }
         die;
+    }
+    function updateRequestAndProducts($item_count,$SID_new)
+    {
+         
+         for($i=1;$i <= $item_count;$i++)
+        {
+            $pos1 = strpos($SID_new,'-');
+            $SID_new = substr($SID_new, $pos1+1);
+            $pos2 = strpos($SID_new,'-');
+            ${'SID' . $i}= substr($SID_new, 0, $pos2);
+             \DB::update('UPDATE products
+                 LEFT JOIN requests ON requests.product_id = products.id
+                        SET products.reserved_qty = (products.reserved_qty - requests.qty)
+                        WHERE requests.id = '.${'SID' . $i}.' AND products.is_reserved = 1');
+        }
     }
 }

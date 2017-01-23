@@ -107,8 +107,9 @@
 
                         <div class="col-md-8">
                             <select name='order_type_id' rows='5' id='order_type_id' class='select3'
-                                    onchange="gameShowHide()" required></select>
+                                     required></select>
                         </div>
+
 
                     </div>
                     <div class="form-group  ">
@@ -189,8 +190,8 @@
                     <input type="hidden" id="hidden_num_items" name="hidden_num_items">
                     <input type="hidden" id="form_type" name="form_type" value="">
                     <input type="hidden" id="where_in_expression" name="where_in_expression"
-                           value="">
-                    <input type="hidden" id="SID_string" name="SID_string" value="">
+                           value="{{$data['where_in_expression']}}">
+                    <input type="hidden" id="SID_string" name="SID_string" @if(isset($data['SID_string']))) value="{{$data['SID_string']}}" @else value="" @endif>
                     <input type="hidden" id="order_id" name="order_id" value="{{ $id }}">
                     <input type="hidden" id="editmode" name="editmode" value="{{ $data['prefill_type'] }}">
                 </fieldset>
@@ -215,7 +216,7 @@
                         <th>Case Price</th>
                         {{--<th>Retail Price</th>--}}
                         <th>Quantity</th>
-                        <th class="game" width="150">Game</th>
+                        {{--<th class="game" width="150">Game Located</th>--}}
                         <th>Total ( $ )</th>
                         <th>Remove</th>
 
@@ -240,29 +241,21 @@
                         </td>
 
                         <td><br/> <input type='number' name='price[]' placeholder='Unit Price' id="price"
-                                         class='form-control' min="0.00" step=".01" value="0.00"
+                                         class='calculate form-control' min="0.00" step=".01" value="0.00"
                                          required></td>
                         <td>
                             <br/> <input type='number' name='case_price[]' placeholder='Case Price' id="case_price"
-                                         class='form-control' min="0.00" step=".01" value="0.00"
+                                         class='calculate form-control' min="0.00" step=".01" value="0.00"
                                          required></td>
                         </td>
 
 
-                        {{--<td>--}}
-                             {{--<br/> <input type='number' name='retail_price[]' placeholder='Retail Price' id="retail_price"--}}
-                                               {{--class='form-control test' min="0.00" step=".01" value="0.00"--}}
-                                               {{--required></td>--}}
-                        {{--</td>--}}
+
 
                         <td><br/> <input type='number' name='qty[]' placeholder='Quantity'
-                                         class='form-control qty' min="0" step="1" id="qty" value="00"
+                                         class='calculate form-control qty' min="0" step="1" id="qty" value="00"
                                          required></td>
-                        <!--<td class="game" style="display:none"><br/>
-                            <select name='game[]' id='game_0' class='game  form-control'>
-                                <option value="">For Various Games</option>
-                            </select>
-                        </td>-->
+
                         <input type='hidden' name='product_id[]' id="product_id">
                         <input type='hidden' name='request_id[]' id="request_id">
                         <td><br/><input type="text" name="total" value="" readonly class="form-control"/></td>
@@ -289,7 +282,7 @@
     padding-right: 105px;
 ">
 
-                <td class="game"></td>
+                {{--<td class="game"></td>--}}
                 <td> </td>
                 <td colspan="6" class="text-left"><strong> Subtotal ( $ ) </strong></td>
                 <td> <input type="text" name="Subtotal" value="{{ $data['order_total'] }}" readonly
@@ -410,7 +403,7 @@
 
 
             $("input[name*='total'] ").attr('readonly', '1');
-            $("input[name*='qty'] , input[name*='bulk_Price'] ").addClass('calculate');
+            $(" input[name*='bulk_Price'] ").addClass('calculate');
             var ele = document.getElementsByClassName(".calculate");
 
             $(".calculate").keyup(function () {
@@ -775,15 +768,7 @@ if(result.unit_price == 0 && result.case_price == 0)
 $(function()
         {
             $("#experiment").trigger('click');
-
-            $("#price").on("change",function(){
-                calculateSum();
-            });
-            $("#qty").on("change",function(){
-                calculateSum();
-            });
-
-            $("#case_price").on("change",function(){
+            $(".calculate").live("change",function () {
                 calculateSum();
             });
         });

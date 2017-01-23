@@ -1,10 +1,8 @@
 <div class="row m-b">
 
-    <div class="col-md-4" >
+    <div class="col-md-3" >
 
         <select name="type" class="select3" id="request_type" style="display:inline-block">
-
-            <option disabled>Select Graphic Requests Type</option>
             <option value="open" selected> Open Graphics Requests </option>
             <option value="archive">Graphics Request Archive</option>
         </select>

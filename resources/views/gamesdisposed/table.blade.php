@@ -30,9 +30,9 @@
         @include( $pageModule.'/toolbar',['config_id'=>$config_id,'colconfigs' => SiteHelpers::getRequiredConfigs($module_id)])
 
 	 <?php echo Form::open(array('url'=>'gamesdisposed/delete/', 'class'=>'form-horizontal' ,'id' =>'SximoTable'  ,'data-parsley-validate'=>'' )) ;?>
-<div class="table-responsive">
+<div class="">
 	@if(count($rowData)>=1)
-    <table class="table table-striped  datagrid" id="{{ $pageModule }}Table">
+    <table class="table   datagrid" id="{{ $pageModule }}Table">
         <thead>
         <tr>
 
@@ -72,7 +72,7 @@
                 endif;
             endforeach; ?>
             @if($setting['disablerowactions']=='false')
-                <th width="170"><?php echo Lang::get('core.btn_action') ;?></th>
+                <th width="70" align="center"><?php echo Lang::get('core.btn_action') ;?></th>
             @endif
         </tr>
         </thead>
@@ -139,7 +139,7 @@
 						 endif;
 						endforeach;
 					  ?>
-				 <td data-values="action" data-key="<?php echo $row->id ;?>">
+				 <td class="action" data-values="action"  data-key="<?php echo $row->id ;?>">
 					{!! AjaxHelpers::buttonAction('gamesdisposed',$access,$id ,$setting) !!}
 					{!! AjaxHelpers::buttonActionInline($row->id,'id') !!}
 				</td>

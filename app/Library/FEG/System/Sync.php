@@ -47,14 +47,21 @@ class Sync
     }
 
     public static function cleanupInactiveDailySummary($params = array()) {
-
+        global $__logger;       
+        extract(array_merge(array(
+            'date' => date('Y-m-d', strtotime('now -1 day')),
+            'location' => null,
+            '_task' => array(),
+            '_logger' => null,
+        ), $params));
+        
        $L = isset($params['_logger']) ? $params['_logger'] : 
             new MyLog('daily-earnings-summary-database-cleanup.log', 'daily-summary', 'CleanupInactiveDailySummary');
         $params['_logger'] = $L;
         
-        $L->log("Start cleanup Inactive Daily Summary");
-        
-        $L->log("End cleanup Inactive Daily Summary");
+        $L->log("Start cleanup Inactive Daily Summary for $date - $location");
+        self::clean_daily_report($date, $location);        
+        $L->log("End cleanup Inactive Daily Summary for $date - $location");
 
     }
     public static function deleteDailySummary($params = array()) {
@@ -69,9 +76,9 @@ class Sync
             new MyLog('daily-earnings-summary-database-cleanup.log', 'daily-summary', 'CleanupInactiveDailySummary');
         $params['_logger'] = $L;
         
-        $L->log("Start cleanup Inactive Daily Summary");
-        self::clean_daily_report($date, $location);
-        $L->log("End cleanup Inactive Daily Summary");
+        $L->log("Start Delete Daily Summary for $date - $location");        
+        self::delete_daily_report($date, $location);
+        $L->log("End Delete Daily Summary for $date - $location");
 
     }
     
@@ -97,7 +104,7 @@ class Sync
     }
     
     public static function delete_daily_report($date = null, $location = null) {
-        if (empty($date) && empy($location)) {
+        if (empty($date) && empty($location)) {
             return;
         }
         $sql = "DELETE FROM report_locations WHERE id IS NOT NULL ";

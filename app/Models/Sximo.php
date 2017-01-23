@@ -73,7 +73,7 @@ class Sximo extends Model {
         }
 
         if(!empty($order_type_id)){
-            $select .= " AND order_type_id='$order_type_id'";
+            $select .= " AND order_type_id in($order_type_id)";
         }
         if(!empty($status_id)){
             $select .= " AND status_id='$status_id'";
@@ -540,7 +540,6 @@ class Sximo extends Model {
 												WHERE O.order_id = ' . $order_id);
             $row[0]['requests_item_count'] = 0;
             foreach ($contentsQuery as $r) {
-
                 $row[0]['requests_item_count'] = $row[0]['requests_item_count'] + 1;
                 $orderDescriptionArray[] = $r['description'];
                 $orderPriceArray[] = $r['price'];
@@ -551,6 +550,7 @@ class Sximo extends Model {
             $row[0]['orderPriceArray'] = $orderPriceArray;
             $row[0]['orderQtyArray'] = $orderQtyArray;
         }
+
         \DB::setFetchMode(\PDO::FETCH_CLASS);
         return $row;
     }
@@ -905,6 +905,27 @@ class Sximo extends Model {
             $array[] = $row;
         }
         return $array;
+    }
+    function get_youtube_id_from_url($url)
+    {
+        if (stristr($url,'youtu.be/'))
+        {
+            preg_match('/(https:|http:|)(\/\/www\.|\/\/|)(.*?)\/(.{11})/i', $url, $final_ID);
+            return $final_ID[4];
+        }
+        elseif(stristr($url,'youtube.com/'))
+        {
+            preg_match('/(https:|http:|)(\/\/www\.|\/\/|)(.*?)\/(.{11})/i', $url, $final_ID);
+            return $final_ID[4];
+        }
+        else
+        {
+            @preg_match('/(https:|http:|):(\/\/www\.|\/\/|)(.*?)\/(embed\/|watch.*?v=|)([a-z_A-Z0-9\-]{11})/i', $url, $IDD);
+            if(isset($IDD[5]) && !empty($IDD[5]))
+            return $IDD[5];
+            else
+                return false;
+        }
     }
     
 }
