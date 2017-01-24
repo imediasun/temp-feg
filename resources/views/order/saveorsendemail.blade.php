@@ -1,5 +1,6 @@
 @extends('layouts.app')
 @section('content')
+    <div class="ajaxLoading"></div>
     <div class="page-content row">
         <!-- Page header -->
         <div class="sbox-title">
@@ -233,9 +234,10 @@
             location.href = "{{ url() }}/order";
         }
         $("#send-only").click(function(e){
-
+            $('.ajaxLoading').show();
             $.get("{{ url() }}/order/po/{{ $order_id }}?mode=save", function(data, status){
                 $("#message").text(data['url']+"/order/download-po/"+data['file_name']);
+                $('.ajaxLoading').hide();
             });
             $("#send-email").click(function(e){
                 var to=$("#to").val();
@@ -250,8 +252,10 @@
 
         });
         $("#save_send_modal").click(function () {
+            $('.ajaxLoading').show();
             $.get("{{ url() }}/order/po/{{ $order_id }}?mode=save", function(data, status){
                 $("#message1").text(data['url']+"/order/download-po/"+data['file_name']);
+                $('.ajaxLoading').hide();
             });
             $("#save_send").click(function(e){
                 var to=$("#to1").val();
