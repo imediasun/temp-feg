@@ -404,10 +404,14 @@ class UsersController extends Controller
 
             }
             $user_locations = \SiteHelpers::getLocationDetails(\Session::get('uid'));
+            $user_location_ids = \SiteHelpers::getIdsFromLocationDetails($user_locations);
+            $has_all_locations = empty($request->input('has_all_locations')) ? 0 : 1;
+            \Session::put('user_has_all_locations', $has_all_locations);              
             if (!empty($user_locations)) {
                 \Session::put('user_locations', $user_locations);
                 \Session::put('selected_location', $user_locations[0]->id);
                 \Session::put('selected_location_name', $user_locations[0]->location_name_short);
+                \Session::put('user_location_ids', $user_location_ids);
             }
             if (!is_null($request->input('apply'))) {
                 $return = 'core/users/update/' . $id . '?return=' . self::returnUrl();
