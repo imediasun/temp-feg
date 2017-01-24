@@ -620,7 +620,10 @@ class OrderController extends Controller
 
     function getPo($order_id = null, $sendemail = false, $to = null, $from = null,$cc = null,$bcc = null, $message= null )
     {
-        $mode=$_GET['mode'];
+        $mode="";
+        if(isset($_GET['mode'])&& !empty($_GET['mode'])) {
+            $mode = $_GET['mode'];
+        }
         $data = $this->model->getOrderData($order_id);
         if (empty($data)) {
 
