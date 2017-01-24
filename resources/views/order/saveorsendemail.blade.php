@@ -239,7 +239,7 @@
             var  email_link="";
             e.preventDefault();
             $.get("{{ url() }}/order/po/{{ $order_id }}?mode=save", function(data, status){
-                email_link="https://mail.google.com/mail/u/0/?view=cm&fs=1&to="+to+"&su=Purchase%20Order&body=click%20here%20to%20download%20Purchase Order %20"+data['url']+"/order/download-po/"+data['file_name']+"&bcc="+bcc+"&tf=1";
+                email_link="https://mail.google.com/mail/u/0/?view=cm&fs=1&to="+to+"&su=Purchase%20Order&body=click%20here%20to%20download%20Purchase Order %20<a href='"+data['url']+"/order/download-po/"+data['file_name']+"'>click here</a>&bcc="+bcc+"&tf=1";
                 window.open(email_link);
             });
 
