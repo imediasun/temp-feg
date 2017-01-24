@@ -1907,6 +1907,35 @@ class SiteHelpers
             ->get();
         return $locations;
     }
+    
+    static function getIdsFromLocationDetails($userLocations)
+    {
+        $locations = array();
+        if (!empty($userLocations)) {
+            foreach($userLocations as $location) {
+                $locations[] = $location->id;
+            }
+        }
+        return $locations;
+    }    
+    
+    public static function getCurrentUserLocationsFromSession($asArray = false)
+    {
+//        $locations = array();        
+//        $hasAllLocations = \Session::get('user_has_all_locations') == 1;
+//        if ($hasAllLocations) {
+//            $locations = \Session::get('user_location_ids');            
+//        }       
+        
+        $locations = \Session::get('user_location_ids');   
+        if ($locations === null) {
+            $locations = array();
+        }        
+        if (!$asArray) {
+            $locations = implode(',', $locations);
+        }        
+        return $locations;
+    }       
 
     static function getQueryStringForLocation($table)
     {
@@ -2121,4 +2150,60 @@ class SiteHelpers
         $user_id=\DB::table('user_module_config')->where('id','=',$config_id)->pluck('user_id');
         return $user_id;
     }
+    
+    /**
+     * Add all unassigned locations to users set with All Locations = true 
+     * (having has_all_locations=1)
+     * The two parameters of the function can use used when an existing location id has been modified
+     * @param number $location    (optional) Location ID after changed
+     * @param number $replaceLocation   (optional) Location ID before changed
+     */
+    public static function addLocationToAllLocationUsers($location = null, $replaceLocation = null) {
+        $table = "user_locations";
+        
+        // update renamed location id
+        if (!empty($replaceLocation) && !empty($location)) {
+            $data = array('location_id' => $location);
+            $query = \DB::table($table)->where('location_id', $replaceLocation);
+            $query->update($data);
+        }
+                
+//        $q = "SELECT l.id AS location_id, u.id AS user_id 
+//                FROM users u, location l 
+//                WHERE u.has_all_locations=1
+//                AND NOT EXISTS (SELECT * FROM user_locations WHERE user_id=u.id AND location_id=l.id) ";
+        
+        // add all unassigned locations to users having has_all_locations=1
+        $q = "INSERT INTO user_locations (location_id, user_id) 
+                SELECT l.id AS location_id, u.id AS user_id 
+                FROM users u, location l 
+                WHERE u.has_all_locations=1
+                AND NOT EXISTS (SELECT * FROM user_locations WHERE user_id=u.id AND location_id=l.id) ";
+                
+        \DB::insert($q);
+        
+        self::cleanUpUserLocations();     
+        
+    }
+    
+    /**
+     * Clean up orphan user-location assignments.
+     * Orphan records are created when either a user or a location is deleted
+     */
+    public static function cleanUpUserLocations() {
+        $table = "user_locations";
+        
+//        $q = "SELECT * FROM $table
+//                WHERE NOT EXISTS (
+//                    SELECT u.id AS user_id, l.id AS location_id 
+//                        FROM users u, location l 
+//                        WHERE u.id=user_locations.user_id AND l.id=user_locations.location_id)";
+        $q = "DELETE FROM $table
+                WHERE NOT EXISTS (
+                    SELECT u.id AS user_id, l.id AS location_id 
+                        FROM users u, location l 
+                        WHERE u.id=user_locations.user_id AND l.id=user_locations.location_id)";
+        
+        \DB::delete($q);
+    }    
 }
