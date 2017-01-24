@@ -620,6 +620,7 @@ class OrderController extends Controller
 
     function getPo($order_id = null, $sendemail = false, $to = null, $from = null,$cc = null,$bcc = null, $message= null )
     {
+        $mode=$_GET['mode'];
         $data = $this->model->getOrderData($order_id);
         if (empty($data)) {
 
@@ -699,6 +700,18 @@ class OrderController extends Controller
                 // $item_total_string = $item_total_string."-----------------\n"."$ ".number_format($order_total_cost,2)."\n";
             }
             $pdf = \PDF::loadView('order.po', ['data' => $data, 'main_title' => "Purchase Order"]);
+            if($mode == "save")
+            {
+                $po_file_name=$data[0]['company_name_short'] . "_PO_" . $data[0]['po_number'] . '.pdf';
+                $po_file_path=public_path().'\orders\\'.$po_file_name;
+                if (\File::exists($po_file_path))
+                {
+                    \File::delete($po_file_path);
+                }
+              $pdf->save($po_file_path);
+                $data=array('file_name'=>$po_file_name,'url'=>url());
+                return $data;
+            }
             if ($sendemail) {
                 if (isset($to) && count($to)>0) {
                     $filename = 'PO_' . $order_id . '.pdf';
@@ -779,7 +792,7 @@ class OrderController extends Controller
                     }
                 }
             } else {
-                return $pdf->download($data[0]['company_name_short'] . "_PO_" . $data[0]['po_number'] . '.pdf');
+                    return $pdf->download($data[0]['company_name_short'] . "_PO_" . $data[0]['po_number'] . '.pdf');
             }
         }
     }
@@ -1034,5 +1047,11 @@ class OrderController extends Controller
                         SET products.reserved_qty = (products.reserved_qty - requests.qty)
                         WHERE requests.id = '.${'SID' . $i}.' AND products.is_reserved = 1');
         }
+    }
+    public function getDownloadPo($file_name){
+
+        $file = public_path()."/orders/".$file_name;
+        $headers = array('Content-Type: application/pdf',);
+        return \Response::download($file,$file_name,$headers);
     }
 }
