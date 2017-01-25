@@ -927,5 +927,53 @@ class Sximo extends Model {
                 return false;
         }
     }
-    
+    public function populateGamesDropdown($location = null)
+    {
+        if(empty($location))
+        {
+            $concat = 'CONCAT(IF(G.location_id = 0, "IN TRANSIT", G.location_id)," | ",IF(G.test_piece = 1,CONCAT("**TEST** ",T.game_title),T.game_title)," | ",G.id)';
+            $where = '';
+            $orderBy = 'T.game_title';
+        }
+        else
+        {
+            if($location == 'plus_notes')
+            {
+                $concat = 'CONCAT(IF(G.location_id = 0, "IN TRANSIT", G.location_id), " | ",T.game_title," | ",G.id, IF(G.notes = "","", CONCAT(" (",G.notes,")")))';
+                $where = '';
+            }
+            else
+            {
+                $concat = 'CONCAT(T.game_title," | ",G.id)';
+                $where = 'AND G.location_id = '.$location.'';
+            }
+            $orderBy = 'L.id,T.game_title';
+        }
+        $query = \DB::select('SELECT G.id AS id,
+									  '.$concat.' AS text
+								 FROM game G
+							LEFT JOIN game_title T ON T.id = G.game_title_id
+							LEFT JOIN location L ON L.id = G.location_id
+								WHERE G.sold = 0
+									  '.$where.'
+							 ORDER BY '.$orderBy);
+
+        foreach ($query as $row)
+        {
+            if(!is_null($row->text) && $row->text == "UNDEFINED") {
+                $row = array(
+                    'id' => $row->id,
+                    'text' => $row->text
+                );
+                $gamesArray[] = $row;
+            }
+        }
+
+        if(empty($gamesArray))
+        {
+            $gamesArray = array(0, 'N/A');
+        }
+        $array = $gamesArray;
+        return json_encode($array);
+    }
 }

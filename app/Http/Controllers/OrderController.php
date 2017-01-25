@@ -241,6 +241,7 @@ class OrderController extends Controller
         $this->data['mode'] = $mode;
         $this->data['id'] = $id;
         $this->data['data'] = $this->model->getOrderQuery($id, $mode);
+        $this->data['games_options']=$this->model->populateGamesDropdown();
 
         return view('order.form', $this->data);
     }
@@ -295,6 +296,7 @@ class OrderController extends Controller
         $order_data = array();
         $order_contents = array();
         $data = array_filter($request->all());
+        $redirect_link="order";
         if ($validator->passes()) {
 
             $order_id = $request->get('order_id');
@@ -438,7 +440,7 @@ class OrderController extends Controller
                 }
                 if(!empty($where_in))
                 {
-
+                 $redirect_link="managefegrequeststore";
                     //// UPDATE STATUS TO APPROVED AND PROCESSED
                     $now = $this->model->get_local_time('date');
 
@@ -451,6 +453,9 @@ class OrderController extends Controller
                     $item_count = substr_count($SID_string, '-') - 1;
                    $SID_new = $SID_string;
                     $this->updateRequestAndProducts($item_count,$SID_new);
+                }
+                else{
+                    $redirect_link="order";
                 }
             }
             // $mailto = $vendor_email;
@@ -472,6 +477,7 @@ class OrderController extends Controller
 //    });
             \Session::put('send_to', $vendor_email);
             \Session::put('order_id', $order_id);
+            \Session::put('redirect',$redirect_link);
             return response()->json(array(
                 'status' => 'success',
                 'message' => \Lang::get('core.note_success'),
