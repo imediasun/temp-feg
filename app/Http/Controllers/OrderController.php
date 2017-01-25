@@ -561,7 +561,7 @@ class OrderController extends Controller
                 'status' => 'error',
                 'message' => \Lang::get('core.note_restric')
             ));
-            die;
+
 
         }
         // delete multipe rows
@@ -592,10 +592,11 @@ class OrderController extends Controller
     {
         $po_number = $request->get('po_number');
         $explanation = $request->get('explaination');
-        $message = 'Link to Order: http://' . $_SERVER['HTTP_HOST'] . '/fegsys/orders/removeorder' . $po_number . ' <br>Explanation: ' . $explanation . '';
+        $message = 'Link to Order: http://' . $_SERVER['HTTP_HOST'] . '/order/removeorder/' . $po_number . ' <br>Explanation: ' . $explanation . '';
         $from = \Session::get('email');
         $to = 'support@fegllc.com';
         $to = 'greg@fegllc.com';
+
         $subject = 'Order Removal Request';
         $headers = 'MIME-Version: 1.0' . "\r\n";
         $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
@@ -613,9 +614,14 @@ class OrderController extends Controller
         }
     }
 
-    function getRemoveorder($po)
+    function getRemoveorder($poNumber = "")
     {
-        echo $po;
+
+
+        \DB::table('orders')->where('po_number', $poNumber)->delete();
+        \Session::flash('success', 'Po  deleted successfully!');
+        return Redirect::to('order')->with('messagetext', \Lang::get('core.note_block'))->with('msgstatus', 'success');
+
     }
 
     function getPo($order_id = null, $sendemail = false, $to = null, $from = null,$cc = null,$bcc = null, $message= null )
