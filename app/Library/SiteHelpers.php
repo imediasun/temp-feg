@@ -964,7 +964,7 @@ class SiteHelpers
                 if (!empty($selectMultiple)) {
                     $multipleClass = "sel-search-multiple";
                 }
-                $form = "<select name='$field{$bulk}'  class='form-control sel-search $multipleClass' $mandatory $selectMultiple $simpleSearchOptions>" .
+                $form = "<select name='$field{$bulk}'  class='form-control select3 sel-search $multipleClass' $mandatory $selectMultiple $simpleSearchOptions>" .
 						(empty($selectMultiple) && !$isSSSFWOBD ? 	"<option value=''> -- Select  -- </option>" : "") .
 						"	$opts
 						</select>";

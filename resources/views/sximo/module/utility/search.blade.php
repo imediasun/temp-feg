@@ -42,7 +42,7 @@
 jQuery(function(){
 
     initiateSearchFormFields($('#{{$pageModule}}Search'));
-
+    $("select.select3").select2({width: "100%"});
 	$('.doSearch').click(function(){
         var ajaxSerachMode = <?php echo $searchMode =='ajax' ?'true':'false';?>;
         $('#sximo-modal').modal('hide');
