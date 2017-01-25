@@ -74,7 +74,7 @@
                                 <input type="text" name="to_add_state" id="to_add_state" class="form-control"
                                        value="{{ $data['alt_state']  }}"
                                        style="width:30%;float:left;margin-left:3px"/>
-                                <
+
                                 <input type="text" name="to_add_zip" id="to_add_zip" class="form-control"
                                        value="{{ $data['alt_zip'] }}" style="width:25%;float:left;margin-left:3px"/>
 
@@ -216,7 +216,7 @@
                         <th>Case Price</th>
                         {{--<th>Retail Price</th>--}}
                         <th>Quantity</th>
-                        {{--<th class="game" width="150">Game Located</th>--}}
+                        <th class="game" style="display:none" width="150">Game Located</th>
                         <th>Total ( $ )</th>
                         <th>Remove</th>
 
@@ -255,6 +255,7 @@
                         <td><br/> <input type='number' name='qty[]' placeholder='Quantity'
                                          class='calculate form-control qty' min="0" step="1" id="qty" value="00"
                                          required></td>
+                        <td  class="game" style="display:none" ><input type='hidden' name='game_0' id='game_0' class='game'></td>
 
                         <input type='hidden' name='product_id[]' id="product_id">
                         <input type='hidden' name='request_id[]' id="request_id">
@@ -374,7 +375,17 @@
 
             $("#order_type_id").jCombo("{{ URL::to('order/comboselect?filter=order_type:id:order_type') }}",
                     {selected_value: '{{ $data["order_type"] }}',initial_text:'-------- Select Order Type --------'});
-
+            var games_options_js = "{{ $games_options}}";
+            console.log(games_options_js);
+            results = [
+                { id: 1, text: 'my thing' },
+                { id: 2, text: 'my other thing' }
+            ]
+            $("#game_0").select2({
+                dataType : 'json',
+                data: function() { return {results: games_options_js}; },
+                placeholder: "For Various Games"
+            });
             $('#vendor_id').on('change',function(){
                 var vendor_id=$(this).val();
                 if(vendor_id != '')
@@ -417,7 +428,7 @@
             $('.editor').summernote();
             $('.previewImage').fancybox();
             $('.tips').tooltip();
-            $(".select3").select2({width: "98%"});
+            $("select.select3").select2({width: "98%"});
             $('.date').datepicker({format: 'mm/dd/yyyy', autoClose: true})
             $('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});
             $('.removeCurrentFiles').on('click', function () {
@@ -772,6 +783,7 @@ $(function()
         });
       function ajaxViewClose1(id)
        {
+
            location.href = "{{ url() }}/order";
        }
     </script>

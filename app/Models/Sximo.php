@@ -847,6 +847,67 @@ class Sximo extends Model {
         
         return $finalFilters;
     }
+    
+    public static function getSearchFiltersAsArray($customSearchString = '') {
+        $receivedFilters = array();
+        $searchQuerystring = !empty($customSearchString) ? $customSearchString : 
+                (isset($_GET['search']) ? $_GET['search'] : '');
+        
+        if ($searchQuerystring) {
+            $filters_raw = trim($searchQuerystring, "|");
+            $filters = explode("|", $filters_raw);
+
+            foreach($filters as $filter) {
+                $columnFilter = explode(":", $filter);
+                $filterData = array();
+                list($fieldName, $operator, $value) = $columnFilter;
+                $filterData['fieldName'] = $fieldName;
+                $filterData['operator'] = $operator;
+                $filterData['value'] = $value;
+                if (isset($columnFilter[3])) {
+                    $filterData['value2'] = $columnFilter[3];
+                }
+                $receivedFilters[$fieldName] = $filterData;
+            }
+        }
+        return $receivedFilters;        
+    }
+    public static function buildSearchQuerystringFromArray($filters = array()) {
+        $qs = '';
+        $qsArray = array();
+        foreach($filters as $item) {
+            $qsArray[] = implode(':', array_values($item));
+        }
+        $qs = implode('|', $qsArray).'|';
+        
+        return $qs;
+    }
+    public static function mergeSearchFilters($receivedFilters = null, $add = array(), $skip = array()) {
+        $filters = empty($receivedFilters) ? self::getSearchFiltersAsArray() : $receivedFilters;
+                
+        if (!empty($add)) {
+            foreach ($add as $key => $item) {
+                $filters[$key] = $item;
+            }
+        }
+        if (!empty($skip)) {
+            foreach ($skip as $key) {
+                if (isset($filters[$key])) {
+                    unset($filters[$key]);
+                }
+            }
+        }
+        
+        return $filters;        
+    }
+    
+    public static function rebuildSearchQuery($add = array(), $skip = array(), $customSearchString = '') {
+        $filters = self::getSearchFiltersAsArray($customSearchString);
+        $newFilters = self::mergeSearchFilters($filters, $add, $skip);
+        $qs = self::buildSearchQuerystringFromArray($newFilters);
+        return $qs;
+    }
+    
     public static function passwordForgetEmails()
     {
         $user_data=\DB::select('select id,email from users');
@@ -927,5 +988,53 @@ class Sximo extends Model {
                 return false;
         }
     }
-    
+    public function populateGamesDropdown($location = null)
+    {
+        if(empty($location))
+        {
+            $concat = 'CONCAT(IF(G.location_id = 0, "IN TRANSIT", G.location_id)," | ",IF(G.test_piece = 1,CONCAT("**TEST** ",T.game_title),T.game_title)," | ",G.id)';
+            $where = '';
+            $orderBy = 'T.game_title';
+        }
+        else
+        {
+            if($location == 'plus_notes')
+            {
+                $concat = 'CONCAT(IF(G.location_id = 0, "IN TRANSIT", G.location_id), " | ",T.game_title," | ",G.id, IF(G.notes = "","", CONCAT(" (",G.notes,")")))';
+                $where = '';
+            }
+            else
+            {
+                $concat = 'CONCAT(T.game_title," | ",G.id)';
+                $where = 'AND G.location_id = '.$location.'';
+            }
+            $orderBy = 'L.id,T.game_title';
+        }
+        $query = \DB::select('SELECT G.id AS id,
+									  '.$concat.' AS text
+								 FROM game G
+							LEFT JOIN game_title T ON T.id = G.game_title_id
+							LEFT JOIN location L ON L.id = G.location_id
+								WHERE G.sold = 0
+									  '.$where.'
+							 ORDER BY '.$orderBy);
+
+        foreach ($query as $row)
+        {
+            if(!is_null($row->text) && $row->text == "UNDEFINED") {
+                $row = array(
+                    'id' => $row->id,
+                    'text' => $row->text
+                );
+                $gamesArray[] = $row;
+            }
+        }
+
+        if(empty($gamesArray))
+        {
+            $gamesArray = array(0, 'N/A');
+        }
+        $array = $gamesArray;
+        return json_encode($array);
+    }
 }

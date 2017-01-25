@@ -231,7 +231,8 @@
                     {initial_text: 'Select BCC'});
         });
         function reloadOrder() {
-            location.href = "{{ url() }}/order";
+            redirect_link = "{{ \Session::get('redirect') }}";
+            location.href = "{{ url() }}/"+redirect_link;
         }
         $("#send-only").click(function(e){
             $('.ajaxLoading').show();
@@ -246,7 +247,16 @@
                 var message=$("#message").val();
                 var  email_link="";
                 e.preventDefault();
-                email_link="https://mail.google.com/mail/u/0/?view=cm&fs=1&to="+to+"&su=Purchase%20Order&body="+message+"&cc="+cc+"&bcc="+bcc+"&tf=1";
+                email_link="https://mail.google.com/mail/u/0/?view=cm&fs=1&to="+to+"&su=Purchase%20Order&body="+message;
+                if(cc)
+                {
+                    email_link = email_link+"&cc="+cc;
+                }
+                if(bcc)
+                {
+                    email_link = email_link+"&bcc="+bcc;
+                }
+                email_link =email_link +"&tf=1";
                 window.open(email_link);
             });
 
@@ -264,7 +274,16 @@
                 var message=$("#message1").val();
                 var  email_link="";
                 e.preventDefault();
-                email_link="https://mail.google.com/mail/u/0/?view=cm&fs=1&to="+to+"&su=Purchase%20Order&body="+message+"&cc="+cc+"&bcc="+bcc+"&tf=1";
+                email_link="https://mail.google.com/mail/u/0/?view=cm&fs=1&to="+to+"&su=Purchase%20Order&body="+message;
+                if(cc)
+                {
+                    email_link = email_link+"&cc="+cc;
+                }
+                if(bcc)
+                {
+                    email_link = email_link+"&bcc="+bcc;
+                }
+                email_link =email_link +"&tf=1";
                 window.open(email_link);
             });
             //$('#sendsaveFormAjax').submit();

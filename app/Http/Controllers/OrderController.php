@@ -120,15 +120,29 @@ class OrderController extends Controller
         $sort = (!is_null($request->input('sort')) ? $request->input('sort') : $this->info['setting']['orderby']);
         $order = (!is_null($request->input('order')) ? $request->input('order') : $this->info['setting']['ordertype']);
         // End Filter sort and order for query
-        // Filter Search for query
-        //$filter = (!is_null($request->input('search')) ? $this->buildSearch() : '');
-        if (is_null($request->input('search'))) {
-            $filter = \SiteHelpers::getQueryStringForLocation('orders');
-        } else {
-            $filter = $this->buildSearch();
+        
+        // Get order_type search filter value and location_id saerch filter values
+        $orderTypeFilter = $this->model->getSearchFilters(array('order_type' => 'order_selected', 'location_id' => ''));
+        extract($orderTypeFilter);
+        // default order type is OPEN
+        if (empty($order_selected)) {
+            $order_selected = "OPEN";
         }
-
-
+        
+        // rebuild search query skipping 'order_type' filter
+        $trimmedSearchQuery = $this->model->rebuildSearchQuery(null, array('order_type'));        
+        
+        // Filter Search for query
+        // build sql query based on search filters
+        $filter = is_null($request->input('search')) ? '' : $this->buildSearch($trimmedSearchQuery);
+        // Get assigned locations list as sql query (part)
+        $locationFilter = \SiteHelpers::getQueryStringForLocation('orders');
+        // if search filter does not have location_id filter
+        // add default location filter
+        if (empty($location_id)) {
+            $filter .= $locationFilter;
+        }
+        
         $page = $request->input('page', 1);
         $params = array(
             'page' => $page,
@@ -138,12 +152,6 @@ class OrderController extends Controller
             'params' => $filter,
             'global' => (isset($this->access['is_global']) ? $this->access['is_global'] : 0)
         );
-        // Get Query
-        // passing All gives error in query, $cond
-        //$order_selected = isset($_GET['order_type']) ? $_GET['order_type'] : 'ALL';
-
-        $order_selected = isset($_GET['order_type']) ? $_GET['order_type'] : 'OPEN';
-
 
         $results = $this->model->getRows($params, $order_selected);
 
@@ -241,6 +249,7 @@ class OrderController extends Controller
         $this->data['mode'] = $mode;
         $this->data['id'] = $id;
         $this->data['data'] = $this->model->getOrderQuery($id, $mode);
+        $this->data['games_options']=$this->model->populateGamesDropdown();
 
         return view('order.form', $this->data);
     }
@@ -295,6 +304,7 @@ class OrderController extends Controller
         $order_data = array();
         $order_contents = array();
         $data = array_filter($request->all());
+        $redirect_link="order";
         if ($validator->passes()) {
 
             $order_id = $request->get('order_id');
@@ -438,7 +448,7 @@ class OrderController extends Controller
                 }
                 if(!empty($where_in))
                 {
-
+                    $redirect_link="managefegrequeststore";
                     //// UPDATE STATUS TO APPROVED AND PROCESSED
                     $now = $this->model->get_local_time('date');
 
@@ -451,6 +461,9 @@ class OrderController extends Controller
                     $item_count = substr_count($SID_string, '-') - 1;
                    $SID_new = $SID_string;
                     $this->updateRequestAndProducts($item_count,$SID_new);
+                }
+                else{
+                    $redirect_link="order";
                 }
             }
             // $mailto = $vendor_email;
@@ -472,6 +485,7 @@ class OrderController extends Controller
 //    });
             \Session::put('send_to', $vendor_email);
             \Session::put('order_id', $order_id);
+            \Session::put('redirect',$redirect_link);
             return response()->json(array(
                 'status' => 'success',
                 'message' => \Lang::get('core.note_success'),
@@ -623,7 +637,7 @@ class OrderController extends Controller
         return Redirect::to('order')->with('messagetext', \Lang::get('core.note_block'))->with('msgstatus', 'success');
 
     }
-
+    
     function getPo($order_id = null, $sendemail = false, $to = null, $from = null,$cc = null,$bcc = null, $message= null )
     {
         $mode="";
