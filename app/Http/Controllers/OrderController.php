@@ -448,8 +448,7 @@ class OrderController extends Controller
                 }
                 if(!empty($where_in))
                 {
-                    die('here...');
-                 $redirect_link="managefegrequeststore";
+                    $redirect_link="managefegrequeststore";
                     //// UPDATE STATUS TO APPROVED AND PROCESSED
                     $now = $this->model->get_local_time('date');
 
