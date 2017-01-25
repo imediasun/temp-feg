@@ -777,8 +777,8 @@ class SiteHelpers
                     if ($isSimpleSearchBetween) {
                         $simpleSearchPlaceholder = "placeholder='Start'";
                         $simpleSearchEndPlaceholder = "placeholder='End'";
-                        $simpleSearchStyle = "style='width:47%; float: left;'";
-                        $simpleSearchEndStyle = "style='width:47%'";                        
+                        $simpleSearchStyle = "style='width:49%; float: left;'";
+                        $simpleSearchEndStyle = "style='width:49%'";                        
                     }
                     
                     $simpleSearchOptionsBasic = " data-simpleSearch='1' 
@@ -804,7 +804,7 @@ class SiteHelpers
                 $form = "<input  type='text' name='" . $field . "{$bulk}' class='form-control input-sm' $mandatory $simpleSearchOptions value='{$value}'/>";
                 if ($isSimpleSearchBetween) {
                     $form = "<div class='clearfix' >$form"
-                            ."<div class='betweenseparator pull-left' style='margin: 1%; height: 100%; line-height: 2em;'> - </div>" 
+                            ."<div class='betweenseparator pull-left' style='width: 2%; margin:0; height: 100%; line-height: 2.5em;text-align: center;'> - </div>" 
                             ."<input type='text' 
                                 value='{$value}'
                                 name='$field{$bulk}_end' 
@@ -823,7 +823,7 @@ class SiteHelpers
                 $form = "<input  type='text' name='" . $field . "{$bulk}' class='form-control input-sm' $mandatory $simpleSearchOptions value='{$value}'/>";
                 if ($isSimpleSearchBetween) {
                     $form = "<div class='clearfix' >$form"
-                            ."<div class='betweenseparator pull-left' style='margin: 1%; height: 100%; line-height: 2em;'> - </div>" 
+                            ."<div class='betweenseparator pull-left' style='width: 2%; margin:0; height: 100%; line-height: 2.5em;text-align: center;'> - </div>" 
                             ."<input type='text' 
                                 value='{$value}'
                                 name='$field{$bulk}_end' 
@@ -842,7 +842,7 @@ class SiteHelpers
                 $form = "<input  type='text' name='" . $field . "{$bulk}' class='form-control input-sm' $mandatory $simpleSearchOptions value='{$value}'/>";
                 if ($isSimpleSearchBetween) {
                     $form = "<div class='clearfix' >$form"
-                            ."<div class='betweenseparator pull-left' style='margin: 1%; height: 100%; line-height: 2em;'> - </div>" 
+                            ."<div class='betweenseparator pull-left' style='width: 2%; margin:0; height: 100%; line-height: 2.5em;text-align: center;'> - </div>" 
                             ."<input type='text' 
                                 value='{$value}'
                                 name='$field{$bulk}_end' 
@@ -861,7 +861,7 @@ class SiteHelpers
                 $form = "<input  type='text' name='$field{$bulk}' class='date form-control input-sm' $mandatory $simpleSearchOptions value='{$value}'/> ";
                 if ($isSimpleSearchBetween) {
                     $form = "<div class='clearfix' >$form"
-                            ."<div class='betweenseparator pull-left' style='margin: 1%; height: 100%; line-height: 2em;'> - </div>" 
+                            ."<div class='betweenseparator pull-left' style='width: 2%; margin:0; height: 100%; line-height: 2.5em;text-align: center;'> - </div>" 
                             ."<input type='text' 
                                 value='{$value}'
                                 name='$field{$bulk}_end' 
@@ -880,7 +880,7 @@ class SiteHelpers
                 $form = "<input  type='text' name='$field{$bulk}'  class='date form-control input-sm'  $mandatory $simpleSearchOptions value='{$value}'/> ";
                 if ($isSimpleSearchBetween) {
                     $form = "<div class='clearfix' >$form"
-                            ."<div class='betweenseparator pull-left' style='margin: 1%; height: 100%; line-height: 2em;'> - </div>" 
+                            ."<div class='betweenseparator pull-left' style='width: 2%; margin:0; height: 100%; line-height: 2.5em;text-align: center;'> - </div>" 
                             ."<input type='text' 
                                 value='{$value}'
                                 name='$field{$bulk}_end' 
