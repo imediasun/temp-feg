@@ -745,7 +745,9 @@ class SiteHelpers
         $simpleSearchOperator = '';
         $isSimpleSearchBetween = false;
         $simpleSearchStyle = '';
+        $simpleSearchClass = '';
         $simpleSearchEndStyle = '';
+        $simpleSearchEndClass = '';
         $simpleSearchPlaceholder = '';
         $simpleSearchEndPlaceholder = '';
         $isSSSFWOBD = false; 
@@ -777,8 +779,10 @@ class SiteHelpers
                     if ($isSimpleSearchBetween) {
                         $simpleSearchPlaceholder = "placeholder='Start'";
                         $simpleSearchEndPlaceholder = "placeholder='End'";
-                        $simpleSearchStyle = "style='width:49%; float: left;'";
-                        $simpleSearchEndStyle = "style='width:49%'";                        
+                        $simpleSearchStyle = "style=''";
+                        $simpleSearchEndStyle = "style=''";                        
+                        $simpleSearchClass = "betweenRangeStart";
+                        $simpleSearchEndClass = "betweenRangeEnd";                        
                     }
                     
                     $simpleSearchOptionsBasic = " data-simpleSearch='1' 
@@ -801,14 +805,16 @@ class SiteHelpers
                 $form = '';
                 break;
             case 'textarea';
-                $form = "<input  type='text' name='" . $field . "{$bulk}' class='form-control input-sm' $mandatory $simpleSearchOptions value='{$value}'/>";
+                $form = "<input  type='text' name='" . $field . "{$bulk}' 
+                    class='form-control input-sm $simpleSearchClass' 
+                    $mandatory $simpleSearchOptions value='{$value}'/>";
                 if ($isSimpleSearchBetween) {
                     $form = "<div class='clearfix' >$form"
-                            ."<div class='betweenseparator pull-left' style='width: 2%; margin:0; height: 100%; line-height: 2.5em;text-align: center;'> - </div>" 
+                            ."<div class='betweenseparator pull-left'> - </div>" 
                             ."<input type='text' 
                                 value='{$value}'
                                 name='$field{$bulk}_end' 
-                                class='form-control input-sm pull-left' 
+                                class='form-control input-sm pull-left $simpleSearchEndClass' 
                                 data-range-end-field='1' 
                                 $mandatory 
                                 $simpleSearchOptionsBasic 
@@ -820,14 +826,16 @@ class SiteHelpers
                 break;
 
             case 'textarea_editor';
-                $form = "<input  type='text' name='" . $field . "{$bulk}' class='form-control input-sm' $mandatory $simpleSearchOptions value='{$value}'/>";
+                $form = "<input  type='text' name='" . $field . "{$bulk}' 
+                    class='form-control input-sm $simpleSearchClass' 
+                        $mandatory $simpleSearchOptions value='{$value}'/>";
                 if ($isSimpleSearchBetween) {
                     $form = "<div class='clearfix' >$form"
-                            ."<div class='betweenseparator pull-left' style='width: 2%; margin:0; height: 100%; line-height: 2.5em;text-align: center;'> - </div>" 
+                            ."<div class='betweenseparator pull-left' > - </div>" 
                             ."<input type='text' 
                                 value='{$value}'
                                 name='$field{$bulk}_end' 
-                                class='form-control input-sm pull-left' 
+                                class='form-control input-sm pull-left $simpleSearchEndClass' 
                                 data-range-end-field='1' 
                                 $mandatory 
                                 $simpleSearchOptionsBasic 
@@ -839,14 +847,16 @@ class SiteHelpers
                 break;
 
             case 'text';
-                $form = "<input  type='text' name='" . $field . "{$bulk}' class='form-control input-sm' $mandatory $simpleSearchOptions value='{$value}'/>";
+                $form = "<input  type='text' name='" . $field . "{$bulk}' 
+                    class='form-control input-sm $simpleSearchClass' 
+                    $mandatory $simpleSearchOptions value='{$value}'/>";
                 if ($isSimpleSearchBetween) {
                     $form = "<div class='clearfix' >$form"
-                            ."<div class='betweenseparator pull-left' style='width: 2%; margin:0; height: 100%; line-height: 2.5em;text-align: center;'> - </div>" 
+                            ."<div class='betweenseparator pull-left'> - </div>" 
                             ."<input type='text' 
                                 value='{$value}'
                                 name='$field{$bulk}_end' 
-                                class='form-control input-sm pull-left' 
+                                class='form-control input-sm pull-left $simpleSearchEndClass' 
                                 data-range-end-field='1' 
                                 $mandatory 
                                 $simpleSearchOptionsBasic 
@@ -858,14 +868,16 @@ class SiteHelpers
                 break;
 
             case 'text_date';
-                $form = "<input  type='text' name='$field{$bulk}' class='date form-control input-sm' $mandatory $simpleSearchOptions value='{$value}'/> ";
+                $form = "<input  type='text' name='$field{$bulk}' 
+                    class='date form-control input-sm $simpleSearchClass' 
+                    $mandatory $simpleSearchOptions value='{$value}'/> ";
                 if ($isSimpleSearchBetween) {
                     $form = "<div class='clearfix' >$form"
-                            ."<div class='betweenseparator pull-left' style='width: 2%; margin:0; height: 100%; line-height: 2.5em;text-align: center;'> - </div>" 
+                            ."<div class='betweenseparator pull-left' > - </div>" 
                             ."<input type='text' 
                                 value='{$value}'
                                 name='$field{$bulk}_end' 
-                                class='date form-control input-sm pull-left' 
+                                class='date form-control input-sm pull-left $simpleSearchEndClass' 
                                 data-range-end-field='1' 
                                 $mandatory 
                                 $simpleSearchOptionsBasic 
@@ -877,14 +889,16 @@ class SiteHelpers
                 break;
 
             case 'text_datetime';
-                $form = "<input  type='text' name='$field{$bulk}'  class='date form-control input-sm'  $mandatory $simpleSearchOptions value='{$value}'/> ";
+                $form = "<input  type='text' name='$field{$bulk}' 
+                    class='date form-control input-sm $simpleSearchClass'  
+                    $mandatory $simpleSearchOptions value='{$value}'/> ";
                 if ($isSimpleSearchBetween) {
                     $form = "<div class='clearfix' >$form"
-                            ."<div class='betweenseparator pull-left' style='width: 2%; margin:0; height: 100%; line-height: 2.5em;text-align: center;'> - </div>" 
+                            ."<div class='betweenseparator pull-left' > - </div>" 
                             ."<input type='text' 
                                 value='{$value}'
                                 name='$field{$bulk}_end' 
-                                class='date form-control input-sm pull-left' 
+                                class='date form-control input-sm pull-left $simpleSearchEndClass' 
                                 data-range-end-field='1' 
                                 $mandatory 
                                 $simpleSearchOptionsBasic 
@@ -2198,5 +2212,28 @@ class SiteHelpers
                         WHERE u.id=user_locations.user_id AND l.id=user_locations.location_id)";
         
         \DB::delete($q);
-    }    
+    }   
+    
+    public static function generateSimpleSearchButton($setting = array()) {
+        $width = isset($setting['simplesearchbuttonwidth']) ? trim($setting['simplesearchbuttonwidth']): '';
+         
+        $widthClass = $widthStyle = $buttonStyle = "";
+        if (preg_match('/^[\_a-zA-Z]/', $width) == 1) {
+            $widthClass = $width . ' add-pad-right';
+        }
+        elseif (!empty($width)) {
+            $widthClass = 'add-pad-right';
+            $widthStyle = 'width:' . $width. ';';
+        }
+        if (!empty($width)) {
+            $buttonStyle = "width: 100%;";
+        }
+        $button = '<div class="sscol-submit '. $widthClass . '" 
+            style="'. $widthStyle .'"><br/>
+            <button type="button" name="search" style="'. $buttonStyle .'"
+                    class="doSimpleSearch btn btn-sm btn-primary"> Search </button>
+            </div>';
+        
+        return $button;
+    }
 }
