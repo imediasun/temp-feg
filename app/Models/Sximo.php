@@ -847,6 +847,67 @@ class Sximo extends Model {
         
         return $finalFilters;
     }
+    
+    public static function getSearchFiltersAsArray($customSearchString = '') {
+        $receivedFilters = array();
+        $searchQuerystring = !empty($customSearchString) ? $customSearchString : 
+                (isset($_GET['search']) ? $_GET['search'] : '');
+        
+        if ($searchQuerystring) {
+            $filters_raw = trim($searchQuerystring, "|");
+            $filters = explode("|", $filters_raw);
+
+            foreach($filters as $filter) {
+                $columnFilter = explode(":", $filter);
+                $filterData = array();
+                list($fieldName, $operator, $value) = $columnFilter;
+                $filterData['fieldName'] = $fieldName;
+                $filterData['operator'] = $operator;
+                $filterData['value'] = $value;
+                if (isset($columnFilter[3])) {
+                    $filterData['value2'] = $columnFilter[3];
+                }
+                $receivedFilters[$fieldName] = $filterData;
+            }
+        }
+        return $receivedFilters;        
+    }
+    public static function buildSearchQuerystringFromArray($filters = array()) {
+        $qs = '';
+        $qsArray = array();
+        foreach($filters as $item) {
+            $qsArray[] = implode(':', array_values($item));
+        }
+        $qs = implode('|', $qsArray).'|';
+        
+        return $qs;
+    }
+    public static function mergeSearchFilters($receivedFilters = null, $add = array(), $skip = array()) {
+        $filters = empty($receivedFilters) ? self::getSearchFiltersAsArray() : $receivedFilters;
+                
+        if (!empty($add)) {
+            foreach ($add as $key => $item) {
+                $filters[$key] = $item;
+            }
+        }
+        if (!empty($skip)) {
+            foreach ($skip as $key) {
+                if (isset($filters[$key])) {
+                    unset($filters[$key]);
+                }
+            }
+        }
+        
+        return $filters;        
+    }
+    
+    public static function rebuildSearchQuery($add = array(), $skip = array(), $customSearchString = '') {
+        $filters = self::getSearchFiltersAsArray($customSearchString);
+        $newFilters = self::mergeSearchFilters($filters, $add, $skip);
+        $qs = self::buildSearchQuerystringFromArray($newFilters);
+        return $qs;
+    }
+    
     public static function passwordForgetEmails()
     {
         $user_data=\DB::select('select id,email from users');
