@@ -1,5 +1,6 @@
 @extends('layouts.app')
 @section('content')
+    <div class="ajaxLoading"></div>
     <div class="page-content row">
         <!-- Page header -->
         <div class="sbox-title">
@@ -48,8 +49,8 @@
                         <div class="form-group" style="margin-top:10px;">
                             <button data-button="save" data-toggle="modal" type="button" data-target="#myModal"
                                     class="btn btn-info btn-lg @if(empty($google_account->g_mail) || empty($google_account->g_password)) {{ 'disabled' }} @endif"
-                                    style="width:33%" title="SEND"><i
-                                        class="fa fa-sign-in  "></i>&nbsp {{ Lang::get('core.sb_send') }}</button>
+                                    style="width:33%" title="SEND" id="send-only"><i
+                                        class="fa fa-sign-in  "></i>&nbsp {{ Lang::get('core.sb_send') }} </button>
                         </div>
                         </div>
                         {!! Form::close() !!}
@@ -116,7 +117,7 @@
                                     </div>
                                     <div class="col-md-offset-6 col-md-6">
                                         <div class="form-group" style="margin-top:10px;">
-                                            <button id="send-only" type="button" name="submit" value="sendemail" data-button="create"
+                                            <button  type="button" name="submit" value="sendemail" id="send-email" data-button="create"
                                                     class="btn btn-info btn-lg" style="width:33%" title="SEND"><i
                                                         class="fa fa-sign-in  "></i>&nbsp {{ Lang::get('core.sb_send') }}
                                             </button>
@@ -180,7 +181,7 @@
 
                                         <div class="col-md-8">
                                             <textarea class="form-control" cols="5" rows="6" name="message"
-                                                      id="message"/>Purchase Order</textarea>
+                                                      id="message1"/>Purchase Order</textarea>
                                         </div>
                                     </div>
                                     <div class="col-md-offset-6 col-md-6">
@@ -233,22 +234,40 @@
             location.href = "{{ url() }}/order";
         }
         $("#send-only").click(function(e){
-          var to=$("#to").val();
-            var cc=$("#cc").val();
-            var bcc=$("#bcc").val();
-            var  email_link="";
-            e.preventDefault();
+            $('.ajaxLoading').show();
             $.get("{{ url() }}/order/po/{{ $order_id }}?mode=save", function(data, status){
-                email_link="https://mail.google.com/mail/u/0/?view=cm&fs=1&to="+to+"&su=Purchase%20Order&body=click%20here%20to%20download%20Purchase Order %20<a href='"+data['url']+"/order/download-po/"+data['file_name']+"'>click here</a>&bcc="+bcc+"&tf=1";
+                $("#message").text(data['url']+"/order/download-po/"+data['file_name']);
+                $('.ajaxLoading').hide();
+            });
+            $("#send-email").click(function(e){
+                var to=$("#to").val();
+                var cc=$("#cc").val();
+                var bcc=$("#bcc").val();
+                var message=$("#message").val();
+                var  email_link="";
+                e.preventDefault();
+                email_link="https://mail.google.com/mail/u/0/?view=cm&fs=1&to="+to+"&su=Purchase%20Order&body="+message+"&cc="+cc+"&bcc="+bcc+"&tf=1";
                 window.open(email_link);
             });
 
-
-
         });
-        $("#save_send").click(function () {
-
-            $('#sendsaveFormAjax').submit();
+        $("#save_send_modal").click(function () {
+            $('.ajaxLoading').show();
+            $.get("{{ url() }}/order/po/{{ $order_id }}?mode=save", function(data, status){
+                $("#message1").text(data['url']+"/order/download-po/"+data['file_name']);
+                $('.ajaxLoading').hide();
+            });
+            $("#save_send").click(function(e){
+                var to=$("#to1").val();
+                var cc=$("#cc1").val();
+                var bcc=$("#bcc1").val();
+                var message=$("#message1").val();
+                var  email_link="";
+                e.preventDefault();
+                email_link="https://mail.google.com/mail/u/0/?view=cm&fs=1&to="+to+"&su=Purchase%20Order&body="+message+"&cc="+cc+"&bcc="+bcc+"&tf=1";
+                window.open(email_link);
+            });
+            //$('#sendsaveFormAjax').submit();
         });
         var form = $('#sendsaveFormAjax');
         form.parsley();
