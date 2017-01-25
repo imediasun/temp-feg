@@ -88,7 +88,7 @@
                   </tr>
                     <tr>
                         <td style="padding:8px;border:1px dotted #000;border-top:none">{{ $data[0]['order_description'] }}</td>
-                        <td style="padding:8px;border:1px dotted #000;border-top:none"> $  {{ number_format($data[0]['order_total'],2) }}</td>
+                        <td style="padding:8px;border:1px dotted #000;border-top:none"> $  {{ number_format($data[0]['order_total'],3) }}</td>
                         <td></td>
                     </tr>
                 @endif

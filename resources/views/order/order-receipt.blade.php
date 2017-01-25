@@ -28,7 +28,7 @@
                             <tr><td><b>Location </b></td><td>{{ $data['location_id'] }}</td></tr>
                             <tr><td><b>Vendor</b></td><td>{{ $data['vendor_name'] }}</td></tr>
                             <tr><td><b>Description</b></td><td>{{ str_replace("<br>","" ,$data['description']) }}</td></tr>
-                            <tr><td><b>Total Cost</b></td><td>{{ $data['order_total'] }}</td></tr>
+                            <tr><td><b>Total Cost</b></td><td>{{ CurrencyHelpers::formatCurrency($data['order_total']) }}</td></tr>
                             <?php //if(!empty($item_count) && ($order_type == 7 || $order_type == 8) && () && $added_to_inventory == 0)  //REDEMPTION OR INSTANT WIN PRIZES -  SET TO DUMMY VALUE TO FORCE ORDER DESCRIPION UNTIL WE INTRODUCE PRIZE ALLOCATION
                             ?>
                             @if((isset($data['item_count']) && !empty($data['item_count'])) && ($data['order_type'] == 7 || $data['order_type'] == 8) &&   $data['added_to_inventory'] == 0)  //REDEMPTION OR INSTANT WIN PRIZES -  SET TO DUMMY VALUE TO FORCE ORDER DESCRIPION UNTIL WE INTRODUCE PRIZE ALLOCATION
@@ -96,13 +96,13 @@
                                         </td>
                                         <td>{{ $order_item->item_name }}</td>
                                         <td>{{ $order_item->product_description }}</td>
-                                        <td>{{ number_format($order_item->price,2) }}</td>
-                                        <td>{{ number_format( $order_item->case_price,2) }}</td>
+                                        <td>{{ number_format($order_item->price,3) }}</td>
+                                        <td>{{ number_format( $order_item->case_price,3) }}</td>
 
                                         <td>{{ $order_item->qty }}</td>
                                         <td>
                                             {{ $order_item->item_received }}
-                                            <input type="hidden" name="receivedItemsQty[]" value="{{ $order_item->item_received }}">
+                                            <input type="hidden" name="receivedItemsQty[]" value="{{$order_item->item_received  }}">
                                         </td>
 
                                         <td style="text-align: center">
@@ -111,7 +111,7 @@
                                         <td>
                                             <input type="text"  id="receivedItemText{{ $order_item->id }}" name="receivedQty[]" value="{{ $order_item->qty - $order_item->item_received}}" readonly="readonly" />
                                         </td>
-                                      <td> {{ number_format($order_item->total,2) }}
+                                      <td> {{ number_format($order_item->total,3) }}
                                         </td>
 
                             </tr>

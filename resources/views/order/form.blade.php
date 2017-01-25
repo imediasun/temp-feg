@@ -241,11 +241,11 @@
                         </td>
 
                         <td><br/> <input type='number' name='price[]' placeholder='Unit Price' id="price"
-                                         class='calculate form-control' min="0.00" step=".01" value="0.00"
+                                         class='calculate form-control' min="0.000" step=".01" value="0.000"
                                          required></td>
                         <td>
                             <br/> <input type='number' name='case_price[]' placeholder='Case Price' id="case_price"
-                                         class='calculate form-control' min="0.00" step=".01" value="0.00"
+                                         class='calculate form-control' min="0.000" step=".01" value="0.000"
                                          required></td>
                         </td>
 
