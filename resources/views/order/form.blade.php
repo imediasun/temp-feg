@@ -785,8 +785,8 @@ $(function()
         });
       function ajaxViewClose1(id)
        {
-           var module="{{\Session::get('redirect')}}";
-           location.href = "{{ url() }}/"+module;
+
+           location.href = "{{ url() }}/order";
        }
     </script>
     <style>

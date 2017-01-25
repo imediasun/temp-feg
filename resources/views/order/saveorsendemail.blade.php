@@ -231,7 +231,8 @@
                     {initial_text: 'Select BCC'});
         });
         function reloadOrder() {
-            location.href = "{{ url() }}/order";
+            redirect_link = "{{ \Session::get('redirect') }}";
+            location.href = "{{ url() }}/"+redirect_link;
         }
         $("#send-only").click(function(e){
             $('.ajaxLoading').show();
