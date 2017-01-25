@@ -102,12 +102,12 @@
                                 </label>
                                 <div class="col-md-6">
                                     <input type="file"   name="img" id="img" @if(empty($row->img)) required  @else style="color:white;width:23%;display:inline" @endif /><span>{{ isset($row->img)?$row->img:"" }}</span>
-                                    @if(!empty($row->img))  <div style="margin-top:15px;">
+                                      <div style="margin-top:15px;">
 
                                         {!! SiteHelpers::showUploadedFile($row->img,'/uploads/games/images/') !!}
 
                                     </div>
-                                        @endif
+
                                 </div>
                                 <div class="col-md-2">
 

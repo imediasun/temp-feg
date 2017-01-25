@@ -466,12 +466,12 @@
             var item_case_price=<?php echo json_encode($data['itemCasePrice']) ?>;
             var item_retail_price=<?php echo json_encode($data['itemRetailPrice'])?>;
             var item_total = 0;
-            console.log(sku_num_array);
+
             for (var i = 0; i < requests_item_count; i++) {
 
                 $('input[name^=item_num]').eq(i).val(i + 1);
                 $('textarea[name^=item]').eq(i).val(order_description_array[i]);
-                console.log("===>"+sku_num_array[i]);
+
                 $('input[name^=sku_num]').eq(i).val(sku_num_array[i]);
                 if(order_price_array[i] == "" || order_price_array[i] == null ) {
                     $('input[name^=price]').eq(i).val(0.00);
@@ -704,9 +704,7 @@
                 var itemid = $("#"+trid+"  textarea[name^=item]").attr('id');
                 var retailpriceid=$('#'+trid+"  input[name^=retail]").attr('id');
                 var selectorProductId=$('#'+trid+"  input[name^=product_id]").attr('id');
-                console.log(qtyid);
-                console.log(retailpriceid);
-                console.log(selectorProductId);
+
 
                 $(obj).autocomplete({
                     minLength: 2,
