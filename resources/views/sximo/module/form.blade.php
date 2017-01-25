@@ -118,7 +118,7 @@
                 <?php $simplesearchoperator = (isset($rows['simplesearchoperator']) ? $rows['simplesearchoperator'] : 'equal'); ?>
                 <input type="hidden" name="simplesearchoperator[<?php echo $id;?>]" value="<?php echo $simplesearchoperator;?>" />
                 <?php $simplesearchselectfieldwithoutblankdefault = (isset($rows['simplesearchselectfieldwithoutblankdefault']) ? $rows['simplesearchselectfieldwithoutblankdefault'] : '0'); ?>
-                <input type="hidden" name="simplesearchselectfieldwithoutblankdefault" value="<?php echo $simplesearchselectfieldwithoutblankdefault;?>" />
+                <input type="hidden" name="simplesearchselectfieldwithoutblankdefault[<?php echo $id;?>]" value="<?php echo $simplesearchselectfieldwithoutblankdefault;?>" />
             </td>            
 			<td class="formFieldRequired">
 				<?php
