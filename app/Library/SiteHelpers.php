@@ -1937,23 +1937,16 @@ class SiteHelpers
         return $locations;
     }       
 
-    static function getQueryStringForLocation($table)
+    static function getQueryStringForLocation($table, $fieldName = 'location_id')
     {
-        $queryString = ' AND (';
-        $locations = self::getLocationDetails(\Session::get('uid'));
-
-        foreach($locations as $index => $location)
+        $locationsData = self::getLocationDetails(\Session::get('uid'));
+        $locations = array();
+        foreach($locationsData as $locationItem)
         {
-            if(count($locations) == ++$index)
-            {
-                $queryString .= " $table.location_id = '$location->id' ) ";
-            }
-            else
-            {
-                $queryString .= " $table.location_id = '$location->id' OR ";
-            }
-
+            $locations[] = "'".$locationItem->id."'";
         }
+        $locationsCSV = implode(',', $locations);
+        $queryString = " AND $table.$fieldName IN ($locationsCSV) ";
         return $queryString;
     }
 
