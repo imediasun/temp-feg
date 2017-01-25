@@ -36,7 +36,7 @@ class order extends Sximo
     public static function queryWhere($cond = null)
     {
         $return = " Where";
-        switch ($cond) {
+        switch (strtoupper($cond)) {
             case 'ALL':
                 $return .= " orders.id IS NOT NULL";
                 break;
