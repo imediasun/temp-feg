@@ -40,20 +40,46 @@ class OrderController extends Controller
         set_time_limit(0);
         $info = $this->model->makeInfo($this->module);
         //$master  	= $this->buildMasterDetail();
-        $filter = (!is_null(Input::get('search')) ? $this->buildSearch() : '');
+        
+        $sort = (!is_null(Input::get('sort')) ? Input::get('sort') : $this->info['setting']['orderby']);
+        $order = (!is_null(Input::get('order')) ? Input::get('order') : $this->info['setting']['ordertype']);
+        
+        // Get order_type search filter value and location_id saerch filter values
+        $orderTypeFilter = $this->model->getSearchFilters(array('order_type' => 'order_selected', 'location_id' => ''));
+        extract($orderTypeFilter);
+        // default order type is OPEN
+        if (empty($order_selected)) {
+            $order_selected = "OPEN";
+        }
+        
+        // rebuild search query skipping 'order_type' filter
+        $trimmedSearchQuery = $this->model->rebuildSearchQuery(null, array('order_type'));        
+        
+        // Filter Search for query
+        // build sql query based on search filters
+        $filter = is_null(Input::get('search')) ? '' : $this->buildSearch($trimmedSearchQuery);
+        // Get assigned locations list as sql query (part)
+        $locationFilter = \SiteHelpers::getQueryStringForLocation('orders');
+        // if search filter does not have location_id filter
+        // add default location filter
+        if (empty($location_id)) {
+            $filter .= $locationFilter;
+        }
+        
 
         //$filter 	.=  $master['masterFilter'];
         //comment limit
         $params = array(
-            'params' => '',
             'page' => 1,
-            'sort' => 'id',
-            'order' => 'desc'
+            'sort' => $sort,
+            'order' => $order,
+            'params' => $filter,            
         );
-
+        
         $minutes = 60;
-        $results = Cache::remember('orderExport', $minutes, function () use ($params) {
-            return $this->model->getExportRows($params);
+        $cacheKey = md5($filter.$order_selected.$sort.$order);
+        $results = Cache::remember($cacheKey, $minutes, function () use ($params, $order_selected) {            
+            return $this->model->getExportRows($params, $order_selected);
         });
         //$results = $this->model->getExportRows($params);
 
