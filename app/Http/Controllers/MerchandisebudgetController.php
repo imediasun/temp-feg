@@ -253,15 +253,18 @@ class MerchandisebudgetController extends Controller
 
     }
 
-    function buildSearch()
+    function buildSearch($customSearchString = null)
     {
         $keywords = '';
         $fields = '';
         $param = '';
         $allowsearch = $this->info['config']['forms'];
+        $searchQuerystring = !is_null($customSearchString) ? $customSearchString : 
+                (isset($_GET['search']) ? $_GET['search'] : '');
+        
         foreach ($allowsearch as $as) $arr[$as['field']] = $as;
-        if ($_GET['search'] != '') {
-            $type = explode("|", $_GET['search']);
+        if ($searchQuerystring != '') {
+            $type = explode("|", $searchQuerystring);
             if (count($type) >= 1) {
                 foreach ($type as $t) {
                     $keys = explode(":", $t);

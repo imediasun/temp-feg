@@ -584,18 +584,19 @@ abstract class Controller extends BaseController
         return;
     }
 
-    function buildSearch()
+    function buildSearch($customSearchString = null)
     {
         $keywords = '';
         $fields = '';
         $param = '';
         $allowsearch = $this->info['config']['forms'];
-
+        $searchQuerystring = !is_null($customSearchString) ? $customSearchString : 
+                (isset($_GET['search']) ? $_GET['search'] : '');
+        
         foreach ($allowsearch as $as)
             $arr[$as['field']] = $as;
-        if ($_GET['search'] != '') {
-            $search_params=$_GET['search'];
-            $search_params=str_replace('_amp','&',$search_params);
+        if ($searchQuerystring != '') {
+            $search_params=str_replace('_amp','&',$searchQuerystring);
             $type = explode("|", $search_params);
             if (count($type) >= 1) {
                 foreach ($type as $t) {
