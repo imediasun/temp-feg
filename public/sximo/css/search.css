@@ -41,6 +41,21 @@
     margin-bottom: 10px;
 }
 
+.simpleSearchContainer .betweenRangeStart {
+    width:49%; 
+    float: left;
+}
+.simpleSearchContainer .betweenRangeEnd {
+    width:49%; 
+}
+.simpleSearchContainer .betweenseparator {
+    width: 2%; 
+    margin:0; 
+    height: 100%; 
+    line-height: 2.5em;
+    text-align: center;
+}
+
 .sscol-submit,
 .sscol {
     padding-right: 10px;
@@ -51,11 +66,11 @@
 }
 
 .sscol-submit {
-    padding-right:0;
-    padding-left: 10px;    
+    padding-right: 0;
 }
-
-
+.sscol-submit.add-pad-right {
+    padding-right: 10px;
+}
 /* Column Header based sorting */
 .datagrid th.dgcsortable {
     cursor: pointer;

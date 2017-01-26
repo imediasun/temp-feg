@@ -192,6 +192,7 @@ class Sximo extends Model {
                 'hideadvancedsearchoperators' => (isset($data['config']['setting']['hideadvancedsearchoperators']) ? $data['config']['setting']['hideadvancedsearchoperators'] : 'false' ),
                 'hiderowcountcolumn' => (isset($data['config']['setting']['hiderowcountcolumn']) ? $data['config']['setting']['hiderowcountcolumn'] : 'false' ),                
                 'usesimplesearch' => (isset($data['config']['setting']['usesimplesearch']) ? $data['config']['setting']['usesimplesearch'] : 'true' ),                
+                'simplesearchbuttonwidth' => (isset($data['config']['setting']['simplesearchbuttonwidth']) ? $data['config']['setting']['simplesearchbuttonwidth'] : '' ),                
                 'disablepagination' => (isset($data['config']['setting']['disablepagination']) ? $data['config']['setting']['disablepagination'] : 'false' ),
                 'disablesort' => (isset($data['config']['setting']['disablesort']) ? $data['config']['setting']['disablesort'] : 'false' ),
                 'disableactioncheckbox' => (isset($data['config']['setting']['disableactioncheckbox']) ? $data['config']['setting']['disableactioncheckbox'] : 'false' ),

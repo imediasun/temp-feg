@@ -234,6 +234,15 @@
         </div>                
         
         <div class="form-group">
+          <label for="simplesearchbuttonwidth" class=" control-label col-md-4">Simple Search Button width</label>
+          <div class="col-md-8">
+              <input  type='text' name='simplesearchbuttonwidth' id='simplesearchbuttonwidth'  
+                      value='@if(isset($setting['simplesearchbuttonwidth'])) {{ $setting['simplesearchbuttonwidth'] }} @endif'                      	
+                />              
+           </div> 
+        </div>                
+        
+        <div class="form-group">
           <label for="hideadvancedsearchoperators" class=" control-label col-md-4">Hide Operators in Advanced Search</label>
           <div class="col-md-8">
               <label class="checkbox">
