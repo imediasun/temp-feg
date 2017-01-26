@@ -727,7 +727,7 @@ class OrderController extends Controller
                 for ($i = 0; $i < $data[0]['requests_item_count']; $i++) {
                     $j = $i + 1;
                     $item_total = $data[0]['orderPriceArray'][$i] * $data[0]['orderQtyArray'][$i];
-                    $item_total_string = "$ " . number_format($item_total, 2);
+                    $item_total_string = "$ " . number_format($item_total, Order::ORDER_PERCISION);
                     $item_description_string = "Item #" . $j . ": " . $data[0]['orderDescriptionArray'][$i];
                  if(isset($data[0]['skuNumArray'])) {
                      $sku_num_string = $data[0]['skuNumArray'][$i];
@@ -744,7 +744,7 @@ class OrderController extends Controller
                 $data[0]['item_qty_string'][$i] = $item_qty_string;
                 $data[0]['item_total_string'][$i] = $item_total_string;
                 $data[0]['order_total_cost'] = $order_total_cost;
-                // $item_total_string = $item_total_string."-----------------\n"."$ ".number_format($order_total_cost,2)."\n";
+//                $item_total_string = $item_total_string."-----------------\n"."$ ".number_format($order_total_cost,3)."\n";
             }
             $pdf = \PDF::loadView('order.po', ['data' => $data, 'main_title' => "Purchase Order"]);
             if($mode == "save")
