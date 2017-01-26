@@ -162,7 +162,7 @@
                         </label>
 
                         <div class="col-md-8">
-                            {{ $row->order_total }}
+                            {{ number_format($row->order_total,\App\Models\Order::ORDER_PERCISION)  }}
                         </div>
                     </div>
                     <div class="clearfix"></div>
@@ -335,7 +335,7 @@ for($i=0; $i < count($order_data['orderQtyArray']);$i++)
                         <td>{{ $i+1 }} </td>
                         <td>{{  $order_data['skuNumArray'][$i]}}</td>
                         <td>{{  $order_data['orderDescriptionArray'][$i] }}</td>
-                        <td>{{  $order_data['orderPriceArray'][$i] }}</td>
+                        <td>{{ number_format($order_data['orderPriceArray'][$i],\App\Models\Order::ORDER_PERCISION) }}</td>
                         <td>{{  $order_data['orderQtyArray'][$i] }}</td>
                         <td>{{ $order_data['receivedItemsArray'][$i] }}</td>
                         <td>{{ number_format(  $order_data['orderPriceArray'][$i]* $order_data['orderQtyArray'][$i],3)}}</td>

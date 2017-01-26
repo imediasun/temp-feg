@@ -241,13 +241,13 @@
                         </td>
 
                         <td><br/> <input type='number' name='price[]' placeholder='Unit Price' id="price"
-                                         class='calculate form-control' min="0.000" step=".01" value="0.000"
+                                         class='calculate form-control' min="0.00" step=".01" value="0.00" style="width: 80px"
                                          required></td>
                         <td>
                             <br/> <input type='number' name='case_price[]' placeholder='Case Price' id="case_price"
-                                         class='calculate form-control' min="0.000" step=".01" value="0.000"
+                                         class='calculate form-control' min="0.00" step=".01" value="0.00" style="width: 80px"
                                          required></td>
-                        </td>
+
 
 
 
@@ -286,7 +286,7 @@
                 {{--<td class="game"></td>--}}
                 <td> </td>
                 <td colspan="6" class="text-left"><strong> Subtotal ( $ ) </strong></td>
-                <td> <input type="text" name="Subtotal" value="{{ $data['order_total'] }}" readonly
+                <td> <input type="text" name="Subtotal" value="{{number_format($data['order_total'],\App\Models\Order::ORDER_PERCISION) }}" readonly
                             class="form-control"/>
                     <div id="error-meesage-amount">
 
@@ -318,6 +318,7 @@
     <script type="text/javascript">
 
         var minOrderAmount = 0.00;
+        var PRECISION = '<?php echo  \App\Models\Order::ORDER_PERCISION?>';
         $('#alt_ship_to').on('change', function () {
                     hideShowAltLocation();
                 }
@@ -342,11 +343,11 @@
                 }
                 sum = Qty * Price;
                 Subtotal += sum;
-                sum = sum.toFixed(2);
+                sum = sum.toFixed(PRECISION);
                 $(this).find("input[name*='total']").val(sum);
             });
 
-            Subtotal = Subtotal.toFixed(2);
+            Subtotal = Subtotal.toFixed(PRECISION);
             $("input[name='Subtotal']").val(Subtotal);
             $("#total_cost").val(Subtotal);
         }

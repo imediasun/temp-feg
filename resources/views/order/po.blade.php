@@ -68,18 +68,18 @@
                     <tr>
                         <td style="padding:8px;border:1px dotted #000;border-top:none">  {{ $data[0]['orderDescriptionArray'][$i] }} <br/></td>
                         <td style="padding:9px;border:1px dotted #000;border-top:none"> {{ $i+1 }}</td>
-                        <td style="padding:8px;border:1px dotted #000;border-top:none">  {{CurrencyHelpers::formatCurrency($data[0]['orderPriceArray'][$i]) }} <br/></td>
+                        <td style="padding:8px;border:1px dotted #000;border-top:none">  {{number_format($data[0]['orderPriceArray'][$i], \App\Models\Order::ORDER_PERCISION) }} <br/></td>
 
                         <td style="padding:8px;border:1px dotted #000;border-top:none">  {{ $data[0]['orderQtyArray'][$i] }} <br/></td>
-                        <td style="padding:9px;border:1px dotted #000;border-top:none">   {{ $data[0]['orderPriceArray'][$i]* $data[0]['orderQtyArray'][$i] }} <br/></td>
-<td></td>
+                        <td style="padding:9px;border:1px dotted #000;border-top:none">   {{ number_format($data[0]['orderPriceArray'][$i]* $data[0]['orderQtyArray'][$i], \App\Models\Order::ORDER_PERCISION) }} <br/></td>
+
                     </tr>
                 @endfor
                 <tr style="">
                     <td colspan="3" style="text-align: left;padding:8px;border:1px dotted #000">Shipping
                         Method: {{ $data[0]['freight_type'] }}</td>
                     <td colspan="1" style="padding:8px;border:1px dotted #000;border-left:1px solid #000">Order Total</td>
-                    <td colspan="1" style="padding:8px;border:1px dotted #000;">$  {{ number_format($data[0]['order_total_cost'],2) }}</td>
+                    <td colspan="1" style="padding:8px;border:1px dotted #000;">$  {{ number_format($data[0]['order_total_cost'],\App\Models\Order::ORDER_PERCISION) }}</td>
                 <td></td>
                 </tr>
                 @else

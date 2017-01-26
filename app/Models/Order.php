@@ -10,6 +10,7 @@ class order extends Sximo
     protected $table = 'orders';
     protected $primaryKey = 'id';
     const OPENID1 = 1, OPENID2 = 3, OPENID3 = 4, FIXED_ASSET_ID = 9, CLOSEID1 = 2, CLOSEID2 = 5;
+    const ORDER_PERCISION = 3;
 
     public function __construct()
     {
@@ -225,12 +226,12 @@ class order extends Sximo
                     $data['requests_item_count'] = $data['requests_item_count'] + 1;
                     $receivedItemsArray[]=$row->item_received;
                     $orderDescriptionArray[] = $row->description;
-                    $orderPriceArray[] = $row->price;
+                    $orderPriceArray[] = number_format($row->price , self::ORDER_PERCISION);
                     $orderQtyArray[] = $row->qty;
                     $orderProductIdArray[] = $row->product_id;
                     $orderitemnamesArray[] = $row->item_name;
                     $skuNumArray[] = $row->sku;
-                    $orderitemcasepriceArray[] = $row->case_price;
+                    $orderitemcasepriceArray[] = number_format($row->case_price,self::ORDER_PERCISION) ;
                     $orderretailpriceArray[]=$row->retail_price;
 
                     //  $prod_data[]=$this->productUnitPriceAndName($orderProductIdArray);
@@ -511,6 +512,13 @@ class order extends Sximo
         } else {
             return parent::getComboselect($params, $limit, $parent);
         }
+    }
+
+    public function getUnitPriceAttribute(){
+        return number_format($this->attributes['unit_price'],3);
+    }
+    public function getCasePriceAttribute(){
+        return number_format($this->attributes['case_price'],3);
     }
 }
 
