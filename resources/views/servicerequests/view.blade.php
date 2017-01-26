@@ -67,13 +67,6 @@ $commentsCount =  $comments->count();
 
 							</tr>
 
-							<tr>
-								<td width='40%' class='label-view text-right'>
-									{{ SiteHelpers::activeLang('Game Name', (isset($fields['game_id']['language'])? $fields['game_id']['language'] : array())) }}
-								</td>
-								<td>{!! SiteHelpers::gridDisplayView($row->game_id,'game_id','1:game:id:game_name') !!} </td>
-
-							</tr>
 
 							<tr>
 								<td width='40%' class='label-view text-right'>
