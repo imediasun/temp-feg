@@ -125,6 +125,12 @@ function initiateSearchFormFields(container) {
     container.find('.sel-search-multiple').select2();
 }
 
+function initiateInlineFormFields(container) {
+    container.find('.date').datepicker({format:'mm/dd/yyyy',autoclose:true});
+    container.find('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss', autoclose:true});
+    container.find('.sel-inline').select2({width:"98%"});
+}
+
 function initDataGrid(module, url, options) {
     if (!options) {
         options = {};

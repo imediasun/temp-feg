@@ -894,7 +894,6 @@ class SiteHelpers
         $type = '';
         $bulk = ($bulk == true ? '[]' : '');
         $mandatory = '';
-        $selectMultiple = "";
         foreach($forms as $f)
         {
             $hasShow = isset($f['view']) ? $f['view'] == 1 : false;
@@ -903,7 +902,6 @@ class SiteHelpers
                 $type = ($f['type'] !='file' ? $f['type'] : '');
                 $option = $f['option'];
                 $required = $f['required'];
-                $selectMultiple = empty($option['select_multiple']) ? "": " multiple='multiple' ";
                 if($required =='required') {
                     $mandatory = "data-parsley-required='true'";
                 } else if($required =='email') {
@@ -1006,12 +1004,8 @@ class SiteHelpers
                     }
 
                 }
-                $multipleClass = "";
-                if (!empty($selectMultiple)) {
-                    $multipleClass = "sel-search-multiple";
-                }
-                $form = "<select name='$field{$bulk}'  class='form-control sel-search $multipleClass' $mandatory $selectMultiple>" .
-                    (empty($selectMultiple) ? 	"<option value=''> -- Select  -- </option>" : "") .
+                $form = "<select name='$field{$bulk}'  class='sel-inline' $mandatory>" .
+                    "<option value=''> -- Select  -- </option>".
                     "	$opts
 						</select>";
                 break;
