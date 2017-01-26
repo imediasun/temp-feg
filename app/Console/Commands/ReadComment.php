@@ -77,7 +77,7 @@ class ReadComment extends Command
                 //insert comment
                 $postUser = \DB::select("Select * FROM users WHERE email = '" . $from . "'");
                 $userId = $postUser[0]->id;
-                $message = imap_fetchbody($inbox, $email_number, 1);
+                $message = imap_fetchbody($inbox, $email_number, 1.1);
 
                 //Insert In sb_comment table
                 $comment_model = new Ticketcomment();
