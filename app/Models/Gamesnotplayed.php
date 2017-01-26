@@ -3,6 +3,7 @@
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use App\Library\ReportHelpers;
+use SiteHelpers;
 
 class gamesnotplayed extends Sximo  {
 	
@@ -48,6 +49,13 @@ class gamesnotplayed extends Sximo  {
             'game_title_id' => ''
         ));        
         extract($filters);
+        if (empty($location_id)) {
+            $location_id = SiteHelpers::getCurrentUserLocationsFromSession();
+        }  
+        if (empty($location_id)) {
+            return ReportHelpers::buildBlankResultDataDueToNoLocation();
+        } 
+        
         ReportHelpers::dateRangeFix($date_start, $date_end);        
         $total = ReportHelpers::getGamesNotPlayedCount($date_start, $date_end, $location_id, $debit_type_id, $game_type_id, $game_cat_id, $game_on_test, $game_id, $game_title_id);
 		$offset = ($page-1) * $limit ;

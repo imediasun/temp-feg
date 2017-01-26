@@ -58,10 +58,14 @@ class UserController extends Controller
                 \Session::put('ulname', $row->last_name);
                 \Session::put('company_id', $row->company_id);
                 $user_locations = \SiteHelpers::getLocationDetails($row->id);
+                $user_location_ids = \SiteHelpers::getIdsFromLocationDetails($user_locations);
+                $has_all_locations = $row->has_all_locations;
+                \Session::put('user_has_all_locations', $has_all_locations);                    
                 if (!empty($user_locations)) {
                     \Session::put('user_locations', $user_locations);
                     \Session::put('selected_location', $user_locations[0]->id);
                     \Session::put('selected_location_name', $user_locations[0]->location_name_short);
+                    \Session::put('user_location_ids', $user_location_ids);
                 }
                 \Session::put('get_locations_by_region', $row->get_locations_by_region);
                 \Session::put('email_2', $row->email_2);
@@ -262,10 +266,14 @@ class UserController extends Controller
                         \Session::put('ulname', $row->last_name);
                         \Session::put('company_id', $row->company_id);
                         $user_locations = \SiteHelpers::getLocationDetails($row->id);
+                        $user_location_ids = \SiteHelpers::getIdsFromLocationDetails($user_locations);
+                        $has_all_locations = $row->has_all_locations;
+                        \Session::put('user_has_all_locations', $has_all_locations);                          
                         if (!empty($user_locations)) {
                             \Session::put('user_locations', $user_locations);
                             \Session::put('selected_location', $user_locations[0]->id);
                             \Session::put('selected_location_name', $user_locations[0]->location_name_short);
+                            \Session::put('user_location_ids', $user_location_ids);
                         } else {
                             \Session::put('selected_location', 0);
                         }
@@ -335,10 +343,14 @@ class UserController extends Controller
         \Session::put('ulname', $row->last_name);
         \Session::put('company_id', $row->company_id);
         $user_locations = \SiteHelpers::getLocationDetails($row->id);
+        $user_location_ids = \SiteHelpers::getIdsFromLocationDetails($user_locations);
+        $has_all_locations = $row->has_all_locations;
+        \Session::put('user_has_all_locations', $has_all_locations);          
         if (!empty($user_locations)) {
             \Session::put('user_locations', $user_locations);
             \Session::put('selected_location', $user_locations[0]->id);
             \Session::put('selected_location_name', $user_locations[0]->location_name_short);
+            \Session::put('user_location_ids', $user_location_ids);
         }
         \Session::put('get_locations_by_region', $row->get_locations_by_region);
         \Session::put('email_2', $row->email_2);
