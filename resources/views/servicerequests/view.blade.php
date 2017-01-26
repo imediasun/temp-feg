@@ -256,7 +256,7 @@ $commentsCount =  $comments->count();
 								</div>
 								<div class="form-group  " >
 									<label for="Assign To" class=" control-label col-md-2 text-left">
-										{!! SiteHelpers::activeLang('Re assign to user', (isset($fields['assign_to']['language'])? $fields['assign_to']['language'] : array())) !!}
+										{!! SiteHelpers::activeLang('Assign to user', (isset($fields['assign_to']['language'])? $fields['assign_to']['language'] : array())) !!}
 									</label>
 									<div class="col-md-5">
 										<select name='assign_to[]' multiple rows='5' id='assign_to' class='select2 ' ></select>
@@ -272,7 +272,7 @@ $commentsCount =  $comments->count();
 								{{--</div>--}}
 								<div class="form-group  " >
 									<label for="Priority" class=" control-label col-md-2 text-left">
-										{!! SiteHelpers::activeLang('Change priority', (isset($fields['Priority']['language'])? $fields['Priority']['language'] : array())) !!}
+										{!! SiteHelpers::activeLang('Change Priority', (isset($fields['Priority']['language'])? $fields['Priority']['language'] : array())) !!}
 									</label>
 									<div class="col-md-5">
 
@@ -290,7 +290,7 @@ $commentsCount =  $comments->count();
 								</div>
 								<div class="form-group  " >
 									<label for="Status" class=" control-label col-md-2 text-left">
-										{!! SiteHelpers::activeLang('Change status', (isset($fields['Status']['language'])? $fields['Status']['language'] : array())) !!}
+										{!! SiteHelpers::activeLang('Status', (isset($fields['Status']['language'])? $fields['Status']['language'] : array())) !!}
 									</label>
 									<div class="col-md-5">
 
@@ -308,7 +308,7 @@ $commentsCount =  $comments->count();
 
 								<div class="form-group  " >
 									<label for="File Path" class=" control-label col-md-2 text-left">
-										{!! SiteHelpers::activeLang('File Path', (isset($fields['Attachments']['language'])? $fields['Attachments']['language'] : array())) !!}
+										{!! SiteHelpers::activeLang('Attach File', (isset($fields['Attachments']['language'])? $fields['Attachments']['language'] : array())) !!}
 									</label>
 									<div class="col-md-5">
 
