@@ -343,7 +343,7 @@ class OrderController extends Controller
             $vendor_id = $request->get('vendor_id');
             $vendor_email = $this->model->getVendorEmail($vendor_id);
             $freight_type_id = $request->get('freight_type_id');
-
+  
            $date_ordered = date("Y-m-d", strtotime($request->get('date_ordered')));
             $total_cost = $request->get('order_total');
             $notes = $request->get('po_notes');
@@ -1103,3 +1103,27 @@ class OrderController extends Controller
         return \Response::download($file,$file_name,$headers);
     }
 }
+
+//    function getComboselect(Request $request)
+//    {
+//        $urlParts = parse_url($request->headers->get('referer'));
+//        $urlSections = array_reverse(explode('/',$urlParts['path']));
+//        $orderId = $urlSections[0];
+//
+
+      //  $result = \DB::table('orders')->where('id', '=', $orderId)->first();
+//        $id = $result->order_type_id;
+        //$row = \DB::table('order_type')->where('id', '=', $id)->first();
+//        echo $id;
+//        exit();
+//           $result =  array('$order_detail' => $row[0]->order_detail,'order_description' => $row[0]->order_description);
+//          echo $result;
+//           exit();
+
+        //query fetch order details
+        //if order type is advance replacement than only show two options
+        //else display all options excluding items returned option
+//        $response = parent::getComboselect($request);
+//        die("in overloaded");
+//    }
+//}

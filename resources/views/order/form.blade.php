@@ -353,9 +353,9 @@
         }
 
         $(document).ready(function () {
-
+            var inc = 1;
             hideShowAltLocation();
-            $("#item_num").val('1');
+            $("#item_num").val(inc);
             $("#submit_btn").hide();
            $('.test').val(0.00);
 
@@ -664,6 +664,12 @@
         }
         function handleItemCount(mode)
         {
+            $('input[name^=item_num]').each(function (index,value) {
+
+                $(value).val(index+1);
+            });
+            /*
+
 
             if(mode == "add")
             {
@@ -671,16 +677,22 @@
             }
             $('input[name^=item_num]').each(function () {
                 if(mode == "add") {
+                    console.log(counter);
                     counter = counter + 1;
                     $('input[name^=item_num]').eq(counter-1).val(counter);
+
                 }
-                else
+                else if (mode == "remove")
                 {
-                    counter = counter - 1;
+                    if(counter >0)
+                    counter = counter-1;
                     $('input[name^=item_num]').eq(counter-1).val(counter);
+
+                   console.log(counter);
                 }
 
-            });
+            });*/
+
 
            // init("item_name"+counter);
         }

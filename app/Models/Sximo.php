@@ -536,13 +536,15 @@ class Sximo extends Model {
             $row[0]['company_name_long'] = '';
         }
         if ($row[0]['new_format'] == 1) {
-            $contentsQuery = \DB::select('SELECT IF(O.product_description = "" && O.product_id != 0, CONCAT(P.vendor_description, " (SKU-",P.sku,")"), O.product_description) AS description,
-													  O.price AS price, O.qty AS qty FROM order_contents O LEFT JOIN products P ON P.id = O.product_id
-												WHERE O.order_id = ' . $order_id);
+            $contentsQuery = \DB::select("SELECT O.item_name AS description,P.sku AS sku, O.price AS price, O.qty AS qty 
+                                            FROM order_contents O 
+                                            LEFT JOIN products P ON P.id = O.product_id 
+                                            WHERE O.order_id = $order_id");
             $row[0]['requests_item_count'] = 0;
             foreach ($contentsQuery as $r) {
                 $row[0]['requests_item_count'] = $row[0]['requests_item_count'] + 1;
-                $orderDescriptionArray[] = $r['description'];
+                //if sku is not empty then concat it with description for PO PDF
+                $orderDescriptionArray[] = empty($r['sku'])?$r['description']:$r['description']." (SKU - {$r['sku']})";
                 $orderPriceArray[] = $r['price'];
                 $orderQtyArray[] = $r['qty'];
             }
