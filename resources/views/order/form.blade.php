@@ -210,7 +210,7 @@
                     <thead>
                     <tr class="invHeading">
                         <th width="50"> Item #</th>
-                        <th width="70"> Sku #</th>
+                        <th width="90"> Sku #</th>
                         <th width="170">Item Name</th>
                         <th width="200">Item Description</th>
                         <th width="90">Price Per Unit</th>
@@ -309,7 +309,7 @@
                 <label class="col-sm-4 text-right">&nbsp;</label>
 
                 <div class="col-sm-8">
-                    <button type="submit" class="btn btn-primary btn-sm "><i
+                    <button  type="submit" class="btn btn-primary btn-sm " id="submit_btn"><i
                                 class="fa  fa-save "></i>  {{ Lang::get('core.sb_save') }} </button>
                     <button type="button" onclick="ajaxViewClose('#{{ $pageModule }}')" class="btn btn-success btn-sm">
                         <i class="fa  fa-arrow-circle-left "></i>  {{ Lang::get('core.sb_cancel') }} </button>
@@ -362,8 +362,9 @@
 
             var inc = 1;
             hideShowAltLocation();
+            checkPOValidity();
             $("#item_num").val(inc);
-            $("#submit_btn").hide();
+            $("#submit_btn").attr('disabled','disabled');
             $('.test').val(0.00);
 
             $('#icon').click(function () {
@@ -585,33 +586,36 @@
         }
         $("#location_id").click(function () {
             $("#po_1").val($(this).val());
+            validatePONumber();
         });
 
         $('#po_3').on("keyup", function () {
+            checkPOValidity();
+        });
+
+        // -----------------for checking and validating PO number.... -----------------------//
+        var poajax;
+        function checkPOValidity()
+        {
             if (poajax) {
                 if (poajax.abort) {
                     poajax.abort();
                 }
             }
-
-            $("#submit_btn").hide();
             var $elm = $('#po_3');
-
             if (editmode && $elm.val().trim() == $elm.data('original')) {
                 $("#po_message").html('');
-                $("#submit_btn").show();
+                $("#submit_btn").removeAttr('disabled');
                 return;
             }
             if ($elm.val().trim() === '') {
                 $("#po_message").html('');
-                $("#submit_btn").fadeOut();
+                $("#submit_btn").attr('disabled','disabled');
                 return;
             }
 
             validatePONumber();
-        });
-        // -----------------for checking and validating PO number.... -----------------------//
-        var poajax;
+        }
         function validatePONumber() {
             var base_url =<?php echo  json_encode(url()) ?>;
             po_1 = $('#po_1').val().trim();
@@ -643,12 +647,12 @@
                     $('.ajaxLoading').hide();
                     poajax = null;
                     if (msg == 'taken') {
-                        $("#po_message").html('<b style="color:red">PO# is taken, try another number..</b>');
-                        $("#submit_btn").fadeOut();
+                        $("#po_message").html('<b style="color:red;margin:5px 0px">*PO# is taken, try another number..</b>');
+                        $("#submit_btn").attr('disabled','disabled');
                     }
                     else {
-                        $("#po_message").html('<b style="color:green">PO# is Available!</b>');
-                        $("#submit_btn").fadeIn();
+                        $("#po_message").html('<b style="color:green;margin:5px 0px">*PO# is Available!</b>');
+                        $("#submit_btn").removeAttr('disabled');
                     }
 
                 }
@@ -680,7 +684,9 @@
                 calculateSum();
             });
             var games_options_js = "{{ json_encode($games_options) }}";
-//games_options_js=JSON.stringify(games_options_js);
+            games_options_js=games_options_js.replace(/&amp;/g, '&');
+            games_options_js=games_options_js.replace(/&#039;/g, "'");
+            games_options_js=games_options_js.replace(/\\/g, "\\\\");
             games_options_js = $.parseJSON(games_options_js.replace(/&quot;/g, '"'));
             $("[id^=game_]").select2({
                 dataType: 'json',
@@ -765,23 +771,22 @@
                     var term = request.term;
                     lastXhr = $.getJSON("order/autocomplete", request, function (data, status, xhr) {
                         cache[term] = data;
-
+                        if(data.value == "No Match")
+                        {
+                            //alert('herell');
+                        }
                         if (xhr === lastXhr) {
                             response(data);
                         }
                     });
                 },
                 select: function (event, ui) {
-
-                    alert(ui.item.value);
-
                     $.ajax({
                         url: "order/productdata",
                         type: "get",
                         dataType: 'json',
                         data: {'product_id': ui.item.value},
                         success: function (result) {
-                            alert(result);
                             if (result.unit_price == 0 && result.case_price == 0) {
                                 notyMessageError("Retail Price and Case Price Unavailable...");
                                 exit;
