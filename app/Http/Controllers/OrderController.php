@@ -344,7 +344,7 @@ class OrderController extends Controller
             $vendor_id = $request->get('vendor_id');
             $vendor_email = $this->model->getVendorEmail($vendor_id);
             $freight_type_id = $request->get('freight_type_id');
-
+  
            $date_ordered = date("Y-m-d", strtotime($request->get('date_ordered')));
             $total_cost = $request->get('order_total');
             $notes = $request->get('po_notes');
@@ -728,7 +728,7 @@ class OrderController extends Controller
                 for ($i = 0; $i < $data[0]['requests_item_count']; $i++) {
                     $j = $i + 1;
                     $item_total = $data[0]['orderPriceArray'][$i] * $data[0]['orderQtyArray'][$i];
-                    $item_total_string = "$ " . number_format($item_total, 2);
+                    $item_total_string = "$ " . number_format($item_total, Order::ORDER_PERCISION);
                     $item_description_string = "Item #" . $j . ": " . $data[0]['orderDescriptionArray'][$i];
                  if(isset($data[0]['skuNumArray'])) {
                      $sku_num_string = $data[0]['skuNumArray'][$i];
@@ -745,7 +745,7 @@ class OrderController extends Controller
                 $data[0]['item_qty_string'][$i] = $item_qty_string;
                 $data[0]['item_total_string'][$i] = $item_total_string;
                 $data[0]['order_total_cost'] = $order_total_cost;
-                // $item_total_string = $item_total_string."-----------------\n"."$ ".number_format($order_total_cost,2)."\n";
+//                $item_total_string = $item_total_string."-----------------\n"."$ ".number_format($order_total_cost,3)."\n";
             }
             $pdf = \PDF::loadView('order.po', ['data' => $data, 'main_title' => "Purchase Order"]);
             if($mode == "save")
@@ -1030,6 +1030,7 @@ class OrderController extends Controller
     {
         $vendor_description = Input::get('product_id');
         $row = \DB::select("select id,sku,item_description,unit_price,case_price,retail_price from products WHERE vendor_description='" . $vendor_description . "'");
+        $row = Order::hydrate($row);
         $json = array('sku' => $row[0]->sku, 'item_description' => $row[0]->item_description, 'unit_price' => $row[0]->unit_price, 'case_price' => $row[0]->case_price, 'retail_price' => $row[0]->retail_price, 'id' => $row[0]->id);
         echo json_encode($json);
     }
@@ -1102,10 +1103,38 @@ class OrderController extends Controller
         $headers = array('Content-Type: application/pdf',);
         return \Response::download($file,$file_name,$headers);
     }
+
     public function getGamesDropdown()
     {
         $user_allowed_locations=implode(',',\Session::get('user_location_ids'));
         $games_options=$this->model->populateGamesDropdown($user_allowed_locations);
         return $games_options;
     }
+
+
 }
+
+ //   function getComboselect(Request $request)
+//    {
+//        $urlParts = parse_url($request->headers->get('referer'));
+//        $urlSections = array_reverse(explode('/',$urlParts['path']));
+//        $orderId = $urlSections[0];
+//
+
+      //  $result = \DB::table('orders')->where('id', '=', $orderId)->first();
+//        $id = $result->order_type_id;
+        //$row = \DB::table('order_type')->where('id', '=', $id)->first();
+//        echo $id;
+//        exit();
+//           $result =  array('$order_detail' => $row[0]->order_detail,'order_description' => $row[0]->order_description);
+//          echo $result;
+//           exit();
+
+        //query fetch order details
+        //if order type is advance replacement than only show two options
+        //else display all options excluding items returned option
+//        $response = parent::getComboselect($request);
+//        die("in overloaded");
+//    }
+//}
+

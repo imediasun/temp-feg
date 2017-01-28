@@ -86,7 +86,7 @@
                                 Shipping Notes </label>
 
                             <div class="col-md-8">
-                                <textarea  name="to_add_notes" id="to_add_notes" rows="6" cols="50" class="form-control">
+                                <textarea name="to_add_notes" id="to_add_notes" rows="6" cols="50" class="form-control">
                                        {{ $data['shipping_notes'] }}
                             </textarea>
                             </div>
@@ -97,7 +97,7 @@
                 </fieldset>
             </div>
 
-            <div class="col-md-6" >
+            <div class="col-md-6">
                 <fieldset>
                     <legend> Order Detail</legend>
 
@@ -107,7 +107,7 @@
 
                         <div class="col-md-8">
                             <select name='order_type_id' rows='5' id='order_type_id' class='select3'
-                                     required></select>
+                                    required></select>
                         </div>
 
 
@@ -140,7 +140,7 @@
 
                         <div class="col-md-8" style="padding-left: 13px;">
                             <div class="input-group datepicker" style="width:150px !important; margin-bottom: 9px;">
-                                <input type="text" class="form-control "  id="my-datepicker"  name="date_ordered"
+                                <input type="text" class="form-control " id="my-datepicker" name="date_ordered"
                                        value="{{ date("m/d/Y", strtotime($data['today'])) }}" required="required"/>
                                 <span class="input-group-addon "><i class="fa fa-calendar" id="icon"></i></span>
                             </div>
@@ -180,7 +180,7 @@
                         <br/><br/>
                         <label class="label-control col-md-4" for="notes"> Order Notes **Will be on PO**</label>
 
-                        <div class="col-md-8" >
+                        <div class="col-md-8">
                             <textarea id="notes" class="form-control " name='po_notes' cols="44" rows="9"
                                       placeholder='Additional Notes'>{{ $data['po_notes'] }}</textarea>
                         </div>
@@ -191,7 +191,8 @@
                     <input type="hidden" id="form_type" name="form_type" value="">
                     <input type="hidden" id="where_in_expression" name="where_in_expression"
                            value="{{$data['where_in_expression']}}">
-                    <input type="hidden" id="SID_string" name="SID_string" @if(isset($data['SID_string']))) value="{{$data['SID_string']}}" @else value="" @endif>
+                    <input type="hidden" id="SID_string" name="SID_string" @if(isset($data['SID_string'])))
+                           value="{{$data['SID_string']}}" @else value="" @endif>
                     <input type="hidden" id="order_id" name="order_id" value="{{ $id }}">
                     <input type="hidden" id="editmode" name="editmode" value="{{ $data['prefill_type'] }}">
                 </fieldset>
@@ -199,9 +200,9 @@
             <hr/>
             <div class="clr clear"></div>
             <div style="visibility: hidden">
-            <input type="button" value="hit me" id="experiment" >
+                <input type="button" value="hit me" id="experiment">
 
-            <h5> Item Details </h5>
+                <h5> Item Details </h5>
             </div>
             <div id="order-info-message"></div>
             <div class="table-responsive">
@@ -227,39 +228,43 @@
 
                     <tbody>
                     <tr id="rowid" class="clone clonedInput">
-                        <td><br/><input type="text"  id="item_num" name="item_num[]" disabled readonly
-                                   style="width:30px;border:none;background:none"/></td>
+                        <td><br/><input type="text" id="item_num" name="item_num[]" disabled readonly
+                                        style="width:30px;border:none;background:none"/></td>
                         <td><br/><input type="text" class="form-control" id="sku_num" name="sku_num[]" disabled readonly
-                                       /></td>
+                                    /></td>
 
                         <td><br/> <input type="text" name='item_name[]' placeholder='Item  Name' id="item_name"
-                                       class='form-control item_name mysearch' onfocus="init(this.id,this)"  maxlength="225" reuuired>
+                                         class='form-control item_name mysearch' onfocus="init(this.id,this)"
+                                         maxlength="225" reuuired>
                         </td>
                         <td>
                             <textarea name='item[]' placeholder='Item  Description' id="item"
-                                      class='form-control item' cols="30" rows="4" maxlength="225" ></textarea>
+                                      class='form-control item' cols="30" rows="4" maxlength="225"></textarea>
                         </td>
 
                         <td><br/> <input type='number' name='price[]' placeholder='Unit Price' id="price"
-                                         class='calculate form-control' min="0.000" step=".01" value="0.000"
+                                         class='calculate form-control' min="0.000" step=".001" value="0.000"
+                                         style="width: 85px"
                                          required></td>
                         <td>
                             <br/> <input type='number' name='case_price[]' placeholder='Case Price' id="case_price"
-                                         class='calculate form-control' min="0.000" step=".01" value="0.000"
+                                         class='calculate form-control' min="0.000" step=".001" value="0.000"
+                                         style="width: 85px"
                                          required></td>
-                        </td>
-                        <td>
-                            <br/> <input type='number' name='qty[]' placeholder='Quantity'
+                        <td><br/> <input type='number' name='qty[]' placeholder='Quantity'
+
                                          class='calculate form-control qty' min="0" step="1" id="qty" value="00"
                                          required></td>
-                        <td  class="game" style="display:none" >
-                          <br/>  <input type='hidden' name='game[]' id='game_0'>
+                        <td class="game" style="display:none">
+                            <br/> <input type='hidden' name='game[]' id='game_0'>
                         </td>
                         <input type='hidden' name='product_id[]' id="product_id">
                         <input type='hidden' name='request_id[]' id="request_id">
                         <td><br/><input type="text" name="total" value="" readonly class="form-control"/></td>
-                        <td align="center"><br/> <button onclick=" $(this).parents('.clonedInput').remove(); calculateSum();decreaseCounter(); return false"
-                                      class="remove btn btn-xs btn-danger">-</button>
+                        <td align="center"><br/>
+                            <button onclick=" $(this).parents('.clonedInput').remove(); calculateSum();decreaseCounter(); return false"
+                                    class="remove btn btn-xs btn-danger">-
+                            </button>
                             <input type="hidden" name="counter[]">
                         </td>
                     </tr>
@@ -268,34 +273,36 @@
                     </tbody>
                 </table>
                 <div style="padding-left:60px !important;">
-                <a href="javascript:void(0);" class="addC btn btn-xs btn-info" rel=".clone" id="add_new_item"><i
-                            class="fa fa-plus"></i>
-                    New Item</a></div>
+                    <a href="javascript:void(0);" class="addC btn btn-xs btn-info" rel=".clone" id="add_new_item"><i
+                                class="fa fa-plus"></i>
+                        New Item</a></div>
                 <input type="hidden" name="enable-masterdetail" value="true">
             </div>
             <br/><br/>
 
 
-            <div style ="
+            <div style="
     padding-left: 865px;
     padding-right: 105px;
 ">
 
                 {{--<td class="game"></td>--}}
-                <td> </td>
+                <td></td>
                 <td colspan="6" class="text-left"><strong> Subtotal ( $ ) </strong></td>
-                <td> <input type="text" name="Subtotal" value="{{ $data['order_total'] }}" readonly
-                            class="form-control"/>
+                <td><input type="text" name="Subtotal"
+                           value="{{number_format($data['order_total'],\App\Models\Order::ORDER_PERCISION) }}" readonly
+                           class="form-control"/>
+
                     <div id="error-meesage-amount">
 
                     </div>
                 </td>
 
 
-
             </div>
 
-<br><hr>
+            <br>
+            <hr>
             <div style="clear:both"></div>
 
             <div class="form-group" style="margin-bottom:50px">
@@ -311,13 +318,14 @@
             {!! Form::close() !!}
         </div>
     </div>
-<?php
+    <?php
 
-?>
+    ?>
     </div>
     <script type="text/javascript">
 
         var minOrderAmount = 0.00;
+        var PRECISION = '<?php echo  \App\Models\Order::ORDER_PERCISION?>';
         $('#alt_ship_to').on('change', function () {
                     hideShowAltLocation();
                 }
@@ -335,74 +343,79 @@
             $('table tr.clone ').each(function (i) {
                 Qty = $(this).find("input[name*='qty']").val();
                 Price = $(this).find("input[name*='price']").val();
-                if(Price == 0)
-                {
+                if (Price == 0) {
                     Price = $(this).find("input[name*='case_price']").val();
 
                 }
                 sum = Qty * Price;
                 Subtotal += sum;
-                sum = sum.toFixed(2);
+                sum = sum.toFixed(PRECISION);
                 $(this).find("input[name*='total']").val(sum);
             });
 
-            Subtotal = Subtotal.toFixed(2);
+            Subtotal = Subtotal.toFixed(PRECISION);
             $("input[name='Subtotal']").val(Subtotal);
             $("#total_cost").val(Subtotal);
         }
 
         $(document).ready(function () {
-            var test = $.parseJSON('<?php echo json_encode($games_options); ?>');
-            results=[{'id':1,'text':test[1].text},{'id':2,'text':test[2].text},{'id':3,'text':test[3].text}];
-            hideShowAltLocation();
-            $("#item_num").val('1');
-            $("#submit_btn").hide();
-           $('.test').val(0.00);
 
-            $('#icon').click(function(){
-                $(document).ready(function(){
+            var inc = 1;
+            hideShowAltLocation();
+            $("#item_num").val(inc);
+            $("#submit_btn").hide();
+            $('.test').val(0.00);
+
+            $('#icon').click(function () {
+                $(document).ready(function () {
                     $("#my-datepicker").datepicker().focus();
                 });
             });
 
             $("#location_id").jCombo("{{ URL::to('order/comboselect?filter=location:id:id|location_name ') }}",
-                    {selected_value: '{{ $data["order_location_id"] }}',initial_text:'-------- Select Location --------'});
+                    {
+                        selected_value: '{{ $data["order_location_id"] }}',
+                        initial_text: '-------- Select Location --------'
+                    });
 
             $("#vendor_id").jCombo("{{ URL::to('order/comboselect?filter=vendor:id:vendor_name') }}",
-                    {selected_value: '{{ $data["order_vendor_id"] }}',initial_text:'-------- Select Vendor --------'});
+                    {
+                        selected_value: '{{ $data["order_vendor_id"] }}',
+                        initial_text: '-------- Select Vendor --------'
+                    });
 
             $("#freight_type_id").jCombo("{{ URL::to('order/comboselect?filter=freight:id:freight_type') }}",
-                    {selected_value: '{{ $data['order_freight_id'] }}',initial_text:'-------- Select Freight Type --------'});
+                    {
+                        selected_value: '{{ $data['order_freight_id'] }}',
+                        initial_text: '-------- Select Freight Type --------'
+                    });
 
             $("#order_type_id").jCombo("{{ URL::to('order/comboselect?filter=order_type:id:order_type') }}",
-                    {selected_value: '{{ $data["order_type"] }}',initial_text:'-------- Select Order Type --------'});
+                    {selected_value: '{{ $data["order_type"] }}', initial_text: '-------- Select Order Type --------'});
             var games_options_js = "{{ json_encode($games_options) }}";
 //games_options_js=JSON.stringify(games_options_js);
-           games_options_js=$.parseJSON(games_options_js.replace(/&quot;/g,'"'));
+            games_options_js = $.parseJSON(games_options_js.replace(/&quot;/g, '"'));
 
             $("[id^=game_0]").select2({
-                dataType : 'json',
-                data:  { results: games_options_js  },
-                placeholder: "For Various Games",width: "98%"
+                dataType: 'json',
+                data: {results: games_options_js},
+                placeholder: "For Various Games", width: "98%"
             });
-            $('#vendor_id').on('change',function(){
-                var vendor_id=$(this).val();
-                if(vendor_id != '')
-                {
+            $('#vendor_id').on('change', function () {
+                var vendor_id = $(this).val();
+                if (vendor_id != '') {
                     $.ajax({
-                        url:'{{url()}}/order/min-order-amount/'+vendor_id,
-                        method:'get',
-                        dataType:'json',
-                        success:function(result){
+                        url: '{{url()}}/order/min-order-amount/' + vendor_id,
+                        method: 'get',
+                        dataType: 'json',
+                        success: function (result) {
                             minOrderAmount = result.min_order_amount;
-                            if(result.status=="success" && result.min_order_amount > 0)
-                            {
-                                $('#order-info-message').css('color','green');
+                            if (result.status == "success" && result.min_order_amount > 0) {
+                                $('#order-info-message').css('color', 'green');
                                 $("#order-info-message").text(result.message);
                             }
-                            else
-                            {
-                                $('#order-info-message').css('color','#ffffff');
+                            else {
+                                $('#order-info-message').css('color', '#ffffff');
                                 $("#order-info-message").text('');
                             }
 
@@ -443,8 +456,7 @@
 
                 if (form.parsley('isValid') == true) {
                     var total_cost = $("#total_cost").val();
-                    if(total_cost >= minOrderAmount)
-                    {
+                    if (total_cost >= minOrderAmount) {
                         var options = {
                             dataType: 'json',
                             beforeSubmit: showRequest,
@@ -452,9 +464,8 @@
                         }
                         $(this).ajaxSubmit(options);
                     }
-                    else
-                    {
-                        $('#error-meesage-amount').css('color','red');
+                    else {
+                        $('#error-meesage-amount').css('color', 'red');
                         $('#error-meesage-amount').show().delay(5000).fadeOut();
                         $("#error-meesage-amount").text('Sorry! you can not create a order request. Please recheck your order price.');
                     }
@@ -470,11 +481,11 @@
             var order_qty_array = <?php echo json_encode($data['orderQtyArray']) ?>;
             var order_product_id_array = <?php echo json_encode($data['orderProductIdArray']) ?>;
             var order_request_id_array = <?php echo json_encode($data['orderRequestIdArray']) ?>;
-            var item_name_array=<?php echo json_encode($data['itemNameArray']) ?>;
-            var sku_num_array=<?php echo json_encode($data['skuNumArray']) ?>;
-            var game_ids_array=<?php echo json_encode($data['gameIdsArray']) ?>;
-            var item_case_price=<?php echo json_encode($data['itemCasePrice']) ?>;
-            var item_retail_price=<?php echo json_encode($data['itemRetailPrice'])?>;
+            var item_name_array =<?php echo json_encode($data['itemNameArray']) ?>;
+            var sku_num_array =<?php echo json_encode($data['skuNumArray']) ?>;
+            var game_ids_array =<?php echo json_encode($data['gameIdsArray']) ?>;
+            var item_case_price =<?php echo json_encode($data['itemCasePrice']) ?>;
+            var item_retail_price =<?php echo json_encode($data['itemRetailPrice'])?>;
             var item_total = 0;
 
             for (var i = 0; i < requests_item_count; i++) {
@@ -483,61 +494,56 @@
                 $('textarea[name^=item]').eq(i).val(order_description_array[i]);
 
                 $('input[name^=sku_num]').eq(i).val(sku_num_array[i]);
-                if(order_price_array[i] == "" || order_price_array[i] == null ) {
+                if (order_price_array[i] == "" || order_price_array[i] == null) {
                     $('input[name^=price]').eq(i).val(0.00);
                 }
-                else{
+                else {
                     $('input[name^=price]').eq(i).val(order_price_array[i]);
 
                 }
-                if(game_ids_array[i] == "" || game_ids_array[i] == null ) {
+                if (game_ids_array[i] == "" || game_ids_array[i] == null) {
                     $('input[name^=game]').eq(i).val("test game");
                 }
-                else{
+                else {
                     $('input[name^=game]').eq(i).val(game_ids_array[i]);
 
                 }
-                if(order_qty_array[i] == "" || order_qty_array[i] == null) {
+                if (order_qty_array[i] == "" || order_qty_array[i] == null) {
                     $('input[name^=qty]').eq(i).val(00);
                 }
-                else{
+                else {
                     $('input[name^=qty]').eq(i).val(order_qty_array[i]);
 
                 }
 
 
-                if(order_product_id_array[i] == "" || order_product_id_array[i]== null)
-                {
+                if (order_product_id_array[i] == "" || order_product_id_array[i] == null) {
                     $('input[name^=product_id]').eq(i).val(0);
                 }
-                else
-                {
+                else {
                     $('input[name^=product_id]').eq(i).val(order_product_id_array[i]);
 
                 }
                 $('input[name^=request_id]').eq(i).val(order_request_id_array[i]);
                 $('input[name^=item_name]').eq(i).val(item_name_array[i]);
 
-                if(item_case_price[i] == "" || item_case_price[i] == null)
-                {
+                if (item_case_price[i] == "" || item_case_price[i] == null) {
                     $('input[name^=case_price]').eq(i).val(0.00);
                 }
-                else
-                {
+                else {
                     $('input[name^=case_price]').eq(i).val(item_case_price[i]);
 
                 }
-                if(item_retail_price[i] == "" || item_retail_price[i] == null) {
+                if (item_retail_price[i] == "" || item_retail_price[i] == null) {
 
                     $('input[name^=retail_price]').eq(i).val(0.00);
                 }
-                else
-                {
+                else {
                     $('input[name^=retail_price]').eq(i).val(item_retail_price[i]);
 
                 }
-                    if (i < requests_item_count - 1) //COMPENSATE FOR BEGINNING WITH ONE INPUT
-        {
+                if (i < requests_item_count - 1) //COMPENSATE FOR BEGINNING WITH ONE INPUT
+                {
 
                     $("#add_new_item").trigger("click");
                 }
@@ -547,11 +553,11 @@
                 calculateSum();
             });
             calculateSum();
-            if(game_ids_array.length > 0) {
+            if (game_ids_array.length > 0) {
                 $("[id^=game_]").select2({
                     dataType: 'json',
                     data: {results: games_options_js},
-                    placeholder: "For Various Games",width: "98%"
+                    placeholder: "For Various Games", width: "98%"
                 });
             }
 
@@ -645,7 +651,7 @@
                 }
             });
         }
-        $('#order_type_id').change(function(){
+        $('#order_type_id').change(function () {
             gameShowHide();
         });
         function gameShowHide() {
@@ -672,42 +678,52 @@
             });
             var games_options_js = "{{ json_encode($games_options) }}";
 //games_options_js=JSON.stringify(games_options_js);
-            games_options_js=$.parseJSON(games_options_js.replace(/&quot;/g,'"'));
+            games_options_js = $.parseJSON(games_options_js.replace(/&quot;/g, '"'));
             $("[id^=game_]").select2({
-                dataType : 'json',
-                data: { results: games_options_js},
-                placeholder: "For Various Games",width: "98%"
+                dataType: 'json',
+                data: {results: games_options_js},
+                placeholder: "For Various Games", width: "98%"
             });
         });
-        function decreaseCounter()
-        {
+        function decreaseCounter() {
 
             handleItemCount('remove');
         }
-        function handleItemCount(mode)
-        {
+        function handleItemCount(mode) {
+            $('input[name^=item_num]').each(function (index, value) {
 
-            if(mode == "add")
-            {
-                counter = 1;
-            }
-            $('input[name^=item_num]').each(function () {
-                if(mode == "add") {
-                    counter = counter + 1;
-                    $('input[name^=item_num]').eq(counter-1).val(counter);
-                }
-                else
-                {
-                    counter = counter - 1;
-                    $('input[name^=item_num]').eq(counter-1).val(counter);
-                }
-
+                $(value).val(index + 1);
             });
+            /*
 
-           // init("item_name"+counter);
+
+             if(mode == "add")
+             {
+             counter = 1;
+             }
+             $('input[name^=item_num]').each(function () {
+             if(mode == "add") {
+             console.log(counter);
+             counter = counter + 1;
+             $('input[name^=item_num]').eq(counter-1).val(counter);
+
+             }
+             else if (mode == "remove")
+             {
+             if(counter >0)
+             counter = counter-1;
+             $('input[name^=item_num]').eq(counter-1).val(counter);
+
+             console.log(counter);
+             }
+
+             });*/
+
+
+            // init("item_name"+counter);
         }
 
-        </script>
+    </script>
     <style type="text/css">
         tr.invHeading th {
             background: #d9d9d9 !important;
@@ -726,109 +742,109 @@
         }
     </style>
     <script>
-        function init(id,obj){
+        function init(id, obj) {
             var cache = {},
                     lastXhr;
 
-                var trid = $(obj).closest('tr').attr('id');
-            var skuid = $("#"+trid+"  input[id^='sku_num']").attr('id');
-                var priceid = $("#"+trid+"  input[id^='price']").attr('id');
-                var casepriceid = $("#"+trid+"  input[id^='case_price']").attr('id');
-                var qtyid = $("#"+trid+"  input[id^='qty']").attr('id');
-                var itemid = $("#"+trid+"  textarea[name^=item]").attr('id');
-                var retailpriceid=$('#'+trid+"  input[name^=retail]").attr('id');
-                var selectorProductId=$('#'+trid+"  input[name^=product_id]").attr('id');
+            var trid = $(obj).closest('tr').attr('id');
+            var skuid = $("#" + trid + "  input[id^='sku_num']").attr('id');
+            var priceid = $("#" + trid + "  input[id^='price']").attr('id');
+            var casepriceid = $("#" + trid + "  input[id^='case_price']").attr('id');
+            var qtyid = $("#" + trid + "  input[id^='qty']").attr('id');
+            var itemid = $("#" + trid + "  textarea[name^=item]").attr('id');
+            var retailpriceid = $('#' + trid + "  input[name^=retail]").attr('id');
+            var selectorProductId = $('#' + trid + "  input[name^=product_id]").attr('id');
 
 
-                $(obj).autocomplete({
-                    minLength: 2,
-                    source: function( request, response ) {
-                        var term = request.term;
-                        lastXhr = $.getJSON( "order/autocomplete", request, function( data, status, xhr ) {
-                            cache[ term ] = data;
+            $(obj).autocomplete({
+                minLength: 2,
+                source: function (request, response) {
+                    var term = request.term;
+                    lastXhr = $.getJSON("order/autocomplete", request, function (data, status, xhr) {
+                        cache[term] = data;
 
-                            if ( xhr === lastXhr ) {
-                                response( data );
-                            }
-                        });
-                    },
-                    select: function( event, ui ) {
+                        if (xhr === lastXhr) {
+                            response(data);
+                        }
+                    });
+                },
+                select: function (event, ui) {
 
-                            alert(ui.item.value);
+                    alert(ui.item.value);
 
-                        $.ajax({url: "order/productdata",type:"get",dataType:'json',data:{'product_id':ui.item.value}, success: function(result){
+                    $.ajax({
+                        url: "order/productdata",
+                        type: "get",
+                        dataType: 'json',
+                        data: {'product_id': ui.item.value},
+                        success: function (result) {
                             alert(result);
-if(result.unit_price == 0 && result.case_price == 0)
-{
-    notyMessageError("Retail Price and Case Price Unavailable...");
-    exit;
-}
-                            if(result.sku) {
-                                $("#"+skuid).val(result.sku);
+                            if (result.unit_price == 0 && result.case_price == 0) {
+                                notyMessageError("Retail Price and Case Price Unavailable...");
+                                exit;
                             }
-                            else
-                            {
-                                $("#"+skuid).val('N/A');
+                            if (result.sku) {
+                                $("#" + skuid).val(result.sku);
+                            }
+                            else {
+                                $("#" + skuid).val('N/A');
                             }
 
-                            if(result.unit_price) {
-                                $("#"+priceid).val(result.unit_price);
+                            if (result.unit_price) {
+                                $("#" + priceid).val(result.unit_price);
                             }
-                            else
-                            {
-                                $("#"+priceid).val(0.00);
+                            else {
+                                $("#" + priceid).val(0.00);
                             }
-                            if(result.case_price) {
-                                $("#"+casepriceid).val(result.case_price);
+                            if (result.case_price) {
+                                $("#" + casepriceid).val(result.case_price);
                             }
-                            else
-                            {
-                                $("#"+casepriceid).val(0.00);
+                            else {
+                                $("#" + casepriceid).val(0.00);
                             }
-                            if(result.retail_price) {
-                                $("#"+retailpriceid).val(result.retail_price);
+                            if (result.retail_price) {
+                                $("#" + retailpriceid).val(result.retail_price);
                             }
-                            else
-                            {
-                                $("#"+casepriceid).val(0.00);
+                            else {
+                                $("#" + casepriceid).val(0.00);
                             }
-                            $("#"+itemid).val(result.item_description);
-                            $("#"+selectorProductId).val(result.id);
-                            $("#"+qtyid).val(0.00);
+                            $("#" + itemid).val(result.item_description);
+                            $("#" + selectorProductId).val(result.id);
+                            $("#" + qtyid).val(0.00);
                             calculateSum();
-                        }});
-                    }
-                });
-        };
+                        }
+                    });
+                }
+            });
+        }
+        ;
         //init();
-$(function()
-        {
+        $(function () {
             $("#experiment").trigger('click');
-            $(".calculate").live("change",function () {
+            $(".calculate").live("change", function () {
                 calculateSum();
             });
         });
-      function ajaxViewClose1(id)
-       {
+        function ajaxViewClose1(id) {
 
-           location.href = "{{ url() }}/order";
-       }
+            location.href = "{{ url() }}/order";
+        }
     </script>
     <style>
-        .ui-corner-all
-        {
-            width:25%!important;
+        .ui-corner-all {
+            width: 25% !important;
         }
-        [id^="s2id_game_0"]:first-of-type{
-            display:none!important;
+
+        [id^="s2id_game_0"]:first-of-type {
+            display: none !important;
         }
-        #s2id_game_0
-        {
-            display:inline-block!important;
+
+        #s2id_game_0 {
+            display: inline-block !important;
         }
-        [id^="game_0"]
-        {
-            width:90%;
+
+        [id^="game_0"] {
+            width: 90%;
         }
     </style>
 
