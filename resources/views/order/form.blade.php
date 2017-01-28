@@ -393,7 +393,10 @@
             $("#order_type_id").jCombo("{{ URL::to('order/comboselect?filter=order_type:id:order_type') }}",
                     {selected_value: '{{ $data["order_type"] }}', initial_text: '-------- Select Order Type --------'});
             var games_options_js = "{{ json_encode($games_options) }}";
-//games_options_js=JSON.stringify(games_options_js);
+//console.log(JSON.stringify(games_options_js));
+            games_options_js=games_options_js.replace(/&amp;/g, '&');
+            games_options_js=games_options_js.replace(/&#039;/g, "'");
+            games_options_js=games_options_js.replace(/\\/g, "\\\\");
             games_options_js = $.parseJSON(games_options_js.replace(/&quot;/g, '"'));
 
             $("[id^=game_0]").select2({
