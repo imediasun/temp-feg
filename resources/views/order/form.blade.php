@@ -362,9 +362,13 @@
 
             var inc = 1;
             hideShowAltLocation();
-            checkPOValidity();
+           var mode="{{ $data['prefill_type'] }}";
+            if(mode != "edit") {
+                $("#submit_btn").attr('disabled','disabled');
+                checkPOValidity();
+            }
             $("#item_num").val(inc);
-            $("#submit_btn").attr('disabled','disabled');
+
             $('.test').val(0.00);
 
             $('#icon').click(function () {
