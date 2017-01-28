@@ -209,16 +209,16 @@
                     <thead>
                     <tr class="invHeading">
                         <th width="50"> Item #</th>
-                        <th width="100"> Sku #</th>
-                        <th width="200">Item Name</th>
+                        <th width="70"> Sku #</th>
+                        <th width="170">Item Name</th>
                         <th width="200">Item Description</th>
-                        <th>Price Per Unit</th>
-                        <th>Case Price</th>
+                        <th width="90">Price Per Unit</th>
+                        <th width="90">Case Price</th>
                         {{--<th>Retail Price</th>--}}
-                        <th>Quantity</th>
-                        <th class="game" style="display:none" width="150">Game Located</th>
-                        <th>Total ( $ )</th>
-                        <th>Remove</th>
+                        <th width="90">Quantity</th>
+                        <th class="game" style="display:none" width="200">Game Located</th>
+                        <th width="90">Total ( $ )</th>
+                        <th width="60" align="center">Remove</th>
 
 
                     </tr>
@@ -229,8 +229,8 @@
                     <tr id="rowid" class="clone clonedInput">
                         <td><br/><input type="text"  id="item_num" name="item_num[]" disabled readonly
                                    style="width:30px;border:none;background:none"/></td>
-                        <td><br/><input type="text"  id="sku_num" name="sku_num[]" disabled readonly
-                                        style="width:70px;border:none;background:none"/></td>
+                        <td><br/><input type="text" class="form-control" id="sku_num" name="sku_num[]" disabled readonly
+                                       /></td>
 
                         <td><br/> <input type="text" name='item_name[]' placeholder='Item  Name' id="item_name"
                                        class='form-control item_name mysearch' onfocus="init(this.id,this)"  maxlength="225" reuuired>
@@ -248,19 +248,17 @@
                                          class='calculate form-control' min="0.000" step=".01" value="0.000"
                                          required></td>
                         </td>
-
-
-
-
-                        <td><br/> <input type='number' name='qty[]' placeholder='Quantity'
+                        <td>
+                            <br/> <input type='number' name='qty[]' placeholder='Quantity'
                                          class='calculate form-control qty' min="0" step="1" id="qty" value="00"
                                          required></td>
-                        <td  class="game" style="display:none" ><input type='hidden' name='game_0' id='game_0' class='game'></td>
-
+                        <td  class="game" style="display:none" >
+                          <br/>  <input type='hidden' name='game[]' id='game_0'>
+                        </td>
                         <input type='hidden' name='product_id[]' id="product_id">
                         <input type='hidden' name='request_id[]' id="request_id">
                         <td><br/><input type="text" name="total" value="" readonly class="form-control"/></td>
-                        <td><br/> <button onclick=" $(this).parents('.clonedInput').remove(); calculateSum();decreaseCounter(); return false"
+                        <td align="center"><br/> <button onclick=" $(this).parents('.clonedInput').remove(); calculateSum();decreaseCounter(); return false"
                                       class="remove btn btn-xs btn-danger">-</button>
                             <input type="hidden" name="counter[]">
                         </td>
@@ -313,7 +311,9 @@
             {!! Form::close() !!}
         </div>
     </div>
+<?php
 
+?>
     </div>
     <script type="text/javascript">
 
@@ -352,7 +352,8 @@
         }
 
         $(document).ready(function () {
-
+            var test = $.parseJSON('<?php echo json_encode($games_options); ?>');
+            results=[{'id':1,'text':test[1].text},{'id':2,'text':test[2].text},{'id':3,'text':test[3].text}];
             hideShowAltLocation();
             $("#item_num").val('1');
             $("#submit_btn").hide();
@@ -375,16 +376,14 @@
 
             $("#order_type_id").jCombo("{{ URL::to('order/comboselect?filter=order_type:id:order_type') }}",
                     {selected_value: '{{ $data["order_type"] }}',initial_text:'-------- Select Order Type --------'});
-            var games_options_js = "{{ $games_options}}";
-            console.log(games_options_js);
-            results = [
-                { id: 1, text: 'my thing' },
-                { id: 2, text: 'my other thing' }
-            ]
-            $("#game_0").select2({
+            var games_options_js = "{{ json_encode($games_options) }}";
+//games_options_js=JSON.stringify(games_options_js);
+           games_options_js=$.parseJSON(games_options_js.replace(/&quot;/g,'"'));
+
+            $("[id^=game_0]").select2({
                 dataType : 'json',
-                data: function() { return {results: games_options_js}; },
-                placeholder: "For Various Games"
+                data:  { results: games_options_js  },
+                placeholder: "For Various Games",width: "98%"
             });
             $('#vendor_id').on('change',function(){
                 var vendor_id=$(this).val();
@@ -473,7 +472,7 @@
             var order_request_id_array = <?php echo json_encode($data['orderRequestIdArray']) ?>;
             var item_name_array=<?php echo json_encode($data['itemNameArray']) ?>;
             var sku_num_array=<?php echo json_encode($data['skuNumArray']) ?>;
-
+            var game_ids_array=<?php echo json_encode($data['gameIdsArray']) ?>;
             var item_case_price=<?php echo json_encode($data['itemCasePrice']) ?>;
             var item_retail_price=<?php echo json_encode($data['itemRetailPrice'])?>;
             var item_total = 0;
@@ -489,6 +488,13 @@
                 }
                 else{
                     $('input[name^=price]').eq(i).val(order_price_array[i]);
+
+                }
+                if(game_ids_array[i] == "" || game_ids_array[i] == null ) {
+                    $('input[name^=game]').eq(i).val("test game");
+                }
+                else{
+                    $('input[name^=game]').eq(i).val(game_ids_array[i]);
 
                 }
                 if(order_qty_array[i] == "" || order_qty_array[i] == null) {
@@ -541,7 +547,13 @@
                 calculateSum();
             });
             calculateSum();
-
+            if(game_ids_array.length > 0) {
+                $("[id^=game_]").select2({
+                    dataType: 'json',
+                    data: {results: games_options_js},
+                    placeholder: "For Various Games",width: "98%"
+                });
+            }
 
         });
 
@@ -633,6 +645,9 @@
                 }
             });
         }
+        $('#order_type_id').change(function(){
+            gameShowHide();
+        });
         function gameShowHide() {
 
             /* var user_level =
@@ -654,6 +669,14 @@
             handleItemCount('add');
             $(".calculate").keyup(function () {
                 calculateSum();
+            });
+            var games_options_js = "{{ json_encode($games_options) }}";
+//games_options_js=JSON.stringify(games_options_js);
+            games_options_js=$.parseJSON(games_options_js.replace(/&quot;/g,'"'));
+            $("[id^=game_]").select2({
+                dataType : 'json',
+                data: { results: games_options_js},
+                placeholder: "For Various Games",width: "98%"
             });
         });
         function decreaseCounter()
@@ -730,7 +753,11 @@
                         });
                     },
                     select: function( event, ui ) {
+
+                            alert(ui.item.value);
+
                         $.ajax({url: "order/productdata",type:"get",dataType:'json',data:{'product_id':ui.item.value}, success: function(result){
+                            alert(result);
 if(result.unit_price == 0 && result.case_price == 0)
 {
     notyMessageError("Retail Price and Case Price Unavailable...");
@@ -792,4 +819,20 @@ $(function()
         {
             width:25%!important;
         }
+        [id^="s2id_game_0"]:first-of-type{
+            display:none!important;
+        }
+        #s2id_game_0
+        {
+            display:inline-block!important;
+        }
+        [id^="game_0"]
+        {
+            width:90%;
+        }
     </style>
+
+    <script>
+
+    </script>
+

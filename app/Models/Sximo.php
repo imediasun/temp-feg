@@ -245,6 +245,7 @@ class Sximo extends Model {
                     $row = \DB::table($table)->where($params['3'], $params['4'])->orderBy($order, 'asc')->get();
                 }
             }
+            if($table=="games-dropdown"){}
         }
 
 
@@ -1006,8 +1007,8 @@ class Sximo extends Model {
             }
             else
             {
-                $concat = 'CONCAT(T.game_title," | ",G.id)';
-                $where = 'AND G.location_id = '.$location.'';
+                $concat = 'CONCAT(G.location_id," | ",T.game_title," | ",G.id)';
+                $where = 'AND G.location_id in ('.$location.')';
             }
             $orderBy = 'L.id,T.game_title';
         }
@@ -1020,22 +1021,21 @@ class Sximo extends Model {
 									  '.$where.'
 							 ORDER BY '.$orderBy);
 
-        foreach ($query as $row)
-        {
-            if(!is_null($row->text) && $row->text == "UNDEFINED") {
+        foreach ($query as $row) {
+            if (!is_null($row->text)) {
                 $row = array(
                     'id' => $row->id,
                     'text' => $row->text
                 );
                 $gamesArray[] = $row;
+
             }
         }
-
         if(empty($gamesArray))
         {
             $gamesArray = array(0, 'N/A');
         }
         $array = $gamesArray;
-        return json_encode($array);
+        return $array;
     }
 }

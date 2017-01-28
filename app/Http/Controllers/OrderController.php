@@ -275,7 +275,8 @@ class OrderController extends Controller
         $this->data['mode'] = $mode;
         $this->data['id'] = $id;
         $this->data['data'] = $this->model->getOrderQuery($id, $mode);
-        $this->data['games_options']=$this->model->populateGamesDropdown();
+        $user_allowed_locations=implode(',',\Session::get('user_location_ids'));
+        $this->data['games_options']=$this->model->populateGamesDropdown($user_allowed_locations);
 
         return view('order.form', $this->data);
     }
@@ -1100,5 +1101,11 @@ class OrderController extends Controller
         $file = public_path()."/orders/".$file_name;
         $headers = array('Content-Type: application/pdf',);
         return \Response::download($file,$file_name,$headers);
+    }
+    public function getGamesDropdown()
+    {
+        $user_allowed_locations=implode(',',\Session::get('user_location_ids'));
+        $games_options=$this->model->populateGamesDropdown($user_allowed_locations);
+        return $games_options;
     }
 }

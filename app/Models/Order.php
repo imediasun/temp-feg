@@ -190,6 +190,7 @@ class order extends Sximo
         $data['skuNumArray'] = "";
         $data['itemCasePrice'] = "";
         $data['itemRetailPrice'] = "";
+        $data['gameIdsArray']="";
         $data['orderRequestIdArray'] = '';
         $data['requests_item_count'] = '';
         $data['today'] = $this->get_local_time();
@@ -219,7 +220,7 @@ class order extends Sximo
             }
             $data['prefill_type'] = 'clone';
             $content_query = \DB::select('SELECT  O.product_description AS description,O.price AS price,O.qty AS qty, O.product_id,O.item_name,O.case_price,P.retail_price, P.sku
-												,O.item_received as item_received FROM order_contents O LEFT JOIN products P ON P.id = O.product_id  WHERE O.order_id = ' . $order_id);
+												,O.item_received as item_received,O.game_id FROM order_contents O LEFT JOIN products P ON P.id = O.product_id  WHERE O.order_id = ' . $order_id);
             if ($content_query) {
                 foreach ($content_query as $row) {
                     $data['requests_item_count'] = $data['requests_item_count'] + 1;
@@ -232,6 +233,7 @@ class order extends Sximo
                     $skuNumArray[] = $row->sku;
                     $orderitemcasepriceArray[] = $row->case_price;
                     $orderretailpriceArray[]=$row->retail_price;
+                    $ordergameidsArray[]=$row->game_id;
 
                     //  $prod_data[]=$this->productUnitPriceAndName($orderProductIdArray);
                 }
@@ -258,6 +260,7 @@ class order extends Sximo
                 $data['itemNameArray'] = $orderitemnamesArray;
                 $data['itemCasePrice'] = $orderitemcasepriceArray;
                 $data['itemRetailPrice']=$orderretailpriceArray;
+                $data['gameIdsArray']=$ordergameidsArray;
                 $data['receivedItemsArray']=$receivedItemsArray;
                 $poArr = array("", "", "");
                 if (isset($data['po_number'])) {
