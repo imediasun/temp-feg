@@ -714,12 +714,33 @@
             $(".calculate").keyup(function () {
                 calculateSum();
             });
-            $("[id^=game_]").select2({
-                dataType: 'json',
-                data: {results: games_options_js},
-                placeholder: "For Various Games", width: "98%"
-            });
+          var location_id= $("#location_id").val();
+            if(location_id != 0) {
+                $.ajax({
+                    type: "GET",
+                    url: "{{ url() }}/order/games-dropdown",
+                    data: {'location': location_id},
+                    success: function (data) {
+                        games_options_js = data;
+                        $("[id^=game_]").select2({
+                            dataType: 'json',
+                            data: {results: data},
+                            placeholder: "For Various Games", width: "98%"
+                        });
+                    }
+                });
+
+            }
+            else {
+                $("[id^=game_]").select2({
+                    dataType: 'json',
+                    data: {results: games_options_js},
+                    placeholder: "For Various Games", width: "98%"
+                });
+            }
         });
+
+
         function decreaseCounter() {
 
             handleItemCount('remove');
