@@ -276,7 +276,7 @@ class OrderController extends Controller
         $this->data['id'] = $id;
         $this->data['data'] = $this->model->getOrderQuery($id, $mode);
         $user_allowed_locations=implode(',',\Session::get('user_location_ids'));
-        $this->data['games_options']=$this->model->populateGamesDropdown($user_allowed_locations);
+        $this->data['games_options']=$this->model->populateGamesDropdown();
 
         return view('order.form', $this->data);
     }
@@ -352,6 +352,16 @@ class OrderController extends Controller
             $po_2 = $request->get('po_2');
             $po_3 = $request->get('po_3');
             $po = $po_1 . '-' . $po_2 . '-' . $po_3;
+            $msg = $this->model->getPoNumber($po);
+            if($msg == 'taken')
+            {
+                $message="PO taken";
+                return response()->json(array(
+                    'message' => $message,
+                    'status' => 'error',
+
+                ));
+            }
             $altShipTo = $request->get('alt_ship_to');
             $alt_address = '';
             $order_description = '';
@@ -1106,8 +1116,9 @@ class OrderController extends Controller
 
     public function getGamesDropdown()
     {
-        $user_allowed_locations=implode(',',\Session::get('user_location_ids'));
-        $games_options=$this->model->populateGamesDropdown($user_allowed_locations);
+        $location = $_GET['location'];
+        //$user_allowed_locations=implode(',',\Session::get('user_location_ids'));
+        $games_options=$this->model->populateGamesDropdown($location);
         return $games_options;
     }
 

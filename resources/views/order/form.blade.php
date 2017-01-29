@@ -357,7 +357,12 @@
             $("input[name='Subtotal']").val(Subtotal);
             $("#total_cost").val(Subtotal);
         }
-
+        var games_options_js = "{{ json_encode($games_options) }}";
+        //console.log(JSON.stringify(games_options_js));
+        games_options_js=games_options_js.replace(/&amp;/g, '&');
+        games_options_js=games_options_js.replace(/&#039;/g, "'");
+        games_options_js=games_options_js.replace(/\\/g, "\\\\");
+        games_options_js = $.parseJSON(games_options_js.replace(/&quot;/g, '"'));
         $(document).ready(function () {
 
             var inc = 1;
@@ -397,13 +402,6 @@
 
             $("#order_type_id").jCombo("{{ URL::to('order/comboselect?filter=order_type:id:order_type') }}",
                     {selected_value: '{{ $data["order_type"] }}', initial_text: '-------- Select Order Type --------'});
-            var games_options_js = "{{ json_encode($games_options) }}";
-//console.log(JSON.stringify(games_options_js));
-            games_options_js=games_options_js.replace(/&amp;/g, '&');
-            games_options_js=games_options_js.replace(/&#039;/g, "'");
-            games_options_js=games_options_js.replace(/\\/g, "\\\\");
-            games_options_js = $.parseJSON(games_options_js.replace(/&quot;/g, '"'));
-
             $("[id^=game_0]").select2({
                 dataType: 'json',
                 data: {results: games_options_js},
@@ -510,9 +508,10 @@
 
                 }
                 if (game_ids_array[i] == "" || game_ids_array[i] == null) {
-                    $('input[name^=game]').eq(i).val("test game");
+                    $('input[name^=game]').eq(i).val("");
                 }
                 else {
+
                     $('input[name^=game]').eq(i).val(game_ids_array[i]);
 
                 }
@@ -562,11 +561,19 @@
             });
             calculateSum();
             if (game_ids_array.length > 0) {
-                $("[id^=game_]").select2({
-                    dataType: 'json',
-                    data: {results: games_options_js},
-                    placeholder: "For Various Games", width: "98%"
+                $.ajax({
+                    type:"GET",
+                    url:"{{ url() }}/order/games-dropdown",
+                    data:{ 'location':"<?php echo $data["order_location_id"] ?>" } ,
+                    success: function(data){
+                        $("[id^=game_]").select2({
+                            dataType: 'json',
+                            data: {results: data},
+                            placeholder: "For Various Games", width: "98%"
+                        });
+                    }
                 });
+
             }
 
         });
@@ -583,14 +590,34 @@
                 notyMessage(data.message);
                 $('#sximo-modal').modal('hide');
             } else {
+                if(data.message == "PO taken")
+                {
+                    data.message="PO is taken already please Try another PO.";
+                    $("#po_message").html('<b style="color:red;margin:5px 0px">*PO# is taken, try another number..</b>');
+                    $("#submit_btn").attr('disabled','disabled');
+                }
                 notyMessageError(data.message);
                 $('.ajaxLoading').hide();
                 return false;
             }
         }
+        var games_dropdown=[];
         $("#location_id").click(function () {
             $("#po_1").val($(this).val());
             validatePONumber();
+            $.ajax({
+                type:"GET",
+                url:"{{ url() }}/order/games-dropdown",
+                data:{'location':$(this).val()},
+                success: function(data){
+                    games_options_js=data;
+                    $("[id^=game_]").select2({
+                        dataType: 'json',
+                        data: {results: data},
+                        placeholder: "For Various Games", width: "98%"
+                    });
+                }
+            });
         });
 
         $('#po_3').on("keyup", function () {
@@ -687,11 +714,6 @@
             $(".calculate").keyup(function () {
                 calculateSum();
             });
-            var games_options_js = "{{ json_encode($games_options) }}";
-            games_options_js=games_options_js.replace(/&amp;/g, '&');
-            games_options_js=games_options_js.replace(/&#039;/g, "'");
-            games_options_js=games_options_js.replace(/\\/g, "\\\\");
-            games_options_js = $.parseJSON(games_options_js.replace(/&quot;/g, '"'));
             $("[id^=game_]").select2({
                 dataType: 'json',
                 data: {results: games_options_js},
