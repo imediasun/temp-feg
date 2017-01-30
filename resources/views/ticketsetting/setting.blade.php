@@ -21,7 +21,7 @@
             {!! Form::open(array('url'=>'sbticket/savepermission', 'class'=>'form-horizontal', 'parsley-validate'=>'','novalidate'=>' ', 'id'=> 'sbticketSetting')) !!}
 
             <div class="sbox">
-                <div class="sbox-title"><h5> Ticket Permission </h5></div>
+                <div class="sbox-title"><h5> Ticket Permissions </h5></div>
                 <div class="sbox-content">
                     <table class="table table-striped table-bordered" id="table">
                         <thead class="no-border">
@@ -48,7 +48,7 @@
                         </tr>
                         <tr>
                             <td>2</td>
-                            <td>Able to receive an email notifications</td>
+                            <td>Will receive ticket update notifications.</td>
                             <td>
                                 <select name='role2[]' multiple id="role2" rows='5' class='select2 '>
                                 </select>
@@ -72,7 +72,7 @@
                         </tr>
                         <tr>
                             <td>4</td>
-                            <td>Able to receive a copy of first email</td>
+                            <td>Will only receive the initial ticket notifications.</td>
                             <td>
                                 <select name='role4[]' multiple id="role4" rows='5' class='select2 '>
                                 </select>
