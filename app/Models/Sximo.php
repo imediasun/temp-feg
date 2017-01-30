@@ -518,21 +518,23 @@ class Sximo extends Model {
             $row[0]['po_zip_ship'] = $query[0]['zip'];
             $row[0]['po_attn'] = $query[0]['attn'];
         } else {
+            $shippingDetail = explode("|",$alt_address);
             $pipe1 = strpos($alt_address, '|');
             $pipe2 = strpos($alt_address, '|', $pipe1 + 1);
             $pipe3 = strpos($alt_address, '|', $pipe2 + 1);
-
+            $pipe4 = strpos($alt_address, '|', $pipe3 + 1);
             $location = substr($alt_address, 0, $pipe1);
             $street = substr($alt_address, $pipe1 + 1, $pipe2 - $pipe1 - 1);
-            $city_state_zip = substr($alt_address, $pipe2 + 1, $pipe3 - $pipe2 - 1);
+
+
             $loading_info_new = substr($alt_address, $pipe3 + 1);
 
             $row[0]['po_location'] = $location;
             $row[0]['po_street1_ship'] = $street;
-            $row[0]['po_city_ship'] = $city_state_zip;
+            $row[0]['po_city_ship'] = $shippingDetail[2];
             $row[0]['loading_info'] = $loading_info_new;
-            $row[0]['po_state_ship'] = '';
-            $row[0]['po_city_shippo_zip_ship'] = '';
+            $row[0]['po_state_ship'] = $shippingDetail[3];
+            $row[0]['po_city_zip'] =  $shippingDetail[4];
             $row[0]['po_attn'] = '';
             $row[0]['company_name_long'] = '';
         }
