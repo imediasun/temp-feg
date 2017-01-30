@@ -92,8 +92,8 @@
 					 </div>
 				  </div> 
 				  <div class="form-group  " >
-					<label for="Solved Date" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Solved Date', (isset($fields['solved_date']['language'])? $fields['solved_date']['language'] : array())) !!}
+					<label for="Date Resolved" class=" control-label col-md-4 text-left">
+					{!! SiteHelpers::activeLang('Date Resolved', (isset($fields['solved_date']['language'])? $fields['solved_date']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
 					  {!! Form::text('solved_date', date("m/d/Y", strtotime($row['solved_date'])),array('class'=>'form-control', 'placeholder'=>'',   )) !!}
