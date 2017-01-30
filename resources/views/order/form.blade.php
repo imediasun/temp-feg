@@ -242,18 +242,18 @@
                                       class='form-control item' cols="30" rows="4" maxlength="225"></textarea>
                         </td>
 
-                        <td><br/> <input type='number' name='price[]' placeholder='Unit Price' id="price"
-                                         class='calculate form-control' min="0.000" step=".001" value="0.000"
+                        <td><br/> <input type='number' name='price[]'  id="price"
+                                         class='calculate form-control' min="0.000" step=".001" placeholder="0.000"
                                          style="width: 85px"
                                          required></td>
                         <td>
-                            <br/> <input type='number' name='case_price[]' placeholder='Case Price' id="case_price"
-                                         class='calculate form-control' min="0.000" step=".001" value="0.000"
+                            <br/> <input type='number' name='case_price[]'  id="case_price"
+                                         class='calculate form-control' min="0.000" step=".001" placeholder="0.000"
                                          style="width: 85px"
                                          required></td>
-                        <td><br/> <input type='number' name='qty[]' placeholder='Quantity'
+                        <td><br/> <input type='number' name='qty[]' placeholder='0'
 
-                                         class='calculate form-control qty' min="0" step="1" id="qty" value="00"
+                                         class='calculate form-control qty' min="0" step="1" id="qty" placeholder="00"
                                          required></td>
                         <td class="game" style="display:none">
                             <br/> <input type='hidden' name='game[]' id='game_0'>
