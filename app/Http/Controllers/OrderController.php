@@ -40,10 +40,10 @@ class OrderController extends Controller
         set_time_limit(0);
         $info = $this->model->makeInfo($this->module);
         //$master  	= $this->buildMasterDetail();
-        
+
         $sort = (!is_null(Input::get('sort')) ? Input::get('sort') : $this->info['setting']['orderby']);
         $order = (!is_null(Input::get('order')) ? Input::get('order') : $this->info['setting']['ordertype']);
-        
+
         // Get order_type search filter value and location_id saerch filter values
         $orderTypeFilter = $this->model->getSearchFilters(array('order_type' => 'order_selected', 'location_id' => ''));
         extract($orderTypeFilter);
@@ -51,10 +51,10 @@ class OrderController extends Controller
         if (empty($order_selected)) {
             $order_selected = "OPEN";
         }
-        
+
         // rebuild search query skipping 'order_type' filter
-        $trimmedSearchQuery = $this->model->rebuildSearchQuery(null, array('order_type'));        
-        
+        $trimmedSearchQuery = $this->model->rebuildSearchQuery(null, array('order_type'));
+
         // Filter Search for query
         // build sql query based on search filters
         $filter = is_null(Input::get('search')) ? '' : $this->buildSearch($trimmedSearchQuery);
