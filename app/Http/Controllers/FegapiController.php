@@ -78,7 +78,9 @@ class FegapiController extends Controller
                     $rows = array();
                     foreach ($tables as $table) {
                         $conn = (isset($table['conn']) ? $table['conn'] : array());
-                        $rows[$table['field']] = $row->$table['field'];
+                        if(isset($row->$table['field'])){
+                            $rows[$table['field']] = $row->$table['field'];
+                        }
                     }
                     $json[] = $rows;
                 }
