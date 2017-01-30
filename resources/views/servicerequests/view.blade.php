@@ -14,7 +14,7 @@ $commentsCount =  $comments->count();
 
 							<tr>
 								<td width='40%' class='label-view text-right'>
-									{{ SiteHelpers::activeLang('Date Open', (isset($fields['Created']['language'])? $fields['Created']['language'] : array())) }}
+									{{ SiteHelpers::activeLang('Date Created', (isset($fields['Created']['language'])? $fields['Created']['language'] : array())) }}
 								</td>
 								<td><?php
 
@@ -70,7 +70,7 @@ $commentsCount =  $comments->count();
 
 							<tr>
 								<td width='40%' class='label-view text-right'>
-									{{ SiteHelpers::activeLang('Assign To', (isset($fields['assign_to']['language'])? $fields['assign_to']['language'] : array())) }}
+									{{ SiteHelpers::activeLang('Assigned To', (isset($fields['assign_to']['language'])? $fields['assign_to']['language'] : array())) }}
 								</td>
 								<td><?php
 
@@ -87,7 +87,7 @@ $commentsCount =  $comments->count();
 								<td width='40%' class='label-view text-right'>
 									{{ SiteHelpers::activeLang('Priority', (isset($fields['Priority']['language'])? $fields['Priority']['language'] : array())) }}
 								</td>
-								<td>{{ $row->Priority }} </td>
+								<td>{{ ucfirst($row->Priority) }} </td>
 
 							</tr>
 
@@ -97,7 +97,7 @@ $commentsCount =  $comments->count();
 								</td>
 								<td><?php
 									if($row->Status=='inqueue') echo 'Pending';
-									else echo $row->Status;
+									else echo ucfirst($row->Status);
 									?></td>
 
 							</tr>
@@ -119,7 +119,7 @@ $commentsCount =  $comments->count();
 
 							<tr>
 								<td width='40%' class='label-view text-right'>
-									{{ SiteHelpers::activeLang('Close', (isset($fields['closed']['language'])? $fields['closed']['language'] : array())) }}
+									{{ SiteHelpers::activeLang('Date Closed', (isset($fields['closed']['language'])? $fields['closed']['language'] : array())) }}
 								</td>
 								<td>
 									<?php
@@ -222,8 +222,8 @@ $commentsCount =  $comments->count();
 							<fieldset><legend> New Reply</legend>
 
 								<div class="form-group ">
-									<label for="TicketID" class=" control-label col-md-2 text-left">
-										{!! SiteHelpers::activeLang('TicketID', (isset($fields['TicketID']['language'])? $fields['TicketID']['language'] : array())) !!}
+									<label for="Ticket ID" class=" control-label col-md-2 text-left">
+										{!! SiteHelpers::activeLang('Ticket ID', (isset($fields['TicketID']['language'])? $fields['TicketID']['language'] : array())) !!}
 									</label>
 									<div class="col-md-5">
 										{!! Form::label('TicketID', $row['TicketID'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
@@ -249,7 +249,7 @@ $commentsCount =  $comments->count();
 								</div>
 								<div class="form-group  " >
 									<label for="Assign To" class=" control-label col-md-2 text-left">
-										{!! SiteHelpers::activeLang('Assign to user', (isset($fields['assign_to']['language'])? $fields['assign_to']['language'] : array())) !!}
+										{!! SiteHelpers::activeLang('Assign to User', (isset($fields['assign_to']['language'])? $fields['assign_to']['language'] : array())) !!}
 									</label>
 									<div class="col-md-5">
 										<select name='assign_to[]' multiple rows='5' id='assign_to' class='select2 ' ></select>
