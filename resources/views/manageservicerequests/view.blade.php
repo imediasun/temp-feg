@@ -116,7 +116,7 @@
 				
 					<tr>
 						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Attachment Path', (isset($fields['attachment_path']['language'])? $fields['attachment_path']['language'] : array())) }}	
+							{{ SiteHelpers::activeLang('Attachments', (isset($fields['attachment_path']['language'])? $fields['attachment_path']['language'] : array())) }}
 						</td>
 						<td>{{ $row->attachment_path }} </td>
 						
