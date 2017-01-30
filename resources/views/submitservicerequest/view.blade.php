@@ -39,7 +39,7 @@
 				
 					<tr>
 						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Requestor Id', (isset($fields['requestor_id']['language'])? $fields['requestor_id']['language'] : array())) }}
+							{{ SiteHelpers::activeLang('Requested By', (isset($fields['requestor_id']['language'])? $fields['requestor_id']['language'] : array())) }}
 						</td>
 						<td>{{ $row->requestor_id }} </td>
 						

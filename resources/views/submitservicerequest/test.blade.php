@@ -1,5 +1,5 @@
 <b>Date Requested:</b> {{ $date_required }}<br>
-<b>Requestor:</b> {{ $requestor }}<br/>
+<b>Requested By:</b> {{ $requestor }}<br/>
 <b>Location:</b> {{ $location }}<br>
 <b>Description:</b> {{ $description }}<br>
 <b>Needed By:</b> {{ $need_by_date }}<br><br>
