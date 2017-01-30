@@ -230,7 +230,7 @@
                     <tr id="rowid" class="clone clonedInput">
                         <td><br/><input type="text" id="item_num" name="item_num[]" disabled readonly
                                         style="width:30px;border:none;background:none"/></td>
-                        <td><br/><input type="text" class="form-control" id="sku_num" name="sku_num[]" disabled readonly
+                        <td><br/><input type="text" class="form-control sku" id="sku_num" name="sku[]"  readonly
                                     /></td>
 
                         <td><br/> <input type="text" name='item_name[]' placeholder='Item  Name' id="item_name"
@@ -498,8 +498,7 @@
 
                 $('input[name^=item_num]').eq(i).val(i + 1);
                 $('textarea[name^=item]').eq(i).val(order_description_array[i]);
-
-                $('input[name^=sku_num]').eq(i).val(sku_num_array[i]);
+                $('input[name^=sku]').eq(i).val(sku_num_array[i]);
                 if (order_price_array[i] == "" || order_price_array[i] == null) {
                     $('input[name^=price]').eq(i).val(0.00);
                 }
@@ -820,7 +819,14 @@
                         cache[term] = data;
                         if(data.value == "No Match")
                         {
-                            //alert('herell');
+                            $('[name^=item_name]:focus').closest('tr').find('.sku').removeAttr('readonly');
+                        }
+                        else
+                        {
+                           // $('[name^=item_name]:focus').closest('tr').find('.sku').attr('disabled',true);
+                            $('[name^=item_name]:focus').closest('tr').find('.sku').attr('readonly',true);
+                            $('[name^=item_name]:focus').closest('tr').find('.sku').val('');
+
                         }
                         if (xhr === lastXhr) {
                             response(data);
