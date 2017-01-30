@@ -353,7 +353,7 @@ class OrderController extends Controller
             $po_3 = $request->get('po_3');
             $po = $po_1 . '-' . $po_2 . '-' . $po_3;
             $msg = $this->model->getPoNumber($po);
-            if($msg == 'taken')
+            if($msg == 'taken' && $request->get('editmode')!= "edit")
             {
                 $message="PO taken";
                 return response()->json(array(
@@ -378,8 +378,7 @@ class OrderController extends Controller
             }
             $itemsArray = $request->get('item');
             $itemNamesArray = $request->get('item_name');
-            //$skuNumArray=$request->get('sku');
-
+            $skuNumArray=$request->get('sku');
             $casePriceArray = $request->get('case_price');
             $priceArray = $request->get('price');
             // add case price in priceArray if item_price is 0.00
@@ -447,6 +446,11 @@ class OrderController extends Controller
                 } else {
                     $product_id = $productIdArray[$i];
                 }
+                if (empty($skuNumArray[$i])) {
+                    $sku_num = '0';
+                } else {
+                    $sku_num = $skuNumArray[$i];
+                }
 
                 if (empty($requestIdArray[$i])) {
                     $request_id = '0';
@@ -459,6 +463,7 @@ class OrderController extends Controller
                 } else {
                     $game_id = '0';
                 }
+
                 $contentsData = array(
                     'order_id' => $order_id,
                     'request_id' => $request_id,
@@ -469,6 +474,7 @@ class OrderController extends Controller
                     'game_id' => $game_id,
                     'item_name' => $itemNamesArray[$i],
                     'case_price' => $casePriceArray[$i],
+                    'sku'=>$sku_num,
                     'total' => $priceArray[$i] * $qtyArray[$i]
                 );
                 \DB::table('order_contents')->insert($contentsData);

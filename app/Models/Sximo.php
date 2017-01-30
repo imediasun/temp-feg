@@ -537,7 +537,7 @@ class Sximo extends Model {
             $row[0]['company_name_long'] = '';
         }
         if ($row[0]['new_format'] == 1) {
-            $contentsQuery = \DB::select("SELECT O.item_name AS description,P.sku AS sku, O.price AS price, O.qty AS qty 
+            $contentsQuery = \DB::select("SELECT O.item_name AS description,if(O.product_id=0,O.sku,P.sku) AS sku, O.price AS price, O.qty AS qty
                                             FROM order_contents O 
                                             LEFT JOIN products P ON P.id = O.product_id 
                                             WHERE O.order_id = $order_id");
@@ -1035,7 +1035,7 @@ class Sximo extends Model {
         }
         if(empty($gamesArray))
         {
-            $gamesArray = array(0, 'N/A');
+            $gamesArray[] = array("id"=> "none"  ,'text'=> 'No Game Found For Selected Location','disabled'=> true);
         }
         $array = $gamesArray;
         return $array;

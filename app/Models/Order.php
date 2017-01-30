@@ -220,7 +220,7 @@ class order extends Sximo
                 $data['alt_address'] = $order_query[0]->alt_address;
             }
             $data['prefill_type'] = 'clone';
-            $content_query = \DB::select('SELECT  O.product_description AS description,O.price AS price,O.qty AS qty, O.product_id,O.item_name,O.case_price,P.retail_price, P.sku
+            $content_query = \DB::select('SELECT  O.product_description AS description,O.price AS price,O.qty AS qty, O.product_id,O.item_name,O.case_price,P.retail_price, if(O.product_id=0,O.sku,P.sku) as sku
 												,O.item_received as item_received,O.game_id FROM order_contents O LEFT JOIN products P ON P.id = O.product_id  WHERE O.order_id = ' . $order_id);
             if ($content_query) {
                 foreach ($content_query as $row) {
@@ -367,6 +367,8 @@ class order extends Sximo
             }
         }
         $data['where_in_expression'] = substr($where_in_expression, 0, -1);
+       //echo "<pre>";
+       // print_r($data);die();
         return $data;
     }
 
