@@ -47,8 +47,8 @@
 					 </div>
 				  </div> 
 				  <div class="form-group  " >
-					<label for="Requestor Id" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Requestor Id', (isset($fields['requestor_id']['language'])? $fields['requestor_id']['language'] : array())) !!}
+					<label for="Requested By" class=" control-label col-md-4 text-left">
+					{!! SiteHelpers::activeLang('Requested By', (isset($fields['requestor_id']['language'])? $fields['requestor_id']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
 					  {!! Form::text('requestor_id', $row['requestor_id'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}

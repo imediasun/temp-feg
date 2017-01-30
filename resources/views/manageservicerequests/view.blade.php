@@ -41,7 +41,7 @@
 				
 					<tr>
 						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Requestor ', (isset($fields['requestor_id']['language'])? $fields['requestor_id']['language'] : array())) }}
+							{{ SiteHelpers::activeLang('Requested By ', (isset($fields['requestor_id']['language'])? $fields['requestor_id']['language'] : array())) }}
 						</td>
                         <td>{!! SiteHelpers::gridDisplayView($row->requestor_id,'requestor_id','1:users:id:username') !!} </td>
 
