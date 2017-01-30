@@ -81,8 +81,8 @@
 					 </div>
 				  </div> 
 				  <div class="form-group  " >
-					<label for="Need By Date" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Need By Date', (isset($fields['need_by_date']['language'])? $fields['need_by_date']['language'] : array())) !!}
+					<label for="Needed By" class=" control-label col-md-4 text-left">
+					{!! SiteHelpers::activeLang('Needed By', (isset($fields['need_by_date']['language'])? $fields['need_by_date']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
 					  {!! Form::text('need_by_date', date("m/d/Y", strtotime($row['need_by_date'])),array('class'=>'form-control', 'placeholder'=>'',   )) !!}
