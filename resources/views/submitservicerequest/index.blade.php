@@ -77,7 +77,7 @@
                         </div>
                         <div class="form-group  " id="description_div">
                             <label for="description" class=" control-label col-md-10 text-left">
-                                Detailed description parts request and explanation of game problem
+                                Detailed Description (parts request and/or description of problem)
                             </label>
 
                             <div class="col-md-4"></div>
@@ -159,7 +159,6 @@
                         </div>
                         <hr/>
                         <h4 class="text-center">Submitted
-                            by {{ \Session::get('first_name') }} {{ \Session::get('last_name') }}
                             on {{ date('m/d/Y') }}</h4>
 
                     </div>
