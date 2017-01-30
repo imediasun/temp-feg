@@ -103,8 +103,8 @@
 					 </div>
 				  </div> 
 				  <div class="form-group  " >
-					<label for="Solver Id" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Solver Id', (isset($fields['solver_id']['language'])? $fields['solver_id']['language'] : array())) !!}
+					<label for="Resolved By Id" class=" control-label col-md-4 text-left">
+					{!! SiteHelpers::activeLang('Resolved By Id', (isset($fields['solver_id']['language'])? $fields['solver_id']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
 					  {!! Form::text('solver_id', $row['solver_id'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
