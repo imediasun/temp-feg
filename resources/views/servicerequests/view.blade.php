@@ -27,7 +27,7 @@ $commentsCount =  $comments->count();
 							</tr>
 							<tr>
 								<td width='40%' class='label-view text-right'>
-									{{ SiteHelpers::activeLang('Needed Date', (isset($fields['need_by_date']['language'])? $fields['need_by_date']['language'] : array())) }}
+									{{ SiteHelpers::activeLang('Date Needed', (isset($fields['need_by_date']['language'])? $fields['need_by_date']['language'] : array())) }}
 								</td>
 								<td><?php echo $row->need_by_date;  ?></td>
 
@@ -300,7 +300,7 @@ $commentsCount =  $comments->count();
 								</div>
 
 								<div class="form-group  " >
-									<label for="File Path" class=" control-label col-md-2 text-left">
+									<label for="Attach File" class=" control-label col-md-2 text-left">
 										{!! SiteHelpers::activeLang('Attach File', (isset($fields['Attachments']['language'])? $fields['Attachments']['language'] : array())) !!}
 									</label>
 									<div class="col-md-5">
