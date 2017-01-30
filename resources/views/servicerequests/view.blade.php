@@ -29,7 +29,7 @@ $commentsCount =  $comments->count();
 								<td width='40%' class='label-view text-right'>
 									{{ SiteHelpers::activeLang('Date Needed', (isset($fields['need_by_date']['language'])? $fields['need_by_date']['language'] : array())) }}
 								</td>
-								<td><?php echo $row->need_by_date;  ?></td>
+								<td><?php echo DateHelpers::formatDate($row->need_by_date);  ?></td>
 
 							</tr>
 							<tr>
@@ -41,8 +41,7 @@ $commentsCount =  $comments->count();
 									if($commentsCount!=0){
 										foreach($comments as $comment)
 										{
-											$date=date("m/d/Y", strtotime($comment->Posted));
-											echo $date;
+											echo DateHelpers::formatDate($comment->Posted);
 											break;
 										}
 									}
@@ -124,8 +123,7 @@ $commentsCount =  $comments->count();
 								<td>
 									<?php
 									if(!empty($row->closed)){
-										$date=date("m/d/Y", strtotime($row->closed));
-										echo $date;
+										echo DateHelpers::formatDate($row->closed);
 									}
 									?>
 								</td>
