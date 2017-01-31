@@ -376,7 +376,9 @@ class order extends Sximo
     {
         $query = \DB::select('SELECT po_number FROM orders WHERE po_number = "' . $po_full . '"');
         if (count($query) > 0) {
-            $po_message = 'taken';
+            //$po_message = 'taken';
+            $po_message=$this->increamentPO();
+
         } else {
             $po_message = 'available';
         }

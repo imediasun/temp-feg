@@ -230,7 +230,7 @@
                     <tr id="rowid" class="clone clonedInput">
                         <td><br/><input type="text" id="item_num" name="item_num[]" disabled readonly
                                         style="width:30px;border:none;background:none"/></td>
-                        <td><br/><input type="text" class="form-control sku" id="sku_num" name="sku[]"  readonly
+                        <td><br/><input type="text" class="form-control sku" id="sku_num" name="sku[]"
                                     /></td>
 
                         <td><br/> <input type="text" name='item_name[]' placeholder='Item  Name' id="item_name"
@@ -289,9 +289,7 @@
                 {{--<td class="game"></td>--}}
                 <td></td>
                 <td colspan="6" class="text-left"><strong> Subtotal ( $ ) </strong></td>
-                <td><input type="text" name="Subtotal"
-                           value="{{number_format($data['order_total'],\App\Models\Order::ORDER_PERCISION) }}" readonly
-                           class="form-control"/>
+                <td><input type="text" name="Subtotal"  value="{{number_format($data['order_total'],\App\Models\Order::ORDER_PERCISION) }}"  class="form-control"/>
 
                     <div id="error-meesage-amount">
 
@@ -323,8 +321,8 @@
     ?>
     </div>
     <script type="text/javascript">
-
         var minOrderAmount = 0.00;
+        var mode="{{ $data['prefill_type'] }}";
         var PRECISION = '<?php echo  \App\Models\Order::ORDER_PERCISION?>';
         $('#alt_ship_to').on('change', function () {
                     hideShowAltLocation();
@@ -363,13 +361,15 @@
         games_options_js=games_options_js.replace(/&#039;/g, "'");
         games_options_js=games_options_js.replace(/\\/g, "\\\\");
         games_options_js = $.parseJSON(games_options_js.replace(/&quot;/g, '"'));
+        $("#po_3").focus(function(){
+            $("#po_message").hide(200);
+        });
         $(document).ready(function () {
 
             var inc = 1;
             hideShowAltLocation();
-           var mode="{{ $data['prefill_type'] }}";
             if(mode != "edit") {
-                $("#submit_btn").attr('disabled','disabled');
+                //$("#submit_btn").attr('disabled','disabled');
                 checkPOValidity();
             }
             $("#item_num").val(inc);
@@ -498,7 +498,13 @@
 
                 $('input[name^=item_num]').eq(i).val(i + 1);
                 $('textarea[name^=item]').eq(i).val(order_description_array[i]);
-                $('input[name^=sku]').eq(i).val(sku_num_array[i]);
+                if (sku_num_array[i] == "" || sku_num_array[i] == null) {
+                    $('input[name^=sku]').eq(i).val("N/A");
+                }
+                else
+                {
+                    $('input[name^=sku]').eq(i).val(sku_num_array[i]);
+                }
                 if (order_price_array[i] == "" || order_price_array[i] == null) {
                     $('input[name^=price]').eq(i).val(0.00);
                 }
@@ -589,12 +595,6 @@
                 notyMessage(data.message);
                 $('#sximo-modal').modal('hide');
             } else {
-                if(data.message == "PO taken")
-                {
-                    data.message="PO is taken already please Try another PO.";
-                    $("#po_message").html('<b style="color:red;margin:5px 0px">*PO# is taken, try another number..</b>');
-                    $("#submit_btn").attr('disabled','disabled');
-                }
                 notyMessageError(data.message);
                 $('.ajaxLoading').hide();
                 return false;
@@ -635,22 +635,24 @@
             var $elm = $('#po_3');
             if (editmode && $elm.val().trim() == $elm.data('original')) {
                 $("#po_message").html('');
-                $("#submit_btn").removeAttr('disabled');
+             //   $("#submit_btn").removeAttr('disabled');
                 return;
             }
             if ($elm.val().trim() === '') {
                 $("#po_message").html('');
-                $("#submit_btn").attr('disabled','disabled');
+               // $("#submit_btn").attr('disabled','disabled');
                 return;
             }
 
             validatePONumber();
         }
         function validatePONumber() {
+            $("#submit_btn").attr('disabled','disabled');
             var base_url =<?php echo  json_encode(url()) ?>;
             po_1 = $('#po_1').val().trim();
             po_2 = $('#po_2').val().trim();
             po_3 = $('#po_3').val().trim();
+            var full_po=po_1+"-"+po_2+"-"+po_3;
             if (po_3.length >= 1) {
                 // $('.ajaxLoading').show();
             }
@@ -665,28 +667,37 @@
             if (!po_1 || !po_2 || !po_3) {
                 return false;
             }
-            poajax = $.ajax({
-                type: "POST",
-                url: base_url + "/order/validateponumber",
-                data: {
-                    po_1: $('#po_1').val().trim(),
-                    po_2: $('#po_2').val().trim(),
-                    po_3: $('#po_3').val().trim()
-                },
-                success: function (msg) {
-                    $('.ajaxLoading').hide();
-                    poajax = null;
-                    if (msg == 'taken') {
-                        $("#po_message").html('<b style="color:red;margin:5px 0px">*PO# is taken, try another number..</b>');
-                        $("#submit_btn").attr('disabled','disabled');
-                    }
-                    else {
-                        $("#po_message").html('<b style="color:green;margin:5px 0px">*PO# is Available!</b>');
+            var origional_po="{{ isset($data['po_number'])?$data['po_number']: '' }}";
+            if(full_po != origional_po ) {
+                poajax = $.ajax({
+                    type: "POST",
+                    url: base_url + "/order/validateponumber",
+                    data: {
+                        po_1: $('#po_1').val().trim(),
+                        po_2: $('#po_2').val().trim(),
+                        po_3: $('#po_3').val().trim()
+                    },
+                    success: function (msg) {
                         $("#submit_btn").removeAttr('disabled');
-                    }
+                        $('.ajaxLoading').hide();
+                        poajax = null;
+                        if (msg != 'available') {
+                            $("#po_3").val(msg);
+                            $("#po_message").html('<b style="color:rgba(43, 164, 32, 0.99);margin:5px 0px">*PO# is available.</b>');
+                            $("#po_message").show(200);
+                        }
+                        else {
+                            $("#po_message").html('<b style="color:rgba(43, 164, 32, 0.99);margin:5px 0px">*PO# is Available.</b>');
+                            $("#po_message").show(200);
+                        }
 
-                }
-            });
+                    }
+                });
+            }
+            else
+            {
+                $("#submit_btn").removeAttr('disabled');
+            }
         }
         $('#order_type_id').change(function () {
             gameShowHide();
@@ -819,13 +830,13 @@
                         cache[term] = data;
                         if(data.value == "No Match")
                         {
-                            $('[name^=item_name]:focus').closest('tr').find('.sku').removeAttr('readonly');
+                           // $('[name^=item_name]:focus').closest('tr').find('.sku').removeAttr('readonly');
                         }
                         else
                         {
                            // $('[name^=item_name]:focus').closest('tr').find('.sku').attr('disabled',true);
-                            $('[name^=item_name]:focus').closest('tr').find('.sku').attr('readonly',true);
-                            $('[name^=item_name]:focus').closest('tr').find('.sku').val('');
+                           // $('[name^=item_name]:focus').closest('tr').find('.sku').attr('readonly',true);
+                           // $('[name^=item_name]:focus').closest('tr').find('.sku').val('');
 
                         }
                         if (xhr === lastXhr) {

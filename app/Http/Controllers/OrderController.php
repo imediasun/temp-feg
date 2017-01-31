@@ -325,7 +325,6 @@ class OrderController extends Controller
 
     function postSave(Request $request, $id = 0)
     {
-
         $rules = array('location_id' => "required", 'vendor_id' => 'required', 'order_type_id' => "required", 'freight_type_id' => 'required', 'date_ordered' => 'required', 'po_3' => 'required');
         $validator = Validator::make($request->all(), $rules);
         $order_data = array();
@@ -344,8 +343,7 @@ class OrderController extends Controller
             $vendor_id = $request->get('vendor_id');
             $vendor_email = $this->model->getVendorEmail($vendor_id);
             $freight_type_id = $request->get('freight_type_id');
-  
-           $date_ordered = date("Y-m-d", strtotime($request->get('date_ordered')));
+            $date_ordered = date("Y-m-d", strtotime($request->get('date_ordered')));
             $total_cost = $request->get('order_total');
             $notes = $request->get('po_notes');
             $po_1 = $request->get('po_1');
@@ -353,14 +351,9 @@ class OrderController extends Controller
             $po_3 = $request->get('po_3');
             $po = $po_1 . '-' . $po_2 . '-' . $po_3;
             $msg = $this->model->getPoNumber($po);
-            if($msg == 'taken' && $request->get('editmode')!= "edit")
-            {
-                $message="PO taken";
-                return response()->json(array(
-                    'message' => $message,
-                    'status' => 'error',
-
-                ));
+            if($msg != "available" && $request->get('editmode')!= "edit") {
+                $po_3=$this->model->increamentPO();
+                $po = $po_1 . '-' . $po_2 . '-' . $po_3;
             }
             $altShipTo = $request->get('alt_ship_to');
             $alt_address = '';
