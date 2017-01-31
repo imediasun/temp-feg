@@ -14,7 +14,7 @@ $commentsCount =  $comments->count();
 
 							<tr>
 								<td width='40%' class='label-view text-right'>
-									{{ SiteHelpers::activeLang('Date Open', (isset($fields['Created']['language'])? $fields['Created']['language'] : array())) }}
+									{{ SiteHelpers::activeLang('Date Created', (isset($fields['Created']['language'])? $fields['Created']['language'] : array())) }}
 								</td>
 								<td><?php
 
@@ -27,9 +27,9 @@ $commentsCount =  $comments->count();
 							</tr>
 							<tr>
 								<td width='40%' class='label-view text-right'>
-									{{ SiteHelpers::activeLang('Needed Date', (isset($fields['need_by_date']['language'])? $fields['need_by_date']['language'] : array())) }}
+									{{ SiteHelpers::activeLang('Date Needed', (isset($fields['need_by_date']['language'])? $fields['need_by_date']['language'] : array())) }}
 								</td>
-								<td><?php echo $row->need_by_date;  ?></td>
+								<td><?php echo DateHelpers::formatDate($row->need_by_date);  ?></td>
 
 							</tr>
 							<tr>
@@ -41,8 +41,7 @@ $commentsCount =  $comments->count();
 									if($commentsCount!=0){
 										foreach($comments as $comment)
 										{
-											$date=date("m/d/Y", strtotime($comment->Posted));
-											echo $date;
+											echo DateHelpers::formatDate($comment->Posted);
 											break;
 										}
 									}
@@ -67,17 +66,10 @@ $commentsCount =  $comments->count();
 
 							</tr>
 
-							<tr>
-								<td width='40%' class='label-view text-right'>
-									{{ SiteHelpers::activeLang('Game Name', (isset($fields['game_id']['language'])? $fields['game_id']['language'] : array())) }}
-								</td>
-								<td>{!! SiteHelpers::gridDisplayView($row->game_id,'game_id','1:game:id:game_name') !!} </td>
-
-							</tr>
 
 							<tr>
 								<td width='40%' class='label-view text-right'>
-									{{ SiteHelpers::activeLang('Assign To', (isset($fields['assign_to']['language'])? $fields['assign_to']['language'] : array())) }}
+									{{ SiteHelpers::activeLang('Assigned To', (isset($fields['assign_to']['language'])? $fields['assign_to']['language'] : array())) }}
 								</td>
 								<td><?php
 
@@ -94,7 +86,7 @@ $commentsCount =  $comments->count();
 								<td width='40%' class='label-view text-right'>
 									{{ SiteHelpers::activeLang('Priority', (isset($fields['Priority']['language'])? $fields['Priority']['language'] : array())) }}
 								</td>
-								<td>{{ $row->Priority }} </td>
+								<td>{{ ucfirst($row->Priority) }} </td>
 
 							</tr>
 
@@ -104,7 +96,7 @@ $commentsCount =  $comments->count();
 								</td>
 								<td><?php
 									if($row->Status=='inqueue') echo 'Pending';
-									else echo $row->Status;
+									else echo ucfirst($row->Status);
 									?></td>
 
 							</tr>
@@ -126,13 +118,12 @@ $commentsCount =  $comments->count();
 
 							<tr>
 								<td width='40%' class='label-view text-right'>
-									{{ SiteHelpers::activeLang('Close', (isset($fields['closed']['language'])? $fields['closed']['language'] : array())) }}
+									{{ SiteHelpers::activeLang('Date Closed', (isset($fields['closed']['language'])? $fields['closed']['language'] : array())) }}
 								</td>
 								<td>
 									<?php
 									if(!empty($row->closed)){
-										$date=date("m/d/Y", strtotime($row->closed));
-										echo $date;
+										echo DateHelpers::formatDate($row->closed);
 									}
 									?>
 								</td>
@@ -229,8 +220,8 @@ $commentsCount =  $comments->count();
 							<fieldset><legend> New Reply</legend>
 
 								<div class="form-group ">
-									<label for="TicketID" class=" control-label col-md-2 text-left">
-										{!! SiteHelpers::activeLang('TicketID', (isset($fields['TicketID']['language'])? $fields['TicketID']['language'] : array())) !!}
+									<label for="Ticket ID" class=" control-label col-md-2 text-left">
+										{!! SiteHelpers::activeLang('Ticket ID', (isset($fields['TicketID']['language'])? $fields['TicketID']['language'] : array())) !!}
 									</label>
 									<div class="col-md-5">
 										{!! Form::label('TicketID', $row['TicketID'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
@@ -256,7 +247,7 @@ $commentsCount =  $comments->count();
 								</div>
 								<div class="form-group  " >
 									<label for="Assign To" class=" control-label col-md-2 text-left">
-										{!! SiteHelpers::activeLang('Re assign to user', (isset($fields['assign_to']['language'])? $fields['assign_to']['language'] : array())) !!}
+										{!! SiteHelpers::activeLang('Assign to User', (isset($fields['assign_to']['language'])? $fields['assign_to']['language'] : array())) !!}
 									</label>
 									<div class="col-md-5">
 										<select name='assign_to[]' multiple rows='5' id='assign_to' class='select2 ' ></select>
@@ -272,7 +263,7 @@ $commentsCount =  $comments->count();
 								{{--</div>--}}
 								<div class="form-group  " >
 									<label for="Priority" class=" control-label col-md-2 text-left">
-										{!! SiteHelpers::activeLang('Change priority', (isset($fields['Priority']['language'])? $fields['Priority']['language'] : array())) !!}
+										{!! SiteHelpers::activeLang('Change Priority', (isset($fields['Priority']['language'])? $fields['Priority']['language'] : array())) !!}
 									</label>
 									<div class="col-md-5">
 
@@ -290,7 +281,7 @@ $commentsCount =  $comments->count();
 								</div>
 								<div class="form-group  " >
 									<label for="Status" class=" control-label col-md-2 text-left">
-										{!! SiteHelpers::activeLang('Change status', (isset($fields['Status']['language'])? $fields['Status']['language'] : array())) !!}
+										{!! SiteHelpers::activeLang('Status', (isset($fields['Status']['language'])? $fields['Status']['language'] : array())) !!}
 									</label>
 									<div class="col-md-5">
 
@@ -307,8 +298,8 @@ $commentsCount =  $comments->count();
 								</div>
 
 								<div class="form-group  " >
-									<label for="File Path" class=" control-label col-md-2 text-left">
-										{!! SiteHelpers::activeLang('File Path', (isset($fields['Attachments']['language'])? $fields['Attachments']['language'] : array())) !!}
+									<label for="Attach File" class=" control-label col-md-2 text-left">
+										{!! SiteHelpers::activeLang('Attach File', (isset($fields['Attachments']['language'])? $fields['Attachments']['language'] : array())) !!}
 									</label>
 									<div class="col-md-5">
 

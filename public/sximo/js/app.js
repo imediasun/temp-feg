@@ -121,8 +121,8 @@ App.notyConfirm = function (options)
  *  This function can check if a value needs URI encoding. 
  *  It can be used before building a custom querystring
  *  
- * @param mixed             value 
- * @param jQuery Element    field
+ * @param mixed             value   String to check
+ * @param jQuery Element    Input   field containing the value
  * @returns {Boolean}
  */
 App.needsURIEncoding = function (value, field) {
@@ -175,8 +175,13 @@ App.buildSearchQueryFromArray = function (fields) {
 
 function initiateSearchFormFields(container) {
     container.find('.date').datepicker({format:'mm/dd/yyyy',autoclose:true});
-    container.find('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});    
-    container.find('.sel-search-multiple').select2();
+    container.find('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});  
+    container.find('.sel-search-multiple').each(function(i, elm) {
+        var $elm = $(elm);
+        if (!$elm.data('select2')) {
+            $elm.select2();
+        }
+    });    
 }
 
 function initDataGrid(module, url, options) {

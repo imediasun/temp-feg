@@ -31,7 +31,7 @@
                         </div>
                     </div>
                     <div class="form-group  ">
-                        <label for="Solved Date" class=" control-label col-md-4 text-left">
+                        <label for="Date Resolved" class=" control-label col-md-4 text-left">
                             {!! SiteHelpers::activeLang(' Date Closed', (isset($fields['solved_date']['language'])?
                             $fields['solved_date']['language'] : array())) !!}
                         </label>

@@ -47,8 +47,8 @@
 					 </div>
 				  </div> 
 				  <div class="form-group  " >
-					<label for="Requestor Id" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Requestor Id', (isset($fields['requestor_id']['language'])? $fields['requestor_id']['language'] : array())) !!}
+					<label for="Requested By" class=" control-label col-md-4 text-left">
+					{!! SiteHelpers::activeLang('Requested By', (isset($fields['requestor_id']['language'])? $fields['requestor_id']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
 					  {!! Form::text('requestor_id', $row['requestor_id'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
@@ -81,8 +81,8 @@
 					 </div>
 				  </div> 
 				  <div class="form-group  " >
-					<label for="Need By Date" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Need By Date', (isset($fields['need_by_date']['language'])? $fields['need_by_date']['language'] : array())) !!}
+					<label for="Needed By" class=" control-label col-md-4 text-left">
+					{!! SiteHelpers::activeLang('Needed By', (isset($fields['need_by_date']['language'])? $fields['need_by_date']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
 					  {!! Form::text('need_by_date', date("m/d/Y", strtotime($row['need_by_date'])),array('class'=>'form-control', 'placeholder'=>'',   )) !!}
@@ -92,8 +92,8 @@
 					 </div>
 				  </div> 
 				  <div class="form-group  " >
-					<label for="Solved Date" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Solved Date', (isset($fields['solved_date']['language'])? $fields['solved_date']['language'] : array())) !!}
+					<label for="Date Resolved" class=" control-label col-md-4 text-left">
+					{!! SiteHelpers::activeLang('Date Resolved', (isset($fields['solved_date']['language'])? $fields['solved_date']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
 					  {!! Form::text('solved_date', date("m/d/Y", strtotime($row['solved_date'])),array('class'=>'form-control', 'placeholder'=>'',   )) !!}
@@ -103,8 +103,8 @@
 					 </div>
 				  </div> 
 				  <div class="form-group  " >
-					<label for="Solver Id" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Solver Id', (isset($fields['solver_id']['language'])? $fields['solver_id']['language'] : array())) !!}
+					<label for="Resolved By Id" class=" control-label col-md-4 text-left">
+					{!! SiteHelpers::activeLang('Resolved By Id', (isset($fields['solver_id']['language'])? $fields['solver_id']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
 					  {!! Form::text('solver_id', $row['solver_id'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}

@@ -37,8 +37,11 @@
                         {{ $data[0]['po_street1_ship'] }} <br/>
                         {{ $data[0]['po_city_ship'] }}
                         {{ $data[0]['po_state_ship'] }}
-                        {{ isset($data[0]['po_zip_ship'])?isset($data[0]['po_zip_ship']):"" }} <br/>
-                        {{ $data[0]['for_location'] }}
+                        {{ $data[0]['po_city_zip'] }} <br/>
+                        <br>
+                        {{  $data[0]['for_location']}}
+                        {{ $data[0]['po_add_notes'] }}
+
                          </td>
                 </tr>
             </table>
