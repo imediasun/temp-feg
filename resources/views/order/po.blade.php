@@ -18,10 +18,10 @@
             </table>
         </div>
         <div id="vendor">
-            <table width="100%" style="border-collapse: collapse">
+            <table width="100%" style="border-collapse: collapse;">
                 <tr><th width="50%" style="text-align: left">Vendor</th><th style="text-align: left;color:red" width="50%">Ship To</th></tr>
                 <tr>
-                    <td style="border:1px solid #000;border-right:none; padding-left: 10px; ">
+                    <td style="border:1px solid #000;border-right:none; padding: 10px; ">
                         {{ $data[0]['vendor_name'] }} <br/>
                         {{ $data[0]['vend_street1'] }}<br/>
                         {{ $data[0]['vend_city'] }}
@@ -32,13 +32,16 @@
                         <br/>
                     </td>
                     <td style="border:1px solid #000; padding-left: 10px; color:red">
-                        {{ $data[0]['company_name_long'] }} <br/>
-                        {{ $data[0]['po_location'] }} <br/>
-                        {{ $data[0]['po_street1_ship'] }} <br/>
-                        {{ $data[0]['po_city_ship'] }}
-                        {{ $data[0]['po_state_ship'] }}
-                        {{ $data[0]['po_city_zip'] }} <br/>
-                        {{ $data[0]['for_location'] }}
+                        {{ isset($data[0]['company_name_long'])?$data[0]['company_name_long']:"" }} <br/>
+                        {{ isset($data[0]['po_location'])?$data[0]['po_location']:"" }} <br/>
+                        {{ isset($data[0]['po_street1_ship'])?$data[0]['po_street1_ship']:"" }} <br/>
+                        {{ isset($data[0]['po_city_ship'])?$data[0]['po_city_ship']:"" }}
+                        {{ isset($data[0]['po_state_ship'])?$data[0]['po_state_ship']:"" }}
+                        {{ isset($data[0]['po_city_zip'])?$data[0]['po_city_zip']:"" }} <br/>
+                        <br>
+                        {{  isset($data[0]['for_location'])?$data[0]['for_location']:""}}
+                        {{ isset($data[0]['po_add_notes'])?$data[0]['po_add_notes']:"" }}
+
                          </td>
                 </tr>
             </table>

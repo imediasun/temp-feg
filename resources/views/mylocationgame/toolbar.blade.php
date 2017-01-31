@@ -7,7 +7,7 @@
         </div>
         <div class="col-md-3">
     <div class="form-group  " >
-            <select name='game_title_id' id='game_name' class='select3 '></select>
+            <select name='game_title_id' id='game_name' class='select4 '></select>
     </div>
         </div>
     <div class="col-md-1">
@@ -15,7 +15,7 @@
         </div>
     <div class="col-md-3">
         <div class="form-group  " >
-            <select name='location_id' id='location_id' class='select3 '></select>
+            <select name='location_id' id='location_id' class='select4 '></select>
         </div>
     </div>
 
@@ -82,7 +82,7 @@
                 );
         $("#location_id").jCombo("{{ URL::to('mylocationgame/comboselect?filter=location:id:location_name') }}",
                 {selected_value: '',initial_text:'--- Select Game Location ---'});
-        $(".select3").select2({ width:"98%"});
+        $("select.select4").select2({ width:"98%"});
         var config_id=$("#col-config").val();
         if(config_id ==0 )
         {
