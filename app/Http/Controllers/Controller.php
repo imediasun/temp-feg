@@ -45,14 +45,17 @@ abstract class Controller extends BaseController
                 \Session::put('ulname', \Auth::user()->last_name);
                 \Session::put('company_id', \Auth::user()->company_id);
                 $user_locations = \SiteHelpers::getLocationDetails(\Auth::user()->id);
+                $user_location_ids = \SiteHelpers::getIdsFromLocationDetails($user_locations);
                 \Session::put('user_locations', $user_locations);
+                \Session::put('user_location_ids', $user_location_ids);
+                \Session::put('user_has_all_locations', \Auth::user()->has_all_locations);
                 \Session::put('selected_location', isset($user_locations[0]->id) ? $user_locations[0]->id: null);
                 \Session::put('selected_location_name', isset($user_locations[0]->location_name_short) ? $user_locations[0]->location_name_short : null);
                 \Session::put('get_locations_by_region', \Auth::user()->get_locations_by_region);
                 \Session::put('themes', 'sximo-light-blue');
             }
         }
-
+        
         if (!\Session::get('themes')) {
             \Session::put('themes', 'sximo');
         }
