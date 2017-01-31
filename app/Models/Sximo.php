@@ -535,6 +535,7 @@ class Sximo extends Model {
             $row[0]['loading_info'] = $loading_info_new;
             $row[0]['po_state_ship'] = $shippingDetail[3];
             $row[0]['po_city_zip'] =  $shippingDetail[4];
+            $row[0]['po_add_notes'] = $shippingDetail[5];
             $row[0]['po_attn'] = '';
             $row[0]['company_name_long'] = '';
         }

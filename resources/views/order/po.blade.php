@@ -39,6 +39,8 @@
                         {{ $data[0]['po_state_ship'] }}
                         {{ $data[0]['po_city_zip'] }} <br/>
                         {{ $data[0]['for_location'] }}
+                        {{ $data[0]['po_add_notes'] }}
+
                          </td>
                 </tr>
             </table>
