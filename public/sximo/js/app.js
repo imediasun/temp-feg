@@ -176,12 +176,7 @@ App.buildSearchQueryFromArray = function (fields) {
 function initiateSearchFormFields(container) {
     container.find('.date').datepicker({format:'mm/dd/yyyy',autoclose:true});
     container.find('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});  
-    container.find('.sel-search-multiple').each(function(i, elm) {
-        var $elm = $(elm);
-        if (!$elm.data('select2')) {
-            $elm.select2();
-        }
-    });    
+    renderDropdown(container.find('.sel-search-multiple'));    
 }
 
 function initDataGrid(module, url, options) {
@@ -286,4 +281,25 @@ function makeSimpleSearchFieldsToInitiateSearchOnEnter() {
             }
         });
     }
+}
+
+/**
+ * This is a simple function to renders select2 dropdown. 
+ * However, before rendering it checks if the target element already has 
+ * been rendered with select2
+ * 
+ * @param {type} elements Elements - result of jQuery select query
+ * @param {type} options - Select2 options
+ * @returns {undefined}
+ */
+function renderDropdown(elements, options) {
+    options = options || {};
+    if (elements && elements.length) {
+        elements.each(function(i, elm){
+            var $elm = $(elm);
+            if (!$elm.data('select2')) {
+                $elm.select2(options);
+            }            
+        });
+    }    
 }
