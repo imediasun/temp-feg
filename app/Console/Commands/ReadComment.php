@@ -61,7 +61,7 @@ class ReadComment extends Command
 
                 /* get information specific to this email */
                 $overview = imap_fetch_overview($inbox, $email_number, 0);
-                //var_dump($overview[0]);
+
                 $from = $overview[0]->from;
                 $from = substr($from, strpos($from, "<") + 1, -1);
                 $to = $overview[0]->to;
@@ -76,11 +76,18 @@ class ReadComment extends Command
                 $ticketId = substr($ticketId[2], 0, strpos($ticketId[2], "@"));
                 //insert comment
                 $postUser = \DB::select("Select * FROM users WHERE email = '" . $from . "'");
-                $userId = $postUser[0]->id;
+                if(!empty($postUser)){
+                    $userId = $postUser[0]->id;
+                }
+                else{
+                    $postUser = \DB::select("Select * FROM users WHERE email = 'greg@element5digital.com'");
+                    $userId = $postUser[0]->id;
+                }
+
                 $message = imap_fetchbody($inbox, $email_number, 1.1);
-                $message = nl2br($message);
-
-
+                if(empty($message)){
+                    $message = imap_fetchbody($inbox, $email_number, 1);
+                }
                 //Insert In sb_comment table
                 $comment_model = new Ticketcomment();
                 $commentsData = array(
@@ -90,9 +97,10 @@ class ReadComment extends Command
                     'UserID' => $userId
                 );
                 $comment_model->insertRow($commentsData, NULL);
+                imap_delete($inbox, $email_number);
             }
 
-            imap_delete($inbox, $email_number);
+
         } else {
             echo "no emails found....";
         }
