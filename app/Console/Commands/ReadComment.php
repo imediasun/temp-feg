@@ -74,30 +74,41 @@ class ReadComment extends Command
                 $subject = $overview[0]->subject;
                 $ticketId = explode('-', $to);
                 $ticketId = substr($ticketId[2], 0, strpos($ticketId[2], "@"));
-                //insert comment
-                $postUser = \DB::select("Select * FROM users WHERE email = '" . $from . "'");
-                if(!empty($postUser)){
-                    $userId = $postUser[0]->id;
-                }
-                else{
-                    $postUser = \DB::select("Select * FROM users WHERE email = 'greg@element5digital.com'");
-                    $userId = $postUser[0]->id;
-                }
+                $ticketDetail = \DB::select("select * from sb_tickets where TicketID = '$ticketId' limit 0,1");
+                if(!empty($ticketDetail)){
+                    //insert comment
+                    $postUser = \DB::select("Select * FROM users WHERE email = '" . $from . "'");
+                    if(!empty($postUser)){
+                        $userId = $postUser[0]->id;
+                    }
+                    else{
+                        $postUser = \DB::select("Select * FROM users WHERE email = 'greg@element5digital.com'");
+                        $userId = $postUser[0]->id;
+                    }
+                    $message = imap_fetchbody($inbox, $email_number, 1.1);
+                    if(empty($message)){
+                        //when message reads from gmail
+                        $message = imap_fetchbody($inbox, $email_number, 1);
+                    }
 
-                $message = imap_fetchbody($inbox, $email_number, 1.1);
-                if(empty($message)){
-                    $message = imap_fetchbody($inbox, $email_number, 1);
+
+                    else{
+                        //when reading from outlook
+                        //add code for removing extra things from message
+                         trim(preg_replace('/From:\s+FEG.*/s','',$message));
+
+                    }
+                    //Insert In sb_comment table
+                    $comment_model = new Ticketcomment();
+                    $commentsData = array(
+                        'TicketID' => $ticketId,
+                        'Comments' => $message,
+                        'Posted' => $posted,
+                        'UserID' => $userId
+                    );
+                    $comment_model->insertRow($commentsData, NULL);
+                    imap_delete($inbox, $email_number);
                 }
-                //Insert In sb_comment table
-                $comment_model = new Ticketcomment();
-                $commentsData = array(
-                    'TicketID' => $ticketId,
-                    'Comments' => $message,
-                    'Posted' => $posted,
-                    'UserID' => $userId
-                );
-                $comment_model->insertRow($commentsData, NULL);
-                imap_delete($inbox, $email_number);
             }
 
 
