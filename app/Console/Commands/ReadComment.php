@@ -95,7 +95,7 @@ class ReadComment extends Command
                     else{
                         //when reading from outlook
                         //add code for removing extra things from message
-                         trim(preg_replace('/From:\s+FEG.*/s','',$message));
+                         $message = trim(preg_replace('/From:\s+FEG.*/s','',$message));
 
                     }
                     //Insert In sb_comment table
