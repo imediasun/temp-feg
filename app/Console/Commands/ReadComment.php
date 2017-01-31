@@ -75,7 +75,7 @@ class ReadComment extends Command
                 $ticketId = explode('-', $to);
                 $ticketId = substr($ticketId[2], 0, strpos($ticketId[2], "@"));
                 $ticketDetail = \DB::select("select * from sb_tickets where TicketID = '$ticketId' limit 0,1");
-                if(!empty($ticketDetail)){
+                if(true){
                     //insert comment
                     $postUser = \DB::select("Select * FROM users WHERE email = '" . $from . "'");
                     if(!empty($postUser)){
