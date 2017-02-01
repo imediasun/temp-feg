@@ -367,8 +367,7 @@ class order extends Sximo
             }
         }
         $data['where_in_expression'] = substr($where_in_expression, 0, -1);
-       //echo "<pre>";
-       // print_r($data);die();
+          
         return $data;
     }
 
