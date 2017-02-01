@@ -107,7 +107,7 @@
 
                         <div class="col-md-8">
                           @if(isset($row->date_received) && !empty($row->date_received))
-                            {{  $row->date_received = date("m/d/Y", strtotime($row->date_received))  }}
+                            {{  DateHelpers::formatDate($row->date_received)  }}
 
 
                               @endif

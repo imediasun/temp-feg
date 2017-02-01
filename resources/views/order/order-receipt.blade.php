@@ -86,12 +86,12 @@
                             </thead>
 
                             <tbody>
-
+                           <?php  $value = 1   ?>
                             @foreach($data['order_items'] as $order_item)
                                 @if($order_item->qty != $order_item->item_received)
                                     <tr>
                                         <td>
-                                            {{ $order_item->id }}
+                                          {{ $value ++ }}
                                             <input type="hidden" name="itemsID[]" value="{{ $order_item->id }}">
                                         </td>
                                         <td>{{ $order_item->item_name }}</td>
@@ -130,7 +130,7 @@
                                 Date Received </label>
                             <div class="col-md-8">
                                 <?php if(isset($data['date_received']) && ($data['date_received']!='0000-00-00'))
-                                $date_received = $data['date_received'];
+                                  $date_received = DateHelpers::formatDate($data['date_received']);
                                 else
                                     $date_received=date('m/d/Y');
                                 ?>
