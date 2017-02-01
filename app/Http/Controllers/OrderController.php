@@ -65,7 +65,7 @@ class OrderController extends Controller
         if (empty($location_id)) {
             $filter .= $locationFilter;
         }
-        
+
 
         //$filter 	.=  $master['masterFilter'];
         //comment limit
@@ -73,12 +73,12 @@ class OrderController extends Controller
             'page' => 1,
             'sort' => $sort,
             'order' => $order,
-            'params' => $filter,            
+            'params' => $filter,
         );
-        
+
         $minutes = 60;
         $cacheKey = md5($filter.$order_selected.$sort.$order);
-        $results = Cache::remember($cacheKey, $minutes, function () use ($params, $order_selected) {            
+        $results = Cache::remember($cacheKey, $minutes, function () use ($params, $order_selected) {
             return $this->model->getExportRows($params, $order_selected);
         });
         //$results = $this->model->getExportRows($params);
@@ -146,7 +146,7 @@ class OrderController extends Controller
         $sort = (!is_null($request->input('sort')) ? $request->input('sort') : $this->info['setting']['orderby']);
         $order = (!is_null($request->input('order')) ? $request->input('order') : $this->info['setting']['ordertype']);
         // End Filter sort and order for query
-        
+
         // Get order_type search filter value and location_id saerch filter values
         $orderTypeFilter = $this->model->getSearchFilters(array('order_type' => 'order_selected', 'location_id' => ''));
         extract($orderTypeFilter);
@@ -154,10 +154,10 @@ class OrderController extends Controller
         if (empty($order_selected)) {
             $order_selected = "OPEN";
         }
-        
+
         // rebuild search query skipping 'order_type' filter
-        $trimmedSearchQuery = $this->model->rebuildSearchQuery(null, array('order_type'));        
-        
+        $trimmedSearchQuery = $this->model->rebuildSearchQuery(null, array('order_type'));
+
         // Filter Search for query
         // build sql query based on search filters
         $filter = is_null($request->input('search')) ? '' : $this->buildSearch($trimmedSearchQuery);
@@ -168,7 +168,7 @@ class OrderController extends Controller
         if (empty($location_id)) {
             $filter .= $locationFilter;
         }
-        
+
         $page = $request->input('page', 1);
         $params = array(
             'page' => $page,
@@ -671,7 +671,7 @@ class OrderController extends Controller
         return Redirect::to('order')->with('messagetext', \Lang::get('core.note_block'))->with('msgstatus', 'success');
 
     }
-    
+
     function getPo($order_id = null, $sendemail = false, $to = null, $from = null,$cc = null,$bcc = null, $message= null )
     {
         $mode="";
@@ -974,7 +974,7 @@ class OrderController extends Controller
             }
             $date_received = $request->get('date_received');
              $date_received = \DateHelpers::formatDate($date_received);
-            
+
             $data = array('date_received' => $date_received,
                 'status_id' => $order_status,
                 'notes' => $notes,
@@ -1046,25 +1046,6 @@ class OrderController extends Controller
     }
 
 
-    function getMinOrderAmount($id)
-    {
-        $row = \DB::table('vendor')->where('id', $id)->select('min_order_amt')->first();
-        if($row)
-        {
-            return response()->json(array(
-                'status' => 'success',
-                'min_order_amount' => $row->min_order_amt,
-                'message' => 'Your request order amonut should be $'.number_format($row->min_order_amt, 2)
-            ));
-        }
-        else {
-            return response()->json(array(
-                'status' => 'error',
-                'message' => 'Current vendor id not exist'
-            ));
-        }
-    }
-
     function getTestEmail()
     {
         $mail = new PHPMailer(); // create a new object
@@ -1094,7 +1075,7 @@ class OrderController extends Controller
     }
     function updateRequestAndProducts($item_count,$SID_new)
     {
-         
+
          for($i=1;$i <= $item_count;$i++)
         {
             $pos1 = strpos($SID_new,'-');

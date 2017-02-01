@@ -289,12 +289,8 @@
                 {{--<td class="game"></td>--}}
                 <td></td>
                 <td colspan="6" class="text-left"><strong> Subtotal ( $ ) </strong></td>
-                <td><input type="text" name="Subtotal"  value="{{number_format($data['order_total'],\App\Models\Order::ORDER_PERCISION) }}"  class="form-control"/>
-
-                    <div id="error-meesage-amount">
-
-                    </div>
-                </td>
+                <td> <input type="text" name="Subtotal" value="{{number_format($data['order_total'],\App\Models\Order::ORDER_PERCISION) }}" readonly
+                            class="form-control"/></td>
 
 
             </div>
@@ -321,7 +317,6 @@
     ?>
     </div>
     <script type="text/javascript">
-        var minOrderAmount = 0.00;
         var mode="{{ $data['prefill_type'] }}";
         var PRECISION = '<?php echo  \App\Models\Order::ORDER_PERCISION?>';
         $('#alt_ship_to').on('change', function () {
@@ -407,29 +402,6 @@
                 data: {results: games_options_js},
                 placeholder: "For Various Games", width: "98%"
             });
-            $('#vendor_id').on('change', function () {
-                var vendor_id = $(this).val();
-                if (vendor_id != '') {
-                    $.ajax({
-                        url: '{{url()}}/order/min-order-amount/' + vendor_id,
-                        method: 'get',
-                        dataType: 'json',
-                        success: function (result) {
-                            minOrderAmount = result.min_order_amount;
-                            if (result.status == "success" && result.min_order_amount > 0) {
-                                $('#order-info-message').css('color', 'green');
-                                $("#order-info-message").text(result.message);
-                            }
-                            else {
-                                $('#order-info-message').css('color', '#ffffff');
-                                $("#order-info-message").text('');
-                            }
-
-                        }
-                    });
-                }
-            });
-
 
             $("input[name*='total'] ").attr('readonly', '1');
             $(" input[name*='bulk_Price'] ").addClass('calculate');
@@ -461,20 +433,12 @@
             form.submit(function () {
 
                 if (form.parsley('isValid') == true) {
-                    var total_cost = $("#total_cost").val();
-                    if (total_cost >= minOrderAmount) {
-                        var options = {
-                            dataType: 'json',
-                            beforeSubmit: showRequest,
-                            success: showResponse
-                        }
-                        $(this).ajaxSubmit(options);
+                    var options = {
+                        dataType: 'json',
+                        beforeSubmit: showRequest,
+                        success: showResponse
                     }
-                    else {
-                        $('#error-meesage-amount').css('color', 'red');
-                        $('#error-meesage-amount').show().delay(5000).fadeOut();
-                        $("#error-meesage-amount").text('Sorry! you can not create a order request. Please recheck your order price.');
-                    }
+                    $(this).ajaxSubmit(options);
                     return false;
 
                 } else {
