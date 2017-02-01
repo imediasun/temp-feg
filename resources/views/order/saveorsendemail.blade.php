@@ -273,7 +273,7 @@
                 var bcc=$("#bcc1").val();
                 var message=$("#message1").val();
                 var  email_link="";
-                e.preventDefault();
+                //e.preventDefault();
                 email_link="https://mail.google.com/mail/u/0/?view=cm&fs=1&to="+to+"&su=Purchase%20Order&body="+message;
                 if(cc)
                 {

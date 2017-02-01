@@ -67,7 +67,7 @@ class order extends Sximo
         if(empty($orders)){
             return $data;
         }
-        $query = "select * from order_contents where order_id in (".implode(',',$orders).")";
+        $query = "SELECT O.*,IF(O.product_id=0,O.sku,P.sku)AS sku FROM order_contents O LEFT OUTER JOIN products P ON O.product_id=P.id WHERE O.order_id IN (".implode(',',$orders).")";
         $result = \DB::select($query);
         //all order contents place them in relevent order
         foreach($result as $item){
