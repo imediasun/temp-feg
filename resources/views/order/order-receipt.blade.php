@@ -96,8 +96,8 @@
                                         </td>
                                         <td>{{ $order_item->item_name }}</td>
                                         <td>{{ $order_item->product_description }}</td>
-                                        <td>{{ number_format($order_item->price , \App\Models\Order::ORDER_PERCISION) }}</td>
-                                        <td>{{ number_format( $order_item->case_price , \App\Models\Order::ORDER_PERCISION) }}</td>
+                                        <td>{{CurrencyHelpers::formatCurrency(number_format($order_item->price , \App\Models\Order::ORDER_PERCISION)) }}</td>
+                                        <td> {{ CurrencyHelpers::formatCurrency( number_format( $order_item->case_price , \App\Models\Order::ORDER_PERCISION)) }}</td>
 
                                         <td>{{ $order_item->qty }}</td>
                                         <td>
@@ -111,7 +111,7 @@
                                         <td>
                                             <input type="text"  id="receivedItemText{{ $order_item->id }}" name="receivedQty[]" value="{{ $order_item->qty - $order_item->item_received}}" readonly="readonly" />
                                         </td>
-                                      <td> {{number_format($order_item->total,\App\Models\Order::ORDER_PERCISION) }}
+                                      <td> {{CurrencyHelpers::formatCurrency( number_format($order_item->total,\App\Models\Order::ORDER_PERCISION)) }}
                                         </td>
 
                             </tr>
