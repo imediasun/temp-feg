@@ -43,12 +43,12 @@
 
                             <div class="form-group" style="margin-top:10px;">
                                 <button data-toggle="modal" data-button="savesend" type="button" data-target="#savesendModal" style="width:33%"
-                                   class=" btn  btn-lg btn-success @if(empty($google_account->g_mail) || empty($google_account->g_password)) @endif" title="SAVE & SEND" id="save_send_modal"><i
+                                   class=" btn  btn-lg btn-success @if(empty($google_account->g_mail) || empty($google_account->g_password)) {{ "disabled" }} @endif" title="SAVE & SEND" id="save_send_modal"><i
                                             class="fa  fa-download" aria-hidden="true"></i>
                                     &nbsp {{ Lang::get('core.sb_save_send') }}</button></div>
                         <div class="form-group" style="margin-top:10px;">
                             <button data-button="save" data-toggle="modal" type="button" data-target="#myModal"
-                                    class="btn btn-info btn-lg @if(empty($google_account->g_mail) || empty($google_account->g_password))  @endif"
+                                    class="btn btn-info btn-lg @if(empty($google_account->g_mail) || empty($google_account->g_password)) {{ "disabled" }}  @endif"
                                     style="width:33%" title="SEND" id="send-only"><i
                                         class="fa fa-sign-in  "></i>&nbsp {{ Lang::get('core.sb_send') }} </button>
                         </div>
