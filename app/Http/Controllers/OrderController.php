@@ -249,11 +249,16 @@ class OrderController extends Controller
         $where_in_expression = '';
         $this->data['setting'] = $this->info['setting'];
         if ($id != 0 && $mode == '') {
+
             $mode = 'edit';
         } elseif ($id == 0 && $mode == '') {
             $mode = 'create';
         } elseif (substr($mode, 0, 3) == 'SID') {
             $mode = $mode;
+        }
+        elseif($mode=="clone")
+        {
+            $mode='clone';
         }
         if ($id == 0) {
             if ($this->access['is_add'] == 0)
@@ -277,7 +282,6 @@ class OrderController extends Controller
         $this->data['data'] = $this->model->getOrderQuery($id, $mode);
         $user_allowed_locations=implode(',',\Session::get('user_location_ids'));
         $this->data['games_options']=$this->model->populateGamesDropdown();
-
         return view('order.form', $this->data);
     }
 
@@ -392,7 +396,7 @@ class OrderController extends Controller
                 $j = $i + 1;
                 $order_description .= ' | item' . $j . ' - (' . $qtyArray[$i] . ') ' . $itemsArray[$i] . ' @ $' . $priceArray[$i] . ' ea.';
             }
-            if ($editmode) {
+            if ($editmode=="edit") {
                 $orderData = array(
                     'company_id' => $company_id,
                     'location_id' => $location_id,
@@ -407,11 +411,11 @@ class OrderController extends Controller
                     'request_ids' => $where_in,
                     'po_notes' => $notes
                 );
+
                 $this->model->insertRow($orderData, $order_id);
                 $last_insert_id = $order_id;
                 \DB::table('order_contents')->where('order_id', $last_insert_id)->delete();
             } else {
-
                 $orderData = array(
                     'user_id' => \Session::get('uid'),
                     'company_id' => $company_id,
@@ -429,6 +433,10 @@ class OrderController extends Controller
                     'new_format' => 1,
                     'po_notes' => $notes
                 );
+                if($editmode == "clone")
+                {
+                    $id=0;
+                }
                 $this->model->insertRow($orderData, $id);
                 $order_id = \DB::getPdo()->lastInsertId();
             }
