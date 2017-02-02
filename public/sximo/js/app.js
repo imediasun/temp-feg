@@ -23,8 +23,7 @@ var UNDEFINED,
 
                     operator = item.operator;
                     if (elm.length) {
-                        if (elm.hasClass('sel-search-multiple')) {
-                            val = val.split(',');
+                        if (elm.hasClass('sel-search-multiple') || elm.data('select2')) {
                             elm.select2('val', val);
                         }
                         else {
@@ -38,7 +37,7 @@ var UNDEFINED,
                         }
                     }                    
                     if (elm2.length) {
-                        if (elm2.hasClass('sel-search-multiple')) {
+                        if (elm2.hasClass('sel-search-multiple') || elm2.data('select2')) {
                             elm2.select2('val', val2);
                         }
                         else {

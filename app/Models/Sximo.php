@@ -407,7 +407,9 @@ class Sximo extends Model {
                         ->leftJoin('users as u1', 'game_service_history.down_user_id', '=', 'u1.id')
                         ->leftJoin('users as u2', 'game_service_history.up_user_id', '=', 'u2.id')
                         ->select('game_service_history.*', 'u1.first_name as down_first_name', 'u1.last_name as down_last_name', 'u2.first_name as up_first_name', 'u2.last_name as up_last_name')
-                        ->where('game_id', '=', $asset_id)->get();
+                        ->where('game_id', '=', $asset_id)
+                        ->orderBy('id', 'desc')
+                        ->get();
         return $row;
     }
 
@@ -422,6 +424,7 @@ class Sximo extends Model {
 
             $row = $row->where('game_id', '=', $asset_id);
         }
+        $row->orderBy('id', 'desc');
         $row = $row->get();
         return $row;
     }

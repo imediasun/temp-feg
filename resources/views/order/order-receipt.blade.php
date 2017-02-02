@@ -187,18 +187,7 @@
 
             <hr/>
             <div class="clr clear"></div>
-
-
-
-
-
-
-
-            {!! Form::close() !!}
-
-
-
-
+           {!! Form::close() !!}
         </div>
 
     </div>
@@ -221,7 +210,7 @@
                 var itemId= $(this).val();
                 $('#receivedItemText'+itemId).attr('readonly', 'readonly');
             });
-            $("#order_status_id").jCombo("{{ URL::to('order/comboselect?filter=order_status:id:status') }}",
+            $("#order_status_id").jCombo("{{ URL::to('order/comboselect?filter=order_status:id:status:order_type_id:1') }}",
                     {selected_value: '{{ $data["order_status_id"] }}',initial_text:'Select Order Status'});
             $('.previewImage').fancybox();
             $('.tips').tooltip();

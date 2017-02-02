@@ -85,10 +85,9 @@
                             <label for="to_add_notes" class=" control-label col-md-4 text-left">
                                 Shipping Notes </label>
 
+
                             <div class="col-md-8">
-                                <textarea name="to_add_notes" id="to_add_notes" rows="6" cols="50" class="form-control">
-                                       {{ $data['shipping_notes'] }}
-                            </textarea>
+                                <textarea name="to_add_notes" id="to_add_notes" rows="6" cols="50" class="form-control">{{ $data['shipping_notes'] }}</textarea>
                             </div>
 
                         </div>
@@ -462,7 +461,7 @@
 
                 $('input[name^=item_num]').eq(i).val(i + 1);
                 $('textarea[name^=item]').eq(i).val(order_description_array[i]);
-                if (sku_num_array[i] == "" || sku_num_array[i] == null) {
+                if (sku_num_array[i] == "" || order_price_array[i] == null) {
                     $('input[name^=sku]').eq(i).val("N/A");
                 }
                 else

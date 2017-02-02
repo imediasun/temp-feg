@@ -230,7 +230,6 @@
             var to1=$(this).val();
             if( to1!= null)
             {
-
                 $("#save_send").removeAttr('disabled');
             }
             else
@@ -239,7 +238,7 @@
             }
 
         });
-        $("#to").change(function(){
+        $("#to").click(function(){
             if($(this).val()!=null)
             {
                 $("#send-email").removeAttr("disabled")
@@ -257,7 +256,10 @@
         }
         $("#send-only").click(function(e){
             $('.ajaxLoading').show();
-            $("#send-email").attr('disabled','disabled');
+            var send_to="{{ $send_to }}"!=" " && "{{ $send_to }}";
+            if(!send_to) {
+                $("#send-email").attr('disabled', 'disabled');
+            }
             $.get("{{ url() }}/order/po/{{ $order_id }}?mode=save", function(data, status){
                 $("#message").text(data['url']+"/order/download-po/"+data['file_name']);
                 $('.ajaxLoading').hide();
@@ -284,18 +286,17 @@
 
         });
         $("#save_send_modal").click(function () {
-            $("#save_send").attr('disabled','disabled');
-            $('.ajaxLoading').show();
+            var send_to="{{ $send_to }}"!=" " && "{{ $send_to }}";
+            if(!send_to) {
+                $("#save_send").attr('disabled', 'disabled');
+           }
+               $('.ajaxLoading').show();
             $.get("{{ url() }}/order/po/{{ $order_id }}?mode=save", function(data, status){
                 $("#message1").text(data['url']+"/order/download-po/"+data['file_name']);
                 $('.ajaxLoading').hide();
             });
             $("#save_send").click(function(e){
                 var to=$("#to1").val();
-                if(!to)
-                {
-
-                }
                 var cc=$("#cc1").val();
                 var bcc=$("#bcc1").val();
                 var message=$("#message1").val();

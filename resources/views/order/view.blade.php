@@ -104,13 +104,10 @@
                         <label class="label-control col-md-4">
                             {{ SiteHelpers::activeLang('Date Received', (isset($fields['date_received']['language'])? $fields['date_received']['language'] : array())) }}
                         </label>
-
                         <div class="col-md-8">
-                          @if(isset($row->date_received) && !empty($row->date_received))
-                            {{  DateHelpers::formatDate($row->date_received)  }}
+                            {{  DateHelpers::formatDate($order_data["received_date"])  }}
 
 
-                              @endif
                         </div>
                     </div>
                     <div class="clearfix"></div>

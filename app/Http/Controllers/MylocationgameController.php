@@ -35,8 +35,10 @@ class MylocationgameController extends Controller
 
     public function getIndex()
     {
-        if ($this->access['is_view'] == 0)
+        if ($this->access['is_view'] == 0) 
+        {
             return Redirect::to('dashboard')->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
+        }            
 
         $this->data['access'] = $this->access;
         return view('mylocationgame.index', $this->data);
@@ -235,6 +237,8 @@ class MylocationgameController extends Controller
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
 
         $this->data['id'] = $id;
+        $this->data['row']['game_title'] = $this->model->get_game_info_by_id($id, 'game_title');
+        $this->data['row']['location_name'] = $this->model->get_location_info_by_id($id, 'location_name');
 
         return view('mylocationgame.form', $this->data);
     }
@@ -366,6 +370,12 @@ class MylocationgameController extends Controller
     public function postUpdate(Request $request, $id = null)
     {
         $request = $request->all();
+        
+        $fromDetailedPage = array_pull($request, 'from_detailed_page');
+        if ($fromDetailedPage == 1) {
+            return $this->updateGameFromDetailsPage($request, $id);
+        }
+        
         $request = array_filter($request);
         array_shift($request);
         array_pull($request, 'submit');
@@ -380,6 +390,158 @@ class MylocationgameController extends Controller
             'status' => 'success',
             'message' => \Lang::get('core.note_success')
         ));
+    }
+    
+    public function updateGameFromDetailsPage($data, $id = null) {
+        
+        $nowDate = date("Y-m-d");
+        $nowDatetime = date("Y-m-d H:i:s");
+        $userId = \Session::get('uid');
+                
+        $oldStatus = $data['old_status_id'];
+        $status = isset($data['status_id']) || !empty($data['status_id']) ? 
+                $data['status_id'] : $oldStatus;
+        
+        $sold = isset($data['sold']) ? $data['sold'] : 0;        
+        $isSold = $sold == 1;
+        $soldDate = isset($data['date_sold']) ? $data['date_sold'] : $nowDate;        
+        $soldTo = @$data['sold_to'];
+        
+        $oldLocation = $data['old_location_id'];
+        if (empty($oldLocation)) {
+            $oldLocation = 0;
+        }
+        $prevLocation = $data['prev_location_id'];
+        if (empty($prevLocation)) {
+            $prevLocation = 0;
+        }        
+        $location = isset($data['location_id']) ? $data['location_id'] : $oldLocation;
+        if (empty($location)) {
+            $location = 0;
+        }        
+        $intendedLocation = $data['intended_first_location'];
+        if (empty($intendedLocation)) {
+            $intendedLocation = 0;
+        }                          
+       
+        $serial = @$data['serial'];
+        $version = @$data['version'];
+        $prevGameName = @$data['prev_game_name'];
+        
+        $newData = array();
+        $newData['serial'] = $serial;
+        $newData['version'] = $version;
+        $newData['prev_game_name'] = $prevGameName;
+        $newData['last_edited_by'] = $userId;
+        $newData['last_edited_on'] = $nowDatetime;
+        $newData['status_id'] = $status;
+        
+        $inTransitToUp  = $oldStatus == 3 && $status == 1;
+        $staysInTransit = $oldStatus == 3 && $status == 3;
+        $upToInTransit  = $oldStatus == 1 && $status == 3;
+        $staysUp        = $oldStatus == 1 && $status == 1;
+        $upToRepair     = $oldStatus == 1 && $status == 2;
+        $repairToUp     = $oldStatus == 2 && $status == 1;
+        $staysRepair    = $oldStatus == 2 && $status == 2;
+        
+        if     ($inTransitToUp) {
+            
+            $move_id = $data['game_move_id'];
+            
+            $newData['status_id'] = $status;
+            $newData['location_id'] = $location;
+            $newData['intended_first_location'] = 0;
+            $newData['date_last_move'] = $nowDate;
+            
+            if (empty($move_id) && empty($prevLocation)) {
+                $newData['date_in_service'] = $nowDate;
+            }
+            if (!empty($move_id)) {
+                \DB::table('game_move_history')
+                        ->where('id', '=', $move_id)
+                        ->update([
+                                'to_loc' => $location,
+                                'to_by' => $userId,
+                                'to_date' => $nowDate,
+                            ]);
+            }
+            
+        }
+        elseif ($upToInTransit) {
+            
+            $newData['location_id'] = 0;
+            $newData['prev_location_id'] = $oldLocation;
+            $newData['intended_first_location'] = $location;
+            $newData['date_last_move'] = $nowDate;
+            
+            $move_id = \DB::table('game_move_history')->insertGetId([
+                    'game_id' => $id,
+                    'from_loc' => $oldLocation,
+                    'from_by' => $userId,
+                    'from_date' => $nowDate,
+                ]);
+                    
+            $newData['game_move_id'] = $move_id;
+          
+        }
+        elseif ($staysInTransit) { 
+            
+            $newData['intended_first_location'] = $location;
+        }
+        elseif ($upToRepair) {  
+            
+            $dataDown = isset($data['date_down']) ? $data['date_down'] : $nowDate;
+            $problem = @$data['problem'];
+            $service_id = \DB::table('game_service_history')->insertGetId([
+                    'game_id' => $id,
+                    'problem' => $problem,
+                    'down_user_id' => $userId,
+                    'date_down' => $dataDown,
+                ]); 
+            $newData['game_service_id'] = $service_id;
+        }
+        elseif ($repairToUp) {         
+            
+            $service_id = $data['game_service_id'];
+            if (empty($service_id)) {
+                return response()->json(array(
+                    'status' => 'error',
+                    'message' => 'Error in moving game to Up & Running. Service history not found!'
+                ));                 
+            }
+            $dateUp = isset($data['date_up']) ? $data['date_up'] : $nowDate;
+            $solution = @$data['solution'];            
+            \DB::table('game_service_history')
+                    ->where('id', '=', $service_id)
+                    ->update([
+                        'solution' => $solution,
+                        'date_up' => $dateUp,
+                        'up_user_id' => $userId,
+                    ]);
+        }
+        elseif ($staysUp) {            
+            
+        }
+        elseif ($staysRepair) {            
+            
+        }        
+        
+        $newData['sold'] = $sold;
+        $newData['sold_to'] = $soldTo;
+        $newData['date_sold'] = $soldDate;         
+        if ($isSold) {
+            $newData['location_id'] = 0;
+            $newData['prev_location_id'] = $oldLocation;
+            $newData['status_id'] = 3;
+            $newData['sale_pending'] = 0;            
+        }
+
+        $newID = $this->model->insertRow($newData, $id);
+        
+        return response()->json(array(
+            'status' => 'success',
+            'message' => \Lang::get('core.note_success')
+        ));        
     }
 
     public function postGamelocation(Request $request)
