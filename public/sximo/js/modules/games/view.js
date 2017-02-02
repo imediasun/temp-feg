@@ -63,7 +63,20 @@
     
     function gameStatusChanged(options) {
         options = options || {};
-        var statusSelector = $(this), 
+        var GAME_UP = 1,
+            GAME_DOWN = 2,
+            GAME_MOVE = 3,
+            statusSelector = $(this), 
+            status=statusSelector.val(),
+            initialStatus = statusSelector.data('original-value') || 0,
+            UP_TO_DOWN  = initialStatus == GAME_UP   && status == GAME_DOWN,
+            UP_TO_MOVE  = initialStatus == GAME_UP   && status == GAME_MOVE,
+            STAYING_UP  = initialStatus == GAME_UP   && status == GAME_UP,
+            STAYING_DOWN= initialStatus == GAME_DOWN && status == GAME_DOWN,
+            DOWN_TO_UP  = initialStatus == GAME_DOWN && status == GAME_UP,
+            MOVE_TO_UP  = initialStatus == GAME_MOVE && status == GAME_UP,
+            STAYING_MOVE= initialStatus == GAME_MOVE && status == GAME_MOVE,
+            
             statusSelectorHasSelect2 = statusSelector.data('select2'),
             locationSelector = container.find("#location_id"),
             locationLabelAddon = container.find(".locationLabelModifier"),
@@ -71,25 +84,25 @@
             upFromRepairContainer = container.find(".upFromRepairDetails"),
             downForRepairContainer = container.find(".downforRepairDetails"),
             location = locationSelector.val(),
-            initialLocation = locationSelector.data('original-value') || 0,
-            initialStatus = statusSelector.data('original-value') || '',
+            initialLocation = locationSelector.data('original-value') || 0,            
             intendedLocation = container.find("[name=intended_first_location]").val() || 0,
-            isSold = container.find("[name=sold]").val() == 1,
-            status=statusSelector.val();
+            isSold = container.find("[name=sold]").val() == 1;
         
         locationLabelAddon.hide();
-        if(initialStatus == 2) {
-            statusSelector.find('option[value=3]').prop('disabled', true);
+        if(initialStatus == GAME_DOWN) {
+            // disable game move
+            statusSelector.find('option[value='+GAME_MOVE+']').prop('disabled', true);
         }        
-        if(initialStatus == 3) {
-            statusSelector.find('option[value=2]').prop('disabled', true);
+        if(initialStatus == GAME_MOVE) {
+            // disable game down
+            statusSelector.find('option[value='+GAME_DOWN+']').prop('disabled', true);
             locationLabelAddon.show();
         }
         form.parsley().destroy();
         container.find('[name=location_id]').prop('required', false);
         form.parsley();        
         // 
-        if(initialStatus == 1 && status == 1) {
+        if(STAYING_UP) {
             if (locationSelectorHasSelect2) {
                 if (location != initialLocation) {
                     locationSelector.select2("val", initialLocation);
@@ -102,12 +115,12 @@
                 }                
                 locationSelector.prop('disabled', true);
             }                                    
-            showUpFromRepair(true);
+            showUpFromRepair(false);
             showDownForRepair(false);   
             return;
         }
         
-        if(initialStatus == 1 && status == 2) {
+        if(UP_TO_DOWN) {
             if (locationSelectorHasSelect2) {
                 if (location != initialLocation) {
                     locationSelector.select2("val", initialLocation);
@@ -120,12 +133,12 @@
                 }                 
                 locationSelector.prop('disabled', true);
             }            
-            showUpFromRepair(true);
+            showUpFromRepair(false);
             showDownForRepair(true);  
             return;
         }
         
-        if(initialStatus == 1 && status == 3) {
+        if(UP_TO_MOVE) {
             if (locationSelectorHasSelect2) {
                 locationSelector.select2("val", 0);
                 locationSelector.select2('enable', true);
@@ -134,26 +147,26 @@
                 locationSelector.val(0);
                 locationSelector.prop('disabled', false);
             }
-            showUpFromRepair(true);
+            showUpFromRepair(false);
             showDownForRepair(false);            
             locationLabelAddon.show();
             return;
         }
         
         //
-        if(initialStatus == 2 && status == 2) {
+        if(STAYING_DOWN) {
             if (locationSelectorHasSelect2) {
                 locationSelector.select2('enable', false);
             }
             else {
                 locationSelector.prop('disabled', true);
             }              
-            showUpFromRepair(true);
+            showUpFromRepair(false);
             showDownForRepair(false); 
             return;
         }
         
-        if(initialStatus == 2 && status == 1) {
+        if(DOWN_TO_UP) {
             if (locationSelectorHasSelect2) {
                 locationSelector.select2('enable', false);
             }
@@ -166,7 +179,7 @@
         }
         
         //
-        if(initialStatus == 3 && status == 3) {
+        if(STAYING_MOVE) {
             if (locationSelectorHasSelect2) {
                 locationSelector.select2('enable', !isSold && intendedLocation == 0);
             }
@@ -178,7 +191,7 @@
             return;
         }
         
-        if(initialStatus == 3 && status == 1) {
+        if(MOVE_TO_UP) {
             if (locationSelectorHasSelect2) {
 //                if (location != intendedLocation) {
 //                    locationSelector.select2("val", intendedLocation);
@@ -370,10 +383,10 @@
 
         hideProgress();
         if(data.status === 'success'){
-            ajaxViewClose('#'+moduleName);
-            initDataGrid(moduleName, url);
             notyMessage(data.message);
+            ajaxViewClose('#'+moduleName);
             $('#sximo-modal').modal('hide');
+            initDataGrid(moduleName, url);
         } 
         else {
             notyMessageError(data.message);
