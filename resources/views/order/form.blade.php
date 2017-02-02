@@ -86,9 +86,7 @@
                                 Shipping Notes </label>
 
                             <div class="col-md-8">
-                                <textarea name="to_add_notes" id="to_add_notes" rows="6" cols="50" class="form-control">
-                                       {{ $data['shipping_notes'] }}
-                            </textarea>
+                                <textarea name="to_add_notes" id="to_add_notes" rows="6" cols="50" class="form-control">{{ $data['shipping_notes'] }}</textarea>
                             </div>
 
                         </div>
