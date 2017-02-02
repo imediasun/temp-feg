@@ -139,8 +139,21 @@
 						endforeach;
 					  ?>
 				 <td class="action"  data-values="action" data-key="<?php echo $row->id ;?>">
-					{!! AjaxHelpers::buttonAction('gamesintransit',$access,$id ,$setting) !!}
+					{!! AjaxHelpers::buttonAction('gamesintransit', $access, $id, $setting) !!}
 					{!! AjaxHelpers::buttonActionInline($row->id,'id') !!}
+                    
+                    <a href="{{ URL::to('mylocationgame/show/'.$id)}}" 
+                       class="tips btn btn-xs btn-white" 
+                       onclick="ajaxViewDetail('#gamesintransit',this.href); return false;"
+                       title="Edit Movement"><i class="fa fa-truck " aria-hidden="true"></i>
+                    </a>
+                    
+                    <a href="{{ URL::to('mylocationgame/update/'.$id)}}" 
+                       class="tips btn btn-xs btn-white" 
+                       onclick="ajaxViewDetail('#gamesintransit',this.href); return false;"
+                       title="Edit Game"><i class="fa fa-pencil " aria-hidden="true"></i>
+                    </a>
+                    
 				</td>
                 </tr>
                 @if($setting['view-method']=='expand')
@@ -181,6 +194,9 @@ $(document).ready(function() {
 		checkboxClass: 'icheckbox_square-blue',
 		radioClass: 'iradio_square-blue',
 	});
+    
+    renderDropdown($(".select2, .select3, .select4, select5"), { width:"98%"});
+    
 	$('#{{ $pageModule }}Table .checkall').on('ifChecked',function(){
 		$('#{{ $pageModule }}Table input[type="checkbox"]').iCheck('check');
 	});

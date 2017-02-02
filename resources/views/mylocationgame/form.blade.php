@@ -3,7 +3,12 @@
     <div class="sbox">
         <div class="sbox-title">
             <h4>
-                <a href="javascript:void(0)" class="collapse-close pull-right btn btn-xs btn-danger" onclick="ajaxViewClose('#{{ $pageModule }}')"><i class="fa fa fa-times"></i></a>
+            <i class="fa fa-gamepad"></i>
+            {{ $row['game_title'] }} ({{ $row['id'] }})
+            @if (!empty($row['location_id']))
+            <small>at {{ $row['location_id'] }} || {{ $row['location_name'] }}  </small>
+            @endif                
+                <a href="javascript:void(0)" class="collapse-close pull-right btn btn-xs btn-danger" onclick="ajaxViewClose('#{{ $pageModule }}', this)"><i class="fa fa fa-times"></i></a>
             </h4>
         </div>
 
@@ -11,7 +16,8 @@
             @endif
             {!! Form::open(array('url'=>'mylocationgame/save/'.$row['id'], 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'mylocationgameFormAjax')) !!}
             <div class="col-md-12">
-                <fieldset><legend> My Location Game</legend>
+                <fieldset>
+                    <legend>Edit</legend>
                     <div class="form-group  " >
                         <label for="Test Piece" class=" control-label col-md-4 text-left">
                             {!! SiteHelpers::activeLang('Test Piece', (isset($fields['test_piece']['language'])? $fields['test_piece']['language'] : array())) !!}
@@ -38,8 +44,8 @@
                         </div>
                     </div>
                     <div class="form-group  " >
-                        <label for="Version " class=" control-label col-md-4 text-left">
-                            {!! SiteHelpers::activeLang('Version ', (isset($fields['version_id']['language'])? $fields['version_id']['language'] : array())) !!}
+                        <label for="version_id" class=" control-label col-md-4 text-left">
+                            {!! SiteHelpers::activeLang('Version ID', (isset($fields['version_id']['language'])? $fields['version_id']['language'] : array())) !!}
                         </label>
                         <div class="col-md-6">
                             <select name='version_id' rows='5' id='version_id' class='select2 '   ></select>
@@ -206,7 +212,7 @@
                 <label class="col-sm-4 text-right">&nbsp;</label>
                 <div class="col-sm-8">
                     <button type="submit" class="btn btn-primary btn-sm "><i class="fa  fa-save "></i>  {{ Lang::get('core.sb_save') }} </button>
-                    <button type="button" onclick="ajaxViewClose('#{{ $pageModule }}')" class="btn btn-success btn-sm"><i class="fa  fa-arrow-circle-left "></i>  {{ Lang::get('core.sb_cancel') }} </button>
+                    <button type="button" onclick="ajaxViewClose('#'+pageModule)" class="btn btn-success btn-sm"><i class="fa  fa-arrow-circle-left "></i>  {{ Lang::get('core.sb_cancel') }} </button>
                 </div>
             </div>
             {!! Form::close() !!}
@@ -218,106 +224,21 @@
 @endif
 
 
-
-
 <script type="text/javascript">
+    
+    var mainUrl = '{{ $pageUrl }}',
+        mainModule = '{{ $pageModule }}';
+    
     $(document).ready(function() {
-
-        $("#game_title_id").jCombo("{{ URL::to('mylocationgame/comboselect?filter=game_title:id:game_title') }}",
-                {  selected_value : '{{ $row["game_title_id"] }}' });
-
-        $("#game_type_id").jCombo("{{ URL::to('mylocationgame/comboselect?filter=game_type:id:game_type') }}",
-                {  selected_value : '{{ $row["game_type_id"] }}' });
-
-        $("#version_id").jCombo("{{ URL::to('mylocationgame/comboselect?filter=game_version:id:version') }}",
-                {  selected_value : '{{ $row["version_id"] }}' });
-
-        $("#location_id").jCombo("{{ URL::to('mylocationgame/comboselect?filter=location:id:location_name') }}",
-                {  selected_value : '{{ $row["location_id"] }}' });
-
-        $("#mfg_id").jCombo("{{ URL::to('mylocationgame/comboselect?filter=vendor:id:vendor_name') }}",
-                {  selected_value : '{{ $row["mfg_id"] }}' });
-
-        $("#status_id").jCombo("{{ URL::to('mylocationgame/comboselect?filter=game_status:id:game_status') }}",
-                {  selected_value : '{{ $row["status_id"] }}' });
-
-
-        $('#game_type_id').change(function() {
-            var game_selected_value = $('#game_type_id option:selected').text();
-            if(game_selected_value.trim() === 'Merchandise')
-            {
-                $('#multi_products').show();
-                $("#product_id").jCombo("{{ URL::to('mylocationgame/comboselect?filter=products:id:vendor_description') }}",
-                        {  selected_value : '{{ $row["product_id"] }}' });
-
-            }
-            else
-            {
-                $('#multi_products').hide();
-            }
-
-        });
-
-        $('.editor').summernote();
-        $('.previewImage').fancybox();
-        $('.tips').tooltip();
-        $(".select2").select2({ width:"98%"});
-        $('.date').datepicker({format:'mm/dd/yyyy',autoClose:true})
-        $('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});
-        $('input[type="checkbox"],input[type="radio"]').iCheck({
-            checkboxClass: 'icheckbox_square-blue',
-            radioClass: 'iradio_square_green'
-        });
-        $('.removeCurrentFiles').on('click',function(){
-            var removeUrl = $(this).attr('href');
-            $.get(removeUrl,function(response){});
-            $(this).parent('div').empty();
-            return false;
-        });
-        var form = $('#mylocationgameFormAjax');
-        form.parsley();
-        form.submit(function(){
-
-            if(form.parsley('isValid') == true){
-                var options = {
-                    dataType:      'json',
-                    beforeSubmit :  showRequest,
-                    success:       showResponse
-                }
-                var game_selected_value = $('#game_type_id option:selected').text();
-                if(game_selected_value.trim() != 'Merchandise')
-                {
-                    $("#product_id").removeAttr('value');
-
-                }
-                $(this).ajaxSubmit(options);
-                return false;
-
-            } else {
-                return false;
-            }
-
-        });
-
+        App.modules.games.formView.init({
+                'container': $('#'+pageModule+'View'),
+                'moduleName': pageModule,
+                'mainModule': mainModule,
+                'url': pageUrl,
+                'mainUrl': mainUrl,
+            },
+            {!! json_encode($row) !!}
+        );
+        
     });
-
-    function showRequest()
-    {
-        $('.ajaxLoading').show();
-    }
-    function showResponse(data)  {
-
-        if(data.status == 'success')
-        {
-            ajaxViewClose('#{{ $pageModule }}');
-            ajaxFilter('#{{ $pageModule }}','{{ $pageUrl }}/data');
-            notyMessage(data.message);
-            $('#sximo-modal').modal('hide');
-        } else {
-            notyMessageError(data.message);
-            $('.ajaxLoading').hide();
-            return false;
-        }
-    }
-
 </script>

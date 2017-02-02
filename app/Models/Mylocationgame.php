@@ -82,6 +82,7 @@ class mylocationgame extends Sximo  {
 									  IF(G.test_piece =1,CONCAT("**TEST** ",T.game_title),T.game_title) AS game_title,
 									  T.id AS game_title_id,
 									  Y.game_type,
+									  G.product_id AS product_ids_json,
 									  P.vendor_description AS product_description,
 									  T.has_manual,
 									  T.has_servicebulletin,
