@@ -43,12 +43,12 @@
 
                             <div class="form-group" style="margin-top:10px;">
                                 <button data-toggle="modal" data-button="savesend" type="button" data-target="#savesendModal" style="width:33%"
-                                   class=" btn  btn-lg btn-success @if(empty($google_account->g_mail) || empty($google_account->g_password)) {{ "disabled" }} @endif" title="SAVE & SEND" id="save_send_modal"><i
+                                   class=" btn  btn-lg btn-success @if(empty($google_account->g_mail) || empty($google_account->g_password)) {{"disabled"}}  @endif" title="SAVE & SEND" id="save_send_modal"><i
                                             class="fa  fa-download" aria-hidden="true"></i>
                                     &nbsp {{ Lang::get('core.sb_save_send') }}</button></div>
                         <div class="form-group" style="margin-top:10px;">
                             <button data-button="save" data-toggle="modal" type="button" data-target="#myModal"
-                                    class="btn btn-info btn-lg @if(empty($google_account->g_mail) || empty($google_account->g_password)) {{ "disabled" }}  @endif"
+                                    class="btn btn-info btn-lg @if(empty($google_account->g_mail) || empty($google_account->g_password)) {{"disabled"}}   @endif"
                                     style="width:33%" title="SEND" id="send-only"><i
                                         class="fa fa-sign-in  "></i>&nbsp {{ Lang::get('core.sb_send') }} </button>
                         </div>
@@ -235,7 +235,6 @@
             var to1=$(this).val();
             if( to1!= null)
             {
-
                 $("#save_send").removeAttr('disabled');
             }
             else
@@ -244,7 +243,7 @@
             }
 
         });
-        $("#to").change(function(){
+        $("#to").click(function(){
             if($(this).val()!=null)
             {
                 $("#send-email").removeAttr("disabled")
@@ -262,7 +261,10 @@
         }
         $("#send-only").click(function(e){
             $('.ajaxLoading').show();
-            $("#send-email").attr('disabled','disabled');
+            var send_to="{{ $send_to }}"!=" " && "{{ $send_to }}";
+            if(!send_to) {
+                $("#send-email").attr('disabled', 'disabled');
+            }
             $.get("{{ url() }}/order/po/{{ $order_id }}?mode=save", function(data, status){
                 $("#message").text(data['url']+"/order/download-po/"+data['file_name']);
                 $('.ajaxLoading').hide();
@@ -289,18 +291,17 @@
 
         });
         $("#save_send_modal").click(function () {
-            $("#save_send").attr('disabled','disabled');
-            $('.ajaxLoading').show();
+            var send_to="{{ $send_to }}"!=" " && "{{ $send_to }}";
+            if(!send_to) {
+                $("#save_send").attr('disabled', 'disabled');
+           }
+               $('.ajaxLoading').show();
             $.get("{{ url() }}/order/po/{{ $order_id }}?mode=save", function(data, status){
                 $("#message1").text(data['url']+"/order/download-po/"+data['file_name']);
                 $('.ajaxLoading').hide();
             });
             $("#save_send").click(function(e){
                 var to=$("#to1").val();
-                if(!to)
-                {
-
-                }
                 var cc=$("#cc1").val();
                 var bcc=$("#bcc1").val();
                 var message=$("#message1").val();

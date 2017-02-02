@@ -496,7 +496,7 @@
 
                 $('input[name^=item_num]').eq(i).val(i + 1);
                 $('textarea[name^=item]').eq(i).val(order_description_array[i]);
-                if (sku_num_array[i] == "" || sku_num_array[i] == null) {
+                if (sku_num_array[i] == "" || order_price_array[i] == null) {
                     $('input[name^=sku]').eq(i).val("N/A");
                 }
                 else
