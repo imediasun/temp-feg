@@ -302,8 +302,8 @@
         }
         
         form.parsley().destroy();
-        container.find('[name=date_down]').prop('required', fieldRequired);
-        container.find('[name=problem]').prop('required', fieldRequired);           
+        container.find('[name=date_up]').prop('required', fieldRequired);
+        container.find('[name=solution]').prop('required', fieldRequired);           
         form.parsley();
     }
   
