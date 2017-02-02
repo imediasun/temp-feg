@@ -411,7 +411,6 @@ class OrderController extends Controller
                     'request_ids' => $where_in,
                     'po_notes' => $notes
                 );
-
                 $this->model->insertRow($orderData, $order_id);
                 $last_insert_id = $order_id;
                 \DB::table('order_contents')->where('order_id', $last_insert_id)->delete();
