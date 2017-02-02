@@ -980,7 +980,7 @@ class OrderController extends Controller
                 $added = 1;
             }
             $date_received = $request->get('date_received');
-             $date_received = \DateHelpers::formatDate($date_received);
+
             
             $data = array('date_received' => $date_received,
                 'status_id' => $order_status,
