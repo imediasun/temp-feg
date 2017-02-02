@@ -22,4 +22,5 @@ define('CNF_ALLOWIP','');
 define('CNF_RESTRICIP','192.116.134 , 194.111.606.21 ');
 define('CNF_REPLY_TO','ticketreply@fegllc.com');
 define('CNF_REPLY_TO_PASSWORD','E5digit@l');
+define('CNF_GRAPHIC_MANAGER','demo@fegllc.com');
 ?>

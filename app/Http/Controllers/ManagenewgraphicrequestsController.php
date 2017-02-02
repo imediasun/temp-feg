@@ -34,8 +34,7 @@ class ManagenewgraphicrequestsController extends Controller
     public function getApprove($id)
     {
 
-        echo config('app.admin-email');
-        exit;
+        
         $request = Managenewgraphicrequests::find($id);
         $data = array(
             'status_id' => 3,
