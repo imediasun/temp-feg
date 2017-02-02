@@ -185,11 +185,11 @@ function ajaxRemove( id, url )
 
             if(data.status =='success')
             {
-                console.log("called succes");
+                //console.log("called succes");
                 notyMessage(data.message);
                 ajaxFilter( id ,url+'/data' );
             } else {
-                console.log("called error");
+                //console.log("called error");
                 notyMessageError(data.message);
             }
         });
@@ -200,7 +200,7 @@ function ajaxRemove( id, url )
 function ajaxViewDetail( id , url )
 {
 	$('.ajaxLoading').show();
-	console.log(url);
+	//console.log(url);
 	$.get( url ,function( data ) {
 		$( id +'View').html( data );
 		$( id +'Grid').hide( );
@@ -212,10 +212,23 @@ function ajaxViewDetail( id , url )
 		
 }
 
-function ajaxViewClose( id )
+function ajaxViewClose( id , elm)
 {
-	$( id +'View' ).html('');	
-	$( id +'Grid' ).show();	
+    var view = $(id+'View'),
+        grid = $(id+'Grid'),
+        $elm = elm && $(elm) || [];
+    
+    if ($elm.length) {
+        if (!view.length) {
+            view = $elm.closest('.moduleView');
+        }
+        if (!grid.length) {
+            grid = view.closest('.page-content').find('.moduleGrid');
+        }
+    }
+    
+	view.html('');
+	grid.show();	
 	$('#sximo-modal').modal('hide');
 }
 

@@ -86,18 +86,18 @@
                             </thead>
 
                             <tbody>
-
+                           <?php  $value = 1   ?>
                             @foreach($data['order_items'] as $order_item)
                                 @if($order_item->qty != $order_item->item_received)
                                     <tr>
                                         <td>
-                                            {{ $order_item->id }}
+                                          {{ $value ++ }}
                                             <input type="hidden" name="itemsID[]" value="{{ $order_item->id }}">
                                         </td>
                                         <td>{{ $order_item->item_name }}</td>
                                         <td>{{ $order_item->product_description }}</td>
-                                        <td>{{ number_format($order_item->price , \App\Models\Order::ORDER_PERCISION) }}</td>
-                                        <td>{{ number_format( $order_item->case_price , \App\Models\Order::ORDER_PERCISION) }}</td>
+                                        <td>{{CurrencyHelpers::formatCurrency(number_format($order_item->price , \App\Models\Order::ORDER_PERCISION)) }}</td>
+                                        <td> {{ CurrencyHelpers::formatCurrency( number_format( $order_item->case_price , \App\Models\Order::ORDER_PERCISION)) }}</td>
 
                                         <td>{{ $order_item->qty }}</td>
                                         <td>
@@ -111,7 +111,7 @@
                                         <td>
                                             <input type="text"  id="receivedItemText{{ $order_item->id }}" name="receivedQty[]" value="{{ $order_item->qty - $order_item->item_received}}" readonly="readonly" />
                                         </td>
-                                      <td> {{number_format($order_item->total,\App\Models\Order::ORDER_PERCISION) }}
+                                      <td> {{CurrencyHelpers::formatCurrency( number_format($order_item->total,\App\Models\Order::ORDER_PERCISION)) }}
                                         </td>
 
                             </tr>
@@ -130,7 +130,7 @@
                                 Date Received </label>
                             <div class="col-md-8">
                                 <?php if(isset($data['date_received']) && ($data['date_received']!='0000-00-00'))
-                                $date_received = $data['date_received'];
+                                  $date_received = DateHelpers::formatDate($data['date_received']);
                                 else
                                     $date_received=date('m/d/Y');
                                 ?>

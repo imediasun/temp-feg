@@ -18,8 +18,8 @@
 	<div class="page-content-wrapper m-t">
 		<div class="resultData"></div>
 		<div class="ajaxLoading"></div>
-		<div id="{{ $pageModule }}View"></div>			
-		<div id="{{ $pageModule }}Grid"></div>
+		<div id="{{ $pageModule }}View" class="moduleView"></div>			
+		<div id="{{ $pageModule }}Grid" class="moduleGrid"></div>
 	</div>	
 	<!-- End Content -->
     <?php
@@ -29,15 +29,27 @@
         $game_id = 0;
     } ?>
 </div>
-<script>
-    $(document).ready(function () {
-        var game_id="{{ $game_id }}";
+	
+@endsection
 
-        if(game_id!=0){
-            ajaxViewDetail('#{{ $pageModule }}',"{{url()}}/mylocationgame/show/"+game_id); return false;
-            //reloadData('#{{ $pageModule }}','/sximo/public/order/data');
-        }
-	reloadData('#{{ $pageModule }}','{{ $pageModule }}/data');	
-});	
-</script>	
+@section ('beforebodyend')
+
+    <script>
+        $(document).ready(function () {
+            var game_id="{{ $game_id }}";
+
+            if(game_id!=0){
+                ajaxViewDetail('#{{ $pageModule }}',"{{url()}}/mylocationgame/show/"+game_id); return false;
+                //reloadData('#{{ $pageModule }}','/sximo/public/order/data');
+            }
+            reloadData('#{{ $pageModule }}','{{ $pageModule }}/data');	
+        });	
+    </script>
+    <script type="text/javascript">
+        var pageModule = '{{$pageModule}}',
+            pageUrl = '{{$pageUrl}}';
+    </script>
+    <script type="text/javascript" src="{{ asset('sximo/js/modules/games/view.js') }}"></script>      
+    <script type="text/javascript" src="{{ asset('sximo/js/modules/games/form.js') }}"></script>      
+    
 @endsection
