@@ -11,6 +11,11 @@
     overflow: visible;    
 }
 
+.simpleSearchContainer .select2-container-multi .select2-choices .select2-input,
+.modal-dialog .select2-container-multi .select2-choices .select2-input {
+    line-height: 16px;
+}
+
 .simpleSearchContainer .select2-container-multi .select2-choices:before,
 .simpleSearchContainer .select2-container-multi .select2-choices:after,
 .modal-dialog .select2-container-multi .select2-choices:before,
