@@ -87,7 +87,8 @@
 
 
                             <div class="col-md-8">
-                                <textarea name="to_add_notes" id="to_add_notes" rows="6" cols="50" class="form-control">{{ $data['shipping_notes'] }}</textarea>
+                                <textarea name="to_add_notes" id="to_add_notes" rows="6" cols="50"
+                                          class="form-control">{{ $data['shipping_notes'] }}</textarea>
                             </div>
 
                         </div>
@@ -218,7 +219,7 @@
                         <th width="90">Quantity</th>
                         <th class="game" style="display:none" width="200">Game Located</th>
                         <th width="90">Total ( $ )</th>
-                        <th width="60" align="center">Remove</th>
+                        <th width="60" align="center"><span id="remove-col">Remove </span></th>
 
 
                     </tr>
@@ -241,16 +242,16 @@
                                       class='form-control item' cols="30" rows="4" maxlength="225"></textarea>
                         </td>
 
-                        <td><br/> <input type='number' name='price[]'  id="price"
+                        <td><br/> <input type='number' name='price[]' id="price"
                                          class='calculate form-control' min="0.000" step=".001" placeholder="0.000"
                                          style="width: 85px"
                                          required></td>
                         <td>
-                            <br/> <input type='number' name='case_price[]'  id="case_price"
+                            <br/> <input type='number' name='case_price[]' id="case_price"
                                          class='calculate form-control' min="0.000" step=".001" placeholder="0.000"
                                          style="width: 85px"
                                          required></td>
-                        <td><br/> <input type='number' name='qty[]' placeholder='0'
+                        <td><br/> <input type='number' name='qty[]' placeholder='0' autocomplete="off"
 
                                          class='calculate form-control qty' min="0" step="1" id="qty" placeholder="00"
                                          required></td>
@@ -261,7 +262,8 @@
                         <input type='hidden' name='request_id[]' id="request_id">
                         <td><br/><input type="text" name="total" value="" readonly class="form-control"/></td>
                         <td align="center" class="remove-container"><br/>
-                            <button id="hide-button" onclick=" $(this).parents('.clonedInput').remove(); calculateSum();decreaseCounter(); return false"
+                            <button id="hide-button"
+                                    onclick=" $(this).parents('.clonedInput').remove(); calculateSum();decreaseCounter(); return false"
                                     class="remove btn btn-xs btn-danger">-
                             </button>
                             <input type="hidden" name="counter[]">
@@ -288,8 +290,9 @@
                 {{--<td class="game"></td>--}}
                 <td></td>
                 <td colspan="6" class="text-left"><strong> Subtotal ( $ ) </strong></td>
-                <td> <input type="text" name="Subtotal" value="{{number_format($data['order_total'],\App\Models\Order::ORDER_PERCISION) }}" readonly
-                            class="form-control"/></td>
+                <td><input type="text" name="Subtotal"
+                           value="{{number_format($data['order_total'],\App\Models\Order::ORDER_PERCISION) }}" readonly
+                           class="form-control"/></td>
 
 
             </div>
@@ -302,7 +305,7 @@
                 <label class="col-sm-4 text-right">&nbsp;</label>
 
                 <div class="col-sm-8">
-                    <button  type="submit" class="btn btn-primary btn-sm " id="submit_btn"><i
+                    <button type="submit" class="btn btn-primary btn-sm " id="submit_btn"><i
                                 class="fa  fa-save "></i>  {{ Lang::get('core.sb_save') }} </button>
                     <button type="button" onclick="ajaxViewClose('#{{ $pageModule }}')" class="btn btn-success btn-sm">
                         <i class="fa  fa-arrow-circle-left "></i>  {{ Lang::get('core.sb_cancel') }} </button>
@@ -316,7 +319,8 @@
     ?>
     </div>
     <script type="text/javascript">
-        var mode="{{ $data['prefill_type'] }}";
+
+        var mode = "{{ $data['prefill_type'] }}";
         var PRECISION = '<?php echo  \App\Models\Order::ORDER_PERCISION?>';
         $('#alt_ship_to').on('change', function () {
                     hideShowAltLocation();
@@ -351,17 +355,23 @@
         }
         var games_options_js = "{{ json_encode($games_options) }}";
         //console.log(JSON.stringify(games_options_js));
-        games_options_js=games_options_js.replace(/&amp;/g, '&');
-        games_options_js=games_options_js.replace(/&#039;/g, "'");
-        games_options_js=games_options_js.replace(/\\/g, "\\\\");
+        games_options_js = games_options_js.replace(/&amp;/g, '&');
+        games_options_js = games_options_js.replace(/&#039;/g, "'");
+        games_options_js = games_options_js.replace(/\\/g, "\\\\");
         games_options_js = $.parseJSON(games_options_js.replace(/&quot;/g, '"'));
-        $("#po_3").focus(function(){
+        $("#po_3").focus(function () {
             $("#po_message").hide(200);
         });
         $(document).ready(function () {
+            if ($("td button.remove").is(':hidden')) {
+                $("#remove-col").hide();
+            }
+            else {
+                $("#remove-col").show()
+            }
             var inc = 1;
             hideShowAltLocation();
-            if(mode != "edit") {
+            if (mode != "edit") {
                 //$("#submit_btn").attr('disabled','disabled');
                 checkPOValidity();
             }
@@ -444,6 +454,9 @@
                 }
             });
             var requests_item_count = <?php echo json_encode($data['requests_item_count']) ?>;
+            if (requests_item_count > 1) {
+                $("#remove-col").show();
+            }
             var order_description_array = <?php echo json_encode($data['orderDescriptionArray']) ?>;
             var order_price_array = <?php echo json_encode($data['orderPriceArray']) ?>;
             var order_qty_array = <?php echo json_encode($data['orderQtyArray']) ?>;
@@ -463,8 +476,7 @@
                 if (sku_num_array[i] == "" || order_price_array[i] == null) {
                     $('input[name^=sku]').eq(i).val("N/A");
                 }
-                else
-                {
+                else {
                     $('input[name^=sku]').eq(i).val(sku_num_array[i]);
                 }
                 if (order_price_array[i] == "" || order_price_array[i] == null) {
@@ -529,10 +541,10 @@
             calculateSum();
             if (game_ids_array.length > 0) {
                 $.ajax({
-                    type:"GET",
-                    url:"{{ url() }}/order/games-dropdown",
-                    data:{ 'location':"<?php echo $data["order_location_id"] ?>" } ,
-                    success: function(data){
+                    type: "GET",
+                    url: "{{ url() }}/order/games-dropdown",
+                    data: {'location': "<?php echo $data["order_location_id"] ?>"},
+                    success: function (data) {
                         $("[id^=game_]").select2({
                             dataType: 'json',
                             data: {results: data},
@@ -562,16 +574,16 @@
                 return false;
             }
         }
-        var games_dropdown=[];
+        var games_dropdown = [];
         $("#location_id").click(function () {
             $("#po_1").val($(this).val());
             validatePONumber();
             $.ajax({
-                type:"GET",
-                url:"{{ url() }}/order/games-dropdown",
-                data:{'location':$(this).val()},
-                success: function(data){
-                    games_options_js=data;
+                type: "GET",
+                url: "{{ url() }}/order/games-dropdown",
+                data: {'location': $(this).val()},
+                success: function (data) {
+                    games_options_js = data;
                     $("[id^=game_]").select2({
                         dataType: 'json',
                         data: {results: data},
@@ -587,8 +599,7 @@
 
         // -----------------for checking and validating PO number.... -----------------------//
         var poajax;
-        function checkPOValidity()
-        {
+        function checkPOValidity() {
             if (poajax) {
                 if (poajax.abort) {
                     poajax.abort();
@@ -597,24 +608,24 @@
             var $elm = $('#po_3');
             if (editmode && $elm.val().trim() == $elm.data('original')) {
                 $("#po_message").html('');
-             //   $("#submit_btn").removeAttr('disabled');
+                //   $("#submit_btn").removeAttr('disabled');
                 return;
             }
             if ($elm.val().trim() === '') {
                 $("#po_message").html('');
-               // $("#submit_btn").attr('disabled','disabled');
+                // $("#submit_btn").attr('disabled','disabled');
                 return;
             }
 
             validatePONumber();
         }
         function validatePONumber() {
-            $("#submit_btn").attr('disabled','disabled');
+            $("#submit_btn").attr('disabled', 'disabled');
             var base_url =<?php echo  json_encode(url()) ?>;
             po_1 = $('#po_1').val().trim();
             po_2 = $('#po_2').val().trim();
             po_3 = $('#po_3').val().trim();
-            var full_po=po_1+"-"+po_2+"-"+po_3;
+            var full_po = po_1 + "-" + po_2 + "-" + po_3;
             if (po_3.length >= 1) {
                 // $('.ajaxLoading').show();
             }
@@ -629,8 +640,8 @@
             if (!po_1 || !po_2 || !po_3) {
                 return false;
             }
-            var origional_po="{{ isset($data['po_number'])?$data['po_number']: '' }}";
-            if(full_po != origional_po ) {
+            var origional_po = "{{ isset($data['po_number'])?$data['po_number']: '' }}";
+            if (full_po != origional_po) {
                 poajax = $.ajax({
                     type: "POST",
                     url: base_url + "/order/validateponumber",
@@ -656,8 +667,7 @@
                     }
                 });
             }
-            else
-            {
+            else {
                 $("#submit_btn").removeAttr('disabled');
             }
         }
@@ -683,17 +693,14 @@
 
         $("#add_new_item").click(function () {
             $('#ordersubmitFormAjax').parsley().destroy();
-
-//set required attribute on input to false
-           // $('input').attr('data-parsley-required', 'true');
-//reinitialize parsley
             $('#ordersubmitFormAjax').parsley();
+
             handleItemCount('add');
             $(".calculate").keyup(function () {
                 calculateSum();
             });
-          var location_id= $("#location_id").val();
-            if(location_id != 0) {
+            var location_id = $("#location_id").val();
+            if (location_id != 0) {
                 $.ajax({
                     type: "GET",
                     url: "{{ url() }}/order/games-dropdown",
@@ -716,8 +723,22 @@
                     placeholder: "For Various Games", width: "98%"
                 });
             }
+            $("[name^=qty]").keypress(isNumeric);
         });
-
+        $("[name^=qty]").keypress(isNumeric);
+        $("[name^=qty]").onpaste = function(e) {
+            e.preventDefault();
+        }
+        function isNumeric(ev) {
+            var keyCode = window.event ? ev.keyCode : ev.which;
+            //codes for 0-9
+            if (keyCode < 48 || keyCode > 57) {
+                //codes for backspace, delete, enter
+                if (keyCode != 0 && keyCode != 8 && keyCode != 13 && !ev.ctrlKey) {
+                    ev.preventDefault();
+                }
+            }
+        }
 
         function decreaseCounter() {
 
@@ -727,6 +748,12 @@
             $('input[name^=item_num]').each(function (index, value) {
 
                 $(value).val(index + 1);
+                if (index + 1 > 1) {
+                    $("#remove-col").show();
+                }
+                else {
+                    $("#remove-col").hide();
+                }
             });
             /*
 
@@ -796,15 +823,13 @@
                     var term = request.term;
                     lastXhr = $.getJSON("order/autocomplete", request, function (data, status, xhr) {
                         cache[term] = data;
-                        if(data.value == "No Match")
-                        {
-                           // $('[name^=item_name]:focus').closest('tr').find('.sku').removeAttr('readonly');
+                        if (data.value == "No Match") {
+                            // $('[name^=item_name]:focus').closest('tr').find('.sku').removeAttr('readonly');
                         }
-                        else
-                        {
-                           // $('[name^=item_name]:focus').closest('tr').find('.sku').attr('disabled',true);
-                           // $('[name^=item_name]:focus').closest('tr').find('.sku').attr('readonly',true);
-                           // $('[name^=item_name]:focus').closest('tr').find('.sku').val('');
+                        else {
+                            // $('[name^=item_name]:focus').closest('tr').find('.sku').attr('disabled',true);
+                            // $('[name^=item_name]:focus').closest('tr').find('.sku').attr('readonly',true);
+                            // $('[name^=item_name]:focus').closest('tr').find('.sku').val('');
 
                         }
                         if (xhr === lastXhr) {
@@ -886,13 +911,10 @@
         [id^="game_0"] {
             width: 90%;
         }
-        .itemstable tr.clone:first-of-type td:last-of-type button.remove
-        {
-           display:none;
+
+        .itemstable tr.clone:first-of-type td:last-of-type button.remove {
+            display: none;
         }
     </style>
 
-    <script>
-
-    </script>
 
