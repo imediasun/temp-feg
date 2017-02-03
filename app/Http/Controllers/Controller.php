@@ -224,7 +224,7 @@ abstract class Controller extends BaseController
         return $rules;
     }
 
-    function validatePost($table)
+    function validatePost($table, $skipFieldsMissingInRequest = false)
     {
         $request = new Request;
         $str = $this->info['config']['forms'];
@@ -233,9 +233,8 @@ abstract class Controller extends BaseController
             
             $field = $f['field'];
             $requestValue = \Request::get($field);
-            $requestType = $f['type'];
-            
-            if ($requestType !=='file' && !isset($requestValue)) {
+            $requestType = $f['type'];            
+            if ($skipFieldsMissingInRequest && $requestType !=='file' && !isset($requestValue)) {
                 continue;
             }
             if ($f['view'] == 1) {
@@ -374,7 +373,7 @@ abstract class Controller extends BaseController
                     }
                 }
             }
-        }
+        }        
         $global = (isset($this->access['is_global']) ? $this->access['is_global'] : 0);
 
         if ($global == 0)
