@@ -18,10 +18,25 @@ class gameservicehistory extends Sximo
     public static function querySelect()
     {
         //CONCAT(IF(date_down IS NULL,'',date_down),'<br/>',IF(date_up IS NULL,'',date_up)) AS
-        return "  SELECT game_service_history.id,game_service_history.game_id,game.game_name,game_service_history.problem,game_service_history.down_user_id,game_service_history.solution,game_service_history.up_user_id,game_service_history.date_up,
-                   game_service_history.date_down,
-                  DATEDIFF(game_service_history.date_up,game_service_history.date_down) as days_down
-                  FROM game_service_history left outer join game on game_service_history.game_id=game.id ";
+        return " SELECT * FROM 
+            (SELECT 
+                gsh.id,
+                gsh.game_id,
+                g.game_title_id,
+                gt.game_title,
+                gsh.location_id,                    
+                l.location_name,
+                gsh.problem,
+                gsh.down_user_id,
+                gsh.date_down,
+                gsh.solution,
+                gsh.up_user_id,
+                gsh.date_up,
+                DATEDIFF(IF(gsh.date_up IS NULL, CURRENT_DATE(), gsh.date_up),gsh.date_down) AS days_down
+            FROM game_service_history gsh
+            LEFT JOIN location l ON l.id = gsh.location_id
+            LEFT JOIN game g ON gsh.game_id=g.id
+            LEFT JOIN game_title gt ON gt.id = g.game_title_id) AS game_service_history ";
     }
 
     public static function queryWhere()
