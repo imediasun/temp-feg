@@ -261,8 +261,8 @@
                         <input type='hidden' name='product_id[]' id="product_id">
                         <input type='hidden' name='request_id[]' id="request_id">
                         <td><br/><input type="text" name="total" value="" readonly class="form-control"/></td>
-                        <td align="center"><br/>
-                            <button onclick=" $(this).parents('.clonedInput').remove(); calculateSum();decreaseCounter(); return false"
+                        <td align="center" class="remove-container"><br/>
+                            <button id="hide-button" onclick=" $(this).parents('.clonedInput').remove(); calculateSum();decreaseCounter(); return false"
                                     class="remove btn btn-xs btn-danger">-
                             </button>
                             <input type="hidden" name="counter[]">
@@ -365,7 +365,6 @@
             $("#po_message").hide(200);
         });
         $(document).ready(function () {
-
             var inc = 1;
             hideShowAltLocation();
             if(mode != "edit") {
@@ -720,6 +719,12 @@
         }
 
         $("#add_new_item").click(function () {
+            $('#ordersubmitFormAjax').parsley().destroy();
+
+//set required attribute on input to false
+           // $('input').attr('data-parsley-required', 'true');
+//reinitialize parsley
+            $('#ordersubmitFormAjax').parsley();
             handleItemCount('add');
             $(".calculate").keyup(function () {
                 calculateSum();
@@ -917,6 +922,10 @@
 
         [id^="game_0"] {
             width: 90%;
+        }
+        .itemstable tr.clone:first-of-type td:last-of-type button.remove
+        {
+           display:none;
         }
     </style>
 

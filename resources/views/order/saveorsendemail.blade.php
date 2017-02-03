@@ -262,7 +262,7 @@
         $("#send-only").click(function(e){
             $('.ajaxLoading').show();
             var send_to="{{ $send_to }}"!=" " && "{{ $send_to }}";
-            if(!send_to) {
+            if(!send_to && !$("#to").val()) {
                 $("#send-email").attr('disabled', 'disabled');
             }
             $.get("{{ url() }}/order/po/{{ $order_id }}?mode=save", function(data, status){
@@ -292,7 +292,7 @@
         });
         $("#save_send_modal").click(function () {
             var send_to="{{ $send_to }}"!=" " && "{{ $send_to }}";
-            if(!send_to) {
+            if(!send_to && !$("#to1").val()) {
                 $("#save_send").attr('disabled', 'disabled');
            }
                $('.ajaxLoading').show();
