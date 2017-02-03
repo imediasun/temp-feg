@@ -9,7 +9,7 @@
 
 	<div class="sbox-content"> 
 @endif	
-			{!! Form::open(array('url'=>'gameservicehistory/save/'.SiteHelpers::encryptID($row['id']), 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'gameservicehistoryFormAjax')) !!}
+			{!! Form::open(array('url'=>'gameservicehistory/save/'.SiteHelpers::encryptID($row['id']), 'class'=>'form-horizontal', 'parsley-validate'=>'','novalidate'=>' ','id'=> 'gameservicehistoryFormAjax')) !!}
 			<div class="col-md-12">
 						<fieldset><legend> Game Service History</legend>
 				
@@ -36,11 +36,23 @@
 					 </div>
 				  </div> 
 				  <div class="form-group  " >
+					<label for="Game Id" class=" control-label col-md-4 text-left">
+					{!! SiteHelpers::activeLang('Location ', (isset($fields['location_id']['language'])? $fields['location_id']['language'] : array())) !!}
+					</label>
+					<div class="col-md-6">
+					  <select name='location_id'  id='location_id' class='select2'></select>
+					 </div> 
+					 <div class="col-md-2">
+					 	
+					 </div>
+				  </div> 
+				  <div class="form-group  " >
 					<label for="Date Down" class=" control-label col-md-4 text-left">
 					{!! SiteHelpers::activeLang('Date Down', (isset($fields['date_down']['language'])? $fields['date_down']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
-					  <input name='date_down' type="text" rows='5' id='date_down' class='form-control date' value="{{ $row['date_down'] }}" >
+					  <input name='date_down' type="text" rows='5' id='date_down' class='form-control date' 
+                             value="{{ DateHelpers::formatDate($row['date_down']) }}" >
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -88,7 +100,8 @@
 					{!! SiteHelpers::activeLang('Date Up', (isset($fields['date_up']['language'])? $fields['date_up']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
-					  <input type="text" name='date_up'  id='date_up' class='form-control date' value="{{ $row['date_up'] }}">
+					  <input type="text" name='date_up'  id='date_up' class='form-control date' 
+                             value="{{ DateHelpers::formatDate($row['date_up']) }}">
 					 </div>
 					 <div class="col-md-2">
 					 	
@@ -111,81 +124,6 @@
 			</div>
 
 
-        {{--
-
-    @if($subgrid['access']['is_add'] == '1')
-    <hr /><div class="clr clear"></div>
-
-    <h5> test </h5>
-
-    <div class="table-responsive">
-        <table class="table table-striped ">
-            <thead>
-                <tr>
-                    @foreach ($subgrid['tableGrid'] as $t)
-                        @if($t['view'] =='1' && $t['field'] !='game_id')
-                            <th>
-                            {{ SiteHelpers::activeLang($t['label'],(isset($t['language'])? $t['language'] : array())) }}
-                            </th>
-                        @endif
-                    @endforeach
-                    <th></th>
-                  </tr>
-
-            </thead>
-
-        <tbody>
-        @if(count($subgrid['rowData'])>=1)
-            @foreach ($subgrid['rowData'] as $rows)
-                <tr class="clone clonedInput">
-                     @foreach ($subgrid['tableGrid'] as $field)
-                         @if($field['view'] =='1' && $field['field'] !='game_id')
-                         <td>
-                             {!! SiteHelpers::bulkForm($field['field'] , $subgrid['tableForm'] , $rows->$field['field']) !!}
-                         </td>
-                         @endif
-
-                     @endforeach
-                     <td>
-                         <a onclick=" $(this).parents('.clonedInput').remove(); return false" href="#" class="remove btn btn-xs btn-danger">-</a>
-                         <input type="hidden" name="counter[]">
-                     </td>
-                </tr>
-            @endforeach
-
-
-        @else
-
-            <tr class="clone clonedInput">
-             @foreach ($subgrid['tableGrid'] as $field)
-
-                 @if($field['view'] =='1' && $field['field'] !='game_id')
-                 <td>
-                     {!! SiteHelpers::bulkForm($field['field'] , $subgrid['tableForm'] ) !!}
-                 </td>
-                 @endif
-
-             @endforeach
-                 <td>
-                     <a onclick=" $(this).parents('.clonedInput').remove(); return false" href="#" class="remove btn btn-xs btn-danger">-</a>
-                     <input type="hidden" name="counter[]">
-                 </td>
-
-            </tr>
-        @endif
-
-
-        </tbody>
-
-         </table>
-        <input type="hidden" name="enable-masterdetail" value="true">
-    </div><br /><br />
-
-     <a href="javascript:void(0);" class="addC btn btn-xs btn-info" rel=".clone"><i class="fa fa-plus"></i> New Item</a>
-     <hr />
-    @endif
-
-       --}}
             <div style="clear:both"></div>
 
             <div class="form-group">
@@ -208,12 +146,16 @@
 
 <script type="text/javascript">
 $(document).ready(function() {
+    
+    $("#location_id").jCombo("{{ URL::to('gameservicehistory/comboselect?filter=location:id:id|location_name') }}" + "&delimiter=%20|%20",
+            {  selected_value : "{{ $row['location_id'] }}", initial_text:'-- Select Location --' });
+                
     $("#up_user_id").jCombo("{{ URL::to('gameservicehistory/comboselect?filter=users:id:username') }}",
             {  selected_value : '{{ $row["up_user_id"] }}',initial_text:'-- Select User --' });
     $("#down_user_id").jCombo("{{ URL::to('gameservicehistory/comboselect?filter=users:id:username') }}",
             {  selected_value : '{{ $row["down_user_id"] }}',initial_text:'-- Select User --' });
-    $("#game_name").jCombo("{{ URL::to('gameservicehistory/comboselect?filter=game:id:game_name') }}",
-            {  selected_value : '{{ $row["game_name"] }}',initial_text:'-- Select Game --' });
+    $("#game_name").jCombo("{{ URL::to('gameservicehistory/comboselect?filter=game:id:id|game_name') }}",
+            {  selected_value : '{{ $row["game_id"] }}',initial_text:'-- Select Game --' });
     $('.addC').relCopy({});
     $('.editor').summernote();
     $('.previewImage').fancybox();
@@ -224,7 +166,9 @@ $(document).ready(function() {
     $('input[type="checkbox"],input[type="radio"]').iCheck({
         checkboxClass: 'icheckbox_square-blue',
         radioClass: 'iradio_square-blue'
+    
     });
+    
     $('.removeCurrentFiles').on('click',function(){
         var removeUrl = $(this).attr('href');
         $.get(removeUrl,function(response){});
