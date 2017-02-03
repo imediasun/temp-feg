@@ -308,7 +308,6 @@ for($i=0; $i < count($order_data['orderQtyArray']);$i++)
             </div><div class="clearfix"></div>
             </div>
             <div class="clr clear"></div>
-            <?php //echo "<pre>";print_r($order_data);die();?>
             <br/>
             <div class="table-responsive" style="box-shadow: 1px 1px 10px gray;background: #fff;padding:10px 10px 0px">
                 <fieldset>

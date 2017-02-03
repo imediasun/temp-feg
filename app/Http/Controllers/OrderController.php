@@ -299,10 +299,12 @@ class OrderController extends Controller
             $this->data['row'] = $this->model->getColumnTable('orders');
         }
         $this->data['order_data'] = $this->model->getOrderQuery($id, 'edit');
+
         $this->data['id'] = $id;
         $this->data['access'] = $this->access;
         $this->data['setting'] = $this->info['setting'];
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
+        
         return view('order.view', $this->data);
     }
 
@@ -336,8 +338,7 @@ class OrderController extends Controller
         $data = array_filter($request->all());
         $redirect_link="order";
         if ($validator->passes()) {
-
-            $order_id = $request->get('order_id');
+           $order_id = $request->get('order_id');
             $editmode = $request->get('editmode');
             $where_in = $request->get('where_in_expression');
             $SID_string = $request->get('SID_string');
@@ -378,6 +379,7 @@ class OrderController extends Controller
             $skuNumArray=$request->get('sku');
             $casePriceArray = $request->get('case_price');
             $priceArray = $request->get('price');
+
             // add case price in priceArray if item_price is 0.00
             foreach($priceArray as $item_price_key=>$item_price_value)
             {
@@ -477,6 +479,7 @@ class OrderController extends Controller
                     'sku'=>$sku_num,
                     'total' => $priceArray[$i] * $qtyArray[$i]
                 );
+
                 \DB::table('order_contents')->insert($contentsData);
                 if ($order_type == 18) //IF ORDER TYPE IS PRODUCT IN-DEVELOPMENT, ADD TO PRODUCTS LIST WITH STATUS IN-DEVELOPMENT
                 {
