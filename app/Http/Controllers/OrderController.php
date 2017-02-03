@@ -957,6 +957,10 @@ class OrderController extends Controller
             foreach ($queries as $query) {
                 $results[] = ['id' => $query->id, 'value' => $query->vendor_description];
             }
+            usort($results, function (&$a, &$b) use ($term) {
+                if (stripos($a["value"],$term) == stripos($b["value"],$term)) return 0;
+                return (stripos($a["value"],$term) < stripos($b["value"],$term)) ? -1 : 1;
+            });
             echo json_encode($results);
         } else {
             echo json_encode(array('id' => 0, 'value' => "No Match"));
