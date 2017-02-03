@@ -192,30 +192,35 @@ $commentsCount =  $comments->count();
 
 							</div>
 						</div>
-						<hr>
-						<hr>
-						<?php if($commentsCount!=0){foreach($comments as $comment){?>
+
+
 						<div class="row">
+							@foreach($Content as $value)
 							<div class="col col-xs-12">
 								<div class="cont">
 									<div class="ticket-message message-left last first clearfix">
 										<div class="profile-image" style="padding-bottom: 5px;">
-											<strong><?php echo $fid.' '; ?>
-												<?php $date=date("m/d/Y H:i:s", strtotime($comment->Posted)); echo $date; ?></strong>
+
+											<strong>{{$value->first_name .' '. $value->last_name   }}
+											  	{{ $value->Posted  }}</strong>
 										</div>
 									</div>
 								</div>
 								<div class="text">
 									<div class="message">
-										<?php echo $comment->Comments; ?>																									</div>
+
+										{{ $value->Comments  }}
+									</div>
 									<div>
 									</div>
 								</div>
+								<br/>
+								<hr>
 							</div>
+								@endforeach
 						</div>
-						<hr>
-						<?php } }?>
-						{!! Form::open(array('url'=>'servicerequests/comment/'.SiteHelpers::encryptID($row['TicketID']), 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'servicerequestsFormAjax')) !!}
+
+							{!! Form::open(array('url'=>'servicerequests/comment/'.SiteHelpers::encryptID($row['TicketID']), 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'servicerequestsFormAjax')) !!}
 						<div class="col-md-12">
 							<fieldset><legend> New Reply</legend>
 

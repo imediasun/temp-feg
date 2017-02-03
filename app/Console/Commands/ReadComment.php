@@ -85,6 +85,7 @@ class ReadComment extends Command
                         $postUser = \DB::select("Select * FROM users WHERE email = 'greg@element5digital.com'");
                         $userId = $postUser[0]->id;
                     }
+                    
                     $message = imap_fetchbody($inbox, $email_number, 1.1);
                     if(empty($message)){
                         //when message reads from gmail
