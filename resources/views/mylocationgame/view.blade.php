@@ -106,6 +106,7 @@
                     <div class="input-group" style="width:100%;">
                         {!! Form::text('date_sold', $soldDateFormatted, array(
                             'class'=>'form-control date', 
+                            'placeholder' => 'Sold Date'
                             'parsley-errors-container' => '.dateSoldError',
                             'parsley-nofocus' => 'true'
                         )) !!}
@@ -115,7 +116,8 @@
                 </div>
                 <div class="col-md-8">
                     <input type="text" name="sold_to" class="form-control" 
-                           id="sold_to" placeholder="Sold To" value="{{ $soldTo }}"/>
+                           id="sold_to" placeholder="Describe Game Sale Details"
+                           value="{{ $soldTo }}"/>
                 </div>                                                        
             </div>
         </div>
