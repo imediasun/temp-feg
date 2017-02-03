@@ -65,7 +65,7 @@ class OrderController extends Controller
         if (empty($location_id)) {
             $filter .= $locationFilter;
         }
-        
+
 
         //$filter 	.=  $master['masterFilter'];
         //comment limit
@@ -73,12 +73,12 @@ class OrderController extends Controller
             'page' => 1,
             'sort' => $sort,
             'order' => $order,
-            'params' => $filter,            
+            'params' => $filter,
         );
-        
+
         $minutes = 60;
         $cacheKey = md5($filter.$order_selected.$sort.$order);
-        $results = Cache::remember($cacheKey, $minutes, function () use ($params, $order_selected) {            
+        $results = Cache::remember($cacheKey, $minutes, function () use ($params, $order_selected) {
             return $this->model->getExportRows($params, $order_selected);
         });
         //$results = $this->model->getExportRows($params);
@@ -146,7 +146,7 @@ class OrderController extends Controller
         $sort = (!is_null($request->input('sort')) ? $request->input('sort') : $this->info['setting']['orderby']);
         $order = (!is_null($request->input('order')) ? $request->input('order') : $this->info['setting']['ordertype']);
         // End Filter sort and order for query
-        
+
         // Get order_type search filter value and location_id saerch filter values
         $orderTypeFilter = $this->model->getSearchFilters(array('order_type' => 'order_selected', 'location_id' => ''));
         extract($orderTypeFilter);
@@ -154,10 +154,10 @@ class OrderController extends Controller
         if (empty($order_selected)) {
             $order_selected = "OPEN";
         }
-        
+
         // rebuild search query skipping 'order_type' filter
-        $trimmedSearchQuery = $this->model->rebuildSearchQuery(null, array('order_type'));        
-        
+        $trimmedSearchQuery = $this->model->rebuildSearchQuery(null, array('order_type'));
+
         // Filter Search for query
         // build sql query based on search filters
         $filter = is_null($request->input('search')) ? '' : $this->buildSearch($trimmedSearchQuery);
@@ -168,7 +168,7 @@ class OrderController extends Controller
         if (empty($location_id)) {
             $filter .= $locationFilter;
         }
-        
+
         $page = $request->input('page', 1);
         $params = array(
             'page' => $page,
@@ -549,7 +549,6 @@ class OrderController extends Controller
 
     public function getSaveOrSendEmail()
     {
-        $google_account = \DB::table('users')->where('id', \Session::get('uid'))->select('g_mail','g_password')->first();
         return view('order.saveorsendemail', compact('google_account'));
     }
 
@@ -678,7 +677,7 @@ class OrderController extends Controller
         return Redirect::to('order')->with('messagetext', \Lang::get('core.note_block'))->with('msgstatus', 'success');
 
     }
-    
+
     function getPo($order_id = null, $sendemail = false, $to = null, $from = null,$cc = null,$bcc = null, $message= null )
     {
         $mode="";
@@ -776,86 +775,7 @@ class OrderController extends Controller
                 $data=array('file_name'=>$po_file_name,'url'=>url());
                 return $data;
             }
-            if ($sendemail) {
-                if (isset($to) && count($to)>0) {
-                    $filename = 'PO_' . $order_id . '.pdf';
-                    $subject = "Purchase Order";
-                    $message = $message;
-                    $cc=$cc;
-                    $bcc=$bcc;
-                    /*
-                    $result = \Mail::raw($message, function ($message) use ($to, $from, $subject, $pdf, $filename,$cc,$bcc) {
-                        $message->subject($subject);
-                        $message->from($from);
-                        $message->to($to);
-                        if(count($cc)>0)
-                        {
-                            $message->cc($cc);
-                        }
-                        if(count($bcc) > 0)
-                        {
-                            $message->bcc($bcc);
-                        }
-                        $message->replyTo($from, $from);
-                        $message->attachData($pdf->output(), $filename);
-                    });*/
-                    /*
-                    * https://www.google.com/settings/security/lesssecureapps
-                    * enable stmp detail
-                    */
-                    $mail = new PHPMailer(); // create a new object
-                    $mail->IsSMTP(); // enable SMTP
-                    //$mail->SMTPDebug = 1; // debugging: 1 = errors and messages, 2 = messages only
-                    $mail->SMTPAuth = true; // authentication enabled
-                    $mail->SMTPSecure = 'tls'; // secure transfer enabled REQUIRED for Gmail
-                    $mail->Host = "smtp.gmail.com";
-                    $mail->Port = 587; // or 587
-                    $mail->IsHTML(true);
-                    /* current user */
-                    $google_acc = \DB::table('users')->where('id', \Session::get('uid'))->select('g_mail', 'g_password')->first();
-                    if(!empty($google_acc->g_mail) && !empty($google_acc->g_password))
-                    {
-
-                        $mail->Username = $google_acc->g_mail;                 // SMTP username
-                        $mail->Password = trim(base64_decode($google_acc->g_password), env('SALT_KEY'));
-                        $mail->SetFrom($google_acc->g_mail);
-                        $mail->Subject = $subject;
-                        $mail->Body = $message;
-                        foreach($to as $t)
-                        {
-                            $mail->addAddress($t);
-                        }
-                        $mail->addReplyTo($google_acc->g_mail);
-                        if(count($cc)>0)
-                        {
-                            foreach($cc as $c)
-                            {
-                                $mail->addCC($c);
-                            }
-                        }
-                        if(count($bcc) > 0)
-                        {
-                            foreach($bcc as $bc)
-                            {
-                                $mail->addBCC($bc);
-                            }
-                        }
-                        $output = $pdf->output();
-                        $file_to_save = public_path().'/orders/'.$filename;
-                        file_put_contents($file_to_save, $output);
-                        $mail->addAttachment($file_to_save, $filename, 'base64', 'application/pdf');
-                        if(!$mail->Send()) {
-                            return 3;
-                        } else {
-                            return 1;
-                        }
-                    }
-                    else
-                    {
-                        return 2;
-                    }
-                }
-            } else {
+            else {
                     return $pdf->download($data[0]['company_name_short'] . "_PO_" . $data[0]['po_number'] . '.pdf');
             }
         }
@@ -980,7 +900,6 @@ class OrderController extends Controller
                 $added = 1;
             }
             $date_received = $request->get('date_received');
-
             // $date_received = \DateHelpers::formatDate($date_received);
             $date_received= date("Y-d-m", strtotime($date_received));
             $data = array('date_received' => $date_received,
@@ -1054,55 +973,9 @@ class OrderController extends Controller
     }
 
 
-    function getMinOrderAmount($id)
-    {
-        $row = \DB::table('vendor')->where('id', $id)->select('min_order_amt')->first();
-        if($row)
-        {
-            return response()->json(array(
-                'status' => 'success',
-                'min_order_amount' => $row->min_order_amt,
-                'message' => 'Your request order amonut should be $'.number_format($row->min_order_amt, 2)
-            ));
-        }
-        else {
-            return response()->json(array(
-                'status' => 'error',
-                'message' => 'Current vendor id not exist'
-            ));
-        }
-    }
-
-    function getTestEmail()
-    {
-        $mail = new PHPMailer(); // create a new object
-        $mail->IsSMTP(); // enable SMTP
-        $mail->Host = 'smtp.gmail.com';
-        $mail->Port = 587; // or 587
-        $mail->SMTPSecure = 'tls'; // secure transfer enabled REQUIRED for Gmail
-        $mail->SMTPAuth = true; // authentication enabled
-
-        $mail->SMTPDebug = 1; // debugging: 1 = errors and messages, 2 = messages only
-
-        //$mail->IsHTML(true);
-        $mail->Username = 'dev2@shayansolutions.com';          // SMTP username
-        $mail->Password = '&b%Dd9Kr';
-        $mail->SetFrom('dev2@shayansolutions.com');
-        $mail->Subject = "Test";
-        $mail->Body = "hello";
-        $mail->AddAddress("dev3@shayansolutions.com");
-        $mail->addCC('shayansolutions@gmail.com');
-        $mail->addBCC('dev1@shayansolutions.com');
-        if(!$mail->Send()) {
-            echo "Mailer Error: " . $mail->ErrorInfo;
-        } else {
-            echo "Message has been sent";
-        }
-        die;
-    }
     function updateRequestAndProducts($item_count,$SID_new)
     {
-         
+
          for($i=1;$i <= $item_count;$i++)
         {
             $pos1 = strpos($SID_new,'-');

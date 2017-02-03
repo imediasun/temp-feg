@@ -399,24 +399,14 @@ class MylocationgameController extends Controller
         $userId = \Session::get('uid');
                 
         $oldStatus = $data['old_status_id'];
-        $status = $data['status_id'];
-        $move_id = $data['game_move_id'];
-
-        $sold = @$data['sold'];        
-        $isSold = $sold == 1;
-        if (!$isSold) {
-            $sold = 0;
-        }        
-        $soldDate = $data['date_sold'];
-        if (empty($soldDate)) {
-            $soldDate = null;
-        }
-        $soldTo = $data['sold_to'];
+        $status = isset($data['status_id']) || !empty($data['status_id']) ? 
+                $data['status_id'] : $oldStatus;
         
-        $location = $data['location_id'];
-        if (empty($location)) {
-            $location = 0;
-        }        
+        $sold = isset($data['sold']) ? $data['sold'] : 0;        
+        $isSold = $sold == 1;
+        $soldDate = isset($data['date_sold']) ? $data['date_sold'] : $nowDate;        
+        $soldTo = @$data['sold_to'];
+        
         $oldLocation = $data['old_location_id'];
         if (empty($oldLocation)) {
             $oldLocation = 0;
@@ -425,14 +415,18 @@ class MylocationgameController extends Controller
         if (empty($prevLocation)) {
             $prevLocation = 0;
         }        
+        $location = isset($data['location_id']) ? $data['location_id'] : $oldLocation;
+        if (empty($location)) {
+            $location = 0;
+        }        
         $intendedLocation = $data['intended_first_location'];
         if (empty($intendedLocation)) {
             $intendedLocation = 0;
         }                          
        
-        $serial = $data['serial'];
-        $version = $data['version'];
-        $prevGameName = $data['prev_game_name'];
+        $serial = @$data['serial'];
+        $version = @$data['version'];
+        $prevGameName = @$data['prev_game_name'];
         
         $newData = array();
         $newData['serial'] = $serial;
@@ -442,7 +436,18 @@ class MylocationgameController extends Controller
         $newData['last_edited_on'] = $nowDatetime;
         $newData['status_id'] = $status;
         
-        if ($oldStatus == 3 && $status == 1) {
+        $inTransitToUp  = $oldStatus == 3 && $status == 1;
+        $staysInTransit = $oldStatus == 3 && $status == 3;
+        $upToInTransit  = $oldStatus == 1 && $status == 3;
+        $staysUp        = $oldStatus == 1 && $status == 1;
+        $upToRepair     = $oldStatus == 1 && $status == 2;
+        $repairToUp     = $oldStatus == 2 && $status == 1;
+        $staysRepair    = $oldStatus == 2 && $status == 2;
+        
+        if     ($inTransitToUp) {
+            
+            $move_id = $data['game_move_id'];
+            
             $newData['status_id'] = $status;
             $newData['location_id'] = $location;
             $newData['intended_first_location'] = 0;
@@ -462,7 +467,8 @@ class MylocationgameController extends Controller
             }
             
         }
-        elseif ($oldStatus == 1 && $status == 3) {
+        elseif ($upToInTransit) {
+            
             $newData['location_id'] = 0;
             $newData['prev_location_id'] = $oldLocation;
             $newData['intended_first_location'] = $location;
@@ -478,19 +484,14 @@ class MylocationgameController extends Controller
             $newData['game_move_id'] = $move_id;
           
         }
-        elseif ($status == 3 && $oldStatus == 3) {            
+        elseif ($staysInTransit) { 
+            
             $newData['intended_first_location'] = $location;
         }
-        elseif ($status == 1 && $oldStatus == 1) {            
+        elseif ($upToRepair) {  
             
-        }
-        elseif ($status == 2 && $oldStatus == 2) {            
-            
-        }
-        elseif ($status == 1 && $oldStatus == 2) {  
-            
-            $dataDown = $data['date_down'];
-            $problem = $data['problem'];
+            $dataDown = isset($data['date_down']) ? $data['date_down'] : $nowDate;
+            $problem = @$data['problem'];
             $service_id = \DB::table('game_service_history')->insertGetId([
                     'game_id' => $id,
                     'problem' => $problem,
@@ -499,10 +500,17 @@ class MylocationgameController extends Controller
                 ]); 
             $newData['game_service_id'] = $service_id;
         }
-        elseif ($status == 2 && $oldStatus == 1) {            
+        elseif ($repairToUp) {         
+            
             $service_id = $data['game_service_id'];
-            $dateUp = $data['date_up'];
-            $solution = $data['solution'];            
+            if (empty($service_id)) {
+                return response()->json(array(
+                    'status' => 'error',
+                    'message' => 'Error in moving game to Up & Running. Service history not found!'
+                ));                 
+            }
+            $dateUp = isset($data['date_up']) ? $data['date_up'] : $nowDate;
+            $solution = @$data['solution'];            
             \DB::table('game_service_history')
                     ->where('id', '=', $service_id)
                     ->update([
@@ -511,11 +519,16 @@ class MylocationgameController extends Controller
                         'up_user_id' => $userId,
                     ]);
         }
-        
+        elseif ($staysUp) {            
+            
+        }
+        elseif ($staysRepair) {            
+            
+        }        
         
         $newData['sold'] = $sold;
         $newData['sold_to'] = $soldTo;
-        $newData['date_sold'] = $soldDate;            
+        $newData['date_sold'] = $soldDate;         
         if ($isSold) {
             $newData['location_id'] = 0;
             $newData['prev_location_id'] = $oldLocation;
