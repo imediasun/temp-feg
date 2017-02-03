@@ -364,12 +364,12 @@
                 <th>Game</th>
                 <th>Asset ID</th>
                 <th>Location</th>
-                <th>Date Down</th>
-                <th>By User</th>
+                <th>Down Date</th>
+                <th>Down By User</th>
                 <th>Problem</th>
                 <th>Solution</th>
-                <th>By User </th>
-                <th>Date Up</th>
+                <th>Up By User </th>
+                <th>Up Date</th>
             </tr>
             </thead>
             <tbody>
