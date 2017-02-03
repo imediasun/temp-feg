@@ -81,7 +81,8 @@ abstract class Controller extends BaseController
             $parent = (!is_null($request->input('parent')) ? $request->input('parent') : null);
 
             $limit = (!is_null($request->input('limit')) ? $request->input('limit') : null);
-
+            $delimiter = empty($request->input('delimiter')) ? ' ' : $request->input('delimiter');
+            
             $rows = $this->model->getComboselect($param, $limit, $parent);
 
             $items = array();
@@ -90,8 +91,12 @@ abstract class Controller extends BaseController
 
             foreach ($rows as $row) {
                 $value = "";
+                $values = array();
                 foreach ($fields as $item => $val) {
-                    if ($val != "") $value .= $row->$val . " ";
+                    if ($val != "") {
+                        $values[] = $row->$val;
+                    }
+                    $value = implode($delimiter, $values);
                 }
                 $items[] = array($row->$param['1'], $value);
 
