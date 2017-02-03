@@ -1,3 +1,5 @@
+{{--*/ $titleID = @$row['id'] /*--}}
+{{--*/ $isEdit = !empty($titleID) /*--}}
 
 @if($setting['form-method'] =='native')
 	<div class="sbox">
@@ -9,9 +11,9 @@
 
 	<div class="sbox-content"> 
 @endif	
-			{!! Form::open(array('url'=>'gamestitle/save/'.$row['id'], 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'gamestitleFormAjax')) !!}
+			{!! Form::open(array('url'=>'gamestitle/save/'.$titleID, 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'gamestitleFormAjax')) !!}
 			<div class="col-md-12">
-						<fieldset><legend> Create New Game Title</legend>
+						<fieldset><legend>@if($isEdit) Edit @else Create New @endif Game Title</legend>
 									
 				  <div class="form-group  " > 
 					<label for="Game Title" class=" control-label col-md-4 text-left"> 
@@ -101,10 +103,10 @@
                                     {!! SiteHelpers::activeLang('Image', (isset($fields['img']['language'])? $fields['img']['language'] : array())) !!}
                                 </label>
                                 <div class="col-md-6">
-                                    <input type="file"   name="img" id="img" @if(empty($row->img)) required  @else style="color:white;width:23%;display:inline" @endif /><span>{{ isset($row->img)?$row->img:"" }}</span>
+                                    <input type="file"   name="img" id="img" @if(empty($row['img'])) required  @else style="color:white;width:23%;display:inline" @endif /><span>{{ isset($row['img'])?$row['img']:"" }}</span>
                                       <div style="margin-top:15px;">
 
-                                        {!! SiteHelpers::showUploadedFile($row->img,'/uploads/games/images/') !!}
+                                        {!! SiteHelpers::showUploadedFile($row['img'],'/uploads/games/images/') !!}
 
                                     </div>
 
@@ -113,27 +115,24 @@
 
                                 </div>
                             </div>
-                            <div class="form-group  " >
+                <!--div class="form-group  " >
 					<label for="Num Prize Meters" class=" control-label col-md-4 text-left"> 
 					{!! SiteHelpers::activeLang('Num Prize Meters', (isset($fields['num_prize_meters']['language'])? $fields['num_prize_meters']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  
-					<?php $num_prize_meters = explode(',',$row['num_prize_meters']);
-					$num_prize_meters_opt = array( '1' => 'Yes' ,'0'=> 'No' ); ?>
-					<select name='num_prize_meters' rows='5'   class='select2 '  > 
-						<?php 
-						foreach($num_prize_meters_opt as $key=>$val)
-						{
-							echo "<option  value ='$key' ".($row['num_prize_meters'] == $key ? " selected='selected' " : '' ).">$val</option>"; 						
-						}						
-						?></select> 
+    					{{--*/ $num_prize_meters = explode(',',$row['num_prize_meters']); /*--}}
+        				{{--*/ $num_prize_meters_opt = array( '1' => 'Yes' ,'0'=> 'No' ); /*--}}
+            			<select name='num_prize_meters' rows='5'   class='select2 '  > 
+						@foreach($num_prize_meters_opt as $key=>$val)						
+							<option  value ='$key' {{ $row['num_prize_meters'] == $key ? " selected='selected' " : '' }}">{{ $val }}</option>"; 						
+						@endforeach						
+						</select> 
 					 </div> 
-					 <div class="col-md-2">
-					 	
-					 </div>
-				  </div> </fieldset>
-			</div>
+					 <div class="col-md-2"></div>
+                </div--> 
+            
+        </fieldset>
+    </div>
 			
 												
 								
