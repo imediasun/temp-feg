@@ -25,6 +25,12 @@
     $game->dropdownlocation = $dropdownLocation;
     
     $serviceId = $game->game_service_id;
+    
+    if (!empty($serviceId)) {
+        $serviceHistoryIndex = array_search($serviceId, array_column($row['service_history'], 'id'));
+        $lastServiceData = $row['service_history'][$serviceHistoryIndex];
+    }
+    
     $moveId = $game->game_move_id;
     
     $serialNumber = $game->serial;
@@ -161,6 +167,22 @@
         
         @if($statusId == 2)
         <!-- up from repair inputs -->
+        @if (isset($lastServiceData))        
+        <div class="downforRepairDetailsText" > 
+            <div class="form-group clearfix">
+                <label class="control-label col-md-4">Date Down</label>
+                <div class="col-md-8">
+                    {!! DateHelpers::formatDate($lastServiceData->date_down) !!}
+                </div>
+            </div>
+            <div class="form-group clearfix">
+                <label class=" control-label col-md-4">Problem</label>
+                <div class="col-md-8">
+                    {!! $lastServiceData->problem !!}
+                </div>
+            </div>
+        </div>
+        @endif
         <input type="hidden" name="game_service_id" value="{{ $serviceId }}">
         <div class="upFromRepairDetails" style="display: none;" >
             <div class="form-group">
