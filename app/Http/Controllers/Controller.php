@@ -735,6 +735,8 @@ abstract class Controller extends BaseController
             'params' => '',
             'sort' => $sort,
             'order' => $order,
+            'params' => $filter,
+            'global' => (isset($this->access['is_global']) ? $this->access['is_global'] : 0)
         );
 
 

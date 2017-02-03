@@ -176,7 +176,7 @@ App.buildSearchQueryFromArray = function (fields) {
 function initiateSearchFormFields(container) {
     container.find('.date').datepicker({format:'mm/dd/yyyy',autoclose:true});
     container.find('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});  
-    renderDropdown(container.find('.sel-search-multiple'));    
+    renderDropdown(container.find('.sel-search-multiple, .select3'));    
 }
 
 function initDataGrid(module, url, options) {
