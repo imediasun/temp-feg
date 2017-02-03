@@ -11,32 +11,22 @@
 @endif	
 			{!! Form::open(array('url'=>'gameservicehistory/save/'.SiteHelpers::encryptID($row['id']), 'class'=>'form-horizontal', 'parsley-validate'=>'','novalidate'=>' ','id'=> 'gameservicehistoryFormAjax')) !!}
 			<div class="col-md-12">
-						<fieldset><legend> Game Service History</legend>
-				
+                <fieldset><legend> Game Service History</legend>
+                {!! Form::hidden('id', $row['id']) !!}
+                    
 				  <div class="form-group  " >
-					<label for="Id" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Id', (isset($fields['id']['language'])? $fields['id']['language'] : array())) !!}
+					<label for="Game Id" class=" control-label col-md-4 text-left">
+					{!! SiteHelpers::activeLang('Game (Asset ID - Game Title)', (isset($fields['game_id']['language'])? $fields['game_id']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('id', $row['id'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
+					  <select name='game_id'  id='game_name' class='select2' required></select>
 					 </div> 
 					 <div class="col-md-2">
 					 	
 					 </div>
 				  </div> 
 				  <div class="form-group  " >
-					<label for="Game Id" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Game ', (isset($fields['game_id']['language'])? $fields['game_id']['language'] : array())) !!}
-					</label>
-					<div class="col-md-6">
-					  <select name='game_id'  id='game_name' class='select2'></select>
-					 </div> 
-					 <div class="col-md-2">
-					 	
-					 </div>
-				  </div> 
-				  <div class="form-group  " >
-					<label for="Game Id" class=" control-label col-md-4 text-left">
+					<label for="location_id" class=" control-label col-md-4 text-left">
 					{!! SiteHelpers::activeLang('Location ', (isset($fields['location_id']['language'])? $fields['location_id']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
@@ -52,7 +42,8 @@
 					</label>
 					<div class="col-md-6">
 					  <input name='date_down' type="text" rows='5' id='date_down' class='form-control date' 
-                             value="{{ DateHelpers::formatDate($row['date_down']) }}" >
+                             value="{{ DateHelpers::formatDate($row['date_down']) }}" 
+                             required>
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -64,7 +55,7 @@
 					</label>
 					<div class="col-md-6">
 					  <textarea name='problem' rows='5' id='problem' class='form-control '
-				           >{{ $row['problem'] }}</textarea>
+				           required>{{ $row['problem'] }}</textarea>
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -76,8 +67,6 @@
 					</label>
 					<div class="col-md-6">
                         <select name="down_user_id" id="down_user_id" class="select2"></select>
-
-
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -89,7 +78,7 @@
 					</label>
 					<div class="col-md-6">
 					  <textarea name='solution' rows='5' id='solution' class='form-control '
-				           >{{ $row['solution'] }}</textarea>
+				           required>{{ $row['solution'] }}</textarea>
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -101,7 +90,8 @@
 					</label>
 					<div class="col-md-6">
 					  <input type="text" name='date_up'  id='date_up' class='form-control date' 
-                             value="{{ DateHelpers::formatDate($row['date_up']) }}">
+                             value="{{ DateHelpers::formatDate($row['date_up']) }}"
+                             required>
 					 </div>
 					 <div class="col-md-2">
 					 	
@@ -154,7 +144,7 @@ $(document).ready(function() {
             {  selected_value : '{{ $row["up_user_id"] }}',initial_text:'-- Select User --' });
     $("#down_user_id").jCombo("{{ URL::to('gameservicehistory/comboselect?filter=users:id:username') }}",
             {  selected_value : '{{ $row["down_user_id"] }}',initial_text:'-- Select User --' });
-    $("#game_name").jCombo("{{ URL::to('gameservicehistory/comboselect?filter=game:id:id|game_name') }}",
+    $("#game_name").jCombo("{{ URL::to('gameservicehistory/comboselect?filter=game:id:id|game_name') }}" + "&delimiter= - ",
             {  selected_value : '{{ $row["game_id"] }}',initial_text:'-- Select Game --' });
     $('.addC').relCopy({});
     $('.editor').summernote();

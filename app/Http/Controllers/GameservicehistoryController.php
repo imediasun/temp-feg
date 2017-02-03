@@ -202,7 +202,7 @@ class GameservicehistoryController extends Controller
         if ($validator->passes()) {
             $data = $this->validatePost('game_service_history', true);
             $id = $this->model->insertRow($data, $request->input('id'));
-            //$this->detailviewsave($this->modelview, $request->all(), $this->data['subgrid'], $id);
+            $this->detailviewsave($this->modelview, $request->all(), $this->data['subgrid'], $id);
             return response()->json(array(
                 'status' => 'success',
                 'message' => \Lang::get('core.note_success')
