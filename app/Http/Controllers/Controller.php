@@ -230,15 +230,22 @@ abstract class Controller extends BaseController
         $str = $this->info['config']['forms'];
         $data = array();
         foreach ($str as $f) {
+            
             $field = $f['field'];
+            $requestValue = \Request::get($field);
+            $requestType = $f['type'];
+            
+            if ($requestType !=='file' && !isset($requestValue)) {
+                continue;
+            }
             if ($f['view'] == 1) {
                 if ($f['type'] == 'textarea_editor' || $f['type'] == 'textarea') {
-
                     $content = (isset($_POST[$field]) ? $_POST[$field] : '');
                     $data[$field] = $content;
-                } else {
+                } 
+                else {
                     $r = \Request::get($field);
-                    if (isset($_POST[$field]) or isset($r)) {
+                    if (isset($_POST[$field]) || isset($r)) {
                         if (isset($_POST[$field])) {
                             $data[$field] = $_POST[$field];
                         } elseif (isset($r)) {
@@ -325,27 +332,25 @@ abstract class Controller extends BaseController
                         }
                     }
 
-
                     // if post is checkbox
-                    if ($f['type'] == 'checkbox') {
+                    elseif ($f['type'] == 'checkbox') {
                         $r1 = \Request::get($field);
-                        if (!is_null($_POST[$field]) or !is_null($r1)) {
-                            if (!is_null($_POST[$field]))
+                        if (!is_null($_POST[$field]) || !is_null($r1)) {
+                            if (!is_null($_POST[$field])) {
                                 $data[$field] = $_POST[$field];
+                            }
                             elseif (!is_null($r1)) {
                                 $data[$field] = $r1;
                             }
                         }
                     }
                     // if post is date
-                    if ($f['type'] == 'date') {
-
-                        $data[$field] = date("Y-m-d", strtotime($request->input($field)));
-                    }
-
+                    elseif ($f['type'] == 'date' || $f['type'] == 'text_date') {
+                        $data[$field] = date("Y-m-d", strtotime(\Request::get($field)));
+                    }   
                     // if post is seelct multiple
                     //
-                    if ($f['type'] == 'select') {
+                    elseif ($f['type'] == 'select') {
                         $r2 = \Request::get($field);
                         $multival = "";
                         //echo '<pre>'; print_r( $_POST[$field] ); echo '</pre>';
@@ -356,9 +361,11 @@ abstract class Controller extends BaseController
 
                                 $multival = (is_array($r2) ? implode(",", $r2) : $r2);
                             }
-
-                            $data[$field] = $multival;
-                        } else {
+                            if (isset($_POST[$field]) || isset($_GET[$field])) {
+                                $data[$field] = $multival;
+                            }                            
+                        } 
+                        else {
                             if (isset($_POST[$field]))
                                 $data[$field] = $_POST[$field];
                             elseif (isset($r2))
