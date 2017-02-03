@@ -234,7 +234,7 @@
 
                         <td><br/> <input type="text" name='item_name[]' placeholder='Item  Name' id="item_name"
                                          class='form-control item_name mysearch' onfocus="init(this.id,this)"
-                                         maxlength="225" reuuired>
+                                         maxlength="225" required>
                         </td>
                         <td>
                             <textarea name='item[]' placeholder='Item  Description' id="item"
@@ -261,9 +261,7 @@
                         <input type='hidden' name='request_id[]' id="request_id">
                         <td><br/><input type="text" name="total" value="" readonly class="form-control"/></td>
                         <td align="center"><br/>
-                            <button onclick=" $(this).parents('.clonedInput').remove(); calculateSum();decreaseCounter(); return false"
-                                    class="remove btn btn-xs btn-danger">-
-                            </button>
+                            <button class="remove btn btn-xs btn-danger">-</button>
                             <input type="hidden" name="counter[]">
                         </td>
                     </tr>
@@ -359,7 +357,6 @@
             $("#po_message").hide(200);
         });
         $(document).ready(function () {
-
             var inc = 1;
             hideShowAltLocation();
             if(mode != "edit") {
@@ -409,9 +406,20 @@
             $(".calculate").keyup(function () {
                 calculateSum();
             });
-            $('.remove').click(function () {
-                calculateSum();
+
+            $('.remove').live( "click", function() {
+                if($(".clonedInput").length>1) {
+                    $(this).parents('.clonedInput').remove();
+                    calculateSum();
+                    decreaseCounter();
+                } else { alert("You can not delete all rows"); }
+                return false;
             });
+//            $('.remove').click(function () {
+//                calculateSum();
+//                $(this).parents('.clonedInput').remove();
+//            calculateSum();decreaseCounter(); return false
+//            });
             $('.selectpicker').selectpicker();
             $('.addC').relCopy({});
             $('.editor').summernote();
@@ -431,7 +439,7 @@
             form.parsley();
             form.submit(function () {
 
-                if (form.parsley('isValid') == true) {
+                if (form.parsley('isValid') == true && $(".calculate").parsley('isValid')==true ) {
                     var options = {
                         dataType: 'json',
                         beforeSubmit: showRequest,
@@ -683,6 +691,12 @@
         }
 
         $("#add_new_item").click(function () {
+            $('#ordersubmitFormAjax').parsley().destroy();
+
+//set required attribute on input to false
+           // $('input').attr('data-parsley-required', 'true');
+//reinitialize parsley
+            $('#ordersubmitFormAjax').parsley();
             handleItemCount('add');
             $(".calculate").keyup(function () {
                 calculateSum();
@@ -880,6 +894,10 @@
 
         [id^="game_0"] {
             width: 90%;
+        }
+        .itemstable tr.clone:first-of-type td:last-of-type button.remove
+        {
+           display:none;
         }
     </style>
 
