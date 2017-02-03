@@ -10,7 +10,7 @@
     $soldDate = $game->date_sold;
     $soldDateFormatted = DateHelpers::formatDate($game->date_sold);
 
-    $assetNumber = $game->asset_number;
+    $assetID = $game->asset_number;
     $locationId = $game->location_id;
     $locationIdName = $game->location_name;
     $indendedLocation = $game->intended_first_location;
@@ -58,7 +58,7 @@
 	<div class="sbox-title">
 		<h4> 
             <i class="fa fa-gamepad"></i>
-            {{ $gameTitle }} ({{ $assetNumber }})
+            {{ $gameTitle }} ({{ $assetID }})
             @if (!empty($locationId))
             <small>at {{ $locationIdName }} </small>
             @endif
@@ -70,7 +70,7 @@
 	<div class="sbox-content">
 @endif
 <div class="row">
-    {!! Form::open(array('url'=>'mylocationgame/update/'. $assetNumber, 'class'=>'form-horizontal', 'novalidate'=>'', 'id'=> 'mylocationgameFormAjax')) !!}
+    {!! Form::open(array('url'=>'mylocationgame/update/'. $assetID, 'class'=>'form-horizontal', 'novalidate'=>'', 'id'=> 'mylocationgameFormAjax')) !!}
     <div class="col-md-offset-1 col-md-5 gameDetailsContainer {{ $containerClass }}">
         <div class="titleSection">
             <h1 class="m-b-f clearfix">Game Details</h1>
@@ -276,9 +276,9 @@
         </div>        
         <div class="form-group clearfix " >
             <label class=" control-label col-md-4">
-                {!! SiteHelpers::activeLang('Asset Number', (isset($fields['asset_number']['language'])? $fields['asset_number']['language'] : array())) !!}
+                {!! SiteHelpers::activeLang('Asset ID', (isset($fields['asset_number']['language'])? $fields['asset_number']['language'] : array())) !!}
             </label>
-            <div class="col-md-8">{{ $assetNumber }}</div>
+            <div class="col-md-8">{{ $assetID }}</div>
         </div>
         <div class="form-group  clearfix" >
             <label class=" control-label col-md-4">
