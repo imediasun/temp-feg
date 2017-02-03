@@ -106,7 +106,7 @@
                     <div class="input-group" style="width:100%;">
                         {!! Form::text('date_sold', $soldDateFormatted, array(
                             'class'=>'form-control date', 
-                            'placeholder' => 'Sold Date'
+                            'placeholder' => 'Sold Date',
                             'parsley-errors-container' => '.dateSoldError',
                             'parsley-nofocus' => 'true'
                         )) !!}
