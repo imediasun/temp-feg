@@ -51,11 +51,13 @@
                                     <td style="border:thin white dotted; padding:2px">{{ $data['order_description_' . $i] }}</td>
                                     <td style="border:thin white dotted; padding:2px; text-align:center;">{{  $data['order_qty_'.$i] }}</td>
                                     <td style="border:thin white dotted; padding:2px; text-align:center;">
+                                        <?php if(!empty($game_options)):?>
                                         <select name='game_'.$i id='game_'.$i>
                                             @foreach($game_options as $key=>$value)
                                                 <option value="{{ $key }}"> {{ $value }} </option>
                                             @endforeach
                                         </select>
+                                        <?php endif; ?>
                                     </td>
                                 </tr>
                                 <input type="hidden" name='order_qty_'.$i value="{{ $data['order_qty_'.$i] }}" id='order_qty_'.$i/>
