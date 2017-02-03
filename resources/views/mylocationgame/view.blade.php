@@ -339,7 +339,8 @@
         <table class="table">
             <thead>
             <tr>
-                <th>Asset Number</th>
+                <th>Asset ID</th>
+                <th>Location</th>
                 <th>Date Down</th>
                 <th>By User</th>
                 <th>Problem</th>
@@ -354,6 +355,7 @@
             @foreach($row['service_history'] as $service_history)
             <tr>
                 <td> {{ $service_history->game_id }}</td>
+                <td> {{ $service_history->location_id }} {{ $service_history->location_name }} </td>
                 <td>{{ DateHelpers::formatDate($service_history->date_down) }}</td>
                 <td>{{ $service_history->down_first_name}} {{ $service_history->down_last_name }}</td>
                 <td>{{ $service_history->problem }}</td>
