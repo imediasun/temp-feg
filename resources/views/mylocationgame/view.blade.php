@@ -333,12 +333,13 @@
 </div>
 
 <div class="row" style="background: #FFF;padding:20px auto;box-shadow: 1px 1px 5px gray;margin:30px auto">
-    <div class="col-md-12">
+    <div class="col-md-12 gameServiceHistoryContainer">
         <h2 class="m-b-f m-t-f">Game Service History</h2>
         <div class="table-responsive">
-        <table class="table">
+        <table class="table table-striped gameServiceHistoryTable">
             <thead>
             <tr>
+                <th>Game</th>
                 <th>Asset ID</th>
                 <th>Location</th>
                 <th>Date Down</th>
@@ -354,10 +355,14 @@
             @if($row['service_history'])
             @foreach($row['service_history'] as $service_history)
             <tr>
+                {{--*/ $thisGame = $service_history->game_id == $assetID /*--}}
+                {{--*/ $gameTitle = $thisGame ? "<b>This Exact Machine</b>" : 
+                    ("<em>Another <b>" . $service_history->game_title . "</b></em>") /*--}}
+                <td @if($thisGame) class="text-danger" @endif> {!! $gameTitle !!}</td>
                 <td> {{ $service_history->game_id }}</td>
                 <td> {{ $service_history->location_id }} {{ $service_history->location_name }} </td>
                 <td>{{ DateHelpers::formatDate($service_history->date_down) }}</td>
-                <td>{{ $service_history->down_first_name}} {{ $service_history->down_last_name }}</td>
+                <td>{{ $service_history->down_first_name}} | {{ $service_history->down_last_name }}</td>
                 <td>{{ $service_history->problem }}</td>
                 <td>{{ $service_history->solution }}</td>
                 <td>{{ $service_history->up_first_name }} {{ $service_history->up_last_name }}</td>
@@ -373,10 +378,10 @@
         </table>
     </div>
     </div>
-    <div class="col-md-12" style="margin-bottom:50px">
+    <div class="col-md-12 gameServiceHistoryContainer" style="margin-bottom:50px">
         <h2 class="m-b-f m-t-f">Game Move History</h2>
         <div class="table-responsive">
-            <table class="table">
+            <table class="table table-striped gameMoveHistoryTable">
                 <thead>
                 <tr>
                     <th>Depart Date</th>
