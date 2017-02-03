@@ -245,7 +245,6 @@ class Sximo extends Model {
                     $row = \DB::table($table)->where($params['3'], $params['4'])->orderBy($order, 'asc')->get();
                 }
             }
-            if($table=="games-dropdown"){}
         }
 
 

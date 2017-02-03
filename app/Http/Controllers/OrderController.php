@@ -960,6 +960,10 @@ class OrderController extends Controller
             foreach ($queries as $query) {
                 $results[] = ['id' => $query->id, 'value' => $query->vendor_description];
             }
+            usort($results, function (&$a, &$b) use ($term) {
+                if (stripos($a["value"],$term) == stripos($b["value"],$term)) return 0;
+                return (stripos($a["value"],$term) < stripos($b["value"],$term)) ? -1 : 1;
+            });
             echo json_encode($results);
         } else {
             echo json_encode(array('id' => 0, 'value' => "No Match"));
@@ -1005,7 +1009,43 @@ class OrderController extends Controller
         $games_options=$this->model->populateGamesDropdown($location);
         return $games_options;
     }
+    function getComboselect(Request $request)
+    {
 
+        if ($request->ajax() == true && \Auth::check() == true) {
+            $param = explode(':', $request->input('filter'));
+            $parent = (!is_null($request->input('parent')) ? $request->input('parent') : null);
+            $limit = (!is_null($request->input('limit')) ? $request->input('limit') : null);
+            //for order type Advance Replacement
+            if(isset($param[3]) && !empty($param[3])&& isset($param[4]) ) {
+                if ($param[3] == "order_type_id" && $param[4] == 0) {
+                    $rows = \DB::table("order_status")->where('id', '=', '1')->orWhere('id', '=', '6')->orderBy('status', 'asc')->get();
+                } //for ordet type other than Advance Replacement
+                elseif ($param[3] == "order_type_id" && $param[4] == 1) {
+                    $rows = \DB::table("order_status")->where('id', '=', '1')->orWhere('id', '=', '2')->orderBy('status', 'asc')->get();
+                }
+            }
+            else {
+                $rows = $this->model->getComboselect($param, $limit, $parent);
+            }
+            $items = array();
+
+            $fields = explode("|", $param[2]);
+
+            foreach ($rows as $row) {
+                $value = "";
+                foreach ($fields as $item => $val) {
+                    if ($val != "") $value .= $row->$val . " ";
+                }
+                $items[] = array($row->$param['1'], $value);
+
+            }
+
+            return json_encode($items);
+        } else {
+            return json_encode(array('OMG' => " Ops .. Cant access the page !"));
+        }
+    }
 
 }
 
