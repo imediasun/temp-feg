@@ -25,6 +25,12 @@
     $game->dropdownlocation = $dropdownLocation;
     
     $serviceId = $game->game_service_id;
+    
+    if (!empty($serviceId)) {
+        $serviceHistoryIndex = array_search($serviceId, array_column($row['service_history'], 'id'));
+        $lastServiceData = $row['service_history'][$serviceHistoryIndex];
+    }
+    
     $moveId = $game->game_move_id;
     
     $serialNumber = $game->serial;
@@ -38,7 +44,7 @@
     $prevLocationIdName = $game->previous_location;
     $lastEditedBy = $game->last_edited_by;
     $lastEditedOn = $game->last_edited_on;
-    $lastEditedDetails = $lastEditedBy . (!empty($lastEditedOn) ? ' on '. DateHelpers::formatDate($lastEditedOn) : '');
+    $lastEditedDetails = $lastEditedBy . (!empty($lastEditedOn) ? ' on '. DateHelpers::formatDateCustom($lastEditedOn) : '');
     
     $hasManual = $game->has_manual === 1;
     $manualDetails = $hasManual ? "<a href='uploads/games/manuals/{$gameTitleId}.pdf' target='_blank'>Click to View</a>" : '';
@@ -100,6 +106,7 @@
                     <div class="input-group" style="width:100%;">
                         {!! Form::text('date_sold', $soldDateFormatted, array(
                             'class'=>'form-control date', 
+                            'placeholder' => 'Sold Date',
                             'parsley-errors-container' => '.dateSoldError',
                             'parsley-nofocus' => 'true'
                         )) !!}
@@ -109,7 +116,8 @@
                 </div>
                 <div class="col-md-8">
                     <input type="text" name="sold_to" class="form-control" 
-                           id="sold_to" placeholder="Sold To" value="{{ $soldTo }}"/>
+                           id="sold_to" placeholder="Describe Game Sale Details"
+                           value="{{ $soldTo }}"/>
                 </div>                                                        
             </div>
         </div>
@@ -161,6 +169,22 @@
         
         @if($statusId == 2)
         <!-- up from repair inputs -->
+        @if (isset($lastServiceData))        
+        <div class="downforRepairDetailsText" > 
+            <div class="form-group clearfix">
+                <label class="control-label col-md-4">Date Down</label>
+                <div class="col-md-8">
+                    {!! DateHelpers::formatDate($lastServiceData->date_down) !!}
+                </div>
+            </div>
+            <div class="form-group clearfix">
+                <label class=" control-label col-md-4">Problem</label>
+                <div class="col-md-8">
+                    {!! $lastServiceData->problem !!}
+                </div>
+            </div>
+        </div>
+        @endif
         <input type="hidden" name="game_service_id" value="{{ $serviceId }}">
         <div class="upFromRepairDetails" style="display: none;" >
             <div class="form-group">
@@ -333,19 +357,21 @@
 </div>
 
 <div class="row" style="background: #FFF;padding:20px auto;box-shadow: 1px 1px 5px gray;margin:30px auto">
-    <div class="col-md-12">
+    <div class="col-md-12 gameServiceHistoryContainer">
         <h2 class="m-b-f m-t-f">Game Service History</h2>
         <div class="table-responsive">
-        <table class="table">
+        <table class="table table-striped gameServiceHistoryTable">
             <thead>
             <tr>
-                <th>Asset Number</th>
-                <th>Date Down</th>
-                <th>By User</th>
+                <th>Game</th>
+                <th>Asset ID</th>
+                <th>Location</th>
+                <th>Down Date</th>
+                <th>Down By User</th>
                 <th>Problem</th>
                 <th>Solution</th>
-                <th>By User </th>
-                <th>Date Up</th>
+                <th>Up By User </th>
+                <th>Up Date</th>
             </tr>
             </thead>
             <tbody>
@@ -353,9 +379,14 @@
             @if($row['service_history'])
             @foreach($row['service_history'] as $service_history)
             <tr>
+                {{--*/ $thisGame = $service_history->game_id == $assetID /*--}}
+                {{--*/ $gameTitle = $thisGame ? "<b>This Exact Machine</b>" : 
+                    ("<em>Another <b>" . $service_history->game_title . "</b></em>") /*--}}
+                <td @if($thisGame) class="text-danger" @endif> {!! $gameTitle !!}</td>
                 <td> {{ $service_history->game_id }}</td>
+                <td> {{ $service_history->location_id }} {{ $service_history->location_name }} </td>
                 <td>{{ DateHelpers::formatDate($service_history->date_down) }}</td>
-                <td>{{ $service_history->down_first_name}} {{ $service_history->down_last_name }}</td>
+                <td>{{ $service_history->down_first_name}} | {{ $service_history->down_last_name }}</td>
                 <td>{{ $service_history->problem }}</td>
                 <td>{{ $service_history->solution }}</td>
                 <td>{{ $service_history->up_first_name }} {{ $service_history->up_last_name }}</td>
@@ -371,10 +402,10 @@
         </table>
     </div>
     </div>
-    <div class="col-md-12" style="margin-bottom:50px">
+    <div class="col-md-12 gameServiceHistoryContainer" style="margin-bottom:50px">
         <h2 class="m-b-f m-t-f">Game Move History</h2>
         <div class="table-responsive">
-            <table class="table">
+            <table class="table table-striped gameMoveHistoryTable">
                 <thead>
                 <tr>
                     <th>Depart Date</th>

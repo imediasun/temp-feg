@@ -403,10 +403,32 @@ class Sximo extends Model {
 
     function getServiceHistory($asset_id) {
         $row = \DB::table('game_service_history')
+                        ->leftJoin('location as l', 'game_service_history.location_id', '=', 'l.id')
+                        ->leftJoin('game as g', 'game_service_history.game_id', '=', 'g.id')
+                        ->leftJoin('game_title as gt', 'g.game_title_id', '=', 'gt.id')
                         ->leftJoin('users as u1', 'game_service_history.down_user_id', '=', 'u1.id')
                         ->leftJoin('users as u2', 'game_service_history.up_user_id', '=', 'u2.id')
-                        ->select('game_service_history.*', 'u1.first_name as down_first_name', 'u1.last_name as down_last_name', 'u2.first_name as up_first_name', 'u2.last_name as up_last_name')
-                        ->where('game_id', '=', $asset_id)
+                        ->select(
+                                'game_service_history.id', 
+                                'game_service_history.game_id', 
+                                'game_service_history.location_id', 
+                                'game_service_history.date_down', 
+                                'game_service_history.problem', 
+                                'game_service_history.down_user_id', 
+                                'game_service_history.solution', 
+                                'game_service_history.date_up', 
+                                'game_service_history.up_user_id', 
+                                'l.id as location_id', 
+                                'l.location_name', 
+                                'l.location_name_short', 
+                                'gt.id as game_title_id', 
+                                'gt.game_title', 
+                                'u1.first_name as down_first_name', 
+                                'u1.last_name as down_last_name', 
+                                'u2.first_name as up_first_name', 
+                                'u2.last_name as up_last_name'
+                            )
+                        ->whereRaw('gt.id = (SELECT game_title_id FROM game WHERE id = '.$asset_id.')')                        
                         ->orderBy('id', 'desc')
                         ->get();
         return $row;

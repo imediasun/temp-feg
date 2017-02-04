@@ -18,7 +18,6 @@
 							{{ SiteHelpers::activeLang('Id', (isset($fields['id']['language'])? $fields['id']['language'] : array())) }}	
 						</td>
 						<td>{{ $row[0]->id }} </td>
-
 					</tr>
 
 					<tr>
@@ -61,13 +60,13 @@
 
 					</tr>
 
-					<tr>
+					<!--tr>
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Num Prize Meters', (isset($fields['num_prize_meters']['language'])? $fields['num_prize_meters']['language'] : array())) }}
 						</td>
 						<td>{{ $row[0]->num_prize_meters }} </td>
 						
-					</tr>
+					</tr-->
 				
 			</tbody>	
 		</table>  

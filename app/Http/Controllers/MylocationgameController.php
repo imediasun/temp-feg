@@ -494,6 +494,7 @@ class MylocationgameController extends Controller
             $problem = @$data['problem'];
             $service_id = \DB::table('game_service_history')->insertGetId([
                     'game_id' => $id,
+                    'location_id' => $oldLocation,
                     'problem' => $problem,
                     'down_user_id' => $userId,
                     'date_down' => $dataDown,
@@ -515,6 +516,7 @@ class MylocationgameController extends Controller
                     ->where('id', '=', $service_id)
                     ->update([
                         'solution' => $solution,
+                        'location_id' => $oldLocation,                        
                         'date_up' => $dateUp,
                         'up_user_id' => $userId,
                     ]);
