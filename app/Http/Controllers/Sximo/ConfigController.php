@@ -75,7 +75,7 @@ class ConfigController extends Controller
             $val .= "define('CNF_RESTRICIP','" . CNF_RESTRICIP . "');\n";
             $val .= "define('CNF_REPLY_TO','" . $request->input('cnf_reply_to') . "');\n";
             $val .= "define('CNF_REPLY_TO_PASSWORD','" . $request->input('cnf_reply_to_password') . "');\n";
-            $val .= "define('CNF_GRAPHIC_MANAGER''". $request->input('graphic_manager_request') . "'_;\n";
+            $val .= "define('CNF_GRAPHIC_MANAGER','". $request->input('graphic_manager_request') . "');\n";
             $val .= "?>";
 
             $filename = base_path() . '/setting.php';
