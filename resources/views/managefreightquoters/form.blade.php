@@ -397,6 +397,7 @@
 
                         <div class="col-md-6">
                             <select class="form-control" name="games_per_location" id="games_per_location">
+                                <option value="0">0</option>
                                 <option value="1">1</option>
                                 <option value="2">2</option>
                                 <option value="3">3</option>
