@@ -232,7 +232,7 @@ class managefreightquoters extends Sximo
         }
         $data['freight_company_1']=isset($freightOrder[0]->freight_company_1)?$freightOrder[0]->freight_company_1:0;
         $data['loc_from_id'] = $loc_from_id;
-        $data['game_drop_dwon'] = self::populateGamesDropDown();
+        $data['game_drop_dwon'] = self::populateGamesDropDownInFreightQuote();
         return $data;
     }
 
@@ -267,7 +267,7 @@ class managefreightquoters extends Sximo
         return $data;
     }
 
-    public static function populateGamesDropDown()
+    public static function populateGamesDropDownInFreightQuote()
     {
         $concat = 'CONCAT(IF(G.location_id = 0, "IN TRANSIT", G.location_id), " | ",T.game_title," | ",G.id, IF(G.notes = "","", CONCAT(" (",G.notes,")")))';
         $where="";
