@@ -34,7 +34,7 @@
 
     function formSubmit() {
         var form = $(this),
-            deleteConfirmed = confirm("Do you want to delete this video?"),
+            deleteConfirmed = confirm("The video will be deleted. Press OK to confirm?"),
             options = {
                 dataType     :  'json',
                 beforeSubmit :  preProcessForm,
