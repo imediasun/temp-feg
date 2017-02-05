@@ -24,7 +24,9 @@
             {!! Form::open(array('url'=>'mylocationgame/save/'.$row['id'], 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'mylocationgameFormAjax')) !!}
             <div class="col-md-12">
                 <fieldset>
+                    @if ($isEdit)
                     <legend>Edit</legend>
+                    @endif
                     <div class="form-group  " >
                         <label for="Test Piece" class=" control-label col-md-4 text-left">
                             {!! SiteHelpers::activeLang('Test Piece', (isset($fields['test_piece']['language'])? $fields['test_piece']['language'] : array())) !!}
