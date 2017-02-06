@@ -228,6 +228,22 @@ function autoSetMainContainerHeight() {
     $(window).resize(setHeight);
 }
 
+function numberFieldValidationChecks(element){
+    element.keypress(isNumeric);
+}
+
+function isNumeric(ev) {
+
+    var keyCode = window.event ? ev.keyCode : ev.which;
+    //codes for 0-9
+    if (keyCode < 48 || keyCode > 57) {
+        //codes for backspace, delete, enter
+        if (keyCode != 0 && keyCode != 8 && keyCode != 13 && !ev.ctrlKey) {
+            ev.preventDefault();
+        }
+    }
+}
+
 jQuery(document).ready(function($){
     // Adjust main panel's height based on overflowing nav-bar
     autoSetMainContainerHeight();

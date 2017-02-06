@@ -362,6 +362,8 @@
             $("#po_message").hide(200);
         });
         $(document).ready(function () {
+
+            numberFieldValidationChecks($("input[name^=qty]"));
             if ($("td button.remove").is(':hidden')) {
                 $("#remove-col").hide();
             }
@@ -727,14 +729,9 @@
                     placeholder: "For Various Games", width: "98%"
                 });
             }
-
             $("[name^=qty]").keypress(isNumeric);
             reInitParcley();
         });
-        $("[name^=qty]").keypress(isNumeric);
-        $("[name^=qty]").onpaste = function(e) {
-            e.preventDefault();
-        }
         function isNumeric(ev) {
             var keyCode = window.event ? ev.keyCode : ev.which;
             //codes for 0-9
@@ -746,13 +743,14 @@
             }
 
         }
-function  reInitParcley()
+        function  reInitParcley()
 {
     $("li.required,li.min").hide();
  //   $("input.parsley-error").css('border-color','#e5e6e7!important');
     $('#ordersubmitFormAjax').parsley().destroy();
     $('#ordersubmitFormAjax').parsley();
 }
+
         function decreaseCounter() {
 
             handleItemCount('remove');
