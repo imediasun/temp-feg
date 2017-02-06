@@ -9,9 +9,11 @@
 
 	<div class="sbox-content clearfix"> 
 @endif
-        {!! Form::open(array('url'=>'managefreightquoters/update/'.$row['freight_order_id'],
-        'class'=>'form-vertical','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=>
-        'managefreightquotersFormAjax')) !!}
+        {!! Form::open(array(
+            'url'=>'managefreightquoters/update/'.$row['freight_order_id'],
+            'class'=>'form-vertical', 'parsley-validate'=>'','novalidate'=>' ',
+            'id'=> 'managefreightquotersFormAjax')) 
+        !!}
         <input type="hidden" id="freight_order_id" name="freight_order_id" value="{{ $row['freight_order_id'] }}" >
         <input type="hidden" id="num_games_per_destination" name="num_games_per_destination" value="{{ $row['num_games_per_destination'] }} " >
         <input type="hidden" id="ship_to_type" name="ship_to_type" value="{{ $row['ship_to_type'] }}" >
@@ -155,17 +157,10 @@
                         <label class="label-control col-md-3">Booked Through</label>
                         <div class="col-md-9">
                             <input type="hidden" name="company[]" id="company{{$i}}" value="{{$row['freight_loc_info']['freight_company'][$i]}}"/>
-                            {{--<select name="company[]" class="form-control" id="company">
-                                <option disabled selected>Select Freight Company</option>
-                                @foreach($row['companies_dropdown'] as $d)
-                                    <option @if($d->id == $row['freight_loc_info']['freight_company'][$i]) selected @endif value="{{ $d->id }}">{{ $d->company_name }}</option>
-                                @endforeach
-                            </select>
-                            --}}
                         </div>
                     </div>
                     <div class="form-group m-b-sm-f clearfix">
-                        <input type="hidden" name="freight_company[].'" id="freight_company_'.$i.'"   value="{{ $row['freight_loc_info']['freight_company'][$i] }}" />                
+                        <input type="hidden" name="freight_company[]" id="freight_company_'.$i.'"   value="{{ $row['freight_loc_info']['freight_company'][$i] }}" />                
                         <label class="label-control col-md-3">To Location {{ $i+1 }}</label>
                         <div class="col-md-9">
                             <strong>
@@ -189,14 +184,6 @@
                                        id="loc_game_{{$i}}_{{$j}}" 
                                        value="{{ isset($row['freight_loc_info']['loc_game'][$i][$j])?  $row['freight_loc_info']['loc_game'][$i][$j]:0 }}" 
                                 />
-                                {{--<select name="loc_game[{{$i}}][{{$j}}]" id="loc_game{{ $j }}" class="form-control">
-                                    <option disabled selected>Select Game</option>
-                                    @foreach($row['game_drop_dwon'] as $game)
-                                    <option @if(isset($row['freight_loc_info']['loc_game'][$i][$j]) && $row['freight_loc_info']['loc_game'][$i][$j]== $game->id) selected @endif value="{{$game->id}}">
-                                        {{$game->text}}
-                                    </option>
-                                        @endforeach
-                                </select> --}}
                             </div>
                         </div>
                     @endfor
@@ -224,8 +211,8 @@
                     <div class="form-group m-b-xs-f clearfix">
                         <label class="label-control col-md-3">INCLUDE IN EMAIL:</label>
                         <div class="col-md-9">
-                            <input type="hidden"  name="include_in_email[]" value="0"/>
-                            <input type="checkbox"  name="include_in_email[]" value="1" id="include_in_email{{$i}}" checked/>
+                            <input type="hidden"  name="include_in_email[]" value="1"/>
+                            <input type="checkbox" data-proxy-input='include_in_email' name="_include_in_email[]" value="1" id="include_in_email{{$i}}" checked/>
                         </div>
                     </div>
                     <hr/>
@@ -248,8 +235,8 @@
                              to <b style="font-size:1.2em;">{{  $row['contact_email']}}</b>
                         @endif
                         </label>
-                        <input type="hidden"  name="email" value="0"/>
-                        <input type="checkbox"  name="email" value="1" id="send_email_update" checked/>
+                        <input type="hidden" name="email" value="1"/>
+                        <input type="checkbox"  data-proxy-input='email' name="_email" value="1" id="send_email_update" checked/>
 
                     </div>
                 </div>                
@@ -267,61 +254,22 @@
 	</div>
 </div>	
 @endif
-<script>
-$(document).ready(function(){
 
-    $('.date').datepicker({format:'mm/dd/yyyy',autoClose:true})
-    $('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});
-    var to_contact_name=<?php echo json_encode($row['to_contact_name']) ?>;
-    var email_notes = <?php echo json_encode($row['email_notes']) ?>;
-/*    $("select[id^='location']").each(function(){
-        $(this).jCombo("{{ URL::to('managefreightquoters/comboselect?filter=location:id:id|location_name') }}",
-            {selected_value: '', initial_text: 'Select Location'});
-    });*/
-    if(to_contact_name !== "" && email_notes == "")
-    {
-        $("#email_notes").val("Hi"+to_contact_name+",");
-    }
-    $("input[id^='company']").select2({
-        width: '100%',
-        data: <?php echo json_encode($row['companies_dropdown'])?>,
-        placeholder: "Select Company"
+<script type="text/javascript">
+    
+    var mainUrl = '{{ $pageUrl }}',
+        mainModule = '{{ $pageModule }}';
+    
+    $(document).ready(function() {
+        App.modules.freight.view.init({
+                'container': $('#'+pageModule+'View'),
+                'moduleName': pageModule,
+                'mainModule': mainModule,
+                'url': pageUrl,
+                'mainUrl': mainUrl,
+            },
+            {!! json_encode($row) !!}
+        );
+        
     });
-    $("#freight_company_1").select2({
-        width:'100%',
-        data:<?php echo json_encode($row['companies_dropdown'])?>,
-        placeholder: "Select Company"
-    });
-    console.log($("input[id^='loc_game_']"));
-    $("input[id^='loc_game_']").each(function(){       
-        $(this).select2({
-            placeholder: "Select Game",
-            width: '100%',
-            data:   <?php echo json_encode($row['game_drop_dwon'])?>  
-        });
-    });
-});
-
-
-$("#send_email_update").on('change',function(){
-        if($(this).is(':checked'))
-        {
-            $("input[id^=include_in_email]").attr('checked','checked');
-        }
-        else{
-            $("input[id^=include_in_email]").removeAttr('checked');
-        }
-    });
-  
-$("#email").change(function() {
-    if(this.checked) {
-        $( ":checkbox" ).prop('checked', true);
-        $( "checkbox[id^='new_ship_']").prop('checked', false);
-    }
-    else
-    {
-        $( ":checkbox" ).prop('checked', false);
-    }
-});
-
-</script>	
+</script>

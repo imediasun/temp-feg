@@ -371,16 +371,20 @@ class order extends Sximo
         return $data;
     }
 
-    function getPoNumber($po_full)
+    function getPoNumber($po_full,$location_id=0)
     {
-        $query = \DB::select('SELECT po_number FROM orders WHERE po_number = "' . $po_full . '"');
-        if (count($query) > 0) {
-            //$po_message = 'taken';
-            $po_message=$this->increamentPO();
-
-        } else {
-            $po_message = 'available';
+        if($location_id != 0) {
+            $query = \DB::select('SELECT po_number FROM orders WHERE po_number = "' . $po_full . '" and location_id=' . $location_id);
         }
+        else
+        {
+          //  $query = \DB::select('SELECT po_number FROM orders WHERE po_number = "' . $po_full .'"');
+        }
+
+            //$po_message = 'taken';
+            $po_message=$this->increamentPO($location_id);
+
+
         return $po_message;
     }
 
@@ -483,14 +487,20 @@ class order extends Sximo
 
     }
 
-    function increamentPO()
+    function increamentPO($location=0)
     {
         $today = date('mdy');
-        $po = \DB::select("select po_number from orders where po_number like '%-$today-%' order by id desc limit 0,1");
-        if(!empty($po)){
-            $po = array_reverse(explode('-', $po[0]->po_number));
-            return ++$po[0];
+        if($location!=0 ) {
+
+            $po = \DB::select("select po_number from orders where po_number like '%-$today-%' and location_id=" . $location . " order by id desc limit 0,1");
         }
+        else {
+             //$po = \DB::select("select po_number from orders where po_number like '%-$today-%' order by id desc limit 0,1");
+        }
+        if(!empty($po[0])){
+
+                return count($po[0])+1;
+            }
         return 1;
     }
 

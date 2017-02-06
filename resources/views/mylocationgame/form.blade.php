@@ -1,13 +1,20 @@
+{{--*/ $ID = @$row['id'] /*--}}
+{{--*/ $isEdit = !empty($ID) /*--}}
 @if($setting['form-method'] =='native')
 
     <div class="sbox">
         <div class="sbox-title">
             <h4>
             <i class="fa fa-gamepad"></i>
-            {{ $row['game_title'] }} ({{ $row['id'] }})
-            @if (!empty($row['location_id']))
-            <small>at {{ $row['location_id'] }} || {{ $row['location_name'] }}  </small>
-            @endif                
+            @if ($isEdit)
+                {{ $row['game_title'] }} ({{ $row['id'] }})
+                @if (!empty($row['location_id']))
+                <small>at {{ $row['location_id'] }} || {{ $row['location_name'] }}  </small>
+                @endif
+            @else
+                Add a new Game
+            @endif
+            
                 <a href="javascript:void(0)" class="collapse-close pull-right btn btn-xs btn-danger" onclick="ajaxViewClose('#{{ $pageModule }}', this)"><i class="fa fa fa-times"></i></a>
             </h4>
         </div>
@@ -17,7 +24,9 @@
             {!! Form::open(array('url'=>'mylocationgame/save/'.$row['id'], 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'mylocationgameFormAjax')) !!}
             <div class="col-md-12">
                 <fieldset>
+                    @if ($isEdit)
                     <legend>Edit</legend>
+                    @endif
                     <div class="form-group  " >
                         <label for="Test Piece" class=" control-label col-md-4 text-left">
                             {!! SiteHelpers::activeLang('Test Piece', (isset($fields['test_piece']['language'])? $fields['test_piece']['language'] : array())) !!}

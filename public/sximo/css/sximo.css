@@ -2826,3 +2826,50 @@ table.table-striped tr th
     border-bottom: 1px solid #a9a9a9;   
 }
 /* end game details */
+
+.videoContainer {    
+    list-style: none;
+}
+.videoContainer .videoItem {
+    background: #000;
+    list-style: none;
+    display: block;
+    margin: 0 0 40px 0;
+    position: relative;
+}
+
+.videoContainer .video-meta {
+    background: #333;
+    color: #eee;
+    padding: 6px;
+    margin: 0 0 1px 0;
+}
+.videoContainer .video-title {
+    color: #ddd;
+}
+.videoContainer .video-by {
+    color: #aaa;
+}
+
+.videoContainer .video-action-delete {
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+.videoContainer .video-action-delete-button {
+    opacity: .9;
+    background: transparent;
+    border: 0;
+    color: #ff8f00;
+    height: 30px;
+    cursor: pointer;
+    font-weight: bold;
+}
+.videoContainer .video-action-delete-button:hover {
+    opacity: 1;
+    color: #ff0000;
+}
+
+.videoContainer iframe {
+    border: 0;
+}

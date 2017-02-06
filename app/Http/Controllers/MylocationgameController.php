@@ -237,8 +237,8 @@ class MylocationgameController extends Controller
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
 
         $this->data['id'] = $id;
-        $this->data['row']['game_title'] = $this->model->get_game_info_by_id($id, 'game_title');
-        $this->data['row']['location_name'] = $this->model->get_location_info_by_id($id, 'location_name');
+        $this->data['row']['game_title'] = empty($id) ? "" : $this->model->get_game_info_by_id($id, 'game_title');
+        $this->data['row']['location_name'] = empty($id) ? "" : $this->model->get_location_info_by_id($id, 'location_name');
 
         return view('mylocationgame.form', $this->data);
     }

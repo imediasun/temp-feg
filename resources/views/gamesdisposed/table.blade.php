@@ -138,7 +138,13 @@
 						endforeach;
 					  ?>
 				 <td class="action" data-values="action"  data-key="<?php echo $row->id ;?>">
-					{!! AjaxHelpers::buttonAction('gamesdisposed',$access,$id ,$setting) !!}
+					{!! AjaxHelpers::buttonAction(
+                            array(
+                                'containerID' => 'gamesdisposed', 
+                                'module' => 'mylocationgame', 
+                                'url' => 'mylocationgame'
+                            ), 
+                            $access, $id, $setting) !!}
 					{!! AjaxHelpers::buttonActionInline($row->id,'id') !!}
 				</td>
                 </tr>
