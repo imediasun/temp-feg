@@ -729,7 +729,7 @@
             }
 
             $("[name^=qty]").keypress(isNumeric);
-            test();
+            reInitParcley();
         });
         $("[name^=qty]").keypress(isNumeric);
         $("[name^=qty]").onpaste = function(e) {
@@ -746,10 +746,10 @@
             }
 
         }
-function test()
+function  reInitParcley()
 {
     $("li.required,li.min").hide();
-    $("input.parsley-error").css('border-color','#e5e6e7');
+ //   $("input.parsley-error").css('border-color','#e5e6e7!important');
     $('#ordersubmitFormAjax').parsley().destroy();
     $('#ordersubmitFormAjax').parsley();
 }
