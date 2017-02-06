@@ -356,7 +356,7 @@ class OrderController extends Controller
             $po = $po_1 . '-' . $po_2 . '-' . $po_3;
             $msg = $this->model->getPoNumber($po);
             if($msg != "available" && $request->get('editmode')!= "edit") {
-                $po_3=$this->model->increamentPO();
+                $po_3=$this->model->increamentPO($location_id);
                 $po = $po_1 . '-' . $po_2 . '-' . $po_3;
             }
             $altShipTo = $request->get('alt_ship_to');
@@ -812,8 +812,9 @@ class OrderController extends Controller
         $po_1 = $request->get('po_1');
         $po_2 = $request->get('po_2');
         $po_3 = $request->get('po_3');
+        $location_id=$request->get('location_id');
         $po_full = $po_1 . '-' . $po_2 . '-' . $po_3;
-        $msg = $this->model->getPoNumber($po_full);
+        $msg = $this->model->getPoNumber($po_full,$location_id);
         echo $msg;
     }
 

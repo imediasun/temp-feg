@@ -253,14 +253,14 @@
                                          required></td>
                         <td><br/> <input type='number' name='qty[]' placeholder='0' autocomplete="off"
 
-                                         class='calculate form-control qty' min="0" step="1" id="qty" placeholder="00"
+                                         class='calculate form-control qty' min="1" step="1" id="qty" placeholder="00"
                                          required></td>
                         <td class="game" style="display:none">
                             <br/> <input type='hidden' name='game[]' id='game_0'>
                         </td>
                         <input type='hidden' name='product_id[]' id="product_id">
                         <input type='hidden' name='request_id[]' id="request_id">
-                        <td><br/><input type="text" name="total" value="" readonly class="form-control"/></td>
+                        <td><br/><input type="text" name="total" value="" placeholder="0.000" readonly class="form-control"/></td>
                         <td align="center" class="remove-container"><br/>
                             <button id="hide-button"
                                     onclick=" $(this).parents('.clonedInput').remove(); calculateSum();decreaseCounter(); return false"
@@ -373,7 +373,8 @@
             hideShowAltLocation();
             if (mode != "edit") {
                 //$("#submit_btn").attr('disabled','disabled');
-                checkPOValidity();
+                var location_id=0;
+                checkPOValidity(location_id);
             }
             $("#item_num").val(inc);
 
@@ -420,6 +421,7 @@
             });
             $('.remove').click(function () {
                 calculateSum();
+
             });
             $('.selectpicker').selectpicker();
             $('.addC').relCopy({});
@@ -577,7 +579,8 @@
         var games_dropdown = [];
         $("#location_id").click(function () {
             $("#po_1").val($(this).val());
-            validatePONumber();
+            var location_id=$(this).val();
+            validatePONumber(location_id);
             $.ajax({
                 type: "GET",
                 url: "{{ url() }}/order/games-dropdown",
@@ -594,12 +597,13 @@
         });
 
         $('#po_3').on("keyup", function () {
-            checkPOValidity();
+            var location_id=$("#po_1").val();
+            checkPOValidity(location_id);
         });
 
         // -----------------for checking and validating PO number.... -----------------------//
         var poajax;
-        function checkPOValidity() {
+        function checkPOValidity(location_id) {
             if (poajax) {
                 if (poajax.abort) {
                     poajax.abort();
@@ -617,9 +621,9 @@
                 return;
             }
 
-            validatePONumber();
+            validatePONumber(location_id);
         }
-        function validatePONumber() {
+        function validatePONumber(location_id) {
             $("#submit_btn").attr('disabled', 'disabled');
             var base_url =<?php echo  json_encode(url()) ?>;
             po_1 = $('#po_1').val().trim();
@@ -648,7 +652,8 @@
                     data: {
                         po_1: $('#po_1').val().trim(),
                         po_2: $('#po_2').val().trim(),
-                        po_3: $('#po_3').val().trim()
+                        po_3: $('#po_3').val().trim(),
+                        location_id:location_id
                     },
                     success: function (msg) {
                         $("#submit_btn").removeAttr('disabled');
@@ -692,8 +697,8 @@
         }
 
         $("#add_new_item").click(function () {
-            $('#ordersubmitFormAjax').parsley().destroy();
-            $('#ordersubmitFormAjax').parsley();
+            ///window.ParsleyUI.removeError($("input").pars‌​ley(), 'required');
+           // $('input[name^=price],input[name^=case_price],input[name^=qty]').parsley().reset();
 
             handleItemCount('add');
             $(".calculate").keyup(function () {
@@ -723,7 +728,9 @@
                     placeholder: "For Various Games", width: "98%"
                 });
             }
+
             $("[name^=qty]").keypress(isNumeric);
+            test();
         });
         $("[name^=qty]").keypress(isNumeric);
         $("[name^=qty]").onpaste = function(e) {
@@ -738,15 +745,21 @@
                     ev.preventDefault();
                 }
             }
-        }
 
+        }
+function test()
+{
+    $("li.required,li.min").hide();
+    $("input.parsley-error").css('border-color','#e5e6e7');
+    $('#ordersubmitFormAjax').parsley().destroy();
+    $('#ordersubmitFormAjax').parsley();
+}
         function decreaseCounter() {
 
             handleItemCount('remove');
         }
         function handleItemCount(mode) {
             $('input[name^=item_num]').each(function (index, value) {
-
                 $(value).val(index + 1);
                 if (index + 1 > 1) {
                     $("#remove-col").show();
@@ -911,7 +924,6 @@
         [id^="game_0"] {
             width: 90%;
         }
-
         .itemstable tr.clone:first-of-type td:last-of-type button.remove {
             display: none;
         }
