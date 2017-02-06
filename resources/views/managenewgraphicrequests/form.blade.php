@@ -58,7 +58,7 @@
 
                     <div class="form-group  ">
                         <label for="status" class=" control-label col-md-4 text-left">
-                            {!! SiteHelpers::activeLang('status ', (isset($fields['status_id']['language'])?
+                            {!! SiteHelpers::activeLang('Status ', (isset($fields['status_id']['language'])?
                             $fields['status_id']['language'] : array())) !!}
                         </label>
                         <div class="col-md-6">
@@ -78,7 +78,7 @@
             <div class="form-group">
                 <label class="col-sm-4 text-right">&nbsp;</label>
 
-                <div class="col-sm-8">
+                <div class="col-sm-8 form-save">
                     <button type="submit" class="btn btn-primary btn-sm "><i
                                 class="fa  fa-save "></i>  {{ Lang::get('core.sb_save') }} </button>
                     <button type="button" onclick="ajaxViewClose('#{{ $pageModule }}')" class="btn btn-success btn-sm">
