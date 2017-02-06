@@ -31,7 +31,8 @@
                         {{ isset($data[0]['vend_email'])?$data[0]['vend_email']:"" }}
                         <br/>
                     </td>
-                    <td style="vertical-align:baseline;border-top:1px solid #000; border-right:1px solid #000;border-bottom: none;border-left: 1px solid #000;  padding-left: 10px; padding-top: 0px; margin-top:0px; color:red"><span style="padding: 0px !important;">{{ preg_replace("/(\r?\n){2,}/", "\n\n", $data[0]['company_name_long'])}}</span>
+                    <td style="vertical-align:baseline;border-top:1px solid #000; border-right:1px solid #000;border-bottom: none;border-left: 1px solid #000;  padding-left: 10px; padding-top: 0px; margin-top:0px; color:red"><span style="padding: 0px !important;">
+                        {{  $data[0]['company_name_long']}}</span><br/>
                         {{ isset($data[0]['po_location'])?trim($data[0]['po_location']):"" }}<br />
                         {{ isset($data[0]['po_street1_ship'])?trim($data[0]['po_street1_ship']):"" }} <br/>
                         {{ isset($data[0]['po_city_ship'])?trim($data[0]['po_city_ship']):"" }}
