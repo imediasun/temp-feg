@@ -724,21 +724,12 @@
             }
             $("[name^=qty]").keypress(isNumeric);
         });
+        /*
         $("[name^=qty]").keypress(isNumeric);
         $("[name^=qty]").onpaste = function(e) {
             e.preventDefault();
-        }
-        function isNumeric(ev) {
-            var keyCode = window.event ? ev.keyCode : ev.which;
-            //codes for 0-9
-            if (keyCode < 48 || keyCode > 57) {
-                //codes for backspace, delete, enter
-                if (keyCode != 0 && keyCode != 8 && keyCode != 13 && !ev.ctrlKey) {
-                    ev.preventDefault();
-                }
-            }
-        }
-
+        }*/
+        numberFieldValidationChecks();
         function decreaseCounter() {
 
             handleItemCount('remove');
