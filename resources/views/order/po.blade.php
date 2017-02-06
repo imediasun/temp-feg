@@ -37,8 +37,8 @@
                         {{ isset($data[0]['po_street1_ship'])?$data[0]['po_street1_ship']:"" }} <br/>
                         {{ isset($data[0]['po_city_ship'])?$data[0]['po_city_ship']:"" }}
                         {{ isset($data[0]['po_state_ship'])?$data[0]['po_state_ship']:"" }}
-                        {{ isset($data[0]['po_city_zip'])?$data[0]['po_city_zip']:"" }} <br/>
-                        {{  isset($data[0]['po_zip_ship'])?$data[0]['po_zip_ship']:"" }} <br/>
+                        {{ isset($data[0]['po_city_zip'])?$data[0]['po_city_zip']:"" }}
+                        {{ isset($data[0]['po_zip_ship'])?$data[0]['po_zip_ship']:"" }} <br/>
                         <br>
                         {{  isset($data[0]['for_location'])?$data[0]['for_location']:""}}
                         {{ isset($data[0]['po_add_notes'])?$data[0]['po_add_notes']:"" }}
