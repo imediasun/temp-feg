@@ -228,8 +228,8 @@ function autoSetMainContainerHeight() {
     $(window).resize(setHeight);
 }
 
-function numberFieldValidationChecks(){
-    $("input[type='number']").keypress(isNumeric);
+function numberFieldValidationChecks(element){
+    element.keypress(isNumeric);
 }
 
 function isNumeric(ev) {
@@ -247,7 +247,6 @@ function isNumeric(ev) {
 jQuery(document).ready(function($){
     // Adjust main panel's height based on overflowing nav-bar
     autoSetMainContainerHeight();
-    numberFieldValidationChecks();
 });
 
 function updateNativeUIFieldsBasedOn() {

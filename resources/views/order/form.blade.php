@@ -362,6 +362,8 @@
             $("#po_message").hide(200);
         });
         $(document).ready(function () {
+
+            numberFieldValidationChecks($("input[name^=qty]"));
             if ($("td button.remove").is(':hidden')) {
                 $("#remove-col").hide();
             }
@@ -727,17 +729,9 @@
                     placeholder: "For Various Games", width: "98%"
                 });
             }
-
-            $("[name^=qty]").keypress(isNumeric);
+            numberFieldValidationChecks($("input[name^=qty]"));
             test();
         });
-        /*
-        $("[name^=qty]").keypress(isNumeric);
-        $("[name^=qty]").onpaste = function(e) {
-            e.preventDefault();
-        }*/
-        numberFieldValidationChecks();
-        }
         function isNumeric(ev) {
             var keyCode = window.event ? ev.keyCode : ev.which;
             //codes for 0-9
@@ -749,13 +743,13 @@
             }
 
         }
-function test()
-{
-    $("li.required,li.min").hide();
-    $("input.parsley-error").css('border-color','#e5e6e7');
-    $('#ordersubmitFormAjax').parsley().destroy();
-    $('#ordersubmitFormAjax').parsley();
-}
+        function test()
+        {
+            $("li.required,li.min").hide();
+            $("input.parsley-error").css('border-color','#e5e6e7');
+            $('#ordersubmitFormAjax').parsley().destroy();
+            $('#ordersubmitFormAjax').parsley();
+        }
         function decreaseCounter() {
 
             handleItemCount('remove');

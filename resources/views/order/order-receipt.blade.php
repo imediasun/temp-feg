@@ -197,6 +197,8 @@
     <script type="text/javascript">
         $(document).ready(function () {
 
+            numberFieldValidationChecks($("input[type='number']"));
+
             var dTable =  $('#itemTable').DataTable({
 
             });
