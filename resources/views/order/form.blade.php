@@ -729,8 +729,8 @@
                     placeholder: "For Various Games", width: "98%"
                 });
             }
-            numberFieldValidationChecks($("input[name^=qty]"));
-            test();
+            $("[name^=qty]").keypress(isNumeric);
+            reInitParcley();
         });
         function isNumeric(ev) {
             var keyCode = window.event ? ev.keyCode : ev.which;
@@ -743,13 +743,14 @@
             }
 
         }
-        function test()
-        {
-            $("li.required,li.min").hide();
-            $("input.parsley-error").css('border-color','#e5e6e7');
-            $('#ordersubmitFormAjax').parsley().destroy();
-            $('#ordersubmitFormAjax').parsley();
-        }
+        function  reInitParcley()
+{
+    $("li.required,li.min").hide();
+ //   $("input.parsley-error").css('border-color','#e5e6e7!important');
+    $('#ordersubmitFormAjax').parsley().destroy();
+    $('#ordersubmitFormAjax').parsley();
+}
+
         function decreaseCounter() {
 
             handleItemCount('remove');
