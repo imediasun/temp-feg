@@ -42,7 +42,7 @@
             
             container.find("#status").jCombo(mainUrl+"/comboselect?filter=game_status:id:game_status", 
                         {  selected_value : ''+ gameData.status_id });
-            container.find("#location_id").jCombo(mainUrl+"/comboselect?filter=location:id:location_name", 
+            container.find("#location_id").jCombo(mainUrl+"/comboselect?filter=location:id:id|location_name&delimiter=%20|%20", 
                         {  selected_value : ''+ gameData.dropdownlocation });
                         
             container.find('.date').datepicker({format:'mm/dd/yyyy',autoClose:true});

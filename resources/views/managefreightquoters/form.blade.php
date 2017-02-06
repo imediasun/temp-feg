@@ -397,6 +397,7 @@
 
                         <div class="col-md-6">
                             <select class="form-control" name="games_per_location" id="games_per_location">
+                                <option value="0">0</option>
                                 <option value="1">1</option>
                                 <option value="2">2</option>
                                 <option value="3">3</option>
@@ -437,7 +438,7 @@
         $('.addC').relCopy({});
         $('.previewImage').fancybox();
         $('.tips').tooltip();
-        $(".select3").select2({width: "100%"});
+        renderDropdown($(".select2, .select3, .select4, select5"), { width:"100%"});
         $('.date').datepicker({format: 'mm/dd/yyyy', autoClose: true})
         $('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});
         $('input[type="checkbox"],input[type="radio"]').iCheck({

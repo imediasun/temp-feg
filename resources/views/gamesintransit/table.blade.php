@@ -21,9 +21,7 @@
                                 {!! SiteHelpers::transForm($t['field'] , $simpleSearchForm) !!}
                             </div>
                         @endforeach
-                        <div class="sscol-submit"><br/>
-                            <button type="button" name="search" class="doSimpleSearch btn btn-sm btn-primary"> Search </button>
-                        </div>
+                        {!! SiteHelpers::generateSimpleSearchButton($setting) !!}
                     </div>
                 @endif
             @endif
@@ -139,21 +137,15 @@
 						endforeach;
 					  ?>
 				 <td class="action"  data-values="action" data-key="<?php echo $row->id ;?>">
-					{!! AjaxHelpers::buttonAction('gamesintransit', $access, $id, $setting) !!}
+										{!! AjaxHelpers::buttonAction(
+                            array(
+                                'containerID' => 'gamesintransit', 
+                                'module' => 'mylocationgame', 
+                                'url' => 'mylocationgame'
+                            ), 
+                            $access, $id, $setting) !!}
 					{!! AjaxHelpers::buttonActionInline($row->id,'id') !!}
-                    
-                    <a href="{{ URL::to('mylocationgame/show/'.$id)}}" 
-                       class="tips btn btn-xs btn-white" 
-                       onclick="ajaxViewDetail('#gamesintransit',this.href); return false;"
-                       title="Edit Movement"><i class="fa fa-truck " aria-hidden="true"></i>
-                    </a>
-                    
-                    <a href="{{ URL::to('mylocationgame/update/'.$id)}}" 
-                       class="tips btn btn-xs btn-white" 
-                       onclick="ajaxViewDetail('#gamesintransit',this.href); return false;"
-                       title="Edit Game"><i class="fa fa-pencil " aria-hidden="true"></i>
-                    </a>
-                    
+
 				</td>
                 </tr>
                 @if($setting['view-method']=='expand')

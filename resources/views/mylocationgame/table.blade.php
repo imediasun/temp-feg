@@ -22,9 +22,7 @@
                             {!! SiteHelpers::transForm($t['field'] , $simpleSearchForm) !!}
                         </div>
                     @endforeach
-                    <div class="sscol-submit"><br/>
-                        <button type="button" name="search" class="doSimpleSearch btn btn-sm btn-primary"> Search </button>
-                    </div>
+                    {!! SiteHelpers::generateSimpleSearchButton($setting) !!}
                 </div>
             @endif
         @endif

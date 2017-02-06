@@ -21,7 +21,7 @@
             <table width="100%" style="border-collapse: collapse;">
                 <tr><th width="50%" style="text-align: left">Vendor</th><th style="text-align: left;color:red" width="50%">Ship To</th></tr>
                 <tr>
-                    <td style="border:1px solid #000;border-right:none; padding: 10px; ">
+                    <td style="border:1px solid #000;border-right:none; padding: 10px; padding-top: 0px;margin-top: 0px; ">
                         {{ $data[0]['vendor_name'] }} <br/>
                         {{ $data[0]['vend_street1'] }}<br/>
                         {{ $data[0]['vend_city'] }}
@@ -31,7 +31,7 @@
                         {{ isset($data[0]['vend_email'])?$data[0]['vend_email']:"" }}
                         <br/>
                     </td>
-                    <td style="border:1px solid #000; padding-left: 10px; color:red">
+                    <td style="border:1px solid #000; padding-left: 10px;padding-top: 0px; margin-top: 0px;  color:red">
                         {{ isset($data[0]['company_name_long'])?$data[0]['company_name_long']:"" }} <br/>
                         {{ isset($data[0]['po_location'])?$data[0]['po_location']:"" }} <br/>
                         {{ isset($data[0]['po_street1_ship'])?$data[0]['po_street1_ship']:"" }} <br/>

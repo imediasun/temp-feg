@@ -21,9 +21,7 @@
                             {!! SiteHelpers::transForm($t['field'] , $simpleSearchForm) !!}
                         </div>
                     @endforeach
-                    <div class="sscol-submit"><br/>
-                        <button type="button" name="search" class="doSimpleSearch btn btn-sm btn-primary"> Search </button>
-                    </div>
+                    {!! SiteHelpers::generateSimpleSearchButton($setting) !!}
                 </div>
             @endif
         @endif
@@ -140,7 +138,13 @@
 						endforeach;
 					  ?>
 				 <td class="action" data-values="action"  data-key="<?php echo $row->id ;?>">
-					{!! AjaxHelpers::buttonAction('gamesdisposed',$access,$id ,$setting) !!}
+					{!! AjaxHelpers::buttonAction(
+                            array(
+                                'containerID' => 'gamesdisposed', 
+                                'module' => 'mylocationgame', 
+                                'url' => 'mylocationgame'
+                            ), 
+                            $access, $id, $setting) !!}
 					{!! AjaxHelpers::buttonActionInline($row->id,'id') !!}
 				</td>
                 </tr>

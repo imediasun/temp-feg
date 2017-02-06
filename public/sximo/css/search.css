@@ -11,6 +11,16 @@
     overflow: visible;    
 }
 
+.simpleSearchContainer .select2-container-multi .select2-choices .select2-input,
+.modal-dialog .select2-container-multi .select2-choices .select2-input {
+    line-height: 16px;
+}
+ .select2-container .select2-choice,
+.simpleSearchContainer .select2-container .select2-choice,
+.modal-dialog .select2-container .select2-choice {
+    height: 28px;
+}
+
 .simpleSearchContainer .select2-container-multi .select2-choices:before,
 .simpleSearchContainer .select2-container-multi .select2-choices:after,
 .modal-dialog .select2-container-multi .select2-choices:before,

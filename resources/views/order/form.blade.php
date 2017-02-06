@@ -87,8 +87,7 @@
 
 
                             <div class="col-md-8">
-                                <textarea name="to_add_notes" id="to_add_notes" rows="6" cols="50"
-                                          class="form-control">{{ $data['shipping_notes'] }}</textarea>
+                                <textarea name="to_add_notes" id="to_add_notes" rows="6" cols="50" class="form-control">{{ $data['shipping_notes'] }}</textarea>
                             </div>
 
                         </div>
@@ -235,7 +234,7 @@
 
                         <td><br/> <input type="text" name='item_name[]' placeholder='Item  Name' id="item_name"
                                          class='form-control item_name mysearch' onfocus="init(this.id,this)"
-                                         maxlength="225" reuuired>
+                                         maxlength="225" required>
                         </td>
                         <td>
                             <textarea name='item[]' placeholder='Item  Description' id="item"

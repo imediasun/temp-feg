@@ -232,7 +232,7 @@ class managefreightquoters extends Sximo
         }
         $data['freight_company_1']=isset($freightOrder[0]->freight_company_1)?$freightOrder[0]->freight_company_1:0;
         $data['loc_from_id'] = $loc_from_id;
-        $data['game_drop_dwon'] = self::populateGamesDropDown();
+        $data['game_drop_down'] = self::populateGamesDropDownInFreightQuote();
         return $data;
     }
 
@@ -267,7 +267,7 @@ class managefreightquoters extends Sximo
         return $data;
     }
 
-    public static function populateGamesDropDown()
+    public static function populateGamesDropDownInFreightQuote()
     {
         $concat = 'CONCAT(IF(G.location_id = 0, "IN TRANSIT", G.location_id), " | ",T.game_title," | ",G.id, IF(G.notes = "","", CONCAT(" (",G.notes,")")))';
         $where="";
@@ -380,7 +380,7 @@ class managefreightquoters extends Sximo
                 if ($data['request']['loc'] != 0) { //IF SHIP TO LOCATION SELECTED, DO GAMES CALCULATION
                     for ($n = 0; $n < $num_games_per_destination; $n++) {
                         $loc_game[$i][$n] = isset($data['request']['loc_game'][$i][$n]) ? $data['request']['loc_game'][$i][$n] : 0;
-                        if (!empty($data['request']['loc_game'][$n])) // UPDATE GAME_SETUP_STATUS TO 1 -> GAME HAS BEEN SHIPPED
+                        if (!empty($data['request']['loc_game'][$i][$n])) // UPDATE GAME_SETUP_STATUS TO 1 -> GAME HAS BEEN SHIPPED
                         {
                             // ${'shipping_exception_'.$i.'_'.$n} = $this->input->post('shipping_exception_'.$i.'_'.$n);
 
@@ -435,7 +435,7 @@ class managefreightquoters extends Sximo
                                 $updateGame['prev_location_id'] = $from_loc;
                             }
 
-                            \DB::table('game')->where('id', $data['request']['loc_game'][$n])->update($updateGame);
+                            \DB::table('game')->where('id', $data['request']['loc_game'][$i][$n])->update($updateGame);
 
                             //}
                         }
@@ -585,7 +585,7 @@ class managefreightquoters extends Sximo
                         $headers .= "MIME-Version: 1.0\r\n";
                         $headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
                         // echo $message;
-                        mail($to, $subject, $message, $headers);
+                        //mail($to, $subject, $message, $headers);
                     } else {
 
                     }
