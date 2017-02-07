@@ -17,7 +17,7 @@
                 <fieldset>
                     <legend> Disposed Games</legend>
 
-                    <div class="form-group  ">
+                    <!--div class="form-group  ">
                         <label for="Test Piece" class=" control-label col-md-4 text-left">
                             {!! SiteHelpers::activeLang('Test Piece', (isset($fields['test_piece']['language'])?
                             $fields['test_piece']['language'] : array())) !!}
@@ -29,7 +29,7 @@
                         <div class="col-md-2">
 
                         </div>
-                    </div>
+                    </div-->
 
                     <div class="form-group  ">
                         <label for="Game Name" class=" control-label col-md-4 text-left">
