@@ -238,7 +238,7 @@ class MylocationgameController extends Controller
 
         $this->data['id'] = $id;
         $this->data['row']['game_title'] = empty($id) ? "" : $this->model->get_game_info_by_id($id, 'game_title');
-        $this->data['row']['location_name'] = empty($id) ? "" : $this->model->get_location_info_by_id($id, 'location_name');
+        $this->data['row']['location_name'] = empty($id) ? "" : $this->model->get_location_info_by_id($row->location_id, 'location_name');
 
         return view('mylocationgame.form', $this->data);
     }
@@ -289,9 +289,6 @@ class MylocationgameController extends Controller
     function postSave(Request $request, $id = null)
     {
         $products = array();
-        $form_data['date_shipped'] = date('Y-m-d');
-        $form_data['date_last_move'] = date('Y-m-d');
-        $form_data['date_in_service'] = date('Y-m-d');
 
         $rules = $this->validateForm();
         $validator = Validator::make($request->all(), $rules);
@@ -305,8 +302,33 @@ class MylocationgameController extends Controller
                 $products = json_encode($products);
                 $data['product_id'] = $products;
             }
-            $data['game_name'] = \DB::table('game_title')->where('id', '=', $data['game_title_id'])->pluck('game_title');
-            unset($data['_token']);
+            
+            /* NOTE: Game name will NOT ALWAYS be same as the Game Title */
+            //$data['game_name'] = \DB::table('game_title')->where('id', '=', $data['game_title_id'])->pluck('game_title');
+            /* Extracting game type id from game type */
+            $data['game_type_id'] = \DB::table('game_title')->where('id', '=', $data['game_title_id'])->pluck('game_type_id');
+            
+            $sold = @$data['sold'];
+            $oldSold = @$data['_oldSoldStatus'];
+            if ($oldSold == 0 && $sold == 1) {
+                $data['prev_location_id'] = @$data['old_location_id'];
+                $data['location_id'] = 0;
+                $data['status_id'] = 3;
+            }
+            elseif ($sold == 0) {
+                $data['date_sold'] = NULL;
+                $data['sold_to'] = '';
+            }
+            
+            if (isset($data['_token'])) unset($data['_token']);
+            if (isset($data['old_location_id'])) unset($data['old_location_id']);
+            if (isset($data['_oldSoldStatus'])) unset($data['_oldSoldStatus']);
+            if (isset($data['_test_piece'])) unset($data['_test_piece']);
+            if (isset($data['_sale_pending'])) unset($data['_sale_pending']);
+            if (isset($data['_for_sale'])) unset($data['_for_sale']);
+            if (isset($data['_not_debit'])) unset($data['_not_debit']);
+            if (isset($data['_sold'])) unset($data['_sold']);
+            
             $id = $this->model->insertRow($data, $id);
             /*
             \DB::table('game_product')
@@ -424,14 +446,14 @@ class MylocationgameController extends Controller
             $intendedLocation = 0;
         }                          
        
-        $serial = @$data['serial'];
-        $version = @$data['version'];
-        $prevGameName = @$data['prev_game_name'];
+//        $serial = @$data['serial'];
+//        $version = @$data['version'];
+//        $prevGameName = @$data['prev_game_name'];
         
         $newData = array();
-        $newData['serial'] = $serial;
-        $newData['version'] = $version;
-        $newData['prev_game_name'] = $prevGameName;
+//        $newData['serial'] = $serial;
+//        $newData['version'] = $version;
+//        $newData['prev_game_name'] = $prevGameName;
         $newData['last_edited_by'] = $userId;
         $newData['last_edited_on'] = $nowDatetime;
         $newData['status_id'] = $status;

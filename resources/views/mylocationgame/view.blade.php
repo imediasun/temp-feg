@@ -89,37 +89,7 @@
         @if($statusId!=2)
         <!-- Sold Inputs -->
         <div class="form-group soldInputs clearfix" >
-            <label for="sold" class=" control-label col-md-1">
-                {!! SiteHelpers::activeLang('Sold', (isset($fields['sold']['language'])? $fields['sold']['language'] : array())) !!}
-            </label>
-            <div class="col-md-1" style="padding: 5px 0 15px;">               
-                <input type="checkbox" name="sold" id="sold" 
-                       value="{{ $soldValue }}"     
-                       data-original-value='{{ $soldValue }}' 
-                       @if($isSold) checked @endif                       
-                       />
-            </div>
-            <div class="col-md-10 soldDetails" 
-                @if(!$isSold) style="display: none;" @endif>
-
-                <div class="col-md-4">
-                    <div class="input-group" style="width:100%;">
-                        {!! Form::text('date_sold', $soldDateFormatted, array(
-                            'class'=>'form-control date', 
-                            'placeholder' => 'Sold Date',
-                            'parsley-errors-container' => '.dateSoldError',
-                            'parsley-nofocus' => 'true'
-                        )) !!}
-                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                    </div>                    
-                    <div class='dateSoldError'></div>
-                </div>
-                <div class="col-md-8">
-                    <input type="text" name="sold_to" class="form-control" 
-                           id="sold_to" placeholder="Describe Game Sale Details"
-                           value="{{ $soldTo }}"/>
-                </div>                                                        
-            </div>
+            <input type="hidden" name="sold" value="{{ $soldValue  }}"/>
         </div>
         @endif
         <!-- Status inputs -->
@@ -235,17 +205,20 @@
 
         </div>
         
+        @if (!$isSold)
         <!-- Submit Button -->
         <div class="clearfix submitButtonContainer">
             <hr class="clearfix saveButtonFrameBorder m-t-lg-f" />
             <div class="clearfix">
                 <input type="submit" 
                        class="btn btn-large btn-success col-md-offset-4 col-md-4" 
-                       name="submit" id="submit" value="Save"/>
+                       name="submit" id="submit" value="Save" disabled />
             </div>
             <hr class="clearfix saveButtonFrameBorder" />
         </div>
+        @endif
         
+        {{--
         <!-- Serial -->
         <div class="form-group  clearfix" >
             <label for="serial" class=" control-label col-md-4 text-left">
@@ -255,7 +228,8 @@
                 <input type="text" name="serial" value="{{ $serialNumber }}" 
                        class="form-control" placeholder="Serial #" required/>
             </div>
-        </div>
+        </div>--}}
+        {{--
         <!-- version -->
         <div class="form-group  clearfix" >
             <label for="version" class=" control-label col-md-4 text-left">
@@ -266,8 +240,8 @@
                        value="{{ $version }}" id="version"/>
 
             </div>
-
-        </div>
+        </div>--}}
+        {{--
         <!-- Previous Game Name -->
         <div class="form-group clearfix " >
             <label for="prev_game_name" class=" control-label col-md-4">
@@ -277,9 +251,9 @@
                 <input type="text" name="prev_game_name" id="prev_game_name"  
                        class="form-control gray-bg" value="{{ $prevGameName }}" />
             </div>
-        </div>
-        </div>
+        </div>--}}
         
+        </div>
         <div class="form-group  clearfix" >
             <label class=" control-label col-md-4">
                 {!! SiteHelpers::activeLang('Game Title', (isset($fields['game_title']['language'])? $fields['game_title']['language'] : array())) !!}
@@ -309,6 +283,18 @@
                 {!! SiteHelpers::activeLang('Serial #', (isset($fields['serial']['language'])? $fields['serial']['language'] : array())) !!}
             </label>
             <div class="col-md-8">{{ $serialNumber }}</div>
+        </div>
+        <div class="form-group  clearfix" >
+            <label class=" control-label col-md-4">
+                {!! SiteHelpers::activeLang('Alt. Version/Signage', (isset($fields['version']['language'])? $fields['version']['language'] : array())) !!}
+            </label>
+            <div class="col-md-8">{{ $version }}</div>
+        </div>
+        <div class="form-group  clearfix" >
+            <label class=" control-label col-md-4">
+                {!! SiteHelpers::activeLang('Game Converted from', (isset($fields['prev_game_name']['language'])? $fields['prev_game_name']['language'] : array())) !!}
+            </label>
+            <div class="col-md-8">{{ $prevGameName }}</div>
         </div>
         <div class="form-group clearfix" >
             <label class=" control-label col-md-4">

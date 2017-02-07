@@ -697,7 +697,7 @@ class Sximo extends Model {
         return $data;
     }
 
-    public function get_location_info_by_id($loc_id = null, $field = null) {
+    public function get_location_info_by_id($loc_id = null, $field = null, $default = "No Location with That ID") {
 
         if(is_null($field)){
             $query = \DB::select('SELECT * FROM location WHERE id = ' . $loc_id);
@@ -706,33 +706,52 @@ class Sximo extends Model {
             $query = \DB::select('SELECT ' . $field . ' FROM location WHERE id = ' . $loc_id);
         }
 
-        foreach ($query as $row) {
-            $location_info = $row->$field;
+        $data = [];
+        if (isset($query[0])) {
+            $data = $query[0];
         }
-
-        if (empty($location_info)) {
-            $location_info = 'No Location with That ID';
+        if (is_null($field)) {
+            return $data;
         }
-        return $location_info;
+        if (!empty($data)) {
+            if (is_array($data)) {
+                $value = $data[$field];
+            }        
+            else {
+                $value = $data->$field;
+            }
+        }
+        if (empty($value)) {
+            $value = $default;
+        }
+        return $value;
     }
-    public function get_game_info_by_id($game_id=null,$field=null)
+    public function get_game_info_by_id($game_id=null,$field=null, $default = 'NONE')
     {
         $query =\DB::select('SELECT '.$field.'
 								 FROM game_title T
 						 	LEFT JOIN game G ON G.game_title_id = T.id
 							    WHERE G.id = '.$game_id);
 
-        foreach($query as $row)
-        {
-            $game_info = $row->$field;
+        $data = [];
+        if (isset($query[0])) {
+            $data = $query[0];
         }
-
-        if(empty($game_info))
-        {
-            $game_info = 'NONE';
+        if (is_null($field)) {
+            return $data;
         }
-
-        return $game_info;
+        if (!empty($data)) {
+            if (is_array($data)) {
+                $value = $data[$field];
+            }        
+            else {
+                $value = $data->$field;
+            }
+        }
+        if (empty($value)) {
+            $value = $default;
+        }
+        return $value;
 
     }
     public function get_user_emails($user_level = null, $loc_id = null)
