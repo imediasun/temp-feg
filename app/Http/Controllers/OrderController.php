@@ -781,12 +781,11 @@ class OrderController extends Controller
             }
             if ($sendemail) {
                 if (isset($to) && count($to)>0) {
-                    $to=['adnanali199@gmail.com','ghs.colony.mailsi@gmail.com'];
                     $filename = 'PO_' . $order_id . '.pdf';
                     $subject = "Purchase Order";
                     $message = $message;
-                    $cc="";
-                    $bcc="";
+                    $cc=$cc;
+                    $bcc=$bcc;
                     /*
                     $result = \Mail::raw($message, function ($message) use ($to, $from, $subject, $pdf, $filename,$cc,$bcc) {
                         $message->subject($subject);
