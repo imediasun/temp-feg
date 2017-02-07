@@ -100,6 +100,7 @@
            		<?php foreach ($rowData as $row) :
            			  $id = $row->id;
            		?>
+
                 <tr class="editable" id="form-{{ $row->id }}">
 
 					@if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
@@ -142,10 +143,10 @@
 						<a href="{{ $pageModule }}/update/{{$row->id}}/clone"  onclick="ajaxViewDetail('#order',this.href); return false; "  class="tips btn btn-xs btn-white" title="Clone Order"><i class=" fa fa-random" aria-hidden="true"></i></a>
 
 
-                    @if($order_selected=='OPEN')
+                    @if($row->status_id=='Open')
                         <a href="{{ URL::to('order/orderreceipt/'.$row->id)}}" class="tips btn btn-xs btn-white" title="Receive Order"><i class="fa fa fa-truck" aria-hidden="true"></i></a>
                    @endif
-					@if($order_selected=='OPEN')
+					@if($row->status_id=='Open')
 						<a href="{{ URL::to('order/removalrequest/'.$row->po_number)}}" class="tips btn btn-xs btn-white" title="Request Removal"><i class="fa fa-trash-o " aria-hidden="true"></i></a>
 						@endif
 					</td>
