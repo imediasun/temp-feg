@@ -17,9 +17,9 @@
             <div class="sbox">
                 <div class="sbox-content">
                     <div style="color:green" class="row">
-                        @if(empty($google_account->g_mail) || empty($google_account->g_password))
+                      {{--  @if(empty($google_account->g_mail) || empty($google_account->g_password))
                             *Google Account Info is missing
-                        @endif
+                        @endif --}}
                     </div>
                     <div class="row">
                         <div class="col-md-6 col-md-offset-5">
