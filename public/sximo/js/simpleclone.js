@@ -20,7 +20,7 @@
  */
 
 (function($) {
-console.log('plugin initialized');
+//console.log('plugin initialized');
 	$.fn.relCopy = function(options) {
 		var settings = jQuery.extend({
 			excludeSelector: ".exclude",
