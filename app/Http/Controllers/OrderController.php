@@ -552,6 +552,7 @@ class OrderController extends Controller
 
     public function getSaveOrSendEmail()
     {
+        $google_account = \DB::table('users')->where('id', \Session::get('uid'))->select('g_mail','g_password')->first();
         return view('order.saveorsendemail', compact('google_account'));
     }
 
@@ -778,7 +779,86 @@ class OrderController extends Controller
                 $data=array('file_name'=>$po_file_name,'url'=>url());
                 return $data;
             }
-            else {
+            if ($sendemail) {
+                if (isset($to) && count($to)>0) {
+                    $filename = 'PO_' . $order_id . '.pdf';
+                    $subject = "Purchase Order";
+                    $message = $message;
+                    $cc=$cc;
+                    $bcc=$bcc;
+                    /*
+                    $result = \Mail::raw($message, function ($message) use ($to, $from, $subject, $pdf, $filename,$cc,$bcc) {
+                        $message->subject($subject);
+                        $message->from($from);
+                        $message->to($to);
+                        if(count($cc)>0)
+                        {
+                            $message->cc($cc);
+                        }
+                        if(count($bcc) > 0)
+                        {
+                            $message->bcc($bcc);
+                        }
+                        $message->replyTo($from, $from);
+                        $message->attachData($pdf->output(), $filename);
+                    });*/
+                    /*
+                    * https://www.google.com/settings/security/lesssecureapps
+                    * enable stmp detail
+                    */
+                    $mail = new PHPMailer(); // create a new object
+                    $mail->IsSMTP(); // enable SMTP
+                    //$mail->SMTPDebug = 1; // debugging: 1 = errors and messages, 2 = messages only
+                    $mail->SMTPAuth = true; // authentication enabled
+                    $mail->SMTPSecure = 'tls'; // secure transfer enabled REQUIRED for Gmail
+                    $mail->Host = "smtp.gmail.com";
+                    $mail->Port = 587; // or 587
+                    $mail->IsHTML(true);
+                    /* current user */
+                    $google_acc = \DB::table('users')->where('id', \Session::get('uid'))->select('g_mail', 'g_password')->first();
+                    if(!empty($google_acc->g_mail) && !empty($google_acc->g_password))
+                    {
+
+                        $mail->Username = $google_acc->g_mail;                 // SMTP username
+                        $mail->Password = trim(base64_decode($google_acc->g_password), env('SALT_KEY'));
+                        $mail->SetFrom($google_acc->g_mail);
+                        $mail->Subject = $subject;
+                        $mail->Body = $message;
+                        foreach($to as $t)
+                        {
+                            $mail->addAddress($t);
+                        }
+                        $mail->addReplyTo($google_acc->g_mail);
+                        if(count($cc)>0)
+                        {
+                            foreach($cc as $c)
+                            {
+                                $mail->addCC($c);
+                            }
+                        }
+                        if(count($bcc) > 0)
+                        {
+                            foreach($bcc as $bc)
+                            {
+                                $mail->addBCC($bc);
+                            }
+                        }
+                        $output = $pdf->output();
+                        $file_to_save = public_path().'/orders/'.$filename;
+                        file_put_contents($file_to_save, $output);
+                        $mail->addAttachment($file_to_save, $filename, 'base64', 'application/pdf');
+                        if(!$mail->Send()) {
+                            return 3;
+                        } else {
+                            return 1;
+                        }
+                    }
+                    else
+                    {
+                        return 2;
+                    }
+                }
+            } else {
                     return $pdf->download($data[0]['company_name_short'] . "_PO_" . $data[0]['po_number'] . '.pdf');
             }
         }
@@ -981,6 +1061,33 @@ class OrderController extends Controller
     }
 
 
+    function getTestEmail()
+    {
+        $mail = new PHPMailer(); // create a new object
+        $mail->IsSMTP(); // enable SMTP
+        $mail->Host = 'smtp.gmail.com';
+        $mail->Port = 587; // or 587
+        $mail->SMTPSecure = 'tls'; // secure transfer enabled REQUIRED for Gmail
+        $mail->SMTPAuth = true; // authentication enabled
+
+        $mail->SMTPDebug = 1; // debugging: 1 = errors and messages, 2 = messages only
+
+        //$mail->IsHTML(true);
+        $mail->Username = 'dev2@shayansolutions.com';          // SMTP username
+        $mail->Password = '&b%Dd9Kr';
+        $mail->SetFrom('dev2@shayansolutions.com');
+        $mail->Subject = "Test";
+        $mail->Body = "hello";
+        $mail->AddAddress("dev3@shayansolutions.com");
+        $mail->addCC('shayansolutions@gmail.com');
+        $mail->addBCC('dev1@shayansolutions.com');
+        if(!$mail->Send()) {
+            echo "Mailer Error: " . $mail->ErrorInfo;
+        } else {
+            echo "Message has been sent";
+        }
+        die;
+    }
     function updateRequestAndProducts($item_count,$SID_new)
     {
 
