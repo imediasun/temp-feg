@@ -205,7 +205,7 @@ class order extends Sximo
         $where_in_expression = "";
         $data['alt_name'] = $data['alt_street'] = $data['alt_city'] = $data['alt_state'] = $data['alt_zip'] = $data['shipping_notes'] = "";
         if ($order_id != 0 && $mode != (substr($mode, 0, 3) == 'SID')) {
-            $order_query = \DB::select('SELECT location_id,vendor_id, date_ordered,order_total,alt_address,order_type_id,company_id,freight_id,po_notes,po_number FROM orders WHERE id = ' . $order_id);
+            $order_query = \DB::select('SELECT location_id,vendor_id, date_ordered,order_total,alt_address,order_type_id,company_id,freight_id,po_notes,po_number FROM orders WHERE id = ' . $order_id );
             if (count($order_query) == 1) {
                 $data['order_loc_id'] = $order_query[0]->location_id;
                 $data['order_vendor_id'] = $order_query[0]->vendor_id;
