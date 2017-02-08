@@ -1866,10 +1866,7 @@ $message
 //            FEGSystemHelper::logit("bcc: " .$bcc, "email-{$reportNameSanitized}.log", "FEGCronTasks/SystemEmailsDump");
 //            FEGSystemHelper::logit("subject: " .$subject, "email-{$reportNameSanitized}.log", "FEGCronTasks/SystemEmailsDump");
             
-            FEGSystemHelper::logit($messageLog, "{$lf}.html", $lpd, true);
-//            if (strpos(\Symfony\Component\HttpFoundation\Request::server('HTTP_REFERER'), "localhost") >= 0) {
-//                return;
-//            }
+            FEGSystemHelper::logit($messageLog, "{$lf}.html", $lpd, true);            
         }
         
         $opt = array();
