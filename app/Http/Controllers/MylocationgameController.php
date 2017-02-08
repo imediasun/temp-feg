@@ -659,101 +659,49 @@ class MylocationgameController extends Controller
 
         ////// END ///// PLUS CLOSING TAG BELOW /////
         $filename = storage_path() . '/qr/' . $id . '.png';
-        $data = url('/') . "mylocationgame/show/" . $id;
-
-        \QrCode::format('png');
-        \QrCode::size(200);
-        \QrCode::errorCorrection('H');
-        \QrCode::generate($data, $filename);
+        $data = url("/mylocationgame/show/" . $id);
+        $width = 147;
+        $xCenter = intval($width / 2);
+        $idYTop = 125;
+        $titleYTop = 145;
+        $idFont = public_path() . "/sximo/fonts/EncodeSansWide-Regular.ttf";
+        $titleFont = public_path() . "/sximo/fonts/pf_tempesta_seven_condensed.ttf";
+        
+        $qr = \QrCode::format('png')
+                ->size($width)
+                ->margin(0)
+                ->errorCorrection('Q')
+                ->generate($data, $filename);
         // $this->model->get_detail($id);
 
-        $row = \DB::select("SELECT G.id, T.game_title FROM game G LEFT JOIN game_title T ON T.id = G.game_title_id WHERE G.id=$id");
-
-        //
-
-//        $newSizeW = 135;
-//        $newSizeH = 147;
-//        $topPadding = 11;
-//        $smallerSizeFactor = .95;
-//        $smallSizeW = round($newSizeW * $smallerSizeFactor);
-//        $smallSizeH = round($newSizeH * $smallerSizeFactor);
-//
-//        // redude size of barcode
-//        $this->load->library('image_lib');
-//        $config['source_image']	= $filename;
-//        $config['quality'] = '100%';
-//        $config['width'] = $smallSizeW;
-//        $config['height'] = $smallSizeH;
-//        $config['overwrite'] = TRUE;
-//        $this->image_lib->initialize($config);
-//        $this->image_lib->resize();
-//        $this->image_lib->clear();
-
-        // add to canvas
-//        $oldimage = imagecreatefrompng($filename);
-//        $oldw = imagesx($oldimage);
-//        $oldh = imagesy($oldimage);
-//        $newimage = imagecreate($newSizeW, $newSizeH); // Creates a black image
-//        // Fill it with white (optional)
-//        $white = imagecolorallocate($newimage, 255, 255, 255);
-//        //imagefill($newimage, 0, 0, $white);
-//        //$background_color = imagecolorallocate($im, 0, 0, 0);
-//        imagecopy($newimage, $oldimage, ($newSizeH-$oldw)/2, $topPadding, 0, 0, $oldw, $oldh);
-//        imagepng($newimage, $filename);
-//        imagedestroy($newimage);
-
-        if ($row) {
-
-            $id = $row[0]->id;
-            $game_name = $row[0]->game_title;
-            /*  die();
-              $this->load->library('image_lib');
-              $config['source_image']	= $filename;
-              $config['quality'] = '100%';
-              $config['wm_text'] = $id;
-              $config['wm_type'] = 'text';
-              //$config['wm_font_path'] = './system/fonts/PTC55F.ttf';
-              //$config['wm_font_path'] = './system/fonts/texb.ttf';
-              //$config['wm_font_path'] = './system/fonts/Segan-Light.ttf';
-              $config['wm_font_path'] = './system/fonts/EncodeSansWide-Regular.ttf';
-              //$config['wm_font_path'] = './system/fonts/DISCO_W.ttf';
-              //$config['wm_font_path'] = './system/fonts/arialnarrow.ttf';
-              //$config['wm_font_path'] = './system/fonts/arial.ttf';
-              $config['wm_font_size']	= '15';
-              $config['wm_font_color'] = 'black';
-              $config['wm_vrt_alignment'] = 'bottom';
-              $config['wm_hor_alignment'] = 'left';
-              $config['wm_vrt_offset'] = '-6';
-              $config['wm_hor_offset'] = '16';
-              $config['overwrite'] = TRUE;
-              $this->image_lib->initialize($config);
-              $this->image_lib->watermark();
-              $this->image_lib->clear();
-
-              $this->load->library('image_lib');
-              $config['source_image']	= $filename;
-              $config['quality'] = '100%';
-              $config['wm_text'] = $game_name;
-              $config['wm_type'] = 'text';
-              //$config['wm_font_path'] = './system/fonts/arialnarrow.ttf';
-              $config['wm_font_path'] = './system/fonts/pf_tempesta_seven_condensed.ttf';
-              //$config['wm_font_path'] = './system/fonts/pf_ronda_seven.ttf';
-              //$config['wm_font_path'] = './system/fonts/hellovetica.ttf';
-              $config['wm_font_size']	= '6';
-              $config['wm_font_color'] = 'black';
-              $config['wm_vrt_alignment'] = 'bottom';
-              $config['wm_hor_alignment'] = 'left';
-              $config['wm_vrt_offset'] = '0';
-              $config['wm_hor_offset'] = '3';
-              $config['overwrite'] = TRUE;
-              $this->image_lib->initialize($config);
-              $this->image_lib->watermark();
-              $this->image_lib->clear();*/
+        //$row = \DB::select("SELECT G.id, T.game_title FROM game G LEFT JOIN game_title T ON T.id = G.game_title_id WHERE G.id=$id");
+        $game_title = \DB::table('game')
+                ->leftJoin('game_title', 'game_title.id', '=', 'game.game_title_id')
+                ->where('game.id', '=', $id)->pluck('game_title');
+        if (empty($game_title)) {
+            $game_title = "";
         }
-        // ////
-        // $gameString = substr($gameString, 9);
-        // }
-        // ////
+
+        \Image::make($filename)
+            ->resizeCanvas(0, -8, 'bottom', true)
+            ->resizeCanvas(0, 20, 'top', true, 'ffffff')
+            ->text($id, $xCenter, $idYTop, function($font) use ($idFont){
+                $font->file($idFont);
+                $font->size(19);
+                $font->color('#000');
+                $font->align('center');
+                $font->valign('top');
+                $font->angle(0);
+            })               
+            ->text($game_title, $xCenter, $titleYTop, function($font)  use ($titleFont){
+                $font->file($titleFont);
+                $font->size(8);
+                $font->color('#000');
+                $font->align('center');
+                $font->valign('top');
+                $font->angle(0);
+            })               
+            ->save($filename, 100);
     }
 
     function postAssettag(Request $request, $asset_ids = null)
