@@ -374,20 +374,47 @@ class order extends Sximo
     function getPoNumber($po_full,$location_id=0)
     {
         if($location_id != 0) {
-            $query = \DB::select('SELECT po_number FROM orders WHERE po_number = "' . $po_full . '" and location_id=' . $location_id);
+            if($this->isPOAvailable($po_full))
+            {
+                $this->createPOTrack($po_full,$location_id);
+                $po=explode('-',$po_full);
+                return $po[2];
+            }
+            else
+            {
+
+                $po_increamented=$this->increamentPO($location_id);
+                $po=explode('-',$po_full);
+                $po[2]=$po_increamented;
+                $po_full=implode('-',$po);
+                $this->createPOTrack($po_full,$location_id);
+                return $po_increamented;
+
+            }
         }
-        else
-        {
-          //  $query = \DB::select('SELECT po_number FROM orders WHERE po_number = "' . $po_full .'"');
+        else{
+            return 1;
         }
 
-            //$po_message = 'taken';
-            $po_message=$this->increamentPO($location_id);
 
 
-        return $po_message;
+
     }
-
+    function isPOAvailable($po_full)
+    {
+        $query = \DB::select("SELECT po_number FROM po_track WHERE po_number = '".$po_full."'" );
+        if(count($query) > 0 ) {
+            return false;
+        }
+        else{
+            return true;
+        }
+    }
+    function createPOTrack($po_full,$location_id)
+    {
+        $data=array('po_number'=>$po_full,'location_id'=>$location_id);
+        \DB::table('po_track')->insert($data);
+    }
     public function get_local_time($type = null)
     {
         $year = date('Y');
@@ -490,16 +517,21 @@ class order extends Sximo
     function increamentPO($location=0)
     {
         $today = date('mdy');
-        if($location!=0 ) {
-
-            $po = \DB::select("select po_number from orders where po_number like '%-$today-%' and location_id=" . $location . " order by id desc limit 0,1");
+        if($location != 0) {
+            $po = \DB::select("select po_number from po_track where po_number like '%-$today-%' and location_id=" . $location . " order by po_number");
         }
-        else {
-             //$po = \DB::select("select po_number from orders where po_number like '%-$today-%' order by id desc limit 0,1");
-        }
-        if(!empty($po[0])){
 
-                return count($po[0])+1;
+        if(!empty($po)){
+            $count = count($po)+1;
+         /*   foreach($po as $po_number)
+            {
+                $po_3=explode('-',$po_number->po_number);
+                if($count == $po_3[2])
+                {
+                    $count=$count+1;
+                }
+            }*/
+           return $count;
             }
         return 1;
     }
