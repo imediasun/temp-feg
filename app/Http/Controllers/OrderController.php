@@ -930,10 +930,13 @@ class OrderController extends Controller
         $received_item_qty = $request->get('receivedItemsQty');
         for ($i = 0; $i < count($item_ids); $i++) {
             $status = 1;
+            $date_received = $request->get('date_received');
+            // $date_received = \DateHelpers::formatDate($date_received);
+            $date_received= date("Y-d-m", strtotime($date_received));
             if (in_array($item_ids[$i], $received_part_ids))
                 $status = 2;
             \DB::insert('INSERT INTO order_received (`order_id`,`order_line_item_id`,`quantity`,`received_by`, `status`, `date_received`, `notes`)
-							 	  		   VALUES (' . $order_id . ',' . $item_ids[$i] . ',' . $received_qtys[$i] . ',' . $user_id . ',' . $status . ', "' . date('Y-m-d') . '" , "' . $notes . '" )');
+							 	  		   VALUES (' . $order_id . ',' . $item_ids[$i] . ',' . $received_qtys[$i] . ',' . $user_id . ',' . $status . ', "' . $date_received . '" , "' . $notes . '" )');
             \DB::update('UPDATE order_contents
 								 	 	 SET item_received = ' . $received_item_qty[$i] . '+' . $received_qtys[$i] . '
 							   	   	   WHERE id = ' . $item_ids[$i]);
@@ -983,9 +986,6 @@ class OrderController extends Controller
                 }
                 $added = 1;
             }
-            $date_received = $request->get('date_received');
-            // $date_received = \DateHelpers::formatDate($date_received);
-            $date_received= date("Y-d-m", strtotime($date_received));
             $data = array('date_received' => $date_received,
                 'status_id' => $order_status,
                 'notes' => $notes,
