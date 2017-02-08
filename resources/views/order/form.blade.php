@@ -166,7 +166,7 @@
                                    class="form-control" style="width:25%;float:left;margin-left:3px"/>
                             <input type="text" name="po_2" readonly id="po_2" class="form-control"
                                    value="{{  $data['po_2'] }}" style="width:35%;float:left;margin-left:3px"/>
-                            <input type="text" name="po_3" id="po_3" required class="form-control"
+                            <input type="text" name="po_3" id="po_3" required class="form-control" autocomplete="off"
                                    value="{{ $data['po_3'] }}" style="width:30%;float:left;margin-left:3px"/>
                             <br/>
                             <br/>
@@ -571,7 +571,16 @@
                 location.href = "{{ url() }}/order/save-or-send-email";
                 notyMessage(data.message);
                 $('#sximo-modal').modal('hide');
-            } else {
+            }
+           /* else if(data.status == "po-error")
+            {
+                $("#po_3").val(data.po_3);
+                $('.ajaxLoading').hide();
+                $("#po_message").html('<b style="color:rgba(43, 164, 32, 0.99);margin:5px 0px">*Available PO# </b>');
+                $("#po_message").show(200);
+                window.setTimeout(function() { $("#ordersubmitFormAjax").submit(); }, 5000);
+            }*/
+            else {
                 notyMessageError(data.message);
                 $('.ajaxLoading').hide();
                 return false;
@@ -579,6 +588,7 @@
         }
         var games_dropdown = [];
         $("#location_id").click(function () {
+            $("#po_message").hide(200);
             $("#po_1").val($(this).val());
             var location_id=$(this).val();
             validatePONumber(location_id);
@@ -658,7 +668,7 @@
                     },
                     success: function (msg) {
                         $("#submit_btn").removeAttr('disabled');
-                        $('.ajaxLoading').hide();
+                       // $('.ajaxLoading').hide();
                         poajax = null;
                         if (msg != 'available') {
                             $("#po_3").val(msg);
@@ -666,7 +676,7 @@
                             $("#po_message").show(200);
                         }
                         else {
-                            $("#po_message").html('<b style="color:rgba(43, 164, 32, 0.99);margin:5px 0px">*PO# is Available.</b>');
+                           $("#po_message").html('<b style="color:rgba(43, 164, 32, 0.99);margin:5px 0px">*PO# is Available.</b>');
                             $("#po_message").show(200);
                         }
 

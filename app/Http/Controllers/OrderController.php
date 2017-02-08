@@ -355,10 +355,9 @@ class OrderController extends Controller
             $po_2 = $request->get('po_2');
             $po_3 = $request->get('po_3');
             $po = $po_1 . '-' . $po_2 . '-' . $po_3;
-            $msg = $this->model->getPoNumber($po);
-            if($msg != "available" && $request->get('editmode')!= "edit") {
-                $po_3=$this->model->increamentPO($location_id);
-                $po = $po_1 . '-' . $po_2 . '-' . $po_3;
+            $msg = $this->model->getPoNumber($po,$location_id);
+            if($msg['mode'] != "available" && $request->get('editmode')!= "edit") {
+
             }
             $altShipTo = $request->get('alt_ship_to');
             $alt_address = '';
@@ -985,6 +984,9 @@ class OrderController extends Controller
                 }
                 $added = 1;
             }
+            $date_received = $request->get('date_received');
+            // $date_received = \DateHelpers::formatDate($date_received);
+            $date_received= date("Y-m-d", strtotime($date_received));
             $data = array('date_received' => $date_received,
                 'status_id' => $order_status,
                 'notes' => $notes,
