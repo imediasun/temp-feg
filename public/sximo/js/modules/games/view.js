@@ -53,8 +53,6 @@
             });     
             container.find(".nogallary a.fancybox").removeAttr("rel");
 
-            container.find("#sold").on('ifToggled', decidedToSell);            
-            
             form.parsley();            
             form.on('submit', formSubmit);              
             
@@ -86,6 +84,7 @@
             location = locationSelector.val(),
             initialLocation = locationSelector.data('original-value') || 0,            
             intendedLocation = container.find("[name=intended_first_location]").val() || 0,
+            submitButton = container.find("#submit"),
             isSold = container.find("[name=sold]").val() == 1;
         
         locationLabelAddon.hide();
@@ -102,7 +101,9 @@
         container.find('[name=location_id]').prop('required', false);
         form.parsley();        
         // 
+        submitButton.prop('disabled', false);
         if(STAYING_UP) {
+            submitButton.prop('disabled', true);
             if (locationSelectorHasSelect2) {
                 if (location != initialLocation) {
                     locationSelector.select2("val", initialLocation);
@@ -155,6 +156,7 @@
         
         //
         if(STAYING_DOWN) {
+            submitButton.prop('disabled', true);
             if (locationSelectorHasSelect2) {
                 locationSelector.select2('enable', false);
             }
@@ -180,6 +182,7 @@
         
         //
         if(STAYING_MOVE) {
+            submitButton.prop('disabled', true);
             if (locationSelectorHasSelect2) {
                 locationSelector.select2('enable', !isSold && intendedLocation == 0);
             }
@@ -216,82 +219,6 @@
        
     };
     
-    function decidedToSell(event){
-        var elm = $(this),
-            isChecked = elm.prop('checked'),
-            initialValue = elm.data('original-value') || 0,
-            initiallySold = initialValue == 1,
-            locationContainer = container.find('#location_id'),
-            statusContainer = container.find('#status'),
-            cacheStatus,
-            cacheLocation,
-            cacheLocationDisabled;
-        
-        elm.val(1*isChecked);
-        
-        if (isChecked) {
-            cacheStatus = statusContainer.val();
-            cacheLocation = locationContainer.val();
-            cacheLocationDisabled = locationContainer.prop('disabled');
-            elm.data('cache-status', cacheStatus);
-            elm.data('cache-location', cacheLocation);
-            elm.data('cache-location-disabled', cacheLocationDisabled);
-            if (statusContainer.data('select2')) {
-                statusContainer.select2('val', 3);
-                statusContainer.select2('enable', false);
-            }
-            else {
-                statusContainer.val(3);
-                statusContainer.prop('disabled', true);
-            }                    
-            if (locationContainer.data('select2')) {
-                locationContainer.select2('val', 0);
-                locationContainer.select2('enable', false);
-            }
-            else {
-                locationContainer.val(0);
-                locationContainer.prop('disabled', true);
-            }                      
-
-            showDownForRepair(false);
-        }
-        else {
-            cacheStatus = elm.data('cache-status') || 3;
-            cacheLocation = elm.data('cache-location');
-            cacheLocationDisabled = elm.data('cache-location-disabled');
-            if (cacheLocation === null) {
-                cacheLocation = 0;
-            }
-            if (cacheLocationDisabled === null) {
-                cacheLocationDisabled = false;
-            }
-            if (statusContainer.data('select2')) {
-                statusContainer.select2('enable', true);
-                statusContainer.select2('val', cacheStatus, true);
-            }
-            else {
-                statusContainer.prop('disabled', false);
-                statusContainer.val(cacheStatus).trigger('change');
-            }
-            if (locationContainer.data('select2')) {
-                locationContainer.select2('val', cacheLocation);
-            }
-            else {
-                locationContainer.val(cacheLocation);
-            }
-             if (locationContainer.data('select2')) {
-                 locationContainer.select2('enable', !cacheLocationDisabled);
-             }
-             else {
-                 locationContainer.prop('disabled', cacheLocationDisabled);
-             }                         
-        }
-                
-        showSoldDetails(isChecked);
-        
-        
-    }
-    
     function showUpFromRepair(showIt) {
         var fieldRequired = showIt !== false;
         if (showIt === false) {
@@ -322,20 +249,6 @@
         form.parsley();
     }
   
-    function showSoldDetails(showIt) {
-        var fieldRequired = showIt !== false;
-        form.parsley().destroy();
-        if(showIt === false) {
-            container.find('.soldDetails').hide();            
-        }
-        else {
-            container.find('.soldDetails').show();
-        }        
-        container.find('[name=date_sold]').prop('required', fieldRequired);
-        container.find('[name=sold_to]').prop('required', fieldRequired);
-        form.parsley();
-    }
-
     function formSubmit() {
         
         if(form.parsley('isValid')) {
@@ -355,11 +268,10 @@
     function preProcessForm(arr, $form, options) {
         options = options || {};
         var elements = {
-                'date_sold': true,
                 'date_down': true,
                 'date_up': true
             },
-            deleteElms = {"date_sold_view": true},
+            deleteElms = {},
             idx,
             value, 
             newValue;
@@ -386,7 +298,7 @@
             notyMessage(data.message);
             ajaxViewClose('#'+moduleName);
             $('#sximo-modal').modal('hide');
-            initDataGrid(moduleName, url);
+            $(".reloadDataButton").click();
         } 
         else {
             notyMessageError(data.message);

@@ -216,7 +216,7 @@
                         <th width="90">Case Price</th>
                         {{--<th>Retail Price</th>--}}
                         <th width="90">Quantity</th>
-                        <th class="game" style="display:none" width="200">Game Located</th>
+                        <th class="game" style="display:none" width="200">Game</th>
                         <th width="90">Total ( $ )</th>
                         <th width="60" align="center"><span id="remove-col">Remove </span></th>
 

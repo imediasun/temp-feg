@@ -56,8 +56,8 @@ class Data
 "update products set updated_at = now() WHERE updated_at IS NULL",
 "UPDATE products SET item_description = SUBSTRING(CONCAT(id,'-',vendor_description),1,60) ",
 "UPDATE `products` SET vendor_description = TRIM(vendor_description) ",
-"UPDATE `products` SET sku = TRIM(sku); ",
-"UPDATE `products` SET sku = REPLACE(sku,' ','');",
+"UPDATE `products` SET sku = TRIM(sku)",
+"UPDATE `products` SET sku = REPLACE(sku,' ','')",
 
 "Update products set img = concat(id,'.jpg') where img !=''",
 

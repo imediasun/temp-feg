@@ -63,6 +63,9 @@ h3,h4,h5 {
 .nav.navbar-top-links > li > a:focus {
   background-color: #ececec;
 }
+.text-bold {
+    font-weight: bold !important;
+}
 .show{
     display:block;
 }
@@ -1357,6 +1360,9 @@ code {
 /* BACKGROUNDS */
 .gray-bg {
   background-color: #f3f3f4;
+}
+.lightgray-bg {
+  background-color: #fcfcfc;
 }
 .white-bg {
   background-color: #ffffff;
@@ -2826,6 +2832,16 @@ table.table-striped tr th
     border-bottom: 1px solid #a9a9a9;   
 }
 /* end game details */
+/* game edits */
+.gameIsSold {
+    background: #fdfdfd;
+    box-shadow: 0px 0px 1px #b9b9b9;
+    padding: 15px;
+    margin: 0 -15px;    
+}
+/* end game edit */
+
+
 
 .videoContainer {    
     list-style: none;

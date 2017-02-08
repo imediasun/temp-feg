@@ -217,15 +217,15 @@
                         </div>
                     </div>
                     <div class="clearfix"></div>
-                    <div class="form-group">
-                        <label class="label-control col-md-4">
-                            {{ SiteHelpers::activeLang('Game ', (isset($fields['game_id']['language'])? $fields['game_id']['language'] : array())) }}
-                        </label>
+                    {{--<div class="form-group">--}}
+                        {{--<label class="label-control col-md-4">--}}
+                            {{--{{ SiteHelpers::activeLang('Game ', (isset($fields['game_id']['language'])? $fields['game_id']['language'] : array())) }}--}}
+                        {{--</label>--}}
 
-                        <div class="col-md-8">
-                            {!! SiteHelpers::gridDisplayView($row->game_id,'game_id','1:vendor:id:vendor_name') !!}
-                        </div>
-                    </div>
+                        {{--<div class="col-md-8">--}}
+                            {{--{!! SiteHelpers::gridDisplayView($row->game_id,'game_id','1:vendor:id:vendor_name') !!}--}}
+                        {{--</div>--}}
+                    {{--</div>--}}
                     <div class="clearfix"></div>
                     <div class="form-group">
                         <label class="label-control col-md-4">

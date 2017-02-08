@@ -238,7 +238,7 @@ class MylocationgameController extends Controller
 
         $this->data['id'] = $id;
         $this->data['row']['game_title'] = empty($id) ? "" : $this->model->get_game_info_by_id($id, 'game_title');
-        $this->data['row']['location_name'] = empty($id) ? "" : $this->model->get_location_info_by_id($id, 'location_name');
+        $this->data['row']['location_name'] = empty($id) ? "" : $this->model->get_location_info_by_id($row->location_id, 'location_name');
 
         return view('mylocationgame.form', $this->data);
     }
@@ -289,9 +289,6 @@ class MylocationgameController extends Controller
     function postSave(Request $request, $id = null)
     {
         $products = array();
-        $form_data['date_shipped'] = date('Y-m-d');
-        $form_data['date_last_move'] = date('Y-m-d');
-        $form_data['date_in_service'] = date('Y-m-d');
 
         $rules = $this->validateForm();
         $validator = Validator::make($request->all(), $rules);
@@ -305,8 +302,33 @@ class MylocationgameController extends Controller
                 $products = json_encode($products);
                 $data['product_id'] = $products;
             }
-            $data['game_name'] = \DB::table('game_title')->where('id', '=', $data['game_title_id'])->pluck('game_title');
-            unset($data['_token']);
+            
+            /* NOTE: Game name will NOT ALWAYS be same as the Game Title */
+            //$data['game_name'] = \DB::table('game_title')->where('id', '=', $data['game_title_id'])->pluck('game_title');
+            /* Extracting game type id from game type */
+            $data['game_type_id'] = \DB::table('game_title')->where('id', '=', $data['game_title_id'])->pluck('game_type_id');
+            
+            $sold = @$data['sold'];
+            $oldSold = @$data['_oldSoldStatus'];
+            if ($oldSold == 0 && $sold == 1) {
+                $data['prev_location_id'] = @$data['old_location_id'];
+                $data['location_id'] = 0;
+                $data['status_id'] = 3;
+            }
+            elseif ($sold == 0) {
+                $data['date_sold'] = NULL;
+                $data['sold_to'] = '';
+            }
+            
+            if (isset($data['_token'])) unset($data['_token']);
+            if (isset($data['old_location_id'])) unset($data['old_location_id']);
+            if (isset($data['_oldSoldStatus'])) unset($data['_oldSoldStatus']);
+            if (isset($data['_test_piece'])) unset($data['_test_piece']);
+            if (isset($data['_sale_pending'])) unset($data['_sale_pending']);
+            if (isset($data['_for_sale'])) unset($data['_for_sale']);
+            if (isset($data['_not_debit'])) unset($data['_not_debit']);
+            if (isset($data['_sold'])) unset($data['_sold']);
+            
             $id = $this->model->insertRow($data, $id);
             /*
             \DB::table('game_product')
@@ -424,14 +446,14 @@ class MylocationgameController extends Controller
             $intendedLocation = 0;
         }                          
        
-        $serial = @$data['serial'];
-        $version = @$data['version'];
-        $prevGameName = @$data['prev_game_name'];
+//        $serial = @$data['serial'];
+//        $version = @$data['version'];
+//        $prevGameName = @$data['prev_game_name'];
         
         $newData = array();
-        $newData['serial'] = $serial;
-        $newData['version'] = $version;
-        $newData['prev_game_name'] = $prevGameName;
+//        $newData['serial'] = $serial;
+//        $newData['version'] = $version;
+//        $newData['prev_game_name'] = $prevGameName;
         $newData['last_edited_by'] = $userId;
         $newData['last_edited_on'] = $nowDatetime;
         $newData['status_id'] = $status;
@@ -637,101 +659,50 @@ class MylocationgameController extends Controller
 
         ////// END ///// PLUS CLOSING TAG BELOW /////
         $filename = storage_path() . '/qr/' . $id . '.png';
-        $data = url('/') . "mylocationgame/show/" . $id;
-
-        \QrCode::format('png');
-        \QrCode::size(200);
-        \QrCode::errorCorrection('H');
-        \QrCode::generate($data, $filename);
+        $data = url("/mylocationgame/?gamedetails=" . $id);
+        $width = 147;
+        $margin = 5;
+        $xCenter = intval($width / 2);
+        $idYTop = 122;
+        $titleYTop = 145;
+        $idFont = public_path() . "/sximo/fonts/EncodeSansWide-Regular.ttf";
+        $titleFont = public_path() . "/sximo/fonts/pf_tempesta_seven_condensed.ttf";
+        
+        $qr = \QrCode::format('png')
+                ->size($width)
+                ->margin($margin)
+                ->errorCorrection('M') //H Q M L
+                ->generate($data, $filename);
         // $this->model->get_detail($id);
 
-        $row = \DB::select("SELECT G.id, T.game_title FROM game G LEFT JOIN game_title T ON T.id = G.game_title_id WHERE G.id=$id");
-
-        //
-
-//        $newSizeW = 135;
-//        $newSizeH = 147;
-//        $topPadding = 11;
-//        $smallerSizeFactor = .95;
-//        $smallSizeW = round($newSizeW * $smallerSizeFactor);
-//        $smallSizeH = round($newSizeH * $smallerSizeFactor);
-//
-//        // redude size of barcode
-//        $this->load->library('image_lib');
-//        $config['source_image']	= $filename;
-//        $config['quality'] = '100%';
-//        $config['width'] = $smallSizeW;
-//        $config['height'] = $smallSizeH;
-//        $config['overwrite'] = TRUE;
-//        $this->image_lib->initialize($config);
-//        $this->image_lib->resize();
-//        $this->image_lib->clear();
-
-        // add to canvas
-//        $oldimage = imagecreatefrompng($filename);
-//        $oldw = imagesx($oldimage);
-//        $oldh = imagesy($oldimage);
-//        $newimage = imagecreate($newSizeW, $newSizeH); // Creates a black image
-//        // Fill it with white (optional)
-//        $white = imagecolorallocate($newimage, 255, 255, 255);
-//        //imagefill($newimage, 0, 0, $white);
-//        //$background_color = imagecolorallocate($im, 0, 0, 0);
-//        imagecopy($newimage, $oldimage, ($newSizeH-$oldw)/2, $topPadding, 0, 0, $oldw, $oldh);
-//        imagepng($newimage, $filename);
-//        imagedestroy($newimage);
-
-        if ($row) {
-
-            $id = $row[0]->id;
-            $game_name = $row[0]->game_title;
-            /*  die();
-              $this->load->library('image_lib');
-              $config['source_image']	= $filename;
-              $config['quality'] = '100%';
-              $config['wm_text'] = $id;
-              $config['wm_type'] = 'text';
-              //$config['wm_font_path'] = './system/fonts/PTC55F.ttf';
-              //$config['wm_font_path'] = './system/fonts/texb.ttf';
-              //$config['wm_font_path'] = './system/fonts/Segan-Light.ttf';
-              $config['wm_font_path'] = './system/fonts/EncodeSansWide-Regular.ttf';
-              //$config['wm_font_path'] = './system/fonts/DISCO_W.ttf';
-              //$config['wm_font_path'] = './system/fonts/arialnarrow.ttf';
-              //$config['wm_font_path'] = './system/fonts/arial.ttf';
-              $config['wm_font_size']	= '15';
-              $config['wm_font_color'] = 'black';
-              $config['wm_vrt_alignment'] = 'bottom';
-              $config['wm_hor_alignment'] = 'left';
-              $config['wm_vrt_offset'] = '-6';
-              $config['wm_hor_offset'] = '16';
-              $config['overwrite'] = TRUE;
-              $this->image_lib->initialize($config);
-              $this->image_lib->watermark();
-              $this->image_lib->clear();
-
-              $this->load->library('image_lib');
-              $config['source_image']	= $filename;
-              $config['quality'] = '100%';
-              $config['wm_text'] = $game_name;
-              $config['wm_type'] = 'text';
-              //$config['wm_font_path'] = './system/fonts/arialnarrow.ttf';
-              $config['wm_font_path'] = './system/fonts/pf_tempesta_seven_condensed.ttf';
-              //$config['wm_font_path'] = './system/fonts/pf_ronda_seven.ttf';
-              //$config['wm_font_path'] = './system/fonts/hellovetica.ttf';
-              $config['wm_font_size']	= '6';
-              $config['wm_font_color'] = 'black';
-              $config['wm_vrt_alignment'] = 'bottom';
-              $config['wm_hor_alignment'] = 'left';
-              $config['wm_vrt_offset'] = '0';
-              $config['wm_hor_offset'] = '3';
-              $config['overwrite'] = TRUE;
-              $this->image_lib->initialize($config);
-              $this->image_lib->watermark();
-              $this->image_lib->clear();*/
+        //$row = \DB::select("SELECT G.id, T.game_title FROM game G LEFT JOIN game_title T ON T.id = G.game_title_id WHERE G.id=$id");
+        $game_title = \DB::table('game')
+                ->leftJoin('game_title', 'game_title.id', '=', 'game.game_title_id')
+                ->where('game.id', '=', $id)->pluck('game_title');
+        if (empty($game_title)) {
+            $game_title = "";
         }
-        // ////
-        // $gameString = substr($gameString, 9);
-        // }
-        // ////
+
+        \Image::make($filename)
+            ->resizeCanvas(0, -4, 'bottom', true)
+            ->resizeCanvas(0, 20, 'top', true, 'ffffff')
+            ->text($id, $xCenter, $idYTop, function($font) use ($idFont){
+                $font->file($idFont);
+                $font->size(19);
+                $font->color('#000');
+                $font->align('center');
+                $font->valign('top');
+                $font->angle(0);
+            })               
+            ->text($game_title, $xCenter, $titleYTop, function($font)  use ($titleFont){
+                $font->file($titleFont);
+                $font->size(8);
+                $font->color('#000');
+                $font->align('center');
+                $font->valign('top');
+                $font->angle(0);
+            })               
+            ->save($filename, 100);
     }
 
     function postAssettag(Request $request, $asset_ids = null)

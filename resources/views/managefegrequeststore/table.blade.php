@@ -149,7 +149,7 @@
                             endforeach;
                             ?>
                             <td>{{ $row->vendor_name }}</td>
-                            <td>{{CurrencyHelpers::formatCurrency($row->case_price)}} </td>
+                            <td>{{CurrencyHelpers::formatPrice($row->case_price)}} </td>
                             <td align="center">{{ $row->reserved_difference }}</td>
                             <td> {{ $row->order_type }}</td>
                             <td data-values="action" data-key="<?php echo $row->id; ?>">
