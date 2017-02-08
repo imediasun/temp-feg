@@ -932,7 +932,7 @@ class OrderController extends Controller
             $status = 1;
             $date_received = $request->get('date_received');
             // $date_received = \DateHelpers::formatDate($date_received);
-            $date_received= date("Y-d-m", strtotime($date_received));
+            $date_received= date("Y-m-d", strtotime($date_received));
             if (in_array($item_ids[$i], $received_part_ids))
                 $status = 2;
             \DB::insert('INSERT INTO order_received (`order_id`,`order_line_item_id`,`quantity`,`received_by`, `status`, `date_received`, `notes`)
