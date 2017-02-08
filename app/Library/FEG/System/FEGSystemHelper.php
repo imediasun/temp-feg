@@ -300,8 +300,12 @@ class FEGSystemHelper
             //$from = "support@fegllc.com";
             //$from = "support@element5digital.com";
             $from = "support@fegllc.com";
-        }        
-        self::phpMail($to, $subject, $message, $from, $options);
+        }
+        
+        $preventEmailSendingSetting = env('PREVENT_FEG_SYSTEM_EMAIL', false);        
+        if (!$preventEmailSendingSetting)  {
+            self::phpMail($to, $subject, $message, $from, $options);            
+        }
     }
     
     public static function getHumanDate($date = "") {
