@@ -238,10 +238,23 @@ class FEGSystemHelper
         return $sTitle;
     }
     
-    public static function joinArray($array, $groupOn = '', $concatOn = array(), $sumOn = array(), $ignore = array()) {
+    public static function joinArray($array, $groupOn = '', $concatOn = array(), $sumOn = array(), $ignore = array(), $options = array()) {
+        $options = array_merge(array(
+        ), $options);
+        extract($options);
+        
         $data = array();
         foreach ($array as $cell) {
-            $groupValue = $cell[$groupOn];
+            
+            if (!is_array($groupOn)) {
+                $groupOn = array($groupOn);
+            }
+            $groupValues = array();
+            foreach($groupOn as $groupOnItem) {
+                $groupValues[] = $cell[$groupOnItem];
+            }
+            $groupValue = implode('-', $groupValues);
+            
             if (empty($data[$groupValue])) {
                 $data[$groupValue] = array();
             }
@@ -288,7 +301,11 @@ class FEGSystemHelper
             //$from = "support@element5digital.com";
             $from = "support@fegllc.com";
         }        
-        self::phpMail($to, $subject, $message, $from, $options);
+        
+        $preventEmailSendingSetting = env('PREVENT_FEG_SYSTEM_EMAIL', false);        
+        if (!$preventEmailSendingSetting)  {
+            self::phpMail($to, $subject, $message, $from, $options);
+        }
     }
     
     public static function getHumanDate($date = "") {
