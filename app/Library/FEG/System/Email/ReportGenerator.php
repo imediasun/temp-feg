@@ -557,8 +557,14 @@ class ReportGenerator
             'debit' => null,
             'reader' => null,
             'game' => null,
-            'sortBy' => 'loc_id',
-            'order' => 'asc',
+            'sortBy' => '',
+            'missing_asset_sortBy' => 'reader_id',
+            'bad_reader_sortBy' => 'loc_game_title',
+            'bad_asset_sortBy' => 'game_id',
+            'order' => '',
+            'missing_asset_order' => 'asc',
+            'bad_reader_order' => 'asc',
+            'bad_asset_order' => 'asc',
             'flatData' => 0,
             '_task' => array(),
             '_logger' => null,
@@ -583,8 +589,10 @@ class ReportGenerator
         $report = array();        
                         
         $missingAssetIdData = array();
+        $thisSortBy = empty($missing_asset_sortBy) ? (empty($sortBy) ? 'reader_id': $sortBy) : $missing_asset_sortBy;
+        $thisOrderBy = empty($missing_asset_order) ? (empty($order) ? 'asc': $sortBy) : $missing_asset_order;
         $q = ReportHelpers::getReadersMissingAssetIdQuery($date_start, $date_end, 
-            $location, $debit, $reader, $sortBy, $order);        
+            $location, $debit, $reader, $thisSortBy, $thisOrderBy);        
         $data = DB::select($q);
         foreach($data as $index => $row) {
             $dateStart = FEGSystemHelper::getHumanDate($row->date_start);
@@ -613,8 +621,6 @@ class ReportGenerator
                 "_Game Revenue Original" => $gameTotalOriginal,
                 "_Asset ID" => 0,
                 "_Reader ID" => $readerIdOriginal,
-                
-                
             );
             if ($isFlatData) {
                 $missingAssetIdData[] = $missingAsset;
@@ -623,8 +629,7 @@ class ReportGenerator
                 if (empty($missingAssetIdData[$locationIDName])) {
                     $missingAssetIdData[$locationIDName] = array();
                 }            
-                $missingAssetIdData[$locationIDName][$locationGameName] = $missingAsset;        
-                
+                $missingAssetIdData[$locationIDName][] = $missingAsset;                
             }
             
         }
@@ -633,8 +638,10 @@ class ReportGenerator
         }        
         
         $badReadersData = array();
+        $thisSortBy = empty($bad_reader_sortBy) ? (empty($sortBy) ? 'loc_game_title': $sortBy) : $bad_reader_sortBy;
+        $thisOrderBy = empty($bad_reader_order) ? (empty($order) ? 'asc': $order) : $bad_reader_order;
         $q = ReportHelpers::getMissingReadersQuery($date_start, $date_end, 
-            $location, $debit, $game, $sortBy, $order);    
+            $location, $debit, $game, $thisSortBy, $thisOrderBy);    
         FEGSystemHelper::logit($q, 'getMissingReadersQuery.sql.log', $lp);
         $data = DB::select($q);
         foreach($data as $index => $row) {
@@ -675,7 +682,7 @@ class ReportGenerator
                 if (empty($badReadersData[$locationIDName])) {
                     $badReadersData[$locationIDName] = array();   
                 }
-                $badReadersData[$locationIDName][$locationGameName] = $badReader;
+                $badReadersData[$locationIDName][] = $badReader;
             }            
 
         }
@@ -684,8 +691,10 @@ class ReportGenerator
         }
         
         $badAssetIDData = array();
+        $thisSortBy = empty($bad_asset_sortBy) ? (empty($sortBy) ? 'game_id': $sortBy) : $bad_asset_sortBy;
+        $thisOrderBy = empty($bad_asset_order) ? (empty($order) ? 'asc': $order) : $bad_asset_order;
         $q = ReportHelpers::getUnknownAssetIdQuery($date_start, $date_end, 
-            $location, $debit, $reader, $sortBy, $order);
+            $location, $debit, $reader, $thisSortBy, $thisOrderBy);
         DB::statement("SET SESSION group_concat_max_len = 1000000;");
         $data = DB::select($q);
         foreach($data as $index => $row) {
@@ -726,7 +735,7 @@ class ReportGenerator
                 if (empty($badReadersData[$locationIDName])) {
                     $badAssetIDData[$locationIDName] = array();
                 }            
-                $badAssetIDData[$locationIDName][$locationGameName] = $badAsset;
+                $badAssetIDData[$locationIDName][] = $badAsset;
             }            
         }
         
@@ -830,7 +839,7 @@ class ReportGenerator
                 }
                 else {
                     foreach($reportData['missingAssetIDs'] as $locationIDName => $items) {
-                        $data = FEGSystemHelper::joinArray($items, 'Location Game Name', 
+                        $data = FEGSystemHelper::joinArray($items, ['Location Game Name', 'Reader ID'], 
                                 array('Date'), 
                                 array('Game Revenue'), 
                                 array('Location ID', 'Location Name'));
@@ -864,7 +873,7 @@ class ReportGenerator
                 else {
                     $data = array();     
                     foreach($reportData['badReaderIDs'] as $locationIDName => $items) {
-                        $data = FEGSystemHelper::joinArray($items, 'Location Game Name', 
+                        $data = FEGSystemHelper::joinArray($items, ['Location Game Name', 'Reader ID', 'Asset ID'], 
                                 array('Date'), 
                                 array('Game Revenue'), 
                                 array('Location ID', 'Location Name'));
@@ -900,7 +909,7 @@ class ReportGenerator
                 else {
                     $data = array();
                     foreach($reportData['badAssetIDs'] as $locationIDName => $items) {
-                        $data = FEGSystemHelper::joinArray($items, 'Location Game Name', 
+                        $data = FEGSystemHelper::joinArray($items, ['Location Game Name', 'Asset ID'], 
                                 array('Date'), 
                                 array('Game Revenue'), 
                                 array('Location ID', 'Location Name'));
