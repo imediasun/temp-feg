@@ -831,6 +831,10 @@
                 minLength: 2,
                 source: function (request, response) {
                     var term = request.term;
+                    var vendorId = $("#vendor_id").val();
+                    if(vendorId != ""){
+                        request.vendor_id = $("#vendor_id").val();
+                    }
                     lastXhr = $.getJSON("order/autocomplete", request, function (data, status, xhr) {
                         cache[term] = data;
                         if (data.value == "No Match") {

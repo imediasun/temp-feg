@@ -11,6 +11,7 @@ class order extends Sximo
     protected $primaryKey = 'id';
     const OPENID1 = 1, OPENID2 = 3, OPENID3 = 4, FIXED_ASSET_ID = 9, CLOSEID1 = 2, CLOSEID2 = 5;
     const ORDER_PERCISION = 3;
+    const ORDER_TYPE_PART_GAMES = 1;
 
     public function __construct()
     {
@@ -220,8 +221,11 @@ class order extends Sximo
                 $data['alt_address'] = $order_query[0]->alt_address;
             }
             $data['prefill_type'] = 'clone';
-            $content_query = \DB::select('SELECT  O.product_description AS description,O.price AS price,O.qty AS qty, O.product_id,O.item_name,O.case_price,P.retail_price, if(O.product_id=0,O.sku,P.sku) as sku
-												,O.item_received as item_received,O.game_id FROM order_contents O LEFT JOIN products P ON P.id = O.product_id  WHERE O.order_id = ' . $order_id);
+            $content_query = \DB::select('SELECT  g.game_name , O.product_description AS description,O.price AS price,O.qty AS qty, O.product_id,O.item_name,O.case_price,P.retail_price, if(O.product_id=0,O.sku,P.sku) as sku
+												,O.item_received as item_received,O.game_id FROM order_contents O LEFT JOIN products P ON P.id = O.product_id
+												  LEFT JOIN game g ON g.id = O.game_id
+												  WHERE O.order_id = ' . $order_id);
+            
             if ($content_query) {
                 foreach ($content_query as $row) {
                     $data['requests_item_count'] = $data['requests_item_count'] + 1;
@@ -233,8 +237,10 @@ class order extends Sximo
                     $orderitemnamesArray[] = $row->item_name;
                     $skuNumArray[] = $row->sku;
                     $orderitemcasepriceArray[] = number_format($row->case_price,self::ORDER_PERCISION) ;
-                    $orderretailpriceArray[]=$row->retail_price;
-                    $ordergameidsArray[]=$row->game_id;
+                    $orderretailpriceArray[]= $row->retail_price;
+                    $ordergameidsArray[] = $row->game_id;
+                    $ordergamenameArray[] = $row->game_name;
+                    
 
                     //  $prod_data[]=$this->productUnitPriceAndName($orderProductIdArray);
                 }
@@ -251,6 +257,7 @@ class order extends Sximo
                 $data['orderQtyArray'] = $orderQtyArray;
                 $data['skuNumArray'] = $skuNumArray;
                 $data['orderProductIdArray'] = $orderProductIdArray;
+                $data['gamenameArray'] = $ordergamenameArray;
                 /*     if(count($prod_data)!=0) {
                          foreach ($prod_data as $d) {
                              $item_name_array[] = $d['vendor_description'];
@@ -411,9 +418,11 @@ class order extends Sximo
         $data['location_id'] = '';
         $data['user_id'] = \Session::get('uid');
         if (!empty($order_id)) {
-            $query = \DB::select('SELECT O.order_type_id,O.order_description,O.request_ids,O.po_number,O.location_id,O.order_total,O.status_id,O.date_received,
+            $query = \DB::select('SELECT  O.order_type_id,O.order_description,O.request_ids,O.po_number,O.location_id,O.order_total,O.status_id,O.date_received,
                      O.notes,O.added_to_inventory,V.vendor_name,U.username FROM orders O LEFT JOIN vendor V ON V.id = O.vendor_id
-                     LEFT JOIN users U ON U.id = O.user_id WHERE O.id = ' . $order_id . '');
+                     LEFT JOIN users U ON U.id = O.user_id
+                      
+                      WHERE O.id = ' . $order_id . '');
             if (count($query) == 1) {
                 $data['requestIds'] = $query[0]->request_ids;
                 $data['order_type'] = $query[0]->order_type_id;
@@ -445,11 +454,12 @@ class order extends Sximo
                         $id = $requestIdString;
                     }
 
-                    $query = \DB::select('SELECT R.product_id,R.qty,P.case_price,P.prod_type_id,R.location_id,CONCAT(P.vendor_description," (SKU-",P.sku,")") AS description FROM requests R
+                    $query = \DB::select('SELECT   R.product_id,R.qty,P.case_price,P.prod_type_id,R.location_id,CONCAT(P.vendor_description," (SKU-",P.sku,")") AS description FROM requests R
                            LEFT JOIN products P ON P.id = R.product_id WHERE R.id = ' . $id);
                     if (count($query) == 1) {
                         $data['product_id_' . $i] = $query[0]->product_id;
                         $data['order_qty_' . $i] = $query[0]->qty;
+                        $data['game_name' . $i] = $query[0]->game_name;
                         $data['order_description_' . $i] = $query[0]->description;
                         $data['order_price_' . $i] = $query[0]->case_price;
                     }

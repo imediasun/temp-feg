@@ -74,6 +74,7 @@
                                 <th> #</th>
                                 <th>Name</th>
                                 <th>Description</th>
+                                @if($data['order_type'] == \App\Models\order::ORDER_TYPE_PART_GAMES)<th>Game</th>@endif
                                 <th>Price Unit</th>
                                 <th>Case Price</th>
                                 <th>Qty</th>
@@ -84,7 +85,6 @@
 
                             </tr>
                             </thead>
-
                             <tbody>
                            <?php  $value = 1   ?>
                             @foreach($data['order_items'] as $order_item)
@@ -96,6 +96,9 @@
                                         </td>
                                         <td>{{ $order_item->item_name }}</td>
                                         <td>{{ $order_item->product_description }}</td>
+                                        @if($data['order_type'] == \App\Models\order::ORDER_TYPE_PART_GAMES)
+                                        <td> {{ $order_item->game_name }}</td>
+                                        @endif
                                         <td>{{CurrencyHelpers::formatCurrency(number_format($order_item->price , \App\Models\Order::ORDER_PERCISION)) }}</td>
                                         <td> {{ CurrencyHelpers::formatCurrency( number_format( $order_item->case_price , \App\Models\Order::ORDER_PERCISION)) }}</td>
 

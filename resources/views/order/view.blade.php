@@ -321,6 +321,9 @@ for($i=0; $i < count($order_data['orderQtyArray']);$i++)
                 <th>Item Price</th>
                 <th>Item Quantity </th>
                 <th>Items Received</th>
+                @if($row->order_type_id == \App\Models\order::ORDER_TYPE_PART_GAMES)
+                <th>Game</th>
+                @endif
                 <th>Total ($)</th>
                 </tr>
                 </thead>
@@ -334,6 +337,9 @@ for($i=0; $i < count($order_data['orderQtyArray']);$i++)
                         <td>{{CurrencyHelpers::formatCurrency(number_format($order_data['orderPriceArray'][$i],\App\Models\Order::ORDER_PERCISION)) }}</td>
                         <td>{{  $order_data['orderQtyArray'][$i] }}</td>
                         <td>{{ $order_data['receivedItemsArray'][$i] }}</td>
+                        @if($row->order_type_id == \App\Models\order::ORDER_TYPE_PART_GAMES)
+                            <td>{{  $order_data['gamenameArray'][$i] }}</td>
+                        @endif
                         <td>{{ CurrencyHelpers::formatCurrency(number_format(  $order_data['orderPriceArray'][$i]* $order_data['orderQtyArray'][$i],3))}}</td>
 
                     </tr>
