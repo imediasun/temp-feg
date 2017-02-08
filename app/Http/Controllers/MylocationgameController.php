@@ -659,18 +659,19 @@ class MylocationgameController extends Controller
 
         ////// END ///// PLUS CLOSING TAG BELOW /////
         $filename = storage_path() . '/qr/' . $id . '.png';
-        $data = url("/mylocationgame/show/" . $id);
+        $data = url("/mylocationgame/?gamedetails=" . $id);
         $width = 147;
+        $margin = 5;
         $xCenter = intval($width / 2);
-        $idYTop = 125;
+        $idYTop = 122;
         $titleYTop = 145;
         $idFont = public_path() . "/sximo/fonts/EncodeSansWide-Regular.ttf";
         $titleFont = public_path() . "/sximo/fonts/pf_tempesta_seven_condensed.ttf";
         
         $qr = \QrCode::format('png')
                 ->size($width)
-                ->margin(0)
-                ->errorCorrection('Q')
+                ->margin($margin)
+                ->errorCorrection('M') //H Q M L
                 ->generate($data, $filename);
         // $this->model->get_detail($id);
 
@@ -683,7 +684,7 @@ class MylocationgameController extends Controller
         }
 
         \Image::make($filename)
-            ->resizeCanvas(0, -8, 'bottom', true)
+            ->resizeCanvas(0, -4, 'bottom', true)
             ->resizeCanvas(0, 20, 'top', true, 'ffffff')
             ->text($id, $xCenter, $idYTop, function($font) use ($idFont){
                 $font->file($idFont);
