@@ -207,7 +207,7 @@ class FegapiController extends Controller
         return \Response::json(array("Status" => \Lang::get('restapi.StatusSuccess'), "Message" => \Lang::get('restapi.DeleteSuccess')), 200);
     }
 
-    function validatePost($table)
+    function validatePost($table, $skipFieldsMissingInRequest = false)
     {
 
         //die;

@@ -72,7 +72,7 @@ orders.id=order_received.order_id ";
         $cond="";
 
         if(!empty($args['createdFrom']) && isset($args['createdFrom'])){
-            $cond .= " AND order_received.date_received BETWEEN '".$args['createdFrom']."' AND '".$args['createdTo']."'";
+            $cond .= " AND order_received.created_at BETWEEN '".$args['createdFrom']."' AND '".$args['createdTo']."'";
             $createdFlag = true;
         }
         if ($cond != null) {
@@ -130,7 +130,7 @@ orders.id=order_received.order_id ";
         $order_ids[]=$record->id;
 }
         if(!empty($param['createdFrom'])){
-            $where .= " AND order_received.date_received BETWEEN '".$param['createdFrom']."' AND '".$param['createdTo']."'";
+            $where .= " AND order_received.created_at BETWEEN '".$param['createdFrom']."' AND '".$param['createdTo']."'";
             $createdFlag = true;
         }
         $qry_in_string=implode(',',$order_ids);
@@ -162,6 +162,7 @@ orders.id=order_received.order_id ";
                         'quantity' => $record->quantity,
                         'received_by' => $record->received_by,
                         'date_received' => $record->date_received,
+                        'created_at' => $record->created_at,
                         'notes' => $record->notes,
                         'status' => $record->status
                     ];
