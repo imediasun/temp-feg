@@ -346,7 +346,7 @@ for($i=0; $i < count($order_data['orderQtyArray']);$i++)
                     @endfor
                 <tr>
 
-                    <td>&nbsp</td><td>&nbsp</td><td>&nbsp</td><td>&nbsp</td><td>&nbsp</td>
+                    <td>&nbsp</td><td>&nbsp</td><td>&nbsp</td><td>&nbsp</td><td>&nbsp</td><td>&nbsp</td>
                     <td  colspan="1">Sub Total</td>
                     <td>{{CurrencyHelpers::formatCurrency(number_format($order_data['order_total'],3)) }}</td>
 
