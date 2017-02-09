@@ -620,7 +620,7 @@ class ReportGenerator
                 "Game Revenue" => $gameTotal,
                 "_Game Revenue Original" => $gameTotalOriginal,
                 "_Asset ID" => 0,
-                "_Reader ID" => $readerIdOriginal,                
+                "_Reader ID" => $readerIdOriginal,
             );
             if ($isFlatData) {
                 $missingAssetIdData[] = $missingAsset;
@@ -628,7 +628,7 @@ class ReportGenerator
             else {
                 if (empty($missingAssetIdData[$locationIDName])) {
                     $missingAssetIdData[$locationIDName] = array();
-                }
+                }            
                 $missingAssetIdData[$locationIDName][] = $missingAsset;                
             }
             
@@ -734,7 +734,7 @@ class ReportGenerator
             else {
                 if (empty($badReadersData[$locationIDName])) {
                     $badAssetIDData[$locationIDName] = array();
-                }        
+                }            
                 $badAssetIDData[$locationIDName][] = $badAsset;
             }            
         }
@@ -1866,7 +1866,7 @@ $message
 //            FEGSystemHelper::logit("bcc: " .$bcc, "email-{$reportNameSanitized}.log", "FEGCronTasks/SystemEmailsDump");
 //            FEGSystemHelper::logit("subject: " .$subject, "email-{$reportNameSanitized}.log", "FEGCronTasks/SystemEmailsDump");
             
-            FEGSystemHelper::logit($messageLog, "{$lf}.html", $lpd, true);
+            FEGSystemHelper::logit($messageLog, "{$lf}.html", $lpd, true);            
         }
         
         $opt = array();
