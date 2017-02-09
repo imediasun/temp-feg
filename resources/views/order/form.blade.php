@@ -375,7 +375,7 @@
             if (mode != "edit") {
                 //$("#submit_btn").attr('disabled','disabled');
                 var location_id=0;
-                checkPOValidity(location_id);
+                validatePONumber(location_id,0);
             }
             $("#item_num").val(inc);
 
@@ -591,7 +591,8 @@
             $("#po_message").hide(200);
             $("#po_1").val($(this).val());
             var location_id=$(this).val();
-            validatePONumber(location_id);
+            //if(myloc == location_id)
+            validatePONumber(location_id,0);
             $.ajax({
                 type: "GET",
                 url: "{{ url() }}/order/games-dropdown",
@@ -606,10 +607,33 @@
                 }
             });
         });
-
-        $('#po_3').on("keyup", function () {
+        function debounce(func, wait, immediate) {
+            var timeout;
+            return function() {
+                var context = this, args = arguments;
+                var later = function() {
+                    timeout = null;
+                    if (!immediate) func.apply(context, args);
+                };
+                var callNow = immediate && !timeout;
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+                if (callNow) func.apply(context, args);
+            };
+        };
+        $('#po_3').on('keyup', debounce(function () {
             var location_id=$("#po_1").val();
-            checkPOValidity(location_id);
+            validatePONumber(location_id,$(this).val());
+        }, 1000));
+
+
+
+        var delay = (function(){
+            var timer = 0;
+            return function(callback, ms){
+                clearTimeout (timer);
+                timer = setTimeout(callback, ms);
+            };
         });
 
         // -----------------for checking and validating PO number.... -----------------------//
@@ -632,21 +656,15 @@
                 return;
             }
 
-            validatePONumber(location_id);
+            validatePONumber(location_id,0);
         }
-        function validatePONumber(location_id) {
+        function validatePONumber(location_id,po) {
             $("#submit_btn").attr('disabled', 'disabled');
             var base_url =<?php echo  json_encode(url()) ?>;
             po_1 = $('#po_1').val().trim();
             po_2 = $('#po_2').val().trim();
             po_3 = $('#po_3').val().trim();
             var full_po = po_1 + "-" + po_2 + "-" + po_3;
-            if (po_3.length >= 1) {
-                // $('.ajaxLoading').show();
-            }
-            else {
-                //$('.ajaxLoading').hide();
-            }
             if (poajax) {
                 if (poajax.abort) {
                     poajax.abort();
@@ -664,7 +682,8 @@
                         po_1: $('#po_1').val().trim(),
                         po_2: $('#po_2').val().trim(),
                         po_3: $('#po_3').val().trim(),
-                        location_id:location_id
+                        location_id:location_id,
+                        po:po
                     },
                     success: function (msg) {
                         $("#submit_btn").removeAttr('disabled');

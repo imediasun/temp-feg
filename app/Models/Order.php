@@ -402,8 +402,11 @@ class order extends Sximo
     }
     function isPOAvailable($po_full)
     {
+        //echo $po_full;
+        //die('here..in p');
         $query = \DB::select("SELECT po_number FROM po_track WHERE po_number = '".$po_full."'" );
         if(count($query) > 0 ) {
+
             return false;
         }
         else{
@@ -514,26 +517,41 @@ class order extends Sximo
 
     }
 
-    function increamentPO($location=0)
+    function increamentPO($location=0,$count=0)
     {
         $today = date('mdy');
         if($location != 0) {
-            $po = \DB::select("select po_number from po_track where po_number like '%-$today-%' and location_id=" . $location . " order by po_number");
-        }
 
-        if(!empty($po)){
-            $count = count($po)+1;
-         /*   foreach($po as $po_number)
-            {
-                $po_3=explode('-',$po_number->po_number);
-                if($count == $po_3[2])
-                {
-                    $count=$count+1;
-                }
-            }*/
-           return $count;
+            $po = \DB::select("select po_number from po_track where po_number like '%-$today-%' and location_id=" . $location . " order by po_number");
+            if($count == 0 ) {
+                $count = count($po) + 1;
+
             }
-        return 1;
+            else
+            {
+
+                $count = $count +1;
+
+            }
+            $po_new=$location."-".$today."-".$count;
+
+            if($this->isPOAvailable($po_new))
+            {
+                $this->createPOTrack($po_new,$location);
+                echo $count;die();
+                return $count;
+            }
+            else
+            {
+                //echo "$location:$count";
+                //die('here...');
+                $this->increamentPO($location,$count);
+            }
+        }
+        else
+        {
+            return 1;
+        }
     }
 
     function getVendorEmail($vendor_id)
