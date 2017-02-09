@@ -766,12 +766,12 @@ class OrderController extends Controller
             $pdf = \PDF::loadView('order.po', ['data' => $data, 'main_title' => "Purchase Order"]);
             if ($mode == "save") {
                 $po_file_name = $data[0]['company_name_short'] . "_PO_" . $data[0]['po_number'] . '.pdf';
-                $po_file_path = public_path() . '\orders\\' . $po_file_name;
+                $po_file_path =  'orders/' . $po_file_name;
                 echo $po_file_path;
                 if (\File::exists($po_file_path)) {
                     \File::delete($po_file_path);
                 }
-               // $pdf->save($po_file_path);
+                $pdf->save($po_file_path);
                 $data = array('file_name' => $po_file_name, 'url' => url());
                 return $data;
             }
@@ -1124,7 +1124,7 @@ function sendPhpEmail($message,$to,$from,$subject,$pdf,$filename,$cc,$bcc)
     public function getDownloadPo($file_name)
     {
 
-        $file = public_path() . "/orders/" . $file_name;
+        $file = "orders/" . $file_name;
         echo $file;
         $headers = array('Content-Type: application/pdf',);
         return \Response::download($file, $file_name, $headers);
