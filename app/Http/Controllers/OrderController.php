@@ -767,7 +767,7 @@ class OrderController extends Controller
             if ($mode == "save") {
                 $po_file_name = $data[0]['company_name_short'] . "_PO_" . $data[0]['po_number'] . '.pdf';
                 $po_file_path =  'orders/' . $po_file_name;
-                echo $po_file_path;
+              //  echo $po_file_path;
                 if (\File::exists($po_file_path)) {
                     \File::delete($po_file_path);
                 }
@@ -1125,7 +1125,7 @@ function sendPhpEmail($message,$to,$from,$subject,$pdf,$filename,$cc,$bcc)
     {
 
         $file = "orders/" . $file_name;
-        echo $file;
+       // echo $file;
         $headers = array('Content-Type: application/pdf',);
         return \Response::download($file, $file_name, $headers);
     }

@@ -347,6 +347,7 @@
                     $('#saveFormAjax').submit();
                 }
                 else {
+                    alert(data['url']);
                     $("#message,#message1").text(data['url'] + "/order/download-po/" + data['file_name']);
                     $('#send-email').click(function () {
                         $("#sendFormAjax").submit();
