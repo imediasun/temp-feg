@@ -7,6 +7,7 @@
         </div>
         <div class="col-md-3">
     <div class="form-group  " >
+            <input name='validateDownload' type='hidden' value='1' />
             <select name='game_title_id' id='game_name' class='select4 '></select>
     </div>
         </div>
@@ -68,9 +69,9 @@
     <div class="col-md-5">
         <div class="row  pull-right" style="margin-right: 1%;">
         <span><b>Download</b>&nbsp;</span>
-        <a href="{{ URL::to( $pageModule .'/history') }}" class="btn btn-sm btn-white"> Game Move History</a>
-        <a href="{{ URL::to( $pageModule .'/pending') }}" class="btn btn-sm btn-white"> Pending Sales List</a>
-        <a href="{{ URL::to( $pageModule .'/forsale') }}" class="btn btn-sm btn-white">For-Sale List</a>
+        <a href="{{ URL::to( $pageModule .'/history') }}" class="btn btn-sm btn-white downloadGameMoveHistory"> Game Move History</a>
+        <a href="{{ URL::to( $pageModule .'/pending') }}" class="btn btn-sm btn-white downloadGamePendingSales"> Pending Sales List</a>
+        <a href="{{ URL::to( $pageModule .'/forsale') }}" class="btn btn-sm btn-white downloadGameForSale">For-Sale List</a>
     </div>
 </div>
     </div>

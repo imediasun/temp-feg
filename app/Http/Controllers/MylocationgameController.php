@@ -590,6 +590,18 @@ class MylocationgameController extends Controller
         }
             $info = $this->model->makeInfo($this->module);
         $rows = $results;
+        if (!empty($request['validateDownload'])) {
+            $status = [];
+            if (empty($rows)) {
+                $status['error'] = 'The selected Game Title is not present at the Location 
+                    you have selected, so the export has been aborted. 
+                    Please select a different Game Title and/or Location combination.';
+            }
+            else {
+                $status['success'] = 1;
+            }
+            return response()->json($status);
+        }
         foreach ($rows as &$row){
             $row->game_name=$row->game_title_id;
         }

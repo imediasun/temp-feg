@@ -443,7 +443,7 @@
                 'moduleName': pageModule,
                 'mainModule': mainModule,
                 'url': pageUrl,
-                'mainUrl': mainUrl,
+                'mainUrl': mainUrl
             },
             {!! json_encode($game) !!}
         );
