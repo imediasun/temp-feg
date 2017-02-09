@@ -43,7 +43,23 @@ class MylocationgameController extends Controller
         $this->data['access'] = $this->access;
         return view('mylocationgame.index', $this->data);
     }
+    public function getSearchFilterQuery($customQueryString = null) {
+        // Filter Search for query
+        // build sql query based on search filters
+        $filter = is_null($customQueryString) ? (is_null(Input::get('search')) ? '' : $this->buildSearch()) : 
+            $this->buildSearch($customQueryString);
 
+        // Get assigned locations list as sql query (part)
+        $locationFilter = \SiteHelpers::getQueryStringForLocation('game');
+        // if search filter does not have location_id filter
+        // add default location filter
+        $frontendSearchFilters = $this->model->getSearchFilters(array('location_id' => ''));
+        if (empty($frontendSearchFilters['location_id'])) {
+            $filter .= $locationFilter;
+        } 
+        
+        return $filter;
+    }
     public function postData(Request $request)
     {
 
@@ -66,12 +82,8 @@ class MylocationgameController extends Controller
         $sort = (!is_null($request->input('sort')) ? $request->input('sort') : $this->info['setting']['orderby']);
         $order = (!is_null($request->input('order')) ? $request->input('order') : $this->info['setting']['ordertype']);
         // End Filter sort and order for query
-        // Filter Search for query
-        if (is_null($request->input('search'))) {
-            $filter = \SiteHelpers::getQueryStringForLocation('game');
-        } else {
-            $filter = $this->buildSearch();
-        }
+        // Filter Search for query        
+        $filter = $this->getSearchFilterQuery();
 
         $page = $request->input('page', 1);
         $params = array(
@@ -613,11 +625,62 @@ class MylocationgameController extends Controller
         );
         return view('sximo.module.utility.csv', $content);
     }
+    
+    public function getAssetIdsFromFilter($request = null) {
 
-    public function getHistory()
+        if (is_null($request)) {
+            $request = array();
+        }                
+        $filterQuery = empty($request['filter']) ? '' : $request['filter'];
+        parse_str(@$request['filter'], $querystring);
+        $searchQuery = empty($querystring['search']) ? null : $querystring['search'];
+        $filter = $this->getSearchFilterQuery($searchQuery);        
+        $q = "SELECT id from game WHERE id IS NOT NULL $filter";
+        $data = \DB::select($q);
+        $assets = [];
+        if (!empty($data)) {
+            foreach($data as $item) {
+                $assets[] = $item->id;
+            }
+        }
+        $assetIds = implode(',', $assets);        
+        return $assetIds;        
+    }
+    
+    public function getHistory(Request $requestData = null)
     {
-        $rows = $this->model->getMoveHistory();
-        $fields = array('game', 'From Location', 'Sent by', 'From Date', 'To Location', 'Accepted by', 'To Date');
+        $request = $requestData->all();
+        $assetIds = $this->getAssetIdsFromFilter($request);
+        if ($assetIds == '') {
+            $assetIds = '0';
+        }
+
+        $rows = $this->model->getMoveHistory($assetIds);
+        if (!empty($request['validateDownload'])) {
+            $status = [];
+            if (empty($assetIds) || empty($rows)) {
+                $status['error'] = 'Game Move history is not found for the selected Games, 
+                    so the download has been aborted. 
+                    Please select a different Game Title and/or Location combination.';
+            }
+            else {
+                $status['success'] = 1;
+            }
+            return response()->json($status);
+        }
+
+        $fields = array(
+                'Asset ID' => 'game_id', 
+                'Game Title' => 'game_title', 
+                'From Location ID' => 'from_loc', 
+                'From Location Name' => 'from_location', 
+                'Sent by' => 'from_name', 
+                'From Date' => 'from_date', 
+                'To Location ID' => 'to_loc', 
+                'To Location Name' => 'to_location', 
+                'Accepted by' => 'to_name', 
+                'To Date' => 'to_date'
+            );
         $this->data['pageTitle'] = 'game move history';
         $content = array(
             'fields' => $fields,
@@ -628,11 +691,42 @@ class MylocationgameController extends Controller
         return view('mylocationgame.csvhistory', $content);
     }
 
-    function getPending()
+    function getPending(Request $requestData = null)
     {
+        $request = $requestData->all();
+        $assetIds = $this->getAssetIdsFromFilter($request);
+        if ($assetIds == '') {
+            $assetIds = '0';
+        }
+
+        $rows = $this->model->getPendingList($assetIds);
+        if (!empty($request['validateDownload'])) {
+            $status = [];
+            if (empty($assetIds) || empty($rows)) {
+                $status['error'] = 'Pending sames information is not found for the selected Games, 
+                    so the download has been aborted. 
+                    Please select a different Game Title and/or Location combination.';
+            }
+            else {
+                $status['success'] = 1;
+            }
+            return response()->json($status);
+        }     
+        
         $this->data['pageTitle'] = 'game pending list';
-        $fields = array("Manufacturer", "Game Title", "Version", "Serial", "Id", "Location Id", "City", "State", "WholeSale", "Retail", "Notes");
-        $rows = $this->model->getPendingList();
+        $fields = array(
+                "Manufacturer" => 'Manufacturer', 
+                "Game Title" => 'Game_Title', 
+                "Version" => 'version', 
+                "Serial" => 'serial', 
+                "Asset ID" => 'id', 
+                "Location Id" => 'location_id', 
+                "City" => 'city', 
+                "State" => 'state', 
+                "WholeSale" => 'Wholesale', 
+                "Retail" => 'Retail', 
+                "Notes" => 'notes'
+            );
         $content = array(
             'fields' => $fields,
             'rows' => $rows,
@@ -642,11 +736,42 @@ class MylocationgameController extends Controller
         return view('mylocationgame.csvhistory', $content);
     }
 
-    function getForsale()
+    function getForsale(Request $requestData = null)
     {
-        $this->data['pageTitle'] = 'game for-sale list';
-        $fields = array("Manufacturer", "Game Title", "Version", "Serial", "Date In Service", "Location Id", "City", "State", "WholeSale", "Retail");
-        $rows = $this->model->getForSaleList();
+        $request = $requestData->all();
+        $assetIds = $this->getAssetIdsFromFilter($request);
+        if ($assetIds == '') {
+            $assetIds = '0';
+        }
+        
+        $rows = $this->model->getForSaleList($assetIds);
+        if (!empty($request['validateDownload'])) {
+            $status = [];
+            if (empty($assetIds) || empty($rows)) {
+                $status['error'] = 'For Sale information is not found for the selected Games, 
+                    so the download has been aborted. 
+                    Please select a different Game Title and/or Location combination.';
+            }
+            else {
+                $status['success'] = 1;
+            }
+            return response()->json($status);
+        }         
+        
+        $this->data['pageTitle'] = 'game for-sale list';     
+        $fields = array(
+                "Manufacturer" => 'Manufacturer', 
+                "Game Title" => 'Game_Title', 
+                "Version" => 'version', 
+                "Serial" => 'serial', 
+                "Asset ID" => 'id',             
+                "Date In Service" => 'date_service', 
+                "Location Id" => 'location_id', 
+                "City" => 'city', 
+                "State" => 'state', 
+                "WholeSale" => 'Wholesale', 
+                "Retail" => 'Retail'
+            );
         $content = array(
             'fields' => $fields,
             'rows' => $rows,

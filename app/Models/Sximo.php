@@ -435,18 +435,21 @@ class Sximo extends Model {
     }
 
     function getMoveHistory($asset_id = null) {
-        $row = \DB::table('game_move_history')
+        $query = \DB::table('game_move_history')
                 ->leftJoin('users as u1', 'game_move_history.from_by', '=', 'u1.id')
                 ->leftJoin('users as u2', 'game_move_history.to_by', '=', 'u2.id')
                 ->leftJoin('location as l1', 'game_move_history.from_loc', '=', 'l1.id')
                 ->leftJoin('location as l2', 'game_move_history.to_loc', '=', 'l2.id')
-                ->select('game_move_history.*', 'u1.username as from_name', 'u2.username as to_name', 'l1.location_name as from_location', 'l2.location_name as to_location');
-        if ($asset_id != null) {
-
-            $row = $row->where('game_id', '=', $asset_id);
+                ->leftJoin('game as g', 'game_move_history.game_id', '=', 'g.id')
+                ->leftJoin('game_title as gt', 'g.game_title_id', '=', 'gt.id')
+                ->select('game_move_history.*', 'gt.game_title', 'u1.username as from_name', 'u2.username as to_name', 'l1.location_name as from_location', 'l2.location_name as to_location');
+        if (!is_null($asset_id)) {
+            $assetIds = explode(',', ''.$asset_id);
+            $query = $query->whereIn('game_id', $assetIds);
         }
-        $row->orderBy('id', 'desc');
-        $row = $row->get();
+        $query->orderBy('id', 'desc');
+        //die($query->toSql());
+        $row = $query->get();
         return $row;
     }
 
@@ -472,27 +475,60 @@ class Sximo extends Model {
         return $row;
     }
 
-    function getPendingList() {
-        $rows = \DB::Select("SELECT V.vendor_name AS Manufacturer,T.game_title AS Game_Title, G.version, G.serial, G.id, G.location_id, L.city, L.state, G.sale_price AS Wholesale,
-									IF(G.sale_price >= 1000,
-									ROUND(((G.sale_price*1.1)-1)/10+.5)*10+5,
-									(G.sale_price+100)
-									) AS Retail, G.notes FROM game G  LEFT JOIN game_title T ON G.game_title_id = T.id LEFT JOIN vendor V ON V.id = T.mfg_id LEFT JOIN location L ON G.location_id = L.id WHERE G.sale_pending = 1 AND G.sold = 0 ORDER BY T.game_title ASC, G.location_id");
+    function getPendingList($asset_id = null) {
+        $rows = \DB::Select("SELECT 
+                    V.vendor_name AS Manufacturer, 
+                    T.game_title AS Game_Title, 
+                    G.version, 
+                    G.serial, 
+                    G.id, 
+                    G.location_id, 
+                    L.city, 
+                    L.state, 
+                    G.sale_price AS Wholesale,
+                    IF(G.sale_price >= 1000,
+                        ROUND(((G.sale_price*1.1)-1)/10+.5)*10+5,
+                        (G.sale_price+100)
+                        ) AS Retail, 
+                    G.notes 
+            FROM game G  
+            LEFT JOIN game_title T ON G.game_title_id = T.id 
+            LEFT JOIN vendor V ON V.id = T.mfg_id 
+            LEFT JOIN location L ON G.location_id = L.id 
+            WHERE 
+                G.sale_pending = 1 
+                AND G.sold = 0" . 
+                (empty($asset_id)? "": " AND G.id IN ($asset_id)"). 
+            " ORDER BY T.game_title ASC, G.location_id");
         return $rows;
     }
 
-    function getForSaleList() {
-        $rows = \DB::Select("SELECT V.vendor_name AS Manufacturer,T.game_title AS Game_Title, G.version, G.serial, IF(G.date_in_service = '0000-00-00','', G.date_in_service) AS 'date_service', G.id, G.location_id, L.city, L.state, G.sale_price AS Wholesale,
-										IF(G.sale_price >= 1000,
-										ROUND(((G.sale_price*1.1)-1)/10+.5)*10+5,
-										(G.sale_price+100)
-										) AS Retail
-									FROM game G
-							   LEFT JOIN game_title T ON G.game_title_id = T.id
-							   LEFT JOIN vendor V ON V.id = T.mfg_id
-							   LEFT JOIN location L ON G.location_id = L.id
-								   WHERE G.for_sale = 1
-    AND G.sale_pending = 0 AND G.status_id!=3 AND G.sold = 0 ORDER BY T.game_title ASC, G.location_id");
+    function getForSaleList($asset_id = null) {
+        $rows = \DB::Select("SELECT 
+                    V.vendor_name AS Manufacturer,
+                    T.game_title AS Game_Title, 
+                    G.version, 
+                    G.serial, 
+                    IF(G.date_in_service = '0000-00-00','', G.date_in_service) AS 'date_service', 
+                    G.id, 
+                    G.location_id, 
+                    L.city, 
+                    L.state, 
+                    G.sale_price AS Wholesale,
+                    IF(G.sale_price >= 1000,
+                        ROUND(((G.sale_price*1.1)-1)/10+.5)*10+5,
+                        (G.sale_price+100)
+                        ) AS Retail
+                FROM game G
+                LEFT JOIN game_title T ON G.game_title_id = T.id
+                LEFT JOIN vendor V ON V.id = T.mfg_id
+                LEFT JOIN location L ON G.location_id = L.id
+            WHERE G.for_sale = 1
+                AND G.sale_pending = 0 
+                AND G.status_id!=3 
+                AND G.sold = 0" . 
+                (empty($asset_id)? "": " AND G.id IN ($asset_id)"). 
+            " ORDER BY T.game_title ASC, G.location_id");
         return $rows;
     }
 
