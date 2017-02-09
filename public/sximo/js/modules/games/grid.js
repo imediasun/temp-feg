@@ -42,8 +42,8 @@
     function exportFormSubmit() {
         
         var form = $(this),
+            allowDownload = form.data('allowDownload') || false,
             validate = form.find('[name=validateDownload]'),
-            needsValidation = validate.val() == 1,
             options = {
                 dataType     :  'json',
                 error        : function () { 
@@ -55,7 +55,8 @@
                     data = data || {};
                     var error = data.error || 'Unable to export. Data not found!';
                     if (data.success) {
-                        validate.val(0);                        
+                        validate.val(0);
+                        form.data('allowDownload', true);
                         form.find('#submit').click();
                     }
                     else {
@@ -63,11 +64,13 @@
                     }
                 }
             };
-        if (needsValidation) {
-            showProgress();                
+        if (!allowDownload) {
+            showProgress();
+            validate.val(1);
             form.ajaxSubmit(options);
             return false;   
-        }
+        }        
+        form.data('allowDownload', false);
     }
     function preProcessForm(arr, $form, options) {
         options = options || {};
