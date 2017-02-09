@@ -894,15 +894,11 @@ class OrderController extends Controller
         }
         echo $msg;
     }
-function getValidateponumber()
-{
-
-}
     function getOrderreceipt($order_id = null)
     {
 
         $this->data['data'] = $this->model->getOrderReceipt($order_id);
-        $this->data['data']['order_items'] = \DB::select('SELECT * FROM order_contents WHERE order_id = ' . $order_id);
+        $this->data['data']['order_items'] = \DB::select('SELECT * , g.game_name  FROM order_contents O LEFT JOIN game g ON g.id = O.game_id WHERE order_id = ' . $order_id);
         return view('order.order-receipt', $this->data);
     }
 
@@ -1026,16 +1022,23 @@ function getValidateponumber()
     public function getAutocomplete()
     {
         $term = Input::get('term');
+        $vendorId = Input::get('vendor_id',0);
+        $whereWithVendorCondition = "";
+        //get products related to selected vendor only
+        if(!empty($vendorId)){
+            $whereWithVendorCondition = " AND products.vendor_id = $vendorId";
+        }
         $results = array();
         $queries = \DB::select("SELECT *
-  FROM products
- WHERE vendor_description LIKE '%$term%'
- GROUP BY vendor_description
- ORDER BY CASE WHEN vendor_description LIKE '$term%' THEN 0
-               WHEN vendor_description LIKE '% %$term% %' THEN 1
-               WHEN vendor_description LIKE '%$term' THEN 2
-               ELSE 3
-          END, vendor_description");
+                                 FROM products
+                                 WHERE vendor_description LIKE '%$term%' $whereWithVendorCondition and products.inactive=0
+                                 GROUP BY vendor_description
+                                 ORDER BY CASE WHEN vendor_description LIKE '$term%' THEN 0
+                                               WHEN vendor_description LIKE '% %$term% %' THEN 1
+                                               WHEN vendor_description LIKE '%$term' THEN 2
+                                               ELSE 3
+                                          END, vendor_description
+                                 Limit 0,10");
         if (count($queries) != 0) {
             foreach ($queries as $query) {
                 $results[] = ['id' => $query->id, 'value' => $query->vendor_description];
@@ -1181,4 +1184,5 @@ function getValidateponumber()
 //        die("in overloaded");
 //    }
 //}
+
 
