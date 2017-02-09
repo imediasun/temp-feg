@@ -13,27 +13,27 @@
                     ><i class="fa fa fa-times"></i></a>
         </div>
         <div class="page-content-wrapper m-t">
-            <div class="ajaxLoading"></div>
             <div class="sbox">
                 <div class="sbox-content">
                     <div style="color:green" class="row">
-                      {{--  @if(empty($google_account->g_mail) || empty($google_account->g_password))
-                            *Google Account Info is missing
-                        @endif --}}
+                        <?php
+                        $send_from = \Session::get('eid');
+                        $order_id = \Session::get('order_id');
+                        $send_to = \Session::get('send_to');
+                        ?>
+                      @if(empty($google_account->g_mail) || empty($google_account->g_password))
+                            <?php $send_from="info@fegllc.com" ;?>
+                        @endif
                     </div>
+                    <a href="{{ URL::to('order/po/'.$order_id)}}" id="download_po">test me </a>
                     <div class="row">
                         <div class="col-md-6 col-md-offset-5">
                             {!! Form::open(array('url'=>'order/saveorsendemail', 'class'=>'form-horizontal','files' =>
                             true , 'parsley-validate'=>'','novalidate'=>' ','id'=>'saveFormAjax')) !!}
-                            <?php
-                            $send_from = \Session::get('eid');
-                            $order_id = \Session::get('order_id');
-                            $send_to = \Session::get('send_to');
-                            ?>
+
                             <input type="hidden" value="{{ $send_from }}" name="from"/>
                             <input type="hidden" value="{{ $order_id }}" name="order_id"/>
-                            <input type="hidden" value="" id="opt" name="opt"/>
-
+                            <input type="hidden" value="{{$send_to}}" name="to"/>
                             <div class="form-group" style="margin-top:10px;">
                                 <a href="{{ URL::to('order/po/'.$order_id)}}" style="width:33%"
                                    class=" btn  btn-lg btn-primary" title="SAVE"><i class="fa fa-save"
@@ -44,15 +44,15 @@
                             <div class="form-group" style="margin-top:10px;">
                                 <button  data-button="savesend"
                                         type="button" @if(!empty($google_account->g_mail) && !empty($google_account->g_password))
-                                        data-target="#savesendModal" data-toggle="modal" data-mode="gmail-account" @else data-mode="gmail-compose" @endif style="width:33%"
+                                         data-mode="gmail-account" @else data-mode="gmail-compose" data-target="#savesendModal" data-toggle="modal"  @endif style="width:33%"
                                         class=" btn  btn-lg btn-success" title="SAVE & SEND"  id="save_send_modal"><i
                                             class="fa  fa-download" aria-hidden="true"></i>
                                     &nbsp {{ Lang::get('core.sb_save_send') }}</button>
                             </div>
                             <div class="form-group" style="margin-top:10px;">
                                 <button data-button="save" @if(!empty($google_account->g_mail) && !empty($google_account->g_password))
-                                        data-toggle="modal"  data-target="#myModal"  data-mode="gmail-account"
-                                        @else data-mode="gmail-compose" @endif  id="send-only" type="button"
+                                          data-mode="gmail-account"
+                                        @else data-toggle="modal"  data-target="#myModal" data-mode="gmail-compose" @endif  id="send-only" type="button"
                                         class="btn btn-info btn-lg "
                                         style="width:33%" title="SEND" ><i
                                             class="fa fa-sign-in  "></i>&nbsp {{ Lang::get('core.sb_send') }} </button>
@@ -82,11 +82,7 @@
                                     {!! Form::open(array('url'=>'order/saveorsendemail',
                                     'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>'
                                     ','id'=>'sendFormAjax')) !!}
-                                    <?php
-                                    $send_from = \Session::get('eid');
-                                    $order_id = \Session::get('order_id');
-                                    $send_to = \Session::get('send_to');
-                                    ?>
+
                                     <input type="hidden" value="{{ $send_from }}" name="from"/>
                                     <input type="hidden" value="{{ $order_id }}" name="order_id"/>
                                     <input type="hidden" value="" id="opt" name="opt"/>
@@ -157,10 +153,7 @@
                                     {!! Form::open(array('url'=>'order/saveorsendemail',
                                     'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>'
                                     ','id'=>'sendsaveFormAjax')) !!}
-                                    <?php
-                                    $send_from = \Session::get('eid');
-                                    $order_id = \Session::get('order_id');
-                                    ?>
+
                                     <input type="hidden" value="{{ $send_from }}" name="from"/>
                                     <input type="hidden" value="{{ $order_id }}" name="order_id"/>
                                     <input type="hidden" value="" id="opt" name="opt"/>
@@ -273,25 +266,32 @@
             $('.ajaxLoading').show();
             var send_to = "{{ $send_to }}" != " " && "{{ $send_to }}";
             var mode = $(this).data('mode');
-            emailSending(send_to,mode);
+            if (mode == "gmail-account") {
+
+                $('#saveFormAjax').submit();
+            }
+            else {
+                emailSending(send_to, mode);
+            };
             if (!send_to && !$("#to1").val()) {
                 $("#save_send").attr('disabled', 'disabled');
             }
-
-
         });
         $("#save_send_modal").click(function () {
             $('.ajaxLoading').show();
             var send_to = "{{ $send_to }}" != " " && "{{ $send_to }}";
             var mode = $(this).data('mode');
-            emailSending(send_to,mode);
-            if (!send_to && !$("#to1").val()) {
+            if (mode == "gmail-account") {
+                $("#download_po").click();
+                $('#saveFormAjax').submit();
+
+            }
+            else {
+                emailSending(send_to, mode);
+            }
+                if (!send_to && !$("#to1").val()) {
                 $("#save_send").attr('disabled', 'disabled');
             }
-
-
-
-            //$('#sendsaveFormAjax').submit();
         });
         var form = $('#sendsaveFormAjax');
         form.parsley();
@@ -350,6 +350,9 @@
         function showRequest() {
             $('.ajaxLoading').show();
         }
+        $("#download_po").click(function(){
+            alert();
+        });
         function showResponse(data) {
             if (data.status == 'success') {
                 notyMessage(data.message);
@@ -363,29 +366,17 @@
         }
         function emailSending(send_to,mode)
         {
-            if (mode == "gmail-compose") {
-                var email_link = "https://mail.google.com/mail/u/0/?view=cm&fs=1&";
-                if (send_to) {
-                    email_link += "to=" + send_to + "&";
-                }
-            }
             $.get("{{ url() }}/order/po/{{ $order_id }}?mode=save", function (data, status) {
                 $('.ajaxLoading').hide();
-               // e.preventDefault();
-                if (mode == "gmail-compose") {
-                    email_link += "su=Purchase%20Order&body=" + data['url'] + "/order/download-po/" + data['file_name'];
-                    email_link = email_link + "&tf=1";
-                    window.open(email_link);
-                }
-                else {
                     $("#message,#message1").text(data['url'] + "/order/download-po/" + data['file_name']);
-                    $('#send-email,#save_send').click(function () {
+                    $('#send-email').click(function () {
                         $("#sendFormAjax").submit();
                     });
-                }
+                    $('#save_send').click(function () {
+                        $("#savesendFormAjax").submit();
+                    });
             });
         }
-
     </script>
 
 @stop

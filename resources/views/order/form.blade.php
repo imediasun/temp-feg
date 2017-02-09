@@ -860,6 +860,7 @@
                 minLength: 2,
                 source: function (request, response) {
                     var term = request.term;
+                    term=term.trim();
                     var vendorId = $("#vendor_id").val();
                     if(vendorId != ""){
                         request.vendor_id = $("#vendor_id").val();

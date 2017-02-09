@@ -354,10 +354,6 @@ class OrderController extends Controller
             $po_2 = $request->get('po_2');
             $po_3 = $request->get('po_3');
             $po = $po_1 . '-' . $po_2 . '-' . $po_3;
-            $msg = $this->model->getPoNumber($po, $location_id);
-            if ($msg['mode'] != "available" && $request->get('editmode') != "edit") {
-
-            }
             $altShipTo = $request->get('alt_ship_to');
             $alt_address = '';
             $order_description = '';
@@ -552,7 +548,17 @@ class OrderController extends Controller
     function postSaveorsendemail(Request $request)
     {
         $type = $request->get('submit');
-        if ($type == "send") {
+        if(!isset($type)) {
+            $type="configured";
+        }
+        if($type=="configured")
+        {
+            $to=$request->get('to');
+            $cc = "";
+            $bcc = "";
+            $message = "";
+        }
+        elseif($type == "send") {
             $to = $request->get('to');
             $cc = $request->get('cc');
             $bcc = $request->get('bcc');
@@ -770,22 +776,7 @@ class OrderController extends Controller
                     $message = $message;
                     $cc = $cc;
                     $bcc = $bcc;
-                    /*
-                    $result = \Mail::raw($message, function ($message) use ($to, $from, $subject, $pdf, $filename,$cc,$bcc) {
-                        $message->subject($subject);
-                        $message->from($from);
-                        $message->to($to);
-                        if(count($cc)>0)
-                        {
-                            $message->cc($cc);
-                        }
-                        if(count($bcc) > 0)
-                        {
-                            $message->bcc($bcc);
-                        }
-                        $message->replyTo($from, $from);
-                        $message->attachData($pdf->output(), $filename);
-                    });*/
+
                     /*
                     * https://www.google.com/settings/security/lesssecureapps
                     * enable stmp detail
@@ -831,7 +822,7 @@ class OrderController extends Controller
                             return 1;
                         }
                     } else {
-                        return 2;
+                       $this->sendPhpEmail($message,$to,$from,$subject,$pdf,$filename,$cc,$bcc);
                     }
                 }
             } else {
@@ -839,7 +830,25 @@ class OrderController extends Controller
             }
         }
     }
+function sendPhpEmail($message,$to,$from,$subject,$pdf,$filename,$cc,$bcc)
+{
 
+                    $result = \Mail::raw($message, function ($message) use ($to, $from, $subject, $pdf, $filename,$cc,$bcc) {
+                        $message->subject($subject);
+                        $message->from($from);
+                        $message->to($to);
+                        if(count($cc)>0)
+                        {
+                            $message->cc($cc);
+                        }
+                        if(count($bcc) > 0)
+                        {
+                            $message->bcc($bcc);
+                        }
+                        $message->replyTo($from, $from);
+                        $message->attachData($pdf->output(), $filename);
+                    });
+}
     function getClone($id)
     {
         if ($id == '') {
