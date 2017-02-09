@@ -25,7 +25,6 @@
                             <?php $send_from="info@fegllc.com" ;?>
                         @endif
                     </div>
-                    <a href="{{ URL::to('order/po/'.$order_id)}}" id="download_po">test me </a>
                     <div class="row">
                         <div class="col-md-6 col-md-offset-5">
                             {!! Form::open(array('url'=>'order/saveorsendemail', 'class'=>'form-horizontal','files' =>
@@ -42,12 +41,20 @@
                             </div>
 
                             <div class="form-group" style="margin-top:10px;">
-                                <button  data-button="savesend"
-                                        type="button" @if(!empty($google_account->g_mail) && !empty($google_account->g_password))
-                                         data-mode="gmail-account" @else data-mode="gmail-compose" data-target="#savesendModal" data-toggle="modal"  @endif style="width:33%"
-                                        class=" btn  btn-lg btn-success" title="SAVE & SEND"  id="save_send_modal"><i
-                                            class="fa  fa-download" aria-hidden="true"></i>
-                                    &nbsp {{ Lang::get('core.sb_save_send') }}</button>
+                                @if(empty($google_account->g_mail) || empty($google_account->g_password))
+                                    <button  data-button="savesend"
+                                             type="button"  data-mode="gmail-compose" data-target="#savesendModal" data-toggle="modal"  style="width:33%"
+                                             class=" btn  btn-lg btn-success" title="SAVE & SEND"  id="save_send_modal"><i
+                                                class="fa  fa-download" aria-hidden="true"></i>
+                                        &nbsp {{ Lang::get('core.sb_save_send') }}</button>
+                                    @else
+                                    <a href="{{ URL::to('order/po/'.$order_id)}}"
+                                       class=" btn  btn-lg btn-success" title="SAVE & SEND" data-mode="gmail-account"
+                                       id="save_send_modal" style="width:33%"><i
+                                                class="fa  fa-download" aria-hidden="true"></i>
+                                        &nbsp {{ Lang::get('core.sb_save_send') }}</a>
+                                @endif
+
                             </div>
                             <div class="form-group" style="margin-top:10px;">
                                 <button data-button="save" @if(!empty($google_account->g_mail) && !empty($google_account->g_password))
@@ -86,30 +93,26 @@
                                     <input type="hidden" value="{{ $send_from }}" name="from"/>
                                     <input type="hidden" value="{{ $order_id }}" name="order_id"/>
                                     <input type="hidden" value="" id="opt" name="opt"/>
-                                    <input type="hidden" value="send" name="submit"/>
+                                    <input type="hidden" value="" name="message" id="save_message"/>
 
                                     <div class="form-group">
                                         <label class="control-label col-md-4" for="to">To</label>
 
                                         <div class="col-md-8">
-                                            <select name="to[]" multiple id="to" class="form-control select2"
-                                                    required></select>
+                                            <input name="to" value="{{ $send_to }}"  id="to" class="form-control" required/>
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label class="control-label col-md-4" for="cc">CC</label>
-
                                         <div class="col-md-8">
-                                            <select name="cc[]" id="cc" multiple class="form-control select2"
-                                                    ></select>
+                                            <input name="cc" id="cc" multiple class="form-control" />
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label class="control-label col-md-4" for="bcc">BCC</label>
 
                                         <div class="col-md-8">
-                                            <select name="bcc[]" id="bcc" multiple class="form-control select2"
-                                                    ></select>
+                                            <input name="bcc" id="bcc" multiple class="form-control" />
                                         </div>
                                     </div>
                                     <div class="form-group">
@@ -163,24 +166,21 @@
                                         <label class="control-label col-md-4" for="to">To</label>
 
                                         <div class="col-md-8">
-                                            <select name="to1[]" multiple id="to1" class="form-control select2"
-                                                    required></select>
+                                            <input name="to1" value="{{ $send_to }}"  id="to1" class="form-control" required/>
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label class="control-label col-md-4" for="cc">CC</label>
 
                                         <div class="col-md-8">
-                                            <select name="cc1[]" id="cc1" multiple class="form-control select2"
-                                                    ></select>
+                                            <input name="cc1" id="cc1" class="form-control">
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label class="control-label col-md-4" for="bcc">BCC</label>
 
                                         <div class="col-md-8">
-                                            <select name="bcc1[]" id="bcc1" multiple class="form-control select2"
-                                                    ></select>
+                                            <input name="bcc1" id="bcc1" class="form-control" />
                                         </div>
                                     </div>
                                     <div class="form-group">
@@ -226,18 +226,8 @@
     </style>
     <script>
         $(document).ready(function () {
-            $("#to").jCombo("{{ URL::to('order/comboselect?filter=vendor:email:email') }}",
-                    {initial_text: 'Select Receipts', selected_value: '{{ $send_to }}'});
-            $("#cc").jCombo("{{ URL::to('order/comboselect?filter=vendor:email:email') }}",
-                    {initial_text: 'Select CC'});
-            $("#bcc").jCombo("{{ URL::to('order/comboselect?filter=vendor:email:email') }}",
-                    {initial_text: 'Select BCC'});
-            $("#to1").jCombo("{{ URL::to('order/comboselect?filter=vendor:email:email') }}",
-                    {initial_text: 'Select Receipts', selected_value: '{{ $send_to }}'});
-            $("#cc1").jCombo("{{ URL::to('order/comboselect?filter=vendor:email:email') }}",
-                    {initial_text: 'Select CC'});
-            $("#bcc1").jCombo("{{ URL::to('order/comboselect?filter=vendor:email:email') }}",
-                    {initial_text: 'Select BCC'});
+
+
         });
         $("#to1").click(function () {
             var to1 = $(this).val();
@@ -266,13 +256,7 @@
             $('.ajaxLoading').show();
             var send_to = "{{ $send_to }}" != " " && "{{ $send_to }}";
             var mode = $(this).data('mode');
-            if (mode == "gmail-account") {
-
-                $('#saveFormAjax').submit();
-            }
-            else {
-                emailSending(send_to, mode);
-            };
+            emailSending(send_to, mode);
             if (!send_to && !$("#to1").val()) {
                 $("#save_send").attr('disabled', 'disabled');
             }
@@ -281,15 +265,8 @@
             $('.ajaxLoading').show();
             var send_to = "{{ $send_to }}" != " " && "{{ $send_to }}";
             var mode = $(this).data('mode');
-            if (mode == "gmail-account") {
-                $("#download_po").click();
-                $('#saveFormAjax').submit();
-
-            }
-            else {
-                emailSending(send_to, mode);
-            }
-                if (!send_to && !$("#to1").val()) {
+            emailSending(send_to, mode);
+            if (!send_to && !$("#to1").val()) {
                 $("#save_send").attr('disabled', 'disabled');
             }
         });
@@ -350,9 +327,6 @@
         function showRequest() {
             $('.ajaxLoading').show();
         }
-        $("#download_po").click(function(){
-            alert();
-        });
         function showResponse(data) {
             if (data.status == 'success') {
                 notyMessage(data.message);
@@ -368,13 +342,19 @@
         {
             $.get("{{ url() }}/order/po/{{ $order_id }}?mode=save", function (data, status) {
                 $('.ajaxLoading').hide();
+                if (mode == "gmail-account") {
+                    $("#save_message").val(data['url'] + "/order/download-po/" + data['file_name']);
+                    $('#saveFormAjax').submit();
+                }
+                else {
                     $("#message,#message1").text(data['url'] + "/order/download-po/" + data['file_name']);
                     $('#send-email').click(function () {
                         $("#sendFormAjax").submit();
                     });
                     $('#save_send').click(function () {
-                        $("#savesendFormAjax").submit();
+                        $("#sendsaveFormAjax").submit();
                     });
+                }
             });
         }
     </script>

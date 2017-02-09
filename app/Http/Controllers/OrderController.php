@@ -548,6 +548,8 @@ class OrderController extends Controller
     function postSaveorsendemail(Request $request)
     {
         $type = $request->get('submit');
+        $from = $request->get('from');
+        $order_id = $request->get('order_id');
         if(!isset($type)) {
             $type="configured";
         }
@@ -556,22 +558,25 @@ class OrderController extends Controller
             $to=$request->get('to');
             $cc = "";
             $bcc = "";
-            $message = "";
+            $message = $request->get('message');
         }
         elseif($type == "send") {
             $to = $request->get('to');
-            $cc = $request->get('cc');
-            $bcc = $request->get('bcc');
+            $to=getMultipleEmails($to);
+            $cc = $this->get('cc');
+            $cc=getMultipleEmails($cc);
+            $bcc = $this->get('bcc');
+            $bcc = $this->getMultipleEmails($bcc);
             $message = $request->get('message');
         } else {
             $to = $request->get('to1');
-            $cc = $request->get('cc1');
-            $bcc = $request->get('bcc1');
+            $to=getMultipleEmails($to);
+            $cc = $this->get('cc1');
+            $cc=getMultipleEmails($cc);
+            $bcc = $this->get('bcc1');
+            $bcc = $this->getMultipleEmails($bcc);
             $message = $request->get('message');
         }
-
-        $from = $request->get('from');
-        $order_id = $request->get('order_id');
         $opt = $request->get('opt');
         if (count($to) == 0 || $from === "NULL" || empty($from) || $from == "") {
             return response()->json(array(
@@ -762,10 +767,11 @@ class OrderController extends Controller
             if ($mode == "save") {
                 $po_file_name = $data[0]['company_name_short'] . "_PO_" . $data[0]['po_number'] . '.pdf';
                 $po_file_path = public_path() . '\orders\\' . $po_file_name;
+                echo $po_file_path;
                 if (\File::exists($po_file_path)) {
                     \File::delete($po_file_path);
                 }
-                $pdf->save($po_file_path);
+               // $pdf->save($po_file_path);
                 $data = array('file_name' => $po_file_name, 'url' => url());
                 return $data;
             }
@@ -776,33 +782,33 @@ class OrderController extends Controller
                     $message = $message;
                     $cc = $cc;
                     $bcc = $bcc;
-
-                    /*
-                    * https://www.google.com/settings/security/lesssecureapps
-                    * enable stmp detail
-                    */
-                    $mail = new PHPMailer(); // create a new object
-                    $mail->IsSMTP(); // enable SMTP
-                    //$mail->SMTPDebug = 1; // debugging: 1 = errors and messages, 2 = messages only
-                    $mail->SMTPAuth = true; // authentication enabled
-                    $mail->SMTPSecure = 'tls'; // secure transfer enabled REQUIRED for Gmail
-                    $mail->Host = "smtp.gmail.com";
-                    $mail->Port = 587; // or 587
-                    $mail->IsHTML(true);
-                    /* current user */
+                  /* current user */
                     $google_acc = \DB::table('users')->where('id', \Session::get('uid'))->select('g_mail', 'g_password')->first();
                     if (!empty($google_acc->g_mail) && !empty($google_acc->g_password)) {
 
+                        /*
+                  * https://www.google.com/settings/security/lesssecureapps
+                  * enable stmp detail
+                  */
+                        $mail = new PHPMailer(); // create a new object
+                        $mail->IsSMTP(); // enable SMTP
+                        //$mail->SMTPDebug = 1; // debugging: 1 = errors and messages, 2 = messages only
+                        $mail->SMTPAuth = true; // authentication enabled
+                        $mail->SMTPSecure = 'tls'; // secure transfer enabled REQUIRED for Gmail
+                        $mail->Host = "smtp.gmail.com";
+                        $mail->Port = 587; // or 587
+                        $mail->IsHTML(true);
                         $mail->Username = $google_acc->g_mail;                 // SMTP username
                         $mail->Password = trim(base64_decode($google_acc->g_password), env('SALT_KEY'));
                         $mail->SetFrom($google_acc->g_mail);
                         $mail->Subject = $subject;
                         $mail->Body = $message;
-                        foreach ($to as $t) {
-                            $mail->addAddress($t);
-                        }
+                       // echo "<pre>";print_r($to);die();
+                        //foreach ($to as $t) {
+                            $mail->addAddress($to);
+                        //}
                         $mail->addReplyTo($google_acc->g_mail);
-                        if (count($cc) > 0) {
+                     /*   if (count($cc) > 0) {
                             foreach ($cc as $c) {
                                 $mail->addCC($c);
                             }
@@ -811,7 +817,7 @@ class OrderController extends Controller
                             foreach ($bcc as $bc) {
                                 $mail->addBCC($bc);
                             }
-                        }
+                        }*/
                         $output = $pdf->output();
                         $file_to_save = public_path() . '/orders/' . $filename;
                         file_put_contents($file_to_save, $output);
@@ -1119,6 +1125,7 @@ function sendPhpEmail($message,$to,$from,$subject,$pdf,$filename,$cc,$bcc)
     {
 
         $file = public_path() . "/orders/" . $file_name;
+        echo $file;
         $headers = array('Content-Type: application/pdf',);
         return \Response::download($file, $file_name, $headers);
     }
@@ -1166,6 +1173,17 @@ function sendPhpEmail($message,$to,$from,$subject,$pdf,$filename,$cc,$bcc)
         } else {
             return json_encode(array('OMG' => " Ops .. Cant access the page !"));
         }
+    }
+    function getMultipleEmails($email)
+    {
+        if (preg_match('/,/',$email)) {
+            $email = explode(',', $email);
+        }
+        else
+        {
+            $email=array($email);
+        }
+        return $email;
     }
 
 }
