@@ -2770,6 +2770,10 @@ table.table-striped tr th
     position:relative !important;
     top: 3px;
 }
+#mylocationgameGrid #col-config
+{
+    top: 0;
+}
 
 #sidemenu.nav .nav > li > a i {
   margin-right: 0;
