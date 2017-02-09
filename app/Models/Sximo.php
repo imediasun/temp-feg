@@ -78,6 +78,10 @@ class Sximo extends Model {
         if(!empty($status_id)){
             $select .= " AND status_id='$status_id'";
         }
+        if(!empty($active)){//added for location
+            $select .= " AND location.active='$active'";
+        }
+
 
         Log::info("Total Query : ".$select . " {$params} " . self::queryGroup() . " {$orderConditional}");
         $counter_select =\DB::select($select . " {$params} " . self::queryGroup() . " {$orderConditional}");
