@@ -116,6 +116,57 @@ App.notyConfirm = function (options)
 	
 };
 
+App.autoCallbacks.registerCallback = function (eventName, definedFunction, options) {
+    options = options || {};
+    var callbackName = options.callbackName,
+        fn = typeof definedFunction === 'function' ? definedFunction : UNFN,
+        bed = App.autoCallbacks[eventName] || (App.autoCallbacks[eventName] = []);
+
+    fn.options = options;
+    if (callbackName) {
+        bed[callbackName] = fn;
+    }
+    else {
+        bed.push(fn);
+    }    
+};
+
+App.autoCallbacks.runCallback = function (eventName, params, options) {
+    options = options || {};
+    params = params || {};
+    
+    var context = this, 
+        callbackName = options.callbackName,
+        index,
+        fn,
+        bed = App.autoCallbacks[eventName] || (App.autoCallbacks[eventName] = []);
+    
+    if (callbackName) {
+        fn = bed[callbackName];
+        if (typeof fn === 'function') {
+           fn.call(context, params);   
+        }
+    }
+    else {
+        for (index in bed) {
+            fn = bed[index];
+            if (typeof fn === 'function') {
+                fn.call(context, params);
+            }            
+        }
+    }
+    
+};
+
+App.autoCallbacks.registerCallback('reloaddata', function(params){
+    
+});
+App.autoCallbacks.registerCallback('columnselector', function(params){
+    
+});
+App.autoCallbacks.registerCallback('ajaxinlinesave', function(params){
+    
+});
 
 /**
  *  This function can check if a value needs URI encoding. 

@@ -1777,8 +1777,12 @@ code {
 .m-n-f {
   margin: 0 !important;
 }
+
 .m-l-none-f {
   margin-left: 0 !important;
+}
+.m-l-xxs-f {
+  margin-left: 1px !important;
 }
 .m-l-xs-f {
   margin-left: 5px !important;
@@ -1819,6 +1823,7 @@ code {
 .m-l-n-xl-f {
   margin-left: -40px !important;
 }
+
 .m-t-none-f {
   margin-top: 0 !important;
 }
@@ -1864,6 +1869,7 @@ code {
 .m-t-n-xl-f {
   margin-top: -40px !important;
 }
+
 .m-r-none-f {
   margin-right: 0 !important;
 }
@@ -1975,9 +1981,24 @@ code {
 .space-30-f {
   margin: 30px 0 !important;
 }
-
-
 /* end margin padding */
+/* line heights */
+.lh-1 {
+    line-height: 1em !important;
+}
+.lh-1p5 {
+    line-height: 1.5em !important;
+}
+.lh-2 {
+    line-height: 2em !important;
+}
+.lh-2p5 {
+    line-height: 2.5em !important;
+}
+.lh-3 {
+    line-height: 3em !important;
+}
+/* end line hieghts */
 
 /* LOGIN  LOCKSCREEN*/
 .middle-box {

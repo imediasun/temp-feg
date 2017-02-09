@@ -8,17 +8,12 @@
         moduleName,
         url,
         forms,
+        downloadForms,
         form;
 
     $(document).ready(function() {
-        App.modules.games.grid.init({
-                'container': $('#'+pageModule+'Grid'),
-                'moduleName': pageModule,
-                'url': pageUrl
-            }
-        );
         
-    });        
+    });
 
     view.init = function (options, data) {    
         options = options || {};
@@ -33,8 +28,7 @@
             container = jQuery;
         }
         
-        var exportForm = container.find('#mylocationgameFormAjax');
-            //downloadForms = container.find('#mylocationgameFormAjax')
+        var exportForm = container.find('#mylocationgameFormAjax, .downloadForm');
         exportForm.on('submit', exportFormSubmit);              
     
     };
@@ -44,6 +38,8 @@
         var form = $(this),
             allowDownload = form.data('allowDownload') || false,
             validate = form.find('[name=validateDownload]'),
+            filtersField = form.find('[name=filter]'),
+            filters,
             options = {
                 dataType     :  'json',
                 error        : function () { 
@@ -57,13 +53,17 @@
                     if (data.success) {
                         validate.val(0);
                         form.data('allowDownload', true);
-                        form.find('#submit').click();
+                        form.find('.submitButton').click();
                     }
                     else {
                         notyMessageError(error);
                     }
                 }
             };
+        if (filtersField.length) {
+            filters = getFooterFilters({'page': true, 'rows': true, 'sort': true, 'order': true});
+            filtersField.val(filters);
+        }
         if (!allowDownload) {
             showProgress();
             validate.val(1);

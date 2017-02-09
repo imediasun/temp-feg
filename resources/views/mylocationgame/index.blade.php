@@ -49,13 +49,14 @@
                 ajaxViewDetail('#{{ $pageModule }}',"{{url()}}/mylocationgame/show/"+game_id); 
                 //return false;
             }
-            reloadData('#{{ $pageModule }}','{{ $pageModule }}/data', function() {
+            App.autoCallbacks.registerCallback('reloaddata', function(){
                 App.modules.games.grid.init({
                     'container': $('#'+pageModule+'Grid'),
                     'moduleName': pageModule,
                     'url': pageUrl
-                });
-            });	
+                });                
+            });
+            reloadData('#{{ $pageModule }}','{{ $pageModule }}/data');	            
         });	
 
     </script>

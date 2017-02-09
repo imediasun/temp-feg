@@ -150,9 +150,7 @@ function SximoModal( url , title)
 	$('#sximo-modal-content').load(url,function(){
         var modal = $('#sximo-modal-content').closest('.modal'),
             titletrim = title.replace(/[\s\W]/ig, '').replace(/^\d+?/,'').toLowerCase();
-        if (window.App && window.App.autoCallbacks && window.App.autoCallbacks[titletrim]) {
-            window.App.autoCallbacks[titletrim].call(modal, {url:url, title:title});
-        }        
+            App.autoCallbacks.runCallback.call(modal, titletrim, {url:url, title:title});      
 	});
 	$('#sximo-modal').modal('show');	
 }
