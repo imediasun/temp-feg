@@ -28,7 +28,7 @@
                             <tr><td><b>Location </b></td><td>{{ $data['location_id'] }}</td></tr>
                             <tr><td><b>Vendor</b></td><td>{{ $data['vendor_name'] }}</td></tr>
                             <tr><td><b>Description</b></td><td>{{ str_replace("<br>","" ,$data['description']) }}</td></tr>
-                            <tr><td><b>Total Cost</b></td><td>{{ $data['order_total'] }}</td></tr>
+                            <tr><td><b>Total Cost</b></td><td>{{ CurrencyHelpers::formatCurrency(number_format($data['order_total'],\App\Models\Order::ORDER_PERCISION )) }}</td></tr>
                             <?php //if(!empty($item_count) && ($order_type == 7 || $order_type == 8) && () && $added_to_inventory == 0)  //REDEMPTION OR INSTANT WIN PRIZES -  SET TO DUMMY VALUE TO FORCE ORDER DESCRIPION UNTIL WE INTRODUCE PRIZE ALLOCATION
                             ?>
                             @if((isset($data['item_count']) && !empty($data['item_count'])) && ($data['order_type'] == 7 || $data['order_type'] == 8) &&   $data['added_to_inventory'] == 0)  //REDEMPTION OR INSTANT WIN PRIZES -  SET TO DUMMY VALUE TO FORCE ORDER DESCRIPION UNTIL WE INTRODUCE PRIZE ALLOCATION
@@ -74,6 +74,7 @@
                                 <th> #</th>
                                 <th>Name</th>
                                 <th>Description</th>
+                                @if($data['order_type'] == \App\Models\order::ORDER_TYPE_PART_GAMES)<th>Game</th>@endif
                                 <th>Price Unit</th>
                                 <th>Case Price</th>
                                 <th>Qty</th>
@@ -84,34 +85,36 @@
 
                             </tr>
                             </thead>
-
                             <tbody>
-
+                           <?php  $value = 1   ?>
                             @foreach($data['order_items'] as $order_item)
                                 @if($order_item->qty != $order_item->item_received)
                                     <tr>
                                         <td>
-                                            {{ $order_item->id }}
+                                          {{ $value ++ }}
                                             <input type="hidden" name="itemsID[]" value="{{ $order_item->id }}">
                                         </td>
                                         <td>{{ $order_item->item_name }}</td>
                                         <td>{{ $order_item->product_description }}</td>
-                                        <td>{{ number_format($order_item->price,2) }}</td>
-                                        <td>{{ number_format( $order_item->case_price,2) }}</td>
+                                        @if($data['order_type'] == \App\Models\order::ORDER_TYPE_PART_GAMES)
+                                        <td> {{ $order_item->game_name }}</td>
+                                        @endif
+                                        <td>{{CurrencyHelpers::formatCurrency(number_format($order_item->price , \App\Models\Order::ORDER_PERCISION)) }}</td>
+                                        <td> {{ CurrencyHelpers::formatCurrency( number_format( $order_item->case_price , \App\Models\Order::ORDER_PERCISION)) }}</td>
 
                                         <td>{{ $order_item->qty }}</td>
                                         <td>
                                             {{ $order_item->item_received }}
-                                            <input type="hidden" name="receivedItemsQty[]" value="{{ $order_item->item_received }}">
+                                            <input type="hidden" name="receivedItemsQty[]" value="{{$order_item->item_received  }}">
                                         </td>
 
                                         <td style="text-align: center">
                                             <input type="checkbox" class="yourBox" name="receivedInParts[]" value="{{ $order_item->id }}" />
                                         </td>
                                         <td>
-                                            <input type="text"  id="receivedItemText{{ $order_item->id }}" name="receivedQty[]" value="{{ $order_item->qty - $order_item->item_received}}" readonly="readonly" />
+                                            <input type="number"  id="receivedItemText{{ $order_item->id }}" name="receivedQty[]" value="{{ $order_item->qty - $order_item->item_received}}" readonly="readonly" />
                                         </td>
-                                      <td> {{ number_format($order_item->total,2) }}
+                                      <td> {{CurrencyHelpers::formatCurrency( number_format($order_item->total,\App\Models\Order::ORDER_PERCISION)) }}
                                         </td>
 
                             </tr>
@@ -130,7 +133,7 @@
                                 Date Received </label>
                             <div class="col-md-8">
                                 <?php if(isset($data['date_received']) && ($data['date_received']!='0000-00-00'))
-                                $date_received = $data['date_received'];
+                                  $date_received = DateHelpers::formatDate($data['date_received']);
                                 else
                                     $date_received=date('m/d/Y');
                                 ?>
@@ -187,18 +190,7 @@
 
             <hr/>
             <div class="clr clear"></div>
-
-
-
-
-
-
-
-            {!! Form::close() !!}
-
-
-
-
+           {!! Form::close() !!}
         </div>
 
     </div>
@@ -207,6 +199,8 @@
 </div>
     <script type="text/javascript">
         $(document).ready(function () {
+
+            numberFieldValidationChecks($("input[type='number']"));
 
             var dTable =  $('#itemTable').DataTable({
 
@@ -221,8 +215,19 @@
                 var itemId= $(this).val();
                 $('#receivedItemText'+itemId).attr('readonly', 'readonly');
             });
-            $("#order_status_id").jCombo("{{ URL::to('order/comboselect?filter=order_status:id:status') }}",
-                    {selected_value: '{{ $data["order_status_id"] }}',initial_text:'Select Order Status'});
+            var isAdvaceReplacement=0;
+
+            if("{{ $data['order_type'] }}" != 2) {
+                $("#order_status_id").jCombo("{{ URL::to('order/comboselect?filter=order_status:id:status:order_type_id:1') }}",
+                        {selected_value: '{{ $data["order_status_id"] }}'});
+            }
+            else
+            {
+                $("#order_status_id").jCombo("{{ URL::to('order/comboselect?filter=order_status:id:status:order_type_id:0') }}",
+                        {selected_value: '{{ $data["order_status_id"] }}', initial_text: 'Select Order Status'});
+            }
+
+
             $('.previewImage').fancybox();
             $('.tips').tooltip();
             $(".select3").select2({width: "98%"});

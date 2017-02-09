@@ -139,8 +139,8 @@
                         <td>{{ $row->sku }}</td>
                         <td>{{ $row->size }}</td>
                         <td>{{ $row->ticket_value }}</td>
-                        <td>{{ $row->case_price }}</td>
-                        <td>{{ $row->retail_price }}</td>
+                        <td>{{CurrencyHelpers::formatPrice($row->case_price) }}</td>
+                        <td>{{CurrencyHelpers::formatPrice( $row->retail_price) }}</td>
                         <td>{{ $row->notes }}</td>
                         <td data-values="action" data-key="<?php echo $row->id;?>">
                             {!! AjaxHelpers::buttonAction('addtocart',$access,$id ,$setting) !!}
@@ -194,7 +194,7 @@
 
                 <div class="col-md-10">
                     <input type="button" style="font-size:1.4em; width:100%; text-align:center;"
-                           value="Submit Weekly Requests totalling ${{ $cartData['shopping_cart_total']}}"
+                           value="Submit Weekly Requests totalling {{CurrencyHelpers::formatPrice($cartData['shopping_cart_total'])}}"
                            onClick="confirmSubmit();" id = "cartbtn"></button>
                 </div>
             </div>

@@ -23,7 +23,10 @@ class CurrencyHelpers
      * @return currency with symbol
      */
      public static function formatCurrency($value){
-         return '$ '.number_format($value,2);
+         return '$ '.$value;
      }
-
+     public static function formatPrice($value){
+         return '$ '. number_format($value,3);
+     }
+    
 }

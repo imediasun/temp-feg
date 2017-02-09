@@ -15,7 +15,7 @@
   * @class Validator
   * @constructor
   */
-  var Validator = function ( options ) {
+  var UNDEFINED, Validator = function ( options ) {
     /**
     * Error messages
     *
@@ -409,7 +409,7 @@
       this.ulErrorManagement();
     }
 
-    /**
+    /** 
     * Manage ul error Container
     *
     * @private
@@ -522,7 +522,8 @@
     * @method manageErrorContainer
     */
     , manageErrorContainer: function () {
-      var errorContainer = this.options.errorContainer || this.options.errors.container( this.ParsleyInstance.element, this.ParsleyInstance.isRadioOrCheckbox )
+      var errorContainer = this.options.errorContainer || this.options.errors.container( this.ParsleyInstance.element, this.ParsleyInstance.isRadioOrCheckbox ) || 
+        this.options.errorsContainer  
         , ulTemplate = this.options.animate ? this.ulTemplate.css('display', '') : this.ulTemplate;
 
       if ( 'undefined' !== typeof errorContainer ) {
@@ -1318,12 +1319,17 @@
             },
             this.options.scrollDuration,
             function () {
-              that.focusedField.focus();
+                if (!$(that.focusedField).parsley().options.nofocus) {
+                    that.focusedField.focus();
+                }
+              
             }
           );
         // Just focus on the field and let the browser do the rest
         } else {
-          this.focusedField.focus();
+            if (!$(this.focusedField).parsley().options.nofocus) {
+                this.focusedField.focus();
+            }          
         }
       }
 
@@ -1538,6 +1544,8 @@
 
     //some quite advanced configuration here..
     , validateIfUnchanged: false                                          // false: validate once by field value change
+    , errorsContainer: UNDEFINED
+    , nofocus: UNDEFINED
     , errors: {
         classHandler: function ( elem, isRadioOrCheckbox ) {}             // specify where parsley error-success classes are set
       , container: function ( elem, isRadioOrCheckbox ) {}                // specify an elem where errors will be **apened**

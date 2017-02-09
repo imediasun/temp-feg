@@ -18,8 +18,8 @@
 	<div class="page-content-wrapper m-t">
 		<div class="resultData"></div>
 		<div class="ajaxLoading"></div>
-		<div id="{{ $pageModule }}View"></div>			
-		<div id="{{ $pageModule }}Grid"></div>
+		<div id="{{ $pageModule }}View" class="moduleView"></div>			
+		<div id="{{ $pageModule }}Grid" class="moduleGrid"></div>
 	</div>	
 	<!-- End Content -->  
 </div>	
@@ -28,4 +28,15 @@ $(document).ready(function(){
 	reloadData('#{{ $pageModule }}','{{ $pageModule }}/data');	
 });	
 </script>	
+@endsection
+
+@section ('beforebodyend')
+
+    <script type="text/javascript">
+        var pageModule = '{{$pageModule}}',
+            pageUrl = '{{$pageUrl}}';
+    </script>
+    <script type="text/javascript" src="{{ asset('sximo/js/modules/games/view.js') }}"></script>      
+    <script type="text/javascript" src="{{ asset('sximo/js/modules/games/form.js') }}"></script>      
+    
 @endsection

@@ -23,7 +23,7 @@ var UNDEFINED,
 
                     operator = item.operator;
                     if (elm.length) {
-                        if (elm.hasClass('sel-search-multiple')) {
+                        if (elm.hasClass('sel-search-multiple') || elm.data('select2')) {
                             elm.select2('val', val);
                         }
                         else {
@@ -37,7 +37,7 @@ var UNDEFINED,
                         }
                     }                    
                     if (elm2.length) {
-                        if (elm2.hasClass('sel-search-multiple')) {
+                        if (elm2.hasClass('sel-search-multiple') || elm2.data('select2')) {
                             elm2.select2('val', val2);
                         }
                         else {
@@ -121,8 +121,8 @@ App.notyConfirm = function (options)
  *  This function can check if a value needs URI encoding. 
  *  It can be used before building a custom querystring
  *  
- * @param mixed             value 
- * @param jQuery Element    field
+ * @param mixed             value   String to check
+ * @param jQuery Element    Input   field containing the value
  * @returns {Boolean}
  */
 App.needsURIEncoding = function (value, field) {
@@ -175,8 +175,8 @@ App.buildSearchQueryFromArray = function (fields) {
 
 function initiateSearchFormFields(container) {
     container.find('.date').datepicker({format:'mm/dd/yyyy',autoclose:true});
-    container.find('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});    
-    container.find('.sel-search-multiple').select2();
+    container.find('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});  
+    renderDropdown(container.find('.sel-search-multiple, .select3'));    
 }
 
 function initDataGrid(module, url, options) {
@@ -226,6 +226,22 @@ function autoSetMainContainerHeight() {
     $('nav.navbar-default').on('hidden.bs.collapse', setHeight);
     $('nav.navbar-default').on('shown.bs.collapse', setHeight);    
     $(window).resize(setHeight);
+}
+
+function numberFieldValidationChecks(element){
+    element.keypress(isNumeric);
+}
+
+function isNumeric(ev) {
+
+    var keyCode = window.event ? ev.keyCode : ev.which;
+    //codes for 0-9
+    if (keyCode < 48 || keyCode > 57) {
+        //codes for backspace, delete, enter
+        if (keyCode != 0 && keyCode != 8 && keyCode != 13 && !ev.ctrlKey) {
+            ev.preventDefault();
+        }
+    }
 }
 
 jQuery(document).ready(function($){
@@ -281,4 +297,25 @@ function makeSimpleSearchFieldsToInitiateSearchOnEnter() {
             }
         });
     }
+}
+
+/**
+ * This is a simple function to renders select2 dropdown. 
+ * However, before rendering it checks if the target element already has 
+ * been rendered with select2
+ * 
+ * @param {type} elements Elements - result of jQuery select query
+ * @param {type} options - Select2 options
+ * @returns {undefined}
+ */
+function renderDropdown(elements, options) {
+    options = options || {};
+    if (elements && elements.length) {
+        elements.each(function(i, elm){
+            var $elm = $(elm);
+            if (!$elm.data('select2')) {
+                $elm.select2(options);
+            }            
+        });
+    }    
 }

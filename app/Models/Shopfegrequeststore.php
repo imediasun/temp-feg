@@ -2,6 +2,7 @@
 
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
+use Log;
 
 class shopfegrequeststore extends Sximo  {
 	
@@ -259,7 +260,7 @@ class shopfegrequeststore extends Sximo  {
 					&nbsp;&nbsp;&nbsp; 2.) Set Priority Level at <b>'.$mangeGraphicRequestURL.'</b><br><br>
 					**All cc\'d, please Reply to All <b> only if you wish to deny or modify request</b> and explain why.</em><br>';
                     $from = \Session::get('eid');
-                    $to = config('app.GRAPHIC_REQUEST_ADMIN_EMAIL');
+                    $to = CNF_GRAPHIC_MANAGER;
                     $cc = '';
                     $bcc = '';
                     $subject = 'New Graphics Request for '.$locationName;
@@ -267,7 +268,8 @@ class shopfegrequeststore extends Sximo  {
                     $headers = 'MIME-Version: 1.0' . "\r\n";
                     $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
                    // mail($to, $subject, $message, $headers);
-        return $last_inserted_id;
+                    Log::info("**Send Graphic Request Email => ",[$to, $subject, $message, $headers]);
+                   return $last_inserted_id;
     }
 
     /**

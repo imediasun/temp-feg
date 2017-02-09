@@ -18,28 +18,35 @@
             </table>
         </div>
         <div id="vendor">
-            <table width="100%" style="border-collapse: collapse">
+            <table width="100%" style="border-collapse: collapse;">
                 <tr><th width="50%" style="text-align: left">Vendor</th><th style="text-align: left;color:red" width="50%">Ship To</th></tr>
                 <tr>
-                    <td style="border:1px solid #000;border-right:none;padding:10px;">
+                    <td style="border:1px solid #000;border-right:none; border-bottom: none; padding: 10px; padding-top: 0px;margin-top:0px; ">
                         {{ $data[0]['vendor_name'] }} <br/>
                         {{ $data[0]['vend_street1'] }}<br/>
-                        {{ $data[0]['vend_city'] }} ,
+                        {{ $data[0]['vend_city'] }}
                         {{ $data[0]['vend_state'] }}
                         {{ $data[0]['vend_zip'] }} <br/><br/>
                         {{ $data[0]['vend_contact'] }}
-                        {{ $data[0]['vend_email'] }}
+                        {{ isset($data[0]['vend_email'])?$data[0]['vend_email']:"" }}
                         <br/>
                     </td>
-                    <td style="border:1px solid #000;padding:10px;color:red">
-                        {{ $data[0]['company_name_long'] }} <br/>
-                        {{ $data[0]['po_location'] }} <br/>
-                        {{ $data[0]['po_street1_ship'] }} ,<br/>
-                        {{ $data[0]['po_city_ship'] }}
-                        {{ $data[0]['po_state_ship'] }}
-                        {{ isset($data[0]['po_zip_ship'])?isset($data[0]['po_zip_ship']):"" }} <br/>
-                        {{ $data[0]['for_location'] }}
-                         </td>
+                    <td style="vertical-align:baseline;border-top:1px solid #000; border-right:1px solid #000;border-bottom: none;border-left: 1px solid #000;  padding-left: 10px; padding-top: 0px; margin-top:0px; color:red"><span style="padding: 0px !important;">
+                            {{ preg_replace("/(\r?\n){2,}/", "\n\n", $data[0]['company_name_long'])}}</span>
+                        {{ isset($data[0]['po_location'])?trim($data[0]['po_location']):"" }}<br />
+                        {{ isset($data[0]['po_street1_ship'])?trim($data[0]['po_street1_ship']):"" }} <br/>
+                        {{ isset($data[0]['po_city_ship'])?trim($data[0]['po_city_ship']):"" }}
+                        {{ isset($data[0]['po_state_ship'])?$data[0]['po_state_ship']:"" }}
+                        {{ isset($data[0]['po_city_zip'])?$data[0]['po_city_zip']:"" }}
+                        {{ isset($data[0]['po_zip_ship'])?$data[0]['po_zip_ship']:"" }} <br/>
+                    </td>
+                </tr>
+                <tr >
+                    <td style="border-top: 0xp;border-left: 1px solid #000;border-bottom:1px solid #000; ">&nbsp;</td>
+                    <td style="border-top: 0px; border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;padding-left:10px; color: red;text-align: justify">
+                        {{  isset($data[0]['for_location'])?$data[0]['for_location']:""}}
+                        {{ isset($data[0]['po_add_notes'])?$data[0]['po_add_notes']:"" }}
+                    </td>
                 </tr>
             </table>
         </div>
@@ -58,28 +65,26 @@
                         Order Description
                     </td>
                     @if(($data[0]['new_format']==1))
-                        <td style="padding:8px;border:1px solid #000">NO #</td>
-                        <td style="padding:8px;border:1px solid #000">Unit Price</td>
-                        <td style="padding:8px;border:1px solid #000">QTY</td>
-                        <td style="padding:9px;border:1px solid #000">Item Total</td>
+
+                        <td style="padding:8px;border:1px solid #000; text-align: right">Unit Price</td>
+                        <td style="padding:8px;border:1px solid #000;text-align: center">QTY</td>
+                        <td style="padding:9px;border:1px solid #000;text-align: right">Item Total</td>
                         <td></td>
                 </tr>
                 @for($i=0;$i < count($data[0]['orderDescriptionArray']);$i++)
                     <tr>
-                        <td style="padding:8px;border:1px dotted #000;border-top:none">  {{ $data[0]['orderDescriptionArray'][$i] }} <br/></td>
-                        <td style="padding:9px;border:1px dotted #000;border-top:none"> {{ $i+1 }}</td>
-                        <td style="padding:8px;border:1px dotted #000;border-top:none">  {{CurrencyHelpers::formatCurrency($data[0]['orderPriceArray'][$i]) }} <br/></td>
-
-                        <td style="padding:8px;border:1px dotted #000;border-top:none">  {{ $data[0]['orderQtyArray'][$i] }} <br/></td>
-                        <td style="padding:9px;border:1px dotted #000;border-top:none">   {{ $data[0]['orderPriceArray'][$i]* $data[0]['orderQtyArray'][$i] }} <br/></td>
+                        <td style="padding:8px;border:1px dotted #000; border-top:none">  {{ $data[0]['orderDescriptionArray'][$i] }} <br/></td>
+                        <td style="padding:8px;border:1px dotted #000;border-top:none;text-align: right">  {{CurrencyHelpers::formatCurrency(number_format($data[0]['orderPriceArray'][$i], \App\Models\Order::ORDER_PERCISION)) }} <br/></td>
+                        <td style="padding:8px;border:1px dotted  #000;border-top:none;text-align: center">  {{ $data[0]['orderQtyArray'][$i] }} <br/></td>
+                        <td style="padding:2px;border:1px dotted  #000;border-top:none;border-right:1px dotted #000;text-align: right ">  $ {{number_format($data[0]['orderPriceArray'][$i]* $data[0]['orderQtyArray'][$i], \App\Models\Order::ORDER_PERCISION) }}  <br/></td>
 <td></td>
                     </tr>
                 @endfor
                 <tr style="">
-                    <td colspan="3" style="text-align: left;padding:8px;border:1px dotted #000">Shipping
+                    <td colspan="2" style="text-align: left;padding:8px;border:1px dotted  #000;border-top:none;">Shipping
                         Method: {{ $data[0]['freight_type'] }}</td>
-                    <td colspan="1" style="padding:8px;border:1px dotted #000;border-left:1px solid #000">Order Total</td>
-                    <td colspan="1" style="padding:8px;border:1px dotted #000;">$  {{ number_format($data[0]['order_total_cost'],2) }}</td>
+                    <td colspan="1" style="padding:8px;border:1px dotted #000;border-left:1px solid #000;text-align: right">Order Total</td>
+                    <td colspan="1" style="padding:8px;border:1px dotted #000;text-align: right">$  {{ number_format($data[0]['order_total_cost'],\App\Models\Order::ORDER_PERCISION) }}</td>
                 <td></td>
                 </tr>
                 @else
@@ -87,8 +92,8 @@
                 <td></td>
                   </tr>
                     <tr>
-                        <td style="padding:8px;border:1px dotted #000;border-top:none">{{ $data[0]['order_description'] }}</td>
-                        <td style="padding:8px;border:1px dotted #000;border-top:none"> $  {{ number_format($data[0]['order_total'],2) }}</td>
+                        <td style="padding:8px;border:1px dotted #000;border-top:none;">{{ $data[0]['order_description'] }}</td>
+                        <td style="padding:8px;border:1px dotted #000;border-top:none;border-left:1px solid ">   {{CurrencyHelpers::formatCurrency(number_format($data[0]['order_total'],\App\Models\Order::ORDER_PERCISION)) }}</td>
                         <td></td>
                     </tr>
                 @endif

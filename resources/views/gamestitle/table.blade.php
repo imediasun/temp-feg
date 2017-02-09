@@ -32,9 +32,7 @@
                                 {!! SiteHelpers::transForm($t['field'] , $simpleSearchForm) !!}
                             </div>
                         @endforeach
-                        <div class="sscol-submit"><br/>
-                            <button type="button" name="search" class="doSimpleSearch btn btn-sm btn-primary"> Search </button>
-                        </div>
+                        {!! SiteHelpers::generateSimpleSearchButton($setting) !!}
                     </div>
                 @endif
             @endif
@@ -83,7 +81,7 @@
                             endif;
                         endforeach; ?>
                         @if($setting['disablerowactions']=='false')
-                            <th width="110"  ><?php echo Lang::get('core.btn_action') ;?></th>
+                            <th width="80"  ><?php echo Lang::get('core.btn_action') ;?></th>
                         @endif
                     </tr>
                     </thead>

@@ -238,10 +238,23 @@ class FEGSystemHelper
         return $sTitle;
     }
     
-    public static function joinArray($array, $groupOn = '', $concatOn = array(), $sumOn = array(), $ignore = array()) {
+    public static function joinArray($array, $groupOn = '', $concatOn = array(), $sumOn = array(), $ignore = array(), $options = array()) {
+        $options = array_merge(array(
+        ), $options);
+        extract($options);
+        
         $data = array();
         foreach ($array as $cell) {
-            $groupValue = $cell[$groupOn];
+            
+            if (!is_array($groupOn)) {
+                $groupOn = array($groupOn);
+            }
+            $groupValues = array();
+            foreach($groupOn as $groupOnItem) {
+                $groupValues[] = $cell[$groupOnItem];
+            }
+            $groupValue = implode('-', $groupValues);
+            
             if (empty($data[$groupValue])) {
                 $data[$groupValue] = array();
             }
@@ -287,8 +300,12 @@ class FEGSystemHelper
             //$from = "support@fegllc.com";
             //$from = "support@element5digital.com";
             $from = "support@fegllc.com";
-        }        
-        self::phpMail($to, $subject, $message, $from, $options);
+        }
+        
+        $preventEmailSendingSetting = env('PREVENT_FEG_SYSTEM_EMAIL', false);        
+        if (!$preventEmailSendingSetting)  {
+            self::phpMail($to, $subject, $message, $from, $options);            
+        }
     }
     
     public static function getHumanDate($date = "") {
@@ -312,5 +329,174 @@ class FEGSystemHelper
             }
         }
         return $arr;        
-    }       
+    }   
+
+    public static function syncTable($params = array()) {
+        extract(array_merge(array(
+            'sourceDB' => '',  //mysql, livemysql, livemysql_sacoa, livemysql_embed
+            'targetDB' => '', //embed_sync, sacoa_sync
+            'table' => '', 
+            'targetTable' => '', 
+            'chunk' => 1000, 
+            'cleanFirst' => 0,
+        ), $params)); // $sourceDB, $targetDB, $table, $chunk, $cleanFirst,
+        self::$L = $_logger;
+        
+        if (empty($targetTable)) {
+            $targetTable = $table;
+            $params['targetTable'] = $targetTable;
+        }
+        
+        $syncLogTemplate = "$sourceDB.$table => $targetDB.$targetTable";
+        self::$L->log("Start DATABASE SYNC: $syncLogTemplate");
+        
+        if (empty($table)) {
+            $log = "No table to sync. Ending...";
+            self::$L->log($log);
+            self::$L->log("End DATABASE SYNC: $syncLogTemplate ");
+            return $log;
+        }
+        if ($targetTable == $table) {
+            if (empty($sourceDB) && empty($targetDB) || ($sourceDB == $targetDB)) {
+                $log = "No target table for sync. Ending...";
+                self::$L->log($log);
+                self::$L->log("End DATABASE SYNC: $syncLogTemplate ");
+                return $log;
+            }
+            
+        }
+
+        
+        if ($cleanFirst == 1) {
+            self::$L->log("Clear all data from target table first...");
+            self::truncateTable(array('db' => $targetDB, 'table' => $targetTable));
+        }
+        
+        $count = 0;
+        
+        $timeStart = microtime(true);
+        $timeEnd = microtime(true);        
+        while(self::checkIfSyncRequired($params)) {
+            $timeEnd = microtime(true);
+            $timeDiff = round($timeEnd - $timeStart);
+            $timeDiffHuman = self::secondsToHumanTime($timeDiff);
+            self::$L->log("Has " . ($count > 0 ? "more":"") . " data to sync [ $timeDiffHuman ]");
+            self::_syncTable($params);
+            $count++;
+            sleep(3);
+        }
+        self::$L->log("No  " . ($count > 0 ? "more":"") . " data to sync");
+        
+        $timeEnd = microtime(true);
+        $timeDiff = round($timeEnd - $timeStart);
+        $timeDiffHuman = self::secondsToHumanTime($timeDiff);
+        
+        self::$L->log("End DATABASE SYNC: $syncLogTemplate ");
+        $timeTaken = "Time taken: $timeDiffHuman ";
+        self::$L->log($timeTaken);
+        
+        if (!empty($sourceDB)) {
+            DB::connection($sourceDB)->disconnect();
+        }
+        if (!empty($targetDB)) {
+            DB::connection($targetDB)->disconnect();
+        }        
+        
+        return $timeTaken;
+    }    
+    public static function _syncTable($params = array()) {
+        extract(array_merge(array(
+            'sourceDB' => '', 
+            'targetDB' => '', 
+            'table' => '', 
+            'targetTable' => '', 
+            'chunk' => 1000, 
+            'cleanFirst' => 0,
+        ), $params)); // $sourceDB, $targetDB, $table, $chunk, $cleanFirst,
+        
+        if (empty($chunk)) {
+            $chunk = 1000;
+        }
+        
+        if (empty($sourceDB)) {
+            $source = DB::connection();
+            DB::connection()->setFetchMode(PDO::FETCH_ASSOC); 
+        }
+        else {
+            $source = DB::connection($sourceDB);
+            DB::connection($sourceDB)->setFetchMode(PDO::FETCH_ASSOC); 
+        }
+        if (empty($targetDB)) {
+            $target = DB::connection();
+            DB::connection()->setFetchMode(PDO::FETCH_ASSOC); 
+        }
+        else {
+            $target = DB::connection($targetDB);
+            DB::connection($targetDB)->setFetchMode(PDO::FETCH_ASSOC); 
+        }
+        
+        $lastID = self::get_last_id($table, $targetDB);
+
+        $q = "SELECT * from $table WHERE id > $lastID LIMIT " . $chunk;
+        $data = $source->select($q);
+        $target->table($targetTable)->insert($data);
+        
+        if (empty($sourceDB)) {
+            DB::connection()->setFetchMode(PDO::FETCH_CLASS); 
+        }
+        else {
+            DB::connection($sourceDB)->setFetchMode(PDO::FETCH_CLASS); 
+        }
+        if (empty($targetDB)) {
+            DB::connection()->setFetchMode(PDO::FETCH_CLASS); 
+        }
+        else {
+            DB::connection($targetDB)->setFetchMode(PDO::FETCH_CLASS); 
+        }
+        
+    }    
+    public static function truncateTable ($params = array()) {
+        extract(array_merge(array(
+            'db' => '', 
+            'table' => ''
+        ), $params)); 
+        if (is_null($db)) {
+            $id = DB::table($table)->truncate();            
+        }       
+        else {
+            $id = DB::connection($db)->table($table)->truncate();
+        }
+    }
+    
+    public static function get_last_id($table, $dbname = null) {                
+        if (is_null($dbname)) {
+            $id = DB::table($table)->orderBy('id', 'desc')->take(1)->value('id');            
+        }       
+        else {
+            $id = DB::connection($dbname)->table($table)->orderBy('id', 'desc')->take(1)->value('id');
+        }
+        
+        if (is_null($id)) {
+            $id = 0;
+        }
+        return $id;
+    }    
+    
+    public static function checkIfSyncRequired($params = array()) {
+        extract(array_merge(array(
+            'sourceDB' => '', 
+            'targetDB' => '', 
+            'table' => '', 
+            'targetTable' => '', 
+            'chunk' => 1000, 
+            'cleanFirst' => 0,
+        ), $params)); // $sourceDB, $targetDB, $table, $targetTable, $chunk, $cleanFirst,
+
+        $sourceLastID = self::get_last_id($table, $sourceDB);
+        $targetLastID = self::get_last_id($targetTable, $targetDB);
+                            
+        $hasMore = $sourceLastID > $targetLastID;
+        
+        return $hasMore;        
+    }    
 }

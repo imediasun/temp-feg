@@ -11,6 +11,16 @@
     overflow: visible;    
 }
 
+.simpleSearchContainer .select2-container-multi .select2-choices .select2-input,
+.modal-dialog .select2-container-multi .select2-choices .select2-input {
+    line-height: 16px;
+}
+ .select2-container .select2-choice,
+.simpleSearchContainer .select2-container .select2-choice,
+.modal-dialog .select2-container .select2-choice {
+    height: 28px;
+}
+
 .simpleSearchContainer .select2-container-multi .select2-choices:before,
 .simpleSearchContainer .select2-container-multi .select2-choices:after,
 .modal-dialog .select2-container-multi .select2-choices:before,
@@ -41,6 +51,21 @@
     margin-bottom: 10px;
 }
 
+.simpleSearchContainer .betweenRangeStart {
+    width:49%; 
+    float: left;
+}
+.simpleSearchContainer .betweenRangeEnd {
+    width:49%; 
+}
+.simpleSearchContainer .betweenseparator {
+    width: 2%; 
+    margin:0; 
+    height: 100%; 
+    line-height: 2.5em;
+    text-align: center;
+}
+
 .sscol-submit,
 .sscol {
     padding-right: 10px;
@@ -51,11 +76,11 @@
 }
 
 .sscol-submit {
-    padding-right:0;
-    padding-left: 10px;    
+    padding-right: 0;
 }
-
-
+.sscol-submit.add-pad-right {
+    padding-right: 10px;
+}
 /* Column Header based sorting */
 .datagrid th.dgcsortable {
     cursor: pointer;

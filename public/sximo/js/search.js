@@ -135,7 +135,7 @@ function changeSearchOperator( val , field , elm ,type)
             .removeClass('pull-left'); 
     
     if (previousOperatorWasNull && !operatorIsNull) {
-        if (fieldElm.hasClass('sel-search-multiple')) {
+        if (fieldElm.hasClass('sel-search-multiple') || fieldElm.data('select2')) {
             fieldElm.select2('val', previousValue);            
         }
         else {

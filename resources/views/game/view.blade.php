@@ -145,7 +145,7 @@
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Date In Service', (isset($fields['date_in_service']['language'])? $fields['date_in_service']['language'] : array())) }}	
 						</td>
-						<td>{{ $row->date_in_service }} </td>
+						<td>{{ DateHelpers::formatDate($row->date_in_service) }} </td>
 						
 					</tr>
 				
@@ -169,7 +169,7 @@
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Intended First Location', (isset($fields['intended_first_location']['language'])? $fields['intended_first_location']['language'] : array())) }}	
 						</td>
-						<td>{{ $row->intended_first_location }} </td>
+						<td>{{  $row->intended_first_location   }} </td>
 						
 					</tr>
 				

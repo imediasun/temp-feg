@@ -29,3 +29,13 @@
         });
     </script>
 @endsection
+
+@section ('beforebodyend')
+
+    <script type="text/javascript">
+        var pageModule = '{{$pageModule}}',
+            pageUrl = '{{$pageUrl}}';
+    </script>
+    <script type="text/javascript" src="{{ asset('sximo/js/modules/training-materials/videos-others.js') }}"></script> 
+    
+@endsection

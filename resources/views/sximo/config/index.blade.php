@@ -102,9 +102,15 @@
 					@endforeach
 				</select>
 			 </div> 
-		  </div> 
+		  </div>
+			<div class="form-group">
+				<label for="ipt" class=" control-label col-md-4">Graphic Manager </label>
+				<div class="col-md-8">
+					<input name="graphic_manager_request" type="text" id="" class="form-control input-sm" value="{{ CNF_GRAPHIC_MANAGER  }}"  />
+				</div>
+			</div>
 
-		  <div class="form-group hide">
+			<div class="form-group hide">
 		    <label for="ipt" class=" control-label col-md-4"> Development Mode ?   </label>
 			<div class="col-md-8">
 				<div class="checkbox">

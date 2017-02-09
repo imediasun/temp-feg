@@ -104,13 +104,10 @@
                         <label class="label-control col-md-4">
                             {{ SiteHelpers::activeLang('Date Received', (isset($fields['date_received']['language'])? $fields['date_received']['language'] : array())) }}
                         </label>
-
                         <div class="col-md-8">
-                          @if(isset($row->date_received) && !empty($row->date_received))
-                            {{  $row->date_received = date("m/d/Y", strtotime($row->date_received))  }}
+                            {{  DateHelpers::formatDate($order_data["received_date"])  }}
 
 
-                              @endif
                         </div>
                     </div>
                     <div class="clearfix"></div>
@@ -162,7 +159,7 @@
                         </label>
 
                         <div class="col-md-8">
-                            {{ $row->order_total }}
+                            {{ CurrencyHelpers::formatCurrency(number_format($row->order_total,\App\Models\Order::ORDER_PERCISION))  }}
                         </div>
                     </div>
                     <div class="clearfix"></div>
@@ -220,15 +217,15 @@
                         </div>
                     </div>
                     <div class="clearfix"></div>
-                    <div class="form-group">
-                        <label class="label-control col-md-4">
-                            {{ SiteHelpers::activeLang('Game ', (isset($fields['game_id']['language'])? $fields['game_id']['language'] : array())) }}
-                        </label>
+                    {{--<div class="form-group">--}}
+                        {{--<label class="label-control col-md-4">--}}
+                            {{--{{ SiteHelpers::activeLang('Game ', (isset($fields['game_id']['language'])? $fields['game_id']['language'] : array())) }}--}}
+                        {{--</label>--}}
 
-                        <div class="col-md-8">
-                            {!! SiteHelpers::gridDisplayView($row->game_id,'game_id','1:vendor:id:vendor_name') !!}
-                        </div>
-                    </div>
+                        {{--<div class="col-md-8">--}}
+                            {{--{!! SiteHelpers::gridDisplayView($row->game_id,'game_id','1:vendor:id:vendor_name') !!}--}}
+                        {{--</div>--}}
+                    {{--</div>--}}
                     <div class="clearfix"></div>
                     <div class="form-group">
                         <label class="label-control col-md-4">
@@ -311,7 +308,6 @@ for($i=0; $i < count($order_data['orderQtyArray']);$i++)
             </div><div class="clearfix"></div>
             </div>
             <div class="clr clear"></div>
-            <?php //echo "<pre>";print_r($order_data);die();?>
             <br/>
             <div class="table-responsive" style="box-shadow: 1px 1px 10px gray;background: #fff;padding:10px 10px 0px">
                 <fieldset>
@@ -325,6 +321,9 @@ for($i=0; $i < count($order_data['orderQtyArray']);$i++)
                 <th>Item Price</th>
                 <th>Item Quantity </th>
                 <th>Items Received</th>
+                @if($row->order_type_id == \App\Models\order::ORDER_TYPE_PART_GAMES)
+                <th>Game</th>
+                @endif
                 <th>Total ($)</th>
                 </tr>
                 </thead>
@@ -335,18 +334,21 @@ for($i=0; $i < count($order_data['orderQtyArray']);$i++)
                         <td>{{ $i+1 }} </td>
                         <td>{{  $order_data['skuNumArray'][$i]}}</td>
                         <td>{{  $order_data['orderDescriptionArray'][$i] }}</td>
-                        <td>{{  $order_data['orderPriceArray'][$i] }}</td>
+                        <td>{{CurrencyHelpers::formatCurrency(number_format($order_data['orderPriceArray'][$i],\App\Models\Order::ORDER_PERCISION)) }}</td>
                         <td>{{  $order_data['orderQtyArray'][$i] }}</td>
                         <td>{{ $order_data['receivedItemsArray'][$i] }}</td>
-                        <td>{{ number_format(  $order_data['orderPriceArray'][$i]* $order_data['orderQtyArray'][$i],2)}}</td>
+                        @if($row->order_type_id == \App\Models\order::ORDER_TYPE_PART_GAMES)
+                            <td>{{  $order_data['gamenameArray'][$i] }}</td>
+                        @endif
+                        <td>{{ CurrencyHelpers::formatCurrency(number_format(  $order_data['orderPriceArray'][$i]* $order_data['orderQtyArray'][$i],3))}}</td>
 
                     </tr>
                     @endfor
                 <tr>
 
-                    <td>&nbsp</td><td>&nbsp</td><td>&nbsp</td><td>&nbsp</td><td>&nbsp</td>
+                    <td>&nbsp</td><td>&nbsp</td><td>&nbsp</td><td>&nbsp</td><td>&nbsp</td><td>&nbsp</td>
                     <td  colspan="1">Sub Total</td>
-                    <td>{{ $order_data['order_total'] }}</td>
+                    <td>{{CurrencyHelpers::formatCurrency(number_format($order_data['order_total'],3)) }}</td>
 
                 </tr>
                     @else

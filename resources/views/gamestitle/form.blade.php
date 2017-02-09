@@ -1,3 +1,6 @@
+{{--*/ $titleID = @$row['id'] /*--}}
+{{--*/ $gameTitle = @$row['game_title'] /*--}}
+{{--*/ $isEdit = !empty($titleID) /*--}}
 
 @if($setting['form-method'] =='native')
 	<div class="sbox">
@@ -9,16 +12,23 @@
 
 	<div class="sbox-content"> 
 @endif	
-			{!! Form::open(array('url'=>'gamestitle/save/'.$row['id'], 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'gamestitleFormAjax')) !!}
+			{!! Form::open(array('url'=>'gamestitle/save/'.$titleID, 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'gamestitleFormAjax')) !!}
 			<div class="col-md-12">
-						<fieldset><legend> Create New Game Title</legend>
+						<fieldset><legend>@if($isEdit) Edit @else Create New @endif Game Title</legend>
 									
 				  <div class="form-group  " > 
 					<label for="Game Title" class=" control-label col-md-4 text-left"> 
 					{!! SiteHelpers::activeLang('Game Title', (isset($fields['game_title']['language'])? $fields['game_title']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('game_title', $row['game_title'],array('class'=>'form-control', 'placeholder'=>'', 'required'=>'required')) !!}
+					  {!! Form::text('game_title', $row['game_title'],array(
+                            'class'=>'form-control', 
+                            'placeholder'=>'', 
+                            'parsley-errors-container' => '.gameTitleValidatorMessage',
+                            'required'=>'required',
+                            'data-old-value' => $gameTitle
+                        )) !!}
+                        <div class="gameTitleValidatorMessage clearfix"></div>
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -101,39 +111,36 @@
                                     {!! SiteHelpers::activeLang('Image', (isset($fields['img']['language'])? $fields['img']['language'] : array())) !!}
                                 </label>
                                 <div class="col-md-6">
-                                    <input type="file"   name="img" id="img" @if(empty($row->img)) required  @else style="color:white;width:23%;display:inline" @endif /><span>{{ isset($row->img)?$row->img:"" }}</span>
-                                    @if(!empty($row->img))  <div style="margin-top:15px;">
+                                    <input type="file"   name="img" id="img" @if(empty($row['img'])) required  @else style="color:white;width:23%;display:inline" @endif /><span>{{ isset($row['img'])?$row['img']:"" }}</span>
+                                      <div style="margin-top:15px;">
 
-                                        {!! SiteHelpers::showUploadedFile($row->img,'/uploads/games/images/') !!}
+                                        {!! SiteHelpers::showUploadedFile($row['img'],'/uploads/games/images/') !!}
 
                                     </div>
-                                        @endif
+
                                 </div>
                                 <div class="col-md-2">
 
                                 </div>
                             </div>
-                            <div class="form-group  " >
+                <!--div class="form-group  " >
 					<label for="Num Prize Meters" class=" control-label col-md-4 text-left"> 
 					{!! SiteHelpers::activeLang('Num Prize Meters', (isset($fields['num_prize_meters']['language'])? $fields['num_prize_meters']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  
-					<?php $num_prize_meters = explode(',',$row['num_prize_meters']);
-					$num_prize_meters_opt = array( '1' => 'Yes' ,'0'=> 'No' ); ?>
-					<select name='num_prize_meters' rows='5'   class='select2 '  > 
-						<?php 
-						foreach($num_prize_meters_opt as $key=>$val)
-						{
-							echo "<option  value ='$key' ".($row['num_prize_meters'] == $key ? " selected='selected' " : '' ).">$val</option>"; 						
-						}						
-						?></select> 
+    					{{--*/ $num_prize_meters = explode(',',$row['num_prize_meters']); /*--}}
+        				{{--*/ $num_prize_meters_opt = array( '1' => 'Yes' ,'0'=> 'No' ); /*--}}
+            			<select name='num_prize_meters' rows='5'   class='select2 '  > 
+						@foreach($num_prize_meters_opt as $key=>$val)						
+							<option  value ='$key' {{ $row['num_prize_meters'] == $key ? " selected='selected' " : '' }}">{{ $val }}</option>"; 						
+						@endforeach						
+						</select> 
 					 </div> 
-					 <div class="col-md-2">
-					 	
-					 </div>
-				  </div> </fieldset>
-			</div>
+					 <div class="col-md-2"></div>
+                </div--> 
+            
+        </fieldset>
+    </div>
 			
 												
 								
@@ -143,7 +150,7 @@
 			<div class="form-group">
 				<label class="col-sm-4 text-right">&nbsp;</label>
 				<div class="col-sm-8">	
-					<button type="submit" class="btn btn-primary btn-sm "><i class="fa  fa-save "></i>  {{ Lang::get('core.sb_save') }} </button>
+					<button type="submit" id="submit_btn" class="btn btn-primary btn-sm submit_btn"><i class="fa  fa-save "></i>  {{ Lang::get('core.sb_save') }} </button>
 					<button type="button" onclick="ajaxViewClose('#{{ $pageModule }}')" class="btn btn-success btn-sm"><i class="fa  fa-arrow-circle-left "></i>  {{ Lang::get('core.sb_cancel') }} </button>
 				</div>			
 			</div> 		 
@@ -163,14 +170,14 @@ $(document).ready(function() {
         placeholder: "Select Manufacturer"
     });
         
-        $("#game_type_id").jCombo("{{ URL::to('gamestitle/comboselect?filter=game_type:id:game_type') }}",
+    $("#game_type_id").jCombo("{{ URL::to('gamestitle/comboselect?filter=game_type:id:game_type') }}",
         {  selected_value : '{{ $row["game_type_id"] }}',initial_text:'Select Game Type' });
          
 	
 	$('.editor').summernote();
 	$('.previewImage').fancybox();	
 	$('.tips').tooltip();	
-	$(".select2").select2({ width:"98%"});	
+	renderDropdown($(".select2, .select3, .select4, select5"), { width:"98%"});
 	$('.date').datepicker({format:'mm/dd/yyyy',autoClose:true})
 	$('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});
 	$('input[type="checkbox"],input[type="radio"]').iCheck({
@@ -194,9 +201,9 @@ $(document).ready(function() {
 				success:       showResponse  
 			}  
 			$(this).ajaxSubmit(options); 
-			return false;
-						
-		} else {
+			return false;			
+		} 
+        else {
 			return false;
 		}		
 	
@@ -223,4 +230,76 @@ function showResponse(data)  {
 	}	
 }			 
 
+(function(){
+    var promise, 
+        form = $("#gamestitleFormAjax"),
+        saveButton = form.find('.submit_btn'),
+        pageUrl = '{{ $pageUrl }}';
+    
+    $('[name=game_title]').on("keyup",function (event) {
+        validateGameTitle.call(this);   
+    });
+    
+    function beforeValidateGameTitle (data) {
+        saveButton.prop('disabled', true);
+    }
+    function postValidateGameTitle (data) {        
+    }
+    function successValidateGameTitle (data, msg) {
+        if (data && data.valid) {
+            saveButton.prop('disabled', false);
+            msg = msg != "" ? "Game title is available" : msg;
+            $(".gameTitleValidatorMessage").html('<b class="text-navy">' + msg + '</b>');
+        }
+        else {
+            errValidateGameTitle();                        
+        }        
+    }
+    function errValidateGameTitle (data, msg) {
+        saveButton.prop('disabled', true);
+        msg = msg || "Game title is not available";
+        $(".gameTitleValidatorMessage").html('<b class="text-danger">' + msg +'</b>');
+    }
+    
+    function validateGameTitle() {
+        var elm = $(this),
+            value = (elm.val() || '').replace(/^\s+?|\s+?$/g, ''),
+            oldValue = elm.data('old-value'),
+            data = { game_title : value },
+            ajax;
+    
+        if (promise && promise.abort) {
+            promise.abort();
+        }
+        if (!value) {
+            return errValidateGameTitle({}, "Enter a Game Title");
+        }
+        if (value == oldValue) {
+            return successValidateGameTitle({valid: true, local: true}, "");
+        }
+        
+        saveButton.prop('disabled', true);
+        promise = $.ajax({
+            'type' : 'post',
+            'url': pageUrl + '/gameexists',
+            'data': data,
+            'beforeSend': beforeValidateGameTitle
+        });
+        promise.done(asPromised);
+        promise.fail(brokenPromise);
+        promise.always(allTrust);     
+    }
+    
+    function asPromised(data) {
+        successValidateGameTitle(data);
+    }    
+    function brokenPromise(data, msg) {
+        if (msg != 'abort') {
+            errValidateGameTitle(data);
+        }        
+    }    
+    function allTrust(data) {
+    }
+    
+}());
 </script>		 
