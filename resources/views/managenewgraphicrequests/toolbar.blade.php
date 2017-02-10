@@ -78,7 +78,8 @@
 <script>
     $('document').ready(function () {
         setType();
-        $(".select3").select2({width: "98%"});
+        renderDropdown($(".select2, .select3 "), { width:"98%"});
+
         var config_id=$("#col-config").val();
             if(config_id ==0 )
             {
