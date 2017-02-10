@@ -925,7 +925,7 @@ class MylocationgameController extends Controller
                 if (file_exists($file)) {
                     $zip->addFile($file, basename($file));
                     return response()->download($file, $asset_ids.'.png', array( 'Content-Type' => 'image/png' ))
-                            ->setContentDisposition('attachment; filename='.$asset_ids.'.png');
+                            ->setContentDisposition('attachment');
                 } else {
                     die('file does not exists');
                 }
