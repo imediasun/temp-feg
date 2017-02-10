@@ -23,8 +23,7 @@
                         ?>
                       @if(empty($google_account->g_mail) || empty($google_account->g_password))
                             <?php $send_from="info@fegllc.com" ;?>
-                          <h1>accound info is missing</h1>
-                        @endif
+                            @endif
                     </div>
                     <div class="row">
                         <div class="col-md-6 col-md-offset-5">
