@@ -900,7 +900,6 @@ class MylocationgameController extends Controller
                         die('file not exists');
                 }
                 $zip->close();
-                sleep(1);
                 if (file_exists($zip_file)) {
                     header('Content-type: application/zip');
                     header('Content-Description: File Transfer');
@@ -922,9 +921,20 @@ class MylocationgameController extends Controller
 
                 //   $location = $this->get_game_info_by_id($id, 'location_id');
                 $file = storage_path() . '/qr/' . $asset_ids . '.png';
-                if (file_exists($file)) {
+                if (file_exists($zip_file)) {
                     $zip->addFile($file, basename($file));
-                    return response()->download($file);
+                    $zip->close();
+                    header('Content-type: application/zip');
+                    header('Content-Description: File Transfer');
+                    // header('Content-Disposition: attachment; filename="'.basename($zip_file).'"');
+                    header('Expires: 0');
+                    header('Cache-Control: must-revalidate');
+                    header('Pragma: public');
+                    header('Content-Length: ' . filesize($zip_file));
+                    readfile($zip_file);
+                    unlink($zip_file);
+                    exit;
+                    //return response()->download($file);
                 } else {
                     die('file does not exists');
                 }
