@@ -335,7 +335,7 @@ class FEGSystemHelper
     }
     
     public static function configLaravelMail($mail, $options) {
-        explode($options);
+        extract($options);
 
         $mail->subject($subject);
 
