@@ -338,7 +338,8 @@ class FEGSystemHelper
         extract($options);
 
         $mail->subject($subject);
-
+        $mail->setBody($message, 'text/html');
+        
         $toArray = explode(',', $to);            
         if (count($toArray)== 1 && isset($toName)) {
             $mail->to($toArray[0], $toName);
@@ -417,9 +418,12 @@ class FEGSystemHelper
             });            
         }
         else {
-            Mail::raw($message, function ($mail) use ($options) {
+            Mail::send([], [], function ($mail) use ($options) {
                 self::configLaravelMail($mail, $options);
-            });            
+            });             
+//            Mail::raw($message, function ($mail) use ($options) {
+//                self::configLaravelMail($mail, $options);
+//            });            
         }
     }
     
@@ -807,11 +811,11 @@ class FEGSystemHelper
 $message    
 <br><br>******************************************* EMAIL END ********************************<br>";
             
-            $subject = "[TEST] ". $subject;
+            $options['subject'] = $subject = "[TEST] ". $subject;
             $emailRecipients = self::getSystemEmailRecipients($reportName, null, true);
-            $to = $emailRecipients['to'];
-            $cc = $emailRecipients['cc'];
-            $bcc = $emailRecipients['bcc'];
+            $options['to'] = $to = $emailRecipients['to'];
+            $options['cc'] = $cc = $emailRecipients['cc'];
+            $options['bcc'] = $bcc = $emailRecipients['bcc'];
             if (empty($to)) {
                 $to = "e5devmail@gmail.com";
             }
@@ -825,14 +829,7 @@ $message
             $messageLog = nl2br($message);           
             self::logit($messageLog, "{$lf}.html", $lpd, true);
         }
-        
-        $opt = array();
-        if (!empty($cc)) {
-            $opt['cc'] = $cc;
-        }
-        if (!empty($bcc)) {
-            $opt['bcc'] = $bcc;
-        }        
+             
         self::logit("Sending Email", $lf, $lp);
         self::sendEmail($to, $subject, $message, $from, $options);
         self::logit("Email sent", $lf, $lp);
