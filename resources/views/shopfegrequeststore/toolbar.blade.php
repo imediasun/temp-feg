@@ -79,7 +79,13 @@
                             });
 //                }
             });
-   $(".select3").select2({width: "98%"});
+            $('.select3').each(function (i, obj) {
+                if (!$(obj).data('select2'))
+                {
+                    $(obj).select2({width: "98%"});
+                }
+            });
+
             var config_id=$("#col-config").val();
             if(config_id ==0 )
             {
