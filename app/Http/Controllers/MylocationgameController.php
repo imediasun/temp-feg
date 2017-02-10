@@ -918,15 +918,14 @@ class MylocationgameController extends Controller
             } else {
                 //  die('smaller than one');
                 $this->generate_asset_tag($asset_ids);
-                sleep(1);
+                sleep(5);
                 //$location = $this->get_game_info_by_id($id, 'location_id');
 
                 //   $location = $this->get_game_info_by_id($id, 'location_id');
                 $file = storage_path() . '/qr/' . $asset_ids . '.png';
                 if (file_exists($file)) {
                     $zip->addFile($file, basename($file));
-                    return response()->download($file, $asset_ids.'.png', array( 'Content-Type' => 'image/png' ))
-                            ->setContentDisposition('attachment');
+                    return response()->download($file);
                 } else {
                     die('file does not exists');
                 }
