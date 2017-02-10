@@ -347,7 +347,7 @@ class FEGSystemHelper
             $mail->to($toArray);
         }
 
-        if (isset($cc)) {
+        if (isset($cc) && !empty(trim($cc))) {
             $ccArray = explode(',', $cc);            
             if (count($ccArray)== 1 && isset($ccName)) {
                 $mail->cc($ccArray[0], $ccName);
@@ -356,7 +356,7 @@ class FEGSystemHelper
                 $mail->cc($ccArray);
             }                            
         }
-        if (isset($bcc)) {
+        if (isset($bcc) && !empty(trim($bcc))) {
             $bccArray = explode(',', $bcc);            
             if (count($bccArray)== 1 && isset($bccName)) {
                 $mail->bcc($bccArray[0], $bccName);
@@ -365,7 +365,7 @@ class FEGSystemHelper
                 $mail->bcc($bccArray);
             }                            
         }
-        if (isset($sender)) {
+        if (isset($sender) && !empty(trim($sender))) {
             $senderArray = explode(',', $sender);            
             if (count($senderArray)== 1 && isset($senderName)) {
                 $mail->sender($senderArray[0], $senderName);
@@ -374,7 +374,7 @@ class FEGSystemHelper
                 $mail->sender($senderArray);
             }                            
         }            
-        if (isset($from)) {
+        if (isset($from) && !empty(trim($from))) {
             $fromArray = explode(',', $from);            
             if (count($fromArray)== 1 && isset($fromName)) {
                 $mail->from($fromArray[0], $fromName);
@@ -383,7 +383,7 @@ class FEGSystemHelper
                 $mail->from($fromArray);
             }                            
         }            
-        if (isset($replyTo)) {
+        if (isset($replyTo) && !empty(trim($replyTo))) {
             $replyToArray = explode(',', $replyTo);            
             if (count($replyToArray)== 1 && isset($replyToName)) {
                 $mail->replyTo($replyToArray[0], $replyToName);
