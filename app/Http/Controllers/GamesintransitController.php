@@ -48,11 +48,11 @@ class GamesintransitController extends Controller
             $this->buildSearch($customQueryString);
 
         // Get assigned locations list as sql query (part)
-        $locationFilter = \SiteHelpers::getQueryStringForLocation('game');
+        $locationFilter = \SiteHelpers::getQueryStringForLocation('game', 'intended_first_location', [], " OR game.location_id=0 ") ;
         // if search filter does not have location_id filter
         // add default location filter
-        $frontendSearchFilters = $this->model->getSearchFilters(array('location_id' => ''));
-        if (empty($frontendSearchFilters['location_id'])) {
+        $frontendSearchFilters = $this->model->getSearchFilters(array('intended_first_location' => ''));
+        if (empty($frontendSearchFilters['intended_first_location'])) {
             $filter .= $locationFilter;
         } 
         
