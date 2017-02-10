@@ -135,7 +135,7 @@ function changeSearchOperator( val , field , elm ,type)
             .removeClass('pull-left'); 
     
     if (previousOperatorWasNull && !operatorIsNull) {
-        if (fieldElm.hasClass('sel-search-multiple')) {
+        if (fieldElm.hasClass('sel-search-multiple') || fieldElm.data('select2')) {
             fieldElm.select2('val', previousValue);            
         }
         else {
@@ -228,7 +228,8 @@ function showBetweenFields(options) {
         });    
     
 }
-App.autoCallbacks.reloaddata = function(params) {
+
+App.autoCallbacks.registerCallback('reloaddata', function(params) {
     if (!params) {
         params = {};
     }    
@@ -244,27 +245,23 @@ App.autoCallbacks.reloaddata = function(params) {
         else {
 
         }        
-    }
-    
+    }    
     makeSimpleSearchFieldsToInitiateSearchOnEnter();
+}, {'callbackName': 'simplesearch'});
 
-};
-App.autoCallbacks.ajaxinlinesave = function(params) {
-    
-};
-App.autoCallbacks.advancedsearch = function(params) {
+
+App.autoCallbacks.registerCallback('advancedsearch', function(params) {
     var modal = this, searchButton = modal.find('.doSearch');
     searchButton.click(function(){
         App.lastSearchMode = 'advanced';
     });
     App.search.populateFields(modal);    
-};
-App.autoCallbacks.advancesearch = function() {
-    App.autoCallbacks.advancedsearch.call(this);
-};
-App.autoCallbacks.columnselector = function() {
-    
-};
+});
+
+App.autoCallbacks.registerCallback('advancesearch', function(params, options) {
+    App.autoCallbacks.runCallback.call(this, 'advancedsearch', params, options);
+});
+
 
 
 App.search.populateFields = function(modal) {

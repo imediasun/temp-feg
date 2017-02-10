@@ -3,8 +3,8 @@
 	<div class="sbox-title">
 		<h5> <i class="fa fa-table"></i> </h5>
 		<div class="sbox-tools" >
-			<a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Clear Search" onclick="reloadData('#{{ $pageModule }}','gamesintransit/data?search=')"><i class="fa fa-trash-o"></i> Clear Search </a>
-			<a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Reload Data" onclick="reloadData('#{{ $pageModule }}','gamesintransit/data?return={{ $return }}')"><i class="fa fa-refresh"></i></a>
+			<a href="javascript:void(0)" class="btn btn-xs btn-white tips clearSearchButton" title="Clear Search" onclick="reloadData('#{{ $pageModule }}','gamesintransit/data?search=')"><i class="fa fa-trash-o"></i> Clear Search </a>
+			<a href="javascript:void(0)" class="btn btn-xs btn-white tips reloadDataButton" title="Reload Data" onclick="reloadData('#{{ $pageModule }}','gamesintransit/data?return={{ $return }}')"><i class="fa fa-refresh"></i></a>
 			@if(Session::get('gid') ==1)
 			<a href="{{ url('feg/module/config/'.$pageModule) }}" class="btn btn-xs btn-white tips" title=" {{ Lang::get('core.btn_config') }}" ><i class="fa fa-cog"></i></a>
 			@endif
@@ -21,9 +21,7 @@
                                 {!! SiteHelpers::transForm($t['field'] , $simpleSearchForm) !!}
                             </div>
                         @endforeach
-                        <div class="sscol-submit"><br/>
-                            <button type="button" name="search" class="doSimpleSearch btn btn-sm btn-primary"> Search </button>
-                        </div>
+                        {!! SiteHelpers::generateSimpleSearchButton($setting) !!}
                     </div>
                 @endif
             @endif
@@ -139,8 +137,15 @@
 						endforeach;
 					  ?>
 				 <td class="action"  data-values="action" data-key="<?php echo $row->id ;?>">
-					{!! AjaxHelpers::buttonAction('gamesintransit',$access,$id ,$setting) !!}
+										{!! AjaxHelpers::buttonAction(
+                            array(
+                                'containerID' => 'gamesintransit', 
+                                'module' => 'mylocationgame', 
+                                'url' => 'mylocationgame'
+                            ), 
+                            $access, $id, $setting) !!}
 					{!! AjaxHelpers::buttonActionInline($row->id,'id') !!}
+
 				</td>
                 </tr>
                 @if($setting['view-method']=='expand')
@@ -181,6 +186,9 @@ $(document).ready(function() {
 		checkboxClass: 'icheckbox_square-blue',
 		radioClass: 'iradio_square-blue',
 	});
+    
+    renderDropdown($(".select2, .select3, .select4, select5"), { width:"98%"});
+    
 	$('#{{ $pageModule }}Table .checkall').on('ifChecked',function(){
 		$('#{{ $pageModule }}Table input[type="checkbox"]').iCheck('check');
 	});

@@ -11,9 +11,8 @@ function reloadData( id,url,callback)
 		$( id +'Grid' ).html( data );
 		$('.ajaxLoading').hide();
 		typeof callback === 'function' && callback();
-        if (window.App && window.App.autoCallbacks && window.App.autoCallbacks.reloaddata) {
-            window.App.autoCallbacks.reloaddata.call($( id +'Grid' ), {id:id, url:url, data:data, isClear: isClearData});
-        }
+        App.autoCallbacks.runCallback.call($( id +'Grid' ), 'reloaddata', 
+            {id:id, url:url, data:data, isClear: isClearData});        
 	});
 
 }
@@ -102,9 +101,8 @@ function ajaxInlineSave(id,url,reloadurl)
 		$.post( reloadurl ,function( data ) {
 			$( id+'Grid' ).html( data );
 			$('.ajaxLoading').hide();
-            if (window.App && window.App.autoCallbacks && window.App.autoCallbacks.ajaxinlinesave) {
-                window.App.autoCallbacks.ajaxinlinesave.call($( id +'Grid' ), {id:id, url:url, data:data, reloadurl: reloadurl});
-            }            
+            App.autoCallbacks.runCallback.call($( id +'Grid' ), 'ajaxinlinesave', 
+                {id:id, url:url, data:data, reloadurl: reloadurl});
 		});							
 	});
 }	
@@ -185,11 +183,11 @@ function ajaxRemove( id, url )
 
             if(data.status =='success')
             {
-                console.log("called succes");
+                //console.log("called succes");
                 notyMessage(data.message);
                 ajaxFilter( id ,url+'/data' );
             } else {
-                console.log("called error");
+                //console.log("called error");
                 notyMessageError(data.message);
             }
         });
@@ -200,7 +198,7 @@ function ajaxRemove( id, url )
 function ajaxViewDetail( id , url )
 {
 	$('.ajaxLoading').show();
-	console.log(url);
+	//console.log(url);
 	$.get( url ,function( data ) {
 		$( id +'View').html( data );
 		$( id +'Grid').hide( );
@@ -212,10 +210,23 @@ function ajaxViewDetail( id , url )
 		
 }
 
-function ajaxViewClose( id )
+function ajaxViewClose( id , elm)
 {
-	$( id +'View' ).html('');	
-	$( id +'Grid' ).show();	
+    var view = $(id+'View'),
+        grid = $(id+'Grid'),
+        $elm = elm && $(elm) || [];
+    
+    if ($elm.length) {
+        if (!view.length) {
+            view = $elm.closest('.moduleView');
+        }
+        if (!grid.length) {
+            grid = view.closest('.page-content').find('.moduleGrid');
+        }
+    }
+    
+	view.html('');
+	grid.show();	
 	$('#sximo-modal').modal('hide');
 }
 
@@ -317,9 +328,7 @@ function SximoModalLarge( url , title)
 	$('#sximo-modal-lg  #sximo-modal-content').load(url,function(){
         var modal = $('#sximo-modal-lg'),
             titletrim = title.replace(/[\s\W]/ig, '').replace(/^\d+?/,'').toLowerCase();
-        if (window.App && window.App.autoCallbacks && window.App.autoCallbacks[titletrim]) {
-            window.App.autoCallbacks[titletrim].call(modal, {url:url, title:title});
-        }
+            App.autoCallbacks.runCallback.call(modal, titletrim, {url:url, title:title});
 	});
 	$('#sximo-modal-lg').modal('show');	
 }

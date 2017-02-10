@@ -35,7 +35,7 @@
 	</div>
 
 	 <div class="table-responsive">
-			<table class="table table-striped table-bordered" id="table">
+			<table class="table table-striped table-bordered moduleGridConfigTable" id="table">
 			<thead class="no-border">
 			  <tr>
 				<th scope="col">No</th>
@@ -214,11 +214,11 @@
 $(document).ready(function() {
 
 
-	var fixHelperModified = function(e, tr) {
+	var fixHelperModified = function(e, tr) {        
 		var $originals = tr.children();
 		var $helper = tr.clone();
 		$helper.children().each(function(index) {
-			$(this).width($originals.eq(index).width())
+			$(this).width($("#table").width());
 		});
 		return $helper;
 		},
@@ -233,8 +233,10 @@ $(document).ready(function() {
 		
 	$("#table tbody").sortable({
 		helper: fixHelperModified,
-		stop: updateIndex
-	});		
+		stop: updateIndex,
+        placeholder: "ui-state-highlight-moduleTable",
+        forcePlaceholderSize: true
+	}).disableSelection();		
 
 	$('.exp-formater').click(function(){
 		$('.formater').hide();
@@ -248,6 +250,14 @@ $(document).ready(function() {
 	.xlick { cursor:pointer;}
 	.popover { width:600px;}
 	.formater { display: none;}
+    #table.moduleGridConfigTable {
+        table-layout: auto;
+    }
+    #table.moduleGridConfigTable .ui-state-highlight-moduleTable,
+    #table.moduleGridConfigTable.table-striped > tbody > tr.ui-state-highlight-moduleTable:nth-child(odd) > td, 
+    #table.moduleGridConfigTable.table-striped.table-striped > tbody > tr.ui-state-highlight-moduleTable:nth-child(odd) > th {
+        background-color: #FDFFBC !important;
+    }
 </style>
 
 @stop

@@ -5,18 +5,6 @@
     <div class="col-md-2">
         <h2>Orders</h2>
     </div>
-    <div class="col-md-3">
-        <?php
-        $orders=array('All'=>'ALL','Fixed Asset Orders'=>'FIXED_ASSET','Open'=>'OPEN');
-        ?>
-        <select name="order_type" id="order_type" class="form-control">
-            @foreach($orders as $type=>$value)
-                <option @if($value==$order_selected) selected @endif value="{{ $value }}">{{ $type }}</option>
-            @endforeach
-
-        </select>
-
-    </div>
 </div>
 
 <div class="sbox-content" style="padding: 10px 20px 7px 15px; border: none;">
@@ -61,16 +49,16 @@
         @if($isExport)
             <div class="pull-right">
                 @if($isExcel)
-                    <a href="{{ URL::to( $pageModule .'/export/excel?return='.$return) }}" class="btn btn-sm btn-white"> Excel</a>
+                    <a href="{{ URL::to( $pageModule .'/export/excel?return='.$return) }}" class="btn btn-sm btn-white" target="_blank"> Excel</a>
                 @endif
                 @if($isCSV)
-                    <a href="{{ URL::to( $pageModule .'/export/csv?return='.$return) }}" class="btn btn-sm btn-white"> CSV </a>
+                    <a href="{{ URL::to( $pageModule .'/export/csv?return='.$return) }}" class="btn btn-sm btn-white"  target="_blank"> CSV </a>
                 @endif
                 @if($isPDF)
-                    <a href="{{ URL::to( $pageModule .'/export/pdf?return='.$return) }}" class="btn btn-sm btn-white"> PDF</a>
+                    <a href="{{ URL::to( $pageModule .'/export/pdf?return='.$return) }}" class="btn btn-sm btn-white" target="_blank"> PDF</a>
                 @endif
                 @if($isWord)
-                    <a href="{{ URL::to( $pageModule .'/export/word?return='.$return) }}" class="btn btn-sm btn-white"> Word</a>
+                    <a href="{{ URL::to( $pageModule .'/export/word?return='.$return) }}" class="btn btn-sm btn-white" target="_blank"> Word</a>
                 @endif
                 @if($isPrint)
                     <a href="{{ URL::to( $pageModule .'/export/print?return='.$return) }}" class="btn btn-sm btn-white" onclick="ajaxPopupStatic(this.href); return false;" > Print</a>
@@ -90,18 +78,7 @@
         $(".export-messsage-contaier").fadeIn();
         $(".export-messsage-contaier").fadeOut(30*1000);
     });
-    $("#order_type").on('change',function(){
 
-        var val=$(this).val();
-        if(val) {
-            if (val != 0) {
-                reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?order_type=' + val + getFooterFilters());
-            }
-            else{
-                reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data');
-            }
-        }
-    });
     $(document).ready(function(){
         var config_id=$("#col-config").val();
         if(config_id ==0 )

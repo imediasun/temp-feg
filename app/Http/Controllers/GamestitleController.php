@@ -239,7 +239,7 @@ class GamestitleController extends Controller
     {
         $rules = $this->validateForm();
         //  $rules['manual']='Not Required|mimes:pdf';
-          $rules['img']='mimes:jpeg,gif,png';
+        $rules['img']='mimes:jpeg,gif,png';
         if($id == null) {
             $rules["game_title"] = "unique:game_title";
         }// $rules['service_bulletin']='Not Required|mimes:pdf';
@@ -249,14 +249,15 @@ class GamestitleController extends Controller
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
 
-                $data = $this->validatePost('game_title');
+            $data = $this->validatePost('game_title');
             if($id != null )
             {
                 unset($data['manual']);
                 unset($data['bulletin']);
                 unset($data['img']);
             }
-                $id = $this->model->insertRow($data, $id);
+            $data['game_title'] = trim($data['game_title']);
+            $id = $this->model->insertRow($data, $id);
 
             $updates = array();
             $manualFlag=false;$serviceFlag=false;$imgFlag=false;
@@ -498,5 +499,12 @@ class GamestitleController extends Controller
 
     }
 
-
+    function postGameexists(Request $request) {
+        $gameTitle = trim($request->input('game_title', ''));
+        $result = [];
+        $titleCount = \DB::table('game_title')->where('game_title', $gameTitle)->count();
+        $result['valid'] = $titleCount <= 0;
+        
+        return $result;
+    }
 }

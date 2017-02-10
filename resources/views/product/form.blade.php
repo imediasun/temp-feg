@@ -94,7 +94,7 @@
 					<div class="col-md-6">
 						<div class="input-group">
 							<span class="input-group-addon">$</span>
-							{!! Form::text('case_price', number_format((double)$row['case_price'],2),array('class'=>'form-control', 'placeholder'=>'','required'=>'required','type'=>'number','min' => '0','step'=>'1' )) !!}
+							{!! Form::text('case_price', number_format((double)$row['case_price'],3),array('class'=>'form-control', 'placeholder'=>'','required'=>'required','type'=>'number','min' => '0','step'=>'1' )) !!}
 						</div>
 					</div>
 					 <div class="col-md-2">
@@ -111,7 +111,7 @@
 								<div class="col-md-6">
 									<div class="input-group">
 										<span class="input-group-addon">$</span>
-										{!! Form::text('unit_price', number_format((double)$row['unit_price'],2),array('class'=>'form-control', 'placeholder'=>'','required'=>'required','type'=>'number','min' => '0','step'=>'1' )) !!}
+										{!! Form::text('unit_price', number_format((double)$row['unit_price'],3),array('class'=>'form-control', 'placeholder'=>'','required'=>'required','type'=>'number','min' => '0','step'=>'1' )) !!}
 									</div>
 								</div>
 								<div class="col-md-2">

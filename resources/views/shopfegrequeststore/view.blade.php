@@ -59,7 +59,7 @@
                             <td width='30%' class='label-view text-right'>
                                 {{ SiteHelpers::activeLang('Case Price', (isset($fields['case_price']['language'])? $fields['case_price']['language'] : array())) }}
                             </td>
-                            <td>$ {{ $row->case_price }} </td>
+                            <td>$ {{CurrencyHelpers::formatPrice($row->case_price) }} </td>
 
                         </tr>
                         <tr>
@@ -73,14 +73,14 @@
                             <td width='30%' class='label-view text-right'>
                                 {{ SiteHelpers::activeLang('Unit Price', (isset($fields['unit_price']['language'])? $fields['unit_price']['language'] : array())) }}
                             </td>
-                            <td>$ {{ $row->unit_price }} </td>
+                            <td>$ {{ CurrencyHelpers::formatPrice($row->unit_price) }} </td>
 
                         </tr>
                         <tr>
                             <td width='30%' class='label-view text-right'>
                                 {{ SiteHelpers::activeLang('Retail Price', (isset($fields['retail_price']['language'])? $fields['retail_price']['language'] : array())) }}
                             </td>
-                            <td>$ {{ $row->retail_price }} </td>
+                            <td>$ {{ CurrencyHelpers::formatPrice($row->retail_price) }} </td>
 
                         </tr>
                         </tbody>

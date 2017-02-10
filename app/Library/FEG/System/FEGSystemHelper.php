@@ -6,6 +6,8 @@ use PDO;
 use DB;
 use Carbon\Carbon;
 use App\Library\MyLog;
+use PHPMailer;
+use Mail;
 
 
 class FEGSystemHelper
@@ -294,17 +296,153 @@ class FEGSystemHelper
         
         mail($to, $subject, $message, $headers);
     }
+    
+    public static function phpMailer($to, $subject, $message, $from = "support@fegllc.com", $options = array()) {
+        $mail = new PHPMailer;
+
+        //$mail->SMTPDebug = 3;                               // Enable verbose debug output
+
+        //$mail->isSMTP();                                      // Set mailer to use SMTP
+        //$mail->Host = 'smtp.gmail.com';  // Specify main and backup SMTP servers
+        //$mail->SMTPAuth = true;                               // Enable SMTP authentication
+        //$mail->Username = '';                 // SMTP username
+        //$mail->Password = '';                           // SMTP password
+        //$mail->SMTPSecure = 'tls';                            // Enable TLS encryption, `ssl` also accepted
+        //$mail->Port = 587;                                    // TCP port to connect to
+
+        $mail->From = 'from@example.com';
+        $mail->FromName = 'Mailer';
+        $mail->addAddress('name@domain.com', 'User');     // Add a recipient
+        $mail->addAddress('ellen@example.com');               // Name is optional
+        $mail->addReplyTo('info@example.com', 'Information');
+        $mail->addCC('cc@example.com');
+        $mail->addBCC('bcc@example.com');
+
+        $mail->addAttachment('');         // Add attachments
+        $mail->addAttachment('/tmp/image.jpg', 'new.jpg');    // Optional name
+        $mail->isHTML(true);                                  // Set email format to HTML
+
+        $mail->Subject = 'Here is the subject';
+        $mail->Body    = 'This is the HTML message body <b>in bold!</b>';
+        $mail->AltBody = 'This is the body in plain text for non-HTML mail clients';
+
+        if(!$mail->send()) {
+            echo 'Message could not be sent.';
+            echo 'Mailer Error: ' . $mail->ErrorInfo;
+        } else {
+            echo 'Message has been sent';
+        }
+    }
+    
+    public static function configLaravelMail($mail, $options) {
+        extract($options);
+
+        $mail->subject($subject);
+        $mail->setBody($message, 'text/html');
+        
+        $toArray = explode(',', $to);            
+        if (count($toArray)== 1 && isset($toName)) {
+            $mail->to($toArray[0], $toName);
+        }
+        else {
+            $mail->to($toArray);
+        }
+
+        if (isset($cc) && !empty(trim($cc))) {
+            $ccArray = explode(',', $cc);            
+            if (count($ccArray)== 1 && isset($ccName)) {
+                $mail->cc($ccArray[0], $ccName);
+            }
+            else {
+                $mail->cc($ccArray);
+            }                            
+        }
+        if (isset($bcc) && !empty(trim($bcc))) {
+            $bccArray = explode(',', $bcc);            
+            if (count($bccArray)== 1 && isset($bccName)) {
+                $mail->bcc($bccArray[0], $bccName);
+            }
+            else {
+                $mail->bcc($bccArray);
+            }                            
+        }
+        if (isset($sender) && !empty(trim($sender))) {
+            $senderArray = explode(',', $sender);            
+            if (count($senderArray)== 1 && isset($senderName)) {
+                $mail->sender($senderArray[0], $senderName);
+            }
+            else {
+                $mail->sender($senderArray);
+            }                            
+        }            
+        if (isset($from) && !empty(trim($from))) {
+            $fromArray = explode(',', $from);            
+            if (count($fromArray)== 1 && isset($fromName)) {
+                $mail->from($fromArray[0], $fromName);
+            }
+            else {
+                $mail->from($fromArray);
+            }                            
+        }            
+        if (isset($replyTo) && !empty(trim($replyTo))) {
+            $replyToArray = explode(',', $replyTo);            
+            if (count($replyToArray)== 1 && isset($replyToName)) {
+                $mail->replyTo($replyToArray[0], $replyToName);
+            }
+            else {
+                $mail->replyTo($replyTo);
+            }                            
+        }            
+
+        if (isset($attach)) {
+            if (is_array($attach)) {
+                foreach($attach as $attachment) {
+                    $mail->attach($attachment);
+                }
+            }
+            else {
+                $mail->attach($attach);
+            }
+        }        
+    }
+    public static function laravelMail($to, $subject, $message, $from = "support@fegllc.com", $options = array()) {
+        $view = empty($options['view']) ? '': $options['view'];
+//        $options['to'] = $to;
+//        $options['subject'] = $subject;
+//        $options['message'] = $message;
+//        $options['from'] = $from;
+        
+        if (!empty($view)) {
+            Mail::send($view, $options, function ($mail) use ($options) {
+                self::configLaravelMail($mail, $options);
+            });            
+        }
+        else {
+            Mail::send([], [], function ($mail) use ($options) {
+                self::configLaravelMail($mail, $options);
+            });             
+//            Mail::raw($message, function ($mail) use ($options) {
+//                self::configLaravelMail($mail, $options);
+//            });            
+        }
+    }
+    
     public static function sendEmail($to, $subject, $message, $from = "support@fegllc.com", $options = array()) { 
         //support@fegllc.com
         if (empty($from)) {
             //$from = "support@fegllc.com";
             //$from = "support@element5digital.com";
             $from = "support@fegllc.com";
-        }        
+        }
         
         $preventEmailSendingSetting = env('PREVENT_FEG_SYSTEM_EMAIL', false);        
         if (!$preventEmailSendingSetting)  {
-            self::phpMail($to, $subject, $message, $from, $options);
+            if (isset($options['attach'])) {
+                self::laravelMail($to, $subject, $message, $from, $options);
+            }
+            else {
+                self::phpMail($to, $subject, $message, $from, $options);
+            }            
         }
     }
     
@@ -499,4 +637,275 @@ class FEGSystemHelper
         
         return $hasMore;        
     }    
+    
+    public static function getSystemEmailRecipients($reportName, $location = null, $isTest = false) {
+        $emails = array('reportName' => $reportName, 'to' => '', 'cc' => '', 'bcc' => '');
+        $q = "SELECT * from system_email_report_manager WHERE report_name='$reportName' AND is_active=1 order by id desc";
+        $data = DB::select($q);
+        $groups = array('to' => '', 'cc' => '', 'bcc' => '');
+        $locationUsers = array('to' => '', 'cc' => '', 'bcc' => '');
+        $users = array('to' => '', 'cc' => '', 'bcc' => '');
+        $inclues = array('to' => '', 'cc' => '', 'bcc' => '');
+        $excludes = array('to' => '', 'cc' => '', 'bcc' => '');
+        if (!empty($data)) {
+            $data = $data[0];
+            if ($isTest) {
+                $emails['to'] = $data->test_to_emails;
+                $emails['cc'] = $data->test_cc_emails;
+                $emails['bcc'] = $data->test_bcc_emails;
+            }
+            else {
+                
+                $location = empty($location) ? null : $location;
+                
+                $lut = $data->to_email_location_contacts;
+                $lucc = $data->cc_email_location_contacts;
+                $lubcc = $data->bcc_email_location_contacts;
+                $locationUsers['to']  = empty($lut) ? array() : self::getLocationManagersEmails($lut,  $location);
+                $locationUsers['cc']  = empty($lucc) ? array() : self::getLocationManagersEmails($lucc,  $location);
+                $locationUsers['bcc'] = empty($lubcc) ? array() : self::getLocationManagersEmails($lubcc, $location);
+                
+                
+                $gt = $data->to_email_groups;
+                $gcc = $data->cc_email_groups;
+                $gbcc = $data->bcc_email_groups;
+                $groups['to'] = empty($gt) ? array() : self::getGroupsUserEmails($gt,   $location);
+                $groups['cc'] = empty($gcc) ? array() : self::getGroupsUserEmails($gcc,   $location);
+                $groups['bcc'] = empty($gbcc) ? array() : self::getGroupsUserEmails($gbcc, $location);
+                
+                $ut = $data->to_email_individuals;
+                $ucc = $data->cc_email_individuals;
+                $ubcc = $data->bcc_email_individuals;                
+                $users['to'] = empty($ut) ? array() : self::getUserEmails($ut);
+                $users['cc'] = empty($ucc) ? array() : self::getUserEmails($ucc);
+                $users['bcc'] = empty($ubcc) ? array() : self::getUserEmails($ubcc);
+                
+                $inclues['to'] = FEGSystemHelper::split_trim($data->to_include_emails);
+                $inclues['cc'] = FEGSystemHelper::split_trim($data->cc_include_emails);
+                $inclues['bcc'] = FEGSystemHelper::split_trim($data->bcc_include_emails);
+                
+                $excludes['to'] = array_merge(FEGSystemHelper::split_trim(
+                        $data->to_exclude_emails), array(null, ''));
+                $excludes['cc'] = array_merge(FEGSystemHelper::split_trim(
+                        $data->cc_exclude_emails), array(null, ''));
+                $excludes['bcc'] = array_merge(FEGSystemHelper::split_trim(
+                        $data->bcc_exclude_emails), array(null, ''));
+                
+                $to = array_diff(array_unique(
+                        array_merge($groups['to'], 
+                            $locationUsers['to'], $users['to'], $inclues['to'])),
+                        $excludes['to']);
+                $cc = array_diff(
+                        array_unique(array_merge($groups['cc'], 
+                            $locationUsers['cc'], $users['cc'], $inclues['cc'])),
+                        $excludes['cc']);
+                $bcc = array_diff(
+                        array_unique(array_merge($groups['bcc'], 
+                            $locationUsers['bcc'], $users['bcc'], $inclues['bcc'])),
+                        $excludes['bcc']);
+                
+                $emails['to'] = implode(',', $to);
+                $emails['cc'] = implode(',', $cc);
+                $emails['bcc'] = implode(',', $bcc);
+            }
+        }
+        return $emails;
+    }
+
+    public static function getLocationManagersEmails($fields, $location = null) {
+//        $q = "SELECT id,contact_id, general_contact_id, field_manager_id,
+//            tech_manager_id, merch_contact_id, merchandise_contact_id,
+//            technical_contact_id, regional_contact_id, senior_vp_id, district_manager_id
+//        FROM location WHERE active=1";
+        $emails = array();
+            if (!empty(trim($fields))) {
+            $q = "SELECT $fields
+            FROM location WHERE active=1";
+            if ($location) {
+                $q .= " AND id IN ($location)";
+            }
+            $fieldsArr = explode(',', $fields);
+            $data = DB::select($q);
+            $ids = array();
+            foreach($data as $row) {            
+                foreach($fieldsArr as $fname) {
+                    $val = $row->$fname;
+                    if (!empty($val)) {
+                        $ids[] = $val;
+                    }                
+                }        
+            }
+            if (!empty($ids)) {
+                $emails = self::getUserEmails(implode(',', $ids));
+            }
+            
+        }
+        
+        return $emails;
+    }
+
+    public static function getGroupsUserEmails($groups = null, $location = null) {
+        $q = "SELECT U.id, U.group_id, UL.location_id, U.email FROM users U 
+                    LEFT JOIN user_locations UL ON UL.user_id = U.id
+                LEFT JOIN tb_groups G ON G.group_id = U.group_id
+                LEFT JOIN location L ON L.id = UL.location_id
+                WHERE U.active=1 AND L.active=1 ";
+        if (!empty($groups)) {
+            $q .= " AND G.group_id IN ($groups)";
+        }
+        if (!empty($location)) {
+            $q .= " AND UL.location_id IN ($location)";
+        }
+        $data = DB::select($q);
+        $emails = array();
+        foreach($data as $row) {
+            $email = $row->email;
+            $emails[] =  trim($email);
+        }
+        return $emails;
+    }
+    public static function getUserEmails($users = null) {
+        $q = "SELECT DISTINCT email FROM users WHERE active=1 ";
+        if (!empty($users)) {
+            $q .= " AND id IN ($users)";
+        }
+        $data = DB::select($q);
+        $emails = array();
+        foreach($data as $row) {
+            $email = $row->email;
+            $emails[] = trim($email);
+        }
+        return $emails;
+    }    
+    
+    public static function sendSystemEmail($options) {  
+        
+        $lp = 'FEGCronTasks/SystemEmails';
+        $lpd = 'FEGCronTasks/SystemEmailsDump';
+        $options = array_merge(array(
+            'from' => "support@fegllc.com",
+            'reportName' => "Test",
+            'reportNamePrefix' => "",
+            'reportNameSuffix' => "",
+        ), $options);
+        
+        extract($options);
+        
+        $reportNameSanitized = preg_replace('/[\W]/', '-', strtolower($reportName));
+        $lf = "email-"
+                . (empty($reportNamePrefix)? "" : "{$reportNamePrefix}-")
+                . $reportNameSanitized
+                . (empty($reportNameSuffix)? "" : "-{$reportNameSuffix}")
+                . ".log";
+        
+        if ($isTest) {
+            
+            $message =  "
+*************** EMAIL START --- DEBUG INFO *******************<br>
+[FROM: $from]<br/>
+[SUBJECT: $subject]<br/>
+[TO: $to]<br/>
+[CC: $cc]<br/>
+[BCC: $bcc]<br/>                   
+***************** DEBUG INFO END *****************************<br><br>
+$message    
+<br><br>******************************************* EMAIL END ********************************<br>";
+            
+            $options['message'] = $message;
+            $options['subject'] = $subject = "[TEST] ". $subject;
+            $emailRecipients = self::getSystemEmailRecipients($reportName, null, true);
+            $options['to'] = $to = $emailRecipients['to'];
+            $options['cc'] = $cc = $emailRecipients['cc'];
+            $options['bcc'] = $bcc = $emailRecipients['bcc'];
+            if (empty($to)) {
+                $to = "e5devmail@gmail.com";
+            }
+            
+//            FEGSystemHelper::logit("to: " .$to, "email-{$reportNameSanitized}.log", "FEGCronTasks/SystemEmailsDump");
+//            FEGSystemHelper::logit("cc: " .$cc, "email-{$reportNameSanitized}.log", "FEGCronTasks/SystemEmailsDump");
+//            FEGSystemHelper::logit("bcc: " .$bcc, "email-{$reportNameSanitized}.log", "FEGCronTasks/SystemEmailsDump");
+//            FEGSystemHelper::logit("subject: " .$subject, "email-{$reportNameSanitized}.log", "FEGCronTasks/SystemEmailsDump");
+              
+            //$messageLog = str_ireplace(array("<br />","<br>","<br/>"), "\r\n", $message);           
+            //$messageLog = nl2br($message);           
+            $messageLog = $message;           
+            self::logit($messageLog, "{$lf}.html", $lpd, true);
+        }
+             
+        self::logit("Sending Email", $lf, $lp);
+        self::sendEmail($to, $subject, $message, $from, $options);
+        self::logit("Email sent", $lf, $lp);
+    }
+
+    public static function getOption($optionName, $default = '', $all = false, $skipInactive = false, $details = false) {
+        $table = "feg_system_options";
+        $value = $default;
+        if ($details) {
+            $value = new \stdClass();
+            $value->option_name = $optionName;
+            $value->option_value = $default;
+            $value->is_active = 1;
+            $value->notes = '';
+            $value->created_at = null;
+            $value->updated_at = null;
+        }
+        if ($all) {            
+            $value = [$value];
+        }        
+        $q = DB::table($table)->where('option_name', $optionName);
+        if ($skipInactive) {
+            $q->where('is_active', 1);
+        }
+        $data = $q->get();
+        if (!empty($data)) {
+            $firstData = $data[0];
+            if ($details && $all) {                
+                $value = $data;
+            }
+            elseif ($details) {
+                $value = $firstData;
+            }
+            elseif ($all) {
+                $value = [];
+                foreach($data as $item) {
+                    $value[] = $item->option_value;
+                }
+            }
+            else {
+                $value = $firstData->option_value;
+            }
+        }
+        
+        return $value;
+    }
+    public static function updateOption($optionName, $value = '', $options = array()) {
+        $table = "feg_system_options";
+        $data = [
+                'option_name' => $optionName,
+                'option_value' => $value
+            ];
+        $data['notes'] = isset($options['notes']) ? $options['notes'] : '';
+        $data['is_active'] = isset($options['is_active']) ? $options['is_active'] : '';
+        
+        $q = DB::table($table);
+        if (isset($option['id'])) {
+            $q->where('id', $option['id']);
+        }
+        else {
+            $q->where('option_name', $optionName);
+        }
+        $q->update($data);
+        return $value;
+    }
+    public static function addOption($optionName, $value = '', $options = array()) {
+        $table = "feg_system_options";
+        $data = [
+                'option_name' => $optionName,
+                'option_value' => $value
+            ];
+        $data['notes'] = isset($options['notes']) ? $options['notes'] : '';
+        $data['is_active'] = isset($options['is_active']) ? $options['is_active'] : '';
+        DB::table($table)->insert($data);
+        return $value;        
+    }
 }

@@ -1951,16 +1951,18 @@ class SiteHelpers
         return $locations;
     }       
 
-    static function getQueryStringForLocation($table, $fieldName = 'location_id')
+    static function getQueryStringForLocation($table, $fieldName = 'location_id', $addOnLocations = array(), $orClause = '')
     {
         $locationsData = self::getLocationDetails(\Session::get('uid'));
-        $locations = array();
+        $locations = is_array($addOnLocations) ? $addOnLocations : array();
         foreach($locationsData as $locationItem)
         {
             $locations[] = "'".$locationItem->id."'";
-            }
+        }
         $locationsCSV = implode(',', $locations);
-        $queryString = " AND $table.$fieldName IN ($locationsCSV) ";
+        $queryString = " AND ($table.$fieldName IN ($locationsCSV) " .
+                (!empty($orClause) ? $orClause : '') . ")";
+        
         return $queryString;
     }
 
@@ -2212,7 +2214,7 @@ class SiteHelpers
                         WHERE u.id=user_locations.user_id AND l.id=user_locations.location_id)";
         
         \DB::delete($q);
-    }    
+    }   
     
     public static function generateSimpleSearchButton($setting = array()) {
         $width = isset($setting['simplesearchbuttonwidth']) ? trim($setting['simplesearchbuttonwidth']): '';

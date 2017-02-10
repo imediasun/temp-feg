@@ -376,6 +376,7 @@ class UsersController extends Controller
             $all_locations = Input::get('all_locations');
             if (empty($all_locations)) {
                 $this->model->inserLocations($request->input('multiple_locations'), $id, $request->input('id'));
+                \DB::update("update users set has_all_locations=0 where id=$id");
             } else {
                 $all_locations = \DB::select('select id from location');
                 $locations = array();

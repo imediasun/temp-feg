@@ -20,6 +20,10 @@ class CreateDummyOrders extends Command
      */
     protected $description = 'Command description';
 
+    protected $startDate = null;
+
+    protected $endDate = null;
+
     /**
      * Create a new command instance.
      *
@@ -37,10 +41,13 @@ class CreateDummyOrders extends Command
      */
     public function handle()
     {
-        if (env('SCENE', 'development') == 'production') {
+        //execute dummy orders in staging environment only
+        if (env('SCENE', 'development') !== 'staging') {
             return;
         }        
-        $created_date=$this->rand_date('2016-12-01','2016-12-31');
+        $this->startDate = '2017-01-01';
+        $this->endDate = '2017-02-28';
+        $created_date=$this->rand_date($this->startDate,$this->endDate);
         $counter=rand(1,5);
       // echo 'total number of orders:'.$counter.'----';
         for($i=0;$i < $counter;$i++) {
@@ -79,6 +86,8 @@ class CreateDummyOrders extends Command
         $product_data=$this->getProductData($product_ids);
         $iproduct_id=array();
         $iproduct_description=array();
+        $iproduct_sku=array();
+        $iproduct_caseprice=array();
         $iitem_name=array();
         $iprice=array();
         $iquantity=array();
@@ -89,6 +98,8 @@ class CreateDummyOrders extends Command
         {
             $qty=rand(1,50);
             $iproduct_id[]=$pd->id;
+            $iproduct_sku[] = $pd->sku;
+            $iproduct_caseprice[] = $pd->case_price;
             $iproduct_description[]=$pd->id.'-'.$pd->vendor_description;
             $iitem_name[]=$pd->vendor_description;
             $iprice[]=$pd->case_price;
@@ -126,6 +137,9 @@ class CreateDummyOrders extends Command
                 $order_contents['qty']=$iquantity[$k];
                 $order_contents['item_name']=$iitem_name[$k];
                 $order_contents['total']=$itotal[$k];
+                $order_contents['case_price']=$iproduct_caseprice[$k];
+                $order_contents['sku']=$iproduct_sku[$k];
+
                 \DB::table('order_contents')->insert($order_contents);
                 $order_contents_ids[$k]=\DB::getPdo()->lastInsertId();
 
@@ -189,13 +203,14 @@ class CreateDummyOrders extends Command
                     $cond = $iquantity[$i];
                     $notes="All Items Received";
                 }
+                //order receive should be greater than created date
                 \DB::insert('INSERT INTO order_received (`order_id`,`order_line_item_id`,`quantity`,`received_by`, `status`, `date_received`, `notes`)
-							 	  		   VALUES (' . $order_id . ',' . $order_contents_ids[$i] . ',' . $iquantity[$i] . ',' . $user_id . ',' . $status . ', "' . date('Y-m-d') . '" , "' . $notes. '" )');
+							 	  		   VALUES (' . $order_id . ',' . $order_contents_ids[$i] . ',' . $iquantity[$i] . ',' . $user_id . ',' . $status . ', "' .date('Y-m-d',rand( strtotime($created_date), strtotime($this->endDate))). '" , "' . $notes. '" )');
                 \DB::update('UPDATE order_contents
 								 	 	 SET item_received ='.$cond . '
 							   	   	   WHERE id = '. $order_contents_ids[$i]);
             }
-            $date_received = date("Y-m-d", strtotime($date_received));
+           $date_received = date("Y-m-d", strtotime($date_received));
             $data = array('date_received'=>$date_received,
                 'status_id' => $status,
                 'notes' => $notes,
@@ -214,6 +229,9 @@ class CreateDummyOrders extends Command
         if($table == "products")
         {
             $id = \DB::select('select id from ' . $table .' Where inactive !=1');
+        }
+        else if($table == "order_type"){
+            $id = \DB::select('select id from ' . $table ." Where order_type != 'Parts for Games'");
         }
         elseif($user != NULL)
         {
@@ -261,7 +279,6 @@ class CreateDummyOrders extends Command
 
         $min_epoch = strtotime($min_date);
         $max_epoch = strtotime($max_date);
-
         $rand_epoch = rand($min_epoch, $max_epoch);
 
         return date('Y-m-d H:i:s', $rand_epoch);

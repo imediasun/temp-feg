@@ -79,7 +79,8 @@
                             });
 //                }
             });
-   $(".select3").select2({width: "98%"});
+            renderDropdown($(".select3"), { width:"98%"});
+
             var config_id=$("#col-config").val();
             if(config_id ==0 )
             {

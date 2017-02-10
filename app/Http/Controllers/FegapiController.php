@@ -35,7 +35,7 @@ class FegapiController extends Controller
             $tables = $config['config']['grid'];
             $page = (!is_null(Input::get('page')) or Input::get('page') != 0) ? Input::get('page') : 1;
             $param = array('page' => $page, 'sort' => '', 'order' => 'asc', 'limit' => '', 'createdFrom' => '', 'createdTo' => date('Y-m-d H:i:s'),
-                'updatedFrom' => '', 'updatedTo' => date('Y-m-d H:i:s'), 'order_type_id' => '', 'status_id' => '', 'prod_type_id' => '', 'vendor_id' => '');
+                'updatedFrom' => '', 'updatedTo' => date('Y-m-d H:i:s'), 'order_type_id' => '', 'status_id' => '', 'prod_type_id' => '', 'vendor_id' => '', 'active'=>'');
             $limit = Input::get('limit');
             $sort = Input::get('order');
             $order = Input::get('sort');
@@ -50,6 +50,7 @@ class FegapiController extends Controller
             $status_id = Input::get('status_id');
             $prod_type_id = Input::get('prod_type_id');
             $vendor_id = Input::get('vendor_id');
+            $active = Input::get('active');
 
 
             if (!is_null($limit) or $limit != 0) $param['limit'] = $limit;
@@ -66,6 +67,8 @@ class FegapiController extends Controller
             if (!is_null($status_id)) $param['status_id'] = $status_id;
             if (!is_null($prod_type_id)) $param['prod_type_id'] = $prod_type_id;
             if (!is_null($vendor_id)) $param['vendor_id'] = $vendor_id;
+            if (!is_null($active)) $param['active'] = $active;
+
 
             $results = $class1::getRows($param);
 
@@ -78,7 +81,9 @@ class FegapiController extends Controller
                     $rows = array();
                     foreach ($tables as $table) {
                         $conn = (isset($table['conn']) ? $table['conn'] : array());
-                        $rows[$table['field']] = $row->$table['field'];
+                        if(isset($row->$table['field'])){
+                            $rows[$table['field']] = $row->$table['field'];
+                        }
                     }
                     $json[] = $rows;
                 }
@@ -205,7 +210,7 @@ class FegapiController extends Controller
         return \Response::json(array("Status" => \Lang::get('restapi.StatusSuccess'), "Message" => \Lang::get('restapi.DeleteSuccess')), 200);
     }
 
-    function validatePost($table)
+    function validatePost($table, $skipFieldsMissingInRequest = false)
     {
 
         //die;

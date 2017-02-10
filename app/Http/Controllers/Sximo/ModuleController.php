@@ -297,6 +297,7 @@ class ModuleController extends Controller
 
             'hiderowcountcolumn' => (isset($config['setting']['hiderowcountcolumn']) ? $config['setting']['hiderowcountcolumn'] : 'false'),
             'usesimplesearch' => (isset($config['setting']['usesimplesearch']) ? $config['setting']['usesimplesearch'] : 'true'),
+            'simplesearchbuttonwidth' => (isset($config['setting']['simplesearchbuttonwidth']) ? $config['setting']['simplesearchbuttonwidth'] : ''),
             'hideadvancedsearchoperators' => (isset($config['setting']['hideadvancedsearchoperators']) ? $config['setting']['hideadvancedsearchoperators'] : 'false'),
             'disablepagination' => (isset($config['setting']['disablepagination']) ? $config['setting']['disablepagination'] : 'false'),
             'disablesort' => (isset($config['setting']['disablesort']) ? $config['setting']['disablesort'] : 'false'),
@@ -373,6 +374,7 @@ class ModuleController extends Controller
 
             'hiderowcountcolumn' => (!is_null($request->input('hiderowcountcolumn')) ? 'true' : 'false'),
             'usesimplesearch' => (!is_null($request->input('usesimplesearch')) ? 'true' : 'false'),
+            'simplesearchbuttonwidth' => (!is_null($request->input('simplesearchbuttonwidth')) ? $request->input('simplesearchbuttonwidth') : ''),
             'hideadvancedsearchoperators' => (!is_null($request->input('hideadvancedsearchoperators')) ? 'true' : 'false'),
             'disablepagination' => (!is_null($request->input('disablepagination')) ? 'true' : 'false'),
             'disablesort' => (!is_null($request->input('disablesort')) ? 'true' : 'false'),

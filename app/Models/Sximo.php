@@ -78,6 +78,10 @@ class Sximo extends Model {
         if(!empty($status_id)){
             $select .= " AND status_id='$status_id'";
         }
+        if(!empty($active)){//added for location
+            $select .= " AND location.active='$active'";
+        }
+
 
         Log::info("Total Query : ".$select . " {$params} " . self::queryGroup() . " {$orderConditional}");
         $counter_select =\DB::select($select . " {$params} " . self::queryGroup() . " {$orderConditional}");
@@ -192,6 +196,7 @@ class Sximo extends Model {
                 'hideadvancedsearchoperators' => (isset($data['config']['setting']['hideadvancedsearchoperators']) ? $data['config']['setting']['hideadvancedsearchoperators'] : 'false' ),
                 'hiderowcountcolumn' => (isset($data['config']['setting']['hiderowcountcolumn']) ? $data['config']['setting']['hiderowcountcolumn'] : 'false' ),                
                 'usesimplesearch' => (isset($data['config']['setting']['usesimplesearch']) ? $data['config']['setting']['usesimplesearch'] : 'true' ),                
+                'simplesearchbuttonwidth' => (isset($data['config']['setting']['simplesearchbuttonwidth']) ? $data['config']['setting']['simplesearchbuttonwidth'] : '' ),                
                 'disablepagination' => (isset($data['config']['setting']['disablepagination']) ? $data['config']['setting']['disablepagination'] : 'false' ),
                 'disablesort' => (isset($data['config']['setting']['disablesort']) ? $data['config']['setting']['disablesort'] : 'false' ),
                 'disableactioncheckbox' => (isset($data['config']['setting']['disableactioncheckbox']) ? $data['config']['setting']['disableactioncheckbox'] : 'false' ),
@@ -402,25 +407,53 @@ class Sximo extends Model {
 
     function getServiceHistory($asset_id) {
         $row = \DB::table('game_service_history')
+                        ->leftJoin('location as l', 'game_service_history.location_id', '=', 'l.id')
+                        ->leftJoin('game as g', 'game_service_history.game_id', '=', 'g.id')
+                        ->leftJoin('game_title as gt', 'g.game_title_id', '=', 'gt.id')
                         ->leftJoin('users as u1', 'game_service_history.down_user_id', '=', 'u1.id')
                         ->leftJoin('users as u2', 'game_service_history.up_user_id', '=', 'u2.id')
-                        ->select('game_service_history.*', 'u1.first_name as down_first_name', 'u1.last_name as down_last_name', 'u2.first_name as up_first_name', 'u2.last_name as up_last_name')
-                        ->where('game_id', '=', $asset_id)->get();
+                        ->select(
+                                'game_service_history.id', 
+                                'game_service_history.game_id', 
+                                'game_service_history.location_id', 
+                                'game_service_history.date_down', 
+                                'game_service_history.problem', 
+                                'game_service_history.down_user_id', 
+                                'game_service_history.solution', 
+                                'game_service_history.date_up', 
+                                'game_service_history.up_user_id', 
+                                'l.id as location_id', 
+                                'l.location_name', 
+                                'l.location_name_short', 
+                                'gt.id as game_title_id', 
+                                'gt.game_title', 
+                                'u1.first_name as down_first_name', 
+                                'u1.last_name as down_last_name', 
+                                'u2.first_name as up_first_name', 
+                                'u2.last_name as up_last_name'
+                            )
+                        ->whereRaw('gt.id = (SELECT game_title_id FROM game WHERE id = '.$asset_id.')')                        
+                        ->orderBy('id', 'desc')
+                        ->get();
         return $row;
     }
 
     function getMoveHistory($asset_id = null) {
-        $row = \DB::table('game_move_history')
+        $query = \DB::table('game_move_history')
                 ->leftJoin('users as u1', 'game_move_history.from_by', '=', 'u1.id')
                 ->leftJoin('users as u2', 'game_move_history.to_by', '=', 'u2.id')
                 ->leftJoin('location as l1', 'game_move_history.from_loc', '=', 'l1.id')
                 ->leftJoin('location as l2', 'game_move_history.to_loc', '=', 'l2.id')
-                ->select('game_move_history.*', 'u1.username as from_name', 'u2.username as to_name', 'l1.location_name as from_location', 'l2.location_name as to_location');
-        if ($asset_id != null) {
-
-            $row = $row->where('game_id', '=', $asset_id);
+                ->leftJoin('game as g', 'game_move_history.game_id', '=', 'g.id')
+                ->leftJoin('game_title as gt', 'g.game_title_id', '=', 'gt.id')
+                ->select('game_move_history.*', 'gt.game_title', 'u1.username as from_name', 'u2.username as to_name', 'l1.location_name as from_location', 'l2.location_name as to_location');
+        if (!is_null($asset_id)) {
+            $assetIds = explode(',', ''.$asset_id);
+            $query = $query->whereIn('game_id', $assetIds);
         }
-        $row = $row->get();
+        $query->orderBy('id', 'desc');
+        //die($query->toSql());
+        $row = $query->get();
         return $row;
     }
 
@@ -446,27 +479,60 @@ class Sximo extends Model {
         return $row;
     }
 
-    function getPendingList() {
-        $rows = \DB::Select("SELECT V.vendor_name AS Manufacturer,T.game_title AS Game_Title, G.version, G.serial, G.id, G.location_id, L.city, L.state, G.sale_price AS Wholesale,
-									IF(G.sale_price >= 1000,
-									ROUND(((G.sale_price*1.1)-1)/10+.5)*10+5,
-									(G.sale_price+100)
-									) AS Retail, G.notes FROM game G  LEFT JOIN game_title T ON G.game_title_id = T.id LEFT JOIN vendor V ON V.id = T.mfg_id LEFT JOIN location L ON G.location_id = L.id WHERE G.sale_pending = 1 AND G.sold = 0 ORDER BY T.game_title ASC, G.location_id");
+    function getPendingList($asset_id = null) {
+        $rows = \DB::Select("SELECT 
+                    V.vendor_name AS Manufacturer, 
+                    T.game_title AS Game_Title, 
+                    G.version, 
+                    G.serial, 
+                    G.id, 
+                    G.location_id, 
+                    L.city, 
+                    L.state, 
+                    G.sale_price AS Wholesale,
+                    IF(G.sale_price >= 1000,
+                        ROUND(((G.sale_price*1.1)-1)/10+.5)*10+5,
+                        (G.sale_price+100)
+                        ) AS Retail, 
+                    G.notes 
+            FROM game G  
+            LEFT JOIN game_title T ON G.game_title_id = T.id 
+            LEFT JOIN vendor V ON V.id = T.mfg_id 
+            LEFT JOIN location L ON G.location_id = L.id 
+            WHERE 
+                G.sale_pending = 1 
+                AND G.sold = 0" . 
+                (empty($asset_id)? "": " AND G.id IN ($asset_id)"). 
+            " ORDER BY T.game_title ASC, G.location_id");
         return $rows;
     }
 
-    function getForSaleList() {
-        $rows = \DB::Select("SELECT V.vendor_name AS Manufacturer,T.game_title AS Game_Title, G.version, G.serial, IF(G.date_in_service = '0000-00-00','', G.date_in_service) AS 'date_service', G.id, G.location_id, L.city, L.state, G.sale_price AS Wholesale,
-										IF(G.sale_price >= 1000,
-										ROUND(((G.sale_price*1.1)-1)/10+.5)*10+5,
-										(G.sale_price+100)
-										) AS Retail
-									FROM game G
-							   LEFT JOIN game_title T ON G.game_title_id = T.id
-							   LEFT JOIN vendor V ON V.id = T.mfg_id
-							   LEFT JOIN location L ON G.location_id = L.id
-								   WHERE G.for_sale = 1
-    AND G.sale_pending = 0 AND G.status_id!=3 AND G.sold = 0 ORDER BY T.game_title ASC, G.location_id");
+    function getForSaleList($asset_id = null) {
+        $rows = \DB::Select("SELECT 
+                    V.vendor_name AS Manufacturer,
+                    T.game_title AS Game_Title, 
+                    G.version, 
+                    G.serial, 
+                    IF(G.date_in_service = '0000-00-00','', G.date_in_service) AS 'date_service', 
+                    G.id, 
+                    G.location_id, 
+                    L.city, 
+                    L.state, 
+                    G.sale_price AS Wholesale,
+                    IF(G.sale_price >= 1000,
+                        ROUND(((G.sale_price*1.1)-1)/10+.5)*10+5,
+                        (G.sale_price+100)
+                        ) AS Retail
+                FROM game G
+                LEFT JOIN game_title T ON G.game_title_id = T.id
+                LEFT JOIN vendor V ON V.id = T.mfg_id
+                LEFT JOIN location L ON G.location_id = L.id
+            WHERE G.for_sale = 1
+                AND G.sale_pending = 0 
+                AND G.status_id!=3 
+                AND G.sold = 0" . 
+                (empty($asset_id)? "": " AND G.id IN ($asset_id)"). 
+            " ORDER BY T.game_title ASC, G.location_id");
         return $rows;
     }
 
@@ -516,32 +582,37 @@ class Sximo extends Model {
             $row[0]['po_zip_ship'] = $query[0]['zip'];
             $row[0]['po_attn'] = $query[0]['attn'];
         } else {
+            $shippingDetail = explode("|",$alt_address);
             $pipe1 = strpos($alt_address, '|');
             $pipe2 = strpos($alt_address, '|', $pipe1 + 1);
             $pipe3 = strpos($alt_address, '|', $pipe2 + 1);
-
+            $pipe4 = strpos($alt_address, '|', $pipe3 + 1);
             $location = substr($alt_address, 0, $pipe1);
             $street = substr($alt_address, $pipe1 + 1, $pipe2 - $pipe1 - 1);
-            $city_state_zip = substr($alt_address, $pipe2 + 1, $pipe3 - $pipe2 - 1);
+
+
             $loading_info_new = substr($alt_address, $pipe3 + 1);
 
             $row[0]['po_location'] = $location;
             $row[0]['po_street1_ship'] = $street;
-            $row[0]['po_city_ship'] = $city_state_zip;
+            $row[0]['po_city_ship'] = $shippingDetail[2];
             $row[0]['loading_info'] = $loading_info_new;
-            $row[0]['po_state_ship'] = '';
-            $row[0]['po_city_shippo_zip_ship'] = '';
+            $row[0]['po_state_ship'] = $shippingDetail[3];
+            $row[0]['po_city_zip'] =  $shippingDetail[4];
+            $row[0]['po_add_notes'] = $shippingDetail[5];
             $row[0]['po_attn'] = '';
             $row[0]['company_name_long'] = '';
         }
         if ($row[0]['new_format'] == 1) {
-            $contentsQuery = \DB::select('SELECT IF(O.product_description = "" && O.product_id != 0, CONCAT(P.vendor_description, " (SKU-",P.sku,")"), O.product_description) AS description,
-													  O.price AS price, O.qty AS qty FROM order_contents O LEFT JOIN products P ON P.id = O.product_id
-												WHERE O.order_id = ' . $order_id);
+            $contentsQuery = \DB::select("SELECT O.item_name AS description,if(O.product_id=0,O.sku,P.sku) AS sku, O.price AS price, O.qty AS qty
+                                            FROM order_contents O 
+                                            LEFT JOIN products P ON P.id = O.product_id 
+                                            WHERE O.order_id = $order_id");
             $row[0]['requests_item_count'] = 0;
             foreach ($contentsQuery as $r) {
                 $row[0]['requests_item_count'] = $row[0]['requests_item_count'] + 1;
-                $orderDescriptionArray[] = $r['description'];
+                //if sku is not empty then concat it with description for PO PDF
+                $orderDescriptionArray[] = empty($r['sku'])?$r['description']:$r['description']." (SKU - {$r['sku']})";
                 $orderPriceArray[] = $r['price'];
                 $orderQtyArray[] = $r['qty'];
             }
@@ -666,7 +737,7 @@ class Sximo extends Model {
         return $data;
     }
 
-    public function get_location_info_by_id($loc_id = null, $field = null) {
+    public function get_location_info_by_id($loc_id = null, $field = null, $default = "No Location with That ID") {
 
         if(is_null($field)){
             $query = \DB::select('SELECT * FROM location WHERE id = ' . $loc_id);
@@ -675,33 +746,53 @@ class Sximo extends Model {
             $query = \DB::select('SELECT ' . $field . ' FROM location WHERE id = ' . $loc_id);
         }
 
-        foreach ($query as $row) {
-            $location_info = $row->$field;
+        $data = [];
+        if (isset($query[0])) {
+            $data = $query[0];
         }
-
-        if (empty($location_info)) {
-            $location_info = 'No Location with That ID';
+        if (is_null($field)) {
+            return $data;
         }
-        return $location_info;
+        if (!empty($data)) {
+            if (is_array($data)) {
+                $value = $data[$field];
+            }        
+            else {
+                $value = $data->$field;
+            }
+        }
+        if (empty($value)) {
+            $value = $default;
+        }
+        return $value;
     }
-    public function get_game_info_by_id($game_id=null,$field=null)
+    public function get_game_info_by_id($game_id=null, $field=null, $default = 'NONE')
     {
-        $query =\DB::select('SELECT '.$field.'
+        $fieldName = empty($field) ? " G.*, T.game_title, T.game_type_id as game_type_id_from_title " : $field;
+        $query =\DB::select('SELECT '.$fieldName.'
 								 FROM game_title T
 						 	LEFT JOIN game G ON G.game_title_id = T.id
 							    WHERE G.id = '.$game_id);
 
-        foreach($query as $row)
-        {
-            $game_info = $row->$field;
+        $data = [];
+        if (isset($query[0])) {
+            $data = $query[0];
         }
-
-        if(empty($game_info))
-        {
-            $game_info = 'NONE';
+        if (is_null($field)) {
+            return $data;
         }
-
-        return $game_info;
+        if (!empty($data)) {
+            if (is_array($data)) {
+                $value = $data[$field];
+            }        
+            else {
+                $value = $data->$field;
+            }
+        }
+        if (empty($value)) {
+            $value = $default;
+        }
+        return $value;
 
     }
     public function get_user_emails($user_level = null, $loc_id = null)
@@ -847,6 +938,67 @@ class Sximo extends Model {
         
         return $finalFilters;
     }
+    
+    public static function getSearchFiltersAsArray($customSearchString = '') {
+        $receivedFilters = array();
+        $searchQuerystring = !empty($customSearchString) ? $customSearchString : 
+                (isset($_GET['search']) ? $_GET['search'] : '');
+        
+        if ($searchQuerystring) {
+            $filters_raw = trim($searchQuerystring, "|");
+            $filters = explode("|", $filters_raw);
+
+            foreach($filters as $filter) {
+                $columnFilter = explode(":", $filter);
+                $filterData = array();
+                list($fieldName, $operator, $value) = $columnFilter;
+                $filterData['fieldName'] = $fieldName;
+                $filterData['operator'] = $operator;
+                $filterData['value'] = $value;
+                if (isset($columnFilter[3])) {
+                    $filterData['value2'] = $columnFilter[3];
+                }
+                $receivedFilters[$fieldName] = $filterData;
+            }
+        }
+        return $receivedFilters;        
+    }
+    public static function buildSearchQuerystringFromArray($filters = array()) {
+        $qs = '';
+        $qsArray = array();
+        foreach($filters as $item) {
+            $qsArray[] = implode(':', array_values($item));
+        }
+        $qs = implode('|', $qsArray).'|';
+        
+        return $qs;
+    }
+    public static function mergeSearchFilters($receivedFilters = null, $add = array(), $skip = array()) {
+        $filters = empty($receivedFilters) ? self::getSearchFiltersAsArray() : $receivedFilters;
+                
+        if (!empty($add)) {
+            foreach ($add as $key => $item) {
+                $filters[$key] = $item;
+            }
+        }
+        if (!empty($skip)) {
+            foreach ($skip as $key) {
+                if (isset($filters[$key])) {
+                    unset($filters[$key]);
+                }
+            }
+        }
+        
+        return $filters;        
+    }
+    
+    public static function rebuildSearchQuery($add = array(), $skip = array(), $customSearchString = '') {
+        $filters = self::getSearchFiltersAsArray($customSearchString);
+        $newFilters = self::mergeSearchFilters($filters, $add, $skip);
+        $qs = self::buildSearchQuerystringFromArray($newFilters);
+        return $qs;
+    }
+    
     public static function passwordForgetEmails()
     {
         $user_data=\DB::select('select id,email from users');
@@ -927,5 +1079,52 @@ class Sximo extends Model {
                 return false;
         }
     }
-    
+    public function populateGamesDropdown($location = null)
+    {
+        if(empty($location))
+        {
+            $concat = 'CONCAT(IF(G.location_id = 0, "IN TRANSIT", G.location_id)," | ",IF(G.test_piece = 1,CONCAT("**TEST** ",T.game_title),T.game_title)," | ",G.id)';
+            $where = '';
+            $orderBy = 'T.game_title';
+        }
+        else
+        {
+            if($location == 'plus_notes')
+            {
+                $concat = 'CONCAT(IF(G.location_id = 0, "IN TRANSIT", G.location_id), " | ",T.game_title," | ",G.id, IF(G.notes = "","", CONCAT(" (",G.notes,")")))';
+                $where = '';
+            }
+            else
+            {
+                $concat = 'CONCAT(G.location_id," | ",T.game_title," | ",G.id)';
+                $where = 'AND G.location_id in ('.$location.')';
+            }
+            $orderBy = 'L.id,T.game_title';
+        }
+        $query = \DB::select('SELECT G.id AS id,
+									  '.$concat.' AS text
+								 FROM game G
+							LEFT JOIN game_title T ON T.id = G.game_title_id
+							LEFT JOIN location L ON L.id = G.location_id
+								WHERE G.sold = 0
+									  '.$where.'
+							 ORDER BY '.$orderBy);
+
+        foreach ($query as $row) {
+            if (!is_null($row->text)) {
+                $row = array(
+                    'id' => $row->id,
+                    'text' => $row->text
+                );
+                $gamesArray[] = $row;
+
+            }
+        }
+        if(empty($gamesArray))
+        {
+            $gamesArray[] = array("id"=> "none"  ,'text'=> 'No Game Found For Selected Location','disabled'=> true);
+        }
+        $array = $gamesArray;
+        return $array;
+    }
 }

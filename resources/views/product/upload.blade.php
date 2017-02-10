@@ -30,17 +30,21 @@
                             {!! SiteHelpers::showUploadedFile($img,'/uploads/products/',400,false) !!}
                     </div>
                     <div class="col-md-6">
-                    {!! Form::open(array('url'=>'product/upload?return='.$return, 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ')) !!}
+
+
+                        {!! Form::open(array('url'=>'product/upload?return='.$return, 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ')) !!}
 
                     <div class="form-group" style="margin-top:120px;">
                                 <input  type='file' name='img' id='img'  required  style='width:150px !important;'     value=""  />
                         <input type="hidden" value="{{ Request::segment(3) }}" name="id"/>
                     </div>
                         <div class="form-group" style="margin-top:50px;">
-                                <button type="submit" name="submit" class="btn btn-primary btn-sm" ><i class="fa  fa-save "></i> {{ Lang::get('core.sb_save') }}</button>
-                                <button type="button" onclick="location.href='{{ URL::to('product?return='.$return) }}' " class="btn btn-success btn-sm "><i class="fa  fa-arrow-circle-left "></i>  {{ Lang::get('core.sb_cancel') }} </button>
 
-                    </div>
+                                <button type="submit" name="submit" class="btn btn-primary btn-sm" ><i class="fa  fa-save "></i> {{ Lang::get('core.sb_save') }}</button>
+
+                            <button type="button" onclick="location.href='{{ URL::to('product?return='.$return) }}' " class="btn btn-success btn-sm "><i class="fa  fa-arrow-circle-left "></i>  {{ Lang::get('core.sb_cancel') }} </button>
+
+                        </div>
 
             </div>
                     {!! Form::close() !!}

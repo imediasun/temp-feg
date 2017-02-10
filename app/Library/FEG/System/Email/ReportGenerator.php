@@ -109,7 +109,7 @@ class ReportGenerator
                     @$gamesNotPlayed;
 
             $reportName = 'Daily Game Earnings DB Transfer Report';
-            $emailRecipients = self::getSystemReportEmailRecipients($reportName);
+            $emailRecipients = FEGSystemHelper::getSystemEmailRecipients($reportName);
             self::sendEmailReport(array_merge($emailRecipients, array(
                 'subject' => "Game Earnings DB Transfer Report for $humanDate", 
                 'message' => $message, 
@@ -286,7 +286,7 @@ class ReportGenerator
         $isTest = $task->is_test_mode;
         
         $reportName = 'Daily Transfer Bulk Fail';
-        $emailRecipients = self::getSystemReportEmailRecipients($reportName); 
+        $emailRecipients = FEGSystemHelper::getSystemEmailRecipients($reportName); 
         self::sendEmailReport(array_merge($emailRecipients, array(
             'subject' => "Transfer Failure $humanDate", 
             'message' => $statusReport, 
@@ -448,7 +448,7 @@ class ReportGenerator
         
         if ($hasDailyReport) {
             $reportName = 'Daily games summary for each location';
-            $emailRecipients = self::getSystemReportEmailRecipients($reportName, $location);
+            $emailRecipients = FEGSystemHelper::getSystemEmailRecipients($reportName, $location);
             self::sendEmailReport(array_merge($emailRecipients, array(
                 'subject' => "Games Summary for location  $location - $humanDate", 
                 'message' => $dailyReport, 
@@ -459,7 +459,7 @@ class ReportGenerator
         }
         else {
             $reportName = 'Daily games summary for each location - No Issue';
-            $emailRecipients = self::getSystemReportEmailRecipients($reportName, $location);
+            $emailRecipients = FEGSystemHelper::getSystemEmailRecipients($reportName, $location);
             self::sendEmailReport(array_merge($emailRecipients, array(
                 'subject' => "Games Summary for location  $location - $humanDate  [NO ISSUES]", 
                 'message' => $dailyReport, 
@@ -620,7 +620,7 @@ class ReportGenerator
                 "Game Revenue" => $gameTotal,
                 "_Game Revenue Original" => $gameTotalOriginal,
                 "_Asset ID" => 0,
-                "_Reader ID" => $readerIdOriginal,
+                "_Reader ID" => $readerIdOriginal,                
             );
             if ($isFlatData) {
                 $missingAssetIdData[] = $missingAsset;
@@ -628,7 +628,7 @@ class ReportGenerator
             else {
                 if (empty($missingAssetIdData[$locationIDName])) {
                     $missingAssetIdData[$locationIDName] = array();
-                }            
+                }
                 $missingAssetIdData[$locationIDName][] = $missingAsset;                
             }
             
@@ -734,7 +734,7 @@ class ReportGenerator
             else {
                 if (empty($badReadersData[$locationIDName])) {
                     $badAssetIDData[$locationIDName] = array();
-                }            
+                }        
                 $badAssetIDData[$locationIDName][] = $badAsset;
             }            
         }
@@ -931,7 +931,7 @@ class ReportGenerator
         
         FEGSystemHelper::logit("    Start sending email", $lf, $lp);
         $reportName = 'Daily Missing Asset ID Reader ID Unknown Asset ID Report';
-        $emailRecipients = self::getSystemReportEmailRecipients($reportName); 
+        $emailRecipients = FEGSystemHelper::getSystemEmailRecipients($reportName); 
         self::sendEmailReport(array_merge($emailRecipients, array(
             'subject' => "FEG Missing Data (Asset ID, Reader ID, Unknown Asset ID) Report for $humanDateRange", 
             'message' => $message, 
@@ -1144,7 +1144,7 @@ class ReportGenerator
         if (!empty($overReporting) && $overReporting != "None") {
             $message = "<b><u>Potential Over-reporting Errors:</u></b><br><br>$overReporting";
             $reportName = 'Daily Potential Over-reporting Errors Report';
-            $emailRecipients = self::getSystemReportEmailRecipients($reportName); 
+            $emailRecipients = FEGSystemHelper::getSystemEmailRecipients($reportName); 
             self::sendEmailReport(array_merge($emailRecipients, array(
                 'subject' => "Potential Over-reporting Errors Check for $humanDate", 
                 'message' => $message, 
@@ -1261,7 +1261,7 @@ class ReportGenerator
 					    Nate";
             
             $reportName = 'Daily Sacoa Data Transfer Failure and Status';
-            $emailRecipients = self::getSystemReportEmailRecipients($reportName); 
+            $emailRecipients = FEGSystemHelper::getSystemEmailRecipients($reportName); 
             self::sendEmailReport(array_merge($emailRecipients, array(
                 'subject' => "Sacoa->FEG: Data Transfer Failure status as of $humanDateToday", 
                 'message' => $sacoaReport, 
@@ -1280,7 +1280,7 @@ class ReportGenerator
                     Nate";
 
             $reportName = 'Daily Embed Data Transfer Failure and Status';
-            $emailRecipients = self::getSystemReportEmailRecipients($reportName); 
+            $emailRecipients = FEGSystemHelper::getSystemEmailRecipients($reportName); 
             self::sendEmailReport(array_merge($emailRecipients, array(
                 'subject' => "Embed->FEG: Data Transfer Failure status as of $humanDateToday", 
                 'message' => $embedReport, 
@@ -1292,7 +1292,7 @@ class ReportGenerator
         
         if ($noRetrySync != 1) { 
             $reportName = 'Daily Data Transfer Failure Summary';
-            $emailRecipients = self::getSystemReportEmailRecipients($reportName); 
+            $emailRecipients = FEGSystemHelper::getSystemEmailRecipients($reportName); 
             self::sendEmailReport(array_merge($emailRecipients, array(
                 'subject' => "Data Transfer Failure Summary as of $humanDateToday", 
                 'message' => $retryReportAll, 
@@ -1457,7 +1457,7 @@ class ReportGenerator
         
         if (!empty($finalGameSummaryReport)) {
             $reportName = 'Daily Games Summary';
-            $emailRecipients = self::getSystemReportEmailRecipients($reportName); 
+            $emailRecipients = FEGSystemHelper::getSystemEmailRecipients($reportName); 
             self::sendEmailReport(array_merge($emailRecipients, array(
                 'subject' => "Games Summary - $humanDate", 
                 'message' => $finalGameSummaryReport, 
@@ -1742,7 +1742,7 @@ class ReportGenerator
         
         $message = implode("", $report);
         $reportName = 'Weekly games summary';
-        $emailRecipients = self::getSystemReportEmailRecipients($reportName);
+        $emailRecipients = FEGSystemHelper::getSystemEmailRecipients($reportName);
             self::sendEmailReport(array_merge($emailRecipients, array(
                 'subject' => "FEG Weekly Games Summary | $humanDateRange", 
                 'message' => $message, 
@@ -1820,204 +1820,7 @@ class ReportGenerator
     }
     
     public static function sendEmailReport($options) {  
-        
-        $lp = 'FEGCronTasks/SystemEmails';
-        $lpd = 'FEGCronTasks/SystemEmailsDump';
-        extract(array_merge(array(
-            'from' => "support@fegllc.com",
-            'reportName' => "Test",
-            'reportNamePrefix' => "",
-            'reportNameSuffix' => "",
-        ), $options));
-        
-        $reportNameSanitized = preg_replace('/[\W]/', '-', strtolower($reportName));
-        $lf = "email-"
-                . (empty($reportNamePrefix)? "" : "{$reportNamePrefix}-")
-                . $reportNameSanitized
-                . (empty($reportNameSuffix)? "" : "-{$reportNameSuffix}")
-                . ".log";
-        
-        if ($isTest) {
-            
-            $message =  "
-*************** EMAIL START --- DEBUG INFO *******************<br>
-[SUBJECT: $subject]<br/>
-[TO: $to]<br/>
-[FROM: $from]<br/>
-[CC: $cc]<br/>
-[BCC: $bcc]<br/>                   
-***************** DEBUG INFO END *****************************<br><br>
-$message
-******************************************* EMAIL END ********************************<br>";
-            
-            $subject = "[TEST] ". $subject;
-            $emailRecipients = self::getSystemReportEmailRecipients($reportName, null, true);
-            $to = $emailRecipients['to'];
-            $cc = $emailRecipients['cc'];
-            $bcc = $emailRecipients['bcc'];
-            if (empty($to)) {
-                $to = "e5devmail@gmail.com";
-            }
-            
-            $messageLog = str_ireplace(array("<br />","<br>","<br/>"), "\r\n", $message);
-            
-//            FEGSystemHelper::logit("to: " .$to, "email-{$reportNameSanitized}.log", "FEGCronTasks/SystemEmailsDump");
-//            FEGSystemHelper::logit("cc: " .$cc, "email-{$reportNameSanitized}.log", "FEGCronTasks/SystemEmailsDump");
-//            FEGSystemHelper::logit("bcc: " .$bcc, "email-{$reportNameSanitized}.log", "FEGCronTasks/SystemEmailsDump");
-//            FEGSystemHelper::logit("subject: " .$subject, "email-{$reportNameSanitized}.log", "FEGCronTasks/SystemEmailsDump");
-            
-            FEGSystemHelper::logit($messageLog, "{$lf}.html", $lpd, true);
-        }
-        
-        $opt = array();
-        if (!empty($cc)) {
-            $opt['cc'] = $cc;
-        }
-        if (!empty($bcc)) {
-            $opt['bcc'] = $bcc;
-        }        
-        FEGSystemHelper::logit("Sending Email", $lf, $lp);
-        FEGSystemHelper::sendEmail($to, $subject, $message, $from, $opt);
-        FEGSystemHelper::logit("Email sent", $lf, $lp);
+        FEGSystemHelper::sendSystemEmail($options);
     }
-    public static function getSystemReportEmailRecipients($reportName, $location = null, $isTest = false) {
-        $emails = array('reportName' => $reportName, 'to' => '', 'cc' => '', 'bcc' => '');
-        $q = "SELECT * from system_email_report_manager WHERE report_name='$reportName' AND is_active=1 order by id desc";
-        $data = DB::select($q);
-        $groups = array('to' => '', 'cc' => '', 'bcc' => '');
-        $locationUsers = array('to' => '', 'cc' => '', 'bcc' => '');
-        $users = array('to' => '', 'cc' => '', 'bcc' => '');
-        $inclues = array('to' => '', 'cc' => '', 'bcc' => '');
-        $excludes = array('to' => '', 'cc' => '', 'bcc' => '');
-        if (!empty($data)) {
-            $data = $data[0];
-            if ($isTest) {
-                $emails['to'] = $data->test_to_emails;
-                $emails['cc'] = $data->test_cc_emails;
-                $emails['bcc'] = $data->test_bcc_emails;
-            }
-            else {
-                
-                $location = empty($location) ? null : $location;
-                
-                $lut = $data->to_email_location_contacts;
-                $lucc = $data->cc_email_location_contacts;
-                $lubcc = $data->bcc_email_location_contacts;
-                $locationUsers['to']  = empty($lut) ? array() : self::getLocationManagersEmails($lut,  $location);
-                $locationUsers['cc']  = empty($lucc) ? array() : self::getLocationManagersEmails($lucc,  $location);
-                $locationUsers['bcc'] = empty($lubcc) ? array() : self::getLocationManagersEmails($lubcc, $location);
-                
-                
-                $gt = $data->to_email_groups;
-                $gcc = $data->cc_email_groups;
-                $gbcc = $data->bcc_email_groups;
-                $groups['to'] = empty($gt) ? array() : self::getGroupsUserEmails($gt,   $location);
-                $groups['cc'] = empty($gcc) ? array() : self::getGroupsUserEmails($gcc,   $location);
-                $groups['bcc'] = empty($gbcc) ? array() : self::getGroupsUserEmails($gbcc, $location);
-                
-                $ut = $data->to_email_individuals;
-                $ucc = $data->cc_email_individuals;
-                $ubcc = $data->bcc_email_individuals;                
-                $users['to'] = empty($ut) ? array() : self::getUserEmails($ut);
-                $users['cc'] = empty($ucc) ? array() : self::getUserEmails($ucc);
-                $users['bcc'] = empty($ubcc) ? array() : self::getUserEmails($ubcc);
-                
-                $inclues['to'] = FEGSystemHelper::split_trim($data->to_include_emails);
-                $inclues['cc'] = FEGSystemHelper::split_trim($data->cc_include_emails);
-                $inclues['bcc'] = FEGSystemHelper::split_trim($data->bcc_include_emails);
-                
-                $excludes['to'] = array_merge(FEGSystemHelper::split_trim(
-                        $data->to_exclude_emails), array(null, ''));
-                $excludes['cc'] = array_merge(FEGSystemHelper::split_trim(
-                        $data->cc_exclude_emails), array(null, ''));
-                $excludes['bcc'] = array_merge(FEGSystemHelper::split_trim(
-                        $data->bcc_exclude_emails), array(null, ''));
-                
-                $to = array_diff(array_unique(
-                        array_merge($groups['to'], 
-                            $locationUsers['to'], $users['to'], $inclues['to'])),
-                        $excludes['to']);
-                $cc = array_diff(
-                        array_unique(array_merge($groups['cc'], 
-                            $locationUsers['cc'], $users['cc'], $inclues['cc'])),
-                        $excludes['cc']);
-                $bcc = array_diff(
-                        array_unique(array_merge($groups['bcc'], 
-                            $locationUsers['bcc'], $users['bcc'], $inclues['bcc'])),
-                        $excludes['bcc']);
-                
-                $emails['to'] = implode(',', $to);
-                $emails['cc'] = implode(',', $cc);
-                $emails['bcc'] = implode(',', $bcc);
-            }
-        }
-        return $emails;
-    }
-
-    public static function getLocationManagersEmails($fields, $location = null) {
-//        $q = "SELECT id,contact_id, general_contact_id, field_manager_id,
-//            tech_manager_id, merch_contact_id, merchandise_contact_id,
-//            technical_contact_id, regional_contact_id, senior_vp_id, district_manager_id
-//        FROM location WHERE active=1";
-        $emails = array();
-            if (!empty(trim($fields))) {
-            $q = "SELECT $fields
-            FROM location WHERE active=1";
-            if ($location) {
-                $q .= " AND id IN ($location)";
-            }
-            $fieldsArr = explode(',', $fields);
-            $data = DB::select($q);
-            $ids = array();
-            foreach($data as $row) {            
-                foreach($fieldsArr as $fname) {
-                    $val = $row->$fname;
-                    if (!empty($val)) {
-                        $ids[] = $val;
-                    }                
-                }        
-            }
-            if (!empty($ids)) {
-                $emails = self::getUserEmails(implode(',', $ids));
-            }
-            
-        }
-        
-        return $emails;
-    }
-
-    public static function getGroupsUserEmails($groups = null, $location = null) {
-        $q = "SELECT U.id, U.group_id, UL.location_id, U.email FROM users U 
-                    LEFT JOIN user_locations UL ON UL.user_id = U.id
-                LEFT JOIN tb_groups G ON G.group_id = U.group_id
-                LEFT JOIN location L ON L.id = UL.location_id
-                WHERE U.active=1 AND L.active=1 ";
-        if (!empty($groups)) {
-            $q .= " AND G.group_id IN ($groups)";
-        }
-        if (!empty($location)) {
-            $q .= " AND UL.location_id IN ($location)";
-        }
-        $data = DB::select($q);
-        $emails = array();
-        foreach($data as $row) {
-            $email = $row->email;
-            $emails[] =  trim($email);
-        }
-        return $emails;
-    }
-    public static function getUserEmails($users = null) {
-        $q = "SELECT DISTINCT email FROM users WHERE active=1 ";
-        if (!empty($users)) {
-            $q .= " AND id IN ($users)";
-        }
-        $data = DB::select($q);
-        $emails = array();
-        foreach($data as $row) {
-            $email = $row->email;
-            $emails[] = trim($email);
-        }
-        return $emails;
-    }
-
+    
 }

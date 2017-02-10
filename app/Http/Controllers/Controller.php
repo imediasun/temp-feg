@@ -81,7 +81,8 @@ abstract class Controller extends BaseController
             $parent = (!is_null($request->input('parent')) ? $request->input('parent') : null);
 
             $limit = (!is_null($request->input('limit')) ? $request->input('limit') : null);
-
+            $delimiter = empty($request->input('delimiter')) ? ' ' : $request->input('delimiter');
+            
             $rows = $this->model->getComboselect($param, $limit, $parent);
 
             $items = array();
@@ -90,8 +91,12 @@ abstract class Controller extends BaseController
 
             foreach ($rows as $row) {
                 $value = "";
+                $values = array();
                 foreach ($fields as $item => $val) {
-                    if ($val != "") $value .= $row->$val . " ";
+                    if ($val != "") {
+                        $values[] = $row->$val;
+                    }
+                    $value = implode($delimiter, $values);
                 }
                 $items[] = array($row->$param['1'], $value);
 
@@ -219,21 +224,27 @@ abstract class Controller extends BaseController
         return $rules;
     }
 
-    function validatePost($table)
+    function validatePost($table, $skipFieldsMissingInRequest = false)
     {
         $request = new Request;
         $str = $this->info['config']['forms'];
         $data = array();
         foreach ($str as $f) {
+            
             $field = $f['field'];
+            $requestValue = \Request::get($field);
+            $requestType = $f['type'];            
+            if ($skipFieldsMissingInRequest && $requestType !=='file' && !isset($requestValue)) {
+                continue;
+            }
             if ($f['view'] == 1) {
                 if ($f['type'] == 'textarea_editor' || $f['type'] == 'textarea') {
-
                     $content = (isset($_POST[$field]) ? $_POST[$field] : '');
                     $data[$field] = $content;
-                } else {
+                } 
+                else {
                     $r = \Request::get($field);
-                    if (isset($_POST[$field]) or isset($r)) {
+                    if (isset($_POST[$field]) || isset($r)) {
                         if (isset($_POST[$field])) {
                             $data[$field] = $_POST[$field];
                         } elseif (isset($r)) {
@@ -320,27 +331,25 @@ abstract class Controller extends BaseController
                         }
                     }
 
-
                     // if post is checkbox
-                    if ($f['type'] == 'checkbox') {
+                    elseif ($f['type'] == 'checkbox') {
                         $r1 = \Request::get($field);
-                        if (!is_null($_POST[$field]) or !is_null($r1)) {
-                            if (!is_null($_POST[$field]))
+                        if (!is_null($_POST[$field]) || !is_null($r1)) {
+                            if (!is_null($_POST[$field])) {
                                 $data[$field] = $_POST[$field];
+                            }
                             elseif (!is_null($r1)) {
                                 $data[$field] = $r1;
                             }
                         }
                     }
                     // if post is date
-                    if ($f['type'] == 'date') {
-
-                        $data[$field] = date("Y-m-d", strtotime($request->input($field)));
-                    }
-
+                    elseif ($f['type'] == 'date' || $f['type'] == 'text_date') {
+                        $data[$field] = date("Y-m-d", strtotime(\Request::get($field)));
+                    }   
                     // if post is seelct multiple
                     //
-                    if ($f['type'] == 'select') {
+                    elseif ($f['type'] == 'select') {
                         $r2 = \Request::get($field);
                         $multival = "";
                         //echo '<pre>'; print_r( $_POST[$field] ); echo '</pre>';
@@ -351,9 +360,11 @@ abstract class Controller extends BaseController
 
                                 $multival = (is_array($r2) ? implode(",", $r2) : $r2);
                             }
-
-                            $data[$field] = $multival;
-                        } else {
+                            if (isset($_POST[$field]) || isset($_GET[$field])) {
+                                $data[$field] = $multival;
+                            }                            
+                        } 
+                        else {
                             if (isset($_POST[$field]))
                                 $data[$field] = $_POST[$field];
                             elseif (isset($r2))
@@ -362,7 +373,7 @@ abstract class Controller extends BaseController
                     }
                 }
             }
-        }
+        }        
         $global = (isset($this->access['is_global']) ? $this->access['is_global'] : 0);
 
         if ($global == 0)
@@ -584,18 +595,19 @@ abstract class Controller extends BaseController
         return;
     }
 
-    function buildSearch()
+    function buildSearch($customSearchString = null)
     {
         $keywords = '';
         $fields = '';
         $param = '';
         $allowsearch = $this->info['config']['forms'];
-
+        $searchQuerystring = !is_null($customSearchString) ? $customSearchString : 
+                (isset($_GET['search']) ? $_GET['search'] : '');
+        
         foreach ($allowsearch as $as)
             $arr[$as['field']] = $as;
-        if ($_GET['search'] != '') {
-            $search_params=$_GET['search'];
-            $search_params=str_replace('_amp','&',$search_params);
+        if ($searchQuerystring != '') {
+            $search_params=str_replace('_amp','&',$searchQuerystring);
             $type = explode("|", $search_params);
             if (count($type) >= 1) {
                 foreach ($type as $t) {
@@ -723,6 +735,8 @@ abstract class Controller extends BaseController
             'params' => '',
             'sort' => $sort,
             'order' => $order,
+            'params' => $filter,
+            'global' => (isset($this->access['is_global']) ? $this->access['is_global'] : 0)
         );
 
 

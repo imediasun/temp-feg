@@ -126,9 +126,8 @@
                                 {!! SiteHelpers::activeLang('All Locations', (isset($fields['has_all_locations']['language'])? $fields['has_all_locations']['language'] : array())) !!}
                             </label>
                             <div class="col-md-6">
-
                                 <input type="checkbox" name="all_locations" value="1" id="has_all_locations"
-                                       @if(isset($row['has_all_locations']) && !empty($row['has_all_locations']) ) checked
+                                       @if(isset($row['has_all_locations']) && $row['has_all_locations'] != 0 ) checked
                                        @endif  class="form-control"/>
 
 

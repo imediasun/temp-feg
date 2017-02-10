@@ -23,10 +23,20 @@
 	</div>	
 	<!-- End Content -->
 
-</div>	
-<script>
-$(document).ready(function(){
-	reloadData('#{{ $pageModule }}','{{ $pageModule }}/data');
-});
-</script>	
+</div>
+@endsection
+
+
+@section ('beforebodyend')
+
+    <script type="text/javascript">
+        var pageModule = '{{$pageModule}}',
+            pageUrl = '{{$pageUrl}}';
+
+        $(document).ready(function(){
+            reloadData('#{{ $pageModule }}','{{ $pageModule }}/data');
+        });
+    </script>
+    <script type="text/javascript" src="{{ asset('sximo/js/modules/freight/view.js') }}"></script>          
+    
 @endsection
