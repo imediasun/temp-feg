@@ -71,9 +71,9 @@
                         <table id="itemTable" class="display" cellspacing="0" width="100%">
                             <thead>
                             <tr>
-                                <th> #</th>
+                            <th>No#</th>
                                 <th>Name</th>
-                                <th>Description</th>
+                                <th>Item Description</th>
                                 @if($data['order_type'] == \App\Models\order::ORDER_TYPE_PART_GAMES)<th>Game</th>@endif
                                 <th>Price Unit</th>
                                 <th>Case Price</th>
@@ -90,7 +90,7 @@
                             @foreach($data['order_items'] as $order_item)
                                 @if($order_item->qty != $order_item->item_received)
                                     <tr>
-                                        <td>
+                                        <td style="text-align: center">
                                           {{ $value ++ }}
                                             <input type="hidden" name="itemsID[]" value="{{ $order_item->id }}">
                                         </td>
