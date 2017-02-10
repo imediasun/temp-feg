@@ -855,7 +855,7 @@ class MylocationgameController extends Controller
             ->resizeCanvas(0, 20, 'top', true, 'ffffff')
             ->text($id, $xCenter, $idYTop, function($font) use ($idFont){
                 $font->file($idFont);
-                $font->size(19);
+                $font->size(18);
                 $font->color('#000');
                 $font->align('center');
                 $font->valign('top');
@@ -863,7 +863,7 @@ class MylocationgameController extends Controller
             })               
             ->text($game_title, $xCenter, $titleYTop, function($font)  use ($titleFont){
                 $font->file($titleFont);
-                $font->size(8);
+                $font->size(10);
                 $font->color('#000');
                 $font->align('center');
                 $font->valign('top');
