@@ -811,6 +811,7 @@ class FEGSystemHelper
 $message    
 <br><br>******************************************* EMAIL END ********************************<br>";
             
+            $options['message'] = $message;
             $options['subject'] = $subject = "[TEST] ". $subject;
             $emailRecipients = self::getSystemEmailRecipients($reportName, null, true);
             $options['to'] = $to = $emailRecipients['to'];
@@ -826,7 +827,8 @@ $message
 //            FEGSystemHelper::logit("subject: " .$subject, "email-{$reportNameSanitized}.log", "FEGCronTasks/SystemEmailsDump");
               
             //$messageLog = str_ireplace(array("<br />","<br>","<br/>"), "\r\n", $message);           
-            $messageLog = nl2br($message);           
+            //$messageLog = nl2br($message);           
+            $messageLog = $message;           
             self::logit($messageLog, "{$lf}.html", $lpd, true);
         }
              
