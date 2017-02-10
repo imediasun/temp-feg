@@ -232,11 +232,13 @@
                             {{ SiteHelpers::activeLang('Quantity', (isset($fields['quantity']['language'])? $fields['quantity']['language'] : array())) }}
                         </label>
 <?php
-                            $quantity=0;
-for($i=0; $i < count($order_data['orderQtyArray']);$i++)
-                            {
-                                $quantity += $order_data['orderQtyArray'][$i];
-                            }
+$quantity=0;
+if(!empty($order_data['orderQtyArray'])){
+    for($i=0; $i < count($order_data['orderQtyArray']);$i++)
+    {
+        $quantity += $order_data['orderQtyArray'][$i];
+    }
+}
 ?>
                         <div class="col-md-8" id="quantity">
                             {{ $quantity }}
@@ -355,7 +357,14 @@ for($i=0; $i < count($order_data['orderQtyArray']);$i++)
 
                 </tr>
                     @else
-                    <tr><td colspan=5 class="text-center">Nothing  Found..</td></tr>
+                    <tr>
+                        @if($row->order_type_id == \App\Models\order::ORDER_TYPE_PART_GAMES)
+                            <td colspan="8" class="text-center">Nothing  Found..</td>
+                        @else
+                            <td colspan="7" class="text-center">Nothing  Found..</td>
+                        @endif
+
+                    </tr>
                     @endif
                 </tbody>
             </table>
