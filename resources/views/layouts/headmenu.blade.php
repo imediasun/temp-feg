@@ -97,6 +97,12 @@
      {
           $pageModule=url().'/dashboard';
      }
+else
+    {
+    $pageModule=\Route::getFacadeRoot()->current()->uri();
+    $pageModule=explode('/',$pageModule);
+    $pageModule=$pageModule[0];
+}
  ?>
 
 <script>
@@ -106,9 +112,8 @@
     $("#user_locations").on('change', function () {
 
         var location_id = $(this).val();
-        var pageModule = "{{ $pageModule }}";
-        var pageModule = pageModule.split('?');
-        location.href = pageModule[0]+"/changelocation/" + location_id;
+        var pageModule ="{{ $pageModule }}";
+        location.href ="{{ url() }}/"+pageModule+"/changelocation/" + location_id;
     });
 
 </script>
