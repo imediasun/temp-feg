@@ -914,16 +914,17 @@ class MylocationgameController extends Controller
                 } else {
                     echo "sorry";
                 }
-            } else {
+            } 
+            else {
                 //  die('smaller than one');
                 $this->generate_asset_tag($asset_ids);
+                $zip->addFile($file, basename($file));
+                $zip->close();
                 //$location = $this->get_game_info_by_id($id, 'location_id');
 
                 //   $location = $this->get_game_info_by_id($id, 'location_id');
                 $file = storage_path() . '/qr/' . $asset_ids . '.png';
                 if (file_exists($zip_file)) {
-                    $zip->addFile($file, basename($file));
-                    $zip->close();
                     header('Content-type: application/zip');
                     header('Content-Description: File Transfer');
                     // header('Content-Disposition: attachment; filename="'.basename($zip_file).'"');
