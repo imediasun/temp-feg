@@ -918,7 +918,6 @@ class MylocationgameController extends Controller
             } else {
                 //  die('smaller than one');
                 $this->generate_asset_tag($asset_ids);
-                sleep(5);
                 //$location = $this->get_game_info_by_id($id, 'location_id');
 
                 //   $location = $this->get_game_info_by_id($id, 'location_id');
