@@ -406,10 +406,10 @@ class FEGSystemHelper
     }
     public static function laravelMail($to, $subject, $message, $from = "support@fegllc.com", $options = array()) {
         $view = empty($options['view']) ? '': $options['view'];
-        $options['to'] = $to;
-        $options['subject'] = $subject;
-        $options['message'] = $message;
-        $options['from'] = $from;
+//        $options['to'] = $to;
+//        $options['subject'] = $subject;
+//        $options['message'] = $message;
+//        $options['from'] = $from;
         
         if (!empty($view)) {
             Mail::send($view, $options, function ($mail) use ($options) {
@@ -834,7 +834,7 @@ $message
             $opt['bcc'] = $bcc;
         }        
         self::logit("Sending Email", $lf, $lp);
-        self::sendEmail($to, $subject, $message, $from, $opt);
+        self::sendEmail($to, $subject, $message, $from, $options);
         self::logit("Email sent", $lf, $lp);
     }
 
