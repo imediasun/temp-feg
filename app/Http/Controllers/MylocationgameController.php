@@ -900,6 +900,7 @@ class MylocationgameController extends Controller
                         die('file not exists');
                 }
                 $zip->close();
+                sleep(1);
                 if (file_exists($zip_file)) {
                     header('Content-type: application/zip');
                     header('Content-Description: File Transfer');
@@ -917,7 +918,7 @@ class MylocationgameController extends Controller
             } else {
                 //  die('smaller than one');
                 $this->generate_asset_tag($asset_ids);
-
+                sleep(1);
                 //$location = $this->get_game_info_by_id($id, 'location_id');
 
                 //   $location = $this->get_game_info_by_id($id, 'location_id');
