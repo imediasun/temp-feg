@@ -325,7 +325,7 @@ for($i=0; $i < count($order_data['orderQtyArray']);$i++)
                 <th>Game</th>
                 @endif
                 <th>Total ($)</th>
-                <th>Sub Total</th>
+
                 </tr>
                 </thead>
                 <tbody>
@@ -342,16 +342,15 @@ for($i=0; $i < count($order_data['orderQtyArray']);$i++)
                             <td>{{  $order_data['gamenameArray'][$i] }}</td>
                         @endif
                         <td>{{ CurrencyHelpers::formatCurrency(number_format(  $order_data['orderPriceArray'][$i]* $order_data['orderQtyArray'][$i],3))}}</td>
-                        <td>{{CurrencyHelpers::formatCurrency(number_format($order_data['order_total'],3)) }}</td>
-                    </tr>
+                          </tr>
                     @endfor
-                {{--<tr>--}}
+                <tr>
 
-                    {{--<td>&nbsp</td><td>&nbsp</td><td>&nbsp</td><td>&nbsp</td><td>&nbsp</td><td>&nbsp</td>--}}
-                    {{--<td  colspan="1">Sub Total</td>--}}
-                    {{--<td>{{CurrencyHelpers::formatCurrency(number_format($order_data['order_total'],3)) }}</td>--}}
+                    <td>&nbsp</td><td>&nbsp</td><td>&nbsp</td><td>&nbsp</td><td>&nbsp</td><td>&nbsp</td>
+                    <td  colspan="1">Sub Total</td>
+                    <td>{{CurrencyHelpers::formatCurrency(number_format($order_data['order_total'],3)) }}</td>
 
-                {{--</tr>--}}
+                </tr>
                     @else
                     <tr><td colspan=5 class="text-center">Nothing  Found..</td></tr>
                     @endif
