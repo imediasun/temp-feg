@@ -778,12 +778,14 @@ class FEGSystemHelper
         
         $lp = 'FEGCronTasks/SystemEmails';
         $lpd = 'FEGCronTasks/SystemEmailsDump';
-        extract(array_merge(array(
+        $options = array_merge(array(
             'from' => "support@fegllc.com",
             'reportName' => "Test",
             'reportNamePrefix' => "",
             'reportNameSuffix' => "",
-        ), $options));
+        ), $options);
+        
+        extract($options);
         
         $reportNameSanitized = preg_replace('/[\W]/', '-', strtolower($reportName));
         $lf = "email-"
@@ -802,8 +804,8 @@ class FEGSystemHelper
 [CC: $cc]<br/>
 [BCC: $bcc]<br/>                   
 ***************** DEBUG INFO END *****************************<br><br>
-$message
-******************************************* EMAIL END ********************************<br>";
+$message    
+<br><br>******************************************* EMAIL END ********************************<br>";
             
             $subject = "[TEST] ". $subject;
             $emailRecipients = self::getSystemEmailRecipients($reportName, null, true);
