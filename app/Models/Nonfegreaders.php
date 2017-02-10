@@ -103,7 +103,7 @@ class nonfegreaders extends Sximo  {
         
         $selectQuery = self::querySelect(). " {$orderConditional} {$limitConditional}";
         $rawRows = \DB::select($selectQuery);
-        $rows = self::processRows($rawRows);
+        $rows = $rawRows;//self::processRows($rawRows);
         
 		return $results = array(
                     'topMessage' => $topMessage,
