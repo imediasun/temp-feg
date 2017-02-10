@@ -762,9 +762,10 @@ class Sximo extends Model {
         }
         return $value;
     }
-    public function get_game_info_by_id($game_id=null,$field=null, $default = 'NONE')
+    public function get_game_info_by_id($game_id=null, $field=null, $default = 'NONE')
     {
-        $query =\DB::select('SELECT '.$field.'
+        $fieldName = empty($field) ? " G.*, T.game_title, T.game_type_id as game_type_id_from_title " : $field;
+        $query =\DB::select('SELECT '.$fieldName.'
 								 FROM game_title T
 						 	LEFT JOIN game G ON G.game_title_id = T.id
 							    WHERE G.id = '.$game_id);

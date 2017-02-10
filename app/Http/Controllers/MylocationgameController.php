@@ -506,6 +506,19 @@ class MylocationgameController extends Controller
             
             if (empty($move_id) && empty($prevLocation)) {
                 $newData['date_in_service'] = $nowDate;
+                
+                // Get game details for email etc.
+                $gameDetails = $this->model->get_game_info_by_id($id, null, null);
+                $gameDetails->status_id  = $status;
+                $gameDetails->location_id  = $location;
+                $gameDetails->location_name  = $this->model->get_location_info_by_id($location, 'location_name', '');
+                $gameDetails->intended_first_location  = 0;
+                $gameDetails->date_last_move  = $nowDate;
+                $gameDetails->assetTag = $this->generate_asset_tag($id);
+
+                \App\Library\FEG\System\Email\GenericReports::newGameReceived([
+                        'game' => $gameDetails,
+                    ]);
             }
             if (!empty($move_id)) {
                 \DB::table('game_move_history')
@@ -857,6 +870,8 @@ class MylocationgameController extends Controller
                 $font->angle(0);
             })               
             ->save($filename, 100);
+        
+        return $filename;
     }
 
     function postAssettag(Request $request, $asset_ids = null)
