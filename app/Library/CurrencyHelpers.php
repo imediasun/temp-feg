@@ -26,7 +26,7 @@ class CurrencyHelpers
          return '$ '.$value;
      }
      public static function formatPrice($value){
-         return '$ '. number_format($value,3);
+         return '$ '. number_format((float)$value,3);
      }
     
 }
