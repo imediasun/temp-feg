@@ -851,11 +851,11 @@ class MylocationgameController extends Controller
         }
 
         \Image::make($filename)
-            ->resizeCanvas(0, -4, 'bottom', true)
-            ->resizeCanvas(0, 20, 'top', true, 'ffffff')
+            ->resizeCanvas(0, -6, 'bottom', true, 'ffffff')
+            ->resizeCanvas(0, 18, 'top', true, 'ffffff')
             ->text($id, $xCenter, $idYTop, function($font) use ($idFont){
                 $font->file($idFont);
-                $font->size(18);
+                $font->size(19);
                 $font->color('#000');
                 $font->align('center');
                 $font->valign('top');
@@ -863,7 +863,7 @@ class MylocationgameController extends Controller
             })               
             ->text($game_title, $xCenter, $titleYTop, function($font)  use ($titleFont){
                 $font->file($titleFont);
-                $font->size(10);
+                $font->size(8);
                 $font->color('#000');
                 $font->align('center');
                 $font->valign('top');
