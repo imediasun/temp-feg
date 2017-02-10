@@ -6,6 +6,8 @@ use PDO;
 use DB;
 use Carbon\Carbon;
 use App\Library\MyLog;
+use PHPMailer;
+use Mail;
 
 
 class FEGSystemHelper
@@ -294,6 +296,133 @@ class FEGSystemHelper
         
         mail($to, $subject, $message, $headers);
     }
+    
+    public static function phpMailer($to, $subject, $message, $from = "support@fegllc.com", $options = array()) {
+        $mail = new PHPMailer;
+
+        //$mail->SMTPDebug = 3;                               // Enable verbose debug output
+
+        //$mail->isSMTP();                                      // Set mailer to use SMTP
+        //$mail->Host = 'smtp.gmail.com';  // Specify main and backup SMTP servers
+        //$mail->SMTPAuth = true;                               // Enable SMTP authentication
+        //$mail->Username = '';                 // SMTP username
+        //$mail->Password = '';                           // SMTP password
+        //$mail->SMTPSecure = 'tls';                            // Enable TLS encryption, `ssl` also accepted
+        //$mail->Port = 587;                                    // TCP port to connect to
+
+        $mail->From = 'from@example.com';
+        $mail->FromName = 'Mailer';
+        $mail->addAddress('name@domain.com', 'User');     // Add a recipient
+        $mail->addAddress('ellen@example.com');               // Name is optional
+        $mail->addReplyTo('info@example.com', 'Information');
+        $mail->addCC('cc@example.com');
+        $mail->addBCC('bcc@example.com');
+
+        $mail->addAttachment('');         // Add attachments
+        $mail->addAttachment('/tmp/image.jpg', 'new.jpg');    // Optional name
+        $mail->isHTML(true);                                  // Set email format to HTML
+
+        $mail->Subject = 'Here is the subject';
+        $mail->Body    = 'This is the HTML message body <b>in bold!</b>';
+        $mail->AltBody = 'This is the body in plain text for non-HTML mail clients';
+
+        if(!$mail->send()) {
+            echo 'Message could not be sent.';
+            echo 'Mailer Error: ' . $mail->ErrorInfo;
+        } else {
+            echo 'Message has been sent';
+        }
+    }
+    
+    public static function configLaravelMail($mail, $options) {
+        explode($options);
+
+        $mail->subject($subject);
+
+        $toArray = explode(',', $to);            
+        if (count($toArray)== 1 && isset($toName)) {
+            $mail->to($toArray[0], $toName);
+        }
+        else {
+            $mail->to($toArray);
+        }
+
+        if (isset($cc)) {
+            $ccArray = explode(',', $cc);            
+            if (count($ccArray)== 1 && isset($ccName)) {
+                $mail->cc($ccArray[0], $ccName);
+            }
+            else {
+                $mail->cc($ccArray);
+            }                            
+        }
+        if (isset($bcc)) {
+            $bccArray = explode(',', $bcc);            
+            if (count($bccArray)== 1 && isset($bccName)) {
+                $mail->bcc($bccArray[0], $bccName);
+            }
+            else {
+                $mail->bcc($bccArray);
+            }                            
+        }
+        if (isset($sender)) {
+            $senderArray = explode(',', $sender);            
+            if (count($senderArray)== 1 && isset($senderName)) {
+                $mail->sender($senderArray[0], $senderName);
+            }
+            else {
+                $mail->sender($senderArray);
+            }                            
+        }            
+        if (isset($from)) {
+            $fromArray = explode(',', $from);            
+            if (count($fromArray)== 1 && isset($fromName)) {
+                $mail->from($fromArray[0], $fromName);
+            }
+            else {
+                $mail->from($fromArray);
+            }                            
+        }            
+        if (isset($replyTo)) {
+            $replyToArray = explode(',', $replyTo);            
+            if (count($replyToArray)== 1 && isset($replyToName)) {
+                $mail->replyTo($replyToArray[0], $replyToName);
+            }
+            else {
+                $mail->replyTo($replyTo);
+            }                            
+        }            
+
+        if (isset($attach)) {
+            if (is_array($attach)) {
+                foreach($attach as $attachment) {
+                    $mail->attach($attachment);
+                }
+            }
+            else {
+                $mail->attach($attach);
+            }
+        }        
+    }
+    public static function laravelMail($to, $subject, $message, $from = "support@fegllc.com", $options = array()) {
+        $view = empty($options['view']) ? '': $options['view'];
+        $options['to'] = $to;
+        $options['subject'] = $subject;
+        $options['message'] = $message;
+        $options['from'] = $from;
+        
+        if (!empty($view)) {
+            Mail::send($view, $options, function ($mail) use ($options) {
+                self::configLaravelMail($mail, $options);
+            });            
+        }
+        else {
+            Mail::raw($message, function ($mail) use ($options) {
+                self::configLaravelMail($mail, $options);
+            });            
+        }
+    }
+    
     public static function sendEmail($to, $subject, $message, $from = "support@fegllc.com", $options = array()) { 
         //support@fegllc.com
         if (empty($from)) {
@@ -304,7 +433,12 @@ class FEGSystemHelper
         
         $preventEmailSendingSetting = env('PREVENT_FEG_SYSTEM_EMAIL', false);        
         if (!$preventEmailSendingSetting)  {
-            self::phpMail($to, $subject, $message, $from, $options);            
+            if (isset($options['attach'])) {
+                self::laravelMail($to, $subject, $message, $from, $options);
+            }
+            else {
+                self::phpMail($to, $subject, $message, $from, $options);
+            }            
         }
     }
     
@@ -639,4 +773,138 @@ class FEGSystemHelper
         }
         return $emails;
     }    
+    
+    public static function sendSystemEmail($options) {  
+        
+        $lp = 'FEGCronTasks/SystemEmails';
+        $lpd = 'FEGCronTasks/SystemEmailsDump';
+        extract(array_merge(array(
+            'from' => "support@fegllc.com",
+            'reportName' => "Test",
+            'reportNamePrefix' => "",
+            'reportNameSuffix' => "",
+        ), $options));
+        
+        $reportNameSanitized = preg_replace('/[\W]/', '-', strtolower($reportName));
+        $lf = "email-"
+                . (empty($reportNamePrefix)? "" : "{$reportNamePrefix}-")
+                . $reportNameSanitized
+                . (empty($reportNameSuffix)? "" : "-{$reportNameSuffix}")
+                . ".log";
+        
+        if ($isTest) {
+            
+            $message =  "
+*************** EMAIL START --- DEBUG INFO *******************<br>
+[FROM: $from]<br/>
+[SUBJECT: $subject]<br/>
+[TO: $to]<br/>
+[CC: $cc]<br/>
+[BCC: $bcc]<br/>                   
+***************** DEBUG INFO END *****************************<br><br>
+$message
+******************************************* EMAIL END ********************************<br>";
+            
+            $subject = "[TEST] ". $subject;
+            $emailRecipients = self::getSystemEmailRecipients($reportName, null, true);
+            $to = $emailRecipients['to'];
+            $cc = $emailRecipients['cc'];
+            $bcc = $emailRecipients['bcc'];
+            if (empty($to)) {
+                $to = "e5devmail@gmail.com";
+            }
+            
+//            FEGSystemHelper::logit("to: " .$to, "email-{$reportNameSanitized}.log", "FEGCronTasks/SystemEmailsDump");
+//            FEGSystemHelper::logit("cc: " .$cc, "email-{$reportNameSanitized}.log", "FEGCronTasks/SystemEmailsDump");
+//            FEGSystemHelper::logit("bcc: " .$bcc, "email-{$reportNameSanitized}.log", "FEGCronTasks/SystemEmailsDump");
+//            FEGSystemHelper::logit("subject: " .$subject, "email-{$reportNameSanitized}.log", "FEGCronTasks/SystemEmailsDump");
+              
+            //$messageLog = str_ireplace(array("<br />","<br>","<br/>"), "\r\n", $message);           
+            $messageLog = nl2br($message);           
+            self::logit($messageLog, "{$lf}.html", $lpd, true);
+        }
+        
+        $opt = array();
+        if (!empty($cc)) {
+            $opt['cc'] = $cc;
+        }
+        if (!empty($bcc)) {
+            $opt['bcc'] = $bcc;
+        }        
+        self::logit("Sending Email", $lf, $lp);
+        self::sendEmail($to, $subject, $message, $from, $opt);
+        self::logit("Email sent", $lf, $lp);
+    }
+
+    public static function getOption($optionName, $default = '', $all = false, $skipInactive = false, $details = false) {
+        $table = "feg_system_options";
+        $value = $default;
+        if ($details) {
+            $value = new \stdClass();
+            $value->option_name = $optionName;
+            $value->option_value = $default;
+            $value->is_active = 1;
+            $value->notes = '';
+            $value->created_at = null;
+            $value->updated_at = null;
+        }
+        if ($all) {            
+            $value = [$value];
+        }        
+        $q = DB::table($table)->where('option_name', $optionName);
+        if ($skipInactive) {
+            $q->where('is_active', 1);
+        }
+        $data = $q->get();
+        if (!empty($data)) {
+            $firstData = $data[0];
+            if ($details && $all) {                
+                $value = $data;
+            }
+            elseif ($details) {
+                $value = $firstData;
+            }
+            elseif ($all) {
+                $value = [];
+                foreach($data as $item) {
+                    $value[] = $item->option_value;
+                }
+            }
+            else {
+                $value = $firstData->option_value;
+            }
+        }
+        
+        return $value;
+    }
+    public static function updateOption($optionName, $value = '', $options = array()) {
+        $table = "feg_system_options";
+        $data = [
+                'option_name' => $optionName,
+                'option_value' => $value
+            ];
+        $data['notes'] = isset($options['notes']) ? $options['notes'] : '';
+        $data['is_active'] = isset($options['is_active']) ? $options['is_active'] : '';
+        
+        $q = DB::table($table);
+        if (isset($option['id'])) {
+            $q->where('id', $option['id']);
+        }
+        else {
+            $q->where('option_name', $optionName);
+        }
+        $q->update($data);
+        return $value;
+    }
+    public static function addOption($optionName, $value = '', $options = array()) {
+        $table = "feg_system_options";
+        $data = [
+                'option_name' => $optionName,
+                'option_value' => $value
+            ];
+        $data['notes'] = isset($options['notes']) ? $options['notes'] : '';
+        $data['is_active'] = isset($options['is_active']) ? $options['is_active'] : '';
+        DB::table($table)->insert($data);
+        return $value;        
+    }
 }

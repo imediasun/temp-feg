@@ -1820,66 +1820,7 @@ class ReportGenerator
     }
     
     public static function sendEmailReport($options) {  
-        
-        $lp = 'FEGCronTasks/SystemEmails';
-        $lpd = 'FEGCronTasks/SystemEmailsDump';
-        extract(array_merge(array(
-            'from' => "support@fegllc.com",
-            'reportName' => "Test",
-            'reportNamePrefix' => "",
-            'reportNameSuffix' => "",
-        ), $options));
-        
-        $reportNameSanitized = preg_replace('/[\W]/', '-', strtolower($reportName));
-        $lf = "email-"
-                . (empty($reportNamePrefix)? "" : "{$reportNamePrefix}-")
-                . $reportNameSanitized
-                . (empty($reportNameSuffix)? "" : "-{$reportNameSuffix}")
-                . ".log";
-        
-        if ($isTest) {
-            
-            $message =  "
-*************** EMAIL START --- DEBUG INFO *******************<br>
-[SUBJECT: $subject]<br/>
-[TO: $to]<br/>
-[FROM: $from]<br/>
-[CC: $cc]<br/>
-[BCC: $bcc]<br/>                   
-***************** DEBUG INFO END *****************************<br><br>
-$message
-******************************************* EMAIL END ********************************<br>";
-            
-            $subject = "[TEST] ". $subject;
-            $emailRecipients = FEGSystemHelper::getSystemEmailRecipients($reportName, null, true);
-            $to = $emailRecipients['to'];
-            $cc = $emailRecipients['cc'];
-            $bcc = $emailRecipients['bcc'];
-            if (empty($to)) {
-                $to = "e5devmail@gmail.com";
-            }
-            
-            $messageLog = str_ireplace(array("<br />","<br>","<br/>"), "\r\n", $message);
-            
-//            FEGSystemHelper::logit("to: " .$to, "email-{$reportNameSanitized}.log", "FEGCronTasks/SystemEmailsDump");
-//            FEGSystemHelper::logit("cc: " .$cc, "email-{$reportNameSanitized}.log", "FEGCronTasks/SystemEmailsDump");
-//            FEGSystemHelper::logit("bcc: " .$bcc, "email-{$reportNameSanitized}.log", "FEGCronTasks/SystemEmailsDump");
-//            FEGSystemHelper::logit("subject: " .$subject, "email-{$reportNameSanitized}.log", "FEGCronTasks/SystemEmailsDump");
-            
-            FEGSystemHelper::logit($messageLog, "{$lf}.html", $lpd, true);
-        }
-        
-        $opt = array();
-        if (!empty($cc)) {
-            $opt['cc'] = $cc;
-        }
-        if (!empty($bcc)) {
-            $opt['bcc'] = $bcc;
-        }        
-        FEGSystemHelper::logit("Sending Email", $lf, $lp);
-        FEGSystemHelper::sendEmail($to, $subject, $message, $from, $opt);
-        FEGSystemHelper::logit("Email sent", $lf, $lp);
+        FEGSystemHelper::sendSystemEmail($options);
     }
-
-
+    
 }
