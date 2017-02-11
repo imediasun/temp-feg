@@ -5,6 +5,7 @@ namespace App\Library\FEG\System;
 use Event;
 use PDO;
 use DB;
+use Route;
 use Carbon\Carbon;
 use App\Library\MyLog;
 use App\Library\DBHelpers;
@@ -33,6 +34,11 @@ class Formatter
      * @return string
      */
     public static function readerIDHTMLStyler($reader_id) {
+        $action =Route::getCurrentRoute()->getActionName(); 
+        $isExportAction = stripos($action, "@getExport") !== false || stripos($action, "@postExport") !== false;
+        if ($isExportAction) {
+            return $reader_id;
+        }
         $store_id_position = strripos($reader_id, '_');
         if ($store_id_position !== FALSE) {
             $reader_id = "<span style='color:#ccc;'>" . 
