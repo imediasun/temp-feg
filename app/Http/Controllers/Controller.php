@@ -82,8 +82,14 @@ abstract class Controller extends BaseController
 
             $limit = (!is_null($request->input('limit')) ? $request->input('limit') : null);
             $delimiter = empty($request->input('delimiter')) ? ' ' : $request->input('delimiter');
+            $assignedLocation = $param[0] == 'location' && strtolower(''. @$request->input('assigned')) == 'me';
             
-            $rows = $this->model->getComboselect($param, $limit, $parent);
+            if ($assignedLocation) {
+                $rows = $this->model->getUserAssignedLocation();
+            }
+            else {
+                $rows = $this->model->getComboselect($param, $limit, $parent);
+            }
 
             $items = array();
 
