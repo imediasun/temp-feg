@@ -729,8 +729,13 @@ abstract class Controller extends BaseController
 
         $info = $this->model->makeInfo($this->module);
         //$master  	= $this->buildMasterDetail();
-        $filter = (!is_null(Input::get('search')) ? $this->buildSearch() : '');
-
+        if (method_exists($this, 'getSearchFilterQuery')) {
+            $filter = $this->getSearchFilterQuery();
+        }
+        else {
+            $filter = (!is_null(Input::get('search')) ? $this->buildSearch() : '');
+        }
+        
         //$filter 	.=  $master['masterFilter'];
 //    $params = array(
 //        'params' => ''
