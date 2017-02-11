@@ -133,6 +133,7 @@ class {controller}Controller extends Controller {
 		}
 		$this->data['fields'] =  \AjaxHelpers::fieldLang($this->info['config']['forms']);
 		{masterdetailgrid}
+        $this->data['tableGrid'] = $this->info['config']['grid'];
 		$this->data['id'] = $id;
 		$this->data['access']		= $this->access;
 		return view('{class}.view',$this->data);	

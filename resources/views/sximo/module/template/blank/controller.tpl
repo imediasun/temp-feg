@@ -72,7 +72,7 @@ class {controller}Controller extends Controller {
 			return Redirect::to('dashboard')
 				->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus','error');
 					
-		
+		$this->data['tableGrid'] = $this->info['config']['grid'];
 		$this->data['access']		= $this->access;
 		return view('{class}.view',$this->data);	
 	}	
