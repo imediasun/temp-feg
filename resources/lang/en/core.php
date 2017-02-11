@@ -50,7 +50,7 @@ return array(
 	"m_groups" 			=> "Groups",
 	"m_pagecms" 		=> "Page CMS",
 	"m_taskspage" 		=> "System Tasks",
-	"m_systememailreportmanager" => "System Report Email Manager",
+	"m_systememailreportmanager" => "System Email Manager",
 	"m_menu" 			=> "Menu Management",
 	"m_logs" 			=> "Activity Logs",
 	"m_codebuilder" 	=> "Code Builder",
