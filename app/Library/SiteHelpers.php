@@ -1911,11 +1911,26 @@ class SiteHelpers
         return $row;
     }
 
+    static function getDebitTypes()
+    {
+        return \DB::table('debit_type')->get();
+    }
+
     static function getLocationDetails($id)
     {
         $locations = \DB::table('user_locations')
             ->join('location', 'user_locations.location_id', '=', 'location.id')
-            ->select('location.id', 'location.location_name', 'location.location_name_short', 'location.street1', 'location.state', 'location.city', 'location.zip')
+            ->join('debit_type', 'debit_type.id', '=', 'location.debit_type_id')
+            ->select(
+                    'location.id', 
+                    'location.location_name', 
+                    'location.location_name_short', 
+                    'location.debit_type_id', 
+                    'debit_type.company', 
+                    'location.street1', 
+                    'location.state', 
+                    'location.city', 
+                    'location.zip')
             ->where('location.active', 1)
             ->where('user_locations.user_id', '=', $id)->orderBy('id', 'asc')
             ->get();
