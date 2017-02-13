@@ -2257,9 +2257,12 @@ class SiteHelpers
     public static function getUserGroup ($id=null) {
         $groupId = '';
         if (empty($id)) {
+            $id = \Session::get('uid');
             $groupId = \Session::get('gid');
         }
-        $groupId = \DB::table('users')->where('id', '=', $id)->pluck('group_id');
+        else {
+            $groupId = \DB::table('users')->where('id', '=', $id)->pluck('group_id');
+        }        
         return $groupId;
     }
 }

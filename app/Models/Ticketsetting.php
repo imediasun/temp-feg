@@ -39,13 +39,16 @@ class ticketsetting extends Sximo  {
         $nGroups = $data['newTicketNotificaitonInLocationOnly']['groups'];
         $nUsers = $data['newTicketNotificaitonInLocationOnly']['users'];
                         
-        $permissions['omniscient'] = in_array($gid, $oGroups) || in_array($id, $oUsers);
-        $permissions['followAllInLocation'] = in_array($gid, $fGroups) || in_array($id, $fUsers);
-        $permissions['newTicketNotificaitonInLocationOnly'] = in_array($gid, $nGroups) || in_array($id, $nUsers);
+        $permissions['omniscient'] = (!empty($gid) && !empty($oGroups) && in_array($gid, $oGroups)) || 
+                (!empty($id) && !empty($oUsers) && in_array($id, $oUsers));
+        $permissions['followAllInLocation'] =  (!empty($gid) && !empty($fGroups) && in_array($gid, $fGroups)) || 
+                (!empty($id) && !empty($fUsers) && in_array($id, $fUsers));               
+        $permissions['newTicketNotificaitonInLocationOnly'] = (!empty($gid) && !empty($nGroups) && in_array($gid, $nGroups)) || 
+                (!empty($id) && !empty($nUsers) && in_array($id, $nUsers));
         
-        return $permissions;
-        
+        return $permissions;        
 	}
+    
 	public static function getAllPermissions(){
 		$data = DB::table('sbticket_setting')->get();
         $omniscients = ['groups' => [], 'users' => ''];
@@ -80,7 +83,7 @@ class ticketsetting extends Sximo  {
         return $permissions;
 	}
 	public static function isUserOmniscient($id = null){
-        $permissions = self::getUserPermissions($id);        
+        $permissions = self::getUserPermissions($id);           
         return $permissions['omniscient'];
 	}
 	public static function getGlobalSubscribers($location = null){
