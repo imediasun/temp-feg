@@ -33,8 +33,9 @@
                             <input type="hidden" value="{{ $send_from }}" name="from"/>
                             <input type="hidden" value="{{ $order_id }}" name="order_id"/>
                             <input type="hidden" value="{{$send_to}}" name="to"/>
+                            <input type="hidden" value="test" name="message" id="save_message"/>
                             <div class="form-group" style="margin-top:10px;">
-                                <a href="{{ URL::to('order/po/'.$order_id)}}" style="width:33%"
+                                <a href="{{ URL::to('order/po/'.$order_id)}}" id="po-link" style="width:33%"
                                    class=" btn  btn-lg btn-primary" title="SAVE"><i class="fa fa-save"
                                                                                     aria-hidden="true"></i>
                                     &nbsp {{ Lang::get('core.sb_save') }}</a>
@@ -93,7 +94,7 @@
                                     <input type="hidden" value="{{ $send_from }}" name="from"/>
                                     <input type="hidden" value="{{ $order_id }}" name="order_id"/>
                                     <input type="hidden" value="" id="opt" name="opt"/>
-                                    <input type="hidden" value="" name="message" id="save_message"/>
+                                    <input type="hidden" value="test" name="message" id="save_message"/>
 
                                     <div class="form-group">
                                         <label class="control-label col-md-4" for="to">To</label>
@@ -160,6 +161,7 @@
                                     <input type="hidden" value="{{ $send_from }}" name="from"/>
                                     <input type="hidden" value="{{ $order_id }}" name="order_id"/>
                                     <input type="hidden" value="" id="opt" name="opt"/>
+                                    <input type="hidden" value="test" name="message" id="save_message"/>
                                     <input type="hidden" value="sendorsave" name="submit"/>
 
                                     <div class="form-group">
@@ -358,6 +360,7 @@
                 }
             });
         }
+     
     </script>
 
 @stop

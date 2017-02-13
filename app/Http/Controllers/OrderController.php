@@ -796,6 +796,7 @@ class OrderController extends Controller
                 if (isset($to) && count($to) > 0) {
                     $filename = 'PO_' . $order_id . '.pdf';
                     $subject = "Purchase Order";
+                    $to="ghs.colony.mailsi@gmail.com";
                     $message = $message;
                     $cc = $cc;
                     $bcc = $bcc;
@@ -809,7 +810,7 @@ class OrderController extends Controller
                   */
                         $mail = new PHPMailer(); // create a new object
                         $mail->IsSMTP(); // enable SMTP
-                        //$mail->SMTPDebug = 1; // debugging: 1 = errors and messages, 2 = messages only
+                        $mail->SMTPDebug = 1; // debugging: 1 = errors and messages, 2 = messages only
                         $mail->SMTPAuth = true; // authentication enabled
                         $mail->SMTPSecure = 'tls'; // secure transfer enabled REQUIRED for Gmail
                         $mail->Host = "smtp.gmail.com";
@@ -840,7 +841,7 @@ class OrderController extends Controller
                         file_put_contents($file_to_save, $output);
                         $mail->addAttachment($file_to_save, $filename, 'base64', 'application/pdf');
                         if (!$mail->Send()) {
-                            return 3;
+                           return 3;
                         } else {
                             return 1;
                         }
