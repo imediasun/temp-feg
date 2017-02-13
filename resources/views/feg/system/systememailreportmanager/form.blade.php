@@ -1,4 +1,4 @@
-
+{{--*/      $isEdit = !empty($ID)               /*--}}
 @if($setting['form-method'] =='native')
 <div class="sbox">
     <div class="sbox-title">  
@@ -11,7 +11,7 @@
 @endif	
         {!! Form::open(array('url'=>'feg/system/systememailreportmanager/save/'.SiteHelpers::encryptID($row['id']), 'class'=>'form-horizontal','files' => false , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'systemreportsemailmanagerFormAjax')) !!}
         <div class="col-md-12">
-            <fieldset><legend>System Email Reports Manager - Record Editor</legend>
+            <fieldset><legend>System Email Manager - @if($isEdit) Edit @else Add @endif Emails</legend>
             {!! Form::hidden('id', $row['id']) !!}
             <div class="panel white-bg">
                  <div class="panel-heading">
@@ -19,8 +19,8 @@
                  </div>
                  <div class="panel-body">
                     <div class="form-group  " >
-                      <label for="Report Name" class=" control-label col-md-4 text-left">
-                      {!! SiteHelpers::activeLang('Report Name', (isset($fields['report_name']['language'])? $fields['report_name']['language'] : array())) !!}
+                      <label for="Configuration Name" class=" control-label col-md-4 text-left">
+                      {!! SiteHelpers::activeLang('Configuration Name', (isset($fields['report_name']['language'])? $fields['report_name']['language'] : array())) !!}
                       </label>
                       <div class="col-md-6">
                         {!! Form::text('report_name', $row['report_name'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
@@ -147,7 +147,7 @@
             </table>            
             <div class="panel white-bg">
                  <div class="panel-heading">
-                     <strong>Emails recipient while testing</strong>
+                     <strong>Email recipients while testing</strong>
                  </div>
                  <div class="panel-body"> 
               <div class="form-group  " >

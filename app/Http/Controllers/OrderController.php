@@ -552,8 +552,6 @@ class OrderController extends Controller
 
     function postSaveorsendemail(Request $request)
     {
-
-
         $type = $request->get('submit');
         $from = $request->get('from');
         $order_id = $request->get('order_id');
@@ -569,19 +567,13 @@ class OrderController extends Controller
         }
         elseif($type == "send") {
             $to = $request->get('to');
-            $to=getMultipleEmails($to);
             $cc = $this->get('cc');
-            $cc=getMultipleEmails($cc);
             $bcc = $this->get('bcc');
-            $bcc = $this->getMultipleEmails($bcc);
             $message = $request->get('message');
         } else {
             $to = $request->get('to1');
-            $to=getMultipleEmails($to);
             $cc = $this->get('cc1');
-            $cc=getMultipleEmails($cc);
             $bcc = $this->get('bcc1');
-            $bcc = $this->getMultipleEmails($bcc);
             $message = $request->get('message');
         }
         $opt = $request->get('opt');
@@ -602,7 +594,7 @@ class OrderController extends Controller
             {
                 return response()->json(array(
                     'message' => \Lang::get('core.mail_sent_success'),
-                    'status' => 'error',
+                    'status' => 'success',
 
                 ));
                }
@@ -809,23 +801,23 @@ class OrderController extends Controller
                   */
                         $mail = new PHPMailer(); // create a new object
                         $mail->IsSMTP(); // enable SMTP
-                        //$mail->SMTPDebug = 1; // debugging: 1 = errors and messages, 2 = messages only
-                        $mail->SMTPAuth = true; // authentication enabled
-                        $mail->SMTPSecure = 'tls'; // secure transfer enabled REQUIRED for Gmail
-                        $mail->Host = "smtp.gmail.com";
+                        $mail->Host = 'smtp.gmail.com';
                         $mail->Port = 587; // or 587
-                        $mail->IsHTML(true);
-                        $mail->Username = $google_acc->g_mail;                 // SMTP username
+                        $mail->SMTPSecure = 'tls'; // secure transfer enabled REQUIRED for Gmail
+                        $mail->SMTPAuth = true; // authentication enabled
+
+                      //  $mail->SMTPDebug = 1; // debugging: 1 = errors and messages, 2 = messages only
+
+                        //$mail->IsHTML(true);
+                        $mail->Username = $google_acc->g_mail;          // SMTP username
                         $mail->Password = trim(base64_decode($google_acc->g_password), env('SALT_KEY'));
                         $mail->SetFrom($google_acc->g_mail);
                         $mail->Subject = $subject;
                         $mail->Body = $message;
-                       // echo "<pre>";print_r($to);die();
                         //foreach ($to as $t) {
-                            $mail->addAddress($to);
+                        $mail->addAddress($to);
                         //}
-                        $mail->addReplyTo($google_acc->g_mail);
-                     /*   if (count($cc) > 0) {
+                        /*   if (count($cc) > 0) {
                             foreach ($cc as $c) {
                                 $mail->addCC($c);
                             }
@@ -835,15 +827,17 @@ class OrderController extends Controller
                                 $mail->addBCC($bc);
                             }
                         }*/
+                        $mail->addReplyTo($google_acc->g_mail);
                         $output = $pdf->output();
                         $file_to_save = public_path() . '/orders/' . $filename;
                         file_put_contents($file_to_save, $output);
                         $mail->addAttachment($file_to_save, $filename, 'base64', 'application/pdf');
-                        if (!$mail->Send()) {
+                          if (!$mail->Send()) {
                             return 3;
                         } else {
                             return 1;
                         }
+                        die;
                     } else {
                        $this->sendPhpEmail($message,$to,$from,$subject,$pdf,$filename,$cc,$bcc);
                     }
@@ -1112,9 +1106,9 @@ function sendPhpEmail($message,$to,$from,$subject,$pdf,$filename,$cc,$bcc)
         $mail->SetFrom('dev2@shayansolutions.com');
         $mail->Subject = "Test";
         $mail->Body = "hello";
-        $mail->AddAddress("dev3@shayansolutions.com");
-        $mail->addCC('shayansolutions@gmail.com');
-        $mail->addBCC('dev1@shayansolutions.com');
+        $mail->AddAddress("dev2@shayansolutions.com");
+        $mail->addCC('dev2@shayansolutions.com');
+        $mail->addBCC('dev2@shayansolutions.com');
         if (!$mail->Send()) {
             echo "Mailer Error: " . $mail->ErrorInfo;
         } else {
@@ -1196,10 +1190,7 @@ function sendPhpEmail($message,$to,$from,$subject,$pdf,$filename,$cc,$bcc)
         if (preg_match('/,/',$email)) {
             $email = explode(',', $email);
         }
-        else
-        {
-            $email=array($email);
-        }
+
         return $email;
     }
 
