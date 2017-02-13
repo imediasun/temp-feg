@@ -41,7 +41,23 @@ class GamesdisposedController extends Controller
         $this->data['access'] = $this->access;
         return view('gamesdisposed.index', $this->data);
     }
+    public function getSearchFilterQuery($customQueryString = null) {
+        // Filter Search for query
+        // build sql query based on search filters
+        $filter = is_null($customQueryString) ? (is_null(Input::get('search')) ? '' : $this->buildSearch()) : 
+            $this->buildSearch($customQueryString);
 
+        // Get assigned locations list as sql query (part)
+        $locationFilter = \SiteHelpers::getQueryStringForLocation('game', 'prev_location_id', [], " OR game.location_id=0 ");
+        // if search filter does not have location_id filter
+        // add default location filter
+        $frontendSearchFilters = $this->model->getSearchFilters(array('prev_location_id' => ''));
+        if (empty($frontendSearchFilters['prev_location_id'])) {
+            $filter .= $locationFilter;
+        } 
+        
+        return $filter;
+    }
     public function postData(Request $request)
     {
 
@@ -65,7 +81,7 @@ class GamesdisposedController extends Controller
         $order = (!is_null($request->input('order')) ? $request->input('order') : $this->info['setting']['ordertype']);
         // End Filter sort and order for query
         // Filter Search for query
-        $filter = (!is_null($request->input('search')) ? $this->buildSearch() : '');
+        $filter = $this->getSearchFilterQuery();
 
 
         $page = $request->input('page', 1);

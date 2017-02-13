@@ -163,6 +163,7 @@ class {controller}Controller extends Controller {
 			$this->data['row'] = $this->model->getColumnTable('{table}');
 		}
 		{masterdetailgrid}
+        $this->data['tableGrid'] = $this->info['config']['grid'];
 		$this->data['id'] = $id;
 		$this->data['access']		= $this->access;
 		$this->data['setting'] 		= $this->info['setting'];

@@ -1911,11 +1911,26 @@ class SiteHelpers
         return $row;
     }
 
+    static function getDebitTypes()
+    {
+        return \DB::table('debit_type')->get();
+    }
+
     static function getLocationDetails($id)
     {
         $locations = \DB::table('user_locations')
             ->join('location', 'user_locations.location_id', '=', 'location.id')
-            ->select('location.id', 'location.location_name', 'location.location_name_short', 'location.street1', 'location.state', 'location.city', 'location.zip')
+            ->join('debit_type', 'debit_type.id', '=', 'location.debit_type_id')
+            ->select(
+                    'location.id', 
+                    'location.location_name', 
+                    'location.location_name_short', 
+                    'location.debit_type_id', 
+                    'debit_type.company', 
+                    'location.street1', 
+                    'location.state', 
+                    'location.city', 
+                    'location.zip')
             ->where('location.active', 1)
             ->where('user_locations.user_id', '=', $id)->orderBy('id', 'asc')
             ->get();
@@ -1951,16 +1966,18 @@ class SiteHelpers
         return $locations;
     }       
 
-    static function getQueryStringForLocation($table, $fieldName = 'location_id')
+    static function getQueryStringForLocation($table, $fieldName = 'location_id', $addOnLocations = array(), $orClause = '')
     {
         $locationsData = self::getLocationDetails(\Session::get('uid'));
-        $locations = array();
+        $locations = is_array($addOnLocations) ? $addOnLocations : array();
         foreach($locationsData as $locationItem)
         {
             $locations[] = "'".$locationItem->id."'";
         }
         $locationsCSV = implode(',', $locations);
-        $queryString = " AND $table.$fieldName IN ($locationsCSV) ";
+        $queryString = " AND ($table.$fieldName IN ($locationsCSV) " .
+                (!empty($orClause) ? $orClause : '') . ")";
+        
         return $queryString;
     }
 

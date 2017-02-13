@@ -98,11 +98,11 @@
                 $('#edit-cols,#delete-cols').show();
             }
         $(".select3").select2({width: "98%"});
-        $("#order_type").select2({
+        renderDropdown($(".select2, .select3, .select4, select5"), { width:"98%"});
+        renderDropdown($("#order_type"), {
             dataType: 'json',
             placeholder: "Select an Order Type",
             data: <?php  echo json_encode($manageRequestInfo['order_dropdown-data']) ?>
-
         });
 
         if ($("#private").is(":checked")) {

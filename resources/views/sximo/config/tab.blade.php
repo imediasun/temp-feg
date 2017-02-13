@@ -2,7 +2,7 @@
 
 $tabs = array(
 		'' 		=> Lang::get('core.tab_siteinfo'),
-		'email'			=> Lang::get('core.tab_email'),
+//		'email'			=> Lang::get('core.tab_email'),
 		'security'		=> Lang::get('core.tab_loginsecurity') ,
 		'translation'	=> 'Translation',
 		'log'			=> Lang::get('Clear Cache & Logs')

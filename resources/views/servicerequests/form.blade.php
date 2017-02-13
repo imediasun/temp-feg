@@ -166,7 +166,7 @@
 										<?php
 										$date = DateHelpers::formatDate($row['need_by_date']);
 										?>
-									{!! Form::text('need_by_date', $date,array('class'=>'form-control', 'id'=>'my-datepicker', 'style'=>'width:150px !important;'   )) !!}
+									{!! Form::text('need_by_date', $date,array('class'=>'form-control date', 'id'=>'my-datepicker', 'style'=>'width:150px !important;'   )) !!}
 
 									<span class="input-group-addon "><i class="fa fa-calendar" id="icon"></i></span>
 								</div>
@@ -286,7 +286,7 @@ $(document).ready(function() {
 	$('.editor').summernote();
 	$('.previewImage').fancybox();	
 	$('.tips').tooltip();	
-	$(".select2").select2({ width:"98%"});	
+	renderDropdown($(".select2"), { width:"100%"});	
 	$('.date').datepicker({format:'mm/dd/yyyy',autoClose:true})
 	$('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});
 	$('input[type="checkbox"],input[type="radio"]').iCheck({
