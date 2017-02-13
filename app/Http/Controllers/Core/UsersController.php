@@ -331,6 +331,7 @@ class UsersController extends Controller
         $rules['g_password'] = 'min:8';
        
 
+        $rules['email'] = 'required|email|unique:users,email';
         if ($request->input('id') == '') {
             $rules['password'] = 'required|between:6,12';
             $rules['password_confirmation'] = 'required|between:6,12';
