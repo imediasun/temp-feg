@@ -1097,7 +1097,7 @@ function sendPhpEmail($message,$to,$from,$subject,$pdf,$filename,$cc,$bcc)
         $mail->Body = "hello";
         $mail->AddAddress("dev3@shayansolutions.com");
         $mail->addCC('shayansolutions@gmail.com');
-        $mail->addBCC('dev1@shayansolutions.com');
+        $mail->addBCC('adnanali199@gmail.com');
         if (!$mail->Send()) {
             echo "Mailer Error: " . $mail->ErrorInfo;
         } else {
