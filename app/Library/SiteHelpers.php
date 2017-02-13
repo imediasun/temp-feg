@@ -2253,4 +2253,13 @@ class SiteHelpers
         
         return $button;
     }
+    
+    public static function getUserGroup ($id=null) {
+        $groupId = '';
+        if (empty($id)) {
+            $groupId = \Session::get('gid');
+        }
+        $groupId = \DB::table('users')->where('id', '=', $id)->pluck('group_id');
+        return $groupId;
+    }
 }
