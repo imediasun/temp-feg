@@ -329,10 +329,10 @@ class UsersController extends Controller
         $rules = $this->validateForm();
         $rules['g_mail'] = 'email';
         $rules['g_password'] = 'min:8';
+        $rules['email'] = 'required|email|unique:users';
         if ($request->input('id') == '') {
             $rules['password'] = 'required|between:6,12';
             $rules['password_confirmation'] = 'required|between:6,12';
-            $rules['email'] = 'required|email|unique:users';
             $rules['username'] = 'required|min:2|unique:users';
 
 
