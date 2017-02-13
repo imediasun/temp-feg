@@ -913,7 +913,8 @@ function sendPhpEmail($message,$to,$from,$subject,$pdf,$filename,$cc,$bcc)
     {
 
         $this->data['data'] = $this->model->getOrderReceipt($order_id);
-        $this->data['data']['order_items'] = \DB::select('SELECT * , g.game_name  FROM order_contents O LEFT JOIN game g ON g.id = O.game_id WHERE order_id = ' . $order_id);
+        $this->data['data']['order_items'] = \DB::select('SELECT * , g.game_name, O.id as id  FROM order_contents O LEFT JOIN game g ON g.id = O.game_id WHERE order_id = ' . $order_id);
+
         return view('order.order-receipt', $this->data);
     }
 

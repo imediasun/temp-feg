@@ -52,7 +52,7 @@
                                     <td style="border:thin white dotted; padding:2px; text-align:center;">{{  $data['order_qty_'.$i] }}</td>
                                     <td style="border:thin white dotted; padding:2px; text-align:center;">
                                         <?php if(!empty($game_options)):?>
-                                        <select name='game_'.$i id='game_'.$i>
+                                        <select name='game_{{$i}}' id='game_{{$i}}'>
                                             @foreach($game_options as $key=>$value)
                                                 <option value="{{ $key }}"> {{ $value }} </option>
                                             @endforeach
@@ -60,8 +60,8 @@
                                         <?php endif; ?>
                                     </td>
                                 </tr>
-                                <input type="hidden" name='order_qty_'.$i value="{{ $data['order_qty_'.$i] }}" id='order_qty_'.$i/>
-                                <input type="hidden" name='product_id_'.$i value="{{ $data['product_id_'.$i] }}" id='product_id_'.$i/>
+                                <input type="hidden" name='order_qty_{{$i}}' value="{{ $data['order_qty_'.$i] }}" id='order_qty_{{$i}}'/>
+                                <input type="hidden" name='product_id_{{$i}}' value="{{ $data['product_id_'.$i] }}" id='product_id_{{$i}}'/>
                             @endfor
 
                             @else
