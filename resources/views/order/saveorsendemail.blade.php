@@ -161,7 +161,6 @@
                                     <input type="hidden" value="{{ $send_from }}" name="from"/>
                                     <input type="hidden" value="{{ $order_id }}" name="order_id"/>
                                     <input type="hidden" value="" id="opt" name="opt"/>
-                                    <input type="hidden" value="test" name="message" id="save_message"/>
                                     <input type="hidden" value="sendorsave" name="submit"/>
 
                                     <div class="form-group">
@@ -360,7 +359,7 @@
                 }
             });
         }
-     
+
     </script>
 
 @stop
