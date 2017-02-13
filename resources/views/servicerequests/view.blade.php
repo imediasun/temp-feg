@@ -74,7 +74,7 @@ $commentsCount =  $comments->count();
 								<td><?php
 
 									foreach ($row->assign_employee_names as $index => $name) :
-										echo (++$index) . '.  ' . isset($name[0]->first_name) ? $name[0]->first_name : "" . ' ' . isset($name[0]->last_name)?$name[0]->last_name:"" . '</br>';
+										echo (++$index) . '.  ' . (isset($name[0]->first_name) ? $name[0]->first_name : "") . ' ' . (isset($name[0]->last_name)?$name[0]->last_name:"") . '</br>';
 									endforeach;
 
 
