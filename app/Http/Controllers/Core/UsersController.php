@@ -329,7 +329,8 @@ class UsersController extends Controller
         $rules = $this->validateForm();
         $rules['g_mail'] = 'email';
         $rules['g_password'] = 'min:8';
-        $rules['email'] = 'required|email|unique:users';
+       
+
         if ($request->input('id') == '') {
             $rules['password'] = 'required|between:6,12';
             $rules['password_confirmation'] = 'required|between:6,12';
@@ -337,6 +338,7 @@ class UsersController extends Controller
 
 
         } else {
+            $rules['email'] = 'required|email|unique:users,email,'.$request->input('id');
             if ($request->input('password') != '') {
                 $rules['password'] = 'required|between:6,12';
                 $rules['password_confirmation'] = 'required|between:6,12';
@@ -424,7 +426,7 @@ class UsersController extends Controller
 
         } else {
 
-            return Redirect::to('core/users/update/' . $id)->with('messagetext', \Lang::get('core.note_error'))->with('msgstatus', 'error')
+            return Redirect::to('core/users/update/' . $request->input('id'))->with('messagetext', \Lang::get('core.note_error'))->with('msgstatus', 'error')
                 ->withErrors($validator)->withInput();
         }
 
