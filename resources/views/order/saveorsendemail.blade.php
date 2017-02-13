@@ -331,11 +331,12 @@
             if (data.status == 'success') {
                 notyMessage(data.message);
                 $('.ajaxLoading').hide();
+                reloadOrder();
                 $('#sximo-modal').modal('hide');
             } else {
                 notyMessageError(data.message);
                 $('.ajaxLoading').hide();
-                return false;
+                reloadOrder();
             }
         }
         function emailSending(send_to,mode)

@@ -179,22 +179,27 @@ class OrderController extends Controller
             'params' => $filter,
             'global' => (isset($this->access['is_global']) ? $this->access['is_global'] : 0)
         );
-
-        $results = $this->model->getRows($params, $order_selected);
-
-        if (count($results['rows']) == 0 and $page != 1) {
+        $isRedirected=\Session::get('filter_before_redirect');
+        if(!empty($isRedirected))
+        {
+            $params=\Session::get('params');
+            \Session::put('filter_before_redirect',false);
+        }
+        else
+        {
+            \Session::put('filter_before_redirect',false);
+        }
+        \Session::put('params',$params);
+         $results = $this->model->getRows($params, $order_selected);
+         if (count($results['rows']) == 0 and $page != 1) {
             $params['limit'] = $this->info['setting']['perpage'];
             $results = $this->model->getRows($params, $order_selected);
-
-        }
+         }
         // Build pagination setting
         $page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;
-
-
         if (count($results['rows']) == $results['total'] && $results['total'] != 0) {
             $params['limit'] = $results['total'];
         }
-
         $pagination = new Paginator($results['rows'], $results['total'], $params['limit']);
         $pagination->setPath('order/data');
         $rows = $results['rows'];
@@ -547,6 +552,8 @@ class OrderController extends Controller
 
     function postSaveorsendemail(Request $request)
     {
+
+
         $type = $request->get('submit');
         $from = $request->get('from');
         $order_id = $request->get('order_id');
@@ -578,33 +585,43 @@ class OrderController extends Controller
             $message = $request->get('message');
         }
         $opt = $request->get('opt');
+        $redirect_module=\Session::get('redirect');
+        \Session::put('filter_before_redirect',false);
         if (count($to) == 0 || $from === "NULL" || empty($from) || $from == "") {
+            \Session::put('filter_before_redirect',true);
             return response()->json(array(
-                'message' => "Failed!Sender or Vendor Email is missing",
-                'status' => 'error'
+                'message' => \Lang::get('core.email_missing_error'),
+                'status' => 'error',
+
             ));
-        } else {
+            } else {
+            \Session::put('filter_before_redirect',true);
             $status = $this->getPo($order_id, true, $to, $from, $cc, $bcc, $message);
 
-            if ($status == 1) {
-                return array(
-                    'status' => 'success',
+            if ($status == 1)
+            {
+                return response()->json(array(
                     'message' => \Lang::get('core.mail_sent_success'),
-
-                );
-            } elseif ($status == 2) {
-                return array(
                     'status' => 'error',
-                    'message' => "Google account detail not exist",
 
-                );
-            } elseif ($status == 3) {
-                return array(
+                ));
+               }
+            elseif ($status == 2)
+            {
+                return response()->json(array(
+                    'message' => \Lang::get('core.google_account_not_exist'),
                     'status' => 'error',
-                    'message' => "Mail Error: SMTP connect() failed",
 
-                );
-            }
+                ));
+               }
+            elseif ($status == 3)
+            {
+                return response()->json(array(
+                    'message' => \Lang::get('core.smtp_connect_failed'),
+                    'status' => 'error',
+
+                ));
+              }
 
 
         }
