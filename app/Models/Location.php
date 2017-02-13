@@ -15,12 +15,12 @@ class location extends Sximo  {
 
 	public static function querySelect(  ){
 		
-		return "  SELECT location.*,If(U4.first_name IS NULL, 'None Specified', CONCAT(U4.first_name,' ',U4.last_name))as district_manager FROM location LEFT JOIN users U4 ON (U4.id = location.district_manager_id	) ";
+		return "  SELECT location.*,if(location.region_id=0,'',location.region_id) as region_id,if(location.company_id=0,'',location.company_id) as company_id,If(U4.first_name IS NULL, 'None Specified', CONCAT(U4.first_name,' ',U4.last_name))as district_manager FROM location LEFT JOIN users U4 ON (U4.id = location.district_manager_id	) ";
 	}	
 
 	public static function queryWhere(  ){
 		
-		return " Where location.id is not null and location.active=1  ";
+		return " Where location.id is not null  ";
 	}
 	
 	public static function queryGroup(){

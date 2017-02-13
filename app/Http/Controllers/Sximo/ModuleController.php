@@ -297,6 +297,7 @@ class ModuleController extends Controller
 
             'hiderowcountcolumn' => (isset($config['setting']['hiderowcountcolumn']) ? $config['setting']['hiderowcountcolumn'] : 'false'),
             'usesimplesearch' => (isset($config['setting']['usesimplesearch']) ? $config['setting']['usesimplesearch'] : 'true'),
+            'simplesearchbuttonwidth' => (isset($config['setting']['simplesearchbuttonwidth']) ? $config['setting']['simplesearchbuttonwidth'] : ''),
             'hideadvancedsearchoperators' => (isset($config['setting']['hideadvancedsearchoperators']) ? $config['setting']['hideadvancedsearchoperators'] : 'false'),
             'disablepagination' => (isset($config['setting']['disablepagination']) ? $config['setting']['disablepagination'] : 'false'),
             'disablesort' => (isset($config['setting']['disablesort']) ? $config['setting']['disablesort'] : 'false'),
@@ -373,6 +374,7 @@ class ModuleController extends Controller
 
             'hiderowcountcolumn' => (!is_null($request->input('hiderowcountcolumn')) ? 'true' : 'false'),
             'usesimplesearch' => (!is_null($request->input('usesimplesearch')) ? 'true' : 'false'),
+            'simplesearchbuttonwidth' => (!is_null($request->input('simplesearchbuttonwidth')) ? $request->input('simplesearchbuttonwidth') : ''),
             'hideadvancedsearchoperators' => (!is_null($request->input('hideadvancedsearchoperators')) ? 'true' : 'false'),
             'disablepagination' => (!is_null($request->input('disablepagination')) ? 'true' : 'false'),
             'disablesort' => (!is_null($request->input('disablesort')) ? 'true' : 'false'),
@@ -600,6 +602,7 @@ class ModuleController extends Controller
                 'simplesearchorder' => (isset($simplesearchorder[$i]) ? $simplesearchorder[$i] : ''),
                 'simplesearchfieldwidth' => (isset($simplesearchfieldwidth[$i]) ? $simplesearchfieldwidth[$i] : ''),
                 'simplesearchoperator' => (isset($simplesearchoperator[$i]) ? $simplesearchoperator[$i] : ''),
+                'simplesearchselectfieldwithoutblankdefault' => (isset($simplesearchselectfieldwithoutblankdefault[$i]) ? $simplesearchselectfieldwithoutblankdefault[$i] : '0'),
                 "sortlist" => $sortlist[$i],
                 'limited' => (isset($limited[$i]) ? $limited[$i] : ''),
                 'option' => array(
@@ -677,6 +680,7 @@ class ModuleController extends Controller
                     'simplesearchorder' => isset($form['simplesearchorder']) ? $form['simplesearchorder'] : '',
                     'simplesearchfieldwidth' => isset($form['simplesearchfieldwidth']) ? $form['simplesearchfieldwidth'] : '',
                     'simplesearchoperator' => isset($form['simplesearchoperator']) ? $form['simplesearchoperator'] : '',
+                    'simplesearchselectfieldwithoutblankdefault' => isset($form['simplesearchselectfieldwithoutblankdefault']) ? $form['simplesearchselectfieldwithoutblankdefault'] : '0',
                     "sortlist" => $form['sortlist'],
                     'option' => array(
                         "opt_type" => $form['option']['opt_type'],
@@ -783,6 +787,7 @@ class ModuleController extends Controller
             'simplesearchorder' => $request->input('simplesearchorder'),
             'simplesearchfieldwidth' => $request->input('simplesearchfieldwidth'),
             'simplesearchoperator' => $request->input('simplesearchoperator'),
+            'simplesearchselectfieldwithoutblankdefault' => $request->input('simplesearchselectfieldwithoutblankdefault'),
             'size' => '',
             'sortlist' => $request->input('sortlist'),
             'option' => array(

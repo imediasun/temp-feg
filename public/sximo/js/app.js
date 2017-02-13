@@ -6,8 +6,9 @@ var UNDEFINED,
         search: {cache: {}},
         simpleSearch: {cache: {}},
         columnSort: {cache: {}},
-        populateFieldsFromCache: function (container, cacheObject, isComplex) {
+        populateFieldsFromCache: function (container, cacheObject, rebuildRequiredElements) {
             var cache = cacheObject.cache, 
+
                 elmName, elm, elm2, operatorElm,
                 item, val, val2, operator;
         
@@ -19,17 +20,10 @@ var UNDEFINED,
                     item = cache[elmName];
                     val = item.value;
                     val2 = item.value2;
-                    if(typeof val === 'string' || val instanceof String){
-                        val = decodeURIComponent(val);
-                    }
-                    //Decode received string
-                    //if game tile search for Cats & Mice then it will show encoded value of & sign
-                    if(typeof val2 === 'string' || val2 instanceof String){
-                        val2 = decodeURIComponent(val2);
-                    }
+
                     operator = item.operator;
                     if (elm.length) {
-                        if (elm.hasClass('sel-search-multiple')) {
+                        if (elm.hasClass('sel-search-multiple') || elm.data('select2')) {
                             elm.select2('val', val);
                         }
                         else {
@@ -43,7 +37,7 @@ var UNDEFINED,
                         }
                     }                    
                     if (elm2.length) {
-                        if (elm2.hasClass('sel-search-multiple')) {
+                        if (elm2.hasClass('sel-search-multiple') || elm2.data('select2')) {
                             elm2.select2('val', val2);
                         }
                         else {
@@ -61,13 +55,15 @@ var UNDEFINED,
                     }
                     switch (operator) {
                         case 'between':
+                            if (rebuildRequiredElements) {
                                 showBetweenFields({
                                     field: elmName,
                                     fieldElm : elm,
                                     fieldElm2 : elm2,
                                     previousValue2 : val2,
                                     dashElement : null
-                                });                            
+                                });
+                            }
                             break;
                         case "is_null":
                         case "not_null":
@@ -118,17 +114,136 @@ App.notyConfirm = function (options)
             };    
 	noty(notyOptions);		
 	
-}
+};
+
+App.autoCallbacks.registerCallback = function (eventName, definedFunction, options) {
+    options = options || {};
+    var callbackName = options.callbackName,
+        fn = typeof definedFunction === 'function' ? definedFunction : UNFN,
+        bed = App.autoCallbacks[eventName] || (App.autoCallbacks[eventName] = []);
+
+    fn.options = options;
+    if (callbackName) {
+        bed[callbackName] = fn;
+    }
+    else {
+        bed.push(fn);
+    }
+};
+
+App.autoCallbacks.runCallback = function (eventName, params, options) {
+    options = options || {};
+    params = params || {};
+
+    var context = this,
+        callbackName = options.callbackName,
+        index,
+        fn,
+        bed = App.autoCallbacks[eventName] || (App.autoCallbacks[eventName] = []);
+
+    if (callbackName) {
+        fn = bed[callbackName];
+        if (typeof fn === 'function') {
+           fn.call(context, params);
+        }
+    }
+    else {
+        for (index in bed) {
+            fn = bed[index];
+            if (typeof fn === 'function') {
+                fn.call(context, params);
+            }
+        }
+    }
+
+};
+
+App.autoCallbacks.registerCallback('reloaddata', function(params){
+
+});
+App.autoCallbacks.registerCallback('columnselector', function(params){
+
+});
+App.autoCallbacks.registerCallback('ajaxinlinesave', function(params){
+
+});
+
+/**
+ *  This function can check if a value needs URI encoding.
+ *  It can be used before building a custom querystring
+ *
+ * @param mixed             value   String to check
+ * @param jQuery Element    Input   field containing the value
+ * @returns {Boolean}
+ */
+App.needsURIEncoding = function (value, field) {
+    //when search is a string the encode it
+    //encoding is needed for & sign, especially in games title search for Cats & Mice
+    //if arrays are encoded, it does not populate in advanced search field
+    // except: date fields
+    var needs = typeof value === 'string';
+    if (value === '' || field.hasClass('date') || field.hasClass('datetime')) {
+        needs = false;
+    }
+    return needs;
+};
+
+
+App.buildSearchQueryFromArray = function (fields) {
+    var fieldName,
+        field,
+        value,
+        operator,
+        value2,
+        attr = '';
+
+    for(fieldName in fields) {
+        field = fields[fieldName];
+        operator = field['operator'];
+        value = field['value'];
+        value2 = field['endValue'];
+        if (operator == 'between') {
+            if (value === UNDEFINED || value2 === UNDEFINED) {
+                operator = "equal";
+            }
+            if (value === UNDEFINED && value2 !== UNDEFINED) {
+                value = value2;
+                value2 = UNDEFINED;
+            }
+            if (value === UNDEFINED && value2 === UNDEFINED) {
+                continue;
+            }
+        }
+        attr += fieldName+':'+operator+':'+value;
+        if (value2 !== UNDEFINED) {
+            attr += ':'+value2;
+        }
+        attr += "|";
+    }
+
+    return attr;
+};
+
 function initiateSearchFormFields(container) {
     container.find('.date').datepicker({format:'mm/dd/yyyy',autoclose:true});
-    container.find('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss', autoclose:true});
-    container.find('.sel-search-multiple').select2();
+    container.find('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});
+    renderDropdown(container.find('.sel-search-multiple, .select3'));
 }
 
 function initiateInlineFormFields(container) {
     container.find('.date').datepicker({format:'mm/dd/yyyy',autoclose:true});
     container.find('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss', autoclose:true});
-    container.find('.sel-inline').select2({width:"98%"});
+    renderDropdown(container.find('.sel-inline'),{width:"98%"});
+    $('.prod_type_id').change(function(){
+
+        //http://sximo/product/comboselect?filter=product_type:id:type_description:request_type_id:1
+        var url_for_prod_sub_type = "http://sximo/product/comboselect?filter=product_type:id:type_description:request_type_id:"+$(this).val();
+        $(this).parent().find('.prod_sub_type_id').jCombo(url_for_prod_sub_type);
+        console.log(url_for_prod_sub_type);
+        /*
+        $(this).parent().find('.prod_sub_type_id').jCombo(url_for_prod_sub_type,
+            {selected_value: '{{ \Session::get('sub_type') }}', initial_text: '--- Select  Subtype ---'  });*/
+    });
 }
 
 function initDataGrid(module, url, options) {
@@ -178,6 +293,22 @@ function autoSetMainContainerHeight() {
     $('nav.navbar-default').on('hidden.bs.collapse', setHeight);
     $('nav.navbar-default').on('shown.bs.collapse', setHeight);    
     $(window).resize(setHeight);
+}
+
+function numberFieldValidationChecks(element){
+    element.keypress(isNumeric);
+}
+
+function isNumeric(ev) {
+
+    var keyCode = window.event ? ev.keyCode : ev.which;
+    //codes for 0-9
+    if (keyCode < 48 || keyCode > 57) {
+        //codes for backspace, delete, enter
+        if (keyCode != 0 && keyCode != 8 && keyCode != 13 && !ev.ctrlKey) {
+            ev.preventDefault();
+        }
+    }
 }
 
 jQuery(document).ready(function($){
@@ -230,6 +361,27 @@ function makeSimpleSearchFieldsToInitiateSearchOnEnter() {
             var keycode = event.keyCode || event.which;
             if(keycode == '13') {
                 simpleSearchButton.click();
+            }
+        });
+    }
+}
+
+/**
+ * This is a simple function to renders select2 dropdown.
+ * However, before rendering it checks if the target element already has
+ * been rendered with select2
+ *
+ * @param {type} elements Elements - result of jQuery select query
+ * @param {type} options - Select2 options
+ * @returns {undefined}
+ */
+function renderDropdown(elements, options) {
+    options = options || {};
+    if (elements && elements.length) {
+        elements.each(function(i, elm){
+            var $elm = $(elm);
+            if (!$elm.data('select2')) {
+                $elm.select2(options);
             }
         });
     }

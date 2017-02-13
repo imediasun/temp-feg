@@ -4,53 +4,98 @@ function performSimpleSearch(params) {
     }
     var elm = this, 
         container = params.container || $('.simpleSearchContainer'), 
-        attr = '?simplesearch=1&search=',
+        attrArray = {},
+        attr = '',
         moduleID = params.moduleID,
         url = params.url,
         ajaxSearch = params.ajaxSearch !== false,
+        searchAttr = '',
+        searchAttr2 = '',
         cache = {};
 
     container.find('.form-control').each(function(i){
 
-        var elm = this,
-            valueField = $(elm),                
-            fieldName = valueField.attr('name'),                
+        var UNDEFINED, 
+            elm = this,
+            valueField = $(elm),
+            fieldName = valueField.attr('name'),
+            isRangeEndField = valueField.attr('data-range-end-field') == '1',
             operate = valueField.attr('data-simpleSearchOperator') || "equal",
+            isRangeEndField,
             value = valueField.val(),
             isValueDate = valueField.hasClass('date'),
             isValueDateTime = valueField.hasClass('datetime');
-
+        
+        // normalize field name for range end field
+        if (isRangeEndField) {
+            fieldName = fieldName.replace(/\_end$/, '');
+        }
+        
+        // normalize values to '' if null/undefined to avoid unwanted results
         if (value === null || value === UNDEFINED ) {
-
             value = '';
         }
-        else
-        {
-            //when search is a string the encode it
-            //encoding is needed for & sign, especially in games title search for Cats & Mice
-            //if arrays are encoded, it does not populate in advanced search field
-            if(typeof value === 'string' || value instanceof String){
-                value = encodeURIComponent(value);
+        
+        // not required to be included
+        if (!fieldName || fieldName === '_token' || value === '') {
+            return;
+        }        
+        
+        // cache original values
+        if (cache[fieldName] === UNDEFINED) {
+            cache[fieldName] = {operator: operate};
+        }
+        if (isRangeEndField) {                    
+            cache[fieldName].value2 = value;
+        }
+        else {
+            cache[fieldName].value = value;
+            if (cache[fieldName].value2 === UNDEFINED) {
+                cache[fieldName].value2 = null;
             }
-        }
-        if (fieldName) {            
-            cache[fieldName] = {value:value, value2: null, operator: operate};
-        }
-
+        }            
+        
+        // convert date format to ISO for serverside consumption
         if(value && isValueDate) {
-            value  = $.datepicker.formatDate('yy-mm-dd', new Date(value));
-        }                    
-
-        if(value !=='' && typeof value !=='undefined' && fieldName !='_token')
+            value = $.datepicker.formatDate('yy-mm-dd', new Date(value));
+        }
+        
+        // encode URI if needed
+        if(App.needsURIEncoding(value, valueField)){
+            value = encodeURIComponent(value);
+        }
+        
+        // store querystring specific values
+        if(value !== '' && value !== UNDEFINED && value !== null)
         {
-            attr += fieldName+':'+operate+':'+value+'|';
+            if (!attrArray[fieldName]) {
+                attrArray[fieldName] = {};
+            }
+            attrArray[fieldName].operator = operate;
+            
+            if (isRangeEndField) {                
+                attrArray[fieldName].endValue = value;
+            }
+            else {
+                attrArray[fieldName].value = value;
+            }            
         }
 
     });
-
-    attr += getFooterFilters({'simplesearch': true, 'search': true, 'page': true});
+    
+    // build search specific querystring 
+    searchAttr = App.buildSearchQueryFromArray(attrArray);
+    
+    // build final querystring
+    attr = '?simplesearch=1&search=' + searchAttr + 
+            getFooterFilters({'simplesearch': true, 'search': true, 'page': true});
+    
+    // store cache
     App.simpleSearch.cache = cache;
+    // set Search Mode 
     App.lastSearchMode = 'simple';
+    
+    // fetch data
     if (ajaxSearch) {
         reloadData(moduleID, url+ '/data' + attr);    
     }

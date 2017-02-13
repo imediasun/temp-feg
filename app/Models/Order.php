@@ -9,7 +9,9 @@ class order extends Sximo
 
     protected $table = 'orders';
     protected $primaryKey = 'id';
-    const OPENID1 = 1, OPENID2 = 3, OPENID3 = 4, FIXED_ASSET_ID = 9, PRO_IN_DEV = 18, CLOSEID1 = 2, CLOSEID2 = 5;
+    const OPENID1 = 1, OPENID2 = 3, OPENID3 = 4, FIXED_ASSET_ID = 9, CLOSEID1 = 2, CLOSEID2 = 5;
+    const ORDER_PERCISION = 3;
+    const ORDER_TYPE_PART_GAMES = 1;
 
     public function __construct()
     {
@@ -36,18 +38,15 @@ class order extends Sximo
     public static function queryWhere($cond = null)
     {
         $return = " Where";
-        switch ($cond) {
+        switch (strtoupper($cond)) {
             case 'ALL':
                 $return .= " orders.id IS NOT NULL";
                 break;
             case 'OPEN':
-                $return .= " orders.status_id IN(" . self::OPENID1 . "," . self::OPENID2 . "," . self::OPENID3 . ") AND orders.order_type_id !=" . self::FIXED_ASSET_ID . " AND orders.order_type_id !=" . self::PRO_IN_DEV;
+                $return .= " orders.status_id IN(" . self::OPENID1 . "," . self::OPENID2 . "," . self::OPENID3 . ") AND orders.order_type_id !=" . self::FIXED_ASSET_ID ;
                 break;
             case 'FIXED_ASSET':
                 $return .= " orders.order_type_id = " . self::FIXED_ASSET_ID;
-                break;
-            case 'PRO_IN_DEV':
-                $return .= "  orders.order_type_id = " . self::PRO_IN_DEV;
                 break;
             case 'CLOSED':
                 $return .= "  orders.status_id IN(" . self::CLOSEID1 . "," . self::CLOSEID2 . ")";
@@ -69,7 +68,7 @@ class order extends Sximo
         if(empty($orders)){
             return $data;
         }
-        $query = "select * from order_contents where order_id in (".implode(',',$orders).")";
+        $query = "SELECT O.*,IF(O.product_id=0,O.sku,P.sku)AS sku FROM order_contents O LEFT OUTER JOIN products P ON O.product_id=P.id WHERE O.order_id IN (".implode(',',$orders).")";
         $result = \DB::select($query);
         //all order contents place them in relevent order
         foreach($result as $item){
@@ -193,6 +192,7 @@ class order extends Sximo
         $data['skuNumArray'] = "";
         $data['itemCasePrice'] = "";
         $data['itemRetailPrice'] = "";
+        $data['gameIdsArray']="";
         $data['orderRequestIdArray'] = '';
         $data['requests_item_count'] = '';
         $data['today'] = $this->get_local_time();
@@ -206,7 +206,7 @@ class order extends Sximo
         $where_in_expression = "";
         $data['alt_name'] = $data['alt_street'] = $data['alt_city'] = $data['alt_state'] = $data['alt_zip'] = $data['shipping_notes'] = "";
         if ($order_id != 0 && $mode != (substr($mode, 0, 3) == 'SID')) {
-            $order_query = \DB::select('SELECT location_id,vendor_id, date_ordered,order_total,alt_address,order_type_id,company_id,freight_id,po_notes,po_number FROM orders WHERE id = ' . $order_id);
+            $order_query = \DB::select('SELECT location_id,vendor_id, date_ordered,order_total,alt_address,order_type_id,company_id,freight_id,po_notes,po_number FROM orders WHERE id = ' . $order_id );
             if (count($order_query) == 1) {
                 $data['order_loc_id'] = $order_query[0]->location_id;
                 $data['order_vendor_id'] = $order_query[0]->vendor_id;
@@ -221,20 +221,26 @@ class order extends Sximo
                 $data['alt_address'] = $order_query[0]->alt_address;
             }
             $data['prefill_type'] = 'clone';
-            $content_query = \DB::select('SELECT  O.product_description AS description,O.price AS price,O.qty AS qty, O.product_id,O.item_name,O.case_price,P.retail_price, P.sku
-												,O.item_received as item_received FROM order_contents O LEFT JOIN products P ON P.id = O.product_id  WHERE O.order_id = ' . $order_id);
+            $content_query = \DB::select('SELECT  g.game_name , O.product_description AS description,O.price AS price,O.qty AS qty, O.product_id,O.item_name,O.case_price,P.retail_price, if(O.product_id=0,O.sku,P.sku) as sku
+												,O.item_received as item_received,O.game_id FROM order_contents O LEFT JOIN products P ON P.id = O.product_id
+												  LEFT JOIN game g ON g.id = O.game_id
+												  WHERE O.order_id = ' . $order_id);
+            
             if ($content_query) {
                 foreach ($content_query as $row) {
                     $data['requests_item_count'] = $data['requests_item_count'] + 1;
                     $receivedItemsArray[]=$row->item_received;
                     $orderDescriptionArray[] = $row->description;
-                    $orderPriceArray[] = $row->price;
+                    $orderPriceArray[] = number_format($row->price , self::ORDER_PERCISION);
                     $orderQtyArray[] = $row->qty;
                     $orderProductIdArray[] = $row->product_id;
                     $orderitemnamesArray[] = $row->item_name;
                     $skuNumArray[] = $row->sku;
-                    $orderitemcasepriceArray[] = $row->case_price;
-                    $orderretailpriceArray[]=$row->retail_price;
+                    $orderitemcasepriceArray[] = number_format($row->case_price,self::ORDER_PERCISION) ;
+                    $orderretailpriceArray[]= $row->retail_price;
+                    $ordergameidsArray[] = $row->game_id;
+                    $ordergamenameArray[] = $row->game_name;
+                    
 
                     //  $prod_data[]=$this->productUnitPriceAndName($orderProductIdArray);
                 }
@@ -251,6 +257,7 @@ class order extends Sximo
                 $data['orderQtyArray'] = $orderQtyArray;
                 $data['skuNumArray'] = $skuNumArray;
                 $data['orderProductIdArray'] = $orderProductIdArray;
+                $data['gamenameArray'] = $ordergamenameArray;
                 /*     if(count($prod_data)!=0) {
                          foreach ($prod_data as $d) {
                              $item_name_array[] = $d['vendor_description'];
@@ -261,6 +268,7 @@ class order extends Sximo
                 $data['itemNameArray'] = $orderitemnamesArray;
                 $data['itemCasePrice'] = $orderitemcasepriceArray;
                 $data['itemRetailPrice']=$orderretailpriceArray;
+                $data['gameIdsArray']=$ordergameidsArray;
                 $data['receivedItemsArray']=$receivedItemsArray;
                 $poArr = array("", "", "");
                 if (isset($data['po_number'])) {
@@ -365,20 +373,58 @@ class order extends Sximo
                 $data['today'] = date('m/d/y');
             }
         }
+        $data['where_in_expression'] = substr($where_in_expression, 0, -1);
+          
         return $data;
     }
 
-    function getPoNumber($po_full)
+    function getPoNumber($po_full,$location_id=0)
     {
-        $query = \DB::select('SELECT po_number FROM orders WHERE po_number = "' . $po_full . '"');
-        if (count($query) > 0) {
-            $po_message = 'taken';
-        } else {
-            $po_message = 'available';
-        }
-        return $po_message;
-    }
+        if($location_id != 0) {
+            if($this->isPOAvailable($po_full))
+            {
+                $this->createPOTrack($po_full,$location_id);
+                $po=explode('-',$po_full);
+                return $po[2];
+            }
+            else
+            {
 
+                $po_increamented=$this->increamentPO($location_id);
+                $po=explode('-',$po_full);
+                $po[2]=$po_increamented;
+                $po_full=implode('-',$po);
+                $this->createPOTrack($po_full,$location_id);
+                return $po_increamented;
+
+            }
+        }
+        else{
+            return 1;
+        }
+
+
+
+
+    }
+    function isPOAvailable($po_full)
+    {
+        //echo $po_full;
+        //die('here..in p');
+        $query = \DB::select("SELECT po_number FROM po_track WHERE po_number = '".$po_full."'" );
+        if(count($query) > 0 ) {
+
+            return false;
+        }
+        else{
+            return true;
+        }
+    }
+    function createPOTrack($po_full,$location_id)
+    {
+        $data=array('po_number'=>$po_full,'location_id'=>$location_id);
+        \DB::table('po_track')->insert($data);
+    }
     public function get_local_time($type = null)
     {
         $year = date('Y');
@@ -402,9 +448,11 @@ class order extends Sximo
         $data['location_id'] = '';
         $data['user_id'] = \Session::get('uid');
         if (!empty($order_id)) {
-            $query = \DB::select('SELECT O.order_type_id,O.order_description,O.request_ids,O.po_number,O.location_id,O.order_total,O.status_id,O.date_received,
+            $query = \DB::select('SELECT  O.order_type_id,O.order_description,O.request_ids,O.po_number,O.location_id,O.order_total,O.status_id,O.date_received,
                      O.notes,O.added_to_inventory,V.vendor_name,U.username FROM orders O LEFT JOIN vendor V ON V.id = O.vendor_id
-                     LEFT JOIN users U ON U.id = O.user_id WHERE O.id = ' . $order_id . '');
+                     LEFT JOIN users U ON U.id = O.user_id
+                      
+                      WHERE O.id = ' . $order_id . '');
             if (count($query) == 1) {
                 $data['requestIds'] = $query[0]->request_ids;
                 $data['order_type'] = $query[0]->order_type_id;
@@ -436,11 +484,12 @@ class order extends Sximo
                         $id = $requestIdString;
                     }
 
-                    $query = \DB::select('SELECT R.product_id,R.qty,P.case_price,P.prod_type_id,R.location_id,CONCAT(P.vendor_description," (SKU-",P.sku,")") AS description FROM requests R
+                    $query = \DB::select('SELECT   R.product_id,R.qty,P.case_price,P.prod_type_id,R.location_id,CONCAT(P.vendor_description," (SKU-",P.sku,")") AS description FROM requests R
                            LEFT JOIN products P ON P.id = R.product_id WHERE R.id = ' . $id);
                     if (count($query) == 1) {
                         $data['product_id_' . $i] = $query[0]->product_id;
                         $data['order_qty_' . $i] = $query[0]->qty;
+                        $data['game_name' . $i] = $query[0]->game_name;
                         $data['order_description_' . $i] = $query[0]->description;
                         $data['order_price_' . $i] = $query[0]->case_price;
                     }
@@ -478,15 +527,41 @@ class order extends Sximo
 
     }
 
-    function increamentPO()
+    function increamentPO($location=0,$count=0)
     {
         $today = date('mdy');
-        $po = \DB::select("select po_number from orders where po_number like '%-$today-%' order by id desc limit 0,1");
-        if(!empty($po)){
-            $po = array_reverse(explode('-', $po[0]->po_number));
-            return ++$po[0];
+        if($location != 0) {
+
+            $po = \DB::select("select po_number from po_track where po_number like '%-$today-%' and location_id=" . $location . " order by po_number");
+            if($count == 0 ) {
+                $count = count($po) + 1;
+
+            }
+            else
+            {
+
+                $count = $count +1;
+
+            }
+            $po_new=$location."-".$today."-".$count;
+
+            if($this->isPOAvailable($po_new))
+            {
+                $this->createPOTrack($po_new,$location);
+                echo $count;die();
+                return $count;
+            }
+            else
+            {
+                //echo "$location:$count";
+                //die('here...');
+                $this->increamentPO($location,$count);
+            }
         }
-        return 1;
+        else
+        {
+            return 1;
+        }
     }
 
     function getVendorEmail($vendor_id)
@@ -513,6 +588,13 @@ class order extends Sximo
         } else {
             return parent::getComboselect($params, $limit, $parent);
         }
+    }
+
+    public function getUnitPriceAttribute(){
+        return number_format($this->attributes['unit_price'],3);
+    }
+    public function getCasePriceAttribute(){
+        return number_format($this->attributes['case_price'],3);
     }
 }
 

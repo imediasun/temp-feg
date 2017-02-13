@@ -41,7 +41,7 @@
 				
 					<tr>
 						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Requestor ', (isset($fields['requestor_id']['language'])? $fields['requestor_id']['language'] : array())) }}
+							{{ SiteHelpers::activeLang('Requested By ', (isset($fields['requestor_id']['language'])? $fields['requestor_id']['language'] : array())) }}
 						</td>
                         <td>{!! SiteHelpers::gridDisplayView($row->requestor_id,'requestor_id','1:users:id:username') !!} </td>
 
@@ -66,7 +66,7 @@
 				
 					<tr>
 						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Need By ', (isset($fields['need_by_date']['language'])? $fields['need_by_date']['language'] : array())) }}
+							{{ SiteHelpers::activeLang('Needed By ', (isset($fields['need_by_date']['language'])? $fields['need_by_date']['language'] : array())) }}
 						</td>
 						<td>{{  $row->need_by_date = date("m/d/Y", strtotime($row->need_by_date))  }}</td>
 						
@@ -74,7 +74,7 @@
 				
 					<tr>
 						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Solved Date', (isset($fields['solved_date']['language'])? $fields['solved_date']['language'] : array())) }}	
+							{{ SiteHelpers::activeLang('Date Resolved', (isset($fields['solved_date']['language'])? $fields['solved_date']['language'] : array())) }}
 						</td>
 						<td>{{  $row->solved_date = date("m/d/Y", strtotime($row->solved_date))  }}</td>
 						
@@ -82,7 +82,7 @@
 				
 					<tr>
 						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Solver ', (isset($fields['solver_id']['language'])? $fields['solver_id']['language'] : array())) }}
+							{{ SiteHelpers::activeLang('Resolved By ', (isset($fields['solver_id']['language'])? $fields['solver_id']['language'] : array())) }}
 						</td>
                         <td>{!! SiteHelpers::gridDisplayView($row->solver_id,'solver_id','1:users:id:username') !!} </td>
 
@@ -116,7 +116,7 @@
 				
 					<tr>
 						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Attachment Path', (isset($fields['attachment_path']['language'])? $fields['attachment_path']['language'] : array())) }}	
+							{{ SiteHelpers::activeLang('Attachments', (isset($fields['attachment_path']['language'])? $fields['attachment_path']['language'] : array())) }}
 						</td>
 						<td>{{ $row->attachment_path }} </td>
 						

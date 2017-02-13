@@ -47,7 +47,7 @@
         var t = document.getElementById('cart_data_table');
         //$("#cart_data_table tr").remove();
         $.ajax({
-            url:'/addtocart/cartdata',
+            url:'addtocart/cartdata',
             method:'get',
             success:function(data){
 
@@ -80,7 +80,7 @@
 
 // Add some text to the new cells:
                     total_cell1.innerHTML = "Total";
-                    total_cell2.innerHTML =" $ "+ data['shopping_cart_total'];
+                    total_cell2.innerHTML =" $ "+  data['shopping_cart_total'];
                 }
                 else
                 {

@@ -71,7 +71,16 @@ class LocationController extends Controller
         // End Filter sort and order for query
         // Filter Search for query
         $filter = (!is_null($request->input('search')) ? $this->buildSearch() : '');
-
+        
+        // Special filter for default active location
+        if (stripos($filter, "location.active") === false ) {
+            $filter .= " AND location.active = '1'";
+        }
+        // and showing both active and inactive location
+        if (stripos($filter, "AND location.active = '-1'") >= 0 ) {
+            $filter = str_replace("AND location.active = '-1'", "", $filter);
+        }
+        
 
         $page = $request->input('page', 1);
         $params = array(
@@ -241,7 +250,19 @@ class LocationController extends Controller
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
             $data = $this->validatePost('location');
-                $id = $this->model->insertRow($data, $id);
+            // old id in case the existing location's id has been modified
+            $oldId = $id;
+            $newId = $data['id'];
+            if ($oldId == $newId) {
+                $oldId = null;
+            }
+            $id = $this->model->insertRow($data, $id);
+            
+            // Assing the newly created or updated/id changed location to 
+            // users having has_all_locations=1 (all Locations = true)
+            // additionally clean orphan user location assignmens
+            \SiteHelpers::addLocationToAllLocationUsers($newId, $oldId);
+            
             return response()->json(array(
                 'status' => 'success',
                 'message' => \Lang::get('core.note_success')
@@ -271,6 +292,9 @@ class LocationController extends Controller
         // delete multipe rows
         if (count($request->input('ids')) >= 1) {
             $this->model->destroy($request->input('ids'));
+            
+            // clean orphan user location assignmens
+            \SiteHelpers::cleanUpUserLocations();
 
             return response()->json(array(
                 'status' => 'success',

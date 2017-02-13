@@ -740,9 +740,20 @@ class SiteHelpers
         $bulk = ($bulk == true ? '[]' : '');
         $mandatory = '';
         $selectMultiple = "";   
+        $simpleSearchOptionsBasic = '';
         $simpleSearchOptions = '';
+        $simpleSearchOperator = '';
+        $isSimpleSearchBetween = false;
+        $simpleSearchStyle = '';
+        $simpleSearchClass = '';
+        $simpleSearchEndStyle = '';
+        $simpleSearchEndClass = '';
+        $simpleSearchPlaceholder = '';
+        $simpleSearchEndPlaceholder = '';
+        $isSSSFWOBD = false; 
+
         foreach ($forms as $f) {
-            $hasSimpleSearch = isset($f['simplesearch']) ? $f['simplesearch'] == 1 : false;
+            $hasSimpleSearch = isset($f['generatingSimpleSearch']) ? $f['generatingSimpleSearch'] : false;
             if ($f['field'] == $field && ($f['search'] == 1 || $hasSimpleSearch)) {
                 $type = ($f['type'] != 'file' ? $f['type'] : '');
                 $option = $f['option'];
@@ -760,12 +771,30 @@ class SiteHelpers
                     $mandatory = '';
                 }
                 if ($hasSimpleSearch) {
-                    $simpleSearchOptions = " data-simpleSearch='1' ";
                     $simpleSearchOperator = 'equal';
                     if (isset($f['simplesearchoperator'])) {
                         $simpleSearchOperator = $f['simplesearchoperator'];
+                    }                    
+                    $isSimpleSearchBetween = $simpleSearchOperator == 'between';
+                    if ($isSimpleSearchBetween) {
+                        $simpleSearchPlaceholder = "placeholder='Start'";
+                        $simpleSearchEndPlaceholder = "placeholder='End'";
+                        $simpleSearchStyle = "style=''";
+                        $simpleSearchEndStyle = "style=''";                        
+                        $simpleSearchClass = "betweenRangeStart";
+                        $simpleSearchEndClass = "betweenRangeEnd";                        
                     }
-                    $simpleSearchOptions .= " data-simpleSearchOperator='{$simpleSearchOperator}' ";
+                    
+                    $simpleSearchOptionsBasic = " data-simpleSearch='1' 
+                        data-simpleSearchOperator='{$simpleSearchOperator}' ";
+                    $simpleSearchOptions = "$simpleSearchOptionsBasic 
+                        $simpleSearchPlaceholder 
+                        $simpleSearchStyle ";
+                    
+                    if (isset($f['simplesearchselectfieldwithoutblankdefault'])) {
+                        $isSSSFWOBD = $f['simplesearchselectfieldwithoutblankdefault'] == 1;
+                    } 
+                    
                 }                
                 break;
             }
@@ -776,23 +805,108 @@ class SiteHelpers
                 $form = '';
                 break;
             case 'textarea';
-                $form = "<input  type='text' name='" . $field . "{$bulk}' class='form-control input-sm' $mandatory $simpleSearchOptions value='{$value}'/>";
+                $form = "<input  type='text' name='" . $field . "{$bulk}' 
+                    class='form-control input-sm $simpleSearchClass' 
+                    $mandatory $simpleSearchOptions value='{$value}'/>";
+                if ($isSimpleSearchBetween) {
+                    $form = "<div class='clearfix' >$form"
+                            ."<div class='betweenseparator pull-left'> - </div>" 
+                            ."<input type='text' 
+                                value='{$value}'
+                                name='$field{$bulk}_end' 
+                                class='form-control input-sm pull-left $simpleSearchEndClass' 
+                                data-range-end-field='1' 
+                                $mandatory 
+                                $simpleSearchOptionsBasic 
+                                $simpleSearchEndStyle 
+                                $simpleSearchEndPlaceholder 
+                                />
+                            </div>";
+                }                 
                 break;
 
             case 'textarea_editor';
-                $form = "<input  type='text' name='" . $field . "{$bulk}' class='form-control input-sm' $mandatory $simpleSearchOptions value='{$value}'/>";
+                $form = "<input  type='text' name='" . $field . "{$bulk}' 
+                    class='form-control input-sm $simpleSearchClass' 
+                        $mandatory $simpleSearchOptions value='{$value}'/>";
+                if ($isSimpleSearchBetween) {
+                    $form = "<div class='clearfix' >$form"
+                            ."<div class='betweenseparator pull-left' > - </div>" 
+                            ."<input type='text' 
+                                value='{$value}'
+                                name='$field{$bulk}_end' 
+                                class='form-control input-sm pull-left $simpleSearchEndClass' 
+                                data-range-end-field='1' 
+                                $mandatory 
+                                $simpleSearchOptionsBasic 
+                                $simpleSearchEndStyle 
+                                $simpleSearchEndPlaceholder 
+                                />
+                            </div>";
+                }                 
                 break;
 
             case 'text';
-                $form = "<input  type='text' name='" . $field . "{$bulk}' class='form-control input-sm' $mandatory $simpleSearchOptions value='{$value}'/>";
+                $form = "<input  type='text' name='" . $field . "{$bulk}' 
+                    class='form-control input-sm $simpleSearchClass' 
+                    $mandatory $simpleSearchOptions value='{$value}'/>";
+                if ($isSimpleSearchBetween) {
+                    $form = "<div class='clearfix' >$form"
+                            ."<div class='betweenseparator pull-left'> - </div>" 
+                            ."<input type='text' 
+                                value='{$value}'
+                                name='$field{$bulk}_end' 
+                                class='form-control input-sm pull-left $simpleSearchEndClass' 
+                                data-range-end-field='1' 
+                                $mandatory 
+                                $simpleSearchOptionsBasic 
+                                $simpleSearchEndStyle 
+                                $simpleSearchEndPlaceholder 
+                                />
+                            </div>";
+                }                
                 break;
 
             case 'text_date';
-                $form = "<input  type='text' name='$field{$bulk}' class='date form-control input-sm' $mandatory $simpleSearchOptions value='{$value}'/> ";
+                $form = "<input  type='text' name='$field{$bulk}' 
+                    class='date form-control input-sm $simpleSearchClass' 
+                    $mandatory $simpleSearchOptions value='{$value}'/> ";
+                if ($isSimpleSearchBetween) {
+                    $form = "<div class='clearfix' >$form"
+                            ."<div class='betweenseparator pull-left' > - </div>" 
+                            ."<input type='text' 
+                                value='{$value}'
+                                name='$field{$bulk}_end' 
+                                class='date form-control input-sm pull-left $simpleSearchEndClass' 
+                                data-range-end-field='1' 
+                                $mandatory 
+                                $simpleSearchOptionsBasic 
+                                $simpleSearchEndStyle 
+                                $simpleSearchEndPlaceholder 
+                                />
+                            </div>";
+                }
                 break;
 
             case 'text_datetime';
-                $form = "<input  type='text' name='$field{$bulk}'  class='date form-control input-sm'  $mandatory $simpleSearchOptions value='{$value}'/> ";
+                $form = "<input  type='text' name='$field{$bulk}' 
+                    class='date form-control input-sm $simpleSearchClass'  
+                    $mandatory $simpleSearchOptions value='{$value}'/> ";
+                if ($isSimpleSearchBetween) {
+                    $form = "<div class='clearfix' >$form"
+                            ."<div class='betweenseparator pull-left' > - </div>" 
+                            ."<input type='text' 
+                                value='{$value}'
+                                name='$field{$bulk}_end' 
+                                class='date form-control input-sm pull-left $simpleSearchEndClass' 
+                                data-range-end-field='1' 
+                                $mandatory 
+                                $simpleSearchOptionsBasic 
+                                $simpleSearchEndStyle 
+                                $simpleSearchEndPlaceholder 
+                                />
+                            </div>";
+                }                 
                 break;
 
             case 'select';
@@ -864,8 +978,8 @@ class SiteHelpers
                 if (!empty($selectMultiple)) {
                     $multipleClass = "sel-search-multiple";
                 }
-                $form = "<select name='$field{$bulk}'  class='form-control sel-search $multipleClass' $mandatory $selectMultiple $simpleSearchOptions>" .
-						(empty($selectMultiple) ? 	"<option value=''> -- Select  -- </option>" : "") .
+                $form = "<select name='$field{$bulk}'  class='form-control select3 sel-search $multipleClass' $mandatory $selectMultiple $simpleSearchOptions>" .
+						(empty($selectMultiple) && !$isSSSFWOBD ? 	"<option value=''> -- Select  -- </option>" : "") .
 						"	$opts
 						</select>";
                 break;
@@ -880,7 +994,9 @@ class SiteHelpers
                     $row = explode(":", $opt[$i]);
                     $opts .= "<option value ='" . $row[0] . "' > " . $row[1] . " </option> ";
                 }
-                $form = "<select name='$field{$bulk}' class='form-control' $mandatory $simpleSearchOptions><option value=''> -- Select  -- </option>$opts</select>";
+                $form = "<select name='$field{$bulk}' class='form-control' $mandatory $simpleSearchOptions>" .
+                        ($isSSSFWOBD ? "" : "<option value=''> -- Select  -- </option")
+                        . ">$opts</select>";
                 break;
 
 
@@ -1004,7 +1120,7 @@ class SiteHelpers
                     }
 
                 }
-                $form = "<select name='$field{$bulk}'  class='sel-inline' $mandatory>" .
+                $form = "<select name='$field{$bulk}'  class='sel-inline $field{$bulk}' $mandatory>" .
                     "<option value=''> -- Select  -- </option>".
                     "	$opts
 						</select>";
@@ -1944,24 +2060,48 @@ class SiteHelpers
             ->get();
         return $locations;
     }
-
-    static function getQueryStringForLocation($table)
+    
+    static function getIdsFromLocationDetails($userLocations)
     {
-        $queryString = ' AND (';
-        $locations = self::getLocationDetails(\Session::get('uid'));
-
-        foreach($locations as $index => $location)
-        {
-            if(count($locations) == ++$index)
-            {
-                $queryString .= " $table.location_id = '$location->id' ) ";
+        $locations = array();
+        if (!empty($userLocations)) {
+            foreach($userLocations as $location) {
+                $locations[] = $location->id;
             }
-            else
-            {
-                $queryString .= " $table.location_id = '$location->id' OR ";
-            }
-
         }
+        return $locations;
+    }    
+    
+    public static function getCurrentUserLocationsFromSession($asArray = false)
+    {
+//        $locations = array();        
+//        $hasAllLocations = \Session::get('user_has_all_locations') == 1;
+//        if ($hasAllLocations) {
+//            $locations = \Session::get('user_location_ids');            
+//        }       
+        
+        $locations = \Session::get('user_location_ids');   
+        if ($locations === null) {
+            $locations = array();
+        }        
+        if (!$asArray) {
+            $locations = implode(',', $locations);
+        }        
+        return $locations;
+    }       
+
+    static function getQueryStringForLocation($table, $fieldName = 'location_id', $addOnLocations = array(), $orClause = '')
+    {
+        $locationsData = self::getLocationDetails(\Session::get('uid'));
+        $locations = is_array($addOnLocations) ? $addOnLocations : array();
+        foreach($locationsData as $locationItem)
+        {
+            $locations[] = "'".$locationItem->id."'";
+        }
+        $locationsCSV = implode(',', $locations);
+        $queryString = " AND ($table.$fieldName IN ($locationsCSV) " .
+                (!empty($orClause) ? $orClause : '') . ")";
+        
         return $queryString;
     }
 
@@ -2122,6 +2262,7 @@ class SiteHelpers
         $newArray = array();
         foreach($data as $item) {
             if (isset($item['simplesearch']) && $item['simplesearch']  == '1') {
+                $item['generatingSimpleSearch'] = true;
                 $newArray[] = $item;
             }
         }
@@ -2156,5 +2297,84 @@ class SiteHelpers
     {
         $user_id=\DB::table('user_module_config')->where('id','=',$config_id)->pluck('user_id');
         return $user_id;
+    }
+    
+    /**
+     * Add all unassigned locations to users set with All Locations = true 
+     * (having has_all_locations=1)
+     * The two parameters of the function can use used when an existing location id has been modified
+     * @param number $location    (optional) Location ID after changed
+     * @param number $replaceLocation   (optional) Location ID before changed
+     */
+    public static function addLocationToAllLocationUsers($location = null, $replaceLocation = null) {
+        $table = "user_locations";
+        
+        // update renamed location id
+        if (!empty($replaceLocation) && !empty($location)) {
+            $data = array('location_id' => $location);
+            $query = \DB::table($table)->where('location_id', $replaceLocation);
+            $query->update($data);
+        }
+                
+//        $q = "SELECT l.id AS location_id, u.id AS user_id 
+//                FROM users u, location l 
+//                WHERE u.has_all_locations=1
+//                AND NOT EXISTS (SELECT * FROM user_locations WHERE user_id=u.id AND location_id=l.id) ";
+        
+        // add all unassigned locations to users having has_all_locations=1
+        $q = "INSERT INTO user_locations (location_id, user_id) 
+                SELECT l.id AS location_id, u.id AS user_id 
+                FROM users u, location l 
+                WHERE u.has_all_locations=1
+                AND NOT EXISTS (SELECT * FROM user_locations WHERE user_id=u.id AND location_id=l.id) ";
+                
+        \DB::insert($q);
+        
+        self::cleanUpUserLocations();     
+        
+    }
+    
+    /**
+     * Clean up orphan user-location assignments.
+     * Orphan records are created when either a user or a location is deleted
+     */
+    public static function cleanUpUserLocations() {
+        $table = "user_locations";
+        
+//        $q = "SELECT * FROM $table
+//                WHERE NOT EXISTS (
+//                    SELECT u.id AS user_id, l.id AS location_id 
+//                        FROM users u, location l 
+//                        WHERE u.id=user_locations.user_id AND l.id=user_locations.location_id)";
+        $q = "DELETE FROM $table
+                WHERE NOT EXISTS (
+                    SELECT u.id AS user_id, l.id AS location_id 
+                        FROM users u, location l 
+                        WHERE u.id=user_locations.user_id AND l.id=user_locations.location_id)";
+        
+        \DB::delete($q);
+    }   
+    
+    public static function generateSimpleSearchButton($setting = array()) {
+        $width = isset($setting['simplesearchbuttonwidth']) ? trim($setting['simplesearchbuttonwidth']): '';
+         
+        $widthClass = $widthStyle = $buttonStyle = "";
+        if (preg_match('/^[\_a-zA-Z]/', $width) == 1) {
+            $widthClass = $width . ' add-pad-right';
+        }
+        elseif (!empty($width)) {
+            $widthClass = 'add-pad-right';
+            $widthStyle = 'width:' . $width. ';';
+        }
+        if (!empty($width)) {
+            $buttonStyle = "width: 100%;";
+        }
+        $button = '<div class="sscol-submit '. $widthClass . '" 
+            style="'. $widthStyle .'"><br/>
+            <button type="button" name="search" style="'. $buttonStyle .'"
+                    class="doSimpleSearch btn btn-sm btn-primary"> Search </button>
+            </div>';
+        
+        return $button;
     }
 }

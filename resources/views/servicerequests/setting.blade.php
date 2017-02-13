@@ -5,7 +5,7 @@
         <!-- Page header -->
         <div class="page-header">
             <div class="page-title">
-                <h3> Permission Editor: </h3>
+                <h3> Permissions Editor: </h3>
             </div>
             <ul class="breadcrumb">
                 <li><a href="{{ URL::to('dashboard') }}"> Dashboard </a></li>
@@ -36,7 +36,7 @@
                         <tbody class="no-border-x no-border-y">
                         <tr>
                             <td>1</td>
-                            <td>Able to see all tickets</td>
+                            <td>Able to see all tickets.</td>
                             <td>
                                 <select name='role1[]' multiple id="role1" rows='5' class='select2 '>
                                 </select>
@@ -48,7 +48,7 @@
                         </tr>
                         <tr>
                             <td>2</td>
-                            <td>Able to receive an email notifications</td>
+                            <td>Will receive ticket update notifications.</td>
                             <td>
                                 <select name='role2[]' multiple id="role2" rows='5' class='select2 '>
                                 </select>
@@ -60,7 +60,7 @@
                         </tr>
                         <tr>
                             <td>3</td>
-                            <td>Able to see only assign tickets</td>
+                            <td>Able to see only assign tickets.</td>
                             <td>
                                 <select name='role3[]' multiple id="role3" rows='5' class='select2 '>
                                 </select>
@@ -72,7 +72,7 @@
                         </tr>
                         <tr>
                             <td>4</td>
-                            <td>Able to receive a copy of first email</td>
+                            <td>Will only receive the initial ticket notifications.</td>
                             <td>
                                 <select name='role4[]' multiple id="role4" rows='5' class='select2 '>
                                 </select>

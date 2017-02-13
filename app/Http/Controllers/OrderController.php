@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Validator, Input, Redirect, Cache;
 use PHPMailer;
+
 class OrderController extends Controller
 {
 
@@ -40,20 +41,46 @@ class OrderController extends Controller
         set_time_limit(0);
         $info = $this->model->makeInfo($this->module);
         //$master  	= $this->buildMasterDetail();
-        $filter = (!is_null(Input::get('search')) ? $this->buildSearch() : '');
+
+        $sort = (!is_null(Input::get('sort')) ? Input::get('sort') : $this->info['setting']['orderby']);
+        $order = (!is_null(Input::get('order')) ? Input::get('order') : $this->info['setting']['ordertype']);
+
+        // Get order_type search filter value and location_id saerch filter values
+        $orderTypeFilter = $this->model->getSearchFilters(array('order_type' => 'order_selected', 'location_id' => ''));
+        extract($orderTypeFilter);
+        // default order type is OPEN
+        if (empty($order_selected)) {
+            $order_selected = "OPEN";
+        }
+
+        // rebuild search query skipping 'order_type' filter
+        $trimmedSearchQuery = $this->model->rebuildSearchQuery(null, array('order_type'));
+
+        // Filter Search for query
+        // build sql query based on search filters
+        $filter = is_null(Input::get('search')) ? '' : $this->buildSearch($trimmedSearchQuery);
+        // Get assigned locations list as sql query (part)
+        $locationFilter = \SiteHelpers::getQueryStringForLocation('orders');
+        // if search filter does not have location_id filter
+        // add default location filter
+        if (empty($location_id)) {
+            $filter .= $locationFilter;
+        }
+
 
         //$filter 	.=  $master['masterFilter'];
         //comment limit
         $params = array(
-            'params' => '',
             'page' => 1,
-            'sort' => 'id',
-            'order' => 'desc'
+            'sort' => $sort,
+            'order' => $order,
+            'params' => $filter,
         );
 
         $minutes = 60;
-        $results = Cache::remember('orderExport', $minutes, function () use ($params) {
-            return $this->model->getExportRows($params);
+        $cacheKey = md5($filter . $order_selected . $sort . $order);
+        $results = Cache::remember($cacheKey, $minutes, function () use ($params, $order_selected) {
+            return $this->model->getExportRows($params, $order_selected);
         });
         //$results = $this->model->getExportRows($params);
 
@@ -105,7 +132,7 @@ class OrderController extends Controller
         $this->data['module_id'] = $module_id;
         if (Input::has('config_id')) {
             $config_id = Input::get('config_id');
-            \Session::put('config_id',$config_id);
+            \Session::put('config_id', $config_id);
         } elseif (\Session::has('config_id')) {
             $config_id = \Session::get('config_id');
         } else {
@@ -120,14 +147,28 @@ class OrderController extends Controller
         $sort = (!is_null($request->input('sort')) ? $request->input('sort') : $this->info['setting']['orderby']);
         $order = (!is_null($request->input('order')) ? $request->input('order') : $this->info['setting']['ordertype']);
         // End Filter sort and order for query
-        // Filter Search for query
-        //$filter = (!is_null($request->input('search')) ? $this->buildSearch() : '');
-        if (is_null($request->input('search'))) {
-            $filter = \SiteHelpers::getQueryStringForLocation('orders');
-        } else {
-            $filter = $this->buildSearch();
+
+        // Get order_type search filter value and location_id saerch filter values
+        $orderTypeFilter = $this->model->getSearchFilters(array('order_type' => 'order_selected', 'location_id' => ''));
+        extract($orderTypeFilter);
+        // default order type is OPEN
+        if (empty($order_selected)) {
+            $order_selected = "OPEN";
         }
 
+        // rebuild search query skipping 'order_type' filter
+        $trimmedSearchQuery = $this->model->rebuildSearchQuery(null, array('order_type'));
+
+        // Filter Search for query
+        // build sql query based on search filters
+        $filter = is_null($request->input('search')) ? '' : $this->buildSearch($trimmedSearchQuery);
+        // Get assigned locations list as sql query (part)
+        $locationFilter = \SiteHelpers::getQueryStringForLocation('orders');
+        // if search filter does not have location_id filter
+        // add default location filter
+        if (empty($location_id)) {
+            $filter .= $locationFilter;
+        }
 
         $page = $request->input('page', 1);
         $params = array(
@@ -138,11 +179,6 @@ class OrderController extends Controller
             'params' => $filter,
             'global' => (isset($this->access['is_global']) ? $this->access['is_global'] : 0)
         );
-        // Get Query
-        // passing All gives error in query, $cond
-        //$order_selected = isset($_GET['order_type']) ? $_GET['order_type'] : 'ALL';
-        $order_selected = isset($_GET['order_type']) ? $_GET['order_type'] : '';
-
 
         $results = $this->model->getRows($params, $order_selected);
 
@@ -214,11 +250,14 @@ class OrderController extends Controller
         $where_in_expression = '';
         $this->data['setting'] = $this->info['setting'];
         if ($id != 0 && $mode == '') {
+
             $mode = 'edit';
         } elseif ($id == 0 && $mode == '') {
             $mode = 'create';
         } elseif (substr($mode, 0, 3) == 'SID') {
             $mode = $mode;
+        } elseif ($mode == "clone") {
+            $mode = 'clone';
         }
         if ($id == 0) {
             if ($this->access['is_add'] == 0)
@@ -240,7 +279,8 @@ class OrderController extends Controller
         $this->data['mode'] = $mode;
         $this->data['id'] = $id;
         $this->data['data'] = $this->model->getOrderQuery($id, $mode);
-
+        $user_allowed_locations = implode(',', \Session::get('user_location_ids'));
+        $this->data['games_options'] = $this->model->populateGamesDropdown();
         return view('order.form', $this->data);
     }
 
@@ -258,10 +298,12 @@ class OrderController extends Controller
             $this->data['row'] = $this->model->getColumnTable('orders');
         }
         $this->data['order_data'] = $this->model->getOrderQuery($id, 'edit');
+
         $this->data['id'] = $id;
         $this->data['access'] = $this->access;
         $this->data['setting'] = $this->info['setting'];
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
+
         return view('order.view', $this->data);
     }
 
@@ -278,6 +320,7 @@ class OrderController extends Controller
 
         $sql = "INSERT INTO orders (" . implode(",", $columns) . ") ";
         $sql .= " SELECT " . implode(",", $columns) . " FROM orders WHERE id IN (" . $toCopy . ")";
+
         \DB::insert($sql);
         return response()->json(array(
             'status' => 'success',
@@ -292,8 +335,8 @@ class OrderController extends Controller
         $order_data = array();
         $order_contents = array();
         $data = array_filter($request->all());
+        $redirect_link = "order";
         if ($validator->passes()) {
-
             $order_id = $request->get('order_id');
             $editmode = $request->get('editmode');
             $where_in = $request->get('where_in_expression');
@@ -304,9 +347,7 @@ class OrderController extends Controller
             $vendor_id = $request->get('vendor_id');
             $vendor_email = $this->model->getVendorEmail($vendor_id);
             $freight_type_id = $request->get('freight_type_id');
-
             $date_ordered = date("Y-m-d", strtotime($request->get('date_ordered')));
-
             $total_cost = $request->get('order_total');
             $notes = $request->get('po_notes');
             $po_1 = $request->get('po_1');
@@ -329,20 +370,27 @@ class OrderController extends Controller
             }
             $itemsArray = $request->get('item');
             $itemNamesArray = $request->get('item_name');
-            //$skuNumArray=$request->get('sku');
-
+            $skuNumArray = $request->get('sku');
             $casePriceArray = $request->get('case_price');
             $priceArray = $request->get('price');
+
+            // add case price in priceArray if item_price is 0.00
+            foreach ($priceArray as $item_price_key => $item_price_value) {
+                if ($item_price_value == 0.00) {
+                    $priceArray[$item_price_key] = $casePriceArray[$item_price_key];
+                }
+            }
             $qtyArray = $request->get('qty');
             $productIdArray = $request->get('product_id');
             $requestIdArray = $request->get('request_id');
             $games = $request->get('game');
             $num_items_in_array = count($itemsArray);
+
             for ($i = 0; $i < $num_items_in_array; $i++) {
                 $j = $i + 1;
                 $order_description .= ' | item' . $j . ' - (' . $qtyArray[$i] . ') ' . $itemsArray[$i] . ' @ $' . $priceArray[$i] . ' ea.';
             }
-            if ($editmode) {
+            if ($editmode == "edit") {
                 $orderData = array(
                     'company_id' => $company_id,
                     'location_id' => $location_id,
@@ -361,7 +409,6 @@ class OrderController extends Controller
                 $last_insert_id = $order_id;
                 \DB::table('order_contents')->where('order_id', $last_insert_id)->delete();
             } else {
-
                 $orderData = array(
                     'user_id' => \Session::get('uid'),
                     'company_id' => $company_id,
@@ -379,14 +426,23 @@ class OrderController extends Controller
                     'new_format' => 1,
                     'po_notes' => $notes
                 );
+                if ($editmode == "clone") {
+                    $id = 0;
+                }
                 $this->model->insertRow($orderData, $id);
                 $order_id = \DB::getPdo()->lastInsertId();
             }
             for ($i = 0; $i < $num_items_in_array; $i++) {
+
                 if (empty($productIdArray[$i])) {
                     $product_id = '0';
                 } else {
                     $product_id = $productIdArray[$i];
+                }
+                if (empty($skuNumArray[$i])) {
+                    $sku_num = '0';
+                } else {
+                    $sku_num = $skuNumArray[$i];
                 }
 
                 if (empty($requestIdArray[$i])) {
@@ -400,6 +456,7 @@ class OrderController extends Controller
                 } else {
                     $game_id = '0';
                 }
+
                 $contentsData = array(
                     'order_id' => $order_id,
                     'request_id' => $request_id,
@@ -410,8 +467,10 @@ class OrderController extends Controller
                     'game_id' => $game_id,
                     'item_name' => $itemNamesArray[$i],
                     'case_price' => $casePriceArray[$i],
+                    'sku' => $sku_num,
                     'total' => $priceArray[$i] * $qtyArray[$i]
                 );
+
                 \DB::table('order_contents')->insert($contentsData);
                 if ($order_type == 18) //IF ORDER TYPE IS PRODUCT IN-DEVELOPMENT, ADD TO PRODUCTS LIST WITH STATUS IN-DEVELOPMENT
                 {
@@ -423,6 +482,23 @@ class OrderController extends Controller
                         'in_development' => 1,
                     );
                     \DB::table('products')->insert($productData);
+                }
+                if (!empty($where_in)) {
+                    $redirect_link = "managefegrequeststore";
+                    //// UPDATE STATUS TO APPROVED AND PROCESSED
+                    $now = $this->model->get_local_time('date');
+
+                    \DB::update('UPDATE requests
+							 SET status_id = 2,
+							 	 process_user_id = ' . \Session::get('uid') . ',
+								 process_date = "' . $now . '"
+						   WHERE id IN(' . $where_in . ')');
+                    //// SUBTRACT QTY OF RESERVED AMT ITEMS
+                    $item_count = substr_count($SID_string, '-') - 1;
+                    $SID_new = $SID_string;
+                    $this->updateRequestAndProducts($item_count, $SID_new);
+                } else {
+                    $redirect_link = "order";
                 }
             }
             // $mailto = $vendor_email;
@@ -444,6 +520,7 @@ class OrderController extends Controller
 //    });
             \Session::put('send_to', $vendor_email);
             \Session::put('order_id', $order_id);
+            \Session::put('redirect', $redirect_link);
             return response()->json(array(
                 'status' => 'success',
                 'message' => \Lang::get('core.note_success'),
@@ -464,56 +541,64 @@ class OrderController extends Controller
 
     public function getSaveOrSendEmail()
     {
-        $google_account = \DB::table('users')->where('id', \Session::get('uid'))->select('g_mail','g_password')->first();
+        $google_account = \DB::table('users')->where('id', \Session::get('uid'))->select('g_mail', 'g_password')->first();
         return view('order.saveorsendemail', compact('google_account'));
     }
 
     function postSaveorsendemail(Request $request)
     {
-        $type=$request->get('submit');
-        if($type == "send") {
-            $to = $request->get('to');
-            $cc = $request->get('cc');
-            $bcc = $request->get('bcc');
-            $message = $request->get('message');
-        }
-        else
-        {
-            $to = $request->get('to1');
-            $cc = $request->get('cc1');
-            $bcc = $request->get('bcc1');
-            $message = $request->get('message');
-        }
-
+        $type = $request->get('submit');
         $from = $request->get('from');
         $order_id = $request->get('order_id');
+        if(!isset($type)) {
+            $type="configured";
+        }
+        if($type=="configured")
+        {
+            $to=$request->get('to');
+            $cc = "";
+            $bcc = "";
+            $message = $request->get('message');
+        }
+        elseif($type == "send") {
+            $to = $request->get('to');
+            $to=getMultipleEmails($to);
+            $cc = $this->get('cc');
+            $cc=getMultipleEmails($cc);
+            $bcc = $this->get('bcc');
+            $bcc = $this->getMultipleEmails($bcc);
+            $message = $request->get('message');
+        } else {
+            $to = $request->get('to1');
+            $to=getMultipleEmails($to);
+            $cc = $this->get('cc1');
+            $cc=getMultipleEmails($cc);
+            $bcc = $this->get('bcc1');
+            $bcc = $this->getMultipleEmails($bcc);
+            $message = $request->get('message');
+        }
         $opt = $request->get('opt');
-        if (count($to) == 0 || $from === "NULL"  || empty($from)  || $from=="") {
+        if (count($to) == 0 || $from === "NULL" || empty($from) || $from == "") {
             return response()->json(array(
                 'message' => "Failed!Sender or Vendor Email is missing",
                 'status' => 'error'
             ));
         } else {
-            $status = $this->getPo($order_id, true, $to, $from,$cc,$bcc,$message);
+            $status = $this->getPo($order_id, true, $to, $from, $cc, $bcc, $message);
 
-            if($status == 1)
-            {
+            if ($status == 1) {
                 return array(
                     'status' => 'success',
                     'message' => \Lang::get('core.mail_sent_success'),
 
                 );
-            }
-            elseif($status == 2)
-            {
+            } elseif ($status == 2) {
                 return array(
                     'status' => 'error',
                     'message' => "Google account detail not exist",
 
                 );
-            }
-            elseif($status == 3)
-            {
+            } elseif ($status == 3) {
                 return array(
                     'status' => 'error',
                     'message' => "Mail Error: SMTP connect() failed",
@@ -533,7 +618,7 @@ class OrderController extends Controller
                 'status' => 'error',
                 'message' => \Lang::get('core.note_restric')
             ));
-            die;
+
 
         }
         // delete multipe rows
@@ -564,7 +649,7 @@ class OrderController extends Controller
     {
         $po_number = $request->get('po_number');
         $explanation = $request->get('explaination');
-        $message = 'Link to Order: http://' . $_SERVER['HTTP_HOST'] . '/fegsys/orders/removeorder' . $po_number . ' <br>Explanation: ' . $explanation . '';
+        $message = 'Link to Order: http://' . $_SERVER['HTTP_HOST'] . '/order/removeorder/' . $po_number . ' <br>Explanation: ' . $explanation . '';
         $from = \Session::get('email');
         $to = 'support@fegllc.com';
         $to = 'greg@fegllc.com';
@@ -585,13 +670,21 @@ class OrderController extends Controller
         }
     }
 
-    function getRemoveorder($po)
+    function getRemoveorder($poNumber = "")
     {
-        echo $po;
+
+        \DB::table('orders')->where('po_number', $poNumber)->delete();
+        \Session::flash('success', 'Po  deleted successfully!');
+        return Redirect::to('order')->with('messagetext', \Lang::get('core.note_block'))->with('msgstatus', 'success');
+
     }
 
-    function getPo($order_id = null, $sendemail = false, $to = null, $from = null,$cc = null,$bcc = null, $message= null )
+    function getPo($order_id = null, $sendemail = false, $to = null, $from = null, $cc = null, $bcc = null, $message = null)
     {
+        $mode = "";
+        if (isset($_GET['mode']) && !empty($_GET['mode'])) {
+            $mode = $_GET['mode'];
+        }
         $data = $this->model->getOrderData($order_id);
         if (empty($data)) {
 
@@ -634,12 +727,11 @@ class OrderController extends Controller
                 $data[0]['po_notes'] = " NOTE: " . $data[0]['po_notes'] . " (Email Questions to " . $data[0]['email'] . $data[0]['cc_email'] . $data[0]['loc_contact_email'] . ")";
             }
             $order_description = $data[0]['order_description'];
-
             if (substr($order_description, 0, 3) === ' | ') {
                 $order_description = substr($order_description, 3);
+
             }
             $order_description = str_replace(' | ', "\n", $order_description);
-
             if ($data[0]['new_format'] == 1) {
                 $item_description_string = '';
                 $sku_num_string = '';
@@ -652,11 +744,11 @@ class OrderController extends Controller
                 for ($i = 0; $i < $data[0]['requests_item_count']; $i++) {
                     $j = $i + 1;
                     $item_total = $data[0]['orderPriceArray'][$i] * $data[0]['orderQtyArray'][$i];
-                    $item_total_string = "$ " . number_format($item_total, 2);
+                    $item_total_string = "$ " . number_format($item_total, Order::ORDER_PERCISION);
                     $item_description_string = "Item #" . $j . ": " . $data[0]['orderDescriptionArray'][$i];
-                 if(isset($data[0]['skuNumArray'])) {
-                     $sku_num_string = $data[0]['skuNumArray'][$i];
-                 }
+                    if (isset($data[0]['skuNumArray'])) {
+                        $sku_num_string = $data[0]['skuNumArray'][$i];
+                    }
                     $item_qty_string = $data[0]['orderQtyArray'][$i];
                     $item_price_string = $data[0]['orderPriceArray'][$i];
                     $descriptionLength = strlen($item_description_string);
@@ -669,17 +761,84 @@ class OrderController extends Controller
                 $data[0]['item_qty_string'][$i] = $item_qty_string;
                 $data[0]['item_total_string'][$i] = $item_total_string;
                 $data[0]['order_total_cost'] = $order_total_cost;
-                // $item_total_string = $item_total_string."-----------------\n"."$ ".number_format($order_total_cost,2)."\n";
+//                $item_total_string = $item_total_string."-----------------\n"."$ ".number_format($order_total_cost,3)."\n";
             }
             $pdf = \PDF::loadView('order.po', ['data' => $data, 'main_title' => "Purchase Order"]);
+            if ($mode == "save") {
+                $po_file_name = $data[0]['company_name_short'] . "_PO_" . $data[0]['po_number'] . '.pdf';
+                $po_file_path =  'orders/' . $po_file_name;
+              //  echo $po_file_path;
+                if (\File::exists($po_file_path)) {
+                    \File::delete($po_file_path);
+                }
+                $pdf->save($po_file_path);
+                $data = array('file_name' => $po_file_name, 'url' => url());
+                return $data;
+            }
             if ($sendemail) {
-                if (isset($to) && count($to)>0) {
+                if (isset($to) && count($to) > 0) {
                     $filename = 'PO_' . $order_id . '.pdf';
                     $subject = "Purchase Order";
                     $message = $message;
-                    $cc=$cc;
-                    $bcc=$bcc;
-                    /*
+                    $cc = $cc;
+                    $bcc = $bcc;
+                  /* current user */
+                    $google_acc = \DB::table('users')->where('id', \Session::get('uid'))->select('g_mail', 'g_password')->first();
+                    if (!empty($google_acc->g_mail) && !empty($google_acc->g_password)) {
+
+                        /*
+                  * https://www.google.com/settings/security/lesssecureapps
+                  * enable stmp detail
+                  */
+                        $mail = new PHPMailer(); // create a new object
+                        $mail->IsSMTP(); // enable SMTP
+                        //$mail->SMTPDebug = 1; // debugging: 1 = errors and messages, 2 = messages only
+                        $mail->SMTPAuth = true; // authentication enabled
+                        $mail->SMTPSecure = 'tls'; // secure transfer enabled REQUIRED for Gmail
+                        $mail->Host = "smtp.gmail.com";
+                        $mail->Port = 587; // or 587
+                        $mail->IsHTML(true);
+                        $mail->Username = $google_acc->g_mail;                 // SMTP username
+                        $mail->Password = trim(base64_decode($google_acc->g_password), env('SALT_KEY'));
+                        $mail->SetFrom($google_acc->g_mail);
+                        $mail->Subject = $subject;
+                        $mail->Body = $message;
+                       // echo "<pre>";print_r($to);die();
+                        //foreach ($to as $t) {
+                            $mail->addAddress($to);
+                        //}
+                        $mail->addReplyTo($google_acc->g_mail);
+                     /*   if (count($cc) > 0) {
+                            foreach ($cc as $c) {
+                                $mail->addCC($c);
+                            }
+                        }
+                        if (count($bcc) > 0) {
+                            foreach ($bcc as $bc) {
+                                $mail->addBCC($bc);
+                            }
+                        }*/
+                        $output = $pdf->output();
+                        $file_to_save = public_path() . '/orders/' . $filename;
+                        file_put_contents($file_to_save, $output);
+                        $mail->addAttachment($file_to_save, $filename, 'base64', 'application/pdf');
+                        if (!$mail->Send()) {
+                            return 3;
+                        } else {
+                            return 1;
+                        }
+                    } else {
+                       $this->sendPhpEmail($message,$to,$from,$subject,$pdf,$filename,$cc,$bcc);
+                    }
+                }
+            } else {
+                return $pdf->download($data[0]['company_name_short'] . "_PO_" . $data[0]['po_number'] . '.pdf');
+            }
+        }
+    }
+function sendPhpEmail($message,$to,$from,$subject,$pdf,$filename,$cc,$bcc)
+{
+
                     $result = \Mail::raw($message, function ($message) use ($to, $from, $subject, $pdf, $filename,$cc,$bcc) {
                         $message->subject($subject);
                         $message->from($from);
@@ -694,69 +853,8 @@ class OrderController extends Controller
                         }
                         $message->replyTo($from, $from);
                         $message->attachData($pdf->output(), $filename);
-                    });*/
-                    /*
-                    * https://www.google.com/settings/security/lesssecureapps
-                    * enable stmp detail
-                    */
-                    $mail = new PHPMailer(); // create a new object
-                    $mail->IsSMTP(); // enable SMTP
-                    //$mail->SMTPDebug = 1; // debugging: 1 = errors and messages, 2 = messages only
-                    $mail->SMTPAuth = true; // authentication enabled
-                    $mail->SMTPSecure = 'ssl'; // secure transfer enabled REQUIRED for Gmail
-                    $mail->Host = "smtp.gmail.com";
-                    $mail->Port = 465; // or 587
-                    $mail->IsHTML(true);
-                    /* current user */
-                    $google_acc = \DB::table('users')->where('id', \Session::get('uid'))->select('g_mail', 'g_password')->first();
-                    if(!empty($google_acc->g_mail) && !empty($google_acc->g_password))
-                    {
-
-                        $mail->Username = $google_acc->g_mail;                 // SMTP username
-                        $mail->Password = trim(base64_decode($google_acc->g_password), env('SALT_KEY'));
-                        $mail->SetFrom($google_acc->g_mail);
-                        $mail->Subject = $subject;
-                        $mail->Body = $message;
-                        foreach($to as $t)
-                        {
-                            $mail->addAddress($t);
-                        }
-                        $mail->addReplyTo($google_acc->g_mail);
-                        if(count($cc)>0)
-                        {
-                            foreach($cc as $c)
-                            {
-                                $mail->addCC($c);
-                            }
-                        }
-                        if(count($bcc) > 0)
-                        {
-                            foreach($bcc as $bc)
-                            {
-                                $mail->addBCC($bc);
-                            }
-                        }
-                        $output = $pdf->output();
-                        $file_to_save = public_path().'/orders/'.$filename;
-                        file_put_contents($file_to_save, $output);
-                        $mail->addAttachment($file_to_save, $filename, 'base64', 'application/pdf');
-                        if(!$mail->Send()) {
-                            return 3;
-                        } else {
-                            return 1;
-                        }
-                    }
-                    else
-                    {
-                        return 2;
-                    }
-                }
-            } else {
-                return $pdf->download($data[0]['company_name_short'] . "_PO_" . $data[0]['po_number'] . '.pdf');
-            }
-        }
-    }
-
+                    });
+}
     function getClone($id)
     {
         if ($id == '') {
@@ -788,16 +886,34 @@ class OrderController extends Controller
         $po_1 = $request->get('po_1');
         $po_2 = $request->get('po_2');
         $po_3 = $request->get('po_3');
+        $location_id = $request->get('location_id');
+        $po = $request->get('po');
         $po_full = $po_1 . '-' . $po_2 . '-' . $po_3;
-        $msg = $this->model->getPoNumber($po_full);
+          if($po !=0)
+          {
+            if($this->model->isPOAvailable($po_full))
+            {
+              $this->model->createPOTrack($po_full,$location_id);
+                $po_3=explode('-',$po_full);
+                $msg= $po_3[2];
+            }
+            else
+            {
+               //die('po not available');
+                $msg=$this->model->increamentPO($location_id);
+            }
+              }
+        else
+        {
+            $msg = $this->model->increamentPo($location_id);
+        }
         echo $msg;
     }
-
     function getOrderreceipt($order_id = null)
     {
 
         $this->data['data'] = $this->model->getOrderReceipt($order_id);
-        $this->data['data']['order_items'] = \DB::select('SELECT * FROM order_contents WHERE order_id = ' . $order_id);
+        $this->data['data']['order_items'] = \DB::select('SELECT * , g.game_name  FROM order_contents O LEFT JOIN game g ON g.id = O.game_id WHERE order_id = ' . $order_id);
         return view('order.order-receipt', $this->data);
     }
 
@@ -820,12 +936,14 @@ class OrderController extends Controller
         $received_qtys = $request->get('receivedQty');
         $item_ids = $request->get('itemsID');
         $received_item_qty = $request->get('receivedItemsQty');
+        $date_received = date("Y-m-d", strtotime($request->get('date_received')));
         for ($i = 0; $i < count($item_ids); $i++) {
             $status = 1;
             if (in_array($item_ids[$i], $received_part_ids))
+
                 $status = 2;
             \DB::insert('INSERT INTO order_received (`order_id`,`order_line_item_id`,`quantity`,`received_by`, `status`, `date_received`, `notes`)
-							 	  		   VALUES (' . $order_id . ',' . $item_ids[$i] . ',' . $received_qtys[$i] . ',' . $user_id . ',' . $status . ', "' . date('Y-m-d') . '" , "' . $notes . '" )');
+							 	  		   VALUES (' . $order_id . ',' . $item_ids[$i] . ',' . $received_qtys[$i] . ',' . $user_id . ',' . $status . ', "' . $date_received . '" , "' . $notes . '" )');
             \DB::update('UPDATE order_contents
 								 	 	 SET item_received = ' . $received_item_qty[$i] . '+' . $received_qtys[$i] . '
 							   	   	   WHERE id = ' . $item_ids[$i]);
@@ -876,6 +994,7 @@ class OrderController extends Controller
                 $added = 1;
             }
             $date_received = $request->get('date_received');
+            // $date_received = \DateHelpers::formatDate($date_received);
             $date_received = date("Y-m-d", strtotime($date_received));
             $data = array('date_received' => $date_received,
                 'status_id' => $order_status,
@@ -918,20 +1037,31 @@ class OrderController extends Controller
     public function getAutocomplete()
     {
         $term = Input::get('term');
+        $vendorId = Input::get('vendor_id',0);
+        $whereWithVendorCondition = "";
+        //get products related to selected vendor only
+        if(!empty($vendorId)){
+            $whereWithVendorCondition = " AND products.vendor_id = $vendorId";
+        }
         $results = array();
         $queries = \DB::select("SELECT *
-  FROM products
- WHERE vendor_description LIKE '%$term%'
- GROUP BY vendor_description
- ORDER BY CASE WHEN vendor_description LIKE '$term%' THEN 0
-               WHEN vendor_description LIKE '% %$term% %' THEN 1
-               WHEN vendor_description LIKE '%$term' THEN 2
-               ELSE 3
-          END, vendor_description");
+                                 FROM products
+                                 WHERE vendor_description LIKE '%$term%' $whereWithVendorCondition and products.inactive=0
+                                 GROUP BY vendor_description
+                                 ORDER BY CASE WHEN vendor_description LIKE '$term%' THEN 0
+                                               WHEN vendor_description LIKE '% %$term% %' THEN 1
+                                               WHEN vendor_description LIKE '%$term' THEN 2
+                                               ELSE 3
+                                          END, vendor_description
+                                 Limit 0,10");
         if (count($queries) != 0) {
             foreach ($queries as $query) {
                 $results[] = ['id' => $query->id, 'value' => $query->vendor_description];
             }
+            usort($results, function (&$a, &$b) use ($term) {
+                if (stripos($a["value"], $term) == stripos($b["value"], $term)) return 0;
+                return (stripos($a["value"], $term) < stripos($b["value"], $term)) ? -1 : 1;
+            });
             echo json_encode($results);
         } else {
             echo json_encode(array('id' => 0, 'value' => "No Match"));
@@ -942,40 +1072,24 @@ class OrderController extends Controller
     {
         $vendor_description = Input::get('product_id');
         $row = \DB::select("select id,sku,item_description,unit_price,case_price,retail_price from products WHERE vendor_description='" . $vendor_description . "'");
+        $row = Order::hydrate($row);
         $json = array('sku' => $row[0]->sku, 'item_description' => $row[0]->item_description, 'unit_price' => $row[0]->unit_price, 'case_price' => $row[0]->case_price, 'retail_price' => $row[0]->retail_price, 'id' => $row[0]->id);
         echo json_encode($json);
     }
 
 
-    function getMinOrderAmount($id)
-    {
-        $row = \DB::table('vendor')->where('id', $id)->select('min_order_amt')->first();
-        if($row)
-        {
-            return response()->json(array(
-                'status' => 'success',
-                'min_order_amount' => $row->min_order_amt,
-                'message' => 'Your request order amonut should be $'.number_format($row->min_order_amt, 2)
-            ));
-        }
-        else {
-            return response()->json(array(
-                'status' => 'error',
-                'message' => 'Current vendor id not exist'
-            ));
-        }
-    }
-
     function getTestEmail()
     {
         $mail = new PHPMailer(); // create a new object
         $mail->IsSMTP(); // enable SMTP
-        //$mail->SMTPDebug = 1; // debugging: 1 = errors and messages, 2 = messages only
+        $mail->Host = 'smtp.gmail.com';
+        $mail->Port = 587; // or 587
+        $mail->SMTPSecure = 'tls'; // secure transfer enabled REQUIRED for Gmail
         $mail->SMTPAuth = true; // authentication enabled
-        $mail->SMTPSecure = 'ssl'; // secure transfer enabled REQUIRED for Gmail
-        $mail->Host = "smtp.gmail.com";
-        $mail->Port = 465; // or 587
-        $mail->IsHTML(true);
+
+        $mail->SMTPDebug = 1; // debugging: 1 = errors and messages, 2 = messages only
+
+        //$mail->IsHTML(true);
         $mail->Username = 'dev2@shayansolutions.com';          // SMTP username
         $mail->Password = '&b%Dd9Kr';
         $mail->SetFrom('dev2@shayansolutions.com');
@@ -984,12 +1098,118 @@ class OrderController extends Controller
         $mail->AddAddress("dev3@shayansolutions.com");
         $mail->addCC('shayansolutions@gmail.com');
         $mail->addBCC('dev1@shayansolutions.com');
-        if(!$mail->Send()) {
+        if (!$mail->Send()) {
             echo "Mailer Error: " . $mail->ErrorInfo;
         } else {
             echo "Message has been sent";
         }
-
         die;
     }
+
+    function updateRequestAndProducts($item_count, $SID_new)
+    {
+
+        for ($i = 1; $i <= $item_count; $i++) {
+            $pos1 = strpos($SID_new, '-');
+            $SID_new = substr($SID_new, $pos1 + 1);
+            $pos2 = strpos($SID_new, '-');
+            ${'SID' . $i} = substr($SID_new, 0, $pos2);
+            \DB::update('UPDATE products
+                 LEFT JOIN requests ON requests.product_id = products.id
+                        SET products.reserved_qty = (products.reserved_qty - requests.qty)
+                        WHERE requests.id = ' . ${'SID' . $i} . ' AND products.is_reserved = 1');
+        }
+    }
+
+    public function getDownloadPo($file_name)
+    {
+
+        $file = "orders/" . $file_name;
+       // echo $file;
+        $headers = array('Content-Type: application/pdf',);
+        return \Response::download($file, $file_name, $headers);
+    }
+
+    public function getGamesDropdown()
+    {
+        $location = $_GET['location'];
+        //$user_allowed_locations=implode(',',\Session::get('user_location_ids'));
+        $games_options = $this->model->populateGamesDropdown($location);
+        return $games_options;
+    }
+
+    function getComboselect(Request $request)
+    {
+
+        if ($request->ajax() == true && \Auth::check() == true) {
+            $param = explode(':', $request->input('filter'));
+            $parent = (!is_null($request->input('parent')) ? $request->input('parent') : null);
+            $limit = (!is_null($request->input('limit')) ? $request->input('limit') : null);
+            //for order type Advance Replacement
+            if (isset($param[3]) && !empty($param[3]) && isset($param[4])) {
+                if ($param[3] == "order_type_id" && $param[4] == 0) {
+                    $rows = \DB::table("order_status")->where('id', '=', '1')->orWhere('id', '=', '6')->orderBy('status', 'asc')->get();
+                } //for ordet type other than Advance Replacement
+                elseif ($param[3] == "order_type_id" && $param[4] == 1) {
+                    $rows = \DB::table("order_status")->where('id', '=', '1')->orWhere('id', '=', '2')->orderBy('status', 'asc')->get();
+                }
+            } else {
+                $rows = $this->model->getComboselect($param, $limit, $parent);
+            }
+            $items = array();
+
+            $fields = explode("|", $param[2]);
+
+            foreach ($rows as $row) {
+                $value = "";
+                foreach ($fields as $item => $val) {
+                    if ($val != "") $value .= $row->$val . " ";
+                }
+                $items[] = array($row->$param['1'], $value);
+
+            }
+
+            return json_encode($items);
+        } else {
+            return json_encode(array('OMG' => " Ops .. Cant access the page !"));
+        }
+    }
+    function getMultipleEmails($email)
+    {
+        if (preg_match('/,/',$email)) {
+            $email = explode(',', $email);
+        }
+        else
+        {
+            $email=array($email);
+        }
+        return $email;
+    }
+
 }
+
+//   function getComboselect(Request $request)
+//    {
+//        $urlParts = parse_url($request->headers->get('referer'));
+//        $urlSections = array_reverse(explode('/',$urlParts['path']));
+//        $orderId = $urlSections[0];
+//
+
+//  $result = \DB::table('orders')->where('id', '=', $orderId)->first();
+//        $id = $result->order_type_id;
+//$row = \DB::table('order_type')->where('id', '=', $id)->first();
+//        echo $id;
+//        exit();
+//           $result =  array('$order_detail' => $row[0]->order_detail,'order_description' => $row[0]->order_description);
+//          echo $result;
+//           exit();
+
+//query fetch order details
+//if order type is advance replacement than only show two options
+//else display all options excluding items returned option
+//        $response = parent::getComboselect($request);
+//        die("in overloaded");
+//    }
+//}
+
+

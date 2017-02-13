@@ -232,7 +232,7 @@ class ReportHelpers
             WHERE (E.game_id = 0 OR E.game_id IS NULL) ";
                      
         if (!empty($reader)) {
-            $Q .= " AND E.reader_id LIKE '$reader' ";
+            $Q .= " AND E.reader_id LIKE '%$reader%' ";
         }
         if (!empty($dateStart)) {
             $Q .= " AND E.date_start >= '$dateStart' ";
@@ -255,6 +255,171 @@ class ReportHelpers
         return $Q;
     }
     public static function getReadersMissingAssetIdCount($dateStart, $dateEnd, 
+            $location = "", $debit = "", $reader = "") {
+        $Q = "SELECT count(*) as `count` FROM (SELECT E.date_start ";
+        $Q .= self::_getReadersMissingAssetIdQuery($dateStart, $dateEnd, $location, $debit, $reader); 
+        $Q .= ") GD";
+        $count = self::getCountFromQuery($Q);
+        return $count;        
+    }
+
+
+    public static function getMissingReadersQuery($dateStart, $dateEnd, 
+            $location = "", $debit = "", $asset = "", $sortby = "date_start", $order = "") {
+        
+        $Q = "SELECT E.id,
+            date_format(E.date_start, '%Y-%m-%d') as date_start,
+            E.date_end,
+            E.game_id, 
+            IF(E.debit_type_id = 1 , SUBSTRING(E.reader_id, 7), reader_id) AS reader_id, 
+            E.loc_id AS location_id,
+            L.location_name_short,
+            E.debit_type_id,
+            D.company as debit_system,
+            E.loc_game_title, 
+            SUM(CASE WHEN E.debit_type_id = 1 THEN E.total_notional_value ELSE E.std_actual_cash END) as game_total ";
+        
+        $Q .= self::_getMissingReadersQuery($dateStart, $dateEnd, $location, $debit, $asset);    
+        // ORDER BY
+        $sortbys = array(            
+        );
+        if (!empty($sortbys[$sortby])) {
+            $sortby = $sortbys[$sortby];
+        }        
+        $sortbyQuery = self::orderify($sortby, $order);
+        $Q .= $sortbyQuery;        
+
+        $L = new MyLog("missing-readers.log", "uireports", "UIReports");
+        $L->log("Query", $Q);
+        return $Q;                  
+    }
+    public static function _getMissingReadersQuery($dateStart, $dateEnd, 
+            $location = "", $debit = "", $asset = "") {  
+        
+        if (!empty($dateStart)) {
+            $dateStart = self::dateify($dateStart);
+        }
+        if (!empty($dateEnd)) {
+            $dateEnd = self::dateify($dateEnd);
+        }
+        
+        $Q = "
+            FROM game_earnings E
+            LEFT JOIN location L ON L.id = E.loc_id
+            LEFT JOIN debit_type D ON D.id = E.debit_type_id            
+            WHERE (
+                E.reader_id = '0' OR 
+                E.reader_id IS NULL OR 
+                E.reader_id = '' 
+                OR (E.debit_type_id = 1 AND SUBSTRING(E.reader_id, 7)='0') 
+                OR E.reader_id REGEXP '[^a-z_0-9]'
+            ) ";
+                     
+        if (!empty($asset)) {
+            $Q .= " AND E.game_id = $asset ";
+        }
+        if (!empty($dateStart)) {
+            $Q .= " AND E.date_start >= '$dateStart' ";
+        }
+        
+        if (!empty($dateEnd)) {
+            $Q .= " AND E.date_start <= '$dateEnd 23:59:59' ";
+        }
+        
+        if (!empty($location)) {
+            $Q .= " AND E.loc_id IN ($location) ";
+        }
+        if (!empty($debit)) {
+            $Q .= " AND E.debit_type_id IN ($debit) ";
+        } 
+        
+        // GROUP BY
+        $Q .= " GROUP BY E.date_start, E.loc_id, E.game_id, E.reader_id ";
+        
+        return $Q;
+    }
+    public static function getMissingReadersCount($dateStart, $dateEnd, 
+            $location = "", $debit = "", $reader = "") {
+        $Q = "SELECT count(*) as `count` FROM (SELECT E.date_start ";
+        $Q .= self::_getMissingReadersQuery($dateStart, $dateEnd, $location, $debit, $reader); 
+        $Q .= ") GD";
+        $count = self::getCountFromQuery($Q);
+        return $count;        
+    }
+
+
+    public static function getUnknownAssetIdQuery($dateStart, $dateEnd, 
+            $location = "", $debit = "", $reader = "", $sortby = "date_start", $order = "") {
+        
+        $Q = "SELECT E.id,
+            date_format(E.date_start, '%Y-%m-%d') as date_start,
+            E.date_end,
+            E.game_id, 
+            IF(E.debit_type_id = 1 , SUBSTRING(E.reader_id, 7), reader_id) AS reader_id, 
+            E.loc_id AS location_id,
+            L.location_name_short,
+            E.debit_type_id,
+            D.company as debit_system,
+            E.loc_game_title,             
+            SUM(CASE WHEN E.debit_type_id = 1 THEN E.total_notional_value ELSE E.std_actual_cash END) as game_total ";
+        
+        $Q .= self::_getUnknownAssetIdQuery($dateStart, $dateEnd, $location, $debit, $reader);    
+        // ORDER BY
+        $sortbys = array(            
+        );
+        if (!empty($sortbys[$sortby])) {
+            $sortby = $sortbys[$sortby];
+        }        
+        $sortbyQuery = self::orderify($sortby, $order);
+        $Q .= $sortbyQuery;        
+
+        $L = new MyLog("unknown-assetid.log", "uireports", "UIReports");
+        $L->log("Query", $Q);
+        return $Q;                  
+    }
+    public static function _getUnknownAssetIdQuery($dateStart, $dateEnd, 
+            $location = "", $debit = "", $reader = "") {  
+        
+        if (!empty($dateStart)) {
+            $dateStart = self::dateify($dateStart);
+        }
+        if (!empty($dateEnd)) {
+            $dateEnd = self::dateify($dateEnd);
+        }
+        
+        $Q = "
+            FROM game_earnings E
+            LEFT JOIN location L ON L.id = E.loc_id
+            LEFT JOIN debit_type D ON D.id = E.debit_type_id
+            WHERE 
+            E.game_id NOT IN (SELECT id from game WHERE sold <> 1)
+            AND E.game_id != 0 AND game_id IS NOT NULL
+            ";
+                     
+        if (!empty($reader)) {
+            $Q .= " AND E.reader_id LIKE '%$reader%' ";
+        }
+        if (!empty($dateStart)) {
+            $Q .= " AND E.date_start >= '$dateStart' ";
+        }
+        
+        if (!empty($dateEnd)) {
+            $Q .= " AND E.date_start <= '$dateEnd 23:59:59' ";
+        }
+        
+        if (!empty($location)) {
+            $Q .= " AND E.loc_id IN ($location) ";
+        }
+        if (!empty($debit)) {
+            $Q .= " AND E.debit_type_id IN ($debit) ";
+        } 
+        
+        // GROUP BY
+        $Q .= " GROUP BY E.date_start, E.loc_id, E.game_id, E.reader_id ";
+        
+        return $Q;
+    }
+    public static function getUnknownAssetIdCount($dateStart, $dateEnd, 
             $location = "", $debit = "", $reader = "") {
         $Q = "SELECT count(*) as `count` FROM (SELECT E.date_start ";
         $Q .= self::_getReadersMissingAssetIdQuery($dateStart, $dateEnd, $location, $debit, $reader); 
@@ -319,7 +484,7 @@ class ReportHelpers
    LEFT JOIN debit_type D ON D.id = L.debit_type_id   
    LEFT JOIN game_title T ON T.id = G.game_title_id
    LEFT JOIN game_type Y ON Y.id = T.game_type_id
-	   WHERE E.game_id <> 0 ";
+	   WHERE E.game_id <> 0 AND E.record_status = 1 AND E.report_status = 1 ";
                      
         if (!empty($gameId)) {
             $Q .= " AND E.game_id IN ($gameId) ";
@@ -423,10 +588,12 @@ class ReportHelpers
         $Q ="           
         FROM  report_game_plays E
         LEFT JOIN location L ON L.id = E.location_id
+        LEFT JOIN game G ON G.id = E.game_id
         LEFT JOIN game_title GT ON E.game_title_id = GT.id
         LEFT JOIN game_type GTY ON E.game_type_id = GTY.id
         LEFT JOIN debit_type D ON L.debit_type_id = D.id
         WHERE 
+        G.sold != 1 AND
         L.reporting = 1 AND
         E.game_id <> 0 AND 
         E.record_status = 1 AND
@@ -528,7 +695,9 @@ class ReportHelpers
             LEFT JOIN game_type Y ON Y.id = T.game_type_id
             LEFT JOIN location L ON L.id = E.location_id
             LEFT JOIN debit_type D ON D.id = E.debit_type_id   
-                WHERE E.game_id <> 0 AND G.not_debit = 0 ";
+                WHERE E.game_id <> 0 AND G.not_debit = 0 
+                AND G.sold != 1 AND E.record_status = 1 
+                ";
                      
         if (!empty($gameTitleId)) {
             $Q .= " AND G.game_title_id IN ($gameTitleId) ";
@@ -636,6 +805,7 @@ class ReportHelpers
             LEFT JOIN game_title T ON T.id = E.game_title_id
             LEFT JOIN game_type Y ON Y.id = E.game_type_id
                 WHERE E.game_id <> 0  AND E.game_not_debit = 0 
+                AND G.sold != 1
                 AND E.report_status = 0 AND E.record_status = 1 ";
                      
         if (!empty($gameTitleId)) {
@@ -1397,5 +1567,28 @@ class ReportHelpers
         $count = self::getCountFromQuery($Q);
         return $count;          
     }    
-    
+   
+    public static function buildBlankResultDataDueToNoLocation($message = "", $topMessage = "Report not available", $bottomMessage = "") {
+        if (empty($message)) {
+            $message = "In order to run reports you must be assigned to atleast one location. 
+                You have not been assigned to any locations. 
+                Please contact an administrator if you believe this to be an error.";
+        }
+        $result = self::buildBlankResultData($message, $topMessage, $bottomMessage);
+        return $result; 
+    }
+    public static function buildBlankResultData($message = "", $topMessage = "", $bottomMessage = "") {
+        $result = self::buildResultData(array(), 0, $message, $topMessage, $bottomMessage);
+        return $result; 
+    }
+    public static function buildResultData($rows = array(), $total = 0, $message = "", $topMessage = "", $bottomMessage = "") {
+        $result = array(
+                'topMessage' => $topMessage,
+                'bottomMessage' => $bottomMessage,
+                'message' => $message,
+                'rows'=> $rows, 
+                'total' => $total
+            );
+        return $result; 
+    }
 }

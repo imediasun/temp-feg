@@ -260,7 +260,7 @@
                 </div>                
             </div>
             <div class="schedulesContainer" style="display:none;">
-
+                <button class="refreshButton"><i class="glyphicon glyphicon-refresh"></i></button>
             </div>            
         </form>
         </div>

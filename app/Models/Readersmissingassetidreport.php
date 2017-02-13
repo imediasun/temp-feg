@@ -3,6 +3,7 @@
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use App\Library\ReportHelpers;
+use SiteHelpers;
 
 class readersmissingassetidreport extends Sximo  {
 	
@@ -17,14 +18,14 @@ class readersmissingassetidreport extends Sximo  {
             $row->date_start = date("m/d/Y", strtotime($row->date_start));
             $row->date_end = date("m/d/Y", strtotime($row->date_end));
             $row->game_total = '$' . number_format($row->game_total,2);
-            
-            $reader_id = $row->reader_id;
-            $store_id_position = strripos($reader_id, '_');
-            if ($store_id_position !== FALSE) {
-                $reader_id = "<span style='color:#ccc;'>" . 
-                        substr_replace($reader_id, "_</span>", $store_id_position, 1);
-                $row->reader_id = $reader_id;
-            }
+//            
+//            $reader_id = $row->reader_id;
+//            $store_id_position = strripos($reader_id, '_');
+//            if ($store_id_position !== FALSE) {
+//                $reader_id = "<span style='color:#ccc;'>" . 
+//                        substr_replace($reader_id, "_</span>", $store_id_position, 1);
+//                $row->reader_id = $reader_id;
+//            }
             
             $newRows[] = $row;
         }
@@ -49,6 +50,13 @@ class readersmissingassetidreport extends Sximo  {
             'debit_type_id' => '','location_id' => '', 'reader_id' => ''
         ));        
         extract($filters);
+        if (empty($location_id)) {
+            $location_id = SiteHelpers::getCurrentUserLocationsFromSession();
+        }    
+        if (empty($location_id)) {
+            return ReportHelpers::buildBlankResultDataDueToNoLocation();
+        } 
+        
         if (empty($reader_id) || (!empty($date_start) && !empty($date_end))) {
             ReportHelpers::dateRangeFix($date_start, $date_end);
         }

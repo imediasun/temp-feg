@@ -125,7 +125,7 @@
 
                                 @if($field['field']=='qty')
 
-                                    <input type="text" value="{{ $value }}" name="qty[]" id="{{ $row->id }}" data-vendor="{{ $row->vendor_name }}" style="width:55px" onblur="changeTotal(this.value,this.id)"/>
+                                    <input type="number" value="{{ $value }}" name="qty[]" id="{{ $row->id }}" data-vendor="{{ $row->vendor_name }}" style="width:55px" onchange="changeTotal(this.value,this.id)"/>
                                 @else
 {!! $value !!}
                                 @endif
@@ -139,8 +139,8 @@
                         <td>{{ $row->sku }}</td>
                         <td>{{ $row->size }}</td>
                         <td>{{ $row->ticket_value }}</td>
-                        <td>{{ $row->case_price }}</td>
-                        <td>{{ $row->retail_price }}</td>
+                        <td>{{CurrencyHelpers::formatPrice($row->case_price) }}</td>
+                        <td>{{CurrencyHelpers::formatPrice( $row->retail_price) }}</td>
                         <td>{{ $row->notes }}</td>
                         <td data-values="action" data-key="<?php echo $row->id;?>">
                             {!! AjaxHelpers::buttonAction('addtocart',$access,$id ,$setting) !!}
@@ -194,7 +194,7 @@
 
                 <div class="col-md-10">
                     <input type="button" style="font-size:1.4em; width:100%; text-align:center;"
-                           value="Submit Weekly Requests totalling ${{ $cartData['shopping_cart_total']}}"
+                           value="Submit Weekly Requests totalling {{CurrencyHelpers::formatPrice($cartData['shopping_cart_total'])}}"
                            onClick="confirmSubmit();" id = "cartbtn"></button>
                 </div>
             </div>
@@ -295,7 +295,7 @@
 
     function doStuff(value,id,vendor_name) {
         $.ajax({
-            url:"/addtocart/save/"+id+"/"+value+"/"+encodeURIComponent(vendor_name) ,
+            url:"addtocart/save/"+id+"/"+value+"/"+encodeURIComponent(vendor_name) ,
             method:'get',
             dataType:'json',
             success:function(data){
@@ -353,6 +353,7 @@
     }
 function loadCart(vendor_name,subtotal)
 {
+
     getCartData(false,vendor_name,subtotal);
    // return false;
 }

@@ -18,7 +18,7 @@ width: 75%">
     </div>
     <div class="col-md-3">
 
-       <select name='prod_sub_type_id' rows='5' id='prod_sub_type_id' class='select3 '   >  </select>
+       <select name='prod_sub_type_id' rows='5' id='prod_sub_type_id' class='select3'   >  </select>
 
     <!--    <option selected selected>------------ Select Product --------------</option>
         <option value="basic" data-active="0">basic</option>
@@ -123,6 +123,7 @@ width: 75%">
                 }
             });
            var url_for_prod_sub_type="{{ URL::to('product/comboselect?filter=product_type:id:type_description') }}";
+            console.log(url_for_prod_sub_type);
             var type="{{ $product_list_type  }}";
 
             if(type != 0 && type != "select")
@@ -134,7 +135,8 @@ width: 75%">
                     {selected_value: '{{ \Session::get('sub_type') }}', initial_text: '--- Select  Subtype ---'  });
             $("#vendor_id").jCombo("{{ URL::to('product/comboselect?filter=vendor:id:vendor_name') }}",
                     {selected_value: '', initial_text: '--- Select Vendor ---'});
-            $(".select3").select2({width: "98%"});
+            //$(".select3").select2({width: "98%"});
+            renderDropdown($(".select2, .select3, .select4,.select5"), { width:"98%"});
             var config_id=$("#col-config").val();
             if(config_id ==0 )
             {

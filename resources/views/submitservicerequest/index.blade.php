@@ -77,7 +77,7 @@
                         </div>
                         <div class="form-group  " id="description_div">
                             <label for="description" class=" control-label col-md-10 text-left">
-                                Detailed description parts request and explanation of game problem
+                                Detailed Description (parts request and/or description of problem)
                             </label>
 
                             <div class="col-md-4"></div>
@@ -147,10 +147,10 @@
                                 <div class="col-sm-8">
                                     <button type="submit" class="btn btn-primary btn-sm "><i
                                                 class="fa  fa-save "></i>  {{ Lang::get('core.sb_save') }} </button>
-                                    <button type="button" onclick="ajaxViewClose('#{{ $pageModule }}')"
-                                            class="btn btn-success btn-sm"><i
-                                                class="fa  fa-arrow-circle-left "></i>  {{ Lang::get('core.sb_cancel') }}
-                                    </button>
+                                    {{--<button type="button" onclick="ajaxViewClose('#{{ $pageModule }}')"--}}
+                                            {{--class="btn btn-success btn-sm"><i--}}
+                                                {{--class="fa  fa-arrow-circle-left "></i>  {{ Lang::get('core.sb_cancel') }}--}}
+                                    {{--</button>--}}
                                 </div>
                             </div>
 
@@ -159,7 +159,6 @@
                         </div>
                         <hr/>
                         <h4 class="text-center">Submitted
-                            by {{ \Session::get('first_name') }} {{ \Session::get('last_name') }}
                             on {{ date('m/d/Y') }}</h4>
 
                     </div>

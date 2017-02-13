@@ -11,7 +11,7 @@
 			@endif
 		</div>
 	</div>
-	<div class="sbox-content" style="">
+	<div class="sbox-content" style="border: none;">
         @if($setting['usesimplesearch']!='false')
             <?php $simpleSearchForm = SiteHelpers::configureSimpleSearchForm($tableForm); ?>
             @if(!empty($simpleSearchForm))
@@ -22,14 +22,12 @@
                             {!! SiteHelpers::transForm($t['field'] , $simpleSearchForm) !!}
                         </div>
                     @endforeach
-                    <div class="sscol-submit"><br/>
-                        <button type="button" name="search" class="doSimpleSearch btn btn-sm btn-primary"> Search </button>
-                    </div>
+                    {!! SiteHelpers::generateSimpleSearchButton($setting) !!}
                 </div>
             @endif
         @endif
-        @include( $pageModule.'/toolbar',['colconfigs' => SiteHelpers::getRequiredConfigs($module_id),'order_type'=>$order_selected])
-
+        @include( $pageModule.'/toolbar',['colconfigs' => SiteHelpers::getRequiredConfigs($module_id)])
+			<div class="sbox-content" style="border: none;">
 	 <?php echo Form::open(array('url'=>'order/delete/', 'class'=>'form-horizontal' ,'id' =>'SximoTable'  ,'data-parsley-validate'=>'' )) ;?>
 <div class="table-responsive">
 	@if(count($rowData)>=1)
@@ -102,6 +100,7 @@
            		<?php foreach ($rowData as $row) :
            			  $id = $row->id;
            		?>
+
                 <tr class="editable" id="form-{{ $row->id }}">
 
 					@if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
@@ -123,8 +122,9 @@
 						 	<?php $limited = isset($field['limited']) ? $field['limited'] :''; ?>
 						 	@if(SiteHelpers::filterColumn($limited ))
 								 <td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}" data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
-									{!! $value !!}
-								 </td>
+
+							{!! $value !!}
+							</td>
 							@endif
 						 <?php endif;
 						endforeach;
@@ -143,10 +143,10 @@
 						<a href="{{ $pageModule }}/update/{{$row->id}}/clone"  onclick="ajaxViewDetail('#order',this.href); return false; "  class="tips btn btn-xs btn-white" title="Clone Order"><i class=" fa fa-random" aria-hidden="true"></i></a>
 
 
-                    @if($order_selected=='OPEN')
-                        <a href="{{ URL::to('order/orderreceipt/'.$row->id)}}" class="tips btn btn-xs btn-white" title="Receive Order"><i class="fa fa-cutlery" aria-hidden="true"></i></a>
-                    @endif
-					@if($order_selected=='OPEN')
+                    @if($row->status_id=='Open')
+                        <a href="{{ URL::to('order/orderreceipt/'.$row->id)}}" class="tips btn btn-xs btn-white" title="Receive Order"><i class="fa fa fa-truck" aria-hidden="true"></i></a>
+                   @endif
+					@if($row->status_id=='Open')
 						<a href="{{ URL::to('order/removalrequest/'.$row->po_number)}}" class="tips btn btn-xs btn-white" title="Request Removal"><i class="fa fa-trash-o " aria-hidden="true"></i></a>
 						@endif
 					</td>
@@ -180,7 +180,7 @@
 
 	</div>
 </div>
-
+</div>
 	@if($setting['inline'] =='true') @include('sximo.module.utility.inlinegrid') @endif
 
 <script>

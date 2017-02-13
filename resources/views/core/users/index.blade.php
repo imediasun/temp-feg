@@ -152,15 +152,15 @@
 					 	@elseif($field['field'] =='active')
 							{!! ($row->active ==1 ? '<lable class="label label-success">Active</lable>' : '<lable class="label label-danger">Inactive</lable>')  !!}
 						 @elseif($field['field'] =='date')
-							 {{  \DateHelpers::formatDate($row->date) }}
+							 {{  DateHelpers::formatDate($row->date) }}
 						 @elseif($field['field'] =='last_login')
-							 {{  \DateHelpers::formatDateTime($row->last_login) }}
+							 {{  DateHelpers::formatDateTime($row->last_login) }}
 						 @elseif($field['field'] =='last_activity')
-							 {{  \DateHelpers::formatDateTime($row->last_activity) }}
+							 {{  DateHelpers::formatDateTime($row->last_activity) }}
 						 @elseif($field['field'] =='updated_at')
-							 {{  \DateHelpers::formatDate($row->updated_at) }}
+							 {{  DateHelpers::formatDate($row->updated_at) }}
 						 @elseif($field['field'] =='created_at')
-							 {{  \DateHelpers::formatDate($row->created_at) }}
+							 {{  DateHelpers::formatDate($row->created_at) }}
 						@else
 							{{--*/ $conn = (isset($field['conn']) ? $field['conn'] : array() ) /*--}}
 							{!! SiteHelpers::gridDisplay($row->$field['field'],$field['field'],$conn) !!}

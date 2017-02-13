@@ -45,14 +45,17 @@ abstract class Controller extends BaseController
                 \Session::put('ulname', \Auth::user()->last_name);
                 \Session::put('company_id', \Auth::user()->company_id);
                 $user_locations = \SiteHelpers::getLocationDetails(\Auth::user()->id);
+                $user_location_ids = \SiteHelpers::getIdsFromLocationDetails($user_locations);
                 \Session::put('user_locations', $user_locations);
+                \Session::put('user_location_ids', $user_location_ids);
+                \Session::put('user_has_all_locations', \Auth::user()->has_all_locations);
                 \Session::put('selected_location', isset($user_locations[0]->id) ? $user_locations[0]->id: null);
                 \Session::put('selected_location_name', isset($user_locations[0]->location_name_short) ? $user_locations[0]->location_name_short : null);
                 \Session::put('get_locations_by_region', \Auth::user()->get_locations_by_region);
                 \Session::put('themes', 'sximo-light-blue');
             }
         }
-
+        
         if (!\Session::get('themes')) {
             \Session::put('themes', 'sximo');
         }
@@ -78,7 +81,8 @@ abstract class Controller extends BaseController
             $parent = (!is_null($request->input('parent')) ? $request->input('parent') : null);
 
             $limit = (!is_null($request->input('limit')) ? $request->input('limit') : null);
-
+            $delimiter = empty($request->input('delimiter')) ? ' ' : $request->input('delimiter');
+            
             $rows = $this->model->getComboselect($param, $limit, $parent);
 
             $items = array();
@@ -87,8 +91,12 @@ abstract class Controller extends BaseController
 
             foreach ($rows as $row) {
                 $value = "";
+                $values = array();
                 foreach ($fields as $item => $val) {
-                    if ($val != "") $value .= $row->$val . " ";
+                    if ($val != "") {
+                        $values[] = $row->$val;
+                    }
+                    $value = implode($delimiter, $values);
                 }
                 $items[] = array($row->$param['1'], $value);
 
@@ -216,21 +224,27 @@ abstract class Controller extends BaseController
         return $rules;
     }
 
-    function validatePost($table)
+    function validatePost($table, $skipFieldsMissingInRequest = false)
     {
         $request = new Request;
         $str = $this->info['config']['forms'];
         $data = array();
         foreach ($str as $f) {
+            
             $field = $f['field'];
+            $requestValue = \Request::get($field);
+            $requestType = $f['type'];            
+            if ($skipFieldsMissingInRequest && $requestType !=='file' && !isset($requestValue)) {
+                continue;
+            }
             if ($f['view'] == 1) {
                 if ($f['type'] == 'textarea_editor' || $f['type'] == 'textarea') {
-
                     $content = (isset($_POST[$field]) ? $_POST[$field] : '');
                     $data[$field] = $content;
-                } else {
+                } 
+                else {
                     $r = \Request::get($field);
-                    if (isset($_POST[$field]) or isset($r)) {
+                    if (isset($_POST[$field]) || isset($r)) {
                         if (isset($_POST[$field])) {
                             $data[$field] = $_POST[$field];
                         } elseif (isset($r)) {
@@ -317,27 +331,25 @@ abstract class Controller extends BaseController
                         }
                     }
 
-
                     // if post is checkbox
-                    if ($f['type'] == 'checkbox') {
+                    elseif ($f['type'] == 'checkbox') {
                         $r1 = \Request::get($field);
-                        if (!is_null($_POST[$field]) or !is_null($r1)) {
-                            if (!is_null($_POST[$field]))
+                        if (!is_null($_POST[$field]) || !is_null($r1)) {
+                            if (!is_null($_POST[$field])) {
                                 $data[$field] = $_POST[$field];
+                            }
                             elseif (!is_null($r1)) {
                                 $data[$field] = $r1;
                             }
                         }
                     }
                     // if post is date
-                    if ($f['type'] == 'date') {
-
-                        $data[$field] = date("Y-m-d", strtotime($request->input($field)));
-                    }
-
+                    elseif ($f['type'] == 'date' || $f['type'] == 'text_date') {
+                        $data[$field] = date("Y-m-d", strtotime(\Request::get($field)));
+                    }   
                     // if post is seelct multiple
                     //
-                    if ($f['type'] == 'select') {
+                    elseif ($f['type'] == 'select') {
                         $r2 = \Request::get($field);
                         $multival = "";
                         //echo '<pre>'; print_r( $_POST[$field] ); echo '</pre>';
@@ -348,9 +360,11 @@ abstract class Controller extends BaseController
 
                                 $multival = (is_array($r2) ? implode(",", $r2) : $r2);
                             }
-
-                            $data[$field] = $multival;
-                        } else {
+                            if (isset($_POST[$field]) || isset($_GET[$field])) {
+                                $data[$field] = $multival;
+                            }                            
+                        } 
+                        else {
                             if (isset($_POST[$field]))
                                 $data[$field] = $_POST[$field];
                             elseif (isset($r2))
@@ -359,7 +373,7 @@ abstract class Controller extends BaseController
                     }
                 }
             }
-        }
+        }        
         $global = (isset($this->access['is_global']) ? $this->access['is_global'] : 0);
 
         if ($global == 0)
@@ -409,10 +423,11 @@ abstract class Controller extends BaseController
         $order = (isset($_GET['order']) ? $_GET['order'] : '');
         $rows = (isset($_GET['rows']) ? $_GET['rows'] : '');
         $search = (isset($_GET['search']) ? $_GET['search'] : '');
-        $product_type = (isset($_GET['prod_list_type']) ? $_GET['prod_list_type'] : '');
+        $product_list_type = (isset($_GET['prod_list_type']) ? $_GET['prod_list_type'] : '');
         $sub_type = (isset($_GET['sub_type']) ? $_GET['sub_type'] : '');
         $budget_year = (isset($_GET['budget_year']) ? $_GET['budget_year'] : '');
         $order_type = (isset($_GET['order_type']) ? $_GET['order_type'] : '');
+        $product_type=(isset($_GET['product_type']) ? $_GET['product_type'] : '');
         $active = (isset($_GET['active']) ? $_GET['active'] : '');
         $active_inactive = (isset($_GET['active_inactive']) ? $_GET['active_inactive'] : '');
         $type = (isset($_GET['type']) ? $_GET['type'] : '');
@@ -427,8 +442,10 @@ abstract class Controller extends BaseController
         if ($order != '') $appends['order'] = $order;
         if ($rows != '') $appends['rows'] = $rows;
         if ($search != '') $appends['search'] = $search;
+        if ($product_list_type != '' || $product_list_type != NULL)
+            $appends['prod_list_type'] = $product_list_type;
         if ($product_type != '' || $product_type != NULL)
-            $appends['prod_list_type'] = $product_type;
+            $appends['product_type'] = $product_type;
         if ($budget_year != '' || $budget_year != NULL)
             $appends['budget_year'] = $budget_year;
         if ($order_type != '')
@@ -578,18 +595,19 @@ abstract class Controller extends BaseController
         return;
     }
 
-    function buildSearch()
+    function buildSearch($customSearchString = null)
     {
         $keywords = '';
         $fields = '';
         $param = '';
         $allowsearch = $this->info['config']['forms'];
-
+        $searchQuerystring = !is_null($customSearchString) ? $customSearchString : 
+                (isset($_GET['search']) ? $_GET['search'] : '');
+        
         foreach ($allowsearch as $as)
             $arr[$as['field']] = $as;
-        if ($_GET['search'] != '') {
-            $search_params=$_GET['search'];
-            $search_params=str_replace('_amp','&',$search_params);
+        if ($searchQuerystring != '') {
+            $search_params=str_replace('_amp','&',$searchQuerystring);
             $type = explode("|", $search_params);
             if (count($type) >= 1) {
                 foreach ($type as $t) {
@@ -717,6 +735,8 @@ abstract class Controller extends BaseController
             'params' => '',
             'sort' => $sort,
             'order' => $order,
+            'params' => $filter,
+            'global' => (isset($this->access['is_global']) ? $this->access['is_global'] : 0)
         );
 
 

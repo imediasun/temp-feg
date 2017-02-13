@@ -14,7 +14,7 @@ class AjaxHelpers
 		if(isset($arr['valid']) && $arr['valid'] ==1)
 		{
 			$fields = str_replace("|",",",$arr['display']);			
-
+            $val=addslashes($val);
 			if(isset( $arr['multiple']) && $arr['multiple'] =='1')
 			{
 				$Q = DB::select(" SELECT ".$fields." FROM ".$arr['db']." WHERE ".$arr['key']." IN (".$val.") ");
@@ -54,22 +54,22 @@ class AjaxHelpers
 		// Handling format function 	
 		if(isset($attribute['formater']['active']) and $attribute['formater']['active']  ==1)
 		{
-			$val = $attribute['formater']['value'];
+			$fval = $attribute['formater']['value'];
 			foreach($row as $k=>$i)
 			{
-				if (preg_match("/$k/",$val))
-					$val = str_replace($k,$i,$val);				
+				if (preg_match('/\b('.$k.')\b/',$fval))
+                $fval = str_replace($k,$i,$fval);
 			}
-			$c = explode("|",$val);
+			$c = explode("|",$fval);
+
 			if(isset($c[0]) && class_exists($c[0]))
 			{
-
-                if($c[1]=="formatDate" || $c[1]=="formatDateTime"){
-
-                    $val = call_user_func( array($c[0],$c[1]), $c[2]);
-                }
-                else{
-                    $val = call_user_func( array($c[0],$c[1]), str_replace(":",",",$c[2]));
+                if(isset($c[2]) && ($c[2] != null || empty($c[2]))) {
+                    if ($c[1] == "formatDate" || $c[1] == "formatDateTime") {
+                        $val = call_user_func(array($c[0], $c[1]), $c[2]);
+                    } else {
+                        $val = call_user_func(array($c[0], $c[1]), str_replace(":", ",", $c[2]));
+                    }
                 }
 			}
 
@@ -148,38 +148,50 @@ class AjaxHelpers
 		return $type;
 	}
 
-	static public function buttonAction( $module , $access , $id , $setting,$edit=null)
+	static public function buttonAction( $module, $access, $id, $setting, $edit=null)
 	{
         
-        $url = $module;
+        $url = $containerID = $module;
         if (is_array($module)) {
-            $url = $module['url'];
-            $module = $module['module'];
+            $moduleData = $module;
+            $module = $moduleData['module'];
+            $url = isset($moduleData['url']) ? $moduleData['url']: $module;
+            $containerID = isset($moduleData['containerID']) ? $moduleData['containerID']: $module;
+            
         }
+        $containerID = '#'.preg_replace('/\/?[^\/]+?\//', '', $containerID);
 
 		$html ='<div class=" action dropup" >';
 		if($access['is_detail'] ==1) {
 			if($setting['view-method'] != 'expand')
 			{
-				$onclick = " onclick=\"ajaxViewDetail('#".preg_replace('/\/?[^\/]+?\//', '', $module)."',this.href); return false; \"" ;
-				if($setting['view-method'] =='modal')
-						$onclick = " onclick=\"SximoModal(this.href,'View Detail'); return false; \"" ;
-				$html .= '<a href="'.URL::to($url.'/show/'.$id).'" '.$onclick.' class="btn btn-xs btn-white tips" title="'.Lang::get('core.btn_view').'"><i class="fa fa-search"></i></a>';
+				$onclick = " onclick=\"ajaxViewDetail('$containerID',this.href); return false; \"" ;
+				if($setting['view-method'] =='modal') {
+                    $onclick = " onclick=\"SximoModal(this.href,'View Detail'); return false; \"" ;
+                }
+				$html .= '<a href="'.URL::to($url.'/show/'.$id).'" '.
+                        $onclick.
+                        ' class="btn btn-xs btn-white tips" title="'.
+                        Lang::get('core.btn_view').'"><i class="fa fa-search"></i></a>';
 			}
 		}
-                if($edit == null)
-                {
-		if($access['is_edit'] ==1) {
-			$onclick = " onclick=\"ajaxViewDetail('#".preg_replace('/\/?[^\/]+?\//', '', $module)."',this.href); return false; \"" ;
-			if($setting['form-method'] =='modal')
-					$onclick = " onclick=\"SximoModal(this.href,'Edit Form'); return false; \"" ;			
-			
-			$html .= ' <a href="'.URL::to($url.'/update/'.$id).'" '.$onclick.'  class="btn btn-xs btn-white tips" title="'.Lang::get('core.btn_edit').'"><i class="fa  fa-edit"></i></a>';
-		}
+        if($edit == null)
+        {
+            if($access['is_edit'] ==1) {
+                $onclick = " onclick=\"ajaxViewDetail('$containerID',this.href); return false; \"" ;
+                if($setting['form-method'] =='modal') {
+                    $onclick = " onclick=\"SximoModal(this.href,'Edit Form'); return false; \"" ;			
                 }
+                $html .= ' <a href="'.URL::to($url.'/update/'.$id).'" '.
+                        $onclick.
+                        '  class="btn btn-xs btn-white tips" title="'.
+                        Lang::get('core.btn_edit').'"><i class="fa  fa-edit"></i></a>';
+            }
+        }
 		$html .= '</div>';
 		return $html;
 	}
+    
 	static public function GamestitleButtonAction( $module , $access , $id , $setting,$edit=null)
 	{
 

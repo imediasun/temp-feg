@@ -193,6 +193,36 @@ the specific language governing permissions and limitations under the Apache Lic
         });
     }
 
+    function sortArray(array, start, targetArrayA, targetArrayB, value)
+    {
+        var index = -1;
+        var flag = false;
+        $.each(array, function(i,v){
+            if(v.text.toLowerCase().search(value) <= start)
+            {
+                start = v.text.toLowerCase().search(value);
+                index = i;
+                if((v.text.length - value.length - 1) == start)
+                    flag = true;
+                else
+                    flag = false;
+
+            }
+        });
+        if(flag)
+        {
+            targetArrayB.push(array[index]);
+        }
+        else
+            targetArrayA.push(array[index]);
+        array.splice(index,1);
+        if(array.length > 1)
+            return sortArray(array, array[0].text.toLowerCase().search(value), targetArrayA, targetArrayB, value)
+        else
+            targetArrayA.push(array[0]);
+        return 	targetArrayA.concat(targetArrayB);
+    }
+
     $document.on("mousemove", function (e) {
         lastMousePosition.x = e.pageX;
         lastMousePosition.y = e.pageY;
@@ -3369,6 +3399,12 @@ the specific language governing permissions and limitations under the Apache Lic
             return data ? escapeMarkup(data.text) : undefined;
         },
         sortResults: function (results, container, query) {
+            if (query.term) {
+                if(results.length > 1)
+                {
+                    results = sortArray(results, results[0].text.toLowerCase().search(query.term.toLowerCase()), [], [], query.term.toLowerCase());
+                }
+            }
             return results;
         },
         formatResultCssClass: function(data) {return data.css;},

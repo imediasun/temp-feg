@@ -20,6 +20,9 @@ class SyncFromOldLiveHelpers
         extract(array_merge(array(
             'cleanFirst' => 0,
             'reverse' => 1,
+            'skipSyncCommon' => 0,
+            'dateStart' => null,
+            'dateEnd' => null,
         ), $params));
         
         $L = $_logger;
@@ -27,15 +30,17 @@ class SyncFromOldLiveHelpers
         
         $timeStart = microtime(true);
         
-        self::commonSyncAll($params);
+        if ($skipSyncCommon != 1) {
+            self::commonSyncAll($params);
+        }        
         $q = "select date_format(max(date_start), '%Y-%m-%d') as maxd, 
             date_format(min(date_start), '%Y-%m-%d') as mind, 
             datediff(max(date_start), min(date_start)) as ndays
             from game_earnings";
         $data = DB::select($q);
         if (!empty($data)) {
-            $max = $data[0]->maxd;
-            $min = $data[0]->mind;
+            $max = !empty($dateEnd) ? $dateEnd : $data[0]->maxd;
+            $min = !empty($dateStart) ? $dateStart : $data[0]->mind;
             $count = $data[0]->ndays;
         }
         
@@ -400,9 +405,9 @@ class SyncFromOldLiveHelpers
         self::$L->log("Start Embed Sync");
         self::live_sync_temp_earnings('livemysql_embed', 'embed_sync');
         self::$L->log("End Embed Sync");        
-        self::$L->log("Adjustments start");        
-        self::live_sync_temp_earnings_adj('livemysql_embed', 'livemysql_sacoa');
-        self::$L->log("Adjustments End"); 
+        //self::$L->log("Adjustments start");        
+        //self::live_sync_temp_earnings_adj('livemysql_embed', 'livemysql_sacoa');
+        //self::$L->log("Adjustments End"); 
 //        self::commonSyncEnd($params);
     }
 

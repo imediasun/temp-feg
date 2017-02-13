@@ -13,7 +13,7 @@
 
 		<input type="hidden" name='assign_to' value="{{$row['assign_to']}}">
 		<div class="col-md-12">
-						<fieldset><legend> Service Requests</legend>
+						<fieldset><legend>Create Ticket</legend>
 									
 
 				  <div class="form-group  " > 
@@ -158,13 +158,13 @@
 				  </div>
 
 							<div class="form-group  " >
-								<label for="Needed Date" class=" control-label col-md-4 text-left">
-									{!! SiteHelpers::activeLang('Needed Date', (isset($fields['need_by_date']['language'])? $fields['need_by_date']['language'] : array())) !!}
+								<label for="Date Needed" class=" control-label col-md-4 text-left">
+									{!! SiteHelpers::activeLang('Date Needed', (isset($fields['need_by_date']['language'])? $fields['need_by_date']['language'] : array())) !!}
 								</label>
 								<div class="col-md-6">
 									<div class="input-group datepicker" style="width:150px ">
 										<?php
-										$date = \DateHelpers::formatDate($row['need_by_date']);
+										$date = DateHelpers::formatDate($row['need_by_date']);
 										?>
 									{!! Form::text('need_by_date', $date,array('class'=>'form-control', 'id'=>'my-datepicker', 'style'=>'width:150px !important;'   )) !!}
 
@@ -180,12 +180,12 @@
 
 
 						<!--	<div class="form-group  " >
-							<label for="Needed Date" class=" control-label col-md-4 text-left">
-							{{ SiteHelpers::activeLang('Needed Date', (isset($fields['need_by_date']['language'])? $fields['need_by_date']['language'] : array())) }}
+							<label for="Date Needed" class=" control-label col-md-4 text-left">
+							{{ SiteHelpers::activeLang('Date Needed', (isset($fields['need_by_date']['language'])? $fields['need_by_date']['language'] : array())) }}
 							</label>
 								<div class="col-md-6">
 								<div class="input-group datepicker" style="width:150px ">
-									{!! Form::text('Needed Date', date("m/d/Y", strtotime($row['need_by_date'])),array('class'=>'form-control ',  ))    !!}
+									{!! Form::text('Date Needed', date("m/d/Y", strtotime($row['need_by_date'])),array('class'=>'form-control ',  ))    !!}
 									<span class="input-group-addon "><i class="fa fa-calendar" id="icon"></i></span>
 								</div>
 								<div class="col-md-2">
@@ -196,8 +196,8 @@
 
 
 				  <div class="form-group  " > 
-					<label for="File Path" class=" control-label col-md-4 text-left"> 
-					{!! SiteHelpers::activeLang('File Path', (isset($fields['file_path']['language'])? $fields['file_path']['language'] : array())) !!}	
+					<label for="Attach File" class=" control-label col-md-4 text-left">
+					{!! SiteHelpers::activeLang('Attach File', (isset($fields['file_path']['language'])? $fields['file_path']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
 					  

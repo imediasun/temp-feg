@@ -34,8 +34,7 @@ class ManagenewgraphicrequestsController extends Controller
     public function getApprove($id)
     {
 
-        echo config('app.admin-email');
-        exit;
+        
         $request = Managenewgraphicrequests::find($id);
         $data = array(
             'status_id' => 3,
@@ -295,5 +294,40 @@ class ManagenewgraphicrequestsController extends Controller
             }
         }
     }
+
+    function getComboselect(Request $request)
+    {
+        if ($request->ajax() == true && \Auth::check() == true) {
+            $param = explode(':', $request->input('filter'));
+            $parent = (!is_null($request->input('parent')) ? $request->input('parent') : null);
+
+            $limit = (!is_null($request->input('limit')) ? $request->input('limit') : null);
+            $delimiter = empty($request->input('delimiter')) ? ' ' : $request->input('delimiter');
+
+            $rows = \DB::table('new_graphics_request_status')->orderBy('sort','asc')->get();
+
+            $items = array();
+
+            $fields = explode("|", $param[2]);
+
+            foreach ($rows as $row) {
+                $value = "";
+                $values = array();
+                foreach ($fields as $item => $val) {
+                    if ($val != "") {
+                        $values[] = $row->$val;
+                    }
+                    $value = implode($delimiter, $values);
+                }
+                $items[] = array($row->$param['1'], $value);
+
+            }
+
+            return json_encode($items);
+        } else {
+            return json_encode(array('OMG' => " Ops .. Cant access the page !"));
+        }
+    }
+
 
 }

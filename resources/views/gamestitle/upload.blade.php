@@ -40,9 +40,11 @@
                                 <input type="hidden" value="{{ $upload_type }}" name="upload_type">
                             </div>
                             <div class="form-group" style="margin-top:50px;">
-                                <button type="submit" name="submit" class="btn btn-primary btn-sm" ><i class="fa  fa-save "></i> {{ Lang::get('core.sb_save') }}</button>
-                                <button type="button" onclick="location.href='{{ URL::to('gamestitle') }}' " class="btn btn-success btn-sm "><i class="fa  fa-arrow-circle-left "></i>  {{ Lang::get('core.sb_cancel') }} </button>
-                                <button type="button" onclick="deleteImage()" class="btn btn-danger btn-sm "><i class="fa  fa-cancel "></i>  {{ Lang::get('core.image_delete') }} </button>
+
+                                <button type="submit" name="submit" class="btn btn-primary btn-sm" >
+                                    <i class="fa  fa-save "></i> {{ Lang::get('core.sb_save') }}</button>
+                                     <button type="button" onclick="location.href='{{ URL::to('gamestitle') }}' " class="btn btn-success btn-sm "><i class="fa  fa-arrow-circle-left "></i>  {{ Lang::get('core.sb_cancel') }} </button>
+                                     <button type="button" onclick="deleteImage()" class="btn btn-danger btn-sm "><i class="fa  fa-cancel "></i>  {{ Lang::get('core.image_delete') }} </button>
 
                             </div>
                         </div>

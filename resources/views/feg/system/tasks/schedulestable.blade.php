@@ -1,3 +1,4 @@
+<button class="refreshButton"><i class="glyphicon glyphicon-refresh"></i></button>
 <table class="schedulesTable">
     <thead>
     <tr>
@@ -7,7 +8,8 @@
         <th>Schedule</th>
         <th>Run at</th>
         <th>End at</th>
-        <th>Result</th>
+        <th width="20%">Params</th>
+        <th width="30%">Result</th>
         <!--<th>Result</th>-->
     </tr>
     </thead>
@@ -48,8 +50,27 @@
         <td>{{ $created_at }}</td>
         <td>{{ $scheduled_at }}</td>
         <td>{{ $run_at }}</td>
-        <td>{{ $end_at }}</td>
-        <td>{{ $results }}</td>
+        <td>{{ $end_at }}
+            @if($status_code==1)
+            <button class="red-bg terminateRunningTask" 
+                    data-id='{{ $id }}' 
+                    data-taskid='{{ $taskId }}' 
+                    title="Send Terminate signal">x</button>
+            @endif </td>
+        <td>
+            {{ $params }} 
+        </td>
+        <td>
+            @if($status_code==1)
+            <label><input type='checkbox' 
+                    data-id='{{ $id }}' 
+                    data-taskid='{{ $taskId }}'
+                    class='scheduleStatusAutoLoad'/> 
+                Autoload status if available
+            </label>
+            @endif 
+            <div class='resultContent'>{{ $results }}</div>
+        </td>
         <!--<td>{{ $results }}</td>-->
     </tr>
 

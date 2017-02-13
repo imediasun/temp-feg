@@ -167,6 +167,7 @@ class GameservicehistoryController extends Controller
             $this->data['row'] = $this->model->getColumnTable('game_service_history');
         }
         $this->data['subgrid'] = $this->detailview($this->modelview, $this->data['subgrid'], $id);
+        $this->data['tableGrid'] = $this->info['config']['grid'];
         $this->data['id'] = $id;
         $this->data['access'] = $this->access;
         $this->data['setting'] = $this->info['setting'];
@@ -196,12 +197,10 @@ class GameservicehistoryController extends Controller
 
     function postSave(Request $request, $id = 0)
     {
-        $form_data['date_down'] = date('Y-m-d');
         $rules = $this->validateForm();
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
-            $data = $this->validatePost('game_service_history');
-
+            $data = $this->validatePost('game_service_history', true);
             $id = $this->model->insertRow($data, $request->input('id'));
             $this->detailviewsave($this->modelview, $request->all(), $this->data['subgrid'], $id);
             return response()->json(array(

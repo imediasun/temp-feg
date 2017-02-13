@@ -43,7 +43,7 @@ $selected_loc=\Session::get('selected_location');?>
             <li>
                 <div class="profile-element" >
                     <h5 id="profile-element-heading">@if($orderData['user_group'] == 'regusers')
-                            Location {{ $orderData['selected_location'] }} - Expense Summary
+                            Location @if($orderData['selected_location'] != 0) {{ $orderData['selected_location'] }} @else {{ 'not set' }}@endif  - Expense Summary
                         @elseif ($orderData['user_group'] == 'distmgr')
                             All {{ SiteHelpers::getRegionName($orderData['reg_id']) }} Locations - Expense Summary
                         @else
@@ -53,7 +53,7 @@ $selected_loc=\Session::get('selected_location');?>
                     </h5>
                     <table class="budget-summery">
                         <tr>
-                            <td>Merchandise</td>
+                            <td width="120">Merchandise</td>
                             <td>$ {{ number_format($orderData['monthly_merch_order_total'], 2, '.', ',') }}</td>
                         </tr>
                         <tr class="border-bottom">
@@ -64,10 +64,10 @@ $selected_loc=\Session::get('selected_location');?>
                         <tr class="border-bottom">
                             <td>{{ $orderData['curMonthFull'] }} Remaining Merch Budget:</td>
                             <td>$
-                                @if($orderData['monthly_merch_remaining'] < 0){
+                            @if($orderData['monthly_merch_remaining'] < 0)
                                 {{ number_format($orderData['monthly_merch_remaining'], 2, '.', ',') }}
-                                @else
-                                    {{ number_format($orderData['monthly_merch_remaining'], 2, '.', ',') }}
+                            @else
+                                {{ number_format($orderData['monthly_merch_remaining'], 2, '.', ',') }}
                             @endif
                         </tr>
                         <tr>

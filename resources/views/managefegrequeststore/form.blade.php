@@ -11,7 +11,7 @@
 @endif	
 			{!! Form::open(array('url'=>'managefegrequeststore/save/'.$row['id'], 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'managefegrequeststoreFormAjax')) !!}
 			<div class="col-md-12">
-						<fieldset><legend> Manage FEG Request Store</legend>
+						<fieldset><legend> Manage FEG Store Requests </legend>
 				  <div class="form-group  " > 
 					<label for="Qty" class=" control-label col-md-4 text-left"> 
 					{!! SiteHelpers::activeLang('Qty', (isset($fields['qty']['language'])? $fields['qty']['language'] : array())) !!}	
@@ -118,7 +118,7 @@ function showResponse(data)  {
 	if(data.status == 'success')
 	{
 		ajaxViewClose('#{{ $pageModule }}');
-		ajaxFilter('#{{ $pageModule }}','{{ $pageModule }}/data','view=manage');
+		ajaxFilter('#{{ $pageModule }}','{{ $pageModule }}/data',data.view);
 		notyMessage(data.message);	
 		$('#sximo-modal').modal('hide');	
 	} else {

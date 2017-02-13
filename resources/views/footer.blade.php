@@ -6,11 +6,11 @@
 	   {!! Form::open(array('url'=>$pageModule.'/filter/')) !!}
 		   {{--*/ $pages = array(10,20,30,50,100) /*--}}
 		   {{--*/ $orders = array('asc','desc') /*--}}
-        <input type="hidden" name="page" value="{{ $param['page']}}" />
+        <input type="hidden" name="page" value="{{ @$param['page']}}" />
 		<input type="hidden" name="search" value="<?php if(!is_null(Input::get('search'))) echo Input::get('search') ;?>" />
 		<input type="hidden" name="simplesearch" value="<?php if(!is_null(Input::get('simplesearch'))) echo Input::get('simplesearch') ;?>" />
         @if(!isset($setting['disablepagination']) || $setting['disablepagination'] == 'false')
-        <?php $setRows = isset($pager['rows']) ? $pager['rows'] : $setting['perpage']; ?>
+        <?php $setRows = isset($pager['rows']) ? $pager['rows'] : @$setting['perpage']; ?>
 		<select name="rows" data-placeholder="{{ Lang::get('core.grid_show') }}" 
                 class="select-alt"  data-setvalue="{{ $setRows }}" >		  
 		  @foreach($pages as $p)
@@ -30,7 +30,7 @@
 		  @foreach($tableGrid as $field)
 		   @if($field['view'] =='1' && $field['sortable'] =='1') 
 			  <option value="{{ $field['field'] }}" 
-				@if($param['sort'] == $field['field'] || (isset($pager['sort']) && $pager['sort'] == $field['field'])) 
+				@if((isset($param['sort']) && $param['sort'] == $field['field']) || (isset($pager['sort']) && $pager['sort'] == $field['field'])) 
 					selected="selected"
 				@endif	
 			  >{{ $field['label'] }}</option>
@@ -42,7 +42,7 @@
 		  <option value=""> {{ Lang::get('core.grid_order') }}</option>
 		   @foreach($orders as $o)
 		  <option value="{{ $o }}"
-			@if($param['order'] == $o || (isset($pager['order']) && $pager['order'] == $o))
+			@if(isset($param['order']) && $param['order'] == $o) || (isset($pager['order']) && $pager['order'] == $o))
 				selected="selected"
 			@endif	
 		  >{{ ucwords($o) }}</option>

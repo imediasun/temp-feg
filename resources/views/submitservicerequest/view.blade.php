@@ -39,7 +39,7 @@
 				
 					<tr>
 						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Requestor Id', (isset($fields['requestor_id']['language'])? $fields['requestor_id']['language'] : array())) }}
+							{{ SiteHelpers::activeLang('Requested By', (isset($fields['requestor_id']['language'])? $fields['requestor_id']['language'] : array())) }}
 						</td>
 						<td>{{ $row->requestor_id }} </td>
 						
@@ -63,7 +63,7 @@
 				
 					<tr>
 						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Need By Date', (isset($fields['need_by_date']['language'])? $fields['need_by_date']['language'] : array())) }}
+							{{ SiteHelpers::activeLang('Needed By', (isset($fields['need_by_date']['language'])? $fields['need_by_date']['language'] : array())) }}
 						</td>
 						<td>{{ $row->need_by_date }} </td>
 						
@@ -71,7 +71,7 @@
 				
 					<tr>
 						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Solved Date', (isset($fields['solved_date']['language'])? $fields['solved_date']['language'] : array())) }}
+							{{ SiteHelpers::activeLang('Date Resolved', (isset($fields['solved_date']['language'])? $fields['solved_date']['language'] : array())) }}
 						</td>
 						<td>{{ $row->solved_date }} </td>
 						
@@ -79,7 +79,7 @@
 				
 					<tr>
 						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Solver Id', (isset($fields['solver_id']['language'])? $fields['solver_id']['language'] : array())) }}
+							{{ SiteHelpers::activeLang('Resolved By Id', (isset($fields['solver_id']['language'])? $fields['solver_id']['language'] : array())) }}
 						</td>
 						<td>{{ $row->solver_id }} </td>
 						

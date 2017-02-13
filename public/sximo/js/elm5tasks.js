@@ -8,17 +8,72 @@ jQuery(document).ready(function ($) {
     $(document).on('click', '.editTask', initEditTask);
     $(document).on('click', '.deleteTask', initDelTask);
     $(document).on('click', '.showSchedules', initShowScheduledTasks);
+    $(document).on('click', '.schedulesContainer .refreshButton', initShowScheduledTasks);
     $(document).on('click', '.addNewTask', initAddTask);
     $(document).on('click', '.testTask', testTask);
     $(document).on('click', '.expandTask', expandTaskContainer);
     $(document).on('click', '.collapseTask', collapseTaskContainer);
     $(document).on('click', '.logActionsExpand', logActionsExpand);
     $(document).on('change', '.croninp', buildCrontab);
-    logActionsExpand
+    $(document).on('click', '.terminateRunningTask', sendTerminateTaskSignal);
+    $(document).on('click', '.scheduleStatusAutoLoad', autoLoadScheduleStatus);
+    
     populateTaskDropdowns();
     
     initTasks($('.tasksContent'));    
 });
+
+
+function autoLoadScheduleStatus(e) {
+    
+    var elm = jQuery(this),
+        id = elm.attr('data-id'),
+        parent = elm.closest('td'),
+        target = parent.find('.resultContent'),
+        isChecked = elm.prop('checked'),
+        intervalId = elm.data('autoloadIntervalId'),
+        data = {'id': id},
+        successFn = function (result) {
+            var i, h = result;
+            if (typeof result != 'string') {
+                h = '';
+                for(var i in result) {
+                   h += result[i] + "<br>";
+                }
+            }
+            
+            target.html(h);            
+        },
+        options = {'method': 'GET', success: successFn, error: UNFN },        
+        url = pageUrl + '/schedulestatus';
+    
+    if (isChecked) {
+        if (intervalId) {
+            clearInterval();
+        }
+        intervalId = setInterval(function(){
+            callServer(url, data, UNFN, options);
+        }, 5000);
+        elm.data('autoloadIntervalId', intervalId);
+    }
+    else {
+        clearInterval(intervalId);
+    }
+    
+}
+
+
+function sendTerminateTaskSignal(e) {
+    e.preventDefault();
+    var elm = jQuery(this),
+        id = elm.attr('data-id'),
+        data = {'id': id},
+        options = {'method': 'POST', success: UNFN, error: UNFN },        
+        url = pageUrl + '/terminateschedule';
+
+    callServer(url, data, UNFN, options);
+    elm.hide();
+}
 
 function logActionsExpand(e) {
     e.preventDefault();
@@ -129,7 +184,7 @@ function initTasks(parent) {
     parseCronStamps(parent.find('.cronStampText'));
     
     parent.find('[data-toggle="tooltip"]').tooltip();
-    parent.find('[name="run_dependent"]').prop('checked', true);
+    //parent.find('[name="run_dependent"]').prop('checked', true);
     
     parent.find('.toggleSwitch').bootstrapSwitch({
         onInit: switchOnInit,
@@ -438,8 +493,13 @@ function initShowScheduledTasks(event) {
         parent = btn.closest('.taskPanel'),
         taskId = parent.find('.taskId').val(),
         container = parent.find('.schedulesContainer'),
+        rotateButton = container.find('.refreshButton'),
         content = trim(container.html() || ""),
+        hasStarted = rotateButton.data('hasStartedLoading'),
+        hasRotateButtonClicked = btn.hasClass('refreshButton'),
         success = function (data) {
+            rotateButton.data('hasStartedLoading', false);
+            rotateButton.removeClass('animated infinite rotateIn');            
             if (data && data.html) {
                 container.html(data.html);                
             }
@@ -449,14 +509,17 @@ function initShowScheduledTasks(event) {
         data = {'id': taskId},
         ajax;
 
-    if (container.is(":visible")) {
-        container.slideUp();
+    if (hasStarted) {
+        return;
     }
-    else {
-        container.slideDown();        
-        if (true || !content) {
-            ajax = callServer(url, data, UNFN, options);
-        }        
+    if (!hasRotateButtonClicked && container.is(":visible")) {
+        container.fadeOut();
+    }
+    else {        
+        rotateButton.addClass('animated infinite rotateIn');
+        container.show();        
+        rotateButton.data('hasStartedLoading', true),
+        ajax = callServer(url, data, UNFN, options);
     }
 
     
@@ -471,6 +534,8 @@ function initAddTask(event) {
     btn.hide();
     source.find('.textContent, .footerStatus').remove();
     source.find('.addUpdateTask').text('Add');
+    source.find('[name="run_dependent"]').prop('checked', true);
+    source.find('[name="no_overlap"]').prop('checked', true);
     
     initTasks(source); 
     source.prependTo(parent);
