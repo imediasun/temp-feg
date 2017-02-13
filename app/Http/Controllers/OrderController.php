@@ -824,7 +824,7 @@ class OrderController extends Controller
                         $mail->Subject = $subject;
                         $mail->Body = $message;
                         //foreach ($to as $t) {
-                        $mail->addAddress('ghs.colony.mailsi@gmail.com');
+                        $mail->addAddress($to);
                         //}
                         /*   if (count($cc) > 0) {
                             foreach ($cc as $c) {
@@ -1115,9 +1115,9 @@ function sendPhpEmail($message,$to,$from,$subject,$pdf,$filename,$cc,$bcc)
         $mail->SetFrom('dev2@shayansolutions.com');
         $mail->Subject = "Test";
         $mail->Body = "hello";
-        $mail->AddAddress("ghs.colony.mailsi@gmail.com");
-        $mail->addCC('adnanali199@gmail.com');
-        $mail->addBCC('adnanali199@gmail.com');
+        $mail->AddAddress("dev2@shayansolutions.com");
+        $mail->addCC('dev2@shayansolutions.com');
+        $mail->addBCC('dev2@shayansolutions.com');
         if (!$mail->Send()) {
             echo "Mailer Error: " . $mail->ErrorInfo;
         } else {
