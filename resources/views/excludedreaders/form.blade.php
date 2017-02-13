@@ -1,4 +1,4 @@
-{!! $isEdit = !empty($row['id']) !!}
+{{--*/      $isEdit = !empty($ID)               /*--}}
 @if($setting['form-method'] =='native')
 	<div class="sbox">
 		<div class="sbox-title">  
