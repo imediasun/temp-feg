@@ -552,8 +552,6 @@ class OrderController extends Controller
 
     function postSaveorsendemail(Request $request)
     {
-
-
         $type = $request->get('submit');
         $from = $request->get('from');
         $order_id = $request->get('order_id');
@@ -569,19 +567,13 @@ class OrderController extends Controller
         }
         elseif($type == "send") {
             $to = $request->get('to');
-            $to=getMultipleEmails($to);
             $cc = $this->get('cc');
-            $cc=getMultipleEmails($cc);
             $bcc = $this->get('bcc');
-            $bcc = $this->getMultipleEmails($bcc);
             $message = $request->get('message');
         } else {
             $to = $request->get('to1');
-            $to=getMultipleEmails($to);
             $cc = $this->get('cc1');
-            $cc=getMultipleEmails($cc);
             $bcc = $this->get('bcc1');
-            $bcc = $this->getMultipleEmails($bcc);
             $message = $request->get('message');
         }
         $opt = $request->get('opt');
@@ -796,7 +788,6 @@ class OrderController extends Controller
                 if (isset($to) && count($to) > 0) {
                     $filename = 'PO_' . $order_id . '.pdf';
                     $subject = "Purchase Order";
-                    $to="ghs.colony.mailsi@gmail.com";
                     $message = $message;
                     $cc = $cc;
                     $bcc = $bcc;
@@ -1199,10 +1190,7 @@ function sendPhpEmail($message,$to,$from,$subject,$pdf,$filename,$cc,$bcc)
         if (preg_match('/,/',$email)) {
             $email = explode(',', $email);
         }
-        else
-        {
-            $email=array($email);
-        }
+
         return $email;
     }
 
