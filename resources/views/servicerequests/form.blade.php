@@ -271,7 +271,7 @@ $(document).ready(function() {
         //{  selected_value : '{{ $row["department_id"] --}}' });
         
      //   $("#debit_card").jCombo("{{-- URL::to('sbticket/comboselect?filter=debit_type:company:company') }}",
-        {  selected_value : '{{ $row["debit_card"] }}','initial-text': "Select Debit Type" --});
+      //  {  selected_value : '{{ $row["debit_card"] }}','initial-text': "Select Debit Type" --});
         
       //  $("#assign_to").jCombo("{{-- URL::to('sbticket/comboselect?filter=employees:id:first_name|last_name') }}",
         //{  selected_value : '{{ $row["assign_to"] --}}' });
@@ -328,11 +328,12 @@ function showResponse(data)  {
 	
 	if(data.status == 'success')
 	{
-		ajaxViewClose('#{{ $pageModule }}');
-		ajaxFilter('#{{ $pageModule }}','{{ $pageUrl }}/data');
+		ajaxViewClose('#' + pageModule);
+		//ajaxFilter('#{{ $pageModule }}','{{ $pageUrl }}/data');
 		notyMessage(data.message);	
 		$('#sximo-modal').modal('hide');
-        window.location.href=window.location;
+        //window.location.href=window.location;
+        $(".reloadDataButton").click();
 	} else {
 		notyMessageError(data.message);	
 		$('.ajaxLoading').hide();
