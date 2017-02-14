@@ -1916,6 +1916,46 @@ class SiteHelpers
         return \DB::table('debit_type')->get();
     }
 
+    /**
+     * Get any field's value from location table. For example, location_name
+     * @param number $loc_id
+     * @param string $field   
+     * @param string $default 
+     * @return mixed    string value if $field is specified else an object. $default is not found.
+     */
+    public static function getLocationInfoById($loc_id = null, $field = null, $default = "") {
+        if(is_null($field)){
+            $query = \DB::select("SELECT * FROM location WHERE id = '$loc_id'");
+        }
+        else{
+            $query = \DB::select("SELECT $field FROM location WHERE id = '$loc_id'");
+        }
+
+        $data = [];
+        if (isset($query[0])) {
+            $data = $query[0];
+        }
+        if (is_null($field)) {
+            return $data;
+        }
+        if (!empty($data)) {
+            if (is_array($data)) {
+                $value = $data[$field];
+            }        
+            else {
+                $value = $data->$field;
+            }
+        }
+        if (empty($value)) {
+            $value = $default;
+        }
+        return $value;
+    }
+    /**
+     * Get Locations details of locations assigned to a user
+     * @param number    $id User ID
+     * @return array 
+     */
     static function getLocationDetails($id)
     {
         $locations = \DB::table('user_locations')
@@ -1937,6 +1977,11 @@ class SiteHelpers
         return $locations;
     }
     
+    /**
+     * Get Location IDs in an indexed array from list of locations
+     * @param type $userLocations
+     * @return type
+     */
     static function getIdsFromLocationDetails($userLocations)
     {
         $locations = array();

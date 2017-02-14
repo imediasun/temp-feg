@@ -737,34 +737,18 @@ class Sximo extends Model {
         return $data;
     }
 
+    /**
+     * Get Location info (as object or as string) from location table
+     * If a field name is passed as second parameter then the value for that field is returned. 
+     * For example, to get the name of a location use get_location_info_by_id(2001, 'location_name')
+     * 
+     * @param number $loc_id
+     * @param string $field
+     * @param string $default
+     * @return mixed
+     */
     public function get_location_info_by_id($loc_id = null, $field = null, $default = "No Location with That ID") {
-
-        if(is_null($field)){
-            $query = \DB::select('SELECT * FROM location WHERE id = ' . $loc_id);
-        }
-        else{
-            $query = \DB::select('SELECT ' . $field . ' FROM location WHERE id = ' . $loc_id);
-        }
-
-        $data = [];
-        if (isset($query[0])) {
-            $data = $query[0];
-        }
-        if (is_null($field)) {
-            return $data;
-        }
-        if (!empty($data)) {
-            if (is_array($data)) {
-                $value = $data[$field];
-            }        
-            else {
-                $value = $data->$field;
-            }
-        }
-        if (empty($value)) {
-            $value = $default;
-        }
-        return $value;
+        return \SiteHelpers::getLocationInfoById($loc_id, $field, $default);
     }
     public function get_game_info_by_id($game_id=null, $field=null, $default = 'NONE')
     {
