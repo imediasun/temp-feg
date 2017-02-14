@@ -82,10 +82,6 @@
 
 </div>
 <script>
-
-
-
-
     $('document').ready(function () {
         setType();
             var config_id=$("#col-config").val();
@@ -97,8 +93,7 @@
             {
                 $('#edit-cols,#delete-cols').show();
             }
-        $(".select3").select2({width: "98%"});
-        renderDropdown($(".select2, .select3, .select4, select5"), { width:"98%"});
+        renderDropdown($(".select2, .select3, .select4, .select5"), { width:"98%"});
         renderDropdown($("#order_type"), {
             dataType: 'json',
             placeholder: "Select an Order Type",
@@ -129,7 +124,7 @@
         else {
             $('number_requests').hide();
         }
-        reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?view=' + request_type);
+        reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?view=' + request_type + getFooterFilters());
     });
     function setType() {
         $('#request_type option').each(function () {
@@ -150,7 +145,22 @@
         var urlLength = url.length;
         var pos = url.search(type);
         var get = "?view="+request_type;
-
+        if("{{ $param['sort'] }}")
+        {
+            get+="&sort="+"{{ $param['sort'] }}";
+        }
+        if("{{ $param['order'] }}")
+        {
+            get+="&order="+"{{$param['order']}}";
+        }
+        if("{{ $param['limit'] }}")
+        {
+            get+="&rows="+"{{$param['limit']}}";
+        }
+        if("{{ $param['page'] }}")
+        {
+            get+="&page="+"{{$param['page']}}";
+        }
         if (pos > 0) {
             url = url.substr(0, pos - 1);
         }
