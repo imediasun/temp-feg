@@ -177,9 +177,20 @@ class ManagefegrequeststoreController extends Controller
                 'params' => $filter,
                 'global' => (isset($this->access['is_global']) ? $this->access['is_global'] : 0)
             );
-            // Get Query
+           // Get Query
             $view = $request->get('view');
             \Session::put('manage-request-view',$view);
+            $isRedirected=\Session::get('filter_before_redirect');
+            if(!empty($isRedirected))
+            {
+                $params=\Session::get('params');
+                \Session::put('filter_before_redirect',false);
+            }
+            else
+            {
+                \Session::put('filter_before_redirect',false);
+            }
+            \Session::put('params',$params);
             $cond = array('view' => $view, 'order_type_id' => $manageRequestInfo['TID'], 'location_id' => $manageRequestInfo['LID'], 'vendor_id' => $manageRequestInfo['VID']);
             $this->data['view'] = $view;
             $results = $this->model->getRows($params, $cond);

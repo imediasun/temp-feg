@@ -23,9 +23,12 @@
 	</div>	
 	<!-- End Content -->  
 </div>	
-<script>
-$(document).ready(function(){
-	reloadData('#{{ $pageModule }}','{{ $pageModule }}/data');	
-});	
+<script type="text/javascript">
+    var pageModule = '{{ $pageModule }}',
+        pageUrl = '{{ $pageUrl }}';
+
+    $(document).ready(function(){
+        reloadData('#{{ $pageModule }}','{{ $pageModule }}/data');	
+    });	
 </script>	
 @endsection

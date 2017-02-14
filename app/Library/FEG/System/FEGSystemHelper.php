@@ -427,6 +427,15 @@ class FEGSystemHelper
         }
     }
     
+    /**
+     * Function which sends email using php mail (mail function) or laravel Mail class when using attachments
+     * [Under Development]
+     * @param type $to
+     * @param type $subject
+     * @param type $message
+     * @param string $from
+     * @param type $options
+     */
     public static function sendEmail($to, $subject, $message, $from = "support@fegllc.com", $options = array()) { 
         //support@fegllc.com
         if (empty($from)) {
@@ -638,9 +647,17 @@ class FEGSystemHelper
         return $hasMore;        
     }    
     
-    public static function getSystemEmailRecipients($reportName, $location = null, $isTest = false) {
-        $emails = array('reportName' => $reportName, 'to' => '', 'cc' => '', 'bcc' => '');
-        $q = "SELECT * from system_email_report_manager WHERE report_name='$reportName' AND is_active=1 order by id desc";
+    /**
+     * Function to get system email recipient defined as a configuration in System Email Manager /system/systememailreportmanager
+     * 
+     * @param string $configName    Name of the Configuration from /system/systememailreportmanager
+     * @param number/string $location   [optional] Pass the location id if you want to filter user assigned to that location. Can pass null to skip it
+     * @param boolean $isTest   [optional] Pass true to get recipients only from the 'Email recipients while testing' section
+     * @return array    {'to' => '<string comma_separated_emails>', 'cc' => '<string comma_separated_emails>', 'bcc' => '<string comma_separated_emails>', }
+     */
+    public static function getSystemEmailRecipients($configName, $location = null, $isTest = false) {
+        $emails = array('configName' => $configName, 'to' => '', 'cc' => '', 'bcc' => '');
+        $q = "SELECT * from system_email_report_manager WHERE report_name='$configName' AND is_active=1 order by id desc";
         $data = DB::select($q);
         $groups = array('to' => '', 'cc' => '', 'bcc' => '');
         $locationUsers = array('to' => '', 'cc' => '', 'bcc' => '');
@@ -778,24 +795,44 @@ class FEGSystemHelper
         return $emails;
     }    
     
+    /**
+     * Wrapper function to send email
+     * @param array $options    An associative array containing these keys: 
+     *                              from - string 
+     *                              to - string comma separated emails
+     *                              cc - string comma separated emails
+     *                              bcc - string comma separated emails
+     *                              subject - string
+     *                              message - strnig body of the mail, 
+     *                              attach - an index array of paths of the files to be attached
+     *                              isTest - boolean - [true=test mode on]whether email will be send to recipients defined in 'Email recipients while testing' in System Email Manager (/system/systememailreportmanager)
+     *                              configName - string (same as the configuration name defined in System Email Manager (/system/systememailreportmanager)
+     *                                          This name is used in this function to get test email recipient if required (if isTest key is set to true). 
+     *                                          This is also used to name the log file which stores the email content as HTML file in test mode
+     *                              configNamePrefix - string - prefix added to configName when the log file name is created
+     *                              configNameSuffix - string - suffix added to configName when the log file name is created
+     *                              
+     *                              
+     *                              
+     */
     public static function sendSystemEmail($options) {  
         
         $lp = 'FEGCronTasks/SystemEmails';
         $lpd = 'FEGCronTasks/SystemEmailsDump';
         $options = array_merge(array(
             'from' => "support@fegllc.com",
-            'reportName' => "Test",
-            'reportNamePrefix' => "",
-            'reportNameSuffix' => "",
+            'configName' => "Test",
+            'configNamePrefix' => "",
+            'configNameSuffix' => "",
         ), $options);
         
         extract($options);
         
-        $reportNameSanitized = preg_replace('/[\W]/', '-', strtolower($reportName));
+        $configNameSanitized = preg_replace('/[\W]/', '-', strtolower($configName));
         $lf = "email-"
-                . (empty($reportNamePrefix)? "" : "{$reportNamePrefix}-")
-                . $reportNameSanitized
-                . (empty($reportNameSuffix)? "" : "-{$reportNameSuffix}")
+                . (empty($configNamePrefix)? "" : "{$configNamePrefix}-")
+                . $configNameSanitized
+                . (empty($configNameSuffix)? "" : "-{$configNameSuffix}")
                 . ".log";
         
         if ($isTest) {
@@ -813,7 +850,7 @@ $message
             
             $options['message'] = $message;
             $options['subject'] = $subject = "[TEST] ". $subject;
-            $emailRecipients = self::getSystemEmailRecipients($reportName, null, true);
+            $emailRecipients = self::getSystemEmailRecipients($configName, null, true);
             $options['to'] = $to = $emailRecipients['to'];
             $options['cc'] = $cc = $emailRecipients['cc'];
             $options['bcc'] = $bcc = $emailRecipients['bcc'];
@@ -821,10 +858,10 @@ $message
                 $to = "e5devmail@gmail.com";
             }
             
-//            FEGSystemHelper::logit("to: " .$to, "email-{$reportNameSanitized}.log", "FEGCronTasks/SystemEmailsDump");
-//            FEGSystemHelper::logit("cc: " .$cc, "email-{$reportNameSanitized}.log", "FEGCronTasks/SystemEmailsDump");
-//            FEGSystemHelper::logit("bcc: " .$bcc, "email-{$reportNameSanitized}.log", "FEGCronTasks/SystemEmailsDump");
-//            FEGSystemHelper::logit("subject: " .$subject, "email-{$reportNameSanitized}.log", "FEGCronTasks/SystemEmailsDump");
+//            FEGSystemHelper::logit("to: " .$to, "email-{$configNameSanitized}.log", "FEGCronTasks/SystemEmailsDump");
+//            FEGSystemHelper::logit("cc: " .$cc, "email-{$configNameSanitized}.log", "FEGCronTasks/SystemEmailsDump");
+//            FEGSystemHelper::logit("bcc: " .$bcc, "email-{$configNameSanitized}.log", "FEGCronTasks/SystemEmailsDump");
+//            FEGSystemHelper::logit("subject: " .$subject, "email-{$configNameSanitized}.log", "FEGCronTasks/SystemEmailsDump");
               
             //$messageLog = str_ireplace(array("<br />","<br>","<br/>"), "\r\n", $message);           
             //$messageLog = nl2br($message);           

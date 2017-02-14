@@ -82,13 +82,18 @@ abstract class Controller extends BaseController
 
             $limit = (!is_null($request->input('limit')) ? $request->input('limit') : null);
             $delimiter = empty($request->input('delimiter')) ? ' ' : $request->input('delimiter');
+            $assignedLocation = $param[0] == 'location' && strtolower(''. @$request->input('assigned')) == 'me';
             
-            $rows = $this->model->getComboselect($param, $limit, $parent);
+            if ($assignedLocation) {
+                $rows = $this->model->getUserAssignedLocation();
+            }
+            else {
+                $rows = $this->model->getComboselect($param, $limit, $parent);
+            }
 
             $items = array();
 
             $fields = explode("|", $param[2]);
-
             foreach ($rows as $row) {
                 $value = "";
                 $values = array();
@@ -101,7 +106,6 @@ abstract class Controller extends BaseController
                 $items[] = array($row->$param['1'], $value);
 
             }
-
             return json_encode($items);
         } else {
             return json_encode(array('OMG' => " Ops .. Cant access the page !"));
@@ -723,8 +727,13 @@ abstract class Controller extends BaseController
 
         $info = $this->model->makeInfo($this->module);
         //$master  	= $this->buildMasterDetail();
-        $filter = (!is_null(Input::get('search')) ? $this->buildSearch() : '');
-
+        if (method_exists($this, 'getSearchFilterQuery')) {
+            $filter = $this->getSearchFilterQuery();
+        }
+        else {
+            $filter = (!is_null(Input::get('search')) ? $this->buildSearch() : '');
+        }
+        
         //$filter 	.=  $master['masterFilter'];
 //    $params = array(
 //        'params' => ''
