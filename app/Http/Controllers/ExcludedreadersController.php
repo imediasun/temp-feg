@@ -159,7 +159,9 @@ class ExcludedreadersController extends Controller {
 			$this->data['row'] 		= $this->model->getColumnTable('reader_exclude');
 		}
 		$this->data['setting'] 		= $this->info['setting'];
-		$this->data['fields'] 		=  \AjaxHelpers::fieldLang($this->info['config']['forms']);
+		$this->data['fields'] 		= \AjaxHelpers::fieldLang($this->info['config']['forms']);
+		$this->data['debitTypes']    = \SiteHelpers::getDebitTypes();
+		$this->data['myLocations']  = \SiteHelpers::getLocationDetails(\Session::get('uid'));
 		
 		$this->data['id'] = $id;
 
@@ -182,6 +184,7 @@ class ExcludedreadersController extends Controller {
 		}
 		
 		$this->data['id'] = $id;
+        $this->data['tableGrid'] = $this->info['config']['grid'];        
 		$this->data['access']		= $this->access;
 		$this->data['setting'] 		= $this->info['setting'];
 		$this->data['fields'] 		= \AjaxHelpers::fieldLang($this->info['config']['forms']);

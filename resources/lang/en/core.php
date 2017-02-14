@@ -50,7 +50,7 @@ return array(
 	"m_groups" 			=> "Groups",
 	"m_pagecms" 		=> "Page CMS",
 	"m_taskspage" 		=> "System Tasks",
-	"m_systememailreportmanager" => "System Report Email Manager",
+	"m_systememailreportmanager" => "System Email Manager",
 	"m_menu" 			=> "Menu Management",
 	"m_logs" 			=> "Activity Logs",
 	"m_codebuilder" 	=> "Code Builder",
@@ -196,7 +196,10 @@ return array(
     "note_freight_paid"         => "Status Changed,Paid Successfully",
      "mail_sent_success"        => "Email Sent Successfully",
     "delete_success"            => "Deleted Successfully",
-    "delete_error"              => "Some Error Occurred while Deleting"
+    "delete_error"              => "Some Error Occurred while Deleting",
+    "email_missing_error"       => "Failed!Sender or Vendor Email is missing",
+    "google_account_not_exist"  => "Google account detail not exist",
+    "smtp_connect_failed"       => "Mail Error: SMTP connect() failed"
 
 
 );

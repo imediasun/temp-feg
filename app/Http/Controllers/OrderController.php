@@ -179,22 +179,27 @@ class OrderController extends Controller
             'params' => $filter,
             'global' => (isset($this->access['is_global']) ? $this->access['is_global'] : 0)
         );
-
-        $results = $this->model->getRows($params, $order_selected);
-
-        if (count($results['rows']) == 0 and $page != 1) {
+        $isRedirected=\Session::get('filter_before_redirect');
+        if(!empty($isRedirected))
+        {
+            $params=\Session::get('params');
+            \Session::put('filter_before_redirect',false);
+        }
+        else
+        {
+            \Session::put('filter_before_redirect',false);
+        }
+        \Session::put('params',$params);
+         $results = $this->model->getRows($params, $order_selected);
+         if (count($results['rows']) == 0 and $page != 1) {
             $params['limit'] = $this->info['setting']['perpage'];
             $results = $this->model->getRows($params, $order_selected);
-
-        }
+         }
         // Build pagination setting
         $page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;
-
-
         if (count($results['rows']) == $results['total'] && $results['total'] != 0) {
             $params['limit'] = $results['total'];
         }
-
         $pagination = new Paginator($results['rows'], $results['total'], $params['limit']);
         $pagination->setPath('order/data');
         $rows = $results['rows'];
@@ -547,7 +552,8 @@ class OrderController extends Controller
 
     function postSaveorsendemail(Request $request)
     {
-        $type = $request->get('submit');
+
+        $type = $request->get('type');
         $from = $request->get('from');
         $order_id = $request->get('order_id');
         if(!isset($type)) {
@@ -562,49 +568,53 @@ class OrderController extends Controller
         }
         elseif($type == "send") {
             $to = $request->get('to');
-            $to=getMultipleEmails($to);
-            $cc = $this->get('cc');
-            $cc=getMultipleEmails($cc);
-            $bcc = $this->get('bcc');
-            $bcc = $this->getMultipleEmails($bcc);
+            $cc = $request->get('cc');
+            $bcc = $request->get('bcc');
             $message = $request->get('message');
         } else {
             $to = $request->get('to1');
-            $to=getMultipleEmails($to);
-            $cc = $this->get('cc1');
-            $cc=getMultipleEmails($cc);
-            $bcc = $this->get('bcc1');
-            $bcc = $this->getMultipleEmails($bcc);
+            $cc = $request->get('cc1');
+            $bcc = $request->get('bcc1');
             $message = $request->get('message');
         }
         $opt = $request->get('opt');
+        $redirect_module=\Session::get('redirect');
+        \Session::put('filter_before_redirect',false);
         if (count($to) == 0 || $from === "NULL" || empty($from) || $from == "") {
+            \Session::put('filter_before_redirect',true);
             return response()->json(array(
-                'message' => "Failed!Sender or Vendor Email is missing",
-                'status' => 'error'
+                'message' => \Lang::get('core.email_missing_error'),
+                'status' => 'error',
+
             ));
-        } else {
+            } else {
+            \Session::put('filter_before_redirect',true);
             $status = $this->getPo($order_id, true, $to, $from, $cc, $bcc, $message);
 
-            if ($status == 1) {
-                return array(
-                    'status' => 'success',
+            if ($status == 1)
+            {
+                return response()->json(array(
                     'message' => \Lang::get('core.mail_sent_success'),
+                    'status' => 'success',
 
-                );
-            } elseif ($status == 2) {
-                return array(
+                ));
+               }
+            elseif ($status == 2)
+            {
+                return response()->json(array(
+                    'message' => \Lang::get('core.google_account_not_exist'),
                     'status' => 'error',
-                    'message' => "Google account detail not exist",
 
-                );
-            } elseif ($status == 3) {
-                return array(
+                ));
+               }
+            elseif ($status == 3)
+            {
+                return response()->json(array(
+                    'message' => \Lang::get('core.smtp_connect_failed'),
                     'status' => 'error',
-                    'message' => "Mail Error: SMTP connect() failed",
 
-                );
-            }
+                ));
+              }
 
 
         }
@@ -792,23 +802,23 @@ class OrderController extends Controller
                   */
                         $mail = new PHPMailer(); // create a new object
                         $mail->IsSMTP(); // enable SMTP
-                        //$mail->SMTPDebug = 1; // debugging: 1 = errors and messages, 2 = messages only
-                        $mail->SMTPAuth = true; // authentication enabled
-                        $mail->SMTPSecure = 'tls'; // secure transfer enabled REQUIRED for Gmail
-                        $mail->Host = "smtp.gmail.com";
+                        $mail->Host = 'smtp.gmail.com';
                         $mail->Port = 587; // or 587
-                        $mail->IsHTML(true);
-                        $mail->Username = $google_acc->g_mail;                 // SMTP username
+                        $mail->SMTPSecure = 'tls'; // secure transfer enabled REQUIRED for Gmail
+                        $mail->SMTPAuth = true; // authentication enabled
+
+                      //  $mail->SMTPDebug = 1; // debugging: 1 = errors and messages, 2 = messages only
+
+                        //$mail->IsHTML(true);
+                        $mail->Username = $google_acc->g_mail;          // SMTP username
                         $mail->Password = trim(base64_decode($google_acc->g_password), env('SALT_KEY'));
                         $mail->SetFrom($google_acc->g_mail);
                         $mail->Subject = $subject;
                         $mail->Body = $message;
-                       // echo "<pre>";print_r($to);die();
                         //foreach ($to as $t) {
-                            $mail->addAddress($to);
+                        $mail->addAddress($to);
                         //}
-                        $mail->addReplyTo($google_acc->g_mail);
-                     /*   if (count($cc) > 0) {
+                        /*   if (count($cc) > 0) {
                             foreach ($cc as $c) {
                                 $mail->addCC($c);
                             }
@@ -818,15 +828,17 @@ class OrderController extends Controller
                                 $mail->addBCC($bc);
                             }
                         }*/
+                        $mail->addReplyTo($google_acc->g_mail);
                         $output = $pdf->output();
                         $file_to_save = public_path() . '/orders/' . $filename;
                         file_put_contents($file_to_save, $output);
                         $mail->addAttachment($file_to_save, $filename, 'base64', 'application/pdf');
-                        if (!$mail->Send()) {
+                          if (!$mail->Send()) {
                             return 3;
                         } else {
                             return 1;
                         }
+                        die;
                     } else {
                        $this->sendPhpEmail($message,$to,$from,$subject,$pdf,$filename,$cc,$bcc);
                     }
@@ -838,8 +850,7 @@ class OrderController extends Controller
     }
 function sendPhpEmail($message,$to,$from,$subject,$pdf,$filename,$cc,$bcc)
 {
-
-                    $result = \Mail::raw($message, function ($message) use ($to, $from, $subject, $pdf, $filename,$cc,$bcc) {
+    $result = \Mail::raw($message, function ($message) use ($to, $from, $subject, $pdf, $filename,$cc,$bcc) {
                         $message->subject($subject);
                         $message->from($from);
                         $message->to($to);
@@ -1095,9 +1106,9 @@ function sendPhpEmail($message,$to,$from,$subject,$pdf,$filename,$cc,$bcc)
         $mail->SetFrom('dev2@shayansolutions.com');
         $mail->Subject = "Test";
         $mail->Body = "hello";
-        $mail->AddAddress("dev3@shayansolutions.com");
-        $mail->addCC('shayansolutions@gmail.com');
-        $mail->addBCC('dev1@shayansolutions.com');
+        $mail->AddAddress("dev2@shayansolutions.com");
+        $mail->addCC('dev2@shayansolutions.com');
+        $mail->addBCC('dev2@shayansolutions.com');
         if (!$mail->Send()) {
             echo "Mailer Error: " . $mail->ErrorInfo;
         } else {
@@ -1179,10 +1190,7 @@ function sendPhpEmail($message,$to,$from,$subject,$pdf,$filename,$cc,$bcc)
         if (preg_match('/,/',$email)) {
             $email = explode(',', $email);
         }
-        else
-        {
-            $email=array($email);
-        }
+
         return $email;
     }
 

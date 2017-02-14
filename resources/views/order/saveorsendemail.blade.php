@@ -33,8 +33,9 @@
                             <input type="hidden" value="{{ $send_from }}" name="from"/>
                             <input type="hidden" value="{{ $order_id }}" name="order_id"/>
                             <input type="hidden" value="{{$send_to}}" name="to"/>
+                            <input type="hidden" value="" name="message" id="save_message"/>
                             <div class="form-group" style="margin-top:10px;">
-                                <a href="{{ URL::to('order/po/'.$order_id)}}" style="width:33%"
+                                <a href="{{ URL::to('order/po/'.$order_id)}}" id="po-link" style="width:33%"
                                    class=" btn  btn-lg btn-primary" title="SAVE"><i class="fa fa-save"
                                                                                     aria-hidden="true"></i>
                                     &nbsp {{ Lang::get('core.sb_save') }}</a>
@@ -93,8 +94,6 @@
                                     <input type="hidden" value="{{ $send_from }}" name="from"/>
                                     <input type="hidden" value="{{ $order_id }}" name="order_id"/>
                                     <input type="hidden" value="" id="opt" name="opt"/>
-                                    <input type="hidden" value="" name="message" id="save_message"/>
-
                                     <div class="form-group">
                                         <label class="control-label col-md-4" for="to">To</label>
 
@@ -123,6 +122,7 @@
                                                       id="message"/>Purchase Order</textarea>
                                         </div>
                                     </div>
+                                    <input type="hidden" name="type" value="send"/>
                                     <div class="col-md-offset-6 col-md-6">
                                         <div class="form-group" style="margin-top:10px;">
                                             <button type="button" name="submit" value="sendemail" id="send-email"
@@ -190,6 +190,7 @@
                                             <textarea class="form-control" cols="5" rows="6" name="message"
                                                       id="message1"/>Purchase Order</textarea>
                                         </div>
+                                        <input type="hidden" name="type" value="sendorsave"/>
                                     </div>
                                     <div class="col-md-offset-6 col-md-6">
                                         <div class="form-group" style="margin-top:10px;">
@@ -331,11 +332,12 @@
             if (data.status == 'success') {
                 notyMessage(data.message);
                 $('.ajaxLoading').hide();
+                reloadOrder();
                 $('#sximo-modal').modal('hide');
             } else {
                 notyMessageError(data.message);
                 $('.ajaxLoading').hide();
-                return false;
+                reloadOrder();
             }
         }
         function emailSending(send_to,mode)
@@ -357,6 +359,7 @@
                 }
             });
         }
+
     </script>
 
 @stop

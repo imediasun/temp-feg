@@ -50,7 +50,6 @@ class servicerequestsController extends Controller
 
     public function postData(Request $request)
     {
-
         $module_id = \DB::table('tb_module')->where('module_name', '=', 'servicerequests')->pluck('module_id');
         $this->data['module_id'] = $module_id;
         if (Input::has('config_id')) {
@@ -71,7 +70,7 @@ class servicerequestsController extends Controller
         $order = (!is_null($request->input('order')) ? $request->input('order') : $this->info['setting']['ordertype']);
         // End Filter sort and order for query
         // Filter Search for query
-        $filter = (!is_null($request->input('search')) ? $this->buildSearch() : "AND sb_tickets.Status != 'close'");
+        $filter = (!is_null($request->input('search')) ? $this->buildSearch() : "AND sb_tickets.Status != 'closed'");
 
         $page = $request->input('page', 1);
         $params = array(
@@ -248,6 +247,8 @@ class servicerequestsController extends Controller
         } else {
             $this->data['row'] = $this->model->getColumnTable('sb_tickets');
         }
+        $this->data['uid'] = \Session::get('uid');
+        $this->data['fid'] = \Session::get('fid');
         $this->data['setting'] = $this->info['setting'];
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
 
@@ -275,12 +276,27 @@ class servicerequestsController extends Controller
         $row->assign_employee_names = $assign_employee_names;
         if ($row) {
             $comments = new Ticketcomment();
-            $this->data['comments'] = $comments->where('TicketID', '=', $id)->get();
+            $this->data['comments'] = $comments->select(
+                    'sb_ticketcomments.*', 
+                    'users.username',  
+                    'users.first_name',  
+                    'users.last_name',  
+                    'users.email',  
+                    'users.avatar',  
+                    'users.active',  
+                    'users.group_id'
+                )
+                ->join('users', 'users.id', '=', 'sb_ticketcomments.UserID')
+                ->where('TicketID', '=', $id)
+                ->orderBy('Posted', 'asc')
+                ->get();
             $this->data['row'] = $row;
         } else {
             $this->data['row'] = $this->model->getColumnTable('sb_tickets');
         }
 
+        
+        $this->data['creator_details'] = !empty($row->entry_by) ? \SiteHelpers::getUserDetails($row->entry_by) : [];
         $this->data['id'] = $id;
         $this->data['uid'] = \Session::get('uid');
         $this->data['fid'] = \Session::get('fid');
@@ -315,8 +331,9 @@ class servicerequestsController extends Controller
         //$data['need_by_date'] = date('Y-m-d');
         //$rules = $this->validateForm();
         $sendMail=false;
-        if($id==null)
-            $sendMail=true;
+        if(empty($id)) {
+            $sendMail = true;
+        }
         $rules = $this->validateForm();
         unset($rules['department_id']);
        //$rules = array('Subject' => 'required', 'Description' => 'required', 'Priority' => 'required', 'issue_type' => 'required', 'location_id' => 'required');
@@ -325,12 +342,10 @@ class servicerequestsController extends Controller
         if ($validator->passes()) {
             $data = $this->validatePost('sb_tickets');
             $data['need_by_date']= date("Y-m-d", strtotime($request->get('need_by_date')));
-            $data['status']=$request->get('status');
-
-            if ($id == 0) {
-
-                $data['Created'] = date('Y-m-d');
-
+            $data['Status']=$request->get('Status');
+            
+            if (empty($id)) {
+                $data['Created'] = date('Y-m-d H:i:s');
             }
             $id = $this->model->insertRow($data, $id);
             if($sendMail){
@@ -338,7 +353,7 @@ class servicerequestsController extends Controller
                 $this->model->notifyObserver('FirstEmail',[
                     "message"       =>$message,
                     "ticketId"      => $id,
-                    "location_id"   => $data['location_id']
+                    'ticket'        => $data
                 ]);
 
             }
@@ -389,25 +404,30 @@ class servicerequestsController extends Controller
 
     public function postComment(Request $request)
     {
+            $TicketID = $request->input('TicketID');
 
             //validate post for sb_tickets module
             $ticketsData = $this->validatePost('sb_tickets');
-            if ($ticketsData['Status'] == 'closed') {
-                $ticketsData['closed'] = date('Y-m-d H:i:s');
-            }
-            else{ $ticketsData['closed']=""; }
-            $ticketsData['updated'] = date('Y-m-d');
-            $commentsData['USERNAME'] = \Session::get('fid');
+            $ticketsData['updated'] = date('Y-m-d H:i:s');
+            
             $comment_model = new Ticketcomment();
-            $TicketID = $request->input('TicketID');
-            $total_comments = \DB::select("Select * FROM sb_ticketcomments WHERE TicketID = " . $TicketID . "");
-            if (count($total_comments) == 0) {
+            $total_comments = $comment_model->where('TicketID', '=', $TicketID)->count();
+
+            $status = $ticketsData['Status'];
+            $isStatusClosed = $status == 'closed';
+            if (!$isStatusClosed && $total_comments == 0) {
                 $ticketsData['Status'] = 'inqueue';
+            }
+            $ticketsData['closed']="";   
+            if ($isStatusClosed) {
+                $ticketsData['closed'] = date('Y-m-d H:i:s');
             }
 
             //re-populate info array to ticket comments module
             $this->info = $comment_model->makeInfo('ticketcomment');
             $commentsData = $this->validatePost('sb_ticketcomments');
+            $commentsData['USERNAME'] = \Session::get('fid');
+            $commentsData['Posted'] = date('Y-m-d H:i:s');;
 
             //@todo need separate table for comment attachments
             unset($ticketsData['file_path']);
@@ -417,11 +437,10 @@ class servicerequestsController extends Controller
             $message = $commentsData['Comments'];
             //send email
             $this->model->notifyObserver('AddComment',[
-                "message"       =>$message,
-                "ticketId"      => $ticketId,
-                "department_id" =>"",
-                "location_id"   => $ticketsData["location_id"],
-                "assign_to"     => $ticketsData['assign_to']
+                    'message'       =>$message,
+                    'ticketId'      => $ticketId,
+                    'ticket'        => $ticketsData,
+                    "department_id" =>"",                
                 ]);
 
             return response()->json(array(

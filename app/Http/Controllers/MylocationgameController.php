@@ -250,7 +250,7 @@ class MylocationgameController extends Controller
 
         $this->data['id'] = $id;
         $this->data['row']['game_title'] = empty($id) ? "" : $this->model->get_game_info_by_id($id, 'game_title');
-        $this->data['row']['location_name'] = empty($id) ? "" : $this->model->get_location_info_by_id($row->location_id, 'location_name');
+        $this->data['row']['location_name'] = empty($row->location_id) ? "" : $this->model->get_location_info_by_id($row->location_id, 'location_name');
 
         return view('mylocationgame.form', $this->data);
     }

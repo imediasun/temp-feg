@@ -148,6 +148,15 @@
 
 								</div>
 							</div>
+                    <div class="form-group clearfix">
+                        <label for="vendor_id" class="control-label col-md-4 text-left">
+                            Vendor </label>
+                        <div class="col-md-6">
+                            <select name='vendor_id' id='vendor_id' class='select2' required></select>
+                        </div>
+                        <div class="col-md-2"></div>                        
+                    </div>
+                            
 				  <div class="form-group  " >
 					<label for="Is Reserved" class=" control-label col-md-4 text-left">
 					{!! SiteHelpers::activeLang('Is Reserved', (isset($fields['is_reserved']['language'])? $fields['is_reserved']['language'] : array())) !!}
@@ -293,7 +302,7 @@ $(document).ready(function() {
 	$('.editor').summernote();
 	$('.previewImage').fancybox();
 	$('.tips').tooltip();
-	$(".select2").select2({ width:"98%"});
+	renderDropdown($(".select2"), { width:"100%"});
 	$('.date').datepicker({format:'mm/dd/yyyy',autoClose:true})
 	$('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});
 	$('input[type="checkbox"],input[type="radio"]').not('.test').iCheck({

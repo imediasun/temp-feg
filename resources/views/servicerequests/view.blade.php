@@ -1,5 +1,13 @@
 <?php
 $commentsCount =  $comments->count();
+$creatorID = $row->entry_by;
+$creator = $creator_details;
+$creatorName = !empty($creator) ? $creator->first_name.' '.$creator->last_name : '';
+$creatorAvatar = !empty($creator) ? $creator->avatar : '';
+$createdOnWithTime = \DateHelpers::formatDateCustom($row->Created);
+$createdOn = \DateHelpers::formatDate($row->Created);
+$updatedOnWithTime = \DateHelpers::formatDateCustom($row->updated);
+$updatedOn = \DateHelpers::formatDate($row->updated);
 ?>
 @if($setting['view-method'] =='native')
 	<div class="sbox">
@@ -8,7 +16,7 @@ $commentsCount =  $comments->count();
 			<div class="container-fuild">
 				<div class="row m-b-lg ">
 					<div class="col-lg-5 animated fadeInLeft delayp1" style="margin-left: auto">
-						<h3>Ticket Info</h3>
+						<h3>Ticket Info - #{{ $row['TicketID'] }}</h3>
 						<table class="table table-striped table-bordered" >
 							<tbody>
 
@@ -16,13 +24,7 @@ $commentsCount =  $comments->count();
 								<td width='40%' class='label-view text-right'>
 									{{ SiteHelpers::activeLang('Date Created', (isset($fields['Created']['language'])? $fields['Created']['language'] : array())) }}
 								</td>
-								<td><?php
-
-									$date=date("m/d/Y", strtotime($row->Created));
-									echo $date;
-									?>
-
-								</td>
+								<td>{{ $createdOn }}</td>
 
 							</tr>
 							<tr>
@@ -37,13 +39,14 @@ $commentsCount =  $comments->count();
 									{{ SiteHelpers::activeLang('Last Event date', (isset($fields['updated']['language'])? $fields['updated']['language'] : array())) }}
 								</td>
 								<td>
+                                    {{ $updatedOnWithTime }}
 									<?php
 									if($commentsCount!=0){
-										foreach($comments as $comment)
-										{
-											echo DateHelpers::formatDate($comment->Posted);
-											break;
-										}
+//										foreach($comments as $comment)
+//										{
+//											echo DateHelpers::formatDateCustom($comment->Posted);
+//											break;
+//										}
 									}
 									?>
 								</td>
@@ -57,12 +60,19 @@ $commentsCount =  $comments->count();
 								<td>{{ $row->Subject }} </td>
 
 							</tr>
+							<tr>
+								<td width='40%' class='label-view text-right'>
+									{{ SiteHelpers::activeLang('Created By', (isset($fields['entry_by']['language'])? $fields['entry_by']['language'] : array())) }}
+								</td>
+								<td>{{ $creatorName }} </td>
+
+							</tr>
 
 							<tr>
 								<td width='40%' class='label-view text-right'>
 									{{ SiteHelpers::activeLang('Location', (isset($fields['location_id']['language'])? $fields['location_id']['language'] : array())) }}
 								</td>
-								<td>{!! SiteHelpers::gridDisplayView($row->location_id,'location_id','1:location:id:location_name') !!} </td>
+								<td>{!! SiteHelpers::gridDisplayView($row->location_id,'location_id','1:location:id:id|location_name') !!} </td>
 
 							</tr>
 
@@ -74,7 +84,7 @@ $commentsCount =  $comments->count();
 								<td><?php
 
 									foreach ($row->assign_employee_names as $index => $name) :
-										echo (++$index) . '.  ' . isset($name[0]->first_name) ? $name[0]->first_name : "" . ' ' . isset($name[0]->last_name)?$name[0]->last_name:"" . '</br>';
+										echo (++$index) . '.  ' . (isset($name[0]->first_name) ? $name[0]->first_name : "") . ' ' . (isset($name[0]->last_name)?$name[0]->last_name:"") . '</br>';
 									endforeach;
 
 
@@ -137,12 +147,12 @@ $commentsCount =  $comments->count();
 								<td>
 
 									<?php
+                                    
 									if(!empty($row->file_path))
 									{
 									$files = explode(',', $row->file_path);
 									foreach($files as $index => $file_name) :
-									$date=date("m/d/Y", strtotime($row->Created));
-									echo $fid.' | '.$date.' | ';
+									echo $creatorName.' | '.$createdOn.' | ';
 									?>
 									<a href="<?php echo url().'/uploads/tickets/'.$file_name; ?>" target="_blank">
 										<?php echo strlen($file_name) > 20 ? substr($file_name,0,20).'.'.substr(strrchr($file_name,'.'),1) : $file_name; ?>
@@ -152,22 +162,26 @@ $commentsCount =  $comments->count();
 									endforeach;
 									}
 									?>
-									<?php if($commentsCount!=0){foreach($comments as $comment):?>
-									<?php
-									if(!empty($comment->Attachments))
-									{
-									$files = explode(',', $comment->Attachments);
-									foreach($files as $index => $file_name) :
-									$date=date("m/d/Y", strtotime($comment->Posted));
-									?>
-									<?php echo $fid.' | '.$date.' | '; ?>
-									<a href="<?php echo url().'/uploads/tickets/comments-attachments/'.$file_name; ?>" target="_blank">
-										<?php echo strlen($file_name) > 20 ? substr($file_name,0,20).'.'.substr(strrchr($file_name,'.'),1) : $file_name; ?>
-									</a></br>
-									<?php
-									endforeach;
-									}
-									endforeach;
+									<?php 
+                                    if($commentsCount!=0){
+                                        foreach($comments as $comment):
+                                            if(!empty($comment->Attachments))
+                                            {
+                                                $files = explode(',', $comment->Attachments);
+                                                $commenterFirstName = empty($comment->first_name) ? '' : $comment->first_name;
+                                                $commenterLastName = empty($comment->last_name) ? '' : $comment->last_name;                                    
+                                                $commenterName = $commenterFirstName . ' ' . $commenterLastName;                                    
+                                                foreach($files as $index => $file_name) :
+                                                    $date = \DateHelpers::formatDate($comment->Posted);                                    
+                                                ?>
+                                                    <?php echo $commenterName.' | '.$date.' | '; ?>
+                                                    <a href="<?php echo url().'/uploads/tickets/comments-attachments/'.$file_name; ?>" target="_blank">
+                                                        <?php echo strlen($file_name) > 20 ? substr($file_name,0,20).'.'.substr(strrchr($file_name,'.'),1) : $file_name; ?>
+                                                    </a></br>
+                                                    <?php
+                                                endforeach;
+                                            }
+                                        endforeach;
 									}
 									?>
 								</td>
@@ -185,8 +199,10 @@ $commentsCount =  $comments->count();
 									<h3>Ticket History<span style="float: right; font-size: x-small" id="comments" class="text-success"> ( <?php echo $commentsCount ?> )  Comment(s)</span> </h3>
 								</div>
 								</br>
+                                <div class="profile-image" style="padding-bottom: 5px;">
+                                <strong><?php echo $creatorName.' '; ?></strong><small><?php echo $createdOnWithTime; ?></small>
+                                </div>
 								<div class="summary">
-
 									<p><span style="color:rgb(113,113,113);"><?php echo $row->Description; ?></span>
 								</div>
 
@@ -200,8 +216,13 @@ $commentsCount =  $comments->count();
 								<div class="cont">
 									<div class="ticket-message message-left last first clearfix">
 										<div class="profile-image" style="padding-bottom: 5px;">
-											<strong><?php echo $fid.' '; ?>
-												<?php $date=date("m/d/Y H:i:s", strtotime($comment->Posted)); echo $date; ?></strong>
+                                            <?php 
+                                                $commenterFirstName = empty($comment->first_name) ? '' : $comment->first_name;
+                                                $commenterLastName = empty($comment->last_name) ? '' : $comment->last_name;                                    
+                                                $commenterName = $commenterFirstName . ' ' . $commenterLastName;
+                                            ?>
+											<strong><?php echo $commenterName.' '; ?>
+												{{ \DateHelpers::formatDateCustom($comment->Posted) }}</strong>
 										</div>
 									</div>
 								</div>
@@ -326,6 +347,8 @@ $commentsCount =  $comments->count();
 							</div>
 						</div>
 
+						{!! Form::hidden('Subject', $row->Subject) !!}
+						{!! Form::hidden('Created', $row->Created) !!}
 						{!! Form::hidden('Description', $row->Description) !!}
 						{!! Form::hidden('issue_type', $row->issue_type) !!}
 						{!! Form::hidden('location_id', $row->location_id) !!}
