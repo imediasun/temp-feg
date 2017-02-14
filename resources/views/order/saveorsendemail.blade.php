@@ -122,6 +122,7 @@
                                                       id="message"/>Purchase Order</textarea>
                                         </div>
                                     </div>
+                                    <input type="hidden" name="type" value="send"/>
                                     <div class="col-md-offset-6 col-md-6">
                                         <div class="form-group" style="margin-top:10px;">
                                             <button type="button" name="submit" value="sendemail" id="send-email"
@@ -189,6 +190,7 @@
                                             <textarea class="form-control" cols="5" rows="6" name="message"
                                                       id="message1"/>Purchase Order</textarea>
                                         </div>
+                                        <input type="hidden" name="type" value="sendorsave"/>
                                     </div>
                                     <div class="col-md-offset-6 col-md-6">
                                         <div class="form-group" style="margin-top:10px;">

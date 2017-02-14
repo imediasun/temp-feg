@@ -552,7 +552,8 @@ class OrderController extends Controller
 
     function postSaveorsendemail(Request $request)
     {
-        $type = $request->get('submit');
+
+        $type = $request->get('type');
         $from = $request->get('from');
         $order_id = $request->get('order_id');
         if(!isset($type)) {
@@ -567,13 +568,13 @@ class OrderController extends Controller
         }
         elseif($type == "send") {
             $to = $request->get('to');
-            $cc = $this->get('cc');
-            $bcc = $this->get('bcc');
+            $cc = $request->get('cc');
+            $bcc = $request->get('bcc');
             $message = $request->get('message');
         } else {
             $to = $request->get('to1');
-            $cc = $this->get('cc1');
-            $bcc = $this->get('bcc1');
+            $cc = $request->get('cc1');
+            $bcc = $request->get('bcc1');
             $message = $request->get('message');
         }
         $opt = $request->get('opt');
@@ -849,8 +850,7 @@ class OrderController extends Controller
     }
 function sendPhpEmail($message,$to,$from,$subject,$pdf,$filename,$cc,$bcc)
 {
-
-                    $result = \Mail::raw($message, function ($message) use ($to, $from, $subject, $pdf, $filename,$cc,$bcc) {
+    $result = \Mail::raw($message, function ($message) use ($to, $from, $subject, $pdf, $filename,$cc,$bcc) {
                         $message->subject($subject);
                         $message->from($from);
                         $message->to($to);
