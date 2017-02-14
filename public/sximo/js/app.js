@@ -237,9 +237,12 @@ function initiateInlineFormFields(container) {
     $('.prod_type_id').change(function(){
 
         //http://sximo/product/comboselect?filter=product_type:id:type_description:request_type_id:1
-        var url_for_prod_sub_type = "http://sximo/product/comboselect?filter=product_type:id:type_description:request_type_id:"+$(this).val();
-        $(this).parent().find('.prod_sub_type_id').jCombo(url_for_prod_sub_type);
-        console.log(url_for_prod_sub_type);
+        var url_for_prod_sub_type = "http://localhost/sximo/public/product/comboselect?filter=product_type:id:type_description:request_type_id:"+$(this).val();
+        //$(this).closest('td').next('td').find('.prod_sub_type_id:first').jCombo(url_for_prod_sub_type);
+        $(this).closest('td').next('td').find('.prod_sub_type_id:first').select2('destroy');
+        $(this).closest('td').next('td').find('.prod_sub_type_id:first').jCombo(url_for_prod_sub_type,
+            {  initial_text: '--- Select  Subtype ---' });
+        renderDropdown(container.find('.sel-inline'),{width:"98%"});
         /*
         $(this).parent().find('.prod_sub_type_id').jCombo(url_for_prod_sub_type,
             {selected_value: '{{ \Session::get('sub_type') }}', initial_text: '--- Select  Subtype ---'  });*/
