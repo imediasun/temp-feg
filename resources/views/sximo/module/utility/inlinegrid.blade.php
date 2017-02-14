@@ -1,9 +1,22 @@
 <script type="text/javascript">
-$(document).ready(function() {
+  var editablerowscount =0;
+     if(editablerowscount==0){
+	  $('#rcv').hide();
+   }
+
+	$(document).ready(function() {
+
+
+
 	//$('.date').datepicker({format:'mm/dd/yyyy',autoClose:true});
 	//initiateInlineFormFields($('#form-0 td'));
 	$('.editable').dblclick(function(){
-		//alert('called');
+		editablerowscount++;
+
+		Displayeditablesavebutton();
+
+
+
 			var id = $(this).attr("id");
 			//console.log("======"+id+"======");
 			$('#form-0 td').each(function(){
@@ -99,18 +112,42 @@ $(document).ready(function() {
 });
 function canceled( id )
 {
+
 	$('#'+id+' .actionopen').hide();
 	$('#'+id+' td').each(function() {
 		var val = $(this).attr("data-values");
 		var value = $(this).attr("data-format");
+
 		if( val !== undefined && val !== 'action' )
 		{
 
 			$(this).html(value);
 		}		
 	});
+
+
 	$('#'+id+' .action').show();
-}	
+
+	 RemoveButton();
+
+}
+  function RemoveButton() {
+	  editablerowscount--;
+	  if(editablerowscount==0){
+		  $('#rcv').hide();
+	  }
+  }
+  function Displayeditablesavebutton() {
+	  if(editablerowscount > 0)
+	  {
+		  $('#rcv').show();
+	  }
+	  else if(editablerowscount < 0) {
+		  $('#rcv').hide();
+	  }
+  }
+
+
 function saved( id )
 {
 	var myId = id.split('-');
