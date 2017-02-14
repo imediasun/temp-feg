@@ -879,6 +879,8 @@ class ModuleController extends Controller
                 'sortable' => (isset($sortable[$i]) ? 1 : 0),
                 'search' => (isset($search[$i]) ? 1 : 0),
                 'download' => (isset($download[$i]) ? 1 : 0),
+                'api' => (isset($api[$i]) ? 1 : 0),
+                'inline' => (isset($inline[$i]) ? 1 : 0),
                 'frozen' => (isset($frozen[$i]) ? 1 : 0),
                 'limited' => (isset($limited[$i]) ? $limited[$i] : ''),
                 'width' => isset($width[$i]) ? $width[$i] : '',
