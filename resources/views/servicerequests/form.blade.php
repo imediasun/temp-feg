@@ -261,7 +261,7 @@
 <script type="text/javascript">
 $(document).ready(function() { 
 	
-        $("#location_id").jCombo("{{ URL::to('sbticket/comboselect?filter=location:id:location_name') }}",
+        $("#location_id").jCombo("{{ URL::to('sbticket/comboselect?filter=location:id:id|location_name') }}" + "&delimiter=%20|%20",
         {  selected_value : '{{ $row["location_id"] }}','initial-text': "Select Location" });
         
       //  $("#game_id").jCombo("{{-- URL::to('sbticket/comboselect?filter=game:id:game_name') }}&limit=where:game_name:!=:''&parent=location_id:",
