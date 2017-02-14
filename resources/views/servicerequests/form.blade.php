@@ -1,4 +1,6 @@
-<?php  ?>
+{{--*/      $ID = @$row['id']                   /*--}}
+{{--*/      $isEdit = !empty($ID)               /*--}}
+{{--*/      $entryBy = empty($row['entry_by']) ? $uid : $row['entry_by']  /*--}}
 @if($setting['form-method'] =='native')
 	<div class="sbox">
 		<div class="sbox-title">  
@@ -11,7 +13,8 @@
 @endif	
 			{!! Form::open(array('url'=>'servicerequests/save/'.$row['TicketID'], 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'sbticketFormAjax')) !!}
 
-		<input type="hidden" name='assign_to' value="{{$row['assign_to']}}">
+		<input type="hidden" name='assign_to' value="{{$row['assign_to']}}">        
+		<input type="hidden" name='entry_by' value="{{ $entryBy }}">
 		<div class="col-md-12">
 						<fieldset><legend>Create Ticket</legend>
 									
@@ -150,7 +153,7 @@
 					{!! SiteHelpers::activeLang('Assign To', (isset($fields['assign_to']['language'])? $fields['assign_to']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  <select name='assign_to[]' multiple rows='5' id='assign_to' class='select2 '  ></select>
+					  <select name='assign_to[]' multiple  id='assign_to' class='select2 '  ></select>
 					 </div>
 					 <div class="col-md-2">
 					 	
