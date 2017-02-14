@@ -50,7 +50,6 @@ class servicerequestsController extends Controller
 
     public function postData(Request $request)
     {
-
         $module_id = \DB::table('tb_module')->where('module_name', '=', 'servicerequests')->pluck('module_id');
         $this->data['module_id'] = $module_id;
         if (Input::has('config_id')) {
@@ -248,6 +247,8 @@ class servicerequestsController extends Controller
         } else {
             $this->data['row'] = $this->model->getColumnTable('sb_tickets');
         }
+        $this->data['uid'] = \Session::get('uid');
+        $this->data['fid'] = \Session::get('fid');
         $this->data['setting'] = $this->info['setting'];
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
 
@@ -275,12 +276,25 @@ class servicerequestsController extends Controller
         $row->assign_employee_names = $assign_employee_names;
         if ($row) {
             $comments = new Ticketcomment();
-            $this->data['comments'] = $comments->where('TicketID', '=', $id)->get();
+            $this->data['comments'] = $comments->select(
+                    'sb_ticketcomments.*', 
+                    'users.username',  
+                    'users.first_name',  
+                    'users.last_name',  
+                    'users.email',  
+                    'users.avatar',  
+                    'users.active',  
+                    'users.group_id'
+                )
+                ->join('users', 'users.id', '=', 'sb_ticketcomments.UserID')
+                ->where('TicketID', '=', $id)->get();
             $this->data['row'] = $row;
         } else {
             $this->data['row'] = $this->model->getColumnTable('sb_tickets');
         }
 
+        
+        $this->data['creator_details'] = !empty($row->entry_by) ? \SiteHelpers::getUserDetails($row->entry_by) : [];
         $this->data['id'] = $id;
         $this->data['uid'] = \Session::get('uid');
         $this->data['fid'] = \Session::get('fid');
@@ -315,8 +329,9 @@ class servicerequestsController extends Controller
         //$data['need_by_date'] = date('Y-m-d');
         //$rules = $this->validateForm();
         $sendMail=false;
-        if($id==null)
-            $sendMail=true;
+        if(empty($id)) {
+            $sendMail = true;
+        }
         $rules = $this->validateForm();
         unset($rules['department_id']);
        //$rules = array('Subject' => 'required', 'Description' => 'required', 'Priority' => 'required', 'issue_type' => 'required', 'location_id' => 'required');
@@ -393,7 +408,9 @@ class servicerequestsController extends Controller
             if ($ticketsData['Status'] == 'closed') {
                 $ticketsData['closed'] = date('Y-m-d H:i:s');
             }
-            else{ $ticketsData['closed']=""; }
+            else{ 
+                $ticketsData['closed']="";                 
+            }
             $ticketsData['updated'] = date('Y-m-d');
             $commentsData['USERNAME'] = \Session::get('fid');
             $comment_model = new Ticketcomment();

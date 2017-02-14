@@ -2265,4 +2265,19 @@ class SiteHelpers
         }        
         return $groupId;
     }
+    
+    public static function getUsersInGroup ($gid=null) {
+    }
+    
+    public static function getUserDetails($id=null) {
+        $data = [];
+        if (empty($id)) {
+            $id = \Session::get('uid');
+        }
+        $data = \DB::table('users')->where('id', '=', $id)->get();
+        if (!empty($data) && is_array($data)) {
+            $data = $data[0];
+        }
+        return $data;        
+    }
 }

@@ -1,5 +1,10 @@
 <?php
 $commentsCount =  $comments->count();
+$creatorID = $row->entry_by;
+$creator = $creator_details;
+$creatorName = !empty($creator) ? $creator->first_name.' '.$creator->last_name : '';
+$creatorAvatar = !empty($creator) ? $creator->avatar : '';
+$createdOn=date("m/d/Y H:i:s", strtotime($row->Created));
 ?>
 @if($setting['view-method'] =='native')
 	<div class="sbox">
@@ -8,7 +13,7 @@ $commentsCount =  $comments->count();
 			<div class="container-fuild">
 				<div class="row m-b-lg ">
 					<div class="col-lg-5 animated fadeInLeft delayp1" style="margin-left: auto">
-						<h3>Ticket Info</h3>
+						<h3>Ticket Info - #{{ $row['TicketID'] }}</h3>
 						<table class="table table-striped table-bordered" >
 							<tbody>
 
@@ -57,12 +62,19 @@ $commentsCount =  $comments->count();
 								<td>{{ $row->Subject }} </td>
 
 							</tr>
+							<tr>
+								<td width='40%' class='label-view text-right'>
+									{{ SiteHelpers::activeLang('Created By', (isset($fields['entry_by']['language'])? $fields['entry_by']['language'] : array())) }}
+								</td>
+								<td>{{ $creatorName }} </td>
+
+							</tr>
 
 							<tr>
 								<td width='40%' class='label-view text-right'>
 									{{ SiteHelpers::activeLang('Location', (isset($fields['location_id']['language'])? $fields['location_id']['language'] : array())) }}
 								</td>
-								<td>{!! SiteHelpers::gridDisplayView($row->location_id,'location_id','1:location:id:location_name') !!} </td>
+								<td>{!! SiteHelpers::gridDisplayView($row->location_id,'location_id','1:location:id:id|location_name') !!} </td>
 
 							</tr>
 
@@ -137,12 +149,13 @@ $commentsCount =  $comments->count();
 								<td>
 
 									<?php
+                                    
 									if(!empty($row->file_path))
 									{
 									$files = explode(',', $row->file_path);
 									foreach($files as $index => $file_name) :
 									$date=date("m/d/Y", strtotime($row->Created));
-									echo $fid.' | '.$date.' | ';
+									echo $creatorName.' | '.$date.' | ';
 									?>
 									<a href="<?php echo url().'/uploads/tickets/'.$file_name; ?>" target="_blank">
 										<?php echo strlen($file_name) > 20 ? substr($file_name,0,20).'.'.substr(strrchr($file_name,'.'),1) : $file_name; ?>
@@ -157,10 +170,14 @@ $commentsCount =  $comments->count();
 									if(!empty($comment->Attachments))
 									{
 									$files = explode(',', $comment->Attachments);
+                                    $commenterFirstName = empty($comment->first_name) ? '' : $comment->first_name;
+                                    $commenterLastName = empty($comment->last_name) ? '' : $comment->last_name;                                    
+                                    $commenterName = $commenterFirstName . ' ' . $commenterLastName;                                    
 									foreach($files as $index => $file_name) :
 									$date=date("m/d/Y", strtotime($comment->Posted));
+                                    
 									?>
-									<?php echo $fid.' | '.$date.' | '; ?>
+									<?php echo $commenterName.' | '.$date.' | '; ?>
 									<a href="<?php echo url().'/uploads/tickets/comments-attachments/'.$file_name; ?>" target="_blank">
 										<?php echo strlen($file_name) > 20 ? substr($file_name,0,20).'.'.substr(strrchr($file_name,'.'),1) : $file_name; ?>
 									</a></br>
@@ -185,8 +202,10 @@ $commentsCount =  $comments->count();
 									<h3>Ticket History<span style="float: right; font-size: x-small" id="comments" class="text-success"> ( <?php echo $commentsCount ?> )  Comment(s)</span> </h3>
 								</div>
 								</br>
+                                <div class="profile-image" style="padding-bottom: 5px;">
+                                <strong><?php echo $creatorName.' '; ?></strong><small><?php echo $createdOn; ?></small>
+                                </div>
 								<div class="summary">
-
 									<p><span style="color:rgb(113,113,113);"><?php echo $row->Description; ?></span>
 								</div>
 
@@ -200,7 +219,12 @@ $commentsCount =  $comments->count();
 								<div class="cont">
 									<div class="ticket-message message-left last first clearfix">
 										<div class="profile-image" style="padding-bottom: 5px;">
-											<strong><?php echo $fid.' '; ?>
+                                            <?php 
+                                                $commenterFirstName = empty($comment->first_name) ? '' : $comment->first_name;
+                                                $commenterLastName = empty($comment->last_name) ? '' : $comment->last_name;                                    
+                                                $commenterName = $commenterFirstName . ' ' . $commenterLastName;
+                                            ?>
+											<strong><?php echo $commenterName.' '; ?>
 												<?php $date=date("m/d/Y H:i:s", strtotime($comment->Posted)); echo $date; ?></strong>
 										</div>
 									</div>
