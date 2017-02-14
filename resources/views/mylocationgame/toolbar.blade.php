@@ -102,7 +102,7 @@
                 );
         $("#location_id").jCombo("{{ URL::to('mylocationgame/comboselect?filter=location:id:id|location_name') }}"+ "&delimiter=%20|%20",
                 {selected_value: '',initial_text:'--- Select Game Location ---'});
-        renderDropdown($(".select2, .select3, .select4, select5"), { width:"98%"});
+        renderDropdown($(".select2, .select3, .select4, .select5"), { width:"98%"});
         var config_id=$("#col-config").val();
         if(config_id ==0 )
         {

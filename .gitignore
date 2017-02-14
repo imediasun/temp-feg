@@ -19,3 +19,4 @@ web.config
 storage/log-backup/
 public/orders/
 storage/framework/
+setting.php

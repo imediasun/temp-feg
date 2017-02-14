@@ -489,7 +489,6 @@ class order extends Sximo
                     if (count($query) == 1) {
                         $data['product_id_' . $i] = $query[0]->product_id;
                         $data['order_qty_' . $i] = $query[0]->qty;
-                        $data['game_name' . $i] = $query[0]->game_name;
                         $data['order_description_' . $i] = $query[0]->description;
                         $data['order_price_' . $i] = $query[0]->case_price;
                     }
