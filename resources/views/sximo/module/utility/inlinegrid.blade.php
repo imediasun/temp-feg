@@ -94,7 +94,7 @@ $(document).ready(function() {
 		//$('#'+ id + ' td').find('.sel-inline').select2('destroy').empty().select2(data);
 		//$('#'+ id + ' td').find('.sel-inline').select2('destroy').empty().select2({data: [{id: 1, text: 'new text'}]})
 		//var data = $('#'+ id + ' td').find('.sel-inline').data('select2');
-		initiateInlineFormFields($('#'+ id + ' td'));
+            initiateInlineFormFields($('#'+ id + ' td'));
 		});
 });
 function canceled( id )
