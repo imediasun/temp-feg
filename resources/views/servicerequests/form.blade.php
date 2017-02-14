@@ -68,8 +68,8 @@
 					  
 					<?php $Status = explode(',',$row['Status']);
 					$Status_opt = array( 'open' => 'Open' ,  'inqueue' => 'Pending' ,  'closed' => 'Closed' , ); ?>
-                        @if(!$in_edit_mode) <input type="text" readonly class="form-control" value="open" name="status"/> @else
-					<select name='status' rows='5'   class='select2 '   >
+                        @if(!$in_edit_mode) <input type="text" readonly class="form-control" value="open" name="Status"/> @else
+					<select name='Status' rows='5'   class='select2 '   >
 						<?php
 
 						foreach($Status_opt as $key=>$val)

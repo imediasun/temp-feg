@@ -325,12 +325,10 @@ class servicerequestsController extends Controller
         if ($validator->passes()) {
             $data = $this->validatePost('sb_tickets');
             $data['need_by_date']= date("Y-m-d", strtotime($request->get('need_by_date')));
-            $data['status']=$request->get('status');
-
-            if ($id == 0) {
-
+            $data['Status']=$request->get('Status');
+            
+            if (empty($id)) {
                 $data['Created'] = date('Y-m-d');
-
             }
             $id = $this->model->insertRow($data, $id);
             if($sendMail){
