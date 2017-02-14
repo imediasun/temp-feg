@@ -135,7 +135,7 @@ width: 75%">
             $("#vendor_id").jCombo("{{ URL::to('product/comboselect?filter=vendor:id:vendor_name') }}",
                     {selected_value: '', initial_text: '--- Select Vendor ---'});
             //$(".select3").select2({width: "98%"});
-            renderDropdown($(".select2, .select3, .select4,.select5"), { width:"98%"});
+            renderDropdown($(".select2, .select3, .select4, .select5"), { width:"98%"});
             var config_id=$("#col-config").val();
             if(config_id ==0 )
             {

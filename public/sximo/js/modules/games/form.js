@@ -41,7 +41,7 @@
                 return false;
             });
             
-            renderDropdown(container.find(".select2, .select3, .select4, select5"), { width:"100%"});
+            renderDropdown(container.find(".select2, .select3, .select4, .select5"), { width:"100%"});
             container.find('.date').datepicker({format:'mm/dd/yyyy',autoClose:true});
             container.find('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});
             
