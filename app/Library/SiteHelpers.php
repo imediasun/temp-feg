@@ -1039,9 +1039,6 @@ class SiteHelpers
                 break;
             case 'textarea':
             case 'textarea_editor':
-                $form = "<textarea name='".$field."{$bulk}' class='form-control input-sm' $mandatory value='{$value}'></textarea>";
-                break;
-
             case 'text':
                 $form = "<input  type='text' name='".$field."{$bulk}' class='form-control input-sm' $mandatory value='{$value}'/>";
                 break;
