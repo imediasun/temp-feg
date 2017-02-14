@@ -240,8 +240,7 @@ function initiateInlineFormFields(container) {
         var url_for_prod_sub_type = "http://localhost/sximo/public/product/comboselect?filter=product_type:id:type_description:request_type_id:"+$(this).val();
         //$(this).closest('td').next('td').find('.prod_sub_type_id:first').jCombo(url_for_prod_sub_type);
         $(this).closest('td').next('td').find('.prod_sub_type_id:first').select2('destroy');
-        $(this).closest('td').next('td').find('.prod_sub_type_id:first').jCombo(url_for_prod_sub_type,
-            {  initial_text: '--- Select  Subtype ---' });
+        $(this).closest('td').next('td').find('.prod_sub_type_id:first').jCombo(url_for_prod_sub_type);
         renderDropdown(container.find('.sel-inline'),{width:"98%"});
         /*
         $(this).parent().find('.prod_sub_type_id').jCombo(url_for_prod_sub_type,
