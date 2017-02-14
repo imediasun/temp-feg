@@ -6,10 +6,10 @@
     <div class="sbox-title">
         <h5><i class="fa fa-table"></i></h5>
         <div class="sbox-tools">
-            <a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Clear Search"
+            <a href="javascript:void(0)" class="btn btn-xs btn-white tips clearSearchButton" title="Clear Search"
                onclick="reloadData('#{{ $pageModule }}','servicerequests/data?search=')"><i class="fa fa-trash-o"></i> Clear
                 Search </a>
-            <a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Reload Data"
+            <a href="javascript:void(0)" class="btn btn-xs btn-white tips reloadDataButton" title="Reload Data"
                onclick="reloadData('#{{ $pageModule }}','servicerequests/data?return={{ $return }}')"><i
                         class="fa fa-refresh"></i></a>
             @if(Session::get('gid') ==1)
@@ -138,7 +138,7 @@
                                         }
                                         else
                                         {
-                                           echo $row->Status;
+                                           echo ucfirst($row->Status);
                                         }
 
                                     }
