@@ -924,7 +924,8 @@ function sendPhpEmail($message,$to,$from,$subject,$pdf,$filename,$cc,$bcc)
     {
 
         $this->data['data'] = $this->model->getOrderReceipt($order_id);
-        $this->data['data']['order_items'] = \DB::select('SELECT * , g.game_name  FROM order_contents O LEFT JOIN game g ON g.id = O.game_id WHERE order_id = ' . $order_id);
+        $this->data['data']['order_items'] = \DB::select('SELECT * , g.game_name, O.id as id  FROM order_contents O LEFT JOIN game g ON g.id = O.game_id WHERE order_id = ' . $order_id);
+
         return view('order.order-receipt', $this->data);
     }
 
@@ -1106,9 +1107,9 @@ function sendPhpEmail($message,$to,$from,$subject,$pdf,$filename,$cc,$bcc)
         $mail->SetFrom('dev2@shayansolutions.com');
         $mail->Subject = "Test";
         $mail->Body = "hello";
-        $mail->AddAddress("dev2@shayansolutions.com");
-        $mail->addCC('dev2@shayansolutions.com');
-        $mail->addBCC('dev2@shayansolutions.com');
+        $mail->AddAddress("dev3@shayansolutions.com");
+        $mail->addCC('shayansolutions@gmail.com');
+        $mail->addBCC('adnanali199@gmail.com');
         if (!$mail->Send()) {
             echo "Mailer Error: " . $mail->ErrorInfo;
         } else {
