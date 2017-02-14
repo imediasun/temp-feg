@@ -4,7 +4,10 @@ $creatorID = $row->entry_by;
 $creator = $creator_details;
 $creatorName = !empty($creator) ? $creator->first_name.' '.$creator->last_name : '';
 $creatorAvatar = !empty($creator) ? $creator->avatar : '';
-$createdOn=date("m/d/Y H:i:s", strtotime($row->Created));
+$createdOnWithTime = \DateHelpers::formatDateCustom($row->Created);
+$createdOn = \DateHelpers::formatDate($row->Created);
+$updatedOnWithTime = \DateHelpers::formatDateCustom($row->updated);
+$updatedOn = \DateHelpers::formatDate($row->updated);
 ?>
 @if($setting['view-method'] =='native')
 	<div class="sbox">
@@ -21,13 +24,7 @@ $createdOn=date("m/d/Y H:i:s", strtotime($row->Created));
 								<td width='40%' class='label-view text-right'>
 									{{ SiteHelpers::activeLang('Date Created', (isset($fields['Created']['language'])? $fields['Created']['language'] : array())) }}
 								</td>
-								<td><?php
-
-									$date=date("m/d/Y", strtotime($row->Created));
-									echo $date;
-									?>
-
-								</td>
+								<td>{{ $createdOn }}</td>
 
 							</tr>
 							<tr>
@@ -42,13 +39,14 @@ $createdOn=date("m/d/Y H:i:s", strtotime($row->Created));
 									{{ SiteHelpers::activeLang('Last Event date', (isset($fields['updated']['language'])? $fields['updated']['language'] : array())) }}
 								</td>
 								<td>
+                                    {{ $updatedOnWithTime }}
 									<?php
 									if($commentsCount!=0){
-										foreach($comments as $comment)
-										{
-											echo DateHelpers::formatDate($comment->Posted);
-											break;
-										}
+//										foreach($comments as $comment)
+//										{
+//											echo DateHelpers::formatDateCustom($comment->Posted);
+//											break;
+//										}
 									}
 									?>
 								</td>
@@ -154,8 +152,7 @@ $createdOn=date("m/d/Y H:i:s", strtotime($row->Created));
 									{
 									$files = explode(',', $row->file_path);
 									foreach($files as $index => $file_name) :
-									$date=date("m/d/Y", strtotime($row->Created));
-									echo $creatorName.' | '.$date.' | ';
+									echo $creatorName.' | '.$createdOn.' | ';
 									?>
 									<a href="<?php echo url().'/uploads/tickets/'.$file_name; ?>" target="_blank">
 										<?php echo strlen($file_name) > 20 ? substr($file_name,0,20).'.'.substr(strrchr($file_name,'.'),1) : $file_name; ?>
@@ -165,26 +162,26 @@ $createdOn=date("m/d/Y H:i:s", strtotime($row->Created));
 									endforeach;
 									}
 									?>
-									<?php if($commentsCount!=0){foreach($comments as $comment):?>
-									<?php
-									if(!empty($comment->Attachments))
-									{
-									$files = explode(',', $comment->Attachments);
-                                    $commenterFirstName = empty($comment->first_name) ? '' : $comment->first_name;
-                                    $commenterLastName = empty($comment->last_name) ? '' : $comment->last_name;                                    
-                                    $commenterName = $commenterFirstName . ' ' . $commenterLastName;                                    
-									foreach($files as $index => $file_name) :
-									$date=date("m/d/Y", strtotime($comment->Posted));
-                                    
-									?>
-									<?php echo $commenterName.' | '.$date.' | '; ?>
-									<a href="<?php echo url().'/uploads/tickets/comments-attachments/'.$file_name; ?>" target="_blank">
-										<?php echo strlen($file_name) > 20 ? substr($file_name,0,20).'.'.substr(strrchr($file_name,'.'),1) : $file_name; ?>
-									</a></br>
-									<?php
-									endforeach;
-									}
-									endforeach;
+									<?php 
+                                    if($commentsCount!=0){
+                                        foreach($comments as $comment):
+                                            if(!empty($comment->Attachments))
+                                            {
+                                                $files = explode(',', $comment->Attachments);
+                                                $commenterFirstName = empty($comment->first_name) ? '' : $comment->first_name;
+                                                $commenterLastName = empty($comment->last_name) ? '' : $comment->last_name;                                    
+                                                $commenterName = $commenterFirstName . ' ' . $commenterLastName;                                    
+                                                foreach($files as $index => $file_name) :
+                                                    $date = \DateHelpers::formatDate($comment->Posted);                                    
+                                                ?>
+                                                    <?php echo $commenterName.' | '.$date.' | '; ?>
+                                                    <a href="<?php echo url().'/uploads/tickets/comments-attachments/'.$file_name; ?>" target="_blank">
+                                                        <?php echo strlen($file_name) > 20 ? substr($file_name,0,20).'.'.substr(strrchr($file_name,'.'),1) : $file_name; ?>
+                                                    </a></br>
+                                                    <?php
+                                                endforeach;
+                                            }
+                                        endforeach;
 									}
 									?>
 								</td>
@@ -203,7 +200,7 @@ $createdOn=date("m/d/Y H:i:s", strtotime($row->Created));
 								</div>
 								</br>
                                 <div class="profile-image" style="padding-bottom: 5px;">
-                                <strong><?php echo $creatorName.' '; ?></strong><small><?php echo $createdOn; ?></small>
+                                <strong><?php echo $creatorName.' '; ?></strong><small><?php echo $createdOnWithTime; ?></small>
                                 </div>
 								<div class="summary">
 									<p><span style="color:rgb(113,113,113);"><?php echo $row->Description; ?></span>
@@ -225,7 +222,7 @@ $createdOn=date("m/d/Y H:i:s", strtotime($row->Created));
                                                 $commenterName = $commenterFirstName . ' ' . $commenterLastName;
                                             ?>
 											<strong><?php echo $commenterName.' '; ?>
-												<?php $date=date("m/d/Y H:i:s", strtotime($comment->Posted)); echo $date; ?></strong>
+												{{ \DateHelpers::formatDateCustom($comment->Posted) }}</strong>
 										</div>
 									</div>
 								</div>
@@ -350,6 +347,8 @@ $createdOn=date("m/d/Y H:i:s", strtotime($row->Created));
 							</div>
 						</div>
 
+						{!! Form::hidden('Subject', $row->Subject) !!}
+						{!! Form::hidden('Created', $row->Created) !!}
 						{!! Form::hidden('Description', $row->Description) !!}
 						{!! Form::hidden('issue_type', $row->issue_type) !!}
 						{!! Form::hidden('location_id', $row->location_id) !!}

@@ -287,7 +287,9 @@ class servicerequestsController extends Controller
                     'users.group_id'
                 )
                 ->join('users', 'users.id', '=', 'sb_ticketcomments.UserID')
-                ->where('TicketID', '=', $id)->get();
+                ->where('TicketID', '=', $id)
+                ->orderBy('Posted', 'asc')
+                ->get();
             $this->data['row'] = $row;
         } else {
             $this->data['row'] = $this->model->getColumnTable('sb_tickets');
@@ -343,7 +345,7 @@ class servicerequestsController extends Controller
             $data['Status']=$request->get('Status');
             
             if (empty($id)) {
-                $data['Created'] = date('Y-m-d');
+                $data['Created'] = date('Y-m-d H:i:s');
             }
             $id = $this->model->insertRow($data, $id);
             if($sendMail){
@@ -351,7 +353,7 @@ class servicerequestsController extends Controller
                 $this->model->notifyObserver('FirstEmail',[
                     "message"       =>$message,
                     "ticketId"      => $id,
-                    "location_id"   => $data['location_id']
+                    'ticket'        => $data
                 ]);
 
             }
@@ -402,27 +404,30 @@ class servicerequestsController extends Controller
 
     public function postComment(Request $request)
     {
+            $TicketID = $request->input('TicketID');
 
             //validate post for sb_tickets module
             $ticketsData = $this->validatePost('sb_tickets');
-            if ($ticketsData['Status'] == 'closed') {
-                $ticketsData['closed'] = date('Y-m-d H:i:s');
-            }
-            else{ 
-                $ticketsData['closed']="";                 
-            }
-            $ticketsData['updated'] = date('Y-m-d');
-            $commentsData['USERNAME'] = \Session::get('fid');
+            $ticketsData['updated'] = date('Y-m-d H:i:s');
+            
             $comment_model = new Ticketcomment();
-            $TicketID = $request->input('TicketID');
-            $total_comments = \DB::select("Select * FROM sb_ticketcomments WHERE TicketID = " . $TicketID . "");
-            if (count($total_comments) == 0) {
+            $total_comments = $comment_model->where('TicketID', '=', $TicketID)->count();
+
+            $status = $ticketsData['Status'];
+            $isStatusClosed = $status == 'closed';
+            if (!$isStatusClosed && $total_comments == 0) {
                 $ticketsData['Status'] = 'inqueue';
+            }
+            $ticketsData['closed']="";   
+            if ($isStatusClosed) {
+                $ticketsData['closed'] = date('Y-m-d H:i:s');
             }
 
             //re-populate info array to ticket comments module
             $this->info = $comment_model->makeInfo('ticketcomment');
             $commentsData = $this->validatePost('sb_ticketcomments');
+            $commentsData['USERNAME'] = \Session::get('fid');
+            $commentsData['Posted'] = date('Y-m-d H:i:s');;
 
             //@todo need separate table for comment attachments
             unset($ticketsData['file_path']);
@@ -432,11 +437,10 @@ class servicerequestsController extends Controller
             $message = $commentsData['Comments'];
             //send email
             $this->model->notifyObserver('AddComment',[
-                "message"       =>$message,
-                "ticketId"      => $ticketId,
-                "department_id" =>"",
-                "location_id"   => $ticketsData["location_id"],
-                "assign_to"     => $ticketsData['assign_to']
+                    'message'       =>$message,
+                    'ticketId'      => $ticketId,
+                    'ticket'        => $ticketsData,
+                    "department_id" =>"",                
                 ]);
 
             return response()->json(array(
