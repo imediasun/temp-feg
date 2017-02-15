@@ -96,7 +96,7 @@ width: 75%">
             @if($isExport)
                 <div class="pull-right">
                     @if($access['is_add'] =='1' && $setting['inline']=='true')
-                    <a href="" id="rcv" class="btn btn-sm btn-white ">Save</a>
+
                     @endif
 
                     @if($isExcel)
@@ -248,5 +248,6 @@ width: 75%">
                 return false;
             }
         }
+
     </script>
 </div>
