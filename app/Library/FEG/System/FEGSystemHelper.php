@@ -509,6 +509,11 @@ class FEGSystemHelper
         }
         return $arr;        
     }   
+    public static function split_trim_join($txt, $delim = ',', $trimChar = null) {
+        $arr = self::split_trim($txt, $delim, $trimChar);
+        $joined = implode($delim, $arr);
+        return $joined;        
+    }   
 
     public static function syncTable($params = array()) {
         extract(array_merge(array(
@@ -805,7 +810,7 @@ class FEGSystemHelper
     }    
 
     public static function getGroupsUserEmails($groups = null, $location = null) {
-        $groups = trim($groups, ',');
+        $groups = self::split_trim_join($groups);
         $q = "SELECT U.id, U.group_id, UL.location_id, U.email FROM users U 
                     LEFT JOIN user_locations UL ON UL.user_id = U.id
                 LEFT JOIN tb_groups G ON G.group_id = U.group_id
@@ -828,7 +833,7 @@ class FEGSystemHelper
         return $emails;
     }
     public static function getGroupsUserIds($groups = null, $location = null) {
-        $groups = trim($groups, ',');
+        $groups = self::split_trim_join($groups);
         $q = "SELECT U.id, U.group_id, UL.location_id, U.email FROM users U 
                 LEFT JOIN user_locations UL ON UL.user_id = U.id
                 LEFT JOIN tb_groups G ON G.group_id = U.group_id
@@ -851,7 +856,7 @@ class FEGSystemHelper
         return array_unique($uids);
     }
     public static function getUserEmails($users = null, $location = null) {
-        $users = trim($users, ',');
+        $users = self::split_trim_join($users);
         $q = "SELECT DISTINCT email FROM users 
             LEFT JOIN user_locations ON user_locations.user_id = users.id
             WHERE users.active=1 ";
@@ -896,6 +901,10 @@ class FEGSystemHelper
         $lpd = 'FEGCronTasks/SystemEmailsDump';
         $options = array_merge(array(
             'from' => "support@fegllc.com",
+            'subject' => "",
+            'to' => "",
+            'cc' => "",
+            'bcc' => "",
             'configName' => "Test",
             'configNamePrefix' => "",
             'configNameSuffix' => "",
