@@ -284,13 +284,45 @@ class FEGSystemHelper
     public static function phpMail($to, $subject, $message, $from = "support@fegllc.com", $options = array()) {
         $headers = 'MIME-Version: 1.0' . "\r\n";
         $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
-        $headers .= 'From: ' . $from . "\r\n";        
+        if (isset($options['fromName'])) {
+            $headers .= 'From: ' . $options['fromName'] . ' <'. $from . '>'. "\r\n";
+        }
+        else {
+            $headers .= 'From: ' . $from . "\r\n";        
+        }
+        
         if (!empty($options)) {
             if (!empty($options['cc'])) {
-                $headers .= 'Cc: ' . $options['cc'] . "\r\n";  
+                if (isset($options['ccName'])) {
+                    $headers .= 'Cc: ' . $options['ccName'] . ' <'. $options['cc'] . '>'. "\r\n";
+                }
+                else {
+                    $headers .= 'Cc: ' . $options['cc'] . "\r\n";  
+                }                
             }
             if (!empty($options['bcc'])) {
-                $headers .= 'Bcc: ' . $options['bcc'] . "\r\n";  
+                if (isset($options['bccName'])) {
+                    $headers .= 'Bcc: ' . $options['bccName'] . ' <'. $options['bcc'] . '>'. "\r\n";
+                }
+                else {
+                    $headers .= 'Bcc: ' . $options['bcc'] . "\r\n";  
+                }                 
+            }
+            if (!empty($options['replyTo'])) {
+                if (isset($options['replyToName'])) {
+                    $headers .= 'Reply-To: ' . $options['replyToName'] . ' <'. $options['replyTo'] . '>'. "\r\n";
+                }
+                else {
+                    $headers .= 'Reply-To: ' . $options['replyTo'] . "\r\n";  
+                }                 
+            }
+            if (!empty($options['sender'])) {
+                if (isset($options['senderName'])) {
+                    $headers .= 'Sender: ' . $options['senderName'] . ' <'. $options['sender'] . '>'. "\r\n";
+                }
+                else {
+                    $headers .= 'Sender: ' . $options['sender'] . "\r\n";  
+                }                 
             }
         }
         
@@ -446,11 +478,11 @@ class FEGSystemHelper
         
         $preventEmailSendingSetting = env('PREVENT_FEG_SYSTEM_EMAIL', false);        
         if (!$preventEmailSendingSetting)  {
-            if (isset($options['attach'])) {
-                self::laravelMail($to, $subject, $message, $from, $options);
+            if (!isset($options['attach']) || !empty($options['usePHPMail'])) {
+                self::phpMail($to, $subject, $message, $from, $options);                
             }
             else {
-                self::phpMail($to, $subject, $message, $from, $options);
+                self::laravelMail($to, $subject, $message, $from, $options);
             }            
         }
     }
