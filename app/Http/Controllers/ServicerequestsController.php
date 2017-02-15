@@ -99,8 +99,10 @@ class servicerequestsController extends Controller
         $pagination = new Paginator($results['rows'], $results['total'], $params['limit']);
         $pagination->setPath('servicerequests/data');
         $rows = $results['rows'];
-        $comments = new Ticketcomment();
-
+        
+        // This part of the code seems to be filtering tickets based on assignment
+        // which is not required now hence commenting out
+        /*
         $user_id = \Session::get('uid');
         $group_id = \Session::get('gid');
         foreach ($rows as $index => $row) {
@@ -155,45 +157,11 @@ class servicerequestsController extends Controller
 
 
 
-            //this code is not woring for some reason
-            /*if (isset($row->department_id) && !empty($row->department_id)&& false)
-            {
-                //$row->comments = $comments->where('TicketID', '=', $row->TicketID)->orderBy('TicketID', 'desc')->take(1)->get();
-                $department_memebers = \DB::select("Select assign_employee_ids FROM departments WHERE id = " . $row->department_id . "");
-                $department_memebers = explode(',', $department_memebers[0]->assign_employee_ids);
-
-                $assign_employee_ids = explode(',', $row->assign_to);
-
-                $members_access = array_unique(array_merge($assign_employee_ids, $department_memebers));
-                foreach ($members_access as $i => $id) {
-                    $get_user_id_from_employess = \DB::select("Select user_id FROM users WHERE id = " . $id . "");
-                    //print"<pre>";
-                    //print_r($get_user_id_from_employess);
-                    if (isset($get_user_id_from_employess[0]->user_id)) {
-                        $members_access[$i] = $get_user_id_from_employess[0]->user_id;
-                        //echo $members_access[$i]."<br>";
-                    }
-
-                }
-
-                if ($group_id != 10) {
-                    if (!in_array($user_id, array_unique($members_access))) {
-                        $flag = 0;
-                    }
-                }
-
-                if ($flag == 1 && count($assign_employee_ids) > 0) {
-                    echo count($assign_employee_ids);
-                    $assign_employee_names = array();
-                    foreach ($assign_employee_ids as $key => $value) {
-                        $assign_employee_names[$key] = \DB::select("Select first_name,last_name FROM users WHERE id = " . $value . "");
-                    }
-                    $row->assign_employee_names = $assign_employee_names;
-                } else {
-                    unset($rows[$index]);
-                }
-            }*/
+            //this code is not woring for some reason [removed on 15 Feb 2017]
         }
+         
+         *
+        */
 
         $this->data['param'] = $params;
         $this->data['rowData'] = $rows;
