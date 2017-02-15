@@ -7,18 +7,22 @@
 	$(document).ready(function() {
 
 
-
-	//$('.date').datepicker({format:'mm/dd/yyyy',autoClose:true});
+//$('.date').datepicker({format:'mm/dd/yyyy',autoClose:true});
 	//initiateInlineFormFields($('#form-0 td'));
 	$('.editable').dblclick(function(){
 		editablerowscount++;
+        if(editablerowscount==1) {
+            var isAccessAllowed="{{ $access['is_add'] }}";
+            var isInlineEnable="{{ $setting['inline'] }}"
+            if( isAccessAllowed =='1' && isInlineEnable=='true') {
+                var newRow = jQuery('<button id="rcv" onclick="saveAll();" class="btn btn-sm btn-white"> Save </button>');
+                jQuery('.m-b .pull-right').prepend(newRow);
+            }
+        }
+    $(this).addClass('inline_edit_applied');
+        displayEditableSaveButton();
 
-
-		displayEditableSaveButton();
-
-
-
-			var id = $(this).attr("id");
+		    var id = $(this).attr("id");
 			//console.log("======"+id+"======");
 			$('#form-0 td').each(function(){
 				var val = $(this).attr("data-form");
@@ -113,7 +117,7 @@
 });
 function canceled( id )
 {
-
+    $("#"+id).removeClass('inline_edit_applied');
 	$('#'+id+' .actionopen').hide();
 	$('#'+id+' td').each(function() {
 		var val = $(this).attr("data-values");
@@ -147,6 +151,7 @@ function canceled( id )
 
 function saved( id )
 {
+    $("#"+id).removeClass('inline_edit_applied');
 	var myId = id.split('-');
 	var datas = $('#'+id+' td :input').serialize();
 	console.log(JSON.stringify(datas));
@@ -165,6 +170,12 @@ function saved( id )
 			return false;
 		}
 	});
-}	
+}
+
+          function saveAll(){
+              $('.inline_edit_applied').each(function(){
+                  saved($(this).attr('id'));
+              });
+          }
 
 </script>
