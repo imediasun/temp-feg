@@ -27,5 +27,23 @@ class Ticketcomment extends Sximo  {
 		return "  ";
 	}
 	
-
+    public static function getCommentsWithUserData($ticketId, $sortBy = 'Posted', $order = 'desc', $fields = array()) {
+            
+        $data = self::select(
+                'sb_ticketcomments.*', 
+                'users.username',  
+                'users.first_name',  
+                'users.last_name',  
+                'users.email',  
+                'users.avatar',  
+                'users.active',  
+                'users.group_id'
+            )
+            ->join('users', 'users.id', '=', 'sb_ticketcomments.UserID')
+            ->where('TicketID', '=', $ticketId)
+            ->orderBy($sortBy, $order)
+            ->get();
+    
+        return $data;
+    }
 }
