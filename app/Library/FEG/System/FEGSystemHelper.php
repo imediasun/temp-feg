@@ -761,39 +761,51 @@ class FEGSystemHelper
         return $emails;
     }
 
-    public static function getLocationManagersEmails($fields, $location = null) {
+    public static function getLocationManagersEmails($fields = '', $location = null) {
 //        $q = "SELECT id,contact_id, general_contact_id, field_manager_id,
 //            tech_manager_id, merch_contact_id, merchandise_contact_id,
 //            technical_contact_id, regional_contact_id, senior_vp_id, district_manager_id
 //        FROM location WHERE active=1";
         $emails = array();
-            if (!empty(trim($fields))) {
-            $q = "SELECT $fields
-            FROM location WHERE active=1";
-            if ($location) {
-                $q .= " AND id IN ($location)";
-            }
-            $fieldsArr = explode(',', $fields);
-            $data = DB::select($q);
-            $ids = array();
-            foreach($data as $row) {            
-                foreach($fieldsArr as $fname) {
-                    $val = $row->$fname;
-                    if (!empty($val)) {
-                        $ids[] = $val;
-                    }                
-                }        
-            }
+        if (!empty(trim($fields))) {
+            $ids = self::getLocationManagersIds($fields, $location);
             if (!empty($ids)) {
                 $emails = self::getUserEmails(implode(',', $ids));
-            }
-            
-        }
-        
+            }            
+        }        
         return $emails;
     }
+    public static function getLocationManagersIds($fields = null, $location = null) {
+//        $q = "SELECT id,contact_id, general_contact_id, field_manager_id,
+//            tech_manager_id, merch_contact_id, merchandise_contact_id,
+//            technical_contact_id, regional_contact_id, senior_vp_id, district_manager_id
+//        FROM location WHERE active=1";
+        if (empty(trim($fields))){
+            $fields = 'contact_id, general_contact_id, field_manager_id,
+//            tech_manager_id, merch_contact_id, merchandise_contact_id,
+//            technical_contact_id, regional_contact_id, senior_vp_id, district_manager_id';
+        }
+        $q = "SELECT $fields
+        FROM location WHERE active=1";
+        if ($location) {
+            $q .= " AND id IN ($location)";
+        }
+        $fieldsArr = explode(',', $fields);
+        $data = DB::select($q);
+        $ids = array();
+        foreach($data as $row) {            
+            foreach($fieldsArr as $fname) {
+                $val = $row->$fname;
+                if (!empty($val)) {
+                    $ids[] = $val;
+                }                
+            }        
+        }        
+        return array_unique($ids);
+    }    
 
     public static function getGroupsUserEmails($groups = null, $location = null) {
+        $groups = trim($groups, ',');
         $q = "SELECT U.id, U.group_id, UL.location_id, U.email FROM users U 
                     LEFT JOIN user_locations UL ON UL.user_id = U.id
                 LEFT JOIN tb_groups G ON G.group_id = U.group_id
@@ -809,14 +821,45 @@ class FEGSystemHelper
         $emails = array();
         foreach($data as $row) {
             $email = $row->email;
-            $emails[] =  trim($email);
+            if (!empty($email)) {
+                $emails[] =  trim($email);
+            }            
         }
         return $emails;
     }
-    public static function getUserEmails($users = null) {
-        $q = "SELECT DISTINCT email FROM users WHERE active=1 ";
+    public static function getGroupsUserIds($groups = null, $location = null) {
+        $groups = trim($groups, ',');
+        $q = "SELECT U.id, U.group_id, UL.location_id, U.email FROM users U 
+                LEFT JOIN user_locations UL ON UL.user_id = U.id
+                LEFT JOIN tb_groups G ON G.group_id = U.group_id
+                LEFT JOIN location L ON L.id = UL.location_id
+                WHERE U.active=1 AND L.active=1 ";
+        if (!empty($groups)) {
+            $q .= " AND G.group_id IN ($groups)";
+        }
+        if (!empty($location)) {
+            $q .= " AND UL.location_id IN ($location)";
+        }
+        $data = DB::select($q);
+        $uids = array();
+        foreach($data as $row) {
+            $uid = $row->id;
+            if (!empty($uid)) {
+                $uids[] = $uid;
+            }            
+        }
+        return array_unique($uids);
+    }
+    public static function getUserEmails($users = null, $location = null) {
+        $users = trim($users, ',');
+        $q = "SELECT DISTINCT email FROM users 
+            LEFT JOIN user_locations ON user_locations.user_id = users.id
+            WHERE users.active=1 ";
         if (!empty($users)) {
-            $q .= " AND id IN ($users)";
+            $q .= " AND users.id IN ($users)";
+        }
+        if (!empty($users)) {
+            $q .= " AND user_locations.location_id IN ($location)";            
         }
         $data = DB::select($q);
         $emails = array();
