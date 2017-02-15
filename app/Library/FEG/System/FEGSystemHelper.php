@@ -725,9 +725,9 @@ class FEGSystemHelper
                 $ut = $data->to_email_individuals;
                 $ucc = $data->cc_email_individuals;
                 $ubcc = $data->bcc_email_individuals;                
-                $users['to'] = empty($ut) ? array() : self::getUserEmails($ut);
-                $users['cc'] = empty($ucc) ? array() : self::getUserEmails($ucc);
-                $users['bcc'] = empty($ubcc) ? array() : self::getUserEmails($ubcc);
+                $users['to'] = empty($ut) ? array() : self::getUserEmails($ut,      $location);
+                $users['cc'] = empty($ucc) ? array() : self::getUserEmails($ucc,    $location);
+                $users['bcc'] = empty($ubcc) ? array() : self::getUserEmails($ubcc, $location);
                 
                 $inclues['to'] = FEGSystemHelper::split_trim($data->to_include_emails);
                 $inclues['cc'] = FEGSystemHelper::split_trim($data->cc_include_emails);
