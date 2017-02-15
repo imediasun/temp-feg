@@ -17,20 +17,7 @@ width: 75%">
 
     </div>
     <div class="col-md-3">
-
-       <select name='prod_sub_type_id' rows='5' id='prod_sub_type_id' class='select3'   >  </select>
-
-    <!--    <option selected selected>------------ Select Product --------------</option>
-        <option value="basic" data-active="0">basic</option>
-        <option value="marker" data-active="0">marker</option>
-        <option value="pen_pencil" data-active="0">penpencil</option>
-        <option value="tape" data-active="0">tape</option>
-        <option value="fastener" data-active="0">fastener</option>
-        <option value="officesupplies" data-active="0">Office Supplies - Products List</option>
-        <option value="parts" data-active="0">Parts - Products List</option>
-        <option value="productsindevelopment" data-active="0"></option>
-        </select>
-  -->
+   <select name='prod_sub_type_id' rows='5' id='prod_sub_type_id' class='select3'   >  </select>
 </div>
 
     <div class="col-md-6">
@@ -98,7 +85,6 @@ width: 75%">
                     @if($access['is_add'] =='1' && $setting['inline']=='true')
 
                     @endif
-
                     @if($isExcel)
                         <a href="{{ URL::to( $pageModule .'/export/excel?return='.$return) }}" class="btn btn-sm btn-white"> Excel</a>
                     @endif

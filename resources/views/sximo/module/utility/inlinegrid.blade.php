@@ -20,8 +20,9 @@
             }
         }
     $(this).addClass('inline_edit_applied');
-		Displayeditablesavebutton();
-			var id = $(this).attr("id");
+        displayEditableSaveButton();
+
+		    var id = $(this).attr("id");
 			//console.log("======"+id+"======");
 			$('#form-0 td').each(function(){
 				var val = $(this).attr("data-form");
@@ -131,22 +132,18 @@ function canceled( id )
 
 
 	$('#'+id+' .action').show();
+	editablerowscount--;
 
-	 RemoveButton();
+	displayEditableSaveButton();
 
 }
-  function RemoveButton() {
-	  editablerowscount--;
-	  if(editablerowscount==0){
-		  $('#rcv').hide();
-	  }
-  }
-  function Displayeditablesavebutton() {
+
+  function displayEditableSaveButton() {
 	  if(editablerowscount > 0)
 	  {
 		  $('#rcv').show();
 	  }
-	  else if(editablerowscount < 0) {
+	  else if(editablerowscount ==0) {
 		  $('#rcv').hide();
 	  }
   }
