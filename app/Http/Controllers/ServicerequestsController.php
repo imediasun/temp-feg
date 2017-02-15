@@ -423,8 +423,9 @@ class servicerequestsController extends Controller
             $this->model->insertRow($ticketsData, $ticketId);
             $message = $commentsData['Comments'];
             
-            if (!empty($data['assign_to'])) {
-                Ticketfollowers::follow($ticketId, $data['assign_to']);
+            Ticketfollowers::follow($ticketId, $ticketsData['entry_by']);
+            if (!empty($ticketsData['assign_to'])) {
+                Ticketfollowers::follow($ticketId, $ticketsData['assign_to']);
             }
             
             //send email
