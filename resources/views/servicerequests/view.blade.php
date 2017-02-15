@@ -350,11 +350,12 @@ $ticketID = $row['TicketID'];
 
 						{!! Form::hidden('Subject', $row->Subject) !!}
 						{!! Form::hidden('Created', $row->Created) !!}
+						{!! Form::hidden('entry_by', $creatorID) !!}
 						{!! Form::hidden('Description', $row->Description) !!}
 						{!! Form::hidden('issue_type', $row->issue_type) !!}
 						{!! Form::hidden('location_id', $row->location_id) !!}
 						{!! Form::hidden('game_id', $row->game_id) !!}
-						{!! Form::hidden('debit_card', $row->debit_card) !!}
+						{!! Form::hidden('file_path', $row->file_path) !!}
 						{!! Form::close() !!}
 					</div>
 				</div>
