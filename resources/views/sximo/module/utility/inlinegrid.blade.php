@@ -13,6 +13,7 @@
 	$('.editable').dblclick(function(){
 		editablerowscount++;
 
+
 		displayEditableSaveButton();
 
 
@@ -127,22 +128,18 @@ function canceled( id )
 
 
 	$('#'+id+' .action').show();
+	editablerowscount--;
 
-	 RemoveButton();
+	displayEditableSaveButton();
 
 }
-  function RemoveButton() {
-	  editablerowscount--;
-	  if(editablerowscount==0){
-		  $('#rcv').hide();
-	  }
-  }
+
   function displayEditableSaveButton() {
 	  if(editablerowscount > 0)
 	  {
 		  $('#rcv').show();
 	  }
-	  else if(editablerowscount < 0) {
+	  else if(editablerowscount ==0) {
 		  $('#rcv').hide();
 	  }
   }
