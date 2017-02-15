@@ -230,14 +230,14 @@ function initiateSearchFormFields(container) {
     renderDropdown(container.find('.sel-search-multiple, .select3'));
 }
 
-function initiateInlineFormFields(container) {
+function initiateInlineFormFields(container,url) {
     container.find('.date').datepicker({format:'mm/dd/yyyy',autoclose:true});
     container.find('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss', autoclose:true});
     renderDropdown(container.find('.sel-inline'),{width:"98%"});
     $('.prod_type_id').change(function(){
 
         //http://sximo/product/comboselect?filter=product_type:id:type_description:request_type_id:1
-        var url_for_prod_sub_type = "http://localhost/sximo/public/product/comboselect?filter=product_type:id:type_description:request_type_id:"+$(this).val();
+        var url_for_prod_sub_type = "http://"+url+"/product/comboselect?filter=product_type:id:type_description:request_type_id:"+$(this).val();
         //$(this).closest('td').next('td').find('.prod_sub_type_id:first').jCombo(url_for_prod_sub_type);
         $(this).closest('td').next('td').find('.prod_sub_type_id:first').select2('destroy');
         $(this).closest('td').next('td').find('.prod_sub_type_id:first').jCombo(url_for_prod_sub_type);
