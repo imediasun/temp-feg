@@ -40,15 +40,6 @@ $updatedOn = \DateHelpers::formatDate($row->updated);
 								</td>
 								<td>
                                     {{ $updatedOnWithTime }}
-									<?php
-									if($commentsCount!=0){
-//										foreach($comments as $comment)
-//										{
-//											echo DateHelpers::formatDateCustom($comment->Posted);
-//											break;
-//										}
-									}
-									?>
 								</td>
 
 							</tr>
@@ -208,7 +199,6 @@ $updatedOn = \DateHelpers::formatDate($row->updated);
 
 							</div>
 						</div>
-						<hr>
 						<hr>
 						<?php if($commentsCount!=0){foreach($comments as $comment){?>
 						<div class="row">

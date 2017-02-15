@@ -79,9 +79,6 @@ class ExcludedreadersController extends Controller {
         }
 		$sort = (!is_null($request->input('sort')) ? $request->input('sort') : $this->info['setting']['orderby']);
 		$order = (!is_null($request->input('order')) ? $request->input('order') : $this->info['setting']['ordertype']);
-		// End Filter sort and order for query
-		// Filter Search for query
-		$filter = (!is_null($request->input('search')) ? $this->buildSearch() : '');
         // End Filter sort and order for query
         // Filter Search for query        
         $filter = $this->getSearchFilterQuery();

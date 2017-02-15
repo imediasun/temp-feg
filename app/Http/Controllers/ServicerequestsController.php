@@ -299,11 +299,7 @@ class servicerequestsController extends Controller
         $this->data['creator_details'] = !empty($row->entry_by) ? \SiteHelpers::getUserDetails($row->entry_by) : [];
         $this->data['id'] = $id;
         $this->data['uid'] = \Session::get('uid');
-
-        $this->data['Content'] = $this->model->getCommentsWithUser($id);
-
-
-        
+        $this->data['fid'] = \Session::get('fid');
         $this->data['access'] = $this->access;
         $this->data['setting'] = $this->info['setting'];
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
