@@ -532,7 +532,17 @@ class OrderController extends Controller
 
             ));
 
-        } else {
+        }
+        elseif($id != 0){
+            $data = $this->validatePost('orders',true);
+            $this->model->insertRow($data, $id);
+            return response()->json(array(
+                'status' => 'success',
+                'message' => \Lang::get('core.note_success'),
+
+            ));
+        }
+        else {
 
             $message = $this->validateListError($validator->getMessageBag()->toArray());
             return response()->json(array(
