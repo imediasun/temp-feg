@@ -299,6 +299,9 @@ class ManagenewgraphicrequestsController extends Controller
     {
         if ($request->ajax() == true && \Auth::check() == true) {
             $param = explode(':', $request->input('filter'));
+            if($param[0] != 'new_graphics_request_status'){
+                return parent::getComboselect($request);
+            }
             $parent = (!is_null($request->input('parent')) ? $request->input('parent') : null);
 
             $limit = (!is_null($request->input('limit')) ? $request->input('limit') : null);
