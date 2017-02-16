@@ -191,7 +191,7 @@ class OrderController extends Controller
         }
         \Session::put('params',$params);
          $results = $this->model->getRows($params, $order_selected);
-         if (count($results['rows']) == 0 and $page != 1) {
+        if (count($results['rows']) == 0 and $page != 1) {
             $params['limit'] = $this->info['setting']['perpage'];
             $results = $this->model->getRows($params, $order_selected);
          }
@@ -205,12 +205,10 @@ class OrderController extends Controller
         $rows = $results['rows'];
         foreach ($rows as $index => $data) {
             $rows[$index]->date_ordered = date("m/d/Y", strtotime($data->date_ordered));
-            $location = \DB::select("Select location_name FROM location WHERE id = " . $data->location_id . "");
-            $rows[$index]->location_id = (isset($location[0]->location_name) ? $location[0]->location_name : '');
-
+            //$location = \DB::select("Select location_name FROM location WHERE id = " . $data->location_id . "");
+           // $rows[$index]->location_id = (isset($location[0]->location_name) ? $location[0]->location_name : '');
             $user = \DB::select("Select username FROM users WHERE id = " . $data->user_id . "");
             $rows[$index]->user_id = (isset($user[0]->username) ? $user[0]->username : '');
-
             $order_type = \DB::select("Select order_type FROM order_type WHERE id = " . $data->order_type_id . "");
             $rows[$index]->order_type_id = (isset($order_type[0]->order_type) ? $order_type[0]->order_type : '');
 

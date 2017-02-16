@@ -118,8 +118,8 @@ class PendingrequestController extends Controller
                 $rows[$index]->process_date = date("m/d/Y", strtotime($data->process_date));
             }
             $rows[$index]->request_date = date("m/d/Y", strtotime($data->request_date));
-            $location = \DB::select("Select location_name FROM location WHERE id = " . $data->location_id . "");
-            $rows[$index]->location_id = (isset($location[0]->location_name) ? $location[0]->location_name : '');
+            //$location = \DB::select("Select location_name FROM location WHERE id = " . $data->location_id . "");
+            //$rows[$index]->location_id = (isset($location[0]->location_name) ? $location[0]->location_name : '');
         }
         //echo '<pre>';
         //print_r($rows);

@@ -154,7 +154,7 @@ function saved( id )
     $("#"+id).removeClass('inline_edit_applied');
 	var myId = id.split('-');
 	var datas = $('#'+id+' td :input').serialize();
-	console.log(JSON.stringify(datas));
+	//console.log(JSON.stringify(datas));
 	$('#'+id+' .action').show();
 	$('.ajaxLoading').show();	
 	$.post( '{{$pageModule}}/save/'+myId[1] ,datas, function( data ) {
