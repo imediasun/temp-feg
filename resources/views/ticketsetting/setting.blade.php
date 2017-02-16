@@ -36,7 +36,7 @@
                         <tbody class="no-border-x no-border-y">
                         <tr>
                             <td>1</td>
-                            <td>Able to see all tickets</td>
+                            <td>Accounts which will be able to see all tickets of all locations in Ticket List page</td>
                             <td>
                                 <select name='role1[]' multiple id="role1" rows='5' class='select2 '>
                                 </select>
@@ -48,7 +48,7 @@
                         </tr>
                         <tr>
                             <td>2</td>
-                            <td>Accounts which will receive email notifications when a ticket is updated for a location which they have been assigned to</td>
+                            <td>Accounts which will receive email notifications when a ticket is created or updated for a location which they have been assigned to</td>
                             <td>
                                 <select name='role2[]' multiple id="role2" rows='5' class='select2 '>
                                 </select>
