@@ -39,7 +39,7 @@ class Ticketcomment extends Sximo  {
                 'users.active',  
                 'users.group_id'
             )
-            ->join('users', 'users.id', '=', 'sb_ticketcomments.UserID')
+            ->leftJoin('users', 'users.id', '=', 'sb_ticketcomments.UserID')
             ->where('TicketID', '=', $ticketId)
             ->orderBy($sortBy, $order)
             ->get();
