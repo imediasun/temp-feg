@@ -44,8 +44,7 @@ class ExcludedreadersController extends Controller {
     public function getSearchFilterQuery($customQueryString = null) {
         // Filter Search for query
         // build sql query based on search filters
-        $filter = is_null($customQueryString) ? (is_null(Input::get('search')) ? '' : $this->buildSearch()) : 
-            $this->buildSearch($customQueryString);
+        $filter = is_null($customQueryString) ? "" : $this->buildSearch($customQueryString);
 
         // Get assigned locations list as sql query (part)
         $locationFilter = \SiteHelpers::getQueryStringForLocation('reader_exclude', 'loc_id');
