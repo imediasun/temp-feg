@@ -36,7 +36,7 @@
                         <tbody class="no-border-x no-border-y">
                         <tr>
                             <td>1</td>
-                            <td>Accounts which will be able to see all tickets of all locations in Ticket List page</td>
+                            <td>Accounts which will see all tickets of all locations in Ticket List page</td>
                             <td>
                                 <select name='role1[]' multiple id="role1" rows='5' class='select2 '>
                                 </select>
