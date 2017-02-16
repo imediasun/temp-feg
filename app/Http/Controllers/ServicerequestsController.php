@@ -4,10 +4,12 @@ use App\Http\Controllers\controller;
 use App\Models\Servicerequests;
 use App\Models\servicerequestsSetting;
 use App\Models\Ticketcomment;
+use App\Models\Ticketfollowers;
+use App\Models\ticketsetting;
+use App\Models\Core\TicketMailer;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Validator, Input, Redirect;
-use App\Models\Core\TicketMailer;
 
 class servicerequestsController extends Controller
 {
@@ -47,7 +49,20 @@ class servicerequestsController extends Controller
         $this->data['access'] = $this->access;
         return view('servicerequests.index', $this->data);
     }
+    
+    public function getSearchFilterQuery($customQueryString = null) {
+        // Filter Search for query
+        // build sql query based on search filters
+        $filter = is_null($customQueryString) ? (is_null(Input::get('search')) ? '' : $this->buildSearch()) : 
+            $this->buildSearch($customQueryString);
 
+        $frontendSearchFilters = $this->model->getSearchFilters(array('Status' => 'status'));
+        if (empty($frontendSearchFilters['status'])) {
+            $filter .= " AND sb_tickets.Status != 'closed' ";
+        } 
+        
+        return $filter;
+    }
     public function postData(Request $request)
     {
         $module_id = \DB::table('tb_module')->where('module_name', '=', 'servicerequests')->pluck('module_id');
@@ -61,16 +76,17 @@ class servicerequestsController extends Controller
             $config_id = 0;
         }
         $this->data['config_id'] = $config_id;
+        \Session::put('config_id', $config_id);
         $config = $this->model->getModuleConfig($module_id, $config_id);
         if (!empty($config)) {
             $this->data['config'] = \SiteHelpers::CF_decode_json($config[0]->config);
-            \Session::put('config_id', $config_id);
         }
         $sort = (!is_null($request->input('sort')) ? $request->input('sort') : $this->info['setting']['orderby']);
         $order = (!is_null($request->input('order')) ? $request->input('order') : $this->info['setting']['ordertype']);
         // End Filter sort and order for query
         // Filter Search for query
-        $filter = (!is_null($request->input('search')) ? $this->buildSearch() : "AND sb_tickets.Status != 'closed'");
+        //$filter = (!is_null($request->input('search')) ? $this->buildSearch() : "AND sb_tickets.Status != 'closed'");
+        $filter = $this->getSearchFilterQuery();
 
         $page = $request->input('page', 1);
         $params = array(
@@ -99,8 +115,10 @@ class servicerequestsController extends Controller
         $pagination = new Paginator($results['rows'], $results['total'], $params['limit']);
         $pagination->setPath('servicerequests/data');
         $rows = $results['rows'];
-        $comments = new Ticketcomment();
-
+        
+        // This part of the code seems to be filtering tickets based on assignment
+        // which is not required now hence commenting out
+        /*
         $user_id = \Session::get('uid');
         $group_id = \Session::get('gid');
         foreach ($rows as $index => $row) {
@@ -155,45 +173,11 @@ class servicerequestsController extends Controller
 
 
 
-            //this code is not woring for some reason
-            /*if (isset($row->department_id) && !empty($row->department_id)&& false)
-            {
-                //$row->comments = $comments->where('TicketID', '=', $row->TicketID)->orderBy('TicketID', 'desc')->take(1)->get();
-                $department_memebers = \DB::select("Select assign_employee_ids FROM departments WHERE id = " . $row->department_id . "");
-                $department_memebers = explode(',', $department_memebers[0]->assign_employee_ids);
-
-                $assign_employee_ids = explode(',', $row->assign_to);
-
-                $members_access = array_unique(array_merge($assign_employee_ids, $department_memebers));
-                foreach ($members_access as $i => $id) {
-                    $get_user_id_from_employess = \DB::select("Select user_id FROM users WHERE id = " . $id . "");
-                    //print"<pre>";
-                    //print_r($get_user_id_from_employess);
-                    if (isset($get_user_id_from_employess[0]->user_id)) {
-                        $members_access[$i] = $get_user_id_from_employess[0]->user_id;
-                        //echo $members_access[$i]."<br>";
-                    }
-
-                }
-
-                if ($group_id != 10) {
-                    if (!in_array($user_id, array_unique($members_access))) {
-                        $flag = 0;
-                    }
-                }
-
-                if ($flag == 1 && count($assign_employee_ids) > 0) {
-                    echo count($assign_employee_ids);
-                    $assign_employee_names = array();
-                    foreach ($assign_employee_ids as $key => $value) {
-                        $assign_employee_names[$key] = \DB::select("Select first_name,last_name FROM users WHERE id = " . $value . "");
-                    }
-                    $row->assign_employee_names = $assign_employee_names;
-                } else {
-                    unset($rows[$index]);
-                }
-            }*/
+            //this code is not woring for some reason [removed on 15 Feb 2017]
         }
+         
+         *
+        */
 
         $this->data['param'] = $params;
         $this->data['rowData'] = $rows;
@@ -275,42 +259,40 @@ class servicerequestsController extends Controller
         }
         $row->assign_employee_names = $assign_employee_names;
         if ($row) {
-            $comments = new Ticketcomment();
-            $this->data['comments'] = $comments->select(
-                    'sb_ticketcomments.*', 
-                    'users.username',  
-                    'users.first_name',  
-                    'users.last_name',  
-                    'users.email',  
-                    'users.avatar',  
-                    'users.active',  
-                    'users.group_id'
-                )
-                ->join('users', 'users.id', '=', 'sb_ticketcomments.UserID')
-                ->where('TicketID', '=', $id)
-                ->orderBy('Posted', 'asc')
-                ->get();
             $this->data['row'] = $row;
         } else {
             $this->data['row'] = $this->model->getColumnTable('sb_tickets');
         }
-
         
+        $comments = Ticketcomment::getCommentsWithUserData($id);
+        $this->data['comments'] = $comments;
+
+        $userId = \Session::get('uid');
         $this->data['creator_details'] = !empty($row->entry_by) ? \SiteHelpers::getUserDetails($row->entry_by) : [];
         $this->data['id'] = $id;
-        $this->data['uid'] = \Session::get('uid');
-
-        $this->data['Content'] = $this->model->getCommentsWithUser($id);
-
-
-        
+        $this->data['uid'] = $userId;
+        $this->data['fid'] = \Session::get('fid');
         $this->data['access'] = $this->access;
+        $this->data['following'] = Ticketfollowers::isFollowing($id, $userId);
         $this->data['setting'] = $this->info['setting'];
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
         return view('servicerequests.view', $this->data);
     }
 
-
+    function getSubscribe(Request $request, $id = NULL, $userID = NULL, $unfollow = NULL) {
+        
+        $unfollowDictionary = ["unfollow", "false", "unsubscribe"];
+        $unsubscribe = !is_null($unfollow) && in_array(strtolower(''.$unfollow), $unfollowDictionary);
+        
+        if (!empty($id) && !empty($userID))  {
+            if ($unsubscribe) {
+                Ticketfollowers::unfollow($id, $userID, '', true);
+            }
+            else {
+                Ticketfollowers::follow($id, $userID, '', true);
+            }
+        }        
+    }
     function postCopy(Request $request)
     {
 
@@ -334,10 +316,8 @@ class servicerequestsController extends Controller
     {
         //$data['need_by_date'] = date('Y-m-d');
         //$rules = $this->validateForm();
-        $sendMail=false;
-        if(empty($id)) {
-            $sendMail = true;
-        }
+        $isAdd = empty($id);
+
         $rules = $this->validateForm();
         unset($rules['department_id']);
        //$rules = array('Subject' => 'required', 'Description' => 'required', 'Priority' => 'required', 'issue_type' => 'required', 'location_id' => 'required');
@@ -352,7 +332,11 @@ class servicerequestsController extends Controller
                 $data['Created'] = date('Y-m-d H:i:s');
             }
             $id = $this->model->insertRow($data, $id);
-            if($sendMail){
+            
+            Ticketfollowers::follow($id, $data['entry_by']);
+            
+            if($isAdd){
+            
                 $message = $data['Description'];
                 $this->model->notifyObserver('FirstEmail',[
                     "message"       =>$message,
@@ -408,14 +392,14 @@ class servicerequestsController extends Controller
 
     public function postComment(Request $request)
     {
-            $TicketID = $request->input('TicketID');
+            $ticketId = $request->input('TicketID');
 
             //validate post for sb_tickets module
             $ticketsData = $this->validatePost('sb_tickets');
             $ticketsData['updated'] = date('Y-m-d H:i:s');
             
             $comment_model = new Ticketcomment();
-            $total_comments = $comment_model->where('TicketID', '=', $TicketID)->count();
+            $total_comments = $comment_model->where('TicketID', '=', $ticketId)->count();
 
             $status = $ticketsData['Status'];
             $isStatusClosed = $status == 'closed';
@@ -436,9 +420,14 @@ class servicerequestsController extends Controller
             //@todo need separate table for comment attachments
             unset($ticketsData['file_path']);
             $comment_model->insertRow($commentsData, NULL);
-            $ticketId = $request->input('TicketID');
             $this->model->insertRow($ticketsData, $ticketId);
             $message = $commentsData['Comments'];
+            
+            Ticketfollowers::follow($ticketId, $ticketsData['entry_by']);
+            if (!empty($ticketsData['assign_to'])) {
+                Ticketfollowers::follow($ticketId, $ticketsData['assign_to']);
+            }
+            
             //send email
             $this->model->notifyObserver('AddComment',[
                     'message'       =>$message,

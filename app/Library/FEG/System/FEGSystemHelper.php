@@ -284,13 +284,45 @@ class FEGSystemHelper
     public static function phpMail($to, $subject, $message, $from = "support@fegllc.com", $options = array()) {
         $headers = 'MIME-Version: 1.0' . "\r\n";
         $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
-        $headers .= 'From: ' . $from . "\r\n";        
+        if (isset($options['fromName'])) {
+            $headers .= 'From: ' . $options['fromName'] . ' <'. $from . '>'. "\r\n";
+        }
+        else {
+            $headers .= 'From: ' . $from . "\r\n";        
+        }
+        
         if (!empty($options)) {
             if (!empty($options['cc'])) {
-                $headers .= 'Cc: ' . $options['cc'] . "\r\n";  
+                if (isset($options['ccName'])) {
+                    $headers .= 'Cc: ' . $options['ccName'] . ' <'. $options['cc'] . '>'. "\r\n";
+                }
+                else {
+                    $headers .= 'Cc: ' . $options['cc'] . "\r\n";  
+                }                
             }
             if (!empty($options['bcc'])) {
-                $headers .= 'Bcc: ' . $options['bcc'] . "\r\n";  
+                if (isset($options['bccName'])) {
+                    $headers .= 'Bcc: ' . $options['bccName'] . ' <'. $options['bcc'] . '>'. "\r\n";
+                }
+                else {
+                    $headers .= 'Bcc: ' . $options['bcc'] . "\r\n";  
+                }                 
+            }
+            if (!empty($options['replyTo'])) {
+                if (isset($options['replyToName'])) {
+                    $headers .= 'Reply-To: ' . $options['replyToName'] . ' <'. $options['replyTo'] . '>'. "\r\n";
+                }
+                else {
+                    $headers .= 'Reply-To: ' . $options['replyTo'] . "\r\n";  
+                }                 
+            }
+            if (!empty($options['sender'])) {
+                if (isset($options['senderName'])) {
+                    $headers .= 'Sender: ' . $options['senderName'] . ' <'. $options['sender'] . '>'. "\r\n";
+                }
+                else {
+                    $headers .= 'Sender: ' . $options['sender'] . "\r\n";  
+                }                 
             }
         }
         
@@ -446,11 +478,11 @@ class FEGSystemHelper
         
         $preventEmailSendingSetting = env('PREVENT_FEG_SYSTEM_EMAIL', false);        
         if (!$preventEmailSendingSetting)  {
-            if (isset($options['attach'])) {
-                self::laravelMail($to, $subject, $message, $from, $options);
+            if (!isset($options['attach']) || !empty($options['usePHPMail'])) {
+                self::phpMail($to, $subject, $message, $from, $options);                
             }
             else {
-                self::phpMail($to, $subject, $message, $from, $options);
+                self::laravelMail($to, $subject, $message, $from, $options);
             }            
         }
     }
@@ -476,6 +508,11 @@ class FEGSystemHelper
             }
         }
         return $arr;        
+    }   
+    public static function split_trim_join($txt, $delim = ',', $trimChar = null) {
+        $arr = self::split_trim($txt, $delim, $trimChar);
+        $joined = implode($delim, $arr);
+        return $joined;        
     }   
 
     public static function syncTable($params = array()) {
@@ -693,9 +730,9 @@ class FEGSystemHelper
                 $ut = $data->to_email_individuals;
                 $ucc = $data->cc_email_individuals;
                 $ubcc = $data->bcc_email_individuals;                
-                $users['to'] = empty($ut) ? array() : self::getUserEmails($ut);
-                $users['cc'] = empty($ucc) ? array() : self::getUserEmails($ucc);
-                $users['bcc'] = empty($ubcc) ? array() : self::getUserEmails($ubcc);
+                $users['to'] = empty($ut) ? array() : self::getUserEmails($ut,      $location);
+                $users['cc'] = empty($ucc) ? array() : self::getUserEmails($ucc,    $location);
+                $users['bcc'] = empty($ubcc) ? array() : self::getUserEmails($ubcc, $location);
                 
                 $inclues['to'] = FEGSystemHelper::split_trim($data->to_include_emails);
                 $inclues['cc'] = FEGSystemHelper::split_trim($data->cc_include_emails);
@@ -729,39 +766,51 @@ class FEGSystemHelper
         return $emails;
     }
 
-    public static function getLocationManagersEmails($fields, $location = null) {
+    public static function getLocationManagersEmails($fields = '', $location = null) {
 //        $q = "SELECT id,contact_id, general_contact_id, field_manager_id,
 //            tech_manager_id, merch_contact_id, merchandise_contact_id,
 //            technical_contact_id, regional_contact_id, senior_vp_id, district_manager_id
 //        FROM location WHERE active=1";
         $emails = array();
-            if (!empty(trim($fields))) {
-            $q = "SELECT $fields
-            FROM location WHERE active=1";
-            if ($location) {
-                $q .= " AND id IN ($location)";
-            }
-            $fieldsArr = explode(',', $fields);
-            $data = DB::select($q);
-            $ids = array();
-            foreach($data as $row) {            
-                foreach($fieldsArr as $fname) {
-                    $val = $row->$fname;
-                    if (!empty($val)) {
-                        $ids[] = $val;
-                    }                
-                }        
-            }
+        if (!empty(trim($fields))) {
+            $ids = self::getLocationManagersIds($fields, $location);
             if (!empty($ids)) {
                 $emails = self::getUserEmails(implode(',', $ids));
-            }
-            
-        }
-        
+            }            
+        }        
         return $emails;
     }
+    public static function getLocationManagersIds($fields = null, $location = null) {
+//        $q = "SELECT id,contact_id, general_contact_id, field_manager_id,
+//            tech_manager_id, merch_contact_id, merchandise_contact_id,
+//            technical_contact_id, regional_contact_id, senior_vp_id, district_manager_id
+//        FROM location WHERE active=1";
+        if (empty(trim($fields))){
+            $fields = 'contact_id, general_contact_id, field_manager_id,
+//            tech_manager_id, merch_contact_id, merchandise_contact_id,
+//            technical_contact_id, regional_contact_id, senior_vp_id, district_manager_id';
+        }
+        $q = "SELECT $fields
+        FROM location WHERE active=1";
+        if ($location) {
+            $q .= " AND id IN ($location)";
+        }
+        $fieldsArr = explode(',', $fields);
+        $data = DB::select($q);
+        $ids = array();
+        foreach($data as $row) {            
+            foreach($fieldsArr as $fname) {
+                $val = $row->$fname;
+                if (!empty($val)) {
+                    $ids[] = $val;
+                }                
+            }        
+        }        
+        return array_unique($ids);
+    }    
 
     public static function getGroupsUserEmails($groups = null, $location = null) {
+        $groups = self::split_trim_join($groups);
         $q = "SELECT U.id, U.group_id, UL.location_id, U.email FROM users U 
                     LEFT JOIN user_locations UL ON UL.user_id = U.id
                 LEFT JOIN tb_groups G ON G.group_id = U.group_id
@@ -777,14 +826,45 @@ class FEGSystemHelper
         $emails = array();
         foreach($data as $row) {
             $email = $row->email;
-            $emails[] =  trim($email);
+            if (!empty($email)) {
+                $emails[] =  trim($email);
+            }            
         }
         return $emails;
     }
-    public static function getUserEmails($users = null) {
-        $q = "SELECT DISTINCT email FROM users WHERE active=1 ";
+    public static function getGroupsUserIds($groups = null, $location = null) {
+        $groups = self::split_trim_join($groups);
+        $q = "SELECT U.id, U.group_id, UL.location_id, U.email FROM users U 
+                LEFT JOIN user_locations UL ON UL.user_id = U.id
+                LEFT JOIN tb_groups G ON G.group_id = U.group_id
+                LEFT JOIN location L ON L.id = UL.location_id
+                WHERE U.active=1 AND L.active=1 ";
+        if (!empty($groups)) {
+            $q .= " AND G.group_id IN ($groups)";
+        }
+        if (!empty($location)) {
+            $q .= " AND UL.location_id IN ($location)";
+        }
+        $data = DB::select($q);
+        $uids = array();
+        foreach($data as $row) {
+            $uid = $row->id;
+            if (!empty($uid)) {
+                $uids[] = $uid;
+            }            
+        }
+        return array_unique($uids);
+    }
+    public static function getUserEmails($users = null, $location = null) {
+        $users = self::split_trim_join($users);
+        $q = "SELECT DISTINCT email FROM users 
+            LEFT JOIN user_locations ON user_locations.user_id = users.id
+            WHERE users.active=1 ";
         if (!empty($users)) {
-            $q .= " AND id IN ($users)";
+            $q .= " AND users.id IN ($users)";
+        }
+        if (!empty($users)) {
+            $q .= " AND user_locations.location_id IN ($location)";            
         }
         $data = DB::select($q);
         $emails = array();
@@ -821,6 +901,10 @@ class FEGSystemHelper
         $lpd = 'FEGCronTasks/SystemEmailsDump';
         $options = array_merge(array(
             'from' => "support@fegllc.com",
+            'subject' => "",
+            'to' => "",
+            'cc' => "",
+            'bcc' => "",
             'configName' => "Test",
             'configNamePrefix' => "",
             'configNameSuffix' => "",

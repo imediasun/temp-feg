@@ -3,6 +3,9 @@
 use DB;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Ticketfollowers;
+use App\Models\Core\TicketMailer;
+
 
 class ticketsetting extends Sximo  {
 	
@@ -23,7 +26,10 @@ class ticketsetting extends Sximo  {
 	public static function queryGroup(){
 		return "  ";
 	}
-
+    
+    public static function getSettings() {
+        return self::first()->toArray();
+    }
 
 	public static function getUserPermissions($id = null){
         $gid = \SiteHelpers::getUserGroup($id);
@@ -50,23 +56,29 @@ class ticketsetting extends Sximo  {
 	}
     
 	public static function getAllPermissions(){
-		$data = DB::table('sbticket_setting')->get();
+		$data = self::getSettings();
+        if (is_null($data)) {
+            return [
+                "nodata" => true, 
+                "omniscient" => false, 
+                "followAllInLocation" => false, 
+                "newTicketNotificaitonInLocationOnly" => false
+            ];
+        }
         $omniscients = ['groups' => [], 'users' => ''];
         $followAllInLocation = ['groups' => [], 'users' => ''];
         $newTicketNotificaitonInLocationOnly = ['groups' => [], 'users' => ''];
-        if (!empty($data)) {
-            $data = $data[0];
-        }
-        $role1 = $data->role1;
-        $role2 = $data->role2;
-        $role3 = $data->role3;
-        $role4 = $data->role4;
-        $role5 = $data->role5;
-        $user1 = $data->individual1;
-        $user2 = $data->individual2;
-        $user3 = $data->individual3;
-        $user4 = $data->individual4;
-        $user5 = $data->individual5;
+
+        $role1 = $data['role1'];
+        $role2 = $data['role2'];
+        $role3 = $data['role3'];
+        $role4 = $data['role4'];
+        $role5 = $data['role5'];
+        $user1 = $data['individual1'];
+        $user2 = $data['individual2'];
+        $user3 = $data['individual3'];
+        $user4 = $data['individual4'];
+        $user5 = $data['individual5'];        
         
         $omniscients['groups'] = explode(',', $role1);
         $followAllInLocation['groups'] = explode(',', $role2);

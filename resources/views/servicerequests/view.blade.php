@@ -8,6 +8,7 @@ $createdOnWithTime = \DateHelpers::formatDateCustom($row->Created);
 $createdOn = \DateHelpers::formatDate($row->Created);
 $updatedOnWithTime = \DateHelpers::formatDateCustom($row->updated);
 $updatedOn = \DateHelpers::formatDate($row->updated);
+$ticketID = $row['TicketID'];
 ?>
 @if($setting['view-method'] =='native')
 	<div class="sbox">
@@ -16,7 +17,17 @@ $updatedOn = \DateHelpers::formatDate($row->updated);
 			<div class="container-fuild">
 				<div class="row m-b-lg ">
 					<div class="col-lg-5 animated fadeInLeft delayp1" style="margin-left: auto">
-						<h3>Ticket Info - #{{ $row['TicketID'] }}</h3>
+                        <h3>Ticket Info - #{{ $row['TicketID'] }} 
+                            <div class="pull-right">
+                            <input 
+                                data-size="mini" data-animate="true" 
+                                data-on-text="Following" 
+                                data-off-text="Not following" 
+                                data-handle-width="100px"
+                                data-handle-hieght="22px"
+                                class="isFollowing" type="checkbox" @if($following) checked @endif />
+                            </div>
+                        </h3>
 						<table class="table table-striped table-bordered" >
 							<tbody>
 
@@ -40,15 +51,6 @@ $updatedOn = \DateHelpers::formatDate($row->updated);
 								</td>
 								<td>
                                     {{ $updatedOnWithTime }}
-									<?php
-									if($commentsCount!=0){
-//										foreach($comments as $comment)
-//										{
-//											echo DateHelpers::formatDateCustom($comment->Posted);
-//											break;
-//										}
-									}
-									?>
 								</td>
 
 							</tr>
@@ -209,7 +211,6 @@ $updatedOn = \DateHelpers::formatDate($row->updated);
 							</div>
 						</div>
 						<hr>
-						<hr>
 						<?php if($commentsCount!=0){foreach($comments as $comment){?>
 						<div class="row">
 							<div class="col col-xs-12">
@@ -349,11 +350,12 @@ $updatedOn = \DateHelpers::formatDate($row->updated);
 
 						{!! Form::hidden('Subject', $row->Subject) !!}
 						{!! Form::hidden('Created', $row->Created) !!}
+						{!! Form::hidden('entry_by', $creatorID) !!}
 						{!! Form::hidden('Description', $row->Description) !!}
 						{!! Form::hidden('issue_type', $row->issue_type) !!}
 						{!! Form::hidden('location_id', $row->location_id) !!}
 						{!! Form::hidden('game_id', $row->game_id) !!}
-						{!! Form::hidden('debit_card', $row->debit_card) !!}
+						{!! Form::hidden('file_path', $row->file_path) !!}
 						{!! Form::close() !!}
 					</div>
 				</div>
@@ -367,6 +369,24 @@ $updatedOn = \DateHelpers::formatDate($row->updated);
 
 <script type="text/javascript">
 	$(document).ready(function() {
+        
+        $(".isFollowing").on('switchChange.bootstrapSwitch', function(event, state) {
+            var elm = $(this),
+                ajaxRunning = elm.data('ajax'),
+                isSubscribe = elm.prop('checked'),
+                url = pageUrl + '/subscribe/{{ $ticketID }}/{{ $uid }}/' + 
+                        (isSubscribe ? 'yes': 'unsubscribe');
+            if (ajaxRunning && ajaxRunning.abort) {
+                ajaxRunning.abort();
+            }
+            ajaxRunning = $.ajax({
+                type:'GET',
+                url: url,
+                success:function(data){}
+            });
+            elm.data('ajax', ajaxRunning);
+        });
+        $(".isFollowing").bootstrapSwitch();
 
 		$("#location_id").jCombo("{{ URL::to('servicerequests/comboselect?filter=location:id:location_name') }}",
 				{  selected_value : '{{ $row["location_id"] }}' });
@@ -438,3 +458,10 @@ $updatedOn = \DateHelpers::formatDate($row->updated);
 	}
 
 </script>
+<style>
+    
+    .bootstrap-switch {
+        height: 22px;
+    }
+
+</style>
