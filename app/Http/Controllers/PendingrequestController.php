@@ -93,7 +93,7 @@ class PendingrequestController extends Controller
         $rows = $results['rows'];
         foreach ($rows as $index => $data) {
 
-            $product = \DB::select("Select unit_price,vendor_id FROM products WHERE id = " . $data->product_id . "");
+            /*$product = \DB::select("Select unit_price,vendor_id FROM products WHERE id = " . $data->product_id . "");
 
             if (isset($product[0]->vendor_id)) {
                 $vendor = \DB::select("Select vendor_name FROM vendor WHERE id = " . $product[0]->vendor_id . "");
@@ -101,10 +101,11 @@ class PendingrequestController extends Controller
             }
             $rows[$index]->vendor_description = (isset($vendor[0]->vendor_name) ? $vendor[0]->vendor_name : '');
             $product = (isset($product[0]->unit_price) ? $product[0]->unit_price : 0.00000);
-            $rows[$index]->total_cost = \CurrencyHelpers::formatCurrency($product * (isset($data->qty) ? $data->qty : 0));
+            */
+           // $rows[$index]->total_cost = \CurrencyHelpers::formatCurrency($data->unit_price * (isset($data->qty) ? $data->qty : 0));
 
-            $user = \DB::select("Select username FROM users WHERE id = " . $data->request_user_id . "");
-            $rows[$index]->request_user_id = (isset($user[0]->username) ? $user[0]->username : '');
+            //$user = \DB::select("Select username FROM users WHERE id = " . $data->request_user_id . "");
+            //$rows[$index]->request_user_id = (isset($user[0]->username) ? $user[0]->username : '');
 
             if ($data->status_id == 2) {
                 $rows[$index]->status_id = 'Approved';
@@ -232,15 +233,14 @@ class PendingrequestController extends Controller
         ));
     }
 
-    function postSave(Request $request, $id = 0)
+    function postSave(Request $request, $id = null)
     {
-
-        $rules = $this->validateForm();
+        $rules = array('location_id'=> "required",'request_user_id'=>'required');
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
             $data = $this->validatePost('requests');
 
-            $id = $this->model->insertRow($data, $request->input('id'));
+            $id = $this->model->insertRow($data, $id);
 
             return response()->json(array(
                 'status' => 'success',
