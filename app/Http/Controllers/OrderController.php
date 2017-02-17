@@ -856,11 +856,11 @@ function sendPhpEmail($message,$to,$from,$subject,$pdf,$filename,$cc,$bcc)
                         $message->to($to);
                         if(count($cc)>0)
                         {
-                            $message->cc($cc);
+                            //$message->cc($cc);
                         }
                         if(count($bcc) > 0)
                         {
-                            $message->bcc($bcc);
+                            //$message->bcc($bcc);
                         }
                         $message->replyTo($from, $from);
                         $message->attachData($pdf->output(), $filename);
