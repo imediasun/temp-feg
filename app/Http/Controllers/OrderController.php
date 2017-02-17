@@ -554,7 +554,7 @@ class OrderController extends Controller
     {
 
         $type = $request->get('type');
-        $from = $request->get('from');
+        $from = \Session::get('eid');//in case non gmail then send email using current login email
         $order_id = $request->get('order_id');
         if(!isset($type)) {
             $type="configured";
@@ -586,7 +586,7 @@ class OrderController extends Controller
         $opt = $request->get('opt');
         $redirect_module=\Session::get('redirect');
         \Session::put('filter_before_redirect',false);
-        if (count($to) == 0 || $from === "NULL" || empty($from) || $from == "") {
+        if (empty($to) || $from === "NULL" || empty($from) || $from == "") {
             \Session::put('filter_before_redirect',true);
             return response()->json(array(
                 'message' => \Lang::get('core.email_missing_error'),
@@ -1205,13 +1205,18 @@ function sendPhpEmail($message,$to,$from,$subject,$pdf,$filename,$cc,$bcc)
         if(!empty($email))
         {
             if (strpos($email, ',') != FALSE) {
-                $email = explode(',', $email);
-                return $email;
+                $email = explode(',', trim($email,","));
             }
             else
             {
-                return array($email);
+                $email = array($email);
             }
+            foreach($email as $index => $record){
+                if(!filter_var($record, FILTER_VALIDATE_EMAIL)){
+                    unset($email[$index]);
+                }
+            }
+            return empty($email)?false:$email;
         }
         return false;
     }

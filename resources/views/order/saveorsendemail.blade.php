@@ -17,20 +17,14 @@
                 <div class="sbox-content">
                     <div style="color:green" class="row">
                         <?php
-                        $send_from = \Session::get('eid');
                         $order_id = \Session::get('order_id');
                         $send_to = \Session::get('send_to');
                         ?>
-                      @if(empty($google_account->g_mail) || empty($google_account->g_password))
-                            <?php $send_from="info@fegllc.com" ;?>
-                            @endif
                     </div>
                     <div class="row">
                         <div class="col-md-6 col-md-offset-5">
                             {!! Form::open(array('url'=>'order/saveorsendemail', 'class'=>'form-horizontal','files' =>
                             true , 'parsley-validate'=>'','novalidate'=>' ','id'=>'saveFormAjax')) !!}
-
-                            <input type="hidden" value="{{ $send_from }}" name="from"/>
                             <input type="hidden" value="{{ $order_id }}" name="order_id"/>
                             <input type="hidden" value="{{$send_to}}" name="to"/>
                             <input type="hidden" value="" name="message" id="save_message"/>
@@ -91,7 +85,6 @@
                                     'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>'
                                     ','id'=>'sendFormAjax')) !!}
 
-                                    <input type="hidden" value="{{ $send_from }}" name="from"/>
                                     <input type="hidden" value="{{ $order_id }}" name="order_id"/>
                                     <input type="hidden" value="" id="opt" name="opt"/>
                                     <div class="form-group">
@@ -157,7 +150,6 @@
                                     'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>'
                                     ','id'=>'sendsaveFormAjax')) !!}
 
-                                    <input type="hidden" value="{{ $send_from }}" name="from"/>
                                     <input type="hidden" value="{{ $order_id }}" name="order_id"/>
                                     <input type="hidden" value="" id="opt" name="opt"/>
                                     <input type="hidden" value="sendorsave" name="submit"/>
