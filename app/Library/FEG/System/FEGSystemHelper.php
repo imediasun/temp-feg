@@ -8,6 +8,7 @@ use Carbon\Carbon;
 use App\Library\MyLog;
 use PHPMailer;
 use Mail;
+use App\Models\Feg\System\Options;
 
 
 class FEGSystemHelper
@@ -959,74 +960,12 @@ $message
     }
 
     public static function getOption($optionName, $default = '', $all = false, $skipInactive = false, $details = false) {
-        $table = "feg_system_options";
-        $value = $default;
-        if ($details) {
-            $value = new \stdClass();
-            $value->option_name = $optionName;
-            $value->option_value = $default;
-            $value->is_active = 1;
-            $value->notes = '';
-            $value->created_at = null;
-            $value->updated_at = null;
-        }
-        if ($all) {            
-            $value = [$value];
-        }        
-        $q = DB::table($table)->where('option_name', $optionName);
-        if ($skipInactive) {
-            $q->where('is_active', 1);
-        }
-        $data = $q->get();
-        if (!empty($data)) {
-            $firstData = $data[0];
-            if ($details && $all) {                
-                $value = $data;
-            }
-            elseif ($details) {
-                $value = $firstData;
-            }
-            elseif ($all) {
-                $value = [];
-                foreach($data as $item) {
-                    $value[] = $item->option_value;
-                }
-            }
-            else {
-                $value = $firstData->option_value;
-            }
-        }
-        
-        return $value;
+        return Options::getOption($optionName, $default, $all, $skipInactive, $details);        
     }
     public static function updateOption($optionName, $value = '', $options = array()) {
-        $table = "feg_system_options";
-        $data = [
-                'option_name' => $optionName,
-                'option_value' => $value
-            ];
-        $data['notes'] = isset($options['notes']) ? $options['notes'] : '';
-        $data['is_active'] = isset($options['is_active']) ? $options['is_active'] : '';
-        
-        $q = DB::table($table);
-        if (isset($option['id'])) {
-            $q->where('id', $option['id']);
-        }
-        else {
-            $q->where('option_name', $optionName);
-        }
-        $q->update($data);
-        return $value;
+        return Options::updateOption($optionName, $value, $options);
     }
     public static function addOption($optionName, $value = '', $options = array()) {
-        $table = "feg_system_options";
-        $data = [
-                'option_name' => $optionName,
-                'option_value' => $value
-            ];
-        $data['notes'] = isset($options['notes']) ? $options['notes'] : '';
-        $data['is_active'] = isset($options['is_active']) ? $options['is_active'] : '';
-        DB::table($table)->insert($data);
-        return $value;        
-    }
+        return Options::addOption($optionName, $value, $options);        
+    }    
 }

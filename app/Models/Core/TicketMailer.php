@@ -14,9 +14,13 @@ class TicketMailer
             $ticketData = $data['ticket'];
             $ticketId = $data['ticketId'];
             $message = $data['message'];
+            $skipUsers = isset($data['skipUsers']) ? $data['skipUsers'] : [];
             $locationId = $ticketData['location_id'];
             
             $followers = $this->getTicketFollowers($ticketId, $locationId, $type);
+            if (!empty($skipUsers)) {
+                $followers = array_diff($followers, $skipUsers);
+            }
             $emails = $this->getFollowersEmails($followers, $locationId);
             $this->sendTicketNotification($ticketId, $message, $emails, $ticketData);
         }
@@ -28,7 +32,7 @@ class TicketMailer
         // $assigneesTo = $assigneesTo = \DB::select("select users.email FROM users WHERE users.id IN (" . $assignTo . ")");
         $title = @$data['Subject'];
         $location = @$data['location_id'];
-        $locationName = \SiteHelpers::getLocationInfoById($location, "location_name");
+        $locationName = $location . '-' .\SiteHelpers::getLocationInfoById($location, "location_name");
         $createdOn = \DateHelpers::formatDate($data['Created']);
         
         $to         = implode(',', $users);
