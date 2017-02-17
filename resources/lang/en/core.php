@@ -199,7 +199,8 @@ return array(
     "delete_error"              => "Some Error Occurred while Deleting",
     "email_missing_error"       => "Failed!Sender or Vendor Email is missing",
     "google_account_not_exist"  => "Google account detail not exist",
-    "smtp_connect_failed"       => "Mail Error: SMTP connect() failed"
+    "smtp_connect_failed"       => "Mail Error: SMTP connect() failed",
+    "error_sending_mail"        => "An Error Occurred in Sending Email."
 
 
 );

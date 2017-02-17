@@ -568,13 +568,19 @@ class OrderController extends Controller
         }
         elseif($type == "send") {
             $to = $request->get('to');
+            $to = $this->getMultipleEmails($to);
             $cc = $request->get('cc');
+            $cc = $this->getMultipleEmails($cc);
             $bcc = $request->get('bcc');
+            $bcc = $this->getMultipleEmails($bcc);
             $message = $request->get('message');
         } else {
             $to = $request->get('to1');
+            $to = $this->getMultipleEmails($to);
             $cc = $request->get('cc1');
+            $cc = $this->getMultipleEmails($cc);
             $bcc = $request->get('bcc1');
+            $bcc = $this->getMultipleEmails($bcc);
             $message = $request->get('message');
         }
         $opt = $request->get('opt');
@@ -615,6 +621,14 @@ class OrderController extends Controller
 
                 ));
               }
+            elseif ($status == 4)
+            {
+                return response()->json(array(
+                    'message' => \Lang::get('core.error_sending_mail'),
+                    'status' => 'error',
+
+                ));
+            }
 
 
         }
@@ -840,7 +854,8 @@ class OrderController extends Controller
                         }
                         die;
                     } else {
-                       $this->sendPhpEmail($message,$to,$from,$subject,$pdf,$filename,$cc,$bcc);
+                      $sent= $this->sendPhpEmail($message,$to,$from,$subject,$pdf,$filename,$cc,$bcc);
+                        return $sent;
                     }
                 }
             } else {
@@ -854,17 +869,25 @@ function sendPhpEmail($message,$to,$from,$subject,$pdf,$filename,$cc,$bcc)
                         $message->subject($subject);
                         $message->from($from);
                         $message->to($to);
-                        if(count($cc)>0)
+                        if(!empty($bcc) && count($cc) > 0)
                         {
                             $message->cc($cc);
                         }
-                        if(count($bcc) > 0)
+                        if(!empty($bcc) && count($bcc) > 0)
                         {
                             $message->bcc($bcc);
                         }
                         $message->replyTo($from, $from);
                         $message->attachData($pdf->output(), $filename);
                     });
+    if($result)
+    {
+       return 1;
+    }
+    else{
+        return 2;
+    }
+
 }
     function getClone($id)
     {
@@ -1109,7 +1132,7 @@ function sendPhpEmail($message,$to,$from,$subject,$pdf,$filename,$cc,$bcc)
         $mail->Body = "hello";
         $mail->AddAddress("dev3@shayansolutions.com");
         $mail->addCC('shayansolutions@gmail.com');
-        $mail->addBCC('adnanali199@gmail.com');
+        $mail->addBCC('dev2@shayansolutions.com');
         if (!$mail->Send()) {
             echo "Mailer Error: " . $mail->ErrorInfo;
         } else {
@@ -1188,11 +1211,13 @@ function sendPhpEmail($message,$to,$from,$subject,$pdf,$filename,$cc,$bcc)
     }
     function getMultipleEmails($email)
     {
-        if (preg_match('/,/',$email)) {
+        if (strpos($email, ',') != FALSE) {
             $email = explode(',', $email);
+            return $email;
         }
-
-        return $email;
+ else{
+     return array($email);
+ }
     }
 
 }
