@@ -869,11 +869,11 @@ function sendPhpEmail($message,$to,$from,$subject,$pdf,$filename,$cc,$bcc)
                         $message->subject($subject);
                         $message->from($from);
                         $message->to($to);
-                        if(!empty($bcc))
+                        if(!empty($cc))
                         {
                             $message->cc($cc);
                         }
-                        if(!empty($bcc) && count($bcc) > 0)
+                        if(!empty($bcc))
                         {
                             $message->bcc($bcc);
                         }
