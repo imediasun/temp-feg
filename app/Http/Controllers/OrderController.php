@@ -831,17 +831,6 @@ class OrderController extends Controller
                         $mail->Body = $message;
                         //foreach ($to as $t) {
                         $mail->addAddress($to);
-                        //}
-                        /*   if (count($cc) > 0) {
-                            foreach ($cc as $c) {
-                                $mail->addCC($c);
-                            }
-                        }
-                        if (count($bcc) > 0) {
-                            foreach ($bcc as $bc) {
-                                $mail->addBCC($bc);
-                            }
-                        }*/
                         $mail->addReplyTo($google_acc->g_mail);
                         $output = $pdf->output();
                         $file_to_save = public_path() . '/orders/' . $filename;
@@ -875,7 +864,9 @@ function sendPhpEmail($message,$to,$from,$subject,$pdf,$filename,$cc,$bcc)
                         }
                         if(!empty($bcc))
                         {
+
                             $message->bcc($bcc);
+
                         }
                         $message->replyTo($from, $from);
                         $message->attachData($pdf->output(), $filename);
@@ -1211,13 +1202,18 @@ function sendPhpEmail($message,$to,$from,$subject,$pdf,$filename,$cc,$bcc)
     }
     function getMultipleEmails($email)
     {
-        if (strpos($email, ',') != FALSE) {
-            $email = explode(',', $email);
-            return $email;
+        if(!empty($email))
+        {
+            if (strpos($email, ',') != FALSE) {
+                $email = explode(',', $email);
+                return $email;
+            }
+            else
+            {
+                return array($email);
+            }
         }
- else{
-     return array($email);
- }
+        return false;
     }
 
 }
