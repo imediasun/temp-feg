@@ -183,6 +183,7 @@ class OrderController extends Controller
         if(!empty($isRedirected))
         {
             $params=\Session::get('params');
+            $order_selected  = null;
             \Session::put('filter_before_redirect',false);
         }
         else
