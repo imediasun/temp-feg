@@ -30,9 +30,11 @@
                             <input type="hidden" value="" name="message" id="save_message"/>
                             <div class="form-group" style="margin-top:10px;">
                                 <a href="{{ URL::to('order/po/'.$order_id)}}" id="po-link" style="width:33%"
-                                   class=" btn  btn-lg btn-primary" title="SAVE"><i class="fa fa-save"
+                                   class=" btn  btn-lg btn-primary" title="SAVE" data-action="save" ><i class="fa fa-save"
                                                                                     aria-hidden="true"></i>
                                     &nbsp {{ Lang::get('core.sb_save') }}</a>
+                                <a href="javascript:void(0)" id="po-close" style="width:33%;display: none"
+                                   class=" btn  btn-lg btn-primary" title="Close" data-action="close" >&nbsp {{ Lang::get('core.sb_close') }}</a>
                             </div>
 
                             <div class="form-group" style="margin-top:10px;">
@@ -220,7 +222,13 @@
     <script>
         $(document).ready(function () {
 
-
+        });
+        $("#po-close").click(function(){
+            reloadOrder();
+        });
+        $("#po-link").click(function () {
+            $(this).hide();
+            $('#po-close').show();
         });
         $("#to1").click(function () {
             var to1 = $(this).val();
