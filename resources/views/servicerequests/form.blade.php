@@ -202,12 +202,11 @@
 					<label for="Attach File" class=" control-label col-md-4 text-left">
 					{!! SiteHelpers::activeLang('Attach File', (isset($fields['file_path']['language'])? $fields['file_path']['language'] : array())) !!}
 					</label>
-					<div class="col-md-6">
-					  
-					<a href="javascript:void(0)" class="btn btn-xs btn-primary pull-right" onclick="addMoreFiles('file_path')"><i class="fa fa-plus"></i></a>
+					<div class="col-md-4 col-sm-6 col-xs-12">
 					<div class="file_pathUpl">	
 					 	<input  type='file' name='file_path[]'  />			
 					</div>
+					<a href="javascript:void(0)" class="btn btn-xs btn-primary" onclick="addMoreFiles('file_path')"><i class="fa fa-plus"></i> Add more files</a>
 					<ul class="uploadedLists " >
 					<?php $cr= 0; 
 					$row['file_path'] = explode(",",$row['file_path']);
@@ -226,7 +225,7 @@
 					</ul>
 					 
 					 </div> 
-					 <div class="col-md-2">
+					 <div class="col-md-4 ">
 					 	
 					 </div>
 				  </div> </fieldset>
