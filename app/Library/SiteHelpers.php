@@ -1911,17 +1911,77 @@ class SiteHelpers
         return $row;
     }
 
+    static function getDebitTypes()
+    {
+        return \DB::table('debit_type')->get();
+    }
+    
+    /**
+     * Get any field's value from location table. For example, location_name
+     * @param number $loc_id
+     * @param string $field   
+     * @param string $default 
+     * @return mixed    string value if $field is specified else an object. $default is not found.
+     */
+    public static function getLocationInfoById($loc_id = null, $field = null, $default = "") {
+        if(is_null($field)){
+            $query = \DB::select("SELECT * FROM location WHERE id = '$loc_id'");
+        }
+        else{
+            $query = \DB::select("SELECT $field FROM location WHERE id = '$loc_id'");
+        }
+
+        $data = [];
+        if (isset($query[0])) {
+            $data = $query[0];
+        }
+        if (is_null($field)) {
+            return $data;
+        }
+        if (!empty($data)) {
+            if (is_array($data)) {
+                $value = $data[$field];
+            }        
+            else {
+                $value = $data->$field;
+            }
+        }
+        if (empty($value)) {
+            $value = $default;
+        }
+        return $value;
+    }
+    /**
+     * Get Locations details of locations assigned to a user
+     * @param number    $id User ID
+     * @return array 
+     */
     static function getLocationDetails($id)
     {
         $locations = \DB::table('user_locations')
             ->join('location', 'user_locations.location_id', '=', 'location.id')
-            ->select('location.id', 'location.location_name', 'location.location_name_short', 'location.street1', 'location.state', 'location.city', 'location.zip')
+            ->join('debit_type', 'debit_type.id', '=', 'location.debit_type_id')
+            ->select(
+                    'location.id', 
+                    'location.location_name', 
+                    'location.location_name_short', 
+                    'location.debit_type_id', 
+                    'debit_type.company', 
+                    'location.street1', 
+                    'location.state', 
+                    'location.city', 
+                    'location.zip')
             ->where('location.active', 1)
             ->where('user_locations.user_id', '=', $id)->orderBy('id', 'asc')
             ->get();
         return $locations;
     }
     
+    /**
+     * Get Location IDs in an indexed array from list of locations
+     * @param type $userLocations
+     * @return type
+     */
     static function getIdsFromLocationDetails($userLocations)
     {
         $locations = array();
@@ -2237,5 +2297,31 @@ class SiteHelpers
             </div>';
         
         return $button;
+    }
+    
+    public static function getUserGroup ($id=null) {
+        $groupId = '';
+        if (empty($id)) {
+            $id = \Session::get('uid');
+            $groupId = \Session::get('gid');
+        }
+        else {
+            $groupId = \DB::table('users')->where('id', '=', $id)->pluck('group_id');
+        }        
+        return $groupId;
+    }
+    
+    public static function getUsersInGroup ($gid=null) {
+    }
+    
+    public static function  getUserDetails($id=null) {
+        if (empty($id)) {
+            $id = \Session::get('uid');
+        }
+        $data = \App\Models\Core\Users::where('id', $id)->first()->toArray();
+        if (empty($data)) {
+            $data = [];
+        }
+        return $data;        
     }
 }
