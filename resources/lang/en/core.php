@@ -200,6 +200,7 @@ return array(
     "email_missing_error"       => "Failed!Sender or Vendor Email is missing",
     "google_account_not_exist"  => "Google account detail not exist",
     "smtp_connect_failed"       => "Mail Error: SMTP connect() failed",
+    "gmail_smtp_connect_failed" => 'To allow system to send emails using your Gmail account. You must turn on less secure apps by clicking <a target="_blank" href="https://www.google.com/settings/u/6/security/lesssecureapps?pageId=none">Here</a>',
     "error_sending_mail"        => "An Error Occurred in Sending Email."
 
 

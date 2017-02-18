@@ -329,7 +329,8 @@
             } else {
                 notyMessageError(data.message);
                 $('.ajaxLoading').hide();
-                reloadOrder();
+                //do not reload order page after error
+                //reloadOrder();
             }
         }
         function emailSending(send_to,mode)

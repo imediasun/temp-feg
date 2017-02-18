@@ -616,7 +616,7 @@ class OrderController extends Controller
             elseif ($status == 3)
             {
                 return response()->json(array(
-                    'message' => \Lang::get('core.smtp_connect_failed'),
+                    'message' => \Lang::get('core.gmail_smtp_connect_failed'),
                     'status' => 'error',
 
                 ));
@@ -815,6 +815,13 @@ class OrderController extends Controller
                   * enable stmp detail
                   */
                         $mail = new PHPMailer(); // create a new object
+                        $mail->SMTPOptions = array(
+                            'ssl' => array(
+                                'verify_peer' => false,
+                                'verify_peer_name' => false,
+                                'allow_self_signed' => true
+                            )
+                        );
                         $mail->IsSMTP(); // enable SMTP
                         $mail->Host = 'smtp.gmail.com';
                         $mail->Port = 587; // or 587
