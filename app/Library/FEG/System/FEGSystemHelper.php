@@ -811,6 +811,9 @@ class FEGSystemHelper
     }    
 
     public static function getGroupsUserEmails($groups = null, $location = null) {
+        if (is_array($groups)) {
+            $groups = implode(',', $groups);
+        }        
         $groups = self::split_trim_join($groups);
         $q = "SELECT U.id, U.group_id, UL.location_id, U.email FROM users U 
                     LEFT JOIN user_locations UL ON UL.user_id = U.id
@@ -834,10 +837,14 @@ class FEGSystemHelper
         return $emails;
     }
     public static function getGroupsUserIds($groups = null, $location = null) {
+        if (is_array($groups)) {
+            $groups = implode(',', $groups);
+        }        
         $groups = self::split_trim_join($groups);
-        $q = "SELECT U.id, U.group_id, UL.location_id, U.email FROM users U 
-                LEFT JOIN user_locations UL ON UL.user_id = U.id
+        $q = "SELECT U.id, U.group_id, UL.location_id, U.email 
+                FROM users U 
                 LEFT JOIN tb_groups G ON G.group_id = U.group_id
+                LEFT JOIN user_locations UL ON UL.user_id = U.id
                 LEFT JOIN location L ON L.id = UL.location_id
                 WHERE U.active=1 AND L.active=1 ";
         if (!empty($groups)) {
@@ -856,7 +863,32 @@ class FEGSystemHelper
         }
         return array_unique($uids);
     }
+    public static function getLocationUserIds($location = null, $users = null) {
+        if (is_array($users)) {
+            $users = implode(',', $users);
+        }        
+        $users = self::split_trim_join($users);
+        $q = "SELECT DISTINCT users.id FROM users 
+            LEFT JOIN user_locations ON user_locations.user_id = users.id
+            WHERE users.active=1 ";
+        if (!empty($users)) {
+            $q .= " AND users.id IN ($users)";
+        }
+        if (!empty($users)) {
+            $q .= " AND user_locations.location_id IN ($location)";            
+        }
+        $data = DB::select($q);
+        $ids = array();
+        foreach($data as $row) {
+            $id = $row->id;
+            $ids[] = trim($id);
+        }
+        return $ids;
+    }    
     public static function getUserEmails($users = null, $location = null) {
+        if (is_array($users)) {
+            $users = implode(',', $users);
+        }        
         $users = self::split_trim_join($users);
         $q = "SELECT DISTINCT email FROM users 
             LEFT JOIN user_locations ON user_locations.user_id = users.id
