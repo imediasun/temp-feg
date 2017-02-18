@@ -22,8 +22,6 @@
 
             <div class="sbox">
                 <div class="sbox-title"><h5> Ticket Permissions </h5></div>
-                <pre>
-                </pre>
                 <div class="sbox-content">
                     <table class="table table-striped table-bordered" id="table">
                         <thead class="no-border">
