@@ -968,4 +968,88 @@ $message
     public static function addOption($optionName, $value = '', $options = array()) {
         return Options::addOption($optionName, $value, $options);        
     }    
+    
+    public static function getUserAvatarUrl($id = null, $file = null) {
+		$fileUrl = url()."/silouette.png";
+        if (!empty($id)) {
+            $file = \App\Models\Core\Users::where('id', $id)->pluck('avatar');
+        }
+        $filePath = "./uploads/users/$file";
+        if (!empty($file) && file_exists($filePath)) {
+            $fileUrl = \URL::to("uploads/users/$file");
+        }        
+        return $fileUrl;
+    }
+    
+    public static function getUserProfileDetails($user) {
+        $userID = $user['id'];
+        $firstName = empty($user['first_name']) ? '' : $user['first_name'];
+        $lastName = empty($user['last_name']) ? '' : $user['last_name'];                                    
+        $fullName = $firstName . ' ' . $lastName;
+        $avatar = self::getUserAvatarUrl(null, $user['avatar']);
+        $userTooltip = 'Username: ' . $user['username'] . '<br/> Email: '. $user['email'];
+        
+        return [
+            'id' => $userID,
+            'fullName' => $fullName,
+            'firstName' => $firstName,
+            'lastName' => $lastName,
+            'avatar' => $avatar,
+            'tooltip' => $userTooltip,
+        ];
+    }
+        
+    public static function getTicketCommentUserProfile($comment, $ticket = []) {
+        $userID = $comment->UserID;
+        $externalName = empty($comment->USERNAME) ? '' : $comment->USERNAME;
+        $firstName = empty($comment->first_name) ? '' : $comment->first_name;
+        $lastName = empty($comment->last_name) ? '' : $comment->last_name;                                    
+        $fullName = $firstName . ' ' . $lastName;
+        $avatar = self::getUserAvatarUrl(null, $comment->avatar);
+        $isExternal = empty($userID);
+
+        $userTooltip = 'Username: ' . $comment->username . '<br/> Email: '. $comment->email;
+        if ($isExternal) {
+            $fullName = $externalName;
+            $userTooltip = "Not an user";
+        }    
+        
+        return [
+            'id' => $userID,
+            'isExternal' => $isExternal,
+            'eExternalName' => $externalName,
+            'fullName' => $fullName,
+            'firstName' => $firstName,
+            'lastName' => $lastName,
+            'avatar' => $avatar,
+            'tooltip' => $userTooltip,
+        ];               
+    }
+    
+    public static function getTicketAttachmentDetails($data, $isInitialTicketData = false) {
+        $fileNamesCSV = $isInitialTicketData ? $data->file_path : $data->Attachments;
+        $datePosted = \DateHelpers::formatDate($isInitialTicketData ? $data->Created : $data->Posted);
+        $attachments = [];
+        if (!empty($fileNamesCSV)) {
+            $files = explode(',', $fileNamesCSV);
+            foreach($files as $file) {
+                $url = url().'/uploads/tickets/'. 
+                        ($isInitialTicketData?$file: "comments-attachments/$file");
+                $fileName =  $file;
+                if (strlen($file) > 20) {
+                    $fileName =  substr($file,0,20).'.'.substr(strrchr($file,'.'),1);
+                }
+                
+                $attachments[] = [
+                    'url' => $url,
+                    'fileName' => $fileName,
+                    'date' => $datePosted
+                ];
+            }
+        }
+        
+        return $attachments;
+    }    
+
+    
 }

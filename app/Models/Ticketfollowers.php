@@ -8,7 +8,7 @@ use DB;
 class Ticketfollowers extends Model {
 	protected $table = 'sb_ticket_subscriptions';
     
-    public static function follow($ticketId, $user, $custom = '', $force = false) {
+    public static function follow($ticketId, $user, $custom = '', $force = false, $role = '') {
         $users = [$user];
         if (is_string($user)) {
             $users = explode(',', $user);
@@ -18,16 +18,25 @@ class Ticketfollowers extends Model {
         }
         foreach($users as $userId) {
             $id = self::where('ticket_id', $ticketId)->where('user_id', $userId)->pluck('id');
+            $isDefault = self::isDefaultFollower($userId);
             if (is_null($id)) {
-                self::insert([
-                    'ticket_id' => $ticketId, 
-                    'user_id' => $userId,
-                    'created_at' => date('Y-m-d H:i:s'),
-                    'custom_email_to' => $custom,
-                ]);
+                if (!$isDefault || $role != 'requester') {
+                    self::insert([
+                        'ticket_id' => $ticketId, 
+                        'user_id' => $userId,
+                        'created_at' => date('Y-m-d H:i:s'),
+                        'custom_email_to' => $custom,
+                        'follow_role' => $role,
+                    ]);                    
+                }
+                
             }
             else {
-                if ($force) {
+                $setRole = self::where('id', $id)->pluck('follow_role');
+                if ($isDefault && $setRole != 'requester') {                
+                    self::where('id', $id)->delete();
+                }
+                elseif ($force) {
                     self::where('id', $id)->update([
                         'updated_at' => date('Y-m-d H:i:s'),
                         'custom_email_to' => $custom,
@@ -47,6 +56,7 @@ class Ticketfollowers extends Model {
         }
         foreach($users as $userId) {
             $id = self::where('ticket_id', $ticketId)->where('user_id', $userId)->pluck('id');
+            //$isDefault = self::isDefaultFollower($userId);
             if (is_null($id)) {
                 self::insert([
                     'ticket_id' => $ticketId, 
@@ -63,24 +73,33 @@ class Ticketfollowers extends Model {
                         'custom_email_to' => $custom,
                         'is_active' => 0,
                     ]);                    
+//                    self::where('id', $id)->delete();                    
                 }
+//                else {
+//                    self::where('id', $id)->update([
+//                        'updated_at' => date('Y-m-d H:i:s'),
+//                        'custom_email_to' => $custom,
+//                        'is_active' => 0,
+//                    ]);                     
+//                }
             }
         }            
     }    
     public static function isFollowing($ticketId, $userId = null, $custom = '') {
-        $isFollower = false;
         if (empty($userId)) {
             $userId = \Session::get('uid');
         } 
-        $location = \App\Models\Servicerequests::where('TicketId', $ticketId)->pluck('location_id');
-        if (!empty($location)) {
-            $allFollowers = self::getAllFollowers($ticketId, $location);
-            $isFollower = in_array($userId, $allFollowers);
-        }        
+        
+        $allFollowers = self::getAllFollowers($ticketId);
+        $isFollower = in_array($userId, $allFollowers);
+        
         return $isFollower;
     }   
     
     public static function getAllFollowers($ticketId, $location = null, $includeNewTicketOnlyFollowers = false) {
+        if (empty($location)) {
+            $location = \App\Models\Servicerequests::where('TicketId', $ticketId)->pluck('location_id');
+        }
         $default = self::getDefaultFollowers($location, $includeNewTicketOnlyFollowers);
         $others = self::getRecordedFollowersUnFollowers($ticketId);
         
@@ -149,8 +168,8 @@ class Ticketfollowers extends Model {
                 ->where('ticket_id', $ticketId)
                 ->where('is_active', 0)
                 ->get();
-        $unfollowers = [];
-        $unfollowerCustomEmails = [];
+        $unfollowers = ['', null];
+        $unfollowerCustomEmails = ['', null];
         foreach($data as $item) {
             $user = $item->user_id;
             $customEmail = $item->custom_email_to;            
@@ -161,7 +180,7 @@ class Ticketfollowers extends Model {
                 $unfollowerCustomEmails[] = $customEmail;
             }
         }
-        return $followers;        
+        return $unfollowers;        
     }    
     public static function getDefaultFollowers($location = null, $includeNewTicketOnlyFollowers = false) {
         $settings = ticketsetting::getSettings();
@@ -178,5 +197,18 @@ class Ticketfollowers extends Model {
         $users = array_diff(array_unique(array_merge($groupUsers, $individualUsers)), ['', null]);        
         
         return $users;        
-    }    
+    }
+    
+    public static function isDefaultFollower($user) {
+        $groupId = \SiteHelpers::getUserGroup($user);
+        $settings = ticketsetting::getSettings();
+        $userGroups  = $settings['role2'].','.$settings['role5'];
+        $individuals = $settings['individual2'].','.$settings['individual5'];
+        $users = explode(',', $individuals);
+        $groups = explode(',', $userGroups);
+        
+        $isDefault = in_array($groupId, $groups) || in_array($user, $users);
+        
+        return $isDefault;        
+    }
 }

@@ -268,12 +268,13 @@ class servicerequestsController extends Controller
         $this->data['comments'] = $comments;
 
         $userId = \Session::get('uid');
-        $this->data['creator_details'] = !empty($row->entry_by) ? \SiteHelpers::getUserDetails($row->entry_by) : [];
+        $this->data['creator'] = !empty($row->entry_by) ? \SiteHelpers::getUserDetails($row->entry_by) : [];
         $this->data['id'] = $id;
         $this->data['uid'] = $userId;
         $this->data['fid'] = \Session::get('fid');
         $this->data['access'] = $this->access;
         $this->data['following'] = Ticketfollowers::isFollowing($id, $userId);
+        $this->data['followers'] = Ticketfollowers::getAllFollowers($id);
         $this->data['setting'] = $this->info['setting'];
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
         return view('servicerequests.view', $this->data);
@@ -330,10 +331,9 @@ class servicerequestsController extends Controller
             
             if (empty($id)) {
                 $data['Created'] = date('Y-m-d H:i:s');
+                Ticketfollowers::follow($id, $data['entry_by'], '', true, 'requester');
             }
             $id = $this->model->insertRow($data, $id);
-            
-            Ticketfollowers::follow($id, $data['entry_by']);
             
             if($isAdd){
             
@@ -393,9 +393,10 @@ class servicerequestsController extends Controller
     public function postComment(Request $request)
     {
             $ticketId = $request->input('TicketID');
-
+            
             //validate post for sb_tickets module
             $ticketsData = $this->validatePost('sb_tickets');
+           
             $ticketsData['updated'] = date('Y-m-d H:i:s');
             
             $comment_model = new Ticketcomment();
@@ -414,6 +415,7 @@ class servicerequestsController extends Controller
             //re-populate info array to ticket comments module
             $this->info = $comment_model->makeInfo('ticketcomment');
             $commentsData = $this->validatePost('sb_ticketcomments');
+           
             $commentsData['USERNAME'] = \Session::get('fid');
             $commentsData['Posted'] = date('Y-m-d H:i:s');;
 
@@ -423,10 +425,37 @@ class servicerequestsController extends Controller
             $this->model->insertRow($ticketsData, $ticketId);
             $message = $commentsData['Comments'];
             
-            Ticketfollowers::follow($ticketId, $ticketsData['entry_by']);
+            /*
+            $isFollowing = $request->input('isFollowingTicket');
+            $allFollowers = $request->input('allFollowers');
+                       
             if (!empty($ticketsData['assign_to'])) {
-                Ticketfollowers::follow($ticketId, $ticketsData['assign_to']);
+                //Ticketfollowers::follow($ticketId, $ticketsData['assign_to']);
             }
+            if (!in_array($ticketsData['entry_by'], $allFollowers)) {
+               // Ticketfollowers::follow($ticketId, $ticketsData['entry_by']);
+            }
+            
+            $recordedFollowers = Ticketfollowers::getRecordedFollowers($ticketId);
+            $unFollowers = [];
+            foreach($recordedFollowers as $follower) {
+                if (!in_array($follower, $allFollowers)) {
+                    $unFollowers[] = $follower;
+                }
+            }
+            Ticketfollowers::unfollow($ticketId, $unFollowers, '', true);
+            
+            $location = $request->input('location_id');
+            $defaultFollowers = Ticketfollowers::getDefaultFollowers($location);
+            
+            $customFollowers = [];
+            foreach($allFollowers as $follower) {
+                if (!in_array($follower, $defaultFollowers)) {
+                    $customFollowers[] = $follower;
+                }
+            }            
+            Ticketfollowers::follow($ticketId, $customFollowers, '', true);
+            */
             
             //send email
             $this->model->notifyObserver('AddComment',[
