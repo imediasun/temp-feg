@@ -4,6 +4,7 @@ namespace App\Library\FEG\System;
 
 use PDO;
 use DB;
+use File;
 use Carbon\Carbon;
 use App\Library\MyLog;
 use PHPMailer;
@@ -1063,25 +1064,63 @@ $message
         $datePosted = \DateHelpers::formatDate($isInitialTicketData ? $data->Created : $data->Posted);
         $attachments = [];
         if (!empty($fileNamesCSV)) {
-            $files = explode(',', $fileNamesCSV);
+            $files = explode(',', $fileNamesCSV);            
             foreach($files as $file) {
-                $url = url().'/uploads/tickets/'. 
-                        ($isInitialTicketData?$file: "comments-attachments/$file");
-                $fileName =  $file;
-                if (strlen($file) > 20) {
-                    $fileName =  substr($file,0,20).'.'.substr(strrchr($file,'.'),1);
+                if (!empty($file)) {
+                    $url = url().$file;
+                    $fileName =  self::getSanitizedFileNameForTicketAttachments($file);                
+                    $attachments[] = [
+                        'url' => $url,
+                        'fileName' => $fileName,
+                        'date' => $datePosted
+                    ];                    
                 }
                 
-                $attachments[] = [
-                    'url' => $url,
-                    'fileName' => $fileName,
-                    'date' => $datePosted
-                ];
             }
         }
         
         return $attachments;
     }    
 
+     /**
+     * This works on paths relative to public folder
+     * 
+     * @param type $basename
+     * @param type $path
+     * @return string The possibly modified filename (without the path)
+     */
+    public static function possiblyRenameFileToResolveDuplicate($basename, $path) {
+        $fileParts = pathinfo($basename);
+        $ext = empty($fileParts['extension']) ? '' : $fileParts['extension'];
+        $filename = $fileParts['filename'];
+        $newBasename = $filename . (empty($ext) ? "" : ('.' . $ext));
+        $path = preg_replace('/([^\/]$)/', '$1/', $path);
+        $copyCount = 0;
+        $filepath = $path . $newBasename;
+        if (!File::exists($path)) {
+            File::makeDirectory($path, 0777, true, true);
+        }
+        while (File::exists($filepath)) {
+            $newBasename = $filename . ('--'.++$copyCount).(empty($ext) ? "" : ('.' . $ext));
+            $filepath = $path . $newBasename;            
+        }
+        return $newBasename;
+    }
     
+    /**
+     * 
+     * @param type $path
+     * @return string trimmed and slim filename
+     */
+    public static function getSanitizedFileNameForTicketAttachments($path, $maxLength = 25) {
+        $fileParts = pathinfo($path);
+        $ext = empty($fileParts['extension']) ? '' : $fileParts['extension'];
+        $fileName = $fileParts['filename'];
+       
+        $fileName  = preg_replace('/--.*$/', '', $fileName);
+        $fileName =  substr($fileName, 0, $maxLength);
+        
+        $newBasename = $fileName . (empty($ext) ? "" : ('.' . $ext));
+        return $newBasename;
+    }
 }

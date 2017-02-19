@@ -73,7 +73,7 @@
                     containerSelector = elm.data('container'),
                     inputContainer = container.find(containerSelector);
                 
-                inputContainer.append("<input  type='file' name='Attachments[]'  />");
+                inputContainer.prepend("<input  type='file' name='Attachments[]'  />");
                 elm.html("Attach more files");
                 return false;
             });

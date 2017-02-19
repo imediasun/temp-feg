@@ -10,6 +10,7 @@ use App\Models\Core\TicketMailer;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Validator, Input, Redirect;
+use App\Library\FEG\System\FEGSystemHelper;
 
 class servicerequestsController extends Controller
 {
@@ -330,13 +331,18 @@ class servicerequestsController extends Controller
             $data['Status']=$request->get('Status');
             
             if (empty($id)) {
-                $data['Created'] = date('Y-m-d H:i:s');
-                Ticketfollowers::follow($id, $data['entry_by'], '', true, 'requester');
+                $data['Created'] = date('Y-m-d H:i:s');                
             }
             $id = $this->model->insertRow($data, $id);
             
-            if($isAdd){
+            $files = $this->uploadTicketAttachments($id);
+            if (!empty($files['file_path'])) {                
+                $this->model->where('TicketID', $id)
+                    ->update(['file_path' => $files['file_path']]);
+            }
             
+            if($isAdd){
+                Ticketfollowers::follow($id, $data['entry_by'], '', true, 'requester');
                 $message = $data['Description'];
                 $this->model->notifyObserver('FirstEmail',[
                     "message"       =>$message,
@@ -359,6 +365,73 @@ class servicerequestsController extends Controller
             ));
         }
 
+    }
+    
+    public function uploadTicketAttachments($id) {
+        $request = new Request;
+        $date = date('Y-m-d');
+        $formConfig = $this->info['config']['forms'];
+        $dataForTable = $this->info['config']['table_db'];
+        $data = [];
+        
+        foreach ($formConfig as $config) {                    
+            
+            $field = $config['field'];            
+            $isFileInput = $config['type'] == 'file' && !is_null(Input::file($field));
+            
+            if ($isFileInput) {
+                
+                $option = $config['option'];
+                $isMultiple = !empty($option['image_multiple']);
+                $uploadPath = $option['path_to_upload'];
+                $uploadImage = $option['upload_type'] == 'image';
+                
+                $inputFiles = Input::file($field);
+                if (!is_array($inputFiles)) {
+                    $inputFiles = [$inputFiles];
+                }
+                
+                $files = [];
+                $uploadPath = preg_replace('/^[\.\/]*public/', '', $uploadPath); 
+                $uploadPath = preg_replace('/^\//', './', $uploadPath); 
+                $uploadPath = preg_replace('/(\/$)/', '', $uploadPath); 
+                $pathExtended = "/ticket-$id/$date/";
+                $targetPath = $uploadPath . $pathExtended;
+                
+                foreach($inputFiles as $file) {
+                    
+                    $oringalFilename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+                    $originalExtension = $file->getClientOriginalExtension(); 
+                    $targetFile = $oringalFilename. "--$id" .                            
+                            (empty($originalExtension) ? '': (".$originalExtension"));
+                    $targetFile = FEGSystemHelper::possiblyRenameFileToResolveDuplicate($targetFile, $targetPath);
+                    try {
+                        $success = $file->move($targetPath, $targetFile);
+                    } catch (Exception $ex) {
+                        $success = false;
+                    }
+                    if($success) {
+                        if ($uploadImage && !empty($option['resize_width'])) {
+                            $resizeWidth = $option['resize_width'];
+                            $resizeHeight = $option['resize_height'];
+
+                            if (empty($resizeHeight)) {
+                                $resizeHeight = $resizeWidth;
+                            }
+                            $fileWithPath = $targetPath.$targetFile;
+                            \SiteHelpers::cropImage($resizeWidth, $resizeHeight, $fileWithPath, $originalExtension, $fileWithPath);
+                        }
+
+                        $url = preg_replace('/^[\.\/]*/', '/', $targetPath).$targetFile;
+                        $files[] = $url;
+                    }                    
+                }
+                
+                $data[$field] = implode(',', $files);
+
+            }            
+        }
+        return $data;    
     }
 
     public function postDelete(Request $request)
@@ -421,7 +494,14 @@ class servicerequestsController extends Controller
 
             //@todo need separate table for comment attachments
             unset($ticketsData['file_path']);
-            $comment_model->insertRow($commentsData, NULL);
+            $commentId = $comment_model->insertRow($commentsData, NULL);
+
+            $files = $this->uploadTicketAttachments($ticketId);
+            if (!empty($files['Attachments'])) {
+                $comment_model->where('CommentID', $commentId)
+                    ->update(['Attachments' => $files['Attachments']]);                
+            }
+            
             $this->model->insertRow($ticketsData, $ticketId);
             $message = $commentsData['Comments'];
             

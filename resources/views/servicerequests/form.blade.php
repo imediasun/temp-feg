@@ -1,4 +1,5 @@
-{{--*/      $ID = @$row['id']                   /*--}}
+{{--*/      use App\Library\FEG\System\FEGSystemHelper;                   /*--}}
+{{--*/      $ID = @$row['TicketID']             /*--}}
 {{--*/      $isEdit = !empty($ID)               /*--}}
 {{--*/      $entryBy = empty($row['entry_by']) ? $uid : $row['entry_by']  /*--}}
 @if($setting['form-method'] =='native')
@@ -13,7 +14,7 @@
 @endif	
 			{!! Form::open(array('url'=>'servicerequests/save/'.$row['TicketID'], 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'sbticketFormAjax')) !!}
 
-		<input type="hidden" name='assign_to' value="{{$row['assign_to']}}">        
+		<input type="hidden" name='assign_to' value="{{ $row['assign_to']}}">        
 		<input type="hidden" name='entry_by' value="{{ $entryBy }}">
 		<div class="col-md-12">
 						<fieldset><legend>Create Ticket</legend>
@@ -214,7 +215,7 @@
 					@foreach($row['file_path'] as $files)
 						@if(file_exists('.'.$files) && $files !='')
 						<li id="cr-<?php echo $cr;?>" class="">							
-							<a href="{{ url('/'.$files) }}" target="_blank" >{{ $files }}</a> 
+							<a href="{{ url('/'.$files) }}" target="_blank" >{{  FEGSystemHelper::getSanitizedFileNameForTicketAttachments($files, 50) }}</a> 
 							<span class="pull-right" rel="cr-<?php echo $cr;?>" onclick=" $(this).parent().remove();"><i class="fa fa-trash-o  btn btn-xs btn-danger"></i></span>
 							<input type="hidden" name="currfile_path[]" value="{{ $files }}"/>
 							<?php ++$cr;?>
@@ -231,9 +232,12 @@
 				  </div> </fieldset>
 			</div>
 			
-												
-								
-						
+            @if ($isEdit)
+                {!! Form::hidden('Created', $row['Created']) !!}
+                {!! Form::hidden('department_id', $row->department_id) !!}
+                {!! Form::hidden('assign_to', $row->assign_to) !!}
+                {!! Form::hidden('game_id', $row->game_id) !!}								
+			@endif
 			<div style="clear:both"></div>	
 							
 			<div class="form-group">
