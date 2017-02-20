@@ -1133,7 +1133,7 @@ class SiteHelpers
                     $row =  explode(":",$opt[$i]);
                     $opts .= "<option value ='".$row[0]."' > ".$row[1]." </option> ";
                 }
-                $form = "<select name='$field{$bulk}' class='form-control' $mandatory ><option value=''> -- Select  -- </option>$opts</select>";
+                $form = "<select name='$field{$bulk}' class='sel-inline' $mandatory ><option value=''> -- Select  -- </option>$opts</select>";
                 break;
 
         }
