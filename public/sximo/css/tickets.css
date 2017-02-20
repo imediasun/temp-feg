@@ -171,12 +171,26 @@
     color: #666;
 }
 
+
 .file_pathUpl input,
 .attachmentInputs input {
     margin: 10px;
     width: 100%;
 }
 
+.uploadedLists {
+    margin: 20px 0;
+    list-style: none;
+    padding: 0;
+}
+
+.uploadedLists li {
+    padding: 0;
+    margin: 5px 0;
+    display: block;
+}
+
+.uploadedLists li a::before,
 .attachmentLink::before {
     content: url(icons/external-link-icon.png);
     margin: 4px;content: url('icons/external-link-icon.png');

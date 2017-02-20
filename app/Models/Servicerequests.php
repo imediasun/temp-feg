@@ -9,7 +9,8 @@ class Servicerequests extends Observerable  {
 
     protected $table = 'sb_tickets';
     protected $primaryKey = 'TicketID';
-
+    public $timestamps = false;
+    
     public function __construct() {
         parent::__construct();
 

@@ -16,9 +16,10 @@ class Ticketfollowers extends Model {
         elseif (is_array($user)) {
             $users = $user;
         }
+        $location = \App\Models\Servicerequests::where('TicketId', $ticketId)->pluck('location_id');
         foreach($users as $userId) {
             $id = self::where('ticket_id', $ticketId)->where('user_id', $userId)->pluck('id');
-            $isDefault = self::isDefaultFollower($userId);
+            $isDefault = self::isDefaultFollower($userId, $location);
             if (is_null($id)) {
                 if (!$isDefault || $role != 'requester') {
                     self::insert([
@@ -193,13 +194,20 @@ class Ticketfollowers extends Model {
         }
         
         $groupUsers = FEGSystemHelper::getGroupsUserIds($userGroups, $location);
-        $individualUsers = explode(',', $individuals);
+        $individualUsers = FEGSystemHelper::getLocationUserIds($location, $individuals);
         $users = array_diff(array_unique(array_merge($groupUsers, $individualUsers)), ['', null]);        
         
         return $users;        
     }
     
-    public static function isDefaultFollower($user) {
+    public static function isDefaultFollower($user, $location = null) {
+        
+        if (!empty($location)) {
+            $userInLocation = FEGSystemHelper::getLocationUserIds($location, $user);
+            if (empty($userInLocation)) {
+                return false;
+            }
+        }
         $groupId = \SiteHelpers::getUserGroup($user);
         $settings = ticketsetting::getSettings();
         $userGroups  = $settings['role2'].','.$settings['role5'];

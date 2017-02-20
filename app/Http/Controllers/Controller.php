@@ -10,6 +10,7 @@ use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
 use Validator, Input, Redirect;
+use App\Library\FEG\System\FEGSystemHelper;
 
 
 abstract class Controller extends BaseController
@@ -261,80 +262,79 @@ abstract class Controller extends BaseController
 
                     if ($f['type'] == 'file') {
 
-
+                        $skipFor = array('sb_tickets', 'sb_ticketcomments');
+                        $dataForTable = $this->info['config']['table_db'];
+                        
                         $files = '';
-                        if (isset($f['option']['image_multiple']) && $f['option']['image_multiple'] == 1) {
+                        $isMultiple = isset($f['option']['image_multiple']) 
+                                    && $f['option']['image_multiple'] == 1;
+                            
+                        if ($isMultiple) {
 
                             if (isset($_POST['curr' . $field])) {
                                 $curr = '';
+                                $fileList = [];
                                 for ($i = 0; $i < count($_POST['curr' . $field]); $i++) {
-                                    $files .= $_POST['curr' . $field][$i] . ',';
+                                    $fileName = $_POST['curr' . $field][$i];
+                                    $fileList[] = $fileName;
                                 }
+                                $files = implode(',', $fileList);
                             }
-
-                            if (!is_null(Input::file($field))) {
-                                if( $this->info['config']['table_db'] == "sb_tickets" || $this->info['config']['table_db'] == "sb_ticketcomments")
-                                {
-                                    $destinationPath = '.' . $f['option']['path_to_upload'].'/'.date('Y-m-d');
-                                    if (!file_exists($destinationPath)) {
-                                        mkdir($destinationPath, 0777, true);
-                                    }
-                                }
-                                else
-                                {
+                                
+                            if (!in_array($dataForTable, $skipFor)) {
+                        
+                                if (!is_null(Input::file($field))) {
+                                    
                                     $destinationPath = '.' . $f['option']['path_to_upload'];
-                                }
-
-                                foreach ($_FILES[$field]['tmp_name'] as $key => $tmp_name) {
-                                    $file_name = $_FILES[$field]['name'][$key];
-                                    $file_tmp =$_FILES[$field]['tmp_name'][$key];
-                                    $temp = explode(".", $_FILES[$field]['name'][$key]);
-                                    $newfilename = round(microtime(true)) . '.' . end($temp);
-                                    if ($file_name != '') {
-                                        move_uploaded_file($file_tmp, $destinationPath . '/' . $newfilename);
-                                        if( $this->info['config']['table_db'] == "sb_tickets" || $this->info['config']['table_db'] == "sb_ticketcomments") {
-                                            $files .= date('Y-m-d').'/'.$newfilename . ',';
-                                        }
-                                        else
-                                        {
+                                    
+                                    foreach ($_FILES[$field]['tmp_name'] as $key => $tmp_name) {
+                                        $file_name = $_FILES[$field]['name'][$key];
+                                        $file_tmp =$_FILES[$field]['tmp_name'][$key];
+                                        $temp = explode(".", $_FILES[$field]['name'][$key]);
+                                        $newfilename = round(microtime(true)) . '.' . end($temp);
+                                        if ($file_name != '') {
+                                            move_uploaded_file($file_tmp, $destinationPath . '/' . $newfilename);
                                             $files .= $newfilename . ',';
-                                        }
-                                   }
+                                       }
 
+                                    }
+                                    if ($files != '') $files = substr($files, 0, strlen($files) - 1);
                                 }
-                                if ($files != '') $files = substr($files, 0, strlen($files) - 1);
                             }
+                            
                             $data[$field] = $files;
-
 
                         }
                         else {
 
+                            if (!in_array($dataForTable, $skipFor)) {
+    
+                                if (!is_null(Input::file($field))) {
 
-                            if (!is_null(Input::file($field))) {
-
-                                $file = Input::file($field);
-                                $destinationPath = public_path() . $f['option']['path_to_upload'];
-                                $filename = $file->getClientOriginalName();
-                                $extension = $file->getClientOriginalExtension(); //if you need extension of the file
-                                $rand = rand(1000, 100000000);
-                                $newfilename = strtotime(date('Y-m-d H:i:s')) . '-' . $rand . '.' . $extension;
-                                $uploadSuccess = $file->move($destinationPath, $newfilename);
-                                if ($f['option']['resize_width'] != '0' && $f['option']['resize_width'] != '') {
-                                    if ($f['option']['resize_height'] == 0) {
-                                        $f['option']['resize_height'] = $f['option']['resize_width'];
+                                    $file = Input::file($field);
+                                    $destinationPath = public_path() . $f['option']['path_to_upload'];
+                                    $filename = $file->getClientOriginalName();
+                                    $extension = $file->getClientOriginalExtension(); //if you need extension of the file
+                                    $rand = rand(1000, 100000000);
+                                    $newfilename = strtotime(date('Y-m-d H:i:s')) . '-' . $rand . '.' . $extension;
+                                    $uploadSuccess = $file->move($destinationPath, $newfilename);
+                                    if ($f['option']['resize_width'] != '0' && $f['option']['resize_width'] != '') {
+                                        if ($f['option']['resize_height'] == 0) {
+                                            $f['option']['resize_height'] = $f['option']['resize_width'];
+                                        }
+                                        $orgFile = $destinationPath . '/' . $newfilename;
+                                        \SiteHelpers::cropImage($f['option']['resize_width'], $f['option']['resize_height'], $orgFile, $extension, $orgFile);
                                     }
-                                    $orgFile = $destinationPath . '/' . $newfilename;
-                                    \SiteHelpers::cropImage($f['option']['resize_width'], $f['option']['resize_height'], $orgFile, $extension, $orgFile);
-                                }
 
-                                if ($uploadSuccess) {
-                                    $data[$field] = $newfilename;
+                                    if ($uploadSuccess) {
+                                        $data[$field] = $newfilename;
+                                    }
+                                } else {
+                                    unset($data[$field]);
                                 }
-                            } else {
-                                unset($data[$field]);
-                            }
+                            }                            
                         }
+
                     }
 
                     // if post is checkbox

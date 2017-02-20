@@ -7,7 +7,8 @@ class Ticketcomment extends Sximo  {
 	
 	protected $table = 'sb_ticketcomments';
 	protected $primaryKey = 'CommentID';
-
+    public $timestamps = false;
+    
 	public function __construct() {
 		parent::__construct();
 		

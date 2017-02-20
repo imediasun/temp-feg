@@ -4,6 +4,7 @@ namespace App\Library\FEG\System;
 
 use PDO;
 use DB;
+use File;
 use Carbon\Carbon;
 use App\Library\MyLog;
 use PHPMailer;
@@ -811,6 +812,9 @@ class FEGSystemHelper
     }    
 
     public static function getGroupsUserEmails($groups = null, $location = null) {
+        if (is_array($groups)) {
+            $groups = implode(',', $groups);
+        }        
         $groups = self::split_trim_join($groups);
         $q = "SELECT U.id, U.group_id, UL.location_id, U.email FROM users U 
                     LEFT JOIN user_locations UL ON UL.user_id = U.id
@@ -834,10 +838,14 @@ class FEGSystemHelper
         return $emails;
     }
     public static function getGroupsUserIds($groups = null, $location = null) {
+        if (is_array($groups)) {
+            $groups = implode(',', $groups);
+        }        
         $groups = self::split_trim_join($groups);
-        $q = "SELECT U.id, U.group_id, UL.location_id, U.email FROM users U 
-                LEFT JOIN user_locations UL ON UL.user_id = U.id
+        $q = "SELECT U.id, U.group_id, UL.location_id, U.email 
+                FROM users U 
                 LEFT JOIN tb_groups G ON G.group_id = U.group_id
+                LEFT JOIN user_locations UL ON UL.user_id = U.id
                 LEFT JOIN location L ON L.id = UL.location_id
                 WHERE U.active=1 AND L.active=1 ";
         if (!empty($groups)) {
@@ -856,7 +864,32 @@ class FEGSystemHelper
         }
         return array_unique($uids);
     }
+    public static function getLocationUserIds($location = null, $users = null) {
+        if (is_array($users)) {
+            $users = implode(',', $users);
+        }        
+        $users = self::split_trim_join($users);
+        $q = "SELECT DISTINCT users.id FROM users 
+            LEFT JOIN user_locations ON user_locations.user_id = users.id
+            WHERE users.active=1 ";
+        if (!empty($users)) {
+            $q .= " AND users.id IN ($users)";
+        }
+        if (!empty($users)) {
+            $q .= " AND user_locations.location_id IN ($location)";            
+        }
+        $data = DB::select($q);
+        $ids = array();
+        foreach($data as $row) {
+            $id = $row->id;
+            $ids[] = trim($id);
+        }
+        return $ids;
+    }    
     public static function getUserEmails($users = null, $location = null) {
+        if (is_array($users)) {
+            $users = implode(',', $users);
+        }        
         $users = self::split_trim_join($users);
         $q = "SELECT DISTINCT email FROM users 
             LEFT JOIN user_locations ON user_locations.user_id = users.id
@@ -1031,25 +1064,63 @@ $message
         $datePosted = \DateHelpers::formatDate($isInitialTicketData ? $data->Created : $data->Posted);
         $attachments = [];
         if (!empty($fileNamesCSV)) {
-            $files = explode(',', $fileNamesCSV);
+            $files = explode(',', $fileNamesCSV);            
             foreach($files as $file) {
-                $url = url().'/uploads/tickets/'. 
-                        ($isInitialTicketData?$file: "comments-attachments/$file");
-                $fileName =  $file;
-                if (strlen($file) > 20) {
-                    $fileName =  substr($file,0,20).'.'.substr(strrchr($file,'.'),1);
+                if (!empty($file)) {
+                    $url = url().$file;
+                    $fileName =  self::getSanitizedFileNameForTicketAttachments($file);                
+                    $attachments[] = [
+                        'url' => $url,
+                        'fileName' => $fileName,
+                        'date' => $datePosted
+                    ];                    
                 }
                 
-                $attachments[] = [
-                    'url' => $url,
-                    'fileName' => $fileName,
-                    'date' => $datePosted
-                ];
             }
         }
         
         return $attachments;
     }    
 
+     /**
+     * This works on paths relative to public folder
+     * 
+     * @param type $basename
+     * @param type $path
+     * @return string The possibly modified filename (without the path)
+     */
+    public static function possiblyRenameFileToResolveDuplicate($basename, $path) {
+        $fileParts = pathinfo($basename);
+        $ext = empty($fileParts['extension']) ? '' : $fileParts['extension'];
+        $filename = $fileParts['filename'];
+        $newBasename = $filename . (empty($ext) ? "" : ('.' . $ext));
+        $path = preg_replace('/([^\/]$)/', '$1/', $path);
+        $copyCount = 0;
+        $filepath = $path . $newBasename;
+        if (!File::exists($path)) {
+            File::makeDirectory($path, 0777, true, true);
+        }
+        while (File::exists($filepath)) {
+            $newBasename = $filename . ('--'.++$copyCount).(empty($ext) ? "" : ('.' . $ext));
+            $filepath = $path . $newBasename;            
+        }
+        return $newBasename;
+    }
     
+    /**
+     * 
+     * @param type $path
+     * @return string trimmed and slim filename
+     */
+    public static function getSanitizedFileNameForTicketAttachments($path, $maxLength = 25) {
+        $fileParts = pathinfo($path);
+        $ext = empty($fileParts['extension']) ? '' : $fileParts['extension'];
+        $fileName = $fileParts['filename'];
+       
+        $fileName  = preg_replace('/--.*$/', '', $fileName);
+        $fileName =  substr($fileName, 0, $maxLength);
+        
+        $newBasename = $fileName . (empty($ext) ? "" : ('.' . $ext));
+        return $newBasename;
+    }
 }
