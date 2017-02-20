@@ -301,9 +301,7 @@ class ManagefegrequeststoreController extends Controller
         $rules = array('qty' => 'required', 'status_id' => 'required');
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
-            $data['qty'] = $request->get('qty');
-            $data['status_id'] = $request->get('status_id');
-            $data['notes'] = $request->get('notes');
+            $data = $this->validatePost('requests',true);
             $id = $this->model->insertRow($data, $id);
             return response()->json(array(
                 'status' => 'success',
