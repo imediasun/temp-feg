@@ -1220,9 +1220,14 @@ function sendPhpEmail($message,$to,$from,$subject,$pdf,$filename,$cc,$bcc)
                 $email = array($email);
             }
             foreach($email as $index => $record){
+                $record = trim($record);
                 if(!filter_var($record, FILTER_VALIDATE_EMAIL)){
                     unset($email[$index]);
                 }
+                else{
+                    $email[$index] = $record;
+                }
+
             }
             return empty($email)?false:$email;
         }
