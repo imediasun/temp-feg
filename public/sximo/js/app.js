@@ -237,7 +237,7 @@ function initiateInlineFormFields(container,url) {
     $('.prod_type_id').change(function(){
 
         //http://sximo/product/comboselect?filter=product_type:id:type_description:request_type_id:1
-        var url_for_prod_sub_type = "http://"+url+"/product/comboselect?filter=product_type:id:type_description:request_type_id:"+$(this).val();
+        var url_for_prod_sub_type = "/product/comboselect?filter=product_type:id:type_description:request_type_id:"+$(this).val();
         //$(this).closest('td').next('td').find('.prod_sub_type_id:first').jCombo(url_for_prod_sub_type);
         $(this).closest('td').next('td').find('.prod_sub_type_id:first').select2('destroy');
         $(this).closest('td').next('td').find('.prod_sub_type_id:first').jCombo(url_for_prod_sub_type);
