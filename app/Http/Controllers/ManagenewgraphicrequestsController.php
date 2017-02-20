@@ -37,7 +37,7 @@ class ManagenewgraphicrequestsController extends Controller
         
         $request = Managenewgraphicrequests::find($id);
         $data = array(
-            'status_id' => 3,
+            'status_id' => 2,
             'aprrove_user_id' => \Session::get('uid'),
             'approve_date' => date('Y-m-d')
         );
