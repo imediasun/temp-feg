@@ -268,7 +268,7 @@ class shopfegrequeststore extends Sximo  {
                     $headers  = "From: $from\r\nReply-to: $from\r\n";
                     $headers .= 'MIME-Version: 1.0' . "\r\n";
                     $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
-                    mail("adnanali199@gmail.com", $subject, $message, $headers);
+                    mail($to, $subject, $message, $headers);
                     Log::info("**Send Graphic Request Email => ",[$to, $subject, $message, $headers]);
                    return $last_inserted_id;
     }
