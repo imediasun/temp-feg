@@ -80,9 +80,10 @@ class ConfigController extends Controller
 
             $filename = base_path() . '/setting.php';
             $fp = fopen($filename, "w+");
-            fwrite($fp, $val);
-            fclose($fp);
-            return Redirect::to('feg/config')->with('messagetext', 'Setting Has Been Save Successful')->with('msgstatus', 'success');
+            if(fwrite($fp, $val) !== FALSE){
+                fclose($fp);
+                return Redirect::to('feg/config')->with('messagetext', 'Setting Has Been Save Successful')->with('msgstatus', 'success');
+            }
         } else {
             return Redirect::to('feg/config')->with('messagetext', 'The following errors occurred')->with('msgstatus', 'success')
                 ->withErrors($validator)->withInput();
