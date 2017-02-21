@@ -127,7 +127,7 @@ class ManagefegrequeststoreController extends Controller
     {
 
         $this->getSearchParamsForRedirect();
-        echo \Session::get('searchParams');
+       // echo \Session::get('searchParams');
         $user_level = \Session::get('gid');
         if ($user_level == 2) {
             return redirect('dashboard');
