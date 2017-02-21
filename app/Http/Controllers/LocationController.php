@@ -1,6 +1,7 @@
 <?php namespace App\Http\Controllers;
 
 use App\Http\Controllers\controller;
+use App\Models\Core\Users;
 use App\Models\Location;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
@@ -262,10 +263,11 @@ class LocationController extends Controller
             // users having has_all_locations=1 (all Locations = true)
             // additionally clean orphan user location assignmens
             \SiteHelpers::addLocationToAllLocationUsers($newId, $oldId);
-            
+            Users::SyncActiveUserLocations();
             return response()->json(array(
                 'status' => 'success',
                 'message' => \Lang::get('core.note_success')
+
             ));
 
         } else {
@@ -295,7 +297,7 @@ class LocationController extends Controller
             
             // clean orphan user location assignmens
             \SiteHelpers::cleanUpUserLocations();
-
+            Users::SyncActiveUserLocations();
             return response()->json(array(
                 'status' => 'success',
                 'message' => \Lang::get('core.note_success_delete')
