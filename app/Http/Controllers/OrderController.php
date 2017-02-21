@@ -1217,9 +1217,27 @@ function sendPhpEmail($message,$to,$from,$subject,$pdf,$filename,$cc,$bcc)
     }
     function getMultipleEmails($email)
     {
-        if (strpos($email, ',') != FALSE) {
-            $email = explode(',', $email);
-            return $email;
+
+        if(!empty($email))
+        {
+            if (strpos($email, ',') != FALSE) {
+                $email = explode(',', trim($email,","));
+            }
+            else
+            {
+                $email = array($email);
+            }
+            foreach($email as $index => $record){
+                $record = trim($record);
+                if(!filter_var($record, FILTER_VALIDATE_EMAIL)){
+                    unset($email[$index]);
+                }
+                else{
+                    $email[$index] = $record;
+                }
+
+            }
+            return empty($email)?false:$email;
         }
  else{
      return array($email);

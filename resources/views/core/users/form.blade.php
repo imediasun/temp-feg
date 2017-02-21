@@ -247,8 +247,7 @@
                         <div class="form-group">
                             <div class="col-md-4"></div>
                             <div class="col-md-8">
-                                <p class="bg-info" style="padding: 5px">To allow system to send emails using your gmail account. You must
-                                    turn on less secure apps by clicking <a target="_blank" href="https://www.google.com/settings/u/6/security/lesssecureapps?pageId=none">Here</a></p>
+                                <p class="bg-info" style="padding: 5px">{!! Lang::get('core.gmail_smtp_connect_failed') !!}</p>
                             </div>
                         </div>
 
