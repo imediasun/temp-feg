@@ -242,7 +242,7 @@ class shopfegrequeststore extends Sximo  {
     {
 
         $last_inserted_id=\DB::table('new_graphics_request')->insertGetId($data);
-        $locationName = $this->get_location_info_by_id($data['location_id'], 'location_name_short');
+        $locationName = $this->get_location_info_by_id($data['location_id'], 'location_name');
         $game_info=explode('-',$data['description']);
         $mangeGraphicRequestURL = url("managenewgraphicrequests");
         $graphicApproveLink = "http://{$_SERVER['HTTP_HOST']}/managenewgraphicrequests/approve/$last_inserted_id";
