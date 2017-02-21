@@ -916,6 +916,7 @@ class SiteHelpers
                     if($option['lookup_table'] =='location')
                     {
                         $lookupParts = explode('|',$option['lookup_value']);
+
                         if(is_array($lookupParts) && !empty($lookupParts)){
                             $option['lookup_value'] = $lookupParts[0];
                         }
@@ -925,17 +926,19 @@ class SiteHelpers
                         foreach ($user_ids as $user_id)
                         {
                         $locations = DB::table($option['lookup_table'])->where('id',$user_id->location_id)->orderby($option['lookup_value'])->get();
-                        foreach ($locations as $location) {
-                            $value = "";
+                            foreach ($locations as $location) {
+                            $value1 = "";
                             foreach($lookupParts as $lookup){
-                                $value .= $location->$lookup." - ";
+                                $value1 .= $location->$lookup." - ";
                             }
-                            $value = trim($value,' - ');
-                            $opts .= "<option $selected  value='" . $location->$option['lookup_key'] . "' $mandatory > " . $value . " </option> ";
+                           $value1 = trim($value1,' - ');
+                                if ($value == $location->id){
+                                    $selected = 'selected="selected"';
+                                }
+                                else{ $selected=""; }
+                            $opts .= "<option  $selected  value='" . $location->$option['lookup_key'] . "' $mandatory > " . $value1 . " </option> ";
                         }
-
                         }
-
                     }
                     else {
                         $fields = explode("|", $option['lookup_value']);
@@ -961,14 +964,12 @@ class SiteHelpers
                         endforeach;
                     }
                 } else {
-
-
                     $opt = explode("|", $option['lookup_query']);
                     $opts = '';
                     for ($i = 0; $i < count($opt); $i++) {
                         $selected = '';
-                        if ($value == ltrim(rtrim($opt[0]))) $selected = 'selected="selected"';
                         $row = explode(":", $opt[$i]);
+                        if ($value == ltrim(rtrim($row[0]))) $selected = 'selected="selected"';
                         $opts .= "<option $selected value ='" . trim($row[0]) . "' > " . $row[1] . " </option> ";
                     }
 
@@ -978,6 +979,7 @@ class SiteHelpers
                 if (!empty($selectMultiple)) {
                     $multipleClass = "sel-search-multiple";
                 }
+
                 $form = "<select name='$field{$bulk}'  class='form-control select3 sel-search $multipleClass' $mandatory $selectMultiple $simpleSearchOptions>" .
 						(empty($selectMultiple) && !$isSSSFWOBD ? 	"<option value=''> -- Select  -- </option>" : "") .
 						"	$opts

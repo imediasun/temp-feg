@@ -4,7 +4,8 @@
     <div style="position:relative">
         <div style="widtd:50%">
             <p>- BILL TO - <br/>
-                {{ $data[0]['company_name_long'] }} <br/> 1000 Hart Road - Suite 375 <br/>Barrington, IL 6008
+                {{ $data[0]['company_name_long'] }} <br/>
+                1265 Hamilton Parkway<br/>Itasca, Illinois 60143
             </p>
         </div>
         <div style="width:50%; position:absolute; left:50%;top:8px">

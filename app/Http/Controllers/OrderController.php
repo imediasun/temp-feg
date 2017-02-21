@@ -130,6 +130,8 @@ class OrderController extends Controller
     {
         $module_id = \DB::table('tb_module')->where('module_name', '=', 'order')->pluck('module_id');
         $this->data['module_id'] = $module_id;
+        $this->getSearchParamsForRedirect();
+       // echo \Session::get('searchParams');
         if (Input::has('config_id')) {
             $config_id = Input::get('config_id');
             \Session::put('config_id', $config_id);
@@ -180,17 +182,21 @@ class OrderController extends Controller
             'global' => (isset($this->access['is_global']) ? $this->access['is_global'] : 0)
         );
         $isRedirected=\Session::get('filter_before_redirect');
-        if(!empty($isRedirected))
+        if(($isRedirected))
         {
-            $params=\Session::get('params');
-            $order_selected  = null;
+            $order_selected=\Session::get('order_selected');
+            //\Session::put('searchParams',"");
             \Session::put('filter_before_redirect',false);
         }
         else
         {
-            \Session::put('filter_before_redirect',false);
+          // \Session::put('searchParams',"");
+
+           $this->destroyRedirectFilters();
         }
-        \Session::put('params',$params);
+        \Session::put('order_selected',$order_selected);
+       // \Session::put('filter_before_redirect',false);
+        //\Session::put('params',$params);
          $results = $this->model->getRows($params, $order_selected);
          if (count($results['rows']) == 0 and $page != 1) {
             $params['limit'] = $this->info['setting']['perpage'];
@@ -553,9 +559,8 @@ class OrderController extends Controller
 
     function postSaveorsendemail(Request $request)
     {
-
         $type = $request->get('type');
-        $from = \Session::get('eid');//in case non gmail then send email using current login email
+        $from = $request->get('from');
         $order_id = $request->get('order_id');
         if(!isset($type)) {
             $type="configured";
@@ -587,7 +592,7 @@ class OrderController extends Controller
         $opt = $request->get('opt');
         $redirect_module=\Session::get('redirect');
         \Session::put('filter_before_redirect',false);
-        if (empty($to) || $from === "NULL" || empty($from) || $from == "") {
+        if (count($to) == 0 || $from === "NULL" || empty($from) || $from == "") {
             \Session::put('filter_before_redirect',true);
             return response()->json(array(
                 'message' => \Lang::get('core.email_missing_error'),
@@ -617,7 +622,7 @@ class OrderController extends Controller
             elseif ($status == 3)
             {
                 return response()->json(array(
-                    'message' => \Lang::get('core.gmail_smtp_connect_failed'),
+                    'message' => \Lang::get('core.smtp_connect_failed'),
                     'status' => 'error',
 
                 ));
@@ -816,13 +821,6 @@ class OrderController extends Controller
                   * enable stmp detail
                   */
                         $mail = new PHPMailer(); // create a new object
-                        $mail->SMTPOptions = array(
-                            'ssl' => array(
-                                'verify_peer' => false,
-                                'verify_peer_name' => false,
-                                'allow_self_signed' => true
-                            )
-                        );
                         $mail->IsSMTP(); // enable SMTP
                         $mail->Host = 'smtp.gmail.com';
                         $mail->Port = 587; // or 587
@@ -839,6 +837,17 @@ class OrderController extends Controller
                         $mail->Body = $message;
                         //foreach ($to as $t) {
                         $mail->addAddress($to);
+                        //}
+                        /*   if (count($cc) > 0) {
+                            foreach ($cc as $c) {
+                                $mail->addCC($c);
+                            }
+                        }
+                        if (count($bcc) > 0) {
+                            foreach ($bcc as $bc) {
+                                $mail->addBCC($bc);
+                            }
+                        }*/
                         $mail->addReplyTo($google_acc->g_mail);
                         $output = $pdf->output();
                         $file_to_save = public_path() . '/orders/' . $filename;
@@ -866,15 +875,13 @@ function sendPhpEmail($message,$to,$from,$subject,$pdf,$filename,$cc,$bcc)
                         $message->subject($subject);
                         $message->from($from);
                         $message->to($to);
-                        if(!empty($cc))
+                        if(!empty($bcc))
                         {
                             $message->cc($cc);
                         }
-                        if(!empty($bcc))
+                        if(!empty($bcc) && count($bcc) > 0)
                         {
-
                             $message->bcc($bcc);
-
                         }
                         $message->replyTo($from, $from);
                         $message->attachData($pdf->output(), $filename);
@@ -1210,6 +1217,7 @@ function sendPhpEmail($message,$to,$from,$subject,$pdf,$filename,$cc,$bcc)
     }
     function getMultipleEmails($email)
     {
+
         if(!empty($email))
         {
             if (strpos($email, ',') != FALSE) {
@@ -1231,8 +1239,11 @@ function sendPhpEmail($message,$to,$from,$subject,$pdf,$filename,$cc,$bcc)
             }
             return empty($email)?false:$email;
         }
-        return false;
+ else{
+     return array($email);
+ }
     }
+
 
 }
 

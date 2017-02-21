@@ -40,7 +40,11 @@ $(document).ready(function(){
         //reloadData('#{{ $pageModule }}','/sximo/public/order/data');
     }
     else{
-        reloadData('#{{ $pageModule }}','{{ $pageModule }}/data');
+        var searchParams="{{ \Session::get('searchParams') }}";
+        if("{{ \Session::get('filter_before_redirect') }}")
+        reloadData('#{{ $pageModule }}','{{ $pageModule }}/data'+searchParams.replace("&amp;","&"));
+        else
+            reloadData('#{{ $pageModule }}','{{ $pageModule }}/data');
     }
 
 });
