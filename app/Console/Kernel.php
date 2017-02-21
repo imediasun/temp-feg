@@ -18,6 +18,7 @@ class Kernel extends ConsoleKernel
         \App\Console\Commands\AutoCloseOrder::class,
         \App\Console\Commands\Elm5TaskManager::class,
         \App\Console\Commands\CreateDummyOrders::class,
+        \App\Console\Commands\SyncUserLocations::class,
     ];
 
     /**
