@@ -45,7 +45,7 @@ class Users extends Sximo  {
 	{
 
 		$tableName = $params[0];
-		if ($tableName == 'location') {
+		if ($tableName == 'location'){
 			$locations = \DB::table('location')
 				->select('location.*')
 				->where('location.active', 1)->orderBy('location.location_name')
@@ -53,6 +53,24 @@ class Users extends Sximo  {
 			return $locations;
 		} else {
 			return parent::getComboselect($params, $limit, $parent);
+		}
+	}
+	public static function SyncActiveUserLocations(){
+		$users = \DB::select('SELECT  * FROM  users WHERE has_all_locations = 1');
+
+		foreach ($users as $user){
+
+			\DB::select('Delete from user_locations WHERE user_id = '.$user->id);
+
+			$locations = \DB::select('select * from location where active =1 ');
+			foreach ($locations as $location){
+
+				$data = array('user_id' => $user->id,
+					'location_id' => $location->id
+				);
+				\DB::table('user_locations')->insert($data);
+			}
+
 		}
 	}
 }
