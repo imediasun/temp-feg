@@ -49,8 +49,8 @@
     <table id="corepagesTable" class="table table-striped ">
         <thead>
 			<tr>
-				<th class="number"> No </th>
-				<th> <input type="checkbox" class="checkall" /></th>
+				<th width="30" class="number"> No </th>
+				<th width="50"> <input type="checkbox" class="checkall" /></th>
 				
 				@foreach ($tableGrid as $t)
 					@if($t['view'] =='1')
