@@ -322,17 +322,6 @@
     </div>
     <script type="text/javascript">
         var counter = 0;
-        function removeRow(id) {
-            if (counter > 1) {
-                $("#" + id).parents('.clonedInput').remove();
-            }
-            else {
-                notyMessageError('For order there must be 1 minimum item available');
-            }
-            calculateSum();
-            decreaseCounter();
-            return false;
-        }
         var mode = "{{ $data['prefill_type'] }}";
         var PRECISION = '<?php echo  \App\Models\Order::ORDER_PERCISION?>';
         $('#alt_ship_to').on('change', function () {
@@ -346,8 +335,6 @@
                 $("#ship_address").hide();
         }
         function calculateSum() {
-
-
             var Subtotal = 0.00;
             $('table tr.clone ').each(function (i) {
                 Qty = $(this).find("input[name*='qty']").val();
@@ -375,6 +362,17 @@
         $("#po_3").focus(function () {
             $("#po_message").hide(200);
         });
+        function removeRow(id) {
+            if (counter > 1) {
+                $("#" + id).parents('.clonedInput').remove();
+            }
+            else {
+                notyMessageError('For order there must be 1 minimum item available');
+            }
+            calculateSum();
+            decreaseCounter();
+            return false;
+        }
         $(document).ready(function () {
             numberFieldValidationChecks($("input[name^=qty]"));
             var inc = 1;
@@ -542,6 +540,11 @@
                 }
 
             }
+            if(mode=="edit")
+            {
+                counter=requests_item_count;
+            }
+
             $(".calculate").keyup(function () {
                 calculateSum();
             });
