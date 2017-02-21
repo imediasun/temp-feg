@@ -126,7 +126,8 @@ class ManagefegrequeststoreController extends Controller
     public function postData(Request $request)
     {
 
-   // die('here in reload data');
+        $this->getSearchParamsForRedirect();
+        echo \Session::get('searchParams');
         $user_level = \Session::get('gid');
         if ($user_level == 2) {
             return redirect('dashboard');
@@ -181,16 +182,13 @@ class ManagefegrequeststoreController extends Controller
             $view = $request->get('view');
             \Session::put('manage-request-view',$view);
             $isRedirected=\Session::get('filter_before_redirect');
-            if(!empty($isRedirected))
+            if(($isRedirected))
             {
-                $params=\Session::get('params');
+                //die();
+                //$params=\Session::get('params');
                 \Session::put('filter_before_redirect',false);
             }
-            else
-            {
-                \Session::put('filter_before_redirect',false);
-            }
-            \Session::put('params',$params);
+            \Session::put('filter_before_redirect',false);
             $cond = array('view' => $view, 'order_type_id' => $manageRequestInfo['TID'], 'location_id' => $manageRequestInfo['LID'], 'vendor_id' => $manageRequestInfo['VID']);
             $this->data['view'] = $view;
             $results = $this->model->getRows($params, $cond);

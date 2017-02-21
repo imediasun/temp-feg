@@ -940,6 +940,25 @@ abstract class Controller extends BaseController
     function generateRandomString($length = 10) {
         return substr(str_shuffle(str_repeat($x='0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', ceil($length/strlen($x)) )),1,$length);
     }
+    function postSearchParams(Request $request)
+    {
+        \Session::put('searchParams',$request->get('searchParams'));
+    }
+    function getSearchParamsForRedirect()
+    {
+        $url="?";
+        foreach($_GET as $paramName=>$paramValue)
+        {
+            $url .= $paramName."=".$paramValue."&";
+        }
+        $url=substr($url,0,strlen($url)-1);
+        \Session::put('searchParams',$url);
+    }
+    function destroyRedirectFilters()
+    {
+        \Session::forget('filter_before_redirect');
+      //  \Session::put('searchParams',"");
+    }
 
 }
 

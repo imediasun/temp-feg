@@ -124,7 +124,8 @@
         else {
             $('number_requests').hide();
         }
-        reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?view=' + request_type + getFooterFilters());
+
+        reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?view=' + request_type+getFooterFilters()+getSimpleSearchParams());
     });
     function setType() {
         $('#request_type option').each(function () {
@@ -137,14 +138,30 @@
         var request_type = $("#request_type").val();
         reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?config_id=' + $("#col-config").val()+'&view=' + request_type + getFooterFilters());
     });
-
+    function removeParam(key, sourceURL) {
+        var rtn = sourceURL.split("?")[0],
+                param,
+                params_arr = [],
+                queryString = (sourceURL.indexOf("?") !== -1) ? sourceURL.split("?")[1] : "";
+        if (queryString !== "") {
+            params_arr = queryString.split("&");
+            for (var i = params_arr.length - 1; i >= 0; i -= 1) {
+                param = params_arr[i].split("=")[0];
+                if (param === key) {
+                    params_arr.splice(i, 1);
+                }
+            }
+            rtn = rtn + "?" + params_arr.join("&");
+        }
+        return rtn;
+    }
     function pageRefresh(type) {
 
         var url = document.URL;
         var request_type = $("#request_type").val();
         var urlLength = url.length;
         var pos = url.search(type);
-        var get = "?view="+request_type;
+        var get = "?";
         if("{{ $param['sort'] }}")
         {
             get+="&sort="+"{{ $param['sort'] }}";
@@ -206,8 +223,8 @@
                 get+="&v1=T"+$('#order_type').val();
             }
         }
-
-        reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data' + get );
+            get += "&view="+request_type;
+        reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data' + get +getSimpleSearchParams());
 
     }
     $('#delete-cols').click(function(){
@@ -242,5 +259,22 @@
             $('.ajaxLoading').hide();
             return false;
         }
+    }
+    function getSimpleSearchParams()
+    {
+        var test="";
+        $(".simpleSearchContainer .form-control").each(function(){
+
+            var val = $(this).val();
+            if($(this).data("simplesearch")) {
+                if(val !== '' && val !== null)
+                {
+                    test += "&simplesearch=1&search="+$(this).attr('name')+":"+$(this).data('simplesearchoperator')+":"+val+"|";
+                }
+            }
+
+
+        });
+        return test;
     }
 </script>
