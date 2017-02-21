@@ -253,7 +253,7 @@ class shopfegrequeststore extends Sximo  {
 					<b>For Game:</b> '.$game_info[0]  .'<br>
 					<b>Description:</b> '.$data['description'].'<br>
 					<b>Quantity:</b> '.$data['qty'].'<br>
-					<b>Need By Date:</b> '.$data['need_by_date'].'<br><br>
+					<b>Need By Date:</b> '.\DateHelpers::formatDate($data['need_by_date']).'<br><br>
 
 					<em>**Mark/Tom, please click on <a href="'.$graphicApproveLink.'">Approval</a> or <a href="'.$graphicDenyLink.'">Denial</a> <br>
 					to Approve/Deny this graphic request <br><br>
