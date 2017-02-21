@@ -32,7 +32,6 @@ class Kernel extends ConsoleKernel
         //giving error
         //$schedule->command('comments:read')->everyMinute();
         $schedule->command('autocloseorder')->daily();
-        $schedule->command('sync:user_locations')->daily();
         $schedule->command('inspire')->hourly();
         //turning off to allow client to test and avoid from varying counts
         $schedule->command('create:dummy_order')->cron('*/30 * * * * *')->withoutOverlapping();;
