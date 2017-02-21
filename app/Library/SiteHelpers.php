@@ -1085,7 +1085,7 @@ class SiteHelpers
                         $fields = explode("|", $option['lookup_value']);
                         if($option['lookup_table'] == 'order_type')
                         {
-                            $data = DB::table($option['lookup_table'])->where($option['lookup_dependency_key'],'=','1')->orderby($option['lookup_key'])->groupby($option['lookup_key'])->get();
+                            $data = DB::table($option['lookup_table'])->where('can_request','=','1')->orderby($option['lookup_key'])->groupby($option['lookup_key'])->get();
                         }
                         else
                         {
