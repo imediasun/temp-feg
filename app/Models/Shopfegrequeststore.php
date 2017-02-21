@@ -247,7 +247,7 @@ class shopfegrequeststore extends Sximo  {
         $mangeGraphicRequestURL = url("managenewgraphicrequests");
         $graphicApproveLink = "http://{$_SERVER['HTTP_HOST']}/managenewgraphicrequests/approve/$last_inserted_id";
         $graphicDenyLink = "http://{$_SERVER['HTTP_HOST']}/managenewgraphicrequests/deny/$last_inserted_id";
-        $message = '<b>Date Requested:</b> '.$data['request_date'].'<br>
+        $message = '<b>Date Requested:</b> '.\DateHelpers::formatDate($data['request_date']).'<br>
 					<b>Requestor:</b> '.\Session::get('fid').'<br>
 					<b>Location:</b> '.$data['location_id'].' | '.$locationName.'<br>
 					<b>For Game:</b> '.$game_info[0]  .'<br>
@@ -265,7 +265,8 @@ class shopfegrequeststore extends Sximo  {
                     $bcc = '';
                     $subject = 'New Graphics Request for '.$locationName;
                     $message = $message;
-                    $headers = 'MIME-Version: 1.0' . "\r\n";
+                    $headers  = "From: $from\r\nReply-to: $from\r\n";
+                    $headers .= 'MIME-Version: 1.0' . "\r\n";
                     $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
                     mail($to, $subject, $message, $headers);
                     Log::info("**Send Graphic Request Email => ",[$to, $subject, $message, $headers]);
