@@ -72,7 +72,7 @@
 								else
 								{
 									$('#'+id+' td select[name="'+target+'"] option').filter(function(){
-										return this.text == values;
+										return this.text.toLowerCase() == values.toLowerCase();
 									}).prop('selected', true);
 								}
 
