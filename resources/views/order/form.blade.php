@@ -3,7 +3,7 @@
         <div class="sbox-title">
             <h4>
                 <a href="javascript:void(0)" class="collapse-close pull-right btn btn-xs btn-danger"
-                   onclick="ajaxViewClose1('#{{ $pageModule }}')"><i class="fa fa fa-times"></i></a>
+                   onclick="ajaxViewClose('#{{ $pageModule }}')"><i class="fa fa fa-times"></i></a>
             </h4>
         </div>
         <div class="sbox-content">
@@ -391,10 +391,9 @@
                     $("#my-datepicker").datepicker().focus();
                 });
             });
-
             $("#location_id").jCombo("{{ URL::to('order/comboselect?filter=location:id:id|location_name ') }}",
                     {
-                        selected_value: '{{ $data["order_location_id"] }}',
+                        selected_value: "{{ $data["order_loc_id"]}}",
                         initial_text: '-------- Select Location --------'
                     });
 
