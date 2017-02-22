@@ -560,7 +560,7 @@ class OrderController extends Controller
     function postSaveorsendemail(Request $request)
     {
         $type = $request->get('type');
-        $from = $request->get('from');
+        $from = \Session::get('eid');
         $order_id = $request->get('order_id');
         if(!isset($type)) {
             $type="configured";
@@ -875,13 +875,13 @@ function sendPhpEmail($message,$to,$from,$subject,$pdf,$filename,$cc,$bcc)
                         $message->subject($subject);
                         $message->from($from);
                         $message->to($to);
+                        if(!empty($cc))
+                        {
+                           $message->cc($cc);
+                        }
                         if(!empty($bcc))
                         {
-                            $message->cc($cc);
-                        }
-                        if(!empty($bcc) && count($bcc) > 0)
-                        {
-                            $message->bcc($bcc);
+                           $message->bcc($bcc);
                         }
                         $message->replyTo($from, $from);
                         $message->attachData($pdf->output(), $filename);

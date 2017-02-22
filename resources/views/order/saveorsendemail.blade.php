@@ -19,7 +19,6 @@
                         <?php
                         $order_id = \Session::get('order_id');
                         $send_to = \Session::get('send_to');
-                        $from= \Session::get('eid');
                         ?>
                     </div>
                     <div class="row">
@@ -28,7 +27,6 @@
                             true , 'parsley-validate'=>'','novalidate'=>' ','id'=>'saveFormAjax')) !!}
                             <input type="hidden" value="{{ $order_id }}" name="order_id"/>
                             <input type="hidden" value="{{$send_to}}" name="to"/>
-                            <input type="hidden" value="{{$from}}" name="from"/>
                             <input type="hidden" value="" name="message" id="save_message"/>
                             <div class="form-group" style="margin-top:10px;">
                                 <a href="{{ URL::to('order/po/'.$order_id)}}" id="po-link" style="width:33%"
@@ -88,9 +86,9 @@
                                     {!! Form::open(array('url'=>'order/saveorsendemail',
                                     'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>'
                                     ','id'=>'sendFormAjax')) !!}
+
                                     <input type="hidden" value="{{ $order_id }}" name="order_id"/>
                                     <input type="hidden" value="" id="opt" name="opt"/>
-                                    <input type="hidden" value="{{$from}}" name="from"/>
                                     <div class="form-group">
                                         <label class="control-label col-md-4" for="to">To</label>
 
