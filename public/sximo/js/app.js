@@ -298,6 +298,9 @@ function isNumeric(ev) {
 jQuery(document).ready(function($){
     // Adjust main panel's height based on overflowing nav-bar
     autoSetMainContainerHeight();
+    
+    // detect link to possible unauthorised access
+    detectPUAA($);
 });
 
 function updateNativeUIFieldsBasedOn() {
@@ -369,4 +372,42 @@ function renderDropdown(elements, options) {
             }            
         });
     }    
+}
+
+
+function detectPUAA($) {
+    var linksToPage = $(".linkPUAA.linkToCMSPage"),
+        linksToModules = $(".linkPUAA"),
+        ajax;
+
+    linksToModules.on('click', function (e){
+        e.preventDefault();
+        var elm = $(this), 
+            authValidator = "/urlauth/access",
+            url = elm.attr('href');
+            
+        if (ajax && ajax.abort) {
+            ajax.abort();            
+        }
+        
+        ajax = $.ajax({
+            type: 'POST',            
+            url: authValidator,            
+            data: {
+                url: url,
+                isPage: elm.hasClass('linkToCMSPage') * 1
+            },
+            success: function (data) {
+                if(data.status === 'success'){
+                    location.href = url;                    
+                }
+                else {
+                    notyMessageError(data.message);
+                }
+            }
+        });
+        
+        
+    });
+
 }

@@ -122,9 +122,6 @@
                     <th width="200"><?php echo Lang::get('core.btn_action') ;?></th>
                 @endif
             </tr>
-
-			  </tr>
-
         </thead>
 
         <tbody>
