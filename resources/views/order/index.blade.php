@@ -41,10 +41,14 @@ $(document).ready(function(){
     }
     else{
         var searchParams="{{ \Session::get('searchParams') }}";
-        if("{{ \Session::get('filter_before_redirect') }}")
-        reloadData('#{{ $pageModule }}','{{ $pageModule }}/data'+searchParams.replace("&amp;","&"));
+        if("{{ \Session::get('filter_before_redirect')}}")
+        {
+            reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data' + searchParams.replace("&amp;", "&"));
+        }
         else
-            reloadData('#{{ $pageModule }}','{{ $pageModule }}/data');
+        {
+            reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data');
+        }
     }
 
 });
