@@ -383,7 +383,7 @@ function detectPUAA($) {
     linksToModules.on('click', function (e){
         e.preventDefault();
         var elm = $(this), 
-            authValidator = "/feg/urlauth/access",
+            authValidator = "/urlauth/access",
             url = elm.attr('href');
             
         if (ajax && ajax.abort) {
