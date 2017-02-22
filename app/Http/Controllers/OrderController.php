@@ -1085,24 +1085,17 @@ function sendPhpEmail($message,$to,$from,$subject,$pdf,$filename,$cc,$bcc)
             $whereWithVendorCondition = " AND products.vendor_id = $vendorId";
         }
         $results = array();
-        $queries = \DB::select("SELECT *
-                                 FROM products
-                                 WHERE vendor_description LIKE '%$term%' $whereWithVendorCondition and products.inactive=0
-                                 GROUP BY vendor_description
-                                 ORDER BY CASE WHEN vendor_description LIKE '$term%' THEN 0
-                                               WHEN vendor_description LIKE '% %$term% %' THEN 1
-                                               WHEN vendor_description LIKE '%$term' THEN 2
-                                               ELSE 3
-                                          END, vendor_description
+        //fixing for https://www.screencast.com/t/vwFYE3AlF
+        $queries = \DB::select("SELECT LOCATE('plush',vendor_description) AS pos,id,vendor_description 
+                                FROM products
+                                WHERE MATCH(vendor_description) AGAINST ('plush') AND products.inactive=0
+                                GROUP BY vendor_description
+                                ORDER BY pos,vendor_description
                                  Limit 0,10");
         if (count($queries) != 0) {
             foreach ($queries as $query) {
                 $results[] = ['id' => $query->id, 'value' => $query->vendor_description];
             }
-            usort($results, function (&$a, &$b) use ($term) {
-                if (stripos($a["value"], $term) == stripos($b["value"], $term)) return 0;
-                return (stripos($a["value"], $term) < stripos($b["value"], $term)) ? -1 : 1;
-            });
             echo json_encode($results);
         } else {
             echo json_encode(array('id' => 0, 'value' => "No Match"));
