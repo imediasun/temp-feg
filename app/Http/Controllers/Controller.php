@@ -648,7 +648,8 @@ abstract class Controller extends BaseController
                                 $param .= " AND " . $arr[$keys[0]]['alias'] . "." . $keys[0] . " " . self::searchOperation($keys[1]) . " '" . $keys[2] . "' ";
                             }
 
-                        } else {
+                        }
+                        else {
                             $col = $arr[$keys[0]]['alias'] . "." . $keys[0];
                             if ($keys[0] == 'up_user_id' && $arr[$keys[0]]['alias'] == "game_service_history") {
                                 $col = "DATEDIFF(date_up,date_down)";
@@ -658,7 +659,7 @@ abstract class Controller extends BaseController
 
                             $operate = self::searchOperation($keys[1]);
                             if ($operate == 'like') {
-                                $param .= " AND " . $col . " LIKE '%" . $keys[2] . "%%' ";
+                                $param .= " AND " . $col . " LIKE '%" . addslashes($keys[2]) . "%%' ";
                             } else if ($operate == 'is_null') {
                                 $param .= " AND " . $col . " IS NULL ";
 
@@ -666,10 +667,10 @@ abstract class Controller extends BaseController
                                 $param .= " AND " . $col . " IS NOT NULL ";
 
                             } else if ($operate == 'between') {
-                                $param .= " AND (" . $col . " BETWEEN '" . $keys[2] . "' AND '" . $keys[3] . "' ) ";
+                                $param .= " AND (" . $col . " BETWEEN '" . addslashes($keys[2]) . "' AND '" . ($keys[3]) . "' ) ";
                             } else {
 
-                                $param .= " AND " . $col . " " . self::searchOperation($keys[1]) . " '" . $keys[2] . "' ";
+                                $param .= " AND " . $col . " " . self::searchOperation($keys[1]) . " '" . addslashes($keys[2]) . "' ";
 
                             }
                         }

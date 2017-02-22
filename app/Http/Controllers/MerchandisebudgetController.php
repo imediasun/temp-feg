@@ -273,14 +273,14 @@ class MerchandisebudgetController extends Controller
                         if ($arr[$keys[0]]['type'] == 'select' || $arr[$keys[0]]['type'] == 'radio') {
                             if ($keys[0] == "budget_date") {
                                 \Session::put('budget_year', $keys[2]);
-                                $param .= " AND " . "YEAR(" . $arr[$keys[0]]['alias'] . "." . $keys[0] . ") " . self::searchOperation($keys[1]) . " '" . $keys[2] . "' ";
+                                $param .= " AND " . "YEAR(" . $arr[$keys[0]]['alias'] . "." . $keys[0] . ") " . self::searchOperation($keys[1]) . " '" . addslashes($keys[2]) . "' ";
                             } else {
-                                $param .= " AND " . $arr[$keys[0]]['alias'] . "." . $keys[0] . " " . self::searchOperation($keys[1]) . " '" . $keys[2] . "' ";
+                                $param .= " AND " . $arr[$keys[0]]['alias'] . "." . $keys[0] . " " . self::searchOperation($keys[1]) . " '" . addslashes($keys[2]) . "' ";
                             }
                         } else {
                             $operate = self::searchOperation($keys[1]);
                             if ($operate == 'like') {
-                                $param .= " AND " . $arr[$keys[0]]['alias'] . "." . $keys[0] . " LIKE '%" . $keys[2] . "%%' ";
+                                $param .= " AND " . $arr[$keys[0]]['alias'] . "." . $keys[0] . " LIKE '%" . addslashes($keys[2]) . "%%' ";
                             } else if ($operate == 'is_null') {
                                 $param .= " AND " . $arr[$keys[0]]['alias'] . "." . $keys[0] . " IS NULL ";
 
@@ -288,9 +288,9 @@ class MerchandisebudgetController extends Controller
                                 $param .= " AND " . $arr[$keys[0]]['alias'] . "." . $keys[0] . " IS NOT NULL ";
 
                             } else if ($operate == 'between') {
-                                $param .= " AND (" . $arr[$keys[0]]['alias'] . "." . $keys[0] . " BETWEEN '" . $keys[2] . "' AND '" . $keys[3] . "' ) ";
+                                $param .= " AND (" . $arr[$keys[0]]['alias'] . "." . $keys[0] . " BETWEEN '" . addslashes($keys[2]) . "' AND '" . addslashes($keys[3]) . "' ) ";
                             } else {
-                                $param .= " AND " . $arr[$keys[0]]['alias'] . "." . $keys[0] . " " . self::searchOperation($keys[1]) . " '" . $keys[2] . "' ";
+                                $param .= " AND " . $arr[$keys[0]]['alias'] . "." . $keys[0] . " " . self::searchOperation($keys[1]) . " '" . addslashes($keys[2]) . "' ";
                             }
                         }
                     endif;
