@@ -882,6 +882,7 @@ function sendPhpEmail($message,$to,$from,$subject,$pdf,$filename,$cc,$bcc)
                         $message->subject($subject);
                         $message->from($from);
                         $message->to($to);
+
                         if(!empty($cc))
                         {
                            $message->cc($cc);
@@ -1241,7 +1242,7 @@ function sendPhpEmail($message,$to,$from,$subject,$pdf,$filename,$cc,$bcc)
             return empty($email)?false:$email;
         }
  else{
-     return array($email);
+     return $email;
  }
     }
 
