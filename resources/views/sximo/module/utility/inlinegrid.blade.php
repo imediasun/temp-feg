@@ -5,10 +5,6 @@
    }
 
 	$(document).ready(function() {
-
-
-//$('.date').datepicker({format:'mm/dd/yyyy',autoClose:true});
-	//initiateInlineFormFields($('#form-0 td'));
 	$('.editable').dblclick(function(){
 		editablerowscount++;
         if(editablerowscount==1) {
@@ -23,43 +19,23 @@
         displayEditableSaveButton();
 
 		    var id = $(this).attr("id");
-			//console.log("======"+id+"======");
 			$('#form-0 td').each(function(){
 				var val = $(this).attr("data-form");
 				var format = $(this).attr("data-form-type");
-				//console.log(format+"===="+val);
 				if( val !== undefined && val !== 'action' )
 				{
 
 					var h = $(this).html();	
 
 					$('#'+id+' td').each(function() {
-						//console.log($(this));
-
 						var target = $(this).attr('data-field');
 						var values = $(this).attr('data-values');
 						var data_format = $(this).attr('data-format');
-						//console.log(target+"===="+values+"===="+data_format);
-						//console.log("=====");
 						if( target !== undefined && target !== 'action' && target == val)
 						{
 							$(this).html(h);
 
 							if(format =='select'){
-								//console.log($('#'+id+' td select[name="'+target+'"]'));
-								//var data = $('#'+id+' td select[name="'+target+'"]').select2('data');
-								//console.log('#'+id+' td select[name="'+target+'"]');
-								//var data = $('#'+id+' td select[name="'+target+'"]').select2();
-								//console.log(data);
-								//$('#'+id+' td select[name="'+target+'"]').empty().select2($.extend(data, { data: data }));
-								//$('#'+id+' td select[name="'+target+'"]').html( data );
-								//$('#'+id+' td select[name="'+target+'"]').select2({});
-								//$('#'+id+' td select[name="'+target+'"]').html();
-								//$('#'+id+' td select[name="'+target+'"]').select({data: data});
-								//console.log(JSON.stringify(data));
-								//$('#'+id+' td select[name="'+target+'"]').select2('destroy').empty().select2({data: data});
-								//$('#'+id+' td select[name="'+target+'"]').select2('destroy').empty().select2({data: [data]});;
-
 								if($.isNumeric(values))
 								{
 									$('#'+id+' td option[value="'+values+'"]').attr('selected','selected');
@@ -106,12 +82,6 @@
 			})
 			$('#'+id+' .action').hide();
 			$('#'+id+' .actionopen').show();
-			//console.log(id);
-		//$('#'+ id + ' td').find('.sel-inline').select2('destroy');
-		//var data = $('#'+ id + ' td').find('.sel-inline').data('select2');
-		//$('#'+ id + ' td').find('.sel-inline').select2('destroy').empty().select2(data);
-		//$('#'+ id + ' td').find('.sel-inline').select2('destroy').empty().select2({data: [{id: 1, text: 'new text'}]})
-		//var data = $('#'+ id + ' td').find('.sel-inline').data('select2');
             initiateInlineFormFields($('#'+ id + ' td'),"{{url()}}");
 		});
 });
@@ -154,7 +124,6 @@ function saved( id )
     $("#"+id).removeClass('inline_edit_applied');
 	var myId = id.split('-');
 	var datas = $('#'+id+' td :input').serialize();
-	//console.log(JSON.stringify(datas));
 	$('#'+id+' .action').show();
 	$('.ajaxLoading').show();	
 	$.post( '{{$pageModule}}/save/'+myId[1] ,datas, function( data ) {
