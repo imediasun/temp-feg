@@ -41,8 +41,8 @@ class CreateDummyOrders extends Command
      */
     public function handle()
     {
-        //execute dummy orders in staging environment only
-        if (env('SCENE', 'development') !== 'staging') {
+        //execute dummy orders if required
+        if (env('AUTOCREATE_DUMMY_ORDERS', false) !== true) {
             return;
         }        
         $this->startDate = '2017-01-01';

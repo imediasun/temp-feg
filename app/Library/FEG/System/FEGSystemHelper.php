@@ -478,7 +478,7 @@ class FEGSystemHelper
             $from = "support@fegllc.com";
         }
         
-        $preventEmailSendingSetting = env('PREVENT_FEG_SYSTEM_EMAIL', false);        
+        $preventEmailSendingSetting = env('PREVENT_FEG_SYSTEM_EMAIL', true);        
         if (!$preventEmailSendingSetting)  {
             if (!isset($options['attach']) || !empty($options['usePHPMail'])) {
                 self::phpMail($to, $subject, $message, $from, $options);                
@@ -875,7 +875,7 @@ class FEGSystemHelper
         if (!empty($users)) {
             $q .= " AND users.id IN ($users)";
         }
-        if (!empty($users)) {
+        if (!empty($location)) {
             $q .= " AND user_locations.location_id IN ($location)";            
         }
         $data = DB::select($q);
@@ -897,7 +897,7 @@ class FEGSystemHelper
         if (!empty($users)) {
             $q .= " AND users.id IN ($users)";
         }
-        if (!empty($users)) {
+        if (!empty($location)) {
             $q .= " AND user_locations.location_id IN ($location)";            
         }
         $data = DB::select($q);

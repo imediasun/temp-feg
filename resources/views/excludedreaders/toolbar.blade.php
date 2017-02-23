@@ -19,8 +19,11 @@
             @endif value={{ $configs['config_id'] }}> {{ $configs['config_name'] }}   </option>
             @endforeach
         </select>
-        <a id="edit-cols" href="{{ URL::to('tablecols/arrange-cols/'.$pageModule.'/edit') }}" class="btn btn-sm btn-white"
-           onclick="SximoModal(this.href,'Column Selector'); return false;"><i class="fa fa-bars"></i> Edit Columns Arrangement</a>
+        @if(\Session::get('uid') ==  \SiteHelpers::getConfigOwner($config_id))
+            <a id="edit-cols" href="{{ URL::to('tablecols/arrange-cols/'.$pageModule.'/edit') }}" class="btn btn-sm btn-white tips"
+               onclick="SximoModal(this.href,'Column Selector'); return false;" title="Edit Arrange">  <i class="fa fa-pencil-square-o"></i></a>
+            <button id="delete-cols" href="{{ URL::to('tablecols/arrange-cols/'.$pageModule.'/delete') }}" class="btn btn-sm btn-white tips" title="Clear Arrange">  <i class="fa fa-trash-o"></i></button>
+        @endif
         @endif
         @endif
     </div>

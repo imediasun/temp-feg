@@ -162,7 +162,7 @@
         }
     }
     $("#game_title_id").on('change',function(){
-getGameName();
+        getGameName();
     });
     function getGameName()
     {
