@@ -168,7 +168,14 @@
 							<option value=""> -- Select Module or Page -- </option>
 							<optgroup label="Module ">
 							@foreach($modules as $mod)
-								<option value="{{ $mod->module_name}}"
+                                <?php                                
+                                    $moduleConfig = \SiteHelpers::CF_decode_json($mod->module_config);
+                                    $moduleRoute = $mod->module_name;
+                                    if (isset($moduleConfig['setting']['module_route'])) {
+                                        $moduleRoute = $moduleConfig['setting']['module_route'];
+                                    }                                    
+                                ?>
+								<option value="{{ $moduleRoute }}"
 								@if($row['module']== $mod->module_name ) selected="selected" @endif
 								>{{ $mod->module_title}}</option>
 							@endforeach

@@ -58,10 +58,18 @@
         <div class="form-group">
           <label for="ipt" class=" control-label col-md-4"> Module Target </label>
         <div class="col-md-8">
-              <select name="module" id="module" required="true" class="form-control">
-              <option value="">-- Select Module --</option> 
-              <?php foreach($modules as $module) {?>
-                <option value="<?php echo $module['module_name'];?>"  ><?php echo $module['module_title'];?></option>
+            <select name="module" id="module" required="true" class="form-control">
+            <option value="">-- Select Module --</option> 
+            <?php foreach($modules as $module) {?>
+                <?php                                
+                    $moduleConfig = \SiteHelpers::CF_decode_json($module['module_config']);
+                    $moduleRoute = $module['module_name'];
+                    if (isset($moduleConfig['setting']['module_route'])) {
+                        $moduleRoute = $moduleConfig['setting']['module_route'];
+                    }                                    
+                ?>            
+                <option value="{{ $module['module_name'] }}"              
+                    ><?php echo $module['module_title'];?></option>
               <?php } ?>
                     </select>
          </div> 

@@ -31,6 +31,8 @@ class GenericReports
         FEGSystemHelper::sendSystemEmail(array_merge($emailRecipients, array(
             'subject' => "NEW Game $gameTitle has been received at $locationId", 
             'message' => $message, 
+            'from' => 'support@fegllc.com',
+            'fromName' => 'Family Entertainment Group',
             'isTest' => env('SEND_NEW_GAME_RECEIVED_EMAIL_TO_TEST_RECIPIENT', false),
             'configName' => $configName,
             'configNamePrefix' => '',

@@ -185,6 +185,7 @@ class Sximo extends Model {
             }
             $data['field'] = $field;
             $data['setting'] = array(
+                'module_route' => (isset($data['config']['setting']['module_route']) ? $data['config']['setting']['module_route'] : $r->module_id),
                 'gridtype' => (isset($data['config']['setting']['gridtype']) ? $data['config']['setting']['gridtype'] : 'native'),
                 'orderby' => (isset($data['config']['setting']['orderby']) ? $data['config']['setting']['orderby'] : $r->module_db_key),
                 'ordertype' => (isset($data['config']['setting']['ordertype']) ? $data['config']['setting']['ordertype'] : 'asc'),

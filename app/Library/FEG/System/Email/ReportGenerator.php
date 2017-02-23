@@ -1820,6 +1820,8 @@ class ReportGenerator
     }
     
     public static function sendEmailReport($options) {  
+        $options['from'] = "support@fegllc.com";
+        $options['fromName'] = "FEG Reports";
         FEGSystemHelper::sendSystemEmail($options);
     }
     
