@@ -38,9 +38,6 @@ class AutoCloseOrder extends Command
      */
     public function handle()
     {
-        if (env('SCENE', 'development') == 'production') {
-            return;
-        }
         $user_id = -1;
         $notes = 'close by cron job';
         $orders  = \DB::select("Select date_ordered, id FROM orders WHERE status_id != 2 AND date_ordered <= DATE_ADD(CURDATE(), INTERVAL -15 DAY) limit 0,10");
