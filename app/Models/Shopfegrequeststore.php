@@ -1,5 +1,6 @@
 <?php namespace App\Models;
 
+use App\Library\FEG\System\FEGSystemHelper;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use Log;
@@ -240,13 +241,14 @@ class shopfegrequeststore extends Sximo  {
 
     function newGraphicRequest($data)
     {
-
+        $configName = 'Request new custom graphics email';
         $last_inserted_id=\DB::table('new_graphics_request')->insertGetId($data);
         $locationName = $this->get_location_info_by_id($data['location_id'], 'location_name');
         $game_info=explode('-',$data['description']);
         $mangeGraphicRequestURL = url("managenewgraphicrequests");
         $graphicApproveLink = "http://{$_SERVER['HTTP_HOST']}/managenewgraphicrequests/approve/$last_inserted_id";
-        $graphicDenyLink = "http://{$_SERVER['HTTP_HOST']}/managenewgraphicrequests/deny/$last_inserted_id";
+        $graphicDenyLink = "http://{$_SERVER['HTTP_HOST']}/managenewgraphgetSystemEmailRecipientsicrequests/deny/$last_inserted_id";
+        $receipts = FEGSystemHelper::getSystemEmailRecipients($configName);
         $message = '<b>Date Requested:</b> '.$data['request_date'].'<br>
 					<b>Requestor:</b> '.\Session::get('fid').'<br>
 					<b>Location:</b> '.$data['location_id'].' | '.$locationName.'<br>
@@ -254,13 +256,18 @@ class shopfegrequeststore extends Sximo  {
 					<b>Description:</b> '.$data['description'].'<br>
 					<b>Quantity:</b> '.$data['qty'].'<br>
 					<b>Need By Date:</b> '.$data['need_by_date'].'<br><br>
-
-					<em>**Mark/Tom, please click on <a href="'.$graphicApproveLink.'">Approval</a> or <a href="'.$graphicDenyLink.'">Denial</a> <br>
+                    <em>**Mark/Tom, please click on <a href="'.$graphicApproveLink.'">Approval</a> or <a href="'.$graphicDenyLink.'">Denial</a> <br>
 					to Approve/Deny this graphic request <br><br>
 					&nbsp;&nbsp;&nbsp; 2.) Set Priority Level at <b>'.$mangeGraphicRequestURL.'</b><br><br>
 					**All cc\'d, please Reply to All <b> only if you wish to deny or modify request</b> and explain why.</em><br>';
                     $from = \Session::get('eid');
-                    $to = CNF_GRAPHIC_MANAGER;
+                    if (!empty($receipts['to']))
+                    {
+                        $to = $receipts['to'];
+                    }
+                    else {
+                        die('not valid receipt email');
+                    }
                     $cc = '';
                     $bcc = '';
                     $subject = 'New Graphics Request for '.$locationName;
@@ -268,8 +275,16 @@ class shopfegrequeststore extends Sximo  {
                     $headers  = "From: $from\r\nReply-to: $from\r\n";
                     $headers .= 'MIME-Version: 1.0' . "\r\n";
                     $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
-                 
-                    mail($to, $subject, $message, $headers);
+              
+
+                    FEGSystemHelper::sendSystemEmail(array_merge($receipts, array(
+                        'subject' => $subject,
+                        'message' => $message,
+                        'isTest' => 1,
+                        'configName' => $configName,
+                        'from' => $from,
+                        'replyTo' => $from
+                    )));
 
                     Log::info("**Send Graphic Request Email => ",[$to, $subject, $message, $headers]);
                    return $last_inserted_id;
