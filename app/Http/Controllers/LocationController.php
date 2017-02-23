@@ -243,14 +243,17 @@ class LocationController extends Controller
         $rules = $this->validateForm();
         $input_id=$request->get('id');
         if(\Session::get('location_updated') != $input_id) {
-            $rules['id'] = 'required|unique:location';
+            $rules['id'] = 'required|unique:location,id,'.$input_id;
         }
         else{
             $rules['id'] = 'required';
         }
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
-            $data = $this->validatePost('location');
+            if(empty($id))
+                $data = $this->validatePost('location');
+            else
+                $data = $this->validatePost('location', true);
             // old id in case the existing location's id has been modified
             $oldId = $id;
             $newId = $data['id'];
