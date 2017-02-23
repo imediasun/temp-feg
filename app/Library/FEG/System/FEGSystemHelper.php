@@ -875,7 +875,7 @@ class FEGSystemHelper
         if (!empty($users)) {
             $q .= " AND users.id IN ($users)";
         }
-        if (!empty($users)) {
+        if (!empty($location)) {
             $q .= " AND user_locations.location_id IN ($location)";            
         }
         $data = DB::select($q);
@@ -897,7 +897,7 @@ class FEGSystemHelper
         if (!empty($users)) {
             $q .= " AND users.id IN ($users)";
         }
-        if (!empty($users)) {
+        if (!empty($location)) {
             $q .= " AND user_locations.location_id IN ($location)";            
         }
         $data = DB::select($q);
