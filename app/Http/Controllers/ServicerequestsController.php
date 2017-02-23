@@ -336,6 +336,7 @@ class servicerequestsController extends Controller
         //$rules = $this->validateForm();
         $sendMail=false;
         if(empty($id)) {
+            dd($sendMail);
             $sendMail = true;
         }
         $rules = $this->validateForm();
