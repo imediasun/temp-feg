@@ -2704,7 +2704,9 @@ li.L9 {
 	vertical-align: middle;
 }
 
-
+#asset_available {
+    margin-top: 3px;
+}
 
 #s_icons a {
   margin-left: 7px;

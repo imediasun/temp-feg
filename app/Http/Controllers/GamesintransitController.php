@@ -274,7 +274,8 @@ class GamesintransitController extends Controller
                 'serial' => $serial,
                 'status_id' => 3,
                 'test_piece' => $test_piece,
-                'notes' => $notes
+                'notes' => $notes,
+                'last_edited_on' => date('Y-m-d H:i:s'),
             );
             \DB::table('game')->insert($insert);
 
@@ -298,7 +299,12 @@ class GamesintransitController extends Controller
     {
         if(strlen(trim($asset_num)) < 8 || strlen(trim($asset_num)) > 8)
         {
-            return json_encode(array('status'=>'error','message'=>'Asset Number must have 8 characters'));
+            return json_encode(array('status'=>'error','message'=>'Asset Number must have 8 digits'));
+
+        }
+        if(preg_match('/[^0-9]/', trim($asset_num)) === 1)
+        {
+            return json_encode(array('status'=>'error','message'=>'Asset Number must be a Number'));
 
         }
         $row=\DB::select('select id from game where id ='.trim($asset_num));
