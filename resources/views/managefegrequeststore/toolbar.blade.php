@@ -125,7 +125,7 @@
             $('number_requests').hide();
         }
 
-        reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?view=' + request_type+getFooterFilters()+getSimpleSearchParams());
+        reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?view=' + request_type+getSimpleSearchParams());
     });
     function setType() {
         $('#request_type option').each(function () {
