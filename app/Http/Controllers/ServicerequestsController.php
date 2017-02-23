@@ -316,6 +316,7 @@ class servicerequestsController extends Controller
 
     function postSave(Request $request, $id = NULL)
     {
+        $date = date("Y-m-d");
         //$data['need_by_date'] = date('Y-m-d');
         //$rules = $this->validateForm();
         $isAdd = empty($id);
@@ -326,10 +327,7 @@ class servicerequestsController extends Controller
         //unset($rules['debit_card']);
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
-            if(empty($id))
-                $data = $this->validatePost('sb_tickets');
-            else
-                $data = $this->validatePost('sb_tickets', true);
+            $data = $this->validatePost('sb_tickets', !empty($id));
             $data['need_by_date']= date("Y-m-d", strtotime($request->get('need_by_date')));
             $data['Status']=$request->get('Status');
             
@@ -338,7 +336,7 @@ class servicerequestsController extends Controller
             }
             $id = $this->model->insertRow($data, $id);
             
-            $files = $this->uploadTicketAttachments($id);
+            $files = $this->uploadTicketAttachments("/ticket-$id/$date/", "--$id");
             if (!empty($files['file_path'])) {                
                 $this->model->where('TicketID', $id)
                     ->update(['file_path' => $files['file_path']]);
@@ -370,7 +368,7 @@ class servicerequestsController extends Controller
 
     }
     
-    public function uploadTicketAttachments($id) {
+    public function uploadTicketAttachments($suffixPath = '', $suffixFileName = '') {
         $request = new Request;
         $date = date('Y-m-d');
         $formConfig = $this->info['config']['forms'];
@@ -398,14 +396,14 @@ class servicerequestsController extends Controller
                 $uploadPath = preg_replace('/^[\.\/]*public/', '', $uploadPath); 
                 $uploadPath = preg_replace('/^\//', './', $uploadPath); 
                 $uploadPath = preg_replace('/(\/$)/', '', $uploadPath); 
-                $pathExtended = "/ticket-$id/$date/";
+                $pathExtended = $suffixPath;//"/ticket-$id/$date/";
                 $targetPath = $uploadPath . $pathExtended;
                 
                 foreach($inputFiles as $file) {
                     
                     $oringalFilename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
                     $originalExtension = $file->getClientOriginalExtension(); 
-                    $targetFile = $oringalFilename. "--$id" .                            
+                    $targetFile = $oringalFilename. $suffixFileName .                            
                             (empty($originalExtension) ? '': (".$originalExtension"));
                     $targetFile = FEGSystemHelper::possiblyRenameFileToResolveDuplicate($targetFile, $targetPath);
                     try {
@@ -468,47 +466,48 @@ class servicerequestsController extends Controller
 
     public function postComment(Request $request)
     {
-            $ticketId = $request->input('TicketID');
-            
-            //validate post for sb_tickets module
-            $ticketsData = $this->validatePost('sb_tickets');
-           
-            $ticketsData['updated'] = date('Y-m-d H:i:s');
-            
-            $comment_model = new Ticketcomment();
-            $total_comments = $comment_model->where('TicketID', '=', $ticketId)->count();
+        $date = date("Y-m-d");
+        $ticketId = $request->input('TicketID');
 
-            $status = $ticketsData['Status'];
-            $isStatusClosed = $status == 'closed';
-            if (!$isStatusClosed && $total_comments == 0) {
-                $ticketsData['Status'] = 'inqueue';
-            }
-            $ticketsData['closed']="";   
-            if ($isStatusClosed) {
-                $ticketsData['closed'] = date('Y-m-d H:i:s');
-            }
+        //validate post for sb_tickets module
+        $ticketsData = $this->validatePost('sb_tickets');
 
-            //re-populate info array to ticket comments module
-            $this->info = $comment_model->makeInfo('ticketcomment');
-            $commentsData = $this->validatePost('sb_ticketcomments');
-           
-            $commentsData['USERNAME'] = \Session::get('fid');
-            $commentsData['Posted'] = date('Y-m-d H:i:s');;
+        $ticketsData['updated'] = date('Y-m-d H:i:s');
 
-            //@todo need separate table for comment attachments
-            unset($ticketsData['file_path']);
-            $commentId = $comment_model->insertRow($commentsData, NULL);
+        $comment_model = new Ticketcomment();
+        $total_comments = $comment_model->where('TicketID', '=', $ticketId)->count();
 
-            $files = $this->uploadTicketAttachments($ticketId);
-            if (!empty($files['Attachments'])) {
-                $comment_model->where('CommentID', $commentId)
-                    ->update(['Attachments' => $files['Attachments']]);                
-            }
+        $status = $ticketsData['Status'];
+        $isStatusClosed = $status == 'closed';
+        if (!$isStatusClosed && $total_comments == 0) {
+            $ticketsData['Status'] = 'inqueue';
+        }
+        $ticketsData['closed']="";   
+        if ($isStatusClosed) {
+            $ticketsData['closed'] = date('Y-m-d H:i:s');
+        }
+
+        //re-populate info array to ticket comments module
+        $this->info = $comment_model->makeInfo('ticketcomment');
+        $commentsData = $this->validatePost('sb_ticketcomments');
+
+        $commentsData['USERNAME'] = \Session::get('fid');
+        $commentsData['Posted'] = date('Y-m-d H:i:s');;
+
+        //@todo need separate table for comment attachments
+        unset($ticketsData['file_path']);
+        $commentId = $comment_model->insertRow($commentsData, NULL);
+
+        $files = $this->uploadTicketAttachments("/ticket-$ticketId/$date/", "--$ticketId");
+        if (!empty($files['Attachments'])) {
+            $comment_model->where('CommentID', $commentId)
+                ->update(['Attachments' => $files['Attachments']]);                
+        }
+
+        $this->model->insertRow($ticketsData, $ticketId);
+        $message = $commentsData['Comments'];
             
-            $this->model->insertRow($ticketsData, $ticketId);
-            $message = $commentsData['Comments'];
-            
-            /*
+        /*
             $isFollowing = $request->input('isFollowingTicket');
             $allFollowers = $request->input('allFollowers');
                        
@@ -538,20 +537,20 @@ class servicerequestsController extends Controller
                 }
             }            
             Ticketfollowers::follow($ticketId, $customFollowers, '', true);
-            */
+        */
             
-            //send email
-            $this->model->notifyObserver('AddComment',[
-                    'message'       =>$message,
-                    'ticketId'      => $ticketId,
-                    'ticket'        => $ticketsData,
-                    "department_id" =>"",                
-                ]);
+        //send email
+        $this->model->notifyObserver('AddComment',[
+                'message'       =>$message,
+                'ticketId'      => $ticketId,
+                'ticket'        => $ticketsData,
+                "department_id" =>"",                
+            ]);
 
-            return response()->json(array(
-                'status' => 'success',
-                'message' => \Lang::get('core.note_success')
-            ));
+        return response()->json(array(
+            'status' => 'success',
+            'message' => \Lang::get('core.note_success')
+        ));
 
 
     }
