@@ -62,7 +62,7 @@
 
 								if($.isNumeric(values))
 								{
-									$('#'+id+' td option[value="'+values+'"]').attr('selected','selected');
+									$('#'+id+' td select[name="'+target+'"] option[value="'+values+'"]').attr('selected','selected');
 								}
 								else if((/^[0-9]+-.*?$/).test(values))
 								{

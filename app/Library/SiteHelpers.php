@@ -2468,4 +2468,13 @@ class SiteHelpers
         }
         return $data;        
     }
+
+    public static function getStatus($value)
+    {
+        if($value==1)
+            return "Yes";
+        elseif($value==0)
+            return "No";
+        return $value;
+    }
 }
