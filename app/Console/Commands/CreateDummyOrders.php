@@ -44,7 +44,7 @@ class CreateDummyOrders extends Command
         //execute dummy orders if required
         if (env('AUTOCREATE_DUMMY_ORDERS', false) !== true) {
             return;
-        }         
+        }
         $this->startDate = '2017-01-01';
         $this->endDate = '2017-02-28';
         $created_date=$this->rand_date($this->startDate,$this->endDate);
