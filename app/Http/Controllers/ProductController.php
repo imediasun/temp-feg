@@ -242,8 +242,8 @@ class ProductController extends Controller
                 $data = $this->validatePost('products');
                 $id = $this->model->insertRow($data, $request->input('id'));
             } else {
-
-                $data = $this->validatePost('products');
+                //for inline editing all fields do not get saved
+                $data = $this->validatePost('products',true);
                 $id = $this->model->insertRow($data, $id);
             }
             /*

@@ -130,12 +130,19 @@ class AjaxHelpers
 				$type = ($f['type'] !='file' ? $f['type'] : ''); 			
 			}	
 		}
-		if($type =='select' || $type="radio" || $type =='checkbox')
+		if($type =='select' || $type=="radio" || $type =='checkbox')
 		{
 			$type = 'select';
 		} else if($type=='file') {
 			$type = '';
-		} else {
+		} else if($type=='text_date') {
+			$type = 'text_date';
+		} else if($type=='text_datetime') {
+			$type = 'text_datetime';
+		} else if($type=='textarea' || $type=='textarea_editor') {
+			$type = 'textarea';
+		}
+		else {
 			$type = 'text';
 		}
 		return $type;

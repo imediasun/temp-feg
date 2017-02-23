@@ -326,7 +326,10 @@ class servicerequestsController extends Controller
         //unset($rules['debit_card']);
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
-            $data = $this->validatePost('sb_tickets');
+            if(empty($id))
+                $data = $this->validatePost('sb_tickets');
+            else
+                $data = $this->validatePost('sb_tickets', true);
             $data['need_by_date']= date("Y-m-d", strtotime($request->get('need_by_date')));
             $data['Status']=$request->get('Status');
             
