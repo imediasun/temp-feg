@@ -113,6 +113,7 @@ return array(
 	"sb_apply"					=> "Apply Change(s)",
 	"sb_submit"					=> "Submit",
 	"sb_cancel"					=> "Cancel",
+    "sb_close"					=> "Close",
     "sb_save_send"               => "Save & Send",
 	
 /* button */
@@ -196,7 +197,12 @@ return array(
     "note_freight_paid"         => "Status Changed,Paid Successfully",
      "mail_sent_success"        => "Email Sent Successfully",
     "delete_success"            => "Deleted Successfully",
-    "delete_error"              => "Some Error Occurred while Deleting"
+    "delete_error"              => "Some Error Occurred while Deleting",
+    "email_missing_error"       => "Failed!Sender or Vendor Email is missing",
+    "google_account_not_exist"  => "Google account detail not exist",
+    "smtp_connect_failed"       => "Mail Error: SMTP connect() failed",
+    "gmail_smtp_connect_failed" => 'To allow system to send emails using your Gmail account, you must turn on less secure apps by clicking <a target="_blank" href="https://www.google.com/settings/u/6/security/lesssecureapps?pageId=none">Here</a>',
+    "error_sending_mail"        => "An Error Occurred in Sending Email."
 
 
 );

@@ -254,8 +254,10 @@ class VendorController extends Controller
         $rules["vendor_name"] = "required|unique:vendor,vendor_name," . $id;
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
-            $data = $this->validatePost('vendor');
-
+            if(empty($id))
+                $data = $this->validatePost('vendor');
+            else
+                $data = $this->validatePost('vendor', true);
             $id = $this->model->insertRow($data, $id);
 
             return response()->json(array(

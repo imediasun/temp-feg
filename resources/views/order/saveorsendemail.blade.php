@@ -17,27 +17,24 @@
                 <div class="sbox-content">
                     <div style="color:green" class="row">
                         <?php
-                        $send_from = \Session::get('eid');
                         $order_id = \Session::get('order_id');
                         $send_to = \Session::get('send_to');
                         ?>
-                      @if(empty($google_account->g_mail) || empty($google_account->g_password))
-                            <?php $send_from="info@fegllc.com" ;?>
-                            @endif
                     </div>
                     <div class="row">
                         <div class="col-md-6 col-md-offset-5">
                             {!! Form::open(array('url'=>'order/saveorsendemail', 'class'=>'form-horizontal','files' =>
                             true , 'parsley-validate'=>'','novalidate'=>' ','id'=>'saveFormAjax')) !!}
-
-                            <input type="hidden" value="{{ $send_from }}" name="from"/>
                             <input type="hidden" value="{{ $order_id }}" name="order_id"/>
                             <input type="hidden" value="{{$send_to}}" name="to"/>
+                            <input type="hidden" value="" name="message" id="save_message"/>
                             <div class="form-group" style="margin-top:10px;">
-                                <a href="{{ URL::to('order/po/'.$order_id)}}" style="width:33%"
-                                   class=" btn  btn-lg btn-primary" title="SAVE"><i class="fa fa-save"
+                                <a href="{{ URL::to('order/po/'.$order_id)}}" id="po-link" style="width:33%"
+                                   class=" btn  btn-lg btn-primary" title="SAVE" data-action="save" ><i class="fa fa-save"
                                                                                     aria-hidden="true"></i>
                                     &nbsp {{ Lang::get('core.sb_save') }}</a>
+                                <a href="javascript:void(0)" id="po-close" style="width:33%;display: none"
+                                   class=" btn  btn-lg btn-primary" title="Close" data-action="close" >&nbsp {{ Lang::get('core.sb_close') }}</a>
                             </div>
 
                             <div class="form-group" style="margin-top:10px;">
@@ -90,11 +87,8 @@
                                     'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>'
                                     ','id'=>'sendFormAjax')) !!}
 
-                                    <input type="hidden" value="{{ $send_from }}" name="from"/>
                                     <input type="hidden" value="{{ $order_id }}" name="order_id"/>
                                     <input type="hidden" value="" id="opt" name="opt"/>
-                                    <input type="hidden" value="" name="message" id="save_message"/>
-
                                     <div class="form-group">
                                         <label class="control-label col-md-4" for="to">To</label>
 
@@ -123,6 +117,7 @@
                                                       id="message"/>Purchase Order</textarea>
                                         </div>
                                     </div>
+                                    <input type="hidden" name="type" value="send"/>
                                     <div class="col-md-offset-6 col-md-6">
                                         <div class="form-group" style="margin-top:10px;">
                                             <button type="button" name="submit" value="sendemail" id="send-email"
@@ -157,7 +152,6 @@
                                     'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>'
                                     ','id'=>'sendsaveFormAjax')) !!}
 
-                                    <input type="hidden" value="{{ $send_from }}" name="from"/>
                                     <input type="hidden" value="{{ $order_id }}" name="order_id"/>
                                     <input type="hidden" value="" id="opt" name="opt"/>
                                     <input type="hidden" value="sendorsave" name="submit"/>
@@ -190,6 +184,7 @@
                                             <textarea class="form-control" cols="5" rows="6" name="message"
                                                       id="message1"/>Purchase Order</textarea>
                                         </div>
+                                        <input type="hidden" name="type" value="sendorsave"/>
                                     </div>
                                     <div class="col-md-offset-6 col-md-6">
                                         <div class="form-group" style="margin-top:10px;">
@@ -227,7 +222,13 @@
     <script>
         $(document).ready(function () {
 
-
+        });
+        $("#po-close").click(function(){
+            reloadOrder();
+        });
+        $("#po-link").click(function () {
+            $(this).hide();
+            $('#po-close').show();
         });
         $("#to1").click(function () {
             var to1 = $(this).val();
@@ -331,11 +332,13 @@
             if (data.status == 'success') {
                 notyMessage(data.message);
                 $('.ajaxLoading').hide();
+                reloadOrder();
                 $('#sximo-modal').modal('hide');
             } else {
                 notyMessageError(data.message);
                 $('.ajaxLoading').hide();
-                return false;
+                //do not reload order page after error
+                //reloadOrder();
             }
         }
         function emailSending(send_to,mode)
@@ -357,6 +360,7 @@
                 }
             });
         }
+
     </script>
 
 @stop

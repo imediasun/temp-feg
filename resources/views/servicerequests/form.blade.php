@@ -1,4 +1,7 @@
-<?php  ?>
+{{--*/      use App\Library\FEG\System\FEGSystemHelper;                   /*--}}
+{{--*/      $ID = @$row['TicketID']             /*--}}
+{{--*/      $isEdit = !empty($ID)               /*--}}
+{{--*/      $entryBy = empty($row['entry_by']) ? $uid : $row['entry_by']  /*--}}
 @if($setting['form-method'] =='native')
 	<div class="sbox">
 		<div class="sbox-title">  
@@ -11,7 +14,8 @@
 @endif	
 			{!! Form::open(array('url'=>'servicerequests/save/'.$row['TicketID'], 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'sbticketFormAjax')) !!}
 
-		<input type="hidden" name='assign_to' value="{{$row['assign_to']}}">
+		<input type="hidden" name='assign_to' value="{{ $row['assign_to']}}">        
+		<input type="hidden" name='entry_by' value="{{ $entryBy }}">
 		<div class="col-md-12">
 						<fieldset><legend>Create Ticket</legend>
 									
@@ -68,8 +72,8 @@
 					  
 					<?php $Status = explode(',',$row['Status']);
 					$Status_opt = array( 'open' => 'Open' ,  'inqueue' => 'Pending' ,  'closed' => 'Closed' , ); ?>
-                        @if(!$in_edit_mode) <input type="text" readonly class="form-control" value="open" name="status"/> @else
-					<select name='status' rows='5'   class='select2 '   >
+                        @if(!$in_edit_mode) <input type="text" readonly class="form-control" value="open" name="Status"/> @else
+					<select name='Status' rows='5'   class='select2 '   >
 						<?php
 
 						foreach($Status_opt as $key=>$val)
@@ -150,7 +154,7 @@
 					{!! SiteHelpers::activeLang('Assign To', (isset($fields['assign_to']['language'])? $fields['assign_to']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  <select name='assign_to[]' multiple rows='5' id='assign_to' class='select2 '  ></select>
+					  <select name='assign_to[]' multiple  id='assign_to' class='select2 '  ></select>
 					 </div>
 					 <div class="col-md-2">
 					 	
@@ -166,7 +170,7 @@
 										<?php
 										$date = DateHelpers::formatDate($row['need_by_date']);
 										?>
-									{!! Form::text('need_by_date', $date,array('class'=>'form-control', 'id'=>'my-datepicker', 'style'=>'width:150px !important;'   )) !!}
+									{!! Form::text('need_by_date', $date,array('class'=>'form-control date', 'id'=>'my-datepicker', 'style'=>'width:150px !important;'   )) !!}
 
 									<span class="input-group-addon "><i class="fa fa-calendar" id="icon"></i></span>
 								</div>
@@ -199,12 +203,11 @@
 					<label for="Attach File" class=" control-label col-md-4 text-left">
 					{!! SiteHelpers::activeLang('Attach File', (isset($fields['file_path']['language'])? $fields['file_path']['language'] : array())) !!}
 					</label>
-					<div class="col-md-6">
-					  
-					<a href="javascript:void(0)" class="btn btn-xs btn-primary pull-right" onclick="addMoreFiles('file_path')"><i class="fa fa-plus"></i></a>
+					<div class="col-md-4 col-sm-6 col-xs-12">
 					<div class="file_pathUpl">	
 					 	<input  type='file' name='file_path[]'  />			
 					</div>
+					<a href="javascript:void(0)" class="btn btn-xs btn-primary" onclick="addMoreFiles('file_path')"><i class="fa fa-plus"></i> Add more files</a>
 					<ul class="uploadedLists " >
 					<?php $cr= 0; 
 					$row['file_path'] = explode(",",$row['file_path']);
@@ -212,7 +215,7 @@
 					@foreach($row['file_path'] as $files)
 						@if(file_exists('.'.$files) && $files !='')
 						<li id="cr-<?php echo $cr;?>" class="">							
-							<a href="{{ url('/'.$files) }}" target="_blank" >{{ $files }}</a> 
+							<a href="{{ url('/'.$files) }}" target="_blank" >{{  FEGSystemHelper::getSanitizedFileNameForTicketAttachments($files, 50) }}</a> 
 							<span class="pull-right" rel="cr-<?php echo $cr;?>" onclick=" $(this).parent().remove();"><i class="fa fa-trash-o  btn btn-xs btn-danger"></i></span>
 							<input type="hidden" name="currfile_path[]" value="{{ $files }}"/>
 							<?php ++$cr;?>
@@ -223,15 +226,18 @@
 					</ul>
 					 
 					 </div> 
-					 <div class="col-md-2">
+					 <div class="col-md-4 ">
 					 	
 					 </div>
 				  </div> </fieldset>
 			</div>
 			
-												
-								
-						
+            @if ($isEdit)
+                {!! Form::hidden('Created', $row['Created']) !!}
+                {!! Form::hidden('department_id', $row->department_id) !!}
+                {!! Form::hidden('assign_to', $row->assign_to) !!}
+                {!! Form::hidden('game_id', $row->game_id) !!}								
+			@endif
 			<div style="clear:both"></div>	
 							
 			<div class="form-group">
@@ -261,7 +267,7 @@
 <script type="text/javascript">
 $(document).ready(function() { 
 	
-        $("#location_id").jCombo("{{ URL::to('sbticket/comboselect?filter=location:id:location_name') }}",
+        $("#location_id").jCombo("{{ URL::to('sbticket/comboselect?filter=location:id:id|location_name') }}" + "&delimiter=%20|%20",
         {  selected_value : '{{ $row["location_id"] }}','initial-text': "Select Location" });
         
       //  $("#game_id").jCombo("{{-- URL::to('sbticket/comboselect?filter=game:id:game_name') }}&limit=where:game_name:!=:''&parent=location_id:",
@@ -271,7 +277,7 @@ $(document).ready(function() {
         //{  selected_value : '{{ $row["department_id"] --}}' });
         
      //   $("#debit_card").jCombo("{{-- URL::to('sbticket/comboselect?filter=debit_type:company:company') }}",
-        {  selected_value : '{{ $row["debit_card"] }}','initial-text': "Select Debit Type" --});
+      //  {  selected_value : '{{ $row["debit_card"] }}','initial-text': "Select Debit Type" --});
         
       //  $("#assign_to").jCombo("{{-- URL::to('sbticket/comboselect?filter=employees:id:first_name|last_name') }}",
         //{  selected_value : '{{ $row["assign_to"] --}}' });
@@ -286,7 +292,7 @@ $(document).ready(function() {
 	$('.editor').summernote();
 	$('.previewImage').fancybox();	
 	$('.tips').tooltip();	
-	$(".select2").select2({ width:"98%"});	
+	renderDropdown($(".select2"), { width:"100%"});	
 	$('.date').datepicker({format:'mm/dd/yyyy',autoClose:true})
 	$('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});
 	$('input[type="checkbox"],input[type="radio"]').iCheck({
@@ -328,11 +334,12 @@ function showResponse(data)  {
 	
 	if(data.status == 'success')
 	{
-		ajaxViewClose('#{{ $pageModule }}');
-		ajaxFilter('#{{ $pageModule }}','{{ $pageUrl }}/data');
+		ajaxViewClose('#' + pageModule);
+		//ajaxFilter('#{{ $pageModule }}','{{ $pageUrl }}/data');
 		notyMessage(data.message);	
 		$('#sximo-modal').modal('hide');
-        window.location.href=window.location;
+        //window.location.href=window.location;
+        $(".reloadDataButton").click();
 	} else {
 		notyMessageError(data.message);	
 		$('.ajaxLoading').hide();

@@ -41,7 +41,8 @@
 
     <script type="text/javascript">
         var pageModule = '{{$pageModule}}',
-            pageUrl = '{{$pageUrl}}';
+            pageUrl = '{{$pageUrl}}',
+            siteUrl = '{{ url() }}';
     
         $(document).ready(function () {
             var game_id="{{ $game_id }}";

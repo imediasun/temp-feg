@@ -23,9 +23,24 @@
 	</div>	
 	<!-- End Content -->  
 </div>	
-<script>
-$(document).ready(function(){
-	reloadData('#{{ $pageModule }}','{{ $pageModule }}/data');	
-});	
-</script>	
+@endsection
+@section ('beforeheadend')
+
+<link href="{{ asset('sximo/css/tickets.css') }}" rel="stylesheet" type="text/css"/>
+
+@endsection
+@section ('beforebodyend')
+
+    <script type="text/javascript">
+        var pageModule = '{{$pageModule}}',
+            pageUrl = '{{$pageUrl}}';
+
+        $(document).ready(function(){
+            reloadData('#{{ $pageModule }}','{{ $pageModule }}/data');
+        });
+    </script>
+    <!--<script type="text/javascript" src="{{ asset('sximo/js/modules/tickets/grid.js') }}"></script>-->          
+    <script type="text/javascript" src="{{ asset('sximo/js/modules/tickets/view.js') }}"></script>
+    <!--<script type="text/javascript" src="{{ asset('sximo/js/modules/tickets/form.js') }}"></script>-->          
+    
 @endsection

@@ -3,62 +3,59 @@
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Observers\Observerable;
-class Servicerequests extends Observerable
-{
+use App\Models\ticketsetting;
+
+class Servicerequests extends Observerable  {
 
     protected $table = 'sb_tickets';
     protected $primaryKey = 'TicketID';
-
-    public function __construct()
-    {
+    public $timestamps = false;
+    
+    public function __construct() {
         parent::__construct();
 
     }
 
-    public static function querySelect()
-    {
+    public static function querySelect(  ){
 
         return "  SELECT sb_tickets.* FROM sb_tickets  ";
     }
 
-    public static function queryWhere()
-    {
+    public static function queryWhere(  ){
+        $table = "sb_tickets";
+        $controlField = "$table.TicketID";
         $selected_loc = \Session::get('selected_location');
-        if (isset($selected_loc))
-            return "  WHERE sb_tickets.TicketID IS NOT NULL AND location_id=$selected_loc";
-        else
-            return "  WHERE sb_tickets.TicketID IS NOT NULL ";
+        $isOmniscient = ticketsetting::isUserOmniscient();
+        $q = "";
+
+        if ($isOmniscient) {
+            $q = "  WHERE $controlField IS NOT NULL ";            
+        }            
+        else {
+            if(isset($selected_loc)) {
+                $q .= "  WHERE $controlField IS NOT NULL AND $table.location_id IN ($selected_loc)";
+            }
+            else {
+                $q = "  WHERE $controlField IS NULL";
+            }
+        }            
+        return $q;
     }
 
-    public static function queryGroup()
-    {
+    public static function queryGroup(){
         return "  ";
     }
 
 
-    public static function getComboselect($params, $limit = null, $parent = null)
-    {
+
+    public static function getComboselect($params, $limit = null, $parent = null) {
         $tableName = $params[0];
-        if ($tableName == 'location') {
-            return parent::getUserAssignedLocation($params, $limit, $parent);
+        if($tableName == 'location'){
+            return parent::getUserAssignedLocation($params,$limit,$parent);
 
-        } else {
-            return parent::getComboselect($params, $limit, $parent);
         }
-    }
-
-    public static function getCommentsWithUser($id = null)
-    {
-
-        if (!empty($id)) {
-            $query = \DB::select('SELECT u.first_name, u.last_name , s.Posted , s.Comments FROM users u  JOIN sb_ticketcomments s ON u.id = s.UserID WHERE s.TicketID =  ' . $id);
-            if (!empty($query)) {
-                return $query;
-            }
-
-            else
-                return false;
+        else{
+            return parent::getComboselect($params,$limit,$parent);
         }
-        
     }
 }

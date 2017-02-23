@@ -7,7 +7,8 @@ class Ticketcomment extends Sximo  {
 	
 	protected $table = 'sb_ticketcomments';
 	protected $primaryKey = 'CommentID';
-
+    public $timestamps = false;
+    
 	public function __construct() {
 		parent::__construct();
 		
@@ -27,5 +28,23 @@ class Ticketcomment extends Sximo  {
 		return "  ";
 	}
 	
-
+    public static function getCommentsWithUserData($ticketId, $sortBy = 'Posted', $order = 'desc', $fields = array()) {
+            
+        $data = self::select(
+                'sb_ticketcomments.*', 
+                'users.username',  
+                'users.first_name',  
+                'users.last_name',  
+                'users.email',  
+                'users.avatar',  
+                'users.active',  
+                'users.group_id'
+            )
+            ->leftJoin('users', 'users.id', '=', 'sb_ticketcomments.UserID')
+            ->where('TicketID', '=', $ticketId)
+            ->orderBy($sortBy, $order)
+            ->get();
+    
+        return $data;
+    }
 }

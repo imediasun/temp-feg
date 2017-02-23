@@ -204,8 +204,15 @@
                                     <option value=""> -- Select Module or Page --</option>
                                     <optgroup label="Module ">
                                         @foreach($modules as $mod)
-                                            <option value="{{ $mod->module_name}}"
-                                                    @if($row['redirect_link'] === $mod->module_name )   selected="selected" @endif
+                                        <?php                                
+                                            $moduleConfig = \SiteHelpers::CF_decode_json($mod->module_config);
+                                            $moduleRoute = $mod->module_name;
+                                            if (isset($moduleConfig['setting']['module_route'])) {
+                                                $moduleRoute = $moduleConfig['setting']['module_route'];
+                                            }                                    
+                                        ?>                                            
+                                        <option value="{{ $moduleRoute }}"
+                                            @if($row['redirect_link'] === $mod->module_name )   selected="selected" @endif
                                             >{{ $mod->module_title}}</option>
                                         @endforeach
                                     </optgroup>
@@ -242,7 +249,15 @@
                             <div class="col-md-8">
                                 <input name="g_password" type="password" id="g_password" class="form-control input-sm" value="" />
                             </div>
+
                         </div>
+                        <div class="form-group">
+                            <div class="col-md-4"></div>
+                            <div class="col-md-8">
+                                <p class="bg-info" style="padding: 5px">{!! Lang::get('core.gmail_smtp_connect_failed') !!}</p>
+                            </div>
+                        </div>
+
                     </div>
 
 

@@ -16,6 +16,9 @@
  
   color: #676a6c; overflow-x:hidden
 }
+#form-0{
+  display: none;
+}
 a { color:#1ab394;}
 h1,h2,h3,h4,h5,h6 {
   font-weight: 100;
@@ -2573,7 +2576,7 @@ li.L9 {
     top: 80px;
 }
 .theme-config-box {
-    margin-right: -220px;
+    margin-right: -320px;
     position: relative;
     transition-duration: 0.8s;
     z-index: 2000;
@@ -2704,7 +2707,9 @@ li.L9 {
 	vertical-align: middle;
 }
 
-
+#asset_available {
+    margin-top: 3px;
+}
 
 #s_icons a {
   margin-left: 7px;

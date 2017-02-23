@@ -79,15 +79,27 @@ class ConfigController extends Controller
             $val .= "?>";
 
             $filename = base_path() . '/setting.php';
-            $fp = fopen($filename, "w+");
-            fwrite($fp, $val);
+            $fp = fopen($filename, "w");
+            self::fwrite_stream($fp, $val);
             fclose($fp);
+            sleep(10);
+
             return Redirect::to('feg/config')->with('messagetext', 'Setting Has Been Save Successful')->with('msgstatus', 'success');
         } else {
             return Redirect::to('feg/config')->with('messagetext', 'The following errors occurred')->with('msgstatus', 'success')
                 ->withErrors($validator)->withInput();
         }
 
+    }
+
+    public static function fwrite_stream($fp, $string) {
+        for ($written = 0; $written < strlen($string); $written += $fwrite) {
+            $fwrite = fwrite($fp, substr($string, $written));
+            if ($fwrite === false) {
+                return $written;
+            }
+        }
+        return $written;
     }
 
 

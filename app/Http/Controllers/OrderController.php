@@ -130,6 +130,8 @@ class OrderController extends Controller
     {
         $module_id = \DB::table('tb_module')->where('module_name', '=', 'order')->pluck('module_id');
         $this->data['module_id'] = $module_id;
+        $this->getSearchParamsForRedirect();
+       // echo \Session::get('searchParams');
         if (Input::has('config_id')) {
             $config_id = Input::get('config_id');
             \Session::put('config_id', $config_id);
@@ -179,33 +181,41 @@ class OrderController extends Controller
             'params' => $filter,
             'global' => (isset($this->access['is_global']) ? $this->access['is_global'] : 0)
         );
+        $isRedirected=\Session::get('filter_before_redirect');
+        if(($isRedirected))
+        {
+            $order_selected=\Session::get('order_selected');
+            //\Session::put('searchParams',"");
+            \Session::put('filter_before_redirect',false);
+        }
+        else
+        {
+          // \Session::put('searchParams',"");
 
-        $results = $this->model->getRows($params, $order_selected);
-
+           $this->destroyRedirectFilters();
+        }
+        \Session::put('order_selected',$order_selected);
+       // \Session::put('filter_before_redirect',false);
+        //\Session::put('params',$params);
+         $results = $this->model->getRows($params, $order_selected);
         if (count($results['rows']) == 0 and $page != 1) {
             $params['limit'] = $this->info['setting']['perpage'];
             $results = $this->model->getRows($params, $order_selected);
-
-        }
+         }
         // Build pagination setting
         $page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;
-
-
         if (count($results['rows']) == $results['total'] && $results['total'] != 0) {
             $params['limit'] = $results['total'];
         }
-
         $pagination = new Paginator($results['rows'], $results['total'], $params['limit']);
         $pagination->setPath('order/data');
         $rows = $results['rows'];
         foreach ($rows as $index => $data) {
             $rows[$index]->date_ordered = date("m/d/Y", strtotime($data->date_ordered));
-            $location = \DB::select("Select location_name FROM location WHERE id = " . $data->location_id . "");
-            $rows[$index]->location_id = (isset($location[0]->location_name) ? $location[0]->location_name : '');
-
+            //$location = \DB::select("Select location_name FROM location WHERE id = " . $data->location_id . "");
+           // $rows[$index]->location_id = (isset($location[0]->location_name) ? $location[0]->location_name : '');
             $user = \DB::select("Select username FROM users WHERE id = " . $data->user_id . "");
             $rows[$index]->user_id = (isset($user[0]->username) ? $user[0]->username : '');
-
             $order_type = \DB::select("Select order_type FROM order_type WHERE id = " . $data->order_type_id . "");
             $rows[$index]->order_type_id = (isset($order_type[0]->order_type) ? $order_type[0]->order_type : '');
 
@@ -527,7 +537,17 @@ class OrderController extends Controller
 
             ));
 
-        } else {
+        }
+        elseif($id != 0){
+            $data = $this->validatePost('orders',true);
+            $this->model->insertRow($data, $id);
+            return response()->json(array(
+                'status' => 'success',
+                'message' => \Lang::get('core.note_success'),
+
+            ));
+        }
+        else {
 
             $message = $this->validateListError($validator->getMessageBag()->toArray());
             return response()->json(array(
@@ -547,8 +567,8 @@ class OrderController extends Controller
 
     function postSaveorsendemail(Request $request)
     {
-        $type = $request->get('submit');
-        $from = $request->get('from');
+        $type = $request->get('type');
+        $from = \Session::get('eid');
         $order_id = $request->get('order_id');
         if(!isset($type)) {
             $type="configured";
@@ -562,48 +582,66 @@ class OrderController extends Controller
         }
         elseif($type == "send") {
             $to = $request->get('to');
-            $to=getMultipleEmails($to);
-            $cc = $this->get('cc');
-            $cc=getMultipleEmails($cc);
-            $bcc = $this->get('bcc');
+            $to = $this->getMultipleEmails($to);
+            $cc = $request->get('cc');
+            $cc = $this->getMultipleEmails($cc);
+            $bcc = $request->get('bcc');
             $bcc = $this->getMultipleEmails($bcc);
             $message = $request->get('message');
         } else {
             $to = $request->get('to1');
-            $to=getMultipleEmails($to);
-            $cc = $this->get('cc1');
-            $cc=getMultipleEmails($cc);
-            $bcc = $this->get('bcc1');
+            $to = $this->getMultipleEmails($to);
+            $cc = $request->get('cc1');
+            $cc = $this->getMultipleEmails($cc);
+            $bcc = $request->get('bcc1');
             $bcc = $this->getMultipleEmails($bcc);
             $message = $request->get('message');
         }
         $opt = $request->get('opt');
+        $redirect_module=\Session::get('redirect');
+        \Session::put('filter_before_redirect',false);
         if (count($to) == 0 || $from === "NULL" || empty($from) || $from == "") {
+            \Session::put('filter_before_redirect',true);
             return response()->json(array(
-                'message' => "Failed!Sender or Vendor Email is missing",
-                'status' => 'error'
+                'message' => \Lang::get('core.email_missing_error'),
+                'status' => 'error',
+
             ));
-        } else {
+            } else {
+            \Session::put('filter_before_redirect',true);
             $status = $this->getPo($order_id, true, $to, $from, $cc, $bcc, $message);
 
-            if ($status == 1) {
-                return array(
-                    'status' => 'success',
+            if ($status == 1)
+            {
+                return response()->json(array(
                     'message' => \Lang::get('core.mail_sent_success'),
+                    'status' => 'success',
 
-                );
-            } elseif ($status == 2) {
-                return array(
+                ));
+               }
+            elseif ($status == 2)
+            {
+                return response()->json(array(
+                    'message' => \Lang::get('core.google_account_not_exist'),
                     'status' => 'error',
-                    'message' => "Google account detail not exist",
 
-                );
-            } elseif ($status == 3) {
-                return array(
+                ));
+               }
+            elseif ($status == 3)
+            {
+                return response()->json(array(
+                    'message' => \Lang::get('core.gmail_smtp_connect_failed'),
                     'status' => 'error',
-                    'message' => "Mail Error: SMTP connect() failed",
 
-                );
+                ));
+              }
+            elseif ($status == 4)
+            {
+                return response()->json(array(
+                    'message' => \Lang::get('core.error_sending_mail'),
+                    'status' => 'error',
+
+                ));
             }
 
 
@@ -791,24 +829,31 @@ class OrderController extends Controller
                   * enable stmp detail
                   */
                         $mail = new PHPMailer(); // create a new object
+                        $mail->SMTPOptions = array(
+                                'ssl' => array(
+                                'verify_peer' => false,
+                                'verify_peer_name' => false,
+                                'allow_self_signed' => true
+                                )
+                        );
                         $mail->IsSMTP(); // enable SMTP
-                        //$mail->SMTPDebug = 1; // debugging: 1 = errors and messages, 2 = messages only
-                        $mail->SMTPAuth = true; // authentication enabled
-                        $mail->SMTPSecure = 'tls'; // secure transfer enabled REQUIRED for Gmail
-                        $mail->Host = "smtp.gmail.com";
+                        $mail->Host = 'smtp.gmail.com';
                         $mail->Port = 587; // or 587
-                        $mail->IsHTML(true);
-                        $mail->Username = $google_acc->g_mail;                 // SMTP username
+                        $mail->SMTPSecure = 'tls'; // secure transfer enabled REQUIRED for Gmail
+                        $mail->SMTPAuth = true; // authentication enabled
+
+                      //  $mail->SMTPDebug = 1; // debugging: 1 = errors and messages, 2 = messages only
+
+                        //$mail->IsHTML(true);
+                        $mail->Username = $google_acc->g_mail;          // SMTP username
                         $mail->Password = trim(base64_decode($google_acc->g_password), env('SALT_KEY'));
                         $mail->SetFrom($google_acc->g_mail);
                         $mail->Subject = $subject;
                         $mail->Body = $message;
-                       // echo "<pre>";print_r($to);die();
                         //foreach ($to as $t) {
-                            $mail->addAddress($to);
+                        $mail->addAddress($to);
                         //}
-                        $mail->addReplyTo($google_acc->g_mail);
-                     /*   if (count($cc) > 0) {
+                        /*   if (count($cc) > 0) {
                             foreach ($cc as $c) {
                                 $mail->addCC($c);
                             }
@@ -818,17 +863,20 @@ class OrderController extends Controller
                                 $mail->addBCC($bc);
                             }
                         }*/
+                        $mail->addReplyTo($google_acc->g_mail);
                         $output = $pdf->output();
                         $file_to_save = public_path() . '/orders/' . $filename;
                         file_put_contents($file_to_save, $output);
                         $mail->addAttachment($file_to_save, $filename, 'base64', 'application/pdf');
-                        if (!$mail->Send()) {
+                          if (!$mail->Send()) {
                             return 3;
                         } else {
                             return 1;
                         }
+                        die;
                     } else {
-                       $this->sendPhpEmail($message,$to,$from,$subject,$pdf,$filename,$cc,$bcc);
+                      $sent= $this->sendPhpEmail($message,$to,$from,$subject,$pdf,$filename,$cc,$bcc);
+                        return $sent;
                     }
                 }
             } else {
@@ -838,22 +886,30 @@ class OrderController extends Controller
     }
 function sendPhpEmail($message,$to,$from,$subject,$pdf,$filename,$cc,$bcc)
 {
-
-                    $result = \Mail::raw($message, function ($message) use ($to, $from, $subject, $pdf, $filename,$cc,$bcc) {
+    $result = \Mail::raw($message, function ($message) use ($to, $from, $subject, $pdf, $filename,$cc,$bcc) {
                         $message->subject($subject);
                         $message->from($from);
                         $message->to($to);
-                        if(count($cc)>0)
+
+                        if(!empty($cc))
                         {
-                            $message->cc($cc);
+                           $message->cc($cc);
                         }
-                        if(count($bcc) > 0)
+                        if(!empty($bcc))
                         {
-                            $message->bcc($bcc);
+                           $message->bcc($bcc);
                         }
                         $message->replyTo($from, $from);
                         $message->attachData($pdf->output(), $filename);
                     });
+    if($result)
+    {
+       return 1;
+    }
+    else{
+        return 2;
+    }
+
 }
     function getClone($id)
     {
@@ -1045,24 +1101,17 @@ function sendPhpEmail($message,$to,$from,$subject,$pdf,$filename,$cc,$bcc)
             $whereWithVendorCondition = " AND products.vendor_id = $vendorId";
         }
         $results = array();
-        $queries = \DB::select("SELECT *
-                                 FROM products
-                                 WHERE vendor_description LIKE '%$term%' $whereWithVendorCondition and products.inactive=0
-                                 GROUP BY vendor_description
-                                 ORDER BY CASE WHEN vendor_description LIKE '$term%' THEN 0
-                                               WHEN vendor_description LIKE '% %$term% %' THEN 1
-                                               WHEN vendor_description LIKE '%$term' THEN 2
-                                               ELSE 3
-                                          END, vendor_description
+        //fixing for https://www.screencast.com/t/vwFYE3AlF
+        $queries = \DB::select("SELECT *,LOCATE('$term',vendor_description) AS pos
+                                FROM products
+                                WHERE vendor_description LIKE '%$term%' AND products.inactive=0 $whereWithVendorCondition
+                                GROUP BY vendor_description
+                                ORDER BY pos, vendor_description
                                  Limit 0,10");
         if (count($queries) != 0) {
             foreach ($queries as $query) {
                 $results[] = ['id' => $query->id, 'value' => $query->vendor_description];
             }
-            usort($results, function (&$a, &$b) use ($term) {
-                if (stripos($a["value"], $term) == stripos($b["value"], $term)) return 0;
-                return (stripos($a["value"], $term) < stripos($b["value"], $term)) ? -1 : 1;
-            });
             echo json_encode($results);
         } else {
             echo json_encode(array('id' => 0, 'value' => "No Match"));
@@ -1098,7 +1147,7 @@ function sendPhpEmail($message,$to,$from,$subject,$pdf,$filename,$cc,$bcc)
         $mail->Body = "hello";
         $mail->AddAddress("dev3@shayansolutions.com");
         $mail->addCC('shayansolutions@gmail.com');
-        $mail->addBCC('adnanali199@gmail.com');
+        $mail->addBCC('dev2@shayansolutions.com');
         if (!$mail->Send()) {
             echo "Mailer Error: " . $mail->ErrorInfo;
         } else {
@@ -1175,42 +1224,30 @@ function sendPhpEmail($message,$to,$from,$subject,$pdf,$filename,$cc,$bcc)
             return json_encode(array('OMG' => " Ops .. Cant access the page !"));
         }
     }
+
     function getMultipleEmails($email)
     {
-        if (preg_match('/,/',$email)) {
-            $email = explode(',', $email);
-        }
-        else
+        if(!empty($email))
         {
-            $email=array($email);
+            if (strpos($email, ',') != FALSE) {
+                $email = explode(',', trim($email,","));
+            }
+            else
+            {
+                $email = array($email);
+            }
+            foreach($email as $index => $record){
+                $record = trim($record);
+                if(!filter_var($record, FILTER_VALIDATE_EMAIL)){
+                    unset($email[$index]);
+                }
+                else{
+                    $email[$index] = $record;
+                }
+
+            }
+            return empty($email)?false:$email;
         }
-        return $email;
+        return false;
     }
-
 }
-
-//   function getComboselect(Request $request)
-//    {
-//        $urlParts = parse_url($request->headers->get('referer'));
-//        $urlSections = array_reverse(explode('/',$urlParts['path']));
-//        $orderId = $urlSections[0];
-//
-
-//  $result = \DB::table('orders')->where('id', '=', $orderId)->first();
-//        $id = $result->order_type_id;
-//$row = \DB::table('order_type')->where('id', '=', $id)->first();
-//        echo $id;
-//        exit();
-//           $result =  array('$order_detail' => $row[0]->order_detail,'order_description' => $row[0]->order_description);
-//          echo $result;
-//           exit();
-
-//query fetch order details
-//if order type is advance replacement than only show two options
-//else display all options excluding items returned option
-//        $response = parent::getComboselect($request);
-//        die("in overloaded");
-//    }
-//}
-
-

@@ -1,4 +1,4 @@
-/* global App, UNDEFINED, UNFN, jQuery, pageModule, pageUrl */ 
+/* global App, UNDEFINED, UNFN, jQuery, pageModule, pageUrl, siteUrl */ 
 (function(){
     "use strict";    
     var modules = App.modules || (App.modules = {}),
@@ -36,7 +36,7 @@
     
         if (container && container.length) {
             
-            renderDropdown(container.find(".select2, .select3, .select4, select5"), { width:"98%"});
+            renderDropdown(container.find(".select2, .select3, .select4, .select5"), { width:"98%"});
             
             container.find("#status").on('change',gameStatusChanged);
             

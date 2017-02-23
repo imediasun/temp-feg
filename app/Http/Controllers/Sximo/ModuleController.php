@@ -286,6 +286,7 @@ class ModuleController extends Controller
         $this->data['tables'] = $config['grid'];
         $this->data['type'] = $row->module_type;
         $this->data['setting'] = array(
+            'module_route' => (isset($config['setting']['module_route']) ? $config['setting']['module_route'] : $id),
             'gridtype' => (isset($config['setting']) ? $config['setting']['gridtype'] : 'native'),
             'orderby' => (isset($config['setting']) ? $config['setting']['orderby'] : $row->module_db_key),
             'ordertype' => (isset($config['setting']) ? $config['setting']['ordertype'] : 'asc'),
@@ -363,6 +364,7 @@ class ModuleController extends Controller
         $row = $row[0];
         $config = \SiteHelpers::CF_decode_json($row->module_config);
         $setting = array(
+            'module_route' => (!is_null($request->input('module_route')) ? $request->input('module_route') : $id),
             'gridtype' => '',
             'orderby' => $request->input('orderby'),
             'ordertype' => $request->input('ordertype'),
@@ -879,6 +881,8 @@ class ModuleController extends Controller
                 'sortable' => (isset($sortable[$i]) ? 1 : 0),
                 'search' => (isset($search[$i]) ? 1 : 0),
                 'download' => (isset($download[$i]) ? 1 : 0),
+                'api' => (isset($api[$i]) ? 1 : 0),
+                'inline' => (isset($inline[$i]) ? 1 : 0),
                 'frozen' => (isset($frozen[$i]) ? 1 : 0),
                 'limited' => (isset($limited[$i]) ? $limited[$i] : ''),
                 'width' => isset($width[$i]) ? $width[$i] : '',

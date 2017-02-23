@@ -4,10 +4,12 @@ namespace App\Library\FEG\System;
 
 use PDO;
 use DB;
+use File;
 use Carbon\Carbon;
 use App\Library\MyLog;
 use PHPMailer;
 use Mail;
+use App\Models\Feg\System\Options;
 
 
 class FEGSystemHelper
@@ -284,13 +286,45 @@ class FEGSystemHelper
     public static function phpMail($to, $subject, $message, $from = "support@fegllc.com", $options = array()) {
         $headers = 'MIME-Version: 1.0' . "\r\n";
         $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
-        $headers .= 'From: ' . $from . "\r\n";        
+        if (isset($options['fromName'])) {
+            $headers .= 'From: ' . $options['fromName'] . ' <'. $from . '>'. "\r\n";
+        }
+        else {
+            $headers .= 'From: ' . $from . "\r\n";        
+        }
+        
         if (!empty($options)) {
             if (!empty($options['cc'])) {
-                $headers .= 'Cc: ' . $options['cc'] . "\r\n";  
+                if (isset($options['ccName'])) {
+                    $headers .= 'Cc: ' . $options['ccName'] . ' <'. $options['cc'] . '>'. "\r\n";
+                }
+                else {
+                    $headers .= 'Cc: ' . $options['cc'] . "\r\n";  
+                }                
             }
             if (!empty($options['bcc'])) {
-                $headers .= 'Bcc: ' . $options['bcc'] . "\r\n";  
+                if (isset($options['bccName'])) {
+                    $headers .= 'Bcc: ' . $options['bccName'] . ' <'. $options['bcc'] . '>'. "\r\n";
+                }
+                else {
+                    $headers .= 'Bcc: ' . $options['bcc'] . "\r\n";  
+                }                 
+            }
+            if (!empty($options['replyTo'])) {
+                if (isset($options['replyToName'])) {
+                    $headers .= 'Reply-To: ' . $options['replyToName'] . ' <'. $options['replyTo'] . '>'. "\r\n";
+                }
+                else {
+                    $headers .= 'Reply-To: ' . $options['replyTo'] . "\r\n";  
+                }                 
+            }
+            if (!empty($options['sender'])) {
+                if (isset($options['senderName'])) {
+                    $headers .= 'Sender: ' . $options['senderName'] . ' <'. $options['sender'] . '>'. "\r\n";
+                }
+                else {
+                    $headers .= 'Sender: ' . $options['sender'] . "\r\n";  
+                }                 
             }
         }
         
@@ -427,6 +461,15 @@ class FEGSystemHelper
         }
     }
     
+    /**
+     * Function which sends email using php mail (mail function) or laravel Mail class when using attachments
+     * [Under Development]
+     * @param type $to
+     * @param type $subject
+     * @param type $message
+     * @param string $from
+     * @param type $options
+     */
     public static function sendEmail($to, $subject, $message, $from = "support@fegllc.com", $options = array()) { 
         //support@fegllc.com
         if (empty($from)) {
@@ -435,13 +478,13 @@ class FEGSystemHelper
             $from = "support@fegllc.com";
         }
         
-        $preventEmailSendingSetting = env('PREVENT_FEG_SYSTEM_EMAIL', false);        
+        $preventEmailSendingSetting = env('PREVENT_FEG_SYSTEM_EMAIL', true);        
         if (!$preventEmailSendingSetting)  {
-            if (isset($options['attach'])) {
-                self::laravelMail($to, $subject, $message, $from, $options);
+            if (!isset($options['attach']) || !empty($options['usePHPMail'])) {
+                self::phpMail($to, $subject, $message, $from, $options);                
             }
             else {
-                self::phpMail($to, $subject, $message, $from, $options);
+                self::laravelMail($to, $subject, $message, $from, $options);
             }            
         }
     }
@@ -467,6 +510,11 @@ class FEGSystemHelper
             }
         }
         return $arr;        
+    }   
+    public static function split_trim_join($txt, $delim = ',', $trimChar = null) {
+        $arr = self::split_trim($txt, $delim, $trimChar);
+        $joined = implode($delim, $arr);
+        return $joined;        
     }   
 
     public static function syncTable($params = array()) {
@@ -638,9 +686,17 @@ class FEGSystemHelper
         return $hasMore;        
     }    
     
-    public static function getSystemEmailRecipients($reportName, $location = null, $isTest = false) {
-        $emails = array('reportName' => $reportName, 'to' => '', 'cc' => '', 'bcc' => '');
-        $q = "SELECT * from system_email_report_manager WHERE report_name='$reportName' AND is_active=1 order by id desc";
+    /**
+     * Function to get system email recipient defined as a configuration in System Email Manager /system/systememailreportmanager
+     * 
+     * @param string $configName    Name of the Configuration from /system/systememailreportmanager
+     * @param number/string $location   [optional] Pass the location id if you want to filter user assigned to that location. Can pass null to skip it
+     * @param boolean $isTest   [optional] Pass true to get recipients only from the 'Email recipients while testing' section
+     * @return array    {'to' => '<string comma_separated_emails>', 'cc' => '<string comma_separated_emails>', 'bcc' => '<string comma_separated_emails>', }
+     */
+    public static function getSystemEmailRecipients($configName, $location = null, $isTest = false) {
+        $emails = array('configName' => $configName, 'to' => '', 'cc' => '', 'bcc' => '');
+        $q = "SELECT * from system_email_report_manager WHERE report_name='$configName' AND is_active=1 order by id desc";
         $data = DB::select($q);
         $groups = array('to' => '', 'cc' => '', 'bcc' => '');
         $locationUsers = array('to' => '', 'cc' => '', 'bcc' => '');
@@ -676,9 +732,9 @@ class FEGSystemHelper
                 $ut = $data->to_email_individuals;
                 $ucc = $data->cc_email_individuals;
                 $ubcc = $data->bcc_email_individuals;                
-                $users['to'] = empty($ut) ? array() : self::getUserEmails($ut);
-                $users['cc'] = empty($ucc) ? array() : self::getUserEmails($ucc);
-                $users['bcc'] = empty($ubcc) ? array() : self::getUserEmails($ubcc);
+                $users['to'] = empty($ut) ? array() : self::getUserEmails($ut,      $location);
+                $users['cc'] = empty($ucc) ? array() : self::getUserEmails($ucc,    $location);
+                $users['bcc'] = empty($ubcc) ? array() : self::getUserEmails($ubcc, $location);
                 
                 $inclues['to'] = FEGSystemHelper::split_trim($data->to_include_emails);
                 $inclues['cc'] = FEGSystemHelper::split_trim($data->cc_include_emails);
@@ -712,39 +768,54 @@ class FEGSystemHelper
         return $emails;
     }
 
-    public static function getLocationManagersEmails($fields, $location = null) {
+    public static function getLocationManagersEmails($fields = '', $location = null) {
 //        $q = "SELECT id,contact_id, general_contact_id, field_manager_id,
 //            tech_manager_id, merch_contact_id, merchandise_contact_id,
 //            technical_contact_id, regional_contact_id, senior_vp_id, district_manager_id
 //        FROM location WHERE active=1";
         $emails = array();
-            if (!empty(trim($fields))) {
-            $q = "SELECT $fields
-            FROM location WHERE active=1";
-            if ($location) {
-                $q .= " AND id IN ($location)";
-            }
-            $fieldsArr = explode(',', $fields);
-            $data = DB::select($q);
-            $ids = array();
-            foreach($data as $row) {            
-                foreach($fieldsArr as $fname) {
-                    $val = $row->$fname;
-                    if (!empty($val)) {
-                        $ids[] = $val;
-                    }                
-                }        
-            }
+        if (!empty(trim($fields))) {
+            $ids = self::getLocationManagersIds($fields, $location);
             if (!empty($ids)) {
                 $emails = self::getUserEmails(implode(',', $ids));
-            }
-            
-        }
-        
+            }            
+        }        
         return $emails;
     }
+    public static function getLocationManagersIds($fields = null, $location = null) {
+//        $q = "SELECT id,contact_id, general_contact_id, field_manager_id,
+//            tech_manager_id, merch_contact_id, merchandise_contact_id,
+//            technical_contact_id, regional_contact_id, senior_vp_id, district_manager_id
+//        FROM location WHERE active=1";
+        if (empty(trim($fields))){
+            $fields = 'contact_id, general_contact_id, field_manager_id,
+//            tech_manager_id, merch_contact_id, merchandise_contact_id,
+//            technical_contact_id, regional_contact_id, senior_vp_id, district_manager_id';
+        }
+        $q = "SELECT $fields
+        FROM location WHERE active=1";
+        if ($location) {
+            $q .= " AND id IN ($location)";
+        }
+        $fieldsArr = explode(',', $fields);
+        $data = DB::select($q);
+        $ids = array();
+        foreach($data as $row) {            
+            foreach($fieldsArr as $fname) {
+                $val = $row->$fname;
+                if (!empty($val)) {
+                    $ids[] = $val;
+                }                
+            }        
+        }        
+        return array_unique($ids);
+    }    
 
     public static function getGroupsUserEmails($groups = null, $location = null) {
+        if (is_array($groups)) {
+            $groups = implode(',', $groups);
+        }        
+        $groups = self::split_trim_join($groups);
         $q = "SELECT U.id, U.group_id, UL.location_id, U.email FROM users U 
                     LEFT JOIN user_locations UL ON UL.user_id = U.id
                 LEFT JOIN tb_groups G ON G.group_id = U.group_id
@@ -760,14 +831,74 @@ class FEGSystemHelper
         $emails = array();
         foreach($data as $row) {
             $email = $row->email;
-            $emails[] =  trim($email);
+            if (!empty($email)) {
+                $emails[] =  trim($email);
+            }            
         }
         return $emails;
     }
-    public static function getUserEmails($users = null) {
-        $q = "SELECT DISTINCT email FROM users WHERE active=1 ";
+    public static function getGroupsUserIds($groups = null, $location = null) {
+        if (is_array($groups)) {
+            $groups = implode(',', $groups);
+        }        
+        $groups = self::split_trim_join($groups);
+        $q = "SELECT U.id, U.group_id, UL.location_id, U.email 
+                FROM users U 
+                LEFT JOIN tb_groups G ON G.group_id = U.group_id
+                LEFT JOIN user_locations UL ON UL.user_id = U.id
+                LEFT JOIN location L ON L.id = UL.location_id
+                WHERE U.active=1 AND L.active=1 ";
+        if (!empty($groups)) {
+            $q .= " AND G.group_id IN ($groups)";
+        }
+        if (!empty($location)) {
+            $q .= " AND UL.location_id IN ($location)";
+        }
+        $data = DB::select($q);
+        $uids = array();
+        foreach($data as $row) {
+            $uid = $row->id;
+            if (!empty($uid)) {
+                $uids[] = $uid;
+            }            
+        }
+        return array_unique($uids);
+    }
+    public static function getLocationUserIds($location = null, $users = null) {
+        if (is_array($users)) {
+            $users = implode(',', $users);
+        }        
+        $users = self::split_trim_join($users);
+        $q = "SELECT DISTINCT users.id FROM users 
+            LEFT JOIN user_locations ON user_locations.user_id = users.id
+            WHERE users.active=1 ";
         if (!empty($users)) {
-            $q .= " AND id IN ($users)";
+            $q .= " AND users.id IN ($users)";
+        }
+        if (!empty($location)) {
+            $q .= " AND user_locations.location_id IN ($location)";            
+        }
+        $data = DB::select($q);
+        $ids = array();
+        foreach($data as $row) {
+            $id = $row->id;
+            $ids[] = trim($id);
+        }
+        return $ids;
+    }    
+    public static function getUserEmails($users = null, $location = null) {
+        if (is_array($users)) {
+            $users = implode(',', $users);
+        }        
+        $users = self::split_trim_join($users);
+        $q = "SELECT DISTINCT email FROM users 
+            LEFT JOIN user_locations ON user_locations.user_id = users.id
+            WHERE users.active=1 ";
+        if (!empty($users)) {
+            $q .= " AND users.id IN ($users)";
+        }
+        if (!empty($location)) {
+            $q .= " AND user_locations.location_id IN ($location)";            
         }
         $data = DB::select($q);
         $emails = array();
@@ -778,24 +909,48 @@ class FEGSystemHelper
         return $emails;
     }    
     
+    /**
+     * Wrapper function to send email
+     * @param array $options    An associative array containing these keys: 
+     *                              from - string 
+     *                              to - string comma separated emails
+     *                              cc - string comma separated emails
+     *                              bcc - string comma separated emails
+     *                              subject - string
+     *                              message - strnig body of the mail, 
+     *                              attach - an index array of paths of the files to be attached
+     *                              isTest - boolean - [true=test mode on]whether email will be send to recipients defined in 'Email recipients while testing' in System Email Manager (/system/systememailreportmanager)
+     *                              configName - string (same as the configuration name defined in System Email Manager (/system/systememailreportmanager)
+     *                                          This name is used in this function to get test email recipient if required (if isTest key is set to true). 
+     *                                          This is also used to name the log file which stores the email content as HTML file in test mode
+     *                              configNamePrefix - string - prefix added to configName when the log file name is created
+     *                              configNameSuffix - string - suffix added to configName when the log file name is created
+     *                              
+     *                              
+     *                              
+     */
     public static function sendSystemEmail($options) {  
         
         $lp = 'FEGCronTasks/SystemEmails';
         $lpd = 'FEGCronTasks/SystemEmailsDump';
         $options = array_merge(array(
             'from' => "support@fegllc.com",
-            'reportName' => "Test",
-            'reportNamePrefix' => "",
-            'reportNameSuffix' => "",
+            'subject' => "",
+            'to' => "",
+            'cc' => "",
+            'bcc' => "",
+            'configName' => "Test",
+            'configNamePrefix' => "",
+            'configNameSuffix' => "",
         ), $options);
         
         extract($options);
         
-        $reportNameSanitized = preg_replace('/[\W]/', '-', strtolower($reportName));
+        $configNameSanitized = preg_replace('/[\W]/', '-', strtolower($configName));
         $lf = "email-"
-                . (empty($reportNamePrefix)? "" : "{$reportNamePrefix}-")
-                . $reportNameSanitized
-                . (empty($reportNameSuffix)? "" : "-{$reportNameSuffix}")
+                . (empty($configNamePrefix)? "" : "{$configNamePrefix}-")
+                . $configNameSanitized
+                . (empty($configNameSuffix)? "" : "-{$configNameSuffix}")
                 . ".log";
         
         if ($isTest) {
@@ -813,7 +968,7 @@ $message
             
             $options['message'] = $message;
             $options['subject'] = $subject = "[TEST] ". $subject;
-            $emailRecipients = self::getSystemEmailRecipients($reportName, null, true);
+            $emailRecipients = self::getSystemEmailRecipients($configName, null, true);
             $options['to'] = $to = $emailRecipients['to'];
             $options['cc'] = $cc = $emailRecipients['cc'];
             $options['bcc'] = $bcc = $emailRecipients['bcc'];
@@ -821,10 +976,10 @@ $message
                 $to = "e5devmail@gmail.com";
             }
             
-//            FEGSystemHelper::logit("to: " .$to, "email-{$reportNameSanitized}.log", "FEGCronTasks/SystemEmailsDump");
-//            FEGSystemHelper::logit("cc: " .$cc, "email-{$reportNameSanitized}.log", "FEGCronTasks/SystemEmailsDump");
-//            FEGSystemHelper::logit("bcc: " .$bcc, "email-{$reportNameSanitized}.log", "FEGCronTasks/SystemEmailsDump");
-//            FEGSystemHelper::logit("subject: " .$subject, "email-{$reportNameSanitized}.log", "FEGCronTasks/SystemEmailsDump");
+//            FEGSystemHelper::logit("to: " .$to, "email-{$configNameSanitized}.log", "FEGCronTasks/SystemEmailsDump");
+//            FEGSystemHelper::logit("cc: " .$cc, "email-{$configNameSanitized}.log", "FEGCronTasks/SystemEmailsDump");
+//            FEGSystemHelper::logit("bcc: " .$bcc, "email-{$configNameSanitized}.log", "FEGCronTasks/SystemEmailsDump");
+//            FEGSystemHelper::logit("subject: " .$subject, "email-{$configNameSanitized}.log", "FEGCronTasks/SystemEmailsDump");
               
             //$messageLog = str_ireplace(array("<br />","<br>","<br/>"), "\r\n", $message);           
             //$messageLog = nl2br($message);           
@@ -838,74 +993,134 @@ $message
     }
 
     public static function getOption($optionName, $default = '', $all = false, $skipInactive = false, $details = false) {
-        $table = "feg_system_options";
-        $value = $default;
-        if ($details) {
-            $value = new \stdClass();
-            $value->option_name = $optionName;
-            $value->option_value = $default;
-            $value->is_active = 1;
-            $value->notes = '';
-            $value->created_at = null;
-            $value->updated_at = null;
-        }
-        if ($all) {            
-            $value = [$value];
-        }        
-        $q = DB::table($table)->where('option_name', $optionName);
-        if ($skipInactive) {
-            $q->where('is_active', 1);
-        }
-        $data = $q->get();
-        if (!empty($data)) {
-            $firstData = $data[0];
-            if ($details && $all) {                
-                $value = $data;
-            }
-            elseif ($details) {
-                $value = $firstData;
-            }
-            elseif ($all) {
-                $value = [];
-                foreach($data as $item) {
-                    $value[] = $item->option_value;
-                }
-            }
-            else {
-                $value = $firstData->option_value;
-            }
-        }
-        
-        return $value;
+        return Options::getOption($optionName, $default, $all, $skipInactive, $details);        
     }
     public static function updateOption($optionName, $value = '', $options = array()) {
-        $table = "feg_system_options";
-        $data = [
-                'option_name' => $optionName,
-                'option_value' => $value
-            ];
-        $data['notes'] = isset($options['notes']) ? $options['notes'] : '';
-        $data['is_active'] = isset($options['is_active']) ? $options['is_active'] : '';
-        
-        $q = DB::table($table);
-        if (isset($option['id'])) {
-            $q->where('id', $option['id']);
-        }
-        else {
-            $q->where('option_name', $optionName);
-        }
-        $q->update($data);
-        return $value;
+        return Options::updateOption($optionName, $value, $options);
     }
     public static function addOption($optionName, $value = '', $options = array()) {
-        $table = "feg_system_options";
-        $data = [
-                'option_name' => $optionName,
-                'option_value' => $value
-            ];
-        $data['notes'] = isset($options['notes']) ? $options['notes'] : '';
-        $data['is_active'] = isset($options['is_active']) ? $options['is_active'] : '';
-        DB::table($table)->insert($data);
-        return $value;        
+        return Options::addOption($optionName, $value, $options);        
+    }    
+    
+    public static function getUserAvatarUrl($id = null, $file = null) {
+		$fileUrl = url()."/silouette.png";
+        if (!empty($id)) {
+            $file = \App\Models\Core\Users::where('id', $id)->pluck('avatar');
+        }
+        $filePath = "./uploads/users/$file";
+        if (!empty($file) && file_exists($filePath)) {
+            $fileUrl = \URL::to("uploads/users/$file");
+        }        
+        return $fileUrl;
+    }
+    
+    public static function getUserProfileDetails($user) {
+        $userID = $user['id'];
+        $firstName = empty($user['first_name']) ? '' : $user['first_name'];
+        $lastName = empty($user['last_name']) ? '' : $user['last_name'];                                    
+        $fullName = $firstName . ' ' . $lastName;
+        $avatar = self::getUserAvatarUrl(null, $user['avatar']);
+        $userTooltip = 'Username: ' . $user['username'] . '<br/> Email: '. $user['email'];
+        
+        return [
+            'id' => $userID,
+            'fullName' => $fullName,
+            'firstName' => $firstName,
+            'lastName' => $lastName,
+            'avatar' => $avatar,
+            'tooltip' => $userTooltip,
+        ];
+    }
+        
+    public static function getTicketCommentUserProfile($comment, $ticket = []) {
+        $userID = $comment->UserID;
+        $externalName = empty($comment->USERNAME) ? '' : $comment->USERNAME;
+        $firstName = empty($comment->first_name) ? '' : $comment->first_name;
+        $lastName = empty($comment->last_name) ? '' : $comment->last_name;                                    
+        $fullName = $firstName . ' ' . $lastName;
+        $avatar = self::getUserAvatarUrl(null, $comment->avatar);
+        $isExternal = empty($userID);
+
+        $userTooltip = 'Username: ' . $comment->username . '<br/> Email: '. $comment->email;
+        if ($isExternal) {
+            $fullName = $externalName;
+            $userTooltip = "Not an user";
+        }    
+        
+        return [
+            'id' => $userID,
+            'isExternal' => $isExternal,
+            'eExternalName' => $externalName,
+            'fullName' => $fullName,
+            'firstName' => $firstName,
+            'lastName' => $lastName,
+            'avatar' => $avatar,
+            'tooltip' => $userTooltip,
+        ];               
+    }
+    
+    public static function getTicketAttachmentDetails($data, $isInitialTicketData = false) {
+        $fileNamesCSV = $isInitialTicketData ? $data->file_path : $data->Attachments;
+        $datePosted = \DateHelpers::formatDate($isInitialTicketData ? $data->Created : $data->Posted);
+        $attachments = [];
+        if (!empty($fileNamesCSV)) {
+            $files = explode(',', $fileNamesCSV);            
+            foreach($files as $file) {
+                if (!empty($file)) {
+                    $url = url().$file;
+                    $fileName =  self::getSanitizedFileNameForTicketAttachments($file);                
+                    $attachments[] = [
+                        'url' => $url,
+                        'fileName' => $fileName,
+                        'date' => $datePosted
+                    ];                    
+                }
+                
+            }
+        }
+        
+        return $attachments;
+    }    
+
+     /**
+     * This works on paths relative to public folder
+     * 
+     * @param type $basename
+     * @param type $path
+     * @return string The possibly modified filename (without the path)
+     */
+    public static function possiblyRenameFileToResolveDuplicate($basename, $path) {
+        $fileParts = pathinfo($basename);
+        $ext = empty($fileParts['extension']) ? '' : $fileParts['extension'];
+        $filename = $fileParts['filename'];
+        $newBasename = $filename . (empty($ext) ? "" : ('.' . $ext));
+        $path = preg_replace('/([^\/]$)/', '$1/', $path);
+        $copyCount = 0;
+        $filepath = $path . $newBasename;
+        if (!File::exists($path)) {
+            File::makeDirectory($path, 0777, true, true);
+        }
+        while (File::exists($filepath)) {
+            $newBasename = $filename . ('--'.++$copyCount).(empty($ext) ? "" : ('.' . $ext));
+            $filepath = $path . $newBasename;            
+        }
+        return $newBasename;
+    }
+    
+    /**
+     * 
+     * @param type $path
+     * @return string trimmed and slim filename
+     */
+    public static function getSanitizedFileNameForTicketAttachments($path, $maxLength = 25) {
+        $fileParts = pathinfo($path);
+        $ext = empty($fileParts['extension']) ? '' : $fileParts['extension'];
+        $fileName = $fileParts['filename'];
+       
+        $fileName  = preg_replace('/--.*$/', '', $fileName);
+        $fileName =  substr($fileName, 0, $maxLength);
+        
+        $newBasename = $fileName . (empty($ext) ? "" : ('.' . $ext));
+        return $newBasename;
     }
 }

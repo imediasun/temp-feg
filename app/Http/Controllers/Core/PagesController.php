@@ -5,7 +5,7 @@ use App\Models\Core\Pages;
 use App\Models\Core\Groups;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
-use Validator, Input, Redirect;
+use Validator, Input, Redirect, Session, Auth, DB;
 
 
 class PagesController extends Controller
@@ -29,28 +29,28 @@ class PagesController extends Controller
             'pageTitle' => $this->info['title'],
             'pageNote' => $this->info['note'],
             'pageModule' => 'core/pages',
+            'pageUrl' => url('core/pages'),
             'return' => self::returnUrl()
 
         );
     }
 
-    public function getIndex(Request $request)
+    public function getIndex(Request $request, $id=null)
     {
         if ($this->access['is_view'] == 0)
             return Redirect::to('dashboard')
                 ->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
 
-        $sort = (!is_null($request->input('sort')) ? $request->input('sort') : 'pageID');
-        $order = (!is_null($request->input('order')) ? $request->input('order') : 'asc');
+        $sort = (!is_null($request->input('sort')) ? $request->input('sort') : $this->info['setting']['orderby']);
+        $order = (!is_null($request->input('order')) ? $request->input('order') : $this->info['setting']['ordertype']);
         // End Filter sort and order for query
         // Filter Search for query
-        $filter = (!is_null($request->input('search')) ? '' : '');
-
+        $filter = (!is_null($request->input('search')) ? $this->buildSearch() : '');
 
         $page = $request->input('page', 1);
         $params = array(
             'page' => $page,
-            'limit' => (!is_null($request->input('rows')) ? filter_var($request->input('rows'), FILTER_VALIDATE_INT) : static::$per_page),
+            'limit' => (!is_null($request->input('rows')) ? filter_var($request->input('rows'), FILTER_VALIDATE_INT) : $this->info['setting']['perpage']),
             'sort' => $sort,
             'order' => $order,
             'params' => $filter,
@@ -61,9 +61,10 @@ class PagesController extends Controller
 
         // Build pagination setting
         $page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;
-        if($params['limit'] == 0)
-            $params['limit'] = $results['total'];
-        $pagination = new Paginator($results['rows'], $results['total'], $params['limit']);
+        //$pagination = new Paginator($results['rows'], $results['total'], $params['limit']);
+        $pagination = new Paginator($results['rows'], $results['total'],
+            (isset($params['limit']) && $params['limit'] > 0 ? $params['limit'] :
+                ($results['total'] > 0 ? $results['total'] : '1')));
         $pagination->setPath('pages');
 
         $this->data['param'] = $params;

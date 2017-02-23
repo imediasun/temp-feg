@@ -1,5 +1,5 @@
 <div class="row m-b">
-	<div class="col-md-8">
+	<div class="col-md-9">
 			<a href="{{ URL::to( $pageModule .'/search') }}" class="btn btn-sm btn-white" onclick="SximoModal(this.href,'Advanced Search'); return false;" ><i class="fa fa-search"></i>Advanced Search</a>
         @if(SiteHelpers::isModuleEnabled($pageModule))
         <a href="{{ URL::to('tablecols/arrange-cols/'.$pageModule) }}" class="btn btn-sm btn-white" onclick="SximoModal(this.href,'Column Selector'); return false;" ><i class="fa fa-bars"></i> Arrange Columns</a>
@@ -19,6 +19,10 @@
                 @endif
             @endif
         @endif
+    </div>
+    <div class="col-md-3">
+        <div class="pull-right">
+        </div>
     </div>
 </div>
 <script>

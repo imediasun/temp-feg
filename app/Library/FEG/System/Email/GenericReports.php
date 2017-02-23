@@ -26,15 +26,17 @@ class GenericReports
         
         $message = "Click link for detail: <a href='".url("/mylocationgame/?gamedetails=" . $gameId)."' target='_blank' >$gameId - $gameTitle at $locationId | $locationName</a>";
         
-        $reportName = 'New Game Received';
-        $emailRecipients = FEGSystemHelper::getSystemEmailRecipients($reportName, $locationId);
+        $configName = 'New Game Received';
+        $emailRecipients = FEGSystemHelper::getSystemEmailRecipients($configName, $locationId);
         FEGSystemHelper::sendSystemEmail(array_merge($emailRecipients, array(
             'subject' => "NEW Game $gameTitle has been received at $locationId", 
             'message' => $message, 
-            'isTest' => true,
-            'reportName' => $reportName,
-            'reportNamePrefix' => '',
-            'reportNameSuffix' => ''.$gameId. '-'. $locationId,
+            'from' => 'support@fegllc.com',
+            'fromName' => 'Family Entertainment Group',
+            'isTest' => env('SEND_NEW_GAME_RECEIVED_EMAIL_TO_TEST_RECIPIENT', false),
+            'configName' => $configName,
+            'configNamePrefix' => '',
+            'configNameSuffix' => ''.$gameId. '-'. $locationId,
             'attach' => [$assetTagPath],
         )));        
         

@@ -37,7 +37,7 @@ class ManagenewgraphicrequestsController extends Controller
         
         $request = Managenewgraphicrequests::find($id);
         $data = array(
-            'status_id' => 3,
+            'status_id' => 2,
             'aprrove_user_id' => \Session::get('uid'),
             'approve_date' => date('Y-m-d')
         );
@@ -226,10 +226,7 @@ class ManagenewgraphicrequestsController extends Controller
         $rules = array('priority_id' => 'required', 'status_id' => 'required', 'description' => 'required|min:5');
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
-            $data['priority_id'] = $request->get('priority_id');
-            $data['status_id'] = $request->get('status_id');
-            $data['description'] = $request->get('description');
-            $data['media_type'] = $request->get('media_type');
+            $data = $this->validatePost('requests',true);
             if (\Session::has('uid') && $data['status_id']) {
                 $data['aprrove_user_id'] = \Session::get('uid');
                 $data['approve_date'] = date('Y-m-d');
@@ -299,6 +296,9 @@ class ManagenewgraphicrequestsController extends Controller
     {
         if ($request->ajax() == true && \Auth::check() == true) {
             $param = explode(':', $request->input('filter'));
+            if($param[0] != 'new_graphics_request_status'){
+                return parent::getComboselect($request);
+            }
             $parent = (!is_null($request->input('parent')) ? $request->input('parent') : null);
 
             $limit = (!is_null($request->input('limit')) ? $request->input('limit') : null);

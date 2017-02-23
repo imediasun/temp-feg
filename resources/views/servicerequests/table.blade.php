@@ -1,15 +1,13 @@
-<?php usort($tableGrid, "SiteHelpers::_sort");
-
-?>
-
+<?php usort($tableGrid, "SiteHelpers::_sort"); ?>
 <div class="sbox">
     <div class="sbox-title">
         <h5><i class="fa fa-table"></i></h5>
+
         <div class="sbox-tools">
-            <a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Clear Search"
+            <a href="javascript:void(0)" class="btn btn-xs btn-white tips clearSearchButton" title="Clear Search"
                onclick="reloadData('#{{ $pageModule }}','servicerequests/data?search=')"><i class="fa fa-trash-o"></i> Clear
                 Search </a>
-            <a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Reload Data"
+            <a href="javascript:void(0)" class="btn btn-xs btn-white tips reloadDataButton" title="Reload Data"
                onclick="reloadData('#{{ $pageModule }}','servicerequests/data?return={{ $return }}')"><i
                         class="fa fa-refresh"></i></a>
             @if(Session::get('gid') ==1)
@@ -85,7 +83,26 @@
                     </thead>
                     <tbody>
 
-
+                    @if($access['is_add'] =='1' && $setting['inline']=='true')
+                        <tr id="form-0" >
+                            <td> # </td>
+                            <td> </td>
+                            @if($setting['view-method']=='expand') <td> </td> @endif
+                            @foreach ($tableGrid as $t)
+                                @if(isset($t['inline']) && $t['inline'] =='1')
+                                    <?php $limited = isset($t['limited']) ? $t['limited'] :''; ?>
+                                    @if(SiteHelpers::filterColumn($limited ))
+                                        <td data-form="{{ $t['field'] }}" data-form-type="{{ AjaxHelpers::inlineFormType($t['field'],$tableForm)}}">
+                                            {!! SiteHelpers::transInlineForm($t['field'] , $tableForm) !!}
+                                        </td>
+                                    @endif
+                                @endif
+                            @endforeach
+                            <td >
+                                <button onclick="saved('form-0')" class="btn btn-primary btn-xs" type="button"><i class="fa  fa-save"></i></button>
+                            </td>
+                        </tr>
+                    @endif
                     <?php foreach ($rowData as $row) :
 
                     $id = $row->TicketID;
@@ -138,7 +155,7 @@
                                         }
                                         else
                                         {
-                                           echo $row->Status;
+                                           echo ucfirst($row->Status);
                                         }
 
                                     }
