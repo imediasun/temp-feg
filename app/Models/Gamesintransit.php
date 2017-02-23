@@ -37,25 +37,25 @@ class gamesintransit extends Sximo
     public static function queryWhere()
     {
         $where="";
-        $user_level=\Session::get('gid');
-        $user_locations= $user_locations = \SiteHelpers::getLocationDetails(\Session::get('uid'));
-        $user_locations= json_decode(json_encode($user_locations),true);
-        $locations=array();
-        foreach($user_locations as $location)
-        {
-            $locations[]=$location['id'];
-        }
-        $user_locations=implode(',',$locations);
-        if( $user_level == 1 || $user_level == 2 || $user_level == 6 || $user_level == 8 ||  $user_level == 11) {
-            $where .= "  WHERE( intended_first_location IN(".$user_locations.") OR
-                         intended_first_location IS NULL OR
-                         prev_location_id IN(".$user_locations.") OR
-                         location_id IN(".$user_locations.")) AND status_id=3 AND sold = 0";
-        }
-        else
-        {
+//        $user_level=\Session::get('gid');
+//        $user_locations= $user_locations = \SiteHelpers::getLocationDetails(\Session::get('uid'));
+//        $user_locations= json_decode(json_encode($user_locations),true);
+//        $locations=array();
+//        foreach($user_locations as $location)
+//        {
+//            $locations[]=$location['id'];
+//        }
+//        $user_locations=implode(',',$locations);
+//        if( $user_level == 1 || $user_level == 2 || $user_level == 6 || $user_level == 8 ||  $user_level == 11) {
+//            $where .= "  WHERE( intended_first_location IN(".$user_locations.") OR
+//                         intended_first_location IS NULL OR
+//                         prev_location_id IN(".$user_locations.") OR
+//                         location_id IN(".$user_locations.")) AND status_id=3 AND sold = 0";
+//        }
+//        else
+//        {
             $where .= " WHERE status_id=3 AND sold = 0";
-        }
+//        }
         return $where;
 
     }
