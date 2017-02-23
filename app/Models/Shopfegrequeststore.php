@@ -268,7 +268,7 @@ class shopfegrequeststore extends Sximo  {
                     FEGSystemHelper::sendSystemEmail(array_merge($receipts, array(
                         'subject' => $subject,
                         'message' => $message,
-                        'isTest' => false,
+                        'isTest' => true,
                         'configName' => $configName,
                         'from' => $from,
                         'replyTo' => $from,
