@@ -478,7 +478,7 @@ class FEGSystemHelper
             $from = "support@fegllc.com";
         }
         
-        $preventEmailSendingSetting = env('PREVENT_FEG_SYSTEM_EMAIL', true);        
+        $preventEmailSendingSetting = env('PREVENT_FEG_SYSTEM_EMAIL', false);
         if (!$preventEmailSendingSetting)  {
             if (!isset($options['attach']) || !empty($options['usePHPMail'])) {
                 self::phpMail($to, $subject, $message, $from, $options);                
