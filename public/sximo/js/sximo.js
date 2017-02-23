@@ -154,6 +154,18 @@ function SximoModal( url , title)
 	});
 	$('#sximo-modal').modal('show');	
 }
+function SximoModalShow(modal, callbackName, data) {
+	modal.modal('show');
+    if (callbackName) {
+        App.autoCallbacks.runCallback.call(modal, callbackName, data);   
+    }
+}
+function SximoModalHide(modal, callbackName, data) {
+	modal.modal('hide');
+    if (callbackName) {
+        App.autoCallbacks.runCallback.call(modal, callbackName, data);   
+    }    
+}
 
 ;(function ($, window, document, undefined) {
 
