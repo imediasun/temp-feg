@@ -261,21 +261,11 @@ class shopfegrequeststore extends Sximo  {
 					&nbsp;&nbsp;&nbsp; 2.) Set Priority Level at <b>'.$mangeGraphicRequestURL.'</b><br><br>
 					**All cc\'d, please Reply to All <b> only if you wish to deny or modify request</b> and explain why.</em><br>';
                     $from = \Session::get('eid');
-                    if (!empty($receipts['to']))
-                    {
-                        $to = $receipts['to'];
-                    }
-                    else {
-                        die('not valid receipt email');
-                    }
-                    $cc = '';
+                   $cc = '';
                     $bcc = '';
                     $subject = 'New Graphics Request for '.$locationName;
                     $message = $message;
-                    $headers  = "From: $from\r\nReply-to: $from\r\n";
-                    $headers .= 'MIME-Version: 1.0' . "\r\n";
-                    $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
-              
+                   
 
                     FEGSystemHelper::sendSystemEmail(array_merge($receipts, array(
                         'subject' => $subject,
@@ -286,7 +276,6 @@ class shopfegrequeststore extends Sximo  {
                         'replyTo' => $from
                     )));
 
-                    Log::info("**Send Graphic Request Email => ",[$to, $subject, $message, $headers]);
                    return $last_inserted_id;
     }
 
