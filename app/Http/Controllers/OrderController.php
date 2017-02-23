@@ -1094,11 +1094,11 @@ function sendPhpEmail($message,$to,$from,$subject,$pdf,$filename,$cc,$bcc)
         }
         $results = array();
         //fixing for https://www.screencast.com/t/vwFYE3AlF
-        $queries = \DB::select("SELECT LOCATE('plush',vendor_description) AS pos,id,vendor_description 
+        $queries = \DB::select("SELECT *,LOCATE('$term',vendor_description) AS pos
                                 FROM products
-                                WHERE MATCH(vendor_description) AGAINST ('plush') AND products.inactive=0
+                                WHERE vendor_description LIKE '%$term%' AND products.inactive=0 $whereWithVendorCondition
                                 GROUP BY vendor_description
-                                ORDER BY pos,vendor_description
+                                ORDER BY pos, vendor_description
                                  Limit 0,10");
         if (count($queries) != 0) {
             foreach ($queries as $query) {
