@@ -247,7 +247,7 @@ class shopfegrequeststore extends Sximo  {
         $game_info=explode('-',$data['description']);
         $mangeGraphicRequestURL = url("managenewgraphicrequests");
         $graphicApproveLink = "http://{$_SERVER['HTTP_HOST']}/managenewgraphicrequests/approve/$last_inserted_id";
-        $graphicDenyLink = "http://{$_SERVER['HTTP_HOST']}/managenewgraphgetSystemEmailRecipientsicrequests/deny/$last_inserted_id";
+        $graphicDenyLink = "http://{$_SERVER['HTTP_HOST']}/managenewgraphicrequests/deny/$last_inserted_id";
         $receipts = FEGSystemHelper::getSystemEmailRecipients($configName);
         $message = '<b>Date Requested:</b> '.$data['request_date'].'<br>
 					<b>Requestor:</b> '.\Session::get('fid').'<br>
@@ -261,8 +261,6 @@ class shopfegrequeststore extends Sximo  {
 					&nbsp;&nbsp;&nbsp; 2.) Set Priority Level at <b>'.$mangeGraphicRequestURL.'</b><br><br>
 					**All cc\'d, please Reply to All <b> only if you wish to deny or modify request</b> and explain why.</em><br>';
                     $from = \Session::get('eid');
-                   $cc = '';
-                    $bcc = '';
                     $subject = 'New Graphics Request for '.$locationName;
                     $message = $message;
                    
