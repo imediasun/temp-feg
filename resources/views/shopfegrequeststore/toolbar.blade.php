@@ -20,7 +20,7 @@
 </div>
 
 
-<div class="row " >
+<div class="row m-b" >
 
     <div class="col-md-8">
 
@@ -47,9 +47,10 @@
             @endif
         @endif
     </div>
-    <div class="col-md-4 style=float:right;">
-        <h3 class="pull-right"> <small><a  href="{{ URL::to('./shopfegrequeststore/new-graphic-request') }}" target="_blank" class="btn btn-primary">Request Custom Graphic</a></small></h3>
-
+    <div class="col-md-4">
+        <div class="pull-right">
+            <a href="{{ URL::to('./shopfegrequeststore/new-graphic-request') }}" target="_blank" class="btn btn-sm btn-primary"> Request Custom Graphic</a>
+        </div>
     </div>
 
 </div>

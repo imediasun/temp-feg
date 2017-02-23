@@ -16,6 +16,9 @@
  
   color: #676a6c; overflow-x:hidden
 }
+#form-0{
+  display: none;
+}
 a { color:#1ab394;}
 h1,h2,h3,h4,h5,h6 {
   font-weight: 100;

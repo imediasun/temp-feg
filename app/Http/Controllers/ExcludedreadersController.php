@@ -38,13 +38,13 @@ class ExcludedreadersController extends Controller {
 		if($this->access['is_view'] ==0)
 			return Redirect::to('dashboard')->with('messagetext',\Lang::get('core.note_restric'))->with('msgstatus','error');
 
-		$this->data['access']		= $this->access;
+		$this->data['access'] = $this->access;
 		return view('excludedreaders.index',$this->data);
 	}
     public function getSearchFilterQuery($customQueryString = null) {
         // Filter Search for query
         // build sql query based on search filters
-        $filter = is_null($customQueryString) ? (is_null(Input::get('search')) ? '' : $this->buildSearch()) : 
+        $filter = is_null($customQueryString) ? (is_null(Input::get('search')) ? '' : $this->buildSearch()) :
             $this->buildSearch($customQueryString);
 
         // Get assigned locations list as sql query (part)

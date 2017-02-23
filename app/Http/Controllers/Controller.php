@@ -95,7 +95,6 @@ abstract class Controller extends BaseController
             $items = array();
 
             $fields = explode("|", $param[2]);
-
             foreach ($rows as $row) {
                 $value = "";
                 $values = array();
@@ -108,7 +107,6 @@ abstract class Controller extends BaseController
                 $items[] = array($row->$param['1'], $value);
 
             }
-
             return json_encode($items);
         } else {
             return json_encode(array('OMG' => " Ops .. Cant access the page !"));

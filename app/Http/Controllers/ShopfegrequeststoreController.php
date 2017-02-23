@@ -209,8 +209,7 @@ class ShopfegrequeststoreController extends Controller
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
             $data = $this->validatePost('products');
-
-            $id = $this->model->insertRow($data, $request->input('id'));
+            $id = $this->model->insertRow($data, $id);
 
             return response()->json(array(
                 'status' => 'success',

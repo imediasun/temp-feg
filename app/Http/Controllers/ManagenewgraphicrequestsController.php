@@ -226,10 +226,7 @@ class ManagenewgraphicrequestsController extends Controller
         $rules = array('priority_id' => 'required', 'status_id' => 'required', 'description' => 'required|min:5');
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
-            $data['priority_id'] = $request->get('priority_id');
-            $data['status_id'] = $request->get('status_id');
-            $data['description'] = $request->get('description');
-            $data['media_type'] = $request->get('media_type');
+            $data = $this->validatePost('requests',true);
             if (\Session::has('uid') && $data['status_id']) {
                 $data['aprrove_user_id'] = \Session::get('uid');
                 $data['approve_date'] = date('Y-m-d');

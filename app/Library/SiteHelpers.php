@@ -1007,6 +1007,149 @@ class SiteHelpers
         return $form;
     }
 
+    public static  function transInlineForm( $field, $forms = array(),$bulk=false , $value ='')
+    {
+        $type = '';
+        $bulk = ($bulk == true ? '[]' : '');
+        $mandatory = '';
+        foreach($forms as $f)
+        {
+            $hasShow = isset($f['view']) ? $f['view'] == 1 : false;
+            if($f['field'] == $field && $hasShow)
+            {
+                $type = ($f['type'] !='file' ? $f['type'] : '');
+                $option = $f['option'];
+                $required = $f['required'];
+                if($required =='required') {
+                    $mandatory = "data-parsley-required='true'";
+                } else if($required =='email') {
+                    $mandatory = "data-parsley-type'='email' ";
+                } else if($required =='date') {
+                    $mandatory = "data-parsley-required='true'";
+                } else if($required =='numeric') {
+                    $mandatory = "data-parsley-type='number' ";
+                } else {
+                    $mandatory = '';
+                }
+            }
+        }
+
+        switch($type)
+        {
+            default:
+                $form ='';
+                break;
+            case 'textarea':
+            case 'textarea_editor':
+            case 'text':
+                $form = "<input  type='text' name='".$field."{$bulk}' class='form-control input-sm' $mandatory value='{$value}'/>";
+                break;
+
+            case 'text_date':
+                $form = "<input  type='text' name='$field{$bulk}' class='date form-control input-sm' $mandatory value='{$value}'/> ";
+                break;
+
+            case 'text_datetime':
+                $form = "<input  type='text' name='$field{$bulk}'  class='datetime form-control input-sm'  $mandatory value='{$value}'/> ";
+                break;
+
+            case 'select':
+
+                if($option['opt_type'] =='external')
+                {
+
+                    $opts = '';
+                    if($option['lookup_table'] =='location')
+                    {
+                        $lookupParts = explode('|',$option['lookup_value']);
+                        if(is_array($lookupParts) && !empty($lookupParts)){
+                            $option['lookup_value'] = $lookupParts[0];
+                        }
+                        $selected = '';
+                        $current_user_id=Auth::id();
+                        $user_ids = DB::table('user_locations')->leftjoin('location as l','user_locations.location_id','=','l.id')->where('user_locations.user_id',$current_user_id)->orderby('l.'.$option['lookup_value'])->get();
+                        foreach ($user_ids as $user_id)
+                        {
+                            $locations = DB::table($option['lookup_table'])->where('id',$user_id->location_id)->orderby($option['lookup_value'])->get();
+                            foreach ($locations as $location) {
+                                $value = "";
+                                foreach($lookupParts as $lookup){
+                                    $value .= $location->$lookup." - ";
+                                }
+                                $value = trim($value,' - ');
+                                $opts .= "<option $selected  value='" . $location->$option['lookup_key'] . "' $mandatory > " . $value . " </option> ";
+                            }
+
+                        }
+
+                    }
+                    else {
+                        $fields = explode("|", $option['lookup_value']);
+                        if($option['lookup_table'] == 'order_type')
+                        {
+                            $data = DB::table($option['lookup_table'])->where('can_request','=','1')->orderby($option['lookup_key'])->groupby($option['lookup_key'])->get();
+                        }
+                        else
+                        {
+                            if(count($fields)>1)
+                            {
+                                $data = DB::table($option['lookup_table'])->where($option['lookup_key'],'!=','')->orderby($option['lookup_key'])->groupby($option['lookup_key'])->get();
+                            }
+                            else
+                            {
+                                $data = DB::table($option['lookup_table'])->where($option['lookup_value'],'!=','')->orderby($option['lookup_value'])->groupby($option['lookup_value'])->get();
+                            }
+                        }
+
+                        foreach ($data as $row):
+                            $selected = '';
+                            if ($value == $row->$option['lookup_key']) $selected = 'selected="selected"';
+
+                            //print_r($fields);exit;
+                            $val = "";
+                            foreach ($fields as $item => $v) {
+                                if ($v != "") $val .= $row->$v . " ";
+                            }
+                            $opts .= "<option $selected value='" . $row->$option['lookup_key'] . "' $mandatory > " . $val . " </option> ";
+                        endforeach;
+                    }
+
+                } else {
+                    $opt = explode("|",$option['lookup_query']);
+                    $opts = '';
+                    for($i=0; $i<count($opt);$i++)
+                    {
+                        $selected = '';
+                        if($value == ltrim(rtrim($opt[0]))) $selected ='selected="selected"';
+                        $row =  explode(":",$opt[$i]);
+                        $opts .= "<option $selected value ='".trim($row[0])."' > ".$row[1]." </option> ";
+                    }
+
+                }
+                $form = "<select name='$field{$bulk}'  class='sel-inline $field{$bulk}' $mandatory>" .
+                    "<option value=''> -- Select  -- </option>".
+                    "	$opts
+						</select>";
+                break;
+
+            case 'radio':
+            case 'checkbox':
+                $opt = explode("|",$option['lookup_query']);
+                $opts = '';
+                for($i=0; $i<count($opt);$i++)
+                {
+                    $checked = '';
+                    $row =  explode(":",$opt[$i]);
+                    $opts .= "<option value ='".$row[0]."' > ".$row[1]." </option> ";
+                }
+                $form = "<select name='$field{$bulk}' class='sel-inline' $mandatory ><option value=''> -- Select  -- </option>$opts</select>";
+                break;
+
+        }
+
+        return $form;
+    }
+
     public static function bulkForm($field, $forms = array(), $value = '')
     {
         $type = '';
