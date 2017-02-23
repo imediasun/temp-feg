@@ -334,9 +334,10 @@ class servicerequestsController extends Controller
     {
         //$data['need_by_date'] = date('Y-m-d');
         //$rules = $this->validateForm();
+        dd($request);
         $sendMail=false;
         if(empty($id)) {
-            dd($sendMail);
+
             $sendMail = true;
         }
         $rules = $this->validateForm();
