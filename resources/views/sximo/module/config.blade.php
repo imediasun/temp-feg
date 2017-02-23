@@ -125,7 +125,12 @@
   <input  type='text' name='module_id' id='module_id'  value='{{ $row->module_id }}'  style="display:none; " />
   	<fieldset>
 		<legend> Module Setting </legend>
-
+          <div class="form-group">
+             <label for="module_route" class=" control-label col-md-4">Module Route</label>
+                <div class="col-md-8">
+                    <input  type='text' name='module_route' id='module_route' class="form-control " value='{{ isset($setting['module_route']) ? $setting['module_route'] : $module_name }}'  />		  
+                </div> 
+          </div> 
 		  <div class="form-group">
 			<label for="ipt" class=" control-label col-md-4"> Grid Table Type </label>
 			<div class="col-md-8">
