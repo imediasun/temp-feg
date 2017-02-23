@@ -268,10 +268,11 @@ class shopfegrequeststore extends Sximo  {
                     FEGSystemHelper::sendSystemEmail(array_merge($receipts, array(
                         'subject' => $subject,
                         'message' => $message,
-                        'isTest' => 1,
+                        'isTest' => false,
                         'configName' => $configName,
                         'from' => $from,
-                        'replyTo' => $from
+                        'replyTo' => $from,
+                        'usePHPMail'=>true
                     )));
 
                    return $last_inserted_id;
