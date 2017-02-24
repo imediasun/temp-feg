@@ -175,7 +175,7 @@ $myUserTooltip = "You";
                         {{--*/ $commentsCountIndex = $commentsCount /*--}}
                         @foreach ($comments as $comment)                            
                             @include('servicerequests.commentview', [
-                                'comment' => html_entity_decode($comment->Comments), 
+                                'comment' => html_entity_decode(nl2br($comment->Comments)), 
                                 'postedOn' => DateHelpers::formatDateCustom($comment->Posted), 
                                 'commentIndex' => $commentsCountIndex, 
                                 'commentIndexText' => 'REPLY #'.$commentsCountIndex, 
@@ -185,7 +185,7 @@ $myUserTooltip = "You";
                         @endforeach
                         
                         @include('servicerequests.commentview', [
-                                'comment' => html_entity_decode($row->Description), 
+                                'comment' => html_entity_decode(nl2br($row->Description)), 
                                 'postedOn' => $createdOnWithTime, 
                                 'commentIndex' => 0, 
                                 'commentIndexText' => 'INITIAL REQUEST', 
