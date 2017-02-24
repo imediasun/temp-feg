@@ -27,7 +27,7 @@
             </small>
         </div>
         <div class="commentText">
-            {{ $comment }}
+            {!! $comment !!}
         </div>            
     </div>
 </div>
