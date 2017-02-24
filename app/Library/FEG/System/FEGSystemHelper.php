@@ -1044,7 +1044,7 @@ $message
         $userTooltip = 'Username: ' . $comment->username . '<br/> Email: '. $comment->email;
         if ($isExternal) {
             $fullName = $externalName;
-            $userTooltip = "Not an user";
+            $userTooltip = "Non-FEG User";
         }    
         
         return [
