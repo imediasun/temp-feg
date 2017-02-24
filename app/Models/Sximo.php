@@ -886,9 +886,25 @@ class Sximo extends Model {
     }
 
     /**
-     * Get submitted search filter values in an associative array
-     * @return Array 
-     */
+     * Returns submitted search filter values in an associative array
+     * LIMITATION: This is an archaic version with simple targets of getting filters into almost a flat array
+     *      It does not return the filter criteria/operator. 
+     *      It does not return both the values of a BETWEEN type filter. It only picks up the first value.
+     *      For advanced search use getSearchFiltersAsArray method instead
+     * 
+     * @param array $requiredFilters [optional] If this parameter is given only 
+     *                      filters with names matching the keys of this array are returned. 
+     *                      Example: ['locaton_id' => '', 'game_id' => ''] will return an array 
+     *                                  ['locaton_id' => value, 'game_id' => value] 
+     * 
+     *                      If a value is specified for the key of the parameter array, that value
+     *                      replaces the key of the returning array
+     * 
+     *                      Example: ['locaton_id' => 'locId', 'game_id' => 'game', 'game_title' => ''] will return an array 
+     *                                  ['locId' => value, 'game' => value, 'game_title' => value] 
+     * 
+     * @return array In format ['filterName' => value, ...]
+     */    
     public static function getSearchFilters($requiredFilters = array()) {
         $receivedFilters = array();
         $finalFilters = array();
@@ -922,10 +938,40 @@ class Sximo extends Model {
         }
         
         return $finalFilters;
-    }
+    }    
     
-    public static function getSearchFiltersAsArray($customSearchString = '') {
+    /**
+     * Returns submitted search filter values in an associative array
+     * This is an advanced version `getSearchFilters` method where instead of the value
+     * each array item of the returned array (filterItem) contains is an associative array with 
+     *  fieldName, operator, value, and optional value2 keys
+     * 
+     * @param string $customSearchString
+     * @param array $requiredFilters [optional] If this parameter is given only 
+     *                      filters with names matching the keys of this array are returned. 
+     *                      Example: ['locaton_id' => '', 'game_id' => ''] will return an array 
+     *                                  ['locaton_id' => 'filterItem', 'game_id' => 'filterItem'] 
+     * 
+     *                      If a value is specified for the key of the parameter array, that value
+     *                      replaces the key of the returning array
+     * 
+     *                      Example: ['locaton_id' => 'locId', 'game_id' => 'game', 'game_title' => ''] will return an array 
+     *                                  ['locId' => 'filterItem', 'game' => 'filterItem', 'game_title' => 'filterItem'] 
+     * 
+     *                  ** NOTE: In case a filter is not set but is sought by $requiredFilters a blank array is returned for that key
+     * 
+     * @return array In format [
+     *                          'filterName' => [
+     *                              'fieldName' => 'filterName' , 
+     *                              'operator' => 'filterOperator', 
+     *                              'value' => 'filterValue or firstValue when BETWEEN operator is used', 
+     *                              'valeu2' => 'optional secondValue when BETWEEN operator is used'
+     *                          ], 
+     *                          ...]
+     */   
+    public static function getSearchFiltersAsArray($customSearchString = '', $requiredFilters = array()) {
         $receivedFilters = array();
+        $finalFilters = array();
         $searchQuerystring = !empty($customSearchString) ? $customSearchString : 
                 (isset($_GET['search']) ? $_GET['search'] : '');
         
@@ -946,8 +992,39 @@ class Sximo extends Model {
                 $receivedFilters[$fieldName] = $filterData;
             }
         }
-        return $receivedFilters;        
+        
+        if (empty($requiredFilters)) {
+            $finalFilters = $receivedFilters;
+        }
+        else {
+            foreach($requiredFilters as $fieldName => $variableName) {
+                if (empty($variableName)) {
+                    $variableName = $fieldName;
+                }
+                if (isset($receivedFilters[$fieldName])) {
+                    $finalFilters[$variableName] = $receivedFilters[$fieldName];
+                }
+                else {
+                    $finalFilters[$variableName] = [];
+                }
+            }
+        }
+        return $finalFilters;        
     }
+    
+    /**
+     * Rebuilds a filter querystring from a filter array with with structure resembling the array returned by getSearchFiltersAsArray method
+     * Hence, its a reverse of getSearchFiltersAsArray method
+     * @param array $filters Array in the following format: [
+     *                          'filterName' => [
+     *                              'fieldName' => 'filterName' , 
+     *                              'operator' => 'filterOperator', 
+     *                              'value' => 'filterValue or firstValue when BETWEEN operator is used', 
+     *                              'valeu2' => 'optional secondValue when BETWEEN operator is used'
+     *                          ], 
+     *                          ...]
+     * @return string search querystring value and looks like `filterName:operator:value:value2|filterName2:operator:value:value2|`
+     */
     public static function buildSearchQuerystringFromArray($filters = array()) {
         $qs = '';
         $qsArray = array();
@@ -958,6 +1035,16 @@ class Sximo extends Model {
         
         return $qs;
     }
+    
+    /**
+     * Merge and removes filters to existing filter array
+     *  
+     * @param array $receivedFilters    [optional] Filter array with structure resembling the array returned by getSearchFiltersAsArray method. 
+     *              If not specified it tries to auto generate the array from GET request querystring
+     * @param array $add    More items to add or replace (if same key is found) 
+     * @param array $skip   Items to remove from the $receivedFilters
+     * @return array Filter array with structure resembling the array returned by getSearchFiltersAsArray method. 
+     */
     public static function mergeSearchFilters($receivedFilters = null, $add = array(), $skip = array()) {
         $filters = empty($receivedFilters) ? self::getSearchFiltersAsArray() : $receivedFilters;
                 
@@ -975,8 +1062,15 @@ class Sximo extends Model {
         }
         
         return $filters;        
-    }
+    }   
     
+    /**
+     * Shorthand wrapper function to add/delete filters to search querystring 
+     * @param array $add    [optional] Items to add or replace (if same key is found) 
+     * @param array $skip   [optional] Items to remove from the $receivedFilters
+     * @param string $customSearchString    [optional] search querystring
+     * @return string   search querystring value and looks like `filterName:operator:value:value2|filterName2:operator:value:value2|` 
+     */
     public static function rebuildSearchQuery($add = array(), $skip = array(), $customSearchString = '') {
         $filters = self::getSearchFiltersAsArray($customSearchString);
         $newFilters = self::mergeSearchFilters($filters, $add, $skip);
