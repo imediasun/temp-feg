@@ -197,7 +197,7 @@ class Ticketfollowers extends Model {
             $groupUsers = FEGSystemHelper::getGroupsUserIds($userGroups, $location, true);
         }
         $individualUsers = [];
-        if (!empty(trim($individualUsers))) {
+        if (!empty(trim($individuals))) {
             $individualUsers = FEGSystemHelper::getLocationUserIds($location, $individuals, true);
         }        
         $users = array_diff(array_unique(array_merge($groupUsers, $individualUsers)), ['', null]);        
