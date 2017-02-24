@@ -266,6 +266,7 @@ class LocationController extends Controller
             // users having has_all_locations=1 (all Locations = true)
             // additionally clean orphan user location assignmens
             \SiteHelpers::addLocationToAllLocationUsers($newId, $oldId);
+            \SiteHelpers::refreshUserLocations(\Session::get('uid'));
             return response()->json(array(
                 'status' => 'success',
                 'message' => \Lang::get('core.note_success')
@@ -299,6 +300,7 @@ class LocationController extends Controller
             
             // clean orphan user location assignmens
             \SiteHelpers::cleanUpUserLocations();
+            \SiteHelpers::refreshUserLocations(\Session::get('uid'));
             return response()->json(array(
                 'status' => 'success',
                 'message' => \Lang::get('core.note_success_delete')
