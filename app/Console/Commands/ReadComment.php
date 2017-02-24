@@ -120,7 +120,7 @@ class ReadComment extends Command
                 
                 $L->log('Adding comment to database', $commentsData);
                 $id = $comment_model->insertRow($commentsData, NULL);
-                Servicerequests::where("TicketID", $ticketId)->update(['updated', $posted]);
+                Servicerequests::where("TicketID", $ticketId)->update(['updated' => $posted]);
                 
                 $L->log('Delete email');
                 imap_delete($inbox, $email_number);
