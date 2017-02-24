@@ -185,7 +185,7 @@ $myUserTooltip = "You";
                         @endforeach
                         
                         @include('servicerequests.commentview', [
-                                'comment' => htmlentities($row->Description), 
+                                'comment' => html_entity_decode($row->Description), 
                                 'postedOn' => $createdOnWithTime, 
                                 'commentIndex' => 0, 
                                 'commentIndexText' => 'INITIAL REQUEST', 
