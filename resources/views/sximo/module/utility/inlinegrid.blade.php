@@ -151,7 +151,7 @@ function canceled( id )
 
 function saved( id )
 {
-    $("#"+id).removeClass('inline_edit_applied');
+
 	var myId = id.split('-');
 	var datas = $('#'+id+' td :input').serialize();
 	//console.log(JSON.stringify(datas));
@@ -160,6 +160,7 @@ function saved( id )
 	$.post( '{{$pageModule}}/save/'+myId[1] ,datas, function( data ) {
 		if(data.status == 'success')
 		{
+            $("#"+id).removeClass('inline_edit_applied');
 			ajaxFilter('#{{ $pageModule }}','{{ $pageUrl }}/data');
 			notyMessage(data.message);
 			$('#'+id+' .actionopen').empty();
