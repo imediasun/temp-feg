@@ -66,8 +66,47 @@ class ShopfegrequeststoreController extends Controller
         $sort = (!is_null($request->input('sort')) ? $request->input('sort') : $this->info['setting']['orderby']);
         $order = (!is_null($request->input('order')) ? $request->input('order') : $this->info['setting']['ordertype']);
         // End Filter sort and order for query
+
+        // Get order_type search filter value and location_id saerch filter values
+        $priceRangeFilter = $this->model->getSearchFiltersAsArray('', array('price_range' => ''));
+        extract($priceRangeFilter);
+        
+        // rebuild search query skipping 'price_range' filter
+        $trimmedSearchQuery = $this->model->rebuildSearchQuery(null, array('price_range'));
+
         // Filter Search for query
-        $filter = (!is_null($request->input('search')) ? $this->buildSearch() : '');
+        // build sql query based on search filters
+        $filter = is_null(Input::get('search')) ? '' : $this->buildSearch($trimmedSearchQuery);
+        // add special price range query
+        if (!empty($price_range)) {
+            $pr1 = '';
+            if (isset($price_range['value'])) {
+                $pr1 = preg_replace('/[^\d\.\-]|\s/', '', ''.$price_range['value']);
+            }            
+            $pr2 = '';
+            if (isset($price_range['value2'])) {
+                $pr2 = preg_replace('/[^\d\.\-]|\s/', '', ''.$price_range['value2']);
+            }
+            if (is_numeric($pr1) || is_numeric($pr2)) {
+                if ($pr2 === '') {
+                    $pr2 = $pr1;
+                }
+                if ($pr1 === '') {
+                    $pr1 = $pr2;
+                }
+                $pr1 = (float)$pr1;
+                $pr2 = (float)$pr2;
+
+                $filter .= " AND (
+                                (products.unit_price   BETWEEN $pr1 AND $pr2) 
+                             OR (products.case_price   BETWEEN $pr1 AND $pr2) 
+                             OR (products.retail_price BETWEEN $pr1 AND $pr2) 
+                            )";
+            }
+        }
+        
+        // Filter Search for query
+        //$filter = (!is_null($request->input('search')) ? $this->buildSearch() : '');
 
 
         $page = $request->input('page', 1);
