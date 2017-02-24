@@ -183,10 +183,15 @@ class Ticketfollowers extends Model {
         }
         return $unfollowers;        
     }    
-    public static function getDefaultFollowers($location = null, $includeNewTicketOnlyFollowers = false) {
+    public static function getDefaultFollowers($location = null, $includeNewTicketOnlyFollowers = false, $onlyFirstFollowers = false) {
         $settings = ticketsetting::getSettings();
-        $userGroups  = implode(',', [trim($settings['role2']), trim($settings['role5'])]);
-        $individuals = implode(',', [trim($settings['individual2']), trim($settings['individual5'])]);
+        $userGroups = '';
+        $individuals = '';
+        
+        if (!$onlyFirstFollowers) {
+            $userGroups  = implode(',', [trim($userGroups), trim($settings['role2'])]);
+            $individuals = implode(',', [trim($individuals), trim($settings['individual2'])]);            
+        }
         
         if ($includeNewTicketOnlyFollowers) {
             $userGroups  = implode(',', [trim($userGroups), trim($settings['role4'])]);
@@ -215,8 +220,8 @@ class Ticketfollowers extends Model {
         }
         $groupId = \SiteHelpers::getUserGroup($user);
         $settings = ticketsetting::getSettings();
-        $userGroups  = implode(',', [trim($settings['role2']), trim($settings['role5'])]);
-        $individuals = implode(',', [trim($settings['individual2']), trim($settings['individual5'])]);
+        $userGroups  = implode(',', [trim($settings['role2'])]);
+        $individuals = implode(',', [trim($settings['individual2'])]);
         $users = explode(',', $individuals);
         $groups = explode(',', $userGroups);
         
