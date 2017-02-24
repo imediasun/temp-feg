@@ -2369,10 +2369,11 @@ class SiteHelpers
      * Add all unassigned locations to users set with All Locations = true 
      * (having has_all_locations=1)
      * The two parameters of the function can use used when an existing location id has been modified
-     * @param number $location    (optional) Location ID after changed
-     * @param number $replaceLocation   (optional) Location ID before changed
+     * @param number $location    [optional] Location ID after changed
+     * @param number $replaceLocation   [optional] Location ID before changed
+     * @param bool $skipInactive   [optional] When set to false would also assign inactive locations
      */
-    public static function addLocationToAllLocationUsers($location = null, $replaceLocation = null) {
+    public static function addLocationToAllLocationUsers($location = null, $replaceLocation = null, $skipInactive = true) {
         $table = "user_locations";
         
         // update renamed location id
@@ -2385,7 +2386,8 @@ class SiteHelpers
 //        $q = "SELECT l.id AS location_id, u.id AS user_id 
 //                FROM users u, location l 
 //                WHERE u.has_all_locations=1
-//                AND NOT EXISTS (SELECT * FROM user_locations WHERE user_id=u.id AND location_id=l.id) ";
+//                AND NOT EXISTS (SELECT * FROM user_locations WHERE user_id=u.id AND location_id=l.id)
+//                AND l.active=1 ";
         
         // add all unassigned locations to users having has_all_locations=1
         $q = "INSERT INTO user_locations (location_id, user_id) 
@@ -2394,6 +2396,10 @@ class SiteHelpers
                 WHERE u.has_all_locations=1
                 AND NOT EXISTS (SELECT * FROM user_locations WHERE user_id=u.id AND location_id=l.id) ";
                 
+        if ($skipInactive) {
+            $q .= " AND l.active=1 ";
+        }
+
         \DB::insert($q);
         
         self::cleanUpUserLocations();     
@@ -2403,20 +2409,29 @@ class SiteHelpers
     /**
      * Clean up orphan user-location assignments.
      * Orphan records are created when either a user or a location is deleted
+     * @param bool $skipInactive   [optional] Would not delete inactive locations when set to true.
      */
-    public static function cleanUpUserLocations() {
+    public static function cleanUpUserLocations($skipInactive = false) {
         $table = "user_locations";
         
 //        $q = "SELECT * FROM $table
 //                WHERE NOT EXISTS (
 //                    SELECT u.id AS user_id, l.id AS location_id 
 //                        FROM users u, location l 
-//                        WHERE u.id=user_locations.user_id AND l.id=user_locations.location_id)";
+//                              WHERE u.id=user_locations.user_id AND l.id=user_locations.location_id
+//                      )
+//                    OR user_locations.location_id IN (SELECT id FROM location WHERE active=0) ";
         $q = "DELETE FROM $table
-                WHERE NOT EXISTS (
+                WHERE 
+                    NOT EXISTS (
                     SELECT u.id AS user_id, l.id AS location_id 
                         FROM users u, location l 
-                        WHERE u.id=user_locations.user_id AND l.id=user_locations.location_id)";
+                        WHERE u.id=user_locations.user_id AND l.id=user_locations.location_id
+                    ) ";
+        
+        if (!$skipInactive) {
+            $q .= " OR user_locations.location_id IN (SELECT id FROM location WHERE active=0) ";
+        }
         
         \DB::delete($q);
     }   
