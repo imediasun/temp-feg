@@ -96,6 +96,7 @@ class ReadComment extends Command
 
                 /* get information specific to this email */
                 $meta = $this->getMessageDetails($inbox, $email_number);
+                $L->log("Message Details: ", $meta);
                 $fromDetails = $this->getSenderDetails($meta);
                 $fromEmail = @$fromDetails['email'];
                 
@@ -103,7 +104,7 @@ class ReadComment extends Command
                 $userName = @$fromDetails['personal'];
                 
                 $ticketId = $this->getTicketID($meta);
-                
+                $L->log("Ticket ID: ", $ticketId);
                 $posted = $this->getDate($meta);
                 
                 $message = $this->cleanUpMessage($this->getMessage($inbox, $email_number));
@@ -192,16 +193,16 @@ class ReadComment extends Command
         return $message;        
     }
     public function cleanUpMessage($message) {
-        $cmessage = trim(preg_replace('/From\:[\s\S]*$/','',$message));
-        $cmessage = trim(preg_replace('/[\r\n]{4}On [\s\S]*$/','',$cmessage));
-        $cmessage = trim(preg_replace('/[\-]{9} Original Message [\-]{9}[\s\S]*$/','',$cmessage));
+        $message = trim(preg_replace('/From\:[\s\S]*$/', '', $message));
+        $message = trim(preg_replace('/[\r\n]{4}On [\s\S]*$/', '', $message));
+        $message = trim(preg_replace('/[\-]{9} Original Message [\-]{9}[\s\S]*$/', '', $message));
         
-        $cmessage = preg_replace('/^[\r\n\t\s]+?/', '', $cmessage);
-        $cmessage = preg_replace('/[\r\n\t\s]+?$/', '', $cmessage);
-        if (empty($cmessage)) {
-            $cmessage = '';
+        $message = preg_replace('/^[\r\n\t\s]+?/', '', $message);
+        $message = preg_replace('/[\r\n\t\s]+?$/', '', $message);
+        if (empty($message)) {
+            $message = '';
         }
-        return $cmessage;
+        return $message;
     }
     
     public function sendNotification($data, $skipUserId) {
