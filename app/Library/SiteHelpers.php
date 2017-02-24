@@ -2493,7 +2493,7 @@ class SiteHelpers
             return "No";
         return $value;
     }
-  public function refreshUserLocations($userId){
+  public static function refreshUserLocations($userId){
 
       $user_locations = self::getLocationDetails($userId);
       $user_location_ids = self::getIdsFromLocationDetails($user_locations);
