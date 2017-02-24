@@ -43,7 +43,7 @@ class SyncUserLocations extends Command
      */
     public function handle()
     {
-         Users::SyncActiveUserLocations();
+         //\SiteHelpers::addLocationToAllLocationUsers($newId, $oldId);
 
    }
 }

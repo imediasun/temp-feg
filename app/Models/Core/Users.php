@@ -55,22 +55,4 @@ class Users extends Sximo  {
 			return parent::getComboselect($params, $limit, $parent);
 		}
 	}
-	public static function SyncActiveUserLocations(){
-		$users = \DB::select('SELECT  * FROM  users WHERE has_all_locations = 1');
-
-		foreach ($users as $user){
-
-			\DB::select('Delete from user_locations WHERE user_id = '.$user->id);
-
-			$locations = \DB::select('select * from location where active =1 ');
-			foreach ($locations as $location){
-
-				$data = array('user_id' => $user->id,
-					'location_id' => $location->id
-				);
-				\DB::table('user_locations')->insert($data);
-			}
-
-		}
-	}
 }
