@@ -2493,4 +2493,18 @@ class SiteHelpers
             return "No";
         return $value;
     }
+  public function refreshUserLocations($userId){
+
+      $user_locations = self::getLocationDetails($userId);
+      $user_location_ids = self::getIdsFromLocationDetails($user_locations);
+
+      if (!empty($user_locations)) {
+          \Session::put('user_locations', $user_locations);
+          \Session::put('selected_location', $user_locations[0]->id);
+          \Session::put('selected_location_name', $user_locations[0]->location_name_short);
+          \Session::put('user_location_ids', $user_location_ids);
+      } else {
+          \Session::put('selected_location', 0);
+      }
+  }
 }
