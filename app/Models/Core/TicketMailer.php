@@ -73,7 +73,7 @@ class TicketMailer
     protected function getFollowersEmails($followerIDs = array(), $locationId = null) {
         $emails = [];
         if (!empty($followerIDs)) {
-            $emails = FEGSystemHelper::getUserEmails(implode(',',$followerIDs), $locationId);
+            $emails = FEGSystemHelper::getUserEmails(implode(',',$followerIDs), $locationId, true);
         }        
         return array_diff(array_unique($emails), ['', null]);
     }

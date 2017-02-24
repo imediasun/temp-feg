@@ -810,12 +810,21 @@ class FEGSystemHelper
         }        
         return array_unique($ids);
     }    
-
-    public static function getGroupsUserEmails($groups = null, $location = null) {
+    /**
+     * 
+     * @param type $groups
+     * @param type $location
+     * @param type $skipIfNoGroup
+     * @return type
+     */
+    public static function getGroupsUserEmails($groups = null, $location = null, $skipIfNoGroup = false) {
         if (is_array($groups)) {
             $groups = implode(',', $groups);
         }        
         $groups = self::split_trim_join($groups);
+        if ($skipIfNoGroup && empty($groups)) {
+            return [];
+        }        
         $q = "SELECT U.id, U.group_id, UL.location_id, U.email FROM users U 
                     LEFT JOIN user_locations UL ON UL.user_id = U.id
                 LEFT JOIN tb_groups G ON G.group_id = U.group_id
@@ -837,11 +846,21 @@ class FEGSystemHelper
         }
         return $emails;
     }
-    public static function getGroupsUserIds($groups = null, $location = null) {
+    /**
+     * 
+     * @param type $groups
+     * @param type $location
+     * @param type $skipIfNoGroup
+     * @return type
+     */
+    public static function getGroupsUserIds($groups = null, $location = null, $skipIfNoGroup = false) {
         if (is_array($groups)) {
             $groups = implode(',', $groups);
-        }        
+        }
         $groups = self::split_trim_join($groups);
+        if ($skipIfNoGroup && empty($groups)) {
+            return [];
+        }
         $q = "SELECT U.id, U.group_id, UL.location_id, U.email 
                 FROM users U 
                 LEFT JOIN tb_groups G ON G.group_id = U.group_id
@@ -864,11 +883,22 @@ class FEGSystemHelper
         }
         return array_unique($uids);
     }
-    public static function getLocationUserIds($location = null, $users = null) {
+    
+    /**
+     *      * Get user ids which are assigned to a location from a list of users
+     * @param type $location
+     * @param type $users
+     * @param type $skipIfNoUsers
+     * @return type
+     */
+    public static function getLocationUserIds($location = null, $users = null, $skipIfNoUsers = false) {
         if (is_array($users)) {
             $users = implode(',', $users);
-        }        
+        }
         $users = self::split_trim_join($users);
+        if ($skipIfNoUsers && empty($users)) {
+            return [];
+        }        
         $q = "SELECT DISTINCT users.id FROM users 
             LEFT JOIN user_locations ON user_locations.user_id = users.id
             WHERE users.active=1 ";
@@ -886,11 +916,21 @@ class FEGSystemHelper
         }
         return $ids;
     }    
-    public static function getUserEmails($users = null, $location = null) {
+    /**
+     * 
+     * @param type $users
+     * @param type $location
+     * @param type $skipIfNoUsers
+     * @return type
+     */
+    public static function getUserEmails($users = null, $location = null, $skipIfNoUsers = false) {
         if (is_array($users)) {
             $users = implode(',', $users);
-        }        
+        }
         $users = self::split_trim_join($users);
+        if ($skipIfNoUsers && empty($users)) {
+            return [];
+        }
         $q = "SELECT DISTINCT email FROM users 
             LEFT JOIN user_locations ON user_locations.user_id = users.id
             WHERE users.active=1 ";

@@ -185,16 +185,21 @@ class Ticketfollowers extends Model {
     }    
     public static function getDefaultFollowers($location = null, $includeNewTicketOnlyFollowers = false) {
         $settings = ticketsetting::getSettings();
-        $userGroups  = $settings['role2'].','.$settings['role5'];
-        $individuals = $settings['individual2'].','.$settings['individual5'];
+        $userGroups  = implode(',', [trim($settings['role2']), trim($settings['role5'])]);
+        $individuals = implode(',', [trim($settings['individual2']), trim($settings['individual5'])]);
         
         if ($includeNewTicketOnlyFollowers) {
-            $userGroups  .= ','.$settings['role4'];
-            $individuals .= ','.$settings['individual4'];
+            $userGroups  = implode(',', [trim($userGroups), trim($settings['role4'])]);
+            $individuals = implode(',', [trim($individuals), trim($settings['individual4'])]);
         }
-        
-        $groupUsers = FEGSystemHelper::getGroupsUserIds($userGroups, $location);
-        $individualUsers = FEGSystemHelper::getLocationUserIds($location, $individuals);
+        $groupUsers = [];
+        if (!empty(trim($userGroups))) {
+            $groupUsers = FEGSystemHelper::getGroupsUserIds($userGroups, $location, true);
+        }
+        $individualUsers = [];
+        if (!empty(trim($individualUsers))) {
+            $individualUsers = FEGSystemHelper::getLocationUserIds($location, $individuals, true);
+        }        
         $users = array_diff(array_unique(array_merge($groupUsers, $individualUsers)), ['', null]);        
         
         return $users;        
@@ -203,15 +208,15 @@ class Ticketfollowers extends Model {
     public static function isDefaultFollower($user, $location = null) {
         
         if (!empty($location)) {
-            $userInLocation = FEGSystemHelper::getLocationUserIds($location, $user);
+            $userInLocation = FEGSystemHelper::getLocationUserIds($location, $user, true);
             if (empty($userInLocation)) {
                 return false;
             }
         }
         $groupId = \SiteHelpers::getUserGroup($user);
         $settings = ticketsetting::getSettings();
-        $userGroups  = $settings['role2'].','.$settings['role5'];
-        $individuals = $settings['individual2'].','.$settings['individual5'];
+        $userGroups  = implode(',', [trim($settings['role2']), trim($settings['role5'])]);
+        $individuals = implode(',', [trim($settings['individual2']), trim($settings['individual5'])]);
         $users = explode(',', $individuals);
         $groups = explode(',', $userGroups);
         
