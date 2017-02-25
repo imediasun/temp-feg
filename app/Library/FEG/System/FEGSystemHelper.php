@@ -1166,4 +1166,68 @@ $message" .
         $newBasename = $fileName . (empty($ext) ? "" : ('.' . $ext));
         return $newBasename;
     }
+    
+    /**
+     * 
+     * @param string $path
+     * @param string $getWhat
+     * @return array or string
+     */
+    public static function getSanitisedPublicUploadPath($path = '', $getWhat = '') {
+
+        $replaces = [[],[]];
+        
+        // remove multiple /
+        $replaces[0][] = '/\/{2,}/';
+        $replaces[1][] = '/';
+        
+        // remove './public/' or '/public/' 
+        $replaces[0][] = '/^[\.\/]*public\//';
+        $replaces[1][] = '/';
+        
+        // replace path that begings in / with ./
+        $replaces[0][] = '/^\//';
+        $replaces[1][] = './';
+        
+        // add a slash at the end
+        $replaces[0][] = '/([^\/])$/';
+        $replaces[1][] = '$1/';
+        
+        //remove multiple /
+        $replaces[0][] = '/\/{2,}/';
+        $replaces[1][] = '/';
+        
+        // sanitise and remove public folder
+        $target = self::sanitiseString($path, $replaces);
+        // retain public folder 
+        array_splice($replaces[0], 1, 1);
+        array_splice($replaces[1], 1, 1);
+        $real = self::sanitiseString($path, $replaces);
+        $url = preg_replace('/^[\.\/]*/', '/', $target);
+        
+        $paths = [
+            'url' => $url,
+            'target' => $target,
+            'real' => $real,
+        ];
+        
+        if (empty($getWhat) || empty($paths[$getWhat])) {
+            return $paths;
+        }        
+        return $paths[$getWhat];
+    }
+    
+    /**
+     * 
+     * @param string $string
+     * @param array $replaceRegExp
+     * @return string
+     */
+    public static function sanitiseString($string = '', $replaceRegExp = []) {        
+        $newString = $string;        
+        if (!empty($replaceRegExp[0] && $replaceRegExp[1])) {
+            $newString = preg_replace($replaceRegExp[0], $replaceRegExp[1], $string);
+        }        
+        return $newString;
+    }
 }

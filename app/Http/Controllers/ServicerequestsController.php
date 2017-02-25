@@ -389,7 +389,10 @@ class servicerequestsController extends Controller
 
     }
     
-    public function uploadTicketAttachments($suffixPath = '', $suffixFileName = '') {
+    public function uploadTicketAttachments ($suffixPath = '', $suffixFileName = '') {
+        return self::uploadFilesFromInputToPublicFolder($suffixPath, $suffixFileName);
+    }
+    public function uploadFilesFromInputToPublicFolder($suffixPath = '', $suffixFileName = '') {
         $request = new Request;
         $date = date('Y-m-d');
         $formConfig = $this->info['config']['forms'];
@@ -413,13 +416,13 @@ class servicerequestsController extends Controller
                     $inputFiles = [$inputFiles];
                 }
                 
-                $files = [];
+                $urls = [];
                 $paths = [];
-                $uploadPath = preg_replace('/^[\.\/]*public/', '', $baseUploadPath); 
-                $uploadPath = preg_replace('/^\//', './', $uploadPath); 
-                $uploadPath = preg_replace('/(\/$)/', '', $uploadPath); 
-                $pathExtended = $suffixPath;//"/ticket-$id/$date/";
-                $targetPath = $uploadPath . $pathExtended;
+                $baseTargetPath = $baseUploadPath.$suffixPath;
+                $paths = FEGSystemHelper::getSanitisedPublicUploadPath($baseTargetPath);
+                $targetPath = $paths['target'];
+                $realPath = $paths['real'];
+                $urlPath = $paths['url'];
                 
                 foreach($inputFiles as $file) {
                     
@@ -441,18 +444,17 @@ class servicerequestsController extends Controller
                             if (empty($resizeHeight)) {
                                 $resizeHeight = $resizeWidth;
                             }
-                            $fileWithPath = $baseUploadPath.$targetFile;
+                            $fileWithPath = $realPath.$targetFile;
                             \SiteHelpers::cropImage($resizeWidth, $resizeHeight, $fileWithPath, $originalExtension, $fileWithPath);
-                        }
-
-                        $url = preg_replace('/^[\.\/]*/', '/', $targetPath).$targetFile;
-                        $paths[] = $baseUploadPath.$targetFile;
-                        $files[] = $url;
+                        }                        
+                        
+                        $urls[] = $urlPath.$targetFile;
+                        $paths[] = $realPath.$targetFile;
                     }                    
                 }
                 
                 $data['_base_'.$field] = implode(',', $paths);
-                $data[$field] = implode(',', $files);
+                $data[$field] = implode(',', $urls);
 
             }            
         }
