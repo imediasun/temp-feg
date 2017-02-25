@@ -27,8 +27,9 @@
                         <thead class="no-border">
                         <tr>
 <!--                            <th field="name1" width="5%">No</th>-->
-                            <th field="name2" width="15%">Permissions </th>
-                            <th field="name3" width="40%">Roles</th>
+                            <th field="name2" width="10%">Title</th>
+                            <th field="name2" width="20%">Description</th>
+                            <th field="name3" width="30%">Roles</th>
                             <th field="name4" width="40%">Individuals</th>
 
                         </tr>
@@ -36,7 +37,8 @@
                         <tbody class="no-border-x no-border-y">
                         <tr>
                             <!--<td>1</td>-->
-                            <td>Accounts which will see all tickets of all locations in Ticket List page</td>
+                            <td>View All Tickets</td>
+                            <td>Users and/or User Groups assigned to this category will be able to see ALL tickets from ALL locations, including locations not assigned to that user.</td>
                             <td>
                                 <select name='role1[]' multiple id="role1" rows='5' class='select2 '>
                                 </select>
@@ -48,7 +50,8 @@
                         </tr>
                         <tr>
                             <!--<td>2</td>-->
-                            <td>Accounts which will receive email notifications when a ticket is created or updated for a location which they have been assigned to</td>
+                            <td>All Email Notifications</td>
+                            <td>Users and/or User Groups assigned to this category will receive ALL email notifications for tickets that have been created in a location to which they have been assigned.</td>
                             <td>
                                 <select name='role2[]' multiple id="role2" rows='5' class='select2 '>
                                 </select>
@@ -58,21 +61,10 @@
                                 </select>
                             </td>
                         </tr>
-<!--                        <tr>
-                            <td>3</td>
-                            <td>Able to see only assign tickets</td>
-                            <td>
-                                <select name='role3[]' multiple id="role3" rows='5' class='select2 '>
-                                </select>
-                            </td>
-                            <td>
-                                <select name='individual3[]' multiple rows='5' id="individual3" class='select2 '>
-                                </select>
-                            </td>
-                        </tr>-->
                         <tr>
-                            <!--<td>3</td>-->
-                            <td>Accounts which will receive an email notification only when a ticket is created for a location which they have been assigned to</td>
+                            <!--<td>4</td>-->
+                            <td>Receive 1st Email Notifications</td>
+                            <td>Users and/or User Groups assigned to this category will only receive the 1st email notification when a ticket is created in a location to which they have been assigned.</td>
                             <td>
                                 <select name='role4[]' multiple id="role4" rows='5' class='select2 '>
                                 </select>
@@ -82,6 +74,19 @@
                                 </select>
                             </td>
                         </tr>
+                        <tr>
+                            <!--<td>3</td>-->
+                            <td>Can change status</td>
+                            <td>Users and/or User Groups assigned to this category will be able to change ticket status.</td>
+                            <td>
+                                <select name='role3[]' multiple id="role3" class='select2 '>
+                                </select>
+                            </td>
+                            <td>
+                                <select name='individual3[]' multiple id="individual3" class='select2 '>
+                                </select>
+                            </td>
+                        </tr>                        
                         {{--<tr>--}}
                             {{--<td>5</td>--}}
                             {{--<td>Able to subscribe to email alerts by ticket</td>--}}
