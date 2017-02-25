@@ -38,7 +38,7 @@ class servicerequestsController extends Controller
             'pageNote' => $this->info['note'],
             'pageModule' => 'servicerequests',
             'pageUrl' => url('servicerequests'),
-            'return' => self::returnUrl()
+            'return' => self::returnUrl(),
             
             'priorityOptions' => $this->priorityOptions,
             'statusOptions' => $this->statusOptions,        
