@@ -431,7 +431,11 @@ class FEGSystemHelper
         if (isset($attach)) {
             if (is_array($attach)) {
                 foreach($attach as $attachment) {
-                    $mail->attach($attachment);
+                    if (file_exists($attachment)) {
+                        $mail->attach($attachment);
+                    }else {
+                        \Log::info("Attachment file not found: $attachment");
+                    }                    
                 }
             }
             else {
