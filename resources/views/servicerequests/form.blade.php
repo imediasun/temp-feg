@@ -48,17 +48,13 @@
 					{!! SiteHelpers::activeLang('Priority', (isset($fields['Priority']['language'])? $fields['Priority']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  
-					<?php $Priority = explode(',',$row['Priority']);
-					$Priority_opt = array('normal' => 'Normal' ,  'emergency' => 'Emergency'); ?>
-					<select name='Priority' rows='5' required  class='select2 '  >
-                        <option value="">Select Priority</option>
-						<?php 
-						foreach($Priority_opt as $key=>$val)
-						{
-							echo "<option  value ='$key' ".($row['Priority'] == $key ? " selected='selected' " : '' ).">$val</option>"; 						
-						}						
-						?></select> 
+                        <select name='Priority' required class='select2 '>
+                            @foreach($priorityOptions as $key => $val)
+                                <option  value ='{{ $key }}' 
+                                    @if($row['Priority'] == $key) selected='selected' @endif
+                                >{{ $val }}</option>";
+                            @endforeach
+                        </select>
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -70,24 +66,17 @@
 					</label>
 					<div class="col-md-6">
 					  
-					<?php $Status = explode(',',$row['Status']);
-					$Status_opt = array( 'open' => 'Open' ,  'inqueue' => 'Pending' ,  'closed' => 'Closed' , ); ?>
-                        @if(!$in_edit_mode) <input type="text" readonly class="form-control" value="open" name="Status"/> @else
-					<select name='Status' rows='5'   class='select2 '   >
-						<?php
-
-						foreach($Status_opt as $key=>$val)
-						{
-							echo "<option  value ='$key' ".($row['Status'] == $key ? " selected='selected' " : '' ).">$val</option>";
-                            if(!$in_edit_mode)
-                                {
-                                    break;
-                                }
-						}
-
-
-
-						?></select>
+					<?php $Status = $row['Status']; ?>
+                        @if(!$in_edit_mode) 
+                            <input type="text" readonly class="form-control" value="open" name="Status"/> 
+                        @else
+                            <select name='Status' required class='select2 '>
+                            	@foreach($statusOptions as $key => $val)
+                                    <option  value ='{{ $key }}' 
+                                        @if($row['Status'] == $key) selected='selected' @endif
+                                    >{{ $val }}</option>";
+                                @endforeach
+                            </select>
                         @endif
 					 </div> 
 					 <div class="col-md-2">

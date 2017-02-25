@@ -19,6 +19,8 @@ class servicerequestsController extends Controller
     public $module = 'Servicerequests';
     protected $layout = "layouts.main";
     protected $data = array();
+    protected $priorityOptions = ['normal' => 'Normal' ,  'sameday' => 'Same Day', ];
+    protected $statusOptions = ['open' => 'Open' ,  'inqueue' => 'Pending' ,  'closed' => 'Closed' ,];
 
     public function __construct()
     {
@@ -37,6 +39,9 @@ class servicerequestsController extends Controller
             'pageModule' => 'servicerequests',
             'pageUrl' => url('servicerequests'),
             'return' => self::returnUrl()
+            
+            'priorityOptions' => $this->priorityOptions,
+            'statusOptions' => $this->statusOptions,        
         );
 
 
