@@ -48,7 +48,7 @@
 					{!! SiteHelpers::activeLang('Priority', (isset($fields['Priority']['language'])? $fields['Priority']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-                        <select name='Priority' required class='select2 '>
+                        <select name='Priority' required class='select2 ' data-current-date='{{ date('Y-m-d') }}'>
                             @foreach($priorityOptions as $key => $val)
                                 <option  value ='{{ $key }}' 
                                     @if($row['Priority'] == $key) selected='selected' @endif
@@ -161,7 +161,7 @@
 										?>
 									{!! Form::text('need_by_date', $date,array('class'=>'form-control date', 'id'=>'my-datepicker', 'style'=>'width:150px !important;'   )) !!}
 
-									<span class="input-group-addon "><i class="fa fa-calendar" id="icon"></i></span>
+									<span class="input-group-addon datepickerHandleButton"><i class="fa fa-calendar" id="icon"></i></span>
 								</div>
 								<div class="col-md-2">
 
@@ -272,28 +272,48 @@ $(document).ready(function() {
         //{  selected_value : '{{ $row["assign_to"] --}}' });
 
 
-	$('#icon').click(function(){
-		$(document).ready(function(){
-			$("#my-datepicker").datepicker().focus();
-		});
+	$('.datepickerHandleButton').click(function(){
+        $("#my-datepicker").datepicker().focus();
+	});
+	$('select[name=Priority]').change(function(){
+        var elm = $(this),
+            val = elm.val(),
+            isSameDay = val == 'sameday',
+            date = elm.data('current-date'),
+            formattedDate,
+            datePicker = $("#my-datepicker"),
+            datePickerVal = datePicker.val();
+            
+        if (isSameDay && !datePickerVal) {
+            formattedDate = $.datepicker.formatDate('mm/dd/yy', new Date(date));
+            datePicker.datepicker('update', formattedDate);
+        }
 	});
 	
 	$('.editor').summernote();
+    
 	$('.previewImage').fancybox();	
+    
 	$('.tips').tooltip();	
+    
 	renderDropdown($(".select2"), { width:"100%"});	
-	$('.date').datepicker({format:'mm/dd/yyyy',autoClose:true})
+    
+	$('.date').datepicker({format:'mm/dd/yyyy',autoclose:true})
+    
 	$('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});
+    
 	$('input[type="checkbox"],input[type="radio"]').iCheck({
 		checkboxClass: 'icheckbox_square-blue',
 		radioClass: 'iradio_square-blue',
 	});			
+    
 	$('.removeCurrentFiles').on('click',function(){
 		var removeUrl = $(this).attr('href');
 		$.get(removeUrl,function(response){});
 		$(this).parent('div').empty();	
 		return false;
-	});			
+	});		
+    
 	var form = $('#sbticketFormAjax'); 
 	form.parsley();
 	form.submit(function(){
