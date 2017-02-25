@@ -343,19 +343,20 @@ class servicerequestsController extends Controller
             $id = $this->model->insertRow($data, $id);
             
             $files = $this->uploadTicketAttachments("/ticket-$id/$date/", "--$id");
-            if ($isAdd) {
-                $data['file_path'] = $files['file_path'];                 
-            }
-            else {
-                $oldFiles = $data['file_path'];
-                if (empty($oldFiles)) {
-                    $data['file_path'] = $files['file_path'];
+            if (!empty($files['file_path'])) {                
+                if ($isAdd) {
+                    $data['file_path'] = $files['file_path'];                 
                 }
                 else {
-                    $data['file_path'] .= ','.$files['file_path'];
+                    $oldFiles = $data['file_path'];
+                    if (empty($oldFiles)) {
+                        $data['file_path'] = $files['file_path'];
+                    }
+                    else {
+                        $data['file_path'] .= ','.$files['file_path'];
+                    }
+                    $data['base_file_path'] = $files['base_file_path'];                    
                 }
-            }
-            if (!empty($files['file_path'])) {                
                 $this->model->where('TicketID', $id)
                     ->update(['file_path' => $data['file_path']]);
             }
@@ -402,7 +403,7 @@ class servicerequestsController extends Controller
                 
                 $option = $config['option'];
                 $isMultiple = !empty($option['image_multiple']);
-                $uploadPath = $option['path_to_upload'];
+                $baseUploadPath = $option['path_to_upload'];
                 $uploadImage = $option['upload_type'] == 'image';
                 
                 $inputFiles = Input::file($field);
@@ -411,7 +412,8 @@ class servicerequestsController extends Controller
                 }
                 
                 $files = [];
-                $uploadPath = preg_replace('/^[\.\/]*public/', '', $uploadPath); 
+                $paths = [];
+                $uploadPath = preg_replace('/^[\.\/]*public/', '', $baseUploadPath); 
                 $uploadPath = preg_replace('/^\//', './', $uploadPath); 
                 $uploadPath = preg_replace('/(\/$)/', '', $uploadPath); 
                 $pathExtended = $suffixPath;//"/ticket-$id/$date/";
@@ -437,15 +439,17 @@ class servicerequestsController extends Controller
                             if (empty($resizeHeight)) {
                                 $resizeHeight = $resizeWidth;
                             }
-                            $fileWithPath = $targetPath.$targetFile;
+                            $fileWithPath = $baseUploadPath.$targetFile;
                             \SiteHelpers::cropImage($resizeWidth, $resizeHeight, $fileWithPath, $originalExtension, $fileWithPath);
                         }
 
                         $url = preg_replace('/^[\.\/]*/', '/', $targetPath).$targetFile;
+                        $paths = $baseUploadPath.$targetFile;
                         $files[] = $url;
                     }                    
                 }
                 
+                $data['_base_'.$field] = implode(',', $files);
                 $data[$field] = implode(',', $files);
 
             }            
@@ -520,6 +524,7 @@ class servicerequestsController extends Controller
 
         $files = $this->uploadTicketAttachments("/ticket-$ticketId/$date/", "--$ticketId");
         if (!empty($files['Attachments'])) {
+            $ticketsData['base_file_path'] = $files['base_Attachments'];
             $comment_model->where('CommentID', $commentId)
                 ->update(['Attachments' => $files['Attachments']]);                
         }

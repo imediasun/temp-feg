@@ -53,7 +53,7 @@ class TicketMailer
 //        $headers   .= 'From: ' . CNF_APPNAME . ' <' . $reply_to . '>' . "\r\n";
 //        Log::info("**Send Ticket Email => ",[$subject, $message, $headers]);
         
-        FEGSystemHelper::sendSystemEmail([
+        $emailConfigurations = [
             'from' => $reply_to, 
             'fromName' => CNF_APPNAME, 
             'to' => $to, 
@@ -62,7 +62,13 @@ class TicketMailer
             'message' => $message, 
             'isTest' => env('SEND_TICKET_EMAIL_TO_TEST_RECIPIENT', false),
             'configNamePrefix' => 'Ticket-Notification-'.$ticketId,
-        ]);
+        ];
+        
+        if (!empty($data['base_file_path'])) {
+            $emailConfigurations['attach'] = explode(',', $data['base_file_path']);
+        }
+        
+        FEGSystemHelper::sendSystemEmail($emailConfigurations);
         
 //        foreach ($users as $email) {
 //            if (!empty($email)) {
