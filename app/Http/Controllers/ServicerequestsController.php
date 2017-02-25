@@ -446,7 +446,7 @@ class servicerequestsController extends Controller
                         }
 
                         $url = preg_replace('/^[\.\/]*/', '/', $targetPath).$targetFile;
-                        $paths = $baseUploadPath.$targetFile;
+                        $paths[] = $baseUploadPath.$targetFile;
                         $files[] = $url;
                     }                    
                 }
