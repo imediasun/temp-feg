@@ -45,8 +45,8 @@
             container.find('.previewImage').fancybox();
             container.find('.tips').tooltip({'html': true});
 
-            renderDropdown(container.find(".select2, .select3, .select4, .select5"), { width:"98%"});
             renderDropdown(container.find(".Priority, .Status"), { width:"20%" });
+            renderDropdown(container.find(".select2, .select3, .select4, .select5"), { width:"98%"});
             
             container.find("#location_id").jCombo(mainUrl+"/comboselect?filter=location:id:id|location_name&delimiter=%20|%20",
                     {  selected_value : '' + ticket.location_id });

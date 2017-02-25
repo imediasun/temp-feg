@@ -136,7 +136,7 @@ $myUserTooltip = "You";
                                                 ><i class="fa  fa-save "></i> Update</button>
                                         @if ($canChangeStatus) 
                                         <div class="selectStatusDropdownContainer">
-                                            <select name='Status' required class='select2 '>
+                                            <select name='Status' required class='Status '>
                                                 @foreach($statusOptions as $key => $val)
                                                     <option  value ='{{ $key }}' 
                                                         @if($row['Status'] == $key) selected='selected' @endif
@@ -146,7 +146,7 @@ $myUserTooltip = "You";
                                         </div>
                                         @endif
                                         <div class="selectPriorityDropdownContainer">
-                                            <select name='Priority' required class='select2 '>
+                                            <select name='Priority' required class='Priority '>
                                                 @foreach($priorityOptions as $key => $val)
                                                     <option  value ='{{ $key }}' 
                                                         @if($row['Priority'] == $key) selected='selected' @endif

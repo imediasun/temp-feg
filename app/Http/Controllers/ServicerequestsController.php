@@ -343,9 +343,21 @@ class servicerequestsController extends Controller
             $id = $this->model->insertRow($data, $id);
             
             $files = $this->uploadTicketAttachments("/ticket-$id/$date/", "--$id");
+            if ($isAdd) {
+                $data['file_path'] = $files['file_path'];                 
+            }
+            else {
+                $oldFiles = $data['file_path'];
+                if (empty($oldFiles)) {
+                    $data['file_path'] = $files['file_path'];
+                }
+                else {
+                    $data['file_path'] .= ','.$files['file_path'];
+                }
+            }
             if (!empty($files['file_path'])) {                
                 $this->model->where('TicketID', $id)
-                    ->update(['file_path' => $files['file_path']]);
+                    ->update(['file_path' => $data['file_path']]);
             }
             
             if($isAdd){
