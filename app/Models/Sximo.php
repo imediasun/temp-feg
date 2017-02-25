@@ -27,6 +27,7 @@ class Sximo extends Model {
             'page' => '0',
             'limit' => '0',
             'sort' => '',
+            'extraSorts' => [],
             'order' => '',
             'params' => '',
             'global' => 1
@@ -34,6 +35,20 @@ class Sximo extends Model {
 
 
         $orderConditional = ($sort != '' && $order != '') ? " ORDER BY {$sort} {$order} " : '';
+        if (!empty($extraSorts)) {
+            if (empty($orderConditional)) {
+                $orderConditional = " ORDER BY ";
+            }
+            else {
+                $orderConditional .= ", ";
+            }
+            $extraOrderConditionals = [];
+            foreach($extraSorts as $extraSortItem) {
+                $extraSortItem[0] = '`'.$extraSortItem[0].'`';
+                $extraOrderConditionals[] = implode(' ', $extraSortItem);
+            }
+            $orderConditional .= implode(', ', $extraOrderConditionals);
+        }
 
         // Update permission global / own access new ver 1.1
         $table = with(new static)->table;
