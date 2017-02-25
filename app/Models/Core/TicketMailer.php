@@ -64,8 +64,8 @@ class TicketMailer
             'configNamePrefix' => 'Ticket-Notification-'.$ticketId,
         ];
         
-        if (!empty($data['base_file_path'])) {
-            $emailConfigurations['attach'] = explode(',', $data['base_file_path']);
+        if (!empty($data['_base_file_path'])) {
+            $emailConfigurations['attach'] = explode(',', $data['_base_file_path']);
         }
         
         FEGSystemHelper::sendSystemEmail($emailConfigurations);

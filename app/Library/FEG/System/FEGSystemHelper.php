@@ -480,12 +480,13 @@ class FEGSystemHelper
         
         $preventEmailSendingSetting = env('PREVENT_FEG_SYSTEM_EMAIL', false);
         if (!$preventEmailSendingSetting)  {
-            if (!isset($options['attach']) || !empty($options['usePHPMail'])) {
-                self::phpMail($to, $subject, $message, $from, $options);                
+            $useLaravelMail = !empty($options['attach']) || empty($options['useLaravelMail']);
+            if ($useLaravelMail) {
+                self::laravelMail($to, $subject, $message, $from, $options);
             }
             else {
-                self::laravelMail($to, $subject, $message, $from, $options);
-            }            
+                self::phpMail($to, $subject, $message, $from, $options);                
+            }
         }
     }
     
@@ -994,17 +995,19 @@ class FEGSystemHelper
                 . ".log";
         
         if ($isTest) {
-            
+            $attachments = isset($attach) ? $attach : '';
             $message =  "
 *************** EMAIL START --- DEBUG INFO *******************<br>
 [FROM: $from]<br/>
 [SUBJECT: $subject]<br/>
 [TO: $to]<br/>
 [CC: $cc]<br/>
-[BCC: $bcc]<br/>                   
+[BCC: $bcc]<br/>              
+    
 ***************** DEBUG INFO END *****************************<br><br>
-$message    
-<br><br>******************************************* EMAIL END ********************************<br>";
+$message" . 
+(isset($attach) ?   "<br><br> ================ ATTACHMENTS ===================================<br><ul><li>".(implode("<li>", $attach)).'</ul>' : '') .
+"<br><br>******************************************* EMAIL END ********************************<br><br/>";
             
             $options['message'] = $message;
             $options['subject'] = $subject = "[TEST] ". $subject;

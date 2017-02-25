@@ -355,8 +355,10 @@ class servicerequestsController extends Controller
                     else {
                         $data['file_path'] .= ','.$files['file_path'];
                     }
-                    $data['base_file_path'] = $files['base_file_path'];                    
                 }
+                
+                $data['_base_file_path'] = $files['_base_file_path'];
+                
                 $this->model->where('TicketID', $id)
                     ->update(['file_path' => $data['file_path']]);
             }
@@ -524,14 +526,15 @@ class servicerequestsController extends Controller
 
         $files = $this->uploadTicketAttachments("/ticket-$ticketId/$date/", "--$ticketId");
         if (!empty($files['Attachments'])) {
-            $ticketsData['base_file_path'] = $files['base_Attachments'];
             $comment_model->where('CommentID', $commentId)
                 ->update(['Attachments' => $files['Attachments']]);                
         }
 
         $this->model->insertRow($ticketsData, $ticketId);
         $message = $commentsData['Comments'];
-            
+        if (!empty($files['Attachments'])) {
+            $ticketsData['_base_file_path'] = $files['_base_Attachments'];
+        }
         /*
             $isFollowing = $request->input('isFollowingTicket');
             $allFollowers = $request->input('allFollowers');
