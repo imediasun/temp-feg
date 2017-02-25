@@ -1203,10 +1203,10 @@ $message" .
         
         // sanitise and remove public folder
         $target = self::sanitiseString($path, $replaces);
-        // retain public folder 
-        array_splice($replaces[0], 1, 1);
-        array_splice($replaces[1], 1, 1);
-        $real = self::sanitiseString($path, $replaces);
+        
+        // retain public folder         
+        $replaces[1][1] = 'public/';
+        $real = base_path(self::sanitiseString($path, $replaces));
         $url = preg_replace('/^[\.\/]*/', '/', $target);
         
         $paths = [
