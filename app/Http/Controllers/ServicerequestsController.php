@@ -269,11 +269,12 @@ class servicerequestsController extends Controller
         $this->data['comments'] = $comments;
 
         $userId = \Session::get('uid');
-        $this->data['creator'] = !empty($row->entry_by) ? \SiteHelpers::getUserDetails($row->entry_by) : [];
+        $this->data['access'] = $this->access;
         $this->data['id'] = $id;
         $this->data['uid'] = $userId;
         $this->data['fid'] = \Session::get('fid');
-        $this->data['access'] = $this->access;
+        $this->data['creator'] = !empty($row->entry_by) ? \SiteHelpers::getUserDetails($row->entry_by) : [];
+        $this->data['canChangeStatus'] = ticketsetting::canUserChangeStatus();
         $this->data['following'] = Ticketfollowers::isFollowing($id, $userId);
         $this->data['followers'] = Ticketfollowers::getAllFollowers($id);
         $this->data['setting'] = $this->info['setting'];
@@ -477,14 +478,16 @@ class servicerequestsController extends Controller
         $comment_model = new Ticketcomment();
         $total_comments = $comment_model->where('TicketID', '=', $ticketId)->count();
 
-        $status = $ticketsData['Status'];
-        $isStatusClosed = $status == 'closed';
-        if (!$isStatusClosed && $total_comments == 0) {
-            $ticketsData['Status'] = 'inqueue';
-        }
-        $ticketsData['closed']="";   
-        if ($isStatusClosed) {
-            $ticketsData['closed'] = date('Y-m-d H:i:s');
+        if (isset($ticketsData['Status'])) {
+            $status = $ticketsData['Status'];
+            $isStatusClosed = $status == 'closed';
+    //        if (!$isStatusClosed && $total_comments == 0) {
+    //            $ticketsData['Status'] = 'inqueue';
+    //        }
+            $ticketsData['closed']="";   
+            if ($isStatusClosed) {
+                $ticketsData['closed'] = date('Y-m-d H:i:s');
+            }
         }
 
         //re-populate info array to ticket comments module

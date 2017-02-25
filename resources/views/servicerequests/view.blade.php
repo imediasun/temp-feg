@@ -134,7 +134,7 @@ $myUserTooltip = "You";
                                         <button type="submit" 
                                                 class="btn btn-primary btn-sm pull-right submitButton"
                                                 ><i class="fa  fa-save "></i> Update</button>
-                                                
+                                        @if ($canChangeStatus) 
                                         <div class="selectStatusDropdownContainer">
                                             <?php $Status = explode(',',$row['Status']);
                                             $Status_opt = array( 'open' => 'Open' ,  'inqueue' => 'Pending' ,  'closed' => 'Closed' , ); ?>
@@ -146,6 +146,7 @@ $myUserTooltip = "You";
                                                 }
                                                 ?></select>                                            
                                         </div>
+                                        @endif
                                         <div class="selectPriorityDropdownContainer">
                                             <?php $Priority = explode(',',$row['Priority']);
                                             $Priority_opt = array('normal' => 'Normal' ,  'emergency' => 'Emergency'); ?>
