@@ -417,7 +417,7 @@ class servicerequestsController extends Controller
                 }
                 
                 $urls = [];
-                $paths = [];
+                $filePaths = [];
                 $baseTargetPath = $baseUploadPath.$suffixPath;
                 $paths = FEGSystemHelper::getSanitisedPublicUploadPath($baseTargetPath);
                 $targetPath = $paths['target'];
@@ -449,11 +449,11 @@ class servicerequestsController extends Controller
                         }                        
                         
                         $urls[] = $urlPath.$targetFile;
-                        $paths[] = $realPath.$targetFile;
+                        $filePaths[] = $realPath.$targetFile;
                     }                    
                 }
                 
-                $data['_base_'.$field] = implode(',', $paths);
+                $data['_base_'.$field] = implode(',', $filePaths);
                 $data[$field] = implode(',', $urls);
 
             }            
