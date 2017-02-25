@@ -72,8 +72,8 @@ $myUserTooltip = "You";
                         <div class="followControlContainer">
                             <input name="isFollowingTicket"
                                 data-size="mini" data-animate="true" 
-                                data-on-text="Un Follow" 
-                                data-off-text="Follow" 
+                                data-on-text="Subscribed" 
+                                data-off-text="Not Subscribed" 
                                 data-handle-width="100px"
                                 class="isFollowing" type="checkbox" 
                                 @if($following) checked @endif />
