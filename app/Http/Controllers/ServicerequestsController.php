@@ -99,6 +99,9 @@ class servicerequestsController extends Controller
             'page' => $page,
             'limit' => (!is_null($request->input('rows')) ? filter_var($request->input('rows'), FILTER_VALIDATE_INT) : $this->info['setting']['perpage']),
             'sort' => $sort,
+            'extraSorts' => [
+                ['updated', 'desc']
+            ],
             'order' => $order,
             'params' => $filter,
             'global' => (isset($this->access['is_global']) ? $this->access['is_global'] : 0)
