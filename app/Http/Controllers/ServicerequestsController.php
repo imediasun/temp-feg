@@ -451,7 +451,7 @@ class servicerequestsController extends Controller
                     }                    
                 }
                 
-                $data['_base_'.$field] = implode(',', $files);
+                $data['_base_'.$field] = implode(',', $paths);
                 $data[$field] = implode(',', $files);
 
             }            
