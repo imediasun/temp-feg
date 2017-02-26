@@ -67,7 +67,7 @@ class ShopfegrequeststoreController extends Controller
         $order = (!is_null($request->input('order')) ? $request->input('order') : $this->info['setting']['ordertype']);
         // End Filter sort and order for query
 
-        // Get order_type search filter value and location_id saerch filter values
+        // Get order_type search filter value
         $priceRangeFilter = $this->model->getSearchFiltersAsArray('', array('price_range' => ''));
         extract($priceRangeFilter);
         

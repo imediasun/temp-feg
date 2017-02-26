@@ -59,11 +59,41 @@ class servicerequestsController extends Controller
     public function getSearchFilterQuery($customQueryString = null) {
         // Filter Search for query
         // build sql query based on search filters
-        $filter = is_null($customQueryString) ? (is_null(Input::get('search')) ? '' : $this->buildSearch()) : 
-            $this->buildSearch($customQueryString);
+        
+        
+        // Get custom Ticket Type filter value 
+        $customTicketTypeFilter = $this->model->getSearchFilters(['ticket_custom_type' => '', 'Status' => 'status']);
+        $skipFilters = ['ticket_custom_type'];
+        $mergeFilters = [];
+        extract($customTicketTypeFilter); //$ticket_custom_type, $status
+        
+        // add custom ticket type filters
+        if (!empty($ticket_custom_type)) {
+            list($debitType, $issue_type) = explode('-', $ticket_custom_type);             
+            if (empty($issue_type)) {
+                $skipFilters[] = 'issue_type';
+            }
+            else {
+                $mergeFilters['issue_type'] = [
+                        'fieldName' => 'issue_type',
+                        'operator' => 'equal',
+                        'value' => $issue_type,
+                    ];
+            }
+        }
+        
+        // rebuild search query skipping 'ticket_custom_type' filter
+        $trimmedSearchQuery = $this->model->rebuildSearchQuery($mergeFilters, $skipFilters, $customQueryString);
 
-        $frontendSearchFilters = $this->model->getSearchFilters(array('Status' => 'status'));
-        if (empty($frontendSearchFilters['status'])) {
+        // Filter Search for query
+        // build sql query based on search filters
+        $filter = is_null(Input::get('search')) ? '' : $this->buildSearch($trimmedSearchQuery);
+        
+        
+        if (!empty($debitType)) {
+            $filter .= " AND sb_tickets.location_id IN (SELECT id from location where debit_type_id='$debitType') ";
+        } 
+        if (empty($status)) {
             $filter .= " AND sb_tickets.Status != 'closed' ";
         } 
         
