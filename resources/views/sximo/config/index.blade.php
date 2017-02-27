@@ -137,7 +137,7 @@
 		   <div class="form-group">
 		    <label  class=" control-label col-md-4">Meta Description</label>
 			<div class="col-md-8">
-				<textarea class="form-control input-sm"  name="cnf_metadesc">  {{CNF_METADESC }}</textarea>
+				<textarea class="form-control input-sm"  name="cnf_metadesc">  {{$options['CNF_METADESC'] }}</textarea>
 			 </div> 
 		  </div>  
 
