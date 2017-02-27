@@ -203,13 +203,21 @@ class GamesdisposedController extends Controller
 
     function postSave(Request $request, $id = null)
     {
-        $rules = array('game_title_id' => 'required');
+        //comment validation rules due to inline editing
+        //$rules = array('game_title_id' => 'required');
+        $rules = $this->validateForm();
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
+            /* comment validation rules due to inline editing
             $data['test_piece'] = $request->get('test_piece');
             $data['notes'] = $request->get('notes');
             $data['game_title_id'] = $request->get('game_title_id');
             $data['game_name'] = $request->get('game_name');
+            */
+            if(empty($id))
+                $data = $this->validatePost('game');
+            else
+                $data = $this->validatePost('game', true);
             $id = $this->model->insertRow($data, $id);
             return response()->json(array(
                 'status' => 'success',
