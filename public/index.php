@@ -20,10 +20,7 @@
 */
 
 require __DIR__.'/../bootstrap/autoload.php';
-$setting = file_get_contents('../setting.php');
-$settings = preg_replace('/^\<\?php|\?\>$/', '', $setting);
-eval($settings);
-//require '../setting.php';
+require '../setting.php';
 
 /*
 |--------------------------------------------------------------------------
