@@ -84,7 +84,8 @@ class ConfigController extends Controller
             fclose($fp);
             sleep(10);
 
-            return Redirect::to('feg/config')->with('messagetext', 'Setting Has Been Save Successful')->with('msgstatus', 'success');
+            Redirect::to('feg/config')->with('messagetext', 'Setting Has Been Save Successful')->with('msgstatus', 'success');
+         die();
         } else {
             return Redirect::to('feg/config')->with('messagetext', 'The following errors occurred')->with('msgstatus', 'success')
                 ->withErrors($validator)->withInput();
