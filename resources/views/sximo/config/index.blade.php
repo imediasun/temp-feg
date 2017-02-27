@@ -261,7 +261,7 @@
                 form.find('button[type=submit]').prop('disabled', false);
 				notyMessage(data.message);
                 //window.setTimeout(function () {window.location.reload()}, 1000);
-                //location.reload();
+                location.reload();
 			}
             else {
                 form.find('button[type=submit]').prop('disabled', false);
