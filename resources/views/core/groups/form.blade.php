@@ -83,9 +83,12 @@
                                                     if (isset($moduleConfig['setting']['module_route'])) {
                                                         $moduleRoute = $moduleConfig['setting']['module_route'];
                                                     }                                    
-                                                ?>                                            
+                                                ?>
+                                                <optgroup label="Dashboards">
+                                                    <option value="dashboard">Dashboard</option>
+                                                </optgroup>                                            
 												<option value="{{ $moduleRoute }}"
-														@if($row['redirect_link'] === $mod->module_name )   selected="selected" @endif
+														@if($row['redirect_link'] === $moduleRoute )   selected="selected" @endif
 												>{{ $mod->module_title}}</option>
 											@endforeach
 										</optgroup>

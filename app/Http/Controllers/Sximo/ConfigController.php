@@ -22,8 +22,8 @@ class ConfigController extends Controller
     public function getIndex()
     {
         $this->data['active'] = '';
-        $this->data['modules'] = \DB::table('tb_module')->where('module_type', '!=', 'core')->get();
-        $this->data['pages'] = \DB::select(" SELECT * FROM tb_pages ");
+        $this->data['modules'] = \DB::table('tb_module')->where('module_type', '!=', 'core')->orderBy('module_title', 'asc')->get();
+        $this->data['pages'] = \DB::table("tb_pages")->orderBy('title', 'asc')->get();
         return view('sximo.config.index', $this->data);
     }
 
