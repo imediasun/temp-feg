@@ -130,13 +130,13 @@
                                 data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
                                 <?php
                                     if($field['field']=='Status'){
-                                        $value = $statusOptions[$value];
+                                        $value = $value;//$statusOptions[$value];
                                     }
                                     elseif ($field['field']=='Priority') {
                                         if ($value == 'emergency') {
                                             $value = "sameday";
                                         }
-                                        $value = $priorityOptions[$value];
+                                        $value = $value ;//$priorityOptions[$value];
                                     }
                                 ?>
                                 {!! $value !!}
