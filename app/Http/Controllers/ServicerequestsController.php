@@ -350,7 +350,12 @@ class servicerequestsController extends Controller
                 $data = $this->validatePost('sb_tickets', true);
             $data['need_by_date']= date("Y-m-d", strtotime($request->get('need_by_date')));
             $data['Status']=$request->get('Status');
-            
+            if($data['Status'] == "closed")
+            {
+                $data['closed'] = date('Y-m-d H:i:s');
+            }
+            else
+                $data['closed'] = "";
             if (empty($id)) {
                 $data['Created'] = date('Y-m-d H:i:s');
             }
