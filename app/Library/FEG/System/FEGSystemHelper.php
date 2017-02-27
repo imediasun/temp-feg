@@ -431,7 +431,11 @@ class FEGSystemHelper
         if (isset($attach)) {
             if (is_array($attach)) {
                 foreach($attach as $attachment) {
-                    $mail->attach($attachment);
+                    if (file_exists($attachment)) {
+                        $mail->attach($attachment);
+                    }else {
+                        \Log::info("Attachment file not found: $attachment");
+                    }                    
                 }
             }
             else {
@@ -480,12 +484,13 @@ class FEGSystemHelper
         
         $preventEmailSendingSetting = env('PREVENT_FEG_SYSTEM_EMAIL', false);
         if (!$preventEmailSendingSetting)  {
-            if (!isset($options['attach']) || !empty($options['usePHPMail'])) {
-                self::phpMail($to, $subject, $message, $from, $options);                
+            $useLaravelMail = !empty($options['attach']) || empty($options['useLaravelMail']);
+            if ($useLaravelMail) {
+                self::laravelMail($to, $subject, $message, $from, $options);
             }
             else {
-                self::laravelMail($to, $subject, $message, $from, $options);
-            }            
+                self::phpMail($to, $subject, $message, $from, $options);                
+            }
         }
     }
     
@@ -810,12 +815,21 @@ class FEGSystemHelper
         }        
         return array_unique($ids);
     }    
-
-    public static function getGroupsUserEmails($groups = null, $location = null) {
+    /**
+     * 
+     * @param type $groups
+     * @param type $location
+     * @param type $skipIfNoGroup
+     * @return type
+     */
+    public static function getGroupsUserEmails($groups = null, $location = null, $skipIfNoGroup = false) {
         if (is_array($groups)) {
             $groups = implode(',', $groups);
         }        
         $groups = self::split_trim_join($groups);
+        if ($skipIfNoGroup && empty($groups)) {
+            return [];
+        }        
         $q = "SELECT U.id, U.group_id, UL.location_id, U.email FROM users U 
                     LEFT JOIN user_locations UL ON UL.user_id = U.id
                 LEFT JOIN tb_groups G ON G.group_id = U.group_id
@@ -837,11 +851,21 @@ class FEGSystemHelper
         }
         return $emails;
     }
-    public static function getGroupsUserIds($groups = null, $location = null) {
+    /**
+     * 
+     * @param type $groups
+     * @param type $location
+     * @param type $skipIfNoGroup
+     * @return type
+     */
+    public static function getGroupsUserIds($groups = null, $location = null, $skipIfNoGroup = false) {
         if (is_array($groups)) {
             $groups = implode(',', $groups);
-        }        
+        }
         $groups = self::split_trim_join($groups);
+        if ($skipIfNoGroup && empty($groups)) {
+            return [];
+        }
         $q = "SELECT U.id, U.group_id, UL.location_id, U.email 
                 FROM users U 
                 LEFT JOIN tb_groups G ON G.group_id = U.group_id
@@ -864,11 +888,22 @@ class FEGSystemHelper
         }
         return array_unique($uids);
     }
-    public static function getLocationUserIds($location = null, $users = null) {
+    
+    /**
+     *      * Get user ids which are assigned to a location from a list of users
+     * @param type $location
+     * @param type $users
+     * @param type $skipIfNoUsers
+     * @return type
+     */
+    public static function getLocationUserIds($location = null, $users = null, $skipIfNoUsers = false) {
         if (is_array($users)) {
             $users = implode(',', $users);
-        }        
+        }
         $users = self::split_trim_join($users);
+        if ($skipIfNoUsers && empty($users)) {
+            return [];
+        }        
         $q = "SELECT DISTINCT users.id FROM users 
             LEFT JOIN user_locations ON user_locations.user_id = users.id
             WHERE users.active=1 ";
@@ -886,11 +921,21 @@ class FEGSystemHelper
         }
         return $ids;
     }    
-    public static function getUserEmails($users = null, $location = null) {
+    /**
+     * 
+     * @param type $users
+     * @param type $location
+     * @param type $skipIfNoUsers
+     * @return type
+     */
+    public static function getUserEmails($users = null, $location = null, $skipIfNoUsers = false) {
         if (is_array($users)) {
             $users = implode(',', $users);
-        }        
+        }
         $users = self::split_trim_join($users);
+        if ($skipIfNoUsers && empty($users)) {
+            return [];
+        }
         $q = "SELECT DISTINCT email FROM users 
             LEFT JOIN user_locations ON user_locations.user_id = users.id
             WHERE users.active=1 ";
@@ -954,17 +999,19 @@ class FEGSystemHelper
                 . ".log";
         
         if ($isTest) {
-            
+            $attachments = isset($attach) ? $attach : '';
             $message =  "
 *************** EMAIL START --- DEBUG INFO *******************<br>
 [FROM: $from]<br/>
 [SUBJECT: $subject]<br/>
 [TO: $to]<br/>
 [CC: $cc]<br/>
-[BCC: $bcc]<br/>                   
+[BCC: $bcc]<br/>              
+    
 ***************** DEBUG INFO END *****************************<br><br>
-$message    
-<br><br>******************************************* EMAIL END ********************************<br>";
+$message" . 
+(isset($attach) ?   "<br><br> ================ ATTACHMENTS ===================================<br><ul><li>".(implode("<li>", $attach)).'</ul>' : '') .
+"<br><br>******************************************* EMAIL END ********************************<br><br/>";
             
             $options['message'] = $message;
             $options['subject'] = $subject = "[TEST] ". $subject;
@@ -988,6 +1035,7 @@ $message
         }
              
         self::logit("Sending Email", $lf, $lp);
+        self::logit($options, $lf, $lp);        
         self::sendEmail($to, $subject, $message, $from, $options);
         self::logit("Email sent", $lf, $lp);
     }
@@ -1044,7 +1092,7 @@ $message
         $userTooltip = 'Username: ' . $comment->username . '<br/> Email: '. $comment->email;
         if ($isExternal) {
             $fullName = $externalName;
-            $userTooltip = "Not an user";
+            $userTooltip = "Non-FEG User";
         }    
         
         return [
@@ -1122,5 +1170,69 @@ $message
         
         $newBasename = $fileName . (empty($ext) ? "" : ('.' . $ext));
         return $newBasename;
+    }
+    
+    /**
+     * 
+     * @param string $path
+     * @param string $getWhat
+     * @return array or string
+     */
+    public static function getSanitisedPublicUploadPath($path = '', $getWhat = '') {
+
+        $replaces = [[],[]];
+        
+        // remove multiple /
+        $replaces[0][] = '/\/{2,}/';
+        $replaces[1][] = '/';
+        
+        // remove './public/' or '/public/' 
+        $replaces[0][] = '/^[\.\/]*public\//';
+        $replaces[1][] = '/';
+        
+        // replace path that begings in / with ./
+        $replaces[0][] = '/^\//';
+        $replaces[1][] = './';
+        
+        // add a slash at the end
+        $replaces[0][] = '/([^\/])$/';
+        $replaces[1][] = '$1/';
+        
+        //remove multiple /
+        $replaces[0][] = '/\/{2,}/';
+        $replaces[1][] = '/';
+        
+        // sanitise and remove public folder
+        $target = self::sanitiseString($path, $replaces);
+        
+        // retain public folder         
+        $replaces[1][1] = 'public/';
+        $real = base_path(self::sanitiseString($path, $replaces));
+        $url = preg_replace('/^[\.\/]*/', '/', $target);
+        
+        $paths = [
+            'url' => $url,
+            'target' => $target,
+            'real' => $real,
+        ];
+        
+        if (empty($getWhat) || empty($paths[$getWhat])) {
+            return $paths;
+        }        
+        return $paths[$getWhat];
+    }
+    
+    /**
+     * 
+     * @param string $string
+     * @param array $replaceRegExp
+     * @return string
+     */
+    public static function sanitiseString($string = '', $replaceRegExp = []) {        
+        $newString = $string;        
+        if (!empty($replaceRegExp[0] && $replaceRegExp[1])) {
+            $newString = preg_replace($replaceRegExp[0], $replaceRegExp[1], $string);
+        }        
+        return $newString;
     }
 }

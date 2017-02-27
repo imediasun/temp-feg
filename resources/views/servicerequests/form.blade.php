@@ -48,17 +48,13 @@
 					{!! SiteHelpers::activeLang('Priority', (isset($fields['Priority']['language'])? $fields['Priority']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  
-					<?php $Priority = explode(',',$row['Priority']);
-					$Priority_opt = array('normal' => 'Normal' ,  'emergency' => 'Emergency'); ?>
-					<select name='Priority' rows='5' required  class='select2 '  >
-                        <option value="">Select Priority</option>
-						<?php 
-						foreach($Priority_opt as $key=>$val)
-						{
-							echo "<option  value ='$key' ".($row['Priority'] == $key ? " selected='selected' " : '' ).">$val</option>"; 						
-						}						
-						?></select> 
+                        <select name='Priority' required class='select2 ' data-current-date='{{ date('Y-m-d') }}'>
+                            @foreach($priorityOptions as $key => $val)
+                                <option  value ='{{ $key }}' 
+                                    @if($row['Priority'] == $key) selected='selected' @endif
+                                >{{ $val }}</option>";
+                            @endforeach
+                        </select>
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -70,24 +66,17 @@
 					</label>
 					<div class="col-md-6">
 					  
-					<?php $Status = explode(',',$row['Status']);
-					$Status_opt = array( 'open' => 'Open' ,  'inqueue' => 'Pending' ,  'closed' => 'Closed' , ); ?>
-                        @if(!$in_edit_mode) <input type="text" readonly class="form-control" value="open" name="Status"/> @else
-					<select name='Status' rows='5'   class='select2 '   >
-						<?php
-
-						foreach($Status_opt as $key=>$val)
-						{
-							echo "<option  value ='$key' ".($row['Status'] == $key ? " selected='selected' " : '' ).">$val</option>";
-                            if(!$in_edit_mode)
-                                {
-                                    break;
-                                }
-						}
-
-
-
-						?></select>
+					<?php $Status = $row['Status']; ?>
+                        @if(!$in_edit_mode) 
+                            <input type="text" readonly class="form-control" value="open" name="Status"/> 
+                        @else
+                            <select name='Status' required class='select2 '>
+                            	@foreach($statusOptions as $key => $val)
+                                    <option  value ='{{ $key }}' 
+                                        @if($row['Status'] == $key) selected='selected' @endif
+                                    >{{ $val }}</option>";
+                                @endforeach
+                            </select>
                         @endif
 					 </div> 
 					 <div class="col-md-2">
@@ -172,7 +161,7 @@
 										?>
 									{!! Form::text('need_by_date', $date,array('class'=>'form-control date', 'id'=>'my-datepicker', 'style'=>'width:150px !important;'   )) !!}
 
-									<span class="input-group-addon "><i class="fa fa-calendar" id="icon"></i></span>
+									<span class="input-group-addon datepickerHandleButton"><i class="fa fa-calendar" id="icon"></i></span>
 								</div>
 								<div class="col-md-2">
 
@@ -283,28 +272,48 @@ $(document).ready(function() {
         //{  selected_value : '{{ $row["assign_to"] --}}' });
 
 
-	$('#icon').click(function(){
-		$(document).ready(function(){
-			$("#my-datepicker").datepicker().focus();
-		});
+	$('.datepickerHandleButton').click(function(){
+        $("#my-datepicker").datepicker().focus();
+	});
+	$('select[name=Priority]').change(function(){
+        var elm = $(this),
+            val = elm.val(),
+            isSameDay = val == 'sameday',
+            date = elm.data('current-date'),
+            formattedDate,
+            datePicker = $("#my-datepicker"),
+            datePickerVal = datePicker.val();
+            
+        if (isSameDay && !datePickerVal) {
+            formattedDate = $.datepicker.formatDate('mm/dd/yy', new Date(date));
+            datePicker.datepicker('update', formattedDate);
+        }
 	});
 	
 	$('.editor').summernote();
+    
 	$('.previewImage').fancybox();	
+    
 	$('.tips').tooltip();	
+    
 	renderDropdown($(".select2"), { width:"100%"});	
-	$('.date').datepicker({format:'mm/dd/yyyy',autoClose:true})
+    
+	$('.date').datepicker({format:'mm/dd/yyyy',autoclose:true})
+    
 	$('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});
+    
 	$('input[type="checkbox"],input[type="radio"]').iCheck({
 		checkboxClass: 'icheckbox_square-blue',
 		radioClass: 'iradio_square-blue',
 	});			
+    
 	$('.removeCurrentFiles').on('click',function(){
 		var removeUrl = $(this).attr('href');
 		$.get(removeUrl,function(response){});
 		$(this).parent('div').empty();	
 		return false;
-	});			
+	});		
+    
 	var form = $('#sbticketFormAjax'); 
 	form.parsley();
 	form.submit(function(){

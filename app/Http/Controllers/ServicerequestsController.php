@@ -19,6 +19,8 @@ class servicerequestsController extends Controller
     public $module = 'Servicerequests';
     protected $layout = "layouts.main";
     protected $data = array();
+    protected $priorityOptions = ['normal' => 'Normal' ,  'sameday' => 'Same Day', ];
+    protected $statusOptions = ['open' => 'Open' ,  'inqueue' => 'Pending' ,  'closed' => 'Closed' ,];
 
     public function __construct()
     {
@@ -36,7 +38,10 @@ class servicerequestsController extends Controller
             'pageNote' => $this->info['note'],
             'pageModule' => 'servicerequests',
             'pageUrl' => url('servicerequests'),
-            'return' => self::returnUrl()
+            'return' => self::returnUrl(),
+            
+            'priorityOptions' => $this->priorityOptions,
+            'statusOptions' => $this->statusOptions,        
         );
 
 
@@ -54,11 +59,41 @@ class servicerequestsController extends Controller
     public function getSearchFilterQuery($customQueryString = null) {
         // Filter Search for query
         // build sql query based on search filters
-        $filter = is_null($customQueryString) ? (is_null(Input::get('search')) ? '' : $this->buildSearch()) : 
-            $this->buildSearch($customQueryString);
+        
+        
+        // Get custom Ticket Type filter value 
+        $customTicketTypeFilter = $this->model->getSearchFilters(['ticket_custom_type' => '', 'Status' => 'status']);
+        $skipFilters = ['ticket_custom_type'];
+        $mergeFilters = [];
+        extract($customTicketTypeFilter); //$ticket_custom_type, $status
+        
+        // add custom ticket type filters
+        if (!empty($ticket_custom_type)) {
+            list($debitType, $issue_type) = explode('-', $ticket_custom_type);             
+            if (empty($issue_type)) {
+                $skipFilters[] = 'issue_type';
+            }
+            else {
+                $mergeFilters['issue_type'] = [
+                        'fieldName' => 'issue_type',
+                        'operator' => 'equal',
+                        'value' => $issue_type,
+                    ];
+            }
+        }
+        
+        // rebuild search query skipping 'ticket_custom_type' filter
+        $trimmedSearchQuery = $this->model->rebuildSearchQuery($mergeFilters, $skipFilters, $customQueryString);
 
-        $frontendSearchFilters = $this->model->getSearchFilters(array('Status' => 'status'));
-        if (empty($frontendSearchFilters['status'])) {
+        // Filter Search for query
+        // build sql query based on search filters
+        $filter = is_null(Input::get('search')) ? '' : $this->buildSearch($trimmedSearchQuery);
+        
+        
+        if (!empty($debitType)) {
+            $filter .= " AND sb_tickets.location_id IN (SELECT id from location where debit_type_id='$debitType') ";
+        } 
+        if (empty($status)) {
             $filter .= " AND sb_tickets.Status != 'closed' ";
         } 
         
@@ -94,6 +129,9 @@ class servicerequestsController extends Controller
             'page' => $page,
             'limit' => (!is_null($request->input('rows')) ? filter_var($request->input('rows'), FILTER_VALIDATE_INT) : $this->info['setting']['perpage']),
             'sort' => $sort,
+            'extraSorts' => [
+                ['updated', 'desc']
+            ],
             'order' => $order,
             'params' => $filter,
             'global' => (isset($this->access['is_global']) ? $this->access['is_global'] : 0)
@@ -269,11 +307,12 @@ class servicerequestsController extends Controller
         $this->data['comments'] = $comments;
 
         $userId = \Session::get('uid');
-        $this->data['creator'] = !empty($row->entry_by) ? \SiteHelpers::getUserDetails($row->entry_by) : [];
+        $this->data['access'] = $this->access;
         $this->data['id'] = $id;
         $this->data['uid'] = $userId;
         $this->data['fid'] = \Session::get('fid');
-        $this->data['access'] = $this->access;
+        $this->data['creator'] = !empty($row->entry_by) ? \SiteHelpers::getUserDetails($row->entry_by) : [];
+        $this->data['canChangeStatus'] = ticketsetting::canUserChangeStatus();
         $this->data['following'] = Ticketfollowers::isFollowing($id, $userId);
         $this->data['followers'] = Ticketfollowers::getAllFollowers($id);
         $this->data['setting'] = $this->info['setting'];
@@ -338,8 +377,23 @@ class servicerequestsController extends Controller
             
             $files = $this->uploadTicketAttachments("/ticket-$id/$date/", "--$id");
             if (!empty($files['file_path'])) {                
+                if ($isAdd) {
+                    $data['file_path'] = $files['file_path'];                 
+                }
+                else {
+                    $oldFiles = $data['file_path'];
+                    if (empty($oldFiles)) {
+                        $data['file_path'] = $files['file_path'];
+                    }
+                    else {
+                        $data['file_path'] .= ','.$files['file_path'];
+                    }
+                }
+                
+                $data['_base_file_path'] = $files['_base_file_path'];
+                
                 $this->model->where('TicketID', $id)
-                    ->update(['file_path' => $files['file_path']]);
+                    ->update(['file_path' => $data['file_path']]);
             }
             
             if($isAdd){
@@ -368,7 +422,10 @@ class servicerequestsController extends Controller
 
     }
     
-    public function uploadTicketAttachments($suffixPath = '', $suffixFileName = '') {
+    public function uploadTicketAttachments ($suffixPath = '', $suffixFileName = '') {
+        return self::uploadFilesFromInputToPublicFolder($suffixPath, $suffixFileName);
+    }
+    public function uploadFilesFromInputToPublicFolder($suffixPath = '', $suffixFileName = '') {
         $request = new Request;
         $date = date('Y-m-d');
         $formConfig = $this->info['config']['forms'];
@@ -384,7 +441,7 @@ class servicerequestsController extends Controller
                 
                 $option = $config['option'];
                 $isMultiple = !empty($option['image_multiple']);
-                $uploadPath = $option['path_to_upload'];
+                $baseUploadPath = $option['path_to_upload'];
                 $uploadImage = $option['upload_type'] == 'image';
                 
                 $inputFiles = Input::file($field);
@@ -392,12 +449,13 @@ class servicerequestsController extends Controller
                     $inputFiles = [$inputFiles];
                 }
                 
-                $files = [];
-                $uploadPath = preg_replace('/^[\.\/]*public/', '', $uploadPath); 
-                $uploadPath = preg_replace('/^\//', './', $uploadPath); 
-                $uploadPath = preg_replace('/(\/$)/', '', $uploadPath); 
-                $pathExtended = $suffixPath;//"/ticket-$id/$date/";
-                $targetPath = $uploadPath . $pathExtended;
+                $urls = [];
+                $filePaths = [];
+                $baseTargetPath = $baseUploadPath.$suffixPath;
+                $paths = FEGSystemHelper::getSanitisedPublicUploadPath($baseTargetPath);
+                $targetPath = $paths['target'];
+                $realPath = $paths['real'];
+                $urlPath = $paths['url'];
                 
                 foreach($inputFiles as $file) {
                     
@@ -419,16 +477,17 @@ class servicerequestsController extends Controller
                             if (empty($resizeHeight)) {
                                 $resizeHeight = $resizeWidth;
                             }
-                            $fileWithPath = $targetPath.$targetFile;
+                            $fileWithPath = $realPath.$targetFile;
                             \SiteHelpers::cropImage($resizeWidth, $resizeHeight, $fileWithPath, $originalExtension, $fileWithPath);
-                        }
-
-                        $url = preg_replace('/^[\.\/]*/', '/', $targetPath).$targetFile;
-                        $files[] = $url;
+                        }                        
+                        
+                        $urls[] = $urlPath.$targetFile;
+                        $filePaths[] = $realPath.$targetFile;
                     }                    
                 }
                 
-                $data[$field] = implode(',', $files);
+                $data['_base_'.$field] = implode(',', $filePaths);
+                $data[$field] = implode(',', $urls);
 
             }            
         }
@@ -477,14 +536,16 @@ class servicerequestsController extends Controller
         $comment_model = new Ticketcomment();
         $total_comments = $comment_model->where('TicketID', '=', $ticketId)->count();
 
-        $status = $ticketsData['Status'];
-        $isStatusClosed = $status == 'closed';
-        if (!$isStatusClosed && $total_comments == 0) {
-            $ticketsData['Status'] = 'inqueue';
-        }
-        $ticketsData['closed']="";   
-        if ($isStatusClosed) {
-            $ticketsData['closed'] = date('Y-m-d H:i:s');
+        if (isset($ticketsData['Status'])) {
+            $status = $ticketsData['Status'];
+            $isStatusClosed = $status == 'closed';
+    //        if (!$isStatusClosed && $total_comments == 0) {
+    //            $ticketsData['Status'] = 'inqueue';
+    //        }
+            $ticketsData['closed']="";   
+            if ($isStatusClosed) {
+                $ticketsData['closed'] = date('Y-m-d H:i:s');
+            }
         }
 
         //re-populate info array to ticket comments module
@@ -506,7 +567,9 @@ class servicerequestsController extends Controller
 
         $this->model->insertRow($ticketsData, $ticketId);
         $message = $commentsData['Comments'];
-            
+        if (!empty($files['Attachments'])) {
+            $ticketsData['_base_file_path'] = $files['_base_Attachments'];
+        }
         /*
             $isFollowing = $request->input('isFollowingTicket');
             $allFollowers = $request->input('allFollowers');

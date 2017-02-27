@@ -128,43 +128,18 @@
                         @if(SiteHelpers::filterColumn($limited ))
                             <td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}"
                                 data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
-
                                 <?php
-                                    if($field['field']=='assign_to'){
-                                       /* foreach ($row->assign_employee_names as $index => $name) :
-                                            if(isset($name[0]->first_name))
-                                                {
-                                            echo (++$index) . '.  ' . $name[0]->first_name . ' ' . $name[0]->last_name . '</br>';
-                                       }
-                                        endforeach;*/
-                                    }elseif($field['field']=='updated'){
-                                        if(!empty($row->updated)){
-                                            $date=date("m/d/Y", strtotime($row->updated));
-                                            echo $date;
-                                        }
-                                    }elseif($field['field']=='Created'){
-                                        $date=date("m/d/Y", strtotime($row->Created));
-                                        echo $date;
-                                    }elseif($field['field']=='game_id'){
-                                        echo $row->game_id;
+                                    if($field['field']=='Status'){
+                                        $value = $statusOptions[$value];
                                     }
-                                    elseif($field['field']=='Status'){
-                                        if($row->Status=='inqueue')
-                                        {
-                                            echo 'Pending';
+                                    elseif ($field['field']=='Priority') {
+                                        if ($value == 'emergency') {
+                                            $value = "sameday";
                                         }
-                                        else
-                                        {
-                                           echo ucfirst($row->Status);
-                                        }
-
-                                    }
-                                    else
-                                    {
-                                        echo $value;
+                                        $value = $priorityOptions[$value];
                                     }
                                 ?>
-
+                                {!! $value !!}
                             </td>
                         @endif
                         <?php endif;

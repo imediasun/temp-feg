@@ -37,7 +37,15 @@ class ticketsetting extends Sximo  {
             $id = \Session::get('uid');
         }        
 		$data = self::getAllPermissions();
-        $permissions = ["omniscient" => false, "followAllInLocation" => false, "newTicketNotificaitonInLocationOnly" => false];
+        $permissions = [
+            "canChangeStatus" => false, 
+            "omniscient" => false, 
+            "followAllInLocation" => false, 
+            "newTicketNotificaitonInLocationOnly" => false
+        ];
+        
+        $sGroups = $data['canChangeStatus']['groups'];
+        $sUsers = $data['canChangeStatus']['users'];
         $oGroups = $data['omniscient']['groups'];
         $oUsers = $data['omniscient']['users'];
         $fGroups = $data['followAllInLocation']['groups'];
@@ -45,6 +53,8 @@ class ticketsetting extends Sximo  {
         $nGroups = $data['newTicketNotificaitonInLocationOnly']['groups'];
         $nUsers = $data['newTicketNotificaitonInLocationOnly']['users'];
                         
+        $permissions['canChangeStatus'] = (!empty($gid) && !empty($sGroups) && in_array($gid, $sGroups)) || 
+                (!empty($id) && !empty($sUsers) && in_array($id, $sUsers));
         $permissions['omniscient'] = (!empty($gid) && !empty($oGroups) && in_array($gid, $oGroups)) || 
                 (!empty($id) && !empty($oUsers) && in_array($id, $oUsers));
         $permissions['followAllInLocation'] =  (!empty($gid) && !empty($fGroups) && in_array($gid, $fGroups)) || 
@@ -60,6 +70,7 @@ class ticketsetting extends Sximo  {
         if (is_null($data)) {
             return [
                 "nodata" => true, 
+                "canChangeStatus" => false, 
                 "omniscient" => false, 
                 "followAllInLocation" => false, 
                 "newTicketNotificaitonInLocationOnly" => false
@@ -80,15 +91,19 @@ class ticketsetting extends Sximo  {
         $user4 = $data['individual4'];
         $user5 = $data['individual5'];        
         
+        $statusChangers['groups'] = explode(',', $role3);
         $omniscients['groups'] = explode(',', $role1);
         $followAllInLocation['groups'] = explode(',', $role2);
         $newTicketNotificaitonInLocationOnly['groups'] = explode(',', $role4);
         
+        $statusChangers['users'] = explode(',', $user3);
         $omniscients['users'] = explode(',', $user1);
         $followAllInLocation['users'] = explode(',', $user2);
         $newTicketNotificaitonInLocationOnly['users'] = explode(',', $user4);
         
-        $permissions = ["omniscient" => $omniscients, 
+        $permissions = [
+            "canChangeStatus" => $statusChangers, 
+            "omniscient" => $omniscients, 
             "followAllInLocation" => $followAllInLocation, 
             "newTicketNotificaitonInLocationOnly" => $newTicketNotificaitonInLocationOnly
         ];
@@ -98,12 +113,8 @@ class ticketsetting extends Sximo  {
         $permissions = self::getUserPermissions($id);           
         return $permissions['omniscient'];
 	}
-	public static function getGlobalSubscribers($location = null){
-		return "  ";
+	public static function canUserChangeStatus($id = null){
+        $permissions = self::getUserPermissions($id);           
+        return $permissions['canChangeStatus'];
 	}
-	public static function getNewTicketSubscribers($location = null){
-		return "  ";
-	}
-	
-
 }

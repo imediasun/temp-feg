@@ -2922,3 +2922,7 @@ table.table-striped tr th
 .form-save{
   padding-left: 20px;
 }
+
+.datepickerHandleButton {
+    cursor: pointer;
+}

@@ -5,7 +5,7 @@ $commentsCount =  $comments->count();
 $conversationCount = $commentsCount + 1;
 
 $ticketID = $row->TicketID;
-$ticketStatus = $row->Status=='inqueue' ? 'Pending' : ucfirst($row->Status);
+$ticketStatus = isset($statusOptions[$row->Status]) ? $statusOptions[$row->Status] : '';
 $dateNeeded = DateHelpers::formatDate($row->need_by_date);
 $createdOn = \DateHelpers::formatDate($row->Created);
 $createdOnWithTime = \DateHelpers::formatDateCustom($row->Created);
@@ -72,8 +72,8 @@ $myUserTooltip = "You";
                         <div class="followControlContainer">
                             <input name="isFollowingTicket"
                                 data-size="mini" data-animate="true" 
-                                data-on-text="Un Follow" 
-                                data-off-text="Follow" 
+                                data-on-text="Subscribed" 
+                                data-off-text="Not Subscribed" 
                                 data-handle-width="100px"
                                 class="isFollowing" type="checkbox" 
                                 @if($following) checked @endif />
@@ -134,29 +134,25 @@ $myUserTooltip = "You";
                                         <button type="submit" 
                                                 class="btn btn-primary btn-sm pull-right submitButton"
                                                 ><i class="fa  fa-save "></i> Update</button>
-                                                
+                                        @if ($canChangeStatus) 
                                         <div class="selectStatusDropdownContainer">
-                                            <?php $Status = explode(',',$row['Status']);
-                                            $Status_opt = array( 'open' => 'Open' ,  'inqueue' => 'Pending' ,  'closed' => 'Closed' , ); ?>
-                                            <select name='Status' required  class='Status'  >
-                                                <?php
-                                                foreach($Status_opt as $key=>$val)
-                                                {
-                                                    echo "<option  value ='$key' ".($row['Status'] == $key ? " selected='selected' " : '' ).">$val</option>";
-                                                }
-                                                ?></select>                                            
+                                            <select name='Status' required class='Status '>
+                                                @foreach($statusOptions as $key => $val)
+                                                    <option  value ='{{ $key }}' 
+                                                        @if($row['Status'] == $key) selected='selected' @endif
+                                                    >{{ $val }}</option>";
+                                                @endforeach
+                                            </select>                                            
                                         </div>
+                                        @endif
                                         <div class="selectPriorityDropdownContainer">
-                                            <?php $Priority = explode(',',$row['Priority']);
-                                            $Priority_opt = array('normal' => 'Normal' ,  'emergency' => 'Emergency'); ?>
-                                            <select name='Priority' required  class='Priority'  >
-                                                <?php
-                                                foreach($Priority_opt as $key=>$val)
-                                                {
-                                                    echo "<option  value ='$key' ".($row['Priority'] == $key ? " selected='selected' " : '' ).">$val</option>";
-                                                }
-                                                ?>
-                                            </select>
+                                            <select name='Priority' required class='Priority '>
+                                                @foreach($priorityOptions as $key => $val)
+                                                    <option  value ='{{ $key }}' 
+                                                        @if($row['Priority'] == $key) selected='selected' @endif
+                                                    >{{ $val }}</option>";
+                                                @endforeach
+                                            </select>                                            
                                         </div>                                        
                                         
                                     </div>

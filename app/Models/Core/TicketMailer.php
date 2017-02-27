@@ -16,12 +16,21 @@ class TicketMailer
             $message = $data['message'];
             $skipUsers = isset($data['skipUsers']) ? $data['skipUsers'] : [];
             $locationId = $ticketData['location_id'];
+            $isFirstNotification = $type == 'FirstEmail';
             
-            $followers = $this->getTicketFollowers($ticketId, $locationId, $type);
+            $followers = $this->getTicketFollowers($ticketId, $locationId);
             if (!empty($skipUsers)) {
                 $followers = array_diff($followers, $skipUsers);
             }
-            $emails = $this->getFollowersEmails($followers, $locationId);
+            $emails['to'] = $this->getFollowersEmails($followers, $locationId);
+            $emails['bcc'] = [];
+            if ($isFirstNotification) {
+                $firstFollowers = $this->getTicketInitialFollowers($locationId);
+                if (!empty($skipUsers)) {
+                    $firstFollowers = array_diff($firstFollowers, $skipUsers);
+                }                
+                $emails['bcc'] = $this->getFollowersEmails($firstFollowers, $locationId);
+            }           
             $this->sendTicketNotification($ticketId, $message, $emails, $ticketData);
         }
         
@@ -35,7 +44,8 @@ class TicketMailer
         $locationName = $location . '-' .\SiteHelpers::getLocationInfoById($location, "location_name");
         $createdOn = \DateHelpers::formatDate($data['Created']);
         
-        $to         = implode(',', $users);
+        $to         = implode(',', $users['to']);
+        $bcc         = implode(',', $users['bcc']);
         $reply_to   ='ticket-reply-'.$ticketId.'@tickets.fegllc.com';
         $subject    = "[Service Request #{$ticketId}] $locationName, $createdOn, $title" ;
 //        $headers    = 'MIME-Version: 1.0' . "\r\n";
@@ -43,15 +53,24 @@ class TicketMailer
 //        $headers   .= 'From: ' . CNF_APPNAME . ' <' . $reply_to . '>' . "\r\n";
 //        Log::info("**Send Ticket Email => ",[$subject, $message, $headers]);
         
-        FEGSystemHelper::sendSystemEmail([
+        $emailConfigurations = [
             'from' => $reply_to, 
+            'replyTo' => $reply_to, 
             'fromName' => CNF_APPNAME, 
+            'replyToName' => CNF_APPNAME, 
             'to' => $to, 
+            'bcc' => $bcc, 
             'subject' => $subject, 
             'message' => $message, 
             'isTest' => env('SEND_TICKET_EMAIL_TO_TEST_RECIPIENT', false),
             'configNamePrefix' => 'Ticket-Notification-'.$ticketId,
-        ]);
+        ];
+        
+        if (!empty($data['_base_file_path'])) {
+            $emailConfigurations['attach'] = explode(',', $data['_base_file_path']);
+        }
+        
+        FEGSystemHelper::sendSystemEmail($emailConfigurations);
         
 //        foreach ($users as $email) {
 //            if (!empty($email)) {
@@ -66,12 +85,19 @@ class TicketMailer
 //        }
     }
  
+    protected function getTicketInitialFollowers($locationId = null) {
+        $emails = Ticketfollowers::getDefaultFollowers($locationId, true, true);
+        return array_diff(array_unique($emails), ['', null]);
+    }
     protected function getTicketFollowers($ticketId, $locationId = null, $type = '') {
         $emails = Ticketfollowers::getAllFollowers($ticketId, $locationId, $type == 'FirstEmail');
         return array_diff(array_unique($emails), ['', null]);
     }
     protected function getFollowersEmails($followerIDs = array(), $locationId = null) {
-        $emails = FEGSystemHelper::getUserEmails(implode(',',$followerIDs), $locationId);
+        $emails = [];
+        if (!empty($followerIDs)) {
+            $emails = FEGSystemHelper::getUserEmails(implode(',',$followerIDs), $locationId, true);
+        }        
         return array_diff(array_unique($emails), ['', null]);
     }
 
