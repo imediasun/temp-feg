@@ -1035,6 +1035,7 @@ $message" .
         }
              
         self::logit("Sending Email", $lf, $lp);
+        self::logit($options, $lf, $lp);        
         self::sendEmail($to, $subject, $message, $from, $options);
         self::logit("Email sent", $lf, $lp);
     }

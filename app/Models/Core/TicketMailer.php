@@ -55,7 +55,9 @@ class TicketMailer
         
         $emailConfigurations = [
             'from' => $reply_to, 
+            'replyTo' => $reply_to, 
             'fromName' => CNF_APPNAME, 
+            'replyToName' => CNF_APPNAME, 
             'to' => $to, 
             'bcc' => $bcc, 
             'subject' => $subject, 
