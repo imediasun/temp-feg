@@ -258,6 +258,7 @@
 		function showResponse(data)  {
             hideProgress();
 			if(data.status == 'success') {				
+                form.find('button[type=submit]').prop('disabled', false);
 				notyMessage(data.message);
                 //window.setTimeout(function () {window.location.reload()}, 1000);
                 //location.reload();
