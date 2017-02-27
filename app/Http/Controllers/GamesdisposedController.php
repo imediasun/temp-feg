@@ -208,7 +208,7 @@ class GamesdisposedController extends Controller
         $rules = $this->validateForm();
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
-            /* comment validation rules due to inline editing
+            /* comment code due to inline editing
             $data['test_piece'] = $request->get('test_piece');
             $data['notes'] = $request->get('notes');
             $data['game_title_id'] = $request->get('game_title_id');
