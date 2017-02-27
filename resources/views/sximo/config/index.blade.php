@@ -228,9 +228,10 @@
 @stop
 
 <script type="text/javascript">
-    $(document).ready(function() {
+    
+    jQuery(document).ready(function() {
         
-        var form = $('#formSximoConfigMain');
+        var $= jQuery, form = $('#formSximoConfigMain');
         form.submit(function(){
 
             var options = {
