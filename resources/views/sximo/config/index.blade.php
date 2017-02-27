@@ -33,7 +33,7 @@
   <div class="sbox  "> 
   <div class="sbox-title"></div>
   <div class="sbox-content"> 
-		 {!! Form::open(array('url'=>'feg/config/save/', 'class'=>'form-horizontal row', 'files' => true)) !!}
+		 {!! Form::open(array('url'=>'feg/config/save/', 'id' => 'formSximoConfigMain', 'class'=>'form-horizontal row', 'files' => true)) !!}
 
 		<div class="col-sm-6 animated fadeInRight ">
 		  <div class="form-group">
@@ -225,11 +225,42 @@
 </div>
 </div>
 
-
-
-
-
-
-
-
 @stop
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        
+        var form = $('#formSximoConfigMain');
+        form.submit(function(){
+
+            var options = {
+                dataType:      'json',
+                success:       showResponse
+            };
+            showProgress();
+            $(this).ajaxSubmit(options);
+            return false;
+
+        });
+
+        function showProgress () {
+            $('.ajaxLoading').show();
+        }
+        function hideProgress () {
+            $('.ajaxLoading').hide();
+        }
+		function showResponse(data)  {
+            hideProgress();
+			if(data.status == 'success') {				
+				notyMessage(data.message);
+                //location.reload();
+			}
+            else {
+				notyMessageError(data.message);
+				return false;
+			}
+		}        
+        
+    });    
+</script>
+        
