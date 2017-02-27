@@ -40,7 +40,6 @@ class ManagefegrequeststoreController extends Controller
     {
         if ($this->access['is_view'] == 0)
             return Redirect::to('dashboard')->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
-
         $this->data['access'] = $this->access;
         return view('managefegrequeststore.index', $this->data);
     }
@@ -125,9 +124,7 @@ class ManagefegrequeststoreController extends Controller
 
     public function postData(Request $request)
     {
-
         $this->getSearchParamsForRedirect();
-       // echo \Session::get('searchParams');
         $user_level = \Session::get('gid');
         if ($user_level == 2) {
             return redirect('dashboard');
@@ -181,18 +178,11 @@ class ManagefegrequeststoreController extends Controller
            // Get Query
             $view = $request->get('view');
             \Session::put('manage-request-view',$view);
-            $isRedirected=\Session::get('filter_before_redirect');
-            if(($isRedirected))
-            {
-                //die();
-                //$params=\Session::get('params');
-                \Session::put('filter_before_redirect',false);
-            }
-            \Session::put('filter_before_redirect',false);
+            $isRedirected=session('filter_before_redirect');
             $cond = array('view' => $view, 'order_type_id' => $manageRequestInfo['TID'], 'location_id' => $manageRequestInfo['LID'], 'vendor_id' => $manageRequestInfo['VID']);
             $this->data['view'] = $view;
             $results = $this->model->getRows($params, $cond);
-            // Build pagination setting
+           // Build pagination setting
             $page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;
             $pagination = new Paginator($results['rows'], $results['total'], (isset($params['limit']) && $params['limit'] > 0 ? $params['limit'] :
                 ($results['total'] > 0 ? $results['total'] : '1')));

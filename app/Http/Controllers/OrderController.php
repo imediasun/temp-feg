@@ -182,19 +182,8 @@ class OrderController extends Controller
             'global' => (isset($this->access['is_global']) ? $this->access['is_global'] : 0)
         );
         $isRedirected=\Session::get('filter_before_redirect');
-        if(($isRedirected))
-        {
-            $order_selected=\Session::get('order_selected');
-            //\Session::put('searchParams',"");
-            \Session::put('filter_before_redirect',false);
-        }
-        else
-        {
-          // \Session::put('searchParams',"");
-
-           $this->destroyRedirectFilters();
-        }
         \Session::put('order_selected',$order_selected);
+
        // \Session::put('filter_before_redirect',false);
         //\Session::put('params',$params);
          $results = $this->model->getRows($params, $order_selected);
@@ -599,16 +588,16 @@ class OrderController extends Controller
         }
         $opt = $request->get('opt');
         $redirect_module=\Session::get('redirect');
-        \Session::put('filter_before_redirect',false);
+        \Session::put('filter_before_redirect','no');
         if (count($to) == 0 || $from === "NULL" || empty($from) || $from == "") {
-            \Session::put('filter_before_redirect',true);
+            //\Session::put('filter_before_redirect',false);
             return response()->json(array(
                 'message' => \Lang::get('core.email_missing_error'),
                 'status' => 'error',
 
             ));
             } else {
-            \Session::put('filter_before_redirect',true);
+            \Session::put('filter_before_redirect','redirect');
             $status = $this->getPo($order_id, true, $to, $from, $cc, $bcc, $message);
 
             if ($status == 1)

@@ -24,6 +24,7 @@
 	</div>
 	<!-- End Content -->
     <?php
+        echo \Session::get('filter_before_redirect');
     if(! isset($id)){
         $id= 0;
     }
@@ -41,12 +42,20 @@ $(document).ready(function(){
     }
     else{
         var searchParams="{{ \Session::get('searchParams') }}";
-        if("{{ \Session::get('filter_before_redirect')}}")
+        if("{{ \Session::get('filter_before_redirect')}}" == "redirect")
         {
+           <?php if(\Session::has('filter_before_redirect') && \Session::has('filter_before_redirect') == 'redirect')
+            {
+            \Session::put('filter_before_redirect','no');
+            }
+            ?>
             reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data' + searchParams.replace("&amp;", "&"));
         }
         else
         {
+            <?php
+     \Session::put('filter_before_redirect','no');
+     ?>
             reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data');
         }
     }

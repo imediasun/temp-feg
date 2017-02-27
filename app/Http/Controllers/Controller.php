@@ -955,8 +955,8 @@ abstract class Controller extends BaseController
     }
     function destroyRedirectFilters()
     {
-        \Session::forget('filter_before_redirect');
-      //  \Session::put('searchParams',"");
+        //\Session::put('searchParams',"");
+        \Session::put('filter_before_redirect',false);
     }
 
 }
