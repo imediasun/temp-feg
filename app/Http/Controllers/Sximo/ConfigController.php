@@ -113,17 +113,15 @@ class ConfigController extends Controller
             $val .= "?>";
 
             $filename = base_path() . '/setting.php';
-            $newfilename = base_path() . '/newsetting.php';
 
-//            $fp = fopen($filename, "w");
+            $fp = fopen($filename, "w");
 //            self::fwrite_stream($fp, $val);
-//            fclose($fp);
+            fwrite($fp, $val);
+            fclose($fp);
+            $fp = null;
 //            sleep(10);
-              file_put_contents($newfilename , $val);
-              unlink($filename);
-              rename($newfilename, $filename);
               
-                return \Response::json(['status' => 'success', 'message' => 'Settings have been saved successfully']);
+                die(json_encode(['status' => 'success', 'message' => 'Settings have been saved successfully']));
 //              return Redirect::to('feg/config')->with('messagetext', 'Setting Has Been Save Successful')->with('msgstatus', 'success');
 
         } else {
