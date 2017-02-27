@@ -1203,7 +1203,7 @@ class ModuleController extends Controller
         $this->data['tables'] = Module::getTableList($this->db);
         $this->data['module'] = $row->module_name;
         $this->data['module_name'] = $id;
-        $this->data['modules'] = Module::all();
+        $this->data['modules'] = Module::orderBy('module_title', 'asc')->get();
         return view('sximo.module.sub', $this->data);
 
 

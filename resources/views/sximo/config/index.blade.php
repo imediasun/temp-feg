@@ -170,11 +170,21 @@
 						<option value=""> -- Select Module or Page -- </option>
 						<optgroup label="Module ">
 							@foreach($modules as $mod)
-								<option value="{{ $mod->module_name}}"
-										@if(CNF_REDIRECTLINK === $mod->module_name )   selected="selected" @endif
+                                <?php                                
+                                    $moduleConfig = \SiteHelpers::CF_decode_json($mod->module_config);
+                                    $moduleRoute = $mod->module_name;
+                                    if (isset($moduleConfig['setting']['module_route'])) {
+                                        $moduleRoute = $moduleConfig['setting']['module_route'];
+                                    }                                    
+                                ?>                                            
+                                <option value="{{ $moduleRoute }}"                            
+                                    @if(CNF_REDIRECTLINK === $moduleRoute )   selected="selected" @endif
 								>{{ $mod->module_title}}</option>
 							@endforeach
 						</optgroup>
+                        <optgroup label="Dashboards">
+                            <option value="dashboard">Dashboard</option>
+                        </optgroup>                        
 						<optgroup label="Page CMS ">
 							@foreach($pages as $page)
 								<option value="{{ $page->alias}}"

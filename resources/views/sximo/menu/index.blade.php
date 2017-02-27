@@ -176,7 +176,7 @@
                                     }                                    
                                 ?>
 								<option value="{{ $moduleRoute }}"
-								@if($row['module']== $mod->module_name ) selected="selected" @endif
+								@if($row['module']== $moduleRoute ) selected="selected" @endif
 								>{{ $mod->module_title}}</option>
 							@endforeach
 							</optgroup>

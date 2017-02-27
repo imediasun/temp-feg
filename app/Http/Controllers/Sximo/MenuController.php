@@ -50,9 +50,9 @@ class MenuController extends Controller
         }
         //echo '<pre>';print_r($this->data);echo '</pre>';  exit;
         $this->data['menus'] = \SiteHelpers::menus($pos, 'all');
-        $this->data['modules'] = \DB::table('tb_module')->where('module_type', '!=', 'core')->get();
+        $this->data['modules'] = \DB::table('tb_module')->where('module_type', '!=', 'core')->orderBy('module_title', 'asc')->get();
         $this->data['groups'] = \DB::select(" SELECT * FROM tb_groups ");
-        $this->data['pages'] = \DB::select(" SELECT * FROM tb_pages ");
+        $this->data['pages'] = \DB::table("tb_pages")->orderBy('title', 'asc')->get();
         $this->data['active'] = $pos;
         return view('sximo.menu.index', $this->data);
     }
