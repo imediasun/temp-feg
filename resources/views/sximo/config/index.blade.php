@@ -39,7 +39,7 @@
 		  <div class="form-group">
 		    <label for="ipt" class=" control-label col-md-4">{{ Lang::get('core.fr_appname') }} </label>
 			<div class="col-md-8">
-			<input name="cnf_appname" type="text" id="cnf_appname" class="form-control input-sm" required  value="{{ CNF_APPNAME }}" />  
+			<input name="cnf_appname" type="text" id="cnf_appname" class="form-control input-sm" required  value="{{ $options['CNF_APPNAME'] }}" />
 			 </div> 
 		  </div>  
 		  

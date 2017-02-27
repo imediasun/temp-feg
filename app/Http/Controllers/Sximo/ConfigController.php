@@ -1,6 +1,7 @@
 <?php namespace App\Http\Controllers\sximo;
 
 use App\Http\Controllers\controller;
+use App\Library\FEG\System\FEGSystemHelper;
 use App\Models\Core\Groups;
 use App\User;
 use Illuminate\Http\Request;
@@ -24,6 +25,8 @@ class ConfigController extends Controller
         $this->data['active'] = '';
         $this->data['modules'] = \DB::table('tb_module')->where('module_type', '!=', 'core')->orderBy('module_title', 'asc')->get();
         $this->data['pages'] = \DB::table("tb_pages")->orderBy('title', 'asc')->get();
+        $this->data['options'] = ['CNF_APPNAME' => FEGSystemHelper::getOption('CNF_APPNAME')
+        ];
         return view('sximo.config.index', $this->data);
     }
 
@@ -50,7 +53,7 @@ class ConfigController extends Controller
                 $logo = 'backend-logo.' . $extension;
                 $uploadSuccess = $file->move($destinationPath, $logo);
             }
-
+            FEGSystemHelper::updateOption('CNF_APPNAME',$request->input('cnf_appname'));
             $val = "<?php \n";
             $val .= "define('CNF_APPNAME','" . $request->input('cnf_appname') . "');\n";
             $val .= "define('CNF_APPDESC','" . $request->input('cnf_appdesc') . "');\n";
