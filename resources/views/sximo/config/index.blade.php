@@ -259,7 +259,7 @@
             hideProgress();
 			if(data.status == 'success') {				
 				notyMessage(data.message);
-                window.setTimeout(function () {window.location.reload()}, 1000);
+                //window.setTimeout(function () {window.location.reload()}, 1000);
                 //location.reload();
 			}
             else {
