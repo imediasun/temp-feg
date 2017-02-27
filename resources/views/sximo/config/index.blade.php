@@ -227,6 +227,10 @@
 
 @stop
 
+@section ('beforebodyend')
+
+  
+
 <script type="text/javascript">
     
     jQuery(document).ready(function() {
@@ -238,6 +242,7 @@
                 dataType:      'json',
                 success:       showResponse
             };
+            form.find('button[type=submit]').prop('disabled', true);
             showProgress();
             $(this).ajaxSubmit(options);
             return false;
@@ -254,9 +259,11 @@
             hideProgress();
 			if(data.status == 'success') {				
 				notyMessage(data.message);
+                window.setTimeout(function () {window.location.reload()}, 1000);
                 //location.reload();
 			}
             else {
+                form.find('button[type=submit]').prop('disabled', false);
 				notyMessageError(data.message);
 				return false;
 			}
@@ -264,4 +271,6 @@
         
     });    
 </script>
-        
+
+    
+@endsection

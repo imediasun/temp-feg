@@ -85,12 +85,12 @@ class ConfigController extends Controller
 //            fclose($fp);
 //            sleep(10);
               file_put_contents($filename , $val);
-                return Response::json(['status' => 'success', 'message' => 'Settings have been saved successfully']);
+                return \Response::json(['status' => 'success', 'message' => 'Settings have been saved successfully']);
 //              return Redirect::to('feg/config')->with('messagetext', 'Setting Has Been Save Successful')->with('msgstatus', 'success');
 
         } else {
             
-              return Response::json(['status' => 'error', 'message' => 'Error saving settings']);
+              return \Response::json(['status' => 'error', 'message' => 'Error saving settings']);
 //            return Redirect::to('feg/config')->with('messagetext', 'The following errors occurred')->with('msgstatus', 'success')
 //                ->withErrors($validator)->withInput();
         }
