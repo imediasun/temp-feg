@@ -121,7 +121,7 @@ class ConfigController extends Controller
             $fp = null;
 //            sleep(10);
               
-                die(json_encode(['status' => 'success', 'message' => 'Settings have been saved successfully']));
+                die(json_encode(['status' => 'success', 'message' => 'Settings have been saved successfully', 'filecontent' => file_get_contents($filename)]));
 //              return Redirect::to('feg/config')->with('messagetext', 'Setting Has Been Save Successful')->with('msgstatus', 'success');
 
         } else {
