@@ -1,4 +1,4 @@
-<div class="col-md-10">
+<div class="col-md-12">
     {!! Form::open(array('url'=>'tablecols/config/'.$module_id, 'class'=>'form-horizontal','files' => true ,
     'parsley-validate'=>'','novalidate'=>' ','id'=> 'tablecolsFormAjax')) !!}
     <input type="hidden" name="module_id" value="{{ $module_id }}"/>
@@ -135,7 +135,7 @@
                 $('#sximo-modal').modal('hide');
                 $('.ajaxLoading').hide();
                 //window.location.reload();
-                reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?config_id=' + data.id);
+                reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?config_id=' + data.id + getFooterFilters());
             } else {
                 notyMessageError(data.message);
                 $('.ajaxLoading').hide();
