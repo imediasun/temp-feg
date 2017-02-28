@@ -484,7 +484,7 @@ class FEGSystemHelper
         
         $preventEmailSendingSetting = env('PREVENT_FEG_SYSTEM_EMAIL', false);
         if (!$preventEmailSendingSetting)  {
-            $useLaravelMail = !empty($options['attach']) || empty($options['useLaravelMail']);
+            $useLaravelMail = !empty($options['useLaravelMail']) || !empty($options['attach']);
             if ($useLaravelMail) {
                 self::laravelMail($to, $subject, $message, $from, $options);
             }
