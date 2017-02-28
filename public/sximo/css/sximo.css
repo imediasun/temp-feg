@@ -2861,6 +2861,16 @@ table.table-striped tr th
     border: none;
     border-bottom: 1px solid #a9a9a9;   
 }
+
+.gameDetailsContainer .productList {
+    list-style: none;
+    padding: 0;
+}
+.gameDetailsContainer .productList li {
+    margin-bottom: 5px;
+    color: #575a5c;
+}
+
 /* end game details */
 /* game edits */
 .gameIsSold {

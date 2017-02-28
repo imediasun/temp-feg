@@ -263,6 +263,16 @@ class MylocationgameController extends Controller
                 ->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
 
         $row = $this->model->getRow($id);
+        
+        //var_dump($row);
+        $productIds = $row[0]->product_ids_json;
+        $products = [];
+        if (!empty($productIds)) {
+            $productIds = \GuzzleHttp\json_decode($productIds, true);
+            $products = \App\Models\product::select('vendor_description')
+                    ->whereIn('id', $productIds)->get();
+        }
+        $this->data['products'] = $products;
         $row['service_history'] = $this->model->getServiceHistory($id);
         $row['move_history'] = $this->model->getMoveHistory($id);
         if ($row) {

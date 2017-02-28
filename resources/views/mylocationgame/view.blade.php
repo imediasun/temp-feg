@@ -299,7 +299,15 @@
             <label class="col-md-4">
                 Current Product
             </label>
-            <div class="col-md-8"></div>
+            <div class="col-md-8">
+                @if (count($products) > 0) 
+                <ul class='productList'>
+                @foreach($products as $product) 
+                    <li>{!! $product->vendor_description !!}</li>
+                @endforeach
+                </ul>
+                @endif 
+            </div>
         </div>
         <div class="form-group clearfix" >
             <label class="col-md-4">
@@ -317,7 +325,7 @@
 
     <div class="col-md-6 text-center nogallary gameImageContainer">
         {!! SiteHelpers::showUploadedFile(SiteHelpers::getGameImage($gameTitleId),'/uploads/games/images/',400,false) !!}
-        <div class="col-md-offset-2 col-md-6" style="background: #fff;padding:10px;text-align: center">
+        <div class="center-block" style="background: #fff;padding:10px;text-align: center; width: 400px;">
             <h3>{{ $gameTitle }}</h3>
         </div>
     </div>
