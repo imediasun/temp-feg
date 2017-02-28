@@ -45,8 +45,8 @@ class CreateDummyOrders extends Command
         if (env('AUTOCREATE_DUMMY_ORDERS', false) !== true) {
             return;
         }     
-        $this->startDate = '2017-01-01';
-        $this->endDate = '2017-02-28';
+        $this->startDate = date("Y-m-d", time() + 86400);;
+        $this->endDate = '2017-03-31';
         $created_date=$this->rand_date($this->startDate,$this->endDate);
         $counter=rand(1,5);
       // echo 'total number of orders:'.$counter.'----';
@@ -235,7 +235,7 @@ class CreateDummyOrders extends Command
         }
         elseif($user != NULL)
         {
-            $id=\DB::select('select location_id as id from  user_locations where user_id='.$user);
+            $id=\DB::select('SELECT location_id AS id FROM  user_locations JOIN location ON location.id=user_locations.location_id WHERE user_id='.$user.' AND location.active=1');
            if(count($id) == 0)
            {
                $id=2012;
