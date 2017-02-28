@@ -304,11 +304,14 @@ class MylocationgameController extends Controller
 
         $rules = $this->validateForm();
         $validator = Validator::make($request->all(), $rules);
-            
+
         if ($validator->passes()) {
-            $data = $this->validatePost('game');
+            if(empty($id))
+                $data = $this->validatePost('game');
+            else
+                $data = $this->validatePost('game', true);
             //after validating data array become very small, so merge with post data
-            $data = array_merge($data, $_POST);
+            $data = array_merge($_POST, $data);
             $gameID = $data['id'];
             $gameIDExists = \DB::table('game')->where('id', $gameID)->count() > 0;
             if ($id != $gameID && $gameIDExists) {
