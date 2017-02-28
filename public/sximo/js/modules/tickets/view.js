@@ -54,7 +54,7 @@
             container.find("#followers").jCombo(mainUrl+"/comboselect?filter=users:id:first_name|last_name",
                     {  selected_value : '' + followers.join(',') });
 
-            container.find('.date').datepicker({format:'mm/dd/yyyy',autoClose:true});
+            container.find('.date').datepicker({format:'mm/dd/yyyy',autoclose:true});
             container.find('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});
             container.find('input[type="checkbox"],input[type="radio"]').not('.isFollowing').iCheck({
                 checkboxClass: 'icheckbox_square-blue',
