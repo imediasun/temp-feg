@@ -44,7 +44,7 @@ function getClearDataFilters(id, url) {
     blinds = $.extend({}, {}, callbackModifications.blind);
 
     filter = getFooterFiltersWith(includes, excludes, forces, blinds);
-    console.log(filter);
+
     return filter;
 }
 

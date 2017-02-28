@@ -273,7 +273,7 @@
         params.data.exclude['product_type'] = true;
         params.data.force['type'] = 'store';
         params.data.force['active_inactive'] = 'active';
-        console.log(params);
+        
     });    
 </script>
 <style>
