@@ -263,6 +263,18 @@
 
         initDataGrid('{{ $pageModule }}', '{{ $pageUrl }}');
     });
+    
+    App.autoCallbacks.registerCallback('beforeclearsearch', function (params) {
+        //params.data.include
+        //params.data.exclue
+        //params.data.force
+        //params.data.blind
+        params.data.exclude['order_type'] = true;
+        params.data.exclude['product_type'] = true;
+        params.data.force['type'] = 'store';
+        params.data.force['active_inactive'] = 'active';
+        console.log(params);
+    });    
 </script>
 <style>
     .table th.right {
