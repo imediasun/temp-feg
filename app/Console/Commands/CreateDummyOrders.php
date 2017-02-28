@@ -68,7 +68,7 @@ class CreateDummyOrders extends Command
        // die ('here...');
         $po_number=$location_id.'-'.date('mdy',strtotime($created_date)).'-'.$this->increamentPO();
         $created_time = strtotime($created_date);
-        $days=rand(1,59);
+        $days=rand(1,2);
         $date_received= date('Y-m-d',strtotime($created_date.' +'.$days.' days'));
 
         $order_contents=array();
