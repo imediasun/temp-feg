@@ -414,10 +414,10 @@ abstract class Controller extends BaseController
         if ($md != '') $filter .= '&md=' . $md;
         if ($s != '') $filter .= '&search=' . $s;
         if ($ss != '') $filter .= '&simplesearch=' . $ss;
-
-
-        return Redirect::to($this->data['pageModule'] . $filter);
-
+        
+        $url = isset($this->data['pageUrl']) ? $this->data['pageUrl'] : $this->data['pageModule'];   
+        
+        return Redirect::to($url . $filter);
     }
 
     function injectPaginate()
