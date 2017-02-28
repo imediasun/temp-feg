@@ -33,7 +33,7 @@ function getFooterFilters(excludeList, forceSetFields) {
     for(fieldKey in forceSetFields) {
         $('.table-actions [name='+fieldKey+']').val(forceSetFields[fieldKey]);
     }        
-    $('.table-actions :input').each(function () {
+    $('.table-actions :input').not(':hidden').each(function () {
         var elm = $(this), 
             fieldName = elm.attr('name'), 
             val = elm.val(),
