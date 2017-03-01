@@ -382,6 +382,12 @@
                 var location_id = 0;
                 validatePONumber(location_id, 0);
             }
+            if (mode == 'clone')
+            {
+                var location_id=$("#po_1").val();
+                var po=$("#po_1").val()+"-"+$("#po_2").val()+"-"+$("#po_3").val();
+                 validatePONumber(location_id,po);
+            }
             $("#item_num").val(inc);
 
             $('.test').val(0.00);

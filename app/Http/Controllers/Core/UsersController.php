@@ -46,7 +46,7 @@ class UsersController extends Controller
         return view('core.users.index', $this->data);
     }
     
-    public function pageData(Request $request = nul, $id=nulll) {
+    public function pageData(Request $request = null, $id=null) {
        $moduleName = $this->data['pageModule'];
        if ($this->access['is_view'] == 0) {
             return Redirect::to('dashboard')

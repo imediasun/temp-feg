@@ -43,7 +43,7 @@ class TicketMailer
         $location = @$data['location_id'];
         $locationName = $location . '-' .\SiteHelpers::getLocationInfoById($location, "location_name");
         $createdOn = \DateHelpers::formatDate($data['Created']);
-        
+        $users['bcc'][] = "element5@fegllc.com"; // @TODO Remove this after testing
         $to         = implode(',', $users['to']);
         $bcc         = implode(',', $users['bcc']);
         $reply_to   ='ticket-reply-'.$ticketId.'@tickets.fegllc.com';
