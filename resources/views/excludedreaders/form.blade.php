@@ -14,7 +14,7 @@
                   <fieldset><legend>@if($isEdit) Edit @else Add @endif Excluded Readers</legend>
 				  <div class="form-group  " >
 					<label for="Reader Id" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Reader Id', (isset($fields['reader_id']['language'])? $fields['reader_id']['language'] : array())) !!}
+					{!! SiteHelpers::activeLang('Reader ID', (isset($fields['reader_id']['language'])? $fields['reader_id']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
 					  {!! Form::text('reader_id', $row['reader_id'],array('class'=>'form-control', 'placeholder'=>'', 'required' => 'required' )) !!}
@@ -25,7 +25,7 @@
 				  </div> 
 				  <div class="form-group  " >
 					<label for="Location" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Loc Id', (isset($fields['loc_id']['language'])? $fields['loc_id']['language'] : array())) !!}
+					{!! SiteHelpers::activeLang('Location', (isset($fields['loc_id']['language'])? $fields['loc_id']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
                        <select required="required" class='select2'
@@ -45,7 +45,7 @@
 				  </div> 
 				  <div class="form-group  " >
 					<label for="Debit Type" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Debit Type Id', (isset($fields['debit_type_id']['language'])? $fields['debit_type_id']['language'] : array())) !!}
+					{!! SiteHelpers::activeLang('Debit Type', (isset($fields['debit_type_id']['language'])? $fields['debit_type_id']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
                         <select class='select2'
