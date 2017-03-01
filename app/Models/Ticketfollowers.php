@@ -106,7 +106,7 @@ class Ticketfollowers extends Model {
         
         $recordedFollowers = $others['followers'];
         $recordedUnfollowers = $others['unfollowers'];
-        $followers = array_unique(array_diff(array_merge($default, $recordedFollowers), $recordedUnfollowers));
+        $followers = array_values(array_diff(array_unique(array_merge($default, $recordedFollowers)), $recordedUnfollowers));
         return $followers;
     }    
     public static function getRecordedFollowersUnFollowers($ticketId) {
@@ -205,7 +205,7 @@ class Ticketfollowers extends Model {
         if (!empty(trim($individuals))) {
             $individualUsers = FEGSystemHelper::getLocationUserIds($location, $individuals, true);
         }        
-        $users = array_diff(array_unique(array_merge($groupUsers, $individualUsers)), ['', null]);        
+        $users = array_values(array_diff(array_unique(array_merge($groupUsers, $individualUsers)), ['', null]));
         
         return $users;        
     }

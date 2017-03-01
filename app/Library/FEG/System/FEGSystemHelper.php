@@ -813,7 +813,7 @@ class FEGSystemHelper
                 }                
             }        
         }        
-        return array_unique($ids);
+        return array_values(array_unique($ids));
     }    
     /**
      * 
@@ -886,7 +886,7 @@ class FEGSystemHelper
                 $uids[] = $uid;
             }            
         }
-        return array_unique($uids);
+        return array_values(array_unique($uids));
     }
     
     /**
