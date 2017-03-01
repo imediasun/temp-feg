@@ -38,7 +38,7 @@
         ticket = data.ticket || {};
         comments = data.comments || [];
         creator = data.creator || {};
-        followers = data.followers | [];
+        followers = data.followers || [];
         
         if (container && container.length) {
             container.find('.editor').summernote();
