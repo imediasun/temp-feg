@@ -35,10 +35,10 @@
             container = jQuery;
         }
         form = container.find('#servicerequestsFormAjax');
-        ticket = data.ticket;
-        comments = data.comments;
-        creator = data.creator;
-        followers = data.followers;
+        ticket = data.ticket || {};
+        comments = data.comments || [];
+        creator = data.creator || {};
+        followers = data.followers || [];
         
         if (container && container.length) {
             container.find('.editor').summernote();
