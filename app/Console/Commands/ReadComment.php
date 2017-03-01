@@ -165,14 +165,24 @@ class ReadComment extends Command
     
     public function getTicketID($meta) {
         //ticket-reply-<ticketId>@tickets.fegllc.com
-        $to = $meta->to;
         $ticketID = "0";
-        foreach($to as $toItem) {
+        $to = isset($meta->to) ? $meta->to : [];
+        $cc = isset($meta->cc) ? $meta->cc : [];
+        $bcc = isset($meta->bcc) ? $meta->bcc : [];
+        $recipients = array_merge($to, $cc, $bcc);
+        foreach($recipients as $toItem) {
             $host = $toItem->host;
             $mailbox = $toItem->mailbox;
             if ($host == 'tickets.fegllc.com') {                
                 $ticketID = str_replace('ticket-reply-', '', $mailbox);
                 break;
+            }
+        }
+        if ($ticketID == "0") {
+            $subject = isset($meta->subject) ? $meta->subject : '';
+            $matched = preg_match('/\[Service Request \#(\d+?)\]/', $subject, $subjectMatch);
+            if ($matched==1 && !empty($subjectMatch[1]))    {
+                $ticketID = $subjectMatch[1];
             }
         }
         return $ticketID;
