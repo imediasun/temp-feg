@@ -117,6 +117,8 @@ class ReadComment extends Command
                     'Posted' => $posted,
                     'UserID' => $userId,
                     'USERNAME' => $userName,
+                    'imap_read' => 1,
+                    'imap_meta' => json_encode($meta),
                 );
                 
                 $L->log('Adding comment to database', $commentsData);
