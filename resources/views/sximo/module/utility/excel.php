@@ -40,7 +40,7 @@
 	header('Content-type: application/vnd.ms-excel');
 
 	// It will be called file.xls
-	header('Content-disposition: attachment; filename="'.$title.' '.date("d/m/Y").'.xlsx"');
+	header('Content-disposition: attachment; filename="'.($title . '-' . date("mdYHis")).'.xlsx"');
 
 	// Write file to the browser
 	$objWriter->save('php://output');
@@ -49,7 +49,7 @@
 
 	@header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
 	@header('Content-Length: '.strlen($content));
-	@header('Content-disposition: inline; filename="'.$title.' '.date("d/m/Y").'.xls"');
+	@header('Content-disposition: inline; filename="'.($title . '-' . date("mdYHis")).'.xls"');
 
 	echo $content;
 	exit;
@@ -79,7 +79,7 @@ $content .= '</table>';
 
 @header('Content-Type: application/ms-excel');
 @header('Content-Length: '.strlen($content));
-@header('Content-disposition: inline; filename="'.$title.' '.date("d/m/Y").'.xls"');
+@header('Content-disposition: inline; filename="'.($title . '-' . date("mdYHis")).'.xls"');
 
 echo $content;
 */	

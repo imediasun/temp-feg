@@ -42,7 +42,7 @@ $word_xmlns = "xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:sc
 	
 	@header('Content-Type: application/msword');
 	@header('Content-Length: '.strlen($content));
-	@header('Content-disposition: inline; filename="'.$title.' '.date("d/m/Y").'.doc"');
+	@header('Content-disposition: inline; filename="'.($title . '-' . date("mdYHis")).'.doc"');
 	echo $content;
 		exit;
 ?>

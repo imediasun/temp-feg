@@ -591,7 +591,7 @@ abstract class Controller extends BaseController
         // We'll be outputting an excel file
         header('Content-type: application/vnd.ms-excel');
         // It will be called file.xls
-        header('Content-disposition: attachment; filename="' . $title . ' ' . date("d/m/Y") . '.xlsx"');
+        header('Content-disposition: attachment; filename="' . ($title . '-' . date("mdYHis")) . '.xlsx"');
 
         // Write file to the browser
         $objWriter->save('php://output');
