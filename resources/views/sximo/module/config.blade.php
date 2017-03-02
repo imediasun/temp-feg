@@ -238,7 +238,7 @@
            </div> 
         </div>
 		<div class="form-group">
-          <label for="usesimplesearch" class=" control-label col-md-4">public access</label>
+          <label for="usesimplesearch" class=" control-label col-md-4">Public access</label>
           <div class="col-md-8">
               <label class="checkbox">
               <input type="checkbox" value="true" name="usesimplesearch" id="usesimplesearch"
