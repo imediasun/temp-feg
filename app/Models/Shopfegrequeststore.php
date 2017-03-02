@@ -272,7 +272,6 @@ class shopfegrequeststore extends Sximo  {
                         'configName' => $configName,
                         'from' => $from,
                         'replyTo' => $from,
-                        'usePHPMail'=>true
                     )));
 
                    return $last_inserted_id;
