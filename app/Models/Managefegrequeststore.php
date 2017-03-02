@@ -146,9 +146,9 @@ class managefegrequeststore extends Sximo
         foreach ($query as $index => $row) {
        //     $number_requests = $number_requests ." ".." | <em>". $row->request_count .":</em>";
             if($index == count($query) -1 )
-                $number_requests = $number_requests ." ".$row->request_count.":  <em>". $row->count  ."  </em>";
+                $number_requests = $number_requests ." ".$row->request_count. $row->count ;
             else
-                $number_requests = $number_requests ." ".$row->request_count.":  <em>". $row->count  ."    |  </em>";
+                $number_requests = $number_requests ." ".$row->request_count. $row->count  ;
 
         }
         $data['number_requests'] = substr($number_requests, 0, -2);
