@@ -382,7 +382,7 @@
                 var location_id = 0;
                 validatePONumber(location_id, 0);
             }
-            if (mode == 'clone')
+            if (mode == 'clone' || mode == 'SID')
             {
                 var location_id=$("#po_1").val();
                 var po=$("#po_1").val()+"-"+$("#po_2").val()+"-"+$("#po_3").val();
