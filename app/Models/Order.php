@@ -372,6 +372,7 @@ class order extends Sximo
                 $data['requests_item_count'] = $item_count-1;
                 $data['today'] = date('m/d/y');
             }
+            $data['prefill_type'] = 'SID';
         }
         $data['where_in_expression'] = substr($where_in_expression, 0, -1);
           

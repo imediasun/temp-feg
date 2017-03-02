@@ -66,7 +66,8 @@ class CreateDummyOrders extends Command
         $order_type=$this->getId('order_type');
         $company_id=$this->getId('company');
        // die ('here...');
-        $po_number=$location_id.'-'.date('mdy',strtotime($created_date)).'-'.$this->increamentPO();
+        $po_number=$location_id.'-'.date('mdy',strtotime($created_date)).'-1';
+        $po_number=$location_id.'-'.date('mdy',strtotime($created_date)).'-'.$this->validatePONum($po_number,$location_id,date('mdy',strtotime($created_date)));
         $created_time = strtotime($created_date);
         $days=rand(1,59);
         $date_received= date('Y-m-d',strtotime($created_date.' +'.$days.' days'));
@@ -262,15 +263,41 @@ class CreateDummyOrders extends Command
 
         return $product_data;
     }
-    function increamentPO()
+    function increamentPO($location=0,$created_date="",$count=0)
     {
-        $today = date('mdy');
-        $po = \DB::select("select po_number from orders where po_number like '%-$today-%' order by id desc limit 0,1");
-        if(!empty($po)){
-            $po = array_reverse(explode('-', $po[0]->po_number));
-            return ++$po[0];
+        $today =$created_date;
+        if($location != 0) {
+
+            $po = \DB::select("select po_number from po_track where po_number like '%-$today-%' and location_id=" . $location . " order by po_number");
+            if($count == 0 ) {
+                $count = count($po) + 1;
+
+            }
+            else
+            {
+
+                $count = $count +1;
+
+            }
+            $po_new=$location."-".$today."-".$count;
+
+            if($this->isPOAvailable($po_new))
+            {
+                $this->createPOTrack($po_new,$location);
+                echo $count;die();
+                return $count;
+            }
+            else
+            {
+                //echo "$location:$count";
+                //die('here...');
+                $this->increamentPO($location,$count);
+            }
         }
-        return 1;
+        else
+        {
+            return 1;
+        }
     }
     function rand_date($min_date, $max_date) {
         /* Gets 2 dates as string, earlier and later date.
@@ -282,6 +309,46 @@ class CreateDummyOrders extends Command
         $rand_epoch = rand($min_epoch, $max_epoch);
 
         return date('Y-m-d H:i:s', $rand_epoch);
+    }
+    function isPOAvailable($po_full)
+    {
+        //echo $po_full;
+        //die('here..in p');
+        $query = \DB::select("SELECT po_number FROM po_track WHERE po_number = '".$po_full."'" );
+        if(count($query) > 0 ) {
+
+            return false;
+        }
+        else{
+            return true;
+        }
+    }
+    function createPOTrack($po_full,$location_id)
+    {
+        $data=array('po_number'=>$po_full,'location_id'=>$location_id);
+        \DB::table('po_track')->insert($data);
+    }
+    function validatePONum($po,$location_id,$created_date)
+    {
+        if($po !=0)
+        {
+            if($this->isPOAvailable($po))
+            {
+                $this->createPOTrack($po,$location_id);
+                $po_3=explode('-',$po);
+                $msg= $po_3[2];
+            }
+            else
+            {
+                //die('po not available');
+                $msg=$this->increamentPO($location_id,$created_date);
+            }
+        }
+        else
+        {
+            $msg = $this->increamentPo($location_id,$created_date);
+        }
+        return $msg;
     }
    
 }
