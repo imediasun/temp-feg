@@ -484,12 +484,13 @@ class FEGSystemHelper
         
         $preventEmailSendingSetting = env('PREVENT_FEG_SYSTEM_EMAIL', false);
         if (!$preventEmailSendingSetting)  {
-            $useLaravelMail = !empty($options['useLaravelMail']) || !empty($options['attach']);
-            if ($useLaravelMail) {
-                self::laravelMail($to, $subject, $message, $from, $options);
+            $usePhpMail = !empty($options['usePHPMail']);
+            //$useLaravelMail = !empty($options['useLaravelMail']) || !empty($options['attach']);
+            if ($usePhpMail) {
+                self::phpMail($to, $subject, $message, $from, $options);                                
             }
             else {
-                self::phpMail($to, $subject, $message, $from, $options);                
+                self::laravelMail($to, $subject, $message, $from, $options);                
             }
         }
     }

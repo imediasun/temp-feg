@@ -64,7 +64,6 @@ class TicketMailer
             'subject' => $subject, 
             'message' => $message, 
             'isTest' => env('SEND_TICKET_EMAIL_TO_TEST_RECIPIENT', false),
-            'useLaravelMail' => true,
             'configNamePrefix' => 'Ticket-Notification-'.$ticketId,
         ];
         
