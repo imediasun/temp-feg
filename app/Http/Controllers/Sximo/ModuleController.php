@@ -269,7 +269,7 @@ class ModuleController extends Controller
 
     function getConfig($id)
     {
-
+         
         $row = \DB::table('tb_module')->where('module_name', $id)
             ->get();
         if (count($row) <= 0) {
@@ -298,6 +298,7 @@ class ModuleController extends Controller
 
             'hiderowcountcolumn' => (isset($config['setting']['hiderowcountcolumn']) ? $config['setting']['hiderowcountcolumn'] : 'false'),
             'usesimplesearch' => (isset($config['setting']['usesimplesearch']) ? $config['setting']['usesimplesearch'] : 'true'),
+            'publicaccess' => (isset($config['setting']['publicaccess']) ? $config['setting']['publicaccess'] : 'false'),
             'simplesearchbuttonwidth' => (isset($config['setting']['simplesearchbuttonwidth']) ? $config['setting']['simplesearchbuttonwidth'] : ''),
             'hideadvancedsearchoperators' => (isset($config['setting']['hideadvancedsearchoperators']) ? $config['setting']['hideadvancedsearchoperators'] : 'false'),
             'disablepagination' => (isset($config['setting']['disablepagination']) ? $config['setting']['disablepagination'] : 'false'),

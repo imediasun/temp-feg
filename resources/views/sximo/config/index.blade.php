@@ -165,6 +165,7 @@
 						<option value=""> -- Select Module or Page -- </option>
 						<optgroup label="Module ">
 							@foreach($modules as $mod)
+
                                 <?php                                
                                     $moduleConfig = \SiteHelpers::CF_decode_json($mod->module_config);
                                     $moduleRoute = $mod->module_name;

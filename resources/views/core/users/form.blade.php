@@ -207,13 +207,14 @@
                                         <?php                                
                                             $moduleConfig = \SiteHelpers::CF_decode_json($mod->module_config);
                                             $moduleRoute = $mod->module_name;
+                                            $modulePublicAccess = isset($moduleConfig['setting']['publicaccess'])?$moduleConfig['setting']['publicaccess']:false;
                                             if (isset($moduleConfig['setting']['module_route'])) {
                                                 $moduleRoute = $moduleConfig['setting']['module_route'];
-                                            }                                    
+                                            }
                                         ?>                                            
                                         <option value="{{ $moduleRoute }}"
                                             @if($row['redirect_link'] === $moduleRoute )   selected="selected" @endif
-                                            >{{ $mod->module_title}}</option>
+                                            >{{ $mod->module_title}} - {{$modulePublicAccess}}</option>
                                         @endforeach
                                     </optgroup>
                                     <optgroup label="Dashboards">

@@ -238,12 +238,15 @@
            </div> 
         </div>
 		<div class="form-group">
-          <label for="usesimplesearch" class=" control-label col-md-4">Public access</label>
+          <label for="publicaccess" class=" control-label col-md-4">Public access</label>
           <div class="col-md-8">
               <label class="checkbox">
-              <input type="checkbox" value="true" name="usesimplesearch" id="usesimplesearch"
+				  <input type="checkbox" value="true" name="publicaccess" id="publicaccess"
+				  	  @if(isset($setting['publicaccess']) && $setting['publicaccess'] == 'true') checked="checked" @endif
 
-              </label>
+				  /> Yes
+
+             </label>
            </div>
         </div>
         
