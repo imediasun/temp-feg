@@ -238,11 +238,11 @@
            </div> 
         </div>
 		<div class="form-group">
-          <label for="publicaccess" class=" control-label col-md-4">Public access</label>
+          <label for="publicaccess" class=" control-label col-md-4">Available in Login start page dropdown</label>
           <div class="col-md-8">
               <label class="checkbox">
 				  <input type="checkbox" value="true" name="publicaccess" id="publicaccess"
-				  	  @if(isset($setting['publicaccess']) && $setting['publicaccess'] == 'true') checked="checked" @endif
+				  	  @if(!isset($setting['publicaccess']) || $setting['publicaccess'] !== false) checked="checked" @endif
 
 				  /> Yes
 

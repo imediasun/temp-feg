@@ -171,11 +171,15 @@
                                     $moduleRoute = $mod->module_name;
                                     if (isset($moduleConfig['setting']['module_route'])) {
                                         $moduleRoute = $moduleConfig['setting']['module_route'];
-                                    }                                    
-                                ?>                                            
+                                    }
+                                    $modulePublicAccess = isset($moduleConfig['setting']['publicaccess'])?
+                                            $moduleConfig['setting']['publicaccess']:true;
+                                ?>
+                                @if($modulePublicAccess)
                                 <option value="{{ $moduleRoute }}"                            
-                                    @if($options['CNF_REDIRECTLINK'] === $moduleRoute )   selected="selected" @endif
+                                    @if($options['CNF_REDIRECTLINK'] === $moduleRoute ) selected="selected" @endif
 								>{{ $mod->module_title}}</option>
+                                @endif
 							@endforeach
 						</optgroup>
                         <optgroup label="Dashboards">
