@@ -236,7 +236,19 @@
                /> Yes
               </label>
            </div> 
-        </div>                
+        </div>
+		<div class="form-group">
+          <label for="publicaccess" class=" control-label col-md-4">Public access</label>
+          <div class="col-md-8">
+              <label class="checkbox">
+				  <input type="checkbox" value="true" name="publicaccess" id="publicaccess"
+				  	  @if(isset($setting['publicaccess']) && $setting['publicaccess'] == 'true') checked="checked" @endif
+
+				  /> Yes
+
+             </label>
+           </div>
+        </div>
         
         <div class="form-group">
           <label for="simplesearchbuttonwidth" class=" control-label col-md-4">Simple Search Button width</label>

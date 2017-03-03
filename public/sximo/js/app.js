@@ -231,8 +231,8 @@ function initiateSearchFormFields(container) {
 }
 
 function initiateInlineFormFields(container,url) {
-    container.find('.date').datepicker({format:'mm/dd/yyyy',autoclose:true});
-    container.find('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss', autoclose:true});
+    container.find('.date').datepicker({format:'mm/dd/yyyy'}).on('change', function(){$('.datepicker').hide();});
+    container.find('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'}).on('change', function(){$('.datepicker').hide();});
     renderDropdown(container.find('.sel-inline'),{width:"98%"});
     $('.prod_type_id').change(function(){
 

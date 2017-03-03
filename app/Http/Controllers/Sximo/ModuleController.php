@@ -269,7 +269,7 @@ class ModuleController extends Controller
 
     function getConfig($id)
     {
-
+         
         $row = \DB::table('tb_module')->where('module_name', $id)
             ->get();
         if (count($row) <= 0) {
@@ -295,9 +295,9 @@ class ModuleController extends Controller
             'form-method' => (isset($config['setting']['form-method']) ? $config['setting']['form-method'] : 'native'),
             'view-method' => (isset($config['setting']['view-method']) ? $config['setting']['view-method'] : 'native'),
             'inline' => (isset($config['setting']['inline']) ? $config['setting']['inline'] : 'false'),
-
             'hiderowcountcolumn' => (isset($config['setting']['hiderowcountcolumn']) ? $config['setting']['hiderowcountcolumn'] : 'false'),
             'usesimplesearch' => (isset($config['setting']['usesimplesearch']) ? $config['setting']['usesimplesearch'] : 'true'),
+            'publicaccess' => (isset($config['setting']['publicaccess']) ? $config['setting']['publicaccess'] : 'false'),
             'simplesearchbuttonwidth' => (isset($config['setting']['simplesearchbuttonwidth']) ? $config['setting']['simplesearchbuttonwidth'] : ''),
             'hideadvancedsearchoperators' => (isset($config['setting']['hideadvancedsearchoperators']) ? $config['setting']['hideadvancedsearchoperators'] : 'false'),
             'disablepagination' => (isset($config['setting']['disablepagination']) ? $config['setting']['disablepagination'] : 'false'),
@@ -376,6 +376,7 @@ class ModuleController extends Controller
 
             'hiderowcountcolumn' => (!is_null($request->input('hiderowcountcolumn')) ? 'true' : 'false'),
             'usesimplesearch' => (!is_null($request->input('usesimplesearch')) ? 'true' : 'false'),
+            'publicaccess' =>  (!is_null($request->input('publicaccess')) ? 'true' : 'false'),
             'simplesearchbuttonwidth' => (!is_null($request->input('simplesearchbuttonwidth')) ? $request->input('simplesearchbuttonwidth') : ''),
             'hideadvancedsearchoperators' => (!is_null($request->input('hideadvancedsearchoperators')) ? 'true' : 'false'),
             'disablepagination' => (!is_null($request->input('disablepagination')) ? 'true' : 'false'),
