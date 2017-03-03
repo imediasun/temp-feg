@@ -2491,6 +2491,8 @@ class SiteHelpers
             return "Yes";
         elseif($value==0)
             return "No";
+        elseif($value==-1)
+            return "Both";
         return $value;
     }
   public static function refreshUserLocations($userId){
