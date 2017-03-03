@@ -212,7 +212,8 @@
                                                 $moduleRoute = $moduleConfig['setting']['module_route'];
                                             }
                                         ?>
-                                        @if($modulePublicAccess)
+
+                                        @if($modulePublicAccess=='true')
                                         <option value="{{ $moduleRoute }}"
                                             @if($row['redirect_link'] === $moduleRoute )   selected="selected" @endif
                                             >{{ $mod->module_title}}</option>
@@ -222,7 +223,7 @@
                                     <optgroup label="Dashboards">
                                         <option value="dashboard">Dashboard</option>
                                     </optgroup>
-                                    <optgroup label="Page CMS ">
+                                    <optgroup label="Page CMS">
                                         @foreach($pages as $page)
                                             <option value="{{ $page->alias}}"
                                                     @if($row['redirect_link']=== $page->alias ) selected="selected" @endif
