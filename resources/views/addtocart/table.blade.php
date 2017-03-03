@@ -205,7 +205,7 @@
     </div>
 </div>
 @else
-    <p style="color:red"> Location {{ \Session::get('selected_location') }}'s cart is empty..</p>
+    <p style="color:white"> Location {{ \Session::get('selected_location') }}'s cart is empty..</p>
 @endif
 @if($setting['inline'] =='true') @include('sximo.module.utility.inlinegrid') @endif
 

@@ -5,7 +5,7 @@ return array(
 	"norecord" => "No Record Found",
 	"create" => "Create New",
 	"add_to_cart" => "Item added to cart",
-	"already_add_to_cart" => "Item already added to Cart",
+	"already_add_to_cart" => "Item already added to cart",
 	// General , Login Info & Signup
 	"home" => "Home",
 	"group" => "Group",
