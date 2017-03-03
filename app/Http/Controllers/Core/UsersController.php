@@ -371,7 +371,9 @@ class UsersController extends Controller
         if ($validator->passes()) {
             $data = $this->validatePost('users');
 
-            $data['redirect_link'] = $request->get('redirect_link');
+
+
+
             if ($request->input('id') == '') {
                 $logId = Users::insertLog($this->module, 'insert');
                 $data['password'] = \Hash::make(Input::get('password'));
@@ -384,8 +386,14 @@ class UsersController extends Controller
                 }
 
                 $file = $request->file('avatar');
+                //in case of editing removes empty values from array and does not allow to
+                //set empty redirect value
                 $data = array_filter($data);
             }
+            //moved redirect_link in bottom because if user want to reset value
+            //then above array_filter does not remove it
+            $data['redirect_link'] = $request->get('redirect_link');
+
             $data['active']=$request->get('active');
             /* add google account password and email*/
             $data['g_mail'] = $request->input('g_mail');
