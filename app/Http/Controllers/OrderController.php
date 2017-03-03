@@ -48,9 +48,9 @@ class OrderController extends Controller
         // Get order_type search filter value and location_id saerch filter values
         $orderTypeFilter = $this->model->getSearchFilters(array('order_type' => 'order_selected', 'location_id' => ''));
         extract($orderTypeFilter);
-        // default order type is OPEN
+        // default order type is blank which means all or anything select other other defaults
         if (empty($order_selected)) {
-            $order_selected = "OPEN";
+            $order_selected = "";
         }
 
         // rebuild search query skipping 'order_type' filter
@@ -153,9 +153,9 @@ class OrderController extends Controller
         // Get order_type search filter value and location_id saerch filter values
         $orderTypeFilter = $this->model->getSearchFilters(array('order_type' => 'order_selected', 'location_id' => ''));
         extract($orderTypeFilter);
-        // default order type is OPEN
+        // default order type is blank which means all or anything select other other defaults
         if (empty($order_selected)) {
-            $order_selected = "OPEN";
+            $order_selected = "";
         }
 
         // rebuild search query skipping 'order_type' filter
