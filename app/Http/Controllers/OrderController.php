@@ -557,19 +557,10 @@ class OrderController extends Controller
     function postSaveorsendemail(Request $request)
     {
         $type = $request->get('type');
-        $from = \Session::get('eid');
+        $from=$request->get('from');
+        $from=!empty($from)?$from:env('MAIL_USERNAME');
         $order_id = $request->get('order_id');
-        if(!isset($type)) {
-            $type="configured";
-        }
-        if($type=="configured")
-        {
-            $to=$request->get('to');
-            $cc = "";
-            $bcc = "";
-            $message = $request->get('message');
-        }
-        elseif($type == "send") {
+        if($type == "send") {
             $to = $request->get('to');
             $to = $this->getMultipleEmails($to);
             $cc = $request->get('cc');
@@ -839,19 +830,19 @@ class OrderController extends Controller
                         $mail->SetFrom($google_acc->g_mail);
                         $mail->Subject = $subject;
                         $mail->Body = $message;
-                        //foreach ($to as $t) {
-                        $mail->addAddress($to);
-                        //}
-                        /*   if (count($cc) > 0) {
+                        foreach ($to as $t) {
+                        $mail->addAddress($t);
+                        }
+                           if (!empty($cc)) {
                             foreach ($cc as $c) {
                                 $mail->addCC($c);
                             }
                         }
-                        if (count($bcc) > 0) {
+                        if (!empty($bcc)) {
                             foreach ($bcc as $bc) {
                                 $mail->addBCC($bc);
                             }
-                        }*/
+                        }
                         $mail->addReplyTo($google_acc->g_mail);
                         $output = $pdf->output();
                         $file_to_save = public_path() . '/orders/' . $filename;

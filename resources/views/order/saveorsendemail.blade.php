@@ -18,7 +18,12 @@
                     <div style="color:green" class="row">
                         <?php
                         $order_id = \Session::get('order_id');
-                        $send_to = \Session::get('send_to');
+                        $send_to  = \Session::get('eid');
+                        $vendor_email = \Session::get('send_to');
+                            if(!empty($vendor_email))
+                                {
+                        $send_to .=','.$vendor_email;
+                                }
                         ?>
                     </div>
                     <div class="row">
@@ -38,25 +43,14 @@
                             </div>
 
                             <div class="form-group" style="margin-top:10px;">
-                                @if(empty($google_account->g_mail) || empty($google_account->g_password))
-                                    <button  data-button="savesend"
+                                <button  data-button="savesend"
                                              type="button"  data-mode="gmail-compose" data-target="#savesendModal" data-toggle="modal"  style="width:33%"
                                              class=" btn  btn-lg btn-success" title="SAVE & SEND"  id="save_send_modal"><i
                                                 class="fa  fa-download" aria-hidden="true"></i>
                                         &nbsp {{ Lang::get('core.sb_save_send') }}</button>
-                                    @else
-                                    <a href="{{ URL::to('order/po/'.$order_id)}}"
-                                       class=" btn  btn-lg btn-success" title="SAVE & SEND" data-mode="gmail-account"
-                                       id="save_send_modal" style="width:33%"><i
-                                                class="fa  fa-download" aria-hidden="true"></i>
-                                        &nbsp {{ Lang::get('core.sb_save_send') }}</a>
-                                @endif
-
                             </div>
                             <div class="form-group" style="margin-top:10px;">
-                                <button data-button="save" @if(!empty($google_account->g_mail) && !empty($google_account->g_password))
-                                          data-mode="gmail-account"
-                                        @else data-toggle="modal"  data-target="#myModal" data-mode="gmail-compose" @endif  id="send-only" type="button"
+                                <button data-button="save"  data-toggle="modal"  data-target="#myModal" data-mode="gmail-compose"  id="send-only" type="button"
                                         class="btn btn-info btn-lg "
                                         style="width:33%" title="SEND" ><i
                                             class="fa fa-sign-in  "></i>&nbsp {{ Lang::get('core.sb_send') }} </button>
@@ -88,6 +82,7 @@
                                     ','id'=>'sendFormAjax')) !!}
 
                                     <input type="hidden" value="{{ $order_id }}" name="order_id"/>
+                                    <input type="hidden" value="{{ $google_account->g_mail }}" name="from"/>
                                     <input type="hidden" value="" id="opt" name="opt"/>
                                     <div class="form-group">
                                         <label class="control-label col-md-4" for="to">To</label>
@@ -155,7 +150,7 @@
                                     <input type="hidden" value="{{ $order_id }}" name="order_id"/>
                                     <input type="hidden" value="" id="opt" name="opt"/>
                                     <input type="hidden" value="sendorsave" name="submit"/>
-
+                                    <input type="hidden" value="{{ $google_account->g_mail }}" name="from"/>
                                     <div class="form-group">
                                         <label class="control-label col-md-4" for="to">To</label>
 
