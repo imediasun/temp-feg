@@ -269,7 +269,7 @@ class ModuleController extends Controller
 
     function getConfig($id)
     {
-
+         
         $row = \DB::table('tb_module')->where('module_name', $id)
             ->get();
         if (count($row) <= 0) {
@@ -286,6 +286,7 @@ class ModuleController extends Controller
         $this->data['tables'] = $config['grid'];
         $this->data['type'] = $row->module_type;
         $this->data['setting'] = array(
+            'module_route' => (isset($config['setting']['module_route']) ? $config['setting']['module_route'] : $id),
             'gridtype' => (isset($config['setting']) ? $config['setting']['gridtype'] : 'native'),
             'orderby' => (isset($config['setting']) ? $config['setting']['orderby'] : $row->module_db_key),
             'ordertype' => (isset($config['setting']) ? $config['setting']['ordertype'] : 'asc'),
@@ -294,9 +295,9 @@ class ModuleController extends Controller
             'form-method' => (isset($config['setting']['form-method']) ? $config['setting']['form-method'] : 'native'),
             'view-method' => (isset($config['setting']['view-method']) ? $config['setting']['view-method'] : 'native'),
             'inline' => (isset($config['setting']['inline']) ? $config['setting']['inline'] : 'false'),
-
             'hiderowcountcolumn' => (isset($config['setting']['hiderowcountcolumn']) ? $config['setting']['hiderowcountcolumn'] : 'false'),
             'usesimplesearch' => (isset($config['setting']['usesimplesearch']) ? $config['setting']['usesimplesearch'] : 'true'),
+            'publicaccess' => (isset($config['setting']['publicaccess']) ? $config['setting']['publicaccess'] : true),
             'simplesearchbuttonwidth' => (isset($config['setting']['simplesearchbuttonwidth']) ? $config['setting']['simplesearchbuttonwidth'] : ''),
             'hideadvancedsearchoperators' => (isset($config['setting']['hideadvancedsearchoperators']) ? $config['setting']['hideadvancedsearchoperators'] : 'false'),
             'disablepagination' => (isset($config['setting']['disablepagination']) ? $config['setting']['disablepagination'] : 'false'),
@@ -363,6 +364,7 @@ class ModuleController extends Controller
         $row = $row[0];
         $config = \SiteHelpers::CF_decode_json($row->module_config);
         $setting = array(
+            'module_route' => (!is_null($request->input('module_route')) ? $request->input('module_route') : $id),
             'gridtype' => '',
             'orderby' => $request->input('orderby'),
             'ordertype' => $request->input('ordertype'),
@@ -374,6 +376,7 @@ class ModuleController extends Controller
 
             'hiderowcountcolumn' => (!is_null($request->input('hiderowcountcolumn')) ? 'true' : 'false'),
             'usesimplesearch' => (!is_null($request->input('usesimplesearch')) ? 'true' : 'false'),
+            'publicaccess' =>  !is_null($request->input('publicaccess')),
             'simplesearchbuttonwidth' => (!is_null($request->input('simplesearchbuttonwidth')) ? $request->input('simplesearchbuttonwidth') : ''),
             'hideadvancedsearchoperators' => (!is_null($request->input('hideadvancedsearchoperators')) ? 'true' : 'false'),
             'disablepagination' => (!is_null($request->input('disablepagination')) ? 'true' : 'false'),
@@ -879,6 +882,8 @@ class ModuleController extends Controller
                 'sortable' => (isset($sortable[$i]) ? 1 : 0),
                 'search' => (isset($search[$i]) ? 1 : 0),
                 'download' => (isset($download[$i]) ? 1 : 0),
+                'api' => (isset($api[$i]) ? 1 : 0),
+                'inline' => (isset($inline[$i]) ? 1 : 0),
                 'frozen' => (isset($frozen[$i]) ? 1 : 0),
                 'limited' => (isset($limited[$i]) ? $limited[$i] : ''),
                 'width' => isset($width[$i]) ? $width[$i] : '',
@@ -1199,7 +1204,7 @@ class ModuleController extends Controller
         $this->data['tables'] = Module::getTableList($this->db);
         $this->data['module'] = $row->module_name;
         $this->data['module_name'] = $id;
-        $this->data['modules'] = Module::all();
+        $this->data['modules'] = Module::orderBy('module_title', 'asc')->get();
         return view('sximo.module.sub', $this->data);
 
 

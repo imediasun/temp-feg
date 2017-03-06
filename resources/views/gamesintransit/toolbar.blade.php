@@ -19,7 +19,7 @@
                 @endif
             @endif
         @endif
-        <button class="btn btn-sm btn-white"  data-toggle="modal" data-target="#myModal"><i class="fa fa-plus"></i>Add Game</button>
+        <button class="btn btn-sm btn-white addNewGameButton" ><i class="fa fa-plus"></i>Add Game</button>
 
     </div>
     <div id="myModal" class="modal fade" role="dialog" tabindex="4">
@@ -46,7 +46,15 @@
                         <div class="form-group">
                         <label class="control-label col-md-4" for="asset_number">Asset Number*</label>
                         <div class="col-md-8">
-                            <input type="text" name="asset_number" id="asset_number" class="form-control" required data-parsley-minlength="8" data-parsley-maxlength ="8" value=" "/>
+                            <input type="text" name="asset_number" id="asset_number" class="form-control" 
+                                   required
+                                   parsley-minlength="8" 
+                                   parsley-maxlength="8" 
+                                   parsley-whitespace="trim" 
+                                   parsley-type="digits"
+                                   parsley-minlength-message="Asset Number must have 8 digits."
+                                   parsley-maxlength-message="Asset Number must have 8 digits."
+                                   value=""/>
                         <p id="asset_available" style="display:none"><i class="fa" id="status-icon"></i> </p>
                         </div>
                         </div>
@@ -115,125 +123,3 @@
     </div>
 </div>
 
-<script>
-    $("#col-config").on('change',function(){
-        reloadData('#{{ $pageModule }}','{{ $pageModule }}/data?config_id='+$("#col-config").val()+ getFooterFilters());
-    });
-    $(document).ready(function () {
-        $("#game_title").jCombo("{{ URL::to('gamesintransit/comboselect?filter=game_title:id:game_title') }}",
-                { initial_text: 'Select Game Title'});
-        var form = $('#addnewgameFormAjax');
-        form.parsley();
-        form.submit(function () {
-
-            if (form.parsley('isValid') == true) {
-                var options = {
-                    dataType: 'json',
-                    beforeSubmit: showRequest,
-                    success: showResponse
-                }
-                $(this).ajaxSubmit(options);
-                return false;
-
-            } else {
-                return false;
-            }
-
-        });
-        var config_id=$("#col-config").val();
-            if(config_id ==0 )
-            {
-                $('#edit-cols,#delete-cols').hide();
-            }
-            else
-            {
-                $('#edit-cols,#delete-cols').show();
-            }
-
-        if ($("#private").is(":checked")) {
-            $('#groups').hide();
-        }
-        else{
-            $('#groups').show();
-        }
-    });
-    $("#public,#private").change(function () {
-        if ($("#public").is(":checked")) {
-            $('#groups').show();
-        }
-        else {
-            $('#groups').hide();
-        }
-    });
-    function showRequest() {
-        $('.ajaxLoading').show();
-    }
-    function showResponse(data) {
-
-        if (data.status == 'success') {
-            ajaxViewClose('#{{ $pageModule }}');
-            ajaxFilter('#{{ $pageModule }}', '{{ $pageUrl }}/data');
-            notyMessage(data.message);
-            $('#myModal').modal('hide');
-        } else {
-            notyMessageError(data.message);
-            $('.ajaxLoading').hide();
-            return false;
-        }
-    }
-    $("#asset_number").focus(function(){
-        $('#asset_available').hide('300');
-    });
-    $("#asset_number").blur(function(){
-        var asset_number=$(this).val();
-        $.ajax({
-            url:'{{url()}}/gamesintransit/asset-number-availability/'+asset_number,
-            method:'get',
-            dataType:'json',
-            success:function(result){
-                if(result.status=="error")
-                {
-                    $('#asset_available').css('color','red');
-                }
-                else{
-                    $('#asset_available').css('color','green');
-                }
-                $('#asset_available').show('500');
-                $("#asset_available").text(result.message);
-            }
-        });
-    });
-    $('#delete-cols').click(function(){
-        if(confirm('Are You Sure, You want to delete this Columns Arrangement?')) {
-            showRequest();
-            var module = "{{ $pageModule }}";
-            var config_id = $("#col-config").val();
-            $.ajax(
-                    {
-                        method: 'get',
-                        data: {module: module, config_id: config_id},
-                        url: '{{ url() }}/tablecols/delete-config',
-                        success: function (data) {
-                            showResponse(data);
-                        }
-                    }
-            );
-        }
-    });
-    function showRequest() {
-        $('.ajaxLoading').show();
-    }
-    function showResponse(data) {
-
-        if (data.status == 'success') {
-            ajaxViewClose('#{{ $pageModule }}');
-            ajaxFilter('#{{ $pageModule }}', '{{ $pageUrl }}/data');
-            notyMessage(data.message);
-            $('#sximo-modal').modal('hide');
-        } else {
-            notyMessageError(data.message);
-            $('.ajaxLoading').hide();
-            return false;
-        }
-    }
-</script>

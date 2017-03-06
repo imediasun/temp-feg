@@ -10,6 +10,7 @@ use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
 use Validator, Input, Redirect;
+use App\Library\FEG\System\FEGSystemHelper;
 
 
 abstract class Controller extends BaseController
@@ -82,13 +83,18 @@ abstract class Controller extends BaseController
 
             $limit = (!is_null($request->input('limit')) ? $request->input('limit') : null);
             $delimiter = empty($request->input('delimiter')) ? ' ' : $request->input('delimiter');
+            $assignedLocation = $param[0] == 'location' && strtolower(''. @$request->input('assigned')) == 'me';
             
-            $rows = $this->model->getComboselect($param, $limit, $parent);
+            if ($assignedLocation) {
+                $rows = $this->model->getUserAssignedLocation();
+            }
+            else {
+                $rows = $this->model->getComboselect($param, $limit, $parent);
+            }
 
             $items = array();
 
             $fields = explode("|", $param[2]);
-
             foreach ($rows as $row) {
                 $value = "";
                 $values = array();
@@ -101,7 +107,6 @@ abstract class Controller extends BaseController
                 $items[] = array($row->$param['1'], $value);
 
             }
-
             return json_encode($items);
         } else {
             return json_encode(array('OMG' => " Ops .. Cant access the page !"));
@@ -255,80 +260,79 @@ abstract class Controller extends BaseController
 
                     if ($f['type'] == 'file') {
 
-
+                        $skipFor = array('sb_tickets', 'sb_ticketcomments');
+                        $dataForTable = $this->info['config']['table_db'];
+                        
                         $files = '';
-                        if (isset($f['option']['image_multiple']) && $f['option']['image_multiple'] == 1) {
+                        $isMultiple = isset($f['option']['image_multiple']) 
+                                    && $f['option']['image_multiple'] == 1;
+                            
+                        if ($isMultiple) {
 
                             if (isset($_POST['curr' . $field])) {
                                 $curr = '';
+                                $fileList = [];
                                 for ($i = 0; $i < count($_POST['curr' . $field]); $i++) {
-                                    $files .= $_POST['curr' . $field][$i] . ',';
+                                    $fileName = $_POST['curr' . $field][$i];
+                                    $fileList[] = $fileName;
                                 }
+                                $files = implode(',', $fileList);
                             }
-
-                            if (!is_null(Input::file($field))) {
-                                if( $this->info['config']['table_db'] == "sb_tickets" || $this->info['config']['table_db'] == "sb_ticketcomments")
-                                {
-                                    $destinationPath = '.' . $f['option']['path_to_upload'].'/'.date('Y-m-d');
-                                    if (!file_exists($destinationPath)) {
-                                        mkdir($destinationPath, 0777, true);
-                                    }
-                                }
-                                else
-                                {
+                                
+                            if (!in_array($dataForTable, $skipFor)) {
+                        
+                                if (!is_null(Input::file($field))) {
+                                    
                                     $destinationPath = '.' . $f['option']['path_to_upload'];
-                                }
-
-                                foreach ($_FILES[$field]['tmp_name'] as $key => $tmp_name) {
-                                    $file_name = $_FILES[$field]['name'][$key];
-                                    $file_tmp =$_FILES[$field]['tmp_name'][$key];
-                                    $temp = explode(".", $_FILES[$field]['name'][$key]);
-                                    $newfilename = round(microtime(true)) . '.' . end($temp);
-                                    if ($file_name != '') {
-                                        move_uploaded_file($file_tmp, $destinationPath . '/' . $newfilename);
-                                        if( $this->info['config']['table_db'] == "sb_tickets" || $this->info['config']['table_db'] == "sb_ticketcomments") {
-                                            $files .= date('Y-m-d').'/'.$newfilename . ',';
-                                        }
-                                        else
-                                        {
+                                    
+                                    foreach ($_FILES[$field]['tmp_name'] as $key => $tmp_name) {
+                                        $file_name = $_FILES[$field]['name'][$key];
+                                        $file_tmp =$_FILES[$field]['tmp_name'][$key];
+                                        $temp = explode(".", $_FILES[$field]['name'][$key]);
+                                        $newfilename = round(microtime(true)) . '.' . end($temp);
+                                        if ($file_name != '') {
+                                            move_uploaded_file($file_tmp, $destinationPath . '/' . $newfilename);
                                             $files .= $newfilename . ',';
-                                        }
-                                   }
+                                       }
 
+                                    }
+                                    if ($files != '') $files = substr($files, 0, strlen($files) - 1);
                                 }
-                                if ($files != '') $files = substr($files, 0, strlen($files) - 1);
                             }
+                            
                             $data[$field] = $files;
-
 
                         }
                         else {
 
+                            if (!in_array($dataForTable, $skipFor)) {
+    
+                                if (!is_null(Input::file($field))) {
 
-                            if (!is_null(Input::file($field))) {
-
-                                $file = Input::file($field);
-                                $destinationPath = public_path() . $f['option']['path_to_upload'];
-                                $filename = $file->getClientOriginalName();
-                                $extension = $file->getClientOriginalExtension(); //if you need extension of the file
-                                $rand = rand(1000, 100000000);
-                                $newfilename = strtotime(date('Y-m-d H:i:s')) . '-' . $rand . '.' . $extension;
-                                $uploadSuccess = $file->move($destinationPath, $newfilename);
-                                if ($f['option']['resize_width'] != '0' && $f['option']['resize_width'] != '') {
-                                    if ($f['option']['resize_height'] == 0) {
-                                        $f['option']['resize_height'] = $f['option']['resize_width'];
+                                    $file = Input::file($field);
+                                    $destinationPath = public_path() . $f['option']['path_to_upload'];
+                                    $filename = $file->getClientOriginalName();
+                                    $extension = $file->getClientOriginalExtension(); //if you need extension of the file
+                                    $rand = rand(1000, 100000000);
+                                    $newfilename = strtotime(date('Y-m-d H:i:s')) . '-' . $rand . '.' . $extension;
+                                    $uploadSuccess = $file->move($destinationPath, $newfilename);
+                                    if ($f['option']['resize_width'] != '0' && $f['option']['resize_width'] != '') {
+                                        if ($f['option']['resize_height'] == 0) {
+                                            $f['option']['resize_height'] = $f['option']['resize_width'];
+                                        }
+                                        $orgFile = $destinationPath . '/' . $newfilename;
+                                        \SiteHelpers::cropImage($f['option']['resize_width'], $f['option']['resize_height'], $orgFile, $extension, $orgFile);
                                     }
-                                    $orgFile = $destinationPath . '/' . $newfilename;
-                                    \SiteHelpers::cropImage($f['option']['resize_width'], $f['option']['resize_height'], $orgFile, $extension, $orgFile);
-                                }
 
-                                if ($uploadSuccess) {
-                                    $data[$field] = $newfilename;
+                                    if ($uploadSuccess) {
+                                        $data[$field] = $newfilename;
+                                    }
+                                } else {
+                                    unset($data[$field]);
                                 }
-                            } else {
-                                unset($data[$field]);
-                            }
+                            }                            
                         }
+
                     }
 
                     // if post is checkbox
@@ -410,10 +414,10 @@ abstract class Controller extends BaseController
         if ($md != '') $filter .= '&md=' . $md;
         if ($s != '') $filter .= '&search=' . $s;
         if ($ss != '') $filter .= '&simplesearch=' . $ss;
-
-
-        return Redirect::to($this->data['pageModule'] . $filter);
-
+        
+        $url = isset($this->data['pageUrl']) ? $this->data['pageUrl'] : $this->data['pageModule'];   
+        
+        return Redirect::to($url . $filter);
     }
 
     function injectPaginate()
@@ -587,7 +591,7 @@ abstract class Controller extends BaseController
         // We'll be outputting an excel file
         header('Content-type: application/vnd.ms-excel');
         // It will be called file.xls
-        header('Content-disposition: attachment; filename="' . $title . ' ' . date("d/m/Y") . '.xlsx"');
+        header('Content-disposition: attachment; filename="' . ($title . '-' . date("mdYHis")) . '.xlsx"');
 
         // Write file to the browser
         $objWriter->save('php://output');
@@ -642,7 +646,8 @@ abstract class Controller extends BaseController
                                 $param .= " AND " . $arr[$keys[0]]['alias'] . "." . $keys[0] . " " . self::searchOperation($keys[1]) . " '" . $keys[2] . "' ";
                             }
 
-                        } else {
+                        }
+                        else {
                             $col = $arr[$keys[0]]['alias'] . "." . $keys[0];
                             if ($keys[0] == 'up_user_id' && $arr[$keys[0]]['alias'] == "game_service_history") {
                                 $col = "DATEDIFF(date_up,date_down)";
@@ -652,7 +657,7 @@ abstract class Controller extends BaseController
 
                             $operate = self::searchOperation($keys[1]);
                             if ($operate == 'like') {
-                                $param .= " AND " . $col . " LIKE '%" . $keys[2] . "%%' ";
+                                $param .= " AND " . $col . " LIKE '%" . addslashes($keys[2]) . "%%' ";
                             } else if ($operate == 'is_null') {
                                 $param .= " AND " . $col . " IS NULL ";
 
@@ -660,10 +665,10 @@ abstract class Controller extends BaseController
                                 $param .= " AND " . $col . " IS NOT NULL ";
 
                             } else if ($operate == 'between') {
-                                $param .= " AND (" . $col . " BETWEEN '" . $keys[2] . "' AND '" . $keys[3] . "' ) ";
+                                $param .= " AND (" . $col . " BETWEEN '" . addslashes($keys[2]) . "' AND '" . ($keys[3]) . "' ) ";
                             } else {
 
-                                $param .= " AND " . $col . " " . self::searchOperation($keys[1]) . " '" . $keys[2] . "' ";
+                                $param .= " AND " . $col . " " . self::searchOperation($keys[1]) . " '" . addslashes($keys[2]) . "' ";
 
                             }
                         }
@@ -723,8 +728,13 @@ abstract class Controller extends BaseController
 
         $info = $this->model->makeInfo($this->module);
         //$master  	= $this->buildMasterDetail();
-        $filter = (!is_null(Input::get('search')) ? $this->buildSearch() : '');
-
+        if (method_exists($this, 'getSearchFilterQuery')) {
+            $filter = $this->getSearchFilterQuery();
+        }
+        else {
+            $filter = (!is_null(Input::get('search')) ? $this->buildSearch() : '');
+        }
+        
         //$filter 	.=  $master['masterFilter'];
 //    $params = array(
 //        'params' => ''
@@ -928,6 +938,25 @@ abstract class Controller extends BaseController
 
     function generateRandomString($length = 10) {
         return substr(str_shuffle(str_repeat($x='0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', ceil($length/strlen($x)) )),1,$length);
+    }
+    function postSearchParams(Request $request)
+    {
+        \Session::put('searchParams',$request->get('searchParams'));
+    }
+    function getSearchParamsForRedirect()
+    {
+        $url="?";
+        foreach($_GET as $paramName=>$paramValue)
+        {
+            $url .= $paramName."=".$paramValue."&";
+        }
+        $url=substr($url,0,strlen($url)-1);
+        \Session::put('searchParams',$url);
+    }
+    function destroyRedirectFilters()
+    {
+        //\Session::put('searchParams',"");
+        \Session::put('filter_before_redirect',false);
     }
 
 }

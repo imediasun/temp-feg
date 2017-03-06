@@ -438,8 +438,8 @@
         $('.addC').relCopy({});
         $('.previewImage').fancybox();
         $('.tips').tooltip();
-        renderDropdown($(".select2, .select3, .select4, select5"), { width:"100%"});
-        $('.date').datepicker({format: 'mm/dd/yyyy', autoClose: true})
+        renderDropdown($(".select2, .select3, .select4, .select5"), { width:"100%"});
+        $('.date').datepicker({format: 'mm/dd/yyyy', autoclose: true})
         $('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});
         $('input[type="checkbox"],input[type="radio"]').iCheck({
             checkboxClass: 'icheckbox_square-blue',

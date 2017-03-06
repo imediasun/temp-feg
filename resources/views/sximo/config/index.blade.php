@@ -33,34 +33,34 @@
   <div class="sbox  "> 
   <div class="sbox-title"></div>
   <div class="sbox-content"> 
-		 {!! Form::open(array('url'=>'feg/config/save/', 'class'=>'form-horizontal row', 'files' => true)) !!}
+		 {!! Form::open(array('url'=>'feg/config/save/', 'id' => 'formSximoConfigMain', 'class'=>'form-horizontal row', 'files' => true)) !!}
 
 		<div class="col-sm-6 animated fadeInRight ">
 		  <div class="form-group">
 		    <label for="ipt" class=" control-label col-md-4">{{ Lang::get('core.fr_appname') }} </label>
 			<div class="col-md-8">
-			<input name="cnf_appname" type="text" id="cnf_appname" class="form-control input-sm" required  value="{{ CNF_APPNAME }}" />  
+			<input name="cnf_appname" type="text" id="cnf_appname" class="form-control input-sm" required  value="{{ $options['CNF_APPNAME'] }}" />
 			 </div> 
 		  </div>  
 		  
 		  <div class="form-group">
 		    <label for="ipt" class=" control-label col-md-4">{{ Lang::get('core.fr_appdesc') }} </label>
 			<div class="col-md-8">
-			<input name="cnf_appdesc" type="text" id="cnf_appdesc" class="form-control input-sm" value="{{ CNF_APPDESC }}" /> 
+			<input name="cnf_appdesc" type="text" id="cnf_appdesc" class="form-control input-sm" value="{{ $options['CNF_APPDESC'] }}" />
 			 </div> 
 		  </div>  
 		  
 		  <div class="form-group">
 		    <label for="ipt" class=" control-label col-md-4">{{ Lang::get('core.fr_comname') }} </label>
 			<div class="col-md-8">
-			<input name="cnf_comname" type="text" id="cnf_comname" class="form-control input-sm" value="{{ CNF_COMNAME }}" />  
+			<input name="cnf_comname" type="text" id="cnf_comname" class="form-control input-sm" value="{{ $options['CNF_COMNAME'] }}" />
 			 </div> 
 		  </div>
 
 		  <div class="form-group">
 		    <label for="ipt" class=" control-label col-md-4">{{ Lang::get('core.fr_emailsys') }} </label>
 			<div class="col-md-8">
-			<input name="cnf_email" type="text" id="cnf_email" class="form-control input-sm" value="{{ CNF_EMAIL }}" /> 
+			<input name="cnf_email" type="text" id="cnf_email" class="form-control input-sm" value="{{ $options['CNF_EMAIL'] }}" />
 			 </div> 
 		  </div>   
 		  <div class="form-group">
@@ -97,25 +97,20 @@
 					<select class="form-control" name="cnf_theme">
 					@foreach(SiteHelpers::themeOption() as $t)
 						<option value="{{  $t['folder'] }}"
-						@if(CNF_THEME ==$t['folder']) selected @endif
+						@if($options['CNF_THEME'] ==$t['folder']) selected @endif
 						>{{  $t['name'] }}</option>
 					@endforeach
 				</select>
 			 </div> 
 		  </div>
-			<div class="form-group">
-				<label for="ipt" class=" control-label col-md-4">Graphic Manager </label>
-				<div class="col-md-8">
-					<input name="graphic_manager_request" type="text" id="" class="form-control input-sm" value="{{ CNF_GRAPHIC_MANAGER  }}"  />
-				</div>
-			</div>
+
 
 			<div class="form-group hide">
 		    <label for="ipt" class=" control-label col-md-4"> Development Mode ?   </label>
 			<div class="col-md-8">
 				<div class="checkbox">
 					<input name="cnf_mode" type="checkbox" id="cnf_mode" value="1"
-					@if (defined('CNF_MODE') &&  CNF_MODE =='production') checked @endif
+					@if (defined($options['CNF_MODE']) &&  $options['CNF_MODE'] =='production') checked @endif
 					  />  Production
 				</div>
 				<small> If you need to debug mode , please unchecked this option </small>	
@@ -135,14 +130,14 @@
 		  <div class="form-group">
 		    <label for="ipt" class=" control-label col-md-4">Metakey </label>
 			<div class="col-md-8">
-				<textarea class="form-control input-sm" name="cnf_metakey">{{ CNF_METAKEY }}</textarea>
+				<textarea class="form-control input-sm" name="cnf_metakey">{{ $options['CNF_METAKEY'] }}</textarea>
 			 </div> 
 		  </div> 
 
 		   <div class="form-group">
 		    <label  class=" control-label col-md-4">Meta Description</label>
 			<div class="col-md-8">
-				<textarea class="form-control input-sm"  name="cnf_metadesc">{{ CNF_METADESC }}</textarea>
+				<textarea class="form-control input-sm"  name="cnf_metadesc">  {{$options['CNF_METADESC'] }}</textarea>
 			 </div> 
 		  </div>  
 
@@ -152,10 +147,10 @@
 				<input type="file" name="logo">
 				<p> <i>Please use image dimension 155px * 30px </i> </p>
 				<div style="padding:5px; border:solid 1px #ddd; background:#f5f5f5; width:auto;">
-				 	@if(file_exists(public_path().'/sximo/images/'.CNF_LOGO) && CNF_LOGO !='')
-				 	<img src="{{ asset('sximo/images/'.CNF_LOGO)}}" alt="{{ CNF_APPNAME }}" />
+				 	@if(file_exists(public_path().'/sximo/images/'.$options['CNF_LOGO']) && $options['CNF_LOGO'] !='')
+				 	<img src="{{ asset('sximo/images/'.$options['CNF_LOGO'])}}" alt="{{ $options['CNF_APPNAME'] }}" />
 				 	@else
-					<img src="{{ asset('sximo/images/logo.png')}}" alt="{{ CNF_APPNAME }}" />
+					<img src="{{ asset('sximo/images/logo.png')}}" alt="{{ $options['CNF_APPNAME'] }}" />
 					@endif	
 				</div>				
 			 </div> 
@@ -166,26 +161,40 @@
 			<div class="form-group  int-link" >
 				<label for="ipt" class=" control-label col-md-4 text-right"> Login Start Page </label>
 				<div class="col-md-8">
-					<select name="cnf_redireclink" rows='5' type="text" id="cnf_redireclink"   style="width:100%"  class='select-liquid ' value="{{ CNF_REDIRECTLINK }}" >
+					<select name="cnf_redireclink" rows='5' type="text" id="cnf_redireclink"   style="width:100%"  class='select-liquid ' value="{{ $options['CNF_REDIRECTLINK'] }}" >
 						<option value=""> -- Select Module or Page -- </option>
 						<optgroup label="Module ">
 							@foreach($modules as $mod)
-								<option value="{{ $mod->module_name}}"
-										@if(CNF_REDIRECTLINK === $mod->module_name )   selected="selected" @endif
+
+                                <?php                                
+                                    $moduleConfig = \SiteHelpers::CF_decode_json($mod->module_config);
+                                    $moduleRoute = $mod->module_name;
+                                    if (isset($moduleConfig['setting']['module_route'])) {
+                                        $moduleRoute = $moduleConfig['setting']['module_route'];
+                                    }
+                                    $modulePublicAccess = isset($moduleConfig['setting']['publicaccess'])?
+                                            $moduleConfig['setting']['publicaccess']:true;
+                                ?>
+                                @if($modulePublicAccess)
+                                <option value="{{ $moduleRoute }}"                            
+                                    @if($options['CNF_REDIRECTLINK'] === $moduleRoute ) selected="selected" @endif
 								>{{ $mod->module_title}}</option>
+                                @endif
 							@endforeach
 						</optgroup>
+                        <optgroup label="Dashboards">
+                            <option value="dashboard">Dashboard</option>
+                        </optgroup>                        
 						<optgroup label="Page CMS ">
 							@foreach($pages as $page)
 								<option value="{{ $page->alias}}"
-										@if(CNF_REDIRECTLINK === $page->alias ) selected="selected" @endif
+										@if($options['CNF_REDIRECTLINK'] === $page->alias ) selected="selected" @endif
 								>Page : {{ $page->title}}</option>
 							@endforeach
 						</optgroup>
 					</select>
 				</div>
-
-</div>
+			</div>
 
 
 
@@ -193,13 +202,13 @@
 			<div class="form-group">
 				<label for="ipt" class=" control-label col-md-4">{{ Lang::get('core.fr_email') }} </label>
 				<div class="col-md-8">
-					<input name="cnf_reply_to" type="text" id="cnf_reply_to" class="form-control input-sm" value="{{ CNF_REPLY_TO }}" />
+					<input name="cnf_reply_to" type="text" id="cnf_reply_to" class="form-control input-sm" value="{{ $options['CNF_REPLY_TO'] }}" />
 				</div>
 			</div>
 			<div class="form-group">
 				<label for="ipt" class=" control-label col-md-4">{{ Lang::get('core.fr_password') }} </label>
 				<div class="col-md-8">
-					<input name="cnf_reply_to_password" type="text" id="cnf_reply_to_password" class="form-control input-sm" value="{{ CNF_REPLY_TO_PASSWORD }}" />
+					<input name="cnf_reply_to_password" type="text" id="cnf_reply_to_password" class="form-control input-sm" value="{{ $options['CNF_REPLY_TO_PASSWORD'] }}" />
 				</div>
 			</div>
 
@@ -215,11 +224,52 @@
 </div>
 </div>
 
-
-
-
-
-
-
-
 @stop
+
+@section ('beforebodyend')
+
+  
+
+<script type="text/javascript">
+    
+    jQuery(document).ready(function() {
+        
+        var $= jQuery, form = $('#formSximoConfigMain');
+        form.submit(function(){
+
+            var options = {
+                dataType:      'json',
+                success:       showResponse
+            };
+            form.find('button[type=submit]').prop('disabled', true);
+            showProgress();
+            $(this).ajaxSubmit(options);
+            return false;
+
+        });
+
+        function showProgress () {
+            $('.ajaxLoading').show();
+        }
+        function hideProgress () {
+            $('.ajaxLoading').hide();
+        }
+		function showResponse(data)  {
+            hideProgress();
+			if(data.status == 'success') {				
+                form.find('button[type=submit]').prop('disabled', false);
+				notyMessage(data.message);
+                window.setTimeout(function () {window.location.reload()}, 1000);
+			}
+            else {
+                form.find('button[type=submit]').prop('disabled', false);
+				notyMessageError(data.message);
+				return false;
+			}
+		}        
+        
+    });    
+</script>
+
+    
+@endsection

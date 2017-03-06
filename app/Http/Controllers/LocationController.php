@@ -1,6 +1,7 @@
 <?php namespace App\Http\Controllers;
 
 use App\Http\Controllers\controller;
+use App\Models\Core\Users;
 use App\Models\Location;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
@@ -242,14 +243,17 @@ class LocationController extends Controller
         $rules = $this->validateForm();
         $input_id=$request->get('id');
         if(\Session::get('location_updated') != $input_id) {
-            $rules['id'] = 'required|unique:location';
+            $rules['id'] = 'required|unique:location,id,'.$input_id;
         }
         else{
             $rules['id'] = 'required';
         }
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
-            $data = $this->validatePost('location');
+            if(empty($id))
+                $data = $this->validatePost('location');
+            else
+                $data = $this->validatePost('location', true);
             // old id in case the existing location's id has been modified
             $oldId = $id;
             $newId = $data['id'];
@@ -262,10 +266,11 @@ class LocationController extends Controller
             // users having has_all_locations=1 (all Locations = true)
             // additionally clean orphan user location assignmens
             \SiteHelpers::addLocationToAllLocationUsers($newId, $oldId);
-            
+            \SiteHelpers::refreshUserLocations(\Session::get('uid'));
             return response()->json(array(
                 'status' => 'success',
                 'message' => \Lang::get('core.note_success')
+
             ));
 
         } else {
@@ -295,7 +300,7 @@ class LocationController extends Controller
             
             // clean orphan user location assignmens
             \SiteHelpers::cleanUpUserLocations();
-
+            \SiteHelpers::refreshUserLocations(\Session::get('uid'));
             return response()->json(array(
                 'status' => 'success',
                 'message' => \Lang::get('core.note_success_delete')

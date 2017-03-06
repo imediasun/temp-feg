@@ -51,15 +51,17 @@
                                     <td style="border:thin white dotted; padding:2px">{{ $data['order_description_' . $i] }}</td>
                                     <td style="border:thin white dotted; padding:2px; text-align:center;">{{  $data['order_qty_'.$i] }}</td>
                                     <td style="border:thin white dotted; padding:2px; text-align:center;">
-                                        <select name='game_'.$i id='game_'.$i>
+                                        <?php if(!empty($game_options)):?>
+                                        <select name='game_{{$i}}' id='game_{{$i}}'>
                                             @foreach($game_options as $key=>$value)
                                                 <option value="{{ $key }}"> {{ $value }} </option>
                                             @endforeach
                                         </select>
+                                        <?php endif; ?>
                                     </td>
                                 </tr>
-                                <input type="hidden" name='order_qty_'.$i value="{{ $data['order_qty_'.$i] }}" id='order_qty_'.$i/>
-                                <input type="hidden" name='product_id_'.$i value="{{ $data['product_id_'.$i] }}" id='product_id_'.$i/>
+                                <input type="hidden" name='order_qty_{{$i}}' value="{{ $data['order_qty_'.$i] }}" id='order_qty_{{$i}}'/>
+                                <input type="hidden" name='product_id_{{$i}}' value="{{ $data['product_id_'.$i] }}" id='product_id_{{$i}}'/>
                             @endfor
 
                             @else
@@ -71,9 +73,9 @@
                         <table id="itemTable" class="display" cellspacing="0" width="100%">
                             <thead>
                             <tr>
-                                <th> #</th>
+                            <th>No#</th>
                                 <th>Name</th>
-                                <th>Description</th>
+                                <th>Item Description</th>
                                 @if($data['order_type'] == \App\Models\order::ORDER_TYPE_PART_GAMES)<th>Game</th>@endif
                                 <th>Price Unit</th>
                                 <th>Case Price</th>
@@ -90,7 +92,7 @@
                             @foreach($data['order_items'] as $order_item)
                                 @if($order_item->qty != $order_item->item_received)
                                     <tr>
-                                        <td>
+                                        <td style="text-align: center">
                                           {{ $value ++ }}
                                             <input type="hidden" name="itemsID[]" value="{{ $order_item->id }}">
                                         </td>
@@ -112,7 +114,7 @@
                                             <input type="checkbox" class="yourBox" name="receivedInParts[]" value="{{ $order_item->id }}" />
                                         </td>
                                         <td>
-                                            <input type="number"  id="receivedItemText{{ $order_item->id }}" name="receivedQty[]" value="{{ $order_item->qty - $order_item->item_received}}" readonly="readonly" />
+                                            <input type="number"  id="receivedItemText{{ $order_item->id }}" name="receivedQty[]" value="{{ $order_item->qty - $order_item->item_received}}" max="{!! $order_item->qty - $order_item->item_received !!}" min="0" readonly="readonly" />
                                         </td>
                                       <td> {{CurrencyHelpers::formatCurrency( number_format($order_item->total,\App\Models\Order::ORDER_PERCISION)) }}
                                         </td>
@@ -231,7 +233,7 @@
             $('.previewImage').fancybox();
             $('.tips').tooltip();
             $(".select3").select2({width: "98%"});
-            $('.date').datepicker({format: 'mm/dd/yyyy', autoClose: true})
+            $('.date').datepicker({format: 'mm/dd/yyyy', autoclose: true})
             $('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});
             $('.removeCurrentFiles').on('click', function () {
                 var removeUrl = $(this).attr('href');

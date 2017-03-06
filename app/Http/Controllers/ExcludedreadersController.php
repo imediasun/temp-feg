@@ -38,9 +38,26 @@ class ExcludedreadersController extends Controller {
 		if($this->access['is_view'] ==0)
 			return Redirect::to('dashboard')->with('messagetext',\Lang::get('core.note_restric'))->with('msgstatus','error');
 
-		$this->data['access']		= $this->access;
+		$this->data['access'] = $this->access;
 		return view('excludedreaders.index',$this->data);
 	}
+    public function getSearchFilterQuery($customQueryString = null) {
+        // Filter Search for query
+        // build sql query based on search filters
+        $filter = is_null($customQueryString) ? (is_null(Input::get('search')) ? '' : $this->buildSearch()) :
+            $this->buildSearch($customQueryString);
+
+        // Get assigned locations list as sql query (part)
+        $locationFilter = \SiteHelpers::getQueryStringForLocation('reader_exclude', 'loc_id');
+        // if search filter does not have location_id filter
+        // add default location filter
+        $frontendSearchFilters = $this->model->getSearchFilters(array('loc_id' => 'location_id'));
+        if (empty($frontendSearchFilters['location_id'])) {
+            $filter .= $locationFilter;
+        } 
+        
+        return $filter;
+    }
 
 	public function postData( Request $request)
 	{
@@ -63,10 +80,10 @@ class ExcludedreadersController extends Controller {
         }
 		$sort = (!is_null($request->input('sort')) ? $request->input('sort') : $this->info['setting']['orderby']);
 		$order = (!is_null($request->input('order')) ? $request->input('order') : $this->info['setting']['ordertype']);
-		// End Filter sort and order for query
-		// Filter Search for query
-		$filter = (!is_null($request->input('search')) ? $this->buildSearch() : '');
 
+        // End Filter sort and order for query
+        // Filter Search for query        
+        $filter = $this->getSearchFilterQuery();
 
 		$page = $request->input('page', 1);
 		$params = array(
@@ -141,8 +158,10 @@ class ExcludedreadersController extends Controller {
 			$this->data['row'] 		= $this->model->getColumnTable('reader_exclude');
 		}
 		$this->data['setting'] 		= $this->info['setting'];
-		$this->data['fields'] 		=  \AjaxHelpers::fieldLang($this->info['config']['forms']);
-		
+		$this->data['fields'] 		= \AjaxHelpers::fieldLang($this->info['config']['forms']);
+		$this->data['debitTypes']    = \SiteHelpers::getDebitTypes();
+		$this->data['myLocations']  = \SiteHelpers::getLocationDetails(\Session::get('uid'));
+
 		$this->data['id'] = $id;
 
 		return view('excludedreaders.form',$this->data);
@@ -164,6 +183,7 @@ class ExcludedreadersController extends Controller {
 		}
 		
 		$this->data['id'] = $id;
+        $this->data['tableGrid'] = $this->info['config']['grid'];
 		$this->data['access']		= $this->access;
 		$this->data['setting'] 		= $this->info['setting'];
 		$this->data['fields'] 		= \AjaxHelpers::fieldLang($this->info['config']['forms']);

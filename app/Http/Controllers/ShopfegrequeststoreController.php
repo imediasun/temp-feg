@@ -66,8 +66,47 @@ class ShopfegrequeststoreController extends Controller
         $sort = (!is_null($request->input('sort')) ? $request->input('sort') : $this->info['setting']['orderby']);
         $order = (!is_null($request->input('order')) ? $request->input('order') : $this->info['setting']['ordertype']);
         // End Filter sort and order for query
+
+        // Get order_type search filter value
+        $priceRangeFilter = $this->model->getSearchFiltersAsArray('', array('price_range' => ''));
+        extract($priceRangeFilter);
+        
+        // rebuild search query skipping 'price_range' filter
+        $trimmedSearchQuery = $this->model->rebuildSearchQuery(null, array('price_range'));
+
         // Filter Search for query
-        $filter = (!is_null($request->input('search')) ? $this->buildSearch() : '');
+        // build sql query based on search filters
+        $filter = is_null(Input::get('search')) ? '' : $this->buildSearch($trimmedSearchQuery);
+        // add special price range query
+        if (!empty($price_range)) {
+            $pr1 = '';
+            if (isset($price_range['value'])) {
+                $pr1 = preg_replace('/[^\d\.\-]|\s/', '', ''.$price_range['value']);
+            }            
+            $pr2 = '';
+            if (isset($price_range['value2'])) {
+                $pr2 = preg_replace('/[^\d\.\-]|\s/', '', ''.$price_range['value2']);
+            }
+            if (is_numeric($pr1) || is_numeric($pr2)) {
+                if ($pr2 === '') {
+                    $pr2 = $pr1;
+                }
+                if ($pr1 === '') {
+                    $pr1 = $pr2;
+                }
+                $pr1 = (float)$pr1;
+                $pr2 = (float)$pr2;
+
+                $filter .= " AND (
+                                (products.unit_price   BETWEEN $pr1 AND $pr2) 
+                             OR (products.case_price   BETWEEN $pr1 AND $pr2) 
+                             OR (products.retail_price BETWEEN $pr1 AND $pr2) 
+                            )";
+            }
+        }
+        
+        // Filter Search for query
+        //$filter = (!is_null($request->input('search')) ? $this->buildSearch() : '');
 
 
         $page = $request->input('page', 1);
@@ -209,8 +248,7 @@ class ShopfegrequeststoreController extends Controller
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
             $data = $this->validatePost('products');
-
-            $id = $this->model->insertRow($data, $request->input('id'));
+            $id = $this->model->insertRow($data, $id);
 
             return response()->json(array(
                 'status' => 'success',
@@ -282,16 +320,18 @@ class ShopfegrequeststoreController extends Controller
             $graphics_description = $request->get('graphics_description');
             $graphics_description = str_replace('"', '', $graphics_description);
             $qty = $request->get('qty');
-            $date_needed = date("Y/m/d", strtotime($request->get('date_needed')));
-
+            $date_needed = date("d/m/Y", strtotime($request->get('date_needed')));
             $game_info = $request->get('game_info');
             $locationId = $request->get('location_name');
             $statusId = 1;
-            $now = date('Y-m-d');
+            $now = date('d/m/Y');
             $filesnames = $request->get('myInputs');
-            $filesnames = implode(',', $filesnames);
+            if(!empty($filesnames)) {
+                $filesnames = implode(',', $filesnames);
+              }
             $data = array('location_id' => $locationId, 'request_user_id' => \Session::get('uid'), 'request_date' => $now, 'need_by_date' => $date_needed, 'description' => $game_info . ' - ' . $graphics_description, 'qty' => $qty, 'status_id' => $statusId, 'img' => $filesnames);
             $last_insert_id = $this->model->newGraphicRequest($data);
+            
 
             return response()->json(array(
                 'status' => 'success',

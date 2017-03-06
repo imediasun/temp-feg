@@ -12,14 +12,38 @@
 		</div>
 	</div>
 	<div class="sbox-content" style="border: none;">
+        <?php
+         $searched=\Request::get('search');
+         $searched=explode("|",$searched);
+        $searchedParams=[];
+        foreach($searched as $t)
+            {
+                $searchedParams[]=explode(':',$t);
+            }
+        ?>
         @if($setting['usesimplesearch']!='false')
             <?php $simpleSearchForm = SiteHelpers::configureSimpleSearchForm($tableForm); ?>
             @if(!empty($simpleSearchForm))
                 <div class="simpleSearchContainer clearfix">
                     @foreach ($simpleSearchForm as $t)
                         <div class="sscol {{ $t['widthClass'] }}" style="{{ $t['widthStyle'] }}">
+                            <?php
+                            $fv="";
+                            foreach($searchedParams as $f)
+                            {
+                               $fv=in_array($t['field'],$f)?$f[2] :"";
+                                if($fv != "")
+                                    {
+                                        break;
+                                    }
+                            }
+                                if($t['field'] == "order_type_id")
+                                {
+                                    $fv=\Session::get('order_selected');
+                                }
+                            ?>
                             {!! SiteHelpers::activeLang($t['label'],(isset($t['language'])? $t['language'] : array())) !!}
-                            {!! SiteHelpers::transForm($t['field'] , $simpleSearchForm) !!}
+                            {!! SiteHelpers::transForm($t['field'] , $simpleSearchForm,false,$fv) !!}
                         </div>
                     @endforeach
                     {!! SiteHelpers::generateSimpleSearchButton($setting) !!}
@@ -82,11 +106,11 @@
 				@endif
 				@if($setting['view-method']=='expand') <td> </td> @endif
 				@foreach ($tableGrid as $t)
-					@if($t['view'] =='1')
+					@if(isset($t['inline']) && $t['inline'] =='1')
 					<?php $limited = isset($t['limited']) ? $t['limited'] :''; ?>
 						@if(SiteHelpers::filterColumn($limited ))
 						<td data-form="{{ $t['field'] }}" data-form-type="{{ AjaxHelpers::inlineFormType($t['field'],$tableForm)}}">
-							{!! SiteHelpers::transForm($t['field'] , $tableForm) !!}
+							{!! SiteHelpers::transInlineForm($t['field'] , $tableForm) !!}
 						</td>
 						@endif
 					@endif

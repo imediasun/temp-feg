@@ -11,7 +11,7 @@
 @endif	
 			{!! Form::open(array('url'=>'managefegrequeststore/save/'.$row['id'], 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'managefegrequeststoreFormAjax')) !!}
 			<div class="col-md-12">
-						<fieldset><legend> Manage FEG Request Store</legend>
+						<fieldset><legend> Manage FEG Store Requests </legend>
 				  <div class="form-group  " > 
 					<label for="Qty" class=" control-label col-md-4 text-left"> 
 					{!! SiteHelpers::activeLang('Qty', (isset($fields['qty']['language'])? $fields['qty']['language'] : array())) !!}	
@@ -75,8 +75,8 @@ $(document).ready(function() {
 	$('.editor').summernote();
 	$('.previewImage').fancybox();	
 	$('.tips').tooltip();	
-	renderDropdown($(".select2, .select3, .select4, select5"), { width:"98%"});
-	$('.date').datepicker({format:'mm/dd/yyyy',autoClose:true})
+	renderDropdown($(".select2, .select3, .select4, .select5"), { width:"98%"});
+	$('.date').datepicker({format:'mm/dd/yyyy',autoclose:true})
 	$('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});
 	$('input[type="checkbox"],input[type="radio"]').iCheck({
 		checkboxClass: 'icheckbox_square-blue',

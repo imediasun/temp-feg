@@ -127,14 +127,8 @@ class ProductController extends Controller
         }
         // Build pagination setting
         $page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;
-
-
-        if (count($results['rows']) == $results['total'] && $results['total'] != 0) {
-            $params['limit'] = $results['total'];
-        }
-
-
-        $pagination = new Paginator($results['rows'], $results['total'], $params['limit']);
+        $pagination = new Paginator($results['rows'], $results['total'], (isset($params['limit']) && $params['limit'] > 0 ? $params['limit'] :
+            ($results['total'] > 0 ? $results['total'] : '1')));
 
         $pagination->setPath('product/data');
 
@@ -248,8 +242,8 @@ class ProductController extends Controller
                 $data = $this->validatePost('products');
                 $id = $this->model->insertRow($data, $request->input('id'));
             } else {
-
-                $data = $this->validatePost('products');
+                //for inline editing all fields do not get saved
+                $data = $this->validatePost('products',true);
                 $id = $this->model->insertRow($data, $id);
             }
             /*

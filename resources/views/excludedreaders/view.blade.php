@@ -12,51 +12,26 @@
 
 		<table class="table table-striped table-bordered" >
 			<tbody>	
-				
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Id', (isset($fields['id']['language'])? $fields['id']['language'] : array())) }}
-						</td>
-						<td>{{ $row->id }} </td>
-						
-					</tr>
-				
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Reader Id', (isset($fields['reader_id']['language'])? $fields['reader_id']['language'] : array())) }}
-						</td>
-						<td>{{ $row->reader_id }} </td>
-						
-					</tr>
-				
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Debit Type Id', (isset($fields['debit_type_id']['language'])? $fields['debit_type_id']['language'] : array())) }}
-						</td>
-						<td>{{ $row->debit_type_id }} </td>
-						
-					</tr>
-				
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Loc Id', (isset($fields['loc_id']['language'])? $fields['loc_id']['language'] : array())) }}
-						</td>
-						<td>{{ $row->loc_id }} </td>
-						
-					</tr>
-				
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Reason', (isset($fields['reason']['language'])? $fields['reason']['language'] : array())) }}
-						</td>
-						<td>{{ $row->reason }} </td>
-						
-					</tr>
-				
-			</tbody>	
+                @foreach ($tableGrid as $field)
+                    @if($field['view'] =='1' && isset($row->$field['field'])) 
+                        {{--*/ $conn = (isset($field['conn']) ? $field['conn'] : array() ) /*--}}
+                        {{--*/ $value = AjaxHelpers::gridFormater($row->$field['field'], $row, $field['attribute'], $conn) /*--}}                            
+                        {{--*/ $limited = isset($field['limited']) ? $field['limited'] :''/*--}} 
+                        @if(SiteHelpers::filterColumn($limited ))
+                        <tr>
+                            <td width='30%' class='label-view text-right'>
+                                {!! \SiteHelpers::activeLang($field['label'],(isset($field['language'])? $field['language'] : array())); !!}
+                            </td>
+                             <td >
+                                     {!! $value !!}
+                             </td>
+                        </tr>
+                        @endif
+                    @endif
+                @endforeach
+			</tbody>
 		</table>  
-			
-		 	
+
 
 @if($setting['form-method'] =='native')
 	</div>	

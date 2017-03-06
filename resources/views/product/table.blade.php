@@ -79,18 +79,18 @@
 
         <tbody>
         	@if($access['is_add'] =='1' && $setting['inline']=='true')
-			<tr id="form-0" >
+			<tr id="form-0" style="display: none">
 				<td> # </td>
 				@if($setting['disableactioncheckbox']=='false')
 					<td> </td>
 				@endif
 				@if($setting['view-method']=='expand') <td> </td> @endif
 				@foreach ($tableGrid as $t)
-					@if($t['view'] =='1')
+					@if(isset($t['inline']) && $t['inline'] =='1')
 					<?php $limited = isset($t['limited']) ? $t['limited'] :''; ?>
 						@if(SiteHelpers::filterColumn($limited ))
 						<td data-form="{{ $t['field'] }}" data-form-type="{{ AjaxHelpers::inlineFormType($t['field'],$tableForm)}}">
-							{!! SiteHelpers::transForm($t['field'] , $tableForm) !!}								
+							{!! SiteHelpers::transInlineForm($t['field'] , $tableForm) !!}
 						</td>
 						@endif
 					@endif
@@ -231,6 +231,7 @@ function showModal(id,obj){
 }
 
 $(document).ready(function() {
+	//$(".sel-search").select2({ width:"98%"});
     $("[id^='toggle_trigger_']").on('switchChange.bootstrapSwitch', function(event, state) {
 
 

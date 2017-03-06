@@ -72,22 +72,22 @@ class product extends Sximo  {
                 {
 
                     \Session::put('sub_type',$sub_type);
-                    $return.=" AND products.prod_type_id=".$product_type_id." AND products.prod_sub_type_id=".$sub_type." AND products.inactive = ".$active." AND products.in_development = 1";
+                    $return.=" AND products.prod_type_id=".$product_type_id." AND products.prod_sub_type_id=".$sub_type." AND products.in_development = 1";
                 }
               else {
                   \Session::put('sub_type',"");
-                  $return .= "  AND  products.inactive = " . $active . " AND products.in_development = 1";
+                  $return .= " AND products.in_development = 1";
               }
             }
             else{
                 if($sub_type != null)
                 {
                     \Session::put('sub_type',$sub_type);
-                    $return.=" AND products.prod_type_id=".$product_type_id." AND products.prod_sub_type_id=".$sub_type." AND  products.inactive = ".$active." AND products.in_development = 0";
+                    $return.=" AND products.prod_type_id=".$product_type_id." AND products.prod_sub_type_id=".$sub_type."  AND products.in_development = 0";
                 }
                 else {
                     \Session::put('sub_type',"");
-                    $return .= " AND products.prod_type_id=" . $product_type_id . " AND  products.inactive = " . $active . " AND products.in_development = 0";
+                    $return .= " AND products.prod_type_id=" . $product_type_id . "  AND products.in_development = 0";
                 }
             }
 
@@ -99,7 +99,7 @@ class product extends Sximo  {
             if($sub_type !=null)
             {
                 \Session::put('sub_type',$sub_type);
-                $return .=" AND products.prod_sub_type_id=".$sub_type." AND products.inactive = ".$active." AND products.in_development = 0";
+                $return .=" AND products.prod_sub_type_id=".$sub_type." AND products.in_development = 0";
             }
             else{
                 \Session::put('sub_type',"");
@@ -173,6 +173,7 @@ class product extends Sximo  {
         if(!empty($vendor_id)){
             $select .= " AND vendor_id='$vendor_id'";
         }
+        //$limitConditional = 'LIMIT 0 , 1';
         Log::info("Query : ".$select . " {$params} " . self::queryGroup() . " {$orderConditional}  {$limitConditional} ");
         $result=\DB::select($select." {$params} ". self::queryGroup() ." {$orderConditional}  {$limitConditional} ");
         if($key =='' ) { $key ='*'; } else { $key = $table.".".$key ; }

@@ -71,6 +71,7 @@ Route::get('/', 'UserController@getLogin');
 Route::controller('home', 'HomeController');
 Route::controller('/user', 'UserController');
 Route::get('/user/user-details/{id?}','Core\UsersController@getIndex');
+Route::controller('urlauth', 'URLAuthController');
 include('pageroutes.php');
 include('moduleroutes.php');
 

@@ -1,5 +1,4 @@
 @extends('layouts.app')
-
 @section('content')
 {{--*/ usort($tableGrid, "SiteHelpers::_sort") /*--}}
   <div class="page-content row">
@@ -22,7 +21,9 @@
 <div class="sbox animated fadeInRight">
 	<div class="sbox-title"> <h5> <i class="fa fa-table"></i> </h5>
 		<div class="sbox-tools" >
-
+        {{--*/ $sortParam = is_null(Input::get('sort'))?'':'&sort='.Input::get('sort') /*--}}
+        {{--*/ $orderParam = is_null(Input::get('order'))?'':'&order='.Input::get('order') /*--}}
+        {{--*/ $rowsParam = is_null(Input::get('rows'))?'':'&rows='.Input::get('rows') /*--}}
 		</div>
 	</div>
 	<div class="sbox-content"> 	
@@ -46,28 +47,65 @@
 	
 	 {!! Form::open(array('url'=>'core/pages/delete/', 'class'=>'form-horizontal' ,'id' =>'SximoTable' )) !!}
 	 <div class="table-responsive" style="min-height:300px;">
-    <table id="corepagesTable" class="table table-striped ">
+    <table id="corepagesTable" class="table table-striped datagrid" >
         <thead>
 			<tr>
-				<th class="number"> No </th>
-				<th> <input type="checkbox" class="checkall" /></th>
-				
-				@foreach ($tableGrid as $t)
-					@if($t['view'] =='1')
-						<th>{{ $t['label'] }}</th>
-					@endif
-				@endforeach
-				<th width="70" >{{ Lang::get('core.btn_action') }}</th>
+
+				@if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
+                    <th class="number" width="30"> No </th>
+				@endif
+                @if($setting['disableactioncheckbox']=='false')
+                    <th width="50"> <input type="checkbox" class="checkall" /></th>
+                @endif
+
+                <?php foreach ($tableGrid as $t) :
+                    if($t['view'] =='1'):
+                        $limited = isset($t['limited']) ? $t['limited'] :'';
+                        if(SiteHelpers::filterColumn($limited ))
+                        {
+                            $sortBy = $param['sort'];
+                            $orderBy = strtolower($param['order']);
+                            $colField = $t['field'];
+                            $colIsSortable = $t['sortable'] == '1';
+                            $colIsSorted = $colIsSortable && $colField == $sortBy;
+                            $colClass = $colIsSortable ? ' dgcsortable' : '';
+                            $colClass .= $colIsSorted ? " dgcsorted dgcorder$orderBy" : '';
+                            $th = '<th'.
+                                    ' class="'.$colClass.'"'.
+                                    ' data-field="'.$colField.'"'.
+                                    ' data-sortable="'.$colIsSortable.'"'.
+                                    ' data-sorted="'.($colIsSorted?1:0).'"'.
+                                    ' data-sortedOrder="'.($colIsSorted?$orderBy:'').'"'.
+                                    ' align="'.$t['align'].'"';
+                            $th .= '>';
+                            $th .= \SiteHelpers::activeLang($t['label'],(isset($t['language'])? $t['language'] : array()));
+                            $th .= '</th>';
+                            echo $th;
+                        }
+                    endif;
+                endforeach; ?>
+
+
+                @if($setting['disablerowactions']=='false')
+                    <th width="200"><?php echo Lang::get('core.btn_action') ;?></th>
+                @endif
 			  </tr>
         </thead>
 
         <tbody>
 						
             @foreach ($rowData as $row)
+
                 <tr>
-					<td width="30"> {{ ++$i }} </td>
-					<td width="50"><input type="checkbox" class="ids" name="id[]" value="{{ $row->pageID }}" />  </td>									
-				 @foreach ($tableGrid as $field)
+					@if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
+                        <td width="30"> {{ ++$i }} </td>
+					@endif
+
+                    @if($setting['disableactioncheckbox']=='false')
+                        <td width="50"><input type="checkbox" class="ids" name="ids[]" value="{{ $row->pageID }}" />  </td>
+                    @endif
+                    @foreach ($tableGrid as $field)
+
 					 @if($field['view'] =='1')
 					 <td>					 
 					 	@if($field['attribute']['image']['active'] =='1')
@@ -78,17 +116,18 @@
 						@endif						 
 					 </td>
 					 @endif					 
+
 				 @endforeach
-				 <td>
+				 <td id="s_icons">
 					 	@if($access['is_detail'] ==1)
 					 		@if($row->pageID == 1)
-					 		<a href="{{ url()}}" target="_blank" class="tips btn btn-xs btn-white" title="{{ Lang::get('core.btn_view') }}"><i class="fa  fa-search "></i></a>
+					 		<a href="{{ url()}}" target="_blank"  class="tips btn btn-xs btn-white viewButtonOnGridRow linkToCMSPage linkPUAA" title="{{ Lang::get('core.btn_view') }}"><i class="fa  fa-search "></i></a>
 					 		@else
-							<a href="{{ url($row->alias)}}" target="_blank" class="tips btn btn-xs btn-white" title="{{ Lang::get('core.btn_view') }}"><i class="fa  fa-search "></i></a>
+							<a href="{{ url($row->alias)}}" target="_blank" class="tips btn btn-xs btn-white viewButtonOnGridRow linkToCMSPage linkPUAA" title="{{ Lang::get('core.btn_view') }}"><i class="fa  fa-search "></i></a>
 							@endif
 						@endif
 						@if($access['is_edit'] ==1)
-						<a  href="{{ url('core/pages/update/'.$row->pageID.'?return='.$return) }}" class="tips btn btn-xs btn-white" title="{{ Lang::get('core.btn_edit') }}"><i class="fa fa-edit "></i></a>
+						<a  href="{{ url('core/pages/update/'.$row->pageID.'?return='.$return) }}" class="tips btn btn-xs btn-white editButtonOnGridRow" title="{{ Lang::get('core.btn_edit') }}"><i class="fa fa-edit "></i></a>
 						@endif
 												
 					
@@ -97,6 +136,7 @@
 				
             @endforeach
               
+
         </tbody>
       
     </table>
@@ -115,7 +155,9 @@ $(document).ready(function(){
 		$('#SximoTable').attr('action','{{ URL::to("core/pages/multisearch")}}');
 		$('#SximoTable').submit();
 	});
-	
+    
+    var ajaxMode = false;
+	initDataGrid('{{ $pageModule }}', '{{ $pageUrl }}', {useAjax: ajaxMode});
 });	
 </script>		
 @stop

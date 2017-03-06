@@ -1,4 +1,4 @@
-/* global App, UNDEFINED, UNFN, jQuery, pageModule, pageUrl */ 
+/* global App, UNDEFINED, UNFN, jQuery, pageModule, pageUrl, siteUrl */ 
 (function(){
     "use strict";    
     var modules = App.modules || (App.modules = {}),
@@ -36,7 +36,7 @@
     
         if (container && container.length) {
             
-            renderDropdown(container.find(".select2, .select3, .select4, select5"), { width:"98%"});
+            renderDropdown(container.find(".select2, .select3, .select4, .select5"), { width:"98%"});
             
             container.find("#status").on('change',gameStatusChanged);
             
@@ -45,7 +45,7 @@
             container.find("#location_id").jCombo(mainUrl+"/comboselect?filter=location:id:id|location_name&delimiter=%20|%20", 
                         {  selected_value : ''+ gameData.dropdownlocation });
                         
-            container.find('.date').datepicker({format:'mm/dd/yyyy',autoClose:true});
+            container.find('.date').datepicker({format:'mm/dd/yyyy',autoclose:true});
             container.find('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});
             container.find('input[type="checkbox"],input[type="radio"]').iCheck({
                 checkboxClass: 'icheckbox_square-blue',

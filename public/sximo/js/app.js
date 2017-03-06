@@ -8,7 +8,7 @@ var UNDEFINED,
         columnSort: {cache: {}},
         populateFieldsFromCache: function (container, cacheObject, rebuildRequiredElements) {
             var cache = cacheObject.cache, 
-                
+
                 elmName, elm, elm2, operatorElm,
                 item, val, val2, operator;
         
@@ -62,7 +62,7 @@ var UNDEFINED,
                                     fieldElm2 : elm2,
                                     previousValue2 : val2,
                                     dashElement : null
-                                });                                
+                                });
                             }
                             break;
                         case "is_null":
@@ -73,7 +73,7 @@ var UNDEFINED,
                 }
             }                    
         }
-    };    
+    };
 App.notyConfirm = function (options)
 {
 	if (!options) {
@@ -128,23 +128,23 @@ App.autoCallbacks.registerCallback = function (eventName, definedFunction, optio
     }
     else {
         bed.push(fn);
-    }    
+    }
 };
 
 App.autoCallbacks.runCallback = function (eventName, params, options) {
     options = options || {};
     params = params || {};
-    
-    var context = this, 
+
+    var context = this,
         callbackName = options.callbackName,
         index,
         fn,
         bed = App.autoCallbacks[eventName] || (App.autoCallbacks[eventName] = []);
-    
+
     if (callbackName) {
         fn = bed[callbackName];
         if (typeof fn === 'function') {
-           fn.call(context, params);   
+           fn.call(context, params);
         }
     }
     else {
@@ -152,26 +152,26 @@ App.autoCallbacks.runCallback = function (eventName, params, options) {
             fn = bed[index];
             if (typeof fn === 'function') {
                 fn.call(context, params);
-            }            
+            }
         }
     }
-    
+
 };
 
 App.autoCallbacks.registerCallback('reloaddata', function(params){
-    
+
 });
 App.autoCallbacks.registerCallback('columnselector', function(params){
-    
+
 });
 App.autoCallbacks.registerCallback('ajaxinlinesave', function(params){
-    
+
 });
 
 /**
- *  This function can check if a value needs URI encoding. 
+ *  This function can check if a value needs URI encoding.
  *  It can be used before building a custom querystring
- *  
+ *
  * @param mixed             value   String to check
  * @param jQuery Element    Input   field containing the value
  * @returns {Boolean}
@@ -190,7 +190,7 @@ App.needsURIEncoding = function (value, field) {
 
 
 App.buildSearchQueryFromArray = function (fields) {
-    var fieldName, 
+    var fieldName,
         field,
         value,
         operator,
@@ -220,14 +220,32 @@ App.buildSearchQueryFromArray = function (fields) {
         }
         attr += "|";
     }
-    
+
     return attr;
 };
 
 function initiateSearchFormFields(container) {
     container.find('.date').datepicker({format:'mm/dd/yyyy',autoclose:true});
-    container.find('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});  
-    renderDropdown(container.find('.sel-search-multiple, .select3'));    
+    container.find('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});
+    renderDropdown(container.find('.sel-search-multiple, .select3'));
+}
+
+function initiateInlineFormFields(container,url) {
+    container.find('.date').datepicker({format:'mm/dd/yyyy'}).on('change', function(){$('.datepicker').hide();});
+    container.find('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'}).on('change', function(){$('.datepicker').hide();});
+    renderDropdown(container.find('.sel-inline'),{width:"98%"});
+    $('.prod_type_id').change(function(){
+
+        //http://sximo/product/comboselect?filter=product_type:id:type_description:request_type_id:1
+        var url_for_prod_sub_type = "/product/comboselect?filter=product_type:id:type_description:request_type_id:"+$(this).val();
+        //$(this).closest('td').next('td').find('.prod_sub_type_id:first').jCombo(url_for_prod_sub_type);
+        $(this).closest('td').next('td').find('.prod_sub_type_id:first').select2('destroy');
+        $(this).closest('td').next('td').find('.prod_sub_type_id:first').jCombo(url_for_prod_sub_type);
+        renderDropdown(container.find('.sel-inline'),{width:"98%"});
+        /*
+        $(this).parent().find('.prod_sub_type_id').jCombo(url_for_prod_sub_type,
+            {selected_value: '{{ \Session::get('sub_type') }}', initial_text: '--- Select  Subtype ---'  });*/
+    });
 }
 
 function initDataGrid(module, url, options) {
@@ -298,6 +316,9 @@ function isNumeric(ev) {
 jQuery(document).ready(function($){
     // Adjust main panel's height based on overflowing nav-bar
     autoSetMainContainerHeight();
+    
+    // detect link to possible unauthorised access
+    detectPUAA($);
 });
 
 function updateNativeUIFieldsBasedOn() {
@@ -351,10 +372,10 @@ function makeSimpleSearchFieldsToInitiateSearchOnEnter() {
 }
 
 /**
- * This is a simple function to renders select2 dropdown. 
- * However, before rendering it checks if the target element already has 
+ * This is a simple function to renders select2 dropdown.
+ * However, before rendering it checks if the target element already has
  * been rendered with select2
- * 
+ *
  * @param {type} elements Elements - result of jQuery select query
  * @param {type} options - Select2 options
  * @returns {undefined}
@@ -366,7 +387,45 @@ function renderDropdown(elements, options) {
             var $elm = $(elm);
             if (!$elm.data('select2')) {
                 $elm.select2(options);
-            }            
+            }
         });
-    }    
+    }
+}
+
+
+function detectPUAA($) {
+    var linksToPage = $(".linkPUAA.linkToCMSPage"),
+        linksToModules = $(".linkPUAA"),
+        ajax;
+
+    linksToModules.on('click', function (e){
+        e.preventDefault();
+        var elm = $(this), 
+            authValidator = "/urlauth/access",
+            url = elm.attr('href');
+            
+        if (ajax && ajax.abort) {
+            ajax.abort();            
+        }
+        
+        ajax = $.ajax({
+            type: 'POST',            
+            url: authValidator,            
+            data: {
+                url: url,
+                isPage: elm.hasClass('linkToCMSPage') * 1
+            },
+            success: function (data) {
+                if(data.status === 'success'){
+                    location.href = url;                    
+                }
+                else {
+                    notyMessageError(data.message);
+                }
+            }
+        });
+        
+        
+    });
+
 }

@@ -1,4 +1,4 @@
-/* global App, UNDEFINED, UNFN, jQuery, pageModule, pageUrl */ 
+/* global App, UNDEFINED, UNFN, jQuery, pageModule, pageUrl, siteUrl */ 
 (function(){
     "use strict";    
     var modules = App.modules || (App.modules = {}),
@@ -41,8 +41,8 @@
                 return false;
             });
             
-            renderDropdown(container.find(".select2, .select3, .select4, select5"), { width:"100%"});
-            container.find('.date').datepicker({format:'mm/dd/yyyy',autoClose:true});
+            renderDropdown(container.find(".select2, .select3, .select4, .select5"), { width:"100%"});
+            container.find('.date').datepicker({format:'mm/dd/yyyy',autoclose:true});
             container.find('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});
             
             container.find('input[type="checkbox"],input[type="radio"]').iCheck({

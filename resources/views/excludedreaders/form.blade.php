@@ -1,4 +1,4 @@
-
+{{--*/      $isEdit = !empty($ID)               /*--}}
 @if($setting['form-method'] =='native')
 	<div class="sbox">
 		<div class="sbox-title">  
@@ -11,48 +11,53 @@
 @endif	
 			{!! Form::open(array('url'=>'excludedreaders/save/'.SiteHelpers::encryptID($row['id']), 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'excludedreadersFormAjax')) !!}
 			<div class="col-md-12">
-						<fieldset><legend> Excluded Readers</legend>
-				
-				  <div class="form-group  " >
-					<label for="Id" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Id', (isset($fields['id']['language'])? $fields['id']['language'] : array())) !!}
-					</label>
-					<div class="col-md-6">
-					  {!! Form::text('id', $row['id'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
-					 </div> 
-					 <div class="col-md-2">
-					 	
-					 </div>
-				  </div> 
+                  <fieldset><legend>@if($isEdit) Edit @else Add @endif Excluded Readers</legend>
 				  <div class="form-group  " >
 					<label for="Reader Id" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Reader Id', (isset($fields['reader_id']['language'])? $fields['reader_id']['language'] : array())) !!}
+					{!! SiteHelpers::activeLang('Reader ID', (isset($fields['reader_id']['language'])? $fields['reader_id']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('reader_id', $row['reader_id'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
-					 </div> 
+					  {!! Form::text('reader_id', $row['reader_id'],array('class'=>'form-control', 'placeholder'=>'', 'required' => 'required' )) !!}
+					 </div>
 					 <div class="col-md-2">
 					 	
 					 </div>
 				  </div> 
 				  <div class="form-group  " >
-					<label for="Debit Type Id" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Debit Type Id', (isset($fields['debit_type_id']['language'])? $fields['debit_type_id']['language'] : array())) !!}
+					<label for="Location" class=" control-label col-md-4 text-left">
+					{!! SiteHelpers::activeLang('Location', (isset($fields['loc_id']['language'])? $fields['loc_id']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('debit_type_id', $row['debit_type_id'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
-					 </div> 
+                       <select required="required" class='select2'
+                               name='loc_id'  id='location_id' >
+                            <option value=''>-- Select Location --</option>
+                            @foreach($myLocations as $location)
+                                <option value='{{ $location->id }}' 
+                                    data-debit-type="{{ $location->debit_type_id }}"
+                                    @if($location->id == $row['loc_id']) selected @endif
+                                >{{ $location->id }} | {{ $location->location_name }}</option>
+                            @endforeach                               
+                        </select>					  
+					 </div>
 					 <div class="col-md-2">
 					 	
 					 </div>
 				  </div> 
 				  <div class="form-group  " >
-					<label for="Loc Id" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('Loc Id', (isset($fields['loc_id']['language'])? $fields['loc_id']['language'] : array())) !!}
+					<label for="Debit Type" class=" control-label col-md-4 text-left">
+					{!! SiteHelpers::activeLang('Debit Type', (isset($fields['debit_type_id']['language'])? $fields['debit_type_id']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('loc_id', $row['loc_id'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
-					 </div> 
+                        <select class='select2'
+                              name='debit_type_id'  id='debit_type_id' >
+                            <option value=''>-- Select Debit Company --</option>
+                            @foreach($debitTypes as $debitType)
+                                <option value='{{ $debitType->id }}' 
+                                    @if($debitType->id == $row['debit_type_id']) selected @endif
+                                >{{ $debitType->company }}</option>
+                            @endforeach                               
+                       </select>
+					 </div>
 					 <div class="col-md-2">
 					 	
 					 </div>
@@ -94,13 +99,24 @@
 </div>	
 			 
 <script type="text/javascript">
-$(document).ready(function() { 
-	 
-	
+$(document).ready(function() {
+
+    $("#location_id").on('change', function(){
+        var debitType = $(this).find("option::selected").data('debit-type'),
+            debitTypeField = $("#debit_type_id");
+        if (debitType) {
+            if (debitTypeField.data('select2')) {
+                debitTypeField.select2('val', debitType);
+            }
+            else {
+                debitTypeField.val(debitType);
+            }            
+        }
+    });
 	$('.editor').summernote();
 	$('.previewImage').fancybox();	
 	$('.tips').tooltip();	
-	$(".select2").select2({ width:"98%"});	
+	renderDropdown($(".select2, .select3, .select4, .select5"), { width:"100%"});
 	$('.date').datepicker({format:'mm/dd/yyyy',autoclose:true})
 	$('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});
 	$('input[type="checkbox"],input[type="radio"]').iCheck({

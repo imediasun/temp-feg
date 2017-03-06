@@ -1,4 +1,4 @@
-/* global App, UNDEFINED, UNFN, jQuery, pageModule, pageUrl */ 
+/* global App, UNDEFINED, UNFN, jQuery, pageModule, pageUrl, siteUrl */ 
 (function(){
     "use strict";    
     var modules = App.modules || (App.modules = {}),

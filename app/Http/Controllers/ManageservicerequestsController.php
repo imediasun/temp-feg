@@ -92,9 +92,8 @@ class ManageservicerequestsController extends Controller
         if (count($results['rows']) == $results['total'] && $results['total'] != 0) {
             $params['limit'] = $results['total'];
         }
-
-
-        $pagination = new Paginator($results['rows'], $results['total'], $params['limit']);
+        $pagination = new Paginator($results['rows'], $results['total'], (isset($params['limit']) && $params['limit'] > 0 ? $params['limit'] :
+            ($results['total'] > 0 ? $results['total'] : '1')));
         $pagination->setPath('manageservicerequests/data');
         $this->data['param'] = $params;
         $this->data['rowData'] = $results['rows'];
@@ -194,16 +193,21 @@ class ManageservicerequestsController extends Controller
 
     function postSave(Request $request, $id = null)
     {
-        $rules = array('priority_id' => 'required', 'status_id' => 'required');
+        //comment validation rules due to inline editing
+        //$rules = array('priority_id' => 'required', 'status_id' => 'required');
+        $rules = $this->validateForm();
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
+            /* comment code due to inline editing
             $data['priority_id'] = $request->get('priority_id');
             $data['status_id'] = $request->get('status_id');
             $data['solved_date'] = date("Y-m-d", strtotime($request->get('solved_date')));
-
-
+            */
+            if(empty($id))
+                $data = $this->validatePost('service_requests');
+            else
+                $data = $this->validatePost('service_requests', true);
             $id = $this->model->insertRow($data, $id);
-
             return response()->json(array(
                 'status' => 'success',
                 'message' => \Lang::get('core.note_success')

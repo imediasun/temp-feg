@@ -4,10 +4,13 @@ use App\Http\Controllers\controller;
 use App\Models\Servicerequests;
 use App\Models\servicerequestsSetting;
 use App\Models\Ticketcomment;
+use App\Models\Ticketfollowers;
+use App\Models\ticketsetting;
+use App\Models\Core\TicketMailer;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Validator, Input, Redirect;
-use App\Models\Core\TicketMailer;
+use App\Library\FEG\System\FEGSystemHelper;
 
 class servicerequestsController extends Controller
 {
@@ -16,6 +19,8 @@ class servicerequestsController extends Controller
     public $module = 'Servicerequests';
     protected $layout = "layouts.main";
     protected $data = array();
+    protected $priorityOptions = ['normal' => 'Normal' ,  'sameday' => 'Same Day', ];
+    protected $statusOptions = ['open' => 'Open' ,  'inqueue' => 'Pending' ,  'closed' => 'Closed' ,];
 
     public function __construct()
     {
@@ -33,7 +38,10 @@ class servicerequestsController extends Controller
             'pageNote' => $this->info['note'],
             'pageModule' => 'servicerequests',
             'pageUrl' => url('servicerequests'),
-            'return' => self::returnUrl()
+            'return' => self::returnUrl(),
+            
+            'priorityOptions' => $this->priorityOptions,
+            'statusOptions' => $this->statusOptions,        
         );
 
 
@@ -47,10 +55,52 @@ class servicerequestsController extends Controller
         $this->data['access'] = $this->access;
         return view('servicerequests.index', $this->data);
     }
+    
+    public function getSearchFilterQuery($customQueryString = null) {
+        // Filter Search for query
+        // build sql query based on search filters
+        
+        
+        // Get custom Ticket Type filter value 
+        $customTicketTypeFilter = $this->model->getSearchFilters(['ticket_custom_type' => '', 'Status' => 'status']);
+        $skipFilters = ['ticket_custom_type'];
+        $mergeFilters = [];
+        extract($customTicketTypeFilter); //$ticket_custom_type, $status
+        
+        // add custom ticket type filters
+        if (!empty($ticket_custom_type)) {
+            list($debitType, $issue_type) = explode('-', $ticket_custom_type);             
+            if (empty($issue_type)) {
+                $skipFilters[] = 'issue_type';
+            }
+            else {
+                $mergeFilters['issue_type'] = [
+                        'fieldName' => 'issue_type',
+                        'operator' => 'equal',
+                        'value' => $issue_type,
+                    ];
+            }
+        }
+        
+        // rebuild search query skipping 'ticket_custom_type' filter
+        $trimmedSearchQuery = $this->model->rebuildSearchQuery($mergeFilters, $skipFilters, $customQueryString);
 
+        // Filter Search for query
+        // build sql query based on search filters
+        $filter = is_null(Input::get('search')) ? '' : $this->buildSearch($trimmedSearchQuery);
+        
+        
+        if (!empty($debitType)) {
+            $filter .= " AND sb_tickets.location_id IN (SELECT id from location where debit_type_id='$debitType') ";
+        } 
+        if (empty($status)) {
+            $filter .= " AND sb_tickets.Status != 'closed' ";
+        } 
+        
+        return $filter;
+    }
     public function postData(Request $request)
     {
-
         $module_id = \DB::table('tb_module')->where('module_name', '=', 'servicerequests')->pluck('module_id');
         $this->data['module_id'] = $module_id;
         if (Input::has('config_id')) {
@@ -62,22 +112,26 @@ class servicerequestsController extends Controller
             $config_id = 0;
         }
         $this->data['config_id'] = $config_id;
+        \Session::put('config_id', $config_id);
         $config = $this->model->getModuleConfig($module_id, $config_id);
         if (!empty($config)) {
             $this->data['config'] = \SiteHelpers::CF_decode_json($config[0]->config);
-            \Session::put('config_id', $config_id);
         }
         $sort = (!is_null($request->input('sort')) ? $request->input('sort') : $this->info['setting']['orderby']);
         $order = (!is_null($request->input('order')) ? $request->input('order') : $this->info['setting']['ordertype']);
         // End Filter sort and order for query
         // Filter Search for query
-        $filter = (!is_null($request->input('search')) ? $this->buildSearch() : "AND sb_tickets.Status != 'close'");
+        //$filter = (!is_null($request->input('search')) ? $this->buildSearch() : "AND sb_tickets.Status != 'closed'");
+        $filter = $this->getSearchFilterQuery();
 
         $page = $request->input('page', 1);
         $params = array(
             'page' => $page,
             'limit' => (!is_null($request->input('rows')) ? filter_var($request->input('rows'), FILTER_VALIDATE_INT) : $this->info['setting']['perpage']),
             'sort' => $sort,
+            'extraSorts' => [
+                ['updated', 'desc']
+            ],
             'order' => $order,
             'params' => $filter,
             'global' => (isset($this->access['is_global']) ? $this->access['is_global'] : 0)
@@ -100,8 +154,10 @@ class servicerequestsController extends Controller
         $pagination = new Paginator($results['rows'], $results['total'], $params['limit']);
         $pagination->setPath('servicerequests/data');
         $rows = $results['rows'];
-        $comments = new Ticketcomment();
-
+        
+        // This part of the code seems to be filtering tickets based on assignment
+        // which is not required now hence commenting out
+        /*
         $user_id = \Session::get('uid');
         $group_id = \Session::get('gid');
         foreach ($rows as $index => $row) {
@@ -156,45 +212,11 @@ class servicerequestsController extends Controller
 
 
 
-            //this code is not woring for some reason
-            /*if (isset($row->department_id) && !empty($row->department_id)&& false)
-            {
-                //$row->comments = $comments->where('TicketID', '=', $row->TicketID)->orderBy('TicketID', 'desc')->take(1)->get();
-                $department_memebers = \DB::select("Select assign_employee_ids FROM departments WHERE id = " . $row->department_id . "");
-                $department_memebers = explode(',', $department_memebers[0]->assign_employee_ids);
-
-                $assign_employee_ids = explode(',', $row->assign_to);
-
-                $members_access = array_unique(array_merge($assign_employee_ids, $department_memebers));
-                foreach ($members_access as $i => $id) {
-                    $get_user_id_from_employess = \DB::select("Select user_id FROM users WHERE id = " . $id . "");
-                    //print"<pre>";
-                    //print_r($get_user_id_from_employess);
-                    if (isset($get_user_id_from_employess[0]->user_id)) {
-                        $members_access[$i] = $get_user_id_from_employess[0]->user_id;
-                        //echo $members_access[$i]."<br>";
-                    }
-
-                }
-
-                if ($group_id != 10) {
-                    if (!in_array($user_id, array_unique($members_access))) {
-                        $flag = 0;
-                    }
-                }
-
-                if ($flag == 1 && count($assign_employee_ids) > 0) {
-                    echo count($assign_employee_ids);
-                    $assign_employee_names = array();
-                    foreach ($assign_employee_ids as $key => $value) {
-                        $assign_employee_names[$key] = \DB::select("Select first_name,last_name FROM users WHERE id = " . $value . "");
-                    }
-                    $row->assign_employee_names = $assign_employee_names;
-                } else {
-                    unset($rows[$index]);
-                }
-            }*/
+            //this code is not woring for some reason [removed on 15 Feb 2017]
         }
+         
+         *
+        */
 
         $this->data['param'] = $params;
         $this->data['rowData'] = $rows;
@@ -248,6 +270,8 @@ class servicerequestsController extends Controller
         } else {
             $this->data['row'] = $this->model->getColumnTable('sb_tickets');
         }
+        $this->data['uid'] = \Session::get('uid');
+        $this->data['fid'] = \Session::get('fid');
         $this->data['setting'] = $this->info['setting'];
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
 
@@ -274,23 +298,42 @@ class servicerequestsController extends Controller
         }
         $row->assign_employee_names = $assign_employee_names;
         if ($row) {
-            $comments = new Ticketcomment();
-            $this->data['comments'] = $comments->where('TicketID', '=', $id)->get();
             $this->data['row'] = $row;
         } else {
             $this->data['row'] = $this->model->getColumnTable('sb_tickets');
         }
+        
+        $comments = Ticketcomment::getCommentsWithUserData($id);
+        $this->data['comments'] = $comments;
 
-        $this->data['id'] = $id;
-        $this->data['uid'] = \Session::get('uid');
-        $this->data['fid'] = \Session::get('fid');
+        $userId = \Session::get('uid');
         $this->data['access'] = $this->access;
+        $this->data['id'] = $id;
+        $this->data['uid'] = $userId;
+        $this->data['fid'] = \Session::get('fid');
+        $this->data['creator'] = !empty($row->entry_by) ? \SiteHelpers::getUserDetails($row->entry_by) : [];
+        $this->data['canChangeStatus'] = ticketsetting::canUserChangeStatus();
+        $this->data['following'] = Ticketfollowers::isFollowing($id, $userId);
+        $this->data['followers'] = Ticketfollowers::getAllFollowers($id);
         $this->data['setting'] = $this->info['setting'];
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
         return view('servicerequests.view', $this->data);
     }
 
-
+    function getSubscribe(Request $request, $id = NULL, $userID = NULL, $unfollow = NULL) {
+        
+        $unfollowDictionary = ["unfollow", "false", "unsubscribe"];
+        $unsubscribe = !is_null($unfollow) && in_array(strtolower(''.$unfollow), $unfollowDictionary);
+        
+        if (!empty($id) && !empty($userID))  {
+            if ($unsubscribe) {
+                Ticketfollowers::unfollow($id, $userID, '', true);
+            }
+            else {
+                Ticketfollowers::follow($id, $userID, '', true);
+            }
+        }        
+    }
     function postCopy(Request $request)
     {
 
@@ -312,33 +355,59 @@ class servicerequestsController extends Controller
 
     function postSave(Request $request, $id = NULL)
     {
+        $date = date("Y-m-d");
         //$data['need_by_date'] = date('Y-m-d');
         //$rules = $this->validateForm();
-        $sendMail=false;
-        if($id==null)
-            $sendMail=true;
+        $isAdd = empty($id);
+
         $rules = $this->validateForm();
         unset($rules['department_id']);
        //$rules = array('Subject' => 'required', 'Description' => 'required', 'Priority' => 'required', 'issue_type' => 'required', 'location_id' => 'required');
         //unset($rules['debit_card']);
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
-            $data = $this->validatePost('sb_tickets');
+            $data = $this->validatePost('sb_tickets', !empty($id));
             $data['need_by_date']= date("Y-m-d", strtotime($request->get('need_by_date')));
-            $data['status']=$request->get('status');
-
-            if ($id == 0) {
-
-                $data['Created'] = date('Y-m-d');
-
+            $data['Status']=$request->get('Status');
+            if($data['Status'] == "closed")
+            {
+                $data['closed'] = date('Y-m-d H:i:s');
+            }
+            else
+                $data['closed'] = "";
+            if (empty($id)) {
+                $data['Created'] = date('Y-m-d H:i:s');                
             }
             $id = $this->model->insertRow($data, $id);
-            if($sendMail){
+            
+            $files = $this->uploadTicketAttachments("/ticket-$id/$date/", "--$id");
+            if (!empty($files['file_path'])) {                
+                if ($isAdd) {
+                    $data['file_path'] = $files['file_path'];                 
+                }
+                else {
+                    $oldFiles = $data['file_path'];
+                    if (empty($oldFiles)) {
+                        $data['file_path'] = $files['file_path'];
+                    }
+                    else {
+                        $data['file_path'] .= ','.$files['file_path'];
+                    }
+                }
+                
+                $data['_base_file_path'] = $files['_base_file_path'];
+                
+                $this->model->where('TicketID', $id)
+                    ->update(['file_path' => $data['file_path']]);
+            }
+            
+            if($isAdd){
+                Ticketfollowers::follow($id, $data['entry_by'], '', true, 'requester');
                 $message = $data['Description'];
                 $this->model->notifyObserver('FirstEmail',[
                     "message"       =>$message,
                     "ticketId"      => $id,
-                    "location_id"   => $data['location_id']
+                    'ticket'        => $data
                 ]);
 
             }
@@ -356,6 +425,78 @@ class servicerequestsController extends Controller
             ));
         }
 
+    }
+    
+    public function uploadTicketAttachments ($suffixPath = '', $suffixFileName = '') {
+        return self::uploadFilesFromInputToPublicFolder($suffixPath, $suffixFileName);
+    }
+    public function uploadFilesFromInputToPublicFolder($suffixPath = '', $suffixFileName = '') {
+        $request = new Request;
+        $date = date('Y-m-d');
+        $formConfig = $this->info['config']['forms'];
+        $dataForTable = $this->info['config']['table_db'];
+        $data = [];
+        
+        foreach ($formConfig as $config) {                    
+            
+            $field = $config['field'];            
+            $isFileInput = $config['type'] == 'file' && !is_null(Input::file($field));
+            
+            if ($isFileInput) {
+                
+                $option = $config['option'];
+                $isMultiple = !empty($option['image_multiple']);
+                $baseUploadPath = $option['path_to_upload'];
+                $uploadImage = $option['upload_type'] == 'image';
+                
+                $inputFiles = Input::file($field);
+                if (!is_array($inputFiles)) {
+                    $inputFiles = [$inputFiles];
+                }
+                
+                $urls = [];
+                $filePaths = [];
+                $baseTargetPath = $baseUploadPath.$suffixPath;
+                $paths = FEGSystemHelper::getSanitisedPublicUploadPath($baseTargetPath);
+                $targetPath = $paths['target'];
+                $realPath = $paths['real'];
+                $urlPath = $paths['url'];
+                
+                foreach($inputFiles as $file) {
+                    
+                    $oringalFilename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+                    $originalExtension = $file->getClientOriginalExtension(); 
+                    $targetFile = $oringalFilename. $suffixFileName .                            
+                            (empty($originalExtension) ? '': (".$originalExtension"));
+                    $targetFile = FEGSystemHelper::possiblyRenameFileToResolveDuplicate($targetFile, $targetPath);
+                    try {
+                        $success = $file->move($targetPath, $targetFile);
+                    } catch (Exception $ex) {
+                        $success = false;
+                    }
+                    if($success) {
+                        if ($uploadImage && !empty($option['resize_width'])) {
+                            $resizeWidth = $option['resize_width'];
+                            $resizeHeight = $option['resize_height'];
+
+                            if (empty($resizeHeight)) {
+                                $resizeHeight = $resizeWidth;
+                            }
+                            $fileWithPath = $realPath.$targetFile;
+                            \SiteHelpers::cropImage($resizeWidth, $resizeHeight, $fileWithPath, $originalExtension, $fileWithPath);
+                        }                        
+                        
+                        $urls[] = $urlPath.$targetFile;
+                        $filePaths[] = $realPath.$targetFile;
+                    }                    
+                }
+                
+                $data['_base_'.$field] = implode(',', $filePaths);
+                $data[$field] = implode(',', $urls);
+
+            }            
+        }
+        return $data;    
     }
 
     public function postDelete(Request $request)
@@ -389,45 +530,95 @@ class servicerequestsController extends Controller
 
     public function postComment(Request $request)
     {
+        $date = date("Y-m-d");
+        $ticketId = $request->input('TicketID');
 
-            //validate post for sb_tickets module
-            $ticketsData = $this->validatePost('sb_tickets');
-            if ($ticketsData['Status'] == 'closed') {
+        //validate post for sb_tickets module
+        $ticketsData = $this->validatePost('sb_tickets');
+
+        $ticketsData['updated'] = date('Y-m-d H:i:s');
+
+        $comment_model = new Ticketcomment();
+        $total_comments = $comment_model->where('TicketID', '=', $ticketId)->count();
+
+        if (isset($ticketsData['Status'])) {
+            $status = $ticketsData['Status'];
+            $isStatusClosed = $status == 'closed';
+    //        if (!$isStatusClosed && $total_comments == 0) {
+    //            $ticketsData['Status'] = 'inqueue';
+    //        }
+            $ticketsData['closed']="";   
+            if ($isStatusClosed) {
                 $ticketsData['closed'] = date('Y-m-d H:i:s');
             }
-            else{ $ticketsData['closed']=""; }
-            $ticketsData['updated'] = date('Y-m-d');
-            $commentsData['USERNAME'] = \Session::get('fid');
-            $comment_model = new Ticketcomment();
-            $TicketID = $request->input('TicketID');
-            $total_comments = \DB::select("Select * FROM sb_ticketcomments WHERE TicketID = " . $TicketID . "");
-            if (count($total_comments) == 0) {
-                $ticketsData['Status'] = 'inqueue';
+        }
+
+        //re-populate info array to ticket comments module
+        $this->info = $comment_model->makeInfo('ticketcomment');
+        $commentsData = $this->validatePost('sb_ticketcomments');
+
+        $commentsData['USERNAME'] = \Session::get('fid');
+        $commentsData['Posted'] = date('Y-m-d H:i:s');;
+
+        //@todo need separate table for comment attachments
+        unset($ticketsData['file_path']);
+        $commentId = $comment_model->insertRow($commentsData, NULL);
+
+        $files = $this->uploadTicketAttachments("/ticket-$ticketId/$date/", "--$ticketId");
+        if (!empty($files['Attachments'])) {
+            $comment_model->where('CommentID', $commentId)
+                ->update(['Attachments' => $files['Attachments']]);                
+        }
+
+        $this->model->insertRow($ticketsData, $ticketId);
+        $message = $commentsData['Comments'];
+        if (!empty($files['Attachments'])) {
+            $ticketsData['_base_file_path'] = $files['_base_Attachments'];
+        }
+        /*
+            $isFollowing = $request->input('isFollowingTicket');
+            $allFollowers = $request->input('allFollowers');
+                       
+            if (!empty($ticketsData['assign_to'])) {
+                //Ticketfollowers::follow($ticketId, $ticketsData['assign_to']);
             }
+            if (!in_array($ticketsData['entry_by'], $allFollowers)) {
+               // Ticketfollowers::follow($ticketId, $ticketsData['entry_by']);
+            }
+            
+            $recordedFollowers = Ticketfollowers::getRecordedFollowers($ticketId);
+            $unFollowers = [];
+            foreach($recordedFollowers as $follower) {
+                if (!in_array($follower, $allFollowers)) {
+                    $unFollowers[] = $follower;
+                }
+            }
+            Ticketfollowers::unfollow($ticketId, $unFollowers, '', true);
+            
+            $location = $request->input('location_id');
+            $defaultFollowers = Ticketfollowers::getDefaultFollowers($location);
+            
+            $customFollowers = [];
+            foreach($allFollowers as $follower) {
+                if (!in_array($follower, $defaultFollowers)) {
+                    $customFollowers[] = $follower;
+                }
+            }            
+            Ticketfollowers::follow($ticketId, $customFollowers, '', true);
+        */
+            
+        //send email
+        $this->model->notifyObserver('AddComment',[
+                'message'       =>$message,
+                'ticketId'      => $ticketId,
+                'ticket'        => $ticketsData,
+                "department_id" =>"",                
+            ]);
 
-            //re-populate info array to ticket comments module
-            $this->info = $comment_model->makeInfo('ticketcomment');
-            $commentsData = $this->validatePost('sb_ticketcomments');
-
-            //@todo need separate table for comment attachments
-            unset($ticketsData['file_path']);
-            $comment_model->insertRow($commentsData, NULL);
-            $ticketId = $request->input('TicketID');
-            $this->model->insertRow($ticketsData, $ticketId);
-            $message = $commentsData['Comments'];
-            //send email
-            $this->model->notifyObserver('AddComment',[
-                "message"       =>$message,
-                "ticketId"      => $ticketId,
-                "department_id" =>"",
-                "location_id"   => $ticketsData["location_id"],
-                "assign_to"     => $ticketsData['assign_to']
-                ]);
-
-            return response()->json(array(
-                'status' => 'success',
-                'message' => \Lang::get('core.note_success')
-            ));
+        return response()->json(array(
+            'status' => 'success',
+            'message' => \Lang::get('core.note_success')
+        ));
 
 
     }

@@ -219,7 +219,6 @@
 </div>
 
 @if($setting['inline'] =='true') @include('sximo.module.utility.inlinegrid') @endif
-<script src="https://cdn.jsdelivr.net/momentjs/2.10.6/moment.min.js"></script>
 <script>
     $(document).ready(function () {
 

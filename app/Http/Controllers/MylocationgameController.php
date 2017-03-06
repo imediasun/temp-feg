@@ -250,7 +250,7 @@ class MylocationgameController extends Controller
 
         $this->data['id'] = $id;
         $this->data['row']['game_title'] = empty($id) ? "" : $this->model->get_game_info_by_id($id, 'game_title');
-        $this->data['row']['location_name'] = empty($id) ? "" : $this->model->get_location_info_by_id($row->location_id, 'location_name');
+        $this->data['row']['location_name'] = empty($row->location_id) ? "" : $this->model->get_location_info_by_id($row->location_id, 'location_name');
 
         return view('mylocationgame.form', $this->data);
     }
@@ -263,6 +263,16 @@ class MylocationgameController extends Controller
                 ->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
 
         $row = $this->model->getRow($id);
+        
+        //var_dump($row);
+        $productIds = $row[0]->product_ids_json;
+        $products = [];
+        if (!empty($productIds)) {
+            $productIds = \GuzzleHttp\json_decode($productIds, true);
+            $products = \App\Models\product::select('vendor_description')
+                    ->whereIn('id', $productIds)->get();
+        }
+        $this->data['products'] = $products;
         $row['service_history'] = $this->model->getServiceHistory($id);
         $row['move_history'] = $this->model->getMoveHistory($id);
         if ($row) {
@@ -304,11 +314,14 @@ class MylocationgameController extends Controller
 
         $rules = $this->validateForm();
         $validator = Validator::make($request->all(), $rules);
-            
+
         if ($validator->passes()) {
-            $data = $this->validatePost('game');
+            if(empty($id))
+                $data = $this->validatePost('game');
+            else
+                $data = $this->validatePost('game', true);
             //after validating data array become very small, so merge with post data
-            $data = array_merge($data, $_POST);
+            $data = array_merge($_POST, $data);
             $gameID = $data['id'];
             $gameIDExists = \DB::table('game')->where('id', $gameID)->count() > 0;
             if ($id != $gameID && $gameIDExists) {
@@ -506,14 +519,18 @@ class MylocationgameController extends Controller
             
             if (empty($move_id) && empty($prevLocation)) {
                 $newData['date_in_service'] = $nowDate;
+                $oldSerial = isset($data['oldserial'])? $data['oldserial'] : '';
+                $serial = isset($data['serial'])? $data['serial'] : $oldSerial;
+                $newData['serial'] = $serial;
                 
                 // Get game details for email etc.
                 $gameDetails = $this->model->get_game_info_by_id($id, null, null);
                 $gameDetails->status_id  = $status;
                 $gameDetails->location_id  = $location;
                 $gameDetails->location_name  = $this->model->get_location_info_by_id($location, 'location_name', '');
-                $gameDetails->intended_first_location  = 0;
-                $gameDetails->date_last_move  = $nowDate;
+                $gameDetails->intended_first_location = 0;
+                $gameDetails->date_last_move = $nowDate;
+                $gameDetails->serial = $serial;
                 $gameDetails->assetTag = $this->generate_asset_tag($id);
 
                 \App\Library\FEG\System\Email\GenericReports::newGameReceived([
@@ -877,6 +894,7 @@ class MylocationgameController extends Controller
     function postAssettag(Request $request, $asset_ids = null)
     {
         $asset_ids = $request->get('asset_ids');
+        $asset_ids = str_replace(' ', '', $asset_ids);
         if (!empty($asset_ids)) {
             $zip = new \ZipArchive();
             $zip_name = "assettags.zip";
@@ -884,12 +902,14 @@ class MylocationgameController extends Controller
             $zip_file = $zip_file_path . "/" . $zip_name;
             $zip->open($zip_file, \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
             //$zip->close();
-            $item_count = substr_count($asset_ids, ',') + 1;
+            $ids = explode(',', $asset_ids);
+            $item_count = count($ids);//substr_count($asset_ids, ',') + 1;
             if ($item_count > 1) {
                 //die('here greater than one');
-                for ($i = 1; $i <= $item_count; $i++) {
-                    $id = substr($asset_ids, 0, 8);
-                    $asset_ids = substr($asset_ids, 9);
+                //for ($i = 1; $i <= $item_count; $i++) {
+                foreach ($ids as $id) {
+                    //$id = substr($asset_ids, 0, 8);
+                    //$asset_ids = substr($asset_ids, 9);
                     $this->generate_asset_tag($id);
                     //$location = $this->get_game_info_by_id($id, 'location_id');
                     //   $location = $this->get_game_info_by_id($id, 'location_id');

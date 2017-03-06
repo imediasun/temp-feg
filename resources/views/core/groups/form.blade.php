@@ -77,11 +77,25 @@
 										<option value=""> -- Select Module or Page -- </option>
 										<optgroup label="Module ">
 											@foreach($modules as $mod)
-												<option value="{{ $mod->module_name}}"
-														@if($row['redirect_link'] === $mod->module_name )   selected="selected" @endif
+                                                <?php                                
+                                                    $moduleConfig = \SiteHelpers::CF_decode_json($mod->module_config);
+                                                    $moduleRoute = $mod->module_name;
+                                                    if (isset($moduleConfig['setting']['module_route'])) {
+                                                        $moduleRoute = $moduleConfig['setting']['module_route'];
+                                                    }
+                                                    $modulePublicAccess = isset($moduleConfig['setting']['publicaccess'])?
+                                                            $moduleConfig['setting']['publicaccess']:true;
+                                                ?>
+                                                @if($modulePublicAccess)
+												<option value="{{ $moduleRoute }}"
+														@if($row['redirect_link'] === $moduleRoute )   selected="selected" @endif
 												>{{ $mod->module_title}}</option>
+                                                @endif
 											@endforeach
 										</optgroup>
+                                        <optgroup label="Dashboards">
+                                            <option value="dashboard">Dashboard</option>
+                                        </optgroup>                                            
 										<optgroup label="Page CMS ">
 											@foreach($pages as $page)
 												<option value="{{ $page->alias}}"

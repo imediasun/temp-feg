@@ -1,0 +1,447 @@
+/* Tickets module css */
+#servicerequestsView .bootstrap-switch {
+    height: 22px;
+}
+#servicerequestsView .sbox-content {
+    background-color: #fff;
+    padding: 0 0 20px 0;
+    border: none;
+    border-top: 1px solid #ddd;
+}
+
+#servicerequestsView .select2-chosen {
+    color: #666;
+    font-size: 13px;
+}
+
+#servicerequestsView .select2-container .select2-choice .select2-arrow {
+    border: none;
+    background: none;
+}
+
+#servicerequestsView .followersListContainer .select2-container-multi .select2-choices {
+    background-image: none;
+    border: 1px solid #eee;
+    background-color: #f8f8f8;
+    padding: 5px;
+    position: relative;
+}
+
+#servicerequestsView .followersListContainer .select2-container-multi .select2-choices::after {
+    content: '+';
+    position: absolute;
+    bottom: -9px;
+    right: 2px;
+    font-size: 30px;
+    color: #1c84c6;
+    cursor: pointer;
+}
+
+
+.ticketCreatorText,
+.img-avatar-container {
+    white-space: nowrap;
+}
+.img-avatar {
+    box-shadow: 0 0 1px 1px #d8d8d8;
+}
+
+.ticketHeaderContainer {
+    padding: 20px;
+    position: relative;
+    background-color: #ffffff;    
+    height: 110px;
+}
+
+.closeButtonContainer {
+    position: absolute;
+    right: 0px;
+    top: 0px;
+}
+.headerThumbnail {
+    position: absolute;
+    font-size: 60px;
+    line-height: 1em;
+    border-radius: 50%;
+    color: #fff;
+    width: 60px;
+    cursor: default;
+}
+
+.headerThumbnail[data-ticket-type="Order Request"] {
+    background-color: #ddd;
+    padding: 0 5px;
+}
+.headerThumbnail[data-ticket-type="Support Issue"] {
+    background-color: #eee;
+    padding: 0 0 0 13px;
+}
+
+.headerTextsContainer {
+    margin-left: 68px;
+    margin-right: 25px;    
+}
+
+.headerTopText {
+    font-size: 12px;
+}
+.headerTopText .label {
+    font-size: 12px;
+    padding: 2px 5px;
+    margin: 0 5px;
+}
+.headerTitleContainer h2 {
+    margin: 10px 0 5px;
+}
+.headerTitleContainer .label {
+    font-size: inherit;
+    padding: 2px 5px;
+    
+}
+.headerTitleContainer .headerTitleText {
+    color: #111; 
+}
+
+.ticketIdText {
+    color: #999;
+    font-size: 17px;
+    line-height: 1em;
+    margin-right: 5px;
+    float: left;
+}
+
+.ticketIdText::before {
+    content: '#';
+    color: #ccc;
+    font-weight: bold;
+}
+
+
+.sidebarInput,
+.sidebarText {
+    margin: 30px 0;
+    text-align: center;
+}
+
+.sidebarInput::before,
+.sidebarText::before {
+    content: attr(data-caption);
+    display: block;
+    text-align: center;
+    font-size: smaller;
+    color: #ccc;
+    margin: 0 0 5px;
+}
+.sidebarTicketIDText {
+    margin-top: 0 !important;
+}
+.sidebarTicketIDText::before {
+    content: attr(data-caption);
+    display: inline;
+    font-size: inherit;
+    color: inherit;
+}
+.sidebarInput {
+    text-align: left;
+    padding: 0 30px;
+}
+.sidebarInput::before {
+    /*text-align: left;*/
+}
+.attachmentContainer::before {
+    /*text-align: center;*/
+}
+
+.previousAttachmentList {
+    margin: 15px 0 5px;
+    /*border-top: 1px dashed #eee;*/
+}
+.attachmentListItem {
+    margin: 5px 0 5px 5px;    
+}
+.attachmentLink {
+    display: block;
+}
+.attachmentMeta {
+    margin: 2px 0 10px 20px;
+    font-size: 11px;
+    color: #aaa;
+}
+.attachmentMeta span {    
+    color: #666;
+}
+
+
+.file_pathUpl input,
+.attachmentInputs input {
+    margin: 10px;
+    width: 100%;
+}
+
+.uploadedLists {
+    margin: 20px 0;
+    list-style: none;
+    padding: 0;
+}
+
+.uploadedLists li {
+    padding: 0;
+    margin: 5px 0;
+    display: block;
+}
+
+.uploadedLists li a::before,
+.attachmentLink::before {
+    content: url(icons/external-link-icon.png);
+    margin: 4px;content: url('icons/external-link-icon.png');
+}
+
+.followControlContainer {
+    float: left;
+    padding: 0 50%;
+    margin: 10px 0 10px -55px;    
+}
+
+.headerMetaText {
+    color: #bbb;
+    font-size: smaller;
+}
+
+.hasSuffixSeparator::after,
+.hasPrefixSeparator::before {
+    color: #eee;
+    margin: 0 5px;
+    content: '•';       
+}
+
+.ticketViewParentContainer {
+    
+}
+.ticketMainViewContainer,
+.ticketLeftSidebarContainer {
+    min-height: 500px;
+    height: auto;
+    background-color: #fff;
+    border-left: 1px solid #ddd;
+    padding-top: 30px;
+}
+.ticketLeftSidebarContainer {
+    position: absolute;
+    border: none;
+    width: 299px;
+    /*background-color: #fcfcfc;*/
+    /*background-color: #ff0000;*/
+}
+
+.ticketMainViewContainer {
+    padding-left: 300px;
+    /*background-color: #fcfcfc;*/
+    /*background-color: #ffff00;*/
+}
+
+
+.label-muted {
+    color: #fff !important;
+    background-color: #ccc !important;
+}
+.ticketStatusText[data-ticket-status=Closed] {
+    color: #fff !important;
+    background-color: #ccc !important;
+}
+.ticketStatusText[data-ticket-status=Pending] {
+    color: #fff !important;
+    background-color: #94bb53 !important;
+}
+.ticketStatusText[data-ticket-status=Open] {
+    color: #fff !important;
+    background-color: #f8ac59 !important;
+}
+
+
+
+.ticketReplyContainer {
+    margin: 0 0 40px;
+}
+
+.ticketReplyInputsContainer {
+    padding-left: 55px;
+}
+
+.ticketReplyMainContainer {
+    font-size: 16px;
+    padding: 0 30px 10px 10px;
+    margin-top: -5px;
+}
+.ticketReplyFieldContainer {
+    padding-bottom: 30px;
+    border: 1px solid #ddd;
+    position: relative;
+    z-index: 0;
+}
+
+.ticketReplyFieldContainer textarea {
+    background: #fff;
+    width: 100%;
+    height: 100%;
+    border: none;
+    border-bottom: 1px solid #ddd;
+    outline: 0;    
+    min-height: 200px;
+    padding: 15px;
+}
+.ticketReplyFieldContainer textarea:focus {
+    outline: 0 !important;
+    border-color: inherit;
+}
+
+.ticketReplyFieldContainer .toolControls {
+    position: absolute;
+    bottom: 0;
+    left:0;
+    width: 100%;
+    height: 30px;
+    background-color: #fefefe;
+    z-index: 0;
+    padding-top: 1px;
+}
+
+button.submitButton {
+    position: absolute;
+    z-index: 1000;
+    right: -1px;
+    bottom: -1px;
+    height: 32px;
+}    
+
+.selectStatusDropdownContainer {
+    left: 0;
+    width: 40%; 
+    display: inline;
+    margin-top: 2px;
+    margin-left: 10px;
+    height: 30px;
+}
+.selectPriorityDropdownContainer {
+    left: 40%;
+    width: 40%;
+    display: inline;
+    margin-top: 2px;
+    margin-left: 10px;
+    height: 30px;
+}
+
+.selectStatusDropdownContainer::before {
+    content: 'Status';
+    display: inline;
+    font-size: smaller;
+    color: #aaa;
+    margin-right: 5px;
+}
+.selectPriorityDropdownContainer::before {
+    content: 'Priority';
+    display: inline;
+    font-size: smaller;
+    color: #aaa;    
+    margin-right: 2px;
+}
+.selectStatusDropdownContainer select,
+.selectPriorityDropdownContainer select {
+    width: 50%;
+}
+
+.replyLabel {
+    /*color: #999;*/
+    margin-bottom: 10px;
+}
+
+.ticketCommentsContainer {
+    
+}
+.ticketCommentsHeaderContainer {
+    font-size: 16px;
+    padding: 14px 11px;
+    border-bottom: 1px solid #ddd;
+}
+.ticketCommentsHeaderContainer .badge {
+    font-size: 14px;
+    padding-left: 10px;
+    padding-right: 10px;
+    margin-left: 5px;
+    padding-top: 5px;    
+}
+
+.commentContainer {
+    position: relative;
+    padding: 30px 20px;
+    margin: 5px;
+    border-bottom: 1px solid #eee;
+    background-color: #fff;
+}
+.commentContainer.initialComment {
+    border-bottom: none;
+}
+
+.commentContainer::before {
+    content: attr(data-comment-index);
+    position: absolute;
+    color: #ddd;
+    font-size: 10px;
+    top: 8px;
+    left: 20px;    
+}
+
+
+.myUserProfileImageContainer,
+.commentUserProfileImageContainer {
+    position: absolute;    
+}
+.commentMainContainer {
+    padding-left: 60px;
+}
+.commentMetaText {
+    margin: 0 0 10px 0;    
+}
+.commentAuthorText {
+    color: #333;
+    font-size: 14px;
+    font-weight: bold;
+    line-height: 20px;
+}
+
+.commentDateText {
+    color: #aaa;
+    font-weight: normal;
+    font-size: 12px;
+    line-height: 20px;
+    margin-left: 5px;
+}
+
+.commentText {
+    color: #666;
+    font-weight: normal;
+    font-size: 14px;
+    line-height: 1.456em;    
+}
+
+
+
+.commentAuthorText,
+.ticketCreatorText,
+.label {
+    cursor: default !important;
+}
+
+img.notAnUser {
+    opacity: .4;
+}
+.commentAuthorText.notAnUser {
+    color: #888;
+}
+.commentAuthorText.notAnUser::after {
+    content: "[Non-FEG User]";
+    color: #999;
+    margin-left: 5px;
+    margin-right: 0px;
+    font-weight: normal;
+    font-size: smaller;
+}

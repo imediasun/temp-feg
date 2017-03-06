@@ -25,7 +25,24 @@
 </div>	
 <script>
 $(document).ready(function(){
-	reloadData('#{{ $pageModule }}','{{ $pageModule }}/data?view=manage');
+    var searchParams="{{ \Session::get('searchParams') }}";
+    var searchParams = searchParams.replace(/&amp;/g, '&');
+    if("{{ \Session::get('filter_before_redirect') }}" == "redirect") {
+     <?php
+     if(\Session::has('filter_before_redirect') && \Session::has('filter_before_redirect') == 'redirect')
+        {
+            \Session::put('filter_before_redirect','no');
+        }
+     ?>
+        reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data' + searchParams.replace("&amp;", "&"));
+    }
+    else {
+        <?php
+
+        \Session::put('filter_before_redirect','no');
+         ?>
+        reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?view=manage');
+    }
 });	
 </script>	
 @endsection

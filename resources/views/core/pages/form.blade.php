@@ -32,7 +32,7 @@
 		 {!! Form::open(array('url'=>'core/pages/save/'.$row['pageID'], 'class'=>'form-vertical row ','files' => true , 'parsley-validate'=>'','novalidate'=>' ')) !!}
 
 			<div class="col-sm-8 ">
-				<div class="sbox">
+				<div class="sbox containerBox">
 					<div class="sbox-title">Page Content </div>
 					<div class="sbox-content">
 
@@ -193,13 +193,13 @@
 <style type="text/css">
 .note-editor .note-editable { height:500px;}
 </style>
-  <script src="//cdn.tinymce.com/4/tinymce.min.js"></script>
-  <script>tinymce.init({
+  <!--<script src="//cdn.tinymce.com/4/tinymce.min.js"></script>-->
+<!--  <script>tinymce.init({
           selector: '#content4',
           plugins: ["advlist autolink lists link image charmap print preview anchor", "searchreplace" +
           " visualblocks code fullscreen", "insertdatetime media table contextmenu paste",
               "advlist","textcolor colorpicker","imagetools"],
           toolbar: "insertfile undo redo | forecolor backcolor | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image", theme_advanced_buttons1 : "save,newdocument,|,bold,italic,underline,strikethrough,|,justifyleft,justifycenter,justifyright,justifyfull,styleselect,formatselect,fontselect,fontsizeselect"
            });
-  </script>
+  </script>-->
 @stop

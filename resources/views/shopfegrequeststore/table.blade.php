@@ -27,9 +27,7 @@
                             {!! SiteHelpers::transForm($t['field'] , $simpleSearchForm) !!}
                         </div>
                     @endforeach
-                    <div class="sscol-submit"><br/>
-                        <button type="button" name="search" class="doSimpleSearch btn btn-sm btn-primary"> Search </button>
-                    </div>
+                    {!! SiteHelpers::generateSimpleSearchButton($setting) !!}
                 </div>
             @endif
         @endif
@@ -98,12 +96,12 @@
                             @if($setting['view-method']=='expand')
                                 <td></td> @endif
                             @foreach ($tableGrid as $t)
-                                @if($t['view'] =='1')
+                                @if(isset($t['inline']) && $t['inline'] =='1')
                                     <?php $limited = isset($t['limited']) ? $t['limited'] : ''; ?>
                                     @if(SiteHelpers::filterColumn($limited ))
                                         <td data-form="{{ $t['field'] }}"
                                             data-form-type="{{ AjaxHelpers::inlineFormType($t['field'],$tableForm)}}">
-                                            {!! SiteHelpers::transForm($t['field'] , $tableForm) !!}
+                                            {!! SiteHelpers::transInlineForm($t['field'] , $tableForm) !!}
                                         </td>
                                     @endif
                                 @endif
@@ -265,6 +263,18 @@
 
         initDataGrid('{{ $pageModule }}', '{{ $pageUrl }}');
     });
+    
+    App.autoCallbacks.registerCallback('beforeclearsearch', function (params) {
+        //params.data.include
+        //params.data.exclue
+        //params.data.force
+        //params.data.blind
+        params.data.exclude['order_type'] = true;
+        params.data.exclude['product_type'] = true;
+        params.data.force['type'] = 'store';
+        params.data.force['active_inactive'] = 'active';
+        
+    });    
 </script>
 <style>
     .table th.right {

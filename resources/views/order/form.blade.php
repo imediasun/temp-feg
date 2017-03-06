@@ -3,7 +3,7 @@
         <div class="sbox-title">
             <h4>
                 <a href="javascript:void(0)" class="collapse-close pull-right btn btn-xs btn-danger"
-                   onclick="ajaxViewClose1('#{{ $pageModule }}')"><i class="fa fa fa-times"></i></a>
+                   onclick="ajaxViewClose('#{{ $pageModule }}')"><i class="fa fa fa-times"></i></a>
             </h4>
         </div>
         <div class="sbox-content">
@@ -87,7 +87,8 @@
 
 
                             <div class="col-md-8">
-                                <textarea name="to_add_notes" id="to_add_notes" rows="6" cols="50" class="form-control">{{ $data['shipping_notes'] }}</textarea>
+                                <textarea name="to_add_notes" id="to_add_notes" rows="6" cols="50"
+                                          class="form-control">{{ $data['shipping_notes'] }}</textarea>
                             </div>
 
                         </div>
@@ -259,12 +260,14 @@
                         </td>
                         <input type='hidden' name='product_id[]' id="product_id">
                         <input type='hidden' name='request_id[]' id="request_id">
-                        <td><br/><input type="text" name="total" value="" placeholder="0.000" readonly class="form-control"/></td>
+                        <td><br/><input type="text" name="total" value="" placeholder="0.000" readonly
+                                        class="form-control"/></td>
                         <td align="center" class="remove-container"><br/>
-                            <button id="hide-button"
-                                    onclick=" $(this).parents('.clonedInput').remove(); calculateSum();decreaseCounter(); return false"
-                                    class="remove btn btn-xs btn-danger">-
-                            </button>
+
+                            <p id="hide-button"
+                               onclick="removeRow(this.id);"
+                               class="remove btn btn-xs btn-danger">-
+                            </p>
                             <input type="hidden" name="counter[]">
                         </td>
                     </tr>
@@ -318,7 +321,7 @@
     ?>
     </div>
     <script type="text/javascript">
-
+        var counter = 0;
         var mode = "{{ $data['prefill_type'] }}";
         var PRECISION = '<?php echo  \App\Models\Order::ORDER_PERCISION?>';
         $('#alt_ship_to').on('change', function () {
@@ -332,8 +335,6 @@
                 $("#ship_address").hide();
         }
         function calculateSum() {
-
-
             var Subtotal = 0.00;
             $('table tr.clone ').each(function (i) {
                 Qty = $(this).find("input[name*='qty']").val();
@@ -361,21 +362,31 @@
         $("#po_3").focus(function () {
             $("#po_message").hide(200);
         });
-        $(document).ready(function () {
-
-            numberFieldValidationChecks($("input[name^=qty]"));
-            if ($("td button.remove").is(':hidden')) {
-                $("#remove-col").hide();
+        function removeRow(id) {
+            if (counter > 1) {
+                $("#" + id).parents('.clonedInput').remove();
             }
             else {
-                $("#remove-col").show()
+                notyMessageError('For order there must be 1 minimum item available');
             }
+            calculateSum();
+            decreaseCounter();
+            return false;
+        }
+        $(document).ready(function () {
+            numberFieldValidationChecks($("input[name^=qty]"));
             var inc = 1;
             hideShowAltLocation();
             if (mode != "edit") {
                 //$("#submit_btn").attr('disabled','disabled');
-                var location_id=0;
-                validatePONumber(location_id,0);
+                var location_id = 0;
+                validatePONumber(location_id, 0);
+            }
+            if (mode == 'clone' || mode == 'SID')
+            {
+                var location_id=$("#po_1").val();
+                var po=$("#po_1").val()+"-"+$("#po_2").val()+"-"+$("#po_3").val();
+                 validatePONumber(location_id,po);
             }
             $("#item_num").val(inc);
 
@@ -386,10 +397,9 @@
                     $("#my-datepicker").datepicker().focus();
                 });
             });
-
             $("#location_id").jCombo("{{ URL::to('order/comboselect?filter=location:id:id|location_name ') }}",
                     {
-                        selected_value: '{{ $data["order_location_id"] }}',
+                        selected_value: "{{ $data["order_loc_id"]}}",
                         initial_text: '-------- Select Location --------'
                     });
 
@@ -430,7 +440,7 @@
             $('.previewImage').fancybox();
             $('.tips').tooltip();
             $("select.select3").select2({width: "98%"});
-            $('.date').datepicker({format: 'mm/dd/yyyy', autoClose: true})
+            $('.date').datepicker({format: 'mm/dd/yyyy', autoclose: true})
             $('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});
             $('.removeCurrentFiles').on('click', function () {
                 var removeUrl = $(this).attr('href');
@@ -457,9 +467,6 @@
                 }
             });
             var requests_item_count = <?php echo json_encode($data['requests_item_count']) ?>;
-            if (requests_item_count > 1) {
-                $("#remove-col").show();
-            }
             var order_description_array = <?php echo json_encode($data['orderDescriptionArray']) ?>;
             var order_price_array = <?php echo json_encode($data['orderPriceArray']) ?>;
             var order_qty_array = <?php echo json_encode($data['orderQtyArray']) ?>;
@@ -538,6 +545,11 @@
                 }
 
             }
+            if(mode=="edit")
+            {
+                counter=requests_item_count;
+            }
+
             $(".calculate").keyup(function () {
                 calculateSum();
             });
@@ -572,14 +584,14 @@
                 notyMessage(data.message);
                 $('#sximo-modal').modal('hide');
             }
-           /* else if(data.status == "po-error")
-            {
-                $("#po_3").val(data.po_3);
-                $('.ajaxLoading').hide();
-                $("#po_message").html('<b style="color:rgba(43, 164, 32, 0.99);margin:5px 0px">*Available PO# </b>');
-                $("#po_message").show(200);
-                window.setTimeout(function() { $("#ordersubmitFormAjax").submit(); }, 5000);
-            }*/
+            /* else if(data.status == "po-error")
+             {
+             $("#po_3").val(data.po_3);
+             $('.ajaxLoading').hide();
+             $("#po_message").html('<b style="color:rgba(43, 164, 32, 0.99);margin:5px 0px">*Available PO# </b>');
+             $("#po_message").show(200);
+             window.setTimeout(function() { $("#ordersubmitFormAjax").submit(); }, 5000);
+             }*/
             else {
                 notyMessageError(data.message);
                 $('.ajaxLoading').hide();
@@ -590,9 +602,9 @@
         $("#location_id").click(function () {
             $("#po_message").hide(200);
             $("#po_1").val($(this).val());
-            var location_id=$(this).val();
+            var location_id = $(this).val();
             //if(myloc == location_id)
-            validatePONumber(location_id,0);
+            validatePONumber(location_id, 0);
             $.ajax({
                 type: "GET",
                 url: "{{ url() }}/order/games-dropdown",
@@ -609,9 +621,9 @@
         });
         function debounce(func, wait, immediate) {
             var timeout;
-            return function() {
+            return function () {
                 var context = this, args = arguments;
-                var later = function() {
+                var later = function () {
                     timeout = null;
                     if (!immediate) func.apply(context, args);
                 };
@@ -620,18 +632,18 @@
                 timeout = setTimeout(later, wait);
                 if (callNow) func.apply(context, args);
             };
-        };
+        }
+        ;
         $('#po_3').on('keyup', debounce(function () {
-            var location_id=$("#po_1").val();
-            validatePONumber(location_id,$(this).val());
+            var location_id = $("#po_1").val();
+            validatePONumber(location_id, $(this).val());
         }, 1000));
 
 
-
-        var delay = (function(){
+        var delay = (function () {
             var timer = 0;
-            return function(callback, ms){
-                clearTimeout (timer);
+            return function (callback, ms) {
+                clearTimeout(timer);
                 timer = setTimeout(callback, ms);
             };
         });
@@ -656,9 +668,9 @@
                 return;
             }
 
-            validatePONumber(location_id,0);
+            validatePONumber(location_id, 0);
         }
-        function validatePONumber(location_id,po) {
+        function validatePONumber(location_id, po) {
             $("#submit_btn").attr('disabled', 'disabled');
             var base_url =<?php echo  json_encode(url()) ?>;
             po_1 = $('#po_1').val().trim();
@@ -682,12 +694,12 @@
                         po_1: $('#po_1').val().trim(),
                         po_2: $('#po_2').val().trim(),
                         po_3: $('#po_3').val().trim(),
-                        location_id:location_id,
-                        po:po
+                        location_id: location_id,
+                        po: po
                     },
                     success: function (msg) {
                         $("#submit_btn").removeAttr('disabled');
-                       // $('.ajaxLoading').hide();
+                        // $('.ajaxLoading').hide();
                         poajax = null;
                         if (msg != 'available') {
                             $("#po_3").val(msg);
@@ -695,7 +707,7 @@
                             $("#po_message").show(200);
                         }
                         else {
-                           $("#po_message").html('<b style="color:rgba(43, 164, 32, 0.99);margin:5px 0px">*PO# is Available.</b>');
+                            $("#po_message").html('<b style="color:rgba(43, 164, 32, 0.99);margin:5px 0px">*PO# is Available.</b>');
                             $("#po_message").show(200);
                         }
 
@@ -728,7 +740,7 @@
 
         $("#add_new_item").click(function () {
             ///window.ParsleyUI.removeError($("input").pars‌​ley(), 'required');
-           // $('input[name^=price],input[name^=case_price],input[name^=qty]').parsley().reset();
+            // $('input[name^=price],input[name^=case_price],input[name^=qty]').parsley().reset();
 
             handleItemCount('add');
             $(".calculate").keyup(function () {
@@ -772,13 +784,12 @@
             }
 
         }
-        function  reInitParcley()
-{
-    $("li.required,li.min").hide();
- //   $("input.parsley-error").css('border-color','#e5e6e7!important');
-    $('#ordersubmitFormAjax').parsley().destroy();
-    $('#ordersubmitFormAjax').parsley();
-}
+        function reInitParcley() {
+            $("li.required,li.min").hide();
+            //   $("input.parsley-error").css('border-color','#e5e6e7!important');
+            $('#ordersubmitFormAjax').parsley().destroy();
+            $('#ordersubmitFormAjax').parsley();
+        }
 
         function decreaseCounter() {
 
@@ -787,16 +798,10 @@
         function handleItemCount(mode) {
             $('input[name^=item_num]').each(function (index, value) {
                 $(value).val(index + 1);
-                if (index + 1 > 1) {
-                    $("#remove-col").show();
-                }
-                else {
-                    $("#remove-col").hide();
-                }
+                counter = index + 1;
             });
+
             /*
-
-
              if(mode == "add")
              {
              counter = 1;
@@ -843,9 +848,7 @@
     </style>
     <script>
         function init(id, obj) {
-            var cache = {},
-                    lastXhr;
-
+            var cache = {}, lastXhr;
             var trid = $(obj).closest('tr').attr('id');
             var skuid = $("#" + trid + "  input[id^='sku_num']").attr('id');
             var priceid = $("#" + trid + "  input[id^='price']").attr('id');
@@ -854,13 +857,15 @@
             var itemid = $("#" + trid + "  textarea[name^=item]").attr('id');
             var retailpriceid = $('#' + trid + "  input[name^=retail]").attr('id');
             var selectorProductId = $('#' + trid + "  input[name^=product_id]").attr('id');
-
-
             $(obj).autocomplete({
                 minLength: 2,
                 source: function (request, response) {
                     var term = request.term;
-                    term=term.trim();
+                    term = term.trim();
+                    var vendorId = $("#vendor_id").val();
+                    if (vendorId != "") {
+                        request.vendor_id = $("#vendor_id").val();
+                    }
                     lastXhr = $.getJSON("order/autocomplete", request, function (data, status, xhr) {
                         cache[term] = data;
                         if (data.value == "No Match") {
@@ -950,9 +955,6 @@
 
         [id^="game_0"] {
             width: 90%;
-        }
-        .itemstable tr.clone:first-of-type td:last-of-type button.remove {
-            display: none;
         }
     </style>
 

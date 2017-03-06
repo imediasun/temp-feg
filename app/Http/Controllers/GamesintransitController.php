@@ -41,7 +41,23 @@ class GamesintransitController extends Controller
         $this->data['access'] = $this->access;
         return view('gamesintransit.index', $this->data);
     }
+    public function getSearchFilterQuery($customQueryString = null) {
+        // Filter Search for query
+        // build sql query based on search filters
+        $filter = is_null($customQueryString) ? (is_null(Input::get('search')) ? '' : $this->buildSearch()) : 
+            $this->buildSearch($customQueryString);
 
+        // Get assigned locations list as sql query (part)
+        $locationFilter = \SiteHelpers::getQueryStringForLocation('game', 'intended_first_location', [], " OR game.location_id=0 ") ;
+        // if search filter does not have location_id filter
+        // add default location filter
+        $frontendSearchFilters = $this->model->getSearchFilters(array('intended_first_location' => ''));
+        if (empty($frontendSearchFilters['intended_first_location'])) {
+            $filter .= $locationFilter;
+        } 
+        
+        return $filter;
+    }
     public function postData(Request $request)
     {
 
@@ -67,8 +83,7 @@ class GamesintransitController extends Controller
         $order = (!is_null($request->input('order')) ? $request->input('order') : $this->info['setting']['ordertype']);
         // End Filter sort and order for query
         // Filter Search for query
-        $filter = (!is_null($request->input('search')) ? $this->buildSearch() : '');
-
+        $filter = $this->getSearchFilterQuery();
 
         $page = $request->input('page', 1);
         $params = array(
@@ -189,14 +204,22 @@ class GamesintransitController extends Controller
 
     function postSave(Request $request, $id = null)
     {
-        $rules = array('game_title_id' => 'required');
+        //comment validation rules due to inline editing
+        //$rules = array('game_title_id' => 'required');
+        $rules = $this->validateForm();
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
+            /* comment code due to inline editing
             $data['game_title_id'] = $request->get('game_title_id');
             $data['for_sale'] = $request->get('for_sale');
             $data['sale_price'] = $request->get('sale_price');
             $data['notes'] = $request->get('notes');
             $data['game_name'] = $request->get('game_name');
+            */
+            if(empty($id))
+                $data = $this->validatePost('game');
+            else
+                $data = $this->validatePost('game', true);
             $id = $this->model->insertRow($data, $id);
             return response()->json(array(
                 'status' => 'success',
@@ -250,16 +273,19 @@ class GamesintransitController extends Controller
         if ($validator->passes()) {
             $serial = $request->get('serial');
             $game_title_id = $request->get('game_title');
+            $game_type_id = \DB::table('game_title')->where('id', $game_title_id)->pluck('game_type_id');
             $asset_number = $request->get('asset_number');
             $notes = $request->get('notes');
             $test_piece = $request->get('test_piece');
             $insert = array(
                 'id' => $asset_number,
                 'game_title_id' => $game_title_id,
+                'game_type_id' => $game_type_id,
                 'serial' => $serial,
                 'status_id' => 3,
                 'test_piece' => $test_piece,
-                'notes' => $notes
+                'notes' => $notes,
+                'last_edited_on' => date('Y-m-d H:i:s'),
             );
             \DB::table('game')->insert($insert);
 
@@ -283,7 +309,12 @@ class GamesintransitController extends Controller
     {
         if(strlen(trim($asset_num)) < 8 || strlen(trim($asset_num)) > 8)
         {
-            return json_encode(array('status'=>'error','message'=>'Asset Number must have 8 characters'));
+            return json_encode(array('status'=>'error','message'=>'Asset Number must have 8 digits'));
+
+        }
+        if(preg_match('/[^0-9]/', trim($asset_num)) === 1)
+        {
+            return json_encode(array('status'=>'error','message'=>'Asset Number must be a Number'));
 
         }
         $row=\DB::select('select id from game where id ='.trim($asset_num));

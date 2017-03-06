@@ -108,14 +108,14 @@ class ReportGenerator
                     "<br><b><u>Games Not Played:</u></b><br>" .
                     @$gamesNotPlayed;
 
-            $reportName = 'Daily Game Earnings DB Transfer Report';
-            $emailRecipients = FEGSystemHelper::getSystemEmailRecipients($reportName);
+            $configName = 'Daily Game Earnings DB Transfer Report';
+            $emailRecipients = FEGSystemHelper::getSystemEmailRecipients($configName);
             self::sendEmailReport(array_merge($emailRecipients, array(
                 'subject' => "Game Earnings DB Transfer Report for $humanDate", 
                 'message' => $message, 
                 'isTest' => $isTest,
-                'reportName' => $reportName,
-                'reportNameSuffix' => $date,
+                'configName' => $configName,
+                'configNameSuffix' => $date,
             )));
 
             $__logger->log("        End Email Game Earnings DB Transfer Report for $date");
@@ -285,14 +285,14 @@ class ReportGenerator
         $task =$_task;
         $isTest = $task->is_test_mode;
         
-        $reportName = 'Daily Transfer Bulk Fail';
-        $emailRecipients = FEGSystemHelper::getSystemEmailRecipients($reportName); 
+        $configName = 'Daily Transfer Bulk Fail';
+        $emailRecipients = FEGSystemHelper::getSystemEmailRecipients($configName); 
         self::sendEmailReport(array_merge($emailRecipients, array(
             'subject' => "Transfer Failure $humanDate", 
             'message' => $statusReport, 
             'isTest' => $isTest,
-            'reportName' => $reportName,
-            'reportNameSuffix' => $date,           
+            'configName' => $configName,
+            'configNameSuffix' => $date,           
         )));       
         
     }
@@ -447,25 +447,25 @@ class ReportGenerator
         $isTest = $task->is_test_mode;
         
         if ($hasDailyReport) {
-            $reportName = 'Daily games summary for each location';
-            $emailRecipients = FEGSystemHelper::getSystemEmailRecipients($reportName, $location);
+            $configName = 'Daily games summary for each location';
+            $emailRecipients = FEGSystemHelper::getSystemEmailRecipients($configName, $location);
             self::sendEmailReport(array_merge($emailRecipients, array(
                 'subject' => "Games Summary for location  $location - $humanDate", 
                 'message' => $dailyReport, 
                 'isTest' => $isTest,
-                'reportName' => $reportName,
-                'reportNameSuffix' => "$location - $humanDate",                
+                'configName' => $configName,
+                'configNameSuffix' => "$location - $humanDate",                
             )));              
         }
         else {
-            $reportName = 'Daily games summary for each location - No Issue';
-            $emailRecipients = FEGSystemHelper::getSystemEmailRecipients($reportName, $location);
+            $configName = 'Daily games summary for each location - No Issue';
+            $emailRecipients = FEGSystemHelper::getSystemEmailRecipients($configName, $location);
             self::sendEmailReport(array_merge($emailRecipients, array(
                 'subject' => "Games Summary for location  $location - $humanDate  [NO ISSUES]", 
                 'message' => $dailyReport, 
                 'isTest' => $isTest,
-                'reportName' => $reportName,
-                'reportNameSuffix' => "$location - $humanDate",                
+                'configName' => $configName,
+                'configNameSuffix' => "$location - $humanDate",                
             )));             
         }
  
@@ -930,15 +930,15 @@ class ReportGenerator
         $message = implode('<br>', $messages);
         
         FEGSystemHelper::logit("    Start sending email", $lf, $lp);
-        $reportName = 'Daily Missing Asset ID Reader ID Unknown Asset ID Report';
-        $emailRecipients = FEGSystemHelper::getSystemEmailRecipients($reportName); 
+        $configName = 'Daily Missing Asset ID Reader ID Unknown Asset ID Report';
+        $emailRecipients = FEGSystemHelper::getSystemEmailRecipients($configName); 
         self::sendEmailReport(array_merge($emailRecipients, array(
             'subject' => "FEG Missing Data (Asset ID, Reader ID, Unknown Asset ID) Report for $humanDateRange", 
             'message' => $message, 
             'isTest' => $isTest,
-            'reportName' => $reportName,
-            'reportNamePrefix' => $reportPrefix,
-            'reportNameSuffix' => $reportSuffix,
+            'configName' => $configName,
+            'configNamePrefix' => $reportPrefix,
+            'configNameSuffix' => $reportSuffix,
         ))); 
         FEGSystemHelper::logit("    End sending email", $lf, $lp);
         FEGSystemHelper::logit("End Processing Missing data for - $logInfo", $lf, $lp);
@@ -1143,14 +1143,14 @@ class ReportGenerator
         //"Daily Potential Over-reporting Errors Report"
         if (!empty($overReporting) && $overReporting != "None") {
             $message = "<b><u>Potential Over-reporting Errors:</u></b><br><br>$overReporting";
-            $reportName = 'Daily Potential Over-reporting Errors Report';
-            $emailRecipients = FEGSystemHelper::getSystemEmailRecipients($reportName); 
+            $configName = 'Daily Potential Over-reporting Errors Report';
+            $emailRecipients = FEGSystemHelper::getSystemEmailRecipients($configName); 
             self::sendEmailReport(array_merge($emailRecipients, array(
                 'subject' => "Potential Over-reporting Errors Check for $humanDate", 
                 'message' => $message, 
                 'isTest' => $isTest,
-                'reportName' => $reportName,
-                'reportNameSuffix' => "$humanDate",
+                'configName' => $configName,
+                'configNameSuffix' => "$humanDate",
             )));          
         }
     }
@@ -1260,14 +1260,14 @@ class ReportGenerator
 					    Thanks,<br>
 					    Nate";
             
-            $reportName = 'Daily Sacoa Data Transfer Failure and Status';
-            $emailRecipients = FEGSystemHelper::getSystemEmailRecipients($reportName); 
+            $configName = 'Daily Sacoa Data Transfer Failure and Status';
+            $emailRecipients = FEGSystemHelper::getSystemEmailRecipients($configName); 
             self::sendEmailReport(array_merge($emailRecipients, array(
                 'subject' => "Sacoa->FEG: Data Transfer Failure status as of $humanDateToday", 
                 'message' => $sacoaReport, 
                 'isTest' => $isTest,
-                'reportName' => $reportName,
-                'reportNameSuffix' => $humanDateToday,
+                'configName' => $configName,
+                'configNameSuffix' => $humanDateToday,
                 
             )));            
         }
@@ -1279,26 +1279,26 @@ class ReportGenerator
                     Thanks,<br>
                     Nate";
 
-            $reportName = 'Daily Embed Data Transfer Failure and Status';
-            $emailRecipients = FEGSystemHelper::getSystemEmailRecipients($reportName); 
+            $configName = 'Daily Embed Data Transfer Failure and Status';
+            $emailRecipients = FEGSystemHelper::getSystemEmailRecipients($configName); 
             self::sendEmailReport(array_merge($emailRecipients, array(
                 'subject' => "Embed->FEG: Data Transfer Failure status as of $humanDateToday", 
                 'message' => $embedReport, 
                 'isTest' => $isTest,
-                'reportName' => $reportName,
-                'reportNameSuffix' => $humanDateToday,
+                'configName' => $configName,
+                'configNameSuffix' => $humanDateToday,
             )));              
         }
         
         if ($noRetrySync != 1) { 
-            $reportName = 'Daily Data Transfer Failure Summary';
-            $emailRecipients = FEGSystemHelper::getSystemEmailRecipients($reportName); 
+            $configName = 'Daily Data Transfer Failure Summary';
+            $emailRecipients = FEGSystemHelper::getSystemEmailRecipients($configName); 
             self::sendEmailReport(array_merge($emailRecipients, array(
                 'subject' => "Data Transfer Failure Summary as of $humanDateToday", 
                 'message' => $retryReportAll, 
                 'isTest' => $isTest,
-                'reportName' => $reportName, 
-                'reportNameSuffix' => $humanDateToday,
+                'configName' => $configName, 
+                'configNameSuffix' => $humanDateToday,
             )));            
         }
  
@@ -1456,14 +1456,14 @@ class ReportGenerator
         $isTest = $task->is_test_mode;        
         
         if (!empty($finalGameSummaryReport)) {
-            $reportName = 'Daily Games Summary';
-            $emailRecipients = FEGSystemHelper::getSystemEmailRecipients($reportName); 
+            $configName = 'Daily Games Summary';
+            $emailRecipients = FEGSystemHelper::getSystemEmailRecipients($configName); 
             self::sendEmailReport(array_merge($emailRecipients, array(
                 'subject' => "Games Summary - $humanDate", 
                 'message' => $finalGameSummaryReport, 
                 'isTest' => $isTest,
-                'reportName' => $reportName,
-                'reportNameSuffix' => $humanDate,
+                'configName' => $configName,
+                'configNameSuffix' => $humanDate,
             )));        
         }
     }
@@ -1741,14 +1741,14 @@ class ReportGenerator
         $__logger->log("sending weekly email report $logInfo");
         
         $message = implode("", $report);
-        $reportName = 'Weekly games summary';
-        $emailRecipients = FEGSystemHelper::getSystemEmailRecipients($reportName);
+        $configName = 'Weekly games summary';
+        $emailRecipients = FEGSystemHelper::getSystemEmailRecipients($configName);
             self::sendEmailReport(array_merge($emailRecipients, array(
                 'subject' => "FEG Weekly Games Summary | $humanDateRange", 
                 'message' => $message, 
                 'isTest' => $isTest,
-                'reportName' => $reportName,
-                'reportNameSuffix' => $humanDateRange,
+                'configName' => $configName,
+                'configNameSuffix' => $humanDateRange,
             )));
         
         $__logger->log("End sending weekly email report $logInfo");
@@ -1820,6 +1820,8 @@ class ReportGenerator
     }
     
     public static function sendEmailReport($options) {  
+        $options['from'] = "support@fegllc.com";
+        $options['fromName'] = "FEG Reports";
         FEGSystemHelper::sendSystemEmail($options);
     }
     

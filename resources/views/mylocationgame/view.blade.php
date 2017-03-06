@@ -53,9 +53,9 @@
 
     $containerClass = 'game-status-'. ($isSold ? 'sold' : 
             preg_replace('/\W/', '', strtolower($statusName)));
-    
+    $isNewlyAddedGame = empty($locationId) && empty($prevLocationId) && !$isSold;
     $headingStatus = $isSold ? "Disposed" : ($statusId === 1 ? '' : $statusName);
-    $headingMessage = empty($locationId) && empty($prevLocationId) && !$isSold ?
+    $headingMessage = $isNewlyAddedGame ?
         "Confirm <em>SERIAL #</em> is accurate before saving this game for the first time." : "";
 
 ?>
@@ -205,6 +205,21 @@
 
         </div>
         
+        @if ($isNewlyAddedGame)
+        <!-- Serial -->
+        <div class="form-group  clearfix" >
+            <label for="serial" class=" control-label col-md-4 text-left">
+                {!! SiteHelpers::activeLang('Serial Number', (isset($fields['serial']['language'])? $fields['serial']['language'] : array())) !!}
+            </label>
+            <div class="col-md-8">
+                <input type="hidden" name="oldserial" value="{{ $serialNumber }}" />
+                <input type="text" name="serial" value="{{ $serialNumber }}" 
+                       style="width: 98%"
+                       class="form-control" placeholder="Serial #" required/>
+            </div>
+        </div>
+        @endif         
+        
         @if (!$isSold)
         <!-- Submit Button -->
         <div class="clearfix submitButtonContainer">
@@ -216,118 +231,92 @@
             </div>
             <hr class="clearfix saveButtonFrameBorder" />
         </div>
-        @endif
-        
-        {{--
-        <!-- Serial -->
-        <div class="form-group  clearfix" >
-            <label for="serial" class=" control-label col-md-4 text-left">
-                {!! SiteHelpers::activeLang('Serial Number', (isset($fields['serial']['language'])? $fields['serial']['language'] : array())) !!}
-            </label>
-            <div class="col-md-8">
-                <input type="text" name="serial" value="{{ $serialNumber }}" 
-                       class="form-control" placeholder="Serial #" required/>
-            </div>
-        </div>--}}
-        {{--
-        <!-- version -->
-        <div class="form-group  clearfix" >
-            <label for="version" class=" control-label col-md-4 text-left">
-                {!! SiteHelpers::activeLang('Alt. Version/Signage', (isset($fields['serial']['language'])? $fields['serial']['language'] : array())) !!}
-            </label>
-            <div class="col-md-8">
-                <input type="text" name="version"  class="form-control gray-bg" 
-                       value="{{ $version }}" id="version"/>
-
-            </div>
-        </div>--}}
-        {{--
-        <!-- Previous Game Name -->
-        <div class="form-group clearfix " >
-            <label for="prev_game_name" class=" control-label col-md-4">
-                {!! SiteHelpers::activeLang('Game Converted from:', (isset($fields['prev_game_name']['language'])? $fields['prev_game_name']['language'] : array())) !!}
-            </label>
-            <div class="col-md-8">
-                <input type="text" name="prev_game_name" id="prev_game_name"  
-                       class="form-control gray-bg" value="{{ $prevGameName }}" />
-            </div>
-        </div>--}}
-        
+        @endif       
         </div>
         <div class="form-group  clearfix" >
-            <label class=" control-label col-md-4">
+            <label class="col-md-4">
                 {!! SiteHelpers::activeLang('Game Title', (isset($fields['game_title']['language'])? $fields['game_title']['language'] : array())) !!}
             </label>
             <div class="col-md-8">{{ $gameTitle }}</div>
         </div>
         <div class="form-group clearfix" >
-            <label class=" control-label col-md-4">
+            <label class="col-md-4">
                 {!! SiteHelpers::activeLang('Manufacturer', (isset($fields['vendor_name']['language'])? $fields['vendor_name']['language'] : array())) !!}
             </label>
             <div class="col-md-8">{{ $manufacturer }}</div>
         </div>
         <div class="form-group  clearfix" >
-            <label class=" control-label col-md-4">
+            <label class="col-md-4">
                 {!! SiteHelpers::activeLang('Game Type', (isset($fields['game_type']['language'])? $fields['game_type']['language'] : array())) !!}
             </label>
             <div class="col-md-8">{{ $gameType }}</div>
         </div>        
         <div class="form-group clearfix " >
-            <label class=" control-label col-md-4">
+            <label class="col-md-4">
                 {!! SiteHelpers::activeLang('Asset ID', (isset($fields['asset_number']['language'])? $fields['asset_number']['language'] : array())) !!}
             </label>
             <div class="col-md-8">{{ $assetID }}</div>
         </div>
         <div class="form-group  clearfix" >
-            <label class=" control-label col-md-4">
+            <label class="col-md-4">
                 {!! SiteHelpers::activeLang('Serial #', (isset($fields['serial']['language'])? $fields['serial']['language'] : array())) !!}
             </label>
             <div class="col-md-8">{{ $serialNumber }}</div>
         </div>
         <div class="form-group  clearfix" >
-            <label class=" control-label col-md-4">
+            <label class="col-md-4">
                 {!! SiteHelpers::activeLang('Alt. Version/Signage', (isset($fields['version']['language'])? $fields['version']['language'] : array())) !!}
             </label>
             <div class="col-md-8">{{ $version }}</div>
         </div>
         <div class="form-group  clearfix" >
-            <label class=" control-label col-md-4">
+            <label class="col-md-4">
                 {!! SiteHelpers::activeLang('Game Converted from', (isset($fields['prev_game_name']['language'])? $fields['prev_game_name']['language'] : array())) !!}
             </label>
             <div class="col-md-8">{{ $prevGameName }}</div>
         </div>
+        @if (!$isNewlyAddedGame)
         <div class="form-group clearfix" >
-            <label class=" control-label col-md-4">
+            <label class="col-md-4">
                 {!! SiteHelpers::activeLang('Current Location', (isset($fields['serial']['language'])? $fields['serial']['language'] : array())) !!}
             </label>
             <div class="col-md-8">{{ $locationIdName }}</div>
         </div>
+        @endif
         <div class="form-group clearfix" >
-            <label class=" control-label col-md-4">
-                {!! SiteHelpers::activeLang('Previous Location', (isset($fields['']['language'])? $fields['serial']['language'] : array())) !!}
+            <label class="col-md-4">
+                {!! SiteHelpers::activeLang('Previous Location', (isset($fields['prev_location_id']['language'])? $fields['prev_location_id']['language'] : array())) !!}
             </label>
             <div class="col-md-8">{{ $prevLocationIdName }}</div>
         </div>
         <div class="form-group clearfix" >
-            <label class=" control-label col-md-4">
+            <label class="col-md-4">
                 {!! SiteHelpers::activeLang('Last Edited By', (isset($fields['last_edited_by']['language'])? $fields['last_edited_by']['language'] : array())) !!}
             </label>
             <div class="col-md-8">{{ $lastEditedDetails }}</div>
         </div>
         <div class="form-group clearfix" >
-            <label class=" control-label col-md-4">
-                {!! SiteHelpers::activeLang('Current Product', (isset($fields['']['language'])? $fields['serial']['language'] : array())) !!}
+            <label class="col-md-4">
+                Current Product
             </label>
-            <div class="col-md-8"></div>
+            <div class="col-md-8">
+                @if (count($products) > 0) 
+                <ul class='productList'>
+                @foreach($products as $product) 
+                    <li>{!! $product->vendor_description !!}</li>
+                @endforeach
+                </ul>
+                @endif 
+            </div>
         </div>
         <div class="form-group clearfix" >
-            <label class=" control-label col-md-4">
+            <label class="col-md-4">
                 {!! SiteHelpers::activeLang('Game Manual', (isset($fields['has_manual']['language'])? $fields['has_manual']['language'] : array())) !!}
             </label>
             <div class="col-md-8">{!! $manualDetails !!}</div>
         </div>        
         <div class="form-group clearfix" >
-            <label class=" control-label col-md-4">
+            <label class="col-md-4">
                 {!! SiteHelpers::activeLang('Game Bulletin', (isset($fields['has_bulletin']['language'])? $fields['has_bulletin']['language'] : array())) !!}
             </label>
             <div class="col-md-8">{!! $serviceBulletinDetails !!}</div>
@@ -336,7 +325,7 @@
 
     <div class="col-md-6 text-center nogallary gameImageContainer">
         {!! SiteHelpers::showUploadedFile(SiteHelpers::getGameImage($gameTitleId),'/uploads/games/images/',400,false) !!}
-        <div class="col-md-offset-2 col-md-6" style="background: #fff;padding:10px;text-align: center">
+        <div class="center-block" style="background: #fff;padding:10px;text-align: center; width: 400px;">
             <h3>{{ $gameTitle }}</h3>
         </div>
     </div>

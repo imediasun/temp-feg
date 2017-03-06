@@ -3,11 +3,14 @@
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Observers\Observerable;
+use App\Models\ticketsetting;
+
 class Servicerequests extends Observerable  {
 
     protected $table = 'sb_tickets';
     protected $primaryKey = 'TicketID';
-
+    public $timestamps = false;
+    
     public function __construct() {
         parent::__construct();
 
@@ -19,11 +22,24 @@ class Servicerequests extends Observerable  {
     }
 
     public static function queryWhere(  ){
-        $selected_loc=\Session::get('selected_location');
-        if (isset($selected_loc))
-            return "  WHERE sb_tickets.TicketID IS NOT NULL AND location_id=$selected_loc";
-        else
-            return "  WHERE sb_tickets.TicketID IS NOT NULL ";
+        $table = "sb_tickets";
+        $controlField = "$table.TicketID";
+        $selected_loc = \Session::get('selected_location');
+        $isOmniscient = ticketsetting::isUserOmniscient();
+        $q = "";
+
+        if ($isOmniscient) {
+            $q = "  WHERE $controlField IS NOT NULL ";            
+        }            
+        else {
+            if(isset($selected_loc)) {
+                $q .= "  WHERE $controlField IS NOT NULL AND $table.location_id IN ($selected_loc)";
+            }
+            else {
+                $q = "  WHERE $controlField IS NULL";
+            }
+        }            
+        return $q;
     }
 
     public static function queryGroup(){

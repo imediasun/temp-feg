@@ -1,20 +1,51 @@
 
 function reloadData( id,url,callback)
 {
-	$('.ajaxLoading').show();
-    var isClearData = /data\?search\=$/.test(url);
-    if (isClearData) {
-        url += getFooterFilters({'search': true, 'page': true});
+    var isClearSearch = /data\?search\=$/.test(url),
+        clearFilters;
+    
+    App.autoCallbacks.runCallback.call($( id +'Grid' ), 'beforereloaddata', 
+        {id:id, url:url, isClear: isClearSearch});       
+        
+    if (isClearSearch) {
+        clearFilters = getClearDataFilters();        
+        url += clearFilters;         
     }
 
+	$('.ajaxLoading').show();
 	$.post( url ,function( data ) {
 		$( id +'Grid' ).html( data );
 		$('.ajaxLoading').hide();
-		typeof callback === 'function' && callback();
+		typeof callback === 'function' && callback(data);
         App.autoCallbacks.runCallback.call($( id +'Grid' ), 'reloaddata', 
-            {id:id, url:url, data:data, isClear: isClearData});        
+            {id:id, url:url, data:data, isClear: isClearSearch});        
 	});
 
+}
+
+
+function getClearDataFilters(id, url) {
+    
+    var filter = '',
+        excludes = {}, includes = {}, forces = {}, blinds = {},
+        callbackModifications = {
+            include: includes, 
+            exclude: excludes, 
+            force: forces,
+            blind: blinds
+        };
+    
+    App.autoCallbacks.runCallback.call($( id +'Grid' ), 'beforeclearsearch', 
+            {id:id, url:url, data: callbackModifications});    
+            
+    excludes = $.extend({}, {'search': true, 'page': true}, callbackModifications.exclude);
+    includes = $.extend({}, {}, callbackModifications.include); //{'rows': true, 'sort': true, 'order': true}
+    forces = $.extend({}, {}, callbackModifications.force);
+    blinds = $.extend({}, {}, callbackModifications.blind);
+
+    filter = getFooterFiltersWith(includes, excludes, forces, blinds);
+
+    return filter;
 }
 
 function getFooterFilters(excludeList, forceSetFields) {
@@ -47,6 +78,64 @@ function getFooterFilters(excludeList, forceSetFields) {
 function getFooterFiltersWithoutSort() {
     var attr = getFooterFilters({'sort': true, 'order': true});
     return attr;
+}
+
+function getFooterFiltersWith(includeList, excludeList, forceSetFields, blindFields) {
+    var UNDEFINED,
+        attr = "", 
+        attrs = {}, 
+        finalAttrs = {},
+        key,
+        val,
+        fieldKey;
+
+    includeList = includeList || {};
+    excludeList = excludeList || {};
+    forceSetFields = forceSetFields || {};
+    blindFields = blindFields || {};
+    
+    for(fieldKey in forceSetFields) {
+        $('.table-actions [name='+fieldKey+']').val(forceSetFields[fieldKey]);
+    } 
+    
+    $('.table-actions :input').each(function () {
+        var elm = $(this), 
+            fieldName = elm.attr('name'), 
+            val = elm.val(),
+            isInclude = includeList[fieldName] === true;
+        if (val !== '' && val !== null) {
+            attrs[fieldName] = val;
+            
+        }
+    });
+    
+    for(key in includeList) {
+        if (includeList[key]===true && attrs[key] !== UNDEFINED) {
+            finalAttrs[key] = attrs[key];
+        }
+    }
+    if ($.isEmptyObject(finalAttrs)) {
+        finalAttrs = $.extend({}, attrs);
+    }
+    
+    for(key in blindFields) {
+        finalAttrs[key] = blindFields[key];
+    }    
+    
+    for(key in excludeList) {
+        if (excludeList[key]===true && finalAttrs[key] !== UNDEFINED) {
+            delete finalAttrs[key];
+        }
+    }
+    
+    for(key in finalAttrs) {
+        val = finalAttrs[key];
+        if (val !== '' && val !== null) {
+            attr += '&' + key + '=' + val;
+        }        
+    }
+    
+    return attr;    
 }
 
 

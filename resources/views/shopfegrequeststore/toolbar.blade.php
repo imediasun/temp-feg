@@ -20,7 +20,7 @@
 </div>
 
 
-<div class="row " >
+<div class="row m-b" >
 
     <div class="col-md-8">
 
@@ -47,9 +47,10 @@
             @endif
         @endif
     </div>
-    <div class="col-md-4 style=float:right;">
-        <h3 class="pull-right"> <small><a  href="{{ URL::to('./shopfegrequeststore/new-graphic-request') }}" target="_blank" class="btn btn-primary">Request Custom Graphic</a></small></h3>
-
+    <div class="col-md-4">
+        <div class="pull-right">
+            <a href="{{ URL::to('./shopfegrequeststore/new-graphic-request') }}" target="_blank" class="btn btn-sm btn-primary"> Request Custom Graphic</a>
+        </div>
     </div>
 
 </div>
@@ -79,13 +80,7 @@
                             });
 //                }
             });
-            $('.select3').each(function (i, obj) {
-                if (!$(obj).data('select2'))
-                {
-                    $(obj).select2({width: "98%"});
-                }
-            });
-
+            renderDropdown($(".select3"), { width:"98%"});
             var config_id=$("#col-config").val();
             if(config_id ==0 )
             {

@@ -262,7 +262,7 @@
                     $('.previewImage').fancybox();
                     $('.tips').tooltip();
                     $(".select3").select2({width: "98%"});
-                    $('.date').datepicker({format: 'mm/dd/yyyy', autoClose: true})
+                    $('.date').datepicker({format: 'mm/dd/yyyy', autoclose: true})
                     $('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});
 
                     $('.removeCurrentFiles').on('click', function () {

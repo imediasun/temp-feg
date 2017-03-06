@@ -86,11 +86,11 @@
 
 				@if($setting['view-method']=='expand') <td> </td> @endif
 				@foreach ($tableGrid as $t)
-					@if($t['view'] =='1')
+					@if(isset($t['inline']) && $t['inline'] =='1')
 					<?php $limited = isset($t['limited']) ? $t['limited'] :''; ?>
 						@if(SiteHelpers::filterColumn($limited ))
 						<td data-form="{{ $t['field'] }}" data-form-type="{{ AjaxHelpers::inlineFormType($t['field'],$tableForm)}}">
-							{!! SiteHelpers::transForm($t['field'] , $tableForm) !!}
+							{!! SiteHelpers::transInlineForm($t['field'] , $tableForm) !!}
 						</td>
 						@endif
 					@endif
@@ -187,7 +187,7 @@ $(document).ready(function() {
 		radioClass: 'iradio_square-blue',
 	});
     
-    renderDropdown($(".select2, .select3, .select4, select5"), { width:"98%"});
+    renderDropdown($(".select2, .select3, .select4, .select5"), { width:"98%"});
     
 	$('#{{ $pageModule }}Table .checkall').on('ifChecked',function(){
 		$('#{{ $pageModule }}Table input[type="checkbox"]').iCheck('check');

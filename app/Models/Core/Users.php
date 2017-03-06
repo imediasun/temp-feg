@@ -45,7 +45,7 @@ class Users extends Sximo  {
 	{
 
 		$tableName = $params[0];
-		if ($tableName == 'location') {
+		if ($tableName == 'location'){
 			$locations = \DB::table('location')
 				->select('location.*')
 				->where('location.active', 1)->orderBy('location.location_name')

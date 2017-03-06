@@ -21,7 +21,7 @@ class managefegrequeststore extends Sximo
         return "SELECT requests.*,u1.username,products.img,IF(product_id = 0, requests.description, products.vendor_description) as description,
                 products.sku,products.case_price,products.retail_price,products.case_price*requests.qty,products.ticket_value,location.location_name_short,
                 merch_request_status.status,products.size,V1.vendor_name,order_type.order_type,If(products.reserved_qty = 0, '' , products.reserved_qty) as reserved_qty,
-                (products.reserved_qty - requests.qty) as reserved_difference FROM requests
+                (products.reserved_qty - requests.qty) as reserved_difference, products.vendor_id,products.prod_type_id  FROM requests
                 LEFT JOIN users u1 ON (requests.request_user_id = u1.id)
 			    LEFT JOIN products ON (requests.product_id = products.id)
 			LEFT JOIN vendor V1 ON (products.vendor_id = V1.id)
@@ -146,9 +146,9 @@ class managefegrequeststore extends Sximo
         foreach ($query as $index => $row) {
        //     $number_requests = $number_requests ." ".." | <em>". $row->request_count .":</em>";
             if($index == count($query) -1 )
-                $number_requests = $number_requests ." ".$row->request_count.":  <em>". $row->count  ."  </em>";
+                $number_requests = $number_requests ." ".$row->request_count. $row->count ;
             else
-                $number_requests = $number_requests ." ".$row->request_count.":  <em>". $row->count  ."    |  </em>";
+                $number_requests = $number_requests ." ".$row->request_count. $row->count  ;
 
         }
         $data['number_requests'] = substr($number_requests, 0, -2);

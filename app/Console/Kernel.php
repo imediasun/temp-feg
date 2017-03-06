@@ -18,6 +18,7 @@ class Kernel extends ConsoleKernel
         \App\Console\Commands\AutoCloseOrder::class,
         \App\Console\Commands\Elm5TaskManager::class,
         \App\Console\Commands\CreateDummyOrders::class,
+        \App\Console\Commands\SyncUserLocations::class,
     ];
 
     /**
@@ -29,7 +30,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         //giving error
-        //$schedule->command('comments:read')->everyMinute();
+        $schedule->command('comments:read')->everyMinute();
         $schedule->command('autocloseorder')->daily();
         $schedule->command('inspire')->hourly();
         //turning off to allow client to test and avoid from varying counts

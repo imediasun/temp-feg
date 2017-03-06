@@ -86,11 +86,11 @@
 				@endif
 				@if($setting['view-method']=='expand') <td> </td> @endif
 				@foreach ($tableGrid as $t)
-					@if($t['view'] =='1')
+					@if(isset($t['inline']) && $t['inline'] =='1')
 					<?php $limited = isset($t['limited']) ? $t['limited'] :''; ?>
 						@if(SiteHelpers::filterColumn($limited ))
 						<td data-form="{{ $t['field'] }}" data-form-type="{{ AjaxHelpers::inlineFormType($t['field'],$tableForm)}}">
-
+							{!! SiteHelpers::transInlineForm($t['field'] , $tableForm) !!}
 						</td>
 						@endif
 					@endif
@@ -112,7 +112,7 @@
 					@if($setting['disableactioncheckbox']=='false')
 							<td ><input type="checkbox" class="ids" name="ids[]" value="<?php echo $row->id ;?>" />  </td>
 						@endif
-                    <td>{!! SiteHelpers::showUploadedFile(SiteHelpers::getGameImage($row->game_title_id),'/uploads/games/images/',50,false) !!}</td>
+                    <td>{!! SiteHelpers::showUploadedFile(SiteHelpers::getGameImage($row->game_title_id),'/uploads/games/images/',50,false,false) !!}</td>
 					@if($setting['view-method']=='expand')
 					<td><a href="javascript:void(0)" class="expandable" rel="#row-{{ $row->id }}" data-url="{{ url('mylocationgame/show/'.$id) }}"><i class="fa fa-plus " ></i></a></td>
 					@endif
@@ -195,7 +195,7 @@ $(document).ready(function() {
 		radioClass: 'iradio_square-blue',
 	});
     
-    renderDropdown($(".select2, .select3, .select4, select5"), { width:"98%"});
+    renderDropdown($(".select2, .select3, .select4, .select5"), { width:"98%"});
     
 	$('#{{ $pageModule }}Table .checkall').on('ifChecked',function(){
 		$('#{{ $pageModule }}Table input[type="checkbox"]').iCheck('check');

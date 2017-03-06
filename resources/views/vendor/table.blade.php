@@ -21,9 +21,7 @@
                             {!! SiteHelpers::transForm($t['field'] , $simpleSearchForm) !!}
                         </div>
                     @endforeach
-                    <div class="sscol-submit"><br/>
-                        <button type="button" name="search" class="doSimpleSearch btn btn-sm btn-primary"> Search </button>
-                    </div>
+                    {!! SiteHelpers::generateSimpleSearchButton($setting) !!}
                 </div>
             @endif
         @endif
@@ -84,11 +82,11 @@
 				@endif
 				@if($setting['view-method']=='expand') <td> </td> @endif
 				@foreach ($tableGrid as $t)
-					@if($t['view'] =='1')
+					@if(isset($t['inline']) && $t['inline'] =='1')
 					<?php $limited = isset($t['limited']) ? $t['limited'] :''; ?>
 						@if(SiteHelpers::filterColumn($limited ))
 						<td data-form="{{ $t['field'] }}" data-form-type="{{ AjaxHelpers::inlineFormType($t['field'],$tableForm)}}">
-							{!! SiteHelpers::transForm($t['field'] , $tableForm) !!}								
+							{!! SiteHelpers::transInlineForm($t['field'] , $tableForm) !!}
 						</td>
 						@endif
 					@endif
@@ -96,8 +94,8 @@
 				<td >
 					<button onclick="saved('form-0')" class="btn btn-primary btn-xs" type="button"><i class="fa  fa-save"></i></button>
 				</td>
-			  </tr>	 
-			  @endif        
+			  </tr>
+			  @endif
 			
            		<?php foreach ($rowData as $row) : 
            			  $id = $row->id;

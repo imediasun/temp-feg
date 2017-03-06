@@ -40,7 +40,6 @@ class ManagefegrequeststoreController extends Controller
     {
         if ($this->access['is_view'] == 0)
             return Redirect::to('dashboard')->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
-
         $this->data['access'] = $this->access;
         return view('managefegrequeststore.index', $this->data);
     }
@@ -125,8 +124,7 @@ class ManagefegrequeststoreController extends Controller
 
     public function postData(Request $request)
     {
-
-   // die('here in reload data');
+        $this->getSearchParamsForRedirect();
         $user_level = \Session::get('gid');
         if ($user_level == 2) {
             return redirect('dashboard');
@@ -177,15 +175,17 @@ class ManagefegrequeststoreController extends Controller
                 'params' => $filter,
                 'global' => (isset($this->access['is_global']) ? $this->access['is_global'] : 0)
             );
-            // Get Query
+           // Get Query
             $view = $request->get('view');
             \Session::put('manage-request-view',$view);
+            $isRedirected=session('filter_before_redirect');
             $cond = array('view' => $view, 'order_type_id' => $manageRequestInfo['TID'], 'location_id' => $manageRequestInfo['LID'], 'vendor_id' => $manageRequestInfo['VID']);
             $this->data['view'] = $view;
             $results = $this->model->getRows($params, $cond);
-            // Build pagination setting
+           // Build pagination setting
             $page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;
-            $pagination = new Paginator($results['rows'], $results['total'], $params['limit']);
+            $pagination = new Paginator($results['rows'], $results['total'], (isset($params['limit']) && $params['limit'] > 0 ? $params['limit'] :
+                ($results['total'] > 0 ? $results['total'] : '1')));
             $pagination->setPath('managefegrequeststore/data');
             $this->data['param'] = $params;
             $this->data['rowData'] = $results['rows'];
@@ -289,9 +289,7 @@ class ManagefegrequeststoreController extends Controller
         $rules = array('qty' => 'required', 'status_id' => 'required');
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
-            $data['qty'] = $request->get('qty');
-            $data['status_id'] = $request->get('status_id');
-            $data['notes'] = $request->get('notes');
+            $data = $this->validatePost('requests',true);
             $id = $this->model->insertRow($data, $id);
             return response()->json(array(
                 'status' => 'success',

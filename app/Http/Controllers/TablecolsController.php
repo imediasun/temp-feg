@@ -231,8 +231,9 @@ class TablecolsController extends Controller
 
     }
 
-    public function getArrangeCols($pageModule,$mode = null)
-    {
+    public function getArrangeCols($pageModule, $mode = null)
+    {       
+        
         $info = $this->model->makeInfo($pageModule);
         $module_id = \DB::table('tb_module')->where('module_name', '=', $pageModule)->pluck('module_id');
         $user_id = \Session::get('uid');
@@ -242,24 +243,46 @@ class TablecolsController extends Controller
         $config_name="";
         if($mode != null)
         {
+            $configIDName = "config_id";
+            $configIDWithModuleName = "{$pageModule}_config_id";
             $module_id = \DB::table('tb_module')->where('module_name', '=',$pageModule)->pluck('module_id');
-            $config_id = \Session::get('config_id');
+            if (\Session::has($configIDWithModuleName)) {
+                $config_id = \Session::get($configIDWithModuleName);
+                $configIDName = $configIDWithModuleName;
+            }
+            elseif (\Session::has($configIDName)) {
+                $config_id = \Session::get($configIDName);
+            }
+            else {
+                $config_id = 0;
+            }
             $config = $this->model->getModuleConfig($module_id, $config_id);
             if (!empty($config)) {
                 $configs = \SiteHelpers::CF_decode_json($config[0]->config);
                 $group_id=$config[0]->group_id;
                 $is_private=$config[0]->is_private;
                 $config_name=$config[0]->config_name;
-                \Session::put('config_id', $config_id);
+                \Session::put($configIDName, $config_id);
             }
         }
         else{
-            $config_id=null;
+            $config_id = null;
         }
         //add code here to get all columns for a module
         $groups = \SiteHelpers::getAllGroups();
-       // $groups = \DB::table('tb_groups')->where('level', '>=', \Session::get('level'))->get();
-        return view('tablecols.arrange_cols', ['allColumns' => $info['config']['grid'], 'user_id' => $user_id, 'module_id' => $module_id, 'pageModule' => $pageModule, 'groups' => $groups,'cols'=>$configs,'group_id'=>$group_id,'config_name'=>$config_name,'is_private'=>$is_private,'config_id'=>$config_id ]);
+       // $groups = \DB::table('tb_groups')->where('level', '>=', \Session::get('level'))->get();        
+        return view('tablecols.arrange_cols', [
+            'allColumns' => @$info['config']['grid'], 
+            'user_id' => $user_id, 
+            'module_id' => $module_id, 
+            'pageModule' => $pageModule, 
+            'groups' => $groups, 
+            'cols'=>$configs,
+            'group_id'=>$group_id,
+            'config_name'=>$config_name,
+            'is_private'=>$is_private,
+            'config_id'=>$config_id 
+        ]);
     }
     function getDeleteConfig(Request $request)
     {

@@ -78,7 +78,7 @@
 			$('.previewImage').fancybox();
 			$('.tips').tooltip();
 			$(".select2").select2({ width:"98%"});
-			$('.date').datepicker({format:'mm/dd/yyyy',autoClose:true})
+			$('.date').datepicker({format:'mm/dd/yyyy',autoclose:true})
 			$('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});
 			$('input[type="checkbox"],input[type="radio"]').iCheck({
 				checkboxClass: 'icheckbox_square-blue',

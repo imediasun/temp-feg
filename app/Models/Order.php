@@ -372,6 +372,7 @@ class order extends Sximo
                 $data['requests_item_count'] = $item_count-1;
                 $data['today'] = date('m/d/y');
             }
+            $data['prefill_type'] = 'SID';
         }
         $data['where_in_expression'] = substr($where_in_expression, 0, -1);
           
@@ -489,7 +490,6 @@ class order extends Sximo
                     if (count($query) == 1) {
                         $data['product_id_' . $i] = $query[0]->product_id;
                         $data['order_qty_' . $i] = $query[0]->qty;
-                        $data['game_name' . $i] = $query[0]->game_name;
                         $data['order_description_' . $i] = $query[0]->description;
                         $data['order_price_' . $i] = $query[0]->case_price;
                     }

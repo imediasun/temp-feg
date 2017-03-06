@@ -28,41 +28,57 @@ class UsersController extends Controller
         $this->data = array(
             'pageTitle' => $this->info['title'],
             'pageNote' => $this->info['note'],
-            'pageModule' => 'core/users',
+            'pageModule' => 'users',
             'pageUrl' => url('core/users'),
+            'pageDetails'       => array('url' => 'core/users', 'module' => 'users'),    
+            'siteUrl'           => url(),
             'return' => self::returnUrl()
 
         );
     }
 
-    public function getIndex(Request $request,$id=null)
+    public function getIndex(Request $request, $id=null)
     {
-
+		if($this->access['is_view'] ==0)
+			return Redirect::to('dashboard')->with('messagetext',\Lang::get('core.note_restric'))->with('msgstatus','error');
+		$this->data['access']		= $this->access;
+        $this->pageData($request, $id);
+        return view('core.users.index', $this->data);
+    }
+    
+    public function pageData(Request $request = null, $id=null) {
+       $moduleName = $this->data['pageModule'];
+       if ($this->access['is_view'] == 0) {
+            return Redirect::to('dashboard')
+                ->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
+       }
+ 
         $module_id = \DB::table('tb_module')->where('module_name', '=', 'users')->pluck('module_id');
 
-        $this->data['modules'] = \DB::table('tb_module')->where('module_type', '!=', 'core')->get();
-        $this->data['pages'] = \DB::select(" SELECT * FROM tb_pages ");
+        $this->data['modules'] = \DB::table('tb_module')->where('module_type', '!=', 'core')->orderBy('module_title', 'asc')->get();
+        $this->data['pages'] = \DB::table("tb_pages")->orderBy('title', 'asc')->get();
 
         $this->data['module_id'] = $module_id;
 
         if (Input::has('config_id')) {
             $config_id = Input::get('config_id');
-            \Session::put('config_id',$config_id);
-        } elseif (\Session::has('config_id')) {
-            $config_id = \Session::get('config_id');
-        } else {
+            \Session::put("{$moduleName}_config_id", $config_id);
+        } 
+        elseif (\Session::has("{$moduleName}_config_id")) {
+            $config_id = \Session::get("{$moduleName}_config_id");
+        }
+        else {
             $config_id = 0;
         }
-        $this->data['config_id'] = $config_id;
         $config = $this->model->getModuleConfig($module_id, $config_id);
         if (!empty($config)) {
             $this->data['config'] = \SiteHelpers::CF_decode_json($config[0]->config);
-            \Session::put('config_id', $config_id);
         }
-
-        if ($this->access['is_view'] == 0)
-            return Redirect::to('dashboard')
-                ->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
+        else {
+            $config_id = 0;
+        }
+        $this->data['config_id'] = $config_id;
+        \Session::put("{$moduleName}_config_id", $config_id);
 
         $sort = (!is_null($request->input('sort')) ? $request->input('sort') : $this->info['setting']['orderby']);
         $order = (!is_null($request->input('order')) ? $request->input('order') : $this->info['setting']['ordertype']);
@@ -84,8 +100,7 @@ class UsersController extends Controller
             'global' => (isset($this->access['is_global']) ? $this->access['is_global'] : 0)
         );
         // Get Query
-
-            $results = $this->model->getRows($params,$id);
+        $results = $this->model->getRows($params, $id);
 
         // Build pagination setting
         $page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;
@@ -98,8 +113,8 @@ class UsersController extends Controller
 
         $this->data['rowData'] = $results['rows'];
 
-        $this->data['modules'] = \DB::table('tb_module')->where('module_type', '!=', 'core')->get();
-        $this->data['pages'] = \DB::select(" SELECT * FROM tb_pages ");
+        $this->data['modules'] = \DB::table('tb_module')->where('module_type', '!=', 'core')->orderBy('module_title', 'asc')->get();
+        $this->data['pages'] = \DB::table("tb_pages")->orderBy('title', 'asc')->get();
 
 
         // Build Pagination
@@ -121,12 +136,16 @@ class UsersController extends Controller
         $this->data['subgrid'] = (isset($this->info['config']['subgrid']) ? $this->info['config']['subgrid'] : array());
         if ($this->data['config_id'] != 0 && !empty($config)) {
             $this->data['tableGrid'] = \SiteHelpers::showRequiredCols($this->data['tableGrid'], $this->data['config']);
-            $this->data['colconfigs'] = \SiteHelpers::getColsConfigs($module_id);
         }
-        // Render into template
-        return view('core.users.index', $this->data);
     }
-
+            
+	public function postData(Request $request, $id=null)
+	{
+        $this->pageData($request, $id);
+        // Render into template
+        return view('core.users.table', $this->data);
+	}
+        
     public function getPlay($id = null)
     {
         $return_id = \Session::get('uid');
@@ -255,8 +274,8 @@ class UsersController extends Controller
 
         $this->data['id'] = $id;
 
-        $this->data['modules'] = \DB::table('tb_module')->where('module_type', '!=', 'core')->orderby('module_name')->get();
-        $this->data['pages'] = \DB::select(" SELECT * FROM tb_pages order by alias");
+        $this->data['modules'] = \DB::table('tb_module')->where('module_type', '!=', 'core')->orderBy('module_title', 'asc')->get();
+        $this->data['pages'] = \DB::table("tb_pages")->orderBy('title', 'asc')->get();
         return view('core.users.form', $this->data);
     }
 
@@ -329,14 +348,17 @@ class UsersController extends Controller
         $rules = $this->validateForm();
         $rules['g_mail'] = 'email';
         $rules['g_password'] = 'min:8';
+       
+
+        $rules['email'] = 'required|email|unique:users,email';
         if ($request->input('id') == '') {
             $rules['password'] = 'required|between:6,12';
             $rules['password_confirmation'] = 'required|between:6,12';
-            $rules['email'] = 'required|email|unique:users';
             $rules['username'] = 'required|min:2|unique:users';
 
 
         } else {
+            $rules['email'] = 'required|email|unique:users,email,'.$request->input('id');
             if ($request->input('password') != '') {
                 $rules['password'] = 'required|between:6,12';
                 $rules['password_confirmation'] = 'required|between:6,12';
@@ -349,7 +371,9 @@ class UsersController extends Controller
         if ($validator->passes()) {
             $data = $this->validatePost('users');
 
-            $data['redirect_link'] = $request->get('redirect_link');
+
+
+
             if ($request->input('id') == '') {
                 $logId = Users::insertLog($this->module, 'insert');
                 $data['password'] = \Hash::make(Input::get('password'));
@@ -362,8 +386,14 @@ class UsersController extends Controller
                 }
 
                 $file = $request->file('avatar');
+                //in case of editing removes empty values from array and does not allow to
+                //set empty redirect value
                 $data = array_filter($data);
             }
+            //moved redirect_link in bottom because if user want to reset value
+            //then above array_filter does not remove it
+            $data['redirect_link'] = $request->get('redirect_link');
+
             $data['active']=$request->get('active');
             /* add google account password and email*/
             $data['g_mail'] = $request->input('g_mail');
@@ -424,7 +454,7 @@ class UsersController extends Controller
 
         } else {
 
-            return Redirect::to('core/users/update/' . $id)->with('messagetext', \Lang::get('core.note_error'))->with('msgstatus', 'error')
+            return Redirect::to('core/users/update/' . $request->input('id'))->with('messagetext', \Lang::get('core.note_error'))->with('msgstatus', 'error')
                 ->withErrors($validator)->withInput();
         }
 

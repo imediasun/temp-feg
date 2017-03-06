@@ -11,14 +11,41 @@
         </div>
     </div>
     <div class="sbox-content">
+        <?php
+        $searched=\Request::get('search');
+
+        $searched=explode("|",$searched);
+        $searchedParams=[];
+        foreach($searched as $t)
+        {
+            $searchedParams[]=explode(':',$t);
+        }
+            $location_id=\Request::get('v2');
+        ?>
         @if($setting['usesimplesearch']!='false')
             <?php $simpleSearchForm = SiteHelpers::configureSimpleSearchForm($tableForm); ?>
             @if(!empty($simpleSearchForm))
                 <div class="simpleSearchContainer clearfix">
                     @foreach ($simpleSearchForm as $t)
                         <div class="sscol {{ $t['widthClass'] }}" style="{{ $t['widthStyle'] }}">
+                            <?php
+                            $fv="";
+                            foreach($searchedParams as $f)
+                            {
+                                $fv=in_array($t['field'],$f)?$f[2] :"";
+                                if($fv != "")
+                                {
+                                    break;
+                                }
+                                if($t['field']=='location_id' && !empty($location_id))
+                                {
+                                    $fv=$location_id;
+                                }
+                            }
+                            ?>
+
                             {!! SiteHelpers::activeLang($t['label'],(isset($t['language'])? $t['language'] : array())) !!}
-                            {!! SiteHelpers::transForm($t['field'] , $simpleSearchForm) !!}
+                            {!! SiteHelpers::transForm($t['field'] , $simpleSearchForm,false,$fv) !!}
                         </div>
                     @endforeach
                     <div class="sscol-submit"><br/>
@@ -89,11 +116,11 @@
                         @endif
                         @if($setting['view-method']=='expand') <td> </td> @endif
                         @foreach ($tableGrid as $t)
-                        @if($t['view'] =='1')
+                            @if(isset($t['inline']) && $t['inline'] =='1')
                         <?php $limited = isset($t['limited']) ? $t['limited'] : ''; ?>
                         @if(SiteHelpers::filterColumn($limited ))
                         <td data-form="{{ $t['field'] }}" data-form-type="{{ AjaxHelpers::inlineFormType($t['field'],$tableForm)}}">
-                            {!! SiteHelpers::transForm($t['field'] , $tableForm) !!}
+                            {!! SiteHelpers::transInlineForm($t['field'] , $tableForm) !!}
                         </td>
                         @endif
                         @endif
@@ -221,6 +248,20 @@ endif;
 
                 initDataGrid('{{ $pageModule }}', '{{ $pageUrl }}');
             });
+
+
+    App.autoCallbacks.registerCallback('beforeclearsearch', function (params) {
+        //params.data.include
+        //params.data.exclue
+        //params.data.force
+        //params.data.blind
+        params.data.exclude['v1'] = true;
+        params.data.exclude['v2'] = true;
+        params.data.exclude['v3'] = true;
+        params.data.force['view'] = 'manage';
+
+    });
+
 </script>
 <style>
     .table th.right {
