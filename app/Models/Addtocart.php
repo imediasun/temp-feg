@@ -40,6 +40,7 @@ class addtocart extends Sximo
         } else {
             $where.= " AND requests.location_id = " . \Session::get('selected_location') . " AND requests.status_id = 0";
         }
+        $where .=" AND requests.status_id != 2";
         return $where ;
     }
 
@@ -75,7 +76,7 @@ class addtocart extends Sximo
             {
                 $statusId = 0;
             }
-            if(!empty($productId))
+            if(!empty($productId) &&!empty($qty))
             {
 
 
@@ -188,6 +189,7 @@ class addtocart extends Sximo
 
         $selected_location=\Session::get('selected_location');
         $update=array('status_id' => '2');
+
         foreach ($ids as $rid) {
             \DB::update("update  requests set status_id=2 where id='".$rid."' AND location_id =".$selected_location);
 

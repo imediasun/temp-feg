@@ -154,9 +154,8 @@
                                class="tips btn btn-xs btn-white"  title="Product Details"><i class="fa fa-search" aria-hidden="true"></i></a>
 </td>
                         <td>@if($row->inactive == 0)
-                                <input type="number" title="Quantity" value="1" onkeyup="if(!this.checkValidity()){this.value='';alert('Please enter a number')};" name="item_quantity" class="form-control" style="width:70px;display:inline" id="item_quantity_{{$row->id}}" min="0"  />
+                                <input type="number" title="Quantity" value="1" min="1" onkeyup="if(!this.checkValidity()){this.value='';alert('Please Enter a Non Zero Number')};" name="item_quantity" class="form-control" style="width:70px;display:inline" id="item_quantity_{{$row->id}}" min="0"  />
                                 <a href="javascript:void(0)" value="{{$row->id}}" class=" addToCart tips btn btn-xs btn-white"  title="Add to Cart"><i class="fa fa-shopping-cart" aria-hidden="true"></i></a>
-
                             @else
                                 Not Avail.
                             @endif</td>
@@ -211,6 +210,16 @@
             reloadData('#{{ $pageModule }}', url);
             return false;
         });
+        $("[name^=item_]").on('keyup',function(){
+            if(!$(this).val())
+            {
+               $(this).next('a').attr('disabled',true);
+            }
+            else
+            {
+                $(this).next('a').attr('disabled',false);
+            }
+        });
 
         $('.addToCart').on('click',function(){
             var base_url = <?php echo  json_encode(url()) ?>;
@@ -219,19 +228,21 @@
 
             if(!qty)
             {
-                qty=1;
+
+                $(this).next('.qty-error').show();
+                return false;
             }
-            console.log(addId+ " "+qty);
-            $.ajax({
-                type: "GET",
-                url: base_url + '/shopfegrequeststore/popup-cart/'+addId+"/"+qty,
-                data: {
-                },
-                success: function (response) {
-                    $("#update_text_to_add_cart").text(response.total_cart);
-                    showResponse(response)
-                }
-            });
+            else {
+                $.ajax({
+                    type: "GET",
+                    url: base_url + '/shopfegrequeststore/popup-cart/' + addId + "/" + qty,
+                    data: {},
+                    success: function (response) {
+                        $("#update_text_to_add_cart").text(response.total_cart);
+                        showResponse(response)
+                    }
+                });
+            }
         });
         function showResponse(data)  {
 

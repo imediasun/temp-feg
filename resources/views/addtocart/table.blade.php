@@ -94,7 +94,6 @@
                             </td>
                         </tr>
                     @endif
-
                     <?php foreach ($rowData as $row) :
                     $id = $row->id;
                     ?>
@@ -125,7 +124,7 @@
 
                                 @if($field['field']=='qty')
 
-                                    <input type="number" value="{{ $value }}" name="qty[]" id="{{ $row->id }}" data-vendor="{{ $row->vendor_name }}" style="width:55px" onchange="changeTotal(this.value,this.id)"/>
+                                    <input type="number" value="{{ $value }}" name="qty[]" id="{{ $row->id }}" data-vendor="{{ $row->vendor_name }}" style="width:55px"  onkeypress="changeTotal(this.value,this.id,event)"/>
                                 @else
 {!! $value !!}
                                 @endif
@@ -304,12 +303,15 @@
         });
     }
     timer=null;
-    function changeTotal(value,id)
+    function changeTotal(value,id,e)
     {
         var vendor_name1=$("#"+id).data('vendor');
        vendor_name1=vendor_name1.replace(/ /g, '_');
        // alert(vendor_name1);
-        doStuff(value,id,vendor_name1);
+        if (e.keyCode == 13) {
+            $('.ajaxLoading').show();
+            doStuff(value,id,vendor_name1);
+        }
     }
     function confirmSubmit() {
         var shortMessage;
@@ -355,6 +357,7 @@ function loadCart(vendor_name,subtotal)
 {
 
     getCartData(false,vendor_name,subtotal);
+
    // return false;
 }
 </script>
