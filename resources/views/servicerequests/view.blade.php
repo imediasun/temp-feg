@@ -136,10 +136,11 @@ $myUserTooltip = "You";
                                                 ><i class="fa  fa-save "></i> Update</button>
                                         @if ($canChangeStatus) 
                                         <div class="selectStatusDropdownContainer">
+                                            <input type='hidden' name='oldStatus' value='{{ $ticketStatus }}' />
                                             <select name='Status' required class='Status '>
                                                 @foreach($statusOptions as $key => $val)
                                                     <option  value ='{{ $key }}' 
-                                                        @if($row['Status'] == $key) selected='selected' @endif
+                                                        @if($ticketStatus == $key) selected='selected' @endif
                                                     >{{ $val }}</option>";
                                                 @endforeach
                                             </select>                                            

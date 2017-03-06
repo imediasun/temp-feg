@@ -2,10 +2,12 @@
 {{--*/      $ID = @$row['TicketID']             /*--}}
 {{--*/      $isEdit = !empty($ID)               /*--}}
 {{--*/      $entryBy = empty($row['entry_by']) ? $uid : $row['entry_by']  /*--}}
+{{--*/      $ticketStatus = isset($statusOptions[$row['Status']]) ? $statusOptions[$row['Status']] : 'Open'  /*--}}
 @if($setting['form-method'] =='native')
 	<div class="sbox">
 		<div class="sbox-title">  
 			<h4>
+                @if ($isEdit) Edit @else Create @endif Ticket
 				<a href="javascript:void(0)" class="collapse-close pull-right btn btn-xs btn-danger" onclick="ajaxViewClose('#{{ $pageModule }}')"><i class="fa fa fa-times"></i></a>
 			</h4>
 	</div>
@@ -17,9 +19,7 @@
 		<input type="hidden" name='assign_to' value="{{ $row['assign_to']}}">        
 		<input type="hidden" name='entry_by' value="{{ $entryBy }}">
 		<div class="col-md-12">
-						<fieldset><legend>Create Ticket</legend>
-									
-
+            <fieldset>
 				  <div class="form-group  " > 
 					<label for="Subject" class=" control-label col-md-4 text-left"> 
 					{!! SiteHelpers::activeLang('Subject', (isset($fields['Subject']['language'])? $fields['Subject']['language'] : array())) !!}	
@@ -67,13 +67,16 @@
 					<div class="col-md-6">
 					  
 					<?php $Status = $row['Status']; ?>
-                        @if(!$in_edit_mode) 
-                            <input type="text" readonly class="form-control" value="open" name="Status"/> 
+                        @if(!$in_edit_mode || !$canChangeStatus) 
+                            <input type='hidden' name='oldStatus' value='{{ $Status }}' />
+                            <input type='hidden' name='Status' value='{{ empty($Status) ? 'open' : $Status }}' />
+                            <input type="text" readonly class="form-control" value="{{ $ticketStatus }}" /> 
                         @else
+                            <input type='hidden' name='oldStatus' value='{{ $Status }}' />
                             <select name='Status' required class='select2 '>
                             	@foreach($statusOptions as $key => $val)
                                     <option  value ='{{ $key }}' 
-                                        @if($row['Status'] == $key) selected='selected' @endif
+                                        @if($Status == $key) selected='selected' @endif
                                     >{{ $val }}</option>";
                                 @endforeach
                             </select>

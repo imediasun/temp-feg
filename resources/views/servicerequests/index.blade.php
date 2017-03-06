@@ -39,7 +39,7 @@
             reloadData('#{{ $pageModule }}','{{ $pageModule }}/data');
         });
     </script>
-    <!--<script type="text/javascript" src="{{ asset('sximo/js/modules/tickets/grid.js') }}"></script>-->          
+    <script type="text/javascript" src="{{ asset('sximo/js/modules/tickets/grid.js') }}"></script>          
     <script type="text/javascript" src="{{ asset('sximo/js/modules/tickets/view.js') }}"></script>
     <!--<script type="text/javascript" src="{{ asset('sximo/js/modules/tickets/form.js') }}"></script>-->          
     

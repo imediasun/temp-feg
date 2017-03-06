@@ -231,6 +231,8 @@ function initiateSearchFormFields(container) {
 }
 
 function initiateInlineFormFields(container,url) {
+    App.autoCallbacks.runCallback('inline.cells.config.before', {'cells': container});
+    
     container.find('.date').datepicker({format:'mm/dd/yyyy'}).on('change', function(){$('.datepicker').hide();});
     container.find('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'}).on('change', function(){$('.datepicker').hide();});
     renderDropdown(container.find('.sel-inline'),{width:"98%"});
@@ -246,6 +248,8 @@ function initiateInlineFormFields(container,url) {
         $(this).parent().find('.prod_sub_type_id').jCombo(url_for_prod_sub_type,
             {selected_value: '{{ \Session::get('sub_type') }}', initial_text: '--- Select  Subtype ---'  });*/
     });
+    
+    App.autoCallbacks.runCallback('inline.cells.config.after', {'cells': container});
 }
 
 function initDataGrid(module, url, options) {

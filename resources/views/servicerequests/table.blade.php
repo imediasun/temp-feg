@@ -89,6 +89,7 @@
                             <td> </td>
                             @if($setting['view-method']=='expand') <td> </td> @endif
                             @foreach ($tableGrid as $t)
+                              @if ($canChangeStatus || !in_array($t['field'],['Status', 'closed']))                             
                                 @if(isset($t['inline']) && $t['inline'] =='1')
                                     <?php $limited = isset($t['limited']) ? $t['limited'] :''; ?>
                                     @if(SiteHelpers::filterColumn($limited ))
@@ -97,6 +98,7 @@
                                         </td>
                                     @endif
                                 @endif
+                              @endif
                             @endforeach
                             <td >
                                 <button onclick="saved('form-0')" class="btn btn-primary btn-xs" type="button"><i class="fa  fa-save"></i></button>

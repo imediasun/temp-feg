@@ -4,9 +4,18 @@
 	  $('#rcv').hide();
    }
 
-	$(document).ready(function() {
+$(document).ready(function() {
 	$('.editable').dblclick(function(){
-		editablerowscount++;
+        
+        var hookParams = {'row': $(this), count: editablerowscount};
+        if ($(this).hasClass('inline_edit_applied')) {
+            return;
+        }
+        App.autoCallbacks.runCallback('inline.row.config.before', hookParams);
+        
+        editablerowscount++;
+        hookParams.count = editablerowscount;
+        
         if(editablerowscount==1) {
             var isAccessAllowed="{{ $access['is_add'] }}";
             var isInlineEnable="{{ $setting['inline'] }}"
@@ -14,138 +23,176 @@
                 var newRow = jQuery('<button id="rcv" onclick="saveAll();" class="btn btn-sm btn-white"> Save </button>');
                 jQuery('.m-b .pull-right').prepend(newRow);
             }
-        }
-    $(this).addClass('inline_edit_applied');
+        }        
+        $(this).addClass('inline_edit_applied');
         displayEditableSaveButton();
 
-		    var id = $(this).attr("id");
-			$('#form-0 td').each(function(){
-				var val = $(this).attr("data-form");
-				var format = $(this).attr("data-form-type");
-				if( val !== undefined && val !== 'action' )
-				{
+        var id = $(this).attr("id");
+        $('#form-0 td').each(function(){
+            var inputTemplateElement = $(this);
+            var val = $(this).attr("data-form");
+            var format = $(this).attr("data-form-type");
+            if( val !== undefined && val !== 'action' ) 
+            {
+                
+                var h = $(this).html();	
 
-					var h = $(this).html();	
-
-					$('#'+id+' td').each(function() {
-						var target = $(this).attr('data-field');
-						var values = $(this).attr('data-values');
-						var data_format = $(this).attr('data-format');
-						if( target !== undefined && target !== 'action' && target == val)
-						{
-							$(this).html(h);
-
-							if(format =='select'){
-								if($.isNumeric(values))
-								{
-									$('#'+id+' td select[name="'+target+'"] option[value="'+values+'"]').attr('selected','selected');
-								}
-								else if((/^[0-9]+-.*?$/).test(values))
-								{
-									var myval = values.split('-');
-									$('#'+id+' td option[value="'+myval[0]+'"]').attr('selected','selected');
-								}
-								else
-								{
-									$('#'+id+' td select[name="'+target+'"] option').filter(function(){
+                $('#'+id+' td').each(function() {
+                    var target = $(this).attr('data-field');
+                    var values = $(this).attr('data-values');
+                    var data_format = $(this).attr('data-format');
+                    hookParams.config = { 'html': h, 'template': inputTemplateElement, 'field': null };                    
+                    hookParams.cell = $(this);                    
+                    if( target !== undefined && target !== 'action' && target == val)
+                    {                        
+                        App.autoCallbacks.runCallback('inline.cell.config.before', hookParams);
+                        $(this).html(h);
+                        hookParams.config.field = $(this).find('[name="'+target+'"]');                        
+                        
+                        if(format =='select'){
+                            if($.isNumeric(values))
+                            {
+                                $('#'+id+' td select[name="'+target+'"] option[value="'+values+'"]').attr('selected','selected');
+                            }
+                            else if((/^[0-9]+-.*?$/).test(values))
+                            {
+                                var myval = values.split('-');
+                                $('#'+id+' td option[value="'+myval[0]+'"]').attr('selected','selected');
+                            }
+                            else
+                            {
+                                $('#'+id+' td select[name="'+target+'"] option').filter(function(){
 										return this.text.toLowerCase() == values.toLowerCase();
-									}).prop('selected', true);
-								}
+                                }).prop('selected', true);
+                            }
 
-							}
+                        }
 
-							else if(format == 'text_date')
-							{
-								$('#'+id+' td input[name="'+target+'"]').val(data_format);
-								$('#'+id+' td input[name="'+target+'"]').datepicker('update');
-							}
-							else if(format == 'text_datetime')
-							{
-								$('#'+id+' td input[name="'+target+'"]').val(data_format);
-								$('#'+id+' td input[name="'+target+'"]').datetimepicker('update');
+                        else if(format == 'text_date')
+                        {
+                            $('#'+id+' td input[name="'+target+'"]').val(data_format);
+                            $('#'+id+' td input[name="'+target+'"]').datepicker('update');
+                        }
+                        else if(format == 'text_datetime')
+                        {
+                            $('#'+id+' td input[name="'+target+'"]').val(data_format);
+                            $('#'+id+' td input[name="'+target+'"]').datetimepicker('update');
 
-							}
-							else if(format =='textarea' || format =='textarea')
-							{
-								$('#'+id+' td textarea[name="'+target+'"]').val(values);
-							}
-							else (format =='text')
-							{
-								$('#'+id+' td input[name="'+target+'"]').val(values);
-							} 
+                        }
+                        else if(format =='textarea' || format =='textarea')
+                        {
+                            $('#'+id+' td textarea[name="'+target+'"]').val(values);
+                        }
+                        else (format =='text')
+                        {
+                            $('#'+id+' td input[name="'+target+'"]').val(values);
+                        } 
+                        
+                        App.autoCallbacks.runCallback('inline.cell.config.after', hookParams);
+                    }
 
-						}
+                });			
 
-					})			
-									
-				} 
-			})
-			$('#'+id+' .action').hide();
-			$('#'+id+' .actionopen').show();
-            initiateInlineFormFields($('#'+ id + ' td'),"{{url()}}");
-		});
+            } 
+        });
+        $('#'+id+' td .action').hide();
+        $('#'+id+' td .actionopen').show();
+        
+        App.autoCallbacks.runCallback('inline.row.config.after', hookParams);
+        
+        initiateInlineFormFields($('#'+ id + ' td[data-field]'),"{{url()}}");
+    });
 });
-function canceled( id )
+
+
+function canceled( id ) 
 {
+    var hookParams = {'id': id, 'row': $("#"+id), count: editablerowscount};
+    App.autoCallbacks.runCallback('inline.row.cancel.before', hookParams);
+
     $("#"+id).removeClass('inline_edit_applied');
-	$('#'+id+' .actionopen').hide();
-	$('#'+id+' td').each(function() {
-		var val = $(this).attr("data-values");
-		var value = $(this).attr("data-format");
+    $('#'+id+' td .actionopen').hide();
+    $('#'+id+' td').each(function() {           
+        var val = $(this).attr("data-values");
+        var value = $(this).attr("data-format");
 
-		if( val !== undefined && val !== 'action' )
-		{
+        if( val !== undefined && val !== 'action' )
+        {
+            hookParams.cell = $(this);
+            App.autoCallbacks.runCallback('inline.cell.cancel.before', hookParams);
+            $(this).html(value);
+            App.autoCallbacks.runCallback('inline.cell.cancel.after', hookParams);
+        }		
+    });
 
-			$(this).html(value);
-		}		
-	});
 
+    $('#'+id+' td .action').show();
+    editablerowscount--;
+    hookParams.count = editablerowscount;
+    displayEditableSaveButton();
 
-	$('#'+id+' .action').show();
-	editablerowscount--;
-
-	displayEditableSaveButton();
-
+    App.autoCallbacks.runCallback('inline.row.cancel.after', hookParams);
 }
 
-  function displayEditableSaveButton() {
-	  if(editablerowscount > 0)
-	  {
-		  $('#rcv').show();
-	  }
-	  else if(editablerowscount ==0) {
-		  $('#rcv').hide();
-	  }
-  }
+function displayEditableSaveButton() {
+    if(editablerowscount > 0)
+    {
+        $('#rcv').show();
+    }
+    else if(editablerowscount == 0) {
+        $('#rcv').hide();
+    }
+}
 
 
 function saved( id )
 {
 
-	var myId = id.split('-');
-	var datas = $('#'+id+' td :input').serialize();
-	$('#'+id+' .action').show();
-	$('.ajaxLoading').show();	
-	$.post( '{{$pageModule}}/save/'+myId[1] ,datas, function( data ) {
-		if(data.status == 'success')
-		{
+    var row = $('#'+id),
+        myId = id.split('-'),
+        recordId = myId && myId[1],
+        saveConfig = {
+            xhr: null,
+            data: $('#'+id+' td :input').serialize(),
+            url: '{{$pageModule}}/save/'+ recordId,
+            callback: function() {}
+        },
+        hookParams = {'id': recordId, 'row': row, 'config': saveConfig};
+
+    App.autoCallbacks.runCallback('inline.row.save.before', hookParams);
+    if (saveConfig.error) {
+        notyMessageError(saveConfig.error);
+        return false;
+    }
+    
+    $('.ajaxLoading').show();	
+    saveConfig.xhr = $.post(saveConfig.url, saveConfig.data, function( data ) {
+        hookParams.data = data;
+        if (saveConfig.callback && typeof saveConfig.callback == 'function') {
+            saveConfig.callback(data, recordId, row);
+        }
+        if(data.status == 'success')
+        {
+            App.autoCallbacks.runCallback('inline.row.save.after', hookParams);
             $("#"+id).removeClass('inline_edit_applied');
-			ajaxFilter('#{{ $pageModule }}','{{ $pageUrl }}/data');
-			notyMessage(data.message);
-			$('#'+id+' .actionopen').empty();
-			
-		} else {
-			$('.ajaxLoading').hide();
-			notyMessageError(data.message);	
-			return false;
-		}
-	});
+            ajaxFilter('#{{ $pageModule }}','{{ $pageUrl }}/data');
+            notyMessage(data.message);
+            $('#'+id+' td .action').show();
+            $('#'+id+' td .actionopen').hide();
+
+        } else {
+            App.autoCallbacks.runCallback('inline.row.save.error', hookParams);
+            $('.ajaxLoading').hide();
+            notyMessageError(data.message);	
+            return false;
+        }
+    });
 }
 
-          function saveAll(){
-              $('.inline_edit_applied').each(function(){
-                  saved($(this).attr('id'));
-              });
-          }
+function saveAll(){
+    $('.inline_edit_applied').each(function(){
+        saved($(this).attr('id'));
+    });
+}
 
 </script>
