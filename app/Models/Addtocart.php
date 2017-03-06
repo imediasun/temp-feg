@@ -40,7 +40,6 @@ class addtocart extends Sximo
         } else {
             $where.= " AND requests.location_id = " . \Session::get('selected_location') . " AND requests.status_id = 0";
         }
-        $where .=" AND requests.status_id != 2";
         return $where ;
     }
 

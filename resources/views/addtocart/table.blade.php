@@ -99,7 +99,7 @@
                     ?>
                     <tr class="editable" id="form-{{ $row->id }}">
                         <td class="number"> <?php echo ++$i;?>  </td>
-                        <td><input type="checkbox" class="ids" name="ids[]" value="<?php echo $row->id;?>"/></td>
+                        <td><input type="checkbox" class="ids" name="ids[]" value="<?php echo $row->id;?>" onkeypress="disableEnter(event)"/></td>
                         <td> <?php
                             echo SiteHelpers::showUploadedFile($row->img, '/uploads/products/', 50, false);
                             ?></td>
@@ -124,7 +124,7 @@
 
                                 @if($field['field']=='qty')
 
-                                    <input type="number" value="{{ $value }}" name="qty[]" id="{{ $row->id }}" data-vendor="{{ $row->vendor_name }}" style="width:55px"  onkeypress="changeTotal(this.value,this.id,event)"/>
+                                    <input type="number" value="{{ $value }}" name="qty[]" id="{{ $row->id }}" data-vendor="{{ $row->vendor_name }}" style="width:55px"  onkeydown="changeTotal(this.value,this.id,event)"/>
                                 @else
 {!! $value !!}
                                 @endif
@@ -209,6 +209,12 @@
 @if($setting['inline'] =='true') @include('sximo.module.utility.inlinegrid') @endif
 
 <script>
+    function disableEnter(e)
+    {
+        if (e.which == 13) {
+            e.preventDefault();
+        }
+    }
     $(document).ready(function () {
         $('.tips').tooltip();
         $("#new_location").jCombo("{{ URL::to('order/comboselect?filter=location:id:id|location_name ') }}",
@@ -307,9 +313,9 @@
     {
         var vendor_name1=$("#"+id).data('vendor');
        vendor_name1=vendor_name1.replace(/ /g, '_');
-       // alert(vendor_name1);
         if (e.keyCode == 13) {
             $('.ajaxLoading').show();
+            e.preventDefault();
             doStuff(value,id,vendor_name1);
         }
     }
