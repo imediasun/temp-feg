@@ -42,7 +42,7 @@ $(document).ready(function() {
                     var values = $(this).attr('data-values');
                     var data_format = $(this).attr('data-format');
                     hookParams.config = { 'html': h, 'template': inputTemplateElement, 'field': null };                    
-                    hookParams.cell = $(this);                    
+                    hookParams.cell = $(this);
                     if( target !== undefined && target !== 'action' && target == val)
                     {                        
                         App.autoCallbacks.runCallback('inline.cell.config.before', hookParams);
@@ -195,4 +195,14 @@ function saveAll(){
     });
 }
 
+  App.autoCallbacks.registerCallback('inline.cell.config.before', function (params) {
+      //'row': row, 'cell':cell, config: { 'html': h, 'template': inputTemplateElement, 'field': null}, count: editablerowscount
+      var cell = params.cell;
+      cell.data('original-value-html', cell.html());
+  });
+  App.autoCallbacks.registerCallback('inline.cell.cancel.after', function (params) {
+      var cell = params.cell,
+              originalValue = cell.data('original-value-html');
+      cell.html(originalValue);
+  });
 </script>

@@ -5,11 +5,6 @@
    App.autoCallbacks.registerCallback('inline.row.config.before', function (params) {
        
    });
-   App.autoCallbacks.registerCallback('inline.cell.config.before', function (params) {
-      //'row': row, 'cell':cell, config: { 'html': h, 'template': inputTemplateElement, 'field': null}, count: editablerowscount 
-       var cell = params.cell;
-        cell.data('original-value-html', cell.html());
-   });
    App.autoCallbacks.registerCallback('inline.cell.config.after', function (params) {
        //'row': row, 'cell':cell, config: { 'html': h, 'template': inputTemplateElement, 'field': null}, count: editablerowscount 
        var  cell = params.cell,
@@ -98,11 +93,6 @@
    });
    App.autoCallbacks.registerCallback('inline.cell.cancel.before', function (params) {
        
-   });
-   App.autoCallbacks.registerCallback('inline.cell.cancel.after', function (params) {
-       var cell = params.cell,
-            originalValue = cell.data('original-value-html');
-        cell.html(originalValue);
    });
    App.autoCallbacks.registerCallback('inline.row.cancel.after', function (params) {
        
