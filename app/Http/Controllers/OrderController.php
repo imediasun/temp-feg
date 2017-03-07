@@ -668,7 +668,7 @@ class OrderController extends Controller
         $po_number = $request->get('po_number');
         $explanation = $request->get('explaination');
         $message = 'Link to Order: http://' . $_SERVER['HTTP_HOST'] . '/order/removeorder/' . $po_number . ' <br>Explanation: ' . $explanation . '';
-        $from = \Session::get('email');
+        $from = \Session::get('eid');
         $to = 'support@fegllc.com';
         $to = 'greg@fegllc.com';
         $subject = 'Order Removal Request';

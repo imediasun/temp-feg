@@ -14,6 +14,7 @@
             <div class="sbox animated fadeInRight">
                 <div class="sbox-title"> <h4> <i class="fa fa-table"></i> Request Removal <small>Order Removal Request</small></h4></div>
                 <div class="sbox-content">
+                    <div class="ajaxLoading"></div>
                     <div class="row" >
                         <div class="col-md-12" style="text-align: center;margin-bottom: 10px;">
                             <h1>Request Removal Explain</h1>
