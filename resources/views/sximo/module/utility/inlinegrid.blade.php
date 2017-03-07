@@ -67,18 +67,6 @@ $(document).ready(function() {
                             }
 
                         }
-
-                        else if(format == 'text_date')
-                        {
-                            $('#'+id+' td input[name="'+target+'"]').val(data_format);
-                            $('#'+id+' td input[name="'+target+'"]').datepicker('update');
-                        }
-                        else if(format == 'text_datetime')
-                        {
-                            $('#'+id+' td input[name="'+target+'"]').val(data_format);
-                            $('#'+id+' td input[name="'+target+'"]').datetimepicker('update');
-
-                        }
                         else if(format =='textarea' || format =='textarea')
                         {
                             $('#'+id+' td textarea[name="'+target+'"]').val(values);
@@ -216,8 +204,11 @@ function saveAll(){
               originalValue = cell.data('values'),
               formattedValue = cell.data('format'),
               input = config.field;
-
-      if (/date/.test(fieldType) && originalValue) {
+      
+      if(/datetime/.test(fieldType) && originalValue){
+          formattedValue = $.datepicker.formatDate('mm/dd/yy hh:ii:ss', new Date(originalValue));
+          input.val(formattedValue);
+      }else if (/date/.test(fieldType) && originalValue) {
           formattedValue = $.datepicker.formatDate('mm/dd/yy', new Date(originalValue));
           input.val(formattedValue);
       }
