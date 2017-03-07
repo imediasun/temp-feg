@@ -205,4 +205,22 @@ function saveAll(){
               originalValue = cell.data('original-value-html');
       cell.html(originalValue);
   });
+  App.autoCallbacks.registerCallback('inline.cell.config.after', function (params) {
+
+      var  cell = params.cell,
+              row = params.row,
+              config = params.config,
+              template = config.template,
+              fieldName = cell.data('field'),
+              fieldType = template.data('form-type'),
+              originalValue = cell.data('values'),
+              formattedValue = cell.data('format'),
+              input = config.field;
+
+      if (/date/.test(fieldType) && originalValue) {
+          formattedValue = $.datepicker.formatDate('mm/dd/yy', new Date(originalValue));
+          input.val(formattedValue);
+      }
+
+  });
 </script>
