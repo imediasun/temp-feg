@@ -352,6 +352,10 @@ abstract class Controller extends BaseController
 
                         $data[$field] = empty(\Request::get($field)) ? null : date("Y-m-d", strtotime(\Request::get($field)));
                     }   
+                    // if post is datetime
+                    elseif ($f['type'] == 'text_datetime') {
+                        $data[$field] = empty(\Request::get($field)) ? null : date("Y-m-d H:i:s", strtotime(\Request::get($field)));
+                    }   
                     // if post is seelct multiple
                     //
                     elseif ($f['type'] == 'select') {
