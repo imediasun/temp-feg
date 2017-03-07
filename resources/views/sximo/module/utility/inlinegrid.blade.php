@@ -7,10 +7,11 @@
 $(document).ready(function() {
 	$('.editable').dblclick(function(){
         
-        var hookParams = {'row': $(this), count: editablerowscount};
         if ($(this).hasClass('inline_edit_applied')) {
             return;
         }
+        
+        var hookParams = {'row': $(this), count: editablerowscount};
         App.autoCallbacks.runCallback('inline.row.config.before', hookParams);
         
         editablerowscount++;
@@ -205,23 +206,20 @@ function saveAll(){
               originalValue = cell.data('original-value-html');
       cell.html(originalValue);
   });
+  
   App.autoCallbacks.registerCallback('inline.cell.config.after', function (params) {
 
       var  cell = params.cell,
-              row = params.row,
-              config = params.config,
-              template = config.template,
-              fieldName = cell.data('field'),
-              fieldType = template.data('form-type'),
-              originalValue = cell.data('values'),
-              formattedValue = cell.data('format'),
-              input = config.field;
+            config = params.config,
+            template = config.template,
+            dateFormats = {'text_date': 'mm/dd/yy', 'text_datetime': 'mm/dd/yy hh:ii:ss'},
+            fieldType = template.data('form-type'),
+            originalValue = cell.data('values'),
+            formattedValue = cell.data('format'),
+            input = config.field;
       
-      if(/datetime/.test(fieldType) && originalValue){
-          formattedValue = $.datepicker.formatDate('mm/dd/yy hh:ii:ss', new Date(originalValue));
-          input.val(formattedValue);
-      }else if (/date/.test(fieldType) && originalValue) {
-          formattedValue = $.datepicker.formatDate('mm/dd/yy', new Date(originalValue));
+      if(/date/.test(fieldType) && originalValue){
+          formattedValue = $.datepicker.formatDate(dateFormats[fieldType], new Date(originalValue));
           input.val(formattedValue);
       }
 

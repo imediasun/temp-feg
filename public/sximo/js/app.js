@@ -233,8 +233,15 @@ function initiateSearchFormFields(container) {
 function initiateInlineFormFields(container,url) {
     App.autoCallbacks.runCallback('inline.cells.config.before', {'cells': container});
     
-    container.find('.date').datepicker({format:'mm/dd/yyyy'}).on('change', function(){$('.datepicker').hide();});
-    container.find('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'}).on('change', function(){$('.datetimepicker').hide();});
+    container.find('.date').datepicker({format:'mm/dd/yyyy', autoclose: true});
+//        .on('changeDate', function(e) {
+//            $(this).datepicker('hide');
+//        });            
+    container.find('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss', autoclose: true});
+//        .on('changeDate', function(e){
+//            $(this).datetimepicker('hide');            
+//        });
+        
     renderDropdown(container.find('.sel-inline'),{width:"98%"});
     $('.prod_type_id').change(function(){
 
