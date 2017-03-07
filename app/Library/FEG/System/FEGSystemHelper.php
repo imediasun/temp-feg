@@ -328,7 +328,7 @@ class FEGSystemHelper
             }
         }
         
-        mail($to, $subject, $message, $headers);
+        return mail($to, $subject, $message, $headers);
     }
     
     public static function phpMailer($to, $subject, $message, $from = "support@fegllc.com", $options = array()) {
@@ -463,6 +463,9 @@ class FEGSystemHelper
 //                self::configLaravelMail($mail, $options);
 //            });            
         }
+        
+        $failureCount = count(Mail::failures());  
+        return $failureCount == 0;
     }
     
     /**
@@ -487,10 +490,10 @@ class FEGSystemHelper
             $usePhpMail = !empty($options['usePHPMail']);
             //$useLaravelMail = !empty($options['useLaravelMail']) || !empty($options['attach']);
             if ($usePhpMail) {
-                self::phpMail($to, $subject, $message, $from, $options);                                
+                return self::phpMail($to, $subject, $message, $from, $options);                                
             }
             else {
-                self::laravelMail($to, $subject, $message, $from, $options);                
+                return self::laravelMail($to, $subject, $message, $from, $options);                
             }
         }
     }
@@ -1037,8 +1040,9 @@ $message" .
              
         self::logit("Sending Email", $lf, $lp);
         self::logit($options, $lf, $lp);        
-        self::sendEmail($to, $subject, $message, $from, $options);
+        $status = self::sendEmail($to, $subject, $message, $from, $options);
         self::logit("Email sent", $lf, $lp);
+        return $status;
     }
 
     public static function getOption($optionName, $default = '', $all = false, $skipInactive = false, $details = false) {
