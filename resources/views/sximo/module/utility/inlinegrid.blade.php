@@ -67,6 +67,18 @@ $(document).ready(function() {
                             }
 
                         }
+
+                        else if(format == 'text_date')
+                        {
+                            $('#'+id+' td input[name="'+target+'"]').val(data_format);
+                            //$('#'+id+' td input[name="'+target+'"]').datepicker('update');
+                        }
+                        else if(format == 'text_datetime')
+                        {
+                            $('#'+id+' td input[name="'+target+'"]').val(data_format);
+                            //$('#'+id+' td input[name="'+target+'"]').datetimepicker('update');
+
+                        }
                         else if(format =='textarea' || format =='textarea')
                         {
                             $('#'+id+' td textarea[name="'+target+'"]').val(values);
