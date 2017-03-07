@@ -67,18 +67,6 @@ $(document).ready(function() {
                             }
 
                         }
-
-                        else if(format == 'text_date')
-                        {
-                            $('#'+id+' td input[name="'+target+'"]').val(data_format);
-                            $('#'+id+' td input[name="'+target+'"]').datepicker('update');
-                        }
-                        else if(format == 'text_datetime')
-                        {
-                            $('#'+id+' td input[name="'+target+'"]').val(data_format);
-                            $('#'+id+' td input[name="'+target+'"]').datetimepicker('update');
-
-                        }
                         else if(format =='textarea' || format =='textarea')
                         {
                             $('#'+id+' td textarea[name="'+target+'"]').val(values);
@@ -204,5 +192,26 @@ function saveAll(){
       var cell = params.cell,
               originalValue = cell.data('original-value-html');
       cell.html(originalValue);
+  });
+  App.autoCallbacks.registerCallback('inline.cell.config.after', function (params) {
+
+      var  cell = params.cell,
+              row = params.row,
+              config = params.config,
+              template = config.template,
+              fieldName = cell.data('field'),
+              fieldType = template.data('form-type'),
+              originalValue = cell.data('values'),
+              formattedValue = cell.data('format'),
+              input = config.field;
+      
+      if(/datetime/.test(fieldType) && originalValue){
+          formattedValue = $.datepicker.formatDate('mm/dd/yy hh:ii:ss', new Date(originalValue));
+          input.val(formattedValue);
+      }else if (/date/.test(fieldType) && originalValue) {
+          formattedValue = $.datepicker.formatDate('mm/dd/yy', new Date(originalValue));
+          input.val(formattedValue);
+      }
+
   });
 </script>
