@@ -237,7 +237,7 @@ function initiateInlineFormFields(container,url) {
 //        .on('changeDate', function(e) {
 //            $(this).datepicker('hide');
 //        });            
-    container.find('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss', autoclose: true});
+    container.find('.datetime').datetimepicker({format: 'mm/dd/yyyy HH:ii:ss P', autoclose: true});
 //        .on('changeDate', function(e){
 //            $(this).datetimepicker('hide');            
 //        });

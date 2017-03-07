@@ -210,16 +210,18 @@ function saveAll(){
   App.autoCallbacks.registerCallback('inline.cell.config.after', function (params) {
 
       var  cell = params.cell,
-            config = params.config,
-            template = config.template,
-            dateFormats = {'text_date': 'mm/dd/yy', 'text_datetime': 'mm/dd/yy hh:ii:ss'},
-            fieldType = template.data('form-type'),
-            originalValue = cell.data('values'),
-            formattedValue = cell.data('format'),
-            input = config.field;
-      
+              config = params.config,
+              template = config.template,
+              dateFormats = {'text_date': 'MM/DD/YYYY', 'text_datetime': 'MM/DD/YYYY hh:mm:ss A'},
+              fieldType = template.data('form-type'),
+              originalValue = cell.data('values'),
+              formattedValue = cell.data('format'),
+              value,
+              input = config.field;
+
       if(/date/.test(fieldType) && originalValue){
-          formattedValue = $.datepicker.formatDate(dateFormats[fieldType], new Date(originalValue));
+          value = moment(originalValue);
+          formattedValue = value.isValid() ? value.format(dateFormats[fieldType]) : '';
           input.val(formattedValue);
       }
 
