@@ -1,6 +1,7 @@
 <?php namespace App\Http\Controllers;
 
 use App\Http\Controllers\controller;
+use App\Library\FEG\System\FEGSystemHelper;
 use App\Models\Order;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
@@ -665,27 +666,29 @@ class OrderController extends Controller
 
     function postRemovalrequest(Request $request)
     {
+        $configName = 'Order Request removal';
         $po_number = $request->get('po_number');
         $explanation = $request->get('explaination');
+        $receipts = FEGSystemHelper::getSystemEmailRecipients($configName);
         $message = 'Link to Order: http://' . $_SERVER['HTTP_HOST'] . '/order/removeorder/' . $po_number . ' <br>Explanation: ' . $explanation . '';
         $from = \Session::get('eid');
-        $to = 'support@fegllc.com';
-        $to = 'greg@fegllc.com';
         $subject = 'Order Removal Request';
-        $headers = 'MIME-Version: 1.0' . "\r\n";
-        $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
         $message = $message;
-        if (mail($to, $subject, $message, $headers)) {
-            return response()->json(array(
-                'status' => 'success',
-                'message' => \Lang::get('core.note_success')
-            ));
-        } else {
-            return response()->json(array(
-                'status' => 'success',
-                'message' => \Lang::get('core.note_success')
-            ));
-        }
+
+        FEGSystemHelper::sendSystemEmail(array_merge($receipts, array(
+            'subject' => $subject,
+            'message' => $message,
+            'isTest' => env('APP_ENV', 'development') !== 'production' ? true : false,
+            'configName' => $configName,
+            'from' => $from,
+            'replyTo' => $from,
+
+        )));
+
+        return response()->json(array(
+            'status' => 'success',
+            'message' => \Lang::get('core.request_sent_success')
+        ));
     }
 
     function getRemoveorder($poNumber = "")
