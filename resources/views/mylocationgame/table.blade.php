@@ -112,7 +112,7 @@
 					@if($setting['disableactioncheckbox']=='false')
 							<td ><input type="checkbox" class="ids" name="ids[]" value="<?php echo $row->id ;?>" />  </td>
 						@endif
-                    <td>{!! SiteHelpers::showUploadedFile(SiteHelpers::getGameImage($row->game_title_id),'/uploads/games/images/',50,false,false) !!}</td>
+                    <td>{!! SiteHelpers::showUploadedFile(SiteHelpers::getGameImage($row->game_title_id),'/uploads/games/images/',50,false,$row->id) !!}</td>
 					@if($setting['view-method']=='expand')
 					<td><a href="javascript:void(0)" class="expandable" rel="#row-{{ $row->id }}" data-url="{{ url('mylocationgame/show/'.$id) }}"><i class="fa fa-plus " ></i></a></td>
 					@endif

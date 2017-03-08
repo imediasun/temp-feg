@@ -129,7 +129,7 @@
                                          <?php
                                                 foreach($images as $img)
                                                     {
-                                         echo SiteHelpers::showUploadedFile($img, '/uploads/newGraphic/', 50, false);
+                                         echo SiteHelpers::showUploadedFile($img, '/uploads/newGraphic/', 50, false,$row->id);
                                          }?>
 
 									 @else
