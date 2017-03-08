@@ -230,35 +230,6 @@ function initiateSearchFormFields(container) {
     renderDropdown(container.find('.sel-search-multiple, .select3'));
 }
 
-function initiateInlineFormFields(container,url) {
-    App.autoCallbacks.runCallback('inline.cells.config.before', {'cells': container});
-    
-    container.find('.date').datepicker({format:'mm/dd/yyyy', autoclose: true});
-//        .on('changeDate', function(e) {
-//            $(this).datepicker('hide');
-//        });            
-    container.find('.datetime').datetimepicker({format: 'mm/dd/yyyy HH:ii:ss P', autoclose: true});
-//        .on('changeDate', function(e){
-//            $(this).datetimepicker('hide');            
-//        });
-        
-    renderDropdown(container.find('.sel-inline'),{width:"98%"});
-    $('.prod_type_id').change(function(){
-
-        //http://sximo/product/comboselect?filter=product_type:id:type_description:request_type_id:1
-        var url_for_prod_sub_type = "/product/comboselect?filter=product_type:id:type_description:request_type_id:"+$(this).val();
-        //$(this).closest('td').next('td').find('.prod_sub_type_id:first').jCombo(url_for_prod_sub_type);
-        $(this).closest('td').next('td').find('.prod_sub_type_id:first').select2('destroy');
-        $(this).closest('td').next('td').find('.prod_sub_type_id:first').jCombo(url_for_prod_sub_type);
-        renderDropdown(container.find('.sel-inline'),{width:"98%"});
-        /*
-        $(this).parent().find('.prod_sub_type_id').jCombo(url_for_prod_sub_type,
-            {selected_value: '{{ \Session::get('sub_type') }}', initial_text: '--- Select  Subtype ---'  });*/
-    });
-    
-    App.autoCallbacks.runCallback('inline.cells.config.after', {'cells': container});
-}
-
 function initDataGrid(module, url, options) {
     if (!options) {
         options = {};
