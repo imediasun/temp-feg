@@ -13,20 +13,20 @@
        var  cell = params.cell,
             row = params.row,
             config = params.config,            
-            template = config.template,
+            inputTemplateCell = config.inputTemplateCell,
             fieldName = cell.data('field'),            
-            fieldType = template.data('form-type'),            
+            fieldType = inputTemplateCell.data('form-type'),            
             originalValue = cell.data('values'),
             formattedValue = cell.data('format'),
-            input = config.field;
+            input = config.input;
 
-        if (!input.val()) {
-            input.val(originalValue);
-        }
-        if (/date/.test(fieldType) && originalValue) {
-            originalValue = formattedValue;
-            input.val(originalValue);
-        }
+//        if (!input.val()) {
+//            input.val(originalValue);
+//        }
+//        if (/date/.test(fieldType) && originalValue) {
+//            originalValue = formattedValue;
+//            input.val(originalValue);
+//        }
                 
         input.on('change', function (e){            
             var val = input.val();            
@@ -39,14 +39,11 @@
                 input.attr('data-touched', 1);                
             }                        
         });       
-   });
-    
+   });    
    App.autoCallbacks.registerCallback('inline.row.config.after', function (params) {
      
    });
-   App.autoCallbacks.registerCallback('inline.cells.config.after', function (params) {
-       
-   });
+
    App.autoCallbacks.registerCallback('inline.cells.config.before', function (params) {
        var  allCells = params.cells,
             statusCell = allCells.filter('[data-field=Status]'), 
@@ -57,7 +54,7 @@
             statusOValue = statusCell.data('values'),
             statusCValue = statusOValue,
             closedDateOValue = closedDateCell.data('format'),
-            closedDateCValue = closedDateOValue,
+            closedDateCValue = closedDateOValue || closedDateInput.data('today'),
             row = statusCell.parent();
         
         bothInputs.on('change', function (e){
@@ -88,13 +85,18 @@
         
         closedDateInput.prop('disabled', statusOValue != 'closed');
             
+   });   
+   App.autoCallbacks.registerCallback('inline.cells.config.after', function (params) {
+       
    });
-   
    
    App.autoCallbacks.registerCallback('inline.row.cancel.before', function (params) {
        
    });
    App.autoCallbacks.registerCallback('inline.cell.cancel.before', function (params) {
+       
+   });
+   App.autoCallbacks.registerCallback('inline.cell.cancel.after', function (params) {
        
    });
    App.autoCallbacks.registerCallback('inline.row.cancel.after', function (params) {
