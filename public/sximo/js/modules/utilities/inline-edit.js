@@ -114,7 +114,17 @@
                     input.attr('data-today-datetime', todayDateTime);
                     break;
                 case 'select':
-                    input.val(originalValue);
+                    if ($.isNumeric(originalValue)) {
+                        input.val((''+originalValue).split('-')[0]);
+                    }
+                    else if ((/^[0-9]+-.*?$/).test(originalValue)) {
+                        input.val((''+originalValue).split('-')[0]);
+                    }
+                    else {
+                        input.find('option').filter(function(){
+                            return this.text.toLowerCase() == originalValue.toLowerCase();
+                        }).prop('selected', true);
+                    }
                     break;
                 default: 
                     input.val(originalValue);
@@ -290,12 +300,11 @@
             var elm = $(this),
                 value = elm.val(),
                 productSubTypeComboDataUrl = url + "/product/comboselect?filter=product_type:id:type_description:request_type_id:" + value,
-                productSubTypeInput = cellsHookParams.row.find('.prod_sub_type_id:first');
+                productSubTypeInput = cellsHookParams.row.find('select.prod_sub_type_id:first');
             
-            productSubTypeInput.select2('destroy');
             productSubTypeInput.jCombo(productSubTypeComboDataUrl);
-            renderDropdown(container.find('.sel-inline'),{width:"98%"});
-
+            productSubTypeInput.select2('destroy');
+            renderDropdown(productSubTypeInput,{width:"98%"});
         });
 
         App.autoCallbacks.runCallback('inline.cells.config.after', cellsHookParams);
