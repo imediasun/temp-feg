@@ -2514,4 +2514,18 @@ class SiteHelpers
           \Session::put('selected_location', 0);
       }
   }
+  
+  public static function getModuleSetting($moduleName, $setting = '') {
+      $returnValue = null;
+      $data = \App\Models\Sximo\Module::where('module_name', $moduleName)->pluck('module_config');
+      if (!empty($data)) {
+        $config = self::CF_decode_json($data);
+        $settings = isset($config['setting']) ? $config['setting'] : [];
+        $returnValue = $settings;
+        if (!empty($setting)) {
+            $returnValue = isset($settings[$setting]) ? $settings[$setting] : null;
+        }
+      }
+      return $returnValue;
+  }
 }
