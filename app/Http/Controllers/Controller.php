@@ -299,7 +299,9 @@ abstract class Controller extends BaseController
                                     if ($files != '') $files = substr($files, 0, strlen($files) - 1);
                                 }
                             }
-                            
+//                            if ($skipFieldsMissingInRequest && empty($files)) {
+//                                contine;
+//                            }
                             $data[$field] = $files;
 
                         }
