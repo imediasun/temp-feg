@@ -112,13 +112,6 @@ class PendingrequestController extends Controller
             } elseif ($data->status_id == 3) {
                 $rows[$index]->status_id = 'Denied';
             }
-            if ($data->process_date == "0000-00-00") {
-
-                $rows[$index]->process_date = '00/00/0000';
-            } else {
-                $rows[$index]->process_date = date("m/d/Y", strtotime($data->process_date));
-            }
-            $rows[$index]->request_date = date("m/d/Y", strtotime($data->request_date));
             //$location = \DB::select("Select location_name FROM location WHERE id = " . $data->location_id . "");
             //$rows[$index]->location_id = (isset($location[0]->location_name) ? $location[0]->location_name : '');
         }
