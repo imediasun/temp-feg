@@ -299,7 +299,9 @@ abstract class Controller extends BaseController
                                     if ($files != '') $files = substr($files, 0, strlen($files) - 1);
                                 }
                             }
-                            
+//                            if ($skipFieldsMissingInRequest && empty($files)) {
+//                                contine;
+//                            }
                             $data[$field] = $files;
 
                         }
@@ -351,6 +353,10 @@ abstract class Controller extends BaseController
                     elseif ($f['type'] == 'date' || $f['type'] == 'text_date') {
 
                         $data[$field] = empty(\Request::get($field)) ? null : date("Y-m-d", strtotime(\Request::get($field)));
+                    }   
+                    // if post is datetime
+                    elseif ($f['type'] == 'text_datetime') {
+                        $data[$field] = empty(\Request::get($field)) ? null : date("Y-m-d H:i:s", strtotime(\Request::get($field)));
                     }   
                     // if post is seelct multiple
                     //

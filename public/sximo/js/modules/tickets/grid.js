@@ -5,6 +5,9 @@
    App.autoCallbacks.registerCallback('inline.row.config.before', function (params) {
        
    });
+   App.autoCallbacks.registerCallback('inline.cell.config.before', function (params) {
+       
+   });
    App.autoCallbacks.registerCallback('inline.cell.config.after', function (params) {
        //'row': row, 'cell':cell, config: { 'html': h, 'template': inputTemplateElement, 'field': null}, count: editablerowscount 
        var  cell = params.cell,
