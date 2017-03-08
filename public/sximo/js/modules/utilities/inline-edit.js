@@ -115,15 +115,19 @@
                     break;
                 case 'select':
                     if ($.isNumeric(originalValue)) {
-                        input.val((''+originalValue).split('-')[0]);
+                        input.val(originalValue);
                     }
                     else if ((/^[0-9]+-.*?$/).test(originalValue)) {
                         input.val((''+originalValue).split('-')[0]);
                     }
                     else {
-                        input.find('option').filter(function(){
-                            return this.text.toLowerCase() == originalValue.toLowerCase();
-                        }).prop('selected', true);
+                        input.val(originalValue);
+                        if (input.val() == '') {
+                            input.find('option').filter(function(){
+                                    return this.text.toLowerCase() == 
+                                            originalValue.toLowerCase();
+                            }).prop('selected', true);
+                        }                        
                     }
                     break;
                 default: 
