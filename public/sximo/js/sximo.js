@@ -45,7 +45,7 @@ jQuery(document).ready(function($){
 
   	$('.switch').bootstrapSwitch();
 	$('.date').datepicker({format:'mm/dd/yyyy',autoclose:true})
-	$('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});
+	$('.datetime').datetimepicker({format: 'mm/dd/yyyy HH:ii:ss P'});
 	
 	/* Tooltip */
 	$('.previewImage').fancybox();	
