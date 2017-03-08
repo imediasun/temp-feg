@@ -415,7 +415,7 @@
                         initial_text: '-------- Select Freight Type --------'
                     });
 
-            $("#order_type_id").jCombo("{{ URL::to('order/comboselect?filter=order_type:id:order_type') }}",
+            $("#order_type_id").jCombo("{{ URL::to('order/comboselect?filter=order_type:id:order_type') }}&parent=can_request:1",
                     {selected_value: '{{ $data["order_type"] }}', initial_text: '-------- Select Order Type --------'});
             $("[id^=game_0]").select2({
                 dataType: 'json',
