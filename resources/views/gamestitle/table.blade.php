@@ -124,7 +124,7 @@
                             <td ><input type="checkbox" class="ids" name="ids[]" value="<?php echo $row->id ;?>" />  </td>
                         @endif
 
-                        <td>{!! SiteHelpers::showUploadedFile($row->img,'/uploads/games/images/',50,false) !!}</td>
+                        <td>{!! SiteHelpers::showUploadedFile($row->img,'/uploads/games/images/',50,false,$row->id) !!}</td>
 
 
 
