@@ -1,21 +1,21 @@
 <?php usort($tableGrid, "SiteHelpers::_sort"); ?>
-<div class="sbox">
+    <div class="sbox">
 	<div class="sbox-title">
-		<h5> <i class="fa fa-table"></i> </h5>
-        <div class="sbox-tools" >
-        {{--*/ $sortParam = is_null(Input::get('sort'))?'':'&sort='.Input::get('sort') /*--}}
-        {{--*/ $orderParam = is_null(Input::get('order'))?'':'&order='.Input::get('order') /*--}}
-        {{--*/ $rowsParam = is_null(Input::get('rows'))?'':'&rows='.Input::get('rows') /*--}}
-        @if(isset($_GET['search']))
-		 <a href="{{ url() }}/core/users?{{ $sortParam }}{{ $orderParam }}{{ $rowsParam }}"
-            class="btn btn-xs btn-white tips btn-search" title="Clear Search" ><i class="fa fa-trash-o"></i> Clear Search </a>
-        @endif
-		@if(Session::get('gid') ==1)
-			<a href="{{ URL::to('feg/module/config/'.$pageModule) }}" class="btn btn-xs btn-white tips" title=" {{ Lang::get('core.btn_config') }}" ><i class="fa fa-cog"></i></a>
-		@endif
-		</div>
+		<h5> <i class="fa fa-table"></i> {{ $pageTitle }} <small>{{ $pageNote }}</small></h5>
+    <div class="sbox-tools" >
+    {{--*/ $sortParam = is_null(Input::get('sort'))?'':'&sort='.Input::get('sort') /*--}}
+    {{--*/ $orderParam = is_null(Input::get('order'))?'':'&order='.Input::get('order') /*--}}
+    {{--*/ $rowsParam = is_null(Input::get('rows'))?'':'&rows='.Input::get('rows') /*--}}
+    @if(isset($_GET['search']))
+     <a href="{{ url() }}/core/users?{{ $sortParam }}{{ $orderParam }}{{ $rowsParam }}"
+        class="btn btn-xs btn-white tips btn-search" title="Clear Search" ><i class="fa fa-trash-o"></i> Clear Search </a>
+    @endif
+    @if(Session::get('gid') ==1)
+        <a href="{{ URL::to('feg/module/config/'.$pageModule) }}" class="btn btn-xs btn-white tips" title=" {{ Lang::get('core.btn_config') }}" ><i class="fa fa-cog"></i></a>
+    @endif
+    </div>
 	</div>
-	<div class="sbox-content" style="border: none;">
+	<div class="sbox-content" >
         @if($setting['usesimplesearch']!='false')
             <?php $simpleSearchForm = SiteHelpers::configureSimpleSearchForm($tableForm); ?>
             @if(!empty($simpleSearchForm))
@@ -91,11 +91,11 @@
 				@endif
 				@if($setting['view-method']=='expand') <td> </td> @endif
 				@foreach ($tableGrid as $t)
-					@if($t['view'] =='1')
+					@if(isset($t['inline']) && $t['inline'] =='1')
 					<?php $limited = isset($t['limited']) ? $t['limited'] :''; ?>
 						@if(SiteHelpers::filterColumn($limited ))
 						<td data-form="{{ $t['field'] }}" data-form-type="{{ AjaxHelpers::inlineFormType($t['field'],$tableForm)}}">
-							{!! SiteHelpers::transForm($t['field'] , $tableForm) !!}
+							{!! SiteHelpers::transInlineForm($t['field'] , $tableForm) !!}
 						</td>
 						@endif
 					@endif
@@ -120,7 +120,10 @@
 					@endif
 					 <?php foreach ($tableGrid as $field) : ?>
                         @if($field['view'] =='1')
-                        <td>
+                            {{--*/ $conn = (isset($field['conn']) ? $field['conn'] : array()) /*--}}
+                            {{--*/ $value = AjaxHelpers::gridFormater($row->$field['field'], $row, $field['attribute'], $conn) /*--}}
+                        <td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}"
+                                data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
                            @if($field['field'] == 'avatar')
                                <?php if( file_exists( './uploads/users/'.$row->avatar) && $row->avatar !='') { ?>
                                <img src="{{ URL::to('uploads/users').'/'.$row->avatar }} " border="0" width="40" class="img-circle" />
@@ -128,20 +131,19 @@
                                <img alt="" src="{{url()}}/silouette.png" width="40" class="img-circle" border="0"/>
                                <?php } ?>
                            @elseif($field['field'] =='active')
-                               {!! ($row->active ==1 ? '<lable class="label label-success">Active</lable>' : '<lable class="label label-danger">Inactive</lable>')  !!}
+                               {!! ($row->active == 1 ? '<lable class="label label-success">Active</lable>' : '<lable class="label label-danger">Inactive</lable>')  !!}
                             @elseif($field['field'] =='date')
-                                {{  DateHelpers::formatDate($row->date) }}
+                                {{  DateHelpers::formatDate($value) }}
                             @elseif($field['field'] =='last_login')
-                                {{  DateHelpers::formatDateTime($row->last_login) }}
+                                {{  DateHelpers::formatDateTime($value) }}
                             @elseif($field['field'] =='last_activity')
-                                {{  DateHelpers::formatDateTime($row->last_activity) }}
+                                {{  DateHelpers::formatDateTime($value) }}
                             @elseif($field['field'] =='updated_at')
-                                {{  DateHelpers::formatDate($row->updated_at) }}
+                                {{  DateHelpers::formatDate($value) }}
                             @elseif($field['field'] =='created_at')
-                                {{  DateHelpers::formatDate($row->created_at) }}
+                                {{  DateHelpers::formatDate($value) }}
                            @else
-                               {{--*/ $conn = (isset($field['conn']) ? $field['conn'] : array() ) /*--}}
-                               {!! SiteHelpers::gridDisplay($row->$field['field'],$field['field'],$conn) !!}
+                                {{ $value }}                               
                            @endif
                         </td>
                         @endif
@@ -149,12 +151,13 @@
 						endforeach;
 					  ?>
                     @if($setting['disablerowactions']=='false')     
-                    <td id="s_icons">
+                    <td id="s_icons" data-values="action" data-key="{{ $row->id }}">
+                        <div class="action">
 					 	@if($access['is_detail'] ==1)
-						<a href="{{ URL::to('core/users/show/'.$row->id.'?return='.$return)}}" class="tips btn btn-xs btn-white" title="{{ Lang::get('core.btn_view') }}"><i class="fa  fa-search "></i></a>
+                            <a href="{{ URL::to('core/users/show/'.$row->id.'?return='.$return)}}" class="tips btn btn-xs btn-white" title="{{ Lang::get('core.btn_view') }}"><i class="fa  fa-search "></i></a>
 						@endif
 						@if($access['is_edit'] ==1)
-						<a  href="{{ URL::to('core/users/update/'.$row->id.'?return='.$return) }}" class="tips btn btn-xs btn-white" title="{{ Lang::get('core.btn_edit') }}"><i class="fa fa-edit "></i></a>
+                            <a  href="{{ URL::to('core/users/update/'.$row->id.'?return='.$return) }}" class="tips btn btn-xs btn-white" title="{{ Lang::get('core.btn_edit') }}"><i class="fa fa-edit "></i></a>
 						@endif
 
                         <a  href="{{ URL::to('core/users/play/'.$row->id)}}" class="tips btn btn-xs btn-white" title="Impersonate"><i class="fa fa-user"  aria-hidden="true"></i></a>
@@ -165,8 +168,10 @@
                             <a  href="{{ URL::to('core/users/block/'.$row->id)}}" class="tips btn btn-xs btn-white"  title="Block User"><i class="fa fa-ban" aria-hidden="true"></i></a>
                         @endif
                         <a href="{{ URL::to('core/users/upload/'.$row->id)}}" class="tips btn btn-xs btn-white"  title="Upload Image"><i class="fa fa-picture-o" aria-hidden="true"></i></a>
-                    @endif
+                        </div>
+                        {!! AjaxHelpers::buttonActionInline($row->id,'id') !!}
                     </td>
+                    @endif
                 </tr>
                 @if($setting['view-method']=='expand')
                 <tr style="display:none" class="expanded" id="row-{{ $row->id }}">
