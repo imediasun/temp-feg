@@ -113,7 +113,7 @@
 					@endif
                     <td>
                         <?php
-                        echo SiteHelpers::showUploadedFile($row->img, '/uploads/games/',50, false);
+                        echo SiteHelpers::showUploadedFile($row->img, '/uploads/games/',50, false,$row->id);
                         ?>
                     </td>
 					@if($setting['view-method']=='expand')

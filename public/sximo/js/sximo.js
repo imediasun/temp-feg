@@ -53,7 +53,7 @@ jQuery(document).ready(function($){
 	$('.editor').summernote();
 	$(".select2").select2({ width:"98%"});	
 	$(".select-liquid").select2({
-		minimumResultsForSearch: "-1",
+		minimumResultsForSearch: "-1"
 	});	
 	$('.panel-trigger').click(function(e){
 		e.preventDefault();
