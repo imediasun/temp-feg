@@ -86,7 +86,11 @@ $(document).ready(function() {
                         }
                         else (format =='text')
                         {
+                            if(/price/.test(target))
+                                values = !(data_format) ? '' : data_format.toString().replace('$', '').trim();
+
                             $('#'+id+' td input[name="'+target+'"]').val(values);
+
                         } 
                         
                         App.autoCallbacks.runCallback('inline.cell.config.after', hookParams);
