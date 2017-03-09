@@ -275,14 +275,16 @@
         if (event && event.preventDefault && typeof event.preventDefault == 'function') {
             event.preventDefault();
         }
-        var editedRows = container.find('.inline_edit_applied'),
+        var elm = $(element),
+            editedRows = container.find('.inline_edit_applied'),
             editedRowsCount = editedRows.length,
             editedIndex = 0;
-            
+        
+        elm.prop('disabled', true);
         editedRows.each(function(){
             editedIndex++;
-            saveInlineForm($(this).attr('id'), null, null, editedIndex >= editedRowsCount);
-        });       
+            saveInlineForm($(this).attr('id'), null, null, editedIndex < editedRowsCount);
+        }); 
    };
     window.displayInlineEditButtons = displayInlineEditButtons = function (rowDomId, isHide) {
         var globalSaveButton = container.find('#rcv');
