@@ -273,7 +273,7 @@
     window.displayInlineEditButtons = displayInlineEditButtons = function (rowDomId, isHide) {
         var globalSaveButton = container.find('#rcv');
         if (!globalSaveButton.length) {
-            globalSaveButton = $('<button id="rcv" onclick="saveAll();" class="btn btn-sm btn-white"> Save </button>');
+            globalSaveButton = $('<button id="rcv" onclick="saveAllInlineForm();" class="btn btn-sm btn-white"> Save </button>');
             container.find('.m-b .pull-right').prepend(globalSaveButton);
         }        
         if(editingRowsCount) {
