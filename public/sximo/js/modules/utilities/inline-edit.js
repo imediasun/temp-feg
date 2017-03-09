@@ -185,8 +185,10 @@
    };
    
     window.cancelInlineEdit = cancelInlineEdit = function (rowDomId, event, element) {
+        if (event && event.preventDefault && typeof event.preventDefault == 'function') {
+            event.preventDefault();
+        }
         
-        event.preventDefault();
         var row = container.find("#"+rowDomId),
             cells = row.find('td[data-edit=1]'), 
             rowHookParams = {'row': row, count: editingRowsCount, cells: cells};
@@ -222,8 +224,10 @@
         return false;
 
    };
-    window.saveInlineForm = saveInlineForm = function (rowDomId, event, element) {
-        event.preventDefault();
+    window.saveInlineForm = saveInlineForm = function (rowDomId, event, element, preventReload) {
+        if (event && event.preventDefault && typeof event.preventDefault == 'function') {
+            event.preventDefault();
+        }
         
         var row = container.find('#'+rowDomId),
             splitID = rowDomId.split('-'),
@@ -252,10 +256,12 @@
             if(data.status == 'success')
             {
                 displayInlineEditButtons(rowDomId, true);
-                notyMessage(data.message);
                 App.autoCallbacks.runCallback('inline.row.save.after', hookParams);
                 row.removeClass('inline_edit_applied');
-                ajaxFilter('#' + moduleName, pageUrl + '/data');
+                if (!preventReload) {
+                    notyMessage(data.message);
+                    ajaxFilter('#' + moduleName, pageUrl + '/data');
+                }                
             } 
             else {
                 App.autoCallbacks.runCallback('inline.row.save.error', hookParams);
@@ -265,15 +271,23 @@
         
         return false;
    };
-    window.saveAllInlineForm = saveAllInlineForm = function () {
-        container('.inline_edit_applied').each(function(){
-            saveInlineForm($(this).attr('id'));
+    window.saveAllInlineForm = saveAllInlineForm = function (event, element) {
+        if (event && event.preventDefault && typeof event.preventDefault == 'function') {
+            event.preventDefault();
+        }
+        var editedRows = container.find('.inline_edit_applied'),
+            editedRowsCount = editedRows.length,
+            editedIndex = 0;
+            
+        editedRows.each(function(){
+            editedIndex++;
+            saveInlineForm($(this).attr('id'), null, null, editedIndex >= editedRowsCount);
         });       
    };
     window.displayInlineEditButtons = displayInlineEditButtons = function (rowDomId, isHide) {
         var globalSaveButton = container.find('#rcv');
         if (!globalSaveButton.length) {
-            globalSaveButton = $('<button id="rcv" onclick="saveAllInlineForm();" class="btn btn-sm btn-white"> Save </button>');
+            globalSaveButton = $('<button id="rcv" onclick="saveAllInlineForm(event, this);" class="btn btn-sm btn-white" type="button"> Save </button>');
             container.find('.m-b .pull-right').prepend(globalSaveButton);
         }        
         if(editingRowsCount) {
