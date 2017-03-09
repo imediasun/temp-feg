@@ -35,7 +35,6 @@
         @endif
        @include( $pageModule.'/toolbar',['colconfigs' => SiteHelpers::getRequiredConfigs($module_id)])
 
-        <?php echo Form::open(array('url' => 'servicerequests/delete/', 'class' => 'form-horizontal', 'id' => 'SximoTable', 'data-parsley-validate' => ''));?>
         <div class="table-responsive">
             @if(count($rowData)>=1)
 
@@ -130,17 +129,6 @@
                         @if(SiteHelpers::filterColumn($limited ))
                             <td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}"
                                 data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
-                                <?php
-                                    if($field['field']=='Status'){
-                                        $value = isset($statusOptions[$value]) ? $statusOptions[$value] : '';
-                                    }
-                                    elseif ($field['field']=='Priority') {
-                                        if ($value == 'emergency') {
-                                            $value = "sameday";
-                                        }
-                                        $value = isset($priorityOptions[$value]) ? $priorityOptions[$value] : '';
-                                    }
-                                ?>
                                 {!! $value !!}
                             </td>
                         @endif
@@ -176,13 +164,10 @@
             @endif
 
         </div>
-        <?php echo Form::close();?>
         @include('ajaxfooter')
 
     </div>
 </div>
-
-@if($setting['inline'] =='true') @include('sximo.module.utility.inlinegrid') @endif
 <script>
     $(document).ready(function () {
         $('.tips').tooltip();

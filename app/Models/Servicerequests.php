@@ -4,6 +4,7 @@ use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Observers\Observerable;
 use App\Models\ticketsetting;
+use App\Library\FEG\System\Formatter;
 
 class Servicerequests extends Observerable  {
 
@@ -57,5 +58,15 @@ class Servicerequests extends Observerable  {
         else{
             return parent::getComboselect($params,$limit,$parent);
         }
+    }
+    
+    public static function getPriorities() {
+        return Formatter::getTicketPriorities();
+    }
+    public static function getStatuses() {
+        return Formatter::getTicketStatuses();
+    }
+    public static function getIssueTypes() {
+        return Formatter::getTicketIssueTypes();
     }
 }

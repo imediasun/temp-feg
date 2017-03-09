@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Validator, Input, Redirect;
 use App\Library\FEG\System\FEGSystemHelper;
+use App\Library\FEG\System\Formatter;  
 
 class servicerequestsController extends Controller
 {
@@ -19,8 +20,6 @@ class servicerequestsController extends Controller
     public $module = 'Servicerequests';
     protected $layout = "layouts.main";
     protected $data = array();
-    protected $priorityOptions = ['normal' => 'Normal' ,  'sameday' => 'Same Day', ];
-    protected $statusOptions = ['open' => 'Open' ,  'inqueue' => 'Pending' ,  'closed' => 'Closed' ,];
 
     public function __construct()
     {
@@ -40,8 +39,9 @@ class servicerequestsController extends Controller
             'pageUrl' => url('servicerequests'),
             'return' => self::returnUrl(),
             
-            'priorityOptions' => $this->priorityOptions,
-            'statusOptions' => $this->statusOptions,
+            'priorityOptions' => $this->model->getPriorities(),
+            'statusOptions' => $this->model->getStatuses(),
+            'issueTypeOptions' => $this->model->getIssueTypes(),
             'canChangeStatus' => ticketsetting::canUserChangeStatus(),
         );
 
@@ -250,20 +250,17 @@ class servicerequestsController extends Controller
     function getUpdate(Request $request, $id = null)
     {
 
-        if ($id == '') {
-            if ($this->access['is_add'] == 0)
+        $isAdd = $this->data['isAdd'] = is_null($id);
+        
+        if ($isAdd) {
+            if ($this->access['is_add'] == 0) {
                 return Redirect::to('dashboard')->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
-
+            }
         }
-
-        if ($id != '') {
-            if ($this->access['is_edit'] == 0)
+        else {
+            if ($this->access['is_edit'] == 0) {
                 return Redirect::to('dashboard')->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
-        }
-        if ($id != null) {
-            $this->data['in_edit_mode'] = true;
-        } else {
-            $this->data['in_edit_mode'] = false;
+            }
         }
         $row = $this->model->find($id);
         if ($row) {
@@ -271,13 +268,21 @@ class servicerequestsController extends Controller
         } else {
             $this->data['row'] = $this->model->getColumnTable('sb_tickets');
         }
-        $this->data['uid'] = \Session::get('uid');
+        $this->data['uid'] = $userId = \Session::get('uid');
         $this->data['fid'] = \Session::get('fid');
         $this->data['setting'] = $this->info['setting'];
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
 
         $this->data['id'] = $id;
 
+        $this->data['issueType'] = $row['issue_type'];
+        $this->data['priority']  =  $row['Priority'];
+        $this->data['status'] = $row['Status'];
+        $this->data['ticketStatusLabel'] = Formatter::getTicketStatus($row['Status'], 'Open');
+        $this->data['needByDate'] = \DateHelpers::formatDate($row['need_by_date']);
+        $this->data['filePaths'] = explode(",", $row['file_path']);        
+        $this->data['entryBy'] = $isAdd ? $userId : $row['entry_by'];
+        $this->data['locationId'] = $isAdd ? \Session::get('selected_location') : $row['location_id'];
 
         return view('servicerequests.form', $this->data);
     }
@@ -312,11 +317,37 @@ class servicerequestsController extends Controller
         $this->data['id'] = $id;
         $this->data['uid'] = $userId;
         $this->data['fid'] = \Session::get('fid');
-        $this->data['creator'] = !empty($row->entry_by) ? \SiteHelpers::getUserDetails($row->entry_by) : [];
+        $this->data['creator'] = $creator = !empty($row->entry_by) ? \SiteHelpers::getUserDetails($row->entry_by) : [];
         $this->data['following'] = Ticketfollowers::isFollowing($id, $userId);
         $this->data['followers'] = Ticketfollowers::getAllFollowers($id);
         $this->data['setting'] = $this->info['setting'];
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
+        
+        
+        $this->data['commentsCount'] =  $commentsCount = $comments->count();
+        $this->data['conversationCount'] = $commentsCount + 1;
+
+        $this->data['ticketID'] = $row->TicketID;
+        $this->data['ticketStatus'] = $row->Status;
+        $this->data['ticketStatusLabel'] = Formatter::getTicketStatus($row->Status, 'Open');
+        $this->data['dateNeeded'] = \DateHelpers::formatDate($row->need_by_date);
+        $this->data['createdOn'] = \DateHelpers::formatDate($row->Created);
+        $this->data['createdOnWithTime'] = \DateHelpers::formatDateCustom($row->Created);
+        $this->data['updatedOn'] = \DateHelpers::formatDate($row->updated);
+        $this->data['updatedOnWithTime'] = \DateHelpers::formatDateCustom($row->updated);
+        $this->data['locationName'] = \SiteHelpers::gridDisplayView($row->location_id,'location_id','1:location:id:id|location_name');
+
+        $this->data['creatorID'] = $row->entry_by;
+        $this->data['creatorProfile'] = $creatorProfile = FEGSystemHelper::getUserProfileDetails($creator);
+
+        $this->data['creatorName'] = $creatorProfile['fullName'];
+        $this->data['creatorAvatar'] =  $creatorProfile['avatar'];
+        $this->data['creatorTooltip'] = $creatorProfile['tooltip'];
+
+        $this->data['myUserAvatar'] = FEGSystemHelper::getUserAvatarUrl($userId);
+        $this->data['myUserTooltip'] = "You";        
+        
+        
         return view('servicerequests.view', $this->data);
     }
 
