@@ -55,23 +55,45 @@ class AjaxHelpers
 		if(isset($attribute['formater']['active']) and $attribute['formater']['active']  ==1)
 		{
 			$fval = $attribute['formater']['value'];
-			foreach($row as $k=>$i)
-			{
-				if (preg_match('/\b('.$k.')\b/',$fval))
-                $fval = str_replace($k,$i,$fval);
-			}
-			$c = explode("|",$fval);
-
-			if(isset($c[0]) && class_exists($c[0]))
-			{
-                if(isset($c[2]) && ($c[2] != null || empty($c[2]))) {
-                    if ($c[1] == "formatDate" || $c[1] == "formatDateTime") {
-                        $val = call_user_func(array($c[0], $c[1]), $c[2]);
-                    } else {
-                        $val = call_user_func(array($c[0], $c[1]), str_replace(":", ",", $c[2]));
+            
+            list($className, $methodName, $serialisedParams) = explode('|', $fval.'||');
+            if (method_exists($className, $methodName)) {
+                $params = explode(':', $serialisedParams);
+                foreach ($params as $index => $fieldName) {
+                    if (is_array($row)) {
+                        if (isset($row[$fieldName])) {
+                            $params[$index] = $row[$fieldName];
+                        }                        
+                    }
+                    else {
+                        if (isset($row->$fieldName)) {
+                            $params[$index] = $row->$fieldName;
+                        }                        
                     }
                 }
-			}
+                $serialisedParams = implode(",", $params);
+                $val = call_user_func(array($className, $methodName), $serialisedParams);
+                $val = call_user_func_array(array($className, $methodName), $params);                   
+            }
+//            
+//            
+//			foreach($row as $k=>$i)
+//			{
+//				if (preg_match('/\b('.$k.')\b/',$fval))
+//                $fval = str_replace($k,$i,$fval);
+//			}
+//			$c = explode("|",$fval);
+//
+//			if(isset($c[0]) && class_exists($c[0]))
+//			{
+//                if(isset($c[2]) && ($c[2] != null || empty($c[2]))) {
+//                    if ($c[1] == "formatDate" || $c[1] == "formatDateTime") {
+//                        $val = call_user_func(array($c[0], $c[1]), $c[2]);
+//                    } else {
+//                        $val = call_user_func(array($c[0], $c[1]), str_replace(":", ",", $c[2]));
+//                    }
+//                }
+//			}
 
 		}
 		// Handling Link  function 	
