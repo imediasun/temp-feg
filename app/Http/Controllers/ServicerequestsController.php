@@ -674,6 +674,7 @@ class servicerequestsController extends Controller
         //@todo need separate table for comment attachments
         unset($ticketsData['oldStatus']);
         unset($ticketsData['file_path']);
+        $requestedOn = $ticketsData['Created'];
         unset($ticketsData['Created']);
         $commentId = $comment_model->insertRow($commentsData, NULL);
 
@@ -721,6 +722,7 @@ class servicerequestsController extends Controller
         */
             
         //send email
+        $ticketsData['Created'] = $requestedOn;
         $this->model->notifyObserver('AddComment',[
                 'message'       =>$message,
                 'ticketId'      => $ticketId,

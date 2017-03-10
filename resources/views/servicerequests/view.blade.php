@@ -167,7 +167,7 @@
                 {!! Form::hidden('Subject', $row->Subject) !!}
                 {!! Form::hidden('Description', $row->Description) !!}
                 {!! Form::hidden('need_by_date', $row->need_by_date) !!}
-                {!! Form::hidden('Created', $row->Created) !!}
+                {!! Form::hidden('Created', $createdOn) !!}
                 {!! Form::hidden('entry_by', $creatorID) !!}
                 {!! Form::hidden('issue_type', $row->issue_type) !!}
                 {!! Form::hidden('location_id', $row->location_id) !!}
