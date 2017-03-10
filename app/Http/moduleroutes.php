@@ -42,7 +42,6 @@ Route::controller('submitservicerequest', 'SubmitservicerequestController');
 Route::controller('gameservicehistory', 'GameservicehistoryController');
 Route::controller('merchindisetheminggallary', 'MerchindisetheminggallaryController');
 Route::controller('redemptioncountergallary', 'RedemptioncountergallaryController');
-Route::controller('getfreightquote', 'GetfreightquoteController');
 Route::controller('managefreightquoters', 'ManagefreightquotersController');
 Route::controller('freightquoters', 'FreightquotersController');
 Route::controller('trainingmaterial', 'TrainingmaterialController');
