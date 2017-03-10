@@ -112,7 +112,6 @@ else
     $("#user_locations").on('change', function () {
         var location_id = $(this).val();
         var pageModule ="{{ $pageModule }}";
-        url=pageModule+"/changelocation/" + location_id;
         window.location.href ="{{ url() }}/"+pageModule+"/changelocation/" + location_id;
     });
 
