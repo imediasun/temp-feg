@@ -87,7 +87,9 @@ class OrderController extends Controller
 
         $fields = $info['config']['grid'];
         $rows = $results['rows'];
-        $rows = $this->updateDateInAllRows($rows);
+
+        //$rows = $this->updateDateInAllRows($rows);
+
         $content = array(
             'fields' => $fields,
             'rows' => $rows,

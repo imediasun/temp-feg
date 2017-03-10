@@ -1,37 +1,31 @@
 {{--*/      use App\Library\FEG\System\FEGSystemHelper;                   /*--}}
-{{--*/      $ID = @$row['TicketID']             /*--}}
-{{--*/      $isEdit = !empty($ID)               /*--}}
-{{--*/      $entryBy = empty($row['entry_by']) ? $uid : $row['entry_by']  /*--}}
-{{--*/      $ticketStatus = isset($statusOptions[$row['Status']]) ? $statusOptions[$row['Status']] : 'Open'  /*--}}
 @if($setting['form-method'] =='native')
-	<div class="sbox">
+<div class="sbox">
 		<div class="sbox-title">  
 			<h4>
-                @if ($isEdit) Edit @else Create @endif Ticket
+                @if ($isAdd) Create @else Edit @endif Ticket
 				<a href="javascript:void(0)" class="collapse-close pull-right btn btn-xs btn-danger" onclick="ajaxViewClose('#{{ $pageModule }}')"><i class="fa fa fa-times"></i></a>
 			</h4>
 	</div>
 
 	<div class="sbox-content"> 
 @endif	
-			{!! Form::open(array('url'=>'servicerequests/save/'.$row['TicketID'], 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'sbticketFormAjax')) !!}
+    {!! Form::open(array('url'=>'servicerequests/save/'.$row['TicketID'], 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'sbticketFormAjax')) !!}
 
 		<input type="hidden" name='assign_to' value="{{ $row['assign_to']}}">        
 		<input type="hidden" name='entry_by' value="{{ $entryBy }}">
-		<div class="col-md-12">
+		<div class="col-md-12 clearfix p-lg-f">
             <fieldset>
-				  <div class="form-group  " > 
+                <div class="form-group  " > 
 					<label for="Subject" class=" control-label col-md-4 text-left"> 
 					{!! SiteHelpers::activeLang('Subject', (isset($fields['Subject']['language'])? $fields['Subject']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
 					  {!! Form::text('Subject', $row['Subject'],array('class'=>'form-control', 'placeholder'=>'', 'required'=>'required'  )) !!}
 					 </div> 
-					 <div class="col-md-2">
-					 	
-					 </div>
-				  </div> 					
-				  <div class="form-group  " > 
+					 <div class="col-md-2"></div>
+                </div> 					
+                <div class="form-group  " > 
 					<label for="Description" class=" control-label col-md-4 text-left"> 
 					{!! SiteHelpers::activeLang('Description', (isset($fields['Description']['language'])? $fields['Description']['language'] : array())) !!}	
 					</label>
@@ -39,11 +33,9 @@
 					  <textarea name='Description' rows='5' id='Description' class='form-control '  
 				         required  >{{ $row['Description'] }}</textarea> 
 					 </div> 
-					 <div class="col-md-2">
-					 	
-					 </div>
-				  </div> 					
-				  <div class="form-group  " > 
+					 <div class="col-md-2"></div>
+                </div> 					
+                <div class="form-group  " > 
 					<label for="Priority" class=" control-label col-md-4 text-left"> 
 					{!! SiteHelpers::activeLang('Priority', (isset($fields['Priority']['language'])? $fields['Priority']['language'] : array())) !!}	
 					</label>
@@ -51,229 +43,153 @@
                         <select name='Priority' required class='select2 ' data-current-date='{{ date('Y-m-d') }}'>
                             @foreach($priorityOptions as $key => $val)
                                 <option  value ='{{ $key }}' 
-                                    @if($row['Priority'] == $key) selected='selected' @endif
-                                >{{ $val }}</option>";
+                                    @if($priority == $key) selected='selected' @endif
+                                >{{ $val }}</option>
                             @endforeach
                         </select>
 					 </div> 
-					 <div class="col-md-2">
-					 	
-					 </div>
-				  </div> 					
-				  <div class="form-group  " > 
+					 <div class="col-md-2"></div>
+                </div> 					
+                <div class="form-group  " > 
 					<label for="Status" class=" control-label col-md-4 text-left"> 
 					{!! SiteHelpers::activeLang('Status', (isset($fields['Status']['language'])? $fields['Status']['language'] : array())) !!}	
 					</label>
-					<div class="col-md-6">
-					  
-					<?php $Status = $row['Status']; ?>
-                        @if(!$in_edit_mode || !$canChangeStatus) 
-                            <input type='hidden' name='oldStatus' value='{{ $Status }}' />
-                            <input type='hidden' name='Status' value='{{ empty($Status) ? 'open' : $Status }}' />
-                            <input type="text" readonly class="form-control" value="{{ $ticketStatus }}" /> 
+					<div class="col-md-6">					  
+                        @if($isAdd || !$canChangeStatus) 
+                            <input type='hidden' name='oldStatus' value='{{ $status }}' />
+                            <input type='hidden' name='Status' value='{{ empty($status) ? 'open' : $status }}' />
+                            <input type="text" readonly class="form-control" value="{{ $ticketStatusLabel }}" /> 
                         @else
-                            <input type='hidden' name='oldStatus' value='{{ $Status }}' />
+                            <input type='hidden' name='oldStatus' value='{{ $status }}' />
                             <select name='Status' required class='select2 '>
                             	@foreach($statusOptions as $key => $val)
                                     <option  value ='{{ $key }}' 
-                                        @if($Status == $key) selected='selected' @endif
-                                    >{{ $val }}</option>";
+                                        @if($status == $key) selected='selected' @endif
+                                    >{{ $val }}</option>
                                 @endforeach
                             </select>
                         @endif
 					 </div> 
-					 <div class="col-md-2">
-					 	
-					 </div>
-				  </div> 					
-				  <div class="form-group  " > 
+					 <div class="col-md-2"></div>
+                </div> 					
+                <div class="form-group  " > 
 					<label for="Issue Type" class=" control-label col-md-4 text-left"> 
 					{!! SiteHelpers::activeLang('Issue Type', (isset($fields['issue_type']['language'])? $fields['issue_type']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  
-					<?php $issue_type = explode(',',$row['issue_type']);
-					$issue_type_opt = array('Order Request' => 'Order Request' ,'Support Issue' => 'Support Issue' ); ?>
 					<select name='issue_type' rows='5'   class='select2 ' required >
                         <option value="">Select Issue Type</option>
-						<?php 
-						foreach($issue_type_opt as $key=>$val)
-						{
-							echo "<option  value ='$key' ".($row['issue_type'] == $key ? " selected='selected' " : '' ).">$val</option>"; 						
-						}						
-						?></select> 
+                           	@foreach($issueTypeOptions as $key=>$val)
+                                    <option  value ='{{ $key }}' 
+                                        @if($issueType == $key) selected='selected' @endif
+                                    >{{ $val }}</option>
+                            @endforeach                        
+						</select> 
 					 </div> 
-					 <div class="col-md-2">
-					 	
-					 </div>
-				  </div> 					
-				  <div class="form-group  " > 
+					 <div class="col-md-2"></div>
+                </div> 					
+                <div class="form-group  " > 
 					<label for="Location" class=" control-label col-md-4 text-left"> 
 					{!! SiteHelpers::activeLang('Location', (isset($fields['location_id']['language'])? $fields['location_id']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
 					  <select name='location_id' rows='5' id='location_id' class='select2 ' required  ></select> 
 					 </div> 
-					 <div class="col-md-2">
-					 	
-					 </div>
-				  </div> 					
-				  <div class="form-group  " style="display:none" >
+					 <div class="col-md-2"></div>
+                </div> 					
+                <div class="form-group  " style="display:none" >
 					<label for="Game" class=" control-label col-md-4 text-left"> 
 					{!! SiteHelpers::activeLang('Game', (isset($fields['game_id']['language'])? $fields['game_id']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
 					  <select name='game_id' rows='5' id='game_id' class='select2 '   ></select> 
 					 </div> 
-					 <div class="col-md-2">
-					 	
-					 </div>
-				  </div> 					
-				  <div class="form-group  " style="display:none" >
+					 <div class="col-md-2"></div>
+                </div> 					
+                <div class="form-group  " style="display:none" >
 					<label for="Department" class=" control-label col-md-4 text-left"> 
 					{!! SiteHelpers::activeLang('Department', (isset($fields['department_id']['language'])? $fields['department_id']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
 					  <select name='department_id' rows='5' id='department_id' class='select2 '   ></select>
 					 </div> 
-					 <div class="col-md-2">
-					 	
-					 </div>
-				  </div> 					
+					 <div class="col-md-2"></div>
+                </div> 					
 
-				  <div class="form-group  " style="display:none" >
+                <div class="form-group  " style="display:none" >
 					<label for="Assign To" class=" control-label col-md-4 text-left"> 
 					{!! SiteHelpers::activeLang('Assign To', (isset($fields['assign_to']['language'])? $fields['assign_to']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
 					  <select name='assign_to[]' multiple  id='assign_to' class='select2 '  ></select>
 					 </div>
-					 <div class="col-md-2">
-					 	
-					 </div>
-				  </div>
+					 <div class="col-md-2"></div>
+                </div>
 
-							<div class="form-group  " >
-								<label for="Date Needed" class=" control-label col-md-4 text-left">
-									{!! SiteHelpers::activeLang('Date Needed', (isset($fields['need_by_date']['language'])? $fields['need_by_date']['language'] : array())) !!}
-								</label>
-								<div class="col-md-6">
-									<div class="input-group datepicker" style="width:150px ">
-										<?php
-										$date = DateHelpers::formatDate($row['need_by_date']);
-										?>
-									{!! Form::text('need_by_date', $date,array('class'=>'form-control date', 'id'=>'my-datepicker', 'style'=>'width:150px !important;'   )) !!}
+                <div class="form-group  " >
+                    <label for="Date Needed" class=" control-label col-md-4 text-left">
+                        {!! SiteHelpers::activeLang('Date Needed', (isset($fields['need_by_date']['language'])? $fields['need_by_date']['language'] : array())) !!}
+                    </label>
+                    <div class="col-md-6">
+                        <div class="input-group datepicker" style="width:150px ">
+                            {!! Form::text('need_by_date', $needByDate, array('class'=>'form-control date', 'id'=>'my-datepicker', 'style'=>'width:150px !important;'   )) !!}
+                            <span class="input-group-addon datepickerHandleButton"><i class="fa fa-calendar" id="icon"></i></span>
+                        </div>
+                    </div>
+                    <div class="col-md-2"></div>
+                </div>
 
-									<span class="input-group-addon datepickerHandleButton"><i class="fa fa-calendar" id="icon"></i></span>
-								</div>
-								<div class="col-md-2">
-
-								</div>
-									</div>
-							</div>
-
-
-
-
-						<!--	<div class="form-group  " >
-							<label for="Date Needed" class=" control-label col-md-4 text-left">
-							{{ SiteHelpers::activeLang('Date Needed', (isset($fields['need_by_date']['language'])? $fields['need_by_date']['language'] : array())) }}
-							</label>
-								<div class="col-md-6">
-								<div class="input-group datepicker" style="width:150px ">
-									{!! Form::text('Date Needed', date("m/d/Y", strtotime($row['need_by_date'])),array('class'=>'form-control ',  ))    !!}
-									<span class="input-group-addon "><i class="fa fa-calendar" id="icon"></i></span>
-								</div>
-								<div class="col-md-2">
-
-								</div>
-							</div>
-								</div>  -->
-
-
-				  <div class="form-group  " > 
+                <div class="form-group clearfix" > 
 					<label for="Attach File" class=" control-label col-md-4 text-left">
 					{!! SiteHelpers::activeLang('Attach File', (isset($fields['file_path']['language'])? $fields['file_path']['language'] : array())) !!}
 					</label>
 					<div class="col-md-4 col-sm-6 col-xs-12">
-					<div class="file_pathUpl">	
-					 	<input  type='file' name='file_path[]'  />			
-					</div>
-					<a href="javascript:void(0)" class="btn btn-xs btn-primary" onclick="addMoreFiles('file_path')"><i class="fa fa-plus"></i> Add more files</a>
-					<ul class="uploadedLists " >
-					<?php $cr= 0; 
-					$row['file_path'] = explode(",",$row['file_path']);
-					?>
-					@foreach($row['file_path'] as $files)
-						@if(file_exists('.'.$files) && $files !='')
-						<li id="cr-<?php echo $cr;?>" class="">							
-							<a href="{{ url('/'.$files) }}" target="_blank" >{{  FEGSystemHelper::getSanitizedFileNameForTicketAttachments($files, 50) }}</a> 
-							<span class="pull-right" rel="cr-<?php echo $cr;?>" onclick=" $(this).parent().remove();"><i class="fa fa-trash-o  btn btn-xs btn-danger"></i></span>
-							<input type="hidden" name="currfile_path[]" value="{{ $files }}"/>
-							<?php ++$cr;?>
-						</li>
-						@endif
-					
-					@endforeach
-					</ul>
-					 
-					 </div> 
-					 <div class="col-md-4 ">
-					 	
+                        <div class="file_pathUpl">	
+                            <input  type='file' name='file_path[]'  />			
+                        </div>
+                        <a href="javascript:void(0)" class="btn btn-xs btn-primary" onclick="addMoreFiles('file_path')"><i class="fa fa-plus"></i> Add more files</a>
+                        <ul class="uploadedLists " >
+                        @foreach($filePaths as $cr => $file)
+                            @if($file !='')
+                            <li id="cr-{!! $cr !!}" class="">							
+                                <a href="{{ url('.'.$file) }}" target="_blank" >{{  FEGSystemHelper::getSanitizedFileNameForTicketAttachments($file, 50) }}</a> 
+                                <span class="pull-right" rel="cr-{!! $cr !!}" onclick=" $(this).parent().remove();"><i class="fa fa-trash-o  btn btn-xs btn-danger"></i></span>
+                                <input type="hidden" name="currfile_path[]" value="{{ $file }}"/>
+                            </li>
+                            @endif
+                        @endforeach
+                        </ul>					 
 					 </div>
-				  </div> </fieldset>
-			</div>
+                </div>
+            </fieldset>
+        </div>
 			
-            @if ($isEdit)
-                {!! Form::hidden('Created', $row['Created']) !!}
-                {!! Form::hidden('department_id', $row->department_id) !!}
-                {!! Form::hidden('assign_to', $row->assign_to) !!}
-                {!! Form::hidden('game_id', $row->game_id) !!}								
-			@endif
-			<div style="clear:both"></div>	
+        @if (!$isAdd)
+            {!! Form::hidden('Created', $row['Created']) !!}
+            {!! Form::hidden('department_id', $row->department_id) !!}
+            {!! Form::hidden('assign_to', $row->assign_to) !!}
+            {!! Form::hidden('game_id', $row->game_id) !!}								
+        @endif
 							
-			<div class="form-group">
-				<label class="col-sm-4 text-right">&nbsp;</label>
-				<div class="col-sm-8">	
-					<button type="submit" class="btn btn-primary btn-sm "><i class="fa  fa-save "></i>  {{ Lang::get('core.sb_save') }} </button>
-					<button type="button" onclick="ajaxViewClose('#{{ $pageModule }}')" class="btn btn-success btn-sm"><i class="fa  fa-arrow-circle-left "></i>  {{ Lang::get('core.sb_cancel') }} </button>
-				</div>			
-			</div> 		 
-			{!! Form::close() !!}
-
+        <div class="form-group clearfix">
+            <label class="col-sm-4 text-right">&nbsp;</label>
+            <div class="col-sm-8">	
+                <button type="submit" class="btn btn-primary btn-sm "><i class="fa  fa-save "></i>  {{ Lang::get('core.sb_save') }} </button>
+                <button type="button" onclick="ajaxViewClose('#{{ $pageModule }}')" class="btn btn-success btn-sm"><i class="fa  fa-arrow-circle-left "></i>  {{ Lang::get('core.sb_cancel') }} </button>
+            </div>			
+        </div> 		 
+    {!! Form::close() !!}
 
 @if($setting['form-method'] =='native')
-	</div>	
-
-@endif	
-<?php
-            if(!$in_edit_mode)
-                {
-                    $row['location_id']=\Session::get('selected_location');
-                }
-
-        ?>
-
+	</div>
 </div>
+@endif	
 			 
 <script type="text/javascript">
 $(document).ready(function() { 
 	
-        $("#location_id").jCombo("{{ URL::to('sbticket/comboselect?filter=location:id:id|location_name') }}" + "&delimiter=%20|%20",
-        {  selected_value : '{{ $row["location_id"] }}','initial-text': "Select Location" });
-        
-      //  $("#game_id").jCombo("{{-- URL::to('sbticket/comboselect?filter=game:id:game_name') }}&limit=where:game_name:!=:''&parent=location_id:",
-        //{  parent: '#location_id', selected_value : '{{ $row["game_id"] --}}' });
-        
-        //$("#department_id").jCombo("{{--URL::to('sbticket/comboselect?filter=departments:id:name') }}",
-        //{  selected_value : '{{ $row["department_id"] --}}' });
-        
-     //   $("#debit_card").jCombo("{{-- URL::to('sbticket/comboselect?filter=debit_type:company:company') }}",
-      //  {  selected_value : '{{ $row["debit_card"] }}','initial-text': "Select Debit Type" --});
-        
-      //  $("#assign_to").jCombo("{{-- URL::to('sbticket/comboselect?filter=employees:id:first_name|last_name') }}",
-        //{  selected_value : '{{ $row["assign_to"] --}}' });
-
+    $("#location_id").jCombo("{{ URL::to('sbticket/comboselect?filter=location:id:id|location_name') }}" + "&delimiter=%20|%20",
+        {  selected_value : '{{ $locationId }}','initial-text': "Select Location" });
 
 	$('.datepickerHandleButton').click(function(){
         $("#my-datepicker").datepicker().focus();

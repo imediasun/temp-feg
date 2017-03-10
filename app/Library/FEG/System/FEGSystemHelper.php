@@ -1240,4 +1240,49 @@ $message" .
         }        
         return $newString;
     }
+    
+    /**
+     * 
+     * @param type $string
+     * @param type $variableDelimiter
+     * @param type $valueDelimiter
+     * @param type $defaults
+     * @return type
+     */
+    public static function parseStringToArray($string = '', $variableDelimiter = '|', $valueDelimiter = ':', $defaults = array()) {
+        $valueArray = $defaults;        
+        $newArray = [];
+        
+        if (!empty($string)) {
+            $variables = explode($variableDelimiter, $string);
+            foreach($variables as $variable) {
+                list($key, $value) = explode($valueDelimiter, $variable.$valueDelimiter);
+                if (strpos($variable, $valueDelimiter) === false) {
+                    $value = $key;
+                }                
+                $newArray[$key] = $value;
+            }
+//            $string = str_replace($variableDelimiter, '&', $string);
+//            $string = str_replace($valueDelimiter, '=', $string);
+//            parse_str($string, $valueArray);
+            $valueArray = array_merge($defaults, $newArray);
+        }        
+        return $valueArray;
+    }
+    
+    /**
+     * 
+     * @param type $value
+     * @param type $options associative array with (value => label)
+     * @param type $default
+     * @return type
+     */
+    public static function getLabelFromOptions($value, $options, $default = '') {
+        $label = $default;
+        if (isset($options[$value])) {
+            $label = $options[$value];
+        }
+        return $label;        
+    }
+    
 }

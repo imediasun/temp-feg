@@ -1,5 +1,7 @@
 <?php
 
+use App\Library\FEG\System\FEGSystemHelper;
+
 class SiteHelpers
 {
     public static function menus($position = 'top', $active = '1')
@@ -2516,12 +2518,39 @@ class SiteHelpers
       $data = \App\Models\Sximo\Module::where('module_name', $moduleName)->pluck('module_config');
       if (!empty($data)) {
         $config = self::CF_decode_json($data);
-        $settings = isset($config['setting']) ? $config['setting'] : [];
-        $returnValue = $settings;
-        if (!empty($setting)) {
-            $returnValue = isset($settings[$setting]) ? $settings[$setting] : null;
+        if (!is_array($setting)) {
+            $setting = ['setting', $setting];
+        }
+        if (!empty($config)) {
+            if (is_array($setting)) {
+                foreach($setting as $property) {
+                    if (is_null($config)) {
+                        break;
+                    }
+                    $config = isset($config[$property]) ? $config[$property] : null;
+                    if (in_array($property, ['forms', 'grid'])) {
+                        $newArray = [];
+                        foreach($config as $item) {
+                            $newArray[$item['field']] = $item;
+                        }
+                        $config = $newArray;
+                    }                    
+                }
+            }
+            $returnValue = $config;
         }
       }
       return $returnValue;
   }
+  
+    public static function getModuleFormFieldDropdownOptions($module, $fieldName, $defaults = array()) {
+        $minutes = 1;
+        $cacheKey = md5("getModuleFormFieldDropdownOptions-$module-$fieldName");
+        $options = Cache::remember($cacheKey, $minutes, function () use ($module, $fieldName, $defaults) {
+            $optionsString = self::getModuleSetting($module, ['forms', $fieldName, 'option', 'lookup_query']);
+            $options = FEGSystemHelper::parseStringToArray($optionsString, '|', ':', $defaults);
+            return $options;
+        });        
+        return $options;
+    }       
 }

@@ -1,29 +1,4 @@
-<?php
-use App\Library\FEG\System\FEGSystemHelper;
-
-$commentsCount =  $comments->count();
-$conversationCount = $commentsCount + 1;
-
-$ticketID = $row->TicketID;
-$ticketStatus = isset($statusOptions[$row->Status]) ? $statusOptions[$row->Status] : '';
-$dateNeeded = DateHelpers::formatDate($row->need_by_date);
-$createdOn = \DateHelpers::formatDate($row->Created);
-$createdOnWithTime = \DateHelpers::formatDateCustom($row->Created);
-$updatedOn = \DateHelpers::formatDate($row->updated);
-$updatedOnWithTime = \DateHelpers::formatDateCustom($row->updated);
-$locationName = \SiteHelpers::gridDisplayView($row->location_id,'location_id','1:location:id:id|location_name');
-
-$creatorID = $row->entry_by;
-$creatorProfile = FEGSystemHelper::getUserProfileDetails($creator);
-
-$creatorName = $creatorProfile['fullName'];
-$creatorAvatar =  $creatorProfile['avatar'];
-$creatorTooltip = $creatorProfile['tooltip'];
-
-$myUserAvatar = FEGSystemHelper::getUserAvatarUrl($uid);
-$myUserTooltip = "You";
-
-?>
+{{--*/      use App\Library\FEG\System\FEGSystemHelper;                   /*--}}
 @if($setting['view-method'] =='native')
 	<div class="sbox">
 		<div class="ticketHeaderContainer clearfix">
@@ -40,7 +15,7 @@ $myUserTooltip = "You";
                     <span class="ticketIdText">{{ $ticketID }}</span>
                     <span class="ticketLocationText label label-success">{{ $locationName }}</span>
                     <span class="ticketNeededByText label label-warning">Needed by {{$dateNeeded}}</span>                    
-                    <span class="ticketStatusText label label-muted" data-ticket-status="{{ $ticketStatus }}">{{ $ticketStatus }}</span>
+                    <span class="ticketStatusText label label-muted" data-ticket-status="{{ $ticketStatus }}">{{ $ticketStatusLabel }}</span>
                 </div>
                 <div class="clearfix headerTitleContainer">
                     <h2>
@@ -62,7 +37,7 @@ $myUserTooltip = "You";
         </div>
         
 		<div class="sbox-content">
-			@endif
+@endif
 			<div class="ticketViewParentContainer clearfix">
                 {!! Form::open(array('url'=>'servicerequests/comment/'.SiteHelpers::encryptID($row['TicketID']), 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'servicerequestsFormAjax')) !!}
                 <div class="ticketLeftSidebarContainer" >
@@ -79,10 +54,6 @@ $myUserTooltip = "You";
                                 @if($following) checked @endif />
                         </div>
                         </div>
-<!--                        <div class="assignToUserInput sidebarInput" 
-                            data-caption="Assign to User">
-                                <select name='assign_to[]' multiple id='assign_to' class='select2 ' ></select>
-                        </div>-->
                         <div class="attachmentContainer sidebarInput" 
                             data-caption="Attachments">
                             <div class="text-center">
@@ -196,7 +167,7 @@ $myUserTooltip = "You";
                 {!! Form::hidden('Subject', $row->Subject) !!}
                 {!! Form::hidden('Description', $row->Description) !!}
                 {!! Form::hidden('need_by_date', $row->need_by_date) !!}
-                {!! Form::hidden('Created', $row->Created) !!}
+                {!! Form::hidden('Created', $createdOn) !!}
                 {!! Form::hidden('entry_by', $creatorID) !!}
                 {!! Form::hidden('issue_type', $row->issue_type) !!}
                 {!! Form::hidden('location_id', $row->location_id) !!}
@@ -209,8 +180,6 @@ $myUserTooltip = "You";
 		</div>
 	</div>
 @endif
-<!--<link href="{{ asset('sximo/css/tickets.css') }}" rel="stylesheet" type="text/css"/>
-<script type="text/javascript" src="{{ asset('sximo/js/modules/tickets/view.js') }}"></script>-->
 <script type="text/javascript">
     
     var mainUrl = '{{ $pageUrl }}',

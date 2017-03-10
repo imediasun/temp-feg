@@ -315,16 +315,15 @@ class ShopfegrequeststoreController extends Controller
         $rules['img'] = 'mimes:jpeg,gif,png';
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
-            $now = date('Y-m-d');
             $item_id = $request->get('item_id');
             $graphics_description = $request->get('graphics_description');
             $graphics_description = str_replace('"', '', $graphics_description);
             $qty = $request->get('qty');
-            $date_needed = date("d/m/Y", strtotime($request->get('date_needed')));
+            $date_needed = date("m/d/Y", strtotime($request->get('date_needed')));
             $game_info = $request->get('game_info');
             $locationId = $request->get('location_name');
             $statusId = 1;
-            $now = date('d/m/Y');
+            $now = date('m/d/Y');
             $filesnames = $request->get('myInputs');
             if(!empty($filesnames)) {
                 $filesnames = implode(',', $filesnames);

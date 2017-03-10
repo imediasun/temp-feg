@@ -108,7 +108,6 @@
                 case 'text_datetime':
                     value = moment(originalValue);
                     formattedValue = value.isValid() ? value.format(dateFormats[inputType]) : '';
-                    input.val(formattedValue);                    
                     input.val(formattedValue);
                     input.attr('data-today', today);
                     input.attr('data-today-datetime', todayDateTime);
@@ -185,8 +184,10 @@
    };
    
     window.cancelInlineEdit = cancelInlineEdit = function (rowDomId, event, element) {
+        if (event && event.preventDefault && typeof event.preventDefault == 'function') {
+            event.preventDefault();
+        }
         
-        event.preventDefault();
         var row = container.find("#"+rowDomId),
             cells = row.find('td[data-edit=1]'), 
             rowHookParams = {'row': row, count: editingRowsCount, cells: cells};
@@ -222,58 +223,164 @@
         return false;
 
    };
-    window.saveInlineForm = saveInlineForm = function (rowDomId, event, element) {
-        event.preventDefault();
-        
-        var row = container.find('#'+rowDomId),
+    window.saveInlineForm = saveInlineForm = function (rowDomId, event, element, options) {
+        if (event && event.preventDefault && typeof event.preventDefault == 'function') {
+            event.preventDefault();
+        }
+        options = options || {};
+        var elm = element && $(element),
+            row = container.find('#'+rowDomId),
             splitID = rowDomId.split('-'),
             dataID = splitID && splitID[1],
+            callback = options.callback || function() {},
             saveConfig = {
                 xhr: null,
                 data: row.find('td :input').serialize(),
                 url: moduleName + '/save/'+ dataID,
-                callback: function() {}
+                callback: callback
             },
             hookParams = {'dataID': dataID, 'row': row, 'config': saveConfig};
-
+    
         App.autoCallbacks.runCallback('inline.row.save.before', hookParams);
         if (saveConfig.error) {
-            notyMessageError(saveConfig.error);
+            if (!options.isBulk) {
+                notyMessageError(saveConfig.error);
+            }            
             return false;
         }
-
+        if (elm && elm.length) {
+            elm.prop('disabled', true);
+        }
+        
         showProgress();
         saveConfig.xhr = $.post(saveConfig.url, saveConfig.data, function( data ) {
-            hideProgress();
+            if (!options.isBulk) {
+                hideProgress();
+            }            
             hookParams.data = data;
-            if (saveConfig.callback && typeof saveConfig.callback == 'function') {
-                saveConfig.callback(data, dataID, row);
+            if (callback && typeof callback == 'function') {
+                callback(hookParams);
             }
             if(data.status == 'success')
             {
                 displayInlineEditButtons(rowDomId, true);
-                notyMessage(data.message);
                 App.autoCallbacks.runCallback('inline.row.save.after', hookParams);
                 row.removeClass('inline_edit_applied');
-                ajaxFilter('#' + moduleName, pageUrl + '/data');
+                if (!options.isBulk) {
+                    notyMessage(data.message);
+                    ajaxFilter('#' + moduleName, pageUrl + '/data');
+                }                
             } 
             else {
                 App.autoCallbacks.runCallback('inline.row.save.error', hookParams);
-                notyMessageError(data.message);	
+                if (!options.isBulk) {
+                    notyMessageError(data.message);	
+                }
+                if (elm && elm.length) {
+                    elm.prop('disabled', false);
+                }                
             }
         }); 
         
-        return false;
+        return saveConfig.xhr;
    };
-    window.saveAllInlineForm = saveAllInlineForm = function () {
-        container('.inline_edit_applied').each(function(){
-            saveInlineForm($(this).attr('id'));
-        });       
+    window.saveAllInlineForm = saveAllInlineForm = function (event, element) {
+        if (event && event.preventDefault && typeof event.preventDefault == 'function') {
+            event.preventDefault();
+        }
+        var elm = $(element),
+            editedRows = container.find('.inline_edit_applied'),
+            editedRowsCount = editedRows.length,
+            saveRemaining = editedRowsCount,
+            errorCount = 0,
+            successCount = 0,
+            nothingToSaveCount = 0,
+            allSuccessMessage = "All data saved successfully",
+            allErrorMessage = "Error in saving data!",
+            finalMessage,
+            hookParams = {'rows': editedRows, 
+                            success: [], 
+                            error: [], 
+                            callbacks: [], 
+                            nothingToSaveCount: 0,
+                            saveRemaining: 0
+                        },
+            finalCallback = function () {
+                --saveRemaining;
+                hookParams.saveRemaining = saveRemaining;
+                if (saveRemaining <= 0) {
+                    
+                    if (nothingToSaveCount >= editedRowsCount) {
+                        hideProgress();
+                        notyMessageError("Nothing to save!");
+                        elm.prop('disabled', false);
+                        return;
+                    }          
+                    
+                    finalMessage = !errorCount ? allSuccessMessage : 
+                            (!successCount ? allErrorMessage : 
+                                ("Data saved successfully with some errors!"));
+                    if (errorCount) {
+                        App.autoCallbacks.runCallback('inline.rows.save.error', hookParams);
+                        notyMessageError(finalMessage);
+                        if (successCount) {
+                            App.autoCallbacks.runCallback('inline.rows.save.after', hookParams);
+                        }
+                    }
+                    else {
+                        App.autoCallbacks.runCallback('inline.rows.save.after', hookParams);
+                        notyMessage(finalMessage);
+                    }
+                    
+                    hideProgress();
+                    ajaxFilter('#' + moduleName, pageUrl + '/data');
+                }                
+            },
+            callback = function (params) {
+                var response = params.data, subCallback, subCallbackIndex;
+                if (response.status === 'success') {
+                    ++successCount;
+                    hookParams.success.push(params);
+                }
+                else {
+                    ++errorCount;
+                    hookParams.error.push(params);
+                }      
+                if (hookParams.callbacks && hookParams.callbacks.length) {
+                    for(subCallbackIndex in hookParams.callbacks) {
+                        subCallback = hookParams.callbacks[subCallbackIndex];
+                        if (subCallback && typeof subCallback === 'function') {
+                            params = params || {};
+                            params.hookParams = hookParams;
+                            subCallback(params);
+                        }
+                    }
+                }
+                finalCallback();
+            };
+        
+        if (editedRows.length) {
+            App.autoCallbacks.runCallback('inline.rows.save.before', hookParams);
+
+            elm.prop('disabled', true);
+            editedRows.each(function(){
+                var xhr = saveInlineForm($(this).attr('id'), null, null, {'callback': callback, 'isBulk': true});
+                if (xhr === false) {
+                    ++nothingToSaveCount;
+                    hookParams.nothingToSaveCount = nothingToSaveCount;
+                    finalCallback();
+                }
+            });             
+        }
+        else {
+            notyMessageError("Nothing to save!");
+        }
+
    };
     window.displayInlineEditButtons = displayInlineEditButtons = function (rowDomId, isHide) {
         var globalSaveButton = container.find('#rcv');
         if (!globalSaveButton.length) {
-            globalSaveButton = $('<button id="rcv" onclick="saveAllInlineForm();" class="btn btn-sm btn-white"> Save </button>');
+            globalSaveButton = $('<button id="rcv" onclick="saveAllInlineForm(event, this);" class="btn btn-sm btn-white" type="button"> Save </button>');
             container.find('.m-b .pull-right').prepend(globalSaveButton);
         }        
         if(editingRowsCount) {

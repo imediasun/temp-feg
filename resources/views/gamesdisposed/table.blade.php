@@ -28,9 +28,9 @@
         @include( $pageModule.'/toolbar',['config_id'=>$config_id,'colconfigs' => SiteHelpers::getRequiredConfigs($module_id)])
 
 	 <?php echo Form::open(array('url'=>'gamesdisposed/delete/', 'class'=>'form-horizontal' ,'id' =>'SximoTable'  ,'data-parsley-validate'=>'' )) ;?>
-<div class="">
+<div class="table-responsive">
 	@if(count($rowData)>=1)
-    <table class="table   datagrid" id="{{ $pageModule }}Table">
+    <table class="table table-striped datagrid " id="{{ $pageModule }}Table">
         <thead>
         <tr>
 

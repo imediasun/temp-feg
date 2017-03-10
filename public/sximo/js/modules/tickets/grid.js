@@ -23,10 +23,10 @@
 //        if (!input.val()) {
 //            input.val(originalValue);
 //        }
-//        if (/date/.test(fieldType) && originalValue) {
-//            originalValue = formattedValue;
+        if (/date/.test(fieldType) && originalValue) {
+            originalValue = formattedValue;
 //            input.val(originalValue);
-//        }
+        }
                 
         input.on('change', function (e){            
             var val = input.val();            
