@@ -934,16 +934,30 @@ abstract class Controller extends BaseController
 
     function getChangelocation($location_id)
     {
-        \Session::put('selected_location', $location_id);
-        $location_name = \DB::select('select location_name_short from location where id=' . $location_id);
-        if (count($location_name) == 1) {
-            $data['selected_location_name'] = $location_name[0]->location_name_short;
+        if(!empty($location_id))
+        {
+            \Session::put('selected_location', $location_id);
+            $location_name = \DB::select('select location_name_short from location where id=' . $location_id);
+            if (count($location_name) == 1) {
+                $data['selected_location_name'] = $location_name[0]->location_name_short;
+            }
+            $data['selected_location'] = $location_id;
+            $total_cart = $this->addToCartModel->totallyRecordInCart();
+            \Session::put('total_cart', $total_cart[0]->total);
+            // Session::put($data);
+            return response()->json(array(
+                'status' => 'success',
+                'message' => 'Successfully change location'
+            ));
+        } else {
+            return response()->json(array(
+                'status' => 'error',
+                'message' => 'Please specify location'
+            ));
         }
-        $data['selected_location'] = $location_id;
-        $total_cart = $this->addToCartModel->totallyRecordInCart();
-        \Session::put('total_cart', $total_cart[0]->total);
-        // Session::put($data);
-        return Redirect::back();
+        /* todo refactor code
+        /return Redirect::back();
+        */
     }
 
     function generateRandomString($length = 10) {

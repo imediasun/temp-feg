@@ -107,12 +107,24 @@ else
 
 <script>
     $(document).ready(function () {
+        $("#user_locations").on('change', function () {
+            $('.globalLoading').show();
+            var location_id = $(this).val();
+            if(location_id != '')
+            {
+                $.get('/user/changelocation/'+location_id,function( response ) {
+                    if(response.status =='success')
+                    {
+                        notyMessage(response.message);
+                        location.reload();
+                    }
+                    else {
+                        notyMessageError(response.message);
+                    }
 
-    });
-    $("#user_locations").on('change', function () {
-        var location_id = $(this).val();
-        var pageModule ="{{ $pageModule }}";
-        window.location.href ="{{ url() }}/"+pageModule+"/changelocation/" + location_id;
-    });
 
+                });
+            }
+        });
+    });
 </script>

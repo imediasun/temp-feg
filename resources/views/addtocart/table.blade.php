@@ -172,22 +172,22 @@
 
         </div>
         <?php echo Form::close();?>
-        @if($cartData['shopping_cart_total'] >= 0)
-            <br/>
+        <!--  todo refactor code
+            @if($cartData['shopping_cart_total'] >= 0)
+                <br/>
 
-            <div class="col-md-6 col-md-offset-2">
-                <div class="col-md-10" id="new_locationdiv">
-                    <select name="new_location" id="new_location" class="select3"></select>
+                <div class="col-md-6 col-md-offset-2">
+                    <div class="col-md-10" id="new_locationdiv">
+                        <select name="new_location" id="new_location" class="select3"></select>
+                    </div>
                 </div>
-            </div>
-          <!--  <div style=";margin-left:50px;" class="col-md-2">
-                <label>Clone Order Info</label>
-                <input type="checkbox" name="clone_order" id="clone_order"
-                       style="height:25px; width:25px;vertical-align: middle">
-            </div>
--->
-        @endif
-
+               <div style=";margin-left:50px;" class="col-md-2">
+                    <label>Clone Order Info</label>
+                    <input type="checkbox" name="clone_order" id="clone_order"
+                           style="height:25px; width:25px;vertical-align: middle">
+                </div>
+            @endif
+        -->
             <div class="col-md-8 col-md-offset-4">
 
 
@@ -217,8 +217,10 @@
     }
     $(document).ready(function () {
         $('.tips').tooltip();
+        <!-- todo refactor code
         $("#new_location").jCombo("{{ URL::to('order/comboselect?filter=location:id:id|location_name ') }}",
                 {selected_value: ''});
+        -->
         $(".select3").select2({width: "98%"});
 
         $('.my_form').on("keypress",(function(e) {
@@ -267,7 +269,9 @@
             reloadData('#{{ $pageModule }}', url);
             return false;
         });
+        <!-- todo refactor code
         $('#new_locationdiv').hide();
+        -->
         <?php if($setting['view-method'] =='expand') :
                 echo AjaxHelpers::htmlExpandGrid();
             endif;
@@ -287,6 +291,7 @@
 
         initDataGrid('{{ $pageModule }}', '{{ $pageUrl }}');
     });
+    <!-- todo refactor code
     $('#clone_order').on('ifChecked', function () {
         $('#new_locationdiv').show();
 
@@ -294,7 +299,7 @@
     $('#clone_order').on('ifUnchecked', function () {
         $('#new_locationdiv').hide();
     });
-
+    -->
     var timer = null;
 
 

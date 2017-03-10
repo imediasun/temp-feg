@@ -116,10 +116,12 @@
         product_type = $("#product_type").val();
         reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?&type=store'+ getFooterFilters()+'&active_inactive=' + type + '&order_type=' + order_type + '&product_type=' + product_type + '&config_id=' + $("#col-config").val());
     });
+
+    /* todo refactor code
     $('#locations').on('click', function () {
         if($('#locations').val() != '')
         window.location = "<?php echo url();?>//shopfegrequeststore/changelocation/" + $('#locations').val();
-    });
+    });*/
     $('#delete-cols').click(function(){
         if(confirm('Are You Sure, You want to delete this Columns Arrangement?')) {
             showRequest();
