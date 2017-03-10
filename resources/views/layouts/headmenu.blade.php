@@ -95,7 +95,7 @@
  <?php $pageModule=isset($_SERVER['HTTP_REFERER'])?$_SERVER['HTTP_REFERER']:$pageModule;
  if($pageModule == url('').'/' )
      {
-          $pageModule=url().'/dashboard';
+          $pageModule='dashboard';
      }
 else
     {
@@ -110,10 +110,10 @@ else
 
     });
     $("#user_locations").on('change', function () {
-
         var location_id = $(this).val();
         var pageModule ="{{ $pageModule }}";
-        location.href ="{{ url() }}/"+pageModule+"/changelocation/" + location_id;
+        url=pageModule+"/changelocation/" + location_id;
+        window.location.href ="{{ url() }}/"+pageModule+"/changelocation/" + location_id;
     });
 
 </script>
