@@ -14,7 +14,7 @@
 
 		<input type="hidden" name='assign_to' value="{{ $row['assign_to']}}">        
 		<input type="hidden" name='entry_by' value="{{ $entryBy }}">
-		<div class="col-md-12 clearfix">
+		<div class="col-md-12 clearfix p-lg-f">
             <fieldset>
                 <div class="form-group  " > 
 					<label for="Subject" class=" control-label col-md-4 text-left"> 
