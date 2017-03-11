@@ -25,11 +25,12 @@ class MylocationgameController extends Controller
         $this->data = array(
             'pageTitle' => $this->info['title'],
             'pageNote' => $this->info['note'],
-            'pageModule' => 'mylocationgame',
-            'pageUrl' => url('mylocationgame'),
+            'pageModule' => $this->module,
+            'pageUrl' => url($this->module),
             'return' => self::returnUrl()
         );
-
+        
+        $this->module_id = \DB::table('tb_module')->where('module_name', '=', $this->module)->pluck('module_id');
 
     }
 
@@ -268,7 +269,7 @@ class MylocationgameController extends Controller
         $productIds = $row[0]->product_ids_json;
         $products = [];
         if (!empty($productIds)) {
-            $productIds = \GuzzleHttp\json_decode($productIds, true);
+            $productIds = json_decode($productIds, true); 
             $products = \App\Models\product::select('vendor_description')
                     ->whereIn('id', $productIds)->get();
         }
@@ -627,28 +628,44 @@ class MylocationgameController extends Controller
         ));        
     }
 
-    public function postGamelocation(Request $request)
+    public function postExportGamesData(Request $request, $exportType = null)
     {
-       // die('here....');
-        $this->data['pageTitle'] = 'game in location';
-        $request = $request->all();
-        if(!empty($request['game_title_id']) && !empty($request['location_id']))
-        {
-            $results = \DB::table('game')->where('game_title_id', '=', $request['game_title_id'])->where('location_id', '=', $request['location_id'])->get();
+              
+        $inputFiltersString = $request->input('footerfiters');
+        parse_str($inputFiltersString, $inputFilters);
+        $search = isset($inputFilters['search']) ? $inputFilters['search'] :'';
+        $filters = $this->model->getSearchFiltersAsArray($search);
+        $gameTitleId = $request->get('game_title_id');
+        $gameLocationId = $request->get('location_id');
+        if (!empty($gameTitleId)) {
+            $filters['game_title_id'] = [
+                'fieldName' => 'game_title_id',
+                'operator' => '=',
+                'value' => $gameTitleId,
+            ];
         }
-        elseif(!empty($request['game_title_id']))
-        {
-            $results = \DB::table('game')->where('game_title_id', '=', $request['game_title_id'])->get();
+        if (!empty($gameLocationId)) {
+            $filters['location_id'] = [
+                'fieldName' => 'location_id',
+                'operator' => '=',
+                'value' => $gameLocationId,
+            ];
         }
-        elseif(!empty($request['location_id'])){
-            $results = \DB::table('game')->where('location_id', '=', $request['location_id'])->get();
-        }
-        else
-        {
-            $results = \DB::table('game')->get();
-        }
-            $info = $this->model->makeInfo($this->module);
-        $rows = $results;
+        $search = $this->model->buildSearchQuerystringFromArray($filters);
+        
+        $filter = $this->getSearchFilterQuery(empty($search) ? null : $search);
+        $sort = isset($inputFilters['sort']) ? $inputFilters['sort'] : $this->info['setting']['orderby'];
+        $order = isset($inputFilters['order']) ? $inputFilters['order'] : $this->info['setting']['ordertype'];
+        $params = array(
+            'page' => 0,
+            'limit' => 0,
+            'sort' => $sort,
+            'order' => $order,
+            'params' => $filter
+        );
+        $results = $this->model->getRows($params);
+
+        $rows = $results['rows'];
         if (!empty($request['validateDownload'])) {
             $status = [];
             if (empty($rows)) {
@@ -661,16 +678,51 @@ class MylocationgameController extends Controller
             }
             return response()->json($status);
         }
-        foreach ($rows as &$row){
-            $row->game_name=$row->game_title_id;
+        
+        $config_id = 0;
+        if (\Session::has('config_id')) {
+            $config_id = \Session::get('config_id');
+            $config = $this->model->getModuleConfig($this->module_id, $config_id);
+            if (!empty($config)) {
+                $configData = \SiteHelpers::CF_decode_json($config[0]->config);
+            }            
+        }         
+        $grid = $this->info['config']['grid'];
+        if (!empty($config_id) && !empty($configData)) {
+            $grid = \SiteHelpers::showRequiredCols_v2($grid, $configData);
         }
-        $fields = $info['config']['grid'];
+
+//        foreach ($rows as &$row){
+//            $row->game_name = $row->game_title_id;
+//        }
+        
+        $pageTitle = 'MyLocationsGames';
         $content = array(
-            'fields' => $fields,
+            'fields' => $grid,
             'rows' => $rows,
-            'title' => $this->data['pageTitle'],
+            'title' => $pageTitle,
         );
-        return view('sximo.module.utility.csv', $content);
+        
+        if (empty($exportType)) {
+            $exportType = 'csv';
+        }
+        switch ($exportType) {
+            case "csv":
+                return view('sximo.module.utility.csv', $content);
+                break;
+            case "word":
+                return view('sximo.module.utility.word', $content);
+                break;
+            case "pdf":
+                $pdf = PDF::loadView('sximo.module.utility.pdf', $content);
+                return view($this->data['pageTitle'] . '.pdf');
+                break;
+            case "print":
+                return view('sximo.module.utility.print', $content);
+                break;
+            default:
+                return view('sximo.module.utility.excel', $content);
+        }
     }
     
     public function getAssetIdsFromFilter($request = null) {

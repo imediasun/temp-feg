@@ -1,36 +1,31 @@
-<div class="row">
-    {!! Form::open(array('url'=>'mylocationgame/gamelocation', 'class'=>'form-horizontal','id'=> 'mylocationgameFormAjax')) !!}
+<div class="simpleBoxContainer gameExportContainer clearfix">
 
-    <div class="col-md-1">
-        <h4>Export</h4>
-    </div>
-    <div class="col-md-3">
-        <div class="form-group  ">
+    {!! Form::open(array('url'=>'mylocationgame/export-games-data/csv', 
+        'class'=>'form-horizontal',
+        'target'=>'_self',
+        'id'=> 'mylocationgameExportFormAjax')) !!}
+    <div class="clearfix">
+        <h4 class='pull-left m-l-sm m-r-xs'>Export</h4>
+        <div class='pull-left col-md-3'>
             <input name='validateDownload' type='hidden' value='1'/>
-            <select name='game_title_id' id='game_name' class='select4 '></select>
+            <input name='footerfiters' type='hidden' value=''/>
+            <select name='game_title_id' id='game_name' class='select4'></select>
         </div>
-    </div>
-    <div class="col-md-1">
-        <h4>From</h4>
-    </div>
-    <div class="col-md-3">
-        <div class="form-group  ">
-            <select name='location_id' id='location_id' class='select4 '></select>
+        <h4 class='pull-left m-r-xs'>From</h4>
+        <div class='pull-left col-md-3'>
+            <select name='location_id' id='location_id' class='select4'></select>
         </div>
-    </div>
-
-    <div class="col-md-3">
-        <button type="submit" class="btn btn-primary submitButton" id="submit" name="submit">Export to CSV</button>
+        <div class='pull-left'>
+            <button type="submit" class="btn btn-primary submitButton" id="submit" name="submit">Export to CSV</button>
+        </div>
     </div>
     {!! Form::close() !!}
 </div>
-<div class="row">
+<div class="simpleBoxContainer assetTagExportContainer clearfix">
     <form method="post" action="mylocationgame/assettag" class="form-horizontal">
-        <div class="col-md-offset-1 col-md-3">
-            <div class="form-group  ">
-                <input type="text" class="form-control" name="asset_ids" id="asset_ids"
-                       placeholder="Enter Asset# -- separate with commas for multiple" required="required"/>
-            </div>
+        <div class="col-md-6">
+            <input type="text" class="form-control" name="asset_ids" id="asset_ids"
+                   placeholder="Enter Asset# -- separate with commas for multiple" required="required"/>
         </div>
         <div class="col-md-3">
             <input type="submit" class="btn btn-primary" id="submit" name="submit" value="Generate Asset Tag">
