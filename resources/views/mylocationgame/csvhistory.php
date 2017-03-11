@@ -18,7 +18,7 @@ foreach ($rows as $row) {
     $data = [];
     foreach($fields as $field) {
         $value = isset($row->$field) ? $row->$field : '';
-        $data[] = $value;
+        $data[] = html_entity_decode($value);
     }
     fputcsv($fp, $data);
 }
