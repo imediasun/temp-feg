@@ -2936,3 +2936,18 @@ table.table-striped tr th
 .datepickerHandleButton {
     cursor: pointer;
 }
+
+.simpleSearchContainer,
+.simpleBoxContainer {
+    background: #fefefe;
+    padding: 10px 0;
+    border: 1px solid #ddd;
+    font-size: 12px;
+    margin-bottom: 10px;    
+}
+
+.simpleBoxContainer button {
+    line-height: 1.2em;
+}
+
+

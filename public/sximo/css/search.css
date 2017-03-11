@@ -43,14 +43,6 @@
     zoom: 1; /* For IE 6/7 (trigger hasLayout) */
 }
 
-.simpleSearchContainer {
-    background: #fefefe;
-    padding: 10px 0;
-    border: 1px solid #ddd;
-    font-size: 12px;
-    margin-bottom: 10px;
-}
-
 .simpleSearchContainer .betweenRangeStart {
     width:49%; 
     float: left;
