@@ -1843,7 +1843,20 @@ class SiteHelpers
         }
         return $table;
     }
-
+    static function showRequiredCols_v2($tableGrid, $cols)
+    {
+        $columns = explode(',', $cols);
+        $table = [];
+        $i = 0;
+        foreach ($tableGrid as $t) {
+            $fieldName = $t['field'];
+            if (in_array($fieldName, $columns)) {
+                $index = array_search($fieldName, $columns);                 
+                $table[$index] = $t;
+            }
+        }
+        return array_values($table);
+    } 
     static function getAllGroups()
     {
         $groups = \DB::table('tb_groups')->get();
