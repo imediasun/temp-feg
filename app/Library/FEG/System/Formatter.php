@@ -124,5 +124,9 @@ class Formatter
     public static function getTicketIssueTypes() {        
         return \SiteHelpers::getModuleFormFieldDropdownOptions('servicerequests', 'issue_type');
     } 
+    
+    public static function empty2Blank($value = null) {        
+        return empty($value) ? '' : $value;
+    } 
       
 }
