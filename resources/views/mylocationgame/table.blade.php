@@ -126,25 +126,23 @@
 						 	@if(SiteHelpers::filterColumn($limited ))
 								 <td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}" data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
 
-                                     @if( $field['field']=="location_id")
-                                         @if($row->location_id != 0)
-                                         	<?php  $value="<a  href=./location/location/$row->location_id>".$value."</a>"; ?>
-                                         @else
+                                    @if( $field['field']=="location_id")
+                                        @if($row->location_id != 0)
+                                            <?php  $value="<a  href='".url()."/location/index/{$row->location_id}' target='_blank'>".$value."</a>"; ?>
+                                        @else
                                              <?php $value=""; ?>
-                                         @if($row->status_id==3)
-                                             <?php $value="<a style='color:red' href=#>In Transit</a>" ?>
-                                         @endif
-                                     @endif
-									 @endif
-											 @if($field['field']=='location_num')
-												 {!! $row->location_id !!}
-
-
-										 @elseif ($field['field']=='game_type_id')
-											 {!! $value=="0"?null:$value !!}
-										@else
-											 {!! $value !!}
-										 @endif
+                                            @if($row->status_id==3)
+                                                <?php $value="<a style='color:red' href=#>In Transit</a>" ?>
+                                            @endif
+                                        @endif
+									@endif
+                                    @if($field['field']=='location_num')
+                                        {!! $row->location_id !!}
+                                    @elseif ($field['field']=='game_type_id')
+                                        {!! $value=="0"?null:$value !!}
+                                    @else
+                                        {!! $value !!}
+                                    @endif
 								 </td>
 							@endif
                     <?php

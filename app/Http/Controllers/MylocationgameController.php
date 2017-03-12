@@ -97,81 +97,84 @@ class MylocationgameController extends Controller
         );
         // Get Query
         $results = $this->model->getRows($params);
-        foreach ($results['rows'] as $result) {
+       // foreach ($results['rows'] as $result) {
 
-            if ($result->dba == 1) {
-                $result->dba = "Yes";
+//            if ($result->dba == 1) {
+//                $result->dba = "Yes";
+//
+//            } else {
+//                $result->dba = "No";
+//            }
+//            if ($result->sacoa == 1) {
+//                $result->sacoa = "Yes";
+//
+//            } else {
+//                $result->sacoa = "No";
+//            }
+//            if ($result->embed == 1) {
+//                $result->embed = "Yes";
+//
+//            } else {
+//                $result->embed = "No";
+//            }
+//            if ($result->for_sale == 1) {
+//                $result->for_sale = "Yes";
+//
+//            } else {
+//                $result->for_sale = "No";
+//            }
+//            if ($result->sale_pending == 1) {
+//                $result->sale_pending = "Yes";
+//
+//            } else {
+//                $result->sale_pending = "No";
+//            }
+//            if ($result->sold == 1) {
+//                $result->sold = "Yes";
+//
+//            } else {
+//                $result->sold = "No";
+//            }
+//            if ($result->test_piece == 1) {
+//                $result->test_piece = "Yes";
+//
+//            } else {
+//                $result->test_piece = "No";
+//            }
+//            if ($result->linked_to_game == 1) {
+//                $result->linked_to_game = "Yes";
+//
+//            } else {
+//                $result->linked_to_game = "No";
+//            }
+//            if ($result->not_debit == 1) {
+//                $result->not_debit = "Yes";
+//
+//            } else {
+//                $result->not_debit = "No";
+//                
+//            }
+            
+    //            if ($result->num_prize_meters == 1) {
+    //                $result->num_prize_meters = "Yes";
+    //
+    //            } else {
+    //                $result->num_prize_meters = "No";
+    //            }
+    //            if ($result->num_prizes == 1) {
+    //                $result->num_prizes = "Yes";
+    //
+    //            } else {
+    //                $result->num_prizes = "No";
+    //            }
+    
+//            if ($result->mfg_id == 0) {
+//                $result->mfg_id = "";
+//
+//            }
 
-            } else {
-                $result->dba = "No";
-            }
-            if ($result->sacoa == 1) {
-                $result->sacoa = "Yes";
 
-            } else {
-                $result->sacoa = "No";
-            }
-            if ($result->embed == 1) {
-                $result->embed = "Yes";
-
-            } else {
-                $result->embed = "No";
-            }
-            if ($result->for_sale == 1) {
-                $result->for_sale = "Yes";
-
-            } else {
-                $result->for_sale = "No";
-            }
-            if ($result->sale_pending == 1) {
-                $result->sale_pending = "Yes";
-
-            } else {
-                $result->sale_pending = "No";
-            }
-            if ($result->sold == 1) {
-                $result->sold = "Yes";
-
-            } else {
-                $result->sold = "No";
-            }
-            if ($result->test_piece == 1) {
-                $result->test_piece = "Yes";
-
-            } else {
-                $result->test_piece = "No";
-            }
-            if ($result->linked_to_game == 1) {
-                $result->linked_to_game = "Yes";
-
-            } else {
-                $result->linked_to_game = "No";
-            }
-            if ($result->not_debit == 1) {
-                $result->not_debit = "Yes";
-
-            } else {
-                $result->num_prize_meters = "No";
-            }
-            if ($result->num_prize_meters == 1) {
-                $result->num_prize_meters = "Yes";
-
-            } else {
-                $result->not_debit = "No";
-            }
-            if ($result->num_prizes == 1) {
-                $result->num_prizes = "Yes";
-
-            } else {
-                $result->num_prizes = "No";
-            }
-            if ($result->mfg_id == 0) {
-                $result->mfg_id = "";
-
-            }
-
-
-        }
+//        }
         // Build pagination setting
         $page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;
 

@@ -31,12 +31,10 @@
 <script>
 $(document).ready(function(){
     var id = {{ $id  }};
-    if(id){
-        reloadData('#{{ $pageModule }}','/sximo/public/location/data/'+id);
+    if(id && id != 0){
+        ajaxViewDetail('#{{ $pageModule }}',"{{$pageUrl}}/show/"+id); 
     }
-    else{
-        reloadData('#{{ $pageModule }}','{{ $pageModule }}/data');
-    }
+    reloadData('#{{ $pageModule }}','{{$pageUrl}}/data');
 });	
 </script>	
 @endsection
