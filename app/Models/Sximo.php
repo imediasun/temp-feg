@@ -894,7 +894,13 @@ class Sximo extends Model {
 
     function totallyRecordInCart()
     {
-        return \DB::select("SELECT COUNT(*) as total FROM requests WHERE request_user_id = ".\Session::get('uid')." AND status_id = 9 AND location_id = ".\Session::get('selected_location'));
+        $data['user_level'] = \Session::get('gid');
+        if ($data['user_level'] == 3 || $data['user_level'] == 4 || $data['user_level'] == 5 || $data['user_level'] == 7 || $data['user_level'] == 9 || $data['user_level'] == 10) {
+           $status_id = 9; /// 9 IS USED AS AN ARBITRARY DELIMETER TO KEEP CART SEPERATE FROM LOCATIONS' OWN
+        } else {
+            $status_id = 0;
+        }
+        return \DB::select("SELECT COUNT(*) as total FROM requests WHERE request_user_id = ".\Session::get('uid')." AND status_id = $status_id AND location_id = ".\Session::get('selected_location'));
     }
 
     public static function processApiData($json,$param=null){
