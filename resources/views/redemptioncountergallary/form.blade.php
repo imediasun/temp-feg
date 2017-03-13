@@ -58,7 +58,7 @@
 
                 $('.editor').summernote();
 
-                $(".select3").select2({width: "98%"});
+                renderDropdown($(".select3 "), { width:"98%"});
 
                 var form = $('#gallaryfileuploadform');
                 form.parsley();
