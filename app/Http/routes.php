@@ -100,6 +100,45 @@ Route::group(['middleware' => 'auth'], function()
 		'feg/system/tasks'	=> 'Feg\System\TasksController',
 		'feg/system/systememailreportmanager'	=> 'Feg\System\SystemEmailReportManagerController',        
 	]);
+    
+    Route::get('feg/system/utils/{slug}', function($slug) {
+        $app = app();
+        $parameters = [];
+        $paths = explode('/', $slug);
+        $classRootPath = 'App\\Http\\Controllers\\Feg\\System\\Utils\\';
+        $method = "index";
+        do {
+            $path = str_replace('-', '', ucwords(ucwords(implode('\\', $paths), '-'), '\\'));
+            $classPath = $classRootPath . $path . 'Controller' ;            
+            try {
+                $controller = $app->make( $classPath );
+            } 
+            catch (Exception $ex) {
+                array_unshift($parameters, array_pop($paths)) ;                
+            }
+            
+        } while (empty($controller) && count($paths) > 0);
+        
+        if (!empty($parameters[0])) {
+            $method = array_shift($parameters);
+        }
+        if (empty($controller)) {        
+            $classPath = $classRootPath .'UtilsController';
+            $controller = $app->make( $classPath );
+            $parameters = [['params' => $parameters, 'slug' => $slug]];
+        }
+
+        try {
+            $called  = $controller->callAction($method, $parameters);
+        } catch (Exception $ex) {
+            array_unshift($parameters, $method);
+            $method = "index";
+            $called  = $controller->callAction($method, $parameters);
+        }
+        
+        return $called;
+
+    })->where('slug','.+');    
 
 });
 
