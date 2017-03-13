@@ -13,7 +13,7 @@
                     <?php endif; ?>
                 </li>
             <li>
-                <a href="addtocart"  class="dropdown-toggle count-info">
+                <a href="{{url()}}/addtocart"  class="dropdown-toggle count-info">
                     <?php
                         $cart_value=\Session::get('total_cart');
                     $cart_value=isset($cart_value)?$cart_value:0;
