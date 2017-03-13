@@ -92,7 +92,7 @@
     </nav>
 </div>
 
- <?php $pageModule=isset($_SERVER['HTTP_REFERER'])?$_SERVER['HTTP_REFERER']:$pageModule;
+ <?php $pageModule=isset($_SERVER['HTTP_REFERER'])?$_SERVER['HTTP_REFERER']: (isset($pageModule) ? $pageModule : '');
  if($pageModule == url('').'/' )
      {
           $pageModule='dashboard';
