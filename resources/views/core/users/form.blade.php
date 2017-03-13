@@ -140,7 +140,7 @@
                         <div class="form-group  ">
                             <label for="Avatar" class=" control-label col-md-4 text-left"> Avatar </label>
                             <div class="col-md-6">
-                                <input type='file' name='avatar' id='avatar' @if($row['avatar'] =='') 
+                                <input type='file' name='avatar' id='avatar' @if($row['avatar'] =='')
                                        @endif style='width:350px !important;' value="{{ $row['avatar'] }}"/>
                                 <div>
                                     {!! SiteHelpers::showUploadedFile($row['avatar'],'/uploads/users/') !!}
