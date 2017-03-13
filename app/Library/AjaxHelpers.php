@@ -59,22 +59,25 @@ class AjaxHelpers
             list($className, $methodName, $serialisedParams) = explode('|', $fval.'||');
             if (method_exists($className, $methodName)) {
                 if ($serialisedParams=='') {
-                    $serialisedParams = $val;
+                    $params = [$val];
+                    //$serialisedParams = $val;
                 }
-                $params = explode(':', $serialisedParams);
-                foreach ($params as $index => $fieldName) {
-                    if (is_array($row)) {
-                        if (isset($row[$fieldName])) {
-                            $params[$index] = $row[$fieldName];
-                        }                        
-                    }
-                    else {
-                        if (isset($row->$fieldName)) {
-                            $params[$index] = $row->$fieldName;
-                        }                        
+                else {
+                    $params = explode(':', $serialisedParams);
+                    foreach ($params as $index => $fieldName) {
+                        if (is_array($row)) {
+                            if (isset($row[$fieldName])) {
+                                $params[$index] = $row[$fieldName];
+                            }                        
+                        }
+                        else {
+                            if (isset($row->$fieldName)) {
+                                $params[$index] = $row->$fieldName;
+                            }                        
+                        }
                     }
                 }
-                $serialisedParams = implode(",", $params);
+                //$serialisedParams = implode(",", $params);
                 //$val = call_user_func(array($className, $methodName), $serialisedParams);
                 $val = call_user_func_array(array($className, $methodName), $params);
             }
