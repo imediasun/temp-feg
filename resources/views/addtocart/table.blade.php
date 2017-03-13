@@ -323,10 +323,7 @@
             e.preventDefault();
             doStuff(value,id,vendor_name1);
         }
-        else if (value <= 0 && value != "" )
-        {
-            notyMessageError('Quantity must be greater than 0');
-        }
+      
     }
     function confirmSubmit() {
         var shortMessage;
