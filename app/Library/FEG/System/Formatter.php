@@ -125,8 +125,11 @@ class Formatter
         return \SiteHelpers::getModuleFormFieldDropdownOptions('servicerequests', 'issue_type');
     } 
     
-    public static function empty2Blank($value = null) {        
+    public static function empty2blank($value = null) {        
         return empty($value) ? '' : $value;
+    } 
+    public static function delegateTo($value = null) {        
+        return is_null($value) ? '' : $value;
     } 
       
 }

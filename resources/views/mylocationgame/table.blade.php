@@ -136,13 +136,8 @@
                                             @endif
                                         @endif
 									@endif
-                                    @if($field['field']=='location_num')
-                                        {!! $row->location_id !!}
-                                    @elseif ($field['field']=='game_type_id')
-                                        {!! $value=="0"?null:$value !!}
-                                    @else
-                                        {!! $value !!}
-                                    @endif
+                                    
+                                    {!! $value !!}
 								 </td>
 							@endif
                     <?php
