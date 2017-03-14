@@ -224,10 +224,11 @@ class LocationController extends Controller
 
     function postSave(Request $request, $id = null)
     {
-        $form_data['date_opened'] = date('Y-m-d');
-        $form_data['date_closed'] = date('Y-m-d');
+
         $rules = $this->validateForm();
         $input_id=$request->get('id');
+        $locationAssignmentFields = \SiteHelpers::getUniqueLocationUserAssignmentMeta('field');
+        
         if(\Session::get('location_updated') != $input_id) {
             $rules['id'] = 'required|unique:location,id,'.$input_id;
         }
@@ -236,17 +237,32 @@ class LocationController extends Controller
         }
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
-            if(empty($id))
-                $data = $this->validatePost('location');
-            else
-                $data = $this->validatePost('location', true);
+            $data = $this->validatePost('location', !empty($id));
+            
             // old id in case the existing location's id has been modified
             $oldId = $id;
             $newId = $data['id'];
             if ($oldId == $newId) {
                 $oldId = null;
             }
+            
+            $locationAssignments = [];
+            foreach($data as $fieldName => $value) {
+                if (isset($locationAssignmentFields[$fieldName])) {
+                    $groupID = $locationAssignmentFields[$fieldName]['group_id'];
+                    if (empty($value)) {
+                        $value = null;
+                    }
+                    $locationAssignments[$groupID] = $value;
+                    unset($data[$fieldName]);
+                }                
+            }
+            
             $id = $this->model->insertRow($data, $id);
+            
+            foreach($locationAssignments as $groupId => $userId) {
+                \App\Models\UserLocations::updateRoleAssignment($newId, $userId, $groupId);
+            }
             
             // Assing the newly created or updated/id changed location to 
             // users having has_all_locations=1 (all Locations = true)

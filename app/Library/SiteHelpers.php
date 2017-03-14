@@ -2613,21 +2613,20 @@ class SiteHelpers
         return $options;
     }
     
-    public static function getUniqueLocationUserAssignmentMeta($type = 'id', $returnType ='array') { // id, field, all, [sql, array]
-        $minutes = 60;
+    public static function getUniqueLocationUserAssignmentMeta($type = 'id', $returnType ='array', $value = null) { // id, field, all, [sql, array]
+        $minutes = 0;
         $cacheKey = md5("getUniqueLocationUserAssignmentMeta-$type-$returnType");
-        return Cache::remember($cacheKey, $minutes, function () use ($type, $returnType) {
+        return Cache::remember($cacheKey, $minutes, function () use ($type, $returnType, $value) {
             $q = \DB::table('location_user_roles_master');
-            switch($type) {
-                case "id":
-                    $q->select('group_id');
-                    break;
-                case "field":
-                    $q->select('proxy_field_name');
-                    break;
-                default:
-                    $q->select('id', 'group_id', 'role_title', 'proxy_field_name', 'unique_assignment');
+            if (!empty($value)) {
+                $field = $returnType;
+                if (!empty($field)){
+                    return $q->where($field, $value)->pluck($type);
+                }
+                return null;
             }
+            $q->select('id', 'group_id', 'role_title', 'proxy_field_name', 'unique_assignment');
+            
             if ($type != 'all') {
                 $q->where(['unique_assignment' => 1]);
             }
@@ -2647,8 +2646,24 @@ class SiteHelpers
 
                 return ['select' => $sqlSelectString, 'join' => $sqlJoinString];
             }
-
-            return $q->get();            
+            $data = [];
+            $records = $q->get();
+            foreach ($records as $item) {
+                $gid = $item->group_id;
+                $pfn = $item->proxy_field_name;
+                $rt = $item->role_title;
+                $item = ['group_id' => $gid, 'field' => $pfn, 'label' => $rt];
+                switch($type) {
+                    case "field":
+                        $data[$pfn] = $item;
+                        break;
+                    default:
+                        $data[$gid] = $item;
+                }
+            }            
+            return $data;
         });                
     }
+    
+    
 }
