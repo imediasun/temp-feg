@@ -33,7 +33,31 @@ class LocationController extends Controller
 
 
     }
+    
+    public function getSearchFilterQuery($customQueryString = null) {
+        // Filter Search for query
+        // build sql query based on search filters
+        $filter = is_null($customQueryString) ? (is_null(Input::get('search')) ? '' : $this->buildSearch()) :
+            $this->buildSearch($customQueryString);
 
+        
+        // Special filter for default active location
+        if (stripos($filter, "location.active") === false ) {
+            $filter .= " AND location.active = '1'";
+        }
+        // and showing both active and inactive location
+        if (stripos($filter, "AND location.active = '-1'") >= 0 ) {
+            $filter = str_replace("AND location.active = '-1'", "", $filter);
+        }
+        
+        $assignmentFields = \SiteHelpers::getUniqueLocationUserAssignmentMeta('-field');
+        foreach($assignmentFields as $field) {
+            $filter = str_replace("location.$field", "$field.user_id", $filter);
+        }  
+        
+        return $filter;
+    }
+    
     public function getIndex(Request $request, $id = 0)
     {
         if ($this->access['is_view'] == 0)
@@ -71,22 +95,8 @@ class LocationController extends Controller
         $order = (!is_null($request->input('order')) ? $request->input('order') : $this->info['setting']['ordertype']);
         // End Filter sort and order for query
         // Filter Search for query
-        $filter = (!is_null($request->input('search')) ? $this->buildSearch() : '');
+        $filter = $this->getSearchFilterQuery();
         
-        // Special filter for default active location
-        if (stripos($filter, "location.active") === false ) {
-            $filter .= " AND location.active = '1'";
-        }
-        // and showing both active and inactive location
-        if (stripos($filter, "AND location.active = '-1'") >= 0 ) {
-            $filter = str_replace("AND location.active = '-1'", "", $filter);
-        }
-        
-        $assignmentFields = \SiteHelpers::getUniqueLocationUserAssignmentMeta('-field');
-        foreach($assignmentFields as $field) {
-            $filter = str_replace("location.$field", "$field.user_id", $filter);
-        }        
-  
         $page = $request->input('page', 1);
         $params = array(
             'page' => $page,
