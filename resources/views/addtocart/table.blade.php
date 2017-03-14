@@ -221,7 +221,7 @@
         $("#new_location").jCombo("{{ URL::to('order/comboselect?filter=location:id:id|location_name ') }}",
                 {selected_value: ''});
         -->
-        $(".select3").select2({width: "98%"});
+        renderDropdown($(".select3 "), { width:"98%"});
 
         $('.my_form').on("keypress",(function(e) {
             console.log(e);

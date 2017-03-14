@@ -231,7 +231,7 @@
                         <td><br/><input type="text" id="item_num" name="item_num[]" disabled readonly
                                         style="width:30px;border:none;background:none"/></td>
                         <td><br/><input type="text" class="form-control sku" id="sku_num" name="sku[]"
-                                    /></td>
+                            /></td>
 
                         <td><br/> <input type="text" name='item_name[]' placeholder='Item  Name' id="item_name"
                                          class='form-control item_name mysearch' onfocus="init(this.id,this)"
@@ -386,7 +386,7 @@
             {
                 var location_id=$("#po_1").val();
                 var po=$("#po_1").val()+"-"+$("#po_2").val()+"-"+$("#po_3").val();
-                 validatePONumber(location_id,po);
+                validatePONumber(location_id,po);
             }
             $("#item_num").val(inc);
 
@@ -417,11 +417,8 @@
 
             $("#order_type_id").jCombo("{{ URL::to('order/comboselect?filter=order_type:id:order_type') }}&parent=can_request:1",
                     {selected_value: '{{ $data["order_type"] }}', initial_text: '-------- Select Order Type --------'});
-            $("[id^=game_0]").select2({
-                dataType: 'json',
-                data: {results: games_options_js},
-                placeholder: "For Various Games", width: "98%"
-            });
+
+            renderGameDropDown($("[id^=game_0]"),{results: games_options_js});
 
             $("input[name*='total'] ").attr('readonly', '1');
             $(" input[name*='bulk_Price'] ").addClass('calculate');
@@ -439,7 +436,7 @@
             $('.editor').summernote();
             $('.previewImage').fancybox();
             $('.tips').tooltip();
-            $("select.select3").select2({width: "98%"});
+            renderDropdown($("select.select3 "), { width:"98%"});
             $('.date').datepicker({format: 'mm/dd/yyyy', autoclose: true})
             $('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});
             $('.removeCurrentFiles').on('click', function () {
@@ -560,11 +557,7 @@
                     url: "{{ url() }}/order/games-dropdown",
                     data: {'location': "<?php echo $data["order_location_id"] ?>"},
                     success: function (data) {
-                        $("[id^=game_]").select2({
-                            dataType: 'json',
-                            data: {results: data},
-                            placeholder: "For Various Games", width: "98%"
-                        });
+                        renderGameDropDown($("[id^=game_]"),{results: data});
                     }
                 });
 
@@ -611,14 +604,20 @@
                 data: {'location': $(this).val()},
                 success: function (data) {
                     games_options_js = data;
-                    $("[id^=game_]").select2({
-                        dataType: 'json',
-                        data: {results: data},
-                        placeholder: "For Various Games", width: "98%"
-                    });
+                    renderGameDropDown($("[id^=game_]"),{results: data});
                 }
             });
         });
+
+
+        function renderGameDropDown(selector,data){
+            renderDropdown(selector,{
+                dataType: 'json',
+                data: data,
+                placeholder: "For Various Games", width: "98%"
+            });
+        }
+
         function debounce(func, wait, immediate) {
             var timeout;
             return function () {
@@ -754,21 +753,13 @@
                     data: {'location': location_id},
                     success: function (data) {
                         games_options_js = data;
-                        $("[id^=game_]").select2({
-                            dataType: 'json',
-                            data: {results: data},
-                            placeholder: "For Various Games", width: "98%"
-                        });
+                        renderGameDropDown($("[id^=game_]"),{results: data});
                     }
                 });
 
             }
             else {
-                $("[id^=game_]").select2({
-                    dataType: 'json',
-                    data: {results: games_options_js},
-                    placeholder: "For Various Games", width: "98%"
-                });
+                renderGameDropDown($("[id^=game_]"),{results: games_options_js});
             }
             $("[name^=qty]").keypress(isNumeric);
             reInitParcley();
@@ -957,5 +948,3 @@
             width: 90%;
         }
     </style>
-
-
