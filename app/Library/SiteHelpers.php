@@ -2657,6 +2657,30 @@ class SiteHelpers
                     case "field":
                         $data[$pfn] = $item;
                         break;
+                    case "-field":
+                        $data[] = $pfn;
+                        break;
+                    case "field-":
+                        $data[$pfn] = '';
+                        break;
+                    case "field-Id":
+                        $data[$pfn] = $gid;
+                        break;
+                    case "field-label":
+                        $data[$pfn] = $rt;
+                        break;
+                    case "-id":
+                        $data[] = $gid;
+                        break;
+                    case "id-":
+                        $data[$gid] = '';
+                        break;
+                    case "id-field":
+                        $data[''.$gid] = $pfn;
+                        break;
+                    case "id-label":
+                        $data[''.$gid] = $rt;
+                        break;
                     default:
                         $data[$gid] = $item;
                 }

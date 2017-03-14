@@ -17,7 +17,7 @@ class UserLocations extends Sximo  {
     public static function updateRoleAssignment($locationId, $userId, $role) {
         
         if (!is_numeric($role)) {
-            $roles = \SiteHelpers::getUniqueLocationUserAssignmentMeta('field');
+            $roles = \SiteHelpers::getUniqueLocationUserAssignmentMeta('field-id');
             $role = $roles[$role];
         }
         if (empty($role)) {

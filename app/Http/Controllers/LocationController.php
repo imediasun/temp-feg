@@ -82,7 +82,11 @@ class LocationController extends Controller
             $filter = str_replace("AND location.active = '-1'", "", $filter);
         }
         
-
+        $assignmentFields = \SiteHelpers::getUniqueLocationUserAssignmentMeta('-field');
+        foreach($assignmentFields as $field) {
+            $filter = str_replace("location.$field", "$field.user_id", $filter);
+        }        
+  
         $page = $request->input('page', 1);
         $params = array(
             'page' => $page,
@@ -150,12 +154,16 @@ class LocationController extends Controller
             if ($this->access['is_edit'] == 0)
                 return Redirect::to('dashboard')->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
         }
-        $row = $this->model->find($id);
+        $row = $this->model->getRow($id);
         if ($row) {
-            $this->data['row'] = $row;
+            $row = $row[0];
         } else {
-            $this->data['row'] = $this->model->getColumnTable('location');
+            $row = $this->model->getColumnTable('location');
+            $assignmentFields = \SiteHelpers::getUniqueLocationUserAssignmentMeta('field-');
+            $row = array_merge($row, $assignmentFields);
         }
+        $this->data['row'] = $row;
+        
         $this->data['setting'] = $this->info['setting'];
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
         $this->data['id'] = $id;
@@ -227,7 +235,7 @@ class LocationController extends Controller
 
         $rules = $this->validateForm();
         $input_id=$request->get('id');
-        $locationAssignmentFields = \SiteHelpers::getUniqueLocationUserAssignmentMeta('field');
+        $locationAssignmentFields = \SiteHelpers::getUniqueLocationUserAssignmentMeta('field-id');
         
         if(\Session::get('location_updated') != $input_id) {
             $rules['id'] = 'required|unique:location,id,'.$input_id;
@@ -249,7 +257,7 @@ class LocationController extends Controller
             $locationAssignments = [];
             foreach($data as $fieldName => $value) {
                 if (isset($locationAssignmentFields[$fieldName])) {
-                    $groupID = $locationAssignmentFields[$fieldName]['group_id'];
+                    $groupID = $locationAssignmentFields[$fieldName];
                     if (empty($value)) {
                         $value = null;
                     }
