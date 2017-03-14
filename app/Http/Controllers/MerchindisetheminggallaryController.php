@@ -196,9 +196,9 @@ class MerchindisetheminggallaryController extends Controller
             $data['users'] = $request->get('employees_involved');
             $data['image_category'] = "mer";
             $data['batch'] = str_pad(mt_rand(0, 999999), 6, '0', STR_PAD_LEFT);
-            $file = $request->file('merch_image');
-            for($i=0;$i < count($file); $i++) {
-                $img = Image::make($file[$i]->getRealPath());
+            $files = $request->file('merch_image');$i=0;
+            foreach($files as $file) {
+                $img = Image::make($file->getRealPath());
                 $mime = $img->mime();
                 if ($mime == 'image/jpeg') {
                     $extension = '.jpg';
@@ -209,11 +209,10 @@ class MerchindisetheminggallaryController extends Controller
                 } else {
                     $extension = '';
                 }
-                $id = $this->model->insertRow($data, $id);
+                $id = $this->model->insertRow($data, NULL);
                 $img->save(public_path() . '/uploads/gallary/' . $id . $extension);
                 $img->resize(101, 150);
                 $img->save(public_path() . '/uploads/gallary/' . $id . '_thumb' . $extension);
-
             }
             return response()->json(array(
                 'status' => 'success',
