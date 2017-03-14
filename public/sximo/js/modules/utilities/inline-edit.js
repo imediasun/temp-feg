@@ -391,10 +391,10 @@
         }
         if (isHide) {
             container.find('#'+rowDomId+' td .action').show();
-            container.find('#'+rowDomId+' td .actionopen').hide();            
+           container.find('#'+rowDomId+' td .actionopen').hide();
         }
         else {
-            container.find('#'+rowDomId+' td .action').hide();
+           // container.find('#'+rowDomId+' td .action').hide();
             container.find('#'+rowDomId+' td .actionopen').show();
         }
    };
