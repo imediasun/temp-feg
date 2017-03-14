@@ -14,11 +14,14 @@ class location extends Sximo  {
 		
 	}
 
-	public static function querySelect(  ){
+    public static function getQuery( ) {
         $roleSQL = \SiteHelpers::getUniqueLocationUserAssignmentMeta('sql');
         $sql = "SELECT ".$roleSQL['select'] . ", location.* 
             FROM location " .$roleSQL['join'];
-		return $sql;
+        return $sql;
+    }
+	public static function querySelect(  ){        
+		return self::getQuery();
 	}	
 
 	public static function queryWhere(  ){
@@ -40,10 +43,8 @@ class location extends Sximo  {
         return $row;
     }*/
     public static function getRow($id)
-    {
-        $roleSQL = \SiteHelpers::getUniqueLocationUserAssignmentMeta('sql');
-        $sql = "SELECT ".$roleSQL['select'] . ", location.* 
-            FROM location " .$roleSQL['join'];
+    {       
+        $sql = self::querySelect();
         $row=\DB::select($sql." WHERE location.id='$id'");
         return $row;
     }

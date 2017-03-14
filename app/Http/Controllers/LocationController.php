@@ -172,14 +172,32 @@ class LocationController extends Controller
 
         $row = $this->model->getRow($id);
         if ($row) {
-            $this->data['row'] = $row;
+            $row = $this->data['row'] = $row[0];
         } else {
-            $this->data['row'] = $this->model->getColumnTable('location');
+            $row = $this->data['row'] = $this->model->getColumnTable('location');
         }
 
         $this->data['id'] = $id;
         $this->data['access'] = $this->access;
         $this->data['setting'] = $this->info['setting'];
+        $gridSettings = $this->info['config']['grid'];
+        
+        $row->contact_name = '';
+        if (!empty($row->contact_id)) {
+            $contactDetails = \SiteHelpers::getUserDetails($row->contact_id);
+            $row->contact_name = $contactDetails['first_name'] . ' ' . $contactDetails['last_name'];
+        }
+        
+        foreach($gridSettings as $field) {
+            $fieldName = $field['field'];
+            if($field['view'] == '1' && isset($row->$fieldName)) {
+                $conn = (isset($field['conn']) ? $field['conn'] : array());
+                $value = \AjaxHelpers::gridFormater($row->$fieldName, $row, $field['attribute'], $conn);
+                $this->data['row']->$fieldName = $value;
+            }
+            $gridSettings[$field['field']] = $field;
+        }
+        $this->data['tableGrid'] = $gridSettings;
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
         return view('location.view', $this->data);
     }
