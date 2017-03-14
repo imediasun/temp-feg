@@ -2565,5 +2565,40 @@ class SiteHelpers
             return $options;
         });        
         return $options;
-    }       
+    }
+    
+    public static function getUniqueLocationUserAssignmentMeta($type = 'id', $returnType ='array') { // id, field, all, [sql, array]
+        $q = \DB::table('location_user_roles_master');
+        switch($type) {
+            case "id":
+                $q->select('group_id');
+                break;
+            case "field":
+                $q->select('proxy_field_name');
+                break;
+            default:
+                $q->select('id', 'group_id', 'role_title', 'proxy_field_name', 'unique_assignment');
+        }
+        if ($type != 'all') {
+            $q->where(['unique_assignment' => 1]);
+        }
+        if ($returnType == 'sql' || $type == 'sql') {
+            $sqlSelect = [];
+            $sqlJoins = [];
+            $data = $q->get();
+            foreach($data as $item) {
+                $gid = $item->group_id;
+                $pfn = $item->proxy_field_name;
+                $sqlSelect[] = "$pfn.user_id as $pfn";
+                $sqlJoins[] = "LEFT JOIN user_locations $pfn ON $pfn.location_id = location.id AND $pfn.group_id='$gid'";
+            }
+            
+            $sqlSelectString = implode(", ", $sqlSelect);
+            $sqlJoinString = implode(" \r\n ", $sqlJoins);
+            
+            return ['select' => $sqlSelectString, 'join' => $sqlJoinString];
+        }
+        
+        return $q->get();
+    }
 }
