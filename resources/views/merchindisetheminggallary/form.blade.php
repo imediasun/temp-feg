@@ -18,7 +18,7 @@
                     <div class="form-group">
                         <label for="gallary_img" class="control-label col-md-3">Add Photo</label>
                         <div class="col-md-9">
-                            <input type='file' name='merch_image' id='merch_image' required value=""/>
+                            <input type='file' name='merch_image[]' multiple id='merch_image' required value=""/>
                         </div>
                     </div>
                     <div class="form-group">

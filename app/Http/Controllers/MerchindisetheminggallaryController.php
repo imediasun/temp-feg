@@ -195,24 +195,26 @@ class MerchindisetheminggallaryController extends Controller
             $data['theme_name'] = $request->get('theme_name');
             $data['users'] = $request->get('employees_involved');
             $data['image_category'] = "mer";
-            $id = $this->model->insertRow($data, $id);
+            $data['batch'] = str_pad(mt_rand(0, 999999), 6, '0', STR_PAD_LEFT);
             $file = $request->file('merch_image');
-            $img = Image::make($file->getRealPath());
-            $mime = $img->mime();
-            if ($mime == 'image/jpeg') {
-                $extension = '.jpg';
-            } elseif ($mime == 'image/png') {
-                $extension = '.png';
-            } elseif ($mime == 'image/gif') {
-                $extension = '.gif';
-            } else {
-                $extension = '';
+            for($i=0;$i < count($file); $i++) {
+                $img = Image::make($file[$i]->getRealPath());
+                $mime = $img->mime();
+                if ($mime == 'image/jpeg') {
+                    $extension = '.jpg';
+                } elseif ($mime == 'image/png') {
+                    $extension = '.png';
+                } elseif ($mime == 'image/gif') {
+                    $extension = '.gif';
+                } else {
+                    $extension = '';
+                }
+                $id = $this->model->insertRow($data, $id);
+                $img->save(public_path() . '/uploads/gallary/' . $id . $extension);
+                $img->resize(101, 150);
+                $img->save(public_path() . '/uploads/gallary/' . $id . '_thumb' . $extension);
+
             }
-
-            $img->save(public_path() . '/uploads/gallary/' . $id . $extension);
-            $img->resize(101, 150);
-            $img->save(public_path() . '/uploads/gallary/' . $id . '_thumb' . $extension);
-
             return response()->json(array(
                 'status' => 'success',
                 'message' => \Lang::get('core.note_success')
