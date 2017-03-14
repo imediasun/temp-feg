@@ -188,7 +188,7 @@ class MerchindisetheminggallaryController extends Controller
 
     function postSave(Request $request, $id = null)
     {
-        $rules = array('merch_image' => 'required|mimes:jpeg,gif,png', 'location' => 'required');
+        $rules = array('merch_image' => 'required', 'location' => 'required');
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
             $data['loc_id'] = $request->get('location');
