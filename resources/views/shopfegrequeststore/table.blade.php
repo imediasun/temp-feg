@@ -73,16 +73,10 @@
                                 }
                             endif;
                         endforeach; ?>
-                        @if($setting['disablerowactions']=='false')
-                            <th width="70"><?php echo Lang::get('core.btn_action') ;?></th>
-                        @endif
-
-                        <th width="115">Add To Cart</th>
-
-
-
-
-
+                            @if($setting['disablerowactions']=='false')
+                                <th width="70"><?php echo Lang::get('core.btn_action') ;?></th>
+                            @endif
+                            <th width="115">Add To Cart</th>
                     </tr>
                     </thead>
 
@@ -150,15 +144,19 @@
                         endif;
                         endforeach;
                         ?>
-                        <td><a href="{{ $pageModule }}/show/{{$row->id}}" target="_blank"
-                               class="tips btn btn-xs btn-white"  title="Product Details"><i class="fa fa-search" aria-hidden="true"></i></a>
-</td>
+                            @if($setting['disablerowactions']=='false')
+                                <td data-values="action" data-key="<?php echo $row->id ;?>">
+                                    {!! AjaxHelpers::buttonAction('shopfegrequeststore',$access,$id ,$setting) !!}
+                                    {!! AjaxHelpers::buttonActionInline($row->id,'id') !!}
+                                </td>
+                            @endif
                         <td>@if($row->inactive == 0)
                                 <input type="number" title="Quantity" value="1" min="1" onkeyup="if(!this.checkValidity()){this.value='';alert('Please Enter a Non Zero Number')};" name="item_quantity" class="form-control" style="width:70px;display:inline" id="item_quantity_{{$row->id}}" min="0"  />
                                 <a href="javascript:void(0)" value="{{$row->id}}" class=" addToCart tips btn btn-xs btn-white"  title="Add to Cart"><i class="fa fa-shopping-cart" aria-hidden="true"></i></a>
                             @else
                                 Not Avail.
                             @endif</td>
+
                     </tr>
                     @if($setting['view-method']=='expand')
                         <tr style="display:none" class="expanded" id="row-{{ $row->id }}">

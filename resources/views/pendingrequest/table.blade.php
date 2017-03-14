@@ -75,7 +75,9 @@
 					endif;
 				$col++;
 				endforeach; ?>
-
+                @if($setting['disablerowactions']=='false')
+                    <th width="70"><?php echo Lang::get('core.btn_action') ;?></th>
+            @endif
         </thead>
 
         <tbody>
@@ -134,7 +136,12 @@
 						 $col++;
 						endforeach; 
 					  ?>
-
+                    @if($setting['disablerowactions']=='false')
+                        <td data-values="action" data-key="<?php echo $row->id ;?>">
+                            {!! AjaxHelpers::buttonAction('pendingrequest',$access,$id ,$setting) !!}
+                            {!! AjaxHelpers::buttonActionInline($row->id,'id') !!}
+                        </td>
+                    @endif
                 </tr>
                 @if($setting['view-method']=='expand')
                 <tr style="display:none" class="expanded" id="row-{{ $row->id }}">
