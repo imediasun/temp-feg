@@ -2614,9 +2614,9 @@ class SiteHelpers
     }
     
     public static function getUniqueLocationUserAssignmentMeta($type = 'id', $returnType ='array', $value = null) { // id, field, all, [sql, array]
-        $minutes = 0;
+        $minutes = 60;
         $cacheKey = md5("getUniqueLocationUserAssignmentMeta-$type-$returnType");
-        return Cache::remember($cacheKey, $minutes, function () use ($type, $returnType, $value) {
+        //return Cache::remember($cacheKey, $minutes, function () use ($type, $returnType, $value) {
             $q = \DB::table('location_user_roles_master');
             if (!empty($value)) {
                 $field = $returnType;
@@ -2663,7 +2663,7 @@ class SiteHelpers
                     case "field-":
                         $data[$pfn] = '';
                         break;
-                    case "field-Id":
+                    case "field-id":
                         $data[$pfn] = $gid;
                         break;
                     case "field-label":
@@ -2686,7 +2686,7 @@ class SiteHelpers
                 }
             }            
             return $data;
-        });                
+        //});                
     }
     
     

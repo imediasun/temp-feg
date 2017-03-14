@@ -32,20 +32,15 @@ class location extends Sximo  {
 	public static function queryGroup(){
 		return "  ";
 	}
-  /*  public static function getRow( $id )
-    {
-        $row= \DB::table('location')
-            ->join('region', 'location.region_id', '=', 'region.id')
-            ->join('company','location.company_id','=','company.id')
-            ->select('location.*','region.region','company.company_name_short')
-            ->where('location.id','=',$id)
-            ->get();
-        return $row;
-    }*/
+
     public static function getRow($id)
     {       
+        if (empty($id)) {
+            return false;
+        }
         $sql = self::querySelect();
-        $row=\DB::select($sql." WHERE location.id='$id'");
+        $rows = \DB::select($sql." WHERE location.id='$id'");
+        $row = json_decode(json_encode($rows), true);
         return $row;
     }
 
