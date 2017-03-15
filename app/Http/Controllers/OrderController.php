@@ -854,6 +854,8 @@ class OrderController extends Controller
                              $file_to_save = public_path() . '/orders/' . $filename;
                              file_put_contents($file_to_save, $output);
                              $mail->addAttachment($file_to_save, $filename, 'base64', 'application/pdf');
+                             $mail->SMTPSecure = 'tls';
+                             $mail->Host = 'smtp.gmail.com';
                              if (!$mail->Send()) {
                                return 3;
                              } else {
@@ -861,9 +863,7 @@ class OrderController extends Controller
                              }
                          }catch (phpmailerException $e) {
                              echo $e->errorMessage(); //Pretty error messages from PHPMailer
-                         } catch (Exception $e) {
-                             echo $e->getMessage(); //Boring error messages from anything else!
-                         }/*
+                         } /*
                           if (!$mail->Send()) {
                           echo $mail->errorInfo();
                         } else {
