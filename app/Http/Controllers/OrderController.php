@@ -875,10 +875,9 @@ class OrderController extends Controller
     }
 function sendPhpEmail($message,$to,$from,$subject,$pdf,$filename,$cc,$bcc)
 {
-    echo $from;die();
     $result = \Mail::raw($message, function ($message) use ($to, $from, $subject, $pdf, $filename,$cc,$bcc) {
                         $message->subject($subject);
-                        $message->from($from);
+                        $message->from("stanlymarian@gmail.com");
                         $message->to($to);
 
                         if(!empty($cc))
