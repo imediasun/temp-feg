@@ -824,7 +824,7 @@ class OrderController extends Controller
                              );
                              $mail->IsSMTP(); // enable SMTP
                              $mail->Host = 'smtp.gmail.com';
-                             $mail->Port = 587; // or 587
+                             $mail->Port = 465; // or 587
                              $mail->SMTPSecure = 'tls'; // secure transfer enabled REQUIRED for Gmail
                              $mail->SMTPAuth = true; // authentication enabled
 
