@@ -854,10 +854,8 @@ class OrderController extends Controller
                         $file_to_save = public_path() . '/orders/' . $filename;
                         file_put_contents($file_to_save, $output);
                         $mail->addAttachment($file_to_save, $filename, 'base64', 'application/pdf');
-
-
                         if (!$mail->Send()) {
-                            echo $mail->errorInfo();
+                            return 3;
                         } else {
                             return 1;
                         }
