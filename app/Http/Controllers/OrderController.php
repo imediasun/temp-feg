@@ -813,9 +813,6 @@ class OrderController extends Controller
                   * https://www.google.com/settings/security/lesssecureapps
                   * enable stmp detail
                   */
-                        $decode_pass=base64_decode($google_acc->g_password);
-                       $pass=explode("_",$decode_pass);
-                        echo $pass[2];die();
                         $mail = new PHPMailer();
                         // create a new object
                         $mail->SMTPOptions = array(
@@ -835,7 +832,9 @@ class OrderController extends Controller
 
                         //$mail->IsHTML(true);
                         $mail->Username = $google_acc->g_mail;          // SMTP username
-                        $mail->Password = trim(base64_decode($google_acc->g_password), env('SALT_KEY'));
+                        $decode_pass=base64_decode($google_acc->g_password);
+                        $pass=explode("_",$decode_pass);
+                        $mail->Password = isset($pass[2])?$pass[2]:trim(base64_decode($google_acc->g_password),env('SALT_KEY'));
                         $mail->SetFrom($google_acc->g_mail);
                         $mail->Subject = $subject;
                         $mail->Body = $message;
