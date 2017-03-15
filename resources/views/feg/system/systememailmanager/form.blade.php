@@ -1,4 +1,3 @@
-{{--*/      $isEdit = !empty($ID)               /*--}}
 @if($setting['form-method'] =='native')
 <div class="sbox">
     <div class="sbox-title">  
@@ -73,7 +72,7 @@
                             <select multiple name='to_email_groups[]' 
                                     id="to_email_groups" 
                                     class='select2'></select><br/> <br/>
-                            Location Contact and Managers:<br/>
+                            Location based Roles:<br/>
                             <div class="clearfix">
                             <input name='to_email_location_contacts' 
                                    id="to_email_location_contacts"  
@@ -229,7 +228,7 @@ $(document).ready(function() {
 	$('.editor').summernote();
 	$('.previewImage').fancybox();	
 	$('.tips').tooltip();	
-	renderDropdown($(".select2 "), { width:"98%"});
+	$(".select2").select2({ width:"98%"});	
 	$('.date').datepicker({format:'mm/dd/yyyy',autoclose:true})
 	$('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});
 	$('input[type="checkbox"],input[type="radio"]').iCheck({

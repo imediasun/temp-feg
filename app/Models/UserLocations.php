@@ -18,14 +18,14 @@ class UserLocations extends Sximo  {
         
         if (!is_numeric($role)) {
             $roles = \SiteHelpers::getUniqueLocationUserAssignmentMeta('field-id');
-            $role = $roles[$role];
+            $role = isset($roles[$role]) ? $roles[$role] : null;
         }
         if (empty($role)) {
-            return;
+            return false;
         }
         if (is_null($userId)) {            
             self::where(['location_id' => $locationId, 'group_id' => $role])->delete();
-            return;
+            return false;
         }
         self::updateOrCreate([
             'location_id' => $locationId, 'group_id' => $role
@@ -71,17 +71,22 @@ class UserLocations extends Sximo  {
     
     public static function getRoleAssignment($locationId, $role) {
         
-        if (is_null($userId)) {
-            self::where(['location_id' => $locationId, 'group_id' => $role])->delete();
-            return;
+        if (!is_numeric($role)) {
+            $roles = \SiteHelpers::getUniqueLocationUserAssignmentMeta('field-id');
+            $role = isset($roles[$role]) ? $roles[$role] : null;
         }
-
+        if (empty($role)) {
+            return null;
+        }
+        
+        $data = self::where(['location_id' => $locationId, 'group_id' => $role])
+                ->pluck('user_id');
+        return $data;
     }
     public static function getRoleAssignments($locationId) {
-        if (is_null($userId)) {
-            self::where(['location_id' => $locationId, 'group_id' => $role])->delete();
-            return;
-        }
-
+        $data = self::where('location_id', $locationId)
+                ->where('group_id', '!=', null)
+                ->get();
+        return $data;
     }
 }
