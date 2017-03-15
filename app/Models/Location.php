@@ -40,8 +40,7 @@ class location extends Sximo  {
         }
         $sql = self::querySelect();
         $rows = \DB::select($sql." WHERE location.id='$id'");
-        $row = json_decode(json_encode($rows), true);
-        return $row;
+        return $rows;
     }
 
 }

@@ -164,7 +164,9 @@ class LocationController extends Controller
             if ($this->access['is_edit'] == 0)
                 return Redirect::to('dashboard')->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
         }
-        $row = $this->model->getRow($id);
+                
+        $rows = $this->model->getRow($id);
+        $row = json_decode(json_encode($rows), true);
         if ($row) {
             $row = $row[0];
         } else {
