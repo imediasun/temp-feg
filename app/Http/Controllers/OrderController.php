@@ -814,63 +814,56 @@ class OrderController extends Controller
                   * enable stmp detail
                   */
                         $mail = new PHPMailer(true);
-                         try {// create a new object
-                             $mail->SMTPOptions = array(
-                                 'ssl' => array(
-                                     'verify_peer' => false,
-                                     'verify_peer_name' => false,
-                                     'allow_self_signed' => true
-                                 )
-                             );
-                             $mail->IsSMTP(); // enable SMTP
-                             $mail->Host = 'smtp.gmail.com';
-                             $mail->Port = 465; // or 587
-                             $mail->SMTPSecure = 'tls'; // secure transfer enabled REQUIRED for Gmail
-                             $mail->SMTPAuth = true; // authentication enabled
+                        // create a new object
+                        $mail->SMTPOptions = array(
+                            'ssl' => array(
+                                'verify_peer' => false,
+                                'verify_peer_name' => false,
+                                'allow_self_signed' => true
+                            )
+                        );
+                        $mail->IsSMTP(); // enable SMTP
+                        $mail->Host = 'smtp.gmail.com';
+                        $mail->Port = 587; // or 587
+                        $mail->SMTPSecure = 'tls'; // secure transfer enabled REQUIRED for Gmail
+                        $mail->SMTPAuth = true; // authentication enabled
 
-                             //$mail->SMTPDebug = 2; // debugging: 1 = errors and messages, 2 = messages only
+                        //$mail->SMTPDebug = 2; // debugging: 1 = errors and messages, 2 = messages only
 
-                             //$mail->IsHTML(true);
-                             $mail->Username = $google_acc->g_mail;          // SMTP username
-                             $mail->Password = trim(base64_decode($google_acc->g_password), env('SALT_KEY'));
-                             $mail->SetFrom($google_acc->g_mail);
-                             $mail->Subject = $subject;
-                             $mail->Body = $message;
-                             foreach ($to as $t) {
-                                 $mail->addAddress($t);
-                             }
-                             if (!empty($cc)) {
-                                 foreach ($cc as $c) {
-                                     $mail->addCC($c);
-                                 }
-                             }
-                             if (!empty($bcc)) {
-                                 foreach ($bcc as $bc) {
-                                     $mail->addBCC($bc);
-                                 }
-                             }
-                             $mail->addReplyTo($google_acc->g_mail);
-                             $output = $pdf->output();
-                             $file_to_save = public_path() . '/orders/' . $filename;
-                             file_put_contents($file_to_save, $output);
-                             $mail->addAttachment($file_to_save, $filename, 'base64', 'application/pdf');
-                             $mail->SMTPSecure = 'tls';
-                             $mail->Host = 'smtp.gmail.com';
-                             if (!$mail->Send()) {
-                               return 3;
-                             } else {
-                                 return 1;
-                             }
-                         }catch (phpmailerException $e) {
-                             echo $e->errorMessage(); //Pretty error messages from PHPMailer
-                         } /*
-                          if (!$mail->Send()) {
-                          echo $mail->errorInfo();
+                        //$mail->IsHTML(true);
+                        $mail->Username = $google_acc->g_mail;          // SMTP username
+                        $mail->Password = trim(base64_decode($google_acc->g_password), env('SALT_KEY'));
+                        $mail->SetFrom($google_acc->g_mail);
+                        $mail->Subject = $subject;
+                        $mail->Body = $message;
+                        foreach ($to as $t) {
+                            $mail->addAddress($t);
+                        }
+                        if (!empty($cc)) {
+                            foreach ($cc as $c) {
+                                $mail->addCC($c);
+                            }
+                        }
+                        if (!empty($bcc)) {
+                            foreach ($bcc as $bc) {
+                                $mail->addBCC($bc);
+                            }
+                        }
+                        $mail->addReplyTo($google_acc->g_mail);
+                        $output = $pdf->output();
+                        $file_to_save = public_path() . '/orders/' . $filename;
+                        file_put_contents($file_to_save, $output);
+                        $mail->addAttachment($file_to_save, $filename, 'base64', 'application/pdf');
+
+
+                        if (!$mail->Send()) {
+                            echo $mail->errorInfo();
                         } else {
                             return 1;
-                        }*/
+                        }
                         die;
-                    } else {
+                    }
+                     else {
                       $sent= $this->sendPhpEmail($message,$to,$from,$subject,$pdf,$filename,$cc,$bcc);
                         return $sent;
                     }
