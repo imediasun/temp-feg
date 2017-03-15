@@ -813,9 +813,7 @@ class OrderController extends Controller
                   * https://www.google.com/settings/security/lesssecureapps
                   * enable stmp detail
                   */
-                        $sent= $this->sendPhpEmail($message,$to,$from,$subject,$pdf,$filename,$cc,$bcc);
-                        return $sent;
-                      /*  $mail = new PHPMailer();
+                        $mail = new PHPMailer();
                         // create a new object
                         $mail->SMTPOptions = array(
                             'ssl' => array(
@@ -861,7 +859,7 @@ class OrderController extends Controller
                         } else {
                             return 1;
                         }
-                        die;*/
+                        die;
                     }
                      else {
                       $sent= $this->sendPhpEmail($message,$to,$from,$subject,$pdf,$filename,$cc,$bcc);
@@ -877,7 +875,7 @@ function sendPhpEmail($message,$to,$from,$subject,$pdf,$filename,$cc,$bcc)
 {
     $result = \Mail::raw($message, function ($message) use ($to, $from, $subject, $pdf, $filename,$cc,$bcc) {
                         $message->subject($subject);
-                        $message->from("stanlymarian@gmail.com");
+                        $message->from($from);
                         $message->to($to);
 
                         if(!empty($cc))
