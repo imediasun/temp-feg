@@ -42,8 +42,7 @@
             @if($setting['disableactioncheckbox']=='false')
                 <th width="30"> <input type="checkbox" class="checkall" /></th>
             @endif
-            <th width="70">Img</th>
-            @if($setting['view-method']=='expand') <th>  </th> @endif
+                @if($setting['view-method']=='expand') <th>  </th> @endif
             <?php foreach ($tableGrid as $t) :
                 if($t['view'] =='1'):
                     $limited = isset($t['limited']) ? $t['limited'] :'';
@@ -112,7 +111,6 @@
 					@if($setting['disableactioncheckbox']=='false')
 							<td ><input type="checkbox" class="ids" name="ids[]" value="<?php echo $row->id ;?>" />  </td>
 						@endif
-                    <td>{!! SiteHelpers::showUploadedFile(SiteHelpers::getGameImage($row->game_title_id),'/uploads/games/images/',50,false,$row->id) !!}</td>
 					@if($setting['view-method']=='expand')
 					<td><a href="javascript:void(0)" class="expandable" rel="#row-{{ $row->id }}" data-url="{{ url('mylocationgame/show/'.$id) }}"><i class="fa fa-plus " ></i></a></td>
 					@endif
@@ -135,9 +133,12 @@
                                                 <?php $value="<a style='color:red' href=#>In Transit</a>" ?>
                                             @endif
                                         @endif
-									@endif
-                                    
-                                    {!! $value !!}
+									@elseif($field['field'] == "img")
+                                         {!! SiteHelpers::showUploadedFile($row->img,'/uploads/games/images/',50,false,$row->id) !!}
+                                    @else
+                                         {!! $value !!}
+                                     @endif
+
 								 </td>
 							@endif
                     <?php

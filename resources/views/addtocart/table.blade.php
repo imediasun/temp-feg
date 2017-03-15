@@ -124,7 +124,7 @@
 
                                 @if($field['field']=='qty')
 
-                                    <input type="number" value="{{ $value }}" name="qty[]" id="{{ $row->id }}" data-vendor="{{ $row->vendor_name }}" style="width:55px"  onkeydown="changeTotal(this.value,this.id,event)"/>
+                                    <input type="number" value="{{ $value }}" min="1" step="1" name="qty[]" id="{{ $row->id }}" data-vendor="{{ $row->vendor_name }}" style="width:55px"  onkeydown="changeTotal(this.value,this.id,event)"/>
                                 @else
 {!! $value !!}
                                 @endif
@@ -318,11 +318,12 @@
     {
         var vendor_name1=$("#"+id).data('vendor');
        vendor_name1=vendor_name1.replace(/ /g, '_');
-        if (e.keyCode == 13) {
+        if (e.keyCode == 13 && value > 0) {
             $('.ajaxLoading').show();
             e.preventDefault();
             doStuff(value,id,vendor_name1);
         }
+      
     }
     function confirmSubmit() {
         var shortMessage;

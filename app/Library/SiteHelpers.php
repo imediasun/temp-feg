@@ -927,33 +927,52 @@ class SiteHelpers
                         $user_ids = DB::table('user_locations')->leftjoin('location as l','user_locations.location_id','=','l.id')->where('user_locations.user_id',$current_user_id)->orderby('l.'.$option['lookup_value'])->get();
                         foreach ($user_ids as $user_id)
                         {
-                        $locations = DB::table($option['lookup_table'])->where('id',$user_id->location_id)->orderby($option['lookup_value'])->get();
+                            $locations = DB::table($option['lookup_table'])->where('id',$user_id->location_id)->orderby($option['lookup_value'])->get();
                             foreach ($locations as $location) {
-                            $value1 = "";
-                            foreach($lookupParts as $lookup){
-                                $value1 .= $location->$lookup." - ";
-                            }
-                           $value1 = trim($value1,' - ');
+                                $value1 = "";
+                                foreach($lookupParts as $lookup){
+                                    $value1 .= $location->$lookup." - ";
+                                }
+                                $value1 = trim($value1,' - ');
                                 if ($value == $location->id){
                                     $selected = 'selected="selected"';
                                 }
-                                else{ $selected=""; }
-                            $opts .= "<option  $selected  value='" . $location->$option['lookup_key'] . "' $mandatory > " . $value1 . " </option> ";
-                        }
+                                else{ 
+                                    $selected="";
+                                }
+                                $opts .= "<option  $selected  value='" . $location->$option['lookup_key'] . "' $mandatory > " . $value1 . " </option> ";
+                            }
                         }
                     }
                     else {
-                        $fields = explode("|", $option['lookup_value']);
+                        $fields = explode("|", $option['lookup_value']);                        
+                        $search = isset($option['lookup_search']) ? $option['lookup_search'] : '';                        
+                        $query = DB::table($option['lookup_table']);
+                        if (!empty($search)) {
+                            $searchParts = explode(':', urldecode($search));
+                            if (count($searchParts) > 1) {
+                                $query->where($searchParts[0], $searchParts[1]);
+                            }
+                            else {
+                                $query->whereRaw($search);
+                            }
+                        }                        
+                        
                         if(count($fields)>1)
                         {
-                            $data = DB::table($option['lookup_table'])->where($option['lookup_key'],'!=','')->orderby($option['lookup_key'])->groupby($option['lookup_key'])->get();
+                            $query->where($option['lookup_key'],'!=','')
+                                    ->orderby($option['lookup_key'])
+                                    ->groupby($option['lookup_key']);
                         }
                         else
                         {
-                            $data = DB::table($option['lookup_table'])->where($option['lookup_value'],'!=','')->orderby($option['lookup_value'])->groupby($option['lookup_value'])->get();
+                            $query->where($option['lookup_value'],'!=','')
+                                    ->orderby($option['lookup_value'])
+                                    ->groupby($option['lookup_value']);
                         }
-
-                        foreach ($data as $row):
+                        
+                        $data = $query->get();
+                        foreach ($data as $row) {
                             $selected = '';
                             if ($value == $row->$option['lookup_key']) $selected = 'selected="selected"';
 
@@ -963,9 +982,10 @@ class SiteHelpers
                                 if ($v != "") $val .= $row->$v . " ";
                             }
                             $opts .= "<option $selected value='" . $row->$option['lookup_key'] . "' $mandatory > " . $val . " </option> ";
-                        endforeach;
+                        }
                     }
-                } else {
+                }
+                else {
                     $opt = explode("|", $option['lookup_query']);
                     $opts = '';
                     for ($i = 0; $i < count($opt); $i++) {
@@ -1087,22 +1107,43 @@ class SiteHelpers
                     }
                     else {
                         $fields = explode("|", $option['lookup_value']);
+                        $search = isset($option['lookup_search']) ? $option['lookup_search'] : '';
+                        
+                        $query = DB::table($option['lookup_table']);
+                        if (!empty($search)) {
+                            $searchParts = explode(':', urldecode($search));
+                            if (count($searchParts) > 1) {
+                                $query->where($searchParts[0], $searchParts[1]);
+                            }
+                            else {
+                                $query->whereRaw($search);
+                            }
+                        }
+                        
                         if($option['lookup_table'] == 'order_type')
                         {
-                            $data = DB::table($option['lookup_table'])->where('can_request','=','1')->orderby($option['lookup_key'])->groupby($option['lookup_key'])->get();
+                            $data = $query->where('can_request','=','1')
+                                    ->orderby($option['lookup_key'])
+                                    ->groupby($option['lookup_key']);
                         }
                         else
                         {
                             if(count($fields)>1)
                             {
-                                $data = DB::table($option['lookup_table'])->where($option['lookup_key'],'!=','')->orderby($option['lookup_key'])->groupby($option['lookup_key'])->get();
+                                $data = $query
+                                        ->where($option['lookup_key'],'!=','')
+                                        ->orderby($option['lookup_key'])
+                                        ->groupby($option['lookup_key']);
                             }
                             else
                             {
-                                $data = DB::table($option['lookup_table'])->where($option['lookup_value'],'!=','')->orderby($option['lookup_value'])->groupby($option['lookup_value'])->get();
+                                $data = $query
+                                        ->where($option['lookup_value'],'!=','')
+                                        ->orderby($option['lookup_value'])
+                                        ->groupby($option['lookup_value']);
                             }
                         }
-
+                        $data = $query->get();
                         foreach ($data as $row):
                             $selected = '';
                             if ($value == $row->$option['lookup_key']) $selected = 'selected="selected"';
@@ -1289,9 +1330,10 @@ class SiteHelpers
                         $table = $form['option']['lookup_table'];
                         $val = $form['option']['lookup_value'];
                         $key = $form['option']['lookup_key'];
+                        $search = isset($form['option']['lookup_search']) ? $form['option']['lookup_search'] : '';
                         $lookey = '';
                         if ($form['option']['is_dependency']) $lookey .= $form['option']['lookup_dependency_key'];
-                        $f .= self::createPreCombo($form['field'], $table, $key, $val, $app, $class, $lookey);
+                        $f .= self::createPreCombo($form['field'], $table, $key, $val, $app, $class, $lookey, $search);
 
                     }
 
@@ -1304,7 +1346,7 @@ class SiteHelpers
 
     }
 
-    public static function createPreCombo($field, $table, $key, $val, $app, $class, $lookey = null)
+    public static function createPreCombo($field, $table, $key, $val, $app, $class, $lookey = null, $search = null)
     {
         $parent = null;
         $parent_field = null;
@@ -1312,8 +1354,12 @@ class SiteHelpers
             $parent = " parent: '#" . $lookey . "',";
             $parent_field = "&parent={$lookey}:";
         }
+        $searchQuery = '';
+        if (!empty($search)) {
+            $searchQuery = "&search=".urlencode($search);
+        }
         $pre_jCombo = "
-        \$(\"#{$field}\").jCombo(\"{{ URL::to('{$class}/comboselect?filter={$table}:{$key}:{$val}') }}$parent_field\",
+        \$(\"#{$field}\").jCombo(\"{{ URL::to('{$class}/comboselect?filter={$table}:{$key}:{$val}') }}$parent_field{$searchQuery}\",
         { " . $parent . " selected_value : '{{ \$row[\"{$field}\"] }}' });
         ";
         return $pre_jCombo;
@@ -2557,7 +2603,7 @@ class SiteHelpers
   }
   
     public static function getModuleFormFieldDropdownOptions($module, $fieldName, $defaults = array()) {
-        $minutes = 1;
+        $minutes = 60;
         $cacheKey = md5("getModuleFormFieldDropdownOptions-$module-$fieldName");
         $options = Cache::remember($cacheKey, $minutes, function () use ($module, $fieldName, $defaults) {
             $optionsString = self::getModuleSetting($module, ['forms', $fieldName, 'option', 'lookup_query']);
@@ -2565,5 +2611,83 @@ class SiteHelpers
             return $options;
         });        
         return $options;
-    }       
+    }
+    
+    public static function getUniqueLocationUserAssignmentMeta($type = 'id', $returnType ='array', $value = null) { // id, field, all, [sql, array]
+        $minutes = 60;
+        $cacheKey = md5("getUniqueLocationUserAssignmentMeta-$type-$returnType");
+        //return Cache::remember($cacheKey, $minutes, function () use ($type, $returnType, $value) {
+            $q = \DB::table('location_user_roles_master');
+            if (!empty($value)) {
+                $field = $returnType;
+                if (!empty($field)){
+                    return $q->where($field, $value)->pluck($type);
+                }
+                return null;
+            }
+            $q->select('id', 'group_id', 'role_title', 'proxy_field_name', 'unique_assignment');
+            
+            if ($type != 'all') {
+                $q->where(['unique_assignment' => 1]);
+            }
+            if ($returnType == 'sql' || $type == 'sql') {
+                $sqlSelect = [];
+                $sqlJoins = [];
+                $data = $q->get();
+                foreach($data as $item) {
+                    $gid = $item->group_id;
+                    $pfn = $item->proxy_field_name;
+                    $sqlSelect[] = "$pfn.user_id as $pfn";
+                    $sqlJoins[] = "LEFT JOIN user_locations $pfn ON $pfn.location_id = location.id AND $pfn.group_id='$gid'";
+                }
+
+                $sqlSelectString = implode(", ", $sqlSelect);
+                $sqlJoinString = implode(" \r\n ", $sqlJoins);
+
+                return ['select' => $sqlSelectString, 'join' => $sqlJoinString];
+            }
+            $data = [];
+            $records = $q->get();
+            foreach ($records as $item) {
+                $gid = $item->group_id;
+                $pfn = $item->proxy_field_name;
+                $rt = $item->role_title;
+                $item = ['group_id' => $gid, 'field' => $pfn, 'label' => $rt];
+                switch($type) {
+                    case "field":
+                        $data[$pfn] = $item;
+                        break;
+                    case "-field":
+                        $data[] = $pfn;
+                        break;
+                    case "field-":
+                        $data[$pfn] = '';
+                        break;
+                    case "field-id":
+                        $data[$pfn] = $gid;
+                        break;
+                    case "field-label":
+                        $data[$pfn] = $rt;
+                        break;
+                    case "-id":
+                        $data[] = $gid;
+                        break;
+                    case "id-":
+                        $data[$gid] = '';
+                        break;
+                    case "id-field":
+                        $data[''.$gid] = $pfn;
+                        break;
+                    case "id-label":
+                        $data[''.$gid] = $rt;
+                        break;
+                    default:
+                        $data[$gid] = $item;
+                }
+            }            
+            return $data;
+        //});                
+    }
+    
+    
 }

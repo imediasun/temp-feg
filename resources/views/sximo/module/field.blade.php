@@ -217,12 +217,20 @@ $(document).ready(function(){
 			
 		</label>
 
-
+        <label class="checkbox">
+            Search filter:
+            <input name="lookup_search" type="text" 
+                    class="ext form-control tips" 
+                    id="lookup_key" 
+                    style=" border-bottom: solid 1px #ddd;"  
+                 value="@if(isset($f['option']['lookup_search'])){!! $f['option']['lookup_search'] !!}@endif"	
+                 placeholder='Lookup field search' title='Format => field:value or valid raw sql where clause' />
+        </label>
 		<label class="checkbox">
 		<input type="checkbox" name="is_dependency" class="ext" value="1" <?php if($f['option']['is_dependency'] ==1) echo 'checked' ;?> /> Parent Filter  </label>
 		<label class="checkbox">				
 		<input name="lookup_dependency_key" type="text" class="ext form-control" id="lookup_key" style=" border-bottom: solid 1px #ddd;"  
-		value="<?php echo $f['option']['lookup_dependency_key'];?>"	placeholder='Lookup Filter Key' />
+		value="<?php echo $f['option']['lookup_dependency_key'];?>"	placeholder='Lookup Parent Control Key' />
 		</label>		
 		<label class="checkbox" >
 		

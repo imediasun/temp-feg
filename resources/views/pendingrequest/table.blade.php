@@ -35,7 +35,10 @@
     <table class="table table-striped datagrid " id="{{ $pageModule }}Table">
         <thead>
 			<tr>
-				<th width="50"> No </th>
+				<th width="30"> No </th>
+                @if($setting['disableactioncheckbox']=='false')
+                    <th width="30"> <input type="checkbox" class="checkall" /></th>
+                @endif
 				@if($setting['view-method']=='expand') <th>  </th> @endif
 				<?php $col = 0; ?>
 				<?php foreach ($tableGrid as $t) : ?>
@@ -72,7 +75,9 @@
 					endif;
 				$col++;
 				endforeach; ?>
-
+                @if($setting['disablerowactions']=='false')
+                    <th width="70"><?php echo Lang::get('core.btn_action') ;?></th>
+            @endif
         </thead>
 
         <tbody>
@@ -102,6 +107,9 @@
            		?>
                 <tr class="editable" id="form-{{ $row->id }}">
 					<td class="number"> <?php echo ++$i;?>  </td>
+                    @if($setting['disableactioncheckbox']=='false')
+                        <td ><input type="checkbox" class="ids" name="ids[]" value="<?php echo $row->id ;?>" />  </td>
+                    @endif
 					@if($setting['view-method']=='expand')
 					<td><a href="javascript:void(0)" class="expandable" rel="#row-{{ $row->id }}" data-url="{{ url('pendingrequest/show/'.$id) }}"><i class="fa fa-plus " ></i></a></td>								
 					@endif			
@@ -128,7 +136,12 @@
 						 $col++;
 						endforeach; 
 					  ?>
-
+                    @if($setting['disablerowactions']=='false')
+                        <td data-values="action" data-key="<?php echo $row->id ;?>">
+                            {!! AjaxHelpers::buttonAction('pendingrequest',$access,$id ,$setting) !!}
+                            {!! AjaxHelpers::buttonActionInline($row->id,'id') !!}
+                        </td>
+                    @endif
                 </tr>
                 @if($setting['view-method']=='expand')
                 <tr style="display:none" class="expanded" id="row-{{ $row->id }}">

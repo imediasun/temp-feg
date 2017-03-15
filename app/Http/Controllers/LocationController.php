@@ -33,7 +33,31 @@ class LocationController extends Controller
 
 
     }
+    
+    public function getSearchFilterQuery($customQueryString = null) {
+        // Filter Search for query
+        // build sql query based on search filters
+        $filter = is_null($customQueryString) ? (is_null(Input::get('search')) ? '' : $this->buildSearch()) :
+            $this->buildSearch($customQueryString);
 
+        
+        // Special filter for default active location
+        if (stripos($filter, "location.active") === false ) {
+            $filter .= " AND location.active = '1'";
+        }
+        // and showing both active and inactive location
+        if (stripos($filter, "AND location.active = '-1'") >= 0 ) {
+            $filter = str_replace("AND location.active = '-1'", "", $filter);
+        }
+        
+        $assignmentFields = \SiteHelpers::getUniqueLocationUserAssignmentMeta('-field');
+        foreach($assignmentFields as $field) {
+            $filter = str_replace("location.$field", "$field.user_id", $filter);
+        }  
+        
+        return $filter;
+    }
+    
     public function getIndex(Request $request, $id = 0)
     {
         if ($this->access['is_view'] == 0)
@@ -71,18 +95,8 @@ class LocationController extends Controller
         $order = (!is_null($request->input('order')) ? $request->input('order') : $this->info['setting']['ordertype']);
         // End Filter sort and order for query
         // Filter Search for query
-        $filter = (!is_null($request->input('search')) ? $this->buildSearch() : '');
+        $filter = $this->getSearchFilterQuery();
         
-        // Special filter for default active location
-        if (stripos($filter, "location.active") === false ) {
-            $filter .= " AND location.active = '1'";
-        }
-        // and showing both active and inactive location
-        if (stripos($filter, "AND location.active = '-1'") >= 0 ) {
-            $filter = str_replace("AND location.active = '-1'", "", $filter);
-        }
-        
-
         $page = $request->input('page', 1);
         $params = array(
             'page' => $page,
@@ -100,39 +114,7 @@ class LocationController extends Controller
             $results['rows'] = $this->model->getRow($id);
             $results['total'] = 1;
         }
-        foreach ($results['rows'] as $result) {
 
-            if ($result->contact_id == 0) {
-                $result->contact_id="";
-
-            }
-            if ($result->merch_contact_id == 0) {
-                $result->merch_contact_id="";
-
-            }
-            if ($result->field_manager_id == 0) {
-                $result->field_manager_id="";
-            }
-            if ($result->tech_manager_id == 0) {
-                $result->tech_manager_id="";
-            }
-
-            if ($result->general_contact_id == 0) {
-                $result->general_contact_id="";
-            }
-            if ($result->technical_contact_id == 0) {
-                $result->technical_contact_id="";
-            }
-            if ($result->regional_contact_id == 0) {
-                $result->regional_contact_id="";
-            }
-            if ($result->senior_vp_id == 0) {
-                $result->senior_vp_id="";
-            }
-
-
-
-        }
         // Build pagination setting
         $page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;
 
@@ -182,12 +164,18 @@ class LocationController extends Controller
             if ($this->access['is_edit'] == 0)
                 return Redirect::to('dashboard')->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
         }
-        $row = $this->model->find($id);
+                
+        $rows = $this->model->getRow($id);
+        $row = json_decode(json_encode($rows), true);
         if ($row) {
-            $this->data['row'] = $row;
+            $row = $row[0];
         } else {
-            $this->data['row'] = $this->model->getColumnTable('location');
+            $row = $this->model->getColumnTable('location');
+            $assignmentFields = \SiteHelpers::getUniqueLocationUserAssignmentMeta('field-');
+            $row = array_merge($row, $assignmentFields);
         }
+        $this->data['row'] = $row;
+        
         $this->data['setting'] = $this->info['setting'];
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
         $this->data['id'] = $id;
@@ -204,14 +192,32 @@ class LocationController extends Controller
 
         $row = $this->model->getRow($id);
         if ($row) {
-            $this->data['row'] = $row;
+            $row = $this->data['row'] = $row[0];
         } else {
-            $this->data['row'] = $this->model->getColumnTable('location');
+            $row = $this->data['row'] = $this->model->getColumnTable('location');
         }
 
         $this->data['id'] = $id;
         $this->data['access'] = $this->access;
         $this->data['setting'] = $this->info['setting'];
+        $gridSettings = $this->info['config']['grid'];
+        
+        $row->contact_name = '';
+        if (!empty($row->contact_id)) {
+            $contactDetails = \SiteHelpers::getUserDetails($row->contact_id);
+            $row->contact_name = $contactDetails['first_name'] . ' ' . $contactDetails['last_name'];
+        }
+        
+        foreach($gridSettings as $field) {
+            $fieldName = $field['field'];
+            if($field['view'] == '1' && isset($row->$fieldName)) {
+                $conn = (isset($field['conn']) ? $field['conn'] : array());
+                $value = \AjaxHelpers::gridFormater($row->$fieldName, $row, $field['attribute'], $conn);
+                $this->data['row']->$fieldName = $value;
+            }
+            $gridSettings[$field['field']] = $field;
+        }
+        $this->data['tableGrid'] = $gridSettings;
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
         return view('location.view', $this->data);
     }
@@ -238,10 +244,11 @@ class LocationController extends Controller
 
     function postSave(Request $request, $id = null)
     {
-        $form_data['date_opened'] = date('Y-m-d');
-        $form_data['date_closed'] = date('Y-m-d');
+
         $rules = $this->validateForm();
         $input_id=$request->get('id');
+        $locationAssignmentFields = \SiteHelpers::getUniqueLocationUserAssignmentMeta('field-id');
+        
         if(\Session::get('location_updated') != $input_id) {
             $rules['id'] = 'required|unique:location,id,'.$input_id;
         }
@@ -250,17 +257,32 @@ class LocationController extends Controller
         }
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
-            if(empty($id))
-                $data = $this->validatePost('location');
-            else
-                $data = $this->validatePost('location', true);
+            $data = $this->validatePost('location', !empty($id));
+            
             // old id in case the existing location's id has been modified
             $oldId = $id;
             $newId = $data['id'];
             if ($oldId == $newId) {
                 $oldId = null;
             }
+            
+            $locationAssignments = [];
+            foreach($data as $fieldName => $value) {
+                if (isset($locationAssignmentFields[$fieldName])) {
+                    $groupID = $locationAssignmentFields[$fieldName];
+                    if (empty($value)) {
+                        $value = null;
+                    }
+                    $locationAssignments[$groupID] = $value;
+                    unset($data[$fieldName]);
+                }                
+            }
+            
             $id = $this->model->insertRow($data, $id);
+            
+            foreach($locationAssignments as $groupId => $userId) {
+                \App\Models\UserLocations::updateRoleAssignment($newId, $userId, $groupId);
+            }
             
             // Assing the newly created or updated/id changed location to 
             // users having has_all_locations=1 (all Locations = true)
