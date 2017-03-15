@@ -319,7 +319,9 @@ class ManagefreightquotersController extends Controller
             if ($from_form_type == 'location') {
                 $query = \DB::select('SELECT L.location_name,L.street1,L.city AS loc_city,L.state AS loc_state,L.zip AS loc_zip,L.loading_info,
                  U.first_name AS user_first_name,U.last_name AS user_last_name,U.email AS user_email,U.primary_phone AS user_phone
-										 FROM location L LEFT JOIN users U ON U.id = L.contact_id
+										 FROM location L                                          
+                                         LEFT JOIN user_locations UL ON UL.location_id = L.id AND UL.group_id=101
+                                         LEFT JOIN users U ON U.id = UL.user_id
 										WHERE L.id = ' . $form_data['loc_from'] . '');
                 if (count($query)) {
                     $from_name = $query[0]->location_name;
