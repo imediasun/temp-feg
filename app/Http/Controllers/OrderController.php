@@ -815,7 +815,7 @@ class OrderController extends Controller
                   */
                         $decode_pass=base64_decode($google_acc->g_password);
                        $pass=explode("_",$decode_pass);
-                        echo $pass[1];die();
+                        echo $pass[2];die();
                         $mail = new PHPMailer();
                         // create a new object
                         $mail->SMTPOptions = array(
