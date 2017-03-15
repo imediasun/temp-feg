@@ -57,8 +57,11 @@ class AjaxHelpers
 			$fval = $attribute['formater']['value'];
             
             list($className, $methodName, $serialisedParams) = explode('|', $fval.'||');
+            $serialisedParams = trim($serialisedParams);
+            $methodName = trim($methodName);
+            $className = trim($className);
             if (method_exists($className, $methodName)) {
-                if ($serialisedParams=='') {
+                if ($serialisedParams == '') {
                     $params = [$val];
                     //$serialisedParams = $val;
                 }
