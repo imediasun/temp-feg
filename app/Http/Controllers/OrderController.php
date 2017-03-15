@@ -813,7 +813,7 @@ class OrderController extends Controller
                   * https://www.google.com/settings/security/lesssecureapps
                   * enable stmp detail
                   */
-                        $mail = new PHPMailer(true);
+                        $mail = new PHPMailer();
                         // create a new object
                         $mail->SMTPOptions = array(
                             'ssl' => array(
