@@ -855,9 +855,9 @@ class OrderController extends Controller
                              file_put_contents($file_to_save, $output);
                              $mail->addAttachment($file_to_save, $filename, 'base64', 'application/pdf');
                              if (!$mail->Send()) {
-                                 echo "not Message Sent OK\n";
+                               return 3;
                              } else {
-                                 echo "Message Sent OK\n";
+                                 return 1;
                              }
                          }catch (phpmailerException $e) {
                              echo $e->errorMessage(); //Pretty error messages from PHPMailer
