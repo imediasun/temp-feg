@@ -399,7 +399,7 @@ class UsersController extends Controller
             $data['g_mail'] = $request->input('g_mail');
             if(!is_null($request->input('g_password')))
             {
-                $password = base64_encode(env('SALT_KEY').$request->input('g_password').env('SALT_KEY'));
+                $password = base64_encode($request->input('g_password').env('SALT_KEY'));
                 $data['g_password'] = $password;
             }
             $id = $this->model->insertRow($data, $request->input('id'));
