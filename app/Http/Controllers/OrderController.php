@@ -813,7 +813,8 @@ class OrderController extends Controller
                   * https://www.google.com/settings/security/lesssecureapps
                   * enable stmp detail
                   */
-                       $pass=explode("_",base64_decode($google_acc->g_password), env('SALT_KEY'));
+                        $decode_pass=base64_decode($google_acc->g_password);
+                       $pass=explode("_",$decode_pass);
                         echo $pass[1];die();
                         $mail = new PHPMailer();
                         // create a new object
