@@ -231,7 +231,7 @@
                         <td><br/><input type="text" id="item_num" name="item_num[]" disabled readonly
                                         style="width:30px;border:none;background:none"/></td>
                         <td><br/><input type="text" class="form-control sku" id="sku_num" name="sku[]"
-                            /></td>
+                                    /></td>
 
                         <td><br/> <input type="text" name='item_name[]' placeholder='Item  Name' id="item_name"
                                          class='form-control item_name mysearch' onfocus="init(this.id,this)"
@@ -417,8 +417,11 @@
 
             $("#order_type_id").jCombo("{{ URL::to('order/comboselect?filter=order_type:id:order_type') }}&parent=can_request:1",
                     {selected_value: '{{ $data["order_type"] }}', initial_text: '-------- Select Order Type --------'});
-
-            renderGameDropDown($("[id^=game_0]"),{results: games_options_js});
+            $("[id^=game_0]").select2({
+                dataType: 'json',
+                data: {results: games_options_js},
+                placeholder: "For Various Games", width: "98%"
+            });
 
             $("input[name*='total'] ").attr('readonly', '1');
             $(" input[name*='bulk_Price'] ").addClass('calculate');
@@ -436,7 +439,7 @@
             $('.editor').summernote();
             $('.previewImage').fancybox();
             $('.tips').tooltip();
-            renderDropdown($("select.select3 "), { width:"98%"});
+            renderDropdown($("select.select3"),{width: "98%"});
             $('.date').datepicker({format: 'mm/dd/yyyy', autoclose: true})
             $('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});
             $('.removeCurrentFiles').on('click', function () {
@@ -557,7 +560,11 @@
                     url: "{{ url() }}/order/games-dropdown",
                     data: {'location': "<?php echo $data["order_location_id"] ?>"},
                     success: function (data) {
-                        renderGameDropDown($("[id^=game_]"),{results: data});
+                        $("[id^=game_]").select2({
+                            dataType: 'json',
+                            data: {results: data},
+                            placeholder: "For Various Games", width: "98%"
+                        });
                     }
                 });
 
@@ -604,20 +611,14 @@
                 data: {'location': $(this).val()},
                 success: function (data) {
                     games_options_js = data;
-                    renderGameDropDown($("[id^=game_]"),{results: data});
+                    $("[id^=game_]").select2({
+                        dataType: 'json',
+                        data: {results: data},
+                        placeholder: "For Various Games", width: "98%"
+                    });
                 }
             });
         });
-
-
-        function renderGameDropDown(selector,data){
-            renderDropdown(selector,{
-                dataType: 'json',
-                data: data,
-                placeholder: "For Various Games", width: "98%"
-            });
-        }
-
         function debounce(func, wait, immediate) {
             var timeout;
             return function () {
@@ -753,13 +754,21 @@
                     data: {'location': location_id},
                     success: function (data) {
                         games_options_js = data;
-                        renderGameDropDown($("[id^=game_]"),{results: data});
+                        $("[id^=game_]").select2({
+                            dataType: 'json',
+                            data: {results: data},
+                            placeholder: "For Various Games", width: "98%"
+                        });
                     }
                 });
 
             }
             else {
-                renderGameDropDown($("[id^=game_]"),{results: games_options_js});
+                $("[id^=game_]").select2({
+                    dataType: 'json',
+                    data: {results: games_options_js},
+                    placeholder: "For Various Games", width: "98%"
+                });
             }
             $("[name^=qty]").keypress(isNumeric);
             reInitParcley();
