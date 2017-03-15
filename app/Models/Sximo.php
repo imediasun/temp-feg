@@ -827,37 +827,37 @@ class Sximo extends Model {
 
         if (!empty($loc_id)) {
 
-            $location_statement = 'AND UL.location_id=' . $loc_id;
+            $location_statement = " AND UL.location_id IN ($loc_id)";
             $query_table = 'users';
         }
 
         if ($user_level == 'all_users') {
-            $user_level_statement = ' AND U.group_id IN(1,2,3,4,5,6,7,8,9,10)';
+            $user_level_statement = ' AND U.group_id IN(1,2,3,4,5,6,7,8,9,10) ';
             $query_table = 'users';
         }
         if ($user_level == 'all_employees') {
-            $user_level_statement = ' AND U.group_id IN(1,3,4,5,6,7,10)';
+            $user_level_statement = ' AND U.group_id IN(1,3,4,5,6,7,10) ';
             $query_table = 'users';
         }
         if ($user_level == 'all_managers') {
-            $user_level_statement = ' AND U.group_id IN(3,4,5,6,7,10)';
+            $user_level_statement = ' AND U.group_id IN(3,4,5,6,7,10) ';
             $query_table = 'users';
         }
         if ($user_level == 'technical_contact') {
-            $user_level_statement = ' AND U.is_tech_contact = 1';
-            $location_statement = ' AND L.id = ' . $loc_id;
+            $user_level_statement = ' AND U.is_tech_contact = 1 ';
+            $location_statement = " AND L.id IN($loc_id) ";
             $query_table = 'users';
         }
         if ($user_level == 'users_plus_district_managers') {
-            $user_level_statement = ' AND U.group_id IN(1,5,6)';
-            $location_statement = ' L.id=' . $loc_id . ' OR U.reg_id = (SELECT L.region_id FROM location L WHERE L.id = ' . $loc_id . '))';
+            $user_level_statement = ' AND (U.group_id IN(1,5,6)  ' . 
+                    ' OR U.id IN (SELECT user_id FROM user_locations WHERE group_id IN (6) AND location_id IN (' . $loc_id . '))) ';
+            $location_statement = " AND L.id IN($loc_id) ";
             $query_table = 'users';
         }
         if ($user_level == 'users_plus_district_and_field_managers') {
-            $user_level_statement = ' AND U.group_id IN(1,4,5,6)';
-            $location_statement = ' AND (UL.location_id = ' . $loc_id . 
-                    ' OR U.id = (SELECT L.field_manager_id FROM location L WHERE L.id = ' . $loc_id . 
-                    ') OR U.reg_id = (SELECT L.region_id FROM location L WHERE L.id = ' . $loc_id . '))';
+            $location_statement = " AND L.id IN ($loc_id) ";
+            $user_level_statement = ' AND (U.group_id IN(1,4,5,6) '.
+                    ' OR U.id IN (SELECT user_id FROM user_locations WHERE group_id IN (1,6) AND location_id IN (' . $loc_id . '))) ';
             $query_table = 'users';
         }
         if ($user_level == 'location_manager_and_field_manager') {
@@ -881,8 +881,7 @@ class Sximo extends Model {
 								 FROM users U
 								LEFT JOIN user_locations UL ON UL.user_id=U.id
 								LEFT JOIN location L ON L.id=UL.location_id
-								LEFT JOIN region R ON R.id = L.region_id
-                               WHERE U.active = 1'
+                               WHERE U.active = 1 '
                 . $user_level_statement
                 . $location_statement;
             $query =\DB::select($sql);
@@ -891,8 +890,7 @@ class Sximo extends Model {
             }
 
         } else if ($query_table == 'location') {
-
-            $query = \DB::select('SELECT CONCAT(Umain.email,", ",Ufield.email,", ",Uregion.email) as Emails
+            $sql = 'SELECT CONCAT(Umain.email,", ",Ufield.email,", ",Uregion.email) as Emails
 									 FROM location L
                                 LEFT JOIN user_locations ULc ON ULc.location_id = L.id AND ULc.group_id=101
                                 LEFT JOIN user_locations ULf ON ULf.location_id = L.id AND ULf.group_id=1
@@ -903,7 +901,8 @@ class Sximo extends Model {
 									WHERE Umain.active = 1
 									  AND Ufield.active = 1
 									  AND Uregion.active = 1
-									    ' . $location_statement);
+									    ' . $location_statement;
+            $query = \DB::select($sql);
 
 
             foreach ($query as $row) {
