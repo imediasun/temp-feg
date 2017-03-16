@@ -305,7 +305,7 @@ class GamestitleController extends Controller
                     }
                     $img_path='./uploads/games/images/' . $id."_".$count.$extension;
                     //$img_thumb='/uploads/games/images/thumb/' . $id ."_".$count.'_thumb' . $extension;
-                    if (\File::exists($img_path) || \File::exists($img_thumb)) {
+                    if (\File::exists($img_path)) {
                         \File::delete($img_path);
                       //  \File::delete($img_thumb);
                     }
