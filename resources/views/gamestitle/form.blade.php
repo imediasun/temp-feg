@@ -112,8 +112,21 @@
                                 </label>
                                 <div class="col-md-6">
                                     <input type="file" multiple  name="img[]" id="img" @if(empty($row['img'])) required   @endif />
-                                      <div style="margin-top:15px;">
 
+                                      <div style="margin-top:15px;">
+                                          <?php
+                                          $images=explode(',',$row['img']);
+                                          ?>
+                                          @if(!empty($images) && $images[0]!="")
+                                              @foreach($images as $img)
+                                                      <div  class="game_imgs">
+                                                          <div class="show-image">
+                                                              <img src="./uploads/games/images/{{$img}}" width="50"  />
+                                                          <i  class="fa fa-times delete" aria-hidden="true" id="{{$img}}"></i>
+                                                              <input type="hidden"  name="imgs[]" value="{{$img}}"/>
+                                                      </div>
+                                              @endforeach
+                                          @endif
                                        {{-- {!! SiteHelpers::showUploadedFile($row['img'],'/uploads/games/images/') !!} --}}
 
                                     </div>
@@ -300,4 +313,38 @@ function showResponse(data)  {
     }
     
 }());
-</script>		 
+    $('.delete').click(function(){
+        $(this).closest('.show-image').remove();
+       /* $.post("{{--url()--}}/gamestitle/delete-img",
+                {
+                    img_name: $(this).attr('id')
+                },
+                function(data, status){
+
+                });*/
+    });
+</script>
+<style>
+    div.show-image {
+        position: relative;
+        float:left;
+        margin:5px;
+    }
+    div.show-image:hover img{
+        opacity:0.5;
+    }
+    div.show-image:hover i {
+        display: block;
+    }
+    div.show-image i {
+        position:absolute;
+        display:none;
+
+    }
+    div.show-image i.delete {
+        top:0;
+        left:79%;
+    }
+
+
+</style>

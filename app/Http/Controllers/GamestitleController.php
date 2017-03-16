@@ -287,10 +287,15 @@ class GamestitleController extends Controller
                     $updates['has_servicebulletin'] = '1';
                 }
             }
+            $imgs=$request->get('imgs');
+            $new_name="";
+            if(!is_null($id) && !empty($imgs)) {
+                foreach ($imgs as $image) {
+                    $new_name .= $image . ',';
+                }
+            }
             if ($request->hasFile('img')) {
                 $images = $request->file('img');
-                $new_name="";
-                $count=1;
                 foreach($images as $img) {
                     $img = Image::make($img->getRealPath());
                     $mime = $img->mime();
@@ -303,21 +308,18 @@ class GamestitleController extends Controller
                     } else {
                         $extension = '';
                     }
-                    $img_path='./uploads/games/images/' . $id."_".$count.$extension;
-                    //$img_thumb='/uploads/games/images/thumb/' . $id ."_".$count.'_thumb' . $extension;
-                    if (\File::exists($img_path)) {
-                        \File::delete($img_path);
-                      //  \File::delete($img_thumb);
-                    }
+                    $count=str_pad(mt_rand(0, 999999), 6, '0', STR_PAD_LEFT);
+                    $img_path='./uploads/games/images/' . $count.$extension;
+                    //$img_thumb='./uploads/games/images/' . $count."_thumb".$extension;
                     $img->save($img_path);
-                    //$img->resize(101, 150);
-                    //$img->save($img_thumb);
-                    $new_name .= $id."_".$count.$extension.',';
-                    $count++;
+                   // $img->resize(101, 150);
+                   // $img->save($img_thumb);
+                    $new_name .= $count.$extension.',';
                 }
-                $imgFlag=true;
-                $updates['img'] = substr($new_name,0,strlen($new_name)-1);
+
             }
+            $imgFlag=true;
+            $updates['img'] = substr($new_name,0,strlen($new_name)-1);
             if($manualFlag || $serviceFlag || $imgFlag) {
                 $this->model->insertRow($updates, $id);
             }
@@ -524,5 +526,14 @@ class GamestitleController extends Controller
         $result['valid'] = $titleCount <= 0;
         
         return $result;
+    }
+    function postDeleteImg(Request $request)
+    {
+        $img_name=$request->get('img_name');
+        $img_path='./uploads/games/images/'.$img_name;
+        if (\File::exists($img_path)) {
+            \File::delete($img_path);
+            //  \File::delete($img_thumb);
+        }
     }
 }
