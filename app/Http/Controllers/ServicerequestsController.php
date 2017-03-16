@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Validator, Input, Redirect;
 use App\Library\FEG\System\FEGSystemHelper;
+use App\Library\FEG\System\Formatter;  
 
 class servicerequestsController extends Controller
 {
@@ -19,8 +20,6 @@ class servicerequestsController extends Controller
     public $module = 'Servicerequests';
     protected $layout = "layouts.main";
     protected $data = array();
-    protected $priorityOptions = ['normal' => 'Normal' ,  'sameday' => 'Same Day', ];
-    protected $statusOptions = ['open' => 'Open' ,  'inqueue' => 'Pending' ,  'closed' => 'Closed' ,];
 
     public function __construct()
     {
@@ -40,8 +39,10 @@ class servicerequestsController extends Controller
             'pageUrl' => url('servicerequests'),
             'return' => self::returnUrl(),
             
-            'priorityOptions' => $this->priorityOptions,
-            'statusOptions' => $this->statusOptions,        
+            'priorityOptions' => $this->model->getPriorities(),
+            'statusOptions' => $this->model->getStatuses(),
+            'issueTypeOptions' => $this->model->getIssueTypes(),
+            'canChangeStatus' => ticketsetting::canUserChangeStatus(),
         );
 
 
@@ -249,20 +250,17 @@ class servicerequestsController extends Controller
     function getUpdate(Request $request, $id = null)
     {
 
-        if ($id == '') {
-            if ($this->access['is_add'] == 0)
+        $isAdd = $this->data['isAdd'] = is_null($id);
+        
+        if ($isAdd) {
+            if ($this->access['is_add'] == 0) {
                 return Redirect::to('dashboard')->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
-
+            }
         }
-
-        if ($id != '') {
-            if ($this->access['is_edit'] == 0)
+        else {
+            if ($this->access['is_edit'] == 0) {
                 return Redirect::to('dashboard')->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
-        }
-        if ($id != null) {
-            $this->data['in_edit_mode'] = true;
-        } else {
-            $this->data['in_edit_mode'] = false;
+            }
         }
         $row = $this->model->find($id);
         if ($row) {
@@ -270,13 +268,21 @@ class servicerequestsController extends Controller
         } else {
             $this->data['row'] = $this->model->getColumnTable('sb_tickets');
         }
-        $this->data['uid'] = \Session::get('uid');
+        $this->data['uid'] = $userId = \Session::get('uid');
         $this->data['fid'] = \Session::get('fid');
         $this->data['setting'] = $this->info['setting'];
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
 
         $this->data['id'] = $id;
 
+        $this->data['issueType'] = $row['issue_type'];
+        $this->data['priority']  =  $row['Priority'];
+        $this->data['status'] = $row['Status'];
+        $this->data['ticketStatusLabel'] = Formatter::getTicketStatus($row['Status'], 'Open');
+        $this->data['needByDate'] = \DateHelpers::formatDate($row['need_by_date']);
+        $this->data['filePaths'] = explode(",", $row['file_path']);        
+        $this->data['entryBy'] = $isAdd ? $userId : $row['entry_by'];
+        $this->data['locationId'] = $isAdd ? \Session::get('selected_location') : $row['location_id'];
 
         return view('servicerequests.form', $this->data);
     }
@@ -311,12 +317,37 @@ class servicerequestsController extends Controller
         $this->data['id'] = $id;
         $this->data['uid'] = $userId;
         $this->data['fid'] = \Session::get('fid');
-        $this->data['creator'] = !empty($row->entry_by) ? \SiteHelpers::getUserDetails($row->entry_by) : [];
-        $this->data['canChangeStatus'] = ticketsetting::canUserChangeStatus();
+        $this->data['creator'] = $creator = !empty($row->entry_by) ? \SiteHelpers::getUserDetails($row->entry_by) : [];
         $this->data['following'] = Ticketfollowers::isFollowing($id, $userId);
         $this->data['followers'] = Ticketfollowers::getAllFollowers($id);
         $this->data['setting'] = $this->info['setting'];
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
+        
+        
+        $this->data['commentsCount'] =  $commentsCount = $comments->count();
+        $this->data['conversationCount'] = $commentsCount + 1;
+
+        $this->data['ticketID'] = $row->TicketID;
+        $this->data['ticketStatus'] = $row->Status;
+        $this->data['ticketStatusLabel'] = Formatter::getTicketStatus($row->Status, 'Open');
+        $this->data['dateNeeded'] = \DateHelpers::formatDate($row->need_by_date);
+        $this->data['createdOn'] = \DateHelpers::formatDate($row->Created);
+        $this->data['createdOnWithTime'] = \DateHelpers::formatDateCustom($row->Created);
+        $this->data['updatedOn'] = \DateHelpers::formatDate($row->updated);
+        $this->data['updatedOnWithTime'] = \DateHelpers::formatDateCustom($row->updated);
+        $this->data['locationName'] = \SiteHelpers::gridDisplayView($row->location_id,'location_id','1:location:id:id|location_name');
+
+        $this->data['creatorID'] = $row->entry_by;
+        $this->data['creatorProfile'] = $creatorProfile = FEGSystemHelper::getUserProfileDetails($creator);
+
+        $this->data['creatorName'] = $creatorProfile['fullName'];
+        $this->data['creatorAvatar'] =  $creatorProfile['avatar'];
+        $this->data['creatorTooltip'] = $creatorProfile['tooltip'];
+
+        $this->data['myUserAvatar'] = FEGSystemHelper::getUserAvatarUrl($userId);
+        $this->data['myUserTooltip'] = "You";        
+        
+        
         return view('servicerequests.view', $this->data);
     }
 
@@ -352,14 +383,75 @@ class servicerequestsController extends Controller
             'message' => \Lang::get('core.note_success')
         ));
     }
-
+    
+    function validateDates ($data, $request = null) {
+        $dateFields = ['need_by_date', 'Created', 'closed'];
+        foreach($dateFields as $field) {
+            if (isset($data[$field])) {
+                if (!is_null($request)) {
+                    if (empty($request->get($field))) {
+                        $data[$field] = null;
+                    }
+                }                
+            }            
+        }
+        return $data;
+    }
+    function postSaveInline(Request $request, $id)
+    {
+        $data = $this->validatePost('sb_tickets', true);
+        $data = $this->validateDates($data, $request);
+        unset($data['file_path']);
+        if (!ticketsetting::canUserChangeStatus()) {
+            unset($data['Status']);
+            unset($data['closed']);
+        }
+        $rules = [];
+        foreach($data as $field => $value) {
+            $rules[$field] = 'required';
+        }
+        
+        if(isset($data['Status'])) { 
+            if ($data['Status'] != "closed") {
+                $data['closed'] = null;
+                unset($rules['closed']);
+            }
+            else {
+                $rules['closed'] = 'required';
+            }
+        }
+        if(isset($data['closed']) && !isset($data['Status'])) { 
+            unset($data['closed']);
+            unset($rules['closed']);
+        }
+        
+ 
+        $validator = Validator::make($data, $rules);
+        if ($validator->passes()) {
+            $data['updated'] = date("Y-m-d H:i:s");
+            $this->model->insertRow($data, $id);
+            return response()->json(array(
+                'status' => 'success',
+                'message' => \Lang::get('core.note_success')
+            ));            
+        }
+        else {
+            $message = $this->validateListError($validator->getMessageBag()->toArray());
+            return response()->json(array(
+                'message' => $message,
+                'status' => 'error'
+            ));            
+        }
+    }
+    
+    
     function postSave(Request $request, $id = NULL)
     {
         $date = date("Y-m-d");
         //$data['need_by_date'] = date('Y-m-d');
         //$rules = $this->validateForm();
         $isAdd = empty($id);
-
+        
         $rules = $this->validateForm();
         unset($rules['department_id']);
        //$rules = array('Subject' => 'required', 'Description' => 'required', 'Priority' => 'required', 'issue_type' => 'required', 'location_id' => 'required');
@@ -368,18 +460,31 @@ class servicerequestsController extends Controller
         if ($validator->passes()) {
             $data = $this->validatePost('sb_tickets', !empty($id));
             $data['need_by_date']= date("Y-m-d", strtotime($request->get('need_by_date')));
-            $data['Status']=$request->get('Status');
-            if($data['Status'] == "closed")
-            {
-                $data['closed'] = date('Y-m-d H:i:s');
-            }
-            else
-                $data['closed'] = "";
-            if (empty($id)) {
+            $data['Status'] = $request->get('Status');
+            $oldStatus = $request->get('oldStatus');
+            if (!$isAdd) {
+                if (!ticketsetting::canUserChangeStatus()) {
+                    unset($data['Status']);
+                    unset($data['closed']);
+                }
+                if(isset($data['Status'])) { 
+                    if ($data['Status'] == "closed") {
+                        if ($oldStatus != 'closed') {
+                            $data['closed'] = date('Y-m-d H:i:s');
+                        }   
+                    }
+                    else {
+                        $data['closed'] = null;
+                    }
+                }
+            }            
+            else {
                 $data['Created'] = date('Y-m-d H:i:s');                
             }
-            $id = $this->model->insertRow($data, $id);
             
+            unset($data['oldStatus']);            
+            $id = $this->model->insertRow($data, $id);
+                        
             $files = $this->uploadTicketAttachments("/ticket-$id/$date/", "--$id");
             if (!empty($files['file_path'])) {                
                 if ($isAdd) {
@@ -409,8 +514,8 @@ class servicerequestsController extends Controller
                     "ticketId"      => $id,
                     'ticket'        => $data
                 ]);
-
-            }
+            }      
+            
             return response()->json(array(
                 'status' => 'success',
                 'message' => \Lang::get('core.note_success')
@@ -534,34 +639,43 @@ class servicerequestsController extends Controller
         $ticketId = $request->input('TicketID');
 
         //validate post for sb_tickets module
-        $ticketsData = $this->validatePost('sb_tickets');
+        $ticketsData = $this->validatePost('sb_tickets', true);
 
         $ticketsData['updated'] = date('Y-m-d H:i:s');
 
         $comment_model = new Ticketcomment();
         $total_comments = $comment_model->where('TicketID', '=', $ticketId)->count();
-
-        if (isset($ticketsData['Status'])) {
+        
+        if (!ticketsetting::canUserChangeStatus()) {
+            unset($ticketsData['Status']);
+            unset($ticketsData['closed']);
+        }
+        elseif (isset($ticketsData['Status'])) {
             $status = $ticketsData['Status'];
             $isStatusClosed = $status == 'closed';
-    //        if (!$isStatusClosed && $total_comments == 0) {
-    //            $ticketsData['Status'] = 'inqueue';
-    //        }
-            $ticketsData['closed']="";   
-            if ($isStatusClosed) {
-                $ticketsData['closed'] = date('Y-m-d H:i:s');
+            if ($isStatusClosed) {                
+                $oldStatus = $request->get('oldStatus');
+                if ($oldStatus != 'closed') {
+                    $ticketsData['closed'] = date('Y-m-d H:i:s');
+                }
+            }
+            else {
+                $ticketsData['closed']= null;   
             }
         }
 
         //re-populate info array to ticket comments module
         $this->info = $comment_model->makeInfo('ticketcomment');
-        $commentsData = $this->validatePost('sb_ticketcomments');
+        $commentsData = $this->validatePost('sb_ticketcomments', true);
 
         $commentsData['USERNAME'] = \Session::get('fid');
         $commentsData['Posted'] = date('Y-m-d H:i:s');;
 
         //@todo need separate table for comment attachments
+        unset($ticketsData['oldStatus']);
         unset($ticketsData['file_path']);
+        $requestedOn = $ticketsData['Created'];
+        unset($ticketsData['Created']);
         $commentId = $comment_model->insertRow($commentsData, NULL);
 
         $files = $this->uploadTicketAttachments("/ticket-$ticketId/$date/", "--$ticketId");
@@ -608,6 +722,7 @@ class servicerequestsController extends Controller
         */
             
         //send email
+        $ticketsData['Created'] = $requestedOn;
         $this->model->notifyObserver('AddComment',[
                 'message'       =>$message,
                 'ticketId'      => $ticketId,

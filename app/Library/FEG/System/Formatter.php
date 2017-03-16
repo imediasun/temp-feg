@@ -10,6 +10,7 @@ use Carbon\Carbon;
 use App\Library\MyLog;
 use App\Library\DBHelpers;
 use App\Library\DateHelpers;
+use App\Library\FEG\System\FEGSystemHelper;
 
 class Formatter
 {    
@@ -46,7 +47,7 @@ class Formatter
         }
         return $reader_id;
     }
-
+    
     public static function userToLink($id, $displayValue = "", $inputOptions = []) {
         extract(array_merge([
                 'path' => "/core/users/show/", 
@@ -102,6 +103,33 @@ class Formatter
             $displayValue = $email;
         }
         return $displayValue;
+    }
+    
+    public static function getTicketStatus($value = '', $default = '') {
+        return FEGSystemHelper::getLabelFromOptions($value, self::getTicketStatuses(), $default);
+    }
+    public static function getTicketPriority($value = '', $default = '') {
+        return FEGSystemHelper::getLabelFromOptions($value, self::getTicketPriorities(), $default);
+    }
+    public static function getTicketIssueType($value = '', $default = '') {
+        return FEGSystemHelper::getLabelFromOptions($value, self::getTicketIssueTypes(), $default);
+    }
+
+    public static function getTicketStatuses() {
+        return \SiteHelpers::getModuleFormFieldDropdownOptions('servicerequests', 'Status');
+    }
+    public static function getTicketPriorities() {
+        return \SiteHelpers::getModuleFormFieldDropdownOptions('servicerequests', 'Priority');
+    }
+    public static function getTicketIssueTypes() {
+        return \SiteHelpers::getModuleFormFieldDropdownOptions('servicerequests', 'issue_type');
+    }
+
+    public static function empty2blank($value = null) {
+        return empty($value) ? '' : $value;
+    }
+    public static function delegateTo($value = null) {
+        return is_null($value) ? '' : $value;
     }
 
 }

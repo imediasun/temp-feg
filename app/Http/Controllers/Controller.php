@@ -299,7 +299,9 @@ abstract class Controller extends BaseController
                                     if ($files != '') $files = substr($files, 0, strlen($files) - 1);
                                 }
                             }
-                            
+//                            if ($skipFieldsMissingInRequest && empty($files)) {
+//                                contine;
+//                            }
                             $data[$field] = $files;
 
                         }
@@ -349,7 +351,12 @@ abstract class Controller extends BaseController
                     }
                     // if post is date
                     elseif ($f['type'] == 'date' || $f['type'] == 'text_date') {
-                        $data[$field] = date("Y-m-d", strtotime(\Request::get($field)));
+
+                        $data[$field] = empty(\Request::get($field)) ? null : date("Y-m-d", strtotime(\Request::get($field)));
+                    }   
+                    // if post is datetime
+                    elseif ($f['type'] == 'text_datetime') {
+                        $data[$field] = empty(\Request::get($field)) ? null : date("Y-m-d H:i:s", strtotime(\Request::get($field)));
                     }   
                     // if post is seelct multiple
                     //
@@ -870,9 +877,12 @@ abstract class Controller extends BaseController
 
     public function changeDateFormat($date)
     {
-        if ($date != '0000-00-00 00:00:00')
-            return date("d/m/Y", strtotime($date));
-        return '';
+        $formattedDate = '';
+        $timestamp = strtotime($date);
+        if ($timestamp !== false) {
+            $formattedDate = date('m/d/Y', $timestamp);
+        }
+        return $formattedDate;
     }
 
     function detailview($model, $detail, $id)
@@ -924,16 +934,30 @@ abstract class Controller extends BaseController
 
     function getChangelocation($location_id)
     {
-        \Session::put('selected_location', $location_id);
-        $location_name = \DB::select('select location_name_short from location where id=' . $location_id);
-        if (count($location_name) == 1) {
-            $data['selected_location_name'] = $location_name[0]->location_name_short;
+        if(!empty($location_id))
+        {
+            \Session::put('selected_location', $location_id);
+            $location_name = \DB::select('select location_name_short from location where id=' . $location_id);
+            if (count($location_name) == 1) {
+                $data['selected_location_name'] = $location_name[0]->location_name_short;
+            }
+            $data['selected_location'] = $location_id;
+            $total_cart = $this->addToCartModel->totallyRecordInCart();
+            \Session::put('total_cart', $total_cart[0]->total);
+            // Session::put($data);
+            return response()->json(array(
+                'status' => 'success',
+                'message' => 'Successfully change location'
+            ));
+        } else {
+            return response()->json(array(
+                'status' => 'error',
+                'message' => 'Please specify location'
+            ));
         }
-        $data['selected_location'] = $location_id;
-        $total_cart = $this->addToCartModel->totallyRecordInCart();
-        \Session::put('total_cart', $total_cart[0]->total);
-        // Session::put($data);
-        return Redirect::back();
+        /* todo refactor code
+        /return Redirect::back();
+        */
     }
 
     function generateRandomString($length = 10) {

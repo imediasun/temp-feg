@@ -9,7 +9,6 @@
 
         <h1 class="text-center"><img src='{{ url() }}/sximo/images/shopping_cart.png'  /> {{ $cartData['title_2'] }}</h1>
         <div class="table-responsive" style="max-height: 800px;min-height: 100px;">
-            <div class="ajaxLoading"></div>
             <table class="table table-hover " id="cart_data_table">
 
                 </table>
@@ -91,6 +90,7 @@
                     $("#cartbtn").val(" Submit Weekly Requests totalling $ "+ data['shopping_cart_total']);
 
                 }
+                $('.ajaxLoading').hide();
 
             }
         });

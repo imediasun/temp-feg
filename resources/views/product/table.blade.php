@@ -125,7 +125,7 @@
 
                                      @if($field['field']=='img')
 										<?php
-										 echo SiteHelpers::showUploadedFile($value,'/uploads/products/', 50,false)
+										 echo SiteHelpers::showUploadedFile($value,'/uploads/products/', 50,false,$row->id)
 										 ?>
 									@elseif($field['field']=='details')
 

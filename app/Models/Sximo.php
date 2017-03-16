@@ -568,18 +568,41 @@ class Sximo extends Model {
 
     function getOrderData($order_id) {
         \DB::setFetchMode(\PDO::FETCH_ASSOC);
-        $row = \DB::select('SELECT U1.first_name, U1.last_name,U1.email,C.company_name_short,C.company_name_long,O.date_ordered,
-										  O.order_type_id,L.location_name_short AS loc_name_short,L.id AS loc_id,L.loading_info,
-										  L.loc_ship_to AS loc_ship_to,U2.email AS loc_contact_email, U3.email AS loc_merch_contact_email,
-										  V.vendor_name,V.street1 AS vend_street1,V.city AS vend_city,V.state AS vend_state,V.zip AS vend_zip,
-										  V.contact AS vend_contact,V.email AS vend_email,O.order_description,O.order_total,O.po_number,
-										  O.alt_address,F.freight_type, O.new_format,O.po_notes
+        $row = \DB::select('SELECT U1.first_name, 
+                                    U1.last_name,
+                                    U1.email,
+                                    C.company_name_short,
+                                    C.company_name_long,
+                                    O.date_ordered,
+										  O.order_type_id,
+                                          L.location_name_short AS loc_name_short,
+                                          L.id AS loc_id,
+                                          L.loading_info,
+										  L.loc_ship_to AS loc_ship_to,
+                                          U2.email AS loc_contact_email, 
+                                          U3.email AS loc_merch_contact_email,
+										  V.vendor_name,
+                                          V.street1 AS vend_street1,
+                                          V.city AS vend_city,
+                                          V.state AS vend_state,
+                                          V.zip AS vend_zip,
+										  V.contact AS vend_contact,
+                                          V.email AS vend_email,
+                                          O.order_description,
+                                          O.order_total,
+                                          O.po_number,
+										  O.alt_address,
+                                          F.freight_type, 
+                                          O.new_format,
+                                          O.po_notes
 								     FROM orders O
 								LEFT JOIN company C ON C.id = O.company_id
 								LEFT JOIN location L ON L.id = O.location_id
 								LEFT JOIN users U1 ON U1.id = O.user_id
-								LEFT JOIN users U2 ON U2.id = L.contact_id
-								LEFT JOIN users U3 ON U3.id = L.merch_contact_id
+								LEFT JOIN user_locations UL2 ON UL2.location_id = L.id AND UL2.group_id=101
+								LEFT JOIN users U2 ON U2.id = UL2.user_id
+								LEFT JOIN user_locations UL3 ON UL3.location_id = L.id AND UL3.group_id=102
+								LEFT JOIN users U3 ON U3.id = UL3.user_id
 								LEFT JOIN vendor V ON V.id = O.vendor_id
 								LEFT JOIN freight F ON F.id = O.freight_id
 								    WHERE O.id=' . $order_id);
@@ -804,35 +827,37 @@ class Sximo extends Model {
 
         if (!empty($loc_id)) {
 
-            $location_statement = 'AND UL.location_id=' . $loc_id;
+            $location_statement = " AND UL.location_id IN ($loc_id)";
             $query_table = 'users';
         }
 
         if ($user_level == 'all_users') {
-            $user_level_statement = ' AND U.group_id IN(1,2,3,4,5,6,7,8,9,10)';
+            $user_level_statement = ' AND U.group_id IN(1,2,3,4,5,6,7,8,9,10) ';
             $query_table = 'users';
         }
         if ($user_level == 'all_employees') {
-            $user_level_statement = ' AND U.group_id IN(1,3,4,5,6,7,10)';
+            $user_level_statement = ' AND U.group_id IN(1,3,4,5,6,7,10) ';
             $query_table = 'users';
         }
         if ($user_level == 'all_managers') {
-            $user_level_statement = ' AND U.group_id IN(3,4,5,6,7,10)';
+            $user_level_statement = ' AND U.group_id IN(3,4,5,6,7,10) ';
             $query_table = 'users';
         }
         if ($user_level == 'technical_contact') {
-            $user_level_statement = ' AND U.is_tech_contact = 1';
-            $location_statement = ' AND L.id = ' . $loc_id;
+            $user_level_statement = ' AND U.is_tech_contact = 1 ';
+            $location_statement = " AND L.id IN($loc_id) ";
             $query_table = 'users';
         }
         if ($user_level == 'users_plus_district_managers') {
-            $user_level_statement = ' AND U.group_id IN(1,5,6)';
-            $location_statement = ' L.id=' . $loc_id . ' OR U.reg_id = (SELECT L.region_id FROM location L WHERE L.id = ' . $loc_id . '))';
+            $user_level_statement = ' AND (U.group_id IN(1,5,6)  ' . 
+                    ' OR U.id IN (SELECT user_id FROM user_locations WHERE group_id IN (6) AND location_id IN (' . $loc_id . '))) ';
+            $location_statement = " AND L.id IN($loc_id) ";
             $query_table = 'users';
         }
         if ($user_level == 'users_plus_district_and_field_managers') {
-            $user_level_statement = ' AND U.group_id IN(1,4,5,6)';
-            $location_statement = ' AND (UL.location_id = ' . $loc_id . ' OR U.id = (SELECT L.field_manager_id FROM location L WHERE L.id = ' . $loc_id . ') OR U.reg_id = (SELECT L.region_id FROM location L WHERE L.id = ' . $loc_id . '))';
+            $location_statement = " AND L.id IN ($loc_id) ";
+            $user_level_statement = ' AND (U.group_id IN(1,4,5,6) '.
+                    ' OR U.id IN (SELECT user_id FROM user_locations WHERE group_id IN (1,6) AND location_id IN (' . $loc_id . '))) ';
             $query_table = 'users';
         }
         if ($user_level == 'location_manager_and_field_manager') {
@@ -856,8 +881,7 @@ class Sximo extends Model {
 								 FROM users U
 								LEFT JOIN user_locations UL ON UL.user_id=U.id
 								LEFT JOIN location L ON L.id=UL.location_id
-								LEFT JOIN region R ON R.id = L.region_id
-                               WHERE U.active = 1'
+                               WHERE U.active = 1 '
                 . $user_level_statement
                 . $location_statement;
             $query =\DB::select($sql);
@@ -866,17 +890,19 @@ class Sximo extends Model {
             }
 
         } else if ($query_table == 'location') {
-
-            $query = \DB::select('SELECT CONCAT(Umain.email,", ",Ufield.email,", ",Uregion.email) as Emails
+            $sql = 'SELECT CONCAT(Umain.email,", ",Ufield.email,", ",Uregion.email) as Emails
 									 FROM location L
-								LEFT JOIN region R ON R.id = L.region_id
-								LEFT JOIN users Umain ON Umain.id = L.contact_id
-								LEFT JOIN users Ufield ON Ufield.id = L.field_manager_id
-								LEFT JOIN users Uregion ON Uregion.id = R.dist_mgr_id
+                                LEFT JOIN user_locations ULc ON ULc.location_id = L.id AND ULc.group_id=101
+                                LEFT JOIN user_locations ULf ON ULf.location_id = L.id AND ULf.group_id=1
+                                LEFT JOIN user_locations ULr ON ULr.location_id = L.id AND ULr.group_id=6
+								LEFT JOIN users Umain ON Umain.id = ULc.user_id
+								LEFT JOIN users Ufield ON Ufield.id = ULf.user_id
+								LEFT JOIN users Uregion ON Uregion.id = ULr.user_id
 									WHERE Umain.active = 1
 									  AND Ufield.active = 1
 									  AND Uregion.active = 1
-									    ' . $location_statement);
+									    ' . $location_statement;
+            $query = \DB::select($sql);
 
 
             foreach ($query as $row) {
@@ -894,7 +920,13 @@ class Sximo extends Model {
 
     function totallyRecordInCart()
     {
-        return \DB::select("SELECT COUNT(*) as total FROM requests WHERE request_user_id = ".\Session::get('uid')." AND status_id = 9 AND location_id = ".\Session::get('selected_location'));
+        $data['user_level'] = \Session::get('gid');
+        if ($data['user_level'] == 3 || $data['user_level'] == 4 || $data['user_level'] == 5 || $data['user_level'] == 7 || $data['user_level'] == 9 || $data['user_level'] == 10) {
+           $status_id = 9; /// 9 IS USED AS AN ARBITRARY DELIMETER TO KEEP CART SEPERATE FROM LOCATIONS' OWN
+        } else {
+            $status_id = 0;
+        }
+        return \DB::select("SELECT COUNT(*) as total FROM requests WHERE request_user_id = ".\Session::get('uid')." AND status_id = $status_id AND location_id = ".\Session::get('selected_location'));
     }
 
     public static function processApiData($json,$param=null){

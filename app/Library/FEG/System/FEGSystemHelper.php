@@ -328,7 +328,7 @@ class FEGSystemHelper
             }
         }
         
-        mail($to, $subject, $message, $headers);
+        return mail($to, $subject, $message, $headers);
     }
     
     public static function phpMailer($to, $subject, $message, $from = "support@fegllc.com", $options = array()) {
@@ -463,6 +463,9 @@ class FEGSystemHelper
 //                self::configLaravelMail($mail, $options);
 //            });            
         }
+        
+        $failureCount = count(Mail::failures());  
+        return $failureCount == 0;
     }
     
     /**
@@ -487,10 +490,10 @@ class FEGSystemHelper
             $usePhpMail = !empty($options['usePHPMail']);
             //$useLaravelMail = !empty($options['useLaravelMail']) || !empty($options['attach']);
             if ($usePhpMail) {
-                self::phpMail($to, $subject, $message, $from, $options);                                
+                return self::phpMail($to, $subject, $message, $from, $options);                                
             }
             else {
-                self::laravelMail($to, $subject, $message, $from, $options);                
+                return self::laravelMail($to, $subject, $message, $from, $options);                
             }
         }
     }
@@ -723,24 +726,24 @@ class FEGSystemHelper
                 $lut = $data->to_email_location_contacts;
                 $lucc = $data->cc_email_location_contacts;
                 $lubcc = $data->bcc_email_location_contacts;
-                $locationUsers['to']  = empty($lut) ? array() : self::getLocationManagersEmails($lut,  $location);
-                $locationUsers['cc']  = empty($lucc) ? array() : self::getLocationManagersEmails($lucc,  $location);
-                $locationUsers['bcc'] = empty($lubcc) ? array() : self::getLocationManagersEmails($lubcc, $location);
+                $locationUsers['to']  = self::getLocationContactsEmails($lut,   $location, true);
+                $locationUsers['cc']  = self::getLocationContactsEmails($lucc,  $location, true);
+                $locationUsers['bcc'] = self::getLocationContactsEmails($lubcc, $location, true);
                 
                 
                 $gt = $data->to_email_groups;
                 $gcc = $data->cc_email_groups;
                 $gbcc = $data->bcc_email_groups;
-                $groups['to'] = empty($gt) ? array() : self::getGroupsUserEmails($gt,   $location);
-                $groups['cc'] = empty($gcc) ? array() : self::getGroupsUserEmails($gcc,   $location);
-                $groups['bcc'] = empty($gbcc) ? array() : self::getGroupsUserEmails($gbcc, $location);
+                $groups['to']  = self::getGroupsUserEmails($gt,   $location, true);
+                $groups['cc']  = self::getGroupsUserEmails($gcc,  $location, true);
+                $groups['bcc'] = self::getGroupsUserEmails($gbcc, $location, true);
                 
                 $ut = $data->to_email_individuals;
                 $ucc = $data->cc_email_individuals;
                 $ubcc = $data->bcc_email_individuals;                
-                $users['to'] = empty($ut) ? array() : self::getUserEmails($ut,      $location);
-                $users['cc'] = empty($ucc) ? array() : self::getUserEmails($ucc,    $location);
-                $users['bcc'] = empty($ubcc) ? array() : self::getUserEmails($ubcc, $location);
+                $users['to']  = self::getUserEmails($ut,   $location, true);
+                $users['cc']  = self::getUserEmails($ucc,  $location, true);
+                $users['bcc'] = self::getUserEmails($ubcc, $location, true);
                 
                 $inclues['to'] = FEGSystemHelper::split_trim($data->to_include_emails);
                 $inclues['cc'] = FEGSystemHelper::split_trim($data->cc_include_emails);
@@ -774,47 +777,46 @@ class FEGSystemHelper
         return $emails;
     }
 
-    public static function getLocationManagersEmails($fields = '', $location = null) {
-//        $q = "SELECT id,contact_id, general_contact_id, field_manager_id,
-//            tech_manager_id, merch_contact_id, merchandise_contact_id,
-//            technical_contact_id, regional_contact_id, senior_vp_id, district_manager_id
-//        FROM location WHERE active=1";
-        $emails = array();
+    public static function getLocationContactsEmails($fields = '', $location = null, $skipIfNoGroup = false) {
+        $emails = [];
         if (!empty(trim($fields))) {
-            $ids = self::getLocationManagersIds($fields, $location);
+            $ids = self::getLocationContactsUserIds($fields, $location, $skipIfNoGroup);
             if (!empty($ids)) {
-                $emails = self::getUserEmails(implode(',', $ids));
+                $emails = self::getUserEmails(implode(',', $ids), $location, $skipIfNoGroup);
             }            
         }        
         return $emails;
     }
-    public static function getLocationManagersIds($fields = null, $location = null) {
-//        $q = "SELECT id,contact_id, general_contact_id, field_manager_id,
-//            tech_manager_id, merch_contact_id, merchandise_contact_id,
-//            technical_contact_id, regional_contact_id, senior_vp_id, district_manager_id
-//        FROM location WHERE active=1";
-        if (empty(trim($fields))){
-            $fields = 'contact_id, general_contact_id, field_manager_id,
-//            tech_manager_id, merch_contact_id, merchandise_contact_id,
-//            technical_contact_id, regional_contact_id, senior_vp_id, district_manager_id';
-        }
-        $q = "SELECT $fields
-        FROM location WHERE active=1";
-        if ($location) {
-            $q .= " AND id IN ($location)";
-        }
-        $fieldsArr = explode(',', $fields);
-        $data = DB::select($q);
-        $ids = array();
-        foreach($data as $row) {            
-            foreach($fieldsArr as $fname) {
-                $val = $row->$fname;
-                if (!empty($val)) {
-                    $ids[] = $val;
-                }                
-            }        
+    public static function getLocationContactsUserIds($groups = null, $location = null, $skipIfNoGroup = false) {
+        if (is_array($groups)) {
+            $groups = implode(',', $groups);
         }        
-        return array_values(array_unique($ids));
+        $groups = self::split_trim_join($groups);
+        if ($skipIfNoGroup && empty($groups)) {
+            return [];
+        } 
+        
+        $q = "SELECT u.id
+                FROM user_locations ul 
+                LEFT JOIN users u ON u.id = ul.user_id
+                WHERE u.active=1";
+        
+        if (!empty($groups)) {
+            $q .= " AND ul.group_id IN ($groups)";
+        }        
+        if ($location) {
+            $q .= " AND UL.location_id IN ($location)";
+        }
+        
+        $data = DB::select($q);
+        $uids = array();
+        foreach($data as $row) {
+            $uid = $row->id;
+            if (!empty($uid)) {
+                $uids[] = $uid;
+            }            
+        }
+        return array_values(array_unique($uids));
     }    
     /**
      * 
@@ -1037,8 +1039,9 @@ $message" .
              
         self::logit("Sending Email", $lf, $lp);
         self::logit($options, $lf, $lp);        
-        self::sendEmail($to, $subject, $message, $from, $options);
+        $status = self::sendEmail($to, $subject, $message, $from, $options);
         self::logit("Email sent", $lf, $lp);
+        return $status;
     }
 
     public static function getOption($optionName, $default = '', $all = false, $skipInactive = false, $details = false) {
@@ -1236,4 +1239,49 @@ $message" .
         }        
         return $newString;
     }
+    
+    /**
+     * 
+     * @param type $string
+     * @param type $variableDelimiter
+     * @param type $valueDelimiter
+     * @param type $defaults
+     * @return type
+     */
+    public static function parseStringToArray($string = '', $variableDelimiter = '|', $valueDelimiter = ':', $defaults = array()) {
+        $valueArray = $defaults;        
+        $newArray = [];
+        
+        if (!empty($string)) {
+            $variables = explode($variableDelimiter, $string);
+            foreach($variables as $variable) {
+                list($key, $value) = explode($valueDelimiter, $variable.$valueDelimiter);
+                if (strpos($variable, $valueDelimiter) === false) {
+                    $value = $key;
+                }                
+                $newArray[$key] = $value;
+            }
+//            $string = str_replace($variableDelimiter, '&', $string);
+//            $string = str_replace($valueDelimiter, '=', $string);
+//            parse_str($string, $valueArray);
+            $valueArray = array_merge($defaults, $newArray);
+        }        
+        return $valueArray;
+    }
+    
+    /**
+     * 
+     * @param type $value
+     * @param type $options associative array with (value => label)
+     * @param type $default
+     * @return type
+     */
+    public static function getLabelFromOptions($value, $options, $default = '') {
+        $label = $default;
+        if (isset($options[$value])) {
+            $label = $options[$value];
+        }
+        return $label;        
+    }
+    
 }

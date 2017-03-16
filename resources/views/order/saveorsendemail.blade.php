@@ -184,11 +184,8 @@
                                     <div class="col-md-offset-6 col-md-6">
                                         <div class="form-group" style="margin-top:10px;">
                                             <div class="form-group" style="margin-top:10px;">
-                                                <a href="{{ URL::to('order/po/'.$order_id)}}"
-                                                   class=" btn  btn-lg btn-success" title="SAVE & SEND"
-                                                   id="save_send"><i
-                                                            class="fa  fa-download" aria-hidden="true"></i>
-                                                    &nbsp {{ Lang::get('core.sb_save_send') }}</a></div>
+                                                <button type="submit" name="submit" class=" btn  btn-lg btn-success" title="SAVE & SEND" id="save_send"> <i class="fa  fa-download" aria-hidden="true"></i> &nbsp {{ Lang::get('core.sb_save_send') }}</button>
+                                            </div>
                                         </div>
                                     </div>
                                     {!! Form::close() !!}
@@ -350,12 +347,11 @@
                         $("#sendFormAjax").submit();
                     });
                     $('#save_send').click(function () {
-                        $("#sendsaveFormAjax").submit();
+                        window.location.href="{{ URL::to('order/po/'.$order_id)}}";
                     });
                 }
             });
         }
-
     </script>
 
 @stop

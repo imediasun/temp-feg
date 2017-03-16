@@ -2,6 +2,7 @@
 
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
+use SiteHelpers;
 
 class location extends Sximo  {
 	
@@ -13,9 +14,14 @@ class location extends Sximo  {
 		
 	}
 
-	public static function querySelect(  ){
-		
-		return "  SELECT location.*,if(location.region_id=0,'',location.region_id) as region_id,if(location.company_id=0,'',location.company_id) as company_id,If(U4.first_name IS NULL, 'None Specified', CONCAT(U4.first_name,' ',U4.last_name))as district_manager FROM location LEFT JOIN users U4 ON (U4.id = location.district_manager_id	) ";
+    public static function getQuery( ) {
+        $roleSQL = \SiteHelpers::getUniqueLocationUserAssignmentMeta('sql');
+        $sql = "SELECT ".$roleSQL['select'] . ", location.* 
+            FROM location " .$roleSQL['join'];
+        return $sql;
+    }
+	public static function querySelect(  ){        
+		return self::getQuery();
 	}	
 
 	public static function queryWhere(  ){
@@ -26,30 +32,15 @@ class location extends Sximo  {
 	public static function queryGroup(){
 		return "  ";
 	}
-  /*  public static function getRow( $id )
-    {
-        $row= \DB::table('location')
-            ->join('region', 'location.region_id', '=', 'region.id')
-            ->join('company','location.company_id','=','company.id')
-            ->select('location.*','region.region','company.company_name_short')
-            ->where('location.id','=',$id)
-            ->get();
-        return $row;
-    }*/
-    public static function getRow($id)
-    {
-        $row=\DB::select('SELECT L.*,
-									  U.first_name,
-									  U.last_name,
-									  C.company_name_short,
-									  R.region
-								 FROM location L
-						    LEFT JOIN users U ON U.id = L.contact_id
-						    LEFT JOIN company C ON C.id = L.company_id
-						    LEFT JOIN region R ON R.id = L.region_id
-								WHERE L.id='.$id.'');
-        return $row;
-    }
 
+    public static function getRow($id)
+    {       
+        if (empty($id)) {
+            return false;
+        }
+        $sql = self::querySelect();
+        $rows = \DB::select($sql." WHERE location.id='$id'");
+        return $rows;
+    }
 
 }

@@ -13,7 +13,7 @@
                     <?php endif; ?>
                 </li>
             <li>
-                <a href="addtocart"  class="dropdown-toggle count-info">
+                <a href="{{url()}}/addtocart"  class="dropdown-toggle count-info">
                     <?php
                         $cart_value=\Session::get('total_cart');
                     $cart_value=isset($cart_value)?$cart_value:0;
@@ -92,10 +92,10 @@
     </nav>
 </div>
 
- <?php $pageModule=isset($_SERVER['HTTP_REFERER'])?$_SERVER['HTTP_REFERER']:$pageModule;
+ <?php $pageModule=isset($_SERVER['HTTP_REFERER'])?$_SERVER['HTTP_REFERER']: (isset($pageModule) ? $pageModule : '');
  if($pageModule == url('').'/' )
      {
-          $pageModule=url().'/dashboard';
+          $pageModule='dashboard';
      }
 else
     {
@@ -107,13 +107,24 @@ else
 
 <script>
     $(document).ready(function () {
+        $("#user_locations").on('change', function () {
+            $('.globalLoading').show();
+            var location_id = $(this).val();
+            if(location_id != '')
+            {
+                $.get('/user/changelocation/'+location_id,function( response ) {
+                    if(response.status =='success')
+                    {
+                        notyMessage(response.message);
+                        location.reload();
+                    }
+                    else {
+                        notyMessageError(response.message);
+                    }
 
+
+                });
+            }
+        });
     });
-    $("#user_locations").on('change', function () {
-
-        var location_id = $(this).val();
-        var pageModule ="{{ $pageModule }}";
-        location.href ="{{ url() }}/"+pageModule+"/changelocation/" + location_id;
-    });
-
 </script>

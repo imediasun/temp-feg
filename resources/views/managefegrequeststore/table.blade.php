@@ -4,7 +4,7 @@
         <h5> <i class="fa fa-table"></i> </h5>
         <div class="sbox-tools" >
             <a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Clear Search" onclick="reloadData('#{{ $pageModule }}', 'managefegrequeststore/data?search=')"><i class="fa fa-trash-o"></i> Clear Search </a>
-            <a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Reload Data" onclick="reloadData('#{{ $pageModule }}','managefegrequeststore / data?return={{ $return }}')"><i class="fa fa-refresh"></i></a>
+            <a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Reload Data" onclick="reloadData('#{{ $pageModule }}','managefegrequeststore/data?view=manage&return={{ $return }}')"><i class="fa fa-refresh"></i></a>
             @if(Session::get('gid') ==1)
             <a href="{{ url('feg/module/config/'.$pageModule) }}" class="btn btn-xs btn-white tips" title=" {{ Lang::get('core.btn_config') }}" ><i class="fa fa-cog"></i></a>
             @endif
@@ -156,14 +156,8 @@
             <?php $limited = isset($field['limited']) ? $field['limited'] : ''; ?>
                                     @if(SiteHelpers::filterColumn($limited ))
                                     <td align="<?php echo $field['align']; ?>" data-values="{{ $row->$field['field'] }}" data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
-                                       @if($field['field'] == 'request_date')
-
-                                            {!! date("m/d/Y", strtotime($value)) !!}
-
-                                        @elseif($field['field'] == 'price')
-
+                                       @if($field['field'] == 'price')
                                             {!!number_format((float)2, '.','',$value) !!}
-
                                         @else
                                             {!! $value !!}
 

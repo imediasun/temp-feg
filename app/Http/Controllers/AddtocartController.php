@@ -286,8 +286,10 @@ class AddtocartController extends Controller
             \Session::put('total_cart', 0);
             //redirect('fegllc/popupCart', 'refresh');
         } else {
-
+            /* @todo refactor code
+             * comment line because $new_location value always come null from addtocart/table.blade
             $this->getChangelocation($new_location);
+             */
             return redirect('./shopfegrequeststore/popup-cart/');
         }
     }

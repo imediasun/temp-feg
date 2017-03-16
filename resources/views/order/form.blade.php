@@ -386,7 +386,7 @@
             {
                 var location_id=$("#po_1").val();
                 var po=$("#po_1").val()+"-"+$("#po_2").val()+"-"+$("#po_3").val();
-                 validatePONumber(location_id,po);
+                validatePONumber(location_id,po);
             }
             $("#item_num").val(inc);
 
@@ -415,7 +415,7 @@
                         initial_text: '-------- Select Freight Type --------'
                     });
 
-            $("#order_type_id").jCombo("{{ URL::to('order/comboselect?filter=order_type:id:order_type') }}",
+            $("#order_type_id").jCombo("{{ URL::to('order/comboselect?filter=order_type:id:order_type') }}&parent=can_request:1",
                     {selected_value: '{{ $data["order_type"] }}', initial_text: '-------- Select Order Type --------'});
             $("[id^=game_0]").select2({
                 dataType: 'json',
@@ -439,7 +439,7 @@
             $('.editor').summernote();
             $('.previewImage').fancybox();
             $('.tips').tooltip();
-            $("select.select3").select2({width: "98%"});
+            renderDropdown($("select.select3"),{width: "98%"});
             $('.date').datepicker({format: 'mm/dd/yyyy', autoclose: true})
             $('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});
             $('.removeCurrentFiles').on('click', function () {
@@ -619,21 +619,6 @@
                 }
             });
         });
-        function debounce(func, wait, immediate) {
-            var timeout;
-            return function () {
-                var context = this, args = arguments;
-                var later = function () {
-                    timeout = null;
-                    if (!immediate) func.apply(context, args);
-                };
-                var callNow = immediate && !timeout;
-                clearTimeout(timeout);
-                timeout = setTimeout(later, wait);
-                if (callNow) func.apply(context, args);
-            };
-        }
-        ;
         $('#po_3').on('keyup', debounce(function () {
             var location_id = $("#po_1").val();
             validatePONumber(location_id, $(this).val());
@@ -957,5 +942,3 @@
             width: 90%;
         }
     </style>
-
-

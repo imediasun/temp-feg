@@ -118,7 +118,8 @@
 					 @endif					 
 
 				 @endforeach
-				 <td id="s_icons">
+                    <td id="s_icons" data-values="action" data-key="{{ $row->pageID }}">
+                        <div class="action">
 					 	@if($access['is_detail'] ==1)
 					 		@if($row->pageID == 1)
 					 		<a href="{{ url()}}" target="_blank"  class="tips btn btn-xs btn-white viewButtonOnGridRow linkToCMSPage linkPUAA" title="{{ Lang::get('core.btn_view') }}"><i class="fa  fa-search "></i></a>
@@ -129,9 +130,8 @@
 						@if($access['is_edit'] ==1)
 						<a  href="{{ url('core/pages/update/'.$row->pageID.'?return='.$return) }}" class="tips btn btn-xs btn-white editButtonOnGridRow" title="{{ Lang::get('core.btn_edit') }}"><i class="fa fa-edit "></i></a>
 						@endif
-												
-					
-				</td>				 
+                        </div>										
+                    </td>				 
                 </tr>
 				
             @endforeach

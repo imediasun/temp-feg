@@ -8,7 +8,7 @@
                onclick="reloadData('#{{ $pageModule }}','shopfegrequeststore/data?search=')"><i
                         class="fa fa-trash-o"></i> Clear Search </a>
             <a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Reload Data"
-               onclick="reloadData('#{{ $pageModule }}','shopfegrequeststore/data?return={{ $return }}')"><i
+               onclick="reloadData('#{{ $pageModule }}','shopfegrequeststore/data?type=store&active_inactive=active&return={{ $return }}')"><i
                         class="fa fa-refresh"></i></a>
             @if(Session::get('gid') ==1)
                 <a href="{{ url('feg/module/config/'.$pageModule) }}" class="btn btn-xs btn-white tips"
@@ -73,16 +73,10 @@
                                 }
                             endif;
                         endforeach; ?>
-                        @if($setting['disablerowactions']=='false')
-                            <th width="70"><?php echo Lang::get('core.btn_action') ;?></th>
-                        @endif
-
-                        <th width="115">Add To Cart</th>
-
-
-
-
-
+                            @if($setting['disablerowactions']=='false')
+                                <th width="70"><?php echo Lang::get('core.btn_action') ;?></th>
+                            @endif
+                            <th width="115">Add To Cart</th>
                     </tr>
                     </thead>
 
@@ -150,16 +144,19 @@
                         endif;
                         endforeach;
                         ?>
-                        <td><a href="{{ $pageModule }}/show/{{$row->id}}" target="_blank"
-                               class="tips btn btn-xs btn-white"  title="Product Details"><i class="fa fa-search" aria-hidden="true"></i></a>
-</td>
+                            @if($setting['disablerowactions']=='false')
+                                <td data-values="action" data-key="<?php echo $row->id ;?>">
+                                    {!! AjaxHelpers::buttonAction('shopfegrequeststore',$access,$id ,$setting) !!}
+                                    {!! AjaxHelpers::buttonActionInline($row->id,'id') !!}
+                                </td>
+                            @endif
                         <td>@if($row->inactive == 0)
-                                <input type="number" title="Quantity" value="1" onkeyup="if(!this.checkValidity()){this.value='';alert('Please enter a number')};" name="item_quantity" class="form-control" style="width:70px;display:inline" id="item_quantity_{{$row->id}}" min="0"  />
+                                <input type="number" title="Quantity" value="1" min="1" onkeyup="if(!this.checkValidity()){this.value='';alert('Please Enter a Non Zero Number')};" name="item_quantity" class="form-control" style="width:70px;display:inline" id="item_quantity_{{$row->id}}" min="0"  />
                                 <a href="javascript:void(0)" value="{{$row->id}}" class=" addToCart tips btn btn-xs btn-white"  title="Add to Cart"><i class="fa fa-shopping-cart" aria-hidden="true"></i></a>
-
                             @else
                                 Not Avail.
                             @endif</td>
+
                     </tr>
                     @if($setting['view-method']=='expand')
                         <tr style="display:none" class="expanded" id="row-{{ $row->id }}">
@@ -211,6 +208,16 @@
             reloadData('#{{ $pageModule }}', url);
             return false;
         });
+        $("[name^=item_]").on('keyup',function(){
+            if(!$(this).val())
+            {
+               $(this).next('a').attr('disabled',true);
+            }
+            else
+            {
+                $(this).next('a').attr('disabled',false);
+            }
+        });
 
         $('.addToCart').on('click',function(){
             var base_url = <?php echo  json_encode(url()) ?>;
@@ -219,19 +226,21 @@
 
             if(!qty)
             {
-                qty=1;
+
+                $(this).next('.qty-error').show();
+                return false;
             }
-            console.log(addId+ " "+qty);
-            $.ajax({
-                type: "GET",
-                url: base_url + '/shopfegrequeststore/popup-cart/'+addId+"/"+qty,
-                data: {
-                },
-                success: function (response) {
-                    $("#update_text_to_add_cart").text(response.total_cart);
-                    showResponse(response)
-                }
-            });
+            else {
+                $.ajax({
+                    type: "GET",
+                    url: base_url + '/shopfegrequeststore/popup-cart/' + addId + "/" + qty,
+                    data: {},
+                    success: function (response) {
+                        $("#update_text_to_add_cart").text(response.total_cart);
+                        showResponse(response)
+                    }
+                });
+            }
         });
         function showResponse(data)  {
 

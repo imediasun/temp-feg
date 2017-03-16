@@ -217,6 +217,7 @@ class order extends Sximo
                 $data['order_company_id'] = $order_query[0]->company_id;
                 $data['order_freight_id'] = $order_query[0]->freight_id;
                 $data['today'] = $order_query[0]->date_ordered;
+                $data['po_notes'] = $order_query[0]->po_notes;
                 $data['order_total'] = $order_query[0]->order_total;
                 $data['alt_address'] = $order_query[0]->alt_address;
             }

@@ -45,7 +45,7 @@ jQuery(document).ready(function($){
 
   	$('.switch').bootstrapSwitch();
 	$('.date').datepicker({format:'mm/dd/yyyy',autoclose:true})
-	$('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});
+	$('.datetime').datetimepicker({format: 'mm/dd/yyyy HH:ii:ss P'});
 	
 	/* Tooltip */
 	$('.previewImage').fancybox();	
@@ -53,7 +53,7 @@ jQuery(document).ready(function($){
 	$('.editor').summernote();
 	$(".select2").select2({ width:"98%"});	
 	$(".select-liquid").select2({
-		minimumResultsForSearch: "-1",
+		minimumResultsForSearch: "-1"
 	});	
 	$('.panel-trigger').click(function(e){
 		e.preventDefault();
@@ -121,7 +121,21 @@ jQuery(document).ready(function($){
 	});	
 		    	
 })
-
+function debounce(func, wait, immediate) {
+    var timeout;
+    return function () {
+        var context = this, args = arguments;
+        var later = function () {
+            timeout = null;
+            if (!immediate) func.apply(context, args);
+        };
+        var callNow = immediate && !timeout;
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+        if (callNow) func.apply(context, args);
+    };
+}
+;
 function addMoreFiles(id){
 
    $("."+id+"Upl").append('<input type="file" name="'+id+'[]" />')

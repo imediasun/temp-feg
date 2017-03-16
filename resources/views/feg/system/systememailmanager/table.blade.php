@@ -26,7 +26,7 @@
         @endif
         @endif
         
-        @include( 'feg/system/systememailreportmanager/toolbar',['config_id'=>$config_id,'colconfigs' => SiteHelpers::getRequiredConfigs($module_id)])
+        @include( 'feg/system/systememailmanager/toolbar',['config_id'=>$config_id,'colconfigs' => SiteHelpers::getRequiredConfigs($module_id)])
 
 	 <?php echo Form::open(array('url'=>'feg/system/systememailreportmanager/delete/', 'class'=>'form-horizontal' ,'id' =>'SximoTable'  ,'data-parsley-validate'=>'' )) ;?>
 <div class="table-responsive">
@@ -157,7 +157,7 @@
                     <h6>Groups</h6>
                     {!! $vrow->to_email_groups !!}
                     <hr/>
-                    <h6>Location Contacts/Managers</h6>
+                    <h6>Location based roles</h6>
                     {!! $vrow->to_email_location_contacts !!}
                     <hr/>
                     <h6>Users</h6>

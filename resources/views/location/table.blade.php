@@ -128,23 +128,13 @@ if (!$colconfigs) {
                         @endif
                         <?php foreach ($tableGrid as $field) :
                         if($field['view'] == '1') :
-                        $conn = (isset($field['conn']) ? $field['conn'] : array());
-
-                        $value = AjaxHelpers::gridFormater($row->$field['field'], $row, $field['attribute'], $conn);
+                            $conn = (isset($field['conn']) ? $field['conn'] : array());
+                            $value = AjaxHelpers::gridFormater($row->$field['field'], $row, $field['attribute'], $conn);
                         ?>
                         <?php $limited = isset($field['limited']) ? $field['limited'] : ''; ?>
                         @if(SiteHelpers::filterColumn($limited ))
-                           {{-- @if($field['field'] != 'bill_token_detail' && $field['field'] != 'bill_license_detail' && $field['field'] != 'bill_attraction_detail')
-                                --}}    <td align="<?php echo $field['align'];?>" data-values="{{ isset($row->$field['field'])?$row->$field['field']:"" }}"
-                                    data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
-@if($field)
-    @if($field['field'] == "district_manager_id")
-      <a href="core/users/user-details/{{ $row->district_manager_id }}" @if($value ==  '0') style="pointer-events: none;cursor: default;display:block;padding:2px;text-align: center;color:blue;font-weight: bold" @else style="display:block;padding:2px;text-align: center;color:blue;font-weight: bold" @endif class="btn-small btn-default" > @if($value ==  '0') {{ 'None Specified' }} @else{!! $value !!} @endif</a>
-        @else
-                                        {!! $value !!}
-@endif
-                                </td>
-                            @endif
+                                <td align="<?php echo $field['align'];?>" data-values="{{ isset($row->$field['field'])?$row->$field['field']:"" }}"
+                                    data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">{!! $value !!}</td>
                         @endif
                         <?php
                         endif;

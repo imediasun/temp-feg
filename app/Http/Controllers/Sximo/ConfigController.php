@@ -24,7 +24,6 @@ class ConfigController extends Controller
     {
         $this->data['active'] = '';
         $this->data['modules'] = \DB::table('tb_module')->where('module_type', '!=', 'core')->orderBy('module_title', 'asc')->get();
-        $this->data['pages'] = \DB::table("tb_pages")->orderBy('title', 'asc')->get();
         $this->data['options'] = [
             'CNF_APPNAME' => FEGSystemHelper::getOption('CNF_APPNAME'),
             'CNF_APPDESC' => FEGSystemHelper::getOption('CNF_APPDESC'),

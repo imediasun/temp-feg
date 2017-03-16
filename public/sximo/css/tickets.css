@@ -244,15 +244,18 @@
     color: #fff !important;
     background-color: #ccc !important;
 }
-.ticketStatusText[data-ticket-status=Closed] {
+.ticketStatusText[data-ticket-status=closed],
+.ticketStatusText[data-ticket-status=Closed]{
     color: #fff !important;
     background-color: #ccc !important;
 }
-.ticketStatusText[data-ticket-status=Pending] {
+.ticketStatusText[data-ticket-status=inqueue],
+.ticketStatusText[data-ticket-status=Pending]{
     color: #fff !important;
     background-color: #94bb53 !important;
 }
-.ticketStatusText[data-ticket-status=Open] {
+.ticketStatusText[data-ticket-status=open],
+.ticketStatusText[data-ticket-status=Open]{
     color: #fff !important;
     background-color: #f8ac59 !important;
 }

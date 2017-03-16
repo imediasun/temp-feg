@@ -35,7 +35,6 @@
         @endif
        @include( $pageModule.'/toolbar',['colconfigs' => SiteHelpers::getRequiredConfigs($module_id)])
 
-        <?php echo Form::open(array('url' => 'servicerequests/delete/', 'class' => 'form-horizontal', 'id' => 'SximoTable', 'data-parsley-validate' => ''));?>
         <div class="table-responsive">
             @if(count($rowData)>=1)
 
@@ -89,6 +88,7 @@
                             <td> </td>
                             @if($setting['view-method']=='expand') <td> </td> @endif
                             @foreach ($tableGrid as $t)
+                              @if ($canChangeStatus || !in_array($t['field'],['Status', 'closed']))                             
                                 @if(isset($t['inline']) && $t['inline'] =='1')
                                     <?php $limited = isset($t['limited']) ? $t['limited'] :''; ?>
                                     @if(SiteHelpers::filterColumn($limited ))
@@ -97,6 +97,7 @@
                                         </td>
                                     @endif
                                 @endif
+                              @endif
                             @endforeach
                             <td >
                                 <button onclick="saved('form-0')" class="btn btn-primary btn-xs" type="button"><i class="fa  fa-save"></i></button>
@@ -128,17 +129,6 @@
                         @if(SiteHelpers::filterColumn($limited ))
                             <td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}"
                                 data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
-                                <?php
-                                    if($field['field']=='Status'){
-                                        $value = isset($statusOptions[$value]) ? $statusOptions[$value] : '';
-                                    }
-                                    elseif ($field['field']=='Priority') {
-                                        if ($value == 'emergency') {
-                                            $value = "sameday";
-                                        }
-                                        $value = isset($priorityOptions[$value]) ? $priorityOptions[$value] : '';
-                                    }
-                                ?>
                                 {!! $value !!}
                             </td>
                         @endif
@@ -174,13 +164,10 @@
             @endif
 
         </div>
-        <?php echo Form::close();?>
         @include('ajaxfooter')
 
     </div>
 </div>
-
-@if($setting['inline'] =='true') @include('sximo.module.utility.inlinegrid') @endif
 <script>
     $(document).ready(function () {
         $('.tips').tooltip();

@@ -1,6 +1,7 @@
 <?php namespace App\Http\Controllers;
 
 use App\Http\Controllers\controller;
+use App\Library\FEG\System\FEGSystemHelper;
 use App\Models\Order;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
@@ -86,7 +87,9 @@ class OrderController extends Controller
 
         $fields = $info['config']['grid'];
         $rows = $results['rows'];
-        $rows = $this->updateDateInAllRows($rows);
+
+        //$rows = $this->updateDateInAllRows($rows);
+
         $content = array(
             'fields' => $fields,
             'rows' => $rows,
@@ -665,27 +668,29 @@ class OrderController extends Controller
 
     function postRemovalrequest(Request $request)
     {
+        $configName = 'Order Request removal';
         $po_number = $request->get('po_number');
         $explanation = $request->get('explaination');
+        $receipts = FEGSystemHelper::getSystemEmailRecipients($configName);
         $message = 'Link to Order: http://' . $_SERVER['HTTP_HOST'] . '/order/removeorder/' . $po_number . ' <br>Explanation: ' . $explanation . '';
-        $from = \Session::get('email');
-        $to = 'support@fegllc.com';
-        $to = 'greg@fegllc.com';
+        $from = \Session::get('eid');
         $subject = 'Order Removal Request';
-        $headers = 'MIME-Version: 1.0' . "\r\n";
-        $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
         $message = $message;
-        if (mail($to, $subject, $message, $headers)) {
-            return response()->json(array(
-                'status' => 'success',
-                'message' => \Lang::get('core.note_success')
-            ));
-        } else {
-            return response()->json(array(
-                'status' => 'success',
-                'message' => \Lang::get('core.note_success')
-            ));
-        }
+
+        FEGSystemHelper::sendSystemEmail(array_merge($receipts, array(
+            'subject' => $subject,
+            'message' => $message,
+            'isTest' => env('APP_ENV', 'development') !== 'production' ? true : false,
+            'configName' => $configName,
+            'from' => $from,
+            'replyTo' => $from,
+
+        )));
+
+        return response()->json(array(
+            'status' => 'success',
+            'message' => \Lang::get('core.request_sent_success')
+        ));
     }
 
     function getRemoveorder($poNumber = "")
@@ -808,13 +813,14 @@ class OrderController extends Controller
                   * https://www.google.com/settings/security/lesssecureapps
                   * enable stmp detail
                   */
-                        $mail = new PHPMailer(); // create a new object
+                        $mail = new PHPMailer();
+                        // create a new object
                         $mail->SMTPOptions = array(
-                                'ssl' => array(
+                            'ssl' => array(
                                 'verify_peer' => false,
                                 'verify_peer_name' => false,
                                 'allow_self_signed' => true
-                                )
+                            )
                         );
                         $mail->IsSMTP(); // enable SMTP
                         $mail->Host = 'smtp.gmail.com';
@@ -822,18 +828,20 @@ class OrderController extends Controller
                         $mail->SMTPSecure = 'tls'; // secure transfer enabled REQUIRED for Gmail
                         $mail->SMTPAuth = true; // authentication enabled
 
-                      //  $mail->SMTPDebug = 1; // debugging: 1 = errors and messages, 2 = messages only
+                        //$mail->SMTPDebug = 2; // debugging: 1 = errors and messages, 2 = messages only
 
                         //$mail->IsHTML(true);
                         $mail->Username = $google_acc->g_mail;          // SMTP username
-                        $mail->Password = trim(base64_decode($google_acc->g_password), env('SALT_KEY'));
+                        $decode_pass=base64_decode($google_acc->g_password);
+                        $pass=explode("_",$decode_pass);
+                        $mail->Password = isset($pass[2])?$pass[2]:trim(base64_decode($google_acc->g_password),env('SALT_KEY'));
                         $mail->SetFrom($google_acc->g_mail);
                         $mail->Subject = $subject;
                         $mail->Body = $message;
                         foreach ($to as $t) {
-                        $mail->addAddress($t);
+                            $mail->addAddress($t);
                         }
-                           if (!empty($cc)) {
+                        if (!empty($cc)) {
                             foreach ($cc as $c) {
                                 $mail->addCC($c);
                             }
@@ -848,13 +856,14 @@ class OrderController extends Controller
                         $file_to_save = public_path() . '/orders/' . $filename;
                         file_put_contents($file_to_save, $output);
                         $mail->addAttachment($file_to_save, $filename, 'base64', 'application/pdf');
-                          if (!$mail->Send()) {
+                        if (!$mail->Send()) {
                             return 3;
                         } else {
                             return 1;
                         }
                         die;
-                    } else {
+                    }
+                     else {
                       $sent= $this->sendPhpEmail($message,$to,$from,$subject,$pdf,$filename,$cc,$bcc);
                         return $sent;
                     }

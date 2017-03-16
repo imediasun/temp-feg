@@ -12,7 +12,7 @@
             <div class="col-md-12" style="text-align: center;margin-bottom: 10px;">
                 <h1>Location {{ $id }} Details</h1>
                 <h3 style="color:forestgreen;">
-                    @if($row[0]->active==1)
+                    @if($row->active==1 || $row->active=="Yes")
                         Active
                     @else
                         Inactive
@@ -23,61 +23,61 @@
                 <h1>BILL-BACK SUMMARY:</h1>
                 <div class="table-responsive">
                     <div style="padding:10px;">
-                        <h4>Debit Cards: <span style="display:inline-block;margin-left:10px"> {{ $row[0]->bill_debit_amt }} % </span></h4>
-                        <h4>Licenses: <span style="display:inline-block;margin-left:20px">{{ $row[0]->bill_license_amt }} %</span></h4>
+                        <h4>Debit Cards: <span style="display:inline-block;margin-left:10px"> {{ $row->bill_debit_amt }} % </span></h4>
+                        <h4>Licenses: <span style="display:inline-block;margin-left:20px">{{ $row->bill_license_amt }} %</span></h4>
                     </div>
                     <table class="table">
                         <tbody>
                         <tr rowspan="2">
                             <td colspan="1"><h3>Location ID:</h3></td>
-                            <td><h4> {{ $row[0]->id }} </h4></td>
+                            <td><h4> {{ $row->id }} </h4></td>
                         </tr>
                         <tr>
                             <td><h3>Address: </h3></td>
                             <td>
-                                <h4>{{ $row[0]->location_name.' ' .$row[0]->street1 .' '.$row[0]->city.','.$row[0]->state.' '.$row[0]->zip }}</h4>
+                                <h4>{{ $row->location_name.' ' .$row->street1 .' '.$row->city.','.$row->state.' '.$row->zip }}</h4>
                             </td>
                         </tr>
                         <tr>
                             <td colspan="1"><h3>Location Short Name:</h3></td>
-                            <td><h4> {{ $row[0]->location_name_short }} </h4></td>
+                            <td><h4> {{ $row->location_name_short }} </h4></td>
                         </tr>
                         <tr>
                             <td colspan="1"><h3>Shipping Restrictions:</h3></td>
-                            <td><h4> {{$row[0]->loading_info}} </h4></td>
+                            <td><h4> {{$row->loading_info}} </h4></td>
                         </tr>
                         <tr>
                             <td colspan="1"><h3>Alt. Shipping Location:</h3></td>
-                            <td><h4> @if($row[0]->loc_ship_to != 0) {{ $row[0]->loc_ship_to }} @endif  </h4></td>
+                            <td><h4> @if($row->loc_ship_to != 0) {{ $row->loc_ship_to }} @endif  </h4></td>
                         </tr>
                         <tr>
                             <td colspan="1"><h3>Reporting</h3></td>
-                            <td><h4> @if($row[0]->reporting == 1) Yes @else No @endif   </h4></td>
+                            <td><h4> @if($row->reporting == 1) Yes @else No @endif   </h4></td>
                         </tr>
                         <tr>
                             <td colspan="1"><h3>Date Opened:</h3></td>
-                            <td><h4>@if($row[0]->date_opened != "0000-00-00") {{  $row[0]->date_opened = date("m/d/Y", strtotime($row[0]->date_opened))  }} @endif </h4></td>
+                            <td><h4>{{ $row->date_opened }}</h4></td>
                         </tr>
                         <tr>
                             <td colspan="1"><h3>Date Closed:</h3></td>
-                            <td><h4>@if($row[0]->date_closed != "0000-00-00") {{  $row[0]->date_closed = date("m/d/Y", strtotime($row[0]->date_closed))  }} @endif </h4></td>
+                            <td><h4>{{ $row->date_closed }}</h4></td>
                         </tr>
                         <tr>
                             <td colspan="1"><h3>Location Phone:</h3></td>
-                            <td><h4>{{ $row[0]->phone }}  </h4></td>
+                            <td><h4>{{ $row->phone }}  </h4></td>
                         </tr>
                         <tr>
                             <td colspan="1"><h3>Internal Contact:</h3></td>
-                            <td><h4>{{ $row[0]->first_name }} {{ $row[0]->last_name }}</h4></td>
+                            <td><h4 class='tips' title="{{$row->contact_id}}">{{ @$row->contact_name }}</h4></td>
                             </td>
                         </tr>
                         <tr>
                             <td colspan="1"><h3>Region:</h3></td>
-                            <td><h4>{{ $row[0]->region }}  </h4></td>
+                            <td><h4>{{ $row->region_id }}  </h4></td>
                         </tr>
                         <tr>
                             <td colspan="1"><h3>Company:</h3></td>
-                            <td><h4> {{ $row[0]->company_name_short }} </h4></td>
+                            <td><h4> {{ $row->company_id }} </h4></td>
                         </tr>
                         </tbody>
                     </table>
@@ -88,7 +88,7 @@
                 <div class="table-responsive">
 
                     <?php $titles = array('bill_debit' => 'Debit Cards', 'bill_ticket' => 'Tickets', 'bill_thermalpaper' => 'Thermal Paper', 'bill_token' => 'Tokens', 'bill_license' => 'Licenses', 'bill_attraction' => 'Major Attractions', 'bill_redemption' => 'Redemption Prizes', 'bill_instant' => 'Instant Win Prizes'); ?>
-                    {!! Form::open(array('url'=>'location/updatelocation/'.$row[0]->id, 'class'=>'form-horizontal' ,
+                    {!! Form::open(array('url'=>'location/updatelocation/'.$row->id, 'class'=>'form-horizontal' ,
                     'parsley-validate'=>'','novalidate'=>' ', 'id'=>'locationFormAjax')) !!}
                     <table class="table">
                         @foreach($titles as $key=>$title)
@@ -100,10 +100,10 @@
                                           $keyamt=$key."_amt";
                                           $keydetails=$key."_detail";
                                     ?>
-                                    <label><input type="radio" @if( $row[0]->$keytype == 0 ) checked @endif name="{{ $keytype  }}" value="0" data-name="{{ $key }}" > NONE</label> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                    <label><input @if( $row[0]->$keytype == 1 ) checked @endif type="radio" name="{{ $keytype }}" value="1" data-detail="{{ $row[0]->$keydetails }}" data-pc="{{ $row[0]->$keyamt }}" data-name="{{ $key }}"> PCT%</label>
-                                    &nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;<label><input  type="radio" @if( $row[0]->$keytype == 2 ) checked @endif name="{{ $keytype }}" value="2"
-                                                                                   data-detail="{{ $row[0]->$keydetails }}" data-pc="{{ $row[0]->$keyamt }}" data-name="{{ $key }}"> FIXED</label>
+                                    <label><input type="radio" @if( $row->$keytype == 0 ) checked @endif name="{{ $keytype  }}" value="0" data-name="{{ $key }}" > NONE</label> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <label><input @if( $row->$keytype == 1 ) checked @endif type="radio" name="{{ $keytype }}" value="1" data-detail="{{ $row->$keydetails }}" data-pc="{{ $row->$keyamt }}" data-name="{{ $key }}"> PCT%</label>
+                                    &nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;<label><input  type="radio" @if( $row->$keytype == 2 ) checked @endif name="{{ $keytype }}" value="2"
+                                                                                   data-detail="{{ $row->$keydetails }}" data-pc="{{ $row->$keyamt }}" data-name="{{ $key }}"> FIXED</label>
                                 </td>
                             </tr>
                         @endforeach

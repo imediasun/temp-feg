@@ -23,7 +23,9 @@
 <div class="row m-b" >
 
     <div class="col-md-8">
-
+        @if($access['is_remove'] ==1)
+            <a href="javascript://ajax" class="btn btn-sm btn-white" onclick="ajaxRemove('#{{ $pageModule }}','{{ $pageUrl }}');"><i class="fa fa-trash-o "></i> {{ Lang::get('core.btn_remove') }} </a>
+        @endif
         <a href="{{ URL::to( $pageModule .'/search') }}" class="btn btn-sm btn-white"
            onclick="SximoModal(this.href,'Advanced Search'); return false;"><i class="fa fa-search"></i>Advanced Search</a>
         @if(SiteHelpers::isModuleEnabled($pageModule))
@@ -115,10 +117,12 @@
         product_type = $("#product_type").val();
         reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?&type=store'+ getFooterFilters()+'&active_inactive=' + type + '&order_type=' + order_type + '&product_type=' + product_type + '&config_id=' + $("#col-config").val());
     });
+
+    /* todo refactor code
     $('#locations').on('click', function () {
         if($('#locations').val() != '')
         window.location = "<?php echo url();?>//shopfegrequeststore/changelocation/" + $('#locations').val();
-    });
+    });*/
     $('#delete-cols').click(function(){
         if(confirm('Are You Sure, You want to delete this Columns Arrangement?')) {
             showRequest();

@@ -31,16 +31,8 @@ class SystemEmailReportManagerController extends Controller
 			'return' 			=> 	self::returnUrl()
 		);
         
-        $this->data['locationContactNames'] = array(
-            "contact_id" => "Contact",
-            "merch_contact_id" => "Merch Contact",
-            "field_manager_id" => "Field Manager",
-            "technical_contact_id" => "Technical Contact",
-            "tech_manager_id" => "Technical Manager",
-            "general_contact_id" => "General Contact",
-            "regional_contact_id" => "Regional Contact",
-            "senior_vp_id" => "Senior VP",
-        );
+        $this->data['locationContactNames'] = \SiteHelpers::getUniqueLocationUserAssignmentMeta('id-label');
+        
         $this->data['users'] = $this->model->getUserEmailsIDAssociated();
         $this->data['userGroups'] = $this->model->getGroupNamesIDAssociated();
         $this->data['usersPerGroup'] = $this->model->getUsersOnGroupNamesIDAssociated();		
@@ -54,7 +46,7 @@ class SystemEmailReportManagerController extends Controller
         
 		$this->data['access']		= $this->access;   
             
-		return view('feg.system.systememailreportmanager.index',$this->data);
+		return view('feg.system.systememailmanager.index',$this->data);
 	}
 
     public function postData(Request $request)
@@ -129,7 +121,7 @@ class SystemEmailReportManagerController extends Controller
             $this->data['tableGrid'] = \SiteHelpers::showRequiredCols($this->data['tableGrid'], $this->data['config']);
         }
         
-        return view('feg.system.systememailreportmanager.table',$this->data);
+        return view('feg.system.systememailmanager.table',$this->data);
     }
 
     
@@ -159,8 +151,9 @@ class SystemEmailReportManagerController extends Controller
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
 
         $this->data['id'] = $id;
+        $this->data['isEdit'] = !empty($id);
 
-        return view('feg.system.systememailreportmanager.form', $this->data);
+        return view('feg.system.systememailmanager.form', $this->data);
     }
 
     public function getShow($id = null)
@@ -182,7 +175,7 @@ class SystemEmailReportManagerController extends Controller
         $this->data['access'] = $this->access;
         $this->data['setting'] = $this->info['setting'];
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
-        return view('feg.system.systememailreportmanager.view', $this->data);
+        return view('feg.system.systememailmanager.view', $this->data);
     }
 
 
@@ -273,4 +266,10 @@ class SystemEmailReportManagerController extends Controller
 
     }
 
+    public function postTest(Request $request) {
+        $reportName = $request->get('test_report_name');
+        $location = $request->get('test_location');
+        $emails = \FEGHelp::getSystemEmailRecipients($reportName, $location);
+        return response()->json($emails);
+    }
 }

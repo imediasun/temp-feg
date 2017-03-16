@@ -141,6 +141,8 @@
 
 {{ Sitehelpers::showNotification() }}
 @yield('beforebodyend', '')
+@include('sximo.module.utility.inlinegrid')
+@yield('inlinedit', '')
 <script type="text/javascript">
 jQuery(document).ready(function ($) {
 

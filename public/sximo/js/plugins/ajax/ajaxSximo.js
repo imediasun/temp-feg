@@ -80,7 +80,7 @@ function getFooterFiltersWithoutSort() {
     return attr;
 }
 
-function getFooterFiltersWith(includeList, excludeList, forceSetFields, blindFields) {
+function getFooterFiltersWith(includeList, excludeList, forceSetFields, blindFields, returnArray) {
     var UNDEFINED,
         attr = "", 
         attrs = {}, 
@@ -128,6 +128,9 @@ function getFooterFiltersWith(includeList, excludeList, forceSetFields, blindFie
         }
     }
     
+    if (returnArray) {
+        return finalAttrs;
+    }
     for(key in finalAttrs) {
         val = finalAttrs[key];
         if (val !== '' && val !== null) {

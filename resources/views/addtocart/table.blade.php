@@ -94,13 +94,12 @@
                             </td>
                         </tr>
                     @endif
-
                     <?php foreach ($rowData as $row) :
                     $id = $row->id;
                     ?>
                     <tr class="editable" id="form-{{ $row->id }}">
                         <td class="number"> <?php echo ++$i;?>  </td>
-                        <td><input type="checkbox" class="ids" name="ids[]" value="<?php echo $row->id;?>"/></td>
+                        <td><input type="checkbox" class="ids" name="ids[]" value="<?php echo $row->id;?>" onkeypress="disableEnter(event)"/></td>
                         <td> <?php
                             echo SiteHelpers::showUploadedFile($row->img, '/uploads/products/', 50, false);
                             ?></td>
@@ -125,7 +124,7 @@
 
                                 @if($field['field']=='qty')
 
-                                    <input type="number" value="{{ $value }}" name="qty[]" id="{{ $row->id }}" data-vendor="{{ $row->vendor_name }}" style="width:55px" onchange="changeTotal(this.value,this.id)"/>
+                                    <input type="number" value="{{ $value }}" min="1" step="1" name="qty[]" id="{{ $row->id }}" data-vendor="{{ $row->vendor_name }}" style="width:55px"  onkeydown="changeTotal(this.value,this.id,event)"/>
                                 @else
 {!! $value !!}
                                 @endif
@@ -173,22 +172,22 @@
 
         </div>
         <?php echo Form::close();?>
-        @if($cartData['shopping_cart_total'] >= 0)
-            <br/>
+        <!--  todo refactor code
+            @if($cartData['shopping_cart_total'] >= 0)
+                <br/>
 
-            <div class="col-md-6 col-md-offset-2">
-                <div class="col-md-10" id="new_locationdiv">
-                    <select name="new_location" id="new_location" class="select3"></select>
+                <div class="col-md-6 col-md-offset-2">
+                    <div class="col-md-10" id="new_locationdiv">
+                        <select name="new_location" id="new_location" class="select3"></select>
+                    </div>
                 </div>
-            </div>
-          <!--  <div style=";margin-left:50px;" class="col-md-2">
-                <label>Clone Order Info</label>
-                <input type="checkbox" name="clone_order" id="clone_order"
-                       style="height:25px; width:25px;vertical-align: middle">
-            </div>
--->
-        @endif
-
+               <div style=";margin-left:50px;" class="col-md-2">
+                    <label>Clone Order Info</label>
+                    <input type="checkbox" name="clone_order" id="clone_order"
+                           style="height:25px; width:25px;vertical-align: middle">
+                </div>
+            @endif
+        -->
             <div class="col-md-8 col-md-offset-4">
 
 
@@ -210,11 +209,19 @@
 @if($setting['inline'] =='true') @include('sximo.module.utility.inlinegrid') @endif
 
 <script>
+    function disableEnter(e)
+    {
+        if (e.which == 13) {
+            e.preventDefault();
+        }
+    }
     $(document).ready(function () {
         $('.tips').tooltip();
+        <!-- todo refactor code
         $("#new_location").jCombo("{{ URL::to('order/comboselect?filter=location:id:id|location_name ') }}",
                 {selected_value: ''});
-        $(".select3").select2({width: "98%"});
+        -->
+        renderDropdown($(".select3 "), { width:"98%"});
 
         $('.my_form').on("keypress",(function(e) {
             console.log(e);
@@ -262,7 +269,9 @@
             reloadData('#{{ $pageModule }}', url);
             return false;
         });
+        <!-- todo refactor code
         $('#new_locationdiv').hide();
+        -->
         <?php if($setting['view-method'] =='expand') :
                 echo AjaxHelpers::htmlExpandGrid();
             endif;
@@ -282,6 +291,7 @@
 
         initDataGrid('{{ $pageModule }}', '{{ $pageUrl }}');
     });
+    <!-- todo refactor code
     $('#clone_order').on('ifChecked', function () {
         $('#new_locationdiv').show();
 
@@ -289,7 +299,7 @@
     $('#clone_order').on('ifUnchecked', function () {
         $('#new_locationdiv').hide();
     });
-
+    -->
     var timer = null;
 
 
@@ -304,12 +314,16 @@
         });
     }
     timer=null;
-    function changeTotal(value,id)
+    function changeTotal(value,id,e)
     {
         var vendor_name1=$("#"+id).data('vendor');
        vendor_name1=vendor_name1.replace(/ /g, '_');
-       // alert(vendor_name1);
-        doStuff(value,id,vendor_name1);
+        if (e.keyCode == 13 && value > 0) {
+            $('.ajaxLoading').show();
+            e.preventDefault();
+            doStuff(value,id,vendor_name1);
+        }
+      
     }
     function confirmSubmit() {
         var shortMessage;
@@ -355,6 +369,7 @@ function loadCart(vendor_name,subtotal)
 {
 
     getCartData(false,vendor_name,subtotal);
+
    // return false;
 }
 </script>
