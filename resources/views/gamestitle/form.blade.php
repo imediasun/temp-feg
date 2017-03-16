@@ -111,7 +111,7 @@
                                     {!! SiteHelpers::activeLang('Image', (isset($fields['img']['language'])? $fields['img']['language'] : array())) !!}
                                 </label>
                                 <div class="col-md-6">
-                                    <input type="file"   name="img" id="img" @if(empty($row['img'])) required  @else style="color:white;width:23%;display:inline" @endif /><span>{{ isset($row['img'])?$row['img']:"" }}</span>
+                                    <input type="file" multiple  name="img[]" id="img" @if(empty($row['img'])) required   @endif />
                                       <div style="margin-top:15px;">
 
                                         {!! SiteHelpers::showUploadedFile($row['img'],'/uploads/games/images/') !!}
@@ -235,11 +235,9 @@ function showResponse(data)  {
         form = $("#gamestitleFormAjax"),
         saveButton = form.find('.submit_btn'),
         pageUrl = '{{ $pageUrl }}';
-    
-    $('[name=game_title]').on("keyup",function (event) {
-        validateGameTitle.call(this);   
-    });
-    
+    $('[name=game_title]').on('keyup', debounce(function (event) {
+        validateGameTitle.call(this);
+    }, 500));
     function beforeValidateGameTitle (data) {
         saveButton.prop('disabled', true);
     }

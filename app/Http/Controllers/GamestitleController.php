@@ -4,7 +4,7 @@ use App\Http\Controllers\controller;
 use App\Models\Gamestitle;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
-use Validator, Input, Redirect;
+use Validator, Input, Redirect,Image;
 
 class GamestitleController extends Controller
 {
@@ -239,7 +239,7 @@ class GamestitleController extends Controller
     {
         $rules = $this->validateForm();
         //  $rules['manual']='Not Required|mimes:pdf';
-        $rules['img']='mimes:jpeg,gif,png';
+       // $rules['img']='required';
         if($id == null) {
             $rules["game_title"] = "unique:game_title";
         }// $rules['service_bulletin']='Not Required|mimes:pdf';
@@ -288,17 +288,35 @@ class GamestitleController extends Controller
                 }
             }
             if ($request->hasFile('img')) {
-                $img = $request->file('img');
-                $img_name = $img->getClientOriginalName();
-                $img_extension = $img->getClientOriginalExtension(); //if you need extension of the file
-                $img_new_name = $id . '.' . $img_extension;
-                $img_destinationPath = './uploads/games/images';
-                $img_uploadSuccess = $request->file('img')->move($img_destinationPath, $img_new_name);
-                if ($img_uploadSuccess) {
-                    $imgFlag=true;
-                    $updates['img'] = $img_new_name;
-
+                $images = $request->file('img');
+                $new_name="";
+                $count=1;
+                foreach($images as $img) {
+                    $img = Image::make($img->getRealPath());
+                    $mime = $img->mime();
+                    if ($mime == 'image/jpeg') {
+                        $extension = '.jpg';
+                    } elseif ($mime == 'image/png') {
+                        $extension = '.png';
+                    } elseif ($mime == 'image/gif') {
+                        $extension = '.gif';
+                    } else {
+                        $extension = '';
+                    }
+                    $img_path=public_path() . '/uploads/games/images/' . $id."_".$count.$extension;
+                    $img_thumb=public_path() . '/uploads/games/images/thumb/' . $id ."_".$count.'_thumb' . $extension;
+                    if (\File::exists($img_path) || \File::exists($img_thumb)) {
+                        \File::delete($img_path);
+                        \File::delete($img_thumb);
+                    }
+                    $img->save($img_path);
+                    $img->resize(101, 150);
+                    $img->save($img_thumb);
+                    $new_name .= $id."_".$count.$extension.',';
+                    $count++;
                 }
+                $imgFlag=true;
+                $updates['img'] = substr($new_name,0,strlen($new_name)-1);
             }
             if($manualFlag || $serviceFlag || $imgFlag) {
                 $this->model->insertRow($updates, $id);
