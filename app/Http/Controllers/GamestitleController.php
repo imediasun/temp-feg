@@ -303,15 +303,15 @@ class GamestitleController extends Controller
                     } else {
                         $extension = '';
                     }
-                    $img_path=public_path() . '/uploads/games/images/' . $id."_".$count.$extension;
-                    $img_thumb=public_path() . '/uploads/games/images/thumb/' . $id ."_".$count.'_thumb' . $extension;
+                    $img_path='./uploads/games/images/' . $id."_".$count.$extension;
+                    //$img_thumb='/uploads/games/images/thumb/' . $id ."_".$count.'_thumb' . $extension;
                     if (\File::exists($img_path) || \File::exists($img_thumb)) {
                         \File::delete($img_path);
-                        \File::delete($img_thumb);
+                      //  \File::delete($img_thumb);
                     }
                     $img->save($img_path);
-                    $img->resize(101, 150);
-                    $img->save($img_thumb);
+                    //$img->resize(101, 150);
+                    //$img->save($img_thumb);
                     $new_name .= $id."_".$count.$extension.',';
                     $count++;
                 }
