@@ -114,7 +114,7 @@
                                     <input type="file" multiple  name="img[]" id="img" @if(empty($row['img'])) required   @endif />
                                       <div style="margin-top:15px;">
 
-                                        {!! SiteHelpers::showUploadedFile($row['img'],'/uploads/games/images/') !!}
+                                       {{-- {!! SiteHelpers::showUploadedFile($row['img'],'/uploads/games/images/') !!} --}}
 
                                     </div>
 
@@ -182,7 +182,7 @@ $(document).ready(function() {
 	$('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});
 	$('input[type="checkbox"],input[type="radio"]').iCheck({
 		checkboxClass: 'icheckbox_square-blue',
-		radioClass: 'iradio_square-blue',
+		radioClass: 'iradio_square-blue'
 	});			
 	$('.removeCurrentFiles').on('click',function(){
 		var removeUrl = $(this).attr('href');
