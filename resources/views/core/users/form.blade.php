@@ -223,13 +223,6 @@
                                     <optgroup label="Dashboards">
                                         <option value="dashboard">Dashboard</option>
                                     </optgroup>
-                                    <optgroup label="Page CMS">
-                                        @foreach($pages as $page)
-                                            <option value="{{ $page->alias}}"
-                                                    @if($row['redirect_link']=== $page->alias ) selected="selected" @endif
-                                            >Page : {{ $page->title}}</option>
-                                        @endforeach
-                                    </optgroup>
                                 </select>
                             </div>
                         </div>
