@@ -111,10 +111,23 @@
                                     {!! SiteHelpers::activeLang('Image', (isset($fields['img']['language'])? $fields['img']['language'] : array())) !!}
                                 </label>
                                 <div class="col-md-6">
-                                    <input type="file"   name="img" id="img" @if(empty($row['img'])) required  @else style="color:white;width:23%;display:inline" @endif /><span>{{ isset($row['img'])?$row['img']:"" }}</span>
-                                      <div style="margin-top:15px;">
+                                    <input type="file" multiple  name="img[]" id="img" @if(empty($row['img'])) required   @endif />
 
-                                        {!! SiteHelpers::showUploadedFile($row['img'],'/uploads/games/images/') !!}
+                                      <div style="margin-top:15px;">
+                                          <?php
+                                          $images=explode(',',$row['img']);
+                                          ?>
+                                          @if(!empty($images) && $images[0]!="")
+                                              @foreach($images as $img)
+                                                      <div  class="game_imgs">
+                                                          <div class="show-image">
+                                                              <img src="./uploads/games/images/{{$img}}" width="50"  />
+                                                          <i  class="fa fa-times delete" aria-hidden="true" id="{{$img}}"></i>
+                                                              <input type="hidden"  name="imgs[]" value="{{$img}}"/>
+                                                      </div>
+                                              @endforeach
+                                          @endif
+                                       {{-- {!! SiteHelpers::showUploadedFile($row['img'],'/uploads/games/images/') !!} --}}
 
                                     </div>
 
@@ -182,7 +195,7 @@ $(document).ready(function() {
 	$('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});
 	$('input[type="checkbox"],input[type="radio"]').iCheck({
 		checkboxClass: 'icheckbox_square-blue',
-		radioClass: 'iradio_square-blue',
+		radioClass: 'iradio_square-blue'
 	});			
 	$('.removeCurrentFiles').on('click',function(){
 		var removeUrl = $(this).attr('href');
@@ -235,11 +248,9 @@ function showResponse(data)  {
         form = $("#gamestitleFormAjax"),
         saveButton = form.find('.submit_btn'),
         pageUrl = '{{ $pageUrl }}';
-    
-    $('[name=game_title]').on("keyup",function (event) {
-        validateGameTitle.call(this);   
-    });
-    
+    $('[name=game_title]').on('keyup', debounce(function (event) {
+        validateGameTitle.call(this);
+    }, 500));
     function beforeValidateGameTitle (data) {
         saveButton.prop('disabled', true);
     }
@@ -302,4 +313,38 @@ function showResponse(data)  {
     }
     
 }());
-</script>		 
+    $('.delete').click(function(){
+        $(this).closest('.show-image').remove();
+       /* $.post("{{--url()--}}/gamestitle/delete-img",
+                {
+                    img_name: $(this).attr('id')
+                },
+                function(data, status){
+
+                });*/
+    });
+</script>
+<style>
+    div.show-image {
+        position: relative;
+        float:left;
+        margin:5px;
+    }
+    div.show-image:hover img{
+        opacity:0.5;
+    }
+    div.show-image:hover i {
+        display: block;
+    }
+    div.show-image i {
+        position:absolute;
+        display:none;
+
+    }
+    div.show-image i.delete {
+        top:0;
+        left:79%;
+    }
+
+
+</style>

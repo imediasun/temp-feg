@@ -2613,13 +2613,19 @@ class SiteHelpers
         return $options;
     }
     
-    public static function getUniqueLocationUserAssignmentMeta($type = 'id', $returnType ='array', $value = null) { // id, field, all, [sql, array]
+    /**
+     * 
+     * @param string $type
+     * @param string $field
+     * @param string $value
+     * @return mixed
+     */
+    public static function getUniqueLocationUserAssignmentMeta($type = 'id', $field = null, $value = '') { 
         $minutes = 60;
-        $cacheKey = md5("getUniqueLocationUserAssignmentMeta-$type-$returnType");
+        $cacheKey = md5("getUniqueLocationUserAssignmentMeta-$type-$field");
         //return Cache::remember($cacheKey, $minutes, function () use ($type, $returnType, $value) {
             $q = \DB::table('location_user_roles_master');
-            if (!empty($value)) {
-                $field = $returnType;
+            if ($value !== '') {
                 if (!empty($field)){
                     return $q->where($field, $value)->pluck($type);
                 }
@@ -2627,10 +2633,17 @@ class SiteHelpers
             }
             $q->select('id', 'group_id', 'role_title', 'proxy_field_name', 'unique_assignment');
             
-            if ($type != 'all') {
-                $q->where(['unique_assignment' => 1]);
+            if ($field == 'non-grouped') {
+                $q->whereRaw(" group_id NOT IN (SELECT group_id from tb_groups)");
             }
-            if ($returnType == 'sql' || $type == 'sql') {
+            if ($field == 'grouped') {
+                $q->whereRaw(" group_id IN (SELECT group_id from tb_groups)");                
+            }
+            
+            if ($type != 'all' || $field == 'non-grouped' || $field == 'grouped') {
+                $q->where('unique_assignment', 1);
+            }
+            if ($type == 'sql') {
                 $sqlSelect = [];
                 $sqlJoins = [];
                 $data = $q->get();
@@ -2688,6 +2701,5 @@ class SiteHelpers
             return $data;
         //});                
     }
-    
-    
+
 }
