@@ -145,7 +145,7 @@
 		    <label  class=" control-label col-md-4">Backend Logo</label>
 			<div class="col-md-8">
 				<input type="file" name="logo">
-				<p> <i>Please use image dimension 155px * 30px </i> {{ $options['CNF_LOGO'] }}</p>
+				<p> <i>Please use image dimension 155px * 30px </i></p>
 				<div style="padding:5px; border:solid 1px #ddd; background:#f5f5f5; width:auto;">
 				 	@if(file_exists(public_path().'/sximo/images/'.CNF_LOGO) && CNF_LOGO !='')
 				 	<img src="{{ asset('sximo/images/'.CNF_LOGO)}}" alt="{{ $options['CNF_APPNAME'] }}" />
