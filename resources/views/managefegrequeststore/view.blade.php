@@ -66,7 +66,7 @@
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Request Date', (isset($fields['request_date']['language'])? $fields['request_date']['language'] : array())) }}
 						</td>
-						<td>{{  $row->request_date = date("m/d/Y", strtotime($row->request_date))  }}</td>
+						<td>{{  $row->request_date = \DateHelpers::formatDate($row->request_date) }}</td>
 
 					</tr>
 
@@ -74,7 +74,7 @@
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Process Date', (isset($fields['process_date']['language'])? $fields['process_date']['language'] : array())) }}
 						</td>
-						<td>{{  $row->process_date = date("m/d/Y", strtotime($row->process_date))  }}</td>
+						<td>{{  $row->process_date =  \DateHelpers::formatDate($row->process_date)   }}</td>
 
 					</tr>
 
