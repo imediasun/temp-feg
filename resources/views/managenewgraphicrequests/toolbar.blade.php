@@ -14,11 +14,11 @@
             </div>
 
         @endif
+<div class="col-md-9"></div>
+<div class="clearfix"></div>
 
 
-
-
-    <div class="col-md-9" style="padding-top: 8px;">
+    <div class="col-md-9" style="padding-top:8px" >
         @if($access['is_remove'] ==1)
             <a href="javascript://ajax" class="btn btn-sm btn-white" onclick="ajaxRemove('#{{ $pageModule }}','{{ $pageUrl }}');"><i class="fa fa-trash-o "></i> {{ Lang::get('core.btn_remove') }} </a>
         @endif
@@ -45,7 +45,7 @@
 
 
 
-    <div class="col-md-3 ">
+    <div class="col-md-3 " style="padding-top:8px">
         <?php
         $isExcel = isset($access['is_excel']) && $access['is_excel'] == 1;
         $isCSV = isset($access['is_csv'])  ? ($access['is_csv'] == 1) : $isExcel;

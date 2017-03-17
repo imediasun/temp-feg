@@ -255,7 +255,7 @@ class AjaxHelpers
 		$html = '
 		<div class="actionopen" style="display:none">
 			<button onclick="saveInlineForm(\''.$divid.'\', event, this)" class="tips btn btn-primary btn-xs" type="button" title="Save"><i class="fa  fa-save"></i></button>
-			<button onclick="cancelInlineEdit(\''.$divid.'\', event, this)" class="tips btn btn-danger btn-xs " type="button" title="Cancel"><i class="fa  fa-repeat"></i></button>
+			<button onclick="cancelInlineEdit(\''.$divid.'\', event, this)" class="tips btn btn-danger btn-xs " type="button" title="Cancel"><i class="fa  fa-times"></i></button>
 			<input type="hidden" value="'.$id.'" name="'.$key.'">
 		</div>	
 		';

@@ -262,19 +262,20 @@
     }
     function getSimpleSearchParams()
     {
-        var test="";
+        var params="&simplesearch=1&search=";
         $(".simpleSearchContainer .form-control").each(function(){
 
             var val = $(this).val();
             if($(this).data("simplesearch")) {
                 if(val !== '' && val !== null)
                 {
-                    test += "&simplesearch=1&search="+$(this).attr('name')+":"+$(this).data('simplesearchoperator')+":"+val+"|";
+
+                    params+= $(this).attr('name')+":"+$(this).data('simplesearchoperator')+":"+val+"|";
                 }
             }
 
 
         });
-        return test;
+        return params;
     }
 </script>
