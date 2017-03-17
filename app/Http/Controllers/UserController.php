@@ -488,7 +488,7 @@ class UserController extends Controller
                 $data = array('token' => $request->input('_token'));
                 $to = $request->input('credit_email');
                 $subject = "[ " . CNF_APPNAME . " ] REQUEST PASSWORD RESET ";
-                $message = view('emails.auth.reminder', $data);
+                $message = view('user.emails.auth.reminder', $data);
                 $headers = 'MIME-Version: 1.0' . "\r\n";
                 $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
                 $headers .= 'From: ' . CNF_APPNAME . ' <' . CNF_EMAIL . '>' . "\r\n";
