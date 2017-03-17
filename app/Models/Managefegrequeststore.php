@@ -74,7 +74,7 @@ class managefegrequeststore extends Sximo
         return "  ";
     }
 
-    public static function getManageRequestsInfo($v1 = null, $v2 = null, $v3 = null)
+    public static function getManageRequestsInfo($v1 = null, $v2 = null, $v3 = null,$filter=null)
     {
         if (substr($v1, 0, 1) == 'T') {
             $v1 = substr($v1, 1);
@@ -120,9 +120,11 @@ class managefegrequeststore extends Sximo
             } else {
                 $TID_comma_replaced = $TID;
             }
-            $data['loc_options'] = self::getLocationDropDownData('CONCAT(requests.location_id," | ",location.location_name_short)', 'WHERE requests.status_id=1 AND products.prod_type_id IN (' . $TID_comma_replaced . ')', 'ORDER BY requests.location_id');
+            $loc_where = 'WHERE requests.status_id=1 AND products.prod_type_id IN (' . $TID_comma_replaced . ') '.$filter;
+            $data['loc_options'] = self::getLocationDropDownData('CONCAT(requests.location_id," | ",location.location_name_short)', $loc_where, 'ORDER BY requests.location_id');
             if (!empty($LID)) {
-                $data['vendor_options'] = self::getVendorDropDownData('vendor_name', 'WHERE requests.status_id=1 AND requests.location_id=' . $LID . ' AND products.prod_type_id IN (' . $TID_comma_replaced . ')', 'ORDER BY vendor.vendor_name');
+                $vendor_where='WHERE requests.status_id=1 AND requests.location_id=' . $LID . ' AND products.prod_type_id IN (' . $TID_comma_replaced . ')'.$filter;
+                $data['vendor_options'] = self::getVendorDropDownData('vendor_name',$vendor_where, 'ORDER BY vendor.vendor_name');
             } else {
                 $data['vendor_options'] = array('' => '<-- Select');
             }

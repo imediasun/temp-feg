@@ -243,6 +243,7 @@ class ShopfegrequeststoreController extends Controller
 
     function postSave(Request $request, $id = 0)
     {
+       echo "<pre>"; die();
 
         $rules = $this->validateForm();
         $validator = Validator::make($request->all(), $rules);
@@ -319,11 +320,11 @@ class ShopfegrequeststoreController extends Controller
             $graphics_description = $request->get('graphics_description');
             $graphics_description = str_replace('"', '', $graphics_description);
             $qty = $request->get('qty');
-            $date_needed = date("m/d/Y", strtotime($request->get('date_needed')));
+            $date_needed = date("Y-m-d", strtotime($request->get('date_needed')));
             $game_info = $request->get('game_info');
             $locationId = $request->get('location_name');
             $statusId = 1;
-            $now = date('m/d/Y');
+            $now = date('Y-m-d');
             $filesnames = $request->get('myInputs');
             if(!empty($filesnames)) {
                 $filesnames = implode(',', $filesnames);

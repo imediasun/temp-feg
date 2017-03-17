@@ -209,9 +209,9 @@ class RedemptioncountergallaryController extends Controller
             } else {
                 $extension = '';
             }
-            $img->save(public_path('/uploads/gallary/' . $id . $extension));
+            $img->save('./uploads/gallary/' . $id . $extension);
             $img->resize(101, 150);
-            $img->save(public_path('/uploads/gallary/' . $id . '_thumb' . $extension));
+            $img->save('./uploads/gallary/' . $id . '_thumb' . $extension);
             return response()->json(array(
                 'status' => 'success',
                 'message' => \Lang::get('core.note_success')
