@@ -7,7 +7,7 @@
     <!-- Page header -->
     <div class="page-header">
 
-	  
+	  <div class="ajaxLoading"></div>
 	 
 	  <ul class="breadcrumb">
 		<li><a href="{{ URL::to('dashboard') }}">{{ Lang::get('core.home') }}</a></li>
