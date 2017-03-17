@@ -131,5 +131,9 @@ class Formatter
     public static function delegateTo($value = null) {        
         return is_null($value) ? '' : $value;
     } 
+    public static function field2title($value = null) {        
+        return str_replace('_', ' ', ucwords($value, '_'));
+    } 
+    
       
 }

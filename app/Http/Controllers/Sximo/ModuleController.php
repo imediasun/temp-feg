@@ -1076,7 +1076,7 @@ class ModuleController extends Controller
             ->with('messagetext', 'Permission Has Changed Successful.')->with('msgstatus', 'success');
     }
 
-
+    
     function getBuild($id)
     {
 
@@ -2089,4 +2089,46 @@ class ModuleController extends Controller
     }
 
 
+    function getSpecialPermissions($moduleName, $mode = null) {
+
+        $pass = new \App\Models\Feg\System\Pass;
+//        $moduleModel = new \App\Models\Sximo\Module;
+//        $id = \App\Models\Sximo\Module::name2id($moduleName);
+//        var_dump($id);
+//        
+//        $access = $model->hasAccess($moduleName);
+//        if (empty($access)) {
+//            return Redirect::back()
+//                ->with('messagetext', 'You are not allowed to configure special permissions')
+//                ->with('msgstatus', 'error');
+//        }
+        
+        $module = Module::select('module_id', 'module_name', 
+                'module_title', 
+                'module_desc', 
+                'module_type as type')
+                ->where('module_name', $moduleName)->first();
+        if (empty($module)) {
+            return Redirect::back()
+                ->with('messagetext', 'Can not find module')
+                ->with('msgstatus', 'error');
+        }
+        
+        if (empty($this->data)) {
+            $this->data = [];
+        }
+        $this->data = array_merge($this->data, $module->toArray());        
+        $this->data['view_mode'] = $mode;   
+        $this->data['rowData'] = $pass->getPasses($module->module_id);
+        $this->data['tableGrid'] = $pass->getGrid();
+        $this->data['pageTitle'] = $mode =='solo' ? $module->module_title : 'Module Configuration';        
+        
+        return view('sximo.module.specialPermissions', $this->data);
+        
+    }
+      
+    function postSaveSpecialPermissions(Request $request, $id) {
+        
+    }
+    
 }	

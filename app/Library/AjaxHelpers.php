@@ -10,13 +10,17 @@ class AjaxHelpers
 		if($attribute['image']['active'] =='1' && $attribute['image']['active'] !='') {
 			$val =  SiteHelpers::showUploadedFile($val,$attribute['image']['path']) ;
 		}
+        
+        if (!empty($arr['datalist']) && !empty($arr['options'])) {
+            $datalistOptions = \FEGHelp::parseStringToArray($arr['options']);
+            $val = \FEGHelp::getLabelFromOptions($val, $datalistOptions);
+        }
 		// Handling Quick Display As 
-		if(isset($arr['valid']) && $arr['valid'] ==1)
+		if(!empty($val) && isset($arr['valid']) && $arr['valid'] ==1)
 		{
 			$fields = str_replace("|",",",$arr['display']);			
             $val=addslashes($val);
-			if(isset( $arr['multiple']) && $arr['multiple'] =='1')
-			{
+			if(isset( $arr['multiple']) && $arr['multiple'] =='1') {
 				$Q = DB::select(" SELECT ".$fields." FROM ".$arr['db']." WHERE ".$arr['key']." IN (".$val.") ");
 				if(count($Q) >= 1 )
 				{	
@@ -36,7 +40,8 @@ class AjaxHelpers
 					$val = implode(", ",$val);
 				}	
 
-			} else {
+			} 
+            else {
 				$Q = DB::select(" SELECT ".$fields." FROM ".$arr['db']." WHERE ".$arr['key']." = '".$val."' ");
 				if(count($Q) >= 1 )
 				{					
@@ -124,11 +129,8 @@ class AjaxHelpers
 			
 			$val =  "<a href='".URL::to($linked)."'  $attr style='display:block' >".$val." <span class='fa fa-arrow-circle-right pull-right'></span></a>";
 		}
-		
-		
-		
-		return $val;
-		
+
+		return $val;		
 	}	
 	
 	static public function fieldLang( $fields ) 
