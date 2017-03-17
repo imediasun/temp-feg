@@ -1037,10 +1037,10 @@ class SiteHelpers
      * @param type $value
      * @return type
      */
-    public static  function transInlineForm( $field, $forms = array(), $bulk=false, $value ='')
+    public static  function transInlineForm( $field, $forms = array(), $bulk = false, $value = '' )
     {
         $type = '';
-        $bulk = ($bulk == true ? '[]' : '');
+        $bulk = is_string($bulk) ? $bulk : ($bulk == true ? '[]' : '');
         $mandatory = '';
         $attribute = '';
         $extend_class = '';

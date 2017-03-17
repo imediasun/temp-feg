@@ -2127,8 +2127,129 @@ class ModuleController extends Controller
         
     }
       
-    function postSaveSpecialPermissions(Request $request, $id) {
+    function postSaveSpecialPermissions(Request $request, $moduleName) {
+
+        
+        $ignoreList = ['_token', 'selectAll', 'ids'];
+        $validationRules = array(
+            'module_id' => 'required',
+            'config_title' => 'required'
+        );
+        $requestData = $request->all();
+        foreach($ignoreList as $item) {
+            unset($requestData[$item]);
+        }
+        
+        $moduleId = array_pull($requestData, 'module_id');        
+        $ids = $requestData['id'];
+        
+        $updatedPermissons = [];
+        $newPermissions = [];        
+        foreach($requestData as $key => $items) {
+            foreach($items as $id => $item) {
+                if ($id == 0) {
+                    $newItems = $item;
+                    foreach ($newItems as $index => $data) {
+                        if (!isset($newPermissions[$index])) {
+                            $newPermissions[$index] = [];
+                        }
+                        if (!isset($newPermissions[$index]['module_id'])) {
+                            $newPermissions[$index]['module_id'] = $moduleId;
+                        }
+                        $newPermissions[$index][$key] = is_array($data) ? implode(',', $data) : $data;
+                    }
+                }
+                else {
+                    if (!isset($updatedPermissons[$id])) {
+                        $updatedPermissons[$id] = [];
+                    }
+                    $updatedPermissons[$id][$key] = is_array($item) ? implode(',', $item) : $item;
+                }
+            }            
+        }
+        
+        \DB::beginTransaction();
+        foreach($updatedPermissons as $id => &$item) {
+            $item['config_name'] = "module.$moduleName.special.".snake_case($item['config_title']);
+            try {
+                $status = \App\Models\Feg\System\Pass::updatePass($id, $item);
+            }
+            catch (Exception $ex) {
+                \DB::rollBack();
+                return response()->json(array(
+                    'message' => "Error creating new Special Permission. " . $ex->getMessage(),
+                    'status' => 'error'
+                ));
+            }
+        }
+
+        foreach($newPermissions as $id => &$item) {
+            $item['config_name'] = "module.$moduleName.special.".snake_case($item['config_title']);
+            try {
+                $status = \App\Models\Feg\System\Pass::addNewPass($item);                
+            } 
+            catch (Exception $ex) {
+                \DB::rollBack();
+                return response()->json(array(
+                    'message' => "Error updating new Special Permission. " . $ex->getMessage(),
+                    'status' => 'error'
+                ));
+            }
+            if ($status !== true) {
+
+            }
+        }
+        \DB::commit();
+        
+        return response()->json(array(
+                'status' => 'success',
+                'message' => \Lang::get('core.note_success')
+            ));
+        
+//        $validator = Validator::make($request->all(), $rules);
+//        if ($validator->passes()) {
+//
+//
+//        } else {
+//            return Redirect::to('feg/module/create')
+//                ->with('messagetext', 'The following errors occurred')
+//                ->with('msgstatus', 'error')
+//                ->withErrors($validator)->withInput();
+//        }
         
     }
     
+    function postDeleteSpecialPermissions(Request $request, $moduleName) {
+        if ($request->has('deletedIds')) {
+            $ids = $request->get('deletedIds');
+            if (!empty($ids)) {
+                $ids = explode(",", $ids);
+                \DB::beginTransaction();
+                foreach ($ids as $id) {
+                    try {
+                        $pass = \App\Models\Feg\System\Pass::find($id);
+                        $pass->master->delete();
+                        $pass->delete();                        
+                    } 
+                    catch (Exception $ex) {
+                        \DB::rollBack();
+                        return response()->json(array(
+                            'message' => "Error deleting new Special Permission. " . $ex->getMessage(),
+                            'status' => 'error'
+                        ));
+                    }                    
+                }
+                \DB::commit();
+                return response()->json(array(
+                    'message' => "Special Permissions deleted successfully",
+                    'status' => 'success'
+                ));                
+            }            
+        }
+        return response()->json(array(
+            'message' => "Nothing to delete!",
+            'status' => 'error'
+        ));
+        
+    }
 }	

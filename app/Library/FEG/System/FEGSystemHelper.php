@@ -1287,9 +1287,13 @@ $message" .
     public static function specialPermissionFormatter($value, $fieldItem, $options = []) {
 
         $row = $options['row'];
+        $id = isset($row->id) ? $row->id : '';
         $fieldOptions = $fieldItem['options'];
-        $fieldName = $fieldItem['field'];        
-        $isTextHide = true;
+        $isMultiselect = isset($fieldOptions['multiple']) && $fieldOptions['multiple'] == true;
+        $fieldArrayLiteral = (!empty($id) ? "[$id]" : '[0]') . ($isMultiselect ? '[]' : '');
+        $fieldName = $fieldItem['field'];
+        $isTextHideDefault = true;
+        $isTextHide = isset($options['hideText']) && !is_null($options['hideText']) ? $options['hideText'] : $isTextHideDefault;
         
         $fieldOptionsMap = [
             'type'      => 'opt_type', 
@@ -1320,11 +1324,11 @@ $message" .
             $inputOptions[$optionMap] = isset($fieldOptions[$key]) ? $fieldOptions[$key] : '';
         }
         $fieldItem['option'] = $inputOptions;        
-        $data['input'] = \SiteHelpers::transInlineForm($fieldName, [$fieldItem], true, $value);
+        $data['input'] = \SiteHelpers::transInlineForm($fieldName, [$fieldItem], $fieldArrayLiteral, $value);
         
         $gridAttributes = [
             'image' => ['active'=>''], 
-            'formatter' => ['active' => 0, 'value' => ''], 
+            'formater' => ['active' => 0, 'value' => ''], 
             'hyperlink' => ['active' => '', 'link' => '', 'target' => '', 'html' => '']
         ];
         $gridFormatter = ['valid' => '', 'db' => '', 'key' => '', 'display'  => '', 'multiple' => '',];
@@ -1333,8 +1337,8 @@ $message" .
         $needsFormatting = false;
         if (!empty($formatter)) {
             $needsFormatting = true;
-            $gridAttributes['formatter']['active'] = 1;
-            $gridAttributes['formatter']['value'] = $formatter;
+            $gridAttributes['formater']['active'] = 1;
+            $gridAttributes['formater']['value'] = $formatter;
         }
         
         $hyperlink = isset($fieldOptions['hyperlink']) ? $fieldOptions['hyperlink']: '';

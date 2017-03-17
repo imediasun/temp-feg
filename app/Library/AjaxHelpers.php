@@ -34,10 +34,10 @@ class AjaxHelpers
 						$v .= (isset($fields[0]) && $fields[0] !='' ?  $values->$fields[0].' ' : '');
 						$v .= (isset($fields[1]) && $fields[1] !=''  ? $values-> $fields[1].' ' : '');
 						$v .= (isset($fields[2]) && $fields[2] !=''  ? $values->$fields[2].' ' : '');
-						$val[] = $v;
+						$val[] = trim($v);
 					}
 
-					$val = implode(", ",$val);
+					$val = trim(implode(", ",$val));
 				}	
 
 			} 
@@ -51,7 +51,7 @@ class AjaxHelpers
 					$v .= (isset($fields[0]) && $fields[0] !='' ?  $rowObj->$fields[0].' ' : '');
 					$v .= (isset($fields[1]) && $fields[1] !=''  ? $rowObj-> $fields[1].' ' : '');
 					$v .= (isset($fields[2]) && $fields[2] !=''  ? $rowObj->$fields[2].' ' : '');
-					$val = $v;
+					$val = trim($v);
 				} 	
 			}				
 		} 	

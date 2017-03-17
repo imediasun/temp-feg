@@ -7,7 +7,7 @@ class PassMaster extends Model  {
 	protected $table = 'feg_special_permissions_master';
 	protected $childTable = 'feg_special_permissions';
 
-    public function pass() {
+    public function passes() {
         return $this->hasMany('App\Models\Feg\System\Pass', 'permission_id');
     }
 }

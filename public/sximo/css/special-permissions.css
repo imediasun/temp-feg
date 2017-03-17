@@ -47,3 +47,14 @@
         background-image: -moz-linear-gradient(top, #ffe4e4 20%, #f0f0f0 50%, #e8e8e8 52%, #eee 100%);
         background-image: linear-gradient(to top, #ffe4e4 20%, #f0f0f0 50%, #e8e8e8 52%, #eee 100%);         
 }
+
+#specialPermissionsGridContainerForm .datagrid tr:nth-child(even).newPermission td {
+    background-color: #ffffee !important;
+}
+#specialPermissionsGridContainerForm .datagrid tr:nth-child(odd).newPermission td {
+    background-color: #f9f9e5 !important;
+}
+
+#specialPermissionsGridContainerForm table.datagrid tr.newPermission td.exclude_user_ids {
+    background-color: #ffebe0 !important;
+}

@@ -17,6 +17,7 @@
         @endif
     </div>
 	<div class="page-content-wrapper m-t" id='specialPermissionsGridContainer'> 
+        <div class="ajaxLoading"></div>
         @if ($view_mode !== 'solo')
             @include('sximo.module.tab', ['active'=>'special-permissions','type'=>$type])
         @endif
@@ -41,6 +42,12 @@
                                 > Add </button>                        
                         <button type="button" class="btn btn-success deletePermission"                                 
                                 > Delete </button> 
+                        {!! Form::open([
+                            'url'=>'feg/module/delete-special-permissions/'.$module_name, 
+                            'id' => 'specialPermissionsGridDeleteForm'
+                        ]) !!}
+                        <input type='hidden' name='deletedIds' value=''/>
+                        {!! Form::close() !!}
                         <div style='display:none' class='newRowTemplateContainer'>
                             <table><tr 
                                     class="newPermission editable"                                     
@@ -54,20 +61,21 @@
                                                data-parsley-excluded='true'
                                                value="" 
                                         />
+                                        <input type='hidden' name='id[0]' value=''/>
                                     </td>
                                     @foreach($tableGrid as $field => $item)
                                     
                                         {{--*/ $hidden = $item['hidden'] ? 
                                             'style="display: none"': '' /*--}}
-                                        {{--*/ $defaultValue = $field == 'is_active' ? 
-                                            '1': '' /*--}}
+                                        {{--*/ $defaultValue = $item['default'] /*--}}
                                         {{--*/
                                             
                                             extract(\FEGHelp::specialPermissionFormatter(
                                                 $defaultValue, 
                                                 $item, 
                                                 [
-                                                    'row' => [], 
+                                                    'hideText' => true,
+                                                    'row' => new \stdClass, 
                                                     'data' => [], 
                                                     'grid' => $tableGrid,                                                     
                                                     'module_id' => $module_id
@@ -77,18 +85,18 @@
                                         /*--}}
                                                 
                                         <td
-                                            class="{!! @$fieldClass !!}"
-                                            data-values="{!! htmlentities(@$value) !!}" 
+                                            class="{!! $fieldClass !!}"
+                                            data-values="{!! htmlentities($value) !!}" 
                                             data-field="{!! $field !!}" 
-                                            data-format="{!! htmlentities(@$formattedValue) !!}"
+                                            data-format="{!! htmlentities($formattedValue) !!}"
                                             {!! $hidden !!} 
 
                                             ><span class="rowDisplayValue" 
                                                {!! $hideText !!}
-                                                >{!! @$value !!}
-                                            </span><div class="rowEditor"
+                                            >{!! $formattedValue !!}</span><div
+                                             class="rowEditor"
                                                 {!! $hideInput !!}
-                                                >{!! @$input !!}</div>
+                                            >{!! $input !!}</div>
                                         </td>
                                     @endforeach
                                     <td 
@@ -124,20 +132,22 @@
                                                data-parsley-excluded='true'
                                             />
                                     </th>
-                                    {{--*/ $columnCount = count($tableGrid) + 2; /*--}}                                    
+                                    {{--*/ $columnCount = 1; /*--}}                                    
                                     @foreach($tableGrid as $field => $item)					
                                         {{--*/ $hidden = @$item['hidden'] ? 
                                             'style="display: none"': '' /*--}}
                                         <th 
-                                            class="{!! @$item['colClass'] !!}"
+                                            class="{!! $item['colClass'] !!}"
                                             data-field="{!! $field !!}"
                                             {!! $hidden !!}    
                                             
                                         >{!! $item['label'] !!}</th>
+                                        {{--*/ $columnCount += ($hidden ? 0 : 1); /*--}}  
                                     @endforeach
                                     <th width="70" style="display: none;" >
                                         {!! Lang::get('core.btn_action') !!}
                                     </th>
+                                    {{--*/ $columnCount += 0; /*--}}  
                                   </tr>
                             </thead>
                             @if(($hasData = count($rowData)> 0))
@@ -152,11 +162,12 @@
                                     <td class='rowSelector'>
                                         <input type="checkbox" 
                                                class="ids" 
-                                               name="ids[]"
+                                               name="ids[{!! $rowId !!}]"
                                                parsley-excluded='true'
                                                data-parsley-excluded='true'
                                                value="{!! $rowId !!}" 
                                         />
+                                        <input type='hidden' name='id[{!! $rowId !!}]' value='{!! $rowId !!}'/>
                                     </td>
                                     @foreach($tableGrid as $field => $item)
                                     
@@ -178,7 +189,7 @@
                                         /*--}}
                                                 
                                         <td
-                                            class="{!! @$fieldClass !!}"
+                                            class="{!! $fieldClass !!}"
                                             data-values="{!! htmlentities(@$value) !!}" 
                                             data-field="{!! $field !!}" 
                                             data-format="{!! htmlentities(@$formattedValue) !!}"
@@ -186,10 +197,10 @@
 
                                             ><span class="rowDisplayValue" 
                                                {!! $hideText !!}
-                                                >{!! @$value !!}
-                                            </span><div class="rowEditor"
+                                            >{!! $formattedValue !!}</span><div
+                                            <div class="rowEditor"
                                                 {!! $hideInput !!}
-                                                >{!! @$input !!}</div>
+                                                >{!! $input !!}</div>
                                         </td>
 
                                     @endforeach
@@ -213,7 +224,7 @@
                             </tbody>
                             @else 
                             <tbody>
-                                <tr><td colspan="20">
+                                <tr><td colspan="{!! $columnCount !!}">
                                     <div style="margin:100px 0; text-align:center;">
                                         @if(!empty($message))
                                             <p class='centralMessage'>
@@ -240,7 +251,7 @@
                                 > Save Changes </button>	
                         <input name="module_id" type="hidden" value="{!! $module_id !!}" />        
                     </div>        
-                    {!! Form::close() !!}	
+                    {!! Form::close() !!}
             </div>
         </div>
     </div>

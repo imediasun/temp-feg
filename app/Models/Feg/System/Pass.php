@@ -11,9 +11,49 @@ class Pass extends Sximo  {
         return $this->belongsTo('App\Models\Feg\System\PassMaster', 'permission_id');
     }
     
+    public static function addNewPass($item) {
+        $masterFields = ['config_title', 'config_name', 'config_description'];
+        $passFields = ['group_ids', 'user_ids', 'exclude_user_ids'];
+        $pass = new self;
+        $master = new \App\Models\Feg\System\PassMaster;
+        foreach($masterFields as $field) {
+            if (isset($item[$field])) {
+                $master->$field = $item[$field];
+            }            
+        }
+        $master->save();
+        $pass->master()->associate($master);
+        foreach($passFields as $field) {
+            if (isset($item[$field])) {
+                $pass->$field = $item[$field];
+            }            
+        }        
+        $pass->save();
+        return true;
+    }
+    public static function updatePass($id, $item) {
+        $masterFields = ['config_title', 'config_name', 'config_description'];
+        $passFields = ['group_ids', 'user_ids', 'exclude_user_ids'];
+        $pass = self::with('master')->find($id);
+        foreach($masterFields as $field) {
+            if (isset($item[$field])) {
+                $pass->master->$field = $item[$field];
+            }            
+        }
+        $pass->master->save();
+        foreach($passFields as $field) {
+            if (isset($item[$field])) {
+                $pass->$field = $item[$field];
+            }            
+        }        
+        $pass->save();
+        return true;
+    }
+    
     public static function getPasses($moduleId) {
-        
-        $models = self::where('module_id', $moduleId)->orWhere('module_id', 0)->get();
+        $data = [];
+        $models = self::where('module_id', $moduleId)->orWhere('module_id', 0)
+                ->orderBy('id', 'desc')->get();
         foreach($models as $model) {
             $values = (array) $model->attributes;
             $parentValues = (array) $model->master->attributes;
@@ -91,7 +131,10 @@ class Pass extends Sximo  {
                 ]
             ],
             'custom_emails' => ['text', ''],
-            'is_active' => ['__checkbox', '1']
+            'is_active' => ['__checkbox', '1',[
+                    'formatter' => 'SiteHelpers|getStatus'
+                ]
+            ]
         ];
         
         foreach($removeColumns as $columnName) {
@@ -117,6 +160,7 @@ class Pass extends Sximo  {
                     'hidden' => in_array($columnName, $hideByDefault),
                     'view' => 1,
                     'type' => $type,
+                    'default' => isset($input[1]) ? $input[1] : '',
                     'options' => isset($input[2]) ? $input[2] : [],
                 ];
             }     
