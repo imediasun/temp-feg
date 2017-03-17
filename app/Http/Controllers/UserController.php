@@ -472,7 +472,8 @@ class UserController extends Controller
 
     public function postRequest(Request $request)
     {
-
+        ini_set('display_errors',1);
+        error_reporting(E_ALL);
         $rules = array(
             'credit_email' => 'required|email'
         );
