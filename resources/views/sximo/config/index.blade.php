@@ -249,7 +249,7 @@
 			if(data.status == 'success') {				
                 form.find('button[type=submit]').prop('disabled', false);
 				notyMessage(data.message);
-                window.setTimeout(function () {window.location.reload(true)}, 1000);
+                window.setTimeout(function () { window.history.forward(1); }, 1000);
 			}
             else {
                 form.find('button[type=submit]').prop('disabled', false);
