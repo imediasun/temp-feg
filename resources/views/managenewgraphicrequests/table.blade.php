@@ -141,14 +141,14 @@
 						 endif;
 						endforeach;
 					  ?>
-                    @if($view != "archive")
+                    {{--@if($view != "archive")--}}
                             @if($setting['disablerowactions']=='false')
 				 <td data-values="action" data-key="<?php echo $row->id ;?>">
 					{!! AjaxHelpers::buttonAction('managenewgraphicrequests',$access,$id ,$setting) !!}
 					{!! AjaxHelpers::buttonActionInline($row->id,'id') !!}
 				</td>
                                 @endif
-                        @endif
+                        {{--@endif--}}
                 </tr>
                 @if($setting['view-method']=='expand')
                 <tr style="display:none" class="expanded" id="row-{{ $row->id }}">

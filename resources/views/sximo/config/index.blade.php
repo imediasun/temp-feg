@@ -7,7 +7,7 @@
     <!-- Page header -->
     <div class="page-header">
 
-	  
+	  <div class="ajaxLoading"></div>
 	 
 	  <ul class="breadcrumb">
 		<li><a href="{{ URL::to('dashboard') }}">{{ Lang::get('core.home') }}</a></li>
@@ -145,10 +145,10 @@
 		    <label  class=" control-label col-md-4">Backend Logo</label>
 			<div class="col-md-8">
 				<input type="file" name="logo">
-				<p> <i>Please use image dimension 155px * 30px </i> </p>
+				<p> <i>Please use image dimension 155px * 30px </i></p>
 				<div style="padding:5px; border:solid 1px #ddd; background:#f5f5f5; width:auto;">
-				 	@if(file_exists(public_path().'/sximo/images/'.$options['CNF_LOGO']) && $options['CNF_LOGO'] !='')
-				 	<img src="{{ asset('sximo/images/'.$options['CNF_LOGO'])}}" alt="{{ $options['CNF_APPNAME'] }}" />
+				 	@if(file_exists(public_path().'/sximo/images/'.CNF_LOGO) && CNF_LOGO !='')
+				 	<img src="{{ asset('sximo/images/'.CNF_LOGO)}}" alt="{{ $options['CNF_APPNAME'] }}" />
 				 	@else
 					<img src="{{ asset('sximo/images/logo.png')}}" alt="{{ $options['CNF_APPNAME'] }}" />
 					@endif	
@@ -162,7 +162,7 @@
 				<label for="ipt" class=" control-label col-md-4 text-right"> Login Start Page </label>
 				<div class="col-md-8">
 					<select name="cnf_redireclink" rows='5' type="text" id="cnf_redireclink"   style="width:100%"  class='select-liquid ' value="{{ $options['CNF_REDIRECTLINK'] }}" >
-						<option value=""> -- Select Module or Page -- </option>
+						<option value=""> -- Select Module -- </option>
 						<optgroup label="Module ">
 							@foreach($modules as $mod)
 
@@ -180,16 +180,6 @@
                                     @if($options['CNF_REDIRECTLINK'] === $moduleRoute ) selected="selected" @endif
 								>{{ $mod->module_title}}</option>
                                 @endif
-							@endforeach
-						</optgroup>
-                        <optgroup label="Dashboards">
-                            <option value="dashboard">Dashboard</option>
-                        </optgroup>                        
-						<optgroup label="Page CMS ">
-							@foreach($pages as $page)
-								<option value="{{ $page->alias}}"
-										@if($options['CNF_REDIRECTLINK'] === $page->alias ) selected="selected" @endif
-								>Page : {{ $page->title}}</option>
 							@endforeach
 						</optgroup>
 					</select>
@@ -259,7 +249,7 @@
 			if(data.status == 'success') {				
                 form.find('button[type=submit]').prop('disabled', false);
 				notyMessage(data.message);
-                window.setTimeout(function () {window.location.reload()}, 1000);
+                window.setTimeout(function () {window.location.reload(true)}, 1000);
 			}
             else {
                 form.find('button[type=submit]').prop('disabled', false);

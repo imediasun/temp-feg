@@ -145,8 +145,15 @@
                             <td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}"
                                 data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
                                 @if($field['field'] == 'img')
-                                {!! SiteHelpers::showUploadedFile($row->img,'/uploads/games/images/',50,false,$row->id) !!}
-                                @else
+                                    <?php
+                                    $images=explode(',',$row->img);
+                                    ?>
+                                @if(!empty($images))
+                                    @foreach($images as $img)
+                                                {!! SiteHelpers::showUploadedFile($img,'/uploads/games/images/',50,false,$row->id) !!}
+                                @endforeach
+                                    @endif
+                                            @else
                                     {!! $value !!}
                                     @endif
                             </td>

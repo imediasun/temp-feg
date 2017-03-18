@@ -70,7 +70,7 @@ class ManagefegrequeststoreController extends Controller
         $v2 = $this->_request->get('v2');
         $v3 = $this->_request->get('v3');
 
-        $manageRequestInfo = $this->model->getManageRequestsInfo($v1, $v2, $v3);
+        $manageRequestInfo = $this->model->getManageRequestsInfo($v1, $v2, $v3,$filter);
 
         $this->data['TID'] = $manageRequestInfo['TID'];
         $this->data['LID'] = $manageRequestInfo['LID'];
@@ -133,12 +133,6 @@ class ManagefegrequeststoreController extends Controller
             $v2 = $request->get('v2');
             $v3 = $request->get('v3');
 
-            $manageRequestInfo = $this->model->getManageRequestsInfo($v1, $v2, $v3);
-            $this->data['TID'] = $manageRequestInfo['TID'];
-            $this->data['LID'] = $manageRequestInfo['LID'];
-            $this->data['VID'] = $manageRequestInfo['VID'];
-            $this->data['view'] = $request->get('view');
-            $this->data['manageRequestInfo'] = $manageRequestInfo;
             $module_id = \DB::table('tb_module')->where('module_name', '=', 'managefegrequeststore')->pluck('module_id');
             $this->data['module_id'] = $module_id;
             if (Input::has('config_id')) {
@@ -164,6 +158,12 @@ class ManagefegrequeststoreController extends Controller
             } else {
                 $filter = $this->buildSearch();
             }
+            $manageRequestInfo = $this->model->getManageRequestsInfo($v1, $v2, $v3,$filter);
+            $this->data['TID'] = $manageRequestInfo['TID'];
+            $this->data['LID'] = $manageRequestInfo['LID'];
+            $this->data['VID'] = $manageRequestInfo['VID'];
+            $this->data['view'] = $request->get('view');
+            $this->data['manageRequestInfo'] = $manageRequestInfo;
 
 
             $page = $request->input('page', 1);
