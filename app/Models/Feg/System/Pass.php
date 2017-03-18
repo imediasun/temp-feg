@@ -2,6 +2,9 @@
 
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Sximo;
+use \Illuminate\Database\QueryException;
+use \Exception;
+use FEGFormat;
 
 class Pass extends Sximo  {
 	protected $table = 'feg_special_permissions';
@@ -11,49 +14,29 @@ class Pass extends Sximo  {
         return $this->belongsTo('App\Models\Feg\System\PassMaster', 'permission_id');
     }
     
-    public static function addNewPass($item) {
-        $masterFields = ['config_title', 'config_name', 'config_description'];
-        $passFields = ['group_ids', 'user_ids', 'exclude_user_ids'];
-        $pass = new self;
-        $master = new \App\Models\Feg\System\PassMaster;
-        foreach($masterFields as $field) {
-            if (isset($item[$field])) {
-                $master->$field = $item[$field];
-            }            
-        }
-        $master->save();
-        $pass->master()->associate($master);
-        foreach($passFields as $field) {
-            if (isset($item[$field])) {
-                $pass->$field = $item[$field];
-            }            
-        }        
-        $pass->save();
-        return true;
+    public static function getMyPass($moduleId, $user = "", $group = "") {
+        
     }
-    public static function updatePass($id, $item) {
-        $masterFields = ['config_title', 'config_name', 'config_description'];
-        $passFields = ['group_ids', 'user_ids', 'exclude_user_ids'];
-        $pass = self::with('master')->find($id);
-        foreach($masterFields as $field) {
-            if (isset($item[$field])) {
-                $pass->master->$field = $item[$field];
-            }            
-        }
-        $pass->master->save();
-        foreach($passFields as $field) {
-            if (isset($item[$field])) {
-                $pass->$field = $item[$field];
-            }            
-        }        
-        $pass->save();
-        return true;
+    public static function doIHavePass($moduleId, $configName, $user = "", $group = "") {
+        
     }
-    
-    public static function getPasses($moduleId) {
+   
+    public static function getPasses($moduleId, $configName = '', $includeInactive = false) {
         $data = [];
-        $models = self::where('module_id', $moduleId)->orWhere('module_id', 0)
-                ->orderBy('id', 'desc')->get();
+        $q = self::whereNotNull('id');
+        if (!empty($configName)) {
+            $q->where('config_name', $configName);
+        }
+        if (!$includeInactive) {
+            $q->where('is_active', 1);
+        }
+        $q->where(function ($query) use($moduleId) {
+                $query->where('module_id', $moduleId)
+                    ->orWhere('module_id', 0);
+            });
+        
+        $models = $q->orderBy('id', 'desc')->get();
+        
         foreach($models as $model) {
             $values = (array) $model->attributes;
             $parentValues = (array) $model->master->attributes;
@@ -64,6 +47,74 @@ class Pass extends Sximo  {
         return $data;
     }
     
+    public static function addNewPass($item) {
+        $masterFields = ['config_title', 'config_name', 'config_description'];
+        $passFields = ['module_id', 'group_ids', 'user_ids', 'exclude_user_ids', 'is_active'];
+        try {        
+            $pass = new self;
+            $master = new PassMaster;
+            foreach($masterFields as $field) {
+                if (isset($item[$field])) {
+                    $master->$field = $item[$field];
+                }            
+            }
+            $master->save();
+            $pass->master()->associate($master);
+            foreach($passFields as $field) {
+                if (isset($item[$field])) {
+                    $pass->$field = $item[$field];
+                }            
+            }        
+            return $pass->save();
+        } 
+        catch (QueryException $ex) {
+            throw self::passException($ex, $item);
+            return false;
+        }            
+        catch (Exception $ex) {
+            throw self::passException($ex, $item);
+            return false;
+        }        
+        return false;
+    }
+    public static function updatePass($id, $item) {
+        $masterFields = ['config_title', 'config_name', 'config_description'];
+        $passFields = ['group_ids', 'user_ids', 'exclude_user_ids', 'is_active'];
+        try {
+            $pass = self::with('master')->find($id);
+            foreach($masterFields as $field) {
+                if (isset($item[$field])) {
+                    $pass->master->$field = $item[$field];
+                }            
+            }
+            $pass->master->save();
+            foreach($passFields as $field) {
+                if (isset($item[$field])) {
+                    $pass->$field = $item[$field];
+                }            
+            }
+            return $pass->save();            
+        } 
+        catch (QueryException $ex) {
+            throw self::passException($ex, $item);
+            return false;
+        }
+        catch (Exception $ex) {
+            throw self::passException($ex, $item);
+            return false;
+        }        
+        return false;
+    }
+    
+    private static function passException ($ex, $data) {
+        $code = $ex->getCode();
+        $exceptionMessages = [
+            '23000' => "Duplicate Title '{$data['config_title']}' exists!"
+        ];        
+        $message = isset($exceptionMessages[$code]) ? $exceptionMessages[$code]: $ex->getMessage();
+        return new Exception($message, $code);
+    }
+
     public static function getGrid() {
         $obj = new self;        
         
@@ -73,6 +124,7 @@ class Pass extends Sximo  {
         
         return $grid;
     }
+    
     public static function buildGrid($columns) {
         
         $removeColumns = ['id', 'created_at', 'updated_at', 
@@ -147,7 +199,7 @@ class Pass extends Sximo  {
             if (isset($columns[$columnName])) {
                 
                 $label = isset($labels[$columnName]) ? $labels[$columnName] : $columnName;
-                $formattedLabel = \FEGFormat::field2title(str_replace('config_', '', $label));
+                $formattedLabel = FEGFormat::field2title(str_replace('config_', '', $label));
                 
                 $input = empty($defaultInput[$columnName]) ? [] : $defaultInput[$columnName];              
                 $type = empty($input[0]) ? '' : $input[0];

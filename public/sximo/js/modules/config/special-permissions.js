@@ -44,7 +44,7 @@
                 };
 
                 showProgress();
-                $(this).ajaxSubmit(options);
+                form.ajaxSubmit(options);
 
             }
             return false;

@@ -5,7 +5,7 @@ use App\Library\ZipHelpers as helper;
 use App\Library\SximoHelpers;
 use App\Http\Controllers\controller;
 use Illuminate\Http\Request;
-use Validator, Input, Redirect;
+use Validator, Input, Redirect, Exception;
 
 
 class ModuleController extends Controller
@@ -2119,7 +2119,7 @@ class ModuleController extends Controller
         }
         $this->data = array_merge($this->data, $module->toArray());        
         $this->data['view_mode'] = $mode;   
-        $this->data['rowData'] = $pass->getPasses($module->module_id);
+        $this->data['rowData'] = $pass->getPasses($module->module_id, '', true);
         $this->data['tableGrid'] = $pass->getGrid();
         $this->data['pageTitle'] = $mode =='solo' ? $module->module_title : 'Module Configuration';        
         
