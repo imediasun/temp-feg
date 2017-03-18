@@ -14,37 +14,107 @@ class Pass extends Sximo  {
         return $this->belongsTo('App\Models\Feg\System\PassMaster', 'permission_id');
     }
     
-    public static function getMyPass($moduleId, $user = "", $group = "") {
+    public static function getMyPass($moduleId, $user = "", $includeInactive = false) {
+        $data = [];
+        if (empty($user)) {
+            $user = \Session::get('uid');            
+        }
+        if (empty($user)) {
+            return $data;
+        }
         
+        $query = self::filterPass(null, [
+            'module_id' => $moduleId,
+            'user' => $user
+        ], $includeInactive);
+        
+        $models = $query->get();
+        $passes = self::pass2array($models);
+        return $passes;        
     }
-    public static function doIHavePass($moduleId, $configName, $user = "", $group = "") {
+    public static function doIHavePass($configName, $user = "", $includeInactive = false) {        
+        $data = false;
+        if (empty($user)) {
+            $user = \Session::get('uid');            
+        }
+        if (empty($user)) {
+            return $data;
+        }
         
+        $passes = self::filterPass(null, [
+            'config_name' => $configName,
+            'user' => $user
+        ], $includeInactive);
+        
+         $data = $passes->exists();
+         
+         return $data;
     }
    
     public static function getPasses($moduleId, $configName = '', $includeInactive = false) {
-        $data = [];
-        $q = self::whereNotNull('id');
-        if (!empty($configName)) {
-            $q->where('config_name', $configName);
+        
+        $query = self::filterPass(null, [
+            'config_name' => $configName,
+            'module_id' => $moduleId
+        ], $includeInactive);
+        
+        $models = $query->orderBy('id', 'desc')->get();
+        $passes = self::pass2array($models);        
+        return $passes;
+    }
+    
+    public static function filterPass($query, $filters = array(), $includeInactive = false) {
+        
+        if (!empty($filters['config_name'])) {
+            $configName = array_pull($filters, 'config_name');
+            $master = PassMaster::where('config_name', $configName)->first();
+            if (empty($master) || empty($master->count())) {
+                $query = self::whereNull('id');
+            }
+            else {
+                $query = $master->passes();
+            }
         }
-        if (!$includeInactive) {
-            $q->where('is_active', 1);
+        else {
+            if (empty($query)) {
+                $query = self::whereNotNull('id');
+            }
         }
-        $q->where(function ($query) use($moduleId) {
+        unset($filters['config_name']);
+        
+        if (!empty($filters['module_id']) || (isset($filters['module_id']) && $filters['module_id'] == 0)) {
+            $moduleId = array_pull($filters, 'module_id');
+            $query->where(function ($query) use($moduleId) {
                 $query->where('module_id', $moduleId)
                     ->orWhere('module_id', 0);
             });
-        
-        $models = $q->orderBy('id', 'desc')->get();
-        
-        foreach($models as $model) {
-            $values = (array) $model->attributes;
-            $parentValues = (array) $model->master->attributes;
-            unset($parentValues['id']);
-            $pass = (object) array_merge($parentValues, $values);
-            $data[] = $pass;
         }
-        return $data;
+        unset($filters['module_id']);
+        
+        if (!$includeInactive) {
+            $query->where('is_active', 1);
+            unset($filters['is_active']);
+        }        
+        if (isset($filters['user'])) {
+            $user = array_pull($filters, 'user');
+            if (empty($user)) {
+                $user = \Session::get('uid');            
+            }
+            $group = \SiteHelpers::getUserGroup($user);        
+            $query->whereRaw(" 
+                (exclude_user_ids IS NULL 
+                    OR TRIM(',' FROM TRIM(exclude_user_ids))='' 
+                    OR exclude_user_ids NOT REGEXP '^{$user}$|^{$user},|,{$user},|,{$user}$')
+                AND (user_ids REGEXP '^{$user}$|^{$user},|,{$user},|,{$user}$' 
+                    OR group_ids REGEXP '^{$group}$|^{$group},|,{$group},|,{$group}$') 
+            ");
+        }
+        
+        if (!empty($filters)) {
+            $query->where($filters);
+        }
+        
+        return $query;
     }
     
     public static function addNewPass($item) {
@@ -114,7 +184,21 @@ class Pass extends Sximo  {
         $message = isset($exceptionMessages[$code]) ? $exceptionMessages[$code]: $ex->getMessage();
         return new Exception($message, $code);
     }
-
+    public static function buildPassQuery() {
+        
+    }
+    private static function pass2array($passes) {
+        $data = [];
+        foreach($passes as $pass) {
+            $values = (array) $pass->attributes;
+            $parentValues = (array) $pass->master->attributes;
+            unset($parentValues['id']);
+            $pass = (object) array_merge($parentValues, $values);
+            $configName = $pass->config_name;
+            $data[$configName] = $pass;
+        }
+        return $data;
+    }
     public static function getGrid() {
         $obj = new self;        
         
@@ -219,6 +303,5 @@ class Pass extends Sximo  {
         }
         return $grid;
     }
-    
-    
+
 }
