@@ -14,7 +14,7 @@ class Pass extends Sximo  {
         return $this->belongsTo('App\Models\Feg\System\PassMaster', 'permission_id');
     }
     
-    public static function getMyPass($moduleId, $user = "", $includeInactive = false) {
+    public static function getMyPass($moduleId, $user = '', $includeInactive = false) {
         $data = [];
         if (empty($user)) {
             $user = \Session::get('uid');            
@@ -32,12 +32,13 @@ class Pass extends Sximo  {
         $passes = self::pass2array($models);
         return $passes;        
     }
-    public static function doIHavePass($configName, $user = "", $includeInactive = false) {        
+    public static function hasPass($configName, $user = "", $includeInactive = false) {
         $data = false;
+        
         if (empty($user)) {
             $user = \Session::get('uid');            
         }
-        if (empty($user)) {
+        if (empty($configName) || empty($user)) {
             return $data;
         }
         
@@ -52,11 +53,11 @@ class Pass extends Sximo  {
     }
    
     public static function getPasses($moduleId, $configName = '', $includeInactive = false) {
-        
-        $query = self::filterPass(null, [
-            'config_name' => $configName,
-            'module_id' => $moduleId
-        ], $includeInactive);
+        $filters = [ 'module_id' => $moduleId ];
+        if (!empty($configName)) {
+            $filters['config_name'] = $configName;
+        }
+        $query = self::filterPass(null, $filters, $includeInactive);
         
         $models = $query->orderBy('id', 'desc')->get();
         $passes = self::pass2array($models);        
@@ -131,9 +132,11 @@ class Pass extends Sximo  {
             $master->save();
             $pass->master()->associate($master);
             foreach($passFields as $field) {
-                if (isset($item[$field])) {
-                    $pass->$field = $item[$field];
-                }            
+                if (!isset($item[$field])) {
+                    $item[$field] = '';
+                }
+                $pass->$field = $item[$field];
+                            
             }        
             return $pass->save();
         } 
@@ -159,9 +162,10 @@ class Pass extends Sximo  {
             }
             $pass->master->save();
             foreach($passFields as $field) {
-                if (isset($item[$field])) {
-                    $pass->$field = $item[$field];
-                }            
+                if (!isset($item[$field])) {
+                    $item[$field] = '';
+                }
+                $pass->$field = $item[$field];                
             }
             return $pass->save();            
         } 
@@ -194,8 +198,8 @@ class Pass extends Sximo  {
             $parentValues = (array) $pass->master->attributes;
             unset($parentValues['id']);
             $pass = (object) array_merge($parentValues, $values);
-            $configName = $pass->config_name;
-            $data[$configName] = $pass;
+            $configTitle = $pass->config_title;
+            $data[$configTitle] = $pass;
         }
         return $data;
     }

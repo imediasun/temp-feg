@@ -130,7 +130,13 @@ class Formatter
     } 
     public static function delegateTo($value = null) {        
         return is_null($value) ? '' : $value;
-    } 
+    }
+
+    /**
+     * Converts all snake case strings (word_word_word) to title case (Word Word Word)
+     * @param type $value
+     * @return type
+     */
     public static function field2title($value = null) {        
         return str_replace('_', ' ', ucwords($value, '_'));
     } 

@@ -88,9 +88,11 @@
 					@if(isset($t['inline']) && $t['inline'] =='1')
 					<?php $limited = isset($t['limited']) ? $t['limited'] :''; ?>
 						@if(SiteHelpers::filterColumn($limited ))
+                       @if (!in_array($t['field'], ['for_sale', 'sale_pending']) || !empty($mylocationgamePass['Edit '.FEGFormat::field2title($t['field'])]))
 						<td data-form="{{ $t['field'] }}" data-form-type="{{ AjaxHelpers::inlineFormType($t['field'],$tableForm)}}">
 							{!! SiteHelpers::transInlineForm($t['field'] , $tableForm) !!}
 						</td>
+						@endif
 						@endif
 					@endif
 				@endforeach

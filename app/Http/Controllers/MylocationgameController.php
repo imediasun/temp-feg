@@ -21,8 +21,11 @@ class MylocationgameController extends Controller
 
         $this->info = $this->model->makeInfo($this->module);
         $this->access = $this->model->validAccess($this->info['id']);
-
+        $this->module_id = \App\Models\Sximo\Module::name2id($this->module);
+        $this->pass = \FEGSPass::getMyPass($this->module_id);
+        
         $this->data = array(
+            'pass' => $this->pass,
             'pageTitle' => $this->info['title'],
             'pageNote' => $this->info['note'],
             'pageModule' => $this->module,
@@ -30,8 +33,6 @@ class MylocationgameController extends Controller
             'return' => self::returnUrl()
         );
         
-        $this->module_id = \DB::table('tb_module')->where('module_name', '=', $this->module)->pluck('module_id');
-
     }
 
     public function getIndex()
@@ -210,7 +211,7 @@ class MylocationgameController extends Controller
         }
         //get the image for game
 
-// Render into template
+        // Render into template
         return view('mylocationgame.table', $this->data);
 
     }

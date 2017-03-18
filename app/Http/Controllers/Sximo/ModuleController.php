@@ -2091,7 +2091,7 @@ class ModuleController extends Controller
 
     function getSpecialPermissions($moduleName, $mode = null) {
 
-        $pass = new \App\Models\Feg\System\Pass;
+        $pass = new \FEGSPass;
 //        $moduleModel = new \App\Models\Sximo\Module;
 //        $id = \App\Models\Sximo\Module::name2id($moduleName);
 //        var_dump($id);
@@ -2172,7 +2172,7 @@ class ModuleController extends Controller
         foreach($updatedPermissons as $id => &$item) {
             $item['config_name'] = "module.$moduleName.special.".snake_case($item['config_title']);
             try {
-                $status = \App\Models\Feg\System\Pass::updatePass($id, $item);
+                $status = \FEGSPass::updatePass($id, $item);
             }
             catch (Exception $ex) {
                 \DB::rollBack();
@@ -2186,7 +2186,7 @@ class ModuleController extends Controller
         foreach($newPermissions as $id => &$item) {
             $item['config_name'] = "module.$moduleName.special.".snake_case($item['config_title']);
             try {
-                $status = \App\Models\Feg\System\Pass::addNewPass($item);                
+                $status = \FEGSPass::addNewPass($item);
             } 
             catch (Exception $ex) {
                 \DB::rollBack();
@@ -2227,7 +2227,7 @@ class ModuleController extends Controller
                 \DB::beginTransaction();
                 foreach ($ids as $id) {
                     try {
-                        $pass = \App\Models\Feg\System\Pass::find($id);
+                        $pass = \FEGSPass::find($id);
                         $pass->master->delete();
                         $pass->delete();                        
                     } 

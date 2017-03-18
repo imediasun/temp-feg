@@ -217,8 +217,7 @@ return [
         'FEGFormat' => \App\Library\FEG\System\Formatter::class,
         'FEGHelp'   => \App\Library\FEG\System\FEGSystemHelper::class,
         'FEGLog'    => \App\Library\MyLog::class,
-
-
+        'FEGSPass' => \App\Models\Feg\System\Pass::class,
     ],
 
 ];
