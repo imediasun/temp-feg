@@ -2126,9 +2126,12 @@ class ModuleController extends Controller
         return view('sximo.module.specialPermissions', $this->data);
         
     }
-      
-    function postSaveSpecialPermissions(Request $request, $moduleName) {
 
+    function saveSpecialPermissions(Request $request, $moduleName) {
+        return $this->postSaveSpecialPermissions($request, $moduleName);
+    }
+    
+    function postSaveSpecialPermissions(Request $request, $moduleName) {
         
         $ignoreList = ['_token', 'selectAll', 'ids'];
         $validationRules = array(
