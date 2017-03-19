@@ -261,13 +261,11 @@
 @endsection
 @section ('beforeheadend')
 
-<link href="{{ asset('sximo/js/plugins/datatables/css/dataTables.bootstrap.css') }}" rel="stylesheet" type="text/css"/>
 <link href="{{ asset('sximo/css/special-permissions.css') }}" rel="stylesheet" type="text/css"/>
 
 @endsection
 @section ('beforebodyend')
 
-    <script type="text/javascript" src="{{ asset('sximo/js/plugins/datatables/dataTables.bootstrap.js') }}"></script>  
     <script type="text/javascript" src="{{ asset('sximo/js/modules/config/special-permissions.js') }}"></script>  
     <script type="text/javascript" >
     $(document).ready(function() {
