@@ -50,7 +50,16 @@
             return false;
 
         });   
-        
+
+        $(document).on('dblclick', 'tbody tr td .editOnDBClick', function(){
+            var elm = $(this),
+                parent = elm.closest('td'),
+                text = parent.find('.rowDisplayValue'),
+                input = parent.find('.rowEditor');
+
+            text.hide();
+            input.show();
+        });
         
         container.find(".addPermission").on('click', function (e){
             e.preventDefault();

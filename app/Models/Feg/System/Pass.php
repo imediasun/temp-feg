@@ -234,7 +234,17 @@ class Pass extends Sximo  {
         $hideByDefault = ['config_name', 'config_value', 'custom_emails', 'priority'];
         
         $defaultInput = [
-            'config_title' => ['text', '', ['required' => true,]],
+            'config_title' => ['text', '', [
+                'required' => true,
+                'hideText' => false,
+                'tooltip' => '', 
+                'textTooltip' => 'This value must be set once and should ideally 
+                    never change again. Read notes above to learn how to change
+                    it for applcable situation',
+                'inputTooltip' => '',
+                'editOnDBClick' => true
+                ]
+            ],
             'config_name' => ['text', '',],
             'config_description' => ['__textarea', ''],
             'data_type' => ['dynamic', ''],
@@ -272,7 +282,8 @@ class Pass extends Sximo  {
             ],
             'custom_emails' => ['text', ''],
             'is_active' => ['__checkbox', '1',[
-                    'formatter' => 'SiteHelpers|getStatus'
+                    'formatter' => 'SiteHelpers|getStatus',
+                    'hideText'  => true
                 ]
             ]
         ];

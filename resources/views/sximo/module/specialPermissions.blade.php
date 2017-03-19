@@ -33,16 +33,23 @@
                     <div class="m-t"></div>	
                     <div class="infobox infobox-danger fade in">
                         <button type="button" class="close" data-dismiss="alert"> x </button>
-                        <h5>Please Note:</h5>
+                        <h4 class='text-danger'>Please Note:</h4>
                         <p><strong>Titles</strong> of the
                             <strong>Special Permissions</strong>
                             need to be unique for each module.
                         </p>
                         <p>
-                            Also, <u>DO NOT</u>
-                            modify the titles! If required, contact the
-                            site administrator.
+                            <strong>NOTE:</strong> <u>DO NOT</u> modify the titles!
+                            Titles must be set once and should ideally
+                            never change again as the titles
+                            are used in code to implement these permissions.
+                            Any change will break the site's functionality.
+                            
+                            If you still need to change it, you may contact the
+                            site administrator or double-click on it to change.
+                            Make sure you notify the change to site administrator.
                         </p>
+                        <p></p>
                     </div>
                     <div class="m-t m-b clearfix" >
                         <button type="button" class="btn btn-success addPermission"                                 
@@ -92,16 +99,24 @@
                                         /*--}}
                                                 
                                         <td
-                                            class="{!! $fieldClass !!}"
+                                            class="{!! $fieldClass !!} tips"
                                             data-values="{!! htmlentities($value) !!}" 
                                             data-field="{!! $field !!}" 
                                             data-format="{!! htmlentities($formattedValue) !!}"
                                             {!! $hidden !!} 
-
-                                            ><span class="rowDisplayValue" 
+                                            @if(!empty($tooltip)) 
+                                                title="{!! $tooltip !!}"
+                                            @endif
+                                            ><span class="rowDisplayValue tips"
+                                               @if(!empty($textTooltip)) 
+                                                    title="{!! $textTooltip !!}"
+                                                @endif
                                                {!! $hideText !!}
                                             >{!! $formattedValue !!}</span><div
-                                             class="rowEditor"
+                                             class="rowEditor tips"
+                                               @if(!empty($inputTooltip))
+                                                    title="{!! $inputTooltip !!}"
+                                                @endif
                                                 {!! $hideInput !!}
                                             >{!! $input !!}</div>
                                         </td>
@@ -196,16 +211,25 @@
                                         /*--}}
                                                 
                                         <td
-                                            class="{!! $fieldClass !!}"
+                                            class="{!! $fieldClass !!} tips"
+                                            @if(!empty($tooltip)) 
+                                                title="{!! $tooltip !!}"
+                                            @endif
                                             data-values="{!! htmlentities(@$value) !!}" 
                                             data-field="{!! $field !!}" 
                                             data-format="{!! htmlentities(@$formattedValue) !!}"
                                             {!! $hidden !!} 
 
-                                            ><span class="rowDisplayValue" 
+                                            ><span class="rowDisplayValue {!! $editOnDBClick !!} tips"
+                                               @if(!empty($textTooltip)) 
+                                                    title="{!! $textTooltip !!}"
+                                               @endif                                               
                                                {!! $hideText !!}
                                             >{!! $formattedValue !!}</span><div
-                                            <div class="rowEditor"
+                                             class="rowEditor tips" 
+                                               @if(!empty($inputTooltip))
+                                                    title="{!! $inputTooltip !!}"
+                                                @endif
                                                 {!! $hideInput !!}
                                                 >{!! $input !!}</div>
                                         </td>

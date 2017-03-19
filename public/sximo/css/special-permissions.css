@@ -20,6 +20,15 @@
     text-align: center;
 }
 
+#specialPermissionsGridContainerForm .datagrid .config_title {
+
+}
+#specialPermissionsGridContainerForm .datagrid tr:not(.newPermission) .config_title input[type=text] {
+    background-color: #fffefe;
+    border-color: #880000;    
+    color: #880000;
+}
+
 #specialPermissionsGridContainerForm .datagrid .exclude_user_ids {
     background-color: #ffeeee;
 }
@@ -58,3 +67,13 @@
 #specialPermissionsGridContainerForm table.datagrid tr.newPermission td.exclude_user_ids {
     background-color: #ffebe0 !important;
 }
+
+#specialPermissionsGridContainerForm table tbody tr td {
+    cursor: default;
+}
+#specialPermissionsGridContainerForm table tbody tr td .rowDisplayValue {
+    cursor: pointer;
+    font-weight: bold;
+    line-height: 28px;
+}
+

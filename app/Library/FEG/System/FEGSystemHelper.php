@@ -1292,7 +1292,7 @@ $message" .
         $isMultiselect = isset($fieldOptions['multiple']) && $fieldOptions['multiple'] == true;
         $fieldArrayLiteral = (!empty($id) ? "[$id]" : '[0]') . ($isMultiselect ? '[]' : '');
         $fieldName = $fieldItem['field'];
-        $isTextHideDefault = true;
+        $isTextHideDefault = isset($fieldOptions['hideText']) ? $fieldOptions['hideText'] : true;
         $isTextHide = isset($options['hideText']) && !is_null($options['hideText']) ? $options['hideText'] : $isTextHideDefault;
         
         $fieldOptionsMap = [
@@ -1303,7 +1303,7 @@ $message" .
             'value'     => 'lookup_value', 
             'search'    => 'lookup_search', 
             'multiple'  => 'select_multiple_inline',
-            'tooltip'       => 'tooltip',
+            'inputTooltip'  => 'tooltip',
             'attribute'     => 'attribute',
             'extend_class'  => 'extend_class',
         ];
@@ -1314,8 +1314,14 @@ $message" .
             'value' => $value,
             'input' => '', 
             'hideText' => $isTextHide ? $hideStyle : '', 
-            'hideInput' => $isTextHide ? '' : $hideStyle, 
+            'hideInput' => $isTextHide ? '' : $hideStyle,
+            'tooltip' => isset($fieldOptions['tooltip']) ? $fieldOptions['tooltip'] : '',
+            'textTooltip' => isset($fieldOptions['textTooltip']) ? $fieldOptions['textTooltip'] : '',
+            'inputTooltip' => isset($fieldOptions['inputTooltip']) ? $fieldOptions['inputTooltip'] : '',
+            'editOnDBClick' => isset($fieldOptions['editOnDBClick']) ? 'editOnDBClick' : '',
+            'editAllOnDBClick' => isset($fieldOptions['editAllOnDBClick']) ? 'editAllOnDBClick' : '',
         ];
+
         
         $required = empty($fieldOptions['required']) ? '' : $fieldOptions['required'];
         $fieldItem['required'] = $required === true ? 'required' : $required;
