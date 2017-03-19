@@ -224,7 +224,8 @@
                             </tbody>
                             @else 
                             <tbody>
-                                <tr><td colspan="{!! $columnCount !!}">
+                                <tr class='noPermissonSetMessageRow'>
+                                <td colspan="{!! $columnCount !!}">
                                     <div style="margin:100px 0; text-align:center;">
                                         @if(!empty($message))
                                             <p class='centralMessage'>
