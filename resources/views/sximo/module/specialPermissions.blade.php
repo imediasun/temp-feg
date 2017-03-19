@@ -34,8 +34,11 @@
                     <div class="infobox infobox-danger fade in">
                         <button type="button" class="close" data-dismiss="alert"> x </button>
                         <h5>Please Note:</h5>
-                        <p><strong>Special Permissions</strong> are unique to each 
-                            module. Be careful while you modify the values.</p>
+                        <p>Titles of the <strong>Special Permissions</strong>
+                            need to be unique for each module. Also, <u>DO NOT</u>
+                            modify the titles! If required, contact the
+                            site administrator.
+                        </p>
                     </div>
                     <div class="m-t m-b clearfix" >
                         <button type="button" class="btn btn-success addPermission"                                 
