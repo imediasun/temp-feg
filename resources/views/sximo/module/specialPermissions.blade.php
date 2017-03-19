@@ -34,8 +34,12 @@
                     <div class="infobox infobox-danger fade in">
                         <button type="button" class="close" data-dismiss="alert"> x </button>
                         <h5>Please Note:</h5>
-                        <p>Titles of the <strong>Special Permissions</strong>
-                            need to be unique for each module. Also, <u>DO NOT</u>
+                        <p><strong>Titles</strong> of the
+                            <strong>Special Permissions</strong>
+                            need to be unique for each module.
+                        </p>
+                        <p>
+                            Also, <u>DO NOT</u>
                             modify the titles! If required, contact the
                             site administrator.
                         </p>
