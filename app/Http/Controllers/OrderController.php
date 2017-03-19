@@ -3,6 +3,7 @@
 use App\Http\Controllers\controller;
 use App\Library\FEG\System\FEGSystemHelper;
 use App\Models\Order;
+use \App\Models\Sximo\Module;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Validator, Input, Redirect, Cache;
@@ -23,12 +24,15 @@ class OrderController extends Controller
         $this->modelview = new  \App\Models\Sbinvoiceitem();
         $this->info = $this->model->makeInfo($this->module);
         $this->access = $this->model->validAccess($this->info['id']);
+        $this->module_id = Module::name2id($this->module);
+        $this->pass = \FEGSPass::getMyPass($this->module_id);
 
         $this->data = array(
+            'pass' => $this->pass,
             'pageTitle' => $this->info['title'],
             'pageNote' => $this->info['note'],
-            'pageModule' => 'order',
-            'pageUrl' => url('order'),
+            'pageModule' => $this->module,
+            'pageUrl' => url($this->module),
             'return' => self::returnUrl()
         );
 

@@ -3,6 +3,7 @@
 use App\Http\Controllers\controller;
 use App\Models\Shopfegrequeststore;
 use App\Models\Addtocart;
+use \App\Models\Sximo\Module;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Validator, Input, Redirect, URL;
@@ -22,12 +23,15 @@ class ShopfegrequeststoreController extends Controller
         $this->addToCartModel = new Addtocart();
         $this->info = $this->model->makeInfo($this->module);
         $this->access = $this->model->validAccess($this->info['id']);
+        $this->module_id = Module::name2id($this->module);
+        $this->pass = \FEGSPass::getMyPass($this->module_id);
 
         $this->data = array(
+            'pass' => $this->pass,
             'pageTitle' => $this->info['title'],
             'pageNote' => $this->info['note'],
-            'pageModule' => 'shopfegrequeststore',
-            'pageUrl' => url('shopfegrequeststore'),
+            'pageModule' => $this->module,
+            'pageUrl' => url($this->module),
             'return' => self::returnUrl()
         );
 

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\controller;
 use App\Models\Mylocationgame;
+use \App\Models\Sximo\Module;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Validator, Input, Redirect;
@@ -21,7 +22,7 @@ class MylocationgameController extends Controller
 
         $this->info = $this->model->makeInfo($this->module);
         $this->access = $this->model->validAccess($this->info['id']);
-        $this->module_id = \App\Models\Sximo\Module::name2id($this->module);
+        $this->module_id = Module::name2id($this->module);
         $this->pass = \FEGSPass::getMyPass($this->module_id);
         
         $this->data = array(
