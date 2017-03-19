@@ -58,7 +58,9 @@
         @endif
         @include( $pageModule.'/toolbar',['colconfigs' => SiteHelpers::getRequiredConfigs($module_id)])
 			<div class="sbox-content" style="border: none;">
-	 <?php echo Form::open(array('url'=>'order/delete/', 'class'=>'form-horizontal' ,'id' =>'SximoTable'  ,'data-parsley-validate'=>'' )) ;?>
+            @if (!empty($pass['Can remove order']))
+                <?php echo Form::open(array('url'=>'order/delete/', 'class'=>'form-horizontal' ,'id' =>'SximoTable'  ,'data-parsley-validate'=>'' )) ;?>
+            @endif
 <div class="table-responsive">
 	@if(count($rowData)>=1)
     <table class="table table-striped datagrid " id="{{ $pageModule }}Table">
@@ -205,7 +207,9 @@
 	@endif
 
 	</div>
-	<?php echo Form::close() ;?>
+            @if (!empty($pass['Can remove order']))
+                <?php echo Form::close() ;?>
+            @endif
 	@include('ajaxfooter')
 
 	</div>
