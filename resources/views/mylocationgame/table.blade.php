@@ -6,8 +6,9 @@
 		<div class="sbox-tools" >
 			<a href="javascript:void(0)" class="btn btn-xs btn-white tips clearSearchButton" title="Clear Search" onclick="reloadData('#{{ $pageModule }}','mylocationgame/data?search=')"><i class="fa fa-trash-o"></i> Clear Search </a>
 			<a href="javascript:void(0)" class="btn btn-xs btn-white tips reloadDataButton" title="Reload Data" onclick="reloadData('#{{ $pageModule }}','mylocationgame/data?return={{ $return }}')"><i class="fa fa-refresh"></i></a>
-			@if(Session::get('gid') ==1)
+			@if(Session::get('gid') ==10)
 			<a href="{{ url('feg/module/config/'.$pageModule) }}" class="btn btn-xs btn-white tips" title=" {{ Lang::get('core.btn_config') }}" ><i class="fa fa-cog"></i></a>
+			<a href="{{ url('feg/module/special-permissions/'.$pageModule.'/solo') }}" class="btn btn-xs btn-white tips" title="Special Permissions" ><i class="fa fa-sliders"></i></a>
 			@endif
 		</div>
 	</div>
@@ -88,9 +89,11 @@
 					@if(isset($t['inline']) && $t['inline'] =='1')
 					<?php $limited = isset($t['limited']) ? $t['limited'] :''; ?>
 						@if(SiteHelpers::filterColumn($limited ))
+                        @if (!in_array($t['field'], ['for_sale', 'sale_pending']) || !empty($pass['Edit '.FEGFormat::field2title($t['field'])]))
 						<td data-form="{{ $t['field'] }}" data-form-type="{{ AjaxHelpers::inlineFormType($t['field'],$tableForm)}}">
 							{!! SiteHelpers::transInlineForm($t['field'] , $tableForm) !!}
 						</td>
+						@endif
 						@endif
 					@endif
 				@endforeach
