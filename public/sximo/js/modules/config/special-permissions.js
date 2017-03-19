@@ -88,6 +88,10 @@
             newRows.remove();
             visibleRowCount = tableBody.find('tr:visible').length;
             saveButton.prop('disabled', !visibleRowCount);
+            if (newRowCount) {
+                form.parsley().destroy();
+                form.parsley();
+            }
 
             rows = tableBody.find(rowSelector);
             deletingRowCount = rows.closest('tr').length;
