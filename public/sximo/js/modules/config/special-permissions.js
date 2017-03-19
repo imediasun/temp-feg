@@ -62,19 +62,42 @@
             initNewInputs(clone);
             clone.find('input[type=text]:first').focus();
             initControls(clone, form);
+            container.find('.noPermissonSetMessageRow').hide();
+            form.find('[type=submit]').prop('disabled', false);
+
         });
         container.find(".deletePermission").on('click', function (e){
             e.preventDefault();
-            var tableBody = form.find('table.datagrid tbody'),
-                rows = tableBody.find('tr :input.ids:checked'),
-                newRows = tableBody.find('tr.newPermission :input.ids:checked').closest('tr'),
-                ids = [];
+            var button = $(this),
+                saveButton = form.find('[type=submit]'),
+                tableBody = form.find('table.datagrid tbody'),
+                rowSelector = 'tr:visible :input.ids:checked',
+                rows = tableBody.find(rowSelector),
+                newRows = tableBody.find('tr.newPermission:visible :input.ids:checked').closest('tr'),
+                newRowCount = newRows.length,
+                deletingRowCount = rows.closest('tr').length,
+                visibleRowCount,
+                ids = [],
+                rows;
                         
-            if (!rows.closest('tr').length && !newRows.length) {
+            if (!deletingRowCount) {
                 notyMessageError("Nothing to delete");
                 return;
             }
-            
+
+            newRows.remove();
+            visibleRowCount = tableBody.find('tr:visible').length;
+            saveButton.prop('disabled', !visibleRowCount);
+
+            rows = tableBody.find(rowSelector);
+            deletingRowCount = rows.closest('tr').length;
+            if (!deletingRowCount) {
+                if (!newRowCount) {
+                    notyMessageError("Nothing to delete");
+                }
+                return;
+            }
+
             rows.each(function(){
                 var val = $(this).val();
                 if (val) {
@@ -84,14 +107,17 @@
             deleteForm.find('[name=deletedIds]').val(ids.join(','));
             
             showProgress();
-            newRows.remove();
+            button.prop('disabled', true);
             deleteForm.ajaxSubmit({
                 dataType: 'json',
                 success :  function(data) {
                     hideProgress();
+                    button.prop('disabled', false);
                     if(data && data.status === 'success'){
                         notyMessage(data.message);
                         rows.closest('tr').remove();
+                        visibleRowCount = tableBody.find('tr:visible').length;
+                        saveButton.prop('disabled', !visibleRowCount);
                     }
                     else {
                         notyMessageError(data && data.message || 'Error in saving!!');
