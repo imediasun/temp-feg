@@ -674,9 +674,7 @@ class MylocationgameController extends Controller
         if (!empty($request['validateDownload'])) {
             $status = [];
             if (empty($rows)) {
-                $status['error'] = 'The selected Game Title is not present at the Location 
-                    you have selected, so the export has been aborted. 
-                    Please select a different Game Title and/or Location combination.';
+                $status['error'] = 'This combination of game title & location is not available.';
             }
             else {
                 $status['success'] = 1;
