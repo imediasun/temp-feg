@@ -227,7 +227,6 @@ class GamestitleController extends Controller
         $sql = "INSERT INTO game_title (" . implode(",", $columns) . ") ";
         $columns[0] = "CONCAT('copy',game_title)";
         $sql .= " SELECT " . implode(",", $columns) . " FROM game_title WHERE id IN (" . $toCopy . ")";
-echo $sql;die();
         \DB::insert($sql);
         return response()->json(array(
             'status' => 'success',
