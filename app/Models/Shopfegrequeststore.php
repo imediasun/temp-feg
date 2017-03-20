@@ -254,12 +254,12 @@ class shopfegrequeststore extends Sximo  {
 					<b>For Game:</b> '.$game_info[0]  .'<br>
 					<b>Description:</b> '.$data['description'].'<br>
 					<b>Quantity:</b> '.$data['qty'].'<br>
-					<b>Need By Date:</b> '.$data['need_by_date'].'<br><br>';
+					<b>Need By Date:</b> '.$data['need_by_date'].'<br><br><em>';
 
-        $links = '<em>**Mark/Tom, please click on <a href="'.$graphicApproveLink.'">Approval</a> or <a href="'.$graphicDenyLink.'">Denial</a> <br>
-					to Approve/Deny this graphic request <br><br>';
+        $links = 'Please click on <a href="'.$graphicApproveLink.'">Approval</a> or <a href="'.$graphicDenyLink.'">Denial</a> <br>
+					to Approve/Deny this graphic request <br><br>&nbsp;&nbsp;&nbsp; 2.) ';
 
-        $messageEnd = '&nbsp;&nbsp;&nbsp; 2.) Set Priority Level at <b>'.$mangeGraphicRequestURL.'</b><br><br>
+        $messageEnd = 'Set Priority Level at <b>'.$mangeGraphicRequestURL.'</b><br><br>
 					**All cc\'d, please Reply to All <b> only if you wish to deny or modify request</b> and explain why.</em><br>';
         
         $from = \Session::get('eid');
