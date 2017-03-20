@@ -120,7 +120,7 @@
                             <input type='hidden' name='prev_location_id' value='{{ $row['prev_location_id'] }}' />
                             <input type='hidden' name='old_location_id' value='{{ $row['location_id'] }}' />
                             <select name='location_id' id='location_id' class='select2 '  
-                                @if($isEdit) disabled='disabled' readonly='readonly' @endif
+                                @if($isEdit)  readonly='readonly' @endif
                             >                                
                             </select>
                         </div>
