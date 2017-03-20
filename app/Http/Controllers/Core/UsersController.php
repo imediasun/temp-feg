@@ -275,6 +275,7 @@ class UsersController extends Controller
         $this->data['id'] = $id;
 
         $this->data['modules'] = \DB::table('tb_module')->where('module_type', '!=', 'core')->orderBy('module_title', 'asc')->get();
+        $this->data['pages'] = \DB::table("tb_pages")->orderBy('title', 'asc')->get();
         return view('core.users.form', $this->data);
     }
 

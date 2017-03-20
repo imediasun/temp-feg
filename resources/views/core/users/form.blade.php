@@ -201,7 +201,7 @@
                             <div class="col-md-8">
                                 <select name="redirect_link" rows='5' type="text" id="redirect_link" style="width:100%"
                                         class='select-liquid ' value="{{ $row['redirect_link'] }}">
-                                    <option value=""> -- Select Module --</option>
+                                    <option value=""> -- Select Module or Page --</option>
                                     <optgroup label="Module ">
                                         @foreach($modules as $mod)
                                             <?php
@@ -222,6 +222,13 @@
                                     </optgroup>
                                     <optgroup label="Dashboards">
                                         <option value="dashboard">Dashboard</option>
+                                    </optgroup>
+                                    <optgroup label="Page CMS">
+                                        @foreach($pages as $page)
+                                            <option value="{{ $page->alias}}"
+                                                    @if($row['redirect_link']=== $page->alias ) selected="selected" @endif
+                                            >Page : {{ $page->title}}</option>
+                                        @endforeach
                                     </optgroup>
                                 </select>
                             </div>
