@@ -20,6 +20,16 @@
                         <div class="col-md-9">
                             <input type='file' name='merch_image[]' multiple id='merch_image' required value=""/>
                         </div>
+                        <div class="clearfix"></div>
+
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-3">
+                        </div>
+                        <div class="col-md-6">
+                            <p class="bg-info" style="padding: 5px">You can select multiple images by pressing control button</p>
+
+                        </div>
                     </div>
                     <div class="form-group">
                         <label for="theme_name" class="control-label col-md-3">Theme Name</label>
