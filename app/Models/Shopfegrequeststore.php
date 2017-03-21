@@ -284,7 +284,6 @@ class shopfegrequeststore extends Sximo  {
             'subject' => $subject,
             'message' => $messageWithoutLink,
             'isTest' => env('APP_ENV', 'development') !== 'production',
-            'configName' => $receipientsForEmailWihtoutLinks,
             'from' => $from,
             'replyTo' => $from,
         )));
