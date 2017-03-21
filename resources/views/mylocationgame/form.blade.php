@@ -120,7 +120,7 @@
                             <input type='hidden' name='prev_location_id' value='{{ $row['prev_location_id'] }}' />
                             <input type='hidden' name='old_location_id' value='{{ $row['location_id'] }}' />
                             <select name='location_id' id='location_id' class='select2 '  
-                                @if($isEdit) disabled='disabled' readonly='readonly' @endif
+                                @if($isEdit)  readonly='readonly' @endif
                             >                                
                             </select>
                         </div>
@@ -227,22 +227,24 @@
 
                         </div>
                     </div>
+                    <input type="hidden" name="for_sale" value="{{ $row['for_sale'] }}"/>
+                    @if (isset($pass) && !empty($pass['Edit '. FEGFormat::field2title('for_sale')]))
                     <div class="form-group  " >
                         <label for="for_sale" class=" control-label col-md-4 text-left">
                             {!! SiteHelpers::activeLang('For Sale', (isset($fields['for_sale']['language'])? $fields['for_sale']['language'] : array())) !!}
                         </label>
                         <div class="col-md-6">                            
-                            <input type="hidden" name="for_sale" value="{{ $row['for_sale'] }}"/>
                             <input type='checkbox' 
                                    data-proxy-input='for_sale' name='_for_sale' 
                                    value="{{ $row['for_sale'] }}"
                                    @if($row['for_sale']==1) checked @endif 
-                            />                                
+                            />
                         </div>
                         <div class="col-md-2">
 
                         </div>
                     </div>
+                    @endif
                     <div class="form-group  " >
                         <label for="sale_price" class=" control-label col-md-4 text-left">
                             {!! SiteHelpers::activeLang('Sale Price', (isset($fields['sale_price']['language'])? $fields['sale_price']['language'] : array())) !!}
@@ -254,12 +256,13 @@
 
                         </div>
                     </div>
+                    <input type="hidden" name="sale_pending" value="{{ $row['sale_pending'] }}"/>
+                    @if (isset($pass) && !empty($pass['Edit '. FEGFormat::field2title('sale_pending')]))
                     <div class="form-group  " >
                         <label for="sale_pending" class=" control-label col-md-4 text-left">
                             {!! SiteHelpers::activeLang('Sale Pending', (isset($fields['sale_pending']['language'])? $fields['sale_pending']['language'] : array())) !!}
                         </label>
                         <div class="col-md-6">                            
-                            <input type="hidden" name="sale_pending" value="{{ $row['sale_pending'] }}"/>
                             <input type='checkbox' 
                                    data-proxy-input='sale_pending' name='_sale_pending' 
                                    value="{{ $row['sale_pending'] }}"
@@ -269,7 +272,8 @@
                         <div class="col-md-2">
 
                         </div>
-                    </div>                    
+                    </div>
+                    @endif
                     @if($isEdit)
                     <div class="soldInputs clearfix @if($isSold) gameIsSold @endif" >                                        
                         <div class="form-group  " >

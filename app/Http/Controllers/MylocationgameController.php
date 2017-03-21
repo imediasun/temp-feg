@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\controller;
 use App\Models\Mylocationgame;
+use \App\Models\Sximo\Module;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Validator, Input, Redirect;
@@ -21,8 +22,11 @@ class MylocationgameController extends Controller
 
         $this->info = $this->model->makeInfo($this->module);
         $this->access = $this->model->validAccess($this->info['id']);
-
+        $this->module_id = Module::name2id($this->module);
+        $this->pass = \FEGSPass::getMyPass($this->module_id);
+        
         $this->data = array(
+            'pass' => $this->pass,
             'pageTitle' => $this->info['title'],
             'pageNote' => $this->info['note'],
             'pageModule' => $this->module,
@@ -30,8 +34,6 @@ class MylocationgameController extends Controller
             'return' => self::returnUrl()
         );
         
-        $this->module_id = \DB::table('tb_module')->where('module_name', '=', $this->module)->pluck('module_id');
-
     }
 
     public function getIndex()
@@ -210,7 +212,7 @@ class MylocationgameController extends Controller
         }
         //get the image for game
 
-// Render into template
+        // Render into template
         return view('mylocationgame.table', $this->data);
 
     }
@@ -672,9 +674,7 @@ class MylocationgameController extends Controller
         if (!empty($request['validateDownload'])) {
             $status = [];
             if (empty($rows)) {
-                $status['error'] = 'The selected Game Title is not present at the Location 
-                    you have selected, so the export has been aborted. 
-                    Please select a different Game Title and/or Location combination.';
+                $status['error'] = 'This combination of game title & location is not available.';
             }
             else {
                 $status['success'] = 1;

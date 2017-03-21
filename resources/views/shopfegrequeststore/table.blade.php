@@ -10,9 +10,15 @@
             <a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Reload Data"
                onclick="reloadData('#{{ $pageModule }}','shopfegrequeststore/data?type=store&active_inactive=active&return={{ $return }}')"><i
                         class="fa fa-refresh"></i></a>
-            @if(Session::get('gid') ==1)
-                <a href="{{ url('feg/module/config/'.$pageModule) }}" class="btn btn-xs btn-white tips"
+            @if(Session::get('gid') ==10)
+                <a href="{{ url('feg/module/config/'.$pageModule) }}" 
+                   class="btn btn-xs btn-white tips openModuleConfig"
                    title=" {{ Lang::get('core.btn_config') }}"><i class="fa fa-cog"></i></a>
+    			<a href="{{ url('feg/module/special-permissions/'.$pageModule.'/solo') }}" 
+                   class="btn btn-xs btn-white tips openSpecialPermissions"
+                   title="Special Permissions"
+                   ><i class="fa fa-sliders"></i></a>
+
             @endif
         </div>
     </div>

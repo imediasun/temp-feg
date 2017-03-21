@@ -107,7 +107,7 @@
                                 <label for="img" class=" control-label col-md-4 text-left">
                                     {!! SiteHelpers::activeLang('Image', (isset($fields['img']['language'])? $fields['img']['language'] : array())) !!}
                                 </label>
-                                <div class="col-md-2">
+                                <div class="col-md-8">
                                     <input type="file" multiple  name="img[]" id="img" @if(empty($row['img'])) required   @endif />
                                     <div style="margin-top:15px;">
                                           <?php
@@ -121,22 +121,23 @@
                                                           <i  class="fa fa-times delete" aria-hidden="true" id="{{$img}}"></i>
                                                               <input type="hidden"  name="imgs[]" value="{{$img}}"/>
                                                       </div>
+                                                      </div>
                                               @endforeach
                                           @endif
                                        {{-- {!! SiteHelpers::showUploadedFile($row['img'],'/uploads/games/images/') !!} --}}
+                                    </div>
+                                </div>
+                                <div class="clearfix"></div>
+                                <div class="form-group">
+                                    <div class="col-md-4">
+                                    </div>
+                                    <div class="col-md-8">
+                                        <p class="bg-info" style="width:82%;padding: 5px">You can select multiple images by pressing control button</p>
 
                                     </div>
-
                                 </div>
-
-                            </div>
-                            <div class="form-group">
-                                <div class="col-md-4"></div>
-                                <div class="col-md-5">
-                                    <p class="bg-info" style="width:82%;padding: 5px">You can select multiple images by pressing control button</p>
                                 </div>
-                            </div>
-                <!--div class="form-group  " >
+                                <!--div class="form-group  " >
 					<label for="Num Prize Meters" class=" control-label col-md-4 text-left">
 					{!! SiteHelpers::activeLang('Num Prize Meters', (isset($fields['num_prize_meters']['language'])? $fields['num_prize_meters']['language'] : array())) !!}
 					</label>
@@ -144,9 +145,9 @@
     					{{--*/ $num_prize_meters = explode(',',$row['num_prize_meters']); /*--}}
         				{{--*/ $num_prize_meters_opt = array( '1' => 'Yes' ,'0'=> 'No' ); /*--}}
             			<select name='num_prize_meters' rows='5'   class='select2 '  >
-						@foreach($num_prize_meters_opt as $key=>$val)
+						{{--@foreach($num_prize_meters_opt as $key=>$val)
 							<option  value ='$key' {{ $row['num_prize_meters'] == $key ? " selected='selected' " : '' }}">{{ $val }}</option>";
-						@endforeach
+						@endforeach--}}
 						</select>
 					 </div>
 					 <div class="col-md-2"></div>

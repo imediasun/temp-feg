@@ -228,7 +228,7 @@ $(document).ready(function() {
 	$('.editor').summernote();
 	$('.previewImage').fancybox();	
 	$('.tips').tooltip();	
-	$(".select2").select2({ width:"98%"});	
+    renderDropdown($(".select2 "), { width:"98%"});
 	$('.date').datepicker({format:'mm/dd/yyyy',autoclose:true})
 	$('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});
 	$('input[type="checkbox"],input[type="radio"]').iCheck({
@@ -245,33 +245,39 @@ $(document).ready(function() {
         ,locationContactSelectData = <?php echo json_encode($locationContactNamesForSelect); ?>;
         
     $("#to_email_groups").jCombo(groupListUrl,
-                {selected_value: '{{  $row["to_email_groups"] }}'});                     
+                {selected_value: '{{  $row["to_email_groups"] }}'});
     $("#to_email_individuals").jCombo(userListUrl,
                 {  selected_value : '{{ $row["to_email_individuals"] }}' });
     $("#cc_email_groups").jCombo(groupListUrl,
-                {selected_value: '{{  $row["cc_email_groups"] }}'});                     
+                {selected_value: '{{  $row["cc_email_groups"] }}'});
     $("#cc_email_individuals").jCombo(userListUrl,
                 {  selected_value : '{{ $row["cc_email_individuals"] }}' });
     $("#bcc_email_groups").jCombo(groupListUrl,
                 {selected_value: '{{  $row["bcc_email_groups"] }}'});                     
     $("#bcc_email_individuals").jCombo(userListUrl,
                 {  selected_value : '{{ $row["bcc_email_individuals"] }}' });
-                
-                
-    $("#to_email_location_contacts").select2({
+
+
+    renderDropdown($("#to_email_location_contacts"), {
         data: locationContactSelectData,
         multiple: true
-    }).select2('val', '{{ $row["to_email_location_contacts"] }}'.split(','));
+    });
+    $("#to_email_location_contacts").select2('val',
+            '{{ $row["to_email_location_contacts"] }}'.split(','));
     
-    $("#cc_email_location_contacts").select2({
+    renderDropdown($("#cc_email_location_contacts"), {
         data: locationContactSelectData,
         multiple: true
-    }).select2('val', '{{ $row["cc_email_location_contacts"] }}'.split(','));
+    });
+    $("#cc_email_location_contacts").select2('val',
+        '{{ $row["cc_email_location_contacts"] }}'.split(','));
     
-    $("#bcc_email_location_contacts").select2({
+    renderDropdown($("#bcc_email_location_contacts"), {
         data: locationContactSelectData,
         multiple: true
-    }).select2('val', '{{ $row["bcc_email_location_contacts"] }}'.split(','));
+    });
+    $("#bcc_email_location_contacts").select2('val',
+        '{{ $row["bcc_email_location_contacts"] }}'.split(','));
     
         
 	var form = $('#systemreportsemailmanagerFormAjax'); 

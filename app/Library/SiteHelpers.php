@@ -1029,11 +1029,23 @@ class SiteHelpers
         return $form;
     }
 
-    public static  function transInlineForm( $field, $forms = array(),$bulk=false , $value ='')
+    /**
+     * 
+     * @param type $field
+     * @param type $forms
+     * @param type $bulk
+     * @param type $value
+     * @return type
+     */
+    public static  function transInlineForm( $field, $forms = array(), $bulk = false, $value = '' )
     {
         $type = '';
-        $bulk = ($bulk == true ? '[]' : '');
+        $bulk = is_string($bulk) ? $bulk : ($bulk == true ? '[]' : '');
         $mandatory = '';
+        $attribute = '';
+        $extend_class = '';
+        $selectMultiple = '';
+        
         foreach($forms as $f)
         {
             $hasShow = isset($f['view']) ? $f['view'] == 1 : false;
@@ -1043,16 +1055,25 @@ class SiteHelpers
                 $option = $f['option'];
                 $required = $f['required'];
                 if($required =='required') {
-                    $mandatory = "data-parsley-required='true'";
+                    $mandatory = "required='required' data-parsley-required='true'";
                 } else if($required =='email') {
-                    $mandatory = "data-parsley-type'='email' ";
+                    $mandatory = "required='required' data-parsley-type'='email' ";
                 } else if($required =='date') {
-                    $mandatory = "data-parsley-required='true'";
+                    $mandatory = "required='required' data-parsley-required='true'";
                 } else if($required =='numeric') {
-                    $mandatory = "data-parsley-type='number' ";
+                    $mandatory = "required='required' data-parsley-type='number' ";
                 } else {
                     $mandatory = '';
                 }
+                
+                if (!empty($option['attribute'])) {
+                    $attribute = $option['attribute'];
+                }
+                if (!empty($option['extend_class'])) {
+                    $extend_class = $option['extend_class'];
+                }
+                $selectMultiple = empty($option['select_multiple_inline']) ? "" : "multiple='multiple'";
+                break;
             }
         }
 
@@ -1146,7 +1167,11 @@ class SiteHelpers
                         $data = $query->get();
                         foreach ($data as $row):
                             $selected = '';
-                            if ($value == $row->$option['lookup_key']) $selected = 'selected="selected"';
+                            $values = explode(',', $value);
+                            $valueFound = count($values) > 1 ? in_array($row->$option['lookup_key'], $values) : false;
+                            if ($value == $row->$option['lookup_key'] || $valueFound) {
+                                $selected = 'selected="selected"';
+                            }
 
                             //print_r($fields);exit;
                             $val = "";
@@ -1159,17 +1184,28 @@ class SiteHelpers
 
                 } else {
                     $opt = explode("|",$option['lookup_query']);
+                    $datalistOptions = \FEGHelp::parseStringToArray($option['lookup_query']);
+                    $values = explode(',', $value);
                     $opts = '';
                     for($i=0; $i<count($opt);$i++)
                     {
                         $selected = '';
-                        if($value == ltrim(rtrim($opt[0]))) $selected ='selected="selected"';
+                        if($value == ltrim(rtrim($opt[0]))) {
+                            $selected ='selected="selected"';
+                        }
                         $row =  explode(":",$opt[$i]);
+                        if (count($values) > 1) {
+                            $valueFound = in_array(trim($row[0]), $values);
+                            if ($valueFound) {
+                                $selected ='selected="selected"';
+                            }
+                        }
+                        
                         $opts .= "<option $selected value ='".trim($row[0])."' > ".$row[1]." </option> ";
                     }
 
                 }
-                $form = "<select name='$field{$bulk}'  class='sel-inline $field{$bulk}' $mandatory>" .
+                $form = "<select name='$field{$bulk}'  class='sel-inline $field{$bulk}' $mandatory {$selectMultiple}>" .
                     "<option value=''> -- Select  -- </option>".
                     "	$opts
 						</select>";
@@ -1188,6 +1224,25 @@ class SiteHelpers
                 $form = "<select name='$field{$bulk}' class='sel-inline' $mandatory ><option value=''> -- Select  -- </option>$opts</select>";
                 break;
 
+            case '__checkbox':
+                $form = "<input type='hidden' name='{$field}{$bulk}' value='$value'/>
+                    <input type='checkbox' 
+                            data-proxy-input='{$field}' 
+                            data-parsley-excluded='true'
+                            parsley-excluded='true'
+                            {$mandatory} {$attribute} 
+                            class='{$extend_class}' 
+                            value='{$value}' 
+                            ".($value ? "checked='checked'" : "")."
+                        />";                    
+                break;
+            case '__textarea':                
+                $form = "<textarea rows='1' 
+                                name='{$field}{$bulk}' 
+                                class='form-control {$extend_class}' 
+                                {$mandatory} {$attribute}  
+                            >{$value}</textarea>";
+                break;
         }
 
         return $form;

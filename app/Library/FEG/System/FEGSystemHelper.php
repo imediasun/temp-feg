@@ -1284,4 +1284,98 @@ $message" .
         return $label;        
     }
     
+    public static function specialPermissionFormatter($value, $fieldItem, $options = []) {
+
+        $row = $options['row'];
+        $id = isset($row->id) ? $row->id : '';
+        $fieldOptions = $fieldItem['options'];
+        $isMultiselect = isset($fieldOptions['multiple']) && $fieldOptions['multiple'] == true;
+        $fieldArrayLiteral = (!empty($id) ? "[$id]" : '[0]') . ($isMultiselect ? '[]' : '');
+        $fieldName = $fieldItem['field'];
+        $isTextHideDefault = isset($fieldOptions['hideText']) ? $fieldOptions['hideText'] : true;
+        $isTextHide = isset($options['hideText']) && !is_null($options['hideText']) ? $options['hideText'] : $isTextHideDefault;
+        
+        $fieldOptionsMap = [
+            'type'      => 'opt_type', 
+            'table'     => 'lookup_table', 
+            'options'     => 'lookup_query', 
+            'key'       => 'lookup_key', 
+            'value'     => 'lookup_value', 
+            'search'    => 'lookup_search', 
+            'multiple'  => 'select_multiple_inline',
+            'inputTooltip'  => 'tooltip',
+            'attribute'     => 'attribute',
+            'extend_class'  => 'extend_class',
+        ];
+        $hideStyle = " style='display: none;' ";
+        $data = [
+            'fieldClass' => 'permissionCell '.$fieldName,
+            'formattedValue' => $value,
+            'value' => $value,
+            'input' => '', 
+            'hideText' => $isTextHide ? $hideStyle : '', 
+            'hideInput' => $isTextHide ? '' : $hideStyle,
+            'tooltip' => isset($fieldOptions['tooltip']) ? $fieldOptions['tooltip'] : '',
+            'textTooltip' => isset($fieldOptions['textTooltip']) ? $fieldOptions['textTooltip'] : '',
+            'inputTooltip' => isset($fieldOptions['inputTooltip']) ? $fieldOptions['inputTooltip'] : '',
+            'editOnDBClick' => isset($fieldOptions['editOnDBClick']) ? 'editOnDBClick' : '',
+            'editAllOnDBClick' => isset($fieldOptions['editAllOnDBClick']) ? 'editAllOnDBClick' : '',
+        ];
+
+        
+        $required = empty($fieldOptions['required']) ? '' : $fieldOptions['required'];
+        $fieldItem['required'] = $required === true ? 'required' : $required;
+        $inputOptions = [];                
+        foreach($fieldOptionsMap as $key => $optionMap) {
+            $inputOptions[$optionMap] = isset($fieldOptions[$key]) ? $fieldOptions[$key] : '';
+        }
+        $fieldItem['option'] = $inputOptions;        
+        $data['input'] = \SiteHelpers::transInlineForm($fieldName, [$fieldItem], $fieldArrayLiteral, $value);
+        
+        $gridAttributes = [
+            'image' => ['active'=>''], 
+            'formater' => ['active' => 0, 'value' => ''], 
+            'hyperlink' => ['active' => '', 'link' => '', 'target' => '', 'html' => '']
+        ];
+        $gridFormatter = ['valid' => '', 'db' => '', 'key' => '', 'display'  => '', 'multiple' => '',];
+        
+        $formatter = isset($fieldOptions['formatter']) ? $fieldOptions['formatter']: '';
+        $needsFormatting = false;
+        if (!empty($formatter)) {
+            $needsFormatting = true;
+            $gridAttributes['formater']['active'] = 1;
+            $gridAttributes['formater']['value'] = $formatter;
+        }
+        
+        $hyperlink = isset($fieldOptions['hyperlink']) ? $fieldOptions['hyperlink']: '';
+        if (!empty($hyperlink)) {
+            $needsFormatting = true;
+            $gridAttributes['hyperlink']['active'] = 1;
+            $gridAttributes['hyperlink']['value'] = $hyperlink;
+            $gridAttributes['hyperlink']['value'] =  isset($fieldOptions['hyperlinkTraget']) ? $fieldOptions['hyperlinkTraget']: '';
+        }
+        
+        $dbConnection = !empty($fieldOptions['table']) ? $fieldOptions['table']: '';
+        if (!empty($dbConnection)) {
+            $needsFormatting = true;
+            $gridFormatter['valid'] = 1;
+            $gridFormatter['db'] = $dbConnection;
+            $gridFormatter['key'] = isset($fieldOptions['key']) ? $fieldOptions['key'] : '';;
+            $gridFormatter['display'] = isset($fieldOptions['value']) ? $fieldOptions['value'] : '';;
+            $gridFormatter['multiple'] = isset($fieldOptions['multiple']) ? $fieldOptions['multiple'] : '';
+        }
+        
+        $dataOptions = !empty($fieldOptions['options']) ? $fieldOptions['options']: '';
+        if (!empty($dataOptions)) {
+            $needsFormatting = true;
+            $gridFormatter['datalist'] = 1;
+            $gridFormatter['options'] = $dataOptions;
+        }        
+        
+        if ($needsFormatting) {
+            $data['formattedValue'] = \AjaxHelpers::gridFormater($value, $row, $gridAttributes, $gridFormatter);
+        }
+                
+        return $data;
+    }
 }

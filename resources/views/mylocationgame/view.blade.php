@@ -1,5 +1,4 @@
 <?php
-
     $game = $row[0];
     $statusId = $game->status_id;
     $statusName = $game->game_status;
@@ -361,7 +360,7 @@
                 <td> {{ $service_history->game_id }}</td>
                 <td> {{ $service_history->location_id }} {{ $service_history->location_name }} </td>
                 <td>{{ DateHelpers::formatDate($service_history->date_down) }}</td>
-                <td>{{ $service_history->down_first_name}} | {{ $service_history->down_last_name }}</td>
+                <td>{{ $service_history->down_first_name}} {{ $service_history->down_last_name }}</td>
                 <td>{{ $service_history->problem }}</td>
                 <td>{{ $service_history->solution }}</td>
                 <td>{{ $service_history->up_first_name }} {{ $service_history->up_last_name }}</td>
@@ -398,10 +397,10 @@
                     @foreach($row['move_history'] as $move_history)
                         <tr>
                             <td> {{ DateHelpers::formatDate($move_history->from_date) }}</td>
-                            <td>{{ $move_history->from_location }}</td>
-                            <td>{{ $move_history->to_location}}</td>
-                            <td>{{ $move_history->from_name }} </td>
-                            <td>{{ $move_history->to_name }} </td>
+                            <td>{{ $move_history->from_location_id }} {{ $move_history->from_location }}</td>
+                            <td>{{ $move_history->to_location_id}} {{ $move_history->to_location}}</td>
+                            <td>{{ $move_history->from_first_name }} {{ $move_history->from_last_name }} </td>
+                            <td>{{ $move_history->to_first_name }} {{ $move_history->to_last_name }} </td>
                             <td>{{ DateHelpers::formatDate($move_history->to_date) }} </td>
                             <td>{{  \SiteHelpers::getDateDiff($move_history->from_date,$move_history->to_date) }}</td>
                         </tr>

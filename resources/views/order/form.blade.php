@@ -842,6 +842,8 @@
             var itemid = $("#" + trid + "  textarea[name^=item]").attr('id');
             var retailpriceid = $('#' + trid + "  input[name^=retail]").attr('id');
             var selectorProductId = $('#' + trid + "  input[name^=product_id]").attr('id');
+
+            @if (!empty($pass['Can select product list']))
             $(obj).autocomplete({
                 minLength: 2,
                 source: function (request, response) {
@@ -911,8 +913,8 @@
                     });
                 }
             });
+            @endif
         }
-        ;
         //init();
         $(function () {
             $("#experiment").trigger('click');

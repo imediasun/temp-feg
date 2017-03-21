@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\controller;
 use App\Models\Gamesintransit;
+use \App\Models\Sximo\Module;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Validator, Input, Redirect;
@@ -21,12 +22,17 @@ class GamesintransitController extends Controller
 
         $this->info = $this->model->makeInfo($this->module);
         $this->access = $this->model->validAccess($this->info['id']);
-
+        $this->module_id = Module::name2id($this->module);
+        $this->pass = \FEGSPass::getMyPass($this->module_id);
+        $this->mylocationgamePass = \FEGSPass::getMyPass(Module::name2id('mylocationgame'));
+        
         $this->data = array(
+            'pass' => $this->pass,
+            'mylocationgamePass' => $this->mylocationgamePass,
             'pageTitle' => $this->info['title'],
             'pageNote' => $this->info['note'],
-            'pageModule' => 'gamesintransit',
-            'pageUrl' => url('gamesintransit'),
+            'pageModule' => $this->module,
+            'pageUrl' => url($this->module),
             'return' => self::returnUrl()
         );
 

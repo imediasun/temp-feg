@@ -915,8 +915,8 @@
         return null;
       }
 
-      // do not validate excluded fields
-      if ( this.$element.is( this.options.excluded ) ) {
+      // do not validate excluded fields      
+      if ( this.$element.is( this.options.excluded )  ||  this.$element.attr('parsley-excluded') == 'true') {
         return null;
       }
 
@@ -1253,7 +1253,7 @@
     * @param elem
     */
     , addItem: function ( elem ) {
-      if ( $( elem ).is( this.options.excluded ) ) {
+      if ( $( elem ).is( this.options.excluded ) ||  $( elem ).attr('parsley-excluded') == 'true') {
         return false;
       }
 
