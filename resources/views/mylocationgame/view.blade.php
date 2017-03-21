@@ -399,8 +399,8 @@
                             <td> {{ DateHelpers::formatDate($move_history->from_date) }}</td>
                             <td>{{ $move_history->from_location_id }}{{ $move_history->from_location }}</td>
                             <td>{{ $move_history->to_location_id}} {{ $move_history->to_location}}</td>
-                            <td>{{ $move_history->from_name }} </td>
-                            <td>{{ $move_history->to_name }} </td>
+                            <td>{{ $move_history->from_first_name }} {{ $move_history->from_last_name }} </td>
+                            <td>{{ $move_history->to_first_name }} {{ $move_history->to_last_name }} </td>
                             <td>{{ DateHelpers::formatDate($move_history->to_date) }} </td>
                             <td>{{  \SiteHelpers::getDateDiff($move_history->from_date,$move_history->to_date) }}</td>
                         </tr>
