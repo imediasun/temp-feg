@@ -16,7 +16,7 @@ class AjaxHelpers
             $val = \FEGHelp::getLabelFromOptions($val, $datalistOptions);
         }
 		// Handling Quick Display As 
-		if(!empty($val) && isset($arr['valid']) && $arr['valid'] ==1)
+		if((!empty($val) || $val==='0' || $val===0) && isset($arr['valid']) && $arr['valid'] ==1)
 		{
 			$fields = str_replace("|",",",$arr['display']);			
             $val=addslashes($val);
@@ -48,9 +48,9 @@ class AjaxHelpers
 					$rowObj = $Q[0];
 					$fields = explode("|",$arr['display']);
 					$v= '';
-					$v .= (isset($fields[0]) && $fields[0] !='' ?  $rowObj->$fields[0].' ' : '');
-					$v .= (isset($fields[1]) && $fields[1] !=''  ? $rowObj-> $fields[1].' ' : '');
-					$v .= (isset($fields[2]) && $fields[2] !=''  ? $rowObj->$fields[2].' ' : '');
+					$v .= (isset($fields[0]) && $fields[0] !=='' ?  $rowObj->$fields[0].' ' : '');
+					$v .= (isset($fields[1]) && $fields[1] !==''  ? $rowObj-> $fields[1].' ' : '');
+					$v .= (isset($fields[2]) && $fields[2] !==''  ? $rowObj->$fields[2].' ' : '');
 					$val = trim($v);
 				} 	
 			}				
