@@ -463,7 +463,7 @@ class Sximo extends Model {
                 ->leftJoin('location as l2', 'game_move_history.to_loc', '=', 'l2.id')
                 ->leftJoin('game as g', 'game_move_history.game_id', '=', 'g.id')
                 ->leftJoin('game_title as gt', 'g.game_title_id', '=', 'gt.id')
-                ->select('game_move_history.*', 'gt.game_title', 'u1.first_name as from_first_name','u1.last_name as from_last_name', 'u2.user_first_name as to_first_name', 'u2.user_last_name as to_last_name', 'l1.location_name as from_location','l1.id as from_location_id', 'l2.location_name as to_location');
+                ->select('game_move_history.*', 'gt.game_title', 'u1.first_name as from_first_name','u1.last_name as from_last_name', 'u2.first_name as to_first_name', 'u2.last_name as to_last_name', 'l1.location_name as from_location','l1.id as from_location_id', 'l2.location_name as to_location');
         if (!is_null($asset_id)) {
             $assetIds = explode(',', ''.$asset_id);
             $query = $query->whereIn('game_id', $assetIds);
