@@ -248,13 +248,13 @@ class shopfegrequeststore extends Sximo  {
         $graphicApproveLink = "http://{$_SERVER['HTTP_HOST']}/managenewgraphicrequests/approve/$last_inserted_id";
         $graphicDenyLink = "http://{$_SERVER['HTTP_HOST']}/managenewgraphicrequests/deny/$last_inserted_id";
         
-        $baseMessage = '<b>Date Requested:</b> '.$data['request_date'].'<br>
+        $baseMessage = '<b>Date Requested:</b> '. \DateHelpers::formatDate($data['request_date']).'<br>
 					<b>Requestor:</b> '.\Session::get('fid').'<br>
 					<b>Location:</b> '.$data['location_id'].' | '.$locationName.'<br>
 					<b>For Game:</b> '.$game_info[0]  .'<br>
 					<b>Description:</b> '.$data['description'].'<br>
 					<b>Quantity:</b> '.$data['qty'].'<br>
-					<b>Need By Date:</b> '.$data['need_by_date'].'<br><br><em>';
+					<b>Need By Date:</b> '.\DateHelpers::formatDate($data['need_by_date']).'<br><br><em>';
 
         $links = 'Please click on <a href="'.$graphicApproveLink.'">Approval</a> or <a href="'.$graphicDenyLink.'">Denial</a> <br>
 					to Approve/Deny this graphic request <br><br>&nbsp;&nbsp;&nbsp; 2.) ';
