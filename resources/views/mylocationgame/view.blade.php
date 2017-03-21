@@ -397,7 +397,7 @@
                     @foreach($row['move_history'] as $move_history)
                         <tr>
                             <td> {{ DateHelpers::formatDate($move_history->from_date) }}</td>
-                            <td>{{ $move_history->from_location_id }}{{ $move_history->from_location }}</td>
+                            <td>{{ $move_history->from_location_id }} {{ $move_history->from_location }}</td>
                             <td>{{ $move_history->to_location_id}} {{ $move_history->to_location}}</td>
                             <td>{{ $move_history->from_first_name }} {{ $move_history->from_last_name }} </td>
                             <td>{{ $move_history->to_first_name }} {{ $move_history->to_last_name }} </td>
