@@ -81,7 +81,17 @@
 
                         </div>
                     </div>
-                </div> </fieldset>
+                </div>
+                <div class="clearfix"></div>
+                <div class="form-group">
+                    <div class="col-md-4">
+                    </div>
+                    <div class="col-md-6">
+                        <p class="bg-info" style="padding: 5px">You can select multiple images by pressing control button</p>
+
+                    </div>
+                </div>
+            </fieldset>
 
 
                 <div class="form-group" style="padding-left: 24px;margin-bottom:50px">

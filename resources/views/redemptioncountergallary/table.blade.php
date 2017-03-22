@@ -27,13 +27,27 @@
         @include( $pageModule.'/toolbar',['config_id'=>$config_id,'colconfigs' => SiteHelpers::getRequiredConfigs($module_id)])
 
         <div>
-            <p>
+            <p><?php $check_mul="";$show=true; ?>
                 @if(isset($rowData))
                     @foreach($rowData as $row)
-                        <a title="{{ $row->Location }}" class="previewImage fancybox" rel='gallery1' data-id="{{ $row->id }}" href="{{ url() }}/uploads/gallary/{{ $row->id }}.jpg">
+                        <?php
+                        if($check_mul == $row->loc_id)
+                        {
+                            $show=false;
+                        }
+                        else
+                        {
+                            $show=true;
+                        }
+                        $rel="gallery".$row->loc_id;
+                        $check_mul=$row->loc_id;
+                        ?>
+                        <a @if(!$show)) style="display:none" @else style="display:inline" @endif  title=" {{ $row->Location }} " class="previewImage fancybox" data-fancybox-group="{{$rel}}"  rel="{{$rel}}" data-id="{{ $row->id }}" href="{{ url() }}/uploads/gallary/{{ $row->id }}.jpg">
                             <img src="{{ url() }}/uploads/gallary/{{ $row->id }}_thumb.jpg" alt="{{ $row->theme_name }}" class="merch-gallery"/>
                         </a>
                     @endforeach
+                    @else
+                    <p>No Images to show in the gallery.
                 @endif
             </p>
         </div>

@@ -210,9 +210,9 @@ class MerchindisetheminggallaryController extends Controller
                     $extension = '';
                 }
                 $id = $this->model->insertRow($data, NULL);
-                $img->save(public_path() . '/uploads/gallary/' . $id . $extension);
+                $img->save('./uploads/gallary/' . $id . $extension);
                 $img->resize(101, 150);
-                $img->save(public_path() . '/uploads/gallary/' . $id . '_thumb' . $extension);
+                $img->save('./uploads/gallary/' . $id . '_thumb' . $extension);
             }
             return response()->json(array(
                 'status' => 'success',
