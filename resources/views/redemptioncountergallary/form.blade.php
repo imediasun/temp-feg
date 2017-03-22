@@ -19,10 +19,18 @@
                     <div class="form-group">
                         <label for="gallary_img" class="control-label col-md-3">Add Photo</label>
                         <div class="col-md-9">
-                            <input type='file' name='redemption_image' id='redemption_img' required value=""/>
+                            <input type='file' name='redemption_image[]' id='redemption_img' required multiple value=""/>
                         </div>
                         </div>
+                    <div class="clearfix"></div>
+                    <div class="form-group">
+                        <div class="col-md-3">
+                        </div>
+                        <div class="col-md-6">
+                            <p class="bg-info" style="padding: 5px">You can select multiple images by pressing control button</p>
 
+                        </div>
+                    </div>
                         <div class="form-group">
                             <label for="location_id" class="control-label col-md-3">Location</label>
 
