@@ -33,6 +33,7 @@ class DashboardController extends Controller
         {
             return redirect(CNF_REDIRECTLINK);
         }
+        
         /* connect to gmail */
         $this->data['online_users'] = \DB::table('users')->orderBy('last_activity', 'desc')->limit(10)->get();
         return view('dashboard.index', $this->data);
