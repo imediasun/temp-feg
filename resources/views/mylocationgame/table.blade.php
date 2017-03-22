@@ -141,6 +141,7 @@
                                                 <?php $value="<a style='color:red' href=#>In Transit</a>" ?>
                                             @endif
                                         @endif
+                                        {!! $value !!}
 									@elseif($field['field'] == "img")
                                          {!! SiteHelpers::showUploadedFile($row->img,'/uploads/games/images/',50,false,$row->id) !!}
                                     @else

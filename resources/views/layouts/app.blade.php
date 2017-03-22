@@ -8,29 +8,29 @@
 <title> {{ CNF_APPNAME }} </title>
 <meta name="keywords" content="">
 <meta name="description" content=""/>
-<link rel="shorStcut icon" href="{{ asset('fegpo.png')}}" type="image/x-icon">
+<link rel="shorStcut icon" href="{{ asset('fegpo.png')}}" type="image/x-icon"/>
 
 		<link href="http://fonts.googleapis.com/css?family=Lato:300,400,400italic,600,700|Raleway:300,400,500,600,700|Crete+Round:400italic" rel="stylesheet" type="text/css" />
-        <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
-	<link rel="stylesheet" href="//cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css">
-        <link href="{{ asset('sximo/js/plugins/bootstrap/css/bootstrap.css')}}" rel="stylesheet">
-		<link href="{{ asset('sximo/js/plugins/jasny-bootstrap/css/jasny-bootstrap.min.css')}}" rel="stylesheet">
-		<link href="{{ asset('sximo/fonts/awesome/css/font-awesome.min.css')}}" rel="stylesheet">
-		<link href="{{ asset('sximo/js/plugins/bootstrap.summernote/summernote.css')}}" rel="stylesheet">
-		<link href="{{ asset('sximo/js/plugins/datepicker/css/bootstrap-datetimepicker.min.css')}}" rel="stylesheet">
-		<link href="{{ asset('sximo/js/plugins/bootstrap.datetimepicker/css/bootstrap-datetimepicker.min.css')}}" rel="stylesheet">
-		<link href="{{ asset('sximo/js/plugins/select2/select2.css')}}" rel="stylesheet">
-		<link href="{{ asset('sximo/js/plugins/iCheck/skins/square/blue.css')}}" rel="stylesheet">
-		<link href="{{ asset('sximo/js/plugins/fancybox/jquery.fancybox.css') }}" rel="stylesheet">
-        <link href="{{ asset('sximo/css/multi-select.css') }}" rel="stylesheet">
-		<link href="{{ asset('sximo/css/animate.css')}}" rel="stylesheet">
-		<link href="{{ asset('sximo/css/icons.min.css')}}" rel="stylesheet">
-		<link href="{{ asset('sximo/css/bootstrap-select.css')}}" rel="stylesheet">
-		<link href="{{ asset('sximo/js/plugins/toastr/toastr.css')}}" rel="stylesheet">
-        <link href="{{ asset('sximo/css/dropzone.css')}}" rel="stylesheet">
-		<link href="{{ asset('sximo/css/sximo.css')}}" rel="stylesheet">
-    <link href="{{ asset('sximo/css/bootstrap-switch.css')}}" rel="stylesheet">
-    <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css"/>
+	<link rel="stylesheet" href="//cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css"/>
+        <link href="{{ asset('sximo/js/plugins/bootstrap/css/bootstrap.css')}}" rel="stylesheet"/>
+		<link href="{{ asset('sximo/js/plugins/jasny-bootstrap/css/jasny-bootstrap.min.css')}}" rel="stylesheet"/>
+		<link href="{{ asset('sximo/fonts/awesome/css/font-awesome.min.css')}}" rel="stylesheet"/>
+		<link href="{{ asset('sximo/js/plugins/bootstrap.summernote/summernote.css')}}" rel="stylesheet"/>
+		<link href="{{ asset('sximo/js/plugins/datepicker/css/bootstrap-datetimepicker.min.css')}}" rel="stylesheet"/>
+		<link href="{{ asset('sximo/js/plugins/bootstrap.datetimepicker/css/bootstrap-datetimepicker.min.css')}}" rel="stylesheet"/>
+		<link href="{{ asset('sximo/js/plugins/select2/select2.css')}}" rel="stylesheet"/>
+		<link href="{{ asset('sximo/js/plugins/iCheck/skins/square/blue.css')}}" rel="stylesheet"/>
+		<link href="{{ asset('sximo/js/plugins/fancybox/jquery.fancybox.css') }}" rel="stylesheet"/>
+        <link href="{{ asset('sximo/css/multi-select.css') }}" rel="stylesheet"/>
+		<link href="{{ asset('sximo/css/animate.css')}}" rel="stylesheet"/>
+		<link href="{{ asset('sximo/css/icons.min.css')}}" rel="stylesheet"/>
+		<link href="{{ asset('sximo/css/bootstrap-select.css')}}" rel="stylesheet"/>
+		<link href="{{ asset('sximo/js/plugins/toastr/toastr.css')}}" rel="stylesheet"/>
+        <link href="{{ asset('sximo/css/dropzone.css')}}" rel="stylesheet"/>
+		<link href="{{ asset('sximo/css/sximo.css')}}" rel="stylesheet"/>
+    <link href="{{ asset('sximo/css/bootstrap-switch.css')}}" rel="stylesheet"/>
+    <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet"/>
 		<script type="text/javascript" src="{{ asset('sximo/js/plugins/jquery.min.js') }}"></script>
 		<script type="text/javascript" src="{{ asset('sximo/js/plugins/jquery.cookie.js') }}"></script>
 		<script type="text/javascript" src="{{ asset('sximo/js/plugins/jquery-ui.min.js') }}"></script>

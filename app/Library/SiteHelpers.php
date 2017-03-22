@@ -1040,7 +1040,7 @@ class SiteHelpers
     public static  function transInlineForm( $field, $forms = array(), $bulk = false, $value = '' )
     {
         $type = '';
-        $bulk = is_string($bulk) ? $bulk : ($bulk == true ? '[]' : '');
+        $bulk = is_string($bulk) ? $bulk : ($bulk === true ? '[]' : '');
         $mandatory = '';
         $attribute = '';
         $extend_class = '';
