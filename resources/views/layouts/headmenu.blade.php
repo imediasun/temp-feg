@@ -108,7 +108,7 @@ else
 <script>
     $(document).ready(function () {
         /*style start by asad*/
-        $('.page-title.change_title').text($('#sidemenu li.active .nav-label').text());
+        $('#sidemenu li.active .nav-label').text() == '' ? '' : $('.page-title.change_title').text($('#sidemenu li.active .nav-label').text());
         /*style end by asad*/
         $("#user_locations").on('change', function () {
             $('.globalLoading').show();
