@@ -10,7 +10,7 @@
       <ul class="breadcrumb">
         <li><a href="{{ URL::to('dashboard') }}">{{ Lang::get('core.home') }}</a></li>
         <li class="active">{{ $pageTitle }}</li>
-      </ul>	  	  
+      </ul>
     </div>
 	<!-- End Header & Breadcrumb -->
 
