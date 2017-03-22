@@ -107,13 +107,8 @@ else
 
 <script>
     $(document).ready(function () {
-        /*style start by asad*/
-        $('.item_dropdown li a').on('click',function () {
-            window.localStorage.setItem('clicked_tab',$(this).parents('.item_title').find(">:first-child").text());
-            //alert($(this).parents('.item_title').find(">:first-child").text());
-        });
-        $('#sidemenu li.active .nav-label').text() == '' ? window.localStorage.getItem('clicked_tab') == '' || window.localStorage.getItem('clicked_tab') == null ? '' : $('.page-title.change_title').text(window.localStorage.getItem('clicked_tab')) : $('.page-title.change_title').text($('#sidemenu li.active .nav-label').text());
-        /*style end by asad*/
+
+
         $("#user_locations").on('change', function () {
             $('.globalLoading').show();
             var location_id = $(this).val();
