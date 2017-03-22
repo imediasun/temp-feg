@@ -38,10 +38,10 @@
                 </li>
             @endif
             @if(Auth::user()->group_id == 10)
-                <li class="user dropdown"><a class="dropdown-toggle" href="javascript:void(0)" data-toggle="dropdown"><i
+                <li class="user dropdown item_title"><a class="dropdown-toggle" href="javascript:void(0)" data-toggle="dropdown"><i
                                 class="fa fa-desktop"></i> <span>{{ Lang::get('core.m_controlpanel') }}</span><i
                                 class="caret"></i></a>
-                    <ul class="dropdown-menu dropdown-menu-right icons-right">
+                    <ul class="dropdown-menu dropdown-menu-right icons-right item_dropdown">
 
                         <li><a href="{{ URL::to('feg/config')}}"><i
                                         class="fa  fa-wrench"></i> {{ Lang::get('core.m_setting') }}</a></li>
@@ -74,10 +74,10 @@
                     </ul>
                 </li>
             @endif
-            <li class="user dropdown"><a class="dropdown-toggle" href="javascript:void(0)" data-toggle="dropdown"><i
+            <li class="user dropdown item_title"><a class="dropdown-toggle" href="javascript:void(0)" data-toggle="dropdown"><i
                             class="fa fa-user"></i> <span>{{ Lang::get('core.m_myaccount') }}</span><i
                             class="caret"></i></a>
-                <ul class="dropdown-menu dropdown-menu-right icons-right">
+                <ul class="dropdown-menu dropdown-menu-right icons-right item_dropdown">
                     <li><a href="{{ URL::to('dashboard')}}"><i
                                     class="fa  fa-laptop"></i> {{ Lang::get('core.m_dashboard') }}</a></li>
                     <li><a href="{{ URL::to('')}}" target="_blank"><i class="fa fa-desktop"></i> Main Site </a></li>
@@ -108,7 +108,11 @@ else
 <script>
     $(document).ready(function () {
         /*style start by asad*/
-        $('#sidemenu li.active .nav-label').text() == '' ? '' : $('.page-title.change_title').text($('#sidemenu li.active .nav-label').text());
+        $('.item_dropdown li a').on('click',function () {
+            window.localStorage.setItem('clicked_tab',$(this).parents('.item_title').find(">:first-child").text());
+            //alert($(this).parents('.item_title').find(">:first-child").text());
+        });
+        $('#sidemenu li.active .nav-label').text() == '' ? window.localStorage.getItem('clicked_tab') == '' || window.localStorage.getItem('clicked_tab') == null ? '' : $('.page-title.change_title').text(window.localStorage.getItem('clicked_tab')) : $('.page-title.change_title').text($('#sidemenu li.active .nav-label').text());
         /*style end by asad*/
         $("#user_locations").on('change', function () {
             $('.globalLoading').show();
