@@ -27,11 +27,22 @@
         @include( $pageModule.'/toolbar',['config_id'=>$config_id,'colconfigs' => SiteHelpers::getRequiredConfigs($module_id)])
 
         <div>
-            <p>
+            <p><?php $check_mul="";$show=true; ?>
                 @if(isset($rowData))
                  @foreach($rowData as $row)
-                        <?php $rel="gallery".$row->batch; ?>
-                <a title="{{ $row->theme_name }} by {{$row->users }} at {{ $row->Location }} " class="previewImage fancybox" data-fancybox-group="{{$rel}}"  rel="{{$rel}}" data-id="{{ $row->id }}" href="{{ url() }}/uploads/gallary/{{ $row->id }}.jpg">
+                        <?php
+                            if($check_mul == $row->batch)
+                                {
+                                    $show=false;
+                                }
+                            else
+                                {
+                                    $show=true;
+                                }
+                        $rel="gallery".$row->batch;
+                        $check_mul=$row->batch;
+                        ?>
+                <a @if(!$show)) style="display:none" @else style="display:inline" @endif  title="{{ $row->theme_name }} by {{$row->users }} at {{ $row->Location }} " class="previewImage fancybox" data-fancybox-group="{{$rel}}"  rel="{{$rel}}" data-id="{{ $row->id }}" href="{{ url() }}/uploads/gallary/{{ $row->id }}.jpg">
                     <img src="{{ url() }}/uploads/gallary/{{ $row->id }}_thumb.jpg" alt="{{ $row->theme_name }}" class="merch-gallery"/>
                 </a>
                 @endforeach
