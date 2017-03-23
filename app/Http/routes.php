@@ -67,6 +67,8 @@ Route::filter('authorization', function()
 Route::get('submitservicerequest/{GID?}/{LID?}', 'SubmitservicerequestController@getIndex');
 Route::get('ticketsetting','TicketsettingController@getSetting');
 Route::get('order/submitorder/{SID?}', 'OrderController@getSubmitorder');
+Route::post('order/init-export/{ID?}', 'OrderController@postInitExport');
+Route::post('order/probe-export/{ID?}', 'OrderController@postProbeExport');
 Route::get('/', 'UserController@getLogin');
 Route::controller('home', 'HomeController');
 Route::controller('/user', 'UserController');

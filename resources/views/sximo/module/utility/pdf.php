@@ -23,6 +23,14 @@
 		$content .= '</tr>';
 	}
 	$content .= '</table>';
+
+    global $exportSessionID;
+    if (!empty($exportSessionID)) {
+        \Session::forget($exportSessionID);
+    }
+    if (!empty($exportID)) {
+        \Session::forget($exportID);
+    }
 	echo $content;
 ?>
 </div>

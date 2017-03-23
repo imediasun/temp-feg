@@ -43,6 +43,10 @@ $word_xmlns = "xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:sc
 	@header('Content-Type: application/msword');
 	@header('Content-Length: '.strlen($content));
 	@header('Content-disposition: inline; filename="'.($title . '-' . date("mdYHis")).'.doc"');
+
+    global $exportSessionID;
+    \Session::forget($exportSessionID);
+    \Session::forget($exportID);
+    
 	echo $content;
-		exit;
 ?>

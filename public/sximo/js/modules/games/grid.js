@@ -54,6 +54,7 @@
                     if (data.success) {
                         validate.val(0);
                         form.data('allowDownload', true);
+                        setAndProbeExportFormSessionTimeout(form);
                         form.find('.submitButton').click();
                     }
                     else {

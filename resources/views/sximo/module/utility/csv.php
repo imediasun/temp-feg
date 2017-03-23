@@ -31,7 +31,11 @@ foreach ($rows as $row)
 	fputcsv($fp, $content);
 	
 }
+
 fclose($fp);
-exit;
+
+global $exportSessionID;
+\Session::forget($exportSessionID);
+\Session::forget($exportID);
 
 ?>
