@@ -323,7 +323,7 @@ jQuery(document).ready(function($){
     // detect link to possible unauthorised access
     detectPUAA($);
 
-    initExport(jQuery);
+    initExport(jQuery('.page-content-wrapper'));
     
 });
 
