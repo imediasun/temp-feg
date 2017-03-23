@@ -21,9 +21,10 @@ width: 75%">
 </div>
 
     <div class="col-md-6">
-        {!! Form::open(array('url'=>'product/listcsv', 'class'=>'form-horizontal','files' => true)) !!}
+        {!! Form::open(array('url'=> url().'/product/listcsv', 'class'=>'form-horizontal','files' => true)) !!}
         <div class="col-md-2"><h3> Export </h3></div>
         <div class="col-md-6">
+            <input name="exportID" value="{{ uniqid('vendorFromProducts', true) }}" type="hidden"/>
             <select name='vendor_id' rows='5' id='vendor_id' class='select3'></select>
         </div>
         <div class="col-md-2">
@@ -200,6 +201,11 @@ width: 75%">
                 $('#submit-btn').enable();
             }
         });
+
+        $('#submit-btn').on('click', function (){
+            setAndProbeExportFormSessionTimeout($(this).closest('form'));
+        });
+
         $('#delete-cols').click(function(){
             if(confirm('Are You Sure, You want to delete this Columns Arrangement?')) {
                 showRequest();
