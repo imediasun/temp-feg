@@ -331,16 +331,22 @@ function ajaxPopupStatic(url ,w , h)
 	if (window.focus) {newwindow.focus()}
 }
 
-function notyMessage(message,showDuration)
+function notyMessage(message, options, messageType, title)
 {
-	showDuration = showDuration || "300";
-	toastr.success("", message);
-	toastr.options = {
+    options = options || {};
+    if (!messageType) {
+        messageType = 'success';
+    }
+    if (!title) {
+        title = '';
+    }
+    
+	var finalOptions = $.extend({}, {
 		  "closeButton": true,
 		  "debug": false,
 		  "positionClass": "toast-bottom-right",
 		  "onclick": null,
-		  "showDuration": showDuration,
+		  "showDuration": "300",
 		  "hideDuration": "1000",
 		  "timeOut": "5000",
 		  "extendedTimeOut": "1000",
@@ -348,20 +354,24 @@ function notyMessage(message,showDuration)
 		  "hideEasing": "linear",
 		  "showMethod": "fadeIn",
 		  "hideMethod": "fadeOut"
-
-	};	
+	}, options);
+    
+	toastr[messageType](message, title, finalOptions);
 	
 }
-function notyMessageError(message, showDuration)
+function notyMessageError(message, options, title)
 {
-	showDuration = showDuration || "300";
-	toastr.error("", message);
-	toastr.options = {
+    options = options || {};
+    if (!title) {
+        title = '';
+    }
+    
+	var finalOptions = $.extend({}, {
 		  "closeButton": true,
 		  "debug": false,
 		  "positionClass": "toast-bottom-right",
 		  "onclick": null,
-		  "showDuration": showDuration,
+		  "showDuration": "300",
 		  "hideDuration": "1000",
 		  "timeOut": "5000",
 		  "extendedTimeOut": "1000",
@@ -369,8 +379,9 @@ function notyMessageError(message, showDuration)
 		  "hideEasing": "linear",
 		  "showMethod": "fadeIn",
 		  "hideMethod": "fadeOut"
+        }, options);
 
-	};	
+	toastr.error(message, title, finalOptions);
 	
 }
 
