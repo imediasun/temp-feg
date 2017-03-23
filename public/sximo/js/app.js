@@ -363,13 +363,15 @@ function setAndProbeExportFormSessionTimeout(formElement) {
 }
 
 function setAndProbeExportSessionTimeout(setUrl, probeUrl) {
-    $.post(setUrl, {}, function(data) {console.log(data);});
+    $.post(setUrl, {}, function(data) {
+        //console.log(data);
+    });
     setTimeout(function (){
 
         $.post(probeUrl,
             {},
             function (data){
-                console.log(data);
+                //console.log(data);
                 if (data && data.waiting) {
                     notyMessage("The file you have requested \n\
                         is large and may take several minutes \n\
