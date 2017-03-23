@@ -39,6 +39,7 @@
             renderDropdown(container.find(".select2, .select3, .select4, .select5"), { width:"98%"});
             
             container.find("#status").on('change',gameStatusChanged);
+            container.find("#location_id").on('change',gameLocationChanged);
             
             container.find("#status").jCombo(mainUrl+"/comboselect?filter=game_status:id:game_status", 
                         {  selected_value : ''+ gameData.status_id });
@@ -219,6 +220,20 @@
        
     };
     
+    function gameLocationChanged(options) {
+        var GAME_MOVE = 3,
+            statusSelector = container.find("#status"),
+            status=statusSelector.val(),
+            locationSelector = $(this),
+            location = locationSelector.val(),
+            initialLocation = locationSelector.data('original-value') || 0,
+            submitButton = container.find("#submit");
+
+        if (status == GAME_MOVE) {
+            submitButton.prop('disabled', location == initialLocation);
+        }
+    }
+
     function showUpFromRepair(showIt) {
         var fieldRequired = showIt !== false;
         if (showIt === false) {
