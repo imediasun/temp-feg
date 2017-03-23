@@ -31,10 +31,10 @@
 	    <div class="toolbar-line ">
 			@if($access['is_excel'] ==1)
 			<div >
-				<a href="{{ URL::to( $pageModule .'/export/excel?return='.$return) }}" class="btn btn-sm btn-success"> Excel</a>
-				<a href="{{ URL::to( $pageModule .'/export/word?return='.$return) }}" class="btn btn-sm btn-primary"> Word </a>
-				<a href="{{ URL::to( $pageModule .'/export/csv?return='.$return) }}" class="btn btn-sm btn-warning"> CSV </a>
-				<a href="{{ URL::to( $pageModule .'/export/print?return='.$return) }}" class="btn btn-sm btn-warning" onclick="ajaxPopupStatic(this.href); return false;" > Print</a>
+				<a href="{{ URL::to( $pageModule .'/export/excel?exportID='.uniqid('excel', true).'&return='.$return) }}" class="btn btn-sm btn-success"> Excel</a>
+				<a href="{{ URL::to( $pageModule .'/export/word?exportID='.uniqid('word', true).'&return='.$return) }}" class="btn btn-sm btn-primary"> Word </a>
+				<a href="{{ URL::to( $pageModule .'/export/csv?exportID='.uniqid('csv', true).'&return='.$return) }}" class="btn btn-sm btn-warning"> CSV </a>
+				<a href="{{ URL::to( $pageModule .'/export/print?exportID='.uniqid('print', true).'&return='.$return) }}" class="btn btn-sm btn-warning" onclick="ajaxPopupStatic(this.href); return false;" > Print</a>
 			</div>	
 			@endif
 		</div> 		
