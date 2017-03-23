@@ -355,8 +355,7 @@ function setAndProbeExportFormSessionTimeout(formElement) {
         setUrl = location.pathname + '/init-export/'+ exportId,
         probeUrl = location.pathname + '/probe-export/'+ exportId;
 
-    console.log(exportId);
-    
+//    console.log(exportId);
     if (exportId) {
         setAndProbeExportSessionTimeout(setUrl, probeUrl);
     }    
