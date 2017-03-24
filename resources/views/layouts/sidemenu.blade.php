@@ -87,15 +87,7 @@ $selected_loc=\Session::get('selected_location');?>
                 </div>
             </li>
             @endif
-            <li>
-                <a href="{{url('throwreport')}}">
-                    <i class=""></i> <span class="nav-label">
 
-					                                Throw Report
-
-					</span><span class="fa arrow"></span>
-                </a>
-            </li>
             @foreach ($sidebar as $menu)
                 <li @if(Request::segment(1) == $menu['module']) class="active" @endif>
                     <a
