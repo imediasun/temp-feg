@@ -382,7 +382,7 @@ function setAndProbeExportSessionTimeout(setUrl, probeUrl) {
                             showEasing: 'linear',
                         },
                         'info',
-                        'Delay');
+                        'Attention');
                 }
             },
             'json'
