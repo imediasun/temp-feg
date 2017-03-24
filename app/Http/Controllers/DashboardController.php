@@ -28,7 +28,7 @@ class DashboardController extends Controller
         if (!empty($redirect)) {
             return redirect($redirect);
         }
-        require_once('setting.php');
+        //require_once('setting.php');
         if(CNF_REDIRECTLINK)
         {
             return redirect(CNF_REDIRECTLINK);
