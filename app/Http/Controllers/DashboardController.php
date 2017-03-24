@@ -2,6 +2,7 @@
 
 use App\Http\Controllers;
 use App\Models\Core\Groups;
+use App\Models\Feg\System\Options;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Auth;
@@ -33,7 +34,7 @@ class DashboardController extends Controller
         {
             return redirect(CNF_REDIRECTLINK);
         }*/
-        
+        return $redirect(Options::where('option_name','CNF_REDIRECLINK')->pluck('option_value'));
         /* connect to gmail */
         $this->data['online_users'] = \DB::table('users')->orderBy('last_activity', 'desc')->limit(10)->get();
         return view('dashboard.index', $this->data);
