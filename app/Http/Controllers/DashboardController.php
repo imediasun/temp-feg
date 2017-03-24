@@ -34,8 +34,9 @@ class DashboardController extends Controller
         {
             return redirect(CNF_REDIRECTLINK);
         }*/
-        dd(Options::where('option_name','CNF_REDIRECLINK')->pluck('option_value'));
-        return redirect(Options::where('option_name','CNF_REDIRECLINK')->pluck('option_value'));
+
+        $redirect = Options::where('option_name','CNF_REDIRECLINK')->pluck('option_value');
+        return redirect($redirect);
         /* connect to gmail */
         $this->data['online_users'] = \DB::table('users')->orderBy('last_activity', 'desc')->limit(10)->get();
         return view('dashboard.index', $this->data);
