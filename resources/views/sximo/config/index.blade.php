@@ -182,9 +182,9 @@
                                 @endif
 							@endforeach
 						</optgroup>
-                        <optgroup label="Dashboards">
+                        {{--<optgroup label="Dashboards">
                             <option value="dashboard">Dashboard</option>
-                        </optgroup>
+                        </optgroup>--}}
 						<optgroup label="Page CMS ">
 							@foreach($pages as $page)
 								<option value="{{ $page->alias}}"
