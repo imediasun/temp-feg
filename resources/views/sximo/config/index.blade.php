@@ -163,6 +163,9 @@
 				<div class="col-md-8">
 					<select name="cnf_redireclink" rows='5' type="text" id="cnf_redireclink"   style="width:100%"  class='select-liquid ' value="{{ $options['CNF_REDIRECTLINK'] }}" >
 						<option value=""> -- Select Module or Page -- </option>
+						<optgroup label="User Profile">
+							<option @if($options['CNF_REDIRECTLINK'] === "user/profile" ) selected="selected" @endif value="user/profile">User Profile</option>
+						</optgroup>
 						<optgroup label="Module ">
 							@foreach($modules as $mod)
 
@@ -182,9 +185,7 @@
                                 @endif
 							@endforeach
 						</optgroup>
-                        {{--<optgroup label="Dashboards">
-                            <option value="dashboard">Dashboard</option>
-                        </optgroup>--}}
+
 						<optgroup label="Page CMS ">
 							@foreach($pages as $page)
 								<option value="{{ $page->alias}}"
