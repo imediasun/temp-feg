@@ -88,7 +88,7 @@
 		@include('layouts/sidemenu')
 		<div class="gray-bg " id="page-wrapper">
 			@include('layouts/headmenu')
-
+			<div class="ajaxLoading"></div>
 			@yield('content')
 		</div>
 
@@ -147,6 +147,49 @@
 
 <script type="text/javascript">
 jQuery(document).ready(function ($) {
+	$('body a:not(.page-content-wrapper a,.expand)').on('click',function (e) {
+		e.preventDefault();
+		var url = $(this).attr('href');
+		var href = $(this).attr('href').split('/');
+		console.log(url,href,href[href.length-1]);
+		if(url != 'javascript:void(0)')
+		{
+			$('.ajaxLoading').show();
+			$.ajax({
+				url:'/core/users/check-access',
+				method:'get',
+				data: {
+					module:href[href.length - 1]
+				}
+			}).done(function (data) {
+						console.log(data);
+						if(data == false)
+						{
+							$('.ajaxLoading').hide();
+							window.location = url;
+						}
+						else
+						{
+							console.log(data.is_view);
+							//console.log(data['is_view']);
+							if(data.is_view == 1)
+							{
+								window.location = url;
+							}
+							else
+							{
+								$('.ajaxLoading').hide();
+								notyMessageError('You are Not Authorized to this Content');
+							}
+						}
+						//$('.globalLoading').hide();
+
+					})
+					.error(function (data) {
+						console.log(data);
+					})
+		}
+	});
 	$('.item_dropdown li a').on('click', function () {
 		if($(this).parents('.item_title').find(">:first-child").text() != 'My Account')
 		{

@@ -199,8 +199,6 @@
 			</div>
 
 
-
-
 			<div class="form-group">
 				<label for="ipt" class=" control-label col-md-4">{{ Lang::get('core.fr_email') }} </label>
 				<div class="col-md-8">
