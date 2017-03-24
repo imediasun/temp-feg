@@ -22,11 +22,14 @@ class DashboardController extends Controller
     {
         if(Auth::user() && Auth::user()->redirect_link)
         {
+            
             return redirect(Auth::user()->redirect_link);
         }
         $group = Auth::user()?Auth::user()->group_id:0;
         $redirect = Groups::find($group)?Groups::find($group)->redirect_link:'';
+
         if (!empty($redirect)) {
+
             return redirect($redirect);
         }
         //require_once('setting.php');
@@ -36,6 +39,7 @@ class DashboardController extends Controller
         }*/
 
         $redirect = Options::where('option_name','CNF_REDIRECLINK')->pluck('option_value');
+
         return redirect($redirect);
         /* connect to gmail */
         $this->data['online_users'] = \DB::table('users')->orderBy('last_activity', 'desc')->limit(10)->get();
