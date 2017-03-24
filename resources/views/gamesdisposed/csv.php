@@ -11,6 +11,9 @@ foreach ($rows as $row) {
     fputcsv($fp, $row);
 }
 fclose($fp);
-exit;
+
+global $exportSessionID;
+\Session::forget($exportSessionID);
+\Session::forget($exportID);
 
 ?>

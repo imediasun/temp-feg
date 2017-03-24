@@ -156,7 +156,7 @@ jQuery(document).ready(function ($) {
 	});
 	if(window.location.pathname != "/dashboard")
 	{
-		console.log($('#sidemenu li.active .nav-label').text());
+		//console.log($('#sidemenu li.active .nav-label').text());
 
 		$('#sidemenu li.active .nav-label').text() == '' ? window.localStorage.getItem('clicked_tab') == '' || window.localStorage.getItem('clicked_tab') == null ? '' : $('.page-title.change_title').text(window.localStorage.getItem('clicked_tab')) : $('.page-title.change_title').text($('#sidemenu li.active .nav-label').text());
 	}

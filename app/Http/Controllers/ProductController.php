@@ -315,12 +315,22 @@ class ProductController extends Controller
 
     function postListcsv(Request $request)
     {
+        global $exportSessionID;
+        ini_set('memory_limit', '1G');
+        set_time_limit(0);
 
+        $exportId = Input::get('exportID');
+        if (!empty($exportId)) {
+            $exportSessionID = 'export-'.$exportId;
+            \Session::put($exportSessionID, microtime(true));
+        }
+        
         $vendor_id = $request->vendor_id;
         $rows = $this->model->getVendorPorductlist($vendor_id);
         $fields = array('Vendor', 'Description', 'Sku', 'Unit Price', 'Item Per Case', 'Case Price', 'Ticket Value', 'Order Type', 'Product Type', 'INACTIVE');
         $this->data['pageTitle'] = 'ProductList_';
         $content = array(
+            'exportID' => $exportSessionID,
             'fields' => $fields,
             'rows' => $rows,
             'type' => 'move',

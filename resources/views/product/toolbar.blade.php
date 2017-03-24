@@ -21,9 +21,10 @@ width: 75%">
 </div>
 
     <div class="col-md-6">
-        {!! Form::open(array('url'=>'product/listcsv', 'class'=>'form-horizontal','files' => true)) !!}
+        {!! Form::open(array('url'=> url().'/product/listcsv', 'class'=>'form-horizontal','files' => true)) !!}
         <div class="col-md-2"><h3> Export </h3></div>
         <div class="col-md-6">
+            <input name="exportID" value="{{ uniqid('vendorFromProducts', true) }}" type="hidden"/>
             <select name='vendor_id' rows='5' id='vendor_id' class='select3'></select>
         </div>
         <div class="col-md-2">
@@ -86,19 +87,19 @@ width: 75%">
 
                     @endif
                     @if($isExcel)
-                        <a href="{{ URL::to( $pageModule .'/export/excel?return='.$return) }}" class="btn btn-sm btn-white"> Excel</a>
+                        <a href="{{ URL::to( $pageModule .'/export/excel?exportID='.uniqid('excel', true).'&return='.$return) }}" class="btn btn-sm btn-white"> Excel</a>
                     @endif
                     @if($isCSV)
-                        <a href="{{ URL::to( $pageModule .'/export/csv?return='.$return) }}" class="btn btn-sm btn-white"> CSV </a>
+                        <a href="{{ URL::to( $pageModule .'/export/csv?exportID='.uniqid('csv', true).'&return='.$return) }}" class="btn btn-sm btn-white"> CSV </a>
                     @endif
                     @if($isPDF)
-                        <a href="{{ URL::to( $pageModule .'/export/pdf?return='.$return) }}" class="btn btn-sm btn-white"> PDF</a>
+                        <a href="{{ URL::to( $pageModule .'/export/pdf?exportID='.uniqid('pdf', true).'&return='.$return) }}" class="btn btn-sm btn-white"> PDF</a>
                     @endif
                     @if($isWord)
-                        <a href="{{ URL::to( $pageModule .'/export/word?return='.$return) }}" class="btn btn-sm btn-white"> Word</a>
+                        <a href="{{ URL::to( $pageModule .'/export/word?exportID='.uniqid('word', true).'&return='.$return) }}" class="btn btn-sm btn-white"> Word</a>
                     @endif
                     @if($isPrint)
-                        <a href="{{ URL::to( $pageModule .'/export/print?return='.$return) }}" class="btn btn-sm btn-white" onclick="ajaxPopupStatic(this.href); return false;" > Print</a>
+                        <a href="{{ URL::to( $pageModule .'/export/print?exportID='.uniqid('print', true).'&return='.$return) }}" class="btn btn-sm btn-white" onclick="ajaxPopupStatic(this.href); return false;" > Print</a>
                     @endif
                 </div>
             @endif
@@ -200,6 +201,11 @@ width: 75%">
                 $('#submit-btn').enable();
             }
         });
+
+        $('#submit-btn').on('click', function (){
+            setAndProbeExportFormSessionTimeout($(this).closest('form'));
+        });
+
         $('#delete-cols').click(function(){
             if(confirm('Are You Sure, You want to delete this Columns Arrangement?')) {
                 showRequest();

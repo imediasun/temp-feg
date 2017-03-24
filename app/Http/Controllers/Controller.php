@@ -71,8 +71,44 @@ abstract class Controller extends BaseController
             'last_activity' => strtotime(Carbon::now())
         );
         \DB::table('users')->where('id', \Session::get('uid'))->update($data);
+
+        $this->data = [
+            'UQID' =>  uniqid('', true)
+        ];
     }
 
+    function postInitExport($exportId = null) {
+        global $exportSessionID;
+        if (!empty($exportId)) {
+            $exportSessionID = 'export-'.$exportId;
+            \Session::put($exportSessionID, microtime(true));
+        }
+        $time = \Session::get($exportSessionID);
+        return response()->json(array('session' => $exportSessionID, 'timestart' => $time));        
+    }
+
+    function postProbeExport($id) {
+        global $exportSessionID;
+        $exportSessionID = 'export-'.$id;
+        if (\Session::has($exportSessionID) && !is_null(\Session::has($exportSessionID))) {
+            $idTime = \Session::get($exportSessionID);
+            $now = microtime(true);
+            $diff = $now - $idTime;
+            \Session::forget($exportSessionID);            
+            return response()->json(array(
+                'session' => $exportSessionID,
+                'timestart' => $idTime,
+                'timenow' => $now,
+                'elapsed' => $diff,
+                'waiting' => true, 
+            ));
+        }
+        return response()->json(array(                
+                'session' => $exportSessionID,
+                'elapsed' => 0,
+                'waiting' => false,
+            ));
+    }
 
     function getComboselect(Request $request)
     {
@@ -732,7 +768,16 @@ abstract class Controller extends BaseController
     public
     function getExport($t = 'excel')
     {
+        global $exportSessionID;
+        ini_set('memory_limit', '1G');
+        set_time_limit(0);
 
+        $exportId = Input::get('exportID');
+        if (!empty($exportId)) {
+            $exportSessionID = 'export-'.$exportId;
+            \Session::put($exportSessionID, microtime(true));
+        }
+        
         $info = $this->model->makeInfo($this->module);
         //$master  	= $this->buildMasterDetail();
         if (method_exists($this, 'getSearchFilterQuery')) {
@@ -834,6 +879,7 @@ abstract class Controller extends BaseController
         }
 
         $content = array(
+            'exportID' => $exportSessionID,
             'fields' => $fields,
             'rows' => $rows,
             'title' => $this->data['pageTitle'],
