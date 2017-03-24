@@ -42,6 +42,9 @@
 	// It will be called file.xls
 	header('Content-disposition: attachment; filename="'.($title . '-' . date("mdYHis")).'.xlsx"');
 
+    global $exportSessionID;
+    \Session::forget($exportSessionID);
+    \Session::forget($exportID);
 	// Write file to the browser
 	$objWriter->save('php://output');
 	/*

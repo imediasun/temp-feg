@@ -3,6 +3,7 @@
 use App\Http\Controllers\controller;
 use App\Library\FEG\System\FEGSystemHelper;
 use App\Models\Core\Groups;
+use App\Models\Feg\System\Options;
 use App\User;
 use Illuminate\Http\Request;
 use Validator, Input, Redirect;
@@ -22,6 +23,7 @@ class ConfigController extends Controller
 
     public function getIndex()
     {
+        
         $this->data['active'] = '';
         $this->data['modules'] = \DB::table('tb_module')->where('module_type', '!=', 'core')->orderBy('module_title', 'asc')->get();
         $this->data['pages'] = \DB::table("tb_pages")->orderBy('title', 'asc')->get();
@@ -32,14 +34,13 @@ class ConfigController extends Controller
              'CNF_EMAIL' => FEGSystemHelper::getOption('CNF_EMAIL'),
              'CNF_METAKEY' => FEGSystemHelper::getOption('CNF_METAKEY'),
             'CNF_METADESC' => FEGSystemHelper::getOption('CNF_METADESC'),
-             'CNF_REDIRECTLINK' => FEGSystemHelper::getOption('CNF_REDIRECTLINK'),
+             'CNF_REDIRECTLINK' => FEGSystemHelper::getOption('CNF_REDIRECTLINK')?FEGSystemHelper::getOption('CNF_REDIRECTLINK'):Options::where('option_name','CNF_REDIRECLINK')->pluck('option_value'),
              'CNF_GROUP' => FEGSystemHelper::getOption('CNF_GROUP'),
              'CNF_ACTIVATION' => FEGSystemHelper::getOption('CNF_ACTIVATION'),
              'CNF_MULTILANG' => FEGSystemHelper::getOption('CNF_MULTILANG'),
              'CNF_LANG' => FEGSystemHelper::getOption('CNF_LANG'),
              'CNF_REGIST' => FEGSystemHelper::getOption('CNF_REGIST'),
             'CNF_FRONT' => FEGSystemHelper::getOption('CNF_FRONT'),
-            'CNF_REGIST' => FEGSystemHelper::getOption('CNF_REGIST'),
             'CNF_RECAPTCHA' => FEGSystemHelper::getOption('CNF_RECAPTCHA'),
             'CNF_THEME' => FEGSystemHelper::getOption('CNF_THEME'),
             'CNF_RECAPTCHAPUBLICKEY' => FEGSystemHelper::getOption('CNF_RECAPTCHAPUBLICKEY'),
@@ -51,6 +52,7 @@ class ConfigController extends Controller
             'CNF_REPLY_TO' => FEGSystemHelper::getOption('CNF_REPLY_TO'),
             'CNF_REPLY_TO_PASSWORD' => FEGSystemHelper::getOption('CNF_REPLY_TO_PASSWORD'),
         ];
+
         return view('sximo.config.index', $this->data);
     }
 
@@ -80,6 +82,7 @@ class ConfigController extends Controller
             
 
             $data = $request->all();
+            
             unset($data['_token']);
             foreach ($data as $key => $value)
             {

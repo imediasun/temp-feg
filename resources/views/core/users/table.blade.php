@@ -208,8 +208,6 @@
 
 	</div>
 </div>
-</div>
-	@if($setting['inline'] =='true') @include('sximo.module.utility.inlinegrid') @endif
 
 <style>
     .table th.right {

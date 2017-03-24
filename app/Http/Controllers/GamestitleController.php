@@ -315,10 +315,15 @@ class GamestitleController extends Controller
                    // $img->save($img_thumb);
                     $new_name .= $count.$extension.',';
                 }
-
+                $imgFlag=true;
             }
-            $imgFlag=true;
+
             $updates['img'] = substr($new_name,0,strlen($new_name)-1);
+            if(empty($updates['img']))
+            {
+                $imgFlag=false;
+                unset($updates['img']);
+            }
             if($manualFlag || $serviceFlag || $imgFlag) {
                 $this->model->insertRow($updates, $id);
             }

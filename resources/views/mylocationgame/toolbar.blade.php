@@ -1,12 +1,13 @@
 <div class="simpleBoxContainer gameExportContainer clearfix">
 
-    {!! Form::open(array('url'=>'mylocationgame/export-games-data/csv', 
+    {!! Form::open(array('url'=>'mylocationgame/export/csv/games',
         'class'=>'form-horizontal',
         'target'=>'_self',
         'id'=> 'mylocationgameExportFormAjax')) !!}
     <div class="clearfix">
         <h4 class='pull-left m-l-sm m-r-xs'>Export</h4>
         <div class='pull-left col-md-3'>
+            <input name="exportID" value="{{ uniqid('gamesdata', true) }}" type="hidden"/>
             <input name='validateDownload' type='hidden' value='1'/>
             <input name='footerfiters' type='hidden' value=''/>
             <select name='game_title_id' id='game_name' class='select4'></select>
@@ -78,24 +79,31 @@
     </div>
     <div class="pull-right">
             <div class="pull-left m-r-xs-f lh-2p5"><strong>Download</strong></div>
-            <form method="get" action="{{ URL::to( $pageModule .'/history') }}"
-                  class="form-inline pull-left m-l-xxs-f downloadGameMoveHistory downloadForm">
-                <input name="filter" value="" type="hidden"/>
+
+            {!! Form::open(array('url'=> URL::to( $pageModule .'/export/csv/history'),
+                'class'=>'form-inline pull-left m-l-xxs-f downloadGameMoveHistory downloadForm',
+                'target'=>'_self')) !!}
+                <input name="exportID" value="{{ uniqid('gamehistory', true) }}" type="hidden"/>
+                <input name="footerfiters" value="" type="hidden"/>
                 <input name='validateDownload' type='hidden' value='1'/>
                 <button type="submit" class="btn btn-sm btn-white submitButton">Game Move History</button>
-            </form>
-            <form method="get" action="{{ URL::to( $pageModule .'/pending') }}"
-                  class="form-inline pull-left m-l-xxs-f downloadGamePendingSales downloadForm">
-                <input name="filter" value="" type="hidden"/>
+            {!! Form::close() !!}
+            {!! Form::open(array('url'=> URL::to( $pageModule .'/export/csv/pending'),
+                'class'=>'form-inline pull-left m-l-xxs-f downloadGamePendingSales downloadForm',
+                'target'=>'_self')) !!}
+                <input name="exportID" value="{{ uniqid('gamependingsale', true) }}" type="hidden"/>
+                <input name="footerfiters" value="" type="hidden"/>
                 <input name='validateDownload' type='hidden' value='1'/>
                 <button type="submit" class="btn btn-sm btn-white submitButton">Pending Sales List</button>
-            </form>
-            <form method="get" action="{{ URL::to( $pageModule .'/forsale') }}"
-                  class="form-inline pull-left m-l-xxs-f downloadGameForSale downloadForm">
-                <input name="filter" value="" type="hidden"/>
+            {!! Form::close() !!}
+            {!! Form::open(array('url'=> URL::to( $pageModule .'/export/csv/forsale'),
+                'class'=>'form-inline pull-left m-l-xxs-f downloadGameForSale downloadForm',
+                'target'=>'_self')) !!}
+                <input name="exportID" value="{{ uniqid('gameforsale', true) }}" type="hidden"/>
+                <input name="footerfiters" value="" type="hidden"/>
                 <input name='validateDownload' type='hidden' value='1'/>
                 <button type="submit" class="btn btn-sm btn-white submitButton">For-Sale List</button>
-            </form>
+            {!! Form::close() !!}
     </div>
 </div>
 

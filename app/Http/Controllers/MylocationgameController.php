@@ -633,9 +633,42 @@ class MylocationgameController extends Controller
         ));        
     }
 
+    public function postExport(Request $request, $exportType = null, $source = null) {
+        ini_set('memory_limit', '1G');
+        set_time_limit(0);
+
+        if (empty($exportType)) {
+            $exportType = 'csv';
+        }
+        switch (strtolower($source)) {
+            case "games":
+                return $this->postExportGamesData($request, $exportType);
+                break;
+            case "history":
+                return $this->getHistory($request, $exportType);
+                break;
+            case "pending":
+                return $this->getPending($request, $exportType);
+                break;
+            case "forsale":
+                return $this->getForsale($request, $exportType);
+                break;
+            default:
+                die($source);
+                return parent::getExport($exportType);
+        }
+    }
+    /**
+     * getExport
+     * @param Request $request
+     * @param string $exportType
+     * @return type
+     */
     public function postExportGamesData(Request $request, $exportType = null)
     {
-              
+        ini_set('memory_limit', '1G');
+        set_time_limit(0);
+        
         $inputFiltersString = $request->input('footerfiters');
         parse_str($inputFiltersString, $inputFilters);
         $search = isset($inputFilters['search']) ? $inputFilters['search'] :'';
@@ -674,7 +707,7 @@ class MylocationgameController extends Controller
         if (!empty($request['validateDownload'])) {
             $status = [];
             if (empty($rows)) {
-                $status['error'] = 'This combination of game title & location is not available.';
+                $status['error'] = 'The selected Game Title is not present at the Location you have selected, so the export has been aborted. Please select a different Game Title and/or Location combination.';
             }
             else {
                 $status['success'] = 1;
@@ -709,6 +742,15 @@ class MylocationgameController extends Controller
         if (empty($exportType)) {
             $exportType = 'csv';
         }
+
+        global $exportSessionID;
+        $exportId = Input::get('exportID');
+        if (!empty($exportId)) {
+            $exportSessionID = 'export-'.$exportId;
+            \Session::put($exportSessionID, microtime(true));
+        }
+        $content['exportID'] = $exportSessionID;
+        
         switch ($exportType) {
             case "csv":
                 return view('sximo.module.utility.csv', $content);
@@ -733,8 +775,8 @@ class MylocationgameController extends Controller
         if (is_null($request)) {
             $request = array();
         }                
-        $filterQuery = empty($request['filter']) ? '' : $request['filter'];
-        parse_str(@$request['filter'], $querystring);
+        $filterQuery = empty($request['footerfiters']) ? '' : $request['footerfiters'];
+        parse_str(@$request['footerfiters'], $querystring);
         $searchQuery = empty($querystring['search']) ? null : $querystring['search'];
         $filter = $this->getSearchFilterQuery($searchQuery);        
         $q = "SELECT id from game WHERE id IS NOT NULL $filter";
@@ -748,16 +790,24 @@ class MylocationgameController extends Controller
         $assetIds = implode(',', $assets);        
         return $assetIds;        
     }
-    
-    public function getHistory(Request $requestData = null)
+
+    /**
+     * getExport
+     * @param Request $requestData
+     * @return type
+     */
+    public function getHistory(Request $requestData = null, $exportType = null)
     {
+        ini_set('memory_limit', '1G');
+        set_time_limit(0);
+
         $request = $requestData->all();
         $assetIds = $this->getAssetIdsFromFilter($request);
         if ($assetIds == '') {
             $assetIds = '0';
         }
-
         $rows = $this->model->getMoveHistory($assetIds);
+
         if (!empty($request['validateDownload'])) {
             $status = [];
             if (empty($assetIds) || empty($rows)) {
@@ -790,11 +840,28 @@ class MylocationgameController extends Controller
             'type' => 'move',
             'title' => $this->data['pageTitle'],
         );
+
+        global $exportSessionID;
+        $exportId = Input::get('exportID');
+        if (!empty($exportId)) {
+            $exportSessionID = 'export-'.$exportId;
+            \Session::put($exportSessionID, microtime(true));
+        }
+        $content['exportID'] = $exportSessionID;
+
         return view('mylocationgame.csvhistory', $content);
     }
 
-    function getPending(Request $requestData = null)
+    /**
+     * getExport
+     * @param Request $requestData
+     * @return type
+     */
+    function getPending(Request $requestData = null, $exportType = null)
     {
+        ini_set('memory_limit', '1G');
+        set_time_limit(0);
+
         $request = $requestData->all();
         $assetIds = $this->getAssetIdsFromFilter($request);
         if ($assetIds == '') {
@@ -835,11 +902,28 @@ class MylocationgameController extends Controller
             'type' => 'pending',
             'title' => $this->data['pageTitle'],
         );
+
+        global $exportSessionID;
+        $exportId = Input::get('exportID');
+        if (!empty($exportId)) {
+            $exportSessionID = 'export-'.$exportId;
+            \Session::put($exportSessionID, microtime(true));
+        }
+        $content['exportID'] = $exportSessionID;
+
         return view('mylocationgame.csvhistory', $content);
     }
 
-    function getForsale(Request $requestData = null)
+    /**
+     * getExport
+     * @param Request $requestData
+     * @return type
+     */
+    function getForsale(Request $requestData = null, $exportType = null)
     {
+        ini_set('memory_limit', '1G');
+        set_time_limit(0);
+
         $request = $requestData->all();
         $assetIds = $this->getAssetIdsFromFilter($request);
         if ($assetIds == '') {
@@ -880,6 +964,15 @@ class MylocationgameController extends Controller
             'type' => 'forsale',
             'title' => $this->data['pageTitle'],
         );
+
+        global $exportSessionID;
+        $exportId = Input::get('exportID');
+        if (!empty($exportId)) {
+            $exportSessionID = 'export-'.$exportId;
+            \Session::put($exportSessionID, microtime(true));
+        }
+        $content['exportID'] = $exportSessionID;
+
         return view('mylocationgame.csvhistory', $content);
     }
 

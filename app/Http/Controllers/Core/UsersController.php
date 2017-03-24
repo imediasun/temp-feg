@@ -4,7 +4,9 @@ namespace App\Http\Controllers\core;
 use App\Http\Controllers\controller;
 use App\Models\Core\Users;
 use App\Models\Core\Groups;
+use App\Models\Sximo\Module;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Validator, Input, Redirect, Session, Auth, DB;
 
@@ -35,6 +37,13 @@ class UsersController extends Controller
             'return' => self::returnUrl()
 
         );
+    }
+
+    public function getCheckAccess()
+    {
+
+        $moduleId = Module::where('module_name' ,Input::get('module'))->pluck('module_id');
+        return response()->json($this->model->validAccess($moduleId));
     }
 
     public function getIndex(Request $request, $id=null)

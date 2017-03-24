@@ -34,19 +34,19 @@
 		@if($isExport)
 		<div class="pull-right">
             @if($isExcel)
-			<a href="{{ URL::to( $pageUrl .'/export/excel?return='.$return) }}" class="btn btn-sm btn-white"> Excel</a>
+			<a href="{{ URL::to( $pageUrl .'/export/excel?exportID='.uniqid('excel', true).'&return='.$return) }}" class="btn btn-sm btn-white"> Excel</a>
 			@endif
             @if($isCSV)
-			<a href="{{ URL::to( $pageUrl .'/export/csv?return='.$return) }}" class="btn btn-sm btn-white"> CSV </a>
+			<a href="{{ URL::to( $pageUrl .'/export/csv?exportID='.uniqid('csv', true).'&return='.$return) }}" class="btn btn-sm btn-white"> CSV </a>
 			@endif
             @if($isPDF)
-			<a href="{{ URL::to( $pageUrl .'/export/pdf?return='.$return) }}" class="btn btn-sm btn-white"> PDF</a>
+			<a href="{{ URL::to( $pageUrl .'/export/pdf?exportID='.uniqid('pdf', true).'&return='.$return) }}" class="btn btn-sm btn-white"> PDF</a>
 			@endif
             @if($isWord)
-			<a href="{{ URL::to( $pageUrl .'/export/word?return='.$return) }}" class="btn btn-sm btn-white"> Word</a>
+			<a href="{{ URL::to( $pageUrl .'/export/word?exportID='.uniqid('word', true).'&return='.$return) }}" class="btn btn-sm btn-white"> Word</a>
 			@endif
             @if($isPrint)
-			<a href="{{ URL::to( $pageUrl .'/export/print?return='.$return) }}" class="btn btn-sm btn-white" onclick="ajaxPopupStatic(this.href); return false;" > Print</a>
+			<a href="{{ URL::to( $pageUrl .'/export/print?exportID='.uniqid('print', true).'&return='.$return) }}" class="btn btn-sm btn-white" onclick="ajaxPopupStatic(this.href); return false;" > Print</a>
 			@endif
 		</div>	
 		@endif

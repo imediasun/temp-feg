@@ -46,7 +46,16 @@ class ManagefegrequeststoreController extends Controller
 
     public function getExport($t = 'excel')
     {
+        global $exportSessionID;
+        ini_set('memory_limit', '1G');
         set_time_limit(0);
+
+        $exportId = Input::get('exportID');
+        if (!empty($exportId)) {
+            $exportSessionID = 'export-'.$exportId;
+            \Session::put($exportSessionID, microtime(true));
+        }
+        
         $info = $this->model->makeInfo($this->module);
         //$master  	= $this->buildMasterDetail();
 
@@ -93,6 +102,7 @@ class ManagefegrequeststoreController extends Controller
         $rows = $results['rows'];
         $rows = $this->updateDateInAllRows($rows);
         $content = array(
+            'exportID' => $exportSessionID,
             'fields' => $fields,
             'rows' => $rows,
             'title' => $this->data['pageTitle'],

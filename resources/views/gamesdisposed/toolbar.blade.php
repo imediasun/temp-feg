@@ -22,7 +22,7 @@
     </div>
 	<div class="col-md-4 ">
 		<div class="pull-right">
-			<a href="{{ URL::to( $pageModule .'/export/csv?return='.$return) }}" class="btn btn-sm btn-white">
+			<a href="{{ URL::to( $pageModule .'/export/csv?exportID='.uniqid('csv', true).'&return='.$return) }}" class="btn btn-sm btn-white">
                 Download Disposed Games List </a>
 		</div>
 	</div>

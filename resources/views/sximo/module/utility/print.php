@@ -56,6 +56,10 @@
 	}
 	$content .= '</table>';
 
+    global $exportSessionID;
+    \Session::forget($exportSessionID);
+    \Session::forget($exportID);
+
 	echo $content;
 //	exit;
 		

@@ -1,5 +1,6 @@
 var UNDEFINED, 
     UNFN = function () {},
+    exportThreshold = 10000,
     App = {
         lastSearchMode: '',
         autoCallbacks: {},
@@ -159,7 +160,7 @@ App.autoCallbacks.runCallback = function (eventName, params, options) {
 };
 
 App.autoCallbacks.registerCallback('reloaddata', function(params){
-
+    initExport(this);
 });
 App.autoCallbacks.registerCallback('columnselector', function(params){
 
@@ -322,9 +323,73 @@ jQuery(document).ready(function($){
     // detect link to possible unauthorised access
     detectPUAA($);
 
-
-
+    initExport(jQuery('.page-content-wrapper'));
+    
 });
+
+function initExport(container) {
+    
+    var exportButtons = container.find('a[href*="/export/"]');
+
+    if (exportButtons.length) {
+        exportButtons.on('click', function () {
+                var elm = $(this),
+                    href = elm.attr('href'),
+                    exportIDMatches = /[\?\&]exportID\=([^\&]*)/.exec(href),
+                    exportId = exportIDMatches && exportIDMatches[1] || '',
+                    setUrl = location.pathname + '/init-export/'+ exportId,
+                    probeUrl = location.pathname + '/probe-export/'+ exportId;
+
+                    if (exportId) {
+                        setAndProbeExportSessionTimeout(setUrl, probeUrl);
+                    }
+
+            });
+    }
+}
+
+function setAndProbeExportFormSessionTimeout(formElement) {
+
+    var exportIDMatches = formElement.find('[name=exportID]'),
+        exportId = exportIDMatches.val(),
+        setUrl = location.pathname + '/init-export/'+ exportId,
+        probeUrl = location.pathname + '/probe-export/'+ exportId;
+
+//    console.log(exportId);
+    if (exportId) {
+        setAndProbeExportSessionTimeout(setUrl, probeUrl);
+    }    
+}
+
+function setAndProbeExportSessionTimeout(setUrl, probeUrl) {
+    $.post(setUrl, {}, function(data) {
+        //console.log(data);
+    });
+    setTimeout(function (){
+
+        $.post(probeUrl,
+            {},
+            function (data){
+                //console.log(data);
+                if (data && data.waiting) {
+                    notyMessage("The file you have requested \n\
+                        is large and may take several minutes \n\
+                        to generate. Please do not close this \n\
+                        page until your file is ready.",
+                        {
+                            showDuration: 0,
+                            timeOut: 0,
+                            showEasing: 'linear',
+                        },
+                        'info',
+                        'Delay');
+                }
+            },
+            'json'
+        );
+
+    }, exportThreshold);
+}
 
 function updateNativeUIFieldsBasedOn() {
     var searchCache,

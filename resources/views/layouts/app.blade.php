@@ -32,7 +32,8 @@
     <link href="{{ asset('sximo/css/bootstrap-switch.css')}}" rel="stylesheet"/>
     <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet"/>
 		<script type="text/javascript" src="{{ asset('sximo/js/plugins/jquery.min.js') }}"></script>
-		<script type="text/javascript" src="{{ asset('sximo/js/plugins/jquery.cookie.js') }}"></script>
+
+			<script type="text/javascript" src="{{ asset('sximo/js/plugins/jquery.cookie.js') }}"></script>
 		<script type="text/javascript" src="{{ asset('sximo/js/plugins/jquery-ui.min.js') }}"></script>
 
 		<script type="text/javascript" src="{{ asset('sximo/js/plugins/iCheck/icheck.min.js') }}"></script>
@@ -87,7 +88,7 @@
 		@include('layouts/sidemenu')
 		<div class="gray-bg " id="page-wrapper">
 			@include('layouts/headmenu')
-
+			<div class="ajaxLoading"></div>
 			@yield('content')
 		</div>
 
@@ -143,8 +144,69 @@
 @yield('beforebodyend', '')
 @include('sximo.module.utility.inlinegrid')
 @yield('inlinedit', '')
+
 <script type="text/javascript">
 jQuery(document).ready(function ($) {
+	$('body a:not(.page-content-wrapper a,.expand)').on('click',function (e) {
+		e.preventDefault();
+		var url = $(this).attr('href');
+		var href = $(this).attr('href').split('/');
+		console.log(url,href,href[href.length-1]);
+		if(url != 'javascript:void(0)')
+		{
+			$('.ajaxLoading').show();
+			$.ajax({
+				url:'/core/users/check-access',
+				method:'get',
+				data: {
+					module:href[href.length - 1]
+				}
+			}).done(function (data) {
+						console.log(data);
+						if(data == false)
+						{
+							$('.ajaxLoading').hide();
+							window.location = url;
+						}
+						else
+						{
+							console.log(data.is_view);
+							//console.log(data['is_view']);
+							if(data.is_view == 1)
+							{
+								window.location = url;
+							}
+							else
+							{
+								$('.ajaxLoading').hide();
+								notyMessageError('You are Not Authorized to this Content');
+							}
+						}
+						//$('.globalLoading').hide();
+
+					})
+					.error(function (data) {
+						console.log(data);
+					})
+		}
+	});
+	$('.item_dropdown li a').on('click', function () {
+		if($(this).parents('.item_title').find(">:first-child").text() != 'My Account')
+		{
+			window.localStorage.setItem('clicked_tab', $(this).parents('.item_title').find(">:first-child").text());
+		}
+		//alert($(this).parents('.item_title').find(">:first-child").text());
+	});
+	if(window.location.pathname != "/dashboard")
+	{
+		//console.log($('#sidemenu li.active .nav-label').text());
+
+		$('#sidemenu li.active .nav-label').text() == '' ? window.localStorage.getItem('clicked_tab') == '' || window.localStorage.getItem('clicked_tab') == null ? '' : $('.page-title.change_title').text(window.localStorage.getItem('clicked_tab')) : $('.page-title.change_title').text($('#sidemenu li.active .nav-label').text());
+	}
+	if(window.location.pathname == '/user/profile')
+	{
+		$('.page-title.change_title').text('My Account');
+	}
 
     $('#sidemenu').sximMenu();
 	$('.spin-icon').click(function () {
