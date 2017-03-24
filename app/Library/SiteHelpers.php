@@ -4,8 +4,11 @@ use App\Library\FEG\System\FEGSystemHelper;
 
 class SiteHelpers
 {
-    public static function menus($position = 'top', $active = '1')
+    public static function menus($position = 'top', $active = '1', $showAll = false)
     {
+        if ($showAll) {
+            $active = "all";
+        }
         $data = array();
         $menu = self::nestedMenu(0, $position, $active);
         foreach ($menu as $row) {
@@ -13,7 +16,7 @@ class SiteHelpers
             $p = json_decode($row->access_data, true);
 
 
-            if ($row->allow_guest == 1) {
+            if ($row->allow_guest == 1 || $showAll) {
                 $is_allow = 1;
             } else {
                 $is_allow = (isset($p[Session::get('gid')]) && $p[Session::get('gid')] ? 1 : 0);
@@ -41,6 +44,7 @@ class SiteHelpers
                                 'menu_name' => $row2->menu_name,
                                 'menu_lang' => json_decode($row2->menu_lang, true),
                                 'menu_icons' => $row2->menu_icons,
+                                'active' => $row->active == 1 ? 'active' : 'inactive',
                                 'childs' => array()
                             );
 
@@ -63,6 +67,7 @@ class SiteHelpers
                                             'menu_name' => $row3->menu_name,
                                             'menu_lang' => json_decode($row3->menu_lang, true),
                                             'menu_icons' => $row3->menu_icons,
+                                            'active' => $row->active == 1 ? 'active' : 'inactive',
                                             'childs' => array()
                                         );
                                         $child_level_3[] = $menu3;
@@ -86,6 +91,7 @@ class SiteHelpers
                     'menu_name' => $row->menu_name,
                     'menu_lang' => json_decode($row->menu_lang, true),
                     'menu_icons' => $row->menu_icons,
+                    'active' => $row->active == 1 ? 'active' : 'inactive',
                     'childs' => $child_level
                 );
 
