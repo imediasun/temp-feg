@@ -29,10 +29,10 @@ class DashboardController extends Controller
             return redirect($redirect);
         }
         //require_once('setting.php');
-        if(CNF_REDIRECTLINK)
+        /*if(CNF_REDIRECTLINK)
         {
             return redirect(CNF_REDIRECTLINK);
-        }
+        }*/
         
         /* connect to gmail */
         $this->data['online_users'] = \DB::table('users')->orderBy('last_activity', 'desc')->limit(10)->get();
