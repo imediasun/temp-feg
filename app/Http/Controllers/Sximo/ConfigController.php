@@ -3,6 +3,7 @@
 use App\Http\Controllers\controller;
 use App\Library\FEG\System\FEGSystemHelper;
 use App\Models\Core\Groups;
+use App\Models\Feg\System\Options;
 use App\User;
 use Illuminate\Http\Request;
 use Validator, Input, Redirect;
@@ -33,7 +34,7 @@ class ConfigController extends Controller
              'CNF_EMAIL' => FEGSystemHelper::getOption('CNF_EMAIL'),
              'CNF_METAKEY' => FEGSystemHelper::getOption('CNF_METAKEY'),
             'CNF_METADESC' => FEGSystemHelper::getOption('CNF_METADESC'),
-             'CNF_REDIRECTLINK' => FEGSystemHelper::getOption('CNF_REDIRECTLINK')?FEGSystemHelper::getOption('CNF_REDIRECTLINK'):CNF_REDIRECTLINK,
+             'CNF_REDIRECTLINK' => FEGSystemHelper::getOption('CNF_REDIRECTLINK')?FEGSystemHelper::getOption('CNF_REDIRECTLINK'):Options::where('option_name','CNF_REDIRECLINK')->pluck('option_value'),
              'CNF_GROUP' => FEGSystemHelper::getOption('CNF_GROUP'),
              'CNF_ACTIVATION' => FEGSystemHelper::getOption('CNF_ACTIVATION'),
              'CNF_MULTILANG' => FEGSystemHelper::getOption('CNF_MULTILANG'),
