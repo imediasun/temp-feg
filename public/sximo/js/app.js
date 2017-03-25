@@ -161,7 +161,7 @@ App.autoCallbacks.runCallback = function (eventName, params, options) {
 
 App.autoCallbacks.registerCallback('reloaddata', function(params){
     initExport(this);
-    initUserPopup(this);
+    //initUserPopup(this);
 });
 App.autoCallbacks.registerCallback('columnselector', function(params){
 
@@ -325,7 +325,7 @@ jQuery(document).ready(function($){
     detectPUAA($);
 
     initExport(jQuery('.page-content-wrapper'));
-    initUserPopup(jQuery('.page-content-wrapper'));
+    //initUserPopup(jQuery('.page-content-wrapper'));
     
 });
 
