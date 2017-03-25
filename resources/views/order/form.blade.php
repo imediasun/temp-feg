@@ -417,7 +417,7 @@
 
             $("#order_type_id").jCombo("{{ URL::to('order/comboselect?filter=order_type:id:order_type') }}&parent=can_request:1",
                     {selected_value: '{{ $data["order_type"] }}', initial_text: '-------- Select Order Type --------'});
-            $("[id^=game_0]").select2({
+            renderDropdown($("[id^=game_0]"), {
                 dataType: 'json',
                 data: {results: games_options_js},
                 placeholder: "For Various Games", width: "98%"
@@ -560,7 +560,7 @@
                     url: "{{ url() }}/order/games-dropdown",
                     data: {'location': "<?php echo $data["order_location_id"] ?>"},
                     success: function (data) {
-                        $("[id^=game_]").select2({
+                        renderDropdown($("[id^=game_]"), {
                             dataType: 'json',
                             data: {results: data},
                             placeholder: "For Various Games", width: "98%"
@@ -611,7 +611,7 @@
                 data: {'location': $(this).val()},
                 success: function (data) {
                     games_options_js = data;
-                    $("[id^=game_]").select2({
+                    renderDropdown($("[id^=game_]"), {
                         dataType: 'json',
                         data: {results: data},
                         placeholder: "For Various Games", width: "98%"
@@ -739,7 +739,7 @@
                     data: {'location': location_id},
                     success: function (data) {
                         games_options_js = data;
-                        $("[id^=game_]").select2({
+                        renderDropdown($("[id^=game_]"), {
                             dataType: 'json',
                             data: {results: data},
                             placeholder: "For Various Games", width: "98%"
@@ -749,7 +749,7 @@
 
             }
             else {
-                $("[id^=game_]").select2({
+                renderDropdown($("[id^=game_]"), {
                     dataType: 'json',
                     data: {results: games_options_js},
                     placeholder: "For Various Games", width: "98%"
