@@ -2974,3 +2974,10 @@ ul.breadcrumb {
   display: none;
 }
 
+.activeLink {
+    cursor: pointer;
+}
+
+.activeLink:hover {
+    
+}
