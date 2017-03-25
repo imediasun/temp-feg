@@ -68,30 +68,30 @@
 		</tbody>
 
 	</table>
-        <h3>Locations:</h3>
-        <table class="table table-striped table-bordered" >
-            <thead>
-<tr>
-    <th>Name</th>
-    <th>Street</th>
-    <th>City</th>
-    <th>State</th>
-    <th>Zip</th>
-
-
-</tr>
-            </thead>
-            <tbody>
-            @foreach($user_locations as $locations)
+    <h3>Locations:</h3>
+    <table class="table table-striped table-bordered table-hover" >
+        <thead>
             <tr>
-                <th>{{ $locations->location_name_short }}</th>
-                <th>{{ $locations->street1 }}</th>
-                <th>{{ $locations->city }}</th>
-                <th>{{ $locations->state }}</th>
-                <th>{{ $locations->zip }}</th>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Street</th>
+                <th>City</th>
+                <th width="40">State</th>
+                <th width="60">Zip</th>
             </tr>
-                @endforeach
-            </tbody>
-            </table>
+        </thead>
+        <tbody>
+        @foreach($user_locations as $locations)
+        <tr>
+            <td>{{ $locations->id }}</td>
+            <td>{{ $locations->location_name_short }}</td>
+            <td>{{ $locations->street1 }}</td>
+            <td>{{ $locations->city }}</td>
+            <td>{{ $locations->state }}</td>
+            <td>{{ $locations->zip }}</td>
+        </tr>
+            @endforeach
+        </tbody>
+    </table>
 	
 </div>
