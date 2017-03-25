@@ -100,11 +100,11 @@
         <table class="table table-striped table-bordered table-hover" >
             <thead>
                 <tr>
-                    <th>ID</th>
+                    <th width="50">ID</th>
                     <th>Name</th>
                     <th>Street</th>
                     <th>City</th>
-                    <th width="40">State</th>
+                    <th width="50">State</th>
                     <th width="60">Zip</th>
                 </tr>
             </thead>
