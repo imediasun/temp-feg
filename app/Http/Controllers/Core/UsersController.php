@@ -332,10 +332,10 @@ class UsersController extends Controller
     {
         if ($this->access['is_detail'] == 0) {
             if ($mode == 'popup') {
-                return Lang::get('core.note_restric');
+                return \Lang::get('core.note_restric');
             }
             return Redirect::to('dashboard')
-                ->with('messagetext', Lang::get('core.note_restric'))->with('msgstatus', 'error');
+                ->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
         }
         
         $row = $this->model->getRow($id);
