@@ -328,24 +328,34 @@ class UsersController extends Controller
 
     }
 
-    public function getShow($id = null)
+    public function getShow($id = null, $mode = null)
     {
-
-        if ($this->access['is_detail'] == 0)
+        if ($this->access['is_detail'] == 0) {
+            if ($mode == 'popup') {
+                return Lang::get('core.note_restric');
+            }
             return Redirect::to('dashboard')
                 ->with('messagetext', Lang::get('core.note_restric'))->with('msgstatus', 'error');
-
+        }
+        
         $row = $this->model->getRow($id);
         if ($row) {
             $this->data['row'] = $row;
         } else {
             $this->data['row'] = $this->model->getColumnTable('users');
         }
+        $this->data['mode'] = $mode;
         $this->data['id'] = $id;
         $this->data['access'] = $this->access;
         $location_details = \SiteHelpers::getLocationDetails($id);
         $this->data['user_locations'] = $location_details;
-        return view('core.users.view', $this->data);
+        if (empty($mode)) {
+            return view('core.users.view', $this->data);
+        }
+        else {
+            return view("core.users.view.$mode", $this->data);
+        }
+        
     }
 
     function postSave(Request $request, $id = 0)
