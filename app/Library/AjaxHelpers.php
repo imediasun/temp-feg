@@ -121,9 +121,10 @@ class AjaxHelpers
 			$linked = $attribute['hyperlink']['link'];
 			foreach($row as $k=>$i)
 			{
-				if (preg_match("/$k/",$attribute['hyperlink']['link'])) {
-                    $linked = str_replace($k,$i, $linked);
-                }
+//				if (preg_match("/$k/",$attribute['hyperlink']['link'])) {
+//                    $linked = str_replace($k,$i, $linked);
+//                }
+                $linked = str_replace('{{'.$k.'}}', $i, $linked);
 			}
 			if($attribute['hyperlink']['target'] =='modal')
 			{
