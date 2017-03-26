@@ -17,6 +17,7 @@
                 if (!empty($formatter)) {
                     $data = [
                         "Field Name" => $field,
+                        "Active?" => $item[ 'attribute']['hyperlink']['active'] == 1 ? "Yes" : "No",
                         "Link"  => $formatter,
                         "Target"  => $target,
                     ];
