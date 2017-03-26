@@ -23,7 +23,7 @@ CREATE TABLE `active` (
 
 
 CREATE TABLE `billing_type` (
-  `id` int(1) NOT NULL,
+  `id` int(1) NOT NULL AUTO_INCREMENT,
   `billing_type` varchar(20) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `billing_type` (`billing_type`)
@@ -109,7 +109,7 @@ CREATE TABLE `customers` (
 
 
 CREATE TABLE `debit_type` (
-  `id` int(11) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `company` varchar(20) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -126,6 +126,66 @@ CREATE TABLE `departments` (
   `assign_employee_ids` varchar(255) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
+
+
+
+
+CREATE TABLE `elm5_task_schedules` (
+  `id` bigint(22) unsigned NOT NULL AUTO_INCREMENT,
+  `task_id` bigint(22) unsigned NOT NULL DEFAULT '0',
+  `params` varchar(1000) NOT NULL DEFAULT '',
+  `status_name` varchar(20) NOT NULL DEFAULT '',
+  `status_code` int(5) NOT NULL DEFAULT '0',
+  `is_manual` tinyint(1) NOT NULL DEFAULT '0',
+  `is_active` tinyint(1) NOT NULL DEFAULT '0',
+  `run_dependent` tinyint(1) DEFAULT '1',
+  `scheduled_at` datetime DEFAULT NULL,
+  `run_at` datetime DEFAULT NULL,
+  `end_at` datetime DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `results` longtext,
+  `no_overlap` tinyint(1) NOT NULL DEFAULT '1',
+  `run_after` bigint(22) unsigned NOT NULL DEFAULT '0',
+  `run_before` bigint(22) unsigned NOT NULL DEFAULT '0',
+  `success_action` varchar(255) NOT NULL DEFAULT '',
+  `fail_action` varchar(255) NOT NULL DEFAULT '',
+  `success_email` varchar(500) NOT NULL DEFAULT '',
+  `fail_email` varchar(500) NOT NULL DEFAULT '',
+  `notes` text,
+  `log_folder` varchar(50) NOT NULL DEFAULT '',
+  `log_filename` varchar(512) NOT NULL DEFAULT '',
+  `is_test_mode` tinyint(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+
+
+
+CREATE TABLE `elm5_tasks` (
+  `id` bigint(22) unsigned NOT NULL AUTO_INCREMENT,
+  `task_name` varchar(255) NOT NULL DEFAULT '',
+  `action_name` varchar(255) NOT NULL DEFAULT '',
+  `params` varchar(1000) NOT NULL DEFAULT '',
+  `schedule` varchar(100) NOT NULL DEFAULT '',
+  `is_repeat` tinyint(1) NOT NULL DEFAULT '0',
+  `repeat_count` bigint(20) NOT NULL DEFAULT '0',
+  `run_dependent` tinyint(1) DEFAULT '1',
+  `no_overlap` tinyint(1) NOT NULL DEFAULT '1',
+  `is_active` tinyint(1) NOT NULL DEFAULT '0',
+  `run_after` bigint(22) unsigned NOT NULL DEFAULT '0',
+  `run_before` bigint(22) unsigned NOT NULL DEFAULT '0',
+  `success_action` varchar(255) NOT NULL DEFAULT '',
+  `fail_action` varchar(255) NOT NULL DEFAULT '',
+  `success_email` varchar(500) NOT NULL DEFAULT '',
+  `fail_email` varchar(500) NOT NULL DEFAULT '',
+  `run_count` bigint(22) NOT NULL DEFAULT '0',
+  `notes` text,
+  `log_folder` varchar(50) NOT NULL DEFAULT '',
+  `log_filename` varchar(512) NOT NULL DEFAULT '',
+  `is_test_mode` tinyint(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `TASKNAME` (`task_name`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 
 
@@ -151,6 +211,57 @@ CREATE TABLE `employees` (
   `using_web` tinyint(1) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
+
+
+
+
+CREATE TABLE `feg_special_permissions` (
+  `id` bigint(22) unsigned NOT NULL AUTO_INCREMENT,
+  `permission_id` bigint(22) unsigned NOT NULL,
+  `module_id` int(5) unsigned NOT NULL DEFAULT '0',
+  `config_value` longtext,
+  `group_ids` text,
+  `user_ids` text,
+  `exclude_user_ids` text,
+  `custom_emails` text,
+  `priority` int(3) unsigned NOT NULL DEFAULT '0',
+  `is_active` tinyint(1) NOT NULL DEFAULT '1',
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+
+
+
+CREATE TABLE `feg_special_permissions_master` (
+  `id` bigint(22) unsigned NOT NULL AUTO_INCREMENT,
+  `config_name` varchar(255) NOT NULL,
+  `config_title` varchar(512) DEFAULT NULL,
+  `config_description` longtext,
+  `default_value` text,
+  `data_type` varchar(100) DEFAULT NULL,
+  `data_options` longtext,
+  `is_global` tinyint(1) DEFAULT '0',
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `config_name_UNIQUE` (`config_name`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+
+
+
+CREATE TABLE `feg_system_options` (
+  `id` bigint(11) NOT NULL AUTO_INCREMENT,
+  `option_name` varchar(64) DEFAULT '',
+  `option_value` longtext,
+  `is_active` tinyint(1) NOT NULL DEFAULT '1',
+  `notes` text,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 
 
@@ -402,17 +513,17 @@ CREATE TABLE `game` (
   `mfg_id` int(3) DEFAULT NULL,
   `source` varchar(50) NOT NULL,
   `serial` varchar(30) NOT NULL,
-  `date_in_service` date NOT NULL,
+  `date_in_service` date DEFAULT NULL,
   `status_id` int(1) NOT NULL,
   `game_setup_status_id` int(1) NOT NULL,
   `intended_first_location` int(4) DEFAULT NULL,
   `ship_delay_reason` text NOT NULL,
-  `date_shipped` date NOT NULL,
+  `date_shipped` date DEFAULT NULL,
   `freight_order_id` int(6) NOT NULL,
-  `date_last_move` date NOT NULL,
-  `last_edited_by` int(4) NOT NULL,
-  `last_edited_on` varchar(20) NOT NULL,
-  `prev_location_id` int(4) NOT NULL,
+  `date_last_move` date DEFAULT NULL,
+  `last_edited_by` int(4) DEFAULT NULL,
+  `last_edited_on` varchar(20) DEFAULT NULL,
+  `prev_location_id` int(4) DEFAULT NULL,
   `for_sale` tinyint(1) NOT NULL,
   `sale_price` decimal(8,2) NOT NULL,
   `sale_pending` tinyint(1) NOT NULL,
@@ -445,7 +556,7 @@ CREATE TABLE `game` (
   `last_product_meter_6` int(12) DEFAULT NULL,
   `last_product_meter_7` int(12) DEFAULT NULL,
   `last_product_meter_8` int(12) DEFAULT NULL,
-  `last_meter_date` date NOT NULL,
+  `last_meter_date` date DEFAULT NULL,
   `not_debit` tinyint(1) NOT NULL,
   `not_debit_reason` varchar(100) NOT NULL,
   `linked_to_game` int(8) NOT NULL,
@@ -535,6 +646,7 @@ CREATE TABLE `game_move_history` (
 CREATE TABLE `game_service_history` (
   `id` int(5) NOT NULL AUTO_INCREMENT,
   `game_id` int(10) NOT NULL,
+  `location_id` int(5) unsigned DEFAULT NULL,
   `date_down` date DEFAULT NULL,
   `problem` text,
   `down_user_id` int(4) DEFAULT NULL,
@@ -576,7 +688,7 @@ CREATE TABLE `game_title` (
 
 
 CREATE TABLE `game_type` (
-  `id` int(2) NOT NULL,
+  `id` int(2) NOT NULL AUTO_INCREMENT,
   `game_type` varchar(25) NOT NULL,
   `game_type_short` varchar(4) NOT NULL,
   UNIQUE KEY `id` (`id`)
@@ -586,7 +698,7 @@ CREATE TABLE `game_type` (
 
 
 CREATE TABLE `game_version` (
-  `id` int(2) NOT NULL,
+  `id` int(2) NOT NULL AUTO_INCREMENT,
   `version` varchar(14) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `version` (`version`)
@@ -599,10 +711,11 @@ CREATE TABLE `img_uploads` (
   `loc_id` int(4) NOT NULL,
   `users` varchar(100) NOT NULL,
   `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `image_category` varchar(6) NOT NULL,
+  `image_category` varchar(50) NOT NULL,
   `video_path` varchar(250) DEFAULT NULL,
   `video_title` varchar(100) DEFAULT NULL,
   `type` tinyint(1) NOT NULL,
+  `batch` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
 
@@ -610,7 +723,7 @@ CREATE TABLE `img_uploads` (
 
 
 CREATE TABLE `loc_group` (
-  `id` int(11) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `loc_group_name` varchar(100) NOT NULL,
   UNIQUE KEY `id_2` (`id`),
   KEY `id` (`id`)
@@ -620,9 +733,8 @@ CREATE TABLE `loc_group` (
 
 
 CREATE TABLE `location` (
-  `id` int(5) NOT NULL,
+  `id` int(5) NOT NULL AUTO_INCREMENT,
   `store_id` varchar(20) DEFAULT NULL,
-  `district_manager_id` int(11) DEFAULT NULL,
   `location_name` varchar(60) NOT NULL,
   `location_name_short` varchar(24) NOT NULL,
   `mail_attention` varchar(20) NOT NULL,
@@ -669,134 +781,10 @@ CREATE TABLE `location` (
   `bill_instant_type` int(1) NOT NULL,
   `bill_instant_amt` decimal(6,2) NOT NULL,
   `bill_instant_detail` varchar(100) NOT NULL,
-  `Jan_2012` decimal(8,2) DEFAULT NULL,
-  `Feb_2012` decimal(8,2) DEFAULT NULL,
-  `Mar_2012` decimal(8,2) DEFAULT NULL,
-  `Apr_2012` decimal(8,2) DEFAULT NULL,
-  `May_2012` decimal(8,2) DEFAULT NULL,
-  `Jun_2012` decimal(8,2) DEFAULT NULL,
-  `Jul_2012` decimal(8,2) DEFAULT NULL,
-  `Aug_2012` decimal(8,2) DEFAULT NULL,
-  `Sep_2012` decimal(8,2) DEFAULT NULL,
-  `Oct_2012` decimal(8,2) DEFAULT NULL,
-  `Nov_2012` decimal(8,2) DEFAULT NULL,
-  `Dec_2012` decimal(8,2) DEFAULT NULL,
-  `Jan_2013` decimal(8,2) DEFAULT NULL,
-  `Feb_2013` decimal(8,2) DEFAULT NULL,
-  `Mar_2013` decimal(8,2) DEFAULT NULL,
-  `Apr_2013` decimal(8,2) DEFAULT NULL,
-  `May_2013` decimal(8,2) DEFAULT NULL,
-  `Jun_2013` decimal(8,2) DEFAULT NULL,
-  `Jul_2013` decimal(8,2) DEFAULT NULL,
-  `Aug_2013` decimal(8,2) DEFAULT NULL,
-  `Sep_2013` decimal(8,2) DEFAULT NULL,
-  `Oct_2013` decimal(8,2) DEFAULT NULL,
-  `Nov_2013` decimal(8,2) DEFAULT NULL,
-  `Dec_2013` decimal(8,2) DEFAULT NULL,
-  `Jan_2014` decimal(8,2) DEFAULT NULL,
-  `Feb_2014` decimal(8,2) DEFAULT NULL,
-  `Mar_2014` decimal(8,2) DEFAULT NULL,
-  `Apr_2014` decimal(8,2) DEFAULT NULL,
-  `May_2014` decimal(8,2) DEFAULT NULL,
-  `Jun_2014` decimal(8,2) DEFAULT NULL,
-  `Jul_2014` decimal(8,2) DEFAULT NULL,
-  `Aug_2014` decimal(8,2) DEFAULT NULL,
-  `Sep_2014` decimal(8,2) DEFAULT NULL,
-  `Oct_2014` decimal(8,2) DEFAULT NULL,
-  `Nov_2014` decimal(8,2) DEFAULT NULL,
-  `Dec_2014` decimal(8,2) DEFAULT NULL,
-  `Jan_2015` decimal(8,2) DEFAULT NULL,
-  `Feb_2015` decimal(8,2) DEFAULT NULL,
-  `Mar_2015` decimal(8,2) DEFAULT NULL,
-  `Apr_2015` decimal(8,2) DEFAULT NULL,
-  `May_2015` decimal(8,2) DEFAULT NULL,
-  `Jun_2015` decimal(8,2) DEFAULT NULL,
-  `Jul_2015` decimal(8,2) DEFAULT NULL,
-  `Aug_2015` decimal(8,2) DEFAULT NULL,
-  `Sep_2015` decimal(8,2) DEFAULT NULL,
-  `Oct_2015` decimal(8,2) DEFAULT NULL,
-  `Nov_2015` decimal(8,2) DEFAULT NULL,
-  `Dec_2015` decimal(8,2) DEFAULT NULL,
-  `Jan_2016` decimal(8,2) DEFAULT NULL,
-  `Feb_2016` decimal(8,2) DEFAULT NULL,
-  `Mar_2016` decimal(8,2) DEFAULT NULL,
-  `Apr_2016` decimal(8,2) DEFAULT NULL,
-  `May_2016` decimal(8,2) DEFAULT NULL,
-  `Jun_2016` decimal(8,2) DEFAULT NULL,
-  `Jul_2016` decimal(8,2) DEFAULT NULL,
-  `Aug_2016` decimal(8,2) DEFAULT NULL,
-  `Sep_2016` decimal(8,2) DEFAULT NULL,
-  `Oct_2016` decimal(8,2) DEFAULT NULL,
-  `Nov_2016` decimal(8,2) DEFAULT NULL,
-  `Dec_2016` decimal(8,2) DEFAULT NULL,
-  `Jan_2017` decimal(8,2) DEFAULT NULL,
-  `Feb_2017` decimal(8,2) DEFAULT NULL,
-  `Mar_2017` decimal(8,2) DEFAULT NULL,
-  `Apr_2017` decimal(8,2) DEFAULT NULL,
-  `May_2017` decimal(8,2) DEFAULT NULL,
-  `Jun_2017` decimal(8,2) DEFAULT NULL,
-  `Jul_2017` decimal(8,2) DEFAULT NULL,
-  `Aug_2017` decimal(8,2) DEFAULT NULL,
-  `Sep_2017` decimal(8,2) DEFAULT NULL,
-  `Oct_2017` decimal(8,2) DEFAULT NULL,
-  `Nov_2017` decimal(8,2) DEFAULT NULL,
-  `Dec_2017` decimal(8,2) DEFAULT NULL,
-  `Jan_2018` decimal(8,2) DEFAULT NULL,
-  `Feb_2018` decimal(8,2) DEFAULT NULL,
-  `Mar_2018` decimal(8,2) DEFAULT NULL,
-  `Apr_2018` decimal(8,2) DEFAULT NULL,
-  `May_2018` decimal(8,2) DEFAULT NULL,
-  `Jun_2018` decimal(8,2) DEFAULT NULL,
-  `Jul_2018` decimal(8,2) DEFAULT NULL,
-  `Aug_2018` decimal(8,2) DEFAULT NULL,
-  `Sep_2018` decimal(8,2) DEFAULT NULL,
-  `Oct_2018` decimal(8,2) DEFAULT NULL,
-  `Nov_2018` decimal(8,2) DEFAULT NULL,
-  `Dec_2018` decimal(8,2) DEFAULT NULL,
-  `Jan_2019` decimal(8,2) DEFAULT NULL,
-  `Feb_2019` decimal(8,2) DEFAULT NULL,
-  `Mar_2019` decimal(8,2) DEFAULT NULL,
-  `Apr_2019` decimal(8,2) DEFAULT NULL,
-  `May_2019` decimal(8,2) DEFAULT NULL,
-  `Jun_2019` decimal(8,2) DEFAULT NULL,
-  `Jul_2019` decimal(8,2) DEFAULT NULL,
-  `Aug_2019` decimal(8,2) DEFAULT NULL,
-  `Sep_2019` decimal(8,2) DEFAULT NULL,
-  `Oct_2019` decimal(8,2) DEFAULT NULL,
-  `Nov_2019` decimal(8,2) DEFAULT NULL,
-  `Dec_2019` decimal(8,2) DEFAULT NULL,
-  `Jan_2020` decimal(8,2) DEFAULT NULL,
-  `Feb_2020` decimal(8,2) DEFAULT NULL,
-  `Mar_2020` decimal(8,2) DEFAULT NULL,
-  `Apr_2020` decimal(8,2) DEFAULT NULL,
-  `May_2020` decimal(8,2) DEFAULT NULL,
-  `Jun_2020` decimal(8,2) DEFAULT NULL,
-  `Jul_2020` decimal(8,2) DEFAULT NULL,
-  `Aug_2020` decimal(8,2) DEFAULT NULL,
-  `Sep_2020` decimal(8,2) DEFAULT NULL,
-  `Oct_2020` decimal(8,2) DEFAULT NULL,
-  `Nov_2020` decimal(8,2) DEFAULT NULL,
-  `Dec_2020` decimal(8,2) DEFAULT NULL,
-  `contact_id` int(4) DEFAULT NULL,
-  `merch_contact_id` int(4) DEFAULT NULL,
-  `field_manager_id` int(11) DEFAULT NULL,
-  `technical_contact_id` int(11) DEFAULT NULL,
-  `tech_manager_id` int(11) DEFAULT NULL,
-  `general_contact_id` int(11) DEFAULT NULL,
-  `merchandise_contact_id` int(11) DEFAULT NULL,
-  `regional_contact_id` int(11) DEFAULT NULL,
-  `senior_vp_id` int(11) DEFAULT NULL,
   `no_games` int(1) NOT NULL,
   `liftgate` tinyint(1) NOT NULL,
   `ipaddress` varchar(12) NOT NULL,
   `reporting` tinyint(1) NOT NULL,
-  `not_reporting_Sun` tinyint(1) NOT NULL,
-  `not_reporting_Mon` tinyint(1) NOT NULL,
-  `not_reporting_Tue` tinyint(1) NOT NULL,
-  `not_reporting_Wed` tinyint(1) NOT NULL,
-  `not_reporting_Thu` tinyint(1) NOT NULL,
-  `not_reporting_Fri` tinyint(1) NOT NULL,
-  `not_reporting_Sat` tinyint(1) NOT NULL,
   `active` tinyint(1) NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -820,21 +808,9 @@ CREATE TABLE `location_user_roles_master` (
   `group_id` mediumint(8) unsigned NOT NULL,
   `role_title` varchar(200) NOT NULL,
   `unique_assignment` tinyint(1) DEFAULT '0',
+  `proxy_field_name` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
-
-
-
-
-CREATE TABLE `locations_closed` (
-  `id` bigint(22) unsigned NOT NULL AUTO_INCREMENT,
-  `location_id` int(5) unsigned NOT NULL,
-  `closed_date` date NOT NULL,
-  `recorded_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `predefined` tinyint(1) NOT NULL DEFAULT '1',
-  PRIMARY KEY (`id`),
-  KEY `Location` (`location_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
 
 
 
@@ -885,7 +861,7 @@ CREATE TABLE `merch_request` (
 
 
 CREATE TABLE `merch_request_status` (
-  `id` int(2) NOT NULL,
+  `id` int(2) NOT NULL AUTO_INCREMENT,
   `status` varchar(40) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -901,6 +877,7 @@ CREATE TABLE `merch_throws` (
   `game_id` int(8) NOT NULL,
   `location_id` int(4) NOT NULL,
   `price_per_play` decimal(5,2) NOT NULL,
+  `product_id` text NOT NULL,
   `product_id_1` int(6) NOT NULL,
   `product_qty_1` int(5) NOT NULL,
   `product_cogs_1` decimal(8,2) NOT NULL,
@@ -924,6 +901,10 @@ CREATE TABLE `merch_throws` (
   `game_earnings` decimal(9,2) NOT NULL,
   `game_throw` decimal(6,2) NOT NULL,
   `notes` text NOT NULL,
+  `reasons` text NOT NULL,
+  `meter` text NOT NULL,
+  `flag` tinyint(1) NOT NULL,
+  `retail_price` decimal(6,2) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
 
@@ -931,7 +912,7 @@ CREATE TABLE `merch_throws` (
 
 
 CREATE TABLE `merchandiser_earnings` (
-  `game_id` int(8) NOT NULL,
+  `game_id` int(8) NOT NULL AUTO_INCREMENT,
   `earnings_1_12` decimal(8,2) NOT NULL,
   `throw_1_13` decimal(5,2) NOT NULL,
   `earnings_2_12` decimal(8,2) NOT NULL,
@@ -1043,7 +1024,7 @@ CREATE TABLE `merchandiser_earnings` (
 
 
 CREATE TABLE `new_graphics_priority` (
-  `id` int(11) NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `id_plus` varchar(12) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -1073,8 +1054,9 @@ CREATE TABLE `new_graphics_request` (
 
 
 CREATE TABLE `new_graphics_request_status` (
-  `id` int(2) NOT NULL,
+  `id` int(2) NOT NULL AUTO_INCREMENT,
   `status` varchar(50) NOT NULL,
+  `sort` int(2) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -1094,7 +1076,7 @@ CREATE TABLE `news` (
 
 
 CREATE TABLE `numbers` (
-  `id` int(2) NOT NULL,
+  `id` int(2) NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -1103,14 +1085,22 @@ CREATE TABLE `numbers` (
 
 CREATE TABLE `order_contents` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `order_id` int(7) NOT NULL,
+  `order_id` int(11) unsigned NOT NULL,
   `request_id` int(7) NOT NULL,
   `product_id` int(6) NOT NULL,
   `product_description` text NOT NULL,
   `price` decimal(10,5) NOT NULL,
   `qty` int(5) NOT NULL,
-  `game_id` int(8) NOT NULL,
-  PRIMARY KEY (`id`)
+  `game_id` int(8) DEFAULT NULL,
+  `item_name` varchar(250) DEFAULT NULL,
+  `case_price` float(10,5) DEFAULT NULL,
+  `total` float(10,5) NOT NULL,
+  `item_received` int(5) NOT NULL,
+  `sku` varchar(50) DEFAULT NULL,
+  `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `FK_order_contents` (`order_id`),
+  CONSTRAINT `FK_order_contents` FOREIGN KEY (`order_id`) REFERENCES `orders` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
 
 
@@ -1118,14 +1108,16 @@ CREATE TABLE `order_contents` (
 
 CREATE TABLE `order_received` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `order_id` int(11) NOT NULL,
+  `order_id` int(11) unsigned NOT NULL,
   `order_line_item_id` int(11) NOT NULL,
   `quantity` int(5) NOT NULL,
   `received_by` int(11) NOT NULL,
   `date_received` date NOT NULL,
   `notes` text COLLATE utf8_unicode_ci,
   `status` tinyint(1) NOT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `FK_order_received` (`order_id`),
+  CONSTRAINT `FK_order_received` FOREIGN KEY (`order_id`) REFERENCES `orders` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 
@@ -1144,7 +1136,7 @@ CREATE TABLE `order_status` (
 
 
 CREATE TABLE `order_type` (
-  `id` int(1) NOT NULL,
+  `id` int(1) NOT NULL AUTO_INCREMENT,
   `order_type` varchar(50) NOT NULL,
   `is_merch` tinyint(1) NOT NULL,
   `can_request` tinyint(1) NOT NULL,
@@ -1171,7 +1163,7 @@ CREATE TABLE `orders` (
   `user_id` int(11) DEFAULT NULL,
   `company_id` int(2) NOT NULL,
   `date_ordered` date NOT NULL,
-  `order_total` decimal(9,2) DEFAULT NULL,
+  `order_total` decimal(9,5) DEFAULT NULL,
   `warranty` tinyint(1) NOT NULL DEFAULT '0',
   `location_id` int(3) NOT NULL,
   `vendor_id` int(3) NOT NULL,
@@ -1186,7 +1178,7 @@ CREATE TABLE `orders` (
   `date_received` date DEFAULT NULL,
   `received_by` int(5) DEFAULT NULL,
   `quantity` int(5) NOT NULL,
-  `alt_address` varchar(300) NOT NULL,
+  `alt_address` text NOT NULL,
   `request_ids` varchar(200) NOT NULL,
   `game_ids` varchar(250) NOT NULL,
   `tracking_number` varchar(40) NOT NULL,
@@ -1201,6 +1193,13 @@ CREATE TABLE `orders` (
 
 
 
+CREATE TABLE `po_track` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `po_number` varchar(20) DEFAULT NULL,
+  `location_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
+
 CREATE TABLE `past_sync_harvest` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `loc_id` int(10) unsigned NOT NULL,
@@ -1214,7 +1213,6 @@ CREATE TABLE `past_sync_harvest` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `DATELOCUNIQUE` (`loc_id`,`date_start`)
 ) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
-
 
 
 
@@ -1259,7 +1257,8 @@ CREATE TABLE `products` (
   `updated_at` datetime DEFAULT NULL,
   `expense_category` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `description` (`vendor_description`,`vendor_id`,`case_price`,`prod_type_id`,`prod_sub_type_id`)
+  UNIQUE KEY `description` (`vendor_description`,`vendor_id`,`case_price`,`prod_type_id`,`prod_sub_type_id`),
+  FULLTEXT KEY `vendor_description` (`vendor_description`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
 
 
@@ -1308,7 +1307,7 @@ CREATE TABLE `redemption_imgs` (
 
 
 CREATE TABLE `region` (
-  `id` int(2) NOT NULL,
+  `id` int(2) NOT NULL AUTO_INCREMENT,
   `region` varchar(30) NOT NULL,
   `dist_mgr_id` int(11) NOT NULL,
   PRIMARY KEY (`id`)
@@ -1347,7 +1346,13 @@ CREATE TABLE `report_game_plays` (
   `record_status` int(5) unsigned DEFAULT NULL,
   `related_record` bigint(22) unsigned DEFAULT NULL,
   `notes` text,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `LOC` (`location_id`),
+  KEY `GAME` (`game_id`),
+  KEY `GAMEOFF` (`game_id`,`report_status`),
+  KEY `DATE` (`date_played`),
+  KEY `DATEGAME` (`game_id`,`date_played`),
+  KEY `LOCDATE` (`location_id`,`date_played`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 
@@ -1443,6 +1448,25 @@ CREATE TABLE `sb_invoices` (
 
 
 
+CREATE TABLE `sb_ticket_subscriptions` (
+  `id` bigint(22) unsigned NOT NULL AUTO_INCREMENT,
+  `ticket_id` int(11) unsigned NOT NULL,
+  `user_id` int(11) unsigned DEFAULT NULL,
+  `is_active` tinyint(1) DEFAULT '1',
+  `follow_role` varchar(50) DEFAULT '',
+  `custom_email_to` text,
+  `custom_email_cc` text,
+  `custom_email_bcc` text,
+  `notification_count` int(11) DEFAULT '0',
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `update_data` longtext,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+
+
+
 CREATE TABLE `sb_ticketcomments` (
   `CommentID` int(11) NOT NULL AUTO_INCREMENT,
   `TicketID` int(11) DEFAULT NULL,
@@ -1451,6 +1475,8 @@ CREATE TABLE `sb_ticketcomments` (
   `UserID` int(11) DEFAULT NULL,
   `USERNAME` varchar(50) NOT NULL,
   `Attachments` varchar(255) DEFAULT NULL,
+  `imap_read` tinyint(4) DEFAULT '0',
+  `imap_meta` longtext,
   PRIMARY KEY (`CommentID`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
 
@@ -1461,9 +1487,9 @@ CREATE TABLE `sb_tickets` (
   `TicketID` int(11) NOT NULL AUTO_INCREMENT,
   `Subject` varchar(255) DEFAULT NULL,
   `Description` text,
-  `need_by_date` varchar(30) NOT NULL,
+  `need_by_date` date DEFAULT NULL,
   `Priority` char(20) DEFAULT NULL,
-  `Created` varchar(30) DEFAULT NULL,
+  `Created` datetime NOT NULL,
   `Status` char(20) DEFAULT NULL,
   `entry_by` int(11) DEFAULT NULL,
   `issue_type` varchar(20) NOT NULL,
@@ -1471,7 +1497,7 @@ CREATE TABLE `sb_tickets` (
   `department_id` int(11) NOT NULL,
   `closed` datetime DEFAULT NULL,
   `assign_to` varchar(50) NOT NULL,
-  `file_path` varchar(255) NOT NULL,
+  `file_path` longtext,
   `game_id` int(11) NOT NULL,
   `updated` datetime DEFAULT NULL,
   `debit_card` varchar(10) DEFAULT NULL,
@@ -1555,7 +1581,7 @@ CREATE TABLE `spare_parts` (
 
 
 CREATE TABLE `spare_status` (
-  `id` int(1) NOT NULL,
+  `id` int(1) NOT NULL AUTO_INCREMENT,
   `status` varchar(15) NOT NULL,
   `class` varchar(10) NOT NULL,
   PRIMARY KEY (`id`)
@@ -1940,7 +1966,7 @@ CREATE TABLE `user_images` (
 
 
 CREATE TABLE `user_level` (
-  `id` int(1) NOT NULL,
+  `id` int(1) NOT NULL AUTO_INCREMENT,
   `user_level` varchar(18) NOT NULL,
   `usr_lvl` varchar(12) NOT NULL,
   PRIMARY KEY (`id`)
@@ -1956,6 +1982,8 @@ CREATE TABLE `user_locations` (
   `group_id` mediumint(8) unsigned DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+
 
 
 
@@ -1976,64 +2004,54 @@ CREATE TABLE `user_module_config` (
 
 CREATE TABLE `users` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `first_name` varchar(40) COLLATE latin1_general_ci NOT NULL,
-  `last_name` varchar(50) COLLATE latin1_general_ci NOT NULL,
-  `user_name` varchar(200) COLLATE latin1_general_ci NOT NULL DEFAULT '',
-  `username` varchar(200) COLLATE latin1_general_ci NOT NULL,
-  `email` varchar(50) COLLATE latin1_general_ci NOT NULL DEFAULT '',
-  `user_level` tinyint(4) NOT NULL DEFAULT '1',
-  `pwd` varchar(220) COLLATE latin1_general_ci NOT NULL DEFAULT '',
+  `first_name` varchar(40) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
+  `last_name` varchar(50) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
+  `username` varchar(200) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL DEFAULT '',
+  `email` varchar(50) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL DEFAULT '',
+  `avatar` varchar(50) CHARACTER SET latin1 COLLATE latin1_general_ci DEFAULT '1.jpg',
+  `group_id` tinyint(4) NOT NULL DEFAULT '1',
+  `password` varchar(220) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL DEFAULT '',
+  `g_mail` varchar(50) NOT NULL,
+  `g_password` varchar(220) NOT NULL,
   `date` date NOT NULL DEFAULT '0000-00-00',
-  `is_tech_contact` tinyint(4) NOT NULL DEFAULT '0',
+  `is_tech_contact` tinyint(1) NOT NULL DEFAULT '0',
   `approved` int(1) NOT NULL DEFAULT '0',
   `banned` int(1) NOT NULL DEFAULT '0',
   `company_id` int(2) NOT NULL,
-  `loc_1` int(5) NOT NULL,
-  `loc_2` int(5) NOT NULL,
-  `loc_3` int(5) NOT NULL,
-  `loc_4` int(5) NOT NULL,
-  `loc_5` int(5) NOT NULL,
-  `loc_6` int(5) NOT NULL,
-  `loc_7` int(5) NOT NULL,
-  `loc_8` int(5) NOT NULL,
-  `loc_9` int(5) NOT NULL,
-  `loc_10` int(5) NOT NULL,
   `get_locations_by_region` tinyint(1) NOT NULL,
   `reg_id` int(2) DEFAULT NULL,
-  `ctime` varchar(220) COLLATE latin1_general_ci NOT NULL,
-  `ckey` varchar(220) COLLATE latin1_general_ci NOT NULL,
+  `ctime` varchar(220) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
+  `ckey` varchar(220) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
   `using_web` tinyint(1) NOT NULL DEFAULT '0',
   `full_time` tinyint(1) NOT NULL,
   `restricted_mgr_email` tinyint(1) NOT NULL,
   `restricted_user_email` tinyint(1) NOT NULL,
   `restrict_merch` tinyint(1) NOT NULL,
-  `email_2` varchar(50) COLLATE latin1_general_ci NOT NULL,
-  `primary_phone` varchar(20) COLLATE latin1_general_ci NOT NULL,
-  `secondary_phone` varchar(20) COLLATE latin1_general_ci NOT NULL,
-  `street` varchar(80) COLLATE latin1_general_ci NOT NULL,
-  `city` varchar(30) COLLATE latin1_general_ci NOT NULL,
-  `state` varchar(2) COLLATE latin1_general_ci NOT NULL,
-  `zip` varchar(10) COLLATE latin1_general_ci NOT NULL,
+  `email_2` varchar(50) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
+  `primary_phone` varchar(20) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
+  `secondary_phone` varchar(20) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
+  `street` varchar(80) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
+  `city` varchar(30) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
+  `state` varchar(2) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
+  `zip` varchar(10) CHARACTER SET latin1 COLLATE latin1_general_ci NOT NULL,
   `timeclock_status` tinyint(1) NOT NULL,
   `timeclock_id` int(6) NOT NULL,
   `tier` int(1) DEFAULT NULL,
   `active` tinyint(1) NOT NULL DEFAULT '1',
   `last_login` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `avatar` varchar(50) COLLATE latin1_general_ci NOT NULL DEFAULT '1.jpg',
-  `group_id` tinyint(4) NOT NULL DEFAULT '1',
-  `password` varchar(220) COLLATE latin1_general_ci NOT NULL,
-  `remember_token` varchar(100) COLLATE latin1_general_ci DEFAULT NULL,
-  `reminder` varchar(100) COLLATE latin1_general_ci DEFAULT NULL,
+  `last_activity` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `remember_token` varchar(100) CHARACTER SET latin1 COLLATE latin1_general_ci DEFAULT NULL,
+  `reminder` varchar(100) CHARACTER SET latin1 COLLATE latin1_general_ci DEFAULT NULL,
   `has_all_locations` tinyint(4) NOT NULL DEFAULT '0',
-  `redirect_link` varchar(250) COLLATE latin1_general_ci DEFAULT NULL,
-  `created_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `updated_at` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `redirect_link` varchar(250) CHARACTER SET latin1 COLLATE latin1_general_ci DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `user_email` (`email`),
   UNIQUE KEY `id` (`id`),
   KEY `email` (`email`),
-  FULLTEXT KEY `idx_search` (`email`,`user_name`)
-) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=latin1 COLLATE=latin1_general_ci;
+  FULLTEXT KEY `idx_search` (`email`,`username`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
 
 
 
@@ -2041,37 +2059,31 @@ CREATE TABLE `users` (
 CREATE TABLE `vendor` (
   `id` int(3) NOT NULL AUTO_INCREMENT,
   `vendor_name` varchar(50) NOT NULL,
-  `street1` varchar(150) NOT NULL,
-  `street2` varchar(40) NOT NULL,
-  `city` varchar(50) NOT NULL,
-  `state` varchar(2) NOT NULL,
-  `zip` varchar(10) NOT NULL,
-  `phone` varchar(22) NOT NULL,
-  `fax` varchar(16) NOT NULL,
-  `contact` varchar(40) NOT NULL,
-  `email` varchar(60) NOT NULL,
-  `email_2` varchar(60) NOT NULL,
-  `website` varchar(80) NOT NULL,
-  `games_contact_name` varchar(60) NOT NULL,
-  `games_contact_email` varchar(60) NOT NULL,
-  `games_contact_phone` varchar(16) NOT NULL,
-  `partner_hide` tinyint(1) NOT NULL,
-  `isgame` tinyint(1) NOT NULL,
-  `ismerch` tinyint(1) NOT NULL,
+  `street1` varchar(150) DEFAULT NULL,
+  `street2` varchar(40) DEFAULT NULL,
+  `city` varchar(50) DEFAULT NULL,
+  `state` varchar(20) DEFAULT NULL,
+  `zip` varchar(10) DEFAULT NULL,
+  `phone` varchar(22) DEFAULT NULL,
+  `fax` varchar(16) DEFAULT NULL,
+  `contact` varchar(40) DEFAULT NULL,
+  `email` varchar(60) DEFAULT NULL,
+  `email_2` varchar(60) DEFAULT NULL,
+  `website` varchar(80) DEFAULT NULL,
+  `games_contact_name` varchar(60) DEFAULT NULL,
+  `games_contact_email` varchar(60) DEFAULT NULL,
+  `games_contact_phone` varchar(16) DEFAULT NULL,
+  `partner_hide` tinyint(1) DEFAULT '0',
+  `isgame` tinyint(1) DEFAULT '0',
+  `ismerch` tinyint(1) DEFAULT '0',
   `min_order_amt` int(6) DEFAULT NULL,
+  `hide` bit(1) DEFAULT b'0',
+  `status` tinyint(1) DEFAULT '1',
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
-  `hide` tinyint(1) DEFAULT '0',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `vendor_name` (`vendor_name`)
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=latin1;
 
-
-
-SET @saved_cs_client     = @@character_set_client;
-SET character_set_client = utf8;
-
-SET character_set_client = @saved_cs_client;
 
 
 
@@ -2080,6 +2092,7 @@ CREATE TABLE `yes_no` (
   `yesno` varchar(3) NOT NULL,
   UNIQUE KEY `id` (`id`,`yesno`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
 
 
 
