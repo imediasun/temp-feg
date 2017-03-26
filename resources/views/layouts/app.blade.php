@@ -108,7 +108,7 @@
   <div class="modal-content">
 	<div class="modal-header bg-default">
 		<button type="button " class="btn-xs collapse-close btn btn-danger pull-right" data-dismiss="modal"  aria-hidden="true"><i class="fa fa fa-times"></i></button>
-		<h4 class="modal-title">Modal title</h4>
+		<h4 class="modal-title">&nbsp:</h4>
 	</div>
 	<div class="modal-body" id="sximo-modal-content">
 

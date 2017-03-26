@@ -2981,3 +2981,10 @@ ul.breadcrumb {
 .activeLink:hover {
     
 }
+
+
+.gridHyperlinkValue::after {
+    content: url(icons/external-link-icon.png);
+    margin: 0 2px;
+    opacity: .2;
+}
