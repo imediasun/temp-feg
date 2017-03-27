@@ -80,7 +80,7 @@ jQuery(document).ready(function($){
 			cblist.removeAttr("checked");
 		}	
 	});
-	
+
 	$('.nav li ul li.active').parents('li').addClass('active');
 	
 	
@@ -156,7 +156,7 @@ function SximoDelete(  )
 	{
 			$('#SximoTable').submit();// do the rest here	
 	}	
-}	
+}
 function SximoModal( url , title)
 {
 	$('#sximo-modal-content').html(' ....Loading content , please wait ...');

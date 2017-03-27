@@ -108,7 +108,7 @@
 
               @foreach ($rowData as $row)
            		<?php $id = $row->id; ?>
-                <tr class="editable" id="form-{{ $row->id }}">
+                <tr class="editable" id="form-{{ $row->id }}" @if($setting['inline']!='false' && $setting['disablerowactions']=='false') data-id="{{ $row->id }}" ondblclick="showFloatingCancelSave(this)" @endif>
 					@if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
 						<td class="number"> <?php echo ++$i;?>  </td>
 					@endif
@@ -169,7 +169,7 @@
                         @endif
                         <a href="{{ URL::to('core/users/upload/'.$row->id)}}" class="tips btn btn-xs btn-white"  title="Upload Image"><i class="fa fa-picture-o" aria-hidden="true"></i></a>
                         </div>
-                        {!! AjaxHelpers::buttonActionInline($row->id,'id') !!}
+
                     </td>
                     @endif
                 </tr>
@@ -187,6 +187,11 @@
         </tbody>
 
     </table>
+            @if($setting['inline']!='false' && $setting['disablerowactions']=='false')
+                @foreach ($rowData as $row)
+                    {!! AjaxHelpers::buttonActionInline($row->id,'id') !!}
+                @endforeach
+            @endif
 	@else
 
 	<div style="margin:100px 0; text-align:center;">

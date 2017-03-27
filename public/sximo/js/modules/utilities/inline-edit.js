@@ -1,7 +1,7 @@
 /* global App, UNDEFINED, UNFN, jQuery, pageModule, pageUrl, siteUrl */ 
 /* App.modules.utilities.inlineEdit */
 (function(){
-    "use strict";    
+    "use strict";
     var $ = jQuery,
         modules = App.modules || (App.modules = {}),
         utilities = modules.utilities || (modules.utilities = {}),
@@ -21,6 +21,7 @@
         displayInlineEditButtons,
         initiateInlineFormFields,
         saveInlineForm,
+        showFloatingCancelSave,
         saveAllInlineForm;
    
     inlineEdit.init = function (options, data) {    
@@ -57,7 +58,7 @@
             editActionButtons = $('#'+rowDomId+' td .actionopen'),
             generalActionButtons = $('#'+rowDomId+' td .actionopen'),
             rowHookParams = {'row': row, count: editingRowsCount};
-            
+
         if (row.hasClass('inline_edit_applied')) {
             return;
         }
@@ -223,6 +224,30 @@
         return false;
 
    };
+    window.showFloatingCancelSave=showFloatingCancelSave=function(ele){
+        var bottomWidth = $(ele).css('width');
+        var bottomHeight = $(ele).css('height');
+        var rowPos = $(ele).position();
+        var id=$(ele).data('id');
+        var $divOverlay = $('#divOverlay_'+id);
+        //alert();
+        var bottomTop = $(ele).offset().top+40;
+        if(id) {
+            $("#divOverlay").attr('id', 'divOverlay_' + id);
+        }
+        // $divOverlay = $('#divOverlay_'+id);
+        // bottomTop = bottomTop+(bottomHeight.substring(0,bottomHeight.length-2) );
+        //  alert(bottomHeight.substring(0,bottomHeight.length-2));
+        //bottomLeft = rowPos.left;
+        $divOverlay.css({
+            position: 'absolute',
+            top: bottomTop,
+            right: '2.3%',
+            width: '5%',
+            height: bottomHeight
+        });
+        $divOverlay.delay(100).slideDown('fast');
+    };
     window.saveInlineForm = saveInlineForm = function (rowDomId, event, element, options) {
         if (event && event.preventDefault && typeof event.preventDefault == 'function') {
             event.preventDefault();
@@ -390,16 +415,20 @@
             globalSaveButton.hide();
         }
         if (isHide) {
-            container.find('#'+rowDomId+' td .action').show();
-           container.find('#'+rowDomId+' td .actionopen').hide();
+            var rowid=$('#'+rowDomId).data('id');
+            var actionInlineBtn="divOverlay_"+rowid;
+
+            container.find('#'+actionInlineBtn).show();
+           container.find('#'+actionInlineBtn).hide();
         }
         else {
            // container.find('#'+rowDomId+' td .action').hide();
-            container.find('#'+rowDomId+' td .actionopen').show();
+            container.find('#'+actionInlineBtn).show();
         }
    };
    
     window.initiateInlineFormFields = initiateInlineFormFields = function (container, url, rowHookParams) {
+        $(container).css('height','62px');
         var cellsHookParams = $.extend({}, rowHookParams, {'cells': container});
         App.autoCallbacks.runCallback('inline.cells.config.before', cellsHookParams);
 

@@ -185,8 +185,8 @@ jQuery(document).ready(function ($) {
 //	}, 60000);
 		
 });	
-	
-	
+
+
 </script>
 </body>
 @yield('afterbodyend', '')
