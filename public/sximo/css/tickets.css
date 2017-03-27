@@ -193,7 +193,7 @@
 .uploadedLists li a::before,
 .attachmentLink::before {
     content: url(icons/external-link-icon.png);
-    margin: 4px;content: url('icons/external-link-icon.png');
+    margin: 4px;
 }
 
 .followControlContainer {

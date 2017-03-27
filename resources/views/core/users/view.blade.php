@@ -97,30 +97,30 @@
 
 	</table>
         <h3>Locations:</h3>
-        <table class="table table-striped table-bordered" >
+        <table class="table table-striped table-bordered table-hover" >
             <thead>
-<tr>
-    <th>Name</th>
-    <th>Street</th>
-    <th>City</th>
-    <th>State</th>
-    <th>Zip</th>
-
-
-</tr>
+                <tr>
+                    <th width="50">ID</th>
+                    <th>Name</th>
+                    <th>Street</th>
+                    <th>City</th>
+                    <th width="50">State</th>
+                    <th width="60">Zip</th>
+                </tr>
             </thead>
             <tbody>
             @foreach($user_locations as $locations)
             <tr>
-                <th>{{ $locations->location_name_short }}</th>
-                <th>{{ $locations->street1 }}</th>
-                <th>{{ $locations->city }}</th>
-                <th>{{ $locations->state }}</th>
-                <th>{{ $locations->zip }}</th>
+                <td>{{ $locations->id }}</td>
+                <td>{{ $locations->location_name_short }}</td>
+                <td>{{ $locations->street1 }}</td>
+                <td>{{ $locations->city }}</td>
+                <td>{{ $locations->state }}</td>
+                <td>{{ $locations->zip }}</td>
             </tr>
                 @endforeach
             </tbody>
-            </table>
+        </table>
 	
 	</div>
 </div>	
