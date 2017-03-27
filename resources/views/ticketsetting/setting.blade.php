@@ -156,6 +156,7 @@
         }
         function showResponse(data) {
 
+            $('.ajaxLoading').hide();
             if (data.status == 'success') {
                 ajaxViewClose('#{{ $pageModule }}');
                 //ajaxFilter('#{{ $pageModule }}', '{{ $pageUrl }}/setting');
@@ -163,9 +164,8 @@
                 $('#sximo-modal').modal('hide');
             } else {
                 notyMessageError(data.message);
-                $('.ajaxLoading').hide();
-                return false;
             }
+            return false;
         }
     </script>
 @stop

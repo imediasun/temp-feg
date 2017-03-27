@@ -25,7 +25,7 @@ class Servicerequests extends Observerable  {
     public static function queryWhere(  ){
         $table = "sb_tickets";
         $controlField = "$table.TicketID";
-        $selected_loc = \Session::get('selected_location');
+        $selected_loc = \SiteHelpers::getCurrentUserLocationsFromSession();//\Session::get('selected_location');
         $isOmniscient = ticketsetting::isUserOmniscient();
         $q = "";
 
