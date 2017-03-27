@@ -247,8 +247,6 @@ class ShopfegrequeststoreController extends Controller
 
     function postSave(Request $request, $id = 0)
     {
-       echo "<pre>"; die();
-
         $rules = $this->validateForm();
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
