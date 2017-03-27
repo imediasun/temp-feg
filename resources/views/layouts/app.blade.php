@@ -88,7 +88,7 @@
 		@include('layouts/sidemenu')
 		<div class="gray-bg " id="page-wrapper">
 			@include('layouts/headmenu')
-
+			<div class="ajaxLoading"></div>
 			@yield('content')
 		</div>
 
@@ -108,7 +108,7 @@
   <div class="modal-content">
 	<div class="modal-header bg-default">
 		<button type="button " class="btn-xs collapse-close btn btn-danger pull-right" data-dismiss="modal"  aria-hidden="true"><i class="fa fa fa-times"></i></button>
-		<h4 class="modal-title">Modal title</h4>
+		<h4 class="modal-title">&nbsp:</h4>
 	</div>
 	<div class="modal-body" id="sximo-modal-content">
 
@@ -147,6 +147,68 @@
 
 <script type="text/javascript">
 jQuery(document).ready(function ($) {
+	navigator.sayswho= (function(){
+		var ua= navigator.userAgent, tem,
+				M= ua.match(/(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*(\d+)/i) || [];
+		if(/trident/i.test(M[1])){
+			tem=  /\brv[ :]+(\d+)/g.exec(ua) || [];
+			return 'IE '+(tem[1] || '');
+		}
+		if(M[1]=== 'Chrome'){
+			tem= ua.match(/\b(OPR|Edge)\/(\d+)/);
+			if(tem!= null) return tem.slice(1).join(' ').replace('OPR', 'Opera');
+		}
+		M= M[2]? [M[1], M[2]]: [navigator.appName, navigator.appVersion, '-?'];
+		if((tem= ua.match(/version\/(\d+)/i))!= null) M.splice(1, 1, tem[1]);
+		return M.join(' ');
+	})();
+
+	console.log(navigator.sayswho);
+
+
+	$('body a:not(.page-content-wrapper a,.expand)').on('click',function (e) {
+		e.preventDefault();
+		var url = $(this).attr('href');
+		var href = $(this).attr('href').split('/');
+		console.log(url,href,href[href.length-1]);
+		if(url != 'javascript:void(0)')
+		{
+			$('.ajaxLoading').show();
+			$.ajax({
+				url:'/core/users/check-access',
+				method:'get',
+				data: {
+					module:href[href.length - 1]
+				}
+			}).done(function (data) {
+						console.log(data);
+						if(data == false)
+						{
+							$('.ajaxLoading').hide();
+							window.location = url;
+						}
+						else
+						{
+							console.log(data.is_view);
+							//console.log(data['is_view']);
+							if(data.is_view == 1)
+							{
+								window.location = url;
+							}
+							else
+							{
+								$('.ajaxLoading').hide();
+								notyMessageError('You are Not Authorized to this Content');
+							}
+						}
+						//$('.globalLoading').hide();
+
+					})
+					.error(function (data) {
+						console.log(data);
+					})
+		}
+	});
 	$('.item_dropdown li a').on('click', function () {
 		if($(this).parents('.item_title').find(">:first-child").text() != 'My Account')
 		{

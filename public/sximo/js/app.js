@@ -161,6 +161,7 @@ App.autoCallbacks.runCallback = function (eventName, params, options) {
 
 App.autoCallbacks.registerCallback('reloaddata', function(params){
     initExport(this);
+    //initUserPopup(this);
 });
 App.autoCallbacks.registerCallback('columnselector', function(params){
 
@@ -324,8 +325,42 @@ jQuery(document).ready(function($){
     detectPUAA($);
 
     initExport(jQuery('.page-content-wrapper'));
+    //initUserPopup(jQuery('.page-content-wrapper'));
     
 });
+
+function initUserPopup(container) {
+    var userFields = [
+            "td[data-field=contact_id]",
+            "td[data-field=merch_contact_id]",
+            "td[data-field=general_manager_id]",
+            "td[data-field=regional_manager_id]",
+            "td[data-field=vp_id]",
+            "td[data-field=technical_user_id]"
+        ],
+        userPath = '/core/users/show/',
+        userSelector = userFields.join(', '),
+        cells = container.find(userSelector);
+
+    cells.each(function (){
+        var cell = $(this),
+            innerElement = cell.find('.activeLink'),
+            content = cell.html(),
+            wrap = "<span class='activeLink text-info'>"+ content + "</span>";
+        if (!innerElement.length) {
+            cell.html(wrap);
+            innerElement = cell.find('.activeLink');
+            innerElement.click(function () {
+                var value = cell.attr('data-values') || '',
+                    val = cell.text(),
+                    userUrl = '' + userPath + value + '/popup';
+                if (value) {
+                    SximoModal(userUrl, val);
+                }
+            });
+        }
+    });
+}
 
 function initExport(container) {
     
@@ -382,7 +417,7 @@ function setAndProbeExportSessionTimeout(setUrl, probeUrl) {
                             showEasing: 'linear',
                         },
                         'info',
-                        'Delay');
+                        'Attention');
                 }
             },
             'json'

@@ -12,12 +12,14 @@
             $gridArray = \SiteHelpers::getModuleSetting($mname, ['grid']);
             $formatters = [];
             foreach($gridArray as $field => $item) {
-                $formatter = empty($item[ 'attribute']['formater']['value']) ? '' : $item[ 'attribute']['formater']['value'];
+                $formatter = empty($item[ 'attribute']['hyperlink']['link']) ? '' : $item[ 'attribute']['hyperlink']['link'];
+                $target = empty($item[ 'attribute']['hyperlink']['target']) ? '' : $item[ 'attribute']['hyperlink']['target'];
                 if (!empty($formatter)) {
                     $data = [
                         "Field Name" => $field,
-                        "Active?" => $item[ 'attribute']['formater']['active'] == 1 ? "Yes" : "No",
-                        "Formatter"  => $formatter,
+                        "Active?" => $item[ 'attribute']['hyperlink']['active'] == 1 ? "Yes" : "No",
+                        "Link"  => $formatter,
+                        "Target"  => $target,
                     ];
                     $formatters[] = $data;
                 }
@@ -29,7 +31,7 @@
         return $r;
     }
 //    
-    echo "<h2>Formatter functions defined in all modules</h2><p>&nbsp;</p>";
+    echo "<h2>Hyperlinks defined in all modules</h2><p>&nbsp;</p>";
     $f = getModulesFormatters();
     foreach($f as $moduleName => $items) {
         echo "<h3 class='moduleNameInList'>$moduleName</h3>";

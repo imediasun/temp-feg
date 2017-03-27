@@ -179,7 +179,7 @@
 $(document).ready(function() {
 
 
-    $("#mfg_id").select2({
+    renderDropdown($("#mfg_id"), {
         data: <?php echo json_encode($vendor_options)?>,
         placeholder: "Select Manufacturer"
     });

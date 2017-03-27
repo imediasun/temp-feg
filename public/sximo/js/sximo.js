@@ -51,10 +51,8 @@ jQuery(document).ready(function($){
 	$('.previewImage').fancybox();	
 	$('.tips').tooltip();	
 	$('.editor').summernote();
-	$(".select2").select2({ width:"98%"});	
-	$(".select-liquid").select2({
-		minimumResultsForSearch: "-1"
-	});	
+    renderDropdown($(".select2"), { width:"98%"});
+    renderDropdown($(".select-liquid"), {minimumResultsForSearch: "-1"});
 	$('.panel-trigger').click(function(e){
 		e.preventDefault();
 		$(this).toggleClass('active');
