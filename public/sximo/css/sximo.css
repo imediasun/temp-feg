@@ -2569,11 +2569,13 @@ li.L9 {
 .footer-pagination ul.pagination { float:right;}
 
 
+
 .theme-config {
     overflow: hidden;
     position: absolute;
     right: 0;
     top: 80px;
+    display: none;
 }
 .theme-config-box {
     margin-right: -320px;
