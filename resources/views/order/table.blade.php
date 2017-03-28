@@ -221,8 +221,7 @@
 	@if($setting['inline'] =='true') @include('sximo.module.utility.inlinegrid') @endif
 
 <script>
-
-$(document).ready(function() {
+    $(document).ready(function() {
     $('.tips').tooltip();
 	$('input[type="checkbox"],input[type="radio"]').iCheck({
 		checkboxClass: 'icheckbox_square-blue',
@@ -260,7 +259,23 @@ $(document).ready(function() {
     }
 
     initDataGrid('{{ $pageModule }}', '{{ $pageUrl }}');
+
 });
+
+
+/*$(function() {
+    $('.table-responsive').scroll( function() {
+        var $width = $('.table-responsive').outerWidth()
+        var $scrollWidth = $('.table-responsive')[0].scrollWidth;
+        var $scrollLeft = $('.table-responsive').scrollLeft();
+        if ($scrollWidth - $width === $scrollLeft-2){
+            console.log('scroll');
+            $("#divOverlay_39644").css({ right:'50px'});
+        }
+    });
+});*/
+
+
 
 </script>
 

@@ -534,3 +534,13 @@ function detectPUAA($) {
     });
 
 }
+$(window).resize(function() {
+    resizeContent();
+});
+function resizeContent() {
+    $(".editable").each(function(){
+        var id=$(this).data('id');
+        var height=$(this).offset().top+40;
+        $('#divOverlay_'+id).css({ top:height});
+    });
+}

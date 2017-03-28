@@ -211,6 +211,7 @@
                 App.autoCallbacks.runCallback('inline.cell.cancel.after', cellHookParams);
             }
             cell.attr('data-edit', null);
+            cell.css('height','auto');
             
         });
         
@@ -232,6 +233,7 @@
         var $divOverlay = $('#divOverlay_'+id);
         //alert();
         var bottomTop = $(ele).offset().top+40;
+        //bottomTop=(bottomTop/$('body').height())*100;
         if(id) {
             $("#divOverlay").attr('id', 'divOverlay_' + id);
         }
@@ -239,14 +241,17 @@
         // bottomTop = bottomTop+(bottomHeight.substring(0,bottomHeight.length-2) );
         //  alert(bottomHeight.substring(0,bottomHeight.length-2));
         //bottomLeft = rowPos.left;
+
         $divOverlay.css({
             position: 'absolute',
+            visibility:'visible',
             top: bottomTop,
-            right: '2.3%',
-            width: '5%',
+            right: '45px',
+            width: 'auto',
             height: bottomHeight
         });
         $divOverlay.delay(100).slideDown('fast');
+
     };
     window.saveInlineForm = saveInlineForm = function (rowDomId, event, element, options) {
         if (event && event.preventDefault && typeof event.preventDefault == 'function') {
