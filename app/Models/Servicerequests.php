@@ -22,12 +22,15 @@ class Servicerequests extends Observerable  {
         $sql = "SELECT concat(U.first_name, ' ', U.last_name) as last_user, sb_tickets.* FROM (
                 SELECT
                     c.last_user_id,
-                    IFNULL (c.last_updated_elapsed_days, DATEDIFF('$date', sb_tickets.Created)) as last_updated_elapsed_days,
+                    IF (
+                        ISNULL(updated),
+                            DATEDIFF('$date', Created),
+                            DATEDIFF('$date', updated)
+                        ) as last_updated_elapsed_days,
                     sb_tickets.*
                 FROM sb_tickets
                 LEFT JOIN (SELECT
                         TicketID,
-                        DATEDIFF('$date', Posted) AS last_updated_elapsed_days,
                         UserID AS last_user_id
                     FROM sb_ticketcomments
                     ORDER BY Posted DESC
