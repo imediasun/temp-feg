@@ -680,18 +680,20 @@ abstract class Controller extends BaseController
                                         $multi_in[] .= '"' . $v . '"';
                                     }
                                     $multi_in = implode(',', $multi_in);
-                                    $param .= " AND " . $table . "." . $keys[0] . " IN(" . $multi_in . ") ";
+                                    $field = (empty($table) ?  "": $table.".") . $keys[0];
+                                    $param .= " AND $field IN(" . $multi_in . ") ";
                                 } else {
-                                    $param .= " AND " . $arr[$keys[0]]['alias'] . "." . $keys[0] . " IN(" . $keys[2] . ") ";
+                                    $field = (empty($arr[$keys[0]]['alias']) ?  "": $arr[$keys[0]]['alias'].".") . $keys[2];
+                                    $param .= " AND $field IN(" . $keys[2] . ") ";
                                 }
                             } else {
-
-                                $param .= " AND " . $arr[$keys[0]]['alias'] . "." . $keys[0] . " " . self::searchOperation($keys[1]) . " '" . $keys[2] . "' ";
+                                $field = (empty($arr[$keys[0]]['alias']) ?  "": $arr[$keys[0]]['alias'].".") . $keys[0];
+                                $param .= " AND $field " . self::searchOperation($keys[1]) . " '" . $keys[2] . "' ";
                             }
 
                         }
                         else {
-                            $col = $arr[$keys[0]]['alias'] . "." . $keys[0];
+                            $col = (empty($arr[$keys[0]]['alias']) ?  "": $arr[$keys[0]]['alias'].".") . $keys[0];
                             if ($keys[0] == 'up_user_id' && $arr[$keys[0]]['alias'] == "game_service_history") {
                                 $col = "DATEDIFF(date_up,date_down)";
                             } elseif ($keys[0] == 'description' && $arr[$keys[0]]['alias'] == "requests" && \Request::segment(1)=="managefegrequeststore") {
