@@ -63,9 +63,9 @@
             @endif
 <div class="table-responsive">
 	@if(count($rowData)>=1)
-    <table class="table table-striped datagrid " id="{{ $pageModule }}Table">
+    <table class="table table-striped datagrid " id="{{ $pageModule }}Table" style="position:relative">
         <thead>
-        <tr>
+        <tr class="row-">
             @if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
                 <th width="35"> No </th>
             @endif
@@ -107,23 +107,23 @@
         </thead>
         <tbody>
         	@if($access['is_add'] =='1' && $setting['inline']=='true')
-			<tr id="form-0" >
-				<td> # </td>
+			<tr id="form-0">
+				<td class="cell"> # </td>
 				@if($setting['disableactioncheckbox']=='false')
-					<td> </td>
+					<td class="cell"> </td>
 				@endif
 				@if($setting['view-method']=='expand') <td> </td> @endif
 				@foreach ($tableGrid as $t)
 					@if(isset($t['inline']) && $t['inline'] =='1')
 					<?php $limited = isset($t['limited']) ? $t['limited'] :''; ?>
 						@if(SiteHelpers::filterColumn($limited ))
-						<td data-form="{{ $t['field'] }}" data-form-type="{{ AjaxHelpers::inlineFormType($t['field'],$tableForm)}}">
+						<td class="cell" data-form="{{ $t['field'] }}" data-form-type="{{ AjaxHelpers::inlineFormType($t['field'],$tableForm)}}">
 							{!! SiteHelpers::transInlineForm($t['field'] , $tableForm) !!}
 						</td>
 						@endif
 					@endif
 				@endforeach
-				<td >
+				<td class="cell">
 					<button onclick="saved('form-0')" class="btn btn-primary btn-xs" type="button"><i class="fa  fa-save"></i></button>
 				</td>
 			  </tr>
@@ -133,13 +133,13 @@
            			  $id = $row->id;
            		?>
 
-                <tr class="editable" id="form-{{ $row->id }}">
+                <tr  class="editable" data-id="{{ $row->id }}" id="form-{{ $row->id }}" @if($setting['inline']!='false' && $setting['disablerowactions']=='false') ondblclick="showFloatingCancelSave(this)" @endif>
 
 					@if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
 						<td class="number"> <?php echo ++$i;?>  </td>
 					@endif
 					@if($setting['disableactioncheckbox']=='false')
-						<td ><input type="checkbox" class="ids" name="ids[]" value="<?php echo $row->id ;?>" />  </td>
+						<td><input type="checkbox" class="ids" name="ids[]" value="<?php echo $row->id ;?>" />  </td>
 					@endif
 
 
@@ -165,14 +165,12 @@
 
 				 <td data-values="action" data-key="<?php echo $row->id ;?>">
 					{!! AjaxHelpers::GamestitleButtonAction('order',$access,$id ,$setting) !!}
-					{!! AjaxHelpers::buttonActionInline($row->id,'id') !!}
 
 
 
-						<a href="{{ URL::to('order/po/'.$row->id)}}"  class="tips btn btn-xs btn-white" title="Generate PO"><i class="fa fa-cogs" aria-hidden="true"></i></a>
+                        <a href="{{ URL::to('order/po/'.$row->id)}}"  class="tips btn btn-xs btn-white" title="Generate PO"><i class="fa fa-cogs" aria-hidden="true"></i></a>
 
-
-						<a href="{{ $pageModule }}/update/{{$row->id}}/clone"  onclick="ajaxViewDetail('#order',this.href); return false; "  class="tips btn btn-xs btn-white" title="Clone Order"><i class=" fa fa-random" aria-hidden="true"></i></a>
+                     <a href="{{ $pageModule }}/update/{{$row->id}}/clone"  onclick="ajaxViewDetail('#order',this.href); return false; "  class="tips btn btn-xs btn-white" title="Clone Order"><i class=" fa fa-random" aria-hidden="true"></i></a>
 
 
                     @if($row->status_id=='Open')
@@ -197,7 +195,12 @@
         </tbody>
 
     </table>
-	@else
+        @if($setting['inline']!='false' && $setting['disablerowactions']=='false')
+            @foreach ($rowData as $row)
+                {!! AjaxHelpers::buttonActionInline($row->id,'id') !!}
+            @endforeach
+        @endif
+    @else
 
 	<div style="margin:100px 0; text-align:center;">
 
@@ -218,9 +221,8 @@
 	@if($setting['inline'] =='true') @include('sximo.module.utility.inlinegrid') @endif
 
 <script>
-$(document).ready(function() {
-
-	$('.tips').tooltip();
+    $(document).ready(function() {
+    $('.tips').tooltip();
 	$('input[type="checkbox"],input[type="radio"]').iCheck({
 		checkboxClass: 'icheckbox_square-blue',
 		radioClass: 'iradio_square-blue'
@@ -257,15 +259,33 @@ $(document).ready(function() {
     }
 
     initDataGrid('{{ $pageModule }}', '{{ $pageUrl }}');
+
 });
+
+/*
+$(function() {
+    var changed=false;
+    $('.table-responsive').scroll( function() {
+        var $width = $('.table-responsive').outerWidth()
+        var $scrollWidth = $('.table-responsive')[0].scrollWidth;
+        var $scrollLeft = $('.table-responsive').scrollLeft();
+
+        if ($scrollWidth - $width == $scrollLeft){
+            console.log('scroll');
+            $(".inline_edit_applied").each(function(){
+                var id=$(this).data('id');
+                var height=$(this).offset().top+$(this).height();
+               $(this).css('height',$(this).height()+30+"px");
+                $('#divOverlay_'+id).css({ top:height});
+            });
+
+        }
+
+
+    });
+});
+
+*/
+
 </script>
-<style>
-    .table th.right {
-        text-align: right !important;
-    }
 
-    .table th.center {
-        text-align: center !important;
-    }
-
-</style>

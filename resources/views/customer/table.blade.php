@@ -61,7 +61,7 @@
            		<?php foreach ($rowData as $row) : 
            			  $id = $row->customerNumber;
            		?>
-                <tr class="editable" id="form-{{ $row->customerNumber }}">
+                <tr class="editable" id="form-{{ $row->customerNumber }}" @if($setting['inline']!='false' && $setting['disablerowactions']=='false') data-id="{{ $row->id }}" ondblclick="showFloatingCancelSave(this)" @endif>
 					<td class="number"> <?php echo ++$i;?>  </td>
 					<td ><input type="checkbox" class="ids" name="ids[]" value="<?php echo $row->customerNumber ;?>" />  </td>					
 					@if($setting['view-method']=='expand')
@@ -83,8 +83,7 @@
 					  ?>
 				 <td data-values="action" data-key="<?php echo $row->customerNumber ;?>">
 					{!! AjaxHelpers::buttonAction('customer',$access,$id ,$setting) !!}
-					{!! AjaxHelpers::buttonActionInline($row->customerNumber,'customerNumber') !!}		
-				</td>			 
+                 </td>
                 </tr>
                 @if($setting['view-method']=='expand')
                 <tr style="display:none" class="expanded" id="row-{{ $row->customerNumber }}">
@@ -100,6 +99,11 @@
         </tbody>
       
     </table>
+        @if($setting['inline']!='false' && $setting['disablerowactions']=='false')
+            @foreach ($rowData as $row)
+                {!! AjaxHelpers::buttonActionInline($row->customerNumber,'customerNumber') !!}
+            @endforeach
+        @endif
 	@else
 
 	<div style="margin:100px 0; text-align:center;">

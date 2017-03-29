@@ -36,20 +36,20 @@
             container.find('.date').datepicker({format:'mm/dd/yyyy', autoclose:true});
             container.find('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});     
 
-            container.find("input[id^='company']").select2({
+            renderDropdown(container.find("input[id^='company']"), {
                 'width': '100%',
                 'data': data['companies_dropdown'],
                 'placeholder': "Select Company"
             });
 
-            container.find("#freight_company_1").select2({
+            renderDropdown(container.find("#freight_company_1"), {
                 'width':'100%',
                 'data': data['companies_dropdown'],
                 'placeholder': "Select Company"
             });
 
-            container.find("input[id^='loc_game_']").each(function(){       
-                $(this).select2({
+            container.find("input[id^='loc_game_']").each(function(){
+                renderDropdown($(this), {
                     'width': '100%',
                     'data': data['game_drop_down'],
                     'placeholder': "Select Game"

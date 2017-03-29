@@ -110,7 +110,7 @@
            		<?php foreach ($rowData as $row) :
            			  $id = $row->id;
            		?>
-                <tr class="editable" id="form-{{ $row->id }}">
+                <tr class="editable" id="form-{{ $row->id }}" @if($setting['inline']!='false' && $setting['disablerowactions']=='false') data-id="{{ $row->id }}" ondblclick="showFloatingCancelSave(this)" @endif>
 					@if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
 						<td class="number"> <?php echo ++$i;?>  </td>
 					@endif
@@ -161,8 +161,7 @@
                   @if($setting['disablerowactions']=='false')
 				 <td data-values="action" data-key="<?php echo $row->id ;?>">
 					{!! AjaxHelpers::buttonAction('managefreightquoters',$access,$id ,$setting,'edit') !!}
-					{!! AjaxHelpers::buttonActionInline($row->id,'id') !!}
-				</td>
+                 </td>
                 @endif
                 </tr>
                 @if($setting['view-method']=='expand')
@@ -179,6 +178,11 @@
         </tbody>
 
     </table>
+            @if($setting['inline']!='false' && $setting['disablerowactions']=='false')
+                @foreach ($rowData as $row)
+                    {!! AjaxHelpers::buttonActionInline($row->id,'id') !!}
+                @endforeach
+            @endif
 	@else
 
 	<div style="margin:100px 0; text-align:center;">

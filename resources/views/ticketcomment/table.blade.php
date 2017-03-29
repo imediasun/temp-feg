@@ -61,7 +61,7 @@
            		<?php foreach ($rowData as $row) : 
            			  $id = $row->CommentID;
            		?>
-                <tr class="editable" id="form-{{ $row->CommentID }}">
+                <tr class="editable" id="form-{{ $row->CommentID }}" @if($setting['inline']!='false' && $setting['disablerowactions']=='false') data-id="{{ $row->id }}" ondblclick="showFloatingCancelSave(this)" @endif>
 					<td class="number"> <?php echo ++$i;?>  </td>
 					<td ><input type="checkbox" class="ids" name="ids[]" value="<?php echo $row->CommentID ;?>" />  </td>					
 					@if($setting['view-method']=='expand')
@@ -83,8 +83,8 @@
 					  ?>
 				 <td data-values="action" data-key="<?php echo $row->CommentID ;?>">
 					{!! AjaxHelpers::buttonAction('ticketcomment',$access,$id ,$setting) !!}
-					{!! AjaxHelpers::buttonActionInline($row->CommentID,'CommentID') !!}		
-				</td>			 
+
+				</td>
                 </tr>
                 @if($setting['view-method']=='expand')
                 <tr style="display:none" class="expanded" id="row-{{ $row->CommentID }}">
@@ -100,6 +100,11 @@
         </tbody>
       
     </table>
+        @if($setting['inline']!='false' && $setting['disablerowactions']=='false')
+            @foreach ($rowData as $row)
+                {!! AjaxHelpers::buttonActionInline($row->CommentID,'CommentID') !!}
+            @endforeach
+        @endif
 	@else
 
 	<div style="margin:100px 0; text-align:center;">

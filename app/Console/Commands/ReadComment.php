@@ -45,7 +45,7 @@ class ReadComment extends Command
     public function handle()
     {
         // don't connect to imap to read ticket comments
-        if (env('DONT_READ_IMAP_TICKET_COMMENTS', false) !== true) {
+        if (env('DONT_READ_IMAP_TICKET_COMMENTS', false) === true) {
             return;
         }
         

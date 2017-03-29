@@ -27,9 +27,7 @@
                             {!! SiteHelpers::transForm($t['field'] , $simpleSearchForm) !!}
                         </div>
                     @endforeach
-                    <div class="sscol-submit"><br/>
-                        <button type="button" name="search" class="doSimpleSearch btn btn-sm btn-primary"> Search </button>
-                    </div>
+                    {!! SiteHelpers::generateSimpleSearchButton($setting) !!}
                 </div>
             @endif
         @endif
@@ -108,7 +106,7 @@
 
                     $id = $row->TicketID;
                     ?>
-                    <tr class="editable" id="form-{{ $row->TicketID }}">
+                    <tr class="editable" id="form-{{ $row->TicketID }}" @if($setting['inline']!='false' && $setting['disablerowactions']=='false') data-id="{{ $row->TicketID }}" ondblclick="showFloatingCancelSave(this)" @endif>
                         @if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
                             <td class="number"> <?php echo ++$i;?>  </td>
                         @endif
@@ -137,7 +135,6 @@
                         ?>
                         <td data-values="action" data-key="<?php echo $row->TicketID;?>">
                             {!! AjaxHelpers::buttonAction('servicerequests',$access,$id ,$setting) !!}
-                            {!! AjaxHelpers::buttonActionInline($row->TicketID,'TicketID') !!}
                         </td>
                     </tr>
                     @if($setting['view-method']=='expand')
@@ -154,6 +151,11 @@
                     </tbody>
 
                 </table>
+                @if($setting['inline']!='false' && $setting['disablerowactions']=='false')
+                    @foreach ($rowData as $row)
+                        {!! AjaxHelpers::buttonActionInline($row->TicketID,'TicketID') !!}
+                    @endforeach
+                @endif
             @else
 
                 <div style="margin:100px 0; text-align:center;">

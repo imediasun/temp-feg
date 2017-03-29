@@ -115,7 +115,7 @@
                     <?php foreach ($rowData as $row) :
                     $id = $row->id;
                     ?>
-                    <tr class="editable" id="form-{{ $row->id }}">
+                    <tr class="editable" id="form-{{ $row->id }}" @if($setting['inline']!='false' && $setting['disablerowactions']=='false') data-id="{{ $row->id }}" ondblclick="showFloatingCancelSave(this)" @endif>
                         @if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
                             <td class="number"> <?php echo ++$i;?>  </td>
                         @endif
@@ -168,7 +168,6 @@
 
                         <td class="action"  data-values="action" data-key="<?php echo $row->id;?>" class="text-center">
                             {!! AjaxHelpers::GamestitleButtonAction('gamestitle',$access,$id ,$setting) !!}
-                            {!! AjaxHelpers::buttonActionInline($row->id,'id') !!}
                             <a href="{{ URL::to('gamestitle/upload/'.$row->id.'?type=2')}}" class="tips btn btn-xs btn-white" title="Upload Manual"><i class="fa fa-file" aria-hidden="true"></i></a>
                             <a href="{{ URL::to('gamestitle/upload/'.$row->id.'?type=3')}}"  class="tips btn btn-xs btn-white" title="Upload Bulletin"><i class="fa fa-file" aria-hidden="true"></i></a>
                             <a  href="{{ URL::to('gamestitle/upload/'.$row->id.'?type=1')}}" class="tips btn btn-xs btn-white" title="Upload Image"><i class="fa fa-picture-o" aria-hidden="true"></i></a>
@@ -188,6 +187,11 @@
                     </tbody>
 
                 </table>
+                @if($setting['inline']!='false' && $setting['disablerowactions']=='false')
+                    @foreach ($rowData as $row)
+                        {!! AjaxHelpers::buttonActionInline($row->id,'id') !!}
+                    @endforeach
+                @endif
             @else
 
                 <div style="margin:100px 0; text-align:center;">

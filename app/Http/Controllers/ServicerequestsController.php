@@ -459,7 +459,8 @@ class servicerequestsController extends Controller
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
             $data = $this->validatePost('sb_tickets', !empty($id));
-            $data['need_by_date']= date("Y-m-d", strtotime($request->get('need_by_date')));
+            $data = $this->validateDates($data);
+            //$data['need_by_date']= date("Y-m-d", strtotime($request->get('need_by_date')));
             $data['Status'] = $request->get('Status');
             $oldStatus = $request->get('oldStatus');
             if (!$isAdd) {

@@ -1149,6 +1149,10 @@ a:focus {
     margin: 0 0 0 240px;
     min-height: 1000px;
   }
+    /*[id^='divOverlay']
+    {
+        //right:6%;
+    }*/
 }
 .title-action {
   text-align: right;
@@ -2130,6 +2134,24 @@ background: none repeat scroll 0 0 #FFFFFF;
 border: 1px solid #DDDDDD;
 color: #333333;
 }
+.divider .dd3-content {
+    position: relative
+}
+.divider .dd3-content::before {
+    content: '';
+    position: absolute;
+    right: 40px;
+    bottom: 33%;
+    top: 33%;
+    left: 100px;
+    border-bottom: 2px solid #eee;
+    border-top: 2px solid #eee;
+    z-index: 1;
+}
+.inactive .dd3-content {
+    background: #f5f5f5;
+    color: #aaa;
+}
 .dd3-content:hover { background: #fff; }
 .dd-dragel > .dd3-item > .dd3-content { margin: 0; }
 .dd3-item > button { margin-left: 35px; }
@@ -2144,6 +2166,7 @@ border: 1px solid #3276B1;
 background: #428BCA;
 height:36px;
 box-shadow:1px 1px 0 rgba(255, 255, 255, 0.2) inset;
+z-index: 2;
 }
 .dd3-handle:before { content: '='; display: block; position: absolute; left: 0; top: 5px; width: 100%; text-align: center; text-indent: 0; color: #fff; font-size: 20px; font-weight: normal; }
 .dd3-handle:hover { background: #4E9DFF; } 
@@ -2569,11 +2592,13 @@ li.L9 {
 .footer-pagination ul.pagination { float:right;}
 
 
+
 .theme-config {
     overflow: hidden;
     position: absolute;
     right: 0;
     top: 80px;
+    display: none;
 }
 .theme-config-box {
     margin-right: -320px;
@@ -2954,4 +2979,20 @@ table.table-striped tr th
 ul.breadcrumb {
   display: none;
 }
+/*for inline-edit floating Action buttons*/
+[id^='divOverlay']{ /* background-color:black;*/ text-align:center;  position:absolute; z-index:9000;right:3% /*opacity:0.5;*/ }
 
+.activeLink {
+    cursor: pointer;
+}
+
+.activeLink:hover {
+    
+}
+
+
+.gridHyperlinkValue::after {
+    content: url(icons/external-link-icon.png);
+    margin: 0 2px;
+    opacity: .2;
+}

@@ -111,23 +111,28 @@ class AjaxHelpers
 
 		}
 		// Handling Link  function 	
-		if(isset($attribute['hyperlink']['active']) && $attribute['hyperlink']['active'] ==1 && $attribute['hyperlink']['link'] != '')
+		if((!empty(trim($val)) || trim($val)=== 0 || trim($val)=== '0') &&
+                isset($attribute['hyperlink']['active']) &&
+                $attribute['hyperlink']['active'] ==1 &&
+                $attribute['hyperlink']['link'] != '')
 		{	
 	
 			$attr = '';
 			$linked = $attribute['hyperlink']['link'];
 			foreach($row as $k=>$i)
 			{
-				
-				if (preg_match("/$k/",$attribute['hyperlink']['link']))
-					$linked = str_replace($k,$i, $linked);				
+//				if (preg_match("/$k/",$attribute['hyperlink']['link'])) {
+//                    $linked = str_replace($k,$i, $linked);
+//                }
+                $linked = str_replace('{{'.$k.'}}', $i, $linked);
 			}
 			if($attribute['hyperlink']['target'] =='modal')
 			{
-				$attr = "onclick='SximoModal(this.href); return false'";
+				$attr = "class='gridHyperlinkValue' onclick='SximoModal(this.href, \"".htmlentities($val)."\"); return false'";
 			}
 			
-			$val =  "<a href='".URL::to($linked)."'  $attr style='display:block' >".$val." <span class='fa fa-arrow-circle-right pull-right'></span></a>";
+//			$val =  "<a href='".URL::to($linked)."'  $attr style='display:block' >".$val." <span class='fa fa-arrow-circle-right pull-right'></span></a>";
+			$val =  "<a href='".URL::to($linked)."'  $attr >".$val."</a>";
 		}
 
 		return $val;		
@@ -253,11 +258,12 @@ class AjaxHelpers
 	}
 	static public function buttonActionInline( $id ,$key )
 	{
-		$divid = 'form-'.$id;	
+        $divid = 'form-'.$id;
+        $outeridvid="divOverlay_".$id;
 		$html = '
-		<div class="actionopen" style="display:none">
+		<div id="'.$outeridvid.'" class="actionopen" style="visibility: hidden" >
 			<button onclick="saveInlineForm(\''.$divid.'\', event, this)" class="tips btn btn-primary btn-xs" type="button" title="Save"><i class="fa  fa-save"></i></button>
-			<button onclick="cancelInlineEdit(\''.$divid.'\', event, this)" class="tips btn btn-danger btn-xs " type="button" title="Cancel"><i class="fa  fa-times"></i></button>
+			<button onclick="cancelInlineEdit(\''.$divid.'\', event, this)" class="tips btn btn-danger btn-xs" type="button" title="Cancel"><i class="fa  fa-times"></i></button>
 			<input type="hidden" value="'.$id.'" name="'.$key.'">
 		</div>
 		';

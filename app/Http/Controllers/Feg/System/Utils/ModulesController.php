@@ -32,5 +32,9 @@ class ModulesController extends Controller
 	{
 		return view('feg.system.utils.modules.formatters',$this->data);
 	}
+	public function hyperlinks($params = null)
+	{
+		return view('feg.system.utils.modules.hyperlinks',$this->data);
+	}
 
 }
