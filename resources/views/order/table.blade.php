@@ -262,20 +262,30 @@
 
 });
 
-
-/*$(function() {
+/*
+$(function() {
+    var changed=false;
     $('.table-responsive').scroll( function() {
         var $width = $('.table-responsive').outerWidth()
         var $scrollWidth = $('.table-responsive')[0].scrollWidth;
         var $scrollLeft = $('.table-responsive').scrollLeft();
-        if ($scrollWidth - $width === $scrollLeft-2){
+
+        if ($scrollWidth - $width == $scrollLeft){
             console.log('scroll');
-            $("#divOverlay_39644").css({ right:'50px'});
+            $(".inline_edit_applied").each(function(){
+                var id=$(this).data('id');
+                var height=$(this).offset().top+$(this).height();
+               $(this).css('height',$(this).height()+30+"px");
+                $('#divOverlay_'+id).css({ top:height});
+            });
+
         }
+
+
     });
-});*/
+});
 
-
+*/
 
 </script>
 

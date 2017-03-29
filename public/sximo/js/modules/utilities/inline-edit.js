@@ -107,9 +107,9 @@
             switch (inputType) {
                 case 'text_date':
                 case 'text_datetime':
-                    value = moment(originalValue);
-                    formattedValue = value.isValid() ? value.format(dateFormats[inputType]) : '';
-                    input.val(formattedValue);
+                   // value = moment(originalValue);
+                    //formattedValue = value.isValid() ? value.format(dateFormats[inputType]) : '';
+                    //nput.val(formattedValue);
                     input.attr('data-today', today);
                     input.attr('data-today-datetime', todayDateTime);
                     break;
@@ -179,7 +179,7 @@
         displayInlineEditButtons(rowDomId);
 
         App.autoCallbacks.runCallback('inline.row.config.after', rowHookParams);
-        
+
         initiateInlineFormFields($('#'+ rowDomId + ' td[data-edit=1]'), siteUrl, rowHookParams);
     });       
    };
@@ -232,7 +232,7 @@
         var id=$(ele).data('id');
         var $divOverlay = $('#divOverlay_'+id);
         //alert();
-        var bottomTop = $(ele).offset().top+40;
+        var bottomTop = $(ele).offset().top+$(ele).height();
         //bottomTop=(bottomTop/$('body').height())*100;
         if(id) {
             $("#divOverlay").attr('id', 'divOverlay_' + id);
@@ -246,7 +246,7 @@
             position: 'absolute',
             visibility:'visible',
             top: bottomTop,
-            right: '45px',
+            right: '51px',
             width: 'auto',
             height: bottomHeight
         });
@@ -433,10 +433,9 @@
    };
    
     window.initiateInlineFormFields = initiateInlineFormFields = function (container, url, rowHookParams) {
-        $(container).css('height','62px');
         var cellsHookParams = $.extend({}, rowHookParams, {'cells': container});
         App.autoCallbacks.runCallback('inline.cells.config.before', cellsHookParams);
-
+        $(container).css('height',$(container).height()+30 +"px");
         container.find('.date').datepicker({format:'mm/dd/yyyy', autoclose: true});
         container.find('.datetime').datetimepicker({format: 'mm/dd/yyyy HH:ii:ss P', autoclose: true});
 
