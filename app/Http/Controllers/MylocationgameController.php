@@ -328,14 +328,17 @@ class MylocationgameController extends Controller
                 $data = $this->validatePost('game', true);
             //after validating data array become very small, so merge with post data
             $data = array_merge($_POST, $data);
-            $gameID = $data['id'];
-            $gameIDExists = \DB::table('game')->where('id', $gameID)->count() > 0;
-            if ($id != $gameID && $gameIDExists) {
-                return response()->json(array(
-                    'status' => 'error',
-                    'message' => 'Asset ID already exists!'
-                ));            
-            }            
+           if(isset($data['id']))
+            {
+                $gameID = $data['id'];
+                $gameIDExists = \DB::table('game')->where('id', $gameID)->count() > 0;
+                if ($id != $gameID && $gameIDExists) {
+                    return response()->json(array(
+                        'status' => 'error',
+                        'message' => 'Asset ID already exists!'
+                    ));
+                }
+            }
             if (!empty($request->input('product_id'))) {
                 $products = $request->input('product_id');
                 $products = json_encode($products);

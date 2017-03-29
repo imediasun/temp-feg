@@ -61,7 +61,7 @@
            		<?php foreach ($rowData as $row) : 
            			  $id = $row->CommentID;
            		?>
-                <tr class="editable" id="form-{{ $row->CommentID }}" @if($setting['inline']!='false' && $setting['disablerowactions']=='false') data-id="{{ $row->id }}" ondblclick="showFloatingCancelSave(this)" @endif>
+                <tr class="editable" id="form-{{ $row->CommentID }}" @if($setting['inline']!='false' && $setting['disablerowactions']=='false') data-id="{{ $row->CommentID }}" ondblclick="showFloatingCancelSave(this)" @endif>
 					<td class="number"> <?php echo ++$i;?>  </td>
 					<td ><input type="checkbox" class="ids" name="ids[]" value="<?php echo $row->CommentID ;?>" />  </td>					
 					@if($setting['view-method']=='expand')
