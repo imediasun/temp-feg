@@ -263,7 +263,7 @@ class LocationController extends Controller
             
             // old id in case the existing location's id has been modified
             $oldId = $id;
-            $newId = $data['id'];
+            $newId = isset($data['id'])?$data['id']:"";
             if ($oldId == $newId) {
                 $oldId = null;
             }
