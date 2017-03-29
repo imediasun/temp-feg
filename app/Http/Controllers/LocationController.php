@@ -253,7 +253,7 @@ class LocationController extends Controller
             $rules['id'] = 'required|unique:location,id,'.$input_id;
         }
         else{
-            if(!is_null($id)) {
+            if(is_null($id)) {
                 $rules['id'] = 'required';
             }
         }
