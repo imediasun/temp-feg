@@ -19,24 +19,25 @@ class Servicerequests extends Observerable  {
 
     public static function querySelect(  ){
         $date = date("Y-m-d");
-        $sql = "SELECT concat(U.first_name, ' ', U.last_name) as last_user, sb_tickets.* FROM (
-                SELECT
-                    c.last_user_id,
-                    IF (
-                        ISNULL(c.Posted),
-                            DATEDIFF('$date', Created),
-                            DATEDIFF('$date', c.Posted)
-                        ) as last_updated_elapsed_days,
-                    sb_tickets.*
-                FROM sb_tickets
-                LEFT JOIN (SELECT
-                        TicketID,
-                        Posted,
-                        UserID AS last_user_id
-                    FROM sb_ticketcomments
-                    ORDER BY Posted DESC
-                ) c ON c.TicketID = sb_tickets.TicketID
-                GROUP BY sb_tickets.TicketID) sb_tickets
+        $sql = "SELECT concat(U.first_name, ' ', U.last_name) as last_user, sb_tickets.*
+                FROM (
+                    SELECT
+                        c.last_user_id,
+                        IF (
+                            ISNULL(c.Posted),
+                                DATEDIFF('$date', Created),
+                                DATEDIFF('$date', c.Posted)
+                            ) as last_updated_elapsed_days,
+                        sb_tickets.*
+                    FROM sb_tickets
+                    LEFT JOIN (SELECT
+                                    TicketID,
+                                    Posted,
+                                    UserID AS last_user_id
+                                FROM sb_ticketcomments
+                                ORDER BY Posted DESC
+                        ) c ON c.TicketID = sb_tickets.TicketID
+                    GROUP BY sb_tickets.TicketID) sb_tickets
                 LEFT JOIN users U ON U.id = sb_tickets.last_user_id
             ";
 
