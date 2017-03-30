@@ -23,14 +23,15 @@ class Servicerequests extends Observerable  {
                 SELECT
                     c.last_user_id,
                     IF (
-                        ISNULL(updated),
+                        ISNULL(c.Posted),
                             DATEDIFF('$date', Created),
-                            DATEDIFF('$date', updated)
+                            DATEDIFF('$date', c.Posted)
                         ) as last_updated_elapsed_days,
                     sb_tickets.*
                 FROM sb_tickets
                 LEFT JOIN (SELECT
                         TicketID,
+                        Posted,
                         UserID AS last_user_id
                     FROM sb_ticketcomments
                     ORDER BY Posted DESC
