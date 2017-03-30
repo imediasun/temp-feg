@@ -428,15 +428,6 @@ class servicerequestsController extends Controller
  
         $validator = Validator::make($data, $rules);
         if ($validator->passes()) {
-            $request_date=$request->get('request_date');
-            $need_by_date=$request->get('need_by_date');
-            if(strtotime($request_date) > strtotime($need_by_date))
-            {
-                return response()->json(array(
-                    'message' => "Requested date should be less then Need by date",
-                    'status' => 'error'
-                ));
-            }
             $data['updated'] = date("Y-m-d H:i:s");
             $this->model->insertRow($data, $id);
             return response()->json(array(
@@ -460,15 +451,6 @@ class servicerequestsController extends Controller
         //$data['need_by_date'] = date('Y-m-d');
         //$rules = $this->validateForm();
         $isAdd = empty($id);
-        $request_date=$request->get('request_date');
-        $need_by_date=$request->get('need_by_date');
-        if(strtotime($request_date) > strtotime($need_by_date))
-        {
-            return response()->json(array(
-                'message' => "Requested date should be less then Need by date",
-                'status' => 'error'
-            ));
-        }
         $rules = $this->validateForm();
         unset($rules['department_id']);
        //$rules = array('Subject' => 'required', 'Description' => 'required', 'Priority' => 'required', 'issue_type' => 'required', 'location_id' => 'required');
