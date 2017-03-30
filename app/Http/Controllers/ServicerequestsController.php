@@ -242,7 +242,7 @@ class servicerequestsController extends Controller
             $this->data['tableGrid'] = \SiteHelpers::showRequiredCols($this->data['tableGrid'], $this->data['config']);
         }
         // Render into template
-        return view('servicerequests.table', $this->data);
+        //return view('servicerequests.table', $this->data);
         var_dump($this->data);
         die();
 
