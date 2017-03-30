@@ -243,6 +243,8 @@ class servicerequestsController extends Controller
         }
         // Render into template
         return view('servicerequests.table', $this->data);
+        var_dump($this->data);
+        die();
 
     }
 
