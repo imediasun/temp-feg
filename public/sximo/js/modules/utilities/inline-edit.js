@@ -212,11 +212,16 @@
             }
             cell.attr('data-edit', null);
             cell.css('height','auto');
+
             
         });
         
         row.removeClass('inline_edit_applied');
-
+        row.nextAll('.inline_edit_applied').each(function(){
+            var id=$(this).data('id');
+            var height=$(this).offset().top+$(this).height()-25;
+            $('#divOverlay_'+id).css('top',height +"px");
+        });
         rowHookParams.count = --editingRowsCount;
         displayInlineEditButtons(rowDomId, true);
 
@@ -231,17 +236,10 @@
         var rowPos = $(ele).position();
         var id=$(ele).data('id');
         var $divOverlay = $('#divOverlay_'+id);
-        //alert();
         var bottomTop = $(ele).offset().top+$(ele).height();
-        //bottomTop=(bottomTop/$('body').height())*100;
         if(id) {
             $("#divOverlay").attr('id', 'divOverlay_' + id);
         }
-        // $divOverlay = $('#divOverlay_'+id);
-        // bottomTop = bottomTop+(bottomHeight.substring(0,bottomHeight.length-2) );
-        //  alert(bottomHeight.substring(0,bottomHeight.length-2));
-        //bottomLeft = rowPos.left;
-
         $divOverlay.css({
             position: 'absolute',
             visibility:'visible',
