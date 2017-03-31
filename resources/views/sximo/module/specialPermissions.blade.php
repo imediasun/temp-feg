@@ -17,7 +17,6 @@
         @endif
     </div>
 	<div class="page-content-wrapper m-t" id='specialPermissionsGridContainer'> 
-        <div class="ajaxLoading"></div>
         @if ($view_mode !== 'solo')
             @include('sximo.module.tab', ['active'=>'special-permissions','type'=>$type])
         @endif
