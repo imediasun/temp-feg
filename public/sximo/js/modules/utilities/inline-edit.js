@@ -107,10 +107,10 @@
             switch (inputType) {
                 case 'text_date':
                 case 'text_datetime':
-                    //value = moment(originalValue);
-                    //formattedValue = value.isValid() ? value.format(dateFormats[inputType]) : '';
-                    //input.val(formattedValue);
-                   // input.attr('data-today', today);
+                    value = moment(originalValue);
+                    formattedValue = value.isValid() ? value.format(dateFormats[inputType]) : '';
+                    input.val(formattedValue);
+                    input.attr('data-today', today);
                     input.attr('data-today-datetime', todayDateTime);
                     break;
                 case 'select':
