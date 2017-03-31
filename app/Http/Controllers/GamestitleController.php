@@ -239,11 +239,12 @@ class GamestitleController extends Controller
         $rules = $this->validateForm();
         //  $rules['manual']='Not Required|mimes:pdf';
        // $rules['img']='required';
+        $rules['game_type_id']="required";
         if($id == null) {
-            $rules["game_title"] = "unique:game_title";
+            $rules["game_title"] = "required|unique:game_title";
         }// $rules['service_bulletin']='Not Required|mimes:pdf';
         else{
-            $rules["game_title"] = "";
+            $rules["game_title"] = "required";
         }
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {

@@ -2980,7 +2980,7 @@ ul.breadcrumb {
   display: none;
 }
 /*for inline-edit floating Action buttons*/
-[id^='divOverlay']{ /* background-color:black;*/ text-align:center;  position:absolute; z-index:9000;right:3% /*opacity:0.5;*/ }
+[id^='divOverlay']{ /* background-color:black;*/ text-align:center;  position:absolute; z-index:500;right:3% /*opacity:0.5;*/ }
 
 .activeLink {
     cursor: pointer;

@@ -233,7 +233,7 @@ class AjaxHelpers
 	static public function GamestitleButtonAction( $module , $access , $id , $setting,$edit=null)
 	{
 
-		$html ='';
+		$html ='<div class="action">';
 		if($access['is_detail'] ==1) {
 			if($setting['view-method'] != 'expand')
 			{
@@ -253,7 +253,7 @@ class AjaxHelpers
 				$html .= ' <a href="'.URL::to($module.'/update/'.$id).'" '.$onclick.'  class="btn btn-xs btn-white tips" title="'.Lang::get('core.btn_edit').'"><i class="fa  fa-edit"></i></a>';
 			}
 		}
-		$html .= '';
+		$html .= '</div>';
 		return $html;
 	}
 	static public function buttonActionInline( $id ,$key )
@@ -262,8 +262,8 @@ class AjaxHelpers
         $outeridvid="divOverlay_".$id;
 		$html = '
 		<div id="'.$outeridvid.'" class="actionopen" style="visibility: hidden" >
-			<button onclick="saveInlineForm(\''.$divid.'\', event, this)" class="tips btn btn-primary btn-xs" type="button" title="Save"><i class="fa  fa-save"></i></button>
-			<button onclick="cancelInlineEdit(\''.$divid.'\', event, this)" class="tips btn btn-danger btn-xs" type="button" title="Cancel"><i class="fa  fa-times"></i></button>
+			<a href="#" onclick="saveInlineForm(\''.$divid.'\', event, this)" class="tips btn btn-primary btn-xs"  title="Save"><i class="fa  fa-save"></i></a>
+			<a href="#" onclick="cancelInlineEdit(\''.$divid.'\', event, this)" class="tips btn btn-danger btn-xs"  title="Cancel"><i class="fa  fa-times"></i></a>
 			<input type="hidden" value="'.$id.'" name="'.$key.'">
 		</div>
 		';

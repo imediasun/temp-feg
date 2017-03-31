@@ -540,7 +540,7 @@ $(window).resize(function() {
 function resizeContent() {
     $(".editable").each(function(){
         var id=$(this).data('id');
-        var height=$(this).offset().top+40;
+        var height=$(this).offset().top+28;
         $('#divOverlay_'+id).css({ top:height});
     });
 }
