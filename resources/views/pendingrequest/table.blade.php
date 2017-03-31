@@ -10,7 +10,7 @@
 			@endif 
 		</div>
 	</div>
-	<div class="sbox-content">
+	<div class="sbox-content" style="border: none;">
         @if($setting['usesimplesearch']!='false')
             <?php $simpleSearchForm = SiteHelpers::configureSimpleSearchForm($tableForm); ?>
             @if(!empty($simpleSearchForm))
@@ -21,20 +21,18 @@
                             {!! SiteHelpers::transForm($t['field'] , $simpleSearchForm) !!}
                         </div>
                     @endforeach
-                    <div class="sscol-submit"><br/>
-                        <button type="button" name="search" class="doSimpleSearch btn btn-sm btn-primary"> Search </button>
-                    </div>
+                        {!! SiteHelpers::generateSimpleSearchButton($setting) !!}
                 </div>
             @endif
         @endif
         @include( $pageModule.'/toolbar',['colconfigs' => SiteHelpers::getRequiredConfigs($module_id)])
-
+            <div class="sbox-content" style="border: none;">
 	 <?php echo Form::open(array('url'=>'pendingrequest/delete/', 'class'=>'form-horizontal' ,'id' =>'SximoTable'  ,'data-parsley-validate'=>'' )) ;?>
 <div class="table-responsive">	
 	@if(count($rowData)>=1)
-    <table class="table table-striped datagrid " id="{{ $pageModule }}Table">
+    <table class="table table-striped datagrid " id="{{ $pageModule }}Table" style="position:relative">
         <thead>
-			<tr>
+			<tr class="row-">
 				<th width="30"> No </th>
                 @if($setting['disableactioncheckbox']=='false')
                     <th width="30"> <input type="checkbox" class="checkall" /></th>
@@ -105,7 +103,7 @@
            		<?php foreach ($rowData as $row) : 
            			  $id = $row->id;
            		?>
-                <tr class="editable" id="form-{{ $row->id }}" @if($setting['inline']!='false' && $setting['disablerowactions']=='false') data-id="{{ $row->id }}" ondblclick="showFloatingCancelSave(this)" @endif>
+                <tr class="editable" id="form-{{ $row->id }}" @if($setting['inline']!='false' && $setting['disablerowactions']=='false') data-id="{{ $row->id }}" ondblclick=" setTimeout(showFloatingCancelSave(this),5000);" @endif>
 					<td class="number"> <?php echo ++$i;?>  </td>
                     @if($setting['disableactioncheckbox']=='false')
                         <td ><input type="checkbox" class="ids" name="ids[]" value="<?php echo $row->id ;?>" />  </td>
@@ -175,10 +173,12 @@
 	@include('ajaxfooter')
 	
 	</div>
-</div>	
+</div>
+    </div>
 	
 	@if($setting['inline'] =='true') @include('sximo.module.utility.inlinegrid') @endif
 <script>
+
 $(document).ready(function() {
 	$('.tips').tooltip();	
 	$('input[type="checkbox"],input[type="radio"]').iCheck({

@@ -104,7 +104,7 @@
            		<?php foreach ($rowData as $row) :
            			  $id = $row->{key};
            		?>
-                <tr class="editable" id="form-{{ $row->{key} }}">
+                <tr class="editable" id="form-{{ $row->{key} }}" data-id="{{ $row->{key} }}" id="form-{{ $row->{key}}}" @if($setting['inline']!='false' && $setting['disablerowactions']=='false') ondblclick="showFloatingCancelSave(this)" @endif>
                     @if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
 					<td class="number"> <?php echo ++$i;?>  </td>
                     @endif
@@ -134,8 +134,7 @@
                   @if($setting['disablerowactions']=='false')     
 				 <td data-values="action" data-key="<?php echo $row->{key} ;?>">
 					{!! AjaxHelpers::buttonAction('{class}',$access,$id ,$setting) !!}
-					{!! AjaxHelpers::buttonActionInline($row->{key},'{key}') !!}
-				</td>
+                 </td>
                 @endif
                 </tr>
                 @if($setting['view-method']=='expand')
@@ -173,7 +172,11 @@
 
 	</div>
 </div>
-
+@if($setting['inline']!='false' && $setting['disablerowactions']=='false')
+@foreach ($rowData as $row)
+{!! AjaxHelpers::buttonActionInline($row->{key},'key') !!}
+@endforeach
+@endif
 	@if($setting['inline'] =='true') @include('sximo.module.utility.inlinegrid') @endif
 <script>
 $(document).ready(function() {

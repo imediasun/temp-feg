@@ -195,11 +195,7 @@
         </tbody>
 
     </table>
-        @if($setting['inline']!='false' && $setting['disablerowactions']=='false')
-            @foreach ($rowData as $row)
-                {!! AjaxHelpers::buttonActionInline($row->id,'id') !!}
-            @endforeach
-        @endif
+
     @else
 
 	<div style="margin:100px 0; text-align:center;">
@@ -216,6 +212,11 @@
 	@include('ajaxfooter')
 
 	</div>
+            @if($setting['inline']!='false' && $setting['disablerowactions']=='false')
+                @foreach ($rowData as $row)
+                    {!! AjaxHelpers::buttonActionInline($row->id,'id') !!}
+                @endforeach
+            @endif
 </div>
 </div>
 	@if($setting['inline'] =='true') @include('sximo.module.utility.inlinegrid') @endif

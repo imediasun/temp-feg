@@ -275,7 +275,6 @@
                 </div>
             </div>
         </div>
-        <div class="ajaxLoading"></div>
     </div>
 
 

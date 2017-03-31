@@ -107,9 +107,9 @@
             switch (inputType) {
                 case 'text_date':
                 case 'text_datetime':
-                   // value = moment(originalValue);
-                    //formattedValue = value.isValid() ? value.format(dateFormats[inputType]) : '';
-                    //nput.val(formattedValue);
+                    value = moment(originalValue);
+                    formattedValue = value.isValid() ? value.format(dateFormats[inputType]) : '';
+                    input.val(formattedValue);
                     input.attr('data-today', today);
                     input.attr('data-today-datetime', todayDateTime);
                     break;
@@ -212,11 +212,17 @@
             }
             cell.attr('data-edit', null);
             cell.css('height','auto');
+
             
         });
-        
-        row.removeClass('inline_edit_applied');
-
+       var actionBtns= $(row).children('td[data-values="action"]').children('.action');
+           actionBtns.css('padding-bottom',"0px");
+           row.removeClass('inline_edit_applied');
+           row.nextAll('.inline_edit_applied').each(function(){
+           var id=$(this).data('id');
+           var height=$(this).offset().top+29;
+           $('#divOverlay_'+id).css('top',height +"px");
+        });
         rowHookParams.count = --editingRowsCount;
         displayInlineEditButtons(rowDomId, true);
 
@@ -231,24 +237,22 @@
         var rowPos = $(ele).position();
         var id=$(ele).data('id');
         var $divOverlay = $('#divOverlay_'+id);
-        //alert();
-        var bottomTop = $(ele).offset().top+$(ele).height();
-        //bottomTop=(bottomTop/$('body').height())*100;
+
         if(id) {
             $("#divOverlay").attr('id', 'divOverlay_' + id);
         }
-        // $divOverlay = $('#divOverlay_'+id);
-        // bottomTop = bottomTop+(bottomHeight.substring(0,bottomHeight.length-2) );
-        //  alert(bottomHeight.substring(0,bottomHeight.length-2));
-        //bottomLeft = rowPos.left;
-
+        var bottomTop;
+        var rightSpace;
+        var actionBtns= $(ele).children('td[data-values="action"]').children('.action');
+           actionBtns.css('padding-bottom',"29px");
+           bottomTop=actionBtns.offset().top+29;
         $divOverlay.css({
             position: 'absolute',
             visibility:'visible',
             top: bottomTop,
-            right: '51px',
+            right: "55px",
             width: 'auto',
-            height: bottomHeight
+            height: '28px'
         });
         $divOverlay.delay(100).slideDown('fast');
 
@@ -435,7 +439,7 @@
     window.initiateInlineFormFields = initiateInlineFormFields = function (container, url, rowHookParams) {
         var cellsHookParams = $.extend({}, rowHookParams, {'cells': container});
         App.autoCallbacks.runCallback('inline.cells.config.before', cellsHookParams);
-        $(container).css('height',$(container).height()+30 +"px");
+        $(container).css('height',$(container).height()+"px");
         container.find('.date').datepicker({format:'mm/dd/yyyy', autoclose: true});
         container.find('.datetime').datetimepicker({format: 'mm/dd/yyyy HH:ii:ss P', autoclose: true});
 

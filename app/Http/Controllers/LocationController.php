@@ -253,7 +253,9 @@ class LocationController extends Controller
             $rules['id'] = 'required|unique:location,id,'.$input_id;
         }
         else{
-            $rules['id'] = 'required';
+            if(is_null($id)) {
+                $rules['id'] = 'required';
+            }
         }
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
@@ -261,7 +263,7 @@ class LocationController extends Controller
             
             // old id in case the existing location's id has been modified
             $oldId = $id;
-            $newId = $data['id'];
+            $newId = isset($data['id'])?$data['id']:"";
             if ($oldId == $newId) {
                 $oldId = null;
             }
