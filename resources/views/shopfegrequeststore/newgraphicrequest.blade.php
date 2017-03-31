@@ -87,7 +87,7 @@
                     <div class="col-md-4">
                     </div>
                     <div class="col-md-6">
-                        <p class="bg-info" style="padding: 5px">You can select multiple images by pressing control button</p>
+                        <p class="bg-info" style="padding: 5px">You may upload multiple images by pressing and holding down the CTRL button on your keyboard while you are selecting images to upload</p>
 
                     </div>
                 </div>
