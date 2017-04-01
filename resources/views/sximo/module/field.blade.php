@@ -108,6 +108,7 @@ $(document).ready(function(){
 <input type="hidden" name="form_group" value="<?php echo $f['form_group'];?>" />	
 <input type="hidden" name="sortlist" value="<?php echo $f['sortlist'];?>" />
 <input type="hidden" name="view" value="<?php echo $f['view'];?>" />
+<input type="hidden" name="required" value="<?php echo $f['required'];?>" />
 <input type="hidden" name="search" value="<?php echo $f['search'];?>" />
 <input type="hidden" name="simplesearch" value="<?php echo isset($f['simplesearch']) ? $f['simplesearch'] : ''; ?>" />
 <input type="hidden" name="simplesearchorder" value="<?php echo isset($f['simplesearchorder']) ? $f['simplesearchorder'] : '';?>" />
