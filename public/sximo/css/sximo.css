@@ -2347,7 +2347,7 @@ z-index: 2;
 .sbox-content {
   background-color: #f9f9f9;
   color: inherit;
-  padding: 10px 20px 7px 20px;
+  padding: 10px 20px 0px 20px;
   border-color: #ddd;
   border-image: none;
   border-style: solid solid none;
@@ -2372,7 +2372,7 @@ z-index: 2;
 .page-header { padding:20px 15px 20px; margin:0; background:#fff; border-top:solid 1px #ddd }
 fieldset { margin:10px 0;}
 fieldset legend { font-size:16px; padding:10px 0; font-weight:500;}
-.table-responsive { background:#fff;  border:solid 1px #ddd; overflow-x:auto; padding-bottom:15px;}
+.table-responsive { background:#fff;  border:solid 1px #ddd; overflow-x:auto; /*padding-bottom:15px;*/}
 .toolbar { margin:10px 0; clear:both; text-align:right;}
 .toolbar-line { margin:6px 0; clear:both; }
 .page-content-wrapper { padding:0 15px;}
@@ -2589,10 +2589,10 @@ li.L9 {
 .shortcut span.h3{ font-weight:400 !important; font-size:16px; }
 .shortcut span.h3 { color: #233646 }
 
-.footer-pagination ul.pagination { float:right;}
-
-
-
+.pagination{
+    float:right;
+    margin:10px 0;
+}
 .theme-config {
     overflow: hidden;
     position: absolute;
@@ -2996,3 +2996,8 @@ ul.breadcrumb {
     margin: 0 2px;
     opacity: .2;
 }
+.table
+{
+    margin-bottom:0px;
+}
+
