@@ -31,6 +31,9 @@
 		<link href="{{ asset('sximo/css/sximo.css')}}" rel="stylesheet"/>
     <link href="{{ asset('sximo/css/bootstrap-switch.css')}}" rel="stylesheet"/>
     <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet"/>
+        <script type="text/javascript">
+            var siteUrl = "{{ url() }}";
+        </script>
 		<script type="text/javascript" src="{{ asset('sximo/js/plugins/jquery.min.js') }}"></script>
 
 			<script type="text/javascript" src="{{ asset('sximo/js/plugins/jquery.cookie.js') }}"></script>
@@ -176,7 +179,7 @@ jQuery(document).ready(function ($) {
 		{
 			$('.ajaxLoading').show();
 			$.ajax({
-				url:'/core/users/check-access',
+				url: siteUrl + '/core/users/check-access',
 				method:'get',
 				data: {
 					module:href[href.length - 1]
