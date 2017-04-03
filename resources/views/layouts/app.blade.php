@@ -90,16 +90,17 @@
 			@include('layouts/headmenu')
 			<div class="ajaxLoading"></div>
 			@yield('content')
+            <div class="footer fixed">
+                <div class="pull-right">
+
+                </div>
+                <div>
+                    <strong>Copyright</strong> &copy; 2014-{{ date('Y')}} . {{ CNF_COMNAME }}
+                </div>
+            </div>
 		</div>
 
-		<div class="footer fixed">
-		    <div class="pull-right">
 
-		    </div>
-		    <div>
-		        <strong>Copyright</strong> &copy; 2014-{{ date('Y')}} . {{ CNF_COMNAME }}
-		    </div>
-		</div>
 
 	</div>
 

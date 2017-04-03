@@ -114,24 +114,8 @@
         </ul>
     </nav>
 </div>
-
- <?php $pageModule=isset($_SERVER['HTTP_REFERER'])?$_SERVER['HTTP_REFERER']: (isset($pageModule) ? $pageModule : '');
- if($pageModule == url('').'/' )
-     {
-          $pageModule='dashboard';
-     }
-else
-    {
-    $pageModule=\Route::getFacadeRoot()->current()->uri();
-    $pageModule=explode('/',$pageModule);
-    $pageModule=$pageModule[0];
-}
- ?>
-
 <script>
     $(document).ready(function () {
-
-
         $("#user_locations").on('change', function () {
             $('.globalLoading').show();
             var location_id = $(this).val();
@@ -146,8 +130,6 @@ else
                     else {
                         notyMessageError(response.message);
                     }
-
-
                 });
             }
         });
