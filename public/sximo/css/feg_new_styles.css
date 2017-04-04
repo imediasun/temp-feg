@@ -85,6 +85,8 @@
 {
     margin-left:0px;
     font-size: 22px;
+    padding-top: 0;
+    padding-bottom: 0;
 }
 .btn-primary, .btn-success,.btn-info,.btn-danger {
     background-color: #1c84c6!important;

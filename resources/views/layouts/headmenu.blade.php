@@ -4,7 +4,7 @@
         <div class="navbar-header">
             <a href="javascript:void(0)" class="navbar-minimalize minimalize-btn btn  silver-btn "><i
                         class="fa fa-bars"></i> </a>
-            <span class="navbar-minimalize minimalize-btn text-gray page-title change_title">@if(isset($pageTitle)){{ $pageTitle }}@endif</span>
+            <span class="navbar-minimalize minimalize-btn text-gray page-title">@if(isset($pageTitle)){{ $pageTitle }}@endif</span>
         </div>
         <ul class="nav navbar-top-links navbar-right">
                 <?php if(\Session::get('return_id') != ''): $id = \Session::get('return_id'); ?>

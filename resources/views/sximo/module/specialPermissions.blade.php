@@ -24,10 +24,11 @@
             {!! Session::get('message') !!}
         @endif
         <div class="sbox">
-            <div class="sbox-title">
-                <h5>{!! $module_title !!}
-                    {!! !empty($module_desc) ? ' - ' . $module_desc : '' !!}
-                </h5></div>
+             @if ($view_mode == 'solo')
+            <div class="sbox-title">               
+                <h5>Special Permissions</h5>
+            </div>
+            @endif
                 <div class="sbox-content">
                     <div class="m-t"></div>	
                     <div class="infobox infobox-danger fade in">
