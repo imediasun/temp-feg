@@ -123,7 +123,7 @@
                 $.get('/user/changelocation/'+location_id,function( response ) {
                     if(response.status =='success')
                     {
-                        notyMessage(response.message);
+                        //notyMessage(response.message);
                         location.reload();
                     }
                     else {
