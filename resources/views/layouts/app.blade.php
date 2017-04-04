@@ -85,7 +85,7 @@
     <!-- End Search and storage  -->
     @yield('beforeheadend', '')	
   	</head>
-  	<body class="sxim-init" style="background:url('{{asset("sximo/images/sidebar-bg.jpg") }}');background-repeat:no-repeat;background-size: 220px;background-position:left bottom;background-color:#103669 ">
+  	<body class="sxim-init" style="background:url('{{asset("sximo/images/sidebar-bg.jpg") }}');background-repeat:no-repeat;background-size: 220px;background-position:left bottom;background-color:#195a97 ">
     @yield('afterbodystart', '')
 	<div id="wrapper">
 		@include('layouts/sidemenu')
