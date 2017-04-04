@@ -30,6 +30,7 @@ jQuery(document).ready(function($){
       button.appendTo("body");
       
       jQuery(window).scroll(function() {
+        offset = Math.min(jQuery(window).height(), 220);
         if (jQuery(this).scrollTop() > offset) {
             jQuery('.back-to-top').fadeIn(duration);
         } else {
