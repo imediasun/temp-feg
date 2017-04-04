@@ -16,10 +16,12 @@
 {
     /*background:#195a97;*/
 }
-.side_menu_bg
+.sideMenuContainer
 {
     background:#103669;
+    margin-bottom: 330px;
 }
+
 #logo
 {
     margin:0px;
@@ -36,10 +38,11 @@
 {
     margin-top:15px;
 }
-.sxim-init
-{
-
+.sxim-init {
+    background: #193160 url('../images/sidebar-bg.jpg') no-repeat left bottom;
+    background-size: 220px;
 }
+
 .navbar-static-side
 {
     width:220px;

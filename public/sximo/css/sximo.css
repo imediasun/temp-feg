@@ -12,10 +12,11 @@
   font-family: 'Lato', sans-serif;
   font-size: 13px;
   line-height: 1.42857143;
-  background: #2f4050;
- 
-  color: #676a6c; overflow-x:hidden
+  background: #2f4050; 
+  color: #676a6c;
+  overflow-x:hidden
 }
+
 #form-0{
   display: none;
 }
@@ -1139,6 +1140,7 @@ a:focus {
 }
 #page-wrapper {
   padding: 0 15px;
+  min-height: 568px;
   position: relative !important;
   background:#eeeeee ;
 }
@@ -1146,7 +1148,7 @@ a:focus {
   #page-wrapper {
     position: inherit;
     margin: 0 0 0 240px;
-
+    min-height: 1000px;
   }
     /*[id^='divOverlay']
     {
@@ -2033,7 +2035,7 @@ code {
   #page-wrapper {
     position: inherit;
     margin: 0 0 0 220px;
-
+    min-height: 1000px;
   }
   .navbar-static-side {
     z-index: 101;
@@ -2050,7 +2052,7 @@ code {
   #page-wrapper {
     position: inherit;
     margin: 0 0 0 0px;
-
+    min-height: 1000px;
   }
   .body-small .navbar-static-side {
     display: none;
@@ -2346,7 +2348,7 @@ z-index: 2;
 .sbox-content {
   background-color: #f9f9f9;
   color: inherit;
-  padding: 10px 20px 0px 20px;
+  padding: 20px;
   border-color: #ddd;
   border-image: none;
   border-style: solid solid none;
@@ -2662,7 +2664,7 @@ li.L9 {
     border-top: 1px solid #e7eaec;
     bottom: 0;
     left: 0;
-   /* margin-left: 220px;*/
+    margin-left: 220px;
     padding: 10px 20px;
 
     right: 0;
@@ -2998,10 +3000,6 @@ ul.breadcrumb {
 .table
 {
     margin-bottom:0px;
-}
-#page-wrapper
-{
-    min-height: 0px !important;
 }
 
 

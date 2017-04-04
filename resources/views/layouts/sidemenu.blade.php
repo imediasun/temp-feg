@@ -5,8 +5,8 @@ $selected_loc=\Session::get('selected_location');?>
 ?>
 
 @endif
-<nav role="navigation" class="  side_menu_bg navbar-default navbar-static-side">
-    <div class="sidebar-collapse ">
+<nav role="navigation" class="  sideMenuNav navbar-default navbar-static-side">
+    <div class="sidebar-collapse sideMenuContainer">
         <ul id="sidemenu" class="nav expanded-menu">
             <li class="logo-header">
                 <a id="logo" class="navbar-brand" href="{{ URL::to('dashboard')}}">

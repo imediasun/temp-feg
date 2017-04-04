@@ -85,7 +85,7 @@
     <!-- End Search and storage  -->
     @yield('beforeheadend', '')	
   	</head>
-  	<body class="sxim-init" style="background:url('{{asset("sximo/images/sidebar-bg.jpg") }}');background-repeat:no-repeat;background-size: 220px;background-position:left bottom;background-color:#195a97 ">
+  	<body class="sxim-init" >
     @yield('afterbodystart', '')
 	<div id="wrapper">
 		@include('layouts/sidemenu')
@@ -93,17 +93,16 @@
 			@include('layouts/headmenu')
 			<div class="ajaxLoading"></div>
 			@yield('content')
-            <div class="footer fixed">
-                <div class="pull-right">
-
-                </div>
-                <div>
-                    <strong>Copyright</strong> &copy; 2014-{{ date('Y')}} . {{ CNF_COMNAME }}
-                </div>
-            </div>
 		</div>
 
+		<div class="footer fixed">
+		    <div class="pull-right">
 
+		    </div>
+		    <div>
+		        <strong>Copyright</strong> &copy; 2014-{{ date('Y')}} . {{ CNF_COMNAME }}
+		    </div>
+		</div>
 
 	</div>
 
@@ -112,7 +111,7 @@
   <div class="modal-content">
 	<div class="modal-header bg-default">
 		<button type="button " class="btn-xs collapse-close btn btn-danger pull-right" data-dismiss="modal"  aria-hidden="true"><i class="fa fa fa-times"></i></button>
-		<h4 class="modal-title">&nbsp:</h4>
+		<h4 class="modal-title">&nbsp;</h4>
 	</div>
 	<div class="modal-body" id="sximo-modal-content">
 
