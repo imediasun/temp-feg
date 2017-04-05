@@ -167,7 +167,7 @@
                                    class="form-control" style="width:25%;float:left;margin-left:3px"/>
                             <input type="text" name="po_2" readonly id="po_2" class="form-control"
                                    value="{{  $data['po_2'] }}" style="width:35%;float:left;margin-left:3px"/>
-                            <input type="text" name="po_3" id="po_3" required class="form-control" autocomplete="off"
+                            <input type="text" name="po_3" id="po_3" required class="form-control" autocomplete="off" readonly
                                    value="{{ $data['po_3'] }}" style="width:30%;float:left;margin-left:3px"/>
                             <br/>
                             <br/>
