@@ -25,7 +25,7 @@
 				@if($setting['view-method']=='expand') <th>  </th> @endif			
 				<?php foreach ($tableGrid as $t) :
 					if($t['view'] =='1'):
-						echo '<th align="'.$t['align'].'">'.\SiteHelpers::activeLang($t['label'],(isset($t['language'])? $t['language'] : array())).'</th>';
+						echo '<th style=text-align:'.$t['align'].'>'.\SiteHelpers::activeLang($t['label'],(isset($t['language'])? $t['language'] : array())).'</th>';
 					endif;
 				endforeach; ?>
 				<th width="70"><?php echo Lang::get('core.btn_action') ;?></th>

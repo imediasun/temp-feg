@@ -244,7 +244,6 @@ class LocationController extends Controller
 
     function postSave(Request $request, $id = null)
     {
-
         $rules = $this->validateForm();
         $input_id=$request->get('id');
         $locationAssignmentFields = \SiteHelpers::getUniqueLocationUserAssignmentMeta('field-id');
@@ -254,7 +253,7 @@ class LocationController extends Controller
         }
         else{
             if(is_null($id)) {
-                $rules['id'] = 'required';
+               $rules['id'] = 'required';
             }
         }
         $validator = Validator::make($request->all(), $rules);

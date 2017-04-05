@@ -116,8 +116,6 @@
         </div>
 
     </div>
-
-    <div class="ajaxLoading"></div>
     
     <script>
         $("document").ready(function(){

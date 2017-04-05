@@ -13,11 +13,12 @@ class TablesController extends Controller
     public function __construct()
     {
         parent::__construct();
+        $this->data['pageTitle'] = "Database Tables";
     }
 
     public function getIndex()
     {
-        $this->data['tables'] = Module::getTableList($this->db);
+        $this->data['tables'] = Module::getTableList($this->db);        
         return view('sximo.tables.index', $this->data);
     }
 

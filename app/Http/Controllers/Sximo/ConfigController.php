@@ -14,6 +14,7 @@ class ConfigController extends Controller
     public function __construct()
     {
         parent::__construct();
+        $this->data['pageTitle'] = "Settings";
         if (\Auth::check() or \Session::get('gid') != '1') {
             //	echo 'redirect';
             return Redirect::to('dashboard');

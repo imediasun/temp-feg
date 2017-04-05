@@ -70,7 +70,7 @@ if (!$colconfigs) {
                                             ' data-sortable="'.$colIsSortable.'"'.
                                             ' data-sorted="'.($colIsSorted?1:0).'"'.
                                             ' data-sortedOrder="'.($colIsSorted?$orderBy:'').'"'.
-                                            ' align="'.$t['align'].'"'.
+                                            ' style=text-align:'.$t['align'].
                                             ' width="'.$t['width'].'"';
                                     $th .= '>';
                                     $th .= \SiteHelpers::activeLang($t['label'],(isset($t['language'])? $t['language'] : array()));

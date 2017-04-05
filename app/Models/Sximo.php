@@ -304,6 +304,26 @@ class Sximo extends Model {
         }
     }
 
+    function validPageAccess($page, $groupId = null) {
+        if (empty($groupId)) {
+            $groupId = \Session::get('gid');
+        }
+        $row = \DB::table('tb_pages')->where('alias', '=', $page)
+                ->first();
+
+        if (!empty($row)) {
+            $data = ['is_view' => 0];
+            if ($row->access != '') {
+                $accsss = json_decode($row->access, true);
+                $data['is_view'] = isset($accsss[$groupId])? $accsss[$groupId] : 0;
+            }
+            return $data;
+        }
+        else {
+            return false;
+        }
+    }
+
     static function getColumnTable($table) {
         $columns = array();
         foreach (\DB::select("SHOW COLUMNS FROM $table") as $column) {

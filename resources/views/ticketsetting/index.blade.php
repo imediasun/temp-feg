@@ -73,7 +73,7 @@
 							$conn = (isset($field['conn']) ? $field['conn'] : array() );
 							$value = AjaxHelpers::gridFormater($row->$field['field'], $row , $field['attribute'],$conn);
 						 	?>
-							<td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}" data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">					 
+							<td  style=text-align:{{ $t['align'] }} data-values="{{ $row->$field['field'] }}" data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
 								{!! $value !!}							 
 							</td>					 
 						

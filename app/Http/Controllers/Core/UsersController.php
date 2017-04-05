@@ -41,9 +41,16 @@ class UsersController extends Controller
 
     public function getCheckAccess()
     {
-
-        $moduleId = Module::where('module_name' ,Input::get('module'))->pluck('module_id');
-        return response()->json($this->model->validAccess($moduleId));
+        $moduleName = Input::get('module');
+        $moduleId = Module::where('module_name', $moduleName)->pluck('module_id');
+        if (!empty($moduleId)) {
+            $access = $this->model->validAccess($moduleId);
+        }
+        else {
+            $access = $this->model->validPageAccess($moduleName);
+        }
+        
+        return response()->json($access);
     }
 
     public function getIndex(Request $request, $id=null)

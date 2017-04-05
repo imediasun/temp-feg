@@ -5,7 +5,7 @@ $orders = array('asc','desc');
 ?>
 	<div class="table-footer">
 	<div class="row">
-	 <div class="col-sm-5">
+	 <div class="col-md-6 col-sm-12 col-xs-12">
 	  <div class="table-actions" style=" padding: 10px 0" id="<?php echo $pageModule;?>Filter">
   			<input type="hidden" name="page" value="{{ isset($param['page'])?$param['page']:""}}" />
 			<input type="hidden" name="search" value="<?php if(!is_null(Input::get('search'))) echo Input::get('search') ;?>" />
@@ -89,13 +89,9 @@ $orders = array('asc','desc');
         @endif
 	  </div>
 	  </div>
-	   <div class="col-sm-2">
-		<p class="text-center" style=" padding: 25px 0">
 
-		</p>
-	   </div>
         @if(!isset($setting['disablepagination']) || $setting['disablepagination'] == 'false')
-		<div class="col-sm-5" id="<?php echo $pageModule;?>Paginate">
+		<div class="col-md-6 col-sm-12 col-xs-12" id="<?php echo $pageModule;?>Paginate">
             {!! $pagination->appends($pager)->render() !!}
         </div>
         @endif

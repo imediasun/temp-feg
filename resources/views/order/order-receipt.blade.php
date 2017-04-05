@@ -15,7 +15,6 @@
     <div class="sbox">
 
         <div class="sbox-content">
-<div class="ajaxLoading"></div>
             {!! Form::open(array('url'=>'order/receiveorder/', 'class'=>'form-vertical','files' => true ,
             'parsley-validate'=>'','novalidate'=>' ','id'=> 'orderreceiveFormAjax')) !!}
             <div class="col-sm-12 ">

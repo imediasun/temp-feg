@@ -6,9 +6,6 @@
   <div class="page-content row">
     <!-- Page header -->
     <div class="page-header">
-
-	  <div class="ajaxLoading"></div>
-	 
 	  <ul class="breadcrumb">
 		<li><a href="{{ URL::to('dashboard') }}">{{ Lang::get('core.home') }}</a></li>
 		<li><a href="{{ URL::to('config') }}">{{ Lang::get('core.t_generalsetting') }}</a></li>

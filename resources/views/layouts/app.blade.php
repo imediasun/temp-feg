@@ -31,6 +31,9 @@
 		<link href="{{ asset('sximo/css/sximo.css')}}" rel="stylesheet"/>
     <link href="{{ asset('sximo/css/bootstrap-switch.css')}}" rel="stylesheet"/>
     <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet"/>
+        <script type="text/javascript">
+            var siteUrl = "{{ url() }}";
+        </script>
 		<script type="text/javascript" src="{{ asset('sximo/js/plugins/jquery.min.js') }}"></script>
 
 			<script type="text/javascript" src="{{ asset('sximo/js/plugins/jquery.cookie.js') }}"></script>
@@ -82,7 +85,7 @@
     <!-- End Search and storage  -->
     @yield('beforeheadend', '')	
   	</head>
-  	<body class="sxim-init" style="background:url('{{asset("sximo/images/sidebar-bg.jpg") }}');background-repeat:no-repeat;background-size: 220px;background-position:left bottom;background-color:#103669 ">
+  	<body class="sxim-init" >
     @yield('afterbodystart', '')
 	<div id="wrapper">
 		@include('layouts/sidemenu')
@@ -108,7 +111,7 @@
   <div class="modal-content">
 	<div class="modal-header bg-default">
 		<button type="button " class="btn-xs collapse-close btn btn-danger pull-right" data-dismiss="modal"  aria-hidden="true"><i class="fa fa fa-times"></i></button>
-		<h4 class="modal-title">&nbsp:</h4>
+		<h4 class="modal-title">&nbsp;</h4>
 	</div>
 	<div class="modal-body" id="sximo-modal-content">
 
@@ -144,112 +147,6 @@
 @yield('beforebodyend', '')
 @include('sximo.module.utility.inlinegrid')
 @yield('inlinedit', '')
-
-<script type="text/javascript">
-jQuery(document).ready(function ($) {
-	navigator.sayswho= (function(){
-		var ua= navigator.userAgent, tem,
-				M= ua.match(/(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*(\d+)/i) || [];
-		if(/trident/i.test(M[1])){
-			tem=  /\brv[ :]+(\d+)/g.exec(ua) || [];
-			return 'IE '+(tem[1] || '');
-		}
-		if(M[1]=== 'Chrome'){
-			tem= ua.match(/\b(OPR|Edge)\/(\d+)/);
-			if(tem!= null) return tem.slice(1).join(' ').replace('OPR', 'Opera');
-		}
-		M= M[2]? [M[1], M[2]]: [navigator.appName, navigator.appVersion, '-?'];
-		if((tem= ua.match(/version\/(\d+)/i))!= null) M.splice(1, 1, tem[1]);
-		return M.join(' ');
-	})();
-
-	console.log(navigator.sayswho);
-
-
-	$('body a:not(.page-content-wrapper a,.expand)').on('click',function (e) {
-		e.preventDefault();
-		var url = $(this).attr('href');
-		var href = $(this).attr('href').split('/');
-		console.log(url,href,href[href.length-1]);
-		if(url != 'javascript:void(0)')
-		{
-			$('.ajaxLoading').show();
-			$.ajax({
-				url:'/core/users/check-access',
-				method:'get',
-				data: {
-					module:href[href.length - 1]
-				}
-			}).done(function (data) {
-						console.log(data);
-						if(data == false)
-						{
-							$('.ajaxLoading').hide();
-							window.location = url;
-						}
-						else
-						{
-							console.log(data.is_view);
-							//console.log(data['is_view']);
-							if(data.is_view == 1)
-							{
-								window.location = url;
-							}
-							else
-							{
-								$('.ajaxLoading').hide();
-								notyMessageError('You are Not Authorized to this Content');
-							}
-						}
-						//$('.globalLoading').hide();
-
-					})
-					.error(function (data) {
-						console.log(data);
-					})
-		}
-	});
-	$('.item_dropdown li a').on('click', function () {
-		if($(this).parents('.item_title').find(">:first-child").text() != 'My Account')
-		{
-			window.localStorage.setItem('clicked_tab', $(this).parents('.item_title').find(">:first-child").text());
-		}
-		//alert($(this).parents('.item_title').find(">:first-child").text());
-	});
-	if(window.location.pathname != "/dashboard")
-	{
-		//console.log($('#sidemenu li.active .nav-label').text());
-
-		$('#sidemenu li.active .nav-label').text() == '' ? window.localStorage.getItem('clicked_tab') == '' || window.localStorage.getItem('clicked_tab') == null ? '' : $('.page-title.change_title').text(window.localStorage.getItem('clicked_tab')) : $('.page-title.change_title').text($('#sidemenu li.active .nav-label').text());
-	}
-	if(window.location.pathname == '/user/profile')
-	{
-		$('.page-title.change_title').text('My Account');
-	}
-
-    $('#sidemenu').sximMenu();
-	$('.spin-icon').click(function () {
-        $(".theme-config-box").toggleClass("show");
-    });
-
-//	setInterval(function(){
-//		var noteurl = $('.notif-value').attr('code');
-//		$.get( noteurl +'/notification/load',function(data){
-//			$('.notif-alert').html(data.total);
-//			var html = '';
-//			$.each( data.note, function( key, val ) {
-//				html += '<li><a href="'+val.url+'"> <div> <i class="'+val.icon+' fa-fw"></i> '+ val.title+'  <span class="pull-right text-muted small">'+val.date+'</span></div></li>';
-//				html += '<li class="divider"></li>';
-//			});
-//			html += '<li><div class="text-center link-block"><a href="'+noteurl+'/notification"><strong>View All Notification</strong> <i class="fa fa-angle-right"></i></a></div></li>';
-//			$('.notif-value').html(html);
-//		});
-//	}, 60000);
-		
-});	
-
-
-</script>
 </body>
 @yield('afterbodyend', '')
 </html>

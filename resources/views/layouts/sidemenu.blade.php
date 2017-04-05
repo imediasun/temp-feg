@@ -5,8 +5,8 @@ $selected_loc=\Session::get('selected_location');?>
 ?>
 
 @endif
-<nav role="navigation" class="  side_menu_bg navbar-default navbar-static-side">
-    <div class="sidebar-collapse ">
+<nav role="navigation" class="  sideMenuNav navbar-default navbar-static-side">
+    <div class="sidebar-collapse sideMenuContainer">
         <ul id="sidemenu" class="nav expanded-menu">
             <li class="logo-header">
                 <a id="logo" class="navbar-brand" href="{{ URL::to('dashboard')}}">
@@ -51,23 +51,24 @@ $selected_loc=\Session::get('selected_location');?>
                         @endif
                         <span class="sub-heading">Month : {{ $orderData['curMonthFull'] }}</span>
                     </h5>
+
                     <table class="budget-summery">
                         <tr>
-                            <td width="120">Merchandise</td>
-                            <td>$ {{ number_format($orderData['monthly_merch_order_total'], 2, '.', ',') }}</td>
+                            <td>Merchandise</td>
+                            <td>${{ number_format($orderData['monthly_merch_order_total'], 2, '.', ',') }}</td>
                         </tr>
                         <tr class="border-bottom">
 
                             <td>Parts & other </td>
-                            <td>$ {{ number_format($orderData['monthly_else_order_total'], 2, '.', ',') }}</td>
+                            <td>${{ number_format($orderData['monthly_else_order_total'], 2, '.', ',') }}</td>
                         </tr>
                         <tr class="border-bottom">
                             <td>{{ $orderData['curMonthFull'] }} Remaining Merch Budget:</td>
-                            <td>$
+                            <td>
                             @if($orderData['monthly_merch_remaining'] < 0)
-                                {{ number_format($orderData['monthly_merch_remaining'], 2, '.', ',') }}
+                                ${{ number_format($orderData['monthly_merch_remaining'], 2, '.', ',') }}
                             @else
-                                {{ number_format($orderData['monthly_merch_remaining'], 2, '.', ',') }}
+                                ${{ number_format($orderData['monthly_merch_remaining'], 2, '.', ',') }}
                             @endif
                         </tr>
                         <tr>

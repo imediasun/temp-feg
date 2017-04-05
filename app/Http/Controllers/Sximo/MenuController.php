@@ -15,6 +15,7 @@ class MenuController extends Controller
         $this->model = new Menu();
         $this->info = $this->model->makeInfo('menu');
         $this->access = $this->model->validAccess($this->info['id']);
+        $this->data['pageTitle'] = "Menu Management";
     }
 
 

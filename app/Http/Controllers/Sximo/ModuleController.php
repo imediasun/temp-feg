@@ -23,6 +23,7 @@ class ModuleController extends Controller
         $this->dbpass = $database[$driver]['password'];
         $this->dbhost = $database[$driver]['host'];
         $this->model = new Module();
+        $this->data['pageTitle'] = "Modules";
     }
 
     public function getIndex(Request $request)
@@ -277,6 +278,7 @@ class ModuleController extends Controller
 
         }
         $row = $row[0];
+        $this->data['pageTitle'] = "Module: " . Module::name2title($id);
         $this->data['row'] = $row;
         $this->data['module'] = 'module';
         $this->data['module_lang'] = json_decode($row->module_lang, true);
@@ -411,6 +413,7 @@ class ModuleController extends Controller
             return Redirect::to('feg/module')->with('messagetext', 'Can not find module')->with('msgstatus', 'error');
         }
         $row = $row[0];
+        $this->data['pageTitle'] = "Module: " . Module::name2title($id);
         $this->data['row'] = $row;
         $config = \SiteHelpers::CF_decode_json($row->module_config);
         $this->data['sql_select'] = $config['sql_select'];
@@ -530,6 +533,7 @@ class ModuleController extends Controller
             return Redirect::to('feg/module')->with('messagetext', 'Can not find module')->with('msgstatus', 'error');
         }
         $row = $row[0];
+        $this->data['pageTitle'] = "Module: " . Module::name2title($id);
         $this->data['row'] = $row;
         $config = \SiteHelpers::CF_decode_json($row->module_config);
         $this->data['tables'] = $config['grid'];
@@ -550,6 +554,7 @@ class ModuleController extends Controller
             return Redirect::to('feg/module')->with('messagetext', 'Can not find module')->with('msgstatus', 'error');
         }
         $row = $row[0];
+        $this->data['pageTitle'] = "Module: " . Module::name2title($id);
         $this->data['row'] = $row;
         $config = \SiteHelpers::CF_decode_json($row->module_config);
 
@@ -652,6 +657,7 @@ class ModuleController extends Controller
             return Redirect::to('feg/module')->with('messagetext', 'Can not find module')->with('msgstatus', 'error');
         }
         $row = $row[0];
+        $this->data['pageTitle'] = "Module: " . Module::id2title($id);
         $this->data['row'] = $row;
         $config = \SiteHelpers::CF_decode_json($row->module_config);
 
@@ -947,6 +953,7 @@ class ModuleController extends Controller
             return Redirect::to('feg/module')->with('messagetext', 'Can not find module')->with('msgstatus', 'error');
         }
         $row = $row[0];
+        $this->data['pageTitle'] = "Module: " . Module::name2title($id);
         $this->data['row'] = $row;
         $this->data['module'] = 'module';
         $this->data['module_name'] = $row->module_name;
@@ -1086,7 +1093,7 @@ class ModuleController extends Controller
             return Redirect::to('feg/module')->with('messagetext', 'Can not find module')->with('msgstatus', 'error');
         }
         $row = $row[0];
-
+        $this->data['pageTitle'] = "Module: " . Module::name2title($id);
         $this->data['module'] = 'module';
         $this->data['module_name'] = $id;
         $this->data['module_id'] = $row->module_id;
@@ -1104,6 +1111,7 @@ class ModuleController extends Controller
                 ->with('messagetext', 'Can not find module')->with('msgstatus', 'error');
         }
         $row = $row[0];
+        $this->data['pageTitle'] = "Module: " . Module::name2title($id);
         $this->data['row'] = $row;
         $config = \SiteHelpers::CF_decode_json($row->module_config);
         $this->data['forms'] = $config['forms'];
@@ -1200,6 +1208,7 @@ class ModuleController extends Controller
             return Redirect::to('feg/module')->with('messagetext', 'Can not find module')->with('msgstatus', 'error');
         }
         $row = $row[0];
+        $this->data['pageTitle'] = "Module: " . Module::name2title($id);
         $config = \SiteHelpers::CF_decode_json($row->module_config);
         $this->data['row'] = $row;
         $this->data['fields'] = $config['grid'];
@@ -1286,6 +1295,7 @@ class ModuleController extends Controller
                 ->with('messagetext', 'Can not find module')->with('msgstatus', 'error');
         }
         $row = $row[0];
+        $this->data['pageTitle'] = "Module: " . Module::name2title($id);
         $this->data['row'] = $row;
 
         $config = \SiteHelpers::CF_decode_json($row->module_config);
@@ -1318,6 +1328,7 @@ class ModuleController extends Controller
             return Redirect::to('feg/module')->with('messagetext', 'Can not find module')->with('msgstatus', 'error');
         }
         $row = $row[0];
+        $this->data['pageTitle'] = "Module: " . Module::name2title($id);
         $this->data['row'] = $row;
         $config = \SiteHelpers::CF_decode_json($row->module_config);
 
@@ -1577,6 +1588,7 @@ class ModuleController extends Controller
             return Redirect::to('feg/module')->with('messagetext', 'Can not find module')->with('msgstatus', 'error');
         }
         $row = $row[0];
+        $this->data['pageTitle'] = "Module: " . Module::name2title($id);
         $this->data['row'] = $row;
         $config = \SiteHelpers::CF_decode_json($row->module_config);
         $class = $row->module_name;
@@ -2121,7 +2133,7 @@ class ModuleController extends Controller
         $this->data['view_mode'] = $mode;   
         $this->data['rowData'] = $pass->getPasses($module->module_id, '', true);
         $this->data['tableGrid'] = $pass->getGrid();
-        $this->data['pageTitle'] = $mode =='solo' ? $module->module_title : 'Module Configuration';        
+        $this->data['pageTitle'] = $mode =='solo' ? $module->module_title : "Module: " .$module->module_title;
         
         return view('sximo.module.specialPermissions', $this->data);
         

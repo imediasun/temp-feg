@@ -27,4 +27,10 @@ class Module extends Sximo {
             return self::where('module_name', $name)->pluck('module_id');
         });
     }
+    public static function name2title($name) {
+        return self::where('module_name', $name)->pluck('module_title');
+    }
+    public static function id2title($id) {
+        return self::where('module_id', $id)->pluck('module_title');
+    }
 }

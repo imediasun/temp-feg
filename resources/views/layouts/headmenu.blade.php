@@ -4,20 +4,19 @@
         <div class="navbar-header">
             <a href="javascript:void(0)" class="navbar-minimalize minimalize-btn btn  silver-btn "><i
                         class="fa fa-bars"></i> </a>
-            <span class="navbar-minimalize minimalize-btn text-gray page-title change_title">@if(isset($pageTitle)){{ $pageTitle }}@endif</span>
+            <span class="navbar-minimalize minimalize-btn text-gray page-title">@if(isset($pageTitle)){{ $pageTitle }}@endif</span>
         </div>
         <ul class="nav navbar-top-links navbar-right">
+                <?php if(\Session::get('return_id') != ''): $id = \Session::get('return_id'); ?>
                 <li >
-                    <?php if(\Session::get('return_id') != ''): $id = \Session::get('return_id'); ?>
                     <a class="exit-admin" style="color: #428bca;" href="{{ URL::to('core/users/play/'.$id)}}">Exit to Admin</a>
-                    <?php endif; ?>
                 </li>
+                <?php endif; ?>
             <li>
                 <a href="{{url()}}/addtocart"  class="dropdown-toggle count-info">
                     <?php
                         $cart_value=\Session::get('total_cart');
-                    $cart_value=isset($cart_value)?$cart_value:0;
-
+                        $cart_value=isset($cart_value)?$cart_value:0;
                     ?>
                     <i class="fa fa-shopping-cart"></i> <span class="notif-alert label label-danger" id="update_text_to_add_cart"></span>
 
@@ -40,7 +39,7 @@
 
             {{--*/ $CPMenus = \SiteHelpers::menus('control-panel'); /*--}}
             @if(!empty($CPMenus))
-                <li class="user dropdown item_title"><a class="dropdown-toggle" href="javascript:void(0)" data-toggle="dropdown"><i
+                <li class="user dropdown item_title controlPanel"><a class="dropdown-toggle" href="javascript:void(0)" data-toggle="dropdown"><i
                                 class="fa fa-desktop"></i> <span>{{ Lang::get('core.m_controlpanel') }}</span><i
                                 class="caret"></i></a>
                     <ul class="dropdown-menu dropdown-menu-right icons-right item_dropdown">
@@ -97,7 +96,7 @@
                     </ul>
                 </li>
             @endif
-            <li class="user dropdown item_title"><a class="dropdown-toggle" href="javascript:void(0)" data-toggle="dropdown"><i
+            <li class="user dropdown item_title myAccount"><a class="dropdown-toggle" href="javascript:void(0)" data-toggle="dropdown"><i
                             class="fa fa-user"></i> <span>{{ Lang::get('core.m_myaccount') }}</span><i
                             class="caret"></i></a>
                 <ul class="dropdown-menu dropdown-menu-right icons-right item_dropdown">
@@ -114,24 +113,8 @@
         </ul>
     </nav>
 </div>
-
- <?php $pageModule=isset($_SERVER['HTTP_REFERER'])?$_SERVER['HTTP_REFERER']: (isset($pageModule) ? $pageModule : '');
- if($pageModule == url('').'/' )
-     {
-          $pageModule='dashboard';
-     }
-else
-    {
-    $pageModule=\Route::getFacadeRoot()->current()->uri();
-    $pageModule=explode('/',$pageModule);
-    $pageModule=$pageModule[0];
-}
- ?>
-
 <script>
     $(document).ready(function () {
-
-
         $("#user_locations").on('change', function () {
             $('.globalLoading').show();
             var location_id = $(this).val();
@@ -140,14 +123,12 @@ else
                 $.get('/user/changelocation/'+location_id,function( response ) {
                     if(response.status =='success')
                     {
-                        notyMessage(response.message);
+                        //notyMessage(response.message);
                         location.reload();
                     }
                     else {
                         notyMessageError(response.message);
                     }
-
-
                 });
             }
         });

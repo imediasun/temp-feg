@@ -18,7 +18,6 @@
     <span class='label label-success'>Now: {!! date('Y-m-d H:i:s') !!}</span>
 	<div class="page-content-wrapper m-t">
 		<div class="resultData"></div>
-		<div class="ajaxLoading"></div>
 		<div id="{{ $pageModule }}View"></div>			
         <div id="{{ $pageModule }}Grid">
             @include('feg.system.tasks.table') 
