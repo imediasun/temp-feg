@@ -175,6 +175,9 @@
                             <td> {{ $row->order_type }}</td>
                             <td data-values="action" data-key="<?php echo $row->id; ?>">
                                 {!! AjaxHelpers::buttonAction('managefegrequeststore',$access,$id ,$setting) !!}
+                               @if($view == "manage")
+                                <a href="#"  class="tips btn btn-xs btn-white" data-id="{{ $row->id }}" title="Deny Request" onclick="denyRequest(this);"><i class="fa fa-ban" aria-hidden="true"></i></a>
+                            @endif
                             </td>
                         </tr>
                         @if($setting['view-method']=='expand')
@@ -259,7 +262,24 @@ endif;
         params.data.force['view'] = 'manage';
 
     });
+function denyRequest(ele)
+{
+    $('.ajaxLoading').show();
+    var requestId=$(ele).data('id');
+    var url="{{ url() }}/managefegrequeststore/deny";
+    $.post(url,{request_id:requestId},function(data){
 
+        if(data.status == 'success')
+        {
+            notyMessage(data.message);
+            reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?view=manage');
+        } else {
+            notyMessageError(data.message);
+            $('.ajaxLoading').hide();
+            return false;
+        }
+    });
+}
 </script>
 <style>
     .table th.right {
