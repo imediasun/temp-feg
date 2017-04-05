@@ -463,7 +463,19 @@
     }
     function hideProgress () {
         $('.ajaxLoading').hide();
-    }     
+    }
+
+    $(window).resize(function() {
+        resizeContent();
+    });
+    function resizeContent() {
+        $(".editable").each(function(){
+            var elm = $(this), id = elm.data('id');
+            var height = elm.offset().top+28;
+            $('#divOverlay_'+id).css({ top:height});
+        });
+    }
+
 }());
 
 App.autoCallbacks.registerCallback('inline.cell.config.before', function (params) {
