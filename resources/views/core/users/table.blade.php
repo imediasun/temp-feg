@@ -126,9 +126,9 @@
                                 data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
                            @if($field['field'] == 'avatar')
                                <?php if( file_exists( './uploads/users/'.$row->avatar) && $row->avatar !='') { ?>
-                               <img src="{{ URL::to('uploads/users').'/'.$row->avatar }} " border="0" width="40" class="img-circle" />
+                               <img src="{{ URL::to('uploads/users').'/'.$row->avatar }} " border="0" width="30" class="img-circle" />
                                <?php  } else { ?>
-                               <img alt="" src="{{url()}}/silouette.png" width="40" class="img-circle" border="0"/>
+                               <img alt="" src="{{url()}}/silouette.png" width="30" class="img-circle" border="0"/>
                                <?php } ?>
                            @elseif($field['field'] =='active')
                                {!! ($row->active == 1 ? '<lable class="label label-success">Active</lable>' : '<lable class="label label-danger">Inactive</lable>')  !!}
