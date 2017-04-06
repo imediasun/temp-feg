@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\controller;
 use App\Models\Gamesdisposed;
+use \App\Models\Sximo\Module;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Validator, Input, Redirect;
@@ -21,12 +22,17 @@ class GamesdisposedController extends Controller
 
         $this->info = $this->model->makeInfo($this->module);
         $this->access = $this->model->validAccess($this->info['id']);
+        $this->module_id = Module::name2id($this->module);
+        $this->pass = \FEGSPass::getMyPass($this->module_id);
+        $this->mylocationgamePass = \FEGSPass::getMyPass(Module::name2id('mylocationgame'));
 
         $this->data = array(
+            'pass' => $this->pass,
+            'mylocationgamePass' => $this->mylocationgamePass,
             'pageTitle' => $this->info['title'],
             'pageNote' => $this->info['note'],
-            'pageModule' => 'gamesdisposed',
-            'pageUrl' => url('gamesdisposed'),
+            'pageModule' => $this->module,
+            'pageUrl' => url($this->module),
             'return' => self::returnUrl()
         );
 
@@ -266,7 +272,16 @@ class GamesdisposedController extends Controller
 
     public function getExport($t = 'excel')
     {
+        global $exportSessionID;
+        ini_set('memory_limit', '1G');
+        set_time_limit(0);
 
+        $exportId = Input::get('exportID');
+        if (!empty($exportId)) {
+            $exportSessionID = 'export-'.$exportId;
+            \Session::put($exportSessionID, microtime(true));
+        }
+        
         $info = $this->model->makeInfo($this->module);
         //$master  	= $this->buildMasterDetail();
         $filter = (!is_null(Input::get('search')) ? $this->buildSearch() : '');
@@ -280,6 +295,7 @@ class GamesdisposedController extends Controller
         $fields = array('Menufacturer', 'Game Title', 'Version', 'Serial', 'Date In Service', 'Id', 'Last Location', 'City', 'State', 'Date Sold', 'SoldTo', 'WholeSale', 'Retail', 'Notes');
         $rows = $results;
         $content = array(
+            'exportID' => $exportSessionID,
             'fields' => $fields,
             'rows' => $rows,
             'title' => $this->data['pageTitle'],

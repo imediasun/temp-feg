@@ -10,9 +10,15 @@
             <a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Reload Data"
                onclick="reloadData('#{{ $pageModule }}','shopfegrequeststore/data?type=store&active_inactive=active&return={{ $return }}')"><i
                         class="fa fa-refresh"></i></a>
-            @if(Session::get('gid') ==1)
-                <a href="{{ url('feg/module/config/'.$pageModule) }}" class="btn btn-xs btn-white tips"
+            @if(Session::get('gid') ==10)
+                <a href="{{ url('feg/module/config/'.$pageModule) }}" 
+                   class="btn btn-xs btn-white tips openModuleConfig"
                    title=" {{ Lang::get('core.btn_config') }}"><i class="fa fa-cog"></i></a>
+    			<a href="{{ url('feg/module/special-permissions/'.$pageModule.'/solo') }}" 
+                   class="btn btn-xs btn-white tips openSpecialPermissions"
+                   title="Special Permissions"
+                   ><i class="fa fa-sliders"></i></a>
+
             @endif
         </div>
     </div>
@@ -64,7 +70,7 @@
                                             ' data-sortable="'.$colIsSortable.'"'.
                                             ' data-sorted="'.($colIsSorted?1:0).'"'.
                                             ' data-sortedOrder="'.($colIsSorted?$orderBy:'').'"'.
-                                            ' align="'.$t['align'].'"'.
+                                            ' style=text-align:'.$t['align'].
                                             ' width="'.$t['width'].'"';
                                     $th .= '>';
                                     $th .= \SiteHelpers::activeLang($t['label'],(isset($t['language'])? $t['language'] : array()));
@@ -73,16 +79,10 @@
                                 }
                             endif;
                         endforeach; ?>
-                        @if($setting['disablerowactions']=='false')
-                            <th width="70"><?php echo Lang::get('core.btn_action') ;?></th>
-                        @endif
-
-                        <th width="115">Add To Cart</th>
-
-
-
-
-
+                            @if($setting['disablerowactions']=='false')
+                                <th width="70"><?php echo Lang::get('core.btn_action') ;?></th>
+                            @endif
+                            <th width="115">Add To Cart</th>
                     </tr>
                     </thead>
 
@@ -116,7 +116,7 @@
                     <?php foreach ($rowData as $row) :
                     $id = $row->id;
                     ?>
-                    <tr class="editable" id="form-{{ $row->id }}">
+                    <tr class="editable" id="form-{{ $row->id }}" @if($setting['inline']!='false' && $setting['disablerowactions']=='false') data-id="{{ $row->id }}" ondblclick="showFloatingCancelSave(this)" @endif>
                         @if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
                             <td class="number"> <?php echo ++$i;?>  </td>
                         @endif
@@ -150,15 +150,18 @@
                         endif;
                         endforeach;
                         ?>
-                        <td><a href="{{ $pageModule }}/show/{{$row->id}}" target="_blank"
-                               class="tips btn btn-xs btn-white"  title="Product Details"><i class="fa fa-search" aria-hidden="true"></i></a>
-</td>
+                            @if($setting['disablerowactions']=='false')
+                                <td data-values="action" data-key="<?php echo $row->id ;?>">
+                                    {!! AjaxHelpers::buttonAction('shopfegrequeststore',$access,$id ,$setting) !!}
+                                </td>
+                            @endif
                         <td>@if($row->inactive == 0)
                                 <input type="number" title="Quantity" value="1" min="1" onkeyup="if(!this.checkValidity()){this.value='';alert('Please Enter a Non Zero Number')};" name="item_quantity" class="form-control" style="width:70px;display:inline" id="item_quantity_{{$row->id}}" min="0"  />
                                 <a href="javascript:void(0)" value="{{$row->id}}" class=" addToCart tips btn btn-xs btn-white"  title="Add to Cart"><i class="fa fa-shopping-cart" aria-hidden="true"></i></a>
                             @else
                                 Not Avail.
                             @endif</td>
+
                     </tr>
                     @if($setting['view-method']=='expand')
                         <tr style="display:none" class="expanded" id="row-{{ $row->id }}">
@@ -174,6 +177,11 @@
                     </tbody>
 
                 </table>
+                @if($setting['inline']!='false' && $setting['disablerowactions']=='false')
+                    @foreach ($rowData as $row)
+                        {!! AjaxHelpers::buttonActionInline($row->id,'id') !!}
+                    @endforeach
+                @endif
             @else
 
                 <div style="margin:100px 0; text-align:center;">

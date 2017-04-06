@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @section('content')
-    <div class="ajaxLoading"></div>
+
     <div class="page-content row">
         <!-- Page header -->
         <div class="sbox-title">

@@ -18,11 +18,13 @@
   @endif
   <li @if($active == 'permission') class="active" @endif >
   <a href="{{ URL::to('feg/module/permission/'.$module_name)}}">Permission</a></li>
+  <li @if($active == 'special-permissions') class="active" @endif >
+    <a href="{{ URL::to('feg/module/special-permissions/'.$module_name)}}">Special Permissions</a>
+  </li>
    <li @if($active == 'rebuild') class="active" @endif >
-
     @if(isset($type) && ( $type =='report' or $type =='generic'))
-
     @else
-   <a href="javascript://ajax" onclick="SximoModal('{{ URL::to('feg/module/build/'.$module_name)}}','Rebuild Module ')">Rebuild</a></li>
+    <a href="javascript://ajax" onclick="SximoModal('{{ URL::to('feg/module/build/'.$module_name)}}','Rebuild Module ')">Rebuild</a>
+   </li>
    @endif
 </ul>

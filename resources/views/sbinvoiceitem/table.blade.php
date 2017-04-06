@@ -5,7 +5,7 @@
 		<div class="sbox-tools" >
 			<a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Clear Search" onclick="reloadData('#{{ $pageModule }}','sbinvoiceitem/data?search=')"><i class="fa fa-trash-o"></i></a>
 			<a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Reload Data" onclick="reloadData('#{{ $pageModule }}','sbinvoiceitem/data?return={{ $return }}')"><i class="fa fa-refresh"></i></a>
-			@if(Session::get('gid') ==1)
+			@if(Session::get('gid') ==10)
 			<a href="{{ url('feg/module/config/'.$pageModule) }}" class="btn btn-xs btn-white tips" title=" {{ Lang::get('core.btn_config') }}" ><i class="fa fa-cog"></i></a>
 			@endif 
 		</div>
@@ -25,7 +25,7 @@
 				@if($setting['view-method']=='expand') <th>  </th> @endif			
 				<?php foreach ($tableGrid as $t) :
 					if($t['view'] =='1'):
-						echo '<th align="'.$t['align'].'">'.\SiteHelpers::activeLang($t['label'],(isset($t['language'])? $t['language'] : array())).'</th>';
+						echo '<th style=text-align:'.$t['align'].'>'.\SiteHelpers::activeLang($t['label'],(isset($t['language'])? $t['language'] : array())).'</th>';
 					endif;
 				endforeach; ?>
 				<th width="70"><?php echo Lang::get('core.btn_action') ;?></th>
@@ -54,7 +54,7 @@
            		<?php foreach ($rowData as $row) : 
            			  $id = $row->ItemID;
            		?>
-                <tr class="editable" id="form-{{ $row->ItemID }}">
+                <tr class="editable" id="form-{{ $row->ItemID }}" @if($setting['inline']!='false' && $setting['disablerowactions']=='false') data-id="{{ $row->id }}" ondblclick="showFloatingCancelSave(this)" @endif>
 					<td class="number"> <?php echo ++$i;?>  </td>
 					<td ><input type="checkbox" class="ids" name="id[]" value="<?php echo $row->ItemID ;?>" />  </td>					
 					@if($setting['view-method']=='expand')
@@ -73,8 +73,7 @@
 					  ?>
 				 <td data-values="action" data-key="<?php echo $row->ItemID ;?>">
 					{!! AjaxHelpers::buttonAction('sbinvoiceitem',$access,$id ,$setting) !!}
-					{!! AjaxHelpers::buttonActionInline($row->ItemID,'ItemID') !!}		
-				</td>			 
+                 </td>
                 </tr>
                 @if($setting['view-method']=='expand')
                 <tr style="display:none" class="expanded" id="row-{{ $row->ItemID }}">
@@ -90,6 +89,11 @@
         </tbody>
       
     </table>
+        @if($setting['inline']!='false' && $setting['disablerowactions']=='false')
+            @foreach ($rowData as $row)
+                {!! AjaxHelpers::buttonActionInline($row->ItemID,'ItemID') !!}
+            @endforeach
+        @endif
 	@else
 
 	<div style="margin:100px 0; text-align:center;">

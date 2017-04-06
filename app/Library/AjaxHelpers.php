@@ -10,13 +10,17 @@ class AjaxHelpers
 		if($attribute['image']['active'] =='1' && $attribute['image']['active'] !='') {
 			$val =  SiteHelpers::showUploadedFile($val,$attribute['image']['path']) ;
 		}
+        
+        if (!empty($arr['datalist']) && !empty($arr['options'])) {
+            $datalistOptions = \FEGHelp::parseStringToArray($arr['options']);
+            $val = \FEGHelp::getLabelFromOptions($val, $datalistOptions);
+        }
 		// Handling Quick Display As 
-		if(isset($arr['valid']) && $arr['valid'] ==1)
+		if((!empty($val) || $val==='0' || $val===0) && isset($arr['valid']) && $arr['valid'] ==1)
 		{
 			$fields = str_replace("|",",",$arr['display']);			
             $val=addslashes($val);
-			if(isset( $arr['multiple']) && $arr['multiple'] =='1')
-			{
+			if(isset( $arr['multiple']) && $arr['multiple'] =='1') {
 				$Q = DB::select(" SELECT ".$fields." FROM ".$arr['db']." WHERE ".$arr['key']." IN (".$val.") ");
 				if(count($Q) >= 1 )
 				{	
@@ -30,23 +34,24 @@ class AjaxHelpers
 						$v .= (isset($fields[0]) && $fields[0] !='' ?  $values->$fields[0].' ' : '');
 						$v .= (isset($fields[1]) && $fields[1] !=''  ? $values-> $fields[1].' ' : '');
 						$v .= (isset($fields[2]) && $fields[2] !=''  ? $values->$fields[2].' ' : '');
-						$val[] = $v;
+						$val[] = trim($v);
 					}
 
-					$val = implode(", ",$val);
+					$val = trim(implode(", ",$val));
 				}	
 
-			} else {
+			} 
+            else {
 				$Q = DB::select(" SELECT ".$fields." FROM ".$arr['db']." WHERE ".$arr['key']." = '".$val."' ");
 				if(count($Q) >= 1 )
 				{					
 					$rowObj = $Q[0];
 					$fields = explode("|",$arr['display']);
 					$v= '';
-					$v .= (isset($fields[0]) && $fields[0] !='' ?  $rowObj->$fields[0].' ' : '');
-					$v .= (isset($fields[1]) && $fields[1] !=''  ? $rowObj-> $fields[1].' ' : '');
-					$v .= (isset($fields[2]) && $fields[2] !=''  ? $rowObj->$fields[2].' ' : '');
-					$val = $v;
+					$v .= (isset($fields[0]) && $fields[0] !=='' ?  $rowObj->$fields[0].' ' : '');
+					$v .= (isset($fields[1]) && $fields[1] !==''  ? $rowObj-> $fields[1].' ' : '');
+					$v .= (isset($fields[2]) && $fields[2] !==''  ? $rowObj->$fields[2].' ' : '');
+					$val = trim($v);
 				} 	
 			}				
 		} 	
@@ -57,23 +62,32 @@ class AjaxHelpers
 			$fval = $attribute['formater']['value'];
             
             list($className, $methodName, $serialisedParams) = explode('|', $fval.'||');
+            $serialisedParams = trim($serialisedParams);
+            $methodName = trim($methodName);
+            $className = trim($className);
             if (method_exists($className, $methodName)) {
-                $params = explode(':', $serialisedParams);
-                foreach ($params as $index => $fieldName) {
-                    if (is_array($row)) {
-                        if (isset($row[$fieldName])) {
-                            $params[$index] = $row[$fieldName];
-                        }                        
-                    }
-                    else {
-                        if (isset($row->$fieldName)) {
-                            $params[$index] = $row->$fieldName;
-                        }                        
+                if ($serialisedParams == '') {
+                    $params = [$val];
+                    //$serialisedParams = $val;
+                }
+                else {
+                    $params = explode(':', $serialisedParams);
+                    foreach ($params as $index => $fieldName) {
+                        if (is_array($row)) {
+                            if (isset($row[$fieldName])) {
+                                $params[$index] = $row[$fieldName];
+                            }                        
+                        }
+                        else {
+                            if (isset($row->$fieldName)) {
+                                $params[$index] = $row->$fieldName;
+                            }                        
+                        }
                     }
                 }
-                $serialisedParams = implode(",", $params);
-                $val = call_user_func(array($className, $methodName), $serialisedParams);
-                $val = call_user_func_array(array($className, $methodName), $params);                   
+                //$serialisedParams = implode(",", $params);
+                //$val = call_user_func(array($className, $methodName), $serialisedParams);
+                $val = call_user_func_array(array($className, $methodName), $params);
             }
 //            
 //            
@@ -97,29 +111,31 @@ class AjaxHelpers
 
 		}
 		// Handling Link  function 	
-		if(isset($attribute['hyperlink']['active']) && $attribute['hyperlink']['active'] ==1 && $attribute['hyperlink']['link'] != '')
+		if((!empty(trim($val)) || trim($val)=== 0 || trim($val)=== '0') &&
+                isset($attribute['hyperlink']['active']) &&
+                $attribute['hyperlink']['active'] ==1 &&
+                $attribute['hyperlink']['link'] != '')
 		{	
 	
 			$attr = '';
 			$linked = $attribute['hyperlink']['link'];
 			foreach($row as $k=>$i)
 			{
-				
-				if (preg_match("/$k/",$attribute['hyperlink']['link']))
-					$linked = str_replace($k,$i, $linked);				
+//				if (preg_match("/$k/",$attribute['hyperlink']['link'])) {
+//                    $linked = str_replace($k,$i, $linked);
+//                }
+                $linked = str_replace('{{'.$k.'}}', $i, $linked);
 			}
 			if($attribute['hyperlink']['target'] =='modal')
 			{
-				$attr = "onclick='SximoModal(this.href); return false'";
+				$attr = "class='gridHyperlinkValue' onclick='SximoModal(this.href, \"".htmlentities($val)."\"); return false'";
 			}
 			
-			$val =  "<a href='".URL::to($linked)."'  $attr style='display:block' >".$val." <span class='fa fa-arrow-circle-right pull-right'></span></a>";
+//			$val =  "<a href='".URL::to($linked)."'  $attr style='display:block' >".$val." <span class='fa fa-arrow-circle-right pull-right'></span></a>";
+			$val =  "<a href='".URL::to($linked)."'  $attr >".$val."</a>";
 		}
-		
-		
-		
-		return $val;
-		
+
+		return $val;		
 	}	
 	
 	static public function fieldLang( $fields ) 
@@ -217,7 +233,7 @@ class AjaxHelpers
 	static public function GamestitleButtonAction( $module , $access , $id , $setting,$edit=null)
 	{
 
-		$html ='';
+		$html ='<div class="action">';
 		if($access['is_detail'] ==1) {
 			if($setting['view-method'] != 'expand')
 			{
@@ -237,18 +253,19 @@ class AjaxHelpers
 				$html .= ' <a href="'.URL::to($module.'/update/'.$id).'" '.$onclick.'  class="btn btn-xs btn-white tips" title="'.Lang::get('core.btn_edit').'"><i class="fa  fa-edit"></i></a>';
 			}
 		}
-		$html .= '';
+		$html .= '</div>';
 		return $html;
 	}
 	static public function buttonActionInline( $id ,$key )
 	{
-		$divid = 'form-'.$id;	
+        $divid = 'form-'.$id;
+        $outeridvid="divOverlay_".$id;
 		$html = '
-		<div class="actionopen" style="display:none">
-			<button onclick="saveInlineForm(\''.$divid.'\', event, this)" class="tips btn btn-primary btn-xs" type="button" title="Save"><i class="fa  fa-save"></i></button>
-			<button onclick="cancelInlineEdit(\''.$divid.'\', event, this)" class="tips btn btn-danger btn-xs " type="button" title="Cancel"><i class="fa  fa-repeat"></i></button>
+		<div id="'.$outeridvid.'" class="actionopen" style="visibility: hidden" >
+			<a href="#" onclick="saveInlineForm(\''.$divid.'\', event, this)" class="tips btn btn-primary btn-xs"  title="Save"><i class="fa  fa-save"></i></a>
+			<a href="#" onclick="cancelInlineEdit(\''.$divid.'\', event, this)" class="tips btn btn-danger btn-xs"  title="Cancel"><i class="fa  fa-times"></i></a>
 			<input type="hidden" value="'.$id.'" name="'.$key.'">
-		</div>	
+		</div>
 		';
 		return $html;
 	}			

@@ -13,7 +13,7 @@
             <a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Reload Data"
                onclick="reloadData('#{{ $pageModule }}','addtocart/data?return={{ $return }}')"><i
                         class="fa fa-refresh"></i></a>
-            @if(Session::get('gid') ==1)
+            @if(Session::get('gid') ==10)
                 <a href="{{ url('feg/module/config/'.$pageModule) }}" class="btn btn-xs btn-white tips"
                    title=" {{ Lang::get('core.btn_config') }}"><i class="fa fa-cog"></i></a>
             @endif
@@ -53,7 +53,7 @@
                             if ($t['view'] == '1'):
                                 $limited = isset($t['limited']) ? $t['limited'] : '';
                                 if (SiteHelpers::filterColumn($limited)) {
-                                    echo '<th align="' . $t['align'] . '" width="' . $t['width'] . '">' . \SiteHelpers::activeLang($t['label'], (isset($t['language']) ? $t['language'] : array())) . '</th>';
+                                    echo '<th style=text-align:'.$t['align'].' width="' . $t['width'] . '">' . \SiteHelpers::activeLang($t['label'], (isset($t['language']) ? $t['language'] : array())) . '</th>';
 
                                 }
                             endif;
@@ -97,7 +97,7 @@
                     <?php foreach ($rowData as $row) :
                     $id = $row->id;
                     ?>
-                    <tr class="editable" id="form-{{ $row->id }}">
+                    <tr class="editable" id="form-{{ $row->id }}" @if($setting['inline']!='false' && $setting['disablerowactions']=='false') data-id="{{ $row->id }}" ondblclick="showFloatingCancelSave(this)" @endif>
                         <td class="number"> <?php echo ++$i;?>  </td>
                         <td><input type="checkbox" class="ids" name="ids[]" value="<?php echo $row->id;?>" onkeypress="disableEnter(event)"/></td>
                         <td> <?php
@@ -124,7 +124,7 @@
 
                                 @if($field['field']=='qty')
 
-                                    <input type="number" value="{{ $value }}" name="qty[]" id="{{ $row->id }}" data-vendor="{{ $row->vendor_name }}" style="width:55px"  onkeydown="changeTotal(this.value,this.id,event)"/>
+                                    <input type="number" value="{{ $value }}" min="1" step="1" name="qty[]" id="{{ $row->id }}" data-vendor="{{ $row->vendor_name }}" style="width:55px"  onkeydown="changeTotal(this.value,this.id,event)"/>
                                 @else
 {!! $value !!}
                                 @endif
@@ -143,7 +143,6 @@
                         <td>{{ $row->notes }}</td>
                         <td data-values="action" data-key="<?php echo $row->id;?>">
                             {!! AjaxHelpers::buttonAction('addtocart',$access,$id ,$setting) !!}
-                            {!! AjaxHelpers::buttonActionInline($row->id,'id') !!}
                         </td>
                     </tr>
                     @if($setting['view-method']=='expand')
@@ -160,7 +159,11 @@
                     </tbody>
 
                 </table>
-
+                @if($setting['inline']!='false' && $setting['disablerowactions']=='false')
+                    @foreach ($rowData as $row)
+                        {!! AjaxHelpers::buttonActionInline($row->id,'id') !!}
+                    @endforeach
+                @endif
             @else
 
                 <div style="margin:100px 0; text-align:center;">
@@ -221,7 +224,7 @@
         $("#new_location").jCombo("{{ URL::to('order/comboselect?filter=location:id:id|location_name ') }}",
                 {selected_value: ''});
         -->
-        $(".select3").select2({width: "98%"});
+        renderDropdown($(".select3 "), { width:"98%"});
 
         $('.my_form').on("keypress",(function(e) {
             console.log(e);
@@ -318,11 +321,12 @@
     {
         var vendor_name1=$("#"+id).data('vendor');
        vendor_name1=vendor_name1.replace(/ /g, '_');
-        if (e.keyCode == 13) {
+        if (e.keyCode == 13 && value > 0) {
             $('.ajaxLoading').show();
             e.preventDefault();
             doStuff(value,id,vendor_name1);
         }
+      
     }
     function confirmSubmit() {
         var shortMessage;

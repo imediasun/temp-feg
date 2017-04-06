@@ -10,7 +10,7 @@
      <a href="{{ url() }}/core/users?{{ $sortParam }}{{ $orderParam }}{{ $rowsParam }}"
         class="btn btn-xs btn-white tips btn-search" title="Clear Search" ><i class="fa fa-trash-o"></i> Clear Search </a>
     @endif
-    @if(Session::get('gid') ==1)
+    @if(Session::get('gid') ==10)
         <a href="{{ URL::to('feg/module/config/'.$pageModule) }}" class="btn btn-xs btn-white tips" title=" {{ Lang::get('core.btn_config') }}" ><i class="fa fa-cog"></i></a>
     @endif
     </div>
@@ -67,7 +67,7 @@
                                 ' data-sortable="'.$colIsSortable.'"'.
                                 ' data-sorted="'.($colIsSorted?1:0).'"'.
                                 ' data-sortedOrder="'.($colIsSorted?$orderBy:'').'"'.
-                                ' align="'.$t['align'].'"'.
+                                ' style=text-align:'.$t['align'].
                                 ' width="'.$t['width'].'"';
                         $th .= '>';
                         $th .= \SiteHelpers::activeLang($t['label'],(isset($t['language'])? $t['language'] : array()));
@@ -108,7 +108,7 @@
 
               @foreach ($rowData as $row)
            		<?php $id = $row->id; ?>
-                <tr class="editable" id="form-{{ $row->id }}">
+                <tr class="editable" id="form-{{ $row->id }}" @if($setting['inline']!='false' && $setting['disablerowactions']=='false') data-id="{{ $row->id }}" ondblclick="showFloatingCancelSave(this)" @endif>
 					@if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
 						<td class="number"> <?php echo ++$i;?>  </td>
 					@endif
@@ -126,9 +126,9 @@
                                 data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
                            @if($field['field'] == 'avatar')
                                <?php if( file_exists( './uploads/users/'.$row->avatar) && $row->avatar !='') { ?>
-                               <img src="{{ URL::to('uploads/users').'/'.$row->avatar }} " border="0" width="40" class="img-circle" />
+                               <img src="{{ URL::to('uploads/users').'/'.$row->avatar }} " border="0" width="30" class="img-circle" />
                                <?php  } else { ?>
-                               <img alt="" src="{{url()}}/silouette.png" width="40" class="img-circle" border="0"/>
+                               <img alt="" src="{{url()}}/silouette.png" width="30" class="img-circle" border="0"/>
                                <?php } ?>
                            @elseif($field['field'] =='active')
                                {!! ($row->active == 1 ? '<lable class="label label-success">Active</lable>' : '<lable class="label label-danger">Inactive</lable>')  !!}
@@ -169,7 +169,7 @@
                         @endif
                         <a href="{{ URL::to('core/users/upload/'.$row->id)}}" class="tips btn btn-xs btn-white"  title="Upload Image"><i class="fa fa-picture-o" aria-hidden="true"></i></a>
                         </div>
-                        {!! AjaxHelpers::buttonActionInline($row->id,'id') !!}
+
                     </td>
                     @endif
                 </tr>
@@ -187,6 +187,11 @@
         </tbody>
 
     </table>
+            @if($setting['inline']!='false' && $setting['disablerowactions']=='false')
+                @foreach ($rowData as $row)
+                    {!! AjaxHelpers::buttonActionInline($row->id,'id') !!}
+                @endforeach
+            @endif
 	@else
 
 	<div style="margin:100px 0; text-align:center;">
@@ -208,8 +213,6 @@
 
 	</div>
 </div>
-</div>
-	@if($setting['inline'] =='true') @include('sximo.module.utility.inlinegrid') @endif
 
 <style>
     .table th.right {

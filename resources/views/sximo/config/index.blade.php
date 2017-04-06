@@ -6,9 +6,6 @@
   <div class="page-content row">
     <!-- Page header -->
     <div class="page-header">
-
-	  
-	 
 	  <ul class="breadcrumb">
 		<li><a href="{{ URL::to('dashboard') }}">{{ Lang::get('core.home') }}</a></li>
 		<li><a href="{{ URL::to('config') }}">{{ Lang::get('core.t_generalsetting') }}</a></li>
@@ -145,10 +142,10 @@
 		    <label  class=" control-label col-md-4">Backend Logo</label>
 			<div class="col-md-8">
 				<input type="file" name="logo">
-				<p> <i>Please use image dimension 155px * 30px </i> </p>
+				<p> <i>Please use image dimension 155px * 30px </i></p>
 				<div style="padding:5px; border:solid 1px #ddd; background:#f5f5f5; width:auto;">
-				 	@if(file_exists(public_path().'/sximo/images/'.$options['CNF_LOGO']) && $options['CNF_LOGO'] !='')
-				 	<img src="{{ asset('sximo/images/'.$options['CNF_LOGO'])}}" alt="{{ $options['CNF_APPNAME'] }}" />
+				 	@if(file_exists(public_path().'/sximo/images/'.CNF_LOGO) && CNF_LOGO !='')
+				 	<img src="{{ asset('sximo/images/'.CNF_LOGO)}}" alt="{{ $options['CNF_APPNAME'] }}" />
 				 	@else
 					<img src="{{ asset('sximo/images/logo.png')}}" alt="{{ $options['CNF_APPNAME'] }}" />
 					@endif	
@@ -163,6 +160,7 @@
 				<div class="col-md-8">
 					<select name="cnf_redireclink" rows='5' type="text" id="cnf_redireclink"   style="width:100%"  class='select-liquid ' value="{{ $options['CNF_REDIRECTLINK'] }}" >
 						<option value=""> -- Select Module or Page -- </option>
+
 						<optgroup label="Module ">
 							@foreach($modules as $mod)
 
@@ -182,9 +180,7 @@
                                 @endif
 							@endforeach
 						</optgroup>
-                        <optgroup label="Dashboards">
-                            <option value="dashboard">Dashboard</option>
-                        </optgroup>                        
+
 						<optgroup label="Page CMS ">
 							@foreach($pages as $page)
 								<option value="{{ $page->alias}}"
@@ -192,11 +188,12 @@
 								>Page : {{ $page->title}}</option>
 							@endforeach
 						</optgroup>
+						<optgroup label="User Profile">
+							<option @if($options['CNF_REDIRECTLINK'] === "user/profile" ) selected="selected" @endif value="user/profile">User Profile</option>
+						</optgroup>
 					</select>
 				</div>
 			</div>
-
-
 
 
 			<div class="form-group">
@@ -259,7 +256,7 @@
 			if(data.status == 'success') {				
                 form.find('button[type=submit]').prop('disabled', false);
 				notyMessage(data.message);
-                window.setTimeout(function () {window.location.reload()}, 1000);
+                window.setTimeout(function () {window.location.reload(true)}, 1000);
 			}
             else {
                 form.find('button[type=submit]').prop('disabled', false);

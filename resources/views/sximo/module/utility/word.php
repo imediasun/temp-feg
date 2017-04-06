@@ -14,6 +14,7 @@
 		foreach($fields as $f )
 		{
 			if($f['download'] =='1'):
+				unset($f['attribute']['hyperlink']);
 				$conn = (isset($f['conn']) ? $f['conn'] : array() );					
 				$content .= '<td> '. AjaxHelpers::gridFormater($row->$f['field'],$row,$f['attribute'],$conn) . '</td>';
 			endif;	
@@ -43,6 +44,10 @@ $word_xmlns = "xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:sc
 	@header('Content-Type: application/msword');
 	@header('Content-Length: '.strlen($content));
 	@header('Content-disposition: inline; filename="'.($title . '-' . date("mdYHis")).'.doc"');
+
+    global $exportSessionID;
+    \Session::forget($exportSessionID);
+    \Session::forget($exportID);
+    
 	echo $content;
-		exit;
 ?>

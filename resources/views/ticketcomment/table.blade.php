@@ -5,7 +5,7 @@
 		<div class="sbox-tools" >
 			<a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Clear Search" onclick="reloadData('#{{ $pageModule }}','ticketcomment/data?search=')"><i class="fa fa-trash-o"></i> Clear Search </a>
 			<a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Reload Data" onclick="reloadData('#{{ $pageModule }}','ticketcomment/data?return={{ $return }}')"><i class="fa fa-refresh"></i></a>
-			@if(Session::get('gid') ==1)
+			@if(Session::get('gid') ==10)
 			<a href="{{ url('feg/module/config/'.$pageModule) }}" class="btn btn-xs btn-white tips" title=" {{ Lang::get('core.btn_config') }}" ><i class="fa fa-cog"></i></a>
 			@endif 
 		</div>
@@ -28,7 +28,7 @@
 						$limited = isset($t['limited']) ? $t['limited'] :'';
 						if(SiteHelpers::filterColumn($limited ))
 						{
-							echo '<th align="'.$t['align'].'" width="'.$t['width'].'">'.\SiteHelpers::activeLang($t['label'],(isset($t['language'])? $t['language'] : array())).'</th>';				
+							echo '<th style=text-align:'.$t['align'].' width="'.$t['width'].'">'.\SiteHelpers::activeLang($t['label'],(isset($t['language'])? $t['language'] : array())).'</th>';
 						} 
 					endif;
 				endforeach; ?>
@@ -61,7 +61,7 @@
            		<?php foreach ($rowData as $row) : 
            			  $id = $row->CommentID;
            		?>
-                <tr class="editable" id="form-{{ $row->CommentID }}">
+                <tr class="editable" id="form-{{ $row->CommentID }}" @if($setting['inline']!='false' && $setting['disablerowactions']=='false') data-id="{{ $row->CommentID }}" ondblclick="showFloatingCancelSave(this)" @endif>
 					<td class="number"> <?php echo ++$i;?>  </td>
 					<td ><input type="checkbox" class="ids" name="ids[]" value="<?php echo $row->CommentID ;?>" />  </td>					
 					@if($setting['view-method']=='expand')
@@ -83,8 +83,8 @@
 					  ?>
 				 <td data-values="action" data-key="<?php echo $row->CommentID ;?>">
 					{!! AjaxHelpers::buttonAction('ticketcomment',$access,$id ,$setting) !!}
-					{!! AjaxHelpers::buttonActionInline($row->CommentID,'CommentID') !!}		
-				</td>			 
+
+				</td>
                 </tr>
                 @if($setting['view-method']=='expand')
                 <tr style="display:none" class="expanded" id="row-{{ $row->CommentID }}">
@@ -100,6 +100,11 @@
         </tbody>
       
     </table>
+        @if($setting['inline']!='false' && $setting['disablerowactions']=='false')
+            @foreach ($rowData as $row)
+                {!! AjaxHelpers::buttonActionInline($row->CommentID,'CommentID') !!}
+            @endforeach
+        @endif
 	@else
 
 	<div style="margin:100px 0; text-align:center;">

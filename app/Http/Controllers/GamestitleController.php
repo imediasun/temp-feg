@@ -4,7 +4,7 @@ use App\Http\Controllers\controller;
 use App\Models\Gamestitle;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
-use Validator, Input, Redirect;
+use Validator, Input, Redirect,Image;
 
 class GamestitleController extends Controller
 {
@@ -227,7 +227,6 @@ class GamestitleController extends Controller
         $sql = "INSERT INTO game_title (" . implode(",", $columns) . ") ";
         $columns[0] = "CONCAT('copy',game_title)";
         $sql .= " SELECT " . implode(",", $columns) . " FROM game_title WHERE id IN (" . $toCopy . ")";
-
         \DB::insert($sql);
         return response()->json(array(
             'status' => 'success',
@@ -239,12 +238,13 @@ class GamestitleController extends Controller
     {
         $rules = $this->validateForm();
         //  $rules['manual']='Not Required|mimes:pdf';
-        $rules['img']='mimes:jpeg,gif,png';
+       // $rules['img']='required';
+        $rules['game_type_id']="required";
         if($id == null) {
-            $rules["game_title"] = "unique:game_title";
+            $rules["game_title"] = "required|unique:game_title";
         }// $rules['service_bulletin']='Not Required|mimes:pdf';
         else{
-            $rules["game_title"] = "";
+            $rules["game_title"] = "required";
         }
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
@@ -287,18 +287,43 @@ class GamestitleController extends Controller
                     $updates['has_servicebulletin'] = '1';
                 }
             }
-            if ($request->hasFile('img')) {
-                $img = $request->file('img');
-                $img_name = $img->getClientOriginalName();
-                $img_extension = $img->getClientOriginalExtension(); //if you need extension of the file
-                $img_new_name = $id . '.' . $img_extension;
-                $img_destinationPath = './uploads/games/images';
-                $img_uploadSuccess = $request->file('img')->move($img_destinationPath, $img_new_name);
-                if ($img_uploadSuccess) {
-                    $imgFlag=true;
-                    $updates['img'] = $img_new_name;
-
+            $imgs=$request->get('imgs');
+            $new_name="";
+            if(!is_null($id) && !empty($imgs)) {
+                foreach ($imgs as $image) {
+                    $new_name .= $image . ',';
                 }
+            }
+            if ($request->hasFile('img')) {
+                $images = $request->file('img');
+                foreach($images as $img) {
+                    $img = Image::make($img->getRealPath());
+                    $mime = $img->mime();
+                    if ($mime == 'image/jpeg') {
+                        $extension = '.jpg';
+                    } elseif ($mime == 'image/png') {
+                        $extension = '.png';
+                    } elseif ($mime == 'image/gif') {
+                        $extension = '.gif';
+                    } else {
+                        $extension = '';
+                    }
+                    $count=str_pad(mt_rand(0, 999999), 6, '0', STR_PAD_LEFT);
+                    $img_path='./uploads/games/images/' . $count.$extension;
+                    //$img_thumb='./uploads/games/images/' . $count."_thumb".$extension;
+                    $img->save($img_path);
+                   // $img->resize(101, 150);
+                   // $img->save($img_thumb);
+                    $new_name .= $count.$extension.',';
+                }
+                $imgFlag=true;
+            }
+
+            $updates['img'] = substr($new_name,0,strlen($new_name)-1);
+            if(empty($updates['img']))
+            {
+                $imgFlag=false;
+                unset($updates['img']);
             }
             if($manualFlag || $serviceFlag || $imgFlag) {
                 $this->model->insertRow($updates, $id);
@@ -506,5 +531,14 @@ class GamestitleController extends Controller
         $result['valid'] = $titleCount <= 0;
         
         return $result;
+    }
+    function postDeleteImg(Request $request)
+    {
+        $img_name=$request->get('img_name');
+        $img_path='./uploads/games/images/'.$img_name;
+        if (\File::exists($img_path)) {
+            \File::delete($img_path);
+            //  \File::delete($img_thumb);
+        }
     }
 }

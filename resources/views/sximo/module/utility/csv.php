@@ -22,16 +22,21 @@ foreach ($rows as $row)
 	foreach($fields as $f )
 	{
 		if($f['download'] =='1'):
+			unset($f['attribute']['hyperlink']);
 			$conn = (isset($f['conn']) ? $f['conn'] : array() );
             $row->$f['field']=html_entity_decode(htmlentities($row->$f['field'], ENT_QUOTES, 'UTF-8'), ENT_QUOTES , 'ISO-8859-15');
-            $content[] = htmlentities(AjaxHelpers::gridFormater($row->$f['field'],$row,$f['attribute'],$conn));
+            $content[] = html_entity_decode(AjaxHelpers::gridFormater($row->$f['field'],$row,$f['attribute'],$conn));
 			//$content[] = SiteHelpers::gridDisplay($row->$f['field'],$f['field'],$conn);
 		endif;
 	}
 	fputcsv($fp, $content);
 	
 }
+
 fclose($fp);
-exit;
+
+global $exportSessionID;
+\Session::forget($exportSessionID);
+\Session::forget($exportID);
 
 ?>

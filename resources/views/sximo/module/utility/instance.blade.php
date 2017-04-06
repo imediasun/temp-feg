@@ -1,4 +1,4 @@
-<div class="ajaxLoading"></div>
+
 <div id="{{ $class }}View"></div>			
 <div id="{{ $class }}Grid"></div>
 		

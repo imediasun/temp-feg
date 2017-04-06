@@ -5,12 +5,12 @@
 		<div class="sbox-tools" >
 			<a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Clear Search" onclick="reloadData('#{{ $pageModule }}','pendingrequest/data?search=')"><i class="fa fa-trash-o"></i> Clear Search </a>
 			<a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Reload Data" onclick="reloadData('#{{ $pageModule }}','pendingrequest/data?return={{ $return }}')"><i class="fa fa-refresh"></i></a>
-			@if(Session::get('gid') ==1)
+			@if(Session::get('gid') ==10)
 			<a href="{{ url('feg/module/config/'.$pageModule) }}" class="btn btn-xs btn-white tips" title=" {{ Lang::get('core.btn_config') }}" ><i class="fa fa-cog"></i></a>
 			@endif 
 		</div>
 	</div>
-	<div class="sbox-content">
+	<div class="sbox-content" style="border: none;">
         @if($setting['usesimplesearch']!='false')
             <?php $simpleSearchForm = SiteHelpers::configureSimpleSearchForm($tableForm); ?>
             @if(!empty($simpleSearchForm))
@@ -21,21 +21,22 @@
                             {!! SiteHelpers::transForm($t['field'] , $simpleSearchForm) !!}
                         </div>
                     @endforeach
-                    <div class="sscol-submit"><br/>
-                        <button type="button" name="search" class="doSimpleSearch btn btn-sm btn-primary"> Search </button>
-                    </div>
+                        {!! SiteHelpers::generateSimpleSearchButton($setting) !!}
                 </div>
             @endif
         @endif
         @include( $pageModule.'/toolbar',['colconfigs' => SiteHelpers::getRequiredConfigs($module_id)])
-
+            <div class="sbox-content" style="border: none;">
 	 <?php echo Form::open(array('url'=>'pendingrequest/delete/', 'class'=>'form-horizontal' ,'id' =>'SximoTable'  ,'data-parsley-validate'=>'' )) ;?>
 <div class="table-responsive">	
 	@if(count($rowData)>=1)
-    <table class="table table-striped datagrid " id="{{ $pageModule }}Table">
+    <table class="table table-striped datagrid " id="{{ $pageModule }}Table" style="position:relative">
         <thead>
-			<tr>
-				<th width="50"> No </th>
+			<tr class="row-">
+				<th width="30"> No </th>
+                @if($setting['disableactioncheckbox']=='false')
+                    <th width="30"> <input type="checkbox" class="checkall" /></th>
+                @endif
 				@if($setting['view-method']=='expand') <th>  </th> @endif
 				<?php $col = 0; ?>
 				<?php foreach ($tableGrid as $t) : ?>
@@ -63,7 +64,7 @@
                                     ' data-sortable="'.$colIsSortable.'"'.
                                     ' data-sorted="'.($colIsSorted?1:0).'"'.
                                     ' data-sortedOrder="'.($colIsSorted?$orderBy:'').'"'.
-                                    ' align="'.$t['align'].'"'.
+                                    ' style=text-align:'.$t['align'].
                                     ' width="'.$t['width'].'"';
                             $th .= '>';
                             $th .= \SiteHelpers::activeLang($t['label'],(isset($t['language'])? $t['language'] : array()));
@@ -72,7 +73,9 @@
 					endif;
 				$col++;
 				endforeach; ?>
-
+                @if($setting['disablerowactions']=='false')
+                    <th width="70"><?php echo Lang::get('core.btn_action') ;?></th>
+            @endif
         </thead>
 
         <tbody>
@@ -100,8 +103,11 @@
            		<?php foreach ($rowData as $row) : 
            			  $id = $row->id;
            		?>
-                <tr class="editable" id="form-{{ $row->id }}">
+                <tr class="editable" id="form-{{ $row->id }}" @if($setting['inline']!='false' && $setting['disablerowactions']=='false') data-id="{{ $row->id }}" ondblclick=" setTimeout(showFloatingCancelSave(this),5000);" @endif>
 					<td class="number"> <?php echo ++$i;?>  </td>
+                    @if($setting['disableactioncheckbox']=='false')
+                        <td ><input type="checkbox" class="ids" name="ids[]" value="<?php echo $row->id ;?>" />  </td>
+                    @endif
 					@if($setting['view-method']=='expand')
 					<td><a href="javascript:void(0)" class="expandable" rel="#row-{{ $row->id }}" data-url="{{ url('pendingrequest/show/'.$id) }}"><i class="fa fa-plus " ></i></a></td>								
 					@endif			
@@ -128,7 +134,11 @@
 						 $col++;
 						endforeach; 
 					  ?>
-
+                    @if($setting['disablerowactions']=='false')
+                        <td data-values="action" data-key="<?php echo $row->id ;?>">
+                            {!! AjaxHelpers::buttonAction('pendingrequest',$access,$id ,$setting) !!}
+                        </td>
+                    @endif
                 </tr>
                 @if($setting['view-method']=='expand')
                 <tr style="display:none" class="expanded" id="row-{{ $row->id }}">
@@ -144,6 +154,11 @@
         </tbody>
       
     </table>
+        @if($setting['inline']!='false' && $setting['disablerowactions']=='false')
+        @foreach ($rowData as $row)
+            {!! AjaxHelpers::buttonActionInline($row->id,'id') !!}
+        @endforeach
+            @endif
 	@else
 
 	<div style="margin:100px 0; text-align:center;">
@@ -158,10 +173,12 @@
 	@include('ajaxfooter')
 	
 	</div>
-</div>	
+</div>
+    </div>
 	
 	@if($setting['inline'] =='true') @include('sximo.module.utility.inlinegrid') @endif
 <script>
+
 $(document).ready(function() {
 	$('.tips').tooltip();	
 	$('input[type="checkbox"],input[type="radio"]').iCheck({

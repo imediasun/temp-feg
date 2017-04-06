@@ -203,7 +203,7 @@
         $('.editor').summernote();
         $('.previewImage').fancybox();
         $('.tips').tooltip();
-        $(".select3").select2({width: "98%"});
+        renderDropdown($(".select3 "), { width:"98%"});
         $('.datee').datepicker({
             format: " yyyy", // Notice the Extra space at the beginning
             viewMode: "years",

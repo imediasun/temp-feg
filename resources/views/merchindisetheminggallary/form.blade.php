@@ -18,7 +18,17 @@
                     <div class="form-group">
                         <label for="gallary_img" class="control-label col-md-3">Add Photo</label>
                         <div class="col-md-9">
-                            <input type='file' name='merch_image' id='merch_image' required value=""/>
+                            <input type='file' name='merch_image[]' multiple id='merch_image' required value=""/>
+                        </div>
+                        <div class="clearfix"></div>
+
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-3">
+                        </div>
+                        <div class="col-md-6">
+                            <p class="bg-info" style="padding: 5px">You may upload multiple images by pressing and holding down the CTRL button on your keyboard while you are selecting images to upload</p>
+
                         </div>
                     </div>
                     <div class="form-group">
@@ -67,7 +77,7 @@
 
         $('.editor').summernote();
 
-        $(".select3").select2({width: "100%"});
+        renderDropdown($(".select3"), { width:"100%"});
 
         var form = $('#gallaryfileuploadform');
         form.parsley();

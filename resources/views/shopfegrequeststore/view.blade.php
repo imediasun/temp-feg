@@ -1,13 +1,14 @@
-@extends('layouts.app')
-
-@section('content')
+@if($setting['view-method'] =='native')
     <div class="sbox">
-        <div class="sbox-title">
-            <h4><i class="fa fa-table"></i> {{ $pageTitle }}
-                <small>{{ $pageNote }}</small>
-            </h4>
-        </div>
-        <div class="sbox-content">
+            <div class="sbox-title">
+                <h4> <i class="fa fa-table"></i> <?php echo $pageTitle ;?> <small>{{ $pageNote }}</small>
+                    <a href="javascript:void(0)" class="collapse-close pull-right btn btn-xs btn-danger" onclick="ajaxViewClose('#{{ $pageModule }}')">
+                        <i class="fa fa fa-times"></i></a>
+                </h4>
+            </div>
+
+            <div class="sbox-content">
+                @endif
 
             <div class="col-md-6 col-md-offset-3 " style="border-bottom:1px solid lightgray">
                 <h1>{{ $row->vendor_description }}</h1>
@@ -85,7 +86,10 @@
                         </tr>
                         </tbody>
                     </table>
+
+                    @if($setting['form-method'] =='native')
                 </div>
+                @endif
                 <div class="col-md-5" >
                     <?php
                     echo SiteHelpers::showUploadedFile($row->img, '/uploads/products/',400, false);
@@ -96,4 +100,4 @@
 
         </div>
     </div>
-@endsection
+

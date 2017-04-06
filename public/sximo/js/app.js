@@ -1,5 +1,6 @@
 var UNDEFINED, 
     UNFN = function () {},
+    exportThreshold = 10000,
     App = {
         lastSearchMode: '',
         autoCallbacks: {},
@@ -159,7 +160,8 @@ App.autoCallbacks.runCallback = function (eventName, params, options) {
 };
 
 App.autoCallbacks.registerCallback('reloaddata', function(params){
-
+    initExport(this);
+    //initUserPopup(this);
 });
 App.autoCallbacks.registerCallback('columnselector', function(params){
 
@@ -294,18 +296,144 @@ function isNumeric(ev) {
         }
     }
 }
-
+// checking browser and browser version
+function get_browser() {
+    var ua=navigator.userAgent,tem,M=ua.match(/(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*(\d+)/i) || [];
+    if(/trident/i.test(M[1])){
+        tem=/\brv[ :]+(\d+)/g.exec(ua) || [];
+        return {name:'IE',version:(tem[1]||'')};
+    }
+    if(M[1]==='Chrome'){
+        tem=ua.match(/\bOPR|Edge\/(\d+)/)
+        if(tem!=null)   {return {name:'Opera', version:tem[1]};}
+    }
+    M=M[2]? [M[1], M[2]]: [navigator.appName, navigator.appVersion, '-?'];
+    if((tem=ua.match(/version\/(\d+)/i))!=null) {M.splice(1,1,tem[1]);}
+    return {
+        name: M[0],
+        version: M[1]
+    };
+}
 jQuery(document).ready(function($){
+
+    //var browser=get_browser(); //need to uncomment it as required
+    //console.log(browser.name+ " version:"+browser.version);
     // Adjust main panel's height based on overflowing nav-bar
     autoSetMainContainerHeight();
     
     // detect link to possible unauthorised access
     detectPUAA($);
 
+    initExport(jQuery('.page-content-wrapper'));
+    //initUserPopup(jQuery('.page-content-wrapper'));
+
     if(PREVENT_CONSOLE_LOGS){
         disableConsoleLogs();
     }
 });
+
+function disableConsoleLogs(){
+    var console = {};
+    console.log = function(){};
+    window.console = console;
+}
+
+function initUserPopup(container) {
+    var userFields = [
+            "td[data-field=contact_id]",
+            "td[data-field=merch_contact_id]",
+            "td[data-field=general_manager_id]",
+            "td[data-field=regional_manager_id]",
+            "td[data-field=vp_id]",
+            "td[data-field=technical_user_id]"
+        ],
+        userPath = '/core/users/show/',
+        userSelector = userFields.join(', '),
+        cells = container.find(userSelector);
+
+    cells.each(function (){
+        var cell = $(this),
+            innerElement = cell.find('.activeLink'),
+            content = cell.html(),
+            wrap = "<span class='activeLink text-info'>"+ content + "</span>";
+        if (!innerElement.length) {
+            cell.html(wrap);
+            innerElement = cell.find('.activeLink');
+            innerElement.click(function () {
+                var value = cell.attr('data-values') || '',
+                    val = cell.text(),
+                    userUrl = '' + userPath + value + '/popup';
+                if (value) {
+                    SximoModal(userUrl, val);
+                }
+            });
+        }
+    });
+}
+
+function initExport(container) {
+    
+    var exportButtons = container.find('a[href*="/export/"]');
+
+    if (exportButtons.length) {
+        exportButtons.on('click', function () {
+                var elm = $(this),
+                    href = elm.attr('href'),
+                    exportIDMatches = /[\?\&]exportID\=([^\&]*)/.exec(href),
+                    exportId = exportIDMatches && exportIDMatches[1] || '',
+                    setUrl = location.pathname + '/init-export/'+ exportId,
+                    probeUrl = location.pathname + '/probe-export/'+ exportId;
+
+                    if (exportId) {
+                        setAndProbeExportSessionTimeout(setUrl, probeUrl);
+                    }
+
+            });
+    }
+}
+
+function setAndProbeExportFormSessionTimeout(formElement) {
+
+    var exportIDMatches = formElement.find('[name=exportID]'),
+        exportId = exportIDMatches.val(),
+        setUrl = location.pathname + '/init-export/'+ exportId,
+        probeUrl = location.pathname + '/probe-export/'+ exportId;
+
+//    console.log(exportId);
+    if (exportId) {
+        setAndProbeExportSessionTimeout(setUrl, probeUrl);
+    }    
+}
+
+function setAndProbeExportSessionTimeout(setUrl, probeUrl) {
+    $.post(setUrl, {}, function(data) {
+        //console.log(data);
+    });
+    setTimeout(function (){
+
+        $.post(probeUrl,
+            {},
+            function (data){
+                //console.log(data);
+                if (data && data.waiting) {
+                    notyMessage("The file you have requested \n\
+                        is large and may take several minutes \n\
+                        to generate. Please do not close this \n\
+                        page until your file is ready.",
+                        {
+                            showDuration: 0,
+                            timeOut: 0,
+                            showEasing: 'linear',
+                        },
+                        'info',
+                        'Attention');
+                }
+            },
+            'json'
+        );
+
+    }, exportThreshold);
+}
 
 function updateNativeUIFieldsBasedOn() {
     var searchCache,
@@ -387,7 +515,7 @@ function detectPUAA($) {
     linksToModules.on('click', function (e){
         e.preventDefault();
         var elm = $(this), 
-            authValidator = "/urlauth/access",
+            authValidator = siteUrl + "/urlauth/access",
             url = elm.attr('href');
             
         if (ajax && ajax.abort) {
@@ -417,8 +545,106 @@ function detectPUAA($) {
 }
 
 
-function disableConsoleLogs(){
-    var console = {};
-    console.log = function(){};
-    window.console = console;
-}
+// TODO: Clean and refactor the below code 
+jQuery(document).ready(function ($) {
+	navigator.sayswho= (function(){
+		var ua= navigator.userAgent, tem,
+				M= ua.match(/(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*(\d+)/i) || [];
+		if(/trident/i.test(M[1])){
+			tem=  /\brv[ :]+(\d+)/g.exec(ua) || [];
+			return 'IE '+(tem[1] || '');
+		}
+		if(M[1]=== 'Chrome'){
+			tem= ua.match(/\b(OPR|Edge)\/(\d+)/);
+			if(tem!= null) return tem.slice(1).join(' ').replace('OPR', 'Opera');
+		}
+		M= M[2]? [M[1], M[2]]: [navigator.appName, navigator.appVersion, '-?'];
+		if((tem= ua.match(/version\/(\d+)/i))!= null) M.splice(1, 1, tem[1]);
+		return M.join(' ');
+	})();
+
+	console.log(navigator.sayswho);
+
+
+	$('body a:not(.page-content-wrapper a,.expand)').on('click',function (e) {
+		e.preventDefault();
+		var url = $(this).attr('href');
+		var href = $(this).attr('href').split('/');
+		console.log(url,href,href[href.length-1]);
+		if(url != 'javascript:void(0)')
+		{
+			$('.ajaxLoading').show();
+			$.ajax({
+				url: siteUrl + '/core/users/check-access',
+				method:'get',
+				data: {
+					module:href[href.length - 1]
+				}
+			}).done(function (data) {
+						console.log(data);
+						if(data == false)
+						{
+							$('.ajaxLoading').hide();
+							window.location = url;
+						}
+						else
+						{
+							console.log(data.is_view);
+							//console.log(data['is_view']);
+							if(data.is_view == 1)
+							{
+								window.location = url;
+							}
+							else
+							{
+								$('.ajaxLoading').hide();
+								notyMessageError('You are Not Authorized to this Content');
+							}
+						}
+						//$('.globalLoading').hide();
+
+					})
+					.error(function (data) {
+						console.log(data);
+					})
+		}
+	});
+//	$('.item_dropdown li a').on('click', function () {
+//		if($(this).parents('.item_title').find(">:first-child").text() != 'My Account')
+//		{
+//			window.localStorage.setItem('clicked_tab', $(this).parents('.item_title').find(">:first-child").text());
+//		}
+//		//alert($(this).parents('.item_title').find(">:first-child").text());
+//	});
+//	if(window.location.pathname != "/dashboard")
+//	{
+//		//console.log($('#sidemenu li.active .nav-label').text());
+//
+//		$('#sidemenu li.active .nav-label').text() == '' ? window.localStorage.getItem('clicked_tab') == '' || window.localStorage.getItem('clicked_tab') == null ? '' : $('.page-title.change_title').text(window.localStorage.getItem('clicked_tab')) : $('.page-title.change_title').text($('#sidemenu li.active .nav-label').text());
+//	}
+//	if(window.location.pathname == '/user/profile')
+//	{
+//		$('.page-title.change_title').text('My Account');
+//	}
+
+    $('#sidemenu').sximMenu();
+	$('.spin-icon').click(function () {
+        $(".theme-config-box").toggleClass("show");
+    });
+
+//	setInterval(function(){
+//		var noteurl = $('.notif-value').attr('code');
+//		$.get( noteurl +'/notification/load',function(data){
+//			$('.notif-alert').html(data.total);
+//			var html = '';
+//			$.each( data.note, function( key, val ) {
+//				html += '<li><a href="'+val.url+'"> <div> <i class="'+val.icon+' fa-fw"></i> '+ val.title+'  <span class="pull-right text-muted small">'+val.date+'</span></div></li>';
+//				html += '<li class="divider"></li>';
+//			});
+//			html += '<li><div class="text-center link-block"><a href="'+noteurl+'/notification"><strong>View All Notification</strong> <i class="fa fa-angle-right"></i></a></div></li>';
+//			$('.notif-value').html(html);
+//		});
+//	}, 60000);
+
+});
+

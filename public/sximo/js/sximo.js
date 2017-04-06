@@ -30,6 +30,7 @@ jQuery(document).ready(function($){
       button.appendTo("body");
       
       jQuery(window).scroll(function() {
+        offset = Math.min(jQuery(window).height(), 220);
         if (jQuery(this).scrollTop() > offset) {
             jQuery('.back-to-top').fadeIn(duration);
         } else {
@@ -51,10 +52,8 @@ jQuery(document).ready(function($){
 	$('.previewImage').fancybox();	
 	$('.tips').tooltip();	
 	$('.editor').summernote();
-	$(".select2").select2({ width:"98%"});	
-	$(".select-liquid").select2({
-		minimumResultsForSearch: "-1"
-	});	
+    renderDropdown($(".select2"), { width:"98%"});
+    renderDropdown($(".select-liquid"), {minimumResultsForSearch: "-1"});
 	$('.panel-trigger').click(function(e){
 		e.preventDefault();
 		$(this).toggleClass('active');
@@ -80,7 +79,7 @@ jQuery(document).ready(function($){
 			cblist.removeAttr("checked");
 		}	
 	});
-	
+
 	$('.nav li ul li.active').parents('li').addClass('active');
 	
 	
@@ -121,7 +120,21 @@ jQuery(document).ready(function($){
 	});	
 		    	
 })
-
+function debounce(func, wait, immediate) {
+    var timeout;
+    return function () {
+        var context = this, args = arguments;
+        var later = function () {
+            timeout = null;
+            if (!immediate) func.apply(context, args);
+        };
+        var callNow = immediate && !timeout;
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+        if (callNow) func.apply(context, args);
+    };
+}
+;
 function addMoreFiles(id){
 
    $("."+id+"Upl").append('<input type="file" name="'+id+'[]" />')
@@ -142,7 +155,7 @@ function SximoDelete(  )
 	{
 			$('#SximoTable').submit();// do the rest here	
 	}	
-}	
+}
 function SximoModal( url , title)
 {
 	$('#sximo-modal-content').html(' ....Loading content , please wait ...');

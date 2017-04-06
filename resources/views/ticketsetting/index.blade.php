@@ -22,7 +22,7 @@
 <div class="sbox animated fadeInRight">
 	<div class="sbox-title"> <h5> <i class="fa fa-table"></i> </h5>
 <div class="sbox-tools" >
-		@if(Session::get('gid') ==1)
+		@if(Session::get('gid') ==10)
 			<a href="{{ URL::to('feg/module/config/'.$pageModule) }}" class="btn btn-xs btn-white tips" title=" {{ Lang::get('core.btn_config') }}" ><i class="fa fa-cog"></i></a>
 		@endif 
 		</div>
@@ -31,10 +31,10 @@
 	    <div class="toolbar-line ">
 			@if($access['is_excel'] ==1)
 			<div >
-				<a href="{{ URL::to( $pageModule .'/export/excel?return='.$return) }}" class="btn btn-sm btn-success"> Excel</a>
-				<a href="{{ URL::to( $pageModule .'/export/word?return='.$return) }}" class="btn btn-sm btn-primary"> Word </a>
-				<a href="{{ URL::to( $pageModule .'/export/csv?return='.$return) }}" class="btn btn-sm btn-warning"> CSV </a>
-				<a href="{{ URL::to( $pageModule .'/export/print?return='.$return) }}" class="btn btn-sm btn-warning" onclick="ajaxPopupStatic(this.href); return false;" > Print</a>
+				<a href="{{ URL::to( $pageModule .'/export/excel?exportID='.uniqid('excel', true).'&return='.$return) }}" class="btn btn-sm btn-success"> Excel</a>
+				<a href="{{ URL::to( $pageModule .'/export/word?exportID='.uniqid('word', true).'&return='.$return) }}" class="btn btn-sm btn-primary"> Word </a>
+				<a href="{{ URL::to( $pageModule .'/export/csv?exportID='.uniqid('csv', true).'&return='.$return) }}" class="btn btn-sm btn-warning"> CSV </a>
+				<a href="{{ URL::to( $pageModule .'/export/print?exportID='.uniqid('print', true).'&return='.$return) }}" class="btn btn-sm btn-warning" onclick="ajaxPopupStatic(this.href); return false;" > Print</a>
 			</div>	
 			@endif
 		</div> 		
@@ -73,7 +73,7 @@
 							$conn = (isset($field['conn']) ? $field['conn'] : array() );
 							$value = AjaxHelpers::gridFormater($row->$field['field'], $row , $field['attribute'],$conn);
 						 	?>
-							<td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}" data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">					 
+							<td  style=text-align:{{ $t['align'] }} data-values="{{ $row->$field['field'] }}" data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
 								{!! $value !!}							 
 							</td>					 
 						

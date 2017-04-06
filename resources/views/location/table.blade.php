@@ -14,7 +14,7 @@ if (!$colconfigs) {
             <a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Reload Data"
                onclick="reloadData('#{{ $pageModule }}','location/data?return={{ $return }}')"><i
                         class="fa fa-refresh"></i></a>
-            @if(Session::get('gid') ==1)
+            @if(Session::get('gid') ==10)
                 <a href="{{ url('feg/module/config/'.$pageModule) }}" class="btn btn-xs btn-white tips"
                    title=" {{ Lang::get('core.btn_config') }}"><i class="fa fa-cog"></i></a>
             @endif
@@ -70,7 +70,7 @@ if (!$colconfigs) {
                                             ' data-sortable="'.$colIsSortable.'"'.
                                             ' data-sorted="'.($colIsSorted?1:0).'"'.
                                             ' data-sortedOrder="'.($colIsSorted?$orderBy:'').'"'.
-                                            ' align="'.$t['align'].'"'.
+                                            ' style=text-align:'.$t['align'].
                                             ' width="'.$t['width'].'"';
                                     $th .= '>';
                                     $th .= \SiteHelpers::activeLang($t['label'],(isset($t['language'])? $t['language'] : array()));
@@ -114,7 +114,7 @@ if (!$colconfigs) {
                     $id = $row->id;
                     ?>
 
-                    <tr class="editable" id="form-{{ $row->id }}">
+                    <tr class="editable" id="form-{{ $row->id }}" @if($setting['inline']!='false' && $setting['disablerowactions']=='false') data-id="{{ $row->id }}" ondblclick="showFloatingCancelSave(this)" @endif>
                         @if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
                             <td class="number"> <?php echo ++$i;?>  </td>
                         @endif
@@ -128,23 +128,13 @@ if (!$colconfigs) {
                         @endif
                         <?php foreach ($tableGrid as $field) :
                         if($field['view'] == '1') :
-                        $conn = (isset($field['conn']) ? $field['conn'] : array());
-
-                        $value = AjaxHelpers::gridFormater($row->$field['field'], $row, $field['attribute'], $conn);
+                            $conn = (isset($field['conn']) ? $field['conn'] : array());
+                            $value = AjaxHelpers::gridFormater($row->$field['field'], $row, $field['attribute'], $conn);
                         ?>
                         <?php $limited = isset($field['limited']) ? $field['limited'] : ''; ?>
                         @if(SiteHelpers::filterColumn($limited ))
-                           {{-- @if($field['field'] != 'bill_token_detail' && $field['field'] != 'bill_license_detail' && $field['field'] != 'bill_attraction_detail')
-                                --}}    <td align="<?php echo $field['align'];?>" data-values="{{ isset($row->$field['field'])?$row->$field['field']:"" }}"
-                                    data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
-@if($field)
-    @if($field['field'] == "district_manager_id")
-      <a href="core/users/user-details/{{ $row->district_manager_id }}" @if($value ==  '0') style="pointer-events: none;cursor: default;display:block;padding:2px;text-align: center;color:blue;font-weight: bold" @else style="display:block;padding:2px;text-align: center;color:blue;font-weight: bold" @endif class="btn-small btn-default" > @if($value ==  '0') {{ 'None Specified' }} @else{!! $value !!} @endif</a>
-        @else
-                                        {!! $value !!}
-@endif
-                                </td>
-                            @endif
+                                <td align="<?php echo $field['align'];?>" data-values="{{ isset($row->$field['field'])?$row->$field['field']:"" }}"
+                                    data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">{!! $value !!}</td>
                         @endif
                         <?php
                         endif;
@@ -153,7 +143,6 @@ if (!$colconfigs) {
 
                         <td data-values="action" data-key="<?php echo $row->id;?>">
                             {!! AjaxHelpers::buttonAction('location',$access,$id ,$setting) !!}
-                            {!! AjaxHelpers::buttonActionInline($row->id,'id') !!}
                         </td>
                     </tr>
                     @if($setting['view-method']=='expand')
@@ -169,6 +158,11 @@ if (!$colconfigs) {
                     </tbody>
 
                 </table>
+                @if($setting['inline']!='false' && $setting['disablerowactions']=='false')
+                    @foreach ($rowData as $row)
+                        {!! AjaxHelpers::buttonActionInline($row->id,'id') !!}
+                    @endforeach
+                @endif
             @else
 
                 <div style="margin:100px 0; text-align:center;">

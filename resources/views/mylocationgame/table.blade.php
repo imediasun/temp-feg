@@ -6,8 +6,14 @@
 		<div class="sbox-tools" >
 			<a href="javascript:void(0)" class="btn btn-xs btn-white tips clearSearchButton" title="Clear Search" onclick="reloadData('#{{ $pageModule }}','mylocationgame/data?search=')"><i class="fa fa-trash-o"></i> Clear Search </a>
 			<a href="javascript:void(0)" class="btn btn-xs btn-white tips reloadDataButton" title="Reload Data" onclick="reloadData('#{{ $pageModule }}','mylocationgame/data?return={{ $return }}')"><i class="fa fa-refresh"></i></a>
-			@if(Session::get('gid') ==1)
-			<a href="{{ url('feg/module/config/'.$pageModule) }}" class="btn btn-xs btn-white tips" title=" {{ Lang::get('core.btn_config') }}" ><i class="fa fa-cog"></i></a>
+			@if(Session::get('gid') ==10)
+			<a href="{{ url('feg/module/config/'.$pageModule) }}"
+                class="btn btn-xs btn-white tips openModuleConfig"
+                title=" {{ Lang::get('core.btn_config') }}"
+               ><i class="fa fa-cog"></i></a>
+			<a href="{{ url('feg/module/special-permissions/'.$pageModule.'/solo') }}" 
+                class="btn btn-xs btn-white tips openSpecialPermissions"
+                title="Special Permissions" ><i class="fa fa-sliders"></i></a>
 			@endif
 		</div>
 	</div>
@@ -42,8 +48,7 @@
             @if($setting['disableactioncheckbox']=='false')
                 <th width="30"> <input type="checkbox" class="checkall" /></th>
             @endif
-            <th width="70">Img</th>
-            @if($setting['view-method']=='expand') <th>  </th> @endif
+                @if($setting['view-method']=='expand') <th>  </th> @endif
             <?php foreach ($tableGrid as $t) :
                 if($t['view'] =='1'):
                     $limited = isset($t['limited']) ? $t['limited'] :'';
@@ -62,7 +67,7 @@
                                 ' data-sortable="'.$colIsSortable.'"'.
                                 ' data-sorted="'.($colIsSorted?1:0).'"'.
                                 ' data-sortedOrder="'.($colIsSorted?$orderBy:'').'"'.
-                                ' align="'.$t['align'].'"'.
+                                ' style=text-align:'.$t['align'].
                                 ' width="'.$t['width'].'"';
                         $th .= '>';
                         $th .= \SiteHelpers::activeLang($t['label'],(isset($t['language'])? $t['language'] : array()));
@@ -89,9 +94,11 @@
 					@if(isset($t['inline']) && $t['inline'] =='1')
 					<?php $limited = isset($t['limited']) ? $t['limited'] :''; ?>
 						@if(SiteHelpers::filterColumn($limited ))
+                        @if (!in_array($t['field'], ['for_sale', 'sale_pending']) || !empty($pass['Edit '.FEGFormat::field2title($t['field'])]))
 						<td data-form="{{ $t['field'] }}" data-form-type="{{ AjaxHelpers::inlineFormType($t['field'],$tableForm)}}">
 							{!! SiteHelpers::transInlineForm($t['field'] , $tableForm) !!}
 						</td>
+						@endif
 						@endif
 					@endif
 				@endforeach
@@ -105,14 +112,13 @@
 					  //print_r($row);
            			  $id = $row->id;
            		?>
-                <tr class="editable" id="form-{{ $row->id }}">
+                <tr class="editable" id="form-{{ $row->id }}" @if($setting['inline']!='false' && $setting['disablerowactions']=='false') data-id="{{ $row->id }}" ondblclick="showFloatingCancelSave(this)" @endif>
 					@if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
 					<td class="number"> <?php echo ++$i;?>  </td>
 					@endif
 					@if($setting['disableactioncheckbox']=='false')
 							<td ><input type="checkbox" class="ids" name="ids[]" value="<?php echo $row->id ;?>" />  </td>
 						@endif
-                    <td>{!! SiteHelpers::showUploadedFile(SiteHelpers::getGameImage($row->game_title_id),'/uploads/games/images/',50,false,$row->id) !!}</td>
 					@if($setting['view-method']=='expand')
 					<td><a href="javascript:void(0)" class="expandable" rel="#row-{{ $row->id }}" data-url="{{ url('mylocationgame/show/'.$id) }}"><i class="fa fa-plus " ></i></a></td>
 					@endif
@@ -126,25 +132,22 @@
 						 	@if(SiteHelpers::filterColumn($limited ))
 								 <td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}" data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
 
-                                     @if( $field['field']=="location_id")
-                                         @if($row->location_id != 0)
-                                         	<?php  $value="<a  href=./location/location/$row->location_id>".$value."</a>"; ?>
-                                         @else
+                                    @if( $field['field']=="location_id")
+                                        @if($row->location_id != 0)
+                                            <?php  $value="<a  href='".url()."/location/index/{$row->location_id}' target='_blank'>".$value."</a>"; ?>
+                                        @else
                                              <?php $value=""; ?>
-                                         @if($row->status_id==3)
-                                             <?php $value="<a style='color:red' href=#>In Transit</a>" ?>
-                                         @endif
+                                            @if($row->status_id==3)
+                                                <?php $value="<a style='color:red' href=#>In Transit</a>" ?>
+                                            @endif
+                                        @endif
+                                        {!! $value !!}
+									@elseif($field['field'] == "img")
+                                         {!! SiteHelpers::showUploadedFile($row->img,'/uploads/games/images/',50,false,$row->id) !!}
+                                    @else
+                                         {!! $value !!}
                                      @endif
-									 @endif
-											 @if($field['field']=='location_num')
-												 {!! $row->location_id !!}
 
-
-										 @elseif ($field['field']=='game_type_id')
-											 {!! $value=="0"?null:$value !!}
-										@else
-											 {!! $value !!}
-										 @endif
 								 </td>
 							@endif
                     <?php
@@ -153,7 +156,7 @@
 					  ?>
 				 <td class="action" data-values="action" data-key="<?php echo $row->id ;?>">
 					{!! AjaxHelpers::buttonAction('mylocationgame',$access,$id ,$setting) !!}
-					{!! AjaxHelpers::buttonActionInline($row->id,'id') !!}
+
 				</td>
                 </tr>
                 @if($setting['view-method']=='expand')
@@ -170,6 +173,11 @@
         </tbody>
 
     </table>
+        @if($setting['inline']!='false' && $setting['disablerowactions']=='false')
+            @foreach ($rowData as $row)
+                {!! AjaxHelpers::buttonActionInline($row->id,'id') !!}
+            @endforeach
+        @endif
 	@else
 
 	<div style="margin:100px 0; text-align:center;">

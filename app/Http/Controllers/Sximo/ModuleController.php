@@ -5,7 +5,7 @@ use App\Library\ZipHelpers as helper;
 use App\Library\SximoHelpers;
 use App\Http\Controllers\controller;
 use Illuminate\Http\Request;
-use Validator, Input, Redirect;
+use Validator, Input, Redirect, Exception;
 
 
 class ModuleController extends Controller
@@ -23,6 +23,7 @@ class ModuleController extends Controller
         $this->dbpass = $database[$driver]['password'];
         $this->dbhost = $database[$driver]['host'];
         $this->model = new Module();
+        $this->data['pageTitle'] = "Modules";
     }
 
     public function getIndex(Request $request)
@@ -277,6 +278,7 @@ class ModuleController extends Controller
 
         }
         $row = $row[0];
+        $this->data['pageTitle'] = "Module: " . Module::name2title($id);
         $this->data['row'] = $row;
         $this->data['module'] = 'module';
         $this->data['module_lang'] = json_decode($row->module_lang, true);
@@ -411,6 +413,7 @@ class ModuleController extends Controller
             return Redirect::to('feg/module')->with('messagetext', 'Can not find module')->with('msgstatus', 'error');
         }
         $row = $row[0];
+        $this->data['pageTitle'] = "Module: " . Module::name2title($id);
         $this->data['row'] = $row;
         $config = \SiteHelpers::CF_decode_json($row->module_config);
         $this->data['sql_select'] = $config['sql_select'];
@@ -530,6 +533,7 @@ class ModuleController extends Controller
             return Redirect::to('feg/module')->with('messagetext', 'Can not find module')->with('msgstatus', 'error');
         }
         $row = $row[0];
+        $this->data['pageTitle'] = "Module: " . Module::name2title($id);
         $this->data['row'] = $row;
         $config = \SiteHelpers::CF_decode_json($row->module_config);
         $this->data['tables'] = $config['grid'];
@@ -550,6 +554,7 @@ class ModuleController extends Controller
             return Redirect::to('feg/module')->with('messagetext', 'Can not find module')->with('msgstatus', 'error');
         }
         $row = $row[0];
+        $this->data['pageTitle'] = "Module: " . Module::name2title($id);
         $this->data['row'] = $row;
         $config = \SiteHelpers::CF_decode_json($row->module_config);
 
@@ -617,6 +622,7 @@ class ModuleController extends Controller
                     'is_dependency' => $is_dependency[$i],
                     'select_multiple' => (isset($select_multiple[$i]) ? $select_multiple[$i] : 0),
                     'image_multiple' => (isset($image_multiple[$i]) ? $image_multiple[$i] : 0),
+                    'lookup_search' => isset($lookup_search[$i]) ? $lookup_search[$i] : '',
                     'lookup_dependency_key' => $lookup_dependency_key[$i],
                     'path_to_upload' => $path_to_upload[$i],
                     'resize_width' => $resize_width[$i],
@@ -651,6 +657,7 @@ class ModuleController extends Controller
             return Redirect::to('feg/module')->with('messagetext', 'Can not find module')->with('msgstatus', 'error');
         }
         $row = $row[0];
+        $this->data['pageTitle'] = "Module: " . Module::id2title($id);
         $this->data['row'] = $row;
         $config = \SiteHelpers::CF_decode_json($row->module_config);
 
@@ -694,6 +701,7 @@ class ModuleController extends Controller
                         'is_dependency' => $form['option']['is_dependency'],
                         'select_multiple' => (isset($form['option']['select_multiple']) ? $form['option']['select_multiple'] : 0),
                         'image_multiple' => (isset($form['option']['image_multiple']) ? $form['option']['image_multiple'] : 0),
+                        'lookup_search' => isset($form['option']['lookup_search']) ? $form['option']['lookup_search'] : '',
                         'lookup_dependency_key' => $form['option']['lookup_dependency_key'],
                         'path_to_upload' => $form['option']['path_to_upload'],
                         'upload_type' => $form['option']['upload_type'],
@@ -802,6 +810,7 @@ class ModuleController extends Controller
                 'is_dependency' => $request->input('is_dependency'),
                 'select_multiple' => (!is_null($request->input('select_multiple')) ? '1' : '0'),
                 'image_multiple' => (!is_null($request->input('image_multiple')) ? '1' : '0'),
+                'lookup_search' => $request->input('lookup_search'),
                 'lookup_dependency_key' => $request->input('lookup_dependency_key'),
                 'path_to_upload' => $request->input('path_to_upload'),
                 'upload_type' => $request->input('upload_type'),
@@ -944,6 +953,7 @@ class ModuleController extends Controller
             return Redirect::to('feg/module')->with('messagetext', 'Can not find module')->with('msgstatus', 'error');
         }
         $row = $row[0];
+        $this->data['pageTitle'] = "Module: " . Module::name2title($id);
         $this->data['row'] = $row;
         $this->data['module'] = 'module';
         $this->data['module_name'] = $row->module_name;
@@ -1073,7 +1083,7 @@ class ModuleController extends Controller
             ->with('messagetext', 'Permission Has Changed Successful.')->with('msgstatus', 'success');
     }
 
-
+    
     function getBuild($id)
     {
 
@@ -1083,7 +1093,7 @@ class ModuleController extends Controller
             return Redirect::to('feg/module')->with('messagetext', 'Can not find module')->with('msgstatus', 'error');
         }
         $row = $row[0];
-
+        $this->data['pageTitle'] = "Module: " . Module::name2title($id);
         $this->data['module'] = 'module';
         $this->data['module_name'] = $id;
         $this->data['module_id'] = $row->module_id;
@@ -1101,6 +1111,7 @@ class ModuleController extends Controller
                 ->with('messagetext', 'Can not find module')->with('msgstatus', 'error');
         }
         $row = $row[0];
+        $this->data['pageTitle'] = "Module: " . Module::name2title($id);
         $this->data['row'] = $row;
         $config = \SiteHelpers::CF_decode_json($row->module_config);
         $this->data['forms'] = $config['forms'];
@@ -1197,6 +1208,7 @@ class ModuleController extends Controller
             return Redirect::to('feg/module')->with('messagetext', 'Can not find module')->with('msgstatus', 'error');
         }
         $row = $row[0];
+        $this->data['pageTitle'] = "Module: " . Module::name2title($id);
         $config = \SiteHelpers::CF_decode_json($row->module_config);
         $this->data['row'] = $row;
         $this->data['fields'] = $config['grid'];
@@ -1283,6 +1295,7 @@ class ModuleController extends Controller
                 ->with('messagetext', 'Can not find module')->with('msgstatus', 'error');
         }
         $row = $row[0];
+        $this->data['pageTitle'] = "Module: " . Module::name2title($id);
         $this->data['row'] = $row;
 
         $config = \SiteHelpers::CF_decode_json($row->module_config);
@@ -1315,6 +1328,7 @@ class ModuleController extends Controller
             return Redirect::to('feg/module')->with('messagetext', 'Can not find module')->with('msgstatus', 'error');
         }
         $row = $row[0];
+        $this->data['pageTitle'] = "Module: " . Module::name2title($id);
         $this->data['row'] = $row;
         $config = \SiteHelpers::CF_decode_json($row->module_config);
 
@@ -1473,6 +1487,7 @@ class ModuleController extends Controller
                 'is_dependency' => '',
                 'select_multiple' => '0',
                 'image_multiple' => '0',
+                'lookup_search' => '',
                 'lookup_dependency_key' => '',
                 'path_to_upload' => '',
                 'upload_type' => '',
@@ -1573,6 +1588,7 @@ class ModuleController extends Controller
             return Redirect::to('feg/module')->with('messagetext', 'Can not find module')->with('msgstatus', 'error');
         }
         $row = $row[0];
+        $this->data['pageTitle'] = "Module: " . Module::name2title($id);
         $this->data['row'] = $row;
         $config = \SiteHelpers::CF_decode_json($row->module_config);
         $class = $row->module_name;
@@ -2085,4 +2101,170 @@ class ModuleController extends Controller
     }
 
 
+    function getSpecialPermissions($moduleName, $mode = null) {
+
+        $pass = new \FEGSPass;
+//        $moduleModel = new \App\Models\Sximo\Module;
+//        $id = \App\Models\Sximo\Module::name2id($moduleName);
+//        var_dump($id);
+//        
+//        $access = $model->hasAccess($moduleName);
+//        if (empty($access)) {
+//            return Redirect::back()
+//                ->with('messagetext', 'You are not allowed to configure special permissions')
+//                ->with('msgstatus', 'error');
+//        }
+        
+        $module = Module::select('module_id', 'module_name', 
+                'module_title', 
+                'module_desc', 
+                'module_type as type')
+                ->where('module_name', $moduleName)->first();
+        if (empty($module)) {
+            return Redirect::back()
+                ->with('messagetext', 'Can not find module')
+                ->with('msgstatus', 'error');
+        }
+        
+        if (empty($this->data)) {
+            $this->data = [];
+        }
+        $this->data = array_merge($this->data, $module->toArray());        
+        $this->data['view_mode'] = $mode;   
+        $this->data['rowData'] = $pass->getPasses($module->module_id, '', true);
+        $this->data['tableGrid'] = $pass->getGrid();
+        $this->data['pageTitle'] = $mode =='solo' ? $module->module_title : "Module: " .$module->module_title;
+        
+        return view('sximo.module.specialPermissions', $this->data);
+        
+    }
+
+    function saveSpecialPermissions(Request $request, $moduleName) {
+        return $this->postSaveSpecialPermissions($request, $moduleName);
+    }
+    
+    function postSaveSpecialPermissions(Request $request, $moduleName) {
+        
+        $ignoreList = ['_token', 'selectAll', 'ids'];
+        $validationRules = array(
+            'module_id' => 'required',
+            'config_title' => 'required'
+        );
+        $requestData = $request->all();
+        foreach($ignoreList as $item) {
+            unset($requestData[$item]);
+        }
+        
+        $moduleId = array_pull($requestData, 'module_id');        
+        $ids = $requestData['id'];
+        
+        $updatedPermissons = [];
+        $newPermissions = [];        
+        foreach($requestData as $key => $items) {
+            foreach($items as $id => $item) {
+                if ($id == 0) {
+                    $newItems = $item;
+                    foreach ($newItems as $index => $data) {
+                        if (!isset($newPermissions[$index])) {
+                            $newPermissions[$index] = [];
+                        }
+                        if (!isset($newPermissions[$index]['module_id'])) {
+                            $newPermissions[$index]['module_id'] = $moduleId;
+                        }
+                        $newPermissions[$index][$key] = is_array($data) ? implode(',', $data) : $data;
+                    }
+                }
+                else {
+                    if (!isset($updatedPermissons[$id])) {
+                        $updatedPermissons[$id] = [];
+                    }
+                    $updatedPermissons[$id][$key] = is_array($item) ? implode(',', $item) : $item;
+                }
+            }            
+        }
+        
+        \DB::beginTransaction();
+        foreach($updatedPermissons as $id => &$item) {
+            $item['config_name'] = "module.$moduleName.special.".snake_case($item['config_title']);
+            try {
+                $status = \FEGSPass::updatePass($id, $item);
+            }
+            catch (Exception $ex) {
+                \DB::rollBack();
+                return response()->json(array(
+                    'message' => "Error creating new Special Permission. " . $ex->getMessage(),
+                    'status' => 'error'
+                ));
+            }
+        }
+
+        foreach($newPermissions as $id => &$item) {
+            $item['config_name'] = "module.$moduleName.special.".snake_case($item['config_title']);
+            try {
+                $status = \FEGSPass::addNewPass($item);
+            } 
+            catch (Exception $ex) {
+                \DB::rollBack();
+                return response()->json(array(
+                    'message' => "Error updating new Special Permission. " . $ex->getMessage(),
+                    'status' => 'error'
+                ));
+            }
+            if ($status !== true) {
+
+            }
+        }
+        \DB::commit();
+        
+        return response()->json(array(
+                'status' => 'success',
+                'message' => \Lang::get('core.note_success')
+            ));
+        
+//        $validator = Validator::make($request->all(), $rules);
+//        if ($validator->passes()) {
+//
+//
+//        } else {
+//            return Redirect::to('feg/module/create')
+//                ->with('messagetext', 'The following errors occurred')
+//                ->with('msgstatus', 'error')
+//                ->withErrors($validator)->withInput();
+//        }
+        
+    }
+    
+    function postDeleteSpecialPermissions(Request $request, $moduleName) {
+        if ($request->has('deletedIds')) {
+            $ids = $request->get('deletedIds');
+            if (!empty($ids)) {
+                $ids = explode(",", $ids);
+                \DB::beginTransaction();
+                foreach ($ids as $id) {
+                    try {
+                        $pass = \FEGSPass::find($id);
+                        $pass->master->delete();
+                        $pass->delete();                        
+                    } 
+                    catch (Exception $ex) {
+                        \DB::rollBack();
+                        return response()->json(array(
+                            'message' => "Error deleting new Special Permission. " . $ex->getMessage(),
+                            'status' => 'error'
+                        ));
+                    }                    
+                }
+                \DB::commit();
+                return response()->json(array(
+                    'message' => "Special Permissions deleted successfully",
+                    'status' => 'success'
+                ));                
+            }            
+        }
+        return response()->json(array(
+            'message' => "Nothing to delete!",
+            'status' => 'error'
+        ));
+        
+    }
 }	

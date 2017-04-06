@@ -28,7 +28,7 @@
             container = jQuery;
         }
         
-        var exportForm = container.find('#mylocationgameFormAjax, .downloadForm');
+        var exportForm = container.find('#mylocationgameExportFormAjax, .downloadForm');
         exportForm.on('submit', exportFormSubmit);              
     
     };
@@ -38,7 +38,8 @@
         var form = $(this),
             allowDownload = form.data('allowDownload') || false,
             validate = form.find('[name=validateDownload]'),
-            filtersField = form.find('[name=filter]'),
+            filtersField = form.find('[name=footerfiters]'),
+            footerFilters,
             filters,
             options = {
                 dataType     :  'json',
@@ -53,6 +54,7 @@
                     if (data.success) {
                         validate.val(0);
                         form.data('allowDownload', true);
+                        setAndProbeExportFormSessionTimeout(form);
                         form.find('.submitButton').click();
                     }
                     else {
@@ -61,7 +63,7 @@
                 }
             };
         if (filtersField.length) {
-            filters = getFooterFilters({'page': true, 'rows': true, 'sort': true, 'order': true});
+            filters = getFooterFiltersWith({'search':true, 'sort': true, 'order': true});
             filtersField.val(filters);
         }
         if (!allowDownload) {

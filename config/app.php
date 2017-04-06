@@ -213,9 +213,11 @@ return [
         'QrCode'    => SimpleSoftwareIO\QrCode\Facades\QrCode::class,
         'Image'     => Intervention\Image\Facades\Image::class,
         'PDF'       => Barryvdh\DomPDF\Facade::class,
-        'Image' => Intervention\Image\Facades\Image::class
-
-
+        'Image'     => Intervention\Image\Facades\Image::class,
+        'FEGFormat' => \App\Library\FEG\System\Formatter::class,
+        'FEGHelp'   => \App\Library\FEG\System\FEGSystemHelper::class,
+        'FEGLog'    => \App\Library\MyLog::class,
+        'FEGSPass' => \App\Models\Feg\System\Pass::class,
     ],
 
 ];

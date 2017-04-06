@@ -15,7 +15,6 @@
     <div class="sbox">
 
         <div class="sbox-content">
-<div class="ajaxLoading"></div>
             {!! Form::open(array('url'=>'order/receiveorder/', 'class'=>'form-vertical','files' => true ,
             'parsley-validate'=>'','novalidate'=>' ','id'=> 'orderreceiveFormAjax')) !!}
             <div class="col-sm-12 ">
@@ -232,7 +231,7 @@
 
             $('.previewImage').fancybox();
             $('.tips').tooltip();
-            $(".select3").select2({width: "98%"});
+            renderDropdown($(".select3 "), { width:"98%"});
             $('.date').datepicker({format: 'mm/dd/yyyy', autoclose: true})
             $('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});
             $('.removeCurrentFiles').on('click', function () {

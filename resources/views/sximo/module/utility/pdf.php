@@ -16,6 +16,7 @@
 		foreach($fields as $f )
 		{
 			if($f['download'] =='1'):
+				unset($f['attribute']['hyperlink']);
 				$conn = (isset($f['conn']) ? $f['conn'] : array() );					
 				$content .= '<td> '. AjaxHelpers::gridFormater($row->$f['field'],$row,$f['attribute'],$conn) . '</td>';
 			endif;	
@@ -23,6 +24,14 @@
 		$content .= '</tr>';
 	}
 	$content .= '</table>';
+
+    global $exportSessionID;
+    if (!empty($exportSessionID)) {
+        \Session::forget($exportSessionID);
+    }
+    if (!empty($exportID)) {
+        \Session::forget($exportID);
+    }
 	echo $content;
 ?>
 </div>

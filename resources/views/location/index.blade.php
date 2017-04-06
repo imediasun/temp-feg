@@ -17,7 +17,6 @@
 	<!-- Begin Content -->
 	<div class="page-content-wrapper m-t">
 		<div class="resultData"></div>
-		<div class="ajaxLoading"></div>
 		<div id="{{ $pageModule }}View"></div>			
 		<div id="{{ $pageModule }}Grid"></div>
 	</div>	
@@ -31,12 +30,10 @@
 <script>
 $(document).ready(function(){
     var id = {{ $id  }};
-    if(id){
-        reloadData('#{{ $pageModule }}','/sximo/public/location/data/'+id);
+    if(id && id != 0){
+        ajaxViewDetail('#{{ $pageModule }}',"{{$pageUrl}}/show/"+id); 
     }
-    else{
-        reloadData('#{{ $pageModule }}','{{ $pageModule }}/data');
-    }
+    reloadData('#{{ $pageModule }}','{{$pageUrl}}/data');
 });	
 </script>	
 @endsection

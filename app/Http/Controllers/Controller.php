@@ -71,8 +71,44 @@ abstract class Controller extends BaseController
             'last_activity' => strtotime(Carbon::now())
         );
         \DB::table('users')->where('id', \Session::get('uid'))->update($data);
+
+        $this->data = [
+            'UQID' =>  uniqid('', true)
+        ];
     }
 
+    function postInitExport($exportId = null) {
+        global $exportSessionID;
+        if (!empty($exportId)) {
+            $exportSessionID = 'export-'.$exportId;
+            \Session::put($exportSessionID, microtime(true));
+        }
+        $time = \Session::get($exportSessionID);
+        return response()->json(array('session' => $exportSessionID, 'timestart' => $time));        
+    }
+
+    function postProbeExport($id) {
+        global $exportSessionID;
+        $exportSessionID = 'export-'.$id;
+        if (\Session::has($exportSessionID) && !is_null(\Session::has($exportSessionID))) {
+            $idTime = \Session::get($exportSessionID);
+            $now = microtime(true);
+            $diff = $now - $idTime;
+            \Session::forget($exportSessionID);            
+            return response()->json(array(
+                'session' => $exportSessionID,
+                'timestart' => $idTime,
+                'timenow' => $now,
+                'elapsed' => $diff,
+                'waiting' => true, 
+            ));
+        }
+        return response()->json(array(                
+                'session' => $exportSessionID,
+                'elapsed' => 0,
+                'waiting' => false,
+            ));
+    }
 
     function getComboselect(Request $request)
     {
@@ -644,18 +680,20 @@ abstract class Controller extends BaseController
                                         $multi_in[] .= '"' . $v . '"';
                                     }
                                     $multi_in = implode(',', $multi_in);
-                                    $param .= " AND " . $table . "." . $keys[0] . " IN(" . $multi_in . ") ";
+                                    $field = (empty($table) ?  "": $table.".") . $keys[0];
+                                    $param .= " AND $field IN(" . $multi_in . ") ";
                                 } else {
-                                    $param .= " AND " . $arr[$keys[0]]['alias'] . "." . $keys[0] . " IN(" . $keys[2] . ") ";
+                                    $field = (empty($arr[$keys[0]]['alias']) ?  "": $arr[$keys[0]]['alias'].".") . $keys[2];
+                                    $param .= " AND $field IN(" . $keys[2] . ") ";
                                 }
                             } else {
-
-                                $param .= " AND " . $arr[$keys[0]]['alias'] . "." . $keys[0] . " " . self::searchOperation($keys[1]) . " '" . $keys[2] . "' ";
+                                $field = (empty($arr[$keys[0]]['alias']) ?  "": $arr[$keys[0]]['alias'].".") . $keys[0];
+                                $param .= " AND $field " . self::searchOperation($keys[1]) . " '" . $keys[2] . "' ";
                             }
 
                         }
                         else {
-                            $col = $arr[$keys[0]]['alias'] . "." . $keys[0];
+                            $col = (empty($arr[$keys[0]]['alias']) ?  "": $arr[$keys[0]]['alias'].".") . $keys[0];
                             if ($keys[0] == 'up_user_id' && $arr[$keys[0]]['alias'] == "game_service_history") {
                                 $col = "DATEDIFF(date_up,date_down)";
                             } elseif ($keys[0] == 'description' && $arr[$keys[0]]['alias'] == "requests" && \Request::segment(1)=="managefegrequeststore") {
@@ -732,7 +770,16 @@ abstract class Controller extends BaseController
     public
     function getExport($t = 'excel')
     {
+        global $exportSessionID;
+        ini_set('memory_limit', '1G');
+        set_time_limit(0);
 
+        $exportId = Input::get('exportID');
+        if (!empty($exportId)) {
+            $exportSessionID = 'export-'.$exportId;
+            \Session::put($exportSessionID, microtime(true));
+        }
+        
         $info = $this->model->makeInfo($this->module);
         //$master  	= $this->buildMasterDetail();
         if (method_exists($this, 'getSearchFilterQuery')) {
@@ -834,6 +881,7 @@ abstract class Controller extends BaseController
         }
 
         $content = array(
+            'exportID' => $exportSessionID,
             'fields' => $fields,
             'rows' => $rows,
             'title' => $this->data['pageTitle'],

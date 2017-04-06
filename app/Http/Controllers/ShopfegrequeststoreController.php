@@ -3,6 +3,7 @@
 use App\Http\Controllers\controller;
 use App\Models\Shopfegrequeststore;
 use App\Models\Addtocart;
+use \App\Models\Sximo\Module;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Validator, Input, Redirect, URL;
@@ -22,12 +23,15 @@ class ShopfegrequeststoreController extends Controller
         $this->addToCartModel = new Addtocart();
         $this->info = $this->model->makeInfo($this->module);
         $this->access = $this->model->validAccess($this->info['id']);
+        $this->module_id = Module::name2id($this->module);
+        $this->pass = \FEGSPass::getMyPass($this->module_id);
 
         $this->data = array(
+            'pass' => $this->pass,
             'pageTitle' => $this->info['title'],
             'pageNote' => $this->info['note'],
-            'pageModule' => 'shopfegrequeststore',
-            'pageUrl' => url('shopfegrequeststore'),
+            'pageModule' => $this->module,
+            'pageUrl' => url($this->module),
             'return' => self::returnUrl()
         );
 
@@ -243,7 +247,6 @@ class ShopfegrequeststoreController extends Controller
 
     function postSave(Request $request, $id = 0)
     {
-
         $rules = $this->validateForm();
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
@@ -319,11 +322,11 @@ class ShopfegrequeststoreController extends Controller
             $graphics_description = $request->get('graphics_description');
             $graphics_description = str_replace('"', '', $graphics_description);
             $qty = $request->get('qty');
-            $date_needed = date("m/d/Y", strtotime($request->get('date_needed')));
+            $date_needed = date("Y-m-d", strtotime($request->get('date_needed')));
             $game_info = $request->get('game_info');
             $locationId = $request->get('location_name');
             $statusId = 1;
-            $now = date('m/d/Y');
+            $now = date('Y-m-d');
             $filesnames = $request->get('myInputs');
             if(!empty($filesnames)) {
                 $filesnames = implode(',', $filesnames);

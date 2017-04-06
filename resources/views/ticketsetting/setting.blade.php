@@ -1,12 +1,14 @@
 @extends('layouts.app')
 
 @section('content')
+
     <div class="page-content row">
         <!-- Page header -->
         <div class="page-header">
             <div class="page-title">
-                <h3> Permission Editor: </h3>
+                <h3> Setting </h3>
             </div>
+
             <ul class="breadcrumb">
                 <li><a href="{{ URL::to('dashboard') }}"> Dashboard </a></li>
                 <li class="active"> Ticket Roles</li>
@@ -21,7 +23,7 @@
             {!! Form::open(array('url'=>'sbticket/savepermission', 'class'=>'form-horizontal', 'parsley-validate'=>'','novalidate'=>' ', 'id'=> 'sbticketSetting')) !!}
 
             <div class="sbox">
-                <div class="sbox-title"><h5> Ticket Permissions </h5></div>
+                <div class="sbox-title"><h5> Setting </h5></div>
                 <div class="sbox-content">
                     <table class="table table-striped table-bordered" id="table">
                         <thead class="no-border">
@@ -156,6 +158,7 @@
         }
         function showResponse(data) {
 
+            $('.ajaxLoading').hide();
             if (data.status == 'success') {
                 ajaxViewClose('#{{ $pageModule }}');
                 //ajaxFilter('#{{ $pageModule }}', '{{ $pageUrl }}/setting');
@@ -163,9 +166,8 @@
                 $('#sximo-modal').modal('hide');
             } else {
                 notyMessageError(data.message);
-                $('.ajaxLoading').hide();
-                return false;
             }
+            return false;
         }
     </script>
 @stop

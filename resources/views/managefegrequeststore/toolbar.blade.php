@@ -52,11 +52,11 @@
         <a href="{{ URL::to( $pageModule .'/search') }}" class="btn btn-sm btn-white"
            onclick="SximoModal(this.href,'Advanced Search'); return false;"><i class="fa fa-search"></i>Advanced Search</a>
         @if(SiteHelpers::isModuleEnabled($pageModule))
-            <a href="{{ URL::to('tablecols/arrange-cols/'.$pageModule) }}" class="btn btn-sm btn-white" onclick="SximoModal(this.href,'Column Selector'); return false;" ><i class="fa fa-bars"></i> Arrange Columns</a>
+            <a href="{{ URL::to('tablecols/arrange-cols/'.$pageModule) }}" class="btn btn-sm btn-white" onclick="SximoModal(this.href,'Arrange Columns'); return false;" ><i class="fa fa-bars"></i> Arrange Columns</a>
             @if(!empty($colconfigs))
                 <select class="form-control" style="width:15%!important;display:inline-block;box-sizing: border-box" name="col-config"
                         id="col-config">
-                    <option value="0">Select Configuraton</option>
+                    <option value="0">Select Column Arrangement</option>
                     @foreach( $colconfigs as $configs )
                         <option @if($config_id == $configs['config_id']) selected
                                                                          @endif value={{ $configs['config_id'] }}> {{ $configs['config_name'] }}   </option>
@@ -64,15 +64,15 @@
                 </select>
                 @if(\Session::get('uid') ==  \SiteHelpers::getConfigOwner($config_id))
                     <a id="edit-cols" href="{{ URL::to('tablecols/arrange-cols/'.$pageModule.'/edit') }}" class="btn btn-sm btn-white tips"
-                       onclick="SximoModal(this.href,'Column Selector'); return false;" title="Edit Arrange">  <i class="fa fa-pencil-square-o"></i></a>
-                    <button id="delete-cols" href="{{ URL::to('tablecols/arrange-cols/'.$pageModule.'/delete') }}" class="btn btn-sm btn-white tips" title="Clear Arrange">  <i class="fa fa-trash-o"></i></button>
+                       onclick="SximoModal(this.href,'Arrange Columns'); return false;" title="Edit Column Arrangement">  <i class="fa fa-pencil-square-o"></i></a>
+                    <button id="delete-cols" href="{{ URL::to('tablecols/arrange-cols/'.$pageModule.'/delete') }}" class="btn btn-sm btn-white tips" title="Delete Column Arrangement">  <i class="fa fa-trash-o"></i></button>
                 @endif
             @endif
         @endif
         <div class="pull-right">
-            <a href="{{ URL::to( $pageModule .'/export/excel?return='.$return) }}" class="btn btn-sm btn-white">
+            <a href="{{ URL::to( $pageModule .'/export/excel?exportID='.uniqid('excel', true).'&return='.$return) }}" class="btn btn-sm btn-white">
                 Excel</a>
-            <a href="{{ URL::to( $pageModule .'/export/csv?return='.$return) }}" class="btn btn-sm btn-white">
+            <a href="{{ URL::to( $pageModule .'/export/csv?exportID='.uniqid('csv', true).'&return='.$return) }}" class="btn btn-sm btn-white">
                 CSV </a>
         </div>
     </div>
@@ -262,19 +262,20 @@
     }
     function getSimpleSearchParams()
     {
-        var test="";
+        var params="&simplesearch=1&search=";
         $(".simpleSearchContainer .form-control").each(function(){
 
             var val = $(this).val();
             if($(this).data("simplesearch")) {
                 if(val !== '' && val !== null)
                 {
-                    test += "&simplesearch=1&search="+$(this).attr('name')+":"+$(this).data('simplesearchoperator')+":"+val+"|";
+
+                    params+= $(this).attr('name')+":"+$(this).data('simplesearchoperator')+":"+val+"|";
                 }
             }
 
 
         });
-        return test;
+        return params;
     }
 </script>

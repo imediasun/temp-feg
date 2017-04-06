@@ -67,6 +67,8 @@ Route::filter('authorization', function()
 Route::get('submitservicerequest/{GID?}/{LID?}', 'SubmitservicerequestController@getIndex');
 Route::get('ticketsetting','TicketsettingController@getSetting');
 Route::get('order/submitorder/{SID?}', 'OrderController@getSubmitorder');
+Route::post('order/init-export/{ID?}', 'OrderController@postInitExport');
+Route::post('order/probe-export/{ID?}', 'OrderController@postProbeExport');
 Route::get('/', 'UserController@getLogin');
 Route::controller('home', 'HomeController');
 Route::controller('/user', 'UserController');
@@ -100,6 +102,45 @@ Route::group(['middleware' => 'auth'], function()
 		'feg/system/tasks'	=> 'Feg\System\TasksController',
 		'feg/system/systememailreportmanager'	=> 'Feg\System\SystemEmailReportManagerController',        
 	]);
+    
+    Route::get('feg/system/utils/{slug}', function($slug) {
+        $app = app();
+        $parameters = [];
+        $paths = explode('/', $slug);
+        $classRootPath = 'App\\Http\\Controllers\\Feg\\System\\Utils\\';
+        $method = "index";
+        do {
+            $path = str_replace('-', '', ucwords(ucwords(implode('\\', $paths), '-'), '\\'));
+            $classPath = $classRootPath . $path . 'Controller' ;            
+            try {
+                $controller = $app->make( $classPath );
+            } 
+            catch (Exception $ex) {
+                array_unshift($parameters, array_pop($paths)) ;                
+            }
+            
+        } while (empty($controller) && count($paths) > 0);
+        
+        if (!empty($parameters[0])) {
+            $method = array_shift($parameters);
+        }
+        if (empty($controller)) {        
+            $classPath = $classRootPath .'UtilsController';
+            $controller = $app->make( $classPath );
+            $parameters = [['params' => $parameters, 'slug' => $slug]];
+        }
+
+        try {
+            $called  = $controller->callAction($method, $parameters);
+        } catch (Exception $ex) {
+            array_unshift($parameters, $method);
+            $method = "index";
+            $called  = $controller->callAction($method, $parameters);
+        }
+        
+        return $called;
+
+    })->where('slug','.+');    
 
 });
 

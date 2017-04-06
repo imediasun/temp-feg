@@ -3,6 +3,7 @@
 use App\Http\Controllers\controller;
 use App\Library\FEG\System\FEGSystemHelper;
 use App\Models\Order;
+use \App\Models\Sximo\Module;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Validator, Input, Redirect, Cache;
@@ -23,12 +24,15 @@ class OrderController extends Controller
         $this->modelview = new  \App\Models\Sbinvoiceitem();
         $this->info = $this->model->makeInfo($this->module);
         $this->access = $this->model->validAccess($this->info['id']);
+        $this->module_id = Module::name2id($this->module);
+        $this->pass = \FEGSPass::getMyPass($this->module_id);
 
         $this->data = array(
+            'pass' => $this->pass,
             'pageTitle' => $this->info['title'],
             'pageNote' => $this->info['note'],
-            'pageModule' => 'order',
-            'pageUrl' => url('order'),
+            'pageModule' => $this->module,
+            'pageUrl' => url($this->module),
             'return' => self::returnUrl()
         );
 
@@ -38,8 +42,16 @@ class OrderController extends Controller
     public
     function getExport($t = 'excel')
     {
+        global $exportSessionID;
         ini_set('memory_limit', '1G');
         set_time_limit(0);
+
+        $exportId = Input::get('exportID');
+        if (!empty($exportId)) {
+            $exportSessionID = 'export-'.$exportId;
+            \Session::put($exportSessionID, microtime(true));
+        }
+
         $info = $this->model->makeInfo($this->module);
         //$master  	= $this->buildMasterDetail();
 
@@ -91,6 +103,7 @@ class OrderController extends Controller
         //$rows = $this->updateDateInAllRows($rows);
 
         $content = array(
+            'exportID' => $exportSessionID,
             'fields' => $fields,
             'rows' => $rows,
             'title' => $this->data['pageTitle'],
@@ -813,13 +826,14 @@ class OrderController extends Controller
                   * https://www.google.com/settings/security/lesssecureapps
                   * enable stmp detail
                   */
-                        $mail = new PHPMailer(); // create a new object
+                        $mail = new PHPMailer();
+                        // create a new object
                         $mail->SMTPOptions = array(
-                                'ssl' => array(
+                            'ssl' => array(
                                 'verify_peer' => false,
                                 'verify_peer_name' => false,
                                 'allow_self_signed' => true
-                                )
+                            )
                         );
                         $mail->IsSMTP(); // enable SMTP
                         $mail->Host = 'smtp.gmail.com';
@@ -827,18 +841,20 @@ class OrderController extends Controller
                         $mail->SMTPSecure = 'tls'; // secure transfer enabled REQUIRED for Gmail
                         $mail->SMTPAuth = true; // authentication enabled
 
-                      //  $mail->SMTPDebug = 1; // debugging: 1 = errors and messages, 2 = messages only
+                        //$mail->SMTPDebug = 2; // debugging: 1 = errors and messages, 2 = messages only
 
                         //$mail->IsHTML(true);
                         $mail->Username = $google_acc->g_mail;          // SMTP username
-                        $mail->Password = trim(base64_decode($google_acc->g_password), env('SALT_KEY'));
+                        $decode_pass=base64_decode($google_acc->g_password);
+                        $pass=explode("_",$decode_pass);
+                        $mail->Password = isset($pass[2])?$pass[2]:trim(base64_decode($google_acc->g_password),env('SALT_KEY'));
                         $mail->SetFrom($google_acc->g_mail);
                         $mail->Subject = $subject;
                         $mail->Body = $message;
                         foreach ($to as $t) {
-                        $mail->addAddress($t);
+                            $mail->addAddress($t);
                         }
-                           if (!empty($cc)) {
+                        if (!empty($cc)) {
                             foreach ($cc as $c) {
                                 $mail->addCC($c);
                             }
@@ -853,13 +869,14 @@ class OrderController extends Controller
                         $file_to_save = public_path() . '/orders/' . $filename;
                         file_put_contents($file_to_save, $output);
                         $mail->addAttachment($file_to_save, $filename, 'base64', 'application/pdf');
-                          if (!$mail->Send()) {
+                        if (!$mail->Send()) {
                             return 3;
                         } else {
                             return 1;
                         }
                         die;
-                    } else {
+                    }
+                     else {
                       $sent= $this->sendPhpEmail($message,$to,$from,$subject,$pdf,$filename,$cc,$bcc);
                         return $sent;
                     }

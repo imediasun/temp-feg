@@ -5,7 +5,7 @@
 	responeFormType('<?php echo $f['type'];?>')	;	
 $(document).ready(function(){
     
-	$(".select2").select2({ width:"98%"});	
+	renderDropdown($(".select2 "), { width:"98%"});
      $(document).on('click', '.searchFieldConfigForm input[type=checkbox]', function(){
          var elm = $(this),
             checked = 1 * elm.prop('checked');            
@@ -108,6 +108,7 @@ $(document).ready(function(){
 <input type="hidden" name="form_group" value="<?php echo $f['form_group'];?>" />	
 <input type="hidden" name="sortlist" value="<?php echo $f['sortlist'];?>" />
 <input type="hidden" name="view" value="<?php echo $f['view'];?>" />
+<input type="hidden" name="required" value="<?php echo $f['required'];?>" />
 <input type="hidden" name="search" value="<?php echo $f['search'];?>" />
 <input type="hidden" name="simplesearch" value="<?php echo isset($f['simplesearch']) ? $f['simplesearch'] : ''; ?>" />
 <input type="hidden" name="simplesearchorder" value="<?php echo isset($f['simplesearchorder']) ? $f['simplesearchorder'] : '';?>" />
@@ -217,12 +218,20 @@ $(document).ready(function(){
 			
 		</label>
 
-
+        <label class="checkbox">
+            Search filter:
+            <input name="lookup_search" type="text" 
+                    class="ext form-control tips" 
+                    id="lookup_key" 
+                    style=" border-bottom: solid 1px #ddd;"  
+                 value="@if(isset($f['option']['lookup_search'])){!! $f['option']['lookup_search'] !!}@endif"	
+                 placeholder='Lookup field search' title='Format => field:value or valid raw sql where clause' />
+        </label>
 		<label class="checkbox">
 		<input type="checkbox" name="is_dependency" class="ext" value="1" <?php if($f['option']['is_dependency'] ==1) echo 'checked' ;?> /> Parent Filter  </label>
 		<label class="checkbox">				
 		<input name="lookup_dependency_key" type="text" class="ext form-control" id="lookup_key" style=" border-bottom: solid 1px #ddd;"  
-		value="<?php echo $f['option']['lookup_dependency_key'];?>"	placeholder='Lookup Filter Key' />
+		value="<?php echo $f['option']['lookup_dependency_key'];?>"	placeholder='Lookup Parent Control Key' />
 		</label>		
 		<label class="checkbox" >
 		

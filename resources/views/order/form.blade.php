@@ -167,7 +167,7 @@
                                    class="form-control" style="width:25%;float:left;margin-left:3px"/>
                             <input type="text" name="po_2" readonly id="po_2" class="form-control"
                                    value="{{  $data['po_2'] }}" style="width:35%;float:left;margin-left:3px"/>
-                            <input type="text" name="po_3" id="po_3" required class="form-control" autocomplete="off"
+                            <input type="text" name="po_3" id="po_3" required class="form-control" autocomplete="off" readonly
                                    value="{{ $data['po_3'] }}" style="width:30%;float:left;margin-left:3px"/>
                             <br/>
                             <br/>
@@ -386,7 +386,7 @@
             {
                 var location_id=$("#po_1").val();
                 var po=$("#po_1").val()+"-"+$("#po_2").val()+"-"+$("#po_3").val();
-                 validatePONumber(location_id,po);
+                validatePONumber(location_id,po);
             }
             $("#item_num").val(inc);
 
@@ -417,7 +417,7 @@
 
             $("#order_type_id").jCombo("{{ URL::to('order/comboselect?filter=order_type:id:order_type') }}&parent=can_request:1",
                     {selected_value: '{{ $data["order_type"] }}', initial_text: '-------- Select Order Type --------'});
-            $("[id^=game_0]").select2({
+            renderDropdown($("[id^=game_0]"), {
                 dataType: 'json',
                 data: {results: games_options_js},
                 placeholder: "For Various Games", width: "98%"
@@ -439,7 +439,7 @@
             $('.editor').summernote();
             $('.previewImage').fancybox();
             $('.tips').tooltip();
-            $("select.select3").select2({width: "98%"});
+            renderDropdown($("select.select3"),{width: "98%"});
             $('.date').datepicker({format: 'mm/dd/yyyy', autoclose: true})
             $('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});
             $('.removeCurrentFiles').on('click', function () {
@@ -560,7 +560,7 @@
                     url: "{{ url() }}/order/games-dropdown",
                     data: {'location': "<?php echo $data["order_location_id"] ?>"},
                     success: function (data) {
-                        $("[id^=game_]").select2({
+                        renderDropdown($("[id^=game_]"), {
                             dataType: 'json',
                             data: {results: data},
                             placeholder: "For Various Games", width: "98%"
@@ -611,7 +611,7 @@
                 data: {'location': $(this).val()},
                 success: function (data) {
                     games_options_js = data;
-                    $("[id^=game_]").select2({
+                    renderDropdown($("[id^=game_]"), {
                         dataType: 'json',
                         data: {results: data},
                         placeholder: "For Various Games", width: "98%"
@@ -619,21 +619,6 @@
                 }
             });
         });
-        function debounce(func, wait, immediate) {
-            var timeout;
-            return function () {
-                var context = this, args = arguments;
-                var later = function () {
-                    timeout = null;
-                    if (!immediate) func.apply(context, args);
-                };
-                var callNow = immediate && !timeout;
-                clearTimeout(timeout);
-                timeout = setTimeout(later, wait);
-                if (callNow) func.apply(context, args);
-            };
-        }
-        ;
         $('#po_3').on('keyup', debounce(function () {
             var location_id = $("#po_1").val();
             validatePONumber(location_id, $(this).val());
@@ -754,7 +739,7 @@
                     data: {'location': location_id},
                     success: function (data) {
                         games_options_js = data;
-                        $("[id^=game_]").select2({
+                        renderDropdown($("[id^=game_]"), {
                             dataType: 'json',
                             data: {results: data},
                             placeholder: "For Various Games", width: "98%"
@@ -764,7 +749,7 @@
 
             }
             else {
-                $("[id^=game_]").select2({
+                renderDropdown($("[id^=game_]"), {
                     dataType: 'json',
                     data: {results: games_options_js},
                     placeholder: "For Various Games", width: "98%"
@@ -857,6 +842,8 @@
             var itemid = $("#" + trid + "  textarea[name^=item]").attr('id');
             var retailpriceid = $('#' + trid + "  input[name^=retail]").attr('id');
             var selectorProductId = $('#' + trid + "  input[name^=product_id]").attr('id');
+
+            @if (!empty($pass['Can select product list']))
             $(obj).autocomplete({
                 minLength: 2,
                 source: function (request, response) {
@@ -926,8 +913,8 @@
                     });
                 }
             });
+            @endif
         }
-        ;
         //init();
         $(function () {
             $("#experiment").trigger('click');
@@ -957,5 +944,3 @@
             width: 90%;
         }
     </style>
-
-

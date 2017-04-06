@@ -258,6 +258,12 @@ class VendorController extends Controller
                 $data = $this->validatePost('vendor');
             else
                 $data = $this->validatePost('vendor', true);
+
+            if (!empty($data['website'])) {
+                if (preg_match('/^https?\:\/\//', trim($data['website'])) !== 1) {
+                    $data['website'] = 'http://' . trim($data['website']);
+                }
+            }
             $id = $this->model->insertRow($data, $id);
 
             return response()->json(array(

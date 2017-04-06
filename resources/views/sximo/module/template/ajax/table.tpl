@@ -5,7 +5,7 @@
 		<div class="sbox-tools" >
 			<a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Clear Search" onclick="reloadData('#{{ $pageModule }}','{class}/data?search=')"><i class="fa fa-trash-o"></i> Clear Search </a>
 			<a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Reload Data" onclick="reloadData('#{{ $pageModule }}','{class}/data?return={{ $return }}')"><i class="fa fa-refresh"></i></a>
-			@if(Session::get('gid') ==1)
+			@if(Session::get('gid') ==10)
 			<a href="{{ url('feg/module/config/'.$pageModule) }}" class="btn btn-xs btn-white tips" title=" {{ Lang::get('core.btn_config') }}" ><i class="fa fa-cog"></i></a>
 			@endif
 		</div>
@@ -62,7 +62,7 @@
                                     ' data-sortable="'.$colIsSortable.'"'.
                                     ' data-sorted="'.($colIsSorted?1:0).'"'.
                                     ' data-sortedOrder="'.($colIsSorted?$orderBy:'').'"'.
-                                    ' align="'.$t['align'].'"'.
+                                    ' style=text-align:'.$t['align'].
                                     ' width="'.$t['width'].'"';
 							$th .= '>';
                             $th .= \SiteHelpers::activeLang($t['label'],(isset($t['language'])? $t['language'] : array()));
@@ -104,7 +104,7 @@
            		<?php foreach ($rowData as $row) :
            			  $id = $row->{key};
            		?>
-                <tr class="editable" id="form-{{ $row->{key} }}">
+                <tr class="editable" id="form-{{ $row->{key} }}" data-id="{{ $row->{key} }}" id="form-{{ $row->{key}}}" @if($setting['inline']!='false' && $setting['disablerowactions']=='false') ondblclick="showFloatingCancelSave(this)" @endif>
                     @if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
 					<td class="number"> <?php echo ++$i;?>  </td>
                     @endif
@@ -134,8 +134,7 @@
                   @if($setting['disablerowactions']=='false')     
 				 <td data-values="action" data-key="<?php echo $row->{key} ;?>">
 					{!! AjaxHelpers::buttonAction('{class}',$access,$id ,$setting) !!}
-					{!! AjaxHelpers::buttonActionInline($row->{key},'{key}') !!}
-				</td>
+                 </td>
                 @endif
                 </tr>
                 @if($setting['view-method']=='expand')
@@ -173,7 +172,11 @@
 
 	</div>
 </div>
-
+@if($setting['inline']!='false' && $setting['disablerowactions']=='false')
+@foreach ($rowData as $row)
+{!! AjaxHelpers::buttonActionInline($row->{key},'key') !!}
+@endforeach
+@endif
 	@if($setting['inline'] =='true') @include('sximo.module.utility.inlinegrid') @endif
 <script>
 $(document).ready(function() {

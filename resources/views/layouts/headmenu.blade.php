@@ -7,17 +7,16 @@
             <span class="navbar-minimalize minimalize-btn text-gray page-title">@if(isset($pageTitle)){{ $pageTitle }}@endif</span>
         </div>
         <ul class="nav navbar-top-links navbar-right">
+                <?php if(\Session::get('return_id') != ''): $id = \Session::get('return_id'); ?>
                 <li >
-                    <?php if(\Session::get('return_id') != ''): $id = \Session::get('return_id'); ?>
                     <a class="exit-admin" style="color: #428bca;" href="{{ URL::to('core/users/play/'.$id)}}">Exit to Admin</a>
-                    <?php endif; ?>
                 </li>
+                <?php endif; ?>
             <li>
-                <a href="addtocart"  class="dropdown-toggle count-info">
+                <a href="{{url()}}/addtocart"  class="dropdown-toggle count-info">
                     <?php
                         $cart_value=\Session::get('total_cart');
-                    $cart_value=isset($cart_value)?$cart_value:0;
-
+                        $cart_value=isset($cart_value)?$cart_value:0;
                     ?>
                     <i class="fa fa-shopping-cart"></i> <span class="notif-alert label label-danger" id="update_text_to_add_cart"></span>
 
@@ -37,13 +36,38 @@
                     </ul>
                 </li>
             @endif
-            @if(Auth::user()->group_id == 10)
-                <li class="user dropdown"><a class="dropdown-toggle" href="javascript:void(0)" data-toggle="dropdown"><i
+
+            {{--*/ $CPMenus = \SiteHelpers::menus('control-panel'); /*--}}
+            @if(!empty($CPMenus))
+                <li class="user dropdown item_title controlPanel"><a class="dropdown-toggle" href="javascript:void(0)" data-toggle="dropdown"><i
                                 class="fa fa-desktop"></i> <span>{{ Lang::get('core.m_controlpanel') }}</span><i
                                 class="caret"></i></a>
-                    <ul class="dropdown-menu dropdown-menu-right icons-right">
-
-                        <li><a href="{{ URL::to('feg/config')}}"><i
+                    <ul class="dropdown-menu dropdown-menu-right icons-right item_dropdown">
+                        @foreach($CPMenus as $menu)
+                        <?php
+                            $mName = $menu['menu_name'];
+                            $mType = $menu['menu_type'];
+                            $mIsDivider = $mType == 'divider';
+                            $mUrl = trim($menu['url'] .'');
+                            if (strpos($mUrl, '/') === 0) {
+                                $mUrl = url().$mUrl;
+                            }
+                            if ($mType == 'internal') {
+                                $module = $menu['module'];
+                                $mUrl = URL::to($menu['module']);
+                            }
+                            $iconClass = $menu['menu_icons'];
+                        ?>
+                        <li class="{!! $mType !!}">
+                        @if(!$mIsDivider)
+                            <a href="{!! $mUrl !!}" >
+                                <i class="{!! $iconClass !!}"></i>
+                                {{ $mName }}
+                            </a>
+                        @endif
+                        </li>
+                        @endforeach
+<!--                        <li><a href="{{ URL::to('feg/config')}}"><i
                                         class="fa  fa-wrench"></i> {{ Lang::get('core.m_setting') }}</a></li>
                         <li><a href="{{ URL::to('core/users')}}"><i
                                         class="fa fa-user"></i> {{ Lang::get('core.m_users') }}
@@ -52,7 +76,7 @@
                         <li><a href="{{ URL::to('core/logs')}}"><i
                                         class="fa fa-clock-o"></i> {{ Lang::get('core.m_logs') }}</a></li>
                         <li class="divider"></li>
-                        <li><a href="{{ URL::to('core/pages')}}"><i
+                            <li><a href="{{ URL::to('core/pages')}}"><i
                                         class="fa fa-copy"></i> {{ Lang::get('core.m_pagecms')}}</a></li>
                         <li class="divider"></li>
                         <li><a href="{{ URL::to('feg/system/tasks')}}"><i
@@ -67,17 +91,15 @@
                         <li><a href="{{ URL::to('feg/tables')}}"><i class="icon-database"></i> Database Tables </a>
                         </li>
                         <li><a href="{{ URL::to('feg/menu')}}"><i
-                                        class="fa fa-sitemap"></i> {{ Lang::get('core.m_menu') }}</a></li>
-
-
+                                        class="fa fa-sitemap"></i> {{ Lang::get('core.m_menu') }}</a></li>-->
 
                     </ul>
                 </li>
             @endif
-            <li class="user dropdown"><a class="dropdown-toggle" href="javascript:void(0)" data-toggle="dropdown"><i
+            <li class="user dropdown item_title myAccount"><a class="dropdown-toggle" href="javascript:void(0)" data-toggle="dropdown"><i
                             class="fa fa-user"></i> <span>{{ Lang::get('core.m_myaccount') }}</span><i
                             class="caret"></i></a>
-                <ul class="dropdown-menu dropdown-menu-right icons-right">
+                <ul class="dropdown-menu dropdown-menu-right icons-right item_dropdown">
                     <li><a href="{{ URL::to('dashboard')}}"><i
                                     class="fa  fa-laptop"></i> {{ Lang::get('core.m_dashboard') }}</a></li>
                     <li><a href="{{ URL::to('')}}" target="_blank"><i class="fa fa-desktop"></i> Main Site </a></li>
@@ -91,20 +113,6 @@
         </ul>
     </nav>
 </div>
-
- <?php $pageModule=isset($_SERVER['HTTP_REFERER'])?$_SERVER['HTTP_REFERER']:$pageModule;
- if($pageModule == url('').'/' )
-     {
-          $pageModule='dashboard';
-     }
-else
-    {
-    $pageModule=\Route::getFacadeRoot()->current()->uri();
-    $pageModule=explode('/',$pageModule);
-    $pageModule=$pageModule[0];
-}
- ?>
-
 <script>
     $(document).ready(function () {
         $("#user_locations").on('change', function () {
@@ -115,14 +123,12 @@ else
                 $.get('/user/changelocation/'+location_id,function( response ) {
                     if(response.status =='success')
                     {
-                        notyMessage(response.message);
+                        //notyMessage(response.message);
                         location.reload();
                     }
                     else {
                         notyMessageError(response.message);
                     }
-
-
                 });
             }
         });

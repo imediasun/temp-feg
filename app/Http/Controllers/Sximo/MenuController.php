@@ -15,6 +15,7 @@ class MenuController extends Controller
         $this->model = new Menu();
         $this->info = $this->model->makeInfo('menu');
         $this->access = $this->model->validAccess($this->info['id']);
+        $this->data['pageTitle'] = "Menu Management";
     }
 
 
@@ -49,7 +50,7 @@ class MenuController extends Controller
             $this->data['menu_lang'] = array();
         }
         //echo '<pre>';print_r($this->data);echo '</pre>';  exit;
-        $this->data['menus'] = \SiteHelpers::menus($pos, 'all');
+        $this->data['menus'] = \SiteHelpers::menus($pos, 'all', in_array(\Session::get('gid'), [10]));
         $this->data['modules'] = \DB::table('tb_module')->where('module_type', '!=', 'core')->orderBy('module_title', 'asc')->get();
         $this->data['groups'] = \DB::select(" SELECT * FROM tb_groups ");
         $this->data['pages'] = \DB::table("tb_pages")->orderBy('title', 'asc')->get();
@@ -111,6 +112,7 @@ class MenuController extends Controller
             'position' => 'required',
         );
         $validator = Validator::make($request->all(), $rules);
+        $pos = '';
         if ($validator->passes()) {
             $pos = $request->input('position');
             $data = $this->validatePost('tb_menu');

@@ -11,14 +11,14 @@
         @if(!empty($colconfigs))
         <select class="form-control" style="width:25%!important;display:inline;" name="col-config"
                 id="col-config">
-            <option value="0">Select Configuraton</option>
+            <option value="0">Select Column Arrangement</option>
             @foreach( $colconfigs as $configs )
             <option @if($config_id == $configs['config_id']) selected
             @endif value={{ $configs['config_id'] }}> {{ $configs['config_name'] }}   </option>
             @endforeach
         </select>
         <a id="edit-cols" href="{{ URL::to('tablecols/arrange-cols/'.$pageModule.'/edit') }}" class="btn btn-sm btn-white"
-           onclick="SximoModal(this.href,'Column Selector'); return false;"><i class="fa fa-bars"></i> Edit Columns Arrangement</a>
+           onclick="SximoModal(this.href,'Arrange Columns'); return false;"><i class="fa fa-bars"></i> Edit Columns Arrangement</a>
         @endif
         @endif
     </div>
@@ -34,19 +34,19 @@
 		@if($isExport)
 		<div class="pull-right">
             @if($isExcel)
-			<a href="{{ URL::to( $pageUrl .'/export/excel?return='.$return) }}" class="btn btn-sm btn-white"> Excel</a>
+			<a href="{{ URL::to( $pageUrl .'/export/excel?exportID='.uniqid('excel', true).'&return='.$return) }}" class="btn btn-sm btn-white"> Excel</a>
 			@endif
             @if($isCSV)
-			<a href="{{ URL::to( $pageUrl .'/export/csv?return='.$return) }}" class="btn btn-sm btn-white"> CSV </a>
+			<a href="{{ URL::to( $pageUrl .'/export/csv?exportID='.uniqid('csv', true).'&return='.$return) }}" class="btn btn-sm btn-white"> CSV </a>
 			@endif
             @if($isPDF)
-			<a href="{{ URL::to( $pageUrl .'/export/pdf?return='.$return) }}" class="btn btn-sm btn-white"> PDF</a>
+			<a href="{{ URL::to( $pageUrl .'/export/pdf?exportID='.uniqid('pdf', true).'&return='.$return) }}" class="btn btn-sm btn-white"> PDF</a>
 			@endif
             @if($isWord)
-			<a href="{{ URL::to( $pageUrl .'/export/word?return='.$return) }}" class="btn btn-sm btn-white"> Word</a>
+			<a href="{{ URL::to( $pageUrl .'/export/word?exportID='.uniqid('word', true).'&return='.$return) }}" class="btn btn-sm btn-white"> Word</a>
 			@endif
             @if($isPrint)
-			<a href="{{ URL::to( $pageUrl .'/export/print?return='.$return) }}" class="btn btn-sm btn-white" onclick="ajaxPopupStatic(this.href); return false;" > Print</a>
+			<a href="{{ URL::to( $pageUrl .'/export/print?exportID='.uniqid('print', true).'&return='.$return) }}" class="btn btn-sm btn-white" onclick="ajaxPopupStatic(this.href); return false;" > Print</a>
 			@endif
 		</div>	
 		@endif

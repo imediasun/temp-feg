@@ -138,7 +138,11 @@ return array(
 	"t_tipsdrag"					=> "Drag and Drop to reorder menu list", // updated apidevlab
 	"t_tipsnote"					=> "Note!, Menus only support 3 levels ", // updated apidevlab
 	"tab_topmenu"					=> "Top Menu",
-	"tab_sidemenu"					=> "Side Menu ",
+	"tab_sidemenu"					=> "Side Menu",
+	"tab_top_menu"					=> "Top Menu",
+	"tab_sidebar_menu"				=> "Side Menu",
+	"tab_both_menu"					=> "Both Menu",
+	"tab_control-panel_menu"        => "Control Panel Menu",
 	"sb_reorder"					=> "Reorder Menu",	
 	"fr_mtitle"						=> "Name / Title ",	
 	"fr_mtype"						=> "Menu Type",	
@@ -202,7 +206,9 @@ return array(
     "google_account_not_exist"  => "Google account detail not exist",
     "smtp_connect_failed"       => "Mail Error: SMTP connect() failed",
     "gmail_smtp_connect_failed" => 'To allow system to send emails using your Gmail account, you must turn on less secure apps by clicking <a target="_blank" href="https://www.google.com/settings/u/6/security/lesssecureapps?pageId=none">Here</a>',
-    "error_sending_mail"        => "An Error Occurred in Sending Email."
+    "error_sending_mail"        => "An Error Occurred in Sending Email.",
+    "note_success_denied"  => "Request Denied Successfully",
+    "note_error_denied"    => "Some Error Occurred While Denying"
 
 
 );

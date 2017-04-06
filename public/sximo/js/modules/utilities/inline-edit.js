@@ -1,7 +1,7 @@
 /* global App, UNDEFINED, UNFN, jQuery, pageModule, pageUrl, siteUrl */ 
 /* App.modules.utilities.inlineEdit */
 (function(){
-    "use strict";    
+    "use strict";
     var $ = jQuery,
         modules = App.modules || (App.modules = {}),
         utilities = modules.utilities || (modules.utilities = {}),
@@ -21,6 +21,7 @@
         displayInlineEditButtons,
         initiateInlineFormFields,
         saveInlineForm,
+        showFloatingCancelSave,
         saveAllInlineForm;
    
     inlineEdit.init = function (options, data) {    
@@ -57,7 +58,7 @@
             editActionButtons = $('#'+rowDomId+' td .actionopen'),
             generalActionButtons = $('#'+rowDomId+' td .actionopen'),
             rowHookParams = {'row': row, count: editingRowsCount};
-            
+
         if (row.hasClass('inline_edit_applied')) {
             return;
         }
@@ -178,7 +179,7 @@
         displayInlineEditButtons(rowDomId);
 
         App.autoCallbacks.runCallback('inline.row.config.after', rowHookParams);
-        
+
         initiateInlineFormFields($('#'+ rowDomId + ' td[data-edit=1]'), siteUrl, rowHookParams);
     });       
    };
@@ -210,11 +211,18 @@
                 App.autoCallbacks.runCallback('inline.cell.cancel.after', cellHookParams);
             }
             cell.attr('data-edit', null);
+            cell.css('height','auto');
+
             
         });
-        
-        row.removeClass('inline_edit_applied');
-
+       var actionBtns= $(row).children('td[data-values="action"]').children('.action');
+           actionBtns.css('padding-bottom',"0px");
+           row.removeClass('inline_edit_applied');
+           row.nextAll('.inline_edit_applied').each(function(){
+           var id=$(this).data('id');
+           var height=$(this).offset().top+29;
+           $('#divOverlay_'+id).css('top',height +"px");
+        });
         rowHookParams.count = --editingRowsCount;
         displayInlineEditButtons(rowDomId, true);
 
@@ -223,6 +231,32 @@
         return false;
 
    };
+    window.showFloatingCancelSave=showFloatingCancelSave=function(ele){
+        var bottomWidth = $(ele).css('width');
+        var bottomHeight = $(ele).css('height');
+        var rowPos = $(ele).position();
+        var id=$(ele).data('id');
+        var $divOverlay = $('#divOverlay_'+id);
+
+        if(id) {
+            $("#divOverlay").attr('id', 'divOverlay_' + id);
+        }
+        var bottomTop;
+        var rightSpace;
+        var actionBtns= $(ele).children('td[data-values="action"]').children('.action');
+           actionBtns.css('padding-bottom',"29px");
+           bottomTop=actionBtns.offset().top+29;
+        $divOverlay.css({
+            position: 'absolute',
+            visibility:'visible',
+            top: bottomTop,
+            right: "55px",
+            width: 'auto',
+            height: '28px'
+        });
+        $divOverlay.delay(100).slideDown('fast');
+
+    };
     window.saveInlineForm = saveInlineForm = function (rowDomId, event, element, options) {
         if (event && event.preventDefault && typeof event.preventDefault == 'function') {
             event.preventDefault();
@@ -390,19 +424,22 @@
             globalSaveButton.hide();
         }
         if (isHide) {
-            container.find('#'+rowDomId+' td .action').show();
-            container.find('#'+rowDomId+' td .actionopen').hide();            
+            var rowid=$('#'+rowDomId).data('id');
+            var actionInlineBtn="divOverlay_"+rowid;
+
+            container.find('#'+actionInlineBtn).show();
+           container.find('#'+actionInlineBtn).hide();
         }
         else {
-            container.find('#'+rowDomId+' td .action').hide();
-            container.find('#'+rowDomId+' td .actionopen').show();
+           // container.find('#'+rowDomId+' td .action').hide();
+            container.find('#'+actionInlineBtn).show();
         }
    };
    
     window.initiateInlineFormFields = initiateInlineFormFields = function (container, url, rowHookParams) {
         var cellsHookParams = $.extend({}, rowHookParams, {'cells': container});
         App.autoCallbacks.runCallback('inline.cells.config.before', cellsHookParams);
-
+        $(container).css('height',$(container).height()+"px");
         container.find('.date').datepicker({format:'mm/dd/yyyy', autoclose: true});
         container.find('.datetime').datetimepicker({format: 'mm/dd/yyyy HH:ii:ss P', autoclose: true});
 
@@ -426,7 +463,19 @@
     }
     function hideProgress () {
         $('.ajaxLoading').hide();
-    }     
+    }
+
+    $(window).resize(function() {
+        resizeContent();
+    });
+    function resizeContent() {
+        $(".editable").each(function(){
+            var elm = $(this), id = elm.data('id');
+            var height = elm.offset().top+28;
+            $('#divOverlay_'+id).css({ top:height});
+        });
+    }
+
 }());
 
 App.autoCallbacks.registerCallback('inline.cell.config.before', function (params) {

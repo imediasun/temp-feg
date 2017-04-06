@@ -1,36 +1,32 @@
-<div class="row">
-    {!! Form::open(array('url'=>'mylocationgame/gamelocation', 'class'=>'form-horizontal','id'=> 'mylocationgameFormAjax')) !!}
+<div class="simpleBoxContainer gameExportContainer clearfix">
 
-    <div class="col-md-1">
-        <h4>Export</h4>
-    </div>
-    <div class="col-md-3">
-        <div class="form-group  ">
+    {!! Form::open(array('url'=>'mylocationgame/export/csv/games',
+        'class'=>'form-horizontal',
+        'target'=>'_self',
+        'id'=> 'mylocationgameExportFormAjax')) !!}
+    <div class="clearfix">
+        <h4 class='pull-left m-l-sm m-r-xs'>Export</h4>
+        <div class='pull-left col-md-3'>
+            <input name="exportID" value="{{ uniqid('gamesdata', true) }}" type="hidden"/>
             <input name='validateDownload' type='hidden' value='1'/>
-            <select name='game_title_id' id='game_name' class='select4 '></select>
+            <input name='footerfiters' type='hidden' value=''/>
+            <select name='game_title_id' id='game_name' class='select4'></select>
         </div>
-    </div>
-    <div class="col-md-1">
-        <h4>From</h4>
-    </div>
-    <div class="col-md-3">
-        <div class="form-group  ">
-            <select name='location_id' id='location_id' class='select4 '></select>
+        <h4 class='pull-left m-r-xs'>From</h4>
+        <div class='pull-left col-md-3'>
+            <select name='location_id' id='location_id' class='select4'></select>
         </div>
-    </div>
-
-    <div class="col-md-3">
-        <button type="submit" class="btn btn-primary submitButton" id="submit" name="submit">Export to CSV</button>
+        <div class='pull-left'>
+            <button type="submit" class="btn btn-primary submitButton" id="submit" name="submit">Export to CSV</button>
+        </div>
     </div>
     {!! Form::close() !!}
 </div>
-<div class="row">
+<div class="simpleBoxContainer assetTagExportContainer clearfix">
     <form method="post" action="mylocationgame/assettag" class="form-horizontal">
-        <div class="col-md-offset-1 col-md-3">
-            <div class="form-group  ">
-                <input type="text" class="form-control" name="asset_ids" id="asset_ids"
-                       placeholder="Enter Asset# -- separate with commas for multiple" required="required"/>
-            </div>
+        <div class="col-md-6">
+            <input type="text" class="form-control" name="asset_ids" id="asset_ids"
+                   placeholder="Enter Asset# -- separate with commas for multiple" required="required"/>
         </div>
         <div class="col-md-3">
             <input type="submit" class="btn btn-primary" id="submit" name="submit" value="Generate Asset Tag">
@@ -57,12 +53,12 @@
         @if(SiteHelpers::isModuleEnabled($pageModule))
             <div class="pull-left">
                 <a href="{{ URL::to('tablecols/arrange-cols/'.$pageModule) }}" class="btn btn-sm btn-white"
-                   onclick="SximoModal(this.href,'Column Selector'); return false;"><i class="fa fa-bars"></i> Arrange
+                   onclick="SximoModal(this.href,'Arrange Columns'); return false;"><i class="fa fa-bars"></i> Arrange
                     Columns</a>
                 @if(!empty($colconfigs))
                     <select class="form-control" name="col-config"
                             id="col-config">
-                        <option value="0">Select Configuraton</option>
+                        <option value="0">Select Column Arrangement</option>
                         @foreach($colconfigs as $configs )
                             <option @if($config_id == $configs['config_id']) selected
                                     @endif value={{ $configs['config_id'] }}> {{ $configs['config_name'] }}   </option>
@@ -71,10 +67,10 @@
                     @if(\Session::get('uid') ==  \SiteHelpers::getConfigOwner($config_id))
                         <a id="edit-cols" href="{{ URL::to('tablecols/arrange-cols/'.$pageModule.'/edit') }}"
                            class="btn btn-sm btn-white tips"
-                           onclick="SximoModal(this.href,'Column Selector'); return false;" title="Edit Arrange"> <i
+                           onclick="SximoModal(this.href,'Arrange Columns'); return false;" title="Edit Column Arrangement"> <i
                                     class="fa fa-pencil-square-o"></i></a>
                         <button id="delete-cols" href="{{ URL::to('tablecols/arrange-cols/'.$pageModule.'/delete') }}"
-                                class="btn btn-sm btn-white tips" title="Clear Arrange"><i class="fa fa-trash-o"></i>
+                                class="btn btn-sm btn-white tips" title="Delete Column Arrangement"><i class="fa fa-trash-o"></i>
                         </button>
                     @endif
                 @endif
@@ -83,24 +79,31 @@
     </div>
     <div class="pull-right">
             <div class="pull-left m-r-xs-f lh-2p5"><strong>Download</strong></div>
-            <form method="get" action="{{ URL::to( $pageModule .'/history') }}"
-                  class="form-inline pull-left m-l-xxs-f downloadGameMoveHistory downloadForm">
-                <input name="filter" value="" type="hidden"/>
+
+            {!! Form::open(array('url'=> URL::to( $pageModule .'/export/csv/history'),
+                'class'=>'form-inline pull-left m-l-xxs-f downloadGameMoveHistory downloadForm',
+                'target'=>'_self')) !!}
+                <input name="exportID" value="{{ uniqid('gamehistory', true) }}" type="hidden"/>
+                <input name="footerfiters" value="" type="hidden"/>
                 <input name='validateDownload' type='hidden' value='1'/>
                 <button type="submit" class="btn btn-sm btn-white submitButton">Game Move History</button>
-            </form>
-            <form method="get" action="{{ URL::to( $pageModule .'/pending') }}"
-                  class="form-inline pull-left m-l-xxs-f downloadGamePendingSales downloadForm">
-                <input name="filter" value="" type="hidden"/>
+            {!! Form::close() !!}
+            {!! Form::open(array('url'=> URL::to( $pageModule .'/export/csv/pending'),
+                'class'=>'form-inline pull-left m-l-xxs-f downloadGamePendingSales downloadForm',
+                'target'=>'_self')) !!}
+                <input name="exportID" value="{{ uniqid('gamependingsale', true) }}" type="hidden"/>
+                <input name="footerfiters" value="" type="hidden"/>
                 <input name='validateDownload' type='hidden' value='1'/>
                 <button type="submit" class="btn btn-sm btn-white submitButton">Pending Sales List</button>
-            </form>
-            <form method="get" action="{{ URL::to( $pageModule .'/forsale') }}"
-                  class="form-inline pull-left m-l-xxs-f downloadGameForSale downloadForm">
-                <input name="filter" value="" type="hidden"/>
+            {!! Form::close() !!}
+            {!! Form::open(array('url'=> URL::to( $pageModule .'/export/csv/forsale'),
+                'class'=>'form-inline pull-left m-l-xxs-f downloadGameForSale downloadForm',
+                'target'=>'_self')) !!}
+                <input name="exportID" value="{{ uniqid('gameforsale', true) }}" type="hidden"/>
+                <input name="footerfiters" value="" type="hidden"/>
                 <input name='validateDownload' type='hidden' value='1'/>
                 <button type="submit" class="btn btn-sm btn-white submitButton">For-Sale List</button>
-            </form>
+            {!! Form::close() !!}
     </div>
 </div>
 

@@ -18,14 +18,34 @@ class Servicerequests extends Observerable  {
     }
 
     public static function querySelect(  ){
+        $date = date("Y-m-d");
+        $sql = "SELECT
+            
+                    CONCAT(U.first_name, ' ', U.last_name) AS last_user,
+                    IF(ISNULL(sbc.Posted),
+                        DATEDIFF('$date', sb_tickets.Created),
+                        DATEDIFF('$date', sbc.Posted)) AS last_updated_elapsed_days,
+                    sb_tickets.*
 
-        return "  SELECT sb_tickets.* FROM sb_tickets  ";
+                FROM sb_tickets
+
+        LEFT JOIN (
+            SELECT sb_ticketcomments.TicketID, Posted, UserID
+				FROM sb_ticketcomments
+				LEFT JOIN (SELECT tc.TicketID, max(tc.Posted) as max_posted from sb_ticketcomments tc group by TicketID) tcm
+					ON tcm.TicketID = sb_ticketcomments.TicketID
+				WHERE tcm.max_posted = sb_ticketcomments.Posted
+    ) sbc ON sbc.TicketID = sb_tickets.TicketID
+
+	LEFT JOIN users U ON U.id = sbc.UserID";
+
+        return $sql;
     }
 
     public static function queryWhere(  ){
         $table = "sb_tickets";
         $controlField = "$table.TicketID";
-        $selected_loc = \Session::get('selected_location');
+        $selected_loc = \SiteHelpers::getCurrentUserLocationsFromSession();//\Session::get('selected_location');
         $isOmniscient = ticketsetting::isUserOmniscient();
         $q = "";
 

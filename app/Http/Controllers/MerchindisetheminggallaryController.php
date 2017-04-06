@@ -188,31 +188,32 @@ class MerchindisetheminggallaryController extends Controller
 
     function postSave(Request $request, $id = null)
     {
-        $rules = array('merch_image' => 'required|mimes:jpeg,gif,png', 'location' => 'required');
+        $rules = array('merch_image' => 'required', 'location' => 'required');
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
             $data['loc_id'] = $request->get('location');
             $data['theme_name'] = $request->get('theme_name');
             $data['users'] = $request->get('employees_involved');
             $data['image_category'] = "mer";
-            $id = $this->model->insertRow($data, $id);
-            $file = $request->file('merch_image');
-            $img = Image::make($file->getRealPath());
-            $mime = $img->mime();
-            if ($mime == 'image/jpeg') {
-                $extension = '.jpg';
-            } elseif ($mime == 'image/png') {
-                $extension = '.png';
-            } elseif ($mime == 'image/gif') {
-                $extension = '.gif';
-            } else {
-                $extension = '';
+            $data['batch'] = str_pad(mt_rand(0, 999999), 6, '0', STR_PAD_LEFT);
+            $files = $request->file('merch_image');$i=0;
+            foreach($files as $file) {
+                $img = Image::make($file->getRealPath());
+                $mime = $img->mime();
+                if ($mime == 'image/jpeg') {
+                    $extension = '.jpg';
+                } elseif ($mime == 'image/png') {
+                    $extension = '.png';
+                } elseif ($mime == 'image/gif') {
+                    $extension = '.gif';
+                } else {
+                    $extension = '';
+                }
+                $id = $this->model->insertRow($data, NULL);
+                $img->save('./uploads/gallary/' . $id . $extension);
+                $img->resize(101, 150);
+                $img->save('./uploads/gallary/' . $id . '_thumb' . $extension);
             }
-
-            $img->save(public_path() . '/uploads/gallary/' . $id . $extension);
-            $img->resize(101, 150);
-            $img->save(public_path() . '/uploads/gallary/' . $id . '_thumb' . $extension);
-
             return response()->json(array(
                 'status' => 'success',
                 'message' => \Lang::get('core.note_success')

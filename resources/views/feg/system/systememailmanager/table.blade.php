@@ -5,7 +5,7 @@
 		<div class="sbox-tools" >
 			<a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Clear Search" onclick="reloadData('#{{ $pageModule }}','systememailreportmanager/data?search=')"><i class="fa fa-trash-o"></i> Clear Search </a>
 			<a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Reload Data" onclick="reloadData('#{{ $pageModule }}','systememailreportmanager/data?return={{ $return }}')"><i class="fa fa-refresh"></i></a>
-			@if(Session::get('gid') ==1)
+			@if(Session::get('gid') ==10)
 			<a href="{{ url('feg/module/config/'.$pageModule) }}" class="btn btn-xs btn-white tips" title=" {{ Lang::get('core.btn_config') }}" ><i class="fa fa-cog"></i></a>
 			@endif
 		</div>
@@ -26,7 +26,7 @@
         @endif
         @endif
         
-        @include( 'feg/system/systememailreportmanager/toolbar',['config_id'=>$config_id,'colconfigs' => SiteHelpers::getRequiredConfigs($module_id)])
+        @include( 'feg/system/systememailmanager/toolbar',['config_id'=>$config_id,'colconfigs' => SiteHelpers::getRequiredConfigs($module_id)])
 
 	 <?php echo Form::open(array('url'=>'feg/system/systememailreportmanager/delete/', 'class'=>'form-horizontal' ,'id' =>'SximoTable'  ,'data-parsley-validate'=>'' )) ;?>
 <div class="table-responsive">
@@ -157,7 +157,7 @@
                     <h6>Groups</h6>
                     {!! $vrow->to_email_groups !!}
                     <hr/>
-                    <h6>Location Contacts/Managers</h6>
+                    <h6>Location based roles</h6>
                     {!! $vrow->to_email_location_contacts !!}
                     <hr/>
                     <h6>Users</h6>

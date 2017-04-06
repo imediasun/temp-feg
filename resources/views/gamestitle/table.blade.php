@@ -11,7 +11,7 @@
             <a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Reload Data"
                onclick="reloadData('#{{ $pageModule }}','gamestitle/data?return={{ $return }}')"><i
                         class="fa fa-refresh"></i></a>
-            @if(Session::get('gid') ==1)
+            @if(Session::get('gid') ==10)
                 <a href="{{ url('sximo/module/config/'.$pageModule) }}" class="btn btn-xs btn-white tips"
                    title=" {{ Lang::get('core.btn_config') }}"><i class="fa fa-cog"></i></a>
             @endif
@@ -51,7 +51,6 @@
                         @if($setting['disableactioncheckbox']=='false')
                             <th width="30"> <input type="checkbox" class="checkall" /></th>
                         @endif
-                            <th width="70">Img</th>
                         @if($setting['view-method']=='expand') <th>  </th> @endif
                         <?php foreach ($tableGrid as $t) :
                             if($t['view'] =='1'):
@@ -70,7 +69,7 @@
                                             ' data-field="'.$colField.'"'.
                                             ' data-sortable="'.$colIsSortable.'"'.
                                             ' data-sorted="'.($colIsSorted?1:0).'"'.
-                                            ' align="'.$t['align'].'"'.
+                                            ' style=text-align:'.$t['align'].
                                             ' width="'.$t['width'].'"'.
                                             ' data-sortedOrder="'.($colIsSorted?$orderBy:'').'"';
                                     $th .= '>';
@@ -81,7 +80,7 @@
                             endif;
                         endforeach; ?>
                         @if($setting['disablerowactions']=='false')
-                            <th width="80"  ><?php echo Lang::get('core.btn_action') ;?></th>
+                            <th width="40"  ><?php echo Lang::get('core.btn_action') ;?></th>
                         @endif
                     </tr>
                     </thead>
@@ -116,7 +115,7 @@
                     <?php foreach ($rowData as $row) :
                     $id = $row->id;
                     ?>
-                    <tr class="editable" id="form-{{ $row->id }}">
+                    <tr class="editable" id="form-{{ $row->id }}" @if($setting['inline']!='false' && $setting['disablerowactions']=='false') data-id="{{ $row->id }}" ondblclick="showFloatingCancelSave(this)" @endif>
                         @if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
                             <td class="number"> <?php echo ++$i;?>  </td>
                         @endif
@@ -124,7 +123,7 @@
                             <td ><input type="checkbox" class="ids" name="ids[]" value="<?php echo $row->id ;?>" />  </td>
                         @endif
 
-                        <td>{!! SiteHelpers::showUploadedFile($row->img,'/uploads/games/images/',50,false,$row->id) !!}</td>
+
 
 
 
@@ -145,7 +144,18 @@
                         @if(SiteHelpers::filterColumn($limited ))
                             <td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}"
                                 data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
-                                {!! $value !!}
+                                @if($field['field'] == 'img')
+                                    <?php
+                                    $images=explode(',',$row->img);
+                                    ?>
+                                @if(!empty($images))
+                                    @foreach($images as $img)
+                                                {!! SiteHelpers::showUploadedFile($img,'/uploads/games/images/',50,false,$row->id) !!}
+                                @endforeach
+                                    @endif
+                                            @else
+                                    {!! $value !!}
+                                    @endif
                             </td>
                         @endif
                         <?php
@@ -158,7 +168,6 @@
 
                         <td class="action"  data-values="action" data-key="<?php echo $row->id;?>" class="text-center">
                             {!! AjaxHelpers::GamestitleButtonAction('gamestitle',$access,$id ,$setting) !!}
-                            {!! AjaxHelpers::buttonActionInline($row->id,'id') !!}
                             <a href="{{ URL::to('gamestitle/upload/'.$row->id.'?type=2')}}" class="tips btn btn-xs btn-white" title="Upload Manual"><i class="fa fa-file" aria-hidden="true"></i></a>
                             <a href="{{ URL::to('gamestitle/upload/'.$row->id.'?type=3')}}"  class="tips btn btn-xs btn-white" title="Upload Bulletin"><i class="fa fa-file" aria-hidden="true"></i></a>
                             <a  href="{{ URL::to('gamestitle/upload/'.$row->id.'?type=1')}}" class="tips btn btn-xs btn-white" title="Upload Image"><i class="fa fa-picture-o" aria-hidden="true"></i></a>
@@ -178,6 +187,11 @@
                     </tbody>
 
                 </table>
+                @if($setting['inline']!='false' && $setting['disablerowactions']=='false')
+                    @foreach ($rowData as $row)
+                        {!! AjaxHelpers::buttonActionInline($row->id,'id') !!}
+                    @endforeach
+                @endif
             @else
 
                 <div style="margin:100px 0; text-align:center;">
