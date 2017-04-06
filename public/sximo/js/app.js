@@ -301,6 +301,10 @@ jQuery(document).ready(function($){
     
     // detect link to possible unauthorised access
     detectPUAA($);
+
+    if(PREVENT_CONSOLE_LOGS){
+        disableConsoleLogs();
+    }
 });
 
 function updateNativeUIFieldsBasedOn() {
@@ -410,4 +414,11 @@ function detectPUAA($) {
         
     });
 
+}
+
+
+function disableConsoleLogs(){
+    var console = {};
+    console.log = function(){};
+    window.console = console;
 }

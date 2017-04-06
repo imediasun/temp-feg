@@ -75,6 +75,10 @@
     <!-- Search and storage  -->
     <link href="{{ asset('sximo/css/search.css')}}" rel="stylesheet">
     <link href="{{ asset('sximo/css/feg_new_styles.css') }}" rel="stylesheet">
+	<script>
+		//define global level js variables here
+		var PREVENT_CONSOLE_LOGS = '{{env('PREVENT_CONSOLE_LOGS')}}';
+	</script>
     <script type="text/javascript" src="{{ asset('sximo/js/app.js') }}"></script>    
     <script type="text/javascript" src="{{ asset('sximo/js/search.js') }}"></script>
     <script type="text/javascript" src="{{ asset('sximo/js/simple-search.js') }}"></script>
@@ -83,16 +87,6 @@
   	</head>
   	<body class="sxim-init" style="background:url('{{asset("sximo/images/sidebar-bg.jpg") }}');background-repeat:no-repeat;background-size: 220px;background-position:left bottom;background-color:#103669 ">
     @yield('afterbodystart', '')
-
-	@if (env('APP_CONSOLE_LOGS'))
-		<script>
-			$(document).ready(function(){
-				var console = {};
-				console.log = function(){};
-				window.console = console;
-			});
-		</script>
-	@endif
 	<div id="wrapper">
 		@include('layouts/sidemenu')
 		<div class="gray-bg " id="page-wrapper">
@@ -155,8 +149,6 @@
 @yield('inlinedit', '')
 <script type="text/javascript">
 jQuery(document).ready(function ($) {
-	console.log('ddd');
-
     $('#sidemenu').sximMenu();
 	$('.spin-icon').click(function () {
         $(".theme-config-box").toggleClass("show");
