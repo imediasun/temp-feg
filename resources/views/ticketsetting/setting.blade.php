@@ -5,7 +5,7 @@
         <!-- Page header -->
         <div class="page-header">
             <div class="page-title">
-                <h3> Permission Editor: </h3>
+                <h3> Setting </h3>
             </div>
             <ul class="breadcrumb">
                 <li><a href="{{ URL::to('dashboard') }}"> Dashboard </a></li>
