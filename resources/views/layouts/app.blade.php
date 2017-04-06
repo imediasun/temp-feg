@@ -83,6 +83,16 @@
   	</head>
   	<body class="sxim-init" style="background:url('{{asset("sximo/images/sidebar-bg.jpg") }}');background-repeat:no-repeat;background-size: 220px;background-position:left bottom;background-color:#103669 ">
     @yield('afterbodystart', '')
+
+	@if (env('APP_CONSOLE_LOGS'))
+		<script>
+			$(document).ready(function(){
+				var console = {};
+				console.log = function(){};
+				window.console = console;
+			});
+		</script>
+	@endif
 	<div id="wrapper">
 		@include('layouts/sidemenu')
 		<div class="gray-bg " id="page-wrapper">
@@ -145,6 +155,7 @@
 @yield('inlinedit', '')
 <script type="text/javascript">
 jQuery(document).ready(function ($) {
+	console.log('ddd');
 
     $('#sidemenu').sximMenu();
 	$('.spin-icon').click(function () {
