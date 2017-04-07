@@ -175,7 +175,7 @@
                             <td> {{ $row->order_type }}</td>
                             <td data-values="action" data-key="<?php echo $row->id; ?>">
                                 {!! AjaxHelpers::buttonAction('managefegrequeststore',$access,$id ,$setting) !!}
-                               @if($view == "manage")
+                               @if($view == "manage" && $access['is_edit'] == 1 )
                                 <a href="#"  class="tips btn btn-xs btn-white" data-id="{{ $row->id }}" title="Deny Request" onclick="denyRequest(this);"><i class="fa fa-ban" aria-hidden="true"></i></a>
                             @endif
                             </td>
