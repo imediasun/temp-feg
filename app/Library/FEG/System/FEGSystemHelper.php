@@ -13,13 +13,13 @@ use App\Models\Feg\System\Options;
 
 
 class FEGSystemHelper
-{    
+{
     private static $L;
-    
+
     public static function setLogger($_logger, $name = "elm5-general-log.log", $path = "FEGCronTasks/ELM5GeneralLog", $id = "LOG") {
         global $__logger;
         if (empty($_logger)) {
-            $_logger = new MyLog($name, $path, $id);                
+            $_logger = new MyLog($name, $path, $id);
         }
         return $_logger;
     }
@@ -34,7 +34,7 @@ class FEGSystemHelper
             $hours = $diff->format('%h');
             $mins = $diff->format('%i');
             $snds = $diff->format('%s');
-            
+
             if (!empty($days)) {
                 $time[] = "$days days";
             }
@@ -46,15 +46,15 @@ class FEGSystemHelper
             }
             if (!empty($snds)) {
                 $time[] = "$snds seconds";
-            }            
+            }
         }
-        
+
         $timeString = implode(" ", $time);
         return $timeString;
     }
-    
+
     /**
-     * 
+     *
      * @param type $obj
      * @param type $file
      * @param type $pathsuffix
@@ -72,27 +72,27 @@ class FEGSystemHelper
         if (!$skipDate) {
             $log = $date.$log;
         }
-        file_put_contents($path, $log."\r\n", FILE_APPEND);    
-    }	
+        file_put_contents($path, $log."\r\n", FILE_APPEND);
+    }
     public static function set_log_path($file = "elm5-system-log.log", $pathsuffix = "") {
         $fileprefix = "log-" . date("Ymd") . "-";
-        $path = realpath(storage_path() . '/logs/').(empty($pathsuffix) ? "" : '/'.$pathsuffix);        
+        $path = realpath(storage_path() . '/logs/').(empty($pathsuffix) ? "" : '/'.$pathsuffix);
         if (!file_exists($path)) {
             mkdir($path, 0755, true);
         }
-        $filepath = $path . '/'. $fileprefix . $file;        
+        $filepath = $path . '/'. $fileprefix . $file;
         return $filepath;
     }
-    
+
     public static function set_session_log_path($file = "session.log" , $isReadonly = false) {
-        $path = realpath(storage_path())."/logs/ELM5_Sessions";        
+        $path = realpath(storage_path())."/logs/ELM5_Sessions";
         if (!$isReadonly && !file_exists($path)) {
             mkdir($path, 0755, true);
         }
-        $filepath = $path.'/'.$file;        
+        $filepath = $path.'/'.$file;
         return $filepath;
     }
-    
+
     public static function session_get($var, $default = '', $deleteFile = false) {
         $path = self::set_session_log_path($var.'.log', true);
         $value = $default;
@@ -112,44 +112,44 @@ class FEGSystemHelper
         else {
             $log = $value;
         }
-        file_put_contents($path, $log);    
+        file_put_contents($path, $log);
         return $log;
     }
     public static function session_pull($var, $default = '') {
-        return self::session_get($var, $default, true);        
+        return self::session_get($var, $default, true);
     }
     public static function session_forget($var) {
         $path = self::set_session_log_path($var, true);
         if (file_exists($path)) {
             return unlink($path);
-        }    
+        }
     }
-    
-    
+
+
     public static function tableFromArray($array = array(), $options = array()) {
-        
+
         extract(array_merge(array(
             'skipUnderscoreHeaders' => true,
             'cellArrayJoinDelimiter' => ',<br/>',
 
             'tableClass' => '',
             'tableStyles' => '',
-            
+
             'TRStyles' => '',
             'headTRStyles' => '',
             'bodyTRStyles' => '',
-            
+
             'cellWidths' => array(),
-            
+
             'cellStyles' => '',
-            
+
             'THStyles' => '',
             'TDStyles' => '',
-            
+
             'TDClasses'=> array(),
-            
+
         ), $options));
-        
+
         $tablehtml = "";
         if (empty($array)) {
             return $tablehtml;
@@ -175,7 +175,7 @@ class FEGSystemHelper
                             $th .= " width='".$cellWidths[$title]."' ";
                         }
                     }
-                    
+
                     if ($title == 'checkbox') {
                         $htmlArr[] = "<{$th}><input type='checkbox' class='checkUncheckAll' /></th>";
                     }
@@ -208,7 +208,7 @@ class FEGSystemHelper
                     if (!empty($TDClasses[$title])) {
                         $cellClass = $TDClasses[$title];
                     }
-                }                
+                }
                 $td = "td class='$sanitizedTitle $cellClass' style='$cellStyles $TDStyles' data-id='$sanitizedId' ";
                 if ($title == 'checkbox') {
                     $rowHTML[] = "<{$td}>
@@ -229,27 +229,27 @@ class FEGSystemHelper
 
         }
         if ($count > 0) {
-            $htmlArr[] = "</tbody>";    
+            $htmlArr[] = "</tbody>";
         }
-        $htmlArr[] = "</table>";    
+        $htmlArr[] = "</table>";
 
         $tablehtml = implode("\r\n", $htmlArr);
         return $tablehtml;
     }
-    
+
     public static function sanitizeTitleToId($title) {
         $sTitle = preg_replace('/\W/', '', strtolower($title));
         return $sTitle;
     }
-    
+
     public static function joinArray($array, $groupOn = '', $concatOn = array(), $sumOn = array(), $ignore = array(), $options = array()) {
         $options = array_merge(array(
         ), $options);
         extract($options);
-        
+
         $data = array();
         foreach ($array as $cell) {
-            
+
             if (!is_array($groupOn)) {
                 $groupOn = array($groupOn);
             }
@@ -258,7 +258,7 @@ class FEGSystemHelper
                 $groupValues[] = $cell[$groupOnItem];
             }
             $groupValue = implode('-', $groupValues);
-            
+
             if (empty($data[$groupValue])) {
                 $data[$groupValue] = array();
             }
@@ -282,7 +282,7 @@ class FEGSystemHelper
         return $data;
     }
 
-    
+
     public static function phpMail($to, $subject, $message, $from = "support@fegllc.com", $options = array()) {
         $headers = 'MIME-Version: 1.0' . "\r\n";
         $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
@@ -290,47 +290,47 @@ class FEGSystemHelper
             $headers .= 'From: ' . $options['fromName'] . ' <'. $from . '>'. "\r\n";
         }
         else {
-            $headers .= 'From: ' . $from . "\r\n";        
+            $headers .= 'From: ' . $from . "\r\n";
         }
-        
+
         if (!empty($options)) {
             if (!empty($options['cc'])) {
                 if (isset($options['ccName'])) {
                     $headers .= 'Cc: ' . $options['ccName'] . ' <'. $options['cc'] . '>'. "\r\n";
                 }
                 else {
-                    $headers .= 'Cc: ' . $options['cc'] . "\r\n";  
-                }                
+                    $headers .= 'Cc: ' . $options['cc'] . "\r\n";
+                }
             }
             if (!empty($options['bcc'])) {
                 if (isset($options['bccName'])) {
                     $headers .= 'Bcc: ' . $options['bccName'] . ' <'. $options['bcc'] . '>'. "\r\n";
                 }
                 else {
-                    $headers .= 'Bcc: ' . $options['bcc'] . "\r\n";  
-                }                 
+                    $headers .= 'Bcc: ' . $options['bcc'] . "\r\n";
+                }
             }
             if (!empty($options['replyTo'])) {
                 if (isset($options['replyToName'])) {
                     $headers .= 'Reply-To: ' . $options['replyToName'] . ' <'. $options['replyTo'] . '>'. "\r\n";
                 }
                 else {
-                    $headers .= 'Reply-To: ' . $options['replyTo'] . "\r\n";  
-                }                 
+                    $headers .= 'Reply-To: ' . $options['replyTo'] . "\r\n";
+                }
             }
             if (!empty($options['sender'])) {
                 if (isset($options['senderName'])) {
                     $headers .= 'Sender: ' . $options['senderName'] . ' <'. $options['sender'] . '>'. "\r\n";
                 }
                 else {
-                    $headers .= 'Sender: ' . $options['sender'] . "\r\n";  
-                }                 
+                    $headers .= 'Sender: ' . $options['sender'] . "\r\n";
+                }
             }
         }
-        
+
         mail($to, $subject, $message, $headers);
     }
-    
+
     public static function phpMailer($to, $subject, $message, $from = "support@fegllc.com", $options = array()) {
         $mail = new PHPMailer;
 
@@ -367,14 +367,14 @@ class FEGSystemHelper
             echo 'Message has been sent';
         }
     }
-    
+
     public static function configLaravelMail($mail, $options) {
         extract($options);
 
         $mail->subject($subject);
         $mail->setBody($message, 'text/html');
-        
-        $toArray = explode(',', $to);            
+
+        $toArray = explode(',', $to);
         if (count($toArray)== 1 && isset($toName)) {
             $mail->to($toArray[0], $toName);
         }
@@ -383,50 +383,50 @@ class FEGSystemHelper
         }
 
         if (isset($cc) && !empty(trim($cc))) {
-            $ccArray = explode(',', $cc);            
+            $ccArray = explode(',', $cc);
             if (count($ccArray)== 1 && isset($ccName)) {
                 $mail->cc($ccArray[0], $ccName);
             }
             else {
                 $mail->cc($ccArray);
-            }                            
+            }
         }
         if (isset($bcc) && !empty(trim($bcc))) {
-            $bccArray = explode(',', $bcc);            
+            $bccArray = explode(',', $bcc);
             if (count($bccArray)== 1 && isset($bccName)) {
                 $mail->bcc($bccArray[0], $bccName);
             }
             else {
                 $mail->bcc($bccArray);
-            }                            
+            }
         }
         if (isset($sender) && !empty(trim($sender))) {
-            $senderArray = explode(',', $sender);            
+            $senderArray = explode(',', $sender);
             if (count($senderArray)== 1 && isset($senderName)) {
                 $mail->sender($senderArray[0], $senderName);
             }
             else {
                 $mail->sender($senderArray);
-            }                            
-        }            
+            }
+        }
         if (isset($from) && !empty(trim($from))) {
-            $fromArray = explode(',', $from);            
+            $fromArray = explode(',', $from);
             if (count($fromArray)== 1 && isset($fromName)) {
                 $mail->from($fromArray[0], $fromName);
             }
             else {
                 $mail->from($fromArray);
-            }                            
-        }            
+            }
+        }
         if (isset($replyTo) && !empty(trim($replyTo))) {
-            $replyToArray = explode(',', $replyTo);            
+            $replyToArray = explode(',', $replyTo);
             if (count($replyToArray)== 1 && isset($replyToName)) {
                 $mail->replyTo($replyToArray[0], $replyToName);
             }
             else {
                 $mail->replyTo($replyTo);
-            }                            
-        }            
+            }
+        }
 
         if (isset($attach)) {
             if (is_array($attach)) {
@@ -435,13 +435,13 @@ class FEGSystemHelper
                         $mail->attach($attachment);
                     }else {
                         \Log::info("Attachment file not found: $attachment");
-                    }                    
+                    }
                 }
             }
             else {
                 $mail->attach($attach);
             }
-        }        
+        }
     }
     public static function laravelMail($to, $subject, $message, $from = "support@fegllc.com", $options = array()) {
         $view = empty($options['view']) ? '': $options['view'];
@@ -449,22 +449,25 @@ class FEGSystemHelper
 //        $options['subject'] = $subject;
 //        $options['message'] = $message;
 //        $options['from'] = $from;
-        
+
         if (!empty($view)) {
             Mail::send($view, $options, function ($mail) use ($options) {
                 self::configLaravelMail($mail, $options);
-            });            
+            });
         }
         else {
             Mail::send([], [], function ($mail) use ($options) {
                 self::configLaravelMail($mail, $options);
-            });             
+            });
 //            Mail::raw($message, function ($mail) use ($options) {
 //                self::configLaravelMail($mail, $options);
-//            });            
+//            });
         }
+
+        $failureCount = count(Mail::failures());
+        return $failureCount == 0;
     }
-    
+
     /**
      * Function which sends email using php mail (mail function) or laravel Mail class when using attachments
      * [Under Development]
@@ -474,27 +477,27 @@ class FEGSystemHelper
      * @param string $from
      * @param type $options
      */
-    public static function sendEmail($to, $subject, $message, $from = "support@fegllc.com", $options = array()) { 
+    public static function sendEmail($to, $subject, $message, $from = "support@fegllc.com", $options = array()) {
         //support@fegllc.com
         if (empty($from)) {
             //$from = "support@fegllc.com";
             //$from = "support@element5digital.com";
             $from = "support@fegllc.com";
         }
-        
+
         $preventEmailSendingSetting = env('PREVENT_FEG_SYSTEM_EMAIL', false);
         if (!$preventEmailSendingSetting)  {
             $usePhpMail = !empty($options['usePHPMail']);
             //$useLaravelMail = !empty($options['useLaravelMail']) || !empty($options['attach']);
             if ($usePhpMail) {
-                self::phpMail($to, $subject, $message, $from, $options);                                
+                return self::phpMail($to, $subject, $message, $from, $options);
             }
             else {
-                self::laravelMail($to, $subject, $message, $from, $options);                
+                return self::laravelMail($to, $subject, $message, $from, $options);
             }
         }
     }
-    
+
     public static function getHumanDate($date = "") {
         $hDate = "";
         if (!empty($date)) {
@@ -515,33 +518,33 @@ class FEGSystemHelper
                 $arr[] = $val;
             }
         }
-        return $arr;        
-    }   
+        return $arr;
+    }
     public static function split_trim_join($txt, $delim = ',', $trimChar = null) {
         $arr = self::split_trim($txt, $delim, $trimChar);
         $joined = implode($delim, $arr);
-        return $joined;        
-    }   
+        return $joined;
+    }
 
     public static function syncTable($params = array()) {
         extract(array_merge(array(
             'sourceDB' => '',  //mysql, livemysql, livemysql_sacoa, livemysql_embed
             'targetDB' => '', //embed_sync, sacoa_sync
-            'table' => '', 
-            'targetTable' => '', 
-            'chunk' => 1000, 
+            'table' => '',
+            'targetTable' => '',
+            'chunk' => 1000,
             'cleanFirst' => 0,
         ), $params)); // $sourceDB, $targetDB, $table, $chunk, $cleanFirst,
         self::$L = $_logger;
-        
+
         if (empty($targetTable)) {
             $targetTable = $table;
             $params['targetTable'] = $targetTable;
         }
-        
+
         $syncLogTemplate = "$sourceDB.$table => $targetDB.$targetTable";
         self::$L->log("Start DATABASE SYNC: $syncLogTemplate");
-        
+
         if (empty($table)) {
             $log = "No table to sync. Ending...";
             self::$L->log($log);
@@ -555,19 +558,19 @@ class FEGSystemHelper
                 self::$L->log("End DATABASE SYNC: $syncLogTemplate ");
                 return $log;
             }
-            
+
         }
 
-        
+
         if ($cleanFirst == 1) {
             self::$L->log("Clear all data from target table first...");
             self::truncateTable(array('db' => $targetDB, 'table' => $targetTable));
         }
-        
+
         $count = 0;
-        
+
         $timeStart = microtime(true);
-        $timeEnd = microtime(true);        
+        $timeEnd = microtime(true);
         while(self::checkIfSyncRequired($params)) {
             $timeEnd = microtime(true);
             $timeDiff = round($timeEnd - $timeStart);
@@ -578,123 +581,123 @@ class FEGSystemHelper
             sleep(3);
         }
         self::$L->log("No  " . ($count > 0 ? "more":"") . " data to sync");
-        
+
         $timeEnd = microtime(true);
         $timeDiff = round($timeEnd - $timeStart);
         $timeDiffHuman = self::secondsToHumanTime($timeDiff);
-        
+
         self::$L->log("End DATABASE SYNC: $syncLogTemplate ");
         $timeTaken = "Time taken: $timeDiffHuman ";
         self::$L->log($timeTaken);
-        
+
         if (!empty($sourceDB)) {
             DB::connection($sourceDB)->disconnect();
         }
         if (!empty($targetDB)) {
             DB::connection($targetDB)->disconnect();
-        }        
-        
+        }
+
         return $timeTaken;
-    }    
+    }
     public static function _syncTable($params = array()) {
         extract(array_merge(array(
-            'sourceDB' => '', 
-            'targetDB' => '', 
-            'table' => '', 
-            'targetTable' => '', 
-            'chunk' => 1000, 
+            'sourceDB' => '',
+            'targetDB' => '',
+            'table' => '',
+            'targetTable' => '',
+            'chunk' => 1000,
             'cleanFirst' => 0,
         ), $params)); // $sourceDB, $targetDB, $table, $chunk, $cleanFirst,
-        
+
         if (empty($chunk)) {
             $chunk = 1000;
         }
-        
+
         if (empty($sourceDB)) {
             $source = DB::connection();
-            DB::connection()->setFetchMode(PDO::FETCH_ASSOC); 
+            DB::connection()->setFetchMode(PDO::FETCH_ASSOC);
         }
         else {
             $source = DB::connection($sourceDB);
-            DB::connection($sourceDB)->setFetchMode(PDO::FETCH_ASSOC); 
+            DB::connection($sourceDB)->setFetchMode(PDO::FETCH_ASSOC);
         }
         if (empty($targetDB)) {
             $target = DB::connection();
-            DB::connection()->setFetchMode(PDO::FETCH_ASSOC); 
+            DB::connection()->setFetchMode(PDO::FETCH_ASSOC);
         }
         else {
             $target = DB::connection($targetDB);
-            DB::connection($targetDB)->setFetchMode(PDO::FETCH_ASSOC); 
+            DB::connection($targetDB)->setFetchMode(PDO::FETCH_ASSOC);
         }
-        
+
         $lastID = self::get_last_id($table, $targetDB);
 
         $q = "SELECT * from $table WHERE id > $lastID LIMIT " . $chunk;
         $data = $source->select($q);
         $target->table($targetTable)->insert($data);
-        
+
         if (empty($sourceDB)) {
-            DB::connection()->setFetchMode(PDO::FETCH_CLASS); 
+            DB::connection()->setFetchMode(PDO::FETCH_CLASS);
         }
         else {
-            DB::connection($sourceDB)->setFetchMode(PDO::FETCH_CLASS); 
+            DB::connection($sourceDB)->setFetchMode(PDO::FETCH_CLASS);
         }
         if (empty($targetDB)) {
-            DB::connection()->setFetchMode(PDO::FETCH_CLASS); 
+            DB::connection()->setFetchMode(PDO::FETCH_CLASS);
         }
         else {
-            DB::connection($targetDB)->setFetchMode(PDO::FETCH_CLASS); 
+            DB::connection($targetDB)->setFetchMode(PDO::FETCH_CLASS);
         }
-        
-    }    
+
+    }
     public static function truncateTable ($params = array()) {
         extract(array_merge(array(
-            'db' => '', 
+            'db' => '',
             'table' => ''
-        ), $params)); 
+        ), $params));
         if (is_null($db)) {
-            $id = DB::table($table)->truncate();            
-        }       
+            $id = DB::table($table)->truncate();
+        }
         else {
             $id = DB::connection($db)->table($table)->truncate();
         }
     }
-    
-    public static function get_last_id($table, $dbname = null) {                
+
+    public static function get_last_id($table, $dbname = null) {
         if (is_null($dbname)) {
-            $id = DB::table($table)->orderBy('id', 'desc')->take(1)->value('id');            
-        }       
+            $id = DB::table($table)->orderBy('id', 'desc')->take(1)->value('id');
+        }
         else {
             $id = DB::connection($dbname)->table($table)->orderBy('id', 'desc')->take(1)->value('id');
         }
-        
+
         if (is_null($id)) {
             $id = 0;
         }
         return $id;
-    }    
-    
+    }
+
     public static function checkIfSyncRequired($params = array()) {
         extract(array_merge(array(
-            'sourceDB' => '', 
-            'targetDB' => '', 
-            'table' => '', 
-            'targetTable' => '', 
-            'chunk' => 1000, 
+            'sourceDB' => '',
+            'targetDB' => '',
+            'table' => '',
+            'targetTable' => '',
+            'chunk' => 1000,
             'cleanFirst' => 0,
         ), $params)); // $sourceDB, $targetDB, $table, $targetTable, $chunk, $cleanFirst,
 
         $sourceLastID = self::get_last_id($table, $sourceDB);
         $targetLastID = self::get_last_id($targetTable, $targetDB);
-                            
+
         $hasMore = $sourceLastID > $targetLastID;
-        
-        return $hasMore;        
-    }    
-    
+
+        return $hasMore;
+    }
+
     /**
      * Function to get system email recipient defined as a configuration in System Email Manager /system/systememailreportmanager
-     * 
+     *
      * @param string $configName    Name of the Configuration from /system/systememailreportmanager
      * @param number/string $location   [optional] Pass the location id if you want to filter user assigned to that location. Can pass null to skip it
      * @param boolean $isTest   [optional] Pass true to get recipients only from the 'Email recipients while testing' section
@@ -717,55 +720,55 @@ class FEGSystemHelper
                 $emails['bcc'] = $data->test_bcc_emails;
             }
             else {
-                
+
                 $location = empty($location) ? null : $location;
-                
+
                 $lut = $data->to_email_location_contacts;
                 $lucc = $data->cc_email_location_contacts;
                 $lubcc = $data->bcc_email_location_contacts;
-                $locationUsers['to']  = empty($lut) ? array() : self::getLocationManagersEmails($lut,  $location);
-                $locationUsers['cc']  = empty($lucc) ? array() : self::getLocationManagersEmails($lucc,  $location);
-                $locationUsers['bcc'] = empty($lubcc) ? array() : self::getLocationManagersEmails($lubcc, $location);
-                
-                
+                $locationUsers['to']  = self::getLocationContactsEmails($lut,   $location, true);
+                $locationUsers['cc']  = self::getLocationContactsEmails($lucc,  $location, true);
+                $locationUsers['bcc'] = self::getLocationContactsEmails($lubcc, $location, true);
+
+
                 $gt = $data->to_email_groups;
                 $gcc = $data->cc_email_groups;
                 $gbcc = $data->bcc_email_groups;
-                $groups['to'] = empty($gt) ? array() : self::getGroupsUserEmails($gt,   $location);
-                $groups['cc'] = empty($gcc) ? array() : self::getGroupsUserEmails($gcc,   $location);
-                $groups['bcc'] = empty($gbcc) ? array() : self::getGroupsUserEmails($gbcc, $location);
-                
+                $groups['to']  = self::getGroupsUserEmails($gt,   $location, true);
+                $groups['cc']  = self::getGroupsUserEmails($gcc,  $location, true);
+                $groups['bcc'] = self::getGroupsUserEmails($gbcc, $location, true);
+
                 $ut = $data->to_email_individuals;
                 $ucc = $data->cc_email_individuals;
-                $ubcc = $data->bcc_email_individuals;                
-                $users['to'] = empty($ut) ? array() : self::getUserEmails($ut,      $location);
-                $users['cc'] = empty($ucc) ? array() : self::getUserEmails($ucc,    $location);
-                $users['bcc'] = empty($ubcc) ? array() : self::getUserEmails($ubcc, $location);
-                
+                $ubcc = $data->bcc_email_individuals;
+                $users['to']  = self::getUserEmails($ut,   $location, true);
+                $users['cc']  = self::getUserEmails($ucc,  $location, true);
+                $users['bcc'] = self::getUserEmails($ubcc, $location, true);
+
                 $inclues['to'] = FEGSystemHelper::split_trim($data->to_include_emails);
                 $inclues['cc'] = FEGSystemHelper::split_trim($data->cc_include_emails);
                 $inclues['bcc'] = FEGSystemHelper::split_trim($data->bcc_include_emails);
-                
+
                 $excludes['to'] = array_merge(FEGSystemHelper::split_trim(
                         $data->to_exclude_emails), array(null, ''));
                 $excludes['cc'] = array_merge(FEGSystemHelper::split_trim(
                         $data->cc_exclude_emails), array(null, ''));
                 $excludes['bcc'] = array_merge(FEGSystemHelper::split_trim(
                         $data->bcc_exclude_emails), array(null, ''));
-                
+
                 $to = array_diff(array_unique(
-                        array_merge($groups['to'], 
+                        array_merge($groups['to'],
                             $locationUsers['to'], $users['to'], $inclues['to'])),
                         $excludes['to']);
                 $cc = array_diff(
-                        array_unique(array_merge($groups['cc'], 
+                        array_unique(array_merge($groups['cc'],
                             $locationUsers['cc'], $users['cc'], $inclues['cc'])),
                         $excludes['cc']);
                 $bcc = array_diff(
-                        array_unique(array_merge($groups['bcc'], 
+                        array_unique(array_merge($groups['bcc'],
                             $locationUsers['bcc'], $users['bcc'], $inclues['bcc'])),
                         $excludes['bcc']);
-                
+
                 $emails['to'] = implode(',', $to);
                 $emails['cc'] = implode(',', $cc);
                 $emails['bcc'] = implode(',', $bcc);
@@ -774,50 +777,49 @@ class FEGSystemHelper
         return $emails;
     }
 
-    public static function getLocationManagersEmails($fields = '', $location = null) {
-//        $q = "SELECT id,contact_id, general_contact_id, field_manager_id,
-//            tech_manager_id, merch_contact_id, merchandise_contact_id,
-//            technical_contact_id, regional_contact_id, senior_vp_id, district_manager_id
-//        FROM location WHERE active=1";
-        $emails = array();
+    public static function getLocationContactsEmails($fields = '', $location = null, $skipIfNoGroup = false) {
+        $emails = [];
         if (!empty(trim($fields))) {
-            $ids = self::getLocationManagersIds($fields, $location);
+            $ids = self::getLocationContactsUserIds($fields, $location, $skipIfNoGroup);
             if (!empty($ids)) {
-                $emails = self::getUserEmails(implode(',', $ids));
-            }            
-        }        
+                $emails = self::getUserEmails(implode(',', $ids), $location, $skipIfNoGroup);
+            }
+        }
         return $emails;
     }
-    public static function getLocationManagersIds($fields = null, $location = null) {
-//        $q = "SELECT id,contact_id, general_contact_id, field_manager_id,
-//            tech_manager_id, merch_contact_id, merchandise_contact_id,
-//            technical_contact_id, regional_contact_id, senior_vp_id, district_manager_id
-//        FROM location WHERE active=1";
-        if (empty(trim($fields))){
-            $fields = 'contact_id, general_contact_id, field_manager_id,
-//            tech_manager_id, merch_contact_id, merchandise_contact_id,
-//            technical_contact_id, regional_contact_id, senior_vp_id, district_manager_id';
+    public static function getLocationContactsUserIds($groups = null, $location = null, $skipIfNoGroup = false) {
+        if (is_array($groups)) {
+            $groups = implode(',', $groups);
         }
-        $q = "SELECT $fields
-        FROM location WHERE active=1";
+        $groups = self::split_trim_join($groups);
+        if ($skipIfNoGroup && empty($groups)) {
+            return [];
+        }
+
+        $q = "SELECT u.id
+                FROM user_locations ul
+                LEFT JOIN users u ON u.id = ul.user_id
+                WHERE u.active=1";
+
+        if (!empty($groups)) {
+            $q .= " AND ul.group_id IN ($groups)";
+        }
         if ($location) {
-            $q .= " AND id IN ($location)";
+            $q .= " AND UL.location_id IN ($location)";
         }
-        $fieldsArr = explode(',', $fields);
+
         $data = DB::select($q);
-        $ids = array();
-        foreach($data as $row) {            
-            foreach($fieldsArr as $fname) {
-                $val = $row->$fname;
-                if (!empty($val)) {
-                    $ids[] = $val;
-                }                
-            }        
-        }        
-        return array_values(array_unique($ids));
-    }    
+        $uids = array();
+        foreach($data as $row) {
+            $uid = $row->id;
+            if (!empty($uid)) {
+                $uids[] = $uid;
+            }
+        }
+        return array_values(array_unique($uids));
+    }
     /**
-     * 
+     *
      * @param type $groups
      * @param type $location
      * @param type $skipIfNoGroup
@@ -826,12 +828,12 @@ class FEGSystemHelper
     public static function getGroupsUserEmails($groups = null, $location = null, $skipIfNoGroup = false) {
         if (is_array($groups)) {
             $groups = implode(',', $groups);
-        }        
+        }
         $groups = self::split_trim_join($groups);
         if ($skipIfNoGroup && empty($groups)) {
             return [];
-        }        
-        $q = "SELECT U.id, U.group_id, UL.location_id, U.email FROM users U 
+        }
+        $q = "SELECT U.id, U.group_id, UL.location_id, U.email FROM users U
                     LEFT JOIN user_locations UL ON UL.user_id = U.id
                 LEFT JOIN tb_groups G ON G.group_id = U.group_id
                 LEFT JOIN location L ON L.id = UL.location_id
@@ -848,12 +850,12 @@ class FEGSystemHelper
             $email = $row->email;
             if (!empty($email)) {
                 $emails[] =  trim($email);
-            }            
+            }
         }
         return $emails;
     }
     /**
-     * 
+     *
      * @param type $groups
      * @param type $location
      * @param type $skipIfNoGroup
@@ -867,8 +869,8 @@ class FEGSystemHelper
         if ($skipIfNoGroup && empty($groups)) {
             return [];
         }
-        $q = "SELECT U.id, U.group_id, UL.location_id, U.email 
-                FROM users U 
+        $q = "SELECT U.id, U.group_id, UL.location_id, U.email
+                FROM users U
                 LEFT JOIN tb_groups G ON G.group_id = U.group_id
                 LEFT JOIN user_locations UL ON UL.user_id = U.id
                 LEFT JOIN location L ON L.id = UL.location_id
@@ -885,11 +887,11 @@ class FEGSystemHelper
             $uid = $row->id;
             if (!empty($uid)) {
                 $uids[] = $uid;
-            }            
+            }
         }
         return array_values(array_unique($uids));
     }
-    
+
     /**
      *      * Get user ids which are assigned to a location from a list of users
      * @param type $location
@@ -904,15 +906,15 @@ class FEGSystemHelper
         $users = self::split_trim_join($users);
         if ($skipIfNoUsers && empty($users)) {
             return [];
-        }        
-        $q = "SELECT DISTINCT users.id FROM users 
+        }
+        $q = "SELECT DISTINCT users.id FROM users
             LEFT JOIN user_locations ON user_locations.user_id = users.id
             WHERE users.active=1 ";
         if (!empty($users)) {
             $q .= " AND users.id IN ($users)";
         }
         if (!empty($location)) {
-            $q .= " AND user_locations.location_id IN ($location)";            
+            $q .= " AND user_locations.location_id IN ($location)";
         }
         $data = DB::select($q);
         $ids = array();
@@ -921,9 +923,9 @@ class FEGSystemHelper
             $ids[] = trim($id);
         }
         return $ids;
-    }    
+    }
     /**
-     * 
+     *
      * @param type $users
      * @param type $location
      * @param type $skipIfNoUsers
@@ -937,14 +939,14 @@ class FEGSystemHelper
         if ($skipIfNoUsers && empty($users)) {
             return [];
         }
-        $q = "SELECT DISTINCT email FROM users 
+        $q = "SELECT DISTINCT email FROM users
             LEFT JOIN user_locations ON user_locations.user_id = users.id
             WHERE users.active=1 ";
         if (!empty($users)) {
             $q .= " AND users.id IN ($users)";
         }
         if (!empty($location)) {
-            $q .= " AND user_locations.location_id IN ($location)";            
+            $q .= " AND user_locations.location_id IN ($location)";
         }
         $data = DB::select($q);
         $emails = array();
@@ -953,30 +955,30 @@ class FEGSystemHelper
             $emails[] = trim($email);
         }
         return $emails;
-    }    
-    
+    }
+
     /**
      * Wrapper function to send email
-     * @param array $options    An associative array containing these keys: 
-     *                              from - string 
+     * @param array $options    An associative array containing these keys:
+     *                              from - string
      *                              to - string comma separated emails
      *                              cc - string comma separated emails
      *                              bcc - string comma separated emails
      *                              subject - string
-     *                              message - strnig body of the mail, 
+     *                              message - strnig body of the mail,
      *                              attach - an index array of paths of the files to be attached
      *                              isTest - boolean - [true=test mode on]whether email will be send to recipients defined in 'Email recipients while testing' in System Email Manager (/system/systememailreportmanager)
      *                              configName - string (same as the configuration name defined in System Email Manager (/system/systememailreportmanager)
-     *                                          This name is used in this function to get test email recipient if required (if isTest key is set to true). 
+     *                                          This name is used in this function to get test email recipient if required (if isTest key is set to true).
      *                                          This is also used to name the log file which stores the email content as HTML file in test mode
      *                              configNamePrefix - string - prefix added to configName when the log file name is created
      *                              configNameSuffix - string - suffix added to configName when the log file name is created
-     *                              
-     *                              
-     *                              
+     *
+     *
+     *
      */
-    public static function sendSystemEmail($options) {  
-        
+    public static function sendSystemEmail($options) {
+
         $lp = 'FEGCronTasks/SystemEmails';
         $lpd = 'FEGCronTasks/SystemEmailsDump';
         $options = array_merge(array(
@@ -989,16 +991,16 @@ class FEGSystemHelper
             'configNamePrefix' => "",
             'configNameSuffix' => "",
         ), $options);
-        
+
         extract($options);
-        
+
         $configNameSanitized = preg_replace('/[\W]/', '-', strtolower($configName));
         $lf = "email-"
                 . (empty($configNamePrefix)? "" : "{$configNamePrefix}-")
                 . $configNameSanitized
                 . (empty($configNameSuffix)? "" : "-{$configNameSuffix}")
                 . ".log";
-        
+
         if ($isTest) {
             $attachments = isset($attach) ? $attach : '';
             $message =  "
@@ -1007,13 +1009,13 @@ class FEGSystemHelper
 [SUBJECT: $subject]<br/>
 [TO: $to]<br/>
 [CC: $cc]<br/>
-[BCC: $bcc]<br/>              
-    
+[BCC: $bcc]<br/>
+
 ***************** DEBUG INFO END *****************************<br><br>
-$message" . 
+$message" .
 (isset($attach) ?   "<br><br> ================ ATTACHMENTS ===================================<br><ul><li>".(implode("<li>", $attach)).'</ul>' : '') .
 "<br><br>******************************************* EMAIL END ********************************<br><br/>";
-            
+
             $options['message'] = $message;
             $options['subject'] = $subject = "[TEST] ". $subject;
             $emailRecipients = self::getSystemEmailRecipients($configName, null, true);
@@ -1023,34 +1025,35 @@ $message" .
             if (empty($to)) {
                 $to = "e5devmail@gmail.com";
             }
-            
+
 //            FEGSystemHelper::logit("to: " .$to, "email-{$configNameSanitized}.log", "FEGCronTasks/SystemEmailsDump");
 //            FEGSystemHelper::logit("cc: " .$cc, "email-{$configNameSanitized}.log", "FEGCronTasks/SystemEmailsDump");
 //            FEGSystemHelper::logit("bcc: " .$bcc, "email-{$configNameSanitized}.log", "FEGCronTasks/SystemEmailsDump");
 //            FEGSystemHelper::logit("subject: " .$subject, "email-{$configNameSanitized}.log", "FEGCronTasks/SystemEmailsDump");
-              
-            //$messageLog = str_ireplace(array("<br />","<br>","<br/>"), "\r\n", $message);           
-            //$messageLog = nl2br($message);           
-            $messageLog = $message;           
+
+            //$messageLog = str_ireplace(array("<br />","<br>","<br/>"), "\r\n", $message);
+            //$messageLog = nl2br($message);
+            $messageLog = $message;
             self::logit($messageLog, "{$lf}.html", $lpd, true);
         }
-             
+
         self::logit("Sending Email", $lf, $lp);
-        self::logit($options, $lf, $lp);        
-        self::sendEmail($to, $subject, $message, $from, $options);
+        self::logit($options, $lf, $lp);
+        $status = self::sendEmail($to, $subject, $message, $from, $options);
         self::logit("Email sent", $lf, $lp);
+        return $status;
     }
 
     public static function getOption($optionName, $default = '', $all = false, $skipInactive = false, $details = false) {
-        return Options::getOption($optionName, $default, $all, $skipInactive, $details);        
+        return Options::getOption($optionName, $default, $all, $skipInactive, $details);
     }
     public static function updateOption($optionName, $value = '', $options = array()) {
         return Options::updateOption($optionName, $value, $options);
     }
     public static function addOption($optionName, $value = '', $options = array()) {
-        return Options::addOption($optionName, $value, $options);        
-    }    
-    
+        return Options::addOption($optionName, $value, $options);
+    }
+
     public static function getUserAvatarUrl($id = null, $file = null) {
 		$fileUrl = url()."/silouette.png";
         if (!empty($id)) {
@@ -1059,18 +1062,18 @@ $message" .
         $filePath = "./uploads/users/$file";
         if (!empty($file) && file_exists($filePath)) {
             $fileUrl = \URL::to("uploads/users/$file");
-        }        
+        }
         return $fileUrl;
     }
-    
+
     public static function getUserProfileDetails($user) {
         $userID = $user['id'];
         $firstName = empty($user['first_name']) ? '' : $user['first_name'];
-        $lastName = empty($user['last_name']) ? '' : $user['last_name'];                                    
+        $lastName = empty($user['last_name']) ? '' : $user['last_name'];
         $fullName = $firstName . ' ' . $lastName;
         $avatar = self::getUserAvatarUrl(null, $user['avatar']);
         $userTooltip = 'Username: ' . $user['username'] . '<br/> Email: '. $user['email'];
-        
+
         return [
             'id' => $userID,
             'fullName' => $fullName,
@@ -1080,12 +1083,12 @@ $message" .
             'tooltip' => $userTooltip,
         ];
     }
-        
+
     public static function getTicketCommentUserProfile($comment, $ticket = []) {
         $userID = $comment->UserID;
         $externalName = empty($comment->USERNAME) ? '' : $comment->USERNAME;
         $firstName = empty($comment->first_name) ? '' : $comment->first_name;
-        $lastName = empty($comment->last_name) ? '' : $comment->last_name;                                    
+        $lastName = empty($comment->last_name) ? '' : $comment->last_name;
         $fullName = $firstName . ' ' . $lastName;
         $avatar = self::getUserAvatarUrl(null, $comment->avatar);
         $isExternal = empty($userID);
@@ -1094,8 +1097,8 @@ $message" .
         if ($isExternal) {
             $fullName = $externalName;
             $userTooltip = "Non-FEG User";
-        }    
-        
+        }
+
         return [
             'id' => $userID,
             'isExternal' => $isExternal,
@@ -1105,35 +1108,35 @@ $message" .
             'lastName' => $lastName,
             'avatar' => $avatar,
             'tooltip' => $userTooltip,
-        ];               
+        ];
     }
-    
+
     public static function getTicketAttachmentDetails($data, $isInitialTicketData = false) {
         $fileNamesCSV = $isInitialTicketData ? $data->file_path : $data->Attachments;
         $datePosted = \DateHelpers::formatDate($isInitialTicketData ? $data->Created : $data->Posted);
         $attachments = [];
         if (!empty($fileNamesCSV)) {
-            $files = explode(',', $fileNamesCSV);            
+            $files = explode(',', $fileNamesCSV);
             foreach($files as $file) {
                 if (!empty($file)) {
                     $url = url().$file;
-                    $fileName =  self::getSanitizedFileNameForTicketAttachments($file);                
+                    $fileName =  self::getSanitizedFileNameForTicketAttachments($file);
                     $attachments[] = [
                         'url' => $url,
                         'fileName' => $fileName,
                         'date' => $datePosted
-                    ];                    
+                    ];
                 }
-                
+
             }
         }
-        
+
         return $attachments;
-    }    
+    }
 
      /**
      * This works on paths relative to public folder
-     * 
+     *
      * @param type $basename
      * @param type $path
      * @return string The possibly modified filename (without the path)
@@ -1151,13 +1154,13 @@ $message" .
         }
         while (File::exists($filepath)) {
             $newBasename = $filename . ('--'.++$copyCount).(empty($ext) ? "" : ('.' . $ext));
-            $filepath = $path . $newBasename;            
+            $filepath = $path . $newBasename;
         }
         return $newBasename;
     }
-    
+
     /**
-     * 
+     *
      * @param type $path
      * @return string trimmed and slim filename
      */
@@ -1165,16 +1168,16 @@ $message" .
         $fileParts = pathinfo($path);
         $ext = empty($fileParts['extension']) ? '' : $fileParts['extension'];
         $fileName = $fileParts['filename'];
-       
+
         $fileName  = preg_replace('/--.*$/', '', $fileName);
         $fileName =  substr($fileName, 0, $maxLength);
-        
+
         $newBasename = $fileName . (empty($ext) ? "" : ('.' . $ext));
         return $newBasename;
     }
-    
+
     /**
-     * 
+     *
      * @param string $path
      * @param string $getWhat
      * @return array or string
@@ -1182,58 +1185,197 @@ $message" .
     public static function getSanitisedPublicUploadPath($path = '', $getWhat = '') {
 
         $replaces = [[],[]];
-        
+
         // remove multiple /
         $replaces[0][] = '/\/{2,}/';
         $replaces[1][] = '/';
-        
-        // remove './public/' or '/public/' 
+
+        // remove './public/' or '/public/'
         $replaces[0][] = '/^[\.\/]*public\//';
         $replaces[1][] = '/';
-        
+
         // replace path that begings in / with ./
         $replaces[0][] = '/^\//';
         $replaces[1][] = './';
-        
+
         // add a slash at the end
         $replaces[0][] = '/([^\/])$/';
         $replaces[1][] = '$1/';
-        
+
         //remove multiple /
         $replaces[0][] = '/\/{2,}/';
         $replaces[1][] = '/';
-        
+
         // sanitise and remove public folder
         $target = self::sanitiseString($path, $replaces);
-        
-        // retain public folder         
+
+        // retain public folder
         $replaces[1][1] = 'public/';
         $real = base_path(self::sanitiseString($path, $replaces));
         $url = preg_replace('/^[\.\/]*/', '/', $target);
-        
+
         $paths = [
             'url' => $url,
             'target' => $target,
             'real' => $real,
         ];
-        
+
         if (empty($getWhat) || empty($paths[$getWhat])) {
             return $paths;
-        }        
+        }
         return $paths[$getWhat];
     }
-    
+
     /**
-     * 
+     *
      * @param string $string
      * @param array $replaceRegExp
      * @return string
      */
-    public static function sanitiseString($string = '', $replaceRegExp = []) {        
-        $newString = $string;        
+    public static function sanitiseString($string = '', $replaceRegExp = []) {
+        $newString = $string;
         if (!empty($replaceRegExp[0] && $replaceRegExp[1])) {
             $newString = preg_replace($replaceRegExp[0], $replaceRegExp[1], $string);
-        }        
+        }
         return $newString;
+    }
+
+    /**
+     *
+     * @param type $string
+     * @param type $variableDelimiter
+     * @param type $valueDelimiter
+     * @param type $defaults
+     * @return type
+     */
+    public static function parseStringToArray($string = '', $variableDelimiter = '|', $valueDelimiter = ':', $defaults = array()) {
+        $valueArray = $defaults;
+        $newArray = [];
+
+        if (!empty($string)) {
+            $variables = explode($variableDelimiter, $string);
+            foreach($variables as $variable) {
+                list($key, $value) = explode($valueDelimiter, $variable.$valueDelimiter);
+                if (strpos($variable, $valueDelimiter) === false) {
+                    $value = $key;
+                }
+                $newArray[$key] = $value;
+            }
+//            $string = str_replace($variableDelimiter, '&', $string);
+//            $string = str_replace($valueDelimiter, '=', $string);
+//            parse_str($string, $valueArray);
+            $valueArray = array_merge($defaults, $newArray);
+        }
+        return $valueArray;
+    }
+
+    /**
+     *
+     * @param type $value
+     * @param type $options associative array with (value => label)
+     * @param type $default
+     * @return type
+     */
+    public static function getLabelFromOptions($value, $options, $default = '') {
+        $label = $default;
+        if (isset($options[$value])) {
+            $label = $options[$value];
+        }
+        return $label;
+    }
+
+    public static function specialPermissionFormatter($value, $fieldItem, $options = []) {
+
+        $row = $options['row'];
+        $id = isset($row->id) ? $row->id : '';
+        $fieldOptions = $fieldItem['options'];
+        $isMultiselect = isset($fieldOptions['multiple']) && $fieldOptions['multiple'] == true;
+        $fieldArrayLiteral = (!empty($id) ? "[$id]" : '[0]') . ($isMultiselect ? '[]' : '');
+        $fieldName = $fieldItem['field'];
+        $isTextHideDefault = isset($fieldOptions['hideText']) ? $fieldOptions['hideText'] : true;
+        $isTextHide = isset($options['hideText']) && !is_null($options['hideText']) ? $options['hideText'] : $isTextHideDefault;
+
+        $fieldOptionsMap = [
+            'type'      => 'opt_type',
+            'table'     => 'lookup_table',
+            'options'     => 'lookup_query',
+            'key'       => 'lookup_key',
+            'value'     => 'lookup_value',
+            'search'    => 'lookup_search',
+            'multiple'  => 'select_multiple_inline',
+            'inputTooltip'  => 'tooltip',
+            'attribute'     => 'attribute',
+            'extend_class'  => 'extend_class',
+        ];
+        $hideStyle = " style='display: none;' ";
+        $data = [
+            'fieldClass' => 'permissionCell '.$fieldName,
+            'formattedValue' => $value,
+            'value' => $value,
+            'input' => '',
+            'hideText' => $isTextHide ? $hideStyle : '',
+            'hideInput' => $isTextHide ? '' : $hideStyle,
+            'tooltip' => isset($fieldOptions['tooltip']) ? $fieldOptions['tooltip'] : '',
+            'textTooltip' => isset($fieldOptions['textTooltip']) ? $fieldOptions['textTooltip'] : '',
+            'inputTooltip' => isset($fieldOptions['inputTooltip']) ? $fieldOptions['inputTooltip'] : '',
+            'editOnDBClick' => isset($fieldOptions['editOnDBClick']) ? 'editOnDBClick' : '',
+            'editAllOnDBClick' => isset($fieldOptions['editAllOnDBClick']) ? 'editAllOnDBClick' : '',
+        ];
+
+
+        $required = empty($fieldOptions['required']) ? '' : $fieldOptions['required'];
+        $fieldItem['required'] = $required === true ? 'required' : $required;
+        $inputOptions = [];
+        foreach($fieldOptionsMap as $key => $optionMap) {
+            $inputOptions[$optionMap] = isset($fieldOptions[$key]) ? $fieldOptions[$key] : '';
+        }
+        $fieldItem['option'] = $inputOptions;
+        $data['input'] = \SiteHelpers::transInlineForm($fieldName, [$fieldItem], $fieldArrayLiteral, $value);
+
+        $gridAttributes = [
+            'image' => ['active'=>''],
+            'formater' => ['active' => 0, 'value' => ''],
+            'hyperlink' => ['active' => '', 'link' => '', 'target' => '', 'html' => '']
+        ];
+        $gridFormatter = ['valid' => '', 'db' => '', 'key' => '', 'display'  => '', 'multiple' => '',];
+
+        $formatter = isset($fieldOptions['formatter']) ? $fieldOptions['formatter']: '';
+        $needsFormatting = false;
+        if (!empty($formatter)) {
+            $needsFormatting = true;
+            $gridAttributes['formater']['active'] = 1;
+            $gridAttributes['formater']['value'] = $formatter;
+        }
+
+        $hyperlink = isset($fieldOptions['hyperlink']) ? $fieldOptions['hyperlink']: '';
+        if (!empty($hyperlink)) {
+            $needsFormatting = true;
+            $gridAttributes['hyperlink']['active'] = 1;
+            $gridAttributes['hyperlink']['value'] = $hyperlink;
+            $gridAttributes['hyperlink']['value'] =  isset($fieldOptions['hyperlinkTraget']) ? $fieldOptions['hyperlinkTraget']: '';
+        }
+
+        $dbConnection = !empty($fieldOptions['table']) ? $fieldOptions['table']: '';
+        if (!empty($dbConnection)) {
+            $needsFormatting = true;
+            $gridFormatter['valid'] = 1;
+            $gridFormatter['db'] = $dbConnection;
+            $gridFormatter['key'] = isset($fieldOptions['key']) ? $fieldOptions['key'] : '';;
+            $gridFormatter['display'] = isset($fieldOptions['value']) ? $fieldOptions['value'] : '';;
+            $gridFormatter['multiple'] = isset($fieldOptions['multiple']) ? $fieldOptions['multiple'] : '';
+        }
+
+        $dataOptions = !empty($fieldOptions['options']) ? $fieldOptions['options']: '';
+        if (!empty($dataOptions)) {
+            $needsFormatting = true;
+            $gridFormatter['datalist'] = 1;
+            $gridFormatter['options'] = $dataOptions;
+        }
+
+        if ($needsFormatting) {
+            $data['formattedValue'] = \AjaxHelpers::gridFormater($value, $row, $gridAttributes, $gridFormatter);
+        }
+
+        return $data;
     }
 }

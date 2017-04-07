@@ -241,40 +241,54 @@ class shopfegrequeststore extends Sximo  {
 
     function newGraphicRequest($data)
     {
-        $configName = 'Request new custom graphics email';
         $last_inserted_id=\DB::table('new_graphics_request')->insertGetId($data);
         $locationName = $this->get_location_info_by_id($data['location_id'], 'location_name');
         $game_info=explode('-',$data['description']);
         $mangeGraphicRequestURL = url("managenewgraphicrequests");
         $graphicApproveLink = "http://{$_SERVER['HTTP_HOST']}/managenewgraphicrequests/approve/$last_inserted_id";
         $graphicDenyLink = "http://{$_SERVER['HTTP_HOST']}/managenewgraphicrequests/deny/$last_inserted_id";
-        $receipts = FEGSystemHelper::getSystemEmailRecipients($configName);
-        $message = '<b>Date Requested:</b> '.$data['request_date'].'<br>
+
+        $baseMessage = '<b>Date Requested:</b> '. \DateHelpers::formatDate($data['request_date']).'<br>
 					<b>Requestor:</b> '.\Session::get('fid').'<br>
 					<b>Location:</b> '.$data['location_id'].' | '.$locationName.'<br>
 					<b>For Game:</b> '.$game_info[0]  .'<br>
 					<b>Description:</b> '.$data['description'].'<br>
 					<b>Quantity:</b> '.$data['qty'].'<br>
-					<b>Need By Date:</b> '.$data['need_by_date'].'<br><br>
-                    <em>**Mark/Tom, please click on <a href="'.$graphicApproveLink.'">Approval</a> or <a href="'.$graphicDenyLink.'">Denial</a> <br>
-					to Approve/Deny this graphic request <br><br>
-					&nbsp;&nbsp;&nbsp; 2.) Set Priority Level at <b>'.$mangeGraphicRequestURL.'</b><br><br>
+					<b>Need By Date:</b> '.$data['need_by_date'].'<br><br><em>';
+
+        $links = 'Please click on <a href="'.$graphicApproveLink.'">Approval</a> or <a href="'.$graphicDenyLink.'">Denial</a> <br>
+					to Approve/Deny this graphic request <br><br>&nbsp;&nbsp;&nbsp; 2.) ';
+
+        $messageEnd = 'Set Priority Level at <b>'.$mangeGraphicRequestURL.'</b><br><br>
 					**All cc\'d, please Reply to All <b> only if you wish to deny or modify request</b> and explain why.</em><br>';
-                    $from = \Session::get('eid');
-                    $subject = 'New Graphics Request for '.$locationName;
-                    $message = $message;
-                   
 
-                    FEGSystemHelper::sendSystemEmail(array_merge($receipts, array(
-                        'subject' => $subject,
-                        'message' => $message,
-                        'isTest' => env('APP_ENV', 'development') !== 'production'?true:false,
-                        'configName' => $configName,
-                        'from' => $from,
-                        'replyTo' => $from,
-                    )));
+        $from = \Session::get('eid');
+        $subject = 'New Graphics Request for '.$locationName;
 
-                   return $last_inserted_id;
+        $configName = 'Request new custom graphics email';
+        $receipts = FEGSystemHelper::getSystemEmailRecipients($configName);
+        $message = $baseMessage.$links.$messageEnd;
+        FEGSystemHelper::sendSystemEmail(array_merge($receipts, array(
+            'subject' => $subject,
+            'message' => $message,
+            'isTest' => env('APP_ENV', 'development') !== 'production'?true:false,
+            'configName' => $configName,
+            'from' => $from,
+            'replyTo' => $from,
+        )));
+
+        $receipientsForEmailWihtoutLinksConfigName = 'New custom graphics notification without links';
+        $receipientsForEmailWihtoutLinks = FEGSystemHelper::getSystemEmailRecipients($receipientsForEmailWihtoutLinksConfigName);
+        $messageWithoutLink = $baseMessage.$messageEnd;
+        FEGSystemHelper::sendSystemEmail(array_merge($receipientsForEmailWihtoutLinks, array(
+            'subject' => $subject,
+            'message' => $messageWithoutLink,
+            'isTest' => env('APP_ENV', 'development') !== 'production',
+            'from' => $from,
+            'replyTo' => $from,
+        )));
+
+        return $last_inserted_id;
     }
 
     /**
