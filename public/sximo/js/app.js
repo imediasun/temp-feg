@@ -564,12 +564,14 @@ jQuery(document).ready(function ($) {
 	})();
 
 	console.log(navigator.sayswho);
-
-
-    setTimeout(
-        function()
+    var alignColumns = function () {
+        tableWidth = $('.table.table-striped').width();
+        if(tableWidth == null)
         {
-            tableWidth = $('.table.table-striped').width();
+            setTimeout(alignColumns, 1000);
+        }
+        else
+        {
             console.log(tableWidth);
             originalTable = $('.table.table-striped').clone();
             console.log(originalTable);
@@ -581,16 +583,23 @@ jQuery(document).ready(function ($) {
             console.log(tdsCount);
             widthForEachTd = tableWidth/tdsCount;
             $(originalTable).children('tbody').children('tr').children('td').each(function (index) {
-                    allTds.eq(index).width(widthForEachTd).addClass( "equalWidth" );
-                    //console.log(allTds.eq(index));
+                allTds.eq(index).width(widthForEachTd).addClass( "equalWidth" );
+                //console.log(allTds.eq(index));
             })
             $(originalTable).children('thead').children('tr').children('th').each(function (index) {
                 allThs.eq(index).width(widthForEachTd).addClass( "equalWidth" );
                 //console.log(allThs.eq(index));
             })
-        },
-        3000);
+        }
 
+    };
+
+    setTimeout(alignColumns, 3000);
+
+    $('select#col-config').on('change',function () {
+        alert('here');
+        alignColumns();
+    });
 	$('body a:not(.page-content-wrapper a,.expand)').on('click',function (e) {
 		e.preventDefault();
 		var url = $(this).attr('href');
