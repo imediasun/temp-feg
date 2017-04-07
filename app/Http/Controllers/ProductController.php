@@ -32,7 +32,48 @@ class ProductController extends Controller
 
 
     }
+    
+    public function getSearchFilterQuery($customQueryString = null) {
+        // Filter Search for query
+        // build sql query based on search filters
 
+
+        // Get custom Ticket Type filter value
+        $globalSearchFilter = $this->model->getSearchFilters(['search_all_fields' => '']);
+        $skipFilters = ['search_all_fields'];
+        $mergeFilters = [];
+        extract($globalSearchFilter); //search_all_fields
+
+        // rebuild search query skipping 'ticket_custom_type' filter
+        $trimmedSearchQuery = $this->model->rebuildSearchQuery($mergeFilters, $skipFilters, $customQueryString);
+        $searchInput = $trimmedSearchQuery;
+        if (!empty($search_all_fields)) {
+            $searchFields = [
+                    'O.order_type',
+                    'T.type_description',
+                    'vendor.vendor_name',
+                    'products.vendor_description',
+                    'products.case_price',
+                    'products.retail_price',
+                    'products.unit_price',
+                    'T.type_description',
+                    'products.expense_category',
+                    'products.sku',
+                    'products.size',
+                    'products.item_description',
+                    'products.ticket_value'
+                ];
+            $searchInput = ['query' => $search_all_fields, 'fields' => $searchFields];
+        }
+
+        // Filter Search for query
+        // build sql query based on search filters
+        $filter = is_null(Input::get('search')) ? '' : $this->buildSearch($searchInput);
+
+
+        return $filter;
+    }
+    
     public function getIndex()
     {
         if ($this->access['is_view'] == 0)
@@ -70,7 +111,7 @@ class ProductController extends Controller
         $order = (!is_null($request->input('order')) ? $request->input('order') : $this->info['setting']['ordertype']);
         // End Filter sort and order for query
         // Filter Search for query
-        $filter = (!is_null($request->input('search')) ? $this->buildSearch() : '');
+        $filter = $this->getSearchFilterQuery();//(!is_null($request->input('search')) ? $this->buildSearch() : '');
 
 
         $page = $request->input('page', 1);

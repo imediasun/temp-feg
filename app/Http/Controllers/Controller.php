@@ -648,12 +648,43 @@ abstract class Controller extends BaseController
         $fields = '';
         $param = '';
         $allowsearch = $this->info['config']['forms'];
+        $searchAllValue = '';
+        $searchAllFields = [];
+        if (is_array($customSearchString) && !empty($customSearchString['query'])) {
+            $searchAllValue = $customSearchString['query'];
+            $searchAllFields = $customSearchString['fields'];
+            $customSearchString = '';
+        }
+
         $searchQuerystring = !is_null($customSearchString) ? $customSearchString : 
                 (isset($_GET['search']) ? $_GET['search'] : '');
-        
-        foreach ($allowsearch as $as)
+
+        foreach ($allowsearch as $as) {
             $arr[$as['field']] = $as;
-        if ($searchQuerystring != '') {
+        }
+        // search in all fields
+        if (!empty($searchAllValue)) {
+            $params = [];
+            $searchAllValue = addslashes($searchAllValue);
+            if (!empty($searchAllFields)) {
+                foreach($searchAllFields as $field) {
+                    $params[] = " $field LIKE '%$searchAllValue%' ";
+                }
+            }
+            else {
+                foreach($arr as $fieldName => $item) {
+                    $alias = @$item['alias'];
+                    $isSearch = @$item['search'] == 1;
+                    if ($isSearch) {
+                        $field = (empty($alias) ?  '' : $alias.'.').$fieldName;
+                        $params[] = " $field LIKE '%$searchAllValue%' ";
+                    }
+                }
+            }
+            $param = " AND (" . implode(' OR ', $params) . ') ';
+        }
+
+        elseif ($searchQuerystring != '') {
             $search_params=str_replace('_amp','&',$searchQuerystring);
             $type = explode("|", $search_params);
             if (count($type) >= 1) {

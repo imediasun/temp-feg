@@ -368,5 +368,22 @@ class ManagefegrequeststoreController extends Controller
             }
         }
     }
-
+function postDeny(Request $request)
+{
+    $request_id=$request->get('request_id');
+    $query=\DB::update("UPDATE requests set status_id=2 WHERE id = $request_id");
+    if($query)
+    {
+        return response()->json(array(
+            'status' => 'success',
+            'message' => \Lang::get('core.note_success_denied')
+        ));
+    }
+    else{
+        return response()->json(array(
+            'status' => 'error',
+            'message' => \Lang::get('core.note_error_denied')
+        ));
+    }
+}
 }

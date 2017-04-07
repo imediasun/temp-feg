@@ -70,10 +70,12 @@ class FegapiController extends Controller
             if (!is_null($active)) $param['active'] = $active;
 
 
-            $results = $class1::getRows($param);
+            dd($param);
 
+            $results = $class1::getRows($param);
             $json = array();
             //condition necessary to show additional fields in api response
+
             if ($class == "Itemreceipt") {
                 $json = $results['rows'];
             } else {

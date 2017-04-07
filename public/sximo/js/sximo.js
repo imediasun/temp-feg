@@ -163,7 +163,7 @@ function SximoModal( url , title)
 	$('#sximo-modal-content').load(url,function(){
         var modal = $('#sximo-modal-content').closest('.modal'),
             titletrim = title.replace(/[\s\W]/ig, '').replace(/^\d+?/,'').toLowerCase();
-            App.autoCallbacks.runCallback.call(modal, titletrim, {url:url, title:title});      
+            App.autoCallbacks.runCallback.call(modal, titletrim, {url:url, title:title});
 	});
 	$('#sximo-modal').modal('show');	
 }

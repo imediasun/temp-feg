@@ -326,9 +326,17 @@ jQuery(document).ready(function($){
 
     initExport(jQuery('.page-content-wrapper'));
     //initUserPopup(jQuery('.page-content-wrapper'));
-    
 
+    if(PREVENT_CONSOLE_LOGS){
+        disableConsoleLogs();
+    }
 });
+
+function disableConsoleLogs(){
+    var console = {};
+    console.log = function(){};
+    window.console = console;
+}
 
 function initUserPopup(container) {
     var userFields = [

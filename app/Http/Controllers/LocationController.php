@@ -249,7 +249,9 @@ class LocationController extends Controller
         $locationAssignmentFields = \SiteHelpers::getUniqueLocationUserAssignmentMeta('field-id');
         
         if(\Session::get('location_updated') != $input_id) {
-            $rules['id'] = 'required|unique:location,id,'.$input_id;
+            if (!empty($input_id)) {
+                $rules['id'] = 'required|unique:location,id,'.$input_id;
+            }
         }
         else{
             if(is_null($id)) {
@@ -262,8 +264,8 @@ class LocationController extends Controller
             
             // old id in case the existing location's id has been modified
             $oldId = $id;
-            $newId = isset($data['id'])?$data['id']:"";
-            if ($oldId == $newId) {
+            $newId = isset($data['id']) ? $data['id'] : $id;
+            if (empty($newId) || empty($oldId) || $oldId == $newId) {
                 $oldId = null;
             }
             
