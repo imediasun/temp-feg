@@ -212,7 +212,7 @@ App.autoCallbacks.registerCallback('ajaxinlinesave', function(params){
 
 });
 App.autoCallbacks.registerCallback('adjustColumnsWidth', function(params){
-    alignColumns();
+    //alignColumns();
 });
 
 /**
