@@ -15,6 +15,8 @@ function reloadData( id,url,callback)
 	$('.ajaxLoading').show();
 	$.post( url ,function( data ) {
 		$( id +'Grid' ).html( data );
+        App.autoCallbacks.runCallback.call($( id +'Grid' ), 'adjustColumnsWidth',
+            {id:id, url:url, data:data, isClear: isClearSearch});
 		$('.ajaxLoading').hide();
 		typeof callback === 'function' && callback(data);
         App.autoCallbacks.runCallback.call($( id +'Grid' ), 'reloaddata', 

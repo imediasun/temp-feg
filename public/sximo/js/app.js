@@ -158,7 +158,28 @@ App.autoCallbacks.runCallback = function (eventName, params, options) {
     }
 
 };
+var alignColumns = function () {
+    tableWidth = $('.table.table-striped').width();
+    console.log(tableWidth);
+    originalTable = $('.table.table-striped').clone();
+    console.log(originalTable);
+    tdsCount = $('.table > tbody > tr:nth-child(2) td').length;
 
+    allTds = $('.table > tbody > tr > td');
+    allThs = $('.table > thead > tr > th');
+    $('.table > tbody > tr').width(tableWidth).css('float','left');
+    console.log(tdsCount);
+    widthForEachTd = tableWidth/tdsCount;
+    $(originalTable).children('tbody').children('tr').children('td').each(function (index) {
+        allTds.eq(index).width(widthForEachTd).addClass( "equalWidth" );
+        //console.log(allTds.eq(index));
+    });
+    $(originalTable).children('thead').children('tr').children('th').each(function (index) {
+        allThs.eq(index).width(widthForEachTd).addClass( "equalWidth" );
+        //console.log(allThs.eq(index));
+    })
+
+};
 App.autoCallbacks.registerCallback('reloaddata', function(params){
     initExport(this);
     //initUserPopup(this);
@@ -168,6 +189,9 @@ App.autoCallbacks.registerCallback('columnselector', function(params){
 });
 App.autoCallbacks.registerCallback('ajaxinlinesave', function(params){
 
+});
+App.autoCallbacks.registerCallback('adjustColumnsWidth', function(params){
+    alignColumns();
 });
 
 /**
@@ -564,42 +588,8 @@ jQuery(document).ready(function ($) {
 	})();
 
 	console.log(navigator.sayswho);
-    var alignColumns = function () {
-        tableWidth = $('.table.table-striped').width();
-        if(tableWidth == null)
-        {
-            setTimeout(alignColumns, 1000);
-        }
-        else
-        {
-            console.log(tableWidth);
-            originalTable = $('.table.table-striped').clone();
-            console.log(originalTable);
-            tdsCount = $('.table > tbody > tr:nth-child(2) td').length;
 
-            allTds = $('.table > tbody > tr > td');
-            allThs = $('.table > thead > tr > th');
-            $('.table > tbody > tr').width(tableWidth).css('float','left');
-            console.log(tdsCount);
-            widthForEachTd = tableWidth/tdsCount;
-            $(originalTable).children('tbody').children('tr').children('td').each(function (index) {
-                allTds.eq(index).width(widthForEachTd).addClass( "equalWidth" );
-                //console.log(allTds.eq(index));
-            })
-            $(originalTable).children('thead').children('tr').children('th').each(function (index) {
-                allThs.eq(index).width(widthForEachTd).addClass( "equalWidth" );
-                //console.log(allThs.eq(index));
-            })
-        }
 
-    };
-
-    setTimeout(alignColumns, 3000);
-
-    $('select#col-config').on('change',function () {
-        alert('here');
-        alignColumns();
-    });
 	$('body a:not(.page-content-wrapper a,.expand)').on('click',function (e) {
 		e.preventDefault();
 		var url = $(this).attr('href');
