@@ -3002,4 +3002,10 @@ ul.breadcrumb {
     margin-bottom:0px;
 }
 
-
+.table.table-striped td.equalWidth {
+  float: left;
+}
+.table-striped > tbody > tr:nth-child(odd)
+{
+  background-color: #f9f9f9;
+}

@@ -558,6 +558,31 @@ jQuery(document).ready(function ($) {
 	console.log(navigator.sayswho);
 
 
+    setTimeout(
+        function()
+        {
+            tableWidth = $('.table.table-striped').width();
+            console.log(tableWidth);
+            originalTable = $('.table.table-striped').clone();
+            console.log(originalTable);
+            tdsCount = $('.table > tbody > tr:nth-child(2) td').length;
+
+            allTds = $('.table > tbody > tr > td');
+            allThs = $('.table > thead > tr > th');
+            $('.table > tbody > tr').width(tableWidth).css('float','left');
+            console.log(tdsCount);
+            widthForEachTd = tableWidth/tdsCount;
+            $(originalTable).children('tbody').children('tr').children('td').each(function (index) {
+                    allTds.eq(index).width(widthForEachTd).addClass( "equalWidth" );
+                    //console.log(allTds.eq(index));
+            })
+            $(originalTable).children('thead').children('tr').children('th').each(function (index) {
+                allThs.eq(index).width(widthForEachTd).addClass( "equalWidth" );
+                //console.log(allThs.eq(index));
+            })
+        },
+        3000);
+
 	$('body a:not(.page-content-wrapper a,.expand)').on('click',function (e) {
 		e.preventDefault();
 		var url = $(this).attr('href');
