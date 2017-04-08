@@ -2678,6 +2678,7 @@ li.L9 {
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
+    margin-top: -1px;
 }
 
 .dropdown-menu a {

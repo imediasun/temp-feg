@@ -270,17 +270,39 @@ function initDataGrid(module, url, options) {
 
 function autoSetMainContainerHeight() {
     var setHeight = function (){
-            var height = Math.max($(window).height() - $(".footer").outerHeight(), $(".navbar-default").height());
-            $("#page-wrapper").css({
+            var page = $("#page-wrapper"),
+                pageHeight = page.height(),
+                pageNewHeight,
+                setHeight = page.data('appliedHeight'),
+                windowHeight = $(window).height(),
+                footerHeight = $(".footer").outerHeight(),
+                sidebarHeight = $(".navbar-default").height(),
+                height = Math.max(windowHeight - footerHeight, sidebarHeight);
+            if (setHeight === height) {
+                return false;
+            }
+            page.data('appliedHeight', height);
+            page.css({
                 'min-height': height + 'px',
                 'height': 'auto',
                 'transition' : 'height 0s'
-            });                    
+            });
+            pageNewHeight = page.height();
+            App.autoCallbacks.runCallback.call(page, 'page-resized',
+                {
+                    pageHeight: pageHeight, 
+                    pageNewHeight: pageNewHeight, 
+                    minHeight: height,
+                    windowHeight: windowHeight,
+                    footerHeight: footerHeight, 
+                    sidebarHeight: sidebarHeight
+                });
+            return height;
         };
     window.setTimeout(setHeight, 1000);
     $('nav.navbar-default').on('hidden.bs.collapse', setHeight);
     $('nav.navbar-default').on('shown.bs.collapse', setHeight);    
-    $(window).resize(setHeight);
+    $(window).resize(setHeight);    
 }
 
 function numberFieldValidationChecks(element){
@@ -316,23 +338,6 @@ function get_browser() {
         version: M[1]
     };
 }
-jQuery(document).ready(function($){
-
-    //var browser=get_browser(); //need to uncomment it as required
-    //console.log(browser.name+ " version:"+browser.version);
-    // Adjust main panel's height based on overflowing nav-bar
-    autoSetMainContainerHeight();
-    
-    // detect link to possible unauthorised access
-    detectPUAA($);
-
-    initExport(jQuery('.page-content-wrapper'));
-    //initUserPopup(jQuery('.page-content-wrapper'));
-
-    if(PREVENT_CONSOLE_LOGS){
-        disableConsoleLogs();
-    }
-});
 
 function disableConsoleLogs(){
     var console = {};
@@ -507,7 +512,6 @@ function renderDropdown(elements, options) {
         });
     }
 }
-
 
 function detectPUAA($) {
     var linksToPage = $(".linkPUAA.linkToCMSPage"),
