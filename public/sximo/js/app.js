@@ -636,8 +636,7 @@ jQuery(document).ready(function ($) {
 
 	console.log(navigator.sayswho);
 
-
-	$('body a:not(.page-content-wrapper a,.expand)').on('click',function (e) {
+    $('body #sidemenu a:not(.expand)').on('click',function (e) {
 		e.preventDefault();
 		var url = $(this).attr('href');
 		var href = $(this).attr('href').split('/');
@@ -651,35 +650,36 @@ jQuery(document).ready(function ($) {
 				data: {
 					module:href[href.length - 1]
 				}
-			}).done(function (data) {
-						console.log(data);
-						if(data == false)
-						{
-							$('.ajaxLoading').hide();
-							window.location = url;
-						}
-						else
-						{
-							console.log(data.is_view);
-							//console.log(data['is_view']);
-							if(data.is_view == 1)
-							{
-								window.location = url;
-							}
-							else
-							{
-								$('.ajaxLoading').hide();
-								notyMessageError('You are Not Authorized to this Content');
-							}
-						}
-						//$('.globalLoading').hide();
+			})
+            .done(function (data) {
+                if(data == false)
+                {
+                    $('.ajaxLoading').hide();
+                    notyMessageError('You are Not Authorized to view this page');
+                    //window.location = url;
+                }
+                else
+                {
+                    if(data.is_view == 1)
+                    {
+                        window.location = url;
+                    }
+                    else
+                    {
+                        $('.ajaxLoading').hide();
+                        notyMessageError('You are Not Authorized to view this page.');
+                    }
+                }
+                //$('.globalLoading').hide();
 
-					})
-					.error(function (data) {
-						console.log(data);
-					})
+            })
+            .error(function (data) {
+                notyMessageError('Eror getting permission to the page you are trying to access');
+                //console.log(data);
+            });
 		}
 	});
+	
 //	$('.item_dropdown li a').on('click', function () {
 //		if($(this).parents('.item_title').find(">:first-child").text() != 'My Account')
 //		{
