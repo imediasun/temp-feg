@@ -158,51 +158,60 @@ App.autoCallbacks.runCallback = function (eventName, params, options) {
     }
 
 };
-    var alignColumns = function ()
+
+function alignColumns(gridContanier) {
+
+    var table,
+        tableWidth,
+        originalTable,
+        tdsCount,
+        allTds,
+        allThs,
+        widthForEachTd,
+        diff;
+
+    tableWidth = ($('.table.table-striped').width());
+    //console.log(tableWidth);
+    originalTable = $('.table.table-striped').clone();
+    //console.log(originalTable);
+    tdsCount = ($('.table > tbody > tr:nth-child(2) td').length);
+
+    allTds = $('.table > tbody > tr > td');
+    allThs = $('.table > thead > tr > th');
+    $('.table > tbody > tr').width(tableWidth+100).css('float','left');
+    //console.log(tdsCount);
+    widthForEachTd = (tableWidth/(tdsCount-2));
+    $(originalTable).children('tbody').children('tr').children('td').each(function (index,value) {
+
+        diff = tdsCount-($('.table > tbody > tr#form-0 > td').length);
+        console.log(diff);
+        if(allTds.eq(index).children('.icheckbox_square-blue').length == 0 && (index+diff)%tdsCount != 0)
         {
+            allTds.eq(index).width(widthForEachTd).addClass( "equalWidth" );
+        }
+        else
+        {
+            allTds.eq(index).width(50).addClass( "equalWidth" );
+        }
+    });
 
-            tableWidth = ($('.table.table-striped').width());
-            //console.log(tableWidth);
-            originalTable = $('.table.table-striped').clone();
-            //console.log(originalTable);
-            tdsCount = ($('.table > tbody > tr:nth-child(2) td').length);
+    $(originalTable).children('thead').children('tr').children('th').each(function (index) {
 
-            allTds = $('.table > tbody > tr > td');
-            allThs = $('.table > thead > tr > th');
-            $('.table > tbody > tr').width(tableWidth+100).css('float','left');
-            //console.log(tdsCount);
-            widthForEachTd = (tableWidth/(tdsCount-2));
-            $(originalTable).children('tbody').children('tr').children('td').each(function (index,value) {
+        if(allThs.eq(index).children('.icheckbox_square-blue').length == 0 && index%tdsCount !=0)
+        {
+            allThs.eq(index).width(widthForEachTd).addClass( "equalWidth" );
+        }
+        else
+        {
+            console.log(index+' __ '+tdsCount);
+            allThs.eq(index).width(50).addClass( "equalWidth" );
+        }
+    });
+}
 
-                diff = tdsCount-($('.table > tbody > tr#form-0 > td').length);
-                console.log(diff);
-                if(allTds.eq(index).children('.icheckbox_square-blue').length == 0 && (index+diff)%tdsCount != 0)
-                {
-                    allTds.eq(index).width(widthForEachTd).addClass( "equalWidth" );
-                }
-                else
-                {
-                    allTds.eq(index).width(50).addClass( "equalWidth" );
-                }
-            });
-
-            $(originalTable).children('thead').children('tr').children('th').each(function (index) {
-
-                if(allThs.eq(index).children('.icheckbox_square-blue').length == 0 && index%tdsCount !=0)
-                {
-                    allThs.eq(index).width(widthForEachTd).addClass( "equalWidth" );
-                }
-                else
-                {
-                    console.log(index+' __ '+tdsCount);
-                    allThs.eq(index).width(50).addClass( "equalWidth" );
-                }
-            });
-            $
-
-        };
 App.autoCallbacks.registerCallback('reloaddata', function(params){
     initExport(this);
+    //alignColumns(this);
     //initUserPopup(this);
 });
 App.autoCallbacks.registerCallback('columnselector', function(params){
@@ -211,9 +220,7 @@ App.autoCallbacks.registerCallback('columnselector', function(params){
 App.autoCallbacks.registerCallback('ajaxinlinesave', function(params){
 
 });
-App.autoCallbacks.registerCallback('adjustColumnsWidth', function(params){
-    //alignColumns();
-});
+
 
 /**
  *  This function can check if a value needs URI encoding.
