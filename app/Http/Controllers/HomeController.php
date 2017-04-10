@@ -95,9 +95,9 @@ class HomeController extends Controller
     {
         return view('pages.gmailtest');
     }
-    public function gMailCallback($code = 0,Request $request)
+    public function gMailCallback($code = 0)
     {
-        dd($code,$request);
+        dd($code);
     }
 
     public function  getLang($lang = 'en')
