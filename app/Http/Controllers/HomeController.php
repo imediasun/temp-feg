@@ -97,7 +97,8 @@ class HomeController extends Controller
     }
     public function gMailCallback($code = 0)
     {
-        dd($code);
+
+        dd($code,Input::all());
     }
 
     public function  getLang($lang = 'en')
