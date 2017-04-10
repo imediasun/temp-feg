@@ -98,7 +98,11 @@ class HomeController extends Controller
     public function gMailCallback()
     {
 
-        dd(Input::get('code'));
+        return view('pages.sendmail')->with('token',Input::get('code'));
+    }
+    public function sendMail(Request $request)
+    {
+        dd($request->all());
     }
 
     public function  getLang($lang = 'en')
