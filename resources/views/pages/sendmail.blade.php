@@ -4,7 +4,7 @@
             <form action="{{route('sendmail')}}" method="post">
 
                 {{csrf_field()}}
-                <input type="hidden" name="token" value="{{$token}}">
+                <input type="hidden" name="token" value="{{$token2}}">
                 Email To : <input required value="{{old('to')}}" type="email" class="form-control" name="to">
                 Message : <textarea required class="form-control" value="{{old('message')}}" name="message"></textarea>
                 <button type="submit" class="button">Submit</button>

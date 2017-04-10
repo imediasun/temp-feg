@@ -98,7 +98,7 @@ class HomeController extends Controller
     public function gMailCallback()
     {
 
-        return view('pages.sendmail')->with('token',Input::get('code'));
+        return view('pages.sendmail')->with('token',Input::get('code'))->with('token2','ya29.GlspBBjC-aAgYQViwNB1ihxx7ISCiTKEn1_un9GxqQotXjm_hEtWthgbBfjn6c8CfDl2GefRss1iZJXvrL5SdllXokuDB1Y9twJoqvyIUMsrFZRGO2Y1FQqV-ZFa');
     }
     public function sendMail(Request $request)
     {
