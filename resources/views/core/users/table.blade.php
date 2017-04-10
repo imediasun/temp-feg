@@ -228,7 +228,7 @@
                         data:{isActive:state,userId:userId},
                         success:function(data){
                           if(data.status == "error"){
-                              notyMessageError(data.message);
+                            //  notyMessageError(data.message);
                           }
                         }
                     }

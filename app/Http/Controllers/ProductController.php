@@ -430,10 +430,15 @@ class ProductController extends Controller
     {
         $isActive = $request->get('isActive');
         $productId = $request->get('productId');
-        echo $isActive;
-        if ($isActive == "true") {
-            $update = \DB::update('update products set inactive=1 where id=' . $productId);
-        } else {
+        if ($isActive == "true" && \Session::get('product_type') == "productsindevelopment") {
+            $update = \DB::update('update products set inactive = 1,in_development = 0 where id=' . $productId);
+        }
+        elseif($isActive == "true")
+        {
+            $update = \DB::update('update products set inactive = 1 where id=' . $productId);
+        }
+        else
+         {
             $update = \DB::update('update products set inactive=0 where id=' . $productId);
         }
         if ($update) {

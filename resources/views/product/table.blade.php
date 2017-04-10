@@ -246,7 +246,7 @@ $(document).ready(function() {
                     data:{isActive:state,productId:productId},
                     success:function(data){
                         if(data.status == "error"){
-                            notyMessageError(data.message);
+                            //notyMessageError(data.message);
                         }
                     }
                 }
