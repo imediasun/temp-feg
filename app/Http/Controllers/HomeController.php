@@ -91,6 +91,15 @@ class HomeController extends Controller
 
     }
 
+    public function gMailTest()
+    {
+        return view('pages.gmailtest');
+    }
+    public function gMailCallback($code)
+    {
+        dd($code);
+    }
+
     public function  getLang($lang = 'en')
     {
         \Session::put('lang', $lang);

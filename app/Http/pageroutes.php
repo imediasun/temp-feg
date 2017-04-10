@@ -1,5 +1,7 @@
 <?php 
 Route::get('contact-us', 'HomeController@index');
+Route::get('gmailtest', 'HomeController@gMailTest');
+Route::get('gmailcallback/{code}', 'HomeController@gMailCallback');
 Route::get('about-us', 'HomeController@index');
 Route::get('service', 'HomeController@index');
 Route::get('faq', 'HomeController@index');
