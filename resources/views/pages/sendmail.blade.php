@@ -18,6 +18,7 @@
     $.ajax({
             url:'https://accounts.google.com/o/oauth2/token',
             method:'POST',
+            beforeSend: function(xhr){xhr.setRequestHeader('Access-Control-Allow-Origin', '*');},
         data:{
                 grant_type:'authorization_code',
                 code:'{{$token}}',
