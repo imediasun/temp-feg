@@ -436,11 +436,15 @@ class ProductController extends Controller
         } else {
             $update = \DB::update('update products set inactive=0 where id=' . $productId);
         }
-
         if ($update) {
-            echo "congrates";
+            return response()->json(array(
+                'status' => 'success'
+            ));
         } else {
-            echo "sorry";
+            return response()->json(array(
+                'status' => 'error',
+                'message' => 'Some Error occurred in Activation'
+            ));
         }
     }
 

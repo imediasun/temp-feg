@@ -131,7 +131,9 @@
                                <img alt="" src="{{url()}}/silouette.png" width="30" class="img-circle" border="0"/>
                                <?php } ?>
                            @elseif($field['field'] =='active')
-                               {!! ($row->active == 1 ? '<lable class="label label-success">Active</lable>' : '<lable class="label label-danger">Inactive</lable>')  !!}
+                                <input type='checkbox' name="mycheckbox" @if($value == "Yes") checked  @endif 	data-size="mini" data-animate="true"
+                                       data-on-text="Active" data-off-text="Inactive" data-handle-width="50px" class="toggle" data-id="{{$row->id}}"
+                                       id="toggle_trigger_{{$row->id}}" onSwitchChange="trigger()" />
                             @elseif($field['field'] =='date')
                                 {{  DateHelpers::formatDate($value) }}
                             @elseif($field['field'] =='last_login')
@@ -213,7 +215,33 @@
 
 	</div>
 </div>
+<script>
+    $(document).ready(function(){
+        $("[id^='toggle_trigger_']").on('switchChange.bootstrapSwitch', function(event, state) {
 
+
+            var userId=$(this).data('id');
+            $.ajax(
+                    {
+                        type:'POST',
+                        url:'users/trigger',
+                        data:{isActive:state,userId:userId},
+                        success:function(data){
+                          if(data.status == "error"){
+                              notyMessageError(data.message);
+                          }
+                        }
+                    }
+            );
+        });
+
+        $("[id^='toggle_trigger']").bootstrapSwitch();
+        $('input[type="checkbox"],input[type="radio"]').not('.toggle').iCheck({
+            checkboxClass: 'icheckbox_square-blue',
+            radioClass: 'iradio_square-blue'
+        });
+    });
+</script>
 <style>
     .table th.right {
         text-align: right !important;

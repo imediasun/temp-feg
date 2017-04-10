@@ -134,7 +134,15 @@ if (!$colconfigs) {
                         <?php $limited = isset($field['limited']) ? $field['limited'] : ''; ?>
                         @if(SiteHelpers::filterColumn($limited ))
                                 <td align="<?php echo $field['align'];?>" data-values="{{ isset($row->$field['field'])?$row->$field['field']:"" }}"
-                                    data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">{!! $value !!}</td>
+                                    data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
+                                    @if($field['field'] =='active')
+                                        <input type='checkbox' name="mycheckbox" @if($value == "Yes") checked  @endif 	data-size="mini" data-animate="true"
+                                               data-on-text="Active" data-off-text="Inactive" data-handle-width="50px" class="toggle" data-id="{{$row->id}}"
+                                               id="toggle_trigger_{{$row->id}}" onSwitchChange="trigger()" />
+                                    @else
+                                    {!! $value !!}
+                                @endif
+                                </td>
                         @endif
                         <?php
                         endif;
@@ -182,8 +190,25 @@ if (!$colconfigs) {
 @if($setting['inline'] =='true') @include('sximo.module.utility.inlinegrid') @endif
 <script>
     $(document).ready(function () {
+        $("[id^='toggle_trigger_']").on('switchChange.bootstrapSwitch', function(event, state) {
+            var locationId=$(this).data('id');
+            $.ajax(
+                    {
+                        type:'POST',
+                        url:'location/trigger',
+                        data:{isActive:state,locationId:locationId},
+                        success:function(data){
+                            if(data.status == "error"){
+                                notyMessageError(data.message);
+                            }
+                        }
+                    }
+            );
+        });
+
+        $("[id^='toggle_trigger']").bootstrapSwitch();
         $('.tips').tooltip();
-        $('input[type="checkbox"],input[type="radio"]').iCheck({
+        $('input[type="checkbox"],input[type="radio"]').not('.toggle').iCheck({
             checkboxClass: 'icheckbox_square-blue',
             radioClass: 'iradio_square-blue'
         });
