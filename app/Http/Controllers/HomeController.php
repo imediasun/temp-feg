@@ -95,10 +95,10 @@ class HomeController extends Controller
     {
         return view('pages.gmailtest');
     }
-    public function gMailCallback($code = 0)
+    public function gMailCallback()
     {
 
-        dd($code,Input::all());
+        dd(Input::get('code'));
     }
 
     public function  getLang($lang = 'en')
