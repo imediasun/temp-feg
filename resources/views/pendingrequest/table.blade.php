@@ -26,7 +26,7 @@
             @endif
         @endif
         @include( $pageModule.'/toolbar',['colconfigs' => SiteHelpers::getRequiredConfigs($module_id)])
-            <div class="sbox-content" style="border: none;">
+
 	 <?php echo Form::open(array('url'=>'pendingrequest/delete/', 'class'=>'form-horizontal' ,'id' =>'SximoTable'  ,'data-parsley-validate'=>'' )) ;?>
 <div class="table-responsive">	
 	@if(count($rowData)>=1)
@@ -172,7 +172,7 @@
 	<?php echo Form::close() ;?>
 	@include('ajaxfooter')
 	
-	</div>
+
 </div>
     </div>
 	
@@ -183,7 +183,7 @@ $(document).ready(function() {
 	$('.tips').tooltip();	
 	$('input[type="checkbox"],input[type="radio"]').iCheck({
 		checkboxClass: 'icheckbox_square-blue',
-		radioClass: 'iradio_square-blue',
+		radioClass: 'iradio_square-blue'
 	});	
 	$('#{{ $pageModule }}Table .checkall').on('ifChecked',function(){
 		$('#{{ $pageModule }}Table input[type="checkbox"]').iCheck('check');
