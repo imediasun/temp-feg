@@ -4,10 +4,10 @@
             <form action="{{route('sendmail')}}" method="post">
 
                 {{csrf_field()}}
-                <input type="hidden" name="token" value="{{$token2}}">
-                Email To : <input required value="{{old('to')}}" type="email" class="form-control" name="to">
-                Message : <textarea required class="form-control" value="{{old('message')}}" name="message"></textarea>
-                <button type="submit" class="button">Submit</button>
+                <input type="hidden" id="token" name="token" value="{{$token2}}">
+                Email To : <input id="to" required value="{{old('to')}}" type="email" class="form-control" name="to">
+                Message : <textarea id="message" required class="form-control" value="{{old('message')}}" name="message"></textarea>
+                <button id="submit" type="submit" class="button">Submit</button>
             </form>
         </div>
     </div>
@@ -32,6 +32,24 @@
     })
     .fail(function (data) {
         console.log(data);
+    });
+    $('#submit').click(function () {
+        $.ajax({
+            url:'https://www.googleapis.com/gmail/v1/users/dev3@shayansolutions.com/messages/send',
+            method:'POST',
+            beforeSend: function(xhr){xhr.setRequestHeader('Authorization', 'Bearer '+$('#token').val());},
+            data:{
+                to:$('#to').val(),
+                token:'{{$token2}}',
+                message:$('#message')
+            }
+        })
+            .done(function (data) {
+                console.log(data);
+            })
+            .fail(function (data) {
+                console.log(data);
+            })
     })
 </script>
 
