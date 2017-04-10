@@ -393,5 +393,25 @@ function getIsLocationAvailable($id)
         ));
     }
 }
+    function postTrigger(Request $request)
+    {
+        $isActive = $request->get('isActive');
+        $locationId = $request->get('locationId');
+        if ($isActive == "true") {
+            $update = \DB::update('update location set active=1 where id=' . $locationId);
+        } else {
+            $update = \DB::update('update location set active=0 where id=' . $locationId);
+        }
 
+        if ($update) {
+            return response()->json(array(
+                'status' => 'success'
+            ));
+        } else {
+            return response()->json(array(
+                'status' => 'error',
+                'message' => 'Some Error occurred in Activation'
+            ));
+        }
+    }
 }

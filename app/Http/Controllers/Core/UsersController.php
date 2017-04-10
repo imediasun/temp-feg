@@ -603,4 +603,25 @@ public function getUserDetails($id)
 return $this->getIndex($request,$id);
 //    return view('core.users.index', $data);
 }
+    function postTrigger(Request $request)
+    {
+        $isActive = $request->get('isActive');
+        $userId = $request->get('userId');
+        if ($isActive == "true") {
+            $update = \DB::update('update users set active=1 where id=' . $userId);
+        } else {
+            $update = \DB::update('update users set active=0 where id=' . $userId);
+        }
+
+        if ($update) {
+            return response()->json(array(
+                'status' => 'success'
+            ));
+        } else {
+            return response()->json(array(
+                'status' => 'error',
+                'message' => 'Some Error occurred in Activation'
+            ));
+        }
+    }
 }

@@ -77,6 +77,7 @@ class product extends Sximo  {
               else {
                   \Session::put('sub_type',"");
                   $return .= " AND products.in_development = 1";
+
               }
             }
             else{

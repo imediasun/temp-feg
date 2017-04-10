@@ -334,6 +334,10 @@ body.minimize-sidemenu .navbar-default .nav > li > .nav-second-level li a {
 body.minimize-sidemenu .navbar-static-side {
   width: 70px;
 }
+.profile-element
+{
+    overflow:hidden;
+}
 body.minimize-sidemenu .profile-element,
 body.minimize-sidemenu .nav-label,
 body.minimize-sidemenu .nav-second-level,
@@ -2348,7 +2352,7 @@ z-index: 2;
 .sbox-content {
   background-color: #f9f9f9;
   color: inherit;
-  padding: 20px;
+  padding: 20px;  padding-bottom:0px;
   border-color: #ddd;
   border-image: none;
   border-style: solid solid none;
