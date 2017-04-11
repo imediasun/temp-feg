@@ -93,11 +93,11 @@ function confirmDelete(id, title)
         location.href="{{ url() }}/merchindisetheminggallary/delete/"+id;
     }
 }
-var angle=0;
+//var angle=0;
    function rotateTo(ele){
         var id=$(ele).data('id');
-        angle +=$(ele).data('value');
-       $('.fancybox-skin').css({'transform': 'rotate(' + angle + 'deg)'});
+        var angle = $(ele).data('value');
+       $('.fancybox-inner').css({'transform': 'rotate(' + angle + 'deg)'});
        $.ajax(
                    {
                        type:'POST',

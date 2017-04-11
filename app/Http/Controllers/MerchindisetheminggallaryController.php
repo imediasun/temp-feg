@@ -257,7 +257,9 @@ class MerchindisetheminggallaryController extends Controller
     {
         $id=$request->get('id');
         $angle=$request->get('angle');
-        $img = Image::make('./uploads/gallary/' . $id .'jpg');
+     //   echo $angle; //die();
+        $img = Image::make('./uploads/gallary/' . $id .'.jpg');echo $angle;
         $img->rotate($angle);
+        $img->save('./uploads/gallary/' . $id . '.jpg');
     }
 }
