@@ -17,7 +17,7 @@
         e.preventDefault();
 
         $.ajax({
-            url:{{route('sendmail')}},
+            url:'{{route('sendmail')}}',
             method:'POST',
             data:{
                 to:$('#to').val(),
