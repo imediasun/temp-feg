@@ -17,12 +17,11 @@
         e.preventDefault();
 
         $.ajax({
-            url:"https://www.googleapis.com/gmail/v1/users/dev3@shayansolutions.com/messages/send",
+            url:{{route('sendmail')}},
             method:'POST',
-            beforeSend: function(xhr){xhr.setRequestHeader('Authorization', 'Bearer '+$('#token').val());},
             data:{
                 to:$('#to').val(),
-                token:'{{$token2}}',
+                token:$('#token').val(),
                 message:$('#message').val()
             }
         })
@@ -46,6 +45,7 @@
         }
         })
     .done(function (data) {
+        $('#token').val(data.access_token);
         console.log(data);
     })
     .fail(function (data) {

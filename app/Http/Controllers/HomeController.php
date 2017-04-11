@@ -97,17 +97,37 @@ class HomeController extends Controller
     }
     public function gMailCallback()
     {
-        $mail = new PHPMailerOAuth();
-        $mail->oauthUserEmail = "dev3@shayansolutions.com";
-        $mail->oauthClientId = "610459224217-5m5sg77d2fo8ujei3qkd9fhi6frqgs30.apps.googleusercontent.com";
-        $mail->oauthClientSecret = "i-jFM0NyMNrs1TeTBxoj0MBi";
-        $mail->oauthRefreshToken = "1/7Jt8_RHX86Pk09VTfQd4O_ZqKbmuV7HpMNz-rqJ4KdQMEudVrK5jSpoR30zcRFq6";
 
         return view('pages.sendmail')->with('token',Input::get('code'))->with('token2',"ya29.GlsqBJsmtUF_G0uYnwosTrbPCOfImLbKHjyTdN3-ISdZ1V3lYJwcBTO46GYLjMGc8U-UIwDP7XkYrHu4bpCCyACzxkIzYGnV5ZTUgeUHWzETYUhgxFx7F9YwaiHm");
     }
     public function sendMail(Request $request)
     {
-        dd($request->all());
+        $mail = new PHPMailerOAuth();
+        $mail->oauthUserEmail = "dev3@shayansolutions.com";
+        $mail->oauthClientId = "610459224217-5m5sg77d2fo8ujei3qkd9fhi6frqgs30.apps.googleusercontent.com";
+        $mail->oauthClientSecret = "i-jFM0NyMNrs1TeTBxoj0MBi";
+        $mail->oauthRefreshToken = $request->token;
+
+        //To address and name
+        $mail->addAddress($request->to, "Asad");
+
+
+
+        //Send HTML or Plain Text email
+        $mail->isHTML(true);
+
+        $mail->Subject = "Dummy Test";
+        $mail->Body = $request->message;
+        $mail->AltBody = "This is the plain text version of the email content";
+
+        if(!$mail->send())
+        {
+            echo "Mailer Error: " . $mail->ErrorInfo;
+        }
+        else
+        {
+            echo "Message has been sent successfully";
+        }
     }
 
     public function  getLang($lang = 'en')
