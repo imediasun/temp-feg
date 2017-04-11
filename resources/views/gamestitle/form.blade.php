@@ -40,8 +40,7 @@
 					</label>
 					<div class="col-md-6">
                         <input type="hidden" name="mfg_id" id="mfg_id" class="" style="width:98%" value="{{ $row['mfg_id'] }}"/>
-
-					 </div>
+                    </div>
 					 <div class="col-md-2">
 
 					 </div>
@@ -117,7 +116,7 @@
                                               @foreach($images as $img)
                                                       <div  class="game_imgs">
                                                           <div class="show-image">
-                                                              <img src="./uploads/games/images/{{$img}}" width="50"  />
+                                                              {!! SiteHelpers::showUploadedFile($img,'/uploads/games/images/',50,false,$img) !!}
                                                           <i  class="fa fa-times delete" aria-hidden="true" id="{{$img}}"></i>
                                                               <input type="hidden"  name="imgs[]" value="{{$img}}"/>
                                                       </div>
