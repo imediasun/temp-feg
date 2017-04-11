@@ -199,7 +199,7 @@ if (!$colconfigs) {
                         data:{isActive:state,locationId:locationId},
                         success:function(data){
                             if(data.status == "error"){
-                                notyMessageError(data.message);
+                               // notyMessageError(data.message);
                             }
                         }
                     }
