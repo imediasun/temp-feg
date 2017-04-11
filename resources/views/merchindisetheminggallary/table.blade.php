@@ -80,9 +80,10 @@ $(document).ready(function() {
             id=$this.data('id'),
             href=$this.attr('href'),
             title=$this.attr('title'),
+            rotatebtns= '<div class="rotate-section"><button onclick="rotateTo(this)" class="btn btn-primary btn-xs" data-id='+id+' data-value= "+90">+90*</buton><button onclick="rotateTo(this)" class="btn btn-primary btn-xs" data-id='+id+' data-value="-90">-90*</buton><button onclick="rotateTo(this)" class="btn btn-primary btn-xs" data-id='+id+' data-value="+180">+180*</buton><button onclick="rotateTo(this)" class="btn btn-primary btn-xs" data-id='+id+' data-value="-180">-180*</buton></div>',
             deleteLink = '<a href="javascript:void(0);" onclick="confirmDelete('+ id +',\''+title+'\');" >Delete</a>',
-             fancyTitle =  '<div>' + title + '<br>' + deleteLink + '</div>';
-             $this.data('fancybox-title', fancyTitle);
+            fancyTitle =  '<div>'+rotatebtns + title + '<br>' + deleteLink + '</div>';
+            $this.data('fancybox-title', fancyTitle);
     });
 });
 function confirmDelete(id, title)
@@ -92,6 +93,24 @@ function confirmDelete(id, title)
         location.href="{{ url() }}/merchindisetheminggallary/delete/"+id;
     }
 }
+var angle=0;
+   function rotateTo(ele){
+        var id=$(ele).data('id');
+        angle +=$(ele).data('value');
+       $('.fancybox-skin').css({'transform': 'rotate(' + angle + 'deg)'});
+       $.ajax(
+                   {
+                       type:'POST',
+                       url:'merchindisetheminggallary/rotate',
+                       data:{id:id,angle:angle},
+                       success:function(data){
+                           //if(data.status == "error"){
+                           //notyMessageError(data.message);
+                           // }
+                       }
+                   }
+           );
+   }
 </script>
 <style>
 .table th.right { text-align:right !important;}
@@ -104,5 +123,12 @@ function confirmDelete(id, title)
         border-radius: 3px;
         padding: 0;
         margin: 3px;
+    }
+
+.rotate-section button
+    {
+        margin:2px;
+        width:50px;
+        display: inline-block;
     }
 </style>

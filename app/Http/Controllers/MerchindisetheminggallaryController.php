@@ -253,4 +253,11 @@ class MerchindisetheminggallaryController extends Controller
                 'message' => \Lang::get('core.note_error')));
         }
     }
+    function postRotate(Request $request)
+    {
+        $id=$request->get('id');
+        $angle=$request->get('angle');
+        $img = Image::make('./uploads/gallary/' . $id .'jpg');
+        $img->rotate($angle);
+    }
 }
