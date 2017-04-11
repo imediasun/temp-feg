@@ -1,7 +1,7 @@
 <?php namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
+use PHPMailerOAuth;
 use Validator, Input, Redirect;
 
 class HomeController extends Controller
@@ -97,6 +97,11 @@ class HomeController extends Controller
     }
     public function gMailCallback()
     {
+        $mail = new PHPMailerOAuth();
+        $mail->oauthUserEmail = "dev3@shayansolutions.com";
+        $mail->oauthClientId = "610459224217-5m5sg77d2fo8ujei3qkd9fhi6frqgs30.apps.googleusercontent.com";
+        $mail->oauthClientSecret = "i-jFM0NyMNrs1TeTBxoj0MBi";
+        $mail->oauthRefreshToken = "1/7Jt8_RHX86Pk09VTfQd4O_ZqKbmuV7HpMNz-rqJ4KdQMEudVrK5jSpoR30zcRFq6";
 
         return view('pages.sendmail')->with('token',Input::get('code'))->with('token2',"ya29.GlsqBJsmtUF_G0uYnwosTrbPCOfImLbKHjyTdN3-ISdZ1V3lYJwcBTO46GYLjMGc8U-UIwDP7XkYrHu4bpCCyACzxkIzYGnV5ZTUgeUHWzETYUhgxFx7F9YwaiHm");
     }
