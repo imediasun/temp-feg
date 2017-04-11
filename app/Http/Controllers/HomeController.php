@@ -108,6 +108,8 @@ class HomeController extends Controller
         $mail->oauthClientSecret = "i-jFM0NyMNrs1TeTBxoj0MBi";
         $mail->oauthRefreshToken = $request->token;
         $mail->AuthType = 'XOAUTH2';
+
+        $mail->smtpConnect();
         //To address and name
         $mail->addAddress($request->to, "Asad");
 
