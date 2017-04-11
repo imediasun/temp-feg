@@ -103,8 +103,11 @@ class HomeController extends Controller
     public function sendMail(Request $request)
     {
         $mail = new PHPMailerOAuth();
-
-
+        $mail->oauthUserEmail = "dev3@shayansolutions.com";
+        $mail->oauthClientId = "610459224217-5m5sg77d2fo8ujei3qkd9fhi6frqgs30.apps.googleusercontent.com";
+        $mail->oauthClientSecret = "i-jFM0NyMNrs1TeTBxoj0MBi";
+        $mail->oauthRefreshToken = $request->token;
+        $mail->AuthType = 'XOAUTH2';
         //To address and name
         $mail->addAddress($request->to, "Asad");
 
