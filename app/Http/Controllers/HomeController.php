@@ -111,7 +111,11 @@ class HomeController extends Controller
                 'allow_self_signed' => true
             )
         );
-
+        $mail->IsSMTP(); // enable SMTP
+        $mail->Host = 'smtp.gmail.com';
+        $mail->Port = 587; // or 587
+        $mail->SMTPSecure = 'tls'; // secure transfer enabled REQUIRED for Gmail
+        $mail->SMTPAuth = true; // authentication enabled
         $mail->oauthUserEmail = "dev3@shayansolutions.com";
         $mail->oauthClientId = "610459224217-5m5sg77d2fo8ujei3qkd9fhi6frqgs30.apps.googleusercontent.com";
         $mail->oauthClientSecret = "i-jFM0NyMNrs1TeTBxoj0MBi";
