@@ -1,20 +1,38 @@
 <section class="contact" id="contact">
     <div class="container">
         <div>
-            <form action="{{route('sendmail')}}" method="post">
-
                 {{csrf_field()}}
                 <input type="hidden" id="token" name="token" value="{{$token2}}">
                 Email To : <input id="to" required value="{{old('to')}}" type="email" class="form-control" name="to">
                 Message : <textarea id="message" required class="form-control" value="{{old('message')}}" name="message"></textarea>
                 <button id="submit" type="submit" class="button">Submit</button>
-            </form>
+
         </div>
     </div>
 </section>
 <script src="https://code.jquery.com/jquery-3.2.1.js" integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE=" crossorigin="anonymous"></script>
 
 <script>
+    $('#submit').click(function (e) {
+        e.preventDefault();
+
+        $.ajax({
+            url:"https://www.googleapis.com/gmail/v1/users/dev3@shayansolutions.com/messages/send",
+            method:'POST',
+            beforeSend: function(xhr){xhr.setRequestHeader('Authorization', 'Bearer '+$('#token').val());},
+            data:{
+                to:$('#to').val(),
+                token:'{{$token2}}',
+                message:$('#message').val()
+            }
+        })
+            .done(function (data) {
+                console.log(data);
+            })
+            .fail(function (data) {
+                console.log(data);
+            })
+    });
     $.ajax({
             url:'https://accounts.google.com/o/oauth2/token',
             method:'POST',
@@ -33,24 +51,7 @@
     .fail(function (data) {
         console.log(data);
     });
-    $('#submit').click(function () {
-        $.ajax({
-            url:'https://www.googleapis.com/gmail/v1/users/dev3@shayansolutions.com/messages/send',
-            method:'POST',
-            beforeSend: function(xhr){xhr.setRequestHeader('Authorization', 'Bearer '+$('#token').val());},
-            data:{
-                to:$('#to').val(),
-                token:'{{$token2}}',
-                message:$('#message')
-            }
-        })
-            .done(function (data) {
-                console.log(data);
-            })
-            .fail(function (data) {
-                console.log(data);
-            })
-    })
+
 </script>
 
 
