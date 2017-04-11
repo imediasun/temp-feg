@@ -103,6 +103,15 @@ class HomeController extends Controller
     public function sendMail(Request $request)
     {
         $mail = new PHPMailerOAuth();
+
+        $mail->SMTPOptions = array(
+            'ssl' => array(
+                'verify_peer' => false,
+                'verify_peer_name' => false,
+                'allow_self_signed' => true
+            )
+        );
+
         $mail->oauthUserEmail = "dev3@shayansolutions.com";
         $mail->oauthClientId = "610459224217-5m5sg77d2fo8ujei3qkd9fhi6frqgs30.apps.googleusercontent.com";
         $mail->oauthClientSecret = "i-jFM0NyMNrs1TeTBxoj0MBi";
