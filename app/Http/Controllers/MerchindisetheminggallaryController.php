@@ -51,7 +51,7 @@ class MerchindisetheminggallaryController extends Controller
         $this->data['module_id'] = $module_id;
         if (Input::has('config_id')) {
             $config_id = Input::get('config_id');
-            \Session::put('config_id',$config_id);
+            \Session::put('config_id', $config_id);
         } elseif (\Session::has('config_id')) {
             $config_id = \Session::get('config_id');
         } else {
@@ -196,8 +196,9 @@ class MerchindisetheminggallaryController extends Controller
             $data['users'] = $request->get('employees_involved');
             $data['image_category'] = "mer";
             $data['batch'] = str_pad(mt_rand(0, 999999), 6, '0', STR_PAD_LEFT);
-            $files = $request->file('merch_image');$i=0;
-            foreach($files as $file) {
+            $files = $request->file('merch_image');
+            $i = 0;
+            foreach ($files as $file) {
                 $img = Image::make($file->getRealPath());
                 $mime = $img->mime();
                 if ($mime == 'image/jpeg') {
@@ -240,8 +241,8 @@ class MerchindisetheminggallaryController extends Controller
 
         if ($id) {
             $this->model->destroy($id);
-           $image_path = array(public_path() . '/uploads/gallary/' . $id . ".jpg", public_path() . '/uploads/gallary' . $id . "_thumb.jpg");
-             foreach ($image_path as $img) {
+            $image_path = array(public_path() . '/uploads/gallary/' . $id . ".jpg", public_path() . '/uploads/gallary' . $id . "_thumb.jpg");
+            foreach ($image_path as $img) {
                 if (file_exists($img)) {
                     unlink($img);
                 }
@@ -252,5 +253,35 @@ class MerchindisetheminggallaryController extends Controller
                 'status' => 'error',
                 'message' => \Lang::get('core.note_error')));
         }
+    }
+
+    function postRotate(Request $request)
+    {
+        $id = $request->get('id');
+        $angle = $request->get('angle');
+        $filename = "image.jpg";
+        if (abs($angle) == 90) {
+            $angle = -$angle;
+        }
+// Load the image
+        $img = Image::make('./uploads/gallary/' . $id . '.jpg');
+        $imgThumb = Image::make('./uploads/gallary/' . $id . '_thumb.jpg');
+// Rotate
+        $img->rotate($angle);
+        $imgThumb->rotate($angle);
+//and save it on your server...
+        if($img->save('./uploads/gallary/' . $id .'.jpg'))
+        {
+            $imgThumb->save('./uploads/gallary/' . $id .'_thumb.jpg');
+            return response()->json(array(
+                'status' => 'success',
+                'message' => \Lang::get('Image Rotated Successfully')));
+        }
+        else{
+            return response()->json(array(
+                'status' => 'error',
+                'message' => \Lang::get('Some Error occurred in rotating the image')));
+        }
+
     }
 }
