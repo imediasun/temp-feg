@@ -1,5 +1,6 @@
 <?php namespace App\Http\Controllers;
 
+use App\User;
 use Illuminate\Http\Request;
 use PHPMailerOAuth;
 use Validator, Input, Redirect, Auth;
@@ -97,7 +98,7 @@ class HomeController extends Controller
     }
     public function saveToken(Request $request)
     {
-        $user = Auth::user();
+        $user = User::find($request->user_id);
         $user->oauth_token = $request->access_token;
         $user->save();
         return 'Token Saved';

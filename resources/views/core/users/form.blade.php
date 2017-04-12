@@ -233,13 +233,6 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="form-group">
-
-                            <label for="ipt" class=" control-label col-md-4 text-left"> </label>
-                            <div class="col-md-8">
-                                Google Account Info
-                            </div>
-                        </div>
 
 
                         {{--<div class="form-group">
@@ -264,24 +257,32 @@
                                 <p class="bg-info" style="padding: 5px">{!! Lang::get('core.gmail_smtp_connect_failed') !!}</p>
                             </div>
                         </div>--}}
-                        <div class="form-group">
-                            <label for="ipt"
-                                   class=" control-label col-md-4"> Connect With Gmail </label>
-                            <div class="col-md-8">
-                                @if(Auth::user()->oauth_token)
-                                    <button type="button" disabled
-                                            class="btn btn-success btn-sm connectGmail">
-                                        <i class="fa  fa-check-circle "></i> Connected
-                                    </button>
-                                @else
-                                    <button type="button" onclick="location.href='{{$oauth_url}}' "
-                                            class="btn btn-success btn-sm connectGmail">
-                                        <i class="fa  fa-check-circle-o "></i> Connect
-                                    </button>
-                                @endif
-                            </div>
-                        </div>
+                        @if($row['id'] !='')
+                            <div class="form-group">
 
+                                <label for="ipt" class=" control-label col-md-4 text-left"> </label>
+                                <div class="col-md-8">
+                                    Google Account Info
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="ipt"
+                                       class=" control-label col-md-4"> Connect With Gmail </label>
+                                <div class="col-md-8">
+                                    @if($row['oauth_token'])
+                                        <button type="button" disabled
+                                                class="btn btn-success btn-sm connectGmail">
+                                            <i class="fa  fa-check-circle "></i> Connected
+                                        </button>
+                                    @else
+                                        <button type="button" onclick="location.href='{{$oauth_url}}' "
+                                                class="btn btn-success btn-sm connectGmail">
+                                            <i class="fa  fa-check-circle-o "></i> Connect
+                                        </button>
+                                    @endif
+                                </div>
+                            </div>
+                        @endif
                     </div>
 
 
@@ -326,6 +327,7 @@ $('.ajaxLoading').show();
             })
                 .done(function (data) {
                     console.log(data);
+                    data.user_id={{$row['id']}}
                     $.ajax({
                         url:'{{route("save_token")}}',
                         type:'post',
