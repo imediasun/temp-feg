@@ -42,7 +42,7 @@
                         $rel="gallery".$row->loc_id;
                         $check_mul=$row->loc_id;
                         ?>
-                        <a @if(!$show)) style="display:none" @else style="display:inline" @endif  title=" {{ $row->Location }} " class="previewImage fancybox" data-fancybox-group="{{$rel}}"  rel="{{$rel}}" data-id="{{ $row->id }}" href="{{ url() }}/uploads/gallary/{{ $row->id }}.jpg">
+                        <a @if(!$show)) style="display:none" @else style="display:inline" @endif  title=" {{ $row->Location }} " class="previewImage fancybox" data-fancybox-group="{{$rel}}"  rel="{{$rel}}" data-id="{{ $row->id }}" href="{{ url() }}/uploads/gallary/{{ $row->id }}.jpg?time={{ time() }}">
                             <img src="{{ url() }}/uploads/gallary/{{ $row->id }}_thumb.jpg" alt="{{ $row->theme_name }}" class="merch-gallery"/>
                         </a>
                     @endforeach
@@ -81,8 +81,9 @@
                 id=$this.data('id'),
                 href=$this.attr('href'),
                 title=$this.attr('title'),
+                rotatebtns= '<div class="rotate-section"><button onclick="rotateTo(this)" class="btn btn-primary btn-xs" data-id='+id+' data-value= "+90">+90*</buton><button onclick="rotateTo(this)" class="btn btn-primary btn-xs" data-id='+id+' data-value="-90">-90*</buton><button onclick="rotateTo(this)" class="btn btn-primary btn-xs" data-id='+id+' data-value="+180">+180*</buton><button onclick="rotateTo(this)" class="btn btn-primary btn-xs" data-id='+id+' data-value="-180">-180*</buton><button id="rotate_save" onclick="saveRotateImg(this)" class="btn btn-info btn-xs"  data-id='+id+'>Save</button></div>',
                 deleteLink = "<a href='javascript:void(0);' onclick='confirmDelete("+ id +")' >Delete</a>",
-                fancyTitle =  '<div>' + title + '<br />' + deleteLink + '</div>';
+                fancyTitle =  '<div>'+rotatebtns + title + '<br />' + deleteLink + '</div>';
                 
             $this.data('fancybox-title', fancyTitle);
            
@@ -95,7 +96,36 @@
          location.href="{{ url() }}/redemptioncountergallary/delete/"+id;
        }
     }
+    var angle=0;
+    function rotateTo(ele){
 
+        angle += $(ele).data('value');
+        $('.fancybox-inner').css({'transform': 'rotate(' + angle + 'deg)'});
+
+    }
+    function saveRotateImg(ele)
+    {
+        $('.ajaxLoading').show();
+        var id=$(ele).data('id');
+        $.ajax(
+                {
+                    type:'POST',
+                    url:'redemptioncountergallary/rotate',
+                    data:{id:id,angle:angle},
+                    success:function(data){
+                        if(data.status == 'success')
+                        {
+                            notyMessage(data.message);
+                            window.location.reload(true);
+                        } else {
+                            notyMessageError(data.message);
+                            $('.ajaxLoading').hide();
+                            return false;
+                        }
+                    }
+                }
+        );
+    }
 </script>
 <style>
     .table th.right { text-align:right !important;}
