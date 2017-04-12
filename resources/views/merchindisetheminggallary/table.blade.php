@@ -152,5 +152,12 @@ function confirmDelete(id, title)
         padding: 0;
         margin: 3px;
     }
-
+.fancybox-skin
+{
+    -moz-box-shadow: none!important;
+    -webkit-box-shadow: none!important;
+    box-shadow: none!important;
+    -o-box-shadow: none!important;
+    background: none!important;
+}
 </style>
