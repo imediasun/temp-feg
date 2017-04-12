@@ -127,8 +127,14 @@
 						 	<?php $limited = isset($field['limited']) ? $field['limited'] :''; ?>
 						 	@if(SiteHelpers::filterColumn($limited ))
 								 <td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}" data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
-									{!! $value !!}
-								 </td>
+                                     @if($field['field'] =='active')
+                                         <input type='checkbox' name="mycheckbox" @if($value == "Yes") checked  @endif 	data-size="mini" data-animate="true"
+                                                data-on-text="Active" data-off-text="Inactive" data-handle-width="50px" class="toggle" data-id="{{$row->id}}"
+                                                id="toggle_trigger_{{$row->id}}" onSwitchChange="trigger()" />
+                                     @else
+                                         {!! $value !!}
+								 @endif
+                                 </td>
 							@endif
                     <?php
 						 endif;
@@ -184,11 +190,28 @@
 	@if($setting['inline'] =='true') @include('sximo.module.utility.inlinegrid') @endif
 <script>
 $(document).ready(function() {
-	$('.tips').tooltip();
-	$('input[type="checkbox"],input[type="radio"]').iCheck({
-		checkboxClass: 'icheckbox_square-blue',
-		radioClass: 'iradio_square-blue',
-	});
+    $("[id^='toggle_trigger_']").on('switchChange.bootstrapSwitch', function(event, state) {
+        var id=$(this).data('id');
+        $.ajax(
+                {
+                    type:'POST',
+                    url:'freightquoters/trigger',
+                    data:{isActive:state,id:id},
+                    success:function(data){
+                        if(data.status == "error"){
+                            // notyMessageError(data.message);
+                        }
+                    }
+                }
+        );
+    });
+
+    $("[id^='toggle_trigger']").bootstrapSwitch();
+    $('.tips').tooltip();
+    $('input[type="checkbox"],input[type="radio"]').not('.toggle').iCheck({
+        checkboxClass: 'icheckbox_square-blue',
+        radioClass: 'iradio_square-blue'
+    });
 	$('#{{ $pageModule }}Table .checkall').on('ifChecked',function(){
 		$('#{{ $pageModule }}Table input[type="checkbox"]').iCheck('check');
 	});

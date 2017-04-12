@@ -239,5 +239,25 @@ class FreightquotersController extends Controller
         }
 
     }
+    function postTrigger(Request $request)
+    {
+        $isActive = $request->get('isActive');
+        $id = $request->get('id');
+        if ($isActive == "true") {
+            $update = \DB::update('update freight_companies set active=1 where id=' . $id);
+        } else {
+            $update = \DB::update('update freight_companies set active=0 where id=' . $id);
+        }
 
+        if ($update) {
+            return response()->json(array(
+                'status' => 'success'
+            ));
+        } else {
+            return response()->json(array(
+                'status' => 'error',
+                'message' => 'Some Error occurred in Activation'
+            ));
+        }
+    }
 }

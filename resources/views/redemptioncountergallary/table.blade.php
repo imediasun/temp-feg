@@ -41,9 +41,25 @@
                         }
                         $rel="gallery".$row->loc_id;
                         $check_mul=$row->loc_id;
+                        $originalFile="./uploads/gallary/". $row->id.".jpg";
+                        $rotatedFile="./uploads/gallary/". $row->id."_rotated.jpg";
+                        $originalThumbFile="./uploads/gallary/". $row->id."_thumb.jpg";
+                        $rotatedThumbFile="./uploads/gallary/".$row->id."_thumb_rotated.jpg";
                         ?>
-                        <a @if(!$show)) style="display:none" @else style="display:inline" @endif  title=" {{ $row->Location }} " class="previewImage fancybox" data-fancybox-group="{{$rel}}"  rel="{{$rel}}" data-id="{{ $row->id }}" href="{{ url() }}/uploads/gallary/{{ $row->id }}.jpg?time={{ time() }}">
-                            <img src="{{ url() }}/uploads/gallary/{{ $row->id }}_thumb.jpg?time={{ time() }}" alt="{{ $row->theme_name }}" class="merch-gallery"/>
+                        <a @if(!$show)) style="display:none" @else style="display:inline" @endif  title=" {{ $row->Location }} " class="previewImage fancybox" data-fancybox-group="{{$rel}}"  rel="{{$rel}}" data-id="{{ $row->id }}"
+                        @if(file_exists($rotatedFile))
+                           href="{{ $rotatedFile }}?time={{ time() }}"
+                           @else
+                           href="{{ $originalFile }}?time={{ time() }}"
+                           @endif
+                          ">
+                            <img
+                            @if(file_exists($rotatedThumbFile))
+                                src="{{ $rotatedThumbFile  }}?time={{ time() }}"
+                                @else
+                                src="{{  $originalThumbFile }}?time={{ time() }}"
+                                @endif
+                                    alt="{{ $row->theme_name }}" class="merch-gallery"/>
                         </a>
                     @endforeach
                     @else
@@ -101,7 +117,6 @@
 
         angle += $(ele).data('value');
         $('.fancybox-inner').css({'transform': 'rotate(' + angle + 'deg)'});
-
     }
     function saveRotateImg(ele)
     {
@@ -138,5 +153,13 @@
         border-radius: 3px;
         padding: 0;
         margin: 3px;
+    }
+    .fancybox-skin
+    {
+        -moz-box-shadow: none!important;
+        -webkit-box-shadow: none!important;
+        box-shadow: none!important;
+        -o-box-shadow: none!important;
+        background: none!important;
     }
 </style>

@@ -269,9 +269,9 @@ class MerchindisetheminggallaryController extends Controller
         $img->rotate($angle);
         $imgThumb->rotate($angle);
 //and save it on your server...
-        if($img->save('./uploads/gallary/' . $id .'.jpg'))
+        if($img->save('./uploads/gallary/' . $id .'_rotated.jpg'))
         {
-            $imgThumb->save('./uploads/gallary/' . $id .'_thumb.jpg');
+            $imgThumb->save('./uploads/gallary/' . $id .'_thumb_rotated.jpg');
             return response()->json(array(
                 'status' => 'success',
                 'message' => \Lang::get('Image Rotated Successfully')));
