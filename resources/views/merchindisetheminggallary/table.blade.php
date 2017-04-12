@@ -41,9 +41,25 @@
                                 }
                         $rel="gallery".$row->batch;
                         $check_mul=$row->batch;
+                            $originalFile="./uploads/gallary/". $row->id.".jpg";
+                            $rotatedFile="./uploads/gallary/". $row->id."_rotated.jpg";
+                            $originalThumbFile="./uploads/gallary/". $row->id."_thumb.jpg";
+                            $rotatedThumbFile="./uploads/gallary/".$row->id."_thumb_rotated.jpg";
                         ?>
-                <a @if(!$show)) style="display:none" @else style="display:inline" @endif  title="{{ $row->theme_name }} by {{$row->users }} at {{ $row->Location }} " class="previewImage fancybox" data-fancybox-group="{{$rel}}"  rel="{{$rel}}" data-id="{{ $row->id }}" href="{{ url() }}/uploads/gallary/{{ $row->id }}.jpg?time={{ time() }}">
-                    <img src="{{ url() }}/uploads/gallary/{{ $row->id }}_thumb.jpg?time={{ time() }}" alt="{{ $row->theme_name }}" class="merch-gallery"/>
+                <a @if(!$show)) style="display:none" @else style="display:inline" @endif  title="{{ $row->theme_name }} by {{$row->users }} at {{ $row->Location }} " class="previewImage fancybox" data-fancybox-group="{{$rel}}"  rel="{{$rel}}" data-id="{{ $row->id }}"
+                @if(file_exists($rotatedFile))
+                   href="{{ $rotatedFile }}?time={{ time() }}"
+                   @else
+                   href="{{ $originalFile }}?time={{ time() }}"
+                   @endif
+                  >
+                    <img
+                    @if(file_exists($rotatedThumbFile))
+                        src="{{ $rotatedThumbFile  }}?time={{ time() }}"
+                    @else
+                        src="{{  $originalThumbFile }}?time={{ time() }}"
+                    @endif
+                    alt="{{ $row->theme_name }}" class="merch-gallery"/>
                 </a>
                 @endforeach
                 @endif
