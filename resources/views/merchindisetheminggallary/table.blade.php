@@ -42,7 +42,7 @@
                         $rel="gallery".$row->batch;
                         $check_mul=$row->batch;
                         ?>
-                <a @if(!$show)) style="display:none" @else style="display:inline" @endif  title="{{ $row->theme_name }} by {{$row->users }} at {{ $row->Location }} " class="previewImage fancybox" data-fancybox-group="{{$rel}}"  rel="{{$rel}}" data-id="{{ $row->id }}" href="{{ url() }}/uploads/gallary/{{ $row->id }}.jpg?date=20170305122713">
+                <a @if(!$show)) style="display:none" @else style="display:inline" @endif  title="{{ $row->theme_name }} by {{$row->users }} at {{ $row->Location }} " class="previewImage fancybox" data-fancybox-group="{{$rel}}"  rel="{{$rel}}" data-id="{{ $row->id }}" href="{{ url() }}/uploads/gallary/{{ $row->id }}.jpg?date=20120305122713">
                     <img src="{{ url() }}/uploads/gallary/{{ $row->id }}_thumb.jpg" alt="{{ $row->theme_name }}" class="merch-gallery"/>
                 </a>
                 @endforeach
