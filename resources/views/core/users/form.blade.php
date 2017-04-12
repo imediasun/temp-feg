@@ -242,7 +242,7 @@
                         </div>
 
 
-                        <div class="form-group">
+                        {{--<div class="form-group">
                             <label for="ipt"
                                    class=" control-label col-md-4"> {{ Lang::get('core.g_mail') }} </label>
                             <div class="col-md-8">
@@ -262,6 +262,23 @@
                             <div class="col-md-4"></div>
                             <div class="col-md-8">
                                 <p class="bg-info" style="padding: 5px">{!! Lang::get('core.gmail_smtp_connect_failed') !!}</p>
+                            </div>
+                        </div>--}}
+                        <div class="form-group">
+                            <label for="ipt"
+                                   class=" control-label col-md-4"> Connect With Gmail </label>
+                            <div class="col-md-8">
+                                @if(Auth::user()->oauth_token)
+                                    <button type="button" disabled
+                                            class="btn btn-success btn-sm connectGmail">
+                                        <i class="fa  fa-check-circle "></i> Connected
+                                    </button>
+                                @else
+                                    <button type="button" onclick="location.href='{{$oauth_url}}' "
+                                            class="btn btn-success btn-sm connectGmail">
+                                        <i class="fa  fa-check-circle-o "></i> Connect
+                                    </button>
+                                @endif
                             </div>
                         </div>
 
@@ -293,7 +310,45 @@
     </div>
     <script type="text/javascript">
         $(document).ready(function () {
+@if(Request::get('code'))
+$('.ajaxLoading').show();
+            $.ajax({
+                url:'https://accounts.google.com/o/oauth2/token',
+                type:'post',
 
+                data:{
+                    grant_type:'authorization_code',
+                    code:'{{Request::get('code')}}',
+                    client_id:'{{env('GOOGLE_CLIENT_ID')}}',
+                    redirect_uri:'{{env('GOOGLE_REDIRECT_URI_2')}}',
+                    client_secret:'{{env('GOOGLE_CLIENT_SECRET')}}'
+                }
+            })
+                .done(function (data) {
+                    console.log(data);
+                    $.ajax({
+                        url:'{{route("save_token")}}',
+                        type:'post',
+
+                        data:data
+                    })
+                        .done(function (data) {
+                            $('.ajaxLoading').hide();
+                            $('.connectGmail').attr('disabled','disabled').html('<i class="fa  fa-check-circle "></i> Connected');
+                            console.log(data);
+                        })
+                        .fail(function (data) {
+                            $('.ajaxLoading').hide();
+                            $('.connectGmail').removeClass('btn-success').addClass('silver-btn').html('<i class="fa  fa-check-circle "></i> Try Again');
+                            console.log(data);
+                        });
+                })
+                .fail(function (data) {
+                    $('.ajaxLoading').hide();
+                    $('.connectGmail').removeClass('btn-success').addClass('silver-btn').html('<i class="fa  fa-check-circle "></i> Try Again');
+                    console.log(data);
+                });
+@endif
             $('input[type=checkbox]').click(function () {
                 if (this.checked) {
                     $(this).prev().val('1');

@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Validator, Input, Redirect, Cache;
 use PHPMailer;
+use PHPMailerOAuth;
 
 class OrderController extends Controller
 {
@@ -819,13 +820,13 @@ class OrderController extends Controller
                     $cc = $cc;
                     $bcc = $bcc;
                   /* current user */
-                    $google_acc = \DB::table('users')->where('id', \Session::get('uid'))->select('g_mail', 'g_password')->first();
+                    /*$google_acc = \DB::table('users')->where('id', \Session::get('uid'))->select('g_mail', 'g_password')->first();
                     if (!empty($google_acc->g_mail) && !empty($google_acc->g_password)) {
 
-                        /*
-                  * https://www.google.com/settings/security/lesssecureapps
-                  * enable stmp detail
-                  */
+
+                  // https://www.google.com/settings/security/lesssecureapps
+                  // enable stmp detail
+
                         $mail = new PHPMailer();
                         // create a new object
                         $mail->SMTPOptions = array(
@@ -875,6 +876,67 @@ class OrderController extends Controller
                             return 1;
                         }
                         die;
+                    }*/
+
+                    /* current user */
+                    $google_acc = \DB::table('users')->where('id', \Session::get('uid'))->first();
+
+                    if (!empty($google_acc->oauth_token)) {
+
+                        $mail = new PHPMailerOAuth();
+
+                        $mail->SMTPOptions = array(
+                            'ssl' => array(
+                                'verify_peer' => false,
+                                'verify_peer_name' => false,
+                                'allow_self_signed' => true
+                            )
+                        );
+                        $mail->SMTPDebug = 2;
+                        $mail->IsSMTP(); // enable SMTP
+                        $mail->Host = 'smtp.gmail.com';
+                        $mail->Port = 587; // or 587
+                        $mail->SMTPSecure = 'tls'; // secure transfer enabled REQUIRED for Gmail
+                        $mail->SMTPAuth = true; // authentication enabled*/
+                        $mail->oauthUserEmail = env('GOOGLE_USER_EMAIL');
+                        $mail->oauthClientId = env('GOOGLE_CLIENT_ID');
+                        $mail->oauthClientSecret = env('GOOGLE_CLIENT_SECRET');
+                        $mail->oauthRefreshToken = $google_acc->oauth_token;
+                        $mail->AuthType = 'XOAUTH2';
+
+                        $mail->smtpConnect();
+
+                        //Send HTML or Plain Text email
+                        $mail->isHTML(true);
+
+                        $mail->SetFrom($google_acc->email);
+                        $mail->Subject = $subject;
+                        $mail->Body = $message;
+                        foreach ($to as $t) {
+                            $mail->addAddress($t);
+                        }
+                        if (!empty($cc)) {
+                            foreach ($cc as $c) {
+                                $mail->addCC($c);
+                            }
+                        }
+                        if (!empty($bcc)) {
+                            foreach ($bcc as $bc) {
+                                $mail->addBCC($bc);
+                            }
+                        }
+                        $mail->addReplyTo($google_acc->email);
+                        $output = $pdf->output();
+                        $file_to_save = public_path() . '/orders/' . $filename;
+                        file_put_contents($file_to_save, $output);
+                        $mail->addAttachment($file_to_save, $filename, 'base64', 'application/pdf');
+
+
+                        if (!$mail->Send()) {
+                            return 3;
+                        } else {
+                            return 1;
+                        }
                     }
                      else {
                       $sent= $this->sendPhpEmail($message,$to,$from,$subject,$pdf,$filename,$cc,$bcc);

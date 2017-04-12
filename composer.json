@@ -17,7 +17,9 @@
         "willdurand/email-reply-parser": "^2.5",
         "phpoffice/phpexcel": "^1.8",
         "phpmailer/phpmailer": "^5.2",
-        "google/apiclient": "^2.0"
+        "league/oauth2-client": "2.2.*",
+        "league/oauth2-google": "2.*",
+        "paragonie/random_compat": "^2.0"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",

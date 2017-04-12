@@ -292,6 +292,8 @@ class UsersController extends Controller
 
         $this->data['modules'] = \DB::table('tb_module')->where('module_type', '!=', 'core')->orderBy('module_title', 'asc')->get();
         $this->data['pages'] = \DB::table("tb_pages")->orderBy('title', 'asc')->get();
+        //$this->data['oauth_url'] = 'https://accounts.google.com/o/oauth2/v2/auth?scope=https://mail.google.com/&approval_prompt=force&access_type=offline&include_granted_scopes=true&state=state_parameter_passthrough_value&redirect_uri='.env('GOOGLE_REDIRECT_URI').'&response_type=code&client_id='.env('GOOGLE_CLIENT_ID');
+        $this->data['oauth_url'] = 'https://accounts.google.com/o/oauth2/v2/auth?scope=https://mail.google.com&access_type=offline&include_granted_scopes=true&state=state_parameter_passthrough_value&redirect_uri='.env('GOOGLE_REDIRECT_URI_2').'&response_type=code&client_id='.env('GOOGLE_CLIENT_ID');
         return view('core.users.form', $this->data);
     }
 

@@ -3,6 +3,7 @@ Route::get('contact-us', 'HomeController@index');
 Route::get('gmailtest', 'HomeController@gMailTest');
 Route::get('gmailcallback', 'HomeController@gMailCallback')->name('gmail_callback');
 Route::post('sendmail', 'HomeController@sendMail')->name('sendmail');
+Route::post('save/oauth/token', 'HomeController@saveToken')->name('save_token');
 Route::get('about-us', 'HomeController@index');
 Route::get('service', 'HomeController@index');
 Route::get('faq', 'HomeController@index');

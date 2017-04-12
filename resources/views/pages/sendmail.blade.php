@@ -40,7 +40,7 @@
                 grant_type:'authorization_code',
                 code:'{{$token}}',
                 client_id:'610459224217-5m5sg77d2fo8ujei3qkd9fhi6frqgs30.apps.googleusercontent.com',
-                redirect_uri:'http://dev.fegllc.com/gmailcallback',
+                redirect_uri:'http://localhost:8000/gmailcallback',
                 client_secret:'i-jFM0NyMNrs1TeTBxoj0MBi'
         }
         })

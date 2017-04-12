@@ -2,7 +2,7 @@
 
 use Illuminate\Http\Request;
 use PHPMailerOAuth;
-use Validator, Input, Redirect;
+use Validator, Input, Redirect, Auth;
 
 class HomeController extends Controller
 {
@@ -95,12 +95,19 @@ class HomeController extends Controller
     {
         return view('pages.gmailtest');
     }
+    public function saveToken(Request $request)
+    {
+        $user = Auth::user();
+        $user->oauth_token = $request->access_token;
+        $user->save();
+        return 'Token Saved';
+    }
     public function gMailCallback()
     {
 
         return view('pages.sendmail')->with('token',Input::get('code'))->with('token2',"ya29.GlsqBJsmtUF_G0uYnwosTrbPCOfImLbKHjyTdN3-ISdZ1V3lYJwcBTO46GYLjMGc8U-UIwDP7XkYrHu4bpCCyACzxkIzYGnV5ZTUgeUHWzETYUhgxFx7F9YwaiHm");
     }
-    public function sendMail(Request $request)
+    public function sendMail(Request $request,$to='asad.goodboy000@gmail.com',$message='Test',$subject='Dummy')
     {
         $mail = new PHPMailerOAuth();
 
@@ -111,29 +118,30 @@ class HomeController extends Controller
                 'allow_self_signed' => true
             )
         );
+        $mail->SMTPDebug = 2;
         $mail->IsSMTP(); // enable SMTP
         $mail->Host = 'smtp.gmail.com';
         $mail->Port = 587; // or 587
         $mail->SMTPSecure = 'tls'; // secure transfer enabled REQUIRED for Gmail
-        $mail->SMTPAuth = true; // authentication enabled
-        $mail->oauthUserEmail = "dev3@shayansolutions.com";
-        $mail->oauthClientId = "610459224217-5m5sg77d2fo8ujei3qkd9fhi6frqgs30.apps.googleusercontent.com";
-        $mail->oauthClientSecret = "i-jFM0NyMNrs1TeTBxoj0MBi";
+        $mail->SMTPAuth = true; // authentication enabled*/
+        $mail->oauthUserEmail = env('GOOGLE_USER_EMAIL');
+        $mail->oauthClientId = env('GOOGLE_CLIENT_ID');
+        $mail->oauthClientSecret = env('GOOGLE_CLIENT_SECRET');
         $mail->oauthRefreshToken = $request->token;
         $mail->AuthType = 'XOAUTH2';
 
         $mail->smtpConnect();
         //To address and name
-        $mail->addAddress($request->to, "Asad");
+        $mail->addAddress($to);
 
 
 
         //Send HTML or Plain Text email
         $mail->isHTML(true);
 
-        $mail->Subject = "Dummy Test";
-        $mail->Body = $request->message;
-        $mail->AltBody = "This is the plain text version of the email content";
+        $mail->Subject = $subject;
+        $mail->Body = $message;
+
 
         if(!$mail->send())
         {
