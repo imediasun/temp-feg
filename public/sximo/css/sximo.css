@@ -3014,3 +3014,11 @@ ul.breadcrumb {
 {
   background-color: #f9f9f9;
 }
+/*image rotation button in galleries*/
+.rotate-section button
+{
+    margin:2px;
+    width:50px;
+    display: inline-block;
+    border-radius: 2px;
+}

@@ -259,7 +259,6 @@ class MerchindisetheminggallaryController extends Controller
     {
         $id = $request->get('id');
         $angle = $request->get('angle');
-        $filename = "image.jpg";
         if (abs($angle) == 90) {
             $angle = -$angle;
         }

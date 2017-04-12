@@ -260,4 +260,32 @@ class RedemptioncountergallaryController extends Controller
                 'message' => \Lang::get('core.note_error')));
         }
     }
+    function postRotate(Request $request)
+    {
+        $id = $request->get('id');
+        $angle = $request->get('angle');
+        if (abs($angle) == 90) {
+            $angle = -$angle;
+        }
+// Load the image
+        $img = Image::make('./uploads/gallary/' . $id . '.jpg');
+        $imgThumb = Image::make('./uploads/gallary/' . $id . '_thumb.jpg');
+// Rotate
+        $img->rotate($angle);
+        $imgThumb->rotate($angle);
+//and save it on your server...
+        if($img->save('./uploads/gallary/' . $id .'.jpg'))
+        {
+            $imgThumb->save('./uploads/gallary/' . $id .'_thumb.jpg');
+            return response()->json(array(
+                'status' => 'success',
+                'message' => \Lang::get('Image Rotated Successfully')));
+        }
+        else{
+            return response()->json(array(
+                'status' => 'error',
+                'message' => \Lang::get('Some Error occurred in rotating the image')));
+        }
+
+    }
 }
