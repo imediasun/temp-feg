@@ -113,7 +113,7 @@ function confirmDelete(id, title)
                         if(data.status == 'success')
                         {
                             notyMessage(data.message);
-                          window.location.href= window.location;
+                          window.location.reload(true);
                         } else {
                             notyMessageError(data.message);
                             $('.ajaxLoading').hide();
