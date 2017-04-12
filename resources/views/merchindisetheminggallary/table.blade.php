@@ -42,7 +42,7 @@
                         $rel="gallery".$row->batch;
                         $check_mul=$row->batch;
                         ?>
-                <a @if(!$show)) style="display:none" @else style="display:inline" @endif  title="{{ $row->theme_name }} by {{$row->users }} at {{ $row->Location }} " class="previewImage fancybox" data-fancybox-group="{{$rel}}"  rel="{{$rel}}" data-id="{{ $row->id }}" href="{{ url() }}/uploads/gallary/{{ $row->id }}.jpg">
+                <a @if(!$show)) style="display:none" @else style="display:inline" @endif  title="{{ $row->theme_name }} by {{$row->users }} at {{ $row->Location }} " class="previewImage fancybox" data-fancybox-group="{{$rel}}"  rel="{{$rel}}" data-id="{{ $row->id }}" href="{{ url() }}/uploads/gallary/{{ $row->id }}.jpg?date=20170305122713">
                     <img src="{{ url() }}/uploads/gallary/{{ $row->id }}_thumb.jpg" alt="{{ $row->theme_name }}" class="merch-gallery"/>
                 </a>
                 @endforeach
@@ -80,7 +80,7 @@ $(document).ready(function() {
             id=$this.data('id'),
             href=$this.attr('href'),
             title=$this.attr('title'),
-            rotatebtns= '<div class="rotate-section"><button onclick="rotateTo(this)" class="btn btn-primary btn-xs" data-id='+id+' data-value= "+90">+90*</buton><button onclick="rotateTo(this)" class="btn btn-primary btn-xs" data-id='+id+' data-value="-90">-90*</buton><button onclick="rotateTo(this)" class="btn btn-primary btn-xs" data-id='+id+' data-value="+180">+180*</buton><button onclick="rotateTo(this)" class="btn btn-primary btn-xs" data-id='+id+' data-value="-180">-180*</buton></div>',
+            rotatebtns= '<div class="rotate-section"><button onclick="rotateTo(this)" class="btn btn-primary btn-xs" data-id='+id+' data-value= "+90">+90*</buton><button onclick="rotateTo(this)" class="btn btn-primary btn-xs" data-id='+id+' data-value="-90">-90*</buton><button onclick="rotateTo(this)" class="btn btn-primary btn-xs" data-id='+id+' data-value="+180">+180*</buton><button onclick="rotateTo(this)" class="btn btn-primary btn-xs" data-id='+id+' data-value="-180">-180*</buton><button id="rotate_save" onclick="saveRotateImg(this)" class="btn btn-info btn-xs"  data-id='+id+'>Save</button></div>',
             deleteLink = '<a href="javascript:void(0);" onclick="confirmDelete('+ id +',\''+title+'\');" >Delete</a>',
             fancyTitle =  '<div>'+rotatebtns + title + '<br>' + deleteLink + '</div>';
             $this.data('fancybox-title', fancyTitle);
@@ -93,24 +93,36 @@ function confirmDelete(id, title)
         location.href="{{ url() }}/merchindisetheminggallary/delete/"+id;
     }
 }
-//var angle=0;
+   var angle=0;
    function rotateTo(ele){
-        var id=$(ele).data('id');
-        var angle = $(ele).data('value');
+
+       angle += $(ele).data('value');
        $('.fancybox-inner').css({'transform': 'rotate(' + angle + 'deg)'});
-       $.ajax(
-                   {
-                       type:'POST',
-                       url:'merchindisetheminggallary/rotate',
-                       data:{id:id,angle:angle},
-                       success:function(data){
-                           //if(data.status == "error"){
-                           //notyMessageError(data.message);
-                           // }
-                       }
-                   }
-           );
+
    }
+    function saveRotateImg(ele)
+    {
+        $('.ajaxLoading').show();
+        var id=$(ele).data('id');
+        $.ajax(
+                {
+                    type:'POST',
+                    url:'merchindisetheminggallary/rotate',
+                    data:{id:id,angle:angle},
+                    success:function(data){
+                        if(data.status == 'success')
+                        {
+                            notyMessage(data.message);
+                          window.location.href= window.location;
+                        } else {
+                            notyMessageError(data.message);
+                            $('.ajaxLoading').hide();
+                            return false;
+                        }
+                    }
+                }
+        );
+    }
 </script>
 <style>
 .table th.right { text-align:right !important;}
@@ -130,5 +142,6 @@ function confirmDelete(id, title)
         margin:2px;
         width:50px;
         display: inline-block;
+        border-radius: 2px;
     }
 </style>
