@@ -43,7 +43,7 @@
                         $check_mul=$row->loc_id;
                         ?>
                         <a @if(!$show)) style="display:none" @else style="display:inline" @endif  title=" {{ $row->Location }} " class="previewImage fancybox" data-fancybox-group="{{$rel}}"  rel="{{$rel}}" data-id="{{ $row->id }}" href="{{ url() }}/uploads/gallary/{{ $row->id }}.jpg?time={{ time() }}">
-                            <img src="{{ url() }}/uploads/gallary/{{ $row->id }}_thumb.jpg" alt="{{ $row->theme_name }}" class="merch-gallery"/>
+                            <img src="{{ url() }}/uploads/gallary/{{ $row->id }}_thumb.jpg?time={{ time() }}" alt="{{ $row->theme_name }}" class="merch-gallery"/>
                         </a>
                     @endforeach
                     @else
