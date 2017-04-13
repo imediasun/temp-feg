@@ -321,6 +321,7 @@
             $('.ajaxLoading').show();
         }
         function showResponse(data) {
+            console.log(data);
             if (data.status == 'success') {
                 notyMessage(data.message);
                 $('.ajaxLoading').hide();
