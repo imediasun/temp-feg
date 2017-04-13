@@ -311,46 +311,6 @@
     </div>
     <script type="text/javascript">
         $(document).ready(function () {
-@if(Request::get('code'))
-$('.ajaxLoading').show();
-            $.ajax({
-                url:'https://accounts.google.com/o/oauth2/token',
-                type:'post',
-
-                data:{
-                    grant_type:'authorization_code',
-                    code:'{{Request::get('code')}}',
-                    client_id:'{{env('GOOGLE_CLIENT_ID')}}',
-                    redirect_uri:'{{env('GOOGLE_REDIRECT_URI_2')}}',
-                    client_secret:'{{env('GOOGLE_CLIENT_SECRET')}}'
-                }
-            })
-                .done(function (data) {
-                    console.log(data);
-                    data.user_id={{$row['id']}}
-                    $.ajax({
-                        url:'{{route("save_token")}}',
-                        type:'post',
-
-                        data:data
-                    })
-                        .done(function (data) {
-                            $('.ajaxLoading').hide();
-                            $('.connectGmail').attr('disabled','disabled').html('<i class="fa  fa-check-circle "></i> Connected');
-                            console.log(data);
-                        })
-                        .fail(function (data) {
-                            $('.ajaxLoading').hide();
-                            $('.connectGmail').removeClass('btn-success').addClass('silver-btn').html('<i class="fa  fa-check-circle "></i> Try Again');
-                            console.log(data);
-                        });
-                })
-                .fail(function (data) {
-                    $('.ajaxLoading').hide();
-                    $('.connectGmail').removeClass('btn-success').addClass('silver-btn').html('<i class="fa  fa-check-circle "></i> Try Again');
-                    console.log(data);
-                });
-@endif
             $('input[type=checkbox]').click(function () {
                 if (this.checked) {
                     $(this).prev().val('1');

@@ -1,5 +1,6 @@
 <?php namespace App\Http\Controllers;
 
+use GuzzleHttp\Client;
 use Laravel\Socialite\Facades\Socialite;
 use App\Http\Controllers\Controller;
 use App\Models\Core\Groups;

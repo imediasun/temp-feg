@@ -5,6 +5,8 @@ use App\Http\Controllers\controller;
 use App\Models\Core\Users;
 use App\Models\Core\Groups;
 use App\Models\Sximo\Module;
+use App\User;
+use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
@@ -267,38 +269,50 @@ class UsersController extends Controller
     function getUpdate(Request $request, $id = null)
     {
 
-        if($request->get('state'))
+        if($request->get('code'))
         {
-            return redirect(url('core/users/update/'.$request->get('state').'?code='.$request->get('code')));
+
+        $client = new Client();
+        $res = $client->request('POST', 'https://accounts.google.com/o/oauth2/token',array('headers'=>array('Content-Type'=>'application/x-www-form-urlencoded; charset=UTF-8'),'form_params'=>array('grant_type'=>'authorization_code','code'=>$request->get('code'),'client_id'=>env('GOOGLE_CLIENT_ID'),'redirect_uri'=>env('GOOGLE_REDIRECT_URI_2'),'client_secret'=>env('GOOGLE_CLIENT_SECRET'))));
+        $result = $res->getBody();
+            $array = json_decode($result, true);
+
+            $user = User::find($request->get('state'));
+            $user->oauth_token = $array['access_token'];
+            $user->save();
+            return redirect(url('core/users/update/'.$request->get('state')));
+        }
+        else
+        {
+            if ($id == '') {
+
+                if ($this->access['is_add'] == 0)
+                    return Redirect::to('dashboard')->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
+                $this->data['user_locations'] = 0;
+            }
+
+            if ($id != '') {
+                if ($this->access['is_edit'] == 0)
+                    return Redirect::to('dashboard')->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
+                $this->data['user_locations'] = $this->model->getLocations($id);
+            }
+
+            $row = $this->model->find($id);
+            if ($row) {
+                $this->data['row'] = $row;
+            } else {
+                $this->data['row'] = $this->model->getColumnTable('users');
+            }
+
+            $this->data['id'] = $id;
+
+            $this->data['modules'] = \DB::table('tb_module')->where('module_type', '!=', 'core')->orderBy('module_title', 'asc')->get();
+            $this->data['pages'] = \DB::table("tb_pages")->orderBy('title', 'asc')->get();
+            //$this->data['oauth_url'] = 'https://accounts.google.com/o/oauth2/v2/auth?scope=https://mail.google.com/&approval_prompt=force&access_type=offline&include_granted_scopes=true&state=state_parameter_passthrough_value&redirect_uri='.env('GOOGLE_REDIRECT_URI').'&response_type=code&client_id='.env('GOOGLE_CLIENT_ID');
+            $this->data['oauth_url'] = 'https://accounts.google.com/o/oauth2/v2/auth?scope=https://mail.google.com&access_type=offline&include_granted_scopes=true&state='.$id.'&redirect_uri='.env('GOOGLE_REDIRECT_URI_2').'&response_type=code&client_id='.env('GOOGLE_CLIENT_ID');
+            return view('core.users.form', $this->data);
         }
 
-        if ($id == '') {
-
-            if ($this->access['is_add'] == 0)
-                return Redirect::to('dashboard')->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
-            $this->data['user_locations'] = 0;
-        }
-
-        if ($id != '') {
-            if ($this->access['is_edit'] == 0)
-                return Redirect::to('dashboard')->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
-            $this->data['user_locations'] = $this->model->getLocations($id);
-        }
-
-        $row = $this->model->find($id);
-        if ($row) {
-            $this->data['row'] = $row;
-        } else {
-            $this->data['row'] = $this->model->getColumnTable('users');
-        }
-
-        $this->data['id'] = $id;
-
-        $this->data['modules'] = \DB::table('tb_module')->where('module_type', '!=', 'core')->orderBy('module_title', 'asc')->get();
-        $this->data['pages'] = \DB::table("tb_pages")->orderBy('title', 'asc')->get();
-        //$this->data['oauth_url'] = 'https://accounts.google.com/o/oauth2/v2/auth?scope=https://mail.google.com/&approval_prompt=force&access_type=offline&include_granted_scopes=true&state=state_parameter_passthrough_value&redirect_uri='.env('GOOGLE_REDIRECT_URI').'&response_type=code&client_id='.env('GOOGLE_CLIENT_ID');
-        $this->data['oauth_url'] = 'https://accounts.google.com/o/oauth2/v2/auth?scope=https://mail.google.com&access_type=offline&include_granted_scopes=true&state='.$id.'&redirect_uri='.env('GOOGLE_REDIRECT_URI_2').'&response_type=code&client_id='.env('GOOGLE_CLIENT_ID');
-        return view('core.users.form', $this->data);
     }
 
     function getUpload($id = NULL)
