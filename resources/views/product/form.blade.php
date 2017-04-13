@@ -120,8 +120,8 @@
                         </div>
                     </div>
                     <div class="form-group  ">
-                        <label for="Individual Item Price" class=" control-label col-md-4 text-left">
-                            {!! SiteHelpers::activeLang('Individual Item Price',
+                        <label for="Unit Price" class=" control-label col-md-4 text-left">
+                            {!! SiteHelpers::activeLang('Unit Price',
                             (isset($fields['unit_price']['language'])? $fields['unit_price']['language'] : array())) !!}
                         </label>
 
