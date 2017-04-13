@@ -274,7 +274,7 @@
                                                 class="btn btn-success btn-sm connectGmail">
                                             <i class="fa  fa-check-circle "></i> Connected
                                         </button>
-                                        <a href="{{$oauth_url}}" class="connectGmail btn" style="background-color:#DD4B39; border-color: #DD4B39; color: #ffffff;"><i class="icon-google-plus"></i> Google </a>
+                                        <a href="{{$oauth_url}}" class="connectGmail btn" style="background-color:#DD4B39; border-color: #DD4B39; color: #ffffff;padding: 5px 8.5px;"><i class="icon-google-plus"></i> Reconnect </a>
                                     @else
                                         <a href="{{$oauth_url}}" class="connectGmail btn btn-block" style="background-color:#DD4B39; border-color: #DD4B39; color: #ffffff;"><i class="icon-google-plus"></i> Google </a>
                                        {{-- <button type="button" onclick="location.href='{{$oauth_url}}' "
