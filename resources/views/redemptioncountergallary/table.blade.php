@@ -97,7 +97,7 @@
                 id=$this.data('id'),
                 href=$this.attr('href'),
                 title=$this.attr('title'),
-                rotatebtns= '<div class="rotate-section"><button onclick="rotateTo(this)" class="btn btn-primary btn-xs" data-id='+id+' data-value= "+90">+90*</buton><button onclick="rotateTo(this)" class="btn btn-primary btn-xs" data-id='+id+' data-value="-90">-90*</buton><button onclick="rotateTo(this)" class="btn btn-primary btn-xs" data-id='+id+' data-value="+180">+180*</buton><button onclick="rotateTo(this)" class="btn btn-primary btn-xs" data-id='+id+' data-value="-180">-180*</buton><button id="rotate_save" onclick="saveRotateImg(this)" class="btn btn-info btn-xs"  data-id='+id+'>Save</button></div>',
+                rotatebtns= '<div class="rotate-section"><button onclick="rotateTo(this)" class="btn btn-primary btn-xs" data-id='+id+' data-value= "+90">+90&deg</buton><button onclick="rotateTo(this)" class="btn btn-primary btn-xs" data-id='+id+' data-value="-90">-90&deg</buton><button onclick="rotateTo(this)" class="btn btn-primary btn-xs" data-id='+id+' data-value="+180">+180&deg</buton><button onclick="rotateTo(this)" class="btn btn-primary btn-xs" data-id='+id+' data-value="-180">-180&deg</buton><button id="rotate_save" onclick="saveRotateImg(this)" class="btn btn-info btn-xs"  data-id='+id+'>Save</button></div>',
                 deleteLink = "<a href='javascript:void(0);' onclick='confirmDelete("+ id +")' >Delete</a>",
                 fancyTitle =  '<div>'+rotatebtns + title + '<br />' + deleteLink + '</div>';
                 
@@ -164,7 +164,7 @@
     }
     .fancybox-inner
     {
-        border:5px solid rgb(255,255,255);
+        border:8px solid rgb(255,255,255);
         webkit-box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
         -moz-box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
         box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
