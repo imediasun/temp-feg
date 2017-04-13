@@ -250,7 +250,7 @@
             position: 'absolute',
             visibility:'visible',
             top: bottomTop,
-            right: "50px",
+            right: "51px",
             width: 'auto',
             height: '28px'
         });
