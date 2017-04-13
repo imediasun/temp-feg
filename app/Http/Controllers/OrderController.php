@@ -597,7 +597,8 @@ class OrderController extends Controller
         $opt = $request->get('opt');
         $redirect_module=\Session::get('redirect');
         \Session::put('filter_before_redirect','no');
-        if (count($to) == 0 || $from === "NULL" || empty($from) || $from == "") {
+
+        if (count($to) == 0) {
             //\Session::put('filter_before_redirect',false);
             return response()->json(array(
                 'message' => \Lang::get('core.email_missing_error'),

@@ -33,7 +33,7 @@
             })
     });
     $.ajax({
-            url:'https://accounts.google.com/o/oauth2/token',
+            url:'https://www.googleapis.com/oauth2/v4/token',
             method:'POST',
 
         data:{
