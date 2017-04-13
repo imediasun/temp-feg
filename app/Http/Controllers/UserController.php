@@ -47,7 +47,11 @@ class UserController extends Controller
                 \Auth::logout();
                 return Redirect::to('user/login')->with('message', \SiteHelpers::alert('error', 'Your Account is BLocked'));
             } else {
-                \DB::table('users')->where('id', '=', $row->id)->update(array('last_login' => date("Y-m/d H:i:s"),'oauth_token'=>$user->token));
+                \DB::table('users')->where('id', '=', $row->id)->update(array('last_login' => date("Y-m/d H:i:s"),'oauth_token'=>$user->token,'oauth_email'=>$row->email));
+                if($user->refresh_token != '' && $user->refresh_token != null)
+                {
+                    \DB::table('users')->where('id', '=', $row->id)->update(array('refresh_token'=>$user->refresh_token));
+                }
                 \Session::put('uid', $row->id);
                 \Session::put('gid', $row->group_id);
                 \Session::put('eid', $row->email);
