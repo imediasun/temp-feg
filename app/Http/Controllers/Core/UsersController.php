@@ -272,13 +272,18 @@ class UsersController extends Controller
         if($request->get('code'))
         {
 
-        $client = new Client();
-        $res = $client->request('POST', 'https://www.googleapis.com/oauth2/v4/token',array('headers'=>array('Content-Type'=>'application/x-www-form-urlencoded; charset=UTF-8'),'form_params'=>array('grant_type'=>'authorization_code','code'=>$request->get('code'),'client_id'=>env('GOOGLE_CLIENT_ID'),'redirect_uri'=>env('GOOGLE_REDIRECT_URI_2'),'client_secret'=>env('GOOGLE_CLIENT_SECRET'))));
-        $result = $res->getBody();
+            $client = new Client();
+            $res = $client->request('POST', 'https://www.googleapis.com/oauth2/v4/token',array('headers'=>array('Content-Type'=>'application/x-www-form-urlencoded; charset=UTF-8'),'form_params'=>array('grant_type'=>'authorization_code','code'=>$request->get('code'),'client_id'=>env('GOOGLE_CLIENT_ID'),'redirect_uri'=>env('GOOGLE_REDIRECT_URI_2'),'client_secret'=>env('GOOGLE_CLIENT_SECRET'))));
+            $result = $res->getBody();
             $array = json_decode($result, true);
+
+            $res2 = $client->request('GET', 'https://www.googleapis.com/oauth2/v1/userinfo?access_token='.$array['access_token'],array('headers'=>array('Content-Type'=>'application/x-www-form-urlencoded; charset=UTF-8')));
+            $result2 = $res2->getBody();
+            $array2 = json_decode($result2, true);
 
             $user = User::find($request->get('state'));
             $user->oauth_token = $array['access_token'];
+            $user->oauth_email=$array2['email'];
             if(isset($array['refresh_token']))
             {
                 $user->refresh_token = $array['refresh_token'];

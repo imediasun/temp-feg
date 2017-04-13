@@ -899,7 +899,7 @@ class OrderController extends Controller
                         $mail->Port = 587; // or 587
                         $mail->SMTPSecure = 'tls'; // secure transfer enabled REQUIRED for Gmail
                         $mail->SMTPAuth = true; // authentication enabled*/
-                        $mail->oauthUserEmail = env('GOOGLE_USER_EMAIL');
+                        $mail->oauthUserEmail = $google_acc->oauth_email;
                         $mail->oauthClientId = env('GOOGLE_CLIENT_ID');
                         $mail->oauthClientSecret = env('GOOGLE_CLIENT_SECRET');
                         $mail->oauthRefreshToken = $google_acc->oauth_token;
