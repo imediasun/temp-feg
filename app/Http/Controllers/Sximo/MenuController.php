@@ -92,7 +92,7 @@ class MenuController extends Controller
                 $a++;
             }
             return Redirect::to('feg/menu')
-                ->with('messagetext', 'Data Has Been Save Successfull')->with('msgstatus', 'success');
+                ->with('messagetext', 'Data have been saved successfully')->with('msgstatus', 'success');
         } else {
             return Redirect::to('feg/menu')
                 ->with('messagetext', 'The following errors occurred')->with('msgstatus', 'error');
@@ -139,7 +139,7 @@ class MenuController extends Controller
             $this->model->insertRow($data, $request->input('menu_id'));
 
             return Redirect::to('feg/menu?pos=' . $pos)
-                ->with('messagetext', 'Data Has Been Save Successfull')->with('msgstatus', 'success');
+                ->with('messagetext', 'Data have been saved successfully')->with('msgstatus', 'success');
 
         } else {
             return Redirect::to('feg/menu?pos=' . $pos)
