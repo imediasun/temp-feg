@@ -162,4 +162,11 @@
         -o-box-shadow: none!important;
         background: none!important;
     }
+    .fancybox-inner
+    {
+        border:5px solid rgb(255,255,255);
+        webkit-box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+        -moz-box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    }
 </style>
