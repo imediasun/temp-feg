@@ -229,7 +229,8 @@ class OrderController extends Controller
             //$rows[$index]->vendor_id = (isset($vendor[0]->vendor_name) ? $vendor[0]->vendor_name : '');
 
             $order_status = \DB::select("Select status FROM order_status WHERE id = " . $data->status_id . "");
-            $rows[$index]->status_id = (isset($order_status[0]->status) ? $order_status[0]->status : '');
+            $partial = $data->is_partial == 1 ? ' (Partial)':'';
+            $rows[$index]->status_id = (isset($order_status[0]->status) ? $order_status[0]->status.$partial : '');
         }
         $this->data['param'] = $params;
         $this->data['rowData'] = $rows;
@@ -1118,11 +1119,19 @@ function sendPhpEmail($message,$to,$from,$subject,$pdf,$filename,$cc,$bcc)
             $date_received = $request->get('date_received');
             // $date_received = \DateHelpers::formatDate($date_received);
             $date_received = date("Y-m-d", strtotime($date_received));
+            $partial = 0;
+            $record = \DB::select('SELECT  SUM(qty) as total_items,(SUM(qty)-SUM(item_received)) as remaining_items FROM order_contents WHERE order_id ='.$request->get('order_id'));
+
+            if($record->remaining_items > 0 && $record->remaining_items < $record->total_items)
+            {
+                $partial = 1;
+            }
             $data = array('date_received' => $date_received,
                 'status_id' => $order_status,
                 'notes' => $notes,
                 'tracking_number' => $request->get('tracking_number'),
                 'received_by' => $request->get('user_id'),
+                'is_partial' => $partial,
                 'added_to_inventory' => $added);
             \DB::table('orders')->where('id', $request->get('order_id'))->update($data);
             return response()->json(array(

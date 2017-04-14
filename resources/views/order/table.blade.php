@@ -173,10 +173,10 @@
                      <a href="{{ $pageModule }}/update/{{$row->id}}/clone"  onclick="ajaxViewDetail('#order',this.href); return false; "  class="tips btn btn-xs btn-white" title="Clone Order"><i class=" fa fa-random" aria-hidden="true"></i></a>
 
 
-                    @if($row->status_id=='Open')
+                    @if($row->status_id=='Open' || $row->status_id=='Open (Partial)')
                         <a href="{{ URL::to('order/orderreceipt/'.$row->id)}}" class="tips btn btn-xs btn-white" title="Receive Order"><i class="fa fa fa-truck" aria-hidden="true"></i></a>
                    @endif
-					@if($row->status_id=='Open')
+					@if($row->status_id=='Open' || $row->status_id=='Open (Partial)')
 						<a href="{{ URL::to('order/removalrequest/'.$row->po_number)}}" class="tips btn btn-xs btn-white" title="Request Removal"><i class="fa fa-trash-o " aria-hidden="true"></i></a>
 						@endif
 					</td>

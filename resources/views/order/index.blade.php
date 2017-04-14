@@ -34,7 +34,6 @@
 $(document).ready(function(){
     var id = "{{ $sid  }}";
     if(id){
-
         ajaxViewDetail('#order',"{{url()}}/order/update/1/"+id); return false;
        // ajaxViewDetail('#order',"http://demo/sximo/public/order/update/1/"+id); return false;
         //reloadData('#{{ $pageModule }}','/sximo/public/order/data');
