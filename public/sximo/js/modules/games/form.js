@@ -76,7 +76,7 @@
             container.find("select#location_id").jCombo(mainUrl + "/comboselect?filter=location:id:id|location_name&delimiter=%20|%20",
                     {  selected_value : '' + gameData.location_id });
 
-            container.find("#mfg_id").jCombo(mainUrl + "/comboselect?filter=vendor:id:vendor_name",
+            container.find("#mfg_id").jCombo(mainUrl + "/comboselect?filter=vendor:id:vendor_name:hide:0:status:1",
                     {  selected_value : '' + gameData.mfg_id });
 
             container.find("select#status_id").jCombo(mainUrl + "/comboselect?filter=game_status:id:game_status",

@@ -403,7 +403,7 @@
                         initial_text: '-------- Select Location --------'
                     });
 
-            $("#vendor_id").jCombo("{{ URL::to('order/comboselect?filter=vendor:id:vendor_name') }}",
+            $("#vendor_id").jCombo("{{ URL::to('product/comboselect?filter=vendor:id:vendor_name:hide:0:status:1') }}",
                     {
                         selected_value: '{{ $data["order_vendor_id"] }}',
                         initial_text: '-------- Select Vendor --------'
