@@ -118,27 +118,26 @@
         angle += $(ele).data('value');
         $('.fancybox-inner').css({'transform': 'rotate(' + angle + 'deg)'});
 
-    function saveRotateImg(ele)
-    {
+    function saveRotateImg(ele) {
         $('.ajaxLoading').show();
         var id = $(ele).data('id');
-        var rotation =  $("#gallery_img_"+id).attr('data-rotation');
-        angle = parseInt(angle) +parseInt(rotation);
+        var rotation = $("#gallery_img_" + id).attr('data-rotation');
+        angle = parseInt(angle) + parseInt(rotation);
         $.ajax(
                 {
-                    type:'POST',
-                    url:'redemptioncountergallary/rotate',
-                    data:{id:id,angle:angle},
-                    success:function(data){
-                        if(data.status == 'success')
-                        {notyMessage(data.message);
-                            $("#gallery_img_"+id).attr('href','./uploads/gallary/'+id+'_rotated.jpg?time='+Math.floor(Date.now()));
+                    type: 'POST',
+                    url: 'redemptioncountergallary/rotate',
+                    data: {id: id, angle: angle},
+                    success: function (data) {
+                        if (data.status == 'success') {
+                            notyMessage(data.message);
+                            $("#gallery_img_" + id).attr('href', './uploads/gallary/' + id + '_rotated.jpg?time=' + Math.floor(Date.now()));
                             console.log(angle);
-                            $("#gallery_img_"+id).attr('data-rotation',angle);
-                            $("#save_btn_"+id).attr('data-rotation',angle);
-                            $('#img_thumb_'+id).attr('src','./uploads/gallary/'+id+'_thumb_rotated.jpg?time='+Math.floor(Date.now()));
-                          //  $('#img_thumb_'+$(ele).data('id')).css({'transform': 'rotate(' + angle + 'deg)'});
-                            angle=0;
+                            $("#gallery_img_" + id).attr('data-rotation', angle);
+                            $("#save_btn_" + id).attr('data-rotation', angle);
+                            $('#img_thumb_' + id).attr('src', './uploads/gallary/' + id + '_thumb_rotated.jpg?time=' + Math.floor(Date.now()));
+                            //  $('#img_thumb_'+$(ele).data('id')).css({'transform': 'rotate(' + angle + 'deg)'});
+                            angle = 0;
                             $('.ajaxLoading').hide();
                             $.fancybox.close();
                             //window.location.reload(true);
@@ -150,6 +149,7 @@
                     }
                 }
         );
+    }
     }
 
 </script>
