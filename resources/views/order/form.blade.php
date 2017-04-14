@@ -139,10 +139,10 @@
                             Date Ordered</label>
 
                         <div class="col-md-8" style="padding-left: 13px;">
-                            <div class="input-group datepicker" style="width:150px !important; margin-bottom: 9px;">
+                            <div class="input-group " style="width:150px !important; margin-bottom: 9px;">
                                 <input type="text" class="form-control " id="my-datepicker" name="date_ordered"
-                                       value="{{ date("m/d/Y", strtotime($data['today'])) }}" required="required"/>
-                                <span class="input-group-addon "><i class="fa fa-calendar" id="icon"></i></span>
+                                       value="{{ date("m/d/Y", strtotime($data['today'])) }}" required="required" readonly/>
+                                <span class="input-group-addon " ><i class="fa fa-calendar" id="icon"></i></span>
                             </div>
                         </div>
 
@@ -392,18 +392,18 @@
 
             $('.test').val(0.00);
 
-            $('#icon').click(function () {
+           /* $('#icon').click(function () {
                 $(document).ready(function () {
                     $("#my-datepicker").datepicker().focus();
                 });
-            });
+            });*/
             $("#location_id").jCombo("{{ URL::to('order/comboselect?filter=location:id:id|location_name ') }}",
                     {
                         selected_value: "{{ $data["order_loc_id"]}}",
                         initial_text: '-------- Select Location --------'
                     });
 
-            $("#vendor_id").jCombo("{{ URL::to('order/comboselect?filter=vendor:id:vendor_name') }}",
+            $("#vendor_id").jCombo("{{ URL::to('product/comboselect?filter=vendor:id:vendor_name:hide:0:status:1') }}",
                     {
                         selected_value: '{{ $data["order_vendor_id"] }}',
                         initial_text: '-------- Select Vendor --------'

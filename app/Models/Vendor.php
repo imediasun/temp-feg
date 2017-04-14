@@ -19,8 +19,17 @@ class vendor extends Sximo  {
 	}	
 
 	public static function queryWhere(  ){
-		
-		return "  WHERE id IS NOT NULL AND vendor.hide = 0 AND vendor.status = 1 ";
+
+        $filters = self::getSearchFilters(['hide' => '', 'status' => '']);
+        $hide = $status = "";
+        if ($filters['hide'] == '') {
+            $hide = "AND vendor.hide = 0 ";
+        }
+        if ($filters['status'] == '') {
+            $status = "AND vendor.status = 1 ";
+        }
+        		
+		return "  WHERE id IS NOT NULL $hide $status";
 	}
 	
 	public static function queryGroup(){

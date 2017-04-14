@@ -428,11 +428,11 @@
         $('#std_from_div,#vend_from_div,#location_from_div,#from_vendor_type_div,#std_to_div,#vend_to_div,#location_to_div,#to_vendor_type_div').hide();
         $("#location_id").jCombo("{{ URL::to('managefreightquoters/comboselect?filter=location:id:id|location_name') }}",
                 {selected_value: '', initial_text: 'Select Location'});
-        $("#vendor_id").jCombo("{{ URL::to('managefreightquoters/comboselect?filter=vendor:id:vendor_name') }}",
+        $("#vendor_id").jCombo("{{ URL::to('product/comboselect?filter=vendor:id:vendor_name:hide:0:status:1') }}",
                 {selected_value: '', initial_text: 'Select Vendor'});
         $('[id^="location_to_id"]').jCombo("{{ URL::to('managefreightquoters/comboselect?filter=location:id:id|location_name') }}",
                 {selected_value: '', initial_text: 'Select Location'});
-        $("#vendor_to_id").jCombo("{{ URL::to('managefreightquoters/comboselect?filter=vendor:id:vendor_name') }}",
+        $("#vendor_to_id").jCombo("{{ URL::to('product/comboselect?filter=vendor:id:vendor_name:hide:0:status:1') }}",
                 {selected_value: '', initial_text: 'Select Vendor'});
         $('.editor').summernote();
         $('.addC').relCopy({});

@@ -401,7 +401,7 @@ class ModuleController extends Controller
 
 
         return Redirect::to('feg/module/config/' . $row->module_name)
-            ->with('messagetext', 'Module Setting Has Been Save Successfull')->with('msgstatus', 'success');
+            ->with('messagetext', 'Module settings have been saved successfully')->with('msgstatus', 'success');
     }
 
     function getSql(Request $request, $id)
@@ -939,7 +939,7 @@ class ModuleController extends Controller
             ->update(array('module_config' => \SiteHelpers::CF_encode_json($new_config)));
 
         return Redirect::to('feg/module/table/' . $row->module_name)
-            ->with('messagetext', 'Module Table Has Been Save Successfull')->with('msgstatus', 'success');
+            ->with('messagetext', 'Module Table has been saved Successfully')->with('msgstatus', 'success');
 
 
     }
@@ -2192,7 +2192,7 @@ class ModuleController extends Controller
             catch (Exception $ex) {
                 \DB::rollBack();
                 return response()->json(array(
-                    'message' => "Error creating new Special Permission. " . $ex->getMessage(),
+                    'message' => "Error updating Special Permission. " . $ex->getMessage(),
                     'status' => 'error'
                 ));
             }
@@ -2206,7 +2206,7 @@ class ModuleController extends Controller
             catch (Exception $ex) {
                 \DB::rollBack();
                 return response()->json(array(
-                    'message' => "Error updating new Special Permission. " . $ex->getMessage(),
+                    'message' => "Error creating new Special Permission. " . $ex->getMessage(),
                     'status' => 'error'
                 ));
             }

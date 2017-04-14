@@ -127,7 +127,7 @@ class ConfigController extends Controller
 //            sleep(10);
               
             return \Response::json(['status' => 'success', 'message' => 'Settings have been saved successfully']);
-//              return Redirect::to('feg/config')->with('messagetext', 'Setting Has Been Save Successful')->with('msgstatus', 'success');
+//              return Redirect::to('feg/config')->with('messagetext', 'Settings have been saved successfully')->with('msgstatus', 'success');
 
         } else {
             
@@ -249,7 +249,7 @@ class ConfigController extends Controller
             $fp = fopen($filename, "w+");
             fwrite($fp, $val);
             fclose($fp);
-            return Redirect::to('feg/config/security')->with('messagetext', 'Setting Has Been Save Successful')->with('msgstatus', 'success');
+            return Redirect::to('feg/config/security')->with('messagetext', 'Settings have been saved successfully')->with('msgstatus', 'success');
         } else {
             return Redirect::to('feg/config/security')->with('messagetext', 'The following errors occurred')->with('msgstatus', 'error')
                 ->withErrors($validator)->withInput();

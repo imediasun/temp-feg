@@ -71,24 +71,6 @@
                         </div>
 
                     </div>
-
-
-                    <div class="form-group  ">
-                        <label for="Quantity Per Case" class=" control-label col-md-4 text-left">
-                            {!! SiteHelpers::activeLang('Quantity Per Case', (isset($fields['num_items']['language'])?
-                            $fields['num_items']['language'] : array())) !!}
-                        </label>
-
-                        <div class="col-md-6">
-                            {!! Form::text('num_items', $row['num_items'],array('class'=>'form-control',
-                            'placeholder'=>'', )) !!}
-                        </div>
-                        <div class="col-md-2">
-
-                        </div>
-                    </div>
-
-
                     <div class="form-group  ">
                         <label for="SKU" class=" control-label col-md-4 text-left">
                             {!! SiteHelpers::activeLang('SKU', (isset($fields['sku']['language'])?
@@ -103,7 +85,20 @@
 
                         </div>
                     </div>
+                    <div class="form-group  ">
+                        <label for="Quantity Per Case" class=" control-label col-md-4 text-left">
+                            {!! SiteHelpers::activeLang('Quantity Per Case', (isset($fields['num_items']['language'])?
+                            $fields['num_items']['language'] : array())) !!}
+                        </label>
 
+                        <div class="col-md-6">
+                            {!! Form::text('num_items', $row['num_items'],array('class'=>'form-control',
+                            'placeholder'=>'', )) !!}
+                        </div>
+                        <div class="col-md-2">
+
+                        </div>
+                    </div>
 
                     <div class="form-group  ">
                         <label for="Case Price" class=" control-label col-md-4 text-left">
@@ -125,8 +120,8 @@
                         </div>
                     </div>
                     <div class="form-group  ">
-                        <label for="Individual Item Price" class=" control-label col-md-4 text-left">
-                            {!! SiteHelpers::activeLang('Individual Item Price',
+                        <label for="Unit Price" class=" control-label col-md-4 text-left">
+                            {!! SiteHelpers::activeLang('Unit Price',
                             (isset($fields['unit_price']['language'])? $fields['unit_price']['language'] : array())) !!}
                         </label>
 
@@ -357,7 +352,7 @@
 <script type="text/javascript">
     $(document).ready(function () {
 
-        $("#vendor_id").jCombo("{{ URL::to('product/comboselect?filter=vendor:id:vendor_name') }}",
+        $("#vendor_id").jCombo("{{ URL::to('product/comboselect?filter=vendor:id:vendor_name:hide:0:status:1') }}",
                 {selected_value: '{{ $row["vendor_id"] }}'});
 
         $("#prod_type_id").jCombo("{{ URL::to('product/comboselect?filter=order_type:id:order_type:can_request:1') }}",
