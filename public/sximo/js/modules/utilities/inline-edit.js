@@ -247,7 +247,7 @@
         console.log(actionBtns.siblings('a').length);
         if(actionBtns.siblings('a').length == 0)
         {
-            actionBtns.css('padding-bottom',"29px");
+            actionBtns.css('padding-bottom',"50px");
             bottomTop=actionBtns.offset().top+29;
         }
         else
