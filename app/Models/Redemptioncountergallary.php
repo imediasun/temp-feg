@@ -14,7 +14,7 @@ class redemptioncountergallary extends Sximo  {
 	}
 
     public static function querySelect(  ){
-        return 'SELECT img_uploads.id,img_uploads.theme_name,CONCAT(L.id, " | ",L.location_name_short) AS Location, img_uploads.users,img_uploads.loc_id
+        return 'SELECT img_uploads.id,img_uploads.theme_name,CONCAT(L.id, " | ",L.location_name_short) AS Location, img_uploads.users,img_uploads.loc_id,img_uploads.img_rotation
 									 FROM img_uploads LEFT JOIN location L on L.id = img_uploads.loc_id ';
     }
 

@@ -46,14 +46,14 @@
                             $originalThumbFile="./uploads/gallary/". $row->id."_thumb.jpg";
                             $rotatedThumbFile="./uploads/gallary/".$row->id."_thumb_rotated.jpg";
                         ?>
-                <a @if(!$show)) style="display:none" @else style="display:inline" @endif  title="{{ $row->theme_name }} by {{$row->users }} at {{ $row->Location }} " class="previewImage fancybox" data-fancybox-group="{{$rel}}"  rel="{{$rel}}" data-id="{{ $row->id }}"
+                <a @if(!$show)) style="display:none" @else style="display:inline" @endif  title="{{ $row->theme_name }} by {{$row->users }} at {{ $row->Location }} " class="previewImage fancybox" data-fancybox-group="{{$rel}}"  rel="{{$rel}}" data-id="{{ $row->id }}" data-rotation="{{ $row->img_rotation }}" id="gallery_img_{{ $row->id }}"
                 @if(file_exists($rotatedFile))
                    href="{{ $rotatedFile }}?time={{ time() }}"
                    @else
                    href="{{ $originalFile }}?time={{ time() }}"
                    @endif
                   >
-                    <img
+                    <img id="img_thumb_{{ $row->id }}"
                     @if(file_exists($rotatedThumbFile))
                         src="{{ $rotatedThumbFile  }}?time={{ time() }}"
                     @else
@@ -96,7 +96,8 @@ $(document).ready(function() {
             id=$this.data('id'),
             href=$this.attr('href'),
             title=$this.attr('title'),
-            rotatebtns= '<div class="rotate-section"><button onclick="rotateTo(this)" class="btn btn-primary btn-xs" data-id='+id+' data-value= "+90">+90&deg</buton><button onclick="rotateTo(this)" class="btn btn-primary btn-xs" data-id='+id+' data-value="-90">-90&deg</buton><button onclick="rotateTo(this)" class="btn btn-primary btn-xs" data-id='+id+' data-value="+180">+180&deg</buton><button onclick="rotateTo(this)" class="btn btn-primary btn-xs" data-id='+id+' data-value="-180">-180&deg</buton><button id="rotate_save" onclick="saveRotateImg(this)" class="btn btn-info btn-xs"  data-id='+id+'>Save</button></div>',
+            rotation=$this.data('rotation'),
+            rotatebtns= '<div class="rotate-section"><button onclick="rotateTo(this)" class="btn btn-primary btn-xs" data-id='+id+' data-value= "+90">+90&deg</buton><button onclick="rotateTo(this)" class="btn btn-primary btn-xs" data-id='+id+' data-value="-90">-90&deg</buton><button onclick="rotateTo(this)" class="btn btn-primary btn-xs" data-id='+id+' data-value="+180">+180&deg</buton><button onclick="rotateTo(this)" class="btn btn-primary btn-xs" data-id='+id+' data-value="-180">-180&deg</buton><button id="rotate_save" onclick="saveRotateImg(this)" class="btn btn-info btn-xs"  data-rotation='+rotation+' id=save_btn_'+id+'  data-id='+id+'>Save</button></div>',
             deleteLink = '<a href="javascript:void(0);" onclick="confirmDelete('+ id +',\''+title+'\');" >Delete</a>',
             fancyTitle =  '<div>'+rotatebtns + title + '<br>' + deleteLink + '</div>';
             $this.data('fancybox-title', fancyTitle);
@@ -120,6 +121,8 @@ function confirmDelete(id, title)
     {
         $('.ajaxLoading').show();
         var id=$(ele).data('id');
+        var rotation =  $("#gallery_img_"+id).attr('data-rotation');
+        angle = parseInt(angle) +parseInt(rotation);
         $.ajax(
                 {
                     type:'POST',
@@ -127,9 +130,17 @@ function confirmDelete(id, title)
                     data:{id:id,angle:angle},
                     success:function(data){
                         if(data.status == 'success')
-                        {
-                            notyMessage(data.message);
-                          window.location.reload(true);
+                        {notyMessage(data.message);
+                            $("#gallery_img_"+id).attr('href','./uploads/gallary/'+id+'_rotated.jpg?time='+Math.floor(Date.now()));
+                            console.log(angle);
+                            $("#gallery_img_"+id).attr('data-rotation',angle);
+                            $("#save_btn_"+id).attr('data-rotation',angle);
+                            $('#img_thumb_'+id).attr('src','./uploads/gallary/'+id+'_thumb_rotated.jpg?time='+Math.floor(Date.now()));
+                            //  $('#img_thumb_'+$(ele).data('id')).css({'transform': 'rotate(' + angle + 'deg)'});
+                            angle=0;
+                            $('.ajaxLoading').hide();
+                            $.fancybox.close();
+                            //window.location.reload(true);
                         } else {
                             notyMessageError(data.message);
                             $('.ajaxLoading').hide();
