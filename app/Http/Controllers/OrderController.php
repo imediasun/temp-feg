@@ -1122,7 +1122,7 @@ function sendPhpEmail($message,$to,$from,$subject,$pdf,$filename,$cc,$bcc)
             $partial = 0;
             $record = \DB::select('SELECT  SUM(qty) as total_items,(SUM(qty)-SUM(item_received)) as remaining_items FROM order_contents WHERE order_id ='.$request->get('order_id'));
 
-            if($record->remaining_items > 0 && $record->remaining_items < $record->total_items)
+            if($record[0]->remaining_items > 0 && $record[0]->remaining_items < $record[0]->total_items)
             {
                 $partial = 1;
             }
