@@ -3022,3 +3022,12 @@ ul.breadcrumb {
     display: inline-block;
     border-radius: 2px;
 }
+.actionopen a.tips.btn.btn-xs {
+  width: 24.5px;
+}
+table .btn.btn-xs {
+  width: 25px;
+}
+.action {
+  margin-top: 1px;
+}

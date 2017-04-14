@@ -249,8 +249,8 @@
         $divOverlay.css({
             position: 'absolute',
             visibility:'visible',
-            top: bottomTop,
-            right: "51px",
+            top: bottomTop-4,
+            right: "47px",
             width: 'auto',
             height: '28px'
         });
