@@ -261,7 +261,7 @@ class LocationController extends Controller
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
             $data = $this->validatePost('location', !empty($id));
-            
+
             // old id in case the existing location's id has been modified
             $oldId = $id;
             $newId = isset($data['id']) ? $data['id'] : $id;

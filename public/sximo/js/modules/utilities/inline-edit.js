@@ -244,8 +244,18 @@
         var bottomTop;
         var rightSpace;
         var actionBtns= $(ele).children('td[data-values="action"]').children('.action');
-           actionBtns.css('padding-bottom',"29px");
-           bottomTop=actionBtns.offset().top+29;
+        console.log(actionBtns.siblings('a').length);
+        if(actionBtns.siblings('a').length == 0)
+        {
+            actionBtns.css('padding-bottom',"29px");
+            bottomTop=actionBtns.offset().top+29;
+        }
+        else
+        {
+            actionBtns.siblings('a').last().css('margin-bottom',"29px");
+            bottomTop=actionBtns.siblings('a').last().offset().top+29;
+        }
+
         $divOverlay.css({
             position: 'absolute',
             visibility:'visible',

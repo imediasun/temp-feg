@@ -3026,6 +3026,7 @@ ul.breadcrumb {
   width: 24.5px;
 }
 table .btn.btn-xs {
+  float: left;
   width: 25px;
 }
 .action {
