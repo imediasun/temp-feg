@@ -114,10 +114,10 @@
        }
     }
     var angle=0;
-    function rotateTo(ele){
+    function rotateTo(ele) {
         angle += $(ele).data('value');
         $('.fancybox-inner').css({'transform': 'rotate(' + angle + 'deg)'});
-
+    }
     function saveRotateImg(ele) {
         $('.ajaxLoading').show();
         var id = $(ele).data('id');
@@ -150,7 +150,7 @@
                 }
         );
     }
-    }
+
 
 </script>
 <style>
