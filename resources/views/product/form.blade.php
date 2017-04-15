@@ -85,6 +85,38 @@
 
                         </div>
                     </div>
+
+                    <div class="form-group  ">
+                        <label for="Prod Type Id" class=" control-label col-md-4 text-left">
+                            {!! SiteHelpers::activeLang('Product Type', (isset($fields['prod_type_id']['language'])?
+                            $fields['prod_type_id']['language'] : array())) !!}
+                        </label>
+
+                        <div class="col-md-6">
+
+                            <select name='prod_type_id' rows='5' id='prod_type_id' class='select2 '
+                                    required='required'></select>
+                        </div>
+                        <div class="col-md-2">
+
+                        </div>
+                    </div>
+
+
+                    <div class="form-group  ">
+                        <label for="Prod Sub Type Id" class=" control-label col-md-4 text-left">
+                            {!! SiteHelpers::activeLang('Product Subtype',
+                            (isset($fields['prod_sub_type_id']['language'])? $fields['prod_sub_type_id']['language'] :
+                            array())) !!}
+                        </label>
+
+                        <div class="col-md-6">
+                            <select name='prod_sub_type_id' rows='5' id='prod_sub_type_id' class='select2 '></select>
+                        </div>
+                        <div class="col-md-2">
+
+                        </div>
+                    </div>
                     <div class="form-group  ">
                         <label for="Quantity Per Case" class=" control-label col-md-4 text-left">
                             {!! SiteHelpers::activeLang('Quantity Per Case', (isset($fields['num_items']['language'])?
@@ -171,37 +203,6 @@
                         </div>
                     </div>
 
-                    <div class="form-group  ">
-                        <label for="Prod Type Id" class=" control-label col-md-4 text-left">
-                            {!! SiteHelpers::activeLang('Prod Type Id', (isset($fields['prod_type_id']['language'])?
-                            $fields['prod_type_id']['language'] : array())) !!}
-                        </label>
-
-                        <div class="col-md-6">
-
-                            <select name='prod_type_id' rows='5' id='prod_type_id' class='select2 '
-                                    required='required'></select>
-                        </div>
-                        <div class="col-md-2">
-
-                        </div>
-                    </div>
-
-
-                    <div class="form-group  ">
-                        <label for="Prod Sub Type Id" class=" control-label col-md-4 text-left">
-                            {!! SiteHelpers::activeLang('Prod Sub Type Id',
-                            (isset($fields['prod_sub_type_id']['language'])? $fields['prod_sub_type_id']['language'] :
-                            array())) !!}
-                        </label>
-
-                        <div class="col-md-6">
-                            <select name='prod_sub_type_id' rows='5' id='prod_sub_type_id' class='select2 '></select>
-                        </div>
-                        <div class="col-md-2">
-
-                        </div>
-                    </div>
                     <div class="form-group clearfix">
                         <label for="vendor_id" class="control-label col-md-4 text-left">
                             Vendor </label>

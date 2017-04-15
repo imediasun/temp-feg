@@ -211,7 +211,7 @@
                         <th width="90"> Sku #</th>
                         <th width="170">Item Name</th>
                         <th width="200">Item Description</th>
-                        <th width="90">Price Per Unit</th>
+                        <th width="90">Unit Price</th>
                         <th width="90">Case Price</th>
                         {{--<th>Retail Price</th>--}}
                         <th width="90">Quantity</th>
@@ -336,11 +336,7 @@
             var Subtotal = 0.00;
             $('table tr.clone ').each(function (i) {
                 Qty = $(this).find("input[name*='qty']").val();
-                Price = $(this).find("input[name*='price']").val();
-                if (Price == 0) {
-                    Price = $(this).find("input[name*='case_price']").val();
-
-                }
+                Price = $(this).find("input[name*='case_price']").val();
                 sum = Qty * Price;
                 Subtotal += sum;
                 sum = sum.toFixed(PRECISION);
@@ -810,7 +806,6 @@
 
             // init("item_name"+counter);
         }
-
     </script>
     <style type="text/css">
         tr.invHeading th {
