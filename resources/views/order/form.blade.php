@@ -142,7 +142,6 @@
                             <div class="input-group " style="width:150px !important; margin-bottom: 9px;">
                                 <input type="text" class="form-control " id="my-datepicker" name="date_ordered"
                                        value="{{ date("m/d/Y", strtotime($data['today'])) }}" required="required" readonly/>
-                                <span class="input-group-addon " ><i class="fa fa-calendar" id="icon"></i></span>
                             </div>
                         </div>
 
