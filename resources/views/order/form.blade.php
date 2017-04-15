@@ -139,10 +139,9 @@
                             Date Ordered</label>
 
                         <div class="col-md-8" style="padding-left: 13px;">
-                            <div class="input-group " style="width:150px !important; margin-bottom: 9px;">
                                 <input type="text" class="form-control " id="my-datepicker" name="date_ordered"
                                        value="{{ date("m/d/Y", strtotime($data['today'])) }}" required="required" readonly/>
-                            </div>
+
                         </div>
 
                     </div>
