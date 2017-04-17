@@ -217,12 +217,13 @@
         });
        var actionBtns= $(row).children('td[data-values="action"]').children('.action');
            actionBtns.css('padding-bottom',"0px");
+           actionBtns.css('margin-bottom',"0px");
            row.removeClass('inline_edit_applied');
-          /* row.nextAll('.inline_edit_applied').each(function(){
+           row.nextAll('.inline_edit_applied').each(function(){
            var id=$(this).data('id');
            var height=$(this).offset().top+29;
            $('#divOverlay_'+id).css('top',height +"px");
-        });*/
+        });
         rowHookParams.count = --editingRowsCount;
         displayInlineEditButtons(rowDomId, true);
 
