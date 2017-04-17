@@ -352,7 +352,7 @@
 
 <script type="text/javascript">
     $(document).ready(function () {
-
+        numberFieldValidationChecks($("#qty_input"));
         $("#vendor_id").jCombo("{{ URL::to('product/comboselect?filter=vendor:id:vendor_name:hide:0:status:1') }}",
                 {selected_value: '{{ $row["vendor_id"] }}'});
 
