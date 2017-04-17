@@ -659,7 +659,7 @@ jQuery(document).ready(function ($) {
                 if(data == false)
                 {
                     $('.ajaxLoading').hide();
-                    notyMessageError('You are Not Authorized to view this page');
+                    notyMessageError('You are not authorized to view this page');
                     //window.location = url;
                 }
                 else
@@ -671,7 +671,7 @@ jQuery(document).ready(function ($) {
                     else
                     {
                         $('.ajaxLoading').hide();
-                        notyMessageError('You are Not Authorized to view this page.');
+                        notyMessageError('You are not authorized to view this page.');
                     }
                 }
                 //$('.globalLoading').hide();

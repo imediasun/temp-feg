@@ -85,6 +85,38 @@
 
                         </div>
                     </div>
+
+                    <div class="form-group  ">
+                        <label for="Prod Type Id" class=" control-label col-md-4 text-left">
+                            {!! SiteHelpers::activeLang('Product Type', (isset($fields['prod_type_id']['language'])?
+                            $fields['prod_type_id']['language'] : array())) !!}
+                        </label>
+
+                        <div class="col-md-6">
+
+                            <select name='prod_type_id' rows='5' id='prod_type_id' class='select2 '
+                                    required='required'></select>
+                        </div>
+                        <div class="col-md-2">
+
+                        </div>
+                    </div>
+
+
+                    <div class="form-group  ">
+                        <label for="Prod Sub Type Id" class=" control-label col-md-4 text-left">
+                            {!! SiteHelpers::activeLang('Product Subtype',
+                            (isset($fields['prod_sub_type_id']['language'])? $fields['prod_sub_type_id']['language'] :
+                            array())) !!}
+                        </label>
+
+                        <div class="col-md-6">
+                            <select name='prod_sub_type_id' rows='5' id='prod_sub_type_id' class='select2 '></select>
+                        </div>
+                        <div class="col-md-2">
+
+                        </div>
+                    </div>
                     <div class="form-group  ">
                         <label for="Quantity Per Case" class=" control-label col-md-4 text-left">
                             {!! SiteHelpers::activeLang('Quantity Per Case', (isset($fields['num_items']['language'])?
@@ -93,7 +125,7 @@
 
                         <div class="col-md-6">
                             {!! Form::text('num_items', $row['num_items'],array('class'=>'form-control',
-                            'placeholder'=>'', )) !!}
+                            'placeholder'=>'', 'id'=>'qty_input')) !!}
                         </div>
                         <div class="col-md-2">
 
@@ -111,7 +143,7 @@
                                 <span class="input-group-addon">$</span>
                                 {!! Form::text('case_price',
                                 number_format((double)$row['case_price'],3),array('class'=>'form-control',
-                                'placeholder'=>'','required'=>'required','type'=>'number','min' => '0','step'=>'1' ))
+                                'placeholder'=>'','required'=>'required','type'=>'number','min' => '0','step'=>'1','id'=>'case_price_input' ))
                                 !!}
                             </div>
                         </div>
@@ -130,7 +162,7 @@
                                 <span class="input-group-addon">$</span>
                                 {!! Form::text('unit_price',
                                 number_format((double)$row['unit_price'],3),array('class'=>'form-control',
-                                'placeholder'=>'','required'=>'required','type'=>'number','min' => '0','step'=>'1' ))
+                                'placeholder'=>'','required'=>'required','type'=>'number','min' => '0','step'=>'1', 'id'=>'unit_price_input' ))
                                 !!}
                             </div>
                         </div>
@@ -171,37 +203,6 @@
                         </div>
                     </div>
 
-                    <div class="form-group  ">
-                        <label for="Prod Type Id" class=" control-label col-md-4 text-left">
-                            {!! SiteHelpers::activeLang('Prod Type Id', (isset($fields['prod_type_id']['language'])?
-                            $fields['prod_type_id']['language'] : array())) !!}
-                        </label>
-
-                        <div class="col-md-6">
-
-                            <select name='prod_type_id' rows='5' id='prod_type_id' class='select2 '
-                                    required='required'></select>
-                        </div>
-                        <div class="col-md-2">
-
-                        </div>
-                    </div>
-
-
-                    <div class="form-group  ">
-                        <label for="Prod Sub Type Id" class=" control-label col-md-4 text-left">
-                            {!! SiteHelpers::activeLang('Prod Sub Type Id',
-                            (isset($fields['prod_sub_type_id']['language'])? $fields['prod_sub_type_id']['language'] :
-                            array())) !!}
-                        </label>
-
-                        <div class="col-md-6">
-                            <select name='prod_sub_type_id' rows='5' id='prod_sub_type_id' class='select2 '></select>
-                        </div>
-                        <div class="col-md-2">
-
-                        </div>
-                    </div>
                     <div class="form-group clearfix">
                         <label for="vendor_id" class="control-label col-md-4 text-left">
                             Vendor </label>
@@ -362,7 +363,7 @@
         $("#prod_sub_type_id").jCombo("{{ URL::to('product/comboselect?filter=product_type:id:type_description') }}&parent=request_type_id:",
                 {parent: '#prod_type_id', selected_value: '{{ $row["prod_sub_type_id"] }}'});
 // for Redemption Prizes show Ticket Value
-        if ("{{$row["prod_type_id"] }}" == 7) {
+        if ("{{$row["prod_type_id"] }}" == 7 || "{{$row["prod_type_id"] }}" == 8) {
             $("#ticket_value").show();
             $("#ticket_input").attr('required','required');
         }
@@ -418,7 +419,7 @@
             $("#retail_price").hide(300);
             $("#retail_price").removeAttr('required');
         }
-        if ($(this).val() == "7") {
+        if ($(this).val() == "7" || $(this).val() == "8" ) {
             $("#ticket_value").show(300);
             $("#ticket_value").attr('required','required');
         }
@@ -443,7 +444,18 @@
             return false;
         }
     }
-
+$('#qty_input,#case_price_input').on('keyup',function(){
+    var case_price = $("#case_price_input").val();
+    var quantity = $("#qty_input").val();
+    var unit_price = case_price/quantity;
+    if(quantity != 0 && unit_price != 0) {
+        $('#unit_price_input').val(unit_price.toFixed(3));
+    }
+    else
+    {
+        $('#unit_price_input').val(0.000);
+    }
+});
 </script>
 <style>
     #ticket_value, #retail_price {

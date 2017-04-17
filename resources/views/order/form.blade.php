@@ -138,12 +138,10 @@
                         <label for="date_orederd" class=" control-label col-md-4 text-left" style="margin-top: 7px;">
                             Date Ordered</label>
 
-                        <div class="col-md-8" style="padding-left: 13px;">
-                            <div class="input-group " style="width:150px !important; margin-bottom: 9px;">
-                                <input type="text" class="form-control " id="my-datepicker" name="date_ordered"
+                        <div class="col-md-8" style="padding-left: 18px;">
+                                <input  style="width:150px !important;" type="text" class="form-control " id="my-datepicker" name="date_ordered"
                                        value="{{ date("m/d/Y", strtotime($data['today'])) }}" required="required" readonly/>
-                                <span class="input-group-addon " ><i class="fa fa-calendar" id="icon"></i></span>
-                            </div>
+
                         </div>
 
                     </div>
@@ -213,7 +211,7 @@
                         <th width="90"> Sku #</th>
                         <th width="170">Item Name</th>
                         <th width="200">Item Description</th>
-                        <th width="90">Price Per Unit</th>
+                        <th width="90">Unit Price</th>
                         <th width="90">Case Price</th>
                         {{--<th>Retail Price</th>--}}
                         <th width="90">Quantity</th>
@@ -338,11 +336,7 @@
             var Subtotal = 0.00;
             $('table tr.clone ').each(function (i) {
                 Qty = $(this).find("input[name*='qty']").val();
-                Price = $(this).find("input[name*='price']").val();
-                if (Price == 0) {
-                    Price = $(this).find("input[name*='case_price']").val();
-
-                }
+                Price = $(this).find("input[name*='case_price']").val();
                 sum = Qty * Price;
                 Subtotal += sum;
                 sum = sum.toFixed(PRECISION);
@@ -812,7 +806,6 @@
 
             // init("item_name"+counter);
         }
-
     </script>
     <style type="text/css">
         tr.invHeading th {
