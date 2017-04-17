@@ -247,6 +247,10 @@ $(document).ready(function() {
                     url:'product/trigger',
                     data:{isActive:state,productId:productId},
                     success:function(data){
+                        if($('select[name="product_list_type"] :selected').val() == 'productsindevelopment')
+						{
+                            window.location.reload();
+						}
                         if(data.status == "error"){
                             //notyMessageError(data.message);
                         }
