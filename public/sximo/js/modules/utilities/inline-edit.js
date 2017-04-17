@@ -258,6 +258,19 @@
                 height: '28px'
             });
         }
+        else if(actionBtns.siblings('a').length > 2 && actionBtns.siblings('a').length < 5)
+        {
+            actionBtns.siblings('a').last().css('margin-bottom',"29px");
+            bottomTop=actionBtns.siblings('a').last().offset().top+29;
+            $divOverlay.css({
+                position: 'absolute',
+                visibility:'visible',
+                top: bottomTop-4,
+                right: "47px",
+                width: 'auto',
+                height: '28px'
+            });
+        }
         else
         {
             actionBtns.siblings('a').last().css('margin-bottom',"29px");
