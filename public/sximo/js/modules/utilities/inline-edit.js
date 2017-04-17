@@ -249,41 +249,20 @@
         {
             actionBtns.css('padding-bottom',"50px");
             bottomTop=actionBtns.offset().top+29;
-            $divOverlay.css({
-                position: 'absolute',
-                visibility:'visible',
-                top: bottomTop-4,
-                right: "47px",
-                width: 'auto',
-                height: '28px'
-            });
-        }
-        else if(actionBtns.siblings('a').length < 3)
-        {
-            actionBtns.siblings('a').last().css('margin-bottom',"29px");
-            bottomTop=actionBtns.siblings('a').last().offset().top+29;
-            $divOverlay.css({
-                position: 'absolute',
-                visibility:'visible',
-                top: bottomTop-4,
-                right: "47px",
-                width: 'auto',
-                height: '28px'
-            });
         }
         else
         {
             actionBtns.siblings('a').last().css('margin-bottom',"29px");
             bottomTop=actionBtns.siblings('a').last().offset().top+29;
-            $divOverlay.css({
-                position: 'absolute',
-                visibility:'visible',
-                top: bottomTop-4,
-                right: "53px",
-                width: 'auto',
-                height: '28px'
-            });
         }
+        $divOverlay.css({
+            position: 'absolute',
+            visibility:'visible',
+            top: bottomTop-4,
+            right: "47px",
+            width: 'auto',
+            height: '28px'
+        });
         $divOverlay.delay(100).slideDown('fast');
 
     };
