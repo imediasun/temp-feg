@@ -278,13 +278,20 @@ class ProductController extends Controller
         $rules['img'] = 'mimes:jpeg,gif,png';
         $rules['sku'] = 'required|unique:products,sku,'.$id;
         $validator = Validator::make($request->all(), $rules);
+        $retail_price = $request->get('retail_price');
+        if($request->get('prod_type_id') != 8)
+        {
+            $retail_price=0.000;
+        }
         if ($validator->passes()) {
             if ($id == 0) {
                 $data = $this->validatePost('products');
+                $data['retail_price']=$retail_price;
                 $id = $this->model->insertRow($data, $request->input('id'));
             } else {
                 //for inline editing all fields do not get saved
                 $data = $this->validatePost('products',true);
+                $data['retail_price']=$retail_price;
                 $id = $this->model->insertRow($data, $id);
             }
             /*

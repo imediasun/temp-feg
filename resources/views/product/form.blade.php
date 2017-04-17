@@ -124,8 +124,8 @@
                         </label>
 
                         <div class="col-md-6">
-                            {!! Form::text('num_items', $row['num_items'],array('class'=>'form-control',
-                            'placeholder'=>'', 'id'=>'qty_input')) !!}
+                            {!! Form::number('num_items', $row['num_items'],array('class'=>'form-control',
+                            'placeholder'=>'','step'=>1,'min'=>1,'placeholder'=>'0', 'id'=>'qty_input')) !!}
                         </div>
                         <div class="col-md-2">
 
@@ -352,7 +352,7 @@
 
 <script type="text/javascript">
     $(document).ready(function () {
-
+        numberFieldValidationChecks($("#qty_input"));
         $("#vendor_id").jCombo("{{ URL::to('product/comboselect?filter=vendor:id:vendor_name:hide:0:status:1') }}",
                 {selected_value: '{{ $row["vendor_id"] }}'});
 
