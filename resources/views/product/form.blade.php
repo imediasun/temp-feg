@@ -124,8 +124,8 @@
                         </label>
 
                         <div class="col-md-6">
-                            {!! Form::text('num_items', $row['num_items'],array('class'=>'form-control',
-                            'placeholder'=>'', 'id'=>'qty_input')) !!}
+                            {!! Form::number('num_items', $row['num_items'],array('class'=>'form-control',
+                            'placeholder'=>'','step'=>1,'min'=>1,'placeholder'=>'0', 'id'=>'qty_input')) !!}
                         </div>
                         <div class="col-md-2">
 

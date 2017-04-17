@@ -936,4 +936,13 @@
         [id^="game_0"] {
             width: 90%;
         }
+        input[type=number]::-webkit-inner-spin-button,
+        input[type=number]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            -o-appearance: none;
+            -ms-appearace:none;
+            appearance: none;
+            margin: 0;
+        }
     </style>
