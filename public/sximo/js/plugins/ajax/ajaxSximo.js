@@ -17,7 +17,8 @@ function reloadData( id,url,callback)
 		$( id +'Grid' ).html( data );
 		typeof callback === 'function' && callback(data);
         App.autoCallbacks.runCallback.call($( id +'Grid' ), 'reloaddata', 
-            {id:id, url:url, data:data, isClear: isClearSearch});        
+            {id:id, url:url, data:data, isClear: isClearSearch});
+        $( id +'Grid' ).show();
 		$('.ajaxLoading').hide();
 	});
 
@@ -290,7 +291,7 @@ function ajaxRemove( id, url )
 function ajaxViewDetail( id , url )
 {
 	$('.ajaxLoading').show();
-	//console.log(url);
+	console.log(url);
 	$.get( url ,function( data ) {
 		$( id +'View').html( data );
 		$( id +'Grid').hide( );
@@ -318,7 +319,11 @@ function ajaxViewClose( id , elm)
     }
     
 	view.html('');
-	grid.show();	
+
+    myurl = id+'/data';
+    myurl = myurl.replace('#','');
+    reloadData(id,myurl);
+    //grid.show();
 	$('#sximo-modal').modal('hide');
 }
 
