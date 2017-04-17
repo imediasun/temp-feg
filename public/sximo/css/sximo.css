@@ -3032,3 +3032,6 @@ table .btn.btn-xs {
 .action {
   margin-top: 1px;
 }
+td.label-view.text-right {
+  text-align: left;
+}
