@@ -217,11 +217,21 @@
         });
        var actionBtns= $(row).children('td[data-values="action"]').children('.action');
            actionBtns.css('padding-bottom',"0px");
+           if(actionBtns.siblings('a').length > 0)
+           {
+               actionBtns.siblings('a').last().css('margin-bottom',"0px");
+           }
            actionBtns.css('margin-bottom',"0px");
            row.removeClass('inline_edit_applied');
            row.nextAll('.inline_edit_applied').each(function(){
            var id=$(this).data('id');
            var height=$(this).offset().top+29;
+               console.log($(this).children('td[data-values="action"]').children('.action').siblings('a'));
+               if($(this).children('td[data-values="action"]').children('.action').siblings('a').length > 0)
+               {
+                   height=$(this).children('td[data-values="action"]').children('.action').siblings('a').last().offset().top+29;
+                   console.log(height);
+               }
            $('#divOverlay_'+id).css('top',height +"px");
         });
         rowHookParams.count = --editingRowsCount;
