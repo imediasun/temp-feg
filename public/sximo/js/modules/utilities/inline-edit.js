@@ -258,7 +258,7 @@
                 height: '28px'
             });
         }
-        else if(actionBtns.siblings('a').length > 2 && actionBtns.siblings('a').length < 5)
+        else if(actionBtns.siblings('a').length < 3)
         {
             actionBtns.siblings('a').last().css('margin-bottom',"29px");
             bottomTop=actionBtns.siblings('a').last().offset().top+29;
