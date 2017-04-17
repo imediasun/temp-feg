@@ -253,7 +253,7 @@
                 position: 'absolute',
                 visibility:'visible',
                 top: bottomTop-4,
-                right: "47px",
+                right: window.location.pathname == '/shopfegrequeststore'?'162px':"47px",
                 width: 'auto',
                 height: '28px'
             });
