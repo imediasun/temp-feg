@@ -28,7 +28,7 @@
                         </div>
                     @endforeach
                         <div class="sscol col-md-1">
-                            <span style="width: 100%;float: left;margin-bottom: 5px;margin-left: 3px;">All</span>
+                            <span style="width: 100%;float: left;margin-bottom: 5px;margin-left: 3px;">All Status</span>
 
                             <input type="checkbox" name="showAll" class="form-control checkbox" data-simplesearch="1">
                         </div>
