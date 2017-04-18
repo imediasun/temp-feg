@@ -60,10 +60,12 @@ class servicerequestsController extends Controller
     public function getSearchFilterQuery($customQueryString = null) {
         // Filter Search for query
         // build sql query based on search filters
-        
+
         
         // Get custom Ticket Type filter value 
-        $customTicketTypeFilter = $this->model->getSearchFilters(['ticket_custom_type' => '', 'Status' => 'status']);
+        $customTicketTypeFilter = $this->model->getSearchFilters(['ticket_custom_type' => '', 'Status' => 'status','showAll'=>0]);
+        $showAll = $customTicketTypeFilter['showAll'];
+        unset($customTicketTypeFilter['showAll']);
         $skipFilters = ['ticket_custom_type'];
         $mergeFilters = [];
         extract($customTicketTypeFilter); //$ticket_custom_type, $status
@@ -94,7 +96,7 @@ class servicerequestsController extends Controller
         if (!empty($debitType)) {
             $filter .= " AND sb_tickets.location_id IN (SELECT id from location where debit_type_id='$debitType') ";
         } 
-        if (empty($status)) {
+        if (empty($status) && $showAll == 0) {
             $filter .= " AND sb_tickets.Status != 'closed' ";
         } 
         

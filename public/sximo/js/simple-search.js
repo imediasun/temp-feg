@@ -22,10 +22,10 @@ function performSimpleSearch(params) {
             isRangeEndField = valueField.attr('data-range-end-field') == '1',
             operate = valueField.attr('data-simpleSearchOperator') || "equal",
             isRangeEndField,
-            value = valueField.val(),
+            value = valueField.hasClass('checkbox')?valueField.is(':checked')?1:0:valueField.val(),
             isValueDate = valueField.hasClass('date'),
             isValueDateTime = valueField.hasClass('datetime');
-        
+
         // normalize field name for range end field
         if (isRangeEndField) {
             fieldName = fieldName.replace(/\_end$/, '');
