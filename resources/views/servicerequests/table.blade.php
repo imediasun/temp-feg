@@ -194,7 +194,7 @@
             reloadData('#{{ $pageModule }}', url);
             return false;
         });
-        $('select[name="ticket_custom_type"]').change(function () {
+        $('select[name="Status"]').change(function () {
             var showAll = $('input[name=showAll]');
             if($('select[name="ticket_custom_type"] :selected')[0].index == 0)
             {
