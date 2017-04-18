@@ -59,7 +59,7 @@
             <div class="freightContentsContainer clearfix">
                 <h3 class="m-b-md-f m-l-f">Freight Contents:</h3>
                 @for($i = 0; $i < count($row['description']); $i++)
-                <input type="hidden" name="freight_pallet_id[]" value="{{ $row['freight_pallet_id'][$i] }}"/>
+                <input type="hidden" name="freight_pallet_id[]" value="{{ isset($row['freight_pallet_id'][$i])?$row['freight_pallet_id'][$i]:'' }}"/>
                 <div class="form-group m-b-xs-f clearfix">
                     <label class="label-control col-md-3">Pallet  {{ $i+1 }}</label>
                     <div class="col-md-9">
