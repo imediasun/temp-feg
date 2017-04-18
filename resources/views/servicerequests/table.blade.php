@@ -196,7 +196,7 @@
         });
         $('select[name="Status"]').change(function () {
             var showAll = $('input[name=showAll]');
-            if($('select[name="ticket_custom_type"] :selected')[0].index == 0)
+            if($('select[name="Status"] :selected')[0].index == 0)
             {
                 $('input[name=showAll]').removeAttr('disabled');
             }
