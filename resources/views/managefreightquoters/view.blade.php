@@ -63,20 +63,20 @@
                 <div class="form-group m-b-xs-f clearfix">
                     <label class="label-control col-md-3">Pallet  {{ $i+1 }}</label>
                     <div class="col-md-9">
-                        <input type="text" class="form-control" name="description[]" value="{{ $row['description'][$i] }}"/>
+                        <input type="text" class="form-control" name="description[]" value="{{ isset($row['description'][$i])?$row['description'][$i]:'' }}"/>
                     </div>
                 </div>
                 <div class="form-group m-b-xs-f clearfix">
                     <label class="label-control col-md-3">Dimension  {{ $i+1 }}</label>
                     <div class="col-md-9">
-                        <input type="text" class="form-control" name="dimension[]" value="{{ $row['dimensions'][$i] }}"/>
+                        <input type="text" class="form-control" name="dimension[]" value="{{ isset($row['dimensions'][$i])?$row['dimensions'][$i]:'' }}"/>
                     </div>
                 </div>
                 @endfor
                 <div class="form-group clearfix">
                     <label class="label-control col-md-3">Shipment Notes:</label>
                     <div class="col-md-9">
-                        <textarea name="notes" rows="6" cols="20" id="notes" class="form-control">{{ $row['notes'] }}</textarea>
+                        <textarea name="notes" rows="6" cols="20" id="notes" class="form-control">{{ isset($row['notes'])?$row['notes']:'' }}</textarea>
                     </div>
                 </div>
                 <hr/>
@@ -95,12 +95,14 @@
                         {{ date("m/d/Y", strtotime($row['date_booked'])) }}
                     </div>
                 </div>
+
                 <div class="form-group clearfix">
                     <label class="label-control col-md-3">Date Paid</label>
                     <div class="col-md-9">
                         {{date("m/d/Y", strtotime($row['date_paid'])) }}
                     </div>
                 </div>
+
                 <div class="form-group clearfix">
                     <label class="label-control col-md-3">Damage or Delays</label>
                     <div class="col-md-9">
