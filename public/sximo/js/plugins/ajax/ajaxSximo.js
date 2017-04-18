@@ -321,9 +321,9 @@ function ajaxViewClose( id , elm)
 	view.html('');
     if($('.table.datagrid').find('.bootstrap-switch-wrapper').length > 0)
     {
-        myurl = id+'/data';
-        myurl = myurl.replace('#','');
-        reloadData(id,myurl);
+        var url = id+'/data';
+        url = url.replace('#','');
+        reloadData(id,url);
     }
     else
     {
