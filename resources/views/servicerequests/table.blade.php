@@ -194,6 +194,10 @@
             reloadData('#{{ $pageModule }}', url);
             return false;
         });
+        if($('select[name="Status"] :selected')[0].index != 0)
+        {
+            $('input[name=showAll]').attr('disabled','disabled').parent('.icheckbox_square-blue').removeClass('checked');
+        }
         $('select[name="Status"]').change(function () {
             var showAll = $('input[name=showAll]');
             if($('select[name="Status"] :selected')[0].index == 0)
