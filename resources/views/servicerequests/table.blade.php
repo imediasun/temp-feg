@@ -194,7 +194,18 @@
             reloadData('#{{ $pageModule }}', url);
             return false;
         });
-
+        $('select[name="Status"]').change(function () {
+            var showAll = $('input[name=showAll]');
+            if($('select[name="Status"] :selected')[0].index == 0)
+            {
+                $('input[name=showAll]').removeAttr('disabled');
+            }
+            else
+            {
+                showAll.attr('disabled','disabled');
+                showAll.parent('.icheckbox_square-blue').removeClass('checked');
+            }
+        });
         <?php if ($setting['view-method'] == 'expand') :
         echo AjaxHelpers::htmlExpandGrid();
     endif;
