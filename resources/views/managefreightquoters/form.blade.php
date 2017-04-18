@@ -338,16 +338,12 @@
                     </div>
                     <hr/>
                     <h3>Pallet Details:</h3>
-                    <div class="text-center col-md-3 col-md-offset-5" style="padding-left:60px" id="add_section_btn">
-                        <a style="display:inline-block;margin:10px;" href="javascript:void(0);"
-                           class="addC btn btn-xs btn-info" rel=".clone1" id="newpallet" "><i class="fa fa-plus"></i> Add
-                            Section</a>
-                    </div><div class="clearfix"></div>
+
 <div class="testbtn">
                     <div class="clone1 clonedInput">
                         <div class="form-group">
                             <label for="" class="control-label col-md-4 text-left">
-                                Description <span id="#"></span>
+                                <span class="counter"> </span>  Description
                             </label>
 
                             <div class="col-md-6">
@@ -359,25 +355,32 @@
                         </div>
                         <div class="form-group">
                             <label for="" class="control-label col-md-4 text-left">
-                                Dimensions <span id="#"></span></label>
+                                <span class="counter1"> </span>  Dimensions <span id="#"></span></label>
 
                             <div class="col-md-6">
                                 <input type="text" name="dimensions[]" id="dimensions"
                                        value="<?php //echo set_value('dimensions'); ?>" class="form-control" required/>
                             </div>
                             <div class="col-md-2" >
-                                <a onclick=" $(this).parents('.clonedInput').remove(); return false"
-                                   href="#"
-                                   class=" remove btn btn-xs btn-danger">-</a>
+                                <p id="hide-button"
+                                   onclick="removeRow(this.id);"
+                                   class="remove btn btn-xs btn-danger">-
+                                </p>
                                 <input type="hidden" name="counter[]">
                             </div>
                         </div>
 
-                        <hr/>
+
                     </div>
     </div>
+                    <div class="text-center col-md-3 col-md-offset-5" style="padding-left:60px" id="add_section_btn">
+                        <a style="display:inline-block;margin:10px;" href="javascript:void(0);"
+                           class="addC btn btn-xs btn-info" rel=".clone1" id="newpallet"><i class="fa fa-plus"></i> Add
+                        Section</a>
+                    </div><div class="clearfix"></div>
 
                     <div class="clearfix"></div>
+                    <hr/>
                     <div class="form-group">
                         <label for="" class="control-label col-md-4 text-left">
                             Shipment Notes
@@ -539,8 +542,34 @@
             $('#vend_to_div,#location_to_div').hide();
         }
     }
+    var counter=0;
+    $("#newpallet").click(function(){
+        handleItemCount('add');
+    });
+    function removeRow(id) {
+        if (counter > 2) {
+            $("#" + id).parents('.clonedInput').remove();
+        }
+        else {
+            notyMessageError("You can't remove first item.");
+        }
+        decreaseCounter();
+        return false;
+    }
+    function handleItemCount(mode) {
+        $('.counter').each(function (index, value) {
+            $(value).text("#"+ ++index+ "." );
+            counter = index + 1;
+        });
+        $('.counter1').each(function (index, value) {
+            $(value).text("#"+ ++index+ "." );
+            counter = index + 1;
+        });
+    }
+    function decreaseCounter() {
 
-
+        handleItemCount('remove');
+    }
 </script>
 <style>
     .clone:first-of-type a {
