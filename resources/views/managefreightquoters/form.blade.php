@@ -17,8 +17,11 @@
                 <fieldset>
                     <legend>Get Freight Quote</legend>
 
-                    <div class="form-group  ">
-                        <div class="col-md-8 col-md-offset-2">
+                    <div class="form-group">
+                        <label class="col-md-4">
+                            From :
+                        </label>
+                        <div class="col-md-8">
                             <label class="radio-inline">
                                 <input type="radio" name="from_type" value="location" id="radio_from_loc">&nbsp&nbsp Our
                                 Location </label>
@@ -34,9 +37,7 @@
                     </div>
                     <div class="clearfix"></div>
                     <div class="form-group">
-                        <label class="col-md-6 col-md-offset-3">
-                            From :
-                        </label>
+
                         <div id="from_div">
                             <div class="col-md-6 col-md-offset-4" id="location_from_div">
                                 <select name="location_from" id="location_id" class="select3">
@@ -171,7 +172,10 @@
                     <hr/>
 
                     <div class="form-group  ">
-                        <div class="col-md-8 col-md-offset-2">
+                        <label class="col-md-4">
+                            To :
+                        </label>
+                        <div class="col-md-8 ">
                             <label class="radio-inline">
                                 <input type="radio" name="to_type" value="location" id="radio_to_loc">&nbsp&nbsp
                                 Our Location </label>
@@ -187,10 +191,6 @@
                     </div>
                     <div class="clearfix"></div>
                     <div class="form-group">
-                        <label class="col-md-6 col-md-offset-3">
-                            To :
-                        </label>
-
                         <div id="from_div">
                             <div class="col-md-6 col-md-offset-4" id="location_to_div">
                                 <div class="clone clonedInput">
