@@ -319,11 +319,16 @@ function ajaxViewClose( id , elm)
     }
     
 	view.html('');
-
-    myurl = id+'/data';
-    myurl = myurl.replace('#','');
-    reloadData(id,myurl);
-    //grid.show();
+    if($('.table.datagrid').find('.bootstrap-switch-wrapper').length > 0)
+    {
+        myurl = id+'/data';
+        myurl = myurl.replace('#','');
+        reloadData(id,myurl);
+    }
+    else
+    {
+        grid.show();
+    }
 	$('#sximo-modal').modal('hide');
 }
 
