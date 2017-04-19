@@ -29,10 +29,10 @@
                 <div class="col-md-9">
                     {!!  $row['status'] !!}
                     @if(!strpos($row['status'],'Paid'))
-                        <a class="m-l-sm-f" href="{{ url()}}/managefreightquoters/paid/{{$row['freight_order_id']}}" onclick="return confirm('Confirm?');">MARK PAID</a>
+                        <a class="m-l-sm-f" id="markPaid" style="font-size: 12px" href="{{ url()}}/managefreightquoters/paid/{{$row['freight_order_id']}}">MARK PAID</a>
                     @endif
                     @if(strpos($row['status'],'Paid'))
-                    <b><span class="m-l-sm-f">on</span> <span class="m-l-sm-f">{{  date("m/d/Y", strtotime($row['date_paid'])) }}</span></b>
+                    <b style="font-size: 12px !important;"><span class="m-l-sm-f">on</span> <span class="m-l-sm-f">{{  date("m/d/Y", strtotime($row['date_paid'])) }}</span></b>
                     @endif
                 </div>
             </div>
@@ -45,7 +45,7 @@
             </div>
             @if(!empty($row['vend_to']) || !empty($row['to_add_street']))
                 <div class="form-group clearfix">
-                    <label class="label-control col-md-3" >TO:</label>
+                    <label class="label-control col-md-3" >To:</label>
                     <div class="col-md-9">
                         <p style="text-align:left; width: 200px;">
                         {!! trim($row['to_address'], "<br/>") !!}
@@ -59,24 +59,24 @@
             <div class="freightContentsContainer clearfix">
                 <h3 class="m-b-md-f m-l-f">Freight Contents:</h3>
                 @for($i = 0; $i < count($row['description']); $i++)
-                <input type="hidden" name="freight_pallet_id[]" value="{{ $row['freight_pallet_id'][$i] }}"/>
+                <input type="hidden" name="freight_pallet_id[]" value="{{ isset($row['freight_pallet_id'][$i])?$row['freight_pallet_id'][$i]:'' }}"/>
                 <div class="form-group m-b-xs-f clearfix">
                     <label class="label-control col-md-3">Pallet  {{ $i+1 }}</label>
                     <div class="col-md-9">
-                        <input type="text" class="form-control" name="description[]" value="{{ $row['description'][$i] }}"/>
+                        <input type="text" class="form-control" name="description[]" value="{{ isset($row['description'][$i])?$row['description'][$i]:'' }}"/>
                     </div>
                 </div>
                 <div class="form-group m-b-xs-f clearfix">
                     <label class="label-control col-md-3">Dimension  {{ $i+1 }}</label>
                     <div class="col-md-9">
-                        <input type="text" class="form-control" name="dimension[]" value="{{ $row['dimensions'][$i] }}"/>
+                        <input type="text" class="form-control" name="dimension[]" value="{{ isset($row['dimensions'][$i])?$row['dimensions'][$i]:'' }}"/>
                     </div>
                 </div>
                 @endfor
                 <div class="form-group clearfix">
                     <label class="label-control col-md-3">Shipment Notes:</label>
                     <div class="col-md-9">
-                        <textarea name="notes" rows="6" cols="20" id="notes" class="form-control">{{ $row['notes'] }}</textarea>
+                        <textarea name="notes" rows="6" cols="20" id="notes" class="form-control">{{ isset($row['notes'])?$row['notes']:'' }}</textarea>
                     </div>
                 </div>
                 <hr/>
@@ -86,21 +86,23 @@
                 <div class="form-group clearfix">
                     <label class="label-control col-md-3">Date Submitted</label>
                     <div class="col-md-9">
-                        {{ date("m/d/Y", strtotime($row['date_submitted'])) }}
+                        {{ \DateHelpers::formatDate($row['date_submitted']) }}
                     </div>
                 </div>
                 <div class="form-group clearfix">
                     <label class="label-control col-md-3">Date Booked</label>
                     <div class="col-md-9">
-                        {{ date("m/d/Y", strtotime($row['date_booked'])) }}
+                        {{ \DateHelpers::formatDate($row['date_booked']) }}
                     </div>
                 </div>
+
                 <div class="form-group clearfix">
                     <label class="label-control col-md-3">Date Paid</label>
                     <div class="col-md-9">
-                        {{date("m/d/Y", strtotime($row['date_paid'])) }}
+                        {{ \DateHelpers::formatDate($row['date_paid']) }}
                     </div>
                 </div>
+
                 <div class="form-group clearfix">
                     <label class="label-control col-md-3">Damage or Delays</label>
                     <div class="col-md-9">
@@ -161,11 +163,13 @@
                     </div>
                     <div class="form-group m-b-sm-f clearfix">
                         <input type="hidden" name="freight_company[]" id="freight_company_'.$i.'"   value="{{ $row['freight_loc_info']['freight_company'][$i] }}" />                
-                        <label class="label-control col-md-3">To Location {{ $i+1 }}</label>
+                        <label class="label-control col-md-3">Ship To {{ $i+1 }}</label>
                         <div class="col-md-9">
+                            @if($row['freight_loc_info']['location'][$i]!=0)
                             <strong>
                                 {{$row['freight_loc_info']['location'][$i]}} | {{$row['freight_loc_info']['location_name'][$i]}}
-                            </strong>                        
+                            </strong>
+                            @endif
                             <input type="hidden" id="loc_{{$i}}" name="loc[]" value="{{ $row['freight_loc_info']['location'][$i] }}" >
                         </div>
                     </div>
@@ -261,6 +265,27 @@
         mainModule = '{{ $pageModule }}';
     
     $(document).ready(function() {
+        $('#markPaid').click(function (e) {
+            $('.ajaxLoading').show();
+            e.preventDefault();
+            var me = $(this);
+            console.log($(this));
+            $.get("{{ url()}}/managefreightquoters/paid/{{$row['freight_order_id']}}",function (data) {
+                console.log(data);
+                console.log($(this));
+                /*me.text('MARKED PAID');
+                me.removeAttr('id');*/
+                $('#'+pageModule+'View').html(data);
+                $('.ajaxLoading').hide();
+                notyMessage("{{\Lang::get('core.note_freight_paid')}}");
+
+            })
+            .fail(function (data) {
+                $('.ajaxLoading').hide();
+                notyMessageError('An Error Occurred');
+                console.log(data);
+            })
+        });
         App.modules.freight.view.init({
                 'container': $('#'+pageModule+'View'),
                 'moduleName': pageModule,

@@ -3032,6 +3032,7 @@ table .btn.btn-xs {
 .action {
   margin-top: 1px;
 }
+<<<<<<< HEAD
 
 
 .sbox-title {
@@ -3096,3 +3097,8 @@ table .btn.btn-xs {
   position: relative !important;
   top: 2px;
 }
+=======
+td.label-view.text-right {
+  text-align: left;
+}
+>>>>>>> a6ca2470cbb36953989e65cffc1b04500213cb3a

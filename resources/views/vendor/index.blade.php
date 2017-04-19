@@ -1,6 +1,11 @@
 @extends('layouts.app')
 
-@section('content')
+@section('content')\
+<style>
+    .actionopen a:first-child{
+        margin-right: 2px;
+    }
+</style>
 <div class="page-content row">
   <!-- Begin Header & Breadcrumb -->
     <div class="page-header">

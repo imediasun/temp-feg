@@ -1,4 +1,10 @@
 @if($setting['form-method'] =='native')
+    <style>
+        #add_new_item
+        {
+            margin: 6px 0;
+        }
+    </style>
     <div class="sbox">
         <div class="sbox-title">
             <h4>
@@ -304,7 +310,7 @@
             <div class="form-group" style="margin-bottom:50px">
                 <label class="col-sm-4 text-right">&nbsp;</label>
 
-                <div class="col-sm-8">
+                <div class="col-sm-8" style="margin-top: -9px;">
                     <button type="submit" class="btn btn-primary btn-sm " id="submit_btn"><i
                                 class="fa  fa-save "></i>  {{ Lang::get('core.sb_save') }} </button>
                     <button type="button" onclick="ajaxViewClose('#{{ $pageModule }}')" class="btn btn-success btn-sm">
@@ -935,5 +941,14 @@
 
         [id^="game_0"] {
             width: 90%;
+        }
+        input[type=number]::-webkit-inner-spin-button,
+        input[type=number]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            -o-appearance: none;
+            -ms-appearace:none;
+            appearance: none;
+            margin: 0;
         }
     </style>

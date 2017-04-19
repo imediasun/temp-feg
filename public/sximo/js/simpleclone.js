@@ -23,7 +23,7 @@
 //console.log('plugin initialized');
 	$.fn.relCopy = function(options) {
 		var settings = jQuery.extend({
-			excludeSelector: ".exclude",
+			excludeSelector: ".exclude,.parsley-error-list",
 			emptySelector: ".empty",
 			copyClass: "copy",
 			append: '',

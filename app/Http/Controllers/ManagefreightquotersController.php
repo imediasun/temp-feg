@@ -201,11 +201,9 @@ class ManagefreightquotersController extends Controller
         $form_data = array();
         $form_data['loc_to_1'] = 0;
         $form_data['date_submitted'] = date('Y-m-d');
-        $form_data['date_paid'] = date('Y-m-d');
-        $form_data['date_booked'] = date('Y-m-d');
-
+        $form_data['date_paid'] = "";
+        $form_data['date_booked'] = "";
         $rules['from_type'] = $rules['to_type'] = $rules['games_per_location'] = $rules['description'] = $rules['dimensions'] = 'required';
-
         if ($to_form_type == 'blank') {
             $rules['to_add_name'] = $rules['to_add_city'] = $rules['to_add_state'] = $rules['to_add_zip'] = $rules['to_add_street'] = $rules['to_contact_name'] = $rules['to_contact_phone'] = $rules['to_contact_email'] = 'required';
             $rules['to_contact_email'] = 'required|email';
@@ -319,7 +317,7 @@ class ManagefreightquotersController extends Controller
             if ($from_form_type == 'location') {
                 $query = \DB::select('SELECT L.location_name,L.street1,L.city AS loc_city,L.state AS loc_state,L.zip AS loc_zip,L.loading_info,
                  U.first_name AS user_first_name,U.last_name AS user_last_name,U.email AS user_email,U.primary_phone AS user_phone
-										 FROM location L                                          
+										 FROM location L
                                          LEFT JOIN user_locations UL ON UL.location_id = L.id AND UL.group_id=101
                                          LEFT JOIN users U ON U.id = UL.user_id
 										WHERE L.id = ' . $form_data['loc_from'] . '');
@@ -365,7 +363,7 @@ class ManagefreightquotersController extends Controller
                 foreach ($location_to as $location) {
                     $query = \DB::select('SELECT L.location_name, L.street1,  L.city AS loc_city, L.state AS loc_state, L.zip AS loc_zip, L.loading_info,
 											  U.first_name AS user_first_name, U.last_name AS user_last_name, U.email AS user_email,  U.primary_phone AS user_phone
-										 FROM location L 
+										 FROM location L
                                          LEFT JOIN user_locations UL ON UL.location_id = L.id AND UL.group_id=101
                                          LEFT JOIN users U ON U.id = UL.user_id
                                          WHERE L.id = ' . $location . '');
@@ -540,11 +538,28 @@ class ManagefreightquotersController extends Controller
     {
         $update = array('status' => 2, 'date_paid' => date('Y-m-d'));
         \DB::table('freight_orders')->where('id', $freight_order_id)->update($update);
-        return Redirect::to('managefreightquoters')->with('messagetext', \Lang::get('core.note_freight_paid'))->with('msgstatus', 'success');
+        $row = $this->model->getRow($freight_order_id);
+        if ($row) {
+            $this->data['row'] = $row;
+        } else {
+            $this->data['row'] = $this->model->getColumnTable('freight_orders');
+        }
+        $this->data['id'] = $freight_order_id;
+        $this->data['access'] = $this->access;
+        $this->data['setting'] = $this->info['setting'];
+        $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
+        return view('managefreightquoters.view', $this->data);
+        //return Redirect::to('managefreightquoters')->with('messagetext', \Lang::get('core.note_freight_paid'))->with('msgstatus', 'success');
     }
 
     public function getGamedetails($SID)
     {
         return Redirect::to('mylocationgame')->with('game_id', $SID);
+    }
+    public function messages()
+    {
+        return [
+            'email.required' => 'Er, you forgot your email address!',
+        ];
     }
 }

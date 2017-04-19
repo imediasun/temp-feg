@@ -217,12 +217,20 @@
         });
        var actionBtns= $(row).children('td[data-values="action"]').children('.action');
            actionBtns.css('padding-bottom',"0px");
+           if(actionBtns.siblings('a').length > 0)
+           {
+               actionBtns.siblings('a').last().css('margin-bottom',"0px");
+           }
            row.removeClass('inline_edit_applied');
            row.nextAll('.inline_edit_applied').each(function(){
-           var id=$(this).data('id');
-           var height=$(this).offset().top+29;
-           $('#divOverlay_'+id).css('top',height +"px");
-        });
+               var id=$(this).data('id');
+               var height=$(this).offset().top+30;
+               if($(this).children('td[data-values="action"]').children('.action').siblings('a').length > 0)
+               {
+                   height=$(this).children('td[data-values="action"]').children('.action').siblings('a').last().offset().top+25;
+               }
+               $('#divOverlay_'+id).css('top',height +"px");
+           });
         rowHookParams.count = --editingRowsCount;
         displayInlineEditButtons(rowDomId, true);
 
@@ -248,12 +256,25 @@
         if(actionBtns.siblings('a').length == 0)
         {
             actionBtns.css('padding-bottom',"50px");
-            bottomTop=actionBtns.offset().top+29;
+            bottomTop=actionBtns.offset().top+25;
             $divOverlay.css({
                 position: 'absolute',
                 visibility:'visible',
-                top: bottomTop-4,
-                right: "47px",
+                top: bottomTop,
+                right: window.location.pathname == '/shopfegrequeststore'?'162px':"47px",
+                width: 'auto',
+                height: '28px'
+            });
+        }
+        else if(actionBtns.siblings('a').length == 3)
+        {
+            actionBtns.siblings('a').last().css('margin-bottom',"29px");
+            bottomTop=actionBtns.siblings('a').last().offset().top+25;
+            $divOverlay.css({
+                position: 'absolute',
+                visibility:'visible',
+                top: bottomTop,
+                right: "53px",
                 width: 'auto',
                 height: '28px'
             });
@@ -261,18 +282,26 @@
         else
         {
             actionBtns.siblings('a').last().css('margin-bottom',"29px");
-            bottomTop=actionBtns.siblings('a').last().offset().top+29;
+            bottomTop=actionBtns.siblings('a').last().offset().top+25;
             $divOverlay.css({
                 position: 'absolute',
                 visibility:'visible',
-                top: bottomTop-4,
-                right: "53px",
+                top: bottomTop,
+                right: "47px",
                 width: 'auto',
                 height: '28px'
             });
         }
         $divOverlay.delay(100).slideDown('fast');
-
+        $(ele).nextAll('.inline_edit_applied').each(function(){
+            var id=$(this).data('id');
+            var height=$(this).offset().top+30;
+            if($(this).children('td[data-values="action"]').children('.action').siblings('a').length > 0)
+            {
+                height=$(this).children('td[data-values="action"]').children('.action').siblings('a').last().offset().top+25;
+            }
+            $('#divOverlay_'+id).css('top',height +"px");
+        });
     };
     window.saveInlineForm = saveInlineForm = function (rowDomId, event, element, options) {
         if (event && event.preventDefault && typeof event.preventDefault == 'function') {

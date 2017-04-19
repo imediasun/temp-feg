@@ -27,7 +27,7 @@ class managefreightquoters extends Sximo
         else {
             $statusqry = '"<b style=\"color:darkblue\">Invoice Paid</b>"';
         }
-        return 'SELECT freight_orders.*,freight_orders.date_submitted,freight_orders.date_paid,GROUP_CONCAT(company_name) AS company_name,
+        return 'SELECT freight_orders.*,IF(freight_orders.loc_to_1 = 0,"",freight_orders.loc_to_1) AS loc_to_1,freight_orders.date_submitted,freight_orders.date_paid,GROUP_CONCAT(company_name) AS company_name,
                 (select c.company_name from freight_companies c where c.id=freight_orders.freight_company_1) as company_name_1,
                 IF(freight_orders.vend_to = 0 AND freight_orders.loc_to_1=0, CONCAT(freight_orders.to_add_name," (",freight_orders.to_add_state,")"),
                 IF(freight_orders.vend_to = 0,CONCAT("",GROUP_CONCAT(L2.location_name_short)), V2.vendor_name)) AS vend_to,
@@ -114,8 +114,8 @@ class managefreightquoters extends Sximo
 						F.to_add_street,F.to_add_city,F.to_add_state,F.to_add_zip,F.to_contact_name,F.to_contact_email,
 						F.to_contact_phone,F.to_loading_info,F.external_ship_quote,F.external_ship_trucking_co,
 						F.external_ship_pro, F.to_add_name,F.to_add_state,F.notes,F.num_games_per_destination,F.email_notes,
-						If(F.status = 0, "<b style=\"color:red; font-size:1.2em\">Quote Requested</b>",
-						If(F.status = 1, "<b style=\"color:green; font-size:1.2em;\">Freight Booked</b>", "<b style=\"color:darkblue; font-size:1.2em;\">Invoice Paid</b>")) AS status,
+						If(F.status = 0, "<b style=\"color:red; font-size:12px\">Quote Requested</b>",
+						If(F.status = 1, "<b style=\"color:green; font-size:12px;\">Freight Booked</b>", "<b style=\"color:darkblue; font-size:12px;\">Invoice Paid</b>")) AS status,
 						F.status AS status_id FROM freight_orders F LEFT JOIN freight_pallet_details FLT on F.id=FLT.freight_order_id
 						LEFT JOIN vendor V ON V.id = F.vend_from LEFT JOIN vendor V2 ON V2.id = F.vend_to  LEFT JOIN location L ON L.id = F.loc_from
 						WHERE F.id = ' . $id);

@@ -27,6 +27,11 @@
                             {!! SiteHelpers::transForm($t['field'] , $simpleSearchForm) !!}
                         </div>
                     @endforeach
+                        <div class="sscol col-md-1">
+                            <span style="width: 100%;float: left;margin-bottom: 5px;margin-left: 3px;">All Status</span>
+
+                            <input type="checkbox" name="showAll" class="form-control checkbox" data-simplesearch="1">
+                        </div>
                     {!! SiteHelpers::generateSimpleSearchButton($setting) !!}
                 </div>
             @endif
@@ -189,7 +194,18 @@
             reloadData('#{{ $pageModule }}', url);
             return false;
         });
-
+        $('select[name="Status"]').change(function () {
+            var showAll = $('input[name=showAll]');
+            if($('select[name="Status"] :selected')[0].index == 0)
+            {
+                $('input[name=showAll]').removeAttr('disabled');
+            }
+            else
+            {
+                showAll.attr('disabled','disabled');
+                showAll.parent('.icheckbox_square-blue').removeClass('checked');
+            }
+        });
         <?php if ($setting['view-method'] == 'expand') :
         echo AjaxHelpers::htmlExpandGrid();
     endif;
@@ -208,6 +224,16 @@
         }
 
         initDataGrid('{{ $pageModule }}', '{{ $pageUrl }}');
+        setTimeout(function () {
+            console.log($('select[name="Priority"]').siblings('.select2-container').children('.select2-choice').children('span.select2-chosen').text(),$('select[name="Priority"]').siblings('.select2-container').children('.select2-choice').children('span.select2-chosen')[0]);
+            if($('select[name="Priority"]').siblings('.select2-container').children('.select2-choice').children('span.select2-chosen').text() == ' -- Select  -- ')
+            {
+                $('input[name=showAll]').removeAttr('disabled');
+            }
+            else {
+                $('input[name=showAll]').attr('disabled','disabled').parent('.icheckbox_square-blue').removeClass('checked').css('cursor','no-drop');
+            }
+        },400);
     });
 </script>
 <style>
@@ -220,4 +246,3 @@
     }
 
 </style>
-	
