@@ -29,7 +29,7 @@
                 <div class="col-md-9">
                     {!!  $row['status'] !!}
                     @if(!strpos($row['status'],'Paid'))
-                        <a class="m-l-sm-f" href="{{ url()}}/managefreightquoters/paid/{{$row['freight_order_id']}}" onclick="return confirm('Confirm?');">MARK PAID</a>
+                        <a class="m-l-sm-f" style="font-size: 12px" href="{{ url()}}/managefreightquoters/paid/{{$row['freight_order_id']}}" onclick="return confirm('Confirm?');">MARK PAID</a>
                     @endif
                     @if(strpos($row['status'],'Paid'))
                     <b><span class="m-l-sm-f">on</span> <span class="m-l-sm-f">{{  date("m/d/Y", strtotime($row['date_paid'])) }}</span></b>

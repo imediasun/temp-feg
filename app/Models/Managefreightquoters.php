@@ -114,8 +114,8 @@ class managefreightquoters extends Sximo
 						F.to_add_street,F.to_add_city,F.to_add_state,F.to_add_zip,F.to_contact_name,F.to_contact_email,
 						F.to_contact_phone,F.to_loading_info,F.external_ship_quote,F.external_ship_trucking_co,
 						F.external_ship_pro, F.to_add_name,F.to_add_state,F.notes,F.num_games_per_destination,F.email_notes,
-						If(F.status = 0, "<b style=\"color:red; font-size:1.2em\">Quote Requested</b>",
-						If(F.status = 1, "<b style=\"color:green; font-size:1.2em;\">Freight Booked</b>", "<b style=\"color:darkblue; font-size:1.2em;\">Invoice Paid</b>")) AS status,
+						If(F.status = 0, "<b style=\"color:red; font-size:12px\">Quote Requested</b>",
+						If(F.status = 1, "<b style=\"color:green; font-size:12px;\">Freight Booked</b>", "<b style=\"color:darkblue; font-size:12px;\">Invoice Paid</b>")) AS status,
 						F.status AS status_id FROM freight_orders F LEFT JOIN freight_pallet_details FLT on F.id=FLT.freight_order_id
 						LEFT JOIN vendor V ON V.id = F.vend_from LEFT JOIN vendor V2 ON V2.id = F.vend_to  LEFT JOIN location L ON L.id = F.loc_from
 						WHERE F.id = ' . $id);
