@@ -29,7 +29,7 @@
                 <div class="col-md-9">
                     {!!  $row['status'] !!}
                     @if(!strpos($row['status'],'Paid'))
-                        <a class="m-l-sm-f" style="font-size: 12px" href="{{ url()}}/managefreightquoters/paid/{{$row['freight_order_id']}}" onclick="return confirm('Confirm?');">MARK PAID</a>
+                        <a class="m-l-sm-f" id="markPaid" style="font-size: 12px" href="{{ url()}}/managefreightquoters/paid/{{$row['freight_order_id']}}">MARK PAID</a>
                     @endif
                     @if(strpos($row['status'],'Paid'))
                     <b><span class="m-l-sm-f">on</span> <span class="m-l-sm-f">{{  date("m/d/Y", strtotime($row['date_paid'])) }}</span></b>
@@ -263,6 +263,26 @@
         mainModule = '{{ $pageModule }}';
     
     $(document).ready(function() {
+        $('#markPaid').click(function (e) {
+            $('.ajaxLoading').show();
+            e.preventDefault();
+            var me = $(this);
+            console.log($(this));
+            $.get("{{ url()}}/managefreightquoters/paid/{{$row['freight_order_id']}}",function (data) {
+                console.log(data);
+                console.log($(this));
+                me.text('MARKED PAID');
+                me.removeAttr('id');
+                $('.ajaxLoading').hide();
+                notyMessage(data);
+
+            })
+            .fail(function (data) {
+                $('.ajaxLoading').hide();
+                notyMessageError('An Error Occurred');
+                console.log(data);
+            })
+        });
         App.modules.freight.view.init({
                 'container': $('#'+pageModule+'View'),
                 'moduleName': pageModule,
