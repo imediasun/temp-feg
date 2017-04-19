@@ -5,29 +5,29 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{{ CNF_APPNAME }}</title>
-<link rel="shortcut icon" href="{{ secure_asset('fegpo.png')}}" type="image/x-icon">
+<link rel="shortcut icon" href="{{ asset('fegpo.png')}}" type="image/x-icon">
 
-		<link href="{{ secure_asset('sximo/js/plugins/bootstrap/css/bootstrap.css')}}" rel="stylesheet"> 
-		<link href="{{ secure_asset('sximo/css/sximo.css')}}" rel="stylesheet">
-		<link href="{{ secure_asset('sximo/css/animate.css')}}" rel="stylesheet">
+		<link href="{{ asset('sximo/js/plugins/bootstrap/css/bootstrap.css')}}" rel="stylesheet">
+		<link href="{{ asset('sximo/css/sximo.css')}}" rel="stylesheet">
+		<link href="{{ asset('sximo/css/animate.css')}}" rel="stylesheet">
 		
 		<link href="sximo/css/icons.min.css" rel="stylesheet">
 		<link href="sximo/fonts/awesome/css/font-awesome.min.css" rel="stylesheet">
 		 <script src="//use.edgefonts.net/source-sans-pro.js"></script>
 
-		<script type="text/javascript" src="{{ secure_asset('sximo/js/plugins/jquery.min.js') }}"></script>
-		<script type="text/javascript" src="{{ secure_asset('sximo/js/plugins/parsley.js') }}"></script>			
-		<script type="text/javascript" src="{{ secure_asset('sximo/js/plugins/bootstrap/js/bootstrap.js') }}"></script>	
+		<script type="text/javascript" src="{{ asset('sximo/js/plugins/jquery.min.js') }}"></script>
+		<script type="text/javascript" src="{{ asset('sximo/js/plugins/parsley.js') }}"></script>
+		<script type="text/javascript" src="{{ asset('sximo/js/plugins/bootstrap/js/bootstrap.js') }}"></script>
 
 		<!--[if lt IE 9]>
 			<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
 			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
 		<![endif]-->
 
-    <link href="{{ secure_asset('sximo/css/feg_new_styles.css')}}" rel="stylesheet">
+    <link href="{{ asset('sximo/css/feg_new_styles.css')}}" rel="stylesheet">
 	
   	</head>
-<body id="login-bg" style="background:url('{{secure_asset("sximo/images/feg-login-bg.jpg") }}');background-size: 100% auto;background-attachment: fixed;background-position: center top;background-size: cover; background-color:#003673">
+<body id="login-bg" style="background:url('{{asset("sximo/images/feg-login-bg.jpg") }}');background-size: 100% auto;background-attachment: fixed;background-position: center top;background-size: cover; background-color:#003673">
     <div class="middle-box  ">
         <div>
 
