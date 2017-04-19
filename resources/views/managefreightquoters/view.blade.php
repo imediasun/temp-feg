@@ -45,7 +45,7 @@
             </div>
             @if(!empty($row['vend_to']) || !empty($row['to_add_street']))
                 <div class="form-group clearfix">
-                    <label class="label-control col-md-3" >TO:</label>
+                    <label class="label-control col-md-3" >To:</label>
                     <div class="col-md-9">
                         <p style="text-align:left; width: 200px;">
                         {!! trim($row['to_address'], "<br/>") !!}

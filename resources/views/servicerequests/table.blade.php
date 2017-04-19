@@ -177,6 +177,11 @@
 </div>
 <script>
     $(document).ready(function () {
+        console.log($('span.select2-chosen').text());
+        if($('span.select2-chosen').text() != '-- Select  --')
+        {
+            $('input[name=showAll]').attr('disabled','disabled').parent('.icheckbox_square-blue').removeClass('checked');
+        }
         $('.tips').tooltip();
         $('input[type="checkbox"],input[type="radio"]').iCheck({
             checkboxClass: 'icheckbox_square-blue',
@@ -194,10 +199,6 @@
             reloadData('#{{ $pageModule }}', url);
             return false;
         });
-        if($('select[name="Status"] :selected')[0].index != 0)
-        {
-            $('input[name=showAll]').attr('disabled','disabled').parent('.icheckbox_square-blue').removeClass('checked');
-        }
         $('select[name="Status"]').change(function () {
             var showAll = $('input[name=showAll]');
             if($('select[name="Status"] :selected')[0].index == 0)
