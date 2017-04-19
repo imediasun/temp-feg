@@ -541,7 +541,17 @@ class ManagefreightquotersController extends Controller
     {
         $update = array('status' => 2, 'date_paid' => date('Y-m-d'));
         \DB::table('freight_orders')->where('id', $freight_order_id)->update($update);
-        return $this->getShow($freight_order_id);
+        $row = $this->model->getRow($freight_order_id);
+        if ($row) {
+            $this->data['row'] = $row;
+        } else {
+            $this->data['row'] = $this->model->getColumnTable('freight_orders');
+        }
+        $this->data['id'] = $freight_order_id;
+        $this->data['access'] = $this->access;
+        $this->data['setting'] = $this->info['setting'];
+        $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
+        return view('managefreightquoters.view', $this->data);
         //return Redirect::to('managefreightquoters')->with('messagetext', \Lang::get('core.note_freight_paid'))->with('msgstatus', 'success');
     }
 
