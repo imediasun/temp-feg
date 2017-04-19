@@ -541,7 +541,7 @@ class ManagefreightquotersController extends Controller
     {
         $update = array('status' => 2, 'date_paid' => date('Y-m-d'));
         \DB::table('freight_orders')->where('id', $freight_order_id)->update($update);
-        return \Lang::get('core.note_freight_paid');
+        return $this->getShow($freight_order_id);
         //return Redirect::to('managefreightquoters')->with('messagetext', \Lang::get('core.note_freight_paid'))->with('msgstatus', 'success');
     }
 

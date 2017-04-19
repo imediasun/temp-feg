@@ -271,10 +271,11 @@
             $.get("{{ url()}}/managefreightquoters/paid/{{$row['freight_order_id']}}",function (data) {
                 console.log(data);
                 console.log($(this));
-                me.text('MARKED PAID');
-                me.removeAttr('id');
+                /*me.text('MARKED PAID');
+                me.removeAttr('id');*/
+                $('#'+pageModule+'View').html(data);
                 $('.ajaxLoading').hide();
-                notyMessage(data);
+                notyMessage("{{\Lang::get('core.note_freight_paid')}}");
 
             })
             .fail(function (data) {
