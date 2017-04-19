@@ -317,9 +317,9 @@ function ajaxViewClose( id , elm)
             grid = view.closest('.page-content').find('.moduleGrid');
         }
     }
-    
+
 	view.html('');
-    if($('.table.datagrid').find('.bootstrap-switch-wrapper').length > 0)
+    if($('.table.datagrid').find('.bootstrap-switch-wrapper').length > 0 || id == '#managefreightquoters')
     {
         var url = id+'/data';
         url = url.replace('#','');
