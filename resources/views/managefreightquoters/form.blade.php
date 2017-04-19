@@ -199,7 +199,7 @@
                                         </select>
                                     </div>
                                     <div class="col-md-1">
-                                        <a onclick=" $(this).parents('.clonedInput').remove();  return false"
+                                        <a onclick=" $(this).parents('.clonedInput').remove();$(this).removeAttr('required');  $('#managefreightquotersFormAjax').parsley().destroy();$('#managefreightquotersFormAjax').parsley();  return false"
                                            href="#" class="remove btn btn-xs btn-danger">-</a>
                                         <input type="hidden" name="counter[]">
                                     </div>
@@ -476,7 +476,7 @@
 
 
     });
-
+$("#radio_to_loc").click();
     function showRequest() {
         $('.ajaxLoading').show();
     }
@@ -497,8 +497,29 @@
         var id = $(this).attr('id');
         fromType(id);
     });
+    $(".addC").click(function(){
+        $('[id^=location_to_id]').attr('required', 'true');
+        $('#managefreightquotersFormAjax').parsley().destroy();
+        $('#managefreightquotersFormAjax').parsley(
+                {
+                    excluded: 'input[type=button], input[type=submit], input[type=reset]',
+                    inputs: 'input, textarea, select, input[type=hidden], :hidden'
+                } );
+    });
     $('#radio_to_loc,#radio_to_vend,#radio_to_blank').on('ifChecked', function (event) {
         var id = $(this).attr('id');
+        if(id == "radio_to_loc")
+        {
+            $('[id^=location_to_id]').attr('required', true);
+            $('#managefreightquotersFormAjax').parsley().destroy();
+            $('#managefreightquotersFormAjax').parsley();
+        }
+        else
+        {
+            $('[id^=location_to_id]').removeAttr('required');
+            $('#managefreightquotersFormAjax').parsley().destroy();
+            $('#managefreightquotersFormAjax').parsley();
+        }
         toType(id);
     });
     $('#add_from_vendor_to_list').on('ifChecked', function (event) {
