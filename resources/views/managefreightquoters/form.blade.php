@@ -484,6 +484,7 @@ $("#radio_to_loc").click();
 
         if (data.status == 'success') {
             ajaxViewClose('#{{ $pageModule }}');
+            {{ \Session::put('freight_status', 'requested') }}
             ajaxFilter('#{{ $pageModule }}', '{{ $pageUrl }}/data');
             notyMessage(data.message);
             $('#sximo-modal').modal('hide');
