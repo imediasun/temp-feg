@@ -2352,7 +2352,7 @@ z-index: 2;
 .sbox-content {
   background-color: #f9f9f9;
   color: inherit;
-  padding: 20px;  padding-bottom:0px;
+  padding: 20px;
   border-color: #ddd;
   border-image: none;
   border-style: solid solid none;
@@ -2586,7 +2586,7 @@ li.L9 {
 .icon-show  .col-md-3{ padding: 5px; border: solid 1px #ddd; background:#fff; margin-bottom: 3px; } 
 
 /* select */
-.select-alt { float:left; padding:5px 2px; border:solid 1px #ddd; margin-right:5px; font-size: 11px;}
+.select-alt { float:left; padding:6px 2px; border:solid 1px #ddd; margin-right:5px; font-size: 12px;}
 
 /* dashboard */
 .shortcut { border:solid 1px #eee; border-top:solid 1px #ddd;}
@@ -3031,4 +3031,68 @@ table .btn.btn-xs {
 }
 .action {
   margin-top: 1px;
+}
+
+
+.sbox-title {
+  height: 53px;
+  padding: 14px 15px;
+}
+
+.form-control {
+  font-size: 12px !important;
+}
+
+.btn.btn-sm .fa {
+  margin-right: 5px;
+}
+
+.simpleSearchContainer, .simpleBoxContainer {
+  margin-bottom: 13px;
+}
+
+.c-margin {
+  margin-bottom: 15px;
+}
+
+.c-margin .col-md-3 ,.c-margin .col-md-4 {
+  bottom: -2px;
+}
+
+
+table .btn.btn-xs {
+  height: 25px;
+  line-height: 19px;
+  margin: 2px;
+  text-align: center;
+}
+
+
+.sbox-content .table-footer .pagination {
+  margin-bottom: 0;
+}
+
+#mylocationgameGrid .form-horizontal input {
+  height: 30px;
+}
+
+#mylocationgameGrid .clearfix .form-inline .pull-left.m-r-f {
+  margin-right: 2px !important;
+}
+
+.submitButton {
+  margin-right: 2px;
+}
+
+.btn.btn-sm {
+  height: 30px !important;
+}
+
+.form-control {
+  padding: 5px 10px;
+}
+
+#col-config {
+  position: relative !important;
+  top: 2px;
 }

@@ -573,7 +573,7 @@ class UserController extends Controller
     {
         \Auth::logout();
         \Session::flush();
-        return Redirect::to('')->with('message', \SiteHelpers::alert('info', 'Your are now logged out!'));
+        return Redirect::to('/')->with('message', \SiteHelpers::alert('info', 'Your are now logged out!'));
     }
 
     function getSocialize($social)
