@@ -201,7 +201,8 @@ class ManagefreightquotersController extends Controller
         $form_data = array();
         $form_data['loc_to_1'] = 0;
         $form_data['date_submitted'] = date('Y-m-d');
-        $form_data['date_paid'] = date('Y-m-d');
+        //https://inmedianetworks.teamwork.com/#tasks/8604048
+        //$form_data['date_paid'] = date('Y-m-d');
         $form_data['date_booked'] = date('Y-m-d');
 
         $rules['from_type'] = $rules['to_type'] = $rules['games_per_location'] = $rules['description'] = $rules['dimensions'] = 'required';
