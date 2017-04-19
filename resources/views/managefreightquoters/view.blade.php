@@ -32,7 +32,7 @@
                         <a class="m-l-sm-f" id="markPaid" style="font-size: 12px" href="{{ url()}}/managefreightquoters/paid/{{$row['freight_order_id']}}">MARK PAID</a>
                     @endif
                     @if(strpos($row['status'],'Paid'))
-                    <b><span class="m-l-sm-f">on</span> <span class="m-l-sm-f">{{  date("m/d/Y", strtotime($row['date_paid'])) }}</span></b>
+                    <b style="font-size: 12px !important;"><span class="m-l-sm-f">on</span> <span class="m-l-sm-f">{{  date("m/d/Y", strtotime($row['date_paid'])) }}</span></b>
                     @endif
                 </div>
             </div>
