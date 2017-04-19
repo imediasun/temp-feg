@@ -201,8 +201,8 @@ class ManagefreightquotersController extends Controller
         $form_data = array();
         $form_data['loc_to_1'] = 0;
         $form_data['date_submitted'] = date('Y-m-d');
-        $form_data['date_paid'] = date('Y-m-d');
-        $form_data['date_booked'] = date('Y-m-d');
+        $form_data['date_paid'] = "";
+        $form_data['date_booked'] = "";
 
         $rules['from_type'] = $rules['to_type'] = $rules['games_per_location'] = $rules['description'] = $rules['dimensions'] = 'required';
 
@@ -546,5 +546,11 @@ class ManagefreightquotersController extends Controller
     public function getGamedetails($SID)
     {
         return Redirect::to('mylocationgame')->with('game_id', $SID);
+    }
+    public function messages()
+    {
+        return [
+            'email.required' => 'Er, you forgot your email address!',
+        ];
     }
 }

@@ -86,19 +86,19 @@
                 <div class="form-group clearfix">
                     <label class="label-control col-md-3">Date Submitted</label>
                     <div class="col-md-9">
-                        {{ date("m/d/Y", strtotime($row['date_submitted'])) }}
+                        {{ \DateHelpers::formatDate($row['date_submitted']) }}
                     </div>
                 </div>
                 <div class="form-group clearfix">
                     <label class="label-control col-md-3">Date Booked</label>
                     <div class="col-md-9">
-                        {{ date("m/d/Y", strtotime($row['date_booked'])) }}
+                        {{ \DateHelpers::formatDate($row['date_booked']) }}
                     </div>
                 </div>
                 <div class="form-group clearfix">
                     <label class="label-control col-md-3">Date Paid</label>
                     <div class="col-md-9">
-                        {{date("m/d/Y", strtotime($row['date_paid'])) }}
+                        {{ \DateHelpers::formatDate($row['date_paid']) }}
                     </div>
                 </div>
                 <div class="form-group clearfix">
@@ -161,11 +161,13 @@
                     </div>
                     <div class="form-group m-b-sm-f clearfix">
                         <input type="hidden" name="freight_company[]" id="freight_company_'.$i.'"   value="{{ $row['freight_loc_info']['freight_company'][$i] }}" />                
-                        <label class="label-control col-md-3">To Location {{ $i+1 }}</label>
+                        <label class="label-control col-md-3">Ship To {{ $i+1 }}</label>
                         <div class="col-md-9">
+                            @if($row['freight_loc_info']['location'][$i]!=0)
                             <strong>
                                 {{$row['freight_loc_info']['location'][$i]}} | {{$row['freight_loc_info']['location_name'][$i]}}
-                            </strong>                        
+                            </strong>
+                            @endif
                             <input type="hidden" id="loc_{{$i}}" name="loc[]" value="{{ $row['freight_loc_info']['location'][$i] }}" >
                         </div>
                     </div>
