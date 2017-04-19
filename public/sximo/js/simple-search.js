@@ -94,7 +94,7 @@ function performSimpleSearch(params) {
     App.simpleSearch.cache = cache;
     // set Search Mode 
     App.lastSearchMode = 'simple';
-    
+
     // fetch data
     if (ajaxSearch) {
         reloadData(moduleID, url+ '/data' + attr);    
@@ -102,7 +102,7 @@ function performSimpleSearch(params) {
     else {
         window.location.href = url+attr;
     }
-    
+
 }
 
 $(document).ready(function() {

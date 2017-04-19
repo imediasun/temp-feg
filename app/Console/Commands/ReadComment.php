@@ -44,18 +44,21 @@ class ReadComment extends Command
      */
     public function handle()
     {
+
         // don't connect to imap to read ticket comments
         if (env('DONT_READ_IMAP_TICKET_COMMENTS', false) === true) {
             return;
         }
+
         
         global $__logger;
         $L = $this->L = $__logger = FEGSystemHelper::setLogger($this->L, "fetch-ticket-emails.log", "FEGTicketCron/ReadComments", "TICKET");
         $L->log('Start Fetching Emails');
-        
+
         $now = date('Y-m-d H:i:s');
         $nowStamp = strtotime($now);
         $lastRun = FEGSystemHelper::getOption('ReadingTicketCommentsFromIMAP', '');
+
         if (!empty($lastRun)) {
             $lastRunTimestamp = strtotime($lastRun);
             if ($nowStamp - $lastRunTimestamp < (3600)) { //wait for 1 hour 
@@ -68,7 +71,7 @@ class ReadComment extends Command
         /* connect to gmail */
         $hostname = '{imap.gmail.com:993/imap/ssl/novalidate-cert}INBOX';
         $username = "tickets@tickets.fegllc.com";
-        $password = "8d<Sy%68";
+        $password = "8d<Sy%681";
 
         $L->log("Connecting...");
         /* try to connect */

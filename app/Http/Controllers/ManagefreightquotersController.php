@@ -203,9 +203,7 @@ class ManagefreightquotersController extends Controller
         $form_data['date_submitted'] = date('Y-m-d');
         $form_data['date_paid'] = "";
         $form_data['date_booked'] = "";
-
         $rules['from_type'] = $rules['to_type'] = $rules['games_per_location'] = $rules['description'] = $rules['dimensions'] = 'required';
-
         if ($to_form_type == 'blank') {
             $rules['to_add_name'] = $rules['to_add_city'] = $rules['to_add_state'] = $rules['to_add_zip'] = $rules['to_add_street'] = $rules['to_contact_name'] = $rules['to_contact_phone'] = $rules['to_contact_email'] = 'required';
             $rules['to_contact_email'] = 'required|email';
@@ -319,7 +317,7 @@ class ManagefreightquotersController extends Controller
             if ($from_form_type == 'location') {
                 $query = \DB::select('SELECT L.location_name,L.street1,L.city AS loc_city,L.state AS loc_state,L.zip AS loc_zip,L.loading_info,
                  U.first_name AS user_first_name,U.last_name AS user_last_name,U.email AS user_email,U.primary_phone AS user_phone
-										 FROM location L                                          
+										 FROM location L
                                          LEFT JOIN user_locations UL ON UL.location_id = L.id AND UL.group_id=101
                                          LEFT JOIN users U ON U.id = UL.user_id
 										WHERE L.id = ' . $form_data['loc_from'] . '');
@@ -365,7 +363,7 @@ class ManagefreightquotersController extends Controller
                 foreach ($location_to as $location) {
                     $query = \DB::select('SELECT L.location_name, L.street1,  L.city AS loc_city, L.state AS loc_state, L.zip AS loc_zip, L.loading_info,
 											  U.first_name AS user_first_name, U.last_name AS user_last_name, U.email AS user_email,  U.primary_phone AS user_phone
-										 FROM location L 
+										 FROM location L
                                          LEFT JOIN user_locations UL ON UL.location_id = L.id AND UL.group_id=101
                                          LEFT JOIN users U ON U.id = UL.user_id
                                          WHERE L.id = ' . $location . '');
