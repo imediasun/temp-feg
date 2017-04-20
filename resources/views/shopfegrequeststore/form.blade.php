@@ -153,6 +153,7 @@
 					{!! SiteHelpers::activeLang('Prod Type Id', (isset($fields['prod_type_id']['language'])? $fields['prod_type_id']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
+						{!! Form::select('prod_type_id', \Illuminate\Support\Facades\DB::table('product_type')->pluck('product_type','id'), $row['prod_type_id'],array('class'=>'form-control') ) !!}
 					  {!! Form::text('prod_type_id', $row['prod_type_id'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
 					 </div> 
 					 <div class="col-md-2">
