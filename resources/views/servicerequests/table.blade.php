@@ -223,8 +223,8 @@
 
         initDataGrid('{{ $pageModule }}', '{{ $pageUrl }}');
         setTimeout(function () {
-            console.log($('select[name="Priority"]').siblings('.select2-container').children('.select2-choice').children('span.select2-chosen').text(),$('select[name="Priority"]').siblings('.select2-container').children('.select2-choice').children('span.select2-chosen')[0]);
-            if($('select[name="Priority"]').siblings('.select2-container').children('.select2-choice').children('span.select2-chosen').text() == ' -- Select  -- ')
+            console.log($('select[name="Status"]').siblings('.select2-container').children('.select2-choice').children('span.select2-chosen').text(),$('select[name="Status"]').siblings('.select2-container').children('.select2-choice').children('span.select2-chosen')[0]);
+            if($('select[name="Status"]').siblings('.select2-container').children('.select2-choice').children('span.select2-chosen').text() == ' -- Select  -- ')
             {
                 $('input[name=showAll]').removeAttr('disabled');
             }
