@@ -28,9 +28,7 @@
                         </div>
                     @endforeach
                         <div class="sscol col-md-2">
-                            <span style="width: 100%;float: left;margin-bottom: 5px;margin-left: 3px;">Display Closed</span>
-
-                            <input type="checkbox" name="showAll" class="form-control checkbox" data-simplesearch="1">
+                            <span style="width: 100%;margin-top:22px;float: left;margin-bottom: 5px;margin-left: 3px;"><input type="checkbox" name="showAll" id="showAll" class="form-control checkbox" data-simplesearch="1">&nbsp;&nbsp; <label for="showAll">Display Closed</label></span>
                         </div>
                     {!! SiteHelpers::generateSimpleSearchButton($setting) !!}
                 </div>
