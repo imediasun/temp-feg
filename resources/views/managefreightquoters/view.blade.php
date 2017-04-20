@@ -275,7 +275,7 @@
                // console.log($(this));
                 /*me.text('MARKED PAID');
                 me.removeAttr('id');*/
-                {{ \Session::put('freight_status', 'booked') }}
+
                 $('#'+pageModule+'View').html(data);
                 $('.ajaxLoading').hide();
                 notyMessage("{{\Lang::get('core.note_freight_paid')}}");
