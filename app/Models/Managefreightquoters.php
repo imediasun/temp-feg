@@ -644,7 +644,7 @@ class managefreightquoters extends Sximo
                 $headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
                 // echo $message;
                 //DO NOT uncomment below code
-              //mail($to, $subject, $message, $headers);
+              mail($to, $subject, $message, $headers);
             }
         }
         return true;
