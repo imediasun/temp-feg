@@ -9,6 +9,7 @@ use App\Models\ticketsetting;
 use App\Models\Core\TicketMailer;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
+use Illuminate\Support\Facades\Session;
 use Validator, Input, Redirect;
 use App\Library\FEG\System\FEGSystemHelper;
 use App\Library\FEG\System\Formatter;  
@@ -97,8 +98,12 @@ class servicerequestsController extends Controller
             $filter .= " AND sb_tickets.location_id IN (SELECT id from location where debit_type_id='$debitType') ";
         } 
         if (empty($status) && $showAll == 0) {
+            \Session::put('showAllChecked',false);
             $filter .= " AND sb_tickets.Status != 'closed' ";
-        } 
+        }
+        else{
+            \Session::put('showAllChecked',true);
+        }
         
         return $filter;
     }
