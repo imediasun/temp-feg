@@ -194,8 +194,8 @@
                         <div id="from_div">
                             <div class="col-md-6 col-md-offset-4" id="location_to_div">
                                 <div class="clone clonedInput">
-                                    <div class="col-md-10" style="padding:0px">
-                                        <select name="location_to[]" style="" id="location_to_id" class="form-control">
+                                    <div class="col-md-12" style="padding:0px">
+                                        <select name="location_to[]" style="width: 100%" id="location_to_id" class="form-control">
                                         </select>
                                     </div>
                                     <div class="col-md-1">

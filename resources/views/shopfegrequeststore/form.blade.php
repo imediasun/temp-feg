@@ -8,7 +8,7 @@
 	</div>
 
 	<div class="sbox-content"> 
-@endif	
+@endif
 			{!! Form::open(array('url'=>'shopfegrequeststore/save/'.SiteHelpers::encryptID($row['id']), 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'shopfegrequeststoreFormAjax')) !!}
 			<div class="col-md-12">
 						<fieldset><legend> Shop FEG Request Store</legend>
@@ -153,8 +153,7 @@
 					{!! SiteHelpers::activeLang('Prod Type Id', (isset($fields['prod_type_id']['language'])? $fields['prod_type_id']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-						{!! Form::select('prod_type_id', \Illuminate\Support\Facades\DB::table('product_type')->pluck('product_type','id'), $row['prod_type_id'],array('class'=>'form-control') ) !!}
-					  {!! Form::text('prod_type_id', $row['prod_type_id'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
+						{!! Form::select('prod_type_id', DB::table('product_type')->lists('product_type','id'), $row['prod_type_id'],array('class'=>'form-control') ) !!}
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -165,8 +164,8 @@
 					{!! SiteHelpers::activeLang('Prod Sub Type Id', (isset($fields['prod_sub_type_id']['language'])? $fields['prod_sub_type_id']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('prod_sub_type_id', $row['prod_sub_type_id'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
-					 </div> 
+						{!! Form::select('prod_sub_type_id', DB::table('product_type')->lists('product_type','id'), $row['prod_sub_type_id'],array('class'=>'form-control') ) !!}
+					</div>
 					 <div class="col-md-2">
 					 	
 					 </div>
