@@ -8,7 +8,7 @@
 	</div>
 
 	<div class="sbox-content"> 
-@endif	
+@endif
 			{!! Form::open(array('url'=>'shopfegrequeststore/save/'.SiteHelpers::encryptID($row['id']), 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'shopfegrequeststoreFormAjax')) !!}
 			<div class="col-md-12">
 						<fieldset><legend> Shop FEG Request Store</legend>
@@ -153,7 +153,7 @@
 					{!! SiteHelpers::activeLang('Prod Type Id', (isset($fields['prod_type_id']['language'])? $fields['prod_type_id']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('prod_type_id', $row['prod_type_id'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
+						{!! Form::select('prod_type_id', DB::table('product_type')->lists('product_type','id'), $row['prod_type_id'],array('class'=>'form-control') ) !!}
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -164,8 +164,8 @@
 					{!! SiteHelpers::activeLang('Prod Sub Type Id', (isset($fields['prod_sub_type_id']['language'])? $fields['prod_sub_type_id']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('prod_sub_type_id', $row['prod_sub_type_id'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
-					 </div> 
+						{!! Form::select('prod_sub_type_id', DB::table('product_type')->lists('product_type','id'), $row['prod_sub_type_id'],array('class'=>'form-control') ) !!}
+					</div>
 					 <div class="col-md-2">
 					 	
 					 </div>
@@ -175,7 +175,7 @@
 					{!! SiteHelpers::activeLang('Is Reserved', (isset($fields['is_reserved']['language'])? $fields['is_reserved']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('is_reserved', $row['is_reserved'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
+					  {!! Form::checkbox('is_reserved', 1,$row['is_reserved']) !!}
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -241,7 +241,7 @@
 					{!! SiteHelpers::activeLang('In Development', (isset($fields['in_development']['language'])? $fields['in_development']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('in_development', $row['in_development'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
+					  {!! Form::checkbox('in_development', 1,$row['in_development']) !!}
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -279,7 +279,7 @@
 					{!! SiteHelpers::activeLang('Hot Item', (isset($fields['hot_item']['language'])? $fields['hot_item']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('hot_item', $row['hot_item'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
+					  {!! Form::checkbox('hot_item', 1,$row['hot_item']) !!}
 					 </div> 
 					 <div class="col-md-2">
 					 	
