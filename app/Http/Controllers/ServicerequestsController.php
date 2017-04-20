@@ -98,10 +98,13 @@ class servicerequestsController extends Controller
             $filter .= " AND sb_tickets.location_id IN (SELECT id from location where debit_type_id='$debitType') ";
         } 
         if (empty($status) && $showAll == 0) {
-            \Session::put('showAllChecked',false);
             $filter .= " AND sb_tickets.Status != 'closed' ";
         }
-        else{
+        if($showAll == 0){
+            \Session::put('showAllChecked',false);
+        }
+        else
+        {
             \Session::put('showAllChecked',true);
         }
         
