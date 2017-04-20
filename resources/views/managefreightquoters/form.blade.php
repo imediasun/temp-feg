@@ -194,15 +194,16 @@
                         <div id="from_div">
                             <div class="col-md-6 col-md-offset-4" id="location_to_div">
                                 <div class="clone clonedInput">
-                                    <div class="col-md-12" style="padding:0px">
+                                    <div class="col-md-12" style="padding:0;margin-bottom: 15px">
                                         <select name="location_to[]" style="width: 100%" id="location_to_id" class="form-control">
                                         </select>
+                                        <div class="col-md-1" style="position: absolute;right: -47px;top: 5px;">
+                                            <a onclick=" $(this).parents('.clonedInput').remove();$(this).removeAttr('required');  reInitParcley();  return false"
+                                               href="#" class="remove btn btn-xs btn-danger">-</a>
+                                            <input type="hidden" name="counter[]">
+                                        </div>
                                     </div>
-                                    <div class="col-md-1">
-                                        <a onclick=" $(this).parents('.clonedInput').remove();$(this).removeAttr('required');  reInitParcley();  return false"
-                                           href="#" class="remove btn btn-xs btn-danger">-</a>
-                                        <input type="hidden" name="counter[]">
-                                    </div>
+
                                 </div>
                                 <div class="text-center col-md-2 col-md-offset-3" style="padding-left:30px">
                                     <a style="display:inline-block;margin-top:10px;" href="javascript:void(0);"
