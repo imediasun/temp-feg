@@ -177,11 +177,6 @@
 </div>
 <script>
     $(document).ready(function () {
-        console.log($('span.select2-chosen').text());
-        if($('span.select2-chosen').text() != '-- Select  --')
-        {
-            $('input[name=showAll]').attr('disabled','disabled').parent('.icheckbox_square-blue').removeClass('checked');
-        }
         $('.tips').tooltip();
         $('input[type="checkbox"],input[type="radio"]').iCheck({
             checkboxClass: 'icheckbox_square-blue',
@@ -229,6 +224,16 @@
         }
 
         initDataGrid('{{ $pageModule }}', '{{ $pageUrl }}');
+        setTimeout(function () {
+            console.log($('select[name="Priority"]').siblings('.select2-container').children('.select2-choice').children('span.select2-chosen').text(),$('select[name="Priority"]').siblings('.select2-container').children('.select2-choice').children('span.select2-chosen')[0]);
+            if($('select[name="Priority"]').siblings('.select2-container').children('.select2-choice').children('span.select2-chosen').text() == ' -- Select  -- ')
+            {
+                $('input[name=showAll]').removeAttr('disabled');
+            }
+            else {
+                $('input[name=showAll]').attr('disabled','disabled').parent('.icheckbox_square-blue').removeClass('checked').css('cursor','no-drop');
+            }
+        },400);
     });
 </script>
 <style>

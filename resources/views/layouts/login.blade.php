@@ -7,16 +7,17 @@
 <title>{{ CNF_APPNAME }}</title>
 <link rel="shortcut icon" href="{{ asset('fegpo.png')}}" type="image/x-icon">
 
-		<link href="{{ asset('sximo/js/plugins/bootstrap/css/bootstrap.css')}}" rel="stylesheet"> 
+		<link href="{{ asset('sximo/js/plugins/bootstrap/css/bootstrap.css')}}" rel="stylesheet">
 		<link href="{{ asset('sximo/css/sximo.css')}}" rel="stylesheet">
 		<link href="{{ asset('sximo/css/animate.css')}}" rel="stylesheet">
-		<link href="{{ asset('sximo/css/icons.min.css')}}" rel="stylesheet">
-		<link href="{{ asset('sximo/fonts/awesome/css/font-awesome.min.css')}}" rel="stylesheet">
+		
+		<link href="sximo/css/icons.min.css" rel="stylesheet">
+		<link href="sximo/fonts/awesome/css/font-awesome.min.css" rel="stylesheet">
 		 <script src="//use.edgefonts.net/source-sans-pro.js"></script>
 
 		<script type="text/javascript" src="{{ asset('sximo/js/plugins/jquery.min.js') }}"></script>
-		<script type="text/javascript" src="{{ asset('sximo/js/plugins/parsley.js') }}"></script>			
-		<script type="text/javascript" src="{{ asset('sximo/js/plugins/bootstrap/js/bootstrap.js') }}"></script>	
+		<script type="text/javascript" src="{{ asset('sximo/js/plugins/parsley.js') }}"></script>
+		<script type="text/javascript" src="{{ asset('sximo/js/plugins/bootstrap/js/bootstrap.js') }}"></script>
 
 		<!--[if lt IE 9]>
 			<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
