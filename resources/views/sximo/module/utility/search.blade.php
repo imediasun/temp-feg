@@ -43,7 +43,7 @@ jQuery(function(){
 
     initiateSearchFormFields($('#{{$pageModule}}Search'));
     renderDropdown($("select.select3 "), { width:"100%"});
-	$('.doSearch').click(function(){
+	$('.doSearch').click(function(event){
         var ajaxSerachMode = <?php echo $searchMode =='ajax' ?'true':'false';?>;
         $('#sximo-modal').modal('hide');
         performAdvancedSearch.call($(this), {

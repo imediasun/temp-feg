@@ -175,7 +175,7 @@
 					{!! SiteHelpers::activeLang('Is Reserved', (isset($fields['is_reserved']['language'])? $fields['is_reserved']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('is_reserved', $row['is_reserved'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
+					  {!! Form::checkbox('is_reserved', 1,$row['is_reserved']) !!}
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -241,7 +241,7 @@
 					{!! SiteHelpers::activeLang('In Development', (isset($fields['in_development']['language'])? $fields['in_development']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('in_development', $row['in_development'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
+					  {!! Form::checkbox('in_development', 1,$row['in_development']) !!}
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -279,7 +279,7 @@
 					{!! SiteHelpers::activeLang('Hot Item', (isset($fields['hot_item']['language'])? $fields['hot_item']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('hot_item', $row['hot_item'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
+					  {!! Form::checkbox('hot_item', 1,$row['hot_item']) !!}
 					 </div> 
 					 <div class="col-md-2">
 					 	
