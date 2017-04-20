@@ -458,7 +458,6 @@
         var form = $('#managefreightquotersFormAjax');
         form.parsley();
         form.submit(function () {
-
             if (form.parsley('isValid') == true) {
                 var options = {
                     dataType: 'json',
@@ -499,21 +498,20 @@ $("#radio_to_loc").click();
         fromType(id);
     });
     $(".addC").click(function(){
-        $('[id^=location_to_id]').attr('required', 'true');
         reInitParcley();
-
     });
     $('#radio_to_loc,#radio_to_vend,#radio_to_blank').on('ifChecked', function (event) {
         var id = $(this).attr('id');
         if(id == "radio_to_loc")
         {
-            $('[id^=location_to_id]').attr('required', true);
+            $('[id^=location_to_id]').attr('required','required');
             reInitParcley();
         }
         else
         {
-          //$('[id^=location_to_id]').removeAttr('required');
-            $('[id^=location_to_id]').attr('required',false);
+          $('[id^=location_to_id]').removeAttr('required');
+            $('#location_to_id').removeAttr('required');
+           // $('[id^=location_to_id]').attr('required',false);
             reInitParcley();
         }
         toType(id);
@@ -553,6 +551,7 @@ $("#radio_to_loc").click();
         else if (type == 'radio_to_vend') {
             $('#vend_to_div').show();
             $('#std_to_div,#location_to_div').hide();
+
         }
         else {
             $('#std_to_div').show();

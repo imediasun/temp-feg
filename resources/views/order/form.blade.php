@@ -295,7 +295,7 @@
 
                 {{--<td class="game"></td>--}}
                 <td></td>
-                <td colspan="6" class="text-left"><strong> Subtotal ( $ ) </strong></td>
+                <td colspan="6" class="text-left"><strong> Subtotal($) </strong></td>
                 <td><input type="text" name="Subtotal"
                            value="{{number_format($data['order_total'],\App\Models\Order::ORDER_PERCISION) }}" readonly
                            class="form-control"/></td>
@@ -340,9 +340,32 @@
         }
         function calculateSum() {
             var Subtotal = 0.00;
+            var Price = 0.00;
             $('table tr.clone ').each(function (i) {
                 Qty = $(this).find("input[name*='qty']").val();
-                Price = $(this).find("input[name*='case_price']").val();
+                unitPrice = $(this).find("input[name*='price']").val();
+                casePrice = $(this).find("input[name*='case_price']").val();
+                orderType=$("#order_type_id").val();
+                // if order type is Debit Card Part=20,Graphics=10,Office Supplies=6, Parts for Game=1,Party Supplies=17
+                if (orderType == 20 || orderType == 10 || orderType == 6 || orderType == 17 || orderType == 1) {
+                    Price = unitPrice;
+                }
+                // if order type is Instant Win prizes=8, redemption prizes=7
+                else if(orderType == 7 || orderType == 8)
+                {
+                     Price=casePrice;
+                }
+                else if(orderType == 4)
+                {
+                    if(unitPrice == 0)
+                    {
+                        Price=casePrice;
+                    }
+                    else
+                    {
+                        Price=unitPrice;
+                    }
+                }
                 sum = Qty * Price;
                 Subtotal += sum;
                 sum = sum.toFixed(PRECISION);
@@ -705,6 +728,7 @@
         }
         $('#order_type_id').change(function () {
             gameShowHide();
+            calculateSum();
         });
         function gameShowHide() {
 
