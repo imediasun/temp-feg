@@ -442,11 +442,11 @@ class ProductController extends Controller
         }
         else
          {
-            $update = \DB::update('update products set inactive = 0 where id=' . $productId);
-             if($update &&  \Session::get('product_type') == "productsindevelopment")
+            $update = \DB::update('update products set inactive = 0,in_development = 0 where id=' . $productId);
+             /*if($update &&  \Session::get('product_type') == "productsindevelopment")
              {
                  \DB::update('update products set in_development = 0 where id=' . $productId);
-             }
+             }*/
         }
         if ($update) {
             return response()->json(array(
