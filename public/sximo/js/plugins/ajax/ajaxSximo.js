@@ -298,9 +298,15 @@ function ajaxViewDetail( id , url )
 		var w = $(window); 
 		var duration = 300;
 		$('html, body').animate({scrollTop: 0}, duration);
+        $('.control-label,.label-control').each(function () {
+            var str = $(this).text();
+            if (str.indexOf(':') == -1) {
+                $(this).addClass('addcolon');
+            }
+        });
 		$('.ajaxLoading').hide();
-	});		
-		
+	});
+
 }
 
 function ajaxViewClose( id , elm)

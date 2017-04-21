@@ -3102,3 +3102,7 @@ td.label-view.text-right {
 .radio-inline:first-child {
   padding-left: 0;
 }
+.addcolon:after
+{
+  content: ':';
+}
