@@ -406,7 +406,7 @@ class ManagefreightquotersController extends Controller
             }
             $from_loading_info = $request->get('from_loading_info');
             if (!empty($from_loading_info)) {
-                $from_loading_info = '<b>**' . $from_loading_info . '</b>** <br>';
+                $from_loading_info = '<b>**' . $from_loading_info . '**</b> <br>';
             }
             $subject = 'FREIGHT QUOTE for Family Entertainment Group - ';
             if(!empty($from_city))
@@ -510,7 +510,7 @@ class ManagefreightquotersController extends Controller
                         $toMessage .= ((!empty($to_contact_full_name[$i]) && !empty($to_contact_phone[$i])) ? ' | ' : '') . $to_contact_email[$i];
                     }
                     $toMessage.= '<br>';
-                    $toMessage.=   '<b style="color:red">' . $to_loading_info[$i] . '</b><br><br>';
+                    $toMessage.=   '<b style="color:red">**' . $to_loading_info[$i] . '**</b><br><br>';
                     //$subject .=  $to_city[$i];
                 }
             } else {
@@ -543,7 +543,7 @@ class ManagefreightquotersController extends Controller
                     $toMessage .= ((!empty($to_contact_full_name) && !empty($to_contact_phone)) ? ' | ' : '') . $to_contact_email;
                 }
                 $toMessage.= '<br>';
-                $toMessage .= '<b style="color:red">' . $to_loading_info . '</b><br><br>';
+                $toMessage .= '<b style="color:red">**' . $to_loading_info . '**</b><br><br>';
                 //$subject .=  $to_city;
             }
             $forMessage = "";
