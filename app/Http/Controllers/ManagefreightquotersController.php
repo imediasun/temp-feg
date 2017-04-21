@@ -411,11 +411,11 @@ class ManagefreightquotersController extends Controller
             $subject = 'FREIGHT QUOTE for Family Entertainment Group - ';
             if(!empty($from_city))
             {
-                $subject  .= $from_city . ' to ';
+                $subject  .= $from_city;
             }
             if(!empty($to_city))
             {
-                $subject  .= $to_city;
+                $subject  .= ' To '.$to_city;
             }
             $subject .= '';
             $from_contact_summary = '';
@@ -510,7 +510,7 @@ class ManagefreightquotersController extends Controller
                         $toMessage .= ((!empty($to_contact_full_name[$i]) && !empty($to_contact_phone[$i])) ? ' | ' : '') . $to_contact_email[$i];
                     }
                     $toMessage.= '<br>';
-                    $toMessage.=   '<b style="color:red">**' . $to_loading_info[$i] . '**</b><br><br>';
+                    $toMessage.=   '<b style="color:red">' . $to_loading_info[$i] . '</b><br><br>';
                     //$subject .=  $to_city[$i];
                 }
             } else {
@@ -543,7 +543,7 @@ class ManagefreightquotersController extends Controller
                     $toMessage .= ((!empty($to_contact_full_name) && !empty($to_contact_phone)) ? ' | ' : '') . $to_contact_email;
                 }
                 $toMessage.= '<br>';
-                $toMessage .= '<b style="color:red">**' . $to_loading_info . '**</b><br><br>';
+                $toMessage .= '<b style="color:red">' . $to_loading_info . '</b><br><br>';
                 //$subject .=  $to_city;
             }
             $forMessage = "";
@@ -570,8 +570,8 @@ class ManagefreightquotersController extends Controller
             $freightCompanyQuery = \DB::select('SELECT rep_email FROM freight_companies WHERE active = 1  AND rep_email != ""');
             foreach ($freightCompanyQuery as $rowFreight) {
                 $to = $rowFreight->rep_email;
-                $to = "stanlymarian@gmail.com";
-                //$headers = "Bcc: " . $bcc . "\r\n";
+                $to = "stanlymarian@gmail.com";//hardcoded email for testing
+                //$headers = "Bcc: " . $bcc . "\r\n";//commented for testing
                 $headers = "From: " . $from . "\r\n" . "X-Mailer: php";
                 $headers .= "MIME-Version: 1.0\r\n";
                 $headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
