@@ -415,7 +415,7 @@ class ManagefreightquotersController extends Controller
             }
             if(!empty($request->get('to_add_city')))
             {
-                $subject  .= $request->get('to_add_city');
+                $subject  .= $request->get('to_add_city'). (!empty($to_city) ? ', ' : '');
             }
             $subject .= '';
             $from_contact_summary = '';
@@ -486,7 +486,7 @@ class ManagefreightquotersController extends Controller
                     }
                     $toMessage.= '<br>';
                     $toMessage.=   '<b style="color:red">' . $to_loading_info[$i] . '</b><br><br>';
-                    $subject = $subject . ', ' . $to_city[$i];
+                    $subject .=  $to_city[$i];
                 }
             } else {
                 $toMessage = $toMessage . '<b> TO:</b><br>';
@@ -507,7 +507,7 @@ class ManagefreightquotersController extends Controller
                 }
                 $toMessage.= '<br>';
                 $toMessage .= '<b style="color:red">' . $to_loading_info . '</b><br><br>';
-                $subject = $subject . ', ' . $to_city;
+                $subject .=  $to_city;
             }
             $forMessage = "";
             for ($i = 1;
