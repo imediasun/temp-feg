@@ -24,7 +24,9 @@
                         <table class="table">
                             <tr><td  style="border: none;" ><b>PO #</b></td><td  style="border: none;" >{{ $data['po_number'] }}</td></tr>
                             <tr><td><b>Ordered By</b></td><td>{{ $data['order_user_name'] }}</td></tr>
-                            <tr><td><b>Location </b></td><td>{{ $data['location_id'] }}</td></tr>
+                            <tr><td><b>Location </b></td><td>{{ $data['location_id'] ." |" }} {!!
+                                    SiteHelpers::gridDisplayView($data['location_id'],'location_id','1:location:id:location_name')
+                                    !!}</td></tr>
                             <tr><td><b>Vendor</b></td><td>{{ $data['vendor_name'] }}</td></tr>
                             <tr><td><b>Description</b></td><td>{{ str_replace("<br>","" ,$data['description']) }}</td></tr>
                             <tr><td><b>Total Cost</b></td><td>{{ CurrencyHelpers::formatCurrency(number_format($data['order_total'],\App\Models\Order::ORDER_PERCISION )) }}</td></tr>
@@ -76,7 +78,7 @@
                                 <th>Name</th>
                                 <th>Item Description</th>
                                 @if($data['order_type'] == \App\Models\order::ORDER_TYPE_PART_GAMES)<th>Game</th>@endif
-                                <th>Price Unit</th>
+                                <th>Unit Price</th>
                                 <th>Case Price</th>
                                 <th>Qty</th>
                                 <th>Received Qty</th>

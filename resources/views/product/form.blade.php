@@ -139,11 +139,11 @@
                         </label>
 
                         <div class="col-md-6">
-                            <div class="input-group" style="float: left;width: 100%;">
-                                <span class="input-group-addon" style="float: left;width: 33px !important;padding: 8px;">$</span>
+                            <div class="input-group">
+                                <span class="input-group-addon">$</span>
                                 {!! Form::text('case_price',
                                 number_format((double)$row['case_price'],3),array('class'=>'form-control',
-                                'placeholder'=>'','required'=>'required','type'=>'number','min' => '0','step'=>'1','id'=>'case_price_input','style'=>"float: left;width: 94%;" ))
+                                'placeholder'=>'','required'=>'required','type'=>'number','min' => '0','step'=>'1','id'=>'case_price_input' ))
                                 !!}
                             </div>
                         </div>
