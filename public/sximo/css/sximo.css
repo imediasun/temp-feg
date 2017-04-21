@@ -3033,6 +3033,11 @@ table .btn.btn-xs {
   margin-top: 1px;
 }
 
+.sbox-title {
+  height: 53px;
+  padding: 14px 15px;
+}
+
 .form-control {
   font-size: 12px !important;
 }
@@ -3131,4 +3136,25 @@ position: relative;
 
 .table.search-table {
   min-width: inherit;
+}
+
+.radio-inline:first-child {
+  padding-left: 0;
+}
+.addcolon:after
+{
+  content: ':';
+}
+.input-group input.form-control{
+  float: left;
+  width: 94%;
+}
+.input-group{
+  float: left;
+  width: 100%;
+}
+.input-group span.input-group-addon{
+  float: left;
+  width: 33px !important;
+  padding: 8px;
 }

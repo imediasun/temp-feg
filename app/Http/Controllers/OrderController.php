@@ -390,13 +390,6 @@ class OrderController extends Controller
             $skuNumArray = $request->get('sku');
             $casePriceArray = $request->get('case_price');
             $priceArray = $request->get('price');
-
-            // add case price in priceArray if item_price is 0.00
-            foreach ($priceArray as $item_price_key => $item_price_value) {
-                if ($item_price_value == 0.00) {
-                    $priceArray[$item_price_key] = $casePriceArray[$item_price_key];
-                }
-            }
             $qtyArray = $request->get('qty');
             $productIdArray = $request->get('product_id');
             $requestIdArray = $request->get('request_id');
@@ -405,7 +398,19 @@ class OrderController extends Controller
 
             for ($i = 0; $i < $num_items_in_array; $i++) {
                 $j = $i + 1;
-                $order_description .= ' | item' . $j . ' - (' . $qtyArray[$i] . ') ' . $itemsArray[$i] . ' @ $' . $priceArray[$i] . ' ea.';
+                if($order_type == 20 || $order_type == 10 || $order_type == 6 || $order_type== 17 || $order_type == 1 )
+                {
+                    $itemsPriceArray[] = $priceArray[$i];
+                }
+                elseif($order_type  == 7 || $order_type  == 8)
+                {
+                    $itemsPriceArray[] = $casePriceArray[$i];
+                }
+                elseif($order_type  == 4)
+                {
+                    $itemsPriceArray[] = ($priceArray[$i] == 0.00)?$casePriceArray[$i]:$priceArray[$i];
+                }
+                $order_description .= ' | item' . $j . ' - (' . $qtyArray[$i] . ') ' . $itemsArray[$i] . ' @ $' . $itemsPriceArray[$i] . ' ea.';
             }
             if ($editmode == "edit") {
                 $orderData = array(
@@ -473,7 +478,6 @@ class OrderController extends Controller
                 } else {
                     $game_id = '0';
                 }
-
                 $contentsData = array(
                     'order_id' => $order_id,
                     'request_id' => $request_id,
@@ -485,7 +489,7 @@ class OrderController extends Controller
                     'item_name' => $itemNamesArray[$i],
                     'case_price' => $casePriceArray[$i],
                     'sku' => $sku_num,
-                    'total' => $priceArray[$i] * $qtyArray[$i]
+                    'total' => $itemsPriceArray[$i] * $qtyArray[$i]
                 );
 
                 \DB::table('order_contents')->insert($contentsData);
@@ -782,14 +786,14 @@ class OrderController extends Controller
                 $numLenghtyDescItems = 0;
                 for ($i = 0; $i < $data[0]['requests_item_count']; $i++) {
                     $j = $i + 1;
-                    $item_total = $data[0]['orderPriceArray'][$i] * $data[0]['orderQtyArray'][$i];
+                    $item_total = $data[0]['orderItemsPriceArray'][$i] * $data[0]['orderQtyArray'][$i];
                     $item_total_string = "$ " . number_format($item_total, Order::ORDER_PERCISION);
                     $item_description_string = "Item #" . $j . ": " . $data[0]['orderDescriptionArray'][$i];
                     if (isset($data[0]['skuNumArray'])) {
                         $sku_num_string = $data[0]['skuNumArray'][$i];
                     }
                     $item_qty_string = $data[0]['orderQtyArray'][$i];
-                    $item_price_string = $data[0]['orderPriceArray'][$i];
+                    $item_price_string = $data[0]['orderItemsPriceArray'][$i];
                     $descriptionLength = strlen($item_description_string);
                     $order_total_cost = $order_total_cost + $item_total;
                 }

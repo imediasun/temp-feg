@@ -1,15 +1,15 @@
 <?php
 return array(
-    'EmptyModule' => "Module Name Can't be Empty",
+    'EmptyModule' => "Module name can't be empty",
     'StatusError' => "Error",
     'StatusSuccess' => "Success",
-    'NothingFound' => "Nothing Found",
-    'UpdatedSuccess' => "Data Updated Successfully",
-    'StroredSuccess' => "Data Stored Successfully",
-    "StoreError" => "Error in Storing Data",
-    "DeleteError" => "Error in Deleting Data",
-    "DeleteSuccess" => "Data Deleted Successfully",
-    "ModuleEmpty" =>"Please Define Module Name to accessed ",
-    "IdEmpty" => "Please Define Module Id to be accessed "
+    'NothingFound' => "Nothing found",
+    'UpdatedSuccess' => "Data updated successfully",
+    'StroredSuccess' => "Data stored successfully",
+    "StoreError" => "Error in storing data",
+    "DeleteError" => "Error in deleting data",
+    "DeleteSuccess" => "Data deleted successfully",
+    "ModuleEmpty" =>"Please define module name to accessed ",
+    "IdEmpty" => "Please define module Id to be accessed "
 );
 ?>

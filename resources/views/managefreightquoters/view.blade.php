@@ -271,10 +271,11 @@
             var me = $(this);
             console.log($(this));
             $.get("{{ url()}}/managefreightquoters/paid/{{$row['freight_order_id']}}",function (data) {
-                console.log(data);
-                console.log($(this));
+               // console.log(data);
+               // console.log($(this));
                 /*me.text('MARKED PAID');
                 me.removeAttr('id');*/
+
                 $('#'+pageModule+'View').html(data);
                 $('.ajaxLoading').hide();
                 notyMessage("{{\Lang::get('core.note_freight_paid')}}");
@@ -283,7 +284,7 @@
             .fail(function (data) {
                 $('.ajaxLoading').hide();
                 notyMessageError('An Error Occurred');
-                console.log(data);
+              //  console.log(data);
             })
         });
         App.modules.freight.view.init({
@@ -291,7 +292,7 @@
                 'moduleName': pageModule,
                 'mainModule': mainModule,
                 'url': pageUrl,
-                'mainUrl': mainUrl,
+                'mainUrl': mainUrl
             },
             {!! json_encode($row) !!}
         );

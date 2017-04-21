@@ -54,7 +54,7 @@ return array(
 	"m_menu" 			=> "Menu Management",
 	"m_logs" 			=> "Activity Logs",
 	"m_codebuilder" 	=> "Code Builder",
-	"m_blastemail" 		=> "Send internal notification",
+	"m_blastemail" 		=> "Send Internal Notification",
 	"m_myaccount" 		=> "My Account",
 	"m_logout" 			=> "Logout",
 	"m_profile" 		=> "Profile",
@@ -183,32 +183,33 @@ return array(
 /*updates	on may ,5 2014 */
 	
 	"loginsocial"				=> "Login via Social Networking", // updated apidevlab
-	"enteremailforgot"			=> "Enter your email address",
+	"enteremailforgot"			=> "Enter Your Email Address",
 	"detail" 					=> "View Detail",
 	"addedit" 					=> "Add - Edit",
     "image_delete"              =>"Remove Image",
 	
 /* Notification */
-	"note_noexists"				=> "Sorry, The page does not exist!", // updated apidevlab
+	"note_noexists"				=> "Sorry, The Page Does Not Exist!", // updated apidevlab
 	"note_restric"				=> "Sorry, You are not allowed to access this page!", // updated apidevlab
 	"note_success"				=> "Saved successfully!", // updated apidevlab
 	"note_error"				=> "The following errors occurred !",
 	"note_success_delete"		=> "Removed successfully!",	// updated apidevlab
     "note_block"                => "Blocked",
     "note_unblock"              => "Unblocked",
-    "request_sent_success"      => "Request sent successfully",
+    "request_sent_success"      => "Request Sent Successfully",
     "request_send_fial"         => "Error in Sending Request",
     "note_freight_paid_"         => "Status Changed,Paid Successfully",
     "note_freight_paid"         => "Freight Order Paid Successfully",
-     "mail_sent_success"        => "Email sent successfully",
-    "delete_success"            => "Deleted successfully",
-    "delete_error"              => "Some error occurred while deleting",
-    "email_missing_error"       => "Failed!Sender or vendor email is missing",
+     "mail_sent_success"        => "Email Sent Successfully",
+    "delete_success"            => "Deleted Successfully",
+    "delete_error"              => "Some Error Occurred while Deleting",
+    "email_missing_error"       => "Failed!Sender or Vendor Email is missing",
     "google_account_not_exist"  => "Google account detail not exist",
     "smtp_connect_failed"       => "Mail Error: SMTP connect() failed",
     "gmail_smtp_connect_failed" => 'To allow system to send emails using your Gmail account, you must turn on less secure apps by clicking <a target="_blank" href="https://www.google.com/settings/u/6/security/lesssecureapps?pageId=none">Here</a>',
-    "error_sending_mail"        => "An error occurred in sending email.",
-    "note_success_denied"  => "Request denieoccurred while denying"
+    "error_sending_mail"        => "An Error Occurred in Sending Email.",
+    "note_success_denied"  => "Request Denied Successfully",
+    "note_error_denied"    => "Some Error Occurred While Denying"
 
 
 );

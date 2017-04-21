@@ -154,7 +154,7 @@
                                 @endforeach
                                     @endif
                                             @else
-                                    {!! $value !!}
+                                    {!! $value =='0'?'':$value !!}
                                     @endif
                             </td>
                         @endif

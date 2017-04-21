@@ -182,7 +182,7 @@ class order extends Sximo
         $data['received_date']="";
         $data['received_by']="";
        // $data['order_location_name'] = '';
-
+        $data['orderItemsPriceArray']="";
         $data['order_freight_id'] = '';
         $data['orderDescriptionArray'] = '';
         $data['orderPriceArray'] = '';
@@ -233,6 +233,18 @@ class order extends Sximo
                     $receivedItemsArray[]=$row->item_received;
                     $orderDescriptionArray[] = $row->description;
                     $orderPriceArray[] = number_format($row->price , self::ORDER_PERCISION);
+                    if($data['order_type'] == 20 || $data['order_type'] == 10 || $data['order_type'] == 6 || $data['order_type']== 17 || $data['order_type'] == 1 )
+                    {
+                        $orderItemsPriceArray[] = $row->price;
+                    }
+                    elseif($data['order_type'] == 7 || $data['order_type'] == 8)
+                    {
+                        $orderItemsPriceArray[] = $row->case_price;
+                    }
+                    elseif($data['order_type'] == 4)
+                    {
+                        $orderItemsPriceArray[] = ($row->price == 0.00)?$row->case_price:$row->price;
+                    }
                     $orderQtyArray[] = $row->qty;
                     $orderProductIdArray[] = $row->product_id;
                     $orderitemnamesArray[] = $row->item_name;
@@ -271,6 +283,7 @@ class order extends Sximo
                 $data['itemRetailPrice']=$orderretailpriceArray;
                 $data['gameIdsArray']=$ordergameidsArray;
                 $data['receivedItemsArray']=$receivedItemsArray;
+                $data['orderItemsPriceArray'] = $orderItemsPriceArray;
                 $poArr = array("", "", "");
                 if (isset($data['po_number'])) {
                     $poArr = explode("-", $data['po_number']);
@@ -317,6 +330,7 @@ class order extends Sximo
 
                 $query = \DB::select('SELECT R.qty,
 											  P.case_price,
+											  P.unit_price,
 											  P.sku,
 											  P.retail_price,
 											  P.vendor_id,
@@ -350,8 +364,9 @@ class order extends Sximo
                     $data['order_freight_id'] = "";
 
                     $orderDescriptionArray[] = $query[0]->description;
-                    $orderPriceArray[] = $query[0]->case_price;
+                    $orderPriceArray[] = $query[0]->unit_price;
                     $orderQtyArray[] = $query[0]->qty;
+
                     $skuNumArray[] = $query[0]->sku;
                     $orderProductIdArray[] = $query[0]->product_id;
                  //   $prod_data = $this->productUnitPriceAndName($query[0]->product_id);

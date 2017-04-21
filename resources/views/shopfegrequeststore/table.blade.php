@@ -116,7 +116,7 @@
                     <?php foreach ($rowData as $row) :
                     $id = $row->id;
                     ?>
-                    <tr class="editable" id="form-{{ $row->id }}" @if($setting['inline']!='false' && $setting['disablerowactions']=='false') data-id="{{ $row->id }}" ondblclick="showFloatingCancelSave(this)" @endif>
+                    <tr class="editable" id="form-{{ $row->id }}" @if($setting['inline']!='false') data-id="{{ $row->id }}" ondblclick="showFloatingCancelSave(this,1)" @endif>
                         @if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
                             <td class="number"> <?php echo ++$i;?>  </td>
                         @endif
@@ -177,9 +177,9 @@
                     </tbody>
 
                 </table>
-                @if($setting['inline']!='false' && $setting['disablerowactions']=='false')
+                @if($setting['inline']!='false')
                     @foreach ($rowData as $row)
-                        {!! AjaxHelpers::buttonActionInline($row->id,'id') !!}
+                        {!! AjaxHelpers::buttonActionInline($row->id,'id',1) !!}
                     @endforeach
                 @endif
             @else

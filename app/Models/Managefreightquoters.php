@@ -491,9 +491,12 @@ class managefreightquoters extends Sximo
 
                         $from = \Session::get('eid');
                         $to = $this->get_user_emails('users_plus_district_and_field_managers', $data['request']['loc'][$i]);
-                        $cc = 'freight-notifications@fegllc.com';
-                        $bcc = 'support@fegllc.com';
-                        $subject = '(' . $num_games_per_destination . ')' . ' Game[s] Scheduled for Delivery to ' . $locationName . '!';
+                        $to = "stanlymarian@gmail.com";//hardcoded email for testing
+                        //$cc = 'freight-notifications@fegllc.com';
+                        $cc = 'jdanial710@gmail.com';
+                        //$bcc = 'support@fegllc.com';
+                        $bcc = 'daynaedvin@gmail.com';
+                        $subject = '(' . $num_games_per_destination . ')' . ' Game[s] scheduled for delivery to ' . $locationName . '!';
                         $message = '<p>
 										' . $email_notes . '
 										<br>
@@ -526,12 +529,12 @@ class managefreightquoters extends Sximo
 													Destination:
 												</td>
 						    					<td style="padding-right:3px; border:thin black solid; text-align:left; font-weight:bold;">
-						    						' . $data['request']['loc'][$i] . $locationName . '
+						    						' . $data['request']['loc'][$i] . ' || ' . $locationName . '
 						    					</td>
 								            </tr>
 			            					<tr style="color:black; border:thin black solid;">
 								                <td style="padding-right:3px; border:thin black solid; text-align:right; width:15%"">
-													Trucking Company:
+													Trucking Line:
 												</td>
 								                <td style="padding-right:3px; border:thin black solid; text-align:left; font-weight:bold;">
 													' . $data['request']['trucking_line'][$i] . '
@@ -542,7 +545,7 @@ class managefreightquoters extends Sximo
 													Pro Number:
 												</td>
 								                <td style="padding-right:3px; border:thin black solid; text-align:left; font-weight:bold;">
-													' . $data['request']['pro_number'][$i] . '	<em>(visit Trucking Company website for Shipment Tracking)</em>
+													' . $data['request']['pro_number'][$i] . '	<em>(visit Trucking Line website for Shipment Tracking)</em>
 						    					</td>
 								            </tr>
 								        </table>
@@ -585,7 +588,7 @@ class managefreightquoters extends Sximo
                         $headers .= "MIME-Version: 1.0\r\n";
                         $headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
                         // echo $message;
-                        //mail($to, $subject, $message, $headers);
+                       mail($to, $subject, $message, $headers);
                     } else {
 
                     }
@@ -597,12 +600,11 @@ class managefreightquoters extends Sximo
                 $contents_message = '';
                 if (isset($data['request']['description']) && !empty($data['request']['description'])) {
                     for ($i = 0; $i < count($data['request']['description']); $i++) {
-                        $contents_message = $contents_message .
-                            'Pallet ' . $i + 1 . ':
-									<b>' . $data['request']['description'][$i] . '</b>
+                        $contents_message = $contents_message . 'Pallet ' . ($i + 1) . ':
+									' . $data['request']['description'][$i] . '
 									<br>
 									Dimensions:
-									<b>' . $data['request']['dimension'][$i] . '</b>';
+									' . $data['request']['dimension'][$i];
                     }
                 }
                 $from = 'support@fegllc.com';
@@ -620,11 +622,11 @@ class managefreightquoters extends Sximo
 							' . $contents_message . '
 							<br>
 							<br>
-							Trucking Company: <b>' . $external_ship_trucking_co . '</b>
+							Trucking Line: ' . $external_ship_trucking_co . '
 							<br>
 							Pro Number: <b>' . $external_ship_pro . '</b>
 							<br>
-							<em>visit Trucking Company website for Shipment Tracking</em>
+							<em>visit Trucking Line website for Shipment Tracking</em>
 							<br>
 						</p>
 						<p style="font-size:1em; font-weight:bold; color:black;">
@@ -644,7 +646,7 @@ class managefreightquoters extends Sximo
                 $headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
                 // echo $message;
                 //DO NOT uncomment below code
-              //mail($to, $subject, $message, $headers);
+              mail($to, $subject, $message, $headers);
             }
         }
         return true;

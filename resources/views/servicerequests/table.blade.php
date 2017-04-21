@@ -27,10 +27,8 @@
                             {!! SiteHelpers::transForm($t['field'] , $simpleSearchForm) !!}
                         </div>
                     @endforeach
-                        <div class="sscol col-md-1">
-                            <span style="width: 100%;float: left;margin-bottom: 5px;margin-left: 3px;">All Status</span>
-
-                            <input type="checkbox" name="showAll" class="form-control checkbox" data-simplesearch="1">
+                        <div class="sscol col-md-2">
+                            <span style="width: 100%;margin-top:22px;float: left;margin-bottom: 5px;margin-left: 3px;"><input type="checkbox" name="showAll" id="showAll" class="form-control checkbox" data-simplesearch="1" @if(\Illuminate\Support\Facades\Session::get('showAllChecked') == true) checked @endif>&nbsp;&nbsp; <label for="showAll">Display Closed</label></span>
                         </div>
                     {!! SiteHelpers::generateSimpleSearchButton($setting) !!}
                 </div>
@@ -225,8 +223,8 @@
 
         initDataGrid('{{ $pageModule }}', '{{ $pageUrl }}');
         setTimeout(function () {
-            console.log($('select[name="Priority"]').siblings('.select2-container').children('.select2-choice').children('span.select2-chosen').text(),$('select[name="Priority"]').siblings('.select2-container').children('.select2-choice').children('span.select2-chosen')[0]);
-            if($('select[name="Priority"]').siblings('.select2-container').children('.select2-choice').children('span.select2-chosen').text() == ' -- Select  -- ')
+            console.log($('select[name="Status"]').siblings('.select2-container').children('.select2-choice').children('span.select2-chosen').text(),$('select[name="Status"]').siblings('.select2-container').children('.select2-choice').children('span.select2-chosen')[0]);
+            if($('select[name="Status"]').siblings('.select2-container').children('.select2-choice').children('span.select2-chosen').text() == ' -- Select  -- ')
             {
                 $('input[name=showAll]').removeAttr('disabled');
             }

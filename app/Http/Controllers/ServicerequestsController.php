@@ -9,6 +9,7 @@ use App\Models\ticketsetting;
 use App\Models\Core\TicketMailer;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
+use Illuminate\Support\Facades\Session;
 use Validator, Input, Redirect;
 use App\Library\FEG\System\FEGSystemHelper;
 use App\Library\FEG\System\Formatter;  
@@ -98,7 +99,14 @@ class servicerequestsController extends Controller
         } 
         if (empty($status) && $showAll == 0) {
             $filter .= " AND sb_tickets.Status != 'closed' ";
-        } 
+        }
+        if($showAll == 0){
+            \Session::put('showAllChecked',false);
+        }
+        else
+        {
+            \Session::put('showAllChecked',true);
+        }
         
         return $filter;
     }

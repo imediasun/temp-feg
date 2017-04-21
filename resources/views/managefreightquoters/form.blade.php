@@ -194,15 +194,16 @@
                         <div id="from_div">
                             <div class="col-md-6 col-md-offset-4" id="location_to_div">
                                 <div class="clone clonedInput">
-                                    <div class="col-md-10" style="padding:0px">
-                                        <select name="location_to[]" style="" id="location_to_id" class="form-control">
+                                    <div class="col-md-12" style="padding:0;margin-bottom: 15px">
+                                        <select name="location_to[]" style="width: 100%" id="location_to_id" class="form-control">
                                         </select>
+                                        <div class="col-md-1" style="position: absolute;right: -47px;top: 5px;">
+                                            <a onclick=" $(this).parents('.clonedInput').remove();$(this).removeAttr('required');  reInitParcley();  return false"
+                                               href="#" class="remove btn btn-xs btn-danger">-</a>
+                                            <input type="hidden" name="counter[]">
+                                        </div>
                                     </div>
-                                    <div class="col-md-1">
-                                        <a onclick=" $(this).parents('.clonedInput').remove();$(this).removeAttr('required');  $('#managefreightquotersFormAjax').parsley().destroy();$('#managefreightquotersFormAjax').parsley();  return false"
-                                           href="#" class="remove btn btn-xs btn-danger">-</a>
-                                        <input type="hidden" name="counter[]">
-                                    </div>
+
                                 </div>
                                 <div class="text-center col-md-2 col-md-offset-3" style="padding-left:30px">
                                     <a style="display:inline-block;margin-top:10px;" href="javascript:void(0);"
@@ -458,7 +459,6 @@
         var form = $('#managefreightquotersFormAjax');
         form.parsley();
         form.submit(function () {
-
             if (form.parsley('isValid') == true) {
                 var options = {
                     dataType: 'json',
@@ -484,6 +484,7 @@ $("#radio_to_loc").click();
 
         if (data.status == 'success') {
             ajaxViewClose('#{{ $pageModule }}');
+            {{ \Session::put('freight_status', 'requested') }}
             ajaxFilter('#{{ $pageModule }}', '{{ $pageUrl }}/data');
             notyMessage(data.message);
             $('#sximo-modal').modal('hide');
@@ -498,27 +499,21 @@ $("#radio_to_loc").click();
         fromType(id);
     });
     $(".addC").click(function(){
-        $('[id^=location_to_id]').attr('required', 'true');
-        $('#managefreightquotersFormAjax').parsley().destroy();
-        $('#managefreightquotersFormAjax').parsley(
-                {
-                    excluded: 'input[type=button], input[type=submit], input[type=reset]',
-                    inputs: 'input, textarea, select, input[type=hidden], :hidden'
-                } );
+        reInitParcley();
     });
     $('#radio_to_loc,#radio_to_vend,#radio_to_blank').on('ifChecked', function (event) {
         var id = $(this).attr('id');
         if(id == "radio_to_loc")
         {
-            $('[id^=location_to_id]').attr('required', true);
-            $('#managefreightquotersFormAjax').parsley().destroy();
-            $('#managefreightquotersFormAjax').parsley();
+            $('[id^=location_to_id]').attr('required','required');
+            reInitParcley();
         }
         else
         {
-            $('[id^=location_to_id]').removeAttr('required');
-            $('#managefreightquotersFormAjax').parsley().destroy();
-            $('#managefreightquotersFormAjax').parsley();
+          $('[id^=location_to_id]').removeAttr('required');
+            $('#location_to_id').removeAttr('required');
+           // $('[id^=location_to_id]').attr('required',false);
+            reInitParcley();
         }
         toType(id);
     });
@@ -557,6 +552,7 @@ $("#radio_to_loc").click();
         else if (type == 'radio_to_vend') {
             $('#vend_to_div').show();
             $('#std_to_div,#location_to_div').hide();
+
         }
         else {
             $('#std_to_div').show();
@@ -568,6 +564,7 @@ $("#radio_to_loc").click();
         handleItemCount('add');
     });
     function removeRow(id) {
+        reInitParcley();
         if (counter > 2) {
             $("#" + id).parents('.clonedInput').remove();
         }
@@ -590,6 +587,15 @@ $("#radio_to_loc").click();
     function decreaseCounter() {
 
         handleItemCount('remove');
+    }
+    function reInitParcley()
+    {
+        $('#managefreightquotersFormAjax').parsley().destroy();
+        $('#managefreightquotersFormAjax').parsley(
+                {
+                    excluded: 'input[type=button], input[type=submit], input[type=reset]',
+                    inputs: 'input, textarea, select, input[type=hidden], :hidden'
+                } );
     }
 </script>
 <style>

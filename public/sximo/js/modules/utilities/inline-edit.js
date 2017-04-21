@@ -184,7 +184,7 @@
     });       
    };
    
-    window.cancelInlineEdit = cancelInlineEdit = function (rowDomId, event, element) {
+    window.cancelInlineEdit = cancelInlineEdit = function (rowDomId, event, element,actionColumnHidden) {
         if (event && event.preventDefault && typeof event.preventDefault == 'function') {
             event.preventDefault();
         }
@@ -215,22 +215,35 @@
 
             
         });
-       var actionBtns= $(row).children('td[data-values="action"]').children('.action');
-           actionBtns.css('padding-bottom',"0px");
-           if(actionBtns.siblings('a').length > 0)
-           {
-               actionBtns.siblings('a').last().css('margin-bottom',"0px");
-           }
-           row.removeClass('inline_edit_applied');
-           row.nextAll('.inline_edit_applied').each(function(){
-               var id=$(this).data('id');
-               var height=$(this).offset().top+30;
-               if($(this).children('td[data-values="action"]').children('.action').siblings('a').length > 0)
-               {
-                   height=$(this).children('td[data-values="action"]').children('.action').siblings('a').last().offset().top+25;
-               }
-               $('#divOverlay_'+id).css('top',height +"px");
-           });
+        if(actionColumnHidden == 0)
+        {
+            var actionBtns= $(row).children('td[data-values="action"]').children('.action');
+            actionBtns.css('padding-bottom',"0px");
+            if(actionBtns.siblings('a').length > 0)
+            {
+                actionBtns.siblings('a').last().css('margin-bottom',"0px");
+            }
+            row.removeClass('inline_edit_applied');
+            row.nextAll('.inline_edit_applied').each(function(){
+                var id=$(this).data('id');
+                var height=$(this).offset().top+30;
+                if($(this).children('td[data-values="action"]').children('.action').siblings('a').length > 0)
+                {
+                    height=$(this).children('td[data-values="action"]').children('.action').siblings('a').last().offset().top+25;
+                }
+                $('#divOverlay_'+id).css('top',height +"px");
+            });
+        }
+        else {
+            var actionBtns= $(row).children('td').last();
+            actionBtns.children().css('margin-bottom',"0");
+            row.removeClass('inline_edit_applied');
+            row.nextAll('.inline_edit_applied').each(function(){
+                var id=$(this).data('id');
+                var height=$(this).offset().top+38;
+                $('#divOverlay_'+id).css('top',height +"px");
+            });
+        }
         rowHookParams.count = --editingRowsCount;
         displayInlineEditButtons(rowDomId, true);
 
@@ -239,7 +252,7 @@
         return false;
 
    };
-    window.showFloatingCancelSave=showFloatingCancelSave=function(ele){
+    window.showFloatingCancelSave=showFloatingCancelSave=function(ele,actionColumnHidden){
         var bottomWidth = $(ele).css('width');
         var bottomHeight = $(ele).css('height');
         var rowPos = $(ele).position();
@@ -251,57 +264,79 @@
         }
         var bottomTop;
         var rightSpace;
-        var actionBtns= $(ele).children('td[data-values="action"]').children('.action');
-        console.log(actionBtns.siblings('a').length);
-        if(actionBtns.siblings('a').length == 0)
-        {
-            actionBtns.css('padding-bottom',"50px");
-            bottomTop=actionBtns.offset().top+25;
-            $divOverlay.css({
-                position: 'absolute',
-                visibility:'visible',
-                top: bottomTop,
-                right: window.location.pathname == '/shopfegrequeststore'?'162px':"47px",
-                width: 'auto',
-                height: '28px'
-            });
-        }
-        else if(actionBtns.siblings('a').length == 3)
-        {
-            actionBtns.siblings('a').last().css('margin-bottom',"29px");
-            bottomTop=actionBtns.siblings('a').last().offset().top+25;
-            $divOverlay.css({
-                position: 'absolute',
-                visibility:'visible',
-                top: bottomTop,
-                right: "53px",
-                width: 'auto',
-                height: '28px'
+        if (typeof actionColumnHidden === "undefined" || actionColumnHidden === null) {
+            var actionBtns= $(ele).children('td[data-values="action"]').children('.action');
+            console.log(actionBtns.siblings('a').length);
+            if(actionBtns.siblings('a').length == 0)
+            {
+                actionBtns.css('padding-bottom',"50px");
+                bottomTop=actionBtns.offset().top+25;
+                $divOverlay.css({
+                    position: 'absolute',
+                    visibility:'visible',
+                    top: bottomTop,
+                    right: window.location.pathname == '/shopfegrequeststore'?'162px':"47px",
+                    width: 'auto',
+                    height: '28px'
+                });
+            }
+            else if(actionBtns.siblings('a').length == 3)
+            {
+                actionBtns.siblings('a').last().css('margin-bottom',"29px");
+                bottomTop=actionBtns.siblings('a').last().offset().top+25;
+                $divOverlay.css({
+                    position: 'absolute',
+                    visibility:'visible',
+                    top: bottomTop,
+                    right: "53px",
+                    width: 'auto',
+                    height: '28px'
+                });
+            }
+            else
+            {
+                actionBtns.siblings('a').last().css('margin-bottom',"29px");
+                bottomTop=actionBtns.siblings('a').last().offset().top+25;
+                $divOverlay.css({
+                    position: 'absolute',
+                    visibility:'visible',
+                    top: bottomTop,
+                    right: "47px",
+                    width: 'auto',
+                    height: '28px'
+                });
+            }
+            $divOverlay.delay(100).slideDown('fast');
+            $(ele).nextAll('.inline_edit_applied').each(function(){
+                var id=$(this).data('id');
+                var height=$(this).offset().top+30;
+                if($(this).children('td[data-values="action"]').children('.action').siblings('a').length > 0)
+                {
+                    height=$(this).children('td[data-values="action"]').children('.action').siblings('a').last().offset().top+25;
+                }
+                $('#divOverlay_'+id).css('top',height +"px");
             });
         }
         else
         {
-            actionBtns.siblings('a').last().css('margin-bottom',"29px");
-            bottomTop=actionBtns.siblings('a').last().offset().top+25;
+            var actionBtns= $(ele).children('td').last();
+            actionBtns.children().css('margin-bottom',"29px");
+            bottomTop=actionBtns.children().offset().top+34;
             $divOverlay.css({
                 position: 'absolute',
                 visibility:'visible',
                 top: bottomTop,
-                right: "47px",
+                right: "62px",
                 width: 'auto',
                 height: '28px'
             });
+            $divOverlay.delay(100).slideDown('fast');
+            $(ele).nextAll('.inline_edit_applied').each(function(){
+                var id=$(this).data('id');
+                var height=$(this).offset().top+38;
+                $('#divOverlay_'+id).css('top',height +"px");
+            });
         }
-        $divOverlay.delay(100).slideDown('fast');
-        $(ele).nextAll('.inline_edit_applied').each(function(){
-            var id=$(this).data('id');
-            var height=$(this).offset().top+30;
-            if($(this).children('td[data-values="action"]').children('.action').siblings('a').length > 0)
-            {
-                height=$(this).children('td[data-values="action"]').children('.action').siblings('a').last().offset().top+25;
-            }
-            $('#divOverlay_'+id).css('top',height +"px");
-        });
     };
     window.saveInlineForm = saveInlineForm = function (rowDomId, event, element, options) {
         if (event && event.preventDefault && typeof event.preventDefault == 'function') {
