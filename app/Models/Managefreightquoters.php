@@ -601,10 +601,10 @@ class managefreightquoters extends Sximo
                 if (isset($data['request']['description']) && !empty($data['request']['description'])) {
                     for ($i = 0; $i < count($data['request']['description']); $i++) {
                         $contents_message = $contents_message . 'Pallet ' . ($i + 1) . ':
-									<b>' . $data['request']['description'][$i] . '</b>
+									' . $data['request']['description'][$i] . '
 									<br>
 									Dimensions:
-									<b>' . $data['request']['dimension'][$i] . '</b>';
+									' . $data['request']['dimension'][$i];
                     }
                 }
                 $from = 'support@fegllc.com';
@@ -622,7 +622,7 @@ class managefreightquoters extends Sximo
 							' . $contents_message . '
 							<br>
 							<br>
-							Trucking Company: <b>' . $external_ship_trucking_co . '</b>
+							Trucking Company: ' . $external_ship_trucking_co . '
 							<br>
 							Pro Number: <b>' . $external_ship_pro . '</b>
 							<br>
