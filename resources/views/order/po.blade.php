@@ -67,7 +67,7 @@
                     </td>
                     @if(($data[0]['new_format']==1))
 
-                        <td style="padding:8px;border:1px solid #000; text-align: right">Unit Price</td>
+                        <td style="padding:8px;border:1px solid #000; text-align: right">@if($data[0]['order_type_id'] ==4 )Unit/Case Price @elseif($data[0]['order_type_id'] == 7 || $data[0]['order_type_id'] == 8) Case Price @else Unit Price @endif</td>
                         <td style="padding:8px;border:1px solid #000;text-align: center">QTY</td>
                         <td style="padding:9px;border:1px solid #000;text-align: right">Item Total</td>
                         <td></td>
@@ -75,9 +75,9 @@
                 @for($i=0;$i < count($data[0]['orderDescriptionArray']);$i++)
                     <tr>
                         <td style="padding:8px;border:1px dotted #000; border-top:none">  {{ $data[0]['orderDescriptionArray'][$i] }} <br/></td>
-                        <td style="padding:8px;border:1px dotted #000;border-top:none;text-align: right">  {{CurrencyHelpers::formatCurrency(number_format($data[0]['orderPriceArray'][$i], \App\Models\Order::ORDER_PERCISION)) }} <br/></td>
+                        <td style="padding:8px;border:1px dotted #000;border-top:none;text-align: right">  {{CurrencyHelpers::formatCurrency(number_format($data[0]['orderItemsPriceArray'][$i], \App\Models\Order::ORDER_PERCISION)) }} <br/></td>
                         <td style="padding:8px;border:1px dotted  #000;border-top:none;text-align: center">  {{ $data[0]['orderQtyArray'][$i] }} <br/></td>
-                        <td style="padding:2px;border:1px dotted  #000;border-top:none;border-right:1px dotted #000;text-align: right ">  $ {{number_format($data[0]['orderPriceArray'][$i]* $data[0]['orderQtyArray'][$i], \App\Models\Order::ORDER_PERCISION) }}  <br/></td>
+                        <td style="padding:2px;border:1px dotted  #000;border-top:none;border-right:1px dotted #000;text-align: right ">  $ {{number_format($data[0]['orderItemsPriceArray'][$i]* $data[0]['orderQtyArray'][$i], \App\Models\Order::ORDER_PERCISION) }}  <br/></td>
 <td></td>
                     </tr>
                 @endfor

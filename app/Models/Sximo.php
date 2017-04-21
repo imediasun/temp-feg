@@ -664,21 +664,35 @@ class Sximo extends Model {
             $row[0]['company_name_long'] = '';
         }
         if ($row[0]['new_format'] == 1) {
-            $contentsQuery = \DB::select("SELECT O.item_name AS description,if(O.product_id=0,O.sku,P.sku) AS sku, O.price AS price, O.qty AS qty
+            $contentsQuery = \DB::select("SELECT O.item_name AS description,if(O.product_id=0,O.sku,P.sku) AS sku, O.price AS price, O.qty AS qty,O.case_price
                                             FROM order_contents O 
                                             LEFT JOIN products P ON P.id = O.product_id 
                                             WHERE O.order_id = $order_id");
             $row[0]['requests_item_count'] = 0;
+            $orderTypeId=$row[0]['order_type_id'];
             foreach ($contentsQuery as $r) {
                 $row[0]['requests_item_count'] = $row[0]['requests_item_count'] + 1;
                 //if sku is not empty then concat it with description for PO PDF
                 $orderDescriptionArray[] = empty($r['sku'])?$r['description']:$r['description']." (SKU - {$r['sku']})";
                 $orderPriceArray[] = $r['price'];
                 $orderQtyArray[] = $r['qty'];
+                if($orderTypeId == 20 || $orderTypeId == 10 || $orderTypeId == 6 || $orderTypeId== 17 || $orderTypeId == 1 )
+                {
+                    $orderItemsPriceArray[] = $r['price'];
+                }
+                elseif($orderTypeId == 7 || $orderTypeId == 8)
+                {
+                    $orderItemsPriceArray[] = $r['case_price'];
+                }
+                elseif($orderTypeId == 4)
+                {
+                    $orderItemsPriceArray[] = ($r['price'] == 0.00)?$r['case_price']:$r['price'];
+                }
             }
 
             $row[0]['orderDescriptionArray'] = $orderDescriptionArray;
             $row[0]['orderPriceArray'] = $orderPriceArray;
+            $row[0]['orderItemsPriceArray']=$orderItemsPriceArray;
             $row[0]['orderQtyArray'] = $orderQtyArray;
         }
 
