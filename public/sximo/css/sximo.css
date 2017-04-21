@@ -3106,3 +3106,16 @@ td.label-view.text-right {
 {
   content: ':';
 }
+.input-group input.form-control{
+  float: left;
+  width: 94%;
+}
+.input-group{
+  float: left;
+  width: 100%;
+}
+.input-group span.input-group-addon{
+  float: left;
+  width: 33px !important;
+  padding: 8px;
+}
