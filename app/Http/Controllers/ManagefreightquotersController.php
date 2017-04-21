@@ -416,7 +416,6 @@ class ManagefreightquotersController extends Controller
             if(!empty($to_city))
             {
                 $subject  .= is_array($to_city)?implode(',',$to_city) == ''|| implode(',',$to_city) == ' ' ?'' :' To '.$to_city:$to_city != ' ' || $to_city != ''?' To '.$to_city:'';
-                dd($subject,$to_city);
             }
             $subject .= '';
             $from_contact_summary = '';
@@ -451,7 +450,7 @@ class ManagefreightquotersController extends Controller
             }
             $fromMessage.= '<br>' .
                 $from_contact_summary .
-                '<b style="color:red">' . $from_loading_info . '</b>';
+                '<b style="color:red">' . $from_loading_info . '</b><br><br>';
             if (!empty($to_contact_full_name) || !empty($to_contact_phone) || !empty($to_contact_email)) {
                 $to_contact_summary = "";
                 for ($i = 1; $i < count($to_contact_full_name); $i++) {
@@ -511,7 +510,11 @@ class ManagefreightquotersController extends Controller
                         $toMessage .= ((!empty($to_contact_full_name[$i]) && !empty($to_contact_phone[$i])) ? ' | ' : '') . $to_contact_email[$i];
                     }
                     $toMessage.= '<br>';
-                    $toMessage.=   '<b style="color:red">' . $to_loading_info[$i] . '</b><br><br>';
+                    if(!empty($to_loading_info[$i]))
+                    {
+                        $toMessage.=   '<b style="color:red">**' . $to_loading_info[$i] . '**</b>';
+                    }
+                    $toMessage.= '<br><br>';
                     //$subject .=  $to_city[$i];
                 }
             } else {
@@ -544,7 +547,11 @@ class ManagefreightquotersController extends Controller
                     $toMessage .= ((!empty($to_contact_full_name) && !empty($to_contact_phone)) ? ' | ' : '') . $to_contact_email;
                 }
                 $toMessage.= '<br>';
-                $toMessage .= '<b style="color:red">' . $to_loading_info . '</b><br><br>';
+                if(!empty($to_loading_info))
+                {
+                    $toMessage.=   '<b style="color:red">**' . $to_loading_info . '**</b>';
+                }
+                $toMessage .= '<br><br>';
                 //$subject .=  $to_city;
             }
             $forMessage = "";
