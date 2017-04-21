@@ -420,8 +420,18 @@ class ManagefreightquotersController extends Controller
                 print_r(is_array($to_city));
                 print_r(' To '.implode(',',$to_city));
                 print_r(($to_city != ' ' || $to_city != ''));
-                $subject  .= is_array($to_city)?(implode(',',$to_city) == '' || implode(',',$to_city) == ' ') ?'' :' To '.implode(',',$to_city):($to_city == ' ' || $to_city == '')?'':' To '.$to_city;
-                dd($subject);
+                if(is_array($to_city))
+                {
+                    $str = implode(',',$to_city);
+                    if(($str != '' && $str != ' '))
+                    {
+                        $subject  .= ' To '.implode(',',$to_city);
+                    }
+                }
+                elseif($to_city != ' ' && $to_city != '')
+                {
+                    $subject .=' To '.$to_city;
+                }
 
             }
             $subject .= '';
