@@ -479,11 +479,11 @@ class ManagefreightquotersController extends Controller
             $freightCompanyQuery = \DB::select('SELECT rep_email FROM freight_companies WHERE active = 1  AND rep_email != ""');
             foreach ($freightCompanyQuery as $rowFreight) {
                 $to = $rowFreight->rep_email;
-                $headers = "Bcc: " . $bcc . "\r\n";
-                $headers .= "From: " . $from . "\r\n" . "X-Mailer: php";
+                //$headers = "Bcc: " . $bcc . "\r\n";
+                $headers = "From: " . $from . "\r\n" . "X-Mailer: php";
                 $headers .= "MIME-Version: 1.0\r\n";
                 $headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
-                //mail($to, $subject, $message, $headers);
+                mail($to, $subject, $message, $headers);
             }
             return response()->json(array(
                 'status' => 'success',
