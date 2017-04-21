@@ -256,14 +256,14 @@ class AjaxHelpers
 		$html .= '</div>';
 		return $html;
 	}
-	static public function buttonActionInline( $id ,$key )
+	static public function buttonActionInline( $id ,$key ,$actionColumnHidden = 0)
 	{
         $divid = 'form-'.$id;
         $outeridvid="divOverlay_".$id;
 		$html = '
 		<div id="'.$outeridvid.'" class="actionopen" style="visibility: hidden" >
 			<a href="#" onclick="saveInlineForm(\''.$divid.'\', event, this)" class="tips btn btn-primary btn-xs"  title="Save"><i class="fa  fa-save"></i></a>
-			<a href="#" onclick="cancelInlineEdit(\''.$divid.'\', event, this)" class="tips btn btn-danger btn-xs"  title="Cancel"><i class="fa  fa-times"></i></a>
+			<a href="#" onclick="cancelInlineEdit(\''.$divid.'\', event, this,'.$actionColumnHidden.')" class="tips btn btn-danger btn-xs"  title="Cancel"><i class="fa  fa-times"></i></a>
 			<input type="hidden" value="'.$id.'" name="'.$key.'">
 		</div>
 		';
