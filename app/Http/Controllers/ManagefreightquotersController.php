@@ -411,7 +411,7 @@ class ManagefreightquotersController extends Controller
             $subject = 'FREIGHT QUOTE for Family Entertainment Group - ';
             if(!empty($from_city))
             {
-                $subject  .= $from_city;
+                $subject  .= 'From '.$from_city;
             }
             if(!empty($to_city))
             {
