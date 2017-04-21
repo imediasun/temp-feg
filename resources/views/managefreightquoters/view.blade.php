@@ -163,7 +163,7 @@
                     </div>
                     <div class="form-group m-b-sm-f clearfix">
                         <input type="hidden" name="freight_company[]" id="freight_company_'.$i.'"   value="{{ $row['freight_loc_info']['freight_company'][$i] }}" />                
-                        <label class="label-control col-md-3">Ship To {{ $i+1 }}</label>
+                        <label class="label-control col-md-3">Ship To Location</label>
                         <div class="col-md-9">
                             @if($row['freight_loc_info']['location'][$i]!=0)
                             <strong>
