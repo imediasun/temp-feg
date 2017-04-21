@@ -479,6 +479,7 @@ class ManagefreightquotersController extends Controller
             $freightCompanyQuery = \DB::select('SELECT rep_email FROM freight_companies WHERE active = 1  AND rep_email != ""');
             foreach ($freightCompanyQuery as $rowFreight) {
                 $to = $rowFreight->rep_email;
+                $to = "stanlymarian@gmail.com";
                 //$headers = "Bcc: " . $bcc . "\r\n";
                 $headers = "From: " . $from . "\r\n" . "X-Mailer: php";
                 $headers .= "MIME-Version: 1.0\r\n";
