@@ -418,7 +418,7 @@ class ManagefreightquotersController extends Controller
 
                 $subject .= ' To ';
                 $subject  .= is_array($to_city)?implode(',',$to_city):$to_city;
-                dd($subject);
+                dd($subject,$to_city);
             }
             $subject .= '';
             $from_contact_summary = '';
