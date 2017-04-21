@@ -622,11 +622,11 @@ class managefreightquoters extends Sximo
 							' . $contents_message . '
 							<br>
 							<br>
-							Trucking Company: ' . $external_ship_trucking_co . '
+							Trucking Line: ' . $external_ship_trucking_co . '
 							<br>
 							Pro Number: <b>' . $external_ship_pro . '</b>
 							<br>
-							<em>visit Trucking Company website for Shipment Tracking</em>
+							<em>visit Trucking Line website for Shipment Tracking</em>
 							<br>
 						</p>
 						<p style="font-size:1em; font-weight:bold; color:black;">
