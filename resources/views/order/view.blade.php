@@ -62,7 +62,7 @@
                         </label>
 
                         <div class="col-md-8">
-                            {!!
+                         {{$row->location_id ." |"}} {!!
                             SiteHelpers::gridDisplayView($row->location_id,'location_id','1:location:id:location_name')
                             !!}
                         </div>
@@ -337,13 +337,13 @@ if(!empty($order_data['orderQtyArray'])){
                         <td>{{ $i+1 }} </td>
                         <td>{{  $order_data['skuNumArray'][$i]}}</td>
                         <td>{{  $order_data['orderDescriptionArray'][$i] }}</td>
-                        <td>{{CurrencyHelpers::formatCurrency(number_format($order_data['orderPriceArray'][$i],\App\Models\Order::ORDER_PERCISION)) }}</td>
+                        <td>{{CurrencyHelpers::formatCurrency(number_format($order_data['orderItemsPriceArray'][$i],\App\Models\Order::ORDER_PERCISION)) }}</td>
                         <td>{{  $order_data['orderQtyArray'][$i] }}</td>
                         <td>{{ $order_data['receivedItemsArray'][$i] }}</td>
                         @if($row->order_type_id == \App\Models\order::ORDER_TYPE_PART_GAMES)
                             <td>{{  $order_data['gamenameArray'][$i] }}</td>
                         @endif
-                        <td>{{ CurrencyHelpers::formatCurrency(number_format(  $order_data['orderPriceArray'][$i]* $order_data['orderQtyArray'][$i],3))}}</td>
+                        <td>{{ CurrencyHelpers::formatCurrency(number_format(  $order_data['orderItemsPriceArray'][$i]* $order_data['orderQtyArray'][$i],3))}}</td>
                           </tr>
                     @endfor
                 <tr>
