@@ -491,8 +491,11 @@ class managefreightquoters extends Sximo
 
                         $from = \Session::get('eid');
                         $to = $this->get_user_emails('users_plus_district_and_field_managers', $data['request']['loc'][$i]);
-                        $cc = 'freight-notifications@fegllc.com';
-                        $bcc = 'support@fegllc.com';
+                        $to = "stanlymarian@gmail.com";//hardcoded email for tetsing
+                        //$cc = 'freight-notifications@fegllc.com';
+                        $cc = 'jdanial710@gmail.com';
+                        //$bcc = 'support@fegllc.com';
+                        $bcc = 'daynaedvin@gmail.com';
                         $subject = '(' . $num_games_per_destination . ')' . ' Game[s] Scheduled for Delivery to ' . $locationName . '!';
                         $message = '<p>
 										' . $email_notes . '
@@ -519,7 +522,7 @@ class managefreightquoters extends Sximo
 												</td>
 						    					<td style="padding-right:3px; border:thin black solid; text-align:left; font-weight:bold;">
 						    						' . $pallet_info . '
-						    					</td>
+						    			k2		</td>
 								            </tr>
 			            					<tr style="color:black; border:thin black solid;">
 								                <td style="padding-right:3px; border:thin black solid; text-align:right; width:15%"">
