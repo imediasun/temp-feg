@@ -415,7 +415,8 @@ class ManagefreightquotersController extends Controller
             }
             if(!empty($to_city))
             {
-                $subject  .= ' To '.$to_city;
+                $subject .= ' To ';
+                $subject  .= is_string($to_city)?$to_city:$request->get('to_add_city');
             }
             $subject .= '';
             $from_contact_summary = '';

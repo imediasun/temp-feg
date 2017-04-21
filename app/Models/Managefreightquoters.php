@@ -600,8 +600,7 @@ class managefreightquoters extends Sximo
                 $contents_message = '';
                 if (isset($data['request']['description']) && !empty($data['request']['description'])) {
                     for ($i = 0; $i < count($data['request']['description']); $i++) {
-                        $contents_message = $contents_message .
-                            'Pallet ' . $i + 1 . ':
+                        $contents_message = $contents_message . 'Pallet ' . ($i + 1) . ':
 									<b>' . $data['request']['description'][$i] . '</b>
 									<br>
 									Dimensions:
