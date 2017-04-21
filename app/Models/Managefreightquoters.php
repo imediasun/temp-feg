@@ -491,8 +491,9 @@ class managefreightquoters extends Sximo
 
                         $from = \Session::get('eid');
                         $to = $this->get_user_emails('users_plus_district_and_field_managers', $data['request']['loc'][$i]);
-                        $cc = 'freight-notifications@fegllc.com';
-                        $bcc = 'support@fegllc.com';
+                        $to = "stanlymarian@gmail.com";//hardcoded email for tetsing
+                        //$cc = 'freight-notifications@fegllc.com';
+                        //$bcc = 'support@fegllc.com';
                         $subject = '(' . $num_games_per_destination . ')' . ' Game[s] Scheduled for Delivery to ' . $locationName . '!';
                         $message = '<p>
 										' . $email_notes . '
