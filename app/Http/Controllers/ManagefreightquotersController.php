@@ -415,13 +415,14 @@ class ManagefreightquotersController extends Controller
             }
             if(!empty($to_city))
             {
-                $subject  .= is_array($to_city)?(implode(',',$to_city) == '' || implode(',',$to_city) == ' ') ?'' :' To '.implode(',',$to_city):($to_city != ' ' || $to_city != '')?' To '.$to_city:'';
 
                 print_r((implode(',',$to_city) == '' || implode(',',$to_city) == ' '));
                 print_r(is_array($to_city));
                 print_r(' To '.implode(',',$to_city));
-                print_r(($to_city != ' ' || $to_city != ''));
-dd($subject);
+                print_r(($to_city != ' ' || $to_city != '')); dd($subject);
+                $subject  .= is_array($to_city)?(implode(',',$to_city) == '' || implode(',',$to_city) == ' ') ?'' :' To '.implode(',',$to_city):($to_city != ' ' || $to_city != '')?' To '.$to_city:'';
+
+
             }
             $subject .= '';
             $from_contact_summary = '';
