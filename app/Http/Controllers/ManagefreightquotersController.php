@@ -435,8 +435,20 @@ class ManagefreightquotersController extends Controller
 
             $fromMessage = '<b>FROM:</b><br>' .
                 $from_name . '<br>' .
-                $from_street . '<br>' .
-                $from_city . ', ' . $from_state . ', ' . $from_zip . '<br>' .
+                $from_street . '<br>' ;
+            if(!empty($from_city))
+            {
+                $fromMessage .= $from_city. (!empty($from_state)?', ':'') ;
+            }
+            if(!empty($from_state))
+            {
+                $fromMessage .= $from_state. (!empty($from_zip)?', ':'')  ;
+            }
+            if(!empty($from_zip))
+            {
+                $fromMessage .= $from_zip ;
+            }
+            $fromMessage.= '<br>' .
                 $from_contact_summary .
                 '<b style="color:red">' . $from_loading_info . '</b>';
             if (!empty($to_contact_full_name) || !empty($to_contact_phone) || !empty($to_contact_email)) {
@@ -470,8 +482,21 @@ class ManagefreightquotersController extends Controller
                     }
 
                     $toMessage = $toMessage . " " . $to_name[$i] . '<br>' .
-                        $to_street[$i] . '<br>' .
-                        $to_city[$i] . ', ' . $to_state[$i] . ', ' . $to_zip[$i] . '<br>' ;
+                        $to_street[$i] . '<br>' ;
+                    if(!empty($to_city[$i]))
+                    {
+                        $toMessage .= $to_city[$i]. (!empty($to_state[$i])?', ':'') ;
+                    }
+                    if(!empty($to_state[$i]))
+                    {
+                        $toMessage .= $to_state[$i]. (!empty($to_zip[$i])?', ':'')  ;
+                    }
+                    if(!empty($to_zip[$i]))
+                    {
+                        $toMessage .= $to_zip[$i] ;
+                    }
+                    $toMessage.= '<br>' ;
+
                     if (!empty($to_contact_full_name[$i])) {
                         $toMessage .= $to_contact_full_name[$i];
                     }
@@ -491,8 +516,20 @@ class ManagefreightquotersController extends Controller
             } else {
                 $toMessage = $toMessage . '<b> TO:</b><br>';
                 $toMessage = $toMessage . " " . $to_name . '<br>' .
-                    $to_street . '<br>' .
-                    $to_city . ', ' . $to_state . ', ' . $to_zip . '<br>' ;
+                    $to_street . '<br>' ;
+                    if(!empty($to_city))
+                    {
+                        $toMessage .= $to_city. (!empty($to_state)?', ':'') ;
+                    }
+                    if(!empty($to_state))
+                    {
+                        $toMessage .= $to_state. (!empty($to_zip)?', ':'')  ;
+                    }
+                    if(!empty($to_zip))
+                    {
+                        $toMessage .= $to_zip ;
+                    }
+                    $toMessage.= '<br>' ;
                 if (!empty($to_contact_full_name)) {
                     $toMessage = $to_contact_full_name;
                 }
