@@ -534,7 +534,7 @@ class managefreightquoters extends Sximo
 								            </tr>
 			            					<tr style="color:black; border:thin black solid;">
 								                <td style="padding-right:3px; border:thin black solid; text-align:right; width:15%"">
-													Trucking Company:
+													Trucking Line:
 												</td>
 								                <td style="padding-right:3px; border:thin black solid; text-align:left; font-weight:bold;">
 													' . $data['request']['trucking_line'][$i] . '
@@ -545,7 +545,7 @@ class managefreightquoters extends Sximo
 													Pro Number:
 												</td>
 								                <td style="padding-right:3px; border:thin black solid; text-align:left; font-weight:bold;">
-													' . $data['request']['pro_number'][$i] . '	<em>(visit Trucking Company website for Shipment Tracking)</em>
+													' . $data['request']['pro_number'][$i] . '	<em>(visit Trucking Line website for Shipment Tracking)</em>
 						    					</td>
 								            </tr>
 								        </table>
