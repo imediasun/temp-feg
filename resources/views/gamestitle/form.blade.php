@@ -5,16 +5,22 @@
 @if($setting['form-method'] =='native')
 	<div class="sbox">
 		<div class="sbox-title">
-			<h4>
-				<a href="javascript:void(0)" class="collapse-close pull-right btn btn-xs btn-danger" onclick="ajaxViewClose('#{{ $pageModule }}')"><i class="fa fa fa-times"></i></a>
-			</h4>
+		    <h4> 
+		        @if($isEdit)
+    			    <i class="fa fa-pencil"></i>&nbsp;&nbsp;Edit Game Title
+    			@else
+    			    <i class="fa fa-plus"></i>&nbsp;&nbsp;Create New Game Title
+    			@endif
+    			<a href="javascript:void(0)" class="collapse-close pull-right btn btn-xs btn-danger" onclick="ajaxViewClose('#{{ $pageModule }}')">
+    			<i class="fa fa fa-times"></i></a>
+		    </h4>
 	</div>
 
 	<div class="sbox-content">
 @endif
 			{!! Form::open(array('url'=>'gamestitle/save/'.$titleID, 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'gamestitleFormAjax')) !!}
 			<div class="col-md-12">
-						<fieldset><legend>@if($isEdit) Edit @else Create New @endif Game Title</legend>
+						
 
 				  <div class="form-group  " >
 					<label for="Game Title" class=" control-label col-md-4 text-left">
@@ -39,7 +45,7 @@
 					{!! SiteHelpers::activeLang('Manufacturer', (isset($fields['mfg_id']['language'])? $fields['mfg_id']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
-                        <input type="hidden" name="mfg_id" id="mfg_id" class="" style="width:98%" value="{{ $row['mfg_id'] }}"/>
+                        <input type="hidden" name="mfg_id" id="mfg_id" class="" style="width:100%" value="{{ $row['mfg_id'] }}"/>
                     </div>
 					 <div class="col-md-2">
 
@@ -50,7 +56,7 @@
 					{!! SiteHelpers::activeLang('Game Type', (isset($fields['game_type_id']['language'])? $fields['game_type_id']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
-					  <select name='game_type_id' rows='5' id='game_type_id' class='select2 ' required  ></select>
+					  <select name='game_type_id' rows='5' id='game_type_id' class='select2' style="width:100%" required  ></select>
 					 </div>
 					 <div class="col-md-2">
 
@@ -190,7 +196,7 @@ $(document).ready(function() {
 	$('.editor').summernote();
 	$('.previewImage').fancybox();
 	$('.tips').tooltip();
-	renderDropdown($(".select2, .select3, .select4, .select5"), { width:"98%"});
+	renderDropdown($(".select2, .select3, .select4, .select5"), { width:"100%"});
 	$('.date').datepicker({format:'mm/dd/yyyy',autoclose:true})
 	$('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});
 	$('input[type="checkbox"],input[type="radio"]').iCheck({

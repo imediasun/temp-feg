@@ -3032,13 +3032,6 @@ table .btn.btn-xs {
 .action {
   margin-top: 1px;
 }
-<<<<<<< HEAD
-
-
-.sbox-title {
-  height: 53px;
-  padding: 14px 15px;
-}
 
 .form-control {
   font-size: 12px !important;
@@ -3097,8 +3090,45 @@ table .btn.btn-xs {
   position: relative !important;
   top: 2px;
 }
-=======
+
 td.label-view.text-right {
   text-align: left;
 }
->>>>>>> a6ca2470cbb36953989e65cffc1b04500213cb3a
+
+table .btn.btn-xs.exp-formater {
+  width: 100%;
+}
+
+.sbox-title {
+height: 53px;
+padding: 14px 15px;
+position: relative;
+}
+
+.collapse-close {
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+.table {
+  min-width: 1120px !important;
+}
+
+.box-white {
+  background: #fff none repeat scroll 0 0;
+  border: 1px solid #ddd;
+  padding: 15px;
+}
+
+.box-white fieldset {
+  margin: 0;
+}
+
+.box-white h3 {
+    margin-top: 0;
+}
+
+.table.search-table {
+  min-width: inherit;
+}

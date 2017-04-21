@@ -8,6 +8,7 @@
 				
 	</div>
 	<div class="sbox-content">
+		
 	<div class="text-center  animated fadeInDown delayp1">
 		<img src="{{ asset('sximo/images/feg-logo.png')}}"  />
 	</div>

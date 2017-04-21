@@ -16,9 +16,14 @@
             @endif
             {!! Form::open(array('url'=>'order/save/', 'class'=>'form-vertical','files' => true ,
             'parsley-validate'=>'','novalidate'=>' ','id'=> 'ordersubmitFormAjax')) !!}
+            
+            <div class="row">
             <div class="col-md-6">
+                <div class="box-white">
+                
                 <fieldset>
-                    <legend>Order Info</legend>
+                    <h3>Order Info</h3>
+                    <hr class="m-t-sm">
                     <div class="form-group  ">
                         <label for="Company Id" class=" control-label col-md-4 text-left"> Bill To:</label>
 
@@ -101,11 +106,14 @@
                     </div>
                     {{--Ship Address Ends here--}}
                 </fieldset>
+                </div>
             </div>
 
             <div class="col-md-6">
+                <div class="box-white">
                 <fieldset>
-                    <legend> Order Detail</legend>
+                    <h3> Order Detail</h3>
+                    <hr class="m-t-sm">
 
                     <div class="form-group">
                         <label for="order_type_id" class=" control-label col-md-4 text-left">
@@ -200,6 +208,9 @@
                     <input type="hidden" id="order_id" name="order_id" value="{{ $id }}">
                     <input type="hidden" id="editmode" name="editmode" value="{{ $data['prefill_type'] }}">
                 </fieldset>
+                </div>
+            </div>
+            
             </div>
             <hr/>
             <div class="clr clear"></div>

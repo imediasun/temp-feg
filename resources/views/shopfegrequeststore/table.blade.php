@@ -80,9 +80,9 @@
                             endif;
                         endforeach; ?>
                             @if($setting['disablerowactions']=='false')
-                                <th width="70"><?php echo Lang::get('core.btn_action') ;?></th>
+                                <th width="75"><?php echo Lang::get('core.btn_action') ;?></th>
                             @endif
-                            <th width="115">Add To Cart</th>
+                            <th width="130">Add To Cart</th>
                     </tr>
                     </thead>
 
@@ -157,7 +157,7 @@
                             @endif
                         <td>@if($row->inactive == 0)
                                 <input type="number" title="Quantity" value="1" min="1" onkeyup="if(!this.checkValidity()){this.value='';alert('Please Enter a Non Zero Number')};" name="item_quantity" class="form-control" style="width:70px;display:inline" id="item_quantity_{{$row->id}}" min="0"  />
-                                <a href="javascript:void(0)" value="{{$row->id}}" class=" addToCart tips btn btn-xs btn-white"  title="Add to Cart"><i class="fa fa-shopping-cart" aria-hidden="true"></i></a>
+                                <a href="javascript:void(0)" value="{{$row->id}}" class=" addToCart tips btn btn-sm btn-white pull-right"  title="Add to Cart"><i class="fa fa-shopping-cart" aria-hidden="true"></i></a>
                             @else
                                 Not Avail.
                             @endif</td>

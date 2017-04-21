@@ -34,6 +34,34 @@
     </form>
 </div>
 <div class="clearfix m-b">
+    <div class="pull-right">
+            <div class="pull-left m-r-xs-f lh-2p5"><strong>Download</strong></div>
+
+            {!! Form::open(array('url'=> URL::to( $pageModule .'/export/csv/history'),
+                'class'=>'form-inline pull-left m-l-xxs-f downloadGameMoveHistory downloadForm',
+                'target'=>'_self')) !!}
+                <input name="exportID" value="{{ uniqid('gamehistory', true) }}" type="hidden"/>
+                <input name="footerfiters" value="" type="hidden"/>
+                <input name='validateDownload' type='hidden' value='1'/>
+                <button type="submit" class="btn btn-sm btn-white submitButton">Game Move History</button>
+            {!! Form::close() !!}
+            {!! Form::open(array('url'=> URL::to( $pageModule .'/export/csv/pending'),
+                'class'=>'form-inline pull-left m-l-xxs-f downloadGamePendingSales downloadForm',
+                'target'=>'_self')) !!}
+                <input name="exportID" value="{{ uniqid('gamependingsale', true) }}" type="hidden"/>
+                <input name="footerfiters" value="" type="hidden"/>
+                <input name='validateDownload' type='hidden' value='1'/>
+                <button type="submit" class="btn btn-sm btn-white submitButton">Pending Sales List</button>
+            {!! Form::close() !!}
+            {!! Form::open(array('url'=> URL::to( $pageModule .'/export/csv/forsale'),
+                'class'=>'form-inline pull-left m-l-xxs-f downloadGameForSale downloadForm',
+                'target'=>'_self')) !!}
+                <input name="exportID" value="{{ uniqid('gameforsale', true) }}" type="hidden"/>
+                <input name="footerfiters" value="" type="hidden"/>
+                <input name='validateDownload' type='hidden' value='1'/>
+                <button type="submit" class="btn btn-sm btn-white submitButton">For-Sale List</button>
+            {!! Form::close() !!}
+    </div>
     <div class="pull-left form-inline">
         <div class="pull-left m-r-f">
             @if($access['is_add'] ==1)
@@ -76,34 +104,6 @@
                 @endif
             </div>
         @endif
-    </div>
-    <div class="pull-right">
-            <div class="pull-left m-r-xs-f lh-2p5"><strong>Download</strong></div>
-
-            {!! Form::open(array('url'=> URL::to( $pageModule .'/export/csv/history'),
-                'class'=>'form-inline pull-left m-l-xxs-f downloadGameMoveHistory downloadForm',
-                'target'=>'_self')) !!}
-                <input name="exportID" value="{{ uniqid('gamehistory', true) }}" type="hidden"/>
-                <input name="footerfiters" value="" type="hidden"/>
-                <input name='validateDownload' type='hidden' value='1'/>
-                <button type="submit" class="btn btn-sm btn-white submitButton">Game Move History</button>
-            {!! Form::close() !!}
-            {!! Form::open(array('url'=> URL::to( $pageModule .'/export/csv/pending'),
-                'class'=>'form-inline pull-left m-l-xxs-f downloadGamePendingSales downloadForm',
-                'target'=>'_self')) !!}
-                <input name="exportID" value="{{ uniqid('gamependingsale', true) }}" type="hidden"/>
-                <input name="footerfiters" value="" type="hidden"/>
-                <input name='validateDownload' type='hidden' value='1'/>
-                <button type="submit" class="btn btn-sm btn-white submitButton">Pending Sales List</button>
-            {!! Form::close() !!}
-            {!! Form::open(array('url'=> URL::to( $pageModule .'/export/csv/forsale'),
-                'class'=>'form-inline pull-left m-l-xxs-f downloadGameForSale downloadForm',
-                'target'=>'_self')) !!}
-                <input name="exportID" value="{{ uniqid('gameforsale', true) }}" type="hidden"/>
-                <input name="footerfiters" value="" type="hidden"/>
-                <input name='validateDownload' type='hidden' value='1'/>
-                <button type="submit" class="btn btn-sm btn-white submitButton">For-Sale List</button>
-            {!! Form::close() !!}
     </div>
 </div>
 
