@@ -415,9 +415,7 @@ class ManagefreightquotersController extends Controller
             }
             if(!empty($to_city))
             {
-
-                $subject .= ' To ';
-                $subject  .= is_array($to_city)?implode(',',$to_city):$to_city;
+                $subject  .= is_array($to_city)?implode(',',$to_city) == ''|| implode(',',$to_city) == ' ' ?'' :' To '.$to_city:$to_city != ' ' || $to_city != ''?' To '.$to_city:'';
                 dd($subject,$to_city);
             }
             $subject .= '';
