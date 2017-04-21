@@ -348,23 +348,22 @@
                 orderType=$("#order_type_id").val();
                 // if order type is Debit Card Part=20,Graphics=10,Office Supplies=6, Parts for Game=1,Party Supplies=17
                 if (orderType == 20 || orderType == 10 || orderType == 6 || orderType == 17 || orderType == 1) {
-                    Price = unitPrice;
+                    Price = (unitPrice ==0)?casePrice:unitPrice;
                 }
                 // if order type is Instant Win prizes=8, redemption prizes=7
                 else if(orderType == 7 || orderType == 8)
                 {
-                     Price=casePrice;
+                     Price = (casePrice == 0)?unitPrice:casePrice;
                 }
                 else if(orderType == 4)
                 {
-                    if(unitPrice == 0)
-                    {
-                        Price=casePrice;
-                    }
-                    else
-                    {
-                        Price=unitPrice;
-                    }
+
+                     Price=(unitPrice == 0)?casePrice:unitPrice;
+
+                }
+                else if(unitPrice != 0 && casePrice != 0)
+                {
+                    price=unitPrice;
                 }
                 sum = Qty * Price;
                 Subtotal += sum;
