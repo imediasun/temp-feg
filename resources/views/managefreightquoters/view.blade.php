@@ -234,7 +234,7 @@
                 <div class="clearfix form-group text-right">
                     <div class="col-md-3"></div>
                     <div class="col-md-9">
-                        <label class="label-control col-md-9 text-right">Send Email Update:
+                        <label class="label-control col-md-9 text-right" style="margin-left: 20%;">Send Email Update:
                         @if(!empty($row['contact_email']))
                              to <b style="font-size:1.2em;">{{  $row['contact_email']}}</b>
                         @endif
