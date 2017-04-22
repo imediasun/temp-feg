@@ -163,7 +163,7 @@
                     </div>
                     <div class="form-group m-b-sm-f clearfix">
                         <input type="hidden" name="freight_company[]" id="freight_company_'.$i.'"   value="{{ $row['freight_loc_info']['freight_company'][$i] }}" />                
-                        <label class="label-control col-md-3">Ship To {{ $i+1 }}</label>
+                        <label class="label-control col-md-3">Ship To Location</label>
                         <div class="col-md-9">
                             @if($row['freight_loc_info']['location'][$i]!=0)
                             <strong>
@@ -195,7 +195,7 @@
                     @endif
 
                     <div class="form-group m-b-xs-f clearfix">
-                        <label class="label-control col-md-3">Quoted Price: $</label>
+                        <label class="label-control col-md-3">Quoted Price $:</label>
                         <div class="col-md-9">
                             <input type="text" class="form-control" name="quoted_price[]" value="{{ $row['freight_loc_info']['location_quote'][$i] }}"/>
                         </div>
@@ -213,7 +213,7 @@
                         </div>
                     </div>
                     <div class="form-group m-b-xs-f clearfix">
-                        <label class="label-control col-md-3">INCLUDE IN EMAIL:</label>
+                        <label class="label-control col-md-3">Include In Email:</label>
                         <div class="col-md-9">
                             <input type="hidden"  name="include_in_email[]" value="1"/>
                             <input type="checkbox" data-proxy-input='include_in_email' name="_include_in_email[]" value="1" id="include_in_email{{$i}}" checked/>
@@ -226,7 +226,7 @@
             @endif
             <div class="freightMessageContainer clearfix">
                 <div class="form-group m-b-sx-f clearfix">
-                    <label class="label-control col-md-3">PERSONALIZED EMAIL MESSAGE:</label>
+                    <label class="label-control col-md-3">Personalized Email Message:</label>
                     <div class="col-md-9">
                         <textarea  name="email_notes" rows="7" cols="20" id="email_notes" class="form-control">{{ $row['email_notes'] }}</textarea>
                     </div>
@@ -234,7 +234,7 @@
                 <div class="clearfix form-group text-right">
                     <div class="col-md-3"></div>
                     <div class="col-md-9">
-                        <label class="label-control col-md-9 text-right">Send Email Update:
+                        <label class="label-control col-md-9 text-right" style="margin-left: 20%;">Send Email Update:
                         @if(!empty($row['contact_email']))
                              to <b style="font-size:1.2em;">{{  $row['contact_email']}}</b>
                         @endif
