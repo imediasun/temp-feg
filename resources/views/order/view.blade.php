@@ -314,7 +314,7 @@ if(!empty($order_data['orderQtyArray'])){
             <div class="table-responsive" style="box-shadow: 1px 1px 10px gray;background: #fff;padding:10px 10px 0px">
                 <fieldset>
                     <legend> Order Items</legend>
-            <table class="table table-hover table-striped">
+            <table class="table table-hover table-striped datagrid">
                 <thead>
                 <tr>
                 <th>N0 #</th>

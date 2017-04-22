@@ -213,7 +213,7 @@
             <div class="col-md-8">
                 <input type="hidden" name="oldserial" value="{{ $serialNumber }}" />
                 <input type="text" name="serial" value="{{ $serialNumber }}" 
-                       style="width: 98%"
+                       style="width: 100%"
                        class="form-control" placeholder="Serial #" required/>
             </div>
         </div>

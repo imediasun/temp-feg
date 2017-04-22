@@ -19,7 +19,7 @@ width: 75%">
     <div class="col-md-3">
    <select name='prod_sub_type_id' rows='5' id='prod_sub_type_id' class='select3'   >  </select>
 </div>
-
+<div class="row m-b">
     <div class="col-md-6">
         {!! Form::open(array('url'=> url().'/product/listcsv', 'class'=>'form-horizontal','files' => true)) !!}
         <div class="col-md-2"><h3> Export </h3></div>
@@ -34,7 +34,9 @@ width: 75%">
 
         {!! Form::close() !!}
     </div>
-    <div class="row m-b" style=" margin-bottom: 10px !important; margin-left:0px; margin-right:0px;  margin-top: 35px !important;">
+ </div>   
+    <div class="row c-margin" style="margin-left:0px; margin-right:0px;">
+        
         <div class="col-md-9">
             @if($access['is_add'] ==1)
                 {!! AjaxHelpers::buttonActionCreate($pageModule,$setting) !!}
@@ -53,7 +55,7 @@ width: 75%">
                    onclick="SximoModal(this.href,'Arrange Columns'); return false;"><i class="fa fa-bars"></i> Arrange
                     Columns</a>
                 @if(!empty($colconfigs))
-                    <select class="form-control" style="width:25%!important;display:inline-block;box-sizing: border-box" name="col-config"
+                    <select class="form-control" style="width:auto!important;display:inline-block;box-sizing: border-box" name="col-config"
                             id="col-config">
                         <option value="0">Select Column Arrangement</option>
                         @foreach( $colconfigs as $configs )
@@ -105,6 +107,8 @@ width: 75%">
             @endif
         </div>
     </div>
+    
+    
     <script>
         $(document).ready(function () {
             $("#product_list_type option").each(function(){
@@ -126,7 +130,7 @@ width: 75%">
                     {selected_value: '{{ \Session::get('sub_type') }}', initial_text: '--- Select  Subtype ---'  });
             $("#vendor_id").jCombo("{{ URL::to('product/comboselect?filter=vendor:id:vendor_name') }}",
                     {selected_value: '', initial_text: '--- Select Vendor ---'});
-            renderDropdown($(".select2, .select3, .select4, .select5"), { width:"98%"});
+            renderDropdown($(".select2, .select3, .select4, .select5"), { width:"100%"});
             var config_id=$("#col-config").val();
             if(config_id ==0 )
             {

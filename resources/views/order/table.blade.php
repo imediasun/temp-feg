@@ -17,7 +17,7 @@
 			@endif
 		</div>
 	</div>
-	<div class="sbox-content" style="border: none;">
+	<div class="sbox-content" style="padding-bottom:0">
         <?php
          $searched=\Request::get('search');
          $searched=explode("|",$searched);
@@ -57,7 +57,7 @@
             @endif
         @endif
         @include( $pageModule.'/toolbar',['colconfigs' => SiteHelpers::getRequiredConfigs($module_id)])
-			<div class="sbox-content" style="border: none;">
+			<div class="sbox-content" style="border: medium none; padding-top: 15px;">
             @if (!empty($pass['Can remove order']))
                 <?php echo Form::open(array('url'=>'order/delete/', 'class'=>'form-horizontal' ,'id' =>'SximoTable'  ,'data-parsley-validate'=>'' )) ;?>
             @endif

@@ -1,14 +1,11 @@
 <div class="col-md-12 export-messsage-contaier">
     <div class="bg-success export-message">Your excel file is being prepared. This may take a few minutes depending on the number of records being downloaded. Please do not leave the current page or the file will not download.</div>
 </div>
-<div class="row">
-    <div class="col-md-2">
-        <h2>Orders</h2>
-    </div>
-</div>
 
-<div class="sbox-content" style="padding: 10px 20px 7px 15px; border: none;">
-<div class="row m-b" style="margin-bottom: 1px;">
+
+<div class="sbox-content" style="padding: 0px 20px 0px 15px; border: medium none;">
+    
+<div class="row c-margin" style="margin-bottom: 1px;">
 	<div class="col-md-9" style="padding-left: 0px !important">
 			@if($access['is_add'] ==1)
 			{!! AjaxHelpers::buttonActionCreate($pageModule,$setting) !!}
@@ -68,6 +65,7 @@
     </div>
 	</div>
 </div>
+
 </div>
 
 <script>

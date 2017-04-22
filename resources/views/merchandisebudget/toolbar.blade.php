@@ -1,4 +1,4 @@
-<div class="row m-b">
+<div class="row c-margin">
 	<div class="col-md-9">
 		<div class="col-md-4">	@if($access['is_add'] ==1)
 			{!! AjaxHelpers::buttonActionCreate($pageModule,$setting) !!}

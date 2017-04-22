@@ -1,4 +1,4 @@
-<div class="row m-b">
+<div class="row c-margin">
 	<div class="col-md-9">
         @if($access['is_add'] ==1)
         {!! AjaxHelpers::buttonActionCreate($pageUrl,$setting) !!}
@@ -9,7 +9,7 @@
         @endif
         @if(SiteHelpers::isModuleEnabled($pageModule))
         @if(!empty($colconfigs))
-        <select class="form-control" style="width:25%!important;display:inline;" name="col-config"
+        <select class="form-control" style="width:auto!important;display:inline;" name="col-config"
                 id="col-config">
             <option value="0">Select Column Arrangement</option>
             @foreach( $colconfigs as $configs )

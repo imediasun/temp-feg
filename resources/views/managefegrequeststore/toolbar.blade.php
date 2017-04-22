@@ -1,4 +1,4 @@
-<div class="row m-b">
+<div class="row c-margin">
 
     {!! Form::open(array('url'=>'managefegrequeststore/multirequestorderfill/', 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'managefegrequeststoreFormAjax')) !!}
     <div >
@@ -13,7 +13,7 @@
     @if($view == "manage")
         <div class="col-md-3">
 
-        <input  name="order_type" @if($TID )value="{{ $TID }}" @endif id="order_type" type="hidden" onchange="pageRefresh('T');" style="width:98%">
+        <input  name="order_type" @if($TID )value="{{ $TID }}" @endif id="order_type" type="hidden" onchange="pageRefresh('T');" style="width:100%">
     </div>
     <div class="col-md-2">
 
@@ -93,7 +93,7 @@
             {
                 $('#edit-cols,#delete-cols').show();
             }
-        renderDropdown($(".select2, .select3, .select4, .select5"), { width:"98%"});
+        renderDropdown($(".select2, .select3, .select4, .select5"), { width:"100%"});
         renderDropdown($("#order_type"), {
             dataType: 'json',
             placeholder: "Select an Order Type",

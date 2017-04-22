@@ -3,7 +3,9 @@
 @section('content')
 
 <div class="page-content row">
+    
     <!-- Page header -->
+    
     <div class="page-header">
       <div class="page-title">
         <h3>  {{ Lang::get('core.t_blastemail') }}  </h3>
@@ -15,7 +17,8 @@
       </ul>
     </div>
 	
- <div class="page-content-wrapper m-t">  
+    <div class="page-content-wrapper m-t">  
+    
   <ul class="nav nav-tabs" style="margin-bottom:10px;">
     <li ><a href="{{ URL::to('core/users')}}"><i class="fa fa-user"></i> Users </a></li>
     <li class=""><a href="{{ URL::to('core/groups')}}"><i class="fa fa-users"></i> Groups</a></li>
@@ -25,7 +28,10 @@
   @if(Session::has('message'))    
        {{ Session::get('message') }}
   @endif  
-    
+  
+  
+<div class="sbox clearfix">
+<div class="sbox-content">
     <!-- Start blast email -->
 
 {!! Form::open(array('url'=>'core/users/doblast/', 'class'=>'form-horizontal ','parsley-validate'=>' ' ,'novalidate'=>' ')) !!}
@@ -40,7 +46,7 @@
            </div> 
           </div> 
 		  
-<div class="col-sm-6">
+        <div class="col-sm-6">
           <div class="form-group  " >
           <label for="ipt" class=" control-label col-md-3">  {{ Lang::get('core.fr_emailsubject') }}   </label>
           <div class="col-md-9">
@@ -48,8 +54,8 @@
            </div> 
           </div> 
           <div class="form-group  " >
-          <label for="ipt" class=" control-label col-md-3"> {{ Lang::get('core.fr_emailsendto') }}   </label>
-          <div class="col-md-9">
+          <label for="ipt" class=" control-label col-md-3"> {{ Lang::get('core.fr_email toto') }}   </label>
+          <div class="col-md-9 check-no">
            @foreach($groups as $row)
             <label class="checkbox">
               <input type="checkbox" required  name="groups[]" value="{{ $row->group_id}}" /> {{ $row->name }}
@@ -111,10 +117,9 @@
 
 
     <!-- / blast email -->
-
 </div>
-
-
+</div>
+</div>
 
 
 </div>      

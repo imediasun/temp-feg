@@ -1,4 +1,4 @@
-<div class="row m-b">
+<div class="row c-margin">
 
     <div class="col-md-3" >
 
@@ -26,7 +26,7 @@
         @if(SiteHelpers::isModuleEnabled($pageModule))
             <a href="{{ URL::to('tablecols/arrange-cols/'.$pageModule) }}" class="btn btn-sm btn-white" onclick="SximoModal(this.href,'Arrange Columns'); return false;" ><i class="fa fa-bars"></i> Arrange Columns</a>
             @if(!empty($colconfigs))
-                <select class="form-control" style="width:15%!important;display:inline;" name="col-config"
+                <select class="form-control" style="width:auto !important;display:inline;" name="col-config"
                         id="col-config">
                     <option value="0">Select Column Arrangement</option>
                     @foreach( $colconfigs as $configs )
@@ -78,7 +78,7 @@
 <script>
     $('document').ready(function () {
         setType();
-        renderDropdown($(".select2, .select3 "), { width:"98%"});
+        renderDropdown($(".select2, .select3 "), { width:"100%"});
 
         var config_id=$("#col-config").val();
             if(config_id ==0 )

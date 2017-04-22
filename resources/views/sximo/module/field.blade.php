@@ -5,7 +5,7 @@
 	responeFormType('<?php echo $f['type'];?>')	;	
 $(document).ready(function(){
     
-	renderDropdown($(".select2 "), { width:"98%"});
+	renderDropdown($(".select2 "), { width:"100%"});
      $(document).on('click', '.searchFieldConfigForm input[type=checkbox]', function(){
          var elm = $(this),
             checked = 1 * elm.prop('checked');            

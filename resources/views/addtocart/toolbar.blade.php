@@ -1,4 +1,4 @@
-<div class="row m-b">
+<div class="row c-margin">
         <?php
       //  $cartData=\Session::get('cartData');
         if($cartData['subtotals'])

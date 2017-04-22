@@ -18,8 +18,8 @@
             {!! Form::open(array('url'=>'order/receiveorder/', 'class'=>'form-vertical','files' => true ,
             'parsley-validate'=>'','novalidate'=>' ','id'=> 'orderreceiveFormAjax')) !!}
             <div class="col-sm-12 ">
-                <fieldset>
-                    <legend>Order Receipt</legend>
+               
+                    <h3>Order Receipt</h3>
                     <div class=" table-responsive col-md-12 col-md-offset-2 item-receipt-container">
                         <table class="table">
                             <tr><td  style="border: none;" ><b>PO #</b></td><td  style="border: none;" >{{ $data['po_number'] }}</td></tr>
@@ -128,10 +128,11 @@
                     </div>
 
                     <div class="clearfix"></div>
-
-                 <div class="col-md-8 col-md-offset-2" style="margin-left: 36.66666667% !important">
-                        <div class="form-group  ">
-                            <br/><br/>
+                <div class="row">
+                 <div class="col-md-8 col-md-offset-4 col-xs-12">
+                    <div class="row">
+                        <div class="form-group clearfix">
+                            
                             <label for="date_received" class=" control-label col-md-4 text-right">
                                 Date Received </label>
                             <div class="col-md-8">
@@ -143,8 +144,8 @@
                                 <input type="text" class="date form-control" name="date_received" value="{{ $date_received }}" required/>
                             </div>
                         </div>
-                        <div class="form-group  ">
-                            <br/><br/>
+                        <div class="form-group clearfix">
+                            
                             <label for="vendor_id" class=" control-label col-md-4 text-right">
                                 Order Status
                             </label>
@@ -153,8 +154,8 @@
                             </div>
 
                         </div>
-                        <div class="form-group " id="tracking_numberdiv" style="display:none">
-                            <br/><br/>
+                        <div class="form-group clearfix" id="tracking_numberdiv" style="display:none">
+                            
                             <label id ="tracking_number_lbl" for="vendor_id" class=" control-label col-md-4 text-left">
                                 Tracking Number
                             </label>
@@ -163,15 +164,15 @@
                             </div>
 
                         </div>
-                        <div class="form-group  ">
-                            <br/><br/>
+                        <div class="form-group clearfix">
+                            
                             <label for="vendor_id" class=" control-label col-md-4 text-right">
                                 Notes </label>
                             <div class="col-md-8">
-                                <textarea name="notes" rows="7" cols="48" id="notes" onchange="removeBorder('order_status')" ></textarea>
+                                <textarea class="form-control" name="notes" rows="7" cols="48" id="notes" onchange="removeBorder('order_status')" ></textarea>
                             </div>
                         </div>
-                        <div class="form-group" >
+                        <div class="form-group clearfix">
                             <input type="hidden" name='item_count' value="{{ $data['item_count'] }}" id='item_count'/>
                             <input type="hidden" name='order_id' value="{{ $data['order_id'] }}" id='order_id'/>
                             <input type="hidden" name='order_type_id' value="{{ $data['order_type'] }}" id='order_type_id'/>
@@ -186,9 +187,10 @@
                                     <i class="fa  fa-arrow-circle-left "></i>  Go Back </button>
                             </div>
                         </div>
+                     </div>
                     </div>
-
-                </fieldset>
+                </div>
+               
             </div>
 
             <hr/>
@@ -233,7 +235,7 @@
 
             $('.previewImage').fancybox();
             $('.tips').tooltip();
-            renderDropdown($(".select3 "), { width:"98%"});
+            renderDropdown($(".select3 "), { width:"100%"});
             $('.date').datepicker({format: 'mm/dd/yyyy', autoclose: true})
             $('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});
             $('.removeCurrentFiles').on('click', function () {

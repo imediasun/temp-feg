@@ -56,7 +56,7 @@
                 </div>
             @endif
         @endif
-	    <div class="toolbar-line ">
+	    <div class="toolbar-line c-margin">
 			@if($access['is_add'] ==1)
 	   		<a href="{{ URL::to('core/groups/update') }}" class="tips btn btn-sm btn-white"  title="{{ Lang::get('core.btn_create') }}">
 			<i class="fa fa-plus-circle "></i>&nbsp;{{ Lang::get('core.btn_create') }}</a>

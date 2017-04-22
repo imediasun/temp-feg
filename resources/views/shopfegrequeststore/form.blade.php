@@ -293,7 +293,7 @@
 			<div style="clear:both"></div>	
 							
 			<div class="form-group">
-				<label class="col-sm-4 text-right">&nbsp;</label>
+				<label class="col-sm-4 text-center">&nbsp;</label>
 				<div class="col-sm-8">	
 					<button type="submit" class="btn btn-primary btn-sm "><i class="fa  fa-save "></i>  {{ Lang::get('core.sb_save') }} </button>
 					<button type="button" onclick="ajaxViewClose('#{{ $pageModule }}')" class="btn btn-success btn-sm"><i class="fa  fa-arrow-circle-left "></i>  {{ Lang::get('core.sb_cancel') }} </button>
@@ -317,7 +317,7 @@ $(document).ready(function() {
 	$('.editor').summernote();
 	$('.previewImage').fancybox();	
 	$('.tips').tooltip();	
-	renderDropdown($(".select2 "), { width:"98%"});
+	renderDropdown($(".select2 "), { width:"100%"});
 	$('.date').datepicker({format:'mm/dd/yyyy',autoclose:true})
 	$('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});
 	$('input[type="checkbox"],input[type="radio"]').iCheck({

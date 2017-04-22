@@ -8,6 +8,8 @@
     <div class="sbox">
         <div class="sbox-title">
             <h4>
+                <i class="fa fa-table"></i>
+                &nbsp;Create Order
                 <a href="javascript:void(0)" class="collapse-close pull-right btn btn-xs btn-danger"
                    onclick="ajaxViewClose('#{{ $pageModule }}')"><i class="fa fa fa-times"></i></a>
             </h4>
@@ -299,10 +301,8 @@
             <br/><br/>
 
 
-            <div style="
-    padding-left: 865px;
-    padding-right: 105px;
-">
+            <div class="row">
+                <div class="col-sm-4 col-sm-offset-8 col-sm-3 col-sm-offset-9 col-lg-3 col-lg-offset-9">
 
                 {{--<td class="game"></td>--}}
                 <td></td>
@@ -310,7 +310,7 @@
                 <td><input type="text" name="Subtotal"
                            value="{{number_format($data['order_total'],\App\Models\Order::ORDER_PERCISION) }}" readonly
                            class="form-control"/></td>
-
+                </div>
 
             </div>
 
@@ -319,9 +319,9 @@
             <div style="clear:both"></div>
 
             <div class="form-group" style="margin-bottom:50px">
-                <label class="col-sm-4 text-right">&nbsp;</label>
+                
 
-                <div class="col-sm-8" style="margin-top: -9px;">
+                <div class="col-sm-12 text-center">
                     <button type="submit" class="btn btn-primary btn-sm " id="submit_btn"><i
                                 class="fa  fa-save "></i>  {{ Lang::get('core.sb_save') }} </button>
                     <button type="button" onclick="ajaxViewClose('#{{ $pageModule }}')" class="btn btn-success btn-sm">
@@ -449,7 +449,7 @@
             renderDropdown($("[id^=game_0]"), {
                 dataType: 'json',
                 data: {results: games_options_js},
-                placeholder: "For Various Games", width: "98%"
+                placeholder: "For Various Games", width: "100%"
             });
 
             $("input[name*='total'] ").attr('readonly', '1');
@@ -468,7 +468,7 @@
             $('.editor').summernote();
             $('.previewImage').fancybox();
             $('.tips').tooltip();
-            renderDropdown($("select.select3"),{width: "98%"});
+            renderDropdown($("select.select3"),{width: "100%"});
             $('.date').datepicker({format: 'mm/dd/yyyy', autoclose: true})
             $('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});
             $('.removeCurrentFiles').on('click', function () {
@@ -594,7 +594,7 @@
                         renderDropdown($("[id^=game_]"), {
                             dataType: 'json',
                             data: {results: data},
-                            placeholder: "For Various Games", width: "98%"
+                            placeholder: "For Various Games", width: "100%"
                         });
                     }
                 });
@@ -645,7 +645,7 @@
                     renderDropdown($("[id^=game_]"), {
                         dataType: 'json',
                         data: {results: data},
-                        placeholder: "For Various Games", width: "98%"
+                        placeholder: "For Various Games", width: "100%"
                     });
                 }
             });
@@ -774,7 +774,7 @@
                         renderDropdown($("[id^=game_]"), {
                             dataType: 'json',
                             data: {results: data},
-                            placeholder: "For Various Games", width: "98%"
+                            placeholder: "For Various Games", width: "100%"
                         });
                     }
                 });
@@ -784,7 +784,7 @@
                 renderDropdown($("[id^=game_]"), {
                     dataType: 'json',
                     data: {results: games_options_js},
-                    placeholder: "For Various Games", width: "98%"
+                    placeholder: "For Various Games", width: "100%"
                 });
             }
             $("[name^=qty]").keypress(isNumeric);

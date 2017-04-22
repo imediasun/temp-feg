@@ -10,10 +10,10 @@
             <div class="sbox-content">
                 @endif
 
-            <div class="col-md-6 col-md-offset-3 " style="border-bottom:1px solid lightgray">
-                <h1>{{ $row->vendor_description }}</h1>
+            <div class="col-md-6 col-md-offset-3 text-center" style="border-bottom:1px solid lightgray">
+                <h2>{{ $row->vendor_description }}</h2>
 
-                <h2 class="text-center" > @if($row->inactive == 1) <span style="color:red"> {{ "NOT AVAILABLE" }} </span> @else <span style="color:green"> {{ "AVAILABLE" }} </span> @endif </h2>
+                <h3 class="text-center" > @if($row->inactive == 1) <span style="color:red"> {{ "NOT AVAILABLE" }} </span> @else <span style="color:green"> {{ "AVAILABLE" }} </span> @endif </h3>
             </div>
             <div class="col-md-3"></div>
             <div class="clearfix"></div>
@@ -90,7 +90,7 @@
                     @if($setting['form-method'] =='native')
                 </div>
                 @endif
-                <div class="col-md-5" >
+                <div class="col-md-5 res-img">
                     <?php
                     echo SiteHelpers::showUploadedFile($row->img, '/uploads/products/',400, false);
                     ?>

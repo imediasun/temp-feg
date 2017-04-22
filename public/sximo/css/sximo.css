@@ -3111,13 +3111,12 @@ position: relative;
 }
 
 .collapse-close {
-  position: absolute;
-  right: 0;
-  top: 0;
+  position: relative;
+  top: -5px;
 }
 
-.table {
-  min-width: 1120px !important;
+.table.datagrid {
+  min-width: 1160px !important;
 }
 
 .box-white {
@@ -3135,16 +3134,18 @@ position: relative;
 }
 
 .table.search-table {
-  min-width: inherit;
+  min-width: inherit !important;
 }
 
 .radio-inline:first-child {
   padding-left: 0;
 }
+
 .addcolon:after
 {
   content: ':';
 }
+
 .input-group input.form-control{
   float: left;
   width: 94%;
@@ -3157,4 +3158,45 @@ position: relative;
   float: left;
   width: 33px !important;
   padding: 8px;
+}
+
+.check-no .radio,.check-no .checkbox {
+  padding-left: 0px;
+}
+
+
+/* Mobile Layout: 320px. */
+
+@media only screen and (max-width: 767px) {
+
+.c-margin .col-md-9 {
+  margin-bottom: 5px;
+}
+.c-margin .col-md-9 .btn, .c-margin .col-md-9 select {
+  margin-bottom: 5px;
+}
+
+#col-config {
+  top: -1px;
+}
+
+.c-margin .col-md-3 .pull-right {
+  float: left !important;
+}
+
+.table-actions .select-alt, .table-actions .btn {
+  margin-bottom: 3px;
+}
+
+.res-img img {
+  display: block;
+  height: auto;
+  margin-top: 15px;
+  max-width: 100%;
+}
+
+.table{
+  min-width:960px;
+}
+
 }
