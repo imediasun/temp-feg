@@ -143,8 +143,9 @@
                                 <input type='file' name='avatar' id='avatar' @if($row['avatar'] =='')
                                        @endif style='width:350px !important;' value="{{ $row['avatar'] }}"/>
                                 <div class="r-avatar">
+                                    <br/>
                                     @if(file_exists(public_path()."/uploads/users/".$row['avatar']))
-                                    <img src="/uploads/users/{{ $row['avatar'] }}" style="box-shadow:1px 1px 5px gray" border="0" width="40px" class="img"/>
+                                   <a href="/uploads/users/{{ $row['avatar'] }}" class="previewImage fancybox" rel="gallery1"> <img src="/uploads/users/{{ $row['avatar'] }}" style="box-shadow:1px 1px 5px gray" border="0" width="40px" class="img"/></a>
                                 @else
                                         <img src="/silouette.png" style="box-shadow:1px 1px 5px gray" border="0" width="40px" class="img"/>
                                     @endif
