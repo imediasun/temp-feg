@@ -305,8 +305,13 @@
 
 
                     <div class="form-group">
+<<<<<<< HEAD
+                        
+                        <div class="col-sm-12 text-center btn-margin">
+=======
 
                         <div class="col-sm-12 text-center">
+>>>>>>> 3999243cb865682c89faf6ae3218bacfc3c4595c
                             <button type="submit" name="apply" class="btn btn-info btn-sm"><i
                                         class="fa  fa-check-circle"></i> {{ Lang::get('core.sb_apply') }}</button>
                             <button type="submit" name="submit" class="btn btn-primary btn-sm"><i
