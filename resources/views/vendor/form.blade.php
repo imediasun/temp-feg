@@ -2,7 +2,7 @@
 @if($setting['form-method'] =='native')
 	<div class="sbox">
 		<div class="sbox-title">  
-			<h4>
+			<h4><i class="fa fa-table"></i>&nbsp;&nbsp;Vendor
 				<a href="javascript:void(0)" class="collapse-close pull-right btn btn-xs btn-danger" onclick="ajaxViewClose('#{{ $pageModule }}')"><i class="fa fa fa-times"></i></a>
 			</h4>
 	</div>
@@ -11,7 +11,7 @@
 @endif	
 			{!! Form::open(array('url'=>'vendor/save/'.$row['id'], 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'vendorFormAjax')) !!}
 			<div class="col-md-12">
-						<fieldset><legend> vendor</legend>
+						<fieldset>
 									
 				  <div class="form-group  " > 
 					<label for="Vendor Name" class=" control-label col-md-4 text-left"> 
@@ -184,7 +184,7 @@
                         <input type='hidden' value='0' name='partner_hide'>
 					{!! SiteHelpers::activeLang('Partner Hide', (isset($fields['partner_hide']['language'])? $fields['partner_hide']['language'] : array())) !!}	
 					</label>
-					<div class="col-md-6">
+					<div class="col-md-6 check-no">
 					  <?php $partner_hide = explode(",",$row['partner_hide']); ?>
 					 <label class='checked checkbox-inline'>   
 					<input type='checkbox' name='partner_hide' value ='1'   class=''
@@ -200,7 +200,7 @@
 					<label for="Parts Vendor" class=" control-label col-md-4 text-left">
 					{!! SiteHelpers::activeLang('Game Vendor', (isset($fields['isgame']['language'])? $fields['isgame']['language'] : array())) !!}
 					</label>
-					<div class="col-md-6">
+					<div class="col-md-6 check-no">
 					  <?php $isgame = explode(",",$row['isgame']); ?>
 					 <label class='checked checkbox-inline'>   
 					<input type='checkbox' name='isgame' value ='1'   class=''
@@ -217,7 +217,7 @@
 					<label for="Merchandise Vendor" class=" control-label col-md-4 text-left">
 					{!! SiteHelpers::activeLang('Merchandise Vendor', (isset($fields['ismerch']['language'])? $fields['ismerch']['language'] : array())) !!}
 					</label>
-					<div class="col-md-6">
+					<div class="col-md-6 check-no">
 					  <?php $ismerch = explode(",",$row['ismerch']); ?>
 					 <label class='checked checkbox-inline'>   
 					<input type='checkbox' name='ismerch' value ='1'   class=''
@@ -247,8 +247,7 @@
 			<div style="clear:both"></div>	
 							
 			<div class="form-group">
-				<label class="col-sm-4 text-right">&nbsp;</label>
-				<div class="col-sm-8">	
+				<div class="col-sm-12 text-center">	
 					<button type="submit" class="btn btn-primary btn-sm "><i class="fa  fa-save "></i>  {{ Lang::get('core.sb_save') }} </button>
 					<button type="button" onclick="ajaxViewClose('#{{ $pageModule }}')" class="btn btn-success btn-sm"><i class="fa  fa-arrow-circle-left "></i>  {{ Lang::get('core.sb_cancel') }} </button>
 				</div>			

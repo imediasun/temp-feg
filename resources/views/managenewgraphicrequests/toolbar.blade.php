@@ -1,6 +1,6 @@
 <div class="row c-margin">
 
-    <div class="col-md-3" >
+    <div class="col-md-3" style="margin-bottom: 8px;">
 
         <select name="type" class="select3" id="request_type" style="display:inline-block">
             <option value="open" selected> Open Graphics Requests </option>

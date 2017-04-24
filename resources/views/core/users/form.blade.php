@@ -137,12 +137,12 @@
                             </div>
                         </div>
 
-                        <div class="form-group  ">
+                        <div class="form-group">
                             <label for="Avatar" class=" control-label col-md-4 text-left"> Avatar </label>
                             <div class="col-md-6">
                                 <input type='file' name='avatar' id='avatar' @if($row['avatar'] =='')
                                        @endif style='width:350px !important;' value="{{ $row['avatar'] }}"/>
-                                <div>
+                                <div class="r-avatar">
                                     {!! SiteHelpers::showUploadedFile($row['avatar'],'/uploads/users/') !!}
 
                                 </div>
@@ -292,8 +292,8 @@
 
 
                     <div class="form-group">
-                        <label class="col-sm-4 text-right">&nbsp;</label>
-                        <div class="col-sm-8">
+                        
+                        <div class="col-sm-12 text-center">
                             <button type="submit" name="apply" class="btn btn-info btn-sm"><i
                                         class="fa  fa-check-circle"></i> {{ Lang::get('core.sb_apply') }}</button>
                             <button type="submit" name="submit" class="btn btn-primary btn-sm"><i

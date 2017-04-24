@@ -8,7 +8,7 @@
     <div class="sbox">
         <div class="sbox-title">
             <h4>
-                <i class="fa fa-table"></i>
+                <i class="fa fa-plus"></i>
                 &nbsp;Create Order
                 <a href="javascript:void(0)" class="collapse-close pull-right btn btn-xs btn-danger"
                    onclick="ajaxViewClose('#{{ $pageModule }}')"><i class="fa fa fa-times"></i></a>
@@ -83,13 +83,13 @@
                             <div class="col-md-8">
                                 <input type="text" name="to_add_city" id="to_add_city" value="{{ $data['alt_city'] }}"
                                        class="form-control"
-                                       style="width:40%;float:left;margin-left:3px"/>
+                                       style="float: left; width: 38%; margin-right: 2%;"/>
                                 <input type="text" name="to_add_state" id="to_add_state" class="form-control"
                                        value="{{ $data['alt_state']  }}"
-                                       style="width:30%;float:left;margin-left:3px"/>
+                                       style="float: left; width: 29%; margin-right: 1%;"/>
 
                                 <input type="text" name="to_add_zip" id="to_add_zip" class="form-control"
-                                       value="{{ $data['alt_zip'] }}" style="width:25%;float:left;margin-left:3px"/>
+                                       value="{{ $data['alt_zip'] }}" style="float: left; width: 29%; margin-left: 1%;"/>
 
                             </div>
                         </div>
@@ -154,8 +154,8 @@
                         <label for="date_orederd" class=" control-label col-md-4 text-left" style="margin-top: 7px;">
                             Date Ordered</label>
 
-                        <div class="col-md-8" style="padding-left: 18px;">
-                                <input  style="width:150px !important;" type="text" class="form-control " id="my-datepicker" name="date_ordered"
+                        <div class="col-md-8" style="padding-left: 15px;">
+                                <input   type="text" class="form-control " id="my-datepicker" name="date_ordered"
                                        value="{{ date("m/d/Y", strtotime($data['today'])) }}" required="required" readonly/>
 
                         </div>
@@ -166,8 +166,8 @@
                         <label for="total_cost" class=" control-label col-md-4 text-left">
                             Total Cost ( $ )</label>
 
-                        <div class="col-md-8" style="padding-left: 18px !important;">
-                            <input style="width:150px !important;" type="text" name="order_total" id="total_cost"
+                        <div class="col-md-8" style="padding-left: 15px !important;">
+                            <input  type="text" name="order_total" id="total_cost"
                                    class="form-control" value="{{ $data['order_total'] }}" maxlength="8"/>
                         </div>
                     </div>
@@ -178,11 +178,11 @@
 
                         <div class="col-md-8">
                             <input type="text" name="po_1" readonly id="po_1" value="{{ $data['order_loc_id'] }}"
-                                   class="form-control" style="width:25%;float:left;margin-left:3px"/>
+                                   class="form-control" style="float: left; margin-right: 2%; width: 28%;"/>
                             <input type="text" name="po_2" readonly id="po_2" class="form-control"
-                                   value="{{  $data['po_2'] }}" style="width:35%;float:left;margin-left:3px"/>
+                                   value="{{  $data['po_2'] }}" style="float: left; margin-right: 1%; width: 39%;"/>
                             <input type="text" name="po_3" id="po_3" required class="form-control" autocomplete="off" readonly
-                                   value="{{ $data['po_3'] }}" style="width:30%;float:left;margin-left:3px"/>
+                                   value="{{ $data['po_3'] }}" style="float: left; width: 29%; margin-left: 1%;"/>
                             <br/>
                             <br/>
 
@@ -302,8 +302,8 @@
 
 
             <div class="row">
-                <div class="col-sm-4 col-sm-offset-8 col-sm-3 col-sm-offset-9 col-lg-3 col-lg-offset-9">
-
+                <div class="col-sm-12">
+                    <div style="width: 180px; float: right;">
                 {{--<td class="game"></td>--}}
                 <td></td>
                 <td colspan="6" class="text-left"><strong> Subtotal($) </strong></td>
@@ -311,7 +311,7 @@
                            value="{{number_format($data['order_total'],\App\Models\Order::ORDER_PERCISION) }}" readonly
                            class="form-control"/></td>
                 </div>
-
+                </div>
             </div>
 
             <br>

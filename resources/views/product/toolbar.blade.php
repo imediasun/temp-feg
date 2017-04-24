@@ -1,6 +1,7 @@
 
 <div class="row">
-    <div class="col-md-3">
+    
+    <div class="col-md-3 sm13">
         <select name='product_list_type' rows='5'  id='product_list_type' class="select3" style="height: auto; font-size: 13px; font-family: 'Lato', sans-serif;
 width: 75%">
             <option value="select" data-active="0" selected>------------ Select Type --------------</option>
@@ -13,17 +14,17 @@ width: 75%">
             <option value="ticketokens" data-active="0">Tickets,Tokens,Uniforms,Photo ,Paper-Debit, Cards</option>
             <option value="productsindevelopment" data-active="0">Products In Development</option>
         </select>
-
-
     </div>
+    
     <div class="col-md-3">
-   <select name='prod_sub_type_id' rows='5' id='prod_sub_type_id' class='select3'   >  </select>
-</div>
-<div class="row m-b">
+       <select name='prod_sub_type_id' rows='5' id='prod_sub_type_id' class='select3'>  </select>
+    </div>
+
+    <div class="row m-b">
     <div class="col-md-6">
         {!! Form::open(array('url'=> url().'/product/listcsv', 'class'=>'form-horizontal','files' => true)) !!}
         <div class="col-md-2"><h3> Export </h3></div>
-        <div class="col-md-6">
+        <div class="col-md-6 sm13">
             <input name="exportID" value="{{ uniqid('vendorFromProducts', true) }}" type="hidden"/>
             <select name='vendor_id' rows='5' id='vendor_id' class='select3'></select>
         </div>

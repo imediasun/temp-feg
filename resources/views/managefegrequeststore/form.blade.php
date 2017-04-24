@@ -11,7 +11,7 @@
 @endif	
 			{!! Form::open(array('url'=>'managefegrequeststore/save/'.$row['id'], 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'managefegrequeststoreFormAjax')) !!}
 			<div class="col-md-12">
-						<fieldset><legend> Manage FEG Store Requests </legend>
+						<fieldset>
 				  <div class="form-group  " > 
 					<label for="Qty" class=" control-label col-md-4 text-left"> 
 					{!! SiteHelpers::activeLang('Qty', (isset($fields['qty']['language'])? $fields['qty']['language'] : array())) !!}	
@@ -50,8 +50,7 @@
 			</div>
 			<div style="clear:both"></div>
 			<div class="form-group">
-				<label class="col-sm-4 text-right">&nbsp;</label>
-				<div class="col-sm-8">	
+				<div class="col-sm-12 text-center">	
 					<button type="submit" class="btn btn-primary btn-sm "><i class="fa  fa-save "></i>  {{ Lang::get('core.sb_save') }} </button>
 					<button type="button" onclick="ajaxViewClose('#{{ $pageModule }}')" class="btn btn-success btn-sm"><i class="fa  fa-arrow-circle-left "></i>  {{ Lang::get('core.sb_cancel') }} </button>
 				</div>			

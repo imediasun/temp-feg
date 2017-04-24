@@ -11,11 +11,11 @@
 
     </div>
     @if($view == "manage")
-        <div class="col-md-3">
+        <div class="col-md-3 sm13">
 
         <input  name="order_type" @if($TID )value="{{ $TID }}" @endif id="order_type" type="hidden" onchange="pageRefresh('T');" style="width:100%">
     </div>
-    <div class="col-md-2">
+        <div class="col-md-2 sm13">
 
         <select id="location_id" class="form-control" name="location_id" onchange="pageRefresh('L');">
             @foreach($manageRequestInfo['loc_options'] as $k => $locations)
@@ -23,7 +23,7 @@
             @endforeach
         </select>
     </div>
-    <div class="col-md-2">
+        <div class="col-md-2">
 
         <select id="vendor_id" class="form-control" name="vendor_id" onchange="pageRefresh('V');">
             @foreach($manageRequestInfo['vendor_options'] as $k => $vendor)
@@ -54,7 +54,7 @@
         @if(SiteHelpers::isModuleEnabled($pageModule))
             <a href="{{ URL::to('tablecols/arrange-cols/'.$pageModule) }}" class="btn btn-sm btn-white" onclick="SximoModal(this.href,'Arrange Columns'); return false;" ><i class="fa fa-bars"></i> Arrange Columns</a>
             @if(!empty($colconfigs))
-                <select class="form-control" style="width:15%!important;display:inline-block;box-sizing: border-box" name="col-config"
+                <select class="form-control" style="top: 1px;width:auto!important;display:inline-block;box-sizing: border-box" name="col-config"
                         id="col-config">
                     <option value="0">Select Column Arrangement</option>
                     @foreach( $colconfigs as $configs )

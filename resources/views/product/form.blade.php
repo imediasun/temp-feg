@@ -1,7 +1,7 @@
 @if($setting['form-method'] =='native')
     <div class="sbox">
         <div class="sbox-title">
-            <h4>
+            <h4><i class="fa fa-table"></i> &nbsp;&nbsp;FEG Store Products
                 <a href="javascript:void(0)" class="collapse-close pull-right btn btn-xs btn-danger"
                    onclick="ajaxViewClose('#{{ $pageModule }}')"><i class="fa fa fa-times"></i></a>
             </h4>
@@ -13,8 +13,6 @@
             'parsley-validate'=>'','novalidate'=>' ','id'=> 'productFormAjax')) !!}
             <div class="col-md-12">
                 <fieldset>
-                    <legend> FEG Store Products</legend>
-
 
                     <div class="form-group  ">
                         <label for="Item Name" class=" control-label col-md-4 text-left">
@@ -139,7 +137,7 @@
                         </label>
 
                         <div class="col-md-6">
-                            <div class="input-group">
+                            <div class="input-group ig-full">
                                 <span class="input-group-addon">$</span>
                                 {!! Form::text('case_price',
                                 number_format((double)$row['case_price'],3),array('class'=>'form-control',
@@ -158,7 +156,7 @@
                         </label>
 
                         <div class="col-md-6">
-                            <div class="input-group">
+                            <div class="input-group ig-full">
                                 <span class="input-group-addon">$</span>
                                 {!! Form::text('unit_price',
                                 number_format((double)$row['unit_price'],3),array('class'=>'form-control',
@@ -177,7 +175,7 @@
                         </label>
 
                         <div class="col-md-6">
-                            <div class="input-group">
+                            <div class="input-group ig-full">
                                 <span class="input-group-addon">$</span>
                                 {!! Form::text('retail_price',
                                 number_format((double)$row['retail_price'],3),array('class'=>'form-control',
@@ -213,13 +211,13 @@
                         <div class="col-md-2"></div>
                     </div>
 
-                    <div class="form-group  ">
+                    <div class="form-group">
                         <label for="Is Reserved" class=" control-label col-md-4 text-left">
                             {!! SiteHelpers::activeLang('Is Reserved', (isset($fields['is_reserved']['language'])?
                             $fields['is_reserved']['language'] : array())) !!}
                         </label>
 
-                        <div class="col-md-6">
+                        <div class="col-md-6 check-no">
                             <?php $is_reserved = explode(",", $row['is_reserved']); ?>
                             <label class='checked checkbox-inline'>
                                 <input type="hidden" name="is_reserved" value="0"/>
@@ -231,7 +229,7 @@
 
                         </div>
                     </div>
-                    <div class="form-group  ">
+                    <div class="form-group">
                         <label for="Reserved Qty" class=" control-label col-md-4 text-left">
                             {!! SiteHelpers::activeLang('Reserved Qty', (isset($fields['reserved_qty']['language'])?
                             $fields['reserved_qty']['language'] : array())) !!}
@@ -259,7 +257,7 @@
                                 <input type='file' name='img'/>
                             </div>
 
-                            <div class="col-md-2" style="padding-top: 3px;">
+                            <div class="col-md-2 row" style="padding-top: 3px;">
                                 <?php
                                 echo SiteHelpers::showUploadedFile($row['img'], '/uploads/products/', 30, false)
                                 ?>
@@ -275,7 +273,7 @@
                         $fields['inactive']['language'] : array())) !!}
                     </label>
 
-                    <div class="col-md-6">
+                    <div class="col-md-6 check-no">
                         <?php $inactive = explode(",", $row['inactive']); ?>
                         <label class='checked checkbox-inline'>
                             <input type="hidden" name="inactive" value="0"/>
@@ -293,7 +291,7 @@
                         $fields['in_development']['language'] : array())) !!}
                     </label>
 
-                    <div class="col-md-6">
+                    <div class="col-md-6 check-no">
                         <?php $indevelopment = explode(",", $row['in_development']); ?>
                         <label class='checked checkbox-inline'>
                             <input type="hidden" name="in_development" value="0"/>
@@ -311,7 +309,7 @@
                         $fields['hot_item']['language'] : array())) !!}
                     </label>
 
-                    <div class="col-md-6">
+                    <div class="col-md-6 check-no">
                         <?php $hot_item = explode(",", $row['hot_item']); ?>
                         <label class='checked checkbox-inline'>
                             <input type="hidden" name="hot_item" value="0"/>
@@ -330,9 +328,7 @@
             <div style="clear:both"></div>
 
             <div class="form-group">
-                <label class="col-sm-4 text-right">&nbsp;</label>
-
-                <div class="col-sm-8">
+                <div class="col-sm-12 text-center">
                     <button type="submit" class="btn btn-primary btn-sm "><i
                                 class="fa  fa-save "></i>  {{ Lang::get('core.sb_save') }} </button>
                     <button type="button" onclick="ajaxViewClose('#{{ $pageModule }}')" class="btn btn-success btn-sm">

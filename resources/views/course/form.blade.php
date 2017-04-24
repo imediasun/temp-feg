@@ -197,8 +197,8 @@
 			<div style="clear:both"></div>	
 							
 			<div class="form-group">
-				<label class="col-sm-4 text-right">&nbsp;</label>
-				<div class="col-sm-8">	
+				
+				<div class="col-sm-12 text-center">
 					<button type="submit" class="btn btn-primary btn-sm "><i class="fa  fa-save "></i>  {{ Lang::get('core.sb_save') }} </button>
 					<button type="button" onclick="ajaxViewClose('#{{ $pageModule }}')" class="btn btn-success btn-sm"><i class="fa  fa-arrow-circle-left "></i>  {{ Lang::get('core.sb_cancel') }} </button>
 				</div>			

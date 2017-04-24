@@ -1,7 +1,7 @@
 <?php usort($tableGrid, "SiteHelpers::_sort"); ?>
 <div class="sbox">
 	<div class="sbox-title">
-		<h5> <i class="fa fa-table"></i> </h5>
+		<h5> <i class="fa fa-video-camera"></i> Training Videos</h5>
 		<div class="sbox-tools" >
 			@if(Session::get('gid') ==10)
 				<a href="{{ url('feg/module/config/'.$pageModule) }}" class="btn btn-xs btn-white tips" title=" {{ Lang::get('core.btn_config') }}" ><i class="fa fa-cog"></i></a>
@@ -16,16 +16,16 @@
 			@endif
 
 			@if(count($rowData)>=1)
-				<div class="col-md-8 col-md-offset-2" style="padding-top: 20px; padding-right: 20px; padding-bottom: 50px; background-color: #ffffff;text-align: justify">
-					<h2 class="text-center">Training Videos</h2>
-					<hr/>
-                    <ul class="videoContainer clearfix">
+				<div class="row">
+                    <ul class="videoContainer clearfix row" style="padding: 0px 15px;">
 					@foreach ($rowData as $row)
-                        <li class="videoItem clearfix">
+                        <li class="col-sm-6 clearfix">
+                            <div class="videoItem">
                             <h3 class="video-meta">
                                 <span class="video-title">{{ $row->video_title }}</span>
                                 <span class="video-by">by {{ $row->users }}</span>
                             </h3>
+                            
                             <iframe src="https://youtube.com/embed/{{$row->video_path}}" 
                                     width="100%" height="380" 
                                     allowfullscreen="allowfullscreen"
@@ -33,6 +33,7 @@
                                     class="video-frame"
                                     >                                        
                             </iframe>
+                            
                             @if($access['is_remove'] ==1)
                                 {!! Form::open(array('url' => 'training/delete/', 'class' => 'video-action-delete', 'method'=> 'POST')) !!}
                                 <input type="hidden" name="ids" value="{{ $row->id }}" />
@@ -43,6 +44,7 @@
                                 </form>
                                 {!! Form::close() !!}
                             @endif
+                            </div>
                         </li>
 					@endforeach
                     </ul>

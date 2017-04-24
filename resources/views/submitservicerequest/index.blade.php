@@ -20,7 +20,7 @@
 
         <div class="page-content-wrapper m-t">
             <div class="sbox animated fadeInRight">
-                <div class="sbox-title"><h5><i class="fa fa-table"></i></h5>
+                <div class="sbox-title"><h5><i class="fa fa-table"></i>&nbsp; &nbsp;IT / Parts / Service Request</h5>
 
                     <div class="sbox-tools">
                         @if(Session::get('gid') ==10)
@@ -30,18 +30,17 @@
                         @endif
                     </div>
                 </div>
-                <div class="sbox-content">
-                    <div class="col-md-6" style="background: #FFF;box-shadow:1px 1px 5px lightgray;padding:30px">
-                        <h2 class="text-center">IT / Parts / Service Request</h2>
-                        <hr/>
+                <div class="sbox-content"  style="background: #FFF">
+                    <div class="col-md-12">
+                        
                         {!! Form::open(array('url'=>'submitservicerequest/save/',
                         'class'=>'form-horizontal' ,'id' =>'submitservicerequest' )) !!}
-                        <div class="form-group  ">
+                        <div class="form-group">
                             <label for="location_id" class="control-label col-md-4 text-left">
                                 For Location
                             </label>
 
-                            <div class="col-md-8">
+                            <div class="col-md-6 select-full">
                                 <select name="location_id" id="location_id" class="select2"></select>
                             </div>
                         </div>
@@ -50,7 +49,7 @@
                                 For Game :
                             </label>
 
-                            <div class="col-md-8">
+                            <div class="col-md-6">
                                 <select name="game_id" id="game_id" class="select2" onchange="grabGameId()"></select>
                             </div>
                         </div>
@@ -59,7 +58,7 @@
                             <label for="tech_type" class=" control-label col-md-4 text-left">
                                 <b style="color:red">IT Service Request</b> </label>
 
-                            <div class="col-md-8">
+                            <div class="col-md-6">
                                 <input type="radio" name="tech_type" value="service" id="tech_type" checked="checked"/>
                             </div>
                         </div>
@@ -68,7 +67,7 @@
                                 Title
                             </label>
 
-                            <div class="col-md-8">
+                            <div class="col-md-6">
                                 <input type="text" class="form-control"
                                        placeholder="Title" maxlength="35"
                                        value=""
@@ -82,7 +81,7 @@
 
                             <div class="col-md-4"></div>
 
-                            <div class="col-md-8">
+                            <div class="col-md-6">
                                 <br/>
                                 <textarea class="form-control" name="description" id="description" cols="40"
                                           rows="6"></textarea>
@@ -94,7 +93,7 @@
                                 Part Cost
                             </label>
 
-                            <div class="col-md-8">
+                            <div class="col-md-6">
                                 <input type="text" class="form-control" placeholder="Cost" value="" name="part_cost"
                                        id="cost">
                             </div>
@@ -113,7 +112,7 @@
                             <label for="date_needed" class="control-label col-md-4 text-left date">
                                 Date Needed: </label>
 
-                            <div class="col-md-8">
+                            <div class="col-md-6">
                                 <input typ="text" class="form-control date" name="need_by_date" value="" id="date_needed"
                                         />
                             </div>
@@ -123,7 +122,7 @@
                             <label for="game_down" class=" control-label col-md-4 text-left">
                                 Game is Down: </label>
 
-                            <div class="col-md-8">
+                            <div class="col-md-6">
                                 <input type="checkbox" name="game_down" value="1" id="game_down"/>
                                 <input type="hidden" name="game_down" value="0" id="game_down"/>
                             </div>
@@ -132,7 +131,7 @@
                             <label for="userfile" class=" control-label col-md-4 text-left">
                                 Upload File </label>
 
-                            <div class="col-md-8">
+                            <div class="col-md-6">
                                 <input type="file" name="userfile" class="" id="userfile"/>
                             </div>
 
@@ -142,9 +141,8 @@
                                    value="{{ \Session::get('company_id') }}">
 
                             <div class="form-group">
-                                <label class="col-sm-4 text-right">&nbsp;</label>
 
-                                <div class="col-sm-8">
+                                <div class="col-sm-12 text-center">
                                     <button type="submit" class="btn btn-primary btn-sm "><i
                                                 class="fa  fa-save "></i>  {{ Lang::get('core.sb_save') }} </button>
                                     {{--<button type="button" onclick="ajaxViewClose('#{{ $pageModule }}')"--}}

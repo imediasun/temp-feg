@@ -413,8 +413,7 @@
                         </div>
                     </div>
                     <div class="form-group ">
-                        <label class="col-sm-4 text-right">&nbsp;</label>
-                        <div class="col-sm-6 text-center">
+                        <div class="col-sm-12 text-center">
                             <button type="submit" class="btn btn-primary btn-sm "><i
                                         class="fa  fa-save "></i>  Email Freight Quote </button>
                         </div>

@@ -2,17 +2,17 @@
 @if($setting['form-method'] =='native')
 	<div class="sbox">
 		<div class="sbox-title">  
-			<h4> <i class="fa fa-table"></i> <?php echo $pageTitle ;?> <small>{{ $pageNote }}</small>
+			<h4> <i class="fa fa-table"></i> Submit Service Request <?php echo $pageTitle ;?> <small>{{ $pageNote }}</small>
 				<a href="javascript:void(0)" class="collapse-close pull-right btn btn-xs btn-danger" onclick="ajaxViewClose('#{{ $pageModule }}')"><i class="fa fa fa-times"></i></a>
 			</h4>
 	</div>
 
-	<div class="sbox-content"> 
+	<div class="sbox-content" style="background:#fff"> 
 @endif	
 			{!! Form::open(array('url'=>'submitservicerequest/save/'.SiteHelpers::encryptID($row['id']), 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'submitservicerequestFormAjax')) !!}
+			
 			<div class="col-md-12">
-						<fieldset><legend> Submit Service Request</legend>
-				
+				<fieldset>
 				  <div class="form-group  " >
 					<label for="Id" class=" control-label col-md-4 text-left">
 					{!! SiteHelpers::activeLang('Id', (isset($fields['id']['language'])? $fields['id']['language'] : array())) !!}
@@ -147,7 +147,7 @@
 					 	
 					 </div>
 				  </div> 
-				  <div class="form-group  " >
+				  <div class="form-group" >
 					<label for="Attachment Path" class=" control-label col-md-4 text-left">
 					{!! SiteHelpers::activeLang('Attachment Path', (isset($fields['attachment_path']['language'])? $fields['attachment_path']['language'] : array())) !!}
 					</label>
@@ -158,7 +158,8 @@
 					 <div class="col-md-2">
 					 	
 					 </div>
-				  </div> </fieldset>
+				  </div>
+				</fieldset>
 			</div>
 			
 												
@@ -167,12 +168,12 @@
 			<div style="clear:both"></div>	
 							
 			<div class="form-group">
-				<label class="col-sm-4 text-right">&nbsp;</label>
-				<div class="col-sm-8">	
+				<div class="col-sm-12 text-center">
 					<button type="submit" class="btn btn-primary btn-sm "><i class="fa  fa-save "></i>  {{ Lang::get('core.sb_save') }} </button>
 					<button type="button" onclick="ajaxViewClose('#{{ $pageModule }}')" class="btn btn-success btn-sm"><i class="fa  fa-arrow-circle-left "></i>  {{ Lang::get('core.sb_cancel') }} </button>
 				</div>			
-			</div> 		 
+			</div>
+			
 			{!! Form::close() !!}
 
 

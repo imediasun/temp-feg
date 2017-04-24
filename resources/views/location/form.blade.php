@@ -2,7 +2,7 @@
 @if($setting['form-method'] =='native')
 	<div class="sbox">
 		<div class="sbox-title">  
-			<h4>
+			<h4><i class="fa fa-map-marker"></i>&nbsp;&nbsp;Location
 				<a href="javascript:void(0)" class="collapse-close pull-right btn btn-xs btn-danger" onclick="ajaxViewClose('#{{ $pageModule }}')"><i class="fa fa fa-times"></i></a>
 			</h4>
 	</div>
@@ -27,7 +27,7 @@
 					<label for="Active Location" class=" control-label col-md-4 text-left">
 					{!! SiteHelpers::activeLang('Active Location', (isset($fields['active']['language'])? $fields['active']['language'] : array())) !!}
 					</label>
-					<div class="col-md-6">
+					<div class="col-md-6 check-no">
                         <input type ="text"  value="0" name="active" style="display:none"/>
 					  <?php $active = $row['active']; ?>
 					 <label class='checked checkbox-inline'>   
@@ -54,7 +54,7 @@
 					<label for="FEG Owned" class=" control-label col-md-4 text-left">
 					{!! SiteHelpers::activeLang('FEG Owned', (isset($fields['self_owned']['language'])? $fields['self_owned']['language'] : array())) !!}
 					</label>
-					<div class="col-md-6">
+					<div class="col-md-6 check-no">
                         <input type ="text"  value="0" name="self_owned" style="display:none"/>
 					  <?php $self_owned = $row['self_owned']; ?>
 					 <label class='checked checkbox-inline'>   
@@ -280,7 +280,7 @@
 					<label for="Can Ship" class=" control-label col-md-4 text-left">
 					{!! SiteHelpers::activeLang('Can Ship', (isset($fields['can_ship']['language'])? $fields['can_ship']['language'] : array())) !!}
 					</label>
-					<div class="col-md-6">
+					<div class="col-md-6 check-no">
                         <input type ="text"  value="0" name="can_ship" style="display:none"/>
 					  <?php $can_ship = $row['can_ship']; ?>
 					 <label class='checked checkbox-inline'>   
@@ -296,7 +296,7 @@
 					<label for="Requires Liftgate" class=" control-label col-md-4 text-left">
 					{!! SiteHelpers::activeLang('Requires Liftgate', (isset($fields['liftgate']['language'])? $fields['liftgate']['language'] : array())) !!}
 					</label>
-					<div class="col-md-6">
+					<div class="col-md-6 check-no">
                         <input type ="text"  value="0" name="liftgate" style="display:none!important"/>
 					  <?php $liftgate = $row['liftgate']; ?>
 					 <label class='checked checkbox-inline'>   
@@ -334,7 +334,7 @@
                                 <label for="reporting" class=" control-label col-md-4 text-left">
                                     {!! SiteHelpers::activeLang('Reporting', (isset($fields['reporting']['language'])? $fields['reporting']['language'] : array())) !!}
                                 </label>
-                                <div class="col-md-6">
+                                <div class="col-md-6 check-no">
                                     <input type ="text"  value="0" name="reporting" style="display:none"/>
                                     <?php $reporting = $row['reporting']; ?>
                                     <label class='checked checkbox-inline'>
@@ -360,7 +360,7 @@
 					<label for=" Debit Type" class=" control-label col-md-4 text-left">
 					{!! SiteHelpers::activeLang('On Debit', (isset($fields['bill_debit_type']['language'])? $fields['bill_debit_type']['language'] : array())) !!}
 					</label>
-					<div class="col-md-6">
+					<div class="col-md-6 check-no">
                         <input type ="text"  value="0" name="bill_debit_type" style="display:none"/>
 					  <?php $bill_debit_type = $row['bill_debit_type']; ?>
 					 <label class='checked checkbox-inline'>   
@@ -380,8 +380,7 @@
 			<div style="clear:both"></div>	
 							
 			<div class="form-group">
-				<label class="col-sm-4 text-right">&nbsp;</label>
-				<div class="col-sm-8">	
+			<div class="col-sm-12 text-center">	
 					<button type="submit" class="btn btn-primary btn-sm "><i class="fa  fa-save "></i>  {{ Lang::get('core.sb_save') }} </button>
 					<button type="button" onclick="ajaxViewClose('#{{ $pageModule }}')" class="btn btn-success btn-sm"><i class="fa  fa-arrow-circle-left "></i>  {{ Lang::get('core.sb_cancel') }} </button>
 				</div>			

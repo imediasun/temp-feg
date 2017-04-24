@@ -14,7 +14,7 @@
             'sparepartsFormAjax')) !!}
             <div class="col-md-12">
                 <fieldset>
-                    <legend> Spare Parts</legend>
+                    
                     @if($row['status_id']==0)
                     <div class="form-group  ">
                         <label for="Description" class=" control-label col-md-4 text-left">

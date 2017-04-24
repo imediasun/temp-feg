@@ -126,9 +126,9 @@
                                 data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
                            @if($field['field'] == 'avatar')
                                <?php if( file_exists( './uploads/users/'.$row->avatar) && $row->avatar !='') { ?>
-                               <img src="{{ URL::to('uploads/users').'/'.$row->avatar }} " border="0" width="30" class="img-circle" />
+                               <img src="{{ URL::to('uploads/users').'/'.$row->avatar }} " border="0" width="30" height="30" class="img-circle test" />
                                <?php  } else { ?>
-                               <img alt="" src="{{url()}}/silouette.png" width="30" class="img-circle" border="0"/>
+                               <img alt="" src="{{url()}}/silouette.png" width="30" height="30" class="img-circle test" border="0"/>
                                <?php } ?>
                            @elseif($field['field'] =='active')
                                 <input type='checkbox' name="mycheckbox" @if($value == "Yes") checked  @endif 	data-size="mini" data-animate="true"

@@ -26,19 +26,18 @@
                             **MUST BE jpg, jpeg, gif, png**
                         </p>
                             </div>
-                    <div class="col-md-6" >
+                    <div class="col-md-6 res-img" >
                             {!! SiteHelpers::showUploadedFile($img,'/uploads/products/',400,false) !!}
                     </div>
+                    
                     <div class="col-md-6">
-
-
                         {!! Form::open(array('url'=>'product/upload?return='.$return, 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ')) !!}
-
-                    <div class="form-group" style="margin-top:120px;">
+                    <div class="m-xl clearfix hidden-xs"></div>
+                    <div class="form-group" style="margin-top: 20px; margin-left: 0px;">
                                 <input  type='file' name='img' id='img'  required  style='width:150px !important;'     value=""  />
                         <input type="hidden" value="{{ Request::segment(3) }}" name="id"/>
                     </div>
-                        <div class="form-group" style="margin-top:50px;">
+                        <div class="form-group" style="margin-left: 0px; margin-top: 20px;">
 
                                 <button type="submit" name="submit" class="btn btn-primary btn-sm" ><i class="fa  fa-save "></i> {{ Lang::get('core.sb_save') }}</button>
 
