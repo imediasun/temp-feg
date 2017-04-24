@@ -58,7 +58,7 @@
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Location ', (isset($fields['location_id']['language'])? $fields['location_id']['language'] : array())) }}
 						</td>
-                        <td>{!! SiteHelpers::gridDisplayView($row->location_id,'location_id','1:location:id:location_name') !!} </td>
+                        <td>{{$row->location_id ." | "}}{!! SiteHelpers::gridDisplayView($row->location_id,'location_id','1:location:id:location_name') !!} </td>
 
 					</tr>
 
@@ -88,19 +88,12 @@
 
 					<tr>
 						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Process User Id', (isset($fields['process_user_id']['language'])? $fields['process_user_id']['language'] : array())) }}
+							{{ SiteHelpers::activeLang('Process User ', (isset($fields['process_user_id']['language'])? $fields['process_user_id']['language'] : array())) }}
 						</td>
-						<td>{{ $row->process_user_id }} </td>
+						<td>{!! SiteHelpers::gridDisplayView($row->process_user_id,'process_user_id','1:users:id:username') !!}</td>
 
 					</tr>
 
-					<tr>
-						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Request Type ', (isset($fields['request_type_id']['language'])? $fields['request_type_id']['language'] : array())) }}
-						</td>
-                        <td>{!! SiteHelpers::gridDisplayView($row->process_user_id,'process_user_id','1:users:id:username') !!} </td>
-
-					</tr>
 
 					<tr>
 						<td width='30%' class='label-view text-right'>

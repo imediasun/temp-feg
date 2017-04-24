@@ -40,5 +40,15 @@ class DateHelpers{
         }
         return $formattedValue;
     }
-    
+    public static function formatZeroValue($val)
+    {
+        if($val == 0 || $val == null || $val == "0")
+        {
+            return "";
+        }
+        else
+        {
+            return $val;
+        }
+    }
 }
