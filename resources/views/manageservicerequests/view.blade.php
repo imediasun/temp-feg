@@ -34,7 +34,7 @@
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Location ', (isset($fields['location_id']['language'])? $fields['location_id']['language'] : array())) }}
 						</td>
-                        <td>{!! SiteHelpers::gridDisplayView($row->location_id,'location_id','1:location:id:location_name') !!} </td>
+                        <td>{{ $row->location_id. " | " }} {!! SiteHelpers::gridDisplayView($row->location_id,'location_id','1:location:id:location_name') !!} </td>
 
 
                     </tr>
@@ -52,7 +52,7 @@
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Request Date', (isset($fields['request_date']['language'])? $fields['request_date']['language'] : array())) }}	
 						</td>
-						<td>{{  $row->request_date = date("m/d/Y", strtotime($row->request_date))  }}</td>
+						<td>{{  \DateHelpers::formatDate($row->request_date)   }}</td>
 						
 					</tr>
 				
@@ -68,7 +68,7 @@
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Needed By ', (isset($fields['need_by_date']['language'])? $fields['need_by_date']['language'] : array())) }}
 						</td>
-						<td>{{  $row->need_by_date = date("m/d/Y", strtotime($row->need_by_date))  }}</td>
+						<td>{{  DateHelpers::formatDate($row->need_by_date)   }}</td>
 						
 					</tr>
 				
@@ -76,7 +76,7 @@
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Date Resolved', (isset($fields['solved_date']['language'])? $fields['solved_date']['language'] : array())) }}
 						</td>
-						<td>{{  $row->solved_date = date("m/d/Y", strtotime($row->solved_date))  }}</td>
+						<td>{{  DateHelpers::formatDate($row->solved_date)  }}</td>
 						
 					</tr>
 				
