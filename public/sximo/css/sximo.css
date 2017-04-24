@@ -3148,17 +3148,16 @@ position: relative;
 
 .input-group input.form-control{
   float: left;
-  width: 94%;
+  width: 100%;
 }
+
 .input-group{
   float: left;
   width: 100%;
 }
-.input-group span.input-group-addon{
-  float: left;
-  width: 33px !important;
-  padding: 8px;
-}
+
+
+
 
 .check-no .radio,.check-no .checkbox {
   padding-left: 0px;
@@ -3192,6 +3191,11 @@ position: relative;
   float: left;
   width: 100%;
 }
+
+.body-small .navbar-static-side {
+  z-index: 1001;
+}
+
 
 
 
@@ -3237,4 +3241,40 @@ position: relative;
   white-space: normal;
 }
 
+.btn-margin .btn {
+  margin-bottom: 3px;
 }
+
+.navbar-header {
+  display: block;
+  width: 100%;
+}
+
+.navbar .navbar-top-links li:first-child {
+  margin-left: 15px;
+}
+
+
+.navbar .navbar-top-links li a {
+  min-height: 50px;
+  padding: 20px 8px;
+}
+
+.pagination li span, .pagination li a {
+  font-size: 12px;
+  padding: 2px 5px;
+}
+
+.pagination {
+  float: left;
+}
+
+.nav-tabs > li > a {
+  padding: 5px 6px;
+}
+
+
+}
+
+
+
