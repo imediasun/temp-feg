@@ -143,8 +143,11 @@
                                 <input type='file' name='avatar' id='avatar' @if($row['avatar'] =='')
                                        @endif style='width:350px !important;' value="{{ $row['avatar'] }}"/>
                                 <div class="r-avatar">
-                                    {!! SiteHelpers::showUploadedFile($row['avatar'],'/uploads/users/') !!}
-
+                                    @if(file_exists(public_path()."/uploads/users/".$row['avatar']))
+                                    <img src="/uploads/users/{{ $row['avatar'] }}" style="box-shadow:1px 1px 5px gray" border="0" width="40px" class="img"/>
+                                @else
+                                        <img src="/silouette.png" style="box-shadow:1px 1px 5px gray" border="0" width="40px" class="img"/>
+                                    @endif
                                 </div>
 
                             </div>
