@@ -11,13 +11,14 @@
     <div class="sbox">
         <div class="sbox-title">
             <h4>
-            <i class="fa fa-gamepad"></i>
             @if ($isEdit)
-                {{ $row['game_title'] }} ({{ $row['id'] }})
+                    <i class="fa fa-pencil"></i>
+                Edit {{ $row['game_title'] }} ({{ $row['id'] }})
                 @if (!empty($row['location_id']))
                 <small>at {{ $row['location_id'] }} || {{ $row['location_name'] }}  </small>
                 @endif
             @else
+                    <i class="fa fa-plus"></i>
                 Add a new Game
             @endif
             
@@ -30,9 +31,6 @@
             {!! Form::open(array('url'=>'mylocationgame/save/'.$ID, 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'mylocationgameFormAjax')) !!}
             <div class="col-md-12 gameInputsContainer clearfix">
                 <fieldset>
-                    @if ($isEdit)
-                    <legend>Edit</legend>
-                    @endif
                     <div class="form-group  clearfix" >
                         <label for="Test Piece" class=" control-label col-md-4 text-left">
                             {!! SiteHelpers::activeLang('Test Piece', (isset($fields['test_piece']['language'])? $fields['test_piece']['language'] : array())) !!}

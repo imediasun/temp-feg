@@ -2,7 +2,11 @@
 @if($setting['form-method'] =='native')
 	<div class="sbox">
 		<div class="sbox-title">  
-			<h4><i class="fa fa-map-marker"></i>&nbsp;&nbsp;Location
+			<h4>@if($id)
+					<i class="fa fa-pencil"></i>&nbsp;&nbsp;Edit Location
+				@else
+					<i class="fa fa-plus"></i>&nbsp;&nbsp;Create New Location
+				@endif&nbsp;&nbsp;
 				<a href="javascript:void(0)" class="collapse-close pull-right btn btn-xs btn-danger" onclick="ajaxViewClose('#{{ $pageModule }}')"><i class="fa fa fa-times"></i></a>
 			</h4>
 	</div>
@@ -11,7 +15,7 @@
 @endif
         {!! Form::open(array('url'=>'location/save/'.$row['id'], 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'locationFormAjax')) !!}
 			<div class="col-md-12">
-						<fieldset><legend> location</legend>
+						<fieldset>
                             <div class="form-group  " >
                                 <label for="Short Name" class=" control-label col-md-4 text-left">
                                     {!! SiteHelpers::activeLang('Location Id', (isset($fields['id']['language'])? $fields['id']['language'] : array())) !!}

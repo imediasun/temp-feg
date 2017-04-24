@@ -6,7 +6,7 @@
 	<div class="sbox">
 		<div class="sbox-title">
 		    <h4> 
-		        @if($isEdit)
+		        @if($id)
     			    <i class="fa fa-pencil"></i>&nbsp;&nbsp;Edit Game Title
     			@else
     			    <i class="fa fa-plus"></i>&nbsp;&nbsp;Create New Game Title

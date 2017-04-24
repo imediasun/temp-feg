@@ -1,8 +1,11 @@
 @if($setting['form-method'] =='native')
     <div class="sbox">
         <div class="sbox-title">
-            <h4><i class="fa fa-table"></i> <?php echo $pageTitle;?>
-                <small>{{ $pageNote }}</small>
+            <h4>@if($id)
+                    <i class="fa fa-pencil"></i>&nbsp;&nbsp;Edit Freight Tool
+                @else
+                    <i class="fa fa-plus"></i>&nbsp;&nbsp;Create New Freight Tool
+                @endif
                 <a href="javascript:void(0)" class="collapse-close pull-right btn btn-xs btn-danger"
                    onclick="ajaxViewClose('#{{ $pageModule }}')"><i class="fa fa fa-times"></i></a>
             </h4>
@@ -15,7 +18,6 @@
             'managefreightquotersFormAjax')) !!}
             <div class="col-md-8 col-md-offset-2" style="background: #FFF;box-shadow:1px 1px 5px lightgray">
                 <fieldset>
-                    <legend>Get Freight Quote</legend>
 
                     <div class="form-group">
                         <label class="col-md-4">
