@@ -134,8 +134,11 @@ class AjaxHelpers
 //			$val =  "<a href='".URL::to($linked)."'  $attr style='display:block' >".$val." <span class='fa fa-arrow-circle-right pull-right'></span></a>";
 			$val =  "<a href='".URL::to($linked)."'  $attr >".$val."</a>";
 		}
-
-		return $val;		
+if($val==="0" || $val === 0)
+{
+  $val="";
+}
+		return $val;
 	}	
 	
 	static public function fieldLang( $fields ) 
