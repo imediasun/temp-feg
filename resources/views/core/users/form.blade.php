@@ -142,6 +142,7 @@
                             <div class="col-md-6">
                                 <input type='file' name='avatar' id='avatar' @if($row['avatar'] =='')
                                        @endif style='width:350px !important;' value="{{ $row['avatar'] }}"/>
+                                @if(!empty($row['id']))
                                 <div class="r-avatar">
                                     <br/>
                                     @if(file_exists(public_path()."/uploads/users/".$row['avatar']))
@@ -150,7 +151,7 @@
                                         <img src="/silouette.png" style="box-shadow:1px 1px 5px gray" border="0" width="50px" class="img"/>
                                     @endif
                                 </div>
-
+                                @endif
                             </div>
                             <div class="col-md-2">
 
