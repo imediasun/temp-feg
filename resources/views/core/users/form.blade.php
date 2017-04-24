@@ -147,7 +147,7 @@
                                     @if(file_exists(public_path()."/uploads/users/".$row['avatar']))
                                    <a href="/uploads/users/{{ $row['avatar'] }}" class="previewImage fancybox" rel="gallery1"> <img src="/uploads/users/{{ $row['avatar'] }}" style="box-shadow:1px 1px 5px gray" border="0" width="40px" class="img"/></a>
                                 @else
-                                        <img src="/silouette.png" style="box-shadow:1px 1px 5px gray" border="0" width="40px" class="img"/>
+                                        <img src="/silouette.png" style="box-shadow:1px 1px 5px gray" border="0" width="50px" class="img"/>
                                     @endif
                                 </div>
 
