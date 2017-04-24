@@ -2845,15 +2845,11 @@ table.table-striped tr th
 }
 
 .gameDetailsContainer.game-status-intransit {
-    background:#f6fff6;
+    background:#fff;
 }
 
 .gameDetailsContainer.game-status-uprunning {
     background:#FFF;
-}
-.gameDetailsContainer.game-status-sold {
-    background: #fafafa;
-    color: #999;
 }
 
 .gameDetailsContainer .headStatus {

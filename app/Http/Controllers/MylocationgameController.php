@@ -231,7 +231,9 @@ class MylocationgameController extends Controller
         }
 
         $row = $this->model->find($id);
+
         if ($row) {
+            $row->game_status = \DB::table('game_status')->where('id',$row->status_id)->pluck('game_status');
             if (!empty($row->product_id)) {
                 $row->product_id = json_decode($row->product_id);
                 $row->product_id = implode(',', $row->product_id);

@@ -24,7 +24,7 @@
                 </div>
                 <div class="form-group  " >
                     <label for="date_needed" class=" control-label col-md-4 text-left">
-                        Date Needed
+                        Date Needed:
                     </label>
                     <div class="col-md-6">
                         <input type="text" class="date form-control" id="date_needed" name="date_needed" required="required"/>
@@ -45,7 +45,7 @@
                     </div>
                 </div>   <div class="form-group  " >
                     <label for="qty" class=" control-label col-md-4 text-left">
-                        Quantity
+                        Quantity:
                     </label>
                     <div class="col-md-6">
                     <input type="text" id="qty" name="qty" value="" class="form-control" required="required"/>
@@ -66,7 +66,7 @@
                 </div>
                 <div class="form-group  " id ="testdiv" >
                     <label for="Add Image" class=" control-label col-md-4 text-left">
-                        {!! SiteHelpers::activeLang('Add Image', (isset($fields['add_image']['language'])? $fields['add_image']['language'] : array())) !!}
+                        {!! SiteHelpers::activeLang('Add Image', (isset($fields['add_image']['language'])? $fields['add_image']['language'] : array())) !!}:
                     </label>
                     <div class="col-md-6">
                         <div class="add_imageUpl">
