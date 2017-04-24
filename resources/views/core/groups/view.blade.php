@@ -23,7 +23,7 @@
 			@endif  		   	  
 		</div>
 <div class="sbox animated fadeInRight">
-	<div class="sbox-title"> <h4> <i class="fa fa-table"></i> <?php echo $pageTitle ;?> <small>{{ $pageNote }}</small></h4></div>
+	<div class="sbox-title"> <h4> <i class="fa fa-eye"></i> <?php echo $pageTitle ;?> </h4></div>
 	<div class="sbox-content"> 	
 
 

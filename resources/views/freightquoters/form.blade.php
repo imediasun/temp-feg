@@ -3,6 +3,11 @@
 	<div class="sbox">
 		<div class="sbox-title">  
 			<h4>
+				@if($id)
+					<i class="fa fa-pencil"></i>&nbsp;&nbsp;Edit Freight Quoter
+				@else
+					<i class="fa fa-plus"></i>&nbsp;&nbsp;Create New Freight Quoter
+				@endif
 				<a href="javascript:void(0)" class="collapse-close pull-right btn btn-xs btn-danger" onclick="ajaxViewClose('#{{ $pageModule }}')"><i class="fa fa fa-times"></i></a>
 			</h4>
 	</div>
@@ -11,7 +16,7 @@
 @endif	
 			{!! Form::open(array('url'=>'freightquoters/save/'.$row['id'], 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'freightquotersFormAjax')) !!}
 			<div class="col-md-12">
-						<fieldset><legend> Freight Quoters</legend>
+						<fieldset>
 				
 
 				  <div class="form-group  " >

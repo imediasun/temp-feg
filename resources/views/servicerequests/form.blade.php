@@ -3,7 +3,11 @@
 <div class="sbox">
 		<div class="sbox-title">  
 			<h4>
-                @if ($isAdd) Create @else Edit @endif Ticket
+				@if($id)
+					<i class="fa fa-pencil"></i>&nbsp;&nbsp;Edit Ticket
+				@else
+					<i class="fa fa-plus"></i>&nbsp;&nbsp;Create New Ticket
+				@endif
 				<a href="javascript:void(0)" class="collapse-close pull-right btn btn-xs btn-danger" onclick="ajaxViewClose('#{{ $pageModule }}')"><i class="fa fa fa-times"></i></a>
 			</h4>
 	</div>

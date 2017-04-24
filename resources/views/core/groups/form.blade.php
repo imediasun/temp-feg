@@ -24,12 +24,16 @@
 			@endforeach
 		</ul>
 <div class="sbox animated fadeInRight">
-	<div class="sbox-title"> <h4> <i class="fa fa-table"></i> <?php echo $pageTitle ;?> <small>{{ $pageNote }}</small></h4></div>
+	<div class="sbox-title"> <h4> @if($id)
+				<i class="fa fa-pencil"></i>&nbsp;&nbsp;Edit Users Group
+			@else
+				<i class="fa fa-plus"></i>&nbsp;&nbsp;Create New Users Group
+			@endif</h4></div>
 	<div class="sbox-content"> 	
 
 		 {!! Form::open(array('url'=>'core/groups/save?return='.$return, 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ')) !!}
 <div class="col-md-12">
-						<fieldset><legend> Users Group</legend>
+						<fieldset>
 									
 								  <div class="form-group hidethis " style="display:none;">
 									<label for="Group Id" class=" control-label col-md-4 text-left"> Group Id </label>

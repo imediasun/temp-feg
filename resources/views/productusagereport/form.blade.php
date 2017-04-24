@@ -2,7 +2,11 @@
 @if($setting['form-method'] =='native')
 	<div class="sbox">
 		<div class="sbox-title">  
-			<h4> <i class="fa fa-table"></i> <?php echo $pageTitle ;?> <small>{{ $pageNote }}</small>
+			<h4> @if($id)
+					<i class="fa fa-pencil"></i>&nbsp;&nbsp;Edit Product Usage Report
+				@else
+					<i class="fa fa-plus"></i>&nbsp;&nbsp;Create New Product Usage Report
+				@endif
 				<a href="javascript:void(0)" class="collapse-close pull-right btn btn-xs btn-danger" onclick="ajaxViewClose('#{{ $pageModule }}')"><i class="fa fa fa-times"></i></a>
 			</h4>
 	</div>
@@ -11,8 +15,8 @@
 @endif	
 			{!! Form::open(array('url'=>'productusagereport/save/'.SiteHelpers::encryptID($row['id']), 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'productusagereportFormAjax')) !!}
 			<div class="col-md-12">
-						<fieldset><legend> ProductUsageReport</legend>
-									
+						<fieldset>
+
 				  <div class="form-group  " > 
 					<label for="Id" class=" control-label col-md-4 text-left"> 
 					{!! SiteHelpers::activeLang('Id', (isset($fields['id']['language'])? $fields['id']['language'] : array())) !!}	

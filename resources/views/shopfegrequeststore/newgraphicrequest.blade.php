@@ -2,8 +2,7 @@
 @section('content')
     <div class="sbox">
         <div class="sbox-title">
-            <h4><i class="fa fa-table"></i> {{ $pageTitle }}
-                <small>{{ $pageNote }}</small>
+            <h4><i class="fa fa-plus"></i> New Graphics Request
             </h4>
         </div>
         <div class="sbox-content">
@@ -11,7 +10,7 @@
                 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=>
                 'newgraphicrequest')) !!}
             <div class="col-md-8 col-md-offset-2" style="background: #FFF;box-shadow:1px 1px 5px lightgray;padding:10px">
-            <fieldset><legend> New Graphics Request </legend>
+            <fieldset>
                 <div class="form-group  " >
                     <label  for="game_info" class=" control-label col-md-4 text-left">
                         For Game [or game type]:

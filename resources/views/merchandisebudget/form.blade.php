@@ -2,8 +2,11 @@
 @if($setting['form-method'] =='native')
     <div class="sbox">
         <div class="sbox-title">
-            <h4><i class="fa fa-table"></i> <?php echo $pageTitle;?>
-                <small>{{ $pageNote }}</small>
+            <h4>@if($id)
+                    <i class="fa fa-pencil"></i>&nbsp;&nbsp;Edit Merchandise Budget
+                @else
+                    <i class="fa fa-plus"></i>&nbsp;&nbsp;Create New Merchandise Budget
+                @endif
                 <a href="javascript:void(0)" class="collapse-close pull-right btn btn-xs btn-danger"
                    onclick="ajaxViewClose('#{{ $pageModule }}')"><i class="fa fa fa-times"></i></a>
             </h4>
@@ -15,7 +18,6 @@
             , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'merchandisebudgetFormAjax')) !!}
             <div class="col-md-12">
                 <fieldset>
-                    <legend> Merchandise Budget</legend>
                     <div class="form-group  ">
                         <label for="Location Id" class=" control-label col-md-4 text-left">
                             {!! SiteHelpers::activeLang('Location Id', (isset($fields['location_id']['language'])?

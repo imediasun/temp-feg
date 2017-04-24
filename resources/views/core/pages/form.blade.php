@@ -33,7 +33,12 @@
 
 			<div class="col-sm-8 ">
 				<div class="sbox containerBox">
-					<div class="sbox-title">Page Content </div>
+					<div class="sbox-title">
+						@if($id)
+							<i class="fa fa-pencil"></i>&nbsp;&nbsp;Edit Page
+						@else
+							<i class="fa fa-plus"></i>&nbsp;&nbsp;Create New Page
+						@endif</div>
 					<div class="sbox-content">
 
 						<ul class="nav nav-tabs" >

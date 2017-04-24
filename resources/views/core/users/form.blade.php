@@ -22,7 +22,15 @@
 
 
             <div class="sbox animated fadeInRight">
-                <div class="sbox-title"></div>
+                <div class="sbox-title">
+                    <h4>
+                        @if($id)
+                            <i class="fa fa-pencil"></i>&nbsp;&nbsp;Edit Employee
+                        @else
+                            <i class="fa fa-plus"></i>&nbsp;&nbsp;Create New Employee
+                        @endif
+                    </h4>
+                </div>
                 <div class="sbox-content">
                     <ul class="parsley-error-list">
                         @foreach($errors->all() as $error)
@@ -292,7 +300,7 @@
 
 
                     <div class="form-group">
-                        
+
                         <div class="col-sm-12 text-center">
                             <button type="submit" name="apply" class="btn btn-info btn-sm"><i
                                         class="fa  fa-check-circle"></i> {{ Lang::get('core.sb_apply') }}</button>

@@ -1,7 +1,11 @@
 @if($setting['form-method'] =='native')
     <div class="sbox">
         <div class="sbox-title">
-            <h4><i class="fa fa-table"></i> &nbsp;&nbsp;FEG Store Products
+            <h4>@if($id)
+                    <i class="fa fa-pencil"></i>&nbsp;&nbsp;Edit FEG Store Product
+                @else
+                    <i class="fa fa-plus"></i>&nbsp;&nbsp;Create New FEG Store Product
+                @endif &nbsp;&nbsp;
                 <a href="javascript:void(0)" class="collapse-close pull-right btn btn-xs btn-danger"
                    onclick="ajaxViewClose('#{{ $pageModule }}')"><i class="fa fa fa-times"></i></a>
             </h4>

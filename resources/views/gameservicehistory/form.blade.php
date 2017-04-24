@@ -2,7 +2,12 @@
 @if($setting['form-method'] =='native')
 	<div class="sbox">
 		<div class="sbox-title">  
-			<h4> <i class="fa fa-table"></i> <?php echo $pageTitle ;?> <small>{{ $pageNote }}</small>
+			<h4>
+				@if($id)
+					<i class="fa fa-pencil"></i>&nbsp;&nbsp;Edit Game Service History
+				@else
+					<i class="fa fa-plus"></i>&nbsp;&nbsp;Create New Game Service History
+				@endif
 				<a href="javascript:void(0)" class="collapse-close pull-right btn btn-xs btn-danger" onclick="ajaxViewClose('#{{ $pageModule }}')"><i class="fa fa fa-times"></i></a>
 			</h4>
 	</div>
@@ -11,7 +16,7 @@
 @endif	
 			{!! Form::open(array('url'=>'gameservicehistory/save/'.SiteHelpers::encryptID($row['id']), 'class'=>'form-horizontal', 'parsley-validate'=>'','novalidate'=>' ','id'=> 'gameservicehistoryFormAjax')) !!}
 			<div class="col-md-12">
-                <fieldset><legend> Game Service History</legend>
+                <fieldset>
                 {!! Form::hidden('id', $row['id']) !!}
                     
 				  <div class="form-group  " >

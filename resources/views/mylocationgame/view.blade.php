@@ -62,7 +62,7 @@
 <div class="sbox">
 	<div class="sbox-title">
 		<h4> 
-            <i class="fa fa-gamepad"></i>
+            <i class="fa fa-eye"></i>
             {{ $gameTitle }} ({{ $assetID }})
             @if (!empty($locationId))
             <small>at {{ $locationIdName }} </small>
