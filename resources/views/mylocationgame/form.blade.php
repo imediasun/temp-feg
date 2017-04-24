@@ -13,13 +13,13 @@
             <h4>
             @if ($isEdit)
                     <i class="fa fa-pencil"></i>
-                Edit {{ $row['game_title'] }} ({{ $row['id'] }})
-                @if (!empty($row['location_id']))
+                Edit My Location's Game
+                {{--@if (!empty($row['location_id']))
                 <small>at {{ $row['location_id'] }} || {{ $row['location_name'] }}  </small>
-                @endif
+                @endif--}}
             @else
                     <i class="fa fa-plus"></i>
-                Add a new Game
+                Add My Location's Game
             @endif
             
                 <a href="javascript:void(0)" class="collapse-close pull-right btn btn-xs btn-danger" onclick="ajaxViewClose('#{{ $pageModule }}', this)"><i class="fa fa fa-times"></i></a>

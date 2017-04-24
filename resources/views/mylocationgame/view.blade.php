@@ -63,10 +63,11 @@
 	<div class="sbox-title">
 		<h4> 
             <i class="fa fa-eye"></i>
-            {{ $gameTitle }} ({{ $assetID }})
+            My Location Game
+            {{--{{ $gameTitle }} ({{ $assetID }})
             @if (!empty($locationId))
             <small>at {{ $locationIdName }} </small>
-            @endif
+            @endif--}}
 			<a href="javascript:void(0)" class="collapse-close pull-right btn btn-xs btn-danger" onclick="ajaxViewClose('#{{ $pageModule }}', this)">
 			<i class="fa fa fa-times"></i></a>
 		</h4>
