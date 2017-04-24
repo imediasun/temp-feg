@@ -496,7 +496,7 @@ class managefreightquoters extends Sximo
                         $cc = 'jdanial710@gmail.com';
                         //$bcc = 'support@fegllc.com';
                         $bcc = 'daynaedvin@gmail.com';
-                        $subject = '(' . $num_games_per_destination . ')' . ' Game[s] scheduled for delivery to ' . $locationName . '!';
+                        $subject = '('.(int)$num_games_per_destination.')'.' Game[s] scheduled for delivery to ' . $locationName . '!';
                         $message = '<p>
 										' . $email_notes . '
 										<br>
