@@ -226,7 +226,7 @@
             row.removeClass('inline_edit_applied');
             row.nextAll('.inline_edit_applied').each(function(){
                 var id=$(this).data('id');
-                var height=$(this).offset().top+30;
+                var height=$(this).offset().top+38;
                 if($(this).children('td[data-values="action"]').children('.action').siblings('a').length > 0)
                 {
                     height=$(this).children('td[data-values="action"]').children('.action').siblings('a').last().offset().top+25;
@@ -270,7 +270,7 @@
             if(actionBtns.siblings('a').length == 0)
             {
                 actionBtns.css('padding-bottom',"50px");
-                bottomTop=actionBtns.offset().top+25;
+                bottomTop=actionBtns.offset().top+30;
                 $divOverlay.css({
                     position: 'absolute',
                     visibility:'visible',
@@ -283,7 +283,7 @@
             else if(actionBtns.siblings('a').length == 3)
             {
                 actionBtns.siblings('a').last().css('margin-bottom',"29px");
-                bottomTop=actionBtns.siblings('a').last().offset().top+25;
+                bottomTop=actionBtns.siblings('a').last().offset().top+30;
                 $divOverlay.css({
                     position: 'absolute',
                     visibility:'visible',
@@ -296,7 +296,7 @@
             else
             {
                 actionBtns.siblings('a').last().css('margin-bottom',"29px");
-                bottomTop=actionBtns.siblings('a').last().offset().top+25;
+                bottomTop=actionBtns.siblings('a').last().offset().top+30;
                 $divOverlay.css({
                     position: 'absolute',
                     visibility:'visible',
