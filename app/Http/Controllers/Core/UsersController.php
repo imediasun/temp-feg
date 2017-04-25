@@ -636,7 +636,7 @@ return $this->getIndex($request,$id);
     function postTrigger(Request $request)
     {
         $isActive = $request->get('isActive');
-        $userId = $request->get('userId');
+        $userId = $request->get('userId');dd($request->all());
         if ($isActive == "true") {
             $update = \DB::update('update users set active=1 where id=' . $userId);
         } else {
