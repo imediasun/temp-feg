@@ -1624,7 +1624,46 @@ class SyncHelpers
         }
         //DB::commit();
         DB::connection()->setFetchMode(PDO::FETCH_CLASS);
+
+
+        $L->log("Start Location User Assignments");
+        $sql = "DELETE FROM user_locations WHERE group_id IS NULL";
+        DB::delete($sql);
+
+        $templateDate = DB::select("SELECT * from location_user_roles_master");
+        $template = [];
+        foreach($templateDate as $tItem) {
+            $template[$templateDate->role_title] = $tItem;
+        }
+
+        $data = DB::select("SELECT r.dist_mgr_id, l.* FROM location l
+                            LEFT JOIN region r ON r.region=l.region_id;");
+
+        $runData = array_keys($template);
         
+        if ($data) {
+            DB::beginTransaction();
+            foreach($data as $item) {
+                $assignment = [];
+                $location = $item->id;
+                $assignment['General Manager'] = !empty($item->field_manager) ? $item->field_manager : 0;
+                $assignment['Regional Manager'] = !empty($item->dist_mgr_id) ? $item->dist_mgr_id : 0;
+                $assignment['Contact'] = !empty($item->contact_id) ? $item->contact_id : 0;
+                $assignment['Merchandise Contact'] = !empty($item->merch_contact_id) ? $item->merch_contact_id : 0;
+                
+                $assignment['Technical'] = !empty($item->tech_manager_id) ? $item->tech_manager_id : 0;
+                $assignment['VP'] = !empty($item->senior_vp_id) ? $item->senior_vp_id : 0;
+
+                $sql = "INSERT INTO user_locations (location_id, user_id, group_id) VALUES(?,?,?)";
+                foreach($runData as $runField) {
+                    if (!empty($assignment[$runField])) {
+                        DB::insert($sql, [$location, $assignment[$runField], $template[$runField]['group_id']]);
+                    }
+                }
+            }
+            DB::commit();
+        }
+        $L->log("END Location User Assignments");
         $L->log("End Database Migration");
         
     }
