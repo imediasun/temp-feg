@@ -611,7 +611,7 @@ class managefreightquoters extends Sximo
                 $to = $contact_email;
                 $cc = 'rich.pankey@fegllc.com';
                 $bcc = '';
-                $subject = 'FEG Has Schedule a Freight Shipment to You!';
+                $subject = 'FEG Has Scheduled a Freight Shipment to You!';
                 $message = '<p style="font-size:1em;">
 							' . $email_notes . '
 							<br>
