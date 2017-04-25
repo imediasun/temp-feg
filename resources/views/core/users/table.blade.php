@@ -131,7 +131,9 @@
                                <img alt="" src="{{url()}}/silouette.png" width="30" height="30" class="img-circle test" border="0"/>
                                <?php } ?>
                            @elseif($field['field'] =='active')
-                                <input type='checkbox' name="mycheckbox" @if($value != "Yes")  @else checked  @endif  />
+                                <input type='checkbox' name="mycheckbox" {{($value == "Yes") ?  'checked':'' }}	data-size="mini" data-animate="true"
+                                       data-on-text="Active" data-off-text="Inactive" data-handle-width="50px" class="toggle" data-id="{{$row->id}}"
+                                       id="toggle_trigger_{{$row->id}}" onSwitchChange="trigger()" />
                             @elseif($field['field'] =='date')
                                 {{  DateHelpers::formatDate($value) }}
                             @elseif($field['field'] =='last_login')
