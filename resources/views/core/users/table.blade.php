@@ -106,8 +106,8 @@
 			  </tr>
 			  @endif
 
-              @foreach ($rowData as $row)
-           		<?php $id = $row->id; ?>
+              @foreach ($rowData as $row){{dd($row)}}
+           		<?php $id = $row->id;?>
                 <tr class="editable" id="form-{{ $row->id }}" @if($setting['inline']!='false' && $setting['disablerowactions']=='false') data-id="{{ $row->id }}" ondblclick="showFloatingCancelSave(this)" @endif>
 					@if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
 						<td class="number"> <?php echo ++$i;?>  </td>
@@ -131,7 +131,7 @@
                                <img alt="" src="{{url()}}/silouette.png" width="30" height="30" class="img-circle test" border="0"/>
                                <?php } ?>
                            @elseif($field['field'] =='active')
-                                <input type='checkbox' name="mycheckbox" {{($value == "Yes") ?  'checked':$value }}	data-size="mini" data-animate="true"
+                                <input type='checkbox' name="mycheckbox" {{($value == "Yes") ?  'checked':'' }}	data-size="mini" data-animate="true"
                                        data-on-text="Active" data-off-text="Inactive" data-handle-width="50px" class="toggle" data-id="{{$row->id}}"
                                        id="toggle_trigger_{{$row->id}}" onSwitchChange="trigger()" />
                             @elseif($field['field'] =='date')
