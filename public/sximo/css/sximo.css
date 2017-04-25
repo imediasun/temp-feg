@@ -3180,12 +3180,12 @@ position: relative;
 .input-group.ig-full span.input-group-addon {
   float: left;
   padding: 8px 10px;
-  width: 4%;
+  width: 4.8%;
 }
 
 .input-group.ig-full input.form-control {
   float: left;
-  width: 96%;
+  width: 95.2%;
 }
 
 .body-small .navbar-static-side {
