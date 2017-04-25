@@ -1544,7 +1544,7 @@ class SyncHelpers
 
         DB::connection()->setFetchMode(PDO::FETCH_CLASS);
         $L->log("Start Location User Assignments");
-        $sql = "DELETE FROM user_locations WHERE group_id IS NULL";
+        $sql = "DELETE FROM user_locations WHERE group_id IS NOT NULL";
         DB::delete($sql);
 
         $templateDate = DB::select("SELECT * from location_user_roles_master");
