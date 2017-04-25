@@ -5,7 +5,7 @@
 
 <div class="sbox-content" style="padding: 0px 20px 0px 15px; border: medium none;">
     
-<div class="row c-margin" style="margin-bottom: 1px;">
+<div class="row c-margin m-b" style="margin-bottom: 1px;">
 	<div class="col-md-9" style="padding-left: 0px !important">
 			@if($access['is_add'] ==1)
 			{!! AjaxHelpers::buttonActionCreate($pageModule,$setting) !!}

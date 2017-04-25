@@ -1,4 +1,4 @@
-<div class="row c-margin">
+<div class="row c-margin m-b">
 	<div class="col-md-8">
 			<a href="{{ URL::to( $pageModule .'/search') }}" class="btn btn-sm btn-white" onclick="SximoModal(this.href,'Advanced Search'); return false;" ><i class="fa fa-search"></i>Advanced Search</a>
         @if(SiteHelpers::isModuleEnabled($pageModule))

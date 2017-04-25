@@ -1,4 +1,4 @@
-<div class="row c-margin">
+<div class="row c-margin m-b">
 
     <div class="col-md-3" style="margin-bottom: 8px;">
 

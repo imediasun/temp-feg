@@ -1,4 +1,4 @@
-<div class="row c-margin">
+<div class="row c-margin m-b">
 	<div class="col-md-8">
 			@if($access['is_add'] ==1)
 			{!! AjaxHelpers::buttonActionCreate($pageModule,$setting,"Upload Image") !!}
