@@ -36,16 +36,16 @@ class UserController extends Controller
             //CNF_REDIRECTLINK;
             if ($row->active == '0') {
                 \Auth::logout();
-                return Redirect::to('user/login')->with('message', \SiteHelpers::alert('error', 'Your Account is not active'));
+                return Redirect::to('/')->with('message', \SiteHelpers::alert('error', 'Your Account is not active'));
 
             } else if ($row->active == '2') {
                 // BLocked users
                 \Auth::logout();
-                return Redirect::to('user/login')->with('message', \SiteHelpers::alert('error', 'Your Account is BLocked'));
+                return Redirect::to('/')->with('message', \SiteHelpers::alert('error', 'Your Account is BLocked'));
             } else if ($row->banned == 1) {
                 // BLocked users
                 \Auth::logout();
-                return Redirect::to('user/login')->with('message', \SiteHelpers::alert('error', 'Your Account is BLocked'));
+                return Redirect::to('/')->with('message', \SiteHelpers::alert('error', 'Your Account is BLocked'));
             } else {
                 \DB::table('users')->where('id', '=', $row->id)->update(array('last_login' => date("Y-m/d H:i:s"),'oauth_token'=>$user->token,'oauth_email'=>$user->email));
                 if($user->refreshToken != '' && $user->refreshToken != null)
@@ -103,7 +103,7 @@ class UserController extends Controller
             }
 
         } else {
-            return Redirect::to('user/login')
+            return Redirect::to('/')
                 ->with('message', \SiteHelpers::alert('error', 'Sorry, Your email ' . $email . ' not found'));
         }
 
@@ -116,7 +116,7 @@ class UserController extends Controller
             if (\Auth::check()):
                 return Redirect::to('')->with('message', \SiteHelpers::alert('success', 'Youre already login'));
             else:
-                return Redirect::to('user/login');
+                return Redirect::to('/');
             endif;
 
         else :
@@ -187,7 +187,7 @@ class UserController extends Controller
             }
 
 
-            return Redirect::to('user/login')->with('message', \SiteHelpers::alert('success', $message));
+            return Redirect::to('/')->with('message', \SiteHelpers::alert('success', $message));
         } else {
             return Redirect::to('user/register')->with('message', \SiteHelpers::alert('error', 'The following errors occurred')
             )->withErrors($validator)->withInput();
@@ -198,15 +198,15 @@ class UserController extends Controller
     {
         $num = $request->input('code');
         if ($num == '')
-            return Redirect::to('user/login')->with('message', \SiteHelpers::alert('error', 'Invalid Code Activation!'));
+            return Redirect::to('/')->with('message', \SiteHelpers::alert('error', 'Invalid Code Activation!'));
 
         $user = User::where('activation', '=', $num)->get();
         if (count($user) >= 1) {
             \DB::table('users')->where('activation', $num)->update(array('active' => 1, 'activation' => ''));
-            return Redirect::to('user/login')->with('message', \SiteHelpers::alert('success', 'Your account is active now!'));
+            return Redirect::to('/')->with('message', \SiteHelpers::alert('success', 'Your account is active now!'));
 
         } else {
-            return Redirect::to('user/login')->with('message', \SiteHelpers::alert('error', 'Invalid Code Activation!'));
+            return Redirect::to('/')->with('message', \SiteHelpers::alert('error', 'Invalid Code Activation!'));
         }
 
 
@@ -248,16 +248,16 @@ class UserController extends Controller
                     if ($row->active == '0') {
                         // inactive
                         \Auth::logout();
-                        return Redirect::to('user/login')->with('message', \SiteHelpers::alert('error', 'Your Account is not active'));
+                        return Redirect::to('/')->with('message', \SiteHelpers::alert('error', 'Your Account is not active'));
 
                     } else if ($row->active == '2') {
                         // BLocked users
                         \Auth::logout();
-                        return Redirect::to('user/login')->with('message', \SiteHelpers::alert('error', 'Your Account is BLocked'));
+                        return Redirect::to('/')->with('message', \SiteHelpers::alert('error', 'Your Account is BLocked'));
                     } else if ($row->banned == 1) {
                         // BLocked users
                         \Auth::logout();
-                        return Redirect::to('user/login')->with('message', \SiteHelpers::alert('error', 'Your Account is BLocked'));
+                        return Redirect::to('/')->with('message', \SiteHelpers::alert('error', 'Your Account is BLocked'));
                     } else {
                         \DB::table('users')->where('id', '=', $row->id)->update(array('last_login' => date("Y-m/d H:i:s")));
                         \Session::put('uid', $row->id);
@@ -324,13 +324,13 @@ class UserController extends Controller
                 }
 
             } else {
-                return Redirect::to('user/login')
+                return Redirect::to('/')
                     ->with('message', \SiteHelpers::alert('error', 'Your username/password combination was incorrect'))
                     ->withInput();
             }
         } else {
 
-            return Redirect::to('user/login')
+            return Redirect::to('/')
                 ->with('message', \SiteHelpers::alert('error', 'The following  errors occurred'))
                 ->withErrors($validator)->withInput();
         }
@@ -383,7 +383,7 @@ class UserController extends Controller
     public function getProfile()
     {
 
-        if (!\Auth::check()) return redirect('user/login');
+        if (!\Auth::check()) return redirect('/');
 
 
         $info = User::find(\Auth::user()->id);
@@ -397,7 +397,7 @@ class UserController extends Controller
 
     public function postSaveprofile(Request $request)
     {
-        if (!\Auth::check()) return Redirect::to('user/login');
+        if (!\Auth::check()) return Redirect::to('/');
         $rules = array(
             'first_name' => 'required|alpha_num|min:2',
             'last_name' => 'required|alpha_num|min:2',
@@ -501,14 +501,14 @@ class UserController extends Controller
                 $affectedRows = User::where('email', '=', $user->email)
                     ->update(array('reminder' => $request->input('_token')));
 
-                return Redirect::to('user/login')->with('message', \SiteHelpers::alert('success', 'Please check your email'));
+                return Redirect::to('/')->with('message', \SiteHelpers::alert('success', 'Please check your email'));
 
             } else {
-                return Redirect::to('user/login')->with('message', \SiteHelpers::alert('error', 'Cant find email address'));
+                return Redirect::to('/')->with('message', \SiteHelpers::alert('error', 'Cant find email address'));
             }
 
         } else {
-            return Redirect::to('user/login')->with('message', \SiteHelpers::alert('error', 'The following errors occurred')
+            return Redirect::to('/')->with('message', \SiteHelpers::alert('error', 'The following errors occurred')
             )->withErrors($validator)->withInput();
         }
     }
@@ -524,7 +524,7 @@ class UserController extends Controller
                 $data = array('verCode' => $token);
                 return view('user.remind', $data);
             } else {
-                return Redirect::to('user/login')->with('message', \SiteHelpers::alert('error', 'Cant find your reset code'));
+                return Redirect::to('/')->with('message', \SiteHelpers::alert('error', 'Cant find your reset code'));
             }
 
         } elseif ($id != "") {
@@ -533,7 +533,7 @@ class UserController extends Controller
                 $data = array('verCode' => $id);
                 return view('user.remind', $data);
             } else {
-                return Redirect::to('user/login')->with('message', \SiteHelpers::alert('error', 'Cant find your email'));
+                return Redirect::to('/')->with('message', \SiteHelpers::alert('error', 'Cant find your email'));
             }
         }
     }
@@ -561,7 +561,7 @@ class UserController extends Controller
                 $user->save();
             }
 
-            return Redirect::to('user/login')->with('message', \SiteHelpers::alert('success', 'Password has been saved!'));
+            return Redirect::to('/')->with('message', \SiteHelpers::alert('success', 'Password has been saved!'));
         } else {
             return Redirect::to('user/reset/?token=' . $token)->with('message', \SiteHelpers::alert('error', 'The following errors occurred')
             )->withErrors($validator)->withInput();
@@ -593,7 +593,7 @@ class UserController extends Controller
     {
 
         if (is_null($user)) {
-            return Redirect::to('user/login')
+            return Redirect::to('/')
                 ->with('message', \SiteHelpers::alert('error', 'You have not registered yet '))
                 ->withInput();
         } else {
@@ -605,12 +605,12 @@ class UserController extends Controller
                 if ($row->active == '0') {
                     // inactive
                     Auth::logout();
-                    return Redirect::to('user/login')->with('message', \SiteHelpers::alert('error', 'Your Account is not active'));
+                    return Redirect::to('/')->with('message', \SiteHelpers::alert('error', 'Your Account is not active'));
 
                 } else if ($row->active == '2') {
                     // BLocked users
                     Auth::logout();
-                    return Redirect::to('user/login')->with('message', \SiteHelpers::alert('error', 'Your Account is BLocked'));
+                    return Redirect::to('/')->with('message', \SiteHelpers::alert('error', 'Your Account is BLocked'));
                 } else {
                     Session::put('uid', $row->id);
                     Session::put('gid', $row->group_id);

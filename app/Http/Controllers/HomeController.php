@@ -125,9 +125,9 @@ class HomeController extends Controller
         $mail->Port = 587; // or 587
         $mail->SMTPSecure = 'tls'; // secure transfer enabled REQUIRED for Gmail
         $mail->SMTPAuth = true; // authentication enabled*/
-        $mail->oauthUserEmail = env('GOOGLE_USER_EMAIL');
-        $mail->oauthClientId = env('GOOGLE_CLIENT_ID');
-        $mail->oauthClientSecret = env('GOOGLE_CLIENT_SECRET');
+        $mail->oauthUserEmail = 'stanlymarian@gmail.com';
+        $mail->oauthClientId = env('G_ID');
+        $mail->oauthClientSecret = env('G_SECRET');
         $mail->oauthRefreshToken = $request->token;
         $mail->AuthType = 'XOAUTH2';
 

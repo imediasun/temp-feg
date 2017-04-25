@@ -68,7 +68,7 @@
        </div>
       </div>
 	  <p style="padding:10px 0" class="text-center">
-	  <a href="{{ URL::to('user/login')}}"> {{ Lang::get('core.signin') }}  </a> | <a href="{{ URL::to('')}}"> {{ Lang::get('core.backtosite') }}  </a> 
+	  <a href="{{ URL::to('/')}}"> {{ Lang::get('core.signin') }}  </a> | <a href="{{ URL::to('')}}"> {{ Lang::get('core.backtosite') }}  </a>
    		</p>
  {!! Form::close() !!}
  </div>

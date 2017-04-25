@@ -905,8 +905,8 @@ class OrderController extends Controller
                         $mail->SMTPSecure = 'tls'; // secure transfer enabled REQUIRED for Gmail
                         $mail->SMTPAuth = true; // authentication enabled*/
                         $mail->oauthUserEmail = $google_acc->oauth_email;
-                        $mail->oauthClientId = env('GOOGLE_CLIENT_ID');
-                        $mail->oauthClientSecret = env('GOOGLE_CLIENT_SECRET');
+                        $mail->oauthClientId = env('G_ID');
+                        $mail->oauthClientSecret = env('G_SECRET');
                         $mail->oauthRefreshToken = $google_acc->oauth_token;
                         $mail->AuthType = 'XOAUTH2';
 

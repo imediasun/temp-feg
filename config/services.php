@@ -38,8 +38,8 @@ return [
 		//'client_id' => '',
 	   	//'client_id' => env('G_ID'),
 	    //'client_secret' => env('G_SECRET'),
-        'client_id' => env('GOOGLE_CLIENT_ID'),
-        'client_secret' => env('GOOGLE_CLIENT_SECRET'),
+        'client_id' => env('G_ID'),
+        'client_secret' => env('G_SECRET'),
 	    'redirect' => env('G_REDIRECT'),
 	],
 
