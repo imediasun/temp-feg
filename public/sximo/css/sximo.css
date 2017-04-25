@@ -2105,7 +2105,7 @@ background: #fff;
 }
 .action
 {
-
+  min-width: 60px;
 }
 .dd-handle:hover { color: #FFF; background: #4D90FD; border-color:#428BCA; }
 
