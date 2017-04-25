@@ -1542,7 +1542,7 @@ class SyncHelpers
 //        DB::commit();
 //        DB::connection()->setFetchMode(PDO::FETCH_CLASS);
 
-
+        DB::connection()->setFetchMode(PDO::FETCH_CLASS);
         $L->log("Start Location User Assignments");
         $sql = "DELETE FROM user_locations WHERE group_id IS NULL";
         DB::delete($sql);
@@ -1550,7 +1550,7 @@ class SyncHelpers
         $templateDate = DB::select("SELECT * from location_user_roles_master");
         $template = [];
         foreach($templateDate as $tItem) {
-            $template[$templateDate->role_title] = $tItem;
+            $template[$tItem->role_title] = $tItem;
         }
 
         $data = DB::select("SELECT r.dist_mgr_id, l.* FROM location l
