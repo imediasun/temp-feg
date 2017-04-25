@@ -3178,14 +3178,14 @@ position: relative;
 }
 
 .input-group.ig-full span.input-group-addon {
-  float: none;
-  padding: 6px 10px;
-  width: 1%;
+  float: left;
+  padding: 8px 10px;
+  width: 4%;
 }
 
 .input-group.ig-full input.form-control {
   float: left;
-  width: 100%;
+  width: 96%;
 }
 
 .body-small .navbar-static-side {
