@@ -642,7 +642,7 @@ return $this->getIndex($request,$id);
         } else {
             $update = \DB::update('update users set active=0 where id=' . $userId);
         }
-        dd($request->all(),$update);
+
         if ($update) {
             return response()->json(array(
                 'status' => 'success'
