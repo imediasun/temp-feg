@@ -636,13 +636,13 @@ return $this->getIndex($request,$id);
     function postTrigger(Request $request)
     {
         $isActive = $request->get('isActive');
-        $userId = $request->get('userId');dd($request->all());
+        $userId = $request->get('userId');
         if ($isActive == "true") {
             $update = \DB::update('update users set active=1 where id=' . $userId);
         } else {
             $update = \DB::update('update users set active=0 where id=' . $userId);
         }
-
+        dd($request->all(),$update);
         if ($update) {
             return response()->json(array(
                 'status' => 'success'
