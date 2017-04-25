@@ -83,6 +83,7 @@
         </thead>
 
         <tbody>
+        {{dd($tableGrid)}}
         	@if($access['is_add'] =='1' && $setting['inline']=='true')
 			<tr id="form-0" >
 				<td> # </td>
