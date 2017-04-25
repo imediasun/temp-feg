@@ -408,7 +408,7 @@ class ManagefreightquotersController extends Controller
             if (!empty($from_loading_info)) {
                 $from_loading_info = '<b>**' . $from_loading_info . '**</b> <br>';
             }
-            $subject = 'FREIGHT QUOTE for Family Entertainment Group - ';
+            $subject = 'FREIGHT QUOTE For Family Entertainment Group - ';
             if(!empty($from_city))
             {
                 $subject  .= 'From '.$from_city;
