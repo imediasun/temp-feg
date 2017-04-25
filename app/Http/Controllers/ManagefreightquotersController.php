@@ -408,7 +408,7 @@ class ManagefreightquotersController extends Controller
             if (!empty($from_loading_info)) {
                 $from_loading_info = '<b>**' . $from_loading_info . '**</b> <br>';
             }
-            $subject = 'FREIGHT QUOTE for Family Entertainment Group - ';
+            $subject = 'FREIGHT QUOTE For Family Entertainment Group - ';
             if(!empty($from_city))
             {
                 $subject  .= 'From '.$from_city;
@@ -590,8 +590,8 @@ class ManagefreightquotersController extends Controller
             $freightCompanyQuery = \DB::select('SELECT rep_email FROM freight_companies WHERE active = 1  AND rep_email != ""');
             foreach ($freightCompanyQuery as $rowFreight) {
                 $to = $rowFreight->rep_email;
-                $to = "stanlymarian@gmail.com";//hardcoded email for testing
-                //$headers = "Bcc: " . $bcc . "\r\n";//commented for testing
+                //$to = "stanlymarian@gmail.com";//hardcoded email for testing
+                $headers = "Bcc: " . $bcc . "\r\n";//commented for testing
                 $headers = "From: " . $from . "\r\n" . "X-Mailer: php";
                 $headers .= "MIME-Version: 1.0\r\n";
                 $headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
