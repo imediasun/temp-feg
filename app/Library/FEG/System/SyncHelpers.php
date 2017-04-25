@@ -1574,7 +1574,7 @@ class SyncHelpers
                 $sql = "INSERT INTO user_locations (location_id, user_id, group_id) VALUES(?,?,?)";
                 foreach($runData as $runField) {
                     if (!empty($assignment[$runField])) {
-                        DB::insert($sql, [$location, $assignment[$runField], $template[$runField]['group_id']]);
+                        DB::insert($sql, [$location, $assignment[$runField], $template[$runField]->group_id]);
                     }
                 }
             }
@@ -1582,7 +1582,7 @@ class SyncHelpers
         }
         $L->log("END Location User Assignments");
         $L->log("End Database Migration");
-        return;
+        return true;
 
         $L->log("       freight_orders start");
         //freight_orders => freight_location_to
