@@ -1,4 +1,10 @@
 {{--*/      use App\Library\FEG\System\FEGSystemHelper;                   /*--}}
+<style>
+    .collapse-close
+    {
+        top:0 !important;
+    }
+</style>
 @if($setting['view-method'] =='native')
 	<div class="sbox">
 		<div class="ticketHeaderContainer clearfix">
