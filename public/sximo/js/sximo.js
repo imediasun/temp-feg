@@ -118,15 +118,7 @@ jQuery(document).ready(function($){
 		$(this).parent('div').empty();	
 		return false;
 	});	
-	setTimeout(function(){ 
-	
-		$('.previewImage.fancybox').each(function () {
-		$(this).addClass('displayBlock');
-        $(this).css('display','block')
-	
-	}, 2000)
-	
-    });    	
+	  	
 })
 function debounce(func, wait, immediate) {
     var timeout;
