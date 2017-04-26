@@ -118,7 +118,10 @@ jQuery(document).ready(function($){
 		$(this).parent('div').empty();	
 		return false;
 	});	
-		    	
+		$('.previewImage.fancybox').each(function () {
+		console.log($(this));
+        $(this).css('display','block','important')
+    });    	
 })
 function debounce(func, wait, immediate) {
     var timeout;
