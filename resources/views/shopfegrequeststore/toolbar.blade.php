@@ -20,7 +20,7 @@
 </div>
 
 
-<div class="row m-b" >
+<div class="row  c-margin" >
 
     <div class="col-md-8">
         @if($access['is_remove'] ==1)
