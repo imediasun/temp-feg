@@ -277,7 +277,7 @@ class RedemptioncountergallaryController extends Controller
 //and save it on your server...
         if($img->save('./uploads/gallary/' . $id .'_rotated.jpg'))
         {
-            \DB::update("UPDATE img_uploads SET img_rotation=$db_angle WHERE id=$id");
+            \DB::update("UPDATE img_uploads SET img_rotation=int()$db_angle WHERE id=$id");
             $imgThumb->save('./uploads/gallary/' . $id .'_thumb_rotated.jpg');
             return response()->json(array(
                 'status' => 'success',
