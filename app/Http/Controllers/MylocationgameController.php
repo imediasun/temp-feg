@@ -319,7 +319,6 @@ class MylocationgameController extends Controller
     function postSave(Request $request, $id = null)
     {
         $products = array();
-dd($request->all());
         $rules = $this->validateForm();
         $validator = Validator::make($request->all(), $rules);
 
@@ -330,6 +329,7 @@ dd($request->all());
                 $data = $this->validatePost('game', true);
             //after validating data array become very small, so merge with post data
             $data = array_merge($_POST, $data);
+            dd($_POST,$data);
            if(isset($data['id']))
             {
                 $gameID = $data['id'];
