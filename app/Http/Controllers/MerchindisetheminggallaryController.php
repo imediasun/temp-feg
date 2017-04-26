@@ -267,7 +267,7 @@ class MerchindisetheminggallaryController extends Controller
         $img = Image::make('./uploads/gallary/' . $id . '.jpg');
         $imgThumb = Image::make('./uploads/gallary/' . $id . '_thumb.jpg');
 // Rotate
-        $img->rotate($angle);
+        $img->rotate((int)$angle);
         $imgThumb->rotate($angle);
 //and save it on your server...
         if($img->save('./uploads/gallary/' . $id .'_rotated.jpg'))
