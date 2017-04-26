@@ -40,7 +40,7 @@ return [
 	    //'client_secret' => env('G_SECRET'),
         'client_id' => env('G_ID'),
         'client_secret' => env('G_SECRET'),
-	    'redirect' => env('G_REDIRECT'),
+	    'redirect' => url('/').env('G_REDIRECT'),
 	],
 
 	'twitter' => [
