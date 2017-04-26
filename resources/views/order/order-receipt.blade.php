@@ -134,7 +134,7 @@
                         <div class="form-group clearfix">
                             
                             <label for="date_received" class=" control-label col-md-4 text-right">
-                                Date Received </label>
+                                Date Received: </label>
                             <div class="col-md-8">
                                 <?php if(isset($data['date_received']) && ($data['date_received']!='0000-00-00'))
                                   $date_received = DateHelpers::formatDate($data['date_received']);
@@ -147,7 +147,7 @@
                         <div class="form-group clearfix">
                             
                             <label for="vendor_id" class=" control-label col-md-4 text-right">
-                                Order Status
+                                Order Status:
                             </label>
                             <div class="col-md-8">
                                 <select name='order_status' rows='5' id='order_status_id' class='select3' required onchange="removeBorder('order_status_id')");></select>
@@ -157,7 +157,7 @@
                         <div class="form-group clearfix" id="tracking_numberdiv" style="display:none">
                             
                             <label id ="tracking_number_lbl" for="vendor_id" class=" control-label col-md-4 text-left">
-                                Tracking Number
+                                Tracking Number:
                             </label>
                             <div class="col-md-8">
                                 <input type="text"  class="form-control" name="tracking_number" id="tracking_number"/>
@@ -167,7 +167,7 @@
                         <div class="form-group clearfix">
                             
                             <label for="vendor_id" class=" control-label col-md-4 text-right">
-                                Notes </label>
+                                Notes: </label>
                             <div class="col-md-8">
                                 <textarea class="form-control" name="notes" rows="7" cols="48" id="notes" onchange="removeBorder('order_status')" ></textarea>
                             </div>
