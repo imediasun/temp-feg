@@ -1,4 +1,4 @@
-<div class="row c-margin m-b">
+<div class="row c-margin">
 
     {!! Form::open(array('url'=>'managefegrequeststore/multirequestorderfill/', 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'managefegrequeststoreFormAjax')) !!}
     <div >

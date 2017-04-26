@@ -1,4 +1,4 @@
-<div class="row c-margin m-b">
+<div class="row c-margin">
     <div class="col-md-6">
         	@if($access['is_add'] ==1)
 			{!! AjaxHelpers::buttonActionCreate($pageModule,$setting,"Get Freight Quote") !!}

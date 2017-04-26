@@ -1,4 +1,4 @@
-<div class="row c-margin m-b">
+<div class="row c-margin">
 	<div class="col-md-9">
 	    <button class="btn btn-sm btn-white addNewGameButton" ><i class="fa fa-plus"></i>Add Game</button>
 		<a href="{{ URL::to( $pageModule .'/search') }}" class="btn btn-sm btn-white" onclick="SximoModal(this.href,'Advanced Search'); return false;" ><i class="fa fa-search"></i>Advanced Search</a>

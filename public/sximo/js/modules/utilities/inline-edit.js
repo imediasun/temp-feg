@@ -496,7 +496,7 @@
         var globalSaveButton = container.find('#rcv');
         if (!globalSaveButton.length) {
             globalSaveButton = $('<button id="rcv" onclick="saveAllInlineForm(event, this);" class="btn btn-sm btn-white" type="button"> Save </button>');
-            container.find('.m-b .pull-right').prepend(globalSaveButton);
+            container.find('.c-margin .pull-right').prepend(globalSaveButton);
         }        
         if(editingRowsCount) {
             globalSaveButton.show();
@@ -520,7 +520,8 @@
     window.initiateInlineFormFields = initiateInlineFormFields = function (container, url, rowHookParams) {
         var cellsHookParams = $.extend({}, rowHookParams, {'cells': container});
         App.autoCallbacks.runCallback('inline.cells.config.before', cellsHookParams);
-        $(container).css('height',$(container).height()+"px");
+        var containerHeight=$(container).height()+10;
+        $(container).css('height',containerHeight+"px");
         container.find('.date').datepicker({format:'mm/dd/yyyy', autoclose: true});
         container.find('.datetime').datetimepicker({format: 'mm/dd/yyyy HH:ii:ss P', autoclose: true});
 

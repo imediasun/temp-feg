@@ -36,7 +36,7 @@ width: 75%">
         {!! Form::close() !!}
     </div>
  </div>   
-    <div class="row c-margin m-b" style="margin-left:0px; margin-right:0px;">
+    <div class="row c-margin" style="margin-left:0px; margin-right:0px;">
         
         <div class="col-md-9">
             @if($access['is_add'] ==1)
