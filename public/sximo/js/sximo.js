@@ -119,6 +119,7 @@ jQuery(document).ready(function($){
 		return false;
 	});	
 		$('.previewImage.fancybox').each(function () {
+		console.log($(this));
         $(this).css('display','block','important')
     });    	
 })
