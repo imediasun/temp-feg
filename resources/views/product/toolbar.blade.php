@@ -36,7 +36,7 @@ width: 75%">
         {!! Form::close() !!}
     </div>
  </div>   
-    <div class="row c-margin m-b" style="margin-left:0px; margin-right:0px;">
+    <div class="row c-margin" style="margin-left:0px; margin-right:0px;">
         
         <div class="col-md-9">
             @if($access['is_add'] ==1)
@@ -66,8 +66,8 @@ width: 75%">
                     </select>
                         @if(\Session::get('uid') ==  \SiteHelpers::getConfigOwner($config_id))
                             <a id="edit-cols" href="{{ URL::to('tablecols/arrange-cols/'.$pageModule.'/edit') }}" class="btn btn-sm btn-white tips"
-                               onclick="SximoModal(this.href,'Arrange Columns'); return false;" title="Edit Column Arrangement">  <i class="fa fa-pencil-square-o"></i></a>
-                            <button id="delete-cols" href="{{ URL::to('tablecols/arrange-cols/'.$pageModule.'/delete') }}" class="btn btn-sm btn-white tips" title="Delete Column Arrangement">  <i class="fa fa-trash-o"></i></button>
+                               onclick="SximoModal(this.href,'Arrange Columns'); return false;" title="Edit column arrangement">  <i class="fa fa-pencil-square-o"></i></a>
+                            <button id="delete-cols" href="{{ URL::to('tablecols/arrange-cols/'.$pageModule.'/delete') }}" class="btn btn-sm btn-white tips" title="Delete column arrangement">  <i class="fa fa-trash-o"></i></button>
                         @endif
                     @endif
             @endif

@@ -250,7 +250,7 @@ class ShopfegrequeststoreController extends Controller
         $rules = $this->validateForm();
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
-            $data = $this->validatePost('products');
+            $data = $this->validatePost('products',true);
             $id = $this->model->insertRow($data, $id);
 
             return response()->json(array(

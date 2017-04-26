@@ -315,22 +315,22 @@ class GamesintransitController extends Controller
     {
         if(strlen(trim($asset_num)) < 8 || strlen(trim($asset_num)) > 8)
         {
-            return json_encode(array('status'=>'error','message'=>'Asset Number must have 8 digits'));
+            return json_encode(array('status'=>'error','message'=>'Asset number must have 8 digits'));
 
         }
         if(preg_match('/[^0-9]/', trim($asset_num)) === 1)
         {
-            return json_encode(array('status'=>'error','message'=>'Asset Number must be a Number'));
+            return json_encode(array('status'=>'error','message'=>'Asset number must be a number'));
 
         }
         $row=\DB::select('select id from game where id ='.trim($asset_num));
         if(count($row) > 0)
         {
-            echo json_encode(array('status'=>'error','message'=>'This Asset Number not available'));
+            echo json_encode(array('status'=>'error','message'=>'This asset number is not available'));
         }
         else
         {
-            echo json_encode(array('status'=>'success','message'=>'This Asset Number is available'));
+            echo json_encode(array('status'=>'success','message'=>'This asset number is available'));
         }
     }
 }
