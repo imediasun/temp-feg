@@ -11,14 +11,15 @@
     <div class="sbox">
         <div class="sbox-title">
             <h4>
-                <?php
-                $soldValue = $row->sold;
-                $statusName = $row->game_status;
-                $isSold = $soldValue === 1;
-                $headingStatus = $isSold ? "Disposed" : ($row->status_id === 1 ? '' : $statusName);
 
-                ?>
             @if ($isEdit)
+                    <?php
+                    $soldValue = $row->sold;
+                    $statusName = $row->game_status;
+                    $isSold = $soldValue === 1;
+                    $headingStatus = $isSold ? "Disposed" : ($row->status_id === 1 ? '' : $statusName);
+
+                    ?>
                     <i class="fa fa-pencil"></i>
                         @if($headingStatus == '') Edit My Location's Game @else Edit Game {{$headingStatus}}@endif
 

@@ -63,7 +63,7 @@
 	<div class="sbox-title">
 		<h4> 
             <i class="fa fa-eye"></i>
-            @if($headingStatus == '') Edit My Location's Game @else Edit Game {{$headingStatus}}@endif
+            @if($headingStatus == '') Move My Location's Game @else Move Game {{$headingStatus}}@endif
             {{--{{ $gameTitle }} ({{ $assetID }})
             @if (!empty($locationId))
             <small>at {{ $locationIdName }} </small>

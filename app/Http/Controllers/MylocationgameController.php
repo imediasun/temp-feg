@@ -319,7 +319,6 @@ class MylocationgameController extends Controller
     function postSave(Request $request, $id = null)
     {
         $products = array();
-
         $rules = $this->validateForm();
         $validator = Validator::make($request->all(), $rules);
 
@@ -330,6 +329,10 @@ class MylocationgameController extends Controller
                 $data = $this->validatePost('game', true);
             //after validating data array become very small, so merge with post data
             $data = array_merge($_POST, $data);
+            if(isset($data['img']))
+            {
+                unset($data['img']); // Todo see where from img key is setting
+            }
            if(isset($data['id']))
             {
                 $gameID = $data['id'];
@@ -372,7 +375,7 @@ class MylocationgameController extends Controller
             if (isset($data['_for_sale'])) unset($data['_for_sale']);
             if (isset($data['_not_debit'])) unset($data['_not_debit']);
             if (isset($data['_sold'])) unset($data['_sold']);
-            
+
             $id = $this->model->insertRow($data, $id);
             /*
             \DB::table('game_product')

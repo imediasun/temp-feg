@@ -490,13 +490,22 @@ class managefreightquoters extends Sximo
                         }
 
                         $from = \Session::get('eid');
-                        $to = $this->get_user_emails('users_plus_district_and_field_managers', $data['request']['loc'][$i]);
-                        $to = "stanlymarian@gmail.com";//hardcoded email for testing
-                        //$cc = 'freight-notifications@fegllc.com';
-                        $cc = 'jdanial710@gmail.com';
-                        //$bcc = 'support@fegllc.com';
-                        $bcc = 'daynaedvin@gmail.com';
-                        $subject = '('.(int)$num_games_per_destination.')'.' Game[s] scheduled for delivery to ' . $locationName . '!';
+                        if(env('APP_ENV', 'development') == 'production')
+                        {
+                            $to = $this->get_user_emails('users_plus_district_and_field_managers', $data['request']['loc'][$i]);
+                            $cc = 'freight-notifications@fegllc.com';
+                            $bcc = 'support@fegllc.com';
+                        }
+                        else
+                        {
+                            $to = "stanlymarian@gmail.com";//hardcoded email for testing
+
+                            $cc = 'jdanial710@gmail.com';
+
+                            $bcc = 'daynaedvin@gmail.com';
+                        }
+
+                        $subject = ((int)$num_games_per_destination == 0)?('Scheduled for delivery to ' . $locationName . '!'):('('.(int)$num_games_per_destination.')'.' Game[s] scheduled for delivery to ' . $locationName . '!');
                         $message = '<p>
 										' . $email_notes . '
 										<br>
@@ -607,11 +616,19 @@ class managefreightquoters extends Sximo
 									' . $data['request']['dimension'][$i];
                     }
                 }
+                if(env('APP_ENV', 'development') == 'production')
+                {
+                    $to = $contact_email;
+                    $cc = 'rich.pankey@fegllc.com';
+                }
+                else
+                {
+                    $to = "stanlymarian@gmail.com";//hardcoded email for testing
+                    $cc = 'jdanial710@gmail.com';
+                }
                 $from = 'support@fegllc.com';
-                $to = $contact_email;
-                $cc = 'rich.pankey@fegllc.com';
                 $bcc = '';
-                $subject = 'FEG Has Schedule a Freight Shipment to You!';
+                $subject = 'FEG has scheduled a Freight Shipment to you!';
                 $message = '<p style="font-size:1em;">
 							' . $email_notes . '
 							<br>

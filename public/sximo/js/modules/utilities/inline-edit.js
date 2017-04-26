@@ -226,7 +226,7 @@
             row.removeClass('inline_edit_applied');
             row.nextAll('.inline_edit_applied').each(function(){
                 var id=$(this).data('id');
-                var height=$(this).offset().top+30;
+                var height=$(this).offset().top+38;
                 if($(this).children('td[data-values="action"]').children('.action').siblings('a').length > 0)
                 {
                     height=$(this).children('td[data-values="action"]').children('.action').siblings('a').last().offset().top+25;
@@ -270,7 +270,7 @@
             if(actionBtns.siblings('a').length == 0)
             {
                 actionBtns.css('padding-bottom',"50px");
-                bottomTop=actionBtns.offset().top+25;
+                bottomTop=actionBtns.offset().top+30;
                 $divOverlay.css({
                     position: 'absolute',
                     visibility:'visible',
@@ -283,7 +283,7 @@
             else if(actionBtns.siblings('a').length == 3)
             {
                 actionBtns.siblings('a').last().css('margin-bottom',"29px");
-                bottomTop=actionBtns.siblings('a').last().offset().top+25;
+                bottomTop=actionBtns.siblings('a').last().offset().top+30;
                 $divOverlay.css({
                     position: 'absolute',
                     visibility:'visible',
@@ -296,7 +296,7 @@
             else
             {
                 actionBtns.siblings('a').last().css('margin-bottom',"29px");
-                bottomTop=actionBtns.siblings('a').last().offset().top+25;
+                bottomTop=actionBtns.siblings('a').last().offset().top+30;
                 $divOverlay.css({
                     position: 'absolute',
                     visibility:'visible',
@@ -496,7 +496,7 @@
         var globalSaveButton = container.find('#rcv');
         if (!globalSaveButton.length) {
             globalSaveButton = $('<button id="rcv" onclick="saveAllInlineForm(event, this);" class="btn btn-sm btn-white" type="button"> Save </button>');
-            container.find('.m-b .pull-right').prepend(globalSaveButton);
+            container.find('.c-margin .pull-right').prepend(globalSaveButton);
         }        
         if(editingRowsCount) {
             globalSaveButton.show();
@@ -520,7 +520,8 @@
     window.initiateInlineFormFields = initiateInlineFormFields = function (container, url, rowHookParams) {
         var cellsHookParams = $.extend({}, rowHookParams, {'cells': container});
         App.autoCallbacks.runCallback('inline.cells.config.before', cellsHookParams);
-        $(container).css('height',$(container).height()+"px");
+        var containerHeight=$(container).height()+10;
+        $(container).css('height',containerHeight+"px");
         container.find('.date').datepicker({format:'mm/dd/yyyy', autoclose: true});
         container.find('.datetime').datetimepicker({format: 'mm/dd/yyyy HH:ii:ss P', autoclose: true});
 

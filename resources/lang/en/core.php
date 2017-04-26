@@ -2,7 +2,7 @@
 
 return array(
 // General 
-	"norecord" => "No Record Found",
+	"norecord" => "No record found",
 	"create" => "Create New",
 	"add_to_cart" => "Item added to cart",
 	"already_add_to_cart" => "Item already added to cart",
@@ -157,7 +157,7 @@ return array(
 	
 /* Code BuilderModule */
 	"t_module"						=> "Module",
-	"t_modulesmall"					=> "List Of All Modules",// updated apidevlab
+	"t_modulesmall"					=> "List of all modules",// updated apidevlab
 	"tab_installed"					=> "Installed Modules", // updated apidevlab
 	"tab_core"						=> "Core Modules", // updated apidevlab
 	"fr_modtitle"					=> "Module Name / Title",
@@ -199,7 +199,7 @@ return array(
     "request_sent_success"      => "Request sent successfully",
     "request_send_fial"         => "Error in Sending Request",
     "note_freight_paid_"         => "Status Changed,Paid Successfully",
-    "note_freight_paid"         => "Freight Order Paid Successfully",
+    "note_freight_paid"         => "Freight order paid successfully",
      "mail_sent_success"        => "Email sent successfully",
     "delete_success"            => "Deleted successfully",
     "delete_error"              => "Some error occurred while deleting",
@@ -208,7 +208,7 @@ return array(
     "smtp_connect_failed"       => "Mail Error: SMTP connect() failed",
     "gmail_smtp_connect_failed" => 'To allow system to send emails using your Gmail account, you must turn on less secure apps by clicking <a target="_blank" href="https://www.google.com/settings/u/6/security/lesssecureapps?pageId=none">Here</a>',
     "error_sending_mail"        => "An error occurred in sending email.",
-    "note_success_denied"  => "Request denieoccurred while denying"
+    "note_success_denied"  => "Request denied successfully"
 
 
 );

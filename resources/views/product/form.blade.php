@@ -87,7 +87,20 @@
 
                         </div>
                     </div>
+                    <div class="form-group  ">
+                        <label for="Quantity Per Case" class=" control-label col-md-4 text-left">
+                            {!! SiteHelpers::activeLang('Quantity Per Case', (isset($fields['num_items']['language'])?
+                            $fields['num_items']['language'] : array())) !!}
+                        </label>
 
+                        <div class="col-md-6">
+                            {!! Form::number('num_items', $row['num_items'],array('class'=>'form-control',
+                            'placeholder'=>'','step'=>1,'min'=>1,'placeholder'=>'0', 'id'=>'qty_input')) !!}
+                        </div>
+                        <div class="col-md-2">
+
+                        </div>
+                    </div>
                     <div class="form-group  ">
                         <label for="Prod Type Id" class=" control-label col-md-4 text-left">
                             {!! SiteHelpers::activeLang('Product Type', (isset($fields['prod_type_id']['language'])?
@@ -119,20 +132,7 @@
 
                         </div>
                     </div>
-                    <div class="form-group  ">
-                        <label for="Quantity Per Case" class=" control-label col-md-4 text-left">
-                            {!! SiteHelpers::activeLang('Quantity Per Case', (isset($fields['num_items']['language'])?
-                            $fields['num_items']['language'] : array())) !!}
-                        </label>
 
-                        <div class="col-md-6">
-                            {!! Form::number('num_items', $row['num_items'],array('class'=>'form-control',
-                            'placeholder'=>'','step'=>1,'min'=>1,'placeholder'=>'0', 'id'=>'qty_input')) !!}
-                        </div>
-                        <div class="col-md-2">
-
-                        </div>
-                    </div>
 
                     <div class="form-group  ">
                         <label for="Case Price" class=" control-label col-md-4 text-left">

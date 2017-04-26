@@ -132,9 +132,9 @@ class addtocart extends Sximo
                 $row = array(
                     'vendor_name' => $row->vendor_name,
                     'vendor_id' => $row->vendor_id,
-                    'vendor_min_order_amt' => $row->min_order_amt,
-                    'vendor_total' => $row->total,
-                    'amt_short' => $row->amt_short
+                    'vendor_min_order_amt' => $this->parseNumber($row->min_order_amt),
+                    'vendor_total' => $this->parseNumber($row->total),
+                    'amt_short' => $this->parseNumber($row->amt_short)
                 );
 
                 $array[] = $row;
@@ -145,7 +145,7 @@ class addtocart extends Sximo
                     $amt_short_message  .= $data['amt_short_message'].$row['vendor_name'].' order is short by $'.$row['amt_short'].'. ';
                 }
 
-                $data['shopping_cart_total'] = $data['shopping_cart_total'] + $row['vendor_total'];
+                $data['shopping_cart_total'] = $this->parseNumber($data['shopping_cart_total'] + $row['vendor_total']);
             }
             $data['amt_short_message']=$amt_short_message;
             if(isset($array))
