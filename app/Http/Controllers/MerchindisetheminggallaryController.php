@@ -259,7 +259,7 @@ class MerchindisetheminggallaryController extends Controller
     {
         $id = $request->get('id');
         $angle = $request->get('angle');
-        $db_angle=$angle;
+        $db_angle=(int)$angle;
         if (abs($angle) == 90) {
             $angle = -$angle;
         }
@@ -267,8 +267,8 @@ class MerchindisetheminggallaryController extends Controller
         $img = Image::make('./uploads/gallary/' . $id . '.jpg');
         $imgThumb = Image::make('./uploads/gallary/' . $id . '_thumb.jpg');
 // Rotate
-        $img->rotate($angle);
-        $imgThumb->rotate($angle);
+        $img->rotate((int)$angle);
+        $imgThumb->rotate((int)$angle);
 //and save it on your server...
         if($img->save('./uploads/gallary/' . $id .'_rotated.jpg'))
         {
