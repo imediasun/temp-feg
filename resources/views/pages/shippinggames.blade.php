@@ -3,7 +3,7 @@
         <div class="sbox animated fadeInRight">
             <div class="sbox-title"> {{ $pageTitle }}</div>
             <div class="sbox-content">
-                <div class="col-md-8 col-md-offset-2" style="padding-top: 50px; padding-right: 50px; padding-bottom: 50px; background-color: #ffffff;">
+                <div class="col-md-12" style="padding-top: 50px; padding-right: 50px; padding-bottom: 50px; background-color: #ffffff;">
 
                     <p><strong>DOWNLOAD<br><a href="/tech/blank_BOL_form.doc" target="_blank"><span style="color: #808080;">Blank BOL Form</span></a></strong> <br><br><strong>VERY
                             IMPORTANT Checklist..</strong> <br><span style="color: #ff0000;"><strong>Game must be in

@@ -22,13 +22,13 @@ class DashboardController extends Controller
     {
         if(Auth::user() && Auth::user()->redirect_link)
         {
-            
-            return redirect(Auth::user()->redirect_link);
+
+            return redirect(Auth::user()->redirect_link == "dashboard"?'user/profile':Auth::user()->redirect_link);
         }
         $group = Auth::user()?Auth::user()->group_id:0;
         $redirect = Groups::find($group)?Groups::find($group)->redirect_link:'';
 
-        if (!empty($redirect)) {
+        if (!empty($redirect) && $redirect != "dashboard") {
 
             return redirect($redirect);
         }

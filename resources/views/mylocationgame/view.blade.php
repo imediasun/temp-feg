@@ -63,7 +63,7 @@
 	<div class="sbox-title">
 		<h4> 
             <i class="fa fa-eye"></i>
-            My Location Game
+            @if($headingStatus == '') Edit My Location's Game @else Edit Game {{$headingStatus}}@endif
             {{--{{ $gameTitle }} ({{ $assetID }})
             @if (!empty($locationId))
             <small>at {{ $locationIdName }} </small>
@@ -113,7 +113,7 @@
         <div class="downforRepairDetails" style="display: none;" >
             <div class="form-group">
                 <label for="date_down" class=" control-label col-md-4">
-                    Date Game Down</label>
+                    Date Game Down:</label>
                 <div class="col-md-8">
                     <div class="input-group" style="width:150px !important;">
                         {!! Form::text('date_down', "", array(
@@ -142,13 +142,13 @@
         @if (isset($lastServiceData))        
         <div class="downforRepairDetailsText" > 
             <div class="form-group clearfix">
-                <label class="control-label col-md-4">Date Down</label>
+                <label class="control-label col-md-4">Date Down:</label>
                 <div class="col-md-8">
                     {!! DateHelpers::formatDate($lastServiceData->date_down) !!}
                 </div>
             </div>
             <div class="form-group clearfix">
-                <label class=" control-label col-md-4">Problem</label>
+                <label class=" control-label col-md-4">Problem:</label>
                 <div class="col-md-8">
                     {!! $lastServiceData->problem !!}
                 </div>
@@ -235,69 +235,69 @@
         </div>
         <div class="form-group  clearfix" >
             <label class="col-md-4">
-                {!! SiteHelpers::activeLang('Game Title', (isset($fields['game_title']['language'])? $fields['game_title']['language'] : array())) !!}
+                {!! SiteHelpers::activeLang('Game Title', (isset($fields['game_title']['language'])? $fields['game_title']['language'] : array())) !!}:
             </label>
             <div class="col-md-8">{{ $gameTitle }}</div>
         </div>
         <div class="form-group clearfix" >
             <label class="col-md-4">
-                {!! SiteHelpers::activeLang('Manufacturer', (isset($fields['vendor_name']['language'])? $fields['vendor_name']['language'] : array())) !!}
+                {!! SiteHelpers::activeLang('Manufacturer', (isset($fields['vendor_name']['language'])? $fields['vendor_name']['language'] : array())) !!}:
             </label>
             <div class="col-md-8">{{ $manufacturer }}</div>
         </div>
         <div class="form-group  clearfix" >
             <label class="col-md-4">
-                {!! SiteHelpers::activeLang('Game Type', (isset($fields['game_type']['language'])? $fields['game_type']['language'] : array())) !!}
+                {!! SiteHelpers::activeLang('Game Type', (isset($fields['game_type']['language'])? $fields['game_type']['language'] : array())) !!}:
             </label>
             <div class="col-md-8">{{ $gameType }}</div>
         </div>        
         <div class="form-group clearfix " >
             <label class="col-md-4">
-                {!! SiteHelpers::activeLang('Asset ID', (isset($fields['asset_number']['language'])? $fields['asset_number']['language'] : array())) !!}
+                {!! SiteHelpers::activeLang('Asset ID', (isset($fields['asset_number']['language'])? $fields['asset_number']['language'] : array())) !!}:
             </label>
             <div class="col-md-8">{{ $assetID }}</div>
         </div>
         <div class="form-group  clearfix" >
             <label class="col-md-4">
-                {!! SiteHelpers::activeLang('Serial #', (isset($fields['serial']['language'])? $fields['serial']['language'] : array())) !!}
+                {!! SiteHelpers::activeLang('Serial #', (isset($fields['serial']['language'])? $fields['serial']['language'] : array())) !!}:
             </label>
             <div class="col-md-8">{{ $serialNumber }}</div>
         </div>
         <div class="form-group  clearfix" >
             <label class="col-md-4">
-                {!! SiteHelpers::activeLang('Alt. Version/Signage', (isset($fields['version']['language'])? $fields['version']['language'] : array())) !!}
+                {!! SiteHelpers::activeLang('Alt. Version/Signage', (isset($fields['version']['language'])? $fields['version']['language'] : array())) !!}:
             </label>
             <div class="col-md-8">{{ $version }}</div>
         </div>
         <div class="form-group  clearfix" >
             <label class="col-md-4">
-                {!! SiteHelpers::activeLang('Game Converted from', (isset($fields['prev_game_name']['language'])? $fields['prev_game_name']['language'] : array())) !!}
+                {!! SiteHelpers::activeLang('Game Converted from', (isset($fields['prev_game_name']['language'])? $fields['prev_game_name']['language'] : array())) !!}:
             </label>
             <div class="col-md-8">{{ $prevGameName }}</div>
         </div>
         @if (!$isNewlyAddedGame)
         <div class="form-group clearfix" >
             <label class="col-md-4">
-                {!! SiteHelpers::activeLang('Current Location', (isset($fields['serial']['language'])? $fields['serial']['language'] : array())) !!}
+                {!! SiteHelpers::activeLang('Current Location', (isset($fields['serial']['language'])? $fields['serial']['language'] : array())) !!}:
             </label>
             <div class="col-md-8">{{ $locationIdName }}</div>
         </div>
         @endif
         <div class="form-group clearfix" >
             <label class="col-md-4">
-                {!! SiteHelpers::activeLang('Previous Location', (isset($fields['prev_location_id']['language'])? $fields['prev_location_id']['language'] : array())) !!}
+                {!! SiteHelpers::activeLang('Previous Location', (isset($fields['prev_location_id']['language'])? $fields['prev_location_id']['language'] : array())) !!}:
             </label>
             <div class="col-md-8">{{ $prevLocationIdName }}</div>
         </div>
         <div class="form-group clearfix" >
             <label class="col-md-4">
-                {!! SiteHelpers::activeLang('Last Edited By', (isset($fields['last_edited_by']['language'])? $fields['last_edited_by']['language'] : array())) !!}
+                {!! SiteHelpers::activeLang('Last Edited By', (isset($fields['last_edited_by']['language'])? $fields['last_edited_by']['language'] : array())) !!}:
             </label>
             <div class="col-md-8">{{ $lastEditedDetails }}</div>
         </div>
         <div class="form-group clearfix" >
             <label class="col-md-4">
-                Current Product
+                Current Product:
             </label>
             <div class="col-md-8">
                 @if (count($products) > 0) 
@@ -311,20 +311,20 @@
         </div>
         <div class="form-group clearfix" >
             <label class="col-md-4">
-                {!! SiteHelpers::activeLang('Game Manual', (isset($fields['has_manual']['language'])? $fields['has_manual']['language'] : array())) !!}
+                {!! SiteHelpers::activeLang('Game Manual', (isset($fields['has_manual']['language'])? $fields['has_manual']['language'] : array())) !!}:
             </label>
             <div class="col-md-8">{!! $manualDetails !!}</div>
         </div>        
         <div class="form-group clearfix" >
             <label class="col-md-4">
-                {!! SiteHelpers::activeLang('Game Bulletin', (isset($fields['has_bulletin']['language'])? $fields['has_bulletin']['language'] : array())) !!}
+                {!! SiteHelpers::activeLang('Game Bulletin', (isset($fields['has_bulletin']['language'])? $fields['has_bulletin']['language'] : array())) !!}:
             </label>
             <div class="col-md-8">{!! $serviceBulletinDetails !!}</div>
         </div>
     </div>
 
     <div class="col-md-6 text-center nogallary gameImageContainer">
-        {!! SiteHelpers::showUploadedFile(SiteHelpers::getGameImage($gameTitleId),'/uploads/games/images/',400,false) !!}
+        {!! SiteHelpers::showUploadedFile(SiteHelpers::getGameImage($gameTitleId),'/uploads/games/images/',400,false) !!}:
         <div class="center-block" style="background: #fff;padding:10px;text-align: center; width: 400px;">
             <h3>{{ $gameTitle }}</h3>
         </div>
@@ -370,7 +370,7 @@
             </tr>
                 @endforeach
                 @else
-                <tr><td> Nothing Found </td></tr>
+                <tr><td colspan="9" style="text-align: center"> Nothing Found </td></tr>
                 @endif
             </tbody>
 
@@ -407,7 +407,7 @@
                         </tr>
                     @endforeach
                 @else
-                    <tr><td colspan="7"> Nothing Found </td></tr>
+                    <tr><td colspan="7" style="text-align: center"> Nothing Found </td></tr>
                 @endif
 
                 </tbody>
