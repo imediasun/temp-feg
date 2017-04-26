@@ -259,7 +259,7 @@ class MerchindisetheminggallaryController extends Controller
     {
         $id = $request->get('id');
         $angle = $request->get('angle');
-        $db_angle=$angle;
+        $db_angle=(int)$angle;
         if (abs($angle) == 90) {
             $angle = -$angle;
         }
@@ -272,7 +272,7 @@ class MerchindisetheminggallaryController extends Controller
 //and save it on your server...
         if($img->save('./uploads/gallary/' . $id .'_rotated.jpg'))
         {
-            \DB::update("UPDATE img_uploads SET img_rotation=int()$db_angle WHERE id=$id");
+            \DB::update("UPDATE img_uploads SET img_rotation=$db_angle WHERE id=$id");
             $imgThumb->save('./uploads/gallary/' . $id .'_thumb_rotated.jpg');
             return response()->json(array(
                 'status' => 'success',
