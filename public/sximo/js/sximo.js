@@ -121,8 +121,8 @@ jQuery(document).ready(function($){
 	setTimeout(function(){ 
 	
 		$('.previewImage.fancybox').each(function () {
-		console.log($(this));
-        $(this).css('display','block','important')
+		$(this).addClass('displayBlock');
+        $(this).css('display','block')
 	
 	}, 2000)
 	
