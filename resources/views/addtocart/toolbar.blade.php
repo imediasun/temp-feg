@@ -67,7 +67,7 @@
 
 // Add some text to the new cells:
                         cell1.innerHTML = vendor_name;
-                        cell2.innerHTML = vendor_total;
+                        cell2.innerHTML = parseFloat(vendor_total).toFixed(2);
                     }
                     total_row = t.insertRow(data['subtotals'].length);
                     total_row.style="border-top:3px solid black";
