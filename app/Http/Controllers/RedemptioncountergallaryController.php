@@ -273,7 +273,7 @@ class RedemptioncountergallaryController extends Controller
         $imgThumb = Image::make('./uploads/gallary/' . $id . '_thumb.jpg');
 // Rotate
         $img->rotate((int)$angle);
-        $imgThumb->rotate($angle);
+        $imgThumb->rotate((int)$angle);
 //and save it on your server...
         if($img->save('./uploads/gallary/' . $id .'_rotated.jpg'))
         {
