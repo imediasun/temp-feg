@@ -452,3 +452,8 @@ img.notAnUser {
     font-weight: normal;
     font-size: smaller;
 }
+
+.img-avatar{
+  height: 45px;
+  width: 45px;
+}

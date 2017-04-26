@@ -55,9 +55,9 @@
                             <label for="Group / Level" class=" control-label col-md-4 text-left"> Group / Level <span
                                         class="asterix"> * </span></label>
                             <div class="col-md-6">
-                                <select name='group_id' rows='5' id='group_id' code='{$group_id}'
-                                        class='select2 ' required></select>
+                                <select name='group_id' rows='5' id='group_id' code='{$group_id}' class='select2 ' required></select>
                             </div>
+                            
                             <div class="col-md-2">
 
                             </div>
@@ -305,13 +305,8 @@
 
 
                     <div class="form-group">
-<<<<<<< HEAD
                         
                         <div class="col-sm-12 text-center btn-margin">
-=======
-
-                        <div class="col-sm-12 text-center">
->>>>>>> 3999243cb865682c89faf6ae3218bacfc3c4595c
                             <button type="submit" name="apply" class="btn btn-info btn-sm"><i
                                         class="fa  fa-check-circle"></i> {{ Lang::get('core.sb_apply') }}</button>
                             <button type="submit" name="submit" class="btn btn-primary btn-sm"><i

@@ -3197,7 +3197,17 @@ position: relative;
 }
 
 
+#col-config.top1 {
+  top: 1px;
+}
 
+#col-config.top2 {
+  top: 2px;
+}
+
+#col-config.top3 {
+  top: 3px;
+}
 
 /* Mobile Layout: 320px. */
 
