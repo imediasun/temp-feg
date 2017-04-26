@@ -60,14 +60,14 @@
                         cell1.style = "padding:7px";
                         cell2.style = "padding:7px";
                         vendor_name = data['subtotals'][i].vendor_name;
-                        vendor_total = " $ " + data['subtotals'][i].vendor_total;
+                        vendor_total = " $ " + parseFloat(data['subtotals'][i].vendor_total).toFixed(2);
                         if (data['subtotals'][i].vendor_min_order_amt > 0) {
                             vendor_name = vendor_name + "( $" + data['subtotals'][i].vendor_min_order_amt + " Minimum )";
                         }
 
 // Add some text to the new cells:
                         cell1.innerHTML = vendor_name;
-                        cell2.innerHTML = parseFloat(vendor_total).toFixed(2);
+                        cell2.innerHTML = vendor_total;
                     }
                     total_row = t.insertRow(data['subtotals'].length);
                     total_row.style="border-top:3px solid black";
