@@ -60,7 +60,7 @@
                         cell1.style = "padding:7px";
                         cell2.style = "padding:7px";
                         vendor_name = data['subtotals'][i].vendor_name;
-                        vendor_total = " $ " + parseFloat(data['subtotals'][i].vendor_total).toFixed(2);
+                        vendor_total = " $ " + data['subtotals'][i].vendor_total;
                         if (data['subtotals'][i].vendor_min_order_amt > 0) {
                             vendor_name = vendor_name + "( $" + data['subtotals'][i].vendor_min_order_amt + " Minimum )";
                         }
