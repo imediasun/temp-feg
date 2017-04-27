@@ -978,7 +978,7 @@ class FEGSystemHelper
      *
      */
     public static function sendSystemEmail($options) {
-dd($options);
+
         $lp = 'FEGCronTasks/SystemEmails';
         $lpd = 'FEGCronTasks/SystemEmailsDump';
         $options = array_merge(array(
@@ -991,7 +991,7 @@ dd($options);
             'configNamePrefix' => "",
             'configNameSuffix' => "",
         ), $options);
-
+        dd($options);
         extract($options);
 
         $configNameSanitized = preg_replace('/[\W]/', '-', strtolower($configName));
