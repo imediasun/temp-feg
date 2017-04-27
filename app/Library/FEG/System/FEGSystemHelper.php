@@ -444,6 +444,7 @@ class FEGSystemHelper
     }
     public static function laravelMail($to, $subject, $message, $from = "support@fegllc.com", $options = array()) {
         $view = empty($options['view']) ? '': $options['view'];
+        //Todo i have uncommented these why these were commented before
         $options['to'] = $to;
         $options['subject'] = $subject;
         $options['message'] = $message;
