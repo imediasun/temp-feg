@@ -327,7 +327,6 @@ class FEGSystemHelper
                 }
             }
         }
-        dd($to, $subject, $message, $headers);
         mail($to, $subject, $message, $headers);
     }
 
@@ -456,7 +455,7 @@ class FEGSystemHelper
             });
         }
         else {
-            Mail::send([], [], function ($mail) use ($options) {
+            Mail::send([], $options, function ($mail) use ($options) {
                 self::configLaravelMail($mail, $options);
             });
 //            Mail::raw($message, function ($mail) use ($options) {
