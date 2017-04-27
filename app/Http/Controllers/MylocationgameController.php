@@ -321,7 +321,7 @@ class MylocationgameController extends Controller
         $products = array();
         $rules = $this->validateForm();
         $validator = Validator::make($request->all(), $rules);
-dd($request->all());
+
         if ($validator->passes()) {
             if(empty($id))
                 $data = $this->validatePost('game');
@@ -375,7 +375,7 @@ dd($request->all());
             if (isset($data['_for_sale'])) unset($data['_for_sale']);
             if (isset($data['_not_debit'])) unset($data['_not_debit']);
             if (isset($data['_sold'])) unset($data['_sold']);
-
+            dd($data);
             $id = $this->model->insertRow($data, $id);
             /*
             \DB::table('game_product')
