@@ -276,12 +276,12 @@ class MerchindisetheminggallaryController extends Controller
             $imgThumb->save('./uploads/gallary/' . $id .'_thumb_rotated.jpg');
             return response()->json(array(
                 'status' => 'success',
-                'message' => \Lang::get('Image Rotated Successfully')));
+                'message' => \Lang::get('Image rotated successfully')));
         }
         else{
             return response()->json(array(
                 'status' => 'error',
-                'message' => \Lang::get('Some Error occurred in rotating the image')));
+                'message' => \Lang::get('Some error occurred in rotating the image')));
         }
 
     }

@@ -978,7 +978,7 @@ class FEGSystemHelper
      *
      */
     public static function sendSystemEmail($options) {
-
+dd($options);
         $lp = 'FEGCronTasks/SystemEmails';
         $lpd = 'FEGCronTasks/SystemEmailsDump';
         $options = array_merge(array(
