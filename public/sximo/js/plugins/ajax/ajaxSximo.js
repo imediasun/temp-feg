@@ -247,29 +247,32 @@ reloadData(id, url+"?"+attr);
 
 function ajaxCopy(  id , url )
 {
-	
-	if(confirm('Are you sure you want to Copy selected row(s)'))
-	{
-		var datas = $( id +'Table :input').serialize();
-			$.post( url+'/copy' ,datas,function( data ) {
-				if(data.status =='success')
-				{
-					notyMessage(data.message );
-					ajaxFilter( id ,url+'/data' );
-				} else {
-					notyMessage(data.message );
-				}				
-			});			
-	} else {
-		return false;
-	}
-	
+    if($(".ids:checked").length > 0) {
+        if (confirm('Are you sure you want to Copy selected row(s)')) {
+            var datas = $(id + 'Table :input').serialize();
+            $.post(url + '/copy', datas, function (data) {
+                if (data.status == 'success') {
+                    notyMessage(data.message);
+                    ajaxFilter(id, url + '/data');
+                } else {
+                    notyMessage(data.message);
+                }
+            });
+        } else {
+            return false;
+        }
+    }
+    else
+    {
+        notyMessageError("Please select one or more rows.");
+    }
 
 }
 
 function ajaxRemove( id, url )
 {
     var datas = $( id +'Table :input').serialize();
+    if($(".ids:checked").length > 0) {
     if(confirm('Are you sure you want to delete the selected row(s)?')) {
 
         $.post( url+'/delete' ,datas,function( data ) {
@@ -285,6 +288,11 @@ function ajaxRemove( id, url )
             }
         });
 
+    }
+    }
+    else
+    {
+        notyMessageError("Please select one or more rows.");
     }
 }
 
