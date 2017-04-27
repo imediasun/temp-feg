@@ -375,14 +375,9 @@ class MylocationgameController extends Controller
             if (isset($data['_for_sale'])) unset($data['_for_sale']);
             if (isset($data['_not_debit'])) unset($data['_not_debit']);
             if (isset($data['_sold'])) unset($data['_sold']);
-            try{
-                $id = $this->model->insertRow($data, $id);
-            }
-            catch (Exception $e)
-            {
-                print_r($e);dd($data);
-            }
-            dd($id);
+
+            $id = $this->model->insertRow($data, $id);
+
             /*
             \DB::table('game_product')
                 ->where('game_id', '=', $id)

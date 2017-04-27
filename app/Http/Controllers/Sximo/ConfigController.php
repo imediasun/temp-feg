@@ -17,7 +17,7 @@ class ConfigController extends Controller
         $this->data['pageTitle'] = "Settings";
         if (\Auth::check() or \Session::get('gid') != '1') {
             //	echo 'redirect';
-            return Redirect::to('dashboard');
+            return Redirect::to('user/profile');
         };
 
     }

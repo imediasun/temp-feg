@@ -209,7 +209,7 @@ class UsersController extends Controller
 
             Session::put('return_id', $return_id);
         }
-        return Redirect::to('dashboard');
+        return Redirect::to('user/profile');
     }
 
     function get($id = NULL)
