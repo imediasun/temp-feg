@@ -321,7 +321,7 @@ class MylocationgameController extends Controller
         $products = array();
         $rules = $this->validateForm();
         $validator = Validator::make($request->all(), $rules);
-
+dd($request->all());
         if ($validator->passes()) {
             if(empty($id))
                 $data = $this->validatePost('game');
@@ -329,7 +329,10 @@ class MylocationgameController extends Controller
                 $data = $this->validatePost('game', true);
             //after validating data array become very small, so merge with post data
             $data = array_merge($_POST, $data);
-            
+            if(isset($data['img']))
+            {
+                unset($data['img']); // Todo see where from img key is setting
+            }
            if(isset($data['id']))
             {
                 $gameID = $data['id'];
