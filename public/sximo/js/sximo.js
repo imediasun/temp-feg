@@ -118,7 +118,7 @@ jQuery(document).ready(function($){
 		$(this).parent('div').empty();	
 		return false;
 	});	
-		    	
+	  	
 })
 function debounce(func, wait, immediate) {
     var timeout;

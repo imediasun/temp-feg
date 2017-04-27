@@ -3283,7 +3283,7 @@ position: relative;
 
 }
 .previewImage.fancybox {
-  /*display: block !important;*/
+  display: inline !important;
 }
 .sbox-content
 {

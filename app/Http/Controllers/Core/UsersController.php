@@ -402,9 +402,7 @@ class UsersController extends Controller
         $form_data['created_at'] = date('Y-m-d');
         $form_data['updated_at'] = date('Y-m-d');
         $rules = $this->validateForm();
-        $rules['g_mail'] = 'email';
-        $rules['g_password'] = 'min:8';
-       
+
 
         $rules['email'] = 'required|email|unique:users,email';
         if ($request->input('id') == '') {
@@ -452,12 +450,6 @@ class UsersController extends Controller
 
             $data['active']=$request->get('active');
             /* add google account password and email*/
-            $data['g_mail'] = $request->input('g_mail');
-            if(!is_null($request->input('g_password')))
-            {
-                $password = base64_encode(env('SALT_KEY').$request->input('g_password').env('SALT_KEY'));
-                $data['g_password'] = $password;
-            }
             $id = $this->model->insertRow($data, $request->input('id'));
             $all_locations = Input::get('all_locations');
             if (empty($all_locations)) {
