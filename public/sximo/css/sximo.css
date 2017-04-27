@@ -3205,6 +3205,21 @@ position: relative;
   top: 3px;
 }
 
+
+.previewImage.fancybox {
+ /* display: inline !important;*/
+}
+.sbox-content
+{
+  float: left;
+  width: 100%;
+}
+.merch-gallery{
+  float:left;
+}
+
+
+
 /* Mobile Layout: 320px. */
 
 @media only screen and (max-width: 767px) {
@@ -3267,26 +3282,28 @@ position: relative;
   float: left;
 }
 
+.navbar-header {
+  display: block;
+  width: 100%;
+}
+
+.navbar .navbar-top-links li:first-child {
+margin-left: 15px;
+}
+
 }
 
 
-@media only screen and (max-width:560px) {
 
-
-  .navbar-header {
-    display: block;
-    width: 100%;
-  }
-
+@media only screen and (max-width: 360px){
+  
   .navbar .navbar-top-links li a {
     font-size: 10px;
     min-height: 50px;
     padding: 15px 1px;
   }
 
-  .navbar .navbar-top-links li:first-child {
-    margin-left: 15px;
-  }
-
 }
+
+
 

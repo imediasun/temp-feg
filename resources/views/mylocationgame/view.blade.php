@@ -324,7 +324,7 @@
     </div>
 
     <div class="col-md-6 text-center nogallary gameImageContainer">
-        {!! SiteHelpers::showUploadedFile(SiteHelpers::getGameImage($gameTitleId),'/uploads/games/images/',400,false) !!}:
+        {!! SiteHelpers::showUploadedFile(SiteHelpers::getGameImage($gameTitleId),'/uploads/games/images/',400,false) !!}
         <div class="center-block" style="background: #fff;padding:10px;text-align: center; width: 400px;">
             <h3>{{ $gameTitle }}</h3>
         </div>

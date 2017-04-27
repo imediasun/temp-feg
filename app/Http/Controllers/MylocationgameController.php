@@ -333,16 +333,34 @@ class MylocationgameController extends Controller
             {
                 unset($data['img']); // Todo see where from img key is setting
             }
+            if(!((int)$data['serial']))
+            {
+                return response()->json(array(
+                    'status' => 'error',
+                    'message' => 'Serial should be a valid number!'
+                ));
+            }
            if(isset($data['id']))
             {
-                $gameID = $data['id'];
-                $gameIDExists = \DB::table('game')->where('id', $gameID)->count() > 0;
-                if ($id != $gameID && $gameIDExists) {
+                if(((int)$data['id']))
+                {
+                    $gameID = $data['id'];
+                    $gameIDExists = \DB::table('game')->where('id', $gameID)->count() > 0;
+                    if ($id != $gameID && $gameIDExists) {
+                        return response()->json(array(
+                            'status' => 'error',
+                            'message' => 'Asset ID already exists!'
+                        ));
+                    }
+                }
+                else
+                {
                     return response()->json(array(
                         'status' => 'error',
-                        'message' => 'Asset ID already exists!'
+                        'message' => 'Asset ID should be a valid number!'
                     ));
                 }
+
             }
             if (!empty($request->input('product_id'))) {
                 $products = $request->input('product_id');
@@ -377,6 +395,7 @@ class MylocationgameController extends Controller
             if (isset($data['_sold'])) unset($data['_sold']);
 
             $id = $this->model->insertRow($data, $id);
+
             /*
             \DB::table('game_product')
                 ->where('game_id', '=', $id)
@@ -583,8 +602,8 @@ class MylocationgameController extends Controller
             
             $newData['intended_first_location'] = $location;
         }
-        elseif ($upToRepair) {  
-            
+        elseif ($upToRepair) {
+            $newData['date_last_move'] = $nowDate;
             $dataDown = isset($data['date_down']) ? $data['date_down'] : $nowDate;
             $problem = @$data['problem'];
             $service_id = \DB::table('game_service_history')->insertGetId([
@@ -596,8 +615,8 @@ class MylocationgameController extends Controller
                 ]); 
             $newData['game_service_id'] = $service_id;
         }
-        elseif ($repairToUp) {         
-            
+        elseif ($repairToUp) {
+            $newData['date_last_move'] = $nowDate;
             $service_id = $data['game_service_id'];
             if (empty($service_id)) {
                 return response()->json(array(
@@ -625,7 +644,7 @@ class MylocationgameController extends Controller
         
         $newData['sold'] = $sold;
         $newData['sold_to'] = $soldTo;
-        $newData['date_sold'] = $soldDate;         
+        $newData['date_sold'] = $soldDate;
         if ($isSold) {
             $newData['location_id'] = 0;
             $newData['prev_location_id'] = $oldLocation;

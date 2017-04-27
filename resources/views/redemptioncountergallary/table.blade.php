@@ -31,7 +31,7 @@
                 @if(isset($rowData))
                     @foreach($rowData as $row)
                         <?php
-                        if($check_mul == $row->loc_id)
+                        if($check_mul == $row->loc_id && $row->loc_id != 0)
                         {
                             $show=false;
                         }

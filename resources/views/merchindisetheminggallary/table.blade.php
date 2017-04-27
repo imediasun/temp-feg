@@ -31,7 +31,7 @@
                 @if(isset($rowData))
                  @foreach($rowData as $row)
                         <?php
-                            if($check_mul == $row->batch)
+                            if($check_mul == $row->batch && $row->batch != 0)
                                 {
                                     $show=false;
                                 }

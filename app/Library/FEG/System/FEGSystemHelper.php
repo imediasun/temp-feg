@@ -327,7 +327,6 @@ class FEGSystemHelper
                 }
             }
         }
-
         mail($to, $subject, $message, $headers);
     }
 
@@ -445,10 +444,11 @@ class FEGSystemHelper
     }
     public static function laravelMail($to, $subject, $message, $from = "support@fegllc.com", $options = array()) {
         $view = empty($options['view']) ? '': $options['view'];
-//        $options['to'] = $to;
-//        $options['subject'] = $subject;
-//        $options['message'] = $message;
-//        $options['from'] = $from;
+        //Todo i have uncommented these why these were commented before
+        $options['to'] = $to;
+        $options['subject'] = $subject;
+        $options['message'] = $message;
+        $options['from'] = $from;
 
         if (!empty($view)) {
             Mail::send($view, $options, function ($mail) use ($options) {
@@ -456,7 +456,7 @@ class FEGSystemHelper
             });
         }
         else {
-            Mail::send([], [], function ($mail) use ($options) {
+            Mail::send([], $options, function ($mail) use ($options) {
                 self::configLaravelMail($mail, $options);
             });
 //            Mail::raw($message, function ($mail) use ($options) {
@@ -991,7 +991,6 @@ class FEGSystemHelper
             'configNamePrefix' => "",
             'configNameSuffix' => "",
         ), $options);
-
         extract($options);
 
         $configNameSanitized = preg_replace('/[\W]/', '-', strtolower($configName));
