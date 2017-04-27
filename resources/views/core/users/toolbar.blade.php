@@ -3,11 +3,11 @@
         
             @if($access['is_add'] ==1)
 	   		<a href="{{ URL::to('core/users/update') }}" class="tips btn btn-sm btn-white"  title="{{ Lang::get('core.btn_create') }}">
-			<i class="fa fa-plus-circle "></i>&nbsp;{{ Lang::get('core.btn_create') }}</a>
+			<i class="fa fa-plus "></i>&nbsp;{{ Lang::get('core.btn_create') }}</a>
 			@endif
 			@if($access['is_remove'] ==1)
 			<a href="javascript://ajax"  onclick="SximoDelete();" class="tips btn btn-sm btn-white" title="{{ Lang::get('core.btn_remove') }}">
-			<i class="fa fa-minus-circle "></i>&nbsp;{{ Lang::get('core.btn_remove') }}</a>
+			<i class="fa fa-trash-o"></i>&nbsp;{{ Lang::get('core.btn_remove') }}</a>
 			@endif
 			<a href="{{ URL::to( $pageUrl .'/search') }}" class="btn btn-sm btn-white" onclick="SximoModal(this.href,'Advanced Search'); return false;" ><i class="fa fa-search"></i>Advanced Search</a>
                 @if(SiteHelpers::isModuleEnabled($pageModule))

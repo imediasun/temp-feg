@@ -273,25 +273,26 @@ function ajaxRemove( id, url )
 {
     var datas = $( id +'Table :input').serialize();
     if($(".ids:checked").length > 0) {
-        if (confirm('Are you sure you want to delete the selected row(s)?')) {
+    if(confirm('Are you sure you want to delete the selected row(s)?')) {
 
-            $.post(url + '/delete', datas, function (data) {
+        $.post( url+'/delete' ,datas,function( data ) {
 
-                if (data.status == 'success') {
-                    //console.log("called succes");
-                    notyMessage(data.message);
-                    ajaxFilter(id, url + '/data');
-                } else {
-                    //console.log("called error");
-                    notyMessageError(data.message);
-                }
-            });
+            if(data.status =='success')
+            {
+                //console.log("called succes");
+                notyMessage(data.message);
+                ajaxFilter( id ,url+'/data' );
+            } else {
+                //console.log("called error");
+                notyMessageError(data.message);
+            }
+        });
 
-        }
+    }
     }
     else
     {
-        notyMessageError("Please select one or more rows");
+        notyMessageError("Please select one or more rows.");
     }
 }
 

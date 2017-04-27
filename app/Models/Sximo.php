@@ -19,6 +19,12 @@ class Sximo extends Model {
         $id = \DB::table($table)->insertGetId($data);
         return $id;
     }
+
+    public static function parseNumber($num)
+    {
+        return number_format((float)$num, 3, '.', '');
+    }
+
     public static function getRows($args, $cond = null) {
         $table = with(new static)->table;
         $key = with(new static)->primaryKey;

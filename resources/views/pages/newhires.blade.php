@@ -6,6 +6,7 @@
                 <div class="col-md-12" style="padding-top: 50px;  padding-bottom: 50px; background-color: #ffffff;">
 <h3 style="padding-left: 30px;">Click on links below to download documents..</h3>
 <p style="padding-left: 90px;"><span style="color: #808080;"><a class="download" style="color: #808080;" href="/newhire/New_Hire_Portfolio_CA.pdf" target="_blank">New Hire Portfolio - California</a></span></p>
+<p style="padding-left: 90px;"><span style="color: #808080;"><a class="download" style="color: #808080;" href="/newhire/New_Hire_Portfolio_CO.pdf" target="_blank">New Hire Portfolio - Colorado</a></span></p>
 <p style="padding-left: 90px;"><span style="color: #808080;"><a class="download" style="color: #808080;" href="/newhire/New_Hire_Portfolio_FL.pdf" target="_blank">New Hire Portfolio - Florida</a></span></p>
 <p style="padding-left: 90px;"><span style="color: #808080;"><a class="download" style="color: #808080;" href="/newhire/New_Hire_Portfolio_IL.pdf" target="_blank">New Hire Portfolio - Illinois</a></span></p>
 <p style="padding-left: 90px;"><span style="color: #808080;"><a class="download" style="color: #808080;" href="/newhire/New_Hire_Portfolio_KS.pdf" target="_blank">New Hire Portfolio - Kansas</a></span></p>

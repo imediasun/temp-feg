@@ -23,13 +23,13 @@
                     <div class=" table-responsive col-md-12 col-md-offset-2 item-receipt-container">
                         <table class="table">
                             <tr><td  style="border: none;" ><b>PO #</b></td><td  style="border: none;" >{{ $data['po_number'] }}</td></tr>
-                            <tr><td><b>Ordered By</b></td><td>{{ $data['order_user_name'] }}</td></tr>
-                            <tr><td><b>Location </b></td><td>{{ $data['location_id'] ." |" }} {!!
+                            <tr><td><b>Ordered By:</b></td><td>{{ $data['order_user_name'] }}</td></tr>
+                            <tr><td><b>Location: </b></td><td>{{ $data['location_id'] ." |" }} {!!
                                     SiteHelpers::gridDisplayView($data['location_id'],'location_id','1:location:id:location_name')
                                     !!}</td></tr>
-                            <tr><td><b>Vendor</b></td><td>{{ $data['vendor_name'] }}</td></tr>
-                            <tr><td><b>Description</b></td><td>{{ str_replace("<br>","" ,$data['description']) }}</td></tr>
-                            <tr><td><b>Total Cost</b></td><td>{{ CurrencyHelpers::formatCurrency(number_format($data['order_total'],\App\Models\Order::ORDER_PERCISION )) }}</td></tr>
+                            <tr><td><b>Vendor:</b></td><td>{{ $data['vendor_name'] }}</td></tr>
+                            <tr><td><b>Description:</b></td><td>{{ str_replace("<br>","" ,$data['description']) }}</td></tr>
+                            <tr><td><b>Total Cost:</b></td><td>{{ CurrencyHelpers::formatCurrency(number_format($data['order_total'],\App\Models\Order::ORDER_PERCISION )) }}</td></tr>
                             <?php //if(!empty($item_count) && ($order_type == 7 || $order_type == 8) && () && $added_to_inventory == 0)  //REDEMPTION OR INSTANT WIN PRIZES -  SET TO DUMMY VALUE TO FORCE ORDER DESCRIPION UNTIL WE INTRODUCE PRIZE ALLOCATION
                             ?>
                             @if((isset($data['item_count']) && !empty($data['item_count'])) && ($data['order_type'] == 7 || $data['order_type'] == 8) &&   $data['added_to_inventory'] == 0)  //REDEMPTION OR INSTANT WIN PRIZES -  SET TO DUMMY VALUE TO FORCE ORDER DESCRIPION UNTIL WE INTRODUCE PRIZE ALLOCATION
@@ -134,7 +134,7 @@
                         <div class="form-group clearfix">
                             
                             <label for="date_received" class=" control-label col-md-4 text-right">
-                                Date Received </label>
+                                Date Received: </label>
                             <div class="col-md-8">
                                 <?php if(isset($data['date_received']) && ($data['date_received']!='0000-00-00'))
                                   $date_received = DateHelpers::formatDate($data['date_received']);
@@ -147,7 +147,7 @@
                         <div class="form-group clearfix">
                             
                             <label for="vendor_id" class=" control-label col-md-4 text-right">
-                                Order Status
+                                Order Status:
                             </label>
                             <div class="col-md-8">
                                 <select name='order_status' rows='5' id='order_status_id' class='select3' required onchange="removeBorder('order_status_id')");></select>
@@ -157,7 +157,7 @@
                         <div class="form-group clearfix" id="tracking_numberdiv" style="display:none">
                             
                             <label id ="tracking_number_lbl" for="vendor_id" class=" control-label col-md-4 text-left">
-                                Tracking Number
+                                Tracking Number:
                             </label>
                             <div class="col-md-8">
                                 <input type="text"  class="form-control" name="tracking_number" id="tracking_number"/>
@@ -167,7 +167,7 @@
                         <div class="form-group clearfix">
                             
                             <label for="vendor_id" class=" control-label col-md-4 text-right">
-                                Notes </label>
+                                Notes: </label>
                             <div class="col-md-8">
                                 <textarea class="form-control" name="notes" rows="7" cols="48" id="notes" onchange="removeBorder('order_status')" ></textarea>
                             </div>
