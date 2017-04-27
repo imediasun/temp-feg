@@ -327,7 +327,7 @@ class FEGSystemHelper
                 }
             }
         }
-
+        dd($to, $subject, $message, $headers);
         mail($to, $subject, $message, $headers);
     }
 
@@ -991,7 +991,6 @@ class FEGSystemHelper
             'configNamePrefix' => "",
             'configNameSuffix' => "",
         ), $options);
-        dd($options);
         extract($options);
 
         $configNameSanitized = preg_replace('/[\W]/', '-', strtolower($configName));
