@@ -123,7 +123,6 @@ function confirmDelete(id, title)
         var id=$(ele).data('id');
         var rotation =  $("#gallery_img_"+id).attr('data-rotation');
         angle = parseInt(angle) +parseInt(rotation);
-        alert("rotation:"+rotation+ "angle"+angle);
         $.ajax(
                 {
                     type:'POST',
