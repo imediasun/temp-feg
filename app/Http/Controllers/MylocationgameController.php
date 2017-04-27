@@ -333,16 +333,34 @@ class MylocationgameController extends Controller
             {
                 unset($data['img']); // Todo see where from img key is setting
             }
+            if(!is_int($data['serial']))
+            {
+                return response()->json(array(
+                    'status' => 'error',
+                    'message' => 'Serial should be a number!'
+                ));
+            }
            if(isset($data['id']))
             {
-                $gameID = $data['id'];
-                $gameIDExists = \DB::table('game')->where('id', $gameID)->count() > 0;
-                if ($id != $gameID && $gameIDExists) {
+                if(is_int($data['id']))
+                {
+                    $gameID = $data['id'];
+                    $gameIDExists = \DB::table('game')->where('id', $gameID)->count() > 0;
+                    if ($id != $gameID && $gameIDExists) {
+                        return response()->json(array(
+                            'status' => 'error',
+                            'message' => 'Asset ID already exists!'
+                        ));
+                    }
+                }
+                else
+                {
                     return response()->json(array(
                         'status' => 'error',
-                        'message' => 'Asset ID already exists!'
+                        'message' => 'Asset ID should be a number!'
                     ));
                 }
+
             }
             if (!empty($request->input('product_id'))) {
                 $products = $request->input('product_id');

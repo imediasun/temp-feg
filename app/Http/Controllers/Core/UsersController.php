@@ -402,8 +402,6 @@ class UsersController extends Controller
         $form_data['created_at'] = date('Y-m-d');
         $form_data['updated_at'] = date('Y-m-d');
         $rules = $this->validateForm();
-
-
         $rules['email'] = 'required|email|unique:users,email';
         if ($request->input('id') == '') {
             $rules['password'] = 'required|between:6,12';
@@ -449,7 +447,7 @@ class UsersController extends Controller
             $data['redirect_link'] = $request->get('redirect_link');
 
             $data['active']=$request->get('active');
-            /* add google account password and email*/
+
             $id = $this->model->insertRow($data, $request->input('id'));
             $all_locations = Input::get('all_locations');
             if (empty($all_locations)) {
