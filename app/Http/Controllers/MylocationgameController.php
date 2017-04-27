@@ -583,8 +583,8 @@ class MylocationgameController extends Controller
             
             $newData['intended_first_location'] = $location;
         }
-        elseif ($upToRepair) {  
-            
+        elseif ($upToRepair) {
+            $newData['date_last_move'] = $nowDate;
             $dataDown = isset($data['date_down']) ? $data['date_down'] : $nowDate;
             $problem = @$data['problem'];
             $service_id = \DB::table('game_service_history')->insertGetId([
@@ -596,8 +596,8 @@ class MylocationgameController extends Controller
                 ]); 
             $newData['game_service_id'] = $service_id;
         }
-        elseif ($repairToUp) {         
-            
+        elseif ($repairToUp) {
+            $newData['date_last_move'] = $nowDate;
             $service_id = $data['game_service_id'];
             if (empty($service_id)) {
                 return response()->json(array(
@@ -625,7 +625,7 @@ class MylocationgameController extends Controller
         
         $newData['sold'] = $sold;
         $newData['sold_to'] = $soldTo;
-        $newData['date_sold'] = $soldDate;         
+        $newData['date_sold'] = $soldDate;
         if ($isSold) {
             $newData['location_id'] = 0;
             $newData['prev_location_id'] = $oldLocation;
