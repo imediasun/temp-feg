@@ -825,9 +825,9 @@ class OrderController extends Controller
                     $message = $message;
                     $cc = $cc;
                     $bcc = $bcc;
+
                 /* current user */
                     $google_acc = \DB::table('users')->where('id', \Session::get('uid'))->first();
-
                     if (!empty($google_acc->oauth_token)) {
 
                         $mail = new PHPMailerOAuth();

@@ -209,7 +209,7 @@ class UsersController extends Controller
 
             Session::put('return_id', $return_id);
         }
-        return Redirect::to('dashboard');
+        return Redirect::to('user/profile');
     }
 
     function get($id = NULL)
@@ -447,6 +447,7 @@ class UsersController extends Controller
             $data['redirect_link'] = $request->get('redirect_link');
 
             $data['active']=$request->get('active');
+
             $id = $this->model->insertRow($data, $request->input('id'));
             $all_locations = Input::get('all_locations');
             if (empty($all_locations)) {
