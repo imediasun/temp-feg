@@ -273,7 +273,7 @@ class UsersController extends Controller
         {
 
             $client = new Client();
-            $res = $client->request('POST', 'https://www.googleapis.com/oauth2/v4/token',array('headers'=>array('Content-Type'=>'application/x-www-form-urlencoded; charset=UTF-8'),'form_params'=>array('grant_type'=>'authorization_code','code'=>$request->get('code'),'client_id'=>env('G_ID'),'redirect_uri'=>env('G_REDIRECT_2'),'client_secret'=>env('G_SECRET'))));
+            $res = $client->request('POST', 'https://www.googleapis.com/oauth2/v4/token',array('headers'=>array('Content-Type'=>'application/x-www-form-urlencoded; charset=UTF-8'),'form_params'=>array('grant_type'=>'authorization_code','code'=>$request->get('code'),'client_id'=>env('G_ID'),'redirect_uri'=>url('/').env('G_REDIRECT_2'),'client_secret'=>env('G_SECRET'))));
             $result = $res->getBody();
             $array = json_decode($result, true);
 
@@ -318,8 +318,8 @@ class UsersController extends Controller
 
             $this->data['modules'] = \DB::table('tb_module')->where('module_type', '!=', 'core')->orderBy('module_title', 'asc')->get();
             $this->data['pages'] = \DB::table("tb_pages")->orderBy('title', 'asc')->get();
-            //$this->data['oauth_url'] = 'https://accounts.google.com/o/oauth2/v2/auth?scope=https://mail.google.com/&approval_prompt=force&access_type=offline&include_granted_scopes=true&state=state_parameter_passthrough_value&redirect_uri='.env('G_REDIRECT').'&response_type=code&client_id='.env('G_ID');
-            $this->data['oauth_url'] = 'https://accounts.google.com/o/oauth2/v2/auth?scope=https://mail.google.com+profile+email&access_type=offline&include_granted_scopes=true&state='.$id.'&redirect_uri='.env('G_REDIRECT_2').'&response_type=code&client_id='.env('G_ID');
+            //$this->data['oauth_url'] = 'https://accounts.google.com/o/oauth2/v2/auth?scope=https://mail.google.com/&approval_prompt=force&access_type=offline&include_granted_scopes=true&state=state_parameter_passthrough_value&redirect_uri='.url('/').env('G_REDIRECT').'&response_type=code&client_id='.env('G_ID');
+            $this->data['oauth_url'] = 'https://accounts.google.com/o/oauth2/v2/auth?scope=https://mail.google.com+profile+email&access_type=offline&include_granted_scopes=true&state='.$id.'&redirect_uri='.url('/').env('G_REDIRECT_2').'&response_type=code&client_id='.env('G_ID');
             return view('core.users.form', $this->data);
         }
 
@@ -402,9 +402,7 @@ class UsersController extends Controller
         $form_data['created_at'] = date('Y-m-d');
         $form_data['updated_at'] = date('Y-m-d');
         $rules = $this->validateForm();
-        $rules['g_mail'] = 'email';
-        $rules['g_password'] = 'min:8';
-       
+
 
         $rules['email'] = 'required|email|unique:users,email';
         if ($request->input('id') == '') {
@@ -452,12 +450,6 @@ class UsersController extends Controller
 
             $data['active']=$request->get('active');
             /* add google account password and email*/
-            $data['g_mail'] = $request->input('g_mail');
-            if(!is_null($request->input('g_password')))
-            {
-                $password = base64_encode(env('SALT_KEY').$request->input('g_password').env('SALT_KEY'));
-                $data['g_password'] = $password;
-            }
             $id = $this->model->insertRow($data, $request->input('id'));
             $all_locations = Input::get('all_locations');
             if (empty($all_locations)) {
