@@ -678,7 +678,7 @@ jQuery(document).ready(function ($) {
 
             })
             .error(function (data) {
-                notyMessageError('Eror getting permission to the page you are trying to access');
+                notyMessageError('Error getting permission to the page you are trying to access');
                 //console.log(data);
             });
 		}
