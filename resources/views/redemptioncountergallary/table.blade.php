@@ -151,7 +151,11 @@
         );
     }
 
-
+    $(".fancybox").fancybox(
+            {    afterClose:function(){
+                angle=0;
+            }
+            });
 </script>
 <style>
     .table th.right { text-align:right !important;}

@@ -49,7 +49,9 @@ jQuery(document).ready(function($){
 	$('.datetime').datetimepicker({format: 'mm/dd/yyyy HH:ii:ss P'});
 	
 	/* Tooltip */
-	$('.previewImage').fancybox();	
+	$('.previewImage').fancybox(
+     
+    );
 	$('.tips').tooltip();	
 	$('.editor').summernote();
     renderDropdown($(".select2"), { width:"98%"});

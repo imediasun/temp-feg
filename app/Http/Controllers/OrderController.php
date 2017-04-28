@@ -572,8 +572,8 @@ class OrderController extends Controller
 
     public function getSaveOrSendEmail()
     {
-        $google_account = \DB::table('users')->where('id', \Session::get('uid'))->select('g_mail', 'g_password')->first();
-        return view('order.saveorsendemail', compact('google_account'));
+
+        return view('order.saveorsendemail');
     }
 
     function postSaveorsendemail(Request $request)
