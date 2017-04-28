@@ -3045,9 +3045,7 @@ table .btn.btn-xs {
 .simpleSearchContainer, .simpleBoxContainer {
   margin-bottom: 13px;
 }
-.simpleSearchContainer .sscol {
-  float: left;
-}
+
 .c-margin {
   margin-bottom: 15px;
 }
@@ -3308,4 +3306,6 @@ margin-left: 15px;
 }
 
 
-
+.simpleSearchContainer .sscol {
+    float: left;
+}
