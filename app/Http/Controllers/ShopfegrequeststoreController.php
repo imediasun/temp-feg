@@ -39,7 +39,7 @@ class ShopfegrequeststoreController extends Controller
     }
 
     public function getIndex()
-    {
+    {dd(Shopfegrequeststore::get_location_group_ids(\SiteHelpers::getLocationDetails(\Session::get('uid'))));
         if ($this->access['is_view'] == 0)
             return Redirect::to('dashboard')->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
 

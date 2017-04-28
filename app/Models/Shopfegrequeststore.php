@@ -77,7 +77,7 @@ class shopfegrequeststore extends Sximo  {
 	public static function queryGroup(){
 		return "  ";
 	}
-    function get_location_group_ids($reg_loc_ids)
+public static function get_location_group_ids($reg_loc_ids)
     {
         $ids=array();
         foreach($reg_loc_ids as $loc_id)
@@ -85,7 +85,7 @@ class shopfegrequeststore extends Sximo  {
             $ids[]=$loc_id->id;
         }
         $reg_loc_ids=implode(',',$ids);
-        $query =\DB::select('SELECT GROUP_CONCAT(DISTINCT loc_group_id) AS group_ids FROM location WHERE id IN('.$reg_loc_ids.')');
+        $query =\DB::select('SELECT GROUP_CONCAT(DISTINCT loc_group_id) AS group_ids FROM location WHERE id IN ('.$reg_loc_ids.')');
        if (count($query) == 1)
         {
             $data['loc_group_ids'] = $query[0]->group_ids;
