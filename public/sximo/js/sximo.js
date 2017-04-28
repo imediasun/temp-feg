@@ -151,7 +151,7 @@ function SximoConfirmDelete( url )
 function SximoDelete(  )
 {	
 	var total = $('input[class="ids"]:checkbox:checked').length;
-	if(confirm('are u sure removing selected rows ?'))
+	if(confirm('Are you sure removing selected rows ?'))
 	{
 			$('#SximoTable').submit();// do the rest here	
 	}	
