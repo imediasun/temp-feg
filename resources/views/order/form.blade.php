@@ -131,7 +131,8 @@
 
 
                     </div>
-                    <div class="form-group  ">
+                    
+                    <div class="form-group">
                         <br/><br/>
                         <label for="vendor_id" class=" control-label col-md-4 text-left">
                             Vendor </label>
@@ -141,7 +142,8 @@
                         </div>
 
                     </div>
-                    <div class="form-group  ">
+                    
+                    <div class="form-group">
                         <br/><br/>
                         <label for="freight_type_id" class=" control-label col-md-4 text-left">
                             Freight Type </label>
@@ -152,7 +154,8 @@
                         </div>
 
                     </div>
-                    <div class="form-group  ">
+                    
+                    <div class="form-group">
                         <br/><br/>
                         <label for="date_orederd" class=" control-label col-md-4 text-left" style="margin-top: 7px;">
                             Date Ordered</label>
@@ -164,7 +167,8 @@
                         </div>
 
                     </div>
-                    <div class="form-group  ">
+                    
+                    <div class="form-group">
                         <br/><br/>
                         <label for="total_cost" class=" control-label col-md-4 text-left">
                             Total Cost ( $ )</label>
@@ -174,7 +178,8 @@
                                    class="form-control" value="{{ $data['order_total'] }}" maxlength="8"/>
                         </div>
                     </div>
-                    <div class="form-group  ">
+                    
+                    <div class="form-group">
                         <br/><br/>
                         <label for="po_number" class=" control-label col-md-4 text-left">
                             PO Number</label>
@@ -193,6 +198,7 @@
                         </div>
 
                     </div>
+                    
                     <div class="form-group">
                         <br/><br/>
                         <label class="label-control col-md-4" for="notes"> Order Notes **Will be on PO**</label>
@@ -229,12 +235,12 @@
                 <table class="table table-striped itemstable" onload="calculatetest()">
                     <thead>
                     <tr class="invHeading">
-                        <th width="50"> Item #</th>
-                        <th width="90"> Sku #</th>
+                        <th width="50">Item #</th>
+                        <th width="90">Sku #</th>
                         <th width="170">Item Name</th>
                         <th width="200">Item Description</th>
-                        <th width="90">Unit Price</th>
-                        <th width="90">Case Price</th>
+                        <th width="90">Unit Price ( $ )</th>
+                        <th width="90">Case Price ( $ )</th>
                         {{--<th>Retail Price</th>--}}
                         <th width="90">Quantity</th>
                         <th class="game" style="display:none" width="200">Game</th>
