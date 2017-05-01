@@ -19,7 +19,7 @@ class FegapiController extends Controller
 
     public function index()
     {
-
+        //test commit
         $class = ucwords(Input::get('module'));
         if (!empty($class)) {
             if ($class == "Users") {
