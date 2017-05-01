@@ -18,7 +18,7 @@ class readersmissingassetidreport extends Sximo  {
             $row->date_start = date("m/d/Y", strtotime($row->date_start));
             $row->date_end = date("m/d/Y", strtotime($row->date_end));
             $row->game_total = '$' . number_format($row->game_total,2);
-//            
+//
 //            $reader_id = $row->reader_id;
 //            $store_id_position = strripos($reader_id, '_');
 //            if ($store_id_position !== FALSE) {
