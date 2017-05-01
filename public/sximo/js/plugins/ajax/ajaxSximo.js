@@ -248,7 +248,7 @@ reloadData(id, url+"?"+attr);
 function ajaxCopy(  id , url )
 {
     if($(".ids:checked").length > 0) {
-        if (confirm('Are you sure you want to Copy selected row(s)')) {
+        if (confirm('Are you sure you want to copy selected row(s)')) {
             var datas = $(id + 'Table :input').serialize();
             $.post(url + '/copy', datas, function (data) {
                 if (data.status == 'success') {

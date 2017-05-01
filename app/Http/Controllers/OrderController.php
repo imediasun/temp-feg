@@ -180,7 +180,7 @@ class OrderController extends Controller
 
         // Filter Search for query
         // build sql query based on search filters
-        $filter = is_null($request->input('search')) ? '' : $this->buildSearch($trimmedSearchQuery);
+        $filter = $this->getSearchFilterQuery();
         // Get assigned locations list as sql query (part)
         $locationFilter = \SiteHelpers::getQueryStringForLocation('orders');
         // if search filter does not have location_id filter
@@ -572,8 +572,8 @@ class OrderController extends Controller
 
     public function getSaveOrSendEmail()
     {
-        $google_account = \DB::table('users')->where('id', \Session::get('uid'))->select('g_mail', 'g_password')->first();
-        return view('order.saveorsendemail', compact('google_account'));
+
+        return view('order.saveorsendemail');
     }
 
     function postSaveorsendemail(Request $request)
@@ -721,7 +721,48 @@ class OrderController extends Controller
         return Redirect::to('order')->with('messagetext', \Lang::get('core.note_block'))->with('msgstatus', 'success');
 
     }
+    public function getSearchFilterQuery($customQueryString = null) {
+        // Filter Search for query
+        // build sql query based on search filters
 
+
+        // Get custom Ticket Type filter value
+        $globalSearchFilter = $this->model->getSearchFilters(['search_all_fields' => '']);
+        $skipFilters = ['search_all_fields'];
+        $mergeFilters = [];
+        extract($globalSearchFilter); //search_all_fields
+
+        // rebuild search query skipping 'ticket_custom_type' filter
+        $trimmedSearchQuery = $this->model->rebuildSearchQuery($mergeFilters, $skipFilters, $customQueryString);
+        $searchInput = $trimmedSearchQuery;
+        if (!empty($search_all_fields)) {
+            $searchFields = [
+                'orders.id',
+                'orders.user_id',
+                'orders.location_id',
+                'orders.vendor_id',
+                'orders.order_total',
+                'orders.date_ordered',
+                'orders.order_description',
+                'orders.status_id',
+                'orders.order_type_id',
+                'orders.po_number',
+                'orders.po_notes',
+                'orders.notes',
+                'orders.is_partial',
+                'orders.created_at',
+                'orders.updated_at'
+            ];
+            $searchInput = ['query' => $search_all_fields, 'fields' => $searchFields];
+        }
+
+        // Filter Search for query
+        // build sql query based on search filters
+        $filter = is_null(Input::get('search')) ? '' : $this->buildSearch($searchInput);
+
+
+        return $filter;
+    }
     function getPo($order_id = null, $sendemail = false, $to = null, $from = null, $cc = null, $bcc = null, $message = null)
     {
         $mode = "";

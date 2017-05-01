@@ -49,7 +49,9 @@ jQuery(document).ready(function($){
 	$('.datetime').datetimepicker({format: 'mm/dd/yyyy HH:ii:ss P'});
 	
 	/* Tooltip */
-	$('.previewImage').fancybox();	
+	$('.previewImage').fancybox(
+     
+    );
 	$('.tips').tooltip();	
 	$('.editor').summernote();
     renderDropdown($(".select2"), { width:"98%"});
@@ -151,7 +153,7 @@ function SximoConfirmDelete( url )
 function SximoDelete(  )
 {	
 	var total = $('input[class="ids"]:checkbox:checked').length;
-	if(confirm('are u sure removing selected rows ?'))
+	if(confirm('Are you sure removing selected rows ?'))
 	{
 			$('#SximoTable').submit();// do the rest here	
 	}	

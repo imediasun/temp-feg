@@ -39,11 +39,11 @@
                                 $limited = isset($t['limited']) ? $t['limited'] : '';
                                 if (SiteHelpers::filterColumn($limited)) {
                                     if ($t['label'] == 'meter') {
-                                        echo ' style=text-align:'.$t['align']. '" width="' . $t['width'] . '">Add/Remove</th>';
-                                        echo 'style=text-align:'.$t['align']. '" width="' . $t['width'] . '">Meter Start</th>';
-                                        echo ' style=text-align:'.$t['align'] . '" width="' . $t['width'] . '">Meter End</th>';
+                                        echo '<th style=text-align:'.$t['align']. '" width="' . $t['width'] . '">Add/Remove</th>';
+                                        echo '<th  style=text-align:'.$t['align']. '" width="' . $t['width'] . '">Meter Start</th>';
+                                        echo '<th  style=text-align:'.$t['align'] . '" width="' . $t['width'] . '">Meter End</th>';
                                     } else
-                                        echo ' style=text-align:'.$t['align'] . '" width="' . $t['width'] . '">' . \SiteHelpers::activeLang($t['label'], (isset($t['language']) ? $t['language'] : array())) . '</th>';
+                                        echo '<th style=text-align:'.$t['align'] . '" width="' . $t['width'] . '">' . \SiteHelpers::activeLang($t['label'], (isset($t['language']) ? $t['language'] : array())) . '</th>';
 
                                 }
                             endif;

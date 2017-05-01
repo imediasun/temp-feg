@@ -82,7 +82,6 @@
                                     ','id'=>'sendFormAjax')) !!}
 
                                     <input type="hidden" value="{{ $order_id }}" name="order_id"/>
-                                    <input type="hidden" value="{{ $google_account->g_mail }}" name="from"/>
                                     <input type="hidden" value="" id="opt" name="opt"/>
                                     <div class="form-group">
                                         <label class="control-label col-md-4" for="to">To</label>
@@ -150,7 +149,6 @@
                                     <input type="hidden" value="{{ $order_id }}" name="order_id"/>
                                     <input type="hidden" value="" id="opt" name="opt"/>
                                     <input type="hidden" value="sendorsave" name="submit"/>
-                                    <input type="hidden" value="{{ $google_account->g_mail }}" name="from"/>
                                     <div class="form-group">
                                         <label class="control-label col-md-4" for="to">To</label>
 
