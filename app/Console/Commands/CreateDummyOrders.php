@@ -69,7 +69,7 @@ class CreateDummyOrders extends Command
         $po_number=$location_id.'-'.date('mdy',strtotime($created_date)).'-1';
         $po_number=$location_id.'-'.date('mdy',strtotime($created_date)).'-'.$this->validatePONum($po_number,$location_id,date('mdy',strtotime($created_date)));
         $created_time = strtotime($created_date);
-        $days=rand(1,59);
+        $days=rand(1,2);
         $date_received= date('Y-m-d',strtotime($created_date.' +'.$days.' days'));
 
         $order_contents=array();
@@ -236,7 +236,7 @@ class CreateDummyOrders extends Command
         }
         elseif($user != NULL)
         {
-            $id=\DB::select('select location_id as id from  user_locations where user_id='.$user);
+            $id=\DB::select('SELECT location_id AS id FROM  user_locations JOIN location ON location.id=user_locations.location_id WHERE user_id='.$user.' AND location.active=1');
            if(count($id) == 0)
            {
                $id=2012;
