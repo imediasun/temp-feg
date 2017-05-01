@@ -282,7 +282,7 @@ class AddtocartController extends Controller
         \DB::table('requests')->where('location_id', $location_id)->where('status_id', $statusId)->update($update);
 
         if (empty($new_location)) {
-            return Redirect::to('./shopfegrequeststore')->with('messagetext', 'Submitted Successfully')->with('msgstatus', 'success');
+            return Redirect::to('./shopfegrequeststore')->with('messagetext', 'Submitted successfully')->with('msgstatus', 'success');
             \Session::put('total_cart', 0);
             //redirect('fegllc/popupCart', 'refresh');
         } else {
