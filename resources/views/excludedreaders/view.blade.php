@@ -12,7 +12,7 @@
 
 		<table class="table table-striped table-bordered" >
 			<tbody>	
-                @foreach ($tableGrid as $field) 
+                @foreach ($tableGrid as $field)
                     @if($field['view'] =='1' && isset($row->$field['field'])) 
                         {{--*/ $conn = (isset($field['conn']) ? $field['conn'] : array() ) /*--}}
                         {{--*/ $value = AjaxHelpers::gridFormater($row->$field['field'], $row, $field['attribute'], $conn) /*--}}                            
@@ -31,6 +31,7 @@
                 @endforeach
 			</tbody>
 		</table>  
+
 
 @if($setting['form-method'] =='native')
 	</div>	

@@ -18,7 +18,7 @@
 					</label>
 					<div class="col-md-6">
 					  {!! Form::text('reader_id', $row['reader_id'],array('class'=>'form-control', 'placeholder'=>'', 'required' => 'required' )) !!}
-					 </div> 
+					 </div>
 					 <div class="col-md-2">
 					 	
 					 </div>
@@ -38,7 +38,7 @@
                                 >{{ $location->id }} | {{ $location->location_name }}</option>
                             @endforeach                               
                         </select>					  
-					 </div> 
+					 </div>
 					 <div class="col-md-2">
 					 	
 					 </div>
@@ -57,7 +57,7 @@
                                 >{{ $debitType->company }}</option>
                             @endforeach                               
                        </select>
-					 </div> 
+					 </div>
 					 <div class="col-md-2">
 					 	
 					 </div>
@@ -98,9 +98,8 @@
 </div>	
 			 
 <script type="text/javascript">
-$(document).ready(function() { 
-	
-    
+$(document).ready(function() {
+
     $("#location_id").on('change', function(){
         var debitType = $(this).find("option::selected").data('debit-type'),
             debitTypeField = $("#debit_type_id");

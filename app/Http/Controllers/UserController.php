@@ -473,7 +473,6 @@ class UserController extends Controller
 
     public function postRequest(Request $request)
     {
-
         $rules = array(
             'credit_email' => 'required|email'
         );
