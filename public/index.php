@@ -1,6 +1,7 @@
 <?php
 error_reporting(E_ALL);
 ini_set('display_errors', 'On');
+set_time_limit(0);
 /**
  * Laravel - A PHP Framework For Web Artisans
  *
