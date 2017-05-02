@@ -1,7 +1,7 @@
 <?php usort($tableGrid, "SiteHelpers::_sort"); ?>
 <div class="sbox">
     <div class="sbox-title">
-        <h5> <i class="fa fa-table"></i>  {{ $pageTitle }}</h5>
+        <h5> <i class="fa fa-table"></i> </h5>
 		<div class="sbox-tools" >
 			<a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Clear Search" onclick="reloadData('#{{ $pageModule }}','{{ $pageModule }}/data?search=')"><i class="fa fa-trash-o"></i> Clear Search </a>
 			<a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Reload Data" onclick="reloadData('#{{ $pageModule }}','{{ $pageModule }}/data?return={{ $return }}')"><i class="fa fa-refresh"></i></a>
@@ -27,7 +27,7 @@
         @include( $pageModule.'/toolbar',['config_id'=>$config_id,'colconfigs' => SiteHelpers::getRequiredConfigs($module_id)])
 
         <div>
-            <p><?php $check_mul="";$show=true; ?>
+            <p style="margin-left: -3px;"><?php $check_mul="";$show=true; ?>
                 @if(isset($rowData))
                     @foreach($rowData as $row)
                         <?php

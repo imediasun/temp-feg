@@ -222,7 +222,7 @@ class ModuleController extends Controller
         $row = \DB::table('tb_module')->where('module_id', $id)
             ->get();
         if (count($row) <= 0) {
-            return Redirect::to('feg/module')->with('messagetext', 'Can not find module')->with('msgstatus', 'error');
+            return Redirect::to('feg/module')->with('messagetext', 'Cannot find module')->with('msgstatus', 'error');
 
         }
         $row = $row[0];
@@ -247,13 +247,13 @@ class ModuleController extends Controller
                 self::removeDir(base_path() . "/resources/views/{$path}");
 
                 return Redirect::to('feg/module')
-                    ->with('messagetext', 'Module has been removed successfull')->with('msgstatus', 'success');
+                    ->with('messagetext', 'Module has been removed successfully')->with('msgstatus', 'success');
 
             }
 
         }
         return Redirect::to($this->module)
-            ->with('messagetext', 'No Module removed !')->with('msgstatus', 'success');
+            ->with('messagetext', 'No module removed !')->with('msgstatus', 'success');
 
     }
 
@@ -274,7 +274,7 @@ class ModuleController extends Controller
         $row = \DB::table('tb_module')->where('module_name', $id)
             ->get();
         if (count($row) <= 0) {
-            return Redirect::to('feg/module')->with('messagetext', 'Can not find module')->with('msgstatus', 'error');
+            return Redirect::to('feg/module')->with('messagetext', 'Cannot find module')->with('msgstatus', 'error');
 
         }
         $row = $row[0];
@@ -343,10 +343,10 @@ class ModuleController extends Controller
             \DB::table('tb_module')->where('module_id', '=', $id)->update($data);
 
             return Redirect::to('feg/module/config/' . $request->input('module_name'))
-                ->with('messagetext', 'Module Info Has Been updated  Successfull')->with('msgstatus', 'success');
+                ->with('messagetext', 'Module info updated  successfully')->with('msgstatus', 'success');
         } else {
             return Redirect::to('feg/module/config/' . $request->input('module_name'))
-                ->with('messagetext', 'The following errors occurred')->with('msgstatus', 'error')
+                ->with('messagetext', 'The following error(s) occurred')->with('msgstatus', 'error')
                 ->withErrors($validator)->withInput();
         }
     }
@@ -360,7 +360,7 @@ class ModuleController extends Controller
         $row = \DB::table('tb_module')->where('module_id', $id)
             ->get();
         if (count($row) <= 0) {
-            return Redirect::to('feg/module')->with('messagetext', 'Can not find module')->with('msgstatus', 'error');
+            return Redirect::to('feg/module')->with('messagetext', 'Cannot find module')->with('msgstatus', 'error');
 
         }
         $row = $row[0];
@@ -410,7 +410,7 @@ class ModuleController extends Controller
         $row = \DB::table('tb_module')->where('module_name', $id)
             ->get();
         if (count($row) <= 0) {
-            return Redirect::to('feg/module')->with('messagetext', 'Can not find module')->with('msgstatus', 'error');
+            return Redirect::to('feg/module')->with('messagetext', 'Cannot find module')->with('msgstatus', 'error');
         }
         $row = $row[0];
         $this->data['pageTitle'] = "Module: " . Module::name2title($id);
@@ -1080,7 +1080,7 @@ class ModuleController extends Controller
         }
 
         return Redirect::to('feg/module/permission/' . $row->module_name)
-            ->with('messagetext', 'Permission Has Changed Successful.')->with('msgstatus', 'success');
+            ->with('messagetext', 'Permission updated successfully.')->with('msgstatus', 'success');
     }
 
     
@@ -1090,7 +1090,7 @@ class ModuleController extends Controller
         $row = \DB::table('tb_module')->where('module_name', $id)
             ->get();
         if (count($row) <= 0) {
-            return Redirect::to('feg/module')->with('messagetext', 'Can not find module')->with('msgstatus', 'error');
+            return Redirect::to('feg/module')->with('messagetext', 'Cannot find module')->with('msgstatus', 'error');
         }
         $row = $row[0];
         $this->data['pageTitle'] = "Module: " . Module::name2title($id);
