@@ -35,9 +35,6 @@ return [
 	],
 
 	'google' => [
-		//'client_id' => '',
-	   	//'client_id' => env('G_ID'),
-	    //'client_secret' => env('G_SECRET'),
         'client_id' => env('G_ID'),
         'client_secret' => env('G_SECRET'),
 	    'redirect' => (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https://' : 'http://').$_SERVER['HTTP_HOST'].env('G_REDIRECT'),
