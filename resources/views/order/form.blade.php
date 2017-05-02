@@ -991,5 +991,6 @@
             -ms-appearace:none;
             appearance: none;
             margin: 0;
+            -moz-appearance:textfield;
         }
     </style>
