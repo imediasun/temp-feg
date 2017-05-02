@@ -754,7 +754,7 @@ class OrderController extends Controller
                 'orders.date_ordered',
                 'orders.order_description',
                 'orders.status_id',
-                'orders.order_type_id',
+                'OT.order_type',
                 'orders.po_number',
                 'orders.po_notes',
                 'orders.notes',
