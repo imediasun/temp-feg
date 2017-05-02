@@ -3225,21 +3225,68 @@ position: relative;
   width: 45px;
 }
 
+
+.table-responsive .table.no-white-space tbody tr td {
+  white-space: normal;
+}
+
+.merch-gallery {
+  margin: 0 3px 6px;
+}
+
+
+#delete-cols.btn.btn-sm .fa, #edit-cols.btn.btn-sm .fa {
+  margin-right: 0;
+}
+
+.bootstrap-switch.bootstrap-switch-focused {
+  box-shadow: none !important;
+}
+
+
+
+
+
+
+
+
+
 /* Mobile Layout: 320px. */
 
 @media only screen and (max-width: 767px) {
 
 .c-margin .col-md-9,
-.c-margin .col-md-8{
+.c-margin .col-md-8,
+.c-margin .col-md-7{
   margin-bottom: 5px;
 }
 
-.c-margin .col-md-9 .btn,
+
+.c-margin .col-md-12 select,
+.c-margin .col-md-11 select,
+.c-margin .col-md-10 select,
 .c-margin .col-md-9 select,
-.c-margin .col-md-6 .btn,
 .c-margin .col-md-6 select,
+.c-margin .col-md-8 select,
+.c-margin .col-md-7 select,
+.c-margin .col-md-6 select,
+.c-margin .col-md-5 select,
+.c-margin .col-md-4 select,
+.c-margin .col-md-3 select,
+.c-margin .col-md-2 select,
+.c-margin .col-md-1 select,
+.c-margin .col-md-12 .btn,
+.c-margin .col-md-11 .btn,
+.c-margin .col-md-10 .btn,
+.c-margin .col-md-9 .btn,
 .c-margin .col-md-8 .btn,
-.c-margin .col-md-4 select{
+.c-margin .col-md-6 .btn,
+.c-margin .col-md-7 .btn,
+.c-margin .col-md-5 .btn,
+.c-margin .col-md-4 .btn,
+.c-margin .col-md-3 .btn,
+.c-margin .col-md-2 .btn,
+.c-margin .col-md-1 .btn{
   margin-bottom: 5px;
 }
 
@@ -3309,5 +3356,13 @@ margin-left: 15px;
     min-height: 50px;
     padding: 15px 1px;
   }
+  
+  .page-content {
+    margin: 0 -25px;
+  }
+  
+  .page-content .sbox .sbox-content {
+  padding: 10px;
+}
 
 }

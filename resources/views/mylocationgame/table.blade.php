@@ -17,7 +17,7 @@
 			@endif
 		</div>
 	</div>
-	<div class="sbox-content">
+	<div class="sbox-content" style="margin-bottom: 15px;">
         @if($setting['usesimplesearch']!='false')
             <?php $simpleSearchForm = SiteHelpers::configureSimpleSearchForm($tableForm); ?>
             @if(!empty($simpleSearchForm))
