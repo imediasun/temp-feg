@@ -167,7 +167,7 @@ class UserController extends Controller
                 'code' => $code
 
             );
-            if (CNF_ACTIVATION != 'confirmation') {
+            if (CNF_ACTIVATION == 'confirmation') {
 
                 $to = $request->input('email');
                 $subject = "[ " . CNF_APPNAME . " ] REGISTRATION ";
