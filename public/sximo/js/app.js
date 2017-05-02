@@ -678,8 +678,15 @@ jQuery(document).ready(function ($) {
 
             })
             .error(function (data) {
-                notyMessageError('Error getting permission to the page you are trying to access');
-                //console.log(data);
+                console.log(data);
+                if(data.status == '500')
+                {
+                    window.location = url;
+                }
+                else
+                {
+                    notyMessageError('Error getting permission to the page you are trying to access');
+                }
             });
 		}
 	});
