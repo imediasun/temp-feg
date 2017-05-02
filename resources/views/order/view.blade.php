@@ -311,10 +311,10 @@ if(!empty($order_data['orderQtyArray'])){
             </div>
             <div class="clr clear"></div>
             <br/>
-            <div class="table-responsive" style="box-shadow: 1px 1px 10px gray;background: #fff;padding:10px 10px 0px">
+            <div class="table-responsive col-md-12" style="box-shadow: 1px 1px 10px gray;background: #fff;padding:10px 10px 0px">
                 <fieldset>
                     <legend> Order Items</legend>
-            <table class="table table-hover table-striped datagrid">
+            <table class="table">
                 <thead>
                 <tr>
                 <th>N0 #</th>
@@ -352,8 +352,8 @@ if(!empty($order_data['orderQtyArray'])){
                     @else
                         <td colspan="5">&nbsp;</td>
                     @endif
-                    <td  colspan="1">Sub Total</td>
-                    <td>{{CurrencyHelpers::formatCurrency(number_format($order_data['order_total'],3)) }}</td>
+                    <td  colspan="1"><b>Sub Total ($)</b></td>
+                    <td><b>{{CurrencyHelpers::formatCurrency(number_format($order_data['order_total'],3)) }}</b></td>
 
                 </tr>
                     @else
