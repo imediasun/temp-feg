@@ -25,7 +25,8 @@
             <div class="sbox">
                 <div class="sbox-title"><h5> Setting </h5></div>
                 <div class="sbox-content">
-                    <table class="table table-striped table-bordered" id="table">
+                    <div class="table-responsive">
+                        <table class="table table-striped table-bordered no-white-space" id="table">
                         <thead class="no-border">
                         <tr>
 <!--                            <th field="name1" width="5%">No</th>-->
@@ -105,6 +106,8 @@
                         {{--</tr>--}}
                         </tbody>
                     </table>
+                    </div>
+                    <br>
                     <button type="submit" class="btn btn-success"> Save Changes </button>
                 </div>	</div>
             {!! Form::close() !!}
