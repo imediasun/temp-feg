@@ -39,6 +39,7 @@ width: 75%">
     <div class="row c-margin" style="margin-left:0px; margin-right:0px;">
         
         <div class="col-md-9">
+            @if($setting['disableactioncheckbox']=='false')
             @if($access['is_add'] ==1)
                 {!! AjaxHelpers::buttonActionCreate($pageModule,$setting) !!}
                 <a href="javascript://ajax" class="btn btn-sm btn-white"
@@ -48,6 +49,7 @@ width: 75%">
                 <a href="javascript://ajax" class="btn btn-sm btn-white"
                    onclick="ajaxRemove('#{{ $pageModule }}','{{ $pageUrl }}');"><i
                             class="fa fa-trash-o "></i> {{ Lang::get('core.btn_remove') }} </a>
+            @endif
             @endif
             <a href="{{ URL::to( $pageModule .'/search') }}" class="btn btn-sm btn-white"
                onclick="SximoModal(this.href,'Advanced Search'); return false;"><i class="fa fa-search"></i>Advanced Search</a>
