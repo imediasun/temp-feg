@@ -3218,7 +3218,12 @@ position: relative;
   float:left;
 }
 
-
+.r-avatar .previewImage img {
+  border-radius: 50%;
+  display: block;
+  height: 45px;
+  width: 45px;
+}
 
 /* Mobile Layout: 320px. */
 
@@ -3231,6 +3236,8 @@ position: relative;
 
 .c-margin .col-md-9 .btn,
 .c-margin .col-md-9 select,
+.c-margin .col-md-6 .btn,
+.c-margin .col-md-6 select,
 .c-margin .col-md-8 .btn,
 .c-margin .col-md-4 select{
   margin-bottom: 5px;
@@ -3303,9 +3310,4 @@ margin-left: 15px;
     padding: 15px 1px;
   }
 
-}
-
-
-.simpleSearchContainer .sscol {
-    float: left;
 }

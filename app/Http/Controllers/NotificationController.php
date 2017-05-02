@@ -183,7 +183,7 @@ class NotificationController extends Controller
 
         } else {
             return Redirect::to('notification')
-                ->with('messagetext', 'No Item Deleted')->with('msgstatus', 'error');
+                ->with('messagetext', 'No item deleted')->with('msgstatus', 'error');
         }
 
     }

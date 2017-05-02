@@ -62,8 +62,8 @@
                         </label>
 
                         <div class="col-md-8">
-                         {{$row->location_id ." |"}} {!!
-                            SiteHelpers::gridDisplayView($row->location_id,'location_id','1:location:id:location_name')
+                          {!!
+                            SiteHelpers::gridDisplayView($row->location_id,'location_id','1:location:id:id|location_name')
                             !!}
                         </div>
                     </div>

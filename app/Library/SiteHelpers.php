@@ -1644,8 +1644,32 @@ class SiteHelpers
                 $v .= (isset($fields[2]) && $fields[2] != '' ? $row->$fields[2] . ' ' : '');
                 return $v;
             } else {
-                return '';
-            }
+                if (isset($arr[3]) && $arr[3] !== '') {
+                        $colName = "";
+                        $col = explode("|", $arr['3']);
+                        if (isset($col[1]) && $col[1] !== '') {
+                            $col = explode("_", $col[1]);
+                            foreach ($col as $c) {
+                                $colName .= $c . " ";
+                            }
+                        } else {
+                            $col = explode("_", $arr[3]);
+                            foreach ($col as $c) {
+                                $colName .= $c . " ";
+                            }
+                        }
+if($val != "0") {
+    $val .= " - <span style='color:red;font-weight: bold'> " . ucfirst($colName) . " not found</span>";
+}
+                    else
+                    {
+                        $val="";
+                    }
+                    }
+
+             echo $val;
+                }
+
         } else {
             return $val;
         }
