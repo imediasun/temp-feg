@@ -40,7 +40,7 @@ return [
 	    //'client_secret' => env('G_SECRET'),
         'client_id' => env('G_ID'),
         'client_secret' => env('G_SECRET'),
-	    'redirect' => 'http://'.$_SERVER['SERVER_NAME'].env('G_REDIRECT'),
+	    'redirect' => (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https://' : 'http://').$_SERVER['HTTP_HOST'].env('G_REDIRECT'),
 	],
 
 	'twitter' => [
