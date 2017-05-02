@@ -216,7 +216,7 @@ class UserController extends Controller
     {
 
         if (\Auth::check()) {
-            return Redirect::to('dashboard')->with('message', \SiteHelpers::alert('success', 'Youre already login'));
+            return Redirect::to('dashboard')->with('message', \SiteHelpers::alert('success', 'You are already login'));
 
         } else {
             $this->data['socialize'] = config('services');
