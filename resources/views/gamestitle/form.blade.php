@@ -22,7 +22,7 @@
 			<div class="col-md-12">
 						
 
-				  <div class="form-group  " >
+				 <div class="form-group  " >
 					<label for="Game Title" class=" control-label col-md-4 text-left">
 					{!! SiteHelpers::activeLang('Game Title', (isset($fields['game_title']['language'])? $fields['game_title']['language'] : array())) !!}
 					</label>
@@ -40,7 +40,7 @@
 
 					 </div>
 				  </div>
-				  <div class="form-group  " >
+				 <div class="form-group  " >
 					<label for="Mfg Id" class=" control-label col-md-4 text-left">
 					{!! SiteHelpers::activeLang('Manufacturer', (isset($fields['mfg_id']['language'])? $fields['mfg_id']['language'] : array())) !!}
 					</label>
@@ -51,7 +51,7 @@
 
 					 </div>
 				  </div>
-				  <div class="form-group  " >
+				 <div class="form-group  " >
 					<label for="Game Type Id" class=" control-label col-md-4 text-left">
 					{!! SiteHelpers::activeLang('Game Type', (isset($fields['game_type_id']['language'])? $fields['game_type_id']['language'] : array())) !!}
 					</label>
@@ -66,7 +66,7 @@
 
 
 
-<div style="display:none">					<?php $has_manual = explode(',',$row['has_manual']);
+                <div style="display:none">					<?php $has_manual = explode(',',$row['has_manual']);
 					$has_manual_opt = array( '1' => 'Yes' ,  '0' => 'No' , ); ?>
 					<select name='has_manual' rows='5'   class='select2 '  >
 						<?php
@@ -76,7 +76,7 @@
 						}
 						?></select>
 </div>
-                            <div class="form-group  " >
+                <div class="form-group  " >
                                 <label for="Has Manual" class=" control-label col-md-4 text-left">
                                     {!! SiteHelpers::activeLang('Manual', (isset($fields['has_manual']['language'])? $fields['has_manual']['language'] : array())) !!}
                                 </label>
@@ -100,7 +100,7 @@
 						}
 						?></select>
                 </div>
-                        <div class="form-group  " >
+                    <div class="form-group  " >
                             <label for="Has Servicebulletin" class=" control-label col-md-4 text-left">
                                 {!! SiteHelpers::activeLang('Service Bulletin', (isset($fields['has_servicebulletin']['language'])? $fields['has_servicebulletin']['language'] : array())) !!}
                             </label>
@@ -108,7 +108,7 @@
                                 <input type="file" name="service_bulletin" id="service_bulletin"/>
 					        </div>
 				        </div>
-                            <div class="form-group  " >
+                    <div class="form-group  " >
                                 <label for="img" class=" control-label col-md-4 text-left">
                                     {!! SiteHelpers::activeLang('Image', (isset($fields['img']['language'])? $fields['img']['language'] : array())) !!}
                                 </label>

@@ -3,9 +3,10 @@
 </div>
 
 
-<div class="sbox-content" style="padding: 0px 20px 0px 15px; border: medium none;">
+<div class="sbox-content" style="border: medium none; padding: 0px 15px;">
     
 <div class="row c-margin" style="margin-bottom: 1px;">
+    
 	<div class="col-md-9" style="padding-left: 0px !important">
 			@if($access['is_add'] ==1)
 			{!! AjaxHelpers::buttonActionCreate($pageModule,$setting) !!}
@@ -34,7 +35,7 @@
                     @endif
                 @endif
 	</div>
-	<div class="col-md-3 " style="padding-right:0px !important">
+	<div class="col-md-3 " style="padding:0px !important">
         <?php
         $isExcel = isset($access['is_excel']) && $access['is_excel'] == 1;
         $isCSV = isset($access['is_csv'])  ? ($access['is_csv'] == 1) : $isExcel;

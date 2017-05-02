@@ -47,7 +47,8 @@
             <p style="color:red;font-weight: bold"><?php echo $manageRequestInfo['number_requests']; ?></p>
         </div>
     @endif
-    <div class="col-md-12">
+    
+    <div class="col-md-9">
 
         <a href="{{ URL::to( $pageModule .'/search') }}" class="btn btn-sm btn-white"
            onclick="SximoModal(this.href,'Advanced Search'); return false;"><i class="fa fa-search"></i>Advanced Search</a>
@@ -69,6 +70,10 @@
                 @endif
             @endif
         @endif
+        
+    </div>
+    
+    <div class="col-md-3">
         <div class="pull-right">
             <a href="{{ URL::to( $pageModule .'/export/excel?exportID='.uniqid('excel', true).'&return='.$return) }}" class="btn btn-sm btn-white">
                 Excel</a>
