@@ -622,6 +622,17 @@ jQuery(document).ready(function($){
 
 // TODO: Clean and refactor the below code 
 jQuery(document).ready(function ($) {
+    $('.ajaxLoading').bind('DOMSubtreeModified', function(e) {
+        if (e.target.innerHTML.length > 0) {
+            console.log('if');
+            console.log(e);
+        }
+        else
+        {
+            console.log('else');
+            console.log(e);
+        }
+    });
 	navigator.sayswho= (function(){
 		var ua= navigator.userAgent, tem,
 				M= ua.match(/(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*(\d+)/i) || [];
