@@ -41,10 +41,10 @@ $app->singleton(
     App\Exceptions\Handler::class
 );
 
-$app->configureMonologUsing(function($monolog) {
+/*$app->configureMonologUsing(function($monolog) {
     $nullLogger = new \Monolog\Handler\NullHandler();
     $monolog->setHandlers(array($nullLogger));
-});
+});*/
 /*
 |--------------------------------------------------------------------------
 | Return The Application
