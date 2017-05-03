@@ -189,7 +189,8 @@ class SparepartsController extends Controller
 
     function postSave(Request $request, $id = null)
     {
-        if($request->status_id != 0)
+        $row = $this->model->getRow($id);
+        if($row->status_id != 0)
         {
             $rules = array('loc_id' => 'required', 'status_id' => 'required');
         }
