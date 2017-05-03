@@ -266,6 +266,16 @@ function initDataGrid(module, url, options) {
         
         
     });
+    console.log($('ul.pagination li').length);
+    $('ul.pagination li.active')
+        .prev().addClass('show-mobile')
+        .prev().addClass('show-mobile');
+    $('ul.pagination li.active')
+        .next().addClass('show-mobile')
+        .next().addClass('show-mobile');
+    $('ul.pagination')
+        .find('li:first-child, li:last-child, li.active')
+        .addClass('show-mobile');
 }
 
 function autoSetMainContainerHeight() {

@@ -3366,3 +3366,8 @@ margin-left: 15px;
 }
 
 }
+@media only screen and (max-width: 520px){
+  ul.pagination li:not(.show-mobile) {
+    display: none;
+  }
+}
