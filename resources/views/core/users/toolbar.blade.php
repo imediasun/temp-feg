@@ -1,10 +1,10 @@
 <div class="row c-margin">
 	<div class="col-md-9">
+        @if($access['is_add'] ==1)
+            <a href="{{ URL::to('core/users/update') }}" class="tips btn btn-sm btn-white"  title="{{ Lang::get('core.btn_create') }}">
+                <i class="fa fa-plus "></i>&nbsp;{{ Lang::get('core.btn_create') }}</a>
+        @endif
         @if($setting['disableactioncheckbox']=='false')
-            @if($access['is_add'] ==1)
-	   		<a href="{{ URL::to('core/users/update') }}" class="tips btn btn-sm btn-white"  title="{{ Lang::get('core.btn_create') }}">
-			<i class="fa fa-plus "></i>&nbsp;{{ Lang::get('core.btn_create') }}</a>
-			@endif
 			@if($access['is_remove'] ==1)
 			<a href="javascript://ajax"  onclick="SximoDelete();" class="tips btn btn-sm btn-white" title="{{ Lang::get('core.btn_remove') }}">
 			<i class="fa fa-trash-o"></i>&nbsp;{{ Lang::get('core.btn_remove') }}</a>

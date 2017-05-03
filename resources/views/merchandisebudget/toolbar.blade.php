@@ -1,6 +1,7 @@
 <div class="row c-margin">
 	<div class="col-md-9">
-		<div class="col-md-4">	@if($access['is_add'] ==1)
+		<div class="col-md-4">
+            @if($access['is_add'] ==1)
 			{!! AjaxHelpers::buttonActionCreate($pageModule,$setting) !!}
 			@endif
             <a href="{{ URL::to( $pageModule .'/search') }}" class="btn btn-sm btn-white" onclick="SximoModal(this.href,'Advanced Search'); return false;" ><i class="fa fa-search"></i>Advanced Search</a>

@@ -1,11 +1,15 @@
 <div class="row c-margin">
 	<div class="col-md-9">
-        @if($access['is_add'] ==1)
-        {!! AjaxHelpers::buttonActionCreate($pageUrl,$setting) !!}
-        <a href="javascript://ajax" class="btn btn-sm btn-white" onclick="ajaxCopy('#{{ $pageModule }}','{{ $pageUrl }}')"><i class="fa fa-file-o"></i> Copy </a>
-        @endif
-        @if($access['is_remove'] ==1)
-        <a href="javascript://ajax" class="btn btn-sm btn-white" onclick="ajaxRemove('#{{ $pageModule }}','{{ $pageUrl }}');"><i class="fa fa-trash-o "></i> {{ Lang::get('core.btn_remove') }} </a>
+		@if($access['is_add'] ==1)
+			{!! AjaxHelpers::buttonActionCreate($pageModule,$setting) !!}
+		@endif
+		@if($setting['disableactioncheckbox']=='false')
+			@if($access['is_add'] ==1)
+			<a href="javascript://ajax" class="btn btn-sm btn-white" onclick="ajaxCopy('#{{ $pageModule }}','{{ $pageUrl }}')"><i class="fa fa-file-o"></i> Copy </a>
+			@endif
+			@if($access['is_remove'] ==1)
+			<a href="javascript://ajax" class="btn btn-sm btn-white" onclick="ajaxRemove('#{{ $pageModule }}','{{ $pageUrl }}');"><i class="fa fa-trash-o "></i> {{ Lang::get('core.btn_remove') }} </a>
+			@endif
         @endif
         @if(SiteHelpers::isModuleEnabled($pageModule))
         @if(!empty($colconfigs))

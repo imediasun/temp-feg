@@ -54,10 +54,11 @@
     <div class="c-margin clearfix">
 
     <div class="col-md-7 form-inline">
-
+        @if($access['is_add'] ==1)
+            {!! AjaxHelpers::buttonActionCreate($pageModule,$setting) !!}
+        @endif
         @if($setting['disableactioncheckbox']=='false')
             @if($access['is_add'] ==1)
-                {!! AjaxHelpers::buttonActionCreate($pageModule,$setting) !!}
                 <a href="javascript://ajax" class="btn btn-sm btn-white"
                    onclick="ajaxCopy('#{{ $pageModule }}','{{ $pageUrl }}')"><i class="fa fa-file-o"></i> Copy </a>
             @endif

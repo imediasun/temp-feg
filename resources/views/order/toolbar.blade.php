@@ -8,9 +8,11 @@
 <div class="row c-margin" style="margin-bottom: 1px;">
     
 	<div class="col-md-9" style="padding-left: 0px !important">
+        @if($access['is_add'] ==1)
+            {!! AjaxHelpers::buttonActionCreate($pageModule,$setting) !!}
+        @endif
             @if($setting['disableactioncheckbox']=='false')
                 @if($access['is_add'] ==1)
-                {!! AjaxHelpers::buttonActionCreate($pageModule,$setting) !!}
                 <a href="javascript://ajax" class="btn btn-sm btn-white" onclick="ajaxCopy('#{{ $pageModule }}','{{ $pageUrl }}')"><i class="fa fa-file-o"></i> Copy </a>
                 @endif
                 @if($access['is_remove'] ==1 && !empty($pass['Can remove order']))

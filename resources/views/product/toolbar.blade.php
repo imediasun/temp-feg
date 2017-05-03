@@ -39,9 +39,11 @@ width: 75%">
     <div class="row c-margin" style="margin-left:0px; margin-right:0px;">
         
         <div class="col-md-9">
-            @if($setting['disableactioncheckbox']=='false')
             @if($access['is_add'] ==1)
                 {!! AjaxHelpers::buttonActionCreate($pageModule,$setting) !!}
+            @endif
+            @if($setting['disableactioncheckbox']=='false')
+            @if($access['is_add'] ==1)
                 <a href="javascript://ajax" class="btn btn-sm btn-white"
                    onclick="ajaxCopy('#{{ $pageModule }}','{{ $pageUrl }}')"><i class="fa fa-file-o"></i> Copy </a>
             @endif
