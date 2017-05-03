@@ -48,13 +48,19 @@
                 'placeholder': "Select Company"
             });
 
-            container.find("input[id^='loc_game_']").each(function(){
+            container.find("input[id^='loc_game_']").each(function(key,value){
                 renderDropdown($(this), {
                     'width': '100%',
                     'data': data['game_drop_down'],
                     'placeholder': "Select Game"
                 });
-            });            
+                if($(this).val() == '' || $(this).val() == null || $(this).val() == '0')
+                {
+                    console.log($(this).siblings('.select2-container').children('a').children('span').first());
+                    //($(this).siblings('.select2-container').children('a').children('span').first().innerHTML = 'Select Game');
+                    $(this).siblings('.select2-container').children('a').children('span').first().text('Select Game').css('color','#999999');
+                }
+            });
 
             if(to_contact_name !== "" && email_notes === "") {
                 $("#email_notes").val("Hi"+to_contact_name+",");
