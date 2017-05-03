@@ -189,7 +189,7 @@ class SparepartsController extends Controller
 
     function postSave(Request $request, $id = null)
     {
-        if($id)
+        if($request->status_id != 0)
         {
             $rules = array('loc_id' => 'required', 'status_id' => 'required');
         }
