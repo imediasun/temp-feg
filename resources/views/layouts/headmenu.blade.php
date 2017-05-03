@@ -132,5 +132,11 @@
                 });
             }
         });
+        <?php if(\Session::get('return_id') != ''): $id = \Session::get('return_id'); ?>
+
+        console.log($('a[data-original-title="Impersonate"]').length);
+        $('a[data-original-title="Impersonate"]').attr('disabled','disabled');
+
+<?php endif; ?>
     });
 </script>
