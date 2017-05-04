@@ -92,7 +92,7 @@
                             {!! SiteHelpers::activeLang('Expense Category', (isset($fields['expense_category']['language'])? $fields['expense_category']['language'] : array())) !!}
                         </label>
                         <div class="col-md-6">
-                            {!! Form::text('expense_category', $row['expense_category'],array('class'=>'form-control', 'placeholder'=>'', 'required'=>'true'  )) !!}
+                            {!! Form::text('expense_category', $row['expense_category'],array('class'=>'form-control', 'placeholder'=>'','parsley-type'=>"number", 'required'=>'true'  )) !!}
                         </div>
                         <div class="col-md-2">
 

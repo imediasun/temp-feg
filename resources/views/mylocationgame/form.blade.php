@@ -112,7 +112,7 @@
 							{!! SiteHelpers::activeLang('Price Per Play', (isset($fields['price_per_play']['language'])? $fields['price_per_play']['language'] : array())) !!}
 						</label>
 						<div class="col-md-6">
-							{!! Form::text('price_per_play', $row['price_per_play'],array('class'=>'form-control', 'placeholder'=>'', 'required'=>'true'  )) !!}
+							{!! Form::text('price_per_play', $row['price_per_play'],array('class'=>'form-control', 'placeholder'=>'Price Per Play','parsley-type'=>"number", 'required'=>'true'  )) !!}
 						</div>
 						<div class="col-md-2">
 
@@ -151,7 +151,7 @@
 							{!! SiteHelpers::activeLang('Serial', (isset($fields['serial']['language'])? $fields['serial']['language'] : array())) !!}
 						</label>
 						<div class="col-md-6">
-							{!! Form::text('serial', $row['serial'],array('class'=>'form-control', 'placeholder'=>'',  'required'=> 'required' )) !!}
+							{!! Form::text('serial', $row['serial'],array('class'=>'form-control', 'placeholder'=>'','parsley-type'=>"number",  'required'=> 'required' )) !!}
 						</div>
 						<div class="col-md-2">
 
