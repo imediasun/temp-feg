@@ -273,7 +273,7 @@ class managefreightquoters extends Sximo
         $where="AND L.active = 1";
         $orderBy = 'L.id,T.game_title';
         $query = \DB::select('SELECT G.id AS id, IFNULL(' . $concat . ',"") AS text  FROM game G
-							LEFT JOIN game_title T ON T.id = G.game_title_id
+							Inner JOIN game_title T ON T.id = G.game_title_id
 							Inner JOIN location L ON L.id = G.location_id
                             WHERE G.sold = 0 ' . $where . '  ORDER BY ' . $orderBy);
         $query=json_decode(json_encode($query),true);
