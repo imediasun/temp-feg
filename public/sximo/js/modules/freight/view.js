@@ -56,8 +56,6 @@
                 });
                 if($(this).val() == '' || $(this).val() == null || $(this).val() == '0')
                 {
-                    console.log($(this).siblings('.select2-container').children('a').children('span').first());
-                    //($(this).siblings('.select2-container').children('a').children('span').first().innerHTML = 'Select Game');
                     $(this).siblings('.select2-container').children('a').children('span').first().text('Select Game').css('color','#999999');
                 }
             });

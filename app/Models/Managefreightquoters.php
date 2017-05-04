@@ -277,7 +277,7 @@ class managefreightquoters extends Sximo
 							LEFT JOIN location L ON L.id = G.location_id
                             WHERE G.sold = 0 ' . $where . '  ORDER BY ' . $orderBy);
         $query=json_decode(json_encode($query),true);
-
+dd($query);
         return $query;
     }
 
