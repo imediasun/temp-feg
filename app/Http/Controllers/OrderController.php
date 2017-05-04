@@ -765,7 +765,8 @@ class OrderController extends Controller
                 'orders.notes',
                 'orders.is_partial',
                 'orders.created_at',
-                'orders.updated_at'
+                'orders.updated_at',
+                'YN.yesno'
             ];
             $searchInput = ['query' => $search_all_fields, 'fields' => $searchFields];
         }
