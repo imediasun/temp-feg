@@ -9,7 +9,7 @@
 		</div>
 	</div>
 	<div class="sbox-content">
-        @include( $pageModule.'/toolbar')
+        @include( $pageModule.'/toolbar',array('pageModule'=>$pageModule))
 	 <div>
     @if(!empty($topMessage))
     <h5 class="topMessage">{{ $topMessage }}</h5>

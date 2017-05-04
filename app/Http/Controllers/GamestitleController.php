@@ -76,29 +76,6 @@ class GamestitleController extends Controller
         );
         // Get Query
         $results = $this->model->getRows($params);
-
-        foreach ($results['rows'] as $result) {
-
-            if ($result->has_manual == 1) {
-                $result->has_manual = "Yes";
-
-            } else {
-                $result->has_manual = "No";
-            }
-            if ($result->has_servicebulletin == 1) {
-                $result->has_servicebulletin = "Yes";
-
-            } else {
-                $result->has_servicebulletin = "No";
-            }
-            if ($result->num_prize_meters == 1) {
-                $result->num_prize_meters = "Yes";
-
-            } else {
-                $result->num_prize_meters = "No";
-            }
-        }
-
         // Build pagination setting
         $page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;
 
