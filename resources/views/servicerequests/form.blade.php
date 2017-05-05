@@ -222,7 +222,7 @@ $(document).ready(function() {
     console.log( new Date() );
 	$('.date').datepicker({format:'mm/dd/yyyy',startDate:new Date(Date.now() - 864e5),autoclose:true});
     
-	$('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss',minDate:new Date()});
+	$('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});
     
 	$('input[type="checkbox"],input[type="radio"]').iCheck({
 		checkboxClass: 'icheckbox_square-blue',
