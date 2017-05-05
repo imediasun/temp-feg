@@ -2,7 +2,7 @@
 <p>&nbsp;</p>
 <div class="page-content-wrapper m-t">
 <div class="sbox animated fadeInRight">
-<div class="sbox-title">&nbsp;{{ $pageTitle }}</div>
+<div class="sbox-title">&nbsp;{{ $pageTitle }}{!! $editLink !!}</div>
 <div class="sbox-content">
 <div class="col-md-12" style="background-color: #fff; padding: 50px;">
 <p><a class="smallhdr" href="http://www.mytotalsource.com/" target="_blank" name="adp">ADP Total Source</a></p>
