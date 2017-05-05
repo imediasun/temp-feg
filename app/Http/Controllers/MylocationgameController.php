@@ -97,6 +97,7 @@ class MylocationgameController extends Controller
             'params' => $filter,
             'global' => (isset($this->access['is_global']) ? $this->access['is_global'] : 0)
         );
+        dd('here');
         // Get Query
         $results = $this->model->getRows($params);
         // foreach ($results['rows'] as $result) {

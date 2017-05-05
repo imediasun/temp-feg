@@ -28,7 +28,6 @@ class Sximo extends Model {
     public static function getRows($args, $cond = null) {
         $table = with(new static)->table;
         $key = with(new static)->primaryKey;
-dd('here');
         extract(array_merge(array(
             'page' => '0',
             'limit' => '0',
@@ -119,7 +118,6 @@ dd('here');
         }
 
         $limitConditional = ($page != 0 && $limit != 0) ? "LIMIT  $offset , $limit" : '';
-        dd($select . " {$params} " . self::queryGroup() . " {$orderConditional}  {$limitConditional} ");
        // echo $select . " {$params} " . self::queryGroup() . " {$orderConditional}  {$limitConditional} ";
         Log::info("Query : ".$select . " {$params} " . self::queryGroup() . " {$orderConditional}  {$limitConditional} ");
         $result = \DB::select($select . " {$params} " . self::queryGroup() . " {$orderConditional}  {$limitConditional} ");
