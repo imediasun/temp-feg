@@ -144,8 +144,11 @@ class PagesController extends Controller
         }
 
         $this->data['groups'] = $group;
-
         $this->data['id'] = $id;
+
+        $redirect = $request->has('return') ? $request->input('return') : '';
+        $this->data['return'] = $redirect;
+
         return view('core.pages.form', $this->data);
     }
 
@@ -208,6 +211,7 @@ class PagesController extends Controller
             $data['direct_edit_groups'] = $request->input('direct_edit_groups');
             $data['direct_edit_users'] = $request->input('direct_edit_users');
             $data['direct_edit_users_exclude'] = $request->input('direct_edit_users_exclude');
+
             if(is_array($data['direct_edit_groups'])) {
                 $data['direct_edit_groups'] = implode(',', $data['direct_edit_groups']);
             }
@@ -221,11 +225,20 @@ class PagesController extends Controller
             $this->model->insertRow($data, $request->input('pageID'));
             self::createRouters();
 
-            return Redirect::to('core/pages?return=' . self::returnUrl())->with('messagetext', \Lang::get('core.note_success'))->with('msgstatus', 'success');
+            $redirect = $request->has('return') ? $request->input('return') : '';
+            if (empty($redirect)) {
+                $redirect = 'core/pages?return=' . self::returnUrl();
+            }
+            
+            return Redirect::to($redirect)
+                    ->with('messagetext', \Lang::get('core.note_success'))
+                    ->with('msgstatus', 'success');
 
         } else {
 
-            return Redirect::to('core/pages/update/' . $id)->with('messagetext', \Lang::get('core.note_error'))->with('msgstatus', 'error')
+            return Redirect::to('core/pages/update/' . $id)
+                ->with('messagetext', \Lang::get('core.note_error'))
+                ->with('msgstatus', 'error')
                 ->withErrors($validator)->withInput();
         }
 

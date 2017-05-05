@@ -42,13 +42,12 @@ class Pages extends Sximo  {
         $module_id = Module::name2id('pages');
         $pass = \FEGSPass::getMyPass($module_id, $user);
         $canEditGeneral = !empty($pass['See Page Edit Link In View']);
-
         if (empty($page)) {
             return $canEditGeneral;
         }
         
         $pageData = self::where('pageID', $page)->first();
-        if (empty($pageData) || empty($pageData->count())) {
+        if (empty($pageData)) {
             return $canEdit;
         }
 
@@ -58,15 +57,23 @@ class Pages extends Sximo  {
                         explode(',', $pageData->direct_edit_users);
         $pageEditExcludedUsers = empty($pageData->direct_edit_users_exclude) ?
                     [] : explode(',', $pageData->direct_edit_users_exclude);
+        $inGroup = in_array($group, $pageEditGroups);
+        $inUsers = in_array($user, $pageEditUsers);
+        $isExcluded = in_array($user, $pageEditExcludedUsers);
         
-        if (empty($pageEditGroups) && empty($pageEditExcludedUsers) && empty($pageEditUsers)) {
-            return $canEditGeneral;
+        if(!empty($pageEditExcludedUsers) && $isExcluded) {
+            return $canEdit;
+        }        
+        if (!empty($pageEditGroups) && $inGroup) {
+            $canEdit = true;
+            return $canEdit;
+        }
+        if (!empty($pageEditUsers) && $inUsers) {
+            $canEdit = true;
+            return $canEdit;
         }
 
-        $canEdit = !in_array($user, $pageEditExcludedUsers) &&
-            (in_array($user, $pageEditUsers) || in_array($group, $pageEditGroups));
-
-        return $canEdit;
+        return $canEditGeneral;
         
     }
 
