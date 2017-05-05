@@ -1659,7 +1659,7 @@ class SiteHelpers
                             }
                         }
 if($val != "0") {
-    $val .= " - <span style='color:red;font-weight: bold'> " . ucfirst($colName) . " not found</span>";
+    $val .= "No Data";
 }
                     else
                     {

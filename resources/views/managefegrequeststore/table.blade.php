@@ -169,10 +169,10 @@
                                 endif;
                             endforeach;
                             ?>
-                            <td>{{ $row->vendor_name }}</td>
+                            <td>{{ \DateHelpers::formatZeroValue($row->vendor_name) }}</td>
                             <td>{{CurrencyHelpers::formatPrice($row->case_price)}} </td>
-                            <td align="center">{{ $row->reserved_difference }}</td>
-                            <td> {{ $row->order_type }}</td>
+                            <td align="center">{{ \DateHelpers::formatZeroValue($row->reserved_difference) }}</td>
+                            <td> {{ \DateHelpers::formatZeroValue($row->order_type) }}</td>
                             <td data-values="action" data-key="<?php echo $row->id; ?>">
                                 {!! AjaxHelpers::buttonAction('managefegrequeststore',$access,$id ,$setting) !!}
                                @if($view == "manage" && $access['is_edit'] == 1 )
