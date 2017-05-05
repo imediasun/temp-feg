@@ -152,7 +152,7 @@ class AjaxHelpers
 //			$val =  "<a href='".URL::to($linked)."'  $attr style='display:block' >".$val." <span class='fa fa-arrow-circle-right pull-right'></span></a>";
             $val = "<a href='" . URL::to($linked) . "'  $attr >" . $val . "</a>";
         }
-        if ($val === "0" || $val === 0 || $val === NULL || $val ==="" || empty($val) || $val===0.00 || $val ==="0.00" || $val==="$ 0.000") {
+        if ($val === "0" || $val === 0 || $val === NULL || $val ==="" || empty($val) ) {
             $val = "No Data";
         }
         return $val;
