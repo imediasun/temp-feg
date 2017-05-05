@@ -457,3 +457,13 @@ img.notAnUser {
   height: 45px;
   width: 45px;
 }
+
+
+#servicerequestsView .input-group.datepicker {
+    padding-left: 0;
+}
+
+
+#servicerequestsView .file_pathUpl input, #servicerequestsView .attachmentInputs input {
+    margin-left: 0;
+}
