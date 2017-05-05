@@ -32,7 +32,7 @@
                         </label>
 
                         <div class="col-md-8">
-                            {{ $row->po_number }}
+                            {{ \DateHelpers::formatStringValue($row->po_number) }}
                         </div>
                     </div>
                     <div class="clearfix"></div>
@@ -42,7 +42,7 @@
                         </label>
 
                         <div class="col-md-8">
-                            {{ $row->alt_address }}
+                            {{ \DateHelpers::formatStringValue($row->alt_address) }}
                         </div>
                     </div>
                     <div class="clearfix"></div>
@@ -94,7 +94,7 @@
                         </label>
 
                         <div class="col-md-8">
-                            {{  $row->date_ordered = date("m/d/Y", strtotime($row->date_ordered))  }}
+                            {{  \DateHelpers::formatDate($row->date_ordered) }}
 
                         </div>
 
@@ -149,7 +149,7 @@
                         </label>
 
                         <div class="col-md-8">
-                            {{ $row->order_description }}
+                            {{ \DateHelpers::formatStringValue($row->order_description) }}
                         </div>
                     </div>
                     <div class="clearfix"></div>
@@ -180,7 +180,7 @@
                         </label>
 
                         <div class="col-md-8">
-                            {{ $row->po_notes }}
+                            {{ \DateHelpers::formatStringValue($row->po_notes) }}
                         </div>
                     </div>
                     <div class="clearfix"></div>
@@ -203,7 +203,7 @@
                         </label>
 
                         <div class="col-md-8">
-                            {{ $row->notes }}
+                            {{ \DateHelpers::formatStringValue($row->notes) }}
                         </div>
                     </div>
                     <div class="clearfix"></div>
@@ -241,7 +241,7 @@ if(!empty($order_data['orderQtyArray'])){
 }
 ?>
                         <div class="col-md-8" id="quantity">
-                            {{ $quantity }}
+                            {{ \DateHelpers::formatZeroValue($quantity) }}
                         </div>
                     </div>
                     <div class="clearfix"></div>
@@ -262,7 +262,7 @@ if(!empty($order_data['orderQtyArray'])){
                         </label>
 
                         <div class="col-md-8">
-                            {{ $row->order_content }}
+                            {{ \DateHelpers::formatStringValue($row->order_content) }}
                         </div>
                     </div>
                     <div class="clearfix"></div>
@@ -283,7 +283,7 @@ if(!empty($order_data['orderQtyArray'])){
                         </label>
 
                         <div class="col-md-8">
-                            {{ $row->tracking_number }}
+                            {{ \DateHelpers::formatZeroValue($row->tracking_number) }}
                         </div>
                     </div>
                     <div class="clearfix"></div>
@@ -293,7 +293,7 @@ if(!empty($order_data['orderQtyArray'])){
                         </label>
 
                         <div class="col-md-8">
-                            {{ $row->game_ids }}
+                            {{ \DateHelpers::formatZeroValue($row->game_ids) }}
                         </div>
                     </div>
                     <div class="clearfix"></div>
@@ -303,7 +303,7 @@ if(!empty($order_data['orderQtyArray'])){
                         </label>
 
                         <div class="col-md-8">
-                            {{ $row->request_ids }}
+                            {{ \DateHelpers::formatZeroValue($row->request_ids) }}
                         </div>
                     </div>
                 </fieldset>
@@ -335,13 +335,13 @@ if(!empty($order_data['orderQtyArray'])){
                 @for($i = 0 ; $i < $order_data['requests_item_count']; $i++)
                     <tr>
                         <td>{{ $i+1 }} </td>
-                        <td>{{  $order_data['skuNumArray'][$i]}}</td>
-                        <td>{{  $order_data['orderDescriptionArray'][$i] }}</td>
+                        <td>{{  \DateHelpers::formatStringValue($order_data['skuNumArray'][$i])}}</td>
+                        <td>{{  \DateHelpers::formatStringValue($order_data['orderDescriptionArray'][$i]) }}</td>
                         <td>{{CurrencyHelpers::formatCurrency(number_format($order_data['orderItemsPriceArray'][$i],\App\Models\Order::ORDER_PERCISION)) }}</td>
-                        <td>{{  $order_data['orderQtyArray'][$i] }}</td>
+                        <td>{{  \DateHelpers::formatZeroValue($order_data['orderQtyArray'][$i]) }}</td>
                         <td>{{ $order_data['receivedItemsArray'][$i] }}</td>
                         @if($row->order_type_id == \App\Models\order::ORDER_TYPE_PART_GAMES)
-                            <td>{{  $order_data['gamenameArray'][$i] }}</td>
+                            <td>{{  \DateHelpers::formatStringValue($order_data['gamenameArray'][$i]) }}</td>
                         @endif
                         <td>{{ CurrencyHelpers::formatCurrency(number_format(  $order_data['orderItemsPriceArray'][$i]* $order_data['orderQtyArray'][$i],3))}}</td>
                           </tr>

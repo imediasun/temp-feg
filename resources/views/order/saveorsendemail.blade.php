@@ -6,8 +6,8 @@
         <div class="sbox-title">
             <h3> Save/Download PO
             </h3>
-            <button style="visibility: hidden" type="button " class="btn-xs collapse-close btn btn-danger pull-right"><i
-                        class="fa fa fa-times"></i></button>
+         {{--   <button style="visibility: hidden" type="button " class="btn-xs collapse-close btn btn-danger pull-right"><i
+                        class="fa fa fa-times"></i></button> --}}
             <a href="javascript:void(0)" class="collapse-close pull-right btn btn-xs btn-danger" id="close"
                onclick="reloadOrder();"
                     ><i class="fa fa fa-times"></i></a>
@@ -93,7 +93,7 @@
                                     <div class="form-group">
                                         <label class="control-label col-md-4" for="cc">CC</label>
                                         <div class="col-md-8">
-                                            <input name="cc" id="cc" multiple class="form-control" />
+                                            <input name="cc" id="cc" value="{{ $cc }}" multiple class="form-control" />
                                         </div>
                                     </div>
                                     <div class="form-group">
@@ -160,7 +160,7 @@
                                         <label class="control-label col-md-4" for="cc">CC</label>
 
                                         <div class="col-md-8">
-                                            <input name="cc1" id="cc1" class="form-control">
+                                            <input name="cc1" id="cc1" value="{{ $cc }}" class="form-control">
                                         </div>
                                     </div>
                                     <div class="form-group">
@@ -240,6 +240,7 @@
 
 
         function reloadOrder() {
+            {{ \Session::put('filter_before_redirect','redirect') }}
             redirect_link = "{{ \Session::get('redirect') }}";
             location.href = "{{ url() }}/" + redirect_link;
         }

@@ -25,7 +25,7 @@
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Description', (isset($fields['description']['language'])? $fields['description']['language'] : array())) }}
 						</td>
-						<td>{{ $row->description }} </td>
+						<td>{{ \DateHelpers::formatStringValue($row->description) }} </td>
 						
 					</tr>
 				
@@ -42,7 +42,7 @@
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('For Game', (isset($fields['for_game']['language'])? $fields['for_game']['language'] : array())) }}
 						</td>
-						<td>{{ $row->for_game }} </td>
+						<td>{{ \DateHelpers::formatZeroValue($row->for_game) }} </td>
 						
 					</tr>
 				
@@ -50,7 +50,7 @@
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Qty', (isset($fields['qty']['language'])? $fields['qty']['language'] : array())) }}
 						</td>
-						<td>{{ $row->qty }} </td>
+						<td>{{ \DateHelpers::formatZeroValue($row->qty) }} </td>
 						
 					</tr>
 				
@@ -58,7 +58,7 @@
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Approx. Value', (isset($fields['value']['language'])? $fields['value']['language'] : array())) }}
 						</td>
-						<td>{{ $row->value }} </td>
+						<td>{{ \DateHelpers::formatZeroValue($row->value) }} </td>
 						
 					</tr>
 				
@@ -66,7 +66,7 @@
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Submitted By', (isset($fields['user']['language'])? $fields['user']['language'] : array())) }}
 						</td>
-						<td>{{ $row->user }} </td>
+						<td>{{ \DateHelpers::formatStringValue($row->user) }} </td>
 						
 					</tr>
 				
@@ -83,7 +83,7 @@
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Claimed By', (isset($fields['user_claim']['language'])? $fields['user_claim']['language'] : array())) }}
 						</td>
-						<td>{{ $row->user_claim }} </td>
+						<td>{{ \DateHelpers::formatStringValue($row->user_claim) }} </td>
 						
 					</tr>
 				
