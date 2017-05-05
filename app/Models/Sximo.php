@@ -28,7 +28,7 @@ class Sximo extends Model {
     public static function getRows($args, $cond = null) {
         $table = with(new static)->table;
         $key = with(new static)->primaryKey;
-
+dd('here');
         extract(array_merge(array(
             'page' => '0',
             'limit' => '0',
