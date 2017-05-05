@@ -42,11 +42,11 @@
 
                         <div id="from_div">
                             <div class="col-md-6 col-md-offset-4" id="location_from_div">
-                                <select name="location_from" id="location_id">
+                                <select name="location_from" id="location_id" class="form-control">
                                 </select>
                             </div>
                             <div class="col-md-6 col-md-offset-4" id="vend_from_div">
-                                <select name="vend_from" id="vendor_id">
+                                <select name="vend_from" id="vendor_id" class="form-control">
                                 </select>
                             </div>
                             <div class="col-md-12" id="std_from_div">
@@ -214,7 +214,7 @@
                                 </div>
                             </div>
                             <div class="col-md-6 col-md-offset-4" id="vend_to_div">
-                                <select name="vend_to" id="vendor_to_id">
+                                <select name="vend_to" id="vendor_to_id" class="form-control">
                                 </select>
                             </div>
                             <div class="col-md-12" id="std_to_div">
