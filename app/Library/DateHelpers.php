@@ -42,7 +42,19 @@ class DateHelpers{
     }
     public static function formatZeroValue($val)
     {
-        if($val == 0 || $val == null || $val == "0" || empty($val))
+        //echo $val;
+        if($val == 0 || $val == null || $val == "0" || empty($val) || $val =="" || $val== 0.00)
+        {
+            return "No Data";
+        }
+        else
+        {
+            return $val;
+        }
+    }
+    public static function formatStringValue($val)
+    {
+        if($val == null || $val == "0" || empty($val) || $val ==""|| $val == "0.00")
         {
             return "No Data";
         }

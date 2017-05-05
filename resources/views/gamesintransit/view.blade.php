@@ -22,7 +22,7 @@
                     <td width='30%' class='label-view text-right'>
                         {{ SiteHelpers::activeLang('Game Name', (isset($fields['game_name']['language'])? $fields['game_name']['language'] : array())) }}
                     </td>
-                    <td>{{ $row->game_name }} </td>
+                    <td>{{ \DateHelpers::formatStringValue($row->game_name) }} </td>
 
                 </tr>
                 <tr>
@@ -37,13 +37,13 @@
                     <td width='30%' class='label-view text-right'>
                         {{ SiteHelpers::activeLang('Notes', (isset($fields['notes']['language'])? $fields['notes']['language'] : array())) }}
                     </td>
-                    <td>{{ $row->notes }} </td>
+                    <td>{{ \DateHelpers::formatStringValue($row->notes) }} </td>
                 </tr>
                 <tr>
                     <td width='30%' class='label-view text-right'>
                         {{ SiteHelpers::activeLang('Serial', (isset($fields['serial']['language'])? $fields['serial']['language'] : array())) }}
                     </td>
-                    <td>{{ $row->serial }} </td>
+                    <td>{{ \DateHelpers::formatStringValue($row->serial) }} </td>
                 </tr>
                 <tr>
                     <td width='30%' class='label-view text-right'>
@@ -57,7 +57,7 @@
                     <td width='30%' class='label-view text-right'>
                         {{ SiteHelpers::activeLang('Intended First Location', (isset($fields['intended_first_location']['language'])? $fields['intended_first_location']['language'] : array())) }}
                     </td>
-                    <td><?php echo $row->intended_first_location ?> </td>
+                    <td>{{ \DateHelpers::formatStringValue($row->intended_first_location) }} </td>
                 </tr>
                 <tr>
                     <td width='30%' class='label-view text-right'>
@@ -69,13 +69,13 @@
                     <td width='30%' class='label-view text-right'>
                         {{ SiteHelpers::activeLang('Sale Price', (isset($fields['sale_price']['language'])? $fields['sale_price']['language'] : array())) }}
                     </td>
-                    <td>{{ $row->sale_price }} </td>
+                    <td>{{ \DateHelpers::formatZeroValue($row->sale_price) }} </td>
                 </tr>
                 <tr>
                     <td width='30%' class='label-view text-right'>
                         {{ SiteHelpers::activeLang('Version', (isset($fields['version']['language'])? $fields['version']['language'] : array())) }}
                     </td>
-                    <td>{{ $row->version }} </td>
+                    <td>{{ \DateHelpers::formatStringValue($row->version) }} </td>
                 </tr>
                 </tbody>
             </table>
