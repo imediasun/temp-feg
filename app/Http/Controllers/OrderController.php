@@ -347,7 +347,14 @@ class OrderController extends Controller
 
     function postSave(Request $request, $id = 0)
     {
-        $rules = array('location_id' => "required", 'vendor_id' => 'required', 'order_type_id' => "required", 'freight_type_id' => 'required', 'date_ordered' => 'required', 'po_3' => 'required');
+        $rules = array(
+                'location_id' => "required",
+                'vendor_id' => 'required',
+                'order_type_id' => "required",
+                'freight_type_id' => 'required',
+                'date_ordered' => 'required',
+                'po_3' => 'required'
+            );
         $validator = Validator::make($request->all(), $rules);
         $order_data = array();
         $order_contents = array();
@@ -375,7 +382,13 @@ class OrderController extends Controller
             $alt_address = '';
             $order_description = '';
             if (!empty($altShipTo)) {
-                $rules = array('to_add_name' => 'required|max:60', 'to_add_street' => 'required|min:5', 'to_add_city' => 'required|min:5', 'to_add_state' => 'required|max:2', 'to_add_zip' => 'required|max:10');
+                $rules = array(
+                        'to_add_name' => 'required|max:60',
+                        'to_add_street' => 'required|min:5',
+                        'to_add_city' => 'required|min:5',
+                        'to_add_state' => 'required|max:2',
+                        'to_add_zip' => 'required|max:10'
+                    );
                 $validator = Validator::make($request->all(), $rules);
                 $to_add_name = $request->get('to_add_name');
                 $to_add_street = $request->get('to_add_street');
@@ -383,7 +396,9 @@ class OrderController extends Controller
                 $to_add_state = $request->get('to_add_state');
                 $to_add_zip = $request->get('to_add_zip');
                 $to_add_notes = $request->get('to_add_notes');
-                $alt_address = $to_add_name . '|' . $to_add_street . '|' . $to_add_city . '| ' . $to_add_state . '| ' . $to_add_zip . '|' . $to_add_notes;
+                $alt_address = $to_add_name . '|' . $to_add_street .
+                        '|' . $to_add_city . '| ' . $to_add_state .
+                        '| ' . $to_add_zip . '|' . $to_add_notes;
             }
             $itemsArray = $request->get('item');
             $itemNamesArray = $request->get('item_name');
@@ -398,7 +413,8 @@ class OrderController extends Controller
 
             for ($i = 0; $i < $num_items_in_array; $i++) {
                 $j = $i + 1;
-                if($order_type == 20 || $order_type == 10 || $order_type == 6 || $order_type== 17 || $order_type == 1 )
+                if($order_type == 20 || $order_type == 10 ||
+                        $order_type == 6 || $order_type== 17 || $order_type == 1 )
                 {
                     $itemsPriceArray[] = $priceArray[$i];
                 }
@@ -410,7 +426,9 @@ class OrderController extends Controller
                 {
                     $itemsPriceArray[] = ($priceArray[$i] == 0.00)?$casePriceArray[$i]:$priceArray[$i];
                 }
-                $order_description .= ' | item' . $j . ' - (' . $qtyArray[$i] . ') ' . $itemsArray[$i] . ' @ $' . $itemsPriceArray[$i] . ' ea.';
+                $order_description .= ' | item' . $j . ' - (' . $qtyArray[$i]
+                        . ') ' . $itemsArray[$i] . ' @ $' .
+                        $itemsPriceArray[$i] . ' ea.';
             }
             if ($editmode == "edit") {
                 $orderData = array(
@@ -542,7 +560,9 @@ class OrderController extends Controller
             \Session::put('send_to', $vendor_email);
             \Session::put('order_id', $order_id);
             \Session::put('redirect', $redirect_link);
+            $saveOrSendView = $this->getSaveOrSendEmail("pop")->render();
             return response()->json(array(
+                'saveOrSendContent' => $saveOrSendView,
                 'status' => 'success',
                 'message' => \Lang::get('core.note_success'),
 
@@ -552,7 +572,10 @@ class OrderController extends Controller
         elseif($id != 0){
             $data = $this->validatePost('orders',true);
             $this->model->insertRow($data, $id);
+            \Session::put('order_id', $id);
+            $saveOrSendView = $this->getSaveOrSendEmail("pop")->render();
             return response()->json(array(
+                'saveOrSendContent' => $saveOrSendView,
                 'status' => 'success',
                 'message' => \Lang::get('core.note_success'),
 
@@ -570,7 +593,7 @@ class OrderController extends Controller
 
     }
 
-    public function getSaveOrSendEmail()
+    public function getSaveOrSendEmail($isPop = null)
     {
         $order_id=\Session::get('order_id');
         $order_type = \DB::select('SELECT order_type_id FROM orders WHERE id='.$order_id);
@@ -593,7 +616,8 @@ class OrderController extends Controller
                 $cc = "stanlymarian@gmail.com,jdanial710@gmail.com,daynaedvin@gmail.com";
             }
         }
-        return view('order.saveorsendemail',array('cc'=>$cc));
+        $viewName = empty($isPop) ? 'order.saveorsendemail' : 'order.pop.saveorsendemail';
+        return view($viewName, array('cc'=>$cc));
     }
 
     function postSaveorsendemail(Request $request)

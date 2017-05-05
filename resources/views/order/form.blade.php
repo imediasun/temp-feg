@@ -618,11 +618,10 @@
         }
         function showResponse(data) {
 
+            $('.ajaxLoading').hide();
             if (data.status == 'success') {
-                var url = location.href;
-                location.href = "{{ url() }}/order/save-or-send-email";
                 notyMessage(data.message);
-                $('#sximo-modal').modal('hide');
+                ajaxViewChange("#order", data.saveOrSendContent);
             }
             /* else if(data.status == "po-error")
              {
@@ -634,7 +633,6 @@
              }*/
             else {
                 notyMessageError(data.message);
-                $('.ajaxLoading').hide();
                 return false;
             }
         }
