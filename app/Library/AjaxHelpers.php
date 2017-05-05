@@ -61,9 +61,7 @@ class AjaxHelpers
                     $v .= (isset($fields[1]) && $fields[1] !== '' ? $rowObj->$fields[1] . ' ' : '');
                     $v .= (isset($fields[2]) && $fields[2] !== '' ? $rowObj->$fields[2] . ' ' : '');
                     $val = trim($v);
-                } elseif (empty($Q)) {
-                    $val = "No Data";
-                } else {
+                }else {
                     $col = explode("|", $arr['display']);
                     if (isset($col[1]) && $col[1] !== '') {
                         /*  $col = explode("_", $col[1]);
@@ -154,7 +152,7 @@ class AjaxHelpers
 //			$val =  "<a href='".URL::to($linked)."'  $attr style='display:block' >".$val." <span class='fa fa-arrow-circle-right pull-right'></span></a>";
             $val = "<a href='" . URL::to($linked) . "'  $attr >" . $val . "</a>";
         }
-        if ($val === "0" || $val === 0 || $val === NULL || $val ==="" || empty($val)) {
+        if ($val === "0" || $val === 0 || $val === NULL || $val ==="" || empty($val) || $val===0.00 || $val ==="0.00" || $val==="$ 0.000") {
             $val = "No Data";
         }
         return $val;

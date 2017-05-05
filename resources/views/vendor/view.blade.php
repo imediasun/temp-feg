@@ -17,7 +17,7 @@
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Vendor', (isset($fields['vendor_name']['language'])? $fields['vendor_name']['language'] : array())) }}	
 						</td>
-						<td>{{ $row->vendor_name }} </td>
+						<td>{{ \DateHelpers::formatStringValue($row->vendor_name) }} </td>
 						
 					</tr>
 				
@@ -25,7 +25,7 @@
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Street1', (isset($fields['street1']['language'])? $fields['street1']['language'] : array())) }}	
 						</td>
-						<td>{{ $row->street1 }} </td>
+						<td>{{ \DateHelpers::formatStringValue($row->street1) }} </td>
 						
 					</tr>
 				
@@ -33,7 +33,7 @@
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('City', (isset($fields['city']['language'])? $fields['city']['language'] : array())) }}	
 						</td>
-						<td>{{ $row->city }} </td>
+						<td>{{ \DateHelpers::formatStringValue($row->city) }} </td>
 						
 					</tr>
 				
@@ -41,7 +41,7 @@
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('State', (isset($fields['state']['language'])? $fields['state']['language'] : array())) }}	
 						</td>
-						<td>{{ $row->state }} </td>
+						<td>{{ \DateHelpers::formatStringValue($row->state) }} </td>
 						
 					</tr>
 				
@@ -49,7 +49,7 @@
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Zip Code', (isset($fields['zip']['language'])? $fields['zip']['language'] : array())) }}	
 						</td>
-						<td>{{ $row->zip }} </td>
+						<td>{{ \DateHelpers::formatStringValue($row->zip) }} </td>
 						
 					</tr>
 				
@@ -57,7 +57,7 @@
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Contact Person', (isset($fields['contact']['language'])? $fields['contact']['language'] : array())) }}	
 						</td>
-						<td>{{ $row->contact }} </td>
+						<td>{{ \DateHelpers::formatStringValue($row->contact) }} </td>
 						
 					</tr>
 				
@@ -65,7 +65,7 @@
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Email 1', (isset($fields['email']['language'])? $fields['email']['language'] : array())) }}	
 						</td>
-						<td>{{ $row->email }} </td>
+						<td>{{ \DateHelpers::formatStringValue($row->email) }} </td>
 						
 					</tr>
 				
@@ -73,7 +73,7 @@
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Website', (isset($fields['website']['language'])? $fields['website']['language'] : array())) }}	
 						</td>
-						<td>{{ $row->website }} </td>
+						<td>{{ \DateHelpers::formatStringValue($row->website) }} </td>
 						
 					</tr>
 				
@@ -81,7 +81,7 @@
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Games Contact', (isset($fields['games_contact_name']['language'])? $fields['games_contact_name']['language'] : array())) }}	
 						</td>
-						<td>{{ $row->games_contact_name }} </td>
+						<td>{{ \DateHelpers::formatStringValue($row->games_contact_name) }} </td>
 						
 					</tr>
 				
@@ -89,7 +89,7 @@
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Games Phone', (isset($fields['games_contact_phone']['language'])? $fields['games_contact_phone']['language'] : array())) }}	
 						</td>
-						<td>{{ $row->games_contact_phone }} </td>
+						<td>{{ \DateHelpers::formatStringValue($row->games_contact_phone) }} </td>
 						
 					</tr>
 				
@@ -121,7 +121,7 @@
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Min Order Amt', (isset($fields['min_order_amt']['language'])? $fields['min_order_amt']['language'] : array())) }}	
 						</td>
-						<td>{{ $row->min_order_amt }} </td>
+						<td>{{ \DateHelpers::formatZeroValue($row->min_order_amt) }} </td>
 						
 					</tr>
 				
