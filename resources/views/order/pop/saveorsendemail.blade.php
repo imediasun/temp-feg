@@ -219,6 +219,8 @@
 
         function reloadOrder() {
             ajaxViewClose("#order");
+            $('.modal').modal('hide');
+            $('.ajaxLoading').hide();
 //            {{ \Session::put('filter_before_redirect','redirect') }}
 //            var redirect_link = "{{ \Session::get('redirect') }}";
 //            location.href = "{{ url() }}/" + redirect_link;
@@ -299,7 +301,7 @@
             $('.ajaxLoading').show();
         }
         function showResponse(data) {
-            console.log(data);
+            
             if (data.status == 'success') {
                 notyMessage(data.message);
                 $('.ajaxLoading').hide();
