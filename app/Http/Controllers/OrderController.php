@@ -583,7 +583,15 @@ class OrderController extends Controller
             //uncomment after testing email sending
             /* $cc = "marissa.sexton@fegllc.com,mandee.cook@fegllc.com,lisa.price@fegllc.com";*/
             // remove these lines after testing email sending
-            $cc = "stanlymarian@gmail.com,jdanial710@gmail.com,daynaedvin@gmail.com";
+
+            if(env('APP_ENV', 'development') == 'production')
+            {
+                $cc = "marissa.sexton@fegllc.com,mandee.cook@fegllc.com,lisa.price@fegllc.com";
+            }
+            else
+            {
+                $cc = "stanlymarian@gmail.com,jdanial710@gmail.com,daynaedvin@gmail.com";
+            }
         }
         return view('order.saveorsendemail',array('cc'=>$cc));
     }
