@@ -117,6 +117,7 @@ class Sximo extends Model {
             $page = ceil($total/$limit);
             $offset = ($page-1) * $limit ;
         }
+        dd($select . " {$params} " . self::queryGroup() . " {$orderConditional}  {$limitConditional} ");
 
         $limitConditional = ($page != 0 && $limit != 0) ? "LIMIT  $offset , $limit" : '';
        // echo $select . " {$params} " . self::queryGroup() . " {$orderConditional}  {$limitConditional} ";
@@ -128,7 +129,6 @@ class Sximo extends Model {
         } else {
             $key = $table . "." . $key;
         }
-
         return $results = array('rows' => $result, 'total' => $total);
     }
 
