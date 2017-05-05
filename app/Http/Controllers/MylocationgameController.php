@@ -99,7 +99,7 @@ class MylocationgameController extends Controller
         );
 
         // Get Query
-        $results = $this->model->getRows($params);dd('here');
+        $results = $this->model->getRows($params);
         // foreach ($results['rows'] as $result) {
 
 //            if ($result->dba == 1) {
