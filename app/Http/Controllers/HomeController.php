@@ -26,8 +26,12 @@ class HomeController extends Controller
         endif;
 
         $page = $request->segment(1);
+        $pageUrl = $request->fullUrl();
+
         if ($page != '') :
-            $content = \DB::table('tb_pages')->where('alias', '=', $page)->where('status', '=', 'enable')->get();
+            $content = \DB::table('tb_pages')
+                ->where('alias', '=', $page)
+                ->where('status', '=', 'enable')->get();
 
             if (count($content) >= 1) {
 
@@ -35,7 +39,7 @@ class HomeController extends Controller
 
                 $this->data['editLink'] = '';
                 if (Pages::canIEdit($row->pageID)){
-                    $editUrl = url('core/pages/update/'.$row->pageID);
+                    $editUrl = url('core/pages/update/'.$row->pageID.'?return='.$pageUrl);
                     $editLink = view('core.pages.edit-link', ['page' => $row,
                                     'url' => $editUrl]);
                     $this->data['editLink'] = $editLink;
