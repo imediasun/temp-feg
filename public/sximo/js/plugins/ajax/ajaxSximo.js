@@ -346,9 +346,30 @@ function ajaxViewClose( id , elm)
 	$('#sximo-modal').modal('hide');
 }
 
-var newwindow;
+function ajaxViewChange(id , newContent, elm)
+{
+    var view = $(id+'View'),
+        pos,
+        top = 0,
+        $elm = elm && $(elm) || [];
+    
+    if ($elm.length) {
+        if (!view.length) {
+            view = $elm.closest('.moduleView');
+        }
+    }
+	$('#sximo-modal').modal('hide');
+	view.html(newContent);
+    pos = view.position()
+    top = pos && pos.top || 0;
+    scrollTo(0, top);
+    
+}
+
+
 function ajaxPopupStatic(url ,w , h)
 {
+    var newwindow;
 	var w = (w == '' ? w : 800 );	
 	var h = (h == '' ? wh: 600 );	
 	newwindow=window.open(url,'name','height='+w+',width='+h+',resizable=yes,toolbar=no,scrollbars=yes,location=no');

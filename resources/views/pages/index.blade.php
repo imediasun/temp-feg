@@ -9,7 +9,7 @@
       </div>
       <ul class="breadcrumb">
         <li><a href="{{ URL::to('dashboard') }}">{{ Lang::get('core.home') }}</a></li>
-        <li class="active">{{ $pageTitle }}</li>
+        <li class="active">{{ $pageTitle }}{!! $editLink !!}</li>
       </ul>	  	  
     </div>
 	<!-- End Header & Breadcrumb -->

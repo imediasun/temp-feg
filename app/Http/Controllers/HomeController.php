@@ -3,6 +3,7 @@
 use App\User;
 use Illuminate\Http\Request;
 use PHPMailerOAuth;
+use App\Models\Core\Pages;
 use Validator, Input, Redirect, Auth;
 
 class HomeController extends Controller
@@ -25,12 +26,25 @@ class HomeController extends Controller
         endif;
 
         $page = $request->segment(1);
+        $pageUrl = $request->fullUrl();
+
         if ($page != '') :
-            $content = \DB::table('tb_pages')->where('alias', '=', $page)->where('status', '=', 'enable')->get();
+            $content = \DB::table('tb_pages')
+                ->where('alias', '=', $page)
+                ->where('status', '=', 'enable')->get();
 
             if (count($content) >= 1) {
 
                 $row = $content[0];
+
+                $this->data['editLink'] = '';
+                if (Pages::canIEdit($row->pageID)){
+                    $editUrl = url('core/pages/update/'.$row->pageID.'?return='.$pageUrl);
+                    $editLink = view('core.pages.edit-link', ['page' => $row,
+                                    'url' => $editUrl]);
+                    $this->data['editLink'] = $editLink;
+                }
+
                 $this->data['pageTitle'] = $row->title;
                 $this->data['pageNote'] = $row->note;
                 $this->data['pageMetakey'] = ($row->metakey != '' ? $row->metakey : CNF_METAKEY);

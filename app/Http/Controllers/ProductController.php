@@ -277,6 +277,7 @@ class ProductController extends Controller
         $rules = $this->validateForm();
         $rules['img'] = 'mimes:jpeg,gif,png';
         $rules['sku'] = 'required|unique:products,sku,'.$id;
+        $rules['expense_category'] = 'required|numeric|min:0';
         $validator = Validator::make($request->all(), $rules);
         $retail_price = $request->get('retail_price');
         if($request->get('prod_type_id') != 8)

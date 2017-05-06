@@ -25,7 +25,7 @@
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Game Title', (isset($fields['game_title']['language'])? $fields['game_title']['language'] : array())) }}
 						</td>
-						<td>{{ $row[0]->game_title }} </td>
+						<td>{{ \DateHelpers::formatStringValue($row[0]->game_title) }} </td>
 
 					</tr>
 
@@ -33,7 +33,7 @@
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Manufacturer', (isset($fields['mfg_id']['language'])? $fields['mfg_id']['language'] : array())) }}
 						</td>
-						<td>{{ $row[0]->vendor_name }} </td>
+						<td>{{ \DateHelpers::formatStringValue($row[0]->vendor_name) }} </td>
 
 					</tr>
 

@@ -24,7 +24,7 @@ class MylocationgameController extends Controller
         $this->access = $this->model->validAccess($this->info['id']);
         $this->module_id = Module::name2id($this->module);
         $this->pass = \FEGSPass::getMyPass($this->module_id);
-
+        
         $this->data = array(
             'pass' => $this->pass,
             'pageTitle' => $this->info['title'],
@@ -33,15 +33,15 @@ class MylocationgameController extends Controller
             'pageUrl' => url($this->module),
             'return' => self::returnUrl()
         );
-
+        
     }
 
     public function getIndex()
     {
-        if ($this->access['is_view'] == 0)
+        if ($this->access['is_view'] == 0) 
         {
             return Redirect::to('dashboard')->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
-        }
+        }            
 
         $this->data['access'] = $this->access;
         return view('mylocationgame.index', $this->data);
@@ -49,7 +49,7 @@ class MylocationgameController extends Controller
     public function getSearchFilterQuery($customQueryString = null) {
         // Filter Search for query
         // build sql query based on search filters
-        $filter = is_null($customQueryString) ? (is_null(Input::get('search')) ? '' : $this->buildSearch()) :
+        $filter = is_null($customQueryString) ? (is_null(Input::get('search')) ? '' : $this->buildSearch()) : 
             $this->buildSearch($customQueryString);
 
         // Get assigned locations list as sql query (part)
@@ -59,8 +59,8 @@ class MylocationgameController extends Controller
         $frontendSearchFilters = $this->model->getSearchFilters(array('location_id' => ''));
         if (empty($frontendSearchFilters['location_id'])) {
             $filter .= $locationFilter;
-        }
-
+        } 
+        
         return $filter;
     }
     public function postData(Request $request)
@@ -85,7 +85,7 @@ class MylocationgameController extends Controller
         $sort = (!is_null($request->input('sort')) ? $request->input('sort') : $this->info['setting']['orderby']);
         $order = (!is_null($request->input('order')) ? $request->input('order') : $this->info['setting']['ordertype']);
         // End Filter sort and order for query
-        // Filter Search for query
+        // Filter Search for query        
         $filter = $this->getSearchFilterQuery();
 
         $page = $request->input('page', 1);
@@ -97,10 +97,9 @@ class MylocationgameController extends Controller
             'params' => $filter,
             'global' => (isset($this->access['is_global']) ? $this->access['is_global'] : 0)
         );
-
         // Get Query
         $results = $this->model->getRows($params);
-        // foreach ($results['rows'] as $result) {
+       // foreach ($results['rows'] as $result) {
 
 //            if ($result->dba == 1) {
 //                $result->dba = "Yes";
@@ -155,22 +154,22 @@ class MylocationgameController extends Controller
 //
 //            } else {
 //                $result->not_debit = "No";
-//
+//                
 //            }
-
-        //            if ($result->num_prize_meters == 1) {
-        //                $result->num_prize_meters = "Yes";
-        //
-        //            } else {
-        //                $result->num_prize_meters = "No";
-        //            }
-        //            if ($result->num_prizes == 1) {
-        //                $result->num_prizes = "Yes";
-        //
-        //            } else {
-        //                $result->num_prizes = "No";
-        //            }
-
+            
+    //            if ($result->num_prize_meters == 1) {
+    //                $result->num_prize_meters = "Yes";
+    //
+    //            } else {
+    //                $result->num_prize_meters = "No";
+    //            }
+    //            if ($result->num_prizes == 1) {
+    //                $result->num_prizes = "Yes";
+    //
+    //            } else {
+    //                $result->num_prizes = "No";
+    //            }
+    
 //            if ($result->mfg_id == 0) {
 //                $result->mfg_id = "";
 //
@@ -272,14 +271,14 @@ class MylocationgameController extends Controller
                 ->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
 
         $row = $this->model->getRow($id);
-
+        
         //var_dump($row);
         $productIds = $row[0]->product_ids_json;
         $products = [];
         if (!empty($productIds)) {
-            $productIds = json_decode($productIds, true);
+            $productIds = json_decode($productIds, true); 
             $products = \App\Models\product::select('vendor_description')
-                ->whereIn('id', $productIds)->get();
+                    ->whereIn('id', $productIds)->get();
         }
         $this->data['products'] = $products;
         $row['service_history'] = $this->model->getServiceHistory($id);
@@ -341,7 +340,7 @@ class MylocationgameController extends Controller
                     'message' => 'Serial should be a valid number!'
                 ));
             }
-            if(isset($data['id']))
+           if(isset($data['id']))
             {
                 if(((int)$data['id']))
                 {
@@ -368,12 +367,12 @@ class MylocationgameController extends Controller
                 $products = json_encode($products);
                 $data['product_id'] = $products;
             }
-
+            
             /* NOTE: Game name will NOT ALWAYS be same as the Game Title */
             //$data['game_name'] = \DB::table('game_title')->where('id', '=', $data['game_title_id'])->pluck('game_title');
             /* Extracting game type id from game type */
             $data['game_type_id'] = \DB::table('game_title')->where('id', '=', $data['game_title_id'])->pluck('game_type_id');
-
+            
             $sold = @$data['sold'];
             $oldSold = @$data['_oldSoldStatus'];
             if ($oldSold == 0 && $sold == 1) {
@@ -385,7 +384,7 @@ class MylocationgameController extends Controller
                 $data['date_sold'] = NULL;
                 $data['sold_to'] = '';
             }
-
+            
             if (isset($data['_token'])) unset($data['_token']);
             if (isset($data['old_location_id'])) unset($data['old_location_id']);
             if (isset($data['_oldSoldStatus'])) unset($data['_oldSoldStatus']);
@@ -459,20 +458,20 @@ class MylocationgameController extends Controller
     public function postUpdate(Request $request, $id = null)
     {
         $request = $request->all();
-
+        
         $fromDetailedPage = array_pull($request, 'from_detailed_page');
         if ($fromDetailedPage == 1) {
             return $this->updateGameFromDetailsPage($request, $id);
         }
-
+        
         // validate game id already exists or not
         $gameID = $request['id'];
-        $gameIDExists = \DB::table('game')->where('id', $gameID)->count() > 0;
+        $gameIDExists = \DB::table('game')->where('id', $gameID)->count() > 0;        
         if ($gameID != $id && $gameIDExists) {
             return response()->json(array(
                 'status' => 'error',
                 'message' => 'Asset ID already exists!'
-            ));
+            ));            
         }
         $request = array_filter($request);
         array_shift($request);
@@ -489,22 +488,22 @@ class MylocationgameController extends Controller
             'message' => \Lang::get('core.note_success')
         ));
     }
-
+    
     public function updateGameFromDetailsPage($data, $id = null) {
-
+        
         $nowDate = date("Y-m-d");
         $nowDatetime = date("Y-m-d H:i:s");
         $userId = \Session::get('uid');
-
+                
         $oldStatus = $data['old_status_id'];
-        $status = isset($data['status_id']) || !empty($data['status_id']) ?
-            $data['status_id'] : $oldStatus;
-
-        $sold = isset($data['sold']) ? $data['sold'] : 0;
+        $status = isset($data['status_id']) || !empty($data['status_id']) ? 
+                $data['status_id'] : $oldStatus;
+        
+        $sold = isset($data['sold']) ? $data['sold'] : 0;        
         $isSold = $sold == 1;
-        $soldDate = isset($data['date_sold']) ? $data['date_sold'] : $nowDate;
+        $soldDate = isset($data['date_sold']) ? $data['date_sold'] : $nowDate;        
         $soldTo = @$data['sold_to'];
-
+        
         $oldLocation = $data['old_location_id'];
         if (empty($oldLocation)) {
             $oldLocation = 0;
@@ -512,20 +511,20 @@ class MylocationgameController extends Controller
         $prevLocation = $data['prev_location_id'];
         if (empty($prevLocation)) {
             $prevLocation = 0;
-        }
+        }        
         $location = isset($data['location_id']) ? $data['location_id'] : $oldLocation;
         if (empty($location)) {
             $location = 0;
-        }
+        }        
         $intendedLocation = $data['intended_first_location'];
         if (empty($intendedLocation)) {
             $intendedLocation = 0;
-        }
-
+        }                          
+       
 //        $serial = @$data['serial'];
 //        $version = @$data['version'];
 //        $prevGameName = @$data['prev_game_name'];
-
+        
         $newData = array();
 //        $newData['serial'] = $serial;
 //        $newData['version'] = $version;
@@ -533,7 +532,7 @@ class MylocationgameController extends Controller
         $newData['last_edited_by'] = $userId;
         $newData['last_edited_on'] = $nowDatetime;
         $newData['status_id'] = $status;
-
+        
         $inTransitToUp  = $oldStatus == 3 && $status == 1;
         $staysInTransit = $oldStatus == 3 && $status == 3;
         $upToInTransit  = $oldStatus == 1 && $status == 3;
@@ -541,22 +540,22 @@ class MylocationgameController extends Controller
         $upToRepair     = $oldStatus == 1 && $status == 2;
         $repairToUp     = $oldStatus == 2 && $status == 1;
         $staysRepair    = $oldStatus == 2 && $status == 2;
-
+        
         if     ($inTransitToUp) {
-
+            
             $move_id = $data['game_move_id'];
-
+            
             $newData['status_id'] = $status;
             $newData['location_id'] = $location;
             $newData['intended_first_location'] = 0;
             $newData['date_last_move'] = $nowDate;
-
+            
             if (empty($move_id) && empty($prevLocation)) {
                 $newData['date_in_service'] = $nowDate;
                 $oldSerial = isset($data['oldserial'])? $data['oldserial'] : '';
                 $serial = isset($data['serial'])? $data['serial'] : $oldSerial;
                 $newData['serial'] = $serial;
-
+                
                 // Get game details for email etc.
                 $gameDetails = $this->model->get_game_info_by_id($id, null, null);
                 $gameDetails->status_id  = $status;
@@ -568,39 +567,39 @@ class MylocationgameController extends Controller
                 $gameDetails->assetTag = $this->generate_asset_tag($id);
 
                 \App\Library\FEG\System\Email\GenericReports::newGameReceived([
-                    'game' => $gameDetails,
-                ]);
+                        'game' => $gameDetails,
+                    ]);
             }
             if (!empty($move_id)) {
                 \DB::table('game_move_history')
-                    ->where('id', '=', $move_id)
-                    ->update([
-                        'to_loc' => $location,
-                        'to_by' => $userId,
-                        'to_date' => $nowDate,
-                    ]);
+                        ->where('id', '=', $move_id)
+                        ->update([
+                                'to_loc' => $location,
+                                'to_by' => $userId,
+                                'to_date' => $nowDate,
+                            ]);
             }
-
+            
         }
         elseif ($upToInTransit) {
-
+            
             $newData['location_id'] = 0;
             $newData['prev_location_id'] = $oldLocation;
             $newData['intended_first_location'] = $location;
             $newData['date_last_move'] = $nowDate;
-
+            
             $move_id = \DB::table('game_move_history')->insertGetId([
-                'game_id' => $id,
-                'from_loc' => $oldLocation,
-                'from_by' => $userId,
-                'from_date' => $nowDate,
-            ]);
-
+                    'game_id' => $id,
+                    'from_loc' => $oldLocation,
+                    'from_by' => $userId,
+                    'from_date' => $nowDate,
+                ]);
+                    
             $newData['game_move_id'] = $move_id;
-
+          
         }
-        elseif ($staysInTransit) {
-
+        elseif ($staysInTransit) { 
+            
             $newData['intended_first_location'] = $location;
         }
         elseif ($upToRepair) {
@@ -608,12 +607,12 @@ class MylocationgameController extends Controller
             $dataDown = isset($data['date_down']) ? $data['date_down'] : $nowDate;
             $problem = @$data['problem'];
             $service_id = \DB::table('game_service_history')->insertGetId([
-                'game_id' => $id,
-                'location_id' => $oldLocation,
-                'problem' => $problem,
-                'down_user_id' => $userId,
-                'date_down' => $dataDown,
-            ]);
+                    'game_id' => $id,
+                    'location_id' => $oldLocation,
+                    'problem' => $problem,
+                    'down_user_id' => $userId,
+                    'date_down' => $dataDown,
+                ]); 
             $newData['game_service_id'] = $service_id;
         }
         elseif ($repairToUp) {
@@ -623,26 +622,26 @@ class MylocationgameController extends Controller
                 return response()->json(array(
                     'status' => 'error',
                     'message' => 'Error in moving game to Up & Running. Service history not found!'
-                ));
+                ));                 
             }
             $dateUp = isset($data['date_up']) ? $data['date_up'] : $nowDate;
-            $solution = @$data['solution'];
+            $solution = @$data['solution'];            
             \DB::table('game_service_history')
-                ->where('id', '=', $service_id)
-                ->update([
-                    'solution' => $solution,
-                    'location_id' => $oldLocation,
-                    'date_up' => $dateUp,
-                    'up_user_id' => $userId,
-                ]);
+                    ->where('id', '=', $service_id)
+                    ->update([
+                        'solution' => $solution,
+                        'location_id' => $oldLocation,                        
+                        'date_up' => $dateUp,
+                        'up_user_id' => $userId,
+                    ]);
         }
-        elseif ($staysUp) {
-
+        elseif ($staysUp) {            
+            
         }
-        elseif ($staysRepair) {
-
-        }
-
+        elseif ($staysRepair) {            
+            
+        }        
+        
         $newData['sold'] = $sold;
         $newData['sold_to'] = $soldTo;
         $newData['date_sold'] = $soldDate;
@@ -650,15 +649,15 @@ class MylocationgameController extends Controller
             $newData['location_id'] = 0;
             $newData['prev_location_id'] = $oldLocation;
             $newData['status_id'] = 3;
-            $newData['sale_pending'] = 0;
+            $newData['sale_pending'] = 0;            
         }
 
         $newID = $this->model->insertRow($newData, $id);
-
+        
         return response()->json(array(
             'status' => 'success',
             'message' => \Lang::get('core.note_success')
-        ));
+        ));        
     }
 
     public function postExport(Request $request, $exportType = null, $source = null) {
@@ -696,7 +695,7 @@ class MylocationgameController extends Controller
     {
         ini_set('memory_limit', '1G');
         set_time_limit(0);
-
+        
         $inputFiltersString = $request->input('footerfiters');
         parse_str($inputFiltersString, $inputFilters);
         $search = isset($inputFilters['search']) ? $inputFilters['search'] :'';
@@ -718,7 +717,7 @@ class MylocationgameController extends Controller
             ];
         }
         $search = $this->model->buildSearchQuerystringFromArray($filters);
-
+        
         $filter = $this->getSearchFilterQuery(empty($search) ? null : $search);
         $sort = isset($inputFilters['sort']) ? $inputFilters['sort'] : $this->info['setting']['orderby'];
         $order = isset($inputFilters['order']) ? $inputFilters['order'] : $this->info['setting']['ordertype'];
@@ -742,15 +741,15 @@ class MylocationgameController extends Controller
             }
             return response()->json($status);
         }
-
+        
         $config_id = 0;
         if (\Session::has('config_id')) {
             $config_id = \Session::get('config_id');
             $config = $this->model->getModuleConfig($this->module_id, $config_id);
             if (!empty($config)) {
                 $configData = \SiteHelpers::CF_decode_json($config[0]->config);
-            }
-        }
+            }            
+        }         
         $grid = $this->info['config']['grid'];
         if (!empty($config_id) && !empty($configData)) {
             $grid = \SiteHelpers::showRequiredCols_v2($grid, $configData);
@@ -759,14 +758,14 @@ class MylocationgameController extends Controller
 //        foreach ($rows as &$row){
 //            $row->game_name = $row->game_title_id;
 //        }
-
+        
         $pageTitle = 'MyLocationsGames';
         $content = array(
             'fields' => $grid,
             'rows' => $rows,
             'title' => $pageTitle,
         );
-
+        
         if (empty($exportType)) {
             $exportType = 'csv';
         }
@@ -778,7 +777,7 @@ class MylocationgameController extends Controller
             \Session::put($exportSessionID, microtime(true));
         }
         $content['exportID'] = $exportSessionID;
-
+        
         switch ($exportType) {
             case "csv":
                 return view('sximo.module.utility.csv', $content);
@@ -797,16 +796,16 @@ class MylocationgameController extends Controller
                 return view('sximo.module.utility.excel', $content);
         }
     }
-
+    
     public function getAssetIdsFromFilter($request = null) {
 
         if (is_null($request)) {
             $request = array();
-        }
+        }                
         $filterQuery = empty($request['footerfiters']) ? '' : $request['footerfiters'];
         parse_str(@$request['footerfiters'], $querystring);
         $searchQuery = empty($querystring['search']) ? null : $querystring['search'];
-        $filter = $this->getSearchFilterQuery($searchQuery);
+        $filter = $this->getSearchFilterQuery($searchQuery);        
         $q = "SELECT id from game WHERE id IS NOT NULL $filter";
         $data = \DB::select($q);
         $assets = [];
@@ -815,8 +814,8 @@ class MylocationgameController extends Controller
                 $assets[] = $item->id;
             }
         }
-        $assetIds = implode(',', $assets);
-        return $assetIds;
+        $assetIds = implode(',', $assets);        
+        return $assetIds;        
     }
 
     /**
@@ -850,17 +849,17 @@ class MylocationgameController extends Controller
         }
 
         $fields = array(
-            'Asset ID' => 'game_id',
-            'Game Title' => 'game_title',
-            'From Location ID' => 'from_loc',
-            'From Location Name' => 'from_location',
-            'Sent by' => 'from_name',
-            'From Date' => 'from_date',
-            'To Location ID' => 'to_loc',
-            'To Location Name' => 'to_location',
-            'Accepted by' => 'to_name',
-            'To Date' => 'to_date'
-        );
+                'Asset ID' => 'game_id', 
+                'Game Title' => 'game_title', 
+                'From Location ID' => 'from_loc', 
+                'From Location Name' => 'from_location', 
+                'Sent by' => 'from_name', 
+                'From Date' => 'from_date', 
+                'To Location ID' => 'to_loc', 
+                'To Location Name' => 'to_location', 
+                'Accepted by' => 'to_name', 
+                'To Date' => 'to_date'
+            );
         $this->data['pageTitle'] = 'game move history';
         $content = array(
             'fields' => $fields,
@@ -908,22 +907,22 @@ class MylocationgameController extends Controller
                 $status['success'] = 1;
             }
             return response()->json($status);
-        }
-
+        }     
+        
         $this->data['pageTitle'] = 'game pending list';
         $fields = array(
-            "Manufacturer" => 'Manufacturer',
-            "Game Title" => 'Game_Title',
-            "Version" => 'version',
-            "Serial" => 'serial',
-            "Asset ID" => 'id',
-            "Location Id" => 'location_id',
-            "City" => 'city',
-            "State" => 'state',
-            "WholeSale" => 'Wholesale',
-            "Retail" => 'Retail',
-            "Notes" => 'notes'
-        );
+                "Manufacturer" => 'Manufacturer', 
+                "Game Title" => 'Game_Title', 
+                "Version" => 'version', 
+                "Serial" => 'serial', 
+                "Asset ID" => 'id', 
+                "Location Id" => 'location_id', 
+                "City" => 'city', 
+                "State" => 'state', 
+                "WholeSale" => 'Wholesale', 
+                "Retail" => 'Retail', 
+                "Notes" => 'notes'
+            );
         $content = array(
             'fields' => $fields,
             'rows' => $rows,
@@ -957,7 +956,7 @@ class MylocationgameController extends Controller
         if ($assetIds == '') {
             $assetIds = '0';
         }
-
+        
         $rows = $this->model->getForSaleList($assetIds);
         if (!empty($request['validateDownload'])) {
             $status = [];
@@ -970,22 +969,22 @@ class MylocationgameController extends Controller
                 $status['success'] = 1;
             }
             return response()->json($status);
-        }
-
-        $this->data['pageTitle'] = 'game for-sale list';
+        }         
+        
+        $this->data['pageTitle'] = 'game for-sale list';     
         $fields = array(
-            "Manufacturer" => 'Manufacturer',
-            "Game Title" => 'Game_Title',
-            "Version" => 'version',
-            "Serial" => 'serial',
-            "Asset ID" => 'id',
-            "Date In Service" => 'date_service',
-            "Location Id" => 'location_id',
-            "City" => 'city',
-            "State" => 'state',
-            "WholeSale" => 'Wholesale',
-            "Retail" => 'Retail'
-        );
+                "Manufacturer" => 'Manufacturer', 
+                "Game Title" => 'Game_Title', 
+                "Version" => 'version', 
+                "Serial" => 'serial', 
+                "Asset ID" => 'id',             
+                "Date In Service" => 'date_service', 
+                "Location Id" => 'location_id', 
+                "City" => 'city', 
+                "State" => 'state', 
+                "WholeSale" => 'Wholesale', 
+                "Retail" => 'Retail'
+            );
         $content = array(
             'fields' => $fields,
             'rows' => $rows,
@@ -1027,18 +1026,18 @@ class MylocationgameController extends Controller
         $titleYTop = 145;
         $idFont = public_path() . "/sximo/fonts/EncodeSansWide-Regular.ttf";
         $titleFont = public_path() . "/sximo/fonts/pf_tempesta_seven_condensed.ttf";
-
+        
         $qr = \QrCode::format('png')
-            ->size($width)
-            ->margin($margin)
-            ->errorCorrection('M') //H Q M L
-            ->generate($data, $filename);
+                ->size($width)
+                ->margin($margin)
+                ->errorCorrection('M') //H Q M L
+                ->generate($data, $filename);
         // $this->model->get_detail($id);
 
         //$row = \DB::select("SELECT G.id, T.game_title FROM game G LEFT JOIN game_title T ON T.id = G.game_title_id WHERE G.id=$id");
         $game_title = \DB::table('game')
-            ->leftJoin('game_title', 'game_title.id', '=', 'game.game_title_id')
-            ->where('game.id', '=', $id)->pluck('game_title');
+                ->leftJoin('game_title', 'game_title.id', '=', 'game.game_title_id')
+                ->where('game.id', '=', $id)->pluck('game_title');
         if (empty($game_title)) {
             $game_title = "";
         }
@@ -1053,7 +1052,7 @@ class MylocationgameController extends Controller
                 $font->align('center');
                 $font->valign('top');
                 $font->angle(0);
-            })
+            })               
             ->text($game_title, $xCenter, $titleYTop, function($font)  use ($titleFont){
                 $font->file($titleFont);
                 $font->size(8);
@@ -1061,9 +1060,9 @@ class MylocationgameController extends Controller
                 $font->align('center');
                 $font->valign('top');
                 $font->angle(0);
-            })
+            })               
             ->save($filename, 100);
-
+        
         return $filename;
     }
 
@@ -1110,7 +1109,7 @@ class MylocationgameController extends Controller
                 } else {
                     echo "sorry";
                 }
-            }
+            } 
             else {
                 //  die('smaller than one');
                 $this->generate_asset_tag($asset_ids);

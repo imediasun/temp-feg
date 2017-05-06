@@ -8,7 +8,7 @@ class DateHelpers{
                 return $newDateString = $oDate->format('m/d/Y');
             }
             else{
-                return null;
+                return "No Data";
             }
 
     }
@@ -17,7 +17,7 @@ class DateHelpers{
                 return date("m/d/Y H:i:s",strtotime(str_replace("/","-",$date)));
             }
             else{
-                return null;
+                return "No Data";
             }
 
     }
@@ -42,9 +42,21 @@ class DateHelpers{
     }
     public static function formatZeroValue($val)
     {
-        if($val == 0 || $val == null || $val == "0")
+        //echo $val;
+        if($val == 0 || $val == null || $val == "0" || empty($val) || $val =="" || $val== 0.00)
         {
-            return "";
+            return "No Data";
+        }
+        else
+        {
+            return $val;
+        }
+    }
+    public static function formatStringValue($val)
+    {
+        if($val == null || $val == "0" || empty($val) || $val ==""|| $val == "0.00")
+        {
+            return "No Data";
         }
         else
         {

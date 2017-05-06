@@ -1,7 +1,7 @@
 @extends('layouts.app') @section('content')
 <div class="page-content-wrapper m-t">
     <div class="sbox animated fadeInRight" style="">
-        <div class="sbox-title"> Benefits / {{ $pageTitle }}</div>
+        <div class="sbox-title"> Benefits / {{ $pageTitle }}{!! $editLink !!}</div>
         <div class="sbox-content">
             <div class="col-md-12 " style="padding-top: 50px;  padding-bottom: 50px;  background-color: rgb(255, 255, 255);">
                 <div>

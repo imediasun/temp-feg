@@ -397,15 +397,27 @@ function getIsLocationAvailable($id)
     {
         $isActive = $request->get('isActive');
         $locationId = $request->get('locationId');
+        /*$user_locations=\Session::get('user_locations');
+        foreach ($user_locations as $key=>$value) {
+            if ($value->id == $locationId) {
+                unset($user_locations[$key]);
+            }
+        }*/
+        //\Session::put('user_locations',$user_locations);
+        $message="";
         if ($isActive == "true") {
             $update = \DB::update('update location set active=1 where id=' . $locationId);
+        $message="active";
         } else {
             $update = \DB::update('update location set active=0 where id=' . $locationId);
+        $message="inactive";
         }
-
+        \SiteHelpers::addLocationToAllLocationUsers();
+        \SiteHelpers::refreshUserLocations(\Session::get('uid'));
         if ($update) {
             return response()->json(array(
-                'status' => 'success'
+                'status' => 'success',
+                'message' => $message
             ));
         } else {
             return response()->json(array(
@@ -413,5 +425,7 @@ function getIsLocationAvailable($id)
                 'message' => 'Some Error occurred in Activation'
             ));
         }
+
     }
+
 }

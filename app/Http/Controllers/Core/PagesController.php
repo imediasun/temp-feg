@@ -144,8 +144,11 @@ class PagesController extends Controller
         }
 
         $this->data['groups'] = $group;
-
         $this->data['id'] = $id;
+
+        $redirect = $request->has('return') ? $request->input('return') : '';
+        $this->data['return'] = $redirect;
+
         return view('core.pages.form', $this->data);
     }
 
@@ -181,6 +184,8 @@ class PagesController extends Controller
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
             $content = $request->input('content');
+            $content = $this->addEditLinkTemplate($content);
+            
             $data = $this->validatePost('tb_pages');
 
             if ($request->input('pageID') == 1) {
@@ -202,15 +207,38 @@ class PagesController extends Controller
 
             $data['allow_guest'] = $request->input('allow_guest');
             $data['template'] = $request->input('template');
+            
+            $data['direct_edit_groups'] = $request->input('direct_edit_groups');
+            $data['direct_edit_users'] = $request->input('direct_edit_users');
+            $data['direct_edit_users_exclude'] = $request->input('direct_edit_users_exclude');
 
+            if(is_array($data['direct_edit_groups'])) {
+                $data['direct_edit_groups'] = implode(',', $data['direct_edit_groups']);
+            }
+            if(is_array($data['direct_edit_users'])) {
+                $data['direct_edit_users'] = implode(',', $data['direct_edit_users']);
+            }
+            if(is_array($data['direct_edit_users_exclude'])) {
+                $data['direct_edit_users_exclude'] = implode(',', $data['direct_edit_users_exclude']);
+            }
+            
             $this->model->insertRow($data, $request->input('pageID'));
             self::createRouters();
 
-            return Redirect::to('core/pages?return=' . self::returnUrl())->with('messagetext', \Lang::get('core.note_success'))->with('msgstatus', 'success');
+            $redirect = $request->has('return') ? $request->input('return') : '';
+            if (empty($redirect)) {
+                $redirect = 'core/pages?return=' . self::returnUrl();
+            }
+            
+            return Redirect::to($redirect)
+                    ->with('messagetext', \Lang::get('core.note_success'))
+                    ->with('msgstatus', 'success');
 
         } else {
 
-            return Redirect::to('core/pages/update/' . $id)->with('messagetext', \Lang::get('core.note_error'))->with('msgstatus', 'error')
+            return Redirect::to('core/pages/update/' . $id)
+                ->with('messagetext', \Lang::get('core.note_error'))
+                ->with('msgstatus', 'error')
                 ->withErrors($validator)->withInput();
         }
 
@@ -255,5 +283,25 @@ class PagesController extends Controller
 
     }
 
-
+    public function addEditLinkTemplate($content = '') {
+        $hasLink = stripos($content, '$editLink') !== FALSE;
+        if ($hasLink) {
+            return $content;
+        }
+        $titlePosition = stripos($content, '$pageTitle');
+        if ($titlePosition === false) {
+            return $content;
+        }
+        $templateEndBraceCount = 2;
+        $endOfTitleTemplatePosition = stripos($content, '}}', $titlePosition + 1);
+        if ($endOfTitleTemplatePosition === false) {
+            $templateEndBraceCount = 1;
+            $endOfTitleTemplatePosition = stripos($content, '}', $titlePosition + 1);
+        }
+        if ($endOfTitleTemplatePosition !== false) {            
+            $content = substr_replace($content, '{!! $editLink !!}',
+                    $endOfTitleTemplatePosition + $templateEndBraceCount, 0);
+        }
+        return $content;        
+    }
 }

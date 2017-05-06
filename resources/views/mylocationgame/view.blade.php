@@ -237,75 +237,77 @@
             <label class="col-md-4">
                 {!! SiteHelpers::activeLang('Game Title', (isset($fields['game_title']['language'])? $fields['game_title']['language'] : array())) !!}:
             </label>
-            <div class="col-md-8">{{ $gameTitle }}</div>
+            <div class="col-md-8">{{ \DateHelpers::formatStringValue($gameTitle) }}</div>
         </div>
         <div class="form-group clearfix" >
             <label class="col-md-4">
                 {!! SiteHelpers::activeLang('Manufacturer', (isset($fields['vendor_name']['language'])? $fields['vendor_name']['language'] : array())) !!}:
             </label>
-            <div class="col-md-8">{{ $manufacturer }}</div>
+            <div class="col-md-8">{{ \DateHelpers::formatStringValue($manufacturer) }}</div>
         </div>
         <div class="form-group  clearfix" >
             <label class="col-md-4">
                 {!! SiteHelpers::activeLang('Game Type', (isset($fields['game_type']['language'])? $fields['game_type']['language'] : array())) !!}:
             </label>
-            <div class="col-md-8">{{ $gameType }}</div>
+            <div class="col-md-8">{{ \DateHelpers::formatStringValue($gameType) }}</div>
         </div>        
         <div class="form-group clearfix " >
             <label class="col-md-4">
                 {!! SiteHelpers::activeLang('Asset ID', (isset($fields['asset_number']['language'])? $fields['asset_number']['language'] : array())) !!}:
             </label>
-            <div class="col-md-8">{{ $assetID }}</div>
+            <div class="col-md-8">{{ \DateHelpers::formatZeroValue($assetID) }}</div>
         </div>
         <div class="form-group  clearfix" >
             <label class="col-md-4">
                 {!! SiteHelpers::activeLang('Serial #', (isset($fields['serial']['language'])? $fields['serial']['language'] : array())) !!}:
             </label>
-            <div class="col-md-8">{{ $serialNumber }}</div>
+            <div class="col-md-8">{{ \DateHelpers::formatStringValue($serialNumber) }}</div>
         </div>
         <div class="form-group  clearfix" >
             <label class="col-md-4">
                 {!! SiteHelpers::activeLang('Alt. Version/Signage', (isset($fields['version']['language'])? $fields['version']['language'] : array())) !!}:
             </label>
-            <div class="col-md-8">{{ $version }}</div>
+            <div class="col-md-8">{{ \DateHelpers::formatStringValue($version) }}</div>
         </div>
         <div class="form-group  clearfix" >
             <label class="col-md-4">
                 {!! SiteHelpers::activeLang('Game Converted from', (isset($fields['prev_game_name']['language'])? $fields['prev_game_name']['language'] : array())) !!}:
             </label>
-            <div class="col-md-8">{{ $prevGameName }}</div>
+            <div class="col-md-8">{{ \DateHelpers::formatStringValue($prevGameName) }}</div>
         </div>
         @if (!$isNewlyAddedGame)
         <div class="form-group clearfix" >
             <label class="col-md-4">
                 {!! SiteHelpers::activeLang('Current Location', (isset($fields['serial']['language'])? $fields['serial']['language'] : array())) !!}:
             </label>
-            <div class="col-md-8">{{ $locationIdName }}</div>
+            <div class="col-md-8">{{ \DateHelpers::formatStringValue($locationIdName) }}</div>
         </div>
         @endif
         <div class="form-group clearfix" >
             <label class="col-md-4">
                 {!! SiteHelpers::activeLang('Previous Location', (isset($fields['prev_location_id']['language'])? $fields['prev_location_id']['language'] : array())) !!}:
             </label>
-            <div class="col-md-8">{{ $prevLocationIdName }}</div>
+            <div class="col-md-8">{{ \DateHelpers::formatStringValue($prevLocationIdName) }}</div>
         </div>
         <div class="form-group clearfix" >
             <label class="col-md-4">
                 {!! SiteHelpers::activeLang('Last Edited By', (isset($fields['last_edited_by']['language'])? $fields['last_edited_by']['language'] : array())) !!}:
             </label>
-            <div class="col-md-8">{{ $lastEditedDetails }}</div>
+            <div class="col-md-8">{{ \DateHelpers::formatStringValue($lastEditedDetails) }}</div>
         </div>
         <div class="form-group clearfix" >
             <label class="col-md-4">
                 Current Product:
             </label>
             <div class="col-md-8">
-                @if (count($products) > 0) 
+                @if (count($products) > 0)
                 <ul class='productList'>
                 @foreach($products as $product) 
-                    <li>{!! $product->vendor_description !!}</li>
+                    <li>{!! \DateHelpers::formatStringValue($product->vendor_description) !!}</li>
                 @endforeach
                 </ul>
+                    @else
+                    {{ "No Data" }}
                 @endif 
             </div>
         </div>
@@ -313,13 +315,13 @@
             <label class="col-md-4">
                 {!! SiteHelpers::activeLang('Game Manual', (isset($fields['has_manual']['language'])? $fields['has_manual']['language'] : array())) !!}:
             </label>
-            <div class="col-md-8">{!! $manualDetails !!}</div>
+            <div class="col-md-8">{!! \DateHelpers::formatStringValue($manualDetails) !!}</div>
         </div>        
         <div class="form-group clearfix" >
             <label class="col-md-4">
                 {!! SiteHelpers::activeLang('Game Bulletin', (isset($fields['has_bulletin']['language'])? $fields['has_bulletin']['language'] : array())) !!}:
             </label>
-            <div class="col-md-8">{!! $serviceBulletinDetails !!}</div>
+            <div class="col-md-8">{!! \DateHelpers::formatStringValue($serviceBulletinDetails) !!}</div>
         </div>
     </div>
 
@@ -358,13 +360,13 @@
                 {{--*/ $gameTitle = $thisGame ? "<b>This Exact Machine</b>" : 
                     ("<em>Another <b>" . $service_history->game_title . "</b></em>") /*--}}
                 <td @if($thisGame) class="text-danger" @endif> {!! $gameTitle !!}</td>
-                <td> {{ $service_history->game_id }}</td>
-                <td> {{ $service_history->location_id }} {{ $service_history->location_name }} </td>
+                <td> {{ \DateHelpers::formatZeroValue($service_history->game_id) }}</td>
+                <td> {{ \DateHelpers::formatZeroValue($service_history->location_id) }} {{ \DateHelpers::formatStringValue($service_history->location_name) }} </td>
                 <td>{{ DateHelpers::formatDate($service_history->date_down) }}</td>
-                <td>{{ $service_history->down_first_name}} {{ $service_history->down_last_name }}</td>
-                <td>{{ $service_history->problem }}</td>
-                <td>{{ $service_history->solution }}</td>
-                <td>{{ $service_history->up_first_name }} {{ $service_history->up_last_name }}</td>
+                <td>{{ \DateHelpers::formatStringValue($service_history->down_first_name)}} {{ \DateHelpers::formatStringValue($service_history->down_last_name) }}</td>
+                <td>{{ \DateHelpers::formatStringValue($service_history->problem) }}</td>
+                <td>{{ \DateHelpers::formatStringValue($service_history->solution) }}</td>
+                <td>{{ \DateHelpers::formatStringValue($service_history->up_first_name) }} {{ \DateHelpers::formatStringValue($service_history->up_last_name) }}</td>
                 <td>{{ DateHelpers::formatDate($service_history->date_up) }}</td>
 
             </tr>
@@ -398,10 +400,10 @@
                     @foreach($row['move_history'] as $move_history)
                         <tr>
                             <td> {{ DateHelpers::formatDate($move_history->from_date) }}</td>
-                            <td>{{ $move_history->from_location_id }} {{ $move_history->from_location }}</td>
-                            <td>{{ $move_history->to_location_id}} {{ $move_history->to_location}}</td>
-                            <td>{{ $move_history->from_first_name }} {{ $move_history->from_last_name }} </td>
-                            <td>{{ $move_history->to_first_name }} {{ $move_history->to_last_name }} </td>
+                            <td>{{ \DateHelpers::formatZeroValue($move_history->from_location_id) }} {{ \DateHelpers::formatStringValue($move_history->from_location) }}</td>
+                            <td>{{ \DateHelpers::formatZeroValue($move_history->to_location_id)}} {{ \DateHelpers::formatStringValue($move_history->to_location)}}</td>
+                            <td>{{ \DateHelpers::formatStringValue($move_history->from_first_name) }} {{ \DateHelpers::formatStringValue($move_history->from_last_name) }} </td>
+                            <td>{{ \DateHelpers::formatStringValue($move_history->to_first_name) }} {{ \DateHelpers::formatStringValue($move_history->to_last_name) }} </td>
                             <td>{{ DateHelpers::formatDate($move_history->to_date) }} </td>
                             <td>{{  \SiteHelpers::getDateDiff($move_history->from_date,$move_history->to_date) }}</td>
                         </tr>

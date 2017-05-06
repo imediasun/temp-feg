@@ -167,7 +167,7 @@ class UserController extends Controller
                 'code' => $code
 
             );
-            if (CNF_ACTIVATION != 'confirmation') {
+            if (CNF_ACTIVATION == 'confirmation') {
 
                 $to = $request->input('email');
                 $subject = "[ " . CNF_APPNAME . " ] REGISTRATION ";
@@ -371,7 +371,7 @@ class UserController extends Controller
         \Session::put('reg_id', $row->reg_id);
         \Session::put('restricted_mgr_email', $row->restricted_mgr_email);
         \Session::put('restricted_user_email', $row->restricted_user_email);
-        return Redirect::to('dashboard');
+        return Redirect::to($row->redirect_link);
     }
 
     public function getData()

@@ -198,8 +198,14 @@ if (!$colconfigs) {
                         url:'location/trigger',
                         data:{isActive:state,locationId:locationId},
                         success:function(data){
-                            if(data.status == "error"){
-                               // notyMessageError(data.message);
+                            if(data.status != "error") {
+                                if (data.message == "inactive") {
+                                    $("#user_locations option[value=" + locationId + "]").hide();
+                                }
+                                else
+                                {
+                                    $("#user_locations option[value=" + locationId + "]").show();
+                                }
                             }
                         }
                     }

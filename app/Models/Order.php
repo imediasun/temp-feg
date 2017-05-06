@@ -24,7 +24,13 @@ class order extends Sximo
     public static function querySelect()
     {
 
-        return "  SELECT orders.* from orders ";
+        return "  SELECT orders.*,L.location_name,V.vendor_name,U.username,OT.order_type,OS.status,YN.yesno FROM orders
+                LEFT OUTER JOIN location L ON orders.location_id=L.id
+                LEFT OUTER JOIN vendor V ON orders.vendor_id=V.id
+                LEFT OUTER JOIN users U ON orders.user_id=U.id
+                LEFT OUTER JOIN order_type OT ON orders.order_type_id=OT.id
+                LEFT OUTER JOIN order_status OS ON orders.status_id=OS.id
+                LEFT OUTER JOIN yes_no YN ON orders.is_partial=YN.id";
     }
 
     public static function processApiData($json,$param=null)

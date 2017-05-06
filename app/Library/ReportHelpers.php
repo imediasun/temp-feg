@@ -1570,7 +1570,7 @@ class ReportHelpers
    
     public static function buildBlankResultDataDueToNoLocation($message = "", $topMessage = "Report not available", $bottomMessage = "") {
         if (empty($message)) {
-            $message = "In order to run reports you must be assigned to atleast one location. 
+            $message = "In order to run reports you must be assigned to at least one location. 
                 You have not been assigned to any locations. 
                 Please contact an administrator if you believe this to be an error.";
         }

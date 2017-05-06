@@ -180,11 +180,28 @@
 					</label>
 				  </div>
 
+
+				  <div class="form-group  userShowEditLinkInPagePermission" >
+					<label>Show edit link in page view for: </label>
+                    <p>
+                        <label>Group: </label>
+                        <select name='direct_edit_groups[]' multiple id="iGroups" class='select2 '></select>
+                    </p>
+                    <p>
+					<label>User: </label>
+                     <select name='direct_edit_users[]' multiple id="iUsers" class='select2 '></select>
+                    </p>
+                    <p>
+					<label>Exclude User: </label>
+                     <select name='direct_edit_users_exclude[]' multiple id="eUsers" class='select2 '></select>
+                    </p>
+				  </div>
+
+
+
 			  <div class="form-group">
-
+                <input type="hidden" name="return" value="{!! $return !!}" />
 				<button type="submit" class="btn btn-primary ">  Submit </button>
-
-
 			  </div>
 			  </div>
 			  </div>
@@ -207,4 +224,17 @@
           toolbar: "insertfile undo redo | forecolor backcolor | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image", theme_advanced_buttons1 : "save,newdocument,|,bold,italic,underline,strikethrough,|,justifyleft,justifycenter,justifyright,justifyfull,styleselect,formatselect,fontselect,fontsizeselect"
            });
   </script>-->
+
+
+    <script>
+        $(document).ready(function(){
+            $("#iGroups").jCombo("{{ URL::to('pages/comboselect?filter=tb_groups:group_id:name') }}",
+                    {selected_value: "{{ $row->direct_edit_groups }}"});
+            $("#iUsers").jCombo("{{ URL::to('pages/comboselect?filter=users:id:first_name|last_name') }}",
+                    {selected_value: "{{ $row->direct_edit_users }}"});
+            $("#eUsers").jCombo("{{ URL::to('pages/comboselect?filter=users:id:first_name|last_name') }}",
+                    {selected_value: "{{ $row->direct_edit_users_exclude }}"});
+        });
+        var row = <?php echo json_encode($row) ; ?>;
+    </script>
 @stop

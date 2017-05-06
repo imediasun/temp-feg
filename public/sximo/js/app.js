@@ -266,6 +266,16 @@ function initDataGrid(module, url, options) {
         
         
     });
+    console.log($('ul.pagination li').length);
+    $('ul.pagination li.active')
+        .prev().addClass('show-mobile')
+        .prev().addClass('show-mobile');
+    $('ul.pagination li.active')
+        .next().addClass('show-mobile')
+        .next().addClass('show-mobile');
+    $('ul.pagination')
+        .find('li:first-child, li:last-child, li.active')
+        .addClass('show-mobile');
 }
 
 function autoSetMainContainerHeight() {
@@ -622,6 +632,17 @@ jQuery(document).ready(function($){
 
 // TODO: Clean and refactor the below code 
 jQuery(document).ready(function ($) {
+    $('.ajaxLoading').bind('DOMSubtreeModified', function(e) {
+        if (e.target.innerHTML.length > 0) {
+            console.log('if');
+            console.log(e);
+        }
+        else
+        {
+            console.log('else');
+            console.log(e);
+        }
+    });
 	navigator.sayswho= (function(){
 		var ua= navigator.userAgent, tem,
 				M= ua.match(/(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*(\d+)/i) || [];
@@ -678,8 +699,15 @@ jQuery(document).ready(function ($) {
 
             })
             .error(function (data) {
-                notyMessageError('Error getting permission to the page you are trying to access');
-                //console.log(data);
+                console.log(data);
+                if(data.status == '500')
+                {
+                    window.location = url;
+                }
+                else
+                {
+                    notyMessageError('Error getting permission to the page you are trying to access');
+                }
             });
 		}
 	});

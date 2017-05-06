@@ -87,6 +87,17 @@
 
                         </div>
                     </div>
+                    <div class="form-group  " >
+                        <label for="Expense Category" class=" control-label col-md-4 text-left">
+                            {!! SiteHelpers::activeLang('Expense Category', (isset($fields['expense_category']['language'])? $fields['expense_category']['language'] : array())) !!}
+                        </label>
+                        <div class="col-md-6">
+                            {!! Form::text('expense_category', $row['expense_category'],array('class'=>'form-control', 'placeholder'=>'','parsley-type'=>"number", 'required'=>'true'  )) !!}
+                        </div>
+                        <div class="col-md-2">
+
+                        </div>
+                    </div>
                     <div class="form-group  ">
                         <label for="Quantity Per Case" class=" control-label col-md-4 text-left">
                             {!! SiteHelpers::activeLang('Quantity Per Case', (isset($fields['num_items']['language'])?

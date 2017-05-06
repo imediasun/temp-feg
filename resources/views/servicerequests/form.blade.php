@@ -205,7 +205,7 @@ $(document).ready(function() {
             formattedDate,
             datePicker = $("#my-datepicker"),
             datePickerVal = datePicker.val();
-            
+
         if (isSameDay && !datePickerVal) {
             formattedDate = $.datepicker.formatDate('mm/dd/yy', new Date(date));
             datePicker.datepicker('update', formattedDate);
@@ -219,16 +219,16 @@ $(document).ready(function() {
 	$('.tips').tooltip();	
     
 	renderDropdown($(".select2"), { width:"100%"});	
-    
-	$('.date').datepicker({format:'mm/dd/yyyy',autoclose:true})
+    console.log( new Date() );
+	$('.date').datepicker({format:'mm/dd/yyyy',startDate:new Date(Date.now() - 864e5),autoclose:true});
     
 	$('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});
     
 	$('input[type="checkbox"],input[type="radio"]').iCheck({
 		checkboxClass: 'icheckbox_square-blue',
 		radioClass: 'iradio_square-blue',
-	});			
-    
+	});
+
 	$('.removeCurrentFiles').on('click',function(){
 		var removeUrl = $(this).attr('href');
 		$.get(removeUrl,function(response){});
@@ -254,7 +254,6 @@ $(document).ready(function() {
 		}		
 	
 	});
-
 });
 
 function showRequest()
@@ -276,6 +275,6 @@ function showResponse(data)  {
 		$('.ajaxLoading').hide();
 		return false;
 	}	
-}			 
+}
 
 </script>		 
