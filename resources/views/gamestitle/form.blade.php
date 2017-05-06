@@ -142,7 +142,8 @@
                                     </div>
                                 </div>
                                 </div>
-                                <!--div class="form-group  " >
+                                
+                    <!--div class="form-group  " >
 					<label for="Num Prize Meters" class=" control-label col-md-4 text-left">
 					{!! SiteHelpers::activeLang('Num Prize Meters', (isset($fields['num_prize_meters']['language'])? $fields['num_prize_meters']['language'] : array())) !!}
 					</label>
@@ -156,7 +157,8 @@
 						</select>
 					 </div>
 					 <div class="col-md-2"></div>
-                </div-->
+					 
+                    </div-->
 
         </fieldset>
     </div>

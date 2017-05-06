@@ -3168,6 +3168,10 @@ position: relative;
   height: 50px;
 }
 
+.r-avatar .img {
+  border-radius: 50%;
+}
+
 #s_icons a {
   margin-left: 2px;
 }
@@ -3345,6 +3349,20 @@ position: relative;
 margin-left: 15px;
 }
 
+.simpleSearchContainer, .simpleBoxContainer {
+  margin-bottom: 15px;
+}
+
+.navbar .navbar-top-links .dropdown-menu li a {
+  font-size: 12px;
+  min-height: 0;
+  padding: 3px 15px;
+}
+
+.navbar .navbar-top-links .dropdown-menu li {
+  margin-left: 0;
+}
+
 }
 
 
@@ -3364,5 +3382,10 @@ margin-left: 15px;
   .page-content .sbox .sbox-content {
   padding: 10px;
 }
+
+.text-left-xs {
+  text-align: left;
+}
+
 
 }

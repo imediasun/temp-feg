@@ -306,7 +306,7 @@
 
                     <div class="form-group">
                         
-                        <div class="col-sm-12 text-center btn-margin">
+                        <div class="col-sm-12 text-center btn-margin text-left-xs">
                             <button type="submit" name="apply" class="btn btn-info btn-sm"><i
                                         class="fa  fa-check-circle"></i> {{ Lang::get('core.sb_apply') }}</button>
                             <button type="submit" name="submit" class="btn btn-primary btn-sm"><i
