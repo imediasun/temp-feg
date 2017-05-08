@@ -556,7 +556,7 @@ class MylocationgameController extends Controller
                 $oldSerial = isset($data['oldserial'])? $data['oldserial'] : '';
                 $serial = isset($data['serial'])? $data['serial'] : $oldSerial;
                 $newData['serial'] = $serial;
-dd($this->model->get_game_info_by_id($id, null, null),$id);
+
                 // Get game details for email etc.
                 $gameDetails = $this->model->get_game_info_by_id($id, null, null);
                 $gameDetails->status_id  = $status;
