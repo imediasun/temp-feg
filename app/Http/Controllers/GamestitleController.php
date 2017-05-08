@@ -234,6 +234,7 @@ class GamestitleController extends Controller
                 unset($data['img']);
             }
             $data['game_title'] = trim($data['game_title']);
+            unset($data['has_servicebulletin']);
             $id = $this->model->insertRow($data, $id);
 
             $updates = array();
@@ -303,7 +304,6 @@ class GamestitleController extends Controller
                 unset($updates['img']);
             }
             if($manualFlag || $serviceFlag || $imgFlag) {
-               // dd($updates);
                 $this->model->insertRow($updates, $id);
             }
             return response()->json(array(
