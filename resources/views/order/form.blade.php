@@ -29,7 +29,7 @@
                 <fieldset>
                     <h3>Order Info</h3>
                     <hr class="m-t-sm">
-                    <div class="form-group  ">
+                    <div class="form-group">
                         <label for="Company Id" class=" control-label col-md-4 text-left"> Bill To:</label>
 
                         <div class="col-md-8">
@@ -39,7 +39,8 @@
 
                     </div>
                     <div class="clearfix"></div>
-                    <div class="form-group  ">
+                    <div class="form-group">
+                        <br>
                         <label for="location_id" class=" control-label col-md-4 text-left"> Location </label>
 
                         <div class="col-md-8">
@@ -121,7 +122,6 @@
                     <hr class="m-t-sm">
 
                     <div class="form-group">
-                       <br/><br/>
                         <label for="order_type_id" class=" control-label col-md-4 text-left">
                             Order Type </label>
 
@@ -132,7 +132,7 @@
 
 
                     </div>
-                    
+                    <br/>
                     <div class="form-group">
                         <br/><br/>
                         <label for="vendor_id" class=" control-label col-md-4 text-left">
