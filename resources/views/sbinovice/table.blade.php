@@ -21,7 +21,9 @@
         <thead>
 			<tr>
 				<th width="20"> No </th>
+				@if($setting['disableactioncheckbox']=='false' && ($access['is_remove'] == 1 || $access['is_add'] =='1'))
 				<th width="60"> <input type="checkbox" class="checkall" /></th>
+				@endif
 				@if($setting['view-method']=='expand') <th>  </th> @endif			
 				<?php foreach ($tableGrid as $t) :
 					if($t['view'] =='1'):
@@ -36,7 +38,9 @@
         	@if($access['is_add'] =='1' && $setting['inline']=='true')
 			<tr id="form-0" >
 				<td> # </td>
+				@if($setting['disableactioncheckbox']=='false' && ($access['is_remove'] == 1 || $access['is_add'] =='1'))
 				<td> </td>
+				@endif
 				@if($setting['view-method']=='expand') <td> </td> @endif
 				@foreach ($tableGrid as $t)
 					@if($t['view'] =='1')
@@ -56,7 +60,9 @@
            		?>
                 <tr class="editable" id="form-{{ $row->InvoiceID }}" @if($setting['inline']!='false' && $setting['disablerowactions']=='false') data-id="{{ $row->id }}" ondblclick="showFloatingCancelSave(this)" @endif>
 					<td class="number"> <?php echo ++$i;?>  </td>
-					<td ><input type="checkbox" class="ids" name="id[]" value="<?php echo $row->InvoiceID ;?>" />  </td>					
+					@if($setting['disableactioncheckbox']=='false' && ($access['is_remove'] == 1 || $access['is_add'] =='1'))
+					<td ><input type="checkbox" class="ids" name="id[]" value="<?php echo $row->InvoiceID ;?>" />  </td>
+					@endif
 					@if($setting['view-method']=='expand')
 					<td><a href="javascript:void(0)" class="expandable" rel="#row-{{ $row->InvoiceID }}" data-url="{{ url('sbinovice/show/'.$id) }}"><i class="fa fa-plus " ></i></a></td>								
 					@endif			
@@ -142,4 +148,3 @@ $(document).ready(function() {
 .table th.center { text-align:center !important;}
 
 </style>
-	

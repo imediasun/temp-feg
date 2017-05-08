@@ -43,7 +43,7 @@
                 @if($setting['disablerowactions']=='false')
 				<th width="70"><?php echo Lang::get('core.btn_action') ;?></th>
                 @endif
-                @if($setting['disableactioncheckbox']=='false')
+                    @if($setting['disableactioncheckbox']=='false' && ($access['is_remove'] == 1 || $access['is_add'] =='1'))
 				<th width="30"> <input type="checkbox" class="checkall" /></th>
                 @endif
 				@if($setting['view-method']=='expand') <th>  </th> @endif
@@ -67,8 +67,8 @@
 					{!! AjaxHelpers::buttonAction('feg/system/systememailreportmanager',$access,$id ,$setting) !!}
 					{!! AjaxHelpers::buttonActionInline($row->id,'id') !!}
 				</td>
-                @endif                
-                @if($setting['disableactioncheckbox']=='false')
+                @endif
+                    @if($setting['disableactioncheckbox']=='false' && ($access['is_remove'] == 1 || $access['is_add'] =='1'))
                 <td ><input type="checkbox" class="ids" name="ids[]" value="<?php echo $row->id ;?>" />  </td>
                 @endif
                 @if($setting['view-method']=='expand')
