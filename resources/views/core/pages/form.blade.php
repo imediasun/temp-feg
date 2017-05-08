@@ -200,10 +200,8 @@
 
 
 			  <div class="form-group">
-
+                <input type="hidden" name="return" value="{!! $return !!}" />
 				<button type="submit" class="btn btn-primary ">  Submit </button>
-
-
 			  </div>
 			  </div>
 			  </div>
