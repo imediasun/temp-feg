@@ -426,11 +426,7 @@ class UserController extends Controller
             }
 
             $user = User::find(\Session::get('uid'));
-            if(!is_null($request->input('g_password')))
-            {
-                $password = base64_encode(env('SALT_KEY').$request->input('g_password').env('SALT_KEY'));
-                $user->g_password = $password;
-            }
+
             $user->first_name = $request->input('first_name');
             $user->last_name = $request->input('last_name');
             $user->email = $request->input('email');

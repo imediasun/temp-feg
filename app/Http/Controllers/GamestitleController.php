@@ -264,9 +264,6 @@ class GamestitleController extends Controller
                     $updates['has_servicebulletin'] = '1';
                 }
             }
-            else{
-                unset($updates['has_servicebulletin']);
-            }
             $imgs=$request->get('imgs');
             $new_name="";
             if(!is_null($id) && !empty($imgs)) {
@@ -306,6 +303,7 @@ class GamestitleController extends Controller
                 unset($updates['img']);
             }
             if($manualFlag || $serviceFlag || $imgFlag) {
+               // dd($updates);
                 $this->model->insertRow($updates, $id);
             }
             return response()->json(array(
