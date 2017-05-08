@@ -233,7 +233,7 @@
 
     }
     $('#delete-cols').click(function(){
-        if(confirm('Are You Sure, You want to delete this Columns Arrangement?')) {
+        if(confirm('Are you sure, You want to delete this columns arrangement?')) {
             showRequest();
             var module = "{{ $pageModule }}";
             var config_id = $("#col-config").val();

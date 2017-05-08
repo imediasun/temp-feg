@@ -92,7 +92,7 @@ $(document).ready(function(){
         $('#edit-cols,#delete-cols').show();
     }
     $('#delete-cols').click(function(){
-        if(confirm('Are You Sure, You want to delete this Columns Arrangement?')) {
+        if(confirm('Are you sure, You want to delete this columns arrangement?')) {
             
             var module = "{{ $pageModule }}";
             var config_id = $("#col-config").val();

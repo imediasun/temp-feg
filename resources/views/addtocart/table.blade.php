@@ -45,7 +45,9 @@
                     <thead>
                     <tr>
                         <th width="30"> No</th>
+                        @if($setting['disableactioncheckbox']=='false' && ($access['is_remove'] == 1 || $access['is_add'] =='1'))
                         <th width="50"><input type="checkbox" class="checkall"/></th>
+                        @endif
                         <th width="100">Image</th>
                         @if($setting['view-method']=='expand')
                             <th></th> @endif
@@ -74,7 +76,9 @@
                     @if($access['is_add'] =='1' && $setting['inline']=='true')
                         <tr id="form-0">
                             <td> #</td>
+                            @if($setting['disableactioncheckbox']=='false' && ($access['is_remove'] == 1 || $access['is_add'] =='1'))
                             <td></td>
+                            @endif
                             @if($setting['view-method']=='expand')
                                 <td></td> @endif
                             @foreach ($tableGrid as $t)
@@ -99,7 +103,9 @@
                     ?>
                     <tr class="editable" id="form-{{ $row->id }}" @if($setting['inline']!='false' && $setting['disablerowactions']=='false') data-id="{{ $row->id }}" ondblclick="showFloatingCancelSave(this)" @endif>
                         <td class="number"> <?php echo ++$i;?>  </td>
+                        @if($setting['disableactioncheckbox']=='false' && ($access['is_remove'] == 1 || $access['is_add'] =='1'))
                         <td><input type="checkbox" class="ids" name="ids[]" value="<?php echo $row->id;?>" onkeypress="disableEnter(event)"/></td>
+                        @endif
                         <td> <?php
                             echo SiteHelpers::showUploadedFile($row->img, '/uploads/products/', 50, false);
                             ?></td>
