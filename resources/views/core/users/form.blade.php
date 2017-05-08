@@ -246,30 +246,6 @@
                                 </select>
                             </div>
                         </div>
-
-
-                        {{--<div class="form-group">
-                            <label for="ipt"
-                                   class=" control-label col-md-4"> {{ Lang::get('core.g_mail') }} </label>
-                            <div class="col-md-8">
-                                <input name="g_mail" type="text" id="g_mail" class="form-control input-sm" value="{{$row['g_mail']}}"/>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="ipt"
-                                   class=" control-label col-md-4"> {{ Lang::get('core.g_password') }} </label>
-                            <div class="col-md-8">
-                                <input name="g_password" type="password" id="g_password" class="form-control input-sm" value="" />
-                            </div>
-
-                        </div>
-                        <div class="form-group">
-                            <div class="col-md-4"></div>
-                            <div class="col-md-8">
-                                <p class="bg-info" style="padding: 5px">{!! Lang::get('core.gmail_smtp_connect_failed') !!}</p>
-                            </div>
-                        </div>--}}
                         @if($row['id'] !='')
                             <div class="form-group">
 
