@@ -264,6 +264,9 @@ class GamestitleController extends Controller
                     $updates['has_servicebulletin'] = '1';
                 }
             }
+            else{
+                unset($updates['has_servicebulletin']);
+            }
             $imgs=$request->get('imgs');
             $new_name="";
             if(!is_null($id) && !empty($imgs)) {
