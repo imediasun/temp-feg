@@ -35,7 +35,7 @@ class AjaxHelpers
                 }
 
             } else {
-                if(is_numeric($val)) {
+                if(($val)) {
                     $Q = DB::select(" SELECT " . $fields . " FROM " . $arr['db'] . " WHERE " . $arr['key'] . " = '" . $val . "' ");
                      if (count($Q) >= 1) {
                         $rowObj = $Q[0];

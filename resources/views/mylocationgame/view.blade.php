@@ -405,7 +405,8 @@
                             <td>{{ \DateHelpers::formatStringValue($move_history->from_first_name) }} {{ \DateHelpers::formatStringValue($move_history->from_last_name) }} </td>
                             <td>{{ \DateHelpers::formatStringValue($move_history->to_first_name) }} {{ \DateHelpers::formatStringValue($move_history->to_last_name) }} </td>
                             <td>{{ DateHelpers::formatDate($move_history->to_date) }} </td>
-                            <td>{{  \SiteHelpers::getDateDiff($move_history->from_date,$move_history->to_date) }}</td>
+                            <?php $days_in_transit=\SiteHelpers::getDateDiff($move_history->from_date,$move_history->to_date) ?>
+                            <td>{{ \DateHelpers::formatZeroValue($days_in_transit) }}</td>
                         </tr>
                     @endforeach
                 @else
