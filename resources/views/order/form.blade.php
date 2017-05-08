@@ -121,6 +121,7 @@
                     <hr class="m-t-sm">
 
                     <div class="form-group">
+                       <br/><br/>
                         <label for="order_type_id" class=" control-label col-md-4 text-left">
                             Order Type </label>
 
