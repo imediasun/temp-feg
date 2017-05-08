@@ -31,51 +31,34 @@ class AjaxHelpers
                         $v .= (isset($fields[2]) && $fields[2] != '' ? $values->$fields[2] . ' ' : '');
                         $val[] = trim($v);
                     }
-
                     $val = trim(implode(", ", $val));
-                } elseif (empty($Q)) {
-                    $val = "No Data";
-                } else {
-                    $col = explode("|", $arr['display']);
-                    if (isset($col[1]) && $col[1] !== '') {
-                        /* $col = explode("_", $col[1]);
-                         $colName = "";
-                         foreach ($col as $c) {
-                             $colName .= $c . " ";
-                         }*/
-                        if ($val != "0") {
-                            $val = "No Data";
-                        } else {
-                            $val = "";
-                        }
-                    }
                 }
 
             } else {
-                $Q = DB::select(" SELECT " . $fields . " FROM " . $arr['db'] . " WHERE " . $arr['key'] . " = '" . $val . "' ");
-                if (count($Q) >= 1) {
-                    $rowObj = $Q[0];
-                    $fields = explode("|", $arr['display']);
-                    $v = '';
-                    $v .= (isset($fields[0]) && $fields[0] !== '' ? $rowObj->$fields[0] . ' ' : '');
-                    $v .= (isset($fields[1]) && $fields[1] !== '' ? $rowObj->$fields[1] . ' ' : '');
-                    $v .= (isset($fields[2]) && $fields[2] !== '' ? $rowObj->$fields[2] . ' ' : '');
-                    $val = trim($v);
-                }else {
-                    $col = explode("|", $arr['display']);
-                    if (isset($col[1]) && $col[1] !== '') {
-                        /*  $col = explode("_", $col[1]);
-                          $colName = "";
-                          foreach ($col as $c) {
-                              $colName .= $c . " ";
-                          }*/
-                        if ($val != "0") {
-                            $val = "No Data";
+                if(is_numeric($val)) {
+                    $Q = DB::select(" SELECT " . $fields . " FROM " . $arr['db'] . " WHERE " . $arr['key'] . " = '" . $val . "' ");
+                     if (count($Q) >= 1) {
+                        $rowObj = $Q[0];
+                        $fields = explode("|", $arr['display']);
+                        $v = '';
+                        $v .= (isset($fields[0]) && $fields[0] !== '' ? $rowObj->$fields[0]. ' ' : '');
+                        if (isset($rowObj->$fields[0]) && empty($rowObj->$fields[0])) {
+                            $v .= (isset($fields[1]) && $fields[1] !== '' ? $rowObj->$fields[1] . ' ' : '');
                         } else {
-                            $val = "";
+                            $val = "No Data";
                         }
+                        $v .= (isset($fields[2]) && $fields[2] !== '' ? $rowObj->$fields[2] . ' ' : '');
+                        $val = trim($v);
+                    }
+                    else
+                    {
+                        $val="";
                     }
                 }
+                else{
+                    return $val;
+                }
+
             }
         }
 
