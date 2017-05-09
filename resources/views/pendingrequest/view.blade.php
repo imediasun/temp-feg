@@ -62,9 +62,10 @@
 				
 					<tr>
 						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('Status', (isset($fields['status_id']['language'])? $fields['status_id']['language'] : array())) }}	
+							{{ SiteHelpers::activeLang('Status', (isset($fields['status_id']['language'])? $fields['status_id']['language'] : array())) }}
 						</td>
-						<td>{{ \DateHelpers::formatZeroValue($row->status_id) }} </td>
+
+						<td>{{ \DateHelpers::formatStringValue($row->status_id)}}</td>
 						
 					</tr>
 				
