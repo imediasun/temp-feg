@@ -55,7 +55,7 @@
                     </div>
                 </div>     <div class="form-group  " >
                     <label for="Id" class=" control-label col-md-4 text-left">
-                       For Location:
+                       For Locations:
                     </label>
                     <div class="col-md-6">
                     <select name="location_name" id="location_name" class="select2" required="required"></select>
@@ -199,5 +199,6 @@
 
     <style>
         .ajaxLoading { background:#fff url( {{ url() }}/loading.gif) no-repeat center center; display:none; height:200px; position:absolute; width:100%; opacity: 0.5; left:0; top:0; height: 100%; z-index:9999;}
+        #s2id_location_name{width: 100% !important;}
     </style>
 @endsection
