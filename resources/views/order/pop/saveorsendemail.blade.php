@@ -307,6 +307,8 @@
                 $('.ajaxLoading').hide();
                 reloadOrder();
                 $('#sximo-modal').modal('hide');
+                $('body').removeClass('modal-open');
+                $('.modal-backdrop').remove();
             } else {
                 notyMessageError(data.message);
                 $('.ajaxLoading').hide();
