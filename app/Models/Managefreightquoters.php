@@ -30,8 +30,8 @@ class managefreightquoters extends Sximo
         return 'SELECT freight_orders.*,IF(freight_orders.loc_to_1 = 0,"",freight_orders.loc_to_1) AS loc_to_1,freight_orders.date_submitted,freight_orders.date_paid,GROUP_CONCAT(company_name) AS company_name,
                 (select c.company_name from freight_companies c where c.id=freight_orders.freight_company_1) as company_name_1,
                 IF(freight_orders.vend_to = 0 AND freight_orders.loc_to_1=0, CONCAT(freight_orders.to_add_name," (",freight_orders.to_add_state,")"),
-                IF(freight_orders.vend_to = 0,CONCAT("",GROUP_CONCAT(L2.location_name_short)), V2.vendor_name)) AS vend_to,
-                IF(freight_orders.vend_from = 0 AND freight_orders.loc_from = 0, CONCAT(freight_orders.from_add_name,"(",freight_orders.from_add_state,")"),IF(freight_orders.vend_from = 0, L.location_name_short, V.vendor_name)) AS vend_from,
+                IF(freight_orders.vend_to = 0,CONCAT("",GROUP_CONCAT(L2.location_name)), V2.vendor_name)) AS vend_to,
+                IF(freight_orders.vend_from = 0 AND freight_orders.loc_from = 0, CONCAT(freight_orders.from_add_name,"(",freight_orders.from_add_state,")"),IF(freight_orders.vend_from = 0, L.location_name, V.vendor_name)) AS vend_from,
                 ' . $statusqry . ' AS status
                 FROM freight_orders  LEFT JOIN
                 freight_location_to FLT ON freight_orders.id=FLT.freight_order_id LEFT JOIN freight_companies FC ON FLT.freight_company=FC.id
@@ -109,7 +109,7 @@ class managefreightquoters extends Sximo
 						group_concat(FLT.dimensions) as dimensions, group_concat(FLT.ship_exception) as shipping_exception,group_concat(FLT.id) as freight_pallet_id,
 						V2.vendor_name AS vend_to_name, V2.street1 AS vend_to_street, V2.city AS vend_to_city, V2.state AS vend_to_state, V2.zip AS vend_to_zip, V2.games_contact_name AS vend_to_contact_name,
 						V2.games_contact_email AS vend_to_contact_email, V2.games_contact_phone AS vend_to_contact_phone, F.loc_from AS loc_from_id,
-						CONCAT(F.loc_from, " | ", L.location_name_short) AS loc_from,F.from_add_name,F.from_add_street,F.from_add_city,F.from_add_state,F.loc_to_1,
+						CONCAT(F.loc_from, " | ", L.location_name) AS loc_from,F.from_add_name,F.from_add_street,F.from_add_city,F.from_add_state,F.loc_to_1,
 						F.from_add_zip,F.from_contact_name,F.from_contact_email,F.from_contact_phone,F.from_loading_info,F.to_add_name,
 						F.to_add_street,F.to_add_city,F.to_add_state,F.to_add_zip,F.to_contact_name,F.to_contact_email,
 						F.to_contact_phone,F.to_loading_info,F.external_ship_quote,F.external_ship_trucking_co,
