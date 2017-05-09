@@ -38,6 +38,7 @@ class AjaxHelpers
                 if(is_numeric($val)) {
                     $Q = DB::select(" SELECT " . $fields . " FROM " . $arr['db'] . " WHERE " . $arr['key'] . " = '" . $val . "' ");
                      if (count($Q) >= 1) {
+
                         $rowObj = $Q[0];
                         $fields = explode("|", $arr['display']);
                         $v = '';
@@ -45,7 +46,7 @@ class AjaxHelpers
                         if (isset($rowObj->$fields[0]) && empty($rowObj->$fields[0])) {
                             $v .= (isset($fields[1]) && $fields[1] !== '' ? $rowObj->$fields[1] . ' ' : '');
                         } else {
-                            $val = "No Data";
+                            $v = "No Data";
                         }
                         $v .= (isset($fields[2]) && $fields[2] !== '' ? $rowObj->$fields[2] . ' ' : '');
                         $val = trim($v);
