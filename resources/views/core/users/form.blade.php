@@ -309,6 +309,8 @@
             margin-bottom: 4px;
             font-size: 13px;
         }
+        #s2id_group_id{width: 100% !important;}
+        #s2id_multiple_loc{width: 100% !important;}
     </style>
     <script type="text/javascript">
         $(document).ready(function () {
