@@ -43,10 +43,10 @@ class AjaxHelpers
                         $fields = explode("|", $arr['display']);
                         $v = '';
                         $v .= (isset($fields[0]) && $fields[0] !== '' ? $rowObj->$fields[0]. ' ' : '');
-                        if (isset($rowObj->$fields[0]) && empty($rowObj->$fields[0])) {
-                            $v .= (isset($fields[1]) && $fields[1] !== '' ? $rowObj->$fields[1] . ' ' : '');
+                        if (isset($fields[1]) && empty($rowObj->$fields[1])) {
+                            $v="No Data";
                         } else {
-                            $v = "No Data";
+                            $v .= (isset($fields[1]) && $fields[1] !== '' ? $rowObj->$fields[1] . ' ' : '');
                         }
                         $v .= (isset($fields[2]) && $fields[2] !== '' ? $rowObj->$fields[2] . ' ' : '');
                         $val = trim($v);
