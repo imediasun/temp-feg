@@ -598,7 +598,13 @@ class OrderController extends Controller
         $order_id=\Session::get('order_id');
         $order_type = \DB::select('SELECT order_type_id FROM orders WHERE id='.$order_id);
         $order_type_id = $order_type[0]->order_type_id;
-        $receipts = FEGSystemHelper::getSystemEmailRecipients("send PO copy");
+        $is_test=env('APP_ENV', 'development') !== 'production'?true:false;
+        if($is_test) {
+            $receipts = FEGSystemHelper::getSystemEmailRecipients("send PO copy",null,true);
+        }
+        else{
+            $receipts = FEGSystemHelper::getSystemEmailRecipients("send PO copy");
+        }
         extract($receipts);
         $cc1="";
        // for Instant Win, Redemption Prize, Tickets, Uniforms and Office Supply categories send a copy of PO to
@@ -606,6 +612,7 @@ class OrderController extends Controller
         if(($order_type_id == 7 || $order_type_id == 8 || $order_type_id == 4 || $order_type_id == 6))// && CNF_MODE != "development" )
         {
             $cc1=$cc;
+
         }
         else{
             $cc1="";
