@@ -152,36 +152,6 @@ class PendingrequestController extends Controller
 
     public function getShow($id = null)
     {
-        /*
-        $test = "0";
-        $test = "";
-        $test = "0.00";
-        $test = "$ 0.00";
-        $test = "null";
-        $test = "NULL";
-        $test = strtolower($test);
-        if( $test === 0){
-            echo "with zero <br>";
-        }
-        if($test == null){
-            echo "with null <br>";
-        }
-        if($test == "0"){
-            echo "with string 0 <br>";
-        }
-        if(empty($test)){
-            echo "with empty <br>";
-        }
-        if($test == ""){
-            echo "with empty string <br>";
-        }
-        if($test === 0.00){
-            echo "with 0.00 <br>";
-        }
-        if($test === "null"){
-            echo "with string null <br>";
-        }
-        die("here");*/
 
         if ($this->access['is_detail'] == 0)
             return Redirect::to('dashboard')
