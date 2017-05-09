@@ -176,7 +176,13 @@ function SximoModalShow(modal, callbackName, data) {
     }
 }
 function SximoModalHide(modal, callbackName, data) {
-	modal.modal('hide');
+    modal.modal('hide');
+    if (modal && modal.length) {
+        modal.each(function (){
+            //$(this).modal('hide');
+        });
+    }
+	
     if (callbackName) {
         App.autoCallbacks.runCallback.call(modal, callbackName, data);   
     }    

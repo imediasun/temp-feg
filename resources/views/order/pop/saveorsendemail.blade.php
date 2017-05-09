@@ -188,6 +188,10 @@
     </div>
 </div>
     <script>
+
+    (function () {
+
+
         $(document).ready(function () {
 
         });
@@ -218,9 +222,9 @@
 
 
         function reloadOrder() {
-            ajaxViewClose("#order");
-            $('.modal').modal('hide');
             $('.ajaxLoading').hide();
+            SximoModalHide($('.modal'));
+            ajaxViewClose("#order", null, {noModal: true});
 //            {{ \Session::put('filter_before_redirect','redirect') }}
 //            var redirect_link = "{{ \Session::get('redirect') }}";
 //            location.href = "{{ url() }}/" + redirect_link;
@@ -306,9 +310,9 @@
                 notyMessage(data.message);
                 $('.ajaxLoading').hide();
                 reloadOrder();
-                $('#sximo-modal').modal('hide');
-                $('body').removeClass('modal-open');
-                $('.modal-backdrop').remove();
+                //$('#sximo-modal').modal('hide');
+                //$('body').removeClass('modal-open');
+                //$('.modal-backdrop').remove();
             } else {
                 notyMessageError(data.message);
                 $('.ajaxLoading').hide();
@@ -335,4 +339,5 @@
                 }
             });
         }
+    }());
     </script>

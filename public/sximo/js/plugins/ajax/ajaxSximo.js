@@ -317,8 +317,9 @@ function ajaxViewDetail( id , url )
 
 }
 
-function ajaxViewClose( id , elm)
+function ajaxViewClose( id , elm, options)
 {
+    options = options || {};
     var view = $(id+'View'),
         grid = $(id+'Grid'),
         $elm = elm && $(elm) || [];
@@ -343,11 +344,20 @@ function ajaxViewClose( id , elm)
     {
         grid.show();
     }
-	$('#sximo-modal').modal('hide');
+    if (options.modal) {
+        SximoModalHide(options.modal, options.callback);
+    }
+    else {
+        if (!options.noModal) {
+            SximoModalHide($('#sximo-modal'), options.callback);
+        }
+        
+    }
 }
 
-function ajaxViewChange(id , newContent, elm)
+function ajaxViewChange(id , newContent, elm, options)
 {
+    options = options || {};
     var view = $(id+'View'),
         pos,
         top = 0,
@@ -358,9 +368,17 @@ function ajaxViewChange(id , newContent, elm)
             view = $elm.closest('.moduleView');
         }
     }
-	$('#sximo-modal').modal('hide');
-	view.html(newContent);
-    pos = view.position()
+    if (options.modal) {
+        SximoModalHide(options.modal, options.callback);
+    }
+    else {
+        if (!options.noModal) {
+            SximoModalHide($('#sximo-modal'), options.callback);
+        }
+    }
+    
+    view.html(newContent);
+    pos = view.position();
     top = pos && pos.top || 0;
     scrollTo(0, top);
     
