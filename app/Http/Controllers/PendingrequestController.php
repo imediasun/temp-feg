@@ -67,6 +67,9 @@ class PendingrequestController extends Controller
         // Filter Search for query
         $filter = (!is_null($request->input('search')) ? $this->buildSearch() : '');
 
+        //following script is used to avoid conflict of vendor_id in search
+        $filter = str_replace('vendor.vendor_id','vendor.id',$filter);
+
 
         $page = $request->input('page', 1);
         $params = array(
