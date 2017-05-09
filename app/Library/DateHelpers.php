@@ -40,10 +40,8 @@ class DateHelpers{
         }
         return $formattedValue;
     }
-    public static function formatZeroValue($val)
-    {
-        //echo $val;
-        if($val == 0 || $val == null || $val == "0" || empty($val) || $val =="" || $val== 0.00)
+    protected static function formatValue($val){
+        if($val === 0 || $val == null || $val == "0" || empty($val) || $val == "" || $val=== 0.00 || strtolower($val) === "null")
         {
             return "No Data";
         }
@@ -52,15 +50,12 @@ class DateHelpers{
             return $val;
         }
     }
+    public static function formatZeroValue($val)
+    {
+        return self::formatValue($val);
+    }
     public static function formatStringValue($val)
     {
-        if($val == null || $val == "0" || empty($val) || $val ==""|| $val == "0.00")
-        {
-            return "No Data";
-        }
-        else
-        {
-            return $val;
-        }
+        return self::formatValue($val);
     }
 }
