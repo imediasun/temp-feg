@@ -15,7 +15,7 @@ class mylocationgame extends Sximo  {
 
 	public static function querySelect(  ){
 		
-		return "SELECT game.*,game_title.img FROM game LEFT OUTER JOIN game_title ON game.game_title_id=game_title.id  ";
+		return "SELECT game.*,game_title.img,game.location_id as location_num FROM game LEFT OUTER JOIN game_title ON game.game_title_id=game_title.id  ";
 	}	
 
 	public static function queryWhere(  ){
