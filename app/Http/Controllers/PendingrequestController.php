@@ -160,11 +160,11 @@ class PendingrequestController extends Controller
         $row = $this->model->getRow($id);
         if ($row) {
             $this->data['row'] = $row;
-            if ($row->status_id == 2) {
+            /*if ($row->status_id == 2) {
                 $row->status_id = 'Approved';
             } elseif ($row->status_id == 3) {
                 $row->status_id = 'Denied';
-            }
+            }*/
             if ($row->process_date == "0000-00-00") {
                 $row->process_date = '00/00/0000';
             } else {
