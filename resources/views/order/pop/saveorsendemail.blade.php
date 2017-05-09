@@ -55,7 +55,7 @@
 
             <!-- popup for sending email  -->
 
-            <div class="modal fade" id="myModal" role="dialog">
+            <div class="modal" id="myModal" role="dialog">
                 <div class="modal-dialog">
                     <!-- Modal content-->
                     <div id="mycontent" class="modal-content">
@@ -120,7 +120,7 @@
             </div>
             <!-- popup for sending email ends here.. -->
             <!-- pop up for sending and saving starts here.. -->
-            <div class="modal fade" id="savesendModal" role="dialog">
+            <div class="modal" id="savesendModal" role="dialog">
                 <div class="modal-dialog">
                     <!-- Modal content-->
                     <div id="mycontent" class="modal-content">
@@ -306,8 +306,7 @@
                 notyMessage(data.message);
                 $('.ajaxLoading').hide();
                 reloadOrder();
-                $('.modal').modal('hide');
-                //$('.modal-backdrop').css('display','none');
+                $('#sximo-modal').modal('hide');
             } else {
                 notyMessageError(data.message);
                 $('.ajaxLoading').hide();
