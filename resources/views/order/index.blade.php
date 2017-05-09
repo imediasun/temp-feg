@@ -23,7 +23,7 @@
 	</div>
 	<!-- End Content -->
     <?php
-        echo \Session::get('filter_before_redirect');
+        //echo \Session::get('filter_before_redirect');
     if(! isset($id)){
         $id= 0;
     }
