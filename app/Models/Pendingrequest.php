@@ -15,7 +15,8 @@ class pendingrequest extends Sximo  {
 
 	public static function querySelect(  ){
 		
-		return "SELECT  requests.*,products.unit_price,vendor.id AS vendor_id  FROM requests
+		return "SELECT  requests.*,products.unit_price,merch_request_status.status AS status_id,vendor.id AS vendor_id  FROM requests
+                LEFT JOIN merch_request_status ON (requests.status_id = merch_request_status.id)
                 LEFT OUTER JOIN products
                 ON requests.product_id=products.id
                 LEFT OUTER JOIN vendor
