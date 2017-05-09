@@ -104,13 +104,13 @@
 
                         <div class="form-group  ">
                             <label for="Status" class=" control-label col-md-4 text-left"> Status <span class="asterix"> * </span></label>
-                            <div class="col-md-6">
+                            <div class="col-md-6" style="padding-bottom: 15px;">
 
                                 <label class='radio radio-inline'>
                                     <input type='radio' name='active' value='0' required
                                            @if($row['active'] == '0') checked="checked" @endif > Inactive </label>
                                 <label class='radio radio-inline'>
-                                    <input type='radio' name='active' value='1' required
+                                    <input type='radio' name='active' value='1'
                                            @if($row['active'] == '1') checked="checked" @endif > Active </label>
                             </div>
                             <div class="col-md-2">
@@ -301,6 +301,15 @@
         </div>
     </div>
     </div>
+
+    <style>
+        #parsley-active{
+            position: absolute;
+            margin-top: 4px;
+            margin-bottom: 4px;
+            font-size: 13px;
+        }
+    </style>
     <script type="text/javascript">
         $(document).ready(function () {
             $('input[type=checkbox]').click(function () {
