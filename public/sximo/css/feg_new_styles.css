@@ -179,3 +179,14 @@
 table.budget-summery td:nth-child(2){
     text-align: right;
 }
+
+.btn-file{
+    background-color: #1a7bb9!important;
+    color: #FFF;
+}
+
+.btn-file:hover{
+    background-color: #14457a!important;
+    color: #FFF;
+    cursor: pointer !important;
+}
