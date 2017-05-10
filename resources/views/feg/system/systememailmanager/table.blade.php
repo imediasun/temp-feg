@@ -150,7 +150,7 @@
                     <strong>ID:</strong> {{ $vrow->id }}<br/><br/>
                     <strong>Is Active?:</strong> {{ $vrow->is_active }}<br/><br/>
                     <strong>Locationwise filter?:</strong> {{ $vrow->has_locationwise_filter }}<br/><br/>
-                    <strong>Updated at:</strong> {{ $vrow->updated_at }}<br/><br/>
+                    <strong>Updated On:</strong> {{ $vrow->updated_at }}<br/><br/>
                     
                 </td>
                 <td>
