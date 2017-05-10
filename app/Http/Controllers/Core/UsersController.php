@@ -166,7 +166,23 @@ class UsersController extends Controller
         
     public function getPlay($id = null)
     {
-        $return_id = \Session::get('uid');
+        $isPlaback = $id == 'back';
+        $impersonatedUserIdPath = Session::has('return_id') ? Session::get('return_id') : [];
+        $current_user = \Session::get('uid');
+        
+        if ($isPlaback) {
+            if (!is_array($impersonatedUserIdPath)) {
+                $id = $impersonatedUserIdPath;
+                $impersonatedUserIdPath = [];
+            }
+            else {
+                $id = array_pop($impersonatedUserIdPath);
+            }
+        }
+        else {
+            $impersonatedUserIdPath[] = $current_user;
+        }
+
         $row = Users::find($id);
         Auth::loginUsingId($row->id);
 
@@ -200,16 +216,12 @@ class UsersController extends Controller
         Session::put('reg_id', $row->reg_id);
         Session::put('restricted_mgr_email', $row->restricted_mgr_email);
         Session::put('restricted_user_email', $row->restricted_user_email);
+
+        Session::put('return_id', $impersonatedUserIdPath);
+
         Session::save();
-
-        if (Session::get('return_id') == $id) {
-
-            Session::put('return_id', '');
-        } else {
-
-            Session::put('return_id', $return_id);
-        }
-        return Redirect::to('user/profile');
+        
+        return Redirect::to($row->redirect_link);
     }
 
     function get($id = NULL)

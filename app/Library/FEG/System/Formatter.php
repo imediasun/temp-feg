@@ -85,6 +85,31 @@ class Formatter
         }
         return $url;
     }
+    public static function usersToNames($ids, $separator = ", ", $prefix = "", $suffix = "", $displayFields = [], $delim = " ") {
+        $values = [];
+        if (!is_array($ids)) {
+            $ids = [$ids];
+        }
+        if (empty($displayFields)) {
+            $displayFields = ["first_name", "last_name"];
+        }
+        
+        foreach($ids as $id) {
+            $user = \App\Models\Core\Users::where('id', $id)->first();
+            if (!empty($user)) {
+                $displayValues = [];
+                foreach($displayFields as $field) {
+                    $displayValues[] = $user->$field;
+                }
+                $displayValue = implode($delim, $displayValues);
+            }
+            $values[] = $prefix.$displayValue.$suffix;
+        }
+
+        $finalValue = implode($separator, $values);
+        return $finalValue;
+    }
+
     public static function userToName($id, $displayValue = "", $displayFields = ["first_name", "last_name"], $delim = " ") {
         $user = \App\Models\Core\Users::where('id', $id)->first();
         if (!empty($user)) {
@@ -140,6 +165,4 @@ class Formatter
     public static function field2title($value = null) {        
         return str_replace('_', ' ', ucwords($value, '_'));
     } 
-    
-      
 }
