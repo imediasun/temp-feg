@@ -87,11 +87,11 @@ class UserController extends Controller
                 \Session::put('lang', 'en');
 
                 if (!empty($row->redirect_link)) {
-                    return Redirect::to($row->redirect_link);
+                    return Redirect::to($row->redirect_link == 'dashboard'?'user/profile':$row->redirect_link);
                 } elseif (!empty($group->redirect_link)) {
-                    return Redirect::to($group->redirect_link);
+                    return Redirect::to($group->redirect_link == 'dashboard'?'user/profile':$group->redirect_link);
                 } else {
-                    return Redirect::to(CNF_REDIRECTLINK);
+                    return Redirect::to(CNF_REDIRECTLINK== 'dashboard'?'user/profile':CNF_REDIRECTLINK);
                 }
                 if (CNF_FRONT == 'false') {
                     return Redirect::to('dashboard');
@@ -303,14 +303,12 @@ class UserController extends Controller
                         } else {
                             \Session::put('lang', 'en');
                         }
-
                         if (!empty($row->redirect_link)) {
-
-                            return Redirect::to($row->redirect_link);
+                            return Redirect::to($row->redirect_link == 'dashboard'?'user/profile':$row->redirect_link);
                         } elseif (!empty($group->redirect_link)) {
-                            return Redirect::to($group->redirect_link);
+                            return Redirect::to($group->redirect_link == 'dashboard'?'user/profile':$group->redirect_link);
                         } else {
-                            return Redirect::to(CNF_REDIRECTLINK);
+                            return Redirect::to(CNF_REDIRECTLINK== 'dashboard'?'user/profile':CNF_REDIRECTLINK);
                         }
 
                         if (CNF_FRONT == 'false') :
@@ -371,7 +369,7 @@ class UserController extends Controller
         \Session::put('reg_id', $row->reg_id);
         \Session::put('restricted_mgr_email', $row->restricted_mgr_email);
         \Session::put('restricted_user_email', $row->restricted_user_email);
-        return Redirect::to($row->redirect_link);
+        return Redirect::to($row->redirect_link == 'dashboard'?'user/profile':$row->redirect_link);
     }
 
     public function getData()
@@ -630,7 +628,7 @@ class UserController extends Controller
                     Session::put('restricted_mgr_email', $row->restricted_mgr_email);
                     Session::put('restricted_user_email', $row->restricted_user_email);
                     if (CNF_FRONT == 'false') :
-                        return Redirect::to('dashboard');
+                        return Redirect::to($row->redirect_link == 'dashboard'?'user/profile':$row->redirect_link);
                     else :
                         return Redirect::to('');
                     endif;
