@@ -25,28 +25,12 @@ class DashboardController extends Controller
     {
         if(Auth::user() && Auth::user()->redirect_link)
         {
-
-            /*$client = new Client();
-            $res = $client->request('GET', url().'/core/users/check-access?module='.$pageOrModule);
-            $result = $res->getBody();
-            $result = json_decode($result,true);
-            $request = new \GuzzleHttp\Psr7\Request('GET', url());
-            $promise = $client->sendAsync($request)->then(function ($response) {
-                echo 'I completed! ' . $response->getBody();
-            });
-            $promise->wait();
-            $request = new \GuzzleHttp\Psr7\Request('GET', url().'/core/users/check-access?module='.$pageOrModule);
-            $promise = $client->sendAsync($request)->then(function ($response) {
-                echo 'I completed! ' . $response->getBody();
-                dd($response->getBody());
-            });
-            $promise->wait();*/
             if(Auth::user()->redirect_link != "dashboard" && self::accessCheck(Auth::user()->redirect_link))
             {
                 return redirect(Auth::user()->redirect_link);
             }
             else{
-                return redirect('user/profile');
+                return redirect('user/profile')->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');;
             }
 
         }
@@ -68,7 +52,7 @@ class DashboardController extends Controller
             return redirect($redirect);
         }
         else{
-            return redirect('user/profile');
+            return redirect('user/profile')->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
         }
 
         /* connect to gmail */
