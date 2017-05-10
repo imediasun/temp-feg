@@ -62,7 +62,7 @@ class DashboardController extends Controller
 
     public static function accessCheck($redirect)
     {
-        $pageOrModule = explode('/',Auth::user()->redirect_link);
+        $pageOrModule = explode('/',$redirect);
         $pageOrModule = $pageOrModule[count($pageOrModule)-1];
         $moduleId = Module::where('module_name', $pageOrModule)->pluck('module_id');
         if (!empty($moduleId)) {
