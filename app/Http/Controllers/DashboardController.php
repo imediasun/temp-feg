@@ -93,7 +93,7 @@ class DashboardController extends Controller
                 } else {
                     $data = array();
                 }
-                return $data;
+                return isset($data['is_view'])?$data['is_view']:false;
             } else {
                 return false;
             }
@@ -108,7 +108,7 @@ class DashboardController extends Controller
                     $accsss = json_decode($row->access, true);
                     $data['is_view'] = isset($accsss[\Session::get('gid')])? $accsss[\Session::get('gid')] : 0;
                 }
-                return $data;
+                return $data['is_view'];
             }
             else {
                 return false;
