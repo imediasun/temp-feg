@@ -26,7 +26,7 @@ class DashboardController extends Controller
         {
             $pageOrModule = explode('/',Auth::user()->redirect_link);
             $pageOrModule = $pageOrModule[count($pageOrModule)-1];
-            $client = new Client();
+            /*$client = new Client();
             $res = $client->request('GET', url().'/core/users/check-access?module='.$pageOrModule);
             $result = $res->getBody();
             $result = json_decode($result,true);
@@ -40,7 +40,7 @@ class DashboardController extends Controller
                 echo 'I completed! ' . $response->getBody();
                 dd($response->getBody());
             });
-            $promise->wait();
+            $promise->wait();*/
             return redirect(Auth::user()->redirect_link == "dashboard"?'user/profile':Auth::user()->redirect_link);
         }
         $group = Auth::user()?Auth::user()->group_id:0;
