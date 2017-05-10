@@ -361,12 +361,12 @@
                     ("<em>Another <b>" . $service_history->game_title . "</b></em>") /*--}}
                 <td @if($thisGame) class="text-danger" @endif> {!! $gameTitle !!}</td>
                 <td> {{ \DateHelpers::formatZeroValue($service_history->game_id) }}</td>
-                <td> {{ \DateHelpers::formatZeroValue($service_history->location_id) }} {{ \DateHelpers::formatStringValue($service_history->location_name) }} </td>
+                <td> {{ \DateHelpers::formatMultiValues($service_history->location_id,$service_history->location_name) }} </td>
                 <td>{{ DateHelpers::formatDate($service_history->date_down) }}</td>
-                <td>{{ \DateHelpers::formatStringValue($service_history->down_first_name)}} {{ \DateHelpers::formatStringValue($service_history->down_last_name) }}</td>
+                <td>{{ \DateHelpers::formatMultiValues($service_history->down_first_name,$service_history->down_last_name)}} </td>
                 <td>{{ \DateHelpers::formatStringValue($service_history->problem) }}</td>
                 <td>{{ \DateHelpers::formatStringValue($service_history->solution) }}</td>
-                <td>{{ \DateHelpers::formatStringValue($service_history->up_first_name) }} {{ \DateHelpers::formatStringValue($service_history->up_last_name) }}</td>
+                <td>{{ \DateHelpers::formatMultiValues($service_history->up_first_name,$service_history->up_last_name) }} </td>
                 <td>{{ DateHelpers::formatDate($service_history->date_up) }}</td>
 
             </tr>
@@ -400,10 +400,10 @@
                     @foreach($row['move_history'] as $move_history)
                         <tr>
                             <td> {{ DateHelpers::formatDate($move_history->from_date) }}</td>
-                            <td>{{ \DateHelpers::formatZeroValue($move_history->from_location_id) }} {{ \DateHelpers::formatStringValue($move_history->from_location) }}</td>
-                            <td>{{ \DateHelpers::formatZeroValue($move_history->to_location_id)}} {{ \DateHelpers::formatStringValue($move_history->to_location)}}</td>
-                            <td>{{ \DateHelpers::formatStringValue($move_history->from_first_name) }} {{ \DateHelpers::formatStringValue($move_history->from_last_name) }} </td>
-                            <td>{{ \DateHelpers::formatStringValue($move_history->to_first_name) }} {{ \DateHelpers::formatStringValue($move_history->to_last_name) }} </td>
+                            <td>{{ \DateHelpers::formatMultiValues($move_history->from_location_id,$move_history->from_location) }} </td>
+                            <td>{{ \DateHelpers::formatMultiValues($move_history->to_location_id,$move_history->to_location)}} </td>
+                            <td>{{ \DateHelpers::formatMultiValues($move_history->from_first_name,$move_history->from_last_name) }}</td>
+                            <td>{{ \DateHelpers::formatMultiValues($move_history->to_first_name,$move_history->to_last_name) }} </td>
                             <td>{{ DateHelpers::formatDate($move_history->to_date) }} </td>
                             <?php $days_in_transit=\SiteHelpers::getDateDiff($move_history->from_date,$move_history->to_date) ?>
                             <td>{{ \DateHelpers::formatZeroValue($days_in_transit) }}</td>
