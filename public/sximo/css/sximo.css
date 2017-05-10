@@ -3182,14 +3182,14 @@ position: relative;
 }
 
 .input-group span.input-group-addon {
-  float: none;
-  padding: 6px 10px;
-  width: 1%;
+    float: left;
+    width: 4.5%;
+    padding: 8px 10px;
 }
 
 .input-group input.form-control {
   float: left;
-  width: 100%;
+  width: 95.5%;
 }
 
 .body-small .navbar-static-side {
