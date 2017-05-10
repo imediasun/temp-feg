@@ -17,7 +17,7 @@
     </div>
         <div class="col-md-2 sm13">
 
-        <select id="location_id" class="form-control" name="location_id" onchange="pageRefresh('L');">
+        <select id="location_id" class="select3 select2-offscreen" name="location_id" onchange="pageRefresh('L');">
             @foreach($manageRequestInfo['loc_options'] as $k => $locations)
                 <option @if($LID == $k) selected @endif value="{{ $k }}">{{ $locations}}</option>
             @endforeach
@@ -25,7 +25,7 @@
     </div>
         <div class="col-md-2">
 
-        <select id="vendor_id" class="form-control" name="vendor_id" onchange="pageRefresh('V');">
+        <select id="vendor_id" class="select3 select2-offscreen" name="vendor_id" onchange="pageRefresh('V');">
             @foreach($manageRequestInfo['vendor_options'] as $k => $vendor)
                 <option @if($VID== $k) selected @endif value="{{ $k }}">{{ $vendor }}</option>
             @endforeach
