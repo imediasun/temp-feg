@@ -7,9 +7,14 @@
             <span class="navbar-minimalize minimalize-btn text-gray page-title">@if(isset($pageTitle)){{ $pageTitle }}@endif</span>
         </div>
         <ul class="nav navbar-top-links navbar-right">
-                <?php if(\Session::get('return_id') != ''): $id = \Session::get('return_id'); ?>
+                <?php if(!empty(\Session::get('return_id'))): ?>
+                <?php $impersonatePath = FEGFormat::usersToNames(array_reverse(\Session::get('return_id')), "", ' → '); ?>
                 <li >
-                    <a class="exit-admin" style="color: #428bca;" href="{{ URL::to('core/users/play/'.$id)}}">Exit to Admin</a>
+                    <a class="exit-admin tips"
+                       title="{!! $impersonatePath !!}"
+                       data-placement="auto"
+                       style="color: #428bca;"
+                       href="{{ URL::to('core/users/play/back')}}">Exit to Admin</a>
                 </li>
                 <?php endif; ?>
             <li>
@@ -132,11 +137,5 @@
                 });
             }
         });
-        <?php if(\Session::get('return_id') != ''): $id = \Session::get('return_id'); ?>
-
-        console.log($('a[data-original-title="Impersonate"]').length);
-        $('a[data-original-title="Impersonate"]').attr('disabled','disabled');
-
-<?php endif; ?>
     });
 </script>
