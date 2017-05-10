@@ -121,7 +121,7 @@
                     <h3> Order Detail</h3>
                     <hr class="m-t-sm">
 
-                    <div class="form-group">
+                    <div class="form-group" style="margin-bottom: -2px;">
                         <label for="order_type_id" class=" control-label col-md-4 text-left">
                             Order Type </label>
 
