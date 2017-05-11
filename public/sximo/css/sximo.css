@@ -3231,7 +3231,7 @@ position: relative;
   width: 100%;
 }
 .merch-gallery{
-  float:left;
+  /*float:left;*/
 }
 
 .r-avatar .previewImage img {
@@ -3240,7 +3240,10 @@ position: relative;
   height: 45px;
   width: 45px;
 }
-
+#gallery-container
+{
+    text-align:center;
+}
 
 .table-responsive .table.no-white-space tbody tr td {
   white-space: normal;

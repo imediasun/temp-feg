@@ -98,7 +98,7 @@ $selected_loc=\Session::get('selected_location');?>
                 </a>
             </li>--}}
             @foreach ($sidebar as $menu)
-                <li @if(Request::segment(1) == $menu['module']) class="active" @endif>
+                <li @if(Request::segment(1) == $menu['module'] || Request::url() == url($menu['url'])) class="active"  @endif>
                     <a
                     @if($menu['menu_type'] =='external')
                         href="{{ $menu['url'] }}"

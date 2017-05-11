@@ -30,7 +30,7 @@
         @endif        
         @include( $pageModule.'/toolbar',['config_id'=>$config_id,'colconfigs' => SiteHelpers::getRequiredConfigs($module_id)])
 
-        <div>
+        <div id="gallery-container">
             <p style="margin-left: -3px;"><?php $check_mul="";$show=true; ?>
                 @if(isset($rowData))
                     @foreach($rowData as $row)
@@ -171,7 +171,7 @@
         border: 5px silver solid;
         border-radius: 3px;
         padding: 0;
-        margin: 3px;
+        margin: 2px;
     }
     .fancybox-skin
     {
