@@ -3200,6 +3200,9 @@ position: relative;
   float: left;
   width: 100%;
 }
+.input-group.m-b input.form-control {
+  height: 36px;
+}
 
 .body-small .navbar-static-side {
   z-index: 1001;
