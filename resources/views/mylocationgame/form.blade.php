@@ -114,7 +114,7 @@
 						<div class="col-md-6">
 						<div class="input-group">
 							<span class="input-group-addon">$</span>
-							{!! Form::text('price_per_play', $row['price_per_play'],array('class'=>'form-control', 'placeholder'=>'Price Per Play','parsley-type'=>"number", 'required'=>'true'  )) !!}
+							{!! Form::text('price_per_play', $row['price_per_play'],array('class'=>'form-control', 'placeholder'=>'0.000','parsley-type'=>"number", 'required'=>'true'  )) !!}
 						</div>
 						</div>
 						<div class="col-md-2">

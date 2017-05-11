@@ -51,7 +51,6 @@ class UsersController extends Controller
         else {
             $access = $this->model->validPageAccess($moduleName);
         }
-        
         return response()->json($access);
     }
 
@@ -221,7 +220,7 @@ class UsersController extends Controller
 
         Session::save();
         
-        return Redirect::to($row->redirect_link);
+        return Redirect::to($row->redirect_link == 'dashboard'?'user/profile':$row->redirect_link);
     }
 
     function get($id = NULL)

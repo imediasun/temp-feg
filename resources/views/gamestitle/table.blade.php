@@ -148,14 +148,14 @@
                                     <?php
                                     $images=explode(',',$row->img);
                                     ?>
-                                @if(!empty($images))
-                                    @foreach($images as $img)
-                                                {!! SiteHelpers::showUploadedFile($img,'/uploads/games/images/',50,false,$row->id) !!}
-                                @endforeach
+                                    @if(!empty($images))
+                                        @foreach($images as $img)
+                                            {!! SiteHelpers::showUploadedFile($img,'/uploads/games/images/',50,false,$row->id) !!}
+                                        @endforeach
                                     @endif
-                                            @else
+                                @else
                                     {!! $value =='0'?'':$value !!}
-                                    @endif
+                                @endif
                             </td>
                         @endif
                         <?php
