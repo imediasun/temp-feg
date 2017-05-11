@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Core\Users;
 use Illuminate\Console\Command;
 use GuzzleHttp\Client;
 use League\OAuth2\Client\Provider\Google;
@@ -43,8 +44,7 @@ class RefreshTicket extends Command
             ['yesno' => 'test',]
         );*/
 
-        $users = \DB::table('users')
-            ->find(238);
+        $users = Users::find(238);
         //foreach ($users as $key=>$user){
             //echo $user->refresh_token;
 
