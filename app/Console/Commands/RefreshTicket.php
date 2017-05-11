@@ -40,12 +40,8 @@ class RefreshTicket extends Command
      */
     public function handle()
     {
-        /*\DB::table('yes_no')->insert(
-            ['yesno' => 'test',]
-        );*/
-
-        $users = Users::find(238);
-        //foreach ($users as $key=>$user){
+        $users = Users::whereNotNull('refresh_token');
+        foreach ($users as $key=>$user){
             //echo $user->refresh_token;
 
             $client = new Client();
@@ -54,27 +50,21 @@ class RefreshTicket extends Command
                 'approval_prompt'=>'force',
                 'access_type'=>'offline',
                 'client_id'=>env('G_ID'),
-                'refresh_token'=>$users->refresh_token,
+                'refresh_token'=>$user->refresh_token,
                 'client_secret'=>env('G_SECRET'))));
-            //$res = $client->request('POST', 'https://accounts.google.com/o/oauth2/auth',array('headers'=>array('Content-Type'=>'application/x-www-form-urlencoded; charset=UTF-8'),'form_params'=>array('grant_type'=>'authorization_code','scope=https://www.googleapis.com/auth/calendar+https://www.googleapis.com/auth/plus.me','client_id'=>env('G_ID'),'approval_prompt=force','access_type=offline','response_type=code','redirect_uri'=>url('/').env('G_REDIRECT_2'))));
 
             $result = $res->getBody();
             $array = json_decode($result, true);
 
-            $users->oauth_token = $array['access_token'];
-
-            $users->save();
-            print_r($array);
-            return true;
-
-           /* $user = User::find($user->id);
-            if(isset($array['refresh_token']))
-            {
+            $user->oauth_token = $array['access_token'];
+            if(isset($array['refresh_token'])){
                 $user->refresh_token = $array['refresh_token'];
             }
 
-            $user->save();*/
-        //}
+            $user->save();
+            print_r($array);
+        }
 
+        return true;
     }
 }
