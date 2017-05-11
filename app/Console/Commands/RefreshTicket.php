@@ -64,7 +64,7 @@ class RefreshTicket extends Command
             $user->save();
             print_r($array);
         }
-
+        echo count($users) . ' Users refresh token updated';
         return true;
     }
 }
