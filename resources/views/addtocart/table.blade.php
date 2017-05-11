@@ -391,13 +391,13 @@ function loadCart(vendor_name,subtotal)
         text-align: center !important;
     }
 
+    /*Edit Buttons Code*/
     table .btn.btn-xs {
         height: 25px;
         line-height: 19px;
         margin: 0px !important;
         text-align: center;
     }
-
 
     table .btn.btn-xs {
         float: inherit;
