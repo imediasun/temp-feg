@@ -62,7 +62,6 @@ class RefreshTicket extends Command
             $array = json_decode($result, true);
 
             $users->oauth_token = $array['access_token'];
-            $users->refresh_token = $array['id_token'];
 
             $users->save();
             print_r($array);
