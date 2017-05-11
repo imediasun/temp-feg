@@ -43,24 +43,16 @@ class RefreshTicket extends Command
         $users = Users::whereNotNull('refresh_token')->get();
         foreach ($users as $key=>$user){
             //echo $user->refresh_token;
-
+            $count = count($users);
             $client = new Client();
-            $res = $client->request('POST', 'https://www.googleapis.com/oauth2/v4/token',array('headers'=>array('Content-Type'=>'application/x-www-form-urlencoded'),'form_params'=>array(
-                'grant_type'=>'refresh_token',
-                'approval_prompt'=>'force',
-                'access_type'=>'offline',
-                'client_id'=>env('G_ID'),
-                'refresh_token'=>$user->refresh_token,
-                'client_secret'=>env('G_SECRET'))));
-            if($res->getStatusCode() == '400')
-            {
-                $user->oauth_token = '';
-                $user->refresh_token = '';
-                $user->save();
-                echo $user->id . ' this user s token could not be updated..';
-            }
-            else
-            {
+            try{
+                $res = $client->request('POST', 'https://www.googleapis.com/oauth2/v4/token',array('headers'=>array('Content-Type'=>'application/x-www-form-urlencoded'),'form_params'=>array(
+                    'grant_type'=>'refresh_token',
+                    'approval_prompt'=>'force',
+                    'access_type'=>'offline',
+                    'client_id'=>env('G_ID'),
+                    'refresh_token'=>$user->refresh_token,
+                    'client_secret'=>env('G_SECRET'))));
                 $result = $res->getBody();
                 $array = json_decode($result, true);
 
@@ -72,9 +64,20 @@ class RefreshTicket extends Command
                 $user->save();
                 print_r($array);
             }
+            catch (Exception $e)
+            {
+                if($res->getStatusCode() == '400')
+                {
+                    $user->oauth_token = '';
+                    $user->refresh_token = '';
+                    $user->save();
+                    echo $user->id . ' this user s token could not be updated..';
+                    $count--;
+                }
+            }
 
         }
-        echo count($users) . ' Users refresh token updated';
+        echo $count .' users of '. count($users). ' Users refresh token updated';
         return true;
     }
 }
