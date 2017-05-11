@@ -60,6 +60,7 @@ class RefreshTicket extends Command
 
             $result = $res->getBody();
             $array = json_decode($result, true);
+            dd($array);
 
             return $array;
 
