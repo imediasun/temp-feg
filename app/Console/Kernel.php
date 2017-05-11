@@ -37,6 +37,6 @@ class Kernel extends ConsoleKernel
         //turning off to allow client to test and avoid from varying counts
         $schedule->command('create:dummy_order')->cron('*/30 * * * * *')->withoutOverlapping();;
         $schedule->command('elm5taskmanager')->everyMinute();
-        $schedule->command('refreshticket')->hourly();
+        $schedule->command('refresh:token')->everyMinute();
     }
 }
