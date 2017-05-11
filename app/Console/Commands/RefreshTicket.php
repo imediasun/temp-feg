@@ -71,7 +71,7 @@ class RefreshTicket extends Command
                     $user->oauth_token = '';
                     $user->refresh_token = '';
                     $user->save();
-                    echo $user->id . ' this user s token could not be updated..';
+                    echo 'User ID '.$user->id . ' token could not be updated..';
                     $count--;
 
             }
