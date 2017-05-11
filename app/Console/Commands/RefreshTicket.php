@@ -40,7 +40,7 @@ class RefreshTicket extends Command
      */
     public function handle()
     {
-        $users = Users::whereNotNull('refresh_token');
+        $users = Users::whereNotNull('refresh_token')->get();
         foreach ($users as $key=>$user){
             //echo $user->refresh_token;
 
