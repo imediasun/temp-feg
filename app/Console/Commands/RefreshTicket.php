@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use GuzzleHttp\Client;
 
 class RefreshTicket extends Command
 {
