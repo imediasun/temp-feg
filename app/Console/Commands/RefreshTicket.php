@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use GuzzleHttp\Client;
+use League\OAuth2\Client\Provider\Google;
 
 class RefreshTicket extends Command
 {
@@ -49,7 +50,7 @@ class RefreshTicket extends Command
             //echo $user->refresh_token;
 
             $client = new Client();
-            $res = $client->request('POST', 'https://www.googleapis.com/oauth2/v4/token',array('headers'=>array('Content-Type'=>'application/x-www-form-urlencoded; charset=UTF-8'),'form_params'=>array(
+            $res = $client->request('POST', 'https://www.googleapis.com/oauth2/v4/token',array('headers'=>array('Content-Type'=>'application/x-www-form-urlencoded'),'form_params'=>array(
                 'grant_type'=>'refresh_token',
                 'approval_prompt'=>'force',
                 'access_type'=>'offline',
