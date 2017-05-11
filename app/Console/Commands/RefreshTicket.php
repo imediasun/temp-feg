@@ -12,7 +12,7 @@ class RefreshTicket extends Command
      *
      * @var string
      */
-    protected $signature = 'refreshticket';
+    protected $signature = 'refresh:token';
 
     /**
      * The console command description.
