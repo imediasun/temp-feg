@@ -75,7 +75,7 @@ class RefreshTicket extends Command
                     echo $user->id . ' this user s token could not be updated..';
                     $count--;
                 }
-                print_r($e);
+                //print_r($e);
                 continue ;
             }
 
