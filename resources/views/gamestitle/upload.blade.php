@@ -62,7 +62,7 @@
     </div>
 <script>
     function deleteImage() {
-        if (confirm("Do you Really Want to Delete Existing Image...")) {
+        if (confirm("Do you really want to delete existing image...")) {
             location.href="{{ url() }}/gamestitle/imageremove/{{ $game_id }}";
         }
     }
