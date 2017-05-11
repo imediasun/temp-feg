@@ -8,7 +8,7 @@ use Illuminate\Console\Command;
 use GuzzleHttp\Client;
 use League\OAuth2\Client\Provider\Google;
 
-class RefreshTicket extends Command
+class RefreshOAuthToken extends Command
 {
     /**
      * The name and signature of the console command.
@@ -41,6 +41,10 @@ class RefreshTicket extends Command
      */
     public function handle()
     {
+        if (env('DONT_REFRESH_OAUTH_TOKEN', false) === true) {
+            return;
+        }
+
         $users = Users::whereNotNull('refresh_token')->get();
         foreach ($users as $key=>$user){
             //echo $user->refresh_token;

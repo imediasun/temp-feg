@@ -19,7 +19,7 @@ class Kernel extends ConsoleKernel
         \App\Console\Commands\Elm5TaskManager::class,
         \App\Console\Commands\CreateDummyOrders::class,
         \App\Console\Commands\SyncUserLocations::class,
-        \App\Console\Commands\RefreshTicket::class,
+        \App\Console\Commands\RefreshOAuthToken::class,
     ];
 
     /**
