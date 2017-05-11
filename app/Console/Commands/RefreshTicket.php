@@ -49,7 +49,13 @@ class RefreshTicket extends Command
             //echo $user->refresh_token;
 
             $client = new Client();
-            $res = $client->request('POST', 'https://www.googleapis.com/oauth2/v4/token',array('headers'=>array('Content-Type'=>'application/x-www-form-urlencoded; charset=UTF-8'),'form_params'=>array('grant_type'=>'refresh_token','client_id'=>env('G_ID'),'refresh_token'=>'1/2jBboLWa5ukV-527LIqKmJGNyFByNdlnUSnTgO7n4DajFdaon5bJO-f2Pxcoinur','client_secret'=>env('G_SECRET'))));
+            $res = $client->request('POST', 'https://www.googleapis.com/oauth2/v4/token',array('headers'=>array('Content-Type'=>'application/x-www-form-urlencoded; charset=UTF-8'),'form_params'=>array(
+                'grant_type'=>'refresh_token',
+                'approval_prompt'=>'force',
+                'access_type'=>'offline',
+                'client_id'=>env('G_ID'),
+                'refresh_token'=>'1/2jBboLWa5ukV-527LIqKmJGNyFByNdlnUSnTgO7n4DajFdaon5bJO-f2Pxcoinur',
+                'client_secret'=>env('G_SECRET'))));
             //$res = $client->request('POST', 'https://accounts.google.com/o/oauth2/auth',array('headers'=>array('Content-Type'=>'application/x-www-form-urlencoded; charset=UTF-8'),'form_params'=>array('grant_type'=>'authorization_code','scope=https://www.googleapis.com/auth/calendar+https://www.googleapis.com/auth/plus.me','client_id'=>env('G_ID'),'approval_prompt=force','access_type=offline','response_type=code','redirect_uri'=>url('/').env('G_REDIRECT_2'))));
 
             $result = $res->getBody();
