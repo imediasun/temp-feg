@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Models\Core\Users;
+use GuzzleHttp\Exception\ClientException;
 use Illuminate\Console\Command;
 use GuzzleHttp\Client;
 use League\OAuth2\Client\Provider\Google;
@@ -64,7 +65,7 @@ class RefreshTicket extends Command
                 $user->save();
                 print_r($array);
             }
-            catch (Exception $e)
+            catch (ClientException $e)
             {
                 if($res->getStatusCode() == '400')
                 {
@@ -74,6 +75,7 @@ class RefreshTicket extends Command
                     echo $user->id . ' this user s token could not be updated..';
                     $count--;
                 }
+                print_r($e);
             }
 
         }
