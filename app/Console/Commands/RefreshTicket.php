@@ -52,17 +52,27 @@ class RefreshTicket extends Command
                 'client_id'=>env('G_ID'),
                 'refresh_token'=>$user->refresh_token,
                 'client_secret'=>env('G_SECRET'))));
+            if($res->getStatusCode() == '400')
+            {
+                $user->oauth_token = '';
+                $user->refresh_token = '';
+                $user->save();
+                echo $user->id . ' this user s token could not be updated..';
+            }
+            else
+            {
+                $result = $res->getBody();
+                $array = json_decode($result, true);
 
-            $result = $res->getBody();
-            $array = json_decode($result, true);
+                $user->oauth_token = $array['access_token'];
+                if(isset($array['refresh_token'])){
+                    $user->refresh_token = $array['refresh_token'];
+                }
 
-            $user->oauth_token = $array['access_token'];
-            if(isset($array['refresh_token'])){
-                $user->refresh_token = $array['refresh_token'];
+                $user->save();
+                print_r($array);
             }
 
-            $user->save();
-            print_r($array);
         }
         echo count($users) . ' Users refresh token updated';
         return true;
