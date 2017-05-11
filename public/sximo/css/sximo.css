@@ -3180,14 +3180,23 @@ position: relative;
   bottom: -25px;
   top: inherit;
 }
-
 .input-group span.input-group-addon {
+  float: left;
+  width: 4.5%;
+  padding: 8px 10px;
+}
+
+.input-group input.form-control {
+  float: left;
+  width: 95.5%;
+}
+.input-group.input-group-sm span.input-group-addon {
   float: none;
   padding: 6px 10px;
   width: 1%;
 }
 
-.input-group input.form-control {
+.input-group.input-group-sm input.form-control {
   float: left;
   width: 100%;
 }
