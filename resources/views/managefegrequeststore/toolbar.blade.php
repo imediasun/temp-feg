@@ -2,7 +2,7 @@
 
     {!! Form::open(array('url'=>'managefegrequeststore/multirequestorderfill/', 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'managefegrequeststoreFormAjax')) !!}
     <div >
-        <div class="col-md-3 m-b">
+        <div class="col-md-2 m-b">
 
         <select name="type" class="select3" id="request_type">
             <option value="archive" @if($view == 'archive'): selected @endif>FEG Store Requests Archives</option>
@@ -11,7 +11,7 @@
 
     </div>
     @if($view == "manage")
-        <div class="col-md-3 sm13">
+        <div class="col-md-2 sm13">
 
         <input  name="order_type" @if($TID )value="{{ $TID }}" @endif id="order_type" type="hidden" onchange="pageRefresh('T');" style="width:100%">
     </div>
