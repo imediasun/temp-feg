@@ -273,7 +273,7 @@
 						<div class="col-md-6">
 							<div class="input-group">
 								<span class="input-group-addon">$</span>
-								{!! Form::text('sale_price', $row['sale_price'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
+								{!! Form::text('sale_price', $row['sale_price'],array('class'=>'form-control', 'placeholder'=>'0.000','parsley-type'=>"number"   )) !!}
 							</div>
 						</div>
 						<div class="col-md-2">
