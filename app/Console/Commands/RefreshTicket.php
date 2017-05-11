@@ -60,9 +60,13 @@ class RefreshTicket extends Command
 
             $result = $res->getBody();
             $array = json_decode($result, true);
-            dd($array);
 
-            return $array;
+            $users->oauth_token = $array['access_token'];
+            $users->refresh_token = $array['id_token'];
+
+            $users->save();
+            print_r($array);
+            return true;
 
            /* $user = User::find($user->id);
             if(isset($array['refresh_token']))
