@@ -76,6 +76,7 @@ class RefreshTicket extends Command
                     $count--;
                 }
                 print_r($e);
+                continue ;
             }
 
         }
