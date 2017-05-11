@@ -62,7 +62,7 @@
         	@if($access['is_add'] =='1' && $setting['inline']=='true')
 			<tr id="form-0" >
 				<td> # </td>
-                @if($setting['disableactioncheckbox']=='false')
+                @if($setting['disableactioncheckbox']=='false' && ($access['is_remove'] == 1 || $access['is_add'] =='1'))
 				<td> </td>
                 @endif
 				@if($setting['view-method']=='expand') <td> </td> @endif

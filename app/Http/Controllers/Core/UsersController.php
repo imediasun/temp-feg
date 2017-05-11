@@ -169,7 +169,7 @@ class UsersController extends Controller
         $isPlaback = $id == 'back';
         $impersonatedUserIdPath = Session::has('return_id') ? Session::get('return_id') : [];
         $current_user = \Session::get('uid');
-        
+
         if ($isPlaback) {
             if (!is_array($impersonatedUserIdPath)) {
                 $id = $impersonatedUserIdPath;
@@ -220,8 +220,8 @@ class UsersController extends Controller
         Session::put('return_id', $impersonatedUserIdPath);
 
         Session::save();
-        
-        return Redirect::to($row->redirect_link);
+
+        return Redirect::to($row->redirect_link == 'dashboard'?'user/profile':$row->redirect_link);
     }
 
     function get($id = NULL)

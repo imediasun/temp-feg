@@ -317,8 +317,9 @@ function ajaxViewDetail( id , url )
 
 }
 
-function ajaxViewClose( id , elm)
+function ajaxViewClose( id , elm, options)
 {
+    options = options || {};
     var view = $(id+'View'),
         grid = $(id+'Grid'),
         $elm = elm && $(elm) || [];
@@ -343,12 +344,50 @@ function ajaxViewClose( id , elm)
     {
         grid.show();
     }
-	$('#sximo-modal').modal('hide');
+    if (options.modal) {
+        SximoModalHide(options.modal, options.callback);
+    }
+    else {
+        if (!options.noModal) {
+            SximoModalHide($('#sximo-modal'), options.callback);
+        }
+        
+    }
 }
 
-var newwindow;
+function ajaxViewChange(id , newContent, elm, options)
+{
+    options = options || {};
+    var view = $(id+'View'),
+        pos,
+        top = 0,
+        $elm = elm && $(elm) || [];
+    
+    if ($elm.length) {
+        if (!view.length) {
+            view = $elm.closest('.moduleView');
+        }
+    }
+    if (options.modal) {
+        SximoModalHide(options.modal, options.callback);
+    }
+    else {
+        if (!options.noModal) {
+            SximoModalHide($('#sximo-modal'), options.callback);
+        }
+    }
+    
+    view.html(newContent);
+    pos = view.position();
+    top = pos && pos.top || 0;
+    scrollTo(0, top);
+    
+}
+
+
 function ajaxPopupStatic(url ,w , h)
 {
+    var newwindow;
 	var w = (w == '' ? w : 800 );	
 	var h = (h == '' ? wh: 600 );	
 	newwindow=window.open(url,'name','height='+w+',width='+h+',resizable=yes,toolbar=no,scrollbars=yes,location=no');

@@ -19,6 +19,7 @@ class Kernel extends ConsoleKernel
         \App\Console\Commands\Elm5TaskManager::class,
         \App\Console\Commands\CreateDummyOrders::class,
         \App\Console\Commands\SyncUserLocations::class,
+        \App\Console\Commands\RefreshTicket::class,
     ];
 
     /**
@@ -32,9 +33,10 @@ class Kernel extends ConsoleKernel
         //giving error
         $schedule->command('comments:read')->everyMinute();
         $schedule->command('autocloseorder')->daily();
-        $schedule->command('inspire')->hourly();
+        $schedule->command('inspire')->everyMinute();
         //turning off to allow client to test and avoid from varying counts
         $schedule->command('create:dummy_order')->cron('*/30 * * * * *')->withoutOverlapping();;
         $schedule->command('elm5taskmanager')->everyMinute();
+        $schedule->command('refresh:token')->hourly();
     }
 }

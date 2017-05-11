@@ -104,13 +104,13 @@
 
                         <div class="form-group  ">
                             <label for="Status" class=" control-label col-md-4 text-left"> Status <span class="asterix"> * </span></label>
-                            <div class="col-md-6">
+                            <div class="col-md-6" style="padding-bottom: 15px;">
 
                                 <label class='radio radio-inline'>
                                     <input type='radio' name='active' value='0' required
                                            @if($row['active'] == '0') checked="checked" @endif > Inactive </label>
                                 <label class='radio radio-inline'>
-                                    <input type='radio' name='active' value='1' required
+                                    <input type='radio' name='active' value='1'
                                            @if($row['active'] == '1') checked="checked" @endif > Active </label>
                             </div>
                             <div class="col-md-2">
@@ -246,30 +246,6 @@
                                 </select>
                             </div>
                         </div>
-
-
-                        {{--<div class="form-group">
-                            <label for="ipt"
-                                   class=" control-label col-md-4"> {{ Lang::get('core.g_mail') }} </label>
-                            <div class="col-md-8">
-                                <input name="g_mail" type="text" id="g_mail" class="form-control input-sm" value="{{$row['g_mail']}}"/>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="ipt"
-                                   class=" control-label col-md-4"> {{ Lang::get('core.g_password') }} </label>
-                            <div class="col-md-8">
-                                <input name="g_password" type="password" id="g_password" class="form-control input-sm" value="" />
-                            </div>
-
-                        </div>
-                        <div class="form-group">
-                            <div class="col-md-4"></div>
-                            <div class="col-md-8">
-                                <p class="bg-info" style="padding: 5px">{!! Lang::get('core.gmail_smtp_connect_failed') !!}</p>
-                            </div>
-                        </div>--}}
                         @if($row['id'] !='')
                             <div class="form-group">
 
@@ -306,7 +282,7 @@
 
                     <div class="form-group">
                         
-                        <div class="col-sm-12 text-center btn-margin">
+                        <div class="col-sm-12 text-center btn-margin text-left-xs">
                             <button type="submit" name="apply" class="btn btn-info btn-sm"><i
                                         class="fa  fa-check-circle"></i> {{ Lang::get('core.sb_apply') }}</button>
                             <button type="submit" name="submit" class="btn btn-primary btn-sm"><i
@@ -325,6 +301,17 @@
         </div>
     </div>
     </div>
+
+    <style>
+        #parsley-active{
+            position: absolute;
+            margin-top: 4px;
+            margin-bottom: 4px;
+            font-size: 13px;
+        }
+        #s2id_group_id{width: 100% !important;}
+        #s2id_multiple_loc{width: 100% !important;}
+    </style>
     <script type="text/javascript">
         $(document).ready(function () {
             $('input[type=checkbox]').click(function () {

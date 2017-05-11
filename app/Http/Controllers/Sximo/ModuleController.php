@@ -939,7 +939,7 @@ class ModuleController extends Controller
             ->update(array('module_config' => \SiteHelpers::CF_encode_json($new_config)));
 
         return Redirect::to('feg/module/table/' . $row->module_name)
-            ->with('messagetext', 'Module Table has been saved Successfully')->with('msgstatus', 'success');
+            ->with('messagetext', 'Module table has been saved successfully')->with('msgstatus', 'success');
 
 
     }

@@ -63,20 +63,6 @@
 			 </div> 
 		  </div>
 
-		  <div class="form-group">
-			  <label for="ipt" class=" control-label col-md-2">{{ Lang::get('core.g_mail') }} </label>
-			  <div class="col-md-8">
-				  <input name="g_mail" type="text" id="g_mail" class="form-control input-sm" value="{{ $info->g_mail }}" />
-			  </div>
-		  </div>
-
-		  <div class="form-group">
-			  <label for="ipt" class=" control-label col-md-2">{{ Lang::get('core.g_password') }} </label>
-			  <div class="col-md-8">
-				  <input name="g_password" type="password" id="g_password" class="form-control input-sm" value="" />
-			  </div>
-		  </div>
-
 		  <div class="form-group  " >
 			<label for="ipt" class=" control-label col-md-2 text-right"> Avatar </label>
 			<div class="col-md-8">

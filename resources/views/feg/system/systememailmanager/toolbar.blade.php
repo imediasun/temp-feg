@@ -1,7 +1,7 @@
 <div class="row c-margin">
 	<div class="col-md-9">
 		@if($access['is_add'] ==1)
-			{!! AjaxHelpers::buttonActionCreate($pageModule,$setting) !!}
+			{!! AjaxHelpers::buttonActionCreate($pageUrl,$setting) !!}
 		@endif
 		@if($setting['disableactioncheckbox']=='false')
 			@if($access['is_add'] ==1)
@@ -27,7 +27,7 @@
         @endif
     </div>
 	<div class="col-md-3 ">
-        <?php 
+        <?php
             $isExcel = isset($access['is_excel']) && $access['is_excel'] == 1;
             $isCSV = isset($access['is_csv'])  ? ($access['is_csv'] == 1) : $isExcel;
             $isPDF = isset($access['is_pdf'])  && $access['is_pdf'] == 1;
@@ -52,7 +52,7 @@
             @if($isPrint)
 			<a href="{{ URL::to( $pageUrl .'/export/print?exportID='.uniqid('print', true).'&return='.$return) }}" class="btn btn-sm btn-white" onclick="ajaxPopupStatic(this.href); return false;" > Print</a>
 			@endif
-		</div>	
+		</div>
 		@endif
 	</div>
 </div>

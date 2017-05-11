@@ -2,7 +2,7 @@
 
     {!! Form::open(array('url'=>'managefegrequeststore/multirequestorderfill/', 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=> 'managefegrequeststoreFormAjax')) !!}
     <div >
-        <div class="col-md-3 m-b">
+        <div class="col-md-2 m-b">
 
         <select name="type" class="select3" id="request_type">
             <option value="archive" @if($view == 'archive'): selected @endif>FEG Store Requests Archives</option>
@@ -11,13 +11,13 @@
 
     </div>
     @if($view == "manage")
-        <div class="col-md-3 sm13">
+        <div class="col-md-2 sm13">
 
         <input  name="order_type" @if($TID )value="{{ $TID }}" @endif id="order_type" type="hidden" onchange="pageRefresh('T');" style="width:100%">
     </div>
         <div class="col-md-2 sm13">
 
-        <select id="location_id" class="form-control" name="location_id" onchange="pageRefresh('L');">
+        <select id="location_id" class="select3 select2-offscreen" name="location_id" onchange="pageRefresh('L');">
             @foreach($manageRequestInfo['loc_options'] as $k => $locations)
                 <option @if($LID == $k) selected @endif value="{{ $k }}">{{ $locations}}</option>
             @endforeach
@@ -25,7 +25,7 @@
     </div>
         <div class="col-md-2">
 
-        <select id="vendor_id" class="form-control" name="vendor_id" onchange="pageRefresh('V');">
+        <select id="vendor_id" class="select3 select2-offscreen" name="vendor_id" onchange="pageRefresh('V');">
             @foreach($manageRequestInfo['vendor_options'] as $k => $vendor)
                 <option @if($VID== $k) selected @endif value="{{ $k }}">{{ $vendor }}</option>
             @endforeach
@@ -233,7 +233,7 @@
 
     }
     $('#delete-cols').click(function(){
-        if(confirm('Are You Sure, You want to delete this Columns Arrangement?')) {
+        if(confirm('Are you sure, You want to delete this columns arrangement?')) {
             showRequest();
             var module = "{{ $pageModule }}";
             var config_id = $("#col-config").val();

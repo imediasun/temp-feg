@@ -234,6 +234,7 @@ class GamestitleController extends Controller
                 unset($data['img']);
             }
             $data['game_title'] = trim($data['game_title']);
+            unset($data['has_servicebulletin']);
             $id = $this->model->insertRow($data, $id);
 
             $updates = array();

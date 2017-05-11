@@ -69,7 +69,7 @@
             @if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
                 <th width="35"> No </th>
             @endif
-            @if($setting['disableactioncheckbox']=='false')
+				@if($setting['disableactioncheckbox']=='false' && ($access['is_remove'] == 1 || $access['is_add'] =='1'))
                 <th width="30"> <input type="checkbox" class="checkall" /></th>
             @endif
             @if($setting['view-method']=='expand') <th>  </th> @endif
@@ -109,7 +109,7 @@
         	@if($access['is_add'] =='1' && $setting['inline']=='true')
 			<tr id="form-0">
 				<td class="cell"> # </td>
-				@if($setting['disableactioncheckbox']=='false')
+				@if($setting['disableactioncheckbox']=='false' && ($access['is_remove'] == 1 || $access['is_add'] =='1'))
 					<td class="cell"> </td>
 				@endif
 				@if($setting['view-method']=='expand') <td> </td> @endif
@@ -138,7 +138,7 @@
 					@if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
 						<td class="number"> <?php echo ++$i;?>  </td>
 					@endif
-					@if($setting['disableactioncheckbox']=='false')
+						@if($setting['disableactioncheckbox']=='false' && ($access['is_remove'] == 1 || $access['is_add'] =='1'))
 						<td><input type="checkbox" class="ids" name="ids[]" value="<?php echo $row->id ;?>" />  </td>
 					@endif
 

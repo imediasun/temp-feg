@@ -115,7 +115,7 @@
 					{!! SiteHelpers::activeLang('Status Id', (isset($fields['status_id']['language'])? $fields['status_id']['language'] : array())) !!}	
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('status_id', $row['status_id'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
+					  {!! Form::select('status_id',DB::table('merch_request_status')->lists('status','id'), $row['status_id'],array('class'=>'select2')) !!}
 					 </div> 
 					 <div class="col-md-2">
 					 	

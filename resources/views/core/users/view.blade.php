@@ -82,7 +82,7 @@
 					</tr>
 				
 					<tr>
-						<td width='30%' class='label-view text-right'>Updated At</td>
+						<td width='30%' class='label-view text-right'>Updated On</td>
 						<td>	{{  $row->updated_at = date("m/d/Y H:i:s", strtotime($row->updated_at))  }} </td>
 						
 					</tr>

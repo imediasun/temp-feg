@@ -23,8 +23,6 @@ return array(
 	"language" => "Language",	
 	"firstname" => "First Name",
 	"lastname" => "Last Name ",
-	"g_mail" => "Google Mail Address",
-	"g_password" => "Google Mail Password",
 	"lastlogin"	=> "Last Login",
 	"personalinfo"	=> "Personal Info",
 	"changepassword"	=> "Change Password",
