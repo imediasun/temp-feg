@@ -271,8 +271,10 @@
 							{!! SiteHelpers::activeLang('Sale Price', (isset($fields['sale_price']['language'])? $fields['sale_price']['language'] : array())) !!}
 						</label>
 						<div class="col-md-6">
-							<span class="input-group-addon">$</span>
-							{!! Form::text('sale_price', $row['sale_price'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
+							<div class="input-group">
+								<span class="input-group-addon">$</span>
+								{!! Form::text('sale_price', $row['sale_price'],array('class'=>'form-control', 'placeholder'=>'0.000','parsley-type'=>"number" ,'parsley-min'=>'0'  )) !!}
+							</div>
 						</div>
 						<div class="col-md-2">
 
