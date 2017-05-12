@@ -25,7 +25,7 @@ class MylocationgameController extends Controller
         $this->module_id = Module::name2id($this->module);
         $this->pass = \FEGSPass::getMyPass($this->module_id);
         $this->access['is_edit'] = $this->access['is_edit'] == 1 || !empty($this->pass['Can Edit']) ? 1 : 0;
-        $this->access['is_remove'] = $this->access['is_remove'] == 1 || !empty($this->pass['Can Can Dispose']) ? 1 : 0;
+        $this->access['is_remove'] = $this->access['is_remove'] == 1 || !empty($this->pass['Can Dispose']) ? 1 : 0;
         
         $this->data = array(
             'pass' => $this->pass,
