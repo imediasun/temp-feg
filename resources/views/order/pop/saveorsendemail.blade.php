@@ -2,6 +2,9 @@
     <div class="sbox">
         <div class="sbox-title">
             <h3> Save/Download PO</h3>
+            <a href="javascript:void(0)" class="collapse-close pull-right btn btn-xs btn-danger" id="close"
+               onclick="reloadOrder();"
+                    ><i class="fa fa fa-times"></i></a>
         </div>
         <div class="sbox-content">
             <div style="color:green" class="row">
