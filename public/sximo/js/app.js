@@ -707,6 +707,7 @@ jQuery(document).ready(function ($) {
                 else
                 {
                     notyMessageError('Error getting permission to the page you are trying to access');
+                    $('.ajaxLoading').hide();
                 }
             });
 		}
