@@ -40,11 +40,11 @@
                         </tr>
                         <tr>
                             <td colspan="1"><h3>Location Short Name:</h3></td>
-                            <td><h4> {{ $row->location_name_short }} </h4></td>
+                            <td><h4> {{ DateHelpers::formatStringValue($row->location_name_short) }} </h4></td>
                         </tr>
                         <tr>
                             <td colspan="1"><h3>Shipping Restrictions:</h3></td>
-                            <td><h4> {{$row->loading_info}} </h4></td>
+                            <td><h4> {{ DateHelpers::formatStringValue($row->loading_info)}} </h4></td>
                         </tr>
                         <tr>
                             <td colspan="1"><h3>Alt. Shipping Location:</h3></td>
@@ -56,28 +56,28 @@
                         </tr>
                         <tr>
                             <td colspan="1"><h3>Date Opened:</h3></td>
-                            <td><h4>{{ $row->date_opened }}</h4></td>
+                            <td><h4>{{ DateHelpers::formatDate($row->date_opened) }}</h4></td>
                         </tr>
                         <tr>
                             <td colspan="1"><h3>Date Closed:</h3></td>
-                            <td><h4>{{ $row->date_closed }}</h4></td>
+                            <td><h4>{{ DateHelpers::formatDate($row->date_closed) }}</h4></td>
                         </tr>
                         <tr>
                             <td colspan="1"><h3>Location Phone:</h3></td>
-                            <td><h4>{{ $row->phone }}  </h4></td>
+                            <td><h4>{{ DateHelpers::formatStringValue($row->phone) }}  </h4></td>
                         </tr>
                         <tr>
                             <td colspan="1"><h3>Internal Contact:</h3></td>
-                            <td><h4 class='tips' title="{{$row->contact_id}}">{{ @$row->contact_name }}</h4></td>
+                            <td><h4 class='tips' title="{{$row->contact_id}}">{{ DateHelpers::formatStringValue(@$row->contact_name) }}</h4></td>
                             </td>
                         </tr>
                         <tr>
                             <td colspan="1"><h3>Region:</h3></td>
-                            <td><h4>{{ $row->region_id }}  </h4></td>
+                            <td><h4>{{ DateHelpers::formatZeroValue($row->region_id) }}  </h4></td>
                         </tr>
                         <tr>
                             <td colspan="1"><h3>Company:</h3></td>
-                            <td><h4> {{ $row->company_id }} </h4></td>
+                            <td><h4> {{ DateHelpers::formatZeroValue($row->company_id) }} </h4></td>
                         </tr>
                         </tbody>
                     </table>

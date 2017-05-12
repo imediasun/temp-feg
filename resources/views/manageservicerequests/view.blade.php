@@ -34,7 +34,7 @@
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Location ', (isset($fields['location_id']['language'])? $fields['location_id']['language'] : array())) }}
 						</td>
-                        <td>{{ $row->location_id. " | " }} {!! SiteHelpers::gridDisplayView($row->location_id,'location_id','1:location:id:location_name') !!} </td>
+                        <td>{{DateHelpers::formatMultiValues($row->location_id,$row->location_name) }} </td>
 
 
                     </tr>
@@ -60,7 +60,7 @@
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Description', (isset($fields['problem']['language'])? $fields['problem']['language'] : array())) }}
 						</td>
-						<td>{{ $row->problem }} </td>
+						<td>{{ DateHelpers::formatStringValue($row->problem) }} </td>
 						
 					</tr>
 				
@@ -93,7 +93,7 @@
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Solution', (isset($fields['solution']['language'])? $fields['solution']['language'] : array())) }}	
 						</td>
-						<td>{{ $row->solution }} </td>
+						<td>{{ DateHelpers::formatStringValue($row->solution) }} </td>
 						
 					</tr>
 				
@@ -110,7 +110,7 @@
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Title', (isset($fields['request_title']['language'])? $fields['request_title']['language'] : array())) }}
 						</td>
-						<td>{{ $row->request_title }} </td>
+						<td>{{ DateHelpers::formatStringValue($row->request_title) }} </td>
 						
 					</tr>
 				
@@ -118,7 +118,7 @@
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Attachments', (isset($fields['attachment_path']['language'])? $fields['attachment_path']['language'] : array())) }}
 						</td>
-						<td>{{ $row->attachment_path }} </td>
+						<td>{{ DateHelpers::formatStringValue($row->attachment_path) }} </td>
 						
 					</tr>
 				

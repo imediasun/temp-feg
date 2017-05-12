@@ -46,7 +46,7 @@ class DateHelpers
 
     protected static function formatValue($val)
     {
-        if ($val === 0 || $val == null || $val == "0" || empty($val) || $val == "" || $val === 0.00 || strtolower($val) === "null") {
+        if ($val === 0 || $val == null || $val == "0" || empty($val) || $val == ""|| $val=="0.00" || $val == "0.000" || $val === 0.00 || strtolower($val) === "null") {
             return "No Data";
         } else {
             return $val;
@@ -66,9 +66,9 @@ class DateHelpers
     // formatting 2 values used in module->view
     public static function formatMultiValues($val1, $val2)
     {
-        if ($val1 === 0 || $val1 == null || $val1 == "0" || empty($val1) || $val1 == "" || $val1 === 0.00 || strtolower($val1) === "null") {
+        if ($val1 === 0 || $val1 == null || $val1 == "0" || empty($val1) || $val1 == "" || $val1 === 0.00 || $val1 == "0.00" || $val1 == "0.000" || strtolower($val1) === "null") {
             return "No Data";
-        } elseif ($val2 === 0 || $val2 == null || $val2 == "0" || empty($val2) || $val2 == "" || $val2 === 0.00 || strtolower($val2) === "null") {
+        } elseif ($val2 === 0 || $val2 == null || $val2 == "0" || empty($val2) || $val2 == "" || $val2 === 0.00 ||$val2 == "0.00" || $val2 == "0.000" || strtolower($val2) === "null") {
             return "No Data";
         } else {
             return $val1 . " " . $val2;

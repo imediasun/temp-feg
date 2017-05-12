@@ -15,7 +15,7 @@ class manageservicerequests extends Sximo  {
 
 	public static function querySelect(  ){
 		
-		return "  SELECT service_requests.*,u1.username,location.location_name_short FROM service_requests LEFT JOIN users u1 ON (service_requests.requestor_id = u1.id)
+		return "  SELECT service_requests.*,u1.username,location.location_name_short,location.location_name FROM service_requests LEFT JOIN users u1 ON (service_requests.requestor_id = u1.id)
 			      LEFT JOIN location ON (service_requests.location_id = location.id)" ;
 	}
 

@@ -23,9 +23,17 @@ class CurrencyHelpers
      * @return currency with symbol
      */
      public static function formatCurrency($value){
+         if(empty($value) || $value === "0.00" || $value === "0.00" || $value === 0.00 || $value === 0.000)
+         {
+             return "No Data";
+         }
          return '$ '.$value;
      }
      public static function formatPrice($value){
+         if(empty($value) || $value === "0.00" || $value === "0.00" || $value === 0.00 || $value === 0.000)
+         {
+             return "No Data";
+         }
          return '$ '. number_format((float)$value,3);
      }
     
