@@ -309,7 +309,6 @@ class OrderController extends Controller
                 ->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
 
         $row = $this->model->getRow($id);
-        dd($row);
         if ($row) {
             $this->data['row'] = $row;
         } else {

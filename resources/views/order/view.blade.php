@@ -105,7 +105,9 @@
                             {{ SiteHelpers::activeLang('Date Received', (isset($fields['date_received']['language'])? $fields['date_received']['language'] : array())) }}
                         </label>
                         <div class="col-md-8">
-                            {{  DateHelpers::formatDate($order_data["received_date"])  }}
+
+                           {{-- ToDo why we are using an unknown key received_date {{  DateHelpers::formatDate($order_data["received_date"])  }}--}}
+                            {{  DateHelpers::formatDate($order_data["date_received"])  }}
 
 
                         </div>
