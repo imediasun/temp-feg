@@ -76,7 +76,8 @@ class ReadComment extends Command
         $L->log("Connecting...");
         /* try to connect */
         try {            
-            $inbox = imap_open($hostname, $username, $password);            
+            $inbox = imap_open($hostname, $username, $password,NULL, 1,
+                array('DISABLE_AUTHENTICATOR' => 'PLAIN'));
             
         } catch (Exception $ex) {
             $L->log("Error connecting to IMAP:" . $ex->getMessage());
