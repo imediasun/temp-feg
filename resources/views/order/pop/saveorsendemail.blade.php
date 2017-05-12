@@ -231,7 +231,7 @@
                 redirect = "{{ \Session::get('redirect') }}",
                 redirectLink = "{{ url() }}/" + redirect;
         
-            if (/\/order/i.test(moduleUrl)) {
+            if (/order/i.test(redirect)) {
                 $('.ajaxLoading').hide();
                 SximoModalHide($('.modal'));
                 ajaxViewClose("#order", null, {noModal: true});
