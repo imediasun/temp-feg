@@ -7,6 +7,7 @@ class mylocationgame extends Sximo  {
 	
 	protected $table = 'game';
 	protected $primaryKey = 'id';
+    public $timestamps = false;
 
 	public function __construct() {
 		parent::__construct();
@@ -116,4 +117,64 @@ class mylocationgame extends Sximo  {
 		}
 
 	}
+
+	public static function dispose($ids)
+	{
+        $result = true;
+        $user = \Session::get('uid');
+        $userName = \FEGFormat::userToName($user);
+        if (is_string($ids)) {
+            $ids = explode(",". $ids);
+        }
+        $now = date("Y-m-d");
+        $nowstamp = date("Y-m-d H:i:s");
+
+        $noDisposeCount = 0;
+        $totalIds = count($ids);
+
+        \DB::beginTransaction();
+        foreach ($ids as $id) {
+            $location = \DB::table('game')->where('id' , $id)->first();
+            $locationID = $location->id;
+            $status = $location->status_id;
+            $sold = $location->sold;
+            if ($status == 3 || $sold == 1) {
+                if (is_bool($result)) {
+                    $result = [];
+                }
+                $result[] = "Game #$id is alerady in-transit or sold.";
+                $noDisposeCount++;
+                continue;
+            }
+            $moveId = \DB::table('game_move_history')->insertGetId(
+                [   
+                    'game_id' => $id,
+                    'from_loc' => $locationID,
+                    'from_by' => $user,
+                    'from_date' => $nowstamp,
+                ]
+            );
+            self::where('id', $id)->update([
+                'prev_location_id' => $locationID,
+                'location_id' => 0,
+                'intended_first_location' => 0,
+                'status_id' => '3',
+                'sold' => '1',
+                'date_sold' => $now,
+                'sold_to' => "Disposed by user: $userName",
+                'game_move_id' => $moveId,
+                'date_last_move' => $now,
+                'last_edited_on' => $nowstamp,
+                'last_edited_by' => $user,
+            ]);            
+        }
+        \DB::commit();
+        
+        if ($totalIds <= $noDisposeCount) {
+            $result = false;
+        }
+
+		return $result;
+	}
+
 }

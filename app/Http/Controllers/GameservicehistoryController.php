@@ -22,7 +22,13 @@ class GameservicehistoryController extends Controller
         $this->info = $this->model->makeInfo($this->module);
         $this->access = $this->model->validAccess($this->info['id']);
 
+        $this->module_id = Module::name2id($this->module);
+        $this->pass = \FEGSPass::getMyPass($this->module_id);
+        $this->access['is_edit'] = $this->access['is_edit'] == 1 || !empty($this->pass['Can Edit']) ? 1 : 0;
+        $this->access['is_remove'] = $this->access['is_remove'] == 1 || !empty($this->pass['Can Remove']) ? 1 : 0;
+        
         $this->data = array(
+            'pass' => $this->pass,
             'pageTitle' => $this->info['title'],
             'pageNote' => $this->info['note'],
             'pageModule' => 'gameservicehistory',
@@ -135,7 +141,7 @@ class GameservicehistoryController extends Controller
         }
 
         if ($id != '') {
-            if ($this->access['is_edit'] == 0)
+            if ($this->access['is_edit'] == 0 && empty($this->pass['Can Edit']))
                 return Redirect::to('dashboard')->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
         }
 
@@ -222,7 +228,7 @@ class GameservicehistoryController extends Controller
     public function postDelete(Request $request)
     {
 
-        if ($this->access['is_remove'] == 0) {
+        if ($this->access['is_remove'] == 0 && empty($this->pass['Can Remove'])) {
             return response()->json(array(
                 'status' => 'error',
                 'message' => \Lang::get('core.note_restric')

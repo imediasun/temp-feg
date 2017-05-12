@@ -24,7 +24,9 @@ class MylocationgameController extends Controller
         $this->access = $this->model->validAccess($this->info['id']);
         $this->module_id = Module::name2id($this->module);
         $this->pass = \FEGSPass::getMyPass($this->module_id);
-
+        $this->access['is_edit'] = $this->access['is_edit'] == 1 || !empty($this->pass['Can Edit']) ? 1 : 0;
+        $this->access['is_remove'] = $this->access['is_remove'] == 1 || !empty($this->pass['Can Can Dispose']) ? 1 : 0;
+        
         $this->data = array(
             'pass' => $this->pass,
             'pageTitle' => $this->info['title'],
@@ -426,6 +428,48 @@ class MylocationgameController extends Controller
 
     }
 
+    public function postDispose(Request $request)
+    {
+
+        if ($this->access['is_remove'] == 0) {
+            return response()->json(array(
+                'status' => 'error',
+                'message' => \Lang::get('core.note_restric')
+            ));
+            die;
+
+        }
+        // delete multipe rows
+        if (count($request->input('ids')) >= 1) {
+            $results = $this->model->dispose($request->input('ids'));
+
+            $message = "Disposed successfully!";
+            if ($results === false) {
+                $message = "Failed to dispose the selected game(s)! "
+                        . "Make sure you are not trying to dispose sold or in-transit games.".
+                        implode("<br/>", $results);
+            }
+            if (is_array($results)) {
+                $message = "Disposed process completes with the following issues:" .
+                        implode("<br/>", $results);
+            }
+            elseif (is_string($results)) {
+                $message = $results;
+            }
+
+            return response()->json(array(
+                'status' => 'success',
+                'message' => $message
+            ));
+
+        } else {
+            return response()->json(array(
+                'status' => 'error',
+                'message' => \Lang::get('core.note_error')
+            ));
+
+        }
+    }
     public function postDelete(Request $request)
     {
 
@@ -452,8 +496,6 @@ class MylocationgameController extends Controller
             ));
 
         }
-
-
     }
 
     public function postUpdate(Request $request, $id = null)
