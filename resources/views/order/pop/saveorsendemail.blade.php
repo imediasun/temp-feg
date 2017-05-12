@@ -226,12 +226,21 @@
 
 
         function reloadOrder() {
-            $('.ajaxLoading').hide();
-            SximoModalHide($('.modal'));
-            ajaxViewClose("#order", null, {noModal: true});
+            
+            var moduleUrl = '{{ $pageUrl }}',
+                redirect = "{{ \Session::get('redirect') }}",
+                redirectLink = "{{ url() }}/" + redirect;
+        
+            if (/\/order/i.test(moduleUrl)) {
+                $('.ajaxLoading').hide();
+                SximoModalHide($('.modal'));
+                ajaxViewClose("#order", null, {noModal: true});
+            }
+            else {
 //            {{ \Session::put('filter_before_redirect','redirect') }}
-//           var redirect_link = "{{ \Session::get('redirect') }}";
-//            location.href = "{{ url() }}/" + redirect_link;
+                location.href = redirectLink;
+            }
+
         }
         $("#send-only").click(function (e) {
             $('.ajaxLoading').show();
