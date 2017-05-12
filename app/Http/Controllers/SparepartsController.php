@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\controller;
 use App\Models\Spareparts;
+use \App\Models\Sximo\Module;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Validator, Input, Redirect;
