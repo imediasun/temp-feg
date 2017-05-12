@@ -23,7 +23,9 @@
                             {!! Form::open(array('url'=>'order/removalrequest', 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=>'removalrequestform')) !!}
                             <label class="label-control" for="explaination">Please Explain Why?</label>
                             <div class="form-group">
-                                <textarea rows="8" cols="80" name="explaination" id="explaination" required></textarea>
+                                <textarea rows="8" cols="80" 
+                                          name="explaination" id="explaination"
+                                          required></textarea>
                                 <input type="hidden" value="{{$po_number }}" name="po_number"/>
                             </div>
                             <div class="form-group">
