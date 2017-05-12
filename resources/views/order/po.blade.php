@@ -63,7 +63,7 @@
                 <tr>
                     <td style="padding:8px;text-align: left;border:1px solid #000"> Ordered By
                         : {{ $data[0]['first_name'] }} {{ $data[0]['last_name'] }} <br/>
-                        Order Description
+                        Item Name
                     </td>
                     @if(($data[0]['new_format']==1))
 

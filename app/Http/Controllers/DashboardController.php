@@ -23,23 +23,23 @@ class DashboardController extends Controller
 
     public function getIndex(Request $request)
     {
-        if(Auth::user() && Auth::user()->redirect_link)
+        if(Auth::user())
         {
-            if(Auth::user()->redirect_link != "dashboard" && self::accessCheck(Auth::user()->redirect_link))
+            if(Auth::user()->redirect_link != "dashboard" && self::accessCheck(Auth::user()->redirect_link) && !empty(Auth::user()->redirect_link))
             {
                 return redirect(Auth::user()->redirect_link);
             }
             else{
-                return redirect('user/profile')->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');;
+                $group = Auth::user()?Auth::user()->group_id:0;
+                $redirect = Groups::find($group)?Groups::find($group)->redirect_link:'';
+                if(!empty($redirect) && $redirect != "dashboard" && self::accessCheck($redirect))
+                {
+                    return redirect($redirect);
+                }
             }
 
         }
-        $group = Auth::user()?Auth::user()->group_id:0;
-        $redirect = Groups::find($group)?Groups::find($group)->redirect_link:'';
-        if(!empty($redirect) && $redirect != "dashboard" && self::accessCheck($redirect))
-        {
-            return redirect($redirect);
-        }
+
         //require_once('setting.php');
         /*if(CNF_REDIRECTLINK)
         {
@@ -52,7 +52,7 @@ class DashboardController extends Controller
             return redirect($redirect);
         }
         else{
-            return redirect('user/profile')->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
+            return redirect('user/profile');
         }
 
         /* connect to gmail */
