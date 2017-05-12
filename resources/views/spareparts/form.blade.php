@@ -38,8 +38,7 @@
                             $fields['for_game']['language'] : array())) !!}
                         </label>
                         <div class="col-md-6">
-                            {!! Form::text('for_game', $row['for_game'],array('class'=>'form-control',
-                            'placeholder'=>'', )) !!}
+                            <select name="for_game" id="for_game" class="select4"></select>
                         </div>
                         <div class="col-md-2">
                         </div>
@@ -152,7 +151,8 @@
                     {selected_value: '{{ $row['status_id'] }}', initial_text: 'Select Status'});
             $("#loc_id").jCombo("{{ URL::to('spareparts/comboselect?filter=location:id:location_name') }}",
                     {selected_value: '{{ $row['loc_id'] }}', initial_text: 'Select Location'});
-
+            $("#for_game").jCombo("{{ URL::to('spareparts/comboselect?filter=game:id:id|game_name') }}" + "&delimiter= - ",
+                {  selected_value : '{{ $row["for_game"] }}',initial_text:'-- Select Game --' });
             $('.editor').summernote();
             $('.previewImage').fancybox();
             $('.tips').tooltip();
