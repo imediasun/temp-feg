@@ -31,12 +31,13 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         //giving error
+        $schedule->command('refresh:token')->everyMinute();
         $schedule->command('comments:read')->everyMinute();
         $schedule->command('autocloseorder')->daily();
         $schedule->command('inspire')->everyMinute();
         //turning off to allow client to test and avoid from varying counts
         $schedule->command('create:dummy_order')->cron('*/30 * * * * *')->withoutOverlapping();;
         $schedule->command('elm5taskmanager')->everyMinute();
-        $schedule->command('refresh:token')->everyMinute();
+
     }
 }
