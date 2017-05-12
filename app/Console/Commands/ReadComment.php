@@ -105,38 +105,60 @@ class ReadComment extends Command
                 /* get information specific to this email */
                 $meta = $this->getMessageDetails($inbox, $email_number);
                 $L->log("Message Details: ", $meta);
+                $UID = isset($meta['message_id']) ? $meta['message_id']: '';
+                //$messageExists = Ticketcomment::doesCommentExist($UID);
+                //if ($messageExists) {
+                //     $L->log("Message exists with ID: $UID.");
+                //}
+                //else{
+
                 $fromDetails = $this->getSenderDetails($meta);
                 $fromEmail = @$fromDetails['email'];
-                
+
                 $userId = $this->getUserIdFromEmail($fromEmail);
                 $userName = @$fromDetails['personal'];
-                
+
                 $ticketId = $this->getTicketID($meta);
                 $L->log("Ticket ID: ", $ticketId);
-                $posted = $this->getDate($meta);
-                
-                $message = $this->cleanUpMessage($this->getMessage($inbox, $email_number));
-                
-                //Insert In sb_ticketcomments table
-                $comment_model = new Ticketcomment();
-                $commentsData = array(
-                    'TicketID' => $ticketId,
-                    'Comments' => $message,
-                    'Posted' => $posted,
-                    'UserID' => $userId,
-                    'USERNAME' => $userName,
-                    'imap_read' => 1,
-                    'imap_meta' => json_encode($meta),
-                );
-                
-                $L->log('Adding comment to database', $commentsData);
-                $id = $comment_model->insertRow($commentsData, NULL);
-                Servicerequests::where("TicketID", $ticketId)->update(['updated' => $posted]);
-                
+
+                $ticketExists = !empty($ticketId) && Servicerequests::doesTicketExist($ticketId);
+
+                if ($ticketExists) {
+
+                    $posted = $this->getDate($meta);
+
+                    $message = $this->cleanUpMessage($this->getMessage($inbox, $email_number));
+
+                    //Insert In sb_ticketcomments table
+                    $comment_model = new Ticketcomment();
+                    $commentsData = array(
+                        'TicketID' => $ticketId,
+                        'Comments' => $message,
+                        'Posted' => $posted,
+                        'UserID' => $userId,
+                        'USERNAME' => $userName,
+                        'imap_read' => 1,
+                        'imap_meta' => json_encode($meta),
+                        'imap_message_id' => $UID,
+                    );
+
+                    $L->log('Adding comment to database', $commentsData);
+                    $id = $comment_model->insertRow($commentsData, NULL);
+                    $L->log("Updaet ticket updated date to $posted");
+                    Servicerequests::where("TicketID", $ticketId)->update(['updated' => $posted]);
+
+                }
+                else {
+                    $L->log("TICKET [ID: $ticketId] DOES NOT EXIST. Skipping.....");
+                }
+
+
                 $L->log('Delete email');
                 imap_delete($inbox, $email_number);
-                //$L->log('Sending comment notificaiton');                
+                //$L->log('Sending comment notificaiton');
                 //$this->sendNotification($commentsData, $userId);
+
+                //}
                 $L->log('---------------------------------------------');
             }
         } 

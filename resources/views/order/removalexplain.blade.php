@@ -78,7 +78,8 @@
             {
                 notyMessage(data.message);
                 $('#sximo-modal').modal('hide');
-                location.href='/order';
+                location.href='{{ url() }}'+'/order';
+                
             } else {
                 notyMessageError(data.message);
                 $('.ajaxLoading').hide();

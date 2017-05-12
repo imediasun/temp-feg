@@ -751,8 +751,16 @@ class OrderController extends Controller
         $configName = 'Order Request removal';
         $po_number = $request->get('po_number');
         $explanation = $request->get('explaination');
+        $user = \Session::get('uid');
+        $userName = \FEGFormat::userToName($user);
         $receipts = FEGSystemHelper::getSystemEmailRecipients($configName);
-        $message = 'Link to Order: http://' . $_SERVER['HTTP_HOST'] . '/order/removeorder/' . $po_number . ' <br>Explanation: ' . $explanation . '';
+        $messageData = [
+            'userName' => $userName,
+            'poNumber' => $po_number,
+            'url' => url().'/order/removeorder/'.$po_number,
+            'reason' => $explanation,
+        ];
+        $message = view('order.email.removal-request', $messageData)->render();
         $from = \Session::get('eid');
         $subject = 'Order Removal Request';
         $message = $message;
