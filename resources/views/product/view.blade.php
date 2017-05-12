@@ -46,7 +46,7 @@
                     <td width='30%' class='label-view text-right'>
                         {{ SiteHelpers::activeLang('Description', (isset($fields['vendor_description']['language'])? $fields['vendor_description']['language'] : array())) }}
                     </td>
-                    <td>{{ $row->vendor_description }} </td>
+                    <td>{{ DateHelpers::formatStringValue($row->vendor_description) }} </td>
 
                 </tr>
 
@@ -54,7 +54,7 @@
                     <td width='30%' class='label-view text-right'>
                         {{ SiteHelpers::activeLang('Size', (isset($fields['size']['language'])? $fields['size']['language'] : array())) }}
                     </td>
-                    <td>{{ $row->size }} </td>
+                    <td>{{ DateHelpers::formatStringValue($row->size) }} </td>
 
                 </tr>
 
@@ -84,7 +84,7 @@
                         <td width='30%' class='label-view text-right'>
                             {{ SiteHelpers::activeLang('Ticket Value', (isset($fields['ticket_value']['language'])? $fields['ticket_value']['language'] : array())) }}
                         </td>
-                        <td>{{ $row->ticket_value }} </td>
+                        <td>{{ DateHelpers::formatStringValue($row->ticket_value) }} </td>
                 </tr>
                 @endif
                 <tr>

@@ -1608,49 +1608,35 @@ class SiteHelpers
 
         $arr = explode(':', $arr);
 
-        if (isset($arr['0']) && $arr['0'] == 1) {
+        if (isset($arr['0']) && $arr['0'] == 1 && (is_numeric($val))) {
             $Q = DB::select(" SELECT " . str_replace("|", ",", $arr['3']) . " FROM " . $arr['1'] . " WHERE " . $arr['2'] . " = '" . $val . "' ");
             if (count($Q) >= 1) {
 
                 $row = $Q[0];
                 $fields = explode("|", $arr['3']);
                 $v = '';
-                $v .= (isset($fields[0]) && $fields[0] != '' ? empty($row->$fields[0]) ? "No Data" : $row->$fields[0] : '');
-                if(isset($fields[1]) && !empty($rowObj->$fields[1])) {
+                $v .= (isset($fields[0]) && $fields[0] != '' ? $row->$fields[0] : '');
+                if (isset($fields[1]) && empty($row->$fields[1])) {
+                    $v="No Data";
+                }
+               else{
                     $v .= (isset($fields[1]) && $fields[1] != '' ? $row->$fields[1] . ' ' : '');
                 }
 
-                if(isset($fields[2]) && !empty($rowObj->$fields[2])) {
+                if(isset($fields[2]) && !empty($row->$fields[2])) {
                     $v .= (isset($fields[2]) && $fields[2] != '' ? $row->$fields[2] . ' ' : '');
                 }
                     return $v;
             }  else {
-                if (isset($arr[3]) && $arr[3] !== '') {
-                    $colName = "";
-                    $col = explode("|", $arr['3']);
-                    if (isset($col[1]) && $col[1] !== '') {
-                        $col = explode("_", $col[1]);
-                        foreach ($col as $c) {
-                            $colName .= $c . " ";
-                        }
-                    } else {
-                        $col = explode("_", $arr[3]);
-                        foreach ($col as $c) {
-                            $colName .= $c . " ";
-                        }
-                    }
-                    if ($val != "0") {
-                        $val = "No Data";
-                    }
+                    $val="";
 
-                }
-
-                echo $val;
             }
 
-        } else {
-            return $val;
         }
+        if ($val === "0" || $val === 0 || $val === NULL || $val ==="" || empty($val) || $val === "$ 0.00" || $val === "$ 0.000" || $val === 0.00 || $val=== 0.000|| $val === "0.00" || $val=== "0.000" ) {
+            $val = "No Data";
+        }
+        return $val;
     }
 
     public static function langOption()
