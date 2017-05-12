@@ -321,6 +321,7 @@ if(!empty($order_data['orderQtyArray'])){
                 <tr>
                 <th>N0 #</th>
                 <th>Sku #</th>
+                <th>Item Name</th>
                 <th>Item Description</th>
                 <th>Item Price</th>
                 <th>Item Quantity </th>
@@ -333,11 +334,13 @@ if(!empty($order_data['orderQtyArray'])){
                 </tr>
                 </thead>
                 <tbody>
+
                 @if( $order_data['requests_item_count'] > 0 )
                 @for($i = 0 ; $i < $order_data['requests_item_count']; $i++)
                     <tr>
                         <td>{{ $i+1 }} </td>
                         <td>{{  \DateHelpers::formatStringValue($order_data['skuNumArray'][$i])}}</td>
+                        <td>{{  \DateHelpers::formatStringValue($order_data['itemNameArray'][$i])}}</td>
                         <td>{{  \DateHelpers::formatStringValue($order_data['orderDescriptionArray'][$i]) }}</td>
                         <td>{{CurrencyHelpers::formatCurrency(number_format($order_data['orderItemsPriceArray'][$i],\App\Models\Order::ORDER_PERCISION)) }}</td>
                         <td>{{  \DateHelpers::formatZeroValue($order_data['orderQtyArray'][$i]) }}</td>
@@ -361,9 +364,9 @@ if(!empty($order_data['orderQtyArray'])){
                     @else
                     <tr>
                         @if($row->order_type_id == \App\Models\order::ORDER_TYPE_PART_GAMES)
-                            <td colspan="8" class="text-center">Nothing  Found..</td>
+                            <td colspan="9" class="text-center">Nothing  Found..</td>
                         @else
-                            <td colspan="7" class="text-center">Nothing  Found..</td>
+                            <td colspan="8" class="text-center">Nothing  Found..</td>
                         @endif
 
                     </tr>
