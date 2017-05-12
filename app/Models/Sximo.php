@@ -960,7 +960,12 @@ class Sximo extends Model {
     {
         if(empty(\Session::get('selected_location')))
         {
-            return 0;
+            $obj = new \stdClass();
+            $obj->total = 0;
+            $total = [
+                0 => $obj
+            ];
+            return $total;
         }
         $data['user_level'] = \Session::get('gid');
         if ($data['user_level'] == 3 || $data['user_level'] == 4 || $data['user_level'] == 5 || $data['user_level'] == 7 || $data['user_level'] == 9 || $data['user_level'] == 10) {
