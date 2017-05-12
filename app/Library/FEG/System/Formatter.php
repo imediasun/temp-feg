@@ -12,6 +12,7 @@ use App\Library\DBHelpers;
 use App\Library\DateHelpers;
 use App\Library\FEG\System\FEGSystemHelper;
 
+// alias as FEGFormat
 class Formatter
 {    
     /**
