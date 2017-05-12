@@ -618,7 +618,7 @@ class OrderController extends Controller
             $cc1="";
         }
         $viewName = empty($isPop) ? 'order.saveorsendemail' : 'order.pop.saveorsendemail';
-        return view($viewName, array('cc'=>$cc1));
+        return view($viewName, array('cc'=>$cc1, "pageUrl" => $this->data['pageUrl']));
     }
 
     function postSaveorsendemail(Request $request)
