@@ -88,4 +88,11 @@ class Servicerequests extends Observerable  {
     public static function getIssueTypes() {
         return Formatter::getTicketIssueTypes();
     }
+	public static function doesTicketExist($id){
+        
+        $ticket = self::where('TicketID', '=', $id)
+                        ->first();
+
+        return !empty($ticket);
+	}
 }
