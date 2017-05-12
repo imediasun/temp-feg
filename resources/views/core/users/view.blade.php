@@ -51,39 +51,39 @@
 				
 					<tr>
 						<td width='30%' class='label-view text-right'>Username</td>
-						<td>{{ $row->username }} </td>
+						<td>{{ \DateHelpers::formatStringValue($row->username) }} </td>
 						
 					</tr>
 				
 					<tr>
 						<td width='30%' class='label-view text-right'>First Name</td>
-						<td>{{ $row->first_name }} </td>
+						<td>{{ \DateHelpers::formatStringValue($row->first_name) }} </td>
 						
 					</tr>
 				
 					<tr>
 						<td width='30%' class='label-view text-right'>Last Name</td>
-						<td>{{ $row->last_name }} </td>
+						<td>{{ \DateHelpers::formatStringValue($row->last_name) }} </td>
 						
 					</tr>
 				
 					<tr>
 						<td width='30%' class='label-view text-right'>Email</td>
-						<td>{{ $row->email }} </td>
+						<td>{{ \DateHelpers::formatStringValue($row->email) }} </td>
 						
 					</tr>
 				
 
 					<tr>
 						<td width='30%' class='label-view text-right'>Last Login</td>
-						<td>	{{  $row->last_login = date("m/d/Y H:i:s", strtotime($row->last_login))  }} </td>
+						<td>	{{  \DateHelpers::formatDateTime($row->last_login)  }} </td>
 
 
 					</tr>
 				
 					<tr>
 						<td width='30%' class='label-view text-right'>Updated On</td>
-						<td>	{{  $row->updated_at = date("m/d/Y H:i:s", strtotime($row->updated_at))  }} </td>
+						<td>	{{  \DateHelpers::formatDateTime($row->updated_at)  }} </td>
 						
 					</tr>
 				
@@ -97,6 +97,7 @@
 
 	</table>
         <h3>Locations:</h3>
+
         <table class="table table-striped table-bordered table-hover" >
             <thead>
                 <tr>
@@ -109,19 +110,24 @@
                 </tr>
             </thead>
             <tbody>
+            @if(count($user_locations) > 0)
             @foreach($user_locations as $locations)
             <tr>
-                <td>{{ $locations->id }}</td>
-                <td>{{ $locations->location_name_short }}</td>
-                <td>{{ $locations->street1 }}</td>
-                <td>{{ $locations->city }}</td>
-                <td>{{ $locations->state }}</td>
-                <td>{{ $locations->zip }}</td>
+                <td>{{ \DateHelpers::formatZeroValue($locations->id) }}</td>
+                <td>{{ \DateHelpers::formatStringValue($locations->location_name_short) }}</td>
+                <td>{{ \DateHelpers::formatStringValue($locations->street1) }}</td>
+                <td>{{ \DateHelpers::formatStringValue($locations->city) }}</td>
+                <td>{{ \DateHelpers::formatStringValue($locations->state) }}</td>
+                <td>{{ \DateHelpers::formatStringValue($locations->zip) }}</td>
             </tr>
                 @endforeach
+            @else
+                <tr><td colspan="6" style="text-align: center"> No Data </td></tr>
+            @endif
+
             </tbody>
         </table>
-	
+
 	</div>
 </div>	
 

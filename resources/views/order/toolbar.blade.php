@@ -15,7 +15,7 @@
                 @if($access['is_add'] ==1)
                 <a href="javascript://ajax" class="btn btn-sm btn-white" onclick="ajaxCopy('#{{ $pageModule }}','{{ $pageUrl }}')"><i class="fa fa-file-o"></i> Copy </a>
                 @endif
-                @if($access['is_remove'] ==1 && !empty($pass['Can remove order']))
+                @if($access['is_remove'] ==1 || !empty($pass['Can remove order']))
                 <a href="javascript://ajax" class="btn btn-sm btn-white" onclick="ajaxRemove('#{{ $pageModule }}','{{ $pageUrl }}');"><i class="fa fa-trash-o "></i> {{ Lang::get('core.btn_remove') }} </a>
                 @endif
             @endif
