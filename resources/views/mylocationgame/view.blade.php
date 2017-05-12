@@ -372,7 +372,7 @@
             </tr>
                 @endforeach
                 @else
-                <tr><td colspan="9" style="text-align: center"> Nothing Found </td></tr>
+                <tr><td colspan="9" style="text-align: center"> No Data </td></tr>
                 @endif
             </tbody>
 
@@ -410,7 +410,7 @@
                         </tr>
                     @endforeach
                 @else
-                    <tr><td colspan="7" style="text-align: center"> Nothing Found </td></tr>
+                    <tr><td colspan="7" style="text-align: center"> No Data </td></tr>
                 @endif
 
                 </tbody>

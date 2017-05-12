@@ -23,8 +23,8 @@
                 <h1>BILL-BACK SUMMARY:</h1>
                 <div class="table-responsive">
                     <div style="padding:10px;">
-                        <h4>Debit Cards: <span style="display:inline-block;margin-left:10px"> {{ $row->bill_debit_amt }} % </span></h4>
-                        <h4>Licenses: <span style="display:inline-block;margin-left:20px">{{ $row->bill_license_amt }} %</span></h4>
+                        <h4>Debit Cards: <span style="display:inline-block;margin-left:10px"> {{ $row->bill_debit_amt }} @if($row->bill_debit_amt!= "No Data")) % @endif </span></h4>
+                        <h4>Licenses: <span style="display:inline-block;margin-left:20px">{{ $row->bill_license_amt }} @if($row->bill_debit_amt!= "No Data")) % @endif</span></h4>
                     </div>
                     <table class="table">
                         <tbody>
@@ -48,7 +48,7 @@
                         </tr>
                         <tr>
                             <td colspan="1"><h3>Alt. Shipping Location:</h3></td>
-                            <td><h4> @if($row->loc_ship_to != 0) {{ $row->loc_ship_to }} @endif  </h4></td>
+                            <td><h4> @if($row->loc_ship_to != 0) {{ $row->loc_ship_to }} @else No Data @endif  </h4></td>
                         </tr>
                         <tr>
                             <td colspan="1"><h3>Reporting</h3></td>
