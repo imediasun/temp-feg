@@ -223,11 +223,11 @@
 
         function reloadOrder() {
             $('.ajaxLoading').hide();
-            SximoModalHide($('.modal'));
-            ajaxViewClose("#order", null, {noModal: true});
-//            {{ \Session::put('filter_before_redirect','redirect') }}
-//            var redirect_link = "{{ \Session::get('redirect') }}";
-//            location.href = "{{ url() }}/" + redirect_link;
+         //   SximoModalHide($('.modal'));
+         //   ajaxViewClose("#order", null, {noModal: true});
+            {{ \Session::put('filter_before_redirect','redirect') }}
+           var redirect_link = "{{ \Session::get('redirect') }}";
+            location.href = "{{ url() }}/" + redirect_link;
         }
         $("#send-only").click(function (e) {
             $('.ajaxLoading').show();
