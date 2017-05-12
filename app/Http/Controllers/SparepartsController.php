@@ -198,7 +198,7 @@ class SparepartsController extends Controller
         $row = $this->model->getRow($id);
         if($id)
         {
-            if($row->status_id != 0)
+            if($row->status_id != 2)
             {
                 $rules = array('loc_id' => 'required', 'status_id' => 'required');
             }

@@ -19,7 +19,7 @@
             <div class="col-md-12">
                 <fieldset>
                     
-                    @if($row['status_id']==0)
+                    @if($row['status_id']==2)
                     <div class="form-group  ">
                         <label for="Description" class=" control-label col-md-4 text-left">
                             {!! SiteHelpers::activeLang('Description', (isset($fields['description']['language'])?
@@ -80,7 +80,7 @@
                         <div class="col-md-2">
                         </div>
                     </div>
-                    @if($row['status_id']==0)
+                    @if($row['status_id']==2)
                     <div class="form-group  ">
                         <label for="User" class=" control-label col-md-4 text-left">
                             {!! SiteHelpers::activeLang('Submitted By', (isset($fields['user']['language'])?
@@ -106,7 +106,7 @@
 
                         </div>
                     </div>
-                    @if($row['status_id']==0)
+                    @if($row['status_id']==2)
                     <div class="form-group  ">
                         <label for="User Claim" class=" control-label col-md-4 text-left">
                             {!! SiteHelpers::activeLang('User Claim', (isset($fields['user_claim']['language'])?
@@ -138,7 +138,7 @@
             </div>
             {!! Form::close() !!}
 
-
+2
             @if($setting['form-method'] =='native')
         </div>
     </div>
