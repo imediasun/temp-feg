@@ -933,7 +933,7 @@ class OrderController extends Controller
             if ($sendemail) {
                 if (isset($to) && count($to) > 0) {
                     $filename = 'PO_' . $order_id . '.pdf';
-                    $subject = "Purchase Order";
+                    $subject = "Purchase Order # {$data[0]['po_number']}";
                     $message = $message;
                     $cc = $cc;
                     $bcc = $bcc;
