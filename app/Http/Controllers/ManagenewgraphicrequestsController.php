@@ -72,7 +72,24 @@ class ManagenewgraphicrequestsController extends Controller
         $this->data['access'] = $this->access;
         return view('managenewgraphicrequests.index', $this->data);
     }
+    public function getSearchFilterQuery($customQueryString = null) {
+        // Filter Search for query
+        // build sql query based on search filters
+        $filter = is_null($customQueryString) ? (is_null(Input::get('search')) ? '' : $this->buildSearch()) :
+            $this->buildSearch($customQueryString);
 
+        // Get assigned locations list as sql query (part)
+        //$locationFilter = \SiteHelpers::getQueryStringForLocation('new_graphics_request', 'location_id', [], ' OR new_graphics_request.location_id=0 ');
+        $locationFilter = \SiteHelpers::getQueryStringForLocation('new_graphics_request');
+        // if search filter does not have location_id filter
+        // add default location filter
+        $frontendSearchFilters = $this->model->getSearchFilters(array('location_id' => ''));
+        if (empty($frontendSearchFilters['location_id'])) {
+            $filter .= $locationFilter;
+        }
+
+        return $filter;
+    }
     public function postData(Request $request)
     {
         $module_id = \DB::table('tb_module')->where('module_name', '=', 'managenewgraphicrequests')->pluck('module_id');
@@ -97,7 +114,8 @@ class ManagenewgraphicrequestsController extends Controller
         $order = (!is_null($request->input('order')) ? $request->input('order') : $this->info['setting']['ordertype']);
         // End Filter sort and order for query
         // Filter Search for query
-        $filter = (!is_null($request->input('search')) ? $this->buildSearch() : '');
+        $filter = $this->getSearchFilterQuery();
+        //$filter = (!is_null($request->input('search')) ? $this->buildSearch() : '');
 
 
         $page = $request->input('page', 1);
