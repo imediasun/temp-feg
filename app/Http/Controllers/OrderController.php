@@ -914,6 +914,8 @@ class OrderController extends Controller
                 $data[0]['item_qty_string'][$i] = $item_qty_string;
                 $data[0]['item_total_string'][$i] = $item_total_string;
                 $data[0]['order_total_cost'] = $order_total_cost;
+                $data[0]['company_name_long'] = 'Family Entertainment Group';
+
 //                $item_total_string = $item_total_string."-----------------\n"."$ ".number_format($order_total_cost,3)."\n";
             }
             $pdf = \PDF::loadView('order.po', ['data' => $data, 'main_title' => "Purchase Order"]);
