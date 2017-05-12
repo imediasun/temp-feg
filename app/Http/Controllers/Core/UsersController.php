@@ -384,14 +384,12 @@ class UsersController extends Controller
 
     public function getShow($id = null, $mode = null)
     {
-        if ($this->access['is_detail'] == 0) {
-            if ($mode == 'popup') {
-                return \Lang::get('core.note_restric');
+        if ($mode != 'popup') {
+            if ($this->access['is_detail'] == 0) {
+                return Redirect::to('dashboard')
+                    ->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
             }
-            return Redirect::to('dashboard')
-                ->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
         }
-        
         $row = $this->model->getRow($id);
         if ($row) {
             $this->data['row'] = $row;

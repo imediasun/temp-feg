@@ -64,8 +64,8 @@
             @endif
             @if($access['is_remove'] ==1)
                 <a href="javascript://ajax" class="btn btn-sm btn-white"
-                   onclick="ajaxRemove('#{{ $pageModule }}','{{ $pageUrl }}');"><i
-                            class="fa fa-trash-o "></i> {{ Lang::get('core.btn_remove') }} </a>
+                   onclick="ajaxGameDispose('#{{ $pageModule }}','{{ $pageUrl }}');"><i
+                            class="fa fa-trash-o "></i> Dispose </a>
             @endif
             @endif
             <a href="{{ URL::to( $pageModule .'/search') }}" class="btn btn-sm btn-white"
