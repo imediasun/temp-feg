@@ -2291,6 +2291,9 @@ class SiteHelpers
             $locations[] = "'" . $locationItem->id . "'";
         }
         $locationsCSV = implode(',', $locations);
+        if (empty($locationsCSV)) {
+            $locationsCSV = 'NULL';
+        }
         $queryString = " AND ($table.$fieldName IN ($locationsCSV) " .
             (!empty($orClause) ? $orClause : '') . ")";
 
