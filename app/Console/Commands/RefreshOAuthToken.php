@@ -65,7 +65,7 @@ class RefreshOAuthToken extends Command
                     'client_secret'=>env('G_SECRET'))));
                 $result = $res->getBody();
                 $array = json_decode($result, true);
-                $users_with_related_oauthemail = Users::where('oauth_email',$user->oauth_email)->get();
+                $users_with_related_oauthemail = Users::where('oauth_email',$user->oauth_email)->where('id','!=',$user->id)->get();
                 $L->log(count($users_with_related_oauthemail).' Users with same oauth email Found');
                 foreach ($users_with_related_oauthemail as $related)
                 {
