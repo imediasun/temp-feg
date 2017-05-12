@@ -42,11 +42,12 @@ class RefreshOAuthToken extends Command
      */
     public function handle()
     {
-//        if (env('DONT_REFRESH_OAUTH_TOKEN', false) === true) {
-//            return;
-//        }
-        global $__logger;
-        $L = $this->L = $__logger = FEGSystemHelper::setLogger($this->L, "refresh-oauth-token.log", "FEGOAuthTokenCron1/RefreshOAuthToken1", "REFRESH_OAUTH");
+        if (env('DONT_REFRESH_OAUTH_TOKEN', false) === true) {
+
+            return;
+        }
+
+        $L = $this->L = FEGSystemHelper::setLogger($this->L, "refresh-oauth-token.log", "FEGOAuthTokenCron1/RefreshOAuthToken1", "REFRESH_OAUTH");
         $L->log('Start Refreshing Oauth Tokens');
 
         $users = Users::whereNotNull('refresh_token')->orWhere('refresh_token','!=','')->get();
