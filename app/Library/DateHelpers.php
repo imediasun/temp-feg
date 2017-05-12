@@ -7,9 +7,9 @@ class DateHelpers
     {
         if (preg_match('/[1-9]/', $date) && !is_null($date)) {
             $oDate = new \DateTime($date);
-            return $newDateString = $oDate->format('m/d/Y');
+            return $newDateString = $oDate->format('m/d/Y').$date;
         } else {
-            return "No Data";
+            return "No Data".$date;
         }
 
     }
