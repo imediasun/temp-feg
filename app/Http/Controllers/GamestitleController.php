@@ -3,6 +3,7 @@
 use App\Http\Controllers\controller;
 use App\Models\Gamestitle;
 use Illuminate\Http\Request;
+use \App\Models\Sximo\Module;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use App\Models\Sximo\Module;
 use Validator, Input, Redirect,Image;
