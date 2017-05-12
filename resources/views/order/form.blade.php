@@ -13,8 +13,10 @@
                 @else
                     <i class="fa fa-plus"></i>&nbsp;&nbsp;Create New Order
                 @endif
-                <a href="javascript:void(0)" class="collapse-close pull-right btn btn-xs btn-danger"
-                   onclick="ajaxViewClose('#{{ $pageModule }}')"><i class="fa fa fa-times"></i></a>
+                    <a href="javascript:void(0)"
+                       class="collapse-close pull-right btn btn-xs btn-danger"
+                       id="closeOrderForm"
+                            ><i class="fa fa fa-times"></i></a>
             </h4>
         </div>
         <div class="sbox-content">
@@ -961,9 +963,23 @@
                 calculateSum();
             });
         });
-        function ajaxViewClose1(id) {
+        $("#closeOrderForm").click(function(e){
+            reloadOrder();
+        });
+        function reloadOrder() {
 
-            location.href = "{{ url() }}/order";
+            var moduleUrl = '{{ $pageUrl }}',
+                    redirect = "{{ \Session::get('redirect') }}",
+                    redirectLink = "{{ url() }}/" + redirect;
+
+            if (redirect== "order") {
+                ajaxViewClose("#order", null, {noModal: true});
+            }
+            else {
+//            {{ \Session::put('filter_before_redirect','redirect') }}
+                location.href = redirectLink;
+            }
+
         }
     </script>
     <style>

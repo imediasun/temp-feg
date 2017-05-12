@@ -1205,6 +1205,7 @@ function sendPhpEmail($message,$to,$from,$subject,$pdf,$filename,$cc,$bcc)
 
     public function getSubmitorder($SID)
     {
+        \Session::put('redirect','managefegrequeststore');
         $this->data['sid'] = $SID;
         $this->data['access'] = $this->access;
         return view('order.index', $this->data);
