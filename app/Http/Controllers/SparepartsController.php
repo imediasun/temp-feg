@@ -5,7 +5,6 @@ use App\Models\Spareparts;
 use \App\Models\Sximo\Module;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
-use App\Models\Sximo\Module;
 use Validator, Input, Redirect;
 
 class SparepartsController extends Controller
