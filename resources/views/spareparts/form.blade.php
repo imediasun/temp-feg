@@ -138,7 +138,6 @@
             </div>
             {!! Form::close() !!}
 
-2
             @if($setting['form-method'] =='native')
         </div>
     </div>
