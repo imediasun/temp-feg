@@ -31,7 +31,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         //giving error
-        $schedule->command('refresh:token')->hourly();
+        $schedule->command('refresh:token')->cron('*/50 * * * * *')->withoutOverlapping();;
         $schedule->command('comments:read')->everyMinute();
         $schedule->command('autocloseorder')->daily();
         $schedule->command('inspire')->everyMinute();
