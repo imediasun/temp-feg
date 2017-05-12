@@ -239,6 +239,8 @@ $(document).ready(function() {
 });
 </script>
 <style>
+
+    
     .table th.right {
         text-align: right !important;
     }
