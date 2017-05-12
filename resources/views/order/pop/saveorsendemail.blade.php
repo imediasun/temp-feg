@@ -2,6 +2,10 @@
     <div class="sbox">
         <div class="sbox-title">
             <h3> Save/Download PO</h3>
+            <a href="javascript:void(0)"
+               class="collapse-close pull-right btn btn-xs btn-danger"
+               id="closeSaveOrSend"
+            ><i class="fa fa fa-times"></i></a>
         </div>
         <div class="sbox-content">
             <div style="color:green" class="row">
@@ -195,7 +199,7 @@
         $(document).ready(function () {
 
         });
-        $("#po-close").click(function(){
+        $("#po-close, a.#closeSaveOrSend").click(function(e){
             reloadOrder();
         });
         $("#po-link").click(function () {
@@ -222,12 +226,21 @@
 
 
         function reloadOrder() {
-            $('.ajaxLoading').hide();
-         //   SximoModalHide($('.modal'));
-         //   ajaxViewClose("#order", null, {noModal: true});
-            {{ \Session::put('filter_before_redirect','redirect') }}
-           var redirect_link = "{{ \Session::get('redirect') }}";
-            location.href = "{{ url() }}/" + redirect_link;
+
+            var moduleUrl = '{{ $pageUrl }}',
+                redirect = "{{ \Session::get('redirect') }}",
+                redirectLink = "{{ url() }}/" + redirect;
+
+            if (/order/i.test(redirect)) {
+                $('.ajaxLoading').hide();
+                SximoModalHide($('.modal'));
+                ajaxViewClose("#order", null, {noModal: true});
+            }
+            else {
+//            {{ \Session::put('filter_before_redirect','redirect') }}
+                location.href = redirectLink;
+            }
+
         }
         $("#send-only").click(function (e) {
             $('.ajaxLoading').show();
