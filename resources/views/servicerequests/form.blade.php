@@ -135,7 +135,7 @@
                         {!! SiteHelpers::activeLang('Date Needed', (isset($fields['need_by_date']['language'])? $fields['need_by_date']['language'] : array())) !!}
                     </label>
                     <div class="col-md-6">
-                        <div class="input-group datepicker" style="width150px">
+                        <div class="input-group" style="width150px">
 							<span class="input-group-addon datepickerHandleButton" style="width: 32px;"><i class="fa fa-calendar" id="icon"></i></span>
 							{!! Form::text('need_by_date', $needByDate, array('class'=>'form-control date', 'id'=>'my-datepicker', 'style'=>'width:150px !important;'   )) !!}
                         </div>
@@ -278,3 +278,11 @@ function showResponse(data)  {
 }
 
 </script>		 
+
+<style>
+	.file_pathUpl input, .attachmentInputs input {
+		margin-bottom: 14px;
+		width: 100%;
+		margin-top: 0px;
+	}
+</style>
