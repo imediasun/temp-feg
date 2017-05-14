@@ -71,7 +71,7 @@ class ReadComment extends Command
         /* connect to gmail */
         $hostname = '{imap.gmail.com:993/imap/ssl/novalidate-cert}INBOX';
         $username = "tickets@tickets.fegllc.com";
-        $password = "8d<Sy%681";
+        $password = "8d<Sy%68";
 
         $L->log("Connecting...");
         /* try to connect */
