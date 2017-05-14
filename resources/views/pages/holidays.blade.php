@@ -16,7 +16,7 @@
                 <div style="padding-left: 60px;">
                     <a class="download" title="**NEW** 2015-16 Benefit Enrollment Package" href="/benefits/14E_Benefit%20Enrollment%20Package-2015-2016.pdf" target="_blank">
                         <span style="color: rgb(255, 0, 0);"><strong>**NEW**</strong> </span>
-                        <span style="color: rgb(128, 128, 128);">2015-16 Benefit Enrollment Package</span>
+                        <span style="color: rgb(128, 128, 128);">2017-18 Benefit Enrollment Package</span>
                     </a>
                 </div>
                 <div style="padding-left: 60px;">
