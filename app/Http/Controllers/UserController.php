@@ -398,10 +398,10 @@ class UserController extends Controller
 
         $inputs = $request->all();
 
-        $callback = $inputs['callback'];
-        $signature = $inputs['signature'];
-        $client_id = $inputs['client_id'];
-        $timestamp = $inputs['timestamp'];
+        $callback = @$inputs['callback'];
+        $signature = @$inputs['signature'];
+        $client_id = @$inputs['client_id'];
+        $timestamp = @$inputs['timestamp'];
 
         $jsonpData = [
             'name' => '',
@@ -420,7 +420,7 @@ class UserController extends Controller
             ];
         }
 
-        $jsonp = implode('', [$callback, '{', json_encode($jsonpData), "};"]);
+        $jsonp = implode('', [$callback, '(', json_encode($jsonpData), ");"]);
 
         return $jsonp;
     }
