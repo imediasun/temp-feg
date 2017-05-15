@@ -157,7 +157,7 @@
 					<?php 	endforeach;
 					  ?>
                     <td>{{ isset($row->company_name)?$row->company_name:"No Data" }}</td>
-                    <td>@if(isset($description[$row->id][0]->description)){{ rtrim($description[$row->id][0]->description,',') }} @else {{ "No Data" }} @endif</td>
+                    <td>@if(isset($description[$row->id][0]->description)){{ rtrim($description[$row->id][0]->description,', ') }} @else {{ "No Data" }} @endif</td>
                   @if($setting['disablerowactions']=='false')
 				 <td data-values="action" data-key="<?php echo $row->id ;?>">
 					{!! AjaxHelpers::buttonAction('managefreightquoters',$access,$id ,$setting,'edit') !!}
