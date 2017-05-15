@@ -2218,7 +2218,7 @@ class SiteHelpers
     {
         $locations = \DB::table('user_locations')
             ->join('location', 'user_locations.location_id', '=', 'location.id')
-            ->join('debit_type', 'debit_type.id', '=', 'location.debit_type_id')
+            ->leftJoin('debit_type', 'debit_type.id', '=', 'location.debit_type_id')
             ->select(
                 'location.id',
                 'location.location_name',
