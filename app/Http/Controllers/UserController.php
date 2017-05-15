@@ -9,6 +9,7 @@ use App\User;
 use Socialize;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
+use App\Library\FEG\System\FEGSystemHelper;
 use Validator, Input, Redirect;
 
 class UserController extends Controller
@@ -512,13 +513,17 @@ class UserController extends Controller
                 $user = $user->get();
                 $user = $user[0];
                 $data = array('token' => $request->input('_token'));
-                $to = $request->input('credit_email');
+                $to = ['to'=>$request->input('credit_email')];
+
                 $subject = "[ " . CNF_APPNAME . " ] REQUEST PASSWORD RESET ";
                 $message = view('user.emails.auth.reminder', $data);
-                $headers = 'MIME-Version: 1.0' . "\r\n";
-                $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
-                $headers .= 'From: ' . CNF_APPNAME . ' <' . CNF_EMAIL . '>' . "\r\n";
-                mail($to, $subject, $message, $headers);
+                FEGSystemHelper::sendSystemEmail(array_merge($to, array(
+                    'subject' => $subject,
+                    'message' => $message,
+                    'isTest' => env('APP_ENV', 'development') !== 'production' ? true : false,
+                    'from' => CNF_EMAIL,
+                    'configName' => 'FORGETPASSWORD EMAIL'
+                )));
 
 
                 $affectedRows = User::where('email', '=', $user->email)
