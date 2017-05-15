@@ -59,7 +59,8 @@
                     $(this).siblings('.select2-container').children('a').children('span').first().text('Select Game').css('color','#999999');
                 }
             });
-
+            var $eventSelect = container.find("input[id^='loc_game_']");
+            $eventSelect.on("change", function (e) { console.log($(this));$(this).siblings('.select2-container').children('a').children('span').first().css('color','#444' , 'important'); });
             if(to_contact_name !== "" && email_notes === "") {
                 $("#email_notes").val("Hi"+to_contact_name+",");
             }
