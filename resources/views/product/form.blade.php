@@ -421,6 +421,7 @@
 
         });
     });
+
     $("#prod_type_id").click(function () {
         if ($(this).val() == "8") {
             $("#retail_price").show(300);
@@ -430,7 +431,7 @@
             $("#retail_price").hide(300);
             $("#retail_price").removeAttr('required');
         }
-        if ($(this).val() == "7" || $(this).val() == "8" ) {
+        if ($(this).val() == "7") {
             $("#ticket_value").show(300);
             $("#ticket_value").attr('required','required');
         }
