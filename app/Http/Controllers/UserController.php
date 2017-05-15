@@ -394,7 +394,7 @@ class UserController extends Controller
         return view('user.profile', $this->data);
     }
 
-    public function jsconnect(Request $request) {
+    public function getJsconnect(Request $request) {
 
         $inputs = $request->all();
 
