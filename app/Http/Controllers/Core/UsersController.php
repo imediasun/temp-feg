@@ -51,7 +51,9 @@ class UsersController extends Controller
         else {
             $access = $this->model->validPageAccess($moduleName);
         }
-        
+        if ($moduleName =='forum') {
+            $access = true;
+        }
         return response()->json($access);
     }
 
