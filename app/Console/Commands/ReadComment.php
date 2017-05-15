@@ -105,7 +105,7 @@ class ReadComment extends Command
                 /* get information specific to this email */
                 $meta = $this->getMessageDetails($inbox, $email_number);
                 $L->log("Message Details: ", $meta);
-                $UID = isset($meta['message_id']) ? $meta['message_id']: '';
+                $UID = isset($meta->message_id) ? $meta->message_id: '';
                 //$messageExists = Ticketcomment::doesCommentExist($UID);
                 //if ($messageExists) {
                 //     $L->log("Message exists with ID: $UID.");
