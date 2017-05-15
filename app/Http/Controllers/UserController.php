@@ -416,7 +416,7 @@ class UserController extends Controller
                 'uniqueid' => \Session::get('uid'),
                 'name' => \Session::get('fid'),
                 'email' => \Session::get('eid'),
-                'photourl' => '';//\FEGHelp::getUserAvatarUrl(\Session::get('uid'))
+                'photourl' => ''//\FEGHelp::getUserAvatarUrl(\Session::get('uid'))
             ];
         }
 
