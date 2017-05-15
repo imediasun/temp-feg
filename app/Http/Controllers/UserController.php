@@ -394,6 +394,37 @@ class UserController extends Controller
         return view('user.profile', $this->data);
     }
 
+    public function getVanilla(Request $request) {
+
+        $inputs = $request->all();
+
+        $callback = $inputs['callback'];
+        $signature = $inputs['signature'];
+        $client_id = $inputs['client_id'];
+        $timestamp = $inputs['timestamp'];
+
+        $jsonpData = [
+            'name' => '',
+            'photourl' => '',
+        ];
+
+        if (\Auth::check())  {
+
+            $jsonpData = [
+                'client_id' => $client_id,
+                'signature' => $signature,
+                'uniqueid' => \Session::get('uid'),
+                'name' => \Session::get('fid'),
+                'email' => \Session::get('eid'),
+                'photourl' => \FEGHelp::getUserAvatarUrl(\Session::get('uid'))
+            ];
+        }
+
+        $jsonp = implode('', [$callback, '{', json_encode($jsonpData), "};"]);
+
+        return $jsonp;
+    }
+
     public function postSaveprofile(Request $request)
     {
         if (!\Auth::check()) return Redirect::to('/');
