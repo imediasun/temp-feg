@@ -373,13 +373,14 @@
 
         $("#prod_sub_type_id").jCombo("{{ URL::to('product/comboselect?filter=product_type:id:type_description') }}&parent=request_type_id:",
                 {parent: '#prod_type_id', selected_value: '{{ $row["prod_sub_type_id"] }}'});
-// for Redemption Prizes show Ticket Value
+
+        // for Redemption Prizes show Ticket Value
         if ("{{$row["prod_type_id"] }}" == 7) {
             $("#ticket_value").show();
             $("#ticket_input").attr('required','required');
         }
 
-// for Instant win Prizes show Retail Price
+        // for Instant win Prizes show Retail Price
         if ("{{$row["prod_type_id"] }}" == 8) {
             $("#retail_price").show();
             $("#retail_input").attr('required','required');
