@@ -373,16 +373,23 @@
 
         $("#prod_sub_type_id").jCombo("{{ URL::to('product/comboselect?filter=product_type:id:type_description') }}&parent=request_type_id:",
                 {parent: '#prod_type_id', selected_value: '{{ $row["prod_sub_type_id"] }}'});
-// for Redemption Prizes show Ticket Value
-        if ("{{$row["prod_type_id"] }}" == 7 || "{{$row["prod_type_id"] }}" == 8) {
+
+        // for Redemption Prizes show Ticket Value
+        if ("{{$row["prod_type_id"] }}" == 7) {
             $("#ticket_value").show();
             $("#ticket_input").attr('required','required');
         }
 
-// for Instant win Prizes show Retail Price
+        // for Instant win Prizes show Retail Price
         if ("{{$row["prod_type_id"] }}" == 8) {
             $("#retail_price").show();
             $("#retail_input").attr('required','required');
+        }
+
+        // for Instant win Prizes show Ticket Value
+        if ("{{$row["prod_type_id"] }}" == 8) {
+            $("#ticket_value").show();
+            //$("#ticket_input").attr('required','required');
         }
 
         $('.editor').summernote();
@@ -421,6 +428,7 @@
 
         });
     });
+
     $("#prod_type_id").click(function () {
         if ($(this).val() == "8") {
             $("#retail_price").show(300);
@@ -430,9 +438,11 @@
             $("#retail_price").hide(300);
             $("#retail_price").removeAttr('required');
         }
-        if ($(this).val() == "7" || $(this).val() == "8" ) {
+        if ($(this).val() == "7") {
             $("#ticket_value").show(300);
             $("#ticket_value").attr('required','required');
+        }else if($(this).val() == "8"){
+            $("#ticket_value").show(300);
         }
         else {
             $("#ticket_value").hide(300);
