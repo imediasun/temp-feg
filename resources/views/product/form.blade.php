@@ -385,6 +385,12 @@
             $("#retail_input").attr('required','required');
         }
 
+        // for Instant win Prizes show Ticket Value
+        if ("{{$row["prod_type_id"] }}" == 8) {
+            $("#ticket_value").show();
+            //$("#ticket_input").attr('required','required');
+        }
+
         $('.editor').summernote();
         $('.previewImage').fancybox();
         $('.tips').tooltip();
@@ -434,6 +440,8 @@
         if ($(this).val() == "7") {
             $("#ticket_value").show(300);
             $("#ticket_value").attr('required','required');
+        }else if($(this).val() == "8"){
+            $("#ticket_value").show(300);
         }
         else {
             $("#ticket_value").hide(300);
