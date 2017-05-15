@@ -413,6 +413,7 @@ class UserController extends Controller
             $jsonpData = [
                 'client_id' => $client_id,
                 'signature' => $signature,
+                'timestamp' => $timestamp,
                 'uniqueid' => \Session::get('uid'),
                 'name' => \Session::get('fid'),
                 'email' => \Session::get('eid'),
