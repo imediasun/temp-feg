@@ -24,15 +24,18 @@ $selected_loc=\Session::get('selected_location');?>
                 <?php $user_locations=\Session::get('user_locations'); ?>
                 @if(isset($user_locations))
                         <li style=" padding: 5px; margin-bottom: 8px;">
-
+                        <?php $uloc = [];  ?>
                         <select id="user_locations"  class="form-control sidebar_loc_dropdown">
                             <?php $userLocations = \Session::get('user_locations') ?>
                             <option disabled selected>Select Your Location</option>
-                            @foreach($userLocations as $location)
+                            @foreach($userLocations as $location) 
+							@if (!isset($uloc[$location->id])) 
+								<?php $uloc[$location->id] = $location->id;  ?>
                                 <option @if($location->id==\Session::get('selected_location')) selected
                                         @endif value="{{ $location->id }}"
                                         data-locationname="{{ $location->location_name }}"> {{ $location->id }} {{ '||' }} {{ $location->location_name }}</option>
-                            @endforeach
+                            @endif
+							@endforeach
                         </select>
                     </li>
                 @endif
