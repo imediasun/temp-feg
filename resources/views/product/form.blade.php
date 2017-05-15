@@ -374,7 +374,7 @@
         $("#prod_sub_type_id").jCombo("{{ URL::to('product/comboselect?filter=product_type:id:type_description') }}&parent=request_type_id:",
                 {parent: '#prod_type_id', selected_value: '{{ $row["prod_sub_type_id"] }}'});
 // for Redemption Prizes show Ticket Value
-        if ("{{$row["prod_type_id"] }}" == 7 || "{{$row["prod_type_id"] }}" == 8) {
+        if ("{{$row["prod_type_id"] }}" == 7) {
             $("#ticket_value").show();
             $("#ticket_input").attr('required','required');
         }
