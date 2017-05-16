@@ -72,7 +72,6 @@ Route::post('order/probe-export/{ID?}', 'OrderController@postProbeExport');
 Route::get('/', 'UserController@getLogin');
 Route::controller('home', 'HomeController');
 Route::controller('/user', 'UserController');
-Route::get('/user/jsconnect', 'UserController@jsconnect');
 Route::get('/user/user-details/{id?}','Core\UsersController@getIndex');
 Route::controller('urlauth', 'URLAuthController');
 include('pageroutes.php');
