@@ -219,14 +219,14 @@
 	  <div class="modal-dialog">
 		  <div class="modal-content">
 			  <div class="modal-header">
-				  <button type="button" class="close" aria-hidden="true" tabindex="-1">×</button>
-				  <h4>Upload Document</h4>
+				  <button type="button" class="close" aria-hidden="true" tabindex="-1" onclick="$('#pdf_modal').modal('toggle');">×</button>
+				  <h4>Upload PDF</h4>
 			  </div>
 			  <div class="modal-body">
 				  <div class="row-fluid">
 					  <form method="post" enctype="multipart/form-data" name="pdf_form">
 					  <div class="form-group">
-						  <label>Upload Doc</label>
+						  <label>Browse PDF</label>
 						  <input type="file" name="pdf_file"/>
 					  </div>
 					  </form>
@@ -256,14 +256,21 @@
 				  $('.note-link-url').val("{{url('')}}/files/"+data);
 				  $('.note-link-btn').trigger('click');
 			  },
-			  error: function (data) {
+			  error: function (xhr, data, errorThrown) {
 				  console.log(data);
+				  console.log(xhr.status);
+					if(xhr.status=='422'){
+						//var error=JSON.parse(xhr.responseText);
+						//alert(error.pdf_file);
+						alert('Must provide a pdf file.')
+					}
 			  }
 		  });
 	  }
 
 	  $( document ).ready(function() {
-		  $('.note-toolbar').append('<div class="note-help btn-group"><button type="button" class="btn btn-default btn-sm btn-small" onclick=$("#pdf_modal").modal() title="" data-shortcut="Ctrl+`" data-mac-shortcut="⌘+`" tabindex="-1" data-original-title="File (Ctrl+`)"><i class="fa fa-file-o"></i></button></div>');
+		  $('.note-toolbar').append('<div class="note-attach btn-group"><button type="button" class="btn btn-default btn-sm btn-small" data-toggle="tooltip" title="Attach PDF" data-placement="bottom" tabindex="-1" onclick=$("#pdf_modal").modal()><i class="fa fa-file-o"></i></button></div>');
+		  $('[data-toggle="tooltip"]').tooltip();
 	  });
 
   </script>

@@ -220,7 +220,7 @@ class PagesController extends Controller
     {
         //return $request->all();
         $this->validate($request, [
-            'pdf_file' => 'required',
+            'pdf_file' => 'required|mimes:pdf',
         ]);
         if( $request->hasFile('pdf_file')) {
             $file = $request->file('pdf_file');
