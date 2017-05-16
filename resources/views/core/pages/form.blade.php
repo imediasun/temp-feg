@@ -44,8 +44,6 @@
 						<ul class="nav nav-tabs" >
 						  <li class="active"><a href="#info" data-toggle="tab"> Page Content </a></li>
 						  <li ><a href="#meta" data-toggle="tab"> Meta & Description </a></li>
-						<li ><a href="#" onclick="$('#pdf_modal').modal();"> Upload Doc </a></li>
-
 						</ul>
 
 
@@ -263,9 +261,12 @@
 			  }
 		  });
 	  }
+
+	  $( document ).ready(function() {
+		  $('.note-toolbar').append('<div class="note-help btn-group"><button type="button" class="btn btn-default btn-sm btn-small" onclick=$("#pdf_modal").modal() title="" data-shortcut="Ctrl+`" data-mac-shortcut="⌘+`" tabindex="-1" data-original-title="File (Ctrl+`)"><i class="fa fa-file-o"></i></button></div>');
+	  });
+
   </script>
-
-
 
 <style type="text/css">
 .note-editor .note-editable { height:500px;}
