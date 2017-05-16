@@ -395,7 +395,7 @@ class UserController extends Controller
         return view('user.profile', $this->data);
     }
 
-    public function getJsconnect(Request $request) {
+    public function jsconnect(Request $request) {
 
         $inputs = $request->all();
 
@@ -414,11 +414,10 @@ class UserController extends Controller
             $jsonpData = [
                 'client_id' => $client_id,
                 'signature' => $signature,
-                'timestamp' => $timestamp,
                 'uniqueid' => \Session::get('uid'),
                 'name' => \Session::get('fid'),
                 'email' => \Session::get('eid'),
-                'photourl' => ''//\FEGHelp::getUserAvatarUrl(\Session::get('uid'))
+                'photourl' => \FEGHelp::getUserAvatarUrl(\Session::get('uid'))
             ];
         }
 
@@ -513,17 +512,13 @@ class UserController extends Controller
                 $user = $user->get();
                 $user = $user[0];
                 $data = array('token' => $request->input('_token'));
-                $to = ['to'=>$request->input('credit_email')];
-
+                $to = $request->input('credit_email');
                 $subject = "[ " . CNF_APPNAME . " ] REQUEST PASSWORD RESET ";
                 $message = view('user.emails.auth.reminder', $data);
-                FEGSystemHelper::sendSystemEmail(array_merge($to, array(
-                    'subject' => $subject,
-                    'message' => $message,
-                    'isTest' => env('APP_ENV', 'development') !== 'production' ? true : false,
-                    'from' => CNF_EMAIL,
-                    'configName' => 'FORGETPASSWORD EMAIL'
-                )));
+                $headers = 'MIME-Version: 1.0' . "\r\n";
+                $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
+                $headers .= 'From: ' . CNF_APPNAME . ' <' . CNF_EMAIL . '>' . "\r\n";
+                mail($to, $subject, $message, $headers);
 
 
                 $affectedRows = User::where('email', '=', $user->email)

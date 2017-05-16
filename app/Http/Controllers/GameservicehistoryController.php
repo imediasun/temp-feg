@@ -3,11 +3,9 @@
 use App\Http\Controllers\controller;
 use App\Models\Gameservicehistory;
 use Illuminate\Http\Request;
-
+use \App\Models\Sximo\Module;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Validator, Input, Redirect;
-use App\Models\Sximo\Module;
-
 
 class GameservicehistoryController extends Controller
 {
