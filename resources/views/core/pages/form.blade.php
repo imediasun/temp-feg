@@ -227,13 +227,14 @@
 					  <form method="post" enctype="multipart/form-data" name="pdf_form">
 					  <div class="form-group">
 						  <label>Browse PDF</label>
-						  <input type="file" name="pdf_file" accept="application/pdf" />
+						  <input type="file" name="pdf_file" id="pdf_file" accept="application/pdf" />
+						  <label style="color:red;font-size:14px;margin-top:5px;" id="pdf_error"></label>
 					  </div>
 					  </form>
 				  </div>
 			  </div>
 			  <div class="modal-footer">
-				  <button href="#" onclick="upload_pdf();" class="btn btn-primary" >Insert</button>
+				  <button href="#" onclick="upload_pdf();" class="btn btn-primary" id="pdf_upload">Insert</button>
 			  </div>
 		  </div>
 	  </div>
@@ -241,7 +242,8 @@
 
   <script>
 	  function upload_pdf() {
-		  $('#pdf_modal').modal('toggle');
+		  $('#pdf_upload').text('Uploading...');
+		  $('#pdf_upload').prop('disabled', true);
 		  var fd = new FormData(document.forms.namedItem("pdf_form"));
 		  //fd.append("CustomField", "This is some extra data");
 		  $.ajax({
@@ -252,18 +254,27 @@
 			  contentType: false,   // tell jQuery not to set contentType
 			  success: function (data) {
 				  console.log(data);
+				  $('#pdf_modal').modal('toggle');
 				  $('.icon-link').trigger('click');
 				  $('.note-link-url').val("{{url('')}}/files/"+data);
 				  $('.note-link-btn').trigger('click');
+				  $('#pdf_file').val('');
+				  $('#pdf_upload').text('Insert');
+				  $('#pdf_upload').prop('disabled', false);
 			  },
 			  error: function (xhr, data, errorThrown) {
 				  console.log(data);
-				  console.log(xhr.status);
 					if(xhr.status=='422'){
 						//var error=JSON.parse(xhr.responseText);
 						//alert(error.pdf_file);
-						alert('Must provide a pdf file.')
+						//alert('Must provide a pdf file.');
+						$('#pdf_error').text('Must provide a pdf file.');
+					}else{
+						$('#pdf_error').text('Something went wrong. Try again.');
 					}
+				  $('#pdf_file').val('');
+				  $('#pdf_upload').text('Insert');
+				  $('#pdf_upload').prop('disabled', false);
 			  }
 		  });
 	  }
