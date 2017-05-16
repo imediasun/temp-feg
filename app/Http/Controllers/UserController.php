@@ -395,7 +395,7 @@ class UserController extends Controller
         return view('user.profile', $this->data);
     }
 
-    public function jsconnect(Request $request) {
+    public function getJsconnect(Request $request) {
 
         $inputs = $request->all();
 
@@ -414,10 +414,11 @@ class UserController extends Controller
             $jsonpData = [
                 'client_id' => $client_id,
                 'signature' => $signature,
+                'timestamp' => $timestamp,
                 'uniqueid' => \Session::get('uid'),
                 'name' => \Session::get('fid'),
                 'email' => \Session::get('eid'),
-                'photourl' => \FEGHelp::getUserAvatarUrl(\Session::get('uid'))
+                'photourl' => ''//\FEGHelp::getUserAvatarUrl(\Session::get('uid'))
             ];
         }
 
