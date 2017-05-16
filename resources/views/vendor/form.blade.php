@@ -242,7 +242,40 @@
 					 <div class="col-md-2">
 					 	
 					 </div>
-				  </div> </fieldset>
+				  </div>
+							<div class="form-group  " >
+								<input type='hidden' value='0' name='hide'>
+								<label for="Hide Vendor" class=" control-label col-md-4 text-left">
+									{!! SiteHelpers::activeLang('Hide Vendor', (isset($fields['hide']['language'])? $fields['hide']['language'] : array())) !!}
+								</label>
+								<div class="col-md-6 check-no">
+                                    <?php $hide = explode(",",$row['hide']); ?>
+									<label class='checked checkbox-inline'>
+										<input type='checkbox' name='hide' value ='1'   class=''
+											   @if(in_array('1',$hide))checked @endif
+										/>  </label>
+								</div>
+								<div class="col-md-2">
+
+								</div>
+							</div>
+							<div class="form-group  " >
+								<input type='hidden' value='0' name='status'>
+								<label for="Active" class=" control-label col-md-4 text-left">
+									{!! SiteHelpers::activeLang('Active', (isset($fields['status']['language'])? $fields['status']['language'] : array())) !!}
+								</label>
+								<div class="col-md-6 check-no">
+                                    <?php $status = explode(",",$row['status']); ?>
+									<label class='checked checkbox-inline'>
+										<input type='checkbox' name='status' value ='1'   class=''
+											   @if(in_array('1',$status))checked @endif
+										/>  </label>
+								</div>
+								<div class="col-md-2">
+
+								</div>
+							</div>
+						</fieldset>
 			</div>
 			
 												

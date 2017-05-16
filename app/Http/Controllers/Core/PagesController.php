@@ -175,12 +175,11 @@ class PagesController extends Controller
 
         $rules = array(
             'title' => 'required',
-            'alias' => 'required|alpha_dash',
+            'alias' => 'required',
             'filename' => 'required|alpha',
             'status' => 'required',
-
-
         );
+
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
             $content = $request->input('content');
@@ -221,7 +220,9 @@ class PagesController extends Controller
             if(is_array($data['direct_edit_users_exclude'])) {
                 $data['direct_edit_users_exclude'] = implode(',', $data['direct_edit_users_exclude']);
             }
-            
+
+            $data['alias']=str_slug($request->input('alias'), '-');
+
             $this->model->insertRow($data, $request->input('pageID'));
             self::createRouters();
 
@@ -235,7 +236,7 @@ class PagesController extends Controller
                     ->with('msgstatus', 'success');
 
         } else {
-
+            //return $request->all();
             return Redirect::to('core/pages/update/' . $id)
                 ->with('messagetext', \Lang::get('core.note_error'))
                 ->with('msgstatus', 'error')

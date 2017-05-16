@@ -1377,4 +1377,69 @@ $message" .
 
         return $data;
     }
+
+	public static function removeDuplicateUserLocations()
+	{
+        $result = [];
+        $sql = "SELECT COUNT(id) AS  cid, GROUP_CONCAT(CONCAT('', id) ORDER BY id) as ids,
+            location_id, user_id, GROUP_CONCAT(CONCAT(IFNULL(group_id, '0'),'')  ORDER BY id) as gids
+            FROM user_locations
+            GROUP BY location_id, user_id
+            HAVING COUNT(id)>1
+            ORDER BY cid DESC";
+        $data = \DB::select($sql);
+        $q = [];
+        if (!empty($data)) {
+            foreach($data as $item) {
+                $user = $item->user_id;
+                $location = $item->location_id;
+                $ids = explode(',', $item->ids);
+                $gs = explode(',', $item->gids);
+                foreach($ids as $key => $id) {
+                    $gid = $gs[$key];
+                    $q[$location.'-'.$user][$gid] = $id;
+                }
+
+            }
+        }
+        $sql = "SELECT COUNT(id) AS  cid, GROUP_CONCAT(CONCAT('', id) ORDER BY id) AS ids,
+            location_id, GROUP_CONCAT(CONCAT(IFNULL(user_id, '0'),'')  ORDER BY id) AS uids,
+            group_id
+
+            FROM user_locations
+            WHERE group_id IS NOT NULL
+            GROUP BY location_id, group_id
+             HAVING COUNT(id)>1
+            ORDER BY cid DESC";
+        $data = \DB::select($sql);
+        $q2 = [];
+        if (!empty($data)) {
+            foreach($data as $item) {
+                $gid = $item->group_id;
+                $location = $item->location_id;
+                $ids = explode(',', $item->ids);
+                foreach($ids as $key => $id) {
+                    $q2[$location.'-'.$gid] = $id;
+                }
+            }
+        }
+
+        \DB::beginTransaction();
+        $result[] = "<strong>Delete User's Duplicate Location Assignments</strong>";
+        foreach($q as $key => $groups) {
+            $ids = [];
+            foreach($groups as $gid => $id) {
+                $ids[] = $id;
+            }
+            $sql = "DELETE FROM user_locations WHERE location_id=". str_replace('-', ' AND user_id=', $key). ' AND id NOT IN ('. implode(',', $ids).')';
+            $result[] = \DB::delete($sql) . ' => '. $sql;
+        }
+        $result[] = "<strong>Delete Location's Special Assignments</strong>";
+        foreach($q2 as $key => $id) {
+            $sql = "DELETE FROM user_locations WHERE location_id=". str_replace('-', ' AND group_id=', $key). ' AND id NOT IN ('. $id .')';
+            $result[] = \DB::delete($sql) . ' => '. $sql;
+        }
+        \DB::commit();
+        return $result;
+	}
 }

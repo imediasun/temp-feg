@@ -25,6 +25,7 @@ class ModulesController extends Controller
 
 	public function index($params = null)
 	{
+        $this->data['data'] = [$params];
 		return view('feg.system.utils.modules.index',$this->data);
 	}
 

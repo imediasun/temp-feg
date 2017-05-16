@@ -513,17 +513,13 @@ class UserController extends Controller
                 $user = $user->get();
                 $user = $user[0];
                 $data = array('token' => $request->input('_token'));
-                $to = ['to'=>$request->input('credit_email')];
-
+                $to = $request->input('credit_email');
                 $subject = "[ " . CNF_APPNAME . " ] REQUEST PASSWORD RESET ";
                 $message = view('user.emails.auth.reminder', $data);
-                FEGSystemHelper::sendSystemEmail(array_merge($to, array(
-                    'subject' => $subject,
-                    'message' => $message,
-                    'isTest' => env('APP_ENV', 'development') !== 'production' ? true : false,
-                    'from' => CNF_EMAIL,
-                    'configName' => 'FORGETPASSWORD EMAIL'
-                )));
+                $headers = 'MIME-Version: 1.0' . "\r\n";
+                $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
+                $headers .= 'From: ' . CNF_APPNAME . ' <' . CNF_EMAIL . '>' . "\r\n";
+                mail($to, $subject, $message, $headers);
 
 
                 $affectedRows = User::where('email', '=', $user->email)

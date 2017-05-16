@@ -265,6 +265,7 @@ class OrderController extends Controller
     {
         $editmode = $prefill_type = 'edit';
         $where_in_expression = '';
+        \Session::put('redirect','order');
         $this->data['setting'] = $this->info['setting'];
         if ($id != 0 && $mode == '') {
 
@@ -272,6 +273,7 @@ class OrderController extends Controller
         } elseif ($id == 0 && $mode == '') {
             $mode = 'create';
         } elseif (substr($mode, 0, 3) == 'SID') {
+            \Session::put('redirect','managefegrequeststore');
             $mode = $mode;
         } elseif ($mode == "clone") {
             $mode = 'clone';
@@ -1381,6 +1383,7 @@ function sendPhpEmail($message,$to,$from,$subject,$pdf,$filename,$cc,$bcc)
         }
         return false;
     }
+    //script for generating unique random po_number for all orders    home_url/order/random-po-update
     function getRandomPoUpdate()
     {
         die("THIS SCRIPT IS NOT WORKING CORRECTLY. DO NOT RUN THIS SCRIPT");

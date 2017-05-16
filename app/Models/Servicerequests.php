@@ -50,7 +50,7 @@ class Servicerequests extends Observerable  {
         if (empty($selected_loc)) {
             $selected_loc = null;
         }
-        
+
         if ($isOmniscient) {
             $q = "  WHERE $controlField IS NOT NULL ";            
         }            

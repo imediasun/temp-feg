@@ -46,6 +46,7 @@
 						  <li ><a href="#meta" data-toggle="tab"> Meta & Description </a></li>
 						</ul>
 
+
 						<div class="tab-content">
 						  <div class="tab-pane active m-t" id="info">
 							  <div class="form-group  " >
@@ -212,6 +213,79 @@
 	</div>
 </div>
 
+  {{--Upload PDF --}}
+
+  <div class="note-link-dialog modal" aria-hidden="false" id="pdf_modal">
+	  <div class="modal-dialog">
+		  <div class="modal-content">
+			  <div class="modal-header">
+				  <button type="button" class="close" aria-hidden="true" tabindex="-1" onclick="$('#pdf_modal').modal('toggle');">×</button>
+				  <h4>Upload PDF</h4>
+			  </div>
+			  <div class="modal-body">
+				  <div class="row-fluid">
+					  <form method="post" enctype="multipart/form-data" name="pdf_form">
+					  <div class="form-group">
+						  <label>Browse PDF</label>
+						  <input type="file" name="pdf_file" id="pdf_file" accept="application/pdf" />
+						  <label style="color:red;font-size:14px;margin-top:5px;" id="pdf_error"></label>
+					  </div>
+					  </form>
+				  </div>
+			  </div>
+			  <div class="modal-footer">
+				  <button href="#" onclick="upload_pdf();" class="btn btn-primary" id="pdf_upload">Insert</button>
+			  </div>
+		  </div>
+	  </div>
+  </div>
+
+  <script>
+	  function upload_pdf() {
+		  $('#pdf_upload').text('Uploading...');
+		  $('#pdf_upload').prop('disabled', true);
+		  var fd = new FormData(document.forms.namedItem("pdf_form"));
+		  //fd.append("CustomField", "This is some extra data");
+		  $.ajax({
+			  url: "{{url()}}/pages/upload",
+			  type: "POST",
+			  data: fd,
+			  processData: false,  // tell jQuery not to process the data
+			  contentType: false,   // tell jQuery not to set contentType
+			  success: function (data) {
+				  console.log(data);
+				  $('#pdf_modal').modal('toggle');
+				  $('.icon-link').trigger('click');
+				  $('.note-link-url').val("{{url('')}}/upload/pageCmsPDF/"+data);
+				  $('.note-link-btn').trigger('click');
+				  $('#pdf_file').val('');
+				  $('#pdf_upload').text('Insert');
+				  $('#pdf_upload').prop('disabled', false);
+			  },
+			  error: function (xhr, data, errorThrown) {
+				  console.log(data);
+					if(xhr.status=='422'){
+						//var error=JSON.parse(xhr.responseText);
+						//alert(error.pdf_file);
+						//alert('Must provide a pdf file.');
+						$('#pdf_error').text('Must provide a pdf file.');
+					}else{
+						$('#pdf_error').text('Something went wrong. Try again.');
+					}
+				  $('#pdf_file').val('');
+				  $('#pdf_upload').text('Insert');
+				  $('#pdf_upload').prop('disabled', false);
+			  }
+		  });
+	  }
+
+	  $( document ).ready(function() {
+		  $('.note-toolbar').append('<div class="note-attach btn-group"><button type="button" class="btn btn-default btn-sm btn-small" data-toggle="tooltip" title="Attach PDF" data-placement="bottom" tabindex="-1" onclick=$("#pdf_modal").modal()><i class="fa fa-file-o"></i></button></div>');
+		  $('[data-toggle="tooltip"]').tooltip();
+	  });
+
+  </script>
+
 <style type="text/css">
 .note-editor .note-editable { height:500px;}
 </style>
@@ -229,11 +303,11 @@
     <script>
         $(document).ready(function(){
             $("#iGroups").jCombo("{{ URL::to('pages/comboselect?filter=tb_groups:group_id:name') }}",
-                    {selected_value: "{{ $row->direct_edit_groups }}"});
+                    {selected_value: "{{ is_object($row)?$row->direct_edit_groups:'' }}"});
             $("#iUsers").jCombo("{{ URL::to('pages/comboselect?filter=users:id:first_name|last_name') }}",
-                    {selected_value: "{{ $row->direct_edit_users }}"});
+                    {selected_value: "{{ is_object($row)?$row->direct_edit_users:'' }}"});
             $("#eUsers").jCombo("{{ URL::to('pages/comboselect?filter=users:id:first_name|last_name') }}",
-                    {selected_value: "{{ $row->direct_edit_users_exclude }}"});
+                    {selected_value: "{{ is_object($row)?$row->direct_edit_users_exclude:'' }}"});
         });
         var row = <?php echo json_encode($row) ; ?>;
     </script>
