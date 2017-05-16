@@ -19,7 +19,8 @@
                             <h1>Request Removal Explain</h1>
                         </div>
 
-                        <div class="col-md-12" style="margin-left: 18px;">
+                        {{--changed--}}
+                        <div class="col-md-12" style="margin-left:18px;">
                             {!! Form::open(array('url'=>'order/removalrequest', 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=>'removalrequestform')) !!}
                             <label class="label-control" for="explaination">Please Explain Why?</label>
                             <div class="form-group">
