@@ -328,4 +328,12 @@ function showResponse(data)  {
 	}	
 }			 
 
-</script>		 
+</script>
+
+<style>
+	.form-horizontal .control-label, .form-horizontal .radio, .form-horizontal .checkbox, .form-horizontal .radio-inline, .form-horizontal .checkbox-inline {
+		padding-top: 0px;
+		margin-top: 0;
+		margin-bottom: 0;
+	}
+</style>

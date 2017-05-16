@@ -324,8 +324,10 @@
 										{!! SiteHelpers::activeLang('Sold Date', (isset($fields['date_sold']['language'])? $fields['date_sold']['language'] : array())) !!}
 									</label>
 									<div class="col-md-6">
-										<div class="input-group" style="width:150px;">
-											<input name='date_sold'
+										<div class="input-group">
+											<span class="input-group-addon" style="width: 30px"><i class="fa fa-calendar"></i></span>
+
+											<input name='date_sold' style="width: 150px;"
 												   type='text' class='form-control date'
 												   value='{{ $soldDateFormatted }}'
 												   placeholder='Sold Date'
@@ -333,7 +335,6 @@
 												   parsley-errors-container='.dateSoldError'
 												   @if($isSold) required='required' @endif
 											/>
-											<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
 										</div>
 										<div class='dateSoldError'></div>
 									</div>

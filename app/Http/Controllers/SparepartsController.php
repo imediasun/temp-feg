@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\controller;
 use App\Models\Spareparts;
+use \App\Models\Sximo\Module;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Validator, Input, Redirect;
@@ -194,10 +195,17 @@ class SparepartsController extends Controller
 
     function postSave(Request $request, $id = null)
     {
-        $row = $this->model->getRow($id);
-        if($row->status_id != 0)
+        if($id)
         {
-            $rules = array('loc_id' => 'required', 'status_id' => 'required');
+            $row = $this->model->getRow($id);
+            if($row->status_id != 2)
+            {
+                $rules = array('loc_id' => 'required', 'status_id' => 'required');
+            }
+            else
+            {
+                $rules = array('description' => "required",  'qty' => "required", 'value' => 'required', 'loc_id' => 'required', 'user' => 'required','status_id' => 'required');
+            }
         }
         else
         {

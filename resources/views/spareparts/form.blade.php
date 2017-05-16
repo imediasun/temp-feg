@@ -19,7 +19,7 @@
             <div class="col-md-12">
                 <fieldset>
                     
-                    @if($row['status_id']==0)
+                    @if($row['status_id']==2)
                     <div class="form-group  ">
                         <label for="Description" class=" control-label col-md-4 text-left">
                             {!! SiteHelpers::activeLang('Description', (isset($fields['description']['language'])?
@@ -38,8 +38,7 @@
                             $fields['for_game']['language'] : array())) !!}
                         </label>
                         <div class="col-md-6">
-                            {!! Form::text('for_game', $row['for_game'],array('class'=>'form-control',
-                            'placeholder'=>'', )) !!}
+                            <select name="for_game" id="for_game" class="select4"></select>
                         </div>
                         <div class="col-md-2">
                         </div>
@@ -81,7 +80,7 @@
                         <div class="col-md-2">
                         </div>
                     </div>
-                    @if($row['status_id']==0)
+                    @if($row['status_id']==2)
                     <div class="form-group  ">
                         <label for="User" class=" control-label col-md-4 text-left">
                             {!! SiteHelpers::activeLang('Submitted By', (isset($fields['user']['language'])?
@@ -107,7 +106,7 @@
 
                         </div>
                     </div>
-                    @if($row['status_id']==0)
+                    @if($row['status_id']==2)
                     <div class="form-group  ">
                         <label for="User Claim" class=" control-label col-md-4 text-left">
                             {!! SiteHelpers::activeLang('User Claim', (isset($fields['user_claim']['language'])?
@@ -139,7 +138,6 @@
             </div>
             {!! Form::close() !!}
 
-
             @if($setting['form-method'] =='native')
         </div>
     </div>
@@ -152,7 +150,8 @@
                     {selected_value: '{{ $row['status_id'] }}', initial_text: 'Select Status'});
             $("#loc_id").jCombo("{{ URL::to('spareparts/comboselect?filter=location:id:location_name') }}",
                     {selected_value: '{{ $row['loc_id'] }}', initial_text: 'Select Location'});
-
+            $("#for_game").jCombo("{{ URL::to('spareparts/comboselect?filter=game:id:id|game_name') }}" + "&delimiter= - ",
+                {  selected_value : '{{ $row["for_game"] }}',initial_text:'-- Select Game --' });
             $('.editor').summernote();
             $('.previewImage').fancybox();
             $('.tips').tooltip();

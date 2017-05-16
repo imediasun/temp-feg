@@ -958,6 +958,15 @@ class Sximo extends Model {
 
     function totallyRecordInCart()
     {
+        if(empty(\Session::get('selected_location')))
+        {
+            $obj = new \stdClass();
+            $obj->total = 0;
+            $total = [
+                0 => $obj
+            ];
+            return $total;
+        }
         $data['user_level'] = \Session::get('gid');
         if ($data['user_level'] == 3 || $data['user_level'] == 4 || $data['user_level'] == 5 || $data['user_level'] == 7 || $data['user_level'] == 9 || $data['user_level'] == 10) {
            $status_id = 9; /// 9 IS USED AS AN ARBITRARY DELIMETER TO KEEP CART SEPERATE FROM LOCATIONS' OWN

@@ -265,6 +265,7 @@ class OrderController extends Controller
     {
         $editmode = $prefill_type = 'edit';
         $where_in_expression = '';
+        \Session::put('redirect','order');
         $this->data['setting'] = $this->info['setting'];
         if ($id != 0 && $mode == '') {
 
@@ -272,6 +273,7 @@ class OrderController extends Controller
         } elseif ($id == 0 && $mode == '') {
             $mode = 'create';
         } elseif (substr($mode, 0, 3) == 'SID') {
+            \Session::put('redirect','managefegrequeststore');
             $mode = $mode;
         } elseif ($mode == "clone") {
             $mode = 'clone';
@@ -618,7 +620,7 @@ class OrderController extends Controller
             $cc1="";
         }
         $viewName = empty($isPop) ? 'order.saveorsendemail' : 'order.pop.saveorsendemail';
-        return view($viewName, array('cc'=>$cc1));
+        return view($viewName, array('cc'=>$cc1, "pageUrl" => $this->data['pageUrl']));
     }
 
     function postSaveorsendemail(Request $request)
@@ -914,6 +916,8 @@ class OrderController extends Controller
                 $data[0]['item_qty_string'][$i] = $item_qty_string;
                 $data[0]['item_total_string'][$i] = $item_total_string;
                 $data[0]['order_total_cost'] = $order_total_cost;
+                $data[0]['company_name_long'] = 'Family Entertainment Group';
+
 //                $item_total_string = $item_total_string."-----------------\n"."$ ".number_format($order_total_cost,3)."\n";
             }
             $pdf = \PDF::loadView('order.po', ['data' => $data, 'main_title' => "Purchase Order"]);
@@ -931,7 +935,7 @@ class OrderController extends Controller
             if ($sendemail) {
                 if (isset($to) && count($to) > 0) {
                     $filename = 'PO_' . $order_id . '.pdf';
-                    $subject = "Purchase Order";
+                    $subject = "Purchase Order # {$data[0]['po_number']}";
                     $message = $message;
                     $cc = $cc;
                     $bcc = $bcc;
@@ -1379,6 +1383,7 @@ function sendPhpEmail($message,$to,$from,$subject,$pdf,$filename,$cc,$bcc)
         }
         return false;
     }
+    //script for generating unique random po_number for all orders    home_url/order/random-po-update
     function getRandomPoUpdate()
     {
         $delete_all_POtrack=\DB::DELETE('delete from po_track');

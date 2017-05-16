@@ -26,7 +26,7 @@ class GamesintransitController extends Controller
         $this->pass = \FEGSPass::getMyPass($this->module_id);
         $this->mylocationgamePass = \FEGSPass::getMyPass(Module::name2id('mylocationgame'));
         $this->access['is_edit'] = $this->access['is_edit'] == 1 || !empty($this->mylocationgamePass['Can Edit']) ? 1 : 0;
-        $this->access['is_remove'] = $this->access['is_remove'] == 1 || !empty($this->mylocationgamePass['Can Can Dispose']) ? 1 : 0;
+        $this->access['is_remove'] = $this->access['is_remove'] == 1 || !empty($this->mylocationgamePass['Can Dispose']) ? 1 : 0;
 
         $this->data = array(
             'pass' => $this->pass,

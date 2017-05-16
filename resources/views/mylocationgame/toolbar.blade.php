@@ -63,9 +63,10 @@
                    onclick="ajaxCopy('#{{ $pageModule }}','{{ $pageUrl }}')"><i class="fa fa-file-o"></i> Copy </a>
             @endif
             @if($access['is_remove'] ==1)
-                <a href="javascript://ajax" class="btn btn-sm btn-white"
+                <a href="javascript://ajax"
+                   class="btn btn-sm btn-white"
                    onclick="ajaxGameDispose('#{{ $pageModule }}','{{ $pageUrl }}');"><i
-                            class="fa fa-trash-o "></i> Dispose </a>
+                class="fa fa-trash-o "></i> Dispose </a>
             @endif
             @endif
             <a href="{{ URL::to( $pageModule .'/search') }}" class="btn btn-sm btn-white"

@@ -188,7 +188,7 @@
             <input type="hidden" name="prev_location_id" value="{{ $prevLocationId }}">
             <input type="hidden" name="old_location_id" value="{{ $locationId }}">
             <input type="hidden" name="game_move_id" value="{{ $moveId }}">
-            <label for="location_id" class=" control-label col-md-4">
+            <label for="location_id" class="control-label col-md-4" style="padding-right: 0px">
                 {!! SiteHelpers::activeLang('Location', (isset($fields['location']['language'])? $fields['location']['language'] : array())) !!}
                 <span class="locationLabelModifier" 
                        @if($statusId != 3) style="display: none;" @endif                      
@@ -213,9 +213,10 @@
             </label>
             <div class="col-md-8">
                 <input type="hidden" name="oldserial" value="{{ $serialNumber }}" />
-                <input type="text" name="serial" value="{{ $serialNumber }}" 
+                <input type="text" name="serial" value="{{ $serialNumber }}"
                        style="width: 100%"
-                       class="form-control" placeholder="Serial #" required/>
+                       class="form-control" placeholder="Serial #" readonly/>
+
             </div>
         </div>
         @endif         

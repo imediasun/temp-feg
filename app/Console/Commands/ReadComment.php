@@ -71,12 +71,13 @@ class ReadComment extends Command
         /* connect to gmail */
         $hostname = '{imap.gmail.com:993/imap/ssl/novalidate-cert}INBOX';
         $username = "tickets@tickets.fegllc.com";
-        $password = "8d<Sy%681";
+        $password = "8d<Sy%68";
 
         $L->log("Connecting...");
         /* try to connect */
         try {            
-            $inbox = imap_open($hostname, $username, $password);            
+            $inbox = imap_open($hostname, $username, $password,NULL, 1,
+                array('DISABLE_AUTHENTICATOR' => 'PLAIN'));
             
         } catch (Exception $ex) {
             $L->log("Error connecting to IMAP:" . $ex->getMessage());
@@ -105,7 +106,7 @@ class ReadComment extends Command
                 /* get information specific to this email */
                 $meta = $this->getMessageDetails($inbox, $email_number);
                 $L->log("Message Details: ", $meta);
-                $UID = isset($meta['message_id']) ? $meta['message_id']: '';
+                $UID = isset($meta->message_id) ? $meta->message_id: '';
                 //$messageExists = Ticketcomment::doesCommentExist($UID);
                 //if ($messageExists) {
                 //     $L->log("Message exists with ID: $UID.");

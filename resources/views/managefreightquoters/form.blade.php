@@ -403,12 +403,9 @@
 
                         <div class="col-md-6">
                             <select class="form-control" name="games_per_location" id="games_per_location">
-                                <option value="0">0</option>
-                                <option value="1">1</option>
-                                <option value="2">2</option>
-                                <option value="3">3</option>
-                                <option value="4">4</option>
-                                <option value="5">5</option>
+                                @for($i =0 ; $i <= 12 ; $i++)
+                                    <option value="{{$i}}">{{$i}}</option>
+                                @endfor
                             </select>
                         </div>
                         <div class="col-md-2">

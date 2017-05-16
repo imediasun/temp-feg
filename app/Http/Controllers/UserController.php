@@ -9,6 +9,7 @@ use App\User;
 use Socialize;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
+use App\Library\FEG\System\FEGSystemHelper;
 use Validator, Input, Redirect;
 
 class UserController extends Controller
@@ -394,6 +395,37 @@ class UserController extends Controller
         return view('user.profile', $this->data);
     }
 
+    public function jsconnect(Request $request) {
+
+        $inputs = $request->all();
+
+        $callback = @$inputs['callback'];
+        $signature = @$inputs['signature'];
+        $client_id = @$inputs['client_id'];
+        $timestamp = @$inputs['timestamp'];
+
+        $jsonpData = [
+            'name' => '',
+            'photourl' => '',
+        ];
+
+        if (\Auth::check())  {
+
+            $jsonpData = [
+                'client_id' => $client_id,
+                'signature' => $signature,
+                'uniqueid' => \Session::get('uid'),
+                'name' => \Session::get('fid'),
+                'email' => \Session::get('eid'),
+                'photourl' => \FEGHelp::getUserAvatarUrl(\Session::get('uid'))
+            ];
+        }
+
+        $jsonp = implode('', [$callback, '(', json_encode($jsonpData), ");"]);
+
+        return $jsonp;
+    }
+
     public function postSaveprofile(Request $request)
     {
         if (!\Auth::check()) return Redirect::to('/');
@@ -569,7 +601,7 @@ class UserController extends Controller
 
     function getSocialize($social)
     {
-        return Socialize::with($social)->scopes(['openid', 'profile', 'email','https://mail.google.com'])->redirect();
+        return Socialize::with($social)->scopes(['openid', 'profile', 'email','https://mail.google.com'])->with(['access_type' => 'offline'])->redirect();
     }
 
     function getAutosocial($social)

@@ -47,6 +47,9 @@ class Servicerequests extends Observerable  {
         $selected_loc = \SiteHelpers::getCurrentUserLocationsFromSession();//\Session::get('selected_location');
         $isOmniscient = ticketsetting::isUserOmniscient();
         $q = "";
+        if (empty($selected_loc)) {
+            $selected_loc = null;
+        }
 
         if ($isOmniscient) {
             $q = "  WHERE $controlField IS NOT NULL ";            
