@@ -95,6 +95,7 @@ class PagesController extends Controller
 
     function getUpdate(Request $request, $id = null)
     {
+
         if ($id == '') {
             if ($this->access['is_add'] == 0)
                 return Redirect::to('dashboard')->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
@@ -215,4 +216,18 @@ class PagesController extends Controller
 
     }
 
+    function postUpload(Request $request)
+    {
+        //return $request->all();
+        $this->validate($request, [
+            'pdf_file' => 'required',
+        ]);
+        if( $request->hasFile('pdf_file')) {
+            $file = $request->file('pdf_file');
+            $path = public_path('files');
+            $name = mt_rand() . '_' . $file->getClientOriginalName();
+            $file->move($path, $name);
+            return $name;
+        }
+    }
 }
