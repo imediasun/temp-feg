@@ -128,13 +128,18 @@
 </div>	
 
 </div>
-<style>
+
+  <style>
 	.btn-xs, .btn-group-xs > .btn {
 		padding: 0px 3px;
 		font-size: 12px;
 		line-height: 1.5;
 		border-radius: 3px;
 	}
+
+	  .btn-group:hover{
+		  background-color: #14457a !important;
+	  }
 </style>
   <script language='javascript' >
   jQuery(document).ready(function($){

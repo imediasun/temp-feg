@@ -15,11 +15,11 @@
                 <div class="sbox-title"> <h4> <i class="fa fa-table"></i> Request Removal <small>Order Removal Request</small></h4></div>
                 <div class="sbox-content">
                     <div class="row" >
-                        <div class="col-md-12" style="text-align: center;margin-bottom: 10px;">
+                        <div class="col-md-12" style="">
                             <h1>Request Removal Explain</h1>
                         </div>
 
-                        <div class="col-md-12" style="text-align: center;">
+                        <div class="col-md-12" style="margin-left: 18px;">
                             {!! Form::open(array('url'=>'order/removalrequest', 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=>'removalrequestform')) !!}
                             <label class="label-control" for="explaination">Please Explain Why?</label>
                             <div class="form-group">
