@@ -27,7 +27,7 @@
 
         <select id="vendor_id" class="select3 select2-offscreen" name="vendor_id" onchange="pageRefresh('V');">
             @foreach($manageRequestInfo['vendor_options'] as $k => $vendor)
-                <option @if($VID== $k) selected @endif value="{{ $k }}">{{ $vendor }}</option>
+                <option data-status={{ substr($vendor, -10) }} @if($VID== $k) selected @endif value="{{ $k }}">{{ $vendor }}</option>
             @endforeach
         </select>
     </div>
@@ -87,6 +87,7 @@
 
 </div>
 <script>
+
     $('document').ready(function () {
         setType();
             var config_id=$("#col-config").val();
@@ -110,6 +111,10 @@
         }
         else{
             $('#groups').show();
+        }
+        if($("#vendor_id").val())
+        {
+            ifVendorInactive();
         }
     });
     $("#public,#private").change(function () {
@@ -216,6 +221,7 @@
             }
         }
         else if (type == 'V') {
+
             var VID = $('#vendor_id').val();
             get += "&v3=V" + VID;
             if($('#location_id').val())
@@ -282,5 +288,16 @@
 
         });
         return params;
+    }
+    function ifVendorInactive()
+    {
+        var status=$("#vendor_id").find(":selected").data("status");
+        if(status == "(Inactive)")
+        {
+            $("#multi-btn").attr('disabled',true);
+        }
+        else{
+            $("#multi-btn").attr('disabled',false);
+        }
     }
 </script>
