@@ -229,11 +229,11 @@
     <script>
         $(document).ready(function(){
             $("#iGroups").jCombo("{{ URL::to('pages/comboselect?filter=tb_groups:group_id:name') }}",
-                    {selected_value: "{{ $row->direct_edit_groups }}"});
+                    {selected_value: "{{ is_object($row)?$row->direct_edit_groups:'' }}"});
             $("#iUsers").jCombo("{{ URL::to('pages/comboselect?filter=users:id:first_name|last_name') }}",
-                    {selected_value: "{{ $row->direct_edit_users }}"});
+                    {selected_value: "{{ is_object($row)?$row->direct_edit_users:'' }}"});
             $("#eUsers").jCombo("{{ URL::to('pages/comboselect?filter=users:id:first_name|last_name') }}",
-                    {selected_value: "{{ $row->direct_edit_users_exclude }}"});
+                    {selected_value: "{{ is_object($row)?$row->direct_edit_users_exclude:'' }}"});
         });
         var row = <?php echo json_encode($row) ; ?>;
     </script>
