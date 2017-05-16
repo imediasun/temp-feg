@@ -1383,6 +1383,7 @@ function sendPhpEmail($message,$to,$from,$subject,$pdf,$filename,$cc,$bcc)
     }
     function getRandomPoUpdate()
     {
+        die("THIS SCRIPT IS NOT WORKING CORRECTLY. DO NOT RUN THIS SCRIPT");
         $delete_all_POtrack=\DB::DELETE('delete from po_track');
         $DATA=\DB::SELECT('SELECT id,location_id, CONCAT(location_id,"-",DATE_FORMAT(date_ordered,"%m%d%y")) AS location_date
                             FROM orders');
