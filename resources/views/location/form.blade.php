@@ -238,7 +238,7 @@
 				  </div> 
 				  <div class="form-group  " >
 					<label for="ATTN" class=" control-label col-md-4 text-left">
-					{!! SiteHelpers::activeLang('ATTN', (isset($fields['attn']['language'])? $fields['attn']['language'] : array())) !!}
+					{!! SiteHelpers::activeLang('Attention', (isset($fields['attn']['language'])? $fields['attn']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
 					  {!! Form::text('attn', $row['attn'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
