@@ -44,7 +44,10 @@
 						<ul class="nav nav-tabs" >
 						  <li class="active"><a href="#info" data-toggle="tab"> Page Content </a></li>
 						  <li ><a href="#meta" data-toggle="tab"> Meta & Description </a></li>
+						<li ><a href="#" onclick="$('#pdf_modal').modal();"> Upload Doc </a></li>
+
 						</ul>
+
 
 						<div class="tab-content">
 						  <div class="tab-pane active m-t" id="info">
@@ -211,6 +214,58 @@
 		 {!! Form::close() !!}
 	</div>
 </div>
+
+  {{--Upload PDF --}}
+
+  <div class="note-link-dialog modal" aria-hidden="false" id="pdf_modal">
+	  <div class="modal-dialog">
+		  <div class="modal-content">
+			  <div class="modal-header">
+				  <button type="button" class="close" aria-hidden="true" tabindex="-1">×</button>
+				  <h4>Upload Document</h4>
+			  </div>
+			  <div class="modal-body">
+				  <div class="row-fluid">
+					  <form method="post" enctype="multipart/form-data" name="pdf_form">
+					  <div class="form-group">
+						  <label>Upload Doc</label>
+						  <input type="file" name="pdf_file"/>
+					  </div>
+					  </form>
+				  </div>
+			  </div>
+			  <div class="modal-footer">
+				  <button href="#" onclick="upload_pdf();" class="btn btn-primary" >Insert</button>
+			  </div>
+		  </div>
+	  </div>
+  </div>
+
+  <script>
+	  function upload_pdf() {
+		  $('#pdf_modal').modal('toggle');
+		  var fd = new FormData(document.forms.namedItem("pdf_form"));
+		  //fd.append("CustomField", "This is some extra data");
+		  $.ajax({
+			  url: "{{url()}}/pages/upload",
+			  type: "POST",
+			  data: fd,
+			  processData: false,  // tell jQuery not to process the data
+			  contentType: false,   // tell jQuery not to set contentType
+			  success: function (data) {
+				  console.log(data);
+				  $('.icon-link').trigger('click');
+				  $('.note-link-url').val("{{url('')}}/files/"+data);
+				  $('.note-link-btn').trigger('click');
+			  },
+			  error: function (data) {
+				  console.log(data);
+			  }
+		  });
+	  }
+  </script>
+
+
 
 <style type="text/css">
 .note-editor .note-editable { height:500px;}
