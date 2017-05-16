@@ -227,7 +227,7 @@
 					  <form method="post" enctype="multipart/form-data" name="pdf_form">
 					  <div class="form-group">
 						  <label>Browse PDF</label>
-						  <input type="file" name="pdf_file"/>
+						  <input type="file" name="pdf_file" accept="application/pdf" />
 					  </div>
 					  </form>
 				  </div>
