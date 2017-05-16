@@ -103,7 +103,7 @@
                     </div>
                 </div>
 
-                <div class="form-group clearfix">
+               {{-- <div class="form-group clearfix">
                     <label class="label-control col-md-3">Damage or Delays</label>
                     <div class="col-md-9">
                         @if(is_string($row['ship_exception']))
@@ -114,7 +114,7 @@
                     </div>
                 </div> 
                <hr/>
-           </div>
+           </div>--}}
             
             @if(!empty($row['vend_to']) || !empty($row['to_add_street']))
             <div class="vendorToCustomAdddressContainer clearfix">
