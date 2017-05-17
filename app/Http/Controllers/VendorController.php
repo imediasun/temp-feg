@@ -312,4 +312,28 @@ class VendorController extends Controller
 
     }
 
+    function postTrigger(Request $request)
+    {
+        $isActive = $request->get('isActive');
+        $field = $request->get('field');
+        $vendorId = $request->get('vendorId');
+        if ($isActive == "true") {
+            $update = \DB::update('update vendor set '.$field.' = 1 where id=' . $vendorId);
+        }
+        else
+        {
+            $update = \DB::update('update vendor set '.$field.' = 0 where id=' . $vendorId);
+        }
+        if ($update) {
+            return response()->json(array(
+                'status' => 'success'
+            ));
+        } else {
+            return response()->json(array(
+                'status' => 'error',
+                'message' => 'Some Error occurred in Activation'
+            ));
+        }
+    }
+
 }
