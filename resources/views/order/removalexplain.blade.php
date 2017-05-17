@@ -5,8 +5,7 @@
         <!-- Page header -->
         <div class="page-header">
             <div class="page-title">
-                <h3> Request Removal <small>Order Removal Request </small></h3>
-
+                <h3> Request Removal </h3>
             </div>
         </div>
 
@@ -19,12 +18,13 @@
                             <h1>Request Removal Explain</h1>
                         </div>
 
-                        <div class="col-md-6" style="margin-left:16px;">
+                        <div class="col-md-7" style="margin-left:16px;">
                             {!! Form::open(array('url'=>'order/removalrequest', 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=>'removalrequestform')) !!}
                             <div class="form-group">
-                                <textarea rows="8" cols="80" 
+                                <textarea rows="9"
                                           name="explaination" id="explaination"
                                           placeholder="Please Explain Why?"
+                                          style="width: 100%;"
                                           required></textarea>
                                 <input type="hidden" value="{{$po_number }}" name="po_number"/>
                             </div>
