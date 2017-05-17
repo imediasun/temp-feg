@@ -67,12 +67,12 @@ class OrderController extends Controller
             $order_selected = "";
         }
 
-        // rebuild search query skipping 'order_type' filter
+        // rebuild search query skipping 'order_type' filter // depricated
         $trimmedSearchQuery = $this->model->rebuildSearchQuery(null, array('order_type'));
 
         // Filter Search for query
         // build sql query based on search filters
-        $filter = $this->getSearchFilterQuery($trimmedSearchQuery);//$filter = is_null(Input::get('search')) ? '' : $this->buildSearch($trimmedSearchQuery);
+        $filter = $this->getSearchFilterQuery();//$filter = is_null(Input::get('search')) ? '' : $this->buildSearch($trimmedSearchQuery);
         // Get assigned locations list as sql query (part)
         $locationFilter = \SiteHelpers::getQueryStringForLocation('orders');
         // if search filter does not have location_id filter
@@ -175,12 +175,12 @@ class OrderController extends Controller
             $order_selected = "";
         }
 
-        // rebuild search query skipping 'order_type' filter
+        // rebuild search query skipping 'order_type' filter // depricated
         $trimmedSearchQuery = $this->model->rebuildSearchQuery(null, array('order_type'));
 
         // Filter Search for query
         // build sql query based on search filters
-        $filter = $this->getSearchFilterQuery($trimmedSearchQuery);
+        $filter = $this->getSearchFilterQuery();
         // Get assigned locations list as sql query (part)
         $locationFilter = \SiteHelpers::getQueryStringForLocation('orders');
         // if search filter does not have location_id filter
