@@ -51,7 +51,7 @@
   							<i class="fa fa-calendar" id="icon"></i>
 						</span>
 					    <input name='date_down' type="text" rows='5' id='date_down' style="width:150px !important;" class='form-control date'
-                             value="No Data"
+                             value=""
                              required>
 						</div>
 					 </div> 
