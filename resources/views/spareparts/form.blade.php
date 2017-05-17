@@ -27,7 +27,7 @@
                         </label>
                         <div class="col-md-6">
                             {!! Form::text('description', $row['description'],array('class'=>'form-control',
-                            'placeholder'=>'', )) !!}
+                            'placeholder'=>'', 'required'=>'true' )) !!}
                         </div>
                         <div class="col-md-2">
                         </div>
@@ -50,7 +50,7 @@
                             $fields['qty']['language'] : array())) !!}
                         </label>
                         <div class="col-md-6">
-                            {!! Form::text('qty', $row['qty'],array('class'=>'form-control', 'placeholder'=>'', )) !!}
+                            {!! Form::text('qty', $row['qty'],array('class'=>'form-control', 'placeholder'=>'','required'=>'true', 'parsley-type'=>'number' , 'parsley-min'=>1  )) !!}
                         </div>
                         <div class="col-md-2">
                         </div>
@@ -61,7 +61,7 @@
                             $fields['value']['language'] : array())) !!}
                         </label>
                         <div class="col-md-6">
-                            {!! Form::text('value', $row['value'],array('class'=>'form-control', 'placeholder'=>'', ))
+                            {!! Form::text('value', $row['value'],array('class'=>'form-control', 'placeholder'=>'','required'=>'true', 'parsley-type'=>'number' , 'parsley-min'=>0))
                             !!}
                         </div>
                         <div class="col-md-2">
@@ -75,7 +75,7 @@
                         </label>
 
                         <div class="col-md-6">
-                           <select name="loc_id" id="loc_id" class="select4"></select>
+                           <select name="loc_id" id="loc_id" class="select4" required></select>
                         </div>
                         <div class="col-md-2">
                         </div>
@@ -87,7 +87,7 @@
                             $fields['user']['language'] : array())) !!}
                         </label>
                         <div class="col-md-6">
-                            {!! Form::text('user', $row['user'],array('class'=>'form-control', 'placeholder'=>'', )) !!}
+                            {!! Form::text('user', $row['user'],array('class'=>'form-control', 'placeholder'=>'' ,'required'=>'true' )) !!}
                         </div>
                         <div class="col-md-2">
                         </div>
@@ -100,7 +100,7 @@
                         </label>
 
                         <div class="col-md-6">
-                            <select name="status_id" id="status_id" class="select4"/>
+                            <select name="status_id" id="status_id" class="select4" required />
                         </div>
                         <div class="col-md-2">
 
@@ -151,7 +151,7 @@
             $("#loc_id").jCombo("{{ URL::to('spareparts/comboselect?filter=location:id:location_name') }}",
                     {selected_value: '{{ $row['loc_id'] }}', initial_text: 'Select Location'});
             $("#for_game").jCombo("{{ URL::to('spareparts/comboselect?filter=game:id:id|game_name') }}" + "&delimiter= - ",
-                {  selected_value : '{{ $row["for_game"] }}',initial_text:'-- Select Game --' });
+                {  selected_value : '{{ $row["for_game"] }}',initial_text:'Select Game' });
             $('.editor').summernote();
             $('.previewImage').fancybox();
             $('.tips').tooltip();
