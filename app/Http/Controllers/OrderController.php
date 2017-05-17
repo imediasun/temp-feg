@@ -1383,34 +1383,4 @@ function sendPhpEmail($message,$to,$from,$subject,$pdf,$filename,$cc,$bcc)
         }
         return false;
     }
-    //script for generating unique random po_number for all orders    home_url/order/random-po-update
-    function getRandomPoUpdate()
-    {
-        $delete_all_POtrack=\DB::DELETE('delete from po_track');
-        $DATA=\DB::SELECT('SELECT id,location_id, CONCAT(location_id,"-",DATE_FORMAT(date_ordered,"%m%d%y")) AS location_date
-                            FROM orders');
-        $po_number= "";
-        foreach($DATA AS $order_data) {
-            $po_number = $order_data->location_date ."-".mt_rand(1,100);
-            $this->checkPOTrack($order_data->id,$order_data->location_id,$order_data->location_date,$po_number);
-        }
-    }
-    function checkPOTrack($order_id,$location_id,$location_date,$po_number)
-    {
-        $is_available_po=\DB::SELECT('select po_number from po_track where po_number ="'.$po_number.'"');
-        if(COUNT($is_available_po) > 0)
-        {
-            $po_number=$this->createNewPO($location_date);
-            $this->checkPOTrack($order_id,$location_id,$location_date,$po_number);
-        }
-        else{
-            \DB::TABLE('po_track')->INSERT(array('po_number'=>$po_number,'location_id'=>$location_id));
-            \DB::UPDATE('update orders set po_number="'.$po_number.'" where id='.$order_id);
-        }
-    }
-    function createNewPO($location_date)
-    {
-        $po_number=$location_date."-".mt_rand(1,100);
-        return $po_number;
-    }
 }
