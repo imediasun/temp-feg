@@ -198,7 +198,7 @@ $(document).ready(function() {
                         //window.location.reload();
                         $('#form-'+vendorId).hide(1000);
                     }
-                    if($('select[name="hide"] :selected').val() == 0 && state == false && field == 'hide')
+                    if($('select[name="hide"] :selected').val() == 1 && state == false && field == 'hide')
                     {
                         //window.location.reload();
                         $('#form-'+vendorId).hide(1000);
