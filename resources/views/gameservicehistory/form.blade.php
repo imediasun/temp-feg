@@ -83,7 +83,7 @@
 					</label>
 					<div class="col-md-6">
 					  <textarea name='solution' rows='5' id='solution' class='form-control '
-				           required>{{ $row['solution'] }}</textarea>
+				           >{{ $row['solution'] }}</textarea>
 					 </div> 
 					 <div class="col-md-2">
 					 	
