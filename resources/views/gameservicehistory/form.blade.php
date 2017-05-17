@@ -46,9 +46,14 @@
 					{!! SiteHelpers::activeLang('Date Down', (isset($fields['date_down']['language'])? $fields['date_down']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
-					  <input name='date_down' type="text" rows='5' id='date_down' class='form-control date' 
+						<div class="input-group">
+						<span class="input-group-addon datepickerHandleButton" style="width: 32px;">
+  							<i class="fa fa-calendar" id="icon"></i>
+						</span>
+					    <input name='date_down' type="text" rows='5' id='date_down' style="width:150px !important;" class='form-control date'
                              value="{{ DateHelpers::formatDate($row['date_down']) }}" 
                              required>
+						</div>
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -94,9 +99,14 @@
 					{!! SiteHelpers::activeLang('Date Up', (isset($fields['date_up']['language'])? $fields['date_up']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
-					  <input type="text" name='date_up'  id='date_up' class='form-control date' 
-                             value="{{ DateHelpers::formatDate($row['date_up']) }}"
+						<div class="input-group">
+						<span class="input-group-addon datepickerHandleButton" style="width: 32px;">
+  							<i class="fa fa-calendar" id="icon"></i>
+						</span>
+					  	<input type="text" name='date_up'  id='date_up' style="width:150px !important;" class='form-control date'
+                             value=""
                              required>
+						</div>
 					 </div>
 					 <div class="col-md-2">
 					 	
