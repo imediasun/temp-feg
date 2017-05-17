@@ -52,7 +52,7 @@
 						</span>
 
                         <input name='date_down' type="text" rows='5' id='date_down' style="width:150px !important;" class='form-control date'
-                               value="" required>
+                               value="{{  $row['date_down'] }}" required>
                     </div>
 					 <div class="col-md-2">
 					 	
@@ -103,7 +103,7 @@
   							<i class="fa fa-calendar" id="icon"></i>
 						</span>
 					  	<input type="text" name='date_up'  id='date_up' style="width:150px !important;" class='form-control date'
-                             value="">
+                             value="{{  $row['date_up'] }}">
 						</div>
 					 </div>
 					 <div class="col-md-2">
