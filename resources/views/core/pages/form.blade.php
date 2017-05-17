@@ -256,7 +256,7 @@
 				  console.log(data);
 				  $('#pdf_modal').modal('toggle');
 				  $('.icon-link').trigger('click');
-				  $('.note-link-url').val("{{url('')}}/files/"+data);
+				  $('.note-link-url').val("{{url('')}}/upload/pageCmsPDF/"+data);
 				  $('.note-link-btn').trigger('click');
 				  $('#pdf_file').val('');
 				  $('#pdf_upload').text('Insert');

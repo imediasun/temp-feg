@@ -224,7 +224,7 @@ class PagesController extends Controller
         ]);
         if( $request->hasFile('pdf_file')) {
             $file = $request->file('pdf_file');
-            $path = public_path('files');
+            $path = public_path('upload/pageCmsPDF');
             $name = mt_rand() . '_' . $file->getClientOriginalName();
             $file->move($path, $name);
             return $name;
