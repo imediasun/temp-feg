@@ -211,7 +211,7 @@ $(document).ready(function() {
         );
     });
 
-    $("[id^='toggle_trigger_']").bootstrapSwitch( {onColor: 'default', offColor:'primary'});
+    $("[id^='toggle_trigger_']").bootstrapSwitch();
 	$('.tips').tooltip();	
 	$('input[type="checkbox"],input[type="radio"]').not('.toggle').iCheck({
 		checkboxClass: 'icheckbox_square-blue',
