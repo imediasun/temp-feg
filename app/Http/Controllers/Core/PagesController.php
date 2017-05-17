@@ -252,8 +252,8 @@ class PagesController extends Controller
             return Redirect::to('dashboard')
                 ->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
         // delete multipe rows
-        if (count($request->input('id')) >= 1) {
-            $this->model->destroy($request->input('id'));
+        if (count($request->input('ids')) >= 1) {
+            $this->model->destroy($request->input('ids'));
 
             self::createRouters();
             return Redirect::to('core/pages')
