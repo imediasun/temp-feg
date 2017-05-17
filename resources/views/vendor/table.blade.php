@@ -127,7 +127,7 @@
 								@elseif($field['field']=='hide')
 									<td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}" data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
 										<input type='checkbox' name="mycheckbox" @if($value == 1) checked  @endif 	data-size="mini" data-animate="true"
-											   data-on-text="Hidden" data-field="hide" data-off-text="Visible" data-handle-width="50px" class="toggle" data-id="{{$row->id}}"
+											   data-on-text="Yes" data-field="hide" data-off-text="No" data-handle-width="50px" class="toggle" data-id="{{$row->id}}"
 											   id="toggle_trigger_{{$row->id}}" onSwitchChange="trigger()" />
 									</td>
 								@else
@@ -198,7 +198,7 @@ $(document).ready(function() {
                         //window.location.reload();
                         $('#form-'+vendorId).hide(1000);
                     }
-                    if($('select[name="hide"] :selected').val() == 0 && state == false && field == 'hide')
+                    if($('select[name="hide"] :selected').val() == 1 && state == false && field == 'hide')
                     {
                         //window.location.reload();
                         $('#form-'+vendorId).hide(1000);
