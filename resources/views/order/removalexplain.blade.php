@@ -21,12 +21,12 @@
 
                         <div class="col-md-6" style="margin-left:16px;">
                             {!! Form::open(array('url'=>'order/removalrequest', 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=>'removalrequestform')) !!}
+                            <label class="label-control" for="explaination">Please Explain Why?</label>
                             <div class="form-group">
                                 <textarea rows="8" cols="80" 
                                           name="explaination" id="explaination"
-                                          placeholder="Please Explain Why?"
-                                          required>
-                                </textarea>
+                                          placeholder="Please Explain"
+                                          required></textarea>
                                 <input type="hidden" value="{{$po_number }}" name="po_number"/>
                             </div>
                             <div class="form-group" style="text-align: center;">
