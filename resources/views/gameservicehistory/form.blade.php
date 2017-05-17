@@ -46,15 +46,14 @@
 					{!! SiteHelpers::activeLang('Date Down', (isset($fields['date_down']['language'])? $fields['date_down']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
-						<div class="input-group">
-						<span class="input-group-addon datepickerHandleButton" style="width: 32px;">
+
+						<span class="input-group-addon" style="width: 32px;padding-left: 10px;padding-top: 8px;padding-bottom: 8px;float: left;">
   							<i class="fa fa-calendar" id="icon"></i>
 						</span>
-					    <input name='date_down' type="text" rows='5' id='date_down' style="width:150px !important;" class='form-control date'
-                             value=""
-                             required>
-						</div>
-					 </div> 
+
+                        <input name='date_down' type="text" rows='5' id='date_down' style="width:150px !important;" class='form-control date'
+                               value="" required>
+                    </div>
 					 <div class="col-md-2">
 					 	
 					 </div>
