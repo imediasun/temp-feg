@@ -21,7 +21,6 @@
 
                         <div class="col-md-6" style="margin-left:16px;">
                             {!! Form::open(array('url'=>'order/removalrequest', 'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=>'removalrequestform')) !!}
-                            {{--<label class="label-control" for="explaination"></label>--}}
                             <div class="form-group">
                                 <textarea rows="8" cols="80" 
                                           name="explaination" id="explaination"
