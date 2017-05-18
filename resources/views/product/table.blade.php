@@ -146,7 +146,7 @@
 ?>
                                      @elseif($field['field']=='inactive')
                                          <input type='checkbox' name="mycheckbox" @if($value == "Yes") checked  @endif 	data-size="mini" data-animate="true"
-                                                data-on-text="Inactive" data-off-text="Active" data-handle-width="50px" class="toggle" data-id="{{$row->id}}"
+                                                data-on-text="Inactive" data-name="{{$row->vendor_description}}" data-off-text="Active" data-handle-width="50px" class="toggle" data-id="{{$row->id}}"
                                                 id="toggle_trigger_{{$row->id}}" onSwitchChange="trigger()" />
 
                                      @else
@@ -238,26 +238,45 @@ function showModal(id,obj){
 $(document).ready(function() {
 	//$(".sel-search").select2({ width:"100%"});
     $("[id^='toggle_trigger_']").on('switchChange.bootstrapSwitch', function(event, state) {
+        productId=$(this).data('id');
+        var message = '';
+        var check = false;
+        if(state)
+        {
+            message = "<div class='confirm_inactive'><br>Are you sure you want to Inactive this product <br> <b>***WARNING***</b><br> if you inactive this product you will not be able to add to cart.</div>";
+        }
+        else
+        {
+            check = true;
+            message = "<div class='confirm_inactive'><br>Are you sure you want to Active this product <br> <b>***WARNING***</b><br> if you active this product you will be able to add to cart.</div>";
+        }
 
-
-        var productId=$(this).data('id');
-        $.ajax(
-                {
-                    type:'POST',
-                    url:'product/trigger',
-                    data:{isActive:state,productId:productId},
-                    success:function(data){
-                        if($('select[name="product_list_type"] :selected').val() == 'productsindevelopment' && state == false)
-						{
-                            //window.location.reload();
-							$('#form-'+productId).hide(1000);
-						}
-                        if(data.status == "error"){
-                            //notyMessageError(data.message);
+        currentElm = $(this);
+        currentElm.bootstrapSwitch('state', check,true);
+        App.notyConfirm({
+            message: message,
+            confirmButtonText: 'Yes',
+            confirm: function (){
+                $.ajax(
+                    {
+                        type:'POST',
+                        url:'product/trigger',
+                        data:{isActive:state,productId:productId},
+                        success:function(data){
+                            currentElm.bootstrapSwitch('state',!check,true);
+                            if($('select[name="product_list_type"] :selected').val() == 'productsindevelopment' && state == false)
+                            {
+                                //window.location.reload();
+                                $('#form-'+productId).hide(1000);
+                            }
+                            if(data.status == "error"){
+                                //notyMessageError(data.message);
+                            }
                         }
                     }
-                }
-        );
+                );
+            }
+        });
     });
 
     $("[id^='toggle_trigger_']").bootstrapSwitch( {onColor: 'default', offColor:'primary'});
