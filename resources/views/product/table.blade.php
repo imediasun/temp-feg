@@ -239,55 +239,44 @@ $(document).ready(function() {
 	//$(".sel-search").select2({ width:"100%"});
     $("[id^='toggle_trigger_']").on('switchChange.bootstrapSwitch', function(event, state) {
         productId=$(this).data('id');
-        if(state == true)
-		{
-		    currentElm = $(this);
-            currentElm.bootstrapSwitch('state', false,true);
-            App.notyConfirm({
-                message: "<div class='confirm_inactive'><br>Are you sure you want to Inactive this product <br> <b>***WARNING***</b><br> if you inactive this product you will not be able to add to cart.</div>",
-                confirmButtonText: 'Yes',
-                confirm: function (){
-                    $.ajax(
-                        {
-                            type:'POST',
-                            url:'product/trigger',
-                            data:{isActive:state,productId:productId},
-                            success:function(data){
-                                currentElm.bootstrapSwitch('state',true,true);
-                                if($('select[name="product_list_type"] :selected').val() == 'productsindevelopment' && state == false)
-                                {
-                                    //window.location.reload();
-                                    $('#form-'+productId).hide(1000);
-                                }
-                                if(data.status == "error"){
-                                    //notyMessageError(data.message);
-                                }
+        var message = '';
+        var check = false;
+        if(state)
+        {
+            message = "<div class='confirm_inactive'><br>Are you sure you want to Inactive this product <br> <b>***WARNING***</b><br> if you inactive this product you will not be able to add to cart.</div>";
+        }
+        else
+        {
+            check = true;
+            message = "<div class='confirm_inactive'><br>Are you sure you want to Active this product <br> <b>***WARNING***</b><br> if you active this product you will be able to add to cart.</div>";
+        }
+
+        currentElm = $(this);
+        currentElm.bootstrapSwitch('state', check,true);
+        App.notyConfirm({
+            message: message,
+            confirmButtonText: 'Yes',
+            confirm: function (){
+                $.ajax(
+                    {
+                        type:'POST',
+                        url:'product/trigger',
+                        data:{isActive:state,productId:productId},
+                        success:function(data){
+                            currentElm.bootstrapSwitch('state',!check,true);
+                            if($('select[name="product_list_type"] :selected').val() == 'productsindevelopment' && state == false)
+                            {
+                                //window.location.reload();
+                                $('#form-'+productId).hide(1000);
+                            }
+                            if(data.status == "error"){
+                                //notyMessageError(data.message);
                             }
                         }
-                    );
-                }
-            });
-		}
-		else
-		{
-            $.ajax(
-                {
-                    type:'POST',
-                    url:'product/trigger',
-                    data:{isActive:state,productId:productId},
-                    success:function(data){
-                        if($('select[name="product_list_type"] :selected').val() == 'productsindevelopment' && state == false)
-                        {
-                            //window.location.reload();
-                            $('#form-'+productId).hide(1000);
-                        }
-                        if(data.status == "error"){
-                            //notyMessageError(data.message);
-                        }
                     }
-                }
-            );
-		}
+                );
+            }
+        });
     });
 
     $("[id^='toggle_trigger_']").bootstrapSwitch( {onColor: 'default', offColor:'primary'});

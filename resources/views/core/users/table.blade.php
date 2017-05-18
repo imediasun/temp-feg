@@ -228,46 +228,41 @@
     $(document).ready(function(){
         $("[id^='toggle_trigger_']").on('switchChange.bootstrapSwitch', function(event, state) {
             var userId=$(this).data('id');
-            if(state == false)
+            var message = '';
+            var check = false;
+            if(state)
             {
-                currentElm = $(this);
-                currentElm.bootstrapSwitch('state', true,true);
-                App.notyConfirm({
-                    message: "<div class='confirm_inactive'><br>Are you sure you want to Inactive this User <br> <b>***WARNING***</b><br> if you inactive this User then he will be unable to login and to do any task.</div>",
-                    confirmButtonText: 'Yes',
-                    confirm: function (){
-                        $.ajax(
-                            {
-                                type:'POST',
-                                url:'users/trigger',
-                                data:{isActive:state,userId:userId},
-                                success:function(data){
-                                    currentElm.bootstrapSwitch('state', false,true);
-                                    if(data.status == "error"){
-                                        //  notyMessageError(data.message);
-                                    }
+                message = "<div class='confirm_inactive'><br>Are you sure you want to Active this User <br> <b>***WARNING***</b><br> if you active this User then he will be able to login and to do any task.</div>";
+            }
+            else
+            {
+                check = true;
+                message = "<div class='confirm_inactive'><br>Are you sure you want to Inactive this User <br> <b>***WARNING***</b><br> if you inactive this User then he will be unable to login and to do any task.</div>";
+            }
+
+            currentElm = $(this);
+            currentElm.bootstrapSwitch('state', check,true);
+            App.notyConfirm({
+                message: message,
+                confirmButtonText: 'Yes',
+                confirm: function (){
+                    $.ajax(
+                        {
+                            type:'POST',
+                            url:'users/trigger',
+                            data:{isActive:state,userId:userId},
+                            success:function(data){
+                                currentElm.bootstrapSwitch('state', !check,true);
+                                if(data.status == "error"){
+                                    //  notyMessageError(data.message);
                                 }
                             }
-                        );
-                    }
-                });
-            }
-            else {
-                $.ajax(
-                    {
-                        type:'POST',
-                        url:'users/trigger',
-                        data:{isActive:state,userId:userId},
-                        success:function(data){
-                            if(data.status == "error"){
-                                //  notyMessageError(data.message);
-                            }
                         }
-                    }
-                );
-            }
-        });
+                    );
+                }
+            });
 
+        });
         $("[id^='toggle_trigger']").bootstrapSwitch();
         $('input[type="checkbox"],input[type="radio"]').not('.toggle').iCheck({
             checkboxClass: 'icheckbox_square-blue',
