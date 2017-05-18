@@ -6,6 +6,7 @@ use App\Http\Controllers\controller;
 use App\Models\Managefreightquoters;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
+use App\Library\FEG\System\FEGSystemHelper;
 use Validator,
     Input,
     Redirect;
@@ -590,32 +591,17 @@ class ManagefreightquotersController extends Controller
             $freightCompanyQuery = \DB::select('SELECT rep_email FROM freight_companies WHERE active = 1  AND rep_email != ""');
             foreach ($freightCompanyQuery as $rowFreight) {
                 $to = $rowFreight->rep_email;
-                /*if(env('APP_ENV', 'development') == 'production')
-                {
-                    $to = $rowFreight->rep_email;
-                    //$headers = "Bcc: " . $bcc . "\r\n";//commented for testing
+                if(!empty($to)){
+                    FEGSystemHelper::sendSystemEmail(array(
+                        'to' => $to,
+                        'subject' => $subject,
+                        'message' => $message,
+                        'isTest' => env('APP_ENV', 'development') !== 'production' ? true : false,
+                        'from' => $from,
+                        'bcc' => $bcc,
+                        'configName' => 'FREIGHT QUOTE EMAIL'
+                    ));
                 }
-                else
-                {
-                    $to = "stanlymarian@gmail.com";//hardcoded email for testing
-                    //$headers = '';
-                }*/
-
-
-                //$headers .= "From: " . $from . "\r\n" . "X-Mailer: php";
-                //$headers .= "MIME-Version: 1.0\r\n";
-                //$headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
-                //mail($to, $subject, $message, $headers);
-                FEGSystemHelper::sendSystemEmail(array(
-                    'to' => $to,
-                    'subject' => $subject,
-                    'message' => $message,
-                    'isTest' => env('APP_ENV', 'development') !== 	'production' ? true : false,
-                    'from' => $from,
-                    'bcc' => $bcc,
-                    'configName' => 'FREIGHT QUOTE CREATE EMAIL'
-                ));
-
             }
             return response()->json(array(
                 'status' => 'success',
