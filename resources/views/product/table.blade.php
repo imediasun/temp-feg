@@ -253,6 +253,7 @@ $(document).ready(function() {
 
         currentElm = $(this);
         currentElm.bootstrapSwitch('state', check,true);
+        $('.custom_overlay').show();
         App.notyConfirm({
             message: message,
             confirmButtonText: 'Yes',
@@ -263,11 +264,12 @@ $(document).ready(function() {
                         url:'product/trigger',
                         data:{isActive:state,productId:productId},
                         success:function(data){
+                            $('.custom_overlay').slideUp(500);
                             currentElm.bootstrapSwitch('state',!check,true);
                             if($('select[name="product_list_type"] :selected').val() == 'productsindevelopment' && state == false)
                             {
                                 //window.location.reload();
-                                $('#form-'+productId).hide(1000);
+                                $('#form-'+productId).hide(800);
                             }
                             if(data.status == "error"){
                                 //notyMessageError(data.message);
@@ -275,6 +277,9 @@ $(document).ready(function() {
                         }
                     }
                 );
+            },
+            cancel: function () {
+                $('.custom_overlay').slideUp(500);
             }
         });
     });

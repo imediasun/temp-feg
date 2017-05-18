@@ -242,6 +242,7 @@
 
             currentElm = $(this);
             currentElm.bootstrapSwitch('state', check,true);
+            $('.custom_overlay').show();
             App.notyConfirm({
                 message: message,
                 confirmButtonText: 'Yes',
@@ -252,6 +253,7 @@
                             url:'users/trigger',
                             data:{isActive:state,userId:userId},
                             success:function(data){
+                                $('.custom_overlay').slideUp(500);
                                 currentElm.bootstrapSwitch('state', !check,true);
                                 if(data.status == "error"){
                                     //  notyMessageError(data.message);
@@ -259,6 +261,9 @@
                             }
                         }
                     );
+                },
+                cancel: function () {
+                    $('.custom_overlay').slideUp(500);
                 }
             });
 

@@ -206,6 +206,7 @@ $(document).ready(function() {
 
         currentElm = $(this);
         currentElm.bootstrapSwitch('state', check,true);
+        $('.custom_overlay').show();
         App.notyConfirm({
             message: message,
             confirmButtonText: 'Yes',
@@ -216,6 +217,7 @@ $(document).ready(function() {
                         url:'freightquoters/trigger',
                         data:{isActive:state,id:id},
                         success:function(data){
+                            $('.custom_overlay').slideUp(500);
                             currentElm.bootstrapSwitch('state', !check,true);
                             if(data.status == "error"){
                                 // notyMessageError(data.message);
@@ -223,6 +225,9 @@ $(document).ready(function() {
                         }
                     }
                 );
+            },
+            cancel: function () {
+                $('.custom_overlay').slideUp(500);
             }
         });
     });

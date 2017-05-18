@@ -153,6 +153,7 @@
 @yield('beforebodyend', '')
 @include('sximo.module.utility.inlinegrid')
 @yield('inlinedit', '')
+	<div class="custom_overlay"></div>
 </body>
 @yield('afterbodyend', '')
 </html>

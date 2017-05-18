@@ -216,6 +216,7 @@ $(document).ready(function() {
 
         currentElm = $(this);
         currentElm.bootstrapSwitch('state', !check2,true);
+        $('.custom_overlay').show();
         App.notyConfirm({
             message: message,
             confirmButtonText: 'Yes',
@@ -226,22 +227,27 @@ $(document).ready(function() {
                         url:'vendor/trigger',
                         data:{isActive:state,field:field,vendorId:vendorId},
                         success:function(data){
+                            $('.custom_overlay').slideUp(500);
                             currentElm.bootstrapSwitch('state', check2,true);
                             if($('select[name="status"] :selected').val() == 1 && state == false && field == 'status')
                             {
                                 $('#form-'+vendorId).hide(500);
+                                $('#divOverlay_'+vendorId).hide(500);
                             }
                             else if($('select[name="status"] :selected').val() == 0 && state == true && field == 'status')
                             {
                                 $('#form-'+vendorId).hide(500);
+                                $('#divOverlay_'+vendorId).hide(500);
                             }
                             if($('select[name="hide"] :selected').val() == 1 && state == false && field == 'hide')
                             {
                                 $('#form-'+vendorId).hide(500);
+                                $('#divOverlay_'+vendorId).hide(500);
                             }
                             else if($('select[name="hide"] :selected').val() == 0 && state == true && field == 'hide')
                             {
                                 $('#form-'+vendorId).hide(500);
+                                $('#divOverlay_'+vendorId).hide(500);
                             }
                             if(data.status == "error"){
                                 notyMessageError(data.message);
@@ -249,6 +255,9 @@ $(document).ready(function() {
                         }
                     }
                 );
+            },
+            cancel: function () {
+                $('.custom_overlay').slideUp(500);
             }
         });
 

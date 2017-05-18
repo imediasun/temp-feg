@@ -206,9 +206,11 @@ if (!$colconfigs) {
 
             currentElm = $(this);
             currentElm.bootstrapSwitch('state', check,true);
+            $('.custom_overlay').show();
             App.notyConfirm({
                 message: message,
                 confirmButtonText: 'Yes',
+                container: '.custom-container',
                 confirm: function (){
                     $.ajax(
                         {
@@ -216,6 +218,7 @@ if (!$colconfigs) {
                             url:'location/trigger',
                             data:{isActive:state,locationId:locationId},
                             success:function(data){
+                                $('.custom_overlay').slideUp(500);
                                 currentElm.bootstrapSwitch('state', !check,true);
                                 if(data.status != "error") {
                                     if (data.message == "inactive") {
@@ -227,15 +230,20 @@ if (!$colconfigs) {
                                     }
                                     if ($('select[name="active"] :selected').val() == 1 && data.message == "inactive") {
                                         $('#form-'+locationId).hide(500);
+                                        $('#divOverlay_'+locationId).hide(500);
                                     }
                                     else if($('select[name="active"] :selected').val() == 0 && data.message == "active")
                                     {
                                         $('#form-'+locationId).hide(500);
+                                        $('#divOverlay_'+locationId).hide(500);
                                     }
                                 }
                             }
                         }
                     );
+                },
+                cancel: function () {
+                    $('.custom_overlay').slideUp(500);
                 }
             });
         });
