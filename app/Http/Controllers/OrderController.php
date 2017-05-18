@@ -350,12 +350,12 @@ class OrderController extends Controller
     function postSave(Request $request, $id = 0)
     {
         $rules = array(
-                'location_id' => "required",
+              //  'location_id' => "required",
                 'vendor_id' => 'required',
                 'order_type_id' => "required",
                 'freight_type_id' => 'required',
                 'date_ordered' => 'required',
-                'po_3' => 'required'
+             //   'po_3' => 'required'
             );
         $validator = Validator::make($request->all(), $rules);
         $order_data = array();
@@ -435,14 +435,11 @@ class OrderController extends Controller
             if ($editmode == "edit") {
                 $orderData = array(
                     'company_id' => $company_id,
-                    'location_id' => $location_id,
                     'order_type_id' => $order_type,
-                    'date_ordered' => $date_ordered,
                     'vendor_id' => $vendor_id,
                     'order_description' => $order_description,
                     'order_total' => $total_cost,
                     'freight_id' => $freight_type_id,
-                    'po_number' => $po,
                     'alt_address' => $alt_address,
                     'request_ids' => $where_in,
                     'po_notes' => $notes

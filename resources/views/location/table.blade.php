@@ -218,12 +218,19 @@ if (!$colconfigs) {
                             success:function(data){
                                 currentElm.bootstrapSwitch('state', !check,true);
                                 if(data.status != "error") {
-                                    if ($('select[name="active"] :selected').val() == 1 && data.message == "inactive") {
+                                    if (data.message == "inactive") {
                                         $("#user_locations option[value=" + locationId + "]").hide();
+                                    }
+                                    else
+                                    {
+                                        $("#user_locations option[value=" + locationId + "]").show();
+                                    }
+                                    if ($('select[name="active"] :selected').val() == 1 && data.message == "inactive") {
+                                        $('#form-'+locationId).hide(500);
                                     }
                                     else if($('select[name="active"] :selected').val() == 0 && data.message == "active")
                                     {
-                                        $("#user_locations option[value=" + locationId + "]").hide();
+                                        $('#form-'+locationId).hide(500);
                                     }
                                 }
                             }
