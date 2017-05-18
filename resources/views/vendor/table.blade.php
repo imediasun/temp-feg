@@ -229,13 +229,19 @@ $(document).ready(function() {
                             currentElm.bootstrapSwitch('state', check2,true);
                             if($('select[name="status"] :selected').val() == 1 && state == false && field == 'status')
                             {
-                                //window.location.reload();
-                                $('#form-'+vendorId).hide(1000);
+                                $('#form-'+vendorId).hide(500);
+                            }
+                            else if($('select[name="status"] :selected').val() == 0 && state == true && field == 'status')
+                            {
+                                $('#form-'+vendorId).hide(500);
                             }
                             if($('select[name="hide"] :selected').val() == 1 && state == false && field == 'hide')
                             {
-                                //window.location.reload();
-                                $('#form-'+vendorId).hide(1000);
+                                $('#form-'+vendorId).hide(500);
+                            }
+                            else if($('select[name="hide"] :selected').val() == 0 && state == true && field == 'hide')
+                            {
+                                $('#form-'+vendorId).hide(500);
                             }
                             if(data.status == "error"){
                                 notyMessageError(data.message);
