@@ -174,10 +174,22 @@ class UserController extends Controller
                 $to = $request->input('email');
                 $subject = "[ " . CNF_APPNAME . " ] REGISTRATION ";
                 $message = view('user.emails.registration', $data);
-                $headers = 'MIME-Version: 1.0' . "\r\n";
-                $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
-                $headers .= 'From: ' . CNF_APPNAME . ' <' . CNF_EMAIL . '>' . "\r\n";
-                mail($to, $subject, $message, $headers);
+                //$headers = 'MIME-Version: 1.0' . "\r\n";
+                //$headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
+                //$headers .= 'From: ' . CNF_APPNAME . ' <' . CNF_EMAIL . '>' . "\r\n";
+                //mail($to, $subject, $message, $headers);
+                if(!empty($to)){
+                    FEGSystemHelper::sendSystemEmail(array(
+                        'to' => $to,
+                        'subject' => $subject,
+                        'message' => $message,
+                        'isTest' => env('APP_ENV', 'development') !== 'production' ? true : false,
+                        'from' => CNF_APPNAME,
+                        //'cc' => $cc,
+                        //'bcc' => $bcc,
+                        'configName' => 'USER CREATE EMAIL'
+                    ));
+                }
 
                 $message = "Thanks for registering! . Please check your inbox and follow activation link";
 

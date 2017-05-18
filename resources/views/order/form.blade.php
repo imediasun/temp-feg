@@ -46,7 +46,12 @@
                         <label for="location_id" class=" control-label col-md-4 text-left"> Location </label>
 
                         <div class="col-md-8">
-                            <select class="select3" id="location_id" name="location_id" required></select>
+                           @if($data['prefill_type'] != "edit")
+                                <select class="select3" id="location_id" name="location_id" required></select>
+                            @else
+                               {{ $data["order_loc_id"]." " }}  {!! SiteHelpers::gridDisplayView($data["order_loc_id"],'location_id','1:location:id:location_name') !!}
+                            <input type="hidden" value="{{$data['order_loc_id']}}" id="location_id" name="location_id"/>
+                            @endif
                         </div>
 
                     </div>
@@ -188,16 +193,26 @@
                             PO Number</label>
 
                         <div class="col-md-8">
-                            <input type="text" name="po_1" readonly id="po_1" value="{{ $data['order_loc_id'] }}"
+                           @if($data['prefill_type'] != "edit")
+                                <input type="text" name="po_1" readonly id="po_1" value="{{ $data['order_loc_id'] }}"
+                                       class="form-control" style="float: left; margin-right: 2%; width: 28%;"/>
+                                <input type="text" name="po_2" readonly id="po_2" class="form-control"
+                                       value="{{  $data['po_2'] }}" style="float: left; margin-right: 1%; width: 39%;"/>
+                                <input type="text" name="po_3" id="po_3" required class="form-control" autocomplete="off" readonly
+                                       value="{{ $data['po_3'] }}" style="float: left; width: 29%; margin-left: 1%;"/>
+                                @elseif( $data['prefill_type'] == "edit" && !empty($data['po_1']) && !empty($data['po_2']) && !empty($data['po_3']))
+                            <input type="text" name="po_1" readonly id="po_1" value="{{ $data['po_1'] }}"
                                    class="form-control" style="float: left; margin-right: 2%; width: 28%;"/>
                             <input type="text" name="po_2" readonly id="po_2" class="form-control"
                                    value="{{  $data['po_2'] }}" style="float: left; margin-right: 1%; width: 39%;"/>
                             <input type="text" name="po_3" id="po_3" required class="form-control" autocomplete="off" readonly
                                    value="{{ $data['po_3'] }}" style="float: left; width: 29%; margin-left: 1%;"/>
+                            @else
+                                <input type="text" name="po"  class="form-control" autocomplete="off" readonly
+                                       value="{{ $data['po_number'] }}"/>
+                            @endif
+                                <br/>
                             <br/>
-                            <br/>
-
-                            <div id="po_message"></div>
                         </div>
 
                     </div>
@@ -400,9 +415,6 @@
         games_options_js = games_options_js.replace(/&#039;/g, "'");
         games_options_js = games_options_js.replace(/\\/g, "\\\\");
         games_options_js = $.parseJSON(games_options_js.replace(/&quot;/g, '"'));
-        $("#po_3").focus(function () {
-            $("#po_message").hide(200);
-        });
         function removeRow(id) {
             if (counter > 1) {
                 $("#" + id).parents('.clonedInput').remove();
@@ -519,7 +531,6 @@
             var item_case_price =<?php echo json_encode($data['itemCasePrice']) ?>;
             var item_retail_price =<?php echo json_encode($data['itemRetailPrice'])?>;
             var item_total = 0;
-
             for (var i = 0; i < requests_item_count; i++) {
 
                 $('input[name^=item_num]').eq(i).val(i + 1);
@@ -538,7 +549,6 @@
                         $('input[name^=price]').eq(i).val(order_price_array[i]);
 
                     }
-
                 if (game_ids_array[i] == "" || game_ids_array[i] == null) {
                     $('input[name^=game]').eq(i).val("");
                 }
@@ -547,6 +557,7 @@
                     $('input[name^=game]').eq(i).val(game_ids_array[i]);
 
                 }
+
                 if (order_qty_array[i] == "" || order_qty_array[i] == null) {
                     $('input[name^=qty]').eq(i).val(00);
                 }
@@ -641,7 +652,6 @@
         }
         var games_dropdown = [];
         $("#location_id").click(function () {
-            $("#po_message").hide(200);
             $("#po_1").val($(this).val());
             var location_id = $(this).val();
             //if(myloc == location_id)
@@ -684,13 +694,13 @@
             }
             var $elm = $('#po_3');
             if (editmode && $elm.val().trim() == $elm.data('original')) {
-                $("#po_message").html('');
+
                 //   $("#submit_btn").removeAttr('disabled');
                 return;
             }
             if ($elm.val().trim() === '') {
-                $("#po_message").html('');
-                // $("#submit_btn").attr('disabled','disabled');
+
+               // $("#submit_btn").attr('disabled','disabled');
                 return;
             }
 
@@ -729,8 +739,7 @@
                         poajax = null;
                         if (msg != 'available') {
                             $("#po_3").val(msg);
-                            $("#po_message").html('<b style="color:rgba(43, 164, 32, 0.99);margin:5px 0px">*PO# is available.</b>');
-                            $("#po_message").show(200);
+
                         }
                         else {
                             $("#po_message").html('<b style="color:rgba(43, 164, 32, 0.99);margin:5px 0px">*PO# is Available.</b>');

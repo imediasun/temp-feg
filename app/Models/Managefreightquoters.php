@@ -590,13 +590,25 @@ class managefreightquoters extends Sximo
 								            </tr>
 								        </table>
 									</p>';
-                        $headers = "CC: " . $cc . PHP_EOL;
-                        $headers .= "BCC:" . $bcc . PHP_EOL;
-                        $headers .= "From: " . $from . "\r\n" . "X-Mailer: php";
-                        $headers .= "MIME-Version: 1.0\r\n";
-                        $headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
+                        //$headers = "CC: " . $cc . PHP_EOL;
+                        //$headers .= "BCC:" . $bcc . PHP_EOL;
+                        //$headers .= "From: " . $from . "\r\n" . "X-Mailer: php";
+                        //$headers .= "MIME-Version: 1.0\r\n";
+                        //$headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
                         // echo $message;
-                       mail($to, $subject, $message, $headers);
+                       //mail($to, $subject, $message, $headers);
+                        if(!empty($to)){
+                            FEGSystemHelper::sendSystemEmail(array(
+                                'to' => $to,
+                                'subject' => $subject,
+                                'message' => $message,
+                                'isTest' => env('APP_ENV', 'development') !== 'production' ? true : false,
+                                'from' => $from,
+                                'cc' => $cc,
+                                'bcc' => $bcc,
+                                'configName' => 'UPDATE FREIGHT ORDER EMAIL'
+                            ));
+                        }
                     } else {
 
                     }
@@ -655,14 +667,26 @@ class managefreightquoters extends Sximo
 								immediately</b> for determination as to whether you should accept or refuse the shipment.
 							<br>
 						</p>';
-                $headers = "CC: " . $cc . PHP_EOL;
-                $headers .= "BCC:" . $bcc . PHP_EOL;
-                $headers .= "From: " . $from . "\r\n" . "X-Mailer: php";
-                $headers .= "MIME-Version: 1.0\r\n";
-                $headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
+                //$headers = "CC: " . $cc . PHP_EOL;
+                //$headers .= "BCC:" . $bcc . PHP_EOL;
+                //$headers .= "From: " . $from . "\r\n" . "X-Mailer: php";
+                //$headers .= "MIME-Version: 1.0\r\n";
+                //$headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
                 // echo $message;
                 //DO NOT uncomment below code
-              mail($to, $subject, $message, $headers);
+                //mail($to, $subject, $message, $headers);
+                if(!empty($to)){
+                    FEGSystemHelper::sendSystemEmail(array(
+                        'to' => $to,
+                        'subject' => $subject,
+                        'message' => $message,
+                        'isTest' => env('APP_ENV', 'development') !== 'production' ? true : false,
+                        'from' => $from,
+                        'cc' => $cc,
+                        'bcc' => $bcc,
+                        'configName' => 'UPDATE FREIGHT ORDER EMAIL'
+                    ));
+                }
             }
         }
         return true;

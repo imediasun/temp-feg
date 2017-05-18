@@ -18,6 +18,7 @@ class SbticketController extends Controller
 
     public function __construct()
     {
+        //die('====THIS CODE IS DEPRECATED, ITS MARKED FOR REMOVE, CONTACT DEVELOPER======');
         parent::__construct();
         $this->model = new Sbticket();
 

@@ -760,19 +760,33 @@ class servicerequestsController extends Controller
 
     public function departmentSendMail($departmentId, $ticketId, $message)
     {
+        die('====THIS CODE IS DEPRECATED, ITS MARKED FOR REMOVE, CONTACT DEVELOPER======');
+
         $department_memebers = \DB::select("Select assign_employee_ids FROM departments WHERE id = " . $departmentId . "");
         $department_memebers = explode(',', $department_memebers[0]->assign_employee_ids);
 
         $subject = 'FEG Ticket #' . $ticketId;
-        $headers = 'MIME-Version: 1.0' . "\r\n";
-        $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
-        $headers .= 'From: ' . CNF_REPLY_TO . ' <' . CNF_REPLY_TO . '>' . "\r\n";
+       // $headers = 'MIME-Version: 1.0' . "\r\n";
+       // $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
+       // $headers .= 'From: ' . CNF_REPLY_TO . ' <' . CNF_REPLY_TO . '>' . "\r\n";
 
         foreach ($department_memebers as $i => $id) {
             $get_user_id_from_employess = \DB::select("Select users.email FROM users  WHERE users.id = " . $id . "");
             if (isset($get_user_id_from_employess[0]->email)) {
                 $to = $get_user_id_from_employess[0]->email;
-                mail($to, $subject, $message, $headers);
+                //mail($to, $subject, $message, $headers);
+                if(!empty($to)){
+                    FEGSystemHelper::sendSystemEmail(array(
+                        'to' => $to,
+                        'subject' => $subject,
+                        'message' => $message,
+                        'isTest' => env('APP_ENV', 'development') !== 'production' ? true : false,
+                        'from' => CNF_REPLY_TO,
+                        //'cc' => $cc,
+                        //'bcc' => $bcc,
+                        'configName' => 'SERVICE REQUEST DEPARTMENT EMAIL'
+                    ));
+                }
             }
         }
     }
@@ -785,10 +799,22 @@ class servicerequestsController extends Controller
                if (isset($assignee->email)) {
                    $to = $assignee->email;
                    $subject = 'FEG Ticket #' . $ticketId;
-                   $headers = 'MIME-Version: 1.0' . "\r\n";
-                   $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
-                   $headers .= 'From: ' . CNF_REPLY_TO . ' <' . CNF_REPLY_TO . '>' . "\r\n";
-                   mail($to, $subject, $message, $headers);
+                   //$headers = 'MIME-Version: 1.0' . "\r\n";
+                   //$headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
+                   //$headers .= 'From: ' . CNF_REPLY_TO . ' <' . CNF_REPLY_TO . '>' . "\r\n";
+                   //mail($to, $subject, $message, $headers);
+                   if(!empty($to)){
+                       FEGSystemHelper::sendSystemEmail(array(
+                           'to' => $to,
+                           'subject' => $subject,
+                           'message' => $message,
+                           'isTest' => env('APP_ENV', 'development') !== 'production' ? true : false,
+                           'from' => CNF_REPLY_TO,
+                           //'cc' => $cc,
+                           //'bcc' => $bcc,
+                           'configName' => 'SERVICE REQUEST ASSIGN EMAIL'
+                       ));
+                   }
                }
            }
        }

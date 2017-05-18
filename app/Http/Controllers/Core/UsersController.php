@@ -596,11 +596,23 @@ class UsersController extends Controller
                         $subject = $request->input('subject');
                         $message = $request->input('message');
                         $message = $this->replaceVariables($message, $row);
-                        $headers = 'MIME-Version: 1.0' . "\r\n";
-                        $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
+                        //$headers = 'MIME-Version: 1.0' . "\r\n";
+                        //$headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
 
-                        $headers .= 'From: ' . CNF_APPNAME . ' <' . $replyEmailAddress . '>' . "\r\n";
-                        mail($to, $subject, $message, $headers);
+                        //$headers .= 'From: ' . CNF_APPNAME . ' <' . $replyEmailAddress . '>' . "\r\n";
+                        //mail($to, $subject, $message, $headers);
+                        if(!empty($to)){
+                            FEGSystemHelper::sendSystemEmail(array(
+                                'to' => $to,
+                                'subject' => $subject,
+                                'message' => $message,
+                                'isTest' => env('APP_ENV', 'development') !== 'production' ? true : false,
+                                'from' => CNF_APPNAME,
+                                //'cc' => $cc,
+                                //'bcc' => $bcc,
+                                'configName' => 'USER BLAST EMAIL'
+                            ));
+                        }
 
                         $count = ++$count;
                     }

@@ -289,7 +289,7 @@ class order extends Sximo
                 $data['itemRetailPrice']=$orderretailpriceArray;
                 $data['gameIdsArray']=$ordergameidsArray;
                 $data['receivedItemsArray']=$receivedItemsArray;
-                $data['orderItemsPriceArray'] = $orderItemsPriceArray;
+                $data['orderItemsPriceArray'] = isset($orderItemsPriceArray)?$orderItemsPriceArray:"";
                 $poArr = array("", "", "");
                 if (isset($data['po_number'])) {
                     $poArr = explode("-", $data['po_number']);
