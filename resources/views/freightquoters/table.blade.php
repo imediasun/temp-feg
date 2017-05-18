@@ -192,7 +192,32 @@
 $(document).ready(function() {
     $("[id^='toggle_trigger_']").on('switchChange.bootstrapSwitch', function(event, state) {
         var id=$(this).data('id');
-        $.ajax(
+        if(state == false)
+        {
+            currentElm = $(this);
+            currentElm.bootstrapSwitch('state', true,true);
+            App.notyConfirm({
+                message: "<div class='confirm_inactive'><br>Are you sure you want to Inactive this Freight Quoter <br> <b>***WARNING***</b><br> if you inactive this Freight Quoter then he will not receive any email.</div>",
+                confirmButtonText: 'Yes',
+                confirm: function (){
+                    $.ajax(
+                        {
+                            type:'POST',
+                            url:'freightquoters/trigger',
+                            data:{isActive:state,id:id},
+                            success:function(data){
+                                currentElm.bootstrapSwitch('state', false,true);
+                                if(data.status == "error"){
+                                    // notyMessageError(data.message);
+                                }
+                            }
+                        }
+                    );
+                }
+            });
+        }
+        else {
+            $.ajax(
                 {
                     type:'POST',
                     url:'freightquoters/trigger',
@@ -203,7 +228,8 @@ $(document).ready(function() {
                         }
                     }
                 }
-        );
+            );
+        }
     });
 
     $("[id^='toggle_trigger']").bootstrapSwitch();

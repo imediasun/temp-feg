@@ -187,28 +187,66 @@ $(document).ready(function() {
 
         var vendorId=$(this).data('id');
         var field=$(this).data('field');
-        $.ajax(
-            {
-                type:'POST',
-                url:'vendor/trigger',
-                data:{isActive:state,field:field,vendorId:vendorId},
-                success:function(data){
-                    if($('select[name="status"] :selected').val() == 1 && state == false && field == 'status')
-                    {
-                        //window.location.reload();
-                        $('#form-'+vendorId).hide(1000);
-                    }
-                    if($('select[name="hide"] :selected').val() == 1 && state == false && field == 'hide')
-                    {
-                        //window.location.reload();
-                        $('#form-'+vendorId).hide(1000);
-                    }
-                    if(data.status == "error"){
-                        notyMessageError(data.message);
+        var check =  (field == 'hide');
+        if(state == check)
+        {
+            currentElm = $(this);
+            currentElm.bootstrapSwitch('state', !check,true);
+            App.notyConfirm({
+                message: "<div class='confirm_inactive'><br>Are you sure you want to "+(field == 'status'?'Inactive':field)+" this Vendor <br> <b>***WARNING***</b><br> if you "+(field == 'status'?'Inactive':field)+" this Vendor then this vendor will not be available and all products of this vendor will not be able to add to cart.</div>",
+                confirmButtonText: 'Yes',
+                confirm: function (){
+                    $.ajax(
+                        {
+                            type:'POST',
+                            url:'vendor/trigger',
+                            data:{isActive:state,field:field,vendorId:vendorId},
+                            success:function(data){
+                                currentElm.bootstrapSwitch('state', check,true);
+                                if($('select[name="status"] :selected').val() == 1 && state == false && field == 'status')
+                                {
+                                    //window.location.reload();
+                                    $('#form-'+vendorId).hide(1000);
+                                }
+                                if($('select[name="hide"] :selected').val() == 1 && state == false && field == 'hide')
+                                {
+                                    //window.location.reload();
+                                    $('#form-'+vendorId).hide(1000);
+                                }
+                                if(data.status == "error"){
+                                    notyMessageError(data.message);
+                                }
+                            }
+                        }
+                    );
+                }
+            });
+        }
+        else {
+            $.ajax(
+                {
+                    type:'POST',
+                    url:'vendor/trigger',
+                    data:{isActive:state,field:field,vendorId:vendorId},
+                    success:function(data){
+                        if($('select[name="status"] :selected').val() == 1 && state == false && field == 'status')
+                        {
+                            //window.location.reload();
+                            $('#form-'+vendorId).hide(1000);
+                        }
+                        if($('select[name="hide"] :selected').val() == 1 && state == false && field == 'hide')
+                        {
+                            //window.location.reload();
+                            $('#form-'+vendorId).hide(1000);
+                        }
+                        if(data.status == "error"){
+                            notyMessageError(data.message);
+                        }
                     }
                 }
-            }
-        );
+            );
+		}
+
     });
 
     $("[id^='toggle_trigger_']").bootstrapSwitch();

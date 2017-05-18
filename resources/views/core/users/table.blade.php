@@ -227,21 +227,45 @@
 <script>
     $(document).ready(function(){
         $("[id^='toggle_trigger_']").on('switchChange.bootstrapSwitch', function(event, state) {
-
-
             var userId=$(this).data('id');
-            $.ajax(
+            if(state == false)
+            {
+                currentElm = $(this);
+                currentElm.bootstrapSwitch('state', true,true);
+                App.notyConfirm({
+                    message: "<div class='confirm_inactive'><br>Are you sure you want to Inactive this User <br> <b>***WARNING***</b><br> if you inactive this User then he will be unable to login and to do any task.</div>",
+                    confirmButtonText: 'Yes',
+                    confirm: function (){
+                        $.ajax(
+                            {
+                                type:'POST',
+                                url:'users/trigger',
+                                data:{isActive:state,userId:userId},
+                                success:function(data){
+                                    currentElm.bootstrapSwitch('state', false,true);
+                                    if(data.status == "error"){
+                                        //  notyMessageError(data.message);
+                                    }
+                                }
+                            }
+                        );
+                    }
+                });
+            }
+            else {
+                $.ajax(
                     {
                         type:'POST',
                         url:'users/trigger',
                         data:{isActive:state,userId:userId},
                         success:function(data){
-                          if(data.status == "error"){
-                            //  notyMessageError(data.message);
-                          }
+                            if(data.status == "error"){
+                                //  notyMessageError(data.message);
+                            }
                         }
                     }
-            );
+                );
+            }
         });
 
         $("[id^='toggle_trigger']").bootstrapSwitch();

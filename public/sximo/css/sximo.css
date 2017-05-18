@@ -3411,3 +3411,6 @@ margin-left: 15px;
     display: none;
   }
 }
+.sbox-title small {
+  display: none;
+}
