@@ -5,7 +5,7 @@
         <!-- Page header -->
         <div class="page-header">
             <div class="page-title">
-                <h3> Upload Image <small>Profile Image</small></h3>
+                <h3> Upload Image </h3>
 
             </div>
 
@@ -13,7 +13,7 @@
 
         <div class="page-content-wrapper m-t">
             <div class="sbox animated fadeInRight">
-                <div class="sbox-title"> <h4> <i class="fa fa-table"></i> Upload Image <small>Profile Image</small>
+                <div class="sbox-title"> <h4> <i class="fa fa-table"></i> Upload Image
                         <a href="javascript:void(0)" class="collapse-close pull-right btn btn-xs btn-danger" onclick="ajaxViewClose('#product')"><i class="fa fa fa-times"></i></a>
                     </h4>
                 </div>

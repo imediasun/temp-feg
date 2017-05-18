@@ -12,7 +12,7 @@
 
         <div class="page-content-wrapper m-t">
             <div class="sbox animated fadeInRight">
-                <div class="sbox-title"> <h4> <i class="fa fa-table"></i> {{ $pageTitle }} <small>{{ $pageNote}}</small></h4></div>
+                <div class="sbox-title"> <h4> <i class="fa fa-table"></i> {{ $pageTitle }} </h4></div>
                 <div class="sbox-content">
 
 
