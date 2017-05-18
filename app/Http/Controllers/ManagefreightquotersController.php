@@ -589,22 +589,33 @@ class ManagefreightquotersController extends Controller
             $sender_name .= \Session::get('lname');
             $freightCompanyQuery = \DB::select('SELECT rep_email FROM freight_companies WHERE active = 1  AND rep_email != ""');
             foreach ($freightCompanyQuery as $rowFreight) {
-                if(env('APP_ENV', 'development') == 'production')
+                $to = $rowFreight->rep_email;
+                /*if(env('APP_ENV', 'development') == 'production')
                 {
                     $to = $rowFreight->rep_email;
-                    $headers = "Bcc: " . $bcc . "\r\n";//commented for testing
+                    //$headers = "Bcc: " . $bcc . "\r\n";//commented for testing
                 }
                 else
                 {
                     $to = "stanlymarian@gmail.com";//hardcoded email for testing
-                    $headers = '';
-                }
+                    //$headers = '';
+                }*/
 
 
-                $headers .= "From: " . $from . "\r\n" . "X-Mailer: php";
-                $headers .= "MIME-Version: 1.0\r\n";
-                $headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
-                mail($to, $subject, $message, $headers);
+                //$headers .= "From: " . $from . "\r\n" . "X-Mailer: php";
+                //$headers .= "MIME-Version: 1.0\r\n";
+                //$headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
+                //mail($to, $subject, $message, $headers);
+                FEGSystemHelper::sendSystemEmail(array(
+                    'to' => $to,
+                    'subject' => $subject,
+                    'message' => $message,
+                    'isTest' => env('APP_ENV', 'development') !== 	'production' ? true : false,
+                    'from' => $from,
+                    'bcc' => $bcc,
+                    'configName' => 'FREIGHT QUOTE CREATE EMAIL'
+                ));
+
             }
             return response()->json(array(
                 'status' => 'success',
