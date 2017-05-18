@@ -193,7 +193,14 @@
                             PO Number</label>
 
                         <div class="col-md-8">
-                            @if(!empty($data['po_1']) && !empty($data['po_2']) && !empty($data['po_3']))
+                           @if($data['prefill_type'] != "edit")
+                                <input type="text" name="po_1" readonly id="po_1" value="{{ $data['order_loc_id'] }}"
+                                       class="form-control" style="float: left; margin-right: 2%; width: 28%;"/>
+                                <input type="text" name="po_2" readonly id="po_2" class="form-control"
+                                       value="{{  $data['po_2'] }}" style="float: left; margin-right: 1%; width: 39%;"/>
+                                <input type="text" name="po_3" id="po_3" required class="form-control" autocomplete="off" readonly
+                                       value="{{ $data['po_3'] }}" style="float: left; width: 29%; margin-left: 1%;"/>
+                                @elseif( $data['prefill_type'] == "edit" && !empty($data['po_1']) && !empty($data['po_2']) && !empty($data['po_3']))
                             <input type="text" name="po_1" readonly id="po_1" value="{{ $data['po_1'] }}"
                                    class="form-control" style="float: left; margin-right: 2%; width: 28%;"/>
                             <input type="text" name="po_2" readonly id="po_2" class="form-control"
