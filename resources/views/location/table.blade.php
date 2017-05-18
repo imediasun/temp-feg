@@ -212,13 +212,13 @@ if (!$colconfigs) {
                 confirmButtonText: 'Yes',
                 container: '.custom-container',
                 confirm: function (){
+                    $('.custom_overlay').slideUp(500);
                     $.ajax(
                         {
                             type:'POST',
                             url:'location/trigger',
                             data:{isActive:state,locationId:locationId},
                             success:function(data){
-                                $('.custom_overlay').slideUp(500);
                                 currentElm.bootstrapSwitch('state', !check,true);
                                 if(data.status != "error") {
                                     if (data.message == "inactive") {

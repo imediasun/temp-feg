@@ -258,13 +258,13 @@ $(document).ready(function() {
             message: message,
             confirmButtonText: 'Yes',
             confirm: function (){
+                $('.custom_overlay').slideUp(500);
                 $.ajax(
                     {
                         type:'POST',
                         url:'product/trigger',
                         data:{isActive:state,productId:productId},
                         success:function(data){
-                            $('.custom_overlay').slideUp(500);
                             currentElm.bootstrapSwitch('state',!check,true);
                             if($('select[name="product_list_type"] :selected').val() == 'productsindevelopment' && state == false)
                             {

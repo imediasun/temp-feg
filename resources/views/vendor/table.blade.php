@@ -221,13 +221,13 @@ $(document).ready(function() {
             message: message,
             confirmButtonText: 'Yes',
             confirm: function (){
+                $('.custom_overlay').slideUp(500);
                 $.ajax(
                     {
                         type:'POST',
                         url:'vendor/trigger',
                         data:{isActive:state,field:field,vendorId:vendorId},
                         success:function(data){
-                            $('.custom_overlay').slideUp(500);
                             currentElm.bootstrapSwitch('state', check2,true);
                             if($('select[name="status"] :selected').val() == 1 && state == false && field == 'status')
                             {

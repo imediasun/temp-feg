@@ -211,13 +211,13 @@ $(document).ready(function() {
             message: message,
             confirmButtonText: 'Yes',
             confirm: function (){
+                $('.custom_overlay').slideUp(500);
                 $.ajax(
                     {
                         type:'POST',
                         url:'freightquoters/trigger',
                         data:{isActive:state,id:id},
                         success:function(data){
-                            $('.custom_overlay').slideUp(500);
                             currentElm.bootstrapSwitch('state', !check,true);
                             if(data.status == "error"){
                                 // notyMessageError(data.message);
