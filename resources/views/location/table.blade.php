@@ -218,12 +218,12 @@ if (!$colconfigs) {
                             success:function(data){
                                 currentElm.bootstrapSwitch('state', !check,true);
                                 if(data.status != "error") {
-                                    if (data.message == "inactive") {
+                                    if ($('select[name="active"] :selected').val() == 1 && data.message == "inactive") {
                                         $("#user_locations option[value=" + locationId + "]").hide();
                                     }
-                                    else
+                                    else if($('select[name="active"] :selected').val() == 0 && data.message == "active")
                                     {
-                                        $("#user_locations option[value=" + locationId + "]").show();
+                                        $("#user_locations option[value=" + locationId + "]").hide();
                                     }
                                 }
                             }
