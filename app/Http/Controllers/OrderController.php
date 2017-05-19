@@ -302,8 +302,9 @@ class OrderController extends Controller
         $this->data['games_options'] = $this->model->populateGamesDropdown();
         return view('order.form', $this->data);
     }
-
-    public function getShow($id = null)
+// Uncomment if Copy functionality is needed for orders
+// it need testing afer commenting.
+  /*  public function getShow($id = null)
     {
 
         if ($this->access['is_detail'] == 0)
@@ -325,8 +326,6 @@ class OrderController extends Controller
 
         return view('order.view', $this->data);
     }
-
-
     function postCopy(Request $request)
     {
 
@@ -334,19 +333,82 @@ class OrderController extends Controller
             if ($column->Field != 'id')
                 $columns[] = $column->Field;
         }
-        $toCopy = implode(",", $request->input('ids'));
+        // $toCopy = implode(",", $request->input('ids'));
+        $toCopy=$request->input('ids');
+        foreach($toCopy as $to)
+        {
 
+            $sql = " SELECT " . implode(",", $columns) . " FROM orders WHERE id = " . $to . "";
+            $order_data=\DB::select($sql);
+            $order_data_arr="";
+            foreach($order_data as $od)
+            {
 
-        $sql = "INSERT INTO orders (" . implode(",", $columns) . ") ";
-        $sql .= " SELECT " . implode(",", $columns) . " FROM orders WHERE id IN (" . $toCopy . ")";
+                $po_3=$this->validatePO($od->po_number,$od->po_number,$od->location_id);
+                $po_number=$od->location_id.'-'. date("mdy", strtotime(date('mdy'))).'-'.$po_3;
+                $order_data_arr=array(
+                    'user_id'=> $od->user_id,
+                    'company_id' => $od->company_id,
+                    'date_ordered' => $od->date_ordered,
+                    'order_total' => $od->order_total,
+                    'warranty' => $od->warranty,
+                    'location_id' => $od->location_id,
+                    'vendor_id'=>$od->vendor_id,
+                    'order_description'=>$od->order_description,
+                    'status_id'=>$od->status_id,
+                    'order_type_id'=>$od->order_type_id,
+                    'game_id'=>$od->game_id,
+                    'freight_id'=>$od->freight_id,
+                    'po_number'=>$po_number,
+                    'po_notes' => $od->po_notes,
+                    'notes' => $od->notes,
+                    'date_received'=> $od->date_received,
+                    'received_by'=> $od->received_by,
+                    'quantity'=> $od->quantity,
+                    'alt_address'=> $od->alt_address,
+                    'request_ids'=>$od->request_ids,
+                    'game_ids' => $od->game_ids,
+                    'tracking_number'=>$od->tracking_number,
+                    'added_to_inventory'=>$od->added_to_inventory,
+                    'order_content'=>$od->order_content,
+                    'new_format'=>$od->new_format,
+                    'is_partial'=>$od->is_partial,
+                );
+            }
+            \DB::table('orders')->insert($order_data_arr);
+            $new_order_id = \DB::getPdo()->lastInsertId();
+            $contents_sql="select request_id,product_id,product_description,price,qty,game_id,item_name,case_price,total,item_received,sku from order_contents where order_id=$to";
+            $order_contents=\DB::select($contents_sql);
 
-        \DB::insert($sql);
+            foreach($order_contents as $oc)
+            {
+                $contents_arr=array(
+                    'order_id'=>$new_order_id,
+                    'request_id'=>$oc->request_id,
+                    'product_description'=>$oc->product_description,
+                    'price'=>$oc->price,
+                    'qty'=>$oc->qty,
+                    'game_id'=>$oc->game_id,
+                    'item_name'=>$oc->item_name,
+                    'case_price'=>$oc->case_price,
+                    'total'=>$oc->total,
+                    'item_received'=>$oc->item_received,
+                    'sku'=>$oc->sku
+                );
+                \DB::table('order_contents')->insert($contents_arr);
+            }
+        }
+
+        //$sql = "INSERT INTO orders (" . implode(",", $columns) . ") ";
+        //$sql .= " SELECT " . implode(",", $columns) . " FROM orders WHERE id IN (" . $toCopy . ")";
+
+        //\DB::insert($sql);
         return response()->json(array(
             'status' => 'success',
             'message' => \Lang::get('core.note_success')
         ));
     }
-
+  */
     function postSave(Request $request, $id = 0)
     {
         $rules = array(
@@ -1067,11 +1129,17 @@ function sendPhpEmail($message,$to,$from,$subject,$pdf,$filename,$cc,$bcc)
         $location_id = $request->get('location_id');
         $po = $request->get('po');
         $po_full = $po_1 . '-' . $po_2 . '-' . $po_3;
-          if($po !=0)
-          {
+        return $this->validatePO($po,$po_full,$location_id);
+
+    }
+    function validatePO($po,$po_full,$location_id)
+    {
+        if($po !=0)
+        {
+
             if($this->model->isPOAvailable($po_full))
             {
-              $this->model->createPOTrack($po_full,$location_id);
+                $this->model->createPOTrack($po_full,$location_id);
                 $po_3=explode('-',$po_full);
                 $msg= $po_3[2];
             }
@@ -1080,12 +1148,11 @@ function sendPhpEmail($message,$to,$from,$subject,$pdf,$filename,$cc,$bcc)
                //die('po not available');
                 $msg=$this->model->increamentPO($location_id);
             }
-              }
-        else
-        {
+        }
+        else{
             $msg = $this->model->increamentPo($location_id);
         }
-        echo $msg;
+        return $msg;
     }
     function getOrderreceipt($order_id = null)
     {
