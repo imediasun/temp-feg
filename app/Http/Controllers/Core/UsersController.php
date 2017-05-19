@@ -609,7 +609,7 @@ class UsersController extends Controller
                                 'subject' => $subject,
                                 'message' => $message,
                                 'isTest' => env('APP_ENV', 'development') !== 'production' ? true : false,
-                                'from' => CNF_APPNAME,
+                                'from' => $replyEmailAddress,
                                 //'cc' => $cc,
                                 //'bcc' => $bcc,
                                 'configName' => 'USER BLAST EMAIL'
