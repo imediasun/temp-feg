@@ -322,7 +322,13 @@
                 <div style="padding-left:60px !important;">
                     <a href="javascript:void(0);" class="addC btn btn-xs btn-info" rel=".clone" id="add_new_item"><i
                                 class="fa fa-plus"></i>
-                        New Item</a></div>
+                        New Item</a>
+                @if(!empty($pass['Can remove order']))
+                        <a href="javascript:void(0);" class="btn btn-xs btn-info enabled" data-status="enabled" id="can-freehand">
+                            <i class="fa fa-times" aria-hidden="true"></i>
+                           <span>Disable Freehand</span></a>
+                    @endif
+                </div>
                 <input type="hidden" name="enable-masterdetail" value="true">
             </div>
             <br/><br/>
@@ -990,6 +996,21 @@
             }
 
         }
+        // for enable/disable free-hand button
+        $('#can-freehand').on('click',function(){
+
+           var status=$(this).data('status');
+            if(status == "enabled") {
+                $(this).data('status','disabled');
+                $("#can-freehand i").toggleClass("fa-times fa-check-circle-o");
+                $("#can-freehand span").text('Enable Freehand');
+            }
+            else{
+                $(this).data('status','enabled');
+                $("#can-freehand i").toggleClass("fa-check-circle-o fa-times ");
+                $("#can-freehand span").text('Disable Freehand');
+            }
+        });
     </script>
     <style>
         .ui-corner-all {
