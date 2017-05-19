@@ -113,7 +113,8 @@ class UserController extends Controller
 
     public function getRegister()
     {
-
+        return Redirect::to('/')->with('message', \SiteHelpers::alert('error', 'Sorry, Registration is disabled. Please contact administrator'));
+        /*
         if (CNF_REGIST == 'false') :
             if (\Auth::check()):
                 return Redirect::to('')->with('message', \SiteHelpers::alert('success', 'Youre already login'));
@@ -124,13 +125,15 @@ class UserController extends Controller
         else :
 
             return view('user.register');
-        endif;
+        endif;*/
 
 
     }
 
     public function postCreate(Request $request)
     {
+        return Redirect::to('/')->with('message', \SiteHelpers::alert('error', 'Sorry, Registration is disabled. Please contact administrator'));
+        /*
         $rules = array(
             'firstname' => 'required|alpha_num|min:2',
             'lastname' => 'required|alpha_num|min:2',
@@ -205,7 +208,7 @@ class UserController extends Controller
         } else {
             return Redirect::to('user/register')->with('message', \SiteHelpers::alert('error', 'The following errors occurred')
             )->withErrors($validator)->withInput();
-        }
+        }*/
     }
 
     public function getActivation(Request $request)
