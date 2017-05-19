@@ -169,7 +169,7 @@
                             Billing Accoung Number</label>
 
                         <div class="col-md-8" style="padding-left: 15px;">
-                            <input  type="text" class="form-control " id="bil_ac_num" name="bil_ac_num" value=""  readonly/>
+                            <input  type="text" class="form-control " id="bil_ac_num" readonly/>
 
                         </div>
 
