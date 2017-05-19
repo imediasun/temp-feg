@@ -13,7 +13,7 @@
             <fieldset>
                 <div class="form-group  " >
                     <label  for="game_info" class=" control-label col-md-4 text-left">
-                        For Game [or game type]:
+                        Request Title:
                     </label>
                     <div class="col-md-6">
                        <input type="text" name="game_info" id="game_info" class="form-control" required="required"/>
