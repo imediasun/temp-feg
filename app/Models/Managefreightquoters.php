@@ -2,6 +2,7 @@
 
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
+use App\Library\FEG\System\FEGSystemHelper;
 
 class managefreightquoters extends Sximo
 {
