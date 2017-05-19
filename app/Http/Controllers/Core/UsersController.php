@@ -44,6 +44,8 @@ class UsersController extends Controller
     public function getCheckAccess()
     {
         $moduleName = Input::get('module');
+        $url = Input::get('url');
+        
         $moduleId = Module::where('module_name', $moduleName)->pluck('module_id');
         if (!empty($moduleId)) {
             $access = $this->model->validAccess($moduleId);

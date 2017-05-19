@@ -101,14 +101,22 @@ $selected_loc=\Session::get('selected_location');?>
                 </a>
             </li>--}}
             @foreach ($sidebar as $menu)
+                <?php
+                $mName = $menu['menu_name'];
+                $mType = $menu['menu_type'];
+                $mIsDivider = $mType == 'divider';
+                $mUrl = trim($menu['url'] .'');
+                if (strpos($mUrl, '/') === 0) {
+                    $mUrl = url().$mUrl;
+                }
+                if ($mType == 'internal') {
+                    $module = $menu['module'];
+                    $mUrl = URL::to($menu['module']);
+                }
+                $iconClass = $menu['menu_icons'];
+                ?>
                 <li @if(Request::segment(1) == $menu['module'] || Request::url() == url($menu['url'])) class="active"  @endif>
-                    <a
-                    @if($menu['menu_type'] =='external')
-                        href="{{ $menu['url'] }}"
-                        @else
-                        href="{{ URL::to($menu['module'])}}"
-                            @endif
-
+                    <a  href="{{ $mUrl }}"
                     @if(count($menu['childs']) > 0 ) class="expand level-closed" @endif>
                         <i class="{{$menu['menu_icons']}}"></i> <span class="nav-label">
 					
@@ -123,14 +131,22 @@ $selected_loc=\Session::get('selected_location');?>
                     @if(count($menu['childs']) > 0)
                         <ul class="nav nav-second-level">
                             @foreach ($menu['childs'] as $menu2)
+                                <?php
+                                $mName = $menu2['menu_name'];
+                                $mType2 = $menu2['menu_type'];
+                                $mIsDivider2 = $mType2 == 'divider';
+                                $mUrl2 = trim($menu2['url'] .'');
+                                if (strpos($mUrl2, '/') === 0) {
+                                    $mUrl2 = url().$mUrl2;
+                                }
+                                if ($mType2 == 'internal') {
+                                    $module2 = $menu2['module'];
+                                    $mUrl2 = URL::to($menu2['module']);
+                                }
+                                $iconClass = $menu['menu_icons'];
+                                ?>
                                 <li @if(Request::segment(1) == $menu2['module'] && Request::segment(2)!="setting") class="active" @endif >
-                                    <a
-                                    @if($menu2['menu_type'] =='external')
-                                        href="{{ $menu2['url']}}"
-                                        @else
-                                        href="{{ URL::to($menu2['module'])}}"
-                                            @endif
-                                            >
+                                    <a href="{{ $mUrl2 }}" >
                                         <i class="{{$menu2['menu_icons']}}"></i>
                                         @if(CNF_MULTILANG ==1 && isset($menu2['menu_lang']['title'][Session::get('lang')]))
                                             {{ $menu2['menu_lang']['title'][Session::get('lang')] }}
