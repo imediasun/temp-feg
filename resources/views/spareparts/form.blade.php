@@ -150,7 +150,7 @@
                     {selected_value: '{{ $row['status_id'] }}', initial_text: 'Select Status'});
             $("#loc_id").jCombo("{{ URL::to('spareparts/comboselect?filter=location:id:location_name') }}",
                     {selected_value: '{{ $row['loc_id'] }}', initial_text: 'Select Location'});
-            $("#for_game").jCombo("{{ URL::to('spareparts/comboselect?filter=game:id:id|game_name') }}" + "&delimiter= - ",
+            $("#for_game").jCombo("{{ URL::to('spareparts/comboselect?filter=game_title:id:game_title') }}" + "&delimiter= - ",
                 {  selected_value : '{{ $row["for_game"] }}',initial_text:'Select Game' });
             $('.editor').summernote();
             $('.previewImage').fancybox();
