@@ -40,9 +40,9 @@
 				
 					<tr>
 						<td width='30%' class='label-view text-right'>
-							{{ SiteHelpers::activeLang('For Game', (isset($fields['for_game']['language'])? $fields['for_game']['language'] : array())) }}
+							{{ SiteHelpers::activeLang('For Game', (isset($fields['game_title_id']['language'])? $fields['game_title_id']['language'] : array())) }}
 						</td>
-						<td>{{ \DateHelpers::formatZeroValue($row->for_game) }} </td>
+						<td>{{ \DateHelpers::formatZeroValue($row->game_title_id) }} </td>
 						
 					</tr>
 				
