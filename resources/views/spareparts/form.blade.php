@@ -45,7 +45,7 @@
                             @if($row['status_id']==2)
                                 <select name="game_title_id" id="game_title_id" class="select4"></select>
                             @else
-                                {{App\Models\Gamestitle::find($row['game_title_id'])?App\Models\Gamestitle::find($row['game_title_id'])->game_title:'No Data'}}
+                                {!! SiteHelpers::gridDisplayView($row['game_title_id'],'game_title_id','1:game_title:id:game_title')!!}
                             @endif
                         </div>
                         <div class="col-md-2">
