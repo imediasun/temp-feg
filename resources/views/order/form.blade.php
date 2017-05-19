@@ -162,6 +162,18 @@
                         </div>
 
                     </div>
+
+                    <div class="form-group">
+                        <br/><br/>
+                        <label for="bil_ac_num" class=" control-label col-md-4 text-left" style="margin-top: 7px;">
+                            Billing Accoung Number</label>
+
+                        <div class="col-md-8" style="padding-left: 15px;">
+                            <input  type="text" class="form-control " id="bil_ac_num" name="bil_ac_num" value=""  readonly/>
+
+                        </div>
+
+                    </div>
                     
                     <div class="form-group">
                         <br/><br/>
@@ -670,6 +682,22 @@
                 }
             });
         });
+
+
+        $("#vendor_id").on('change', function() {
+            $.ajax({
+                type: "GET",
+                url: "{{ url() }}/order/bill-account",
+                data: {'vendor': $(this).val()},
+                success: function (data) {
+                    if(data.length>0){
+                        $('#bil_ac_num').val(data[0].bill_account_num);
+                    }
+                }
+            });
+        });
+
+
         $('#po_3').on('keyup', debounce(function () {
             var location_id = $("#po_1").val();
             validatePONumber(location_id, $(this).val());

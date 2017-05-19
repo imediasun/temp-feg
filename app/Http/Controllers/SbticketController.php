@@ -6,6 +6,7 @@ use App\Models\SbticketSetting;
 use App\Models\Ticketcomment;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
+use App\Library\FEG\System\FEGSystemHelper;
 use Validator, Input, Redirect;
 
 class SbticketController extends Controller

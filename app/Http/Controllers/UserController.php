@@ -536,7 +536,7 @@ class UserController extends Controller
                     'message' => $message,
                     'isTest' => env('APP_ENV', 'development') !== 'production' ? true : false,
                     'from' => CNF_EMAIL,
-                    'configName' => 'FORGETPASSWORD EMAIL'
+                    'configName' => 'FORGET PASSWORD EMAIL'
                 )));
 
 
