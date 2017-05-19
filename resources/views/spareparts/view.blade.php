@@ -42,7 +42,7 @@
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('For Game', (isset($fields['game_title_id']['language'])? $fields['game_title_id']['language'] : array())) }}
 						</td>
-						<td>{{ \DateHelpers::formatZeroValue(App\Models\Gamestitle::find($row['game_title_id'])?App\Models\Gamestitle::find($row['game_title_id'])->game_title:'No Data') }} </td>
+						<td>{!! SiteHelpers::gridDisplayView($row->game_title_id,'game_title_id','1:game_title:id:game_title')!!} </td>
 						
 					</tr>
 				

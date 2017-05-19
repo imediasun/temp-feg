@@ -496,14 +496,14 @@ class managefreightquoters extends Sximo
                             $cc = 'freight-notifications@fegllc.com';
                             $bcc = 'support@fegllc.com';
                         }
-                        else
+                        /*else
                         {
                             $to = "stanlymarian@gmail.com";//hardcoded email for testing
 
                             $cc = 'jdanial710@gmail.com';
 
                             $bcc = 'daynaedvin@gmail.com';
-                        }
+                        }*/
 
                         $subject = ((int)$num_games_per_destination == 0)?('Scheduled for delivery to ' . $locationName . '!'):('('.(int)$num_games_per_destination.')'.' Game[s] scheduled for delivery to ' . $locationName . '!');
                         $message = '<p>

@@ -187,7 +187,7 @@ class UserController extends Controller
                         'subject' => $subject,
                         'message' => $message,
                         'isTest' => env('APP_ENV', 'development') !== 'production' ? true : false,
-                        'from' => CNF_APPNAME,
+                        'from' => CNF_EMAIL,
                         //'cc' => $cc,
                         //'bcc' => $bcc,
                         'configName' => 'USER CREATE EMAIL'
