@@ -5,7 +5,7 @@ use App\Models\Freightquoters;
 use Illuminate\Http\Request;
 use \App\Models\Sximo\Module;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
-use Validator, Input, Redirect, FEGSystemHelper;
+use Validator, Input, Redirect;
 
 
 class FreightquotersController extends Controller
