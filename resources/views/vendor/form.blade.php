@@ -182,8 +182,20 @@
 					 <div class="col-md-2">
 					 	
 					 </div>
-				  </div> 					
-				  <div class="form-group  " > 
+				  </div>
+
+				<div class="form-group  " >
+					<label for="Billing Account Number" class=" control-label col-md-4 text-left">
+						{!! SiteHelpers::activeLang('Billing Account Number', (isset($fields['bill_account_num']['language'])? $fields['bill_account_num']['language'] : array())) !!}
+					</label>
+					<div class="col-md-6">
+						{!! Form::text('bill_account_num', $row['bill_account_num'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
+					</div>
+					<div class="col-md-2">
+
+					</div>
+				</div>
+							<div class="form-group  " >
 					<label for="Partner Hide" class=" control-label col-md-4 text-left">
                         <input type='hidden' value='0' name='partner_hide'>
 					{!! SiteHelpers::activeLang('Partner Hide', (isset($fields['partner_hide']['language'])? $fields['partner_hide']['language'] : array())) !!}	

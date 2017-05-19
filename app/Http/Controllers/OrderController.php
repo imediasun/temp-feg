@@ -788,6 +788,7 @@ class OrderController extends Controller
         return Redirect::to('order')->with('messagetext', \Lang::get('core.note_block'))->with('msgstatus', 'success');
 
     }
+
     public function getSearchFilterQuery($customQueryString = null) {
         // Filter Search for query
         // build sql query based on search filters
@@ -831,6 +832,7 @@ class OrderController extends Controller
 
         return $filter;
     }
+
     function getPo($order_id = null, $sendemail = false, $to = null, $from = null, $cc = null, $bcc = null, $message = null)
     {
         $mode = "";
@@ -914,8 +916,8 @@ class OrderController extends Controller
                 $data[0]['item_total_string'][$i] = $item_total_string;
                 $data[0]['order_total_cost'] = $order_total_cost;
                 $data[0]['company_name_long'] = 'Family Entertainment Group';
-
-//                $item_total_string = $item_total_string."-----------------\n"."$ ".number_format($order_total_cost,3)."\n";
+                
+                //$item_total_string = $item_total_string."-----------------\n"."$ ".number_format($order_total_cost,3)."\n";
             }
             $pdf = \PDF::loadView('order.po', ['data' => $data, 'main_title' => "Purchase Order"]);
             if ($mode == "save") {
@@ -1006,7 +1008,8 @@ class OrderController extends Controller
             }
         }
     }
-function sendPhpEmail($message,$to,$from,$subject,$pdf,$filename,$cc,$bcc)
+
+    function sendPhpEmail($message,$to,$from,$subject,$pdf,$filename,$cc,$bcc)
 {
     $result = \Mail::raw($message, function ($message) use ($to, $from, $subject, $pdf, $filename,$cc,$bcc) {
                         $message->subject($subject);
@@ -1033,6 +1036,7 @@ function sendPhpEmail($message,$to,$from,$subject,$pdf,$filename,$cc,$bcc)
     }
 
 }
+
     function getClone($id)
     {
         if ($id == '') {
@@ -1087,6 +1091,7 @@ function sendPhpEmail($message,$to,$from,$subject,$pdf,$filename,$cc,$bcc)
         }
         echo $msg;
     }
+
     function getOrderreceipt($order_id = null)
     {
 
@@ -1316,6 +1321,12 @@ function sendPhpEmail($message,$to,$from,$subject,$pdf,$filename,$cc,$bcc)
         //$user_allowed_locations=implode(',',\Session::get('user_location_ids'));
         $games_options = $this->model->populateGamesDropdown($location);
         return $games_options;
+    }
+
+    public function getBillAccount()
+    {
+        $vendor_id = $_GET['vendor'];
+        return \DB::table('vendor')->select('bill_account_num')->where('id', $vendor_id)->get();
     }
 
     function getComboselect(Request $request)
