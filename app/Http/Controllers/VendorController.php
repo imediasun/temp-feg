@@ -33,6 +33,33 @@ class VendorController extends Controller
 
     }
 
+    public function getSearchFilterQuery($customQueryString = null) {
+        // Filter Search for query
+        // build sql query based on search filters
+        $filter = is_null($customQueryString) ? (is_null(Input::get('search')) ? '' : $this->buildSearch()) :
+            $this->buildSearch($customQueryString);
+
+//
+//        // Special filter for default active status
+//        if (stripos($filter, "vendor.status") === false ) {
+//            $filter .= " AND vendor.status = '1'";
+//        }
+//        // special filter for default no-hidden status
+//        if (stripos($filter, "vendor.hide") === false ) {
+//            $filter .= " AND vendor.hide = '0'";
+//        }
+        // and showing both active and inactive vendors
+        if (stripos($filter, "AND vendor.status = '-1'") >= 0 ) {
+            $filter = str_replace("AND vendor.status = '-1'", "", $filter);
+        }
+        // showing both hidden and not hidden vendors
+        if (stripos($filter, "AND vendor.hide = '-1'") >= 0 ) {
+            $filter = str_replace("AND vendor.hide = '-1'", "", $filter);
+        }
+
+        return $filter;
+    }
+
     public function getIndex()
     {
         if ($this->access['is_view'] == 0)
@@ -63,7 +90,8 @@ class VendorController extends Controller
         $order = (!is_null($request->input('order')) ? $request->input('order') : $this->info['setting']['ordertype']);
         // End Filter sort and order for query
         // Filter Search for query
-        $filter = (!is_null($request->input('search')) ? $this->buildSearch() : '');
+        $filter = $this->getSearchFilterQuery();
+        //$filter = (!is_null($request->input('search')) ? $this->buildSearch() : '');
 
         $page = $request->input('page', 1);
         $params = array(
