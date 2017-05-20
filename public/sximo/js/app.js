@@ -673,7 +673,8 @@ jQuery(document).ready(function ($) {
 				url: siteUrl + '/core/users/check-access',
 				method:'get',
 				data: {
-					module:href[href.length - 1]
+					module:href[href.length - 1],
+					url: url.replace(siteUrl, '')
 				}
 			})
             .done(function (data) {

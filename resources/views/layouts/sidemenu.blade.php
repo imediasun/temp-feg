@@ -101,14 +101,24 @@ $selected_loc=\Session::get('selected_location');?>
                 </a>
             </li>--}}
             @foreach ($sidebar as $menu)
-                <li @if(Request::segment(1) == $menu['module'] || Request::url() == url($menu['url'])) class="active"  @endif>
-                    <a
-                    @if($menu['menu_type'] =='external')
-                        href="{{ $menu['url'] }}"
-                        @else
-                        href="{{ URL::to($menu['module'])}}"
-                            @endif
-
+                <?php
+                $mName = $menu['menu_name'];
+                $mType = $menu['menu_type'];
+                $mIsDivider = $mType == 'divider';
+                $mUrl = trim($menu['url'] .'');
+                if (strpos($mUrl, '/') === 0) {
+                    $mUrl = url().$mUrl;
+                }
+                if ($mType == 'internal') {
+                    $module = $menu['module'];
+                    $mUrl = URL::to($menu['module']);
+                }
+                $iconClass = $menu['menu_icons'];
+                //$class = Request::segment(1) == $menu['module'] || Request::url() == $mUrl ? "active" : "";
+                $class = Request::url() == $mUrl ? "active" : "";
+                ?>
+                <li class="{{$class}}" >
+                    <a  href="{{ $mUrl }}"
                     @if(count($menu['childs']) > 0 ) class="expand level-closed" @endif>
                         <i class="{{$menu['menu_icons']}}"></i> <span class="nav-label">
 					
@@ -123,14 +133,28 @@ $selected_loc=\Session::get('selected_location');?>
                     @if(count($menu['childs']) > 0)
                         <ul class="nav nav-second-level">
                             @foreach ($menu['childs'] as $menu2)
-                                <li @if(Request::segment(1) == $menu2['module'] && Request::segment(2)!="setting") class="active" @endif >
-                                    <a
-                                    @if($menu2['menu_type'] =='external')
-                                        href="{{ $menu2['url']}}"
-                                        @else
-                                        href="{{ URL::to($menu2['module'])}}"
-                                            @endif
-                                            >
+                                <?php
+                                $mName2 = $menu2['menu_name'];
+                                $mType2 = $menu2['menu_type'];
+                                $mIsDivider2 = $mType2 == 'divider';
+                                $mUrl2 = trim($menu2['url'] .'');
+                                if (strpos($mUrl2, '/') === 0) {
+                                    $mUrl2 = url().$mUrl2;
+                                }
+                                if ($mType2 == 'internal') {
+                                    $module2 = $menu2['module'];
+                                    $mUrl2 = URL::to($menu2['module']);
+                                }
+                                $iconClass2 = $menu['menu_icons'];
+                                //$class2 = (Request::segment(1) == $menu2['module'] ||  Request::url() == $mUrl2) && Request::segment(2)!="setting" ? "active" : "";
+                                $class2 = Request::url() == $mUrl2 ? "active" : "";
+                                // temporary fix for order form opened from Manage FEG Store Requests
+                                if (Request::segment(1)==$menu2['module'] && $menu2['module']=="order") {
+                                    $class2 = "active";
+                                }
+                                ?>
+                                <li  class="{{$class2}}")>
+                                    <a href="{{ $mUrl2 }}" >
                                         <i class="{{$menu2['menu_icons']}}"></i>
                                         @if(CNF_MULTILANG ==1 && isset($menu2['menu_lang']['title'][Session::get('lang')]))
                                             {{ $menu2['menu_lang']['title'][Session::get('lang')] }}
@@ -141,15 +165,24 @@ $selected_loc=\Session::get('selected_location');?>
                                     @if(count($menu2['childs']) > 0)
                                         <ul class="nav nav-third-level">
                                             @foreach($menu2['childs'] as $menu3)
-                                                <li @if(Request::segment(1) == $menu3['module']) class="active" @endif>
-                                                    <a
-                                                    @if($menu['menu_type'] =='external')
-                                                        href="{{ $menu3['url'] }}"
-                                                        @else
-                                                        href="{{ URL::to($menu3['module'])}}"
-                                                            @endif
-
-                                                            >
+                                                <?php
+                                                $mName3 = $menu3['menu_name'];
+                                                $mType3 = $menu3['menu_type'];
+                                                $mIsDivider3 = $mType3 == 'divider';
+                                                $mUrl3 = trim($menu3['url'] .'');
+                                                if (strpos($mUrl3, '/') === 0) {
+                                                    $mUrl3 = url().$mUrl3;
+                                                }
+                                                if ($mType3 == 'internal') {
+                                                    $module3 = $menu3['module'];
+                                                    $mUrl3 = URL::to($menu3['module']);
+                                                }
+                                                $iconClass3 = $menu3['menu_icons'];
+                                                //$class3 = Request::segment(1) == $menu3['module']||  Request::url() == $mUrl3 ? "active" : "";
+                                                $class3 = Request::url() == $mUrl3 ? "active" : "";
+                                                ?>
+                                                <li class="{{$class3}}">
+                                                    <a href="{{ $mUrl3 }}">
                                                         <i class="{{$menu3['menu_icons']}}"></i>
                                                         @if(CNF_MULTILANG ==1 && isset($menu3['menu_lang']['title'][Session::get('lang')]))
                                                             {{ $menu3['menu_lang']['title'][Session::get('lang')] }}
