@@ -366,6 +366,7 @@
         numberFieldValidationChecks($("#qty_input"));
         $("#vendor_id").jCombo("{{ URL::to('product/comboselect?filter=vendor:id:vendor_name:hide:0:status:1') }}",
                 {selected_value: '{{ $row["vendor_id"] }}'});
+        alert({{ $row["vendor_id"] }});
 
         $("#prod_type_id").jCombo("{{ URL::to('product/comboselect?filter=order_type:id:order_type:can_request:1') }}",
                 {selected_value: '{{ $row["prod_type_id"] }}'});
