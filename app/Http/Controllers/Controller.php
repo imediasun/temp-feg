@@ -653,6 +653,10 @@ abstract class Controller extends BaseController
         if (is_array($customSearchString) && !empty($customSearchString['query'])) {
             $searchAllValue = $customSearchString['query'];
             $searchAllFields = $customSearchString['fields'];
+            $searchDateFields = isset($customSearchString['dateFields']) ? $customSearchString['dateFields'] : [];
+            $dateQuery = isset($customSearchString['dateQuery']) ? $customSearchString['dateQuery'] : [];
+            $dateQueryOperator = isset($customSearchString['dateQueryOperator']) ? $customSearchString['dateQueryOperator'] :
+                (count($dateQuery)== 2 ? 'BETWEEN' : '=');
             $customSearchString = '';
         }
 
@@ -679,6 +683,14 @@ abstract class Controller extends BaseController
                         $field = (empty($alias) ?  '' : $alias.'.').$fieldName;
                         $params[] = " $field LIKE '%$searchAllValue%' ";
                     }
+                }
+            }
+            if (!empty($dateQuery)) {
+                foreach($dateQuery as $dateIndex => $dateItem) {
+                    $dateQuery[$dateIndex] = "'$dateItem'";
+                }
+                foreach($searchDateFields as $field) {
+                    $params[] = " ($field $dateQueryOperator ".implode(" AND ", $dateQuery). ") ";
                 }
             }
             $param = " AND (" . implode(' OR ', $params) . ') ';
