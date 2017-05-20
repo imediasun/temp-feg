@@ -490,21 +490,9 @@ class managefreightquoters extends Sximo
                         }
 
                         $from = \Session::get('eid');
-                        if(env('APP_ENV', 'development') == 'production')
-                        {
-                            $to = $this->get_user_emails('users_plus_district_and_field_managers', $data['request']['loc'][$i]);
-                            $cc = 'freight-notifications@fegllc.com';
-                            $bcc = 'support@fegllc.com';
-                        }
-                        else
-                        {
-                            $to = "stanlymarian@gmail.com";//hardcoded email for testing
-
-                            $cc = 'jdanial710@gmail.com';
-
-                            $bcc = 'daynaedvin@gmail.com';
-                        }
-
+                        $to = $this->get_user_emails('users_plus_district_and_field_managers', $data['request']['loc'][$i]);
+                        $cc = 'freight-notifications@fegllc.com';
+                        $bcc = 'support@fegllc.com';
                         $subject = ((int)$num_games_per_destination == 0)?('Scheduled for delivery to ' . $locationName . '!'):('('.(int)$num_games_per_destination.')'.' Game[s] scheduled for delivery to ' . $locationName . '!');
                         $message = '<p>
 										' . $email_notes . '
