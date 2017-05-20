@@ -98,22 +98,6 @@
                     </div>
 
                     <div class="form-group  ">
-                        <label for="User" class=" control-label col-md-4 text-left">
-                            {!! SiteHelpers::activeLang('Submitted By', (isset($fields['user']['language'])?
-                            $fields['user']['language'] : array())) !!}
-                        </label>
-                        <div class="col-md-6">
-                            @if($row['status_id']==2)
-                                {!! Form::text('user', $row['user'],array('class'=>'form-control', 'placeholder'=>'' ,'required'=>'true' )) !!}
-                            @else
-                                {{$row['user']}}
-                            @endif
-                        </div>
-                        <div class="col-md-2">
-                        </div>
-                    </div>
-
-                    <div class="form-group  ">
                         <label for="Status Id" class=" control-label col-md-4 text-left">
                             {!! SiteHelpers::activeLang('Status', (isset($fields['status_id']['language'])?
                             $fields['status_id']['language'] : array())) !!}
@@ -143,6 +127,22 @@
                         </div>
                         <div class="col-md-2">
 
+                        </div>
+                    </div>
+                    <div class="form-group  ">
+                        <label for="User" class=" control-label col-md-4 text-left">
+                            {!! SiteHelpers::activeLang('Submitted By', (isset($fields['user']['language'])?
+                            $fields['user']['language'] : array())) !!}
+                        </label>
+                        <div class="col-md-6">
+                            <input type="hidden" name="user" value="{{Auth::user()->first_name .' '. Auth::user()->last_name}}">
+                            @if(!empty($row['user']))
+                                {{$row['user']}}
+                            @else
+                                {{Auth::user()->first_name .' '. Auth::user()->last_name}}
+                            @endif
+                        </div>
+                        <div class="col-md-2">
                         </div>
                     </div>
 
