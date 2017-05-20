@@ -1,0 +1,4 @@
+{{$submitterEmailAddress}},<br>
+Thank you for your submission. An expected delivery date will be applied to your request automatically. Should your request be denied, you will be notified.<br>
+All graphic requests will receive an expected delivery date of 15, 30, or 45 days from the date of submission. This is dependent on the priority classification of your request. For more information on deadlines and priority classifications, please download, print, and refer to (link) FEG: New Graphics Requests<br>
+If you wish to amend your submission or request an advanced deadline, please contact Shaun.Remele@fegllc.com<br>
