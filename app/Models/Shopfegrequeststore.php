@@ -253,7 +253,7 @@ class shopfegrequeststore extends Sximo  {
         }else{
             $description=$data['description'];
         }
-        $baseMessage = '
+        /*$baseMessage = '
                     <b>Project:</b> '.$game_info[0].'<br>
                     <b>Date:</b> '. \DateHelpers::formatDate($data['request_date']).'<br>
 					<b>Submitter:</b> '.\Session::get('fid').'<br>
@@ -267,14 +267,26 @@ class shopfegrequeststore extends Sximo  {
         $messageEnd = '<br> To fast-track the completion of this task, please contact the Graphics Department at (847) 852-4270 to arrange an expedited deadline.';
 
         //$messageEnd = 'Set Priority Level at <b>'.$mangeGraphicRequestURL.'</b><br><br>
-					//**All cc\'d, please Reply to All <b> only if you wish to deny or modify request</b> and explain why.</em><br>';
+					//**All cc\'d, please Reply to All <b> only if you wish to deny or modify request</b> and explain why.</em><br>';*/
+
+        $messageWithLink = View::make('shopfegrequeststore.emails.graphic-request-submitter-link', array(
+            'title' => $game_info[0],
+            'date' => \DateHelpers::formatDate($data['request_date']),
+            'submitter' => \Session::get('fid'),
+            'location_id' => $data['location_id'],
+            'location_name' => $locationName,
+            'description' => $description,
+            'request_link' => $mangeGraphicRequestURL,
+            'approve_link' => $graphicApproveLink,
+            'deny_link' => $graphicDenyLink
+        ))->render();
 
         $from = \Session::get('eid');
         $subject = 'New Graphics Request for '.$locationName;
 
         $configName = 'Request new custom graphics email';
         $receipts = FEGSystemHelper::getSystemEmailRecipients($configName);
-        $message = $baseMessage.$links.$messageEnd;
+        $message = $messageWithLink;//$baseMessage.$links.$messageEnd;
         FEGSystemHelper::sendSystemEmail(array_merge($receipts, array(
             'subject' => $subject,
             'message' => $message,
