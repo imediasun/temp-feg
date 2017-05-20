@@ -50,10 +50,11 @@ class UsersController extends Controller
         $copiedUrlParts = $urlParts;
         $fullPassList = ['forum'];
 
-        do {
-            $moduleId = Module::where('module_name', $searchableModuleName)->pluck('module_id');
+        $moduleId = Module::where('module_name', $searchableModuleName)->pluck('module_id');
+        while (empty($moduleId) && !empty($copiedUrlParts)) {
             $searchableModuleName = array_pop($copiedUrlParts);
-        } while (empty($moduleId) && !empty($copiedUrlParts));
+            $moduleId = Module::where('module_name', $searchableModuleName)->pluck('module_id');
+        }
 
         $access = [];
 
@@ -68,8 +69,6 @@ class UsersController extends Controller
                 $access = ['is_view' => 1];
             }
         }
-
-
         return response()->json($access);
     }
 
