@@ -46,16 +46,31 @@ class UsersController extends Controller
     public function getCheckAccess()
     {
         $moduleName = Input::get('module');
-        $moduleId = Module::where('module_name', $moduleName)->pluck('module_id');
+        $searchableModuleName = $moduleName;
+        $urlParts = explode('/', trim(Input::get('url'), '/'));
+        array_pop($urlParts);
+        $copiedUrlParts = $urlParts;
+        $fullPassList = ['forum'];
+        
+        $moduleId = Module::where('module_name', $searchableModuleName)->pluck('module_id');
+        while (empty($moduleId) && !empty($copiedUrlParts)) {
+            $searchableModuleName = array_pop($copiedUrlParts);
+            $moduleId = Module::where('module_name', $searchableModuleName)->pluck('module_id');
+        }
+        
+        $access = [];
+
         if (!empty($moduleId)) {
             $access = $this->model->validAccess($moduleId);
         }
         else {
             $access = $this->model->validPageAccess($moduleName);
         }
-        if ($moduleName =='forum') {
-            $access = ['is_view' => 1];
-        }
+        if (empty($access)) {
+            if (in_array($moduleName, $fullPassList)) {
+                $access = ['is_view' => 1];
+            }
+        }        
         return response()->json($access);
     }
 
