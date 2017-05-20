@@ -97,6 +97,19 @@ $(document).ready(function(){
 			$('.standart-form').hide(); 
 			$('.database').hide();$('.datalist').hide();$('.file-upl').hide();
 		}
+
+        switch (val) {
+            case "text":
+            case "textarea":
+                $("#advancedsearchoperator").val('like');
+                break;
+            case "text_date":
+            case "text_datetime":
+                $("#advancedsearchoperator").val('between');
+                break;
+            default:
+                $("#advancedsearchoperator").val('equal');
+        }
 	
 	}	
 </script>
