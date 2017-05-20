@@ -262,7 +262,7 @@ class shopfegrequeststore extends Sximo  {
 					<br><em>';
 
         $links = 'Please click on <a href="'.$graphicApproveLink.'">Approval</a> or <a href="'.$graphicDenyLink.'">Denial</a> <br>
-					to Approve/Deny this graphic request <br><br>&nbsp;&nbsp;&nbsp; 2.) ';
+					to Approve/Deny this graphic request <br><br>&nbsp;&nbsp;&nbsp;';
 
         $messageEnd = '<br> To fast-track the completion of this task, please contact the Graphics Department at (847) 852-4270 to arrange an expedited deadline.';
 
