@@ -40,8 +40,7 @@ class OrderController extends Controller
 
     }
 
-    public
-    function getExport($t = 'excel')
+    public function getExport($t = 'excel')
     {
         global $exportSessionID;
         ini_set('memory_limit', '1G');

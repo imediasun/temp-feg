@@ -3424,3 +3424,7 @@ margin-left: 15px;
   top: 0;
   display: none;
 }
+span.order_custom_error ~ ul.parsley-error-list
+{
+  display: none;
+}
