@@ -873,7 +873,6 @@ class OrderController extends Controller
                 'L.location_name',
                 'V.vendor_name',
                 'orders.order_total',
-                'orders.date_ordered',
                 'orders.order_description',
                 'OS.status',
                 'OT.order_type',
@@ -881,11 +880,17 @@ class OrderController extends Controller
                 'orders.po_notes',
                 'orders.notes',
                 'orders.is_partial',
-                'orders.created_at',
-                'orders.updated_at',
                 'YN.yesno'
             ];
-            $searchInput = ['query' => $search_all_fields, 'fields' => $searchFields];
+            $dateSearchFields = [
+                'orders.date_ordered',
+                'orders.created_at',
+                'orders.updated_at',
+            ];
+            $dates = FEGSystemHelper::probeDatesInSearchQuery($search_all_fields);
+            $searchInput = ['query' => $search_all_fields, 'dateQuery' => $dates,
+                'fields' => $searchFields, 'dateFields' => $dateSearchFields];
+
         }
 
         // Filter Search for query
