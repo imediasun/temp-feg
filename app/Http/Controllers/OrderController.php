@@ -302,9 +302,8 @@ class OrderController extends Controller
         $this->data['games_options'] = $this->model->populateGamesDropdown();
         return view('order.form', $this->data);
     }
-// Uncomment if Copy functionality is needed for orders
-// it need testing afer commenting.
-  /*  public function getShow($id = null)
+
+   public function getShow($id = null)
     {
 
         if ($this->access['is_detail'] == 0)
@@ -326,6 +325,9 @@ class OrderController extends Controller
 
         return view('order.view', $this->data);
     }
+    // Uncomment if Copy functionality is needed for orders
+// it need testing afer commenting.
+/*
     function postCopy(Request $request)
     {
 
