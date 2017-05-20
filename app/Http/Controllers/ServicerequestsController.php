@@ -650,10 +650,12 @@ class servicerequestsController extends Controller
             $date = date("Y-m-d");
             $status = @$request->input('Status');
             $oldStatus = @$request->input('oldStatus');
+            $priority = @$request->input('Priority');
             $ticketsData = [];
             //$ticketsData['updated'] = date('Y-m-d H:i:s');
             if (!empty($status)) {
                 $ticketsData['Status'] = $status;
+                $ticketsData['Priority'] = $priority;
                 $ticketsData['closed'] = null;
                 $isStatusClosed = $status == 'closed';
                 if ($isStatusClosed) {
