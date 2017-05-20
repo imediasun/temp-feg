@@ -283,11 +283,15 @@ class VendorController extends Controller
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
             if(empty($id))
+            {
                 $data = $this->validatePost('vendor');
+            }
             else
+            {
                 $data = $this->validatePost('vendor', true);
-            $data['hide'] = $request->has('hide')?1:0;
-            $data['status'] = $request->has('status')?1:0;
+            }
+            $data['hide'] = $request->get('hide') == "1" ?1:0;
+            $data['status'] = $request->get('status') == "1" ?1:0;
             if (!empty($data['website'])) {
                 if (preg_match('/^https?\:\/\//', trim($data['website'])) !== 1) {
                     $data['website'] = 'http://' . trim($data['website']);
