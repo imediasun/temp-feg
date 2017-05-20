@@ -6,10 +6,10 @@
 				<div class="avatar">
 					@if(file_exists('./uploads/users/'.$row->avatar) && $row->avatar !='')
 						<img src="{{ asset('uploads/users/'.$row->avatar)}}" class="img-circle" width="50">
-					@else 
+					@else
 						<img alt="" src="http://www.gravatar.com/avatar/<?php echo md5($row->email);?>" class="img-circle" width="50">
 					@endif
-					
+
 
 				</div>
 				<div class="comments">
@@ -19,18 +19,18 @@
 						<a onclick="removeComm('{{ $row->CommentID}}')" class="collapse-close pull-right btn btn-xs btn-danger" href="javascript:void(0)">
 			<i class="fa fa fa-times"></i></a>
 						@endif
-					</div> 
+					</div>
 					{{ $row->Comments }}
 				</div>
 
 				<div class="clear clr clearfix"></div>
-				
+
 			</li>
-		
+
 		@endforeach
 		</ul>
 		<div class="clear clr clearfix"></div>
-	</div<	
+	</div<
 	@else
 		<p><b> No Conversation Found ! </b> </p>
 	@endif
@@ -50,13 +50,13 @@
 		{
 			$('.ajaxLoading').show();
 			$.get("{{ url('sbticket/removereply/')}}/"+id,function(callback){
-				notyMessage(callback.message);	
+				notyMessage(callback.message);
 				$.get('{{ url("sbticket/comment/".$TicketID)}}',function(output){
 					$('#RelpyList').html(output);
 					$('.ajaxLoading').hide();
 				});
 			})
-		
+
 		} else {
 			return false;
 		}

@@ -192,24 +192,60 @@ if (!$colconfigs) {
     $(document).ready(function () {
         $("[id^='toggle_trigger_']").on('switchChange.bootstrapSwitch', function(event, state) {
             var locationId=$(this).data('id');
-            $.ajax(
-                    {
-                        type:'POST',
-                        url:'location/trigger',
-                        data:{isActive:state,locationId:locationId},
-                        success:function(data){
-                            if(data.status != "error") {
-                                if (data.message == "inactive") {
-                                    $("#user_locations option[value=" + locationId + "]").hide();
-                                }
-                                else
-                                {
-                                    $("#user_locations option[value=" + locationId + "]").show();
+            var message = '';
+            var check = false;
+            if(state)
+            {
+                message = "<div class='confirm_inactive'><br>Are you sure you want to Active this Location <br> <b>***WARNING***</b><br> if you active this location then this will be visible for all users how assigned to this and will be able to do any task on this location.</div>";
+            }
+            else
+            {
+                check = true;
+                message = "<div class='confirm_inactive'><br>Are you sure you want to Inactive this Location <br> <b>***WARNING***</b><br> if you inactive this location then this will be hidden for all users how assigned to this and will not be able to do any task on this location.</div>";
+            }
+
+            currentElm = $(this);
+            currentElm.bootstrapSwitch('state', check,true);
+            $('.custom_overlay').show();
+            App.notyConfirm({
+                message: message,
+                confirmButtonText: 'Yes',
+                container: '.custom-container',
+                confirm: function (){
+                    $('.custom_overlay').slideUp(500);
+                    $.ajax(
+                        {
+                            type:'POST',
+                            url:'location/trigger',
+                            data:{isActive:state,locationId:locationId},
+                            success:function(data){
+                                currentElm.bootstrapSwitch('state', !check,true);
+                                if(data.status != "error") {
+                                    if (data.message == "inactive") {
+                                        $("#user_locations option[value=" + locationId + "]").hide();
+                                    }
+                                    else
+                                    {
+                                        $("#user_locations option[value=" + locationId + "]").show();
+                                    }
+                                    if ($('select[name="active"] :selected').val() == 1 && data.message == "inactive") {
+                                        $('#form-'+locationId).hide(500);
+                                        $('#divOverlay_'+locationId).hide(500);
+                                    }
+                                    else if($('select[name="active"] :selected').val() == 0 && data.message == "active")
+                                    {
+                                        $('#form-'+locationId).hide(500);
+                                        $('#divOverlay_'+locationId).hide(500);
+                                    }
                                 }
                             }
                         }
-                    }
-            );
+                    );
+                },
+                cancel: function () {
+                    $('.custom_overlay').slideUp(500);
+                }
+            });
         });
 
         $("[id^='toggle_trigger']").bootstrapSwitch();

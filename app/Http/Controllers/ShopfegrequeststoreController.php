@@ -38,6 +38,48 @@ class ShopfegrequeststoreController extends Controller
 
     }
 
+    public function getSearchFilterQuery($customQueryString = null) {
+        // Filter Search for query
+        // build sql query based on search filters
+
+
+        // Get custom Ticket Type filter value
+        $globalSearchFilter = $this->model->getSearchFilters(['search_all_fields' => '']);
+        $skipFilters = ['search_all_fields'];
+        $mergeFilters = [];
+        extract($globalSearchFilter); //search_all_fields
+
+        // rebuild search query skipping 'ticket_custom_type' filter
+        $trimmedSearchQuery = $this->model->rebuildSearchQuery($mergeFilters, $skipFilters, $customQueryString);
+        $searchInput = $trimmedSearchQuery;
+        if (!empty($search_all_fields)) {
+            $searchFields = [
+                'products.id',
+                'products.vendor_description',
+                'products.item_description',
+                'products.size',
+                'products.unit_price',
+                'products.num_items',
+                'products.case_price',
+                'products.retail_price',
+                'products.created_at',
+                'products.updated_at',
+                'products.expense_category',
+                'vendor.vendor_name',
+                'products.ticket_value',
+                'O.order_type',
+                'T.product_type'
+            ];
+            $searchInput = ['query' => $search_all_fields, 'fields' => $searchFields];
+        }
+
+        // Filter Search for query
+        // build sql query based on search filters
+        $filter = is_null(Input::get('search')) ? '' : $this->buildSearch($searchInput);
+
+
+        return $filter;
+    }
     public function getIndex()
     {
         if ($this->access['is_view'] == 0)
@@ -80,7 +122,9 @@ class ShopfegrequeststoreController extends Controller
 
         // Filter Search for query
         // build sql query based on search filters
-        $filter = is_null(Input::get('search')) ? '' : $this->buildSearch($trimmedSearchQuery);
+      //Commented below line to implement single Search field in simple search
+      //$filter = is_null(Input::get('search')) ? '' : $this->buildSearch($trimmedSearchQuery);
+        $filter = $this->getSearchFilterQuery();
         // add special price range query
         if (!empty($price_range)) {
             $pr1 = '';
@@ -333,7 +377,7 @@ class ShopfegrequeststoreController extends Controller
               }
             $data = array('location_id' => $locationId, 'request_user_id' => \Session::get('uid'), 'request_date' => $now, 'need_by_date' => $date_needed, 'description' => $game_info . ' - ' . $graphics_description, 'qty' => $qty, 'status_id' => $statusId, 'img' => $filesnames);
             $last_insert_id = $this->model->newGraphicRequest($data);
-            
+
 
             return response()->json(array(
                 'status' => 'success',

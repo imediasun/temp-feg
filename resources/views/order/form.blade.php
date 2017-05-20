@@ -23,7 +23,8 @@
             @endif
             {!! Form::open(array('url'=>'order/save/', 'class'=>'form-vertical','files' => true ,
             'parsley-validate'=>'','novalidate'=>' ','id'=> 'ordersubmitFormAjax')) !!}
-            
+            <input type="hidden" id="is_freehand" name="is_freehand" value="0">
+            <input type="hidden" id="can_select_product_list" value="1">
             <div class="row">
             <div class="col-md-6">
                 <div class="box-white">
@@ -46,7 +47,12 @@
                         <label for="location_id" class=" control-label col-md-4 text-left"> Location </label>
 
                         <div class="col-md-8">
-                            <select class="select3" id="location_id" name="location_id" required></select>
+                           @if($data['prefill_type'] != "edit")
+                                <select class="select3" id="location_id" name="location_id" required></select>
+                            @else
+                               {{ $data["order_loc_id"]." " }}  {!! SiteHelpers::gridDisplayView($data["order_loc_id"],'location_id','1:location:id:location_name') !!}
+                            <input type="hidden" value="{{$data['order_loc_id']}}" id="location_id" name="location_id"/>
+                            @endif
                         </div>
 
                     </div>
@@ -157,6 +163,18 @@
                         </div>
 
                     </div>
+
+                    <div class="form-group">
+                        <br/><br/>
+                        <label for="bil_ac_num" class=" control-label col-md-4 text-left" style="margin-top: 7px;">
+                            Billing Accoung Number</label>
+
+                        <div class="col-md-8" style="padding-left: 15px;">
+                            <input  type="text" class="form-control " id="bil_ac_num" readonly/>
+
+                        </div>
+
+                    </div>
                     
                     <div class="form-group">
                         <br/><br/>
@@ -188,16 +206,26 @@
                             PO Number</label>
 
                         <div class="col-md-8">
-                            <input type="text" name="po_1" readonly id="po_1" value="{{ $data['order_loc_id'] }}"
+                           @if($data['prefill_type'] != "edit")
+                                <input type="text" name="po_1" readonly id="po_1" value="{{ $data['order_loc_id'] }}"
+                                       class="form-control" style="float: left; margin-right: 2%; width: 28%;"/>
+                                <input type="text" name="po_2" readonly id="po_2" class="form-control"
+                                       value="{{  $data['po_2'] }}" style="float: left; margin-right: 1%; width: 39%;"/>
+                                <input type="text" name="po_3" id="po_3" required class="form-control" autocomplete="off" readonly
+                                       value="{{ $data['po_3'] }}" style="float: left; width: 29%; margin-left: 1%;"/>
+                                @elseif( $data['prefill_type'] == "edit" && !empty($data['po_1']) && !empty($data['po_2']) && !empty($data['po_3']))
+                            <input type="text" name="po_1" readonly id="po_1" value="{{ $data['po_1'] }}"
                                    class="form-control" style="float: left; margin-right: 2%; width: 28%;"/>
                             <input type="text" name="po_2" readonly id="po_2" class="form-control"
                                    value="{{  $data['po_2'] }}" style="float: left; margin-right: 1%; width: 39%;"/>
                             <input type="text" name="po_3" id="po_3" required class="form-control" autocomplete="off" readonly
                                    value="{{ $data['po_3'] }}" style="float: left; width: 29%; margin-left: 1%;"/>
+                            @else
+                                <input type="text" name="po"  class="form-control" autocomplete="off" readonly
+                                       value="{{ $data['po_number'] }}"/>
+                            @endif
+                                <br/>
                             <br/>
-                            <br/>
-
-                            <div id="po_message"></div>
                         </div>
 
                     </div>
@@ -307,7 +335,13 @@
                 <div style="padding-left:60px !important;">
                     <a href="javascript:void(0);" class="addC btn btn-xs btn-info" rel=".clone" id="add_new_item"><i
                                 class="fa fa-plus"></i>
-                        New Item</a></div>
+                        New Item</a>
+                @if(!empty($pass['Can add freehand products']))
+                        <a href="javascript:void(0);" class="btn btn-xs btn-info enabled" data-status="disabled" id="can-freehand">
+                            <i class="fa fa-times fa-check-circle-o" aria-hidden="true"></i>
+                           <span>Enable Freehand</span></a>
+                    @endif
+                </div>
                 <input type="hidden" name="enable-masterdetail" value="true">
             </div>
             <br/><br/>
@@ -400,9 +434,6 @@
         games_options_js = games_options_js.replace(/&#039;/g, "'");
         games_options_js = games_options_js.replace(/\\/g, "\\\\");
         games_options_js = $.parseJSON(games_options_js.replace(/&quot;/g, '"'));
-        $("#po_3").focus(function () {
-            $("#po_message").hide(200);
-        });
         function removeRow(id) {
             if (counter > 1) {
                 $("#" + id).parents('.clonedInput').remove();
@@ -519,7 +550,6 @@
             var item_case_price =<?php echo json_encode($data['itemCasePrice']) ?>;
             var item_retail_price =<?php echo json_encode($data['itemRetailPrice'])?>;
             var item_total = 0;
-
             for (var i = 0; i < requests_item_count; i++) {
 
                 $('input[name^=item_num]').eq(i).val(i + 1);
@@ -538,7 +568,6 @@
                         $('input[name^=price]').eq(i).val(order_price_array[i]);
 
                     }
-
                 if (game_ids_array[i] == "" || game_ids_array[i] == null) {
                     $('input[name^=game]').eq(i).val("");
                 }
@@ -547,6 +576,7 @@
                     $('input[name^=game]').eq(i).val(game_ids_array[i]);
 
                 }
+
                 if (order_qty_array[i] == "" || order_qty_array[i] == null) {
                     $('input[name^=qty]').eq(i).val(00);
                 }
@@ -641,7 +671,6 @@
         }
         var games_dropdown = [];
         $("#location_id").click(function () {
-            $("#po_message").hide(200);
             $("#po_1").val($(this).val());
             var location_id = $(this).val();
             //if(myloc == location_id)
@@ -660,6 +689,22 @@
                 }
             });
         });
+
+
+        $("#vendor_id").on('change', function() {
+            $.ajax({
+                type: "GET",
+                url: "{{ url() }}/order/bill-account",
+                data: {'vendor': $(this).val()},
+                success: function (data) {
+                    if(data.length>0){
+                        $('#bil_ac_num').val(data[0].bill_account_num);
+                    }
+                }
+            });
+        });
+
+
         $('#po_3').on('keyup', debounce(function () {
             var location_id = $("#po_1").val();
             validatePONumber(location_id, $(this).val());
@@ -684,13 +729,13 @@
             }
             var $elm = $('#po_3');
             if (editmode && $elm.val().trim() == $elm.data('original')) {
-                $("#po_message").html('');
+
                 //   $("#submit_btn").removeAttr('disabled');
                 return;
             }
             if ($elm.val().trim() === '') {
-                $("#po_message").html('');
-                // $("#submit_btn").attr('disabled','disabled');
+
+               // $("#submit_btn").attr('disabled','disabled');
                 return;
             }
 
@@ -729,8 +774,7 @@
                         poajax = null;
                         if (msg != 'available') {
                             $("#po_3").val(msg);
-                            $("#po_message").html('<b style="color:rgba(43, 164, 32, 0.99);margin:5px 0px">*PO# is available.</b>');
-                            $("#po_message").show(200);
+
                         }
                         else {
                             $("#po_message").html('<b style="color:rgba(43, 164, 32, 0.99);margin:5px 0px">*PO# is Available.</b>');
@@ -883,78 +927,117 @@
             var itemid = $("#" + trid + "  textarea[name^=item]").attr('id');
             var retailpriceid = $('#' + trid + "  input[name^=retail]").attr('id');
             var selectorProductId = $('#' + trid + "  input[name^=product_id]").attr('id');
+            if(($('#can_select_product_list').val() == 1))
+            {
+                @if (!empty($pass['Can select product list']))
+                    $(obj).autocomplete({
+                        minLength: 2,
+                        source: function (request, response) {
+                            var term = request.term;
+                            term = term.trim();
+                            var vendorId = $("#vendor_id").val();
+                            if (vendorId != "") {
+                                request.vendor_id = $("#vendor_id").val();
+                            }
+                            lastXhr = $.getJSON("order/autocomplete", request, function (data, status, xhr) {
+                                cache[term] = data;
+                                if (data.value == "No Match") {
+                                    // $('[name^=item_name]:focus').closest('tr').find('.sku').removeAttr('readonly');
+                                }
+                                else {
+                                    // $('[name^=item_name]:focus').closest('tr').find('.sku').attr('disabled',true);
+                                    // $('[name^=item_name]:focus').closest('tr').find('.sku').attr('readonly',true);
+                                    // $('[name^=item_name]:focus').closest('tr').find('.sku').val('');
 
-            @if (!empty($pass['Can select product list']))
-            $(obj).autocomplete({
-                minLength: 2,
-                source: function (request, response) {
-                    var term = request.term;
-                    term = term.trim();
-                    var vendorId = $("#vendor_id").val();
-                    if (vendorId != "") {
-                        request.vendor_id = $("#vendor_id").val();
-                    }
-                    lastXhr = $.getJSON("order/autocomplete", request, function (data, status, xhr) {
-                        cache[term] = data;
-                        if (data.value == "No Match") {
-                            // $('[name^=item_name]:focus').closest('tr').find('.sku').removeAttr('readonly');
-                        }
-                        else {
-                            // $('[name^=item_name]:focus').closest('tr').find('.sku').attr('disabled',true);
-                            // $('[name^=item_name]:focus').closest('tr').find('.sku').attr('readonly',true);
-                            // $('[name^=item_name]:focus').closest('tr').find('.sku').val('');
+                                }
+                                if (xhr === lastXhr) {
+                                    response(data);
+                                }
+                            });
+                        },
+                        select: function (event, ui) {
+                            $.ajax({
+                                url: "order/productdata",
+                                type: "get",
+                                dataType: 'json',
+                                data: {'product_id': ui.item.value},
+                                success: function (result) {
+                                    if (result.unit_price == 0 && result.case_price == 0) {
+                                        notyMessageError("Retail Price and Case Price Unavailable...");
+                                        exit;
+                                    }
+                                    if (result.sku) {
+                                        $("#" + skuid).val(result.sku);
+                                    }
+                                    else {
+                                        $("#" + skuid).val('N/A');
+                                    }
 
-                        }
-                        if (xhr === lastXhr) {
-                            response(data);
+                                    if (result.unit_price) {
+                                        $("#" + priceid).val(result.unit_price);
+                                    }
+                                    else {
+                                        $("#" + priceid).val(0.00);
+                                    }
+                                    if (result.case_price) {
+                                        $("#" + casepriceid).val(result.case_price);
+                                    }
+                                    else {
+                                        $("#" + casepriceid).val(0.00);
+                                    }
+                                    if (result.retail_price) {
+                                        $("#" + retailpriceid).val(result.retail_price);
+                                    }
+                                    else {
+                                        $("#" + casepriceid).val(0.00);
+                                    }
+                                    $("#" + itemid).val(result.item_description);
+                                    $("#" + selectorProductId).val(result.id);
+                                    $("#" + qtyid).val(0.00);
+                                    calculateSum();
+                                }
+                            });
+                        },
+                        change: function (event, ui) {
+
+                            if (($('#is_freehand').val() == 0)) {
+                                if ($(this).val()) {
+                                    if (($(this).val() == 'No Match')) {
+                                        $(this).val("");
+                                        //$('.'+$(this).attr('id')+'_span').remove();
+                                        $(this).attr('placeholder', 'Please select a value from list');
+                                        $(this).css('border-color', '#c00', 'important');
+                                        //$(this).parents('td').append("<span class='"+$(this).attr('id')+"_span order_custom_error' style='color:#cc0000'>Please select a value from list</span>");
+                                    }
+                                    else if (!(ui.item)) {
+                                        $(this).val("");
+                                        //$('.'+$(this).attr('id')+'_span').remove();
+                                        $(this).attr('placeholder', 'Please select a value from list');
+
+                                        $(this).css('border-color', '#c00', 'important');
+
+                                        //$(this).parents('td').append("<span class='"+$(this).attr('id')+"_span order_custom_error' style='color:#cc0000'>Please select a value from list</span>");
+                                    }
+                                    else {
+                                        $(this).css('border-color', '#e5e6e7', 'important');
+                                        //$('.'+$(this).attr('id')+'_span').remove();
+                                    }
+                                }
+                                else {
+                                    //$('.'+$(this).attr('id')+'_span').remove();
+                                    $(this).css('border-color', '#e5e6e7', 'important');
+                                }
+                            }
                         }
                     });
-                },
-                select: function (event, ui) {
-                    $.ajax({
-                        url: "order/productdata",
-                        type: "get",
-                        dataType: 'json',
-                        data: {'product_id': ui.item.value},
-                        success: function (result) {
-                            if (result.unit_price == 0 && result.case_price == 0) {
-                                notyMessageError("Retail Price and Case Price Unavailable...");
-                                exit;
-                            }
-                            if (result.sku) {
-                                $("#" + skuid).val(result.sku);
-                            }
-                            else {
-                                $("#" + skuid).val('N/A');
-                            }
-
-                            if (result.unit_price) {
-                                $("#" + priceid).val(result.unit_price);
-                            }
-                            else {
-                                $("#" + priceid).val(0.00);
-                            }
-                            if (result.case_price) {
-                                $("#" + casepriceid).val(result.case_price);
-                            }
-                            else {
-                                $("#" + casepriceid).val(0.00);
-                            }
-                            if (result.retail_price) {
-                                $("#" + retailpriceid).val(result.retail_price);
-                            }
-                            else {
-                                $("#" + casepriceid).val(0.00);
-                            }
-                            $("#" + itemid).val(result.item_description);
-                            $("#" + selectorProductId).val(result.id);
-                            $("#" + qtyid).val(0.00);
-                            calculateSum();
-                        }
-                    });
-                }
-            });
-            @endif
+                $(obj).autocomplete( "enable" );
+                @endif
+            }
+            else
+            {
+                $(obj).autocomplete();
+                $(obj).autocomplete('disable');
+            }
         }
         //init();
         $(function () {
@@ -981,6 +1064,68 @@
             }
 
         }
+        // for enable/disable free-hand button
+        $('#can-freehand').on('click',function(){
+            currentElm = $(this);
+            if($('#item_name').val())
+            {
+                App.notyConfirm({
+                    message: "Are you sure you want to "+(currentElm.data('status') == 'enabled'?'Disable':'Enable')+" Freehand mode <br> <b>***WARNING***</b><br>if you change mode all of your items will be removed and you will have to add them again",
+                    confirmButtonText: 'Yes',
+                    confirm: function (){
+                        var status=currentElm.data('status');
+                        if(status == "enabled") {
+                            currentElm.data('status','disabled');
+                            $("#can-freehand i").toggleClass("fa-check-circle-o");
+                            $("#can-freehand span").text('Enable Freehand');
+                            $('#is_freehand').val(0);
+                            $('#can_select_product_list').val(1);
+                            $('.itemstable .clonedInput:not(:first-child)').remove();
+                            $('.itemstable .clonedInput:first-child input').val('');
+                            $('.itemstable .clonedInput:first-child textarea').val('');
+                        }
+                        else{
+                            currentElm.data('status','enabled');
+                            $("#can-freehand i").toggleClass("fa-check-circle-o");
+                            $("#can-freehand span").text('Disable Freehand');
+                            $('#is_freehand').val(1);
+                            $('#can_select_product_list').val(0);
+                            $('.clonedInput .item_name').css('border-color','#e5e6e7','important');
+                            $('.clonedInput .item_name').attr('placeholder','Item Name');
+                            $('.itemstable .clonedInput:not(:first-child)').remove();
+                            $('.itemstable .clonedInput:first-child input').val('');
+                            $('.itemstable .clonedInput:first-child textarea').val('');
+                        }
+                    }
+                });
+            }
+            else
+            {
+                var status=currentElm.data('status');
+                if(status == "enabled") {
+                    currentElm.data('status','disabled');
+                    $("#can-freehand i").toggleClass("fa-check-circle-o");
+                    $("#can-freehand span").text('Enable Freehand');
+                    $('#is_freehand').val(0);
+                    $('#can_select_product_list').val(1);
+                    $('.itemstable .clonedInput:not(:first-child)').remove();
+                    $('.itemstable .clonedInput:first-child input').val('');
+                    $('.itemstable .clonedInput:first-child textarea').val('');
+                }
+                else{
+                    currentElm.data('status','enabled');
+                    $("#can-freehand i").toggleClass("fa-check-circle-o");
+                    $("#can-freehand span").text('Disable Freehand');
+                    $('#is_freehand').val(1);
+                    $('#can_select_product_list').val(0);
+                    $('.clonedInput .item_name').css('border-color','#e5e6e7','important');
+                    $('.clonedInput .item_name').attr('placeholder','Item Name');
+                    $('.itemstable .clonedInput:not(:first-child)').remove();
+                    $('.itemstable .clonedInput:first-child input').val('');
+                    $('.itemstable .clonedInput:first-child textarea').val('');
+                }
+            }
+        });
     </script>
     <style>
         .ui-corner-all {

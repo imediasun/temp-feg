@@ -113,7 +113,8 @@ class UserController extends Controller
 
     public function getRegister()
     {
-
+        return Redirect::to('/')->with('message', \SiteHelpers::alert('error', 'Sorry, Registration is disabled. Please contact administrator'));
+        /*
         if (CNF_REGIST == 'false') :
             if (\Auth::check()):
                 return Redirect::to('')->with('message', \SiteHelpers::alert('success', 'Youre already login'));
@@ -124,13 +125,15 @@ class UserController extends Controller
         else :
 
             return view('user.register');
-        endif;
+        endif;*/
 
 
     }
 
     public function postCreate(Request $request)
     {
+        return Redirect::to('/')->with('message', \SiteHelpers::alert('error', 'Sorry, Registration is disabled. Please contact administrator'));
+        /*
         $rules = array(
             'firstname' => 'required|alpha_num|min:2',
             'lastname' => 'required|alpha_num|min:2',
@@ -174,10 +177,22 @@ class UserController extends Controller
                 $to = $request->input('email');
                 $subject = "[ " . CNF_APPNAME . " ] REGISTRATION ";
                 $message = view('user.emails.registration', $data);
-                $headers = 'MIME-Version: 1.0' . "\r\n";
-                $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
-                $headers .= 'From: ' . CNF_APPNAME . ' <' . CNF_EMAIL . '>' . "\r\n";
-                mail($to, $subject, $message, $headers);
+                //$headers = 'MIME-Version: 1.0' . "\r\n";
+                //$headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
+                //$headers .= 'From: ' . CNF_APPNAME . ' <' . CNF_EMAIL . '>' . "\r\n";
+                //mail($to, $subject, $message, $headers);
+                if(!empty($to)){
+                    FEGSystemHelper::sendSystemEmail(array(
+                        'to' => $to,
+                        'subject' => $subject,
+                        'message' => $message,
+                        'isTest' => env('APP_ENV', 'development') !== 'production' ? true : false,
+                        'from' => CNF_EMAIL,
+                        //'cc' => $cc,
+                        //'bcc' => $bcc,
+                        'configName' => 'USER CREATE EMAIL'
+                    ));
+                }
 
                 $message = "Thanks for registering! . Please check your inbox and follow activation link";
 
@@ -193,7 +208,7 @@ class UserController extends Controller
         } else {
             return Redirect::to('user/register')->with('message', \SiteHelpers::alert('error', 'The following errors occurred')
             )->withErrors($validator)->withInput();
-        }
+        }*/
     }
 
     public function getActivation(Request $request)
@@ -524,7 +539,7 @@ class UserController extends Controller
                     'message' => $message,
                     'isTest' => env('APP_ENV', 'development') !== 'production' ? true : false,
                     'from' => CNF_EMAIL,
-                    'configName' => 'FORGETPASSWORD EMAIL'
+                    'configName' => 'FORGET PASSWORD EMAIL'
                 )));
 
 

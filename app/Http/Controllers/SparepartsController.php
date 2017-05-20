@@ -143,6 +143,7 @@ class SparepartsController extends Controller
             $this->data['row'] = $row;
         } else {
             $this->data['row'] = $this->model->getColumnTable('spare_parts');
+            $this->data['row']['status_id'] = 2;
         }
         $this->data['setting'] = $this->info['setting'];
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);

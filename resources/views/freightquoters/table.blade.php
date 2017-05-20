@@ -192,18 +192,44 @@
 $(document).ready(function() {
     $("[id^='toggle_trigger_']").on('switchChange.bootstrapSwitch', function(event, state) {
         var id=$(this).data('id');
-        $.ajax(
-                {
-                    type:'POST',
-                    url:'freightquoters/trigger',
-                    data:{isActive:state,id:id},
-                    success:function(data){
-                        if(data.status == "error"){
-                            // notyMessageError(data.message);
+        var message = '';
+        var check = false;
+        if(state)
+        {
+            message = "<div class='confirm_inactive'><br>Are you sure you want to Active this Freight Quoter <br> <b>***WARNING***</b><br> if you active this Freight Quoter then he will receive all emails.</div>";
+        }
+        else
+        {
+            check = true;
+            message = "<div class='confirm_inactive'><br>Are you sure you want to Inactive this Freight Quoter <br> <b>***WARNING***</b><br> if you inactive this Freight Quoter then he will not receive any email.</div>";
+        }
+
+        currentElm = $(this);
+        currentElm.bootstrapSwitch('state', check,true);
+        $('.custom_overlay').show();
+        App.notyConfirm({
+            message: message,
+            confirmButtonText: 'Yes',
+            confirm: function (){
+                $('.custom_overlay').slideUp(500);
+                $.ajax(
+                    {
+                        type:'POST',
+                        url:'freightquoters/trigger',
+                        data:{isActive:state,id:id},
+                        success:function(data){
+                            currentElm.bootstrapSwitch('state', !check,true);
+                            if(data.status == "error"){
+                                // notyMessageError(data.message);
+                            }
                         }
                     }
-                }
-        );
+                );
+            },
+            cancel: function () {
+                $('.custom_overlay').slideUp(500);
+            }
+        });
     });
 
     $("[id^='toggle_trigger']").bootstrapSwitch();

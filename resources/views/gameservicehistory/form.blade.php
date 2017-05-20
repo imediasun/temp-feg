@@ -46,10 +46,14 @@
 					{!! SiteHelpers::activeLang('Date Down', (isset($fields['date_down']['language'])? $fields['date_down']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
-					  <input name='date_down' type="text" rows='5' id='date_down' class='form-control date' 
-                             value="{{ DateHelpers::formatDate($row['date_down']) }}" 
-                             required>
-					 </div> 
+
+						<span class="input-group-addon" style="width: 32px;padding-left: 10px;padding-top: 8px;padding-bottom: 8px;float: left;">
+  							<i class="fa fa-calendar" id="icon"></i>
+						</span>
+
+                        <input name='date_down' type="text" rows='5' id='date_down' style="width:150px !important;" class='form-control date'
+                               value="{{  $row['date_down'] }}" required>
+                    </div>
 					 <div class="col-md-2">
 					 	
 					 </div>
@@ -83,7 +87,7 @@
 					</label>
 					<div class="col-md-6">
 					  <textarea name='solution' rows='5' id='solution' class='form-control '
-				           required>{{ $row['solution'] }}</textarea>
+				           >{{ $row['solution'] }}</textarea>
 					 </div> 
 					 <div class="col-md-2">
 					 	
@@ -94,9 +98,13 @@
 					{!! SiteHelpers::activeLang('Date Up', (isset($fields['date_up']['language'])? $fields['date_up']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
-					  <input type="text" name='date_up'  id='date_up' class='form-control date' 
-                             value="{{ DateHelpers::formatDate($row['date_up']) }}"
-                             required>
+						<div class="input-group">
+						<span class="input-group-addon datepickerHandleButton" style="width: 32px;">
+  							<i class="fa fa-calendar" id="icon"></i>
+						</span>
+					  	<input type="text" name='date_up'  id='date_up' style="width:150px !important;" class='form-control date'
+                             value="{{  $row['date_up'] }}">
+						</div>
 					 </div>
 					 <div class="col-md-2">
 					 	

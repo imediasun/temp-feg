@@ -289,7 +289,7 @@ class order extends Sximo
                 $data['itemRetailPrice']=$orderretailpriceArray;
                 $data['gameIdsArray']=$ordergameidsArray;
                 $data['receivedItemsArray']=$receivedItemsArray;
-                $data['orderItemsPriceArray'] = $orderItemsPriceArray;
+                $data['orderItemsPriceArray'] = isset($orderItemsPriceArray)?$orderItemsPriceArray:"";
                 $poArr = array("", "", "");
                 if (isset($data['po_number'])) {
                     $poArr = explode("-", $data['po_number']);
@@ -432,8 +432,6 @@ class order extends Sximo
     }
     function isPOAvailable($po_full)
     {
-        //echo $po_full;
-        //die('here..in p');
         $query = \DB::select("SELECT po_number FROM po_track WHERE po_number = '".$po_full."'" );
         if(count($query) > 0 ) {
 
@@ -570,8 +568,7 @@ class order extends Sximo
             if($this->isPOAvailable($po_new))
             {
                 $this->createPOTrack($po_new,$location);
-                echo $count;die();
-                return $count;
+
             }
             else
             {
@@ -582,8 +579,9 @@ class order extends Sximo
         }
         else
         {
-            return 1;
+            $count=1;;
         }
+        return $count;
     }
 
     function getVendorEmail($vendor_id)

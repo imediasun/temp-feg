@@ -227,23 +227,47 @@
 <script>
     $(document).ready(function(){
         $("[id^='toggle_trigger_']").on('switchChange.bootstrapSwitch', function(event, state) {
-
-
             var userId=$(this).data('id');
-            $.ajax(
-                    {
-                        type:'POST',
-                        url:'users/trigger',
-                        data:{isActive:state,userId:userId},
-                        success:function(data){
-                          if(data.status == "error"){
-                            //  notyMessageError(data.message);
-                          }
-                        }
-                    }
-            );
-        });
+            var message = '';
+            var check = false;
+            if(state)
+            {
+                message = "<div class='confirm_inactive'><br>Are you sure you want to Active this User <br> <b>***WARNING***</b><br> if you active this User then he will be able to login and to do any task.</div>";
+            }
+            else
+            {
+                check = true;
+                message = "<div class='confirm_inactive'><br>Are you sure you want to Inactive this User <br> <b>***WARNING***</b><br> if you inactive this User then he will be unable to login and to do any task.</div>";
+            }
 
+            currentElm = $(this);
+            currentElm.bootstrapSwitch('state', check,true);
+            $('.custom_overlay').show();
+            App.notyConfirm({
+                message: message,
+                confirmButtonText: 'Yes',
+                confirm: function (){
+                    $('.custom_overlay').slideUp(500);
+                    $.ajax(
+                        {
+                            type:'POST',
+                            url:'users/trigger',
+                            data:{isActive:state,userId:userId},
+                            success:function(data){
+                                currentElm.bootstrapSwitch('state', !check,true);
+                                if(data.status == "error"){
+                                    //  notyMessageError(data.message);
+                                }
+                            }
+                        }
+                    );
+                },
+                cancel: function () {
+                    $('.custom_overlay').slideUp(500);
+                }
+            });
+
+        });
         $("[id^='toggle_trigger']").bootstrapSwitch();
         $('input[type="checkbox"],input[type="radio"]').not('.toggle').iCheck({
             checkboxClass: 'icheckbox_square-blue',

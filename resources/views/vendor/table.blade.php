@@ -117,9 +117,24 @@
 						 	?>
 						 	<?php $limited = isset($field['limited']) ? $field['limited'] :''; ?>
 						 	@if(SiteHelpers::filterColumn($limited ))
-								 <td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}" data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">					 
-									{!! $value !!}							 
-								 </td>
+								@if($field['field']=='status')
+									<td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}" data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
+										<input type='checkbox' name="mycheckbox" @if($value == 1) checked  @endif 	data-size="mini" data-animate="true"
+									   		data-on-text="Active" data-field="status" data-off-text="Inactive" data-handle-width="50px" class="toggle" data-id="{{$row->id}}"
+									   		id="toggle_trigger_{{$row->id}}" onSwitchChange="trigger()" />
+									</td>
+
+								@elseif($field['field']=='hide')
+									<td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}" data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
+										<input type='checkbox' name="mycheckbox" @if($value == 1) checked  @endif 	data-size="mini" data-animate="true"
+											   data-on-text="Yes" data-field="hide" data-off-text="No" data-handle-width="50px" class="toggle" data-id="{{$row->id}}"
+											   id="toggle_trigger_{{$row->id}}" onSwitchChange="trigger()" />
+									</td>
+								@else
+									<td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}" data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">
+										{!! $value !!}
+								 	</td>
+								@endif
 							@endif	
 						 <?php endif;					 
 						endforeach; 
@@ -167,8 +182,90 @@
 	@if($setting['inline'] =='true') @include('sximo.module.utility.inlinegrid') @endif
 <script>
 $(document).ready(function() {
+    $("[id^='toggle_trigger_']").on('switchChange.bootstrapSwitch', function(event, state) {
+
+
+        var vendorId=$(this).data('id');
+        var field=$(this).data('field');
+        var check =  (field == 'hide');
+        var message = '';
+        var check2 = check;
+        if(state)
+        {
+            if(check)
+            {
+                message = "<div class='confirm_inactive'><br>Are you sure you want to Hide this Vendor <br> <b>***WARNING***</b><br> if you Hide this Vendor then this vendor will not be available and all products of this vendor will not be able to add to cart.</div>";
+            }
+            else {
+                check2 = !check;
+                message = "<div class='confirm_inactive'><br>Are you sure you want to Active this Vendor <br> <b>***WARNING***</b><br> if you active this Vendor then this vendor will be available and all products of this vendor will be able to add to cart.</div>";
+            }
+        }
+        else
+        {
+            if(check)
+            {
+                check2 = !check;
+                message = "<div class='confirm_inactive'><br>Are you sure you want to make visible this Vendor <br> <b>***WARNING***</b><br> if you make visible this Vendor then this vendor will be available and all products of this vendor will be able to add to cart.</div>";
+            }
+            else
+            {
+                message = "<div class='confirm_inactive'><br>Are you sure you want to Inactive this Vendor <br> <b>***WARNING***</b><br> if you Inactive this Vendor then this vendor will not be available and all products of this vendor will not be able to add to cart.</div>";
+            }
+        }
+
+        currentElm = $(this);
+        currentElm.bootstrapSwitch('state', !check2,true);
+        $('.custom_overlay').show();
+        App.notyConfirm({
+            message: message,
+            confirmButtonText: 'Yes',
+            confirm: function (){
+                $('.custom_overlay').slideUp(500);
+                $.ajax(
+                    {
+                        type:'POST',
+                        url:'vendor/trigger',
+                        data:{isActive:state,field:field,vendorId:vendorId},
+                        success:function(data){
+                            currentElm.bootstrapSwitch('state', check2,true);
+                            if($('select[name="status"] :selected').val() == 1 && state == false && field == 'status')
+                            {
+                                $('#form-'+vendorId).hide(500);
+                                $('#divOverlay_'+vendorId).hide(500);
+                            }
+                            else if($('select[name="status"] :selected').val() == 0 && state == true && field == 'status')
+                            {
+                                $('#form-'+vendorId).hide(500);
+                                $('#divOverlay_'+vendorId).hide(500);
+                            }
+                            if($('select[name="hide"] :selected').val() == 1 && state == false && field == 'hide')
+                            {
+                                $('#form-'+vendorId).hide(500);
+                                $('#divOverlay_'+vendorId).hide(500);
+                            }
+                            else if($('select[name="hide"] :selected').val() == 0 && state == true && field == 'hide')
+                            {
+                                $('#form-'+vendorId).hide(500);
+                                $('#divOverlay_'+vendorId).hide(500);
+                            }
+                            if(data.status == "error"){
+                                notyMessageError(data.message);
+                            }
+                        }
+                    }
+                );
+            },
+            cancel: function () {
+                $('.custom_overlay').slideUp(500);
+            }
+        });
+
+    });
+
+    $("[id^='toggle_trigger_']").bootstrapSwitch();
 	$('.tips').tooltip();	
-	$('input[type="checkbox"],input[type="radio"]').iCheck({
+	$('input[type="checkbox"],input[type="radio"]').not('.toggle').iCheck({
 		checkboxClass: 'icheckbox_square-blue',
 		radioClass: 'iradio_square-blue',
 	});	

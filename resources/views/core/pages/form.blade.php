@@ -280,7 +280,7 @@
 	  }
 
 	  $( document ).ready(function() {
-		  $('.note-toolbar').append('<div class="note-attach btn-group"><button type="button" class="btn btn-default btn-sm btn-small" data-toggle="tooltip" title="Attach PDF" data-placement="bottom" tabindex="-1" onclick=$("#pdf_modal").modal()><i class="fa fa-file-o"></i></button></div>');
+		  $('.note-toolbar').append('<div class="note-attach btn-group"><button type="button" class="btn btn-default btn-sm btn-small" data-toggle="tooltip" title="Attach PDF" data-placement="bottom" tabindex="-1" onclick=$("#pdf_modal").modal()><i class="fa fa-file-pdf-o"></i></button></div>');
 		  $('[data-toggle="tooltip"]').tooltip();
 	  });
 

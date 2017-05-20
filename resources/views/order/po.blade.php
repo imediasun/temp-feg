@@ -29,7 +29,11 @@
                         {{ $data[0]['vend_state'] }}
                         {{ $data[0]['vend_zip'] }} <br/><br/>
                         {{ $data[0]['vend_contact'] }}
-                        {{ isset($data[0]['vend_email'])?$data[0]['vend_email']:"" }}
+                        {{ isset($data[0]['vend_email'])?$data[0]['vend_email']:"" }}<br/>
+                        @if(isset($data[0]['billing_account']) && $data[0]['billing_account']!='0')
+                            <b>Billing Account Number: </b>
+                            {{$data[0]['billing_account']}}
+                        @endif
                         <br/>
                     </td>
                     <td style="vertical-align:baseline;border-top:1px solid #000; border-right:1px solid #000;border-bottom: none;border-left: 1px solid #000;  padding-left: 10px; padding-top: 0px; margin-top:0px; color:red"><span style="padding: 0px !important;">

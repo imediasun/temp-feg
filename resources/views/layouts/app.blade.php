@@ -83,7 +83,9 @@
 		//define global level js variables here
 		var PREVENT_CONSOLE_LOGS = '{{env('PREVENT_CONSOLE_LOGS')}}';
 	</script>
-    <script type="text/javascript" src="{{ asset('sximo/js/app.js') }}"></script>    
+	<script type="text/javascript" src="{{ asset('sximo/js/plugins/ajax/noty/packaged/jquery.noty.packaged.min.js') }}"></script>
+
+	<script type="text/javascript" src="{{ asset('sximo/js/app.js') }}"></script>
     <script type="text/javascript" src="{{ asset('sximo/js/search.js') }}"></script>
     <script type="text/javascript" src="{{ asset('sximo/js/simple-search.js') }}"></script>
     <!-- End Search and storage  -->
@@ -151,6 +153,7 @@
 @yield('beforebodyend', '')
 @include('sximo.module.utility.inlinegrid')
 @yield('inlinedit', '')
+	<div class="custom_overlay"></div>
 </body>
 @yield('afterbodyend', '')
 </html>

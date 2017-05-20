@@ -3,7 +3,7 @@
 use App\Library\FEG\System\FEGSystemHelper;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
-use Log;
+use Log, View;
 
 class shopfegrequeststore extends Sximo  {
 	
@@ -247,27 +247,46 @@ class shopfegrequeststore extends Sximo  {
         $mangeGraphicRequestURL = url("managenewgraphicrequests");
         $graphicApproveLink = "http://{$_SERVER['HTTP_HOST']}/managenewgraphicrequests/approve/$last_inserted_id";
         $graphicDenyLink = "http://{$_SERVER['HTTP_HOST']}/managenewgraphicrequests/deny/$last_inserted_id";
-
-        $baseMessage = '<b>Date Requested:</b> '. \DateHelpers::formatDate($data['request_date']).'<br>
-					<b>Requestor:</b> '.\Session::get('fid').'<br>
+        $description='';
+        if(strlen($data['description'])>=140){
+            $description=substr($data['description'], 0, 140).'...';
+        }else{
+            $description=$data['description'];
+        }
+        /*$baseMessage = '
+                    <b>Project:</b> '.$game_info[0].'<br>
+                    <b>Date:</b> '. \DateHelpers::formatDate($data['request_date']).'<br>
+					<b>Submitter:</b> '.\Session::get('fid').'<br>
 					<b>Location:</b> '.$data['location_id'].' | '.$locationName.'<br>
-					<b>For Game:</b> '.$game_info[0]  .'<br>
-					<b>Description:</b> '.$data['description'].'<br>
-					<b>Quantity:</b> '.$data['qty'].'<br>
-					<b>Need By Date:</b> '.$data['need_by_date'].'<br><br><em>';
+					<b>Description:</b> '.$description.'<a href="'.$mangeGraphicRequestURL.'">See full request</a>
+					<br><em>';
 
         $links = 'Please click on <a href="'.$graphicApproveLink.'">Approval</a> or <a href="'.$graphicDenyLink.'">Denial</a> <br>
-					to Approve/Deny this graphic request <br><br>&nbsp;&nbsp;&nbsp; 2.) ';
+					to Approve/Deny this graphic request <br><br>&nbsp;&nbsp;&nbsp;';
 
-        $messageEnd = 'Set Priority Level at <b>'.$mangeGraphicRequestURL.'</b><br><br>
-					**All cc\'d, please Reply to All <b> only if you wish to deny or modify request</b> and explain why.</em><br>';
+        $messageEnd = '<br> To fast-track the completion of this task, please contact the Graphics Department at (847) 852-4270 to arrange an expedited deadline.';
+
+        //$messageEnd = 'Set Priority Level at <b>'.$mangeGraphicRequestURL.'</b><br><br>
+					//**All cc\'d, please Reply to All <b> only if you wish to deny or modify request</b> and explain why.</em><br>';*/
+
+        $messageWithLink = View::make('shopfegrequeststore.emails.graphic-request-submitter-link', array(
+            'title' => $game_info[0],
+            'date' => \DateHelpers::formatDate($data['request_date']),
+            'submitter' => \Session::get('fid'),
+            'location_id' => $data['location_id'],
+            'location_name' => $locationName,
+            'description' => $description,
+            'request_link' => $mangeGraphicRequestURL,
+            'approve_link' => $graphicApproveLink,
+            'deny_link' => $graphicDenyLink
+        ))->render();
 
         $from = \Session::get('eid');
         $subject = 'New Graphics Request for '.$locationName;
 
         $configName = 'Request new custom graphics email';
         $receipts = FEGSystemHelper::getSystemEmailRecipients($configName);
-        $message = $baseMessage.$links.$messageEnd;
+        $message = $messageWithLink;//$baseMessage.$links.$messageEnd;
         FEGSystemHelper::sendSystemEmail(array_merge($receipts, array(
             'subject' => $subject,
             'message' => $message,
@@ -279,7 +298,12 @@ class shopfegrequeststore extends Sximo  {
 
         $receipientsForEmailWihtoutLinksConfigName = 'New custom graphics notification without links';
         $receipientsForEmailWihtoutLinks = FEGSystemHelper::getSystemEmailRecipients($receipientsForEmailWihtoutLinksConfigName);
-        $messageWithoutLink = $baseMessage.$messageEnd;
+
+        $messageWithoutLink = View::make('shopfegrequeststore.emails.graphic-request-submitter', array(
+            'submitterEmailAddress' => \Session::get('eid')
+        ))->render();
+
+
         FEGSystemHelper::sendSystemEmail(array_merge($receipientsForEmailWihtoutLinks, array(
             'subject' => $subject,
             'message' => $messageWithoutLink,

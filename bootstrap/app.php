@@ -40,11 +40,6 @@ $app->singleton(
     Illuminate\Contracts\Debug\ExceptionHandler::class,
     App\Exceptions\Handler::class
 );
-
-$app->configureMonologUsing(function($monolog) {
-    $nullLogger = new \Monolog\Handler\NullHandler();
-    $monolog->setHandlers(array($nullLogger));
-});
 /*
 |--------------------------------------------------------------------------
 | Return The Application

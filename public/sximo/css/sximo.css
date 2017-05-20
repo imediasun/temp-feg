@@ -3411,3 +3411,20 @@ margin-left: 15px;
     display: none;
   }
 }
+.sbox-title small {
+  display: none;
+}
+.custom_overlay
+{
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  background-color: rgba(0,0,0,0.7);
+  z-index: 9999;
+  top: 0;
+  display: none;
+}
+span.order_custom_error ~ ul.parsley-error-list
+{
+  display: none;
+}

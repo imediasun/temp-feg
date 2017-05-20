@@ -19,26 +19,34 @@
             <div class="col-md-12">
                 <fieldset>
                     
-                    @if($row['status_id']==2)
+
                     <div class="form-group  ">
                         <label for="Description" class=" control-label col-md-4 text-left">
                             {!! SiteHelpers::activeLang('Description', (isset($fields['description']['language'])?
                             $fields['description']['language'] : array())) !!}
                         </label>
                         <div class="col-md-6">
+                            @if($row['status_id']==2)
                             {!! Form::text('description', $row['description'],array('class'=>'form-control',
-                            'placeholder'=>'', )) !!}
+                            'placeholder'=>'', 'required'=>'true' )) !!}
+                            @else
+                                {{$row['description']}}
+                            @endif
                         </div>
                         <div class="col-md-2">
                         </div>
                     </div>
                     <div class="form-group  ">
                         <label for="For Game" class=" control-label col-md-4 text-left">
-                            {!! SiteHelpers::activeLang('For Game', (isset($fields['for_game']['language'])?
-                            $fields['for_game']['language'] : array())) !!}
+                            {!! SiteHelpers::activeLang('For Game', (isset($fields['game_title_id']['language'])?
+                            $fields['game_title_id']['language'] : array())) !!}
                         </label>
                         <div class="col-md-6">
-                            <select name="for_game" id="for_game" class="select4"></select>
+                            @if($row['status_id']==2)
+                                <select name="game_title_id" id="game_title_id" class="select4"></select>
+                            @else
+                                {!! SiteHelpers::gridDisplayView($row['game_title_id'],'game_title_id','1:game_title:id:game_title')!!}
+                            @endif
                         </div>
                         <div class="col-md-2">
                         </div>
@@ -50,7 +58,11 @@
                             $fields['qty']['language'] : array())) !!}
                         </label>
                         <div class="col-md-6">
-                            {!! Form::text('qty', $row['qty'],array('class'=>'form-control', 'placeholder'=>'', )) !!}
+                            @if($row['status_id']==2)
+                                {!! Form::text('qty', $row['qty'],array('class'=>'form-control', 'placeholder'=>'','required'=>'true', 'parsley-type'=>'number' , 'parsley-min'=>1  )) !!}
+                            @else
+                                {{$row['qty']}}
+                            @endif
                         </div>
                         <div class="col-md-2">
                         </div>
@@ -61,13 +73,17 @@
                             $fields['value']['language'] : array())) !!}
                         </label>
                         <div class="col-md-6">
-                            {!! Form::text('value', $row['value'],array('class'=>'form-control', 'placeholder'=>'', ))
+                            @if($row['status_id']==2)
+                            {!! Form::text('value', $row['value'],array('class'=>'form-control', 'placeholder'=>'','required'=>'true', 'parsley-type'=>'number' , 'parsley-min'=>0))
                             !!}
+                            @else
+                                {{$row['value']}}
+                            @endif
                         </div>
                         <div class="col-md-2">
                         </div>
                     </div>
-                    @endif
+
                     <div class="form-group  ">
                         <label for="Loc Id" class=" control-label col-md-4 text-left">
                             {!! SiteHelpers::activeLang('Location', (isset($fields['loc_id']['language'])?
@@ -75,24 +91,12 @@
                         </label>
 
                         <div class="col-md-6">
-                           <select name="loc_id" id="loc_id" class="select4"></select>
+                           <select name="loc_id" id="loc_id" class="select4" required></select>
                         </div>
                         <div class="col-md-2">
                         </div>
                     </div>
-                    @if($row['status_id']==2)
-                    <div class="form-group  ">
-                        <label for="User" class=" control-label col-md-4 text-left">
-                            {!! SiteHelpers::activeLang('Submitted By', (isset($fields['user']['language'])?
-                            $fields['user']['language'] : array())) !!}
-                        </label>
-                        <div class="col-md-6">
-                            {!! Form::text('user', $row['user'],array('class'=>'form-control', 'placeholder'=>'', )) !!}
-                        </div>
-                        <div class="col-md-2">
-                        </div>
-                    </div>
-                    @endif
+
                     <div class="form-group  ">
                         <label for="Status Id" class=" control-label col-md-4 text-left">
                             {!! SiteHelpers::activeLang('Status', (isset($fields['status_id']['language'])?
@@ -100,13 +104,13 @@
                         </label>
 
                         <div class="col-md-6">
-                            <select name="status_id" id="status_id" class="select4"/>
+                            <select name="status_id" id="status_id" class="select4" required />
                         </div>
                         <div class="col-md-2">
 
                         </div>
                     </div>
-                    @if($row['status_id']==2)
+
                     <div class="form-group  ">
                         <label for="User Claim" class=" control-label col-md-4 text-left">
                             {!! SiteHelpers::activeLang('User Claim', (isset($fields['user_claim']['language'])?
@@ -114,14 +118,34 @@
                         </label>
 
                         <div class="col-md-6">
-                            {!! Form::text('user_claim', $row['user_claim'],array('class'=>'form-control',
-                            'placeholder'=>'', )) !!}
+                            @if($row['status_id']==2)
+                                {!! Form::text('user_claim', $row['user_claim'],array('class'=>'form-control',
+                                'placeholder'=>'', )) !!}
+                                @else
+                                {{$row['user_claim']}}
+                            @endif
                         </div>
                         <div class="col-md-2">
 
                         </div>
                     </div>
-                        @endif
+                    <div class="form-group  ">
+                        <label for="User" class=" control-label col-md-4 text-left">
+                            {!! SiteHelpers::activeLang('Submitted By', (isset($fields['user']['language'])?
+                            $fields['user']['language'] : array())) !!}
+                        </label>
+                        <div class="col-md-6">
+                            <input type="hidden" name="user" value="{{Auth::user()->first_name .' '. Auth::user()->last_name}}">
+                            @if(!empty($row['user']))
+                                {{$row['user']}}
+                            @else
+                                {{Auth::user()->first_name .' '. Auth::user()->last_name}}
+                            @endif
+                        </div>
+                        <div class="col-md-2">
+                        </div>
+                    </div>
+
                 </fieldset>
             </div>
 
@@ -150,8 +174,8 @@
                     {selected_value: '{{ $row['status_id'] }}', initial_text: 'Select Status'});
             $("#loc_id").jCombo("{{ URL::to('spareparts/comboselect?filter=location:id:location_name') }}",
                     {selected_value: '{{ $row['loc_id'] }}', initial_text: 'Select Location'});
-            $("#for_game").jCombo("{{ URL::to('spareparts/comboselect?filter=game:id:id|game_name') }}" + "&delimiter= - ",
-                {  selected_value : '{{ $row["for_game"] }}',initial_text:'-- Select Game --' });
+            $("#game_title_id").jCombo("{{ URL::to('spareparts/comboselect?filter=game_title:id:game_title') }}" + "&delimiter= - ",
+                {  selected_value : '{{ $row["game_title_id"] }}',initial_text:'Select Game' });
             $('.editor').summernote();
             $('.previewImage').fancybox();
             $('.tips').tooltip();

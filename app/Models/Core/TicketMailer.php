@@ -114,18 +114,29 @@ class TicketMailer
         $department_memebers = explode(',', $department_memebers[0]->assign_employee_ids);
         $subject = "[Service Request #{$ticketId}] <Location Name>, <Date Created>, <Title>" ;
         $reply_to='ticket-reply-'.$ticketId.'@tickets.fegllc.com';
-        $headers = 'MIME-Version: 1.0' . "\r\n";
-        $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
-        $headers .= 'From: ' . CNF_APPNAME . ' <' . $reply_to . '>' . "\r\n";
+        //$headers = 'MIME-Version: 1.0' . "\r\n";
+        //$headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
+        //$headers .= 'From: ' . CNF_APPNAME . ' <' . $reply_to . '>' . "\r\n";
 
         foreach ($department_memebers as $i => $id) {
             $get_user_id_from_employess = \DB::select("Select users.email FROM users  WHERE users.id = " . $id . "");
             if (isset($get_user_id_from_employess[0]->email)) {
                 $to = $get_user_id_from_employess[0]->email;
-                Log::info("**Send Emmail => ",[$to, $subject, $message, $headers]);
+                //Log::info("**Send Emmail => ",[$to, $subject, $message, $headers]);
                 //enabled on gabe request
                 if (!env('PREVENT_FEG_SYSTEM_EMAIL', false)) {
-                    mail($to, $subject, $message, $headers);
+                    //mail($to, $subject, $message, $headers);
+                    if(!empty($to)){
+                        FEGSystemHelper::sendSystemEmail(array(
+                            'to' => $to,
+                            'subject' => $subject,
+                            'message' => $message,
+                            'isTest' => env('APP_ENV', 'development') !== 'production' ? true : false,
+                            'from' => $reply_to,
+                            //'bcc' => $bcc,
+                            'configName' => 'DEPARTMENT TICKET EMAIL'
+                        ));
+                    }
                 }
                 
             }
