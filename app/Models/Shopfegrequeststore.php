@@ -247,20 +247,27 @@ class shopfegrequeststore extends Sximo  {
         $mangeGraphicRequestURL = url("managenewgraphicrequests");
         $graphicApproveLink = "http://{$_SERVER['HTTP_HOST']}/managenewgraphicrequests/approve/$last_inserted_id";
         $graphicDenyLink = "http://{$_SERVER['HTTP_HOST']}/managenewgraphicrequests/deny/$last_inserted_id";
-
-        $baseMessage = '<b>Date Requested:</b> '. \DateHelpers::formatDate($data['request_date']).'<br>
-					<b>Requestor:</b> '.\Session::get('fid').'<br>
+        $description='';
+        if(strlen($data['description'])>=140){
+            $description=substr($data['description'], 0, 140).'...';
+        }else{
+            $description=$data['description'];
+        }
+        $baseMessage = '
+                    <b>Project:</b> '.$game_info[0].'<br>
+                    <b>Date:</b> '. \DateHelpers::formatDate($data['request_date']).'<br>
+					<b>Submitter:</b> '.\Session::get('fid').'<br>
 					<b>Location:</b> '.$data['location_id'].' | '.$locationName.'<br>
-					<b>For Game:</b> '.$game_info[0]  .'<br>
-					<b>Description:</b> '.$data['description'].'<br>
-					<b>Quantity:</b> '.$data['qty'].'<br>
-					<b>Need By Date:</b> '.$data['need_by_date'].'<br><br><em>';
+					<b>Description:</b> '.$description.'<a href="'.$mangeGraphicRequestURL.'">See full request</a>
+					<br><em>';
 
         $links = 'Please click on <a href="'.$graphicApproveLink.'">Approval</a> or <a href="'.$graphicDenyLink.'">Denial</a> <br>
 					to Approve/Deny this graphic request <br><br>&nbsp;&nbsp;&nbsp; 2.) ';
 
-        $messageEnd = 'Set Priority Level at <b>'.$mangeGraphicRequestURL.'</b><br><br>
-					**All cc\'d, please Reply to All <b> only if you wish to deny or modify request</b> and explain why.</em><br>';
+        $messageEnd = '<br> To fast-track the completion of this task, please contact the Graphics Department at (847) 852-4270 to arrange an expedited deadline.';
+
+        //$messageEnd = 'Set Priority Level at <b>'.$mangeGraphicRequestURL.'</b><br><br>
+					//**All cc\'d, please Reply to All <b> only if you wish to deny or modify request</b> and explain why.</em><br>';
 
         $from = \Session::get('eid');
         $subject = 'New Graphics Request for '.$locationName;
