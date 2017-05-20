@@ -64,7 +64,7 @@ class ShopfegrequeststoreController extends Controller
                 'products.retail_price',
                 'products.created_at',
                 'products.updated_at',
-                'products.expence_category',
+                'products.expense_category',
                 'vendor.vendor_name',
                 'products.ticket_value',
                 'O.order_type',
