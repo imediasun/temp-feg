@@ -312,7 +312,35 @@ $(document).ready(function(){
 	<div class="col-md-8">
 		<textarea name="attribute" id="attribute" class="form-control input-sm"><?php echo $f['option']['attribute'];?></textarea>
 	 </div> 
-  </div>  
+  </div>
+    <?php
+        $searchoperators = array(
+            "equal" => " = ",
+            "bigger_equal" => " >= ",
+            "smaller_equal" => " <= ",
+            "smaller" => " < ",
+            "bigger" => " > ",
+            "like" => "Like",
+            "between" => "BETWEEN",
+        );
+    ?>
+   <div class="form-group">
+    <label for="advancedsearchoperator" class=" control-label col-md-4">Advanced Search Operator</label>
+	<div class="col-md-8">
+        <?php
+            $advancedsearchoperator = isset($f['advancedsearchoperator']) ? $f['advancedsearchoperator'] :
+                (strpos($f['type'], "date") >=0 ? 'between':'equal');
+        ?>
+        <select id="advancedsearchoperator" class="form-control" name="advancedsearchoperator">
+            <?php foreach($searchoperators as $val=>$label): ?>
+                <option  value="<?php echo $val;?>"
+                    <?php if($val == $advancedsearchoperator) echo 'selected="selected"';?>
+                > <?php echo $label;?></option>
+            <?php endforeach; ?>
+        </select>
+	 </div>
+  </div>
+
     
    <div class="form-group" @if(empty($f['simplesearch']) || $f['simplesearch'] != 1) style="display:none;" @endif>
         <?php 
@@ -330,18 +358,9 @@ $(document).ready(function(){
 	<div class="col-md-8">
         <?php 
             $simplesearchoperator = isset($f['simplesearchoperator']) ? $f['simplesearchoperator'] : 'equal';
-            $simplesearchoperators = array(
-                    "equal" => " = ",
-                    "bigger_equal" => " >= ",
-                    "smaller_equal" => " <= ",
-                    "smaller" => " < ",
-                    "bigger" => " > ",
-                    "like" => "Like",
-                    "between" => "BETWEEN",
-                );
         ?>
         <select id="simplesearchoperator" class="form-control" name="simplesearchoperator">
-            <?php foreach($simplesearchoperators as $val=>$label): ?>
+            <?php foreach($searchoperators as $val=>$label): ?>
                 <option  value="<?php echo $val;?>"
                     <?php if($val == $simplesearchoperator) echo 'selected="selected"';?>
                 > <?php echo $label;?></option>
