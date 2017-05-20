@@ -3,7 +3,7 @@
 use App\Library\FEG\System\FEGSystemHelper;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
-use Log;
+use Log, View;
 
 class shopfegrequeststore extends Sximo  {
 	
@@ -286,7 +286,12 @@ class shopfegrequeststore extends Sximo  {
 
         $receipientsForEmailWihtoutLinksConfigName = 'New custom graphics notification without links';
         $receipientsForEmailWihtoutLinks = FEGSystemHelper::getSystemEmailRecipients($receipientsForEmailWihtoutLinksConfigName);
-        $messageWithoutLink = $baseMessage.$messageEnd;
+
+        $messageWithoutLink = View::make('shopfegrequeststore.emails.graphic-request-submitter', array(
+            'submitterEmailAddress' => \Session::get('eid')
+        ))->render();
+
+
         FEGSystemHelper::sendSystemEmail(array_merge($receipientsForEmailWihtoutLinks, array(
             'subject' => $subject,
             'message' => $messageWithoutLink,
