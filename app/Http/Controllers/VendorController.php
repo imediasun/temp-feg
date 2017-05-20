@@ -287,7 +287,7 @@ class VendorController extends Controller
             else
                 $data = $this->validatePost('vendor', true);
             $data['hide'] = $request->hide;
-            $data['status'] = $request->hide;
+            $data['status'] = $request->statue;
             if (!empty($data['website'])) {
                 if (preg_match('/^https?\:\/\//', trim($data['website'])) !== 1) {
                     $data['website'] = 'http://' . trim($data['website']);
