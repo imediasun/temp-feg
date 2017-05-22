@@ -227,6 +227,7 @@ class SbticketController extends Controller
         $this->data['uid'] = \Session::get('uid');
         $this->data['fid'] = \Session::get('fid');
         $this->data['access'] = $this->access;
+        $this->data['nodata']=\SiteHelpers::isNoData($this->info['config']['grid']);
         $this->data['setting'] = $this->info['setting'];
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
         return view('sbticket.view', $this->data);

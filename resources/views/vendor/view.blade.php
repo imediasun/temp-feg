@@ -121,7 +121,7 @@
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Min Order Amt', (isset($fields['min_order_amt']['language'])? $fields['min_order_amt']['language'] : array())) }}	
 						</td>
-						<td>{{ \DateHelpers::formatZeroValue($row->min_order_amt) }} </td>
+						<td>{{ \DateHelpers::formatZeroValue($row->min_order_amt,$nodata['min_order_amt']) }} </td>
 						
 					</tr>
 				

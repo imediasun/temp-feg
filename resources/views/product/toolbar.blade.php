@@ -131,8 +131,16 @@ width: 75%">
                 url_for_prod_sub_type = url_for_prod_sub_type+":request_type_id:"+"{{\Session::get('product_type_id')}}";
 
             }
+
+            if($('#product_list_type').val()=='productsindevelopment'){
+                $("#prod_sub_type_id").hide();
+            }else{
+                $("#prod_sub_type_id").show();
+            }
+
             $("#prod_sub_type_id").jCombo(url_for_prod_sub_type,
                     {selected_value: '{{ \Session::get('sub_type') }}', initial_text: '--- Select  Subtype ---'  });
+
             $("#vendor_id").jCombo("{{ URL::to('product/comboselect?filter=vendor:id:vendor_name') }}",
                     {selected_value: '', initial_text: '--- Select Vendor ---'});
             renderDropdown($(".select2, .select3, .select4, .select5"), { width:"100%"});

@@ -3,7 +3,7 @@
     <div class="sbox-title">
         <h5> <i class="fa fa-table"></i> </h5>
         <div class="sbox-tools" >
-            <a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Clear Search" onclick="reloadData('#{{ $pageModule }}', 'managefegrequeststore/data?view=manage')"><i class="fa fa-trash-o"></i> Clear Search </a>
+            <a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Clear Search" onclick="reloadData('#{{ $pageModule }}', 'managefegrequeststore/data?search=')"><i class="fa fa-trash-o"></i> Clear Search </a>
             <a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Reload Data" onclick="reloadData('#{{ $pageModule }}','managefegrequeststore/data?view=manage&return={{ $return }}')"><i class="fa fa-refresh"></i></a>
             @if(Session::get('gid') ==10)
             <a href="{{ url('feg/module/config/'.$pageModule) }}" class="btn btn-xs btn-white tips" title=" {{ Lang::get('core.btn_config') }}" ><i class="fa fa-cog"></i></a>
@@ -151,7 +151,7 @@
                                     $conn = (isset($field['conn']) ? $field['conn'] : array() );
 
 
-                                    $value = AjaxHelpers::gridFormater($row->$field['field'], $row, $field['attribute'], $conn);
+                                    $value = AjaxHelpers::gridFormater($row->$field['field'], $row, $field['attribute'], $conn,isset($field['nodata'])?$field['nodata']:0);
                                     ?>
             <?php $limited = isset($field['limited']) ? $field['limited'] : ''; ?>
                                     @if(SiteHelpers::filterColumn($limited ))

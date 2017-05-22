@@ -419,6 +419,7 @@ class UsersController extends Controller
         $this->data['id'] = $id;
         $this->data['access'] = $this->access;
         $location_details = \SiteHelpers::getLocationDetails($id);
+        $this->data['nodata']=\SiteHelpers::isNoData($this->info['config']['grid']);
         $this->data['user_locations'] = $location_details;
         if (empty($mode)) {
             return view('core.users.view', $this->data);
