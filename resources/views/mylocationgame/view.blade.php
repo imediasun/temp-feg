@@ -238,63 +238,63 @@
             <label class="col-md-4">
                 {!! SiteHelpers::activeLang('Game Title', (isset($fields['game_title']['language'])? $fields['game_title']['language'] : array())) !!}:
             </label>
-            <div class="col-md-8">{{ \DateHelpers::formatStringValue($gameTitle,$nodata['game_title']) }}</div>
+            <div class="col-md-8">{{ \DateHelpers::formatStringValue($gameTitle) }}</div>
         </div>
         <div class="form-group clearfix" >
             <label class="col-md-4">
                 {!! SiteHelpers::activeLang('Manufacturer', (isset($fields['vendor_name']['language'])? $fields['vendor_name']['language'] : array())) !!}:
             </label>
-            <div class="col-md-8">{{ \DateHelpers::formatStringValue($manufacturer,$nodata['vendor_name']) }}</div>
+            <div class="col-md-8">{{ \DateHelpers::formatStringValue($manufacturer) }}</div>
         </div>
         <div class="form-group  clearfix" >
             <label class="col-md-4">
                 {!! SiteHelpers::activeLang('Game Type', (isset($fields['game_type']['language'])? $fields['game_type']['language'] : array())) !!}:
             </label>
-            <div class="col-md-8">{{ \DateHelpers::formatStringValue($gameType,$nodata['game_type']) }}</div>
+            <div class="col-md-8">{{ \DateHelpers::formatStringValue($gameType) }}</div>
         </div>        
         <div class="form-group clearfix " >
             <label class="col-md-4">
                 {!! SiteHelpers::activeLang('Asset ID', (isset($fields['asset_number']['language'])? $fields['asset_number']['language'] : array())) !!}:
             </label>
-            <div class="col-md-8">{{ \DateHelpers::formatZeroValue($assetID,$nodata['asset_number']) }}</div>
+            <div class="col-md-8">{{ \DateHelpers::formatZeroValue($assetID) }}</div>
         </div>
         <div class="form-group  clearfix" >
             <label class="col-md-4">
                 {!! SiteHelpers::activeLang('Serial #', (isset($fields['serial']['language'])? $fields['serial']['language'] : array())) !!}:
             </label>
-            <div class="col-md-8">{{ \DateHelpers::formatStringValue($serialNumber,$nodata['serial']) }}</div>
+            <div class="col-md-8">{{ \DateHelpers::formatStringValue($serialNumber) }}</div>
         </div>
         <div class="form-group  clearfix" >
             <label class="col-md-4">
                 {!! SiteHelpers::activeLang('Alt. Version/Signage', (isset($fields['version']['language'])? $fields['version']['language'] : array())) !!}:
             </label>
-            <div class="col-md-8">{{ \DateHelpers::formatStringValue($version,$nodata['version']) }}</div>
+            <div class="col-md-8">{{ \DateHelpers::formatStringValue($version) }}</div>
         </div>
         <div class="form-group  clearfix" >
             <label class="col-md-4">
                 {!! SiteHelpers::activeLang('Game Converted from', (isset($fields['prev_game_name']['language'])? $fields['prev_game_name']['language'] : array())) !!}:
             </label>
-            <div class="col-md-8">{{ \DateHelpers::formatStringValue($prevGameName,$nodata['prev_game_name']) }}</div>
+            <div class="col-md-8">{{ \DateHelpers::formatStringValue($prevGameName) }}</div>
         </div>
         @if (!$isNewlyAddedGame)
         <div class="form-group clearfix" >
             <label class="col-md-4">
                 {!! SiteHelpers::activeLang('Current Location', (isset($fields['serial']['language'])? $fields['serial']['language'] : array())) !!}:
             </label>
-            <div class="col-md-8">{{ \DateHelpers::formatStringValue($locationIdName,$nodata['serial']) }}</div>
+            <div class="col-md-8">{{ \DateHelpers::formatStringValue($locationIdName) }}</div>
         </div>
         @endif
         <div class="form-group clearfix" >
             <label class="col-md-4">
                 {!! SiteHelpers::activeLang('Previous Location', (isset($fields['prev_location_id']['language'])? $fields['prev_location_id']['language'] : array())) !!}:
             </label>
-            <div class="col-md-8">{{ \DateHelpers::formatStringValue($prevLocationIdName,$nodata['prev_location_id']) }}</div>
+            <div class="col-md-8">{{ \DateHelpers::formatStringValue($prevLocationIdName) }}</div>
         </div>
         <div class="form-group clearfix" >
             <label class="col-md-4">
                 {!! SiteHelpers::activeLang('Last Edited By', (isset($fields['last_edited_by']['language'])? $fields['last_edited_by']['language'] : array())) !!}:
             </label>
-            <div class="col-md-8">{{ \DateHelpers::formatStringValue($lastEditedDetails,$nodata['last_edited_by']) }}</div>
+            <div class="col-md-8">{{ \DateHelpers::formatStringValue($lastEditedDetails) }}</div>
         </div>
         <div class="form-group clearfix" >
             <label class="col-md-4">

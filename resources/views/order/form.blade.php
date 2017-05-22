@@ -501,7 +501,8 @@
             $("#vendor_id").jCombo("{{ URL::to('product/comboselect?filter=vendor:id:vendor_name:hide:0:status:1') }}",
                     {
                         selected_value: '{{ $data["order_vendor_id"] }}',
-                        initial_text: '-------- Select Vendor --------'
+                        initial_text: '-------- Select Vendor --------',
+                        ready:addInactiveVendor("#vendor_id", {{ $data["order_vendor_id"] }})
                     });
 
             $("#freight_type_id").jCombo("{{ URL::to('order/comboselect?filter=freight:id:freight_type') }}",
