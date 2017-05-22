@@ -39,7 +39,7 @@
 				
 					<tr>
 						<td width='30%' class='label-view text-right'>Users</td>
-						<td>{{ SiteHelpers::gridDisplayView($row->user_id,'user_id','1:tb_users:id:first_name') }} </td>
+						<td>{{ SiteHelpers::gridDisplayView($row->user_id,'user_id','1:tb_users:id:first_name',$tableGrid) }} </td>
 						
 					</tr>
 				

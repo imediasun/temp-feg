@@ -4,7 +4,7 @@
 class AjaxHelpers
 {
 
-    public static function gridFormater($val, $row, $attribute = array(), $arr = array())
+    public static function gridFormater($val, $row, $attribute = array(), $arr = array(),$noData=0)
     {
 
         if ($attribute['image']['active'] == '1' && $attribute['image']['active'] != '') {
@@ -66,7 +66,7 @@ class AjaxHelpers
         // Handling format function
         if (isset($attribute['formater']['active']) and $attribute['formater']['active'] == 1) {
             $fval = $attribute['formater']['value'];
-if(empty($val))
+if(empty($val) &&  $noData == 0)
 {
     return "No Data";
 }
@@ -139,7 +139,7 @@ if(empty($val))
 //			$val =  "<a href='".URL::to($linked)."'  $attr style='display:block' >".$val." <span class='fa fa-arrow-circle-right pull-right'></span></a>";
             $val = "<a href='" . URL::to($linked) . "'  $attr >" . $val . "</a>";
         }
-        if ($val === "0" || $val === 0 || $val === NULL || $val ==="" || empty($val) || $val === "$ 0.00" || $val === "$ 0.000" || $val === 0.00 || $val=== 0.000|| $val === "0.00" || $val=== "0.000" ) {
+        if (($val === "0" || $val === 0 || $val === NULL || $val ==="" || empty($val)) && $noData == 0 ) {
             $val = "No Data";
         }
         return $val;

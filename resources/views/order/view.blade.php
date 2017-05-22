@@ -52,7 +52,7 @@
                         </label>
 
                         <div class="col-md-8">
-                            {!! SiteHelpers::gridDisplayView($row->user_id,'user_id','1:users:id:username') !!}
+                            {!! SiteHelpers::gridDisplayView($row->user_id,'user_id','1:users:id:username',$nodata['user_id']) !!}
                         </div>
                     </div>
                     <div class="clearfix"></div>
@@ -63,7 +63,7 @@
 
                         <div class="col-md-8">
                           {!!
-                            SiteHelpers::gridDisplayView($row->location_id,'location_id','1:location:id:id|location_name')
+                            SiteHelpers::gridDisplayView($row->location_id,'location_id','1:location:id:id|location_name',$nodata['location_id'])
                             !!}
                         </div>
                     </div>
@@ -74,7 +74,7 @@
                         </label>
 
                         <div class="col-md-8">
-                            {!! SiteHelpers::gridDisplayView($row->vendor_id,'vendor_id','1:vendor:id:vendor_name') !!}
+                            {!! SiteHelpers::gridDisplayView($row->vendor_id,'vendor_id','1:vendor:id:vendor_name',$nodata['vendor_id']) !!}
                         </div>
                     </div>
                     <div class="clearfix"></div>
@@ -84,7 +84,7 @@
                         </label>
 
                         <div class="col-md-8">
-                            {!! SiteHelpers::gridDisplayView($row->company_id,'company_id','1:company:id:company_name_long') !!}
+                            {!! SiteHelpers::gridDisplayView($row->company_id,'company_id','1:company:id:company_name_long',$nodata['company_id']) !!}
                         </div>
                     </div>
                     <div class="clearfix"></div>
@@ -119,7 +119,7 @@
                         </label>
 
                         <div class="col-md-8">
-                            {!! SiteHelpers::gridDisplayView($row->received_by,'received_by','1:users:id:username') !!}
+                            {!! SiteHelpers::gridDisplayView($row->received_by,'received_by','1:users:id:username',$nodata['received_by']) !!}
 
                         </div>
                     </div>
@@ -140,7 +140,7 @@
 
                         <div class="col-md-8">
                             {{
-                            SiteHelpers::gridDisplayView($row->order_type_id,'order_type_id','1:order_type:id:order_type')
+                            SiteHelpers::gridDisplayView($row->order_type_id,'order_type_id','1:order_type:id:order_type',$nodata['order_type_id'])
                             }}
                         </div>
                     </div>
@@ -171,7 +171,7 @@
                         </label>
 
                         <div class="col-md-8">
-                            {!! SiteHelpers::gridDisplayView($row->status_id,'status_id','1:order_status:id:status') !!}
+                            {!! SiteHelpers::gridDisplayView($row->status_id,'status_id','1:order_status:id:status',$nodata['status_id']) !!}
                         </div>
                     </div>
                     <div class="clearfix"></div>
@@ -193,7 +193,7 @@
 
                         <div class="col-md-8">
                             <td> {!!
-                                SiteHelpers::gridDisplayView($row->freight_id,'freight_id','1:freight:id:freight_type')
+                                SiteHelpers::gridDisplayView($row->freight_id,'freight_id','1:freight:id:freight_type',$nodata['freight_id'])
                                 !!}
                             </td>
                         </div>
@@ -214,7 +214,7 @@
                         </label>
 
                         <div class="col-md-8">
-                          {{  SiteHelpers::gridDisplayView($row->warranty,'warranty','1:yes_no:id:yesno') }}
+                          {{  SiteHelpers::gridDisplayView($row->warranty,'warranty','1:yes_no:id:yesno',$nodata['warranty']) }}
 
                         </div>
                     </div>
@@ -243,7 +243,7 @@ if(!empty($order_data['orderQtyArray'])){
 }
 ?>
                         <div class="col-md-8" id="quantity">
-                            {{ \DateHelpers::formatZeroValue($quantity) }}
+                            {{ \DateHelpers::formatZeroValue($quantity,$nodata['quantity']) }}
                         </div>
                     </div>
                     <div class="clearfix"></div>
@@ -253,7 +253,7 @@ if(!empty($order_data['orderQtyArray'])){
                         </label>
 
                         <div class="col-md-8">
-                            {!! SiteHelpers::gridDisplayView($row->new_format,'new_format','1:yes_no:id:yesno') !!}
+                            {!! SiteHelpers::gridDisplayView($row->new_format,'new_format','1:yes_no:id:yesno',$nodata['new_format']) !!}
 
                         </div>
                     </div>
@@ -274,7 +274,7 @@ if(!empty($order_data['orderQtyArray'])){
                         </label>
 
                         <div class="col-md-8">
-                            {!! SiteHelpers::gridDisplayView( $row->added_to_inventory,'added_to_inventory','1:yes_no:id:yesno') !!}
+                            {!! SiteHelpers::gridDisplayView( $row->added_to_inventory,'added_to_inventory','1:yes_no:id:yesno',$nodata['added_to_inventory']) !!}
 
                         </div>
                     </div>

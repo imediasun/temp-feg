@@ -50,6 +50,7 @@
 				<th scope="col" data-hide="phone">Download</th>
 			  	<th scope="col" data-hide="phone">API</th>
 			  	<th scope="col" data-hide="phone">Inline Editing</th>
+                <th scope="col" data-hide="phone">Filter No Data</th>
 				<th scope="col" data-hide="phone" style="width:70px;">Width</th>
 				<th scope="col" data-hide="phone" style="width:100px;">Align</th>
 				<th scope="col" data-hide="phone">Format Column </th>
@@ -137,6 +138,12 @@
 						  <?php if(isset($rows['inline']) && $rows['inline'] == 1) echo 'checked="checked"';?>/>
 					  </label>
 				  </td>
+                  <td>
+                      <label >
+                          <input name="nodata[<?php echo $id;?>]" type="checkbox" id="inline" value="1"
+                          <?php if(isset($rows['nodata']) && $rows['nodata'] == 1) echo 'checked="checked"';?>/>
+                      </label>
+                  </td>
 				<td>
 					<input type="text" class="form-control" name="width[<?php echo $id;?>]" value="<?php echo $rows['width'];?>" />
 				</td>

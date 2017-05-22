@@ -41,7 +41,7 @@
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Location', (isset($fields['location_id']['language'])? $fields['location_id']['language'] : array())) }}	
 						</td>
-						<td>{!! SiteHelpers::gridDisplayView($row->location_id,'location_id','1:location:id:location_name') !!} </td>
+						<td>{!! SiteHelpers::gridDisplayView($row->location_id,'location_id','1:location:id:location_name',$nodata['location_id']) !!} </td>
 						
 					</tr>
 				
@@ -97,7 +97,7 @@
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Group Name', (isset($fields['group_id']['language'])? $fields['group_id']['language'] : array())) }}	
 						</td>
-						<td>{!! SiteHelpers::gridDisplayView($row->group_id,'group_id','1:tb_groups:group_id:name') !!} </td>
+						<td>{!! SiteHelpers::gridDisplayView($row->group_id,'group_id','1:tb_groups:group_id:name',$nodata['group_id']) !!} </td>
 						
 					</tr>
 				
@@ -105,7 +105,7 @@
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Company Name', (isset($fields['company_id']['language'])? $fields['company_id']['language'] : array())) }}	
 						</td>
-						<td>{!! SiteHelpers::gridDisplayView($row->company_id,'company_id','1:company:id:company_name_long') !!} </td>
+						<td>{!! SiteHelpers::gridDisplayView($row->company_id,'company_id','1:company:id:company_name_long',$nodata['company_id']) !!} </td>
 						
 					</tr>
 				

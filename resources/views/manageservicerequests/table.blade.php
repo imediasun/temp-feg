@@ -117,7 +117,7 @@
 							$conn = (isset($field['conn']) ? $field['conn'] : array() );
 
 
-							$value = AjaxHelpers::gridFormater($row->$field['field'], $row , $field['attribute'],$conn);
+							$value = AjaxHelpers::gridFormater($row->$field['field'], $row , $field['attribute'],$conn,isset($field['nodata'])?$field['nodata']:0);
 						 	?>
 						 	<?php $limited = isset($field['limited']) ? $field['limited'] :''; ?>
 						 	@if(SiteHelpers::filterColumn($limited ))
