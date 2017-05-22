@@ -1450,6 +1450,7 @@ $message" .
 	{
 	    $dates = [];
 	    if (!empty($query)) {
+            $query = urldecode($query);
             list($dateStart, $dateEnd) = explode("-", $query. "-");
             $dateStart = trim($dateStart);
             $dateEnd = trim($dateEnd);
