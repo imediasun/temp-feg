@@ -49,7 +49,7 @@
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Zip Code', (isset($fields['zip']['language'])? $fields['zip']['language'] : array())) }}	
 						</td>
-						<td>{{ \DateHelpers::formatStringValue($row->zip) }} </td>
+						<td>{{ \DateHelpers::formatStringValue($row->zip,$nodata['zip']) }} </td>
 						
 					</tr>
 				
@@ -73,7 +73,7 @@
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Website', (isset($fields['website']['language'])? $fields['website']['language'] : array())) }}	
 						</td>
-						<td>{{ \DateHelpers::formatStringValue($row->website) }} </td>
+						<td>{{ \DateHelpers::formatStringValue($row->website,$nodata['website']) }} </td>
 						
 					</tr>
 				
@@ -81,7 +81,7 @@
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Games Contact', (isset($fields['games_contact_name']['language'])? $fields['games_contact_name']['language'] : array())) }}	
 						</td>
-						<td>{{ \DateHelpers::formatStringValue($row->games_contact_name) }} </td>
+						<td>{{ \DateHelpers::formatStringValue($row->games_contact_name,$nodata['games_contact_name']) }} </td>
 						
 					</tr>
 				
@@ -89,7 +89,7 @@
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Games Phone', (isset($fields['games_contact_phone']['language'])? $fields['games_contact_phone']['language'] : array())) }}	
 						</td>
-						<td>{{ \DateHelpers::formatStringValue($row->games_contact_phone) }} </td>
+						<td>{{ \DateHelpers::formatStringValue($row->games_contact_phone,$nodata['games_contact_phone']) }} </td>
 						
 					</tr>
 				
@@ -121,7 +121,7 @@
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Min Order Amt', (isset($fields['min_order_amt']['language'])? $fields['min_order_amt']['language'] : array())) }}	
 						</td>
-						<td>{{ \DateHelpers::formatZeroValue($row->min_order_amt) }} </td>
+						<td>{{ \DateHelpers::formatZeroValue($row->min_order_amt,$nodata['min_order_amt']) }} </td>
 						
 					</tr>
 				

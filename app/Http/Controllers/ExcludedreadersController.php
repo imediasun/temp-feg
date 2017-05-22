@@ -186,6 +186,7 @@ class ExcludedreadersController extends Controller {
         $this->data['tableGrid'] = $this->info['config']['grid'];
 		$this->data['access']		= $this->access;
 		$this->data['setting'] 		= $this->info['setting'];
+        $this->data['nodata']=\SiteHelpers::isNoData($this->info['config']['grid']);
 		$this->data['fields'] 		= \AjaxHelpers::fieldLang($this->info['config']['forms']);
 		return view('excludedreaders.view',$this->data);
 	}

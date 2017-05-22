@@ -31,7 +31,7 @@
                         {{ SiteHelpers::activeLang('Prev Location', (isset($fields['prev_location_id']['language'])? $fields['prev_location_id']['language'] : array())) }}
                     </td>
                     <td>{!!
-                        SiteHelpers::gridDisplayView($row->prev_location_id,'prev_location_id','1:location:id:location_name')
+                        SiteHelpers::gridDisplayView($row->prev_location_id,'prev_location_id','1:location:id:location_name',$nodata['prev_location_id'])
                         !!}
                     </td>
                 </tr>
@@ -66,7 +66,7 @@
                     <td width='30%' class='label-view text-right'>
                         {{ SiteHelpers::activeLang('Test Piece', (isset($fields['test_piece']['language'])? $fields['test_piece']['language'] : array())) }}
                     </td>
-                    <td>{!! SiteHelpers::gridDisplayView($row->test_piece,'test_piece','1:yes_no:id:yesno') !!}</td>
+                    <td>{!! SiteHelpers::gridDisplayView($row->test_piece,'test_piece','1:yes_no:id:yesno',$nodata['test_piece']) !!}</td>
                 </tr>
 
                 </tbody>

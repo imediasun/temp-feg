@@ -893,6 +893,7 @@ class ModuleController extends Controller
                 'download' => (isset($download[$i]) ? 1 : 0),
                 'api' => (isset($api[$i]) ? 1 : 0),
                 'inline' => (isset($inline[$i]) ? 1 : 0),
+                'nodata' => (isset($nodata[$i]) ? 1 : 0),
                 'frozen' => (isset($frozen[$i]) ? 1 : 0),
                 'limited' => (isset($limited[$i]) ? $limited[$i] : ''),
                 'width' => isset($width[$i]) ? $width[$i] : '',

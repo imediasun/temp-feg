@@ -322,7 +322,7 @@ class OrderController extends Controller
         $this->data['access'] = $this->access;
         $this->data['setting'] = $this->info['setting'];
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
-
+        $this->data['nodata']=\SiteHelpers::isNoData($this->info['config']['grid']);
         return view('order.view', $this->data);
     }
     // Uncomment if Copy functionality is needed for orders

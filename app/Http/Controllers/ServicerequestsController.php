@@ -331,6 +331,7 @@ class servicerequestsController extends Controller
         $this->data['following'] = Ticketfollowers::isFollowing($id, $userId);
         $this->data['followers'] = Ticketfollowers::getAllFollowers($id);
         $this->data['setting'] = $this->info['setting'];
+        $this->data['nodata']=\SiteHelpers::isNoData($this->info['config']['grid']);
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
         
         

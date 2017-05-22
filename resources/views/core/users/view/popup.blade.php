@@ -17,7 +17,7 @@
 				
 					<tr>
 						<td width='30%' class='label-view text-right'>Group</td>
-						<td>{{ SiteHelpers::gridDisplayView($row->group_id,'group_id','1:tb_groups:group_id:name') }} </td>
+						<td>{{ SiteHelpers::gridDisplayView($row->group_id,'group_id','1:tb_groups:group_id:name',$nodata['group_id']) }} </td>
 						
 					</tr>
 				

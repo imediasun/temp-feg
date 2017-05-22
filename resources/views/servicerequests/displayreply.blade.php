@@ -13,7 +13,7 @@
 				<td> {{ $row->Priority }} </td>
 			<tr>	
 				<td> Author </td>
-				<td> {!! SiteHelpers::gridDisplayView($row->entry_by,'entry_by','1:users:id:first_name|last_name') !!} </td>
+				<td> {!! SiteHelpers::gridDisplayView($row->entry_by,'entry_by','1:users:id:first_name|last_name',$nodata['entry_by']) !!} </td>
 			</tr>
 			<tr>	
 				<td> Status </td>
