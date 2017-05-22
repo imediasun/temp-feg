@@ -1,9 +1,26 @@
+<?php
+    $searchoperators = array(
+//        "equal" => " = ",
+        "bigger_equal" => " >= ",
+        "smaller_equal" => " <= ",
+        "smaller" => " < ",
+        "bigger" => " > ",
+        "not_null" => " ! Null ",
+        "is_null" => " Null ",
+        "like" => "Like",
+        "between" => "BETWEEN",
+    );
+?>
 <div >
 <form id="{{$pageModule}}Search">
 <table class="table search-table table-striped" id="advance-search">
 	<tbody>
 @foreach ($tableForm as $t)
 	@if($t['search'] =='1')
+        <?php
+            $aso = isset($t['advancedsearchoperator']) ? $t['advancedsearchoperator'] :
+                (strpos($t['type'], "date") !== false ? 'between' : 'equal');
+        ?>
 		<tr id="{{ $t['field'] }}" class="fieldsearch">
 			<td>{!! SiteHelpers::activeLang($t['label'], (isset($t['language']) ? $t['language'] : array())) !!} </td>
 			<td width="120">
@@ -11,17 +28,15 @@
 				<option value="equal"> = </option>
                 @if($pageModule != "merchandisebudget" )
                     @if($t['type'] != 'select')
-				<option value="bigger_equal"> >= </option>
-				<option value="smaller_equal"> <= </option>
-				<option value="smaller"> < </option>
-				<option value="bigger"> > </option>
-				<option value="not_null"> ! Null  </option>
-				<option value="is_null"> Null </option>
-				<option value="between"> Between </option>
-				<option value="like"> Like </option>
+                        @foreach($searchoperators as $operatorValue => $operatorLabel )
+                            <option value="{!!$operatorValue!!}"
+                                    @if($operatorValue == $aso)
+                                        selected="selected"
+                                    @endif
+                                    >{!!$operatorLabel!!}</option>
+                        @endforeach
                     @endif
-                    @endif
-
+                @endif
 			</select>
 			</td>
 			<td id="field_{{ $t['field']}}" width="50%">{!! SiteHelpers::transForm($t['field'] , $tableForm) !!}</td>

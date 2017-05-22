@@ -643,6 +643,36 @@ class servicerequestsController extends Controller
 
     }
 
+    public function postStatusUpdate(Request $request, $id) {
+        $response = ['status' => 'error',  'message' => 'Not authorized to change status'];
+        if (ticketsetting::canUserChangeStatus()){
+            $id = \SiteHelpers::encryptID($id, true);
+            $date = date("Y-m-d");
+            $status = @$request->input('Status');
+            $oldStatus = @$request->input('oldStatus');
+            $priority = @$request->input('Priority');
+            $ticketsData = [];
+            //$ticketsData['updated'] = date('Y-m-d H:i:s');
+            if (!empty($status)) {
+                $ticketsData['Status'] = $status;
+                $ticketsData['Priority'] = $priority;
+                $ticketsData['closed'] = null;
+                $isStatusClosed = $status == 'closed';
+                if ($isStatusClosed) {
+                    if ($oldStatus != 'closed') {
+                        $ticketsData['closed'] = date('Y-m-d H:i:s');
+                    }
+                }
+
+                $this->model->where('TicketID', $id)->update($ticketsData);
+                $response = ['status' => 'success',  'message' => "Status updated successfully."];
+            }
+            else {
+                $response = ['status' => 'error',  'message' => 'Invalid status'];
+            }
+        }
+        return response()->json($response);
+    }
     public function postComment(Request $request)
     {
         $date = date("Y-m-d");

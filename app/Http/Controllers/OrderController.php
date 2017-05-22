@@ -875,7 +875,6 @@ class OrderController extends Controller
                 'L.location_name',
                 'V.vendor_name',
                 'orders.order_total',
-                'orders.date_ordered',
                 'orders.order_description',
                 'OS.status',
                 'OT.order_type',
@@ -883,11 +882,17 @@ class OrderController extends Controller
                 'orders.po_notes',
                 'orders.notes',
                 'orders.is_partial',
-                'orders.created_at',
-                'orders.updated_at',
                 'YN.yesno'
             ];
-            $searchInput = ['query' => $search_all_fields, 'fields' => $searchFields];
+            $dateSearchFields = [
+                'orders.date_ordered',
+                'orders.created_at',
+                'orders.updated_at',
+            ];
+            $dates = FEGSystemHelper::probeDatesInSearchQuery($search_all_fields);
+            $searchInput = ['query' => $search_all_fields, 'dateQuery' => $dates,
+                'fields' => $searchFields, 'dateFields' => $dateSearchFields];
+
         }
 
         // Filter Search for query
@@ -1120,6 +1125,36 @@ class OrderController extends Controller
         } else {
             $this->data['row'] = $this->model->getColumnTable('order');
         }
+        $this->data['setting'] = $this->info['setting'];
+        //  $this->data['subgrid'] = $this->detailview($this->modelview ,  $this->data['subgrid'] ,$id );
+        $this->data['id'] = $id;
+        $this->data['access'] = $this->access;
+        $this->data['data'] = $this->model->getOrderQuery($id);
+        return view('order.clonenew', $this->data);
+    }
+    function getCloneAuto(Request $request, $eId)
+    {
+        $response = ['status' => 'error', 'message' => \Lang::get('core.note_restric')];
+        if ($this->access['is_add'] == 0) {
+            return response()->json($response);
+        }
+        $id = \SiteHelpers::encryptID($eId, true);
+        $response['message'] = \Lang::get('core.order_missing_id');
+        if (empty($id)) {
+            return response()->json($response);
+        }
+        $row = $this->model->find($id)->toArray();
+        if (empty($row)) {
+            return response()->json($response);
+        }
+        unset($row['is_api_visible']);
+        unset($row['api_created_at']);
+        unset($row['api_updated_at']);
+        unset($row['updated_at']);
+        unset($row['created_at']);
+        unset($row['po_number']);
+        
+
         $this->data['setting'] = $this->info['setting'];
         //  $this->data['subgrid'] = $this->detailview($this->modelview ,  $this->data['subgrid'] ,$id );
         $this->data['id'] = $id;
@@ -1460,5 +1495,17 @@ class OrderController extends Controller
             return empty($email)?false:$email;
         }
         return false;
+    }
+
+    function getExposeApi(Request $request, $eId) {
+        $id = \SiteHelpers::encryptID($eId, true);
+        $response = ['status' => 'error', 'message' => \Lang::get('core.order_missing_id')];
+        if (!empty($id)) {
+            $status = Order::apified($id);
+            $response['status'] = $status === false ? 'error' : 'success';
+            $response['message'] = $status === false ? \Lang::get('core.order_api_not_exposable') : \Lang::get('core.order_api_exposed');
+        }
+        return response()->json($response);
+
     }
 }

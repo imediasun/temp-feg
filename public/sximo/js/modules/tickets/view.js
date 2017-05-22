@@ -160,7 +160,7 @@
     };
   
     function formSubmit() {
-        
+        var status, oldStatus, statusForm, priority;
         if(form.parsley('isValid')) {
             var options = {
                 dataType     :  'json',
@@ -172,6 +172,20 @@
             return false;   
         } 
         else {
+            status = form.find('[name=Status]').val();
+            oldStatus = form.find('[name=oldStatus]').val();
+            priority = form.find('[name=Priority]').val();
+            statusForm = form.parent().find('#servicerequestsStatusUpdateFormAjax');
+            if (status != oldStatus) {
+                form.parsley().destroy();
+                statusForm.find('[name=Status]').val(status);
+                statusForm.find('[name=Priority]').val(priority);
+                showProgress();
+                statusForm.ajaxSubmit({
+                    dataType     :  'json',
+                    success      :  showFormResponse
+                });
+            }
             return false;
         }        
     }
