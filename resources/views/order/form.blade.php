@@ -24,7 +24,7 @@
             @endif
             {!! Form::open(array('url'=>'order/save/', 'class'=>'form-vertical','files' => true ,
             'parsley-validate'=>'','novalidate'=>' ','id'=> 'ordersubmitFormAjax')) !!}
-            <input type="hidden" id="is_freehand" name="is_freehand" value="{{  is_object($row) ? $row->is_freehand:0 }}">
+            <input type="hidden" id="is_freehand" name="is_freehand" value="{{  is_object($row) ? $fromStore == 1?0:$row->is_freehand:0 }}">
             <input type="hidden" id="can_select_product_list" value="1">
             <div class="row">
             <div class="col-md-6">
@@ -306,7 +306,7 @@
                     <tr id="rowid" class="clone clonedInput">
                         <td><br/><input type="text" id="item_num" name="item_num[]" disabled readonly
                                         style="width:30px;border:none;background:none"/></td>
-                        <td><br/><input type="text" placeholder="sku" {{  is_object($row) ? $row->is_freehand != 1 ?'readonly': '':'readonly' }} class="form-control sku" id="sku_num" name="sku[]"
+                        <td><br/><input type="text" placeholder="sku" {{  is_object($row) ? $fromStore == 1?'readonly': $row->is_freehand != 1 ?'readonly': '':'readonly' }} class="form-control sku" id="sku_num" name="sku[]"
                                     /></td>
 
                         <td><br/> <input type="text" name='item_name[]' placeholder='Item  Name' id="item_name"
@@ -314,7 +314,7 @@
                                          maxlength="225" required>
                         </td>
                         <td>
-                            <textarea name='item[]' {{  is_object($row) ? $row->is_freehand != 1 ?'readonly': '':'readonly' }} placeholder='Item  Description' id="item"
+                            <textarea name='item[]' {{  is_object($row) ? $fromStore == 1?'readonly':$row->is_freehand != 1 ?'readonly': '':'readonly' }} placeholder='Item  Description' id="item"
                                       class='form-control item' cols="30" rows="4" maxlength="225"></textarea>
                         </td>
 
