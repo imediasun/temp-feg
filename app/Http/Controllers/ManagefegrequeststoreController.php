@@ -4,7 +4,7 @@ use App\Http\Controllers\controller;
 use App\Models\Managefegrequeststore;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
-use Validator, Input, Redirect;
+use Validator, Input, Redirect, Log;
 
 class ManagefegrequeststoreController extends Controller
 {
@@ -168,6 +168,7 @@ class ManagefegrequeststoreController extends Controller
             } else {
                 $filter = $this->buildSearch();
             }
+            Log::info("$v1 => $v2 => $v3  ==== filters = ".print_r($filter,true));
             $manageRequestInfo = $this->model->getManageRequestsInfo($v1, $v2, $v3,$filter);
             $this->data['TID'] = $manageRequestInfo['TID'];
             $this->data['LID'] = $manageRequestInfo['LID'];
