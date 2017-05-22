@@ -1442,4 +1442,33 @@ $message" .
         \DB::commit();
         return $result;
 	}
+
+    /**
+     * @param string $query
+     */
+    public static function probeDatesInSearchQuery($query = '')
+	{
+	    $dates = [];
+	    if (!empty($query)) {
+            $query = urldecode($query);
+            list($dateStart, $dateEnd) = explode("-", $query. "-");
+            $dateStart = trim($dateStart);
+            $dateEnd = trim($dateEnd);
+            $dateStartValue = strtotime($dateStart);
+            $dateEndValue = strtotime($dateEnd);
+            if ($dateStartValue !== false) {
+                $dates[0] = date("Y-m-d H:i:s", $dateStartValue);
+            }
+            if ($dateEndValue !== false) {
+                $dates[1] = date("Y-m-d H:i:s", $dateEndValue);
+                if (strpos($dates[1], "00:00:00") > 0) {
+                    $dates[1] = date("Y-m-d H:i:s", strtotime($dates[1]." +1 day -1 second"));
+                }
+            }
+            if (empty($dates[0]) && !empty($dates[1])) {
+                $dates = [$dates[1]];
+            }
+        }
+        return $dates;
+    }
 }

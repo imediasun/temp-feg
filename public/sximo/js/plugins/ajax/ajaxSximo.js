@@ -13,7 +13,7 @@ function reloadData( id,url,callback)
     }
 
 	$('.ajaxLoading').show();
-	$.post( url ,function( data ) {
+	$.post( encodeURI(url) ,function( data ) {
 		$( id +'Grid' ).html( data );
 		typeof callback === 'function' && callback(data);
         App.autoCallbacks.runCallback.call($( id +'Grid' ), 'reloaddata', 

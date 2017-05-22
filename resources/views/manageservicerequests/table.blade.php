@@ -36,7 +36,7 @@
         <thead>
         <tr>
             @if(!isset($setting['hiderowcountcolumn']) || $setting['hiderowcountcolumn'] != 'true')
-                <th width="35"> No </th>
+                <th width="50"> No </th>
             @endif
 				@if($setting['disableactioncheckbox']=='false' && ($access['is_remove'] == 1 || $access['is_add'] =='1'))
                 <th width="30"> <input type="checkbox" class="checkall" /></th>

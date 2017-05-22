@@ -490,7 +490,8 @@ class managefreightquoters extends Sximo
                         }
 
                         $from = \Session::get('eid');
-                        $to = $this->get_user_emails('users_plus_district_and_field_managers', $data['request']['loc'][$i]);
+                        //$to = $this->get_user_emails('users_plus_district_and_field_managers', $data['request']['loc'][$i]);
+                        $to =  \FEGHelp::getSystemEmailRecipients('USERS PLUS DISTINCT AND FIELD MANAGER', $data['request']['loc'][$i]);
                         $cc = 'freight-notifications@fegllc.com';
                         $bcc = 'support@fegllc.com';
                         $subject = ((int)$num_games_per_destination == 0)?('Scheduled for delivery to ' . $locationName . '!'):('('.(int)$num_games_per_destination.')'.' Game[s] scheduled for delivery to ' . $locationName . '!');

@@ -653,6 +653,10 @@ abstract class Controller extends BaseController
         if (is_array($customSearchString) && !empty($customSearchString['query'])) {
             $searchAllValue = $customSearchString['query'];
             $searchAllFields = $customSearchString['fields'];
+            $searchDateFields = isset($customSearchString['dateFields']) ? $customSearchString['dateFields'] : [];
+            $dateQuery = isset($customSearchString['dateQuery']) ? $customSearchString['dateQuery'] : [];
+            $dateQueryOperator = isset($customSearchString['dateQueryOperator']) ? $customSearchString['dateQueryOperator'] :
+                (count($dateQuery)== 2 ? 'BETWEEN' : '=');
             $customSearchString = '';
         }
 
@@ -665,7 +669,7 @@ abstract class Controller extends BaseController
         // search in all fields
         if (!empty($searchAllValue)) {
             $params = [];
-            $searchAllValue = addslashes($searchAllValue);
+            $searchAllValue = addslashes(urldecode($searchAllValue));
             if (!empty($searchAllFields)) {
                 foreach($searchAllFields as $field) {
                     $params[] = " $field LIKE '%$searchAllValue%' ";
@@ -681,6 +685,14 @@ abstract class Controller extends BaseController
                     }
                 }
             }
+            if (!empty($dateQuery)) {
+                foreach($dateQuery as $dateIndex => $dateItem) {
+                    $dateQuery[$dateIndex] = "'$dateItem'";
+                }
+                foreach($searchDateFields as $field) {
+                    $params[] = " ($field $dateQueryOperator ".implode(" AND ", $dateQuery). ") ";
+                }
+            }
             $param = " AND (" . implode(' OR ', $params) . ') ';
         }
 
@@ -691,6 +703,13 @@ abstract class Controller extends BaseController
                 foreach ($type as $t) {
 
                     $keys = explode(":", $t);
+                    if (isset($keys[2])) {
+                        $keys[2] = urldecode($keys[2]);
+                    }
+                    if (isset($keys[3])) {
+                        $keys[3] = urldecode($keys[3]);
+                    }
+
                     if (in_array($keys[0], array_keys($arr))) {
 
                         if ($arr[$keys[0]]['type'] == 'select' || $arr[$keys[0]]['type'] == 'radio') {

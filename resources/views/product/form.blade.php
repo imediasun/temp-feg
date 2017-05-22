@@ -360,19 +360,25 @@
 
 
 
-
+//
 <script type="text/javascript">
     $(document).ready(function () {
         numberFieldValidationChecks($("#qty_input"));
-        $("#vendor_id").jCombo("{{ URL::to('product/comboselect?filter=vendor:id:vendor_name:hide:0:status:1') }}",
-                {selected_value: '{{ $row["vendor_id"] }}'});
 
         $("#prod_type_id").jCombo("{{ URL::to('product/comboselect?filter=order_type:id:order_type:can_request:1') }}",
                 {selected_value: '{{ $row["prod_type_id"] }}'});
 
+        $("#prod_type_id").change(function () {
+            $("#prod_sub_type_id").jCombo("{{ URL::to('product/comboselect?filter=product_type:id:type_description') }}&parent=request_type_id:"+$('#prod_type_id').val()+"",
+                    {selected_value: '{{ $row["prod_sub_type_id"] }}'});
+        });
 
-        $("#prod_sub_type_id").jCombo("{{ URL::to('product/comboselect?filter=product_type:id:type_description') }}&parent=request_type_id:",
-                {parent: '#prod_type_id', selected_value: '{{ $row["prod_sub_type_id"] }}'});
+
+        /*$("#prod_sub_type_id").jCombo("{{ URL::to('product/comboselect?filter=product_type:id:type_description') }}&parent=request_type_id:",
+                {parent: '#prod_type_id', selected_value: '{{ $row["prod_sub_type_id"] }}'});*/
+
+        $("#vendor_id").jCombo("{{ URL::to('product/comboselect?filter=vendor:id:vendor_name:hide:0:status:1') }}",
+                {selected_value: '{{ $row["vendor_id"] }}'});
 
         // for Redemption Prizes show Ticket Value
         if ("{{$row["prod_type_id"] }}" == 7) {
