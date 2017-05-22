@@ -70,15 +70,15 @@
                     @if($id)
                         <div class="form-group netSuiteStatus"><br/><br/>
                         
-                        <p class="text-info netSuiteStatusSuccess @if(!Order::isApiVisible($id, $row)) hidden @endif">
+                        <p class="text-info netSuiteStatusSuccess @if(!Order::isApified($id, $row)) hidden @endif">
                             <i class="fa fa-check-square-o m-l-sm m-r-xs"></i>
                             {{ Lang::get('core.order_api_exposed_label') }}
                         </p>
-                        <p class="text-warning netSuiteStatusPending @if(Order::isApiVisible($id, $row) || !Order::isApiEligible($id, $row)) hidden @endif">
+                        <p class="text-warning netSuiteStatusPending @if(Order::isApified($id, $row) || !Order::isApiable($id, $row)) hidden @endif">
                             <i class="fa fa-exclamation-triangle m-l-sm m-r-xs"></i>
                             {{ Lang::get('core.order_api_exposed_label_pending') }}
                         </p>
-                        <p class="text-gray netSuiteStatusNR  @if(Order::isApiEligible($id, $row)) hidden @endif">
+                        <p class="text-gray netSuiteStatusNR  @if(Order::isApiable($id, $row)) hidden @endif">
                             <i class="fa fa-times m-l-sm m-r-xs"></i>
                             {{ Lang::get('core.order_api_exposed_label_ineligible') }}
                         </p>
@@ -389,7 +389,7 @@
                 <div class="col-sm-12 text-center">
                     <button type="submit" class="btn btn-primary btn-sm " id="submit_btn"><i
                                 class="fa  fa-save "></i>  {{ Lang::get('core.sb_save') }} </button>                    
-                    @if($id && Order::isApiEligible($id, $row) && !Order::isApiVisible($id, $row))
+                    @if($id && Order::isApiable($id, $row) && !Order::isApified($id, $row))
                         <button type="button" class="btn btn-success btn-sm exposeAPI">
                         {{ Lang::get('core.order_api_expose_button_label') }} </button>
                     @endif

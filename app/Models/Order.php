@@ -648,25 +648,25 @@ class order extends Sximo
         $isFreeHand = !empty($freehand);
         return $isFreeHand;
     }
-    public static function isApiEligible($id, $data = null, $ignoreVoid = false) {
+    public static function isApiable($id, $data = null, $ignoreVoid = false) {
         return !self::isFreehand($id, $data) && ($ignoreVoid || !self::isVoided($id, $data));
     }
-    public static function isApiVisible($id, $data = null) {
+    public static function isApified($id, $data = null) {
         if (!empty($data)) {
             $api = is_object($data) ? $data->is_api_visible : $data['is_api_visible'];
         }
         else {
             $api = self::where('id', $id)->pluck('is_api_visible');
         }
-        $isApiVisible = !empty($api);
-        return $isApiVisible;
+        $isApified = !empty($api);
+        return $isApified;
     }
-    public static function updateApiVisibility($id, $isUnset = false) {
-        if (self::isApiEligible($id, null, true)) {
+    public static function apified($id, $isUnset = false) {
+        if (self::isApiable($id, null, true)) {
             $now = date("Y-m-d H:i:s");
             $setValue = $isUnset ? 0 : 1;
             $updateData = ['is_api_visible' => $setValue];
-            if (self::isApiVisible($id)) {
+            if (self::isApified($id)) {
                 $updateData['api_updated_at'] = $now;
             }
             else {
@@ -676,10 +676,10 @@ class order extends Sximo
         }
         return false;
     }
-    public static function vodify($id) {
+    public static function voidify($id) {
         $now = date("Y-m-d H:i:s");
         $updateData = ['status_id' => self::ORDER_VOID_STATUS];
-        if (self::isApiVisible($id)) {
+        if (self::isApified($id)) {
             $updateData['api_updated_at'] = $now;
         }
         $updateData['updated_at'] = $now;

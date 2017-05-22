@@ -56,7 +56,7 @@
                                             class="fa fa-sign-in  "></i>&nbsp {{ Lang::get('core.sb_send') }} </button>
                             </div>
                             
-                            @if($order_id && Order::isApiEligible($order_id) && !Order::isApiVisible($order_id))
+                            @if($order_id && Order::isApiable($order_id) && !Order::isApified($order_id))
                             <div class="form-group" style="margin-top:10px;">
                                 <button type="button" class="btn btn-info btn-lg exposeAPIFromSaveOrSend"
                                         style="width:33%">

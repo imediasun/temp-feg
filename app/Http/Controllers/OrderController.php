@@ -1499,7 +1499,7 @@ class OrderController extends Controller
         $id = \SiteHelpers::encryptID($eId, true);
         $response = ['status' => 'error', 'message' => \Lang::get('core.order_missing_id')];
         if (!empty($id)) {
-            $status = Order::updateApiVisibility($id);
+            $status = Order::apified($id);
             $response['status'] = $status === false ? 'error' : 'success';
             $response['message'] = $status === false ? \Lang::get('core.order_api_not_exposable') : \Lang::get('core.order_api_exposed');
         }
