@@ -1,3 +1,4 @@
+<?php use App\Models\Order; ?>
 @if($setting['form-method'] =='native')
     <style>
         #add_new_item
@@ -66,6 +67,24 @@
                                    value="1" @if(!empty($data['alt_address'])) checked @endif/></div>
 
                     </div>
+                    @if($id)
+                        <div class="form-group netSuiteStatus"><br/><br/>
+                        
+                        <p class="text-info netSuiteStatusSuccess @if(!Order::isApiVisible($id, $row)) hidden @endif">
+                            <i class="fa fa-check-square-o m-l-sm m-r-xs"></i>
+                            {{ Lang::get('core.order_api_exposed_label') }}
+                        </p>
+                        <p class="text-warning netSuiteStatusPending @if(Order::isApiVisible($id, $row) || !Order::isApiEligible($id, $row)) hidden @endif">
+                            <i class="fa fa-exclamation-triangle m-l-sm m-r-xs"></i>
+                            {{ Lang::get('core.order_api_exposed_label_pending') }}
+                        </p>
+                        <p class="text-gray netSuiteStatusNR  @if(Order::isApiEligible($id, $row)) hidden @endif">
+                            <i class="fa fa-times m-l-sm m-r-xs"></i>
+                            {{ Lang::get('core.order_api_exposed_label_ineligible') }}
+                        </p>
+                        </div>
+                    @endif
+                    
                     {{-- Ship Address starts here  --}}
                     <div id="ship_address" style="display:none">
                         <div class="form-group  ">
@@ -369,7 +388,11 @@
 
                 <div class="col-sm-12 text-center">
                     <button type="submit" class="btn btn-primary btn-sm " id="submit_btn"><i
-                                class="fa  fa-save "></i>  {{ Lang::get('core.sb_save') }} </button>
+                                class="fa  fa-save "></i>  {{ Lang::get('core.sb_save') }} </button>                    
+                    @if($id && Order::isApiEligible($id, $row) && !Order::isApiVisible($id, $row))
+                        <button type="button" class="btn btn-success btn-sm exposeAPI">
+                        {{ Lang::get('core.order_api_expose_button_label') }} </button>
+                    @endif
                     <button type="button" onclick="reloadOrder()" class="btn btn-success btn-sm">
                         <i class="fa  fa-arrow-circle-left "></i>  {{ Lang::get('core.sb_cancel') }} </button>
                 </div>
@@ -1157,3 +1180,31 @@
         }
 
     </style>
+
+<script>
+    $(document).ready(function () {
+        
+        $(".exposeAPI").on('click', function() {
+            var btn = $(this);
+            btn.prop('disabled', true);
+            blockUI();
+            $.ajax({
+                type: "GET",
+                url: "{{ url() }}/order/expose-api/{{ \SiteHelpers::encryptID($id) }}",
+                success: function (data) {
+                    unblockUI();
+                    if(data.status === 'success'){
+                        notyMessage(data.message);
+                        $(".netSuiteStatus p").addClass('hidden');
+                        $(".netSuiteStatus p.netSuiteStatusSuccess").removeClass('hidden');
+                        btn.remove();
+                    }
+                    else {
+                        btn.prop('disabled', false);
+                        notyMessageError(data.message);
+                    }
+                }
+            });
+        });
+    });
+</script>

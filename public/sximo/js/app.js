@@ -611,6 +611,12 @@ function alignColumns(gridContanier) {
     });
 }
 
+function blockUI() {
+    $('.ajaxLoading').show();
+}
+function unblockUI() {
+    $('.ajaxLoading').hide();
+}
 
 jQuery(document).ready(function($){
 
