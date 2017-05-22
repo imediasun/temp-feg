@@ -61,6 +61,10 @@ class order extends Sximo
             default:
                 $return .= " orders.id IS NOT NULL";
         }
+        if($cond == 'except_freehand')
+        {
+            $return .= " AND is_freehand = 0";
+        }
 
         return $return;
     }

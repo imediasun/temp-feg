@@ -24,7 +24,7 @@
             @endif
             {!! Form::open(array('url'=>'order/save/', 'class'=>'form-vertical','files' => true ,
             'parsley-validate'=>'','novalidate'=>' ','id'=> 'ordersubmitFormAjax')) !!}
-            <input type="hidden" id="is_freehand" name="is_freehand" value="0">
+            <input type="hidden" id="is_freehand" name="is_freehand" value="{{  is_object($row) ? $row->is_freehand:0 }}">
             <input type="hidden" id="can_select_product_list" value="1">
             <div class="row">
             <div class="col-md-6">
@@ -306,7 +306,7 @@
                     <tr id="rowid" class="clone clonedInput">
                         <td><br/><input type="text" id="item_num" name="item_num[]" disabled readonly
                                         style="width:30px;border:none;background:none"/></td>
-                        <td><br/><input type="text" class="form-control sku" id="sku_num" name="sku[]"
+                        <td><br/><input type="text" placeholder="sku" {{  is_object($row) ? $row->is_freehand != 1 ?'readonly': '':'readonly' }} class="form-control sku" id="sku_num" name="sku[]"
                                     /></td>
 
                         <td><br/> <input type="text" name='item_name[]' placeholder='Item  Name' id="item_name"
@@ -314,7 +314,7 @@
                                          maxlength="225" required>
                         </td>
                         <td>
-                            <textarea name='item[]' placeholder='Item  Description' id="item"
+                            <textarea name='item[]' {{  is_object($row) ? $row->is_freehand != 1 ?'readonly': '':'readonly' }} placeholder='Item  Description' id="item"
                                       class='form-control item' cols="30" rows="4" maxlength="225"></textarea>
                         </td>
 
@@ -355,7 +355,7 @@
                     <a href="javascript:void(0);" class="addC btn btn-xs btn-info" rel=".clone" id="add_new_item"><i
                                 class="fa fa-plus"></i>
                         New Item</a>
-                @if(!empty($pass['Can add freehand products']))
+                @if(!empty($pass['Can add freehand products']) && !is_object($row))
                         <a href="javascript:void(0);" class="btn btn-xs btn-info enabled" data-status="disabled" id="can-freehand">
                             <i class="fa fa-times fa-check-circle-o" aria-hidden="true"></i>
                            <span>Enable Freehand</span></a>
@@ -950,111 +950,108 @@
             var itemid = $("#" + trid + "  textarea[name^=item]").attr('id');
             var retailpriceid = $('#' + trid + "  input[name^=retail]").attr('id');
             var selectorProductId = $('#' + trid + "  input[name^=product_id]").attr('id');
-            if(($('#can_select_product_list').val() == 1))
+            if(($('#is_freehand').val() == 0))
             {
-                @if (!empty($pass['Can select product list']))
-                    $(obj).autocomplete({
-                        minLength: 2,
-                        source: function (request, response) {
-                            var term = request.term;
-                            term = term.trim();
-                            var vendorId = $("#vendor_id").val();
-                            if (vendorId != "") {
-                                request.vendor_id = $("#vendor_id").val();
-                            }
-                            lastXhr = $.getJSON("order/autocomplete", request, function (data, status, xhr) {
-                                cache[term] = data;
-                                if (data.value == "No Match") {
-                                    // $('[name^=item_name]:focus').closest('tr').find('.sku').removeAttr('readonly');
-                                }
-                                else {
-                                    // $('[name^=item_name]:focus').closest('tr').find('.sku').attr('disabled',true);
-                                    // $('[name^=item_name]:focus').closest('tr').find('.sku').attr('readonly',true);
-                                    // $('[name^=item_name]:focus').closest('tr').find('.sku').val('');
-
-                                }
-                                if (xhr === lastXhr) {
-                                    response(data);
-                                }
-                            });
-                        },
-                        select: function (event, ui) {
-                            $.ajax({
-                                url: "order/productdata",
-                                type: "get",
-                                dataType: 'json',
-                                data: {'product_id': ui.item.value},
-                                success: function (result) {
-                                    if (result.unit_price == 0 && result.case_price == 0) {
-                                        notyMessageError("Retail Price and Case Price Unavailable...");
-                                        exit;
-                                    }
-                                    if (result.sku) {
-                                        $("#" + skuid).val(result.sku);
-                                    }
-                                    else {
-                                        $("#" + skuid).val('N/A');
-                                    }
-
-                                    if (result.unit_price) {
-                                        $("#" + priceid).val(result.unit_price);
-                                    }
-                                    else {
-                                        $("#" + priceid).val(0.00);
-                                    }
-                                    if (result.case_price) {
-                                        $("#" + casepriceid).val(result.case_price);
-                                    }
-                                    else {
-                                        $("#" + casepriceid).val(0.00);
-                                    }
-                                    if (result.retail_price) {
-                                        $("#" + retailpriceid).val(result.retail_price);
-                                    }
-                                    else {
-                                        $("#" + casepriceid).val(0.00);
-                                    }
-                                    $("#" + itemid).val(result.item_description);
-                                    $("#" + selectorProductId).val(result.id);
-                                    $("#" + qtyid).val(0.00);
-                                    calculateSum();
-                                }
-                            });
-                        },
-                        change: function (event, ui) {
-
-                            if (($('#is_freehand').val() == 0)) {
-                                if ($(this).val()) {
-                                    if (($(this).val() == 'No Match')) {
-                                        $(this).val("");
-                                        //$('.'+$(this).attr('id')+'_span').remove();
-                                        $(this).attr('placeholder', 'Please select a value from list');
-                                        $(this).css('border-color', '#c00', 'important');
-                                        //$(this).parents('td').append("<span class='"+$(this).attr('id')+"_span order_custom_error' style='color:#cc0000'>Please select a value from list</span>");
-                                    }
-                                    else if (!(ui.item)) {
-                                        $(this).val("");
-                                        //$('.'+$(this).attr('id')+'_span').remove();
-                                        $(this).attr('placeholder', 'Please select a value from list');
-
-                                        $(this).css('border-color', '#c00', 'important');
-
-                                        //$(this).parents('td').append("<span class='"+$(this).attr('id')+"_span order_custom_error' style='color:#cc0000'>Please select a value from list</span>");
-                                    }
-                                    else {
-                                        $(this).css('border-color', '#e5e6e7', 'important');
-                                        //$('.'+$(this).attr('id')+'_span').remove();
-                                    }
-                                }
-                                else {
-                                    //$('.'+$(this).attr('id')+'_span').remove();
-                                    $(this).css('border-color', '#e5e6e7', 'important');
-                                }
-                            }
+                $(obj).autocomplete({
+                    minLength: 2,
+                    source: function (request, response) {
+                        var term = request.term;
+                        term = term.trim();
+                        var vendorId = $("#vendor_id").val();
+                        if (vendorId != "") {
+                            request.vendor_id = $("#vendor_id").val();
                         }
-                    });
+                        lastXhr = $.getJSON("order/autocomplete", request, function (data, status, xhr) {
+                            cache[term] = data;
+                            if (data.value == "No Match") {
+                                // $('[name^=item_name]:focus').closest('tr').find('.sku').removeAttr('readonly');
+                            }
+                            else {
+                                // $('[name^=item_name]:focus').closest('tr').find('.sku').attr('disabled',true);
+                                // $('[name^=item_name]:focus').closest('tr').find('.sku').attr('readonly',true);
+                                // $('[name^=item_name]:focus').closest('tr').find('.sku').val('');
+
+                            }
+                            if (xhr === lastXhr) {
+                                response(data);
+                            }
+                        });
+                    },
+                    select: function (event, ui) {
+                        $.ajax({
+                            url: "order/productdata",
+                            type: "get",
+                            dataType: 'json',
+                            data: {'product_id': ui.item.value},
+                            success: function (result) {
+                                if (result.unit_price == 0 && result.case_price == 0) {
+                                    notyMessageError("Retail Price and Case Price Unavailable...");
+                                    exit;
+                                }
+                                if (result.sku) {
+                                    $("#" + skuid).val(result.sku);
+                                }
+                                else {
+                                    $("#" + skuid).val('N/A');
+                                }
+
+                                if (result.unit_price) {
+                                    $("#" + priceid).val(result.unit_price);
+                                }
+                                else {
+                                    $("#" + priceid).val(0.00);
+                                }
+                                if (result.case_price) {
+                                    $("#" + casepriceid).val(result.case_price);
+                                }
+                                else {
+                                    $("#" + casepriceid).val(0.00);
+                                }
+                                if (result.retail_price) {
+                                    $("#" + retailpriceid).val(result.retail_price);
+                                }
+                                else {
+                                    $("#" + casepriceid).val(0.00);
+                                }
+                                $("#" + itemid).val(result.item_description);
+                                $("#" + selectorProductId).val(result.id);
+                                $("#" + qtyid).val(0.00);
+                                calculateSum();
+                            }
+                        });
+                    },
+                    change: function (event, ui) {
+
+                            if ($(this).val()) {
+                                if (($(this).val() == 'No Match')) {
+                                    $(this).val("");
+                                    //$('.'+$(this).attr('id')+'_span').remove();
+                                    $(this).attr('placeholder', 'Please select a value from list');
+                                    $(this).css('border-color', '#c00', 'important');
+                                    //$(this).parents('td').append("<span class='"+$(this).attr('id')+"_span order_custom_error' style='color:#cc0000'>Please select a value from list</span>");
+                                }
+                                else if (!(ui.item)) {
+                                    $(this).val("");
+                                    //$('.'+$(this).attr('id')+'_span').remove();
+                                    $(this).attr('placeholder', 'Please select a value from list');
+
+                                    $(this).css('border-color', '#c00', 'important');
+
+                                    //$(this).parents('td').append("<span class='"+$(this).attr('id')+"_span order_custom_error' style='color:#cc0000'>Please select a value from list</span>");
+                                }
+                                else {
+                                    $(this).css('border-color', '#e5e6e7', 'important');
+                                    //$('.'+$(this).attr('id')+'_span').remove();
+                                }
+                            }
+                            else {
+                                //$('.'+$(this).attr('id')+'_span').remove();
+                                $(this).css('border-color', '#e5e6e7', 'important');
+                            }
+                    }
+                });
                 $(obj).autocomplete( "enable" );
-                @endif
+
             }
             else
             {
@@ -1104,7 +1101,9 @@
                             $('#is_freehand').val(0);
                             $('#can_select_product_list').val(1);
                             $('.itemstable .clonedInput:not(:first-child)').remove();
-                            $('.itemstable .clonedInput:first-child input').val('');
+                            $('.itemstable .clonedInput input.sku').attr('readonly','readonly');
+                            $('.itemstable .clonedInput textarea.item').attr('readonly','readonly');
+                            $('.itemstable .clonedInput:first-child input').not('#item_num').val('');
                             $('.itemstable .clonedInput:first-child textarea').val('');
                         }
                         else{
@@ -1116,7 +1115,9 @@
                             $('.clonedInput .item_name').css('border-color','#e5e6e7','important');
                             $('.clonedInput .item_name').attr('placeholder','Item Name');
                             $('.itemstable .clonedInput:not(:first-child)').remove();
-                            $('.itemstable .clonedInput:first-child input').val('');
+                            $('.itemstable .clonedInput input.sku').removeAttr('readonly');
+                            $('.itemstable .clonedInput textarea.item').removeAttr('readonly');
+                            $('.itemstable .clonedInput:first-child input').not('#item_num').val('');
                             $('.itemstable .clonedInput:first-child textarea').val('');
                         }
                     }
@@ -1132,7 +1133,9 @@
                     $('#is_freehand').val(0);
                     $('#can_select_product_list').val(1);
                     $('.itemstable .clonedInput:not(:first-child)').remove();
-                    $('.itemstable .clonedInput:first-child input').val('');
+                    $('.itemstable .clonedInput:first-child input').not('#item_num').val('');
+                    $('.itemstable .clonedInput input.sku').attr('readonly','readonly');
+                    $('.itemstable .clonedInput textarea.item').attr('readonly','readonly');
                     $('.itemstable .clonedInput:first-child textarea').val('');
                 }
                 else{
@@ -1144,7 +1147,9 @@
                     $('.clonedInput .item_name').css('border-color','#e5e6e7','important');
                     $('.clonedInput .item_name').attr('placeholder','Item Name');
                     $('.itemstable .clonedInput:not(:first-child)').remove();
-                    $('.itemstable .clonedInput:first-child input').val('');
+                    $('.itemstable .clonedInput input.sku').removeAttr('readonly');
+                    $('.itemstable .clonedInput textarea.item').removeAttr('readonly');
+                    $('.itemstable .clonedInput:first-child input').not('#item_num').val('');
                     $('.itemstable .clonedInput:first-child textarea').val('');
                 }
             }

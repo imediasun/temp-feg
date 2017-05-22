@@ -439,6 +439,7 @@ class OrderController extends Controller
             $date_ordered = date("Y-m-d", strtotime($request->get('date_ordered')));
             $total_cost = $request->get('order_total');
             $notes = $request->get('po_notes');
+            $is_freehand = $request->get('is_freehand') == "1" ?1:0;
             $po_1 = $request->get('po_1');
             $po_2 = $request->get('po_2');
             $po_3 = $request->get('po_3');
@@ -526,6 +527,7 @@ class OrderController extends Controller
                     'alt_address' => $alt_address,
                     'request_ids' => $where_in,
                     'new_format' => 1,
+                    'is_freehand' => $is_freehand,
                     'po_notes' => $notes
                 );
                 if ($editmode == "clone") {
