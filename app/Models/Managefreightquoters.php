@@ -492,8 +492,8 @@ class managefreightquoters extends Sximo
                         $from = \Session::get('eid');
                         //$to = $this->get_user_emails('users_plus_district_and_field_managers', $data['request']['loc'][$i]);
                         $to =  \FEGHelp::getSystemEmailRecipients('USERS PLUS DISTINCT AND FIELD MANAGER', $data['request']['loc'][$i]);
-                        $cc = 'freight-notifications@fegllc.com';
-                        $bcc = 'support@fegllc.com';
+                        //$cc = 'freight-notifications@fegllc.com';
+                        //$bcc = 'support@fegllc.com';
                         $subject = ((int)$num_games_per_destination == 0)?('Scheduled for delivery to ' . $locationName . '!'):('('.(int)$num_games_per_destination.')'.' Game[s] scheduled for delivery to ' . $locationName . '!');
                         $message = '<p>
 										' . $email_notes . '
@@ -594,8 +594,8 @@ class managefreightquoters extends Sximo
                                 'message' => $message,
                                 'isTest' => env('APP_ENV', 'development') !== 'production' ? true : false,
                                 'from' => $from,
-                                'cc' => $cc,
-                                'bcc' => $bcc,
+                                //'cc' => $cc,
+                                //'bcc' => $bcc,
                                 'configName' => 'UPDATE FREIGHT ORDER EMAIL'
                             ));
                         }
