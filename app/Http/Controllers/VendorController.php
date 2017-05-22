@@ -230,6 +230,7 @@ class VendorController extends Controller
         $this->data['id'] = $id;
         $this->data['access'] = $this->access;
         $this->data['setting'] = $this->info['setting'];
+        $this->data['nodata']=\SiteHelpers::isNoData($this->info['config']['grid']);
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
         return view('vendor.view', $this->data);
     }
@@ -343,7 +344,11 @@ class VendorController extends Controller
         }
 
     }
-
+    public function getVendorcheck(Request $request)
+    {
+        $vendor = \App\Models\Vendor::where('id',$request->id)->where('status',0)->first()?\App\Models\Vendor::where('id',$request->id)->where('status',0)->first()->vendor_name:0;
+        return $vendor;
+    }
     function postTrigger(Request $request)
     {
         $isActive = $request->get('isActive');

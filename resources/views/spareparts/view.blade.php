@@ -33,7 +33,7 @@
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Location', (isset($fields['loc_id']['language'])? $fields['loc_id']['language'] : array())) }}
 						</td>
-                        <td>{!! SiteHelpers::gridDisplayView($row->loc_id,'loc_id','1:location:id:location_name')!!}
+                        <td>{!! SiteHelpers::gridDisplayView($row->loc_id,'loc_id','1:location:id:location_name',$nodata['loc_id'])!!}
                         </td>
 						
 					</tr>
@@ -42,7 +42,7 @@
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('For Game', (isset($fields['game_title_id']['language'])? $fields['game_title_id']['language'] : array())) }}
 						</td>
-						<td>{!! SiteHelpers::gridDisplayView($row->game_title_id,'game_title_id','1:game_title:id:game_title')!!} </td>
+						<td>{!! SiteHelpers::gridDisplayView($row->game_title_id,'game_title_id','1:game_title:id:game_title',$nodata['game_title_id'])!!} </td>
 						
 					</tr>
 				
@@ -50,7 +50,7 @@
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Qty', (isset($fields['qty']['language'])? $fields['qty']['language'] : array())) }}
 						</td>
-						<td>{{ \DateHelpers::formatZeroValue($row->qty) }} </td>
+						<td>{{ \DateHelpers::formatZeroValue($row->qty,$nodata['qty']) }} </td>
 						
 					</tr>
 				
@@ -74,7 +74,7 @@
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Status', (isset($fields['status_id']['language'])? $fields['status_id']['language'] : array())) }}
 						</td>
-                        <td>{!! SiteHelpers::gridDisplayView($row->status_id,'status_id','1:spare_status:id:status')!!}
+                        <td>{!! SiteHelpers::gridDisplayView($row->status_id,'status_id','1:spare_status:id:status',$nodata['status_id'])!!}
                         </td>
 						
 					</tr>

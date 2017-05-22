@@ -303,7 +303,7 @@
                     {selected_value: '{{ $data["order_loc_id"] }}'});
 
             $("#vendor_id").jCombo("{{ URL::to('order/comboselect?filter=vendor:id:vendor_name') }}",
-                    {selected_value: '{{ $data["order_vendor_id"] }}'});
+                    {selected_value: '{{ $data["order_vendor_id"] }}', ready:addInactiveVendor( "#vendor_id", {{ $data["order_vendor_id"] }} ) });
 
             $("#freight_type_id").jCombo("{{ URL::to('order/comboselect?filter=freight:id:freight_type') }}",
                     {selected_value: '{{ $data['order_freight_id'] }}'});

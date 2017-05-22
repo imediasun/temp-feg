@@ -201,7 +201,7 @@ class LocationController extends Controller
         $this->data['access'] = $this->access;
         $this->data['setting'] = $this->info['setting'];
         $gridSettings = $this->info['config']['grid'];
-        
+
         $row->contact_name = '';
         if (!empty($row->contact_id)) {
             $contactDetails = \SiteHelpers::getUserDetails($row->contact_id);
@@ -212,12 +212,12 @@ class LocationController extends Controller
             $fieldName = $field['field'];
             if($field['view'] == '1' && isset($row->$fieldName)) {
                 $conn = (isset($field['conn']) ? $field['conn'] : array());
-                $value = \AjaxHelpers::gridFormater($row->$fieldName, $row, $field['attribute'], $conn);
+                $value = \AjaxHelpers::gridFormater($row->$fieldName, $row, $field['attribute'], $conn,isset($field['nodata'])?$field['nodata']:0);
                 $this->data['row']->$fieldName = $value;
             }
             $gridSettings[$field['field']] = $field;
         }
-        $this->data['tableGrid'] = $gridSettings;
+        $this->data['nodata']=\SiteHelpers::isNoData($this->info['config']['grid']);
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
         return view('location.view', $this->data);
     }

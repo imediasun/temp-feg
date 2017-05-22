@@ -192,6 +192,7 @@ class GamestitleController extends Controller
         $this->data['access'] = $this->access;
         $this->data['setting'] = $this->info['setting'];
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
+        $this->data['nodata']=\SiteHelpers::isNoData($this->info['config']['grid']);
         return view('gamestitle.view', $this->data);
     }
 

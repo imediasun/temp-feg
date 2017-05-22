@@ -71,7 +71,7 @@ $commentsCount =  $comments->count();
 								<td width='30%' class='label-view text-right'>
 									{{ SiteHelpers::activeLang('Location', (isset($fields['location_id']['language'])? $fields['location_id']['language'] : array())) }}
 								</td>
-								<td>{!! SiteHelpers::gridDisplayView($row->location_id,'location_id','1:location:id:location_name') !!} </td>
+								<td>{!! SiteHelpers::gridDisplayView($row->location_id,'location_id','1:location:id:location_name',$nodata['location_id']) !!} </td>
 
 							</tr>
 
@@ -79,7 +79,7 @@ $commentsCount =  $comments->count();
 								<td width='30%' class='label-view text-right'>
 									{{ SiteHelpers::activeLang('Game Name', (isset($fields['game_id']['language'])? $fields['game_id']['language'] : array())) }}
 								</td>
-								<td>{!! SiteHelpers::gridDisplayView($row->game_id,'game_id','1:game:id:game_name') !!} </td>
+								<td>{!! SiteHelpers::gridDisplayView($row->game_id,'game_id','1:game:id:game_name',$nodata['game_id']) !!} </td>
 
 							</tr>
 
@@ -128,7 +128,7 @@ $commentsCount =  $comments->count();
 								<td width='30%' class='label-view text-right'>
 									{{ SiteHelpers::activeLang('Department', (isset($fields['department_id']['language'])? $fields['department_id']['language'] : array())) }}
 								</td>
-								<td>{!! SiteHelpers::gridDisplayView($row->department_id,'department_id','1:departments:id:name') !!} </td>
+								<td>{!! SiteHelpers::gridDisplayView($row->department_id,'department_id','1:departments:id:name',$nodata['department_id']) !!} </td>
 
 							</tr>
 

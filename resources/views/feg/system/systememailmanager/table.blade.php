@@ -81,7 +81,7 @@
                         $conn = (isset($field['conn']) ? $field['conn'] : array() );
 
 
-                        $value = AjaxHelpers::gridFormater($row->$field['field'], $row , $field['attribute'],$conn);
+                        $value = AjaxHelpers::gridFormater($row->$field['field'], $row , $field['attribute'],$conn,isset($field['nodata'])?$field['nodata']:0);
                         $fieldName = $field['field'];
                         if ($fieldName == "is_active") {
                             $value = $value == "1" ? "Yes" : "No";

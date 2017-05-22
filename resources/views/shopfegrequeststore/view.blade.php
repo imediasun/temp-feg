@@ -43,7 +43,7 @@
                             <td width='30%' class='label-view text-right'>
                                 {{ SiteHelpers::activeLang('Vendor ', (isset($fields['vendor_id']['language'])? $fields['vendor_id']['language'] : array())) }}
                             </td>
-                            <td>{!! SiteHelpers::gridDisplayView($row->vendor_id,'vendor_id','1:vendor:id:vendor_name')
+                            <td>{!! SiteHelpers::gridDisplayView($row->vendor_id,'vendor_id','1:vendor:id:vendor_name',$nodata['vendor_id'])
                                 !!}
                             </td>
 
