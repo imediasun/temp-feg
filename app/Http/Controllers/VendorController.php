@@ -343,7 +343,11 @@ class VendorController extends Controller
         }
 
     }
-
+    public function getVendorcheck(Request $request)
+    {
+        $vendor = \App\Models\Vendor::where('id',$request->id)->where('status',0)->first()?\App\Models\Vendor::where('id',$request->id)->where('status',0)->first()->vendor_name:0;
+        return $vendor;
+    }
     function postTrigger(Request $request)
     {
         $isActive = $request->get('isActive');
