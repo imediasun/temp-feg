@@ -262,6 +262,7 @@ class OrderController extends Controller
 
     function getUpdate(Request $request, $id = 0, $mode = '')
     {
+        $fromStore = 0;
         $editmode = $prefill_type = 'edit';
         $where_in_expression = '';
         \Session::put('redirect','order');
@@ -274,6 +275,7 @@ class OrderController extends Controller
         } elseif (substr($mode, 0, 3) == 'SID') {
             \Session::put('redirect','managefegrequeststore');
             $mode = $mode;
+            $fromStore = 1;
         } elseif ($mode == "clone") {
             $mode = 'clone';
         }
@@ -299,7 +301,7 @@ class OrderController extends Controller
         $this->data['data'] = $this->model->getOrderQuery($id, $mode);
         $user_allowed_locations = implode(',', \Session::get('user_location_ids'));
         $this->data['games_options'] = $this->model->populateGamesDropdown();
-        return view('order.form', $this->data);
+        return view('order.form', $this->data)->with('fromStore',$fromStore);
     }
 
    public function getShow($id = null)
