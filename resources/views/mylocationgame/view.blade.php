@@ -238,7 +238,7 @@
             <label class="col-md-4">
                 {!! SiteHelpers::activeLang('Game Title', (isset($fields['game_title']['language'])? $fields['game_title']['language'] : array())) !!}:
             </label>
-            <div class="col-md-8">{{ \DateHelpers::formatStringValue($gameTitle,$nodata['game_title']) }}</div>
+            <div class="col-md-8">{{ \DateHelpers::formatStringValue($gameTitle) }}</div>
         </div>
         <div class="form-group clearfix" >
             <label class="col-md-4">

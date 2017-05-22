@@ -25,7 +25,7 @@
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Location', (isset($fields['location_id']['language'])? $fields['location_id']['language'] : array())) }}
 						</td>
-                        <td>{{ (!empty($row->location_id))?$row->location_id ." | ":"" }}{!! SiteHelpers::gridDisplayView($row->location_id,'location_id','1:location:id:location_name',$tableGrid) !!} </td>
+                        <td>{{ (!empty($row->location_id))?$row->location_id ." | ":"" }}{!! SiteHelpers::gridDisplayView($row->location_id,'location_id','1:location:id:location_name',$nodata['location_id']) !!} </td>
 
 
                     </tr>
