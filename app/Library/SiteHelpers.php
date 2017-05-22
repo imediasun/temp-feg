@@ -2769,7 +2769,7 @@ class SiteHelpers
         $noDataArray=array();
         if(!is_null($tableGrid)) {
             foreach ($tableGrid as $f) {
-                if(isset($f['nodata'])) {
+                if(isset($f['nodata']) && issset($f['field'])) {
                     $noDataArray[$f['field']] = $f['nodata'];
                 }
             }
