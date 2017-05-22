@@ -49,7 +49,7 @@
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Zip Code', (isset($fields['zip']['language'])? $fields['zip']['language'] : array())) }}	
 						</td>
-						<td>{{ \DateHelpers::formatStringValue($row->zip,$nodata['zip']) }} </td>
+						<td>{{ \DateHelpers::formatStringValue($row->zip) }} </td>
 						
 					</tr>
 				
