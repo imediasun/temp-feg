@@ -185,19 +185,25 @@ function SximoModalHide(modal, callbackName, data) {
         App.autoCallbacks.runCallback.call(modal, callbackName, data);   
     }    
 }
-function addInactiveVendor(field,id)
+function addInactiveItem(field,id,module,check,column,withId)
 {
 	$.ajax({
 		method:'GET',
-		url:'vendor/vendorcheck',
-		data:{id:id}
-	}).success(function (vendor) {
-        if(vendor != 0)
+		url:'vendor/itemcheck',
+		data: {
+			id:id,
+			module:module,
+			check:check,
+			column:column,
+			withId:withId
+		}
+	}).success(function (item) {
+        if(item != 0)
         {
             setTimeout(function()
             {
-                console.log(vendor);
-                var option = new Option(vendor, id);
+                console.log(item);
+                var option = new Option(item, id);
                 option.selected = true;
 
                 $(field).append(option);

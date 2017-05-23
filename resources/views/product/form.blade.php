@@ -378,7 +378,7 @@
                 {parent: '#prod_type_id', selected_value: '{{ $row["prod_sub_type_id"] }}'});*/
 
         $("#vendor_id").jCombo("{{ URL::to('product/comboselect?filter=vendor:id:vendor_name:hide:0:status:1') }}",
-                {selected_value: '{{ $row["vendor_id"] }}' , ready:addInactiveVendor("#vendor_id", {{ $row["vendor_id"] }})});
+                {selected_value: '{{ $row["vendor_id"] }}' , ready:addInactiveItem("#vendor_id", {{ $row["vendor_id"] }} , 'Vendor', 'status' , 'vendor_name')});
         // for Redemption Prizes show Ticket Value
         if ("{{$row["prod_type_id"] }}" == 7) {
             $("#ticket_value").show();

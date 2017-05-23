@@ -192,7 +192,7 @@
 $(document).ready(function() { 
 	
     $("#location_id").jCombo("{{ URL::to('sbticket/comboselect?filter=location:id:id|location_name') }}" + "&delimiter=%20|%20",
-        {  selected_value : '{{ $locationId }}','initial-text': "Select Location" });
+        {  selected_value : '{{ $locationId }}','initial-text': "Select Location" , ready:addInactiveItem("#location_id", {{ $locationId  }} , 'Location', 'active' , 'location_name' , 1) });
 
 	$('.datepickerHandleButton').click(function(){
         $("#my-datepicker").datepicker().focus();

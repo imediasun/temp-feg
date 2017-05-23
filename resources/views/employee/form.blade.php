@@ -141,7 +141,7 @@
 $(document).ready(function() { 
 	
         $("#location_id").jCombo("{{ URL::to('employee/comboselect?filter=location:id:location_name') }}",
-        {  selected_value : '{{ $row["location_id"] }}' });
+        {  selected_value : '{{ $row["location_id"] }}' , ready:addInactiveItem("#location_id", {{ $row['location_id']  }} , 'Location', 'active' , 'location_name') });
         
         $("#company_id").jCombo("{{ URL::to('employee/comboselect?filter=company:id:company_name_long') }}",
         {  selected_value : '{{ $row["company_id"] }}' });
