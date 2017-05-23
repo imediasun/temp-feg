@@ -192,37 +192,33 @@ function decodeEntities(encodedString) {
 }
 function addInactiveItem(field,id,module,check,column)
 {
-    if($(field +" option[value='"+id+"']").length > 0)
-	{
-		alert('already exist');
-	}
-	else
-	{
-        alert('not exist');
-	}
-	$.ajax({
-		method:'GET',
-		url:'vendor/itemcheck',
-		data: {
-			id:id,
-			module:module,
-			check:check,
-			column:column
-		}
-	}).success(function (item) {
-        if(item != 0)
-        {
-            setTimeout(function()
-            {
-                console.log(item);
-                var option = new Option(item, id);
-                option.selected = true;
+    setTimeout(function() {
+        select = field + " option[value='" + id + "']";
+        if ($(select).length == 0) {
 
-                $(field).append(option);
-                $(field).trigger("change");
-            }, 1000);
-        }
-    })
+			$.ajax({
+				method: 'GET',
+				url: 'vendor/itemcheck',
+				data: {
+					id: id,
+					module: module,
+					check: check,
+					column: column
+				}
+			}).success(function (item) {
+				if (item != 0) {
+
+					console.log(item);
+					var option = new Option(item, id);
+					option.selected = true;
+
+					$(field).append(option);
+					$(field).trigger("change");
+
+				}
+			})
+    	}
+    }, 1000);
 
 }
 (function ($, window, document, undefined) {
