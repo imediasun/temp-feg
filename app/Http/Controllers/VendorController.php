@@ -5,6 +5,7 @@ use App\Models\Vendor;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Validator, Input, Redirect;
+use DB;
 
 class VendorController extends Controller
 {
@@ -351,7 +352,16 @@ class VendorController extends Controller
 
         if($request->module == 'Vendor')
         {
-            $item = $module::where('id',$request->id)->where($request->check,0)->orWhere('hide',1)->first()?$module::where('id',$request->id)->where($request->check,0)->orWhere('hide',1)->first()->$column:0;
+            $item = DB::select("SELECT $request->column  FROM vendor WHERE id=$request->id AND ($request->check = 0 OR hide=1)");
+            if(!empty($item))
+            {
+                $item = $item[0]->$column;
+            }
+            else
+            {
+                $item = 0;
+            }
+            //$item = $module::where('id',$request->id)->where($request->check,0)->orWhere('hide',1)->first()?$module::where('id',$request->id)->where($request->check,0)->orWhere('hide',1)->first()->$column:0;
         }
         else
         {

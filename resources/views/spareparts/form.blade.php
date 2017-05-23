@@ -173,7 +173,9 @@
             $("#status_id").jCombo("{{ URL::to('spareparts/comboselect?filter=spare_status:id:status') }}",
                     {selected_value: '{{ $row['status_id'] }}', initial_text: 'Select Status'});
             $("#loc_id").jCombo("{{ URL::to('spareparts/comboselect?filter=location:id:location_name') }}",
-                    {selected_value: '{{ $row['loc_id'] }}', initial_text: 'Select Location' , ready:addInactiveItem("#loc_id", {{ $row['loc_id']  }} , 'Location', 'active' , 'location_name')});
+                    {selected_value: '{{ $row['loc_id'] }}', initial_text: 'Select Location' ,
+                        <?php $row["loc_id"] == '' ? '': print_r("ready:addInactiveItem('#loc_id', ".$row['loc_id']." , 'Location', 'active' , 'location_name' )") ?>
+                    });
             $("#game_title_id").jCombo("{{ URL::to('spareparts/comboselect?filter=game_title:id:game_title') }}" + "&delimiter= - ",
                 {  selected_value : '{{ $row["game_title_id"] }}',initial_text:'Select Game' });
             $('.editor').summernote();

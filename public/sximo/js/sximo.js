@@ -185,6 +185,11 @@ function SximoModalHide(modal, callbackName, data) {
         App.autoCallbacks.runCallback.call(modal, callbackName, data);   
     }    
 }
+function decodeEntities(encodedString) {
+    var textArea = document.createElement('textarea');
+    textArea.innerHTML = encodedString;
+    return textArea.value;
+}
 function addInactiveItem(field,id,module,check,column,withId)
 {
 	$.ajax({

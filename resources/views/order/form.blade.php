@@ -496,14 +496,14 @@
                     {
                         selected_value: "{{ $data["order_loc_id"]}}",
                         initial_text: '-------- Select Location --------',
-                        ready:addInactiveItem("#location_id", {{ $data["order_loc_id"] }} , 'Location', 'active' , 'location_name' ,1 )
+                        <?php $data["order_loc_id"] == '' ? '': print_r("ready:addInactiveItem('#location_id', ".$data['order_loc_id']." , 'Location', 'active' , 'location_name' ,1 )") ?>
                     });
 
             $("#vendor_id").jCombo("{{ URL::to('product/comboselect?filter=vendor:id:vendor_name:hide:0:status:1') }}",
                     {
                         selected_value: '{{ $data["order_vendor_id"] }}',
                         initial_text: '-------- Select Vendor --------',
-                        ready:addInactiveItem("#vendor_id", {{ $data["order_vendor_id"] }} , 'Vendor' , 'status' , 'vendor_name')
+                        <?php $data["order_vendor_id"] == '' ? '': print_r("ready:addInactiveItem('#vendor_id', ".$data['order_vendor_id']." , 'Vendor', 'status' , 'vendor_name')") ?>
                     });
 
             $("#freight_type_id").jCombo("{{ URL::to('order/comboselect?filter=freight:id:freight_type') }}",
