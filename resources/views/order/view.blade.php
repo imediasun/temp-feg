@@ -141,7 +141,7 @@
                     </div>
 
                      <div class="form-group relationshipStatus"><br/><br/>
-                         {{implode("<br/>", @$relationships)}}
+                         {!!implode("<br/>", @$relationships)!!}
                      </div>
 
                 </fieldset>

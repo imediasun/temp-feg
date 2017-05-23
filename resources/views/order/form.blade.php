@@ -74,18 +74,18 @@
                             <i class="fa fa-check-square-o m-l-sm m-r-xs"></i>
                             {{ Lang::get('core.order_api_exposed_label') }}
                         </p>
-                        <p class="text-warning netSuiteStatusPending @if(Order::isApified($id, $row) || !Order::isApiable($id, $row)) hidden @endif">
+                        <p class="text-warning netSuiteStatusPending @if(Order::isApified($id, $row) || !Order::isApiable($id, $row, true)) hidden @endif">
                             <i class="fa fa-exclamation-triangle m-l-sm m-r-xs"></i>
                             {{ Lang::get('core.order_api_exposed_label_pending') }}
                         </p>
-                        <p class="text-gray netSuiteStatusNR  @if(Order::isApiable($id, $row)) hidden @endif">
+                        <p class="text-gray netSuiteStatusNR  @if(Order::isApiable($id, $row, true)) hidden @endif">
                             <i class="fa fa-times m-l-sm m-r-xs"></i>
                             {{ Lang::get('core.order_api_exposed_label_ineligible') }}
                         </p>
                         </div>
 
                      <div class="form-group relationshipStatus"><br/><br/>
-                         {{implode("<br/>", @$relationships)}}
+                         {!!implode("<br/>", @$relationships)!!}
                      </div>
                     @endif
                     
