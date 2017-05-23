@@ -490,7 +490,7 @@ class managefreightquoters extends Sximo
                         }
 
                         $from = \Session::get('eid');
-                        $rec =  \FEGHelp::getSystemEmailRecipients('UPDATE FREIGHT TOOL EMAIL', $data['request']['loc'][$i]);
+                        $recipients =  \FEGHelp::getSystemEmailRecipients('UPDATE FREIGHT TOOL EMAIL', $data['request']['loc'][$i]);
 
                         $subject = ((int)$num_games_per_destination == 0)?('Scheduled for delivery to ' . $locationName . '!'):('('.(int)$num_games_per_destination.')'.' Game[s] scheduled for delivery to ' . $locationName . '!');
                         $message = '<p>
@@ -578,17 +578,13 @@ class managefreightquoters extends Sximo
 								            </tr>
 								        </table>
 									</p>';
-                        if(!empty($rec['to'])){
-                            FEGSystemHelper::sendSystemEmail(array(
-                                'to' => $rec['to'],
+                        if(!empty($recipients['to'])){
+                            FEGSystemHelper::sendSystemEmail(array_merge($recipients, array(
                                 'subject' => $subject,
                                 'message' => $message,
                                 'isTest' => env('APP_ENV', 'development') !== 'production' ? true : false,
                                 'from' => $from,
-                                'cc' => $rec['cc'],
-                                'bcc' => $rec['bcc'],
-                                'configName' => 'UPDATE FREIGHT TOOL EMAIL'
-                            ));
+                            )));
                         }
 
 
