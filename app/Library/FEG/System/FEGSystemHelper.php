@@ -1471,4 +1471,26 @@ $message" .
         }
         return $dates;
     }
+
+    public static function getEnumTable($table, $key, $label, $limit = '') {
+        $sql = "SELECT $key, $label from $table $limit";
+        $data = DB::select($sql);
+        $enum = [];
+        foreach($data as $row) {
+            $enum[$row->$key] = $row->$label;
+        }
+        return $enum;
+    }
+
+    public static function stringBuilder($string, $data = []) {
+        $search = [];
+        $replacer = [];
+        foreach($data as $index => $val) {
+            $search[] = '{'.$index.'}';
+            $replacer[] = $val;
+        }
+        $string = str_replace($search, $replacer, $string);
+        $string = preg_replace('/\{\d+?\}/', '', $string);
+        return $string;
+    }
 }

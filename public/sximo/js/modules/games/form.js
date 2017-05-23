@@ -74,7 +74,7 @@
                     {  selected_value : '' + gameData.version_id });
 
             container.find("select#location_id").jCombo(mainUrl + "/comboselect?filter=location:id:id|location_name&delimiter=%20|%20",
-                    {  selected_value : '' + gameData.location_id  , ready:addInactiveItem("select#location_id", '' + gameData.location_id , 'Location', 'active' , 'location_name',1)});
+                    {  selected_value : '' + gameData.location_id  , ready:addInactiveItem("select#location_id", '' + gameData.location_id , 'Location', 'active' , 'id|location_name')});
 
             container.find("#mfg_id").jCombo(mainUrl + "/comboselect?filter=vendor:id:vendor_name:hide:0:status:1",
                     {  selected_value : '' + gameData.mfg_id , ready:addInactiveItem("#mfg_id", '' + gameData.mfg_id , 'Vendor', 'status' , 'vendor_name')});

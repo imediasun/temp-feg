@@ -424,7 +424,9 @@ $(document).ready(function() {
 
         
         $("#loc_ship_to").jCombo("{{ URL::to('location/comboselect?filter=location:id:location_name') }}",
-        {  selected_value : '{{ $row["loc_ship_to"] }}', ready:addInactiveItem("#loc_ship_to", {{ $row["loc_ship_to"] }} , 'Location', 'active' , 'location_name') });
+        {  selected_value : '{{ $row["loc_ship_to"] }}',
+            <?php $row["loc_ship_to"] == '' ? '': print_r("ready:addInactiveItem('#loc_ship_to', ".$row['loc_ship_to']." , 'Location', 'active' , 'location_name')") ?>
+        });
         
         $("#loc_group_id").jCombo("{{ URL::to('location/comboselect?filter=loc_group:id:loc_group_name') }}",
         {  selected_value : '{{ $row["loc_group_id"] }}' });

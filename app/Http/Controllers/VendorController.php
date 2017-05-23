@@ -5,6 +5,7 @@ use App\Models\Vendor;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Validator, Input, Redirect;
+use DB;
 
 class VendorController extends Controller
 {
@@ -347,20 +348,40 @@ class VendorController extends Controller
     public function getItemcheck(Request $request)
     {
         $module = str_replace(' ', '', "\App\Models\ ".$request->module);
-        $column = $request->column;
-        if($request->withId == 0)
+        $columns = explode('|', $request->column);
+        $result = '';
+        $count = count($columns);
+        if($request->module == 'Vendor')
         {
-            $item = $module::where('id',$request->id)->where($request->check,0)->first()?$module::where('id',$request->id)->where($request->check,0)->first()->$column:0;
+            $item = DB::select("SELECT ".implode(',' , $columns)."  FROM vendor WHERE id=$request->id AND ($request->check = 0 OR hide=1)");
+            if(!empty($item))
+            {
+                $item = $item[0];
+            }
+
         }
         else
         {
             $item = $module::where('id',$request->id)->where($request->check,0)->first()?$module::where('id',$request->id)->where($request->check,0)->first():0;
-            if($item)
+        }
+        if(!empty($item))
+        {
+            $i = 1;
+            foreach ($columns as $column)
             {
-                $item = $item->id . ' | '.$item->$column;
+                $result .= $item->$column;
+                if($i < $count)
+                {
+                    $result .= ' | ';
+                }
+                $i++;
             }
         }
-        return $item;
+        else
+        {
+            $result = 0;
+        }
+        return $result;
     }
     function postTrigger(Request $request)
     {
