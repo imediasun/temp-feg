@@ -3,22 +3,30 @@
 class DateHelpers
 {
 
-    public static function formatDate($date)
+    public static function formatDate($date,$nodata=0)
     {
         if (preg_match('/[1-9]/', $date) && !is_null($date)) {
             $oDate = new \DateTime($date);
             return $newDateString = $oDate->format('m/d/Y');
-        } else {
+        } elseif($nodata == 1) {
+            return "";
+        }
+        else
+        {
             return "No Data";
         }
 
     }
 
-    public static function formatDateTime($date)
+    public static function formatDateTime($date,$nodata=0)
     {
         if (preg_match('/[1-9]/', $date) && !is_null($date)) {
             return date("m/d/Y H:i:s", strtotime(str_replace("/", "-", $date)));
-        } else {
+        }
+        elseif($nodata == 1) {
+            return "";
+        }
+        else {
             return "No Data";
         }
 
