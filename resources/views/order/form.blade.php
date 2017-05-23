@@ -83,6 +83,10 @@
                             {{ Lang::get('core.order_api_exposed_label_ineligible') }}
                         </p>
                         </div>
+
+                     <div class="form-group relationshipStatus"><br/><br/>
+                         {{implode("<br/>", @$relationships)}}
+                     </div>
                     @endif
                     
                     {{-- Ship Address starts here  --}}

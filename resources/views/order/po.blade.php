@@ -107,6 +107,7 @@
         </div>
     </div>
 </div>
+{{ @$relationships }}
 <script>
 
 
