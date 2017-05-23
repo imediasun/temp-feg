@@ -100,7 +100,7 @@
                 $('#edit-cols,#delete-cols').show();
             }
         <?php
-            unset($manageRequestInfo['order_dropdown-data'][count($manageRequestInfo['order_dropdown-data'])-1]);
+            //unset($manageRequestInfo['order_dropdown-data'][count($manageRequestInfo['order_dropdown-data'])-1]);
             //print_r($manageRequestInfo['order_dropdown-data']);
         ?>
         renderDropdown($(".select2, .select3, .select4, .select5"), { width:"100%"});
