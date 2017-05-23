@@ -194,11 +194,11 @@ function addInactiveItem(field,id,module,check,column)
 {
     setTimeout(function() {
         select = field + " option[value='" + id + "']";
-        if ($(select).length == 0) {
-
+        if(!($(select).length > 0))
+		{
 			$.ajax({
 				method: 'GET',
-				url: 'vendor/itemcheck',
+				url: '/vendor/itemcheck',
 				data: {
 					id: id,
 					module: module,
@@ -218,7 +218,7 @@ function addInactiveItem(field,id,module,check,column)
 				}
 			})
     	}
-    }, 1000);
+    }, 2000);
 
 }
 (function ($, window, document, undefined) {

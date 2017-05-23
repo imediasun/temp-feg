@@ -381,7 +381,6 @@ class VendorController extends Controller
         {
             $result = 0;
         }
-
         return $result;
     }
     function postTrigger(Request $request)
