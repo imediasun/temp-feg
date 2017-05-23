@@ -356,7 +356,7 @@ $commentsCount =  $comments->count();
 	$(document).ready(function() {
 
 		$("#location_id").jCombo("{{ URL::to('sbticket/comboselect?filter=location:id:location_name') }}",
-				{  selected_value : '{{ $row["location_id"] }}' });
+				{  selected_value : '{{ $row["location_id"] }}' , ready:addInactiveItem("#location_id", {{ $row['location_id']  }} , 'Location', 'active' , 'location_name')});
 
 		$("#game_id").jCombo("{{ URL::to('sbticket/comboselect?filter=game:id:game_name') }}&parent=location_id:",
 				{  parent: '#location_id', selected_value : '{{ $row["game_id"] }}' });

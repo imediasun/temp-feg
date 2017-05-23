@@ -67,7 +67,7 @@
 $(document).ready(function() { 
 	
         $("#location_id").jCombo("{{ URL::to('nonfegreaders/comboselect?filter=location:id:location_name_short') }}",
-        {  selected_value : '{{ $row["location_id"] }}' });
+        {  selected_value : '{{ $row["location_id"] }}', ready:addInactiveItem("#location_id", {{ $row['location_id']  }} , 'Location', 'active' , 'location_name_short')  });
         
         $("#debit_type_id").jCombo("{{ URL::to('nonfegreaders/comboselect?filter=debit_type:id:company') }}",
         {  selected_value : '{{ $row["debit_type_id"] }}' });

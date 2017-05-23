@@ -246,10 +246,10 @@
             <script type="text/javascript">
                 $(document).ready(function () {
                     $("#location_id").jCombo("{{ URL::to('order/comboselect?filter=location:id:location_name') }}",
-                            {selected_value: '{{ $data["order_loc_id"] }}'});
+                            {selected_value: '{{ $data["order_loc_id"] }}', ready:addInactiveItem("#location_id", {{ $data["order_loc_id"] }} , 'Location' , 'active' , 'location_name')});
 
                     $("#vendor_id").jCombo("{{ URL::to('order/comboselect?filter=vendor:id:vendor_name') }}",
-                            {selected_value: '{{ $data["order_vendor_id"] }}'});
+                            {selected_value: '{{ $data["order_vendor_id"] }}', ready:addInactiveItem( "#vendor_id", {{ $data["order_vendor_id"] }} , 'Vendor' , 'status' , 'vendor_name') });
 
                     $("#freight_type_id").jCombo("{{ URL::to('order/comboselect?filter=freight:id:freight_type') }}",
                             {selected_value: '{{ $data['order_freight_id'] }}'});

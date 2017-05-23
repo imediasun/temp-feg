@@ -344,7 +344,24 @@ class VendorController extends Controller
         }
 
     }
-
+    public function getItemcheck(Request $request)
+    {
+        $module = str_replace(' ', '', "\App\Models\ ".$request->module);
+        $column = $request->column;
+        if($request->withId == 0)
+        {
+            $item = $module::where('id',$request->id)->where($request->check,0)->first()?$module::where('id',$request->id)->where($request->check,0)->first()->$column:0;
+        }
+        else
+        {
+            $item = $module::where('id',$request->id)->where($request->check,0)->first()?$module::where('id',$request->id)->where($request->check,0)->first():0;
+            if($item)
+            {
+                $item = $item->id . ' | '.$item->$column;
+            }
+        }
+        return $item;
+    }
     function postTrigger(Request $request)
     {
         $isActive = $request->get('isActive');
