@@ -149,7 +149,7 @@ class Sximo extends Model {
         return $result;
     }
 
-    public  function insertRow($data, $id) {
+    public  function insertRow($data, $id = null) {
 
         $timestampTables = array('vendor','products','orders', 'departments', 'system_email_report_manager');
         $table = with(new static)->table;
