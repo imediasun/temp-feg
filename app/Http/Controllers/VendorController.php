@@ -353,7 +353,7 @@ class VendorController extends Controller
         $count = count($columns);
         if($request->module == 'Vendor')
         {
-            $item = DB::select("SELECT ".implode($columns , ',')."  FROM vendor WHERE id=$request->id AND ($request->check = 0 OR hide=1)");
+            $item = DB::select("SELECT ".implode(',' , $columns)."  FROM vendor WHERE id=$request->id AND ($request->check = 0 OR hide=1)");
             $item = $item[0];
         }
         else
