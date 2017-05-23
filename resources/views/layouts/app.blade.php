@@ -92,6 +92,15 @@
     @yield('beforeheadend', '')	
   	</head>
   	<body class="sxim-init" >
+	<a href="#"><div id="browser_notification" style="
+		background-color: #d71b21;
+		padding: 5px;
+		font-size: 18px;
+		font-weight: bold;
+		color: #FFF;
+		text-align: center;
+		display: none;
+	" onclick="$(this).hide();">Browser is not supported, Some features of the admin may not work correctly</div></a>
     @yield('afterbodystart', '')
 	<div id="wrapper">
 		@include('layouts/sidemenu')

@@ -349,6 +349,31 @@ function get_browser() {
     };
 }
 
+function verifyBrowser() {
+    get_browser();
+    switch (get_browser().name){
+        case 'Chrome':
+            if(get_browser().version<56){
+                $('#browser_notification').show();
+            }
+            break;
+        case 'Firefox':
+            if(get_browser().version<52){
+                $('#browser_notification').show();
+            }
+            break;
+        case 'Safari':
+            if(get_browser().version<5){
+                $('#browser_notification').show();
+            }
+            break;
+    }
+}
+
+$( document ).ready(function() {
+    verifyBrowser();
+});
+
 function disableConsoleLogs(){
     var console = {};
     console.log = function(){};
