@@ -393,7 +393,7 @@
                         <button type="button" class="btn btn-success btn-sm exposeAPI">
                         {{ Lang::get('core.order_api_expose_button_label') }} </button>
                     @endif
-                    <button type="button" onclick="reloadOrder()" class="btn btn-success btn-sm">
+                    <button type="button" onclick="reloadOrder()" class="btn btn-success btn-sm cancelButton">
                         <i class="fa  fa-arrow-circle-left "></i>  {{ Lang::get('core.sb_cancel') }} </button>
                 </div>
             </div>
@@ -1204,6 +1204,12 @@
                         notyMessage(data.message);
                         $(".netSuiteStatus p").addClass('hidden');
                         $(".netSuiteStatus p.netSuiteStatusSuccess").removeClass('hidden');
+                        btn.closest("form#ordersubmitFormAjax")
+                            .find(":input").not(".cancelButton")
+                            .prop('disabled', true)
+                            .prop('readonly', true);
+                        btn.closest("form#ordersubmitFormAjax")
+                            .find("[type=submit]").remove();
                         btn.remove();
                     }
                     else {
