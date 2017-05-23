@@ -54,7 +54,7 @@
 
             if (container.find("#location_id").length) {
                 container.find("#location_id").jCombo(mainUrl+"/comboselect?filter=location:id:id|location_name&delimiter=%20|%20",
-                        {  selected_value : '' + ticket.location_id });
+                        {  selected_value : '' + ticket.location_id  , ready:addInactiveItem("#location_id", ''+ ticket.location_id  , 'Location', 'active' , 'location_name',1)});
             }
 
             container.find('.date').datepicker({format:'mm/dd/yyyy',autoclose:true});

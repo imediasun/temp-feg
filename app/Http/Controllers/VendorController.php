@@ -344,10 +344,12 @@ class VendorController extends Controller
         }
 
     }
-    public function getVendorcheck(Request $request)
+    public function getItemcheck(Request $request)
     {
-        $vendor = \App\Models\Vendor::where('id',$request->id)->where('status',0)->first()?\App\Models\Vendor::where('id',$request->id)->where('status',0)->first()->vendor_name:0;
-        return $vendor;
+        $module = str_replace(' ', '', "\App\Models\ ".$request->module);
+        $column = $request->column;
+        $item = $module::where('id',$request->id)->where($request->check,0)->first()?$module::where('id',$request->id)->where($request->check,0)->first()->$column:0;
+        return $item;
     }
     function postTrigger(Request $request)
     {
