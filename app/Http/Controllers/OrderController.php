@@ -991,7 +991,7 @@ class OrderController extends Controller
                 $data[0]['order_total_cost'] = $order_total_cost;
                 $data[0]['company_name_long'] = 'Family Entertainment Group';
 
-                $data[0]['relationships'] = implde("<br/>", $this->model->getOrderRelationships($order_id));
+                $data[0]['relationships'] = implode("<br/>", $this->model->getOrderRelationships($order_id));
                 
                 //$item_total_string = $item_total_string."-----------------\n"."$ ".number_format($order_total_cost,3)."\n";
             }
