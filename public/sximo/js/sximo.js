@@ -192,6 +192,14 @@ function decodeEntities(encodedString) {
 }
 function addInactiveItem(field,id,module,check,column)
 {
+    if($(field +" option[value='"+id+"']").length > 0)
+	{
+		alert('already exist');
+	}
+	else
+	{
+        alert('not exist');
+	}
 	$.ajax({
 		method:'GET',
 		url:'vendor/itemcheck',
