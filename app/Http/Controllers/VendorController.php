@@ -348,18 +348,27 @@ class VendorController extends Controller
     {
         $module = str_replace(' ', '', "\App\Models\ ".$request->module);
         $column = $request->column;
-        if($request->withId == 0)
+
+        if($request->module == 'Vendor')
         {
-            $item = $module::where('id',$request->id)->where($request->check,0)->first()?$module::where('id',$request->id)->where($request->check,0)->first()->$column:0;
+            $item = $module::where('id',$request->id)->where($request->check,0)->orWhere('hide',1)->first()?$module::where('id',$request->id)->where($request->check,0)->orWhere('hide',1)->first()->$column:0;
         }
         else
         {
-            $item = $module::where('id',$request->id)->where($request->check,0)->first()?$module::where('id',$request->id)->where($request->check,0)->first():0;
-            if($item)
+            if($request->withId == 0)
             {
-                $item = $item->id . ' | '.$item->$column;
+                $item = $module::where('id',$request->id)->where($request->check,0)->first()?$module::where('id',$request->id)->where($request->check,0)->first()->$column:0;
+            }
+            else
+            {
+                $item = $module::where('id',$request->id)->where($request->check,0)->first()?$module::where('id',$request->id)->where($request->check,0)->first():0;
+                if($item)
+                {
+                    $item = $item->id . ' | '.$item->$column;
+                }
             }
         }
+
         return $item;
     }
     function postTrigger(Request $request)
