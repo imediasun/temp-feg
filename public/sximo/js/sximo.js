@@ -185,12 +185,18 @@ function SximoModalHide(modal, callbackName, data) {
         App.autoCallbacks.runCallback.call(modal, callbackName, data);   
     }    
 }
-function addInactiveItem(field,id,module,check,column)
+function addInactiveItem(field,id,module,check,column,withId)
 {
 	$.ajax({
 		method:'GET',
 		url:'vendor/itemcheck',
-		data:{id:id,module:module,check:check,column:column}
+		data: {
+			id:id,
+			module:module,
+			check:check,
+			column:column,
+			withId:withId
+		}
 	}).success(function (item) {
         if(item != 0)
         {
