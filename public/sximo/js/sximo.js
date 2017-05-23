@@ -190,7 +190,7 @@ function decodeEntities(encodedString) {
     textArea.innerHTML = encodedString;
     return textArea.value;
 }
-function addInactiveItem(field,id,module,check,column,withId)
+function addInactiveItem(field,id,module,check,column)
 {
 	$.ajax({
 		method:'GET',
@@ -199,8 +199,7 @@ function addInactiveItem(field,id,module,check,column,withId)
 			id:id,
 			module:module,
 			check:check,
-			column:column,
-			withId:withId
+			column:column
 		}
 	}).success(function (item) {
         if(item != 0)

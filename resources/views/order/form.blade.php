@@ -496,7 +496,7 @@
                     {
                         selected_value: "{{ $data["order_loc_id"]}}",
                         initial_text: '-------- Select Location --------',
-                        <?php $data["order_loc_id"] == '' ? '': print_r("ready:addInactiveItem('#location_id', ".$data['order_loc_id']." , 'Location', 'active' , 'location_name' ,1 )") ?>
+                        <?php $data["order_loc_id"] == '' ? '': print_r("ready:addInactiveItem('#location_id', ".$data['order_loc_id']." , 'Location', 'active' , 'id|location_name' )") ?>
                     });
 
             $("#vendor_id").jCombo("{{ URL::to('product/comboselect?filter=vendor:id:vendor_name:hide:0:status:1') }}",

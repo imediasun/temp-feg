@@ -348,38 +348,37 @@ class VendorController extends Controller
     public function getItemcheck(Request $request)
     {
         $module = str_replace(' ', '', "\App\Models\ ".$request->module);
-        $column = $request->column;
-
+        $columns = explode('|', $request->column);
+        $result = '';
+        $count = count($columns);
         if($request->module == 'Vendor')
         {
-            $item = DB::select("SELECT $request->column  FROM vendor WHERE id=$request->id AND ($request->check = 0 OR hide=1)");
-            if(!empty($item))
-            {
-                $item = $item[0]->$column;
-            }
-            else
-            {
-                $item = 0;
-            }
-            //$item = $module::where('id',$request->id)->where($request->check,0)->orWhere('hide',1)->first()?$module::where('id',$request->id)->where($request->check,0)->orWhere('hide',1)->first()->$column:0;
+            $item = DB::select("SELECT ".implode($columns , ',')."  FROM vendor WHERE id=$request->id AND ($request->check = 0 OR hide=1)");
+            $item = $item[0];
         }
         else
         {
-            if($request->withId == 0)
+            $item = $module::where('id',$request->id)->where($request->check,0)->first()?$module::where('id',$request->id)->where($request->check,0)->first():0;
+        }
+        if(!empty($item))
+        {
+            $i = 1;
+            foreach ($columns as $column)
             {
-                $item = $module::where('id',$request->id)->where($request->check,0)->first()?$module::where('id',$request->id)->where($request->check,0)->first()->$column:0;
-            }
-            else
-            {
-                $item = $module::where('id',$request->id)->where($request->check,0)->first()?$module::where('id',$request->id)->where($request->check,0)->first():0;
-                if($item)
+                $result .= $item->$column;
+                if($i < $count)
                 {
-                    $item = $item->id . ' | '.$item->$column;
+                    $result .= ' | ';
                 }
+                $i++;
             }
         }
+        else
+        {
+            $result = 0;
+        }
 
-        return $item;
+        return $result;
     }
     function postTrigger(Request $request)
     {

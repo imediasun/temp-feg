@@ -193,7 +193,7 @@ $(document).ready(function() {
 	
     $("#location_id").jCombo("{{ URL::to('sbticket/comboselect?filter=location:id:id|location_name') }}" + "&delimiter=%20|%20",
         {  selected_value : '{{ $locationId }}','initial-text': "Select Location" ,
-            <?php $locationId == '' ? '': print_r("ready:addInactiveItem('#location_id', ".$locationId." , 'Location', 'active' , 'location_name' ,1 )") ?>
+            <?php $locationId == '' ? '': print_r("ready:addInactiveItem('#location_id', ".$locationId." , 'Location', 'active' , 'id|location_name' )") ?>
         });
 
 	$('.datepickerHandleButton').click(function(){
