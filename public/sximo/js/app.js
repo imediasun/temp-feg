@@ -367,6 +367,11 @@ function verifyBrowser() {
                 $('#browser_notification').show();
             }
             break;
+        case 'IE':
+            if(get_browser().version<11){
+                $('#browser_notification').show();
+            }
+            break;
     }
 }
 
