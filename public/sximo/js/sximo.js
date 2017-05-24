@@ -190,8 +190,9 @@ function decodeEntities(encodedString) {
     textArea.innerHTML = encodedString;
     return textArea.value;
 }
-function addInactiveItem(field,id,module,check,column)
+function addInactiveItem(field,id,module,check,column,inverse)
 {
+    inverse = inverse || 0;
     setTimeout(function() {
         select = field + " option[value='" + id + "']";
         if(!($(select).length > 0))
@@ -203,7 +204,8 @@ function addInactiveItem(field,id,module,check,column)
 					id: id,
 					module: module,
 					check: check,
-					column: column
+					column: column,
+                    inverse: inverse
 				}
 			}).success(function (item) {
 				if (item != 0) {
@@ -218,6 +220,10 @@ function addInactiveItem(field,id,module,check,column)
 				}
 			})
     	}
+    	else {
+            console.log(select);
+            console.log('Already exists!');
+        }
     }, 2000);
 
 }

@@ -362,7 +362,7 @@ class VendorController extends Controller
         }
         else
         {
-            $item = $module::where('id',$request->id)->where($request->check,0)->first()?$module::where('id',$request->id)->where($request->check,0)->first():0;
+            $item = $module::where('id',$request->id)->where($request->check,$request->inverse)->first()?$module::where('id',$request->id)->where($request->check,$request->inverse)->first():0;
         }
         if(!empty($item))
         {
