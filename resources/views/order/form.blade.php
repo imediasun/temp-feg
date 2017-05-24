@@ -736,20 +736,20 @@
                         }
                     });
                 }
+                $.ajax({
+                    type: "GET",
+                    url: "{{ url() }}/order/bill-account",
+                    data: {'vendor': $(this).val()},
+                    success: function (data) {
+                        if(data.length>0){
+                            $('#bil_ac_num').val(data[0].bill_account_num);
+                        }
+                    }
+                });
             }
             else {
                 $(this).data('lastSelected').attr('selected', true);
             }
-            $.ajax({
-                type: "GET",
-                url: "{{ url() }}/order/bill-account",
-                data: {'vendor': $(this).val()},
-                success: function (data) {
-                    if(data.length>0){
-                        $('#bil_ac_num').val(data[0].bill_account_num);
-                    }
-                }
-            });
         });
 
 
