@@ -1526,7 +1526,7 @@ class OrderController extends Controller
     function getCheckEditable(Request $request, $id) {
         $response = ['status' => 'error', 'message' => \Lang::get('core.order_missing_id')];
         if (!empty($id)) {
-            $orderData = Order::find($id)->toArray();
+            $orderData = Order::find($id)?Order::find($id)->toArray():null;
             $freeHand = Order::isFreehand($id, $orderData);
             $apified = Order::isApified($id, $orderData);
             $voided = Order::isVoided($id, $orderData);
