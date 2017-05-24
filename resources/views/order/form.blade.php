@@ -359,7 +359,7 @@
                     <a href="javascript:void(0);" class="addC btn btn-xs btn-info" rel=".clone" id="add_new_item"><i
                                 class="fa fa-plus"></i>
                         New Item</a>
-                @if(!empty($pass['Can add freehand products']) && !is_object($row))
+                @if(!empty($pass['Can add freehand products']) && !is_object($row) && $fromStore != 1)
                         <a href="javascript:void(0);" class="btn btn-xs btn-info enabled" data-status="disabled" id="can-freehand">
                             <i class="fa fa-times fa-check-circle-o" aria-hidden="true"></i>
                            <span>Enable Freehand</span></a>
@@ -719,8 +719,23 @@
             });
         });
 
-
+        vendorChangeCount = 0;
         $("#vendor_id").on('change', function() {
+            vendorChangeCount++;
+            if(vendorChangeCount > 1)
+            {
+                if($('#item_name').val()) {
+                    App.notyConfirm({
+                        message: "Are you sure you want to change Vendor <br> <b>***WARNING***</b><br>if you change vendor all of your items will be removed and you will have to add them again",
+                        confirmButtonText: 'Yes',
+                        confirm: function () {
+                            $('.itemstable .clonedInput:not(:first-child)').remove();
+                            $('.itemstable .clonedInput:first-child input').not('#item_num').val('');
+                            $('.itemstable .clonedInput:first-child textarea').val('');
+                        }
+                    });
+                }
+            }
             $.ajax({
                 type: "GET",
                 url: "{{ url() }}/order/bill-account",
@@ -967,7 +982,7 @@
                         if (vendorId != "") {
                             request.vendor_id = $("#vendor_id").val();
                         }
-                        lastXhr = $.getJSON("order/autocomplete", request, function (data, status, xhr) {
+                        lastXhr = $.getJSON("/order/autocomplete", request, function (data, status, xhr) {
                             cache[term] = data;
                             if (data.value == "No Match") {
                                 // $('[name^=item_name]:focus').closest('tr').find('.sku').removeAttr('readonly');
@@ -985,7 +1000,7 @@
                     },
                     select: function (event, ui) {
                         $.ajax({
-                            url: "order/productdata",
+                            url: "/order/productdata",
                             type: "get",
                             dataType: 'json',
                             data: {'product_id': ui.item.value},
@@ -1140,9 +1155,9 @@
                     $('#can_select_product_list').val(1);
                     $('.itemstable .clonedInput:not(:first-child)').remove();
                     $('.itemstable .clonedInput:first-child input').not('#item_num').val('');
+                    $('.itemstable .clonedInput:first-child textarea').val('');
                     $('.itemstable .clonedInput input.sku').attr('readonly','readonly');
                     $('.itemstable .clonedInput textarea.item').attr('readonly','readonly');
-                    $('.itemstable .clonedInput:first-child textarea').val('');
                 }
                 else{
                     currentElm.data('status','enabled');
