@@ -52,19 +52,19 @@ class ManagefegrequeststoreController extends Controller
 
         $exportId = Input::get('exportID');
         if (!empty($exportId)) {
-            $exportSessionID = 'export-'.$exportId;
+            $exportSessionID = 'export-' . $exportId;
             \Session::put($exportSessionID, microtime(true));
         }
-        
+
         $info = $this->model->makeInfo($this->module);
         //$master  	= $this->buildMasterDetail();
 
         // End Filter sort and order for query
         // Filter Search for query
-       // if (is_null($this->_request->input('search'))) {
-         //   $filter = \SiteHelpers::getQueryStringForLocation('requests');
+        // if (is_null($this->_request->input('search'))) {
+        //   $filter = \SiteHelpers::getQueryStringForLocation('requests');
         //} else {
-         //   $filter = $this->buildSearch();
+        //   $filter = $this->buildSearch();
         //}
         $filter = $this->getSearchFilterQuery();
 
@@ -79,7 +79,7 @@ class ManagefegrequeststoreController extends Controller
         $v2 = $this->_request->get('v2');
         $v3 = $this->_request->get('v3');
 
-        $manageRequestInfo = $this->model->getManageRequestsInfo($v1, $v2, $v3,$filter);
+        $manageRequestInfo = $this->model->getManageRequestsInfo($v1, $v2, $v3, $filter);
 
         $this->data['TID'] = $manageRequestInfo['TID'];
         $this->data['LID'] = $manageRequestInfo['LID'];
@@ -147,7 +147,7 @@ class ManagefegrequeststoreController extends Controller
             $this->data['module_id'] = $module_id;
             if (Input::has('config_id')) {
                 $config_id = Input::get('config_id');
-                \Session::put('config_id',$config_id);
+                \Session::put('config_id', $config_id);
             } elseif (\Session::has('config_id')) {
                 $config_id = \Session::get('config_id');
             } else {
@@ -163,20 +163,29 @@ class ManagefegrequeststoreController extends Controller
             $order = (!is_null($request->input('order')) ? $request->input('order') : $this->info['setting']['ordertype']);
             // End Filter sort and order for query
             // Filter Search for query
-          //  if (is_null($request->input('search'))) {
-           //     $filter = \SiteHelpers::getQueryStringForLocation('requests');
-         //   } else {
-        //        $filter = $this->buildSearch();
-        //    }
+            //  if (is_null($request->input('search'))) {
+            //     $filter = \SiteHelpers::getQueryStringForLocation('requests');
+            //   } else {
+            //        $filter = $this->buildSearch();
+            //    }
             $filter = $this->getSearchFilterQuery();
-            $manageRequestInfo = $this->model->getManageRequestsInfo($v1, $v2, $v3,$filter);
+            $manageRequestInfo = $this->model->getManageRequestsInfo($v1, $v2, $v3, $filter);
+            $this->data['manageRequestInfo'] = $manageRequestInfo;
             $this->data['TID'] = $manageRequestInfo['TID'];
             $this->data['LID'] = $manageRequestInfo['LID'];
             $this->data['VID'] = $manageRequestInfo['VID'];
             $this->data['view'] = $request->get('view');
-            $this->data['manageRequestInfo'] = $manageRequestInfo;
-
-
+            $data_options_array = array_flatten($manageRequestInfo['order_dropdown-data']);
+             if (!empty($data_options_array) && !in_array($this->data['TID'], $data_options_array)) {
+                $this->data['TID'] = "";
+                $this->data['LID'] = "";
+                $this->data['VID'] = "";
+            } if (!empty($manageRequestInfo['loc_options']) && !array_key_exists(!empty($this->data['LID'])?$this->data['LID']:0, $manageRequestInfo['loc_options'])) {
+                $this->data['LID'] = "";
+                $this->data['VID'] = "";
+            } if (!empty($manageRequestInfo['vendor_options']) && !array_key_exists(isset($this->data['VID'])?$this->data['VID']:0,$manageRequestInfo['vendor_options'])) {
+                $this->data['VID'] = "";
+            }
             $page = $request->input('page', 1);
             $params = array(
                 'page' => $page,
@@ -186,14 +195,14 @@ class ManagefegrequeststoreController extends Controller
                 'params' => $filter,
                 'global' => (isset($this->access['is_global']) ? $this->access['is_global'] : 0)
             );
-           // Get Query
+            // Get Query
             $view = $request->get('view');
-            \Session::put('manage-request-view',$view);
-            $isRedirected=session('filter_before_redirect');
-            $cond = array('view' => $view, 'order_type_id' => $manageRequestInfo['TID'], 'location_id' => $manageRequestInfo['LID'], 'vendor_id' => $manageRequestInfo['VID']);
+            \Session::put('manage-request-view', $view);
+            $isRedirected = session('filter_before_redirect');
+            $cond = array('view' => $view, 'order_type_id' => $this->data['TID'], 'location_id' => $this->data['LID'], 'vendor_id' => $this->data['VID']);
             $this->data['view'] = $view;
             $results = $this->model->getRows($params, $cond);
-           // Build pagination setting
+            // Build pagination setting
             $page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;
             $pagination = new Paginator($results['rows'], $results['total'], (isset($params['limit']) && $params['limit'] > 0 ? $params['limit'] :
                 ($results['total'] > 0 ? $results['total'] : '1')));
@@ -225,7 +234,8 @@ class ManagefegrequeststoreController extends Controller
         }
     }
 
-    public function getSearchFilterQuery($customQueryString = null) {
+    public function getSearchFilterQuery($customQueryString = null)
+    {
         // Filter Search for query
         // build sql query based on search filters
         $filter = is_null($customQueryString) ? (is_null(Input::get('search')) ? '' : $this->buildSearch()) :
@@ -243,6 +253,7 @@ class ManagefegrequeststoreController extends Controller
 
         return $filter;
     }
+
     function getUpdate(Request $request, $id = null)
     {
 
@@ -287,8 +298,8 @@ class ManagefegrequeststoreController extends Controller
         $this->data['id'] = $id;
         $this->data['access'] = $this->access;
         $this->data['setting'] = $this->info['setting'];
-        $this->data['tableGrid']=$this->info['config']['grid'];
-        $this->data['nodata']=\SiteHelpers::isNoData($this->info['config']['grid']);
+        $this->data['tableGrid'] = $this->info['config']['grid'];
+        $this->data['nodata'] = \SiteHelpers::isNoData($this->info['config']['grid']);
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
         return view('managefegrequeststore.view', $this->data);
     }
@@ -319,11 +330,11 @@ class ManagefegrequeststoreController extends Controller
         $rules = array('qty' => 'required', 'status_id' => 'required');
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
-            $data = $this->validatePost('requests',true);
+            $data = $this->validatePost('requests', true);
             $id = $this->model->insertRow($data, $id);
             return response()->json(array(
                 'status' => 'success',
-                'view'=>\Session::get('manage-request-view'),
+                'view' => \Session::get('manage-request-view'),
                 'message' => \Lang::get('core.note_success')
             ));
 
@@ -388,22 +399,21 @@ class ManagefegrequeststoreController extends Controller
             }
         }
     }
-function postDeny(Request $request)
-{
-    $request_id=$request->get('request_id');
-    $query=\DB::update("UPDATE requests set status_id=2 WHERE id = $request_id");
-    if($query)
+
+    function postDeny(Request $request)
     {
-        return response()->json(array(
-            'status' => 'success',
-            'message' => \Lang::get('core.note_success_denied')
-        ));
+        $request_id = $request->get('request_id');
+        $query = \DB::update("UPDATE requests set status_id=2 WHERE id = $request_id");
+        if ($query) {
+            return response()->json(array(
+                'status' => 'success',
+                'message' => \Lang::get('core.note_success_denied')
+            ));
+        } else {
+            return response()->json(array(
+                'status' => 'error',
+                'message' => \Lang::get('core.note_error_denied')
+            ));
+        }
     }
-    else{
-        return response()->json(array(
-            'status' => 'error',
-            'message' => \Lang::get('core.note_error_denied')
-        ));
-    }
-}
 }

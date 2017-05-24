@@ -66,10 +66,7 @@ class AjaxHelpers
         // Handling format function
         if (isset($attribute['formater']['active']) and $attribute['formater']['active'] == 1) {
             $fval = $attribute['formater']['value'];
-if(empty($val) &&  $noData == 0)
-{
-    return "No Data";
-}
+
             list($className, $methodName, $serialisedParams) = explode('|', $fval . '||');
             $serialisedParams = trim($serialisedParams);
             $methodName = trim($methodName);
@@ -95,6 +92,10 @@ if(empty($val) &&  $noData == 0)
                 //$serialisedParams = implode(",", $params);
                 //$val = call_user_func(array($className, $methodName), $serialisedParams);
                 $val = call_user_func_array(array($className, $methodName), $params);
+                if(empty($val) &&  $noData == 0)
+                {
+                    return "No Data";
+                }
             }
 //            
 //            

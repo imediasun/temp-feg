@@ -13,7 +13,7 @@
     @if($view == "manage")
         <div class="col-md-2 sm13">
 
-        <input  name="order_type" @if($TID )value="{{ $TID }}" @endif id="order_type" type="hidden" onchange="pageRefresh('T');" style="width:100%">
+        <input  name="order_type" @if($TID && in_array($TID,array_flatten($manageRequestInfo['order_dropdown-data']))) value="{{ $TID }}" @endif id="order_type" type="hidden" onchange="pageRefresh('T');" style="width:100%">
     </div>
         <div class="col-md-2 sm13">
 
