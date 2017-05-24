@@ -287,7 +287,7 @@
   </script>
 
 <style type="text/css">
-.note-editor .note-editable { height:1023px;}
+.note-editor .note-editable { height:1050px;}
 </style>
   <!--<script src="//cdn.tinymce.com/4/tinymce.min.js"></script>-->
 <!--  <script>tinymce.init({
