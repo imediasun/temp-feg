@@ -50,7 +50,7 @@
 				<th scope="col" data-hide="phone">Download</th>
 			  	<th scope="col" data-hide="phone">API</th>
 			  	<th scope="col" data-hide="phone">Inline Editing</th>
-                <th scope="col" data-hide="phone">Filter No Data</th>
+                <th scope="col" data-hide="phone">No Data</th>
 				<th scope="col" data-hide="phone" style="width:70px;">Width</th>
 				<th scope="col" data-hide="phone" style="width:100px;">Align</th>
 				<th scope="col" data-hide="phone">Format Column </th>
