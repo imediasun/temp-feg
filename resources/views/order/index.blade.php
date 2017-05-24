@@ -64,7 +64,7 @@ App.autoCallbacks.registerCallback('ajaxview.before', function (eventData){
     var url = eventData.url,
         id,
         checkUrl,
-        isEdit = /\/order\/update\/[^0][^\/]/.test(url);
+        isEdit = /\/order\/update\/[^0][^\/]/.test(url) && !/\/clone$/.test(url);
 
     if (isEdit) {
         id = url.split('/').pop().replace(/[^\d]/, '');
