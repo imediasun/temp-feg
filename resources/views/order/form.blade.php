@@ -722,6 +722,7 @@
         vendorChangeCount = 0;
         $('#vendor_id').attr('data-lastSelected',($('#vendor_id option:selected')));
         $("#vendor_id").on('change', function() {
+            vendor = $(this);
             vendorChangeCount++;
             if(vendorChangeCount > 1)
             {
@@ -733,6 +734,12 @@
                             $('.itemstable .clonedInput:not(:first-child)').remove();
                             $('.itemstable .clonedInput:first-child input').not('#item_num').val('');
                             $('.itemstable .clonedInput:first-child textarea').val('');
+                        },
+                        cancel:function(){
+                            if(vendor.data('lastSelected'))
+                            {
+                                vendor.data('lastSelected').attr('selected', true);
+                            }
                         }
                     });
                 }
@@ -747,13 +754,7 @@
                     }
                 });
             }
-            else {
-                if($(this).data('lastSelected'))
-                {
-                    $(this).data('lastSelected').attr('selected', true);
-                }
-            }
-        });
+        })
 
 
         $('#po_3').on('keyup', debounce(function () {
