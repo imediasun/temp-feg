@@ -151,7 +151,7 @@ $(document).ready(function() {
     
     $("#location_id").jCombo("{{ URL::to('gameservicehistory/comboselect?filter=location:id:id|location_name') }}" + "&delimiter=%20|%20",
             {  selected_value : "{{ $row['location_id'] }}", initial_text:'-- Select Location --',
-                <?php $row["location_id"] == '' ? '': print_r("ready:addInactiveItem('#location_id', ".$row['location_id']." , 'Location', 'active' , 'id|location_name' )") ?>
+                <?php $row["location_id"] == '' ? '': print_r("onLoad:addInactiveItem('#location_id', ".$row['location_id']." , 'Location', 'active' , 'id|location_name' )") ?>
             });
                 
     $("#up_user_id").jCombo("{{ URL::to('gameservicehistory/comboselect?filter=users:id:username') }}",

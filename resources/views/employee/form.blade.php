@@ -142,7 +142,7 @@ $(document).ready(function() {
 	
         $("#location_id").jCombo("{{ URL::to('employee/comboselect?filter=location:id:location_name') }}",
         {  selected_value : '{{ $row["location_id"] }}' ,
-            <?php $row["location_id"] == '' ? '': print_r("ready:addInactiveItem('#location_id', ".$row['location_id']." , 'Location', 'active' , 'location_name' )") ?>
+            <?php $row["location_id"] == '' ? '': print_r("onLoad:addInactiveItem('#location_id', ".$row['location_id']." , 'Location', 'active' , 'location_name' )") ?>
         });
         
         $("#company_id").jCombo("{{ URL::to('employee/comboselect?filter=company:id:company_name_long') }}",

@@ -776,7 +776,7 @@ $(document).ready(function() {
 	
         $("#location_name_short").jCombo("{{ URL::to('closedlocations/comboselect?filter=location::location_name_short') }}",
         {  selected_value : '{{ $row["location_name_short"] }}'  ,
-            <?php $row["location_name_short"] == '' ? '': print_r("ready:addInactiveItem('#location_name_short', ".$row['location_name_short']." , 'Location', 'active' , 'location_name_short' )") ?>
+            <?php $row["location_name_short"] == '' ? '': print_r("onLoad:addInactiveItem('#location_name_short', ".$row['location_name_short']." , 'Location', 'active' , 'location_name_short' )") ?>
         });
         
         $("#debit_type_id").jCombo("{{ URL::to('closedlocations/comboselect?filter=debit_type:id:company') }}",
