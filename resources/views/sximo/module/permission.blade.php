@@ -30,8 +30,8 @@
 		<table class="table table-striped table-bordered" id="table">
 		<thead class="no-border">
   <tr>
-	<th field="name1" width="20">No</th>
-	<th field="name2">Group </th>
+	<th field="name1" width="30">No</th>
+	<th field="name2" width="200">Group </th>
 	<?php foreach($tasks as $item=>$val) {?>	
 	<th field="name3" data-hide="phone"><?php echo $val;?> </th>
 	<?php }?>
