@@ -305,7 +305,9 @@ class shopfegrequeststore extends Sximo  {
             'submitterEmailAddress' => \Session::get('eid')
         ))->render();
 
-        $receipientsForEmailWihtoutLinks['to']=Auth::user()->email;
+        if(empty($receipientsForEmailWihtoutLinks['to'])){
+            $receipientsForEmailWihtoutLinks['to']=Auth::user()->email;
+        }
 
         FEGSystemHelper::sendSystemEmail(array_merge($receipientsForEmailWihtoutLinks, array(
             'subject' => $subject,
