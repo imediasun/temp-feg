@@ -720,6 +720,7 @@
         });
 
         vendorChangeCount = 0;
+        $('#vendor_id').attr('last_selected',($('#vendor_id option:selected')));
         $("#vendor_id").on('change', function() {
             vendorChangeCount++;
             if(vendorChangeCount > 1)
@@ -735,6 +736,9 @@
                         }
                     });
                 }
+            }
+            else {
+                $(this).data('lastSelected').attr('selected', true);
             }
             $.ajax({
                 type: "GET",
