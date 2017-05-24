@@ -865,6 +865,17 @@ class order extends Sximo
             \DB::table('orders_relations')->insert($data);
         }        
     }
+
+    public static function getOrderRelationships($id) {
+        $notes = [];
+        $data = \DB::table('orders_relations')->where("order_id", $id)->get();
+        if (!empty($data)) {
+            foreach($data as $row) {
+                $notes[] = $row->relation_note;
+            }
+        }
+        return $notes;
+    }
 }
 
 

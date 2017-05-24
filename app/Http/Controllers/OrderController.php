@@ -299,6 +299,7 @@ class OrderController extends Controller
         $this->data['mode'] = $mode;
         $this->data['id'] = $id;
         $this->data['data'] = $this->model->getOrderQuery($id, $mode);
+        $this->data['relationships'] = $this->model->getOrderRelationships($id);
         $user_allowed_locations = implode(',', \Session::get('user_location_ids'));
         $this->data['games_options'] = $this->model->populateGamesDropdown();
         return view('order.form', $this->data)->with('fromStore',$fromStore);
@@ -324,6 +325,7 @@ class OrderController extends Controller
         $this->data['setting'] = $this->info['setting'];
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
         $this->data['nodata']=\SiteHelpers::isNoData($this->info['config']['grid']);
+        $this->data['relationships'] = $this->model->getOrderRelationships($id);
         return view('order.view', $this->data);
     }
     // Uncomment if Copy functionality is needed for orders
@@ -988,6 +990,8 @@ class OrderController extends Controller
                 $data[0]['item_total_string'][$i] = $item_total_string;
                 $data[0]['order_total_cost'] = $order_total_cost;
                 $data[0]['company_name_long'] = 'Family Entertainment Group';
+
+                $data[0]['relationships'] = implode("<br/>", $this->model->getOrderRelationships($order_id));
                 
                 //$item_total_string = $item_total_string."-----------------\n"."$ ".number_format($order_total_cost,3)."\n";
             }
