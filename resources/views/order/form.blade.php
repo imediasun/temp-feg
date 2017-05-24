@@ -507,7 +507,6 @@
                     {
                         selected_value: '{{ $data["order_vendor_id"] }}',
                         initial_text: '-------- Select Vendor --------',
-                        onLoad: $("#vendor_id").trigger('change'),
                         <?php $data["order_vendor_id"] == '' ? '': print_r("onLoad:addInactiveItem('#vendor_id', ".$data['order_vendor_id']." , 'Vendor', 'status' , 'vendor_name')") ?>
                     });
 
@@ -744,19 +743,27 @@
                         }
                     });
                 }
-                $.ajax({
-                    type: "GET",
-                    url: "{{ url() }}/order/bill-account",
-                    data: {'vendor': $(this).val()},
-                    success: function (data) {
-                        if(data.length>0){
-                            $('#bil_ac_num').val(data[0].bill_account_num);
-                        }
-                    }
-                });
+                check_bill_account($(this).val());
             }
-        })
+        });
+        
+        
+        function check_bill_account(vendor) {
+            $.ajax({
+                type: "GET",
+                url: "{{ url() }}/order/bill-account",
+                data: {'vendor':vendor},
+                success: function (data) {
+                    if(data.length>0){
+                        $('#bil_ac_num').val(data[0].bill_account_num);
+                    }
+                }
+            });
+        }
 
+        $( document ).ready(function() {
+            check_bill_account('{{$data["order_vendor_id"]}}');
+        });
 
         $('#po_3').on('keyup', debounce(function () {
             var location_id = $("#po_1").val();
