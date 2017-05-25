@@ -368,7 +368,7 @@ function verifyBrowser() {
                 $('#browser_notification').show();
             }
             break;
-        case 'IE':
+        case 'IE' || 'MSIE':
             if(get_browser().version<10){
                 $('#browser_notification').show();
             }
