@@ -781,7 +781,6 @@ abstract class Controller extends BaseController
                 }
             }
         }
-        echo $param;
         return $param;
 
     }
