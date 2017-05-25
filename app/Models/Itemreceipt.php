@@ -44,7 +44,11 @@ orders.id=order_received.order_id ";
         if($cond == 'only_api_visible')
         {
             $fromApi = 1;
-            $cond = null;
+            $cond = " AND orders.is_api_visible = 1 And orders.api_created_at IS NOT NULL";
+        }
+        else
+        {
+            $cond="";
         }
 
         extract(array_merge(array(
@@ -75,7 +79,7 @@ orders.id=order_received.order_id ";
 
         */
         $createdFlag = false;
-        $cond="";
+
 
         if(!empty($args['createdFrom']) && isset($args['createdFrom'])){
             if($fromApi)
