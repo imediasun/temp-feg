@@ -350,7 +350,7 @@ function get_browser() {
 }
 
 function verifyBrowser() {
-    get_browser();
+    console.log(get_browser());
     switch (get_browser().name){
         case 'Chrome':
             if(get_browser().version<56){
