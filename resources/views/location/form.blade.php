@@ -359,9 +359,9 @@
 					 <div class="col-md-2">
 					 	
 					 </div>
-				  </div> 
+				  </div>
 				  <div class="form-group  " >
-					<label for=" Debit Type" class=" control-label col-md-4 text-left">
+					{{--<label for=" Debit Type" class=" control-label col-md-4 text-left">
 					{!! SiteHelpers::activeLang('On Debit', (isset($fields['bill_debit_type']['language'])? $fields['bill_debit_type']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6 check-no">
@@ -374,8 +374,9 @@
 					 </div> 
 					 <div class="col-md-2">
 					 	
-					 </div>
-				  </div> </fieldset>
+					 </div>--}}
+				  </div>
+						</fieldset>
 			</div>
 			
 												
