@@ -31,7 +31,7 @@
 		</ul>
 		 {!! Form::open(array('url'=>'core/pages/save/'.$row['pageID'], 'class'=>'form-vertical row ','files' => true , 'parsley-validate'=>'','novalidate'=>' ')) !!}
 
-			<div class="col-sm-8 ">
+			<div class="col-sm-8 " style="padding-right: 0px;">
 				<div class="sbox containerBox">
 					<div class="sbox-title">
 						@if($id)
@@ -283,7 +283,7 @@
 		  $('.note-toolbar').append('<div class="note-attach btn-group"><button type="button" class="btn btn-default btn-sm btn-small" data-toggle="tooltip" title="Attach PDF" data-placement="bottom" tabindex="-1" onclick=$("#pdf_modal").modal()><i class="fa fa-file-pdf-o"></i></button></div>');
 		  $('[data-toggle="tooltip"]').tooltip();
 
-		  $('.note-editor .note-editable').css('height', $('#cms_bar_id').height()-229);
+		  $('.note-editor .note-editable').css('height', $('#cms_bar_id').height()-208);
 	  });
 
   </script>
