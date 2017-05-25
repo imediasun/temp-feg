@@ -75,7 +75,7 @@ class FegapiController extends Controller
             }
             else
             {
-                $results = $class1::getRows($param , 'except_freehand');
+                $results = $class1::getRows($param , 'only_api_visible');
             }
             $json = array();
             //condition necessary to show additional fields in api response
