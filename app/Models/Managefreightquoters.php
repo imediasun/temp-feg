@@ -30,7 +30,7 @@ class managefreightquoters extends Sximo
         }
         return 'SELECT freight_orders.*,IF(freight_orders.loc_to_1 = 0,"",freight_orders.loc_to_1) AS loc_to_1,freight_orders.date_submitted,freight_orders.date_paid,GROUP_CONCAT(company_name) AS company_name,
                 (select c.company_name from freight_companies c where c.id=freight_orders.freight_company_1) as company_name_1,
-                IF(freight_orders.vend_to = 0 AND freight_orders.loc_to_1=0, CONCAT(freight_orders.to_add_name," (",freight_orders.to_add_state,")"),
+                IF(freight_orders.vend_to = 0 AND freight_orders.loc_to_1=0, CONCAT(freight_orders.to_add_name,"(",freight_orders.to_add_state,")"),
                 IF(freight_orders.vend_to = 0,CONCAT("",GROUP_CONCAT(L2.location_name)), V2.vendor_name)) AS vend_to,
                 IF(freight_orders.vend_from = 0 AND freight_orders.loc_from = 0, CONCAT(freight_orders.from_add_name,"(",freight_orders.from_add_state,")"),IF(freight_orders.vend_from = 0, L.location_name, V.vendor_name)) AS vend_from,
                 ' . $statusqry . ' AS status
