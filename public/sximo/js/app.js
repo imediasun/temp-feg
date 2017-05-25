@@ -350,7 +350,7 @@ function get_browser() {
 }
 
 function verifyBrowser() {
-    console.log(get_browser());
+    console.log(get_browser().version);
     switch (get_browser().name){
         case 'Chrome':
             if(get_browser().version<56){
@@ -368,7 +368,7 @@ function verifyBrowser() {
             }
             break;
         case 'IE':
-            if(get_browser().version<11){
+            if(get_browser().version<10){
                 $('#browser_notification').show();
             }
             break;
