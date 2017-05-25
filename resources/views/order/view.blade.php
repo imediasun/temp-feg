@@ -108,8 +108,7 @@
                         <div class="col-md-8">
 
                            {{-- ToDo why we are using an unknown key received_date {{  DateHelpers::formatDate($order_data["received_date"])  }}--}}
-                            {{--{{  DateHelpers::formatDate($order_data["received_date"])  }}--}}
-                            {{$order_data["received_date"]}} sdsdfs
+                            {{  DateHelpers::formatDate($order_data["received_date"])  }}
 
 
                         </div>
