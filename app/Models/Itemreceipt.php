@@ -40,6 +40,12 @@ orders.id=order_received.order_id ";
     public static function getRows($args, $cond = null) {
         $table = with(new static)->table;
         $key = with(new static)->primaryKey;
+        $fromApi = 0;
+        if($cond == 'only_api_visible')
+        {
+            $fromApi = 1;
+            $cond = null;
+        }
 
         extract(array_merge(array(
             'page' => '0',
@@ -72,7 +78,14 @@ orders.id=order_received.order_id ";
         $cond="";
 
         if(!empty($args['createdFrom']) && isset($args['createdFrom'])){
-            $cond .= " AND order_received.created_at BETWEEN '".$args['createdFrom']."' AND '".$args['createdTo']."'";
+            if($fromApi)
+            {
+                $cond .= " AND orders.api_created_at BETWEEN '".$args['createdFrom']."' AND '".$args['createdTo']."'";
+            }
+            else
+            {
+                $cond .= " AND order_received.created_at BETWEEN '".$args['createdFrom']."' AND '".$args['createdTo']."'";
+            }
             $createdFlag = true;
         }
         if ($cond != null) {
@@ -85,10 +98,24 @@ orders.id=order_received.order_id ";
         if(!empty($updatedFrom)){
 
             if($createdFlag){
-                $select .= " OR updated_at BETWEEN '$updatedFrom' AND '$updatedTo'";
+                if($fromApi)
+                {
+                    $select .= " OR orders.api_updated_at BETWEEN '$updatedFrom' AND '$updatedTo'";
+                }
+                else
+                {
+                    $select .= " OR updated_at BETWEEN '$updatedFrom' AND '$updatedTo'";
+                }
             }
             else{
-                $select .= " AND updated_at BETWEEN '$updatedFrom' AND '$updatedTo'";
+                if($fromApi)
+                {
+                    $select .= " AND orders.api_updated_at BETWEEN '$updatedFrom' AND '$updatedTo'";
+                }
+                else
+                {
+                    $select .= " AND updated_at BETWEEN '$updatedFrom' AND '$updatedTo'";
+                }
             }
 
         }

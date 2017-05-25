@@ -6,11 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 use Request, Log;
 class Sximo extends Model {
 
-    public static function insertLog($module, $task)
+    public static function insertLog($module, $task , $notes = '')
     {
         $table = 'tb_logs';
         $data = array(
             'auditID' => '',
+            'note' => $notes,
             'ipaddress' => Request::ip(),
             'user_id' => \Session::get('uid'),
             'module'  => $module,
@@ -19,7 +20,10 @@ class Sximo extends Model {
         $id = \DB::table($table)->insertGetId($data);
         return $id;
     }
-
+    /*public function update(array $attributes = [])
+    {
+        return parent::update($attributes);
+    }*/
     public static function parseNumber($num)
     {
         return number_format((float)$num, 3, '.', '');
