@@ -82,14 +82,9 @@ orders.id=order_received.order_id ";
 
 
         if(!empty($args['createdFrom']) && isset($args['createdFrom'])){
-            if($fromApi)
-            {
-                $cond .= " AND orders.api_created_at BETWEEN '".$args['createdFrom']."' AND '".$args['createdTo']."'";
-            }
-            else
-            {
+
                 $cond .= " AND order_received.created_at BETWEEN '".$args['createdFrom']."' AND '".$args['createdTo']."'";
-            }
+
             $createdFlag = true;
         }
         if ($cond != null) {
@@ -102,28 +97,18 @@ orders.id=order_received.order_id ";
         if(!empty($updatedFrom)){
 
             if($createdFlag){
-                if($fromApi)
-                {
-                    $select .= " OR orders.api_updated_at BETWEEN '$updatedFrom' AND '$updatedTo'";
-                }
-                else
-                {
+
                     $select .= " OR updated_at BETWEEN '$updatedFrom' AND '$updatedTo'";
-                }
+
             }
             else{
-                if($fromApi)
-                {
-                    $select .= " AND orders.api_updated_at BETWEEN '$updatedFrom' AND '$updatedTo'";
-                }
-                else
-                {
+
                     $select .= " AND updated_at BETWEEN '$updatedFrom' AND '$updatedTo'";
-                }
+
             }
 
         }
-        \Log::info("Total Query : ".$select . " {$params} " . "  self::queryGroup() "." {$orderConditional}");
+        \Log::info("Total Query : ".$select . " {$params} " .  self::queryGroup() ." {$orderConditional}");
         //why added group by in order
         $counter_select =\DB::select($select . " {$params} "  . self::queryGroup() .  " {$orderConditional}");
         $total= count($counter_select);
@@ -155,11 +140,12 @@ orders.id=order_received.order_id ";
 
         $result = [];
         $order_ids=array();
+
         $where="";
         foreach($data as $record)
-{
-        $order_ids[]=$record->id;
-}
+        {
+            $order_ids[]=$record->id;
+        }
         if(!empty($param['createdFrom'])){
             $where .= " AND order_received.created_at BETWEEN '".$param['createdFrom']."' AND '".$param['createdTo']."'";
             $createdFlag = true;
