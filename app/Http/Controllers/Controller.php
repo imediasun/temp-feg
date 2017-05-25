@@ -753,11 +753,11 @@ abstract class Controller extends BaseController
                             if ($operate == 'like') {
                                 if($keys[0] == 'vend_to' && $arr[$keys[0]]['alias'] == "freight_orders" && \Request::segment(1)=="managefreightquoters")
                                 {
-                                    $param .= "AND V2.vendor_name LIKE'%". addslashes($keys[2]) . "%%' OR L2.location_name LIKE'%". addslashes($keys[2]) . "%%'";
+                                    $param .= "AND (V2.vendor_name LIKE'%". addslashes($keys[2]) . "%%' OR L2.location_name LIKE'%". addslashes($keys[2]) . "%%')";
                                 }
                                 elseif($keys[0] == 'vend_from' && $arr[$keys[0]]['alias'] == "freight_orders" && \Request::segment(1)=="managefreightquoters")
                                 {
-                                    $param .= "AND V.vendor_name LIKE'%". addslashes($keys[2]) . "%%' OR L.location_name LIKE'%". addslashes($keys[2]) . "%%'";
+                                    $param .= "AND (V.vendor_name LIKE'%". addslashes($keys[2]) . "%%' OR L.location_name LIKE'%". addslashes($keys[2]) . "%%')";
                                 }
                                 else {
                                     $param .= " AND " . $col . " LIKE '%" . addslashes($keys[2]) . "%%' ";
@@ -780,6 +780,7 @@ abstract class Controller extends BaseController
                 }
             }
         }
+        echo $param;
         return $param;
 
     }
