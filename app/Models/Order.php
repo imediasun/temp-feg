@@ -62,9 +62,9 @@ class order extends Sximo
             default:
                 $return .= " orders.id IS NOT NULL";
         }
-        if($cond == 'except_freehand')
+        if($cond == 'only_api_visible')
         {
-            $return .= " AND is_freehand = 0";
+            $return .= " AND is_api_visible = 1 And api_created_at IS NOT NULL";
         }
 
         return $return;
