@@ -105,8 +105,8 @@
                             class="fa fa-user"></i> <span>{{ Lang::get('core.m_myaccount') }}</span><i
                             class="caret"></i></a>
                 <ul class="dropdown-menu dropdown-menu-right icons-right item_dropdown">
-                    <li><a href="{{ URL::to('dashboard')}}"><i
-                                    class="fa  fa-laptop"></i> {{ Lang::get('core.m_dashboard') }}</a></li>
+                    {{--<li><a href="{{ URL::to('dashboard')}}"><i
+                                    class="fa  fa-laptop"></i> {{ Lang::get('core.m_dashboard') }}</a></li>--}}
                     <li><a href="{{ URL::to('')}}" target="_blank"><i class="fa fa-desktop"></i> Main Site </a></li>
                     <li><a href="{{ URL::to('user/profile')}}"><i
                                     class="fa fa-user"></i> {{ Lang::get('core.m_profile') }}</a></li>
