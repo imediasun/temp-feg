@@ -1,4 +1,6 @@
-<?php use App\Models\Order; ?>
+<?php use App\Models\Order;
+echo $data['prefill_type'];
+?>
 @if($setting['form-method'] =='native')
     <style>
         #add_new_item
@@ -48,7 +50,7 @@
                         <label for="location_id" class=" control-label col-md-4 text-left"> Location </label>
 
                         <div class="col-md-8">
-                           @if($data['prefill_type'] != "edit")
+                           @if($data['prefill_type'] != "edit" && $data['prefill_type']!= "SID")
                                 <select class="select3" id="location_id" name="location_id" required></select>
                             @else
                                {{ $data["order_loc_id"]." " }}  {!! SiteHelpers::gridDisplayView($data["order_loc_id"],'location_id','1:location:id:location_name') !!}
