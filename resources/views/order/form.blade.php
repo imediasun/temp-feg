@@ -719,11 +719,12 @@
             });
         });
 
-        vendorChangeCount = 0;
-        $('#vendor_id').attr('data-lastSelected',($('#vendor_id option:selected')));
+        vendorChangeCount = 1;
+$('#vendor_id').on('select2-selecting',function (e) {
+    $(this).attr('lastSelected', $(this).val());
+});
         $("#vendor_id").on('change', function() {
             vendor = $(this);
-            vendorChangeCount++;
             if(vendorChangeCount > 1)
             {
                 if($('#item_name').val()) {
@@ -734,19 +735,50 @@
                             $('.itemstable .clonedInput:not(:first-child)').remove();
                             $('.itemstable .clonedInput:first-child input').not('#item_num').val('');
                             $('.itemstable .clonedInput:first-child textarea').val('');
+                            $.ajax({
+                                type: "GET",
+                                url: "{{ url() }}/order/bill-account",
+                                data: {'vendor': vendor.val()},
+                                success: function (data) {
+                                    if(data.length>0){
+                                        $('#bil_ac_num').val(data[0].bill_account_num);
+                                    }
+                                }
+                            });
                         },
                         cancel:function(){
-                            if(vendor.data('lastSelected'))
+
+                            if(vendor.attr('lastSelected'))
                             {
-                                vendor.data('lastSelected').attr('selected', true);
+                                console.log('selecting lastSelected');
+
+                                $('#vendor_id option[value = '+vendor.attr('lastSelected')+']').attr('selected', true);
+                                vendorChangeCount = 1;
+                                vendor.trigger("change");
                             }
                         }
                     });
                 }
+                else
+                {
+                    $.ajax({
+                        type: "GET",
+                        url: "{{ url() }}/order/bill-account",
+                        data: {'vendor': vendor.val()},
+                        success: function (data) {
+                            if(data.length>0){
+                                $('#bil_ac_num').val(data[0].bill_account_num);
+                            }
+                        }
+                    });
+                }
+            }
+            else
+            {
                 $.ajax({
                     type: "GET",
                     url: "{{ url() }}/order/bill-account",
-                    data: {'vendor': $(this).val()},
+                    data: {'vendor': vendor.val()},
                     success: function (data) {
                         if(data.length>0){
                             $('#bil_ac_num').val(data[0].bill_account_num);
@@ -754,9 +786,8 @@
                     }
                 });
             }
-        })
-
-
+            vendorChangeCount++;
+        });
         $('#po_3').on('keyup', debounce(function () {
             var location_id = $("#po_1").val();
             validatePONumber(location_id, $(this).val());

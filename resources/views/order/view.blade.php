@@ -177,7 +177,7 @@
                     <div class="clearfix"></div>
                     <div class="form-group">
                         <label class="label-control col-md-4">
-                            {{ SiteHelpers::activeLang('Total Cost (NO "$")', (isset($fields['order_total']['language'])? $fields['order_total']['language'] : array())) }}
+                            {{ SiteHelpers::activeLang('Total Cost', (isset($fields['order_total']['language'])? $fields['order_total']['language'] : array())) }}
                         </label>
 
                         <div class="col-md-8">
