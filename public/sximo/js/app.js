@@ -354,7 +354,7 @@ function verifyBrowser() {
     console.log(get_browser().version);
     switch (get_browser().name){
         case 'Chrome':
-            if(get_browser().version<56){
+            if(get_browser().version<57){
                 $('#browser_notification').show();
             }
             break;
@@ -364,17 +364,22 @@ function verifyBrowser() {
             }
             break;
         case 'Safari':
-            if(get_browser().version<5){
+            if(get_browser().version<9){
+                $('#browser_notification').show();
+            }
+            break;
+        case 'Edge':
+            if(get_browser().version<14){
                 $('#browser_notification').show();
             }
             break;
         case 'IE':
-            if(get_browser().version<10){
+            if(get_browser().version<11){
                 $('#browser_notification').show();
             }
             break;
         case 'MSIE':
-            if(get_browser().version<10){
+            if(get_browser().version<11){
                 $('#browser_notification').show();
             }
             break;
