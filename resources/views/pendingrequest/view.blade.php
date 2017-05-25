@@ -24,7 +24,7 @@
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Date Requested', (isset($fields['request_date']['language'])? $fields['request_date']['language'] : array())) }}	
 						</td>
-						<td>{{ \DateHelpers::formatStringValue($row->request_date) }} </td>
+						<td>{{ \DateHelpers::formatDate($row->request_date) }} </td>
 						
 					</tr>
 				
