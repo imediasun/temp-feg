@@ -77,17 +77,38 @@ class Sximo extends Model {
         }
 
         if(!empty($createdFrom)){
-            $select .= " AND created_at BETWEEN '$createdFrom' AND '$createdTo'";
+            if($cond != 'only_api_visible')
+            {
+                $select .= " AND created_at BETWEEN '$createdFrom' AND '$createdTo'";
+            }
+            else
+            {
+                $select .= " AND api_created_at BETWEEN '$createdFrom' AND '$createdTo'";
+            }
             $createdFlag = true;
         }
 
         if(!empty($updatedFrom)){
 
             if($createdFlag){
-                $select .= " OR updated_at BETWEEN '$updatedFrom' AND '$updatedTo'";
+                if($cond != 'only_api_visible')
+                {
+                    $select .= " OR updated_at BETWEEN '$updatedFrom' AND '$updatedTo'";
+                }
+                else
+                {
+                    $select .= " OR api_updated_at BETWEEN '$updatedFrom' AND '$updatedTo'";
+                }
             }
             else{
-                $select .= " AND updated_at BETWEEN '$updatedFrom' AND '$updatedTo'";
+                if($cond != 'only_api_visible')
+                {
+                    $select .= " AND updated_at BETWEEN '$updatedFrom' AND '$updatedTo'";
+                }
+                else
+                {
+                    $select .= " AND api_updated_at BETWEEN '$updatedFrom' AND '$updatedTo'";
+                }
             }
 
         }
