@@ -638,7 +638,7 @@ class managefreightquoters extends Sximo
 						</p>';
                 $recipients =  \FEGHelp::getSystemEmailRecipients('UPDATE FREIGHT EXTERNAL EMAIL');
                 $recipients['to']=$contact_email;
-                if(!empty($recipients['to'])){
+                if($recipients['to']!=' '){
                     FEGSystemHelper::sendSystemEmail(array_merge($recipients, array(
                         'subject' => $subject,
                         'message' => $message,
