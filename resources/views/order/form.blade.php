@@ -725,7 +725,7 @@ $('#vendor_id').on('select2-selecting',function (e) {
 });
         $("#vendor_id").on('change', function() {
             vendor = $(this);
-            if(vendorChangeCount > 1)
+            if(vendorChangeCount > 1 && $('#vendor_id').attr('lastselected') != undefined)
             {
                 if($('#item_name').val()) {
                     App.notyConfirm({
