@@ -368,8 +368,8 @@ function verifyBrowser() {
                 $('#browser_notification').show();
             }
             break;
-        case 'Edge':
-            if(get_browser().version<14){
+        case 'Opera':
+            if(get_browser().version<15){
                 $('#browser_notification').show();
             }
             break;
