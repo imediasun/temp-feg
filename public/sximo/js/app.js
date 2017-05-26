@@ -364,7 +364,7 @@ function verifyBrowser() {
             }
             break;
         case 'Safari':
-            if(get_browser().version<11){
+            if(get_browser().version<9){
                 $('#browser_notification').show();
             }
             break;
