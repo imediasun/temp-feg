@@ -197,6 +197,8 @@ function addInactiveItem(field,id,module,check,column,inverse)
         select = field + " option[value='" + id + "']";
         if(!($(select).length > 0))
 		{
+            console.log(select);
+            console.log('Not exists!');
 			$.ajax({
 				method: 'GET',
 				url: '/vendor/itemcheck',

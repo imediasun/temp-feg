@@ -221,7 +221,7 @@
                             Vendor </label>
 
                         <div class="col-md-6">
-                            <select name='vendor_id' id='vendor_id' class='select2' required></select>
+                            <select name='vendor_id' data-seprate='true' id='vendor_id' class='select2' required></select>
                         </div>
                         <div class="col-md-2"></div>
                     </div>
@@ -379,7 +379,7 @@
 
         $("#vendor_id").jCombo("{{ URL::to('product/comboselect?filter=vendor:id:vendor_name:hide:0:status:1') }}",
                 {selected_value: '{{ $row["vendor_id"] }}' ,
-                    <?php $row["vendor_id"] == '' ? '': print_r("onLoad:addInactiveItem('#vendor_id', ".$row['vendor_id']." , 'Vendor', 'status' , 'vendor_name')") ?>
+                    <?php $row["vendor_id"] == '' ? '': print_r("onLoad:addInactiveItem('#vendor_id[data-seprate=true]', ".$row['vendor_id']." , 'Vendor', 'status' , 'vendor_name')") ?>
                 });
         // for Redemption Prizes show Ticket Value
         if ("{{$row["prod_type_id"] }}" == 7) {
