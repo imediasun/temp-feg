@@ -636,16 +636,15 @@ class managefreightquoters extends Sximo
 								immediately</b> for determination as to whether you should accept or refuse the shipment.
 							<br>
 						</p>';
-
-                if(!empty($to)){
-                    FEGSystemHelper::sendSystemEmail(array(
-                        'to' => $to,
+                $recipients =  \FEGHelp::getSystemEmailRecipients('UPDATE FREIGHT EXTERNAL EMAIL');
+                $recipients['to']=$contact_email;
+                if(!empty($recipients['to'])){
+                    FEGSystemHelper::sendSystemEmail(array_merge($recipients, array(
                         'subject' => $subject,
                         'message' => $message,
                         'isTest' => env('APP_ENV', 'development') !== 'production' ? true : false,
                         'from' => $from,
-                        'configName' => 'UPDATE FREIGHT EXTERNAL EMAIL'
-                    ));
+                    )));
                 }
             }
         }
