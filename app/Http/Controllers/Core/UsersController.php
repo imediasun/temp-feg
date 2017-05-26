@@ -419,6 +419,7 @@ class UsersController extends Controller
         $this->data['id'] = $id;
         $this->data['access'] = $this->access;
         $location_details = \SiteHelpers::getLocationDetails($id);
+        $this->data['nodata']=\SiteHelpers::isNoData($this->info['config']['grid']);
         $this->data['user_locations'] = $location_details;
         if (empty($mode)) {
             return view('core.users.view', $this->data);
@@ -488,7 +489,7 @@ class UsersController extends Controller
                 $this->model->inserLocations($request->input('multiple_locations'), $id, $request->input('id'));
                 \DB::update("update users set has_all_locations=0 where id=$id");
             } else {
-                $all_locations = \DB::select('select id from location');
+                $all_locations = \DB::select('select id from location where active = 1');
                 $locations = array();
                 $i = 0;
                 foreach ($all_locations as $l) {

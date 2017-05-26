@@ -289,7 +289,7 @@ class servicerequestsController extends Controller
         $this->data['priority']  =  $row['Priority'];
         $this->data['status'] = $row['Status'];
         $this->data['ticketStatusLabel'] = Formatter::getTicketStatus($row['Status'], 'Open');
-        $this->data['needByDate'] = \DateHelpers::formatDate($row['need_by_date']);
+        $this->data['needByDate'] = \DateHelpers::formatDate($row['need_by_date'],1);
         $this->data['filePaths'] = explode(",", $row['file_path']);        
         $this->data['entryBy'] = $isAdd ? $userId : $row['entry_by'];
         $this->data['locationId'] = $isAdd ? \Session::get('selected_location') : $row['location_id'];
@@ -331,6 +331,7 @@ class servicerequestsController extends Controller
         $this->data['following'] = Ticketfollowers::isFollowing($id, $userId);
         $this->data['followers'] = Ticketfollowers::getAllFollowers($id);
         $this->data['setting'] = $this->info['setting'];
+        $this->data['nodata']=\SiteHelpers::isNoData($this->info['config']['grid']);
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
         
         
@@ -360,7 +361,6 @@ class servicerequestsController extends Controller
         
         return view('servicerequests.view', $this->data);
     }
-
     function getSubscribe(Request $request, $id = NULL, $userID = NULL, $unfollow = NULL) {
         
         $unfollowDictionary = ["unfollow", "false", "unsubscribe"];

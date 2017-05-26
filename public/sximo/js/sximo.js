@@ -185,8 +185,49 @@ function SximoModalHide(modal, callbackName, data) {
         App.autoCallbacks.runCallback.call(modal, callbackName, data);   
     }    
 }
+function decodeEntities(encodedString) {
+    var textArea = document.createElement('textarea');
+    textArea.innerHTML = encodedString;
+    return textArea.value;
+}
+function addInactiveItem(field,id,module,check,column,inverse)
+{
+    inverse = inverse || 0;
+    setTimeout(function() {
+        select = field + " option[value='" + id + "']";
+        if(!($(select).length > 0))
+		{
+			$.ajax({
+				method: 'GET',
+				url: '/vendor/itemcheck',
+				data: {
+					id: id,
+					module: module,
+					check: check,
+					column: column,
+                    inverse: inverse
+				}
+			}).success(function (item) {
+				if (item != 0) {
 
-;(function ($, window, document, undefined) {
+					console.log(item);
+					var option = new Option(item, id);
+					option.selected = true;
+
+					$(field).append(option);
+					$(field).trigger("change");
+
+				}
+			})
+    	}
+    	else {
+            console.log(select);
+            console.log('Already exists!');
+        }
+    }, 2000);
+
+}
+(function ($, window, document, undefined) {
 
     var pluginName = "sximMenu",
         defaults = {

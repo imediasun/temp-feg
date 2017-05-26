@@ -52,7 +52,7 @@
 						</span>
 
                         <input name='date_down' type="text" rows='5' id='date_down' style="width:150px !important;" class='form-control date'
-                               value="{{  $row['date_down'] }}" required>
+                               value="{{  \DateHelpers::formatDateCustom($row->date_down, 'm/d/Y')  }}" required>
                     </div>
 					 <div class="col-md-2">
 					 	
@@ -103,7 +103,7 @@
   							<i class="fa fa-calendar" id="icon"></i>
 						</span>
 					  	<input type="text" name='date_up'  id='date_up' style="width:150px !important;" class='form-control date'
-                             value="{{  $row['date_up'] }}">
+                             value="{{  \DateHelpers::formatDateCustom($row->date_up, 'm/d/Y')  }}">
 						</div>
 					 </div>
 					 <div class="col-md-2">
@@ -148,9 +148,11 @@
 
 <script type="text/javascript">
 $(document).ready(function() {
-    
+
     $("#location_id").jCombo("{{ URL::to('gameservicehistory/comboselect?filter=location:id:id|location_name') }}" + "&delimiter=%20|%20",
-            {  selected_value : "{{ $row['location_id'] }}", initial_text:'-- Select Location --' });
+            {  selected_value : "{{ $row['location_id'] }}", initial_text:'-- Select Location --',
+                <?php $row["location_id"] == '' ? '': print_r("onLoad:addInactiveItem('#location_id', ".$row['location_id']." , 'Location', 'active' , 'id|location_name' )") ?>
+            });
                 
     $("#up_user_id").jCombo("{{ URL::to('gameservicehistory/comboselect?filter=users:id:username') }}",
             {  selected_value : '{{ $row["up_user_id"] }}',initial_text:'-- Select User --' });
@@ -163,7 +165,7 @@ $(document).ready(function() {
     $('.previewImage').fancybox();
     $('.tips').tooltip();
     renderDropdown($(".select2 "), { width:"100%"});
-    $('.date').datepicker({format:'mm/dd/yyyy',autoclose:true})
+    $('.date').datepicker({format:'mm/dd/yyyy',autoclose:true});
     $('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});
     $('input[type="checkbox"],input[type="radio"]').iCheck({
         checkboxClass: 'icheckbox_square-blue',

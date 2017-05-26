@@ -117,7 +117,7 @@
 					 <?php foreach ($tableGrid as $field) :
 					 	if($field['view'] =='1') : 
 							$conn = (isset($field['conn']) ? $field['conn'] : array() );
-							$value = AjaxHelpers::gridFormater($row->$field['field'], $row , $field['attribute'],$conn);
+							$value = AjaxHelpers::gridFormater($row->$field['field'], $row , $field['attribute'],$conn,isset($field['nodata'])?$field['nodata']:0);
 						 	?>
 						 	<?php $limited = isset($field['limited']) ? $field['limited'] :''; ?>
 						 	@if(SiteHelpers::filterColumn($limited ))
@@ -239,49 +239,23 @@ $(document).ready(function() {
 	//$(".sel-search").select2({ width:"100%"});
     $("[id^='toggle_trigger_']").on('switchChange.bootstrapSwitch', function(event, state) {
         productId=$(this).data('id');
-        var message = '';
-        var check = false;
-        if(state)
-        {
-            message = "<div class='confirm_inactive'><br>Are you sure you want to Inactive this product <br> <b>***WARNING***</b><br> if you inactive this product you will not be able to add to cart.</div>";
-        }
-        else
-        {
-            check = true;
-            message = "<div class='confirm_inactive'><br>Are you sure you want to Active this product <br> <b>***WARNING***</b><br> if you active this product you will be able to add to cart.</div>";
-        }
-
-        currentElm = $(this);
-        currentElm.bootstrapSwitch('state', check,true);
-        $('.custom_overlay').show();
-        App.notyConfirm({
-            message: message,
-            confirmButtonText: 'Yes',
-            confirm: function (){
-                $('.custom_overlay').slideUp(500);
-                $.ajax(
+        $.ajax(
+            {
+                type:'POST',
+                url:'product/trigger',
+                data:{isActive:state,productId:productId},
+                success:function(data){
+                    if($('select[name="product_list_type"] :selected').val() == 'productsindevelopment' && state == false)
                     {
-                        type:'POST',
-                        url:'product/trigger',
-                        data:{isActive:state,productId:productId},
-                        success:function(data){
-                            currentElm.bootstrapSwitch('state',!check,true);
-                            if($('select[name="product_list_type"] :selected').val() == 'productsindevelopment' && state == false)
-                            {
-                                //window.location.reload();
-                                $('#form-'+productId).hide(800);
-                            }
-                            if(data.status == "error"){
-                                //notyMessageError(data.message);
-                            }
-                        }
+                        //window.location.reload();
+                        $('#form-'+productId).hide(800);
                     }
-                );
-            },
-            cancel: function () {
-                $('.custom_overlay').slideUp(500);
+                    if(data.status == "error"){
+                        //notyMessageError(data.message);
+                    }
+                }
             }
-        });
+        );
     });
 
     $("[id^='toggle_trigger_']").bootstrapSwitch( {onColor: 'default', offColor:'primary'});

@@ -58,6 +58,7 @@
 <br/>
         <div style="width:100%;border:1px solid #000;padding:8px; border-collapse:collapse;">
             <p> {{ $data[0]['po_notes'] }}</p>
+            <p>{!! @$data[0]['relationships'] !!}</p>
         </div>
         <br/>
 

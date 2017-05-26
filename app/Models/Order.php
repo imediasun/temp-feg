@@ -12,6 +12,8 @@ class order extends Sximo
     const OPENID1 = 1, OPENID2 = 3, OPENID3 = 4, FIXED_ASSET_ID = 9, CLOSEID1 = 2, CLOSEID2 = 5;
     const ORDER_PERCISION = 3;
     const ORDER_TYPE_PART_GAMES = 1;
+    const ORDER_VOID_STATUS = 9;
+    const ORDER_CLOSED_STATUS = [2,6];
 
     public function __construct()
     {
@@ -59,6 +61,10 @@ class order extends Sximo
                 break;
             default:
                 $return .= " orders.id IS NOT NULL";
+        }
+        if($cond == 'only_api_visible')
+        {
+            $return .= " AND is_api_visible = 1 And api_created_at IS NOT NULL";
         }
 
         return $return;
@@ -547,9 +553,9 @@ class order extends Sximo
 
     }
 
-    function increamentPO($location=0,$count=0)
+    function increamentPO($location=0,$count=0, $datemdy = "")
     {
-        $today = date('mdy');
+        $today = empty($datemdy) ? date('mdy'): $datemdy;
         if($location != 0) {
 
             $po = \DB::select("select po_number from po_track where po_number like '%-$today-%' and location_id=" . $location . " order by po_number");
@@ -616,6 +622,261 @@ class order extends Sximo
     public function getCasePriceAttribute(){
         return number_format($this->attributes['case_price'],3);
     }
+
+    public static function isClonable($id, $data = null) {
+        
+    }
+    public static function isEditable($id, $data = null) {
+
+    }
+    public static function isReceivable($id, $data = null) {
+
+    }
+    public static function isPartiallyReceived($id, $data = null) {
+        $partial = false;
+        if (self::isVoided($id, $data)){
+            return $partial;
+        }
+        $record = \DB::select('SELECT
+            SUM(qty) as total_items,
+            (SUM(qty)-SUM(item_received)) as remaining_items 
+            FROM order_contents
+            WHERE order_id ='.$id.
+            " GROUP BY order_id");
+        $partial = !empty($record) && 
+                $record[0]->remaining_items > 0 && 
+                $record[0]->remaining_items < $record[0]->total_items;        
+        return $partial;
+    }
+    
+    public static function isClosed($id, $data = null) {
+        if (!empty($data)) {
+            $statusId = is_object($data) ? $data->status_id : $data['status_id'];
+        }
+        else {
+            $statusId = self::where('id', $id)->value('status_id');
+        }
+        $isClosed = in_array($statusId, self::ORDER_CLOSED_STATUS);
+        return $isClosed;
+    }
+    public static function isVoided($id, $data = null) {
+        if (!empty($data)) {
+            $statusId = is_object($data) ? $data->status_id : $data['status_id'];
+        }
+        else {
+            $statusId = self::where('id', $id)->value('status_id');
+        }
+        $isVoided = $statusId == self::ORDER_VOID_STATUS;
+        return $isVoided;
+    }
+    public static function isFreehand($id, $data = null) {
+        if (!empty($data)) {
+            $freehand = is_object($data) ? $data->is_freehand : $data['is_freehand'];
+        }
+        else {
+            $freehand = self::where('id', $id)->value('is_freehand');
+        }
+        $isFreeHand = !empty($freehand);
+        return $isFreeHand;
+    }
+    public static function isApiable($id, $data = null, $ignoreVoid = false) {
+        return !self::isFreehand($id, $data) && ($ignoreVoid || !self::isVoided($id, $data));
+    }
+    public static function isApified($id, $data = null) {
+        if (!empty($data)) {
+            $api = is_object($data) ? $data->is_api_visible : $data['is_api_visible'];
+        }
+        else {
+            $api = self::where('id', $id)->value('is_api_visible');
+        }
+        $isApified = !empty($api);
+        return $isApified;
+    }
+    public static function apified($id, $isUnset = false) {
+        if (self::isApiable($id, null, true)) {
+            $now = date("Y-m-d H:i:s");
+            $setValue = $isUnset ? 0 : 1;
+            $updateData = ['is_api_visible' => $setValue];
+            if (self::isApified($id)) {
+                $updateData['api_updated_at'] = $now;
+            }
+            else {
+                $updateData['api_created_at'] = $now;
+            }
+            return self::where('id', $id)->update($updateData);
+        }
+        return false;
+    }
+    public static function voidify($id) {
+        $now = date("Y-m-d H:i:s");
+        $updateData = ['status_id' => self::ORDER_VOID_STATUS];
+        if (self::isApified($id)) {
+            $updateData['api_updated_at'] = $now;
+        }
+        $updateData['updated_at'] = $now;
+        return self::where('id', $id)->update($updateData);
+    }
+
+    public static function cloneOrder($id, $data = null, $options = array()) {
+
+        $options = array_merge([
+            'skipReceipts' => true,
+            'skipItems' => false,
+            'resetDate' => null,
+            'resetApiable' => true
+        ], $options);
+        
+        $nowTimestamp = strtotime("now");
+        $now = date("Y-m-d", $nowTimestamp);
+        $nowStamp = date("Y-m-d H:i:s", $nowTimestamp);
+        
+        if (empty($data)) {
+            $data = self::find($id)->toArray();
+        }
+        $locationId = $data['location_id'];
+        unset($data['id']);
+        if (!empty($options['resetApiable'])) {
+            unset($data['is_api_visible']);
+            unset($data['api_created_at']);
+            unset($data['api_updated_at']);
+        }
+        unset($data['updated_at']);
+        unset($data['created_at']);
+        unset($data['date_received']);
+        if (!empty($options['resetDate'])) {
+            $nowStamp = $options['resetDate'];
+            $nowTimestamp = strtotime($nowStamp);
+            $now = date('Y-m-d', $nowTimestamp);
+        }
+
+        $data['date_ordered'] = $now;
+        $data['po_number'] = self::generateNewPONumber($locationId, $nowStamp);
+        $obj = with(new self);
+        $newID = $obj->insertRow($data);
+        \Log::info($options);
+        if (empty($options['skipItems'])) {
+            \Log::info("Not skipping items");
+            $itemReceived = empty($options['skipReceipts'])? 'oc.item_received' : '0';
+            $sql = "INSERT INTO order_contents
+                      ( order_id,
+                        request_id,
+                        product_id,
+                        product_description,
+                        price,
+                        qty,
+                        game_id,
+                        item_name,
+                        case_price,
+                        total,
+                        item_received,
+                        sku,
+                        created_at
+                      )
+                    SELECT $newID,
+                        oc.request_id,
+                        oc.product_id,
+                        oc.product_description,
+                        oc.price,
+                        oc.qty,
+                        oc.game_id,
+                        oc.item_name,
+                        oc.case_price,
+                        oc.total,
+                        $itemReceived,
+                        oc.sku,
+                        NOW()
+                    FROM order_contents AS oc
+                    WHERE oc.order_id=$id";
+
+            \Log::info($sql);
+            $affected = \DB::insert($sql);
+        }
+        else {
+            \Log::info("skipping items");
+        }
+        if (empty($options['skipReceipts'])) {
+             \Log::info("NOT skipping receipts");
+            $sql = "INSERT INTO order_received
+                        (order_id,
+                        order_line_item_id,
+                        quantity,
+                        received_by,
+                        date_received,
+                        created_at,
+                        notes,
+                        status)
+                    SELECT $newID,
+                        orc.order_line_item_id,
+                        orc.quantity,
+                        orc.received_by,
+                        orc.date_received,
+                        NOW(),
+                        orc.notes,
+                        orc.status
+                        
+                    FROM order_received AS orc
+                    WHERE orc.order_id=$id";
+
+            $affected = \DB::insert($sql);
+        }
+        else {
+            \Log::info("skipping receipts");
+        }
+
+        return $newID;
+
+    }
+
+    public static function generateNewPONumber($location, $date, $count = 0) {
+        $obj = with(new static);
+        $datemdy = date("mdy", strtotime($date));
+        do {
+            $poCount = $obj->increamentPO($location, $count, $datemdy);
+            $poNumber = "$location-$datemdy-$poCount";
+            $count++;
+        } while(self::where('po_number', $poNumber)->count() > 0);
+
+        return $poNumber;
+    }
+    public static function relateOrder($rType, $originalOrderID, $targetOrderID) {
+        
+        $typeIDs = \FEGHelp::getEnumTable('orders_relation_types', 'relation_name', 'id');
+        $oOrderData = self::find($originalOrderID);
+        $tOrderData = self::find($targetOrderID);
+        $nowDateTime = date("Y-m-d H:i:s");
+        $now = \DateHelpers::formatDate($nowDateTime);
+        $oPO = $oOrderData->po_number;
+        $tPO = $tOrderData->po_number;
+        $now = \DateHelpers::formatDate(date("Y-m-d H:i:s"));
+        if ($rType == 'replace') {
+            // $originalOrderID => new order which replaces the old
+            // $targetOrderID => old order which has been replaced by the $originalOrderID
+            $data =[[
+                'order_id' => $originalOrderID,
+                'related_order_id' => $targetOrderID,
+                'relation_id' => $typeIDs['replaces'],
+                'relation_note' => \FEGHelp::stringBuilder(\Lang::get('core.templates.order_replaces'), [$tPO, $now]),
+            ],[
+                'order_id' => $targetOrderID,
+                'related_order_id' => $originalOrderID,
+                'relation_id' => $typeIDs['replaced by'],
+                'relation_note' => \FEGHelp::stringBuilder(\Lang::get('core.templates.order_replaced_by'), [$oPO, $now]),
+            ]];
+            \DB::table('orders_relations')->insert($data);
+        }        
+    }
+
+    public static function getOrderRelationships($id) {
+        $notes = [];
+        $data = \DB::table('orders_relations')->where("order_id", $id)->get();
+        if (!empty($data)) {
+            foreach($data as $row) {
+                $notes[] = $row->relation_note;
+            }
+        }
+        return $notes;
+    }
 }
+
 
 

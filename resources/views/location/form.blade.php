@@ -359,9 +359,9 @@
 					 <div class="col-md-2">
 					 	
 					 </div>
-				  </div> 
+				  </div>
 				  <div class="form-group  " >
-					<label for=" Debit Type" class=" control-label col-md-4 text-left">
+					{{--<label for=" Debit Type" class=" control-label col-md-4 text-left">
 					{!! SiteHelpers::activeLang('On Debit', (isset($fields['bill_debit_type']['language'])? $fields['bill_debit_type']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6 check-no">
@@ -374,8 +374,9 @@
 					 </div> 
 					 <div class="col-md-2">
 					 	
-					 </div>
-				  </div> </fieldset>
+					 </div>--}}
+				  </div>
+						</fieldset>
 			</div>
 			
 												
@@ -424,7 +425,9 @@ $(document).ready(function() {
 
         
         $("#loc_ship_to").jCombo("{{ URL::to('location/comboselect?filter=location:id:location_name') }}",
-        {  selected_value : '{{ $row["loc_ship_to"] }}' });
+        {  selected_value : '{{ $row["loc_ship_to"] }}',
+            <?php $row["loc_ship_to"] == '' ? '': print_r("onLoad:addInactiveItem('#loc_ship_to', ".$row['loc_ship_to']." , 'Location', 'active' , 'location_name')") ?>
+        });
         
         $("#loc_group_id").jCombo("{{ URL::to('location/comboselect?filter=loc_group:id:loc_group_name') }}",
         {  selected_value : '{{ $row["loc_group_id"] }}' });

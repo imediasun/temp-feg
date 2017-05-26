@@ -92,7 +92,7 @@ $orders = array('asc','desc');
 
         @if(!isset($setting['disablepagination']) || $setting['disablepagination'] == 'false')
 		<div class="col-md-6 col-sm-12 col-xs-12" id="<?php echo $pageModule;?>Paginate">
-            {!! $pagination->appends($pager)->render() !!}
+            {!! urldecode($pagination->appends($pager)->render()) !!}
         </div>
         @endif
 	  </div>

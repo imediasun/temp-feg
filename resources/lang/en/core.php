@@ -206,7 +206,35 @@ return array(
     "smtp_connect_failed"       => "Mail Error: SMTP connect() failed",
     "gmail_smtp_connect_failed" => 'To allow system to send emails using your Gmail account, you must turn on less secure apps by clicking <a target="_blank" href="https://www.google.com/settings/u/6/security/lesssecureapps?pageId=none">Here</a>',
     "error_sending_mail"        => "An error occurred in sending email.",
-    "note_success_denied"  => "Request denied successfully"
+    "note_success_denied"  => "Request denied successfully",
 
+    /* Orders */
+    "order_api_expose_button_label"  => "Post to Netsuite",
+    "order_api_exposed_label"  => "Posted to Netsuite",
+    "order_api_exposed_label_pending"  => "Pending post to Netsuite",
+    "order_api_exposed_label_ineligible"  => "The Purchase Order is not eligible to be posted to Netsuite",
+    "order_missing_id"  => "The Purchase Order is not available",
+    "order_clone_error"  => "Error while duplicating the Purchase Order",
+    "order_api_exposed"  => "The Purchase Order has been posted to Netsuite",
+    "order_api_not_exposable"  => "The Purchase Order is not eligible to post to Netsuite",
+    "order_api_expose_error"  => "Unable to post the Purchase Order to Netsuite",
+    "order_voided_edit_alert"  => "This Purchase Order has been voided and is not editable any more.",
+    "order_closed_edit_alert"  => "This Purchase Order has been closed and is not editable any more.",
+    "order_api_edit_partial_alert"  => "This Purchase Order has already been received partially and is not editable any more.",
+    "order_api_exposed_edit_alert"  => "This Purchase Order has already been submitted to Netsuite. If you continue, then this Purchase Order will be voided and a new Purchase Order created. Do you wish to continue?",
+    "order_voided_receipt_alert"  => "This Purchase Order has been voided and is not receivable any more.",
+    "order_closed_receipt_alert"  => "This Purchase Order has been closed and is not receivable any more.",
+    "order_receive_error_api_not_exposed"  => "This Purchase Order has not yet been submitted to Netsuite. Please contact the Merchandise team to be able to receive this order.",
+
+    "order_clone_successful"  => "This Purchase Order has been duplicated.",
+    "order_clone_void_successful"  => "This Purchase Order has been voided successfully. A duplicate Purchase Order has been created.",
+    "order_voided_receipt_alert"  => "This Purchase Order has been voided and is not receivable any more.",
+    "order_voided_receipt_alert"  => "This Purchase Order has been voided and is not receivable any more.",
+
+    "templates" => array(
+        "order_replaces" => "This Purchase Order replaces voided Purchase Order #{0} as of {1}",
+        "order_replaced_by" => "This Purchase Order was voided and replaced with Purchase Order #{0} on {1}",
+
+    ),
 
 );

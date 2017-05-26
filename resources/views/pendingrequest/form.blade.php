@@ -103,12 +103,14 @@
 					<label for="Process Date" class=" control-label col-md-4 text-left"> 
 					{!! SiteHelpers::activeLang('Process Date', (isset($fields['process_date']['language'])? $fields['process_date']['language'] : array())) !!}	
 					</label>
-					<div class="col-md-6">
-					  {!! Form::text('process_date', $row['process_date'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
-					 </div> 
-					 <div class="col-md-2">
-					 	
-					 </div>
+                      <div class="col-md-6">
+                          <div class="input-group m-b" style="width:150px !important;">
+                              {!! Form::text('process_date', $row['process_date'],array('class'=>'form-control date')) !!}
+                              <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                          </div>
+                      </div>
+                      <div class="col-md-2">
+                     </div>
 				  </div> 					
 				  <div class="form-group  " > 
 					<label for="Status Id" class=" control-label col-md-4 text-left"> 

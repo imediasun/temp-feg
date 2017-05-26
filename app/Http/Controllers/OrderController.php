@@ -262,6 +262,7 @@ class OrderController extends Controller
 
     function getUpdate(Request $request, $id = 0, $mode = '')
     {
+        $fromStore = 0;
         $editmode = $prefill_type = 'edit';
         $where_in_expression = '';
         \Session::put('redirect','order');
@@ -274,6 +275,7 @@ class OrderController extends Controller
         } elseif (substr($mode, 0, 3) == 'SID') {
             \Session::put('redirect','managefegrequeststore');
             $mode = $mode;
+            $fromStore = 1;
         } elseif ($mode == "clone") {
             $mode = 'clone';
         }
@@ -297,9 +299,10 @@ class OrderController extends Controller
         $this->data['mode'] = $mode;
         $this->data['id'] = $id;
         $this->data['data'] = $this->model->getOrderQuery($id, $mode);
+        $this->data['relationships'] = $this->model->getOrderRelationships($id);
         $user_allowed_locations = implode(',', \Session::get('user_location_ids'));
         $this->data['games_options'] = $this->model->populateGamesDropdown();
-        return view('order.form', $this->data);
+        return view('order.form', $this->data)->with('fromStore',$fromStore);
     }
 
    public function getShow($id = null)
@@ -321,7 +324,8 @@ class OrderController extends Controller
         $this->data['access'] = $this->access;
         $this->data['setting'] = $this->info['setting'];
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
-
+        $this->data['nodata']=\SiteHelpers::isNoData($this->info['config']['grid']);
+        $this->data['relationships'] = $this->model->getOrderRelationships($id);
         return view('order.view', $this->data);
     }
     // Uncomment if Copy functionality is needed for orders
@@ -439,6 +443,7 @@ class OrderController extends Controller
             $date_ordered = date("Y-m-d", strtotime($request->get('date_ordered')));
             $total_cost = $request->get('order_total');
             $notes = $request->get('po_notes');
+            $is_freehand = $request->get('is_freehand') == "1" ?1:0;
             $po_1 = $request->get('po_1');
             $po_2 = $request->get('po_2');
             $po_3 = $request->get('po_3');
@@ -526,6 +531,7 @@ class OrderController extends Controller
                     'alt_address' => $alt_address,
                     'request_ids' => $where_in,
                     'new_format' => 1,
+                    'is_freehand' => $is_freehand,
                     'po_notes' => $notes
                 );
                 if ($editmode == "clone") {
@@ -984,6 +990,8 @@ class OrderController extends Controller
                 $data[0]['item_total_string'][$i] = $item_total_string;
                 $data[0]['order_total_cost'] = $order_total_cost;
                 $data[0]['company_name_long'] = 'Family Entertainment Group';
+
+                $data[0]['relationships'] = implode("<br/>", $this->model->getOrderRelationships($order_id));
                 
                 //$item_total_string = $item_total_string."-----------------\n"."$ ".number_format($order_total_cost,3)."\n";
             }
@@ -1129,6 +1137,45 @@ class OrderController extends Controller
         $this->data['access'] = $this->access;
         $this->data['data'] = $this->model->getOrderQuery($id);
         return view('order.clonenew', $this->data);
+    }
+    function getInstaClone(Request $request, $eId, $voidify = null)
+    {
+        $now = date("Y-m-d");
+        $nowStamp = date("Y-m-d H:i:s");
+        $nowPOPart = date("mdy");
+        $response = ['status' => 'error', 'message' => \Lang::get('core.note_restric')];
+        if ($this->access['is_add'] == 0) {
+            return response()->json($response);
+        }
+        $id = \SiteHelpers::encryptID($eId, true);
+        $response['message'] = \Lang::get('core.order_missing_id');
+        if (empty($id)) {
+            return response()->json($response);
+        }
+        $row = $this->model->find($id)->toArray();
+        if (empty($row)) {
+            return response()->json($response);
+        }
+        $newID = Order::cloneOrder($id, $row, ['resetDate' => $nowStamp]);
+        $response['message'] = \Lang::get('core.order_clone_error');
+        if (empty($newID)) {
+            return response()->json($response);
+        }
+
+        $response['status'] = 'success';
+        $response['editUrl'] = url('/order/update/'.$newID);
+        $response['viewUrl'] = url('/order/show/'.$newID);
+        $response['poUrl'] = url('/order/po/'.$newID);
+        $response['receiptUrl'] = url('/order/orderreceipt/'.$newID);
+        
+        $response['message'] = \Lang::get('core.order_clone_successful');
+        if (strtolower($voidify) == 'voided') {
+            Order::voidify($id);
+            Order::relateOrder('replace', $newID, $id);
+            $response['message'] = \Lang::get('core.order_clone_void_successful');
+        }
+
+        return response()->json($response);
     }
 
     function postValidateponumber(Request $request)
@@ -1464,4 +1511,98 @@ class OrderController extends Controller
         }
         return false;
     }
+
+    function getExposeApi(Request $request, $eId) {
+        $id = \SiteHelpers::encryptID($eId, true);
+        $response = ['status' => 'error', 'message' => \Lang::get('core.order_missing_id')];
+        if (!empty($id)) {
+            $status = Order::apified($id);
+            $response['status'] = $status === false ? 'error' : 'success';
+            $response['message'] = $status === false ? \Lang::get('core.order_api_not_exposable') : \Lang::get('core.order_api_exposed');
+        }
+        return response()->json($response);
+    }
+
+    function getCheckEditable(Request $request, $id) {
+        $response = ['status' => 'error', 'message' => \Lang::get('core.order_missing_id')];
+        if (!empty($id)) {
+            $orderData = Order::find($id)?Order::find($id)->toArray():null;
+            $freeHand = Order::isFreehand($id, $orderData);
+            $apified = Order::isApified($id, $orderData);
+            $voided = Order::isVoided($id, $orderData);
+            $closed = Order::isClosed($id, $orderData);
+            $partial = Order::isPartiallyReceived($id);
+            
+            $status = true;
+
+            if ($freeHand) {
+                $response['status'] = 'success';
+                $response['message'] = 'Ready for edit';
+                return response()->json($response);
+            }
+
+            if ($apified) {
+                $message = \Lang::get('core.order_api_exposed_edit_alert');
+                $status = false;
+            }
+            if ($apified && $partial) {
+                $message = \Lang::get('core.order_api_edit_partial_alert');
+                $status = false;
+            }
+            if ($closed) {
+                $message = \Lang::get('core.order_closed_edit_alert');
+                $status = false;
+            }
+            if ($voided) {
+                $message = \Lang::get('core.order_voided_edit_alert');
+                $status = false;
+            }
+
+            $response['status'] = $status === false ? 'error' : 'success';
+            $response['message'] = $status === false ? $message : 'Ready for edit';
+
+            $isClone = $apified && (!$partial && !$voided && !$closed);
+
+            if ($isClone) {
+                $response['url'] = url('/order/insta-clone/'.\SiteHelpers::encryptID($id).'/voided');
+                $response['action'] = 'clone';
+            }
+        }
+        return response()->json($response);
+    }
+    function getCheckReceivable(Request $request, $eId) {
+        $id = \SiteHelpers::encryptID($eId, true);
+        $response = ['status' => 'error', 'message' => \Lang::get('core.order_missing_id')];
+        if (!empty($id)) {
+            $orderData = Order::find($id)->toArray();
+            $freeHand = Order::isFreehand($id, $orderData);
+            $apified = Order::isApified($id, $orderData);
+            $voided = Order::isVoided($id, $orderData);
+            $closed = Order::isClosed($id, $orderData);
+            $status = !$voided && !$closed && ($freeHand || $apified);
+
+            if (!$apified) {
+                $message = \Lang::get('core.order_receive_error_api_not_exposed');
+            }
+            if ($closed) {
+                $message = \Lang::get('core.order_closed_receipt_alert');
+            }
+            if ($voided) {
+                $message = \Lang::get('core.order_voided_receipt_alert');
+            }
+
+            $response['status'] = $status === false ? 'error' : 'success';
+            $response['message'] = $status === false ? $message : 'Ready to receive';
+
+            if ($status) {
+                $response['url'] = url('/order/orderreceipt/'.$id);
+            }
+        }
+        return response()->json($response);
+
+    }
+    function getCheckClonable(Request $request, $eId) {
+
+    }
+
 }

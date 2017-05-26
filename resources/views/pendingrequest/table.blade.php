@@ -118,7 +118,7 @@
 					foreach ($tableGrid as $field) :
                     if($field['view'] =='1') :
                     $conn = (isset($field['conn']) ? $field['conn'] : array() );
-                    $value = AjaxHelpers::gridFormater($row->$field['field'], $row , $field['attribute'],$conn);
+                    $value = AjaxHelpers::gridFormater($row->$field['field'], $row , $field['attribute'],$conn,isset($field['nodata'])?$field['nodata']:0);
                     $limited = isset($field['limited']) ? $field['limited'] :''; ?>
                     @if(SiteHelpers::filterColumn($limited ))
 									 <td align="<?php echo $field['align'];?>" data-values="{{ $row->$field['field'] }}" data-field="{{ $field['field'] }}" data-format="{{ htmlentities($value) }}">

@@ -6,11 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 use Request, Log;
 class Sximo extends Model {
 
-    public static function insertLog($module, $task)
+    public static function insertLog($module, $task , $notes = '')
     {
         $table = 'tb_logs';
         $data = array(
             'auditID' => '',
+            'note' => $notes,
             'ipaddress' => Request::ip(),
             'user_id' => \Session::get('uid'),
             'module'  => $module,
@@ -19,7 +20,10 @@ class Sximo extends Model {
         $id = \DB::table($table)->insertGetId($data);
         return $id;
     }
-
+    /*public function update(array $attributes = [])
+    {
+        return parent::update($attributes);
+    }*/
     public static function parseNumber($num)
     {
         return number_format((float)$num, 3, '.', '');
@@ -77,17 +81,38 @@ class Sximo extends Model {
         }
 
         if(!empty($createdFrom)){
-            $select .= " AND created_at BETWEEN '$createdFrom' AND '$createdTo'";
+            if($cond != 'only_api_visible')
+            {
+                $select .= " AND created_at BETWEEN '$createdFrom' AND '$createdTo'";
+            }
+            else
+            {
+                $select .= " AND api_created_at BETWEEN '$createdFrom' AND '$createdTo'";
+            }
             $createdFlag = true;
         }
 
         if(!empty($updatedFrom)){
 
             if($createdFlag){
-                $select .= " OR updated_at BETWEEN '$updatedFrom' AND '$updatedTo'";
+                if($cond != 'only_api_visible')
+                {
+                    $select .= " OR updated_at BETWEEN '$updatedFrom' AND '$updatedTo'";
+                }
+                else
+                {
+                    $select .= " OR api_updated_at BETWEEN '$updatedFrom' AND '$updatedTo'";
+                }
             }
             else{
-                $select .= " AND updated_at BETWEEN '$updatedFrom' AND '$updatedTo'";
+                if($cond != 'only_api_visible')
+                {
+                    $select .= " AND updated_at BETWEEN '$updatedFrom' AND '$updatedTo'";
+                }
+                else
+                {
+                    $select .= " AND api_updated_at BETWEEN '$updatedFrom' AND '$updatedTo'";
+                }
             }
 
         }
@@ -149,7 +174,7 @@ class Sximo extends Model {
         return $result;
     }
 
-    public  function insertRow($data, $id) {
+    public  function insertRow($data, $id = null) {
 
         $timestampTables = array('vendor','products','orders', 'departments', 'system_email_report_manager');
         $table = with(new static)->table;

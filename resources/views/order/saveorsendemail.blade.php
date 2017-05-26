@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @section('content')
-
+<?php use App\Models\Order; ?>
     <div class="page-content row">
         <!-- Page header -->
         <div class="sbox-title">
@@ -55,8 +55,16 @@
                                         style="width:33%" title="SEND" ><i
                                             class="fa fa-sign-in  "></i>&nbsp {{ Lang::get('core.sb_send') }} </button>
                             </div>
+                            
+                            @if($order_id && Order::isApiable($order_id) && !Order::isApified($order_id))
+                            <div class="form-group" style="margin-top:10px;">
+                                <button type="button" class="btn btn-info btn-lg exposeAPIFromSaveOrSend"
+                                        style="width:33%">
+                                {{ Lang::get('core.order_api_expose_button_label') }} </button>
+                            </div>
+                            {!! Form::close() !!}
+                            @endif
                         </div>
-                        {!! Form::close() !!}
                         <ul class="parsley-error-list">
                             @foreach($errors->all() as $error)
                                 <li>{{ $error }}</li>
@@ -211,7 +219,26 @@
     </style>
     <script>
         $(document).ready(function () {
-
+            $(".exposeAPIFromSaveOrSend").click(function(e){
+                var btn = $(this);
+                btn.prop('disabled', true);
+                blockUI();
+                $.ajax({
+                    type: "GET",
+                    url: "{{ url() }}/order/expose-api/{{ \SiteHelpers::encryptID($order_id) }}",
+                    success: function (data) {
+                        unblockUI();
+                        if(data.status === 'success'){
+                            notyMessage(data.message);
+                            btn.remove();
+                        }
+                        else {
+                            btn.prop('disabled', false);
+                            notyMessageError(data.message);
+                        }
+                    }
+                });
+            });
         });
         $("#po-close").click(function(){
             reloadOrder();

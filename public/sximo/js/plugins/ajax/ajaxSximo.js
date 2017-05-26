@@ -13,7 +13,7 @@ function reloadData( id,url,callback)
     }
 
 	$('.ajaxLoading').show();
-	$.post( url ,function( data ) {
+	$.post( encodeURI(url) ,function( data ) {
 		$( id +'Grid' ).html( data );
 		typeof callback === 'function' && callback(data);
         App.autoCallbacks.runCallback.call($( id +'Grid' ), 'reloaddata', 
@@ -324,23 +324,38 @@ function ajaxGameDispose( id, url )
 
 function ajaxViewDetail( id , url )
 {
-	$('.ajaxLoading').show();
-	console.log(url);
-	$.get( url ,function( data ) {
-		$( id +'View').html( data );
-		$( id +'Grid').hide( );
-		var w = $(window); 
-		var duration = 300;
-		$('html, body').animate({scrollTop: 0}, duration);
-        $('.control-label,.label-control').each(function () {
-            var str = $(this).text();
-            if (str.indexOf(':') == -1) {
-                $(this).addClass('addcolon');
-            }
-        });
-		$('.ajaxLoading').hide();
-	});
+    var beforeSximoEvent = 'ajaxview.before',
+        beforeSximoEventModule = 'ajaxview.before.'+id,
+        showView = function () {
+            $('.ajaxLoading').show();
+            console.log(url);
+            $.get( url ,function( data ) {
+                $( id +'View').html( data );
+                $( id +'Grid').hide( );
+                var w = $(window);
+                var duration = 300;
+                $('html, body').animate({scrollTop: 0}, duration);
+                $('.control-label,.label-control').each(function () {
+                    var str = $(this).text();
+                    if (str.indexOf(':') == -1) {
+                        $(this).addClass('addcolon');
+                    }
+                });
+                $('.ajaxLoading').hide();
+            });
+        },
+        eventData = {url:url, id:id, callback: showView};
 
+    if (App.autoCallbacks[beforeSximoEventModule] && App.autoCallbacks[beforeSximoEventModule].length) {
+        App.autoCallbacks.runCallback.call(window, beforeSximoEvent,eventData);
+    }
+    if (App.autoCallbacks[beforeSximoEvent] && App.autoCallbacks[beforeSximoEvent].length) {
+        App.autoCallbacks.runCallback.call(window, beforeSximoEvent, eventData);
+    }
+    else {
+        showView();
+    }
+    
 }
 
 function ajaxViewClose( id , elm, options)

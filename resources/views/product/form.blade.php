@@ -368,12 +368,19 @@
         $("#prod_type_id").jCombo("{{ URL::to('product/comboselect?filter=order_type:id:order_type:can_request:1') }}",
                 {selected_value: '{{ $row["prod_type_id"] }}'});
 
-        $("#prod_sub_type_id").jCombo("{{ URL::to('product/comboselect?filter=product_type:id:type_description') }}&parent=request_type_id:",
-                {parent: '#prod_type_id', selected_value: '{{ $row["prod_sub_type_id"] }}'});
+        $("#prod_type_id").change(function () {
+            $("#prod_sub_type_id").jCombo("{{ URL::to('product/comboselect?filter=product_type:id:type_description') }}&parent=request_type_id:"+$('#prod_type_id').val()+"",
+                    {selected_value: '{{ $row["prod_sub_type_id"] }}'});
+        });
+
+
+        /*$("#prod_sub_type_id").jCombo("{{ URL::to('product/comboselect?filter=product_type:id:type_description') }}&parent=request_type_id:",
+                {parent: '#prod_type_id', selected_value: '{{ $row["prod_sub_type_id"] }}'});*/
 
         $("#vendor_id").jCombo("{{ URL::to('product/comboselect?filter=vendor:id:vendor_name:hide:0:status:1') }}",
-                {selected_value: '{{ $row["vendor_id"] }}'});
-
+                {selected_value: '{{ $row["vendor_id"] }}' ,
+                    <?php $row["vendor_id"] == '' ? '': print_r("onLoad:addInactiveItem('#vendor_id', ".$row['vendor_id']." , 'Vendor', 'status' , 'vendor_name')") ?>
+                });
         // for Redemption Prizes show Ticket Value
         if ("{{$row["prod_type_id"] }}" == 7) {
             $("#ticket_value").show();
@@ -396,6 +403,7 @@
         $('.previewImage').fancybox();
         $('.tips').tooltip();
         renderDropdown($(".select2"), {width: "100%"});
+
         $('.date').datepicker({format: 'mm/dd/yyyy', autoclose: true})
         $('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});
         $('input[type="checkbox"],input[type="radio"]').not('.test').iCheck({

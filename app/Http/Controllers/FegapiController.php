@@ -69,9 +69,14 @@ class FegapiController extends Controller
             if (!is_null($vendor_id)) $param['vendor_id'] = $vendor_id;
             if (!is_null($active)) $param['active'] = $active;
 
-
-            $results = $class1::getRows($param);
-
+            if($class != 'Order' && $class != "Itemreceipt")
+            {
+                $results = $class1::getRows($param);
+            }
+            else
+            {
+                $results = $class1::getRows($param , 'only_api_visible');
+            }
             $json = array();
             //condition necessary to show additional fields in api response
             if ($class == "Itemreceipt") {

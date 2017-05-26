@@ -38,7 +38,7 @@
                     <td width='30%' class='label-view text-right'>
                         {{ SiteHelpers::activeLang('Vendor', (isset($fields['vendor_id']['language'])? $fields['vendor_id']['language'] : array())) }}
                     </td>
-                    <td>{!! SiteHelpers::gridDisplayView($row->vendor_id,'vendor_id','1:vendor:id:vendor_name') !!}</td>
+                    <td>{!! SiteHelpers::gridDisplayView($row->vendor_id,'vendor_id','1:vendor:id:vendor_name',$nodata['vendor_id']) !!}</td>
 
                 </tr>
 
@@ -62,7 +62,7 @@
                     <td width='30%' class='label-view text-right'>
                         {{ SiteHelpers::activeLang('Product Type', (isset($fields['prod_type_id']['language'])? $fields['prod_type_id']['language'] : array())) }}
                     </td>
-                    <td>{!! SiteHelpers::gridDisplayView($row->prod_type_id,'prod_type_id','1:order_type:id:order_type')
+                    <td>{!! SiteHelpers::gridDisplayView($row->prod_type_id,'prod_type_id','1:order_type:id:order_type',$nodata['prod_type_id'])
                         !!}
                     </td>
 
@@ -73,7 +73,7 @@
                         {{ SiteHelpers::activeLang('Sub Type', (isset($fields['prod_sub_type_id']['language'])? $fields['prod_sub_type_id']['language'] : array())) }}
                     </td>
                     <td>{!!
-                        SiteHelpers::gridDisplayView($row->prod_sub_type_id,'prod_sub_type_id','1:product_type:id:type_description')
+                        SiteHelpers::gridDisplayView($row->prod_sub_type_id,'prod_sub_type_id','1:product_type:id:type_description',$nodata['prod_sub_type_id'])
                         !!}
                     </td>
 

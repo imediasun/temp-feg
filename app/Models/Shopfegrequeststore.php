@@ -3,7 +3,7 @@
 use App\Library\FEG\System\FEGSystemHelper;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
-use Log, View;
+use Log, View, Auth;
 
 class shopfegrequeststore extends Sximo  {
 	
@@ -287,6 +287,8 @@ class shopfegrequeststore extends Sximo  {
         $configName = 'Request new custom graphics email';
         $receipts = FEGSystemHelper::getSystemEmailRecipients($configName);
         $message = $messageWithLink;//$baseMessage.$links.$messageEnd;
+
+
         FEGSystemHelper::sendSystemEmail(array_merge($receipts, array(
             'subject' => $subject,
             'message' => $message,
@@ -303,6 +305,9 @@ class shopfegrequeststore extends Sximo  {
             'submitterEmailAddress' => \Session::get('eid')
         ))->render();
 
+        if(empty($receipientsForEmailWihtoutLinks['to'])){
+            $receipientsForEmailWihtoutLinks['to']=Auth::user()->email;
+        }
 
         FEGSystemHelper::sendSystemEmail(array_merge($receipientsForEmailWihtoutLinks, array(
             'subject' => $subject,

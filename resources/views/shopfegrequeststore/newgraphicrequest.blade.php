@@ -35,7 +35,7 @@
                 </div>
                 <div class="form-group  " >
                     <label for="graphics_description" class=" control-label col-md-4 text-left">
-                       Detailed description of color, art, location and/or game colors, size requirements, etc.
+                       Detailed description of color, art, location and/or game colors, size requirements, etc:
                     </label>
                     <div class="col-md-6">
                         <textarea required="required" class="form-control "id="graphics_description" name="graphics_description" rows="8" cols="45"></textarea>

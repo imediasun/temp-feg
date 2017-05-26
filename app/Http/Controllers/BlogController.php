@@ -170,6 +170,7 @@ class BlogController extends Controller
 
         $this->data['id'] = $id;
         $this->data['access'] = $this->access;
+        $this->data['nodata']=\SiteHelpers::isNoData($this->info['config']['grid']);
         return view('blog.view', $this->data);
     }
 

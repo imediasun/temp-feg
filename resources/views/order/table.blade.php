@@ -4,8 +4,8 @@
 	<div class="sbox-title">
 		<h5> <i class="fa fa-table"></i> </h5>
 		<div class="sbox-tools" >
-			<a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Clear Search" onclick="reloadData('#{{ $pageModule }}','order/data?search=')"><i class="fa fa-trash-o"></i> Clear Search </a>
-			<a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Reload Data" onclick="reloadData('#{{ $pageModule }}','order/data?return={{ $return }}')"><i class="fa fa-refresh"></i></a>
+			<a href="javascript:void(0)" class="btn btn-xs btn-white tips orderTableClearSearch" title="Clear Search" onclick="reloadData('#{{ $pageModule }}','order/data?search=')"><i class="fa fa-trash-o"></i> Clear Search </a>
+			<a href="javascript:void(0)" class="btn btn-xs btn-white tips orderTableReload" title="Reload Data" onclick="reloadData('#{{ $pageModule }}','order/data?return={{ $return }}')"><i class="fa fa-refresh"></i></a>
 			@if(Session::get('gid') ==10)
 			<a href="{{ url('feg/module/config/'.$pageModule) }}" 
                class="btn btn-xs btn-white tips openModuleConfig"
@@ -130,7 +130,8 @@
 			  @endif
 
            		<?php foreach ($rowData as $row) :
-           			  $id = $row->id;
+                    $id = $row->id;
+                    $eid = \SiteHelpers::encryptID($id);
            		?>
 
                 <tr  class="editable" data-id="{{ $row->id }}" id="form-{{ $row->id }}" @if($setting['inline']!='false' && $setting['disablerowactions']=='false') ondblclick="showFloatingCancelSave(this)" @endif>
@@ -149,7 +150,7 @@
 					 <?php foreach ($tableGrid as $field) :
 					 	if($field['view'] =='1') :
 							$conn = (isset($field['conn']) ? $field['conn'] : array() );
-							$value = AjaxHelpers::gridFormater($row->$field['field'], $row , $field['attribute'],$conn);
+							$value = AjaxHelpers::gridFormater($row->$field['field'], $row , $field['attribute'],$conn,isset($field['nodata'])?$field['nodata']:0);
 						 	?>
 						 	<?php $limited = isset($field['limited']) ? $field['limited'] :''; ?>
 						 	@if(SiteHelpers::filterColumn($limited ))
@@ -163,22 +164,41 @@
 					  ?>
 
 
-				 <td data-values="action" data-key="<?php echo $row->id ;?>">
-					{!! AjaxHelpers::GamestitleButtonAction('order',$access,$id ,$setting) !!}
-
-
-
-                        <a href="{{ URL::to('order/po/'.$row->id)}}"  class="tips btn btn-xs btn-white" title="Generate PO"><i class="fa fa-cogs" aria-hidden="true"></i></a>
-
-                     <a href="{{ $pageModule }}/update/{{$row->id}}/clone"  onclick="ajaxViewDetail('#order',this.href); return false; "  class="tips btn btn-xs btn-white" title="Clone Order"><i class=" fa fa-random" aria-hidden="true"></i></a>
-
-
-                    @if($row->status_id=='Open' || $row->status_id=='Open (Partial)')
-                        <a href="{{ URL::to('order/orderreceipt/'.$row->id)}}" class="tips btn btn-xs btn-white" title="Receive Order"><i class="fa fa fa-truck" aria-hidden="true"></i></a>
-                   @endif
-					@if($row->status_id=='Open' || $row->status_id=='Open (Partial)')
-						<a href="{{ URL::to('order/removalrequest/'.$row->po_number)}}" class="tips btn btn-xs btn-white" title="Request Removal"><i class="fa fa-trash-o " aria-hidden="true"></i></a>
-						@endif
+                    <td data-values="action" data-key="<?php echo $row->id ;?>">
+                        {!! AjaxHelpers::GamestitleButtonAction('order',$access,$id ,$setting) !!}
+                        <a href="{{ URL::to('order/po/'.$row->id)}}"
+                            data-id="{{$eid}}"
+                            data-action="po"
+                           class="tips btn btn-xs btn-white orderGenPOAction"
+                           title="Generate PO">
+                            <i class="fa fa-cogs" aria-hidden="true"></i>
+                        </a>
+                        <a href="{{ $pageModule }}/update/{{$row->id}}/clone"
+                            onclick="ajaxViewDetail('#order',this.href); return false; "
+                            data-id="{{$eid}}"
+                            data-action="clone"
+                           class="tips btn btn-xs btn-white orderCloneAction"
+                           title="Clone Order">
+                            <i class=" fa fa-random" aria-hidden="true"></i>
+                        </a>
+                        @if($row->status_id=='Open' || $row->status_id=='Open (Partial)')
+                            <a href="{{ URL::to('order/orderreceipt/'.$row->id)}}"
+                               data-id="{{$eid}}"
+                               data-action="receipt"
+                               class="tips btn btn-xs btn-white orderReceiptAction"
+                               title="Receive Order">
+                                <i class="fa fa fa-truck" aria-hidden="true"></i>
+                            </a>
+                        @endif
+                        @if($row->status_id=='Open' || $row->status_id=='Open (Partial)')
+                            <a href="{{ URL::to('order/removalrequest/'.$row->po_number)}}"
+                               data-id="{{$eid}}"
+                               data-action="removal"
+                               class="tips btn btn-xs btn-white orderRemovalRequestAction"
+                               title="Request Removal">
+                                <i class="fa fa-trash-o " aria-hidden="true"></i>
+                            </a>
+                        @endif
 					</td>
                 </tr>
                 @if($setting['view-method']=='expand')
@@ -260,6 +280,32 @@
     }
 
     initDataGrid('{{ $pageModule }}', '{{ $pageUrl }}');
+
+    $("a.orderReceiptAction").click(function (e){
+        var btn = $(this),
+            id = btn.data('id'),
+            checkUrl = siteUrl + '/order/check-receivable/'+id;
+
+        e.preventDefault();
+
+        btn.prop('disabled', true);
+        blockUI();
+        $.ajax({
+            type: "GET",
+            url: checkUrl,
+            success: function (data) {
+                unblockUI();
+                if(data.status === 'success'){
+                    location.href = data.url;
+                }
+                else {
+                    btn.prop('disabled', false);
+                    notyMessageError(data.message);
+                    e.preventDefault();
+                }
+            }
+        });
+    });
 
 });
 </script>

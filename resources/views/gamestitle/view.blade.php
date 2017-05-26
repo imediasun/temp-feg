@@ -25,7 +25,7 @@
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Game Title', (isset($fields['game_title']['language'])? $fields['game_title']['language'] : array())) }}
 						</td>
-						<td>{{ \DateHelpers::formatStringValue($row[0]->game_title) }} </td>
+						<td>{{ \DateHelpers::formatStringValue($row[0]->game_title,$nodata['game_title']) }} </td>
 
 					</tr>
 
@@ -33,7 +33,7 @@
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Manufacturer', (isset($fields['mfg_id']['language'])? $fields['mfg_id']['language'] : array())) }}
 						</td>
-						<td>{{ \DateHelpers::formatStringValue($row[0]->vendor_name) }} </td>
+						<td>{{ \DateHelpers::formatStringValue($row[0]->vendor_name,$nodata['mfg_id']) }} </td>
 
 					</tr>
 
@@ -41,7 +41,7 @@
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Game Type ', (isset($fields['game_type_id']['language'])? $fields['game_type_id']['language'] : array())) }}
 						</td>
-						<td>{!! SiteHelpers::gridDisplayView($row[0]->game_type_id,'game_type_id','1:game_type:id:game_type_short') !!} </td>
+						<td>{!! SiteHelpers::gridDisplayView($row[0]->game_type_id,'game_type_id','1:game_type:id:game_type_short',$nodata['game_type_id']) !!} </td>
 
 					</tr>
 

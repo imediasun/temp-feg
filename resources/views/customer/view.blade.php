@@ -105,7 +105,7 @@
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('SalesRepEmployeeNumber', (isset($fields['salesRepEmployeeNumber']['language'])? $fields['salesRepEmployeeNumber']['language'] : array())) }}	
 						</td>
-						<td>{!! SiteHelpers::gridDisplayView($row->salesRepEmployeeNumber,'salesRepEmployeeNumber','1:employees:employeeNumber:firstName|lastName') !!} </td>
+						<td>{!! SiteHelpers::gridDisplayView($row->salesRepEmployeeNumber,'salesRepEmployeeNumber','1:employees:employeeNumber:firstName|lastName',$nodata['salesRepEmployeeNumber']) !!} </td>
 						
 					</tr>
 				

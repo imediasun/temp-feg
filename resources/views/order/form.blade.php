@@ -1,3 +1,4 @@
+<?php use App\Models\Order;?>
 @if($setting['form-method'] =='native')
     <style>
         #add_new_item
@@ -23,7 +24,7 @@
             @endif
             {!! Form::open(array('url'=>'order/save/', 'class'=>'form-vertical','files' => true ,
             'parsley-validate'=>'','novalidate'=>' ','id'=> 'ordersubmitFormAjax')) !!}
-            <input type="hidden" id="is_freehand" name="is_freehand" value="0">
+            <input type="hidden" id="is_freehand" name="is_freehand" value="{{  is_object($row) ? $fromStore == 1?0:$row->is_freehand:0 }}">
             <input type="hidden" id="can_select_product_list" value="1">
             <div class="row">
             <div class="col-md-6">
@@ -47,7 +48,7 @@
                         <label for="location_id" class=" control-label col-md-4 text-left"> Location </label>
 
                         <div class="col-md-8">
-                           @if($data['prefill_type'] != "edit")
+                           @if($data['prefill_type'] != "edit" && $data['prefill_type']!= "SID")
                                 <select class="select3" id="location_id" name="location_id" required></select>
                             @else
                                {{ $data["order_loc_id"]." " }}  {!! SiteHelpers::gridDisplayView($data["order_loc_id"],'location_id','1:location:id:location_name') !!}
@@ -66,6 +67,28 @@
                                    value="1" @if(!empty($data['alt_address'])) checked @endif/></div>
 
                     </div>
+                    @if($id)
+                        <div class="form-group netSuiteStatus"><br/><br/>
+                        
+                        <p class="text-info netSuiteStatusSuccess @if(!Order::isApified($id, $row)) hidden @endif">
+                            <i class="fa fa-check-square-o m-l-sm m-r-xs"></i>
+                            {{ Lang::get('core.order_api_exposed_label') }}
+                        </p>
+                        <p class="text-warning netSuiteStatusPending @if(Order::isApified($id, $row) || !Order::isApiable($id, $row, true)) hidden @endif">
+                            <i class="fa fa-exclamation-triangle m-l-sm m-r-xs"></i>
+                            {{ Lang::get('core.order_api_exposed_label_pending') }}
+                        </p>
+                        <p class="text-gray netSuiteStatusNR  @if(Order::isApiable($id, $row, true)) hidden @endif">
+                            <i class="fa fa-times m-l-sm m-r-xs"></i>
+                            {{ Lang::get('core.order_api_exposed_label_ineligible') }}
+                        </p>
+                        </div>
+
+                     <div class="form-group relationshipStatus"><br/><br/>
+                         {!!implode("<br/>", @$relationships)!!}
+                     </div>
+                    @endif
+                    
                     {{-- Ship Address starts here  --}}
                     <div id="ship_address" style="display:none">
                         <div class="form-group  ">
@@ -287,7 +310,7 @@
                     <tr id="rowid" class="clone clonedInput">
                         <td><br/><input type="text" id="item_num" name="item_num[]" disabled readonly
                                         style="width:30px;border:none;background:none"/></td>
-                        <td><br/><input type="text" class="form-control sku" id="sku_num" name="sku[]"
+                        <td><br/><input type="text" placeholder="sku" {{  is_object($row) ? $fromStore == 1?'readonly': $row->is_freehand != 1 ?'readonly': '':'readonly' }} class="form-control sku" id="sku_num" name="sku[]"
                                     /></td>
 
                         <td><br/> <input type="text" name='item_name[]' placeholder='Item  Name' id="item_name"
@@ -295,7 +318,7 @@
                                          maxlength="225" required>
                         </td>
                         <td>
-                            <textarea name='item[]' placeholder='Item  Description' id="item"
+                            <textarea name='item[]' {{  is_object($row) ? $fromStore == 1?'readonly':$row->is_freehand != 1 ?'readonly': '':'readonly' }} placeholder='Item  Description' id="item"
                                       class='form-control item' cols="30" rows="4" maxlength="225"></textarea>
                         </td>
 
@@ -336,7 +359,7 @@
                     <a href="javascript:void(0);" class="addC btn btn-xs btn-info" rel=".clone" id="add_new_item"><i
                                 class="fa fa-plus"></i>
                         New Item</a>
-                @if(!empty($pass['Can add freehand products']))
+                @if(!empty($pass['Can add freehand products']) && !is_object($row) && $fromStore != 1)
                         <a href="javascript:void(0);" class="btn btn-xs btn-info enabled" data-status="disabled" id="can-freehand">
                             <i class="fa fa-times fa-check-circle-o" aria-hidden="true"></i>
                            <span>Enable Freehand</span></a>
@@ -369,8 +392,12 @@
 
                 <div class="col-sm-12 text-center">
                     <button type="submit" class="btn btn-primary btn-sm " id="submit_btn"><i
-                                class="fa  fa-save "></i>  {{ Lang::get('core.sb_save') }} </button>
-                    <button type="button" onclick="reloadOrder()" class="btn btn-success btn-sm">
+                                class="fa  fa-save "></i>  {{ Lang::get('core.sb_save') }} </button>                    
+                    @if($id && Order::isApiable($id, $row) && !Order::isApified($id, $row))
+                        <button type="button" class="btn btn-success btn-sm exposeAPI">
+                        {{ Lang::get('core.order_api_expose_button_label') }} </button>
+                    @endif
+                    <button type="button" onclick="reloadOrder()" class="btn btn-success btn-sm cancelButton">
                         <i class="fa  fa-arrow-circle-left "></i>  {{ Lang::get('core.sb_cancel') }} </button>
                 </div>
             </div>
@@ -472,13 +499,15 @@
             $("#location_id").jCombo("{{ URL::to('order/comboselect?filter=location:id:id|location_name ') }}",
                     {
                         selected_value: "{{ $data["order_loc_id"]}}",
-                        initial_text: '-------- Select Location --------'
+                        initial_text: '-------- Select Location --------',
+                        <?php $data["order_loc_id"] == '' ? '': print_r("onLoad:addInactiveItem('#location_id', ".$data['order_loc_id']." , 'Location', 'active' , 'id|location_name' )") ?>
                     });
 
             $("#vendor_id").jCombo("{{ URL::to('product/comboselect?filter=vendor:id:vendor_name:hide:0:status:1') }}",
                     {
                         selected_value: '{{ $data["order_vendor_id"] }}',
-                        initial_text: '-------- Select Vendor --------'
+                        initial_text: '-------- Select Vendor --------',
+                        <?php $data["order_vendor_id"] == '' ? '': print_r("onLoad:addInactiveItem('#vendor_id', ".$data['order_vendor_id']." , 'Vendor', 'status' , 'vendor_name')") ?>
                     });
 
             $("#freight_type_id").jCombo("{{ URL::to('order/comboselect?filter=freight:id:freight_type') }}",
@@ -690,21 +719,75 @@
             });
         });
 
-
+        vendorChangeCount = 1;
+$('#vendor_id').on('select2-selecting',function (e) {
+    $(this).attr('lastSelected', $(this).val());
+});
         $("#vendor_id").on('change', function() {
-            $.ajax({
-                type: "GET",
-                url: "{{ url() }}/order/bill-account",
-                data: {'vendor': $(this).val()},
-                success: function (data) {
-                    if(data.length>0){
-                        $('#bil_ac_num').val(data[0].bill_account_num);
-                    }
+            vendor = $(this);
+            if(vendorChangeCount > 1)
+            {
+                if($('#item_name').val()) {
+                    App.notyConfirm({
+                        message: "Are you sure you want to change Vendor <br> <b>***WARNING***</b><br>if you change vendor all of your items will be removed and you will have to add them again",
+                        confirmButtonText: 'Yes',
+                        confirm: function () {
+                            $('.itemstable .clonedInput:not(:first-child)').remove();
+                            $('.itemstable .clonedInput:first-child input').not('#item_num').val('');
+                            $('.itemstable .clonedInput:first-child textarea').val('');
+                            $.ajax({
+                                type: "GET",
+                                url: "{{ url() }}/order/bill-account",
+                                data: {'vendor': vendor.val()},
+                                success: function (data) {
+                                    if(data.length>0){
+                                        $('#bil_ac_num').val(data[0].bill_account_num);
+                                    }
+                                }
+                            });
+                        },
+                        cancel:function(){
+
+                            if(vendor.attr('lastSelected'))
+                            {
+                                console.log('selecting lastSelected');
+
+                                $('#vendor_id option[value = '+vendor.attr('lastSelected')+']').attr('selected', true);
+                                vendorChangeCount = 1;
+                                vendor.trigger("change");
+                            }
+                        }
+                    });
                 }
-            });
+                else
+                {
+                    $.ajax({
+                        type: "GET",
+                        url: "{{ url() }}/order/bill-account",
+                        data: {'vendor': vendor.val()},
+                        success: function (data) {
+                            if(data.length>0){
+                                $('#bil_ac_num').val(data[0].bill_account_num);
+                            }
+                        }
+                    });
+                }
+            }
+            else
+            {
+                $.ajax({
+                    type: "GET",
+                    url: "{{ url() }}/order/bill-account",
+                    data: {'vendor': vendor.val()},
+                    success: function (data) {
+                        if(data.length>0){
+                            $('#bil_ac_num').val(data[0].bill_account_num);
+                        }
+                    }
+                });
+            }
+            vendorChangeCount++;
         });
-
-
         $('#po_3').on('keyup', debounce(function () {
             var location_id = $("#po_1").val();
             validatePONumber(location_id, $(this).val());
@@ -927,111 +1010,108 @@
             var itemid = $("#" + trid + "  textarea[name^=item]").attr('id');
             var retailpriceid = $('#' + trid + "  input[name^=retail]").attr('id');
             var selectorProductId = $('#' + trid + "  input[name^=product_id]").attr('id');
-            if(($('#can_select_product_list').val() == 1))
+            if(($('#is_freehand').val() == 0))
             {
-                @if (!empty($pass['Can select product list']))
-                    $(obj).autocomplete({
-                        minLength: 2,
-                        source: function (request, response) {
-                            var term = request.term;
-                            term = term.trim();
-                            var vendorId = $("#vendor_id").val();
-                            if (vendorId != "") {
-                                request.vendor_id = $("#vendor_id").val();
-                            }
-                            lastXhr = $.getJSON("order/autocomplete", request, function (data, status, xhr) {
-                                cache[term] = data;
-                                if (data.value == "No Match") {
-                                    // $('[name^=item_name]:focus').closest('tr').find('.sku').removeAttr('readonly');
-                                }
-                                else {
-                                    // $('[name^=item_name]:focus').closest('tr').find('.sku').attr('disabled',true);
-                                    // $('[name^=item_name]:focus').closest('tr').find('.sku').attr('readonly',true);
-                                    // $('[name^=item_name]:focus').closest('tr').find('.sku').val('');
-
-                                }
-                                if (xhr === lastXhr) {
-                                    response(data);
-                                }
-                            });
-                        },
-                        select: function (event, ui) {
-                            $.ajax({
-                                url: "order/productdata",
-                                type: "get",
-                                dataType: 'json',
-                                data: {'product_id': ui.item.value},
-                                success: function (result) {
-                                    if (result.unit_price == 0 && result.case_price == 0) {
-                                        notyMessageError("Retail Price and Case Price Unavailable...");
-                                        exit;
-                                    }
-                                    if (result.sku) {
-                                        $("#" + skuid).val(result.sku);
-                                    }
-                                    else {
-                                        $("#" + skuid).val('N/A');
-                                    }
-
-                                    if (result.unit_price) {
-                                        $("#" + priceid).val(result.unit_price);
-                                    }
-                                    else {
-                                        $("#" + priceid).val(0.00);
-                                    }
-                                    if (result.case_price) {
-                                        $("#" + casepriceid).val(result.case_price);
-                                    }
-                                    else {
-                                        $("#" + casepriceid).val(0.00);
-                                    }
-                                    if (result.retail_price) {
-                                        $("#" + retailpriceid).val(result.retail_price);
-                                    }
-                                    else {
-                                        $("#" + casepriceid).val(0.00);
-                                    }
-                                    $("#" + itemid).val(result.item_description);
-                                    $("#" + selectorProductId).val(result.id);
-                                    $("#" + qtyid).val(0.00);
-                                    calculateSum();
-                                }
-                            });
-                        },
-                        change: function (event, ui) {
-
-                            if (($('#is_freehand').val() == 0)) {
-                                if ($(this).val()) {
-                                    if (($(this).val() == 'No Match')) {
-                                        $(this).val("");
-                                        //$('.'+$(this).attr('id')+'_span').remove();
-                                        $(this).attr('placeholder', 'Please select a value from list');
-                                        $(this).css('border-color', '#c00', 'important');
-                                        //$(this).parents('td').append("<span class='"+$(this).attr('id')+"_span order_custom_error' style='color:#cc0000'>Please select a value from list</span>");
-                                    }
-                                    else if (!(ui.item)) {
-                                        $(this).val("");
-                                        //$('.'+$(this).attr('id')+'_span').remove();
-                                        $(this).attr('placeholder', 'Please select a value from list');
-
-                                        $(this).css('border-color', '#c00', 'important');
-
-                                        //$(this).parents('td').append("<span class='"+$(this).attr('id')+"_span order_custom_error' style='color:#cc0000'>Please select a value from list</span>");
-                                    }
-                                    else {
-                                        $(this).css('border-color', '#e5e6e7', 'important');
-                                        //$('.'+$(this).attr('id')+'_span').remove();
-                                    }
-                                }
-                                else {
-                                    //$('.'+$(this).attr('id')+'_span').remove();
-                                    $(this).css('border-color', '#e5e6e7', 'important');
-                                }
-                            }
+                $(obj).autocomplete({
+                    minLength: 2,
+                    source: function (request, response) {
+                        var term = request.term;
+                        term = term.trim();
+                        var vendorId = $("#vendor_id").val();
+                        if (vendorId != "") {
+                            request.vendor_id = $("#vendor_id").val();
                         }
-                    });
+                        lastXhr = $.getJSON("/order/autocomplete", request, function (data, status, xhr) {
+                            cache[term] = data;
+                            if (data.value == "No Match") {
+                                // $('[name^=item_name]:focus').closest('tr').find('.sku').removeAttr('readonly');
+                            }
+                            else {
+                                // $('[name^=item_name]:focus').closest('tr').find('.sku').attr('disabled',true);
+                                // $('[name^=item_name]:focus').closest('tr').find('.sku').attr('readonly',true);
+                                // $('[name^=item_name]:focus').closest('tr').find('.sku').val('');
+
+                            }
+                            if (xhr === lastXhr) {
+                                response(data);
+                            }
+                        });
+                    },
+                    select: function (event, ui) {
+                        $.ajax({
+                            url: "/order/productdata",
+                            type: "get",
+                            dataType: 'json',
+                            data: {'product_id': ui.item.value},
+                            success: function (result) {
+                                if (result.unit_price == 0 && result.case_price == 0) {
+                                    notyMessageError("Retail Price and Case Price Unavailable...");
+                                    exit;
+                                }
+                                if (result.sku) {
+                                    $("#" + skuid).val(result.sku);
+                                }
+                                else {
+                                    $("#" + skuid).val('N/A');
+                                }
+
+                                if (result.unit_price) {
+                                    $("#" + priceid).val(result.unit_price);
+                                }
+                                else {
+                                    $("#" + priceid).val(0.00);
+                                }
+                                if (result.case_price) {
+                                    $("#" + casepriceid).val(result.case_price);
+                                }
+                                else {
+                                    $("#" + casepriceid).val(0.00);
+                                }
+                                if (result.retail_price) {
+                                    $("#" + retailpriceid).val(result.retail_price);
+                                }
+                                else {
+                                    $("#" + casepriceid).val(0.00);
+                                }
+                                $("#" + itemid).val(result.item_description);
+                                $("#" + selectorProductId).val(result.id);
+                                $("#" + qtyid).val(0.00);
+                                calculateSum();
+                            }
+                        });
+                    },
+                    change: function (event, ui) {
+
+                            if ($(this).val()) {
+                                if (($(this).val() == 'No Match')) {
+                                    $(this).val("");
+                                    //$('.'+$(this).attr('id')+'_span').remove();
+                                    $(this).attr('placeholder', 'Please select a value from list');
+                                    $(this).css('border-color', '#c00', 'important');
+                                    //$(this).parents('td').append("<span class='"+$(this).attr('id')+"_span order_custom_error' style='color:#cc0000'>Please select a value from list</span>");
+                                }
+                                else if (!(ui.item)) {
+                                    $(this).val("");
+                                    //$('.'+$(this).attr('id')+'_span').remove();
+                                    $(this).attr('placeholder', 'Please select a value from list');
+
+                                    $(this).css('border-color', '#c00', 'important');
+
+                                    //$(this).parents('td').append("<span class='"+$(this).attr('id')+"_span order_custom_error' style='color:#cc0000'>Please select a value from list</span>");
+                                }
+                                else {
+                                    $(this).css('border-color', '#e5e6e7', 'important');
+                                    //$('.'+$(this).attr('id')+'_span').remove();
+                                }
+                            }
+                            else {
+                                //$('.'+$(this).attr('id')+'_span').remove();
+                                $(this).css('border-color', '#e5e6e7', 'important');
+                            }
+                    }
+                });
                 $(obj).autocomplete( "enable" );
-                @endif
+
             }
             else
             {
@@ -1081,7 +1161,9 @@
                             $('#is_freehand').val(0);
                             $('#can_select_product_list').val(1);
                             $('.itemstable .clonedInput:not(:first-child)').remove();
-                            $('.itemstable .clonedInput:first-child input').val('');
+                            $('.itemstable .clonedInput input.sku').attr('readonly','readonly');
+                            $('.itemstable .clonedInput textarea.item').attr('readonly','readonly');
+                            $('.itemstable .clonedInput:first-child input').not('#item_num').val('');
                             $('.itemstable .clonedInput:first-child textarea').val('');
                         }
                         else{
@@ -1093,7 +1175,9 @@
                             $('.clonedInput .item_name').css('border-color','#e5e6e7','important');
                             $('.clonedInput .item_name').attr('placeholder','Item Name');
                             $('.itemstable .clonedInput:not(:first-child)').remove();
-                            $('.itemstable .clonedInput:first-child input').val('');
+                            $('.itemstable .clonedInput input.sku').removeAttr('readonly');
+                            $('.itemstable .clonedInput textarea.item').removeAttr('readonly');
+                            $('.itemstable .clonedInput:first-child input').not('#item_num').val('');
                             $('.itemstable .clonedInput:first-child textarea').val('');
                         }
                     }
@@ -1109,8 +1193,10 @@
                     $('#is_freehand').val(0);
                     $('#can_select_product_list').val(1);
                     $('.itemstable .clonedInput:not(:first-child)').remove();
-                    $('.itemstable .clonedInput:first-child input').val('');
+                    $('.itemstable .clonedInput:first-child input').not('#item_num').val('');
                     $('.itemstable .clonedInput:first-child textarea').val('');
+                    $('.itemstable .clonedInput input.sku').attr('readonly','readonly');
+                    $('.itemstable .clonedInput textarea.item').attr('readonly','readonly');
                 }
                 else{
                     currentElm.data('status','enabled');
@@ -1121,7 +1207,9 @@
                     $('.clonedInput .item_name').css('border-color','#e5e6e7','important');
                     $('.clonedInput .item_name').attr('placeholder','Item Name');
                     $('.itemstable .clonedInput:not(:first-child)').remove();
-                    $('.itemstable .clonedInput:first-child input').val('');
+                    $('.itemstable .clonedInput input.sku').removeAttr('readonly');
+                    $('.itemstable .clonedInput textarea.item').removeAttr('readonly');
+                    $('.itemstable .clonedInput:first-child input').not('#item_num').val('');
                     $('.itemstable .clonedInput:first-child textarea').val('');
                 }
             }
@@ -1157,3 +1245,37 @@
         }
 
     </style>
+
+<script>
+    $(document).ready(function () {
+        
+        $(".exposeAPI").on('click', function() {
+            var btn = $(this);
+            btn.prop('disabled', true);
+            blockUI();
+            $.ajax({
+                type: "GET",
+                url: "{{ url() }}/order/expose-api/{{ \SiteHelpers::encryptID($id) }}",
+                success: function (data) {
+                    unblockUI();
+                    if(data.status === 'success'){
+                        notyMessage(data.message);
+                        $(".netSuiteStatus p").addClass('hidden');
+                        $(".netSuiteStatus p.netSuiteStatusSuccess").removeClass('hidden');
+                        btn.closest("form#ordersubmitFormAjax")
+                            .find(":input").not(".cancelButton")
+                            .prop('disabled', true)
+                            .prop('readonly', true);
+                        btn.closest("form#ordersubmitFormAjax")
+                            .find("[type=submit]").remove();
+                        btn.remove();
+                    }
+                    else {
+                        btn.prop('disabled', false);
+                        notyMessageError(data.message);
+                    }
+                }
+            });
+        });
+    });
+</script>

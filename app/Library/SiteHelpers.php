@@ -1603,7 +1603,7 @@ class SiteHelpers
         }
     }
 
-    public static function gridDisplayView($val, $field, $arr)
+    public static function gridDisplayView($val, $field, $arr,$nodata=0)
     {
 
         $arr = explode(':', $arr);
@@ -1617,23 +1617,22 @@ class SiteHelpers
                 $v = '';
                 $v .= (isset($fields[0]) && $fields[0] != '' ? $row->$fields[0] : '');
                 if (isset($fields[1]) && empty($row->$fields[1])) {
-                    $v="No Data";
-                }
-               else{
+                    $v = "No Data";
+                } else {
                     $v .= (isset($fields[1]) && $fields[1] != '' ? $row->$fields[1] . ' ' : '');
                 }
 
-                if(isset($fields[2]) && !empty($row->$fields[2])) {
+                if (isset($fields[2]) && !empty($row->$fields[2])) {
                     $v .= (isset($fields[2]) && $fields[2] != '' ? $row->$fields[2] . ' ' : '');
                 }
-                    return $v;
-            }  else {
-                    $val="";
+                return $v;
+            } else {
+                $val = "";
 
             }
 
         }
-        if ($val === "0" || $val === 0 || $val === NULL || $val ==="" || empty($val) || $val === "$ 0.00" || $val === "$ 0.000" || $val === 0.00 || $val=== 0.000|| $val === "0.00" || $val=== "0.000" ) {
+        if (($val === "0" || $val === 0 || $val === NULL || $val === "" || empty($val)) && $nodata == 0) {
             $val = "No Data";
         }
         return $val;
@@ -2764,4 +2763,17 @@ class SiteHelpers
         //});                
     }
 
+    public static function isNoData($tableGrid)
+    {
+
+        $noDataArray=array();
+        if(!is_null($tableGrid)) {
+            foreach ($tableGrid as $f) {
+                if(isset($f['nodata']) && isset($f['field'])) {
+                    $noDataArray[$f['field']] = $f['nodata'];
+                }
+            }
+        }
+        return $noDataArray;
+    }
 }

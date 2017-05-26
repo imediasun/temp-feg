@@ -3,22 +3,30 @@
 class DateHelpers
 {
 
-    public static function formatDate($date)
+    public static function formatDate($date,$nodata=0)
     {
         if (preg_match('/[1-9]/', $date) && !is_null($date)) {
             $oDate = new \DateTime($date);
             return $newDateString = $oDate->format('m/d/Y');
-        } else {
+        } elseif($nodata == 1) {
+            return "";
+        }
+        else
+        {
             return "No Data";
         }
 
     }
 
-    public static function formatDateTime($date)
+    public static function formatDateTime($date,$nodata=0)
     {
         if (preg_match('/[1-9]/', $date) && !is_null($date)) {
             return date("m/d/Y H:i:s", strtotime(str_replace("/", "-", $date)));
-        } else {
+        }
+        elseif($nodata == 1) {
+            return "";
+        }
+        else {
             return "No Data";
         }
 
@@ -44,31 +52,31 @@ class DateHelpers
         return $formattedValue;
     }
 
-    protected static function formatValue($val)
+    protected static function formatValue($val,$nodata)
     {
-        if ($val === 0 || $val == null || $val == "0" || empty($val) || $val == ""|| $val=="0.00" || $val == "0.000" || $val === 0.00 || strtolower($val) === "null") {
+        if (($val === 0 || $val == null || $val == "0" || empty($val) || $val == ""||  strtolower($val) === "null") && $nodata == 0) {
             return "No Data";
         } else {
             return $val;
         }
     }
 
-    public static function formatZeroValue($val)
+    public static function formatZeroValue($val,$nodata=0)
     {
-        return self::formatValue($val);
+        return self::formatValue($val,$nodata);
     }
 
-    public static function formatStringValue($val)
+    public static function formatStringValue($val,$nodata=0)
     {
-        return self::formatValue($val);
+        return self::formatValue($val,$nodata);
     }
 
     // formatting 2 values used in module->view
     public static function formatMultiValues($val1, $val2)
     {
-        if ($val1 === 0 || $val1 == null || $val1 == "0" || empty($val1) || $val1 == "" || $val1 === 0.00 || $val1 == "0.00" || $val1 == "0.000" || strtolower($val1) === "null") {
+        if ($val1 === 0 || $val1 == null || $val1 == "0" || empty($val1) || $val1 == "" || strtolower($val1) === "null") {
             return "No Data";
-        } elseif ($val2 === 0 || $val2 == null || $val2 == "0" || empty($val2) || $val2 == "" || $val2 === 0.00 ||$val2 == "0.00" || $val2 == "0.000" || strtolower($val2) === "null") {
+        } elseif ($val2 === 0 || $val2 == null || $val2 == "0" || empty($val2) || $val2 == "" || strtolower($val2) === "null") {
             return "No Data";
         } else {
             return $val1 . " " . $val2;

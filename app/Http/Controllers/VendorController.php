@@ -5,6 +5,7 @@ use App\Models\Vendor;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Validator, Input, Redirect;
+use DB;
 
 class VendorController extends Controller
 {
@@ -230,6 +231,7 @@ class VendorController extends Controller
         $this->data['id'] = $id;
         $this->data['access'] = $this->access;
         $this->data['setting'] = $this->info['setting'];
+        $this->data['nodata']=\SiteHelpers::isNoData($this->info['config']['grid']);
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
         return view('vendor.view', $this->data);
     }
@@ -283,11 +285,15 @@ class VendorController extends Controller
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
             if(empty($id))
+            {
                 $data = $this->validatePost('vendor');
+            }
             else
+            {
                 $data = $this->validatePost('vendor', true);
-            $data['hide'] = $request->hide;
-            $data['status'] = $request->statue;
+            }
+            $data['hide'] = $request->get('hide') == "1" ?1:0;
+            $data['status'] = $request->get('status') == "1" ?1:0;
             if (!empty($data['website'])) {
                 if (preg_match('/^https?\:\/\//', trim($data['website'])) !== 1) {
                     $data['website'] = 'http://' . trim($data['website']);
@@ -339,7 +345,44 @@ class VendorController extends Controller
         }
 
     }
+    public function getItemcheck(Request $request)
+    {
+        $module = str_replace(' ', '', "\App\Models\ ".$request->module);
+        $columns = explode('|', $request->column);
+        $result = '';
+        $count = count($columns);
+        if($request->module == 'Vendor')
+        {
+            $item = DB::select("SELECT ".implode(',' , $columns)."  FROM vendor WHERE id=$request->id AND ($request->check = 0 OR hide=1)");
+            if(!empty($item))
+            {
+                $item = $item[0];
+            }
 
+        }
+        else
+        {
+            $item = $module::where('id',$request->id)->where($request->check,$request->inverse)->first()?$module::where('id',$request->id)->where($request->check,$request->inverse)->first():0;
+        }
+        if(!empty($item))
+        {
+            $i = 1;
+            foreach ($columns as $column)
+            {
+                $result .= $item->$column;
+                if($i < $count)
+                {
+                    $result .= ' | ';
+                }
+                $i++;
+            }
+        }
+        else
+        {
+            $result = 0;
+        }
+        return $result;
+    }
     function postTrigger(Request $request)
     {
         $isActive = $request->get('isActive');

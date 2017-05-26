@@ -349,6 +349,47 @@ function get_browser() {
     };
 }
 
+function verifyBrowser() {
+    console.log(get_browser().name);
+    console.log(get_browser().version);
+    switch (get_browser().name){
+        case 'Chrome':
+            if(get_browser().version<57){
+                $('#browser_notification').show();
+            }
+            break;
+        case 'Firefox':
+            if(get_browser().version<52){
+                $('#browser_notification').show();
+            }
+            break;
+        case 'Safari':
+            if(get_browser().version<9){
+                $('#browser_notification').show();
+            }
+            break;
+        case 'Edge':
+            if(get_browser().version<14){
+                $('#browser_notification').show();
+            }
+            break;
+        case 'IE':
+            if(get_browser().version<11){
+                $('#browser_notification').show();
+            }
+            break;
+        case 'MSIE':
+            if(get_browser().version<11){
+                $('#browser_notification').show();
+            }
+            break;
+    }
+}
+
+$( document ).ready(function() {
+    verifyBrowser();
+});
+
 function disableConsoleLogs(){
     var console = {};
     console.log = function(){};
@@ -611,6 +652,12 @@ function alignColumns(gridContanier) {
     });
 }
 
+function blockUI() {
+    $('.ajaxLoading').show();
+}
+function unblockUI() {
+    $('.ajaxLoading').hide();
+}
 
 jQuery(document).ready(function($){
 

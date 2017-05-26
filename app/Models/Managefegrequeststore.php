@@ -171,12 +171,12 @@ class managefegrequeststore extends Sximo
         foreach ($query as $index => $row) {
        //     $number_requests = $number_requests ." ".." | <em>". $row->request_count .":</em>";
             if($index == count($query) -1 )
-                $number_requests = $number_requests ." ".$row->request_count. $row->count ;
+                $number_requests = $number_requests ." ".$row->request_count.": ". $row->count ;
             else
-                $number_requests = $number_requests ." ".$row->request_count. $row->count  ;
+                $number_requests = $number_requests ." ".$row->request_count.": ". $row->count  ;
 
         }
-        $data['number_requests'] = substr($number_requests, 0, -2);
+        $data['number_requests'] = $number_requests;
         $query = \DB::select('SELECT GROUP_CONCAT(order_type) AS order_types  FROM order_type
 							  WHERE id != 6 AND id != 10');
         if (count($query) == 1) {
@@ -206,19 +206,23 @@ class managefegrequeststore extends Sximo
                 'id' => $row->id,
                 'text' => $row->order_type
             );
+                $orderTypesArray[] = $row;
                // Removing 'Instant Wind Prizes' and 'Redemption Prizes' from order type array
-                if($row['id'] != 7 && $row['id'] != 8) {
+                /*if($row['id'] != 7 && $row['id'] != 8) {
                     $orderTypesArray[] = $row;
-                }
+                }*/
             }
         }
-              // Combining 'Instant Win','Redemption' and 'Party' order types in a single category
-        $customArray[] = array(
+
+        // Combining 'Instant Win','Redemption' and 'Party' order types in a single category
+        /*$customArray[] = array(
             'id' => '7-8-17',
             'text' => 'Instant Win, Redemption, Party (Combined)'
-        );
+        );*/
 
-        $array = array_merge($orderTypesArray, $customArray);
+        //$array = array_merge($orderTypesArray, $customArray);
+        $array = array_merge($orderTypesArray);
+
         return $array;
     }
 
@@ -373,7 +377,7 @@ class managefegrequeststore extends Sximo
             {
                 $number_requests = $number_requests.$row->request_count;
             }
-            $data['number_requests'] = substr($number_requests, 0, -2);
+            $data['number_requests'] = substr($number_requests, 0,-2);
 
             $query = \DB::select('SELECT GROUP_CONCAT(order_type) AS order_types
 									 FROM order_type

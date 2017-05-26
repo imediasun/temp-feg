@@ -192,7 +192,9 @@
 $(document).ready(function() { 
 	
     $("#location_id").jCombo("{{ URL::to('sbticket/comboselect?filter=location:id:id|location_name') }}" + "&delimiter=%20|%20",
-        {  selected_value : '{{ $locationId }}','initial-text': "Select Location" });
+        {  selected_value : '{{ $locationId }}','initial-text': "Select Location" ,
+            <?php $locationId == '' ? '': print_r("onLoad:addInactiveItem('#location_id', ".$locationId." , 'Location', 'active' , 'id|location_name' )") ?>
+        });
 
 	$('.datepickerHandleButton').click(function(){
         $("#my-datepicker").datepicker().focus();
@@ -226,7 +228,7 @@ $(document).ready(function() {
     
 	$('input[type="checkbox"],input[type="radio"]').iCheck({
 		checkboxClass: 'icheckbox_square-blue',
-		radioClass: 'iradio_square-blue',
+		radioClass: 'iradio_square-blue'
 	});
 
 	$('.removeCurrentFiles').on('click',function(){

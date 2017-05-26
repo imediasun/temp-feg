@@ -30,7 +30,7 @@ class managefreightquoters extends Sximo
         }
         return 'SELECT freight_orders.*,IF(freight_orders.loc_to_1 = 0,"",freight_orders.loc_to_1) AS loc_to_1,freight_orders.date_submitted,freight_orders.date_paid,GROUP_CONCAT(company_name) AS company_name,
                 (select c.company_name from freight_companies c where c.id=freight_orders.freight_company_1) as company_name_1,
-                IF(freight_orders.vend_to = 0 AND freight_orders.loc_to_1=0, CONCAT(freight_orders.to_add_name," (",freight_orders.to_add_state,")"),
+                IF(freight_orders.vend_to = 0 AND freight_orders.loc_to_1=0, CONCAT(freight_orders.to_add_name,"(",freight_orders.to_add_state,")"),
                 IF(freight_orders.vend_to = 0,CONCAT("",GROUP_CONCAT(L2.location_name)), V2.vendor_name)) AS vend_to,
                 IF(freight_orders.vend_from = 0 AND freight_orders.loc_from = 0, CONCAT(freight_orders.from_add_name,"(",freight_orders.from_add_state,")"),IF(freight_orders.vend_from = 0, L.location_name, V.vendor_name)) AS vend_from,
                 ' . $statusqry . ' AS status
@@ -490,9 +490,8 @@ class managefreightquoters extends Sximo
                         }
 
                         $from = \Session::get('eid');
-                        $to = $this->get_user_emails('users_plus_district_and_field_managers', $data['request']['loc'][$i]);
-                        $cc = 'freight-notifications@fegllc.com';
-                        $bcc = 'support@fegllc.com';
+                        $recipients =  \FEGHelp::getSystemEmailRecipients('UPDATE FREIGHT TOOL EMAIL', $data['request']['loc'][$i]);
+
                         $subject = ((int)$num_games_per_destination == 0)?('Scheduled for delivery to ' . $locationName . '!'):('('.(int)$num_games_per_destination.')'.' Game[s] scheduled for delivery to ' . $locationName . '!');
                         $message = '<p>
 										' . $email_notes . '
@@ -579,25 +578,17 @@ class managefreightquoters extends Sximo
 								            </tr>
 								        </table>
 									</p>';
-                        //$headers = "CC: " . $cc . PHP_EOL;
-                        //$headers .= "BCC:" . $bcc . PHP_EOL;
-                        //$headers .= "From: " . $from . "\r\n" . "X-Mailer: php";
-                        //$headers .= "MIME-Version: 1.0\r\n";
-                        //$headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
-                        // echo $message;
-                       //mail($to, $subject, $message, $headers);
-                        if(!empty($to)){
-                            FEGSystemHelper::sendSystemEmail(array(
-                                'to' => $to,
+                        if(!empty($recipients['to'])){
+                            FEGSystemHelper::sendSystemEmail(array_merge($recipients, array(
                                 'subject' => $subject,
                                 'message' => $message,
                                 'isTest' => env('APP_ENV', 'development') !== 'production' ? true : false,
                                 'from' => $from,
-                                'cc' => $cc,
-                                'bcc' => $bcc,
-                                'configName' => 'UPDATE FREIGHT ORDER EMAIL'
-                            ));
+                            )));
                         }
+
+
+
                     } else {
 
                     }

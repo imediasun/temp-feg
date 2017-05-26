@@ -142,6 +142,8 @@ class PendingrequestController extends Controller
         } else {
             $this->data['row'] = $this->model->getColumnTable('requests');
         }
+        $row['request_date'] = \DateHelpers::formatDate($row['request_date'],1);
+        $row['process_date'] = \DateHelpers::formatDate($row['process_date'],1);
         $this->data['setting'] = $this->info['setting'];
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
 
@@ -177,6 +179,7 @@ class PendingrequestController extends Controller
         $this->data['id'] = $id;
         $this->data['access'] = $this->access;
         $this->data['setting'] = $this->info['setting'];
+        $this->data['nodata']=\SiteHelpers::isNoData($this->info['config']['grid']);
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
         return view('pendingrequest.view', $this->data);
     }
@@ -207,7 +210,6 @@ class PendingrequestController extends Controller
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
             $data = $this->validatePost('requests');
-
             $id = $this->model->insertRow($data, $id);
 
             return response()->json(array(

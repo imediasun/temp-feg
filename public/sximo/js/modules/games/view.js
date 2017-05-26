@@ -44,7 +44,7 @@
             container.find("#status").jCombo(mainUrl+"/comboselect?filter=game_status:id:game_status", 
                         {  selected_value : ''+ gameData.status_id });
             container.find("#location_id").jCombo(mainUrl+"/comboselect?filter=location:id:id|location_name&delimiter=%20|%20", 
-                        {  selected_value : ''+ gameData.dropdownlocation });
+                        {  selected_value : ''+ gameData.dropdownlocation  , ready:addInactiveItem("#location_id", ''+ gameData.dropdownlocation , 'Location', 'active' , 'id|location_name')});
                         
             container.find('.date').datepicker({format:'mm/dd/yyyy',autoclose:true});
             container.find('.datetime').datetimepicker({format: 'mm/dd/yyyy hh:ii:ss'});
