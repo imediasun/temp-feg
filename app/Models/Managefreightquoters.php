@@ -490,8 +490,7 @@ class managefreightquoters extends Sximo
                         }
 
                         $from = \Session::get('eid');
-                        $recipients =  \FEGHelp::getSystemEmailRecipients('UPDATE FREIGHT TOOL EMAIL', $data['request']['loc'][$i]);
-
+                        $recipients =  \FEGHelp::getSystemEmailRecipients('UPDATE FREIGHT INTERNAL EMAIL', $data['request']['loc'][$i]);
                         $subject = ((int)$num_games_per_destination == 0)?('Scheduled for delivery to ' . $locationName . '!'):('('.(int)$num_games_per_destination.')'.' Game[s] scheduled for delivery to ' . $locationName . '!');
                         $message = '<p>
 										' . $email_notes . '
@@ -607,18 +606,8 @@ class managefreightquoters extends Sximo
 									' . $data['request']['dimension'][$i];
                     }
                 }
-                if(env('APP_ENV', 'development') == 'production')
-                {
-                    $to = $contact_email;
-                    $cc = 'rich.pankey@fegllc.com';
-                }
-                else
-                {
-                    $to = "stanlymarian@gmail.com";//hardcoded email for testing
-                    $cc = 'jdanial710@gmail.com';
-                }
+                $to = $contact_email;
                 $from = 'support@fegllc.com';
-                $bcc = '';
                 $subject = 'FEG has scheduled a Freight Shipment to you!';
                 $message = '<p style="font-size:1em;">
 							' . $email_notes . '
@@ -647,14 +636,7 @@ class managefreightquoters extends Sximo
 								immediately</b> for determination as to whether you should accept or refuse the shipment.
 							<br>
 						</p>';
-                //$headers = "CC: " . $cc . PHP_EOL;
-                //$headers .= "BCC:" . $bcc . PHP_EOL;
-                //$headers .= "From: " . $from . "\r\n" . "X-Mailer: php";
-                //$headers .= "MIME-Version: 1.0\r\n";
-                //$headers .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
-                // echo $message;
-                //DO NOT uncomment below code
-                //mail($to, $subject, $message, $headers);
+
                 if(!empty($to)){
                     FEGSystemHelper::sendSystemEmail(array(
                         'to' => $to,
@@ -662,9 +644,7 @@ class managefreightquoters extends Sximo
                         'message' => $message,
                         'isTest' => env('APP_ENV', 'development') !== 'production' ? true : false,
                         'from' => $from,
-                        'cc' => $cc,
-                        'bcc' => $bcc,
-                        'configName' => 'UPDATE FREIGHT ORDER EMAIL'
+                        'configName' => 'UPDATE FREIGHT EXTERNAL EMAIL'
                     ));
                 }
             }
