@@ -211,14 +211,10 @@ class MerchandisebudgetController extends Controller
         $budget_vals['oct'] = array('location_id' => $location_id, 'budget_date' => $budget_year . '-10-01', 'budget_value' => $request->get('oct'));
         $budget_vals['nov'] = array('location_id' => $location_id, 'budget_date' => $budget_year . '-11-01', 'budget_value' => $request->get('nov'));
         $budget_vals['dec'] = array('location_id' => $location_id, 'budget_date' => $budget_year . '-12-01', 'budget_value' => $request->get('dec'));
-
-        $budget_vals['location_id'] = $location_id;
-        $budget_vals['budget_year'] = $budget_year;
-
         if ($id == 0) {
-            $id = $this->model->insertRow($budget_vals, $request->input('id'));
+            $id = $this->model->insertRow($budget_vals, $request->input('id'), $location_id, $budget_year);
         } else {
-            $id = $this->model->insertRow($budget_vals, $id);
+            $id = $this->model->insertRow($budget_vals, $id, $location_id, $budget_year);
         }
         return response()->json(array(
             'status' => 'success',
