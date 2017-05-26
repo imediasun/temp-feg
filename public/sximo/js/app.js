@@ -364,12 +364,12 @@ function verifyBrowser() {
             }
             break;
         case 'Safari':
-            if(get_browser().version<9){
+            if(get_browser().version<11){
                 $('#browser_notification').show();
             }
             break;
         case 'Opera':
-            if(get_browser().version<15){
+            if(get_browser().version<14){
                 $('#browser_notification').show();
             }
             break;
