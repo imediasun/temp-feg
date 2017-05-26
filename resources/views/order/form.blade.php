@@ -1,6 +1,4 @@
-<?php use App\Models\Order;
-echo $data['prefill_type'];
-?>
+<?php use App\Models\Order;?>
 @if($setting['form-method'] =='native')
     <style>
         #add_new_item
