@@ -66,7 +66,7 @@
                         <li class="{!! $mType !!}">
                         @if(!$mIsDivider)
                             <a href="{!! $mUrl !!}" >
-                                <i class="{!! $iconClass !!}"></i>
+                                <i class="{!! $iconClass !!}"></i> &nbsp;&nbsp;&nbsp;
                                 {{ $mName }}
                             </a>
                         @endif

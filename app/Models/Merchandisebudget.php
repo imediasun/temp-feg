@@ -53,7 +53,7 @@ class merchandisebudget extends Sximo
         return " GROUP BY location_budget.location_id ";
     }
 
-    public function insertRow($data, $id, $location_id = null, $budget_year = null)
+    public function insertRow($data, $id = null, $location_id = null, $budget_year = null)
     {
 
         $table = with(new static)->table;
