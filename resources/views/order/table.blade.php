@@ -184,7 +184,7 @@ usort($tableGrid, "SiteHelpers::_sort");
                             <i class=" fa fa-random" aria-hidden="true"></i>
                         </a>
                         @if($row->status_id=='Open' || $row->status_id=='Open (Partial)')
-                            @if(Order::isApified($id, $row) || !Order::isApiable($id, $row, true))
+                            @if($row->is_freehand=='1' || Order::isApified($id, $row) || !Order::isApiable($id, $row, true))
                                 <a href="{{ URL::to('order/orderreceipt/'.$row->id)}}"
                                    data-id="{{$eid}}"
                                    data-action="receipt"
