@@ -113,8 +113,11 @@
                                 Date Needed: </label>
 
                             <div class="col-md-6">
+                                <span class="input-group-addon" style="width: 32px;padding-left: 10px;padding-top: 8px;padding-bottom: 8px;float: left;">
+                                    <i class="fa fa-calendar" id="icon"></i>
+                                </span>
                                 <input typ="text" class="form-control date" name="need_by_date" value="" id="date_needed"
-                                        />
+                                        style="width:150px !important;" />
                             </div>
 
                         </div>
@@ -145,7 +148,7 @@
                                 <div class="col-sm-6 text-center"><br>
                                     <button type="submit" class="btn btn-primary btn-sm " ><i
                                                 class="fa  fa-save "></i>  {{ Lang::get('core.sb_save') }} </button>
-                                    <b class="text-center">Submitted
+                                    <b class="text-center">&nbsp;Submitted
                                         on {{ date('m/d/Y') }}</b>
                                     {{--<button type="button" onclick="ajaxViewClose('#{{ $pageModule }}')"--}}
                                             {{--class="btn btn-success btn-sm"><i--}}
