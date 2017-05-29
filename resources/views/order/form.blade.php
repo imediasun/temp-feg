@@ -170,7 +170,7 @@
                             Vendor </label>
 
                         <div class="col-md-8">
-                            <select name='vendor_id' rows='5' id='vendor_id' class='select3 ' required></select>
+                            <select name='vendor_id' rows='5' id='vendor_id' data-seprate=true class='select3 ' required></select>
                         </div>
 
                     </div>
@@ -507,7 +507,7 @@
                     {
                         selected_value: '{{ $data["order_vendor_id"] }}',
                         initial_text: '-------- Select Vendor --------',
-                        <?php $data["order_vendor_id"] == '' ? '': print_r("onLoad:addInactiveItem('#vendor_id', ".$data['order_vendor_id']." , 'Vendor', 'status' , 'vendor_name')") ?>
+                        <?php $data["order_vendor_id"] == '' ? '': print_r("onLoad:addInactiveItem('#vendor_id[data-seprate=true]', ".$data['order_vendor_id']." , 'Vendor', 'status' , 'vendor_name')") ?>
                     });
 
             $("#freight_type_id").jCombo("{{ URL::to('order/comboselect?filter=freight:id:freight_type') }}",
@@ -725,7 +725,7 @@ $('#vendor_id').on('select2-selecting',function (e) {
 });
         $("#vendor_id").on('change', function() {
             vendor = $(this);
-            if(vendorChangeCount > 1)
+            if(vendorChangeCount > 1 && $('#vendor_id').attr('lastselected') != undefined)
             {
                 if($('#item_name').val()) {
                     App.notyConfirm({

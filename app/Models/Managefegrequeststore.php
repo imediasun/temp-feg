@@ -74,8 +74,18 @@ class managefegrequeststore extends Sximo
         return "  ";
     }
 
+    /**
+     * @param null $v1 => T for Order Type (v1=T6)
+     * @param null $v2 => V for Order Vendor(v2=
+     * @param null $v3 => L for Order Location(v3=V11)
+     * @param null $filter
+     * @return mixed
+     */
     public static function getManageRequestsInfo($v1 = null, $v2 = null, $v3 = null,$filter=null)
     {
+        /**
+         * Extract type id from v1,v2 or v3 variable
+         */
         if (substr($v1, 0, 1) == 'T') {
             $v1 = substr($v1, 1);
             $TID = $v1;
@@ -88,6 +98,10 @@ class managefegrequeststore extends Sximo
         } else {
             $TID = 0;
         }
+
+        /**
+         * Extract location id from v1,v2 or v3 variable
+         */
         if (substr($v1, 0, 1) == 'L') {
             $v1 = substr($v1, 1);
             $LID = $v1;
@@ -100,6 +114,11 @@ class managefegrequeststore extends Sximo
         } else {
             $LID = 0;
         }
+
+        /**
+         * Extract vendor id from v1,v2 or v3 variable
+         */
+
         if (substr($v1, 0, 1) == 'V') {
             $v1 = substr($v1, 1);
             $VID = $v1;
@@ -112,8 +131,12 @@ class managefegrequeststore extends Sximo
         } else {
             $VID = 0;
         }
+
         $order_dropdown_data = self::getOrdersDropDownData();
         $data['order_dropdown-data'] = $order_dropdown_data;
+
+
+
         if (!empty($TID)) {
             if (strpos($TID, '-')) {
                 $TID_comma_replaced = str_replace('-', ',', $TID);

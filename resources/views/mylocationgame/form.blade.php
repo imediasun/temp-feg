@@ -140,7 +140,7 @@
 						<div class="col-md-6">
 							<input type='hidden' name='prev_location_id' value='{{ $row['prev_location_id'] }}' />
 							<input type='hidden' name='old_location_id' value='{{ $row['location_id'] }}' />
-							<select name='location_id' id='location_id' class='select2 '
+							<select name='location_id' data-seprate=true id='location_id' class='select2 '
 									@if($isEdit)  readonly='readonly' @endif
 							>
 							</select>
@@ -165,7 +165,7 @@
 							{!! SiteHelpers::activeLang('Manufacturer', (isset($fields['mfg_id']['language'])? $fields['mfg_id']['language'] : array())) !!}
 						</label>
 						<div class="col-md-6">
-							<select name='mfg_id' rows='5' id='mfg_id' class='select2 '   ></select>
+							<select name='mfg_id' rows='5' id='mfg_id' data-seprate=true class='select2 '   ></select>
 						</div>
 						<div class="col-md-2">
 
@@ -187,7 +187,7 @@
 							{!! SiteHelpers::activeLang('Product ', (isset($fields['product_id']['language'])? $fields['product_id']['language'] : array())) !!}
 						</label>
 						<div class="col-md-6">
-							<select name='product_id[]' multiple rows='5' id='product_id' class='select2 '   ></select>
+							<select name='product_id[]' multiple rows='5' data-seprate=true id='product_id' class='select2 '   ></select>
 						</div>
 						<div class="col-md-2">
 

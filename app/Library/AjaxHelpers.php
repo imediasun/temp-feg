@@ -92,7 +92,7 @@ class AjaxHelpers
                 //$serialisedParams = implode(",", $params);
                 //$val = call_user_func(array($className, $methodName), $serialisedParams);
                 $val = call_user_func_array(array($className, $methodName), $params);
-                if(empty($val) &&  $noData == 0)
+                if(empty($val)  &&  $noData == 0)
                 {
                     return "No Data";
                 }

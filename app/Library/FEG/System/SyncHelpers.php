@@ -1460,7 +1460,7 @@ class SyncHelpers
     
     public static function migrate($params = array()) {
         $L = new MyLog('database-migration.log', 'GoLiveMigration', 'Data');
-        $L->log("Start Database Migration");
+        $L->log("****** Start Database Migration ********");
 //        $L->log("       game start");
 //        // update game
 //        ////DB::statement('ALTER TABLE `game` CHANGE `product_id` `product_id` TEXT NOT NULL; ');
@@ -1500,61 +1500,67 @@ class SyncHelpers
 //            order by user_id";
 //        DB::insert($q);
         
-        $L->log("       location_budget start");
+        $L->log("-------- location_budget migration starts");
         //From location.[id,<montth_year>] to location_budget.[location_id,budget_date,budget_value]        
-//        $q = "SELECT id, Jan_2012,Feb_2012,Mar_2012,Apr_2012,May_2012,
-//            Jun_2012,Jul_2012,Aug_2012,Sep_2012,Oct_2012,Nov_2012,Dec_2012,
-//            Jan_2013,Feb_2013,Mar_2013,Apr_2013,May_2013,Jun_2013,Jul_2013,
-//            Aug_2013,Sep_2013,Oct_2013,Nov_2013,Dec_2013,
-//            Jan_2014,Feb_2014,Mar_2014,Apr_2014,May_2014,Jun_2014,Jul_2014,
-//            Aug_2014,Sep_2014,Oct_2014,Nov_2014,Dec_2014,
-//            Jan_2015,Feb_2015,Mar_2015,Apr_2015,May_2015,Jun_2015,Jul_2015,
-//            Aug_2015,Sep_2015,Oct_2015,Nov_2015,Dec_2015,
-//            Jan_2016,Feb_2016,Mar_2016,Apr_2016,May_2016,Jun_2016,Jul_2016,
-//            Aug_2016,Sep_2016,Oct_2016,Nov_2016,Dec_2016,
-//            Jan_2017,Feb_2017,Mar_2017,Apr_2017,May_2017,Jun_2017,Jul_2017,
-//            Aug_2017,Sep_2017,Oct_2017,Nov_2017,Dec_2017,
-//            Jan_2018,Feb_2018,Mar_2018,Apr_2018,May_2018,Jun_2018,Jul_2018,
-//            Aug_2018,Sep_2018,Oct_2018,Nov_2018,Dec_2018,
-//            Jan_2019,Feb_2019,Mar_2019,Apr_2019,May_2019,Jun_2019,Jul_2019,
-//            Aug_2019,Sep_2019,Oct_2019,Nov_2019,Dec_2019,
-//            Jan_2020,Feb_2020,Mar_2020,Apr_2020,May_2020,Jun_2020,Jul_2020,
-//            Aug_2020,Sep_2020,Oct_2020,Nov_2020,Dec_2020
-//
-//            FROM location";
-//
-//        DB::connection()->setFetchMode(PDO::FETCH_ASSOC);
-//        DB::table("location_budget")->truncate();
-//        $data = DB::select($q);
-//        DB::beginTransaction();
-//        foreach($data as $row) {
-//            $id = $row['id'];
-//            foreach($row as $fieldName => $value) {
-//                if ($fieldName != "id") {
-//                    $date = date("Y-m-d", strtotime(str_replace('_', ' ', $fieldName)));
-//                    $q = "INSERT INTO location_budget
-//                        (location_id, budget_date, budget_value)
-//                        VALUES (?, ?, ?)";
-//                    DB::insert($q, [$id, $date, $value]);
-//                }
-//            }
-//        }
-//        DB::commit();
-//        DB::connection()->setFetchMode(PDO::FETCH_CLASS);
+        $q = "SELECT id, Jan_2012,Feb_2012,Mar_2012,Apr_2012,May_2012,
+            Jun_2012,Jul_2012,Aug_2012,Sep_2012,Oct_2012,Nov_2012,Dec_2012,
+            Jan_2013,Feb_2013,Mar_2013,Apr_2013,May_2013,Jun_2013,Jul_2013,
+            Aug_2013,Sep_2013,Oct_2013,Nov_2013,Dec_2013,
+            Jan_2014,Feb_2014,Mar_2014,Apr_2014,May_2014,Jun_2014,Jul_2014,
+            Aug_2014,Sep_2014,Oct_2014,Nov_2014,Dec_2014,
+            Jan_2015,Feb_2015,Mar_2015,Apr_2015,May_2015,Jun_2015,Jul_2015,
+            Aug_2015,Sep_2015,Oct_2015,Nov_2015,Dec_2015,
+            Jan_2016,Feb_2016,Mar_2016,Apr_2016,May_2016,Jun_2016,Jul_2016,
+            Aug_2016,Sep_2016,Oct_2016,Nov_2016,Dec_2016,
+            Jan_2017,Feb_2017,Mar_2017,Apr_2017,May_2017,Jun_2017,Jul_2017,
+            Aug_2017,Sep_2017,Oct_2017,Nov_2017,Dec_2017,
+            Jan_2018,Feb_2018,Mar_2018,Apr_2018,May_2018,Jun_2018,Jul_2018,
+            Aug_2018,Sep_2018,Oct_2018,Nov_2018,Dec_2018,
+            Jan_2019,Feb_2019,Mar_2019,Apr_2019,May_2019,Jun_2019,Jul_2019,
+            Aug_2019,Sep_2019,Oct_2019,Nov_2019,Dec_2019,
+            Jan_2020,Feb_2020,Mar_2020,Apr_2020,May_2020,Jun_2020,Jul_2020,
+            Aug_2020,Sep_2020,Oct_2020,Nov_2020,Dec_2020
 
+            FROM location";
+
+        DB::connection()->setFetchMode(PDO::FETCH_ASSOC);
+        DB::table("location_budget")->truncate();
+        $data = DB::select($q);
+        DB::beginTransaction();
+        foreach($data as $row) {
+            $id = $row['id'];
+            foreach($row as $fieldName => $value) {
+                if ($fieldName != "id" && !empty($value)) {
+                    $date = date("Y-m-d", strtotime(str_replace('_', ' ', $fieldName)));
+                    $q = "INSERT INTO location_budget
+                        (location_id, budget_date, budget_value)
+                        VALUES (?, ?, ?)";
+                    $c = DB::insert($q, [$id, $date, $value]);
+                    $L->log("-------- ---- $c records added for Loc: $id, Date: $date, Amount: $value");
+                }
+            }
+        }
+        DB::commit();
         DB::connection()->setFetchMode(PDO::FETCH_CLASS);
-        $L->log("Start Location User Assignments");
+        $L->log("-------- location_budget migration ends");
+
+/*
+        
+        $L->log("======== Location User Assignments Starts");
+        DB::connection()->setFetchMode(PDO::FETCH_CLASS);
         $sql = "DELETE FROM user_locations WHERE group_id IS NOT NULL";
         DB::delete($sql);
 
-        $templateDate = DB::select("SELECT * from location_user_roles_master");
+        $templateData = DB::select("SELECT * from location_user_roles_master");
         $template = [];
-        foreach($templateDate as $tItem) {
+        foreach($templateData as $tItem) {
             $template[$tItem->role_title] = $tItem;
         }
 
-        $data = DB::select("SELECT r.dist_mgr_id, l.* FROM location l
-                            LEFT JOIN region r ON r.region=l.region_id;");
+        $data = DB::select("SELECT r.dist_mgr_id, l.id, l.location_name, l.region_id FROM location l
+                	LEFT JOIN region r ON r.id=l.region_id
+                    WHERE r.dist_mgr_id IS NOT NULL AND r.dist_mgr_id <> 0
+                    AND l.region_id > 1");
 
         $runData = array_keys($template);
 
@@ -1580,11 +1586,10 @@ class SyncHelpers
             }
             DB::commit();
         }
-        $L->log("END Location User Assignments");
-        $L->log("End Database Migration");
-        return true;
-
-        $L->log("       freight_orders start");
+        $L->log("======== Location User Assignments ends");
+//        return true;
+*/
+        $L->log("######## freight_orders migration starts");
         //freight_orders => freight_location_to
         //
         //
@@ -1666,9 +1671,8 @@ class SyncHelpers
         }
         //DB::commit();
         DB::connection()->setFetchMode(PDO::FETCH_CLASS);
-
-
-        $L->log("End Database Migration");
+        $L->log("######## freight_orders migration Ends");
+        $L->log("****** End Database Migration **************");
         
     }
     
