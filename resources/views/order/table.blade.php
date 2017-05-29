@@ -1,4 +1,6 @@
-<?php usort($tableGrid, "SiteHelpers::_sort");
+<?php
+use App\Models\Order;
+usort($tableGrid, "SiteHelpers::_sort");
 ?>
 <div class="sbox">
 	<div class="sbox-title">
@@ -182,13 +184,15 @@
                             <i class=" fa fa-random" aria-hidden="true"></i>
                         </a>
                         @if($row->status_id=='Open' || $row->status_id=='Open (Partial)')
-                            <a href="{{ URL::to('order/orderreceipt/'.$row->id)}}"
-                               data-id="{{$eid}}"
-                               data-action="receipt"
-                               class="tips btn btn-xs btn-white orderReceiptAction"
-                               title="Receive Order">
-                                <i class="fa fa fa-truck" aria-hidden="true"></i>
-                            </a>
+                            @if(Order::isApified($id, $row) || !Order::isApiable($id, $row, true))
+                                <a href="{{ URL::to('order/orderreceipt/'.$row->id)}}"
+                                   data-id="{{$eid}}"
+                                   data-action="receipt"
+                                   class="tips btn btn-xs btn-white orderReceiptAction"
+                                   title="Receive Order">
+                                    <i class="fa fa fa-truck" aria-hidden="true"></i>
+                                </a>
+                            @endif
                         @endif
                         @if($row->status_id=='Open' || $row->status_id=='Open (Partial)')
                             <a href="{{ URL::to('order/removalrequest/'.$row->po_number)}}"
