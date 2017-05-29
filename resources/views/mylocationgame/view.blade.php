@@ -115,14 +115,18 @@
                 <label for="date_down" class=" control-label col-md-4">
                     Date Game Down:</label>
                 <div class="col-md-8">
-                    <div class="input-group" style="width:150px !important;">
-                        {!! Form::text('date_down', "", array(
-                            'class'=>'form-control date',
-                            'parsley-errors-container' => '.dateDownError',
-                            'parsley-nofocus' => 'true'
-                        )) !!}
-                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                    </div>
+
+                    <span class="input-group-addon" style="width: 32px;padding-left: 10px;padding-top: 8px;padding-bottom: 8px;float: left;">
+                        <i class="fa fa-calendar" id="icon"></i>
+                    </span>
+
+                    {!! Form::text('date_down', "", array(
+                        'class'=>'form-control date',
+                        'parsley-errors-container' => '.dateDownError',
+                        'parsley-nofocus' => 'true',
+                        'style' => 'width:150px !important;'
+                    )) !!}
+
                     <div class='dateDownError'></div>
                 </div>
             </div>
