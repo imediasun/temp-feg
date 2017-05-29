@@ -37,7 +37,7 @@
                         'class'=>'form-horizontal' ,'id' =>'submitservicerequest' )) !!}
                         <div class="form-group">
                             <label for="location_id" class="control-label col-md-4 text-left">
-                                For Location
+                                For Location:
                             </label>
 
                             <div class="col-md-6 select-full">
@@ -46,7 +46,7 @@
                         </div>
                         <div class="form-group " id="game_div">
                             <label for="game_id" class="control-label col-md-4 text-left">
-                                For Game :
+                                For Game:
                             </label>
 
                             <div class="col-md-6">
@@ -56,7 +56,7 @@
                         <div class="form-group ">
 
                             <label for="tech_type" class=" control-label col-md-4 text-left">
-                                <b style="color:red">IT Service Request</b> </label>
+                                <b style="color:red">IT Service Request:</b> </label>
 
                             <div class="col-md-6">
                                 <input type="radio" name="tech_type" value="service" id="tech_type" checked="checked"/>
@@ -64,7 +64,7 @@
                         </div>
                         <div class="form-group  ">
                             <label for="requestTitle" class=" control-label col-md-4 text-left">
-                                Title
+                                Title:
                             </label>
 
                             <div class="col-md-6">
@@ -75,14 +75,14 @@
                             </div>
                         </div>
                         <div class="form-group  " id="description_div">
-                            <label for="description" class=" control-label col-md-10 text-left">
-                                Detailed Description (parts request and/or description of problem)
-                            </label>
 
-                            <div class="col-md-4"></div>
+                            <div class="col-md-4">
+                                <label for="description" class="" style="font-weight: normal;">
+                                    Detailed Description (parts request and/or description of problem):
+                                </label>
+                            </div>
 
                             <div class="col-md-6">
-                                <br/>
                                 <textarea class="form-control" name="description" id="description" cols="40"
                                           rows="6"></textarea>
                             </div>
@@ -90,7 +90,7 @@
                         </div>
                         <div class="form-group" id="cost_div">
                             <label for="cost" class=" control-label col-md-4 text-left">
-                                Part Cost
+                                Part Cost:
                             </label>
 
                             <div class="col-md-6">
@@ -129,7 +129,7 @@
                         </div>
                         <div class="form-group ">
                             <label for="userfile" class=" control-label col-md-4 text-left">
-                                Upload File </label>
+                                Upload File: </label>
 
                             <div class="col-md-6">
                                 <input type="file" name="userfile" class="" id="userfile"/>
@@ -141,10 +141,12 @@
                                    value="{{ \Session::get('company_id') }}">
 
                             <div class="form-group">
-
-                                <div class="col-sm-12 text-center">
-                                    <button type="submit" class="btn btn-primary btn-sm "><i
+                                <div class="col-sm-4"></div>
+                                <div class="col-sm-6 text-center"><br>
+                                    <button type="submit" class="btn btn-primary btn-sm " ><i
                                                 class="fa  fa-save "></i>  {{ Lang::get('core.sb_save') }} </button>
+                                    <b class="text-center">Submitted
+                                        on {{ date('m/d/Y') }}</b>
                                     {{--<button type="button" onclick="ajaxViewClose('#{{ $pageModule }}')"--}}
                                             {{--class="btn btn-success btn-sm"><i--}}
                                                 {{--class="fa  fa-arrow-circle-left "></i>  {{ Lang::get('core.sb_cancel') }}--}}
@@ -155,9 +157,6 @@
 
                             {!! Form::close() !!}
                         </div>
-                        <hr/>
-                        <h4 class="text-center">Submitted
-                            on {{ date('m/d/Y') }}</h4>
 
                     </div>
                     <div class="col-md-6">
