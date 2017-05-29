@@ -386,10 +386,6 @@ function verifyBrowser() {
     }
 }
 
-$( document ).ready(function() {
-    verifyBrowser();
-});
-
 function disableConsoleLogs(){
     var console = {};
     console.log = function(){};
