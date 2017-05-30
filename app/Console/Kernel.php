@@ -20,6 +20,7 @@ class Kernel extends ConsoleKernel
         \App\Console\Commands\CreateDummyOrders::class,
         \App\Console\Commands\SyncUserLocations::class,
         \App\Console\Commands\RefreshOAuthToken::class,
+        \App\Console\Commands\ResetEmailsToAllActiveUsers::class
     ];
 
     /**
