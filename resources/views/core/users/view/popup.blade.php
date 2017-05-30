@@ -56,7 +56,7 @@
                             }
                             $phone = implode("<br/>", $phones);
                         ?>
-						<td>{{ $phone }} </td>
+						<td>{!! $phone !!} </td>
 
 					</tr>
 				
