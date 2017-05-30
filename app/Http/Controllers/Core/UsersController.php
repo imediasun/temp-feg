@@ -660,10 +660,10 @@ class UsersController extends Controller
         $content = str_replace("[email]",$object->email,$content);
         return $content;
     }
-    public function getSendPasswordResetEmails()
+    /*public function getSendPasswordResetEmails()
     {
         $this->model->passwordForgetEmails();
-    }
+    }*/
 public function getUserDetails($id)
 {
     $request=new Request();
