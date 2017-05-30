@@ -1499,7 +1499,7 @@ class SyncHelpers
 //            SELECT id as user_id, loc_10 as loc FROM `users` where loc_10<>0
 //            order by user_id";
 //        DB::insert($q);
-        
+        /*
         $L->log("-------- location_budget migration starts");
         //From location.[id,<montth_year>] to location_budget.[location_id,budget_date,budget_value]        
         $q = "SELECT id, Jan_2012,Feb_2012,Mar_2012,Apr_2012,May_2012,
@@ -1543,6 +1543,7 @@ class SyncHelpers
         DB::commit();
         DB::connection()->setFetchMode(PDO::FETCH_CLASS);
         $L->log("-------- location_budget migration ends");
+        */
 
 /*
         
@@ -1613,11 +1614,12 @@ class SyncHelpers
                 $ship_exception = $row['ship_exception_'.$keyIndex];
                 $new_ship_date = $row['new_ship_date_'.$keyIndex];
                 $new_ship_date_stamp = strtotime($new_ship_date);
+                $new_ship_date_valid = \FEGHelp::isValidDate($new_ship_date);
                 $new_ship_reason = $row['new_ship_reason_'.$keyIndex];
                 
-                if (!empty($description) || !empty($dimensions) || 
-                        !empty($ship_exception) || $new_ship_date_stamp !== false ||
-                        !empty($new_ship_reason)) {
+                if (!empty(trim($description)) || !empty(trim($dimensions)) ||
+                        !empty(trim($ship_exception)) || $new_ship_date_valid ||
+                        !empty(trim($new_ship_reason))) {
                     
                     $q = "INSERT INTO freight_pallet_details 
                         (freight_order_id, description, dimensions, 
@@ -1640,7 +1642,7 @@ class SyncHelpers
 //                    $L->log("Data($keyIndex): ", array($loc_to, $loc_pro, $loc_quote, $loc_trucking_co, $freight_company));
 //                    $L->log("Are Empty? ", array(empty($loc_to), empty($loc_pro), $loc_quote_is_empty, empty($loc_trucking_co), empty($freight_company)));
 //                }
-                if (!empty($loc_to) || !empty($loc_pro) || 
+                if (!empty(trim($loc_to)) || !empty(trim($loc_pro)) ||
                         !$loc_quote_is_empty || !empty($loc_trucking_co) ||
                         !empty($freight_company)) {
                                        
