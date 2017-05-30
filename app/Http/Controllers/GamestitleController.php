@@ -317,7 +317,7 @@ class GamestitleController extends Controller
             }
             return response()->json(array(
                 'status' => 'success',
-                'message' => \Lang::get('core.note_success').$updates['manual']
+                'message' => \Lang::get('core.note_success')
             ));
 
         } else {
