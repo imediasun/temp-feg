@@ -23,18 +23,19 @@
 	@if(Session::has('message'))	  
 		   {!! Session::get('message') !!}
 	@endif	
-	<ul>
-		@foreach($errors->all() as $error)
-			<li>{{ $error }}</li>
-		@endforeach
-	</ul>	
+	{{--<ul>
+	@foreach($errors->all() as $error)
+		<li>{{ $error }}</li>
+
+	@endforeach
+	</ul>--}}
 	<ul class="nav nav-tabs" >
 	  <li class="active"><a href="#info" data-toggle="tab"> {{ Lang::get('core.personalinfo') }} </a></li>
 	  <li ><a href="#pass" data-toggle="tab">{{ Lang::get('core.changepassword') }} </a></li>
 	</ul>	
 	
 	<div class="tab-content">
-	  <div class="tab-pane active m-t" id="info">
+	  <div class="tab-pane m-t {!! ($errors->has('password') || $errors->has('password_confirmation'))? '':'active' !!}" id="info">
 		{!! Form::open(array('url'=>'user/saveprofile/', 'class'=>'form-horizontal ' ,'files' => true)) !!}  
 		  <div class="form-group">
 			<label for="ipt" class=" control-label col-md-2"> Username </label>
@@ -45,22 +46,37 @@
 		  <div class="form-group">
 			<label for="ipt" class=" control-label col-md-2">{{ Lang::get('core.email') }} </label>
 			<div class="col-md-8">
-			<input name="email" type="text" id="email"  class="form-control input-sm" value="{{ $info->email }}" /> 
-			 </div> 
+			<input name="email" type="text" id="email"  class="form-control input-sm" value="{{ $info->email }}" {!! $errors->has('email')? "style='border-color: #cc0000;'":"" !!}/>
+			@if ($errors->has('email'))
+				<span class="error_styles">
+					<strong>{{ $errors->first('email') }}</strong>
+				</span>
+			@endif
+			</div>
 		  </div> 	  
 	  
 		  <div class="form-group">
 			<label for="ipt" class=" control-label col-md-2">{{ Lang::get('core.firstname') }} </label>
 			<div class="col-md-8">
-			<input name="first_name" type="text" id="first_name" class="form-control input-sm" required value="{{ $info->first_name }}" /> 
-			 </div> 
+			<input name="first_name" type="text" id="first_name" class="form-control input-sm" required value="{{ $info->first_name }}" {!! $errors->has('first_name')? "style='border-color: #cc0000;'":"" !!} />
+			@if ($errors->has('first_name'))
+				<span class="error_styles">
+					<strong>{{ $errors->first('first_name') }}</strong>
+				</span>
+			@endif
+			</div>
 		  </div>  
 		  
 		  <div class="form-group">
 			<label for="ipt" class=" control-label col-md-2">{{ Lang::get('core.lastname') }} </label>
 			<div class="col-md-8">
-			<input name="last_name" type="text" id="last_name" class="form-control input-sm" required value="{{ $info->last_name }}" />  
-			 </div> 
+			<input name="last_name" type="text" id="last_name" class="form-control input-sm" required value="{{ $info->last_name }}" {!! $errors->has('last_name')? "style='border-color: #cc0000;'":"" !!}/>
+			@if ($errors->has('last_name'))
+				<span class="error_styles">
+					<strong>{{ $errors->first('last_name') }}</strong>
+				</span>
+			@endif
+			</div>
 		  </div>
 
 		  <div class="form-group  " >
@@ -91,21 +107,31 @@
 		{!! Form::close() !!}	
 	  </div>
   
-	  <div class="tab-pane  m-t" id="pass">
+	  <div class="tab-pane  m-t {!! ($errors->has('password') || $errors->has('password_confirmation'))? 'active':'' !!}" id="pass">
 		{!! Form::open(array('url'=>'user/savepassword/', 'class'=>'form-horizontal ')) !!}    
 		  
 		  <div class="form-group">
 			<label for="ipt" class=" control-label col-md-2"> {{ Lang::get('core.newpassword') }} </label>
 			<div class="col-md-8">
-			<input name="password" type="password" id="password" class="form-control input-sm" value="" /> 
-			 </div> 
+			<input name="password" type="password" id="password" class="form-control input-sm" value="" {!! $errors->has('password')? "style='border-color: #cc0000;'":"" !!}/>
+			@if ($errors->has('password'))
+				<span class="error_styles">
+					<strong>{{ $errors->first('password') }}</strong>
+				</span>
+			@endif
+			</div>
 		  </div>  
 		  
 		  <div class="form-group">
 			<label for="ipt" class=" control-label col-md-2"> {{ Lang::get('core.conewpassword') }}  </label>
 			<div class="col-md-8">
-			<input name="password_confirmation" type="password" id="password_confirmation" class="form-control input-sm" value="" />  
-			 </div> 
+			<input name="password_confirmation" type="password" id="password_confirmation" class="form-control input-sm" value="" {!! $errors->has('password_confirmation')? "style='border-color: #cc0000;'":"" !!}/>
+			@if ($errors->has('password_confirmation'))
+				<span class="error_styles">
+					<strong>{{ $errors->first('password_confirmation') }}</strong>
+				</span>
+			@endif
+			</div>
 		  </div>    
 		 
 		
@@ -126,5 +152,12 @@
 </div>
  
  </div>
+
+	<style>
+		.error_styles strong{
+			color: #cc0000;
+			font-weight: normal;
+		}
+	</style>
 
 @endsection

@@ -500,10 +500,10 @@ class UserController extends Controller
             $user->password = \Hash::make($request->input('password'));
             $user->save();
 
-            return Redirect::to('user/profile')->with('message', \SiteHelpers::alert('success', 'Password has been saved!'));
+            return Redirect::to('user/profile')->with('messagetext', 'Password has been saved!')->with('msgstatus', 'success');
         } else {
-            return Redirect::to('user/profile')->with('message', \SiteHelpers::alert('error', 'The following errors occurred')
-            )->withErrors($validator)->withInput();
+            return Redirect::to('user/profile')->with('messagetext', 'The following errors occurred')->with('msgstatus', 'error')
+                ->withErrors($validator)->withInput();
         }
 
     }
