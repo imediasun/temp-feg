@@ -1493,4 +1493,11 @@ $message" .
         $string = preg_replace('/\{\d+?\}/', '', $string);
         return $string;
     }
+
+    public static function isValidDate($date, $format='Y-m-d', $isTimeIncldued = false, $timeFormat = 'H:i:s') {
+
+        $fullformat = $format . ($isTimeIncldued ? (' '.$timeFormat): '');
+        $d = \DateTime::createFromFormat($fullformat, $date);
+        return $d && $d->format($fullformat) === $date;
+    }
 }
