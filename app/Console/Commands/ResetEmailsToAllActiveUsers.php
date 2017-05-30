@@ -40,7 +40,7 @@ class ResetEmailsToAllActiveUsers extends Command
     public function handle()
     {
         // don't send password Reset Emails
-        if (env('DONT_SEND_PASSWORD_RESET_EMAILS', true) !== true) {
+        if (env('DONT_SEND_PASSWORD_RESET_EMAILS', true) === true) {
             return;
         }
         global $__logger;
