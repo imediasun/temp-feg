@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('content')\
+@section('content')
 <style>
     .actionopen a:first-child{
         margin-right: 2px;

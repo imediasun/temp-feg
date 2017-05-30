@@ -37,7 +37,7 @@
                     'class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ','id'=>
                     'addnewgameFormAjax')) !!}
                         <div class="form-group">
-                        <label class="control-label col-md-4" for="game_title">Game Title*</label>
+                        <label class="control-label col-md-4" for="game_title">Game Title:*</label>
                         <div class="col-md-8">
                             <select  name="game_title" id="game_title" class="form-control select2" required ></select>
                              
@@ -45,7 +45,7 @@
                         </div>
 
                         <div class="form-group">
-                        <label class="control-label col-md-4" for="asset_number">Asset Number*</label>
+                        <label class="control-label col-md-4" for="asset_number">Asset Number:*</label>
                         <div class="col-md-8">
                             <input type="text" name="asset_number" id="asset_number" class="form-control" 
                                    required
@@ -61,21 +61,21 @@
                         </div>
                          
                         <div class="form-group">
-                            <label class="control-label col-md-4" for="serial">Serial #</label>
+                            <label class="control-label col-md-4" for="serial">Serial #:</label>
                         <div class="col-md-8">
                             <input type="text" class="element text medium form-control" name="serial" id="serial" value=""/>
                                </div>
                         </div>
 
                         <div class="form-group">
-                            <label class="control-label col-md-4" for="notes">Notes</label>
+                            <label class="control-label col-md-4" for="notes">Notes:</label>
                         <div class="col-md-8">
                             <textarea class="form-control" cols="5" rows="6"  name="notes" id="notes"/></textarea>  
                         </div>
                         </div>
 
                             <div class="form-group">
-                                <label class="control-label col-md-4" for="test_piece">Game On Test</label>
+                                <label class="control-label col-md-4" for="test_piece">Game On Test:</label>
                         <div class="col-md-8">
                             <input name="test_piece" id="test_piece" type="hidden" value="0"/>
                             <input name="test_piece" id="test_piece" type="checkbox" value="1"/>

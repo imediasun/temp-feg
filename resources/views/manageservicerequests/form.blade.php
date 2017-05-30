@@ -37,8 +37,11 @@
                         </label>
 
                         <div class="col-md-6">
+                            <span class="input-group-addon" style="width: 32px;padding-left: 10px;padding-top: 8px;padding-bottom: 8px;float: left;">
+                                <i class="fa fa-calendar" id="icon"></i>
+                            </span>
                             {!! Form::text('solved_date', $row['solved_date'] == "0000-00-00" ? "" : date("m/d/Y", strtotime($row['solved_date'])),array('class'=>'form-control date',
-                            'placeholder'=>'', )) !!}
+                            'placeholder'=>'', 'style'=>'width:150px !important;')) !!}
                         </div>
                         <div class="col-md-2">
 

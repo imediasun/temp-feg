@@ -43,7 +43,7 @@
 
 
                         <div class="form-group hidethis " style="display:none;">
-                            <label for="Id" class=" control-label col-md-4 text-left"> Id </label>
+                            <label for="Id" class=" control-label col-md-4 text-left"> Id: </label>
                             <div class="col-md-6">
                                 {!! Form::text('id', $row['id'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
                             </div>
@@ -52,7 +52,7 @@
                             </div>
                         </div>
                         <div class="form-group  ">
-                            <label for="Group / Level" class=" control-label col-md-4 text-left"> Group / Level <span
+                            <label for="Group / Level" class=" control-label col-md-4 text-left"> Group / Level: <span
                                         class="asterix"> * </span></label>
                             <div class="col-md-6">
                                 <select name='group_id' rows='5' id='group_id' code='{$group_id}' class='select2 ' required></select>
@@ -63,7 +63,7 @@
                             </div>
                         </div>
                         <div class="form-group  ">
-                            <label for="Username" class=" control-label col-md-4 text-left"> Username <span
+                            <label for="Username" class=" control-label col-md-4 text-left"> Username: <span
                                         class="asterix"> * </span></label>
                             <div class="col-md-6">
                                 {!! Form::text('username', $row['username'],array('class'=>'form-control', 'placeholder'=>'', 'required'=>'true'  )) !!}
@@ -73,7 +73,7 @@
                             </div>
                         </div>
                         <div class="form-group  ">
-                            <label for="First Name" class=" control-label col-md-4 text-left"> First Name <span
+                            <label for="First Name" class=" control-label col-md-4 text-left"> First Name: <span
                                         class="asterix"> * </span></label>
                             <div class="col-md-6">
                                 {!! Form::text('first_name', $row['first_name'],array('class'=>'form-control', 'placeholder'=>'', 'required'=>'true'  )) !!}
@@ -83,7 +83,7 @@
                             </div>
                         </div>
                         <div class="form-group  ">
-                            <label for="Last Name" class=" control-label col-md-4 text-left"> Last Name </label>
+                            <label for="Last Name" class=" control-label col-md-4 text-left"> Last Name: </label>
                             <div class="col-md-6">
                                 {!! Form::text('last_name', $row['last_name'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
                             </div>
@@ -92,7 +92,7 @@
                             </div>
                         </div>
                         <div class="form-group  ">
-                            <label for="Email" class=" control-label col-md-4 text-left"> Email <span
+                            <label for="Email" class=" control-label col-md-4 text-left"> Email: <span
                                         class="asterix"> * </span></label>
                             <div class="col-md-6">
                                 {!! Form::text('email', $row['email'],array('class'=>'form-control', 'placeholder'=>'', 'required'=>'true', 'parsley-type'=>'email'   )) !!}
@@ -103,7 +103,7 @@
                         </div>
 
                         <div class="form-group  ">
-                            <label for="Status" class=" control-label col-md-4 text-left"> Status <span class="asterix"> * </span></label>
+                            <label for="Status" class=" control-label col-md-4 text-left"> Status: <span class="asterix"> * </span></label>
                             <div class="col-md-6" style="padding-bottom: 15px;">
 
                                 <label class='radio radio-inline'>
@@ -119,7 +119,7 @@
                         </div>
                         <div class="form-group  ">
                             <label for="multiple_loc" class=" control-label col-md-4 text-left">
-                                {!! SiteHelpers::activeLang('Locations', (isset($fields['locations']['language'])? $fields['assign_to']['language'] : array())) !!}
+                                {!! SiteHelpers::activeLang('Locations:', (isset($fields['locations']['language'])? $fields['assign_to']['language'] : array())) !!}
                             </label>
                             <div class="col-md-6">
                                 <select name='multiple_locations[]' multiple rows='5' id='multiple_loc' class='select2'
@@ -131,7 +131,7 @@
                         </div>
                         <div class="form-group  ">
                             <label for="has_all_locations" class=" control-label col-md-4 text-left">
-                                {!! SiteHelpers::activeLang('All Locations', (isset($fields['has_all_locations']['language'])? $fields['has_all_locations']['language'] : array())) !!}
+                                {!! SiteHelpers::activeLang('All Locations:', (isset($fields['has_all_locations']['language'])? $fields['has_all_locations']['language'] : array())) !!}
                             </label>
                             <div class="col-md-6">
                                 <input type="checkbox" name="all_locations" value="1" id="has_all_locations"
@@ -146,7 +146,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="Avatar" class=" control-label col-md-4 text-left"> Avatar </label>
+                            <label for="Avatar" class=" control-label col-md-4 text-left"> Avatar: </label>
                             <div class="col-md-6">
                                 <input type='file' name='avatar' id='avatar' @if($row['avatar'] =='')
                                        @endif style='width:350px !important;' value="{{ $row['avatar'] }}"/>
@@ -185,7 +185,7 @@
 
                         <div class="form-group">
                             <label for="ipt"
-                                   class=" control-label col-md-4"> {{ Lang::get('core.newpassword') }} </label>
+                                   class=" control-label col-md-4"> {{ Lang::get('core.newpassword') }}: </label>
                             <div class="col-md-8">
                                 <input name="password" type="password" id="password" class="form-control input-sm"
                                        value=""
@@ -198,7 +198,7 @@
 
                         <div class="form-group">
                             <label for="ipt"
-                                   class=" control-label col-md-4"> {{ Lang::get('core.conewpassword') }} </label>
+                                   class=" control-label col-md-4"> {{ Lang::get('core.conewpassword') }}: </label>
                             <div class="col-md-8">
                                 <input name="password_confirmation" type="password" id="password_confirmation"
                                        class="form-control input-sm" value=""
@@ -210,7 +210,7 @@
                         </div>
 
                         <div class="form-group  int-link">
-                            <label for="ipt" class=" control-label col-md-4 text-right">Login Start Page </label>
+                            <label for="ipt" class=" control-label col-md-4 text-right">Login Start Page: </label>
                             <div class="col-md-8">
                                 <select name="redirect_link" rows='5' type="text" id="redirect_link" style="width:100%"
                                         class='select-liquid ' value="{{ $row['redirect_link'] }}">

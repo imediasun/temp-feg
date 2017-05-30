@@ -368,7 +368,7 @@ function verifyBrowser() {
                 $('#browser_notification').show();
             }
             break;
-        case 'Edge':
+        case 'Opera':
             if(get_browser().version<14){
                 $('#browser_notification').show();
             }
@@ -385,10 +385,6 @@ function verifyBrowser() {
             break;
     }
 }
-
-$( document ).ready(function() {
-    verifyBrowser();
-});
 
 function disableConsoleLogs(){
     var console = {};

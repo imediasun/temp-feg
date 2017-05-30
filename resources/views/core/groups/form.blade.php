@@ -36,7 +36,7 @@
 						<fieldset>
 									
 								  <div class="form-group hidethis " style="display:none;">
-									<label for="Group Id" class=" control-label col-md-4 text-left"> Group Id </label>
+									<label for="Group Id" class=" control-label col-md-4 text-left"> Group Id: </label>
 									<div class="col-md-6">
 									  {!! Form::text('group_id', $row['group_id'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
 									 </div> 
@@ -45,7 +45,7 @@
 									 </div>
 								  </div> 					
 								  <div class="form-group  " >
-									<label for="Name" class=" control-label col-md-4 text-left"> Name <span class="asterix"> * </span></label>
+									<label for="Name" class=" control-label col-md-4 text-left"> Name: <span class="asterix"> * </span></label>
 									<div class="col-md-6">
 									  {!! Form::text('name', $row['name'],array('class'=>'form-control', 'placeholder'=>'', 'required'=>'true'  )) !!} 
 									 </div> 
@@ -54,7 +54,7 @@
 									 </div>
 								  </div> 					
 								  <div class="form-group  " >
-									<label for="Description" class=" control-label col-md-4 text-left"> Description </label>
+									<label for="Description" class=" control-label col-md-4 text-left"> Description: </label>
 									<div class="col-md-6">
 									  <textarea name='description' rows='2' id='description' class='form-control '  
 				           >{{ $row['description'] }}</textarea> 
@@ -64,7 +64,7 @@
 									 </div>
 								  </div> 					
 								  <div class="form-group  " >
-									<label for="Level" class=" control-label col-md-4 text-left"> Level <span class="asterix"> * </span></label>
+									<label for="Level" class=" control-label col-md-4 text-left"> Level: <span class="asterix"> * </span></label>
 									<div class="col-md-6">
 									  {!! Form::text('level', $row['level'],array('class'=>'form-control', 'placeholder'=>'', 'required'=>'true'  )) !!} 
 									 </div> 
@@ -75,7 +75,7 @@
 
 
 							<div class="form-group  int-link" >
-								<label for="ipt" class=" control-label col-md-4 text-right"> Login Start Page </label>
+								<label for="ipt" class=" control-label col-md-4 text-right"> Login Start Page: </label>
 								<div class="col-md-6">
 									<select name="redirect_link"  rows='5' type="text" id="redirect_link"  style="width:100%"  class='select-liquid ' value="{{ $row['redirect_link'] }}" >
 										<option value=""> -- Select Module or Page -- </option>
