@@ -1150,7 +1150,7 @@ $('#vendor_id').on('select2-selecting',function (e) {
             if($('#item_name').val())
             {
                 App.notyConfirm({
-                    message: "Are you sure you want to "+(currentElm.data('status') == 'enabled'?'Disable':'Enable')+" Freehand mode <br> <b>***WARNING***</b><br>if you change mode all of your items will be removed and you will have to add them again",
+                    message: "Are you sure you want to "+(currentElm.data('status') == 'enabled'?'Disable':'Enable')+" Freehand mode? <br> <b>***WARNING***</b><br>If you change to Freehand Mode all of your items will be removed and you will have to add them again",
                     confirmButtonText: 'Yes',
                     confirm: function (){
                         var status=currentElm.data('status');
