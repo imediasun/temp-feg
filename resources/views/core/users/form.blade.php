@@ -32,11 +32,11 @@
                     </h4>
                 </div>
                 <div class="sbox-content">
-                    <ul class="parsley-error-list">
+                   {{-- <ul class="parsley-error-list">
                         @foreach($errors->all() as $error)
                             <li>{{ $error }}</li>
                         @endforeach
-                    </ul>
+                    </ul>--}}
 
                     {!! Form::open(array('url'=>'core/users/save?return='.$return, 'id'=>'user_form','class'=>'form-horizontal','files' => true , 'parsley-validate'=>'','novalidate'=>' ')) !!}
                     <div class="col-md-6">
@@ -192,7 +192,13 @@
                                        @if($row['id'] =='')
                                        required
                                         @endif
+                                        {!! $errors->has('password')? "style='border-color: #cc0000;'":"" !!}
                                 />
+                                @if ($errors->has('password'))
+                                    <span class="error_styles">
+                                        <strong>{{ $errors->first('password') }}</strong>
+                                    </span>
+                                @endif
                             </div>
                         </div>
 
@@ -205,7 +211,13 @@
                                        @if($row['id'] =='')
                                        required
                                         @endif
+                                        {!! $errors->has('password_confirmation')? "style='border-color: #cc0000;'":"" !!}
                                 />
+                                @if ($errors->has('password_confirmation'))
+                                    <span class="error_styles">
+                                        <strong>{{ $errors->first('password_confirmation') }}</strong>
+                                    </span>
+                                @endif
                             </div>
                         </div>
 
@@ -311,6 +323,10 @@
         }
         #s2id_group_id{width: 100% !important;}
         #s2id_multiple_loc{width: 100% !important;}
+        .error_styles strong{
+            color: #cc0000;
+            font-weight: normal;
+        }
     </style>
     <script type="text/javascript">
         $(document).ready(function () {
