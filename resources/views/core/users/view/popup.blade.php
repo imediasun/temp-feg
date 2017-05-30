@@ -44,6 +44,21 @@
 						<td>{{ $row->email }} </td>
 						
 					</tr>
+					<tr>
+						<td width='30%' class='label-view text-right'>Phone</td>
+						<?php
+                            $phones = [];
+                            if (!empty($row->primary_phone)) {
+                                $phones[] = $row->primary_phone;
+                            }
+                            if (!empty($row->secondary_phone)) {
+                                $phones[] = $row->secondary_phone;
+                            }
+                            $phone = implode("<br/>", $phones);
+                        ?>
+						<td>{{ $phone }} </td>
+
+					</tr>
 				
 
 					<tr>
