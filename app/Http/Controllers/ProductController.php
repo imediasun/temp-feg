@@ -264,7 +264,7 @@ class ProductController extends Controller
         $toCopy = implode(",", $request->input('ids'));
 
         $sql = "INSERT INTO products (" . implode(",", $columns) . ") ";
-        $columns[2] = "CONCAT('copy ',vendor_description)";
+        $columns[1] = "CONCAT('copy ',vendor_description)";
         $sql .= " SELECT " . implode(",", $columns) . " FROM products WHERE id IN (" . $toCopy . ")";
         \DB::insert($sql);
 
