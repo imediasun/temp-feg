@@ -40,7 +40,7 @@ class ResetEmailsToAllActiveUsers extends Command
     public function handle()
     {
         // don't send password Reset Emails
-        if (env('DONT_SEND_PASSWORD_RESET_EMAILS', false) === true) {
+        if (env('DONT_SEND_PASSWORD_RESET_EMAILS', true) === true) {
             return;
         }
         global $__logger;
@@ -51,7 +51,7 @@ class ResetEmailsToAllActiveUsers extends Command
         $lastRun = FEGSystemHelper::getOption('SendingPasswordResetEmails', '');
         if (!empty($lastRun)) {
             $lastRunTimestamp = strtotime($lastRun);
-            if ($nowStamp - $lastRunTimestamp < (500)) { //wait for 5 minutes
+            if ($nowStamp - $lastRunTimestamp < (300)) { //wait for 5 minutes
                 $L->log("Task to send Password Reset emails already running since $lastRun. Quit.");
                 return;
             }
