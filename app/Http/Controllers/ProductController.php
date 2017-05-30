@@ -61,7 +61,8 @@ class ProductController extends Controller
                     'products.sku',
                     'products.size',
                     'products.item_description',
-                    'products.ticket_value'
+                    'products.ticket_value',
+                    'products.details'
                 ];
             $searchInput = ['query' => $search_all_fields, 'fields' => $searchFields];
         }
