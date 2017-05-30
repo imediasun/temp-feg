@@ -165,13 +165,18 @@
                 <label for="date_up" class=" control-label col-md-4">
                     Date Game Up</label>
                 <div class="col-md-8">
+
+                    <span class="input-group-addon" style="width: 32px;padding-left: 10px;padding-top: 8px;padding-bottom: 8px;float: left;">
+                        <i class="fa fa-calendar" id="icon"></i>
+                    </span>
+
                     <div class="input-group" style="width:150px !important;">
                         {!! Form::text('date_up', "",array(
                             'class'=>'form-control date',
                             'parsley-errors-container' => '.dateUpError',
-                            'parsley-nofocus' => 'true'                            
+                            'parsley-nofocus' => 'true',
+                            'style' => 'width:150px !important;'
                         )) !!}
-                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
                     </div>
                     <div class='dateUpError'></div>
                 </div>
