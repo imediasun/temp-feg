@@ -162,7 +162,7 @@ class FegapiController extends Controller
             return \Response::json(array('Status' => \Lang::get('restapi.StatusError'), "Message" => \Lang::get('restapi.NothingFound')));
         }
     }
-
+    /*
     public function store()
     {
 
@@ -351,5 +351,5 @@ class FegapiController extends Controller
             $data['entry_by'] = \Session::get('uid');
 
         return $data;
-    }
+    }*/
 }
