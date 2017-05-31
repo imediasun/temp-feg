@@ -1,5 +1,6 @@
 <?php namespace App\Http\Controllers;
 
+use App\Models\UserLocations;
 use GuzzleHttp\Client;
 use Laravel\Socialite\Facades\Socialite;
 use App\Http\Controllers\Controller;
@@ -11,6 +12,8 @@ use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use App\Library\FEG\System\FEGSystemHelper;
 use Validator, Input, Redirect;
+use App\Models\Location;
+use DB;
 
 class UserController extends Controller
 {
@@ -25,6 +28,53 @@ class UserController extends Controller
 
     }
 
+    public function readCsv()
+    {
+        $file = fopen("user_with_location_client.csv","r");
+
+        while(! feof($file))
+        {
+            $records = fgetcsv($file);
+            $locations = explode(',',$records[1]);
+            foreach ($locations as $location)
+            {
+                if(!empty($location))
+                {
+                    $loc = Location::where('location_name' , $location)->first();
+                    if(is_object($loc))
+                    {
+                        $locUser = DB::table('user_locations')->where('user_id',$records[0])->where('location_id',$loc->id)->first();
+                        if(!is_object($locUser))
+                        {
+                            $locUser = 'Relation Not Found';
+                        }
+                    }
+                    else
+                    {
+                        $loc = 'Location Not Found {'.$location.'}';
+                        $locUser = 'Relation Not Found';
+                    }
+                    echo "<pre>";
+                    echo ' user id : ' . $records[0] .'---';
+                    print_r($loc);
+                    echo "<br>";
+                    echo "<hr>";
+                    echo "<br>";
+                    print_r($locUser);
+                    echo "<hr>";
+                    echo "</pre>";
+                }
+
+
+               /* echo '--- location id : '. is_object($loc) ?print_r($loc->id):' No Data ' ;
+                echo '--- user id : ' . $records[0] ;
+
+                echo '--- Relation id : '. is_object($locUser) ?print_r($locUser):' No Relations ' . "<br>";*/
+            }
+        }
+
+        fclose($file);
+    }
     public function getGoogle()
     {
         $user = Socialite::driver('google')->stateless()->user();

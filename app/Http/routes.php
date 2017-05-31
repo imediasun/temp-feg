@@ -70,6 +70,7 @@ Route::get('order/submitorder/{SID?}', 'OrderController@getSubmitorder');
 Route::post('order/init-export/{ID?}', 'OrderController@postInitExport');
 Route::post('order/probe-export/{ID?}', 'OrderController@postProbeExport');
 Route::get('/', 'UserController@getLogin');
+Route::get('/read/csv', 'UserController@readCsv');
 Route::controller('home', 'HomeController');
 Route::controller('/user', 'UserController');
 Route::get('/user/user-details/{id?}','Core\UsersController@getIndex');
