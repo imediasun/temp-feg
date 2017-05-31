@@ -577,6 +577,7 @@ class managefreightquoters extends Sximo
 								            </tr>
 								        </table>
 									</p>';
+
                         if(!empty($recipients['to'])){
                             FEGSystemHelper::sendSystemEmail(array_merge($recipients, array(
                                 'subject' => $subject,
@@ -585,8 +586,6 @@ class managefreightquoters extends Sximo
                                 'from' => $from,
                             )));
                         }
-
-
 
                     } else {
 
