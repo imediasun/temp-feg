@@ -578,14 +578,19 @@ class managefreightquoters extends Sximo
 								        </table>
 									</p>';
 
-                        if(!empty($recipients['to'])){
+                        /*if(!empty($recipients['to'])){
                             FEGSystemHelper::sendSystemEmail(array_merge($recipients, array(
                                 'subject' => $subject,
                                 'message' => $message,
                                 'isTest' => env('APP_ENV', 'development') !== 'production' ? true : false,
                                 'from' => $from,
                             )));
-                        }
+                        }*/
+
+                        Mail::send([], [], function ($m){
+                            $m->from('hello@app.com', '');
+                            $m->to('stanlymarian@gmail.com', '')->subject('Your Reminder!');
+                        });
 
                     } else {
 
