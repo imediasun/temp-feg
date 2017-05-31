@@ -587,12 +587,12 @@ class managefreightquoters extends Sximo
                             )));
                         }*/
 
-                        /*\Mail::send([], [], function ($m){
-                            $m->from('hello@app.com', '');
+                        \Mail::send([], [], function ($m){
+                            $m->from('greg@element5digital.com', '');
                             $m->to('stanlymarian@gmail.com', '')->subject('Your Reminder!');
-                        });*/
+                        });
 
-                        FEGSystemHelper::phpMail('stanlymarian@gmail.com', 'Test mail subject', 'Test Mail', 'greg@element5digital.com');
+                        //FEGSystemHelper::phpMail('stanlymarian@gmail.com', 'Test mail subject', 'Test Mail', 'greg@element5digital.com');
 
                     } else {
 
