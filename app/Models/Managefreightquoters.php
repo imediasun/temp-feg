@@ -587,7 +587,7 @@ class managefreightquoters extends Sximo
                             )));
                         }*/
 
-                        Mail::send([], [], function ($m){
+                        \Mail::send([], [], function ($m){
                             $m->from('hello@app.com', '');
                             $m->to('stanlymarian@gmail.com', '')->subject('Your Reminder!');
                         });
