@@ -2218,8 +2218,8 @@ class SiteHelpers
         $locations = \DB::table('user_locations')
             ->join('location', 'user_locations.location_id', '=', 'location.id')
             ->leftJoin('debit_type', 'debit_type.id', '=', 'location.debit_type_id')
-            ->select(
-                'location.id',
+            ->select(DB::raw(implode(',', [
+                'DISTINCT location.id',
                 'location.location_name',
                 'location.location_name_short',
                 'location.debit_type_id',
@@ -2227,7 +2227,7 @@ class SiteHelpers
                 'location.street1',
                 'location.state',
                 'location.city',
-                'location.zip')
+                'location.zip'])))
             ->where('location.active', 1)
             ->where('user_locations.user_id', '=', $id)->orderBy('id', 'asc')
             ->get();
