@@ -1534,7 +1534,7 @@ class SiteHelpers
 
         } else {
 
-            return "<img src='" . asset('/uploads/images/no-image.png') . "' border='0' width='" . $width . "' /></a>";
+            return "<img src='" . asset('/upload/images/no-image.png') . "' border='0' width='" . $width . "' /></a>";
 
         }
 
