@@ -38,6 +38,7 @@ class UserController extends Controller
             $locations = explode(',',$records[1]);
             foreach ($locations as $location)
             {
+                $location = trim($location);
                 if(!empty($location))
                 {
                     $loc = Location::where('location_name' , $location)->first();
