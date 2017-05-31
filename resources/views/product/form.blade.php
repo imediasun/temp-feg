@@ -73,20 +73,6 @@
                         </div>
 
                     </div>
-                    <div class="form-group  ">
-                        <label for="SKU" class=" control-label col-md-4 text-left">
-                            {!! SiteHelpers::activeLang('SKU', (isset($fields['sku']['language'])?
-                            $fields['sku']['language'] : array())) !!}
-                        </label>
-
-                        <div class="col-md-6">
-                            {!! Form::text('sku', $row['sku'],array('class'=>'form-control', 'placeholder'=>'',
-                            'required'=>'required')) !!}
-                        </div>
-                        <div class="col-md-2">
-
-                        </div>
-                    </div>
                     <div class="form-group  " >
                         <label for="Expense Category" class=" control-label col-md-4 text-left">
                             {!! SiteHelpers::activeLang('Expense Category', (isset($fields['expense_category']['language'])? $fields['expense_category']['language'] : array())) !!}
@@ -143,7 +129,20 @@
 
                         </div>
                     </div>
+                    <div class="form-group  ">
+                        <label for="SKU" class=" control-label col-md-4 text-left">
+                            {!! SiteHelpers::activeLang('SKU', (isset($fields['sku']['language'])?
+                            $fields['sku']['language'] : array())) !!}
+                        </label>
 
+                        <div class="col-md-6">
+                            {!! Form::text('sku', $row['sku'],array('class'=>'form-control', 'placeholder'=>'',
+                            'required'=>'required',"data-parsley-requireonproducttype"=>"")) !!}
+                        </div>
+                        <div class="col-md-2">
+
+                        </div>
+                    </div>
 
                     <div class="form-group  ">
                         <label for="Case Price" class=" control-label col-md-4 text-left">
@@ -364,6 +363,8 @@
 <script type="text/javascript">
     $(document).ready(function () {
         numberFieldValidationChecks($("#qty_input"));
+        var form = $('#productFormAjax');
+        form.parsley();
 
         $("#prod_type_id").jCombo("{{ URL::to('product/comboselect?filter=order_type:id:order_type:can_request:1') }}",
                 {selected_value: '{{ $row["prod_type_id"] }}'});
@@ -371,6 +372,18 @@
         $("#prod_type_id").change(function () {
             $("#prod_sub_type_id").jCombo("{{ URL::to('product/comboselect?filter=product_type:id:type_description') }}&parent=request_type_id:"+$('#prod_type_id').val()+"",
                     {selected_value: '{{ $row["prod_sub_type_id"] }}'});
+            if($('#prod_type_id').val() == 1 || $('#prod_type_id').val() == 4 || $('#prod_type_id').val() == 20)
+            {
+                form.parsley().destroy();
+                $('input[name="sku"]').removeAttr('required');
+                form.parsley();
+            }
+            else
+            {
+                form.parsley().destroy();
+                $('input[name="sku"]').attr('required','required');
+                form.parsley();
+            }
         });
 
 
@@ -417,8 +430,7 @@
             $(this).parent('div').empty();
             return false;
         });
-        var form = $('#productFormAjax');
-        form.parsley();
+
         form.submit(function () {
 
             if (form.parsley('isValid') == true) {
