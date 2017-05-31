@@ -30,12 +30,17 @@ class UserController extends Controller
 
     public function readCsv()
     {
+        echo '<br>';
+        echo '---------------Script Started --------------';
         $file = fopen("user_with_location_client.csv","r");
 
         while(! feof($file))
         {
             $records = fgetcsv($file);
             $locations = explode(',',$records[1]);
+
+
+
             foreach ($locations as $location)
             {
                 $location = trim($location);
@@ -44,14 +49,25 @@ class UserController extends Controller
                     $loc = Location::where('location_name' , $location)->first();
                     if(is_object($loc))
                     {
+                        $user = User::findOrFail($records[0]);
+                        if(!is_object($user)){
+                            echo "User Not Found";
+                        }
                         $locUser = DB::table('user_locations')->where('user_id',$records[0])->where('location_id',$loc->id)->first();
                         if(!is_object($locUser))
                         {
+                            echo "Insert {$loc->id} for {$user->id} <br>";
+                            /*
+                            DB::table('user_locations')->insert(array(
+                                    'user_id' => $user->id,
+                                    'location_id' => $loc->id
+                            ));*/
                             $locUser = 'Relation Not Found';
                         }
                     }
                     else
                     {
+
                         $loc = 'Location Not Found {'.$location.'}';
                         $locUser = 'Relation Not Found';
                     }
@@ -75,6 +91,8 @@ class UserController extends Controller
         }
 
         fclose($file);
+        echo '<br>';
+        echo "----------------Script Ended----------------";
     }
     public function getGoogle()
     {
