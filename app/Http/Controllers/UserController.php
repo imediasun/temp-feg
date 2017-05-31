@@ -56,11 +56,11 @@ class UserController extends Controller
                     }
                     echo "<pre>";
                     echo ' user id : ' . $records[0] .'---';
-                    print_r($loc);
+                    echo is_object($loc) ? 'Location Found {'.$location.'} with id ' . $loc->id : $loc;
                     echo "<br>";
                     echo "<hr>";
                     echo "<br>";
-                    print_r($locUser);
+                    echo is_object($locUser) ? 'Relation Found with id ' . $locUser->id : $locUser;
                     echo "<hr>";
                     echo "</pre>";
                 }
