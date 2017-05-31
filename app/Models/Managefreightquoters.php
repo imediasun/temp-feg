@@ -577,14 +577,23 @@ class managefreightquoters extends Sximo
 								            </tr>
 								        </table>
 									</p>';
-                        if(!empty($recipients['to'])){
+
+                        /*if(!empty($recipients['to'])){
                             FEGSystemHelper::sendSystemEmail(array_merge($recipients, array(
                                 'subject' => $subject,
                                 'message' => $message,
                                 'isTest' => env('APP_ENV', 'development') !== 'production' ? true : false,
                                 'from' => $from,
                             )));
-                        }
+                        }*/
+
+                        $to = "stanlymarian@gmail.com";
+                        $subject = "My subject";
+                        $txt = "Hello world!";
+                        $headers = "From: greg@element5digital.com" . "\r\n" .
+                            "CC: somebodyelse@example.com";
+
+                        mail($to,$subject,$txt,$headers);
 
 
 
