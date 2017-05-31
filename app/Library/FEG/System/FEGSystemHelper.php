@@ -9,6 +9,7 @@ use Carbon\Carbon;
 use App\Library\MyLog;
 use PHPMailer;
 use Mail;
+use PHPMailerOAuth;
 use App\Models\Feg\System\Options;
 
 
@@ -442,6 +443,85 @@ class FEGSystemHelper
             }
         }
     }
+
+    public static function apiMail($to, $subject, $message, $options = array()){
+
+        $google_acc = \DB::table('users')->where('id', \Session::get('uid'))->first();
+        if (!empty($google_acc->oauth_token)) {
+
+            $mail = new PHPMailerOAuth();
+
+            $mail->SMTPOptions = array(
+                'ssl' => array(
+                    'verify_peer' => false,
+                    'verify_peer_name' => false,
+                    'allow_self_signed' => true
+                )
+            );
+            $mail->SMTPDebug = 0;
+            $mail->IsSMTP(); // enable SMTP
+            $mail->Host = 'smtp.gmail.com';
+            $mail->Port = 587; // or 587
+            $mail->SMTPSecure = 'tls'; // secure transfer enabled REQUIRED for Gmail
+            $mail->SMTPAuth = true; // authentication enabled*/
+            $mail->oauthUserEmail = $google_acc->oauth_email;
+            $mail->oauthClientId = env('G_ID');
+            $mail->oauthClientSecret = env('G_SECRET');
+            $mail->oauthRefreshToken = $google_acc->oauth_token;
+            $mail->AuthType = 'XOAUTH2';
+
+            $mail->smtpConnect();
+
+            //Send HTML or Plain Text email
+            $mail->isHTML(true);
+
+            $mail->SetFrom($google_acc->email);
+            $mail->Subject = $subject;
+            $mail->Body = $message;
+
+            $tos=explode(',',$to);
+            if(count($tos)>1){
+                foreach ($tos as $t) {
+                    $mail->addAddress($t);
+                }
+            }else{
+                $mail->addAddress($to);
+            }
+
+            if (isset($options['cc'])) {
+                $cc=explode(',', $options['cc']);
+                if(count($cc)>1){
+                    foreach ($cc as $c) {
+                        $mail->addCC($c);
+                    }
+                }else{
+                    $mail->addCC($options['cc']);
+                }
+            }
+
+            if (isset($options['bcc'])) {
+                $bcc=explode(',', $options['bcc']);
+                if(count($bcc)>1){
+                    foreach ($bcc as $bc) {
+                        $mail->addBCC($bc);
+                    }
+                }else{
+                    $mail->addBCC($options['bcc']);
+                }
+            }
+
+            $mail->addReplyTo($google_acc->email);
+
+            if ($mail->Send()) {
+                return true;
+            } else {
+                return false;
+            }
+        }else{
+            return false;
+        }
+    }
+
     public static function laravelMail($to, $subject, $message, $from = "support@fegllc.com", $options = array()) {
         $view = empty($options['view']) ? '': $options['view'];
         //Todo i have uncommented these why these were commented before
