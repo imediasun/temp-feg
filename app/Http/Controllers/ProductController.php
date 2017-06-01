@@ -462,6 +462,21 @@ class ProductController extends Controller
             ));
         }
     }
+function getExpenseCategory(Request $request)
+{
+    $order_type_id=$request->get('order_type');
+    $product_type_id=$request->get('product_type');
+    $expense_category="";
+    if(!empty($product_type_id))
+    {
 
+        $expense_category=\DB::table('expense_category_mapping')->where('order_type',$order_type_id)->where('product_type',$product_type_id)->pluck('mapped_expense_category');
+    }
+    else
+    {
+        $expense_category=\DB::table('expense_category_mapping')->where('order_type',$order_type_id)->pluck('mapped_expense_category');
+    }
+return json_encode(array('expense_category'=>$expense_category));
+}
 
 }

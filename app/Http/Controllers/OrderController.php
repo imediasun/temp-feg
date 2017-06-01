@@ -416,6 +416,15 @@ class OrderController extends Controller
   */
     function postSave(Request $request, $id = 0)
     {
+        $query = \DB::select('SELECT R.id FROM requests R LEFT JOIN products P ON P.id = R.product_id WHERE R.location_id = "' . (int)$request->location_id . '"  AND P.vendor_id = "' . (int)$request->vendor_id . '" AND R.status_id = 1');
+        //dd($query,$request->from_sid);
+        if (count($query) < 1 && $request->from_sid == 1) {
+            return response()->json(array(
+                'message' => 'The same order has been submitted by some other user',
+                'status' => 'error',
+
+            ));
+        }
         $rules = array(
               //  'location_id' => "required",
                 'vendor_id' => 'required',
