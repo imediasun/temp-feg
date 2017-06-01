@@ -102,7 +102,7 @@ $(document).ready(function() {
             title=$this.attr('title'),
             rotation=$this.data('rotation'),
             rotatebtns= '<div class="rotate-section"><button onclick="rotateTo(this)" class="btn btn-primary btn-xs" data-id='+id+' data-value= "+90">+90&deg</buton><button onclick="rotateTo(this)" class="btn btn-primary btn-xs" data-id='+id+' data-value="-90">-90&deg</buton><button onclick="rotateTo(this)" class="btn btn-primary btn-xs" data-id='+id+' data-value="+180">+180&deg</buton><button onclick="rotateTo(this)" class="btn btn-primary btn-xs" data-id='+id+' data-value="-180">-180&deg</buton><button id="rotate_save" onclick="saveRotateImg(this)" class="btn btn-info btn-xs"  data-rotation='+rotation+' id=save_btn_'+id+'  data-id='+id+'>Save</button></div>',
-            deleteLink = '<a href="javascript:void(0);" onclick="confirmDelete('+ id +',\''+title+'\');" >Delete</a>',
+            deleteLink = '@if($access['is_remove'] ==1)<a href="javascript:void(0);" onclick="confirmDelete('+ id +',\''+title+'\');" >Delete</a>@endif',
             fancyTitle =  '<div>'+rotatebtns + title + '<br>' + deleteLink + '</div>';
             $this.data('fancybox-title', fancyTitle);
     });
