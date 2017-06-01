@@ -420,7 +420,7 @@ class OrderController extends Controller
         //dd($query,$request->from_sid);
         if (count($query) < 1 && $request->from_sid == 1) {
             return response()->json(array(
-                'message' => 'The same order has been submitted by some other user',
+                'message' => 'Someone has already ordered these products',
                 'status' => 'error',
 
             ));
