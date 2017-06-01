@@ -9,6 +9,7 @@ use Carbon\Carbon;
 use App\Library\MyLog;
 use PHPMailer;
 use Mail;
+use PHPMailerOAuth;
 use App\Models\Feg\System\Options;
 
 
@@ -367,6 +368,71 @@ class FEGSystemHelper
         }
     }
 
+    public static function googleOAuthMail($to, $subject, $message, $userDetail, $options = array()){
+
+        if (!empty($userDetail->oauth_token)) {
+
+            $mail = new PHPMailerOAuth();
+
+            $mail->SMTPOptions = array(
+                'ssl' => array(
+                    'verify_peer' => false,
+                    'verify_peer_name' => false,
+                    'allow_self_signed' => true
+                )
+            );
+            $mail->SMTPDebug = 0;
+            $mail->IsSMTP(); // enable SMTP
+            $mail->Host = 'smtp.gmail.com';
+            $mail->Port = 587; // or 587
+            $mail->SMTPSecure = 'tls'; // secure transfer enabled REQUIRED for Gmail
+            $mail->SMTPAuth = true; // authentication enabled*/
+            $mail->oauthUserEmail = $userDetail->oauth_email;
+            $mail->oauthClientId = env('G_ID');
+            $mail->oauthClientSecret = env('G_SECRET');
+            $mail->oauthRefreshToken = $userDetail->oauth_token;
+            $mail->AuthType = 'XOAUTH2';
+
+            $mail->smtpConnect();
+
+            //Send HTML or Plain Text email
+            $mail->isHTML(true);
+
+            $mail->SetFrom($userDetail->email);
+            $mail->Subject = $subject;
+            $mail->Body = $message;
+
+            $tos = explode(',',$to);
+            foreach ($tos as $t) {
+                $mail->addAddress($t);
+            }
+
+            if (isset($options['cc'])) {
+                $cc = explode(',', $options['cc']);
+                foreach ($cc as $c) {
+                    $mail->addCC($c);
+                }
+            }
+
+            if (isset($options['bcc'])) {
+                $bcc = explode(',', $options['bcc']);
+                foreach ($bcc as $bc) {
+                    $mail->addBCC($bc);
+                }
+            }
+
+            $mail->addReplyTo($userDetail->email);
+
+            if ($mail->Send()) {
+                return true;
+            } else {
+                return false;
+            }
+        }else{
+            return false;
+        }
+    }
+
     public static function configLaravelMail($mail, $options) {
         extract($options);
 
@@ -442,6 +508,7 @@ class FEGSystemHelper
             }
         }
     }
+
     public static function laravelMail($to, $subject, $message, $from = "support@fegllc.com", $options = array()) {
         $view = empty($options['view']) ? '': $options['view'];
         //Todo i have uncommented these why these were commented before
@@ -493,7 +560,11 @@ class FEGSystemHelper
                 return self::phpMail($to, $subject, $message, $from, $options);
             }
             else {
-                return self::laravelMail($to, $subject, $message, $from, $options);
+                if(!empty(Auth()->user()->oauth_token)){
+                    return self::googleOAuthMail($to, $subject, $message, Auth()->user(), $options);
+                }else{
+                    return self::laravelMail($to, $subject, $message, $from, $options);
+                }
             }
         }
     }
@@ -978,7 +1049,6 @@ class FEGSystemHelper
      *
      */
     public static function sendSystemEmail($options) {
-
         $lp = 'FEGCronTasks/SystemEmails';
         $lpd = 'FEGCronTasks/SystemEmailsDump';
         $options = array_merge(array(
