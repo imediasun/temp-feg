@@ -43,7 +43,9 @@
     $prevLocationIdName = $game->previous_location;
     $lastEditedBy = $game->last_edited_by;
     $lastEditedOn = $game->last_edited_on;
-    $lastEditedDetails = $lastEditedBy . (!empty($lastEditedOn) ? ' on '. DateHelpers::formatDateCustom($lastEditedOn) : '');
+    $showOn='';
+    (!empty($lastEditedBy))? $showOn=' on ':$showOn='';
+    $lastEditedDetails = $lastEditedBy . (!empty($lastEditedOn) ?  $showOn. DateHelpers::formatDateCustom($lastEditedOn) : '');
     
     $hasManual = $game->has_manual === 1;
     $manualDetails = $hasManual ? "<a href='uploads/games/manuals/{$gameTitleId}.pdf' target='_blank'>Click to View</a>" : '';
@@ -301,7 +303,7 @@
         </div>
         <div class="form-group clearfix" >
             <label class="col-md-4">
-                {!! SiteHelpers::activeLang('Last Edited By', (isset($fields['last_edited_by']['language'])? $fields['last_edited_by']['language'] : array())) !!}:
+                {!! SiteHelpers::activeLang('Last Edited On', (isset($fields['last_edited_by']['language'])? $fields['last_edited_by']['language'] : array())) !!}:
             </label>
             <div class="col-md-8">{{ \DateHelpers::formatStringValue($lastEditedDetails) }}</div>
         </div>
