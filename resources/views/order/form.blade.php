@@ -47,6 +47,7 @@
                         <br>
                         <label for="location_id" class=" control-label col-md-4 text-left"> Location </label>
 
+                        <input type="hidden" name="from_sid" value="{{$data['prefill_type'] == "SID" ? 1 : 0}}">
                         <div class="col-md-8">
                            @if($data['prefill_type'] != "edit" && $data['prefill_type']!= "SID")
                                 <select class="select3" id="location_id" name="location_id" required></select>
