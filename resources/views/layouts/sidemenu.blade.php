@@ -203,5 +203,13 @@ $selected_loc=\Session::get('selected_location');?>
             @endforeach
         </ul>
     </div>
-</nav>	  
-	  
+</nav>
+
+@if(count(\Session::get('user_locations'))<=0)
+<script>
+    noty({
+        text: 'In order to run module you must be assigned to at least one location. You have not been assigned to any locations. Please contact an administrator if you believe this to be an error.',
+        type   : 'error',
+    }).show();
+</script>
+@endif
