@@ -44,13 +44,16 @@
     $lastEditedBy = $game->last_edited_by;
     $lastEditedOn = $game->last_edited_on;
     $lastEditedDetailsDate = [];
-    if (!empty(trim($lastEditedBy))) {
+    if (empty(trim($lastEditedBy))) {
         $lastEditedBy = " - ";
     }
-    $lastEditedDetailsDate[] = $lastEditedBy;
     if (!empty(trim($lastEditedOn))) {
+        $lastEditedDetailsDate[] = $lastEditedBy;
         $lastEditedDetailsDate[] = DateHelpers::formatDateCustom($lastEditedOn);
-    }    
+    }
+    else {
+        $lastEditedDetails[] = $game->last_edited_by;
+    }
     $lastEditedDetails = implode(' on ', $lastEditedDetailsDate);
     
     $hasManual = $game->has_manual === 1;
