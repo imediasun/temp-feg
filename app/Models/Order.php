@@ -257,6 +257,10 @@ class order extends Sximo
                     {
                         $orderItemsPriceArray[] = ($row->price == 0.00)?$row->case_price:$row->price;
                     }
+                    else
+                    {
+                        $orderItemsPriceArray[] = $row->price;
+                    }
                     $orderQtyArray[] = $row->qty;
                     $orderProductIdArray[] = $row->product_id;
                     $orderitemnamesArray[] = $row->item_name;

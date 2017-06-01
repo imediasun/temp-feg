@@ -27,6 +27,66 @@ class UserController extends Controller
         $this->addToCartModel = new Addtocart();
 
     }
+    /*
+    public function readCsv()
+    {
+        echo '<br>';
+        echo '---------------Script Started --------------';
+        $file = fopen("user_with_location_client.csv","r");
+
+        while(! feof($file))
+        {
+            $records = fgetcsv($file);
+            $locations = explode(',',$records[1]);
+
+
+
+            foreach ($locations as $location)
+            {
+                $location = trim($location);
+                if(!empty($location))
+                {
+                    $loc = Location::where('location_name' , $location)->first();
+                    if(is_object($loc))
+                    {
+                        $user = User::findOrFail($records[0]);
+                        if(!is_object($user)){
+                            echo "User Not Found";
+                        }
+                        $locUser = DB::table('user_locations')->where('user_id',$records[0])->where('location_id',$loc->id)->first();
+                        if(!is_object($locUser))
+                        {
+                            echo "Insert {$loc->id} for {$user->id} <br>";
+
+                            $locUser = 'Relation Not Found';
+                        }
+                    }
+                    else
+                    {
+
+                        $loc = 'Location Not Found {'.$location.'}';
+                        $locUser = 'Relation Not Found';
+                    }
+                    echo "<pre>";
+                    echo ' user id : ' . $records[0] .'---';
+                    echo is_object($loc) ? 'Location Found {'.$location.'} with id ' . $loc->id : $loc;
+                    echo "<br>";
+                    echo "<hr>";
+                    echo "<br>";
+                    echo is_object($locUser) ? 'Relation Found with id ' . $locUser->id : $locUser;
+                    echo "<hr>";
+                    echo "</pre>";
+                }
+
+
+
+            }
+        }
+
+        fclose($file);
+        echo '<br>';
+        echo "----------------Script Ended----------------";
+    }*/
 
     public function readCsv()
     {
