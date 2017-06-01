@@ -367,9 +367,8 @@ class FEGSystemHelper
         }
     }
 
-    public static function googleOAuthMail($to, $subject, $message, $options = array()){
+    public static function googleOAuthMail($to, $subject, $message, $userDetail, $options = array()){
 
-        $userDetail = \DB::table('users')->where('id', \Session::get('uid'))->first();
         if (!empty($userDetail->oauth_token)) {
 
             $mail = new PHPMailerOAuth();
@@ -560,7 +559,11 @@ class FEGSystemHelper
                 return self::phpMail($to, $subject, $message, $from, $options);
             }
             else {
-                return self::laravelMail($to, $subject, $message, $from, $options);
+                if(!empty(Auth()->user()->oauth_token)){
+                    return self::googleOAuthMail($to, $subject, $message, Auth()->user(), $options);
+                }else{
+                    return self::laravelMail($to, $subject, $message, $from, $options);
+                }
             }
         }
     }
@@ -1045,7 +1048,6 @@ class FEGSystemHelper
      *
      */
     public static function sendSystemEmail($options) {
-
         $lp = 'FEGCronTasks/SystemEmails';
         $lpd = 'FEGCronTasks/SystemEmailsDump';
         $options = array_merge(array(
