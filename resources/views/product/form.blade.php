@@ -122,7 +122,7 @@
                             {!! SiteHelpers::activeLang('Expense Category', (isset($fields['expense_category']['language'])? $fields['expense_category']['language'] : array())) !!}
                         </label>
                         <div class="col-md-6">
-                            {!! Form::text('expense_category', $row['expense_category'],array('class'=>'form-control', 'placeholder'=>'','parsley-type'=>"number", 'required'=>'true'  )) !!}
+                            {!! Form::text('expense_category', $row['expense_category'],array('class'=>'form-control', 'placeholder'=>'','parsley-type'=>"number", 'required'=>'true', 'id'=>'expense_category'  )) !!}
                         </div>
                         <div class="col-md-2">
                         </div>
@@ -376,7 +376,7 @@
                     {selected_value: '{{ $row["prod_sub_type_id"] }}'});
             if($(this).val()) {
                 //need to uncomment after discussion
-                //getExpenseCategory($(this).val());
+                getExpenseCategory($(this).val());
             }
             if($('#prod_type_id').val() == 1 || $('#prod_type_id').val() == 4 || $('#prod_type_id').val() == 20)
             {
@@ -509,6 +509,7 @@
     });
     function getExpenseCategory(order_type_id,product_type_id)
     {
+        $("#expense_category").val('');
         if(product_type_id === null)
         {
             product_type_id="";
@@ -516,7 +517,6 @@
         $.get('product/expense-category',{'order_type':order_type_id,'product_type':product_type_id},function(data){
             if(data.expense_category)
             {
-
                 $("#expense_category").val(data.expense_category);
             }
         },'json');

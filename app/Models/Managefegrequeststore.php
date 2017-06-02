@@ -206,22 +206,22 @@ class managefegrequeststore extends Sximo
                 'id' => $row->id,
                 'text' => $row->order_type
             );
-                $orderTypesArray[] = $row;
+                //$orderTypesArray[] = $row;
                // Removing 'Instant Wind Prizes' and 'Redemption Prizes' from order type array
-                /*if($row['id'] != 7 && $row['id'] != 8) {
+                if($row['id'] != 7 && $row['id'] != 8) {
                     $orderTypesArray[] = $row;
-                }*/
+                }
             }
         }
 
         // Combining 'Instant Win','Redemption' and 'Party' order types in a single category
-        /*$customArray[] = array(
+        $customArray[] = array(
             'id' => '7-8-17',
             'text' => 'Instant Win, Redemption, Party (Combined)'
-        );*/
+        );
 
-        //$array = array_merge($orderTypesArray, $customArray);
-        $array = array_merge($orderTypesArray);
+        $array = array_merge($orderTypesArray, $customArray);
+        //$array = array_merge($orderTypesArray);
 
         return $array;
     }
