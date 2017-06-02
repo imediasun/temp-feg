@@ -125,13 +125,13 @@
 						
 					</tr>
 				
-					<tr>
+					{{-- <tr>
 						<td width='30%' class='label-view text-right'>
 							{{ SiteHelpers::activeLang('Region Id', (isset($fields['region_id']['language'])? $fields['region_id']['language'] : array())) }}	
 						</td>
 						<td>{{ $row->region_id }} </td>
 						
-					</tr>
+					</tr> --}}
 				
 					<tr>
 						<td width='30%' class='label-view text-right'>
