@@ -716,6 +716,7 @@ class servicerequestsController extends Controller
         unset($ticketsData['file_path']);
         $requestedOn = $ticketsData['Created'];
         unset($ticketsData['Created']);
+        $ticketThreadContent = $this->getTicketThread($ticketId, true, true);
         $commentId = $comment_model->insertRow($commentsData, NULL);
 
         $files = $this->uploadTicketAttachments("/ticket-$ticketId/$date/", "--$ticketId");
@@ -763,6 +764,7 @@ class servicerequestsController extends Controller
             
         //send email
         $ticketsData['Created'] = $requestedOn;
+        $message .= $ticketThreadContent;
         $this->model->notifyObserver('AddComment',[
                 'message'       =>$message,
                 'ticketId'      => $ticketId,
@@ -776,6 +778,41 @@ class servicerequestsController extends Controller
         ));
 
 
+    }
+
+    public function getTicketThread($ticketId, $includeInitial = true, $renderHtml = false) {
+        $commentsData =  Ticketcomment::getCommentsWithUserData($ticketId);
+        if ($includeInitial) {
+            $initialComment = $this->model->getTicketInitialRequestAsComment($ticketId);
+            if (!empty($initialComment)) {                
+                $commentsData[] = $initialComment;
+            }            
+        }
+        if ($renderHtml) {
+            $commentsCount =  $commentsData->count();
+            $comments = '<div>';
+            $commentsArray = [];
+            $commentsCountIndex = $commentsCount;
+            foreach ($commentsData as $comment) {                
+                $commentsCountIndex--;
+                $commentsArray[] = \View::make('servicerequests.email.commentview', [
+                    'comment' => html_entity_decode(nl2br($comment->Comments)),
+                    'postedOn' => \DateHelpers::formatDateCustom($comment->Posted),
+                    'commentIndex' => $commentsCountIndex,
+                    'commentIndexText' => $commentsCount == 0 ? "INITIAL REQUEST" : ('REPLY #'.$commentsCountIndex),
+                    'userProfile' => FEGSystemHelper::getTicketCommentUserProfile($comment),
+                ])->render();
+            }
+            if (!empty($commentsArray)) {
+                $comments = '<hr style="margin:20px 0; border-color: #999; ">';
+                $comments .= \View::make('servicerequests.email.commentviewheader', ['conversationCount' => $commentsCount])->render();;
+                $comments .= implode("<br/>", $commentsArray);
+            }
+        }
+        else {
+            $comments = $commentsData;
+        }
+        return $comments;
     }
 
     function validateTicketCommentsForm()
