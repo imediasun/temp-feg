@@ -10,7 +10,7 @@
     }
     // styles
     $commentContainer = "position: relative;
-    padding: 30px 20px;
+    padding: 20px 20px;
     margin: 5px;    
     background-color: #fff;";
 
