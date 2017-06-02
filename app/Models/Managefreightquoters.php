@@ -582,6 +582,7 @@ class managefreightquoters extends Sximo
                             FEGSystemHelper::sendSystemEmail(array_merge($recipients, array(
                                 'subject' => $subject,
                                 'message' => $message,
+                                'preferGoogleOAuthMail' => true,
                                 'isTest' => env('APP_ENV', 'development') !== 'production' ? true : false,
                                 'from' => $from,
                             )));
@@ -641,6 +642,7 @@ class managefreightquoters extends Sximo
                     FEGSystemHelper::sendSystemEmail(array_merge($recipients, array(
                         'subject' => $subject,
                         'message' => $message,
+//                        'preferGoogleOAuthMail' => true,
                         'isTest' => env('APP_ENV', 'development') !== 'production' ? true : false,
                         'from' => $from,
                     )));

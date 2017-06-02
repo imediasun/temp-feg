@@ -555,12 +555,13 @@ class FEGSystemHelper
         $preventEmailSendingSetting = env('PREVENT_FEG_SYSTEM_EMAIL', false);
         if (!$preventEmailSendingSetting)  {
             $usePhpMail = !empty($options['usePHPMail']);
+            $preferGoogleSend = !empty($options['preferGoogleOAuthMail']);
             //$useLaravelMail = !empty($options['useLaravelMail']) || !empty($options['attach']);
             if ($usePhpMail) {
                 return self::phpMail($to, $subject, $message, $from, $options);
             }
             else {
-                if(!empty(Auth()->user()->oauth_token)){
+                if($preferGoogleSend && !empty(Auth()->user()->oauth_token)){
                     return self::googleOAuthMail($to, $subject, $message, Auth()->user(), $options);
                 }else{
                     return self::laravelMail($to, $subject, $message, $from, $options);
