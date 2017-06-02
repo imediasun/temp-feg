@@ -12,6 +12,13 @@ class SximoDB extends \Illuminate\Support\Facades\DB
         return parent::insert($query, $bindings);
     }
 
+    public static function insertGetId(array $values, $sequence = null)
+    {
+        Sximo::insertLog('Users','insert' , $values);
+        return parent::insertGetId($values, $sequence);
+    }
+
+
     public static function update($query, $bindings = [])
     {
         return parent::update($query, $bindings);
