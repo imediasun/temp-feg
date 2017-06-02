@@ -509,6 +509,7 @@
     });
     function getExpenseCategory(order_type_id,product_type_id)
     {
+        $("#expense_category").val('');
         if(product_type_id === null)
         {
             product_type_id="";
