@@ -799,7 +799,7 @@ class servicerequestsController extends Controller
                     'comment' => html_entity_decode(nl2br($comment->Comments)),
                     'postedOn' => \DateHelpers::formatDateCustom($comment->Posted),
                     'commentIndex' => $commentsCountIndex,
-                    'commentIndexText' => $commentsCount == 0 ? "INITIAL REQUEST" : ('REPLY #'.$commentsCountIndex),
+                    'commentIndexText' => $commentsCountIndex == 0 ? "INITIAL REQUEST" : ('REPLY #'.$commentsCountIndex),
                     'userProfile' => FEGSystemHelper::getTicketCommentUserProfile($comment),
                 ])->render();
             }
