@@ -71,10 +71,10 @@
                             <td><h4 class='tips' title="{{$row->contact_id}}">{{ @$row->contact_name }}</h4></td>
                             </td>
                         </tr>
-                        <tr>
+                         {{-- <tr>
                             <td colspan="1"><h3>Region:</h3></td>
                             <td><h4>{{ $row->region_id }}  </h4></td>
-                        </tr>
+                        </tr> --}}
                         <tr>
                             <td colspan="1"><h3>Company:</h3></td>
                             <td><h4> {{ $row->company_id }} </h4></td>
