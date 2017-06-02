@@ -61,7 +61,8 @@ class TicketMailer
             'to' => $to, 
             'bcc' => $bcc, 
             'subject' => $subject, 
-            'message' => $message, 
+            'message' => $message,
+            'preferGoogleOAuthMail' => true,
             'isTest' => env('SEND_TICKET_EMAIL_TO_TEST_RECIPIENT', false),
             'configNamePrefix' => 'Ticket-Notification-'.$ticketId,
         ];
