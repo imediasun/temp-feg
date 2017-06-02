@@ -23,9 +23,10 @@ class pendingrequest extends Sximo  {
                 ON products.vendor_id=vendor.id";
 	}	
 
-	public static function queryWhere(  ){
-		
-		return "  WHERE requests.id IS NOT NULL ";
+	public static function queryWhere(  )
+    {
+        $selectedLocations = \SiteHelpers::getCurrentUserLocationsFromSession();
+		return "  WHERE requests.id IS NOT NULL AND requests.location_id IN ($selectedLocations) ";
 	}
 	
 	public static function queryGroup(){

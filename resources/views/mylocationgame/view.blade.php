@@ -43,9 +43,18 @@
     $prevLocationIdName = $game->previous_location;
     $lastEditedBy = $game->last_edited_by;
     $lastEditedOn = $game->last_edited_on;
-    $showOn='';
-    (!empty($lastEditedBy))? $showOn=' on ':$showOn='';
-    $lastEditedDetails = $lastEditedBy . (!empty($lastEditedOn) ?  $showOn. DateHelpers::formatDateCustom($lastEditedOn) : '');
+    $lastEditedDetailsDate = [];
+    if (empty(trim($lastEditedBy))) {
+        $lastEditedBy = " - ";
+    }
+    if (!empty(trim($lastEditedOn))) {
+        $lastEditedDetailsDate[] = $lastEditedBy;
+        $lastEditedDetailsDate[] = DateHelpers::formatDateCustom($lastEditedOn);
+    }
+    else {
+        $lastEditedDetails[] = $game->last_edited_by;
+    }
+    $lastEditedDetails = implode(' on ', $lastEditedDetailsDate);
     
     $hasManual = $game->has_manual === 1;
     $manualDetails = $hasManual ? "<a href='uploads/games/manuals/{$gameTitleId}.pdf' target='_blank'>Click to View</a>" : '';
@@ -216,7 +225,7 @@
 
         </div>
         
-        @if ($isNewlyAddedGame)
+        @if (false && $isNewlyAddedGame)
         <!-- Serial -->
         <div class="form-group  clearfix" >
             <label for="serial" class=" control-label col-md-4 text-left">
@@ -303,7 +312,7 @@
         </div>
         <div class="form-group clearfix" >
             <label class="col-md-4">
-                {!! SiteHelpers::activeLang('Last Edited On', (isset($fields['last_edited_by']['language'])? $fields['last_edited_by']['language'] : array())) !!}:
+                {!! SiteHelpers::activeLang('Last Edited by', (isset($fields['last_edited_by']['language'])? $fields['last_edited_by']['language'] : array())) !!}:
             </label>
             <div class="col-md-8">{{ \DateHelpers::formatStringValue($lastEditedDetails) }}</div>
         </div>
