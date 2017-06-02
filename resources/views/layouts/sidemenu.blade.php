@@ -205,7 +205,7 @@ $selected_loc=\Session::get('selected_location');?>
     </div>
 </nav>
 
-@if(count(\Session::get('user_locations'))>=0)
+@if(count(\Session::get('user_locations'))<=0)
 <script>
     $(document).ajaxStop(function () {
         if($('td[data-field="location_id"]').length>0){
