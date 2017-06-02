@@ -3,8 +3,6 @@
     $badge = "font-size: 14px;padding-left: 10px;padding-right: 10px;margin-left: 5px;   padding-top: 5px;";
 ?>
 <div style="{!! $ticketCommentsHeaderContainer !!}" >
-    <span style="">Comments</span>
-    <span style="{!! $badge !!}"
-          >{{ $conversationCount }} comments</span>
+    <span style="">{{ $conversationCount }} Previous Comments</span>
 </div> 
 

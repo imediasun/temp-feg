@@ -32,10 +32,10 @@
         $imgAvatar .= " opacity: .4;";
     }
     
-    $commentUserProfileImageContainer = "position: absolute;";
+    $commentUserProfileImageContainer = "";
     $imgAvatarContainer = "white-space: nowrap;";
     $imgCircle = "border-radius: 50%;";
-    $commentMainContainer = "padding-left: 60px;";
+    $commentMainContainer = "padding-left: 60px; margin-top: -60px;";
     $commentMetaText = "margin: 0 0 10px 0;";
     $commentDateText = "    color: #aaa;
         font-weight: normal;

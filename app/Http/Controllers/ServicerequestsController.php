@@ -804,7 +804,7 @@ class servicerequestsController extends Controller
                 ])->render();
             }
             if (!empty($commentsArray)) {
-                $comments = '<hr style="margin:20px 0; border-color: #999; ">';
+                $comments = '<div style="margin:50px 0 20px; border-bottom: 1px solid #999; "/><div>';
                 $comments .= \View::make('servicerequests.email.commentviewheader', ['conversationCount' => $commentsCount])->render();;
                 $comments .= implode("<br/>", $commentsArray);
             }
