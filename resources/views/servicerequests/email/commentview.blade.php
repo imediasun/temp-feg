@@ -35,7 +35,7 @@
     $commentUserProfileImageContainer = "";
     $imgAvatarContainer = "white-space: nowrap;";
     $imgCircle = "border-radius: 50%;";
-    $commentMainContainer = "padding-left: 60px; margin-top: -60px;";
+    $commentMainContainer = "";
     $commentMetaText = "margin: 0 0 10px 0;";
     $commentDateText = "    color: #aaa;
         font-weight: normal;
