@@ -143,10 +143,10 @@ class managefegrequeststore extends Sximo
             } else {
                 $TID_comma_replaced = $TID;
             }
-            $loc_where = 'WHERE requests.status_id=1 AND products.prod_type_id IN (' . $TID_comma_replaced . ') '.$filter;
+            $loc_where = 'WHERE requests.status_id=1  AND requests.blocked_at IS NULL AND products.prod_type_id IN (' . $TID_comma_replaced . ') '.$filter;
             $data['loc_options'] = self::getLocationDropDownData('CONCAT(requests.location_id," | ",location.location_name_short)', $loc_where, 'ORDER BY requests.location_id');
             if (!empty($LID)) {
-                $vendor_where='WHERE requests.status_id=1 AND requests.location_id=' . $LID . ' AND products.prod_type_id IN (' . $TID_comma_replaced . ')'.$filter;
+                $vendor_where='WHERE requests.status_id=1  AND requests.blocked_at IS NULL AND requests.location_id=' . $LID . ' AND products.prod_type_id IN (' . $TID_comma_replaced . ')'.$filter;
                 $data['vendor_options'] = self::getVendorDropDownData('CONCAT(vendor_name,IF(vendor.status=0," (Inactive)",""))',$vendor_where, 'ORDER BY vendor.vendor_name');
             } else {
                 $data['vendor_options'] = array('' => '<-- Select');
@@ -166,7 +166,7 @@ class managefegrequeststore extends Sximo
 
         $query = \DB::select('SELECT COUNT(requests.id) as count,O.order_type AS request_count FROM requests
 								LEFT JOIN products P ON P.id = requests.product_id LEFT JOIN order_type O ON O.id = P.prod_type_id
-                                WHERE requests.status_id = 1 AND O.order_type IS NOT NULL ' . $order_type_where . ' GROUP BY P.prod_type_id');
+                                WHERE requests.status_id = 1  AND requests.blocked_at IS NULL AND O.order_type IS NOT NULL ' . $order_type_where . ' GROUP BY P.prod_type_id');
 
         foreach ($query as $index => $row) {
        //     $number_requests = $number_requests ." ".." | <em>". $row->request_count .":</em>";
@@ -341,11 +341,11 @@ class managefegrequeststore extends Sximo
                     $TID_comma_replaced = $TID;
                 }
 
-                $data['loc_options'] = self::getLocationDropDownData('CONCAT(requests.location_id," | ",location.location_name_short)','WHERE requests.status_id=1 AND products.prod_type_id IN ('.$TID_comma_replaced.')','ORDER BY requests.location_id');
+                $data['loc_options'] = self::getLocationDropDownData('CONCAT(requests.location_id," | ",location.location_name_short)','WHERE requests.status_id=1  AND requests.blocked_at IS NULL AND products.prod_type_id IN ('.$TID_comma_replaced.')','ORDER BY requests.location_id');
 
                 if(!empty($LID))
                 {
-                    $data['vendor_options'] = self::getVendorDropDownData('vendor_name','WHERE requests.status_id=1 AND requests.location_id='.$LID.' AND products.prod_type_id IN ('.$TID_comma_replaced.')','ORDER BY vendor.vendor_name');
+                    $data['vendor_options'] = self::getVendorDropDownData('vendor_name','WHERE requests.status_id=1  AND requests.blocked_at IS NULL AND requests.location_id='.$LID.' AND products.prod_type_id IN ('.$TID_comma_replaced.')','ORDER BY vendor.vendor_name');
                 }
                 else
                 {

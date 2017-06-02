@@ -982,6 +982,34 @@ $('#vendor_id').on('select2-selecting',function (e) {
 
             // init("item_name"+counter);
         }
+        <?php
+        if($fromStore)
+            {
+                ?>
+                setTimeout(function () {
+            App.notyConfirm({
+                message: "You have not saved your order yet , Do you want to cancel this order!",
+                confirmButtonText: 'Yes',
+                confirm: function (){
+                    reloadOrder();
+                },
+                cancel:function () {
+                    var requestIds = $('#where_in_expression').val();
+                    $.ajax({
+                        url:"{{route('add_more_blocked_time')}}",
+                        data:{requestIds:requestIds}
+                    }).success(function (data) {
+                        console.log(data);
+                    })
+                        .error(function (data) {
+                            console.log(data);
+                        })
+                }
+            });
+                }, {{env('notification_popup_time_for_order')}}000);
+        <?php
+        }
+        ?>
     </script>
     <style type="text/css">
         tr.invHeading th {
@@ -1131,18 +1159,49 @@ $('#vendor_id').on('select2-selecting',function (e) {
             reloadOrder();
         });
         function reloadOrder() {
+            var requestIds = $('#where_in_expression').val();
+            if(requestIds)
+            {
+                $.ajax({
+                    method: "Get",
+                    url:"{{route('remove_blocked_check')}}",
+                    data:{
+                        requestIds:requestIds
+                    }
+                })
+                    .success(function (data) {
+                        console.log(data);
+                        var moduleUrl = '{{ $pageUrl }}',
+                            redirect = "{{ \Session::get('redirect') }}",
+                            redirectLink = "{{ url() }}/" + redirect;
 
-            var moduleUrl = '{{ $pageUrl }}',
+                        if (redirect== "order") {
+                            ajaxViewClose("#order", null, {noModal: true});
+                        }
+                        else {
+                            //  {{ \Session::put('filter_before_redirect','redirect') }}
+                            location.href = redirectLink;
+                        }
+                    })
+                    .error(function (data) {
+                        console.log(data);
+                    })
+            }
+            else
+            {
+                var moduleUrl = '{{ $pageUrl }}',
                     redirect = "{{ \Session::get('redirect') }}",
                     redirectLink = "{{ url() }}/" + redirect;
 
-            if (redirect== "order") {
-                ajaxViewClose("#order", null, {noModal: true});
+                if (redirect== "order") {
+                    ajaxViewClose("#order", null, {noModal: true});
+                }
+                else {
+                    //  {{ \Session::put('filter_before_redirect','redirect') }}
+                    location.href = redirectLink;
+                }
             }
-            else {
-//            {{ \Session::put('filter_before_redirect','redirect') }}
-                location.href = redirectLink;
-            }
+
 
         }
         // for enable/disable free-hand button

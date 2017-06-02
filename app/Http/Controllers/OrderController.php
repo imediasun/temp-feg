@@ -416,18 +416,18 @@ class OrderController extends Controller
   */
     function postSave(Request $request, $id = 0)
     {
-        //$query = \DB::select('SELECT R.id FROM requests R LEFT JOIN products P ON P.id = R.product_id WHERE R.location_id = "' . (int)$request->location_id . '"  AND P.vendor_id = "' . (int)$request->vendor_id . '" AND R.status_id = 1');
+        $query = \DB::select('SELECT R.id FROM requests R LEFT JOIN products P ON P.id = R.product_id WHERE R.location_id = "' . (int)$request->location_id . '"  AND P.vendor_id = "' . (int)$request->vendor_id . '" AND R.status_id = 1');
 
         /*$productIdArray = $request->get('product_id');
         $query = \DB::select('select id from requests where location_id = "' . (int)$request->location_id . '" AND status_id = 1 AND product_id IN ('.implode(',',$productIdArray).')');
-
+*/
         if (count($query) < 1 && $request->from_sid == 1) {
             return response()->json(array(
                 'message' => 'Someone has already ordered these products',
                 'status' => 'error',
 
             ));
-        }*/
+        }
         $rules = array(
               //  'location_id' => "required",
                 'vendor_id' => 'required',
@@ -611,7 +611,8 @@ class OrderController extends Controller
                     \DB::update('UPDATE requests
 							 SET status_id = 2,
 							 	 process_user_id = ' . \Session::get('uid') . ',
-								 process_date = "' . $now . '"
+								 process_date = "' . $now . '",
+								 blocked_at = NOW() 
 						   WHERE id IN(' . $where_in . ')');
                     //// SUBTRACT QTY OF RESERVED AMT ITEMS
                     $item_count = substr_count($SID_string, '-') - 1;
