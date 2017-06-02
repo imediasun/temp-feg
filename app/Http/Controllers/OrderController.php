@@ -612,7 +612,7 @@ class OrderController extends Controller
 							 SET status_id = 2,
 							 	 process_user_id = ' . \Session::get('uid') . ',
 								 process_date = "' . $now . '",
-								 blocked_at = NOW() 
+								 blocked_at = null 
 						   WHERE id IN(' . $where_in . ')');
                     //// SUBTRACT QTY OF RESERVED AMT ITEMS
                     $item_count = substr_count($SID_string, '-') - 1;
