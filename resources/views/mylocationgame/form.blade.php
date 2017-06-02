@@ -154,7 +154,7 @@
 							{!! SiteHelpers::activeLang('Serial', (isset($fields['serial']['language'])? $fields['serial']['language'] : array())) !!}
 						</label>
 						<div class="col-md-6">
-							{!! Form::text('serial', $row['serial'],array('class'=>'form-control', 'placeholder'=>'','parsley-type'=>"number",  'required'=> 'required' )) !!}
+							{!! Form::text('serial', $row['serial'],array('class'=>'form-control', 'placeholder'=>'')) !!}
 						</div>
 						<div class="col-md-2">
 
