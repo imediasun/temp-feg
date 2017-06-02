@@ -1006,7 +1006,7 @@ $('#vendor_id').on('select2-selecting',function (e) {
                         })
                 }
             });
-                }, {{env('notification_popup_time_for_order')}}000);
+                }, {{env('notification_popup_time_for_order')}});
         <?php
         }
         ?>
