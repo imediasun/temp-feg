@@ -411,6 +411,8 @@
     </div>
     <script type="text/javascript">
         var counter = 0;
+        var hidePopup;
+        var showFirstPopup;
         var mode = "{{ $data['prefill_type'] }}";
         var PRECISION = '<?php echo  \App\Models\Order::ORDER_PERCISION?>';
         $('#alt_ship_to').on('change', function () {
@@ -682,6 +684,7 @@
         function showResponse(data) {
 
             $('.ajaxLoading').hide();
+            clearTimeout(hidePopup);
             if (data.status == 'success') {
                 notyMessage(data.message);
                 ajaxViewChange("#order", data.saveOrSendContent);
@@ -982,36 +985,50 @@ $('#vendor_id').on('select2-selecting',function (e) {
 
             // init("item_name"+counter);
         }
+        function showPopups()
+        {
+            showFirstPopup = setTimeout(function () {
+                App.notyConfirm({
+                    message: "You have not saved your order yet , Do you want to cancel this order!",
+                    confirmButtonText: 'Yes',
+                    cancelButtonText: 'No',
+                    timeout:6000,
+                    confirm: function (){
+                        reloadOrder();
+                    },
+                    cancel:function () {
+                        var requestIds = $('#where_in_expression').val();
+                        $.ajax({
+                            url:"{{route('add_more_blocked_time')}}",
+                            data:{requestIds:requestIds}
+                        }).success(function (data) {
+                            console.log(data);
+                            clearTimeout(hidePopup);
+                            var settimeout =  showPopups();
+                            console.log(settimeout);
+                        })
+                            .error(function (data) {
+                                console.log(data);
+                            })
+                    }
+                });
+                    hidePopup = setTimeout(function () {
+                        $('#noty_topCenter_layout_container').hide(200);
+                        reloadOrder();
+                    },60000)
+            }, ({{env('notification_popup_time_for_order')}} * 60000));
+            return 'Time Out set successfully';
+        }
+        <?php
+            if($fromStore)
+            {
+        ?>
+
+                   var settimeout =  showPopups();
+                   console.log(settimeout);
 
         <?php
-        if($fromStore)
-            {
-                ?>
-                setTimeout(function () {
-            App.notyConfirm({
-                message: "You have not saved your order yet , Do you want to cancel this order!",
-                confirmButtonText: 'Yes',
-                cancelButtonText: 'No',
-                timeout:6000,
-                confirm: function (){
-                    reloadOrder();
-                },
-                cancel:function () {
-                    var requestIds = $('#where_in_expression').val();
-                    $.ajax({
-                        url:"{{route('add_more_blocked_time')}}",
-                        data:{requestIds:requestIds}
-                    }).success(function (data) {
-                        console.log(data);
-                    })
-                        .error(function (data) {
-                            console.log(data);
-                        })
-                }
-            });
-                }, ({{env('notification_popup_time_for_order')}} * 60000));
-        <?php
-        }
+            }
         ?>
     </script>
     <style type="text/css">
