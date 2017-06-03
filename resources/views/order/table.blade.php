@@ -248,7 +248,7 @@ usort($tableGrid, "SiteHelpers::_sort");
 <script>
     $(document).ready(function() {
     $('.tips').tooltip();
-        $('select[name="status_id"] option:first-child').text('all');
+        $('select[name="status_id"] option:first-child').text('All');
         $('select[name="status_id"]').change();
         $('input[type="checkbox"],input[type="radio"]').iCheck({
 		checkboxClass: 'icheckbox_square-blue',
