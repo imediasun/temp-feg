@@ -63,7 +63,7 @@ class RefreshOAuthToken extends Command
            }
            $now = new \DateTime();
            $now = $now->getTimestamp();
-           if($now >= $nextRefreshTime || !User::verifyOAuthTokenIsValid($user->oauth_token)){
+           if($now >= $nextRefreshTime || !Users::verifyOAuthTokenIsValid($user->oauth_token)){
                try{
 
                    $array = Users::refreshOAuthToken($user->refresh_token);
