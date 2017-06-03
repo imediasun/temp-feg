@@ -594,8 +594,14 @@ class FEGSystemHelper
                 return self::phpMail($to, $subject, $message, $from, $options);
             }
             else {
-                if($preferGoogleSend && !empty(Auth()->user()->oauth_token)){
-                    return self::googleOAuthMail($to, $subject, $message, Auth()->user(), $options);
+                $user = Auth()->user();
+                if($preferGoogleSend && !empty($user->oauth_token)){
+                    if(!$user->isOAuthRefreshedRecently()){
+
+                        $googleResponse = Users::refreshOAuthToken($user->refresh_token);
+                        $user->updateRefreshToken($googleResponse);
+                    }
+                    return self::googleOAuthMail($to, $subject, $message, $user, $options);
                 }else{
                     return self::laravelMail($to, $subject, $message, $from, $options);
                 }

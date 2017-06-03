@@ -50,53 +50,41 @@ class RefreshOAuthToken extends Command
         $L = $this->L = FEGSystemHelper::setLogger($this->L, "refresh-oauth-token.log", "FEGOAuthTokenCron1/RefreshOAuthToken1", "REFRESH_OAUTH");
         $L->log('Start Refreshing Oauth Tokens');
 
-        $users = Users::whereNotNull('refresh_token')->orWhere('refresh_token','!=','')->get();
+        $users = Users::whereNotNull('refresh_token')->where('oauth_refreshed_at')->orWhere('refresh_token','!=','')->get();
         $count = count($users);
         $L->log($count.' Users with Oauth Refresh Token Found');
         $client = new Client();
         foreach ($users as $key=>$user){
             //echo $user->refresh_token;
-            try{
-                $res = $client->request('POST', 'https://www.googleapis.com/oauth2/v4/token',array('headers'=>array('Content-Type'=>'application/x-www-form-urlencoded'),'form_params'=>array(
-                    'grant_type'=>'refresh_token',
-                    'approval_prompt'=>'force',
-                    'access_type'=>'offline',
-                    'client_id'=>env('G_ID'),
-                    'refresh_token'=>$user->refresh_token,
-                    'client_secret'=>env('G_SECRET'))));
-                $result = $res->getBody();
-                $array = json_decode($result, true);
-                $users_with_related_oauthemail = Users::where('oauth_email',$user->oauth_email)->where('id','!=',$user->id)->get();
-                $L->log(count($users_with_related_oauthemail).' Users with same oauth email Found');
-                foreach ($users_with_related_oauthemail as $related)
-                {
-                    $related->oauth_token = $array['access_token'];
-                    if(isset($array['refresh_token'])){
-                        $related->refresh_token = $array['refresh_token'];
-                    }
-                    $related->save();
-                    $L->log('ID '.$related->id.' User (with same oauth email) oauth token updated');
-                }
-                $user->oauth_token = $array['access_token'];
-                if(isset($array['refresh_token'])){
-                    $user->refresh_token = $array['refresh_token'];
-                }
+           $refreshedAt = \DateTime::createFromFormat("Y-m-d H:i:s",$user->oauth_refreshed_at)->getTimestamp();
+           $nextRefreshTime = $refreshedAt + (55*60.00);//add 55 minutes to last refresh time
+           $now = new \DateTime();
+           $now = $now->getTimestamp();
+           if($now >= $nextRefreshTime){
+               try{
 
-                $user->save();
-                $L->log('ID '.$user->id.' User oauth token updated');
-                $L->log('Google Api (Refresh token) response for user id '.$user->id.' '.json_encode($array));
-                print_r($array);
-            }
-            catch (ClientException $e)
-            {
+                   $array = Users::refreshOAuthToken($user->refresh_token);
+                   $user->updateRefreshToken($array);
+                   $L->log('ID '.$user->id.' User oauth token updated');
+                   $L->log('Google Api (Refresh token) response for user id '.$user->id.' '.json_encode($array));
+                   print_r($array);
+               }
+               catch (ClientException $e)
+               {
 
-                    $user->oauth_token = null;
-                    $user->refresh_token = null;
-                    $user->save();
-                    echo 'User ID '.$user->id . ' token could not be updated..';
-                    $count--;
-                $L->log('Google Api (Refresh token) error response for user id '.$user->id.' '.$e);
-            }
+                   $user->oauth_token = null;
+                   $user->refresh_token = null;
+                   $user->save();
+                   echo 'User ID '.$user->id . ' token could not be updated..';
+                   $count--;
+                   $L->log('Google Api (Refresh token) error response for user id '.$user->id.' '.$e);
+               }
+           }
+           else
+           {
+               $L->log('ID '.$user->id.' Recently refreshed at '.$user->oauth_refreshed_at);
+               $count--;
+           }
 
         }
         $L->log($count .' users of '. count($users). ' Users refresh token updated');
