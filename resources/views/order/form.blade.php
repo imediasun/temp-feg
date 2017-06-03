@@ -685,6 +685,7 @@
 
             $('.ajaxLoading').hide();
             clearTimeout(hidePopup);
+            console.log('timeoutcleared');
             if (data.status == 'success') {
                 notyMessage(data.message);
                 ajaxViewChange("#order", data.saveOrSendContent);
@@ -987,6 +988,7 @@ $('#vendor_id').on('select2-selecting',function (e) {
         }
         function showPopups()
         {
+            console.log('settingtimeout');
             showFirstPopup = setTimeout(function () {
                 App.notyConfirm({
                     message: "You have not saved your order yet , Do you want to cancel this order!",
@@ -1004,6 +1006,7 @@ $('#vendor_id').on('select2-selecting',function (e) {
                         }).success(function (data) {
                             console.log(data);
                             clearTimeout(hidePopup);
+                            console.log('timeoutcleared');
                             var settimeout =  showPopups();
                             console.log(settimeout);
                         })
@@ -1012,6 +1015,7 @@ $('#vendor_id').on('select2-selecting',function (e) {
                             })
                     }
                 });
+
                     hidePopup = setTimeout(function () {
                         $('#noty_topCenter_layout_container').hide(200);
                         reloadOrder();
