@@ -49,18 +49,17 @@ class EnableBlockedOrderItems extends Command
         $L->log('Start getting blocked items');
 
         //$blocked_items = \DB::select("SELECT id FROM requests WHERE blocked_at <= (NOW() - INTERVAL ".env('ENABLE_BLOCKED_ITEMS_TIME')." MINUTE )");
-        $blocked_items = managefegrequeststore::where('blocked_at', '<=',date("Y-m-d h:i:s",strtotime(date("Y-m-d h:i:s")." +10 minutes")))->get()->pluck('id');
-
+        $blocked_items = managefegrequeststore::where('blocked_at', '<=',date("Y-m-d h:i:s",strtotime(date("Y-m-d h:i:s")." +10 minutes")))->get();
         $count = count($blocked_items);
-        $blocked_items = implode(',',$blocked_items->all());
         $L->log($count.' Blocked records found');
-        $L->log(' Blocked records IDs = '.$blocked_items);
+        $blocked_items_ids = implode(',',$blocked_items->pluck('id')->all());
+        $L->log(' Blocked records IDs = '.$blocked_items_ids);
         if($count > 0)
         {
-            \DB::update('update requests set blocked_at = null WHERE id IN ('.$blocked_items.')');
+            \DB::update('update requests set blocked_at = null WHERE id IN ('.$blocked_items_ids.')');
         }
 
-        $L->log($count .' requests blocked_at field set to null where id =   '.$blocked_items);
+        $L->log($count .' requests blocked_at field set to null where id =   '.$blocked_items_ids.'and blocked_at = '.implode(',',$blocked_items->pluck('blocked_at')->all()) );
         $L->log('Cron job for updating blocked items END');
         return true;
     }
