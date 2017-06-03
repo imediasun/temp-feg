@@ -588,7 +588,7 @@ class FEGSystemHelper
         $preventEmailSendingSetting = env('PREVENT_FEG_SYSTEM_EMAIL', false);
         if (!$preventEmailSendingSetting)  {
             $usePhpMail = !empty($options['usePHPMail']);
-            $preferGoogleSend = !empty($options['preferGoogleOAuthMail']);
+            $preferGoogleSend = !empty($options['preferGoogleOAuthMails']);
             //$useLaravelMail = !empty($options['useLaravelMail']) || !empty($options['attach']);
             if ($usePhpMail) {
                 return self::phpMail($to, $subject, $message, $from, $options);

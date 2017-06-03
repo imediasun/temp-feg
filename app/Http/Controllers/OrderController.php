@@ -850,7 +850,7 @@ class OrderController extends Controller
         FEGSystemHelper::sendSystemEmail(array_merge($receipts, array(
             'subject' => $subject,
             'message' => $message,
-//            'preferGoogleOAuthMail' => true,
+//            'preferGoogleOAuthMails' => true,
             'isTest' => env('APP_ENV', 'development') !== 'production' ? true : false,
             'configName' => $configName,
             'from' => $from,
