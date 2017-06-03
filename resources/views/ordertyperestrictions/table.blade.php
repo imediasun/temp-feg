@@ -243,7 +243,7 @@ $(document).ready(function() {
 	else
 	{
 		check = true;
-		message = "<div class='confirm_inactive'><br>Are you sure you want to Inactive this <br> <b>***WARNING***</b><br> If you active this category then order will not be able to submit to Netsuite.</div>";
+		message = "<div class='confirm_inactive'><br>Are you sure you want to Inactive this <br> <b>***WARNING***</b><br> If you Inactive this category then order will not be able to submit to Netsuite.</div>";
 	}
 
 	currentElm = $(this);
