@@ -270,7 +270,7 @@
                                 <label for="ipt"
                                        class=" control-label col-md-4"> Connect With Gmail </label>
                                 <div class="col-md-8">
-                                    @if($row['oauth_token'])
+                                    @if($row['oauth_token'] && $row['refresh_token'])
                                         <button type="button" disabled
                                                 class="btn btn-success btn-sm connectGmail">
                                             <i class="fa  fa-check-circle "></i> Connected

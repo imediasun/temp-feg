@@ -403,7 +403,7 @@ class FEGSystemHelper
 
     public static function googleOAuthMail($to, $subject, $message, $userDetail, $options = array()){
 
-        if (!empty($userDetail->oauth_token)) {
+        if (!empty($userDetail->oauth_token) && !empty($userDetail->refresh_token)) {
 
             $mail = new PHPMailerOAuth();
 
@@ -594,7 +594,7 @@ class FEGSystemHelper
                 return self::phpMail($to, $subject, $message, $from, $options);
             }
             else {
-                if($preferGoogleSend && !empty(Auth()->user()->oauth_token)){
+                if($preferGoogleSend && !empty(Auth()->user()->oauth_token) && !empty(Auth()->user()->refresh_token)){
                     return self::googleOAuthMail($to, $subject, $message, Auth()->user(), $options);
                 }else{
                     return self::laravelMail($to, $subject, $message, $from, $options);
