@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Console;
+
 use DB;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
@@ -20,7 +21,8 @@ class Kernel extends ConsoleKernel
         \App\Console\Commands\CreateDummyOrders::class,
         \App\Console\Commands\SyncUserLocations::class,
         \App\Console\Commands\RefreshOAuthToken::class,
-        \App\Console\Commands\ResetEmailsToAllActiveUsers::class
+        \App\Console\Commands\ResetEmailsToAllActiveUsers::class,
+        \App\Console\Commands\EnableBlockedOrderItems::class
     ];
 
     /**
@@ -39,6 +41,7 @@ class Kernel extends ConsoleKernel
         //turning off to allow client to test and avoid from varying counts
         $schedule->command('create:dummy_order')->cron('*/30 * * * * *')->withoutOverlapping();;
         $schedule->command('elm5taskmanager')->everyMinute();
+        $schedule->command('enable:blocked_items')->everyMinute();
 
     }
 }

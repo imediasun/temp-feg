@@ -982,6 +982,7 @@ $('#vendor_id').on('select2-selecting',function (e) {
 
             // init("item_name"+counter);
         }
+
         <?php
         if($fromStore)
             {
@@ -990,6 +991,8 @@ $('#vendor_id').on('select2-selecting',function (e) {
             App.notyConfirm({
                 message: "You have not saved your order yet , Do you want to cancel this order!",
                 confirmButtonText: 'Yes',
+                cancelButtonText: 'No',
+                timeout:6000,
                 confirm: function (){
                     reloadOrder();
                 },
@@ -1006,7 +1009,7 @@ $('#vendor_id').on('select2-selecting',function (e) {
                         })
                 }
             });
-                }, {{env('notification_popup_time_for_order')}});
+                }, ({{env('notification_popup_time_for_order')}} * 60000));
         <?php
         }
         ?>
