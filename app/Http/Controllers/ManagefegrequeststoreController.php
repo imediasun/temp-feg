@@ -442,17 +442,21 @@ class ManagefegrequeststoreController extends Controller
     public function AddBlockedCheck(Request $request)
     {
         $requestIds = $request->requestIds;
-        $query = \DB::update("UPDATE requests set blocked_at = NOW() WHERE id IN ($requestIds)");
-        if ($query) {
-            return response()->json(array(
-                'status' => 'success',
-                'message' => 'Added Blocked Time'
-            ));
-        } else {
-            return response()->json(array(
-                'status' => 'error',
-                'message' => 'Unable to add time'
-            ));
+        if(!empty($requestIds))
+        {
+            $query = \DB::update("UPDATE requests set blocked_at = NOW() WHERE id IN ($requestIds)");
+            if ($query) {
+                return response()->json(array(
+                    'status' => 'success',
+                    'message' => 'Added Blocked Time'
+                ));
+            } else {
+                return response()->json(array(
+                    'status' => 'error',
+                    'message' => 'Unable to add time'
+                ));
+            }
         }
+        return 'requestIds are empty!';
     }
 }

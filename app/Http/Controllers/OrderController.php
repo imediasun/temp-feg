@@ -1032,7 +1032,7 @@ class OrderController extends Controller
 
                 /* current user */
                     $google_acc = \DB::table('users')->where('id', \Session::get('uid'))->first();
-                    if (!empty($google_acc->oauth_token)) {
+                    if (!empty($google_acc->oauth_token) && !empty($google_acc->refresh_token)) {
 
                         $mail = new PHPMailerOAuth();
 

@@ -403,7 +403,7 @@ class FEGSystemHelper
 
     public static function googleOAuthMail($to, $subject, $message, $userDetail, $options = array()){
 
-        if (!empty($userDetail->oauth_token)) {
+        if (!empty($userDetail->oauth_token) && !empty($userDetail->refresh_token)) {
 
             $mail = new PHPMailerOAuth();
 
@@ -595,7 +595,7 @@ class FEGSystemHelper
             }
             else {
                 $user = Auth()->user();
-                if($preferGoogleSend && !empty($user->oauth_token)){
+                if($preferGoogleSend && !empty($user->oauth_token) && !empty(Auth()->user()->refresh_token)){
                     if(!$user->isOAuthRefreshedRecently()){
 
                         $googleResponse = Users::refreshOAuthToken($user->refresh_token);
