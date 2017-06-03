@@ -58,7 +58,8 @@ class EnableBlockedOrderItems extends Command
         foreach($blocked_items as $blocked_item)
         {
             $L->log('Checking condition '.date("Y-m-d h:i:s",strtotime($blocked_item->blocked_at." +10 minutes")) .' < '. date("Y-m-d h:i:s"));
-            if(date("Y-m-d h:i:s",strtotime($blocked_item->blocked_at." +10 minutes")) < date("Y-m-d h:i:s"))
+            $L->log('Checking condition '.date("Y-m-d h:i:s") .' - '. $blocked_item->blocked_at .'>='. 10 );
+            if(date("Y-m-d h:i:s") - $blocked_item->blocked_at >= 10)
             {
                 \DB::update('update requests set blocked_at = null WHERE id = '.$blocked_item->id);
                 $L->log('table requests blocked_at field set to null where id =   '.$blocked_item->id.'and blocked_at = '.$blocked_item->blocked_at );
