@@ -337,13 +337,13 @@ class MylocationgameController extends Controller
             {
                 unset($data['img']); // Todo see where from img key is setting
             }
-            if(!((int)$data['serial']))
-            {
-                return response()->json(array(
-                    'status' => 'error',
-                    'message' => 'Serial should be a valid number!'
-                ));
-            }
+//            if(!((int)$data['serial']))
+//            {
+//                return response()->json(array(
+//                    'status' => 'error',
+//                    'message' => 'Serial should be a valid number!'
+//                ));
+//            }
             if(isset($data['id']))
             {
                 if(((int)$data['id']))

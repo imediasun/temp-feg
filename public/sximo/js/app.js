@@ -3,6 +3,8 @@ var UNDEFINED,
     exportThreshold = 10000,
     App = {
         lastSearchMode: '',
+        handlers: {},
+        functions: {},
         autoCallbacks: {},
         search: {cache: {}},
         simpleSearch: {cache: {}},
@@ -112,7 +114,41 @@ App.notyConfirm = function (options)
                 timeout: timeout,
                 layout: layout,		
                 buttons: buttons
-            };    
+            };
+
+    if (options.modal !== UNDEFINED) {
+        notyOptions.modal = options.modal;
+    }
+    if (options.closeWith !== UNDEFINED) {
+        notyOptions.closeWith = options.closeWith;
+    }
+    if (options.killer !== UNDEFINED) {
+        notyOptions.killer = options.killer;
+    }
+    if (options.progressBar !== UNDEFINED) {
+        notyOptions.progressBar = options.progressBar;
+    }
+    if (options.force !== UNDEFINED) {
+        notyOptions.force = options.force;
+    }
+    if (options.container !== UNDEFINED) {
+        notyOptions.container = options.container;
+    }
+    if (options.animation !== UNDEFINED) {
+        notyOptions.animation = options.animation;
+    }
+    if (options.callbacks !== UNDEFINED) {
+        notyOptions.callbacks = options.callbacks;
+    }
+    if (options.container !== UNDEFINED) {
+        notyOptions.container = options.container;
+    }
+    if (options.id !== UNDEFINED) {
+        notyOptions.id = options.id;
+    }
+    if (options.theme !== UNDEFINED) {
+        notyOptions.theme = options.theme;
+    }
 	noty(notyOptions);		
 	
 };
@@ -171,6 +207,29 @@ App.autoCallbacks.registerCallback('ajaxinlinesave', function(params){
 
 });
 
+App.handlers.ajaxError = function (jQEvent, jQXhr, xhr, errorName) {
+    var obj = this,
+        skipIf = {'Unauthorized': true};
+    console.log([obj, jQEvent, jQXhr, xhr, errorName]);
+
+    if(__noErrorReport || skipIf[errorName]) {
+        return;
+    }
+    App.autoCallbacks.runCallback.call(obj, 'ajaxerror',{
+        jQEvent: jQEvent, jQXhr: jQXhr, xhr: xhr, errorName: errorName, context: obj
+    });
+};
+
+//App.handlers.ajaxSuccess = function (a,b,c) {
+//    var obj = this;
+//    console.log(arguments);
+//    App.autoCallbacks.runCallback.call(obj, 'ajaxsuccess',{});
+//};
+//App.handlers.ajaxFail = function (a,b,c) {
+//    var obj = this;
+//    console.log(arguments);
+//    App.autoCallbacks.runCallback.call(obj, 'ajaxfail',{});
+//};
 
 /**
  *  This function can check if a value needs URI encoding.
@@ -477,7 +536,7 @@ function setAndProbeExportSessionTimeout(setUrl, probeUrl) {
                         {
                             showDuration: 0,
                             timeOut: 0,
-                            showEasing: 'linear',
+                            showEasing: 'linear'
                         },
                         'info',
                         'Attention');
@@ -671,6 +730,17 @@ jQuery(document).ready(function($){
     if(PREVENT_CONSOLE_LOGS){
         disableConsoleLogs();
     }
+
+    $('body').bind('ajaxError', function(jQEvent, jQXhr, xhr, errorName){
+        App.handlers.ajaxError.call(this, jQEvent, jQXhr, xhr, errorName);
+    });
+//    $('body').bind('ajaxStart', function(e){
+//        console.log(['ajaxStart', arguments]);
+//    });
+//    $('body').bind('ajaxSend', function(e){
+//        console.log(['ajaxSend', arguments]);
+//    });
+
 });
 
 // TODO: Clean and refactor the below code 
@@ -729,7 +799,12 @@ jQuery(document).ready(function ($) {
                 }
                 else
                 {
-                    if(data.is_view == 1)
+                    if (data.noAuth) {
+                        notyMessageError(data.message);
+                        unblockUI();
+                        window.location = siteUrl;
+                    }
+                    else if(data.is_view == 1)
                     {
                         window.location = url;
                     }
@@ -744,8 +819,9 @@ jQuery(document).ready(function ($) {
             })
             .error(function (data) {
                 console.log(data);
-                if(data.status == '500')
+                if(data.status == '500' || data.status == '401')
                 {
+                    notyMessageError(data.statusText);
                     window.location = url;
                 }
                 else
@@ -796,3 +872,69 @@ jQuery(document).ready(function ($) {
 
 });
 
+/* Ajax Error Handling */
+App.functions.reportIssue = function (params, options) {
+    var reportUrl = siteUrl + '/core/users/report-issue';
+    notyMessage("Wait, Reporting error!");
+    $.ajax({
+        url: reportUrl,
+        type:'POST',
+        method:'POST',
+        data: {
+            responseText: params.jQXhr.responseText,
+            readyState: params.jQXhr.readyState,
+            status: params.jQXhr.status,
+            statusText: params.jQXhr.statusText,
+            type: params.xhr.type,
+            url: params.xhr.url,
+            data: params.xhr.data || {}
+        }
+    })
+    .done(function (data) {
+        if (options.done) {
+            options.done();
+        }
+    })
+    .error(function (data) {
+        if (options.done) {
+            options.done();
+        }
+    });
+};
+
+App.autoCallbacks.registerCallback('ajaxerror', function(params){
+    
+    var obj = this;
+    unblockUI();   
+    App.notyConfirm({
+        message : "Hi, the server doesn't like whatever it is that you just \n\
+                tried to do. Don't worry, in all likelihood you didn't \n\
+                do anything wrong. Please click the button below to send a \n\
+                    log of the error report to the Element5Digital support team. \n\
+                    Email to be sent to: support@element5digital.com",
+        modal: true,
+        layout: 'center',
+        type: 'error',
+        closeWith: ['button'],
+        killer: true,
+        theme: 'relax',
+        cancelButtonText: 'Return to site',
+        cancel: function (){
+            location.href = siteUrl;//location.reload();
+        },
+        buttons: [{
+                    addClass: 'btn btn-primary btn-sm',
+                    text: 'Report Issue',
+                    onClick: function ($noty) {
+                        blockUI();
+                        App.functions.reportIssue.call(obj, params, {'done': function (response) {
+                            unblockUI();
+                            $noty.close();
+                            notyMessage("Error reported! Going back to your home page.");
+                            location.href = siteUrl;
+                            //location.reload();
+                        }});
+                    }
+                }]
+    });
+});
