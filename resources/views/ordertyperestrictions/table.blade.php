@@ -238,12 +238,12 @@ $(document).ready(function() {
 	var check = false;
 	if(state)
 	{
-		message = "<div class='confirm_inactive'><br>Are you sure you want to Active this <br> <b>***WARNING***</b><br> if you active this User then he will be able to login and to do any task.</div>";
+		message = "<div class='confirm_inactive'><br>Are you sure you want to Active this <br> <b>***WARNING***</b><br> If you active this category then order will be able to submit to Netsuite.</div>";
 	}
 	else
 	{
 		check = true;
-		message = "<div class='confirm_inactive'><br>Are you sure you want to Inactive this <br> <b>***WARNING***</b><br> if you inactive this User then he will be unable to login and to do any task.</div>";
+		message = "<div class='confirm_inactive'><br>Are you sure you want to Inactive this <br> <b>***WARNING***</b><br> If you active this category then order will not be able to submit to Netsuite.</div>";
 	}
 
 	currentElm = $(this);
@@ -256,7 +256,7 @@ $(document).ready(function() {
 			$('.custom_overlay').slideUp(500);
 			$.ajax({
 						type:'POST',
-						url:'ordertyperestriction/trigger',
+						url:'ordertyperestrictions/trigger',
 						data:{isActive:state,typeId:typeId},
 						success:function(data){
 							currentElm.bootstrapSwitch('state', !check,true);
