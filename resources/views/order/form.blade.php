@@ -685,6 +685,7 @@
 
             $('.ajaxLoading').hide();
             clearTimeout(hidePopup);
+            clearTimeout(showFirstPopup);
             console.log('timeoutcleared');
             if (data.status == 'success') {
                 notyMessage(data.message);
