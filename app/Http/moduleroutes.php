@@ -60,5 +60,5 @@ Route::controller('feg/system/tasks', 'Feg\System\TasksController');
 Route::controller('feg/system/systememailreportmanager', 'Feg\System\SystemEmailReportManagerController');
 Route::controller('training', 'TrainingController');
 Route::controller('excludedreaders', 'ExcludedreadersController');
-Route::controller('ordertyperestriction', 'OrdertyperestrictionController');
+
 ?>
