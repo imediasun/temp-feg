@@ -13,7 +13,7 @@ class EnableBlockedOrderItems extends Command
      *
      * @var string
      */
-    protected $signature = 'enable:blocked_items';
+    protected $signature = 'enable:blocked_order_items';
 
     protected $L = null;
     /**
@@ -55,7 +55,11 @@ class EnableBlockedOrderItems extends Command
         $blocked_items = implode(',',$blocked_items->all());
         $L->log($count.' Blocked records found');
         $L->log(' Blocked records IDs = '.$blocked_items);
-        \DB::update('update requests set blocked_at = null WHERE id IN ('.$blocked_items.')');
+        if($count > 0)
+        {
+            \DB::update('update requests set blocked_at = null WHERE id IN ('.$blocked_items.')');
+        }
+
         $L->log($count .' requests blocked_at field set to null where id =   '.$blocked_items);
         $L->log('Cron job for updating blocked items END');
         return true;
