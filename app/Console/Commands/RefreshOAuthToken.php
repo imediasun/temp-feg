@@ -56,8 +56,11 @@ class RefreshOAuthToken extends Command
         $client = new Client();
         foreach ($users as $key=>$user){
             //echo $user->refresh_token;
-           $refreshedAt = \DateTime::createFromFormat("Y-m-d H:i:s",$user->oauth_refreshed_at)->getTimestamp();
-           $nextRefreshTime = $refreshedAt + (55*60.00);//add 55 minutes to last refresh time
+           $nextRefreshTime = 0;
+           if(!empty($user->oauth_refreshed_at)){
+               $refreshedAt = \DateTime::createFromFormat("Y-m-d H:i:s",$user->oauth_refreshed_at)->getTimestamp();
+               $nextRefreshTime = $refreshedAt + (55*60.00);//add 55 minutes to last refresh time
+           }
            $now = new \DateTime();
            $now = $now->getTimestamp();
            if($now >= $nextRefreshTime){

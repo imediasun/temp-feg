@@ -11,6 +11,7 @@ use PHPMailer;
 use Mail;
 use PHPMailerOAuth;
 use App\Models\Feg\System\Options;
+use App\Models\Core\Users;
 
 
 class FEGSystemHelper
@@ -594,8 +595,8 @@ class FEGSystemHelper
                 return self::phpMail($to, $subject, $message, $from, $options);
             }
             else {
-                $user = Auth()->user();
-                if($preferGoogleSend && !empty($user->oauth_token) && !empty(Auth()->user()->refresh_token)){
+                $user = Users::find(Auth()->user()->id);
+                if($preferGoogleSend && !empty($user->oauth_token) && !empty($user->refresh_token)){
                     if(!$user->isOAuthRefreshedRecently()){
 
                         $googleResponse = Users::refreshOAuthToken($user->refresh_token);

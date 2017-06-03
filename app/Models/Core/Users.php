@@ -100,6 +100,7 @@ class Users extends Sximo  {
             return false;
         }
         $oAuthRefreshed = \DateTime::createFromFormat('Y-m-d H:i:s',$this->oauth_refreshed_at)->getTimestamp();
+        $oAuthRefreshed += (55*60.00);
         $now = new \DateTime();
         $now = $now->getTimestamp();
 
