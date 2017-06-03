@@ -73,13 +73,13 @@ class FegapiController extends Controller
 
             if($class != 'Order' && $class != "Itemreceipt")
             {
-                $qry = $class1::getRowsQuery($param);
                 $results = $class1::getRows($param);
+                $qry = $class1::$getRowsQuery;
             }
             else
             {
-                $qry = $class1::getRowsQuery($param);
                 $results = $class1::getRows($param , 'only_api_visible');
+                $qry = $class1::$getRowsQuery;
             }
             $json = array();
             //condition necessary to show additional fields in api response
