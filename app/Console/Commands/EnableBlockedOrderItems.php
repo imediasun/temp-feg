@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Models\managefegrequeststore;
 use Illuminate\Console\Command;
 use App\Library\FEG\System\FEGSystemHelper;
 
@@ -47,9 +48,11 @@ class EnableBlockedOrderItems extends Command
         $L = $this->L = FEGSystemHelper::setLogger($this->L, "enable-blocked-items.log", "FEGEnableBlockedItems/EnableBlockedItems", "ENABLE_BLOCKED_ITEMS");
         $L->log('Start getting blocked items');
 
-        $blocked_items = \DB::select("SELECT id FROM requests WHERE blocked_at <= (NOW() - INTERVAL ".env('ENABLE_BLOCKED_ITEMS_TIME')." MINUTE )");
+        //$blocked_items = \DB::select("SELECT id FROM requests WHERE blocked_at <= (NOW() - INTERVAL ".env('ENABLE_BLOCKED_ITEMS_TIME')." MINUTE )");
+        $blocked_items = managefegrequeststore::where('blocked_at', '<=',date("Y-m-d h:i:s",strtotime(date("Y-m-d h:i:s")." +10 minutes")))->get()->pluck('id');
+
         $count = count($blocked_items);
-        $blocked_items = implode(',',$blocked_items);
+        $blocked_items = implode(',',$blocked_items->all());
         $L->log($count.' Blocked records found');
         $L->log(' Blocked records IDs = '.$blocked_items);
         \DB::update('update requests set blocked_at = null WHERE id IN ('.$blocked_items.')');
