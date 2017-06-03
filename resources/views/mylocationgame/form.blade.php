@@ -255,6 +255,7 @@
 								{!! SiteHelpers::activeLang('For Sale', (isset($fields['for_sale']['language'])? $fields['for_sale']['language'] : array())) !!}
 							</label>
 							<div class="col-md-6">
+								<input type="hidden" name="for_sale" value="{{ $row['for_sale'] }}"/>
 								<input type='checkbox'
 									   data-proxy-input='for_sale' name='_for_sale'
 									   value="{{ $row['for_sale'] }}"
@@ -287,6 +288,7 @@
 								{!! SiteHelpers::activeLang('Sale Pending', (isset($fields['sale_pending']['language'])? $fields['sale_pending']['language'] : array())) !!}
 							</label>
 							<div class="col-md-6">
+								<input type="hidden" name="sale_pending" value="{{ $row['sale_pending'] }}"/>
 								<input type='checkbox'
 									   data-proxy-input='sale_pending' name='_sale_pending'
 									   value="{{ $row['sale_pending'] }}"
