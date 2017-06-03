@@ -32,7 +32,8 @@
     <link href="{{ asset('sximo/css/bootstrap-switch.css')}}" rel="stylesheet"/>
     <link href="//gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet"/>
         <script type="text/javascript">
-            var siteUrl = "{{ url() }}";
+            var siteUrl = "{{ url() }}",
+                __noErrorReport = {{ env('PREVENT_ERROR_REPORT_PROMPT', false) ? 'true':'false' }};
         </script>
 		<script type="text/javascript" src="{{ asset('sximo/js/plugins/jquery.min.js') }}"></script>
 

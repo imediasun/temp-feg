@@ -45,6 +45,9 @@ class UsersController extends Controller
 
     public function getCheckAccess()
     {
+        if (!\Auth::check()) {
+            response()->json(['status' => "fail", 'noAuth' => true, 'message' => 'You are no longer logged-in. Please login again.']);
+        }
         $moduleName = Input::get('module');
         $searchableModuleName = $moduleName;
         $urlParts = explode('/', trim(Input::get('url'), '/'));

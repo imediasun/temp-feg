@@ -84,6 +84,39 @@ class FEGSystemHelper
         $filepath = $path . '/'. $fileprefix . $file;
         return $filepath;
     }
+    public static function getUniqueFile($file = "elm5-system-log.log", $pathsuffix = "", $rootPath = null) {
+        $fileSuffix = "-" . date("Ymd-His");
+        if (empty($rootPath)) {
+            $rootPath = realpath(storage_path() . '/logs/');
+        }
+        $path = $rootPath.(empty($pathsuffix) ? "" : '/'.$pathsuffix);
+        if (!file_exists($path)) {
+            mkdir($path, 0755, true);
+        }
+        $fileParts = pathinfo($file);
+        $count = 0;
+        do {
+            $fileName = $fileParts['filename']
+                    .$fileSuffix
+                    .($count > 0 ? "-$count" : '')
+                    .'.'.$fileParts['extension'];
+            
+            $filepath = $path . '/' . $fileName;
+            $count++;
+        } while (file_exists($filepath));
+
+        return $fileName;
+    }
+    public static function getUniqueFilePath($file = "elm5-system-log.log", $pathsuffix = "", $rootPath = null) {
+        $file = self::getUniqueFile($file, $pathsuffix, $rootPath);
+        $fileSuffix = "-" . date("YmdHis");
+        if (empty($rootPath)) {
+            $rootPath = realpath(storage_path() . '/logs/');
+        }
+        $path = $rootPath.(empty($pathsuffix) ? "" : '/'.$pathsuffix);
+        $filepath = $path . '/' . $file;
+        return $filepath;
+    }
 
     public static function set_session_log_path($file = "session.log" , $isReadonly = false) {
         $path = realpath(storage_path())."/logs/ELM5_Sessions";
@@ -1571,4 +1604,35 @@ $message" .
         $d = \DateTime::createFromFormat($fullformat, $date);
         return $d && $d->format($fullformat) === $date;
     }
+
+    public static function strip_html_tags($str){
+        $str = preg_replace('/(<|>)\1{2}/is', '', $str);
+        $str = preg_replace(
+            array(// Remove invisible content
+                '@<head[^>]*?>.*?</head>@siu',
+                '@<style[^>]*?>.*?</style>@siu',
+                '@<script[^>]*?.*?</script>@siu',
+                '@<noscript[^>]*?.*?</noscript>@siu',
+                ),
+            "", //replace above with nothing
+            $str );
+        $str = self::replaceWhitespace($str);
+        $str = strip_tags($str);
+        return $str;
+    }
+
+    //To replace all types of whitespace with a single space
+    public static function replaceWhitespace($str) {
+        $result = $str;
+        foreach (array(
+        "  ", " \t",  " \r",  " \n",
+        "\t\t", "\t ", "\t\r", "\t\n",
+        "\r\r", "\r ", "\r\t", "\r\n",
+        "\n\n", "\n ", "\n\t", "\n\r",
+        ) as $replacement) {
+            $result = str_replace($replacement, $replacement[0], $result);
+        }
+        return $str !== $result ? self::replaceWhitespace($result) : $result;
+    }
+
 }
