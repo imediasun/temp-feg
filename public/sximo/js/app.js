@@ -209,10 +209,10 @@ App.autoCallbacks.registerCallback('ajaxinlinesave', function(params){
 
 App.handlers.ajaxError = function (jQEvent, jQXhr, xhr, errorName) {
     var obj = this,
-        skipIf = {'Unauthorized': true};
+        skipIf = {'unauthorized': true, 'abort': true};
     console.log([obj, jQEvent, jQXhr, xhr, errorName]);
 
-    if(__noErrorReport || skipIf[errorName]) {
+    if(__noErrorReport || skipIf[errorName.toLowerCase()]) {
         return;
     }
     App.autoCallbacks.runCallback.call(obj, 'ajaxerror',{
