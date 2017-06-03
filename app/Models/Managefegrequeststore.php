@@ -35,7 +35,7 @@ class managefegrequeststore extends Sximo
         $order_type_id = isset($cond['order_type_id']) ? $cond['order_type_id'] : "";
         $location_id = isset($cond['location_id']) ? $cond['location_id'] : "";
         $vendor_id = isset($cond['vendor_id']) ? $cond['vendor_id'] : "";
-        $where = "  WHERE requests.id IS NOT NULL ";
+        $where = "  WHERE requests.id IS NOT NULL AND requests.blocked_at IS NULL ";
         if ($cond['view'] == 'manage') {
             if (!empty($order_type_id)) {
                 if (strpos($order_type_id, '-')) {
