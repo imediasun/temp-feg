@@ -98,4 +98,39 @@ class Servicerequests extends Observerable  {
 
         return !empty($ticket);
 	}
+
+    public static function getTicketInitialRequestAsComment($ticketId) {
+        $data = self::select(\DB::raw(implode(",", [
+                    "0 as CommentID,
+                    TicketID,
+                    Description as Comments,
+                    Created as Posted,
+                    entry_by as UserID,
+                    concat(users.first_name, ' ',users.last_name)  as `USERNAME`,
+                    file_path as Attachments,
+                    0 as `imap_read`,
+                    '' as `imap_message_id`,
+                    '' as `imap_meta`,
+                    Created as created_at,
+                    updated as updated_at",
+
+                   'users.username',
+                   'users.first_name',
+                   'users.last_name',
+                   'users.email',
+                   'users.avatar',
+                   'users.active',
+                   'users.group_id'
+                ]))
+            )
+            ->leftJoin('users', 'users.id', '=', 'sb_tickets.entry_by')
+            ->where('TicketID', '=', $ticketId)
+            ->get()->first();
+        $comment = null;
+        if (!empty($data)) {
+            //$comment = $data[0];
+            $comment = $data;
+        }
+        return $comment;
+    }
 }
