@@ -1,6 +1,7 @@
 <?php namespace App\Models\Core;
 
 use App\Models\Sximo;
+use GuzzleHttp\Exception\ClientException;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use GuzzleHttp\Client;
@@ -61,10 +62,19 @@ class Users extends Sximo  {
 	    if(empty($oauthToken)){
 	        return false;
         }
-        $client = new Client();
-        $res = $client->request('GET', "https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=$oauthToken");
-        $result = $res->getBody();
-        $result = json_decode($result, true);
+
+        try
+        {
+            $client = new Client();
+            $res = $client->request('GET', "https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=$oauthToken");
+            $result = $res->getBody();
+            $result = json_decode($result, true);
+        }
+        catch (ClientException $e)
+        {
+            $result['error'] = true;
+        }
+
         if(isset($result['error'])){
             return false;
         }
