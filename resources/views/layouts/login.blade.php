@@ -97,7 +97,7 @@
 		color: #FFF;
 		text-align: center;
 		display: none;
-	" onclick="$(this).hide();">Warning, this browser is not supported. Some admin functions may not work correctly</div></a>
+	" onclick="$(this).hide();">Warning, this browser is not supported. Some admin functions may not work correctly.</div></a>
 	<div class="middle-box  ">
         <div>
 
