@@ -597,7 +597,7 @@ class FEGSystemHelper
             else {
                 $user = Users::find(Auth()->user()->id);
                 if($preferGoogleSend && !empty($user->oauth_token) && !empty($user->refresh_token)){
-                    if(!$user->isOAuthRefreshedRecently()){
+                    if(!$user->isOAuthRefreshedRecently() || !Users::verifyOAuthTokenIsValid($user->oauth_token)){
 
                         $googleResponse = Users::refreshOAuthToken($user->refresh_token);
                         $user->updateRefreshToken($googleResponse);
