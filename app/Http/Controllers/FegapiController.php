@@ -126,13 +126,12 @@ class FegapiController extends Controller
             }
 
             $apiLogger = $this->apiLogger = FEGSystemHelper::setLogger($this->apiLogger, "feg-api-call.log", "FEGApiCallLogs/ApiCallLogs", "API_CALL");
-            $apiLogger->log('<============Start Logging API Call============>');
-            $apiLogger->log('Module: '.$class);
-            $apiLogger->log('Date Called: '.date("m/d/Y"));
-            $apiLogger->log('Client IP: '.$this->getClientIp());
-            $apiLogger->log('Parameters: '.json_encode(array_filter($param)));
-            $apiLogger->log('Query: '.$qry);
-            $apiLogger->log('Results: '.json_encode($jsonData));
+            $apiLogger->log('============Start Logging API Call============');
+            $apiLogger->log('Module: ',$class);
+            $apiLogger->log('Client IP: ',$this->getClientIp());
+            $apiLogger->log('Parameters: ',array_filter($param));
+            $apiLogger->log('Query: ',$qry);
+            $apiLogger->log('Results: ',$jsonData);
 
 
 
