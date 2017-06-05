@@ -323,7 +323,11 @@
             dataType:'json',
             success:function(data){
                 loadCart(vendor_name,data.subtotal);
-            }
+            },
+            error: function(){
+                unblockUI();
+            },
+
         });
     }
     timer=null;
