@@ -1036,8 +1036,15 @@ class OrderController extends Controller
                     $file_to_save = public_path() . '/orders/' . $filename;
                     file_put_contents($file_to_save, $output);
                     $message = $message;
-                    $cc = implode(',',$cc);
-                    $bcc = implode(',',$bcc);
+                    if(is_array($cc))
+                    {
+                        $cc = implode(',',$cc);
+                    }
+                    if(is_array($bcc))
+                    {
+                        $bcc = implode(',',$bcc);
+                    }
+
 
                 /* current user */
                     $google_acc = \DB::table('users')->where('id', \Session::get('uid'))->first();
