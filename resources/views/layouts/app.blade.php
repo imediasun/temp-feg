@@ -41,7 +41,7 @@
 		<script type="text/javascript" src="{{ asset('sximo/js/plugins/jquery-ui.min.js') }}"></script>
 
 		<script type="text/javascript" src="{{ asset('sximo/js/plugins/iCheck/icheck.min.js') }}"></script>
-		<script type="text/javascript" src="{{ asset('sximo/js/plugins/select2/select2.min.js') }}"></script>
+		<script type="text/javascript" src="{{ asset('sximo/js/plugins/select2/select2.js') }}"></script>
 		<script type="text/javascript" src="{{ asset('sximo/js/plugins/fancybox/jquery.fancybox.js') }}"></script>
 		<script type="text/javascript" src="{{ asset('sximo/js/plugins/prettify.js') }}"></script>
 		<script type="text/javascript" src="{{ asset('sximo/js/plugins/parsley.js') }}"></script>
