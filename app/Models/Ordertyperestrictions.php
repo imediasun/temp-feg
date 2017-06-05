@@ -3,7 +3,7 @@
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 
-class ordertyperestrictions extends Sximo  {
+class Ordertyperestrictions extends Sximo  {
 	
 	protected $table = 'order_type';
 	protected $primaryKey = 'id';

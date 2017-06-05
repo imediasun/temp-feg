@@ -2,7 +2,7 @@
 
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\ordertyperestrictions;
+use App\Models\Ordertyperestrictions;
 use Log;
 
 class order extends Sximo
@@ -692,7 +692,7 @@ class order extends Sximo
         else {
             $oType = self::where('id', $id)->value('order_type_id');
         }
-        $isApiable = ordertyperestrictions::isApiable($oType);
+        $isApiable = Ordertyperestrictions::isApiable($oType);
         return $isApiable;
     }
     public static function isApiable($id, $data = null, $ignoreVoid = false) {

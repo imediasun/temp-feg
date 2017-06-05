@@ -1071,32 +1071,32 @@ class OrderController extends Controller
     }
 
     function sendPhpEmail($message,$to,$from,$subject,$pdf,$filename,$cc,$bcc)
-{
-    $result = \Mail::raw($message, function ($message) use ($to, $from, $subject, $pdf, $filename,$cc,$bcc) {
-                        $message->subject($subject);
-                        $message->from($from);
-                        $message->to($to);
-
-                        if(!empty($cc))
-                        {
-                           $message->cc($cc);
-                        }
-                        if(!empty($bcc))
-                        {
-                           $message->bcc($bcc);
-                        }
-                        $message->replyTo($from, $from);
-                        $message->attachData($pdf->output(), $filename);
-                    });
-    if($result)
     {
-       return 1;
-    }
-    else{
-        return 2;
-    }
+        $result = \Mail::raw($message, function ($message) use ($to, $from, $subject, $pdf, $filename,$cc,$bcc) {
+                            $message->subject($subject);
+                            $message->from($from);
+                            $message->to($to);
 
-}
+                            if(!empty($cc))
+                            {
+                               $message->cc($cc);
+                            }
+                            if(!empty($bcc))
+                            {
+                               $message->bcc($bcc);
+                            }
+                            $message->replyTo($from, $from);
+                            $message->attachData($pdf->output(), $filename);
+                        });
+        if($result)
+        {
+           return 1;
+        }
+        else{
+            return 2;
+        }
+
+    }
 
     function getClone($id)
     {
