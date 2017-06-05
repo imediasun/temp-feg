@@ -386,7 +386,11 @@ class ShopfegrequeststoreController extends Controller
             ));
 
         } else {
-
+            $message = $this->validateListError($validator->getMessageBag()->toArray());
+            return response()->json(array(
+                'status' => 'error',
+                'message' => $message
+            ));
         }
 
     }
