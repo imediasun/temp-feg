@@ -3,6 +3,7 @@
 use App\Http\Controllers\controller;
 use App\Library\FEG\System\FEGSystemHelper;
 use App\Models\Order;
+use App\Models\OrderSendDetails;
 use \App\Models\Sximo\Module;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
@@ -753,6 +754,11 @@ class OrderController extends Controller
 
             ));
             } else {
+
+            // Store email recipients for future use through auto-complete suggestion
+            OrderSendDetails::saveDetails($order_id, ['emails' =>
+                ["TO" => $to, "CC" => $cc, "BCC" => $bcc]]);
+
             \Session::put('filter_before_redirect','redirect');
             $status = $this->getPo($order_id, true, $to, $from, $cc, $bcc, $message);
 
@@ -1460,7 +1466,10 @@ class OrderController extends Controller
 
     public function getBillAccount()
     {
-        $vendor_id = $_GET['vendor'];
+        $vendor_id = @$_GET['vendor'];
+        if (empty($vendor_id)) {
+            $vendor_id = 0;
+        }
         return \DB::table('vendor')->select('bill_account_num')->where('id', $vendor_id)->get();
     }
 
@@ -1618,6 +1627,40 @@ class OrderController extends Controller
     }
     function getCheckClonable(Request $request, $eId) {
 
+    }
+
+    public function getEmailHistory(Request $request) {
+        
+        $returnSelf = !empty($request->input('returnSelf'));
+
+        $searchFor = !is_null($request->input('search')) ? trim($request->input('search')) : '';
+        $searchFor = empty($searchFor) || $searchFor == '@' ? '' : $searchFor;
+        
+        $startAt = !is_null($request->input('start')) ? trim($request->input('start')) : '';
+        $endAt = !is_null($request->input('end')) ? trim($request->input('end')) : '';
+
+        $query = OrderSendDetails::distinct();
+        
+        if (!empty($searchFor)) {
+            $query->where('email', 'LIKE', "%$searchFor%");
+        }
+        if (!empty($startAt)) {
+            $query->where('created_at', '>=', $startAt);
+        }
+        if (!empty($endAt)) {
+            $query->where('created_at', '<=', $endAt);
+        }
+
+        $dataList = [];
+        if (!empty($searchFor) || !empty($startAt) || !empty($endAt)) {
+            $dataList = $query->lists('email');
+        }
+        
+        if($returnSelf && !empty($searchFor)) {
+            $dataList[] = $searchFor;
+        }
+        
+        return response()->json($dataList);
     }
 
 }

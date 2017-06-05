@@ -5,6 +5,7 @@ var UNDEFINED,
         lastSearchMode: '',
         handlers: {},
         functions: {},
+        ajax: {},
         autoCallbacks: {},
         search: {cache: {}},
         simpleSearch: {cache: {}},
@@ -209,10 +210,15 @@ App.autoCallbacks.registerCallback('ajaxinlinesave', function(params){
 
 App.handlers.ajaxError = function (jQEvent, jQXhr, xhr, errorName) {
     var obj = this,
-        skipIf = {'unauthorized': true, 'abort': true};
-    console.log([obj, jQEvent, jQXhr, xhr, errorName]);
+        status = jQXhr.status,
+        statusText = jQXhr.statusText,
+        skipIf = {'unauthorized': true, 'abort': true, 'not found': true},
+        skipIfStatus = {'500': true, '401': true, '403': true},
+        isErrorNameString = typeof errorName == 'string',
+        errorNameString = isErrorNameString && errorName.toLowerCase() || '';
 
-    if(__noErrorReport || skipIf[errorName.toLowerCase()]) {
+    console.log([obj, jQEvent, jQXhr, xhr, errorName]);
+    if(__noErrorReport || !isErrorNameString || skipIf[errorNameString]) {
         return;
     }
     App.autoCallbacks.runCallback.call(obj, 'ajaxerror',{
@@ -938,3 +944,91 @@ App.autoCallbacks.registerCallback('ajaxerror', function(params){
                 }]
     });
 });
+
+/**
+ * Shorthand ajax 
+ * @param string url
+ * @param object options
+ * @returns jQXhr
+ */
+App.ajax.getData = function (url, options) {
+    options = options || {};
+    var settings = options.settings || {},
+        done = options.done || UNFN,
+        fail = options.fail || UNFN,
+        always = options.always || UNFN,
+        ajaxSettings = $.extend({}, {
+            url: url,
+            method: options.method || options.type || 'get',
+            dataType: options.dataType || 'json',
+            data: options.data || {},
+        }, settings),
+        xhr;
+
+    xhr = $.ajax(ajaxSettings)
+            .done(function (data, textStatus, jqXHR){
+                done(data, textStatus, jqXHR);
+                if (settings.done && typeof settings.done == 'function') {
+                    settings.done(data, textStatus, jqXHR);
+                }
+            })
+            .fail(function (jqXHR, textStatus, errorThrown){
+                fail(jqXHR, textStatus, errorThrown);
+                if (settings.fail && typeof settings.fail == 'function') {
+                    settings.fail(jqXHR, textStatus, errorThrown);
+                }
+            })
+            .always(function (d, status, x){
+                always(d, status, x);
+                if (settings.always && typeof settings.always == 'function') {
+                    settings.always(d, status, x);
+                }
+            });
+    
+    return xhr;
+};
+
+/**
+ * Renders select2 based auto-complete supports tag-like multiple entries by default
+ * @param jQueryElement elm
+ * @param Object options
+ * @returns element
+ */
+App.initAutoComplete = function (elm, options) {
+    options = options || {};
+    var isAjax = options.ajax || options.url || false,
+        defaultData = function (params) { return {
+            search: params,
+            returnSelf: 1,
+        }},
+        defaultDataParser = function (data) {
+            var s2Data = [], i;
+            for(i in data) {
+                s2Data.push({'id': data[i], 'text': data[i]});
+            }
+            return {results:s2Data};
+        },
+        ajaxOptions = $.extend(true, {}, {
+            allowClear: options.allowClear || true,
+            delay: options.delay || 500,
+            url: options.url || '',
+            dataType: options.dataType || 'json',
+            cache: options.cache || true,
+            results: options.processResults || defaultDataParser,
+            data: options.data || defaultData,
+        }, options.ajax),
+
+        acOptions = $.extend({}, {
+            multiple:true,
+            tags: true,
+            minimumInputLength: 1,
+            separator: ',', // seprator to join multiple values 
+            tokenSeparators: [',', ' ', ';']
+        }, options);
+
+    if (isAjax) {
+        acOptions.ajax = ajaxOptions;
+    }
+    return elm.select2(acOptions);
+};
+
