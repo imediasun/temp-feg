@@ -1127,7 +1127,8 @@ abstract class Controller extends BaseController
         if (!empty($data)) {
             $L->error("Request Data:", $data);
         }
-        $L->error("[$statusText - $status][ReadyState: $readyState] ".FEGSystemHelper::strip_html_tags($responseText));
+        $responseTextStripped = FEGSystemHelper::strip_html_tags($responseText);
+        $L->error("[$statusText - $status][ReadyState: $readyState] ".$responseTextStripped);
         $L->log(str_repeat("#", 100));
 
 
@@ -1135,7 +1136,7 @@ abstract class Controller extends BaseController
         $subject = "An error has been reported by user from FEG Admin";
         $emailMessage = "<p>".$errorMessage . "</p><hr/>"
                 . (!empty($data) ? "<p><strong>POST DATA:</strong></p><p style='font-family:monospace;'>".json_encode($data).'</p>': '')
-                . '<br/><br/><hr><p><strong>TRACE:</stong></p>'.$responseText;
+                . "<br/><br/><hr><p><strong>TRACE:</stong></p><p style='font-family:monospace;'>".$responseTextStripped. '</p>';
         
         $emailConfigurations = [
             'from' => CNF_EMAIL,
