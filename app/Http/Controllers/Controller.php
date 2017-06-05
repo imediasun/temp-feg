@@ -1133,7 +1133,10 @@ abstract class Controller extends BaseController
 
         $emailAttachment = $htmlFilePath;
         $subject = "An error has been reported by user from FEG Admin";
-        $emailMessage = $errorMessage . (!empty($data) ? '<br/><br/><hr>'.json_encode($data): '');
+        $emailMessage = "<p>".$errorMessage . "</p><hr/>"
+                . (!empty($data) ? "<p><strong>POST DATA:</strong></p><p style='font-family:monospace;'>".json_encode($data).'</p>': '')
+                . '<br/><br/><hr><p><strong>TRACE:</stong></p>'.$responseText;
+        
         $emailConfigurations = [
             'from' => CNF_EMAIL,
             'fromName' => "FEG Admin Error Reporting",
