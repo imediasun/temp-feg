@@ -362,6 +362,12 @@
     $(document).ready(function () {
         numberFieldValidationChecks($("#qty_input"));
         var form = $('#productFormAjax');
+        @if(!empty($row['id']))
+        if($('#prod_type_id').val() == 1 || $('#prod_type_id').val() == 4 || $('#prod_type_id').val() == 20)
+        {
+            $('input[name="sku"]').removeAttr('required');
+        }
+        @endif
         form.parsley();
 
         $("#prod_type_id").jCombo("{{ URL::to('product/comboselect?filter=order_type:id:order_type:can_request:1') }}",
