@@ -227,6 +227,9 @@ class Sximo extends Model {
                 unset($data['createdOn']);
             if (isset($data['updatedOn']))
                 $data['updatedOn'] = date("Y-m-d H:i:s");
+            $data['case_price']=str_replace(",","",$data['case_price']);
+            $data['unit_price']=str_replace(",","",$data['unit_price']);
+            $data['retail_price']=str_replace(",","",$data['retail_price']);
             \DB::table($table)->where($key, $id)->update($data);
         }
         return $id;
