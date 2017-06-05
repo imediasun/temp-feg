@@ -152,7 +152,7 @@
                             <div class="input-group ig-full">
                                 <span class="input-group-addon">$</span>
                                 {!! Form::text('case_price',
-                                number_format((double)$row['case_price'],3),array('class'=>'form-control',
+                                (double)$row['case_price'],array('class'=>'form-control',
                                 'placeholder'=>'','required'=>'required','type'=>'number','min' => '0','step'=>'1','id'=>'case_price_input' ))
                                 !!}
                             </div>
@@ -171,7 +171,7 @@
                             <div class="input-group ig-full">
                                 <span class="input-group-addon">$</span>
                                 {!! Form::text('unit_price',
-                                number_format((double)$row['unit_price'],3),array('class'=>'form-control',
+                                (double)$row['unit_price'],array('class'=>'form-control',
                                 'placeholder'=>'','required'=>'required','type'=>'number','min' => '0','step'=>'1', 'id'=>'unit_price_input' ))
                                 !!}
                             </div>
@@ -190,7 +190,7 @@
                             <div class="input-group ig-full">
                                 <span class="input-group-addon">$</span>
                                 {!! Form::text('retail_price',
-                                number_format((double)$row['retail_price'],3),array('class'=>'form-control',
+                                (double)$row['retail_price'],array('class'=>'form-control',
                                 'placeholder'=>'','type'=>'number','min' => '0','step'=>'1','id'=>'retail_input' )) !!}
                             </div>
                         </div>
