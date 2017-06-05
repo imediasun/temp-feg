@@ -1499,7 +1499,7 @@ class SyncHelpers
 //            SELECT id as user_id, loc_10 as loc FROM `users` where loc_10<>0
 //            order by user_id";
 //        DB::insert($q);
-        /*
+        
         $L->log("-------- location_budget migration starts");
         //From location.[id,<montth_year>] to location_budget.[location_id,budget_date,budget_value]        
         $q = "SELECT id, Jan_2012,Feb_2012,Mar_2012,Apr_2012,May_2012,
@@ -1543,7 +1543,7 @@ class SyncHelpers
         DB::commit();
         DB::connection()->setFetchMode(PDO::FETCH_CLASS);
         $L->log("-------- location_budget migration ends");
-        */
+        
 
 /*
         
