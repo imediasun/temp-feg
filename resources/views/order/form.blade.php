@@ -1022,7 +1022,7 @@ $('#vendor_id').on('select2-selecting',function (e) {
                         $('#noty_topCenter_layout_container').hide(200);
                         reloadOrder();
                     },60000)
-            }, ({{env('notification_popup_time_for_order')}} * 60000));
+            }, ({{env('notification_popup_time_for_order',1)}} * 60000));
             return 'Time Out set successfully';
         }
         <?php
