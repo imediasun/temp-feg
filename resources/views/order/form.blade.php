@@ -465,6 +465,7 @@
         games_options_js = games_options_js.replace(/\\/g, "\\\\");
         games_options_js = $.parseJSON(games_options_js.replace(/&quot;/g, '"'));
         function removeRow(id) {
+            decreaseCounter();
             if (counter > 1) {
                 $("#" + id).parents('.clonedInput').remove();
             }
