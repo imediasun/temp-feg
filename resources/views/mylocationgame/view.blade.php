@@ -225,7 +225,7 @@
 
         </div>
         
-        @if (false && $isNewlyAddedGame)
+        @if ($isNewlyAddedGame)
         <!-- Serial -->
         <div class="form-group  clearfix" >
             <label for="serial" class=" control-label col-md-4 text-left">
@@ -235,7 +235,7 @@
                 <input type="hidden" name="oldserial" value="{{ $serialNumber }}" />
                 <input type="text" name="serial" value="{{ $serialNumber }}"
                        style="width: 100%"
-                       class="form-control" placeholder="Serial #" readonly/>
+                       class="form-control" placeholder="Serial #" />
 
             </div>
         </div>
