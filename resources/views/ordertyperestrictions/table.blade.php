@@ -126,7 +126,7 @@
 								@if($field['field']=='api_restricted')
 									<td>
 										<input type='checkbox' name="actionSwitch" @if($value == "1") checked  @endif 	data-size="mini" data-animate="true"
-											   data-on-text="Active" data-off-text="Inactive" data-handle-width="50px" class="toggle" data-id="{{$row->id}}"
+											   data-on-text="Yes" data-off-text="No" data-handle-width="50px" class="toggle" data-id="{{$row->id}}"
 											   id="toggle_trigger_{{$row->id}}" onSwitchChange="trigger()" />
 									</td>
 								@else

@@ -27,4 +27,9 @@ class ordertyperestrictions extends Sximo  {
 		return "  ";
 	}
 
+    public static function isApiable($id) {
+        $api = self::where('id', $id)->value('api_restricted');
+        return empty($api);
+    }
+
 }
