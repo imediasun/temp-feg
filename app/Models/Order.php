@@ -686,6 +686,7 @@ class order extends Sximo
     }
 
     public static function isApiableFromType($id, $data = null) {
+        $data = null;
         if (!empty($data)) {
             $oType = is_object($data) ? $data->order_type_id : $data['order_type_id'];
         }
