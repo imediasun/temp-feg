@@ -435,7 +435,7 @@ abstract class Controller extends BaseController
         $errMsg = \Lang::get('core.note_error');
         $errMsg .= '<hr /> <ul>';
         foreach ($rules as $key => $val) {
-            $errMsg .= '<li>' . $key . ' : ' . $val[0] . '</li>';
+            $errMsg .= '<li>' . $val[0] . '</li>';
         }
         $errMsg .= '</li>';
         return $errMsg;

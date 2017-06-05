@@ -360,7 +360,7 @@ class ShopfegrequeststoreController extends Controller
 
     function postNewgraphic(Request $request)
     {
-        $rules['img'] = 'mimes:jpeg,gif,png';
+        $rules['myInputs'] = 'required';
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
             $item_id = $request->get('item_id');
@@ -386,7 +386,11 @@ class ShopfegrequeststoreController extends Controller
             ));
 
         } else {
-
+            $message = $this->validateListError($validator->getMessageBag()->toArray());
+            return response()->json(array(
+                'status' => 'error',
+                'message' => $message
+            ));
         }
 
     }

@@ -465,6 +465,7 @@
         games_options_js = games_options_js.replace(/\\/g, "\\\\");
         games_options_js = $.parseJSON(games_options_js.replace(/&quot;/g, '"'));
         function removeRow(id) {
+            decreaseCounter();
             if (counter > 1) {
                 $("#" + id).parents('.clonedInput').remove();
             }
@@ -1021,7 +1022,7 @@ $('#vendor_id').on('select2-selecting',function (e) {
                         $('#noty_topCenter_layout_container').hide(200);
                         reloadOrder();
                     },60000)
-            }, ({{env('notification_popup_time_for_order')}} * 60000));
+            }, ({{env('notification_popup_time_for_order',1)}} * 60000));
             return 'Time Out set successfully';
         }
         <?php
@@ -1250,6 +1251,8 @@ $('#vendor_id').on('select2-selecting',function (e) {
                             $('.itemstable .clonedInput textarea.item').attr('readonly','readonly');
                             $('.itemstable .clonedInput:first-child input').not('#item_num').val('');
                             $('.itemstable .clonedInput:first-child textarea').val('');
+                            $('#total_cost').val(0.00);
+                            $('input[name="Subtotal"]').val(0.000);
                         }
                         else{
                             currentElm.data('status','enabled');
@@ -1264,6 +1267,8 @@ $('#vendor_id').on('select2-selecting',function (e) {
                             $('.itemstable .clonedInput textarea.item').removeAttr('readonly');
                             $('.itemstable .clonedInput:first-child input').not('#item_num').val('');
                             $('.itemstable .clonedInput:first-child textarea').val('');
+                            $('#total_cost').val(0.00);
+                            $('input[name="Subtotal"]').val(0.000);
                         }
                     }
                 });

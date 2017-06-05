@@ -163,14 +163,16 @@ class GamestitleController extends Controller
 
         if ($row) {
 
+            $manualPath = "uploads/games/manuals/{$row[0]->id }.pdf";
+            $bulletinPath = "uploads/games/bulletins/{$row[0]->id}.pdf";
 
-            if ($row[0]->has_manual == 1) {
+            if ($row[0]->has_manual == 1 && file_exists($manualPath)) {
                 $row[0]->has_manual = "Yes";
 
             } else {
                 $row[0]->has_manual = "No";
             }
-            if ($row[0]->has_servicebulletin == 1) {
+            if ($row[0]->has_servicebulletin == 1 && file_exists($bulletinPath)) {
                 $row[0]->has_servicebulletin = "Yes";
 
             } else {

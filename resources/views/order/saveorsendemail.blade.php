@@ -165,14 +165,14 @@
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <label class="control-label col-md-4" for="cc">CC</label>
+                                        <label class="control-label col-md-4" for="cc1">CC</label>
 
                                         <div class="col-md-8">
                                             <input name="cc1" id="cc1" value="{{ $cc }}" class="form-control">
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <label class="control-label col-md-4" for="bcc">BCC</label>
+                                        <label class="control-label col-md-4" for="bcc1">BCC</label>
 
                                         <div class="col-md-8">
                                             <input name="bcc1" id="bcc1" class="form-control" />
