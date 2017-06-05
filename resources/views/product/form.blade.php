@@ -135,8 +135,7 @@
                         </label>
 
                         <div class="col-md-6">
-                            {!! Form::text('sku', $row['sku'],array('class'=>'form-control', 'placeholder'=>'',
-                            'required'=>'required')) !!}
+                            <input type="text" name="sku" id="sku" value="{{$row['sku']}}" class="form-control"  @if(empty($row['id'])) required='required' @endif>
                         </div>
                         <div class="col-md-2">
 
@@ -362,12 +361,7 @@
     $(document).ready(function () {
         numberFieldValidationChecks($("#qty_input"));
         var form = $('#productFormAjax');
-        @if(!empty($row['id']))
-        if($('#prod_type_id').val() == 1 || $('#prod_type_id').val() == 4 || $('#prod_type_id').val() == 20)
-        {
-            $('input[name="sku"]').removeAttr('required');
-        }
-        @endif
+
         form.parsley();
 
         $("#prod_type_id").jCombo("{{ URL::to('product/comboselect?filter=order_type:id:order_type:can_request:1') }}",
@@ -465,7 +459,6 @@
         });
 
         form.submit(function () {
-
             if (form.parsley('isValid') == true) {
                 var options = {
                     dataType: 'json',
