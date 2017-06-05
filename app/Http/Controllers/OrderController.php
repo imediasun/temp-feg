@@ -1032,64 +1032,28 @@ class OrderController extends Controller
                 if (isset($to) && count($to) > 0) {
                     $filename = 'PO_' . $order_id . '.pdf';
                     $subject = "Purchase Order # {$data[0]['po_number']}";
+                    $output = $pdf->output();
+                    $file_to_save = public_path() . '/orders/' . $filename;
+                    file_put_contents($file_to_save, $output);
                     $message = $message;
-                    $cc = $cc;
-                    $bcc = $bcc;
+                    $cc = implode(',',$cc);
+                    $bcc = implode(',',$bcc);
 
                 /* current user */
                     $google_acc = \DB::table('users')->where('id', \Session::get('uid'))->first();
+                    $options = [
+                        'cc'=>$cc,
+                        'bcc'=>$bcc,
+                        'attach'=>$file_to_save,
+                        'filename'=>$filename,
+                        'encoding'=>'base64',
+                        'type'=>'application/pdf',
+                        'preferGoogleOAuthMail'=>true
+                    ];
                     if (!empty($google_acc->oauth_token) && !empty($google_acc->refresh_token)) {
 
-                        $mail = new PHPMailerOAuth();
-
-                        $mail->SMTPOptions = array(
-                            'ssl' => array(
-                                'verify_peer' => false,
-                                'verify_peer_name' => false,
-                                'allow_self_signed' => true
-                            )
-                        );
-                        $mail->SMTPDebug = 0;
-                        $mail->IsSMTP(); // enable SMTP
-                        $mail->Host = 'smtp.gmail.com';
-                        $mail->Port = 587; // or 587
-                        $mail->SMTPSecure = 'tls'; // secure transfer enabled REQUIRED for Gmail
-                        $mail->SMTPAuth = true; // authentication enabled*/
-                        $mail->oauthUserEmail = $google_acc->oauth_email;
-                        $mail->oauthClientId = env('G_ID');
-                        $mail->oauthClientSecret = env('G_SECRET');
-                        $mail->oauthRefreshToken = $google_acc->oauth_token;
-                        $mail->AuthType = 'XOAUTH2';
-
-                        $mail->smtpConnect();
-
-                        //Send HTML or Plain Text email
-                        $mail->isHTML(true);
-
-                        $mail->SetFrom($google_acc->email);
-                        $mail->Subject = $subject;
-                        $mail->Body = $message;
-                        foreach ($to as $t) {
-                            $mail->addAddress($t);
-                        }
-                        if (!empty($cc)) {
-                            foreach ($cc as $c) {
-                                $mail->addCC($c);
-                            }
-                        }
-                        if (!empty($bcc)) {
-                            foreach ($bcc as $bc) {
-                                $mail->addBCC($bc);
-                            }
-                        }
-                        $mail->addReplyTo($google_acc->email);
-                        $output = $pdf->output();
-                        $file_to_save = public_path() . '/orders/' . $filename;
-                        file_put_contents($file_to_save, $output);
-                        $mail->addAttachment($file_to_save, $filename, 'base64', 'application/pdf');
-
-
-                        if (!$mail->Send()) {
+                        $sent = FEGSystemHelper::sendEmail(implode(',',$to),$subject,$message,$google_acc->email,$options);
+                        if (!$sent) {
                             return 3;
                         } else {
                             return 1;
