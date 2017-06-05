@@ -1251,6 +1251,8 @@ $('#vendor_id').on('select2-selecting',function (e) {
                             $('.itemstable .clonedInput textarea.item').attr('readonly','readonly');
                             $('.itemstable .clonedInput:first-child input').not('#item_num').val('');
                             $('.itemstable .clonedInput:first-child textarea').val('');
+                            $('#total_cost').val(0.00);
+                            $('input[name="Subtotal"]').val(0.000);
                         }
                         else{
                             currentElm.data('status','enabled');
@@ -1265,6 +1267,8 @@ $('#vendor_id').on('select2-selecting',function (e) {
                             $('.itemstable .clonedInput textarea.item').removeAttr('readonly');
                             $('.itemstable .clonedInput:first-child input').not('#item_num').val('');
                             $('.itemstable .clonedInput:first-child textarea').val('');
+                            $('#total_cost').val(0.00);
+                            $('input[name="Subtotal"]').val(0.000);
                         }
                     }
                 });
