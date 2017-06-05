@@ -33,7 +33,7 @@ $(document).ready(function(){
             \Session::put('filter_before_redirect','no');
         }
      ?>
-        reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data' + searchParams.replace("&amp;", "&"));
+        reloadData('#{{ $pageModule }}', '/{{ $pageModule }}/data' + searchParams.replace("&amp;", "&"));
     }
     else {
         <?php
@@ -42,6 +42,15 @@ $(document).ready(function(){
          ?>
         reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?view=manage');
     }
+    <?php
+   if(isset($error))
+       {
+           ?>
+           notyMessageError("{{$error}}");
+    <?php
+    }
+    ?>
+
 });	
 </script>	
 @endsection

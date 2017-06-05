@@ -103,7 +103,7 @@
 
                         </div>
                     </div>
-                    <div class="form-group  ">
+                    {{-- <div class="form-group  ">
                         <label for="Region " class=" control-label col-md-4 text-left">
                             {!! SiteHelpers::activeLang('Region ', (isset($fields['region_id']['language'])? $fields['region_id']['language'] : array())) !!}
                         </label>
@@ -113,7 +113,7 @@
                         <div class="col-md-2">
 
                         </div>
-                    </div>
+                    </div> --}}
                     <div class="form-group  ">
                         <label for="Company " class=" control-label col-md-4 text-left">
                             {!! SiteHelpers::activeLang('Company ', (isset($fields['company_id']['language'])? $fields['company_id']['language'] : array())) !!}
@@ -390,23 +390,23 @@
 <script type="text/javascript">
     $(document).ready(function () {
         $('#location_available').hide();
-        $("#region_id").jCombo("{{ URL::to('location/comboselect?filter=region:id:region') }}",
-                {selected_value: '{{ $row["region_id"] }}'});
+        /*$("#region_id").jCombo("{{ URL::to('location/comboselect?filter=region:id:region') }}",
+                {selected_value: '{{ $row["region_id"] }}'});*/
         $("#company_id").jCombo("{{ URL::to('location/comboselect?filter=company:id:company_name_long') }}",
                 {selected_value: '{{ $row["company_id"] }}'});
 
 
-        $("#contact_id").jCombo("{{ URL::to('location/comboselect?filter=users:id:first_name|last_name') }}",
+        $("#contact_id").jCombo("{{ URL::to('location/comboselect?filter=users:id:first_name|last_name:active:1') }}",
                 {selected_value: '{{ $row["contact_id"] }}'});
-        $("#merch_contact_id").jCombo("{{ URL::to('location/comboselect?filter=users:id:first_name|last_name') }}",
+        $("#merch_contact_id").jCombo("{{ URL::to('location/comboselect?filter=users:id:first_name|last_name:active:1') }}",
                 {selected_value: '{{ $row["merch_contact_id"] }}'});
-        $("#general_manager_id").jCombo("{{ URL::to('location/comboselect?filter=users:id:first_name|last_name:group_id:1') }}",
+        $("#general_manager_id").jCombo("{{ URL::to('location/comboselect?filter=users:id:first_name|last_name:active:1') }}",
                 {selected_value: '{{ $row["general_manager_id"] }}'});
-        $("#technical_user_id").jCombo("{{ URL::to('location/comboselect?filter=users:id:first_name|last_name:group_id:2') }}",
+        $("#technical_user_id").jCombo("{{ URL::to('location/comboselect?filter=users:id:first_name|last_name:active:1') }}",
                 {selected_value: '{{ $row["technical_user_id"] }}'});
-        $("#regional_manager_id").jCombo("{{ URL::to('location/comboselect?filter=users:id:first_name|last_name:group_id:6') }}",
+        $("#regional_manager_id").jCombo("{{ URL::to('location/comboselect?filter=users:id:first_name|last_name:active:1') }}",
                 {selected_value: '{{ $row["regional_manager_id"] }}'});
-        $("#vp_id").jCombo("{{ URL::to('location/comboselect?filter=users:id:first_name|last_name:group_id:7') }}",
+        $("#vp_id").jCombo("{{ URL::to('location/comboselect?filter=users:id:first_name|last_name:active:1') }}",
                 {selected_value: '{{ $row["vp_id"] }}'});
 
 

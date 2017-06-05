@@ -3,6 +3,7 @@
 use App\Http\Controllers\controller;
 use App\Library\FEG\System\FEGSystemHelper;
 use App\Models\Order;
+use App\Models\OrderSendDetails;
 use \App\Models\Sximo\Module;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
@@ -416,6 +417,18 @@ class OrderController extends Controller
   */
     function postSave(Request $request, $id = 0)
     {
+        $query = \DB::select('SELECT R.id FROM requests R LEFT JOIN products P ON P.id = R.product_id WHERE R.location_id = "' . (int)$request->location_id . '"  AND P.vendor_id = "' . (int)$request->vendor_id . '" AND R.status_id = 1');
+
+        /*$productIdArray = $request->get('product_id');
+        $query = \DB::select('select id from requests where location_id = "' . (int)$request->location_id . '" AND status_id = 1 AND product_id IN ('.implode(',',$productIdArray).')');
+*/
+        if (count($query) < 1 && $request->from_sid == 1) {
+            return response()->json(array(
+                'message' => 'Someone has already ordered these products',
+                'status' => 'error',
+
+            ));
+        }
         $rules = array(
               //  'location_id' => "required",
                 'vendor_id' => 'required',
@@ -433,6 +446,7 @@ class OrderController extends Controller
             $order_id = $request->get('order_id');
             $editmode = $request->get('editmode');
             $where_in = $request->get('where_in_expression');
+            //$where_in = implode(',',$query);
             $SID_string = $request->get('SID_string');
             $company_id = $request->get('company_id');
             $location_id = $request->get('location_id');
@@ -598,7 +612,8 @@ class OrderController extends Controller
                     \DB::update('UPDATE requests
 							 SET status_id = 2,
 							 	 process_user_id = ' . \Session::get('uid') . ',
-								 process_date = "' . $now . '"
+								 process_date = "' . $now . '",
+								 blocked_at = null 
 						   WHERE id IN(' . $where_in . ')');
                     //// SUBTRACT QTY OF RESERVED AMT ITEMS
                     $item_count = substr_count($SID_string, '-') - 1;
@@ -739,6 +754,11 @@ class OrderController extends Controller
 
             ));
             } else {
+
+            // Store email recipients for future use through auto-complete suggestion
+            OrderSendDetails::saveDetails($order_id, ['emails' =>
+                ["TO" => $to, "CC" => $cc, "BCC" => $bcc]]);
+
             \Session::put('filter_before_redirect','redirect');
             $status = $this->getPo($order_id, true, $to, $from, $cc, $bcc, $message);
 
@@ -836,6 +856,7 @@ class OrderController extends Controller
         FEGSystemHelper::sendSystemEmail(array_merge($receipts, array(
             'subject' => $subject,
             'message' => $message,
+//            'preferGoogleOAuthMail' => true,
             'isTest' => env('APP_ENV', 'development') !== 'production' ? true : false,
             'configName' => $configName,
             'from' => $from,
@@ -1011,64 +1032,35 @@ class OrderController extends Controller
                 if (isset($to) && count($to) > 0) {
                     $filename = 'PO_' . $order_id . '.pdf';
                     $subject = "Purchase Order # {$data[0]['po_number']}";
+                    $output = $pdf->output();
+                    $file_to_save = public_path() . '/orders/' . $filename;
+                    file_put_contents($file_to_save, $output);
                     $message = $message;
-                    $cc = $cc;
-                    $bcc = $bcc;
+                    if(is_array($cc))
+                    {
+                        $cc = implode(',',$cc);
+                    }
+                    if(is_array($bcc))
+                    {
+                        $bcc = implode(',',$bcc);
+                    }
+
 
                 /* current user */
                     $google_acc = \DB::table('users')->where('id', \Session::get('uid'))->first();
-                    if (!empty($google_acc->oauth_token)) {
+                    $options = [
+                        'cc'=>$cc,
+                        'bcc'=>$bcc,
+                        'attach'=>$file_to_save,
+                        'filename'=>$filename,
+                        'encoding'=>'base64',
+                        'type'=>'application/pdf',
+                        'preferGoogleOAuthMail'=>true
+                    ];
+                    if (!empty($google_acc->oauth_token) && !empty($google_acc->refresh_token)) {
 
-                        $mail = new PHPMailerOAuth();
-
-                        $mail->SMTPOptions = array(
-                            'ssl' => array(
-                                'verify_peer' => false,
-                                'verify_peer_name' => false,
-                                'allow_self_signed' => true
-                            )
-                        );
-                        $mail->SMTPDebug = 0;
-                        $mail->IsSMTP(); // enable SMTP
-                        $mail->Host = 'smtp.gmail.com';
-                        $mail->Port = 587; // or 587
-                        $mail->SMTPSecure = 'tls'; // secure transfer enabled REQUIRED for Gmail
-                        $mail->SMTPAuth = true; // authentication enabled*/
-                        $mail->oauthUserEmail = $google_acc->oauth_email;
-                        $mail->oauthClientId = env('G_ID');
-                        $mail->oauthClientSecret = env('G_SECRET');
-                        $mail->oauthRefreshToken = $google_acc->oauth_token;
-                        $mail->AuthType = 'XOAUTH2';
-
-                        $mail->smtpConnect();
-
-                        //Send HTML or Plain Text email
-                        $mail->isHTML(true);
-
-                        $mail->SetFrom($google_acc->email);
-                        $mail->Subject = $subject;
-                        $mail->Body = $message;
-                        foreach ($to as $t) {
-                            $mail->addAddress($t);
-                        }
-                        if (!empty($cc)) {
-                            foreach ($cc as $c) {
-                                $mail->addCC($c);
-                            }
-                        }
-                        if (!empty($bcc)) {
-                            foreach ($bcc as $bc) {
-                                $mail->addBCC($bc);
-                            }
-                        }
-                        $mail->addReplyTo($google_acc->email);
-                        $output = $pdf->output();
-                        $file_to_save = public_path() . '/orders/' . $filename;
-                        file_put_contents($file_to_save, $output);
-                        $mail->addAttachment($file_to_save, $filename, 'base64', 'application/pdf');
-
-
-                        if (!$mail->Send()) {
+                        $sent = FEGSystemHelper::sendEmail(implode(',',$to),$subject,$message,$google_acc->email,$options);
+                        if (!$sent) {
                             return 3;
                         } else {
                             return 1;
@@ -1086,32 +1078,32 @@ class OrderController extends Controller
     }
 
     function sendPhpEmail($message,$to,$from,$subject,$pdf,$filename,$cc,$bcc)
-{
-    $result = \Mail::raw($message, function ($message) use ($to, $from, $subject, $pdf, $filename,$cc,$bcc) {
-                        $message->subject($subject);
-                        $message->from($from);
-                        $message->to($to);
-
-                        if(!empty($cc))
-                        {
-                           $message->cc($cc);
-                        }
-                        if(!empty($bcc))
-                        {
-                           $message->bcc($bcc);
-                        }
-                        $message->replyTo($from, $from);
-                        $message->attachData($pdf->output(), $filename);
-                    });
-    if($result)
     {
-       return 1;
-    }
-    else{
-        return 2;
-    }
+        $result = \Mail::raw($message, function ($message) use ($to, $from, $subject, $pdf, $filename,$cc,$bcc) {
+                            $message->subject($subject);
+                            $message->from($from);
+                            $message->to($to);
 
-}
+                            if(!empty($cc))
+                            {
+                               $message->cc($cc);
+                            }
+                            if(!empty($bcc))
+                            {
+                               $message->bcc($bcc);
+                            }
+                            $message->replyTo($from, $from);
+                            $message->attachData($pdf->output(), $filename);
+                        });
+        if($result)
+        {
+           return 1;
+        }
+        else{
+            return 2;
+        }
+
+    }
 
     function getClone($id)
     {
@@ -1445,7 +1437,10 @@ class OrderController extends Controller
 
     public function getBillAccount()
     {
-        $vendor_id = $_GET['vendor'];
+        $vendor_id = @$_GET['vendor'];
+        if (empty($vendor_id)) {
+            $vendor_id = 0;
+        }
         return \DB::table('vendor')->select('bill_account_num')->where('id', $vendor_id)->get();
     }
 
@@ -1603,6 +1598,40 @@ class OrderController extends Controller
     }
     function getCheckClonable(Request $request, $eId) {
 
+    }
+
+    public function getEmailHistory(Request $request) {
+        
+        $returnSelf = !empty($request->input('returnSelf'));
+
+        $searchFor = !is_null($request->input('search')) ? trim($request->input('search')) : '';
+        $searchFor = empty($searchFor) || $searchFor == '@' ? '' : $searchFor;
+        
+        $startAt = !is_null($request->input('start')) ? trim($request->input('start')) : '';
+        $endAt = !is_null($request->input('end')) ? trim($request->input('end')) : '';
+
+        $query = OrderSendDetails::distinct();
+        
+        if (!empty($searchFor)) {
+            $query->where('email', 'LIKE', "%$searchFor%");
+        }
+        if (!empty($startAt)) {
+            $query->where('created_at', '>=', $startAt);
+        }
+        if (!empty($endAt)) {
+            $query->where('created_at', '<=', $endAt);
+        }
+
+        $dataList = [];
+        if (!empty($searchFor) || !empty($startAt) || !empty($endAt)) {
+            $dataList = $query->lists('email');
+        }
+        
+        if($returnSelf && !empty($searchFor)) {
+            $dataList[] = $searchFor;
+        }
+        
+        return response()->json($dataList);
     }
 
 }

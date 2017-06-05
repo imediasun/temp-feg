@@ -11,6 +11,7 @@ use PHPMailer;
 use Mail;
 use PHPMailerOAuth;
 use App\Models\Feg\System\Options;
+use App\Models\Core\Users;
 
 
 class FEGSystemHelper
@@ -82,6 +83,39 @@ class FEGSystemHelper
             mkdir($path, 0755, true);
         }
         $filepath = $path . '/'. $fileprefix . $file;
+        return $filepath;
+    }
+    public static function getUniqueFile($file = "elm5-system-log.log", $pathsuffix = "", $rootPath = null) {
+        $fileSuffix = "-" . date("Ymd-His");
+        if (empty($rootPath)) {
+            $rootPath = realpath(storage_path() . '/logs/');
+        }
+        $path = $rootPath.(empty($pathsuffix) ? "" : '/'.$pathsuffix);
+        if (!file_exists($path)) {
+            mkdir($path, 0755, true);
+        }
+        $fileParts = pathinfo($file);
+        $count = 0;
+        do {
+            $fileName = $fileParts['filename']
+                    .$fileSuffix
+                    .($count > 0 ? "-$count" : '')
+                    .'.'.$fileParts['extension'];
+            
+            $filepath = $path . '/' . $fileName;
+            $count++;
+        } while (file_exists($filepath));
+
+        return $fileName;
+    }
+    public static function getUniqueFilePath($file = "elm5-system-log.log", $pathsuffix = "", $rootPath = null) {
+        $file = self::getUniqueFile($file, $pathsuffix, $rootPath);
+        $fileSuffix = "-" . date("YmdHis");
+        if (empty($rootPath)) {
+            $rootPath = realpath(storage_path() . '/logs/');
+        }
+        $path = $rootPath.(empty($pathsuffix) ? "" : '/'.$pathsuffix);
+        $filepath = $path . '/' . $file;
         return $filepath;
     }
 
@@ -368,10 +402,9 @@ class FEGSystemHelper
         }
     }
 
-    public static function googleOAuthMail($to, $subject, $message, $options = array()){
+    public static function googleOAuthMail($to, $subject, $message, $userDetail, $options = array()){
 
-        $userDetail = \DB::table('users')->where('id', \Session::get('uid'))->first();
-        if (!empty($userDetail->oauth_token)) {
+        if (!empty($userDetail->oauth_token) && !empty($userDetail->refresh_token)) {
 
             $mail = new PHPMailerOAuth();
 
@@ -423,7 +456,10 @@ class FEGSystemHelper
             }
 
             $mail->addReplyTo($userDetail->email);
-
+            if(isset($options['attach']))
+            {
+                $mail->addAttachment($options['attach'], $options['filename'], isset($options['encoding'])?$options['encoding']:'base64', $options['type']);
+            }
             if ($mail->Send()) {
                 return true;
             } else {
@@ -556,12 +592,23 @@ class FEGSystemHelper
         $preventEmailSendingSetting = env('PREVENT_FEG_SYSTEM_EMAIL', false);
         if (!$preventEmailSendingSetting)  {
             $usePhpMail = !empty($options['usePHPMail']);
+            $preferGoogleSend = !empty($options['preferGoogleOAuthMail']);
             //$useLaravelMail = !empty($options['useLaravelMail']) || !empty($options['attach']);
             if ($usePhpMail) {
                 return self::phpMail($to, $subject, $message, $from, $options);
             }
             else {
-                return self::laravelMail($to, $subject, $message, $from, $options);
+                $user = Users::find(Auth()->user()->id);
+                if($preferGoogleSend && !empty($user->oauth_token) && !empty($user->refresh_token)){
+                    if(!$user->isOAuthRefreshedRecently() || !Users::verifyOAuthTokenIsValid($user->oauth_token)){
+
+                        $googleResponse = Users::refreshOAuthToken($user->refresh_token);
+                        $user->updateRefreshToken($googleResponse);
+                    }
+                    return self::googleOAuthMail($to, $subject, $message, $user, $options);
+                }else{
+                    return self::laravelMail($to, $subject, $message, $from, $options);
+                }
             }
         }
     }
@@ -1046,7 +1093,6 @@ class FEGSystemHelper
      *
      */
     public static function sendSystemEmail($options) {
-
         $lp = 'FEGCronTasks/SystemEmails';
         $lpd = 'FEGCronTasks/SystemEmailsDump';
         $options = array_merge(array(
@@ -1568,4 +1614,35 @@ $message" .
         $d = \DateTime::createFromFormat($fullformat, $date);
         return $d && $d->format($fullformat) === $date;
     }
+
+    public static function strip_html_tags($str){
+        $str = preg_replace('/(<|>)\1{2}/is', '', $str);
+        $str = preg_replace(
+            array(// Remove invisible content
+                '@<head[^>]*?>.*?</head>@siu',
+                '@<style[^>]*?>.*?</style>@siu',
+                '@<script[^>]*?.*?</script>@siu',
+                '@<noscript[^>]*?.*?</noscript>@siu',
+                ),
+            "", //replace above with nothing
+            $str );
+        $str = self::replaceWhitespace($str);
+        $str = strip_tags($str);
+        return $str;
+    }
+
+    //To replace all types of whitespace with a single space
+    public static function replaceWhitespace($str) {
+        $result = $str;
+        foreach (array(
+        "  ", " \t",  " \r",  " \n",
+        "\t\t", "\t ", "\t\r", "\t\n",
+        "\r\r", "\r ", "\r\t", "\r\n",
+        "\n\n", "\n ", "\n\t", "\n\r",
+        ) as $replacement) {
+            $result = str_replace($replacement, $replacement[0], $result);
+        }
+        return $str !== $result ? self::replaceWhitespace($result) : $result;
+    }
+
 }

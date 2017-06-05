@@ -197,14 +197,18 @@
                 </div>
             @endif
         -->
-            <div class="col-md-8 col-md-offset-4">
+            <div class="row" id="cart-footer-btns">
 
-
-                <div class="col-md-10">
-                    <input type="button" style="font-size:1.4em; width:100%; text-align:center;"
+                <div class=" col-md-offset-4 col-sm-offset-2 col-xs-offset-1 col-md-8">
+               <div class="col-md-2 col-sm-3 col-xs-12">
+                   <button  class="btn btn-sm btn-primary" id="update-cart-values">Update Cart</button>
+               </div>
+                   <div class="col-md-10 col-sm-9 col-xs-12">
+                    <input type="button" style="font-weight: bold;" class="btn btn-sm btn-success"
                            value="Submit Weekly Requests totalling {{CurrencyHelpers::formatPrice($cartData['shopping_cart_total'])}}"
                            onClick="confirmSubmit();" id = "cartbtn"></button>
                 </div>
+            </div>
             </div>
         @include('ajaxfooter')
 
@@ -381,6 +385,16 @@ function loadCart(vendor_name,subtotal)
 
    // return false;
 }
+    $("#update-cart-values").click(function(){
+        var ele=$("input[name^=qty]");
+        ele.each(function(){
+           var vendor=$(this).data('vendor');
+            var id= $(this).attr('id');
+            var qty= $(this).val();
+            $('.ajaxLoading').show();
+            doStuff(qty,id,vendor);
+        });
+    });
 </script>
 <style>
     .table th.right {

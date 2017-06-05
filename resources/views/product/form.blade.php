@@ -71,32 +71,6 @@
                             <textarea name='details' rows='5' id='details'
                                       class='form-control '>{{ $row['details'] }}</textarea>
                         </div>
-
-                    </div>
-                    <div class="form-group  ">
-                        <label for="SKU" class=" control-label col-md-4 text-left">
-                            {!! SiteHelpers::activeLang('SKU', (isset($fields['sku']['language'])?
-                            $fields['sku']['language'] : array())) !!}
-                        </label>
-
-                        <div class="col-md-6">
-                            {!! Form::text('sku', $row['sku'],array('class'=>'form-control', 'placeholder'=>'',
-                            'required'=>'required')) !!}
-                        </div>
-                        <div class="col-md-2">
-
-                        </div>
-                    </div>
-                    <div class="form-group  " >
-                        <label for="Expense Category" class=" control-label col-md-4 text-left">
-                            {!! SiteHelpers::activeLang('Expense Category', (isset($fields['expense_category']['language'])? $fields['expense_category']['language'] : array())) !!}
-                        </label>
-                        <div class="col-md-6">
-                            {!! Form::text('expense_category', $row['expense_category'],array('class'=>'form-control', 'placeholder'=>'','parsley-type'=>"number", 'required'=>'true'  )) !!}
-                        </div>
-                        <div class="col-md-2">
-
-                        </div>
                     </div>
                     <div class="form-group  ">
                         <label for="Quantity Per Case" class=" control-label col-md-4 text-left">
@@ -143,8 +117,31 @@
 
                         </div>
                     </div>
+                    <div class="form-group">
+                        <label for="Expense Category" class=" control-label col-md-4 text-left">
+                            {!! SiteHelpers::activeLang('Expense Category', (isset($fields['expense_category']['language'])? $fields['expense_category']['language'] : array())) !!}
+                        </label>
+                        <div class="col-md-6">
+                            {!! Form::text('expense_category', $row['expense_category'],array('class'=>'form-control', 'placeholder'=>'','parsley-type'=>"number", 'required'=>'true', 'id'=>'expense_category'  )) !!}
+                        </div>
+                        <div class="col-md-2">
+                        </div>
+                    </div>
 
+                    <div class="form-group  ">
+                        <label for="SKU" class=" control-label col-md-4 text-left">
+                            {!! SiteHelpers::activeLang('SKU', (isset($fields['sku']['language'])?
+                            $fields['sku']['language'] : array())) !!}
+                        </label>
 
+                        <div class="col-md-6">
+                            {!! Form::text('sku', $row['sku'],array('class'=>'form-control', 'placeholder'=>'',
+                            'required'=>'required')) !!}
+                        </div>
+                        <div class="col-md-2">
+
+                        </div>
+                    </div>
                     <div class="form-group  ">
                         <label for="Case Price" class=" control-label col-md-4 text-left">
                             {!! SiteHelpers::activeLang('Case Price', (isset($fields['case_price']['language'])?
@@ -364,18 +361,67 @@
 <script type="text/javascript">
     $(document).ready(function () {
         numberFieldValidationChecks($("#qty_input"));
+        var form = $('#productFormAjax');
+        @if(!empty($row['id']))
+        if($('#prod_type_id').val() == 1 || $('#prod_type_id').val() == 4 || $('#prod_type_id').val() == 20)
+        {
+            $('input[name="sku"]').removeAttr('required');
+        }
+        @endif
+        form.parsley();
 
         $("#prod_type_id").jCombo("{{ URL::to('product/comboselect?filter=order_type:id:order_type:can_request:1') }}",
                 {selected_value: '{{ $row["prod_type_id"] }}'});
-
-        $("#prod_type_id").change(function () {
+        if('{{ $row["prod_type_id"] }}')
+        {
+            $("#prod_sub_type_id").jCombo("{{ URL::to('product/comboselect?filter=product_type:id:type_description') }}&parent=request_type_id:{{ $row["prod_type_id"] }}",
+                    {selected_value: '{{ $row["prod_sub_type_id"] }}'});
+        }
+        $("#prod_type_id").click(function () {
             $("#prod_sub_type_id").jCombo("{{ URL::to('product/comboselect?filter=product_type:id:type_description') }}&parent=request_type_id:"+$('#prod_type_id').val()+"",
                     {selected_value: '{{ $row["prod_sub_type_id"] }}'});
+            if($(this).val()) {
+                //need to uncomment after discussion
+                getExpenseCategory($(this).val());
+            }
+            if($('#prod_type_id').val() == 1 || $('#prod_type_id').val() == 4 || $('#prod_type_id').val() == 20)
+            {
+                form.parsley().destroy();
+                $('input[name="sku"]').removeAttr('required');
+                form.parsley();
+            }
+            else
+            {
+                form.parsley().destroy();
+                $('input[name="sku"]').attr('required','required');
+                form.parsley();
+            }
+
+            if ($(this).val() == "8") {
+                $("#retail_price").show(300);
+                $("#retail_price").attr('required','required');
+            }
+            else {
+                $("#retail_price").hide(300);
+                $("#retail_price").removeAttr('required');
+            }
+            if ($(this).val() == "7") {
+                $("#ticket_value").show(300);
+                $("#ticket_value").attr('required','required');
+            }else if($(this).val() == "8"){
+                $("#ticket_value").show(300);
+            }
+            else {
+                $("#ticket_value").hide(300);
+                $("#ticket_value").removeAttr('required');
+            }
         });
-
-
-        /*$("#prod_sub_type_id").jCombo("{{ URL::to('product/comboselect?filter=product_type:id:type_description') }}&parent=request_type_id:",
-                {parent: '#prod_type_id', selected_value: '{{ $row["prod_sub_type_id"] }}'});*/
+        $("#prod_sub_type_id").click(function () {
+            if($(this).val()) {
+                //need to uncomment after discussion
+                //getExpenseCategory($("#prod_type_id").val(),$(this).val());
+            }
+        });
 
         $("#vendor_id").jCombo("{{ URL::to('product/comboselect?filter=vendor:id:vendor_name:hide:0:status:1') }}",
                 {selected_value: '{{ $row["vendor_id"] }}' ,
@@ -417,8 +463,7 @@
             $(this).parent('div').empty();
             return false;
         });
-        var form = $('#productFormAjax');
-        form.parsley();
+
         form.submit(function () {
 
             if (form.parsley('isValid') == true) {
@@ -437,26 +482,6 @@
         });
     });
 
-    $("#prod_type_id").click(function () {
-        if ($(this).val() == "8") {
-            $("#retail_price").show(300);
-            $("#retail_price").attr('required','required');
-        }
-        else {
-            $("#retail_price").hide(300);
-            $("#retail_price").removeAttr('required');
-        }
-        if ($(this).val() == "7") {
-            $("#ticket_value").show(300);
-            $("#ticket_value").attr('required','required');
-        }else if($(this).val() == "8"){
-            $("#ticket_value").show(300);
-        }
-        else {
-            $("#ticket_value").hide(300);
-            $("#ticket_value").removeAttr('required');
-        }
-    });
     function showRequest() {
         $('.ajaxLoading').show();
     }
@@ -473,18 +498,35 @@
             return false;
         }
     }
-$('#qty_input,#case_price_input').on('keyup',function(){
-    var case_price = $("#case_price_input").val();
-    var quantity = $("#qty_input").val();
-    var unit_price = case_price/quantity;
-    if(quantity != 0 && unit_price != 0) {
-        $('#unit_price_input').val(unit_price.toFixed(3));
-    }
-    else
+    $('#qty_input,#case_price_input').on('keyup',function(){
+        var case_price = $("#case_price_input").val();
+        var quantity = $("#qty_input").val();
+        var unit_price = case_price/quantity;
+        if(quantity != 0 && unit_price != 0) {
+            $('#unit_price_input').val(unit_price.toFixed(3));
+        }
+        else
+        {
+            $('#unit_price_input').val(0.000);
+        }
+    });
+    $("#prod_type_id").click(function () {
+
+    });
+    function getExpenseCategory(order_type_id,product_type_id)
     {
-        $('#unit_price_input').val(0.000);
+        $("#expense_category").val('');
+        if(product_type_id === null)
+        {
+            product_type_id="";
+        }
+        $.get('product/expense-category',{'order_type':order_type_id,'product_type':product_type_id},function(data){
+            if(data.expense_category)
+            {
+                $("#expense_category").val(data.expense_category);
+            }
+        },'json');
     }
-});
 </script>
 <style>
     #ticket_value, #retail_price {

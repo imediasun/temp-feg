@@ -86,6 +86,18 @@
 
 
 </div>
+<style>
+    .select2-container .select2-choice > .select2-chosen {
+        margin-right: 26px;
+        display: block;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        float: none;
+        width: auto;
+        color: #333;
+    }
+</style>
 <script>
 
     $('document').ready(function () {

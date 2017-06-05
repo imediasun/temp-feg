@@ -2845,11 +2845,15 @@ table.table-striped tr th
 }
 
 .gameDetailsContainer.game-status-intransit {
-    background:#fff;
+    background:#f6fff6;
 }
 
 .gameDetailsContainer.game-status-uprunning {
     background:#FFF;
+}
+.gameDetailsContainer.game-status-sold {
+    background: #fafafa;
+    color: #999;
 }
 
 .gameDetailsContainer .headStatus {
@@ -3314,7 +3318,10 @@ position: relative;
 #col-config {
   top: -1px;
 }
-
+    #cartbtn
+    {
+        margin-top: 10px;
+    }
 .c-margin .col-md-3 .pull-right,
 .c-margin .col-md-4 .pull-right{
   float: left !important;
@@ -3410,6 +3417,7 @@ margin-left: 15px;
   ul.pagination li:not(.show-mobile) {
     display: none;
   }
+
 }
 .sbox-title small {
   display: none;
@@ -3427,4 +3435,8 @@ margin-left: 15px;
 span.order_custom_error ~ ul.parsley-error-list
 {
   display: none;
+}
+#cart-footer-btns
+{
+    margin-top:10px;
 }

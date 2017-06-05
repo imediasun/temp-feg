@@ -3,8 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Request, Log;
+use App\Library\FEG\System\FEGSystemHelper;
+use Request, Log,Redirect;
 class Sximo extends Model {
+
+    public static $getRowsQuery = null;
 
     public static function insertLog($module, $task , $notes = '')
     {
@@ -166,6 +169,7 @@ class Sximo extends Model {
         $limitConditional = ($page != 0 && $limit != 0) ? "LIMIT  $offset , $limit" : '';
        // echo $select . " {$params} " . self::queryGroup() . " {$orderConditional}  {$limitConditional} ";
         Log::info("Query : ".$select . " {$params} " . self::queryGroup() . " {$orderConditional}  {$limitConditional} ");
+        self::$getRowsQuery = $select . " {$params} " . self::queryGroup() . " {$orderConditional}  {$limitConditional} ";
         $result = \DB::select($select . " {$params} " . self::queryGroup() . " {$orderConditional}  {$limitConditional} ");
 
         if ($key == '') {
@@ -1225,33 +1229,36 @@ class Sximo extends Model {
     
     public static function passwordForgetEmails()
     {
-        $user_data=\DB::select('select id,email from users');
+
+        $user_data=\DB::select('SELECT id,email FROM users WHERE active=1');
+        $subject = "[ " . CNF_APPNAME . " ] REQUEST PASSWORD RESET ";
+        $headers = 'MIME-Version: 1.0' . "\r\n";
+        $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
+        $headers .= 'From: ' . CNF_APPNAME . ' <' . CNF_EMAIL . '>' . "\r\n";
         foreach($user_data as $email)
         {
 
            // $user_emails[]= $email->email;
             if (isset($email->email) && !empty($email->email)) {
-
                 $data = array('id' =>$email->id);
                 $to = $email->email;
-                $subject = "[ " . CNF_APPNAME . " ] REQUEST PASSWORD RESET ";
                 $message = view('user.emails.auth.reminder', $data);
-                $headers = 'MIME-Version: 1.0' . "\r\n";
-                $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
-                $headers .= 'From: ' . CNF_APPNAME . ' <' . CNF_EMAIL . '>' . "\r\n";
+
                 //@todo please enable email line in producton environment when itneded to send emails to all users
-                //if(mail($to, $subject, $message, $headers))
-                //{
-                //  return Redirect::to('user/login')->with('message', \SiteHelpers::alert('success', 'Emails send successfully'));
-                //}
-                //else{
-                //  return Redirect::to('user/login')->with('message', \SiteHelpers::alert('error', 'Error in sending Emails'));
-                //}
-                //  return Redirect::to('user/login')->with('message', \SiteHelpers::alert('success', 'Please check your email'));
+                FEGSystemHelper::sendSystemEmail(['to'=>$to,
+                    'subject' => $subject,
+                    'message' => $message,
+                    'headers' =>$headers,
+                    'isTest' => env('APP_ENV', 'development') !== 'production' ? true : false,
+                    'from' => CNF_EMAIL,
+                    'configName' => 'Password Reset Email To All Users'
+                ]);
             }
 
         }
        // $user_emails_string=implode(',',$user_emails);
+          return \Redirect::to('user/login')->with('message', \SiteHelpers::alert('success', 'Emails sent successfully'));
+
 
 
     }

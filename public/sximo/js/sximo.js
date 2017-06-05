@@ -201,7 +201,7 @@ function addInactiveItem(field,id,module,check,column,inverse)
             console.log('Not exists!');
 			$.ajax({
 				method: 'GET',
-				url: '/vendor/itemcheck',
+				url: siteUrl + '/vendor/itemcheck',
 				data: {
 					id: id,
 					module: module,

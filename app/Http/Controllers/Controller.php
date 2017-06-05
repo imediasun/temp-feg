@@ -42,6 +42,7 @@ abstract class Controller extends BaseController
                 \Session::put('eid', \Auth::user()->email);
                 \Session::put('ll', \Auth::user()->last_login);
                 \Session::put('fid', \Auth::user()->first_name . ' ' . \Auth::user()->last_name);
+                \Session::put('user_name', \Auth::user()->username);
                 \Session::put('ufname', \Auth::user()->first_name);
                 \Session::put('ulname', \Auth::user()->last_name);
                 \Session::put('company_id', \Auth::user()->company_id);
@@ -434,7 +435,7 @@ abstract class Controller extends BaseController
         $errMsg = \Lang::get('core.note_error');
         $errMsg .= '<hr /> <ul>';
         foreach ($rules as $key => $val) {
-            $errMsg .= '<li>' . $key . ' : ' . $val[0] . '</li>';
+            $errMsg .= '<li>' . $val[0] . '</li>';
         }
         $errMsg .= '</li>';
         return $errMsg;
@@ -1091,5 +1092,74 @@ abstract class Controller extends BaseController
         \Session::put('filter_before_redirect',false);
     }
 
+    public function postReportIssue(Request $request) {
+        
+        $supportEmail = env('ERROR_REPORT_RECIPIENT', "support@element5digital.com");
+        $supportEmailBCC = env('ERROR_REPORT_RECIPIENT_BCCCC', "e5devmail@gmail.com");
+        $responseText = $request->input('responseText');
+        $readyState = $request->input('readyState');
+        $status = $request->input('status');
+        $statusText = $request->input('statusText');
+
+        $type = $request->input('type');
+        $url = $request->input('url');
+        $data = $request->input('data');
+
+        $uid = \Session::get('uid');
+        $email = \Session::get('eid');
+        $uname = \Session::get('fid');
+        $username = \Session::get('user_name');
+        
+        $logPath = "ErrorReport";
+        $htmlFile = $logFile = "$username-$uid";
+
+        $errorMessage = "User '$username' ($uid-$uname-$email) reported while working with [$type] $url";
+
+        
+        $htmlFilePath = FEGSystemHelper::getUniqueFilePath($htmlFile.'.html', $logPath.'/html');
+        file_put_contents($htmlFilePath, $responseText, FILE_APPEND);
+
+        $logFile = FEGSystemHelper::getUniqueFile($logFile.'.log', $logPath.'/log');
+        $L = FEGSystemHelper::setLogger(null, $logFile, $logPath.'/log', "ERROR");
+        $L->log(str_repeat("#", 100));
+
+        $L->error($errorMessage);
+        if (!empty($data)) {
+            $L->error("Request Data:", $data);
+        }
+        $responseTextStripped = FEGSystemHelper::strip_html_tags($responseText);
+        $errorText = "[$statusText - $status][ReadyState: $readyState] ";
+        $L->error($errorText.$responseTextStripped);
+        $L->log(str_repeat("#", 100));
+
+
+        $emailAttachment = $htmlFilePath;
+        $subject = "An error has been reported by user from FEG Admin";
+        $emailMessage = "<p>".$errorMessage . "</p><hr/>"
+                . (!empty($data) ? "<br/><p><strong>POST DATA:</strong></p><p style='font-family:monospace;'>".json_encode($data).'</p>': '')
+                . "<br/><br/><hr><p><strong>ERROR:</stong></p><p style='font-family:monospace;'>".$errorText. '</p>'
+                . "<br/><br/><hr><p><strong>TRACE:</stong></p><p style='font-family:monospace;'>".$responseTextStripped. '</p><hr>';
+        
+        $emailConfigurations = [
+            'from' => CNF_EMAIL,
+            'fromName' => "FEG Admin Error Reporting",
+            'to' => $supportEmail,
+            'bcc' => $supportEmailBCC,
+            'subject' => $subject,
+            'message' => $emailMessage,
+            'isTest' => env('SEND_ERRORREPORT_EMAIL_TO_TEST_RECIPIENT=true', false),
+            'configName' => 'Error Reporting',
+        ];
+
+        if (!empty($emailAttachment)) {
+            $emailConfigurations['attach'] = explode(',', $emailAttachment);
+        }
+        FEGSystemHelper::sendSystemEmail($emailConfigurations);
+        
+        return response()->json(array(
+            'status' => 'success',
+            'message' => 'Error reported successfully!',
+        ));
+    }
 }
 

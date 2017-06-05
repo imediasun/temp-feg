@@ -2,6 +2,7 @@
 
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Ordertyperestrictions;
 use Log;
 
 class order extends Sximo
@@ -257,6 +258,10 @@ class order extends Sximo
                     {
                         $orderItemsPriceArray[] = ($row->price == 0.00)?$row->case_price:$row->price;
                     }
+                    else
+                    {
+                        $orderItemsPriceArray[] = $row->price;
+                    }
                     $orderQtyArray[] = $row->qty;
                     $orderProductIdArray[] = $row->product_id;
                     $orderitemnamesArray[] = $row->item_name;
@@ -358,7 +363,7 @@ class order extends Sximo
 									LEFT JOIN products P ON P.id = R.product_id
 									LEFT JOIN location L ON L.id = R.location_id
 										WHERE R.id = ' . ${'SID' . $i} . '');
-
+                \DB::table('requests')->where('id', ${'SID' . $i})->update(['blocked_at'=>date('Y-m-d h:i:s')]);
                 if (count($query) == 1) {
 
                     $data['order_loc_id'] = $query[0]->location_id;
@@ -679,8 +684,20 @@ class order extends Sximo
         $isFreeHand = !empty($freehand);
         return $isFreeHand;
     }
+
+    public static function isApiableFromType($id, $data = null) {
+        if (!empty($data)) {
+            $oType = is_object($data) ? $data->order_type_id : $data['order_type_id'];
+        }
+        else {
+            $oType = self::where('id', $id)->value('order_type_id');
+        }
+        $isApiable = Ordertyperestrictions::isApiable($oType);
+        return $isApiable;
+    }
     public static function isApiable($id, $data = null, $ignoreVoid = false) {
-        return !self::isFreehand($id, $data) && ($ignoreVoid || !self::isVoided($id, $data));
+        return !self::isFreehand($id, $data) && self::isApiableFromType($id, $data) &&
+                ($ignoreVoid || !self::isVoided($id, $data));
     }
     public static function isApified($id, $data = null) {
         if (!empty($data)) {

@@ -61,7 +61,8 @@ class ProductController extends Controller
                     'products.sku',
                     'products.size',
                     'products.item_description',
-                    'products.ticket_value'
+                    'products.ticket_value',
+                    'products.details'
                 ];
             $searchInput = ['query' => $search_all_fields, 'fields' => $searchFields];
         }
@@ -263,7 +264,7 @@ class ProductController extends Controller
         $toCopy = implode(",", $request->input('ids'));
 
         $sql = "INSERT INTO products (" . implode(",", $columns) . ") ";
-        $columns[1] = "CONCAT('copy ',vendor_description)";
+        $columns[1] = "CONCAT('copy ".mt_rand()." ',vendor_description)";
         $sql .= " SELECT " . implode(",", $columns) . " FROM products WHERE id IN (" . $toCopy . ")";
         \DB::insert($sql);
 
@@ -277,7 +278,7 @@ class ProductController extends Controller
     {
         $rules = $this->validateForm();
         $rules['img'] = 'mimes:jpeg,gif,png';
-        $rules['sku'] = 'required';
+        //$rules['sku'] = 'required';
         $rules['expense_category'] = 'required|numeric|min:0';
         $validator = Validator::make($request->all(), $rules);
         $retail_price = $request->get('retail_price');
@@ -461,6 +462,21 @@ class ProductController extends Controller
             ));
         }
     }
+function getExpenseCategory(Request $request)
+{
+    $order_type_id=$request->get('order_type');
+    $product_type_id=$request->get('product_type');
+    $expense_category="";
+    if(!empty($product_type_id))
+    {
 
+        $expense_category=\DB::table('expense_category_mapping')->where('order_type',$order_type_id)->where('product_type',$product_type_id)->pluck('mapped_expense_category');
+    }
+    else
+    {
+        $expense_category=\DB::table('expense_category_mapping')->where('order_type',$order_type_id)->pluck('mapped_expense_category');
+    }
+return json_encode(array('expense_category'=>$expense_category));
+}
 
 }

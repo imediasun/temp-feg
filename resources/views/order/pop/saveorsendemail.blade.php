@@ -89,20 +89,20 @@
                                 <label class="control-label col-md-4" for="to">To</label>
 
                                 <div class="col-md-8">
-                                    <input name="to" value="{{ $send_to }}"  id="to" class="form-control" required/>
+                                    <input name="to" id="to" value="{{ $send_to }}" data-value="{{ $send_to }}" class="form-control orderEmailAutoComplete" required/>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label class="control-label col-md-4" for="cc">CC</label>
                                 <div class="col-md-8">
-                                    <input name="cc" id="cc" value="{{ $cc }}" multiple class="form-control" />
+                                    <input name="cc" id="cc" value="{{ $cc }}" data-value="{{ $cc }}" multiple class="form-control orderEmailAutoComplete" />
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label class="control-label col-md-4" for="bcc">BCC</label>
 
                                 <div class="col-md-8">
-                                    <input name="bcc" id="bcc" multiple class="form-control" />
+                                    <input name="bcc" id="bcc" multiple data-value="" class="form-control orderEmailAutoComplete" />
                                 </div>
                             </div>
                             <div class="form-group">
@@ -155,21 +155,21 @@
                                 <label class="control-label col-md-4" for="to">To</label>
 
                                 <div class="col-md-8">
-                                    <input name="to1" value="{{ $send_to }}"  id="to1" class="form-control" required/>
+                                    <input name="to1" id="to1" value="{{ $send_to }}" data-value="{{ $send_to }}" class="form-control orderEmailAutoComplete" required/>
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label class="control-label col-md-4" for="cc">CC</label>
 
                                 <div class="col-md-8">
-                                    <input name="cc1" id="cc1" value="{{ $cc }}" class="form-control">
+                                    <input name="cc1" id="cc1" value="{{ $cc }}" data-value="{{ $cc }}"  class="form-control orderEmailAutoComplete">
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label class="control-label col-md-4" for="bcc">BCC</label>
 
                                 <div class="col-md-8">
-                                    <input name="bcc1" id="bcc1" class="form-control" />
+                                    <input name="bcc1" id="bcc1" data-value=""  class="form-control orderEmailAutoComplete" />
                                 </div>
                             </div>
                             <div class="form-group">
@@ -206,6 +206,9 @@
 
 
         $(document).ready(function () {
+            
+            App.initAutoComplete($('.orderEmailAutoComplete'),
+                {url: siteUrl+'/order/email-history'});
 
             $(".exposeAPIFromSaveOrSend").click(function(e){
                 var btn = $(this);

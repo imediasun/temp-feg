@@ -385,7 +385,9 @@ class ManagefegrequeststoreController extends Controller
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
             $vendor = $request->get('vendor_id');
-            $query = \DB::select('SELECT R.id FROM requests R LEFT JOIN products P ON P.id = R.product_id WHERE R.location_id = "' . $location . '"  AND P.vendor_id = "' . $vendor . '" AND R.status_id = 1');
+            $query = \DB::select('SELECT R.* FROM requests R LEFT JOIN products P ON P.id = R.product_id WHERE R.location_id = "' . $location . '"  AND P.vendor_id = "' . $vendor . '" AND R.status_id = 1 AND R.blocked_at IS NULL');
+
+            //$query = \DB::select('select id from requests where location_id = "' . $location . '" AND status_id = 1 AND product_id IN (Select id from products where id IN (select product_id from requests where location_id = "' . $location . '" AND status_id = 1) And vendor_id = "' . $vendor . '")');
             if (count($query) > 0) {
                 $SID = 'SID';
                 foreach ($query as $row) {
@@ -393,6 +395,9 @@ class ManagefegrequeststoreController extends Controller
                 }
                 return Redirect::to('order/submitorder/' . $SID . '-');
             } else {
+                $this->data['access'] = $this->access;
+                \Session::put('filter_before_redirect','redirect');
+                return view('managefegrequeststore.index',$this->data)->with('error' ,'These items are blocked');
                 $manageRequestInfo = $this->model->getManageRequestsInfo();
                 $this->data['manageRequestInfo'] = $manageRequestInfo;
                 return view('managefegrequests.table', $this->data);
@@ -415,5 +420,43 @@ class ManagefegrequeststoreController extends Controller
                 'message' => \Lang::get('core.note_error_denied')
             ));
         }
+    }
+
+    public function removeBlockedCheck(Request $request)
+    {
+        $requestIds = $request->requestIds;
+        $query = \DB::update("UPDATE requests set blocked_at = null WHERE id IN ($requestIds)");
+        if ($query) {
+            return response()->json(array(
+                'status' => 'success',
+                'message' => 'Removed Blocked'
+            ));
+        } else {
+            return response()->json(array(
+                'status' => 'error',
+                'message' => 'Unable to remove'
+            ));
+        }
+    }
+
+    public function AddBlockedCheck(Request $request)
+    {
+        $requestIds = $request->requestIds;
+        if(!empty($requestIds))
+        {
+            $query = \DB::update("UPDATE requests set blocked_at = NOW() WHERE id IN ($requestIds)");
+            if ($query) {
+                return response()->json(array(
+                    'status' => 'success',
+                    'message' => 'Added Blocked Time'
+                ));
+            } else {
+                return response()->json(array(
+                    'status' => 'error',
+                    'message' => 'Unable to add time'
+                ));
+            }
+        }
+        return 'requestIds are empty!';
     }
 }

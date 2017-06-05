@@ -45,6 +45,9 @@ class UsersController extends Controller
 
     public function getCheckAccess()
     {
+        if (!\Auth::check()) {
+            response()->json(['status' => "fail", 'noAuth' => true, 'message' => 'You are no longer logged-in. Please login again.']);
+        }
         $moduleName = Input::get('module');
         $searchableModuleName = $moduleName;
         $urlParts = explode('/', trim(Input::get('url'), '/'));
@@ -439,7 +442,7 @@ class UsersController extends Controller
         $rules = $this->validateForm();
         $rules['email'] = 'required|email|unique:users,email';
         if ($request->input('id') == '') {
-            $rules['password'] = 'required|between:6,12';
+            $rules['password'] = 'required|confirmed|between:6,12';
             $rules['password_confirmation'] = 'required|between:6,12';
             $rules['username'] = 'required|min:2|unique:users';
 
@@ -447,7 +450,7 @@ class UsersController extends Controller
         } else {
             $rules['email'] = 'required|email|unique:users,email,'.$request->input('id');
             if ($request->input('password') != '') {
-                $rules['password'] = 'required|between:6,12';
+                $rules['password'] = 'required|confirmed|between:6,12';
                 $rules['password_confirmation'] = 'required|between:6,12';
             }
 
@@ -660,10 +663,10 @@ class UsersController extends Controller
         $content = str_replace("[email]",$object->email,$content);
         return $content;
     }
-    public function getSendPasswordResetEmails()
+    /*public function getSendPasswordResetEmails()
     {
         $this->model->passwordForgetEmails();
-    }
+    }*/
 public function getUserDetails($id)
 {
     $request=new Request();

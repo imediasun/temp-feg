@@ -203,5 +203,14 @@ $selected_loc=\Session::get('selected_location');?>
             @endforeach
         </ul>
     </div>
-</nav>	  
-	  
+</nav>
+
+@if(count(\Session::get('user_locations'))<=0)
+<script>
+    notyMessageError('In order to run module you must be assigned to at least one location. You have not been assigned to any locations. Please contact an administrator if you believe this to be an error.', {"timeOut":"8000"});
+    /*$(document).ajaxStop(function () {
+        if($('td[data-field="location_id"]').length>0){
+        }
+    });*/
+</script>
+@endif

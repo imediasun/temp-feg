@@ -47,6 +47,7 @@
                         <br>
                         <label for="location_id" class=" control-label col-md-4 text-left"> Location </label>
 
+                        <input type="hidden" name="from_sid" value="{{$data['prefill_type'] == "SID" ? 1 : 0}}">
                         <div class="col-md-8">
                            @if($data['prefill_type'] != "edit" && $data['prefill_type']!= "SID")
                                 <select class="select3" id="location_id" name="location_id" required></select>
@@ -410,6 +411,8 @@
     </div>
     <script type="text/javascript">
         var counter = 0;
+        var hidePopup;
+        var showFirstPopup;
         var mode = "{{ $data['prefill_type'] }}";
         var PRECISION = '<?php echo  \App\Models\Order::ORDER_PERCISION?>';
         $('#alt_ship_to').on('change', function () {
@@ -462,6 +465,7 @@
         games_options_js = games_options_js.replace(/\\/g, "\\\\");
         games_options_js = $.parseJSON(games_options_js.replace(/&quot;/g, '"'));
         function removeRow(id) {
+            decreaseCounter();
             if (counter > 1) {
                 $("#" + id).parents('.clonedInput').remove();
             }
@@ -681,6 +685,9 @@
         function showResponse(data) {
 
             $('.ajaxLoading').hide();
+            clearTimeout(hidePopup);
+            clearTimeout(showFirstPopup);
+            console.log('timeoutcleared');
             if (data.status == 'success') {
                 notyMessage(data.message);
                 ajaxViewChange("#order", data.saveOrSendContent);
@@ -981,6 +988,54 @@ $('#vendor_id').on('select2-selecting',function (e) {
 
             // init("item_name"+counter);
         }
+        function showPopups()
+        {
+            console.log('settingtimeout');
+            showFirstPopup = setTimeout(function () {
+                App.notyConfirm({
+                    message: "You have not saved your order yet , Do you want to cancel this order!",
+                    confirmButtonText: 'Yes',
+                    cancelButtonText: 'No',
+                    timeout:6000,
+                    confirm: function (){
+                        reloadOrder();
+                    },
+                    cancel:function () {
+                        var requestIds = $('#where_in_expression').val();
+                        $.ajax({
+                            url:"{{route('add_more_blocked_time')}}",
+                            data:{requestIds:requestIds}
+                        }).success(function (data) {
+                            console.log(data);
+                            clearTimeout(hidePopup);
+                            console.log('timeoutcleared');
+                            var settimeout =  showPopups();
+                            console.log(settimeout);
+                        })
+                            .error(function (data) {
+                                console.log(data);
+                            })
+                    }
+                });
+
+                    hidePopup = setTimeout(function () {
+                        $('#noty_topCenter_layout_container').hide(200);
+                        reloadOrder();
+                    },60000)
+            }, ({{env('notification_popup_time_for_order')}} * 60000));
+            return 'Time Out set successfully';
+        }
+        <?php
+            if($fromStore)
+            {
+        ?>
+
+                   var settimeout =  showPopups();
+                   console.log(settimeout);
+
+        <?php
+            }
+        ?>
     </script>
     <style type="text/css">
         tr.invHeading th {
@@ -1130,18 +1185,49 @@ $('#vendor_id').on('select2-selecting',function (e) {
             reloadOrder();
         });
         function reloadOrder() {
+            var requestIds = $('#where_in_expression').val();
+            if(requestIds)
+            {
+                $.ajax({
+                    method: "Get",
+                    url:"{{route('remove_blocked_check')}}",
+                    data:{
+                        requestIds:requestIds
+                    }
+                })
+                    .success(function (data) {
+                        console.log(data);
+                        var moduleUrl = '{{ $pageUrl }}',
+                            redirect = "{{ \Session::get('redirect') }}",
+                            redirectLink = "{{ url() }}/" + redirect;
 
-            var moduleUrl = '{{ $pageUrl }}',
+                        if (redirect== "order") {
+                            ajaxViewClose("#order", null, {noModal: true});
+                        }
+                        else {
+                            //  {{ \Session::put('filter_before_redirect','redirect') }}
+                            location.href = redirectLink;
+                        }
+                    })
+                    .error(function (data) {
+                        console.log(data);
+                    })
+            }
+            else
+            {
+                var moduleUrl = '{{ $pageUrl }}',
                     redirect = "{{ \Session::get('redirect') }}",
                     redirectLink = "{{ url() }}/" + redirect;
 
-            if (redirect== "order") {
-                ajaxViewClose("#order", null, {noModal: true});
+                if (redirect== "order") {
+                    ajaxViewClose("#order", null, {noModal: true});
+                }
+                else {
+                    //  {{ \Session::put('filter_before_redirect','redirect') }}
+                    location.href = redirectLink;
+                }
             }
-            else {
-//            {{ \Session::put('filter_before_redirect','redirect') }}
-                location.href = redirectLink;
-            }
+
 
         }
         // for enable/disable free-hand button
@@ -1165,6 +1251,8 @@ $('#vendor_id').on('select2-selecting',function (e) {
                             $('.itemstable .clonedInput textarea.item').attr('readonly','readonly');
                             $('.itemstable .clonedInput:first-child input').not('#item_num').val('');
                             $('.itemstable .clonedInput:first-child textarea').val('');
+                            $('#total_cost').val(0.00);
+                            $('input[name="Subtotal"]').val(0.000);
                         }
                         else{
                             currentElm.data('status','enabled');
@@ -1179,6 +1267,8 @@ $('#vendor_id').on('select2-selecting',function (e) {
                             $('.itemstable .clonedInput textarea.item').removeAttr('readonly');
                             $('.itemstable .clonedInput:first-child input').not('#item_num').val('');
                             $('.itemstable .clonedInput:first-child textarea').val('');
+                            $('#total_cost').val(0.00);
+                            $('input[name="Subtotal"]').val(0.000);
                         }
                     }
                 });

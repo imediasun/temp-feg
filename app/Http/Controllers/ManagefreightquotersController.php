@@ -597,6 +597,7 @@ class ManagefreightquotersController extends Controller
                         'to' => $to,
                         'subject' => $subject,
                         'message' => $message,
+                        'preferGoogleOAuthMail' => true,
                         'isTest' => env('APP_ENV', 'development') !== 'production' ? true : false,
                         'from' => $from,
                         'bcc' => $bcc,

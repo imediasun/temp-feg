@@ -43,7 +43,18 @@
     $prevLocationIdName = $game->previous_location;
     $lastEditedBy = $game->last_edited_by;
     $lastEditedOn = $game->last_edited_on;
-    $lastEditedDetails = $lastEditedBy . (!empty($lastEditedOn) ? ' on '. DateHelpers::formatDateCustom($lastEditedOn) : '');
+    $lastEditedDetailsDate = [];
+    if (empty(trim($lastEditedBy))) {
+        $lastEditedBy = " - ";
+    }
+    if (!empty(trim($lastEditedOn))) {
+        $lastEditedDetailsDate[] = $lastEditedBy;
+        $lastEditedDetailsDate[] = DateHelpers::formatDateCustom($lastEditedOn);
+    }
+    else {
+        $lastEditedDetails[] = $game->last_edited_by;
+    }
+    $lastEditedDetails = implode(' on ', $lastEditedDetailsDate);
     
     $hasManual = $game->has_manual === 1;
     $manualDetails = $hasManual ? "<a href='uploads/games/manuals/{$gameTitleId}.pdf' target='_blank'>Click to View</a>" : '';
@@ -165,13 +176,18 @@
                 <label for="date_up" class=" control-label col-md-4">
                     Date Game Up</label>
                 <div class="col-md-8">
+
+                    <span class="input-group-addon" style="width: 32px;padding-left: 10px;padding-top: 8px;padding-bottom: 8px;float: left;">
+                        <i class="fa fa-calendar" id="icon"></i>
+                    </span>
+
                     <div class="input-group" style="width:150px !important;">
                         {!! Form::text('date_up', "",array(
                             'class'=>'form-control date',
                             'parsley-errors-container' => '.dateUpError',
-                            'parsley-nofocus' => 'true'                            
+                            'parsley-nofocus' => 'true',
+                            'style' => 'width:150px !important;'
                         )) !!}
-                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
                     </div>
                     <div class='dateUpError'></div>
                 </div>
@@ -209,7 +225,7 @@
 
         </div>
         
-        @if ($isNewlyAddedGame)
+        @if (false && $isNewlyAddedGame)
         <!-- Serial -->
         <div class="form-group  clearfix" >
             <label for="serial" class=" control-label col-md-4 text-left">
@@ -296,7 +312,7 @@
         </div>
         <div class="form-group clearfix" >
             <label class="col-md-4">
-                {!! SiteHelpers::activeLang('Last Edited By', (isset($fields['last_edited_by']['language'])? $fields['last_edited_by']['language'] : array())) !!}:
+                {!! SiteHelpers::activeLang('Last Edited by', (isset($fields['last_edited_by']['language'])? $fields['last_edited_by']['language'] : array())) !!}:
             </label>
             <div class="col-md-8">{{ \DateHelpers::formatStringValue($lastEditedDetails) }}</div>
         </div>
