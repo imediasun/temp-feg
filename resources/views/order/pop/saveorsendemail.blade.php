@@ -56,8 +56,8 @@
                                 style="width:33%">
                         {{ Lang::get('core.order_api_expose_button_label') }} </button>
                     </div>
-                    {!! Form::close() !!}
                     @endif
+                    {!! Form::close() !!}
                 </div>
                 <ul class="parsley-error-list">
                     @foreach($errors->all() as $error)
