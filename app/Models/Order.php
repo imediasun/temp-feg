@@ -363,7 +363,7 @@ class order extends Sximo
 									LEFT JOIN products P ON P.id = R.product_id
 									LEFT JOIN location L ON L.id = R.location_id
 										WHERE R.id = ' . ${'SID' . $i} . '');
-                \DB::table('requests')->where('id', ${'SID' . $i})->update(['blocked_at'=>date('Y-m-d h:i:s')]);
+                \DB::table('requests')->where('id', ${'SID' . $i})->update(['blocked_at'=>date('Y-m-d H:i:s')]);
                 if (count($query) == 1) {
 
                     $data['order_loc_id'] = $query[0]->location_id;
