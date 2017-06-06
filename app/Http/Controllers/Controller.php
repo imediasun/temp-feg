@@ -1121,8 +1121,8 @@ abstract class Controller extends BaseController
         $errorMessages = [
                        "Page: $pageUrl",
                        "Request Url: $url",
-                       "Request Type: $type",
-                       "POST DATA: ". empty($data) ? '{none}': json_encode($data),
+                       "Request Type: [$type]",
+                       "Request Data: ". (empty($data) ? '{none}': json_encode($data)),
                        "",
                        "Error: $statusText",
                        "Error Code: $status",
@@ -1150,13 +1150,13 @@ abstract class Controller extends BaseController
         $responseTextStripped = FEGSystemHelper::strip_html_tags($responseText);
         $L->error($responseTextStripped);
         $L->log(str_repeat("#", 100));
-
+        $responseAsBodyHTML = FEGSystemHelper::retainHTMLBody($responseText);        
 
         $emailAttachment = $htmlFilePath;
         $subject = "An error has been reported by user from FEG Admin";
         $emailMessage = "<p>".$errorMessageHTML . "</p><hr/>"
                 . "<p style='font-family:monospace;font-size:120%;'>".
-                $responseTextStripped. '</p><hr/>';
+                $responseAsBodyHTML. '</p><hr/>';
         
         $emailConfigurations = [
             'from' => CNF_EMAIL,

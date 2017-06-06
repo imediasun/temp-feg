@@ -1644,5 +1644,11 @@ $message" .
         }
         return $str !== $result ? self::replaceWhitespace($result) : $result;
     }
+    
+    public static function retainHTMLBody($html) {
 
+        $html = preg_replace('/\<[\s\S]*\<body\>/is', '', $html);
+        $html = preg_replace('/\<\/body[\s\S]*\/html\>/is', '', $html);
+        return $html;
+    }
 }
