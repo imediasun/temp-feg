@@ -1138,7 +1138,7 @@ abstract class Controller extends BaseController
                        ""];
         
         $errorMessageHTML = implode("<br/>", $errorMessages);
-        $errorMessageLog = implode("\r\n", $errorMessages);
+        $errorMessageLog = implode(", \r\n", $errorMessages);
 
         $htmlFilePath = FEGSystemHelper::getUniqueFilePath($htmlFile.'.html', $logPath.'/html');
         file_put_contents($htmlFilePath, $responseText, FILE_APPEND);
