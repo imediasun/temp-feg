@@ -70,7 +70,7 @@ class VendorController extends Controller
                 'vendor.created_at',
                 'vendor.updated_at',
             ];
-            $dates = FEGSystemHelper::probeDatesInSearchQuery($search_all_fields);
+            $dates = \FEGHelp::probeDatesInSearchQuery($search_all_fields);
             $searchInput = ['query' => $search_all_fields, 'dateQuery' => $dates,
                 'fields' => $searchFields, 'dateFields' => $dateSearchFields];
 
