@@ -489,7 +489,8 @@
                 rid = rIdInput.val(),
                 i, j, newIds = [], newSids = [];
     
-            App.ajax.getData(siteUrl+'/removeblocked', {data:{requestIds: rid}, blockUI:true});
+            App.ajax.submit(siteUrl+'/managefegrequeststore/deny',
+                    {data:{request_id: rid}, blockUI:true, method: 'POST'});
 
             for(i in ids) {
                 j = ids[i];
