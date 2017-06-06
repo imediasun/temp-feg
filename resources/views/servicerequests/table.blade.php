@@ -1,6 +1,4 @@
-<?php usort($tableGrid, "SiteHelpers::_sort");
-$x = $x['c'];
-?>
+<?php usort($tableGrid, "SiteHelpers::_sort"); ?>
 <div class="sbox">
     <div class="sbox-title">
         <h5><i class="fa fa-table"></i></h5>
