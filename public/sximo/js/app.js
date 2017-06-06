@@ -893,6 +893,8 @@ App.functions.reportIssue = function (params, options) {
             statusText: params.jQXhr.statusText,
             type: params.xhr.type,
             url: params.xhr.url,
+            pageUrl: location.href,
+            userAgent: navigator.userAgent,
             data: params.xhr.data || {}
         }
     })
