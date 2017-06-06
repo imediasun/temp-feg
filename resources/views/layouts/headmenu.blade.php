@@ -28,9 +28,12 @@
                 </a>
             </li>
 
+            <li>
+                <span class="notif-alert label label-danger" id="nav_cart_total">$00000</span>
+            </li>
 
 
-            @if(CNF_MULTILANG ==1)
+                @if(CNF_MULTILANG ==1)
                 <li class="user dropdown"><a href="javascript:void(0)" class="dropdown-toggle" data-toggle="dropdown"><i
                                 class="icon-flag"></i><i class="caret"></i></a>
                     <ul class="dropdown-menu dropdown-menu-right icons-right">

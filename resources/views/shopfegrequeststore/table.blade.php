@@ -247,7 +247,8 @@
                     data: {},
                     success: function (response) {
                         $("#update_text_to_add_cart").text(response.total_cart);
-                        showResponse(response)
+                        showResponse(response);
+                        getCartTotal();
                     }
                 });
             }

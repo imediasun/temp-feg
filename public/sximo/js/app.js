@@ -1032,3 +1032,18 @@ App.initAutoComplete = function (elm, options) {
     return elm.select2(acOptions);
 };
 
+function getCartTotal()
+{
+    $.ajax({
+        url:'addtocart/cartdata',
+        method:'get',
+        success:function(data){
+            var total = data['shopping_cart_total'] || "00";
+            $('#nav_cart_total').text('$'+total);
+        }
+    });
+}
+
+$(document).ready(function(){
+    getCartTotal();
+});
