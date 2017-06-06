@@ -19,7 +19,7 @@
                 <?php endif; ?>
 
             <li>
-                <span class="notif-alert label label-danger" id="nav_cart_total">$0.000</span>
+                <span class="notif-alert label label-danger" id="nav_cart_total">$ -.---</span>
             </li>
 
             <li>
