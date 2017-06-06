@@ -272,7 +272,18 @@ function denyRequest(ele)
         if(data.status == 'success')
         {
             notyMessage(data.message);
-            reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?view=manage');
+console.log($('#managefegrequeststoreTable tbody tr').not('.hiddenNow').length);
+            if($('#managefegrequeststoreTable tbody tr').not('.hiddenNow').length < 3)
+            {
+                reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?view=manage');
+            }
+            else
+            {
+                $('#form-'+requestId).addClass('hiddenNow').hide(200);
+                $('.ajaxLoading').hide();
+                return true;
+            }
+
         } else {
             notyMessageError(data.message);
             $('.ajaxLoading').hide();

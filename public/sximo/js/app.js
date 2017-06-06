@@ -961,7 +961,7 @@ App.autoCallbacks.registerCallback('ajaxerror', function(params){
  * @param object options
  * @returns jQXhr
  */
-App.ajax.getData = function (url, options) {
+App.ajax.request = App.ajax.submit = App.ajax.getData = function (url, options) {
     options = options || {};
     var settings = options.settings || {},
         done = options.done || UNFN,
@@ -970,6 +970,7 @@ App.ajax.getData = function (url, options) {
         isBlockUI = options.blockUI || false,
         ajaxSettings = $.extend({}, {
             url: url,
+            type: options.type || options.method || 'get',
             method: options.method || options.type || 'get',
             dataType: options.dataType || 'json',
             data: options.data || {},
