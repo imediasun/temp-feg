@@ -1048,7 +1048,7 @@ App.initAutoComplete = function (elm, options) {
 function getCartTotal()
 {
     $.ajax({
-        url:'addtocart/cartdata',
+        url: siteUrl + '/addtocart/cartdata',
         method:'get',
         success:function(data){
             var total = data['shopping_cart_total'] || "0.00";
