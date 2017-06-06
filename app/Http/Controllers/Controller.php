@@ -1102,7 +1102,7 @@ abstract class Controller extends BaseController
         $status = $request->input('status');
         $readyState = $request->input('readyState');
 
-        $pageUrl = $request->input('pareUrl');
+        $pageUrl = $request->input('pageUrl');
         $url = $request->input('url');
         $type = $request->input('type');
         $data = $request->input('data');
@@ -1119,6 +1119,8 @@ abstract class Controller extends BaseController
         $htmlFile = $logFile = "$username-$uid";
 
         $errorMessages = [
+                       "Reported On (EST): " .date("m/d/Y H:i:s"),
+                       "",
                        "Page: $pageUrl",
                        "Request Url: $url",
                        "Request Type: [$type]",
