@@ -917,6 +917,9 @@ class SiteHelpers
                 }
                 break;
 
+
+
+
             case 'select';
                 if ($option['opt_type'] == 'external') {
 
@@ -995,14 +998,71 @@ class SiteHelpers
                 }
 
                 $multipleClass = "";
+                $multiple = false;
                 if (!empty($selectMultiple)) {
                     $multipleClass = "sel-search-multiple";
+                    $multiple = true;
                 }
-
                 $form = "<select name='$field{$bulk}'  class='form-control select3 sel-search $multipleClass' $mandatory $selectMultiple $simpleSearchOptions>" .
                     (empty($selectMultiple) && !$isSSSFWOBD ? "<option value=''> -- Select  -- </option>" : "") .
                     "	$opts
 						</select>";
+
+                if($f['alias'] == 'game_service_history')
+                {
+                	$random = str_random(4);
+                	$form = "<select data-name='$field{$bulk}' style='display:none' class=''>" .
+                    (empty($selectMultiple) && !$isSSSFWOBD ? "<option value=''> -- Select  -- </option>" : "") .
+                    "	$opts
+						</select>";
+                    $form .= "<input type='hidden' name='$field{$bulk}' id='$field{$bulk}' class='form-control custom-select sel-search $multipleClass' $mandatory $selectMultiple $simpleSearchOptions value='$value'>
+					<script>  
+						var data_$random = [];
+					
+					    $.each($('select[data-name=$field{$bulk}]').prop('options'), function(i, opt) {
+					        //data[opt.value] = opt.textContent;
+					        data_$random.push({id: ''+opt.value, text: ''+opt.textContent});
+					    });
+					
+					    $('.form-control[name=$field{$bulk}]').select2({
+					        
+					        initSelection: function(element, callback) {
+					            
+					            var selection = _.find(data_$random, function(metric){
+					                return metric.id === element.val();
+					            });
+					            callback(selection);
+					        },
+					        query: function(options){
+					            var pageSize = 100;
+					            var startIndex  = (options.page - 1) * pageSize;
+					            var filteredData = data_$random;
+					
+					            if( options.term && options.term.length > 0 ){
+					                if( !options.context ){
+					                    var term = options.term.toLowerCase();
+					                    options.context = data_$random.filter( function(metric){
+					                        return ( metric.text.toLowerCase().indexOf(term) !== -1 );
+					                    });
+					                }
+					                filteredData = options.context;
+					            }
+					
+					            options.callback({
+					                context: filteredData,
+					                results: filteredData.slice(startIndex, startIndex + pageSize),
+					                more: (startIndex + pageSize) < filteredData.length
+					            });
+					        }
+					        
+					        "
+                        .($multiple == true ? ', multiple:  true': '').
+                        "
+                    });		
+					</script>
+";
+                }
+
                 break;
 
             case 'radio':

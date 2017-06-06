@@ -305,7 +305,10 @@ class AddtocartController extends Controller
             $updated = $this->model->popupCartData(null, $vendor_name);
             return json_encode(array('vendor_name' => $updated['subtotals'][0]['vendor_name'], 'subtotal' => $updated['subtotals'][0]['vendor_total']));
         } else {
-            echo "Update Failed...";
+            return response()->json(array(
+                'status' => 'error',
+                'message' => \Lang::get('core.cart_invalid_quantity')
+            ));
         }
     }
 
