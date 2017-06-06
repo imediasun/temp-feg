@@ -919,8 +919,8 @@ App.autoCallbacks.registerCallback('ajaxerror', function(params){
     unblockUI();
     App.notyConfirm({
         message : "Opps Something Went Wrong.\n\
-                    Please click the Report Issue button below to send \n\
-                    a error report to the support team.",
+                    Please click the Report Issue \n\
+                    button below to send an error report to the support team.",
         modal: true,
         layout: 'center',
         type: 'error',
