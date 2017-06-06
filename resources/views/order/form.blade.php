@@ -207,7 +207,7 @@
 
                         <div class="col-md-8" style="padding-left: 15px;">
                                 <input   type="text" class="form-control " id="my-datepicker" name="date_ordered"
-                                       value="{{ date("m/d/Y", strtotime($data['today'])) }}" required="required" readonly/>
+                                       value="{{ date("m/d/Y", strtotime($data['today'])) }}" readonly/>
 
                         </div>
 
@@ -269,7 +269,7 @@
                     <input type="hidden" id="form_type" name="form_type" value="">
                     <input type="hidden" id="where_in_expression" name="where_in_expression"
                            value="{{$data['where_in_expression']}}">
-                    <input type="hidden" id="SID_string" name="SID_string" @if(isset($data['SID_string'])))
+                    <input type="hidden" id="SID_string" name="SID_string" @if(isset($data['SID_string']))
                            value="{{$data['SID_string']}}" @else value="" @endif>
                     <input type="hidden" id="order_id" name="order_id" value="{{ $id }}">
                     <input type="hidden" id="editmode" name="editmode" value="{{ $data['prefill_type'] }}">
@@ -410,7 +410,8 @@
     ?>
     </div>
     <script type="text/javascript">
-        var counter = 0;
+        var isRequestApprovalProcess = <?php echo $isRequestApproveProcess ? 'true' : 'false'; ?>;
+        var counter = isRequestApprovalProcess ? $('input[name^=item_num]').length : 0;
         var hidePopup;
         var showFirstPopup;
         var mode = "{{ $data['prefill_type'] }}";
@@ -465,6 +466,9 @@
         games_options_js = games_options_js.replace(/\\/g, "\\\\");
         games_options_js = $.parseJSON(games_options_js.replace(/&quot;/g, '"'));
         function removeRow(id) {
+            if (isRequestApprovalProcess) {
+                removeIdFromSIDList(id);
+            }
             decreaseCounter();
             if (counter > 1) {
                 $("#" + id).parents('.clonedInput').remove();
@@ -475,6 +479,33 @@
             calculateSum();
             decreaseCounter();
             return false;
+        }
+        function removeIdFromSIDList(id) {
+            var ids = ($("#where_in_expression").val() || '').split(','),
+                sids = ($("#SID_string").val() || '').split('-'),
+                container = $("#"+id),
+                tr = container.closest('tr'),
+                rIdInput = tr.find('[id^=request_id]'),
+                rid = rIdInput.val(),
+                i, j, newIds = [], newSids = [];
+    
+            App.ajax.getData(siteUrl+'/removeblocked', {data:{requestIds: rid}, blockUI:true});
+
+            for(i in ids) {
+                j = ids[i];
+                if (j!=rid) {
+                    newIds.push(j);
+                }
+            }
+            for(i in sids) {
+                j = sids[i];
+                if (j!=rid) {
+                    newSids.push(j);
+                }
+            }
+            $("#where_in_expression").val(newIds.join(','));
+            $("#SID_string").val(newSids.join('-'));
+
         }
         $(document).ready(function () {
             numberFieldValidationChecks($("input[name^=qty]"));

@@ -268,13 +268,14 @@ class OrderController extends Controller
         $where_in_expression = '';
         \Session::put('redirect','order');
         $this->data['setting'] = $this->info['setting'];
+        $isRequestApproveProcess = false;
         if ($id != 0 && $mode == '') {
-
             $mode = 'edit';
         } elseif ($id == 0 && $mode == '') {
             $mode = 'create';
         } elseif (substr($mode, 0, 3) == 'SID') {
             \Session::put('redirect','managefegrequeststore');
+            $isRequestApproveProcess = true;
             $mode = $mode;
             $fromStore = 1;
         } elseif ($mode == "clone") {
@@ -298,6 +299,7 @@ class OrderController extends Controller
         $this->data['setting'] = $this->info['setting'];
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
         $this->data['mode'] = $mode;
+        $this->data['isRequestApproveProcess'] = $isRequestApproveProcess;
         $this->data['id'] = $id;
         $this->data['data'] = $this->model->getOrderQuery($id, $mode);
         $this->data['relationships'] = $this->model->getOrderRelationships($id);
