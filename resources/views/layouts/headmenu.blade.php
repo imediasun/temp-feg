@@ -29,7 +29,7 @@
             </li>
 
             <li>
-                <span class="notif-alert label label-danger" id="nav_cart_total">$00000</span>
+                <span class="notif-alert label label-danger" id="nav_cart_total">$00</span>
             </li>
 
 
