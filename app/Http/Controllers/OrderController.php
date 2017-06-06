@@ -1572,10 +1572,11 @@ class OrderController extends Controller
         if (!empty($id)) {
             $orderData = Order::find($id)->toArray();
             $freeHand = Order::isFreehand($id, $orderData);
+            $apiable = Order::isApiable($id, $orderData);
             $apified = Order::isApified($id, $orderData);
             $voided = Order::isVoided($id, $orderData);
             $closed = Order::isClosed($id, $orderData);
-            $status = !$voided && !$closed && ($freeHand || $apified);
+            $status = !$voided && !$closed && ($freeHand || !$apiable || $apified);
 
             if (!$apified) {
                 $message = \Lang::get('core.order_receive_error_api_not_exposed');
