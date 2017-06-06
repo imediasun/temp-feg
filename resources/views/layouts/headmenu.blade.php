@@ -17,6 +17,11 @@
                        href="{{ URL::to('core/users/play/back')}}">Exit to Admin</a>
                 </li>
                 <?php endif; ?>
+
+            <li>
+                <span class="notif-alert label label-danger" id="nav_cart_total">$0.000</span>
+            </li>
+
             <li>
                 <a href="{{url()}}/addtocart"  class="dropdown-toggle count-info">
                     <?php
@@ -28,9 +33,6 @@
                 </a>
             </li>
 
-            <li>
-                <span class="notif-alert label label-danger" id="nav_cart_total">$00</span>
-            </li>
 
 
                 @if(CNF_MULTILANG ==1)

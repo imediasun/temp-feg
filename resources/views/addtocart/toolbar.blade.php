@@ -90,6 +90,7 @@
                     $("#cartbtn").val(" Submit Weekly Requests totalling $ "+ data['shopping_cart_total']);
 
                 }
+                getCartTotal();
                 $('.ajaxLoading').hide();
 
             }
