@@ -28,8 +28,15 @@ var UNDEFINED,
                     operator = item.operator;
                     if (elm.length) {
                         if (elm.hasClass('sel-search-multiple') || elm.data('select2')) {
-                            //elm.select2('val', val);
-                            elm.val(val).trigger('change');
+
+                            if(elm.hasClass('custom-select'))
+                            {
+                                elm.val(val).trigger('change');
+                            }
+                            else {
+                                elm.select2('val', val);
+                            }
+
                         }
                         else {
                             elm.val(val);

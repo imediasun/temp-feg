@@ -1003,12 +1003,19 @@ class SiteHelpers
                     $multipleClass = "sel-search-multiple";
                     $multiple = true;
                 }
-                $random = str_random(4);
-                $form = "<select data-name='$field{$bulk}' style='display:none' class=''>" .
+                $form = "<select name='$field{$bulk}'  class='form-control select3 sel-search $multipleClass' $mandatory $selectMultiple $simpleSearchOptions>" .
                     (empty($selectMultiple) && !$isSSSFWOBD ? "<option value=''> -- Select  -- </option>" : "") .
                     "	$opts
 						</select>";
-                $form .= "<input type='hidden' name='$field{$bulk}' id='$field{$bulk}' class='form-control sel-search $multipleClass' $mandatory $selectMultiple $simpleSearchOptions value='$value'>
+
+                if($f['alias'] == 'game_service_history')
+                {
+                	$random = str_random(4);
+                	$form = "<select data-name='$field{$bulk}' style='display:none' class=''>" .
+                    (empty($selectMultiple) && !$isSSSFWOBD ? "<option value=''> -- Select  -- </option>" : "") .
+                    "	$opts
+						</select>";
+                    $form .= "<input type='hidden' name='$field{$bulk}' id='$field{$bulk}' class='form-control custom-select sel-search $multipleClass' $mandatory $selectMultiple $simpleSearchOptions value='$value'>
 					<script>  
 						var data_$random = [];
 					
@@ -1049,12 +1056,13 @@ class SiteHelpers
 					        }
 					        
 					        "
-                    .($multiple == true ? ', multiple:  true': '').
-                    "
-           });
-				
+                        .($multiple == true ? ', multiple:  true': '').
+                        "
+                    });		
 					</script>
 ";
+                }
+
                 break;
 
             case 'radio':
