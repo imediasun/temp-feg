@@ -887,12 +887,14 @@ App.functions.reportIssue = function (params, options) {
         type:'POST',
         method:'POST',
         data: {
-            responseText: params.jQXhr.responseText,
+            responseText: encodeURIComponent(encodeURIComponent(params.jQXhr.responseText)),
             readyState: params.jQXhr.readyState,
             status: params.jQXhr.status,
             statusText: params.jQXhr.statusText,
             type: params.xhr.type,
             url: params.xhr.url,
+            pageUrl: location.href,
+            userAgent: navigator.userAgent,
             data: params.xhr.data || {}
         }
     })
@@ -957,6 +959,7 @@ App.ajax.getData = function (url, options) {
         done = options.done || UNFN,
         fail = options.fail || UNFN,
         always = options.always || UNFN,
+        isBlockUI = options.blockUI || false,
         ajaxSettings = $.extend({}, {
             url: url,
             method: options.method || options.type || 'get',
@@ -965,6 +968,9 @@ App.ajax.getData = function (url, options) {
         }, settings),
         xhr;
 
+    if (isBlockUI) {
+        blockUI();
+    }
     xhr = $.ajax(ajaxSettings)
             .done(function (data, textStatus, jqXHR){
                 done(data, textStatus, jqXHR);
@@ -979,6 +985,9 @@ App.ajax.getData = function (url, options) {
                 }
             })
             .always(function (d, status, x){
+                if (isBlockUI) {
+                   unblockUI();
+                }
                 always(d, status, x);
                 if (settings.always && typeof settings.always == 'function') {
                     settings.always(d, status, x);

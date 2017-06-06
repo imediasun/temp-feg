@@ -1096,49 +1096,67 @@ abstract class Controller extends BaseController
         
         $supportEmail = env('ERROR_REPORT_RECIPIENT', "support@element5digital.com");
         $supportEmailBCC = env('ERROR_REPORT_RECIPIENT_BCCCC', "e5devmail@gmail.com");
-        $responseText = $request->input('responseText');
-        $readyState = $request->input('readyState');
-        $status = $request->input('status');
-        $statusText = $request->input('statusText');
+        $responseText = urldecode(urldecode($request->input('responseText')));
 
-        $type = $request->input('type');
+        $statusText = $request->input('statusText');
+        $status = $request->input('status');
+        $readyState = $request->input('readyState');
+
+        $pageUrl = $request->input('pareUrl');
         $url = $request->input('url');
+        $type = $request->input('type');
         $data = $request->input('data');
 
         $uid = \Session::get('uid');
         $email = \Session::get('eid');
         $uname = \Session::get('fid');
         $username = \Session::get('user_name');
+
+        $userAgent = $request->input('userAgent');
+        $ip = request()->ip();
         
         $logPath = "ErrorReport";
         $htmlFile = $logFile = "$username-$uid";
 
-        $errorMessage = "User '$username' ($uid-$uname-$email) reported while working with [$type] $url";
+        $errorMessages = [
+                       "Page: $pageUrl",
+                       "Request Url: $url",
+                       "Request Type: [$type]",
+                       "Request Data: ". (empty($data) ? '{none}': json_encode($data)),
+                       "",
+                       "Error: $statusText",
+                       "Error Code: $status",
+                       "Ready State: $status",
+                       "",
+                       "Username: $username",
+                       "User ID: $uid",
+                       "Name: $uname",
+                       "Email: $email",
+                       "",
+                       "Browser: $userAgent",
+                       "IP: $ip",
+                       ""];
 
-        
+        $errorMessageHTML = implode("<br/>", $errorMessages);
+        $errorMessageLog = implode(", \r\n", $errorMessages);
+
         $htmlFilePath = FEGSystemHelper::getUniqueFilePath($htmlFile.'.html', $logPath.'/html');
         file_put_contents($htmlFilePath, $responseText, FILE_APPEND);
 
         $logFile = FEGSystemHelper::getUniqueFile($logFile.'.log', $logPath.'/log');
         $L = FEGSystemHelper::setLogger(null, $logFile, $logPath.'/log', "ERROR");
         $L->log(str_repeat("#", 100));
-
-        $L->error($errorMessage);
-        if (!empty($data)) {
-            $L->error("Request Data:", $data);
-        }
+        $L->error($errorMessageLog);
         $responseTextStripped = FEGSystemHelper::strip_html_tags($responseText);
-        $errorText = "[$statusText - $status][ReadyState: $readyState] ";
-        $L->error($errorText.$responseTextStripped);
+        $L->error($responseTextStripped);
         $L->log(str_repeat("#", 100));
-
+        $responseAsBodyHTML = FEGSystemHelper::retainHTMLBody($responseText);
 
         $emailAttachment = $htmlFilePath;
         $subject = "An error has been reported by user from FEG Admin";
-        $emailMessage = "<p>".$errorMessage . "</p><hr/>"
-                . (!empty($data) ? "<br/><p><strong>POST DATA:</strong></p><p style='font-family:monospace;'>".json_encode($data).'</p>': '')
-                . "<br/><br/><hr><p><strong>ERROR:</stong></p><p style='font-family:monospace;'>".$errorText. '</p>'
-                . "<br/><br/><hr><p><strong>TRACE:</stong></p><p style='font-family:monospace;'>".$responseTextStripped. '</p><hr>';
+        $emailMessage = "<p>".$errorMessageHTML . "</p><hr/>"
+                . "<p style='font-family:monospace;font-size:120%;'>".
+                $responseAsBodyHTML. '</p><hr/>';
         
         $emailConfigurations = [
             'from' => CNF_EMAIL,
