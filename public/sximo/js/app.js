@@ -887,7 +887,7 @@ App.functions.reportIssue = function (params, options) {
         type:'POST',
         method:'POST',
         data: {
-            responseText: params.jQXhr.responseText,
+            responseText: encodeURIComponent(encodeURIComponent(params.jQXhr.responseText)),
             readyState: params.jQXhr.readyState,
             status: params.jQXhr.status,
             statusText: params.jQXhr.statusText,
