@@ -598,8 +598,8 @@ class FEGSystemHelper
                 return self::phpMail($to, $subject, $message, $from, $options);
             }
             else {
-                $user = Users::find(Auth()->user()->id);
-                if($preferGoogleSend && !empty($user->oauth_token) && !empty($user->refresh_token)){
+                if($preferGoogleSend && !empty(Auth()->user()->oauth_token) && !empty(Auth()->user()->refresh_token)){
+                    $user = Users::find(Auth()->user()->id);
                     if(!$user->isOAuthRefreshedRecently() || !Users::verifyOAuthTokenIsValid($user->oauth_token)){
 
                         $googleResponse = Users::refreshOAuthToken($user->refresh_token);
