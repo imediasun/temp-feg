@@ -600,6 +600,7 @@
                     return false;
 
                 } else {
+                    console.log("parsley validation error");
                     return false;
                 }
             });
@@ -1301,6 +1302,7 @@ $('#vendor_id').on('select2-selecting',function (e) {
                             $('.itemstable .clonedInput:first-child textarea').val('');
                             $('#total_cost').val(0.00);
                             $('input[name="Subtotal"]').val(0.000);
+                            reInitParcley();
                         }
                     }
                 });
