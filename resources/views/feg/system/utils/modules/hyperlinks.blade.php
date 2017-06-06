@@ -3,7 +3,7 @@
 @section('content')
 <div class="page-content row" style="padding: 1% 2%; background-color: #fff;">    
 <?php
-
+    $x = $x['c'];
     function getModulesFormatters() {
         $r = [];
         $modules = \DB::table('tb_module')->select('module_name')->orderBy('module_name', 'asc')->get();
