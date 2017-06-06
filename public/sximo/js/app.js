@@ -918,11 +918,9 @@ App.autoCallbacks.registerCallback('ajaxerror', function(params){
     var obj = this;
     unblockUI();
     App.notyConfirm({
-        message : "Hi, the server doesn't like whatever it is that you just \n\
-                tried to do. Don't worry, in all likelihood you didn't \n\
-                do anything wrong. Please click the button below to send a \n\
-                    log of the error report to the Element5Digital support team. \n\
-                    Email to be sent to: support@element5digital.com",
+        message : "Opps Something Went Wrong.\n\
+                    Please click the Report Issue button below to send \n\
+                    a error report to the support team.",
         modal: true,
         layout: 'center',
         type: 'error',
