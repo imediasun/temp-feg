@@ -1055,7 +1055,7 @@ function getCartTotal()
         url:'addtocart/cartdata',
         method:'get',
         success:function(data){
-            var total = data['shopping_cart_total'] || "00";
+            var total = data['shopping_cart_total'] || "0.00";
             $('#nav_cart_total').text('$'+total);
         }
     });
