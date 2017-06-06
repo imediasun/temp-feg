@@ -246,11 +246,11 @@ class order extends Sximo
                     $receivedItemsArray[]=$row->item_received;
                     $orderDescriptionArray[] = $row->description;
                     $orderPriceArray[] = number_format($row->price , self::ORDER_PERCISION);
-                    if($data['order_type'] == 20 || $data['order_type'] == 10 || $data['order_type'] == 6 || $data['order_type']== 17 || $data['order_type'] == 1 )
+                    if($data['order_type'] == 20 || $data['order_type'] == 10 || $data['order_type']== 17 || $data['order_type'] == 1 )
                     {
                         $orderItemsPriceArray[] = $row->price;
                     }
-                    elseif($data['order_type'] == 7 || $data['order_type'] == 8)
+                    elseif($data['order_type'] == 7 || $data['order_type'] == 8 || $data['order_type'] == 6)
                     {
                         $orderItemsPriceArray[] = $row->case_price;
                     }

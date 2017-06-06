@@ -7,7 +7,7 @@
                     <i class="fa fa-plus"></i>&nbsp;&nbsp;Create New FEG Store Product
                 @endif &nbsp;&nbsp;
                 <a href="javascript:void(0)" class="collapse-close pull-right btn btn-xs btn-danger"
-                   onclick="ajaxViewClose('#{{ $pageModule }}')"><i class="fa fa fa-times"></i></a>
+                   onclick="cancelAction();"><i class="fa fa fa-times"></i></a>
             </h4>
         </div>
 
@@ -342,7 +342,7 @@
                 <div class="col-sm-12 text-center">
                     <button type="submit" class="btn btn-primary btn-sm "><i
                                 class="fa  fa-save "></i>  {{ Lang::get('core.sb_save') }} </button>
-                    <button type="button" onclick="ajaxViewClose('#{{ $pageModule }}')" class="btn btn-success btn-sm">
+                    <button type="button" onclick="cancelAction();" class="btn btn-success btn-sm">
                         <i class="fa  fa-arrow-circle-left "></i>  {{ Lang::get('core.sb_cancel') }} </button>
                 </div>
             </div>

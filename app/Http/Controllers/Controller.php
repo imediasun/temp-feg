@@ -1102,7 +1102,7 @@ abstract class Controller extends BaseController
         $status = $request->input('status');
         $readyState = $request->input('readyState');
 
-        $pageUrl = $request->input('pareUrl');
+        $pageUrl = $request->input('pageUrl');
         $url = $request->input('url');
         $type = $request->input('type');
         $data = $request->input('data');
@@ -1119,6 +1119,8 @@ abstract class Controller extends BaseController
         $htmlFile = $logFile = "$username-$uid";
 
         $errorMessages = [
+                       "Reported On (EST): " .date("m/d/Y H:i:s"),
+                       "",
                        "Page: $pageUrl",
                        "Request Url: $url",
                        "Request Type: [$type]",
@@ -1136,7 +1138,7 @@ abstract class Controller extends BaseController
                        "Browser: $userAgent",
                        "IP: $ip",
                        ""];
-
+        
         $errorMessageHTML = implode("<br/>", $errorMessages);
         $errorMessageLog = implode(", \r\n", $errorMessages);
 
@@ -1150,7 +1152,7 @@ abstract class Controller extends BaseController
         $responseTextStripped = FEGSystemHelper::strip_html_tags($responseText);
         $L->error($responseTextStripped);
         $L->log(str_repeat("#", 100));
-        $responseAsBodyHTML = FEGSystemHelper::retainHTMLBody($responseText);
+        $responseAsBodyHTML = FEGSystemHelper::retainHTMLBody($responseText);        
 
         $emailAttachment = $htmlFilePath;
         $subject = "An error has been reported by user from FEG Admin";

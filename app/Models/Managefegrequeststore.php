@@ -216,8 +216,8 @@ class managefegrequeststore extends Sximo
 
         // Combining 'Instant Win','Redemption' and 'Party' order types in a single category
         $customArray[] = array(
-            'id' => '7-8-17',
-            'text' => 'Instant Win, Redemption'
+            'id' => '7-8',
+            'text' => 'Instant Win, Redemption (combined)'
         );
 
         $array = array_merge($orderTypesArray, $customArray);
