@@ -1,4 +1,4 @@
-var UNDEFINED, 
+var UNDEFINED,
     UNFN = function () {},
     exportThreshold = 10000,
     App = {
@@ -11,12 +11,12 @@ var UNDEFINED,
         simpleSearch: {cache: {}},
         columnSort: {cache: {}},
         populateFieldsFromCache: function (container, cacheObject, rebuildRequiredElements) {
-            var cache = cacheObject.cache, 
+            var cache = cacheObject.cache,
 
                 elmName, elm, elm2, operatorElm,
                 item, val, val2, operator;
-        
-            if (container.length && cache) {            
+
+            if (container.length && cache) {
                 for(elmName in cache) {
                     elm = container.find('.form-control[name=' + elmName + ']');
                     elm2 = container.find('.form-control[name=' + elmName + '_end]');
@@ -28,15 +28,10 @@ var UNDEFINED,
                     operator = item.operator;
                     if (elm.length) {
                         if (elm.hasClass('sel-search-multiple') || elm.data('select2')) {
-
-                            if(elm.hasClass('custom-select'))
-                            {
-                                elm.val(val).trigger('change');
+                            if (typeof val =='string') {
+                                val = val.split(',');
                             }
-                            else {
-                                elm.select2('val', val);
-                            }
-
+                            elm.select2('val', val);
                         }
                         else {
                             elm.val(val);
@@ -47,7 +42,7 @@ var UNDEFINED,
                                 elm.datetimepicker('update');
                             }
                         }
-                    }                    
+                    }
                     if (elm2.length) {
                         if (elm2.hasClass('sel-search-multiple') || elm2.data('select2')) {
                             elm2.select2('val', val2);
@@ -61,7 +56,7 @@ var UNDEFINED,
                                 elm2.datetimepicker('update');
                             }
                         }
-                    }                    
+                    }
                     if (operatorElm.length) {
                         operatorElm.val(operator);
                     }
@@ -80,10 +75,10 @@ var UNDEFINED,
                         case "is_null":
                         case "not_null":
                             elm.prop('readonly', true);
-                            break;                            
+                            break;
                     }
                 }
-            }                    
+            }
         }
     };
 App.notyConfirm = function (options)
@@ -101,27 +96,27 @@ App.notyConfirm = function (options)
                 {   addClass: 'btn btn-primary btn-sm',
                     text: options.confirmButtonText || 'Ok',
                     onClick: function ($noty) {
-                        $noty.close();   
+                        $noty.close();
                         confirmCallback();
                     }
                 }
             ],
         cancelButton = options.cancelButton || {
-                addClass: 'btn btn-danger btn-sm', 
-                text: options.cancelButtonText || 'Cancel', 
+                addClass: 'btn btn-danger btn-sm',
+                text: options.cancelButtonText || 'Cancel',
                 onClick: function($noty) {
 					$noty.close();
                     cancelCallback();
 				}
 			},
             notyOptions;
-            
+
         buttons.push(cancelButton);
         notyOptions = {
                 text: text,
                 type: type,
                 timeout: timeout,
-                layout: layout,		
+                layout: layout,
                 buttons: buttons
             };
 
@@ -158,8 +153,8 @@ App.notyConfirm = function (options)
     if (options.theme !== UNDEFINED) {
         notyOptions.theme = options.theme;
     }
-	noty(notyOptions);		
-	
+	noty(notyOptions);
+
 };
 
 App.autoCallbacks.registerCallback = function (eventName, definedFunction, options) {
@@ -311,13 +306,13 @@ function initDataGrid(module, url, options) {
     if (!options) {
         options = {};
     }
-    
+
     var useAjax = options.useAjax !== false;
     module = module.replace(/[^\w-]/g, '');
-    
+
     var table = $('table#'+module+'Table'),
-        sortableCols = table.find('thead tr th.dgcsortable');        
-    
+        sortableCols = table.find('thead tr th.dgcsortable');
+
     sortableCols.click(function(event){
         var th = this,
             elm = $(th),
@@ -328,16 +323,16 @@ function initDataGrid(module, url, options) {
             nextOrder = sortedOrder == 'asc' ? 'desc' : 'asc',
             attr = getFooterFilters({'sort': true, 'order': true}),
             allAttr = attr + ('&sort=' + field + '&order=' + nextOrder);
-        
-        
+
+
         if (useAjax) {
             reloadData('#'+module, url+'/data?colheadersort=1' + allAttr);
         }
         else {
             window.location.href = url+'?colheadersort=1' + allAttr;
-        }            
-        
-        
+        }
+
+
     });
     console.log($('ul.pagination li').length);
     $('ul.pagination li.active')
@@ -373,19 +368,19 @@ function autoSetMainContainerHeight() {
             pageNewHeight = page.height();
             App.autoCallbacks.runCallback.call(page, 'page-resized',
                 {
-                    pageHeight: pageHeight, 
-                    pageNewHeight: pageNewHeight, 
+                    pageHeight: pageHeight,
+                    pageNewHeight: pageNewHeight,
                     minHeight: height,
                     windowHeight: windowHeight,
-                    footerHeight: footerHeight, 
+                    footerHeight: footerHeight,
                     sidebarHeight: sidebarHeight
                 });
             return height;
         };
     window.setTimeout(setHeight, 1000);
     $('nav.navbar-default').on('hidden.bs.collapse', setHeight);
-    $('nav.navbar-default').on('shown.bs.collapse', setHeight);    
-    $(window).resize(setHeight);    
+    $('nav.navbar-default').on('shown.bs.collapse', setHeight);
+    $(window).resize(setHeight);
 }
 
 function numberFieldValidationChecks(element){
@@ -499,7 +494,7 @@ function initUserPopup(container) {
 }
 
 function initExport(container) {
-    
+
     var exportButtons = container.find('a[href*="/export/"]');
 
     if (exportButtons.length) {
@@ -529,7 +524,7 @@ function setAndProbeExportFormSessionTimeout(formElement) {
 //    console.log(exportId);
     if (exportId) {
         setAndProbeExportSessionTimeout(setUrl, probeUrl);
-    }    
+    }
 }
 
 function setAndProbeExportSessionTimeout(setUrl, probeUrl) {
@@ -565,12 +560,12 @@ function setAndProbeExportSessionTimeout(setUrl, probeUrl) {
 function updateNativeUIFieldsBasedOn() {
     var searchCache,
         search = $('.table-actions input[name=search]').val() || '',
-        isSimpleSearch = $('.table-actions input[name=simplesearch]').val() || 0, 
+        isSimpleSearch = $('.table-actions input[name=simplesearch]').val() || 0,
         splitFields = search.split('|'),//id:between:1:100|
-        field, 
+        field,
         item, i,
         fieldName, val, operator, val2;
-        
+
     if (search) {
         searchCache = {};
         for(i in splitFields) {
@@ -594,13 +589,13 @@ function updateNativeUIFieldsBasedOn() {
             App.search.cache = searchCache;
         }
     }
-    
+
 }
 
 function makeSimpleSearchFieldsToInitiateSearchOnEnter() {
     var simpleSearchContainer = $('.simpleSearchContainer'),
         hasSimpleSearch = simpleSearchContainer.length,
-        simpleSearchButton =  hasSimpleSearch && 
+        simpleSearchButton =  hasSimpleSearch &&
                             simpleSearchContainer.find('.doSimpleSearch');
     if (hasSimpleSearch) {
         simpleSearchContainer.find('input[type=text]').keypress(function(event){
@@ -640,32 +635,32 @@ function detectPUAA($) {
 
     linksToModules.on('click', function (e){
         e.preventDefault();
-        var elm = $(this), 
+        var elm = $(this),
             authValidator = siteUrl + "/urlauth/access",
             url = elm.attr('href');
-            
+
         if (ajax && ajax.abort) {
-            ajax.abort();            
+            ajax.abort();
         }
-        
+
         ajax = $.ajax({
-            type: 'POST',            
-            url: authValidator,            
+            type: 'POST',
+            url: authValidator,
             data: {
                 url: url,
                 isPage: elm.hasClass('linkToCMSPage') * 1
             },
             success: function (data) {
                 if(data.status === 'success'){
-                    location.href = url;                    
+                    location.href = url;
                 }
                 else {
                     notyMessageError(data.message);
                 }
             }
         });
-        
-        
+
+
     });
 
 }
@@ -757,7 +752,7 @@ jQuery(document).ready(function($){
 
 });
 
-// TODO: Clean and refactor the below code 
+// TODO: Clean and refactor the below code
 jQuery(document).ready(function ($) {
     $('.ajaxLoading').bind('DOMSubtreeModified', function(e) {
         if (e.target.innerHTML.length > 0) {
@@ -846,7 +841,7 @@ jQuery(document).ready(function ($) {
             });
 		}
 	});
-	
+
 //	$('.item_dropdown li a').on('click', function () {
 //		if($(this).parents('.item_title').find(">:first-child").text() != 'My Account')
 //		{
@@ -919,9 +914,9 @@ App.functions.reportIssue = function (params, options) {
 };
 
 App.autoCallbacks.registerCallback('ajaxerror', function(params){
-    
+
     var obj = this;
-    unblockUI();   
+    unblockUI();
     App.notyConfirm({
         message : "Hi, the server doesn't like whatever it is that you just \n\
                 tried to do. Don't worry, in all likelihood you didn't \n\
@@ -956,7 +951,7 @@ App.autoCallbacks.registerCallback('ajaxerror', function(params){
 });
 
 /**
- * Shorthand ajax 
+ * Shorthand ajax
  * @param string url
  * @param object options
  * @returns jQXhr
@@ -1002,7 +997,7 @@ App.ajax.request = App.ajax.submit = App.ajax.getData = function (url, options) 
                     settings.always(d, status, x);
                 }
             });
-    
+
     return xhr;
 };
 
@@ -1040,7 +1035,7 @@ App.initAutoComplete = function (elm, options) {
             multiple:true,
             tags: true,
             minimumInputLength: 1,
-            separator: ',', // seprator to join multiple values 
+            separator: ',', // seprator to join multiple values
             tokenSeparators: [',', ' ', ';']
         }, options);
 
