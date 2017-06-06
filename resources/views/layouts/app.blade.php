@@ -89,7 +89,7 @@
 	<script type="text/javascript" src="{{ asset('sximo/js/app.js') }}"></script>
     <script type="text/javascript" src="{{ asset('sximo/js/search.js') }}"></script>
     <script type="text/javascript" src="{{ asset('sximo/js/simple-search.js') }}"></script>
-    <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.min.js"></script>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.min.js"></script>
     <!-- End Search and storage  -->
     @yield('beforeheadend', '')	
   	</head>
