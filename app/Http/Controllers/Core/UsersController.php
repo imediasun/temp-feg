@@ -206,49 +206,56 @@ class UsersController extends Controller
         }
 
         $row = Users::find($id);
-        Auth::loginUsingId($row->id);
+        if(is_object($row))
+        {
+            Auth::loginUsingId($row->id);
 
-        DB::table('users')->where('id', '=', $row->id)->update(array('last_login' => date("Y-m-d H:i:s")));
-        //Session::regenerate();
+            DB::table('users')->where('id', '=', $row->id)->update(array('last_login' => date("Y-m-d H:i:s")));
+            //Session::regenerate();
 
-        Session::put('uid', $row->id);
-        Session::put('gid', $row->group_id);
-        Session::put('eid', $row->email);
-        Session::put('flgStatus', 1);
-        Session::put('ll', $row->last_login);
-        Session::put('fid', $row->first_name . ' ' . $row->last_name);
-        Session::put('user_name', $row->username);
-        Session::put('ufname', $row->first_name);
-        Session::put('ulname', $row->last_name);
-        Session::put('company_id', $row->company_id);
-        $user_locations = \SiteHelpers::getLocationDetails($row->id);
-        if (empty($user_locations)) {
-            $user_locations = [];
+            Session::put('uid', $row->id);
+            Session::put('gid', $row->group_id);
+            Session::put('eid', $row->email);
+            Session::put('flgStatus', 1);
+            Session::put('ll', $row->last_login);
+            Session::put('fid', $row->first_name . ' ' . $row->last_name);
+            Session::put('user_name', $row->username);
+            Session::put('ufname', $row->first_name);
+            Session::put('ulname', $row->last_name);
+            Session::put('company_id', $row->company_id);
+            $user_locations = \SiteHelpers::getLocationDetails($row->id);
+            if (empty($user_locations)) {
+                $user_locations = [];
+            }
+            $user_location_ids = \SiteHelpers::getIdsFromLocationDetails($user_locations);
+            $has_all_locations = empty($row->has_all_locations) ? 0 : 1;
+            \Session::put('user_has_all_locations', $has_all_locations);
+            Session::put('user_locations', $user_locations);
+            Session::put('selected_location', isset($user_locations[0]->id) ? $user_locations[0]->id: null);
+            Session::put('selected_location_name', isset($user_locations[0]->location_name_short) ? $user_locations[0]->location_name_short : null);
+            \Session::put('user_location_ids', $user_location_ids);
+            Session::put('get_locations_by_region', $row->get_locations_by_region);
+            Session::put('email_2', $row->email_2);
+            Session::put('primary_phone', $row->primary_phone);
+            Session::put('secondary_phone', $row->secondary_phone);
+            Session::put('street', $row->street);
+            Session::put('city', $row->city);
+            Session::put('state', $row->state);
+            Session::put('zip', $row->zip);
+            Session::put('reg_id', $row->reg_id);
+            Session::put('restricted_mgr_email', $row->restricted_mgr_email);
+            Session::put('restricted_user_email', $row->restricted_user_email);
+
+            Session::put('return_id', $impersonatedUserIdPath);
+
+            Session::save();
+
+            return Redirect::to($row->redirect_link == 'dashboard'?'user/profile':$row->redirect_link);
         }
-        $user_location_ids = \SiteHelpers::getIdsFromLocationDetails($user_locations);
-        $has_all_locations = empty($row->has_all_locations) ? 0 : 1;
-        \Session::put('user_has_all_locations', $has_all_locations); 
-        Session::put('user_locations', $user_locations);
-        Session::put('selected_location', isset($user_locations[0]->id) ? $user_locations[0]->id: null);
-        Session::put('selected_location_name', isset($user_locations[0]->location_name_short) ? $user_locations[0]->location_name_short : null);
-        \Session::put('user_location_ids', $user_location_ids);
-        Session::put('get_locations_by_region', $row->get_locations_by_region);
-        Session::put('email_2', $row->email_2);
-        Session::put('primary_phone', $row->primary_phone);
-        Session::put('secondary_phone', $row->secondary_phone);
-        Session::put('street', $row->street);
-        Session::put('city', $row->city);
-        Session::put('state', $row->state);
-        Session::put('zip', $row->zip);
-        Session::put('reg_id', $row->reg_id);
-        Session::put('restricted_mgr_email', $row->restricted_mgr_email);
-        Session::put('restricted_user_email', $row->restricted_user_email);
-
-        Session::put('return_id', $impersonatedUserIdPath);
-
-        Session::save();
-
-        return Redirect::to($row->redirect_link == 'dashboard'?'user/profile':$row->redirect_link);
+        else
+        {
+            return redirect()->back();
+        }
     }
 
     function get($id = NULL)
