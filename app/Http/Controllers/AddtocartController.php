@@ -4,6 +4,7 @@ use App\Http\Controllers\controller;
 use App\Models\Addtocart;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
+use Mockery\CountValidator\Exception;
 use Validator, Input, Redirect;
 
 class AddtocartController extends Controller
@@ -46,6 +47,13 @@ class AddtocartController extends Controller
 
     public function postData(Request $request)
     {
+        if(count(\Session::get('user_locations'))<=0){
+            return response()->json(array(
+                'status' => 'error',
+                'message' => "No location assigned!"
+            ));
+        }
+        
         $productId = \Session::get('productId');
         $cartData = $this->model->popupCartData(null);
         $this->data['cartData'] = $cartData;
@@ -297,17 +305,18 @@ class AddtocartController extends Controller
 
     public function getSave($id = null, $qty = null, $vendor_name = null)
     {
-        $data = array('qty' => $qty);
-        $update = \DB::table('requests')->where('id', $id)->update($data);
-        if ($update) {
+
+        try {
+            $data = array('qty' => $qty);
+            \DB::table('requests')->where('id', $id)->update($data);
             $vendor_name = str_replace('_', ' ', $vendor_name);
 
             $updated = $this->model->popupCartData(null, $vendor_name);
             return json_encode(array('vendor_name' => $updated['subtotals'][0]['vendor_name'], 'subtotal' => $updated['subtotals'][0]['vendor_total']));
-        } else {
+        } catch (\Illuminate\Database\QueryException $e) {
             return response()->json(array(
                 'status' => 'error',
-                'message' => \Lang::get('core.cart_invalid_quantity')
+                'message' => $e->getMessage()
             ));
         }
     }

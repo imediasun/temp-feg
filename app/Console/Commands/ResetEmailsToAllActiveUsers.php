@@ -69,7 +69,7 @@ class ResetEmailsToAllActiveUsers extends Command
                 if (isset($email->email) && !empty($email->email)) {
                     $data = array('id' => $email->id);
                     $to = $email->email;
-                    $message = view('user.emails.auth.reminder', $data);
+                    $message = view('user.emails.auth.reminder-all', $data);
                     $L->log("Sending Email To: ", $email->email);
                     //@todo please enable email line in producton environment when itneded to send emails to all users
                     FEGSystemHelper::sendSystemEmail(['to' => $to,

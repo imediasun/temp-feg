@@ -58,14 +58,17 @@ class addtocart extends Sximo
 
         if ($data['user_level'] == 2)
         {
-            redirect('./dashboard', 'refresh');
+            //redirect('./dashboard', 'refresh');
+            return false;
         }
         else
         {
 
             $locationId = \Session::get('selected_location');
 
-
+            if(empty($locationId)){
+                return false;
+            }
 
             if ($data['user_level'] == 3 || $data['user_level'] == 4 || $data['user_level'] == 5 || $data['user_level'] == 7 || $data['user_level'] == 9 || $data['user_level'] == 10)
             {
