@@ -39,6 +39,7 @@ class ResetEmailsToAllActiveUsers extends Command
      */
     public function handle()
     {
+        die('here');
         // don't send password Reset Emails
         if (env('DONT_SEND_PASSWORD_RESET_EMAILS', true) === true) {
             return;
@@ -72,14 +73,14 @@ class ResetEmailsToAllActiveUsers extends Command
                     $message = view('user.emails.auth.reminder', $data);
                     $L->log("Sending Email To: ", $email->email);
                     //@todo please enable email line in producton environment when itneded to send emails to all users
-                    /*FEGSystemHelper::sendSystemEmail(['to' => $to,
+                    FEGSystemHelper::sendSystemEmail(['to' => $to,
                         'subject' => $subject,
                         'message' => $message,
                         'headers' => $headers,
                         'isTest' => env('APP_ENV', 'development') !== 'production' ? true : false,
                         'from' => CNF_EMAIL,
                         'configName' => 'Password Reset Email To All Users'
-                    ]);*/
+                    ]);
                     $L->log("Email Sent Successfully To: ", $email->email);
                 }
 
