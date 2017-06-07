@@ -58,7 +58,8 @@ class addtocart extends Sximo
 
         if ($data['user_level'] == 2)
         {
-            redirect('./dashboard', 'refresh');
+            //redirect('./dashboard', 'refresh');
+            return false;
         }
         else
         {

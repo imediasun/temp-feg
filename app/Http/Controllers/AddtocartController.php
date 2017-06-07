@@ -318,8 +318,7 @@ class AddtocartController extends Controller
     {
         $productId = \Session::get('productId');
         $cart_data = $this->model->popupCartData($productId);
-        //return response()->json($cart_data);
-        return $cart_data;
+        return response()->json($cart_data);
     }
 
 }
