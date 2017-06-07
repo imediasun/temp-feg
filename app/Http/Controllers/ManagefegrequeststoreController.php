@@ -395,6 +395,7 @@ class ManagefegrequeststoreController extends Controller
                     $SID = $SID . '-' . $row->id;
                     $requestIds .= $row->id.',';
                 }
+                $requestIds = rtrim($requestIds,",");
                 \DB::update("UPDATE requests set blocked_at = NOW() WHERE id IN ($requestIds)");
                 return Redirect::to('order/submitorder/' . $SID . '-');
             } else {
