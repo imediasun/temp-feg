@@ -46,7 +46,7 @@
         var t = document.getElementById('cart_data_table');
         //$("#cart_data_table tr").remove();
         $.ajax({
-            url:'addtocart/cartdata',
+            url: siteUrl + '/addtocart/cartdata',
             method:'get',
             success:function(data){
 
