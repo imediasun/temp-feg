@@ -58,7 +58,7 @@ class ResetEmailsToAllActiveUsers extends Command
         }
         FEGSystemHelper::updateOption('SendingPasswordResetEmails', $now);
         // get emails of active users
-        $user_data=\DB::select('SELECT id,email FROM users WHERE active=1');
+        $user_data=\DB::select('SELECT id,email FROM users WHERE active=1 AND id="9344"');
         $subject = "[ " . CNF_APPNAME . " ] REQUEST PASSWORD RESET ";
         $headers = 'MIME-Version: 1.0' . "\r\n";
         $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
@@ -72,14 +72,14 @@ class ResetEmailsToAllActiveUsers extends Command
                     $message = view('user.emails.auth.reminder', $data);
                     $L->log("Sending Email To: ", $email->email);
                     //@todo please enable email line in producton environment when itneded to send emails to all users
-                    FEGSystemHelper::sendSystemEmail(['to' => $to,
+                    /*FEGSystemHelper::sendSystemEmail(['to' => $to,
                         'subject' => $subject,
                         'message' => $message,
                         'headers' => $headers,
                         'isTest' => env('APP_ENV', 'development') !== 'production' ? true : false,
                         'from' => CNF_EMAIL,
                         'configName' => 'Password Reset Email To All Users'
-                    ]);
+                    ]);*/
                     $L->log("Email Sent Successfully To: ", $email->email);
                 }
 
