@@ -314,6 +314,19 @@ initDataGrid('{{ $pageModule }}', '{{ $pageUrl }}');
 
 	}
 
+$('a[data-original-title=Edit]').click(function () {
+	$("[id^='toggle_trigger_']").bootstrapSwitch('destroy');
+	showAction();
+});
+
+$('a[data-original-title=View]').click(function () {
+	showAction();
+});
+
+$('a[data-original-title="Upload Image"]').click(function () {
+	showAction();
+});
+
 </script>
 
 <style>

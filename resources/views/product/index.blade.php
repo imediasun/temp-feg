@@ -26,5 +26,18 @@
 $(document).ready(function(){
 	reloadData('#{{ $pageModule }}','{{ $pageModule }}/data');	
 });	
+    
+function cancelAction() {
+    $('#{{$pageModule}}View').hide();
+    $('#{{$pageModule}}Grid').show();
+    $('#{{$pageModule}}View').html('');
+    $("[id^='toggle_trigger_']").iCheck('destroy');
+    $("[id^='toggle_trigger_']").bootstrapSwitch( {onColor: 'default', offColor:'primary'});
+}
+
+function showAction() {
+    $('#{{$pageModule}}View').show();
+    $('#{{$pageModule}}Grid').hide();
+}
 </script>	
 @endsection

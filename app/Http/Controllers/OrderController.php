@@ -268,13 +268,14 @@ class OrderController extends Controller
         $where_in_expression = '';
         \Session::put('redirect','order');
         $this->data['setting'] = $this->info['setting'];
+        $isRequestApproveProcess = false;
         if ($id != 0 && $mode == '') {
-
             $mode = 'edit';
         } elseif ($id == 0 && $mode == '') {
             $mode = 'create';
         } elseif (substr($mode, 0, 3) == 'SID') {
             \Session::put('redirect','managefegrequeststore');
+            $isRequestApproveProcess = true;
             $mode = $mode;
             $fromStore = 1;
         } elseif ($mode == "clone") {
@@ -298,6 +299,7 @@ class OrderController extends Controller
         $this->data['setting'] = $this->info['setting'];
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);
         $this->data['mode'] = $mode;
+        $this->data['isRequestApproveProcess'] = $isRequestApproveProcess;
         $this->data['id'] = $id;
         $this->data['data'] = $this->model->getOrderQuery($id, $mode);
         $this->data['relationships'] = $this->model->getOrderRelationships($id);
@@ -497,12 +499,11 @@ class OrderController extends Controller
 
             for ($i = 0; $i < $num_items_in_array; $i++) {
                 $j = $i + 1;
-                if($order_type == 20 || $order_type == 10 ||
-                        $order_type == 6 || $order_type== 17 || $order_type == 1 )
+                if($order_type == 20 || $order_type == 10 || $order_type== 17 || $order_type == 1 )
                 {
                     $itemsPriceArray[] = $priceArray[$i];
                 }
-                elseif($order_type  == 7 || $order_type  == 8)
+                elseif($order_type  == 7 || $order_type  == 8 || $order_type == 6)
                 {
                     $itemsPriceArray[] = $casePriceArray[$i];
                 }
@@ -1571,10 +1572,11 @@ class OrderController extends Controller
         if (!empty($id)) {
             $orderData = Order::find($id)->toArray();
             $freeHand = Order::isFreehand($id, $orderData);
+            $apiable = Order::isApiable($id, $orderData);
             $apified = Order::isApified($id, $orderData);
             $voided = Order::isVoided($id, $orderData);
             $closed = Order::isClosed($id, $orderData);
-            $status = !$voided && !$closed && ($freeHand || $apified);
+            $status = !$voided && !$closed && ($freeHand || !$apiable || $apified);
 
             if (!$apified) {
                 $message = \Lang::get('core.order_receive_error_api_not_exposed');

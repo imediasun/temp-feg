@@ -35,10 +35,50 @@ class VendorController extends Controller
     }
 
     public function getSearchFilterQuery($customQueryString = null) {
+
+
+        // Get custom Ticket Type filter value
+        $globalSearchFilter = $this->model->getSearchFilters(['search_all_fields' => '']);
+        $skipFilters = ['search_all_fields'];
+        $mergeFilters = [];
+        extract($globalSearchFilter); //search_all_fields
+
+        // rebuild search query skipping 'ticket_custom_type' filter
+        $trimmedSearchQuery = $this->model->rebuildSearchQuery($mergeFilters, $skipFilters, $customQueryString);
+        $searchInput = $trimmedSearchQuery;
+        //Vendor name, phone, contact, billing account, email, email 2,
+        //website, games contact name, games contact phone, status, created on and updated on.
+        if (!empty($search_all_fields)) {
+            $searchFields = [
+                'vendor.vendor_name',
+//                'vendor.street1',
+//                'vendor.street2',
+//                'vendor.city',
+//                'vendor.state',
+//                'vendor.zip',
+                'vendor.phone',
+                'vendor.contact',
+                'vendor.email',
+                'vendor.email_2',
+                'vendor.website',
+                'vendor.bill_account_num',
+                'vendor.games_contact_name',
+                'vendor.games_contact_email',
+                'vendor.games_contact_phone',
+            ];
+            $dateSearchFields = [
+                'vendor.created_at',
+                'vendor.updated_at',
+            ];
+            $dates = \FEGHelp::probeDatesInSearchQuery($search_all_fields);
+            $searchInput = ['query' => $search_all_fields, 'dateQuery' => $dates,
+                'fields' => $searchFields, 'dateFields' => $dateSearchFields];
+
+        }
+
         // Filter Search for query
         // build sql query based on search filters
-        $filter = is_null($customQueryString) ? (is_null(Input::get('search')) ? '' : $this->buildSearch()) :
-            $this->buildSearch($customQueryString);
+        $filter = is_null(Input::get('search')) ? '' : $this->buildSearch($searchInput);
 
 //
 //        // Special filter for default active status
@@ -59,6 +99,7 @@ class VendorController extends Controller
         }
 
         return $filter;
+
     }
 
     public function getIndex()
