@@ -380,19 +380,22 @@ class ManagefegrequeststoreController extends Controller
 
     function postMultirequestorderfill(Request $request)
     {
+
         $rules = array('location_id' => 'required', 'vendor_id' => 'required');
         $location = $request->get('location_id');
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
             $vendor = $request->get('vendor_id');
             $query = \DB::select('SELECT R.* FROM requests R LEFT JOIN products P ON P.id = R.product_id WHERE R.location_id = "' . $location . '"  AND P.vendor_id = "' . $vendor . '" AND R.status_id = 1 AND R.blocked_at IS NULL');
-
             //$query = \DB::select('select id from requests where location_id = "' . $location . '" AND status_id = 1 AND product_id IN (Select id from products where id IN (select product_id from requests where location_id = "' . $location . '" AND status_id = 1) And vendor_id = "' . $vendor . '")');
             if (count($query) > 0) {
                 $SID = 'SID';
+                $requestIds = '';
                 foreach ($query as $row) {
                     $SID = $SID . '-' . $row->id;
+                    $requestIds .= $row->id.',';
                 }
+                \DB::update("UPDATE requests set blocked_at = NOW() WHERE id IN ($requestIds)");
                 return Redirect::to('order/submitorder/' . $SID . '-');
             } else {
                 $this->data['access'] = $this->access;
