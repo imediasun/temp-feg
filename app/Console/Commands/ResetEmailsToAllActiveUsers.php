@@ -39,7 +39,6 @@ class ResetEmailsToAllActiveUsers extends Command
      */
     public function handle()
     {
-        die('here');
         // don't send password Reset Emails
         if (env('DONT_SEND_PASSWORD_RESET_EMAILS', true) === true) {
             return;
