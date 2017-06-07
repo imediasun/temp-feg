@@ -47,6 +47,13 @@ class AddtocartController extends Controller
 
     public function postData(Request $request)
     {
+        if(count(\Session::get('user_locations'))<=0){
+            return response()->json(array(
+                'status' => 'error',
+                'message' => "No location assigned!"
+            ));
+        }
+        
         $productId = \Session::get('productId');
         $cartData = $this->model->popupCartData(null);
         $this->data['cartData'] = $cartData;
