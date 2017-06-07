@@ -245,7 +245,7 @@ class order extends Sximo
                     $data['requests_item_count'] = $data['requests_item_count'] + 1;
                     $receivedItemsArray[]=$row->item_received;
                     $orderDescriptionArray[] = $row->description;
-                    $orderPriceArray[] = number_format($row->price , self::ORDER_PERCISION);
+                    $orderPriceArray[] = Sximo::parseNumber($row->price);
                     if($data['order_type'] == 20 || $data['order_type'] == 10 || $data['order_type']== 17 || $data['order_type'] == 1 )
                     {
                         $orderItemsPriceArray[] = $row->price;
@@ -266,7 +266,7 @@ class order extends Sximo
                     $orderProductIdArray[] = $row->product_id;
                     $orderitemnamesArray[] = $row->item_name;
                     $skuNumArray[] = $row->sku;
-                    $orderitemcasepriceArray[] = number_format($row->case_price,self::ORDER_PERCISION) ;
+                    $orderitemcasepriceArray[] = Sximo::parseNumber($row->case_price) ;
                     $orderretailpriceArray[]= $row->retail_price;
                     $ordergameidsArray[] = $row->game_id;
                     $ordergamenameArray[] = $row->game_name;
