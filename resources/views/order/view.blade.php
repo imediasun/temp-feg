@@ -377,8 +377,8 @@ if(!empty($order_data['orderQtyArray'])){
                     @else
                         <td colspan="5">&nbsp;</td>
                     @endif
-                    <td  colspan="1"><b>Sub Total ($)</b></td>
-                    <td colspan="2" style="text-align: right;"><b>{{CurrencyHelpers::formatCurrency(number_format($order_data['order_total'],3)) }}</b></td>
+                    <td  colspan="2"><b>Sub Total ($)</b></td>
+                    <td colspan="1"><b>{{CurrencyHelpers::formatCurrency(number_format($order_data['order_total'],3)) }}</b></td>
 
                 </tr>
                     @else
