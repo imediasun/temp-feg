@@ -212,6 +212,7 @@ App.autoCallbacks.registerCallback('ajaxinlinesave', function(params){
 });
 
 App.handlers.ajaxError = function (jQEvent, jQXhr, xhr, errorName) {
+    console.log([errorName, jQEvent, jQXhr, xhr]);
     var obj = this,
         status = jQXhr.status,
         statusText = jQXhr.statusText,
