@@ -622,10 +622,12 @@ class order extends Sximo
     }
 
     public function getUnitPriceAttribute(){
-        return number_format($this->attributes['unit_price'],3);
+        return Sximo::parseNumber($this->attributes['unit_price']);
+        //return number_format($this->attributes['unit_price'],3); //causing problem with inputs
     }
     public function getCasePriceAttribute(){
-        return number_format($this->attributes['case_price'],3);
+        return Sximo::parseNumber($this->attributes['case_price']);
+        //return number_format($this->attributes['case_price'],3); //causing problem with inputs
     }
 
     public static function isClonable($id, $data = null) {
