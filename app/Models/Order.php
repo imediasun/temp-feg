@@ -229,7 +229,7 @@ class order extends Sximo
                 $data['order_type'] = $order_query[0]->order_type_id;
                 $data['order_company_id'] = $order_query[0]->company_id;
                 $data['order_freight_id'] = $order_query[0]->freight_id;
-                $data['today'] = $order_query[0]->date_ordered;
+                $data['today'] = $mode == 'clone' ? $this->get_local_time('date'):$order_query[0]->date_ordered;
                 $data['po_notes'] = $order_query[0]->po_notes;
                 $data['order_total'] = $order_query[0]->order_total;
                 $data['alt_address'] = $order_query[0]->alt_address;
@@ -330,8 +330,8 @@ class order extends Sximo
 
                 $data['prefill_type'] = 'edit';
             }
-            $data['today'] = ($mode) ? $order_query[0]->date_ordered : $this->get_local_time('date');
-        } elseif (substr($mode, 0, 3) == 'SID') {
+            $data['today'] = ($mode) && $mode != 'clone' ? $order_query[0]->date_ordered : $this->get_local_time('date');
+            } elseif (substr($mode, 0, 3) == 'SID') {
             $item_count = substr_count($mode, '-');
             $SID_string = $mode;
             $data['SID_string'] = $SID_string;
