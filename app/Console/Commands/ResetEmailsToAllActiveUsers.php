@@ -58,7 +58,7 @@ class ResetEmailsToAllActiveUsers extends Command
         }
         FEGSystemHelper::updateOption('SendingPasswordResetEmails', $now);
         // get emails of active users
-        $user_data=\DB::select('SELECT id,email FROM users WHERE active=1 AND forget_password_sent = 0');
+        $user_data=\DB::select('SELECT id,email FROM users WHERE active=1');
         $subject = "[ " . CNF_APPNAME . " ] REQUEST PASSWORD RESET ";
         $headers = 'MIME-Version: 1.0' . "\r\n";
         $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
