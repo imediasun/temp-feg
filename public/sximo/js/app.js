@@ -97,7 +97,7 @@ App.notyConfirm = function (options)
                     text: options.confirmButtonText || 'Ok',
                     onClick: function ($noty) {
                         $noty.close();
-                        confirmCallback();
+                        confirmCallback($noty);
                     }
                 }
             ],
@@ -106,7 +106,7 @@ App.notyConfirm = function (options)
                 text: options.cancelButtonText || 'Cancel',
                 onClick: function($noty) {
 					$noty.close();
-                    cancelCallback();
+                    cancelCallback($noty);
 				}
 			},
             notyOptions;
@@ -212,6 +212,7 @@ App.autoCallbacks.registerCallback('ajaxinlinesave', function(params){
 });
 
 App.handlers.ajaxError = function (jQEvent, jQXhr, xhr, errorName) {
+    console.log([errorName, jQEvent, jQXhr, xhr]);
     var obj = this,
         status = jQXhr.status,
         statusText = jQXhr.statusText,
@@ -221,7 +222,7 @@ App.handlers.ajaxError = function (jQEvent, jQXhr, xhr, errorName) {
         errorNameString = isErrorNameString && errorName.toLowerCase() || '';
 
     console.log([obj, jQEvent, jQXhr, xhr, errorName]);
-    if(__noErrorReport || !isErrorNameString || skipIf[errorNameString]) {
+    if(__noErrorReport || !isErrorNameString || !errorNameString || skipIf[errorNameString]) {
         return;
     }
     App.autoCallbacks.runCallback.call(obj, 'ajaxerror',{
@@ -928,8 +929,10 @@ App.autoCallbacks.registerCallback('ajaxerror', function(params){
         killer: true,
         theme: 'relax',
         cancelButtonText: 'Return to site',
-        cancel: function (){
-            location.href = siteUrl;//location.reload();
+        cancel: function ($noty){
+            unblockUI();
+            $noty.close();
+            //location.href = siteUrl;//location.reload();
         },
         buttons: [{
                     addClass: 'btn btn-primary btn-sm',
@@ -939,8 +942,8 @@ App.autoCallbacks.registerCallback('ajaxerror', function(params){
                         App.functions.reportIssue.call(obj, params, {'done': function (response) {
                             unblockUI();
                             $noty.close();
-                            notyMessage("Error reported! Going back to your home page.");
-                            location.href = siteUrl;
+                            notyMessage("Error reported!");
+                            //location.href = siteUrl;
                             //location.reload();
                         }});
                     }
