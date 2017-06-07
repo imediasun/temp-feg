@@ -58,7 +58,7 @@
 						<th>{{ $t['label'] }}</th>
 					@endif
 				@endforeach
-				{{--<th width="70" >{{ Lang::get('core.btn_action') }}</th>--}}
+				<th width="70" >{{ Lang::get('core.btn_action') }}</th>
 			  </tr>
         </thead>
 
@@ -80,7 +80,7 @@
 					 </td>
 					 @endif					 
 				 @endforeach
-				 {{--<td>
+				 <td>
 					 	@if($access['is_detail'] ==1)
 						<a href="{{ URL::to('core/logs/show/'.$row->auditID.'?return='.$return)}}" class="tips btn btn-xs btn-white" title="{{ Lang::get('core.btn_view') }}"><i class="fa  fa-search "></i></a>
 						@endif
@@ -89,7 +89,7 @@
 						@endif
 												
 					
-				</td>		--}}
+				</td>
                 </tr>
 				
             @endforeach
