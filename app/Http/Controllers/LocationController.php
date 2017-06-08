@@ -243,7 +243,7 @@ class LocationController extends Controller
     }
 
     function postSave(Request $request, $id = null)
-    {dd($request->all());
+    {
         $rules = $this->validateForm();
         $input_id=$request->get('id');
         $locationAssignmentFields = \SiteHelpers::getUniqueLocationUserAssignmentMeta('field-id');
@@ -280,7 +280,7 @@ class LocationController extends Controller
                     unset($data[$fieldName]);
                 }                
             }
-            
+            dd($locationAssignments,$data);
             $id = $this->model->insertRow($data, $id);
             
             foreach($locationAssignments as $groupId => $userId) {
