@@ -585,26 +585,29 @@ class ManagefreightquotersController extends Controller
 							<b>' . $notes . '</b>';
             }
             $message = $fromMessage . $toMessage . $forMessage;
-            $bcc = 'freight-notifications@fegllc.com';
             $from = \Session::get('eid');
             $sender_name = \Session::get('fname');
             $sender_name .= \Session::get('lname');
             $freightCompanyQuery = \DB::select('SELECT rep_email FROM freight_companies WHERE active = 1  AND rep_email != ""');
+            $recipients =  \FEGHelp::getSystemEmailRecipients('GET FREIGHT QUOTE EMAIL');
             foreach ($freightCompanyQuery as $rowFreight) {
-                $to = $rowFreight->rep_email;
-                if(!empty($to)){
-                    FEGSystemHelper::sendSystemEmail(array(
-                        'to' => $to,
+                $recipients['to'] .= (empty($recipients['to']))? $rowFreight->rep_email:','.$rowFreight->rep_email;
+            }
+            $to_emails = explode(",", $recipients['to']);
+            foreach ($to_emails as $to){
+                $recipients['to'] = $to;
+                if(!empty($recipients['to'])){
+                    FEGSystemHelper::sendSystemEmail(array_merge($recipients, array(
                         'subject' => $subject,
                         'message' => $message,
                         'preferGoogleOAuthMail' => true,
                         'isTest' => env('APP_ENV', 'development') !== 'production' ? true : false,
-                        'from' => $from,
-                        'bcc' => $bcc,
-                        'configName' => 'FREIGHT QUOTE EMAIL'
-                    ));
+                        'from' => $from
+                    )));
                 }
             }
+
+
             return response()->json(array(
                 'status' => 'success',
                 'message' => \Lang::get('core.note_success')
