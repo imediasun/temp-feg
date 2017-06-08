@@ -842,7 +842,9 @@ class OrderController extends Controller
         $explanation = $request->get('explaination');
         $user = \Session::get('uid');
         $userName = \FEGFormat::userToName($user);
-        $receipts = FEGSystemHelper::getSystemEmailRecipients($configName);
+        $isTest = env('APP_ENV', 'development') !== 'production' ? true : false;
+        $receipts = FEGSystemHelper::getSystemEmailRecipients($configName,null,$isTest);
+
         $messageData = [
             'userName' => $userName,
             'poNumber' => $po_number,

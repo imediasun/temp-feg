@@ -5,10 +5,15 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use App\Library\FEG\System\FEGSystemHelper;
 use Request, Log,Redirect;
+use App\Library\SximoBuilder;
 class Sximo extends Model {
 
     public static $getRowsQuery = null;
 
+    public function newEloquentBuilder($query)
+    {
+        return new SximoBuilder($query);
+    }
     public static function insertLog($module, $task , $notes = '')
     {
         $table = 'tb_logs';

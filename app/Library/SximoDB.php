@@ -21,6 +21,7 @@ class SximoDB extends \Illuminate\Support\Facades\DB
 
     public static function update($query, $bindings = [])
     {
+        Sximo::insertLog('Users','Update' , $query);
         return parent::update($query, $bindings);
     }
 
