@@ -593,7 +593,6 @@ class ManagefreightquotersController extends Controller
             foreach ($freightCompanyQuery as $rowFreight) {
                 $recipients['to'] .= (empty($recipients['to']))? $rowFreight->rep_email:','.$rowFreight->rep_email;
             }
-            //dd($recipients);
             if(!empty($recipients['to'])){
                 FEGSystemHelper::sendSystemEmail(array_merge($recipients, array(
                     'subject' => $subject,
