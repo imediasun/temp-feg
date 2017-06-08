@@ -593,15 +593,21 @@ class ManagefreightquotersController extends Controller
             foreach ($freightCompanyQuery as $rowFreight) {
                 $recipients['to'] .= (empty($recipients['to']))? $rowFreight->rep_email:','.$rowFreight->rep_email;
             }
-            if(!empty($recipients['to'])){
-                FEGSystemHelper::sendSystemEmail(array_merge($recipients, array(
-                    'subject' => $subject,
-                    'message' => $message,
-                    'preferGoogleOAuthMail' => true,
-                    'isTest' => env('APP_ENV', 'development') !== 'production' ? true : false,
-                    'from' => $from,
-                )));
+            $to_emails = explode(",", $recipients['to']);
+            foreach ($to_emails as $to){
+                $recipients['to'] = $to;
+                if(!empty($recipients['to'])){
+                    FEGSystemHelper::sendSystemEmail(array_merge($recipients, array(
+                        'subject' => $subject,
+                        'message' => $message,
+                        'preferGoogleOAuthMail' => true,
+                        'isTest' => env('APP_ENV', 'development') !== 'production' ? true : false,
+                        'from' => $from
+                    )));
+                }
             }
+
+
             return response()->json(array(
                 'status' => 'success',
                 'message' => \Lang::get('core.note_success')
