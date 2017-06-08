@@ -280,7 +280,9 @@ class LocationController extends Controller
                     unset($data[$fieldName]);
                 }                
             }
-            
+            $L = new \FEGLog("location.log", "FEGTests", "Location");
+            $L->log("Location Data: ",$data);
+            $L->log("User Assignment: ", $locationAssignments);
             $id = $this->model->insertRow($data, $id);
             
             foreach($locationAssignments as $groupId => $userId) {
