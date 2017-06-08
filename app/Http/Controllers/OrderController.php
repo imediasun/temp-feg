@@ -165,6 +165,9 @@ class OrderController extends Controller
         }
         $sort = (!is_null($request->input('sort')) ? $request->input('sort') : $this->info['setting']['orderby']);
         $order = (!is_null($request->input('order')) ? $request->input('order') : $this->info['setting']['ordertype']);
+        if($sort == 'order_type_id'){ 
+            $sort = 'OT.order_type';
+        }
         // End Filter sort and order for query
 
         // Get order_type search filter value and location_id saerch filter values
