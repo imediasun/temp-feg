@@ -151,7 +151,6 @@ class Sximo extends Model {
             $select .= " AND location.active='$active'";
         }
 
-
         Log::info("Total Query : ".$select . " {$params} " . self::queryGroup() . " {$orderConditional}");
         $counter_select =\DB::select($select . " {$params} " . self::queryGroup() . " {$orderConditional}");
         $total= count($counter_select);
