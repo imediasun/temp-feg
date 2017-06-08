@@ -928,7 +928,7 @@ App.autoCallbacks.registerCallback('ajaxerror', function(params){
         closeWith: ['button'],
         killer: true,
         theme: 'relax',
-        cancelButtonText: 'Return to site',
+        cancelButtonText: 'Close Window',
         cancel: function ($noty){
             unblockUI();
             $noty.close();
