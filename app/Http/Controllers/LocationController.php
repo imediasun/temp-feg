@@ -280,7 +280,6 @@ class LocationController extends Controller
                     unset($data[$fieldName]);
                 }                
             }
-            dd($locationAssignments,$data);
             $id = $this->model->insertRow($data, $id);
             
             foreach($locationAssignments as $groupId => $userId) {
