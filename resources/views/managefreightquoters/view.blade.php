@@ -19,7 +19,7 @@
         <input type="hidden" id="ship_to_type" name="ship_to_type" value="{{ $row['ship_to_type'] }}" >
         <input type="hidden" id="freight_contents" name="freight_contents" value=' ' >
         <input type="hidden" id="current_status_id" name="current_status_id" value='{{ $row["current_status_id"] }}' >
-        <input type="hidden" id="contact_email" name="contact_email" value=' {{ $row["contact_email"] }}' >
+        <input type="hidden" id="contact_email" name="contact_email" value='{{ $row["contact_email"] }}' >
 		<div class="col-md-8 col-md-offset-2" style="background-color:#FFF;box-shadow: 1px 1px 5px lightgray;padding:30px">
             <div class="clearfix freightOrderBasicDetailsContainer">
             <h2 class="text-center">Freight Order</h2>
