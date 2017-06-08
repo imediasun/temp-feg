@@ -72,6 +72,7 @@ Route::get('addmoreblockedtime', 'ManagefegrequeststoreController@AddBlockedChec
 Route::post('order/init-export/{ID?}', 'OrderController@postInitExport');
 Route::post('order/probe-export/{ID?}', 'OrderController@postProbeExport');
 Route::get('/', 'UserController@getLogin');
+Route::get('/login', 'UserController@getLogin');
 Route::get('/read/csv', 'UserController@readCsv');
 Route::controller('home', 'HomeController');
 Route::controller('/user', 'UserController');
