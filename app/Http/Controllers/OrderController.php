@@ -165,7 +165,7 @@ class OrderController extends Controller
         }
         $sort = (!is_null($request->input('sort')) ? $request->input('sort') : $this->info['setting']['orderby']);
         $order = (!is_null($request->input('order')) ? $request->input('order') : $this->info['setting']['ordertype']);
-        if($sort == 'order_type_id'){ 
+        if($sort == 'order_type_id'){
             $sort = 'OT.order_type';
         }
         // End Filter sort and order for query
@@ -876,11 +876,13 @@ class OrderController extends Controller
 
     function getRemoveorder($poNumber = "")
     {
-
-        \DB::table('orders')->where('po_number', $poNumber)->delete();
-        \Session::flash('success', 'Po  deleted successfully!');
-        return Redirect::to('order')->with('messagetext', \Lang::get('core.note_block'))->with('msgstatus', 'success');
-
+        $result=\DB::table('orders')->where('po_number', $poNumber)->delete();
+        if($result){
+            return Redirect::to('order')->with('messagetext', 'Po  removed successfully!')->with('msgstatus', 'success');
+        }else{
+            return Redirect::to('order')->with('messagetext', 'Po  already removed!')->with('msgstatus', 'error');
+        }
+        //\Session::flash('success', 'Po  deleted successfully!');
     }
 
     public function getSearchFilterQuery($customQueryString = null) {
