@@ -337,11 +337,15 @@ $(document).ready(function() {
     
 	form.parsley();
 	form.submit(function(){
-		cleanupForm(form, {'email': ['trim'], 'email_2': ['trim']});
+        App.functions.cleanupForm(form, {'email': ['trim'], 'email_2': ['trim']});
 		if(form.parsley('isValid') == true){			
 			var options = { 
 				dataType:      'json', 
-				beforeSubmit :  cleanupFormData,
+				beforeSubmit :  function (d, f, o) {
+                    o.form = f;
+                    var myAction = {};
+                    return App.functions.cleanupFormData(d, myAction, o);
+                },
 				success:       showResponse  
 			}
             blockUI();
@@ -356,44 +360,6 @@ $(document).ready(function() {
 
 });
 
-function cleanupForm(form, myActionList) {
-
-    var inputs = form.find(":input"),
-        actionList = myActionList || {'email': ['trim'], 'email_2': ['trim']};
-
-    if (inputs.length) {
-        inputs.each(function (){
-            var elm = $(this),
-                elmName = elm.attr('name'),
-                val = elm.val(),
-                actions = actionList[elmName];
-
-            if (actions && actions.length) {
-                if (val !== UNDEFINED) {
-                    val = App.applyFormats(val, actions, {'form': form});
-                    elm.val(val);
-                }
-            }
-        });
-    }
-}
-function cleanupFormData(data, $form, options) {
-    var i, item, key, val, actions, action,
-        actionList = {};
-
-    for(i in data) {
-        item = data[i];
-        key = item['name'];
-        actions = actionList[key];
-        if (actionList[key]) {
-            val = item['value'];
-            val = App.applyFormats(val, actions, {'data': data, 'form': $form, 'ajaxOptions': options});
-            data[i]['value'] = val;
-        }
-    }
-
-    return data;
-}
 function showRequest()
 {
 	unblockUI();

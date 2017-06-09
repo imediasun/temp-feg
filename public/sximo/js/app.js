@@ -929,7 +929,7 @@ App.autoCallbacks.registerCallback('ajaxerror', function(params){
         closeWith: ['button'],
         killer: true,
         theme: 'relax',
-        cancelButtonText: 'Return to site',
+        cancelButtonText: 'Close Window',
         cancel: function ($noty){
             unblockUI();
             $noty.close();
@@ -1001,6 +1001,45 @@ App.ajax.request = App.ajax.submit = App.ajax.getData = function (url, options) 
             });
 
     return xhr;
+};
+
+App.functions.cleanupForm = function (form, myActionList, options) {
+    options = options || {};
+    var inputs = form.find(":input"),
+        actionList = myActionList || {'email': ['trim'], 'email_2': ['trim']};
+
+    if (inputs.length) {
+        inputs.each(function (){
+            var elm = $(this),
+                elmName = elm.attr('name'),
+                val = elm.val(),
+                actions = actionList[elmName];
+
+            if (actions && actions.length) {
+                if (val !== UNDEFINED) {
+                    val = App.applyFormats(val, actions, {'form': form});
+                    elm.val(val);
+                }
+            }
+        });
+    }
+};
+
+App.functions.cleanupFormData = function (data, myActionList, options) {
+    var i, item, key, val, actions,
+        actionList = myActionList || {};
+
+    for(i in data) {
+        item = data[i];
+        key = item['name'];
+        actions = actionList[key];
+        if (actionList[key]) {
+            val = item['value'];
+            val = App.applyFormats(val, actions, {'data': data, 'ajaxOptions': options});
+            data[i]['value'] = val;
+        }
+    }
+    return data;
 };
 
 App.formats = {
