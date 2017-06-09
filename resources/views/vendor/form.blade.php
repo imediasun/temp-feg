@@ -337,7 +337,7 @@ $(document).ready(function() {
     
 	form.parsley();
 	form.submit(function(){
-		cleanupForm(form);
+		cleanupForm(form, {'email': ['trim'], 'email_2': ['trim']});
 		if(form.parsley('isValid') == true){			
 			var options = { 
 				dataType:      'json', 
@@ -356,10 +356,10 @@ $(document).ready(function() {
 
 });
 
-function cleanupForm(form) {
+function cleanupForm(form, myActionList) {
 
     var inputs = form.find(":input"),
-        actionList = {'email': ['trim'], 'email_2': ['trim']};
+        actionList = myActionList || {'email': ['trim'], 'email_2': ['trim']};
 
     if (inputs.length) {
         inputs.each(function (){
