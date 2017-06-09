@@ -333,16 +333,18 @@ $(document).ready(function() {
 		$(this).parent('div').empty();	
 		return false;
 	});			
-	var form = $('#vendorFormAjax'); 
+	var form = $('#vendorFormAjax');
+    
 	form.parsley();
 	form.submit(function(){
-		
+		cleanupForm(form);
 		if(form.parsley('isValid') == true){			
 			var options = { 
 				dataType:      'json', 
-				beforeSubmit :  showRequest,
+				beforeSubmit :  cleanupFormData,
 				success:       showResponse  
-			}  
+			}
+            blockUI();
 			$(this).ajaxSubmit(options); 
 			return false;
 						
@@ -354,9 +356,47 @@ $(document).ready(function() {
 
 });
 
+function cleanupForm(form) {
+
+    var inputs = form.find(":input"),
+        actionList = {'email': ['trim'], 'email_2': ['trim']};
+
+    if (inputs.length) {
+        inputs.each(function (){
+            var elm = $(this),
+                elmName = elm.attr('name'),
+                val = elm.val(),
+                actions = actionList[elmName];
+
+            if (actions && actions.length) {
+                if (val !== UNDEFINED) {
+                    val = App.applyFormats(val, actions, {'form': form});
+                    elm.val(val);
+                }
+            }
+        });
+    }
+}
+function cleanupFormData(data, $form, options) {
+    var i, item, key, val, actions, action,
+        actionList = {};
+
+    for(i in data) {
+        item = data[i];
+        key = item['name'];
+        actions = actionList[key];
+        if (actionList[key]) {
+            val = item['value'];
+            val = App.applyFormats(val, actions, {'data': data, 'form': $form, 'ajaxOptions': options});
+            data[i]['value'] = val;
+        }
+    }
+
+    return data;
+}
 function showRequest()
 {
-	$('.ajaxLoading').show();		
+	unblockUI();
 }  
 function showResponse(data)  {		
 	

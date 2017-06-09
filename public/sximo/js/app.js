@@ -5,6 +5,7 @@ var UNDEFINED,
         lastSearchMode: '',
         handlers: {},
         functions: {},
+        formats: {},
         ajax: {},
         autoCallbacks: {},
         search: {cache: {}},
@@ -1000,6 +1001,32 @@ App.ajax.request = App.ajax.submit = App.ajax.getData = function (url, options) 
             });
 
     return xhr;
+};
+
+App.formats = {
+    trim: function (val) {
+        var newVal = val;
+        if (val && typeof val === 'string') {
+            if (val.trim) {
+                newVal = val.trim();
+            }
+            else {
+                newVal = val.relpace(/^\s+?|\s+?$/g, '');
+            }
+        }
+        return newVal;
+    }
+};
+
+App.applyFormats = function (val, formats, options) {
+    var formatList = App.formats, i, format;
+    for(i in formats) {
+        format = formats[i];
+        if (formatList[format]) {
+            val = formatList[format](val);
+        }
+    }
+    return val;
 };
 
 /**
