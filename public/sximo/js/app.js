@@ -218,12 +218,16 @@ App.handlers.ajaxError = function (jQEvent, jQXhr, xhr, errorName) {
         status = jQXhr.status,
         statusText = jQXhr.statusText,
         skipIf = {'unauthorized': true, 'abort': true, 'not found': true},
-        skipIfStatus = {'500': true, '401': true, '403': true},
+        skipIfStatus = {'0': true, '401': true, '403': true},
         isErrorNameString = typeof errorName == 'string',
         errorNameString = isErrorNameString && errorName.toLowerCase() || '';
 
     console.log([obj, jQEvent, jQXhr, xhr, errorName]);
-    if(__noErrorReport || !isErrorNameString || !errorNameString || skipIf[errorNameString]) {
+    if(__noErrorReport ||
+            !isErrorNameString ||
+            !errorNameString ||
+            skipIf[''+status] ||
+            skipIf[errorNameString]) {
         return;
     }
     App.autoCallbacks.runCallback.call(obj, 'ajaxerror',{
