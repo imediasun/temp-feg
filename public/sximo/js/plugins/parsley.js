@@ -1297,6 +1297,10 @@
       var valid = true;
       this.focusedField = false;
 
+      var onBeforeFormValidate = this.options.listeners.onBeforeFormValidate(event, this.items, this);
+      if (onBeforeFormValidate === false) {
+        return onBeforeFormValidate;
+      }
       for ( var item = 0; item < this.items.length; item++ ) {
         if ( 'undefined' !== typeof this.items[ item ] && false === this.items[ item ].validate() ) {
           valid = false;
@@ -1553,7 +1557,8 @@
       , errorElem: '<li></li>'                                            // each field constraint fail in an li
       }
     , listeners: {
-        onFieldValidate: function ( elem, ParsleyForm ) { return false; } // Executed on validation. Return true to ignore field validation
+        onBeforeFormValidate: function ( event, items, ParsleyForm ) { }
+      , onFieldValidate: function ( elem, ParsleyForm ) { return false; } // Executed on validation. Return true to ignore field validation
       , onFormValidate: function ( isFormValid, event, ParsleyForm ) {}     // Executed once on form validation. Return (bool) false to block submit, even if valid
       , onFieldError: function ( elem, constraints, ParsleyField ) {}     // Executed when a field is detected as invalid
       , onFieldSuccess: function ( elem, constraints, ParsleyField ) {}   // Executed when a field passes validation

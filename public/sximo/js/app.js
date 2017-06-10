@@ -217,8 +217,8 @@ App.handlers.ajaxError = function (jQEvent, jQXhr, xhr, errorName) {
     var obj = this,
         status = jQXhr.status,
         statusText = jQXhr.statusText,
-        skipIf = {'unauthorized': true, 'abort': true, 'not found': true},
-        skipIfStatus = {'0': true, '401': true, '403': true},
+        skipIf = {'unauthorized': false, 'abort': true, 'not found': true},
+        skipIfStatus = {'0': true, '401': false, '403': true},
         isErrorNameString = typeof errorName == 'string',
         errorNameString = isErrorNameString && errorName.toLowerCase() || '';
 
@@ -833,7 +833,6 @@ jQuery(document).ready(function ($) {
 
             })
             .error(function (data) {
-                console.log(data);
                 if(data.status == '500' || data.status == '401')
                 {
                     notyMessageError(data.statusText);
@@ -921,12 +920,17 @@ App.functions.reportIssue = function (params, options) {
 
 App.autoCallbacks.registerCallback('ajaxerror', function(params){
 
+    console.log(params);
     var obj = this;
     unblockUI();
-    App.notyConfirm({
-        message : "Opps Something Went Wrong.\n\
+    var defaultMessage = "Opps Something Went Wrong.\n\
                     Please click the Report Issue \n\
-                    button below to send an error report to the support team.",
+                    button below to send an error report to the support team.";
+    if(params.errorName == "Unauthorized"){
+        defaultMessage = "Unauthorized to perform this operation";
+    }
+    App.notyConfirm({
+        message : defaultMessage,
         modal: true,
         layout: 'center',
         type: 'error',
@@ -937,7 +941,10 @@ App.autoCallbacks.registerCallback('ajaxerror', function(params){
         cancel: function ($noty){
             unblockUI();
             $noty.close();
-            //location.href = siteUrl;//location.reload();
+            if(params.errorName == "Unauthorized"){
+                location.href = siteUrl;//location.reload();
+            }
+
         },
         buttons: [{
                     addClass: 'btn btn-primary btn-sm',
@@ -1007,6 +1014,33 @@ App.ajax.request = App.ajax.submit = App.ajax.getData = function (url, options) 
     return xhr;
 };
 
+
+/*** GLOBAL FORM CLEANUP BEFORE CLIENT SIDE VALIDATION */
+App.autoCallbacks.registerCallback('parsley.form.validate.before', function (event, parameters) {
+    var form = this;
+    App.functions.cleanupForm(form, {'email': ['trim'], 'email_2': ['trim']});
+});
+
+$.fn.parsley.defaults.listeners.onBeforeFormValidate = function (event, items, ParsleyForm) {
+    var $form = ParsleyForm.$element,
+        ret;
+    ret = App.autoCallbacks.runCallback.call($form, 'parsley.form.validate.before',{
+        event: event, items: items, parsleyForm: ParsleyForm
+    });
+    console.log([event, items, ParsleyForm]);
+    return ret;
+};
+$.fn.parsley.defaults.listeners.onFormValidate = function (isFormValid, event, ParsleyForm) {
+    var $form = ParsleyForm.$element,
+        ret;
+    ret = App.autoCallbacks.runCallback.call($form, 'parsley.form.validate.after',{
+        event: event, isValid: isFormValid, parsleyForm: ParsleyForm
+    });
+    console.log([event, isFormValid, ParsleyForm]);
+    return ret;
+};
+// pass actions as {'email': ['trim'], 'email_2': ['trim']}
+// pass options as {'skipTrimForRequiredFields':true} to skip trim on required fields
 App.functions.cleanupForm = function (form, myActionList, options) {
     options = options || {};
     var inputs = form.find(":input"),
@@ -1016,9 +1050,15 @@ App.functions.cleanupForm = function (form, myActionList, options) {
         inputs.each(function (){
             var elm = $(this),
                 elmName = elm.attr('name'),
+                required = elm.attr('required'),
                 val = elm.val(),
                 actions = actionList[elmName];
-
+            if(!options.length && !options.skipTrimForRequiredFields == true){
+                if(required !== UNDEFINED){
+                    val = App.applyFormats(val, ["trim"], {'form': form});
+                    elm.val(val);
+                }
+            }
             if (actions && actions.length) {
                 if (val !== UNDEFINED) {
                     val = App.applyFormats(val, actions, {'form': form});
@@ -1130,4 +1170,5 @@ function getCartTotal()
 
 $(document).ready(function(){
     getCartTotal();
+    $('a[href="http://admin1.fegllc.com/forum"]').attr('target','_blank');
 });
