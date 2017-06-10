@@ -78,6 +78,7 @@
 
 
                         </div>
+                        <span id="img_error"></span>
 
                         <div class="col-md-2">
 
@@ -156,6 +157,10 @@
                 window.location="{{ url() }}/shopfegrequeststore";
             } else {
                 notyMessageError(data.message);
+                if(data.message=="The following errors occurred !<hr /> <ul><li>Image field is required.</li></li>"){
+                    $('#dropzoneFileUpload').css('border-color', '#cc0000');
+                    $('#img_error').html('<ul class="parsley-error-list"><li class="required" style="display: list-item;">This value is required.</li></ul>');
+                }
                 $('.ajaxLoading').hide();
                 return false;
             }
@@ -203,5 +208,7 @@
     <style>
         .ajaxLoading { background:#fff url( {{ url() }}/loading.gif) no-repeat center center; display:none; height:200px; position:absolute; width:100%; opacity: 0.5; left:0; top:0; height: 100%; z-index:9999;}
         #s2id_location_name{width: 100% !important;}
+
+
     </style>
 @endsection

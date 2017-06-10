@@ -361,7 +361,8 @@ class ShopfegrequeststoreController extends Controller
     function postNewgraphic(Request $request)
     {
         $rules['myInputs'] = 'required';
-        $validator = Validator::make($request->all(), $rules);
+        $messages = [ 'myInputs.required' => 'Image field is required.' ];
+        $validator = Validator::make($request->all(), $rules, $messages);
         if ($validator->passes()) {
             $item_id = $request->get('item_id');
             $graphics_description = $request->get('graphics_description');
