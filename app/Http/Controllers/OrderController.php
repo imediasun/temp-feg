@@ -1377,8 +1377,11 @@ class OrderController extends Controller
     {
         $vendor_description = Input::get('product_id');
         $row = \DB::select("select id,sku,item_description,unit_price,case_price,retail_price from products WHERE vendor_description='" . $vendor_description . "'");
-        $row = Order::hydrate($row);
-        $json = array('sku' => $row[0]->sku, 'item_description' => $row[0]->item_description, 'unit_price' => $row[0]->unit_price, 'case_price' => $row[0]->case_price, 'retail_price' => $row[0]->retail_price, 'id' => $row[0]->id);
+        $json = [];
+        if (!empty($row)) {
+            $row = Order::hydrate($row);
+            $json = array('sku' => $row[0]->sku, 'item_description' => $row[0]->item_description, 'unit_price' => $row[0]->unit_price, 'case_price' => $row[0]->case_price, 'retail_price' => $row[0]->retail_price, 'id' => $row[0]->id);
+        }        
         echo json_encode($json);
     }
 
