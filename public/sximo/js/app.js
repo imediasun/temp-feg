@@ -941,7 +941,10 @@ App.autoCallbacks.registerCallback('ajaxerror', function(params){
         cancel: function ($noty){
             unblockUI();
             $noty.close();
-            //location.href = siteUrl;//location.reload();
+            if(params.errorName == "Unauthorized"){
+                location.href = siteUrl;//location.reload();
+            }
+
         },
         buttons: [{
                     addClass: 'btn btn-primary btn-sm',
