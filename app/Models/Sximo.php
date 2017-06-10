@@ -5,16 +5,25 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use App\Library\FEG\System\FEGSystemHelper;
 use Request, Log,Redirect;
-use App\Library\SximoBuilder;
+use App\Library\SximoEloquentBuilder;
+use App\Library\SximoQueryBuilder;
 class Sximo extends Model {
 
     public static $getRowsQuery = null;
 
     public function newEloquentBuilder($query)
     {
-        return new SximoBuilder($query);
+        return new SximoEloquentBuilder($query);
     }
-    public static function insertLog($module, $task , $notes = '')
+    protected function newBaseQueryBuilder()
+    {
+        $conn = $this->getConnection();
+
+        $grammar = $conn->getQueryGrammar();
+
+        return new SximoQueryBuilder($conn, $grammar, $conn->getPostProcessor());
+    }
+    public static function insertLog($module, $task , $notes = '',$previous_value = null)
     {
         $table = 'tb_logs';
         $data = array(

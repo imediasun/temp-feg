@@ -136,8 +136,7 @@ class MerchandisebudgetController extends Controller
         }
 
 
-        $row = $this->model->getRow($id);
-
+        $row = $this->model->getRow($id, false);
         $row = json_decode(json_encode($row), true);
         if ($row) {
             $this->data['row'] = $row;

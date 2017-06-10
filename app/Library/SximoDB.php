@@ -8,20 +8,20 @@ class SximoDB extends \Illuminate\Support\Facades\DB
 
     public static function insert($query, $bindings = [])
     {
-        Sximo::insertLog('Users','insert' , $query);
+        Sximo::insertLog('Users_SximoDB','insert' , $query);
         return parent::insert($query, $bindings);
     }
 
     public static function insertGetId(array $values, $sequence = null)
     {
-        Sximo::insertLog('Users','insert' , $values);
+        Sximo::insertLog('Users_SximoDB','insert' , $values);
         return parent::insertGetId($values, $sequence);
     }
 
 
     public static function update($query, $bindings = [])
     {
-        Sximo::insertLog('Users','Update' , $query);
+        Sximo::insertLog('Users_SximoDB','Update' , $query);
         return parent::update($query, $bindings);
     }
 
