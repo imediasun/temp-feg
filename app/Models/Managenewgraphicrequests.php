@@ -43,25 +43,22 @@ class managenewgraphicrequests extends Sximo
 
     public static function getManageGraphicsRequestsInfo($var1 = null, $var2 = null)
     {
-        $data['user_level'] = \Session::get('gid');
-        if ($data['user_level'] == '2') {
-            redirect('fegsys/home', 'refresh');
-        } else {
-            if (substr($var1, 0, 3) == 'LID') {
-                $var1 = substr($var1, 3);
-                $LID = $var1;
-            } else if (substr($var2, 0, 3) == 'LID') {
-                $var2 = substr($var2, 3);
-                $LID = $var2;
-            }
 
-            if (empty($LID)) {
-                $data['LID'] = '';
-                $data['search_name'] = '';
-                //$data['vendor_options'] = $this->create_vendor_options('vendor_name','WHERE requests.status_id=1','ORDER BY vendor.vendor_name');
-            } else {
-                $data['LID'] = $LID;
-                //  $data['vendor_options'] = $this->create_vendor_options('vendor_name','WHERE requests.status_id=1 AND requests.location_id="'.$LID.'"','ORDER BY vendor.vendor_name');
+        if (substr($var1, 0, 3) == 'LID') {
+            $var1 = substr($var1, 3);
+            $LID = $var1;
+        } else if (substr($var2, 0, 3) == 'LID') {
+            $var2 = substr($var2, 3);
+            $LID = $var2;
+        }
+
+        if (empty($LID)) {
+            $data['LID'] = '';
+            $data['search_name'] = '';
+            //$data['vendor_options'] = $this->create_vendor_options('vendor_name','WHERE requests.status_id=1','ORDER BY vendor.vendor_name');
+        } else {
+            $data['LID'] = $LID;
+            //  $data['vendor_options'] = $this->create_vendor_options('vendor_name','WHERE requests.status_id=1 AND requests.location_id="'.$LID.'"','ORDER BY vendor.vendor_name');
 
                 // $query = $this->db->query('SELECT location_name_short FROM location WHERE id = "'.$LID.'"');
                 // if ($query->num_rows() == 1)
@@ -116,7 +113,6 @@ class managenewgraphicrequests extends Sximo
             */
             return $data;
 
-        }
     }
 
 
