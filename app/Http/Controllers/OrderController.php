@@ -223,15 +223,15 @@ class OrderController extends Controller
             $rows[$index]->date_ordered = date("m/d/Y", strtotime($data->date_ordered));
             //$location = \DB::select("Select location_name FROM location WHERE id = " . $data->location_id . "");
            // $rows[$index]->location_id = (isset($location[0]->location_name) ? $location[0]->location_name : '');
-            $user = \DB::select("Select username FROM users WHERE id = " . $data->user_id . "");
+            $user = \DB::select("Select username FROM users WHERE id = '" . $data->user_id . "'");
             $rows[$index]->user_id = (isset($user[0]->username) ? $user[0]->username : '');
-            $order_type = \DB::select("Select order_type FROM order_type WHERE id = " . $data->order_type_id . "");
+            $order_type = \DB::select("Select order_type FROM order_type WHERE id = '" . $data->order_type_id . "'");
             $rows[$index]->order_type_id = (isset($order_type[0]->order_type) ? $order_type[0]->order_type : '');
 
             //  $vendor = \DB::table('vendor')->where('id', '=', $data->vendor_id)->get(array('vendor_name'));
             //$rows[$index]->vendor_id = (isset($vendor[0]->vendor_name) ? $vendor[0]->vendor_name : '');
 
-            $order_status = \DB::select("Select status FROM order_status WHERE id = " . $data->status_id . "");
+            $order_status = \DB::select("Select status FROM order_status WHERE id = '" . $data->status_id . "'");
             $partial = $data->is_partial == 1 ? ' (Partial)':'';
             $rows[$index]->status_id = (isset($order_status[0]->status) ? $order_status[0]->status.$partial : '');
         }
