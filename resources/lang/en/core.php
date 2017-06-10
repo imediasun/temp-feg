@@ -238,4 +238,6 @@ return array(
 
     ),
 
+    "unauthorized" => "Unauthorized to perform operation",
+
 );

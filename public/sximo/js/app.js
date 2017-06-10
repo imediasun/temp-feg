@@ -217,8 +217,8 @@ App.handlers.ajaxError = function (jQEvent, jQXhr, xhr, errorName) {
     var obj = this,
         status = jQXhr.status,
         statusText = jQXhr.statusText,
-        skipIf = {'unauthorized': true, 'abort': true, 'not found': true},
-        skipIfStatus = {'0': true, '401': true, '403': true},
+        skipIf = {'unauthorized': false, 'abort': true, 'not found': true},
+        skipIfStatus = {'0': true, '401': false, '403': true},
         isErrorNameString = typeof errorName == 'string',
         errorNameString = isErrorNameString && errorName.toLowerCase() || '';
 
@@ -833,7 +833,6 @@ jQuery(document).ready(function ($) {
 
             })
             .error(function (data) {
-                console.log(data);
                 if(data.status == '500' || data.status == '401')
                 {
                     notyMessageError(data.statusText);
@@ -921,12 +920,17 @@ App.functions.reportIssue = function (params, options) {
 
 App.autoCallbacks.registerCallback('ajaxerror', function(params){
 
+    console.log(params);
     var obj = this;
     unblockUI();
-    App.notyConfirm({
-        message : "Opps Something Went Wrong.\n\
+    var defaultMessage = "Opps Something Went Wrong.\n\
                     Please click the Report Issue \n\
-                    button below to send an error report to the support team.",
+                    button below to send an error report to the support team.";
+    if(params.errorName == "Unauthorized"){
+        defaultMessage = "Unauthorized to perform this operation";
+    }
+    App.notyConfirm({
+        message : defaultMessage,
         modal: true,
         layout: 'center',
         type: 'error',
