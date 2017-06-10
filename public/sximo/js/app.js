@@ -1013,6 +1013,32 @@ App.ajax.request = App.ajax.submit = App.ajax.getData = function (url, options) 
 
     return xhr;
 };
+
+
+/*** GLOBAL FORM CLEANUP BEFORE CLIENT SIDE VALIDATION */
+App.autoCallbacks.registerCallback('parsley.form.validate.before', function (event, parameters) {
+    var form = this;
+    App.functions.cleanupForm(form, {'email': ['trim'], 'email_2': ['trim']});
+});
+
+$.fn.parsley.defaults.listeners.onBeforeFormValidate = function (event, items, ParsleyForm) {
+    var $form = ParsleyForm.$element,
+        ret;
+    ret = App.autoCallbacks.runCallback.call($form, 'parsley.form.validate.before',{
+        event: event, items: items, parsleyForm: ParsleyForm
+    });
+    console.log([event, items, ParsleyForm]);
+    return ret;
+};
+$.fn.parsley.defaults.listeners.onFormValidate = function (isFormValid, event, ParsleyForm) {
+    var $form = ParsleyForm.$element,
+        ret;
+    ret = App.autoCallbacks.runCallback.call($form, 'parsley.form.validate.after',{
+        event: event, isValid: isFormValid, parsleyForm: ParsleyForm
+    });
+    console.log([event, isFormValid, ParsleyForm]);
+    return ret;
+};
 // pass actions as {'email': ['trim'], 'email_2': ['trim']}
 // pass options as {'skipTrimForRequiredFields':true} to skip trim on required fields
 App.functions.cleanupForm = function (form, myActionList, options) {

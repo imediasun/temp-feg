@@ -336,8 +336,7 @@ $(document).ready(function() {
 	var form = $('#vendorFormAjax');
     
 	form.parsley();
-	form.submit(function(){
-        App.functions.cleanupForm(form, {'email': ['trim'], 'email_2': ['trim']});
+	form.submit(function(){        
 		if(form.parsley('isValid') == true){			
 			var options = { 
 				dataType:      'json', 
