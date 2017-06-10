@@ -212,7 +212,13 @@ class Sximo extends Model {
         return $result;
     }
 
+    public function cleanData($data){
+        return array_map('trim',$data);
+    }
+
     public  function insertRow($data, $id = null) {
+
+        $data = $this->cleanData($data);
 
         $timestampTables = array('vendor','products','orders', 'departments', 'system_email_report_manager');
         $table = with(new static)->table;
