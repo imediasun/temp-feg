@@ -57,7 +57,7 @@
                             <div class="col-md-6">
                                 <select name='group_id' rows='5' id='group_id' code='{$group_id}' class='select2 ' required></select>
                             </div>
-                            
+
                             <div class="col-md-2">
 
                             </div>
@@ -293,7 +293,7 @@
 
 
                     <div class="form-group">
-                        
+
                         <div class="col-sm-12 text-center btn-margin text-left-xs">
                             <button type="submit" name="apply" class="btn btn-info btn-sm"><i
                                         class="fa  fa-check-circle"></i> {{ Lang::get('core.sb_apply') }}</button>
@@ -370,9 +370,13 @@
             $('#multiple_loc').attr('required', '');
 
 // Reactivate Parsley validation
-            $('#user_form').parsley({
-                //options
-            });
+
+        });
+
+        var form = $('#user_form');
+
+        form.submit(function(){
+            App.functions.cleanupForm(form, {'email': ['trim'], 'email_2': ['trim']});
         });
     </script>
 @stop

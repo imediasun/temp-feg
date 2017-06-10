@@ -1006,7 +1006,8 @@ App.ajax.request = App.ajax.submit = App.ajax.getData = function (url, options) 
 
     return xhr;
 };
-
+// pass actions as {'email': ['trim'], 'email_2': ['trim']}
+// pass options as {'skipTrimForRequiredFields':true} to skip trim on required fields
 App.functions.cleanupForm = function (form, myActionList, options) {
     options = options || {};
     var inputs = form.find(":input"),
@@ -1016,9 +1017,15 @@ App.functions.cleanupForm = function (form, myActionList, options) {
         inputs.each(function (){
             var elm = $(this),
                 elmName = elm.attr('name'),
+                required = elm.attr('required'),
                 val = elm.val(),
                 actions = actionList[elmName];
-
+            if(!options.length && !options.skipTrimForRequiredFields == true){
+                if(required !== UNDEFINED){
+                    val = App.applyFormats(val, ["trim"], {'form': form});
+                    elm.val(val);
+                }
+            }
             if (actions && actions.length) {
                 if (val !== UNDEFINED) {
                     val = App.applyFormats(val, actions, {'form': form});
