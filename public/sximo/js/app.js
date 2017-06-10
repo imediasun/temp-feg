@@ -5,6 +5,7 @@ var UNDEFINED,
         lastSearchMode: '',
         handlers: {},
         functions: {},
+        formats: {},
         ajax: {},
         autoCallbacks: {},
         search: {cache: {}},
@@ -217,12 +218,16 @@ App.handlers.ajaxError = function (jQEvent, jQXhr, xhr, errorName) {
         status = jQXhr.status,
         statusText = jQXhr.statusText,
         skipIf = {'unauthorized': true, 'abort': true, 'not found': true},
-        skipIfStatus = {'500': true, '401': true, '403': true},
+        skipIfStatus = {'0': true, '401': true, '403': true},
         isErrorNameString = typeof errorName == 'string',
         errorNameString = isErrorNameString && errorName.toLowerCase() || '';
 
     console.log([obj, jQEvent, jQXhr, xhr, errorName]);
-    if(__noErrorReport || !isErrorNameString || !errorNameString || skipIf[errorNameString]) {
+    if(__noErrorReport ||
+            !isErrorNameString ||
+            !errorNameString ||
+            skipIf[''+status] ||
+            skipIf[errorNameString]) {
         return;
     }
     App.autoCallbacks.runCallback.call(obj, 'ajaxerror',{
@@ -1000,6 +1005,78 @@ App.ajax.request = App.ajax.submit = App.ajax.getData = function (url, options) 
             });
 
     return xhr;
+};
+// pass actions as {'email': ['trim'], 'email_2': ['trim']}
+// pass options as {'skipTrimForRequiredFields':true} to skip trim on required fields
+App.functions.cleanupForm = function (form, myActionList, options) {
+    options = options || {};
+    var inputs = form.find(":input"),
+        actionList = myActionList || {'email': ['trim'], 'email_2': ['trim']};
+
+    if (inputs.length) {
+        inputs.each(function (){
+            var elm = $(this),
+                elmName = elm.attr('name'),
+                required = elm.attr('required'),
+                val = elm.val(),
+                actions = actionList[elmName];
+            if(!options.length && !options.skipTrimForRequiredFields == true){
+                if(required !== UNDEFINED){
+                    val = App.applyFormats(val, ["trim"], {'form': form});
+                    elm.val(val);
+                }
+            }
+            if (actions && actions.length) {
+                if (val !== UNDEFINED) {
+                    val = App.applyFormats(val, actions, {'form': form});
+                    elm.val(val);
+                }
+            }
+        });
+    }
+};
+
+App.functions.cleanupFormData = function (data, myActionList, options) {
+    var i, item, key, val, actions,
+        actionList = myActionList || {};
+
+    for(i in data) {
+        item = data[i];
+        key = item['name'];
+        actions = actionList[key];
+        if (actionList[key]) {
+            val = item['value'];
+            val = App.applyFormats(val, actions, {'data': data, 'ajaxOptions': options});
+            data[i]['value'] = val;
+        }
+    }
+    return data;
+};
+
+App.formats = {
+    trim: function (val) {
+        var newVal = val;
+        if (val && typeof val === 'string') {
+            if (val.trim) {
+                newVal = val.trim();
+            }
+            else {
+                newVal = val.relpace(/^\s+?|\s+?$/g, '');
+            }
+        }
+        return newVal;
+    }
+};
+
+App.applyFormats = function (val, formats, options) {
+    var formatList = App.formats, i, format;
+    for(i in formats) {
+        format = formats[i];
+        if (formatList[format]) {
+            val = formatList[format](val);
+        }
+    }
+    return val;
 };
 
 /**

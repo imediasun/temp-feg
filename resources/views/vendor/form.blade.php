@@ -333,16 +333,22 @@ $(document).ready(function() {
 		$(this).parent('div').empty();	
 		return false;
 	});			
-	var form = $('#vendorFormAjax'); 
+	var form = $('#vendorFormAjax');
+    
 	form.parsley();
 	form.submit(function(){
-		
+        App.functions.cleanupForm(form, {'email': ['trim'], 'email_2': ['trim']});
 		if(form.parsley('isValid') == true){			
 			var options = { 
 				dataType:      'json', 
-				beforeSubmit :  showRequest,
+				beforeSubmit :  function (d, f, o) {
+                    o.form = f;
+                    var myAction = {};
+                    return App.functions.cleanupFormData(d, myAction, o);
+                },
 				success:       showResponse  
-			}  
+			}
+            blockUI();
 			$(this).ajaxSubmit(options); 
 			return false;
 						
@@ -356,7 +362,7 @@ $(document).ready(function() {
 
 function showRequest()
 {
-	$('.ajaxLoading').show();		
+	unblockUI();
 }  
 function showResponse(data)  {		
 	

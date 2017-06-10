@@ -1095,7 +1095,7 @@ abstract class Controller extends BaseController
     public function postReportIssue(Request $request) {
         
         $supportEmail = env('ERROR_REPORT_RECIPIENT', "support@element5digital.com");
-        $supportEmailBCC = env('ERROR_REPORT_RECIPIENT_BCCCC', "e5devmail@gmail.com");
+        $supportEmailBCC = env('ERROR_REPORT_RECIPIENT_BCC', "e5devmail@gmail.com");
         $responseText = urldecode(urldecode($request->input('responseText')));
 
         $statusText = $request->input('statusText');
