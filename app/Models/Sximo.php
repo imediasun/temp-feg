@@ -744,11 +744,11 @@ class Sximo extends Model {
                 $orderDescriptionArray[] = empty($r['sku'])?$r['description']:$r['description']." (SKU - {$r['sku']})";
                 $orderPriceArray[] = $r['price'];
                 $orderQtyArray[] = $r['qty'];
-                if($orderTypeId == 20 || $orderTypeId == 10 || $orderTypeId== 17 || $orderTypeId == 1 )
+                if($orderTypeId == 20 || $orderTypeId== 17 || $orderTypeId == 1 )
                 {
                     $orderItemsPriceArray[] = $r['price'];
                 }
-                elseif($orderTypeId == 7 || $orderTypeId == 8 || $orderTypeId == 6)
+                elseif($orderTypeId == 7 || $orderTypeId == 8 || $orderTypeId == 6 || $orderTypeId == 10)
                 {
                     $orderItemsPriceArray[] = $r['case_price'];
                 }

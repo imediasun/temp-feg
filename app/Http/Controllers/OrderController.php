@@ -502,11 +502,11 @@ class OrderController extends Controller
 
             for ($i = 0; $i < $num_items_in_array; $i++) {
                 $j = $i + 1;
-                if($order_type == 20 || $order_type == 10 || $order_type== 17 || $order_type == 1 )
+                if($order_type == 20 || $order_type== 17 || $order_type == 1 )
                 {
                     $itemsPriceArray[] = $priceArray[$i];
                 }
-                elseif($order_type  == 7 || $order_type  == 8 || $order_type == 6)
+                elseif($order_type  == 7 || $order_type  == 8 || $order_type == 6 || $order_type == 10)
                 {
                     $itemsPriceArray[] = $casePriceArray[$i];
                 }
