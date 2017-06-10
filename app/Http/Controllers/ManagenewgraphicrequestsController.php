@@ -133,6 +133,7 @@ class ManagenewgraphicrequestsController extends Controller
         $this->data['manageNewGraphicsInfo'] = $this->model->getManageGraphicsRequestsInfo();
         // Get Query
         $results = $this->model->getRows($params, $cond);
+
         // Build pagination setting
         $page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;
 
@@ -140,7 +141,10 @@ class ManagenewgraphicrequestsController extends Controller
         if (count($results['rows']) == $results['total'] && $results['total'] != 0) {
             $params['limit'] = $results['total'];
         }
-
+        
+        if($params['limit']==0){
+            $params['limit']=1;
+        }
         $pagination = new Paginator($results['rows'], $results['total'], $params['limit']);
         $pagination->setPath('managenewgraphicrequests/data');
         $this->data['param'] = $params;
