@@ -1109,7 +1109,7 @@ $('#vendor_id').on('select2-selecting',function (e) {
                         if (vendorId != "") {
                             request.vendor_id = $("#vendor_id").val();
                         }
-                        lastXhr = $.getJSON("/order/autocomplete", request, function (data, status, xhr) {
+                        lastXhr = $.getJSON("{{url()}}/order/autocomplete", request, function (data, status, xhr) {
                             cache[term] = data;
                             if (data.value == "No Match") {
                                 // $('[name^=item_name]:focus').closest('tr').find('.sku').removeAttr('readonly');
@@ -1126,8 +1126,11 @@ $('#vendor_id').on('select2-selecting',function (e) {
                         });
                     },
                     select: function (event, ui) {
+                        if (ui.item.value == 'No Match') {
+                            return;
+                        }
                         $.ajax({
-                            url: "/order/productdata",
+                            url: "{{url()}}/order/productdata",
                             type: "get",
                             dataType: 'json',
                             data: {'product_id': ui.item.value},
