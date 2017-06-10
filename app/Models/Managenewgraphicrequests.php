@@ -83,15 +83,29 @@ class managenewgraphicrequests extends Sximo
                 $data['VID'] = $VID;
             }
             //  $data['loc_options'] = $this->create_location_options('CONCAT(requests.location_id," | ",location.location_name_short)','WHERE requests.status_id=1','ORDER BY requests.location_id');
+            /*
+             * *************** Code deprecated no longer in use *********************
+             * Added By : Arslan
+             * Date : 10-June-2017
+             * ***********************************************************************
+             */
+            /*
             $query = \DB::select('SELECT COUNT(R.id) AS request_count  FROM requests R
 								LEFT JOIN products P ON P.id = R.product_id WHERE R.status_id = 1 AND (P.prod_type_id = 6 OR P.prod_type_id = 10)');
             if (count($query) == 1) {
                 $data['number_existing_requests'] = $query[0]->request_count;
-            }
+            }*/
             $query = \DB::select('SELECT COUNT(id) AS request_count FROM new_graphics_request WHERE status_id IN(1,2,3,4)');
             if (count($query) == 1) {
                 $data['number_new_requests'] = $query[0]->request_count;
             }
+            /*
+             * *************** Code deprecated no longer in use *********************
+             * Added By : Arslan
+             * Date : 10-June-2017
+             * ***********************************************************************
+             */
+            /*
             $query = \DB::select('SELECT GROUP_CONCAT(order_type) AS order_types
 									 FROM order_type
 									WHERE (id = 6
@@ -99,6 +113,7 @@ class managenewgraphicrequests extends Sximo
             if (count($query) == 1) {
                 $data['order_types'] = $query[0]->order_types;
             }
+            */
             return $data;
 
         }
