@@ -442,7 +442,6 @@ class UsersController extends Controller
 
     function postSave(Request $request, $id = 0)
     {
-        //dd($request->all());
         $form_data['date'] = date('Y-m-d');
         $form_data['last_login'] = date('Y-m-d');
         $form_data['created_at'] = date('Y-m-d');
