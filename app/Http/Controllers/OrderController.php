@@ -893,15 +893,18 @@ class OrderController extends Controller
 
 
         // Get custom Ticket Type filter value
-        $globalSearchFilter = $this->model->getSearchFilters(['search_all_fields' => '', 'status_id' => '']);
+        $globalSearchFilter = $this->model->getSearchFilters(['search_all_fields' => '', 'status_id' => '', 'po_notes' => '']);
         $skipFilters = ['search_all_fields'];
-        $statusIdFilter = ['status_id'];
+        $statusIdFilter = $globalSearchFilter['status_id'];
+        unset($globalSearchFilter['status_id']);
         $mergeFilters = [];
         extract($globalSearchFilter); //search_all_fields
+
 
         // rebuild search query skipping 'ticket_custom_type' filter
         $trimmedSearchQuery = $this->model->rebuildSearchQuery($mergeFilters, $skipFilters, $customQueryString);
         $searchInput = $trimmedSearchQuery;
+        $orderStatusCondition='';
         if (!empty($search_all_fields)) {
             $searchFields = [
                 'orders.id',
@@ -926,17 +929,18 @@ class OrderController extends Controller
             $searchInput = ['query' => $search_all_fields, 'dateQuery' => $dates,
                 'fields' => $searchFields, 'dateFields' => $dateSearchFields];
 
-        }
-
-        //dd($searchInput);
-
-        if(!empty($statusIdFilter)){
+            if(!empty($statusIdFilter)){
+                $orderStatusCondition = "AND orders.status_id = '".$statusIdFilter."'";
+            }
 
         }
+
 
         // Filter Search for query
         // build sql query based on search filters
         $filter = is_null(Input::get('search')) ? '' : $this->buildSearch($searchInput);
+        
+        $filter .= $orderStatusCondition;
 
         return $filter;
     }
