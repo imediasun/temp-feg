@@ -57,7 +57,7 @@
                             <div class="col-md-6">
                                 <select name='group_id' rows='5' id='group_id' code='{$group_id}' class='select2 ' required></select>
                             </div>
-                            
+
                             <div class="col-md-2">
 
                             </div>
@@ -122,8 +122,7 @@
                                 {!! SiteHelpers::activeLang('Locations:', (isset($fields['locations']['language'])? $fields['assign_to']['language'] : array())) !!}
                             </label>
                             <div class="col-md-6">
-                                <select name='multiple_locations[]' multiple rows='5' id='multiple_loc' class='select2'
-                                        required="required"></select>
+                                <select name='multiple_locations[]' multiple rows='5' id='multiple_loc' class='select2'></select>
                             </div>
                             <div class="col-md-2">
 
@@ -293,7 +292,7 @@
 
 
                     <div class="form-group">
-                        
+
                         <div class="col-sm-12 text-center btn-margin text-left-xs">
                             <button type="submit" name="apply" class="btn btn-info btn-sm"><i
                                         class="fa  fa-check-circle"></i> {{ Lang::get('core.sb_apply') }}</button>
@@ -370,9 +369,13 @@
             $('#multiple_loc').attr('required', '');
 
 // Reactivate Parsley validation
-            $('#user_form').parsley({
-                //options
-            });
+
+        });
+
+        var form = $('#user_form');
+
+        form.submit(function(){
+            App.functions.cleanupForm(form, {'email': ['trim'], 'email_2': ['trim']});
         });
     </script>
 @stop

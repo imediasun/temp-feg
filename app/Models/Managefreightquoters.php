@@ -272,7 +272,7 @@ class managefreightquoters extends Sximo
     {
         $concat = 'CONCAT(IF(G.location_id = 0, "IN TRANSIT", G.location_id), " | ",T.game_title," | ",G.id, IF(G.notes = "","", CONCAT(" (",G.notes,")")))';
         $where="AND L.active = 1";
-        $orderBy = 'L.id,T.game_title';
+        $orderBy = 'G.status_id DESC,L.id,T.game_title';
         $query = \DB::select('SELECT G.id AS id, IFNULL(' . $concat . ',"") AS text  FROM game G
 							Inner JOIN game_title T ON T.id = G.game_title_id
 							Inner JOIN location L ON L.id = G.location_id
@@ -595,7 +595,6 @@ class managefreightquoters extends Sximo
             }
         } else {
             $contact_email = $data['request']['contact_email'];
-            if ($email == 1 && !empty($contact_email)) {
                 $contents_message = '';
                 if (isset($data['request']['description']) && !empty($data['request']['description'])) {
                     for ($i = 0; $i < count($data['request']['description']); $i++) {
@@ -606,7 +605,6 @@ class managefreightquoters extends Sximo
 									' . $data['request']['dimension'][$i];
                     }
                 }
-                $to = $contact_email;
                 $from = 'support@fegllc.com';
                 $subject = 'FEG has scheduled a Freight Shipment to you!';
                 $message = '<p style="font-size:1em;">
@@ -637,8 +635,10 @@ class managefreightquoters extends Sximo
 							<br>
 						</p>';
                 $recipients =  \FEGHelp::getSystemEmailRecipients('UPDATE FREIGHT EXTERNAL EMAIL');
-                $recipients['to']=$contact_email;
-                if($recipients['to']!=' '){
+                if($email == 1 && !empty($contact_email)){
+                    $recipients['to'].= (empty($recipients['to']))? $contact_email:','.$contact_email;
+                }
+                if($recipients['to']!=''){
                     FEGSystemHelper::sendSystemEmail(array_merge($recipients, array(
                         'subject' => $subject,
                         'message' => $message,
@@ -647,7 +647,7 @@ class managefreightquoters extends Sximo
                         'from' => $from,
                     )));
                 }
-            }
+
         }
         return true;
 

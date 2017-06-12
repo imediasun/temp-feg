@@ -80,7 +80,7 @@
 
                         <div class="col-md-6">
                             {!! Form::number('num_items', $row['num_items'],array('class'=>'form-control',
-                            'placeholder'=>'','step'=>1,'min'=>1,'placeholder'=>'0', 'id'=>'qty_input')) !!}
+                            'placeholder'=>'','step'=>1,'parsley-min'=>1,'placeholder'=>'0', 'id'=>'qty_input')) !!}
                         </div>
                         <div class="col-md-2">
 
@@ -151,8 +151,8 @@
                             <div class="input-group ig-full">
                                 <span class="input-group-addon">$</span>
                                 {!! Form::text('case_price',
-                                (double)$row['case_price'],array('class'=>'form-control',
-                                'placeholder'=>'','required'=>'required','type'=>'number','min' => '0','step'=>'1','id'=>'case_price_input' ))
+                                $row['case_price'] == ''?'':(double)$row['case_price'],array('class'=>'form-control',
+                                'placeholder'=>'0.00','required'=>'required','type'=>'number','parsley-min' => '0','step'=>'1','id'=>'case_price_input' ))
                                 !!}
                             </div>
                         </div>
@@ -170,8 +170,8 @@
                             <div class="input-group ig-full">
                                 <span class="input-group-addon">$</span>
                                 {!! Form::text('unit_price',
-                                (double)$row['unit_price'],array('class'=>'form-control',
-                                'placeholder'=>'','required'=>'required','type'=>'number','min' => '0','step'=>'1', 'id'=>'unit_price_input' ))
+                                $row['unit_price'] == ''?'':(double)$row['unit_price'],array('class'=>'form-control',
+                                'placeholder'=>'0.00','required'=>'required','type'=>'number','parsley-min' => '0','step'=>'1', 'id'=>'unit_price_input' ))
                                 !!}
                             </div>
                         </div>
@@ -189,8 +189,8 @@
                             <div class="input-group ig-full">
                                 <span class="input-group-addon">$</span>
                                 {!! Form::text('retail_price',
-                                (double)$row['retail_price'],array('class'=>'form-control',
-                                'placeholder'=>'','type'=>'number','min' => '0','step'=>'1','id'=>'retail_input' )) !!}
+                                $row['retail_price'] == ''?'':(double)$row['retail_price'],array('class'=>'form-control',
+                                'placeholder'=>'0.00','type'=>'number','parsley-min' => '0','step'=>'1','id'=>'retail_input' )) !!}
                             </div>
                         </div>
                         <div class="col-md-2">

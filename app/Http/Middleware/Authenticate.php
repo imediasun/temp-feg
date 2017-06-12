@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Contracts\Auth\Guard;
+use Response;
 
 class Authenticate
 {
@@ -36,7 +37,7 @@ class Authenticate
     {
         if ($this->auth->guest()) {
             if ($request->ajax()) {
-                return response('Unauthorized.', 401);
+                return Response::json(array('status'=>'401','statusText'=>\Lang::get('core.unauthorized')),401);
             } else {
                 return redirect()->guest('/');
             }

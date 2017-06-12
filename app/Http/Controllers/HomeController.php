@@ -122,51 +122,6 @@ class HomeController extends Controller
 
         return view('pages.sendmail')->with('token',Input::get('code'))->with('token2',"ya29.GlsqBJsmtUF_G0uYnwosTrbPCOfImLbKHjyTdN3-ISdZ1V3lYJwcBTO46GYLjMGc8U-UIwDP7XkYrHu4bpCCyACzxkIzYGnV5ZTUgeUHWzETYUhgxFx7F9YwaiHm");
     }
-    public function sendMail(Request $request,$to='asad.goodboy000@gmail.com',$message='Test',$subject='Dummy')
-    {
-        $mail = new PHPMailerOAuth();
-
-        $mail->SMTPOptions = array(
-            'ssl' => array(
-                'verify_peer' => false,
-                'verify_peer_name' => false,
-                'allow_self_signed' => true
-            )
-        );
-        $mail->SMTPDebug = 2;
-        $mail->IsSMTP(); // enable SMTP
-        $mail->Host = 'smtp.gmail.com';
-        $mail->Port = 587; // or 587
-        $mail->SMTPSecure = 'tls'; // secure transfer enabled REQUIRED for Gmail
-        $mail->SMTPAuth = true; // authentication enabled*/
-        $mail->oauthUserEmail = 'stanlymarian@gmail.com';
-        $mail->oauthClientId = env('G_ID');
-        $mail->oauthClientSecret = env('G_SECRET');
-        $mail->oauthRefreshToken = $request->token;
-        $mail->AuthType = 'XOAUTH2';
-
-        $mail->smtpConnect();
-        //To address and name
-        $mail->addAddress($to);
-
-
-
-        //Send HTML or Plain Text email
-        $mail->isHTML(true);
-
-        $mail->Subject = $subject;
-        $mail->Body = $message;
-
-
-        if(!$mail->send())
-        {
-            echo "Mailer Error: " . $mail->ErrorInfo;
-        }
-        else
-        {
-            echo "Message has been sent successfully";
-        }
-    }
 
     public function  getLang($lang = 'en')
     {

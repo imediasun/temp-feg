@@ -165,11 +165,15 @@ class OrderController extends Controller
         }
         $sort = (!is_null($request->input('sort')) ? $request->input('sort') : $this->info['setting']['orderby']);
         $order = (!is_null($request->input('order')) ? $request->input('order') : $this->info['setting']['ordertype']);
+        if($sort == 'order_type_id'){
+            $sort = 'OT.order_type';
+        }
         // End Filter sort and order for query
 
         // Get order_type search filter value and location_id saerch filter values
         $orderTypeFilter = $this->model->getSearchFilters(array('order_type' => 'order_selected', 'location_id' => ''));
         extract($orderTypeFilter);
+
         // default order type is blank which means all or anything select other other defaults
         if (empty($order_selected)) {
             $order_selected = "";
@@ -185,9 +189,12 @@ class OrderController extends Controller
         $locationFilter = \SiteHelpers::getQueryStringForLocation('orders');
         // if search filter does not have location_id filter
         // add default location filter
+
         if (empty($location_id)) {
             $filter .= $locationFilter;
         }
+
+
 
         $page = $request->input('page', 1);
         $params = array(
@@ -213,22 +220,23 @@ class OrderController extends Controller
         if (count($results['rows']) == $results['total'] && $results['total'] != 0) {
             $params['limit'] = $results['total'];
         }
-        $pagination = new Paginator($results['rows'], $results['total'], $params['limit']);
+        $pagination = new Paginator($results['rows'], $results['total'], (isset($params['limit']) && $params['limit'] > 0 ? $params['limit'] :
+            ($results['total'] > 0 ? $results['total'] : '1')));
         $pagination->setPath('order/data');
         $rows = $results['rows'];
         foreach ($rows as $index => $data) {
             $rows[$index]->date_ordered = date("m/d/Y", strtotime($data->date_ordered));
             //$location = \DB::select("Select location_name FROM location WHERE id = " . $data->location_id . "");
            // $rows[$index]->location_id = (isset($location[0]->location_name) ? $location[0]->location_name : '');
-            $user = \DB::select("Select username FROM users WHERE id = " . $data->user_id . "");
+            $user = \DB::select("Select username FROM users WHERE id = '" . $data->user_id . "'");
             $rows[$index]->user_id = (isset($user[0]->username) ? $user[0]->username : '');
-            $order_type = \DB::select("Select order_type FROM order_type WHERE id = " . $data->order_type_id . "");
+            $order_type = \DB::select("Select order_type FROM order_type WHERE id = '" . $data->order_type_id . "'");
             $rows[$index]->order_type_id = (isset($order_type[0]->order_type) ? $order_type[0]->order_type : '');
 
             //  $vendor = \DB::table('vendor')->where('id', '=', $data->vendor_id)->get(array('vendor_name'));
             //$rows[$index]->vendor_id = (isset($vendor[0]->vendor_name) ? $vendor[0]->vendor_name : '');
 
-            $order_status = \DB::select("Select status FROM order_status WHERE id = " . $data->status_id . "");
+            $order_status = \DB::select("Select status FROM order_status WHERE id = '" . $data->status_id . "'");
             $partial = $data->is_partial == 1 ? ' (Partial)':'';
             $rows[$index]->status_id = (isset($order_status[0]->status) ? $order_status[0]->status.$partial : '');
         }
@@ -499,11 +507,11 @@ class OrderController extends Controller
 
             for ($i = 0; $i < $num_items_in_array; $i++) {
                 $j = $i + 1;
-                if($order_type == 20 || $order_type == 10 || $order_type== 17 || $order_type == 1 )
+                if($order_type == 20 || $order_type== 17 || $order_type == 1 )
                 {
                     $itemsPriceArray[] = $priceArray[$i];
                 }
-                elseif($order_type  == 7 || $order_type  == 8 || $order_type == 6)
+                elseif($order_type  == 7 || $order_type  == 8 || $order_type == 6 || $order_type == 10)
                 {
                     $itemsPriceArray[] = $casePriceArray[$i];
                 }
@@ -735,13 +743,9 @@ class OrderController extends Controller
         if(($order_type_id == 7 || $order_type_id == 8 || $order_type_id == 4 || $order_type_id == 6))// && CNF_MODE != "development" )
         {
             //uncomment after testing email sending
-           /* $to[] = "marissa.sexton@fegllc.com";
+            $to[] = "marissa.sexton@fegllc.com";
             $to[] = "mandee.cook@fegllc.com";
-            $to[] = "lisa.price@fegllc.com";*/
-            // remove these lines after testing email sending
-          /*  $to[] = "stanlymarian@gmail.com";
-            $to[] = "jdanial710@gmail.com";
-            $to[] = "daynaedvin@gmail.com";
+            $to[] = "lisa.price@fegllc.com";
         }*/
         $opt = $request->get('opt');
         $redirect_module=\Session::get('redirect');
@@ -842,7 +846,9 @@ class OrderController extends Controller
         $explanation = $request->get('explaination');
         $user = \Session::get('uid');
         $userName = \FEGFormat::userToName($user);
-        $receipts = FEGSystemHelper::getSystemEmailRecipients($configName);
+        $isTest = env('APP_ENV', 'development') !== 'production' ? true : false;
+        $receipts = FEGSystemHelper::getSystemEmailRecipients($configName,null,$isTest);
+
         $messageData = [
             'userName' => $userName,
             'poNumber' => $po_number,
@@ -873,11 +879,13 @@ class OrderController extends Controller
 
     function getRemoveorder($poNumber = "")
     {
-
-        \DB::table('orders')->where('po_number', $poNumber)->delete();
-        \Session::flash('success', 'Po  deleted successfully!');
-        return Redirect::to('order')->with('messagetext', \Lang::get('core.note_block'))->with('msgstatus', 'success');
-
+        $result=\DB::table('orders')->where('po_number', $poNumber)->delete();
+        if($result){
+            return Redirect::to('order')->with('messagetext', 'Po  removed successfully!')->with('msgstatus', 'success');
+        }else{
+            return Redirect::to('order')->with('messagetext', 'Po  already removed!')->with('msgstatus', 'error');
+        }
+        //\Session::flash('success', 'Po  deleted successfully!');
     }
 
     public function getSearchFilterQuery($customQueryString = null) {
@@ -886,14 +894,18 @@ class OrderController extends Controller
 
 
         // Get custom Ticket Type filter value
-        $globalSearchFilter = $this->model->getSearchFilters(['search_all_fields' => '']);
+        $globalSearchFilter = $this->model->getSearchFilters(['search_all_fields' => '', 'status_id' => '']);
         $skipFilters = ['search_all_fields'];
+        $statusIdFilter = $globalSearchFilter['status_id'];
+        unset($globalSearchFilter['status_id']);
         $mergeFilters = [];
         extract($globalSearchFilter); //search_all_fields
+
 
         // rebuild search query skipping 'ticket_custom_type' filter
         $trimmedSearchQuery = $this->model->rebuildSearchQuery($mergeFilters, $skipFilters, $customQueryString);
         $searchInput = $trimmedSearchQuery;
+        $orderStatusCondition='';
         if (!empty($search_all_fields)) {
             $searchFields = [
                 'orders.id',
@@ -902,7 +914,6 @@ class OrderController extends Controller
                 'V.vendor_name',
                 'orders.order_total',
                 'orders.order_description',
-                'OS.status',
                 'OT.order_type',
                 'orders.po_number',
                 'orders.po_notes',
@@ -919,12 +930,18 @@ class OrderController extends Controller
             $searchInput = ['query' => $search_all_fields, 'dateQuery' => $dates,
                 'fields' => $searchFields, 'dateFields' => $dateSearchFields];
 
+            if(!empty($statusIdFilter)){
+                $orderStatusCondition = "AND orders.status_id = '".$statusIdFilter."'";
+            }
+
         }
+
 
         // Filter Search for query
         // build sql query based on search filters
         $filter = is_null(Input::get('search')) ? '' : $this->buildSearch($searchInput);
 
+        $filter .= $orderStatusCondition;
 
         return $filter;
     }
@@ -1370,40 +1387,14 @@ class OrderController extends Controller
     {
         $vendor_description = Input::get('product_id');
         $row = \DB::select("select id,sku,item_description,unit_price,case_price,retail_price from products WHERE vendor_description='" . $vendor_description . "'");
-        $row = Order::hydrate($row);
-        $json = array('sku' => $row[0]->sku, 'item_description' => $row[0]->item_description, 'unit_price' => $row[0]->unit_price, 'case_price' => $row[0]->case_price, 'retail_price' => $row[0]->retail_price, 'id' => $row[0]->id);
+        $json = [];
+        if (!empty($row)) {
+            $row = Order::hydrate($row);
+            $json = array('sku' => $row[0]->sku, 'item_description' => $row[0]->item_description, 'unit_price' => $row[0]->unit_price, 'case_price' => $row[0]->case_price, 'retail_price' => $row[0]->retail_price, 'id' => $row[0]->id);
+        }        
         echo json_encode($json);
     }
-
-
-    function getTestEmail()
-    {
-        $mail = new PHPMailer(); // create a new object
-        $mail->IsSMTP(); // enable SMTP
-        $mail->Host = 'smtp.gmail.com';
-        $mail->Port = 587; // or 587
-        $mail->SMTPSecure = 'tls'; // secure transfer enabled REQUIRED for Gmail
-        $mail->SMTPAuth = true; // authentication enabled
-
-        $mail->SMTPDebug = 1; // debugging: 1 = errors and messages, 2 = messages only
-
-        //$mail->IsHTML(true);
-        $mail->Username = 'dev2@shayansolutions.com';          // SMTP username
-        $mail->Password = '&b%Dd9Kr';
-        $mail->SetFrom('dev2@shayansolutions.com');
-        $mail->Subject = "Test";
-        $mail->Body = "hello";
-        $mail->AddAddress("dev3@shayansolutions.com");
-        $mail->addCC('shayansolutions@gmail.com');
-        $mail->addBCC('dev2@shayansolutions.com');
-        if (!$mail->Send()) {
-            echo "Mailer Error: " . $mail->ErrorInfo;
-        } else {
-            echo "Message has been sent";
-        }
-        die;
-    }
-
+    
     function updateRequestAndProducts($item_count, $SID_new)
     {
 

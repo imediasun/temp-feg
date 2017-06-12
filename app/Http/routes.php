@@ -17,76 +17,81 @@ Route::group(array('before' => 'authorization'), function()
 {
     Route::resource('fegapi', 'FegapiController');
 });
-Route::filter('authorization', function()
+
+Route::group(['middleware' => 'auth'], function()
 {
-
-    if(is_null(Input::get('module')))
-        return Response::json(array('status'=>'error','message'=>\Lang::get('restapi.ModuleEmpty')),400);
-
-   /* if(!isset($_SERVER['PHP_AUTH_USER']) && !isset($_SERVER['PHP_AUTH_PW']))
+    Route::filter('authorization', function()
     {
-        return Response::json([
-            'error' => true,
-            'message' => 'Not authenticated',
-            'code' => 401], 401
-        );
-    } else {
 
-        $user = $_SERVER['PHP_AUTH_USER'];
-        $key = $_SERVER['PHP_AUTH_PW'];
+        if(is_null(Input::get('module')))
+            return Response::json(array('status'=>'error','message'=>\Lang::get('restapi.ModuleEmpty')),400);
 
-        $auth = DB::table('tb_restapi')
-            ->join('tb_users', 'tb_users.id', '=', 'tb_restapi.apiuser')
-            ->where('apikey',"$key")->where("email","$user")->get();
-
-
-        if(count($auth) <=0 )
+       /* if(!isset($_SERVER['PHP_AUTH_USER']) && !isset($_SERVER['PHP_AUTH_PW']))
         {
             return Response::json([
                 'error' => true,
-                'message' => 'Invalid authenticated params !',
+                'message' => 'Not authenticated',
                 'code' => 401], 401
             );
-        }  else {
+        } else {
 
-            $row = $auth[0];
-            $modules = explode(',',str_replace(" ","",$row->modules));
-            if(!in_array(Input::get('module'), $modules))
+            $user = $_SERVER['PHP_AUTH_USER'];
+            $key = $_SERVER['PHP_AUTH_PW'];
+
+            $auth = DB::table('tb_restapi')
+                ->join('tb_users', 'tb_users.id', '=', 'tb_restapi.apiuser')
+                ->where('apikey',"$key")->where("email","$user")->get();
+
+
+            if(count($auth) <=0 )
             {
                 return Response::json([
                     'error' => true,
-                    'message' => 'You Dont Have Authorization Access!',
+                    'message' => 'Invalid authenticated params !',
                     'code' => 401], 401
                 );
+            }  else {
+
+                $row = $auth[0];
+                $modules = explode(',',str_replace(" ","",$row->modules));
+                if(!in_array(Input::get('module'), $modules))
+                {
+                    return Response::json([
+                        'error' => true,
+                        'message' => 'You Dont Have Authorization Access!',
+                        'code' => 401], 401
+                    );
+                }
+
             }
+        }*/
 
-        }
-    }*/
-
+    });
+    Route::get('submitservicerequest/{GID?}/{LID?}', 'SubmitservicerequestController@getIndex');
+    Route::get('ticketsetting','TicketsettingController@getSetting');
+    Route::get('order/submitorder/{SID?}', 'OrderController@getSubmitorder');
+    Route::get('removeblocked', 'ManagefegrequeststoreController@removeBlockedCheck')->name('remove_blocked_check');
+    Route::get('addmoreblockedtime', 'ManagefegrequeststoreController@AddBlockedCheck')->name('add_more_blocked_time');
+    Route::post('order/init-export/{ID?}', 'OrderController@postInitExport');
+    Route::post('order/probe-export/{ID?}', 'OrderController@postProbeExport');
+    Route::get('/read/csv', 'UserController@readCsv');
+    Route::controller('home', 'HomeController');
+    Route::get('/user/user-details/{id?}','Core\UsersController@getIndex');
+    Route::controller('urlauth', 'URLAuthController');
+    Route::controller('demo', 'DemoController');
+    include('pageroutes.php');
+    include('moduleroutes.php');
 });
-Route::get('submitservicerequest/{GID?}/{LID?}', 'SubmitservicerequestController@getIndex');
-Route::get('ticketsetting','TicketsettingController@getSetting');
-Route::get('order/submitorder/{SID?}', 'OrderController@getSubmitorder');
-Route::get('removeblocked', 'ManagefegrequeststoreController@removeBlockedCheck')->name('remove_blocked_check');
-Route::get('addmoreblockedtime', 'ManagefegrequeststoreController@AddBlockedCheck')->name('add_more_blocked_time');
-Route::post('order/init-export/{ID?}', 'OrderController@postInitExport');
-Route::post('order/probe-export/{ID?}', 'OrderController@postProbeExport');
-Route::get('/', 'UserController@getLogin');
-Route::get('/read/csv', 'UserController@readCsv');
-Route::controller('home', 'HomeController');
-Route::controller('/user', 'UserController');
-Route::get('/user/user-details/{id?}','Core\UsersController@getIndex');
-Route::controller('urlauth', 'URLAuthController');
-include('pageroutes.php');
-include('moduleroutes.php');
 
+Route::controller('/user', 'UserController');
+Route::get('/login', 'UserController@getLogin');
+Route::get('/', 'UserController@getLogin');
 Route::get('/restric',function(){
 
 	return view('errors.blocked');
 
 });
 
-Route::controller('demo', 'DemoController');
 //Route::resource('sximoapi', 'SximoapiController');
 Route::group(['middleware' => 'auth'], function()
 {

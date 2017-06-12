@@ -5,6 +5,7 @@ var UNDEFINED,
         lastSearchMode: '',
         handlers: {},
         functions: {},
+        formats: {},
         ajax: {},
         autoCallbacks: {},
         search: {cache: {}},
@@ -97,7 +98,7 @@ App.notyConfirm = function (options)
                     text: options.confirmButtonText || 'Ok',
                     onClick: function ($noty) {
                         $noty.close();
-                        confirmCallback();
+                        confirmCallback($noty);
                     }
                 }
             ],
@@ -106,7 +107,7 @@ App.notyConfirm = function (options)
                 text: options.cancelButtonText || 'Cancel',
                 onClick: function($noty) {
 					$noty.close();
-                    cancelCallback();
+                    cancelCallback($noty);
 				}
 			},
             notyOptions;
@@ -212,16 +213,21 @@ App.autoCallbacks.registerCallback('ajaxinlinesave', function(params){
 });
 
 App.handlers.ajaxError = function (jQEvent, jQXhr, xhr, errorName) {
+    console.log([errorName, jQEvent, jQXhr, xhr]);
     var obj = this,
         status = jQXhr.status,
         statusText = jQXhr.statusText,
-        skipIf = {'unauthorized': true, 'abort': true, 'not found': true},
-        skipIfStatus = {'500': true, '401': true, '403': true},
+        skipIf = {'unauthorized': false, 'abort': true, 'not found': true},
+        skipIfStatus = {'0': true, '401': false, '403': true},
         isErrorNameString = typeof errorName == 'string',
         errorNameString = isErrorNameString && errorName.toLowerCase() || '';
 
     console.log([obj, jQEvent, jQXhr, xhr, errorName]);
-    if(__noErrorReport || !isErrorNameString || skipIf[errorNameString]) {
+    if(__noErrorReport ||
+            !isErrorNameString ||
+            !errorNameString ||
+            skipIf[''+status] ||
+            skipIf[errorNameString]) {
         return;
     }
     App.autoCallbacks.runCallback.call(obj, 'ajaxerror',{
@@ -827,7 +833,6 @@ jQuery(document).ready(function ($) {
 
             })
             .error(function (data) {
-                console.log(data);
                 if(data.status == '500' || data.status == '401')
                 {
                     notyMessageError(data.statusText);
@@ -915,21 +920,31 @@ App.functions.reportIssue = function (params, options) {
 
 App.autoCallbacks.registerCallback('ajaxerror', function(params){
 
+    console.log(params);
     var obj = this;
     unblockUI();
-    App.notyConfirm({
-        message : "Opps Something Went Wrong.\n\
+    var defaultMessage = "Opps Something Went Wrong.\n\
                     Please click the Report Issue \n\
-                    button below to send an error report to the support team.",
+                    button below to send an error report to the support team.";
+    if(params.errorName == "Unauthorized"){
+        defaultMessage = "Unauthorized to perform this operation";
+    }
+    App.notyConfirm({
+        message : defaultMessage,
         modal: true,
         layout: 'center',
         type: 'error',
         closeWith: ['button'],
         killer: true,
         theme: 'relax',
-        cancelButtonText: 'Return to site',
-        cancel: function (){
-            location.href = siteUrl;//location.reload();
+        cancelButtonText: 'Close Window',
+        cancel: function ($noty){
+            unblockUI();
+            $noty.close();
+            if(params.errorName == "Unauthorized"){
+                location.href = siteUrl;//location.reload();
+            }
+
         },
         buttons: [{
                     addClass: 'btn btn-primary btn-sm',
@@ -939,8 +954,8 @@ App.autoCallbacks.registerCallback('ajaxerror', function(params){
                         App.functions.reportIssue.call(obj, params, {'done': function (response) {
                             unblockUI();
                             $noty.close();
-                            notyMessage("Error reported! Going back to your home page.");
-                            location.href = siteUrl;
+                            notyMessage("Error reported!");
+                            //location.href = siteUrl;
                             //location.reload();
                         }});
                     }
@@ -997,6 +1012,104 @@ App.ajax.request = App.ajax.submit = App.ajax.getData = function (url, options) 
             });
 
     return xhr;
+};
+
+
+/*** GLOBAL FORM CLEANUP BEFORE CLIENT SIDE VALIDATION */
+App.autoCallbacks.registerCallback('parsley.form.validate.before', function (event, parameters) {
+    var form = this;
+    App.functions.cleanupForm(form, {'email': ['trim'], 'email_2': ['trim']});
+});
+
+$.fn.parsley.defaults.listeners.onBeforeFormValidate = function (event, items, ParsleyForm) {
+    var $form = ParsleyForm.$element,
+        ret;
+    ret = App.autoCallbacks.runCallback.call($form, 'parsley.form.validate.before',{
+        event: event, items: items, parsleyForm: ParsleyForm
+    });
+    console.log([event, items, ParsleyForm]);
+    return ret;
+};
+$.fn.parsley.defaults.listeners.onFormValidate = function (isFormValid, event, ParsleyForm) {
+    var $form = ParsleyForm.$element,
+        ret;
+    ret = App.autoCallbacks.runCallback.call($form, 'parsley.form.validate.after',{
+        event: event, isValid: isFormValid, parsleyForm: ParsleyForm
+    });
+    console.log([event, isFormValid, ParsleyForm]);
+    return ret;
+};
+// pass actions as {'email': ['trim'], 'email_2': ['trim']}
+// pass options as {'skipTrimForRequiredFields':true} to skip trim on required fields
+App.functions.cleanupForm = function (form, myActionList, options) {
+    options = options || {};
+    var inputs = form.find(":input"),
+        actionList = myActionList || {'email': ['trim'], 'email_2': ['trim']};
+
+    if (inputs.length) {
+        inputs.each(function (){
+            var elm = $(this),
+                elmName = elm.attr('name'),
+                required = elm.attr('required'),
+                val = elm.val(),
+                actions = actionList[elmName];
+            if(!options.length && !options.skipTrimForRequiredFields == true){
+                if(required !== UNDEFINED){
+                    val = App.applyFormats(val, ["trim"], {'form': form});
+                    elm.val(val);
+                }
+            }
+            if (actions && actions.length) {
+                if (val !== UNDEFINED) {
+                    val = App.applyFormats(val, actions, {'form': form});
+                    elm.val(val);
+                }
+            }
+        });
+    }
+};
+
+App.functions.cleanupFormData = function (data, myActionList, options) {
+    var i, item, key, val, actions,
+        actionList = myActionList || {};
+
+    for(i in data) {
+        item = data[i];
+        key = item['name'];
+        actions = actionList[key];
+        if (actionList[key]) {
+            val = item['value'];
+            val = App.applyFormats(val, actions, {'data': data, 'ajaxOptions': options});
+            data[i]['value'] = val;
+        }
+    }
+    return data;
+};
+
+App.formats = {
+    trim: function (val) {
+        var newVal = val;
+        if (val && typeof val === 'string') {
+            if (val.trim) {
+                newVal = val.trim();
+            }
+            else {
+                newVal = val.relpace(/^\s+?|\s+?$/g, '');
+            }
+        }
+        return newVal;
+    }
+};
+
+App.applyFormats = function (val, formats, options) {
+    var formatList = App.formats, i, format;
+    for(i in formats) {
+        format = formats[i];
+        if (formatList[format]) {
+            val = formatList[format](val);
+        }
+    }
+    return val;
 };
 
 /**
@@ -1057,4 +1170,5 @@ function getCartTotal()
 
 $(document).ready(function(){
     getCartTotal();
+    $('a[href="http://admin1.fegllc.com/forum"]').attr('target','_blank');
 });

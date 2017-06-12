@@ -51,7 +51,7 @@
                                 <label for="jan" class=" control-label col-md-4 text-left">January</label>
 
                                 <div class="col-md-4">
-                                    <input type="number" name="jan" id="jan" value="{{$row['Jan']}}"
+                                    <input type="number" name="jan" id="jan" value="{{ number_format($row['Jan'], 2, '.', '') }}"
                                            class="form-control"/>
                                 </div>
                                 <div class="col-md-4">
@@ -61,7 +61,7 @@
                                 <label for="feb" class=" control-label col-md-4 text-left"> February</label>
 
                                 <div class="col-md-4">
-                                    <input type="number" name="feb" id="feb" value="{{ $row['Feb']}}"
+                                    <input type="number" name="feb" id="feb" value="{{ number_format($row['Feb'], 2, '.', '')}}"
                                            class="form-control"/></div>
                                 <div class="col-md-4">
                                 </div>
@@ -72,7 +72,7 @@
                                 </label>
 
                                 <div class="col-md-4">
-                                    <input type="number" name="march" id="march" value="{{$row['March']}}"
+                                    <input type="number" name="march" id="march" value="{{number_format($row['March'], 2, '.', '')}}"
                                            class="form-control"/></div>
                                 <div class="col-md-4">
                                 </div>
@@ -83,7 +83,7 @@
 
                                 <div class="col-md-4">
                                     <input type="number" name="april" id="april" class="form-control"
-                                           value="{{$row['April']}}"/></div>
+                                           value="{{number_format($row['April'], 2, '.', '')}}"/></div>
                                 <div class="col-md-4">
                                 </div>
                             </div>
@@ -93,7 +93,7 @@
 
                                 <div class="col-md-4">
                                     <input type="number" name="may" id="may" class="form-control"
-                                           value="{{$row['May']}}"/></div>
+                                           value="{{number_format($row['May'], 2, '.', '')}}"/></div>
                                 <div class="col-md-4">
                                 </div>
                             </div>
@@ -103,7 +103,7 @@
 
                                 <div class="col-md-4">
                                     <input type="number" name="jun" id="jun" class="form-control"
-                                           value="{{$row['June']}}"/></div>
+                                           value="{{number_format($row['June'], 2, '.', '')}}"/></div>
                                 <div class="col-md-4">
                                 </div>
                             </div>
@@ -113,7 +113,7 @@
 
                                 <div class="col-md-4">
                                     <input type="number" name="jul" id="jul" class="form-control"
-                                           value="{{$row['July']}}"/></div>
+                                           value="{{number_format($row['July'], 2, '.', '')}}"/></div>
                                 <div class="col-md-4">
                                 </div>
                             </div>
@@ -123,7 +123,7 @@
 
                                 <div class="col-md-4">
                                     <input type="number" name="aug" id="aug" class="form-control"
-                                           value="{{$row['August']}}"/></div>
+                                           value="{{number_format($row['August'], 2, '.', '')}}"/></div>
                                 <div class="col-md-4">
                                 </div>
                             </div>
@@ -133,7 +133,7 @@
 
                                 <div class="col-md-4">
                                     <input type="number" name="sep" id="sep" class="form-control"
-                                           value="{{$row['September']}}"/></div>
+                                           value="{{number_format($row['September'], 2, '.', '')}}"/></div>
                                 <div class="col-md-4">
                                 </div>
                             </div>
@@ -143,7 +143,7 @@
 
                                 <div class="col-md-4">
                                     <input type="number" name="oct" id="oct" class="form-control"
-                                           value="{{$row['Octuber']}}"/>
+                                           value="{{number_format($row['Octuber'], 2, '.', '')}}"/>
                                 </div>
                                 <div class="col-md-4">
                                 </div>
@@ -154,7 +154,7 @@
 
                                 <div class="col-md-4">
                                     <input type="number" name="nov" id="nov" class="form-control"
-                                           value="{{$row['November']}}"/>
+                                           value="{{number_format($row['November'], 2, '.', '')}}"/>
                                 </div>
                                 <div class="col-md-4">
                                 </div>
@@ -165,7 +165,7 @@
 
                                 <div class="col-md-4">
                                     <input type="number" name="dec" id="dec" class="form-control"
-                                           value="{{$row['December']}}"/></div>
+                                           value="{{number_format($row['December'], 2, '.', '')}}"/></div>
                                 <div class="col-md-4">
                                 </div>
                             </div>
@@ -290,7 +290,7 @@
     {
         ev.stopPropagation();
         var txt=$(t).prev().val().replace(/[|]/g,"");
-        if ($.trim(txt)=='') return;
+        if ($.number_format(txt)=='') return;
         var p=$(t).closest('.bootstrap-select').prev();
         var o=$('option', p).eq(-2);
         o.before( $("<option>", { "selected": true, "text": txt}) );
