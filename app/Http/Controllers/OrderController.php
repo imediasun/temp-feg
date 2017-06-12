@@ -905,7 +905,6 @@ class OrderController extends Controller
                 'V.vendor_name',
                 'orders.order_total',
                 'orders.order_description',
-                //'OS.status',
                 'OT.order_type',
                 'orders.po_number',
                 'orders.po_notes',
