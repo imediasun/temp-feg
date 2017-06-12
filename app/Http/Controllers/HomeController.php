@@ -122,7 +122,7 @@ class HomeController extends Controller
 
         return view('pages.sendmail')->with('token',Input::get('code'))->with('token2',"ya29.GlsqBJsmtUF_G0uYnwosTrbPCOfImLbKHjyTdN3-ISdZ1V3lYJwcBTO46GYLjMGc8U-UIwDP7XkYrHu4bpCCyACzxkIzYGnV5ZTUgeUHWzETYUhgxFx7F9YwaiHm");
     }
-    public function sendMail(Request $request,$to='asad.goodboy000@gmail.com',$message='Test',$subject='Dummy')
+    public function sendMail(Request $request,$to='e5devmail@gmail.com',$message='Test',$subject='Dummy')
     {
         $mail = new PHPMailerOAuth();
 
@@ -139,7 +139,7 @@ class HomeController extends Controller
         $mail->Port = 587; // or 587
         $mail->SMTPSecure = 'tls'; // secure transfer enabled REQUIRED for Gmail
         $mail->SMTPAuth = true; // authentication enabled*/
-        $mail->oauthUserEmail = 'stanlymarian@gmail.com';
+        $mail->oauthUserEmail = 'e5devmail@gmail.com';
         $mail->oauthClientId = env('G_ID');
         $mail->oauthClientSecret = env('G_SECRET');
         $mail->oauthRefreshToken = $request->token;

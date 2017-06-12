@@ -122,8 +122,7 @@
                                 {!! SiteHelpers::activeLang('Locations:', (isset($fields['locations']['language'])? $fields['assign_to']['language'] : array())) !!}
                             </label>
                             <div class="col-md-6">
-                                <select name='multiple_locations[]' multiple rows='5' id='multiple_loc' class='select2'
-                                        required="required"></select>
+                                <select name='multiple_locations[]' multiple rows='5' id='multiple_loc' class='select2'></select>
                             </div>
                             <div class="col-md-2">
 

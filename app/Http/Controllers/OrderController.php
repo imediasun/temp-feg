@@ -173,6 +173,7 @@ class OrderController extends Controller
         // Get order_type search filter value and location_id saerch filter values
         $orderTypeFilter = $this->model->getSearchFilters(array('order_type' => 'order_selected', 'location_id' => ''));
         extract($orderTypeFilter);
+
         // default order type is blank which means all or anything select other other defaults
         if (empty($order_selected)) {
             $order_selected = "";
@@ -188,9 +189,12 @@ class OrderController extends Controller
         $locationFilter = \SiteHelpers::getQueryStringForLocation('orders');
         // if search filter does not have location_id filter
         // add default location filter
+
         if (empty($location_id)) {
             $filter .= $locationFilter;
         }
+
+
 
         $page = $request->input('page', 1);
         $params = array(
@@ -739,13 +743,9 @@ class OrderController extends Controller
         if(($order_type_id == 7 || $order_type_id == 8 || $order_type_id == 4 || $order_type_id == 6))// && CNF_MODE != "development" )
         {
             //uncomment after testing email sending
-           /* $to[] = "marissa.sexton@fegllc.com";
+            $to[] = "marissa.sexton@fegllc.com";
             $to[] = "mandee.cook@fegllc.com";
-            $to[] = "lisa.price@fegllc.com";*/
-            // remove these lines after testing email sending
-          /*  $to[] = "stanlymarian@gmail.com";
-            $to[] = "jdanial710@gmail.com";
-            $to[] = "daynaedvin@gmail.com";
+            $to[] = "lisa.price@fegllc.com";
         }*/
         $opt = $request->get('opt');
         $redirect_module=\Session::get('redirect');
@@ -894,14 +894,18 @@ class OrderController extends Controller
 
 
         // Get custom Ticket Type filter value
-        $globalSearchFilter = $this->model->getSearchFilters(['search_all_fields' => '']);
+        $globalSearchFilter = $this->model->getSearchFilters(['search_all_fields' => '', 'status_id' => '']);
         $skipFilters = ['search_all_fields'];
+        $statusIdFilter = $globalSearchFilter['status_id'];
+        unset($globalSearchFilter['status_id']);
         $mergeFilters = [];
         extract($globalSearchFilter); //search_all_fields
+
 
         // rebuild search query skipping 'ticket_custom_type' filter
         $trimmedSearchQuery = $this->model->rebuildSearchQuery($mergeFilters, $skipFilters, $customQueryString);
         $searchInput = $trimmedSearchQuery;
+        $orderStatusCondition='';
         if (!empty($search_all_fields)) {
             $searchFields = [
                 'orders.id',
@@ -910,7 +914,6 @@ class OrderController extends Controller
                 'V.vendor_name',
                 'orders.order_total',
                 'orders.order_description',
-                'OS.status',
                 'OT.order_type',
                 'orders.po_number',
                 'orders.po_notes',
@@ -927,12 +930,18 @@ class OrderController extends Controller
             $searchInput = ['query' => $search_all_fields, 'dateQuery' => $dates,
                 'fields' => $searchFields, 'dateFields' => $dateSearchFields];
 
+            if(!empty($statusIdFilter)){
+                $orderStatusCondition = "AND orders.status_id = '".$statusIdFilter."'";
+            }
+
         }
+
 
         // Filter Search for query
         // build sql query based on search filters
         $filter = is_null(Input::get('search')) ? '' : $this->buildSearch($searchInput);
 
+        $filter .= $orderStatusCondition;
 
         return $filter;
     }
@@ -1378,8 +1387,11 @@ class OrderController extends Controller
     {
         $vendor_description = Input::get('product_id');
         $row = \DB::select("select id,sku,item_description,unit_price,case_price,retail_price from products WHERE vendor_description='" . $vendor_description . "'");
-        $row = Order::hydrate($row);
-        $json = array('sku' => $row[0]->sku, 'item_description' => $row[0]->item_description, 'unit_price' => $row[0]->unit_price, 'case_price' => $row[0]->case_price, 'retail_price' => $row[0]->retail_price, 'id' => $row[0]->id);
+        $json = [];
+        if (!empty($row)) {
+            $row = Order::hydrate($row);
+            $json = array('sku' => $row[0]->sku, 'item_description' => $row[0]->item_description, 'unit_price' => $row[0]->unit_price, 'case_price' => $row[0]->case_price, 'retail_price' => $row[0]->retail_price, 'id' => $row[0]->id);
+        }        
         echo json_encode($json);
     }
 
@@ -1396,14 +1408,14 @@ class OrderController extends Controller
         $mail->SMTPDebug = 1; // debugging: 1 = errors and messages, 2 = messages only
 
         //$mail->IsHTML(true);
-        $mail->Username = 'dev2@shayansolutions.com';          // SMTP username
+        $mail->Username = 'e5devmail@gmail.com';          // SMTP username
         $mail->Password = '&b%Dd9Kr';
-        $mail->SetFrom('dev2@shayansolutions.com');
+        $mail->SetFrom('e5devmail@gmail.com');
         $mail->Subject = "Test";
         $mail->Body = "hello";
-        $mail->AddAddress("dev3@shayansolutions.com");
-        $mail->addCC('shayansolutions@gmail.com');
-        $mail->addBCC('dev2@shayansolutions.com');
+        $mail->AddAddress("e5devmail@gmail.com");
+        $mail->addCC('e5devmail2@gmail.com');
+        $mail->addBCC('e5devmail2@gmail.com');
         if (!$mail->Send()) {
             echo "Mailer Error: " . $mail->ErrorInfo;
         } else {
