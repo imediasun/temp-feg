@@ -1395,36 +1395,7 @@ class OrderController extends Controller
         }        
         echo json_encode($json);
     }
-
-
-    function getTestEmail()
-    {
-        $mail = new PHPMailer(); // create a new object
-        $mail->IsSMTP(); // enable SMTP
-        $mail->Host = 'smtp.gmail.com';
-        $mail->Port = 587; // or 587
-        $mail->SMTPSecure = 'tls'; // secure transfer enabled REQUIRED for Gmail
-        $mail->SMTPAuth = true; // authentication enabled
-
-        $mail->SMTPDebug = 1; // debugging: 1 = errors and messages, 2 = messages only
-
-        //$mail->IsHTML(true);
-        $mail->Username = 'e5devmail@gmail.com';          // SMTP username
-        $mail->Password = '&b%Dd9Kr';
-        $mail->SetFrom('e5devmail@gmail.com');
-        $mail->Subject = "Test";
-        $mail->Body = "hello";
-        $mail->AddAddress("e5devmail@gmail.com");
-        $mail->addCC('e5devmail2@gmail.com');
-        $mail->addBCC('e5devmail2@gmail.com');
-        if (!$mail->Send()) {
-            echo "Mailer Error: " . $mail->ErrorInfo;
-        } else {
-            echo "Message has been sent";
-        }
-        die;
-    }
-
+    
     function updateRequestAndProducts($item_count, $SID_new)
     {
 
