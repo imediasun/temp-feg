@@ -78,6 +78,7 @@
 
 
                         </div>
+                        <span id="img_error"></span>
 
                         <div class="col-md-2">
 
@@ -121,6 +122,7 @@
     
     <script>
         $("document").ready(function(){
+
           //  $('.ajaxLoading').show();
             $("#location_name").jCombo("{{ URL::to('shopfegrequeststore/comboselect?filter=location:id:id|location_name') }}",
                     {selected_value: '', initial_text: 'Select Location'});
@@ -128,7 +130,7 @@
             form.parsley();
             form.submit(function () {
 
-                if (form.parsley('isValid') == true) {
+                if (form.parsley('isValid') == true && anyImageUploaded == true) {
                     var options = {
                         dataType: 'json',
                         beforeSubmit: showRequest,
@@ -137,7 +139,13 @@
                     $(this).ajaxSubmit(options);
                     return false;
 
-                } else {
+                }
+                else
+                {
+                    if(!anyImageUploaded){
+                        displayMissingImagesError();
+                    }
+
                     return false;
                 }
             });
@@ -146,6 +154,17 @@
             $('.ajaxLoading').show();
            // myDropzone.processQueue();
         }
+
+        function displayMissingImagesError(){
+            $('#dropzoneFileUpload').css('border-color', '#c00');
+            $('#img_error').html('<ul class="parsley-error-list"><li class="required" style="display: list-item;">This value is required.</li></ul>');
+        }
+
+        function clearErrorMessage(){
+            $('#dropzoneFileUpload').css('border-color', 'rgba(0, 0, 0, 0.3)');
+            $('#img_error').html('');
+        }
+
         function showResponse(data) {
 
             if (data.status == 'success') {
@@ -156,27 +175,30 @@
                 window.location="{{ url() }}/shopfegrequeststore";
             } else {
                 notyMessageError(data.message);
+                if(data.message=="The following errors occurred !<hr /> <ul><li>Image field is required.</li></li>"){
+                    displayMissingImagesError();
+                }
                 $('.ajaxLoading').hide();
                 return false;
             }
         }
-    </script>
-    <script type="text/javascript">
-        var baseUrl = "{{ url('/') }}";
         var token = "{{ Session::getToken() }}";
         Dropzone.autoDiscover = false;
+        var anyImageUploaded = false;
         var myDropzone = new Dropzone("div#dropzoneFileUpload", {
-            url: baseUrl + "/shopfegrequeststore/uploadfiles",
+            addRemoveLinks: true,
+            url: siteUrl + "/shopfegrequeststore/uploadfiles",
             params: {
                 _token: token
             },autoProcessQueue:true,
 
             init:function(){
                 this.options.parallelUploads = 5,
-                        this.on("success", function(file,response) {
-                                                       addInput(response);
-                        });
-
+                this.on("success", function(file,response) {
+                    addInput(response);
+                    anyImageUploaded = true;
+                    clearErrorMessage();
+                });
             }
         });
         function addInput(value){
@@ -203,5 +225,7 @@
     <style>
         .ajaxLoading { background:#fff url( {{ url() }}/loading.gif) no-repeat center center; display:none; height:200px; position:absolute; width:100%; opacity: 0.5; left:0; top:0; height: 100%; z-index:9999;}
         #s2id_location_name{width: 100% !important;}
+
+
     </style>
 @endsection

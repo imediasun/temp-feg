@@ -132,7 +132,7 @@ class managefegrequeststore extends Sximo
             $VID = 0;
         }
 
-        $order_dropdown_data = self::getOrdersDropDownData();
+        $order_dropdown_data = self::getOrdersDropDownData($filter);
         $data['order_dropdown-data'] = $order_dropdown_data;
 
 
@@ -189,17 +189,27 @@ class managefegrequeststore extends Sximo
         return $data;
     }
 
-    public static function getOrdersDropDownData()
+    public static function getOrdersDropDownData($filter)
     {
-
+        $filter = str_replace('requests.','R.',$filter);
         $query = \DB::select('SELECT O.id,O.order_type FROM order_type O
 							  LEFT JOIN products P ON P.prod_type_id = O.id
 							  LEFT JOIN requests R ON R.product_id = P.id
 							  WHERE R.status_id = 1
+							  AND R.blocked_at IS NULL
 							  GROUP BY O.id
                               ORDER BY O.order_type');
 
+        $query = \DB::select("SELECT O.id,O.order_type FROM requests R
+                               JOIN products P ON P.id = R.product_id
+                               JOIN order_type O ON O.id = P.prod_type_id
+							  WHERE R.status_id = 1
+							  AND R.blocked_at IS NULL
+							 $filter
+							  GROUP BY O.id
+                              ORDER BY O.order_type");
         $orderTypesArray = array();
+        $haveCategories = 0;
         foreach ($query as $row) {
             if($row->order_type!= 7 && $row->order_type != 8) {
                 $row = array(
@@ -211,19 +221,27 @@ class managefegrequeststore extends Sximo
                 if($row['id'] != 7 && $row['id'] != 8) {
                     $orderTypesArray[] = $row;
                 }
+                else
+                {
+                    $haveCategories = 1;
+                }
             }
         }
 
-        // Combining 'Instant Win','Redemption' and 'Party' order types in a single category
-        $customArray[] = array(
-            'id' => '7-8',
-            'text' => 'Instant Win, Redemption (combined)'
-        );
+        if($haveCategories)
+        {
+            // Combining 'Instant Win','Redemption' and 'Party' order types in a single category
+            $customArray[] = array(
+                'id' => '7-8',
+                'text' => 'Instant Win, Redemption (combined)'
+            );
 
-        $array = array_merge($orderTypesArray, $customArray);
-        //$array = array_merge($orderTypesArray);
+            $orderTypesArray = array_merge($orderTypesArray, $customArray);
+            //$array = array_merge($orderTypesArray);
+        }
 
-        return $array;
+
+        return $orderTypesArray;
     }
 
     public static function getLocationDropDownData($customField, $customWhere, $customOrderBy)

@@ -144,7 +144,6 @@ class UsersController extends Controller
 
         // Build pagination setting
         $page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;
-        //$pagination = new Paginator($results['rows'], $results['total'], $params['limit']);
         $pagination = new Paginator($results['rows'], $results['total'],
             (isset($params['limit']) && $params['limit'] > 0 ? $params['limit'] :
                 ($results['total'] > 0 ? $results['total'] : '1')));
@@ -495,7 +494,11 @@ class UsersController extends Controller
 
             $id = $this->model->insertRow($data, $request->input('id'));
             $all_locations = Input::get('all_locations');
-            if (empty($all_locations)) {
+
+            if(empty($request->input('multiple_locations')) && empty($all_locations)){
+                \DB::table('user_locations')->where('user_id', '=', $request->input('id'))->delete();
+            }
+            else if (empty($all_locations)) {
                 $this->model->inserLocations($request->input('multiple_locations'), $id, $request->input('id'));
                 \DB::update("update users set has_all_locations=0 where id=$id");
             } else {

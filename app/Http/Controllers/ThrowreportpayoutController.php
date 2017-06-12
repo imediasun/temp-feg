@@ -92,7 +92,6 @@ class ThrowreportpayoutController extends Controller
                                   WHERE merch_throws.location_id = " . \Session::get('selected_location') . " AND merch_throws.date_start  >= '" . date("Y-m-d", strtotime($dateStart)) . "' AND merch_throws.date_end <='" . date("Y-m-d", strtotime($dateEnd)) . "'");
         // Build pagination setting
         $page = $page >= 1 && filter_var($page, FILTER_VALIDATE_INT) !== false ? $page : 1;
-        //$pagination = new Paginator($results['rows'], $results['total'], $params['limit']);
         $pagination = new Paginator($results['rows'], $results['total'],
             (isset($params['limit']) && $params['limit'] > 0 ? $params['limit'] :
                 ($results['total'] > 0 ? $results['total'] : '1')));

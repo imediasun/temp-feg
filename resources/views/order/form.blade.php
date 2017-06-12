@@ -435,11 +435,11 @@
                 casePrice = $(this).find("input[name*='case_price']").val();
                 orderType=$("#order_type_id").val();
                 // if order type is Debit Card Part=20,Graphics=10, Parts for Game=1,Party Supplies=17
-                if (orderType == 20 || orderType == 10  || orderType == 17 || orderType == 1) {
+                if (orderType == 20 || orderType == 17 || orderType == 1) {
                     Price = unitPrice;
                 }
                 // if order type is Instant Win prizes=8, redemption prizes=7,Office Supplies=6
-                else if(orderType == 7 || orderType == 8 || orderType == 6)
+                else if(orderType == 7 || orderType == 8 || orderType == 6 || orderType == 10)
                 {
                      Price = casePrice;
                 }

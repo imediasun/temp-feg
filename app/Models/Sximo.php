@@ -5,11 +5,25 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use App\Library\FEG\System\FEGSystemHelper;
 use Request, Log,Redirect;
+use App\Library\SximoEloquentBuilder;
+use App\Library\SximoQueryBuilder;
 class Sximo extends Model {
 
     public static $getRowsQuery = null;
 
-    public static function insertLog($module, $task , $notes = '')
+    public function newEloquentBuilder($query)
+    {
+        return new SximoEloquentBuilder($query);
+    }
+    protected function newBaseQueryBuilder()
+    {
+        $conn = $this->getConnection();
+
+        $grammar = $conn->getQueryGrammar();
+
+        return new SximoQueryBuilder($conn, $grammar, $conn->getPostProcessor());
+    }
+    public static function insertLog($module, $task , $notes = '',$previous_value = null)
     {
         $table = 'tb_logs';
         $data = array(
@@ -151,7 +165,6 @@ class Sximo extends Model {
             $select .= " AND location.active='$active'";
         }
 
-
         Log::info("Total Query : ".$select . " {$params} " . self::queryGroup() . " {$orderConditional}");
         $counter_select =\DB::select($select . " {$params} " . self::queryGroup() . " {$orderConditional}");
         $total= count($counter_select);
@@ -199,7 +212,13 @@ class Sximo extends Model {
         return $result;
     }
 
+    public function cleanData($data){
+        return array_map('trim',$data);
+    }
+
     public  function insertRow($data, $id = null) {
+
+        $data = $this->cleanData($data);
 
         $timestampTables = array('vendor','products','orders', 'departments', 'system_email_report_manager');
         $table = with(new static)->table;
@@ -731,11 +750,11 @@ class Sximo extends Model {
                 $orderDescriptionArray[] = empty($r['sku'])?$r['description']:$r['description']." (SKU - {$r['sku']})";
                 $orderPriceArray[] = $r['price'];
                 $orderQtyArray[] = $r['qty'];
-                if($orderTypeId == 20 || $orderTypeId == 10 || $orderTypeId== 17 || $orderTypeId == 1 )
+                if($orderTypeId == 20 || $orderTypeId== 17 || $orderTypeId == 1 )
                 {
                     $orderItemsPriceArray[] = $r['price'];
                 }
-                elseif($orderTypeId == 7 || $orderTypeId == 8 || $orderTypeId == 6)
+                elseif($orderTypeId == 7 || $orderTypeId == 8 || $orderTypeId == 6 || $orderTypeId == 10)
                 {
                     $orderItemsPriceArray[] = $r['case_price'];
                 }
