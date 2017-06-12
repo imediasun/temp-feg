@@ -738,13 +738,9 @@ class OrderController extends Controller
         if(($order_type_id == 7 || $order_type_id == 8 || $order_type_id == 4 || $order_type_id == 6))// && CNF_MODE != "development" )
         {
             //uncomment after testing email sending
-           /* $to[] = "marissa.sexton@fegllc.com";
+            $to[] = "marissa.sexton@fegllc.com";
             $to[] = "mandee.cook@fegllc.com";
-            $to[] = "lisa.price@fegllc.com";*/
-            // remove these lines after testing email sending
-          /*  $to[] = "stanlymarian@gmail.com";
-            $to[] = "jdanial710@gmail.com";
-            $to[] = "daynaedvin@gmail.com";
+            $to[] = "lisa.price@fegllc.com";
         }*/
         $opt = $request->get('opt');
         $redirect_module=\Session::get('redirect');
