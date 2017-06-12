@@ -173,6 +173,7 @@ class OrderController extends Controller
         // Get order_type search filter value and location_id saerch filter values
         $orderTypeFilter = $this->model->getSearchFilters(array('order_type' => 'order_selected', 'location_id' => ''));
         extract($orderTypeFilter);
+
         // default order type is blank which means all or anything select other other defaults
         if (empty($order_selected)) {
             $order_selected = "";
@@ -188,9 +189,12 @@ class OrderController extends Controller
         $locationFilter = \SiteHelpers::getQueryStringForLocation('orders');
         // if search filter does not have location_id filter
         // add default location filter
+
         if (empty($location_id)) {
             $filter .= $locationFilter;
         }
+
+
 
         $page = $request->input('page', 1);
         $params = array(
@@ -889,8 +893,9 @@ class OrderController extends Controller
 
 
         // Get custom Ticket Type filter value
-        $globalSearchFilter = $this->model->getSearchFilters(['search_all_fields' => '']);
+        $globalSearchFilter = $this->model->getSearchFilters(['search_all_fields' => '', 'status_id' => '']);
         $skipFilters = ['search_all_fields'];
+        $statusIdFilter = ['status_id'];
         $mergeFilters = [];
         extract($globalSearchFilter); //search_all_fields
 
@@ -923,10 +928,15 @@ class OrderController extends Controller
 
         }
 
+        //dd($searchInput);
+
+        if(!empty($statusIdFilter)){
+
+        }
+
         // Filter Search for query
         // build sql query based on search filters
         $filter = is_null(Input::get('search')) ? '' : $this->buildSearch($searchInput);
-
 
         return $filter;
     }
