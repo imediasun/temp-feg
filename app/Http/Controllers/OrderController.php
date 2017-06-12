@@ -893,7 +893,7 @@ class OrderController extends Controller
 
 
         // Get custom Ticket Type filter value
-        $globalSearchFilter = $this->model->getSearchFilters(['search_all_fields' => '', 'status_id' => '', 'po_notes' => '']);
+        $globalSearchFilter = $this->model->getSearchFilters(['search_all_fields' => '', 'status_id' => '']);
         $skipFilters = ['search_all_fields'];
         $statusIdFilter = $globalSearchFilter['status_id'];
         unset($globalSearchFilter['status_id']);
@@ -939,7 +939,7 @@ class OrderController extends Controller
         // Filter Search for query
         // build sql query based on search filters
         $filter = is_null(Input::get('search')) ? '' : $this->buildSearch($searchInput);
-        
+
         $filter .= $orderStatusCondition;
 
         return $filter;
