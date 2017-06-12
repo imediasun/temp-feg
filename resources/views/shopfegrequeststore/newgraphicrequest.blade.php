@@ -190,7 +190,7 @@
         Dropzone.options.myAwesomeDropzone = {
             paramName: "file", // The name that will be used to transfer the file
             maxFilesize: 2, // MB
-            addRemoveLinks: true,
+            //addRemoveLinks: true,
             acceptedFiles: "image/jpeg,image/png,image/gif",
 
             accept: function(file, done) {
