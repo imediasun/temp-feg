@@ -220,7 +220,8 @@ class OrderController extends Controller
         if (count($results['rows']) == $results['total'] && $results['total'] != 0) {
             $params['limit'] = $results['total'];
         }
-        $pagination = new Paginator($results['rows'], $results['total'], $params['limit']);
+        $pagination = new Paginator($results['rows'], $results['total'], (isset($params['limit']) && $params['limit'] > 0 ? $params['limit'] :
+            ($results['total'] > 0 ? $results['total'] : '1')));
         $pagination->setPath('order/data');
         $rows = $results['rows'];
         foreach ($rows as $index => $data) {
