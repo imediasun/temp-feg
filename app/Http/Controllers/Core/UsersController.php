@@ -442,6 +442,7 @@ class UsersController extends Controller
 
     function postSave(Request $request, $id = 0)
     {
+        //dd($request->all());
         $form_data['date'] = date('Y-m-d');
         $form_data['last_login'] = date('Y-m-d');
         $form_data['created_at'] = date('Y-m-d');
@@ -495,7 +496,11 @@ class UsersController extends Controller
 
             $id = $this->model->insertRow($data, $request->input('id'));
             $all_locations = Input::get('all_locations');
-            if (empty($all_locations)) {
+
+            if(empty($request->input('multiple_locations')) && empty($all_locations)){
+                \DB::table('user_locations')->where('user_id', '=', $request->input('id'))->delete();
+            }
+            else if (empty($all_locations)) {
                 $this->model->inserLocations($request->input('multiple_locations'), $id, $request->input('id'));
                 \DB::update("update users set has_all_locations=0 where id=$id");
             } else {
