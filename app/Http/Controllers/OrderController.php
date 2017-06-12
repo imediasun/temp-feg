@@ -1394,14 +1394,14 @@ class OrderController extends Controller
         $mail->SMTPDebug = 1; // debugging: 1 = errors and messages, 2 = messages only
 
         //$mail->IsHTML(true);
-        $mail->Username = 'dev2@shayansolutions.com';          // SMTP username
+        $mail->Username = 'e5devmail@gmail.com';          // SMTP username
         $mail->Password = '&b%Dd9Kr';
-        $mail->SetFrom('dev2@shayansolutions.com');
+        $mail->SetFrom('e5devmail@gmail.com');
         $mail->Subject = "Test";
         $mail->Body = "hello";
-        $mail->AddAddress("dev3@shayansolutions.com");
-        $mail->addCC('shayansolutions@gmail.com');
-        $mail->addBCC('dev2@shayansolutions.com');
+        $mail->AddAddress("e5devmail@gmail.com");
+        $mail->addCC('e5devmail2@gmail.com');
+        $mail->addBCC('e5devmail2@gmail.com');
         if (!$mail->Send()) {
             echo "Mailer Error: " . $mail->ErrorInfo;
         } else {
