@@ -23,17 +23,29 @@ class Sximo extends Model {
 
         return new SximoQueryBuilder($conn, $grammar, $conn->getPostProcessor());
     }
-    public static function insertLog($module, $task , $notes = '',$previous_value = null)
+    public static function insertLog($module, $task ,$note = '', $conditions = '',$params = null)
     {
         $table = 'tb_logs';
         $data = array(
             'auditID' => '',
-            'note' => $notes,
+            'note' => $note,
             'ipaddress' => Request::ip(),
             'user_id' => \Session::get('uid'),
             'module'  => $module,
-            'task'    => $task
+            'task'    => $task,
+            'params' => $params,
+            'conditions' => $conditions
         );
+        $l = '';
+        $L =  FEGSystemHelper::setLogger($l, "user-action-logs.log", "FEGUserActions", "USER_ACTIONS");
+        $L->log('--------------------Start UserActions logging------------------');
+        $L->log("User ID : ". \Auth::user()->id);
+        $L->log("User IP : ".Request::ip());
+        $L->log("Module or Table : ".$module);
+        $L->log("Task : ".$task);
+        $L->log("Conditions : ".json_encode($conditions));
+        $L->log("Parameters : " . json_encode($params));
+        $L->log('--------------------End UserActions logging------------------');
         $id = \DB::table($table)->insertGetId($data);
         return $id;
     }

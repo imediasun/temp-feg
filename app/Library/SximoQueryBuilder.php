@@ -10,14 +10,6 @@ use Illuminate\Database\Query\Processors\Processor;
 class SximoQueryBuilder extends Builder
 {
 
-    public function __construct(ConnectionInterface $connection,
-                                Grammar $grammar,
-                                Processor $processor)
-    {
-        $this->grammar = $grammar;
-        $this->processor = $processor;
-        $this->connection = $connection;
-    }
 
     /*public function update(array $values)
     {
