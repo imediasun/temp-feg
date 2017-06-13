@@ -11,10 +11,9 @@ class SximoQueryBuilder extends Builder
 {
 
 
-    /*public function update(array $values)
+    public function update(array $values)
     {
-        dd('SximoQueryBuilder',$this->model->getAttributes());
-        Sximo::insertLog($this->model->getTable(),'Update' , json_encode($values),json_encode($this->model->getAttributes()));
+        Sximo::insertLog($this->from,'Update' , 'SximoQueryBuilder',json_encode($this->wheres),json_encode($values));
         return parent::update($values);
     }
 
@@ -22,14 +21,15 @@ class SximoQueryBuilder extends Builder
     {
         if($method == 'insert' || $method == 'insertGetId')
         {
-            Sximo::insertLog($this->model->getTable(),$method, json_encode($parameters),json_encode($this->model->getAttributes()));
+            Sximo::insertLog($this->from,'Insert/InsertGetId' , 'SximoQueryBuilder',json_encode($this->wheres),json_encode($parameters));
         }
         return parent::__call($method,$parameters);
     }
 
     public function delete($id = null)
     {
-        Sximo::insertLog($this->model->getTable(),'delete',$this->model->id, json_encode($this->model->getAttributes()));
+        Sximo::insertLog($this->from,'Delete' , 'SximoQueryBuilder',json_encode($this->wheres),json_encode($id));
+
         return parent::delete($id);
-    }*/
+    }
 }

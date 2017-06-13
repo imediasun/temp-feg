@@ -49,29 +49,6 @@ class Sximo extends Model {
         $id = \DB::table($table)->insertGetId($data);
         return $id;
     }
-    public static function create(array $attributes = [])
-    {
-        //self::insertLog(self::getTable(),'create',$attributes);
-        return parent::create($attributes);
-    }
-
-    public function update(array $attributes = [])
-    {
-        //self::insertLog(self::getTable(),'update',$attributes);
-        return parent::update($attributes);
-    }
-
-    public function delete()
-    {
-        //self::insertLog(self::getTable(),'delete','');
-        return parent::delete();
-    }
-
-    public function save(array $options = [])
-    {
-        //self::insertLog(self::getTable(),'save',$options);
-        return parent::save($options);
-    }
 
 
     public static function parseNumber($num)
