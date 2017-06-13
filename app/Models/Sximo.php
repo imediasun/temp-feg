@@ -26,20 +26,22 @@ class Sximo extends Model {
     public static function insertLog($module, $task ,$note = '', $conditions = '',$params = null)
     {
         $table = 'tb_logs';
+        $user = (is_object(\Auth::user()) ? \Auth::user()->id : 'User Not Logged In');
         $data = array(
             'auditID' => '',
             'note' => $note,
             'ipaddress' => Request::ip(),
-            'user_id' => \Session::get('uid'),
+            'user_id' => $user,
             'module'  => $module,
             'task'    => $task,
             'params' => $params,
             'conditions' => $conditions
         );
+
         $l = '';
         $L =  FEGSystemHelper::setLogger($l, "user-action-logs.log", "FEGUserActions", "USER_ACTIONS");
         $L->log('--------------------Start UserActions logging------------------');
-        $L->log("User ID : ". is_object(\Auth::user())?\Auth::user()->id:'User Not Logged In');
+        $L->log("User ID : ". $user);
         $L->log("User IP : ".Request::ip());
         $L->log("Module or Table : ".$module);
         $L->log("Notes : ".$note);
