@@ -39,7 +39,7 @@ class Sximo extends Model {
         $l = '';
         $L =  FEGSystemHelper::setLogger($l, "user-action-logs.log", "FEGUserActions", "USER_ACTIONS");
         $L->log('--------------------Start UserActions logging------------------');
-        $L->log("User ID : ". \Auth::user()->id);
+        $L->log("User ID : ". \Auth::user()?\Auth::user()->id:'User Not Logged In');
         $L->log("User IP : ".Request::ip());
         $L->log("Module or Table : ".$module);
         $L->log("Notes : ".$note);
