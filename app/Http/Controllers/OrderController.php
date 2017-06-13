@@ -1367,6 +1367,7 @@ class OrderController extends Controller
             $whereWithVendorCondition = " AND products.vendor_id = $vendorId";
         }
         $results = array();
+        $term = addslashes($term); 
         //fixing for https://www.screencast.com/t/vwFYE3AlF
         $queries = \DB::select("SELECT *,LOCATE('$term',vendor_description) AS pos
                                 FROM products
