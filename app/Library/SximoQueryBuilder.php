@@ -60,4 +60,10 @@ class SximoQueryBuilder extends Builder
 
         return parent::insertGetId($values,$sequence);
     }
+    public function insert(array $values)
+    {
+        Sximo::insertLog($this->from,'Insert' , 'SximoQueryBuilder','',json_encode($values));
+        return parent::insert($values);
+    }
+
 }
