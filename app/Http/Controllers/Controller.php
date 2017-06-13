@@ -20,6 +20,15 @@ abstract class Controller extends BaseController
 
     public function __construct()
     {
+        $newLocations = \SiteHelpers::getLocationDetails(\Session::get('uid'));
+        $oldLocations = \Session::get('user_locations');
+        $result=array_udiff($newLocations,$oldLocations,"self::compareArrays");
+
+        if(!empty($result)){
+            \Session::flash('messagetext', 'Your location has been changed by administrator');
+            \Session::flash('msgstatus', 'info');
+            \SiteHelpers::refreshUserLocations(\Session::get('uid'));
+        }
 
         $this->addToCartModel = new Addtocart();
 
@@ -76,6 +85,15 @@ abstract class Controller extends BaseController
         $this->data = [
             'UQID' =>  uniqid('', true)
         ];
+    }
+
+    static function compareArrays($a,$b)
+    {
+        if ($a->location_name === $b->location_name)
+        {
+            return 0;
+        }
+        return ($a>$b)?1:-1;
     }
 
     function postInitExport($exportId = null) {
