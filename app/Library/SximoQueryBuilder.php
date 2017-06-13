@@ -13,7 +13,7 @@ class SximoQueryBuilder extends Builder
 
     public function update(array $values)
     {
-        $allwheres = [];
+        $allwheres = [];dd($this->wheres);
         foreach ($this->wheres as $i => $where)
         {
             $allwheres[$i]['column'] = $where['column'];
