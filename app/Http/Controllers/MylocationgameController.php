@@ -56,14 +56,21 @@ class MylocationgameController extends Controller
         $this->data['access'] = $this->access;
         return view('mylocationgame.index', $this->data);
     }
-    public function getSearchFilterQuery($customQueryString = null) {
+    public function getSearchFilterQuery($customQueryString = null,$canSeeAllLocations = false) {
         // Filter Search for query
         // build sql query based on search filters
         $filter = is_null($customQueryString) ? (is_null(Input::get('search')) ? '' : $this->buildSearch()) :
             $this->buildSearch($customQueryString);
 
         // Get assigned locations list as sql query (part)
-        $locationFilter = \SiteHelpers::getQueryStringForLocation('game');
+        if($canSeeAllLocations == false)
+        {
+            $locationFilter = \SiteHelpers::getQueryStringForLocation('game');
+        }
+        else
+        {
+            $locationFilter = '';
+        }
         // if search filter does not have location_id filter
         // add default location filter
         $frontendSearchFilters = $this->model->getSearchFilters(array('location_id' => ''));
@@ -75,7 +82,7 @@ class MylocationgameController extends Controller
     }
     public function postData(Request $request)
     {
-
+        $canSeeAllLocations = isset($this->pass["Games For All Locations"]);
         $module_id = \DB::table('tb_module')->where('module_name', '=', 'mylocationgame')->pluck('module_id');
         $this->data['module_id'] = $module_id;
         if (Input::has('config_id')) {
@@ -96,7 +103,7 @@ class MylocationgameController extends Controller
         $order = (!is_null($request->input('order')) ? $request->input('order') : $this->info['setting']['ordertype']);
         // End Filter sort and order for query
         // Filter Search for query
-        $filter = $this->getSearchFilterQuery();
+        $filter = $this->getSearchFilterQuery(null,$canSeeAllLocations);
 
         $page = $request->input('page', 1);
         $params = array(
