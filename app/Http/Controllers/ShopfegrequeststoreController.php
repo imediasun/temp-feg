@@ -379,6 +379,7 @@ class ShopfegrequeststoreController extends Controller
                 $filesnames = implode(',', $filesnames);
               }
             $data = array('location_id' => $locationId, 'request_user_id' => \Session::get('uid'), 'request_date' => $now, 'need_by_date' => $date_needed, 'description' => $game_info . ' - ' . $graphics_description, 'qty' => $qty, 'status_id' => $statusId, 'img' => $filesnames);
+
             $last_insert_id = $this->model->newGraphicRequest($data);
 
 
