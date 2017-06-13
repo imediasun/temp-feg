@@ -26,7 +26,7 @@ class MylocationgameController extends Controller
         $this->pass = \FEGSPass::getMyPass($this->module_id);
         $this->access['is_edit'] = $this->access['is_edit'] == 1 || !empty($this->pass['Can Edit']) ? 1 : 0;
         $this->access['is_remove'] = $this->access['is_remove'] == 1 || !empty($this->pass['Can Dispose']) ? 1 : 0;
-        
+
         $this->data = array(
             'pass' => $this->pass,
             'pageTitle' => $this->info['title'],
@@ -35,7 +35,15 @@ class MylocationgameController extends Controller
             'pageUrl' => url($this->module),
             'return' => self::returnUrl()
         );
+    }
 
+    private function  updatePermissions($module){
+        $info = $this->model->makeInfo($module);
+        $this->access = $this->model->validAccess($info['id']);
+        $module_id = Module::name2id($module);
+        $this->pass = \FEGSPass::getMyPass($module_id);
+        $this->access['is_edit'] = $this->access['is_edit'] == 1 || !empty($this->pass['Can Edit']) ? 1 : 0;
+        $this->access['is_remove'] = $this->access['is_remove'] == 1 || !empty($this->pass['Can Dispose']) ? 1 : 0;
     }
 
     public function getIndex()
@@ -222,8 +230,12 @@ class MylocationgameController extends Controller
     }
 
 
-    function getUpdate(Request $request, $id = null)
+    function getUpdate(Request $request, $id = null, $actionedBy='mylocationgame')
     {
+        if($actionedBy=='gamesintransit'){
+            $this->updatePermissions('gamesintransit');
+        }
+
         if ($id == null) {
             if ($this->access['is_add'] == 0)
                 return Redirect::to('dashboard')->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
