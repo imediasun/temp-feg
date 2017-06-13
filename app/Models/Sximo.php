@@ -42,6 +42,7 @@ class Sximo extends Model {
         $L->log("User ID : ". \Auth::user()->id);
         $L->log("User IP : ".Request::ip());
         $L->log("Module or Table : ".$module);
+        $L->log("Notes : ".$note);
         $L->log("Task : ".$task);
         $L->log("Conditions : ".json_encode($conditions));
         $L->log("Parameters : " . json_encode($params));
