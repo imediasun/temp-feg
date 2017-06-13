@@ -31,21 +31,14 @@ class SximoQueryBuilder extends Builder
     {
         if($method == 'insert' || $method == 'insertGetId')
         {
-            if(isset($this->wheres[0]['value']))
-            {
-                foreach ($this->wheres as $i => $where)
-                {
-                    $allwheres[$i]['column'] = $where['column'];
-                    $allwheres[$i]['value'] = $where['value'];
-                }
-            }
-            Sximo::insertLog($this->from,'Insert/InsertGetId' , 'SximoQueryBuilder',json_encode($allwheres),json_encode($parameters));
+            Sximo::insertLog($this->from,'Insert/InsertGetId' , 'SximoQueryBuilder','',json_encode($parameters));
         }
         return parent::__call($method,$parameters);
     }
 
     public function delete($id = null)
     {
+        $allwheres = [];
         if(isset($this->wheres[0]['value']))
         {
             foreach ($this->wheres as $i => $where)
@@ -57,5 +50,14 @@ class SximoQueryBuilder extends Builder
         Sximo::insertLog($this->from,'Delete' , 'SximoQueryBuilder',json_encode($allwheres),json_encode($id));
 
         return parent::delete($id);
+    }
+    public function insertGetId(array $values, $sequence = null)
+    {
+        if(!isset($values['auditID']))
+        {
+            Sximo::insertLog($this->from,'InsertGetId' , 'SximoQueryBuilder','',json_encode($values));
+        }
+
+        return parent::insertGetId($values,$sequence);
     }
 }
