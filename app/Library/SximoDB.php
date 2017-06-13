@@ -9,9 +9,10 @@ class SximoDB extends \Illuminate\Support\Facades\DB
     public static function insert($query, $bindings = [])
     {
         $myquery = strtolower($query);
-
+        $queryArray = explode(' ',$myquery);
         $data = substr($myquery, strpos($myquery, "values") + 6);
-        $table = substr($myquery, strpos($myquery, "into") + 4,strpos($myquery, " (") );
+        //$table = substr($myquery, strpos($myquery, "into") + 4,strpos($myquery, " (") );
+        $table = $queryArray[2];
         $columns = substr($myquery, strpos($myquery, '(') , strpos($myquery, "values")-6 );
 
         Sximo::insertLog($table,'insert' , 'SximoDB',$columns,$data);
@@ -29,10 +30,12 @@ class SximoDB extends \Illuminate\Support\Facades\DB
     public static function update($query, $bindings = [])
     {
         $myquery = strtolower($query);
+        $queryArray = explode(' ',$myquery);
         $data = substr($myquery, strpos($myquery, "set") + 3,(strpos($myquery, "where")-strpos($myquery, "set") -3));
 
         $condition = substr($myquery, strpos($myquery, "where") + 5);
-        $table = substr($myquery, strpos($myquery, "update") + 6,strpos($myquery, "set") - 6);
+        //$table = substr($myquery, strpos($myquery, "update") + 6,strpos($myquery, "set") - 6);
+        $table = $queryArray[1];
 
         Sximo::insertLog($table,'Update' ,'SximoDB', $condition,$data);
         return parent::update($query, $bindings);
@@ -42,9 +45,10 @@ class SximoDB extends \Illuminate\Support\Facades\DB
     public static function delete($query, $bindings = [])
     {
         $myquery = strtolower($query);
-
+        $queryArray = explode(' ',$myquery);
         $condition = substr($myquery, strpos($myquery, "where") + 5);
-        $table = substr($myquery, strpos($myquery, "from") + 4,strlen($condition));
+        //$table = substr($myquery, strpos($myquery, "from") + 4,strlen($condition));
+        $table = $queryArray[2];
         Sximo::insertLog($table,'Delete' ,'SximoDB', $condition,'');
         return parent::delete($query, $bindings);
     }
