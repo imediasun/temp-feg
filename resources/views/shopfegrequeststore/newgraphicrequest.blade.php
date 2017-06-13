@@ -200,15 +200,9 @@
                     clearErrorMessage();
                 });
                 this.on("removedfile", function(file) {
-                    console.log(file);
-                    id = "input#"+file.xhr.response+"";
-                    console.log($("document "+id).val());
+                    $('input[id="'+file.xhr.response+'"]').remove();
                     console.log(file.xhr.response);
-                    $(id).remove();
-                    alert('removed');
                     if (!file.serverId) { return; } // The file hasn't been uploaded
-
-                    //$.post("delete-file.php?id=" + file.serverId); // Send the file id along
                 });
             }
         });
@@ -216,8 +210,6 @@
             var newdiv = document.createElement('div');
             newdiv.innerHTML = " <br><input id="+value+" style="+ "display:none"+" type='text' name='myInputs[]' value='"+value+"'>";
             document.getElementById("testdiv").appendChild(newdiv);
-
-
         }
 
         Dropzone.options.myAwesomeDropzone = {
