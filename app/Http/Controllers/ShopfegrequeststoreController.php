@@ -356,8 +356,6 @@ class ShopfegrequeststoreController extends Controller
 
     function getNewGraphicRequest()
     {
-        \DB::table('new_graphics_request')->insert(['item_id'=>1]);
-        dd('here');
         return view('shopfegrequeststore.newgraphicrequest', $this->data);
     }
 
