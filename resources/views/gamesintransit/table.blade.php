@@ -140,7 +140,7 @@
                                 'module' => 'mylocationgame', 
                                 'url' => 'mylocationgame'
                             ), 
-                            $access, $id, $setting) !!}
+                            $access, $id.'/gamesintransit', $setting) !!}
 					
 
 				</td>
