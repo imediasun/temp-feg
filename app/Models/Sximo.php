@@ -27,6 +27,11 @@ class Sximo extends Model {
     {
         $table = 'tb_logs';
         $user = (is_object(\Auth::user()) ? \Auth::user()->id : 'User Not Logged In');
+        $cronTask = (Request::ip() == "127.0.0.1");
+        if($cronTask)
+        {
+            $user = "System";
+        }
         $data = array(
             'auditID' => '',
             'note' => $note,
@@ -40,15 +45,17 @@ class Sximo extends Model {
 
         $l = '';
         $L =  FEGSystemHelper::setLogger($l, "user-action-logs.log", "FEGUserActions", "USER_ACTIONS");
-        $L->log('--------------------Start UserActions logging------------------');
-        $L->log("User ID : ". $user);
-        $L->log("User IP : ".Request::ip());
-        $L->log("Module or Table : ".$module);
-        $L->log("Notes : ".$note);
+
+        $cronTask ? $L->log('--------------------Start CronJobActions logging------------------') : $L->log('--------------------Start UserActions logging------------------');
+
+        $L->log("User ID ",$user);
+        $L->log("User IP ",Request::ip());
+        $L->log("Module or Table : ".$module, $note);
         $L->log("Task : ".$task);
         $L->log("Conditions : ".json_encode($conditions));
         $L->log("Parameters : " . json_encode($params));
-        $L->log('--------------------End UserActions logging------------------');
+
+        $cronTask ? $L->log('--------------------End CronJobActions logging------------------') : $L->log('--------------------End UserActions logging------------------');
         $id = \DB::table($table)->insertGetId($data);
         return $id;
     }
