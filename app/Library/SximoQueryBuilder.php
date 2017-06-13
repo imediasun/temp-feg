@@ -13,12 +13,16 @@ class SximoQueryBuilder extends Builder
 
     public function update(array $values)
     {
-        $allwheres = [];dd($this->wheres);
-        foreach ($this->wheres as $i => $where)
+        $allwheres = [];
+        if(isset($this->wheres[0]['value']))
         {
-            $allwheres[$i]['column'] = $where['column'];
-            $allwheres[$i]['value'] = $where['value'];
+            foreach ($this->wheres as $i => $where)
+            {
+                $allwheres[$i]['column'] = $where['column'];
+                $allwheres[$i]['value'] = $where['value'];
+            }
         }
+
         Sximo::insertLog($this->from,'Update' , 'SximoQueryBuilder',json_encode($allwheres),json_encode($values));
         return parent::update($values);
     }
@@ -27,11 +31,13 @@ class SximoQueryBuilder extends Builder
     {
         if($method == 'insert' || $method == 'insertGetId')
         {
-            $allwheres = [];
-            foreach ($this->wheres as $i => $where)
+            if(isset($this->wheres[0]['value']))
             {
-                $allwheres[$i]['column'] = $where['column'];
-                $allwheres[$i]['value'] = $where['value'];
+                foreach ($this->wheres as $i => $where)
+                {
+                    $allwheres[$i]['column'] = $where['column'];
+                    $allwheres[$i]['value'] = $where['value'];
+                }
             }
             Sximo::insertLog($this->from,'Insert/InsertGetId' , 'SximoQueryBuilder',json_encode($allwheres),json_encode($parameters));
         }
@@ -40,11 +46,13 @@ class SximoQueryBuilder extends Builder
 
     public function delete($id = null)
     {
-        $allwheres = [];
-        foreach ($this->wheres as $i => $where)
+        if(isset($this->wheres[0]['value']))
         {
-            $allwheres[$i]['column'] = $where['column'];
-            $allwheres[$i]['value'] = $where['value'];
+            foreach ($this->wheres as $i => $where)
+            {
+                $allwheres[$i]['column'] = $where['column'];
+                $allwheres[$i]['value'] = $where['value'];
+            }
         }
         Sximo::insertLog($this->from,'Delete' , 'SximoQueryBuilder',json_encode($allwheres),json_encode($id));
 

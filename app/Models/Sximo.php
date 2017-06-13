@@ -26,27 +26,36 @@ class Sximo extends Model {
     public static function insertLog($module, $task ,$note = '', $conditions = '',$params = null)
     {
         $table = 'tb_logs';
+        $user = (is_object(\Auth::user()) ? \Auth::user()->id : 'User Not Logged In');
+        $cronTask = (Request::ip() == "127.0.0.1");
+        if($cronTask)
+        {
+            $user = "System";
+        }
         $data = array(
             'auditID' => '',
             'note' => $note,
             'ipaddress' => Request::ip(),
-            'user_id' => \Session::get('uid'),
+            'user_id' => $user,
             'module'  => $module,
             'task'    => $task,
             'params' => $params,
             'conditions' => $conditions
         );
+
         $l = '';
         $L =  FEGSystemHelper::setLogger($l, "user-action-logs.log", "FEGUserActions", "USER_ACTIONS");
-        $L->log('--------------------Start UserActions logging------------------');
-        $L->log("User ID : ". \Auth::user()?\Auth::user()->id:'User Not Logged In');
-        $L->log("User IP : ".Request::ip());
-        $L->log("Module or Table : ".$module);
-        $L->log("Notes : ".$note);
+
+        $cronTask ? $L->log('--------------------Start CronJobActions logging------------------') : $L->log('--------------------Start UserActions logging------------------');
+
+        $L->log("User ID ",$user);
+        $L->log("User IP ",Request::ip());
+        $L->log("Module or Table : ".$module, $note);
         $L->log("Task : ".$task);
         $L->log("Conditions : ".json_encode($conditions));
         $L->log("Parameters : " . json_encode($params));
-        $L->log('--------------------End UserActions logging------------------');
+
+        $cronTask ? $L->log('--------------------End CronJobActions logging------------------') : $L->log('--------------------End UserActions logging------------------');
         $id = \DB::table($table)->insertGetId($data);
         return $id;
     }
