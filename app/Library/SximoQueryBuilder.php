@@ -13,7 +13,13 @@ class SximoQueryBuilder extends Builder
 
     public function update(array $values)
     {
-        Sximo::insertLog($this->from,'Update' , 'SximoQueryBuilder',json_encode($this->wheres),json_encode($values));
+        $allwheres = [];
+        foreach ($this->wheres as $i => $where)
+        {
+            $allwheres[$i]['column'] = $where['column'];
+            $allwheres[$i]['value'] = $where['value'];
+        }
+        Sximo::insertLog($this->from,'Update' , 'SximoQueryBuilder',json_encode($allwheres),json_encode($values));
         return parent::update($values);
     }
 
@@ -21,14 +27,26 @@ class SximoQueryBuilder extends Builder
     {
         if($method == 'insert' || $method == 'insertGetId')
         {
-            Sximo::insertLog($this->from,'Insert/InsertGetId' , 'SximoQueryBuilder',json_encode($this->wheres),json_encode($parameters));
+            $allwheres = [];
+            foreach ($this->wheres as $i => $where)
+            {
+                $allwheres[$i]['column'] = $where['column'];
+                $allwheres[$i]['value'] = $where['value'];
+            }
+            Sximo::insertLog($this->from,'Insert/InsertGetId' , 'SximoQueryBuilder',json_encode($allwheres),json_encode($parameters));
         }
         return parent::__call($method,$parameters);
     }
 
     public function delete($id = null)
     {
-        Sximo::insertLog($this->from,'Delete' , 'SximoQueryBuilder',json_encode($this->wheres),json_encode($id));
+        $allwheres = [];
+        foreach ($this->wheres as $i => $where)
+        {
+            $allwheres[$i]['column'] = $where['column'];
+            $allwheres[$i]['value'] = $where['value'];
+        }
+        Sximo::insertLog($this->from,'Delete' , 'SximoQueryBuilder',json_encode($allwheres),json_encode($id));
 
         return parent::delete($id);
     }
