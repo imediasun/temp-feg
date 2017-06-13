@@ -195,15 +195,26 @@
             init:function(){
                 this.options.parallelUploads = 5,
                 this.on("success", function(file,response) {
-                    addInput(response);
+                    addInput(response,file);
                     anyImageUploaded = true;
                     clearErrorMessage();
                 });
+                this.on("removedfile", function(file) {
+                    console.log(file);
+                    id = "input#"+file.xhr.response+"";
+                    console.log($("document "+id).val());
+                    console.log(file.xhr.response);
+                    $(id).remove();
+                    alert('removed');
+                    if (!file.serverId) { return; } // The file hasn't been uploaded
+
+                    //$.post("delete-file.php?id=" + file.serverId); // Send the file id along
+                });
             }
         });
-        function addInput(value){
+        function addInput(value,file){
             var newdiv = document.createElement('div');
-            newdiv.innerHTML = " <br><input style="+ "display:none"+" type='text' name='myInputs[]' value='"+value+"'>";
+            newdiv.innerHTML = " <br><input id="+value+" style="+ "display:none"+" type='text' name='myInputs[]' value='"+value+"'>";
             document.getElementById("testdiv").appendChild(newdiv);
 
 

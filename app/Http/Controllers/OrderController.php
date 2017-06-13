@@ -7,7 +7,8 @@ use App\Models\OrderSendDetails;
 use \App\Models\Sximo\Module;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
-use Validator, Input, Redirect, Cache;
+use App\Library\SximoDB;
+use Validator, Input, Redirect, Cache ;
 use PHPMailer;
 use PHPMailerOAuth;
 
