@@ -265,7 +265,7 @@ class AddtocartController extends Controller
         if ($data['user_level'] == 3 || $data['user_level'] == 4 || $data['user_level'] == 5 || $data['user_level'] == 7 || $data['user_level'] == 9 || $data['user_level'] == 10) {
             $statusId = 9; /// 9 IS USED AS AN ARBITRARY DELIMETER TO KEEP CART SEPERATE FROM LOCATIONS' OWN
         } else {
-            $statusId = 0;
+            $statusId = 4;
         }
 
         if (!empty($new_location)) {

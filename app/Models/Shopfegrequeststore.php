@@ -109,7 +109,7 @@ class shopfegrequeststore extends Sximo  {
                                 V.min_order_amt - SUM(R.qty*P.case_price) AS amt_short FROM requests R
 								LEFT JOIN products P ON P.id = R.product_id
 								LEFT JOIN vendor V ON V.id = P.vendor_id
-									WHERE R.status_id = 0
+									WHERE R.status_id = 4
 									  AND R.location_id = "'.$location_id .'"
 								 GROUP BY V.vendor_name');
             foreach ($query as $row)

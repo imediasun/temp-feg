@@ -399,13 +399,13 @@ class ShopfegrequeststoreController extends Controller
 
     function getPopupCart($productId = null, $qty = 0)
     {
-        if (\Session::get('gid') == 2)
-        {
-            return response()->json(array(
-                'status' => 'error',
-                'message' => "You don't have permission to perform this task"
-            ));
-        }
+//        if (\Session::get('gid') == 2)
+//        {
+//            return response()->json(array(
+//                'status' => 'error',
+//                'message' => "You don't have permission to perform this task"
+//            ));
+//        }
 
         $current_total_cart = \Session::get('total_cart');
         \Session::put('productId', $productId);
