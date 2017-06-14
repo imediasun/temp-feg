@@ -789,19 +789,16 @@ jQuery(document).ready(function ($) {
 
 	console.log(navigator.sayswho);
 
-        $('a[href="http://dev.fegllc.com/forum"],a[href="http://admin1.fegllc.com/forum"]').click(function(e) {
+        $('body #sidemenu a[href="http://dev.fegllc.com/forum"],a[href="http://admin1.fegllc.com/forum"]').click(function(e) {
             e.preventDefault();
             e.stopPropagation();
-            alert('here');
             var Link = $(this);
-
             Link.attr("target", "_blank");
             window.open(Link.attr("href"));
-
             return false;
         });
 
-    $('body #sidemenu a:not(.expand)').not('#logo').on('click',function (e) {
+    $('body #sidemenu a:not(.expand)').not('a[href="http://dev.fegllc.com/forum"]').not('a[href="http://admin1.fegllc.com/forum"]').not('#logo').on('click',function (e) {
 		e.preventDefault();
 		var url = $(this).attr('href');
 		var href = $(this).attr('href').split('/');
