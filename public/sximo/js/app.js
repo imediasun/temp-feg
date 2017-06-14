@@ -789,7 +789,7 @@ jQuery(document).ready(function ($) {
 
 	console.log(navigator.sayswho);
 
-    $('body #sidemenu a:not(.expand)').not('#logo').not('input[target=_blank]').on('click',function (e) {
+    $('body #sidemenu a:not(.expand):not(.newtab)').not('#logo').on('click',function (e) {
 		e.preventDefault();
 		var url = $(this).attr('href');
 		var href = $(this).attr('href').split('/');
@@ -1171,4 +1171,5 @@ function getCartTotal()
 $(document).ready(function(){
     getCartTotal();
     $('a[href="http://admin1.fegllc.com/forum"]').attr('target','_blank');
+    $('a[href="http://dev.fegllc.com/forum"]').attr('target','_blank');
 });
