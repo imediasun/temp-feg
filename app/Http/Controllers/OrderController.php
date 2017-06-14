@@ -206,6 +206,7 @@ class OrderController extends Controller
             'params' => $filter,
             'global' => (isset($this->access['is_global']) ? $this->access['is_global'] : 0)
         );
+        
         $isRedirected=\Session::get('filter_before_redirect');
         \Session::put('order_selected',$order_selected);
 
@@ -241,6 +242,11 @@ class OrderController extends Controller
             $partial = $data->is_partial == 1 ? ' (Partial)':'';
             $rows[$index]->status_id = (isset($order_status[0]->status) ? $order_status[0]->status.$partial : '');
         }
+
+        if($sort == 'OT.order_type'){
+            $params['sort'] = 'order_type_id';
+        }
+
         $this->data['param'] = $params;
         $this->data['rowData'] = $rows;
         // Build Pagination
