@@ -271,11 +271,11 @@ class managefreightquoters extends Sximo
     public static function populateGamesDropDownInFreightQuote()
     {
         $concat = 'CONCAT(IF(G.location_id = 0, "IN TRANSIT", G.location_id), " | ",T.game_title," | ",G.id, IF(G.notes = "","", CONCAT(" (",G.notes,")")))';
-        $where="AND L.active = 1";
+        $where="AND IF(G.status_id = 3, 1, L.active) = 1";
         $orderBy = 'G.status_id DESC,L.id,T.game_title';
         $query = \DB::select('SELECT G.id AS id, IFNULL(' . $concat . ',"") AS text  FROM game G
-							Inner JOIN game_title T ON T.id = G.game_title_id
-							Inner JOIN location L ON L.id = G.location_id
+							LEFT JOIN game_title T ON T.id = G.game_title_id
+							LEFT JOIN location L ON L.id = G.location_id
                             WHERE G.sold = 0 ' . $where . '  ORDER BY ' . $orderBy);
         $query=json_decode(json_encode($query),true);
         return $query;
