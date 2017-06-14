@@ -789,7 +789,7 @@ jQuery(document).ready(function ($) {
 
 	console.log(navigator.sayswho);
 
-    $('body #sidemenu a:not(.expand)').not('#logo').not('input[target=_blank]').on('click',function (e) {
+    $('body #sidemenu a:not(.expand)').not('#logo').not('a[target=_blank]').on('click',function (e) {
 		e.preventDefault();
 		var url = $(this).attr('href');
 		var href = $(this).attr('href').split('/');
