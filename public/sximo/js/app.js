@@ -1170,6 +1170,6 @@ function getCartTotal()
 
 $(document).ready(function(){
     getCartTotal();
-    $('a[href="http://admin1.fegllc.com/forum"]').attr('target','_blank');
-    $('a[href="http://dev.fegllc.com/forum"]').attr('target','_blank');
+    $('a[href="http://admin1.fegllc.com/forum"]').addClass('newtab').attr('target','_blank');
+    $('a[href="http://dev.fegllc.com/forum"]').addClass('newtab').attr('target','_blank');
 });
