@@ -63,14 +63,10 @@ class MylocationgameController extends Controller
             $this->buildSearch($customQueryString);
 
         // Get assigned locations list as sql query (part)
-        if($canSeeAllLocations == false)
-        {
-            $locationFilter = \SiteHelpers::getQueryStringForLocation('game');
-        }
-        else
-        {
-            $locationFilter = '';
-        }
+
+            $locationFilter = \SiteHelpers::getQueryStringForLocation('game','location_id',[],'',$canSeeAllLocations);
+
+
         // if search filter does not have location_id filter
         // add default location filter
         $frontendSearchFilters = $this->model->getSearchFilters(array('location_id' => ''));

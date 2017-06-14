@@ -15,7 +15,7 @@ class pendingrequest extends Sximo  {
 
 	public static function querySelect(  ){
 		
-		return "SELECT  requests.*,products.unit_price,merch_request_status.status AS status_id,vendor.id AS vendor_id  FROM requests
+		return "SELECT  requests.*,products.unit_price,merch_request_status.status ,vendor.id AS vendor_id  FROM requests
                 LEFT JOIN merch_request_status ON (requests.status_id = merch_request_status.id)
                 LEFT OUTER JOIN products
                 ON requests.product_id=products.id
@@ -38,7 +38,7 @@ class pendingrequest extends Sximo  {
         $key = with(new static)->primaryKey;
 
         $result =  \DB::select(
-           'select  requests.*,U1.username as request_name,merch_request_status.status AS status_id,U2.username process_name,l1.location_name as location,p.vendor_description  FROM requests
+           'select  requests.*,U1.username as request_name,merch_request_status.status ,U2.username process_name,l1.location_name as location,p.vendor_description  FROM requests
 LEFT JOIN merch_request_status ON (requests.status_id = merch_request_status.id)
 left outer join users U1 on requests.request_user_id = U1.id
 left outer join users U2 on requests.process_user_id=U2.id

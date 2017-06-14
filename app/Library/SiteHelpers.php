@@ -2276,24 +2276,46 @@ class SiteHelpers
      * @param number $id User ID
      * @return array
      */
-    static function getLocationDetails($id)
+    static function getLocationDetails($id,$canSeeAllLocations = false)
     {
-        $locations = \DB::table('user_locations')
-            ->join('location', 'user_locations.location_id', '=', 'location.id')
-            ->leftJoin('debit_type', 'debit_type.id', '=', 'location.debit_type_id')
-            ->select(DB::raw(implode(',', [
-                'DISTINCT location.id',
-                'location.location_name',
-                'location.location_name_short',
-                'location.debit_type_id',
-                'debit_type.company',
-                'location.street1',
-                'location.state',
-                'location.city',
-                'location.zip'])))
-            ->where('location.active', 1)
-            ->where('user_locations.user_id', '=', $id)->orderBy('id', 'asc')
-            ->get();
+    	if($canSeeAllLocations)
+	    {
+            $locations = \DB::table('user_locations')
+                ->join('location', 'user_locations.location_id', '=', 'location.id')
+                ->leftJoin('debit_type', 'debit_type.id', '=', 'location.debit_type_id')
+                ->select(DB::raw(implode(',', [
+                    'DISTINCT location.id',
+                    'location.location_name',
+                    'location.location_name_short',
+                    'location.debit_type_id',
+                    'debit_type.company',
+                    'location.street1',
+                    'location.state',
+                    'location.city',
+                    'location.zip'])))
+                ->where('location.active', 1)
+                ->orderBy('id', 'asc')
+                ->get();
+	    }
+	    else{
+            $locations = \DB::table('user_locations')
+                ->join('location', 'user_locations.location_id', '=', 'location.id')
+                ->leftJoin('debit_type', 'debit_type.id', '=', 'location.debit_type_id')
+                ->select(DB::raw(implode(',', [
+                    'DISTINCT location.id',
+                    'location.location_name',
+                    'location.location_name_short',
+                    'location.debit_type_id',
+                    'debit_type.company',
+                    'location.street1',
+                    'location.state',
+                    'location.city',
+                    'location.zip'])))
+                ->where('location.active', 1)
+                ->where('user_locations.user_id', '=', $id)->orderBy('id', 'asc')
+                ->get();
+	    }
+
         return $locations;
     }
 
@@ -2331,9 +2353,9 @@ class SiteHelpers
         return $locations;
     }
 
-    static function getQueryStringForLocation($table, $fieldName = 'location_id', $addOnLocations = array(), $orClause = '')
+    static function getQueryStringForLocation($table, $fieldName = 'location_id', $addOnLocations = array(), $orClause = '',$canSeeAllLocations = false)
     {
-        $locationsData = self::getLocationDetails(\Session::get('uid'));
+        $locationsData = self::getLocationDetails(\Session::get('uid'),$canSeeAllLocations);
         $locations = is_array($addOnLocations) ? $addOnLocations : array();
         foreach ($locationsData as $locationItem) {
             $locations[] = "'" . $locationItem->id . "'";
