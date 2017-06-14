@@ -995,7 +995,7 @@ class OrderController extends Controller
             if (!empty($data[0]['po_attn'])) {
                 $data[0]['po_location'] = $data[0]['po_location'] . "\n" . $data[0]['po_attn'];
             }
-            $addonPONote = "\r\nShip Palatalized Whenever Possible. ";
+            $addonPONote = "\r\n Ship Palletized Whenever Possible. ";
             if (empty($data[0]['po_notes'])) {
                 $data[0]['po_notes'] = " NOTE: **TO CONFIRM ORDER RECEIPT AND PRICING, SEND EMAILS TO " . $data[0]['email'] . $data[0]['cc_email'] . $data[0]['loc_contact_email'] . "**".$addonPONote;
             } else {
