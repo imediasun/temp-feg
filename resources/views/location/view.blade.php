@@ -66,11 +66,11 @@
                             <td colspan="1"><h3>Location Phone:</h3></td>
                             <td><h4>{{ DateHelpers::formatStringValue($row->phone,$nodata['phone']) }}  </h4></td>
                         </tr>
-                        <tr>
+                       {{-- <tr>
                             <td colspan="1"><h3>Internal Contact:</h3></td>
                             <td><h4 class='tips' title="{{$row->contact_id}}">{{ DateHelpers::formatStringValue(@$row->contact_name,$nodata['contact_id']) }}</h4></td>
                             </td>
-                        </tr>
+                        </tr>--}}
                         {{-- <tr>
                             <td colspan="1"><h3>Region:</h3></td>
                             <td><h4>{{ DateHelpers::formatZeroValue($row->region_id,$nodata['region_id']) }}  </h4></td>
