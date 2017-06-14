@@ -69,7 +69,7 @@ class MylocationgameController extends Controller
         }
         else
         {
-            $locationFilter = '';
+            $locationFilter = 'And game.location_id != 0';
         }
         // if search filter does not have location_id filter
         // add default location filter
