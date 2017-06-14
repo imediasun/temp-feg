@@ -38,7 +38,7 @@ class addtocart extends Sximo
         if ($data['user_level'] == 3 || $data['user_level'] == 4 || $data['user_level'] == 5 || $data['user_level'] == 7 || $data['user_level'] == 9 || $data['user_level'] == 10) {
             $where.= " AND requests.location_id = " . \Session::get('selected_location') . " AND requests.status_id = 9"; /// 9 IS USED AS AN ARBITRARY DELIMETER TO KEEP CART SEPERATE FROM LOCATIONS' OWN
         } else {
-            $where.= " AND requests.location_id = " . \Session::get('selected_location') . " AND requests.status_id = 0";
+            $where.= " AND requests.location_id = " . \Session::get('selected_location') . " AND requests.status_id = 4";
         }
         return $where ;
     }
@@ -56,7 +56,7 @@ class addtocart extends Sximo
 
 
 
-        if ($data['user_level'] == 2)
+        if (false && $data['user_level'] == 2) 
         {
             //redirect('./dashboard', 'refresh');
             return false;
@@ -76,7 +76,7 @@ class addtocart extends Sximo
             }
             else
             {
-                $statusId = 0;
+                $statusId = 4;
             }
             if(!empty($productId) &&!empty($qty))
             {
