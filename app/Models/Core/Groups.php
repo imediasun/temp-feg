@@ -10,7 +10,7 @@ class Groups extends Sximo  {
 	protected $primaryKey = 'group_id';
     const USER = 1;
     const PARTNER = 2;
-    const MERCH_MANAGER = 3;
+    const MERCHANDISE_MANAGER = 3;
     const FIELD_MANAGER = 4;
     const OFFICE_MANAGER = 5;
     const DISTRICT_MANAGER = 6;

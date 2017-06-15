@@ -804,7 +804,7 @@ class Sximo extends Model {
         if ($user_level == Groups::PARTNER) {
             $data['user_level'] = 'partner';
         }
-        if ($user_level == Groups::MERCH_MANAGER) {
+        if ($user_level == Groups::MERCHANDISE_MANAGER) {
             $data['user_level'] = 'merchmgr';
         }
         if ($user_level == Groups::FIELD_MANAGER) {
@@ -834,7 +834,7 @@ class Sximo extends Model {
         if ($user_level == Groups::USER || $user_level == Groups::PARTNER || $user_level == Groups::DISTRICT_MANAGER || $user_level == Groups::PARTNER_PLUS || $user_level == Groups::TECHNICAL_MANAGER) {
             $data['user_group'] = 'regusers';
         }
-        if ($user_level == Groups::MERCH_MANAGER || $user_level == Groups::FIELD_MANAGER || $user_level == Groups::OFFICE_MANAGER || $user_level == Groups::FINANCE_MANAGER || $user_level == Groups::GUEST || $user_level == Groups::SUPPER_ADMIN) {
+        if ($user_level == Groups::MERCHANDISE_MANAGER || $user_level == Groups::FIELD_MANAGER || $user_level == Groups::OFFICE_MANAGER || $user_level == Groups::FINANCE_MANAGER || $user_level == Groups::GUEST || $user_level == Groups::SUPPER_ADMIN) {
             $data['user_group'] = 'allmgrs';
         }
         $get_locations_by_region = \Session::get('get_locations_by_region');
@@ -941,15 +941,15 @@ class Sximo extends Model {
         }
 
         if ($user_level == 'all_users') {
-            $user_level_statement = ' AND U.group_id IN('.Groups::USER.','.Groups::PARTNER.','.Groups::MERCH_MANAGER.','.Groups::FIELD_MANAGER.','.Groups::OFFICE_MANAGER.','.Groups::DISTRICT_MANAGER.','.Groups::FINANCE_MANAGER.','.Groups::PARTNER_PLUS.','.Groups::GUEST.','.Groups::SUPPER_ADMIN.') ';
+            $user_level_statement = ' AND U.group_id IN('.Groups::USER.','.Groups::PARTNER.','.Groups::MERCHANDISE_MANAGER.','.Groups::FIELD_MANAGER.','.Groups::OFFICE_MANAGER.','.Groups::DISTRICT_MANAGER.','.Groups::FINANCE_MANAGER.','.Groups::PARTNER_PLUS.','.Groups::GUEST.','.Groups::SUPPER_ADMIN.') ';
             $query_table = 'users';
         }
         if ($user_level == 'all_employees') {
-            $user_level_statement = ' AND U.group_id IN('.Groups::USER.','.Groups::MERCH_MANAGER.','.Groups::FIELD_MANAGER.','.Groups::OFFICE_MANAGER.','.Groups::DISTRICT_MANAGER.','.Groups::FINANCE_MANAGER.','.Groups::SUPPER_ADMIN.') ';
+            $user_level_statement = ' AND U.group_id IN('.Groups::USER.','.Groups::MERCHANDISE_MANAGER.','.Groups::FIELD_MANAGER.','.Groups::OFFICE_MANAGER.','.Groups::DISTRICT_MANAGER.','.Groups::FINANCE_MANAGER.','.Groups::SUPPER_ADMIN.') ';
             $query_table = 'users';
         }
         if ($user_level == 'all_managers') {
-            $user_level_statement = ' AND U.group_id IN('.Groups::MERCH_MANAGER.','.Groups::FIELD_MANAGER.','.Groups::OFFICE_MANAGER.','.Groups::DISTRICT_MANAGER.','.Groups::FINANCE_MANAGER.','.Groups::SUPPER_ADMIN.') ';
+            $user_level_statement = ' AND U.group_id IN('.Groups::MERCHANDISE_MANAGER.','.Groups::FIELD_MANAGER.','.Groups::OFFICE_MANAGER.','.Groups::DISTRICT_MANAGER.','.Groups::FINANCE_MANAGER.','.Groups::SUPPER_ADMIN.') ';
             $query_table = 'users';
         }
         if ($user_level == 'technical_contact') {
@@ -1039,7 +1039,7 @@ class Sximo extends Model {
             return $total;
         }
         $data['user_level'] = \Session::get('gid');
-        if ($data['user_level'] == Groups::MERCH_MANAGER || $data['user_level'] == Groups::FIELD_MANAGER || $data['user_level'] == Groups::OFFICE_MANAGER || $data['user_level'] == Groups::FINANCE_MANAGER || $data['user_level'] == Groups::GUEST || $data['user_level'] == Groups::SUPPER_ADMIN) {
+        if ($data['user_level'] == Groups::MERCHANDISE_MANAGER || $data['user_level'] == Groups::FIELD_MANAGER || $data['user_level'] == Groups::OFFICE_MANAGER || $data['user_level'] == Groups::FINANCE_MANAGER || $data['user_level'] == Groups::GUEST || $data['user_level'] == Groups::SUPPER_ADMIN) {
            $status_id = 9; /// 9 IS USED AS AN ARBITRARY DELIMETER TO KEEP CART SEPERATE FROM LOCATIONS' OWN
         } else {
             $status_id = 0;
