@@ -572,8 +572,8 @@ class SyncHelpers
                             }   
                             
                             if (!empty($location)) {   
-                                FEGSystemHelper::logit("    FINAL: DB UPDATED [game: $game_id], '$foundLocation'(debit type: $foundDebitType) date: '$foundLastPlayed' \r\n", $lf, $lp);
                                 DB::update($updateSQL, [$foundLastPlayed, $foundLocation, $foundDebitType, $id]);                            
+                                FEGSystemHelper::logit("    FINAL: DB UPDATED [game: $game_id], '$foundLocation'(debit type: $foundDebitType) date: '$foundLastPlayed' \r\n", $lf, $lp);
                             }
                             else {
                                 FEGSystemHelper::logit("    FINAL: [game: $game_id] Location not found hence skipping [DATE: '$foundLastPlayed', LOC: '$foundLocation' ($foundDebitType), DBID: $id]\r\n", $lf, $lp);
@@ -596,7 +596,7 @@ class SyncHelpers
                 }
             );  
                 
-        if (!$result || FEGSystemHelper::session_pull("terminate_elm5_schedule_$_scheduleId") == 1) {
+        if (FEGSystemHelper::session_pull("terminate_elm5_schedule_$_scheduleId") == 1) {
             FEGSystemHelper::logit("GLP USER TERMINATED !!!! - rolling back", $lf, $lp);
             DB::rollBack();
             return false;
