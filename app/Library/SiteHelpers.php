@@ -1033,7 +1033,7 @@ class SiteHelpers
                                     var data = [];
                                     $((element.val()||'').split(',')).each(function () {
                                         var obj = { id: this, text: cache[this] || this };
-                                        data.push(obj);
+                                        //data.push(obj);
                                     });
                                     callback(data);
                                 },
