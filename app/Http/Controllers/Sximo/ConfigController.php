@@ -4,6 +4,7 @@ use App\Http\Controllers\controller;
 use App\Library\FEG\System\FEGSystemHelper;
 use App\Models\Core\Groups;
 use App\Models\Feg\System\Options;
+use App\Models\Sximo;
 use App\User;
 use Illuminate\Http\Request;
 use Validator, Input, Redirect;
@@ -15,7 +16,7 @@ class ConfigController extends Controller
     {
         parent::__construct();
         $this->data['pageTitle'] = "Settings";
-        if (\Auth::check() or \Session::get('gid') != '1') {
+        if (\Auth::check() or \Session::get('gid') != Groups::USER) {
             //	echo 'redirect';
             return Redirect::to('user/profile');
         };

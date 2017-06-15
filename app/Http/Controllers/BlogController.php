@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\controller;
 use App\Models\Blog;
+use App\Models\Sximo;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Validator, Input, Redirect;
@@ -269,7 +270,7 @@ class BlogController extends Controller
     public function getRemovecomm(Request $request, $id, $alias)
     {
 
-        if (\Session::get('gid') != 1)
+        if (\Session::get('gid') != Groups::USER)
             return Redirect::to('')
                 ->with('message', \SiteHelpers::alert('error', \Lang::get('core.note_restric')));
 

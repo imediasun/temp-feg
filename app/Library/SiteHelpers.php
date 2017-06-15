@@ -1,6 +1,8 @@
 <?php
 
 use App\Library\FEG\System\FEGSystemHelper;
+use \App\Models\Sximo;
+use App\Models\Core\Groups;
 
 class SiteHelpers
 {
@@ -2142,9 +2144,9 @@ class SiteHelpers
                 $data['selected_location_name'] = $locData['location_name_short'];
             }
 
-            if ($data['user_level'] == 6 || $data['reg_id'] > 1) // IF USER IS DISTRICT MANAGER OR LOCATIONS ARE BASED ON REGION (TYPICALLY USED FOR MANY, ROUTE LOCATIONS)
+            if ($data['user_level'] == Groups::DISTRICT_MANAGER || $data['reg_id'] > 1) // IF USER IS DISTRICT MANAGER OR LOCATIONS ARE BASED ON REGION (TYPICALLY USED FOR MANY, ROUTE LOCATIONS)
             {
-                if ($data['user_level'] == 6) {
+                if ($data['user_level'] == Groups::DISTRICT_MANAGER) {
                     $distMgrQuery = $this->db->query("SELECT DISTINCT GROUP_CONCAT(L.id) AS LocationIdList
 														 FROM location L
 														WHERE L.region_id IN(
@@ -2405,7 +2407,7 @@ class SiteHelpers
             $prevMonthYear = $curYear;
         }
         $user_level = \Session::get('gid');
-        if ($user_level == 1 || $user_level == 2 || $user_level == 6 || $user_level == 8 || $user_level == 11) {
+        if ($user_level == Groups::USER || $user_level == Groups::PARTNER || $user_level == Groups::DISTRICT_MANAGER || $user_level == Groups::PARTNER_PLUS || $user_level == Groups::TECHNICAL_MANAGER) {
             $query = \DB::select('SELECT (SELECT SUM(budget_value) FROM location_budget
 											WHERE location_id=' . $loc1 . ' AND MONTH(budget_date) = ' . $curMonthNumber . ' AND YEAR(budget_date)=' . $curYear . ')
 											   AS monthly_merch_budget,
@@ -2439,7 +2441,7 @@ class SiteHelpers
 										      AND location_id=' . $loc1 . ')
 											   AS annual_order_total');
             $data['user_group'] = "regusers";
-        } else if ($user_level == 6) {
+        } else if ($user_level == Groups::DISTRICT_MANAGER) {
             $query = \DB::select('SELECT (SELECT SUM(budget_value) FROM location_budget left join location on location_budget.location_id = location.id where MONTH(budget_date) = ' . $curMonthNumber . ' AND YEAR(budget_date)=' . $curYear . '
 										 AND location.region_id=' . $reg_id . ')
 										   AS monthly_merch_budget,

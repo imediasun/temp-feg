@@ -1,10 +1,12 @@
 <?php namespace App\Http\Controllers;
 
+use App\Models\Sximo;
 use App\User;
 use Illuminate\Http\Request;
 use PHPMailerOAuth;
 use App\Models\Core\Pages;
 use Validator, Input, Redirect, Auth;
+use App\Models\Core\Groups;
 
 class HomeController extends Controller
 {
@@ -61,7 +63,7 @@ class HomeController extends Controller
                 // If guest not allowed
                 if ($row->allow_guest != 1) {
                     $group_id = \Session::get('gid');
-                    $isValid = (isset($access[$group_id]) && $access[$group_id] == 1 ? 1 : 0);
+                    $isValid = (isset($access[$group_id]) && $access[$group_id] == Groups::USER ? 1 : 0);
                     if ($isValid == 0) {
                         return Redirect::to('');
                         //->with('message', \SiteHelpers::alert('error',Lang::get('core.note_restric')));

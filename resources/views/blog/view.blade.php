@@ -65,7 +65,7 @@
 			<div class="comm" >	
 				<div class="info">{{ date("F j, Y " , strtotime($com['created'])) }} | {{ $com['name'] }} says :  </div>
 				<div class="body">{!! SiteHelpers::BBCode2Html($com['comment']) !!}</div>
-				@if(Session::get('gid') == 1 or $com['user_id'] == Session::get('uid'))
+				@if(Session::get('gid') == \App\Models\Core\Groups::USER or $com['user_id'] == Session::get('uid'))
 					<div class="action"><a href="{{ url('blog/removecomm/'.$com['commentID'].'/'.$row->slug) }}" class="btn btn-white btn-xs text-danger"><i class="fa fa-trash-o"></i> Remove </a></div>
 				@endif	
 				

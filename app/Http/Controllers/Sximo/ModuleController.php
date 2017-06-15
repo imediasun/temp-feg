@@ -1,5 +1,6 @@
 <?php namespace App\Http\Controllers\Sximo;
 
+use App\Models\Core\Groups;
 use App\Models\Sximo\Module;
 use App\Library\ZipHelpers as helper;
 use App\Library\SximoHelpers;
@@ -185,7 +186,7 @@ class ModuleController extends Controller
                 foreach ($groups as $g) {
                     $arr = array();
                     foreach ($tasks as $t => $v) {
-                        if ($g->group_id == '1') {
+                        if ($g->group_id == Groups::USER) {
                             $arr[$t] = '1';
                         } else {
                             $arr[$t] = '0';

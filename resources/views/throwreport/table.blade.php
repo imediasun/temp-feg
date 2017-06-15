@@ -11,7 +11,7 @@
                onclick="reloadData('#{{ $pageModule }}','throwreport/data?return={{ $return }}')"><i
                         class="fa fa-refresh"></i></a>
             -->
-            @if(Session::get('gid') ==10)
+            @if(Session::get('gid') ==  \App\Models\Core\Groups::SUPPER_ADMIN)
                 <a href="{{ url('feg/module/config/'.$pageModule) }}" class="btn btn-xs btn-white tips"
                    title=" {{ Lang::get('core.btn_config') }}"><i class="fa fa-cog"></i></a>
             @endif

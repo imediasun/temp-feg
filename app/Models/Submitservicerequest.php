@@ -2,6 +2,7 @@
 
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Core\Groups;
 
 class submitservicerequest extends Sximo
 {
@@ -88,7 +89,7 @@ class submitservicerequest extends Sximo
         } else {
 
             $user_level = \Session::get('gid');
-            if ($user_level == 1 || $user_level == 2 || $user_level == 6 || $user_level == 8 || $user_level == 11) {
+            if ($user_level == Groups::USER || $user_level == Groups::PARTNER || $user_level == Groups::DISTRICT_MANAGER || $user_level == Groups::PARTNER_PLUS || $user_level == Groups::TECHNICAL_MANAGER) {
 
                 $user_locations = \Session::get('user_locations');
                 $LID = $user_locations[0]->id;

@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use App\Library\FEG\System\FEGSystemHelper;
 use Validator, Input, Redirect;
+use App\Models\Core\Groups;
 
 class SbticketController extends Controller
 {
@@ -124,7 +125,7 @@ class SbticketController extends Controller
 
             }
 
-            if ($group_id != 10) {
+            if ($group_id != Groups::SUPPER_ADMIN) {
                 if (!in_array($user_id, array_unique($members_access))) {
                     $flag = 0;
                 }

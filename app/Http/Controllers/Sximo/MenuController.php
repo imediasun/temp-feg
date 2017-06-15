@@ -4,6 +4,7 @@ use App\Models\Sximo\Menu;
 use App\Http\Controllers\controller;
 use Illuminate\Http\Request;
 use Validator, Input, Redirect;
+use App\Models\Core\Groups;
 
 
 class MenuController extends Controller
@@ -50,7 +51,7 @@ class MenuController extends Controller
             $this->data['menu_lang'] = array();
         }
         //echo '<pre>';print_r($this->data);echo '</pre>';  exit;
-        $this->data['menus'] = \SiteHelpers::menus($pos, 'all', in_array(\Session::get('gid'), [10]));
+        $this->data['menus'] = \SiteHelpers::menus($pos, 'all', in_array(\Session::get('gid'), [Groups::SUPPER_ADMIN]));
         $this->data['modules'] = \DB::table('tb_module')->where('module_type', '!=', 'core')->orderBy('module_title', 'asc')->get();
         $this->data['groups'] = \DB::select(" SELECT * FROM tb_groups ");
         $this->data['pages'] = \DB::table("tb_pages")->orderBy('title', 'asc')->get();

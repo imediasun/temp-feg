@@ -7,6 +7,7 @@ use App\Library\FEG\System\FEGSystemHelper;
 use Request, Log,Redirect;
 use App\Library\SximoEloquentBuilder;
 use App\Library\SximoQueryBuilder;
+use App\Models\Core\Groups;
 class Sximo extends Model {
 
     public static $getRowsQuery = null;
@@ -796,43 +797,44 @@ class Sximo extends Model {
         $data['selected_location'] = \Session::get('selected_location');
         $data['selected_location_name'] = \Session::get('selected_location_name');
         $user_level = \Session::get('gid');
-        if ($user_level == 1) {
+
+        if ($user_level == Groups::USER) {
             $data['user_level'] = 'user';
         }
-        if ($user_level == 2) {
+        if ($user_level == Groups::PARTNER) {
             $data['user_level'] = 'partner';
         }
-        if ($user_level == 3) {
+        if ($user_level == Groups::MERCH_MANAGER) {
             $data['user_level'] = 'merchmgr';
         }
-        if ($user_level == 4) {
+        if ($user_level == Groups::FIELD_MANAGER) {
             $data['user_level'] = 'fieldmgr';
         }
-        if ($user_level == 5) {
+        if ($user_level == Groups::OFFICE_MANAGER) {
             $data['user_level'] = 'officemgr';
         }
-        if ($user_level == 6) {
+        if ($user_level == Groups::DISTRICT_MANAGER) {
             $data['user_level'] = 'distmgr';
         } // TREATED AS REGULAR USER - BELOW
-        if ($user_level == 7) {
+        if ($user_level == Groups::FINANCE_MANAGER) {
             $data['user_level'] = 'financemgr';
         }
-        if ($user_level == 8) {
+        if ($user_level == Groups::PARTNER_PLUS) {
             $data['user_level'] = 'partnerplus';
         } //ADDS ACCESS TO MERCH REQUEST
-        if ($user_level == 9) {
+        if ($user_level == Groups::GUEST) {
             $data['user_level'] = 'guest';
         }
-        if ($user_level == 10) {
+        if ($user_level == Groups::SUPPER_ADMIN) {
             $data['user_level'] = 'superadmin';
         }
-        if ($user_level == 11) {
+        if ($user_level == Groups::TECHNICAL_MANAGER) {
             $data['user_level'] = 'techmgr';
         }
-        if ($user_level == 1 || $user_level == 2 || $user_level == 6 || $user_level == 8 || $user_level == 11) {
+        if ($user_level == Groups::USER || $user_level == Groups::PARTNER || $user_level == Groups::DISTRICT_MANAGER || $user_level == Groups::PARTNER_PLUS || $user_level == Groups::TECHNICAL_MANAGER) {
             $data['user_group'] = 'regusers';
         }
-        if ($user_level == 3 || $user_level == 4 || $user_level == 5 || $user_level == 7 || $user_level == 9 || $user_level == 10) {
+        if ($user_level == Groups::MERCH_MANAGER || $user_level == Groups::FIELD_MANAGER || $user_level == Groups::OFFICE_MANAGER || $user_level == Groups::FINANCE_MANAGER || $user_level == Groups::GUEST || $user_level == Groups::SUPPER_ADMIN) {
             $data['user_group'] = 'allmgrs';
         }
         $get_locations_by_region = \Session::get('get_locations_by_region');
@@ -939,15 +941,15 @@ class Sximo extends Model {
         }
 
         if ($user_level == 'all_users') {
-            $user_level_statement = ' AND U.group_id IN(1,2,3,4,5,6,7,8,9,10) ';
+            $user_level_statement = ' AND U.group_id IN('.Groups::USER.','.Groups::PARTNER.','.Groups::MERCH_MANAGER.','.Groups::FIELD_MANAGER.','.Groups::OFFICE_MANAGER.','.Groups::DISTRICT_MANAGER.','.Groups::FINANCE_MANAGER.','.Groups::PARTNER_PLUS.','.Groups::GUEST.','.Groups::SUPPER_ADMIN.') ';
             $query_table = 'users';
         }
         if ($user_level == 'all_employees') {
-            $user_level_statement = ' AND U.group_id IN(1,3,4,5,6,7,10) ';
+            $user_level_statement = ' AND U.group_id IN('.Groups::USER.','.Groups::MERCH_MANAGER.','.Groups::FIELD_MANAGER.','.Groups::OFFICE_MANAGER.','.Groups::DISTRICT_MANAGER.','.Groups::FINANCE_MANAGER.','.Groups::SUPPER_ADMIN.') ';
             $query_table = 'users';
         }
         if ($user_level == 'all_managers') {
-            $user_level_statement = ' AND U.group_id IN(3,4,5,6,7,10) ';
+            $user_level_statement = ' AND U.group_id IN('.Groups::MERCH_MANAGER.','.Groups::FIELD_MANAGER.','.Groups::OFFICE_MANAGER.','.Groups::DISTRICT_MANAGER.','.Groups::FINANCE_MANAGER.','.Groups::SUPPER_ADMIN.') ';
             $query_table = 'users';
         }
         if ($user_level == 'technical_contact') {
@@ -956,14 +958,14 @@ class Sximo extends Model {
             $query_table = 'users';
         }
         if ($user_level == 'users_plus_district_managers') {
-            $user_level_statement = ' AND (U.group_id IN(1,5,6)  ' . 
-                    ' OR U.id IN (SELECT user_id FROM user_locations WHERE group_id IN (6) AND location_id IN (' . $loc_id . '))) ';
+            $user_level_statement = ' AND (U.group_id IN('.Groups::USER.','.Groups::OFFICE_MANAGER.','.Groups::DISTRICT_MANAGER.')  ' .
+                    ' OR U.id IN (SELECT user_id FROM user_locations WHERE group_id IN ('.Groups::DISTRICT_MANAGER.') AND location_id IN (' . $loc_id . '))) ';
             $location_statement = " AND L.id IN($loc_id) ";
             $query_table = 'users';
         }
         if ($user_level == 'users_plus_district_and_field_managers') {
             $location_statement = " AND L.id IN ($loc_id) ";
-            $user_level_statement = ' AND (U.group_id IN(1,4,5,6) '.
+            $user_level_statement = ' AND (U.group_id IN('.Groups::USER.','.Groups::FIELD_MANAGER.','.Groups::OFFICE_MANAGER.','.Groups::DISTRICT_MANAGER.') '.
                     ' OR U.id IN (SELECT user_id FROM user_locations WHERE group_id IN (1,6) AND location_id IN (' . $loc_id . '))) ';
             $query_table = 'users';
         }
@@ -1037,7 +1039,7 @@ class Sximo extends Model {
             return $total;
         }
         $data['user_level'] = \Session::get('gid');
-        if ($data['user_level'] == 3 || $data['user_level'] == 4 || $data['user_level'] == 5 || $data['user_level'] == 7 || $data['user_level'] == 9 || $data['user_level'] == 10) {
+        if ($data['user_level'] == Groups::MERCH_MANAGER || $data['user_level'] == Groups::FIELD_MANAGER || $data['user_level'] == Groups::OFFICE_MANAGER || $data['user_level'] == Groups::FINANCE_MANAGER || $data['user_level'] == Groups::GUEST || $data['user_level'] == Groups::SUPPER_ADMIN) {
            $status_id = 9; /// 9 IS USED AS AN ARBITRARY DELIMETER TO KEEP CART SEPERATE FROM LOCATIONS' OWN
         } else {
             $status_id = 0;
@@ -1280,7 +1282,7 @@ class Sximo extends Model {
     public function populateVendorsDropdown()
     {
         $gid=\Session::get('gid');
-        if($gid == 2 || $gid == 8 || $gid == 9)
+        if($gid == Groups::PARTNER || $gid == Groups::PARTNER_PLUS || $gid == Groups::GUEST)
         {
             $where = 'WHERE V.partner_hide = 0 and V.isgame = 1';
         }

@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Mockery\CountValidator\Exception;
 use Validator, Input, Redirect;
+use App\Models\Core\Groups;
 
 class AddtocartController extends Controller
 {
@@ -262,7 +263,7 @@ class AddtocartController extends Controller
 
         $location_id = \Session::get('selected_location');
         $data['user_level'] = \Session::get('gid');
-        if ($data['user_level'] == 3 || $data['user_level'] == 4 || $data['user_level'] == 5 || $data['user_level'] == 7 || $data['user_level'] == 9 || $data['user_level'] == 10) {
+        if ($data['user_level'] == Groups::MERCH_MANAGER || $data['user_level'] == Groups::FIELD_MANAGER || $data['user_level'] == Groups::OFFICE_MANAGER || $data['user_level'] == Groups::FINANCE_MANAGER || $data['user_level'] == Groups::GUEST || $data['user_level'] == Groups::SUPPER_ADMIN) {
             $statusId = 9; /// 9 IS USED AS AN ARBITRARY DELIMETER TO KEEP CART SEPERATE FROM LOCATIONS' OWN
         } else {
             $statusId = 4;
