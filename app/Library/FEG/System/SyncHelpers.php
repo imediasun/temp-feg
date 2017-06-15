@@ -861,8 +861,8 @@ class SyncHelpers
             'count' => 0,
             'reverse' => 0,
             'location' => null,
-            'skipGames' => false,
-            'skipLocations' => false,
+            'skipGames' => 0,
+            'skipLocations' => 0,
             '_task' => array(),
             '_logger' => null,
         ), $params)); 
@@ -886,12 +886,12 @@ class SyncHelpers
             while($currentDate >= $dateStartTimestamp) {
                 $__logger->log("DATE: $date ($dateCount/$count days)");
                 $cParams = array_merge($params, array("date" => $date));
-                if ($skipLocations === false) {
+                if (empty($skipLocations)) {
                     $__logger->log("Start Generate Daily LOCATION Summary");
                     self::report_daily_location_summary($cParams);
                     $__logger->log("END Generate Daily LOCATION Summary");
                 }
-                if ($skipGames === false) {
+                if (empty($skipGames)) {
                     $__logger->log("Start Generate Daily GAME Summary");
                     self::report_daily_game_summary($cParams);
                     $__logger->log("END Generate Daily GAME Summary");
@@ -912,12 +912,12 @@ class SyncHelpers
             while($currentDate <= $dateEndTimestamp) {
                 $__logger->log("DATE: $date ($dateCount/$count days)");
                 $cParams = array_merge($params, array("date" => $date));
-                if ($skipLocations === false) {
+                if (empty($skipLocations)) {
                     $__logger->log("Start Generate Daily LOCATION Summary");
                     self::report_daily_location_summary($cParams);
                     $__logger->log("END Generate Daily LOCATION Summary");
                 }
-                if ($skipGames === false) {
+                if (empty($skipGames)) {
                     $__logger->log("Start Generate Daily GAME Summary");
                     self::report_daily_game_summary($cParams);
                     $__logger->log("END Generate Daily GAME Summary");
