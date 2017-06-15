@@ -861,6 +861,8 @@ class SyncHelpers
             'count' => 0,
             'reverse' => 0,
             'location' => null,
+            'skipGames' => false,
+            'skipLocations' => false,
             '_task' => array(),
             '_logger' => null,
         ), $params)); 
@@ -884,12 +886,16 @@ class SyncHelpers
             while($currentDate >= $dateStartTimestamp) {
                 $__logger->log("DATE: $date ($dateCount/$count days)");
                 $cParams = array_merge($params, array("date" => $date));
-                $__logger->log("Start Generate Daily LOCATION Summary");
-                self::report_daily_location_summary($cParams);
-                $__logger->log("END Generate Daily LOCATION Summary");
-                $__logger->log("Start Generate Daily GAME Summary");
-                self::report_daily_game_summary($cParams);
-                $__logger->log("END Generate Daily GAME Summary");            
+                if ($skipLocations === false) {
+                    $__logger->log("Start Generate Daily LOCATION Summary");
+                    self::report_daily_location_summary($cParams);
+                    $__logger->log("END Generate Daily LOCATION Summary");
+                }
+                if ($skipGames === false) {
+                    $__logger->log("Start Generate Daily GAME Summary");
+                    self::report_daily_game_summary($cParams);
+                    $__logger->log("END Generate Daily GAME Summary");
+                }
 
                 $currentDate = strtotime($date . " -1 day");
                 $date = date("Y-m-d", $currentDate);
@@ -906,12 +912,16 @@ class SyncHelpers
             while($currentDate <= $dateEndTimestamp) {
                 $__logger->log("DATE: $date ($dateCount/$count days)");
                 $cParams = array_merge($params, array("date" => $date));
-                $__logger->log("Start Generate Daily LOCATION Summary");
-                self::report_daily_location_summary($cParams);
-                $__logger->log("END Generate Daily LOCATION Summary");
-                $__logger->log("Start Generate Daily GAME Summary");
-                self::report_daily_game_summary($cParams);
-                $__logger->log("END Generate Daily GAME Summary");            
+                if ($skipLocations === false) {
+                    $__logger->log("Start Generate Daily LOCATION Summary");
+                    self::report_daily_location_summary($cParams);
+                    $__logger->log("END Generate Daily LOCATION Summary");
+                }
+                if ($skipGames === false) {
+                    $__logger->log("Start Generate Daily GAME Summary");
+                    self::report_daily_game_summary($cParams);
+                    $__logger->log("END Generate Daily GAME Summary");
+                }
 
                 $currentDate = strtotime($date . " +1 day");
                 $date = date("Y-m-d", $currentDate);
