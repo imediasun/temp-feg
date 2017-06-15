@@ -18,9 +18,10 @@ class SyncFromOldLiveHelpers
 
     public static function createGameSummary($params = array()) {
         extract(array_merge(array(
-            'cleanFirst' => 1,
+            'cleanFirst' => 0,
             'reverse' => 1,
             'skipSyncCommon' => 1,
+            'location' => null,
             'dateStart' => null,
             'dateEnd' => null,
         ), $params));
@@ -54,6 +55,9 @@ class SyncFromOldLiveHelpers
         $params['date_end'] = $max;
         $params['count'] = $count;
         $params['reverse'] = $reverse;
+        if (!empty($location)) {
+            $params['location'] = $location;
+        }
         
         SyncHelpers::generateDailySummaryDateRange($params);
         
