@@ -417,17 +417,16 @@
                 </thead>
                 <tbody>
 
-                @if(($row['move_history']))
+                @if($row['move_history'])
                     @foreach($row['move_history'] as $move_history)
                         <tr>
-                            <td> {{ DateHelpers::formatDate($move_history->from_date) }}</td>
+                            <td> {{ \DateHelpers::formatDate($move_history->from_date) }}</td>
                             <td>{{ \DateHelpers::formatMultiValues($move_history->from_location_id,$move_history->from_location) }} </td>
                             <td>{{ \DateHelpers::formatMultiValues($move_history->to_location_id,$move_history->to_location)}} </td>
                             <td>{{ \DateHelpers::formatMultiValues($move_history->from_first_name,$move_history->from_last_name) }}</td>
                             <td>{{ \DateHelpers::formatMultiValues($move_history->to_first_name,$move_history->to_last_name) }} </td>
-                            <td>{{ DateHelpers::formatDate($move_history->to_date) }} </td>
-                            <?php $days_in_transit=\SiteHelpers::getDateDiff($move_history->from_date,$move_history->to_date) ?>
-                            <td>{{ \DateHelpers::formatZeroValue($days_in_transit) }}</td>
+                            <td>{{ \DateHelpers::formatDate($move_history->to_date) }} </td>
+                            <td>{{ \DateHelpers::formatZeroValue(\SiteHelpers::getDateDiff($move_history->from_date,$move_history->to_date)) }}</td>
                         </tr>
                     @endforeach
                 @else
