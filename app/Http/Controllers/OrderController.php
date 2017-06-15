@@ -890,7 +890,7 @@ class OrderController extends Controller
         if($result){
             return Redirect::to('order')->with('messagetext', 'Po  removed successfully!')->with('msgstatus', 'success');
         }else{
-            return Redirect::to('order')->with('messagetext', 'Po  already removed!')->with('msgstatus', 'error');
+            return Redirect::to('order')->with('messagetext', 'This PO has already been removed!')->with('msgstatus', 'error');
         }
         //\Session::flash('success', 'Po  deleted successfully!');
     }
