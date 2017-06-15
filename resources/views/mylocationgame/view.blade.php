@@ -1,5 +1,6 @@
 <?php
     $game = $row[0];
+    $gameNotes = $game->notes;
     $statusId = $game->status_id;
     $statusName = $game->game_status;
     
@@ -44,6 +45,7 @@
     $lastEditedBy = $game->last_edited_by;
     $lastEditedOn = $game->last_edited_on;
     $lastEditedDetailsDate = [];
+
     if (empty(trim($lastEditedBy))) {
         $lastEditedBy = " - ";
     }
@@ -239,7 +241,18 @@
 
             </div>
         </div>
-        @endif         
+        @endif
+
+
+        <div class="form-group  " >
+            <label for="notes" class=" control-label col-md-4 text-left">
+                {!! SiteHelpers::activeLang('Notes', (isset($fields['notes']['language'])? $fields['notes']['language'] : array())) !!}
+            </label>
+            <div class="col-md-8">
+                  <textarea name='notes' rows='5' id='notes' class='form-control' required >{{$gameNotes}}</textarea>
+            </div>
+        </div>
+
         
         @if (!$isSold)
         <!-- Submit Button -->
