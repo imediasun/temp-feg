@@ -711,6 +711,7 @@ class MylocationgameController extends Controller
             $newData['status_id'] = 3;
             $newData['sale_pending'] = 0;
         }
+        $newData['notes'] = $data['notes'];
 
         $newID = $this->model->insertRow($newData, $id);
 

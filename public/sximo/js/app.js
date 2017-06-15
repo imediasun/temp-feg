@@ -936,7 +936,7 @@ App.autoCallbacks.registerCallback('ajaxerror', function(params){
                     Please click the Report Issue \n\
                     button below to send an error report to the support team.";
     if(params.errorName == "Unauthorized"){
-        defaultMessage = "Unauthorized to perform this operation";
+        defaultMessage = "Your session has expired. Please log back into the admin in order to complete this action. ";
     }
     App.notyConfirm({
         message : defaultMessage,

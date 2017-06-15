@@ -275,7 +275,35 @@ function denyRequest(ele)
 console.log($('#managefegrequeststoreTable tbody tr').not('.hiddenNow').length);
             if($('#managefegrequeststoreTable tbody tr').not('.hiddenNow').length < 3)
             {
-                reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?view=manage');
+                console.log('performing reload');
+
+                if($('#vendor_id').val()!=''){
+                    console.log('Clearing vendor');
+                    $('#vendor_id').val('');
+
+                }else if($('#location_id').val()!=''){
+                    console.log('Clearing location');
+                    $('#location_id').val('');
+
+                }else if($('#order_type').val()!=''){
+                    console.log('Clearing order types');
+                    $('#order_type').val('');
+                }
+
+
+                if($('#order_type').val()==''){
+                    console.log('Reload all');
+                    reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?view=manage');
+
+                }else if($('#location_id').val()==''){
+                    console.log('Reload order types');
+                    pageRefresh('T');
+
+                }else if($('#vendor_id').val()==''){
+                    console.log('Reload location');
+                    pageRefresh('L');
+                }
+
             }
             else
             {

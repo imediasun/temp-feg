@@ -1,5 +1,6 @@
 <?php
     $game = $row[0];
+    $gameNotes = $game->notes;
     $statusId = $game->status_id;
     $statusName = $game->game_status;
     
@@ -44,6 +45,7 @@
     $lastEditedBy = $game->last_edited_by;
     $lastEditedOn = $game->last_edited_on;
     $lastEditedDetailsDate = [];
+
     if (empty(trim($lastEditedBy))) {
         $lastEditedBy = " - ";
     }
@@ -239,7 +241,18 @@
 
             </div>
         </div>
-        @endif         
+        @endif
+
+
+        <div class="form-group  " >
+            <label for="notes" class=" control-label col-md-4 text-left">
+                {!! SiteHelpers::activeLang('Notes', (isset($fields['notes']['language'])? $fields['notes']['language'] : array())) !!}
+            </label>
+            <div class="col-md-8">
+                  <textarea name='notes' rows='5' id='notes' class='form-control' required >{{$gameNotes}}</textarea>
+            </div>
+        </div>
+
         
         @if (!$isSold)
         <!-- Submit Button -->
@@ -417,17 +430,16 @@
                 </thead>
                 <tbody>
 
-                @if(($row['move_history']))
+                @if($row['move_history'])
                     @foreach($row['move_history'] as $move_history)
                         <tr>
-                            <td> {{ DateHelpers::formatDate($move_history->from_date) }}</td>
+                            <td> {{ \DateHelpers::formatDate($move_history->from_date) }}</td>
                             <td>{{ \DateHelpers::formatMultiValues($move_history->from_location_id,$move_history->from_location) }} </td>
                             <td>{{ \DateHelpers::formatMultiValues($move_history->to_location_id,$move_history->to_location)}} </td>
                             <td>{{ \DateHelpers::formatMultiValues($move_history->from_first_name,$move_history->from_last_name) }}</td>
                             <td>{{ \DateHelpers::formatMultiValues($move_history->to_first_name,$move_history->to_last_name) }} </td>
-                            <td>{{ DateHelpers::formatDate($move_history->to_date) }} </td>
-                            <?php $days_in_transit=\SiteHelpers::getDateDiff($move_history->from_date,$move_history->to_date) ?>
-                            <td>{{ \DateHelpers::formatZeroValue($days_in_transit) }}</td>
+                            <td>{{ \DateHelpers::formatDate($move_history->to_date) }} </td>
+                            <td>{{ \DateHelpers::formatZeroValue(\SiteHelpers::getDateDiff($move_history->from_date,$move_history->to_date)) }}</td>
                         </tr>
                     @endforeach
                 @else

@@ -2071,9 +2071,9 @@ class SiteHelpers
         if ($second != 00 && $first != 00) {
             $interval = $datetime1->diff($datetime2);
             $days = $interval->format("%a");
-            echo $days;
+            return $days;
         } else {
-            echo "N/A";
+            return "N/A";
         }
 
     }
