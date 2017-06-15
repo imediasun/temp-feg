@@ -18,9 +18,9 @@ class SyncFromOldLiveHelpers
 
     public static function createGameSummary($params = array()) {
         extract(array_merge(array(
-            'cleanFirst' => 0,
+            'cleanFirst' => 1,
             'reverse' => 1,
-            'skipSyncCommon' => 0,
+            'skipSyncCommon' => 1,
             'dateStart' => null,
             'dateEnd' => null,
         ), $params));
@@ -31,7 +31,7 @@ class SyncFromOldLiveHelpers
         $timeStart = microtime(true);
         
         if ($skipSyncCommon != 1) {
-            self::commonSyncAll($params);
+            //self::commonSyncAll($params);
         }        
         $q = "select date_format(max(date_start), '%Y-%m-%d') as maxd, 
             date_format(min(date_start), '%Y-%m-%d') as mind, 
