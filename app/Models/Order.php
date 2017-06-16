@@ -597,8 +597,12 @@ class order extends Sximo
 
     function getVendorEmail($vendor_id)
     {
-        $vendor_email = \DB::select("SELECT email from vendor WHERE id=" . $vendor_id);
-        return $vendor_email[0]->email;
+        $vendor_email = \DB::select("SELECT email, email_2 from vendor WHERE id=" . $vendor_id);
+        if(empty($vendor_email[0]->email_2)){
+            return $vendor_email[0]->email;
+        }else{
+            return $vendor_email[0]->email.','.$vendor_email[0]->email_2;
+        }
     }
 
     function productUnitPriceAndName($prod_id)
