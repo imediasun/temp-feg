@@ -80,7 +80,7 @@ class AddtocartController extends Controller
         // Filter Search for query
         $filter = (!is_null($request->input('search')) ? $this->buildSearch() : '');
 
-        $filter .= 'AND requests.request_user_id='.\Session::get('uid');
+        $filter .= ' AND requests.request_user_id='.\Session::get('uid');
 
         $page = $request->input('page', 1);
         $params = array(
