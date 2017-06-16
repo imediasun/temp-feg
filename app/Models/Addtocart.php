@@ -3,6 +3,7 @@
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Core\Groups;
+use Illuminate\Support\Facades\Session;
 
 class addtocart extends Sximo
 {
@@ -87,7 +88,7 @@ class addtocart extends Sximo
 
 
 
-                $query = \DB::select('SELECT id FROM requests WHERE product_id = "'.$productId.'" AND status_id = "'.$statusId.'" AND location_id = "'.$locationId.'"');
+                $query = \DB::select('SELECT id FROM requests WHERE product_id = "'.$productId.'" AND status_id = "'.$statusId.'" AND request_user_id = "'.\Session::get('uid').'" AND location_id = "'.$locationId.'"');
 
                 /// TO AVOID ADDITNG THE SAME PRODUCT IN TWO PLACES
                 if (count($query) == 0)
