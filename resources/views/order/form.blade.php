@@ -439,7 +439,7 @@
                     Price = unitPrice;
                 }
                 // if order type is Instant Win prizes=8, redemption prizes=7,Office Supplies=6
-                else if(orderType == 7 || orderType == 8 || orderType == 6 || orderType == 10)
+                else if(orderType == 7 || orderType == 8 || orderType == 6 || orderType == 10 || orderType == 2)
                 {
                      Price = casePrice;
                 }

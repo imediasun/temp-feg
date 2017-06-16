@@ -754,7 +754,7 @@ class Sximo extends Model {
                 {
                     $orderItemsPriceArray[] = $r['price'];
                 }
-                elseif($orderTypeId == 7 || $orderTypeId == 8 || $orderTypeId == 6 || $orderTypeId == 10)
+                elseif($orderTypeId == 7 || $orderTypeId == 8 || $orderTypeId == 6 || $orderTypeId == 10 || $orderTypeId == 2)
                 {
                     $orderItemsPriceArray[] = $r['case_price'];
                 }
