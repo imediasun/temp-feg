@@ -55,7 +55,7 @@ class addtocart extends Sximo
     {
 
         $data['user_level']=\Session::get('gid');
-
+        $userID = \Session::get('uid');
 
 
         if (false && $data['user_level'] == Groups::PARTNER)
@@ -88,7 +88,7 @@ class addtocart extends Sximo
 
 
 
-                $query = \DB::select('SELECT id FROM requests WHERE product_id = "'.$productId.'" AND status_id = "'.$statusId.'" AND request_user_id = "'.\Session::get('uid').'" AND location_id = "'.$locationId.'"');
+                $query = \DB::select('SELECT id FROM requests WHERE product_id = "'.$productId.'" AND status_id = "'.$statusId.'" AND request_user_id = "'.$userID.'" AND location_id = "'.$locationId.'"');
 
                 /// TO AVOID ADDITNG THE SAME PRODUCT IN TWO PLACES
                 if (count($query) == 0)
@@ -122,6 +122,7 @@ class addtocart extends Sximo
 								       LEFT JOIN vendor V ON V.id = P.vendor_id
 									   WHERE R.status_id = "' . $statusId . '" AND V.vendor_name !="null"
 									   AND R.location_id = "' . $location_id . '"
+									   AND R.request_user_id = "' . $userID . '"
                                        GROUP BY V.vendor_name';
             if($v1)
             {
