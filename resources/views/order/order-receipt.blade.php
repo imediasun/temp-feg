@@ -318,20 +318,24 @@
 
 
         $('#order_status_id').on('click',function(){
+            $('#orderreceiveFormAjax').parsley('destroy');
             if($(this).val()==2){
                 $('#tracking_number').attr('required', 'required');
             }else {
                 $('#tracking_number').removeAttr('required');
             }
+            $('#orderreceiveFormAjax').parsley();
         });
 
 
         $('.yourBox').on('ifChanged',function(){
+            $('#orderreceiveFormAjax').parsley('destroy');
             if(checkboxCount()>0){
                 $('#tracking_number').removeAttr('required');
             }else{
                 $('#tracking_number').attr('required', 'required');
             }
+            $('#orderreceiveFormAjax').parsley();
         });
 
         function checkboxCount() {
