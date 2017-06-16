@@ -932,7 +932,7 @@ App.autoCallbacks.registerCallback('ajaxerror', function(params){
     console.log(params);
     var obj = this;
     unblockUI();
-    var defaultMessage = "Opps Something Went Wrong.\n\
+    var defaultMessage = "OOPS Something Went Wrong.\n\
                     Please click the Report Issue \n\
                     button below to send an error report to the support team.";
     if(params.errorName == "Unauthorized"){

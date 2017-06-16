@@ -518,7 +518,7 @@ class OrderController extends Controller
                 {
                     $itemsPriceArray[] = $priceArray[$i];
                 }
-                elseif($order_type  == 7 || $order_type  == 8 || $order_type == 6 || $order_type == 10)
+                elseif($order_type  == 7 || $order_type  == 8 || $order_type == 6 || $order_type == 10|| $order_type == 2)
                 {
                     $itemsPriceArray[] = $casePriceArray[$i];
                 }
@@ -926,6 +926,7 @@ class OrderController extends Controller
                 'orders.po_notes',
                 'orders.notes',
                 'orders.is_partial',
+                'orders.tracking_number',
                 'YN.yesno'
             ];
             $dateSearchFields = [
@@ -1248,6 +1249,7 @@ class OrderController extends Controller
         $order_status = $request->get('order_status');
         $added_to_inventory = $request->get('added_to_inventory');
         $user_id = $request->get('user_id');
+        $order_type_id = $request->get('order_type_id');
         $added = 0;
         if (!empty($request->get('receivedInParts'))) {
             $received_part_ids = $request->get('receivedInParts');
@@ -1274,11 +1276,12 @@ class OrderController extends Controller
         if (empty($notes)) {
             $rules['order_status'] = "required:min:2";
         }
-        if ($order_status == 5) // Advanced Replacement Returned.. require tracking number
+        if ($order_status == 2 && $order_type_id==2) // Advanced Replacement Returned.. require tracking number
         {
             $rules['tracking_number'] = "required|min:3";
             $tracking_number = $request->get('tracking_number');
         }
+        $rules['tracking_number'] = "alpha_num|min:3";
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
             if (!empty($item_count) && $added_to_inventory == 0) {
