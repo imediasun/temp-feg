@@ -360,7 +360,7 @@
                     <a href="javascript:void(0);" class="addC btn btn-xs btn-info" rel=".clone" id="add_new_item"><i
                                 class="fa fa-plus"></i>
                         New Item</a>
-                @if(!empty($pass['Can add freehand products']) && !is_object($row) && $fromStore != 1)
+                @if(!is_object($row) && $fromStore != 1)
                         <a href="javascript:void(0);" class="btn btn-xs btn-info enabled" data-status="disabled" id="can-freehand">
                             <i class="fa fa-times fa-check-circle-o" aria-hidden="true"></i>
                            <span>Enable Freehand</span></a>
@@ -406,10 +406,38 @@
         </div>
     </div>
     <?php
-
+        $catIntantRedemption = false;
+        if(!empty($pass['Freehand functionality for Instant Win or Redemption Prize categories']))
+        {
+            $catIntantRedemption = true;
+        }
+        $canAddFreehand = false;
+        if(!empty($pass['Can add freehand products']))
+        {
+            $canAddFreehand = true;
+        }
+        $catDebitCard = false;
+        if(!empty($pass['Freehand functionality for Debit Card Parts category']))
+        {
+            $catDebitCard = true;
+        }
     ?>
     </div>
     <script type="text/javascript">
+
+        var catIntantRedemption = <?php echo $catIntantRedemption ? 1:0 ; ?>;
+        var catDebitCard = <?php echo $catDebitCard ? 1:0  ; ?>;
+        var canAddFreehand = <?php echo $canAddFreehand ? 1:0 ; ?>;
+        $(document).ready(function () {
+            if(!canAddFreehand)
+            {
+                $('#can-freehand').hide();
+            }
+        });
+        console.log('catDebitCard : '+catDebitCard);
+        console.log('catIntantRedemption : '+catIntantRedemption);
+        console.log('canAddFreehand : '+canAddFreehand);
+
         var isRequestApprovalProcess = <?php echo $isRequestApproveProcess ? 'true' : 'false'; ?>;
         var counter = isRequestApprovalProcess ? $('input[name^=item_num]').length : 0;
         var hidePopup;
@@ -760,9 +788,9 @@
         });
 
         vendorChangeCount = 1;
-$('#vendor_id').on('select2-selecting',function (e) {
-    $(this).attr('lastSelected', $(this).val());
-});
+        $('#vendor_id').on('select2-selecting',function (e) {
+            $(this).attr('lastSelected', $(this).val());
+        });
         $("#vendor_id").on('change', function() {
             vendor = $(this);
             if(vendorChangeCount > 1 && $('#vendor_id').attr('lastselected') != undefined)
@@ -912,6 +940,26 @@ $('#vendor_id').on('select2-selecting',function (e) {
             }
         }
         $('#order_type_id').change(function () {
+            if(($(this).val() == 7 || $(this).val() == 8) && catIntantRedemption == 1)
+            {
+                $('#can-freehand').show();
+            }
+            else if($(this).val() == 20  && catDebitCard == 1)
+            {
+                $('#can-freehand').show();
+            }
+            else
+            {
+                if(canAddFreehand == 1)
+                {
+                    $('#can-freehand').show();
+                }
+                else
+                {
+                    $('#can-freehand').hide();
+                }
+
+            }
             gameShowHide();
             calculateSum();
         });
