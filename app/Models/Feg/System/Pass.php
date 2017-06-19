@@ -5,6 +5,7 @@ use App\Models\Sximo;
 use \Illuminate\Database\QueryException;
 use \Exception;
 use FEGFormat;
+use Illuminate\Http\Request;
 
 class Pass extends Sximo  {
 	protected $table = 'feg_special_permissions';
@@ -119,7 +120,15 @@ class Pass extends Sximo  {
     }
     
     public static function addNewPass($item) {
-        $masterFields = ['config_title', 'config_name', 'config_description'];
+        $url = explode('/',\Request::url());
+        if(($url[count($url)-1]) == 'order')
+        {
+            $masterFields = ['config_title', 'config_name','data_type','data_options', 'config_description'];
+        }
+        else
+        {
+            $masterFields = ['config_title', 'config_name', 'config_description'];
+        }
         $passFields = ['module_id', 'group_ids', 'user_ids', 'exclude_user_ids', 'is_active'];
         try {        
             $pass = new self;
@@ -151,7 +160,15 @@ class Pass extends Sximo  {
         return false;
     }
     public static function updatePass($id, $item) {
-        $masterFields = ['config_title', 'config_name', 'config_description'];
+        $url = explode('/',\Request::url());
+        if(($url[count($url)-1]) == 'order')
+        {
+            $masterFields = ['config_title', 'config_name','data_type','data_options', 'config_description'];
+        }
+        else
+        {
+            $masterFields = ['config_title', 'config_name', 'config_description'];
+        }
         $passFields = ['group_ids', 'user_ids', 'exclude_user_ids', 'is_active'];
         try {
             $pass = self::with('master')->find($id);
@@ -209,16 +226,27 @@ class Pass extends Sximo  {
         $columns = self::getColumnTable($obj->table);
         $parentColumns = self::getColumnTable($obj->tableMaster);        
         $grid = self::buildGrid(array_merge($parentColumns, $columns));
-        
+
         return $grid;
     }
     
     public static function buildGrid($columns) {
-        
-        $removeColumns = ['id', 'created_at', 'updated_at', 
+        $url = explode('/',\Request::url());
+        if(($url[count($url)-1]) == 'order')
+        {
+            $removeColumns = ['id', 'created_at', 'updated_at',
                 'permission_id', 'module_id', 'is_global',
-                'data_type', 'data_options', 'default_value',
+                'default_value',
             ];
+        }
+        else
+        {
+            $removeColumns = ['id', 'created_at', 'updated_at',
+                'permission_id','data_type','data_options', 'module_id', 'is_global',
+                'default_value',
+            ];
+        }
+
         $labels = [
             'group_ids' => 'user_groups',
             'exclude_user_ids' => 'exluded',
@@ -247,8 +275,8 @@ class Pass extends Sximo  {
             ],
             'config_name' => ['text', '',],
             'config_description' => ['__textarea', ''],
-            'data_type' => ['dynamic', ''],
-            'data_options' => ['data_type', ''],
+            //'data_type' => ['dynamic', ''],
+            //'data_options' => ['data_type', ''],
             'default_value' => ['data_options', ''],
             'config_value' => ['data_options', ''],
             'group_ids' => ['select', '', [
@@ -279,6 +307,17 @@ class Pass extends Sximo  {
                 'multiple' => true,
                 'required' => false,
                 ]
+            ],
+            'data_type' => ['text', ''],
+            'data_options' => ['select', '', [
+                'type' => 'external',
+                'table'=> 'order_type',
+                'key' => 'id',
+                'value' => 'order_type',
+                'search' => '',
+                'multiple' => true,
+                'required' => false,
+            ]
             ],
             'custom_emails' => ['text', ''],
             'is_active' => ['__checkbox', '1',[
