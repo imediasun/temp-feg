@@ -488,7 +488,7 @@
                 orderType=$("#order_type_id").val();
 
                 // if order type is Instant Win prizes=8, redemption prizes=7,Office Supplies=6
-                else if($.inArray(parseInt(orderType),case_price_categories) != -1)
+                if($.inArray(parseInt(orderType),case_price_categories) != -1)
                 {
                      Price = casePrice;
                 }
