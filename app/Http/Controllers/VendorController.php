@@ -279,7 +279,7 @@ class VendorController extends Controller
         return view('vendor.view', $this->data);
     }
 
-    public static function getVendor($id) {
+    private function getVendor($id) {
 
         $result = \DB::select('
         SELECT vendor.* FROM vendor 
