@@ -950,15 +950,20 @@ class OrderController extends Controller
                 }
             }
 
+        }else{
+            if(!empty($statusIdFilter)){
+                if($statusIdFilter == 6){
+                    $orderStatusCondition = " OR (orders.status_id = '2' AND orders.tracking_number!='') ";
+                }
+            }
         }
-
 
         // Filter Search for query
         // build sql query based on search filters
         $filter = is_null(Input::get('search')) ? '' : $this->buildSearch($searchInput);
 
         $filter .= $orderStatusCondition;
-
+        dd($filter);
         return $filter;
     }
 
