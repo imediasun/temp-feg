@@ -659,7 +659,18 @@ class Sximo extends Model {
         return $row;
     }
 
-    function getOrderData($order_id) {
+    function getOrderData($order_id,$pass = null) {
+
+        $case_price_categories = [];
+        if(isset($pass['calculate price according to case price']))
+        {
+            $case_price_categories = explode(',',$pass['calculate price according to case price']->data_options);
+        }
+        $case_price_if_no_unit_categories = [];
+        if(isset($pass['use case price if unit price is 0.00']))
+        {
+            $case_price_if_no_unit_categories = explode(',',$pass['use case price if unit price is 0.00']->data_options);
+        }
         \DB::setFetchMode(\PDO::FETCH_ASSOC);
         $row = \DB::select('SELECT U1.first_name, 
                                     U1.last_name,
@@ -750,17 +761,17 @@ class Sximo extends Model {
                 $orderDescriptionArray[] = empty($r['sku'])?$r['description']:$r['description']." (SKU - {$r['sku']})";
                 $orderPriceArray[] = $r['price'];
                 $orderQtyArray[] = $r['qty'];
-                if($orderTypeId == 20 || $orderTypeId== 17 || $orderTypeId == 1 )
-                {
-                    $orderItemsPriceArray[] = $r['price'];
-                }
-                elseif($orderTypeId == 7 || $orderTypeId == 8 || $orderTypeId == 6 || $orderTypeId == 10 || $orderTypeId == 2)
+                if(in_array($orderTypeId,$case_price_categories))
                 {
                     $orderItemsPriceArray[] = $r['case_price'];
                 }
-                elseif($orderTypeId == 4)
+                elseif(in_array($orderTypeId,$case_price_if_no_unit_categories))
                 {
                     $orderItemsPriceArray[] = ($r['price'] == 0.00)?$r['case_price']:$r['price'];
+                }
+                else
+                {
+                    $orderItemsPriceArray[] = $r['price'];
                 }
             }
 

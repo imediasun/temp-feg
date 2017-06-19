@@ -1,5 +1,6 @@
 <?php namespace App\Models;
 
+use App\Http\Controllers\OrderController;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Ordertyperestrictions;
@@ -182,9 +183,18 @@ class order extends Sximo
         return "GROUP BY orders.id  ";
     }
 
-    public function getOrderQuery($order_id, $mode = null)
+    public function getOrderQuery($order_id, $mode = null,$pass=null)
     {
-
+        $case_price_categories = [];
+        if(isset($pass['calculate price according to case price']))
+        {
+            $case_price_categories = explode(',',$pass['calculate price according to case price']->data_options);
+        }
+        $case_price_if_no_unit_categories = [];
+        if(isset($pass['use case price if unit price is 0.00']))
+        {
+            $case_price_if_no_unit_categories = explode(',',$pass['use case price if unit price is 0.00']->data_options);
+        }
         $data['requests_item_count'] = 0;
         $data['receivedItemsArray']=0;
         $data['order_loc_id'] = '0';
@@ -246,15 +256,11 @@ class order extends Sximo
                     $receivedItemsArray[]=$row->item_received;
                     $orderDescriptionArray[] = $row->description;
                     $orderPriceArray[] = Sximo::parseNumber($row->price);
-                    if($data['order_type'] == 20 || $data['order_type']== 17 || $data['order_type'] == 1 )
-                    {
-                        $orderItemsPriceArray[] = $row->price;
-                    }
-                    elseif($data['order_type'] == 7 || $data['order_type'] == 8 || $data['order_type'] == 6 || $data['order_type'] == 10 || $data['order_type'] == 2)
+                    if(in_array($data['order_type'],$case_price_categories))
                     {
                         $orderItemsPriceArray[] = $row->case_price;
                     }
-                    elseif($data['order_type'] == 4)
+                    elseif(in_array($data['order_type'],$case_price_if_no_unit_categories))
                     {
                         $orderItemsPriceArray[] = ($row->price == 0.00)?$row->case_price:$row->price;
                     }
