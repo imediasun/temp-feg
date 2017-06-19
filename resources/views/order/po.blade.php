@@ -75,12 +75,12 @@
                             $case_price_categories = [];
                             if(isset($data['pass']['calculate price according to case price']))
                             {
-                                $case_price_categories = $data['pass']['calculate price according to case price']->data_options;
+                                $case_price_categories = explode(',',$data['pass']['calculate price according to case price']->data_options);
                             }
                             $case_price_if_no_unit_categories = [];
                             if(isset($data['pass']['use case price if unit price is 0.00']))
                             {
-                                $case_price_if_no_unit_categories = $data['pass']['use case price if unit price is 0.00']->data_options;
+                                $case_price_if_no_unit_categories = explode(',',$data['pass']['use case price if unit price is 0.00']->data_options);
                             }
                         ?>
                         <td style="padding:8px;border:1px solid #000; text-align: right">@if(in_array($data[0]['order_type_id'],$case_price_if_no_unit_categories))Unit/Case Price @elseif(in_array($data[0]['order_type_id'],$case_price_categories)) Case Price @else Unit Price @endif</td>
