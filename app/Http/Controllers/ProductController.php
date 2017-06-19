@@ -287,7 +287,7 @@ class ProductController extends Controller
             $retail_price=0.000;
         }
         if ($validator->passes()) {
-            $alreadyExist = Product::where('vendor_description',$request->vendor_description)->where('case_price',$request->case_price)->where('vendor_id',$request->vendor_id)->where('product_type_id',$request->product_type_id)->where('product_sub_type_id',$request->product_sub_type_id)->first();
+            $alreadyExist = Product::where('vendor_description',$request->vendor_description)->where('case_price',$request->case_price)->where('vendor_id',$request->vendor_id)->where('prod_type_id',$request->prod_type_id)->where('prod_sub_type_id',$request->prod_sub_type_id)->first();
             if(is_object($alreadyExist))
             {
                 return response()->json(array(
