@@ -292,8 +292,17 @@ class ProductController extends Controller
                 $data['retail_price']=$retail_price;
                 $id = $this->model->insertRow($data, $request->input('id'));
             } else {
+
                 //for inline editing all fields do not get saved
                 $data = $this->validatePost('products',true);
+                $alreadyExist = Product::where('vendor_description',$data['vendor_description'])->where('case_price',$data['case_price'])->where('vendor_id',$data['vendor_id'])->where('product_type_id',$data['product_type_id'])->where('product_sub_type_id',$data['product_sub_type_id'])->first();
+                if(is_object($alreadyExist))
+                {
+                    return response()->json(array(
+                        'status' => 'Error',
+                        'message' => 'A product is already exists with same data'
+                    ));
+                }
                 $data['retail_price']=$retail_price;
                 $id = $this->model->insertRow($data, $id);
             }
