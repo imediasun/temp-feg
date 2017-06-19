@@ -963,7 +963,6 @@ class OrderController extends Controller
         $filter = is_null(Input::get('search')) ? '' : $this->buildSearch($searchInput);
 
         $filter .= $orderStatusCondition;
-        dd($filter);
         return $filter;
     }
 
