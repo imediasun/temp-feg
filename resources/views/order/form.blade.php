@@ -582,11 +582,6 @@
 
             $("#order_type_id").jCombo("{{ URL::to('order/comboselect?filter=order_type:id:order_type') }}&parent=can_request:1",
                     {selected_value: '{{ $data["order_type"] }}', initial_text: '-------- Select Order Type --------'});
-            renderDropdown($("[id^=game_0]"), {
-                dataType: 'json',
-                data: {results: games_options_js},
-                placeholder: "For Various Games", width: "100%"
-            });
 
             $("input[name*='total'] ").attr('readonly', '1');
             $(" input[name*='bulk_Price'] ").addClass('calculate');
@@ -778,13 +773,20 @@
                 data: {'location': $(this).val()},
                 success: function (data) {
                     games_options_js = data;
-                    renderDropdown($("[id^=game_]"), {
+                    $("[id^=game_0]").select2('destroy');
+                    renderDropdown($("[id^=game_0]"), {
                         dataType: 'json',
                         data: {results: data},
                         placeholder: "For Various Games", width: "100%"
                     });
                 }
             });
+        });
+
+        renderDropdown($("[id^=game_0]"), {
+            dataType: 'json',
+            data: {results: games_options_js},
+            placeholder: "For Various Games", width: "100%"
         });
 
         vendorChangeCount = 1;
