@@ -443,11 +443,11 @@
 
         var canAddFreehand = <?php echo $canAddFreehand ? 1:0 ; ?>;
 
-        var case_price_if_no_unit_categories = <?php echo $case_price_if_no_unit_categories  ; ?>;
+        var case_price_if_no_unit_categories = "<?php echo $case_price_if_no_unit_categories  ; ?>";
         case_price_if_no_unit_categories = case_price_if_no_unit_categories.split(",").map(Number);
 
 
-        var case_price_categories = <?php echo $case_price_categories  ; ?>;
+        var case_price_categories = "<?php echo $case_price_categories  ; ?>";
         case_price_categories = case_price_categories.split(",").map(Number);
 
         var show_freehand = <?php echo $show_freehand  ; ?>;
