@@ -406,36 +406,41 @@
         </div>
     </div>
     <?php
-        $catIntantRedemption = false;
-        if(!empty($pass['Freehand functionality for Instant Win or Redemption Prize categories']))
+        $type_permissions = '';
+        $show_freehand = (!is_object($row) && $fromStore != 1) ? 1: 0;
+        foreach ($pass as $permission)
         {
-            $catIntantRedemption = true;
+            if($permission->data_type == 'order_type_restrictions')
+            {
+                $type_permissions .= $permission->data_options;
+                $type_permissions .= ',';
+            }
+
         }
+        $type_permissions = rtrim($type_permissions,",");
         $canAddFreehand = false;
         if(!empty($pass['Can add freehand products']))
         {
             $canAddFreehand = true;
         }
-        $catDebitCard = false;
-        if(!empty($pass['Freehand functionality for Debit Card Parts category']))
-        {
-            $catDebitCard = true;
-        }
     ?>
     </div>
     <script type="text/javascript">
+        var type_permissions = "<?php echo $type_permissions ?>";
+        type_permissions = type_permissions.split(",").map(Number);
 
-        var catIntantRedemption = <?php echo $catIntantRedemption ? 1:0 ; ?>;
-        var catDebitCard = <?php echo $catDebitCard ? 1:0  ; ?>;
+
         var canAddFreehand = <?php echo $canAddFreehand ? 1:0 ; ?>;
+        var show_freehand = <?php echo $show_freehand  ; ?>;
+        console.log(type_permissions);
+        console.log('Createing order '+show_freehand);
         $(document).ready(function () {
             if(!canAddFreehand)
             {
                 $('#can-freehand').hide();
             }
         });
-        console.log('catDebitCard : '+catDebitCard);
-        console.log('catIntantRedemption : '+catIntantRedemption);
+
         console.log('canAddFreehand : '+canAddFreehand);
 
         var isRequestApprovalProcess = <?php echo $isRequestApproveProcess ? 'true' : 'false'; ?>;
@@ -939,26 +944,66 @@
                 $("#submit_btn").removeAttr('disabled');
             }
         }
+
+        $('#order_type_id').on('select2-selecting',function (e) {
+            $(this).attr('lastSelected', $(this).val());
+        });
         $('#order_type_id').change(function () {
-            if(($(this).val() == 7 || $(this).val() == 8) && catIntantRedemption == 1)
+            var orderType = $(this);
+            var selected_type = $(this).val();
+            if(canAddFreehand == 1 && show_freehand)
             {
                 $('#can-freehand').show();
+                console.log('I have master permission');
             }
-            else if($(this).val() == 20  && catDebitCard == 1)
+            else if($.inArray(parseInt(selected_type),type_permissions) != -1 && show_freehand)
             {
                 $('#can-freehand').show();
+                console.log('I have permission for order type ' + selected_type);
+            }
+            else if($(this).val() && show_freehand)
+            {
+                var lastselected = $.inArray(parseInt(orderType.attr('lastselected')),type_permissions);
+                if(lastselected != -1) {
+                    if($('.itemstable .clonedInput:first-child input.item_name').val() != '')
+                    {
+                        App.notyConfirm({
+                            message: "Are you sure you want to change Order Type <br> <b>***WARNING***</b><br>If you change to Order Type all of your items will be removed and you will have to add them again",
+                            confirmButtonText: 'Yes',
+                            confirm: function () {
+                                $('#can-freehand').hide();
+                                $('#is_freehand').val(0);
+                                $('#can_select_product_list').val(1);
+                                $('.itemstable .clonedInput:not(:first-child)').remove();
+                                $('.itemstable .clonedInput input.sku').attr('readonly', 'readonly');
+                                $('.itemstable .clonedInput textarea.item').attr('readonly', 'readonly');
+                                $('.itemstable .clonedInput:first-child input').not('#item_num').val('');
+                                $('.itemstable .clonedInput:first-child textarea').val('');
+                                $('#total_cost').val(0.00);
+                                $('input[name="Subtotal"]').val(0.000);
+                            },
+                            cancel:function(){
+
+                                if(orderType.attr('lastSelected'))
+                                {
+                                    console.log('selecting lastSelected order type');
+
+                                    $('#order_type_id option[value = '+orderType.attr('lastSelected')+']').attr('selected', true);
+                                    orderType.trigger("change");
+                                }
+                            }
+                        });
+                    }
+                    else
+                    {
+                        $('#can-freehand').hide();
+                    }
+                }
             }
             else
             {
-                if(canAddFreehand == 1)
-                {
-                    $('#can-freehand').show();
-                }
-                else
-                {
-                    $('#can-freehand').hide();
-                }
-
+                $('#can-freehand').hide();
+                console.log("I don't have any permission");
             }
             gameShowHide();
             calculateSum();

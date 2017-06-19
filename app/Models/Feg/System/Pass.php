@@ -151,7 +151,7 @@ class Pass extends Sximo  {
         return false;
     }
     public static function updatePass($id, $item) {
-        $masterFields = ['config_title', 'config_name', 'config_description'];
+        $masterFields = ['config_title', 'config_name','data_type','data_options', 'config_description'];
         $passFields = ['group_ids', 'user_ids', 'exclude_user_ids', 'is_active'];
         try {
             $pass = self::with('master')->find($id);
@@ -209,7 +209,7 @@ class Pass extends Sximo  {
         $columns = self::getColumnTable($obj->table);
         $parentColumns = self::getColumnTable($obj->tableMaster);        
         $grid = self::buildGrid(array_merge($parentColumns, $columns));
-        
+
         return $grid;
     }
     
@@ -217,7 +217,7 @@ class Pass extends Sximo  {
         
         $removeColumns = ['id', 'created_at', 'updated_at', 
                 'permission_id', 'module_id', 'is_global',
-                'data_type', 'data_options', 'default_value',
+                 'default_value',
             ];
         $labels = [
             'group_ids' => 'user_groups',
@@ -247,8 +247,8 @@ class Pass extends Sximo  {
             ],
             'config_name' => ['text', '',],
             'config_description' => ['__textarea', ''],
-            'data_type' => ['dynamic', ''],
-            'data_options' => ['data_type', ''],
+            //'data_type' => ['dynamic', ''],
+            //'data_options' => ['data_type', ''],
             'default_value' => ['data_options', ''],
             'config_value' => ['data_options', ''],
             'group_ids' => ['select', '', [
@@ -279,6 +279,17 @@ class Pass extends Sximo  {
                 'multiple' => true,
                 'required' => false,
                 ]
+            ],
+            'data_type' => ['text', ''],
+            'data_options' => ['select', '', [
+                'type' => 'external',
+                'table'=> 'order_type',
+                'key' => 'id',
+                'value' => 'order_type',
+                'search' => '',
+                'multiple' => true,
+                'required' => false,
+            ]
             ],
             'custom_emails' => ['text', ''],
             'is_active' => ['__checkbox', '1',[
