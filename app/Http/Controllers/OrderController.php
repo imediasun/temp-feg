@@ -668,8 +668,10 @@ class OrderController extends Controller
 //
 //    });
             //Updating PO Track table
-            \DB::table('po_track')->where('po_number', $orderData['po_number'])->update(['enabled' => '1']);
-            \DB::table('po_track')->where('enabled', '0')->where('created_at', '<=', \DB::raw('DATE_SUB(NOW(), INTERVAL '.env("UNUSED PO DELETE INTERVAL", "120").' MINUTE)'))->delete();
+            if(isset($orderData['po_number'])){
+                \DB::table('po_track')->where('po_number', $orderData['po_number'])->update(['enabled' => '1']);
+                \DB::table('po_track')->where('enabled', '0')->where('created_at', '<=', \DB::raw('DATE_SUB(NOW(), INTERVAL '.env("UNUSED PO DELETE INTERVAL", "120").' MINUTE)'))->delete();
+            }
 
             \Session::put('send_to', $vendor_email);
             \Session::put('order_id', $order_id);
