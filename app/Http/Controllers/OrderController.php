@@ -943,7 +943,11 @@ class OrderController extends Controller
                 'fields' => $searchFields, 'dateFields' => $dateSearchFields];
 
             if(!empty($statusIdFilter)){
-                $orderStatusCondition = "AND orders.status_id = '".$statusIdFilter."'";
+                if($statusIdFilter == 6){
+                    $orderStatusCondition = "AND orders.status_id = '".$statusIdFilter."' OR (orders.status_id = '2' AND orders.tracking_number!='') ";
+                }else{
+                    $orderStatusCondition = "AND orders.status_id = '".$statusIdFilter."'";
+                }
             }
 
         }
