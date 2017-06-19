@@ -5,6 +5,7 @@ use App\Models\Sximo;
 use \Illuminate\Database\QueryException;
 use \Exception;
 use FEGFormat;
+use Illuminate\Http\Request;
 
 class Pass extends Sximo  {
 	protected $table = 'feg_special_permissions';
@@ -119,7 +120,15 @@ class Pass extends Sximo  {
     }
     
     public static function addNewPass($item) {
-        $masterFields = ['config_title', 'config_name', 'config_description'];
+        $url = explode('/',\Request::url());
+        if(($url[count($url)-1]) == 'order')
+        {
+            $masterFields = ['config_title', 'config_name','data_type','data_options', 'config_description'];
+        }
+        else
+        {
+            $masterFields = ['config_title', 'config_name', 'config_description'];
+        }
         $passFields = ['module_id', 'group_ids', 'user_ids', 'exclude_user_ids', 'is_active'];
         try {        
             $pass = new self;
@@ -151,7 +160,15 @@ class Pass extends Sximo  {
         return false;
     }
     public static function updatePass($id, $item) {
-        $masterFields = ['config_title', 'config_name','data_type','data_options', 'config_description'];
+        $url = explode('/',\Request::url());
+        if(($url[count($url)-1]) == 'order')
+        {
+            $masterFields = ['config_title', 'config_name','data_type','data_options', 'config_description'];
+        }
+        else
+        {
+            $masterFields = ['config_title', 'config_name', 'config_description'];
+        }
         $passFields = ['group_ids', 'user_ids', 'exclude_user_ids', 'is_active'];
         try {
             $pass = self::with('master')->find($id);
@@ -214,11 +231,22 @@ class Pass extends Sximo  {
     }
     
     public static function buildGrid($columns) {
-        
-        $removeColumns = ['id', 'created_at', 'updated_at', 
+        $url = explode('/',\Request::url());
+        if(($url[count($url)-1]) == 'order')
+        {
+            $removeColumns = ['id', 'created_at', 'updated_at',
                 'permission_id', 'module_id', 'is_global',
-                 'default_value',
+                'default_value',
             ];
+        }
+        else
+        {
+            $removeColumns = ['id', 'created_at', 'updated_at',
+                'permission_id','data_type','data_options', 'module_id', 'is_global',
+                'default_value',
+            ];
+        }
+
         $labels = [
             'group_ids' => 'user_groups',
             'exclude_user_ids' => 'exluded',
