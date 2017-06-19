@@ -251,8 +251,8 @@ class Pass extends Sximo  {
             'group_ids' => 'user_groups',
             'exclude_user_ids' => 'exluded',
             'user_ids' => 'individual_users',
-            'data_type' => 'input_type',
-            'data_options' => 'input_options',
+            'data_type' => 'restriction_type',
+            'data_options' => 'order_types',
             'custom_emails' => 'include_custom_emails',
         ];
         $columnOrder = ['config_title' => '', 'config_name' => '', 
@@ -308,7 +308,14 @@ class Pass extends Sximo  {
                 'required' => false,
                 ]
             ],
-            'data_type' => ['text', ''],
+            'data_type' => ['text', '', [
+                'hideText' => false,
+                'tooltip' => '',
+                'textTooltip' => 'This value must be set once and should ideally 
+                    never change again. it should be order_type_restrictions to implement freehand functionality on order type',
+                'inputTooltip' => '',
+                'editOnDBClick' => true
+            ]],
             'data_options' => ['select', '', [
                 'type' => 'external',
                 'table'=> 'order_type',
