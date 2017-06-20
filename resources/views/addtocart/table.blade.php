@@ -206,7 +206,7 @@
                    <div class="col-md-10 col-sm-9 col-xs-12">
                     <input type="button" style="font-weight: bold;" class="btn btn-sm btn-success"
                            value="Submit Weekly Requests totalling {{CurrencyHelpers::formatPrice($cartData['shopping_cart_total'])}}"
-                           onClick="confirmSubmit();" id = "cartbtn"></button>
+                           id = "cartbtn"></button>
                 </div>
             </div>
             </div>
@@ -342,7 +342,7 @@
         }
       
     }
-    function confirmSubmit() {
+    $('#cartbtn').click(function() {
         var shortMessage;
         if(amt_short_msg == null) {
             shortMessage = "{{ json_encode($cartData['amt_short_message']) }}";
@@ -381,7 +381,7 @@
             }
 
         }
-    }
+    });
 function loadCart(vendor_name,subtotal)
 {
 
