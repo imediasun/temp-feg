@@ -41,5 +41,37 @@
                 reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data');
             }
         });
+
+        function updateCart() {
+            var ele=$("input[name^=qty]");
+            ele.each(function(){
+                var vendor=$(this).data('vendor');
+                var id= $(this).attr('id');
+                var qty= $(this).val();
+                $('.ajaxLoading').show();
+                doStuff(qty,id,vendor);
+            });
+        }
+
+        function doStuff(value,id,vendor_name) {
+            $.ajax({
+                url:"addtocart/save/"+id+"/"+value+"/"+encodeURIComponent(vendor_name) ,
+                method:'get',
+                dataType:'json',
+                success:function(data){
+                    loadCart(vendor_name,data.subtotal);
+                },
+                error: function(){
+                    unblockUI();
+                },
+
+            });
+        }
+
+        function loadCart(vendor_name,subtotal)
+        {
+            getCartData(false,vendor_name,subtotal);
+            // return false;
+        }
     </script>
 @endsection

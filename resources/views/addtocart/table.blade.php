@@ -201,7 +201,7 @@
 
                 <div class=" col-md-offset-4 col-sm-offset-2 col-xs-offset-1 col-md-8">
                <div class="col-md-2 col-sm-3 col-xs-12">
-                   <button  class="btn btn-sm btn-primary" id="update-cart-values">Update Cart</button>
+                   <button  class="btn btn-sm btn-primary" onclick="updateCart();" id="update-cart-values">Update Cart</button>
                </div>
                    <div class="col-md-10 col-sm-9 col-xs-12">
                     <input type="button" style="font-weight: bold;" class="btn btn-sm btn-success"
@@ -316,20 +316,7 @@
     var timer = null;
 
 
-    function doStuff(value,id,vendor_name) {
-        $.ajax({
-            url:"addtocart/save/"+id+"/"+value+"/"+encodeURIComponent(vendor_name) ,
-            method:'get',
-            dataType:'json',
-            success:function(data){
-                loadCart(vendor_name,data.subtotal);
-            },
-            error: function(){
-                unblockUI();
-            },
 
-        });
-    }
     timer=null;
     function changeTotal(value,id,e)
     {
@@ -382,14 +369,10 @@
 
         }
     }
-function loadCart(vendor_name,subtotal)
-{
 
-    getCartData(false,vendor_name,subtotal);
 
-   // return false;
-}
-    $("#update-cart-values").click(function(){
+
+   /* $("#update-cart-values").click(function(){
         var ele=$("input[name^=qty]");
         ele.each(function(){
            var vendor=$(this).data('vendor');
@@ -398,7 +381,7 @@ function loadCart(vendor_name,subtotal)
             $('.ajaxLoading').show();
             doStuff(qty,id,vendor);
         });
-    });
+    });*/
 </script>
 <style>
     .table th.right {
