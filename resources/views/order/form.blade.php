@@ -423,6 +423,17 @@
         {
             $canAddFreehand = true;
         }
+
+    $case_price_categories = [];
+    if(isset($pass['calculate price according to case price']))
+    {
+        $case_price_categories = $pass['calculate price according to case price']->data_options;
+    }
+    $case_price_if_no_unit_categories = [];
+    if(isset($pass['use case price if unit price is 0.00']))
+    {
+        $case_price_if_no_unit_categories = $pass['use case price if unit price is 0.00']->data_options;
+    }
     ?>
     </div>
     <script type="text/javascript">
@@ -431,6 +442,14 @@
 
 
         var canAddFreehand = <?php echo $canAddFreehand ? 1:0 ; ?>;
+
+        var case_price_if_no_unit_categories = "<?php echo $case_price_if_no_unit_categories  ; ?>";
+        case_price_if_no_unit_categories = case_price_if_no_unit_categories.split(",").map(Number);
+
+
+        var case_price_categories = "<?php echo $case_price_categories  ; ?>";
+        case_price_categories = case_price_categories.split(",").map(Number);
+
         var show_freehand = <?php echo $show_freehand  ; ?>;
         console.log(type_permissions);
         console.log('Createing order '+show_freehand);
@@ -467,20 +486,21 @@
                 unitPrice = $(this).find("input[name*='price']").val();
                 casePrice = $(this).find("input[name*='case_price']").val();
                 orderType=$("#order_type_id").val();
-                // if order type is Debit Card Part=20,Graphics=10, Parts for Game=1,Party Supplies=17
-                if (orderType == 20 || orderType == 17 || orderType == 1) {
-                    Price = unitPrice;
-                }
+
                 // if order type is Instant Win prizes=8, redemption prizes=7,Office Supplies=6
-                else if(orderType == 7 || orderType == 8 || orderType == 6 || orderType == 10 || orderType == 2)
+                if($.inArray(parseInt(orderType),case_price_categories) != -1)
                 {
                      Price = casePrice;
                 }
-                else if(orderType == 4)
+                else if($.inArray(parseInt(orderType),case_price_if_no_unit_categories) != -1)
                 {
 
                      Price=(unitPrice == 0)?casePrice:unitPrice;
 
+                }
+                else
+                {
+                    Price = unitPrice;
                 }
                 sum = Qty * Price;
                 Subtotal += sum;

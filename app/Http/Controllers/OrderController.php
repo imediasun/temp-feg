@@ -316,7 +316,7 @@ class OrderController extends Controller
         $this->data['mode'] = $mode;
         $this->data['isRequestApproveProcess'] = $isRequestApproveProcess;
         $this->data['id'] = $id;
-        $this->data['data'] = $this->model->getOrderQuery($id, $mode);
+        $this->data['data'] = $this->model->getOrderQuery($id, $mode,$this->data['pass']);
         $this->data['relationships'] = $this->model->getOrderRelationships($id);
         $user_allowed_locations = implode(',', \Session::get('user_location_ids'));
         $this->data['games_options'] = $this->model->populateGamesDropdown();
@@ -336,7 +336,7 @@ class OrderController extends Controller
         } else {
             $this->data['row'] = $this->model->getColumnTable('orders');
         }
-        $this->data['order_data'] = $this->model->getOrderQuery($id, 'edit');
+        $this->data['order_data'] = $this->model->getOrderQuery($id, 'edit',$this->data['pass']);
 
         $this->data['id'] = $id;
         $this->data['access'] = $this->access;
@@ -460,6 +460,17 @@ class OrderController extends Controller
         $data = array_filter($request->all());
         $redirect_link = "order";
         if ($validator->passes()) {
+
+            $case_price_categories = [];
+            if(isset($this->data['pass']['calculate price according to case price']))
+            {
+                $case_price_categories = explode(',',$this->data['pass']['calculate price according to case price']->data_options);
+            }
+            $case_price_if_no_unit_categories = [];
+            if(isset($this->data['pass']['use case price if unit price is 0.00']))
+            {
+                $case_price_if_no_unit_categories = explode(',',$this->data['pass']['use case price if unit price is 0.00']->data_options);
+            }
             $order_id = $request->get('order_id');
             $editmode = $request->get('editmode');
             $where_in = $request->get('where_in_expression');
@@ -514,17 +525,17 @@ class OrderController extends Controller
 
             for ($i = 0; $i < $num_items_in_array; $i++) {
                 $j = $i + 1;
-                if($order_type == 20 || $order_type== 17 || $order_type == 1 )
-                {
-                    $itemsPriceArray[] = $priceArray[$i];
-                }
-                elseif($order_type  == 7 || $order_type  == 8 || $order_type == 6 || $order_type == 10|| $order_type == 2)
+                if(in_array($order_type,$case_price_categories))
                 {
                     $itemsPriceArray[] = $casePriceArray[$i];
                 }
-                elseif($order_type  == 4)
+                elseif(in_array($order_type,$case_price_if_no_unit_categories))
                 {
                     $itemsPriceArray[] = ($priceArray[$i] == 0.00)?$casePriceArray[$i]:$priceArray[$i];
+                }
+                else
+                {
+                    $itemsPriceArray[] = $priceArray[$i];
                 }
                 $order_description .= ' | item' . $j . ' - (' . $qtyArray[$i]
                         . ') ' . $itemsArray[$i] . ' @ $' .
@@ -657,8 +668,10 @@ class OrderController extends Controller
 //
 //    });
             //Updating PO Track table
-            \DB::table('po_track')->where('po_number', $orderData['po_number'])->update(['enabled' => '1']);
-            \DB::table('po_track')->where('enabled', '0')->where('created_at', '<=', \DB::raw('DATE_SUB(NOW(), INTERVAL '.env("UNUSED PO DELETE INTERVAL", "120").' MINUTE)'))->delete();
+            if(isset($orderData['po_number'])){
+                \DB::table('po_track')->where('po_number', $orderData['po_number'])->update(['enabled' => '1']);
+                \DB::table('po_track')->where('enabled', '0')->where('created_at', '<=', \DB::raw('DATE_SUB(NOW(), INTERVAL '.env("UNUSED PO DELETE INTERVAL", "120").' MINUTE)'))->delete();
+            }
 
             \Session::put('send_to', $vendor_email);
             \Session::put('order_id', $order_id);
@@ -972,7 +985,7 @@ class OrderController extends Controller
         if (isset($_GET['mode']) && !empty($_GET['mode'])) {
             $mode = $_GET['mode'];
         }
-        $data = $this->model->getOrderData($order_id);
+        $data = $this->model->getOrderData($order_id,$this->data['pass']);
         if (empty($data)) {
 
         } else {
@@ -1055,6 +1068,7 @@ class OrderController extends Controller
                 
                 //$item_total_string = $item_total_string."-----------------\n"."$ ".number_format($order_total_cost,3)."\n";
             }
+            $data['pass'] = $this->data['pass'];
             $pdf = \PDF::loadView('order.po', ['data' => $data, 'main_title' => "Purchase Order"]);
             if ($mode == "save") {
                 $po_file_name = $data[0]['company_name_short'] . "_PO_" . $data[0]['po_number'] . '.pdf';
@@ -1166,7 +1180,7 @@ class OrderController extends Controller
         //  $this->data['subgrid'] = $this->detailview($this->modelview ,  $this->data['subgrid'] ,$id );
         $this->data['id'] = $id;
         $this->data['access'] = $this->access;
-        $this->data['data'] = $this->model->getOrderQuery($id);
+        $this->data['data'] = $this->model->getOrderQuery($id,null,$this->data['pass']);
         return view('order.clonenew', $this->data);
     }
     function getInstaClone(Request $request, $eId, $voidify = null)
