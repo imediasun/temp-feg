@@ -761,7 +761,7 @@ jQuery(document).ready(function($){
 // TODO: Clean and refactor the below code
 jQuery(document).ready(function ($) {
     $('.ajaxLoading').bind('DOMSubtreeModified', function(e) {
-        if (e.target.innerHTML.length > 0) {
+        /*if (e.target.innerHTML.length > 0) {
             console.log('if');
             console.log(e);
         }
@@ -769,7 +769,7 @@ jQuery(document).ready(function ($) {
         {
             console.log('else');
             console.log(e);
-        }
+        }*/
     });
 	navigator.sayswho= (function(){
 		var ua= navigator.userAgent, tem,
