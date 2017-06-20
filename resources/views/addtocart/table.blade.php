@@ -342,7 +342,8 @@
         }
       
     }
-    $(document).on('click','#cartbtn',function() {
+    document.getElementById("cartbtn").addEventListener("click", confirmSubmit);
+    function confirmSubmit() {
         var shortMessage;
         if(amt_short_msg == null) {
             shortMessage = "{{ json_encode($cartData['amt_short_message']) }}";
