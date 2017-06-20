@@ -201,7 +201,7 @@
 
                 <div class=" col-md-offset-4 col-sm-offset-2 col-xs-offset-1 col-md-8">
                <div class="col-md-2 col-sm-3 col-xs-12">
-                   <button  class="btn btn-sm btn-primary" id="update-cart-values">Update Cart</button>
+                   <button  class="btn btn-sm btn-primary" id="update-cart-values" onclick="updateCart();">Update Cart</button>
                </div>
                    <div class="col-md-10 col-sm-9 col-xs-12">
                     <input type="button" style="font-weight: bold;" class="btn btn-sm btn-success"
@@ -382,23 +382,7 @@
 
         }
     }
-function loadCart(vendor_name,subtotal)
-{
 
-    getCartData(false,vendor_name,subtotal);
-
-   // return false;
-}
-    $("#update-cart-values").click(function(){
-        var ele=$("input[name^=qty]");
-        ele.each(function(){
-           var vendor=$(this).data('vendor');
-            var id= $(this).attr('id');
-            var qty= $(this).val();
-            $('.ajaxLoading').show();
-            doStuff(qty,id,vendor);
-        });
-    });
 </script>
 <style>
     .table th.right {
