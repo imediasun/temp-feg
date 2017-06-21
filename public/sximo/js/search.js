@@ -39,8 +39,10 @@ function performAdvancedSearch(params) {
             if (value2 === null || value2 === UNDEFINED ) {
                 value2 = '';
             }
-            value = $.trim(value);
-            value2 = $.trim(value2);
+            if (typeof value == 'string') {
+                value  = $.trim(value);
+                value2 = $.trim(value2);
+            }
             // cache original value
             cache[field] = {value:value, value2: value2, operator: operate};           
 
