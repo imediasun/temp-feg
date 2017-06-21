@@ -139,11 +139,11 @@
                             </div>
                             <div class="form-group  ">
                                 <label for="oct" class=" control-label col-md-4 text-left">
-                                    Octuber </label>
+                                    October </label>
 
                                 <div class="col-md-4">
                                     <input type="number" name="oct" id="oct" class="form-control"
-                                           value="{{number_format($row['Octuber'], 2, '.', '')}}"/>
+                                           value="{{number_format($row['October'], 2, '.', '')}}"/>
                                 </div>
                                 <div class="col-md-4">
                                 </div>

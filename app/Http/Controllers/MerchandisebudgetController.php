@@ -140,7 +140,7 @@ class MerchandisebudgetController extends Controller
         if ($row) {
             $this->data['row'] = $row;
         } else {
-            $this->data['row'] = array("id" => null, "location_id" => "", 'budget_year' => "", 'Jan' => '0', 'Feb' => '0', 'March' => '0', 'April' => '0', 'May' => '0', 'June' => '0', 'July' => '0', 'August' => '0', 'September' => '0', 'Octuber' => '0', 'Octuber' => '0', 'November' => '0', 'December' => '0');
+            $this->data['row'] = array("id" => null, "location_id" => "", 'budget_year' => "", 'Jan' => '0', 'Feb' => '0', 'March' => '0', 'April' => '0', 'May' => '0', 'June' => '0', 'July' => '0', 'August' => '0', 'September' => '0', 'October' => '0','November' => '0', 'December' => '0');
         }
         $this->data['setting'] = $this->info['setting'];
         $this->data['fields'] = \AjaxHelpers::fieldLang($this->info['config']['forms']);

@@ -49,7 +49,7 @@
                 <th width="150">July</th>
                 <th width="150">August</th>
                 <th width="150">September</th>
-                <th width="150">Octuber</th>
+                <th width="150">October</th>
                 <th width="150">November</th>
                 <th width="150">December</th>
                 @if($setting['disablerowactions']=='false')
