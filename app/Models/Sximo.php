@@ -1344,7 +1344,7 @@ class Sximo extends Model {
         {
             $concat = 'CONCAT(IF(G.location_id = 0, "IN TRANSIT", G.location_id)," | ",IF(G.test_piece = 1,CONCAT("**TEST** ",T.game_title),T.game_title)," | ",G.id)';
             $where = '';
-            $orderBy = 'T.game_title';
+            $orderBy = 'G.status_id DESC,T.game_title';
         }
         else
         {
@@ -1358,7 +1358,7 @@ class Sximo extends Model {
                 $concat = 'CONCAT(G.location_id," | ",T.game_title," | ",G.id)';
                 $where = 'AND G.location_id in ('.$location.')';
             }
-            $orderBy = 'L.id,T.game_title';
+            $orderBy = 'G.status_id DESC,L.id,T.game_title';
         }
         $query = \DB::select('SELECT G.id AS id,
 									  '.$concat.' AS text

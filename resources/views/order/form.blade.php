@@ -424,12 +424,12 @@
             $canAddFreehand = true;
         }
 
-    $case_price_categories = [];
+    $case_price_categories = '';
     if(isset($pass['calculate price according to case price']))
     {
         $case_price_categories = $pass['calculate price according to case price']->data_options;
     }
-    $case_price_if_no_unit_categories = [];
+    $case_price_if_no_unit_categories = '';
     if(isset($pass['use case price if unit price is 0.00']))
     {
         $case_price_if_no_unit_categories = $pass['use case price if unit price is 0.00']->data_options;
@@ -443,7 +443,7 @@
 
         var canAddFreehand = <?php echo $canAddFreehand ? 1:0 ; ?>;
 
-        var case_price_if_no_unit_categories = "<?php echo $case_price_if_no_unit_categories  ; ?>";
+        var case_price_if_no_unit_categories = "<?php echo $case_price_if_no_unit_categories; ?>";
         case_price_if_no_unit_categories = case_price_if_no_unit_categories.split(",").map(Number);
 
 
