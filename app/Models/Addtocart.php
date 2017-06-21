@@ -72,21 +72,18 @@ class addtocart extends Sximo
                 return false;
             }
 
-            if ($data['user_level'] == Groups::MERCHANDISE_MANAGER || $data['user_level'] == Groups::FIELD_MANAGER || $data['user_level'] == Groups::OFFICE_MANAGER || $data['user_level'] == Groups::FINANCE_MANAGER || $data['user_level'] == Groups::GUEST || $data['user_level'] == Groups::SUPPER_ADMIN || $data['user_level'] == Groups::PARTNER)
+            /*if ($data['user_level'] == Groups::MERCHANDISE_MANAGER || $data['user_level'] == Groups::FIELD_MANAGER || $data['user_level'] == Groups::OFFICE_MANAGER || $data['user_level'] == Groups::FINANCE_MANAGER || $data['user_level'] == Groups::GUEST || $data['user_level'] == Groups::SUPPER_ADMIN)
             {
                 $statusId = 9; /// 9 IS USED AS AN ARBITRARY DELIMETER TO KEEP CART SEPERATE FROM LOCATIONS' OWN
             }
             else
             {
                 $statusId = 4;
-            }
+            }*/
+            $statusId = 4;
             if(!empty($productId) &&!empty($qty))
             {
-
-
                // $qty = 1;
-
-
 
                 $query = \DB::select('SELECT id FROM requests WHERE product_id = "'.$productId.'" AND status_id = "'.$statusId.'" AND request_user_id = "'.$userID.'" AND location_id = "'.$locationId.'"');
 

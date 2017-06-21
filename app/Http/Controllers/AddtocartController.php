@@ -264,12 +264,12 @@ class AddtocartController extends Controller
 
         $location_id = \Session::get('selected_location');
         $data['user_level'] = \Session::get('gid');
-        if ($data['user_level'] == Groups::MERCHANDISE_MANAGER || $data['user_level'] == Groups::FIELD_MANAGER || $data['user_level'] == Groups::OFFICE_MANAGER || $data['user_level'] == Groups::FINANCE_MANAGER || $data['user_level'] == Groups::GUEST || $data['user_level'] == Groups::SUPPER_ADMIN) {
+        /*if ($data['user_level'] == Groups::MERCHANDISE_MANAGER || $data['user_level'] == Groups::FIELD_MANAGER || $data['user_level'] == Groups::OFFICE_MANAGER || $data['user_level'] == Groups::FINANCE_MANAGER || $data['user_level'] == Groups::GUEST || $data['user_level'] == Groups::SUPPER_ADMIN) {
             $statusId = 9; /// 9 IS USED AS AN ARBITRARY DELIMETER TO KEEP CART SEPERATE FROM LOCATIONS' OWN
         } else {
             $statusId = 4;
-        }
-
+        }*/
+        $statusId = 4;
         if (!empty($new_location)) {
             $query = \DB::select('SELECT product_id,description,qty,status_id,request_type_id FROM requests
                                   WHERE location_id = ' . $location_id . ' AND status_id = 9');
