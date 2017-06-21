@@ -95,7 +95,7 @@
                     <td>{{ $row->July }}</td>
                     <td>{{ $row->August }}</td>
                     <td>{{ $row->September }}</td>
-                    <td>{{ $row->Octuber }}</td>
+                    <td>{{ $row->October }}</td>
                     <td>{{ $row->November }}</td>
                     <td>{{ $row->December }}</td>
 
