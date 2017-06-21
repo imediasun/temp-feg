@@ -2730,7 +2730,13 @@ li.L9 {
     padding: 10px;
     margin: 0 !important;
     color: #666;
-    border-bottom: 1px solid #aaa;
+    border: solid 1px #ddd;    
+}
+.topMessage {
+    border-bottom: none;
+}
+.bottomMessage {
+    border-top: none;
 }
 
 #advance-search.search-table  tr.fieldsearch td:first-child {
