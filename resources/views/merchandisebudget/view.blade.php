@@ -79,8 +79,8 @@
 
                     </tr><tr>
                         <td width='30%' class='label-view text-right'>
-                            Octuber</td>
-                        <td>{{ $row->Octuber }} </td>
+                            October</td>
+                        <td>{{ $row->October }} </td>
 
                     </tr><tr>
                         <td width='30%' class='label-view text-right'>

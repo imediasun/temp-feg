@@ -27,7 +27,7 @@ class merchandisebudget extends Sximo
   CONCAT('$',FORMAT(SUM(CASE WHEN DATE_FORMAT(location_budget.budget_date,'%b')='Jul' THEN location_budget.budget_value ELSE 0 END),2)) July,
   CONCAT('$',FORMAT(SUM(CASE WHEN DATE_FORMAT(location_budget.budget_date,'%b')='Aug' THEN location_budget.budget_value ELSE 0 END),2)) August,
   CONCAT('$',FORMAT(SUM(CASE WHEN DATE_FORMAT(location_budget.budget_date,'%b')='Sep' THEN location_budget.budget_value ELSE 0 END),2)) September,
-  CONCAT('$',FORMAT(SUM(CASE WHEN DATE_FORMAT(location_budget.budget_date,'%b')='Oct' THEN location_budget.budget_value ELSE 0 END),2)) Octuber,
+  CONCAT('$',FORMAT(SUM(CASE WHEN DATE_FORMAT(location_budget.budget_date,'%b')='Oct' THEN location_budget.budget_value ELSE 0 END),2)) October,
   CONCAT('$',FORMAT(SUM(CASE WHEN DATE_FORMAT(location_budget.budget_date,'%b')='Nov' THEN location_budget.budget_value ELSE 0 END),2)) November,
   CONCAT('$',FORMAT(SUM(CASE WHEN DATE_FORMAT(location_budget.budget_date,'%b')='Dec' THEN location_budget.budget_value ELSE 0 END),2)) December
   FROM location,location_budget ";
@@ -49,7 +49,7 @@ class merchandisebudget extends Sximo
             ROUND(0.00+ SUM(CASE WHEN DATE_FORMAT(location_budget.budget_date,'%b')='Jul' THEN location_budget.budget_value ELSE 0.00 END),2) July,
             ROUND(0.00+ SUM(CASE WHEN DATE_FORMAT(location_budget.budget_date,'%b')='Aug' THEN location_budget.budget_value ELSE 0.00 END),2) August,
             ROUND(0.00+ SUM(CASE WHEN DATE_FORMAT(location_budget.budget_date,'%b')='Sep' THEN location_budget.budget_value ELSE 0.00 END),2) September,
-            ROUND(0.00+ SUM(CASE WHEN DATE_FORMAT(location_budget.budget_date,'%b')='Oct' THEN location_budget.budget_value ELSE 0.00 END),2) Octuber,
+            ROUND(0.00+ SUM(CASE WHEN DATE_FORMAT(location_budget.budget_date,'%b')='Oct' THEN location_budget.budget_value ELSE 0.00 END),2) October,
             ROUND(0.00+ SUM(CASE WHEN DATE_FORMAT(location_budget.budget_date,'%b')='Nov' THEN location_budget.budget_value ELSE 0.00 END),2) November,
             ROUND(0.00+ SUM(CASE WHEN DATE_FORMAT(location_budget.budget_date,'%b')='Dec' THEN location_budget.budget_value ELSE 0.00 END),2) December
   
