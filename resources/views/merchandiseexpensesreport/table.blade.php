@@ -28,10 +28,10 @@
         @include( $pageModule.'/toolbar',['config_id'=>$config_id,'colconfigs' => SiteHelpers::getRequiredConfigs($module_id)])
 
 	 <?php echo Form::open(array('url'=>'merchandiseexpensesreport/delete/', 'class'=>'form-horizontal' ,'id' =>'SximoTable'  ,'data-parsley-validate'=>'' )) ;?>
-<div class="table-responsive">
     @if(!empty($topMessage))
     <h5 class="topMessage">{{ $topMessage }}</h5>
     @endif
+    <div class="table-responsive">
 	@if(count($rowData)>=1)
     <table class="table table-striped datagrid " id="{{ $pageModule }}Table" data-module="{{ $pageModule }}" data-url="{{ $pageUrl }}">
         <thead>
@@ -166,11 +166,11 @@
 	</div>
 
 	@endif
+    
+	</div>
     @if(!empty($bottomMessage))
     <h5 class="bottomMessage">{{ $bottomMessage }}</h5>
     @endif
-    
-	</div>
 	<?php echo Form::close() ;?>
 	@include('ajaxfooter')
 
