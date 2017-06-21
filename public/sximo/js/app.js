@@ -217,7 +217,7 @@ App.handlers.ajaxError = function (jQEvent, jQXhr, xhr, errorName) {
     var obj = this,
         status = jQXhr.status,
         statusText = jQXhr.statusText,
-        skipIf = {'unauthorized': false, 'abort': true, 'not found': true},
+        skipIf = {'unauthorized': false, 'abort': true, 'not found': true, 'Unprocessable Entity':true},
         skipIfStatus = {'0': true, '401': false, '403': true},
         isErrorNameString = typeof errorName == 'string',
         errorNameString = isErrorNameString && errorName.toLowerCase() || '';
@@ -937,6 +937,9 @@ App.autoCallbacks.registerCallback('ajaxerror', function(params){
                     button below to send an error report to the support team.";
     if(params.errorName == "Unauthorized"){
         defaultMessage = "Your session has expired. Please log back into the admin in order to complete this action. ";
+    }
+    if(params.errorName == "Unprocessable Entity"){ ///Set for ajax validation errors
+        return;
     }
     App.notyConfirm({
         message : defaultMessage,
