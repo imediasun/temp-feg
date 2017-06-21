@@ -218,13 +218,14 @@ $selected_loc=\Session::get('selected_location');?>
             'Game Maintenance',
             'Training',
             'Shipping Games',
-            'Inventory / Asset Tags',
+            'Inventory  / Asset Tags',
             'General Tips',
             'Training Materials',
             'Setting',
             'API Order Restrictions'
     );
 ?>
+
 @if( count(\Session::get('user_locations'))<=0 && !(in_array($pageTitle , $noLocationModules)) )
 <script>
     notyMessageError('In order to run module you must be assigned to at least one location. You have not been assigned to any locations. Please contact an administrator if you believe this to be an error.', {"timeOut":"8000"});
