@@ -35,7 +35,9 @@ function performSimpleSearch(params) {
         if (value === null || value === UNDEFINED ) {
             value = '';
         }
-        value = $.trim(value);
+        if (typeof value == 'string') {
+            value = $.trim(value);
+        }
         // not required to be included
         if (!fieldName || fieldName === '_token' || value === '') {
             return;
