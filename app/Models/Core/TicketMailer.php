@@ -52,11 +52,14 @@ class TicketMailer
 //        $headers   .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
 //        $headers   .= 'From: ' . CNF_APPNAME . ' <' . $reply_to . '>' . "\r\n";
 //        Log::info("**Send Ticket Email => ",[$subject, $message, $headers]);
-        
+        $fromName = \Session::get('fid');
+        if (empty($fromName)) {
+            $fromName = CNF_APPNAME;
+        }
         $emailConfigurations = [
             'from' => $reply_to, 
             'replyTo' => $reply_to, 
-            'fromName' => CNF_APPNAME, 
+            'fromName' => $fromName,
             'replyToName' => CNF_APPNAME, 
             'to' => $to, 
             'bcc' => $bcc, 
