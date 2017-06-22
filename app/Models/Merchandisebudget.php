@@ -83,6 +83,7 @@ class merchandisebudget extends Sximo
         $key = with(new static)->primaryKey;
         $vals = array();
         foreach ($data as $budget) {
+            $budget['budget_value'] = str_replace('$','',$budget['budget_value']);
             $vals[] = $budget;
         }
 

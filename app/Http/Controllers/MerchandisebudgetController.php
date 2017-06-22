@@ -200,7 +200,7 @@ class MerchandisebudgetController extends Controller
         {
             $location = $request->get('location');
             $id = explode('|',$location);
-            $location_id = $id[0];
+            $location_id = rtrim($id[0]);
         }
         $budget_year = $request->get('budget_year');
         $budget_vals['jan'] = array('location_id' => $location_id, 'budget_date' => $budget_year . '-01-01', 'budget_value' => $request->get('jan'));
