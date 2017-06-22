@@ -97,6 +97,7 @@
 
 
                     <td data-values="{{$row->location}}" data-field="location" data-format="{{$row->location}}">{{ $row->location }}</td>
+                    <td style="display: none" data-values="{{\Session::get('budget_year')}}" data-field="budget_year" data-format="{{\Session::get('budget_year')}}">{{\Session::get('budget_year')}}</td>
                     <td data-values="{{$row->Jan}}" data-field="Jan" data-format="{{$row->Jan}}">{{ $row->Jan }}</td>
                     <td data-values="{{$row->Feb}}" data-field="Feb" data-format="{{$row->Feb}}">{{ $row->Feb }}</td>
                     <td data-values="{{$row->March}}" data-field="March" data-format="{{$row->March}}">{{ $row->March }}</td>
