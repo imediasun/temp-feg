@@ -1216,4 +1216,11 @@ class MylocationgameController extends Controller
     {
 
     }
+    public function postNotes(Request $request)
+    {
+        $game = Mylocationgame::find($request->id);
+        $game->notes = $request->notes;
+        $game->save();
+        return 'Notes Saved Successfully';
+    }
 }

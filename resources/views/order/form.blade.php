@@ -418,11 +418,6 @@
 
         }
         $type_permissions = rtrim($type_permissions,",");
-        $canAddFreehand = false;
-        if(!empty($pass['Can add freehand products']))
-        {
-            $canAddFreehand = true;
-        }
 
     $case_price_categories = '';
     if(isset($pass['calculate price according to case price']))
@@ -440,9 +435,6 @@
         var type_permissions = "<?php echo $type_permissions ?>";
         type_permissions = type_permissions.split(",").map(Number);
 
-
-        var canAddFreehand = <?php echo $canAddFreehand ? 1:0 ; ?>;
-
         var case_price_if_no_unit_categories = "<?php echo $case_price_if_no_unit_categories; ?>";
         case_price_if_no_unit_categories = case_price_if_no_unit_categories.split(",").map(Number);
 
@@ -454,13 +446,12 @@
         console.log(type_permissions);
         console.log('Createing order '+show_freehand);
         $(document).ready(function () {
-            if(!canAddFreehand)
+            if(!show_freehand)
             {
                 $('#can-freehand').hide();
             }
         });
 
-        console.log('canAddFreehand : '+canAddFreehand);
 
         var isRequestApprovalProcess = <?php echo $isRequestApproveProcess ? 'true' : 'false'; ?>;
         var counter = isRequestApprovalProcess ? $('input[name^=item_num]').length : 0;
@@ -973,12 +964,7 @@
         $('#order_type_id').change(function () {
             var orderType = $(this);
             var selected_type = $(this).val();
-            if(canAddFreehand == 1 && show_freehand)
-            {
-                $('#can-freehand').show();
-                console.log('I have master permission');
-            }
-            else if($.inArray(parseInt(selected_type),type_permissions) != -1 && show_freehand)
+            if($.inArray(parseInt(selected_type),type_permissions) != -1 && show_freehand)
             {
                 $('#can-freehand').show();
                 console.log('I have permission for order type ' + selected_type);

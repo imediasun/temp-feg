@@ -242,17 +242,6 @@
             </div>
         </div>
         @endif
-
-
-        <div class="form-group  " >
-            <label for="notes" class=" control-label col-md-4 text-left">
-                {!! SiteHelpers::activeLang('Notes', (isset($fields['notes']['language'])? $fields['notes']['language'] : array())) !!}
-            </label>
-            <div class="col-md-8">
-                  <textarea name='notes' rows='5' id='notes' class='form-control' required >{{$gameNotes}}</textarea>
-            </div>
-        </div>
-
         
         @if (!$isSold)
         <!-- Submit Button -->
@@ -322,6 +311,23 @@
                 {!! SiteHelpers::activeLang('Previous Location', (isset($fields['prev_location_id']['language'])? $fields['prev_location_id']['language'] : array())) !!}:
             </label>
             <div class="col-md-8">{{ \DateHelpers::formatStringValue($prevLocationIdName) }}</div>
+        </div>
+        <div class="form-group clearfix" >
+            <label class="col-md-4">
+                {!! SiteHelpers::activeLang('Notes', (isset($fields['note']['language'])? $fields['note']['language'] : array())) !!}:
+            </label>
+            <div class="col-md-7"><span id="notes_text">{{ $gameNotes }}</span><span id="notes_input" style="display: none;"><textarea name='notes' rows='5' id='notes' class='form-control' required >{{$gameNotes}}</textarea></span></div>
+            <div class="col-md-1">
+                <a style="margin-top: 8px;" href="javascript:void(0)" id="editNotes" class="collapse-close pull-right btn btn-xs btn-primary">
+                    <i class="fa fa fa-pencil"></i>
+                </a>
+                <a style="margin-top: 8px; display: none" href="javascript:void(0)" id="saveNotes" class="collapse-close pull-right btn btn-xs btn-primary">
+                    <i class="fa fa fa-save"></i>
+                </a>
+                <a style="margin-top: 2px; display: none;width: 22px" href="javascript:void(0)" id="cancelNotes" class="collapse-close pull-right btn btn-xs btn-danger">
+                    <i class="fa fa fa-times"></i>
+                </a>
+            </div>
         </div>
         <div class="form-group clearfix" >
             <label class="col-md-4">
@@ -463,6 +469,57 @@
         mainModule = '{{ $pageModule }}';
     
     $(document).ready(function() {
+        function toggleInput()
+        {
+            $('#notes_text').toggle();
+            $('#saveNotes').toggle();
+            $('#notes_input').toggle();
+            $('#cancelNotes').toggle();
+            $('#editNotes').toggle();
+        }
+        $('#editNotes').click(function () {
+            $('#notes_text').hide();
+            $('#saveNotes').show();
+            $('#notes_input').show();
+            $('#cancelNotes').show();
+            $('#editNotes').hide();
+        });
+        $('#saveNotes').click(function () {
+            $.ajax({
+                type:'POST',
+                url:"{{url('mylocationgame/notes')}}",
+                data:{
+                    _token:"{{csrf_token()}}",
+                    notes:$('#notes_input textarea').val(),
+                    id:"{{$game->asset_number}}"
+                },
+                success:function (data) {
+                    $('#notes_text').html($('#notes_input textarea').val()).show();
+                    $('#saveNotes').hide();
+                    $('#notes_input').hide();
+                    $('#cancelNotes').hide();
+                    $('#editNotes').show();
+                    console.log('notes saved!');
+                    console.log(data);
+
+                },
+                error:function (data) {
+                    console.log('notes save Error!');
+                    console.log(data);
+                }
+
+            });
+
+        });
+        $('#cancelNotes').click(function () {
+            $('#notes_input textarea').val($('#notes_text').text());
+            $('#notes_text').show();
+            $('#saveNotes').hide();
+            $('#notes_input').hide();
+            $('#cancelNotes').hide();
+            $('#editNotes').show();
+        });
+
         App.modules.games.detailedView.init({
                 'container': $('#'+pageModule+'View'),
                 'moduleName': pageModule,

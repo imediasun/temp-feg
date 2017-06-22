@@ -211,7 +211,7 @@
 
                             </div>
                         </div>
-                        <div class="form-group  " >
+                        {{--<div class="form-group  " >
                             <label for="City" class=" control-label col-md-4 text-left">
                                 {!! SiteHelpers::activeLang('City', (isset($fields['city']['language'])? $fields['city']['language'] : array())) !!}
                             </label>
@@ -221,7 +221,7 @@
                             <div class="col-md-2">
 
                             </div>
-                        </div>
+                        </div>--}}
                         <div class="form-group  " >
                             <label for="State" class=" control-label col-md-4 text-left">
                                 {!! SiteHelpers::activeLang('State', (isset($fields['state']['language'])? $fields['state']['language'] : array())) !!}
