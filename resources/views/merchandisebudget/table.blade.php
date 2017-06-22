@@ -61,19 +61,28 @@
         <tbody>
         	@if($access['is_add'] =='1' && $setting['inline']=='true')
 			<tr id="form-0" >
-				<td> # </td>
+				<td class="cell"> # </td>
                 @if($setting['disableactioncheckbox']=='false' && ($access['is_remove'] == 1 || $access['is_add'] =='1'))
-				<td> </td>
+				    <td class="cell"> </td>
                 @endif
-				@if($setting['view-method']=='expand') <td> </td> @endif
-				@foreach ($tableGrid as $t)
 
-				<td >
-					<button onclick="saved('form-0')" class="btn btn-primary btn-xs" type="button"><i class="fa  fa-save"></i></button>
-				</td>
-			  </tr>
+				@if($setting['view-method']=='expand') <td> </td> @endif
+
+				@foreach ($tableGrid as $t)
+                    @if(isset($t['inline']) && $t['inline'] =='1')
+                        <?php $limited = isset($t['limited']) ? $t['limited'] :''; ?>
+                        @if(SiteHelpers::filterColumn($limited ))
+                            <td class="cell" data-form="{{ $t['field'] }}" data-form-type="{{ AjaxHelpers::inlineFormType($t['field'],$tableForm)}}">
+                                {!! SiteHelpers::transInlineForm($t['field'] , $tableForm) !!}
+                            </td>
+                        @endif
+                    @endif
                 @endforeach
-			  @endif
+                <td class="cell">
+                    <button onclick="saved('form-0')" class="btn btn-primary btn-xs" type="button"><i class="fa  fa-save"></i></button>
+                </td>
+            </tr>
+            @endif
 
            		<?php foreach ($rowData as $row) :
            			  $id = $row->id;
@@ -85,19 +94,23 @@
 					@if($setting['view-method']=='expand')
 					<td><a href="javascript:void(0)" class="expandable" rel="#row-{{ $row->id }}" data-url="{{ url('merchandisebudget/show/'.$id) }}"><i class="fa fa-plus " ></i></a></td>
 					@endif
-                    <td>{{ $row->location }}</td>
-                    <td>{{ $row->Jan }}</td>
-                    <td>{{ $row->Feb }}</td>
-                    <td>{{ $row->March }}</td>
-                    <td>{{ $row->April }}</td>
-                    <td>{{ $row->May }}</td>
-                    <td>{{ $row->June }}</td>
-                    <td>{{ $row->July }}</td>
-                    <td>{{ $row->August }}</td>
-                    <td>{{ $row->September }}</td>
-                    <td>{{ $row->October }}</td>
-                    <td>{{ $row->November }}</td>
-                    <td>{{ $row->December }}</td>
+
+
+                    <td data-values="{{$row->location}}" data-field="location" data-format="{{$row->location}}">{{ $row->location }}</td>
+                    <td data-values="{{$row->Jan}}" data-field="Jan" data-format="{{$row->Jan}}">{{ $row->Jan }}</td>
+                    <td data-values="{{$row->Feb}}" data-field="Feb" data-format="{{$row->Feb}}">{{ $row->Feb }}</td>
+                    <td data-values="{{$row->March}}" data-field="March" data-format="{{$row->March}}">{{ $row->March }}</td>
+                    <td data-values="{{$row->April}}" data-field="April" data-format="{{$row->April}}">{{ $row->April }}</td>
+                    <td data-values="{{$row->May}}" data-field="May" data-format="{{$row->May}}">{{ $row->May }}</td>
+                    <td data-values="{{$row->June}}" data-field="June" data-format="{{$row->June}}">{{ $row->June }}</td>
+                    <td data-values="{{$row->July}}" data-field="July" data-format="{{$row->July}}">{{ $row->July }}</td>
+                    <td data-values="{{$row->August}}" data-field="August" data-format="{{$row->August}}">{{ $row->August }}</td>
+                    <td data-values="{{$row->September}}" data-field="September" data-format="{{$row->September}}">{{ $row->September }}</td>
+                    <td data-values="{{$row->October}}" data-field="October" data-format="{{$row->October}}">{{ $row->October }}</td>
+                    <td data-values="{{$row->November}}" data-field="November" data-format="{{$row->November}}">{{ $row->November }}</td>
+                    <td data-values="{{$row->December}}" data-field="December" data-format="{{$row->December}}">{{ $row->December }}</td>
+
+
 
 				 <td data-values="action" data-key="<?php echo $row->id ;?>">
 					{!! AjaxHelpers::buttonAction('merchandisebudget',$access,$id ,$setting) !!}
