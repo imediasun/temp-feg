@@ -1356,8 +1356,10 @@ class Sximo extends Model {
             }
             else
             {
-                $concat = 'CONCAT(G.location_id," | ",T.game_title," | ",G.id)';
-                $where = 'AND G.location_id in ('.$location.')';
+                //$concat = 'CONCAT(G.location_id," | ",T.game_title," | ",G.id)';
+                $concat = 'CONCAT(IF(G.location_id = 0, "IN TRANSIT", G.location_id), " | ",T.game_title," | ",G.id)';
+
+                $where = 'AND G.location_id in (0,'.$location.')';
             }
             $orderBy = 'G.status_id DESC,L.id,T.game_title';
         }
