@@ -196,6 +196,12 @@ class MerchandisebudgetController extends Controller
 
         $budget_vals = array();
         $location_id = $request->get('location_id');
+        if(empty($location_id))
+        {
+            $location = $request->get('location');
+            $id = explode('|',$location);
+            $location_id = $id[0];
+        }
         $budget_year = $request->get('budget_year');
         $budget_vals['jan'] = array('location_id' => $location_id, 'budget_date' => $budget_year . '-01-01', 'budget_value' => $request->get('jan'));
         $budget_vals['feb'] = array('location_id' => $location_id, 'budget_date' => $budget_year . '-02-01', 'budget_value' => $request->get('feb'));
