@@ -102,7 +102,7 @@
                                     June</label>
 
                                 <div class="col-md-4">
-                                    <input type="number" name="jun" id="jun" class="form-control"
+                                    <input type="number" name="june" id="jun" class="form-control"
                                            value="{{number_format($row['June'], 2, '.', '')}}"/></div>
                                 <div class="col-md-4">
                                 </div>
@@ -112,7 +112,7 @@
                                     July </label>
 
                                 <div class="col-md-4">
-                                    <input type="number" name="jul" id="jul" class="form-control"
+                                    <input type="number" name="july" id="jul" class="form-control"
                                            value="{{number_format($row['July'], 2, '.', '')}}"/></div>
                                 <div class="col-md-4">
                                 </div>
@@ -122,7 +122,7 @@
                                     August </label>
 
                                 <div class="col-md-4">
-                                    <input type="number" name="aug" id="aug" class="form-control"
+                                    <input type="number" name="august" id="aug" class="form-control"
                                            value="{{number_format($row['August'], 2, '.', '')}}"/></div>
                                 <div class="col-md-4">
                                 </div>
@@ -132,7 +132,7 @@
                                     September </label>
 
                                 <div class="col-md-4">
-                                    <input type="number" name="sep" id="sep" class="form-control"
+                                    <input type="number" name="september" id="sep" class="form-control"
                                            value="{{number_format($row['September'], 2, '.', '')}}"/></div>
                                 <div class="col-md-4">
                                 </div>
@@ -142,7 +142,7 @@
                                     October </label>
 
                                 <div class="col-md-4">
-                                    <input type="number" name="oct" id="oct" class="form-control"
+                                    <input type="number" name="october" id="oct" class="form-control"
                                            value="{{number_format($row['October'], 2, '.', '')}}"/>
                                 </div>
                                 <div class="col-md-4">
@@ -153,7 +153,7 @@
                                     November </label>
 
                                 <div class="col-md-4">
-                                    <input type="number" name="nov" id="nov" class="form-control"
+                                    <input type="number" name="november" id="nov" class="form-control"
                                            value="{{number_format($row['November'], 2, '.', '')}}"/>
                                 </div>
                                 <div class="col-md-4">
@@ -164,7 +164,7 @@
                                     December </label>
 
                                 <div class="col-md-4">
-                                    <input type="number" name="dec" id="dec" class="form-control"
+                                    <input type="number" name="december" id="dec" class="form-control"
                                            value="{{number_format($row['December'], 2, '.', '')}}"/></div>
                                 <div class="col-md-4">
                                 </div>

@@ -101,18 +101,18 @@
 
                     <td data-values="{{$row->location}}" data-field="location" data-format="{{$row->location}}">{{ $row->location }}</td>
                     <td style="display: none" data-values="{{\Session::get('budget_year')}}" data-field="budget_year" data-format="{{\Session::get('budget_year')}}">{{\Session::get('budget_year')}}</td>
-                    <td data-values="{{$row->Jan}}" data-field="Jan" data-format="{{$row->Jan}}">{{ $row->Jan }}</td>
-                    <td data-values="{{$row->Feb}}" data-field="Feb" data-format="{{$row->Feb}}">{{ $row->Feb }}</td>
-                    <td data-values="{{$row->March}}" data-field="March" data-format="{{$row->March}}">{{ $row->March }}</td>
-                    <td data-values="{{$row->April}}" data-field="April" data-format="{{$row->April}}">{{ $row->April }}</td>
-                    <td data-values="{{$row->May}}" data-field="May" data-format="{{$row->May}}">{{ $row->May }}</td>
-                    <td data-values="{{$row->June}}" data-field="June" data-format="{{$row->June}}">{{ $row->June }}</td>
-                    <td data-values="{{$row->July}}" data-field="July" data-format="{{$row->July}}">{{ $row->July }}</td>
-                    <td data-values="{{$row->August}}" data-field="August" data-format="{{$row->August}}">{{ $row->August }}</td>
-                    <td data-values="{{$row->September}}" data-field="September" data-format="{{$row->September}}">{{ $row->September }}</td>
-                    <td data-values="{{$row->October}}" data-field="October" data-format="{{$row->October}}">{{ $row->October }}</td>
-                    <td data-values="{{$row->November}}" data-field="November" data-format="{{$row->November}}">{{ $row->November }}</td>
-                    <td data-values="{{$row->December}}" data-field="December" data-format="{{$row->December}}">{{ $row->December }}</td>
+                    <td data-values="{{$row->Jan}}" data-field="jan" data-format="{{$row->Jan}}">{{ $row->Jan }}</td>
+                    <td data-values="{{$row->Feb}}" data-field="feb" data-format="{{$row->Feb}}">{{ $row->Feb }}</td>
+                    <td data-values="{{$row->March}}" data-field="march" data-format="{{$row->March}}">{{ $row->March }}</td>
+                    <td data-values="{{$row->April}}" data-field="april" data-format="{{$row->April}}">{{ $row->April }}</td>
+                    <td data-values="{{$row->May}}" data-field="may" data-format="{{$row->May}}">{{ $row->May }}</td>
+                    <td data-values="{{$row->June}}" data-field="june" data-format="{{$row->June}}">{{ $row->June }}</td>
+                    <td data-values="{{$row->July}}" data-field="july" data-format="{{$row->July}}">{{ $row->July }}</td>
+                    <td data-values="{{$row->August}}" data-field="august" data-format="{{$row->August}}">{{ $row->August }}</td>
+                    <td data-values="{{$row->September}}" data-field="september" data-format="{{$row->September}}">{{ $row->September }}</td>
+                    <td data-values="{{$row->October}}" data-field="october" data-format="{{$row->October}}">{{ $row->October }}</td>
+                    <td data-values="{{$row->November}}" data-field="november" data-format="{{$row->November}}">{{ $row->November }}</td>
+                    <td data-values="{{$row->December}}" data-field="december" data-format="{{$row->December}}">{{ $row->December }}</td>
 
 
 
