@@ -1557,7 +1557,7 @@ class OrderController extends Controller
             $voided = Order::isVoided($id, $orderData);
             $closed = Order::isClosed($id, $orderData);
             $partial = Order::isPartiallyReceived($id);
-            
+
             $status = true;
 
             if ($freeHand) {
@@ -1575,8 +1575,8 @@ class OrderController extends Controller
                 $status = false;
             }
             if ($closed) {
-                $message = \Lang::get('core.order_closed_edit_alert');
-                $status = false;
+                //$message = \Lang::get('core.order_closed_edit_alert');
+                //$status = false;
             }
             if ($voided) {
                 $message = \Lang::get('core.order_voided_edit_alert');
