@@ -491,6 +491,12 @@ class UsersController extends Controller
             $data['redirect_link'] = $request->get('redirect_link');
 
             $data['active']=$request->get('active');
+            $data['street']=$request->get('street');
+            $data['tier']=$request->get('tier');
+            $data['primary_phone']=$request->get('primary_phone');
+            $data['restricted_mgr_email']=$request->get('restricted_mgr_email');
+            $data['restrict_merch']=$request->get('restrict_merch');
+            $data['is_tech_contact']=$request->get('is_tech_contact');
 
             $id = $this->model->insertRow($data, $request->input('id'));
             $all_locations = Input::get('all_locations');

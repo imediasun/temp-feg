@@ -91,17 +91,17 @@
 					 	
 					 </div>
 				  </div> 					
-				  <div class="form-group  " > 
-					<label for="Email" class=" control-label col-md-4 text-left"> 
-					{!! SiteHelpers::activeLang('Email', (isset($fields['email']['language'])? $fields['email']['language'] : array())) !!}	
+				  <div class="form-group  " >
+					<label for="Email" class=" control-label col-md-4 text-left">
+					{!! SiteHelpers::activeLang('Email', (isset($fields['email']['language'])? $fields['email']['language'] : array())) !!}
 					</label>
 					<div class="col-md-6">
-					  {!! Form::text('email', $row['email'],array('class'=>'form-control', 'placeholder'=>'',   )) !!} 
-					 </div> 
-					 <div class="col-md-2">
-					 	
+					  {!! Form::text('email', $row['email'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
 					 </div>
-				  </div> 					
+					 <div class="col-md-2">
+
+					 </div>
+				  </div>
 				  <div class="form-group  " > 
 					<label for="Company Id" class=" control-label col-md-4 text-left"> 
 					{!! SiteHelpers::activeLang('Company Id', (isset($fields['company_id']['language'])? $fields['company_id']['language'] : array())) !!}	
