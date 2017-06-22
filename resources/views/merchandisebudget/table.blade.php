@@ -78,6 +78,9 @@
                         @endif
                     @endif
                 @endforeach
+                <td class="cell" data-form="budget_year" data-form-type="textarea">
+                    <input type="text" name="budget_year" class="form-control input-sm" value="">
+                </td>
                 <td class="cell">
                     <button onclick="saved('form-0')" class="btn btn-primary btn-xs" type="button"><i class="fa  fa-save"></i></button>
                 </td>
