@@ -495,6 +495,7 @@ class UsersController extends Controller
             $data['tier']=$request->get('tier');
             $data['primary_phone']=$request->get('primary_phone');
             $data['restricted_mgr_email']=$request->get('restricted_mgr_email');
+            $data['restricted_user_email']=$request->get('restricted_user_email');
             $data['restrict_merch']=$request->get('restrict_merch');
             $data['is_tech_contact']=$request->get('is_tech_contact');
 

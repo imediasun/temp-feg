@@ -247,7 +247,7 @@
 
                         <div class="form-group  " >
                             <label for="Company Id" class=" control-label col-md-4 text-left">
-                                {!! SiteHelpers::activeLang('Company Id', (isset($fields['company_id']['language'])? $fields['company_id']['language'] : array())) !!}
+                                {!! SiteHelpers::activeLang('Company', (isset($fields['company_id']['language'])? $fields['company_id']['language'] : array())) !!}
                             </label>
                             <div class="col-md-6">
                                 <select name='company_id' rows='5' id='company_id' class='select2 ' required  ></select>
@@ -281,6 +281,21 @@
                                 <label class='radio radio-inline'>
                                     <input type='radio' name='restricted_mgr_email' value='1'
                                            @if($row['restricted_mgr_email'] == '1') checked="checked" @endif > Yes </label>
+                            </div>
+                            <div class="col-md-2">
+
+                            </div>
+                        </div>
+                        <div class="form-group  ">
+                            <label for="Status" class=" control-label col-md-4 text-left"> Restricted User Email: <span class="asterix">  </span></label>
+                            <div class="col-md-6" style="padding-bottom: 15px;">
+
+                                <label class='radio radio-inline'>
+                                    <input type='radio' name='restricted_user_email' value='0' required
+                                           @if($row['restricted_user_email'] == '0') checked="checked" @endif > No </label>
+                                <label class='radio radio-inline'>
+                                    <input type='radio' name='restricted_user_email' value='1'
+                                           @if($row['restricted_user_email'] == '1') checked="checked" @endif > Yes </label>
                             </div>
                             <div class="col-md-2">
 
