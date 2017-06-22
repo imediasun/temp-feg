@@ -3446,3 +3446,8 @@ span.order_custom_error ~ ul.parsley-error-list
 {
     margin-top:10px;
 }
+
+#systememailreportmanagerTable td {
+    word-wrap: break-word;
+    word-break: break-all;
+}
