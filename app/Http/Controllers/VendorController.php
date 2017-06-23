@@ -268,7 +268,7 @@ class VendorController extends Controller
 
             $this->data['row'] = $row;
         } else {
-            $this->data['row'] = $this->model->getColumnTable('vendor');
+            $this->data['row'] = (object)$this->model->getColumnTable('vendor');
         }
 
         $this->data['id'] = $id;
