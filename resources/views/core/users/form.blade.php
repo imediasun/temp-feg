@@ -145,7 +145,7 @@
                         </div>
                         <div class="form-group  " >
                             <label for="Tier" class=" control-label col-md-4 text-left">
-                                {!! SiteHelpers::activeLang('Tier', (isset($fields['tier']['language'])? $fields['tier']['language'] : array())) !!}
+                                {!! SiteHelpers::activeLang('Tier', (isset($fields['tier']['language'])? $fields['tier']['language'] : array())) !!}:
                             </label>
                             <div class="col-md-6">
                                 {!! Form::number('tier', $row['tier'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
@@ -156,7 +156,7 @@
                         </div>
                         <div class="form-group  " >
                             <label for="City" class=" control-label col-md-4 text-left">
-                                {!! SiteHelpers::activeLang('Primary Phone', (isset($fields['primary_phone']['language'])? $fields['primary_phone']['language'] : array())) !!}
+                                {!! SiteHelpers::activeLang('Primary Phone', (isset($fields['primary_phone']['language'])? $fields['primary_phone']['language'] : array())) !!}:
                             </label>
                             <div class="col-md-6">
                                 {!! Form::text('primary_phone', $row['primary_phone'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
@@ -167,7 +167,7 @@
                         </div>
                         <div class="form-group  " >
                             <label for="City" class=" control-label col-md-4 text-left">
-                                {!! SiteHelpers::activeLang('Secondary Phone', (isset($fields['secondary_phone']['language'])? $fields['secondary_phone']['language'] : array())) !!}
+                                {!! SiteHelpers::activeLang('Secondary Phone', (isset($fields['secondary_phone']['language'])? $fields['secondary_phone']['language'] : array())) !!}:
                             </label>
                             <div class="col-md-6">
                                 {!! Form::text('secondary_phone', $row['secondary_phone'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
@@ -202,7 +202,7 @@
                     <div class="col-md-6">
                         <div class="form-group  " >
                             <label for="street" class=" control-label col-md-4 text-left">
-                                {!! SiteHelpers::activeLang('Street', (isset($fields['street']['language'])? $fields['street']['language'] : array())) !!}
+                                {!! SiteHelpers::activeLang('Street', (isset($fields['street']['language'])? $fields['street']['language'] : array())) !!}:
                             </label>
                             <div class="col-md-6">
 					  <input type="text" name='street' id='street' class='form-control ' value="{{ $row['street'] }}">
@@ -224,7 +224,7 @@
                         </div>--}}
                         <div class="form-group  " >
                             <label for="State" class=" control-label col-md-4 text-left">
-                                {!! SiteHelpers::activeLang('State', (isset($fields['state']['language'])? $fields['state']['language'] : array())) !!}
+                                {!! SiteHelpers::activeLang('State', (isset($fields['state']['language'])? $fields['state']['language'] : array())) !!}:
                             </label>
                             <div class="col-md-6">
                                 {!! Form::text('state', $row['state'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
@@ -235,7 +235,7 @@
                         </div>
                         <div class="form-group  " >
                             <label for="Zip" class=" control-label col-md-4 text-left">
-                                {!! SiteHelpers::activeLang('Zip', (isset($fields['zip']['language'])? $fields['zip']['language'] : array())) !!}
+                                {!! SiteHelpers::activeLang('Zip', (isset($fields['zip']['language'])? $fields['zip']['language'] : array())) !!}:
                             </label>
                             <div class="col-md-6">
                                 {!! Form::text('zip', $row['zip'],array('class'=>'form-control', 'placeholder'=>'',   )) !!}
@@ -247,10 +247,10 @@
 
                         <div class="form-group  " >
                             <label for="Company Id" class=" control-label col-md-4 text-left">
-                                {!! SiteHelpers::activeLang('Company', (isset($fields['company_id']['language'])? $fields['company_id']['language'] : array())) !!}
+                                {!! SiteHelpers::activeLang('Company', (isset($fields['company_id']['language'])? $fields['company_id']['language'] : array())) !!}:
                             </label>
                             <div class="col-md-6">
-                                <select name='company_id' rows='5' id='company_id' class='select2 ' required  ></select>
+                                <select name='company_id' rows='5' id='company_id' class='select-liquid' required   style="width:100%"></select>
                             </div>
                             <div class="col-md-2">
 
@@ -318,8 +318,8 @@
                         </div>
                         <div class="form-group">
 
-                            <label for="ipt" class=" control-label col-md-4 text-left"> </label>
-                            <div class="col-md-8">
+                            <label for="ipt" class=" control-label col-md-4 text-left"> Notes:</label>
+                            <div class="col-md-6">
                                 @if($row['id'] !='')
                                     {{ Lang::get('core.notepassword') }}
                                 @else
@@ -332,7 +332,7 @@
                         <div class="form-group">
                             <label for="ipt"
                                    class=" control-label col-md-4"> {{ Lang::get('core.newpassword') }}: </label>
-                            <div class="col-md-8">
+                            <div class="col-md-6">
                                 <input name="password" type="password" id="password" class="form-control input-sm"
                                        value=""
                                        @if($row['id'] =='')
@@ -351,7 +351,7 @@
                         <div class="form-group">
                             <label for="ipt"
                                    class=" control-label col-md-4"> {{ Lang::get('core.conewpassword') }}: </label>
-                            <div class="col-md-8">
+                            <div class="col-md-6">
                                 <input name="password_confirmation" type="password" id="password_confirmation"
                                        class="form-control input-sm" value=""
                                        @if($row['id'] =='')
@@ -369,7 +369,7 @@
 
                         <div class="form-group  int-link">
                             <label for="ipt" class=" control-label col-md-4 text-right">Login Start Page: </label>
-                            <div class="col-md-8">
+                            <div class="col-md-6">
                                 <select name="redirect_link" rows='5' type="text" id="redirect_link" style="width:100%"
                                         class='select-liquid ' value="{{ $row['redirect_link'] }}">
                                     <option value=""> -- Select Module or Page --</option>
@@ -408,14 +408,14 @@
                             <div class="form-group">
 
                                 <label for="ipt" class=" control-label col-md-4 text-left"> </label>
-                                <div class="col-md-8">
+                                <div class="col-md-6">
                                     Google Account Info
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label for="ipt"
-                                       class=" control-label col-md-4"> Connect With Gmail </label>
-                                <div class="col-md-8">
+                                       class=" control-label col-md-4"> Connect With Gmail: </label>
+                                <div class="col-md-6">
                                     @if($row['oauth_token'] && $row['refresh_token'])
                                         <button type="button" disabled
                                                 class="btn btn-success btn-sm connectGmail">
