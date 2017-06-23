@@ -5,7 +5,7 @@
 		<div class="sbox-tools" >
 			<a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Clear Search" onclick="reloadData('#{{ $pageModule }}','merchandisebudget/data?search=')"><i class="fa fa-trash-o"></i> Clear Search </a>
 			<a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Reload Data" onclick="reloadData('#{{ $pageModule }}','merchandisebudget/data?return={{ $return }}')"><i class="fa fa-refresh"></i></a>
-			@if(Session::get('gid') ==10)
+			@if(Session::get('gid') == \App\Models\Core\Groups::SUPPER_ADMIN)
 			<a href="{{ url('feg/module/config/'.$pageModule) }}" class="btn btn-xs btn-white tips" title=" {{ Lang::get('core.btn_config') }}" ><i class="fa fa-cog"></i></a>
 			@endif
 		</div>
@@ -61,18 +61,30 @@
         <tbody>
         	@if($access['is_add'] =='1' && $setting['inline']=='true')
 			<tr id="form-0" >
-				<td> # </td>
+				<td class="cell"> # </td>
                 @if($setting['disableactioncheckbox']=='false' && ($access['is_remove'] == 1 || $access['is_add'] =='1'))
-				<td> </td>
+				    <td class="cell"> </td>
                 @endif
-				@if($setting['view-method']=='expand') <td> </td> @endif
-				@foreach ($tableGrid as $t)
 
-				<td >
+				@if($setting['view-method']=='expand') <td> </td> @endif
+
+				@foreach ($tableGrid as $t)
+                    @if(isset($t['inline']) && $t['inline'] =='1')
+                        <?php $limited = isset($t['limited']) ? $t['limited'] :''; ?>
+                        @if(SiteHelpers::filterColumn($limited ))
+                            <td class="cell" data-form="{{ $t['field'] }}" data-form-type="{{ AjaxHelpers::inlineFormType($t['field'],$tableForm)}}">
+                                {!! SiteHelpers::transInlineForm($t['field'] , $tableForm) !!}
+                            </td>
+                        @endif
+                    @endif
+                @endforeach
+                <td class="cell" data-form="budget_year" data-form-type="textarea">
+                    <input type="text" name="budget_year" class="form-control input-sm" value="">
+                </td>
+                <td class="cell">
 					<button onclick="saved('form-0')" class="btn btn-primary btn-xs" type="button"><i class="fa  fa-save"></i></button>
 				</td>
 			  </tr>
-                @endforeach
 			  @endif
 
            		<?php foreach ($rowData as $row) :
@@ -85,19 +97,24 @@
 					@if($setting['view-method']=='expand')
 					<td><a href="javascript:void(0)" class="expandable" rel="#row-{{ $row->id }}" data-url="{{ url('merchandisebudget/show/'.$id) }}"><i class="fa fa-plus " ></i></a></td>
 					@endif
-                    <td>{{ $row->location }}</td>
-                    <td>{{ $row->Jan }}</td>
-                    <td>{{ $row->Feb }}</td>
-                    <td>{{ $row->March }}</td>
-                    <td>{{ $row->April }}</td>
-                    <td>{{ $row->May }}</td>
-                    <td>{{ $row->June }}</td>
-                    <td>{{ $row->July }}</td>
-                    <td>{{ $row->August }}</td>
-                    <td>{{ $row->September }}</td>
-                    <td>{{ $row->October }}</td>
-                    <td>{{ $row->November }}</td>
-                    <td>{{ $row->December }}</td>
+
+
+                    <td data-values="{{$row->location}}" data-field="location" data-format="{{$row->location}}">{{ $row->location }}</td>
+                    <td style="display: none" data-values="{{\Session::get('budget_year')}}" data-field="budget_year" data-format="{{\Session::get('budget_year')}}">{{\Session::get('budget_year')}}</td>
+                    <td data-values="{{$row->Jan}}" data-field="jan" data-format="{{$row->Jan}}">{{ $row->Jan }}</td>
+                    <td data-values="{{$row->Feb}}" data-field="feb" data-format="{{$row->Feb}}">{{ $row->Feb }}</td>
+                    <td data-values="{{$row->March}}" data-field="march" data-format="{{$row->March}}">{{ $row->March }}</td>
+                    <td data-values="{{$row->April}}" data-field="april" data-format="{{$row->April}}">{{ $row->April }}</td>
+                    <td data-values="{{$row->May}}" data-field="may" data-format="{{$row->May}}">{{ $row->May }}</td>
+                    <td data-values="{{$row->June}}" data-field="june" data-format="{{$row->June}}">{{ $row->June }}</td>
+                    <td data-values="{{$row->July}}" data-field="july" data-format="{{$row->July}}">{{ $row->July }}</td>
+                    <td data-values="{{$row->August}}" data-field="august" data-format="{{$row->August}}">{{ $row->August }}</td>
+                    <td data-values="{{$row->September}}" data-field="september" data-format="{{$row->September}}">{{ $row->September }}</td>
+                    <td data-values="{{$row->October}}" data-field="october" data-format="{{$row->October}}">{{ $row->October }}</td>
+                    <td data-values="{{$row->November}}" data-field="november" data-format="{{$row->November}}">{{ $row->November }}</td>
+                    <td data-values="{{$row->December}}" data-field="december" data-format="{{$row->December}}">{{ $row->December }}</td>
+
+
 
 				 <td data-values="action" data-key="<?php echo $row->id ;?>">
 					{!! AjaxHelpers::buttonAction('merchandisebudget',$access,$id ,$setting) !!}
