@@ -205,12 +205,29 @@ $selected_loc=\Session::get('selected_location');?>
     </div>
 </nav>
 
-@if(count(\Session::get('user_locations'))<=0)
+<?php
+    $noLocationModules = array(
+            'Holidays',
+            'Pre-Employment',
+            'Current Employees',
+            'ADP Total Source',
+            'New Hires',
+            'Independent Contractors',
+            'Termination',
+            'Game Titles',
+            'Game Maintenance',
+            'Training',
+            'Shipping Games',
+            'Inventory  / Asset Tags',
+            'General Tips',
+            'Training Materials',
+            'Setting',
+            'API Order Restrictions'
+    );
+?>
+
+@if( count(\Session::get('user_locations'))<=0 && !(in_array($pageTitle , $noLocationModules)) )
 <script>
     notyMessageError('In order to run module you must be assigned to at least one location. You have not been assigned to any locations. Please contact an administrator if you believe this to be an error.', {"timeOut":"8000"});
-    /*$(document).ajaxStop(function () {
-        if($('td[data-field="location_id"]').length>0){
-        }
-    });*/
 </script>
 @endif

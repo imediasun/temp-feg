@@ -71,8 +71,19 @@
                         Item Name
                     </td>
                     @if(($data[0]['new_format']==1))
-
-                        <td style="padding:8px;border:1px solid #000; text-align: right">@if($data[0]['order_type_id'] ==4 )Unit/Case Price @elseif($data[0]['order_type_id'] == 7 || $data[0]['order_type_id'] == 8 || $data[0]['order_type_id'] == 6  || $data[0]['order_type_id'] == 10) Case Price @else Unit Price @endif</td>
+                        <?php
+                            $case_price_categories = [];
+                            if(isset($data['pass']['calculate price according to case price']))
+                            {
+                                $case_price_categories = explode(',',$data['pass']['calculate price according to case price']->data_options);
+                            }
+                            $case_price_if_no_unit_categories = [];
+                            if(isset($data['pass']['use case price if unit price is 0.00']))
+                            {
+                                $case_price_if_no_unit_categories = explode(',',$data['pass']['use case price if unit price is 0.00']->data_options);
+                            }
+                        ?>
+                        <td style="padding:8px;border:1px solid #000; text-align: right">@if(in_array($data[0]['order_type_id'],$case_price_if_no_unit_categories))Unit/Case Price @elseif(in_array($data[0]['order_type_id'],$case_price_categories)) Case Price @else Unit Price @endif</td>
                         <td style="padding:8px;border:1px solid #000;text-align: center">QTY</td>
                         <td style="padding:9px;border:1px solid #000;text-align: right">Item Total</td>
                         <td></td>

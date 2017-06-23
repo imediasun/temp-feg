@@ -14,7 +14,7 @@
 	<div class="page-content-wrapper">  
 
 
-	@if(Auth::check() && Auth::user()->group_id == 10)
+	@if(Auth::check() && Auth::user()->group_id == \App\Models\Core\Groups::SUPPER_ADMIN)
 
 <section>
 	<div class="row m-l-none m-r-none m-t  white-bg shortcut " >

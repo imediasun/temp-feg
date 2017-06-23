@@ -7,6 +7,7 @@ use App\Library\FEG\System\FEGSystemHelper;
 use Request, Log,Redirect;
 use App\Library\SximoEloquentBuilder;
 use App\Library\SximoQueryBuilder;
+use App\Models\Core\Groups;
 class Sximo extends Model {
 
     public static $getRowsQuery = null;
@@ -23,42 +24,41 @@ class Sximo extends Model {
 
         return new SximoQueryBuilder($conn, $grammar, $conn->getPostProcessor());
     }
-    public static function insertLog($module, $task , $notes = '',$previous_value = null)
+    public static function insertLog($module, $task ,$note = '', $conditions = '',$params = null)
     {
         $table = 'tb_logs';
+        $user = (is_object(\Auth::user()) ? \Auth::user()->id : 'User Not Logged In');
+        $cronTask = (Request::ip() == "127.0.0.1");
+        if($cronTask)
+        {
+            $user = "System";
+        }
         $data = array(
             'auditID' => '',
-            'note' => $notes,
+            'note' => $note,
             'ipaddress' => Request::ip(),
-            'user_id' => \Session::get('uid'),
+            'user_id' => $user,
             'module'  => $module,
-            'task'    => $task
+            'task'    => $task,
+            'params' => $params,
+            'conditions' => $conditions
         );
+
+        $l = '';
+        $L =  FEGSystemHelper::setLogger($l, "user-action-logs.log", "FEGUserActions", "USER_ACTIONS");
+
+        $cronTask ? $L->log('--------------------Start CronJobActions logging------------------') : $L->log('--------------------Start UserActions logging------------------');
+
+        $L->log("User ID ",$user);
+        $L->log("User IP ",Request::ip());
+        $L->log("Module or Table : ".$module, $note);
+        $L->log("Task : ".$task);
+        $L->log("Conditions : ".json_encode($conditions));
+        $L->log("Parameters : " . json_encode($params));
+
+        $cronTask ? $L->log('--------------------End CronJobActions logging------------------') : $L->log('--------------------End UserActions logging------------------');
         $id = \DB::table($table)->insertGetId($data);
         return $id;
-    }
-    public static function create(array $attributes = [])
-    {
-        //self::insertLog(self::getTable(),'create',$attributes);
-        return parent::create($attributes);
-    }
-
-    public function update(array $attributes = [])
-    {
-        //self::insertLog(self::getTable(),'update',$attributes);
-        return parent::update($attributes);
-    }
-
-    public function delete()
-    {
-        //self::insertLog(self::getTable(),'delete','');
-        return parent::delete();
-    }
-
-    public function save(array $options = [])
-    {
-        //self::insertLog(self::getTable(),'save',$options);
-        return parent::save($options);
     }
 
 
@@ -659,7 +659,18 @@ class Sximo extends Model {
         return $row;
     }
 
-    function getOrderData($order_id) {
+    function getOrderData($order_id,$pass = null) {
+
+        $case_price_categories = [];
+        if(isset($pass['calculate price according to case price']))
+        {
+            $case_price_categories = explode(',',$pass['calculate price according to case price']->data_options);
+        }
+        $case_price_if_no_unit_categories = [];
+        if(isset($pass['use case price if unit price is 0.00']))
+        {
+            $case_price_if_no_unit_categories = explode(',',$pass['use case price if unit price is 0.00']->data_options);
+        }
         \DB::setFetchMode(\PDO::FETCH_ASSOC);
         $row = \DB::select('SELECT U1.first_name, 
                                     U1.last_name,
@@ -750,17 +761,17 @@ class Sximo extends Model {
                 $orderDescriptionArray[] = empty($r['sku'])?$r['description']:$r['description']." (SKU - {$r['sku']})";
                 $orderPriceArray[] = $r['price'];
                 $orderQtyArray[] = $r['qty'];
-                if($orderTypeId == 20 || $orderTypeId== 17 || $orderTypeId == 1 )
-                {
-                    $orderItemsPriceArray[] = $r['price'];
-                }
-                elseif($orderTypeId == 7 || $orderTypeId == 8 || $orderTypeId == 6 || $orderTypeId == 10)
+                if(in_array($orderTypeId,$case_price_categories))
                 {
                     $orderItemsPriceArray[] = $r['case_price'];
                 }
-                elseif($orderTypeId == 4)
+                elseif(in_array($orderTypeId,$case_price_if_no_unit_categories))
                 {
                     $orderItemsPriceArray[] = ($r['price'] == 0.00)?$r['case_price']:$r['price'];
+                }
+                else
+                {
+                    $orderItemsPriceArray[] = $r['price'];
                 }
             }
 
@@ -797,43 +808,44 @@ class Sximo extends Model {
         $data['selected_location'] = \Session::get('selected_location');
         $data['selected_location_name'] = \Session::get('selected_location_name');
         $user_level = \Session::get('gid');
-        if ($user_level == 1) {
+
+        if ($user_level == Groups::USER) {
             $data['user_level'] = 'user';
         }
-        if ($user_level == 2) {
+        if ($user_level == Groups::PARTNER) {
             $data['user_level'] = 'partner';
         }
-        if ($user_level == 3) {
+        if ($user_level == Groups::MERCHANDISE_MANAGER) {
             $data['user_level'] = 'merchmgr';
         }
-        if ($user_level == 4) {
+        if ($user_level == Groups::FIELD_MANAGER) {
             $data['user_level'] = 'fieldmgr';
         }
-        if ($user_level == 5) {
+        if ($user_level == Groups::OFFICE_MANAGER) {
             $data['user_level'] = 'officemgr';
         }
-        if ($user_level == 6) {
+        if ($user_level == Groups::DISTRICT_MANAGER) {
             $data['user_level'] = 'distmgr';
         } // TREATED AS REGULAR USER - BELOW
-        if ($user_level == 7) {
+        if ($user_level == Groups::FINANCE_MANAGER) {
             $data['user_level'] = 'financemgr';
         }
-        if ($user_level == 8) {
+        if ($user_level == Groups::PARTNER_PLUS) {
             $data['user_level'] = 'partnerplus';
         } //ADDS ACCESS TO MERCH REQUEST
-        if ($user_level == 9) {
+        if ($user_level == Groups::GUEST) {
             $data['user_level'] = 'guest';
         }
-        if ($user_level == 10) {
+        if ($user_level == Groups::SUPPER_ADMIN) {
             $data['user_level'] = 'superadmin';
         }
-        if ($user_level == 11) {
+        if ($user_level == Groups::TECHNICAL_MANAGER) {
             $data['user_level'] = 'techmgr';
         }
-        if ($user_level == 1 || $user_level == 2 || $user_level == 6 || $user_level == 8 || $user_level == 11) {
+        if ($user_level == Groups::USER || $user_level == Groups::PARTNER || $user_level == Groups::DISTRICT_MANAGER || $user_level == Groups::PARTNER_PLUS || $user_level == Groups::TECHNICAL_MANAGER) {
             $data['user_group'] = 'regusers';
         }
-        if ($user_level == 3 || $user_level == 4 || $user_level == 5 || $user_level == 7 || $user_level == 9 || $user_level == 10) {
+        if ($user_level == Groups::MERCHANDISE_MANAGER || $user_level == Groups::FIELD_MANAGER || $user_level == Groups::OFFICE_MANAGER || $user_level == Groups::FINANCE_MANAGER || $user_level == Groups::GUEST || $user_level == Groups::SUPPER_ADMIN) {
             $data['user_group'] = 'allmgrs';
         }
         $get_locations_by_region = \Session::get('get_locations_by_region');
@@ -940,15 +952,15 @@ class Sximo extends Model {
         }
 
         if ($user_level == 'all_users') {
-            $user_level_statement = ' AND U.group_id IN(1,2,3,4,5,6,7,8,9,10) ';
+            $user_level_statement = ' AND U.group_id IN('.Groups::USER.','.Groups::PARTNER.','.Groups::MERCHANDISE_MANAGER.','.Groups::FIELD_MANAGER.','.Groups::OFFICE_MANAGER.','.Groups::DISTRICT_MANAGER.','.Groups::FINANCE_MANAGER.','.Groups::PARTNER_PLUS.','.Groups::GUEST.','.Groups::SUPPER_ADMIN.') ';
             $query_table = 'users';
         }
         if ($user_level == 'all_employees') {
-            $user_level_statement = ' AND U.group_id IN(1,3,4,5,6,7,10) ';
+            $user_level_statement = ' AND U.group_id IN('.Groups::USER.','.Groups::MERCHANDISE_MANAGER.','.Groups::FIELD_MANAGER.','.Groups::OFFICE_MANAGER.','.Groups::DISTRICT_MANAGER.','.Groups::FINANCE_MANAGER.','.Groups::SUPPER_ADMIN.') ';
             $query_table = 'users';
         }
         if ($user_level == 'all_managers') {
-            $user_level_statement = ' AND U.group_id IN(3,4,5,6,7,10) ';
+            $user_level_statement = ' AND U.group_id IN('.Groups::MERCHANDISE_MANAGER.','.Groups::FIELD_MANAGER.','.Groups::OFFICE_MANAGER.','.Groups::DISTRICT_MANAGER.','.Groups::FINANCE_MANAGER.','.Groups::SUPPER_ADMIN.') ';
             $query_table = 'users';
         }
         if ($user_level == 'technical_contact') {
@@ -957,14 +969,14 @@ class Sximo extends Model {
             $query_table = 'users';
         }
         if ($user_level == 'users_plus_district_managers') {
-            $user_level_statement = ' AND (U.group_id IN(1,5,6)  ' . 
-                    ' OR U.id IN (SELECT user_id FROM user_locations WHERE group_id IN (6) AND location_id IN (' . $loc_id . '))) ';
+            $user_level_statement = ' AND (U.group_id IN('.Groups::USER.','.Groups::OFFICE_MANAGER.','.Groups::DISTRICT_MANAGER.')  ' .
+                    ' OR U.id IN (SELECT user_id FROM user_locations WHERE group_id IN ('.Groups::DISTRICT_MANAGER.') AND location_id IN (' . $loc_id . '))) ';
             $location_statement = " AND L.id IN($loc_id) ";
             $query_table = 'users';
         }
         if ($user_level == 'users_plus_district_and_field_managers') {
             $location_statement = " AND L.id IN ($loc_id) ";
-            $user_level_statement = ' AND (U.group_id IN(1,4,5,6) '.
+            $user_level_statement = ' AND (U.group_id IN('.Groups::USER.','.Groups::FIELD_MANAGER.','.Groups::OFFICE_MANAGER.','.Groups::DISTRICT_MANAGER.') '.
                     ' OR U.id IN (SELECT user_id FROM user_locations WHERE group_id IN (1,6) AND location_id IN (' . $loc_id . '))) ';
             $query_table = 'users';
         }
@@ -1037,12 +1049,13 @@ class Sximo extends Model {
             ];
             return $total;
         }
-        $data['user_level'] = \Session::get('gid');
-        if ($data['user_level'] == 3 || $data['user_level'] == 4 || $data['user_level'] == 5 || $data['user_level'] == 7 || $data['user_level'] == 9 || $data['user_level'] == 10) {
+        /*$data['user_level'] = \Session::get('gid');
+        if ($data['user_level'] == Groups::MERCHANDISE_MANAGER || $data['user_level'] == Groups::FIELD_MANAGER || $data['user_level'] == Groups::OFFICE_MANAGER || $data['user_level'] == Groups::FINANCE_MANAGER || $data['user_level'] == Groups::GUEST || $data['user_level'] == Groups::SUPPER_ADMIN) {
            $status_id = 9; /// 9 IS USED AS AN ARBITRARY DELIMETER TO KEEP CART SEPERATE FROM LOCATIONS' OWN
         } else {
-            $status_id = 0;
-        }
+            $status_id = 4;
+        }*/
+        $status_id = 4;
         return \DB::select("SELECT COUNT(*) as total FROM requests WHERE request_user_id = ".\Session::get('uid')." AND status_id = $status_id AND location_id = ".\Session::get('selected_location'));
     }
 
@@ -1281,7 +1294,7 @@ class Sximo extends Model {
     public function populateVendorsDropdown()
     {
         $gid=\Session::get('gid');
-        if($gid == 2 || $gid == 8 || $gid == 9)
+        if($gid == Groups::PARTNER || $gid == Groups::PARTNER_PLUS || $gid == Groups::GUEST)
         {
             $where = 'WHERE V.partner_hide = 0 and V.isgame = 1';
         }
@@ -1332,7 +1345,7 @@ class Sximo extends Model {
         {
             $concat = 'CONCAT(IF(G.location_id = 0, "IN TRANSIT", G.location_id)," | ",IF(G.test_piece = 1,CONCAT("**TEST** ",T.game_title),T.game_title)," | ",G.id)';
             $where = '';
-            $orderBy = 'T.game_title';
+            $orderBy = 'G.status_id DESC,T.game_title';
         }
         else
         {
@@ -1343,10 +1356,12 @@ class Sximo extends Model {
             }
             else
             {
-                $concat = 'CONCAT(G.location_id," | ",T.game_title," | ",G.id)';
-                $where = 'AND G.location_id in ('.$location.')';
+                //$concat = 'CONCAT(G.location_id," | ",T.game_title," | ",G.id)';
+                $concat = 'CONCAT(IF(G.location_id = 0, "IN TRANSIT", G.location_id), " | ",T.game_title," | ",G.id)';
+
+                $where = 'AND G.location_id in (0,'.$location.')';
             }
-            $orderBy = 'L.id,T.game_title';
+            $orderBy = 'G.status_id DESC,L.id,T.game_title';
         }
         $query = \DB::select('SELECT G.id AS id,
 									  '.$concat.' AS text

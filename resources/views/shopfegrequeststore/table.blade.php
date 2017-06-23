@@ -10,7 +10,7 @@
             <a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Reload Data"
                onclick="reloadData('#{{ $pageModule }}','shopfegrequeststore/data?type=store&active_inactive=active&return={{ $return }}')"><i
                         class="fa fa-refresh"></i></a>
-            @if(Session::get('gid') ==10)
+            @if(Session::get('gid') == \App\Models\Core\Groups::SUPPER_ADMIN)
                 <a href="{{ url('feg/module/config/'.$pageModule) }}" 
                    class="btn btn-xs btn-white tips openModuleConfig"
                    title=" {{ Lang::get('core.btn_config') }}"><i class="fa fa-cog"></i></a>

@@ -23,7 +23,7 @@
                 <div class="sbox-title"><h5><i class="fa fa-table"></i>&nbsp; &nbsp;IT / Parts / Service Request</h5>
 
                     <div class="sbox-tools">
-                        @if(Session::get('gid') ==10)
+                        @if(Session::get('gid') == \App\Models\Core\Groups::SUPPER_ADMIN)
                             <a href="{{ URL::to('feg/module/config/'.$pageModule) }}"
                                class="btn btn-xs btn-white tips" title=" {{ Lang::get('core.btn_config') }}"><i
                                         class="fa fa-cog"></i></a>

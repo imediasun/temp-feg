@@ -8,7 +8,17 @@ class Groups extends Sximo  {
 	
 	protected $table = 'tb_groups';
 	protected $primaryKey = 'group_id';
-
+    const USER = 1;
+    const PARTNER = 2;
+    const MERCHANDISE_MANAGER = 3;
+    const FIELD_MANAGER = 4;
+    const OFFICE_MANAGER = 5;
+    const DISTRICT_MANAGER = 6;
+    const FINANCE_MANAGER = 7;
+    const PARTNER_PLUS = 8;
+    const GUEST = 9;
+    const SUPPER_ADMIN = 10;
+    const TECHNICAL_MANAGER = 11;
 	public function __construct() {
 		parent::__construct();
 		

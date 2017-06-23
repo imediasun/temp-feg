@@ -7,7 +7,8 @@ use App\Models\OrderSendDetails;
 use \App\Models\Sximo\Module;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
-use Validator, Input, Redirect, Cache;
+use App\Library\SximoDB;
+use Validator, Input, Redirect, Cache ;
 use PHPMailer;
 use PHPMailerOAuth;
 
@@ -205,6 +206,7 @@ class OrderController extends Controller
             'params' => $filter,
             'global' => (isset($this->access['is_global']) ? $this->access['is_global'] : 0)
         );
+        
         $isRedirected=\Session::get('filter_before_redirect');
         \Session::put('order_selected',$order_selected);
 
@@ -240,6 +242,11 @@ class OrderController extends Controller
             $partial = $data->is_partial == 1 ? ' (Partial)':'';
             $rows[$index]->status_id = (isset($order_status[0]->status) ? $order_status[0]->status.$partial : '');
         }
+
+        if($sort == 'OT.order_type'){
+            $params['sort'] = 'order_type_id';
+        }
+
         $this->data['param'] = $params;
         $this->data['rowData'] = $rows;
         // Build Pagination
@@ -309,7 +316,7 @@ class OrderController extends Controller
         $this->data['mode'] = $mode;
         $this->data['isRequestApproveProcess'] = $isRequestApproveProcess;
         $this->data['id'] = $id;
-        $this->data['data'] = $this->model->getOrderQuery($id, $mode);
+        $this->data['data'] = $this->model->getOrderQuery($id, $mode,$this->data['pass']);
         $this->data['relationships'] = $this->model->getOrderRelationships($id);
         $user_allowed_locations = implode(',', \Session::get('user_location_ids'));
         $this->data['games_options'] = $this->model->populateGamesDropdown();
@@ -329,7 +336,7 @@ class OrderController extends Controller
         } else {
             $this->data['row'] = $this->model->getColumnTable('orders');
         }
-        $this->data['order_data'] = $this->model->getOrderQuery($id, 'edit');
+        $this->data['order_data'] = $this->model->getOrderQuery($id, 'edit',$this->data['pass']);
 
         $this->data['id'] = $id;
         $this->data['access'] = $this->access;
@@ -453,6 +460,17 @@ class OrderController extends Controller
         $data = array_filter($request->all());
         $redirect_link = "order";
         if ($validator->passes()) {
+
+            $case_price_categories = [];
+            if(isset($this->data['pass']['calculate price according to case price']))
+            {
+                $case_price_categories = explode(',',$this->data['pass']['calculate price according to case price']->data_options);
+            }
+            $case_price_if_no_unit_categories = [];
+            if(isset($this->data['pass']['use case price if unit price is 0.00']))
+            {
+                $case_price_if_no_unit_categories = explode(',',$this->data['pass']['use case price if unit price is 0.00']->data_options);
+            }
             $order_id = $request->get('order_id');
             $editmode = $request->get('editmode');
             $where_in = $request->get('where_in_expression');
@@ -507,17 +525,17 @@ class OrderController extends Controller
 
             for ($i = 0; $i < $num_items_in_array; $i++) {
                 $j = $i + 1;
-                if($order_type == 20 || $order_type== 17 || $order_type == 1 )
-                {
-                    $itemsPriceArray[] = $priceArray[$i];
-                }
-                elseif($order_type  == 7 || $order_type  == 8 || $order_type == 6 || $order_type == 10)
+                if(in_array($order_type,$case_price_categories))
                 {
                     $itemsPriceArray[] = $casePriceArray[$i];
                 }
-                elseif($order_type  == 4)
+                elseif(in_array($order_type,$case_price_if_no_unit_categories))
                 {
                     $itemsPriceArray[] = ($priceArray[$i] == 0.00)?$casePriceArray[$i]:$priceArray[$i];
+                }
+                else
+                {
+                    $itemsPriceArray[] = $priceArray[$i];
                 }
                 $order_description .= ' | item' . $j . ' - (' . $qtyArray[$i]
                         . ') ' . $itemsArray[$i] . ' @ $' .
@@ -649,6 +667,11 @@ class OrderController extends Controller
 //        $message->from($from);
 //
 //    });
+            //Updating PO Track table
+            if(isset($orderData['po_number'])){
+                \DB::table('po_track')->where('po_number', $orderData['po_number'])->update(['enabled' => '1']);
+            }
+
             \Session::put('send_to', $vendor_email);
             \Session::put('order_id', $order_id);
             \Session::put('redirect', $redirect_link);
@@ -883,7 +906,7 @@ class OrderController extends Controller
         if($result){
             return Redirect::to('order')->with('messagetext', 'Po  removed successfully!')->with('msgstatus', 'success');
         }else{
-            return Redirect::to('order')->with('messagetext', 'Po  already removed!')->with('msgstatus', 'error');
+            return Redirect::to('order')->with('messagetext', 'This PO has already been removed!')->with('msgstatus', 'error');
         }
         //\Session::flash('success', 'Po  deleted successfully!');
     }
@@ -919,6 +942,7 @@ class OrderController extends Controller
                 'orders.po_notes',
                 'orders.notes',
                 'orders.is_partial',
+                'orders.tracking_number',
                 'YN.yesno'
             ];
             $dateSearchFields = [
@@ -931,18 +955,26 @@ class OrderController extends Controller
                 'fields' => $searchFields, 'dateFields' => $dateSearchFields];
 
             if(!empty($statusIdFilter)){
-                $orderStatusCondition = "AND orders.status_id = '".$statusIdFilter."'";
+                if($statusIdFilter == 6){
+                    $orderStatusCondition = "AND orders.status_id = '".$statusIdFilter."' OR (orders.status_id = '2' AND orders.tracking_number!='') ";
+                }else{
+                    $orderStatusCondition = "AND orders.status_id = '".$statusIdFilter."'";
+                }
             }
 
+        }else{
+            if(!empty($statusIdFilter)){
+                if($statusIdFilter == 6){
+                    $orderStatusCondition = " OR (orders.status_id = '2' AND orders.tracking_number!='') ";
+                }
+            }
         }
-
 
         // Filter Search for query
         // build sql query based on search filters
         $filter = is_null(Input::get('search')) ? '' : $this->buildSearch($searchInput);
 
         $filter .= $orderStatusCondition;
-
         return $filter;
     }
 
@@ -952,7 +984,7 @@ class OrderController extends Controller
         if (isset($_GET['mode']) && !empty($_GET['mode'])) {
             $mode = $_GET['mode'];
         }
-        $data = $this->model->getOrderData($order_id);
+        $data = $this->model->getOrderData($order_id,$this->data['pass']);
         if (empty($data)) {
 
         } else {
@@ -988,10 +1020,11 @@ class OrderController extends Controller
             if (!empty($data[0]['po_attn'])) {
                 $data[0]['po_location'] = $data[0]['po_location'] . "\n" . $data[0]['po_attn'];
             }
+            $addonPONote = "\r\n Ship Palletized Whenever Possible. ";
             if (empty($data[0]['po_notes'])) {
-                $data[0]['po_notes'] = " NOTE: **TO CONFIRM ORDER RECEIPT AND PRICING, SEND EMAILS TO " . $data[0]['email'] . $data[0]['cc_email'] . $data[0]['loc_contact_email'] . "**";
+                $data[0]['po_notes'] = " NOTE: **TO CONFIRM ORDER RECEIPT AND PRICING, SEND EMAILS TO " . $data[0]['email'] . $data[0]['cc_email'] . $data[0]['loc_contact_email'] . "**".$addonPONote;
             } else {
-                $data[0]['po_notes'] = " NOTE: " . $data[0]['po_notes'] . " (Email Questions to " . $data[0]['email'] . $data[0]['cc_email'] . $data[0]['loc_contact_email'] . ")";
+                $data[0]['po_notes'] = " NOTE: " . $data[0]['po_notes'] . " (Email Questions to " . $data[0]['email'] . $data[0]['cc_email'] . $data[0]['loc_contact_email'] . ")".$addonPONote;
             }
             $order_description = $data[0]['order_description'];
             if (substr($order_description, 0, 3) === ' | ') {
@@ -1034,6 +1067,7 @@ class OrderController extends Controller
                 
                 //$item_total_string = $item_total_string."-----------------\n"."$ ".number_format($order_total_cost,3)."\n";
             }
+            $data['pass'] = $this->data['pass'];
             $pdf = \PDF::loadView('order.po', ['data' => $data, 'main_title' => "Purchase Order"]);
             if ($mode == "save") {
                 $po_file_name = $data[0]['company_name_short'] . "_PO_" . $data[0]['po_number'] . '.pdf';
@@ -1145,7 +1179,7 @@ class OrderController extends Controller
         //  $this->data['subgrid'] = $this->detailview($this->modelview ,  $this->data['subgrid'] ,$id );
         $this->data['id'] = $id;
         $this->data['access'] = $this->access;
-        $this->data['data'] = $this->model->getOrderQuery($id);
+        $this->data['data'] = $this->model->getOrderQuery($id,null,$this->data['pass']);
         return view('order.clonenew', $this->data);
     }
     function getInstaClone(Request $request, $eId, $voidify = null)
@@ -1240,6 +1274,7 @@ class OrderController extends Controller
         $order_status = $request->get('order_status');
         $added_to_inventory = $request->get('added_to_inventory');
         $user_id = $request->get('user_id');
+        $order_type_id = $request->get('order_type_id');
         $added = 0;
         if (!empty($request->get('receivedInParts'))) {
             $received_part_ids = $request->get('receivedInParts');
@@ -1266,11 +1301,12 @@ class OrderController extends Controller
         if (empty($notes)) {
             $rules['order_status'] = "required:min:2";
         }
-        if ($order_status == 5) // Advanced Replacement Returned.. require tracking number
+        if ($order_status == 2 && $order_type_id==2) // Advanced Replacement Returned.. require tracking number
         {
             $rules['tracking_number'] = "required|min:3";
             $tracking_number = $request->get('tracking_number');
         }
+        $rules['tracking_number'] = "alpha_num|min:3";
         $validator = Validator::make($request->all(), $rules);
         if ($validator->passes()) {
             if (!empty($item_count) && $added_to_inventory == 0) {
@@ -1520,7 +1556,7 @@ class OrderController extends Controller
             $voided = Order::isVoided($id, $orderData);
             $closed = Order::isClosed($id, $orderData);
             $partial = Order::isPartiallyReceived($id);
-            
+
             $status = true;
 
             if ($freeHand) {
@@ -1538,8 +1574,8 @@ class OrderController extends Controller
                 $status = false;
             }
             if ($closed) {
-                $message = \Lang::get('core.order_closed_edit_alert');
-                $status = false;
+                //$message = \Lang::get('core.order_closed_edit_alert');
+                //$status = false;
             }
             if ($voided) {
                 $message = \Lang::get('core.order_voided_edit_alert');

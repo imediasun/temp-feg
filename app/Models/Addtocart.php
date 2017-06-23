@@ -2,6 +2,8 @@
 
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Core\Groups;
+use Illuminate\Support\Facades\Session;
 
 class addtocart extends Sximo
 {
@@ -35,7 +37,7 @@ class addtocart extends Sximo
         $data['user_level'] = \Session::get('gid');
 
 
-        if ($data['user_level'] == 3 || $data['user_level'] == 4 || $data['user_level'] == 5 || $data['user_level'] == 7 || $data['user_level'] == 9 || $data['user_level'] == 10) {
+        if ($data['user_level'] == Groups::MERCHANDISE_MANAGER || $data['user_level'] == Groups::FIELD_MANAGER || $data['user_level'] == Groups::OFFICE_MANAGER || $data['user_level'] == Groups::FINANCE_MANAGER || $data['user_level'] == Groups::GUEST || $data['user_level'] == Groups::SUPPER_ADMIN) {
             $where.= " AND requests.location_id = " . \Session::get('selected_location') . " AND requests.status_id = 9"; /// 9 IS USED AS AN ARBITRARY DELIMETER TO KEEP CART SEPERATE FROM LOCATIONS' OWN
         } else {
             $where.= " AND requests.location_id = " . \Session::get('selected_location') . " AND requests.status_id = 4";
@@ -53,10 +55,10 @@ class addtocart extends Sximo
     {
 
         $data['user_level']=\Session::get('gid');
+        $userID = \Session::get('uid');
 
 
-
-        if (false && $data['user_level'] == 2) 
+        if (false && $data['user_level'] == Groups::PARTNER)
         {
             //redirect('./dashboard', 'refresh');
             return false;
@@ -70,23 +72,20 @@ class addtocart extends Sximo
                 return false;
             }
 
-            if ($data['user_level'] == 3 || $data['user_level'] == 4 || $data['user_level'] == 5 || $data['user_level'] == 7 || $data['user_level'] == 9 || $data['user_level'] == 10)
+            /*if ($data['user_level'] == Groups::MERCHANDISE_MANAGER || $data['user_level'] == Groups::FIELD_MANAGER || $data['user_level'] == Groups::OFFICE_MANAGER || $data['user_level'] == Groups::FINANCE_MANAGER || $data['user_level'] == Groups::GUEST || $data['user_level'] == Groups::SUPPER_ADMIN)
             {
                 $statusId = 9; /// 9 IS USED AS AN ARBITRARY DELIMETER TO KEEP CART SEPERATE FROM LOCATIONS' OWN
             }
             else
             {
                 $statusId = 4;
-            }
+            }*/
+            $statusId = 4;
             if(!empty($productId) &&!empty($qty))
             {
-
-
                // $qty = 1;
 
-
-
-                $query = \DB::select('SELECT id FROM requests WHERE product_id = "'.$productId.'" AND status_id = "'.$statusId.'" AND location_id = "'.$locationId.'"');
+                $query = \DB::select('SELECT id FROM requests WHERE product_id = "'.$productId.'" AND status_id = "'.$statusId.'" AND request_user_id = "'.$userID.'" AND location_id = "'.$locationId.'"');
 
                 /// TO AVOID ADDITNG THE SAME PRODUCT IN TWO PLACES
                 if (count($query) == 0)
@@ -120,6 +119,7 @@ class addtocart extends Sximo
 								       LEFT JOIN vendor V ON V.id = P.vendor_id
 									   WHERE R.status_id = "' . $statusId . '" AND V.vendor_name !="null"
 									   AND R.location_id = "' . $location_id . '"
+									   AND R.request_user_id = "' . $userID . '"
                                        GROUP BY V.vendor_name';
             if($v1)
             {

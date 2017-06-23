@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="page-content row">
+<div class="page-content row {{ $pageModule }}Page">
   <!-- Begin Header & Breadcrumb -->
     <div class="page-header">
       <div class="page-title">
@@ -15,14 +15,14 @@
 	<!-- End Header & Breadcrumb -->
 
 	<!-- Begin Content -->
-	<div class="page-content-wrapper m-t">
+	<div class="page-content-wrapper m-t clearfix">
 		<div class="resultData"></div>
 		<div id="{{ $pageModule }}View"></div>			
 		<div id="{{ $pageModule }}Grid"></div>
 	</div>	
 	<!-- End Content -->  
    
-    <div class='panel panel-primary testInputs m-lg'>
+    <div class='panel panel-primary testInputs m-lg clearfix'>
         <div class="panel-heading">Test here</div>
           <div class="panel-body white-bg">
             {!! Form::open(array('url'=>'feg/system/systememailreportmanager/test', 'class'=>'form-horizontal','files' => false, 'id'=> 'systemreportsemailmanagerTestFormAjax')) !!}
@@ -31,10 +31,10 @@
                 {!! Form::text('test_location', '', array('class'=>'form-control m-b-xs', 'placeholder'=>'Location ID (optional)')) !!} 
                 <button type="submit" class="btn btn-primary btn-sm testSubmit">Test</button>
             {!! Form::close() !!}                   
-</div>	
+          </div>
           <div class="panel-footer testOutput" style='overflow-wrap: break-word; word-wrap: break-word;'>Result: </div>        
     </div>
-    <div class='panel '>
+    <div class='panel clearfix'>
         
     </div>
 </div>	

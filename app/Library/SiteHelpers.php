@@ -1,6 +1,8 @@
 <?php
 
 use App\Library\FEG\System\FEGSystemHelper;
+use \App\Models\Sximo;
+use App\Models\Core\Groups;
 
 class SiteHelpers
 {
@@ -1031,7 +1033,7 @@ class SiteHelpers
                                     var data = [];
                                     $((element.val()||'').split(',')).each(function () {
                                         var obj = { id: this, text: cache[this] || this };
-                                        data.push(obj);
+                                        //data.push(obj);
                                     });
                                     callback(data);
                                 },
@@ -2069,9 +2071,9 @@ class SiteHelpers
         if ($second != 00 && $first != 00) {
             $interval = $datetime1->diff($datetime2);
             $days = $interval->format("%a");
-            echo $days;
+            return $days;
         } else {
-            echo "N/A";
+            return "N/A";
         }
 
     }
@@ -2142,9 +2144,9 @@ class SiteHelpers
                 $data['selected_location_name'] = $locData['location_name_short'];
             }
 
-            if ($data['user_level'] == 6 || $data['reg_id'] > 1) // IF USER IS DISTRICT MANAGER OR LOCATIONS ARE BASED ON REGION (TYPICALLY USED FOR MANY, ROUTE LOCATIONS)
+            if ($data['user_level'] == Groups::DISTRICT_MANAGER || $data['reg_id'] > 1) // IF USER IS DISTRICT MANAGER OR LOCATIONS ARE BASED ON REGION (TYPICALLY USED FOR MANY, ROUTE LOCATIONS)
             {
-                if ($data['user_level'] == 6) {
+                if ($data['user_level'] == Groups::DISTRICT_MANAGER) {
                     $distMgrQuery = $this->db->query("SELECT DISTINCT GROUP_CONCAT(L.id) AS LocationIdList
 														 FROM location L
 														WHERE L.region_id IN(
@@ -2276,24 +2278,46 @@ class SiteHelpers
      * @param number $id User ID
      * @return array
      */
-    static function getLocationDetails($id)
+    static function getLocationDetails($id,$canSeeAllLocations = false)
     {
-        $locations = \DB::table('user_locations')
-            ->join('location', 'user_locations.location_id', '=', 'location.id')
-            ->leftJoin('debit_type', 'debit_type.id', '=', 'location.debit_type_id')
-            ->select(DB::raw(implode(',', [
-                'DISTINCT location.id',
-                'location.location_name',
-                'location.location_name_short',
-                'location.debit_type_id',
-                'debit_type.company',
-                'location.street1',
-                'location.state',
-                'location.city',
-                'location.zip'])))
-            ->where('location.active', 1)
-            ->where('user_locations.user_id', '=', $id)->orderBy('id', 'asc')
-            ->get();
+    	if($canSeeAllLocations)
+	    {
+            $locations = \DB::table('user_locations')
+                ->join('location', 'user_locations.location_id', '=', 'location.id')
+                ->leftJoin('debit_type', 'debit_type.id', '=', 'location.debit_type_id')
+                ->select(DB::raw(implode(',', [
+                    'DISTINCT location.id',
+                    'location.location_name',
+                    'location.location_name_short',
+                    'location.debit_type_id',
+                    'debit_type.company',
+                    'location.street1',
+                    'location.state',
+                    'location.city',
+                    'location.zip'])))
+                ->where('location.active', 1)
+                ->orderBy('id', 'asc')
+                ->get();
+	    }
+	    else{
+            $locations = \DB::table('user_locations')
+                ->join('location', 'user_locations.location_id', '=', 'location.id')
+                ->leftJoin('debit_type', 'debit_type.id', '=', 'location.debit_type_id')
+                ->select(DB::raw(implode(',', [
+                    'DISTINCT location.id',
+                    'location.location_name',
+                    'location.location_name_short',
+                    'location.debit_type_id',
+                    'debit_type.company',
+                    'location.street1',
+                    'location.state',
+                    'location.city',
+                    'location.zip'])))
+                ->where('location.active', 1)
+                ->where('user_locations.user_id', '=', $id)->orderBy('id', 'asc')
+                ->get();
+	    }
+
         return $locations;
     }
 
@@ -2331,9 +2355,9 @@ class SiteHelpers
         return $locations;
     }
 
-    static function getQueryStringForLocation($table, $fieldName = 'location_id', $addOnLocations = array(), $orClause = '')
+    static function getQueryStringForLocation($table, $fieldName = 'location_id', $addOnLocations = array(), $orClause = '',$canSeeAllLocations = false)
     {
-        $locationsData = self::getLocationDetails(\Session::get('uid'));
+        $locationsData = self::getLocationDetails(\Session::get('uid'),$canSeeAllLocations);
         $locations = is_array($addOnLocations) ? $addOnLocations : array();
         foreach ($locationsData as $locationItem) {
             $locations[] = "'" . $locationItem->id . "'";
@@ -2383,7 +2407,7 @@ class SiteHelpers
             $prevMonthYear = $curYear;
         }
         $user_level = \Session::get('gid');
-        if ($user_level == 1 || $user_level == 2 || $user_level == 6 || $user_level == 8 || $user_level == 11) {
+        if ($user_level == Groups::USER || $user_level == Groups::PARTNER || $user_level == Groups::DISTRICT_MANAGER || $user_level == Groups::PARTNER_PLUS || $user_level == Groups::TECHNICAL_MANAGER) {
             $query = \DB::select('SELECT (SELECT SUM(budget_value) FROM location_budget
 											WHERE location_id=' . $loc1 . ' AND MONTH(budget_date) = ' . $curMonthNumber . ' AND YEAR(budget_date)=' . $curYear . ')
 											   AS monthly_merch_budget,
@@ -2417,7 +2441,7 @@ class SiteHelpers
 										      AND location_id=' . $loc1 . ')
 											   AS annual_order_total');
             $data['user_group'] = "regusers";
-        } else if ($user_level == 6) {
+        } else if ($user_level == Groups::DISTRICT_MANAGER) {
             $query = \DB::select('SELECT (SELECT SUM(budget_value) FROM location_budget left join location on location_budget.location_id = location.id where MONTH(budget_date) = ' . $curMonthNumber . ' AND YEAR(budget_date)=' . $curYear . '
 										 AND location.region_id=' . $reg_id . ')
 										   AS monthly_merch_budget,

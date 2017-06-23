@@ -5,7 +5,7 @@
         <div class="sbox-tools" >
             <a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Clear Search" onclick="reloadData('#{{ $pageModule }}', 'managefegrequeststore/data?search=')"><i class="fa fa-trash-o"></i> Clear Search </a>
             <a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Reload Data" onclick="reloadData('#{{ $pageModule }}','managefegrequeststore/data?view=manage&return={{ $return }}')"><i class="fa fa-refresh"></i></a>
-            @if(Session::get('gid') ==10)
+            @if(Session::get('gid') ==  \App\Models\Core\Groups::SUPPER_ADMIN)
             <a href="{{ url('feg/module/config/'.$pageModule) }}" class="btn btn-xs btn-white tips" title=" {{ Lang::get('core.btn_config') }}" ><i class="fa fa-cog"></i></a>
             @endif
         </div>
@@ -275,7 +275,35 @@ function denyRequest(ele)
 console.log($('#managefegrequeststoreTable tbody tr').not('.hiddenNow').length);
             if($('#managefegrequeststoreTable tbody tr').not('.hiddenNow').length < 3)
             {
-                reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?view=manage');
+                console.log('performing reload');
+
+                if($('#vendor_id').val()!=''){
+                    console.log('Clearing vendor');
+                    $('#vendor_id').val('');
+
+                }else if($('#location_id').val()!=''){
+                    console.log('Clearing location');
+                    $('#location_id').val('');
+
+                }else if($('#order_type').val()!=''){
+                    console.log('Clearing order types');
+                    $('#order_type').val('');
+                }
+
+
+                if($('#order_type').val()==''){
+                    console.log('Reload all');
+                    reloadData('#{{ $pageModule }}', '{{ $pageModule }}/data?view=manage');
+
+                }else if($('#location_id').val()==''){
+                    console.log('Reload order types');
+                    pageRefresh('T');
+
+                }else if($('#vendor_id').val()==''){
+                    console.log('Reload location');
+                    pageRefresh('L');
+                }
+
             }
             else
             {

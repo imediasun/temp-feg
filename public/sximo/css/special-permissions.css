@@ -23,7 +23,7 @@
 #specialPermissionsGridContainerForm .datagrid .config_title {
 
 }
-#specialPermissionsGridContainerForm .datagrid tr:not(.newPermission) .config_title input[type=text] {
+#specialPermissionsGridContainerForm .datagrid tr:not(.newPermission) .config_title input[type=text] ,#specialPermissionsGridContainerForm .datagrid tr:not(.newPermission) .data_type input[type=text] {
     background-color: #fffefe;
     border-color: #880000;    
     color: #880000;

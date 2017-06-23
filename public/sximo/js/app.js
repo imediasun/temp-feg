@@ -217,7 +217,7 @@ App.handlers.ajaxError = function (jQEvent, jQXhr, xhr, errorName) {
     var obj = this,
         status = jQXhr.status,
         statusText = jQXhr.statusText,
-        skipIf = {'unauthorized': false, 'abort': true, 'not found': true},
+        skipIf = {'unauthorized': false, 'abort': true, 'not found': true, 'Unprocessable Entity':true},
         skipIfStatus = {'0': true, '401': false, '403': true},
         isErrorNameString = typeof errorName == 'string',
         errorNameString = isErrorNameString && errorName.toLowerCase() || '';
@@ -761,7 +761,7 @@ jQuery(document).ready(function($){
 // TODO: Clean and refactor the below code
 jQuery(document).ready(function ($) {
     $('.ajaxLoading').bind('DOMSubtreeModified', function(e) {
-        if (e.target.innerHTML.length > 0) {
+        /*if (e.target.innerHTML.length > 0) {
             console.log('if');
             console.log(e);
         }
@@ -769,7 +769,7 @@ jQuery(document).ready(function ($) {
         {
             console.log('else');
             console.log(e);
-        }
+        }*/
     });
 	navigator.sayswho= (function(){
 		var ua= navigator.userAgent, tem,
@@ -789,7 +789,16 @@ jQuery(document).ready(function ($) {
 
 	console.log(navigator.sayswho);
 
-    $('body #sidemenu a:not(.expand)').not('#logo').on('click',function (e) {
+        $('body #sidemenu a[href="http://dev.fegllc.com/forum"],a[href="http://admin1.fegllc.com/forum"]').click(function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            var Link = $(this);
+            Link.attr("target", "_blank");
+            window.open(Link.attr("href"));
+            return false;
+        });
+
+    $('body #sidemenu a:not(.expand)').not('a[href="http://dev.fegllc.com/forum"]').not('a[href="http://admin1.fegllc.com/forum"]').not('#logo').on('click',function (e) {
 		e.preventDefault();
 		var url = $(this).attr('href');
 		var href = $(this).attr('href').split('/');
@@ -923,11 +932,14 @@ App.autoCallbacks.registerCallback('ajaxerror', function(params){
     console.log(params);
     var obj = this;
     unblockUI();
-    var defaultMessage = "Opps Something Went Wrong.\n\
+    var defaultMessage = "OOPS Something Went Wrong.\n\
                     Please click the Report Issue \n\
                     button below to send an error report to the support team.";
     if(params.errorName == "Unauthorized"){
-        defaultMessage = "Unauthorized to perform this operation";
+        defaultMessage = "Your session has expired. Please log back into the admin in order to complete this action. ";
+    }
+    if(params.errorName == "Unprocessable Entity"){ ///Set for ajax validation errors
+        return;
     }
     App.notyConfirm({
         message : defaultMessage,
@@ -1170,5 +1182,4 @@ function getCartTotal()
 
 $(document).ready(function(){
     getCartTotal();
-    $('a[href="http://admin1.fegllc.com/forum"]').attr('target','_blank');
 });

@@ -222,10 +222,10 @@ class PagesController extends Controller
     {
         //return $request->all();
         $this->validate($request, [
-            'pdf_file' => 'required|mimes:pdf',
+            'upload_file' => 'required',
         ]);
-        if( $request->hasFile('pdf_file')) {
-            $file = $request->file('pdf_file');
+        if( $request->hasFile('upload_file')) {
+            $file = $request->file('upload_file');
             $path = public_path('upload/pageCmsPDF');
             $name = mt_rand() . '_' . $file->getClientOriginalName();
             $file->move($path, $name);

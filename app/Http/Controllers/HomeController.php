@@ -1,10 +1,12 @@
 <?php namespace App\Http\Controllers;
 
+use App\Models\Sximo;
 use App\User;
 use Illuminate\Http\Request;
 use PHPMailerOAuth;
 use App\Models\Core\Pages;
 use Validator, Input, Redirect, Auth;
+use App\Models\Core\Groups;
 
 class HomeController extends Controller
 {

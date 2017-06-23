@@ -292,8 +292,10 @@ class ProductController extends Controller
                 $data['retail_price']=$retail_price;
                 $id = $this->model->insertRow($data, $request->input('id'));
             } else {
+
                 //for inline editing all fields do not get saved
                 $data = $this->validatePost('products',true);
+
                 $data['retail_price']=$retail_price;
                 $id = $this->model->insertRow($data, $id);
             }

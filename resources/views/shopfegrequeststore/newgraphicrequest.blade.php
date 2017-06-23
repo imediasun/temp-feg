@@ -195,18 +195,21 @@
             init:function(){
                 this.options.parallelUploads = 5,
                 this.on("success", function(file,response) {
-                    addInput(response);
+                    addInput(response,file);
                     anyImageUploaded = true;
                     clearErrorMessage();
                 });
+                this.on("removedfile", function(file) {
+                    $('input[id="'+file.xhr.response+'"]').remove();
+                    console.log(file.xhr.response);
+                    if (!file.serverId) { return; } // The file hasn't been uploaded
+                });
             }
         });
-        function addInput(value){
+        function addInput(value,file){
             var newdiv = document.createElement('div');
-            newdiv.innerHTML = " <br><input style="+ "display:none"+" type='text' name='myInputs[]' value='"+value+"'>";
+            newdiv.innerHTML = " <br><input id="+value+" style="+ "display:none"+" type='text' name='myInputs[]' value='"+value+"'>";
             document.getElementById("testdiv").appendChild(newdiv);
-
-
         }
 
         Dropzone.options.myAwesomeDropzone = {

@@ -8,7 +8,7 @@ usort($tableGrid, "SiteHelpers::_sort");
 		<div class="sbox-tools" >
 			<a href="javascript:void(0)" class="btn btn-xs btn-white tips orderTableClearSearch" title="Clear Search" onclick="reloadData('#{{ $pageModule }}','order/data?search=')"><i class="fa fa-trash-o"></i> Clear Search </a>
 			<a href="javascript:void(0)" class="btn btn-xs btn-white tips orderTableReload" title="Reload Data" onclick="reloadData('#{{ $pageModule }}','order/data?return={{ $return }}')"><i class="fa fa-refresh"></i></a>
-			@if(Session::get('gid') ==10)
+			@if(Session::get('gid') == \App\Models\Core\Groups::SUPPER_ADMIN)
 			<a href="{{ url('feg/module/config/'.$pageModule) }}" 
                class="btn btn-xs btn-white tips openModuleConfig"
                title=" {{ Lang::get('core.btn_config') }}"

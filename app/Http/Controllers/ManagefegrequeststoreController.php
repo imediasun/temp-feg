@@ -2,10 +2,11 @@
 
 use App\Http\Controllers\controller;
 use App\Models\Managefegrequeststore;
+use App\Models\Sximo;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Validator, Input, Redirect;
-
+use App\Models\Core\Groups;
 class ManagefegrequeststoreController extends Controller
 {
 
@@ -136,7 +137,7 @@ class ManagefegrequeststoreController extends Controller
     {
         $this->getSearchParamsForRedirect();
         $user_level = \Session::get('gid');
-        if ($user_level == 2) {
+        if ($user_level == Groups::PARTNER) {
             return redirect('dashboard');
         } else {
             $v1 = $request->get('v1');

@@ -5,7 +5,7 @@
 		<div class="sbox-tools" >
 			<a href="javascript:void(0)" class="btn btn-xs btn-white tips clearSearchButton" title="Clear Search" onclick="reloadData('#{{ $pageModule }}','gamesintransit/data?search=')"><i class="fa fa-trash-o"></i> Clear Search </a>
 			<a href="javascript:void(0)" class="btn btn-xs btn-white tips reloadDataButton" title="Reload Data" onclick="reloadData('#{{ $pageModule }}','gamesintransit/data?return={{ $return }}')"><i class="fa fa-refresh"></i></a>
-			@if(Session::get('gid') ==10)
+			@if(Session::get('gid') ==  \App\Models\Core\Groups::SUPPER_ADMIN)
 			<a href="{{ url('feg/module/config/'.$pageModule) }}" class="btn btn-xs btn-white tips" title=" {{ Lang::get('core.btn_config') }}" ><i class="fa fa-cog"></i></a>
 			@endif
 		</div>
@@ -140,7 +140,7 @@
                                 'module' => 'mylocationgame', 
                                 'url' => 'mylocationgame'
                             ), 
-                            $access, $id, $setting) !!}
+                            $access, $id.'/gamesintransit', $setting) !!}
 					
 
 				</td>

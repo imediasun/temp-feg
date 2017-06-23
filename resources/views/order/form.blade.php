@@ -360,7 +360,7 @@
                     <a href="javascript:void(0);" class="addC btn btn-xs btn-info" rel=".clone" id="add_new_item"><i
                                 class="fa fa-plus"></i>
                         New Item</a>
-                @if(!empty($pass['Can add freehand products']) && !is_object($row) && $fromStore != 1)
+                @if(!is_object($row) && $fromStore != 1)
                         <a href="javascript:void(0);" class="btn btn-xs btn-info enabled" data-status="disabled" id="can-freehand">
                             <i class="fa fa-times fa-check-circle-o" aria-hidden="true"></i>
                            <span>Enable Freehand</span></a>
@@ -406,10 +406,53 @@
         </div>
     </div>
     <?php
+        $type_permissions = '';
+        $show_freehand = (!is_object($row) && $fromStore != 1) ? 1: 0;
+        foreach ($pass as $permission)
+        {
+            if($permission->data_type == 'order_type_restrictions')
+            {
+                $type_permissions .= $permission->data_options;
+                $type_permissions .= ',';
+            }
 
+        }
+        $type_permissions = rtrim($type_permissions,",");
+
+    $case_price_categories = '';
+    if(isset($pass['calculate price according to case price']))
+    {
+        $case_price_categories = $pass['calculate price according to case price']->data_options;
+    }
+    $case_price_if_no_unit_categories = '';
+    if(isset($pass['use case price if unit price is 0.00']))
+    {
+        $case_price_if_no_unit_categories = $pass['use case price if unit price is 0.00']->data_options;
+    }
     ?>
     </div>
     <script type="text/javascript">
+        var type_permissions = "<?php echo $type_permissions ?>";
+        type_permissions = type_permissions.split(",").map(Number);
+
+        var case_price_if_no_unit_categories = "<?php echo $case_price_if_no_unit_categories; ?>";
+        case_price_if_no_unit_categories = case_price_if_no_unit_categories.split(",").map(Number);
+
+
+        var case_price_categories = "<?php echo $case_price_categories  ; ?>";
+        case_price_categories = case_price_categories.split(",").map(Number);
+
+        var show_freehand = <?php echo $show_freehand  ; ?>;
+        console.log(type_permissions);
+        console.log('Createing order '+show_freehand);
+        $(document).ready(function () {
+            if(!show_freehand)
+            {
+                $('#can-freehand').hide();
+            }
+        });
+
+
         var isRequestApprovalProcess = <?php echo $isRequestApproveProcess ? 'true' : 'false'; ?>;
         var counter = isRequestApprovalProcess ? $('input[name^=item_num]').length : 0;
         var hidePopup;
@@ -434,20 +477,21 @@
                 unitPrice = $(this).find("input[name*='price']").val();
                 casePrice = $(this).find("input[name*='case_price']").val();
                 orderType=$("#order_type_id").val();
-                // if order type is Debit Card Part=20,Graphics=10, Parts for Game=1,Party Supplies=17
-                if (orderType == 20 || orderType == 17 || orderType == 1) {
-                    Price = unitPrice;
-                }
+
                 // if order type is Instant Win prizes=8, redemption prizes=7,Office Supplies=6
-                else if(orderType == 7 || orderType == 8 || orderType == 6 || orderType == 10)
+                if($.inArray(parseInt(orderType),case_price_categories) != -1)
                 {
                      Price = casePrice;
                 }
-                else if(orderType == 4)
+                else if($.inArray(parseInt(orderType),case_price_if_no_unit_categories) != -1)
                 {
 
                      Price=(unitPrice == 0)?casePrice:unitPrice;
 
+                }
+                else
+                {
+                    Price = unitPrice;
                 }
                 sum = Qty * Price;
                 Subtotal += sum;
@@ -554,11 +598,6 @@
 
             $("#order_type_id").jCombo("{{ URL::to('order/comboselect?filter=order_type:id:order_type') }}&parent=can_request:1",
                     {selected_value: '{{ $data["order_type"] }}', initial_text: '-------- Select Order Type --------'});
-            renderDropdown($("[id^=game_0]"), {
-                dataType: 'json',
-                data: {results: games_options_js},
-                placeholder: "For Various Games", width: "100%"
-            });
 
             $("input[name*='total'] ").attr('readonly', '1');
             $(" input[name*='bulk_Price'] ").addClass('calculate');
@@ -750,7 +789,8 @@
                 data: {'location': $(this).val()},
                 success: function (data) {
                     games_options_js = data;
-                    renderDropdown($("[id^=game_]"), {
+                    $("[id^=game_0]").select2('destroy');
+                    renderDropdown($("[id^=game_0]"), {
                         dataType: 'json',
                         data: {results: data},
                         placeholder: "For Various Games", width: "100%"
@@ -759,10 +799,16 @@
             });
         });
 
+        renderDropdown($("[id^=game_0]"), {
+            dataType: 'json',
+            data: {results: games_options_js},
+            placeholder: "For Various Games", width: "100%"
+        });
+
         vendorChangeCount = 1;
-$('#vendor_id').on('select2-selecting',function (e) {
-    $(this).attr('lastSelected', $(this).val());
-});
+        $('#vendor_id').on('select2-selecting',function (e) {
+            $(this).attr('lastSelected', $(this).val());
+        });
         $("#vendor_id").on('change', function() {
             vendor = $(this);
             if(vendorChangeCount > 1 && $('#vendor_id').attr('lastselected') != undefined)
@@ -911,7 +957,62 @@ $('#vendor_id').on('select2-selecting',function (e) {
                 $("#submit_btn").removeAttr('disabled');
             }
         }
+
+        $('#order_type_id').on('select2-selecting',function (e) {
+            $(this).attr('lastSelected', $(this).val());
+        });
         $('#order_type_id').change(function () {
+            var orderType = $(this);
+            var selected_type = $(this).val();
+            if($.inArray(parseInt(selected_type),type_permissions) != -1 && show_freehand)
+            {
+                $('#can-freehand').show();
+                console.log('I have permission for order type ' + selected_type);
+            }
+            else if($(this).val() && show_freehand)
+            {
+                var lastselected = $.inArray(parseInt(orderType.attr('lastselected')),type_permissions);
+                if(lastselected != -1) {
+                    if($('.itemstable .clonedInput:first-child input.item_name').val() != '')
+                    {
+                        App.notyConfirm({
+                            message: "Are you sure you want to change Order Type <br> <b>***WARNING***</b><br>If you change to Order Type all of your items will be removed and you will have to add them again",
+                            confirmButtonText: 'Yes',
+                            confirm: function () {
+                                $('#can-freehand').hide();
+                                $('#is_freehand').val(0);
+                                $('#can_select_product_list').val(1);
+                                $('.itemstable .clonedInput:not(:first-child)').remove();
+                                $('.itemstable .clonedInput input.sku').attr('readonly', 'readonly');
+                                $('.itemstable .clonedInput textarea.item').attr('readonly', 'readonly');
+                                $('.itemstable .clonedInput:first-child input').not('#item_num').val('');
+                                $('.itemstable .clonedInput:first-child textarea').val('');
+                                $('#total_cost').val(0.00);
+                                $('input[name="Subtotal"]').val(0.000);
+                            },
+                            cancel:function(){
+
+                                if(orderType.attr('lastSelected'))
+                                {
+                                    console.log('selecting lastSelected order type');
+
+                                    $('#order_type_id option[value = '+orderType.attr('lastSelected')+']').attr('selected', true);
+                                    orderType.trigger("change");
+                                }
+                            }
+                        });
+                    }
+                    else
+                    {
+                        $('#can-freehand').hide();
+                    }
+                }
+            }
+            else
+            {
+                $('#can-freehand').hide();
+                console.log("I don't have any permission");
+            }
             gameShowHide();
             calculateSum();
         });

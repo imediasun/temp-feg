@@ -26,7 +26,7 @@ class MylocationgameController extends Controller
         $this->pass = \FEGSPass::getMyPass($this->module_id);
         $this->access['is_edit'] = $this->access['is_edit'] == 1 || !empty($this->pass['Can Edit']) ? 1 : 0;
         $this->access['is_remove'] = $this->access['is_remove'] == 1 || !empty($this->pass['Can Dispose']) ? 1 : 0;
-        
+
         $this->data = array(
             'pass' => $this->pass,
             'pageTitle' => $this->info['title'],
@@ -35,7 +35,15 @@ class MylocationgameController extends Controller
             'pageUrl' => url($this->module),
             'return' => self::returnUrl()
         );
+    }
 
+    private function  updatePermissions($module){
+        $info = $this->model->makeInfo($module);
+        $this->access = $this->model->validAccess($info['id']);
+        $module_id = Module::name2id($module);
+        $this->pass = \FEGSPass::getMyPass($module_id);
+        $this->access['is_edit'] = $this->access['is_edit'] == 1 || !empty($this->pass['Can Edit']) ? 1 : 0;
+        $this->access['is_remove'] = $this->access['is_remove'] == 1 || !empty($this->pass['Can Dispose']) ? 1 : 0;
     }
 
     public function getIndex()
@@ -48,14 +56,17 @@ class MylocationgameController extends Controller
         $this->data['access'] = $this->access;
         return view('mylocationgame.index', $this->data);
     }
-    public function getSearchFilterQuery($customQueryString = null) {
+    public function getSearchFilterQuery($customQueryString = null,$canSeeAllLocations = false) {
         // Filter Search for query
         // build sql query based on search filters
         $filter = is_null($customQueryString) ? (is_null(Input::get('search')) ? '' : $this->buildSearch()) :
             $this->buildSearch($customQueryString);
 
         // Get assigned locations list as sql query (part)
-        $locationFilter = \SiteHelpers::getQueryStringForLocation('game');
+
+            $locationFilter = \SiteHelpers::getQueryStringForLocation('game','location_id',[],'',$canSeeAllLocations);
+
+
         // if search filter does not have location_id filter
         // add default location filter
         $frontendSearchFilters = $this->model->getSearchFilters(array('location_id' => ''));
@@ -67,7 +78,7 @@ class MylocationgameController extends Controller
     }
     public function postData(Request $request)
     {
-
+        $canSeeAllLocations = isset($this->pass["Games For All Locations"]);
         $module_id = \DB::table('tb_module')->where('module_name', '=', 'mylocationgame')->pluck('module_id');
         $this->data['module_id'] = $module_id;
         if (Input::has('config_id')) {
@@ -88,7 +99,7 @@ class MylocationgameController extends Controller
         $order = (!is_null($request->input('order')) ? $request->input('order') : $this->info['setting']['ordertype']);
         // End Filter sort and order for query
         // Filter Search for query
-        $filter = $this->getSearchFilterQuery();
+        $filter = $this->getSearchFilterQuery(null,$canSeeAllLocations);
 
         $page = $request->input('page', 1);
         $params = array(
@@ -222,8 +233,12 @@ class MylocationgameController extends Controller
     }
 
 
-    function getUpdate(Request $request, $id = null)
+    function getUpdate(Request $request, $id = null, $actionedBy='mylocationgame')
     {
+        if($actionedBy=='gamesintransit'){
+            $this->updatePermissions('gamesintransit');
+        }
+
         if ($id == null) {
             if ($this->access['is_add'] == 0)
                 return Redirect::to('dashboard')->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
@@ -696,6 +711,7 @@ class MylocationgameController extends Controller
             $newData['status_id'] = 3;
             $newData['sale_pending'] = 0;
         }
+        $newData['notes'] = $data['notes'];
 
         $newID = $this->model->insertRow($newData, $id);
 
@@ -1199,5 +1215,12 @@ class MylocationgameController extends Controller
     function getDowload()
     {
 
+    }
+    public function postNotes(Request $request)
+    {
+        $game = Mylocationgame::find($request->id);
+        $game->notes = $request->notes;
+        $game->save();
+        return 'Notes Saved Successfully';
     }
 }

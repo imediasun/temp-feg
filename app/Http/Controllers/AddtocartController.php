@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use Mockery\CountValidator\Exception;
 use Validator, Input, Redirect;
+use App\Models\Core\Groups;
 
 class AddtocartController extends Controller
 {
@@ -79,6 +80,7 @@ class AddtocartController extends Controller
         // Filter Search for query
         $filter = (!is_null($request->input('search')) ? $this->buildSearch() : '');
 
+        $filter .= ' AND requests.request_user_id='.\Session::get('uid');
 
         $page = $request->input('page', 1);
         $params = array(
@@ -262,12 +264,12 @@ class AddtocartController extends Controller
 
         $location_id = \Session::get('selected_location');
         $data['user_level'] = \Session::get('gid');
-        if ($data['user_level'] == 3 || $data['user_level'] == 4 || $data['user_level'] == 5 || $data['user_level'] == 7 || $data['user_level'] == 9 || $data['user_level'] == 10) {
+        /*if ($data['user_level'] == Groups::MERCHANDISE_MANAGER || $data['user_level'] == Groups::FIELD_MANAGER || $data['user_level'] == Groups::OFFICE_MANAGER || $data['user_level'] == Groups::FINANCE_MANAGER || $data['user_level'] == Groups::GUEST || $data['user_level'] == Groups::SUPPER_ADMIN) {
             $statusId = 9; /// 9 IS USED AS AN ARBITRARY DELIMETER TO KEEP CART SEPERATE FROM LOCATIONS' OWN
         } else {
             $statusId = 4;
-        }
-
+        }*/
+        $statusId = 4;
         if (!empty($new_location)) {
             $query = \DB::select('SELECT product_id,description,qty,status_id,request_type_id FROM requests
                                   WHERE location_id = ' . $location_id . ' AND status_id = 9');
@@ -292,7 +294,7 @@ class AddtocartController extends Controller
         \DB::table('requests')->where('location_id', $location_id)->where('status_id', $statusId)->update($update);
 
         if (empty($new_location)) {
-            return Redirect::to('./shopfegrequeststore')->with('messagetext', 'Submitted successfully')->with('msgstatus', 'success');
+            return Redirect::to('/shopfegrequeststore')->with('messagetext', 'Submitted successfully')->with('msgstatus', 'success');
             \Session::put('total_cart', 0);
             //redirect('fegllc/popupCart', 'refresh');
         } else {
@@ -300,7 +302,7 @@ class AddtocartController extends Controller
              * comment line because $new_location value always come null from addtocart/table.blade
             $this->getChangelocation($new_location);
              */
-            return redirect('./shopfegrequeststore/popup-cart/');
+            return redirect('/shopfegrequeststore/popup-cart/');
         }
     }
 

@@ -10,19 +10,20 @@ use Illuminate\Database\Query\Processors\Processor;
 class SximoQueryBuilder extends Builder
 {
 
-    public function __construct(ConnectionInterface $connection,
-                                Grammar $grammar,
-                                Processor $processor)
-    {
-        $this->grammar = $grammar;
-        $this->processor = $processor;
-        $this->connection = $connection;
-    }
 
-    /*public function update(array $values)
+    public function update(array $values)
     {
-        dd('SximoQueryBuilder',$this->model->getAttributes());
-        Sximo::insertLog($this->model->getTable(),'Update' , json_encode($values),json_encode($this->model->getAttributes()));
+        $allwheres = [];
+        if(isset($this->wheres[0]['value']))
+        {
+            foreach ($this->wheres as $i => $where)
+            {
+                $allwheres[$i]['column'] = $where['column'];
+                $allwheres[$i]['value'] = $where['value'];
+            }
+        }
+
+        Sximo::insertLog($this->from,'Update' , 'SximoQueryBuilder',json_encode($allwheres),json_encode($values));
         return parent::update($values);
     }
 
@@ -30,14 +31,39 @@ class SximoQueryBuilder extends Builder
     {
         if($method == 'insert' || $method == 'insertGetId')
         {
-            Sximo::insertLog($this->model->getTable(),$method, json_encode($parameters),json_encode($this->model->getAttributes()));
+            Sximo::insertLog($this->from,'Insert/InsertGetId' , 'SximoQueryBuilder','',json_encode($parameters));
         }
         return parent::__call($method,$parameters);
     }
 
     public function delete($id = null)
     {
-        Sximo::insertLog($this->model->getTable(),'delete',$this->model->id, json_encode($this->model->getAttributes()));
+        $allwheres = [];
+        if(isset($this->wheres[0]['value']))
+        {
+            foreach ($this->wheres as $i => $where)
+            {
+                $allwheres[$i]['column'] = $where['column'];
+                $allwheres[$i]['value'] = $where['value'];
+            }
+        }
+        Sximo::insertLog($this->from,'Delete' , 'SximoQueryBuilder',json_encode($allwheres),json_encode($id));
+
         return parent::delete($id);
-    }*/
+    }
+    public function insertGetId(array $values, $sequence = null)
+    {
+        if(!isset($values['auditID']))
+        {
+            Sximo::insertLog($this->from,'InsertGetId' , 'SximoQueryBuilder','',json_encode($values));
+        }
+
+        return parent::insertGetId($values,$sequence);
+    }
+    public function insert(array $values)
+    {
+        Sximo::insertLog($this->from,'Insert' , 'SximoQueryBuilder','',json_encode($values));
+        return parent::insert($values);
+    }
+
 }

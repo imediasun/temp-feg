@@ -226,8 +226,8 @@
 				  <div class="row-fluid">
 					  <form method="post" enctype="multipart/form-data" name="pdf_form">
 					  <div class="form-group">
-						  <label>Browse PDF</label>
-						  <input type="file" name="pdf_file" id="pdf_file" accept="application/pdf" />
+						  <label>Browse File</label>
+						  <input type="file" name="upload_file" id="pdf_file" accept="application/pdf, application/msword" />
 						  <label style="color:red;font-size:14px;margin-top:5px;" id="pdf_error"></label>
 					  </div>
 					  </form>
@@ -262,13 +262,11 @@
 				  $('#pdf_upload').text('Insert');
 				  $('#pdf_upload').prop('disabled', false);
 			  },
-			  error: function (xhr, data, errorThrown) {
-				  console.log(data);
+			  error: function (xhr) {
 					if(xhr.status=='422'){
-						//var error=JSON.parse(xhr.responseText);
-						//alert(error.pdf_file);
-						//alert('Must provide a pdf file.');
-						$('#pdf_error').text('Must provide a pdf file.');
+						var error= JSON.parse(xhr.responseText);
+						console.log("error is "+error.upload_file);
+						$('#pdf_error').text(error.upload_file);
 					}else{
 						$('#pdf_error').text('Something went wrong. Try again.');
 					}
@@ -280,7 +278,7 @@
 	  }
 
 	  $( document ).ready(function() {
-		  $('.note-toolbar').append('<div class="note-attach btn-group"><button type="button" class="btn btn-default btn-sm btn-small" data-toggle="tooltip" title="Attach PDF" data-placement="bottom" tabindex="-1" onclick=$("#pdf_modal").modal()><i class="fa fa-file-pdf-o"></i></button></div>');
+		  $('.note-toolbar').append('<div class="note-attach btn-group"><button type="button" class="btn btn-default btn-sm btn-small" data-toggle="tooltip" title="Attach File" data-placement="bottom" tabindex="-1" onclick=$("#pdf_modal").modal()><i class="fa fa-file-o"></i></button></div>');
 		  $('[data-toggle="tooltip"]').tooltip();
 
 		  $('.note-editor .note-editable').css('height', $('#cms_bar_id').height()-208);

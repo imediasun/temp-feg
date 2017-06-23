@@ -1,5 +1,6 @@
 <?php namespace App\Models;
 
+use App\Http\Controllers\OrderController;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Ordertyperestrictions;
@@ -182,9 +183,18 @@ class order extends Sximo
         return "GROUP BY orders.id  ";
     }
 
-    public function getOrderQuery($order_id, $mode = null)
+    public function getOrderQuery($order_id, $mode = null,$pass=null)
     {
-
+        $case_price_categories = [];
+        if(isset($pass['calculate price according to case price']))
+        {
+            $case_price_categories = explode(',',$pass['calculate price according to case price']->data_options);
+        }
+        $case_price_if_no_unit_categories = [];
+        if(isset($pass['use case price if unit price is 0.00']))
+        {
+            $case_price_if_no_unit_categories = explode(',',$pass['use case price if unit price is 0.00']->data_options);
+        }
         $data['requests_item_count'] = 0;
         $data['receivedItemsArray']=0;
         $data['order_loc_id'] = '0';
@@ -246,15 +256,11 @@ class order extends Sximo
                     $receivedItemsArray[]=$row->item_received;
                     $orderDescriptionArray[] = $row->description;
                     $orderPriceArray[] = Sximo::parseNumber($row->price);
-                    if($data['order_type'] == 20 || $data['order_type']== 17 || $data['order_type'] == 1 )
-                    {
-                        $orderItemsPriceArray[] = $row->price;
-                    }
-                    elseif($data['order_type'] == 7 || $data['order_type'] == 8 || $data['order_type'] == 6 || $data['order_type'] == 10)
+                    if(in_array($data['order_type'],$case_price_categories))
                     {
                         $orderItemsPriceArray[] = $row->case_price;
                     }
-                    elseif($data['order_type'] == 4)
+                    elseif(in_array($data['order_type'],$case_price_if_no_unit_categories))
                     {
                         $orderItemsPriceArray[] = ($row->price == 0.00)?$row->case_price:$row->price;
                     }
@@ -481,7 +487,7 @@ class order extends Sximo
         $data['user_id'] = \Session::get('uid');
         if (!empty($order_id)) {
             $query = \DB::select('SELECT  O.order_type_id,O.order_description,O.request_ids,O.po_number,O.location_id,O.order_total,O.status_id,O.date_received,
-                     O.notes,O.added_to_inventory,V.vendor_name,U.username FROM orders O LEFT JOIN vendor V ON V.id = O.vendor_id
+                     O.notes,O.added_to_inventory,O.tracking_number,V.vendor_name,U.username FROM orders O LEFT JOIN vendor V ON V.id = O.vendor_id
                      LEFT JOIN users U ON U.id = O.user_id
                       
                       WHERE O.id = ' . $order_id . '');
@@ -500,6 +506,7 @@ class order extends Sximo
                 $data['vendor_name'] = $query[0]->vendor_name;
                 $data['item_count'] = '';
                 $data['date_received']=$query[0]->date_received;
+                $data['tracking_number']=$query[0]->tracking_number;
             }
             if (!empty($data['requestIds']) && ($data['order_type'] == 7 || $data['order_type'] == 8)) //INSTANT WIN AND REDEMPTION PRIZES
             {
@@ -597,8 +604,12 @@ class order extends Sximo
 
     function getVendorEmail($vendor_id)
     {
-        $vendor_email = \DB::select("SELECT email from vendor WHERE id=" . $vendor_id);
-        return $vendor_email[0]->email;
+        $vendor_email = \DB::select("SELECT email, email_2 from vendor WHERE id=" . $vendor_id);
+        if(empty($vendor_email[0]->email_2)){
+            return $vendor_email[0]->email;
+        }else{
+            return $vendor_email[0]->email.','.$vendor_email[0]->email_2;
+        }
     }
 
     function productUnitPriceAndName($prod_id)

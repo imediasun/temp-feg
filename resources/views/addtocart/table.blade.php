@@ -13,7 +13,7 @@
             <a href="javascript:void(0)" class="btn btn-xs btn-white tips" title="Reload Data"
                onclick="reloadData('#{{ $pageModule }}','addtocart/data?return={{ $return }}')"><i
                         class="fa fa-refresh"></i></a>
-            @if(Session::get('gid') ==10)
+            @if(Session::get('gid') ==  \App\Models\Core\Groups::SUPPER_ADMIN)
                 <a href="{{ url('feg/module/config/'.$pageModule) }}" class="btn btn-xs btn-white tips"
                    title=" {{ Lang::get('core.btn_config') }}"><i class="fa fa-cog"></i></a>
             @endif
@@ -201,12 +201,12 @@
 
                 <div class=" col-md-offset-4 col-sm-offset-2 col-xs-offset-1 col-md-8">
                <div class="col-md-2 col-sm-3 col-xs-12">
-                   <button  class="btn btn-sm btn-primary" id="update-cart-values">Update Cart</button>
+                   <button  class="btn btn-sm btn-primary" id="update-cart-values" onclick="updateCart();">Update Cart</button>
                </div>
                    <div class="col-md-10 col-sm-9 col-xs-12">
                     <input type="button" style="font-weight: bold;" class="btn btn-sm btn-success"
                            value="Submit Weekly Requests totalling {{CurrencyHelpers::formatPrice($cartData['shopping_cart_total'])}}"
-                           onClick="confirmSubmit();" id = "cartbtn"></button>
+                           onClick="confirmSubmit({{ json_encode($cartData['amt_short_message']) }});" id = "cartbtn"></button>
                 </div>
             </div>
             </div>
@@ -313,92 +313,8 @@
         $('#new_locationdiv').hide();
     });
     -->
-    var timer = null;
 
 
-    function doStuff(value,id,vendor_name) {
-        $.ajax({
-            url:"addtocart/save/"+id+"/"+value+"/"+encodeURIComponent(vendor_name) ,
-            method:'get',
-            dataType:'json',
-            success:function(data){
-                loadCart(vendor_name,data.subtotal);
-            },
-            error: function(){
-                unblockUI();
-            },
-
-        });
-    }
-    timer=null;
-    function changeTotal(value,id,e)
-    {
-        var vendor_name1=$("#"+id).data('vendor');
-       vendor_name1=vendor_name1.replace(/ /g, '_');
-        if (e.keyCode == 13 && value > 0) {
-            $('.ajaxLoading').show();
-            e.preventDefault();
-            doStuff(value,id,vendor_name1);
-        }
-      
-    }
-    function confirmSubmit() {
-        var shortMessage;
-        if(amt_short_msg == null) {
-            shortMessage = "{{ json_encode($cartData['amt_short_message']) }}";
-}
-        else
-        {
-     shortMessage=amt_short_msg;
-        }
-        shortMessage=shortMessage.replace(/&quot;/g, '');
-            shortMessage=shortMessage.trim();
-        if ( shortMessage && shortMessage.length > 0 ) {
-
-            var text="Please increase order amount in order to proceed."
-            alert(shortMessage +" "+ text);
-
-        }
-        else {
-            if (confirm("Have you confirmed all items and quantities in your shopping cart?")) {
-                var new_location = '';
-                var checked = $("#clone_order").parent('[class*="icheckbox"]').hasClass("checked");
-
-                if (checked) {
-                    if ($('#new_location').val() > 0) {
-                        new_location = '/' + $('#new_location').val();
-                        window.location.href = '{{ $pageModule }}/submit-requests' + new_location;
-                    }
-                    else {
-                        alert("You must pick a location to clone this order to!");
-                    }
-                }
-                else {
-                 //   alert('{{ $pageModule }}/submit-requests');
-                    window.location.href = '{{ $pageModule }}/submit-requests';
-                    $("#update_text_to_add_cart").text('0');
-                }
-            }
-
-        }
-    }
-function loadCart(vendor_name,subtotal)
-{
-
-    getCartData(false,vendor_name,subtotal);
-
-   // return false;
-}
-    $("#update-cart-values").click(function(){
-        var ele=$("input[name^=qty]");
-        ele.each(function(){
-           var vendor=$(this).data('vendor');
-            var id= $(this).attr('id');
-            var qty= $(this).val();
-            $('.ajaxLoading').show();
-            doStuff(qty,id,vendor);
-        });
-    });
 </script>
 <style>
     .table th.right {

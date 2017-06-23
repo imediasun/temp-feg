@@ -132,7 +132,7 @@
                  <div class="col-md-8 col-md-offset-4 col-xs-12">
                     <div class="row">
                         <div class="form-group clearfix">
-                            
+
                             <label for="date_received" class=" control-label col-md-4 text-right">
                                 Date Received: </label>
                             <div class="col-md-8">
@@ -154,7 +154,18 @@
                             </div>
 
                         </div>
-                        <div class="form-group clearfix" id="tracking_numberdiv" style="display:none">
+
+                        @if($data['order_type']=='2')
+                            <div class="form-group clearfix">
+                                <label for="date_received" class=" control-label col-md-4 text-right">
+                                    Tracking Number: </label>
+                                <div class="col-md-8">
+                                    <input type="text" class="form-control" name="tracking_number" id="tracking_number" value="{{ $data['tracking_number'] }}" required/>
+                                </div>
+                            </div>
+                        @endif
+
+                        {{--<div class="form-group clearfix" id="tracking_numberdiv" style="displaynone">
                             
                             <label id ="tracking_number_lbl" for="vendor_id" class=" control-label col-md-4 text-left">
                                 Tracking Number:
@@ -163,13 +174,13 @@
                                 <input type="text"  class="form-control" name="tracking_number" id="tracking_number"/>
                             </div>
 
-                        </div>
+                        </div>--}}
                         <div class="form-group clearfix">
                             
                             <label for="vendor_id" class=" control-label col-md-4 text-right">
                                 Notes: </label>
                             <div class="col-md-8">
-                                <textarea class="form-control" name="notes" rows="7" cols="48" id="notes" onchange="removeBorder('order_status')" ></textarea>
+                                <textarea class="form-control" name="notes" rows="7" cols="48" id="notes" ></textarea>
                             </div>
                         </div>
                         <div class="form-group clearfix">
@@ -222,15 +233,10 @@
             });
             var isAdvaceReplacement=0;
 
-            if("{{ $data['order_type'] }}" != 2) {
-                $("#order_status_id").jCombo("{{ URL::to('order/comboselect?filter=order_status:id:status:order_type_id:1') }}",
-                        {selected_value: '{{ $data["order_status_id"] }}'});
-            }
-            else
-            {
-                $("#order_status_id").jCombo("{{ URL::to('order/comboselect?filter=order_status:id:status:order_type_id:0') }}",
-                        {selected_value: '{{ $data["order_status_id"] }}', initial_text: 'Select Order Status'});
-            }
+            $("#order_status_id").jCombo("{{ URL::to('order/comboselect?filter=order_status:id:status:order_type_id:1') }}",
+                    {selected_value: '{{ $data["order_status_id"] }}'});
+
+
 
 
             $('.previewImage').fancybox();
@@ -290,7 +296,7 @@
             if(selected)
             {
                 $("#"+type).css("border","");
-                if(selected == 5) /* Advanced Replacement Returned.. add tracking number */
+                if(selected == 2) /* Advanced Replacement Returned.. add tracking number */
                 {
                     $("#tracking_numberdiv").show();
                 }
@@ -303,6 +309,36 @@
             {
                 $("#"+type).css("border" , "2px solid #F00")  ;
             }
+        }
+
+
+        $('#order_status_id').on('click',function(){
+            $('#orderreceiveFormAjax').parsley('destroy');
+            if($(this).val()==2){
+                $('#tracking_number').attr('required', 'required');
+            }else {
+                $('#tracking_number').removeAttr('required');
+            }
+            $('#orderreceiveFormAjax').parsley();
+        });
+
+
+        $('.yourBox').on('ifChanged',function(){
+            $('#orderreceiveFormAjax').parsley('destroy');
+            if(checkboxCount()>0){
+                $('#tracking_number').removeAttr('required');
+            }else{
+                $('#tracking_number').attr('required', 'required');
+            }
+            $('#orderreceiveFormAjax').parsley();
+        });
+
+        function checkboxCount() {
+            var count = 0;
+            $('.yourBox:checked').each(function(){
+                count++;
+            });
+            return count;
         }
 
     </script>

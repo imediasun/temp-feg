@@ -244,7 +244,8 @@ class VendorController extends Controller
             return Redirect::to('dashboard')
                 ->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
 
-        $row = $this->model->getRow($id);
+        //Due to vendor status and hide issue we don't using sximo getRow method. Vendor model where clauses have these conditions
+        $row = $this->getVendor($id);
         if ($row) {
             if ($row->partner_hide == 1) {
                 $row->partner_hide = "Yes";
@@ -267,7 +268,7 @@ class VendorController extends Controller
 
             $this->data['row'] = $row;
         } else {
-            $this->data['row'] = $this->model->getColumnTable('vendor');
+            $this->data['row'] = (object)$this->model->getColumnTable('vendor');
         }
 
         $this->data['id'] = $id;
@@ -278,6 +279,20 @@ class VendorController extends Controller
         return view('vendor.view', $this->data);
     }
 
+    private function getVendor($id) {
+
+        $result = \DB::select('
+        SELECT vendor.* FROM vendor 
+        WHERE id IS NOT NULL
+        AND vendor.id = '.$id.' 
+        ');
+        if (count($result) <= 0) {
+            $result = array();
+        } else {
+            $result = $result[0];
+        }
+        return $result;
+    }
 
     function postCopy(Request $request)
     {

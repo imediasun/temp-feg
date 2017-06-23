@@ -1,5 +1,6 @@
 <?php
     $game = $row[0];
+    $gameNotes = $game->notes;
     $statusId = $game->status_id;
     $statusName = $game->game_status;
     
@@ -44,6 +45,7 @@
     $lastEditedBy = $game->last_edited_by;
     $lastEditedOn = $game->last_edited_on;
     $lastEditedDetailsDate = [];
+
     if (empty(trim($lastEditedBy))) {
         $lastEditedBy = " - ";
     }
@@ -239,7 +241,7 @@
 
             </div>
         </div>
-        @endif         
+        @endif
         
         @if (!$isSold)
         <!-- Submit Button -->
@@ -309,6 +311,23 @@
                 {!! SiteHelpers::activeLang('Previous Location', (isset($fields['prev_location_id']['language'])? $fields['prev_location_id']['language'] : array())) !!}:
             </label>
             <div class="col-md-8">{{ \DateHelpers::formatStringValue($prevLocationIdName) }}</div>
+        </div>
+        <div class="form-group clearfix" >
+            <label class="col-md-4">
+                {!! SiteHelpers::activeLang('Notes', (isset($fields['note']['language'])? $fields['note']['language'] : array())) !!}:
+            </label>
+            <div class="col-md-7"><span id="notes_text">{{ $gameNotes }}</span><span id="notes_input" style="display: none;"><textarea name='notes' rows='5' id='notes' class='form-control' required >{{$gameNotes}}</textarea></span></div>
+            <div class="col-md-1">
+                <a style="margin-top: 8px;" href="javascript:void(0)" id="editNotes" class="collapse-close pull-right btn btn-xs btn-primary">
+                    <i class="fa fa fa-pencil"></i>
+                </a>
+                <a style="margin-top: 8px; display: none" href="javascript:void(0)" id="saveNotes" class="collapse-close pull-right btn btn-xs btn-primary">
+                    <i class="fa fa fa-save"></i>
+                </a>
+                <a style="margin-top: 2px; display: none;width: 22px" href="javascript:void(0)" id="cancelNotes" class="collapse-close pull-right btn btn-xs btn-danger">
+                    <i class="fa fa fa-times"></i>
+                </a>
+            </div>
         </div>
         <div class="form-group clearfix" >
             <label class="col-md-4">
@@ -417,17 +436,16 @@
                 </thead>
                 <tbody>
 
-                @if(($row['move_history']))
+                @if($row['move_history'])
                     @foreach($row['move_history'] as $move_history)
                         <tr>
-                            <td> {{ DateHelpers::formatDate($move_history->from_date) }}</td>
+                            <td> {{ \DateHelpers::formatDate($move_history->from_date) }}</td>
                             <td>{{ \DateHelpers::formatMultiValues($move_history->from_location_id,$move_history->from_location) }} </td>
                             <td>{{ \DateHelpers::formatMultiValues($move_history->to_location_id,$move_history->to_location)}} </td>
                             <td>{{ \DateHelpers::formatMultiValues($move_history->from_first_name,$move_history->from_last_name) }}</td>
                             <td>{{ \DateHelpers::formatMultiValues($move_history->to_first_name,$move_history->to_last_name) }} </td>
-                            <td>{{ DateHelpers::formatDate($move_history->to_date) }} </td>
-                            <?php $days_in_transit=\SiteHelpers::getDateDiff($move_history->from_date,$move_history->to_date) ?>
-                            <td>{{ \DateHelpers::formatZeroValue($days_in_transit) }}</td>
+                            <td>{{ \DateHelpers::formatDate($move_history->to_date) }} </td>
+                            <td>{{ \DateHelpers::formatZeroValue(\SiteHelpers::getDateDiff($move_history->from_date,$move_history->to_date)) }}</td>
                         </tr>
                     @endforeach
                 @else
@@ -451,6 +469,57 @@
         mainModule = '{{ $pageModule }}';
     
     $(document).ready(function() {
+        function toggleInput()
+        {
+            $('#notes_text').toggle();
+            $('#saveNotes').toggle();
+            $('#notes_input').toggle();
+            $('#cancelNotes').toggle();
+            $('#editNotes').toggle();
+        }
+        $('#editNotes').click(function () {
+            $('#notes_text').hide();
+            $('#saveNotes').show();
+            $('#notes_input').show();
+            $('#cancelNotes').show();
+            $('#editNotes').hide();
+        });
+        $('#saveNotes').click(function () {
+            $.ajax({
+                type:'POST',
+                url:"{{url('mylocationgame/notes')}}",
+                data:{
+                    _token:"{{csrf_token()}}",
+                    notes:$('#notes_input textarea').val(),
+                    id:"{{$game->asset_number}}"
+                },
+                success:function (data) {
+                    $('#notes_text').html($('#notes_input textarea').val()).show();
+                    $('#saveNotes').hide();
+                    $('#notes_input').hide();
+                    $('#cancelNotes').hide();
+                    $('#editNotes').show();
+                    console.log('notes saved!');
+                    console.log(data);
+
+                },
+                error:function (data) {
+                    console.log('notes save Error!');
+                    console.log(data);
+                }
+
+            });
+
+        });
+        $('#cancelNotes').click(function () {
+            $('#notes_input textarea').val($('#notes_text').text());
+            $('#notes_text').show();
+            $('#saveNotes').hide();
+            $('#notes_input').hide();
+            $('#cancelNotes').hide();
+            $('#editNotes').show();
+        });
+
         App.modules.games.detailedView.init({
                 'container': $('#'+pageModule+'View'),
                 'moduleName': pageModule,

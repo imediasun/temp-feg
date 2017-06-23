@@ -279,7 +279,7 @@ class managefegrequeststore extends Sximo
     function manageRequests($v1 = null, $v2 = null, $v3 = null)
     {
         $user_lever=\Session::get('gid');
-        if ($user_lever == 2)
+        if ($user_lever == Groups::PARTNER)
         {
             redirect('dashboard');
         }

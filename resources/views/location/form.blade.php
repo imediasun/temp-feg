@@ -125,7 +125,7 @@
 
                         </div>
                     </div>
-                    <div class="form-group  ">
+                    {{--<div class="form-group  ">
                         <label for="Contact " class=" control-label col-md-4 text-left">
                             {!! SiteHelpers::activeLang('Inernal Contact ', (isset($fields['contact_id']['language'])? $fields['contact_id']['language'] : array())) !!}
                         </label>
@@ -135,7 +135,7 @@
                         <div class="col-md-2">
 
                         </div>
-                    </div>
+                    </div>--}}
                     <div class="form-group  ">
                         <label for="Merch Contact " class=" control-label col-md-4 text-left">
                             {!! SiteHelpers::activeLang('Merch Contact ', (isset($fields['merch_contact_id']['language'])? $fields['merch_contact_id']['language'] : array())) !!}
@@ -396,8 +396,8 @@
                 {selected_value: '{{ $row["company_id"] }}'});
 
 
-        $("#contact_id").jCombo("{{ URL::to('location/comboselect?filter=users:id:first_name|last_name:active:1') }}",
-                {selected_value: '{{ $row["contact_id"] }}'});
+        /*$("#contact_id").jCombo("{{ URL::to('location/comboselect?filter=users:id:first_name|last_name:active:1') }}",
+                {selected_value: '{{ $row["contact_id"] }}'});*/
         $("#merch_contact_id").jCombo("{{ URL::to('location/comboselect?filter=users:id:first_name|last_name:active:1') }}",
                 {selected_value: '{{ $row["merch_contact_id"] }}'});
         $("#general_manager_id").jCombo("{{ URL::to('location/comboselect?filter=users:id:first_name|last_name:active:1') }}",
