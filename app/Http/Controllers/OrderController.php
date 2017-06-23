@@ -670,7 +670,6 @@ class OrderController extends Controller
             //Updating PO Track table
             if(isset($orderData['po_number'])){
                 \DB::table('po_track')->where('po_number', $orderData['po_number'])->update(['enabled' => '1']);
-                \DB::table('po_track')->where('enabled', '0')->where('created_at', '<=', \DB::raw('DATE_SUB(NOW(), INTERVAL '.env("UNUSED PO DELETE TIMEOUT", "120").' MINUTE)'))->delete();
             }
 
             \Session::put('send_to', $vendor_email);
