@@ -37,10 +37,9 @@ class RestorePONumber extends Command
      */
     public function handle()
     {
-        if (env('AUTOMATIC_UNUSED_PO_RESTORE', false) === true) {
+        if (!env('AUTOMATIC_UNUSED_PO_RESTORE', false)) {
             return;
         }
-
         $count = \DB::table('po_track')->where('enabled', '0')->where('created_at', '<=', \DB::raw('DATE_SUB(NOW(), INTERVAL '.env("UNUSED_PO_RESTORE_TIMEOUT", "120").' MINUTE)'))->delete();
         if($count){
             \Log::info($count." Unused PO's Restored.");
