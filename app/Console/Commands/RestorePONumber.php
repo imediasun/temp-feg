@@ -37,6 +37,8 @@ class RestorePONumber extends Command
      */
     public function handle()
     {
+        \Log::info("Running Unused PO's Restored.");
+
         if (!env('AUTOMATIC_UNUSED_PO_RESTORE', false)) {
             return;
         }
