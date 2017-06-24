@@ -69,7 +69,7 @@ class topgamesreport extends Sximo  {
             $message = "To view the contents of this report, please select a date range and other search filter.";
         }
         $humanDateRange = ReportHelpers::humanifyDateRangeMessage($date_start, $date_end);
-        $topMessage = "Game Play Ranking $humanDateRange";
+        $topMessage = "Gameplay Ranking $humanDateRange";
         
 		$results = array(
             'topMessage' => $topMessage,
