@@ -78,7 +78,7 @@ class readersmissingassetidreport extends Sximo  {
             $message = "To view the contents of this report, please select a date range and other search filter.";
 	}
         $humanDateRange = ReportHelpers::humanifyDateRangeMessage($date_start, $date_end);
-        $topMessage = "Readers with missing Asset IDs $humanDateRange";
+        $topMessage = "Readers with missing Asset ID $humanDateRange";
         
 		$results = array(
             'topMessage' => $topMessage,
