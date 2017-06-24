@@ -1206,7 +1206,11 @@ class ReportGenerator
                 $notes = $row->notes;
                 $locId = $row->loc_id;
                 $debitType = $row->debit_type_id;
-                
+                $isPastSync = !empty($row->is_past_sync_adjustment);
+
+                if ($isPastSync) {
+                    continue;
+                }
                 if ($status == 1 && $notes != "CLOSED") {
                     $notes .= " OR Location is closed";
                 }

@@ -225,7 +225,7 @@ class SyncHelpers
                     L.id AS location_id, 
                     '$date' as date_played," . 
                     ($skipLastPlayedDetection == 1 ? "E.date_last_played," : 
-                    "(SELECT max(E.date_played) FROM report_locations E WHERE E.location_id = L.id and E.date_played <= '$date') as date_last_played,").
+                    "IFNULL(E.date_last_played, (SELECT max(E.date_played) FROM report_locations E WHERE E.location_id = L.id and E.date_played <= '$date')) as date_last_played,").
                     "L.debit_type_id,
                     '$today' as report_date,
                     E.sync_record_count, 
