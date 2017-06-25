@@ -35,13 +35,14 @@ class addtocart extends Sximo
     {
         $where="WHERE requests.id IS NOT NULL ";
         $data['user_level'] = \Session::get('gid');
-
-
-        if ($data['user_level'] == Groups::MERCHANDISE_MANAGER || $data['user_level'] == Groups::FIELD_MANAGER || $data['user_level'] == Groups::OFFICE_MANAGER || $data['user_level'] == Groups::FINANCE_MANAGER || $data['user_level'] == Groups::GUEST || $data['user_level'] == Groups::SUPPER_ADMIN) {
-            $where.= " AND requests.location_id = " . \Session::get('selected_location') . " AND requests.status_id = 9"; /// 9 IS USED AS AN ARBITRARY DELIMETER TO KEEP CART SEPERATE FROM LOCATIONS' OWN
-        } else {
-            $where.= " AND requests.location_id = " . \Session::get('selected_location') . " AND requests.status_id = 4";
-        }
+//
+//
+//        if ($data['user_level'] == Groups::MERCHANDISE_MANAGER || $data['user_level'] == Groups::FIELD_MANAGER || $data['user_level'] == Groups::OFFICE_MANAGER || $data['user_level'] == Groups::FINANCE_MANAGER || $data['user_level'] == Groups::GUEST || $data['user_level'] == Groups::SUPPER_ADMIN) {
+//            $where.= " AND requests.location_id = " . \Session::get('selected_location') . " AND requests.status_id = 9"; /// 9 IS USED AS AN ARBITRARY DELIMETER TO KEEP CART SEPERATE FROM LOCATIONS' OWN
+//        } else {
+//            $where.= " AND requests.location_id = " . \Session::get('selected_location') . " AND requests.status_id = 4";
+//        }
+        $where.= " AND requests.location_id = " . \Session::get('selected_location') . " AND requests.status_id = 4";
         return $where ;
     }
 
@@ -57,7 +58,7 @@ class addtocart extends Sximo
         $data['user_level']=\Session::get('gid');
         $userID = \Session::get('uid');
 
-
+        // TODO: Remove the false and the whole logic related to PARTNER [comment 24 June 2017]
         if (false && $data['user_level'] == Groups::PARTNER)
         {
             //redirect('./dashboard', 'refresh');

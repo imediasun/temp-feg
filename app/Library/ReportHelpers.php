@@ -1051,7 +1051,8 @@ class ReportHelpers
     }
     
     public static function getRetrySyncStatusQuery($adjustment_date = null, $location = "") {
-        $q = "SELECT GA.date_start, GA.loc_id, L.debit_type_id, GA.status, GA.notes, GA.adjustment_date
+        $q = "SELECT GA.date_start, GA.loc_id, L.debit_type_id, GA.status, GA.notes, GA.adjustment_date,
+            GA.is_past_sync_adjustment
             FROM game_earnings_transfer_adjustments GA 
             LEFT JOIN location L ON L.id=GA.loc_id
             WHERE 
@@ -1066,7 +1067,8 @@ class ReportHelpers
         return $q;
     }
     public static function getRetrySyncSuccessQuery($adjustment_date = null) {
-        $q = "SELECT date_start, loc_id, status, notes, adjustment_date
+        $q = "SELECT date_start, loc_id, status, notes, adjustment_date,
+            is_past_sync_adjustment
             FROM game_earnings_transfer_adjustments 
             WHERE status = 0 AND notes='ADJUSTED' ";
         if (!empty($adjustment_date)) {
