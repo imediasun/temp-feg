@@ -77,6 +77,7 @@
     cursor: pointer;
     position: relative;
     padding-left: 15px;
+    background: none;
 }
 
 .datagrid th.dgcsortable:after {
