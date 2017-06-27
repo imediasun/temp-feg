@@ -520,15 +520,11 @@ class servicerequestsController extends Controller
             if($isAdd){
                 Ticketfollowers::follow($id, $data['entry_by'], '', true, 'requester');
                 $message = nl2br($data['Description']);
-                $message .= "<div style='margin:20px 0 40px;padding: 10px;
-                        border-top:1px solid #999;
-                        border-bottom:1px solid #999;
-                        color: #aaa;'>
-                        View Service Request: ".
-                        url(). "/servicerequests/?view=".
-                        \SiteHelpers::encryptID($id) .
-                        "</div>";
                 
+                $message .= \View::make('servicerequests.email.commentviewlink', [
+                    'url' => url(). "/servicerequests/?view=".\SiteHelpers::encryptID($id),
+                ])->render();
+
                 $this->model->notifyObserver('FirstEmail',[
                     "message"       =>$message,
                     "ticketId"      => $id,
@@ -774,14 +770,11 @@ class servicerequestsController extends Controller
             
         //send email
         $ticketsData['Created'] = $requestedOn;
-        $message .= "<div style='margin:20px 0 40px; padding: 10px;
-                        border-top:1px solid #999;
-                        border-bottom:1px solid #777;
-                        color: #aaa;'>
-                        View Service Request: ".
-                    url(). "/servicerequests/?view=".
-                    \SiteHelpers::encryptID($ticketId) .
-                    "</div>";
+
+        $message .= \View::make('servicerequests.email.commentviewlink', [
+            'url' => url(). "/servicerequests/?view=".\SiteHelpers::encryptID($ticketId),
+        ])->render();
+        
         $message .= $ticketThreadContent;
         $this->model->notifyObserver('AddComment',[
                 'message'       =>$message,
@@ -822,7 +815,7 @@ class servicerequestsController extends Controller
                 ])->render();
             }
             if (!empty($commentsArray)) {
-                $comments = '<div style="margin:40px 0 0; border-top: 1px solid #999; ">&nbsp;</div>';
+                $comments = '';
                 $comments .= \View::make('servicerequests.email.commentviewheader', ['conversationCount' => $commentsCount])->render();;
                 $comments .= implode("<br/>", $commentsArray);
             }
