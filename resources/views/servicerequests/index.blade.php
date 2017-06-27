@@ -33,7 +33,7 @@
     <script type="text/javascript">
         var pageModule = '{{$pageModule}}',
             pageUrl = '{{$pageUrl}}',
-            viewTicketId = '{{ $id  }}';
+            viewTicketId = @if(empty($_GET['view'])) "" @else "{{$_GET['view']}}";
 
         if(viewTicketId && viewTicketId != 0){
             ajaxViewDetail('#'+pageModule, pageUrl + "/show/"+viewTicketId);

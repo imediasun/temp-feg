@@ -49,13 +49,12 @@ class servicerequestsController extends Controller
 
     }
 
-    public function getIndex(Request $request, $id = null)
+    public function getIndex()
     {
         if ($this->access['is_view'] == 0)
             return Redirect::to('dashboard')->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
 
         $this->data['access'] = $this->access;
-        $this->data['id'] = empty($id) ? 0 : \SiteHelpers::encryptID($id, true);
         return view('servicerequests.index', $this->data);
     }
     
@@ -522,7 +521,7 @@ class servicerequestsController extends Controller
                 Ticketfollowers::follow($id, $data['entry_by'], '', true, 'requester');
                 $message = nl2br($data['Description']);
                 $message .= "<br/><hr/>View Service Request: ".
-                        url(). "/servicerequests/".
+                        url(). "/servicerequests/?view=".
                         \SiteHelpers::encryptID($id) .
                         "<hr/><br/>";
                 
@@ -772,7 +771,7 @@ class servicerequestsController extends Controller
         //send email
         $ticketsData['Created'] = $requestedOn;
         $message .= "<br/><hr/>View Service Request: ".
-                    url(). "/servicerequests/".
+                    url(). "/servicerequests/?view=".
                     \SiteHelpers::encryptID($ticketId) .
                     "";
         $message .= $ticketThreadContent;
