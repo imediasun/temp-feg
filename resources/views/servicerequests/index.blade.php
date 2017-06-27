@@ -33,7 +33,7 @@
     <script type="text/javascript">
         var pageModule = '{{$pageModule}}',
             pageUrl = '{{$pageUrl}}',
-            viewTicketId = @if(empty(@$_GET['view'])) "" @else "{{$_GET['view']}}" @endif;
+            viewTicketId = @if(empty(@$_GET['view'])) "" @else "{{ \SiteHelpers::encryptID($_GET['view'], true) }}" @endif;
         
         $(document).ready(function(){
 
