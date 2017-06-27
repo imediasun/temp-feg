@@ -192,6 +192,8 @@ class managefegrequeststore extends Sximo
     public static function getOrdersDropDownData($filter)
     {
         $filter = str_replace('requests.','R.',$filter);
+        $filter = str_replace('products.','P.',$filter);
+        $filter = str_replace('order_type.','O.',$filter);
         $query = \DB::select('SELECT O.id,O.order_type FROM order_type O
 							  LEFT JOIN products P ON P.prod_type_id = O.id
 							  LEFT JOIN requests R ON R.product_id = P.id

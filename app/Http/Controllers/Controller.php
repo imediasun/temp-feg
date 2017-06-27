@@ -11,6 +11,7 @@ use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
 use Validator, Input, Redirect;
 use App\Library\FEG\System\FEGSystemHelper;
+use App\Models\Feg\System\Options;
 
 
 abstract class Controller extends BaseController
@@ -1114,7 +1115,13 @@ abstract class Controller extends BaseController
     }
 
     public function postReportIssue(Request $request) {
-        
+
+        $optionCount = intval(Options::getOption('UIErrorReportCount', 1));
+        if (empty($optionCount)) {
+            $optionCount = 1;
+        }
+        Options::updateOption('UIErrorReportCount', ++$optionCount);
+
         $supportEmail = env('ERROR_REPORT_RECIPIENT', "support@element5digital.com");
         $supportEmailBCC = env('ERROR_REPORT_RECIPIENT_BCC', "e5devmail@gmail.com");
         $responseText = urldecode(urldecode($request->input('responseText')));
@@ -1140,6 +1147,8 @@ abstract class Controller extends BaseController
         $htmlFile = $logFile = "$username-$uid";
 
         $errorMessages = [
+                       "Error Report ID: #" .$optionCount,
+                       "",
                        "Reported On (EST): " .date("m/d/Y H:i:s"),
                        "",
                        "Page: $pageUrl",
