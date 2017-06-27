@@ -49,13 +49,13 @@ class servicerequestsController extends Controller
 
     }
 
-    public function getIndex(Request $request, $id = 0)
+    public function getIndex(Request $request, $id = null)
     {
         if ($this->access['is_view'] == 0)
             return Redirect::to('dashboard')->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
 
         $this->data['access'] = $this->access;
-        $this->data['id'] = \SiteHelpers::encryptID($id, true);;
+        $this->data['id'] = empty($id) ? 0 : \SiteHelpers::encryptID($id, true);
         return view('servicerequests.index', $this->data);
     }
     
