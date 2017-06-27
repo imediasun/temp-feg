@@ -34,12 +34,12 @@
         var pageModule = '{{$pageModule}}',
             pageUrl = '{{$pageUrl}}',
             viewTicketId = @if(empty($_GET['view'])) "" @else "{{$_GET['view']}}";
-
-        if(viewTicketId && viewTicketId != 0){
-            ajaxViewDetail('#'+pageModule, pageUrl + "/show/"+viewTicketId);
-        }
         
         $(document).ready(function(){
+
+            if(viewTicketId && viewTicketId != 0){
+                ajaxViewDetail('#'+pageModule, pageUrl + "/show/"+viewTicketId);
+            }
             reloadData('#{{ $pageModule }}','{{ $pageModule }}/data');
         });
     </script>
