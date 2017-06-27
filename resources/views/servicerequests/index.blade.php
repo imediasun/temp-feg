@@ -32,8 +32,13 @@
 
     <script type="text/javascript">
         var pageModule = '{{$pageModule}}',
-            pageUrl = '{{$pageUrl}}';
+            pageUrl = '{{$pageUrl}}',
+            viewTicketId = '{{ $id  }}';
 
+        if(viewTicketId && viewTicketId != 0){
+            ajaxViewDetail('#'+pageModule, pageUrl + "/show/"+viewTicketId);
+        }
+        
         $(document).ready(function(){
             reloadData('#{{ $pageModule }}','{{ $pageModule }}/data');
         });
