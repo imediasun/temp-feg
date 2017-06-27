@@ -519,7 +519,7 @@ class servicerequestsController extends Controller
             
             if($isAdd){
                 Ticketfollowers::follow($id, $data['entry_by'], '', true, 'requester');
-                $message = $data['Description'];
+                $message = nl2br($data['Description']);
                 $this->model->notifyObserver('FirstEmail',[
                     "message"       =>$message,
                     "ticketId"      => $id,
@@ -727,7 +727,7 @@ class servicerequestsController extends Controller
         }
 
         $this->model->insertRow($ticketsData, $ticketId);
-        $message = $commentsData['Comments'];
+        $message = nl2br($commentsData['Comments']);
         if (!empty($files['Attachments'])) {
             $ticketsData['_base_file_path'] = $files['_base_Attachments'];
         }
