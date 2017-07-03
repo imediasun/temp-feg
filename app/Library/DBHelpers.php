@@ -46,4 +46,14 @@ class DBHelpers
       }
       return $enum;
     }
+
+    public static function getHighestRecorded($table, $field, $whereClauses = null, $connectionName = '') {
+        $database = empty($connectionName) ? DB::connection() : DB::connection($connectionName);
+        $q = $database->table($table);
+        if ($whereClauses) {
+            $q->whereRaw($whereClauses);
+        }
+        $ret = $q->max($field);
+        return $ret;
+    }
 }

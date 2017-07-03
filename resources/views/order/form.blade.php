@@ -1,4 +1,8 @@
 <?php use App\Models\Order;?>
+<?php
+    $isFreeHand = is_object($row) ? ($fromStore == 1 ? 0 : $row->is_freehand) : 0;
+    $show_freehand = $mode=='clone' || (!is_object($row) && $fromStore != 1) ? 1: 0;
+?>
 @if($setting['form-method'] =='native')
     <style>
         #add_new_item
@@ -24,7 +28,7 @@
             @endif
             {!! Form::open(array('url'=>'order/save/', 'class'=>'form-vertical','files' => true ,
             'parsley-validate'=>'','novalidate'=>' ','id'=> 'ordersubmitFormAjax')) !!}
-            <input type="hidden" id="is_freehand" name="is_freehand" value="{{  is_object($row) ? $fromStore == 1?0:$row->is_freehand:0 }}">
+            <input type="hidden" id="is_freehand" name="is_freehand" value="{{ $isFreeHand  }}">
             <input type="hidden" id="can_select_product_list" value="1">
             <div class="row">
             <div class="col-md-6">
@@ -360,10 +364,12 @@
                     <a href="javascript:void(0);" class="addC btn btn-xs btn-info" rel=".clone" id="add_new_item"><i
                                 class="fa fa-plus"></i>
                         New Item</a>
-                @if(!is_object($row) && $fromStore != 1)
-                        <a href="javascript:void(0);" class="btn btn-xs btn-info enabled" data-status="disabled" id="can-freehand">
+                @if($show_freehand == 1)
+                        <a href="javascript:void(0);" class="btn btn-xs btn-info enabled" 
+                           data-status="{{ $isFreeHand ? "enabled": "disabled" }}"
+                           id="can-freehand">
                             <i class="fa fa-times fa-check-circle-o" aria-hidden="true"></i>
-                           <span>Enable Freehand</span></a>
+                           <span>{{ $isFreeHand ? "Disable": "Enable" }} Freehand</span></a>
                     @endif
                 </div>
                 <input type="hidden" name="enable-masterdetail" value="true">
@@ -406,8 +412,7 @@
         </div>
     </div>
     <?php
-        $type_permissions = '';
-        $show_freehand = (!is_object($row) && $fromStore != 1) ? 1: 0;
+        $type_permissions = '';       
         foreach ($pass as $permission)
         {
             if($permission->data_type == 'order_type_restrictions')

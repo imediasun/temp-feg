@@ -4,6 +4,7 @@ use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use SiteHelpers;
 use App\Library\ReportHelpers;
+use App\Library\DBHelpers;
 
 class productusagereport extends Sximo  {
 	
@@ -62,7 +63,9 @@ class productusagereport extends Sximo  {
         if (empty($location_id)) {
             return ReportHelpers::buildBlankResultDataDueToNoLocation();
         }         
-        
+
+        $defaultEndDate = DBHelpers::getHighestRecorded('requests', 'process_date');
+        ReportHelpers::dateRangeFix($date_start, $date_end, true, $defaultEndDate, 7);
         if (empty($date_start) || empty($date_end)) {
             $message = "To view the contents of this report, please select a date range and other search filter.";
         }

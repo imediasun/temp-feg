@@ -1,26 +1,22 @@
 <div class="row c-margin">
-	<div class="col-md-9">
-		<div class="col-md-4">
-            @if($access['is_add'] ==1)
-			{!! AjaxHelpers::buttonActionCreate($pageModule,$setting) !!}
-			@endif
-            <a href="{{ URL::to( $pageModule .'/search') }}" class="btn btn-sm btn-white" onclick="SximoModal(this.href,'Advanced Search'); return false;" ><i class="fa fa-search"></i>Advanced Search</a>
-        </div>
-        <div class="col-md-4">
-            <?php
-                $years=SiteHelpers::getBudgetYears()
-            ?>
-            <select name="budget_year" id="budget_year" class="selectpicker1 show-menu-arrow" data-header="Select Year" data-style="btn-default">
-                @foreach($years as $year)
-                    <option @if( $year->year == \Session::get('budget_year')) selected
-                                                                              @endif value="{{ $year->year }}">{{ $year->year }}</option>
-                @endforeach
-            </select>
-        </div>
-
-
+    <div class="col-md-4">
+        @if($access['is_add'] ==1)
+        {!! AjaxHelpers::buttonActionCreate($pageModule,$setting) !!}
+        @endif
+        <a href="{{ URL::to( $pageModule .'/search') }}" class="btn btn-sm btn-white" onclick="SximoModal(this.href,'Advanced Search'); return false;" ><i class="fa fa-search"></i>Advanced Search</a>
     </div>
-    <div class="col-md-3 ">
+    <div class="col-md-4">
+        <?php
+            $years=SiteHelpers::getBudgetYears()
+        ?>
+        <select name="budget_year" id="budget_year" class="selectpicker1 show-menu-arrow" data-header="Select Year" data-style="btn-default">
+            @foreach($years as $year)
+                <option @if( $year->year == \Session::get('budget_year')) selected
+                                                                          @endif value="{{ $year->year }}">{{ $year->year }}</option>
+            @endforeach
+        </select>
+    </div>
+    <div class="col-md-4">
         <?php
         $isExcel = isset($access['is_excel']) && $access['is_excel'] == 1;
         $isCSV = isset($access['is_csv'])  ? ($access['is_csv'] == 1) : $isExcel;

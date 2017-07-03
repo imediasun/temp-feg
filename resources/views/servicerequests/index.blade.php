@@ -32,9 +32,14 @@
 
     <script type="text/javascript">
         var pageModule = '{{$pageModule}}',
-            pageUrl = '{{$pageUrl}}';
-
+            pageUrl = '{{$pageUrl}}',
+            viewTicketId = @if(empty(@$_GET['view'])) "" @else "{{ \SiteHelpers::encryptID($_GET['view'], true) }}" @endif;
+        
         $(document).ready(function(){
+
+            if(viewTicketId && viewTicketId != 0){
+                ajaxViewDetail('#'+pageModule, pageUrl + "/show/"+viewTicketId);
+            }
             reloadData('#{{ $pageModule }}','{{ $pageModule }}/data');
         });
     </script>

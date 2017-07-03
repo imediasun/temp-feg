@@ -2,6 +2,8 @@
 
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
+use App\Library\ReportHelpers;
+use App\Library\DBHelpers;
 
 class productsindevelopmentreport extends Sximo  {
 	
@@ -42,12 +44,16 @@ class productsindevelopmentreport extends Sximo  {
         $date_end = @$filters['end_date'];
         $description = @$filters['Description'];
         
-		$where = "   WHERE products.in_development = 1  ";        
+		$where = "   WHERE products.in_development = 1  ";
+
+        $defaultEndDate = DBHelpers::getHighestRecorded('products', 'date_added');
+        ReportHelpers::dateRangeFix($date_start, $date_end, true, $defaultEndDate, 7);
+
         if (!empty($date_start)) {
             $where .= " AND products.date_added >= '$date_start' ";
         }
         if (!empty($date_end)) {
-            $where .= " AND products.date_added <= '$date_end 23:59:59' ";
+            $where .= " AND products.date_added <= '$date_end' ";
         }
         if (!empty($description)) {
             $where .= " AND products.vendor_description LIKE '%$description%' ";
