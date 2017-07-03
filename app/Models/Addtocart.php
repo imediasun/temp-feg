@@ -110,11 +110,12 @@ class addtocart extends Sximo
 
 
             // SHOPPING CART TOTALS (SHOWN ABOVE CART) START
+            $data['total_cart_items'] = '';
             $data['shopping_cart_total'] = '';
             $data['amt_short'] = '';
             $data['amt_short_message'] = '';
 
-                                       $select='SELECT V.vendor_name,  V.id AS vendor_id, V.min_order_amt, SUM(R.qty*P.case_price) AS total,
+                                       $select='SELECT V.vendor_name,  V.id AS vendor_id, V.min_order_amt, SUM(R.qty*P.case_price) AS total, COUNT(V.id) AS cart_items,
                                        V.min_order_amt - SUM(R.qty*P.case_price) AS amt_short FROM requests R
                                        LEFT JOIN products P ON P.id = R.product_id
 								       LEFT JOIN vendor V ON V.id = P.vendor_id
@@ -127,8 +128,7 @@ class addtocart extends Sximo
                 $select .= ' HAVING V.vendor_name="'.$v1.'"';
             }
 
-                $query = \DB::select($select);
-
+            $query = \DB::select($select);
 
             $amt_short_message="";
             foreach ($query as $row)
@@ -138,6 +138,7 @@ class addtocart extends Sximo
                     'vendor_id' => $row->vendor_id,
                     'vendor_min_order_amt' => $this->parseNumber($row->min_order_amt),
                     'vendor_total' => $this->parseNumber($row->total),
+                    'cart_items' => $row->cart_items,
                     'amt_short' => $this->parseNumber($row->amt_short)
                 );
 
@@ -150,6 +151,8 @@ class addtocart extends Sximo
                 }
 
                 $data['shopping_cart_total'] = $this->parseNumber($data['shopping_cart_total'] + $row['vendor_total']);
+                $data['total_cart_items'] = $row['cart_items'];
+
             }
             $data['amt_short_message']=$amt_short_message;
             if(isset($array))
