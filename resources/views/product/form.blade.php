@@ -491,7 +491,7 @@
             return false;
         }
     }
-    $('#qty_input,#case_price_input').on('keyup',function(){
+    $('#qty_input,#case_price_input').on('keyup mouseup',function(){
         var case_price = $("#case_price_input").val();
         var quantity = $("#qty_input").val();
         var unit_price = case_price/quantity;
