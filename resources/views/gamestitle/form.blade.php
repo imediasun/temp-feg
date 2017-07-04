@@ -182,6 +182,16 @@
 	</div>
 </div>
 @endif
+
+
+<style>
+    .form-control {
+        font-size: 13px !important;
+        color: black;
+    }
+</style>
+
+
 <script type="text/javascript">
 $(document).ready(function() {
 
