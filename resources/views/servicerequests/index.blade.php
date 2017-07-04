@@ -33,14 +33,15 @@
     <script type="text/javascript">
         var pageModule = '{{$pageModule}}',
             pageUrl = '{{$pageUrl}}',
-            viewTicketId = @if(empty(@$_GET['view'])) "" @else "{{ \SiteHelpers::encryptID($_GET['view'], true) }}" @endif;
+            viewTicketId = @if(empty(@$_GET['view'])) "" @else "{{ \SiteHelpers::encryptID($_GET['view'], true) }}" @endif,
+            hasViewTicket = viewTicketId && viewTicketId != 0;
         
         $(document).ready(function(){
 
-            if(viewTicketId && viewTicketId != 0){
+            if(hasViewTicket){
                 ajaxViewDetail('#'+pageModule, pageUrl + "/show/"+viewTicketId);
             }
-            reloadData('#{{ $pageModule }}','{{ $pageModule }}/data');
+            reloadData('#{{ $pageModule }}','{{ $pageModule }}/data', UNFN, { isBackground: hasViewTicket});
         });
     </script>
     <script type="text/javascript" src="{{ asset('sximo/js/modules/tickets/grid.js') }}"></script>          
