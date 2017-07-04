@@ -40,7 +40,7 @@ class closedlocations extends Sximo  {
         ));        
         extract($filters);
 
-        $defaultEndDate = DBHelpers::getHighestRecorded('report_locations', 'date_played', 'report_status=1 AND record_status=1');
+        $defaultEndDate = DBHelpers::getHighestRecorded('game_earnings_transfer_adjustments', 'date_start', "notes='CLOSED'");
         ReportHelpers::dateRangeFix($date_start, $date_end, true, $defaultEndDate, 7);
         //ReportHelpers::dateRangeFix($date_start, $date_end);
         
