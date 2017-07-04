@@ -22,6 +22,14 @@ Route::group(['middleware' => 'auth'], function()
 {
     Route::filter('authorization', function()
     {
+        if(!isset($_GET['token'])){
+            return Response::json([
+                'error' => true,
+                'message' => 'Authentication token not provided!',
+                'code' => 401], 401
+            );
+        }
+
         if(is_null(Input::get('module')))
             return Response::json(array('status'=>'error','message'=>\Lang::get('restapi.ModuleEmpty')),400);
 
