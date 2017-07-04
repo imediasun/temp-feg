@@ -113,7 +113,7 @@
                                     {!! SiteHelpers::activeLang('Image', (isset($fields['img']['language'])? $fields['img']['language'] : array())) !!}
                                 </label>
                                 <div class="col-md-8">
-                                    <input type="file" multiple  name="img[]" id="img" @if(empty($row['img'])) required   @endif />
+                                    <input type="file" multiple  name="img[]" id="img" @if(empty($row['img']))  required  @endif />
                                     <div style="margin-top:15px;">
                                           <?php
                                           $images=explode(',',$row['img']);
@@ -211,8 +211,8 @@ $(document).ready(function() {
 		$(this).parent('div').empty();
 		return false;
 	});
+
 	var form = $('#gamestitleFormAjax');
-	form.parsley();
 	form.submit(function(){
 
 		if(form.parsley('isValid') == true){
@@ -229,6 +229,7 @@ $(document).ready(function() {
 		}
 
 	});
+    form.parsley();
 
 });
 
