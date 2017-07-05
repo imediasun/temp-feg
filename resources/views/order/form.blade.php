@@ -295,7 +295,7 @@
                     <thead>
                     <tr class="invHeading">
                         <th width="50">Item #</th>
-                        <th width="90">Sku #</th>
+                        <th width="90">SKU #</th>
                         <th width="170">Item Name</th>
                         <th width="200">Item Description</th>
                         <th width="90">Unit Price ( $ )</th>
