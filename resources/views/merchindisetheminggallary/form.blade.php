@@ -80,7 +80,6 @@
         renderDropdown($(".select3"), { width:"100%"});
 
         var form = $('#gallaryfileuploadform');
-        form.parsley();
         form.submit(function () {
 
             if (form.parsley('isValid') == true) {
@@ -95,6 +94,8 @@
                 return false;
             }
         });
+        form.parsley();
+
     });
     function showRequest() {
         $('.ajaxLoading').show();
