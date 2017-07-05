@@ -339,8 +339,8 @@ if(!empty($order_data['orderQtyArray'])){
             <table class="table">
                 <thead>
                 <tr>
-                <th>N0 #</th>
-                <th>Sku #</th>
+                <th>NO #</th>
+                <th>SKU #</th>
                 <th>Item Name</th>
                 <th>Item Description</th>
                 <th>Item Price</th>
