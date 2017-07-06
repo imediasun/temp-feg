@@ -570,14 +570,16 @@ class order extends Sximo
         $today = empty($datemdy) ? date('mdy'): $datemdy;
         if($location != 0) {
 
+            Log::info("select po_number from po_track where po_number like '%-$today-%' and location_id=" . $location . " order by po_number");
+
             $po = \DB::select("select po_number from po_track where po_number like '%-$today-%' and location_id=" . $location . " order by po_number");
             if($count == 0 ) {
+                Log::info("First call");
                 $count = count($po) + 1;
-
             }
             else
             {
-
+                Log::info("Count value received is $count");
                 $count = $count +1;
 
             }
@@ -585,6 +587,7 @@ class order extends Sximo
 
             if($this->isPOAvailable($po_new))
             {
+                Log::info("PO available => $po_new");
                 $this->createPOTrack($po_new,$location);
 
             }
@@ -592,7 +595,8 @@ class order extends Sximo
             {
                 //echo "$location:$count";
                 //die('here...');
-                $this->increamentPO($location,$count);
+                Log::info("Increment PO => $location and $count");
+                $count = $this->increamentPO($location,$count);
             }
         }
         else
