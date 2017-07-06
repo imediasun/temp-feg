@@ -592,7 +592,7 @@ class order extends Sximo
             {
                 //echo "$location:$count";
                 //die('here...');
-                $this->increamentPO($location,$count);
+                $count = $this->increamentPO($location,$count);
             }
         }
         else
