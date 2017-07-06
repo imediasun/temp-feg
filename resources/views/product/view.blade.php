@@ -44,9 +44,17 @@
 
                 <tr>
                     <td width='30%' class='label-view text-right'>
-                        {{ SiteHelpers::activeLang('Description', (isset($fields['vendor_description']['language'])? $fields['vendor_description']['language'] : array())) }}
+                        {{ SiteHelpers::activeLang('Name', (isset($fields['vendor_description']['language'])? $fields['vendor_description']['language'] : array())) }}
                     </td>
                     <td>{{ DateHelpers::formatStringValue($row->vendor_description) }} </td>
+
+                </tr>
+
+                <tr>
+                    <td width='30%' class='label-view text-right'>
+                        {{ SiteHelpers::activeLang('Description', (isset($fields['item_description']['language'])? $fields['item_description']['language'] : array())) }}
+                    </td>
+                    <td>{{ DateHelpers::formatStringValue($row->item_description) }} </td>
 
                 </tr>
 

@@ -3,6 +3,7 @@
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use App\Library\ReportHelpers;
+use App\Library\DBHelpers;
 use SiteHelpers;
 
 class gameplayreport extends Sximo  {
@@ -52,8 +53,10 @@ class gameplayreport extends Sximo  {
         if (empty($location_id)) {
             return ReportHelpers::buildBlankResultDataDueToNoLocation();
         }
-        
-        ReportHelpers::dateRangeFix($date_start, $date_end);  
+
+        $defaultEndDate = DBHelpers::getHighestRecorded('report_game_plays', 'date_played', 'report_status=1 AND record_status=1');
+        ReportHelpers::dateRangeFix($date_start, $date_end, true, $defaultEndDate, 7);
+        //ReportHelpers::dateRangeFix($date_start, $date_end);
         
         $total = ReportHelpers::getGamePlayCount($date_start, $date_end, $location_id, $debit_type_id, $game_type_id, $game_cat_id, $game_on_test, $game_id, $game_title_id);       
 		$offset = ($page-1) * $limit ;

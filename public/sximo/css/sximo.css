@@ -2800,6 +2800,9 @@ table.table-striped tr th
 .clearfix {
     zoom: 1; /* For IE 6/7 (trigger hasLayout) */
 }
+.form-control.select2-container:not(.select2-container-multi) {
+    border: none;
+}
 
 .autoheight {
     height: auto !important;

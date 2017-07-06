@@ -35,13 +35,14 @@ class addtocart extends Sximo
     {
         $where="WHERE requests.id IS NOT NULL ";
         $data['user_level'] = \Session::get('gid');
-
-
-        if ($data['user_level'] == Groups::MERCHANDISE_MANAGER || $data['user_level'] == Groups::FIELD_MANAGER || $data['user_level'] == Groups::OFFICE_MANAGER || $data['user_level'] == Groups::FINANCE_MANAGER || $data['user_level'] == Groups::GUEST || $data['user_level'] == Groups::SUPPER_ADMIN) {
-            $where.= " AND requests.location_id = " . \Session::get('selected_location') . " AND requests.status_id = 9"; /// 9 IS USED AS AN ARBITRARY DELIMETER TO KEEP CART SEPERATE FROM LOCATIONS' OWN
-        } else {
-            $where.= " AND requests.location_id = " . \Session::get('selected_location') . " AND requests.status_id = 4";
-        }
+//
+//
+//        if ($data['user_level'] == Groups::MERCHANDISE_MANAGER || $data['user_level'] == Groups::FIELD_MANAGER || $data['user_level'] == Groups::OFFICE_MANAGER || $data['user_level'] == Groups::FINANCE_MANAGER || $data['user_level'] == Groups::GUEST || $data['user_level'] == Groups::SUPPER_ADMIN) {
+//            $where.= " AND requests.location_id = " . \Session::get('selected_location') . " AND requests.status_id = 9"; /// 9 IS USED AS AN ARBITRARY DELIMETER TO KEEP CART SEPERATE FROM LOCATIONS' OWN
+//        } else {
+//            $where.= " AND requests.location_id = " . \Session::get('selected_location') . " AND requests.status_id = 4";
+//        }
+        $where.= " AND requests.location_id = " . \Session::get('selected_location') . " AND requests.status_id = 4";
         return $where ;
     }
 
@@ -57,7 +58,7 @@ class addtocart extends Sximo
         $data['user_level']=\Session::get('gid');
         $userID = \Session::get('uid');
 
-
+        // TODO: Remove the false and the whole logic related to PARTNER [comment 24 June 2017]
         if (false && $data['user_level'] == Groups::PARTNER)
         {
             //redirect('./dashboard', 'refresh');
@@ -109,11 +110,12 @@ class addtocart extends Sximo
 
 
             // SHOPPING CART TOTALS (SHOWN ABOVE CART) START
+            $data['total_cart_items'] = '';
             $data['shopping_cart_total'] = '';
             $data['amt_short'] = '';
             $data['amt_short_message'] = '';
 
-                                       $select='SELECT V.vendor_name,  V.id AS vendor_id, V.min_order_amt, SUM(R.qty*P.case_price) AS total,
+                                       $select='SELECT V.vendor_name,  V.id AS vendor_id, V.min_order_amt, SUM(R.qty*P.case_price) AS total, COUNT(V.id) AS cart_items,
                                        V.min_order_amt - SUM(R.qty*P.case_price) AS amt_short FROM requests R
                                        LEFT JOIN products P ON P.id = R.product_id
 								       LEFT JOIN vendor V ON V.id = P.vendor_id
@@ -126,8 +128,7 @@ class addtocart extends Sximo
                 $select .= ' HAVING V.vendor_name="'.$v1.'"';
             }
 
-                $query = \DB::select($select);
-
+            $query = \DB::select($select);
 
             $amt_short_message="";
             foreach ($query as $row)
@@ -137,6 +138,7 @@ class addtocart extends Sximo
                     'vendor_id' => $row->vendor_id,
                     'vendor_min_order_amt' => $this->parseNumber($row->min_order_amt),
                     'vendor_total' => $this->parseNumber($row->total),
+                    'cart_items' => $row->cart_items,
                     'amt_short' => $this->parseNumber($row->amt_short)
                 );
 
@@ -149,6 +151,8 @@ class addtocart extends Sximo
                 }
 
                 $data['shopping_cart_total'] = $this->parseNumber($data['shopping_cart_total'] + $row['vendor_total']);
+                $data['total_cart_items'] += $row['cart_items'];
+
             }
             $data['amt_short_message']=$amt_short_message;
             if(isset($array))
