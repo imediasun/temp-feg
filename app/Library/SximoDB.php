@@ -9,14 +9,32 @@ class SximoDB extends \Illuminate\Support\Facades\DB
     public static function insert($query, $bindings = [])
     {
         $myquery = strtolower($query);
-        $queryArray = explode(' ',$myquery);
-        $data = substr($myquery, strpos($myquery, "values") + 6);
-        //$table = substr($myquery, strpos($myquery, "into") + 4,strpos($myquery, " (") );
-        $table = $queryArray[2];
-        $columns = substr($myquery, strpos($myquery, '(') , strpos($myquery, "values")-6 );
 
-        Sximo::insertLog($table,'insert' , 'SximoDB',$columns,$data);
+        $queryArray = explode(' ',$myquery);
+        if(!self::copyOperation($myquery,$queryArray))
+        {
+            $data = substr($myquery, strpos($myquery, "values") + 6);
+            //$table = substr($myquery, strpos($myquery, "into") + 4,strpos($myquery, " (") );
+            $table = $queryArray[2];
+            $columns = substr($myquery, strpos($myquery, '(') , strpos($myquery, "values")-6 );
+
+            Sximo::insertLog($table,'insert' , 'SximoDB',$columns,$data);
+        }
         return parent::insert($query, $bindings);
+    }
+
+    public static function copyOperation($query,$queryArray)
+    {
+        $tablename = $queryArray[2];
+        $key = array_search('select',$queryArray);
+        $tablename2 = $queryArray[$key+2];
+        if($tablename == $tablename2)
+        {
+            $condition = substr($query, strpos($query, "where") + 5);
+            Sximo::insertLog($tablename,'copy' , 'SximoDB',$condition,$query);
+            return true;
+        }
+        return false;
     }
 
     public static function insertGetId(array $values, $sequence = null)
