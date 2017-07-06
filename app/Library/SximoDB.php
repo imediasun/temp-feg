@@ -27,7 +27,7 @@ class SximoDB extends \Illuminate\Support\Facades\DB
     {
         $tablename = $queryArray[2];
         $key = array_search('select',$queryArray);
-        $tablename2 = $queryArray[$key+2];
+        $tablename2 = $queryArray[$key+3];
         if($tablename == $tablename2)
         {
             $condition = substr($query, strpos($query, "where") + 5);
