@@ -42,7 +42,7 @@ class addtocart extends Sximo
 //        } else {
 //            $where.= " AND requests.location_id = " . \Session::get('selected_location') . " AND requests.status_id = 4";
 //        }
-        $where.= " AND requests.location_id = " . \Session::get('selected_location') . " AND requests.status_id = 4";
+        $where.= " AND requests.location_id = " . \Session::get('selected_location') . " AND requests.status_id = 4 AND requests.request_user_id = " . \Session::get('uid');
         return $where ;
     }
 
