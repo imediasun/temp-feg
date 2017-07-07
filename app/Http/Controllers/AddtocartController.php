@@ -291,7 +291,7 @@ class AddtocartController extends Controller
         $update = array('status_id' => 1,
             'request_user_id' => \Session::get('uid'),
             'request_date' => $now);
-        \DB::table('requests')->where('location_id', $location_id)->where('status_id', $statusId)->update($update);
+        \DB::table('requests')->where('location_id', $location_id)->where('request_user_id', \Session::get('uid'))->where('status_id', $statusId)->update($update);
 
         if (empty($new_location)) {
             return Redirect::to('/shopfegrequeststore')->with('messagetext', 'Submitted successfully')->with('msgstatus', 'success');
