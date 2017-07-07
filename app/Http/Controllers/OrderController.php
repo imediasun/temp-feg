@@ -4,6 +4,7 @@ use App\Http\Controllers\controller;
 use App\Library\FEG\System\FEGSystemHelper;
 use App\Models\Order;
 use App\Models\OrderSendDetails;
+use App\Models\Sximo;
 use \App\Models\Sximo\Module;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
@@ -577,6 +578,7 @@ class OrderController extends Controller
                 );
                 if ($editmode == "clone") {
                     $id = 0;
+                    Sximo::insertLog('Order','Clone' , 'OrderController','An order with po : '.$po.' is cloned',$orderData);
                 }
                 $this->model->insertRow($orderData, $id);
                 $order_id = \DB::getPdo()->lastInsertId();
