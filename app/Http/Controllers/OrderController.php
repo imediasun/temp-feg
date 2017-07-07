@@ -578,7 +578,7 @@ class OrderController extends Controller
                 );
                 if ($editmode == "clone") {
                     $id = 0;
-                    Sximo::insertLog('Order','Clone' , 'OrderController','An order with po : '.$po.' is cloned',$orderData);
+                    Sximo::insertLog('Order','Clone' , 'OrderController','An order with po : '.$po.' is cloned',json_encode($orderData));
                 }
                 $this->model->insertRow($orderData, $id);
                 $order_id = \DB::getPdo()->lastInsertId();
