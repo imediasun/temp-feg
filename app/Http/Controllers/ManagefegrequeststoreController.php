@@ -184,7 +184,7 @@ class ManagefegrequeststoreController extends Controller
             } if (!empty($manageRequestInfo['loc_options']) && !array_key_exists(!empty($this->data['LID'])?$this->data['LID']:0, $manageRequestInfo['loc_options'])) {
                 $this->data['LID'] = "";
                 $this->data['VID'] = "";
-            } if (!empty($manageRequestInfo['vendor_options']) && !array_key_exists(isset($this->data['VID'])?$this->data['VID']:0,$manageRequestInfo['vendor_options'])) {
+            } if (!empty($manageRequestInfo['vendor_options']) && !array_key_exists(!empty($this->data['VID'])?$this->data['VID']:0,$manageRequestInfo['vendor_options'])) {
                 $this->data['VID'] = "";
             }
             $page = $request->input('page', 1);
