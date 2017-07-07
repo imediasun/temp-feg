@@ -317,7 +317,7 @@
                 {!! SiteHelpers::activeLang('Notes', (isset($fields['note']['language'])? $fields['note']['language'] : array())) !!}:
             </label>
             <div class="col-md-7"><span id="notes_text">{{ $gameNotes }}</span><span id="notes_input" style="display: none;"><textarea name='notes' rows='5' id='notes' class='form-control' >{{$gameNotes}}</textarea>
-                <ul id="parsley-custom" class="parsley-error-list"><li class="required" style="display: list-item;">This value is required.</li></ul>
+                <ul id="parsley-custom" style="display: none" class="parsley-error-list"><li class="required" style="display: list-item;">This value is required.</li></ul>
                 </span></div>
             <div class="col-md-1">
                 <a style="margin-top: 8px;" href="javascript:void(0)" id="editNotes" class="collapse-close pull-right btn btn-xs btn-primary">
