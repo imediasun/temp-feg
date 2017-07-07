@@ -270,7 +270,9 @@ class AddtocartController extends Controller
             $statusId = 4;
         }*/
         $statusId = 4;
-        if (!empty($new_location)) {
+        /*
+          //commented on 07/07/2017 by asad because its not needed now
+         if (!empty($new_location)) {
             $query = \DB::select('SELECT product_id,description,qty,status_id,request_type_id FROM requests
                                   WHERE location_id = ' . $location_id . ' AND status_id = 9 AND request_user_id = '.\Session::get('uid'));
 
@@ -287,7 +289,7 @@ class AddtocartController extends Controller
                 );
                 \DB::table('requests')->insert($insert);
             }
-        }
+        }*/
         $update = array('status_id' => 1,
             'request_user_id' => \Session::get('uid'),
             'request_date' => $now);
