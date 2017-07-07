@@ -272,7 +272,7 @@ class AddtocartController extends Controller
         $statusId = 4;
         if (!empty($new_location)) {
             $query = \DB::select('SELECT product_id,description,qty,status_id,request_type_id FROM requests
-                                  WHERE location_id = ' . $location_id . ' AND status_id = 9');
+                                  WHERE location_id = ' . $location_id . ' AND status_id = 9 AND request_user_id = '.\Session::get('uid'));
 
             foreach ($query as $row) {
                 $insert = array(
