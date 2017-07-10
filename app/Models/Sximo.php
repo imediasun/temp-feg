@@ -925,6 +925,11 @@ class Sximo extends Model {
         if (is_null($field)) {
             return $data;
         }
+        $field2 = explode('.',$field);
+        if(isset($field2[1]))
+        {
+            $field = $field2[1];
+        }
         if (!empty($data)) {
             if (is_array($data)) {
                 $value = $data[$field];

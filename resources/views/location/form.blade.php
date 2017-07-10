@@ -161,7 +161,7 @@
                     </div>
                     <div class="form-group  ">
                         <label for="technical_user_id" class=" control-label col-md-4 text-left">
-                            {!! SiteHelpers::activeLang('Technical', (isset($fields['technical_user_id']['language'])? $fields['technical_user_id']['language'] : array())) !!}
+                            {!! SiteHelpers::activeLang('Technical Contact', (isset($fields['technical_user_id']['language'])? $fields['technical_user_id']['language'] : array())) !!}
                         </label>
                         <div class="col-md-6">
                             <select name='technical_user_id' rows='5' id='technical_user_id' class='select2 '></select>
