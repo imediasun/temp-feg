@@ -1113,7 +1113,7 @@ class OrderController extends Controller
                         'preferGoogleOAuthMail'=>true
                     ];
                     if (!empty($google_acc->oauth_token) && !empty($google_acc->refresh_token)) {
-
+                        dd($options);
                         $sent = FEGSystemHelper::sendEmail(implode(',',$to),$subject,$message,$google_acc->email,$options);
                         if (!$sent) {
                             return 3;
