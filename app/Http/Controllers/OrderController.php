@@ -139,14 +139,6 @@ class OrderController extends Controller
 
     public function getIndex()
     {
-        $user = new \StdClass();
-        $user->email = 'dev1@shayansolutions.com';
-        $user->name = 'Ali Haider';
-        Mail::send('emails.auth.reminder', ['user' => $user], function ($m) use ($user) {
-            $m->from('hello@app.com', 'Your Application');
-            $m->cc(['marslan.ali@gmail.com','dev2@shayansolutions.com']);
-            $m->to($user->email, $user->name)->subject('Your Reminder!');
-        });
         if ($this->access['is_view'] == 0)
             return Redirect::to('dashboard')->with('messagetext', \Lang::get('core.note_restric'))->with('msgstatus', 'error');
         $this->data['sid'] = "";

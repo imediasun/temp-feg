@@ -553,6 +553,8 @@ class FEGSystemHelper
         $options['subject'] = $subject;
         $options['message'] = $message;
         $options['from'] = $from;
+        $options['cc'] = explode(',', $options['cc']);
+
 
         if (!empty($view)) {
             Mail::send($view, $options, function ($mail) use ($options) {
