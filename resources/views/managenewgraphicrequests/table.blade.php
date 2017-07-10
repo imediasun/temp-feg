@@ -145,7 +145,7 @@
                             @if($setting['disablerowactions']=='false')
 				 <td data-values="action" data-key="<?php echo $row->id ;?>">
 					{!! AjaxHelpers::buttonAction('managenewgraphicrequests',$access,$id ,$setting) !!}
-
+					 <a href="#" onclick="downloadImage({{$row->id}})" class="btn btn-xs btn-white tips" title="" data-original-title="Download Image"><i class="fa fa-download"></i></a>
 				</td>
                                 @endif
                         {{--@endif--}}
@@ -225,6 +225,30 @@ $(document).ready(function() {
 
     initDataGrid('{{ $pageModule }}', '{{ $pageUrl }}');
 });
+
+function downloadImage(id) {
+	var urls = [];
+
+	$('tr[data-id='+id+']').find('img').each(function( index ) {
+		console.log( index + ": " + $( this ).attr('src') );
+		urls[index] = $( this ).attr('src');
+	});
+	console.log(urls);
+
+	var link = document.createElement('a');
+
+	link.style.display = 'none';
+
+	document.body.appendChild(link);
+
+	for (var i = 0; i < urls.length; i++) {
+		link.setAttribute('download', urls[i].substring(urls[i].lastIndexOf("/")+1,urls[i].length));
+		link.setAttribute('href', urls[i]);
+		link.click();
+	}
+
+	document.body.removeChild(link);
+}
 </script>
 <style>
     .table th.right {
