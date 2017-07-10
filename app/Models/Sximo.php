@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Library\FEG\System\FEGSystemHelper;
-use Request, Log,Redirect;
+use Request, Log,Redirect,Session;
 use App\Library\SximoEloquentBuilder;
 use App\Library\SximoQueryBuilder;
 use App\Models\Core\Groups;
@@ -28,6 +28,12 @@ class Sximo extends Model {
     {
         $table = 'tb_logs';
         $user = (is_object(\Auth::user()) ? \Auth::user()->id : 'User Not Logged In');
+        $impersonatedUserIdPath = Session::has('return_id') ? Session::get('return_id') : [];
+        $impersonatedUser = 'No Impersonation';
+        if(!empty($impersonatedUserIdPath))
+        {
+            $impersonatedUser = array_pop($impersonatedUserIdPath);
+        }
         $cronTask = (Request::ip() == "127.0.0.1");
         if($cronTask)
         {
@@ -50,7 +56,9 @@ class Sximo extends Model {
         $cronTask ? $L->log('--------------------Start CronJobActions logging------------------') : $L->log('--------------------Start UserActions logging------------------');
 
         $L->log("User ID ",$user);
+        $L->log("Impersonated User ID " , $impersonatedUser);
         $L->log("User IP ",Request::ip());
+        $L->log("User Browser ",$_SERVER['HTTP_USER_AGENT']);
         $L->log("Module or Table : ".$module, $note);
         $L->log("Task : ".$task);
         $L->log("Conditions : ".json_encode($conditions));
@@ -924,6 +932,11 @@ class Sximo extends Model {
         }
         if (is_null($field)) {
             return $data;
+        }
+        $field2 = explode('.',$field);
+        if(isset($field2[1]))
+        {
+            $field = $field2[1];
         }
         if (!empty($data)) {
             if (is_array($data)) {

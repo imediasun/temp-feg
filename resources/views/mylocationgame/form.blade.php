@@ -241,8 +241,7 @@
 							{!! SiteHelpers::activeLang('Notes', (isset($fields['notes']['language'])? $fields['notes']['language'] : array())) !!}
 						</label>
 						<div class="col-md-6">
-					  <textarea name='notes' rows='5' id='notes' class='form-control '
-								required  >{{ $row['notes'] }}</textarea>
+					  <textarea name='notes' rows='5' id='notes' class='form-control '>{{ $row['notes'] }}</textarea>
 						</div>
 						<div class="col-md-2">
 

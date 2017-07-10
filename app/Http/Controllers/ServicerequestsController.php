@@ -519,7 +519,12 @@ class servicerequestsController extends Controller
             
             if($isAdd){
                 Ticketfollowers::follow($id, $data['entry_by'], '', true, 'requester');
-                $message = $data['Description'];
+                $message = nl2br($data['Description']);
+                
+                $message .= \View::make('servicerequests.email.commentviewlink', [
+                    'url' => url(). "/servicerequests/?view=".\SiteHelpers::encryptID($id),
+                ])->render();
+
                 $this->model->notifyObserver('FirstEmail',[
                     "message"       =>$message,
                     "ticketId"      => $id,
@@ -727,7 +732,7 @@ class servicerequestsController extends Controller
         }
 
         $this->model->insertRow($ticketsData, $ticketId);
-        $message = $commentsData['Comments'];
+        $message = nl2br($commentsData['Comments']);
         if (!empty($files['Attachments'])) {
             $ticketsData['_base_file_path'] = $files['_base_Attachments'];
         }
@@ -765,6 +770,11 @@ class servicerequestsController extends Controller
             
         //send email
         $ticketsData['Created'] = $requestedOn;
+
+        $message .= \View::make('servicerequests.email.commentviewlink', [
+            'url' => url(). "/servicerequests/?view=".\SiteHelpers::encryptID($ticketId),
+        ])->render();
+        
         $message .= $ticketThreadContent;
         $this->model->notifyObserver('AddComment',[
                 'message'       =>$message,
@@ -805,7 +815,7 @@ class servicerequestsController extends Controller
                 ])->render();
             }
             if (!empty($commentsArray)) {
-                $comments = '<div style="margin:40px 0 0; border-top: 1px solid #999; ">&nbsp;</div>';
+                $comments = '';
                 $comments .= \View::make('servicerequests.email.commentviewheader', ['conversationCount' => $commentsCount])->render();;
                 $comments .= implode("<br/>", $commentsArray);
             }

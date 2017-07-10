@@ -349,6 +349,7 @@ class VendorController extends Controller
             {
                 $data = $this->validatePost('vendor', true);
             }
+            $data['updated_by'] = \Session::get('uid');
             $data['hide'] = $request->get('hide') == "1" ?1:0;
             $data['status'] = $request->get('status') == "1" ?1:0;
             if (!empty($data['website'])) {

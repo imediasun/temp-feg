@@ -316,7 +316,9 @@
             <label class="col-md-4">
                 {!! SiteHelpers::activeLang('Notes', (isset($fields['note']['language'])? $fields['note']['language'] : array())) !!}:
             </label>
-            <div class="col-md-7"><span id="notes_text">{{ $gameNotes }}</span><span id="notes_input" style="display: none;"><textarea name='notes' rows='5' id='notes' class='form-control' required >{{$gameNotes}}</textarea></span></div>
+            <div class="col-md-7"><span id="notes_text">{{ $gameNotes }}</span><span id="notes_input" style="display: none;"><textarea name='notes' rows='5' id='notes' class='form-control' >{{$gameNotes}}</textarea>
+                <ul id="parsley-custom" style="display: none" class="parsley-error-list"><li class="required" style="display: list-item;">This value is required.</li></ul>
+                </span></div>
             <div class="col-md-1">
                 <a style="margin-top: 8px;" href="javascript:void(0)" id="editNotes" class="collapse-close pull-right btn btn-xs btn-primary">
                     <i class="fa fa fa-pencil"></i>
@@ -485,30 +487,40 @@
             $('#editNotes').hide();
         });
         $('#saveNotes').click(function () {
-            $.ajax({
-                type:'POST',
-                url:"{{url('mylocationgame/notes')}}",
-                data:{
-                    _token:"{{csrf_token()}}",
-                    notes:$('#notes_input textarea').val(),
-                    id:"{{$game->asset_number}}"
-                },
-                success:function (data) {
-                    $('#notes_text').html($('#notes_input textarea').val()).show();
-                    $('#saveNotes').hide();
-                    $('#notes_input').hide();
-                    $('#cancelNotes').hide();
-                    $('#editNotes').show();
-                    console.log('notes saved!');
-                    console.log(data);
+            if($('#notes_input textarea').val() == '' || $.trim($('#notes_input textarea').val()) == '')
+            {
+                $('#parsley-custom').show();
+                $('#notes_input textarea').css('border','1px solid red');
+            }
+            else
+            {
+                $('#parsley-custom').hide();
+                $('#notes_input textarea').css('border','1px solid #e5e6e7');
+                $.ajax({
+                    type:'POST',
+                    url:"{{url('mylocationgame/notes')}}",
+                    data:{
+                        _token:"{{csrf_token()}}",
+                        notes:$('#notes_input textarea').val(),
+                        id:"{{$game->asset_number}}"
+                    },
+                    success:function (data) {
+                        $('#notes_text').html($('#notes_input textarea').val()).show();
+                        $('#saveNotes').hide();
+                        $('#notes_input').hide();
+                        $('#cancelNotes').hide();
+                        $('#editNotes').show();
+                        console.log('notes saved!');
+                        console.log(data);
 
-                },
-                error:function (data) {
-                    console.log('notes save Error!');
-                    console.log(data);
-                }
+                    },
+                    error:function (data) {
+                        console.log('notes save Error!');
+                        console.log(data);
+                    }
 
-            });
+                });
+            }
 
         });
         $('#cancelNotes').click(function () {

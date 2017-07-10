@@ -460,7 +460,8 @@ class order extends Sximo
     }
     function createPOTrack($po_full,$location_id)
     {
-        $data=array('po_number'=>$po_full,'location_id'=>$location_id);
+        $count = explode('-', $po_full);
+        $data=array('po_number'=>$po_full,'location_id'=>$location_id, 'sort' => $count[2]);
         \DB::table('po_track')->insert($data);
     }
     public function get_local_time($type = null)
@@ -565,21 +566,19 @@ class order extends Sximo
 
     }
 
-    function increamentPO($location=0,$count=0, $datemdy = "")
+    function increamentPO_bk($location=0,$count=0, $datemdy = "")
     {
         $today = empty($datemdy) ? date('mdy'): $datemdy;
         if($location != 0) {
 
-            Log::info("select po_number from po_track where po_number like '%-$today-%' and location_id=" . $location . " order by po_number");
-
             $po = \DB::select("select po_number from po_track where po_number like '%-$today-%' and location_id=" . $location . " order by po_number");
             if($count == 0 ) {
-                Log::info("First call");
                 $count = count($po) + 1;
+
             }
             else
             {
-                Log::info("Count value received is $count");
+
                 $count = $count +1;
 
             }
@@ -587,7 +586,6 @@ class order extends Sximo
 
             if($this->isPOAvailable($po_new))
             {
-                Log::info("PO available => $po_new");
                 $this->createPOTrack($po_new,$location);
 
             }
@@ -595,13 +593,52 @@ class order extends Sximo
             {
                 //echo "$location:$count";
                 //die('here...');
-                Log::info("Increment PO => $location and $count");
                 $count = $this->increamentPO($location,$count);
             }
         }
         else
         {
             $count=1;;
+        }
+        return $count;
+    }
+
+    function increamentPO($location=0,$count=0, $datemdy = ""){
+        $today = empty($datemdy) ? date('mdy'): $datemdy;
+        if($location != 0) {
+
+            $poData = \DB::select("select sort from po_track where po_number like '%-$today-%' and location_id=" . $location . " order by sort");
+
+            $poData = array_map(function ($value) {
+                return $value->sort;
+            }, $poData);
+
+            $total = count($poData);
+            if($count == 0 ) {
+                $count = $total + 1;
+            }
+            else{
+                $count = $count + 1;
+            }
+
+            if ($total != 0) {
+                for ($i = 1; $i <= $total; $i++) {
+                    if (!in_array($i, $poData)) {
+                        $count = $i;
+                        break;
+                    }
+                }
+            }
+
+            $po_new = $location . "-" . $today . "-" . $count;
+            if ($this->isPOAvailable($po_new)) {
+                $this->createPOTrack($po_new, $location);
+            } /*else {
+                $count = $this->increamentPO($location);
+            }*/
+            
+        }else{
+            $count=1;
         }
         return $count;
     }

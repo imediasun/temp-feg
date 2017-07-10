@@ -3,6 +3,7 @@
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use App\Library\ReportHelpers;
+use App\Library\DBHelpers;
 use SiteHelpers;
 
 class readersmissingassetidreport extends Sximo  {
@@ -58,7 +59,9 @@ class readersmissingassetidreport extends Sximo  {
         } 
         
         if (empty($reader_id) || (!empty($date_start) && !empty($date_end))) {
-            ReportHelpers::dateRangeFix($date_start, $date_end);
+            $defaultEndDate = DBHelpers::getHighestRecorded('game_earnings', 'date_start');
+            ReportHelpers::dateRangeFix($date_start, $date_end, true, $defaultEndDate, 7);
+            //ReportHelpers::dateRangeFix($date_start, $date_end);
         }
         
 		$offset = ($page-1) * $limit ;

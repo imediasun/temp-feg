@@ -3,6 +3,7 @@
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use App\Library\ReportHelpers;
+use App\Library\DBHelpers;
 use SiteHelpers;
 
 class reports extends Sximo  {
@@ -46,8 +47,9 @@ class reports extends Sximo  {
         if (empty($location_id)) {
             return ReportHelpers::buildBlankResultDataDueToNoLocation();
         }        
-        
-        ReportHelpers::dateRangeFix($date_start, $date_end);  
+
+        $defaultEndDate = DBHelpers::getHighestRecorded('report_locations', 'date_played', 'report_status=1 AND record_status=1');
+        ReportHelpers::dateRangeFix($date_start, $date_end, true, $defaultEndDate, 7);
 		$offset = ($page-1) * $limit ;
         $total = ReportHelpers::getLocationNotReportingCount($date_start, $date_end, $location_id, $debit_type_id);
         if ($offset >= $total) {

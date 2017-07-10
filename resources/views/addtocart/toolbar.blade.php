@@ -78,7 +78,7 @@
 
 
 // Add some text to the new cells:
-                    total_cell1.innerHTML = "Total";
+                    total_cell1.innerHTML = "TOTAL";
                     total_cell2.innerHTML =" $ "+  data['shopping_cart_total'];
                 }
                 else

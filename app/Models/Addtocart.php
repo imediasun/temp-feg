@@ -152,6 +152,7 @@ class addtocart extends Sximo
 
                 $data['shopping_cart_total'] = $this->parseNumber($data['shopping_cart_total'] + $row['vendor_total']);
                 $data['total_cart_items'] += $row['cart_items'];
+
             }
             $data['amt_short_message']=$amt_short_message;
             if(isset($array))

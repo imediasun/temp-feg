@@ -593,7 +593,7 @@ class ReportHelpers
         LEFT JOIN game_type GTY ON E.game_type_id = GTY.id
         LEFT JOIN debit_type D ON L.debit_type_id = D.id
         WHERE 
-        
+
         L.reporting = 1 AND
         E.game_id <> 0 AND 
         E.record_status = 1 AND
@@ -696,7 +696,7 @@ class ReportHelpers
             LEFT JOIN location L ON L.id = E.location_id
             LEFT JOIN debit_type D ON D.id = E.debit_type_id   
                 WHERE E.game_id <> 0 AND G.not_debit = 0 
-                
+
                 AND E.record_status = 1
                 ";
                      
@@ -1228,10 +1228,16 @@ class ReportHelpers
      * @param Boolean $includeEndInRange   Whether full day of end date is inclusive in the range
      * @return Array 
      */
-    public static function dateRangeFix(&$startDate = "", &$endDate = "", $includeEndInRange = true) {
+    public static function dateRangeFix(&$startDate = "", &$endDate = "", $includeEndInRange = true, $defaultEndDate = null, $defaultDaysToReport = 7) {
         $newStartDate = trim($startDate);
         $newEndDate = trim($endDate);
         $yesterday = self::dateify("", -1);
+
+        if (empty($newStartDate) && empty($newEndDate) && !empty($defaultEndDate)) {
+            $newEndDate = trim($defaultEndDate);
+            $newStartDate = date('Y-m-d H:i:s', strtotime($newEndDate.' -' .($defaultDaysToReport-1).' days'));
+        }
+
         if (empty($newStartDate)) {
             if (empty($newEndDate)) {
                 $newStartDate = $yesterday;

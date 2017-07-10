@@ -15,7 +15,7 @@ class vendor extends Sximo  {
 
 	public static function querySelect(  ){
 		
-		return "SELECT vendor.* FROM vendor ";
+		return "SELECT vendor.* ,CONCAT(users.first_name, ' ', users.last_name) as updated_by_user FROM vendor LEFT JOIN users ON vendor.updated_by=users.id ";
 	}	
 
 	public static function queryWhere(  ){
@@ -29,7 +29,7 @@ class vendor extends Sximo  {
             $status = "AND vendor.status = 1 ";
         }
         		
-		return "  WHERE id IS NOT NULL $hide $status";
+		return "  WHERE vendor.id IS NOT NULL $hide $status";
 	}
 	
 	public static function queryGroup(){
