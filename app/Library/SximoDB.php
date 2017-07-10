@@ -9,14 +9,32 @@ class SximoDB extends \Illuminate\Support\Facades\DB
     public static function insert($query, $bindings = [])
     {
         $myquery = strtolower($query);
-        $queryArray = explode(' ',$myquery);
-        $data = substr($myquery, strpos($myquery, "values") + 6);
-        //$table = substr($myquery, strpos($myquery, "into") + 4,strpos($myquery, " (") );
-        $table = $queryArray[2];
-        $columns = substr($myquery, strpos($myquery, '(') , strpos($myquery, "values")-6 );
 
-        Sximo::insertLog($table,'insert' , 'SximoDB',$columns,$data);
+        $queryArray = explode(' ',$myquery);
+        if(!self::copyOperation($myquery,$queryArray))
+        {
+            $data = substr($myquery, strpos($myquery, "values") + 6);
+            //$table = substr($myquery, strpos($myquery, "into") + 4,strpos($myquery, " (") );
+            $table = $queryArray[2];
+            $columns = substr($myquery, strpos($myquery, '(') , strpos($myquery, "values")-6 );
+
+            Sximo::insertLog($table,'insert' , 'SximoDB',$columns,$data);
+        }
         return parent::insert($query, $bindings);
+    }
+
+    public static function copyOperation($query,$queryArray)
+    {
+        $tablename = $queryArray[2];
+        $key = array_search('select',$queryArray);
+        $tablename2 = $queryArray[$key+3];
+        if($tablename == $tablename2)
+        {
+            $condition = substr($query, strpos($query, "where") + 5);
+            Sximo::insertLog($tablename,'copy' , 'SximoDB',$condition,$query);
+            return true;
+        }
+        return false;
     }
 
     public static function insertGetId(array $values, $sequence = null)
@@ -36,8 +54,17 @@ class SximoDB extends \Illuminate\Support\Facades\DB
         $condition = substr($myquery, strpos($myquery, "where") + 5);
         //$table = substr($myquery, strpos($myquery, "update") + 6,strpos($myquery, "set") - 6);
         $table = $queryArray[1];
+        $statusColumns = ['active','hide','status','inactive','api_restricted'];
+        $column = explode('=',trim($data));
+        if(isset($column[0]) && in_array($column[0],$statusColumns))
+        {
+            Sximo::insertLog($table,'Change Status' ,'SximoDB', $condition,$data);
+        }
+        else
+        {
+            Sximo::insertLog($table,'Update' ,'SximoDB', $condition,$data);
+        }
 
-        Sximo::insertLog($table,'Update' ,'SximoDB', $condition,$data);
         return parent::update($query, $bindings);
     }
 

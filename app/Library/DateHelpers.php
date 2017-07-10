@@ -6,6 +6,7 @@ class DateHelpers
     public static function formatDate($date,$nodata=0)
     {
         if (preg_match('/[1-9]/', $date) && !is_null($date)) {
+            $date = self::checkForAmPm($date);
             $oDate = new \DateTime($date);
             return $newDateString = $oDate->format('m/d/Y');
         } elseif($nodata == 1) {
@@ -16,6 +17,30 @@ class DateHelpers
             return "No Data";
         }
 
+    }
+
+    public static function checkForAmPm($date)
+    {
+
+        $time =strtolower($date);
+        $timeArray = explode(' ',$time);
+        if($timeArray[count($timeArray)-1] == 'am' || $timeArray[count($timeArray)-1] == 'pm')
+        {
+            if(strlen($date) == 8)
+            {
+                //$date ='10:54 am';
+                $date= date("H:i", strtotime($date)).':00';
+            }
+            else
+            {
+                //$date ='2017-07-03 10:54 am';
+                $time = date("H:i", strtotime(($timeArray[1].' '.$timeArray[2])));
+                $date = $timeArray[0].' '.$time.':00';
+
+            }
+        }
+
+        return $date;
     }
 
     public static function formatDateTime($date,$nodata=0)

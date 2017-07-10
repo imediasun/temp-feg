@@ -54,7 +54,7 @@ class AddtocartController extends Controller
                 'message' => "No location assigned!"
             ));
         }
-        
+
         $productId = \Session::get('productId');
         $cartData = $this->model->popupCartData(null);
         $this->data['cartData'] = $cartData;
@@ -270,9 +270,11 @@ class AddtocartController extends Controller
             $statusId = 4;
         }*/
         $statusId = 4;
-        if (!empty($new_location)) {
+        /*
+          //commented on 07/07/2017 by asad because its not needed now
+         if (!empty($new_location)) {
             $query = \DB::select('SELECT product_id,description,qty,status_id,request_type_id FROM requests
-                                  WHERE location_id = ' . $location_id . ' AND status_id = 9');
+                                  WHERE location_id = ' . $location_id . ' AND status_id = 9 AND request_user_id = '.\Session::get('uid'));
 
             foreach ($query as $row) {
                 $insert = array(
@@ -287,11 +289,11 @@ class AddtocartController extends Controller
                 );
                 \DB::table('requests')->insert($insert);
             }
-        }
+        }*/
         $update = array('status_id' => 1,
             'request_user_id' => \Session::get('uid'),
             'request_date' => $now);
-        \DB::table('requests')->where('location_id', $location_id)->where('status_id', $statusId)->update($update);
+        \DB::table('requests')->where('location_id', $location_id)->where('request_user_id', \Session::get('uid'))->where('status_id', $statusId)->update($update);
 
         if (empty($new_location)) {
             return Redirect::to('/shopfegrequeststore')->with('messagetext', 'Submitted successfully')->with('msgstatus', 'success');

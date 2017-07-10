@@ -161,7 +161,7 @@
                     </div>
                     <div class="form-group  ">
                         <label for="technical_user_id" class=" control-label col-md-4 text-left">
-                            {!! SiteHelpers::activeLang('Technical', (isset($fields['technical_user_id']['language'])? $fields['technical_user_id']['language'] : array())) !!}
+                            {!! SiteHelpers::activeLang('Technical Contact', (isset($fields['technical_user_id']['language'])? $fields['technical_user_id']['language'] : array())) !!}
                         </label>
                         <div class="col-md-6">
                             <select name='technical_user_id' rows='5' id='technical_user_id' class='select2 '></select>
@@ -172,7 +172,7 @@
                     </div>
                     <div class="form-group  ">
                         <label for="regional_manager_id" class=" control-label col-md-4 text-left">
-                            {!! SiteHelpers::activeLang('Regional Manager', (isset($fields['regional_manager_id']['language'])? $fields['regional_manager_id']['language'] : array())) !!}
+                            {!! SiteHelpers::activeLang('Regional Manager/VP', (isset($fields['regional_manager_id']['language'])? $fields['regional_manager_id']['language'] : array())) !!}
                         </label>
                         <div class="col-md-6">
                             <select name='regional_manager_id' rows='5' id='regional_manager_id'
@@ -184,7 +184,7 @@
                     </div>
                     <div class="form-group  ">
                         <label for="vp_id" class=" control-label col-md-4 text-left">
-                            {!! SiteHelpers::activeLang('VP', (isset($fields['vp_id']['language'])? $fields['vp_id']['language'] : array())) !!}
+                            {!! SiteHelpers::activeLang('SVP', (isset($fields['vp_id']['language'])? $fields['vp_id']['language'] : array())) !!}
                         </label>
                         <div class="col-md-6">
                             <select name='vp_id' rows='5' id='vp_id' class='select2 '></select>
