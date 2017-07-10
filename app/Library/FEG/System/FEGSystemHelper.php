@@ -553,8 +553,7 @@ class FEGSystemHelper
         $options['subject'] = $subject;
         $options['message'] = $message;
         $options['from'] = $from;
-
-        dd($options);
+        
         $options['cc'] = explode(',', $options['cc']);
 
 
