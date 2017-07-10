@@ -1121,7 +1121,6 @@ class OrderController extends Controller
                         }
                     }
                      else {
-                         dd($options);
 
                          $sent= $this->sendPhpEmail($message,$to,$from,$subject,$pdf,$filename,$cc,$bcc);
                         return $sent;
@@ -1142,7 +1141,8 @@ class OrderController extends Controller
 
                             if(!empty($cc))
                             {
-                               $message->cc($cc);
+
+                               $message->cc(explode(',', $cc));
                             }
                             if(!empty($bcc))
                             {

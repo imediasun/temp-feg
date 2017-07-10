@@ -554,10 +554,6 @@ class FEGSystemHelper
         $options['message'] = $message;
         $options['from'] = $from;
 
-        dd($options);
-        $options['cc'] = explode(',', $options['cc']);
-
-
         if (!empty($view)) {
             Mail::send($view, $options, function ($mail) use ($options) {
                 self::configLaravelMail($mail, $options);
