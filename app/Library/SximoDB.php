@@ -54,8 +54,17 @@ class SximoDB extends \Illuminate\Support\Facades\DB
         $condition = substr($myquery, strpos($myquery, "where") + 5);
         //$table = substr($myquery, strpos($myquery, "update") + 6,strpos($myquery, "set") - 6);
         $table = $queryArray[1];
+        $statusColumns = ['active','hide','status','inactive','api_restricted'];
+        $column = explode('=',trim($data));
+        if(isset($column[0]) && in_array($column[0],$statusColumns))
+        {
+            Sximo::insertLog($table,'Change Status' ,'SximoDB', $condition,$data);
+        }
+        else
+        {
+            Sximo::insertLog($table,'Update' ,'SximoDB', $condition,$data);
+        }
 
-        Sximo::insertLog($table,'Update' ,'SximoDB', $condition,$data);
         return parent::update($query, $bindings);
     }
 
