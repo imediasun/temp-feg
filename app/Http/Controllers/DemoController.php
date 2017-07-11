@@ -27,22 +27,25 @@ class DemoController extends Controller
 
 
         //Game with not matched location with last history log
-        $csv = "ASSET ID, GAME NAME, HISTORY LOG ID \n";
+        $csv = "ASSET ID, GAME NAME, GAME TITLE, CURRENT LOCATION, HISTORY LOCATION, HISTORY LOG ID \n";
+
         $games = \DB::select("
-            SELECT game.id AS id, game.game_name AS name
+            SELECT game.id AS id, game.game_name AS name,  game_title.game_title AS title, game.location_id AS location, game_move_history.to_loc AS history_loc
             FROM game
             LEFT JOIN game_move_history ON game.id = game_move_history.game_id
+            LEFT JOIN game_title ON game.game_title_id = game_title.id
             WHERE game.location_id != (SELECT to_loc FROM game_move_history WHERE game_id = game.id ORDER BY id DESC LIMIT 0,1) GROUP BY game.id");
 
         foreach ($games as $index => $game){
-            $csv .= "$game->id, $game->name, Last movement log not exist \n";
+            $csv .= "$game->id, $game->name, $game->title, $game->location, $game->history_loc,  Game move history location id mismatch with Game location id,  \n";
         }
 
         //Game with history conflicts
         $games = \DB::select("
-            SELECT game.id AS id, game.game_name AS name
+            SELECT game.id AS id, game.game_name AS name, game_title.game_title AS title, game.location_id AS location, game_move_history.to_loc AS history_loc
             FROM game
             LEFT JOIN game_move_history ON game.id = game_move_history.game_id
+            LEFT JOIN game_title ON game.game_title_id = game_title.id
             WHERE game.location_id = (SELECT to_loc FROM game_move_history WHERE game_id = game.id ORDER BY id DESC LIMIT 0,1) GROUP BY game.id");
 
         foreach ($games as $game){
@@ -51,7 +54,7 @@ class DemoController extends Controller
             foreach ($history as $key => $row){
                 if($key+1>=count($history)){break;}
                 if($row->to_loc != $history[$key+1]->from_loc){
-                    $csv .= "$row->game_id, $game->name, $row->id \n";
+                    $csv .= "$game->id, $game->name, $game->title, $game->location, $row->to_loc, $row->id \n";
                     break;
                 }
             }
