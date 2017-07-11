@@ -236,7 +236,7 @@ class ReadComment extends Command
 //            }
 //        }
         $this->L->log('in get message function');
-        $this->L->log("inbox = $inbox email_number = $email_number structure = $structure");
+        $this->L->log("inbox = $inbox email_number = $email_number structure = ".json_encode($structure));
         $message = $this->getMessageFromStructure($inbox, $email_number, $structure);
         if (empty($message)) {
             $message = '';
