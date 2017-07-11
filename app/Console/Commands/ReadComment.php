@@ -128,6 +128,9 @@ class ReadComment extends Command
                     $L->log("in if block means ticket exists");
                     $posted = $this->getDate($meta);
                     $L->log("Posted date = ".$posted);
+                    $L->log("inbox = ".$inbox);
+                    $L->log("email_number = ".$email_number);
+                    $L->log("getMessage() = ".$this->getMessage($inbox, $email_number));
                     $message = $this->cleanUpMessage($this->getMessage($inbox, $email_number));
                     $L->log("Message = ".$posted);
                     //Insert In sb_ticketcomments table
