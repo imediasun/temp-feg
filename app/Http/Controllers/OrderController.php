@@ -9,10 +9,9 @@ use \App\Models\Sximo\Module;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 use App\Library\SximoDB;
-use Validator, Input, Redirect, Cache, Mail ;
+use Validator, Input, Redirect, Cache ;
 use PHPMailer;
 use PHPMailerOAuth;
-
 
 class OrderController extends Controller
 {
@@ -1113,6 +1112,7 @@ class OrderController extends Controller
                         'preferGoogleOAuthMail'=>true
                     ];
                     if (!empty($google_acc->oauth_token) && !empty($google_acc->refresh_token)) {
+
                         $sent = FEGSystemHelper::sendEmail(implode(',',$to),$subject,$message,$google_acc->email,$options);
                         if (!$sent) {
                             return 3;
@@ -1121,8 +1121,7 @@ class OrderController extends Controller
                         }
                     }
                      else {
-
-                         $sent= $this->sendPhpEmail($message,$to,$from,$subject,$pdf,$filename,$cc,$bcc);
+                      $sent= $this->sendPhpEmail($message,$to,$from,$subject,$pdf,$filename,$cc,$bcc);
                         return $sent;
                     }
                 }
@@ -1141,12 +1140,11 @@ class OrderController extends Controller
 
                             if(!empty($cc))
                             {
-
-                               $message->cc(explode(',', $cc));
+                               $message->cc(explode(",",$cc));
                             }
                             if(!empty($bcc))
                             {
-                               $message->bcc(explode(',', $bcc));
+                               $message->bcc(explode(",",$bcc));
                             }
                             $message->replyTo($from, $from);
                             $message->attachData($pdf->output(), $filename);

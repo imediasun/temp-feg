@@ -35,10 +35,10 @@ class Sximo extends Model {
             $impersonatedUser = array_pop($impersonatedUserIdPath);
         }
         $cronTask = (Request::ip() == "127.0.0.1");
-        if($cronTask)
+        /*if($cronTask)
         {
             $user = "System";
-        }
+        }*/
         $data = array(
             'auditID' => '',
             'note' => $note,
@@ -52,21 +52,26 @@ class Sximo extends Model {
 
         $l = '';
         $L =  FEGSystemHelper::setLogger($l, "user-action-logs.log", "FEGUserActions", "USER_ACTIONS");
-
-        $cronTask ? $L->log('--------------------Start CronJobActions logging------------------') : $L->log('--------------------Start UserActions logging------------------');
+        if(!$cronTask)
+        {
+            /*$cronTask ? $L->log('--------------------Start CronJobActions logging------------------') : */
+            $L->log('--------------------Start UserActions logging------------------');
 
         $L->log("User ID ",$user);
-        $L->log("Impersonated User ID " , $impersonatedUser);
+        $L->log("Actual User ID " , $impersonatedUser);
         $L->log("User IP ",Request::ip());
-        $L->log("User Browser ",$_SERVER['HTTP_USER_AGENT']);
+        $L->log("User Browser ",isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT']: "CLI");
         $L->log("Module or Table : ".$module, $note);
         $L->log("Task : ".$task);
         $L->log("Conditions : ".json_encode($conditions));
         $L->log("Parameters : " . json_encode($params));
 
-        $cronTask ? $L->log('--------------------End CronJobActions logging------------------') : $L->log('--------------------End UserActions logging------------------');
-        $id = \DB::table($table)->insertGetId($data);
-        return $id;
+            /*$cronTask ? $L->log('--------------------End CronJobActions logging------------------') : */
+            $L->log('--------------------End UserActions logging------------------');
+            $id = \DB::table($table)->insertGetId($data);
+            return $id;
+        }
+        return 0;
     }
 
 
