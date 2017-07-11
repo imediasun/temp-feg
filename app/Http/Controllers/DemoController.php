@@ -27,7 +27,7 @@ class DemoController extends Controller
 
 
         //Game with not matched location with last history log
-        $csv = "ASSET ID, GAME NAME, GAME TITLE, CURRENT LOCATION, HISTORY LOCATION, HISTORY LOG ID \n";
+        $csv = "ASSET ID, GAME NAME, GAME TITLE, GAME LOCATION ID, MOVE HISTORY LOCATION ID, HISTORY LOG ID \n";
 
         $games = \DB::select("
             SELECT game.id AS id, game.game_name AS name,  game_title.game_title AS title, game.location_id AS location, game_move_history.to_loc AS history_loc
@@ -54,7 +54,7 @@ class DemoController extends Controller
             foreach ($history as $key => $row){
                 if($key+1>=count($history)){break;}
                 if($row->to_loc != $history[$key+1]->from_loc){
-                    $csv .= "$game->id, $game->name, $game->title, $game->location, $row->to_loc, $row->id \n";
+                    $csv .= "$game->id, $game->name, $game->title, $game->location, $row->to_loc, Missing Log for game movement at ID => $row->id \n";
                     break;
                 }
             }
