@@ -235,7 +235,9 @@ class ReadComment extends Command
 //                break;
 //            }
 //        }
-        $message = $this->getMessageFromStructure($inbox, $email_number, $structure);        
+        $this->L->log('in get message function');
+        $this->L->log("inbox = $inbox email_number = $email_number structure = $structure");
+        $message = $this->getMessageFromStructure($inbox, $email_number, $structure);
         if (empty($message)) {
             $message = '';
         }
@@ -270,14 +272,18 @@ class ReadComment extends Command
     }
     
     public function getMessageFromStructure($connection, $messageNumber, $partNumbers) {
+        $this->L->log('in getMessageFromStructure function');
         $structure = imap_fetchstructure($connection, $messageNumber);
+        $this->L->log('structure = '.$structure);
         $flattenedParts = $this->emailFlattenParts($structure->parts);
+        $this->L->log('flattenedParts = '.json_encode($flattenedParts));
         $message = "";
         foreach($flattenedParts as $partNumber => $part) {
 
             switch($part->type) {
 
                 case 0:
+                    $this->L->log('case 0 matched ');
                     // the HTML or plain text part of the email
                     $message = $this->emailGetPart($connection, $messageNumber, $partNumber, $part->encoding);
                     // now do something with the message, e.g. render it
@@ -310,9 +316,11 @@ class ReadComment extends Command
             }
             
             if (!empty($message) && in_array($partNumber, $partNumbers)) {
+                $this->L->log('in if breaking loop ');
                 break;
             }
-        }    
+        }
+        $this->L->log('returning message = '.$message);
         return $message;
     }
     
