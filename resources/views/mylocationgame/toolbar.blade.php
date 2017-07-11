@@ -201,4 +201,8 @@
             return false;
         }
     }
+
+    $(document).ajaxStop(function () {
+        $('#location_id').append('<option value="0"> In-Transit </option>');
+    });
 </script>
