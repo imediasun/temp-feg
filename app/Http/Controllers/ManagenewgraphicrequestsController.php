@@ -4,6 +4,7 @@ use App\Http\Controllers\controller;
 use App\Models\Managenewgraphicrequests;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
+use App\Library\FEG\System\FEGSystemHelper;
 use Validator, Input, Redirect;
 
 class ManagenewgraphicrequestsController extends Controller
@@ -73,10 +74,41 @@ class ManagenewgraphicrequestsController extends Controller
         return view('managenewgraphicrequests.index', $this->data);
     }
     public function getSearchFilterQuery($customQueryString = null) {
+
+        // Get custom Ticket Type filter value
+        $globalSearchFilter = $this->model->getSearchFilters(['search_all_fields' => '', 'status_id' => '']);
+        $skipFilters = ['search_all_fields'];
+        $mergeFilters = [];
+        extract($globalSearchFilter); //search_all_fields
+
+
+        // rebuild search query skipping 'ticket_custom_type' filter
+        $trimmedSearchQuery = $this->model->rebuildSearchQuery($mergeFilters, $skipFilters, $customQueryString);
+        $searchInput = $trimmedSearchQuery;
+        if (!empty($search_all_fields)) {
+            $searchFields = [
+                'new_graphics_request.description',
+                'new_graphics_request.request_user_id',
+                'location.id',
+                'new_graphics_request_status.id'
+            ];
+            $dateSearchFields = [
+                'new_graphics_request.request_date',
+                'new_graphics_request.need_by_date',
+                'new_graphics_request.approve_date',
+            ];
+            $dates = FEGSystemHelper::probeDatesInSearchQuery($search_all_fields);
+            $searchInput = ['query' => $search_all_fields, 'dateQuery' => $dates,
+                'fields' => $searchFields, 'dateFields' => $dateSearchFields];
+
+        }
+
+
         // Filter Search for query
         // build sql query based on search filters
-        $filter = is_null($customQueryString) ? (is_null(Input::get('search')) ? '' : $this->buildSearch()) :
+        $filter = is_null($customQueryString) ? (is_null(Input::get('search')) ? '' : $this->buildSearch($searchInput)) :
             $this->buildSearch($customQueryString);
+
 
         // Get assigned locations list as sql query (part)
         //$locationFilter = \SiteHelpers::getQueryStringForLocation('new_graphics_request', 'location_id', [], ' OR new_graphics_request.location_id=0 ');
