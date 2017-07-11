@@ -273,7 +273,7 @@ class ReadComment extends Command
     
     public function getMessageFromStructure($connection, $messageNumber, $partNumbers) {
         $this->L->log('in getMessageFromStructure function');
-        $structure = imap_fetchstructure($connection, $messageNumber);
+        $structure = imap_fetchstructure('466', $messageNumber);
         $this->L->log('structure = '. json_encode( (array)$structure ));
         $flattenedParts = $this->emailFlattenParts($structure->parts);
         $this->L->log('flattenedParts = '.json_encode($flattenedParts));
