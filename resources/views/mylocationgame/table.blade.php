@@ -236,6 +236,8 @@ $(document).ready(function() {
     }
 
     initDataGrid('{{ $pageModule }}', '{{ $pageUrl }}');
+
+	$('select[name=location_id]').append('<option value="0"> In-Transit </option>');
 });
 </script>
 <style>
