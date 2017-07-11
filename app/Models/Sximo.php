@@ -57,14 +57,14 @@ class Sximo extends Model {
             /*$cronTask ? $L->log('--------------------Start CronJobActions logging------------------') : */
             $L->log('--------------------Start UserActions logging------------------');
 
-            $L->log("User ID ",$user);
-            $L->log("Actual User ID " , $impersonatedUser);
-            $L->log("User IP ",Request::ip());
-            $L->log("User Browser ",$_SERVER['HTTP_USER_AGENT']);
-            $L->log("Module or Table : ".$module, $note);
-            $L->log("Task : ".$task);
-            $L->log("Conditions : ".json_encode($conditions));
-            $L->log("Parameters : " . json_encode($params));
+        $L->log("User ID ",$user);
+        $L->log("Actual User ID " , $impersonatedUser);
+        $L->log("User IP ",Request::ip());
+        $L->log("User Browser ",isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT']: "CLI");
+        $L->log("Module or Table : ".$module, $note);
+        $L->log("Task : ".$task);
+        $L->log("Conditions : ".json_encode($conditions));
+        $L->log("Parameters : " . json_encode($params));
 
             /*$cronTask ? $L->log('--------------------End CronJobActions logging------------------') : */
             $L->log('--------------------End UserActions logging------------------');

@@ -54,7 +54,7 @@ class AddtocartController extends Controller
                 'message' => "No location assigned!"
             ));
         }
-        
+
         $productId = \Session::get('productId');
         $cartData = $this->model->popupCartData(null);
         $this->data['cartData'] = $cartData;
