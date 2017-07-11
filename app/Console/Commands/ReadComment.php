@@ -63,7 +63,7 @@ class ReadComment extends Command
             $lastRunTimestamp = strtotime($lastRun);
             if ($nowStamp - $lastRunTimestamp < (3600)) { //wait for 1 hour 
                 $L->log("Task to fetch emails already running since $lastRun. Quit.");
-                return;
+                //return;
             }
         }
         FEGSystemHelper::updateOption('ReadingTicketCommentsFromIMAP', $now);
@@ -121,17 +121,23 @@ class ReadComment extends Command
 
                 $ticketId = $this->getTicketID($meta);
                 $L->log("Ticket ID: ", $ticketId);
-
+                $L->log("Checking if ticket exists....");
                 $ticketExists = !empty($ticketId) && Servicerequests::doesTicketExist($ticketId);
+                $L->log("Checked if ticket exists result = ".$ticketExists);
 
                 if ($ticketExists) {
-
+                    $L->log("in if block means ticket exists");
                     $posted = $this->getDate($meta);
-
+                    $L->log("Posted date = ".$posted);
+                    $L->log("inbox = ".$inbox);
+                    $L->log("email_number = ".$email_number);
+                    $L->log("getMessage() = ".$this->getMessage($inbox, $email_number));
                     $message = $this->cleanUpMessage($this->getMessage($inbox, $email_number));
-
+                    $L->log("Message = ".$posted);
                     //Insert In sb_ticketcomments table
+                    $L->log("Creating new comment");
                     $comment_model = new Ticketcomment();
+                    $L->log("Created new comment instance");
                     $commentsData = array(
                         'TicketID' => $ticketId,
                         'Comments' => $message,
@@ -142,7 +148,7 @@ class ReadComment extends Command
                         'imap_meta' => json_encode($meta),
                         'imap_message_id' => $UID,
                     );
-
+                    $L->log("comments data = ".json_encode($commentsData));
                     $L->log('Adding comment to database', $commentsData);
                     $id = $comment_model->insertRow($commentsData, NULL);
                     $L->log("Updaet ticket updated date to $posted");
@@ -230,7 +236,9 @@ class ReadComment extends Command
 //                break;
 //            }
 //        }
-        $message = $this->getMessageFromStructure($inbox, $email_number, $structure);        
+        $this->L->log('in get message function');
+        $this->L->log("inbox = $inbox email_number = $email_number structure = ".json_encode($structure));
+        $message = $this->getMessageFromStructure($inbox, $email_number, $structure);
         if (empty($message)) {
             $message = '';
         }
@@ -265,49 +273,61 @@ class ReadComment extends Command
     }
     
     public function getMessageFromStructure($connection, $messageNumber, $partNumbers) {
+        $this->L->log('in getMessageFromStructure function');
+        $this->L->log("connection = $connection messageNumber = $messageNumber partNumbers = ".json_encode($partNumbers));
         $structure = imap_fetchstructure($connection, $messageNumber);
-        $flattenedParts = $this->emailFlattenParts($structure->parts);
+        $this->L->log('structure = '. json_encode( (array)$structure ));
         $message = "";
-        foreach($flattenedParts as $partNumber => $part) {
+        if(isset($structure->parts))
+        {
+            $flattenedParts = $this->emailFlattenParts($structure->parts);
+            $this->L->log('flattenedParts = '.json_encode($flattenedParts));
 
-            switch($part->type) {
+            foreach($flattenedParts as $partNumber => $part) {
 
-                case 0:
-                    // the HTML or plain text part of the email
-                    $message = $this->emailGetPart($connection, $messageNumber, $partNumber, $part->encoding);
-                    // now do something with the message, e.g. render it
-                break;
+                switch($part->type) {
 
-                case 1:
-                    // multi-part headers, can ignore
+                    case 0:
+                        $this->L->log('case 0 matched ');
+                        // the HTML or plain text part of the email
+                        $message = $this->emailGetPart($connection, $messageNumber, $partNumber, $part->encoding);
+                        // now do something with the message, e.g. render it
+                        break;
 
-                break;
-                case 2:
-                    // attached message headers, can ignore
-                break;
+                    case 1:
+                        // multi-part headers, can ignore
 
-                case 3: // application
-                case 4: // audio
-                case 5: // image
-                case 6: // video
-                case 7: // other
-                    //$filename = $this->emailgetEmailAttachmentFilenameFromPart($part);
-                    //if($filename) {
+                        break;
+                    case 2:
+                        // attached message headers, can ignore
+                        break;
+
+                    case 3: // application
+                    case 4: // audio
+                    case 5: // image
+                    case 6: // video
+                    case 7: // other
+                        //$filename = $this->emailgetEmailAttachmentFilenameFromPart($part);
+                        //if($filename) {
                         // it's an attachment
                         //$attachment = $this->emailGetPart($connection, $messageNumber, $partNumber, $part->encoding);
                         // now do something with the attachment, e.g. save it somewhere
-                    //}
-                    //else {
+                        //}
+                        //else {
                         // don't know what it is
-                    //}
-                break;
+                        //}
+                        break;
 
+                }
+
+                if (!empty($message) && in_array($partNumber, $partNumbers)) {
+                    $this->L->log('in if breaking loop ');
+                    break;
+                }
             }
-            
-            if (!empty($message) && in_array($partNumber, $partNumbers)) {
-                break;
-            }
-        }    
+        }
+
+        $this->L->log('returning message = '.$message);
         return $message;
     }
     

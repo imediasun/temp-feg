@@ -1140,11 +1140,11 @@ class OrderController extends Controller
 
                             if(!empty($cc))
                             {
-                                $message->cc(explode(',', $cc));
+                               $message->cc(explode(",",$cc));
                             }
                             if(!empty($bcc))
                             {
-                               $message->bcc(explode(',', $bcc));
+                               $message->bcc(explode(",",$bcc));
                             }
                             $message->replyTo($from, $from);
                             $message->attachData($pdf->output(), $filename);
