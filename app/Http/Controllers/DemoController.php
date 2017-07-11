@@ -59,7 +59,7 @@ class DemoController extends Controller
 
 
         header('Content-type: text/csv');
-        header('Content-Disposition: attachment; filename="demo.csv"');
+        header('Content-Disposition: attachment; filename="Game-History-Conflict-Report.csv"');
         header('Pragma: no-cache');
         header('Expires: 0');
 
