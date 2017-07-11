@@ -63,7 +63,7 @@ class ReadComment extends Command
             $lastRunTimestamp = strtotime($lastRun);
             if ($nowStamp - $lastRunTimestamp < (3600)) { //wait for 1 hour 
                 $L->log("Task to fetch emails already running since $lastRun. Quit.");
-                return;
+                //return;
             }
         }
         FEGSystemHelper::updateOption('ReadingTicketCommentsFromIMAP', $now);
