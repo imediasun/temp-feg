@@ -121,17 +121,19 @@ class ReadComment extends Command
 
                 $ticketId = $this->getTicketID($meta);
                 $L->log("Ticket ID: ", $ticketId);
-
+                $L->log("Checking if ticket exists....");
                 $ticketExists = !empty($ticketId) && Servicerequests::doesTicketExist($ticketId);
-
+                $L->log("Checked if ticket exists result = ".$ticketExists);
                 if ($ticketExists) {
-
+                    $L->log("in if block means ticket exists");
                     $posted = $this->getDate($meta);
-
+                    $L->log("Posted date = ".$posted);
                     $message = $this->cleanUpMessage($this->getMessage($inbox, $email_number));
-
+                    $L->log("Message = ".$posted);
                     //Insert In sb_ticketcomments table
+                    $L->log("Creating new comment");
                     $comment_model = new Ticketcomment();
+                    $L->log("Created new comment instance");
                     $commentsData = array(
                         'TicketID' => $ticketId,
                         'Comments' => $message,
@@ -142,7 +144,7 @@ class ReadComment extends Command
                         'imap_meta' => json_encode($meta),
                         'imap_message_id' => $UID,
                     );
-
+                    $L->log("comments data = ".json_encode($commentsData));
                     $L->log('Adding comment to database', $commentsData);
                     $id = $comment_model->insertRow($commentsData, NULL);
                     $L->log("Updaet ticket updated date to $posted");
