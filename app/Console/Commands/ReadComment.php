@@ -159,8 +159,8 @@ class ReadComment extends Command
                 }
 
 
-                $L->log('Delete email');
-                imap_delete($inbox, $email_number);
+                /*$L->log('Delete email');
+                imap_delete($inbox, $email_number);*/
                 //$L->log('Sending comment notificaiton');
                 //$this->sendNotification($commentsData, $userId);
 
