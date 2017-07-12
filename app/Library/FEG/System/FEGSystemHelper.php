@@ -12,7 +12,7 @@ use Mail;
 use PHPMailerOAuth;
 use App\Models\Feg\System\Options;
 use App\Models\Core\Users;
-
+use FEGFormat;
 
 class FEGSystemHelper
 {
@@ -224,7 +224,7 @@ class FEGSystemHelper
                     }
                     else {
                         if (!empty($humanifyTitle)) {
-                            $title = self::desanitizeTitleId($title);
+                            $title = FEGFormat::field2title($title);
                         }
                         $htmlArr[] = "<{$th}>{$title}</th>";
                     }
@@ -289,7 +289,7 @@ class FEGSystemHelper
         return $sTitle;
     }
     public static function desanitizeTitleId($title) {
-        $sTitle = ucwords(str_replace('_', ' ', $title));
+        $sTitle = FEGFormat::field2title($title);
         return $sTitle;
     }
 

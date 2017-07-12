@@ -54,13 +54,31 @@ class Tools
 
         $ret[] = "<hr/>";
         $ret[] = "<h3>Game Table's Data</h3>";
-        $gameData = DB::table('game')->select('location_id', 'prev_location_id')->where('id', $gameId)->first();
+        $gameData = DB::table('game')->select(
+                'location_id',
+                'prev_location_id',
+                'date_in_service', 
+                'game_move_id',
+                'date_last_move',
+                'status_id', 
+                'sold', 
+                'not_debit',
+                'test_piece'
+                
+                )->where('id', $gameId)->first();
         if (empty($gameData)) {
             $ret = ["<font color='red'>No data in game table!</font>"];
         }
         else {
+            $ret[] = implode('', ["Status: ", $gameData->status_id == "3" ? "Transit" : ($gameData->status_id == "2" ? "Repair" : "Up")]);
             $ret[] = implode('', ["Location: ", $gameData->location_id]);
             $ret[] = implode('', ["Prev Location: ", $gameData->prev_location_id]);
+            $ret[] = implode('', ["Inception Date: ", \DateHelpers::formatDate($gameData->date_in_service)]);
+            $ret[] = implode('', ["Not Debit?: ", $gameData->not_debit == 1 ? "Yes" : "No"]);
+            $ret[] = implode('', ["Is Test?: ", $gameData->test_piece == 1 ? "Yes" : "No"]);
+            $ret[] = implode('', ["Last Moved on: ", \DateHelpers::formatDate($gameData->date_last_move)]);
+            $ret[] = implode('', ["Last Move ID: ", $gameData->game_move_id]);
+            $ret[] = implode('', ["Sold?: ", $gameData->sold == 1 ? "Yes" : "No"]);
         }
 
 
@@ -109,10 +127,10 @@ class Tools
     $ret[] = "<br/><pre>UPDATE game SET
         location_id=?,
         prev_location_id=?,
-        date_last_move='? 00:00:00',
+        date_last_move='?',
         game_move_id=?
 
-    WHERE id=$gameId'</pre>";
+    WHERE id=$gameId</pre>";
 
     $ret[] = "<br/><strong>SQL TO UPDATE GAME PLAY REPORT SUMMARY</strong>";
     $ret[] = "<br/><pre>UPDATE report_game_plays SET
@@ -121,7 +139,7 @@ class Tools
             game_id=$gameId
         AND date_played >='?'
         AND date_played <='?'
-        AND location_id != 2031'</pre>";
+        AND location_id != 2031</pre>";
 
         return $ret;
 
