@@ -88,9 +88,10 @@ class ManagenewgraphicrequestsController extends Controller
         if (!empty($search_all_fields)) {
             $searchFields = [
                 'new_graphics_request.description',
-                'new_graphics_request.request_user_id',
-                'location.id',
-                'new_graphics_request_status.id'
+                'u1.first_name',
+                'u1.last_name',
+                'location.location_name',
+                'new_graphics_request_status.status'
             ];
             $dateSearchFields = [
                 'new_graphics_request.request_date',
